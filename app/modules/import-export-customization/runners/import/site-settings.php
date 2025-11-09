@@ -9,6 +9,18 @@ use Elementor\Core\Experiments\Manager as ExperimentsManager;
 
 class Site_Settings extends Import_Runner_Base {
 
+	const ALLOWED_SETTINGS = [
+		'theme',
+		'globalColors',
+		'globalFonts',
+		'themeStyleSettings',
+		'generalSettings',
+		'experiments',
+		'customCode',
+		'customIcons',
+		'customFonts',
+	];
+
 	/**
 	 * @var int
 	 */
@@ -50,6 +62,10 @@ class Site_Settings extends Import_Runner_Base {
 	private $imported_experiments = [];
 
 	public function get_theme_upgrader(): \Theme_Upgrader {
+		if ( ! function_exists( 'request_filesystem_credentials' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
+
 		if ( ! class_exists( '\Theme_Upgrader' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 		}
@@ -74,8 +90,29 @@ class Site_Settings extends Import_Runner_Base {
 	}
 
 	public function import( array $data, array $imported_data ) {
+		$customization = $data['customization']['settings'] ?? null;
+
+		if ( $customization ) {
+			return $this->import_with_customization( $data, $imported_data, $customization );
+		}
+
+		return $this->import_with_manifest( $data, $imported_data );
+	}
+
+	private function import_with_customization( array $data, array $imported_data, array $customization ) {
+		$result = apply_filters( 'elementor/import-export-customization/import/site-settings/customization', null, $data, $imported_data, $customization, $this );
+
+		if ( is_array( $result ) ) {
+			return $result;
+		}
+
+		return $this->import_with_manifest( $data, $imported_data, ! empty( $customization['theme'] ) );
+	}
+
+	private function import_with_manifest( array $data, array $imported_data, $include_theme = true ) {
 		$new_site_settings = $data['site_settings']['settings'];
 		$title = $data['manifest']['title'] ?? 'Imported Kit';
+		$manifest_settings = $data['manifest']['site-settings'] ?? [];
 
 		$active_kit = Plugin::$instance->kits_manager->get_active_kit();
 
@@ -90,15 +127,17 @@ class Site_Settings extends Import_Runner_Base {
 			$old_settings = [];
 		}
 
-		if ( ! empty( $old_settings['custom_colors'] ) ) {
+		$new_site_settings = $this->filter_settings_by_manifest( $new_site_settings, $manifest_settings );
+
+		if ( ( $manifest_settings['globalColors'] ?? false ) && ! empty( $old_settings['custom_colors'] ) && ! empty( $new_site_settings['custom_colors'] ) ) {
 			$new_site_settings['custom_colors'] = array_merge( $old_settings['custom_colors'], $new_site_settings['custom_colors'] );
 		}
 
-		if ( ! empty( $old_settings['custom_typography'] ) ) {
+		if ( ( $manifest_settings['globalFonts'] ?? false ) && ! empty( $old_settings['custom_typography'] ) && ! empty( $new_site_settings['custom_typography'] ) ) {
 			$new_site_settings['custom_typography'] = array_merge( $old_settings['custom_typography'], $new_site_settings['custom_typography'] );
 		}
 
-		if ( ! empty( $new_site_settings['space_between_widgets'] ) ) {
+		if ( ( $manifest_settings['generalSettings'] ?? false ) && ! empty( $new_site_settings['space_between_widgets'] ) ) {
 			$new_site_settings['space_between_widgets'] = Utils::update_space_between_widgets_values( $new_site_settings['space_between_widgets'] );
 		}
 
@@ -108,21 +147,124 @@ class Site_Settings extends Import_Runner_Base {
 
 		$this->imported_kit_id = (int) $new_kit;
 
-		$result['site-settings'] = (bool) $new_kit;
+		$result['site-settings']['imported_kit_id'] = $this->imported_kit_id;
 
-		$import_theme_result = $this->import_theme( $data );
-
-		if ( ! empty( $import_theme_result ) ) {
-			$result['theme'] = $import_theme_result;
+		foreach ( $new_site_settings as $key => $value ) {
+			$result['site-settings'][ $key ] = $value;
 		}
 
-		$this->import_experiments( $data );
+		if ( ( $manifest_settings['theme'] ?? false ) && $include_theme ) {
+			$import_theme_result = $this->import_theme( $data );
 
-		if ( ! empty( $this->imported_experiments ) ) {
-			$result['experiments'] = $this->imported_experiments;
+			if ( ! empty( $import_theme_result ) ) {
+				$result['theme'] = $import_theme_result;
+			}
+		}
+
+		if ( $manifest_settings['experiments'] ?? false ) {
+			$this->import_experiments( $data );
+
+			if ( ! empty( $this->imported_experiments ) ) {
+				$result['experiments'] = $this->imported_experiments;
+			}
 		}
 
 		return $result;
+	}
+
+	private function filter_settings_by_manifest( array $settings, array $manifest_settings ): array {
+		foreach ( self::ALLOWED_SETTINGS as $setting_key ) {
+			if ( ! ( $manifest_settings[ $setting_key ] ?? false ) ) {
+				$settings = $this->remove_setting_by_key( $settings, $setting_key );
+			}
+		}
+
+		return $settings;
+	}
+
+	private function remove_setting_by_key( array $settings, string $setting_key ): array {
+		switch ( $setting_key ) {
+			case 'globalColors':
+				$settings = $this->remove_global_colors( $settings );
+				break;
+			case 'globalFonts':
+				$settings = $this->remove_global_fonts( $settings );
+				break;
+			case 'themeStyleSettings':
+				$settings = $this->remove_theme_style( $settings );
+				break;
+			case 'generalSettings':
+				$settings = $this->remove_other_settings( $settings );
+				break;
+		}
+
+		return $settings;
+	}
+
+	private function remove_global_colors( array $settings ): array {
+		$color_keys = [ 'system_colors', 'custom_colors' ];
+
+		foreach ( $color_keys as $key ) {
+			if ( isset( $settings[ $key ] ) ) {
+				unset( $settings[ $key ] );
+			}
+		}
+
+		return $settings;
+	}
+
+	private function remove_global_fonts( array $settings ): array {
+		$typography_keys = [ 'system_typography', 'custom_typography', 'default_generic_fonts' ];
+
+		foreach ( $typography_keys as $key ) {
+			if ( isset( $settings[ $key ] ) ) {
+				unset( $settings[ $key ] );
+			}
+		}
+
+		return $settings;
+	}
+
+	private function remove_theme_style( array $settings ): array {
+		$theme_style_patterns = [
+			'/^body_/',
+			'/^h[1-6]_/',
+			'/^button_/',
+			'/^link_/',
+			'/^form_field_/',
+		];
+
+		foreach ( $settings as $key => $value ) {
+			foreach ( $theme_style_patterns as $pattern ) {
+				if ( preg_match( $pattern, $key ) ) {
+					unset( $settings[ $key ] );
+					break;
+				}
+			}
+		}
+
+		return $settings;
+	}
+
+	private function remove_other_settings( array $settings ): array {
+		$settings_keys = [
+			'template',
+			'container_width',
+			'container_padding',
+			'space_between_widgets',
+			'viewport_md',
+			'viewport_lg',
+			'page_title_selector',
+			'activeItemIndex',
+		];
+
+		foreach ( $settings_keys as $key ) {
+			if ( isset( $settings[ $key ] ) ) {
+				unset( $settings[ $key ] );
+			}
+		}
+
+		return $settings;
 	}
 
 	protected function install_theme( $slug, $version ) {
@@ -140,6 +282,10 @@ class Site_Settings extends Import_Runner_Base {
 			return null;
 		}
 
+		if ( ! function_exists( 'wp_get_theme' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/theme.php';
+		}
+
 		$theme = $data['site_settings']['theme'];
 		$theme_slug = $theme['slug'];
 		$theme_name = $theme['name'];
@@ -150,7 +296,11 @@ class Site_Settings extends Import_Runner_Base {
 		$this->previous_active_theme['version'] = $current_theme->get( 'Version' );
 
 		if ( $current_theme->get_stylesheet() === $theme_slug ) {
-			$result['succeed'][ $theme_slug ] = sprintf( __( 'Theme: %1$s is already used', 'elementor' ), $theme_name );
+			$result['succeed'][ $theme_slug ] = sprintf(
+				/* translators: %s: Theme name. */
+				__( 'Theme: %s is already used', 'elementor' ),
+				$theme_name
+			);
 			return $result;
 		}
 
@@ -158,18 +308,30 @@ class Site_Settings extends Import_Runner_Base {
 			if ( wp_get_theme( $theme_slug )->exists() ) {
 				$this->activate_theme( $theme_slug );
 				$this->activated_theme = $theme_slug;
-				$result['succeed'][ $theme_slug ] = sprintf( __( 'Theme: %1$s has already been installed and activated', 'elementor' ), $theme_name );
+				$result['succeed'][ $theme_slug ] = sprintf(
+					/* translators: %s: Theme name. */
+					__( 'Theme: %s has already been installed and activated', 'elementor' ),
+					$theme_name
+				);
 				return $result;
 			}
 
 			$import = $this->install_theme( $theme_slug, $theme['version'] );
 
 			if ( is_wp_error( $import ) ) {
-				$result['failed'][ $theme_slug ] = sprintf( __( 'Failed to install theme: %1$s', 'elementor' ), $theme_name );
+				$result['failed'][ $theme_slug ] = sprintf(
+					/* translators: %s: Theme name. */
+					__( 'Failed to install theme: %s', 'elementor' ),
+					$theme_name
+				);
 				return $result;
 			}
 
-			$result['succeed'][ $theme_slug ] = sprintf( __( 'Theme: %1$s has been successfully installed', 'elementor' ), $theme_name );
+			$result['succeed'][ $theme_slug ] = sprintf(
+				/* translators: %s: Theme name. */
+				__( 'Theme: %s has been successfully installed', 'elementor' ),
+				$theme_name
+			);
 			$this->installed_theme = $theme_slug;
 			$this->activate_theme( $theme_slug );
 		} catch ( \Exception $error ) {
@@ -179,7 +341,7 @@ class Site_Settings extends Import_Runner_Base {
 		return $result;
 	}
 
-	private function import_experiments( array $data ) {
+	public function import_experiments( array $data ) {
 		if ( empty( $data['site_settings']['experiments'] ) ) {
 			return null;
 		}

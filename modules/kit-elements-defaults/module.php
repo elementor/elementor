@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\KitElementsDefaults\Data\Controller;
 use Elementor\Plugin;
 use Elementor\Modules\KitElementsDefaults\ImportExport\Import_Export;
+use Elementor\Modules\KitElementsDefaults\ImportExportCustomization\Import_Export_Customization;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -49,6 +50,7 @@ class Module extends BaseModule {
 
 		if ( is_admin() ) {
 			( new Import_Export() )->register();
+			( new Import_Export_Customization() )->register();
 		}
 	}
 }

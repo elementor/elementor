@@ -28,11 +28,9 @@ export default function useKitPlugins( { open } ) {
 
 			const pluginsObject = {};
 			result.forEach( ( plugin ) => {
-				const pluginKey = plugin.plugin.endsWith( '.php' ) ? plugin.plugin : plugin.plugin + '.php';
-
-				pluginsObject[ pluginKey ] = {
+				pluginsObject[ plugin.plugin ] = {
 					name: plugin.name,
-					plugin: pluginKey,
+					plugin: plugin.plugin,
 					pluginUri: plugin.plugin_uri,
 					version: plugin.version,
 				};

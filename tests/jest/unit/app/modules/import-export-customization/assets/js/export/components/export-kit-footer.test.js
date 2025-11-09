@@ -2,9 +2,13 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ExportKitFooter from 'elementor/app/modules/import-export-customization/assets/js/export/components/export-kit-footer';
 
+const mockNavigate = jest.fn();
+
 jest.mock( 'elementor-app/hooks/use-cloud-kits-eligibility', () => jest.fn() );
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-connect-state', () => jest.fn() );
+
+jest.mock( '@reach/router' );
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context', () => ( {
 	useExportContext: jest.fn(),
@@ -18,6 +22,7 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/export/c
 import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
 import useConnectState from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-connect-state';
 import { useExportContext } from 'elementor/app/modules/import-export-customization/assets/js/export/context/export-context';
+import { useNavigate } from '@reach/router';
 
 describe( 'ExportKitFooter Component', () => {
 	let mockElementorAppConfig;
@@ -28,6 +33,8 @@ describe( 'ExportKitFooter Component', () => {
 	let mockSetConnecting;
 
 	beforeEach( () => {
+		useNavigate.mockReturnValue( mockNavigate );
+
 		mockElementorAppConfig = {
 			base_url: 'https://example.com/elementor',
 			'cloud-library': {
@@ -35,9 +42,6 @@ describe( 'ExportKitFooter Component', () => {
 			},
 		};
 		global.elementorAppConfig = mockElementorAppConfig;
-
-		delete window.location;
-		window.location = { href: '' };
 
 		global.jQuery = jest.fn( () => ( {
 			elementorConnect: jest.fn(),
@@ -51,7 +55,14 @@ describe( 'ExportKitFooter Component', () => {
 
 		useExportContext.mockReturnValue( {
 			dispatch: mockDispatch,
-			isTemplateNameValid: true,
+			hasValidationErrors: false,
+			data: {
+				customization: {
+					content: {
+						mediaFormat: 'link',
+					},
+				},
+			},
 		} );
 
 		useConnectState.mockReturnValue( {
@@ -71,6 +82,12 @@ describe( 'ExportKitFooter Component', () => {
 
 	afterEach( () => {
 		jest.clearAllMocks();
+		mockNavigate.mockClear();
+	} );
+
+	afterAll( () => {
+		jest.restoreAllMocks();
+		jest.unmock( '@reach/router' );
 	} );
 
 	describe( 'Button Rendering for Disconnected State', () => {
@@ -92,10 +109,10 @@ describe( 'ExportKitFooter Component', () => {
 			expect( saveToLibraryButton.getAttribute( 'href' ) ).toBe( 'https://example.com/connect' );
 		} );
 
-		it( 'should render Save to Library button disabled when template name is invalid', () => {
+		it( 'should render Save to Library button disabled when there are validation errors', () => {
 			useExportContext.mockReturnValue( {
 				dispatch: mockDispatch,
-				isTemplateNameValid: false,
+				hasValidationErrors: true,
 			} );
 
 			render( <ExportKitFooter /> );
@@ -112,10 +129,10 @@ describe( 'ExportKitFooter Component', () => {
 			expect( exportButton ).toBeTruthy();
 		} );
 
-		it( 'should render Export as .zip button disabled when template name is invalid', () => {
+		it( 'should render Export as .zip button disabled when there are validation errors', () => {
 			useExportContext.mockReturnValue( {
 				dispatch: mockDispatch,
-				isTemplateNameValid: false,
+				hasValidationErrors: true,
 			} );
 
 			render( <ExportKitFooter /> );
@@ -199,7 +216,7 @@ describe( 'ExportKitFooter Component', () => {
 		it( 'should not trigger export when button is disabled', () => {
 			useExportContext.mockReturnValue( {
 				dispatch: mockDispatch,
-				isTemplateNameValid: false,
+				hasValidationErrors: true,
 			} );
 
 			render( <ExportKitFooter /> );

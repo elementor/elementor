@@ -11,7 +11,7 @@ import { __flushAllInjections } from '@elementor/locations';
 import { __deleteStore } from '@elementor/store';
 
 jest.mock( '@elementor/http-client' );
-
+jest.mock( '@elementor/editor-mcp', () => ( {} ) );
 globalThis.structuredClone = ( value ) => JSON.parse( JSON.stringify( value ) );
 
 globalThis.ResizeObserver = class ResizeObserver {

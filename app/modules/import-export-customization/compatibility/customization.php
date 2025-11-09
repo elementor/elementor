@@ -75,9 +75,6 @@ class Customization extends Base_Adapter {
 			$manifest_data['site-settings'] = $new_site_settings;
 		}
 
-		// Update version to current
-		$manifest_data['version'] = Module::FORMAT_VERSION;
-
 		return $manifest_data;
 	}
 }

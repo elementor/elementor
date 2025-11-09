@@ -130,13 +130,13 @@ class Module extends BaseModule {
 	 * @since 2.3.0
 	 * @access public
 	 *
-	 * @param string $slug App slug.
-	 * @param string $class App full class name.
+	 * @param string $slug       App slug.
+	 * @param string $class_name App full class name.
 	 *
 	 * @return self The updated apps manager instance.
 	 */
-	public function register_app( $slug, $class ) {
-		$this->registered_apps[ $slug ] = $class;
+	public function register_app( $slug, $class_name ) {
+		$this->registered_apps[ $slug ] = $class_name;
 
 		return $this;
 	}

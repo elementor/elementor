@@ -14,10 +14,9 @@ export const NoSearchResults = ( { searchValue, onClear, icon }: Props ) => {
 			gap={ 1 }
 			alignItems="center"
 			justifyContent="center"
-			height="100%"
 			p={ 2.5 }
 			color="text.secondary"
-			sx={ { pb: 3.5 } }
+			sx={ { pb: 3.5, pt: 8 } }
 		>
 			{ icon }
 			<Typography align="center" variant="subtitle2">

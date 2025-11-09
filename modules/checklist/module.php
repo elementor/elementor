@@ -3,7 +3,6 @@
 namespace Elementor\Modules\Checklist;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\ElementorCounter\Module as Elementor_Counter;
 use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
@@ -13,7 +12,6 @@ use Elementor\Core\Isolation\Elementor_Counter_Adapter_Interface;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\Modules\Checklist\Data\Controller;
-use Elementor\Core\Utils\Isolation_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -43,8 +41,8 @@ class Module extends BaseModule implements Checklist_Module_Interface {
 		?Wordpress_Adapter_Interface $wordpress_adapter = null,
 		?Elementor_Adapter_Interface $elementor_adapter = null
 	) {
-		$this->wordpress_adapter = $wordpress_adapter ?? Isolation_Manager::get_adapter( Wordpress_Adapter::class );
-		$this->elementor_adapter = $elementor_adapter ?? Isolation_Manager::get_adapter( Elementor_Adapter::class );
+		$this->wordpress_adapter = $wordpress_adapter ?? new Wordpress_Adapter();
+		$this->elementor_adapter = $elementor_adapter ?? new Elementor_Adapter();
 
 		parent::__construct();
 		$this->init_user_progress();

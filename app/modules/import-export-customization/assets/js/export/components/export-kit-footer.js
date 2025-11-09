@@ -1,14 +1,17 @@
 import { useRef, useEffect } from 'react';
 import { Button, Stack, CircularProgress } from '@elementor/ui';
+import { useNavigate } from '@reach/router';
 
 import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
 import useConnectState from '../../shared/hooks/use-connect-state';
 import { useExportContext, EXPORT_STATUS } from '../context/export-context';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function ExportKitFooter() {
 	const connectButtonRef = useRef();
+	const navigate = useNavigate();
 	const { isConnected, isConnecting, setConnecting, handleConnectSuccess, handleConnectError } = useConnectState();
-	const { dispatch, isTemplateNameValid } = useExportContext();
+	const { data, dispatch, hasValidationErrors, isExporting } = useExportContext();
 
 	const { data: cloudKitsData, isLoading: isCheckingEligibility, refetch: refetchEligibility } = useCloudKitsEligibility( {
 		enabled: isConnected,
@@ -43,12 +46,12 @@ export default function ExportKitFooter() {
 		}
 
 		if ( ! isCloudKitsEligible ) {
-			window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
+			navigate( '/kit-library/cloud' );
 		} else {
 			dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'cloud' } );
 			dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
-			window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ isConnecting, isCheckingEligibility, isCloudKitsEligible, dispatch ] );
 
 	useEffect( () => {
@@ -57,20 +60,40 @@ export default function ExportKitFooter() {
 		}
 	}, [ isConnecting, isCheckingEligibility, setConnecting ] );
 
+	useEffect( () => {
+		if ( isExporting ) {
+			navigate( '/export-customization/process' );
+		}
+	}, [ isExporting, navigate ] );
+
 	const handleUpgradeClick = () => {
-		window.location.href = elementorAppConfig.base_url + '#/kit-library/cloud';
+		AppsEventTracking.sendKitsCloudUpgradeClicked( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomization );
+		navigate( '/kit-library/cloud' );
 	};
 
 	const handleUploadClick = () => {
+		if ( hasValidationErrors ) {
+			return;
+		}
+
 		dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'cloud' } );
 		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
-		window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
 	};
 
 	const handleExportAsZip = () => {
+		if ( hasValidationErrors ) {
+			return;
+		}
+
+		const hasCloudMediaFormat = 'cloud' === data.customization?.content?.mediaFormat;
+
+		if ( hasCloudMediaFormat ) {
+			dispatch( { type: 'SET_MEDIA_FORMAT_VALIDATION', payload: true } );
+			return;
+		}
+
 		dispatch( { type: 'SET_KIT_SAVE_SOURCE', payload: 'file' } );
 		dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.EXPORTING } );
-		window.location.href = elementorAppConfig.base_url + '#/export-customization/process';
 	};
 
 	const renderSaveToLibraryButton = () => {
@@ -81,7 +104,7 @@ export default function ExportKitFooter() {
 					variant="outlined"
 					color="secondary"
 					size="small"
-					disabled={ ! isTemplateNameValid }
+					disabled={ hasValidationErrors }
 					href={ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url?.replace( /&#038;/g, '&' ) || '#' }
 					data-testid="export-kit-footer-save-to-library-button"
 				>
@@ -111,7 +134,7 @@ export default function ExportKitFooter() {
 					variant="outlined"
 					color="secondary"
 					size="small"
-					disabled={ ! isTemplateNameValid }
+					disabled={ hasValidationErrors }
 					onClick={ handleUpgradeClick }
 					data-testid="export-kit-footer-save-to-library-button"
 				>
@@ -125,7 +148,7 @@ export default function ExportKitFooter() {
 				variant="outlined"
 				color="secondary"
 				size="small"
-				disabled={ ! isTemplateNameValid }
+				disabled={ hasValidationErrors }
 				onClick={ handleUploadClick }
 				data-testid="export-kit-footer-save-to-library-button"
 			>
@@ -141,7 +164,7 @@ export default function ExportKitFooter() {
 				variant="contained"
 				color="primary"
 				size="small"
-				disabled={ ! isTemplateNameValid }
+				disabled={ hasValidationErrors }
 				onClick={ handleExportAsZip }
 				data-testid="export-kit-footer-export-zip-button"
 			>

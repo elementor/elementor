@@ -1,47 +1,34 @@
 import * as React from 'react';
 import { useEffect, useMemo } from 'react';
-import { type StyleDefinitionID } from '@elementor/editor-styles';
+import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 import { __useDispatch as useDispatch } from '@elementor/store';
 import { List, Stack, styled, Typography, type TypographyProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useClassesOrder } from '../../hooks/use-classes-order';
+import { useFilters } from '../../hooks/use-filters';
 import { useOrderedClasses } from '../../hooks/use-ordered-classes';
 import { slice } from '../../store';
+import { useSearchAndFilters } from '../search-and-filter/context';
 import { ClassItem } from './class-item';
-import { CssClassNotFound } from './class-manager-class-not-found';
 import { DeleteConfirmationProvider } from './delete-confirmation-dialog';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
+import { getNotFoundType, NotFound } from './not-found';
 import { SortableItem, SortableProvider } from './sortable';
 
 type GlobalClassesListProps = {
 	disabled?: boolean;
-	searchValue: string;
-	onSearch: ( searchValue: string ) => void;
 };
 
-export const GlobalClassesList = ( { disabled, searchValue, onSearch }: GlobalClassesListProps ) => {
+export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
+	const {
+		search: { debouncedValue: searchValue },
+	} = useSearchAndFilters();
 	const cssClasses = useOrderedClasses();
 	const dispatch = useDispatch();
-
+	const filters = useFilters();
 	const [ classesOrder, reorderClasses ] = useReorder();
-
-	const lowercaseLabels = useMemo(
-		() =>
-			cssClasses.map( ( cssClass ) => ( {
-				...cssClass,
-				lowerLabel: cssClass.label.toLowerCase(),
-			} ) ),
-		[ cssClasses ]
-	);
-
-	const filteredClasses = useMemo( () => {
-		return searchValue.length > 1
-			? lowercaseLabels.filter( ( cssClass ) =>
-					cssClass.lowerLabel.toLowerCase().includes( searchValue.toLowerCase() )
-			  )
-			: cssClasses;
-	}, [ searchValue, cssClasses, lowercaseLabels ] );
+	const filteredCssClasses = useFilteredCssClasses();
 
 	useEffect( () => {
 		const handler = ( event: KeyboardEvent ) => {
@@ -65,42 +52,50 @@ export const GlobalClassesList = ( { disabled, searchValue, onSearch }: GlobalCl
 		return <EmptyState />;
 	}
 
+	const notFoundType = getNotFoundType( searchValue, filters, filteredCssClasses );
+
+	if ( notFoundType ) {
+		return <NotFound notFoundType={ notFoundType } />;
+	}
+
+	const isFiltersApplied = filters?.length || searchValue;
+
+	const allowSorting = filteredCssClasses.length > 1 && ! isFiltersApplied;
+
 	return (
 		<DeleteConfirmationProvider>
-			{ filteredClasses.length <= 0 && searchValue.length > 1 ? (
-				<CssClassNotFound onClear={ () => onSearch( '' ) } searchValue={ searchValue } />
-			) : (
-				<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
-					<SortableProvider value={ classesOrder } onChange={ reorderClasses }>
-						{ filteredClasses?.map( ( { id, label } ) => {
-							return (
-								<SortableItem key={ id } id={ id }>
-									{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
-										<ClassItem
-											isSearchActive={ searchValue.length < 2 }
-											id={ id }
-											label={ label }
-											renameClass={ ( newLabel: string ) => {
-												dispatch(
-													slice.actions.update( {
-														style: {
-															id,
-															label: newLabel,
-														},
-													} )
-												);
-											} }
-											selected={ isDragged }
-											disabled={ disabled || isDragPlaceholder }
-											sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
-										/>
-									) }
-								</SortableItem>
-							);
-						} ) }
-					</SortableProvider>
-				</List>
-			) }
+			<List sx={ { display: 'flex', flexDirection: 'column', gap: 0.5 } }>
+				<SortableProvider
+					value={ classesOrder }
+					onChange={ reorderClasses }
+					disableDragOverlay={ ! allowSorting }
+				>
+					{ filteredCssClasses?.map( ( { id, label } ) => (
+						<SortableItem key={ id } id={ id }>
+							{ ( { isDragged, isDragPlaceholder, triggerProps, triggerStyle } ) => (
+								<ClassItem
+									id={ id }
+									label={ label }
+									renameClass={ ( newLabel: string ) => {
+										dispatch(
+											slice.actions.update( {
+												style: {
+													id,
+													label: newLabel,
+												},
+											} )
+										);
+									} }
+									selected={ isDragged }
+									disabled={ disabled || isDragPlaceholder }
+									sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
+									showSortIndicator={ allowSorting }
+								/>
+							) }
+						</SortableItem>
+					) ) }
+				</SortableProvider>
+			</List>
 		</DeleteConfirmationProvider>
 	);
 };
@@ -136,4 +131,35 @@ const useReorder = () => {
 	};
 
 	return [ order, reorder ] as const;
+};
+
+const useFilteredCssClasses = (): StyleDefinition[] => {
+	const cssClasses = useOrderedClasses();
+	const {
+		search: { debouncedValue: searchValue },
+	} = useSearchAndFilters();
+	const filters = useFilters();
+
+	const lowercaseLabels = useMemo(
+		() =>
+			cssClasses.map( ( cssClass ) => ( {
+				...cssClass,
+				lowerLabel: cssClass.label.toLowerCase(),
+			} ) ),
+		[ cssClasses ]
+	);
+
+	const filteredClasses = useMemo( () => {
+		if ( searchValue.length > 1 ) {
+			return lowercaseLabels.filter( ( cssClass ) => cssClass.lowerLabel.includes( searchValue.toLowerCase() ) );
+		}
+		return cssClasses;
+	}, [ searchValue, cssClasses, lowercaseLabels ] );
+
+	return useMemo( () => {
+		if ( filters && filters.length > 0 ) {
+			return filteredClasses.filter( ( cssClass ) => filters.includes( cssClass.id ) );
+		}
+		return filteredClasses;
+	}, [ filteredClasses, filters ] );
 };

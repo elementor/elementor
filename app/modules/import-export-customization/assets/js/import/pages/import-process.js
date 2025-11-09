@@ -4,28 +4,50 @@ import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { BaseLayout, CenteredContent, PageHeader, TopBar } from '../../shared/components';
 import { useImportKit, IMPORT_PROCESSING_STATUS } from '../hooks/use-import-kit';
-import ImportError from '../components/import-error';
-import { useImportContext } from '../context/import-context';
+import { IMPORT_STATUS, useImportContext } from '../context/import-context';
 import { PluginActivation } from '../components/plugin-activation';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
+import { ProcessingErrorDialog } from '../../shared/components/error/processing-error-dialog';
 
 const headerContent = (
 	<PageHeader title={ __( 'Import', 'elementor' ) } />
 );
 
 export default function ImportProcess() {
-	const { isProcessing } = useImportContext();
-	const { status, error, runnersState } = useImportKit();
+	const { data, dispatch, isProcessing, runnersState } = useImportContext();
+	const { includes, customization } = data;
+	const { status, error, importKit, duration } = useImportKit( {
+		data,
+		includes,
+		customization,
+		isProcessing,
+		dispatch,
+	} );
+
 	const navigate = useNavigate();
+	const title = data.uploadedData?.manifest?.title || '';
+	const id = data.kitUploadParams?.id || '';
 
 	useEffect( () => {
 		if ( ! error ) {
 			if ( IMPORT_PROCESSING_STATUS.DONE === status ) {
+				AppsEventTracking.sendKitImportStatus( null, id, title, duration );
 				navigate( 'import-customization/complete' );
 			} else if ( ! isProcessing ) {
 				navigate( 'import-customization', { replace: true } );
 			}
+		} else {
+			AppsEventTracking.sendKitImportStatus( error, id, title );
 		}
-	}, [ status, error, navigate, isProcessing ] );
+	}, [ status, error, navigate, isProcessing, title, id, duration ] );
+
+	const handleTryAgain = () => {
+		importKit();
+	};
+	const handleCloseError = () => {
+		dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.CUSTOMIZING } );
+		navigate( 'import-customization/content' );
+	};
 
 	return (
 		<BaseLayout
@@ -53,9 +75,11 @@ export default function ImportProcess() {
 						</>
 					) }
 
-					{ error && (
-						<ImportError statusText={ error.message } />
-					) }
+					<ProcessingErrorDialog
+						error={ error }
+						handleClose={ handleCloseError }
+						handleTryAgain={ handleTryAgain }
+					/>
 				</Stack>
 			</CenteredContent>
 		</BaseLayout>

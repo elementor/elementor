@@ -1,4 +1,5 @@
 import { createMockStyleDefinition } from 'test-utils';
+import { getCurrentUser } from '@elementor/editor-current-user';
 import { __privateRunCommandSync as runCommandSync, registerDataHook } from '@elementor/editor-v1-adapters';
 import {
 	__createStore as createStore,
@@ -8,17 +9,23 @@ import {
 } from '@elementor/store';
 
 import { apiClient } from '../api';
+import { UPDATE_CLASS_CAPABILITY_KEY } from '../capabilities';
 import { selectFrontendInitialData, selectIsDirty, selectPreviewInitialData, slice } from '../store';
 import { syncWithDocumentSave } from '../sync-with-document-save';
 
 jest.mock( '@elementor/editor-v1-adapters' );
 jest.mock( '../api' );
+jest.mock( '@elementor/editor-current-user' );
 
 describe( 'syncWithDocumentSave', () => {
 	beforeEach( () => {
 		registerSlice( slice );
 
 		createStore();
+
+		jest.mocked( getCurrentUser ).mockReturnValue( {
+			capabilities: [ UPDATE_CLASS_CAPABILITY_KEY ],
+		} as never );
 	} );
 
 	it( 'should sync global classes dirty state with the document dirty state', () => {
@@ -93,6 +100,39 @@ describe( 'syncWithDocumentSave', () => {
 			unsubscribe();
 		}
 	);
+
+	it( 'should not save global classes when the user does not have the capability', async () => {
+		// Arrange.
+		const triggerHook = mockRegisterDataHook();
+
+		jest.mocked( getCurrentUser ).mockReturnValue( {
+			capabilities: [],
+		} as never );
+
+		const unsubscribe = syncWithDocumentSave();
+
+		const styleDefinition = createMockStyleDefinition();
+
+		dispatch( slice.actions.add( styleDefinition ) );
+
+		// Act.
+		await triggerHook( 'after', 'document/save/save', { status: 'publish' } );
+
+		// Assert.
+		expect( apiClient.publish ).not.toHaveBeenCalled();
+
+		expect( selectIsDirty( getState() ) ).toBe( true );
+		expect( selectPreviewInitialData( getState() ) ).toEqual( {
+			items: {},
+			order: [],
+		} );
+		expect( selectFrontendInitialData( getState() ) ).toEqual( {
+			items: {},
+			order: [],
+		} );
+
+		unsubscribe();
+	} );
 } );
 
 function mockRegisterDataHook() {

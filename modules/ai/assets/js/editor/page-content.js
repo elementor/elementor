@@ -77,6 +77,7 @@ const PageContent = (
 			sx: {
 				m: 0,
 				maxHeight: 'media' === type ? '95vh' : '76vh',
+				minHeight: '80vh',
 				height: 'auto',
 			},
 		},
@@ -236,7 +237,7 @@ const PageContent = (
 		};
 		return (
 			<PromptDialog onClose={ onCloseAnimationDialog } { ...codePromptDialogStyleProps }>
-				<PromptDialog.Header onClose={ onCloseAnimationDialog }>
+				<PromptDialog.Header onClose={ onCloseAnimationDialog } hideAiBetaLogo={ additionalOptions?.hideAiBetaLogo }>
 					{ maybeRenderUpgradeChip() }
 				</PromptDialog.Header>
 
@@ -265,8 +266,8 @@ const PageContent = (
 		<PromptDialog onClose={ onClose } { ...promptDialogStyleProps }>
 			<PromptHistoryProvider historyType={ HISTORY_TYPES.TEXT }>
 				<PromptHistoryActionProvider>
-					<PromptDialog.Header onClose={ onClose }>
-						<PromptHistory />
+					<PromptDialog.Header onClose={ onClose } hideAiBetaLogo={ additionalOptions?.hideAiBetaLogo }>
+						{ ! additionalOptions?.withoutHistory && <PromptHistory /> }
 
 						{ maybeRenderUpgradeChip() }
 					</PromptDialog.Header>

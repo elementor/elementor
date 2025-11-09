@@ -142,7 +142,7 @@ $remote-templates-items-space: 30px;
 
 				i {
 					font-size: 14px;
-					margin-left: 5px;
+					margin-inline-start: 5px;
 				}
 			}
 
@@ -396,11 +396,11 @@ $remote-templates-items-space: 30px;
 					height: 100px;
 					position: relative;
 					border-radius: 3px;
-					margin-bottom: 4px;
+					margin-block-end: 4px;
 					overflow: hidden;
 
 					img {
-						object-fit: cover;
+						object-fit: contain;
 						width: 100%;
 						height: 100%;
 					}
@@ -557,11 +557,11 @@ $remote-templates-items-space: 30px;
 
 		input[type=checkbox] {
 			position: relative;
-			top: 3px;
+			inset-block-start: 3px;
 		}
 
 		input[type=checkbox]:checked {
-			top: 0px;
+			inset-block-start: 0px;
 		}
 	}
 
@@ -723,7 +723,7 @@ label.elementor-template-library-order-label {
 #elementor-template-library-create-new-folder-dialog {
 
 	.elementor-create-folder-template-dialog__p {
-		margin-bottom: 10px;
+		margin-block-end: 10px;
 	}
 }
 
@@ -738,7 +738,7 @@ label.elementor-template-library-order-label {
 		transform: translateY(-50%);
 
 		&.eicon-loading.eicon-animation-spin {
-			top: 25%;
+			inset-block-start: 25%;
 		}
 	}
 }
@@ -1325,7 +1325,7 @@ label.elementor-template-library-order-label {
 
 			input[type=checkbox]:checked {
 				background: $gray;
-				top: -3px;
+				inset-block-start: -3px;
 				position: relative;
 			}
 		}
@@ -1337,16 +1337,19 @@ label.elementor-template-library-order-label {
 			&.cloud,
 			&.local {
 				@include ellipsis;
+				display: inline-flex;
+				align-items: baseline;
 				line-height: 27px;
 			}
 
 			#cloud,
 			#local {
+				flex-shrink: 0;
 				position: relative;
-				top: 2px;
+				inset-block-start: 2px;
 
 				&:checked {
-					top: -2px;
+					inset-block-start: -2px;
 				}
 			}
 
@@ -1363,15 +1366,24 @@ label.elementor-template-library-order-label {
 			.selected-folder {
 				display: none;
 				margin-inline-end: 5px;
+				align-items: baseline;
+				@include ellipsis;
+
+
+				&[style*="display: inline"] {
+					display: inline-flex !important;
+				}
 
 				&-text {
 					text-decoration: underline;
 					cursor: pointer;
+					@include ellipsis;
 				}
 			}
 
 			.eicon-editor-close {
 				cursor: pointer;
+				flex-shrink: 0;
 			}
 
 			#elementor-template-library-connect__badge {
@@ -1387,7 +1399,7 @@ label.elementor-template-library-order-label {
 		.cloud-folder-selection-dropdown {
 			display: none;
 			position: absolute;
-			top: 40px;
+			inset-block-start: 40px;
 			background-color: var(--e-a-bg-default);
 			min-width: 187px;
 			overflow: auto;
@@ -1442,8 +1454,7 @@ label.elementor-template-library-order-label {
 			.no-results {
 				text-align: center;
 				font-size: 13px;
-				width: 155px;
-				margin: 0 auto;
+				margin: 0 20px;
 				padding-block: 15px;
 				pointer-events: none;
 
@@ -1582,9 +1593,9 @@ label.elementor-template-library-order-label {
 
 .elementor-template-library-blank-footer {
 	position: absolute;
-	bottom: 70px;
-	left: 50%;
-	transform: translateX(-50%);
+	inset-block-end: 70px;
+	inset-inline-start: 50%;
+	transform: translateX(calc(-50% * var(--direction-multiplier)));
 	font-style: italic;
 	color: var(--e-a-color-txt-muted);
 
@@ -1668,8 +1679,8 @@ label.elementor-template-library-order-label {
 	}
 
 	&:after {
-		top: 100%;
-		border-top-color: var(--e-a-bg-default);
+		inset-block-start: 100%;
+		border-block-start-color: var(--e-a-bg-default);
 	}
 }
 
@@ -1681,7 +1692,7 @@ label.elementor-template-library-order-label {
 	}
 
 	&:after {
-		bottom: 100%;
-		border-bottom-color: var(--e-a-bg-default);
+		inset-block-end: 100%;
+		border-block-end-color: var(--e-a-bg-default);
 	}
 }

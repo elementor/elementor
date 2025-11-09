@@ -17,6 +17,7 @@ class Repeatable_Control extends Atomic_Control_Base {
 	private ?object $initial_values;
 	private ?string $pattern_label;
 	private ?string $placeholder;
+	private ?string $prop_key = '';
 
 	public function get_type(): string {
 		return 'repeatable';
@@ -70,6 +71,12 @@ class Repeatable_Control extends Atomic_Control_Base {
 		return $this;
 	}
 
+	public function set_prop_key( string $prop_key ): self {
+		$this->prop_key = $prop_key;
+
+		return $this;
+	}
+
 	public function get_props(): array {
 		return [
 			'childControlType'   => $this->child_control_type,
@@ -80,6 +87,7 @@ class Repeatable_Control extends Atomic_Control_Base {
 			'patternLabel'       => $this->pattern_label,
 			'repeaterLabel'      => $this->repeater_label,
 			'placeholder'        => $this->placeholder,
+			'propKey'            => $this->prop_key,
 		];
 	}
 }

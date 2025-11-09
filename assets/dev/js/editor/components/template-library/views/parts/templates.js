@@ -161,13 +161,14 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		document.querySelectorAll( '.bulk-selection-item-checkbox' ).forEach( function( checkbox ) {
 			checkbox.checked = isChecked;
 			const templateId = checkbox.dataset.template_id;
+			const type = checkbox.dataset.type;
 			const parentDiv = checkbox.closest( '.elementor-template-library-template' );
 
 			if ( isChecked ) {
-				elementor.templates.addBulkSelectionItem( templateId );
+				elementor.templates.addBulkSelectionItem( templateId, type );
 				parentDiv?.classList.add( 'bulk-selected-item' );
 			} else {
-				elementor.templates.removeBulkSelectionItem( templateId );
+				elementor.templates.removeBulkSelectionItem( templateId, type );
 				parentDiv?.classList.remove( 'bulk-selected-item' );
 			}
 		} );
@@ -421,8 +422,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		if ( 'cloud' === activeSource ) {
 			const isFolderView = elementor.templates.getFilter( 'parentId' );
 			const location = isFolderView
-				? elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTabFolder
-				: elementor.editorEvents.config.secondaryLocations.templateLibrary.cloudTab;
+				? elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.cloudTabFolder
+				: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.cloudTab;
 
 			elementor.templates.eventManager.sendPageViewEvent( { location } );
 
@@ -431,7 +432,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 		if ( 'local' === activeSource ) {
 			elementor.templates.eventManager.sendPageViewEvent( {
-				location: elementor.editorEvents.config.secondaryLocations.templateLibrary.siteTab,
+				location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.siteTab,
 			} );
 		}
 	},
@@ -649,7 +650,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		const value = quota ? Math.round( ( quota.currentUsage / quota.threshold ) * 100 ) : 0;
 
 		elementor.templates.eventManager.sendUpgradeClickedEvent( {
-			secondaryLocation: elementor.editorEvents.config.secondaryLocations.templateLibrary.quotaBar,
+			secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.quotaBar,
 			upgrade_position: `quota bar ${ value ? value + '%' : '' }`,
 		} );
 	},

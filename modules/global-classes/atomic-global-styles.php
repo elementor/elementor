@@ -4,7 +4,7 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
-use Elementor\Modules\AtomicWidgets\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
 
 class Atomic_Global_Styles {
 	const STYLES_KEY = 'global';
@@ -62,7 +62,7 @@ class Atomic_Global_Styles {
 	private function invalidate_cache( ?string $context = null ) {
 		$cache_validity = new Cache_Validity();
 
-		if ( empty( $context ) ) {
+		if ( empty( $context ) || Global_Classes_Repository::CONTEXT_FRONTEND === $context ) {
 			$cache_validity->invalidate( [ self::STYLES_KEY ] );
 
 			return;

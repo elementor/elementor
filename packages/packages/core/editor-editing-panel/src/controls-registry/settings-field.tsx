@@ -14,8 +14,8 @@ import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
-import { extractOrderedDependencies, updateValues, type Values } from '../utils/prop-dependency-utils';
-import { createTopLevelOjectType } from './create-top-level-object-type';
+import { extractOrderedDependencies, getUpdatedValues, type Values } from '../utils/prop-dependency-utils';
+import { createTopLevelObjectType } from './create-top-level-object-type';
 
 type SettingsFieldProps = {
 	bind: PropKey;
@@ -35,7 +35,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 
 	const value = { [ bind ]: elementSettingValues?.[ bind ] ?? null };
 
-	const propType = createTopLevelOjectType( { schema: propsSchema } );
+	const propType = createTopLevelObjectType( { schema: propsSchema } );
 
 	const undoableUpdateElementProp = useUndoableUpdateElementProp( {
 		elementId,
@@ -50,12 +50,12 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 			dependenciesPerTargetMapping
 		);
 
-		const settings = updateValues( newValue, dependents, propsSchema, elementSettingValues );
+		const settings = getUpdatedValues( newValue, dependents, propsSchema, elementSettingValues, elementId );
 
 		undoableUpdateElementProp( settings );
 	};
 
-	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues );
+	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues ).isMet;
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>

@@ -3,7 +3,7 @@
 namespace Elementor\Testing\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Atomic_Global_Styles;
@@ -49,7 +49,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 							'color' => [
 								'$$type' => 'color',
 								'value' => 'blue',
-							]
+							],
 						],
 					],
 				],
@@ -99,7 +99,6 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 					return true;
 				} )
 			);
-
 
 		// Act.
 		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_atomic_styles_manager, [ 0 ] );
@@ -160,7 +159,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		$this->assertEquals( [ 'g-only-frontend', 'both', 'preview' ], $result );
 	}
 
-	public function test_cache_invalidation_on_update() {
+	public function test_cache_invalidation_on_frontend_update() {
 		// Arrange.
 		$global_classes = new Atomic_Global_Styles();
 		$global_classes->register_hooks();
@@ -191,7 +190,45 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		$this->assertFalse( $cache_validity->is_valid(
 			[ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_FRONTEND ]
 		) );
+
+		$this->assertFalse( $cache_validity->is_valid(
+			[ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_PREVIEW ]
+		) );
+	}
+
+	public function test_cache_invalidation_on_preview_update() {
+		// Arrange.
+		$global_classes = new Atomic_Global_Styles();
+		$global_classes->register_hooks();
+		$cache_validity = new Cache_Validity();
+
+		// Act.
+		$cache_validity->validate( [ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_FRONTEND ] );
+		$cache_validity->validate( [ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_PREVIEW ] );
+
+		// Assert.
 		$this->assertTrue( $cache_validity->is_valid(
+			[ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_FRONTEND ]
+		) );
+		$this->assertTrue( $cache_validity->is_valid(
+			[ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_PREVIEW ]
+		) );
+
+		// Act.
+		do_action( 'elementor/global_classes/update', Global_Classes_Repository::CONTEXT_PREVIEW, [
+			'items' => [],
+			'order' => [],
+		], [
+			'items' => [],
+			'order' => [],
+		] );
+
+		// Assert.
+		$this->assertTrue( $cache_validity->is_valid(
+			[ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_FRONTEND ]
+		) );
+
+		$this->assertFalse( $cache_validity->is_valid(
 			[ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_PREVIEW ]
 		) );
 	}
@@ -207,7 +244,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 		$cache_validity->validate( [ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_FRONTEND ] );
 		$cache_validity->validate( [ Atomic_Global_Styles::STYLES_KEY, Global_Classes_Repository::CONTEXT_PREVIEW ] );
 
-		do_action('elementor/core/files/clear_cache' );
+		do_action( 'elementor/core/files/clear_cache' );
 
 		// Assert.
 		$this->assertFalse( $cache_validity->is_valid(

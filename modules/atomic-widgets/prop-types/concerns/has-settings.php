@@ -27,7 +27,7 @@ trait Has_Settings {
 		return $this->settings;
 	}
 
-	public function get_setting( string $key, $default = null ) {
-		return array_key_exists( $key, $this->settings ) ? $this->settings[ $key ] : $default;
+	public function get_setting( string $key, $default_value = null ) {
+		return array_key_exists( $key, $this->settings ) ? $this->settings[ $key ] : $default_value;
 	}
 }

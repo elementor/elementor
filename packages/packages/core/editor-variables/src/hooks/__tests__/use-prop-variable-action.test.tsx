@@ -9,6 +9,8 @@ import { trackVariableEvent } from '../../utils/tracking';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { usePropVariableAction } from '../use-prop-variable-action';
 
+const MockStartIcon = () => ( { type: 'div' } ) as JSX.Element;
+
 // Mock dependencies
 jest.mock( '@elementor/editor-editing-panel', () => ( {
 	useBoundProp: jest.fn(),
@@ -76,6 +78,7 @@ describe( 'usePropVariableAction', () => {
 						icon: TextIcon,
 						valueField: jest.fn(),
 						variableType: 'type-1',
+						startIcon: MockStartIcon,
 						propTypeUtil: createMockPropTypeUtil( 'color-variable' ),
 						fallbackPropTypeUtil: createMockPropTypeUtil( 'string' ),
 					};
@@ -103,6 +106,7 @@ describe( 'usePropVariableAction', () => {
 				fallbackPropTypeUtil: createMockPropTypeUtil( 'string' ),
 				valueField: jest.fn(),
 				variableType: 'font',
+				startIcon: MockStartIcon,
 			};
 
 			const mockPropType = createMockPropType( {

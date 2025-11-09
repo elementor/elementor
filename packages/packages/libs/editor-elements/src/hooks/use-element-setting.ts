@@ -24,6 +24,6 @@ export const useElementSettings = < TValue >( elementId: ElementID, settingKeys:
 
 				return settings;
 			}, {} ),
-		[ elementId, ...settingKeys ]
+		[ elementId, settingKeys.join( ',' ) ]
 	);
 };

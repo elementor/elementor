@@ -23,14 +23,52 @@ const toTransitionSelectorValue = ( label: string ) => {
 	return null;
 };
 
-export const TransitionSelector = () => {
+const findByValue = ( value: string ) => {
+	for ( const category of transitionProperties ) {
+		const property = category.properties.find( ( prop ) => prop.value === value );
+		if ( property ) {
+			return property.label;
+		}
+	}
+};
+
+export const TransitionSelector = ( {
+	recentlyUsedList = [],
+	disabledItems = [],
+}: {
+	recentlyUsedList: string[];
+	disabledItems?: string[];
+} ) => {
 	const { value, setValue } = useBoundProp( keyValuePropTypeUtil );
 	const {
-		value: { value: transitionValue },
 		key: { value: transitionLabel },
 	} = value;
 	const defaultRef = useRef< HTMLDivElement >( null );
 	const popoverState = usePopupState( { variant: 'popover' } );
+
+	const getItemList = () => {
+		const recentItems = recentlyUsedList
+			.map( ( item ) => findByValue( item ) )
+			.filter( ( item ) => !! item ) as string[];
+		const filteredItems = transitionsItemsList.map( ( category ) => {
+			return {
+				...category,
+				items: category.items.filter( ( item ) => ! recentItems.includes( item ) ),
+			};
+		} );
+		if ( recentItems.length === 0 ) {
+			return filteredItems;
+		}
+		const [ first, ...rest ] = filteredItems;
+		return [
+			first,
+			{
+				label: __( 'Recently Used', 'elementor' ),
+				items: recentItems,
+			},
+			...rest,
+		];
+	};
 
 	const handleTransitionPropertyChange = ( newLabel: string ) => {
 		const newValue = toTransitionSelectorValue( newLabel );
@@ -74,13 +112,14 @@ export const TransitionSelector = () => {
 				transformOrigin={ { vertical: 'top', horizontal: 'left' } }
 			>
 				<ItemSelector
-					itemsList={ transitionsItemsList }
-					selectedItem={ transitionValue }
+					itemsList={ getItemList() }
+					selectedItem={ transitionLabel }
 					onItemChange={ handleTransitionPropertyChange }
 					onClose={ popoverState.close }
 					sectionWidth={ 268 }
 					title={ __( 'Transition Property', 'elementor' ) }
 					icon={ VariationsIcon as React.ElementType< { fontSize: string } > }
+					disabledItems={ disabledItems }
 				/>
 			</Popover>
 		</Box>

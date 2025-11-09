@@ -7,7 +7,7 @@ use Elementor\Plugin;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\CloudKitLibrary\Connect\Cloud_Kits;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
-use Elementor\App\Modules\ImportExport\Module as ImportExport_Module;
+use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomization_Module;
 use Elementor\App\Modules\KitLibrary\Connect\Kit_Library as Kit_Library_Api;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -27,19 +27,17 @@ class Module extends BaseModule {
 			$connect_module->register_app( 'cloud-kits', Cloud_Kits::get_class_name() );
 		} );
 
-		if ( Plugin::$instance->experiments->is_feature_active( 'cloud-library' ) ) {
-			add_filter( 'elementor/export/kit/export-result', [ $this, 'handle_export_kit_result' ], 10, 5 );
-			add_filter( 'elementor/import/kit/result/cloud', [ $this, 'handle_import_kit_from_cloud' ], 10, 1 );
-			add_filter( 'elementor/import/kit_thumbnail', [ $this, 'handle_import_kit_thumbnail' ], 10, 3 );
+		add_filter( 'elementor/export/kit/export-result', [ $this, 'handle_export_kit_result' ], 10, 6 );
+		add_filter( 'elementor/import/kit/result/cloud', [ $this, 'handle_import_kit_from_cloud' ], 10, 1 );
+		add_filter( 'elementor/import/kit_thumbnail', [ $this, 'handle_import_kit_thumbnail' ], 10, 3 );
 
-			add_action( 'elementor/kit_library/registered', function () {
-				Plugin::$instance->data_manager_v2->register_controller( new Cloud_Kits_Controller() );
-			} );
-		}
+		add_action( 'elementor/kit_library/registered', function () {
+			Plugin::$instance->data_manager_v2->register_controller( new Cloud_Kits_Controller() );
+		} );
 	}
 
 	public function handle_import_kit_thumbnail( $thumbnail, $kit_id, $referrer ) {
-		if ( ImportExport_Module::REFERRER_KIT_LIBRARY === $referrer ) {
+		if ( ImportExportCustomization_Module::REFERRER_KIT_LIBRARY === $referrer ) {
 
 			if ( empty( $kit_id ) ) {
 				return '';
@@ -55,7 +53,7 @@ class Module extends BaseModule {
 			return $kit->thumbnail;
 		}
 
-		if ( ImportExport_Module::REFERRER_CLOUD === $referrer ) {
+		if ( ImportExportCustomization_Module::REFERRER_CLOUD === $referrer ) {
 			if ( empty( $kit_id ) ) {
 				return '';
 			}
@@ -72,8 +70,8 @@ class Module extends BaseModule {
 		return $thumbnail;
 	}
 
-	public function handle_export_kit_result( $result, $source, $export, $settings, $file ) {
-		if ( ImportExport_Module::EXPORT_SOURCE_CLOUD !== $source ) {
+	public function handle_export_kit_result( $result, $source, $export, $settings, $file, $file_size ) {
+		if ( ImportExportCustomization_Module::EXPORT_SOURCE_CLOUD !== $source ) {
 			return $result;
 		}
 
@@ -89,6 +87,8 @@ class Module extends BaseModule {
 			$file,
 			$raw_screen_shot,
 			$settings['include'],
+			$settings['customization']['content']['mediaFormat'] ?? 'link',
+			$file_size,
 		);
 
 		if ( is_wp_error( $kit ) ) {
@@ -106,35 +106,44 @@ class Module extends BaseModule {
 		] );
 
 		if ( is_wp_error( $kit ) ) {
-			return $kit;
+			throw new \Error( ImportExportCustomization_Module::CLOUD_KIT_LIBRARY_ERROR_LOADING_RESOURCE ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		if ( empty( $kit['downloadUrl'] ) ) {
-			throw new \Error( ImportExport_Module::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new \Error( ImportExportCustomization_Module::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
-		return [
+		$data = [
 			'file_name' => self::get_remote_kit_zip( $kit['downloadUrl'] ),
-			'referrer' => ImportExport_Module::REFERRER_CLOUD,
+			'referrer' => ImportExportCustomization_Module::REFERRER_CLOUD,
 			'file_url' => $kit['downloadUrl'],
 			'kit' => $kit,
 		];
+
+		if ( ! empty( $kit['mediaDownloadUrl'] ) ) {
+			$media_zip = self::get_remote_kit_zip( $kit['mediaDownloadUrl'], 'media.zip' );
+			$data['media_file_name'] = $media_zip;
+		}
+
+		return $data;
 	}
 
-	public static function get_remote_kit_zip( $url ) {
-		$remote_zip_request = wp_safe_remote_get( $url );
+	public static function get_remote_kit_zip( $url, $file_name = 'kit.zip' ) {
+		$remote_zip_request = wp_safe_remote_get( $url, [
+			'timeout' => 300,
+		] );
 
 		if ( is_wp_error( $remote_zip_request ) ) {
 			Plugin::$instance->logger->get_logger()->error( $remote_zip_request->get_error_message() );
-			throw new \Error( ImportExport_Module::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new \Error( ImportExportCustomization_Module::CLOUD_KIT_LIBRARY_ERROR_LOADING_RESOURCE ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
 		if ( 200 !== $remote_zip_request['response']['code'] ) {
 			Plugin::$instance->logger->get_logger()->error( $remote_zip_request['response']['message'] );
-			throw new \Error( ImportExport_Module::KIT_LIBRARY_ERROR_KEY ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new \Error( ImportExportCustomization_Module::CLOUD_KIT_LIBRARY_ERROR_LOADING_RESOURCE ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
 
-		return Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], 'kit.zip' );
+		return Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], $file_name );
 	}
 
 	public static function get_app(): Cloud_Kits {

@@ -1,11 +1,24 @@
 import { useMemo } from 'react';
+import { useBoundProp } from '@elementor/editor-controls';
 import { type PropKey } from '@elementor/editor-props';
 
+import { useVariableType } from '../context/variable-type-context';
 import { service } from '../service';
-import { type Variable } from '../types';
+import { type NormalizedVariable, type Variable } from '../types';
+import { filterBySearch } from '../utils/filter-by-search';
+
+export const getVariables = ( includeDeleted = true ) => {
+	const variables = service.variables();
+
+	if ( includeDeleted ) {
+		return variables;
+	}
+
+	return Object.fromEntries( Object.entries( variables ).filter( ( [ , variable ] ) => ! variable.deleted ) );
+};
 
 export const useVariable = ( key: string ) => {
-	const variables = service.variables();
+	const variables = getVariables();
 
 	if ( ! variables?.[ key ] ) {
 		return null;
@@ -18,57 +31,65 @@ export const useVariable = ( key: string ) => {
 };
 
 export const useFilteredVariables = ( searchValue: string, propTypeKey: string ) => {
-	const variables = usePropVariables( propTypeKey );
+	const baseVariables = usePropVariables( propTypeKey );
 
-	const filteredVariables = variables.filter( ( { label } ) => {
-		return label.toLowerCase().includes( searchValue.toLowerCase() );
+	const typeFilteredVariables = useVariableSelectionFilter( baseVariables );
+	const searchFilteredVariables = filterBySearch( typeFilteredVariables, searchValue );
+	const sortedVariables = searchFilteredVariables.sort( ( a, b ) => {
+		const orderA = a.order ?? Number.MAX_SAFE_INTEGER;
+		const orderB = b.order ?? Number.MAX_SAFE_INTEGER;
+		return orderA - orderB;
 	} );
 
 	return {
-		list: filteredVariables,
-		hasMatches: filteredVariables.length > 0,
-		isSourceNotEmpty: variables.length > 0,
+		list: sortedVariables,
+		hasMatches: searchFilteredVariables.length > 0,
+		isSourceNotEmpty: typeFilteredVariables.length > 0,
+		hasNoCompatibleVariables: baseVariables.length > 0 && typeFilteredVariables.length === 0,
 	};
 };
 
-const usePropVariables = ( propKey: PropKey ) => {
+const useVariableSelectionFilter = ( variables: NormalizedVariable[] ): NormalizedVariable[] => {
+	const { selectionFilter } = useVariableType();
+	const { propType } = useBoundProp();
+
+	return selectionFilter ? selectionFilter( variables, propType ) : variables;
+};
+
+const usePropVariables = ( propKey: PropKey ): NormalizedVariable[] => {
 	return useMemo( () => normalizeVariables( propKey ), [ propKey ] );
 };
 
-const isNotDeleted = ( { deleted }: { deleted?: boolean } ) => ! deleted;
-
 const normalizeVariables = ( propKey: string ) => {
-	const variables = service.variables();
+	const variables = getVariables( false );
 
 	return Object.entries( variables )
-		.filter( ( [ , variable ] ) => variable.type === propKey && isNotDeleted( variable ) )
-		.map( ( [ key, { label, value } ] ) => ( {
+		.filter( ( [ , variable ] ) => variable.type === propKey )
+		.map( ( [ key, { label, value, order } ] ) => ( {
 			key,
 			label,
 			value,
+			order,
 		} ) );
 };
 
+const extractId = ( { id }: { id: string } ): string => id;
+
 export const createVariable = ( newVariable: Variable ): Promise< string > => {
-	return service.create( newVariable ).then( ( { id }: { id: string } ) => {
-		return id;
-	} );
+	return service.create( newVariable ).then( extractId );
 };
 
-export const updateVariable = ( updateId: string, { value, label }: { value: string; label: string } ) => {
-	return service.update( updateId, { value, label } ).then( ( { id }: { id: string } ) => {
-		return id;
-	} );
+export const updateVariable = (
+	updateId: string,
+	{ value, label }: { value: string; label: string }
+): Promise< string > => {
+	return service.update( updateId, { value, label } ).then( extractId );
 };
 
-export const deleteVariable = ( deleteId: string ) => {
-	return service.delete( deleteId ).then( ( { id }: { id: string } ) => {
-		return id;
-	} );
+export const deleteVariable = ( deleteId: string ): Promise< string > => {
+	return service.delete( deleteId ).then( extractId );
 };
 
-export const restoreVariable = ( restoreId: string, label?: string, value?: string ) => {
-	return service.restore( restoreId, label, value ).then( ( { id }: { id: string } ) => {
-		return id;
-	} );
+export const restoreVariable = ( restoreId: string, label?: string, value?: string ): Promise< string > => {
+	return service.restore( restoreId, label, value ).then( extractId );
 };

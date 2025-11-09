@@ -9,7 +9,7 @@ import {
 	PanelHeader,
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
-import { ThemeProvider } from '@elementor/editor-ui';
+import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
 import { XIcon } from '@elementor/icons';
 import { useMutation } from '@elementor/query';
@@ -18,6 +18,7 @@ import {
 	Alert,
 	Box,
 	Button,
+	Chip,
 	DialogHeader,
 	Divider,
 	ErrorBoundary,
@@ -25,19 +26,22 @@ import {
 	type IconButtonProps,
 	Stack,
 } from '@elementor/ui';
-import { useDebounceState } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
+import { useClassesOrder } from '../../hooks/use-classes-order';
 import { useDirtyState } from '../../hooks/use-dirty-state';
+import { useFilters } from '../../hooks/use-filters';
 import { saveGlobalClasses } from '../../save-global-classes';
 import { slice } from '../../store';
+import { ActiveFilters } from '../search-and-filter/components/filter/active-filters';
+import { CssClassFilter } from '../search-and-filter/components/filter/css-class-filter';
+import { ClassManagerSearch } from '../search-and-filter/components/search/class-manager-search';
+import { SearchAndFilterProvider } from '../search-and-filter/context';
 import { ClassManagerIntroduction } from './class-manager-introduction';
-import { ClassManagerSearch } from './class-manager-search';
 import { hasDeletedItems, onDelete } from './delete-class';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { GlobalClassesList } from './global-classes-list';
 import { blockPanelInteractions, unblockPanelInteractions } from './panel-interactions';
-import { SaveChangesDialog, useDialog } from './save-changes-dialog';
 
 const id = 'global-classes-manager';
 
@@ -59,16 +63,11 @@ export const { panel, usePanelActions } = createPanel( {
 
 		unblockPanelInteractions();
 	},
+	isOpenPreviousElement: true,
 } );
 
 export function ClassManagerPanel() {
-	const { debouncedValue, inputValue, handleChange } = useDebounceState( {
-		delay: 300,
-		initialValue: '',
-	} );
-
 	const isDirty = useDirtyState();
-
 	const { close: closePanel } = usePanelActions();
 	const { open: openSaveChangesDialog, close: closeSaveChangesDialog, isOpen: isSaveChangesDialogOpen } = useDialog();
 
@@ -85,68 +84,72 @@ export function ClassManagerPanel() {
 		<ThemeProvider>
 			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
 				<Panel>
-					<PanelHeader>
-						<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
-							<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
-								<FlippedColorSwatchIcon fontSize="inherit" />
-								{ __( 'Class Manager', 'elementor' ) }
-							</PanelHeaderTitle>
-							<CloseButton
-								sx={ { marginLeft: 'auto' } }
-								disabled={ isPublishing }
-								onClose={ () => {
-									if ( isDirty ) {
-										openSaveChangesDialog();
-										return;
-									}
+					<SearchAndFilterProvider>
+						<PanelHeader>
+							<Stack p={ 1 } pl={ 2 } width="100%" direction="row" alignItems="center">
+								<Stack width="100%" direction="row" gap={ 1 }>
+									<PanelHeaderTitle sx={ { display: 'flex', alignItems: 'center', gap: 0.5 } }>
+										<FlippedColorSwatchIcon fontSize="inherit" />
+										{ __( 'Class Manager', 'elementor' ) }
+									</PanelHeaderTitle>
+									<TotalCssClassCounter />
+								</Stack>
+								<CloseButton
+									sx={ { marginLeft: 'auto' } }
+									disabled={ isPublishing }
+									onClose={ () => {
+										if ( isDirty ) {
+											openSaveChangesDialog();
+											return;
+										}
 
-									closePanel();
+										closePanel();
+									} }
+								/>
+							</Stack>
+						</PanelHeader>
+						<PanelBody
+							sx={ {
+								display: 'flex',
+								flexDirection: 'column',
+								height: '100%',
+							} }
+						>
+							<Box px={ 2 } pb={ 1 }>
+								<Stack direction="row" justifyContent="spaceBetween" gap={ 0.5 } sx={ { pb: 0.5 } }>
+									<Box sx={ { flexGrow: 1 } }>
+										<ClassManagerSearch />
+									</Box>
+									<CssClassFilter />
+								</Stack>
+								<ActiveFilters />
+							</Box>
+							<Divider />
+							<Box
+								px={ 2 }
+								sx={ {
+									flexGrow: 1,
+									overflowY: 'auto',
 								} }
-							/>
-						</Stack>
-					</PanelHeader>
-					<PanelBody
-						sx={ {
-							display: 'flex',
-							flexDirection: 'column',
-							height: '100%',
-						} }
-					>
-						<ClassManagerSearch searchValue={ inputValue } onChange={ handleChange } />
-						<Divider
-							sx={ {
-								borderWidth: '1px 0 0 0',
-							} }
-						/>
+							>
+								<GlobalClassesList disabled={ isPublishing } />
+							</Box>
+						</PanelBody>
 
-						<Box
-							px={ 2 }
-							sx={ {
-								flexGrow: 1,
-								overflowY: 'auto',
-							} }
-						>
-							<GlobalClassesList
-								disabled={ isPublishing }
-								searchValue={ debouncedValue }
-								onSearch={ handleChange }
-							/>
-						</Box>
-					</PanelBody>
-
-					<PanelFooter>
-						<Button
-							fullWidth
-							size="small"
-							color="global"
-							variant="contained"
-							onClick={ publish }
-							disabled={ ! isDirty }
-							loading={ isPublishing }
-						>
-							{ __( 'Save changes', 'elementor' ) }
-						</Button>
-					</PanelFooter>
+						<PanelFooter>
+							<Button
+								fullWidth
+								size="small"
+								color="global"
+								variant="contained"
+								onClick={ publish }
+								disabled={ ! isDirty }
+								loading={ isPublishing }
+							>
+								{ __( 'Save changes', 'elementor' ) }
+							</Button>
+						</PanelFooter>
+					</SearchAndFilterProvider>
 				</Panel>
 			</ErrorBoundary>
 			<ClassManagerIntroduction />
@@ -232,4 +235,16 @@ const usePublish = () => {
 			}
 		},
 	} );
+};
+
+const TotalCssClassCounter = () => {
+	const filters = useFilters();
+	const cssClasses = useClassesOrder();
+
+	return (
+		<Chip
+			size={ 'small' }
+			label={ filters ? `${ filters.length } / ${ cssClasses?.length }` : cssClasses?.length }
+		/>
+	);
 };

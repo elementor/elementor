@@ -939,13 +939,16 @@ class Source_Local extends Source_Base {
 			}
 
 			foreach ( $extracted_files['files'] as $file_path ) {
+				// Skip macOS metadata files and folders
+				if ( false !== strpos( $file_path, '__MACOSX' ) || '.' === basename( $file_path )[0] ) {
+					continue;
+				}
+
 				$import_result = $this->import_single_template( $file_path );
 
 				if ( is_wp_error( $import_result ) ) {
-					// Delete the temporary extraction directory, since it's now not necessary.
-					Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_files['extraction_directory'] );
-
-					return $import_result;
+					// Skip failed files
+					continue;
 				}
 
 				$items[] = $import_result;
@@ -1352,7 +1355,7 @@ class Source_Local extends Source_Base {
 		if ( empty( $current_type ) ) {
 			$counts = (array) wp_count_posts( self::CPT );
 			unset( $counts['auto-draft'] );
-			$count  = array_sum( $counts );
+			$count = array_sum( $counts );
 
 			if ( 0 < $count ) {
 				return;
@@ -1472,6 +1475,10 @@ class Source_Local extends Source_Base {
 	 */
 	private function import_single_template( $file_path ) {
 		$data = $this->prepare_import_template_data( $file_path );
+
+		if ( is_wp_error( $data ) ) {
+			return $data;
+		}
 
 		if ( empty( $data ) ) {
 			return new \WP_Error( 'file_error', 'Invalid File' );
@@ -1705,7 +1712,7 @@ class Source_Local extends Source_Base {
 		return $posts_columns;
 	}
 
-	public function get_current_tab_group( $default = '' ) {
+	public function get_current_tab_group() {
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
 		$current_tabs_group = Utils::get_super_global_value( $_REQUEST, 'tabs_group' ) ?? '';
 		//phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.

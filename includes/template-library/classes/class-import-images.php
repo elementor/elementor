@@ -160,7 +160,7 @@ class Import_Images {
 			$svg_handler = Plugin::$instance->uploads_manager->get_file_type_handlers( 'svg' );
 
 			$file_content = $svg_handler->sanitizer( $file_content );
-		};
+		}
 
 		$upload = wp_upload_bits(
 			$filename,
@@ -212,6 +212,54 @@ class Import_Images {
 		}
 
 		return $new_attachment;
+	}
+
+	/**
+	 * Import local file.
+	 *
+	 * Import a local file directly to WordPress media library.
+	 * Used for importing files that are already downloaded locally (e.g., from extracted ZIP).
+	 *
+	 * @since 3.33.0
+	 * @access public
+	 *
+	 * @param string $local_file_path The local file path.
+	 * @param int    $parent_post_id  Optional. Parent post ID.
+	 *
+	 * @return false|array Imported image data, or false on failure.
+	 */
+	public function import_local_file( $local_file_path, $parent_post_id = null ) {
+		global $wp_filesystem;
+
+		if ( ! $wp_filesystem->exists( $local_file_path ) ) {
+			return false;
+		}
+
+		if ( ! function_exists( 'media_handle_sideload' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/media.php';
+		}
+
+		if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/image.php';
+		}
+
+		$file_array = [
+			'name' => basename( $local_file_path ),
+			'tmp_name' => $local_file_path,
+		];
+
+		$attachment_id = media_handle_sideload( $file_array, $parent_post_id );
+
+		if ( is_wp_error( $attachment_id ) ) {
+			return false;
+		}
+
+		apply_filters( 'elementor/template_library/import_images/new_attachment', $attachment_id );
+
+		return [
+			'id' => $attachment_id,
+			'url' => wp_get_attachment_url( $attachment_id ),
+		];
 	}
 
 	/**

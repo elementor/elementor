@@ -76,6 +76,7 @@ class Library extends Common_App {
 				'base_access_tier' => ConnectModule::ACCESS_TIER_FREE,
 				'current_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 				'current_access_tier' => ConnectModule::ACCESS_TIER_FREE,
+				'plan_type' => ConnectModule::ACCESS_TIER_FREE,
 			],
 		] );
 	}
@@ -147,10 +148,6 @@ class Library extends Common_App {
 				'label' => 'Site Key',
 				'value' => get_option( self::OPTION_CONNECT_SITE_KEY ),
 			],
-			'remote_info_library' => [
-				'label' => 'Remote Library Info',
-				'value' => get_option( 'elementor_remote_info_library' ),
-			],
 		];
 	}
 
@@ -158,6 +155,9 @@ class Library extends Common_App {
 		return [
 			'access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 			'access_tier' => ConnectModule::ACCESS_TIER_FREE,
+			'plan_type' => ConnectModule::ACCESS_TIER_FREE,
+			'tracking_opted_in' => $this->get( 'data_share_opted_in' ) ?? false,
+			'user_id' => $this->get_user_id(),
 		];
 	}
 

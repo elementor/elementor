@@ -1,5 +1,6 @@
 import { useReducer, useContext, createContext } from 'react';
 import PropTypes from 'prop-types';
+import { isVersionLessThan } from '../utils/version-utils';
 
 export const IMPORT_STATUS = {
 	PENDING: 'PENDING',
@@ -7,6 +8,10 @@ export const IMPORT_STATUS = {
 	CUSTOMIZING: 'CUSTOMIZING',
 	IMPORTING: 'IMPORTING',
 	COMPLETED: 'COMPLETED',
+};
+
+export const ACTION_TYPE = {
+	APPLY_ALL: 'apply-all',
 };
 
 const importReducer = ( state, { type, payload } ) => {
@@ -21,6 +26,16 @@ const importReducer = ( state, { type, payload } ) => {
 			return { ...state, importedData: payload };
 		case 'SET_KIT_UPLOAD_PARAMS':
 			return { ...state, kitUploadParams: payload };
+		case 'SET_ACTION_TYPE':
+			return { ...state, actionType: payload };
+		case 'SET_RUNNERS_STATE':
+			return {
+				...state,
+				runnersState: {
+					...state.runnersState,
+					...payload,
+				},
+			};
 		case 'ADD_INCLUDE':
 			return {
 				...state,
@@ -28,13 +43,31 @@ const importReducer = ( state, { type, payload } ) => {
 					? state.includes
 					: [ ...state.includes, payload ],
 			};
+		case 'ADD_INCLUDES':
+			return {
+				...state,
+				includes: Array.from( new Set( [ ...state.includes, ...payload ] ) ),
+			};
 		case 'REMOVE_INCLUDE':
 			return {
 				...state,
 				includes: state.includes.filter( ( item ) => item !== payload ),
+				// Clear customization when removing from includes
+				customization: {
+					...state.customization,
+					[ payload ]: null,
+				},
 			};
 		case 'RESET_STATE':
 			return { ...initialState };
+		case 'SET_CUSTOMIZATION':
+			return {
+				...state,
+				customization: {
+					...state.customization,
+					[ payload.key ]: payload.value,
+				},
+			};
 		default:
 			return state;
 	}
@@ -47,9 +80,11 @@ const initialState = {
 	uploadedData: null,
 	importedData: null,
 	kitUploadParams: null,
+	actionType: null,
 	plugins: [],
-	includes: [ 'content', 'templates', 'settings', 'plugins' ], // All items selected by default
+	includes: [ 'plugins' ],
 	importStatus: IMPORT_STATUS.PENDING,
+	runnersState: {},
 	customization: {
 		settings: null,
 		templates: null,
@@ -60,14 +95,20 @@ const initialState = {
 export default function ImportContextProvider( props ) {
 	const [ data, dispatch ] = useReducer( importReducer, initialState );
 
+	const isOldExport = isVersionLessThan( data.uploadedData?.manifest?.version, elementorAppConfig[ 'import-export-customization' ].manifestVersion );
+	const isOldElementorVersion = isVersionLessThan( elementorAppConfig[ 'import-export-customization' ].elementorVersion, data.uploadedData?.manifest?.elementor_version );
+
 	return (
 		<ImportContext.Provider value={ {
 			data,
 			dispatch,
+			runnersState: data.runnersState,
 			isUploading: data.importStatus === IMPORT_STATUS.UPLOADING,
 			isCustomizing: data.importStatus === IMPORT_STATUS.CUSTOMIZING,
 			isProcessing: data.importStatus === IMPORT_STATUS.IMPORTING,
 			isCompleted: data.importStatus === IMPORT_STATUS.COMPLETED,
+			isOldExport,
+			isOldElementorVersion,
 		} }>
 			{ props.children }
 		</ImportContext.Provider>
@@ -75,7 +116,7 @@ export default function ImportContextProvider( props ) {
 }
 
 ImportContextProvider.propTypes = {
-        children: PropTypes.node.isRequired,
+	children: PropTypes.node.isRequired,
 };
 
 export function useImportContext() {
@@ -87,4 +128,3 @@ export function useImportContext() {
 
 	return context;
 }
-

@@ -7,7 +7,7 @@ use Elementor\Core\Settings\Manager as SettingsManager;
 use Elementor\Group_Control_Typography;
 use Elementor\Icons_Manager;
 use Elementor\Modules\Apps\Module as AppsModule;
-use Elementor\Modules\EditorEvents\Module as EditorEventsModule;
+use Elementor\Core\Common\Modules\EventsManager\Module as EditorEventsModule;
 use Elementor\Modules\Home\Module as Home_Module;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -15,6 +15,7 @@ use Elementor\Shapes;
 use Elementor\Tools;
 use Elementor\User;
 use Elementor\Utils;
+use Elementor\Core\Utils\Hints;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,6 +32,7 @@ class Editor_Common_Scripts_Settings {
 		$kits_manager = Plugin::$instance->kits_manager;
 
 		$page_title_selector = $kits_manager->get_current_settings( 'page_title_selector' );
+		$top_bar_connect_app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'activate' ) ?? Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
 
 		$page_title_selector .= ', .elementor-page-title .elementor-heading-title';
 
@@ -74,6 +76,18 @@ class Editor_Common_Scripts_Settings {
 				'introduction' => User::get_introduction_meta(),
 				'dismissed_editor_notices' => User::get_dismissed_editor_notices(),
 				'locale' => get_user_locale(),
+				'top_bar' => [
+					'connect_url' => $top_bar_connect_app->get_admin_url( 'authorize', [
+						'utm_source' => 'editor-app',
+						'utm_campaign' => 'connect-account',
+						'utm_medium' => 'wp-dash',
+						'utm_term' => '1.0.0',
+						'utm_content' => 'cta-link',
+						'source' => 'generic',
+						'mode' => 'popup',
+					] ),
+					'my_elementor_url' => 'https://go.elementor.com/wp-dash-top-bar-account/',
+				],
 			],
 			'preview' => [
 				'help_preview_error_url' => 'https://go.elementor.com/preview-not-loaded/',
@@ -99,6 +113,9 @@ class Editor_Common_Scripts_Settings {
 			],
 			'promotion' => [
 				'elements' => Plugin::$instance->editor->promotion->get_elements_promotion(),
+				'integration' => [
+					'ally-accessibility' => Hints::get_ally_action_data(),
+				],
 			],
 			'editor_events' => EditorEventsModule::get_editor_events_config(),
 			'promotions' => [
@@ -111,12 +128,33 @@ class Editor_Common_Scripts_Settings {
 			'fontVariableRanges' => Group_Control_Typography::get_font_variable_ranges(),
 		];
 
-		if ( ! Utils::has_pro() && current_user_can( 'manage_options' ) ) {
-			$client_env['promotionWidgets'] = Api::get_promotion_widgets();
-		}
-
 		if ( Plugin::$instance->experiments->is_feature_active( 'container' ) ) {
 			$client_env['elementsPresets'] = Plugin::$instance->editor->get_elements_presets();
+		}
+
+		$is_admin_user_without_pro = current_user_can( 'manage_options' ) && ! Utils::has_pro();
+		if ( $is_admin_user_without_pro ) {
+			$client_env['integrationWidgets'] = array_merge(
+				( isset( $client_env['integrationWidgets'] ) && is_array( $client_env['integrationWidgets'] ) ?
+				$client_env['integrationWidgets'] :
+				[] ), [
+					[
+						'categories' => '[ "general" ]',
+						'icon' => 'eicon-accessibility',
+						'name' => 'ally-accessibility',
+						'title' => esc_html__( 'Ally Accessibility', 'elementor' ),
+						'keywords' => [
+							'Accessibility',
+							'Usability',
+							'Inclusive',
+							'Statement',
+							'WCAG',
+							'Ally',
+							'Complaince',
+						],
+					],
+				],
+			);
 		}
 
 		static::bc_move_document_filters();
@@ -131,7 +169,31 @@ class Editor_Common_Scripts_Settings {
 		 * @param array $client_env  Editor configuration.
 		 * @param int   $post_id The ID of the current post being edited.
 		 */
-		return apply_filters( 'elementor/editor/localize_settings', $client_env );
+		$client_env = apply_filters( 'elementor/editor/localize_settings', $client_env );
+
+		if ( $is_admin_user_without_pro ) {
+			$client_env = self::ensure_pro_widgets( $client_env );
+		}
+
+		if ( ! empty( $client_env['promotionWidgets'] ) && is_array( $client_env['promotionWidgets'] ) ) {
+			$client_env['promotionWidgets'] = self::ensure_numeric_keys( $client_env['promotionWidgets'] );
+		}
+
+		return $client_env;
+	}
+
+	private static function ensure_pro_widgets( array $client_env ) {
+		$pro_widgets = Api::get_promotion_widgets();
+		if ( ! isset( $client_env['promotionWidgets'] ) ) {
+			$client_env['promotionWidgets'] = $pro_widgets;
+		} else {
+			$client_env['promotionWidgets'] = array_merge( $pro_widgets, $client_env['promotionWidgets'] );
+		}
+		return $client_env;
+	}
+
+	private static function ensure_numeric_keys( array $base_array ) {
+		return array_values( $base_array );
 	}
 
 	private static function bc_move_document_filters() {

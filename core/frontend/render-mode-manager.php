@@ -126,7 +126,7 @@ class Render_Mode_Manager {
 			array_key_exists( $key, $this->render_modes )
 		) {
 			$this->set_current( new $this->render_modes[ $key ]( $post_id ) );
-		} else if ( $this->is_template_preview_mode( $template_id, $key, $nonce ) ) {
+		} elseif ( $this->is_template_preview_mode( $template_id, $key, $nonce ) ) {
 			$this->set_current( new $this->render_modes[ $key ]( $template_id ) );
 		} else {
 			$this->set_current( new Render_Mode_Normal( $post_id ) );
@@ -159,7 +159,7 @@ class Render_Mode_Manager {
 	 * Add actions base on the current render.
 	 *
 	 * @throws \Requests_Exception_HTTP_403 If the current render mode does not have the required permissions.
-	 * @throws Status403 If the current render mode does not have the required permissions.
+	 * @throws \WpOrg\Requests\Exception\Http\Status403 If the current render mode does not have the required permissions.
 	 */
 	private function add_current_actions() {
 		if ( ! $this->current->get_permissions_callback() ) {

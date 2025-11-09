@@ -7,6 +7,8 @@ import ControlActions from '../../control-actions/control-actions';
 import { type ExtendedOption, isUnitExtendedOption, type Unit } from '../../utils/size-control';
 import { SelectionEndAdornment, TextFieldInnerSelection } from '../size-control/text-field-inner-selection';
 
+const RESTRICTED_KEYBOARD_SHORTCUT_UNITS = [ 'auto' ];
+
 type SizeInputProps = {
 	unit: Unit | ExtendedOption;
 	size: number | string;
@@ -20,9 +22,10 @@ type SizeInputProps = {
 	handleSizeChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
 	popupState: PopupState;
 	disabled?: boolean;
+	min?: number;
+	id?: string;
+	ariaLabel?: string;
 };
-
-const RESTRICTED_INPUT_KEYS = [ 'e', 'E', '+', '-' ];
 
 export const SizeInput = ( {
 	units,
@@ -37,6 +40,9 @@ export const SizeInput = ( {
 	unit,
 	popupState,
 	disabled,
+	min,
+	id,
+	ariaLabel,
 }: SizeInputProps ) => {
 	const unitInputBufferRef = useRef( '' );
 	const inputType = isUnitExtendedOption( unit ) ? 'text' : 'number';
@@ -56,9 +62,9 @@ export const SizeInput = ( {
 		unitInputBufferRef.current = updatedBuffer;
 
 		const matchedUnit =
-			units.find( ( u ) => u.includes( updatedBuffer ) ) ||
-			units.find( ( u ) => u.startsWith( newChar ) ) ||
-			units.find( ( u ) => u.includes( newChar ) );
+			units.find( ( u ) => ! RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes( u ) && u.includes( updatedBuffer ) ) ||
+			units.find( ( u ) => ! RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes( u ) && u.startsWith( newChar ) ) ||
+			units.find( ( u ) => ! RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes( u ) && u.includes( newChar ) );
 
 		if ( matchedUnit ) {
 			handleUnitChange( matchedUnit );
@@ -70,7 +76,17 @@ export const SizeInput = ( {
 		'aria-haspopup': true,
 	};
 
-	const inputProps = {
+	const menuItemsAttributes = units.includes( 'custom' )
+		? {
+				custom: popupAttributes,
+		  }
+		: undefined;
+
+	const alternativeOptionLabels = {
+		custom: <MathFunctionIcon fontSize="tiny" />,
+	};
+
+	const InputProps = {
 		...popupAttributes,
 		readOnly: isUnitExtendedOption( unit ),
 		autoComplete: 'off',
@@ -87,16 +103,8 @@ export const SizeInput = ( {
 				options={ units }
 				onClick={ handleUnitChange }
 				value={ unit }
-				alternativeOptionLabels={ {
-					custom: <MathFunctionIcon fontSize="tiny" />,
-				} }
-				menuItemsAttributes={
-					units.includes( 'custom' )
-						? {
-								custom: popupAttributes,
-						  }
-						: undefined
-				}
+				alternativeOptionLabels={ alternativeOptionLabels }
+				menuItemsAttributes={ menuItemsAttributes }
 			/>
 		),
 	};
@@ -110,15 +118,12 @@ export const SizeInput = ( {
 					type={ inputType }
 					value={ inputValue }
 					onChange={ handleSizeChange }
-					onKeyDown={ ( event ) => {
-						if ( RESTRICTED_INPUT_KEYS.includes( event.key ) ) {
-							event.preventDefault();
-						}
-					} }
 					onKeyUp={ handleKeyUp }
 					onBlur={ onBlur }
-					inputProps={ inputProps }
+					InputProps={ InputProps }
+					inputProps={ { min, step: 'any', 'aria-label': ariaLabel } }
 					isPopoverOpen={ popupState.isOpen }
+					id={ id }
 				/>
 			</Box>
 		</ControlActions>

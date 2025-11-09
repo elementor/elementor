@@ -1,18 +1,9 @@
 import * as React from 'react';
-import { useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { enqueueFont, ItemSelector } from '@elementor/editor-controls';
 import { useFontFamilies, useSectionWidth } from '@elementor/editor-editing-panel';
 import { ChevronDownIcon, TextIcon } from '@elementor/icons';
-import {
-	bindPopover,
-	bindTrigger,
-	FormHelperText,
-	FormLabel,
-	Grid,
-	Popover,
-	UnstableTag,
-	usePopupState,
-} from '@elementor/ui';
+import { bindPopover, bindTrigger, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { usePopoverContentRef } from '../../context/variable-selection-popover.context';
@@ -21,11 +12,11 @@ import { validateValue } from '../../utils/validations';
 type FontFieldProps = {
 	value: string;
 	onChange: ( value: string ) => void;
+	onValidationChange?: ( errorMessage: string ) => void;
 };
 
-export const FontField = ( { value, onChange }: FontFieldProps ) => {
+export const FontField = ( { value, onChange, onValidationChange }: FontFieldProps ) => {
 	const [ fontFamily, setFontFamily ] = useState( value );
-	const [ errorMessage, setErrorMessage ] = useState( '' );
 
 	const defaultRef = useRef< HTMLDivElement >( null );
 	const anchorRef = usePopoverContentRef() ?? defaultRef.current;
@@ -46,7 +37,7 @@ export const FontField = ( { value, onChange }: FontFieldProps ) => {
 		setFontFamily( newValue );
 
 		const errorMsg = validateValue( newValue );
-		setErrorMessage( errorMsg );
+		onValidationChange?.( errorMsg );
 
 		onChange( errorMsg ? '' : newValue );
 	};
@@ -56,41 +47,39 @@ export const FontField = ( { value, onChange }: FontFieldProps ) => {
 		fontPopoverState.close();
 	};
 
+	const id = useId();
+
 	return (
-		<Grid container gap={ 0.75 } alignItems="center">
-			<Grid item xs={ 12 }>
-				<FormLabel size="tiny">{ __( 'Value', 'elementor' ) }</FormLabel>
-			</Grid>
-			<Grid item xs={ 12 }>
-				<UnstableTag
-					variant="outlined"
-					label={ fontFamily }
-					endIcon={ <ChevronDownIcon fontSize="tiny" /> }
-					{ ...bindTrigger( fontPopoverState ) }
-					fullWidth
+		<>
+			<UnstableTag
+				id={ id }
+				variant="outlined"
+				label={ fontFamily }
+				endIcon={ <ChevronDownIcon fontSize="tiny" /> }
+				{ ...bindTrigger( fontPopoverState ) }
+				fullWidth
+			/>
+			<Popover
+				disablePortal
+				disableScrollLock
+				anchorEl={ anchorRef }
+				anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
+				transformOrigin={ { vertical: 'top', horizontal: -28 } }
+				{ ...bindPopover( fontPopoverState ) }
+			>
+				<ItemSelector
+					id="font-family-variables-selector"
+					itemsList={ mapFontSubs }
+					selectedItem={ fontFamily }
+					onItemChange={ handleFontFamilyChange }
+					onClose={ fontPopoverState.close }
+					sectionWidth={ sectionWidth }
+					title={ __( 'Font family', 'elementor' ) }
+					itemStyle={ ( item ) => ( { fontFamily: item.value } ) }
+					onDebounce={ enqueueFont }
+					icon={ TextIcon as React.ElementType< { fontSize: string } > }
 				/>
-				<Popover
-					disablePortal
-					disableScrollLock
-					anchorEl={ anchorRef }
-					anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
-					transformOrigin={ { vertical: 'top', horizontal: -28 } }
-					{ ...bindPopover( fontPopoverState ) }
-				>
-					<ItemSelector
-						itemsList={ mapFontSubs }
-						selectedItem={ fontFamily }
-						onItemChange={ handleFontFamilyChange }
-						onClose={ fontPopoverState.close }
-						sectionWidth={ sectionWidth }
-						title={ __( 'Font Family', 'elementor' ) }
-						itemStyle={ ( item ) => ( { fontFamily: item.value } ) }
-						onDebounce={ enqueueFont }
-						icon={ TextIcon as React.ElementType< { fontSize: string } > }
-					/>
-				</Popover>
-				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
-			</Grid>
-		</Grid>
+			</Popover>
+		</>
 	);
 };

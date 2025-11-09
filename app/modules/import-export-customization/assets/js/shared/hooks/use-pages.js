@@ -1,12 +1,17 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
 export function usePages( { skipLoading = false } = {} ) {
 	const [ pages, setPages ] = useState( [] );
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ error, setError ] = useState( null );
 	const [ hasMorePages, setHasMorePages ] = useState( true );
+	const isLoaded = useRef( null );
 
 	const fetchAllPages = useCallback( async () => {
+		if ( isLoaded.current ) {
+			return;
+		}
+
 		try {
 			setIsLoading( true );
 			setError( null );
@@ -45,6 +50,7 @@ export function usePages( { skipLoading = false } = {} ) {
 			}
 
 			setPages( allPages );
+			isLoaded.current = true;
 		} catch ( err ) {
 			setError( err.message );
 		} finally {
@@ -64,6 +70,7 @@ export function usePages( { skipLoading = false } = {} ) {
 		if ( ! skipLoading ) {
 			fetchAllPages();
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ skipLoading ] );
 
 	return {
@@ -72,5 +79,6 @@ export function usePages( { skipLoading = false } = {} ) {
 		error,
 		refreshPages,
 		pageOptions,
+		isLoaded: isLoaded.current,
 	};
 }

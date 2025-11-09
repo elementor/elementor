@@ -1,13 +1,13 @@
 import { z } from '@elementor/schema';
 
 import { createPropUtils } from '../utils/create-prop-utils';
-import { sizePropTypeUtil } from './size';
+import { unknownChildrenSchema } from './utils';
 
 export const positionPropTypeUtil = createPropUtils(
 	'object-position',
 	z.strictObject( {
-		x: sizePropTypeUtil.schema.nullable(),
-		y: sizePropTypeUtil.schema.nullable(),
+		x: unknownChildrenSchema,
+		y: unknownChildrenSchema,
 	} )
 );
 

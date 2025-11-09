@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Elementor\Core\Kits\Documents\Tabs\Global_Colors;
 use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
+use Elementor\Core\Utils\Hints;
+use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Modules\Promotions\Controls\Promotion_Control;
 
 /**
@@ -246,6 +248,8 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 			]
 		);
 
+		$this->maybe_add_ally_heading_hint();
+
 		$this->end_controls_section();
 
 		$this->start_controls_section(
@@ -262,22 +266,27 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
+				],
+				'classes' => 'elementor-control-start-end',
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
 				],
 				'default' => '',
 				'selectors' => [
@@ -451,6 +460,52 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		echo $title_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
+	public function maybe_add_ally_heading_hint() {
+		$notice_id = 'ally_heading_notice';
+		$plugin_slug = 'pojo-accessibility';
+		if ( ! Hints::should_display_hint( $notice_id ) ) {
+			return;
+		}
+		$notice_content = esc_html__( 'Make sure your page is structured with accessibility in mind. Ally helps detect and fix common issues across your site.', 'elementor' );
+
+		$campaign_data = [
+			'name' => 'elementor_ea11y_campaign',
+			'campaign' => 'acc-scanner-plg-heading',
+			'source' => 'editor-heading-widget',
+			'medium' => 'editor',
+		];
+
+		$button_text = __( 'Install Plugin', 'elementor' );
+		$action_url = Admin_Notices::add_plg_campaign_data( Hints::get_plugin_action_url( $plugin_slug ), $campaign_data );
+
+		if ( Hints::is_plugin_installed( $plugin_slug ) && ! Hints::is_plugin_active( $plugin_slug ) ) {
+			$button_text = __( 'Activate Plugin', 'elementor' );
+		} elseif ( Hints::is_plugin_active( $plugin_slug ) && empty( get_option( 'ea11y_access_token' ) ) ) {
+			$button_text = __( 'Connect to Ally', 'elementor' );
+			$action_url = admin_url( 'admin.php?page=accessibility-settings' );
+		}
+
+		$this->add_control(
+			$notice_id,
+			[
+				'type' => Controls_Manager::RAW_HTML,
+				'raw' => Hints::get_notice_template( [
+					'display' => ! Hints::is_dismissed( $notice_id ),
+					'heading' => esc_html__( 'Accessible structure matters', 'elementor' ),
+					'type' => 'info',
+					'content' => $notice_content,
+					'icon' => true,
+					'dismissible' => $notice_id,
+					'button_text' => $button_text,
+					'button_event' => $notice_id,
+					'button_data' => [
+						'action_url' => $action_url,
+					],
+				], true ),
+			]
+		);
+	}
+
 	/**
 	 * Render heading widget output in the editor.
 	 *
@@ -464,8 +519,8 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		<#
 		let title = elementor.helpers.sanitize( settings.title, { ALLOW_DATA_ATTR: false } );
 
-		if ( '' !== settings.link.url ) {
-			title = '<a href="' + elementor.helpers.sanitizeUrl( settings.link.url ) + '">' + title + '</a>';
+		if ( '' !== settings.link?.url ) {
+			title = '<a href="' + elementor.helpers.sanitizeUrl( settings.link?.url ) + '">' + title + '</a>';
 		}
 
 		view.addRenderAttribute( 'title', 'class', [ 'elementor-heading-title' ] );

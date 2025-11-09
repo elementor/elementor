@@ -1,16 +1,19 @@
-import * as React from 'react';
 import { Fragment } from 'react';
+import * as React from 'react';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
+import { PopupStateProvider } from '../contexts/popup-state-contex';
 import { ScrollProvider } from '../contexts/scroll-context';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { useStateByElement } from '../hooks/use-state-by-element';
+import { InteractionsTab } from './interactions-tab';
 import { SettingsTab } from './settings-tab';
 import { stickyHeaderStyles, StyleTab } from './style-tab';
 
-type TabValue = 'settings' | 'style';
+type TabValue = 'settings' | 'style' | 'interactions';
 
 export const EditingPanelTabs = () => {
 	const { element } = useElement();
@@ -26,6 +29,7 @@ export const EditingPanelTabs = () => {
 const PanelTabContent = () => {
 	const editorDefaults = useDefaultPanelSettings();
 	const defaultComponentTab = editorDefaults.defaultTab as TabValue;
+	const isInteractionsActive = isExperimentActive( 'e_interactions' );
 
 	const [ currentTab, setCurrentTab ] = useStateByElement< TabValue >( 'tab', defaultComponentTab );
 	const { getTabProps, getTabPanelProps, getTabsProps } = useTabs< TabValue >( currentTab );
@@ -45,6 +49,9 @@ const PanelTabContent = () => {
 					>
 						<Tab label={ __( 'General', 'elementor' ) } { ...getTabProps( 'settings' ) } />
 						<Tab label={ __( 'Style', 'elementor' ) } { ...getTabProps( 'style' ) } />
+						{ isInteractionsActive && (
+							<Tab label={ __( 'Interactions', 'elementor' ) } { ...getTabProps( 'interactions' ) } />
+						) }
 					</Tabs>
 					<Divider />
 				</Stack>
@@ -54,6 +61,13 @@ const PanelTabContent = () => {
 				<TabPanel { ...getTabPanelProps( 'style' ) } disablePadding>
 					<StyleTab />
 				</TabPanel>
+				{ isInteractionsActive && (
+					<TabPanel { ...getTabPanelProps( 'interactions' ) } disablePadding>
+						<PopupStateProvider>
+							<InteractionsTab />
+						</PopupStateProvider>
+					</TabPanel>
+				) }
 			</Stack>
 		</ScrollProvider>
 	);

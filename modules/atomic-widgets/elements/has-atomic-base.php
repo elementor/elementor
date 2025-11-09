@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements;
 
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Base\Atomic_Control_Base;
+use Elementor\Modules\AtomicWidgets\Base\Element_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
@@ -48,21 +49,18 @@ trait Has_Atomic_Base {
 				continue;
 			}
 
-			if ( ! ( $control instanceof Atomic_Control_Base ) ) {
-				Utils::safe_throw( 'Control must be an instance of `Atomic_Control_Base`.' );
-				continue;
-			}
+			if ( ( $control instanceof Atomic_Control_Base ) ) {
+				$prop_name = $control->get_bind();
 
-			$prop_name = $control->get_bind();
+				if ( ! $prop_name ) {
+					Utils::safe_throw( 'Control is missing a bound prop from the schema.' );
+					continue;
+				}
 
-			if ( ! $prop_name ) {
-				Utils::safe_throw( 'Control is missing a bound prop from the schema.' );
-				continue;
-			}
-
-			if ( ! array_key_exists( $prop_name, $schema ) ) {
-				Utils::safe_throw( "Prop `{$prop_name}` is not defined in the schema of `{$this->get_name()}`." );
-				continue;
+				if ( ! array_key_exists( $prop_name, $schema ) ) {
+					Utils::safe_throw( "Prop `{$prop_name}` is not defined in the schema of `{$this->get_name()}`." );
+					continue;
+				}
 			}
 
 			$valid_controls[] = $control;
@@ -110,6 +108,26 @@ trait Has_Atomic_Base {
 		return $result->unwrap();
 	}
 
+	private function parse_atomic_interactions( $interactions ) {
+
+		if ( empty( $interactions ) ) {
+			return [];
+		}
+
+		if ( is_string( $interactions ) ) {
+			$decoded = json_decode( $interactions, true );
+			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+				return $decoded;
+			}
+		}
+
+		if ( is_array( $interactions ) ) {
+			return $interactions;
+		}
+
+		return [];
+	}
+
 	public function get_atomic_controls() {
 		$controls = apply_filters(
 			'elementor/atomic-widgets/controls',
@@ -147,6 +165,7 @@ trait Has_Atomic_Base {
 		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
 		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
 		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
+		$data['interactions'] = $this->parse_atomic_interactions( $data['interactions'] );
 
 		return $data;
 	}
@@ -155,6 +174,7 @@ trait Has_Atomic_Base {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
 		$raw_data['styles'] = $this->styles;
+		$raw_data['interactions'] = $this->interactions ?? [];
 		$raw_data['editor_settings'] = $this->editor_settings;
 
 		return $raw_data;
@@ -172,6 +192,24 @@ trait Has_Atomic_Base {
 		$props = $this->get_settings();
 
 		return Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+	}
+
+	public function get_atomic_setting( string $key ) {
+		$schema = static::get_props_schema();
+
+		if ( ! isset( $schema[ $key ] ) ) {
+			return null;
+		}
+
+		$props = $this->get_settings();
+		$prop_value = $props[ $key ] ?? null;
+
+		$single_schema = [ $key => $schema[ $key ] ];
+		$single_props = [ $key => $prop_value ];
+
+		$resolved = Render_Props_Resolver::for_settings()->resolve( $single_schema, $single_props );
+
+		return $resolved[ $key ] ?? null;
 	}
 
 	private function parse_editor_settings( array $data ): array {

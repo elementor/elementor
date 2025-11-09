@@ -4,29 +4,39 @@ import { KitPluginsCustomizationDialog } from 'elementor/app/modules/import-expo
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-kit-plugins' );
 import useKitPlugins from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-kit-plugins';
+import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 
 global.__ = jest.fn( ( text ) => text );
+
+const mockSendKitImportUploadFile = jest.fn();
+const mockSendPageViewsWebsiteTemplates = jest.fn();
+jest.mock( 'elementor/app/assets/js/event-track/apps-event-tracking', () => ( {
+	AppsEventTracking: {
+		sendKitImportUploadFile: ( ...args ) => mockSendKitImportUploadFile( ...args ),
+		sendPageViewsWebsiteTemplates: ( ...args ) => mockSendPageViewsWebsiteTemplates( ...args ),
+	},
+} ) );
 
 describe( 'KitPluginsCustomizationDialog Component', () => {
 	const mockHandleClose = jest.fn();
 	const mockHandleSaveChanges = jest.fn();
 
 	const mockPluginsList = {
-		'elementor/elementor.php': {
+		'elementor/elementor': {
 			name: 'Elementor',
-			plugin: 'elementor/elementor.php',
+			plugin: 'elementor/elementor',
 			version: '3.18.0',
 			pluginUri: 'https://elementor.com',
 		},
-		'advanced-custom-fields/acf.php': {
+		'advanced-custom-fields/acf': {
 			name: 'Advanced Custom Fields',
-			plugin: 'advanced-custom-fields/acf.php',
+			plugin: 'advanced-custom-fields/acf',
 			version: '6.2.4',
 			pluginUri: 'https://www.advancedcustomfields.com/',
 		},
-		'contact-form-7/wp-contact-form-7.php': {
+		'contact-form-7/wp-contact-form-7': {
 			name: 'Contact Form 7',
-			plugin: 'contact-form-7/wp-contact-form-7.php',
+			plugin: 'contact-form-7/wp-contact-form-7',
 			version: '5.8.2',
 			pluginUri: '',
 		},
@@ -45,6 +55,12 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 			pluginsList: mockPluginsList,
 			isLoading: false,
 		} );
+
+		global.elementorCommon = {
+			eventsManager: {
+				config: eventsConfig,
+			},
+		};
 	} );
 
 	describe( 'Dialog Rendering', () => {
@@ -196,9 +212,9 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 				includes: [ 'plugins' ],
 				customization: {
 					plugins: {
-						'elementor/elementor.php': true,
-						'advanced-custom-fields/acf.php': false,
-						'contact-form-7/wp-contact-form-7.php': true,
+						'elementor/elementor': true,
+						'advanced-custom-fields/acf': false,
+						'contact-form-7/wp-contact-form-7': true,
 					},
 				},
 			};
@@ -294,9 +310,9 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 				includes: [ 'plugins' ],
 				customization: {
 					plugins: {
-						'elementor/elementor.php': true,
-						'advanced-custom-fields/acf.php': false,
-						'contact-form-7/wp-contact-form-7.php': true,
+						'elementor/elementor': true,
+						'advanced-custom-fields/acf': false,
+						'contact-form-7/wp-contact-form-7': true,
 					},
 				},
 			};
@@ -425,9 +441,15 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 			expect( mockHandleSaveChanges ).toHaveBeenCalledWith(
 				'plugins',
 				{
-					'elementor/elementor.php': true,
-					'advanced-custom-fields/acf.php': true,
-					'contact-form-7/wp-contact-form-7.php': true,
+					'elementor/elementor': true,
+					'advanced-custom-fields/acf': true,
+					'contact-form-7/wp-contact-form-7': true,
+				},
+				true,
+				{
+					'advanced-custom-fields/acf': true,
+					'contact-form-7/wp-contact-form-7': true,
+					'elementor/elementor': true,
 				},
 			);
 			expect( mockHandleClose ).toHaveBeenCalledTimes( 1 );
@@ -452,9 +474,15 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 			expect( mockHandleSaveChanges ).toHaveBeenCalledWith(
 				'plugins',
 				{
-					'elementor/elementor.php': true,
-					'advanced-custom-fields/acf.php': false,
-					'contact-form-7/wp-contact-form-7.php': true,
+					'elementor/elementor': true,
+					'advanced-custom-fields/acf': false,
+					'contact-form-7/wp-contact-form-7': true,
+				},
+				true,
+				{
+					'advanced-custom-fields/acf': false,
+					'contact-form-7/wp-contact-form-7': true,
+					'elementor/elementor': true,
 				},
 			);
 		} );

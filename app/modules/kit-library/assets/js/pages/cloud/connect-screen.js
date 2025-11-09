@@ -5,6 +5,8 @@ import Content from '../../../../../../assets/js/layout/content';
 import IndexHeader from '../index/index-header';
 import IndexSidebar from '../index/index-sidebar';
 import Layout from '../../components/layout';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
+import { TIERS } from 'elementor-utils/tiers';
 
 export default function ConnectScreen( {
 	onConnectSuccess,
@@ -25,10 +27,17 @@ export default function ConnectScreen( {
 				width: 600,
 				height: 700,
 			},
-			success: ( data ) => {
+			success: ( _event, data ) => {
+				const isTrackingOptedInConnect = data.tracking_opted_in && elementorCommon.config.editor_events;
+
 				elementorCommon.config.library_connect.is_connected = true;
 				elementorCommon.config.library_connect.current_access_level = data.kits_access_level || data.access_level || 0;
 				elementorCommon.config.library_connect.current_access_tier = data.access_tier;
+				elementorCommon.config.library_connect.plan_type = data.plan_type;
+
+				if ( isTrackingOptedInConnect ) {
+					elementorCommon.config.editor_events.can_send_events = true;
+				}
 
 				onConnectSuccess?.();
 			},
@@ -36,11 +45,16 @@ export default function ConnectScreen( {
 				elementorCommon.config.library_connect.is_connected = false;
 				elementorCommon.config.library_connect.current_access_level = 0;
 				elementorCommon.config.library_connect.current_access_tier = '';
+				elementorCommon.config.library_connect.plan_type = TIERS.free;
 
 				onConnectError?.();
 			},
 		} );
 	}, [ onConnectSuccess, onConnectError ] );
+
+	useEffect( () => {
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.cloudKitLibraryConnect );
+	}, [] );
 
 	return (
 		<Layout

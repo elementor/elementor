@@ -1,55 +1,38 @@
 import * as React from 'react';
-import type { TransformItemPropValue } from '@elementor/editor-props';
+import type { TransformFunctionsItemPropValue } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { defaultValues, TransformFunctionKeys } from './types';
+import { CUSTOM_SIZE_LABEL } from '../size-control';
+import { defaultValues, TransformFunctionKeys } from './initial-values';
 
-const transformMoveValue = ( value: TransformItemPropValue[ 'value' ] ) =>
-	Object.values( value )
+const formatLabel = ( value: TransformFunctionsItemPropValue[ 'value' ], functionType: keyof typeof defaultValues ) => {
+	return Object.values( value )
 		.map( ( axis ) => {
-			const size = axis?.value?.size ?? defaultValues.move.size;
-			const unit = axis?.value?.unit ?? defaultValues.move.unit;
+			if ( functionType === 'scale' ) {
+				return axis?.value || defaultValues[ functionType ];
+			}
 
-			return `${ size }${ unit }`;
+			const defaults = defaultValues[ functionType ];
+			const size = axis?.value?.size ?? defaults.size;
+			const unit = axis?.value?.unit ?? defaults.unit;
+
+			return unit === 'custom' ? size || CUSTOM_SIZE_LABEL : `${ size }${ unit }`;
 		} )
 		.join( ', ' );
+};
 
-const transformScaleValue = ( value: TransformItemPropValue[ 'value' ] ) =>
-	Object.values( value )
-		.map( ( axis ) => axis?.value || defaultValues.scale )
-		.join( ', ' );
-
-const transformRotateValue = ( value: TransformItemPropValue[ 'value' ] ) =>
-	Object.values( value )
-		.map( ( axis ) => {
-			const size = axis?.value?.size ?? defaultValues.rotate.size;
-			const unit = axis?.value?.unit ?? defaultValues.rotate.unit;
-
-			return `${ size }${ unit }`;
-		} )
-		.join( ', ' );
-const transformSkewValue = ( value: TransformItemPropValue[ 'value' ] ) =>
-	Object.values( value )
-		.map( ( axis ) => {
-			const size = axis?.value?.size ?? defaultValues.skew.size;
-			const unit = axis?.value?.unit ?? defaultValues.skew.unit;
-
-			return `${ size }${ unit }`;
-		} )
-		.join( ', ' );
-
-export const TransformLabel = ( props: { value: TransformItemPropValue } ) => {
+export const TransformLabel = ( props: { value: TransformFunctionsItemPropValue } ) => {
 	const { $$type, value } = props.value;
 	switch ( $$type ) {
 		case TransformFunctionKeys.move:
-			return <Label label={ __( 'Move', 'elementor' ) } value={ transformMoveValue( value ) } />;
+			return <Label label={ __( 'Move', 'elementor' ) } value={ formatLabel( value, 'move' ) } />;
 		case TransformFunctionKeys.scale:
-			return <Label label={ __( 'Scale', 'elementor' ) } value={ transformScaleValue( value ) } />;
+			return <Label label={ __( 'Scale', 'elementor' ) } value={ formatLabel( value, 'scale' ) } />;
 		case TransformFunctionKeys.rotate:
-			return <Label label={ __( 'Rotate', 'elementor' ) } value={ transformRotateValue( value ) } />;
+			return <Label label={ __( 'Rotate', 'elementor' ) } value={ formatLabel( value, 'rotate' ) } />;
 		case TransformFunctionKeys.skew:
-			return <Label label={ __( 'Skew', 'elementor' ) } value={ transformSkewValue( value ) } />;
+			return <Label label={ __( 'Skew', 'elementor' ) } value={ formatLabel( value, 'skew' ) } />;
 		default:
 			return '';
 	}

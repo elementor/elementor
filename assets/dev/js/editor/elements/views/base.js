@@ -1,5 +1,6 @@
 import environment from 'elementor-common/utils/environment';
 import ElementTypeNotFound from 'elementor-editor/errors/element-type-not-found';
+import { getAllElementTypes } from 'elementor-editor/utils/element-types';
 
 var ControlsCSSParser = require( 'elementor-editor-utils/controls-css-parser' ),
 	Validator = require( 'elementor-validator/base' ),
@@ -279,12 +280,18 @@ BaseElementView = BaseContainer.extend( {
 
 	getHandlesOverlay() {
 		const elementType = this.getElementType();
+
 		if ( ! elementor.userCan( 'design' ) && elementType !== 'widget' ) {
 			return;
 		}
 
+		if ( ! this.getContainer().isEditable() ) {
+			return;
+		}
+
+		const isElement = getAllElementTypes().includes( elementType );
 		const	$handlesOverlay = jQuery( '<div>', { class: 'elementor-element-overlay' } ),
-			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings` } ),
+			$overlayList = jQuery( '<ul>', { class: `elementor-editor-element-settings elementor-editor-${ elementType }-settings ${ isElement ? 'elementor-editor-element-overlay-settings' : '' }` } ),
 			editButtonsEnabled = elementor.getPreferences( 'edit_buttons' ),
 			elementData = elementor.getElementData( this.model );
 
@@ -1064,7 +1071,7 @@ BaseElementView = BaseContainer.extend( {
 			anchor?.getAttribute( 'href' ) ||
 			this.model?.get( 'settings' )?.get( 'link' )?.url ||
 			'';
-		if ( hash && hash.startsWith( '#' ) ) {
+		if ( hash && hash.startsWith( '#' ) && ! hash.includes( 'elementor-action' ) ) {
 			const scrollTargetElem = event.target?.ownerDocument.querySelector( hash );
 
 			if ( scrollTargetElem ) {
@@ -1158,6 +1165,10 @@ BaseElementView = BaseContainer.extend( {
 
 		// Init the draggable only for Containers and their children.
 		if ( ! this.$el.hasClass( '.e-con' ) && ! this.$el.parents( '.e-con' ).length ) {
+			return;
+		}
+
+		if ( ! this.getContainer().isEditable() ) {
 			return;
 		}
 

@@ -7,14 +7,16 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -55,21 +57,26 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 			'link' => Link_Prop_Type::make(),
 
-			'attributes' => Key_Value_Array_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make(),
 		];
 
 		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
+		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
+
+		$control = $is_feature_active
+			? Text_Control::bind_to( 'title' )
+				->set_placeholder( __( 'Inline editing', 'elementor' ) )
+				->set_label( __( 'Inline editing', 'elementor' ) )
+			: Textarea_Control::bind_to( 'title' )
+				->set_placeholder( __( 'Type your title here', 'elementor' ) )
+				->set_label( __( 'Title', 'elementor' ) );
+
 		$content_section = Section::make()
 			->set_label( __( 'Content', 'elementor' ) )
-			->set_items( [
-				Textarea_Control::bind_to( 'title' )
-				->set_placeholder( __( 'Type your title here', 'elementor' ) )
-					->set_label( __( 'Title', 'elementor' ) ),
-			] );
-
+			->set_items( [ $control ] );
 		return [
 			$content_section,
 			Section::make()
@@ -110,6 +117,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				])
 				->set_label( __( 'Tag', 'elementor' ) ),
 			Link_Control::bind_to( 'link' )
+				->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
 				->set_label( __( 'Link', 'elementor' ) )
 				->set_meta( [
 					'topDivider' => true,

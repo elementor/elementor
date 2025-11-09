@@ -4,18 +4,23 @@ import IndexHeader from '../index/index-header';
 import IndexSidebar from '../index/index-sidebar';
 import KitListCloud from '../../components/kit-list-cloud';
 import Layout from '../../components/layout';
+import QuotaBar from '../../components/quota-bar';
+import QuotaNotification from '../../components/quota-notification';
 import SearchInput from '../../components/search-input';
 import useCloudKits from '../../hooks/use-cloud-kits';
 import useCloudKitsEligibility from 'elementor-app/hooks/use-cloud-kits-eligibility';
+import useCloudKitsQuota from 'elementor-app/hooks/use-cloud-kits-quota';
 import useMenuItems from '../../hooks/use-menu-items';
 import useConnectState from '../../hooks/use-connect-state';
 import usePageTitle from 'elementor-app/hooks/use-page-title';
 import { Grid } from '@elementor/app-ui';
-import { appsEventTrackingDispatch } from 'elementor-app/event-track/apps-event-tracking';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
+import { isCloudKitsDeactivated } from '../../utils';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import ConnectScreen from './connect-screen';
 import UpgradeScreen from './upgrade-screen';
+import DeactivatedScreen from './deactivated-screen';
 import FullPageLoader from './full-page-loader';
 
 import '../index/index.scss';
@@ -47,24 +52,16 @@ export default function Cloud( {
 		enabled: isConnected,
 	} );
 
+	const { data: quotaData, isLoading: isLoadingQuota } = useCloudKitsQuota( {
+		enabled: isConnected,
+	} );
+
 	const isCloudKitsAvailable = cloudKitsData?.is_eligible || false;
+	const isDeactivated = quotaData && isCloudKitsDeactivated( quotaData );
+
+	const exportUrl = elementorCommon?.config?.experimentalFeatures?.[ 'import-export-customization' ] ? elementorAppConfig.base_url + '#/export-customization' : elementorAppConfig.base_url + '#/export';
 
 	const menuItems = useMenuItems( path );
-
-	const eventTracking = ( command, elementPosition, search = null, direction = null, sortType = null, action = null, eventType = 'click' ) => {
-		appsEventTrackingDispatch(
-			command,
-			{
-				page_source: 'cloud page',
-				element_position: elementPosition,
-				search_term: search,
-				sort_direction: direction,
-				sort_type: sortType,
-				event_type: eventType,
-				action,
-			},
-		);
-	};
 
 	const onConnectSuccess = () => {
 		refetchEligibility();
@@ -84,6 +81,10 @@ export default function Cloud( {
 		}
 	}, [ isConnecting, isCheckingEligibility, isLoading, setConnecting ] );
 
+	useEffect( () => {
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.cloudKitLibrary );
+	}, [] );
+
 	if ( ! isConnected ) {
 		return (
 			<ConnectScreen
@@ -99,6 +100,16 @@ export default function Cloud( {
 	if ( shouldShowLoading ) {
 		return (
 			<FullPageLoader
+				menuItems={ menuItems }
+				forceRefetch={ forceRefetch }
+				isFetching={ isFetching }
+			/>
+		);
+	}
+
+	if ( isDeactivated && ! shouldShowLoading ) {
+		return (
+			<DeactivatedScreen
 				menuItems={ menuItems }
 				forceRefetch={ forceRefetch }
 				isFetching={ isFetching }
@@ -140,11 +151,24 @@ export default function Cloud( {
 							value={ queryParams.search }
 							onChange={ ( value ) => {
 								setQueryParams( ( prev ) => ( { ...prev, search: value } ) );
-								eventTracking( 'kit-library/kit-free-search', 'top_area_search', value, null, null, null, 'search' );
 							} }
 						/>
 					</Grid>
+					<Grid item className="e-kit-library__index-layout-heading-quota">
+						{ ! isLoadingQuota && quotaData?.storage && (
+							<QuotaBar
+								used={ quotaData.storage.currentUsage }
+								total={ quotaData.storage.threshold }
+								unit={ quotaData.storage.unit }
+							/>
+						) }
+					</Grid>
 				</Grid>
+				{ ! isLoadingQuota && quotaData?.storage && (
+					<QuotaNotification
+						usagePercentage={ Math.min( ( quotaData.storage.currentUsage / quotaData.storage.threshold ) * 100, 100 ) }
+					/>
+				) }
 				<Content className="e-kit-library__index-layout-main">
 					<>
 						{
@@ -178,7 +202,7 @@ export default function Cloud( {
 											newLineButton={ true }
 											button={ {
 												text: __( 'Export this site', 'elementor' ),
-												url: elementorAppConfig.base_url + '#/export',
+												url: exportUrl,
 												target: '_blank',
 												variant: 'contained',
 												color: 'primary',

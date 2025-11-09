@@ -1,5 +1,6 @@
-import { injectIntoTop } from '@elementor/editor';
+import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
 
+import { ClassesRename } from './components/classes-rename';
 import { ElementsOverlays } from './components/elements-overlays';
 import { StyleRenderer } from './components/style-renderer';
 import { initSettingsTransformers } from './init-settings-transformers';
@@ -26,5 +27,10 @@ export function init() {
 	injectIntoTop( {
 		id: 'canvas-style-render',
 		component: StyleRenderer,
+	} );
+
+	injectIntoLogic( {
+		id: 'classes-rename',
+		component: ClassesRename,
 	} );
 }

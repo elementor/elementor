@@ -31,7 +31,7 @@ type ClassItemProps = React.PropsWithChildren< {
 	selected?: boolean;
 	disabled?: boolean;
 	sortableTriggerProps: SortableTriggerProps;
-	isSearchActive: boolean;
+	showSortIndicator?: boolean;
 } >;
 
 export const ClassItem = ( {
@@ -41,10 +41,9 @@ export const ClassItem = ( {
 	selected,
 	disabled,
 	sortableTriggerProps,
-	isSearchActive,
+	showSortIndicator,
 }: ClassItemProps ) => {
 	const itemRef = useRef< HTMLElement >( null );
-
 	const {
 		ref: editableRef,
 		openEditMode,
@@ -80,7 +79,7 @@ export const ClassItem = ( {
 						ref={ itemRef }
 						dense
 						disableGutters
-						showSortIndicator={ isSearchActive }
+						showSortIndicator={ showSortIndicator }
 						showActions={ isSelected || isEditing }
 						shape="rounded"
 						onDoubleClick={ openEditMode }

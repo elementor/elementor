@@ -24,6 +24,7 @@ class Image_Transformer extends Transformer_Base {
 			[ $src, $width, $height ] = $image_src;
 
 			return [
+				'id' => $value['src']['id'],
 				'src' => $src,
 				'width' => (int) $width,
 				'height' => (int) $height,

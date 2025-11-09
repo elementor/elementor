@@ -9,8 +9,12 @@
 
 			.elementor-icon-box-wrapper {
 				text-align: end;
-				flex-direction: getValueByDirection(row-reverse, row);
+				flex-direction: row-reverse;
 				gap: var(--icon-box-icon-margin, 15px);
+
+				[dir="rtl"] & { // BC for RTL direction.
+					flex-direction: row;
+				}
 			}
 		}
 
@@ -18,8 +22,12 @@
 
 			.elementor-icon-box-wrapper {
 				text-align: start;
-				flex-direction: getValueByDirection(row, row-reverse);
+				flex-direction: row;
 				gap: var(--icon-box-icon-margin, 15px);
+
+				[dir="rtl"] & { // BC for RTL direction.
+					flex-direction: row-reverse;
+				}
 			}
 		}
 
@@ -29,10 +37,17 @@
 				text-align: center;
 				flex-direction: column;
 				gap: var(--icon-box-icon-margin, 15px);
+				align-items: unset !important; // Specificity override to fix mobile icon alignment issue.
 			}
+		}
 
-			.elementor-icon-box-icon {
-				margin-inline: auto;
+		&bottom {
+
+			.elementor-icon-box-wrapper {
+				text-align: center;
+				flex-direction: column-reverse;
+				gap: var(--icon-box-icon-margin, 15px);
+				align-items: unset !important; // Specificity override to fix mobile icon alignment issue.
 			}
 		}
 	}
@@ -48,8 +63,9 @@
 	}
 
 	.elementor-icon-box-icon {
-		display: inline-flex;
+		display: inline-block;
 		flex: 0 0 auto; // Hack for Safari
+		line-height: 0;
 	}
 
 	.elementor-icon-box-content {

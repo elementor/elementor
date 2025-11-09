@@ -311,9 +311,6 @@ class Widget_Social_Icons extends Widget_Base {
 			]
 		);
 
-		$start = is_rtl() ? 'end' : 'start';
-		$end = is_rtl() ? 'start' : 'end';
-
 		$align_selector = Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' ) && ! $this->has_widget_inner_wrapper()
 			? '{{WRAPPER}}'
 			: '{{WRAPPER}} .elementor-widget-container';
@@ -661,9 +658,9 @@ class Widget_Social_Icons extends Widget_Base {
 						<span class="elementor-screen-only"><?php echo esc_html( ucwords( $social ) ); ?></span>
 						<?php
 						if ( $is_new || $migrated ) {
-							Icons_Manager::render_icon( $item['social_icon'] );
+							Icons_Manager::render_icon( $item['social_icon'], [ 'aria-hidden' => 'true' ] );
 						} else { ?>
-							<i class="<?php echo esc_attr( $item['social'] ); ?>"></i>
+							<i class="<?php echo esc_attr( $item['social'] ); ?>" aria-hidden="true"></i>
 						<?php } ?>
 					</a>
 				</span>

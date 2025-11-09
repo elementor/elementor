@@ -15,10 +15,10 @@ export default function useActionProps(): ToggleActionProps {
 		title: __( 'User Preferences', 'elementor' ),
 		onClick: () => {
 			const extendedWindow = window as unknown as ExtendedWindow;
-			const config = extendedWindow?.elementor?.editorEvents?.config;
+			const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
 			if ( config ) {
-				extendedWindow.elementor.editorEvents.dispatchEvent( config.names.topBar.userPreferences, {
+				extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar.userPreferences, {
 					location: config.locations.topBar,
 					secondaryLocation: config.secondaryLocations.elementorLogo,
 					trigger: config.triggers.click,

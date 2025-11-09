@@ -11,19 +11,32 @@ type ParsedTerm = DependencyTerm;
 
 type Relation = Dependency[ 'relation' ];
 
-export function isDependencyMet( dependency: Dependency | undefined, values: PropValue ): boolean {
+export function isDependencyMet(
+	dependency: Dependency | undefined,
+	values: PropValue
+): { isMet: true } | { isMet: false; failingDependencies: DependencyTerm[] } {
 	if ( ! dependency?.terms.length ) {
-		return true;
+		return { isMet: true };
 	}
 
 	const { relation, terms } = dependency;
 	const method = getRelationMethod( relation );
 
-	return terms[ method ]( ( term: ParsedTerm | Dependency ) =>
-		isDependency( term )
-			? isDependencyMet( term, values )
-			: evaluateTerm( term, extractValue( term.path, values )?.value )
-	);
+	const failingDependencies: DependencyTerm[] = [];
+	const isMet = terms[ method ]( ( term: ParsedTerm | Dependency ) => {
+		const isNestedDependency = isDependency( term );
+		const result = isNestedDependency
+			? isDependencyMet( term, values ).isMet
+			: evaluateTerm( term, extractValue( term.path, values )?.value );
+
+		if ( ! result && ! isNestedDependency ) {
+			failingDependencies.push( term );
+		}
+
+		return result;
+	} );
+
+	return { isMet, failingDependencies };
 }
 
 export function evaluateTerm( term: DependencyTerm, actualValue: unknown ) {

@@ -13,15 +13,17 @@ import { createCombineArrayTransformer } from './transformers/styles/create-comb
 import { createMultiPropsTransformer } from './transformers/styles/create-multi-props-transformer';
 import { filterTransformer } from './transformers/styles/filter-transformer';
 import { flexTransformer } from './transformers/styles/flex-transformer';
+import { perspectiveOriginTransformer } from './transformers/styles/perspective-origin-transformer';
 import { positionTransformer } from './transformers/styles/position-transformer';
 import { shadowTransformer } from './transformers/styles/shadow-transformer';
 import { sizeTransformer } from './transformers/styles/size-transformer';
 import { strokeTransformer } from './transformers/styles/stroke-transformer';
+import { transformFunctionsTransformer } from './transformers/styles/transform-functions-transformer';
 import { transformMoveTransformer } from './transformers/styles/transform-move-transformer';
+import { transformOriginTransformer } from './transformers/styles/transform-origin-transformer';
 import { transformRotateTransformer } from './transformers/styles/transform-rotate-transformer';
 import { transformScaleTransformer } from './transformers/styles/transform-scale-transformer';
 import { transformSkewTransformer } from './transformers/styles/transform-skew-transformer';
-import { transformTransformer } from './transformers/styles/transform-transformer';
 import { transitionTransformer } from './transformers/styles/transition-transformer';
 
 export function initStyleTransformers() {
@@ -51,11 +53,20 @@ export function initStyleTransformers() {
 		.register( 'image-src', imageSrcTransformer )
 		.register( 'image', imageTransformer )
 		.register( 'object-position', positionTransformer )
+		.register( 'transform-origin', transformOriginTransformer )
+		.register( 'perspective-origin', perspectiveOriginTransformer )
 		.register( 'transform-move', transformMoveTransformer )
 		.register( 'transform-scale', transformScaleTransformer )
 		.register( 'transform-rotate', transformRotateTransformer )
 		.register( 'transform-skew', transformSkewTransformer )
-		.register( 'transform', transformTransformer )
+		.register( 'transform-functions', transformFunctionsTransformer )
+		.register(
+			'transform',
+			createMultiPropsTransformer(
+				[ 'transform-functions', 'transform-origin', 'perspective', 'perspective-origin' ],
+				( { key } ) => ( key === 'transform-functions' ? 'transform' : key )
+			)
+		)
 		.register( 'transition', transitionTransformer )
 		.register(
 			'layout-direction',

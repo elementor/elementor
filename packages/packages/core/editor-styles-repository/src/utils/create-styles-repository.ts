@@ -1,4 +1,4 @@
-import { type Meta, type StylesProvider } from '../types';
+import { type Meta, type StylesCollection, type StylesProvider } from '../types';
 
 export const createStylesRepository = () => {
 	const providers: StylesProvider[] = [];
@@ -15,7 +15,7 @@ export const createStylesRepository = () => {
 		return getProviders().flatMap( ( provider ) => provider.actions.all( meta ) );
 	};
 
-	const subscribe = ( cb: () => void ) => {
+	const subscribe = ( cb: ( previous?: StylesCollection, current?: StylesCollection ) => void ) => {
 		const unsubscribes = providers.map( ( provider ) => {
 			return provider.subscribe( cb );
 		} );

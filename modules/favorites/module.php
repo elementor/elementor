@@ -94,9 +94,9 @@ class Module extends BaseModule {
 	/**
 	 * Merge new user favorites to a type.
 	 *
-	 * @param string        $type
-	 * @param array|string  $favorites
-	 * @param bool          $store
+	 * @param string       $type
+	 * @param array|string $favorites
+	 * @param bool         $store
 	 *
 	 * @return array|bool
 	 */
@@ -107,9 +107,9 @@ class Module extends BaseModule {
 	/**
 	 * Delete existing favorites from a type.
 	 *
-	 * @param string        $type
-	 * @param array|string  $favorites
-	 * @param bool          $store
+	 * @param string       $type
+	 * @param array|string $favorites
+	 * @param bool         $store
 	 *
 	 * @return array|int
 	 */
@@ -167,10 +167,10 @@ class Module extends BaseModule {
 	/**
 	 * Register a new type class.
 	 *
-	 * @param string $class
+	 * @param string $class_name
 	 */
-	public function register( $class ) {
-		$type_instance = new $class();
+	public function register( $class_name ) {
+		$type_instance = new $class_name();
 
 		$this->types[ $type_instance->get_name() ] = $type_instance;
 	}
@@ -238,11 +238,10 @@ class Module extends BaseModule {
 	 * Throw action doesn't exist exception.
 	 *
 	 * @param string $action
+	 *
+	 * @throws \InvalidArgumentException If favorite action fails or validation errors occur.
 	 */
 	public function action_doesnt_exists( $action ) {
-		throw new \InvalidArgumentException( sprintf( esc_html(
-			"Action '%s' to apply on favorites doesn't exists",
-			$action
-		)) );
+		throw new \InvalidArgumentException( sprintf( "Action '%s' to apply on favorites doesn't exists", esc_html( $action ) ) );
 	}
 }

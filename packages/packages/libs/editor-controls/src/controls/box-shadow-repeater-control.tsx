@@ -1,55 +1,67 @@
 import * as React from 'react';
 import { type RefObject, useRef } from 'react';
-import { boxShadowPropTypeUtil, type PropKey, shadowPropTypeUtil, type ShadowPropValue } from '@elementor/editor-props';
-import { FormLabel, Grid, type SxProps, type Theme, UnstableColorIndicator } from '@elementor/ui';
+import { boxShadowPropTypeUtil, shadowPropTypeUtil, type ShadowPropValue } from '@elementor/editor-props';
+import { FormLabel, Grid, styled, type SxProps, type Theme, UnstableColorIndicator } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
+import { ControlRepeater, Header, Item, ItemsContainer, TooltipAddItemAction } from '../components/control-repeater';
+import { DisableItemAction } from '../components/control-repeater/actions/disable-item-action';
+import { DuplicateItemAction } from '../components/control-repeater/actions/duplicate-item-action';
+import { RemoveItemAction } from '../components/control-repeater/actions/remove-item-action';
+import { useRepeaterContext } from '../components/control-repeater/context/repeater-context';
+import { EditItemPopover } from '../components/control-repeater/items/edit-item-popover';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
-import { Repeater } from '../components/repeater';
 import { createControl } from '../create-control';
 import { ColorControl } from './color-control';
 import { SelectControl } from './select-control';
-import { SizeControl } from './size-control';
+import { CUSTOM_SIZE_LABEL, SizeControl } from './size-control';
 
 export const BoxShadowRepeaterControl = createControl( () => {
 	const { propType, value, setValue, disabled } = useBoundProp( boxShadowPropTypeUtil );
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ () => disabled }>
-			<Repeater
-				openOnAdd
-				disabled={ disabled }
-				values={ value ?? [] }
-				setValues={ setValue }
-				label={ __( 'Box shadow', 'elementor' ) }
-				itemSettings={ {
-					Icon: ItemIcon,
-					Label: ItemLabel,
-					Content: ItemContent,
-					initialValues: initialShadow,
-				} }
-			/>
+			<ControlRepeater initial={ initialShadow } propTypeUtil={ boxShadowPropTypeUtil }>
+				<Header label={ __( 'Box shadow', 'elementor' ) }>
+					<TooltipAddItemAction newItemIndex={ 0 } disabled={ disabled } ariaLabel={ 'Box shadow' } />
+				</Header>
+				<ItemsContainer>
+					<Item
+						Icon={ ItemIcon }
+						Label={ ItemLabel }
+						actions={
+							<>
+								<DuplicateItemAction />
+								<DisableItemAction />
+								<RemoveItemAction />
+							</>
+						}
+					/>
+				</ItemsContainer>
+				<EditItemPopover>
+					<Content />
+				</EditItemPopover>
+			</ControlRepeater>
 		</PropProvider>
 	);
 } );
 
+const StyledUnstableColorIndicator = styled( UnstableColorIndicator )( ( { theme } ) => ( {
+	height: '1rem',
+	width: '1rem',
+	borderRadius: `${ theme.shape.borderRadius / 2 }px`,
+} ) );
+
 const ItemIcon = ( { value }: { value: ShadowPropValue } ) => (
-	<UnstableColorIndicator size="inherit" component="span" value={ value.value.color?.value } />
+	<StyledUnstableColorIndicator size="inherit" component="span" value={ value.value.color?.value } />
 );
 
-const ItemContent = ( { anchorEl, bind }: { anchorEl: HTMLElement | null; bind: PropKey } ) => {
-	return (
-		<PropKeyProvider bind={ bind }>
-			<Content anchorEl={ anchorEl } />
-		</PropKeyProvider>
-	);
-};
-
-const Content = ( { anchorEl }: { anchorEl: HTMLElement | null } ) => {
+const Content = () => {
 	const context = useBoundProp( shadowPropTypeUtil );
 	const rowRef: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ) ];
+	const { rowRef: anchorEl } = useRepeaterContext();
 
 	return (
 		<PropProvider { ...context }>
@@ -123,11 +135,19 @@ const ItemLabel = ( { value }: { value: ShadowPropValue } ) => {
 	const positionLabel = position?.value || 'outset';
 
 	const sizes = [
-		hOffsetSize + hOffsetUnit,
-		vOffsetSize + vOffsetUnit,
-		blurSize + blurUnit,
-		spreadSize + spreadUnit,
-	].join( ' ' );
+		[ hOffsetSize, hOffsetUnit ],
+		[ vOffsetSize, vOffsetUnit ],
+		[ blurSize, blurUnit ],
+		[ spreadSize, spreadUnit ],
+	]
+		.map( ( [ size, unit ] ) => {
+			if ( unit !== 'custom' ) {
+				return size + unit;
+			}
+
+			return ! size ? CUSTOM_SIZE_LABEL : size;
+		} )
+		.join( ' ' );
 
 	return (
 		<span style={ { textTransform: 'capitalize' } }>

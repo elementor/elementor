@@ -139,8 +139,8 @@
 
 .elementor-panel-footer-sub-menu-wrapper {
 	position: absolute;
-	bottom: 100%;
-	left: 0;
+	inset-block-end: 100%;
+	inset-inline-start: 0;
 	width: 100%;
 	background-color: $editor-darker;
 	padding: 10px;

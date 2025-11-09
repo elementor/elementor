@@ -209,8 +209,6 @@ class Widget_Testimonial extends Widget_Base {
 			]
 		);
 
-		$aside = is_rtl() ? 'right' : 'left';
-
 		$this->add_control(
 			'testimonial_image_position',
 			[
@@ -220,7 +218,7 @@ class Widget_Testimonial extends Widget_Base {
 				'options' => [
 					'aside' => [
 						'title' => esc_html__( 'Aside', 'elementor' ),
-						'icon' => 'eicon-h-align-' . $aside,
+						'icon' => 'eicon-h-align-left',
 					],
 					'top' => [
 						'title' => esc_html__( 'Top', 'elementor' ),
@@ -232,6 +230,7 @@ class Widget_Testimonial extends Widget_Base {
 					'testimonial_image[url]!' => '',
 				],
 				'separator' => 'before',
+				'classes' => 'elementor-control-start-end',
 				'style_transfer' => true,
 			]
 		);
@@ -243,18 +242,23 @@ class Widget_Testimonial extends Widget_Base {
 				'type' => Controls_Manager::CHOOSE,
 				'default' => 'center',
 				'options' => [
-					'left'    => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
+				],
+				'classes' => 'elementor-control-start-end',
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
 				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-testimonial-wrapper' => 'text-align: {{VALUE}}',
@@ -585,8 +589,8 @@ class Widget_Testimonial extends Widget_Base {
 			hasImage = ' elementor-has-image';
 
 			var imageHtml = '<img src="' + _.escape( imageUrl ) + '" alt="testimonial" />';
-			if ( settings.link.url ) {
-				imageHtml = '<a href="' + elementor.helpers.sanitizeUrl( settings.link.url ) + '">' + imageHtml + '</a>';
+			if ( settings.link?.url ) {
+				imageHtml = '<a href="' + elementor.helpers.sanitizeUrl( settings.link?.url ) + '">' + imageHtml + '</a>';
 			}
 		}
 
@@ -631,9 +635,9 @@ class Widget_Testimonial extends Widget_Base {
 
 			view.addInlineEditingAttributes( 'testimonial_name', 'none' );
 
-			if ( settings.link.url ) {
+			if ( settings.link?.url ) {
 				#>
-				<a href="{{  elementor.helpers.sanitizeUrl( settings.link.url ) }}" {{{ view.getRenderAttributeString( 'testimonial_name' ) }}}>{{ settings.testimonial_name }}</a>
+				<a href="{{  elementor.helpers.sanitizeUrl( settings.link?.url ) }}" {{{ view.getRenderAttributeString( 'testimonial_name' ) }}}>{{ settings.testimonial_name }}</a>
 				<#
 			} else {
 				#>
@@ -647,9 +651,9 @@ class Widget_Testimonial extends Widget_Base {
 
 			view.addInlineEditingAttributes( 'testimonial_job', 'none' );
 
-			if ( settings.link.url ) {
+			if ( settings.link?.url ) {
 				#>
-				<a href="{{  elementor.helpers.sanitizeUrl( settings.link.url ) }}" {{{ view.getRenderAttributeString( 'testimonial_job' ) }}}>{{ settings.testimonial_job }}</a>
+				<a href="{{  elementor.helpers.sanitizeUrl( settings.link?.url ) }}" {{{ view.getRenderAttributeString( 'testimonial_job' ) }}}>{{ settings.testimonial_job }}</a>
 				<#
 			} else {
 				#>

@@ -5,7 +5,7 @@ import { backgroundColorOverlayPropTypeUtil } from './background-color-overlay';
 import { backgroundGradientOverlayPropTypeUtil } from './background-gradient-overlay';
 import { backgroundImageOverlayPropTypeUtil } from './background-image-overlay';
 
-const backgroundOverlayItem = backgroundColorOverlayPropTypeUtil.schema
+export const backgroundOverlayItem = backgroundColorOverlayPropTypeUtil.schema
 	.or( backgroundGradientOverlayPropTypeUtil.schema )
 	.or( backgroundImageOverlayPropTypeUtil.schema );
 

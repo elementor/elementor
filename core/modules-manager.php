@@ -100,6 +100,7 @@ class Modules_Manager {
 			'favorites',
 			'admin-top-bar',
 			'element-manager',
+			'pro-free-trial-popup',
 			'nested-elements',
 			// Depends on Nested Elements module
 			'nested-tabs',
@@ -107,6 +108,7 @@ class Modules_Manager {
 			'container-converter',
 			'web-cli',
 			'promotions',
+			'pro-install',
 			'notes',
 			'performance-lab',
 			'lazyload',
@@ -122,7 +124,6 @@ class Modules_Manager {
 			'link-in-bio',
 			'floating-buttons',
 			'content-sanitizer',
-			'editor-events',
 			'atomic-widgets',
 			'global-classes',
 			'variables',
@@ -131,6 +132,8 @@ class Modules_Manager {
 			'cloud-library',
 			'cloud-kit-library',
 			'atomic-opt-in',
+			'components',
+			'interactions',
 		];
 	}
 

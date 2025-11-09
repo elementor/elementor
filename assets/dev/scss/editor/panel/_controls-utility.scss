@@ -19,7 +19,7 @@ $title-size: 12px;
 	&__holder {
 		position: absolute;
 		width: 100%;
-		top: 0;
+		inset-block-start: 0;
 		background-color: var(--e-a-bg-default);
 		border-radius: var(--e-a-border-radius);
 		transition: 0.15s;

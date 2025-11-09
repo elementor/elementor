@@ -43,15 +43,26 @@ describe( 'useImportKit Hook', () => {
 		} );
 	}
 
+	function createHookParams( overrides = {} ) {
+		return {
+			data: {},
+			includes: [],
+			customization: {},
+			isProcessing: false,
+			dispatch: mockDispatch,
+			...overrides,
+		};
+	}
+
 	it( 'should have correct initial state', () => {
 		// Arrange
 		setupContext();
+		const hookParams = createHookParams();
 		// Act
-		const { result } = renderHook( () => useImportKit() );
+		const { result } = renderHook( () => useImportKit( hookParams ) );
 		// Assert
 		expect( result.current.status ).toBe( IMPORT_PROCESSING_STATUS.PENDING );
 		expect( result.current.error ).toBe( null );
-		expect( result.current.runnersState ).toEqual( {} );
 	} );
 
 	it( 'should call importKit and dispatch SET_IMPORTED_DATA on success', async () => {
@@ -59,9 +70,15 @@ describe( 'useImportKit Hook', () => {
 		const kitUploadParams = { id: 1, referrer: 'test' };
 		const uploadedData = { session: 'abc' };
 		const includes = [ 'content' ];
+		const data = { kitUploadParams, uploadedData, includes };
 		setupContext( {
 			isProcessing: true,
-			data: { kitUploadParams, uploadedData, includes },
+			data,
+		} );
+		const hookParams = createHookParams( {
+			data,
+			includes,
+			isProcessing: true,
 		} );
 		const mockResponseData = { data: { imported: true } };
 		mockFetch.mockResolvedValueOnce( {
@@ -69,7 +86,7 @@ describe( 'useImportKit Hook', () => {
 			json: jest.fn().mockResolvedValue( mockResponseData ),
 		} );
 		// Act
-		renderHook( () => useImportKit() );
+		renderHook( () => useImportKit( hookParams ) );
 		// Assert
 		await waitFor( () => {
 			expect( mockFetch ).toHaveBeenCalledWith(
@@ -88,13 +105,19 @@ describe( 'useImportKit Hook', () => {
 		const kitUploadParams = { id: 1, referrer: 'test' };
 		const uploadedData = { session: 'abc' };
 		const includes = [ 'content' ];
+		const data = { kitUploadParams, uploadedData, includes };
 		setupContext( {
 			isProcessing: true,
-			data: { kitUploadParams, uploadedData, includes },
+			data,
+		} );
+		const hookParams = createHookParams( {
+			data,
+			includes,
+			isProcessing: true,
 		} );
 		mockFetch.mockRejectedValueOnce( new Error( 'Import error' ) );
 		// Act
-		const { result } = renderHook( () => useImportKit() );
+		const { result } = renderHook( () => useImportKit( hookParams ) );
 		// Assert
 		await waitFor( () => {
 			expect( result.current.error ).toBeInstanceOf( Error );
@@ -106,10 +129,23 @@ describe( 'useImportKit Hook', () => {
 	it( 'should run import runners and update runnersState', async () => {
 		// Arrange
 		const importedData = { session: 'abc', runners: [ 'plugin1', 'plugin2' ] };
+		const includes = [ 'content' ];
+		const data = { importedData, includes, uploadedData: { session: 'abc' } };
 		setupContext( {
 			isProcessing: true,
-			data: { importedData, includes: [ 'content' ] },
+			data,
 		} );
+		const hookParams = createHookParams( {
+			data,
+			includes,
+			isProcessing: true,
+		} );
+
+		mockFetch.mockResolvedValueOnce( {
+			ok: true,
+			json: jest.fn().mockResolvedValue( { data: { imported_data: importedData } } ),
+		} );
+
 		// First runner
 		mockFetch.mockResolvedValueOnce( {
 			ok: true,
@@ -121,12 +157,12 @@ describe( 'useImportKit Hook', () => {
 			json: jest.fn().mockResolvedValue( { data: { imported_data: { plugin2: 'ok' } } } ),
 		} );
 		// Act
-		const { result } = renderHook( () => useImportKit() );
+		const { result } = renderHook( () => useImportKit( hookParams ) );
 		// Assert
 		await waitFor( () => {
-			expect( result.current.runnersState.plugin1 ).toBe( 'ok' );
-			expect( result.current.runnersState.plugin2 ).toBe( 'ok' );
 			expect( result.current.status ).toBe( IMPORT_PROCESSING_STATUS.DONE );
+			expect( mockDispatch ).toHaveBeenCalledWith( { type: 'SET_RUNNERS_STATE', payload: { plugin1: 'ok' } } );
+			expect( mockDispatch ).toHaveBeenCalledWith( { type: 'SET_RUNNERS_STATE', payload: { plugin2: 'ok' } } );
 			expect( mockDispatch ).toHaveBeenCalledWith( { type: 'SET_IMPORT_STATUS', payload: 'COMPLETED' } );
 		} );
 	} );
@@ -134,14 +170,26 @@ describe( 'useImportKit Hook', () => {
 	it( 'should set error and stop runners on runner error', async () => {
 		// Arrange
 		const importedData = { session: 'abc', runners: [ 'plugin1', 'plugin2' ] };
+		const includes = [ 'content' ];
+		const data = { importedData, includes };
 		setupContext( {
 			isProcessing: true,
-			data: { importedData, includes: [ 'content' ] },
+			data,
 		} );
+		const hookParams = createHookParams( {
+			data,
+			includes,
+			isProcessing: true,
+		} );
+		mockFetch.mockResolvedValueOnce( {
+			ok: true,
+			json: jest.fn().mockResolvedValue( { data: { imported_data: importedData } } ),
+		} );
+
 		// First runner fails
 		mockFetch.mockRejectedValueOnce( new Error( 'Runner error' ) );
 		// Act
-		const { result } = renderHook( () => useImportKit() );
+		const { result } = renderHook( () => useImportKit( hookParams ) );
 		// Assert
 		await waitFor( () => {
 			expect( result.current.error ).toBeInstanceOf( Error );

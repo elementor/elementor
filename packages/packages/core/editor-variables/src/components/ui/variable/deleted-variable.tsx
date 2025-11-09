@@ -3,15 +3,18 @@ import { useId, useRef, useState } from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { type PropTypeKey } from '@elementor/editor-props';
 import { Backdrop, bindPopover, Box, Infotip, Popover, usePopupState } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { VariableTypeProvider } from '../../../context/variable-type-context';
 import { usePermissions } from '../../../hooks/use-permissions';
 import { restoreVariable } from '../../../hooks/use-prop-variables';
+import { resolveBoundPropAndSetValue } from '../../../hooks/use-variable-bound-prop';
 import { type Variable } from '../../../types';
+import { createUnlinkHandler } from '../../../utils/unlink-variable';
 import { getVariableType } from '../../../variables-registry/variable-type-registry';
 import { VariableRestore } from '../../variable-restore';
 import { DeletedVariableAlert } from '../deleted-variable-alert';
-import { DeletedTag } from '../tags/deleted-tag';
+import { WarningVariableTag } from '../tags/warning-variable-tag';
 
 type Props = {
 	variable: Variable;
@@ -24,9 +27,9 @@ type Handlers = {
 };
 
 export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
-	const { fallbackPropTypeUtil, propTypeUtil } = getVariableType( propTypeKey );
+	const { propTypeUtil } = getVariableType( propTypeKey );
 
-	const { setValue } = useBoundProp();
+	const boundProp = useBoundProp();
 
 	const userPermissions = usePermissions();
 
@@ -45,9 +48,7 @@ export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
 	const handlers: Handlers = {};
 
 	if ( userPermissions.canUnlink() ) {
-		handlers.onUnlink = () => {
-			setValue( fallbackPropTypeUtil.create( variable.value ) );
-		};
+		handlers.onUnlink = createUnlinkHandler( variable, propTypeKey, boundProp.setValue );
 	}
 
 	if ( userPermissions.canRestore() ) {
@@ -57,8 +58,9 @@ export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
 			}
 
 			restoreVariable( variable.key )
-				.then( ( key ) => {
-					setValue( propTypeUtil.create( key ) );
+				.then( ( id ) => {
+					resolveBoundPropAndSetValue( propTypeUtil.create( id ), boundProp );
+
 					closeInfotip();
 				} )
 				.catch( () => {
@@ -102,7 +104,11 @@ export const DeletedVariable = ( { variable, propTypeKey }: Props ) => {
 						},
 					} }
 				>
-					<DeletedTag label={ variable.label } onClick={ toggleInfotip } />
+					<WarningVariableTag
+						label={ variable.label }
+						onClick={ toggleInfotip }
+						suffix={ __( 'deleted', 'elementor' ) }
+					/>
 				</Infotip>
 
 				<Popover

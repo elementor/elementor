@@ -34,7 +34,7 @@
 		&:before,
 		&:after {
 			position: absolute;
-			top: 0;
+			inset-block-start: 0;
 			width: 50%;
 			text-align: center;
 			line-height: 20px;
@@ -43,13 +43,13 @@
 
 		&:before {
 			content: attr(data-off);
-			right: 5px;
+			inset-inline-end: 5px;
 			color: var(--e-a-color-txt-muted);
 		}
 
 		&:after {
 			content: attr(data-on);
-			left: 5px;
+			inset-inline-start: 5px;
 			color: var(--e-a-btn-color);
 			opacity: 0;
 		}
@@ -69,17 +69,17 @@
 
 	.elementor-switch-handle {
 		position: absolute;
-		top: 1px;
-		left: 1px;
+		inset-block-start: 1px;
+		inset-inline-start: 1px;
 		width: 18px;
 		height: 18px;
 		background: white;
 		border-radius: 10px;
-		transition: left 0.15s ease-out;
+		transition: inset-inline-start 0.15s ease-out;
 	}
 
 	.elementor-switch-input:checked ~ .elementor-switch-handle {
-		left: initial;
-		right: 1px;
+		inset-inline-start: initial;
+		inset-inline-end: 1px;
 	}
 }

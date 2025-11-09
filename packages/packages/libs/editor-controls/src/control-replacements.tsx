@@ -11,6 +11,7 @@ type ControlReplacement = {
 
 type ConditionArgs = {
 	value: PropValue;
+	placeholder?: PropValue;
 };
 
 type Props = PropsWithChildren< { replacements: ControlReplacement[] } >;
@@ -22,11 +23,11 @@ export const ControlReplacementsProvider = ( { replacements, children }: Props )
 };
 
 export const useControlReplacement = ( OriginalComponent: ComponentType ) => {
-	const { value } = useBoundProp();
+	const { value, placeholder } = useBoundProp();
 	const replacements = useContext( ControlReplacementContext );
 
 	try {
-		const replacement = replacements.find( ( r ) => r.condition( { value } ) );
+		const replacement = replacements.find( ( r ) => r.condition( { value, placeholder } ) );
 
 		return replacement?.component ?? OriginalComponent;
 	} catch {

@@ -1,6 +1,6 @@
 {
   "name": "@elementor/editor-v1-adapters",
-  "version": "0.12.1",
+  "version": "3.33.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -39,7 +39,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/utils": "0.5.0"
+    "@elementor/utils": "3.33.0"
   },
   "peerDependencies": {
     "react": "^18.3.1"

@@ -8,18 +8,19 @@ import {
 	type ScaleTransformPropValue,
 	skewTransformPropTypeUtil,
 	type SkewTransformPropValue,
-	type TransformItemPropValue,
+	type TransformFunctionsItemPropValue,
 } from '@elementor/editor-props';
 import { useTabs } from '@elementor/ui';
 
 import { useBoundProp } from '../../bound-prop-context';
-import { type TransformFunction, TransformFunctionKeys } from './types';
+import { useRepeaterContext } from '../../components/control-repeater/context/repeater-context';
+import { type TransformFunction, TransformFunctionKeys } from './initial-values';
 
 type InitialTransformValues = {
-	move: TransformItemPropValue[ 'value' ];
-	scale: TransformItemPropValue[ 'value' ];
-	rotate: TransformItemPropValue[ 'value' ];
-	skew: TransformItemPropValue[ 'value' ];
+	move: TransformFunctionsItemPropValue[ 'value' ];
+	scale: TransformFunctionsItemPropValue[ 'value' ];
+	rotate: TransformFunctionsItemPropValue[ 'value' ];
+	skew: TransformFunctionsItemPropValue[ 'value' ];
 };
 
 export const useTransformTabsHistory = ( {
@@ -32,6 +33,8 @@ export const useTransformTabsHistory = ( {
 	const { value: scaleValue, setValue: setScaleValue } = useBoundProp( scaleTransformPropTypeUtil );
 	const { value: rotateValue, setValue: setRotateValue } = useBoundProp( rotateTransformPropTypeUtil );
 	const { value: skewValue, setValue: setSkewValue } = useBoundProp( skewTransformPropTypeUtil );
+
+	const { openItemIndex, items } = useRepeaterContext();
 
 	const getCurrentTransformType = (): TransformFunction => {
 		switch ( true ) {
@@ -55,7 +58,7 @@ export const useTransformTabsHistory = ( {
 		skew: initialSkew,
 	} );
 
-	const saveToHistory = ( key: keyof InitialTransformValues, value: TransformItemPropValue[ 'value' ] ) => {
+	const saveToHistory = ( key: keyof InitialTransformValues, value: TransformFunctionsItemPropValue[ 'value' ] ) => {
 		if ( value ) {
 			valuesHistory.current[ key ] = value;
 		}
@@ -99,8 +102,15 @@ export const useTransformTabsHistory = ( {
 		return getTabsProps().onChange( e, tabName );
 	};
 
+	const isTabDisabled = ( tabKey: TransformFunction ) => {
+		return !! items.find( ( { item: { $$type: key } }, pos ) => tabKey === key && pos !== openItemIndex );
+	};
+
 	return {
-		getTabProps,
+		getTabProps: ( value: TransformFunction ) => ( {
+			...getTabProps( value ),
+			disabled: isTabDisabled( value ),
+		} ),
 		getTabPanelProps,
 		getTabsProps: () => ( { ...getTabsProps(), onChange: onTabChange } ),
 	};

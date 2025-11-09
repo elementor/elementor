@@ -5,15 +5,21 @@ import {
 	type BackgroundOverlayItemPropValue,
 	backgroundOverlayPropTypeUtil,
 	colorPropTypeUtil,
-	type PropKey,
 } from '@elementor/editor-props';
 import { Box, CardMedia, styled, Tab, TabPanel, Tabs, type Theme, UnstableColorIndicator } from '@elementor/ui';
 import { useWpMediaAttachment } from '@elementor/wp-media';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../../bound-prop-context';
+import { ControlRepeater, Header, ItemsContainer, TooltipAddItemAction } from '../../../components/control-repeater';
+import { DisableItemAction } from '../../../components/control-repeater/actions/disable-item-action';
+import { DuplicateItemAction } from '../../../components/control-repeater/actions/duplicate-item-action';
+import { RemoveItemAction } from '../../../components/control-repeater/actions/remove-item-action';
+import { useRepeaterContext } from '../../../components/control-repeater/context/repeater-context';
+import { EditItemPopover } from '../../../components/control-repeater/items/edit-item-popover';
+import { Item } from '../../../components/control-repeater/items/item';
+import { type CollectionPropUtil, type RepeatablePropValue } from '../../../components/control-repeater/types';
 import { PopoverContent } from '../../../components/popover-content';
-import { Repeater } from '../../../components/repeater';
 import { createControl } from '../../../create-control';
 import { env } from '../../../env';
 import { ColorControl } from '../../color-control';
@@ -71,41 +77,46 @@ const backgroundResolutionOptions = [
 ];
 
 export const BackgroundOverlayRepeaterControl = createControl( () => {
-	const { propType, value: overlayValues, setValue, disabled } = useBoundProp( backgroundOverlayPropTypeUtil );
+	const { propType, value: overlayValues, setValue } = useBoundProp( backgroundOverlayPropTypeUtil );
 
 	return (
-		<PropProvider propType={ propType } value={ overlayValues } setValue={ setValue } isDisabled={ () => disabled }>
-			<Repeater
-				openOnAdd
-				disabled={ disabled }
-				values={ overlayValues ?? [] }
-				setValues={ setValue }
-				label={ __( 'Overlay', 'elementor' ) }
-				itemSettings={ {
-					Icon: ItemIcon,
-					Label: ItemLabel,
-					Content: ItemContent,
-					initialValues: getInitialBackgroundOverlay(),
-				} }
-			/>
+		<PropProvider propType={ propType } value={ overlayValues } setValue={ setValue }>
+			<ControlRepeater
+				initial={ getInitialBackgroundOverlay() as RepeatablePropValue }
+				propTypeUtil={ backgroundOverlayPropTypeUtil as CollectionPropUtil< RepeatablePropValue > }
+			>
+				<Header label={ __( 'Overlay', 'elementor' ) }>
+					<TooltipAddItemAction newItemIndex={ 0 } />
+				</Header>
+				<ItemsContainer>
+					<Item
+						Icon={ ItemIcon }
+						Label={ ItemLabel }
+						actions={
+							<>
+								<DuplicateItemAction />
+								<DisableItemAction />
+								<RemoveItemAction />
+							</>
+						}
+					/>
+				</ItemsContainer>
+				<EditItemPopover>
+					<ItemContent />
+				</EditItemPopover>
+			</ControlRepeater>
 		</PropProvider>
 	);
 } );
 
-export const ItemContent = ( { anchorEl = null, bind }: { anchorEl?: HTMLElement | null; bind: PropKey } ) => {
-	return (
-		<PropKeyProvider bind={ bind }>
-			<Content anchorEl={ anchorEl } />
-		</PropKeyProvider>
-	);
-};
-
-const Content = ( { anchorEl }: { anchorEl: HTMLElement | null } ) => {
+export const ItemContent = () => {
 	const { getTabsProps, getTabProps, getTabPanelProps } = useBackgroundTabsHistory( {
 		image: getInitialBackgroundOverlay().value,
 		color: initialBackgroundColorOverlay.value,
 		gradient: initialBackgroundGradientOverlay.value,
 	} );
+
+	const { rowRef } = useRepeaterContext();
 
 	return (
 		<Box sx={ { width: '100%' } }>
@@ -131,21 +142,21 @@ const Content = ( { anchorEl }: { anchorEl: HTMLElement | null } ) => {
 			</TabPanel>
 			<TabPanel sx={ { p: 1.5 } } { ...getTabPanelProps( 'color' ) }>
 				<PopoverContent>
-					<ColorOverlayContent anchorEl={ anchorEl } />
+					<ColorOverlayContent anchorEl={ rowRef } />
 				</PopoverContent>
 			</TabPanel>
 		</Box>
 	);
 };
 
-const ItemIcon = ( { value }: { value: BackgroundOverlayItemPropValue } ) => {
+const ItemIcon = ( { value }: { value: RepeatablePropValue } ) => {
 	switch ( value.$$type ) {
 		case 'background-image-overlay':
 			return <ItemIconImage value={ value as BackgroundImageOverlay } />;
 		case 'background-color-overlay':
-			return <ItemIconColor value={ value } />;
+			return <ItemIconColor value={ value as BackgroundOverlayItemPropValue } />;
 		case 'background-gradient-overlay':
-			return <ItemIconGradient value={ value } />;
+			return <ItemIconGradient value={ value as BackgroundOverlayItemPropValue } />;
 		default:
 			return null;
 	}
@@ -171,8 +182,8 @@ const ItemIconImage = ( { value }: { value: BackgroundImageOverlay } ) => {
 		<CardMedia
 			image={ imageUrl }
 			sx={ ( theme: Theme ) => ( {
-				height: '1em',
-				width: '1em',
+				height: '1rem',
+				width: '1rem',
 				borderRadius: `${ theme.shape.borderRadius / 2 }px`,
 				outline: `1px solid ${ theme.palette.action.disabled }`,
 			} ) }
@@ -186,14 +197,14 @@ const ItemIconGradient = ( { value }: { value: BackgroundOverlayItemPropValue } 
 	return <StyledUnstableColorIndicator size="inherit" component="span" value={ gradient } />;
 };
 
-const ItemLabel = ( { value }: { value: BackgroundOverlayItemPropValue } ) => {
+export const ItemLabel = ( { value }: { value: RepeatablePropValue } ) => {
 	switch ( value.$$type ) {
 		case 'background-image-overlay':
 			return <ItemLabelImage value={ value as BackgroundImageOverlay } />;
 		case 'background-color-overlay':
-			return <ItemLabelColor value={ value } />;
+			return <ItemLabelColor value={ value as BackgroundOverlayItemPropValue } />;
 		case 'background-gradient-overlay':
-			return <ItemLabelGradient value={ value } />;
+			return <ItemLabelGradient value={ value as BackgroundOverlayItemPropValue } />;
 		default:
 			return null;
 	}
@@ -254,6 +265,8 @@ const ImageOverlayContent = () => {
 };
 
 const StyledUnstableColorIndicator = styled( UnstableColorIndicator )( ( { theme } ) => ( {
+	height: '1rem',
+	width: '1rem',
 	borderRadius: `${ theme.shape.borderRadius / 2 }px`,
 } ) );
 

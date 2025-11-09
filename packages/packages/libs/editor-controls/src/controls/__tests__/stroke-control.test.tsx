@@ -47,7 +47,7 @@ describe( 'StrokeControl', () => {
 
 		fireEvent.click( widthInput );
 
-		fireEvent.change( widthInput, { target: { value: '10' } } );
+		fireEvent.input( widthInput, { target: { value: '10' } } );
 
 		expect( setValue ).toHaveBeenCalledWith( {
 			$$type: 'stroke',
@@ -100,7 +100,7 @@ describe( 'StrokeControl', () => {
 
 		fireEvent.click( widthInput );
 
-		fireEvent.change( widthInput, { target: { value: 'hot' } } );
+		fireEvent.input( widthInput, { target: { value: 'hot' } } );
 
 		expect( setValue ).toHaveBeenCalledWith( {
 			$$type: 'stroke',

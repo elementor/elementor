@@ -12,15 +12,16 @@ import { getStylesProviderThemeColor } from '../../utils/get-styles-provider-col
 import { type SnapshotPropValue } from '../types';
 import { getValueFromInheritanceChain } from '../utils';
 import { StylesInheritanceInfotip } from './styles-inheritance-infotip';
-
-const skipControls = [ 'box-shadow', 'filter', 'backdrop-filter', 'transform' ];
-
-export const StylesInheritanceIndicator = () => {
-	const { path, propType } = useBoundProp();
-
+export const StylesInheritanceIndicator = ( {
+	customContext,
+}: {
+	customContext?: { path: string[]; propType: PropType };
+} ) => {
+	const context = useBoundProp();
+	const { path, propType } = customContext || context;
 	const inheritanceChain = useStylesInheritanceChain( path );
 
-	if ( ! path || path.some( ( pathItem ) => skipControls.includes( pathItem ) ) || ! inheritanceChain.length ) {
+	if ( ! path || ! inheritanceChain.length ) {
 		return null;
 	}
 
@@ -31,9 +32,10 @@ type IndicatorProps = {
 	inheritanceChain: SnapshotPropValue[];
 	path: string[];
 	propType: PropType;
+	isDisabled?: boolean;
 };
 
-const Indicator = ( { inheritanceChain, path, propType }: IndicatorProps ) => {
+const Indicator = ( { inheritanceChain, path, propType, isDisabled }: IndicatorProps ) => {
 	const { id: currentStyleId, provider: currentStyleProvider, meta: currentStyleMeta } = useStyle();
 
 	const currentItem = currentStyleId
@@ -66,6 +68,7 @@ const Indicator = ( { inheritanceChain, path, propType }: IndicatorProps ) => {
 			path={ path }
 			propType={ propType }
 			label={ label }
+			isDisabled={ isDisabled }
 		>
 			<StyleIndicator { ...styleIndicatorProps } />
 		</StylesInheritanceInfotip>

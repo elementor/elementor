@@ -170,10 +170,6 @@ abstract class Base_App {
 	}
 
 	public function action_reset() {
-		if ( current_user_can( 'manage_options' ) ) {
-			delete_option( 'elementor_remote_info_library' );
-		}
-
 		$this->redirect_to_admin_page();
 	}
 
@@ -292,10 +288,10 @@ abstract class Base_App {
 	 * @since 2.3.0
 	 * @access public
 	 */
-	public function get( $key, $default = null ) {
+	public function get( $key, $default_value = null ) {
 		$this->init_data();
 
-		return isset( $this->data[ $key ] ) ? $this->data[ $key ] : $default;
+		return isset( $this->data[ $key ] ) ? $this->data[ $key ] : $default_value;
 	}
 
 	/**
@@ -334,8 +330,8 @@ abstract class Base_App {
 	 * @since 2.3.0
 	 * @access protected
 	 */
-	protected function add( $key, $value, $default = '' ) {
-		$new_value = $this->get( $key, $default );
+	protected function add( $key, $value, $default_value = '' ) {
+		$new_value = $this->get( $key, $default_value );
 
 		if ( is_array( $new_value ) ) {
 			$new_value[] = $value;
@@ -731,6 +727,12 @@ abstract class Base_App {
 
 	protected function get_auth_redirect_uri() {
 		$redirect_uri = $this->get_admin_url( 'get_token' );
+
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is not required here.
+		$val = Utils::get_super_global_value( $_REQUEST, 'redirect_to' );
+		if ( $val ) {
+			$redirect_uri = add_query_arg( [ 'redirect_to' => $val ], $redirect_uri );
+		}
 
 		switch ( $this->auth_mode ) {
 			case 'popup':

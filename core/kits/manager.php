@@ -375,7 +375,7 @@ class Manager {
 	 * Send a confirm message before move a kit to trash, or if delete permanently not for trash.
 	 *
 	 * @param $post_id
-	 * @param bool    $is_permanently_delete
+	 * @param bool $is_permanently_delete
 	 */
 	private function before_delete_kit( $post_id, $is_permanently_delete = false ) {
 		if ( $this->should_skip_trash_kit_confirmation ) {

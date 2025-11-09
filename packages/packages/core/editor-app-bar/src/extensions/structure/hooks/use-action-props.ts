@@ -2,23 +2,23 @@ import {
 	__privateRunCommand as runCommand,
 	__privateUseRouteStatus as useRouteStatus,
 } from '@elementor/editor-v1-adapters';
-import { StructureIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
 import { type ExtendedWindow, type ToggleActionProps } from '../../../types';
+import { StructureIconWithPopup } from './structure-icon-with-popup';
 
 export default function useActionProps(): ToggleActionProps {
 	const { isActive, isBlocked } = useRouteStatus( 'navigator' );
 
 	return {
 		title: __( 'Structure', 'elementor' ),
-		icon: StructureIcon,
+		icon: StructureIconWithPopup,
 		onClick: () => {
 			const extendedWindow = window as unknown as ExtendedWindow;
-			const config = extendedWindow?.elementor?.editorEvents?.config;
+			const config = extendedWindow?.elementorCommon?.eventsManager?.config;
 
 			if ( config ) {
-				extendedWindow.elementor.editorEvents.dispatchEvent( config.names.topBar.structure, {
+				extendedWindow.elementorCommon.eventsManager.dispatchEvent( config.names.topBar.structure, {
 					location: config.locations.topBar,
 					secondaryLocation: config.secondaryLocations.structure,
 					trigger: config.triggers.toggleClick,

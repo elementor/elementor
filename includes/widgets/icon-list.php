@@ -259,20 +259,25 @@ class Widget_Icon_List extends Widget_Base {
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-h-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-h-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-h-align-right',
 					],
 				],
+				'classes_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
+				],
 				'prefix_class' => 'elementor%s-align-',
+				'classes' => 'elementor-control-start-end',
 			]
 		);
 
@@ -778,7 +783,7 @@ class Widget_Icon_List extends Widget_Base {
 							<?php } ?>
 						</span>
 					<?php endif; ?>
-					<span <?php $this->print_render_attribute_string( $repeater_setting_key ); ?>><?php $this->print_unescaped_setting( 'text', 'icon_list', $index ); ?></span>
+					<span <?php $this->print_render_attribute_string( $repeater_setting_key ); ?>><?php echo wp_kses_post( $item['text'] ); ?></span>
 					<?php if ( ! empty( $item['link']['url'] ) ) : ?>
 						</a>
 					<?php endif; ?>
@@ -822,8 +827,8 @@ class Widget_Icon_List extends Widget_Base {
 					view.addInlineEditingAttributes( iconTextKey ); #>
 
 					<li {{{ view.getRenderAttributeString( 'list_item' ) }}}>
-						<# if ( item.link && item.link.url ) { #>
-							<a href="{{ elementor.helpers.sanitizeUrl( item.link.url ) }}">
+						<# if ( item.link && item.link?.url ) { #>
+							<a href="{{ elementor.helpers.sanitizeUrl( item.link?.url ) }}">
 						<# } #>
 						<# if ( item.icon || item.selected_icon.value ) { #>
 						<span class="elementor-icon-list-icon">
@@ -839,7 +844,7 @@ class Widget_Icon_List extends Widget_Base {
 						</span>
 						<# } #>
 						<span {{{ view.getRenderAttributeString( iconTextKey ) }}}>{{{ item.text }}}</span>
-						<# if ( item.link && item.link.url ) { #>
+						<# if ( item.link && item.link?.url ) { #>
 							</a>
 						<# } #>
 					</li>

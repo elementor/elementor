@@ -33,9 +33,15 @@ class Union_Prop_Type implements Prop_Type {
 	}
 
 	public static function create_from( Transformable_Prop_Type $prop_type ): self {
+		$dependencies = $prop_type->get_dependencies();
+
+		$prop_type->set_dependencies( [] );
+
 		return static::make()
 			->add_prop_type( $prop_type )
-			->default( $prop_type->get_default() );
+			->default( $prop_type->get_default() )
+			->set_dependencies( $dependencies )
+			->set_required_settings( $prop_type );
 	}
 
 	public function get_type(): string {
@@ -56,7 +62,7 @@ class Union_Prop_Type implements Prop_Type {
 		return $this->prop_types[ $type ] ?? null;
 	}
 
-	private function get_prop_type_from_value( $value ): ?Prop_Type {
+	public function get_prop_type_from_value( $value ): ?Prop_Type {
 		if ( isset( $value['$$type'] ) ) {
 			return $this->get_prop_type( $value['$$type'] );
 		}
@@ -126,5 +132,13 @@ class Union_Prop_Type implements Prop_Type {
 
 	public function get_dependencies(): ?array {
 		return $this->dependencies;
+	}
+
+	private function set_required_settings( Transformable_Prop_Type $prop_type ): self {
+		if ( $prop_type->get_setting( 'required', false ) ) {
+			$this->required();
+		}
+
+		return $this;
 	}
 }

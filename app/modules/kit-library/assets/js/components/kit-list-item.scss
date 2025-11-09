@@ -70,6 +70,13 @@ $root: e-kit-library__kit-item;
 		position: relative;
 	}
 
+	&-lock-icon {
+		font-size: 14px;
+		margin-inline-end: 8px;
+		color: var(--card-headline-color);
+		cursor: pointer;
+	}
+
 	&-actions-menu {
 		i {
 			font-size: 16px;
@@ -83,9 +90,9 @@ $root: e-kit-library__kit-item;
 		min-width: 0;
 		padding: 12px 0;
 		position: absolute;
-		top: 25px;
-		left: 100%;
-		transform: translateX(-100%);
+		inset-block-start: 25px;
+		inset-inline-start: 100%;
+		transform: translateX(calc(-100% * var(--direction-multiplier)));
 
 		&-item {
 			display: flex;
@@ -140,6 +147,24 @@ $root: e-kit-library__kit-item;
 			& > span {
 				font-size: 15px;
 			}
+		}
+
+		i.eicon-lock {
+			font-size: 48px;
+			color: rgba(255, 255, 255, 0.8);
+			cursor: pointer;
+		}
+	}
+
+	&--locked {
+		opacity: 0.6;
+
+		.eps-card__image {
+			opacity: 0.7;
+		}
+
+		.eps-card__overlay {
+			background-color: rgba(0, 0, 0, 0.5);
 		}
 	}
 }

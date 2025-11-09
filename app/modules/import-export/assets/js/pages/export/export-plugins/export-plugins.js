@@ -20,6 +20,7 @@ export default function ExportPlugins() {
 		[ isKitReady, setIsKitReady ] = useState( false ),
 		{ plugins, isExportProcessStarted } = exportContext.data || [],
 		hasIncludes = ! ! sharedContext.data.includes.length,
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		handleOnSelect = useCallback( ( selectedPlugins ) => exportContext.dispatch( { type: 'SET_PLUGINS', payload: selectedPlugins } ), [] ),
 		getLearnMoreLink = () => (
 			<InlineLink url="https://go.elementor.com/app-what-are-kits" italic>
@@ -33,6 +34,7 @@ export default function ExportPlugins() {
 			// When not starting from the main screen.
 			navigate( '/export' );
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
 	// On plugins change.
@@ -47,6 +49,7 @@ export default function ExportPlugins() {
 			// In case that the kit has no content, it can only be exported if there is at least one selected plugin.
 			setIsKitReady( isExportKitAllowed );
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ plugins ] );
 
 	return (

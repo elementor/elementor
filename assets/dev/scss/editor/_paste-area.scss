@@ -20,9 +20,8 @@
 		margin: 0;
 		height: 100px;
 		position: absolute;
-		top: -60px;
-		left: 0;
-		right: 0;
+		inset-block-start: -60px;
+		inset-inline: 0;
 
 		&:focus {
 			border-color: transparent;

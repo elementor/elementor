@@ -1,9 +1,11 @@
 import { Heading, Text, Grid, Button } from '@elementor/app-ui';
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Content from '../../../../../../assets/js/layout/content';
 import IndexHeader from '../index/index-header';
 import IndexSidebar from '../index/index-sidebar';
 import Layout from '../../components/layout';
+import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 export default function UpgradeScreen( {
 	menuItems,
@@ -13,6 +15,10 @@ export default function UpgradeScreen( {
 } ) {
 	const hasSubscription = '' !== cloudKitsData?.subscription_id;
 	const url = hasSubscription ? 'https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/' : 'https://go.elementor.com/go-pro-cloud-website-templates-library/';
+
+	useEffect( () => {
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.cloudKitLibraryUpgrade );
+	}, [] );
 
 	return (
 		<Layout
@@ -45,6 +51,9 @@ export default function UpgradeScreen( {
 						<Button
 							text={ __( 'Upgrade now', 'elementor' ) }
 							url={ url }
+							onClick={ () => {
+								AppsEventTracking.sendKitsCloudUpgradeClicked( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.cloudKitLibrary );
+							} }
 							target="_blank"
 							className="e-kit-library__upgrade-button"
 						/>
