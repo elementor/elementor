@@ -11,6 +11,8 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Tabs_Control;
+use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader;
+use Elementor\Utils;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -149,11 +151,24 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		return [ 'elementor-tabs-handler' ];
 	}
 
-	protected function define_children_context() {
-		$default_active_tab = $this->get_atomic_settings()['default-active-tab'];
+	public function register_frontend_handlers() {
+		$assets_url = ELEMENTOR_ASSETS_URL;
+		$min_suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
+
+		wp_register_script(
+			'elementor-tabs-handler',
+			"{$assets_url}js/tabs-handler{$min_suffix}.js",
+			[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE ],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
+	protected function define_render_context() {
+		$default_active_tab = $this->get_atomic_setting( 'default-active-tab' );
 
 		return [
-			'activeTab' => $default_active_tab,
+			'default-active-tab' => $default_active_tab,
 		];
 	}
 

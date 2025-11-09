@@ -80,7 +80,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return [];
 	}
 
-	protected function define_children_context() {
+	protected function define_render_context(): array {
 		return [];
 	}
 
@@ -156,13 +156,19 @@ abstract class Atomic_Element_Base extends Element_Base {
 	}
 
 	public function print_content() {
-		add_filter( 'elementor/atomic/contexts', function( $contexts ) {
-			$contexts[ $this->get_type() ] = $this->define_children_context();
+		$element_context = $this->define_render_context();
 
-			return $contexts;
-		} );
+		$has_context = ! empty( $element_context );
+
+		if ( ! $has_context ) {
+			return parent::print_content();
+		}
+
+		Render_Context::push( static::class, $element_context );
 
 		parent::print_content();
+
+		Render_Context::pop( static::class );
 	}
 
 
