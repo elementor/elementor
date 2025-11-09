@@ -171,11 +171,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 		Render_Context::pop( static::class );
 	}
 
-
-	protected function get_context( $key = null ) {
-		return apply_filters( 'elementor/atomic/contexts', [] )[ $key ] ?? [];
-	}
-
 	/**
 	 * Default before render for container elements.
 	 *
