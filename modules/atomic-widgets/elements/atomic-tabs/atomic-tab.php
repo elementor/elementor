@@ -8,11 +8,12 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Render_Context;
+use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -70,18 +71,63 @@ class Atomic_Tab extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$display = String_Prop_Type::generate( 'block' );
-		$padding = Size_Prop_Type::generate( [
-			'size' => 4,
-			'unit' => 'px',
-		] );
+		$base_styles = [
+			'display' => String_Prop_Type::generate( 'block' ),
+			'cursor' => String_Prop_Type::generate( 'pointer' ),
+			'color' => Color_Prop_Type::generate( '#0C0D0E' ),
+			'border-style' => String_Prop_Type::generate( 'solid' ),
+			'border-color' => Color_Prop_Type::generate( '#E0E0E0' ),
+			'border-width' => Size_Prop_Type::generate( [
+				'size' => 2,
+				'unit' => 'px',
+			]),
+			'padding' => Size_Prop_Type::generate( [
+				'size' => 8,
+				'unit' => 'px',
+			]),
+			'width' => Size_Prop_Type::generate( [
+				'size' => 160,
+				'unit' => 'px',
+			]),
+			'background' => Background_Prop_Type::generate( [
+				'color' => Color_Prop_Type::generate( '#FFFFFF' ),
+			]),
+		];
+
+		$selected_styles = [
+			'outline-width' => Size_Prop_Type::generate( [
+				'size' => 0,
+				'unit' => 'px',
+			]),
+			'border-color' => Color_Prop_Type::generate( '#0C0D0E' ),
+		];
+
+		$hover_styles = [
+			'background' => Background_Prop_Type::generate( [
+				'color' => Color_Prop_Type::generate( '#E0E0E0' ),
+			]),
+		];
 
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'display', $display )
-						->add_prop( 'padding', $padding )
+						->add_props( $base_styles )
+				)
+				->add_variant(
+					Style_Variant::make()
+						->set_state( Style_States::SELECTED )
+						->add_props( $selected_styles )
+				)
+				->add_variant(
+					Style_Variant::make()
+						->set_state( Style_States::FOCUS )
+						->add_props( $selected_styles )
+				)
+				->add_variant(
+					Style_Variant::make()
+						->set_state( Style_States::HOVER )
+						->add_props( $hover_styles )
 				),
 		];
 	}
@@ -102,6 +148,7 @@ class Atomic_Tab extends Atomic_Element_Base {
 			Atomic_Heading::generate()
 				->settings( [
 					'title' => String_Prop_Type::generate( 'Tab' ),
+					'tag' => String_Prop_Type::generate( 'h3' ),
 				] )
 				->build(),
 		];

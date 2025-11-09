@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Tabs_Control;
 
 
@@ -75,31 +76,28 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$display = String_Prop_Type::generate( 'block' );
+		$base_styles = [
+			'display' => String_Prop_Type::generate( 'flex' ),
+			'flex-direction' => String_Prop_Type::generate( 'column' ),
+			'gap' => Size_Prop_Type::generate( [
+				'size' => 30,
+				'unit' => 'px',
+			]),
+			'padding' => Dimensions_Prop_Type::generate( [
+				'block-start' => Size_Prop_Type::generate( [
+					'size' => 0,
+					'unit' => 'px',
+				]),
+			] ),
+		];
 
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'display', $display )
-						->add_prop( 'padding', $this->get_base_padding() )
-						->add_prop( 'min-width', $this->get_base_min_width() )
+						->add_props( $base_styles )
 				),
 		];
-	}
-
-	protected function get_base_padding(): array {
-		return Size_Prop_Type::generate( [
-			'size' => 10,
-			'unit' => 'px',
-		] );
-	}
-
-	protected function get_base_min_width(): array {
-		return Size_Prop_Type::generate( [
-			'size' => 30,
-			'unit' => 'px',
-		] );
 	}
 
 	protected function define_default_children() {
