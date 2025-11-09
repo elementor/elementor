@@ -164,7 +164,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		);
 	}
 
-	protected function define_render_context() {
+	protected function define_render_context(): array {
 		$default_active_tab = $this->get_atomic_setting( 'default-active-tab' );
 
 		return [
