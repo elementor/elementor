@@ -1337,11 +1337,14 @@ label.elementor-template-library-order-label {
 			&.cloud,
 			&.local {
 				@include ellipsis;
+				display: inline-flex;
+				align-items: baseline;
 				line-height: 27px;
 			}
 
 			#cloud,
 			#local {
+				flex-shrink: 0;
 				position: relative;
 				inset-block-start: 2px;
 
@@ -1363,15 +1366,24 @@ label.elementor-template-library-order-label {
 			.selected-folder {
 				display: none;
 				margin-inline-end: 5px;
+				align-items: baseline;
+				@include ellipsis;
+
+
+				&[style*="display: inline"] {
+					display: inline-flex !important;
+				}
 
 				&-text {
 					text-decoration: underline;
 					cursor: pointer;
+					@include ellipsis;
 				}
 			}
 
 			.eicon-editor-close {
 				cursor: pointer;
+				flex-shrink: 0;
 			}
 
 			#elementor-template-library-connect__badge {
@@ -1442,8 +1454,7 @@ label.elementor-template-library-order-label {
 			.no-results {
 				text-align: center;
 				font-size: 13px;
-				width: 155px;
-				margin: 0 auto;
+				margin: 0 20px;
 				padding-block: 15px;
 				pointer-events: none;
 
