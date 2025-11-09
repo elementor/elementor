@@ -31,7 +31,7 @@ export * from './key-value';
 export * from './date-time';
 export * from './position';
 export * from './query';
-export * from './wysiwyg';
+export * from './inline-editing';
 export * from './filter-prop-types/filter';
 export * from './transform-prop-types/transform';
 export * from './transform-prop-types/transform-functions';

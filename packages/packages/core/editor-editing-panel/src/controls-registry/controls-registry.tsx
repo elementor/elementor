@@ -24,6 +24,7 @@ import {
 	DateTimePropTypeUtil,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
+	inlineEditingPropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
 	numberPropTypeUtil,
@@ -31,8 +32,7 @@ import {
 	queryPropTypeUtil,
 	sizePropTypeUtil,
 	stringPropTypeUtil,
-	wysiwygPropTypeUtil,
-} from "@elementor/editor-props";
+} from '@elementor/editor-props';
 
 import { ControlTypeAlreadyRegisteredError, ControlTypeNotRegisteredError } from '../errors';
 
@@ -59,7 +59,7 @@ const controlTypes = {
 	'html-tag': { component: HtmlTagControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
-	wysiwyg: { component: WysiwygControl, layout: 'full', propTypeUtil: wysiwygPropTypeUtil },
+	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: inlineEditingPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

@@ -9,9 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Wysiwyg_Prop_Type extends Plain_Prop_Type {
+class Inline_Editing_Prop_Type extends Plain_Prop_Type {
 	public static function get_key(): string {
-		return 'wysiwyg_prop';
+		return 'inline-editing';
 	}
 
 	public function enum( array $allowed_values ): self {
