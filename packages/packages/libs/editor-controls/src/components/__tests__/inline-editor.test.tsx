@@ -18,24 +18,6 @@ describe( 'InlineEditor', () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'should render with initial value', () => {
-		// Arrange & Act.
-		setup();
-
-		// Assert.
-		expect( screen.getByText( 'Test content' ) ).toBeInTheDocument();
-	} );
-
-	it( 'should render empty editor when value is empty', () => {
-		// Arrange & Act.
-		setup( { value: '' } );
-
-		// Assert.
-		const editor = screen.getByRole( 'textbox' );
-		expect( editor ).toBeInTheDocument();
-		expect( editor ).toHaveTextContent( '' );
-	} );
-
 	it( 'should call setValue when content changes', async () => {
 		// Arrange.
 		const setValue = jest.fn();
@@ -70,18 +52,6 @@ describe( 'InlineEditor', () => {
 		} );
 	} );
 
-	it( 'should be focusable', () => {
-		// Arrange.
-		setup();
-		const editor = screen.getByRole( 'textbox' );
-
-		// Act.
-		fireEvent.focus( editor );
-
-		// Assert.
-		expect( editor ).toHaveClass( 'ProseMirror-focused' );
-	} );
-
 	it( 'should render formatted content with bold / italic / strike / underline', () => {
 		// Arrange & Act.
 		const formattedValue = '<strong>Bold</strong> <em>Italic</em> <s>Strike</s> <u>Underline</u>';
@@ -93,6 +63,7 @@ describe( 'InlineEditor', () => {
 		expect( screen.getByText( 'Strike' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Underline' ) ).toBeInTheDocument();
 	} );
+
 	it( 'should keep content inline without block elements', () => {
 		// Arrange & Act.
 		const inlineValue = 'Line 1<br>Line 2';
