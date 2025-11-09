@@ -30,7 +30,7 @@ async function addComponentStyles( ids: ComponentId[] ) {
 	addStyles( newComponents );
 
 	Object.values( newComponents ).forEach( ( [ , data ] ) => {
-		loadComponentsStyles( ( data.elements ?? [] ) as Element[] );
+		loadComponentsStyles( data.elements as Element[] );
 	} );
 }
 
