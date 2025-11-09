@@ -2,7 +2,7 @@ import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 
 import { PredefinedInteractionsList } from '../components/interactions-list';
-import { PopupStateProvider } from '../contexts/popup-state-contex';
+import { PopupStateProvider } from '../contexts/popup-state-context';
 import { getInteractionsConfig } from '../utils/get-interactions-config';
 
 jest.mock( '../utils/get-interactions-config' );
