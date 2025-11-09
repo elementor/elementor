@@ -12,6 +12,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Tabs_Control;
+use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader;
+use Elementor\Utils;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -145,6 +147,19 @@ class Atomic_Tabs extends Atomic_Element_Base {
 
 	public function get_script_depends() {
 		return [ 'elementor-tabs-handler' ];
+	}
+
+	public function register_frontend_handlers() {
+		$assets_url = ELEMENTOR_ASSETS_URL;
+		$min_suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
+
+		wp_register_script(
+			'elementor-tabs-handler',
+			"{$assets_url}js/tabs-handler{$min_suffix}.js",
+			[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE ],
+			ELEMENTOR_VERSION,
+			true
+		);
 	}
 
 	protected function define_render_context(): array {
