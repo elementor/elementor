@@ -1,5 +1,5 @@
 import { injectIntoLogic, injectIntoTop } from '@elementor/editor';
-import { init as initInteractionsRepository } from '@elementor/editor-interactions-repository';
+import { init as initInteractionsRepository } from '@elementor/editor-interactions';
 
 import { ClassesRename } from './components/classes-rename';
 import { ElementsOverlays } from './components/elements-overlays';
