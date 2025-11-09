@@ -14,7 +14,7 @@ class Frontend_Assets_Loader {
 		$this->register_package_scripts();
 
 		do_action( 'elementor/atomic-widgets/frontend/loader/scripts/register', $this );
-	} 
+	}
 
 	private function register_package_scripts() {
 		$assets_url = ELEMENTOR_ASSETS_URL;
