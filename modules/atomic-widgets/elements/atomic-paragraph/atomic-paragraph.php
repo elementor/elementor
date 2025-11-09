@@ -16,7 +16,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\WYSIWYG_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Inline_Editing_Control;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -64,9 +64,9 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
 
 		$control = $is_feature_active
-			? Text_Control::bind_to( 'paragraph' )
-				->set_placeholder( __( 'Inline editing', 'elementor' ) )
-				->set_label( __( 'Inline editing', 'elementor' ) )
+			? Inline_Editing_Control::bind_to( 'paragraph' )
+				->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
+				->set_label( __( 'Paragraph', 'elementor' ) )
 			: Textarea_Control::bind_to( 'paragraph' )
 				->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
 				->set_label( __( 'Paragraph', 'elementor' ) );

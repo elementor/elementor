@@ -3,6 +3,7 @@ import {
 	DateTimeControl,
 	HtmlTagControl,
 	ImageControl,
+	InlineEditingControl,
 	KeyValueControl,
 	LinkControl,
 	NumberControl,
