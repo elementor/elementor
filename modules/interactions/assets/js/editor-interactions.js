@@ -57,8 +57,7 @@
 
 		try {
 			animateFunc( element, keyframes, options );
-		} catch ( error ) {
-		}
+		} catch {}
 	}
 
 	function getInteractionsData() {
@@ -69,7 +68,7 @@
 
 		try {
 			return JSON.parse( scriptTag.textContent || '[]' );
-		} catch ( error ) {
+		} catch {
 			return [];
 		}
 	}
@@ -102,9 +101,8 @@
 			return style.display === 'block' || style.display === 'flex' || style.display === 'grid';
 		} );
 
-		// If it's a heading, button, or paragraph tag, animate it directly
 		const isContentElement = /^(h[1-6]|p|button|a|span|div)$/i.test( element.tagName );
-		
+
 		if ( isContentElement && ! hasBlockChildren ) {
 			return element;
 		}
@@ -135,20 +133,13 @@
 			}, 10 );
 			return;
 		}
-		
+
 		try {
-			// Store original styles to restore later
-			const originalOpacity = window.getComputedStyle( element ).opacity;
-			const originalTransform = window.getComputedStyle( element ).transform;
-			
-			// Reset element to starting state
 			element.style.opacity = '0';
 			element.style.transform = 'scale(0.2)';
-			
-			// Force a reflow to ensure styles are applied
+
 			element.offsetHeight;
-			
-			// Simple fade + scale animation
+
 			const animation = animateFunc(
 				element,
 				{
@@ -158,10 +149,9 @@
 				{
 					duration: 0.5,
 					easing: 'ease-out',
-			}
-		);
-			
-			// Clean up styles after animation completes
+				}
+			);
+
 			if ( animation && typeof animation.then === 'function' ) {
 				animation.then( () => {
 					element.style.opacity = '';
@@ -173,9 +163,7 @@
 					element.style.transform = '';
 				}, 500 );
 			}
-			
-		} catch ( error ) {
-			// Restore styles on error
+		} catch {
 			element.style.opacity = '';
 			element.style.transform = '';
 		}
