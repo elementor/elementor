@@ -57,7 +57,25 @@ class Test_Atomic_Tabs extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
 
-	private function create_tabs_instance( array $settings ): object {
+	public function test__render_atomic_tabs_with_interactions(): void {
+		// Arrange.
+		$this->instance = $this->create_tabs_instance( [], [
+			'click' => [
+				'id' => 'e8e55a1',
+				'type' => 'click',
+			],
+		] );
+
+		// Act.
+		ob_start();
+		$this->instance->print_element();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
+
+	private function create_tabs_instance( array $settings, array $interactions = [] ): object {
 		$tab_1 = [
 			'id' => self::TAB_ID_1,
 			'elType' => Atomic_Tab::get_element_type(),
@@ -113,6 +131,10 @@ class Test_Atomic_Tabs extends Elementor_Test_Base {
 			'widgetType' => Atomic_Tabs::get_element_type(),
 			'elements' => [ $tabs_list, $tabs_content ],
 		];
+
+		if ( ! empty( $interactions ) ) {
+			$mock['interactions'] = $interactions;
+		}
 
 		return Plugin::$instance->elements_manager->create_element_instance( $mock );
 	}

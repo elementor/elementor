@@ -86,11 +86,7 @@ export function CreateComponentForm() {
 
 			dispatch( slice.actions.addCreatedThisSession( uuid ) );
 
-			replaceElementWithComponent( element.element, {
-				id: uuid,
-				name: values.componentName,
-				uuid,
-			} );
+			replaceElementWithComponent( element.element, { uuid, name: values.componentName } );
 
 			trackComponentEvent( {
 				action: 'created',

@@ -635,6 +635,12 @@ class Widgets_Manager {
 		}
 	}
 
+	public function register_frontend_handlers() {
+		foreach ( $this->get_widget_types() as $widget ) {
+			$widget->register_frontend_handlers();
+		}
+	}
+
 	/**
 	 * Enqueue widgets styles
 	 *

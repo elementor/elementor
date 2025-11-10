@@ -1,0 +1,70 @@
+name: Manual Create Revert PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to revert (e.g., 1234)'
+        required: false
+      commit_sha:
+        description: 'Commit SHA to revert (if not using PR number)'
+        required: false
+      branch:
+        description: 'Target branch (main or 3.XX)'
+        required: true
+        default: 'main'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-revert:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Validate inputs
+        run: |
+          if [[ -z "${{ inputs.pr_number }}" && -z "${{ inputs.commit_sha }}" ]]; then
+            echo "Error: Either PR number or commit SHA must be provided"
+            exit 1
+          fi
+
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ inputs.branch }}
+
+      - name: Get commit SHA from PR
+        id: get-commit
+        if: ${{ inputs.pr_number != '' }}
+        run: |
+          COMMIT_SHA=$(gh pr view ${{ inputs.pr_number }} --json mergeCommit -q '.mergeCommit.oid')
+          if [[ -z "$COMMIT_SHA" || "$COMMIT_SHA" == "null" ]]; then
+            echo "Error: Could not find merge commit for PR #${{ inputs.pr_number }}"
+            exit 1
+          fi
+          echo "commit_sha=$COMMIT_SHA" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine commit to revert
+        id: commit-info
+        run: |
+          if [[ -n "${{ steps.get-commit.outputs.commit_sha }}" ]]; then
+            echo "final_sha=${{ steps.get-commit.outputs.commit_sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "final_sha=${{ inputs.commit_sha }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create revert PR
+        uses: ./.github/workflows/create-revert-pr
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_SHA: ${{ steps.commit-info.outputs.final_sha }}
+          BRANCH_NAME: ${{ inputs.branch }}
+          WORKFLOW_NAME: "Playwright"
+          WORKFLOW_RUN_URL: "Manual revert trigger"
+          ALLOW_WORKFLOW_CHANGES: 'true'
+
