@@ -1062,9 +1062,7 @@ class OnboardingTracker {
 	}
 
 	startSessionRecordingIfNeeded( stepNumber ) {
-		const HELLO_BIZ_STEP = 2;
-
-		if ( HELLO_BIZ_STEP !== stepNumber ) {
+		if ( ! EventDispatcher.canSendEvents() ) {
 			return;
 		}
 
@@ -1090,13 +1088,12 @@ class OnboardingTracker {
 
 		TimingManager.trackStepStartTime( stepNumber );
 
-		this.startSessionRecordingIfNeeded( stepNumber );
-
 		if ( 1 === stepNumber || 'account' === currentStep ) {
 			this.sendExperimentStarted( 101 );
 		}
 
 		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
+			this.startSessionRecordingIfNeeded( stepNumber );
 			this.sendStoredStep1EventsOnStep2();
 			this.sendExperimentStarted( 201 );
 			this.sendExperimentStarted( 202 );
