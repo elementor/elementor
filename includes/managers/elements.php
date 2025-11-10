@@ -366,6 +366,12 @@ class Elements_Manager {
 		}
 	}
 
+	public function register_frontend_handlers() {
+		foreach ( $this->get_element_types() as $element ) {
+			$element->register_frontend_handlers();
+		}
+	}
+
 	/**
 	 * Require files.
 	 *

@@ -209,6 +209,7 @@ class Style_Schema {
 				'inset',
 				'outset',
 			] ),
+			'outline-width' => Size_Prop_Type::make()->units( Size_Constants::border() ),
 		];
 	}
 

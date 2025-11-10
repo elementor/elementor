@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 
 export default function ThemeSelectionCard( {
 	themeSlug,
+	label,
 	title,
 	description,
 	illustration,
@@ -39,9 +40,10 @@ export default function ThemeSelectionCard( {
 			aria-label={ ariaLabel }
 		>
 			<div className={ `e-onboarding__theme-card-illustration ${ illustration?.className || '' }` }>
-				{ illustration?.svg }
+				{ illustration?.svg || ( illustration?.src && <img src={ illustration.src } alt={ `${ title } theme illustration` } /> ) }
 			</div>
 			<div className="e-onboarding__theme-card-content">
+				<span className="e-onboarding__theme-card-label"><span>{ label }</span> by Elementor</span>
 				<h3 className="e-onboarding__theme-card-title">
 					{ title }
 				</h3>
@@ -55,10 +57,12 @@ export default function ThemeSelectionCard( {
 
 ThemeSelectionCard.propTypes = {
 	themeSlug: PropTypes.string.isRequired,
+	label: PropTypes.string,
 	title: PropTypes.string.isRequired,
 	description: PropTypes.string.isRequired,
 	illustration: PropTypes.shape( {
-		svg: PropTypes.element.isRequired,
+		svg: PropTypes.element,
+		src: PropTypes.string,
 		className: PropTypes.string,
 	} ).isRequired,
 	isSelected: PropTypes.bool,

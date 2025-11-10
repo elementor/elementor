@@ -13,6 +13,7 @@ use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
 use Elementor\Modules\Promotions\Pointers\Birthday;
+use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
@@ -61,6 +62,10 @@ class Module extends Base_Module {
 
 		if ( Birthday::should_display_notice() ) {
 			new Birthday();
+		}
+
+		if ( Black_Friday::should_display_notice() ) {
+			new Black_Friday();
 		}
 
 		if ( Utils::has_pro() ) {

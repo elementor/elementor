@@ -17,15 +17,15 @@ on:
   schedule:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
-      inputs:
-        fail_fast:
-            type: boolean
-            required: true
-            description: 'Cancel tests when one of them fails'
-            default: false
-        tag:
-          description: 'Provide @tag or a keyword'
-          required: false
+    inputs:
+      fail_fast:
+        type: boolean
+        required: true
+        description: 'Cancel tests when one of them fails'
+        default: false
+      tag:
+        description: 'Provide @tag or a keyword'
+        required: false
 
 permissions:
   contents: write
@@ -37,14 +37,19 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  get-php-version:
+    name: Calculate PHP Version
+    uses: ./.github/workflows/calculate_php_version.yml
+
   build-plugin:
     if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
     name: Build plugin
     uses: ./.github/workflows/build.yml
+  
   Playwright:
-    name: Playwright test - ${{ matrix.shardIndex }} on PHP 8.1
+    name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
-    needs: [build-plugin]
+    needs: [build-plugin, get-php-version]
     if: github.event.inputs.tag == '' && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests'))
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
@@ -52,13 +57,17 @@ jobs:
         shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
         shardTotal: [ 10 ]
         include:
-        - shardIndex: "v4-tests"
-        - shardIndex: "elements-regression"
-        - shardIndex: "plugin_tester_section"
-        - shardIndex: "plugin_tester_container"
+          - shardIndex: "v4-tests"
+          - shardIndex: "elements-regression"
+          - shardIndex: "plugin_tester_section"
+          - shardIndex: "plugin_tester_container"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+
+      - name: Set PHP_VERSION environment variable
+        run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
+
       - name: Cache Docker images.
         uses: ScribeMD/docker-cache@0.5.0
         with:
@@ -80,6 +89,13 @@ jobs:
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
+
+      - name: Update PHP version in config
+        run: |
+          jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+          echo "PHP version set to:"
+          cat tests/playwright/.playwright-wp-lite-env.json | grep phpVersion
+
       - name: Install WordPress environment
         run: |
           npm run start-local-server
@@ -124,13 +140,17 @@ jobs:
           if-no-files-found: ignore
           retention-days: 2
   PlaywrightWithTag:
-    name: Playwright test - tagged tests on PHP 8.1
+    name: Playwright test - tagged tests on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
-    needs: [ build-plugin ]
+    needs: [ build-plugin, get-php-version ]
     if: ${{ github.event.inputs.tag }}
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
+
+      - name: Set PHP_VERSION environment variable
+        run: echo "PHP_VERSION=${{ needs.get-php-version.outputs.php_version }}" >> $GITHUB_ENV
+
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
@@ -148,6 +168,13 @@ jobs:
         run: |
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
+
+      - name: Update PHP version in config
+        run: |
+          jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+          echo "PHP version set to:"
+          cat tests/playwright/.playwright-wp-lite-env.json | grep phpVersion
+
       - name: Install WordPress environment
         run: |
           npm run start-local-server
@@ -161,8 +188,10 @@ jobs:
         run: |
           npx playwright install chromium
       - name: Run Playwright tests
+        env:
+          TEST_TAG: ${{ inputs.tag }}
         run: |
-          npm run test:playwright -- --grep="${{ inputs.tag }}"
+          npm run test:playwright -- --grep="$TEST_TAG"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -186,51 +215,16 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Create revert PR on push failure
-        id: create_revert_pr
-        if: ${{ needs.Playwright.result == 'failure' && github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')) }}
-        continue-on-error: true
-        uses: ./.github/workflows/create-revert-pr
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COMMIT_SHA: ${{ github.sha }}
-          BRANCH_NAME: ${{ github.ref_name }}
-          WORKFLOW_NAME: "Playwright"
-          WORKFLOW_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          ALLOW_WORKFLOW_CHANGES: 'true'
-      - name: Generate revert message
-        id: revert_message
-        if: ${{ needs.Playwright.result == 'failure' && github.event_name != 'workflow_dispatch' && github.event_name != 'pull_request' }}
-        run: |
-          if [[ "${{ github.event_name }}" == "schedule" ]]; then
-            BASE_MESSAGE="Elementor Core: Scheduled Playwright tests failed - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          else
-            BASE_MESSAGE="Elementor Core: Playwright - ${{ github.event_name }} failed: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          fi
-
-          if [[ "${{ steps.create_revert_pr.outputs.status }}" == "created" ]]; then
-            REVERT_MESSAGE="\n\nYou can review revert of this commit here: [PR #${{ steps.create_revert_pr.outputs.pr_number }}](${{ steps.create_revert_pr.outputs.pr_url }})"
-            {
-              echo "message<<EOF"
-              echo "${BASE_MESSAGE}${REVERT_MESSAGE}"
-              echo "EOF"
-            } >> $GITHUB_OUTPUT
-          else
-            {
-              echo "message<<EOF"
-              echo "${BASE_MESSAGE}"
-              echo "EOF"
-            } >> $GITHUB_OUTPUT
-          fi
-
       - name: Generate a token
         id: generate-token
+        if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) }}
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ secrets.TEST_CONFIGURATION_APP_ID }}
           private-key: ${{ secrets.TEST_CONFIGURATION_APP_PRIVATE_KEY }}
           owner: elementor
       - name: Checkout private action repository
+        if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) }}
         uses: actions/checkout@v4
         with:
           repository: elementor/elementor-tests-configuration
@@ -240,6 +234,7 @@ jobs:
           ref: main
       - name: Map GitHub user to Slack
         id: map_user
+        if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) }}
         uses: ./elementor-tests-configuration/.github/actions/map-github-to-slack
         with:
           github_user: ${{ github.actor }}
@@ -254,13 +249,13 @@ jobs:
           SLACK_TAG_CHANNELS: ${{ secrets.TEST_AUTOMATION_RESULTS }}
           PAYLOAD: |
             {
-              "text": "${{ steps.revert_message.outputs.message }}",
+              "text": "Elementor Core: Playwright tests failed - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "${{ steps.revert_message.outputs.message }}"
+                    "text": "Elementor Core: Playwright tests failed - ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   }
                 },
                 {

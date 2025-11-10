@@ -5,10 +5,10 @@ import AtomicElementBaseModel from './atomic-element-base-model';
 import createDivBlockType from './atomic-element-types/create-div-block-type';
 import createFlexboxType from './atomic-element-types/create-flexbox-type';
 import createAtomicTabsType from './atomic-element-types/atomic-tabs/create-atomic-tabs-type';
-import createAtomicTabPanelType from './atomic-element-types/atomic-tab-panel/create-atomic-tab-panel-type';
+import createAtomicTabContentType from './atomic-element-types/atomic-tab-content/create-atomic-tab-content-type';
 import createAtomicTabType from './atomic-element-types/atomic-tab/create-atomic-tab-type';
-import createAtomicTabsListType from './atomic-element-types/create-atomic-tabs-list-type';
-import createAtomicTabsContentType from './atomic-element-types/create-atomic-tabs-content-type';
+import createAtomicTabsMenuType from './atomic-element-types/create-atomic-tabs-menu-type';
+import createAtomicTabsContentAreaType from './atomic-element-types/create-atomic-tabs-content-area-type';
 
 class Module extends elementorModules.editor.utils.Module {
 	onInit() {
@@ -32,10 +32,10 @@ class Module extends elementorModules.editor.utils.Module {
 
 		if ( elementorCommon.config.experimentalFeatures[ nestedElementsExperiment ] ) {
 			elementor.elementsManager.registerElementType( createAtomicTabsType() );
-			elementor.elementsManager.registerElementType( createAtomicTabPanelType() );
+			elementor.elementsManager.registerElementType( createAtomicTabContentType() );
 			elementor.elementsManager.registerElementType( createAtomicTabType() );
-			elementor.elementsManager.registerElementType( createAtomicTabsListType() );
-			elementor.elementsManager.registerElementType( createAtomicTabsContentType() );
+			elementor.elementsManager.registerElementType( createAtomicTabsMenuType() );
+			elementor.elementsManager.registerElementType( createAtomicTabsContentAreaType() );
 		}
 	}
 }

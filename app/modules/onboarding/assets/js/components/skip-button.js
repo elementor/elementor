@@ -34,7 +34,10 @@ export default function SkipButton( props ) {
 		OnboardingEventTracking.sendEventOrStore( 'SKIP', { currentStep: stepNumber } );
 
 		if ( 4 === stepNumber ) {
-			OnboardingEventTracking.storeExitEventForLater( 'step4_skip_button', stepNumber );
+			OnboardingEventTracking.sendEventOrStore( 'EXIT', {
+				currentStep: stepNumber,
+				exitType: 'skip_button',
+			} );
 		}
 
 		elementorCommon.events.dispatchEvent( {

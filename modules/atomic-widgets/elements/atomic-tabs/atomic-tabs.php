@@ -10,7 +10,10 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Tabs_Control;
+use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader;
+use Elementor\Utils;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +32,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	}
 
 	public function get_title() {
-		return esc_html__( 'Atomic Tabs', 'elementor' );
+		return esc_html__( 'Tabs', 'elementor' );
 	}
 
 	public function get_keywords() {
@@ -52,84 +55,87 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	protected function define_atomic_controls(): array {
 		return [
 			Section::make()
+				->set_label( __( 'Content', 'elementor' ) )
+				->set_id( 'content' )
+				->set_items( [
+					Tabs_Control::make()
+					->set_label( __( 'Menu items', 'elementor' ) )
+					->set_meta( [
+						'layout' => 'custom',
+					] ),
+				] ),
+			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )
 				->set_items( [
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
-						->set_meta( $this->get_css_id_control_meta() ),
-					Tabs_Control::make()
-						->set_label( __( 'Menu items', 'elementor' ) )
 						->set_meta( [
-							'topDivider' => true,
-							'layout' => 'custom',
+							'layout' => 'two-columns',
 						] ),
 				] ),
 		];
 	}
 
 	protected function define_base_styles(): array {
-		$display = String_Prop_Type::generate( 'block' );
+		$styles = [
+			'display' => String_Prop_Type::generate( 'flex' ),
+			'flex-direction' => String_Prop_Type::generate( 'column' ),
+			'gap' => Size_Prop_Type::generate( [
+				'size' => 30,
+				'unit' => 'px',
+			]),
+			'padding' => Dimensions_Prop_Type::generate( [
+				'block-start' => Size_Prop_Type::generate( [
+					'size' => 0,
+					'unit' => 'px',
+				]),
+			] ),
+		];
 
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'display', $display )
-						->add_prop( 'padding', $this->get_base_padding() )
-						->add_prop( 'min-width', $this->get_base_min_width() )
+						->add_props( $styles )
 				),
 		];
-	}
-
-	protected function get_base_padding(): array {
-		return Size_Prop_Type::generate( [
-			'size' => 10,
-			'unit' => 'px',
-		] );
-	}
-
-	protected function get_base_min_width(): array {
-		return Size_Prop_Type::generate( [
-			'size' => 30,
-			'unit' => 'px',
-		] );
 	}
 
 	protected function define_default_children() {
 		$default_tab_count = 3;
 		$tab_elements = [];
-		$tab_panel_elements = [];
+		$tab_content_elements = [];
 
 		foreach ( range( 1, $default_tab_count ) as $i ) {
 			$tab_elements[] = Atomic_Tab::generate()
 				->editor_settings( [
-					'title' => "Tab {$i}",
+					'title' => "Tab {$i} trigger",
 				] )
 				->is_locked( true )
 				->build();
 
-			$tab_panel_elements[] = Atomic_Tab_Panel::generate()
+			$tab_content_elements[] = Atomic_Tab_Content::generate()
 				->is_locked( true )
 				->editor_settings( [
-					'title' => "Tab {$i} panel",
+					'title' => "Tab {$i} content",
 				] )
 				->build();
 		}
 
-		$tabs_list = Atomic_Tabs_List::generate()
+		$tabs_menu = Atomic_Tabs_Menu::generate()
 			->children( $tab_elements )
 			->is_locked( true )
 			->build();
 
-		$tabs_content = Atomic_Tabs_Content::generate()
-			->children( $tab_panel_elements )
+		$tabs_content_area = Atomic_Tabs_Content_Area::generate()
+			->children( $tab_content_elements )
 			->is_locked( true )
 			->build();
 
 		return [
-			$tabs_list,
-			$tabs_content,
+			$tabs_menu,
+			$tabs_content_area,
 		];
 	}
 
@@ -141,6 +147,27 @@ class Atomic_Tabs extends Atomic_Element_Base {
 
 	public function get_script_depends() {
 		return [ 'elementor-tabs-handler' ];
+	}
+
+	public function register_frontend_handlers() {
+		$assets_url = ELEMENTOR_ASSETS_URL;
+		$min_suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
+
+		wp_register_script(
+			'elementor-tabs-handler',
+			"{$assets_url}js/tabs-handler{$min_suffix}.js",
+			[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE ],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
+	protected function define_render_context(): array {
+		$default_active_tab = $this->get_atomic_setting( 'default-active-tab' );
+
+		return [
+			'default-active-tab' => $default_active_tab,
+		];
 	}
 
 	protected function add_render_attributes() {
@@ -156,10 +183,12 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
+			'data-id' => $this->get_id(),
+			'data-interactions' => json_encode( $this->interactions ),
 		];
 
 		if ( ! empty( $settings['default-active-tab'] ) ) {
-			$attributes['data-active-tab'] = esc_attr( $settings['default-active-tab'] );
+			$attributes['data-e-settings'] = json_encode( [ 'default-active-tab' => esc_js( $settings['default-active-tab'] ) ] );
 		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {

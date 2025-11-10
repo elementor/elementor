@@ -16,10 +16,10 @@
 						"$$type": "classes",
 						"value": ["component-2-heading-local-class-id"]
 					},
-					"title": {
-						"$$type": "string",
-						"value": "Component 2 Heading"
-					}
+				"title": {
+					"$$type": "inline-editing",
+					"value": "Component 2 Heading"
+				}
 				},
 				"elements": [],
 				"widgetType": "e-heading",
@@ -50,7 +50,8 @@
 					}
 				},
 				"editor_settings": [],
-				"version": "0.0"
+				"version": "0.0",
+				"interactions": []
 			},
 			{
 				"id": "component-2-image-id",
@@ -104,7 +105,8 @@
 					}
 				},
 				"editor_settings": [],
-				"version": "0.0"
+				"version": "0.0",
+				"interactions": []
 			}
 		],
 		"isInner": false,
@@ -143,5 +145,6 @@
 			}
 		},
 		"editor_settings": [],
-		"version": "0.0"
+		"version": "0.0",
+		"interactions": []
 	}]

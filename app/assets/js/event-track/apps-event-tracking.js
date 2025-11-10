@@ -10,6 +10,8 @@ const EVENTS_MAP = {
 	KIT_CLOUD_LIBRARY_DELETE: 'kit_cloud_library_delete',
 	IMPORT_EXPORT_ADMIN_ACTION: 'ie_admin_action',
 	KIT_IMPORT_UPLOAD_FILE: 'kit_import_upload_file',
+	KITDEMO_APPLY_COMPLETED: 'kitdemo_apply_completed',
+	KITDEMO_APPLY_FAILED: 'kitdemo_apply_failed',
 };
 
 export const appsEventTrackingDispatch = ( command, eventParams ) => {
@@ -82,10 +84,25 @@ export class AppsEventTracking {
 		} );
 	}
 
-	static sendKitImportStatus( error = null ) {
+	static sendKitImportStatus( error = null, id = '', title = '', duration = '' ) {
+		const isError = !! error;
+		if ( isError ) {
+			this.dispatchEvent( EVENTS_MAP.KITDEMO_APPLY_FAILED, {
+				error_title: error?.message || 'Unknown error',
+				kit_id: id,
+				kit_title: title,
+			} );
+		} else {
+			this.dispatchEvent( EVENTS_MAP.KITDEMO_APPLY_COMPLETED, {
+				kit_id: id,
+				kit_title: title,
+				duration_s: duration,
+			} );
+		}
+
 		return this.dispatchEvent( EVENTS_MAP.KIT_IMPORT_STATUS, {
-			kit_import_status: ! error,
-			...( error && { kit_import_error: error.message } ),
+			kit_import_status: ! isError,
+			...( isError && { kit_import_error: error.message } ),
 		} );
 	}
 
