@@ -1,6 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function throttle< TArgs extends any[] >( fn: ( ...args: TArgs ) => void, wait: number ) {
+export function throttle< TArgs extends any[] >(
+	fn: ( ...args: TArgs ) => void,
+	wait: number,
+	shouldExecuteIgnoredCalls: boolean = false
+) {
 	let timer: ReturnType< typeof setTimeout > | null = null;
+	let ignoredExecution: boolean = false;
 
 	const cancel = () => {
 		if ( ! timer ) {
@@ -19,6 +24,7 @@ export function throttle< TArgs extends any[] >( fn: ( ...args: TArgs ) => void,
 
 	const run = ( ...args: TArgs ) => {
 		if ( timer ) {
+			ignoredExecution = true;
 			return;
 		}
 
@@ -26,6 +32,12 @@ export function throttle< TArgs extends any[] >( fn: ( ...args: TArgs ) => void,
 
 		timer = setTimeout( () => {
 			timer = null;
+
+			if ( ignoredExecution && shouldExecuteIgnoredCalls ) {
+				fn( ...args );
+			}
+
+			ignoredExecution = false;
 		}, wait );
 	};
 

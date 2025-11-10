@@ -111,7 +111,7 @@ function createComponentView(
 			}
 		}
 
-		handleDblClick(e: MouseEvent) {
+		handleDblClick( e: MouseEvent ) {
 			e.stopPropagation();
 
 			this.switchDocument();

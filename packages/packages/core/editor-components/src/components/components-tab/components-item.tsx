@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
-import { dropElement, type DropElementParams } from '@elementor/editor-elements';
+import { dropElement, type DropElementParams, type V1ElementData } from '@elementor/editor-elements';
 import { ComponentsIcon } from '@elementor/icons';
 import { Box, ListItemButton, ListItemIcon, ListItemText, Typography } from '@elementor/ui';
 
 import { loadComponentsStyles } from '../../store/load-components-styles';
-import { type Component, type Element } from '../../types';
+import { type Component } from '../../types';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
 import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
 
@@ -17,7 +17,7 @@ export const ComponentItem = ( { component }: { component: Component } ) => {
 	};
 
 	const handleDragEnd = () => {
-		loadComponentsStyles( [ componentModel as Element ] );
+		loadComponentsStyles( [ componentModel as V1ElementData ] );
 
 		endDragElementFromPanel();
 	};
@@ -53,7 +53,7 @@ const addComponentToPage = ( model: DropElementParams[ 'model' ] ) => {
 		throw new Error( `Can't find container to drop new component instance at` );
 	}
 
-	loadComponentsStyles( [ model as Element ] );
+	loadComponentsStyles( [ model as V1ElementData ] );
 
 	dropElement( {
 		containerId: container.id,

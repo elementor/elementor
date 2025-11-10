@@ -1,43 +1,81 @@
 import { useEffect, useState } from 'react';
-import { debounce, throttle } from '@elementor/utils';
+import { throttle } from '@elementor/utils';
 
 export function useElementRect( element: HTMLElement | null ) {
 	const [ rect, setRect ] = useState< DOMRect >( new DOMRect( 0, 0, 0, 0 ) );
 
+	const onChange = throttle(
+		() => {
+			setRect( element?.getBoundingClientRect() ?? new DOMRect( 0, 0, 0, 0 ) );
+		},
+		20,
+		true
+	);
+
+	useScrollListener( { element, onChange } );
+	useResizeListener( { element, onChange } );
+	useMutationsListener( { element, onChange } );
+
+	useEffect(
+		() => () => {
+			onChange.cancel();
+		},
+		[ onChange ]
+	);
+
+	return rect;
+}
+
+type ListenerProps = {
+	element: HTMLElement | null;
+	onChange: () => void;
+};
+
+function useScrollListener( { element, onChange }: ListenerProps ) {
 	useEffect( () => {
 		if ( ! element ) {
-			setRect( new DOMRect( 0, 0, 0, 0 ) );
 			return;
 		}
 
-		const throttledUpdated = throttle( () => {
-			setRect( element.getBoundingClientRect() );
-		}, 10 );
+		const win = element.ownerDocument?.defaultView;
+		win?.addEventListener( 'scroll', onChange, { passive: true } );
 
-		const debouncedUpdate = debounce( () => {
-			setRect( element.getBoundingClientRect() );
-		}, 20 );
+		return () => {
+			win?.removeEventListener( 'scroll', onChange );
+		};
+	}, [ element, onChange ] );
+}
 
-		debouncedUpdate();
+function useResizeListener( { element, onChange }: ListenerProps ) {
+	useEffect( () => {
+		if ( ! element ) {
+			return;
+		}
 
-		const resizeObserver = new ResizeObserver( debouncedUpdate );
+		const resizeObserver = new ResizeObserver( onChange );
 		resizeObserver.observe( element );
 
-		const mutationObserver = new MutationObserver( throttledUpdated );
-		mutationObserver.observe( element, { childList: true, subtree: true } );
-
 		const win = element.ownerDocument?.defaultView;
-		win?.addEventListener( 'scroll', throttledUpdated, { passive: true } );
-		win?.addEventListener( 'resize', debouncedUpdate, { passive: true } );
+		win?.addEventListener( 'resize', onChange, { passive: true } );
 
 		return () => {
 			resizeObserver.disconnect();
-			mutationObserver.disconnect();
-			
-			win?.removeEventListener( 'scroll', throttledUpdated );
-			win?.removeEventListener( 'resize', debouncedUpdate );
+			win?.removeEventListener( 'resize', onChange );
 		};
-	}, [ element ] );
+	}, [ element, onChange ] );
+}
 
-	return rect;
+function useMutationsListener( { element, onChange }: ListenerProps ) {
+	useEffect( () => {
+		if ( ! element ) {
+			return;
+		}
+
+		const mutationObserver = new MutationObserver( onChange );
+		mutationObserver.observe( element, { childList: true, subtree: true } );
+
+		return () => {
+			mutationObserver.disconnect();
+		};
+	}, [ element, onChange ] );
 }

@@ -105,7 +105,6 @@ function getRoundedRectPath( rect: DOMRect, viewport: Window, borderRadius: numb
 	return path.replace( /\s{2,}/g, ' ' );
 }
 
-
 /**
  * when switching to another document id, we get a document handler when hovering
  * this functionality originates in Pro, and is intended for editing templates, e.g. header/footer
@@ -131,7 +130,5 @@ function BlockEditPage() {
 	}
 	`;
 
-	return (
-		<style data-e-style-id="e-block-v3-document-handles-styles">{ blockV3DocumentHandlesStyles }</style>
-	);
+	return <style data-e-style-id="e-block-v3-document-handles-styles">{ blockV3DocumentHandlesStyles }</style>;
 }

@@ -162,4 +162,55 @@ describe( 'throttle', () => {
 		// Assert.
 		expect( throttledFn.pending() ).toBe( false );
 	} );
+
+	it( 'should execute ignored calls on timeout when shouldExecuteIgnoredCalls is true', () => {
+		// Arrange.
+		const waitTime = 100;
+		let value = 0;
+		const fn = () => value++;
+		const shouldExecuteIgnoredCalls = true;
+
+		// Act.
+		const throttledFn = throttle( fn, waitTime, shouldExecuteIgnoredCalls );
+
+		throttledFn();
+
+		// Assert.
+		expect( value ).toBe( 1 );
+
+		// Act.
+		throttledFn();
+		throttledFn();
+
+		// Assert.
+		expect( value ).toBe( 1 );
+
+		// Act.
+		jest.advanceTimersByTime( 100 );
+
+		// Assert.
+		expect( value ).toBe( 2 );
+	} );
+
+	it( 'should not execute on timeout when shouldExecuteIgnoredCalls is true but no calls were ignored', () => {
+		// Arrange.
+		const waitTime = 100;
+		let value = 0;
+		const fn = () => value++;
+		const shouldExecuteIgnoredCalls = true;
+
+		// Act.
+		const throttledFn = throttle( fn, waitTime, shouldExecuteIgnoredCalls );
+
+		throttledFn();
+
+		// Assert.
+		expect( value ).toBe( 1 );
+
+		// Act.
+		jest.advanceTimersByTime( 100 );
+
+		// Assert.
+		expect( value ).toBe( 1 );
+	} );
 } );

@@ -217,13 +217,13 @@ function mockDocument( id: number, isComponent: boolean = false ) {
 					dataset: isComponent
 						? {
 								id: id.toString(),
-						}
+						  }
 						: {},
 					children: [
 						createDOMElement( {
 							tag: 'div',
-							children: [ 
-								createDOMElement( { tag: 'div' } ) // the component's actual root element
+							children: [
+								createDOMElement( { tag: 'div' } ), // the component's actual root element
 							],
 						} ),
 					],

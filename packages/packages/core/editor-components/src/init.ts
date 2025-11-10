@@ -5,6 +5,7 @@ import {
 	settingsTransformersRegistry,
 } from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
+import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { __privateListenTo as listenTo, commandStartEvent, registerDataHook } from '@elementor/editor-v1-adapters';
@@ -22,7 +23,7 @@ import { componentsStylesProvider } from './store/components-styles-provider';
 import { loadComponentsStyles } from './store/load-components-styles';
 import { removeComponentStyles } from './store/remove-component-styles';
 import { slice } from './store/store';
-import { type Element, type ExtendedWindow } from './types';
+import { type ExtendedWindow } from './types';
 import { beforeSave } from './utils/before-save';
 
 const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
@@ -71,7 +72,7 @@ export function init() {
 			removeComponentStyles( id );
 		}
 
-		loadComponentsStyles( ( config?.elements as Element[] ) ?? [] );
+		loadComponentsStyles( ( config?.elements as V1ElementData[] ) ?? [] );
 	} );
 
 	settingsTransformersRegistry.register( 'component-id', componentIdTransformer );
