@@ -10,8 +10,8 @@ use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Inline_Editing_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
@@ -49,7 +49,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'paragraph' => Inline_Editing_Prop_Type::make()
+			'paragraph' => String_Prop_Type::make()
 				->default( __( 'Type your paragraph here', 'elementor' ) ),
 
 			'link' => Link_Prop_Type::make(),
