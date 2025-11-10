@@ -143,11 +143,6 @@ class Module extends BaseModule {
 		];
 	}
 
-	/**
-	 * Register frontend scripts for interactions.
-	 *
-	 * @return void
-	 */
 	private function register_frontend_scripts() {
 		wp_register_script(
 			'motion-js',
@@ -166,11 +161,6 @@ class Module extends BaseModule {
 		);
 	}
 
-	/**
-	 * Enqueue interactions scripts.
-	 *
-	 * @return void
-	 */
 	public function enqueue_interactions(): void {
 		wp_enqueue_script( 'motion-js' );
 		wp_enqueue_script( 'elementor-interactions' );
@@ -182,12 +172,7 @@ class Module extends BaseModule {
 		);
 	}
 
-	/**
-	 * Enqueue editor scripts for interactions.
-	 *
-	 * @return void
-	 */
-	public function enqueue_editor_scripts() {
+public function enqueue_editor_scripts() {
 		wp_add_inline_script(
 			'elementor-common',
 			'window.ElementorInteractionsConfig = ' . wp_json_encode( $this->get_config() ) . ';',
@@ -257,12 +242,6 @@ class Module extends BaseModule {
 		return $elements;
 	}
 
-	/**
-	 * Sanitize document data before saving.
-	 *
-	 * @param array $data Document data to sanitize.
-	 * @return array Sanitized document data.
-	 */
 	private function sanitize_document_data( $data ) {
 		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
 			$data['elements'] = $this->sanitize_elements_interactions( $data['elements'] );
