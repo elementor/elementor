@@ -72,11 +72,21 @@ register( {
 
 					return getTabId( index );
 				},
-				':class'() {
+				'x-effect'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
 					const tabId = getTabId( index );
+					const isActive = this.activeTab === tabId;
 
-					return this.activeTab === tabId ? SELECTED_CLASS : '';
+					if ( isActive ) {
+						this.$el.style.removeProperty( 'display' );
+						this.$el.removeAttribute( 'hidden' );
+
+						requestAnimationFrame( () => {
+							this.$el.classList.add( SELECTED_CLASS );
+						} );
+					} else {
+						this.$el.classList.remove( SELECTED_CLASS );
+					}
 				},
 				'x-show'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
