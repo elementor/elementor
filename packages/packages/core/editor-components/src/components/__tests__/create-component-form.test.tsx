@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { createMockElement, renderWithStore } from 'test-utils';
-import {
-	getElementLabel,
-	replaceElement,
-	type V1ElementModelProps,
-} from '@elementor/editor-elements';
+import { getElementLabel, replaceElement, type V1ElementModelProps } from '@elementor/editor-elements';
 import { __createStore, __dispatch, __registerSlice, type SliceState, type Store } from '@elementor/store';
 import { __getState as getState } from '@elementor/store';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

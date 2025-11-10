@@ -24,7 +24,7 @@ import { removeComponentStyles } from './store/remove-component-styles';
 import { slice } from './store/store';
 import { type Element, type ExtendedWindow } from './types';
 import { beforeSave } from './utils/before-save';
-import { onElementCreation } from './utils/tracking';
+import { onElementDrop } from './utils/tracking';
 
 const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
 
@@ -45,7 +45,7 @@ export function init() {
 		return true;
 	} );
 
-	registerDataHook< Record< string, unknown >, V1Element >( 'after', 'document/elements/create', onElementCreation );
+	registerDataHook< Record< string, unknown >, V1Element >( 'after', 'preview/drop', onElementDrop );
 
 	( window as unknown as ExtendedWindow ).elementorCommon.__beforeSave = beforeSave;
 

@@ -19,7 +19,7 @@ export const trackComponentEvent = ( { action, ...data }: ComponentEventData ) =
 	dispatchEvent?.( name, data );
 };
 
-export const onElementCreation = ( _args: unknown, result: V1Element ) => {
+export const onElementDrop = ( _args: unknown, result: V1Element ) => {
 	if ( result.model.get( 'widgetType' ) === 'e-component' ) {
 		const editorSettings = result.model.get( 'editor_settings' );
 		const componentName = editorSettings?.title;

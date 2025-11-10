@@ -89,7 +89,10 @@ function createComponentView(
 							icon: 'eicon-edit',
 							title: () => __( 'Edit Component', 'elementor' ),
 							isEnabled: () => true,
-							callback: () => this.switchDocument(),
+							callback: (
+								_: unknown,
+								eventData: { location: string; secondaryLocation: string; trigger: string }
+							) => this.editComponent( eventData ),
 						},
 					],
 				},
@@ -114,7 +117,15 @@ function createComponentView(
 			}
 		}
 
-		editComponent( { trigger, secondaryLocation }: { trigger: string; secondaryLocation: string } ) {
+		editComponent( {
+			trigger,
+			location,
+			secondaryLocation,
+		}: {
+			trigger: string;
+			location: string;
+			secondaryLocation: string;
+		} ) {
 			this.switchDocument();
 
 			const editorSettings = this.model.get( 'editor_settings' );
@@ -123,7 +134,7 @@ function createComponentView(
 				action: 'edited',
 				component_uuid: editorSettings?.component_uuid,
 				component_name: editorSettings?.title,
-				location: this.eventsManagerConfig.locations.canvas,
+				location,
 				secondary_location: secondaryLocation,
 				trigger,
 			} );
@@ -132,7 +143,12 @@ function createComponentView(
 		events() {
 			return {
 				...super.events(),
-				dblclick: this.switchDocument,
+				dblclick: () =>
+					this.editComponent( {
+						trigger: this.eventsManagerConfig.triggers.doubleClick,
+						location: this.eventsManagerConfig.locations.canvas,
+						secondaryLocation: this.eventsManagerConfig.secondaryLocations.canvasElement,
+					} ),
 			};
 		}
 
