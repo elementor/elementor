@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Base;
 
-use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
@@ -20,6 +19,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Required_Setting;
 	use Concerns\Has_Settings;
 	use Concerns\Has_Transformable_Validation;
+	use Concerns\Has_Initial_Value;
 
 	protected Prop_Type $item_type;
 
@@ -105,6 +105,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 			'settings' => (object) $this->get_settings(),
 			'item_prop_type' => $this->get_item_type(),
 			'dependencies' => $this->get_dependencies(),
+			'initial_value' => $this->get_initial_value(),
 		];
 	}
 

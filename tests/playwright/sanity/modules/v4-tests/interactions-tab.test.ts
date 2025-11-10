@@ -104,7 +104,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect( directionOption ).toBeVisible();
 			await directionOption.click();
 
-			await expect( interactionTag ).toContainText( 'Scroll Into View - Slide Out Top (100ms)' );
+			await expect( interactionTag ).toContainText( 'Scroll into view: Slide Out Top (100ms/0ms)' );
 
 			await page.locator( 'body' ).click();
 		} );
