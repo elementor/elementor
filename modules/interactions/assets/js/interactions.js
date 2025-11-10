@@ -26,28 +26,45 @@ function getKeyframes( effect, type, direction ) {
 }
 
 function parseAnimationName( name ) {
-	const [ trigger, effect, type, direction ] = name.split( '-' );
-	return { trigger, effect, type, direction: direction || null };
+	const [ trigger, effect, type, direction, duration, delay ] = name.split( '-' );
+	return {
+		trigger,
+		effect,
+		type,
+		direction: direction || null,
+		duration: duration ? parseInt( duration, 10 ) : config.defaultDuration,
+		delay: delay ? parseInt( delay, 10 ) : config.defaultDelay,
+	};
 }
 
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
 	const options = {
-		duration: config.defaultDuration,
-		delay: config.defaultDelay,
+		duration: animConfig.duration / 1000,
+		delay: animConfig.delay / 1000,
 		easing: config.easing,
 	};
 
 	const viewOptions = { amount: 0.1, root: null };
 
 	if ( 'scrollOut' === animConfig.trigger ) {
-		inViewFunc( element, ( info ) => {
-			if ( ! info.isIntersecting ) {
+		inViewFunc( element, () => {
+			const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
+			animateFunc( element, resetKeyframes, { duration: 0 } );
+
+			return () => {
 				animateFunc( element, keyframes, options );
-			}
+			};
 		}, viewOptions );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
-		inViewFunc( element, () => animateFunc( element, keyframes, options ), viewOptions );
+		inViewFunc( element, () => {
+			animateFunc( element, keyframes, options );
+
+			return () => {
+				const resetKeyframes = getKeyframes( animConfig.effect, 'out', animConfig.direction );
+				animateFunc( element, resetKeyframes, { duration: 0 } );
+			};
+		}, viewOptions );
 	} else {
 		animateFunc( element, keyframes, options );
 	}
