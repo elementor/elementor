@@ -5,7 +5,6 @@
 				{% if settings.link.href %}
 						<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
 								{{ settings.paragraph | striptags(allowed_tags) | raw }}
-
 						</a>
 				{% else %}
 						{{ settings.paragraph | striptags(allowed_tags) | raw }}
