@@ -13,10 +13,10 @@ describe( 'PredefinedInteractionsList', () => {
 	beforeEach( () => {
 		mockedGetInteractionsConfig.mockReturnValue( {
 			animationOptions: [
-				{ value: 'load-fade-in--300-0', label: 'Page Load - Fade In (300ms/0ms)' },
-				{ value: 'load-fade-in--500-0', label: 'Page Load - Fade In (500ms/0ms)' },
-				{ value: 'scrollIn-slide-in-top-600-0', label: 'Scroll Into View - Slide In Top (600ms/0ms)' },
-				{ value: 'scrollOut-fade-out--800-200', label: 'Scroll Out Of View - Fade Out (800ms/200ms)' },
+				{ value: 'load-fade-in--300-0', label: 'On page load: Fade In (300ms/0ms)' },
+				{ value: 'load-fade-in--500-0', label: 'On page load: Fade In (500ms/0ms)' },
+				{ value: 'scrollIn-slide-in-top-600-0', label: 'Scroll into view: Slide In Top (600ms/0ms)' },
+				{ value: 'scrollOut-fade-out--800-200', label: 'Scroll out of view: Fade Out (800ms/200ms)' },
 			],
 			constants: {
 				defaultDuration: 300,
@@ -33,10 +33,10 @@ describe( 'PredefinedInteractionsList', () => {
 	} );
 
 	test.each( [
-		[ 'load-fade-in--300-0', 'Page Load - Fade In (300ms/0ms)' ],
-		[ 'load-fade-in--500-0', 'Page Load - Fade In (500ms/0ms)' ],
-		[ 'scrollOut-fade-out--800-200', 'Scroll Out Of View - Fade Out (800ms/200ms)' ],
-		[ 'scrollIn-slide-in-top-600-0', 'Scroll Into View - Slide In Top (600ms/0ms)' ],
+		[ 'load-fade-in--300-0', 'On page load: Fade In (300ms/0ms)' ],
+		[ 'load-fade-in--500-0', 'On page load: Fade In (500ms/0ms)' ],
+		[ 'scrollOut-fade-out--800-200', 'Scroll out of view: Fade Out (800ms/200ms)' ],
+		[ 'scrollIn-slide-in-top-600-0', 'Scroll into view: Slide In Top (600ms/0ms)' ],
 	] )( 'displays formatted label "%s" for interaction "%s"', ( selectedInteraction, expectedLabel ) => {
 		// Arrange.
 		const onSelectInteraction = jest.fn();

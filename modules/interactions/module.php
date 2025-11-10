@@ -62,9 +62,9 @@ class Module extends BaseModule {
 	private function get_label( $key, $value ) {
 		$special_labels = [
 			'trigger' => [
-				'load' => __( 'Page Load', 'elementor' ),
-				'scrollIn' => __( 'Scroll Into View', 'elementor' ),
-				'scrollOut' => __( 'Scroll Out of View', 'elementor' ),
+				'load' => __( 'On page load', 'elementor' ),
+				'scrollIn' => __( 'Scroll into view', 'elementor' ),
+				'scrollOut' => __( 'Scroll out of view', 'elementor' ),
 			],
 		];
 
@@ -90,7 +90,7 @@ class Module extends BaseModule {
 							foreach ( $delays as $delay ) {
 								$value = "{$trigger}-{$effect}-{$type}-{$direction}-{$duration}-{$delay}";
 								$label = sprintf(
-									'%s - %s %s %s (%dms/%dms)',
+									'%s: %s %s %s (%dms/%dms)',
 									$this->get_label( 'trigger', $trigger ),
 									$this->get_label( 'effect', $effect ),
 									$this->get_label( 'type', $type ),
@@ -110,7 +110,7 @@ class Module extends BaseModule {
 						foreach ( $delays as $delay ) {
 							$value = "{$trigger}-{$effect}-{$type}--{$duration}-{$delay}";
 							$label = sprintf(
-								'%s - %s %s (%dms/%dms)',
+								'%s: %s %s (%dms/%dms)',
 								$this->get_label( 'trigger', $trigger ),
 								$this->get_label( 'effect', $effect ),
 								$this->get_label( 'type', $type ),
