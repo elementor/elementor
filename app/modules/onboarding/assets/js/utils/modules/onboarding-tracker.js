@@ -1061,10 +1061,36 @@ class OnboardingTracker {
 		StorageManager.remove( storageKey );
 	}
 
+	startSessionRecordingIfNeeded( stepNumber ) {
+		const HELLO_BIZ_STEP = 2;
+
+		if ( HELLO_BIZ_STEP !== stepNumber ) {
+			return;
+		}
+
+		if ( ! elementorCommon?.eventsManager?.isSessionRecordingInProgress ) {
+			return;
+		}
+
+		if ( elementorCommon.eventsManager.isSessionRecordingInProgress() ) {
+			return;
+		}
+
+		EventDispatcher.dispatch( ONBOARDING_EVENTS_MAP.SESSION_REPLAY_START, {
+			location: 'plugin_onboarding',
+			step_number: stepNumber,
+			step_name: this.getStepName( stepNumber ),
+		} );
+
+		elementorCommon.eventsManager.startSessionRecording();
+	}
+
 	onStepLoad( currentStep ) {
 		const stepNumber = this.getStepNumber( currentStep );
 
 		TimingManager.trackStepStartTime( stepNumber );
+
+		this.startSessionRecordingIfNeeded( stepNumber );
 
 		if ( 1 === stepNumber || 'account' === currentStep ) {
 			this.sendExperimentStarted( 101 );
