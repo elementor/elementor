@@ -4,7 +4,7 @@ import { EyeIcon, XIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, IconButton, Popover, Stack, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { usePopupStateContext } from '../contexts/popup-state-contex';
+import { usePopupStateContext } from '../contexts/popup-state-context';
 import { formatInteractionLabel } from '../utils/format-interaction-label';
 import { Header } from './header';
 import { InteractionDetails } from './interaction-details';
