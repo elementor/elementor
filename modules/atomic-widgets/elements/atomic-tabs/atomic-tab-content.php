@@ -151,7 +151,6 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
-			'data-id' => $this->get_id(),
 			'data-interactions' => json_encode( $this->interactions ),
 			'x-bind' => 'tabContent',
 			'id' => Atomic_Tabs::get_tab_content_id( $tabs_id, $index ),
