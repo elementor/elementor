@@ -48,13 +48,23 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.1, root: null };
 
 	if ( 'scrollOut' === animConfig.trigger ) {
-		inViewFunc( element, ( info ) => {
-			if ( ! info.isIntersecting ) {
+		inViewFunc( element, () => {
+			const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
+			animateFunc( element, resetKeyframes, { duration: 0 } );
+
+			return () => {
 				animateFunc( element, keyframes, options );
-			}
+			};
 		}, viewOptions );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
-		inViewFunc( element, () => animateFunc( element, keyframes, options ), viewOptions );
+		inViewFunc( element, () => {
+			animateFunc( element, keyframes, options );
+
+			return () => {
+				const resetKeyframes = getKeyframes( animConfig.effect, 'out', animConfig.direction );
+				animateFunc( element, resetKeyframes, { duration: 0 } );
+			};
+		}, viewOptions );
 	} else {
 		animateFunc( element, keyframes, options );
 	}
