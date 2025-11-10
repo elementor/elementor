@@ -1,0 +1,325 @@
+---
+description: React and TypeScript development rules
+globs: ["**/*.tsx", "**/*.jsx", "**/*.ts", "**/*.js"]
+alwaysApply: true
+---
+
+# React & TypeScript Development Rules
+
+## React Best Practices
+
+### Component Design
+- Use functional components with hooks
+- Keep components small and focused
+- Use composition over inheritance
+- Prefer controlled components
+
+### State Management
+- Use local state when possible
+- Lift state up when needed
+- Use context for shared state
+- Avoid prop drilling
+
+### Performance
+- Use React.memo for expensive components
+- Use useMemo for expensive calculations
+- Use useCallback for stable function references
+- Avoid unnecessary re-renders
+
+## TypeScript Standards
+
+### Type Definitions
+- Use strict TypeScript configuration
+- Define interfaces for all props
+- Use union types for variants
+- Avoid `any` type unless absolutely necessary
+
+### Type Safety
+- Enable strict null checks
+- Use proper type guards
+- Define return types for functions
+- Use generic types when appropriate
+
+## Elementor-Specific Patterns
+
+### Pluggable Components
+```typescript
+// Register component
+const MyComponent = () => <div>My Component</div>;
+locations.register('editor.panel.item', MyComponent);
+
+// Use component
+const PanelItem = () => {
+  const components = locations.get('editor.panel.item');
+  return (
+    <div>
+      {components.map((Component, index) => (
+        <Component key={index} />
+      ))}
+    </div>
+  );
+};
+```
+
+### Hook Patterns
+```typescript
+// Custom hook for editor state
+export const useEditorState = () => {
+  const [state, setState] = useState<EditorState>(initialState);
+  
+  const updateState = useCallback((updates: Partial<EditorState>) => {
+    setState(prev => ({ ...prev, ...updates }));
+  }, []);
+
+  return { state, updateState };
+};
+```
+
+### API Integration
+```typescript
+// Type-safe API calls
+interface ElementAPI {
+  getElement(id: string): Promise<Element>;
+  updateElement(id: string, props: ElementProps): Promise<void>;
+}
+
+const useElementAPI = (): ElementAPI => {
+  // Implementation
+};
+```
+
+## Component Patterns
+
+### Props Interface
+```typescript
+interface ButtonProps {
+  children: React.ReactNode;
+  variant?: 'primary' | 'secondary';
+  size?: 'small' | 'medium' | 'large';
+  onClick?: () => void;
+  disabled?: boolean;
+}
+
+const Button: React.FC<ButtonProps> = ({
+  children,
+  variant = 'primary',
+  size = 'medium',
+  onClick,
+  disabled = false,
+}) => {
+  // Component implementation
+};
+```
+
+### Event Handlers
+```typescript
+const handleClick = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
+  event.preventDefault();
+  onClick?.();
+}, [onClick]);
+
+const handleChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+  const value = event.target.value;
+  setValue(value);
+}, []);
+```
+
+### Conditional Rendering
+```typescript
+// Use early returns for clarity
+const UserProfile = ({ user }: { user: User | null }) => {
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <div>
+      <h1>{user.name}</h1>
+      <p>{user.email}</p>
+    </div>
+  );
+};
+
+// Use logical operators for simple conditions
+const StatusIndicator = ({ isActive }: { isActive: boolean }) => (
+  <div>
+    {isActive && <span className="active">Active</span>}
+    {!isActive && <span className="inactive">Inactive</span>}
+  </div>
+);
+```
+
+## State Management Patterns
+
+### Local State
+```typescript
+const [count, setCount] = useState(0);
+const [isLoading, setIsLoading] = useState(false);
+const [error, setError] = useState<string | null>(null);
+```
+
+### Derived State
+```typescript
+const filteredItems = useMemo(() => 
+  items.filter(item => 
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  ), [items, searchTerm]
+);
+
+const totalPrice = useMemo(() => 
+  items.reduce((sum, item) => sum + item.price, 0), 
+  [items]
+);
+```
+
+### Context Pattern
+```typescript
+interface EditorContextType {
+  currentDocument: Document | null;
+  selectedElement: Element | null;
+  updateDocument: (document: Document) => void;
+}
+
+const EditorContext = createContext<EditorContextType | null>(null);
+
+export const useEditor = () => {
+  const context = useContext(EditorContext);
+  if (!context) {
+    throw new Error('useEditor must be used within EditorProvider');
+  }
+  return context;
+};
+```
+
+## Error Handling
+
+### Error Boundaries
+```typescript
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div>Something went wrong.</div>;
+    }
+
+    return this.props.children;
+  }
+}
+```
+
+### Async Error Handling
+```typescript
+const useAsyncOperation = () => {
+  const [state, setState] = useState<{
+    data: any | null;
+    loading: boolean;
+    error: string | null;
+  }>({
+    data: null,
+    loading: false,
+    error: null,
+  });
+
+  const execute = useCallback(async (operation: () => Promise<any>) => {
+    setState(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      const data = await operation();
+      setState({ data, loading: false, error: null });
+    } catch (error) {
+      setState(prev => ({ 
+        ...prev, 
+        loading: false, 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      }));
+    }
+  }, []);
+
+  return { ...state, execute };
+};
+```
+
+## Performance Optimization
+
+### Memoization
+```typescript
+const ExpensiveComponent = React.memo(({ data }: { data: ComplexData }) => {
+  const processedData = useMemo(() => 
+    processComplexData(data), 
+    [data]
+  );
+
+  const handleClick = useCallback(() => {
+    // Handle click
+  }, []);
+
+  return <div onClick={handleClick}>{processedData}</div>;
+});
+```
+
+### Lazy Loading
+```typescript
+const LazyComponent = React.lazy(() => import('./LazyComponent'));
+
+const App = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <LazyComponent />
+  </Suspense>
+);
+```
+
+## Testing Patterns
+
+### Component Testing
+```typescript
+import { render, screen, fireEvent } from '@testing-library/react';
+import { Button } from './Button';
+
+describe('Button', () => {
+  it('should render with correct text', () => {
+    render(<Button>Click me</Button>);
+    expect(screen.getByText('Click me')).toBeInTheDocument();
+  });
+
+  it('should call onClick when clicked', () => {
+    const handleClick = jest.fn();
+    render(<Button onClick={handleClick}>Click me</Button>);
+    
+    fireEvent.click(screen.getByText('Click me'));
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+});
+```
+
+### Hook Testing
+```typescript
+import { renderHook, act } from '@testing-library/react';
+import { useCounter } from './useCounter';
+
+describe('useCounter', () => {
+  it('should increment counter', () => {
+    const { result } = renderHook(() => useCounter());
+    
+    act(() => {
+      result.current.increment();
+    });
+    
+    expect(result.current.count).toBe(1);
+  });
+});
+```
