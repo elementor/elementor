@@ -28,6 +28,7 @@ export type Dependency = {
 
 type BasePropType< TValue > = {
 	default?: TValue | null;
+	initial_value?: TValue | null;
 	settings: Record< string, unknown >;
 	meta: Record< string, unknown >;
 	dependencies?: Dependency;
