@@ -154,10 +154,17 @@ class Unified_Widget_Conversion_Service {
 	}
 
 	private function filter_widgets_for_output( array $widgets, string $selector ): array {
-		$class_name = ltrim( $selector, '.' );
+		// FIXED: Support tag selectors, not just class selectors
 		$target_widgets = [];
 
-		$this->find_widgets_matching_class_recursively( $widgets, $class_name, $target_widgets );
+		// Try class-based matching first (for backward compatibility)
+		if ( strpos( $selector, '.' ) === 0 ) {
+			$class_name = ltrim( $selector, '.' );
+			$this->find_widgets_matching_class_recursively( $widgets, $class_name, $target_widgets );
+		} else {
+			// Tag selector or other - find widgets matching the selector
+			$target_widgets = $this->find_widgets_by_selector( $widgets, $selector );
+		}
 
 		if ( empty( $target_widgets ) ) {
 			error_log( "WIDGET_FILTERING: No widgets found matching selector {$selector}, returning all widgets" );
@@ -165,7 +172,38 @@ class Unified_Widget_Conversion_Service {
 		}
 
 		error_log( "WIDGET_FILTERING: Found " . count( $target_widgets ) . " widgets matching selector {$selector}" );
+		error_log( "WIDGET_FILTERING: Returning matched widgets directly (no child extraction)" );
+		
+		// FIXED: Return matched widgets directly - both small and large selectors should work identically
 		return $target_widgets;
+	}
+
+	private function is_container_widget( array $widget ): bool {
+		// Check if widget is a container type (e-div-block, e-flexbox)
+		$widget_type = $widget['widget_type'] ?? '';
+		return in_array( $widget_type, [ 'e-div-block', 'e-flexbox' ], true );
+	}
+
+	private function find_widgets_by_selector( array $widgets, string $selector ): array {
+		// Find widgets matching tag-based selectors (main, article, h1, etc.)
+		$matched_widgets = [];
+		
+		foreach ( $widgets as $widget ) {
+			$original_tag = $widget['original_tag'] ?? '';
+			
+			// Match by tag name
+			if ( $original_tag === $selector ) {
+				$matched_widgets[] = $widget;
+			}
+			
+			// Recursively search children
+			if ( ! empty( $widget['children'] ) ) {
+				$child_matches = $this->find_widgets_by_selector( $widget['children'], $selector );
+				$matched_widgets = array_merge( $matched_widgets, $child_matches );
+			}
+		}
+		
+		return $matched_widgets;
 	}
 
 	private function find_widgets_matching_class_recursively( array $widgets, string $class_name, array &$target_widgets ): void {
@@ -292,32 +330,38 @@ class Unified_Widget_Conversion_Service {
 		$element_styles = [];
 		$reset_element_styles = [];
 		foreach ( $widgets as $widget ) {
+			// FIXED: Process all widgets, even those without resolved_styles
+			// Child widgets may not have direct styles but still need to be processed
 			if ( empty( $widget['resolved_styles'] ) ) {
-				continue;
+				error_log( "STYLE_EXTRACTION: Processing widget without resolved_styles: " . ( $widget['widget_type'] ?? 'unknown' ) );
 			}
-			foreach ( $widget['resolved_styles'] as $property => $style_data ) {
-				$source = $style_data['source'] ?? 'unknown';
-				// Group styles by their source type for widget_creator compatibility
-				switch ( $source ) {
-					case 'id':
-						$id_styles[] = $style_data;
-						break;
-					case 'inline':
-						$inline_styles[] = $style_data;
-						break;
-					case 'css-selector':
-					case 'class':
-						$css_selector_styles[] = $style_data;
-						break;
-					case 'element':
-						$element_styles[] = $style_data;
-						break;
-					case 'reset-element':
-						$reset_element_styles[] = $style_data;
-						break;
+			// Process resolved styles if they exist
+			if ( ! empty( $widget['resolved_styles'] ) ) {
+				foreach ( $widget['resolved_styles'] as $property => $style_data ) {
+					$source = $style_data['source'] ?? 'unknown';
+					// Group styles by their source type for widget_creator compatibility
+					switch ( $source ) {
+						case 'id':
+							$id_styles[] = $style_data;
+							break;
+						case 'inline':
+							$inline_styles[] = $style_data;
+							break;
+						case 'css-selector':
+						case 'class':
+							$css_selector_styles[] = $style_data;
+							break;
+						case 'element':
+							$element_styles[] = $style_data;
+							break;
+						case 'reset-element':
+							$reset_element_styles[] = $style_data;
+							break;
+					}
 				}
 			}
-			// Process child widgets recursively
+			
+			// ALWAYS process child widgets recursively, regardless of parent styles
 			if ( ! empty( $widget['children'] ) ) {
 				$child_styles = $this->extract_styles_by_source_from_widgets( $widget['children'] );
 				$id_styles = array_merge( $id_styles, $child_styles['id_styles'] );

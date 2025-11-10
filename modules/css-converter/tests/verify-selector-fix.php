@@ -131,3 +131,4 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 	echo wp_json_encode( verify_selector_fix(), JSON_PRETTY_PRINT );
 	exit;
 }
+

@@ -2,6 +2,7 @@
 namespace Elementor\Modules\CssConverter\Routes;
 
 use Elementor\Modules\CssConverter\Services\AtomicWidgets\Atomic_Widgets_Orchestrator;
+use Elementor\Modules\CssConverter\Services\Content\Intelligent_Content_Extractor;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -13,9 +14,11 @@ class Atomic_Widgets_Route {
 	private const ROUTE_BASE = 'atomic-widgets';
 
 	private $conversion_service;
+	private $content_extractor;
 
 	public function __construct() {
 		$this->conversion_service = null; // Initialize lazily
+		$this->content_extractor = new Intelligent_Content_Extractor();
 		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
 	}
 
@@ -150,8 +153,17 @@ class Atomic_Widgets_Route {
 		$selector = $request->get_param( 'selector' );
 		$auto_extracted_css_urls = [];
 
+		// Get extraction options early for passing to resolve_html_content
+		$extraction_strategy = $request->get_param( 'extraction_strategy' ) ?? 'semantic';
+		$content_options = $request->get_param( 'content_options' ) ?? [];
+		
+		$extraction_options = [
+			'extraction_strategy' => $extraction_strategy,
+			'content_options' => $content_options
+		];
+
 		error_log( "CSS Variables DEBUG: extract_conversion_parameters called with type=$type, selector=" . ( $selector ?? 'null' ) );
-		$html_result = $this->resolve_html_content( $type, $content, $html_param, $selector, $auto_extracted_css_urls );
+		$html_result = $this->resolve_html_content( $type, $content, $html_param, $selector, $auto_extracted_css_urls, $extraction_options );
 
 		$manual_css_urls = $request->get_param( 'cssUrls' ) ? $request->get_param( 'cssUrls' ) : [];
 		$all_css_urls = array_merge( $auto_extracted_css_urls, $manual_css_urls );
@@ -166,19 +178,32 @@ class Atomic_Widgets_Route {
 		}
 
 		$options = $request->get_param( 'options' ) ? $request->get_param( 'options' ) : [];
+		
+		// Add intelligent extraction options
+		$extraction_strategy = $request->get_param( 'extraction_strategy' ) ?? 'semantic';
+		$content_options = $request->get_param( 'content_options' ) ?? [];
+		
+		$options['extraction_strategy'] = $extraction_strategy;
+		$options['content_options'] = $content_options;
+		
 		if ( ! empty( $selector ) ) {
 			$options['selector'] = $selector;
 		}
 
 		if ( is_array( $html_result ) ) {
 			if ( isset( $html_result['full_html'] ) && isset( $html_result['selector'] ) ) {
-				// New approach: full HTML + selector for selective conversion
+				// Selector-based approach: full HTML + selector for selective conversion
 				$html = $html_result['full_html'];
 				$options['conversion_selector'] = $html_result['selector'];
+			} elseif ( isset( $html_result['selected_html'] ) ) {
+				// Intelligent extraction approach: extracted content
+				$html = $html_result['selected_html'];
+				$options['extraction_stats'] = $html_result['extraction_stats'] ?? [];
+				$options['content_quality_score'] = $html_result['content_quality_score'] ?? 0;
 			} else {
 				// Legacy approach: context classes (fallback)
 				$options['context_classes'] = $html_result['context_classes'] ?? [];
-				$html = $html_result['selected_html'];
+				$html = $html_result['selected_html'] ?? $html_result;
 			}
 		} else {
 			$html = $html_result;
@@ -194,15 +219,13 @@ class Atomic_Widgets_Route {
 		];
 	}
 
-	private function resolve_html_content( string $type, $content, $html_param, $selector = null, array &$auto_extracted_css_urls = [] ) {
+	private function resolve_html_content( string $type, $content, $html_param, $selector = null, array &$auto_extracted_css_urls = [], array $extraction_options = [] ) {
 		if ( 'url' === $type && ! empty( $content ) ) {
 			$html = $this->fetch_html_from_url( $content );
 
-			if ( ! empty( $selector ) ) {
-				$auto_extracted_css_urls = $this->extract_stylesheet_urls_from_html( $html, $content );
-			} else {
-				$auto_extracted_css_urls = [];
-			}
+			// FIXED: Always extract CSS URLs regardless of selector presence
+			// CSS context is essential for proper widget styling and global class creation
+			$auto_extracted_css_urls = $this->extract_stylesheet_urls_from_html( $html, $content );
 
 			if ( $this->is_elementor_website( $html ) ) {
 				error_log( "CSS Variables DEBUG: Elementor website detected, attempting to extract Kit CSS URL" );
@@ -217,17 +240,23 @@ class Atomic_Widgets_Route {
 				error_log( "CSS Variables DEBUG: Not an Elementor website, skipping Kit CSS extraction" );
 			}
 
-			// SIMPLIFIED APPROACH: Always return full HTML for CSS context
-			// If selector provided, mark it for selective widget conversion
+			// INTELLIGENT CONTENT EXTRACTION: Use semantic extraction when no selector provided
 			if ( ! empty( $selector ) ) {
+				// Specific selector provided - use targeted extraction
 				$inline_styles = $this->extract_inline_style_tags( $html );
 				return [
 					'full_html' => $inline_styles . $html,
 					'selector' => $selector,
 				];
+			} else {
+				// No selector - use robust fallback chain to find content
+				$best_selector = $this->find_best_available_selector( $html );
+				$inline_styles = $this->extract_inline_style_tags( $html );
+				return [
+					'full_html' => $inline_styles . $html,
+					'selector' => $best_selector,
+				];
 			}
-
-			return $html;
 		}
 
 		if ( $html_param ) {
@@ -235,6 +264,312 @@ class Atomic_Widgets_Route {
 		}
 
 		return $content ? $content : '';
+	}
+
+	private function find_best_available_selector( string $html ): string {
+		// FIXED: Prioritize content elements over container elements
+		// This ensures we get actual text content (h1, p) instead of empty containers (div, section)
+		$selector_chain = [
+			// Content elements first (these create proper widgets)
+			'h1, h2, h3, h4, h5, h6, p',  // Headings and paragraphs
+			'article h1, article h2, article h3, article p',  // Content within articles
+			'main h1, main h2, main h3, main p',  // Content within main
+			'.content h1, .content h2, .content h3, .content p',  // Content within content areas
+			
+			// Semantic containers (only if no content elements found)
+			'article',
+			'main', 
+			'[role="main"]',
+			
+			// Common content classes
+			'.main-content',
+			'.content',
+			'.post-content',
+			'.entry-content',
+			'.page-content',
+			'.site-content',
+			'.primary',
+			
+			// Generic content containers
+			'#content',
+			'#main',
+			'.main',
+			'.container',
+			
+			// Last resort - body content (will get everything)
+			'body'
+		];
+
+		$dom = $this->create_simple_dom( $html );
+		if ( ! $dom ) {
+			error_log( "FALLBACK_SELECTOR: Failed to create DOM, using body as fallback" );
+			return 'body';
+		}
+
+		$xpath = new \DOMXPath( $dom );
+
+		foreach ( $selector_chain as $selector ) {
+			try {
+				// Handle multiple selectors (comma-separated)
+				if ( strpos( $selector, ',' ) !== false ) {
+					$individual_selectors = array_map( 'trim', explode( ',', $selector ) );
+					foreach ( $individual_selectors as $individual_selector ) {
+						$xpath_query = $this->css_selector_to_xpath( $individual_selector );
+						$nodes = $xpath->query( $xpath_query );
+
+						if ( $nodes && $nodes->length > 0 ) {
+							$element = $nodes->item( 0 );
+							$text_length = strlen( trim( $element->textContent ) );
+							
+							// For content elements, require less text (25 chars minimum)
+							$min_length = $this->is_content_element( $individual_selector ) ? 25 : 50;
+							
+							if ( $text_length >= $min_length ) {
+								error_log( "FALLBACK_SELECTOR: Found suitable content selector '{$individual_selector}' with {$text_length} characters" );
+								return $individual_selector;
+							}
+						}
+					}
+				} else {
+					// Single selector
+					$xpath_query = $this->css_selector_to_xpath( $selector );
+					$nodes = $xpath->query( $xpath_query );
+
+					if ( $nodes && $nodes->length > 0 ) {
+						$element = $nodes->item( 0 );
+						$text_length = strlen( trim( $element->textContent ) );
+						
+						// Require at least some content (50 characters minimum)
+						if ( $text_length >= 50 ) {
+							error_log( "FALLBACK_SELECTOR: Found suitable selector '{$selector}' with {$text_length} characters of content" );
+							return $selector;
+						} else {
+							error_log( "FALLBACK_SELECTOR: Selector '{$selector}' found but insufficient content ({$text_length} chars)" );
+						}
+					} else {
+						error_log( "FALLBACK_SELECTOR: Selector '{$selector}' not found in HTML" );
+					}
+				}
+			} catch ( \Exception $e ) {
+				error_log( "FALLBACK_SELECTOR: Error testing selector '{$selector}': " . $e->getMessage() );
+				continue;
+			}
+		}
+
+		// Ultimate fallback - use body (will capture everything)
+		error_log( "FALLBACK_SELECTOR: No suitable content selector found, using 'body' as last resort" );
+		return 'body';
+	}
+
+	private function is_content_element( string $selector ): bool {
+		// Check if selector targets content elements (headings, paragraphs)
+		$content_elements = [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p' ];
+		foreach ( $content_elements as $element ) {
+			if ( strpos( $selector, $element ) !== false ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private function create_simple_dom( string $html ): ?\DOMDocument {
+		$dom = new \DOMDocument();
+		$previous_use_errors = libxml_use_internal_errors( true );
+		
+		try {
+			$success = $dom->loadHTML( '<?xml encoding="UTF-8">' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+			if ( ! $success ) {
+				return null;
+			}
+			return $dom;
+		} catch ( \Exception $e ) {
+			error_log( "FALLBACK_SELECTOR: DOM creation failed: " . $e->getMessage() );
+			return null;
+		} finally {
+			libxml_use_internal_errors( $previous_use_errors );
+		}
+	}
+
+	private function apply_intelligent_content_extraction( string $html, array $options = [] ): array {
+		// Get extraction options from request parameters
+		$extraction_strategy = $options['extraction_strategy'] ?? 'semantic';
+		$content_options = $options['content_options'] ?? [];
+		
+		$extraction_options = [
+			'extraction_strategy' => $extraction_strategy,
+			'max_sections' => $content_options['max_sections'] ?? 3,
+			'min_content_length' => $content_options['min_content_length'] ?? 100,
+			'exclude_navigation' => $content_options['exclude_navigation'] ?? true
+		];
+
+		error_log( "INTELLIGENT_EXTRACTION: Applying intelligent content extraction with strategy: {$extraction_strategy}" );
+		
+		$extraction_result = $this->content_extractor->extract_meaningful_sections( $html, $extraction_options );
+		
+		if ( empty( $extraction_result['selected_html'] ) || $extraction_result['extraction_method'] === 'fallback_full' ) {
+			error_log( "INTELLIGENT_EXTRACTION: No meaningful content found or full page requested, returning full HTML" );
+			return $html;
+		}
+
+		error_log( "INTELLIGENT_EXTRACTION: Successfully extracted content using method: " . $extraction_result['extraction_method'] );
+		error_log( "INTELLIGENT_EXTRACTION: Content quality score: " . ( $extraction_result['content_quality_score'] ?? 'N/A' ) );
+		error_log( "INTELLIGENT_EXTRACTION: Sections extracted: " . ( $extraction_result['sections_count'] ?? 'N/A' ) );
+		
+		// DEBUG: Log extracted HTML content to understand what's being processed
+		$extracted_html = $extraction_result['selected_html'] ?? '';
+		$html_length = strlen( $extracted_html );
+		$html_preview = substr( strip_tags( $extracted_html ), 0, 200 );
+		error_log( "INTELLIGENT_EXTRACTION: Extracted HTML length: {$html_length} characters" );
+		error_log( "INTELLIGENT_EXTRACTION: HTML preview (text only): " . $html_preview );
+		error_log( "INTELLIGENT_EXTRACTION: HTML structure sample: " . substr( $extracted_html, 0, 500 ) );
+
+		// Add inline styles to extracted content for CSS context
+		$inline_styles = $this->extract_inline_style_tags( $html );
+		$extraction_result['selected_html'] = $inline_styles . $extraction_result['selected_html'];
+
+		return $extraction_result;
+	}
+
+	private function apply_intelligent_content_extraction_with_full_html( string $html, array $options = [] ): array {
+		// CRITICAL FIX: Use the same approach as selector-based extraction
+		// This preserves the full HTML and uses a "virtual selector" for intelligent targeting
+		
+		$extraction_strategy = $options['extraction_strategy'] ?? 'semantic';
+		$content_options = $options['content_options'] ?? [];
+		
+		$extraction_options = [
+			'extraction_strategy' => $extraction_strategy,
+			'max_sections' => $content_options['max_sections'] ?? 3,
+			'min_content_length' => $content_options['min_content_length'] ?? 100,
+			'exclude_navigation' => $content_options['exclude_navigation'] ?? true
+		];
+
+		error_log( "INTELLIGENT_EXTRACTION_FULL_HTML: Applying intelligent extraction with strategy: {$extraction_strategy}" );
+		
+		// Find the best content selector using intelligent extraction
+		$best_selector = $this->find_best_content_selector( $html, $extraction_options );
+		
+		if ( empty( $best_selector ) ) {
+			error_log( "INTELLIGENT_EXTRACTION_FULL_HTML: No suitable content selector found, falling back to 'main' selector" );
+			// Fallback to a simple selector that's likely to exist
+			$best_selector = 'main';
+		}
+
+		error_log( "INTELLIGENT_EXTRACTION_FULL_HTML: Found best content selector: {$best_selector}" );
+
+		// Use the SAME approach as selector-based extraction:
+		// 1. Keep full HTML for CSS context
+		// 2. Mark the intelligent selector for targeted conversion
+		$inline_styles = $this->extract_inline_style_tags( $html );
+		return [
+			'full_html' => $inline_styles . $html,
+			'selector' => $best_selector, // This will be processed the same way as user-provided selectors
+		];
+	}
+
+	private function find_best_content_selector( string $html, array $options ): string {
+		// Use the intelligent content extractor to find the best selector, not extract HTML
+		try {
+			$dom = $this->create_dom_document_for_selector_finding( $html );
+			if ( ! $dom ) {
+				error_log( "INTELLIGENT_EXTRACTION_FULL_HTML: Failed to create DOM document" );
+				return '';
+			}
+
+			$xpath = new \DOMXPath( $dom );
+		} catch ( \Exception $e ) {
+			error_log( "INTELLIGENT_EXTRACTION_FULL_HTML: Exception in DOM creation: " . $e->getMessage() );
+			return '';
+		}
+		
+		// Try semantic selectors in priority order
+		$semantic_selectors = [
+			'main',
+			'article',
+			'[role="main"]',
+			'.main-content',
+			'.content',
+			'.post-content',
+			'.entry-content',
+			'.page-content'
+		];
+
+		foreach ( $semantic_selectors as $selector ) {
+			try {
+				$xpath_query = $this->css_selector_to_xpath( $selector );
+				$nodes = $xpath->query( $xpath_query );
+
+				if ( $nodes && $nodes->length > 0 ) {
+					$element = $nodes->item( 0 );
+					$text_length = strlen( trim( $element->textContent ) );
+					$min_length = $options['min_content_length'] ?? 100;
+					
+					error_log( "INTELLIGENT_EXTRACTION_FULL_HTML: Testing selector '{$selector}', found {$nodes->length} nodes, text length: {$text_length}" );
+					
+					if ( $text_length >= $min_length ) {
+						error_log( "INTELLIGENT_EXTRACTION_FULL_HTML: Found suitable content with selector '{$selector}', text length: {$text_length}" );
+						return $selector;
+					}
+				} else {
+					error_log( "INTELLIGENT_EXTRACTION_FULL_HTML: Selector '{$selector}' found no nodes" );
+				}
+			} catch ( \Exception $e ) {
+				error_log( "INTELLIGENT_EXTRACTION_FULL_HTML: Exception testing selector '{$selector}': " . $e->getMessage() );
+				continue;
+			}
+		}
+
+		// If no semantic selector works, try to find a good content div by class
+		$content_class_selectors = [
+			'.content',
+			'.main',
+			'.article',
+			'.post',
+			'.entry'
+		];
+
+		foreach ( $content_class_selectors as $selector ) {
+			$xpath_query = $this->css_selector_to_xpath( $selector );
+			$nodes = $xpath->query( $xpath_query );
+
+			if ( $nodes->length > 0 ) {
+				$element = $nodes->item( 0 );
+				$text_length = strlen( trim( $element->textContent ) );
+				$min_length = $options['min_content_length'] ?? 100;
+				
+				if ( $text_length >= $min_length ) {
+					error_log( "INTELLIGENT_EXTRACTION_FULL_HTML: Found suitable content with class selector '{$selector}', text length: {$text_length}" );
+					return $selector;
+				}
+			}
+		}
+
+		return ''; // No suitable selector found
+	}
+
+	private function create_dom_document_for_selector_finding( string $html ): ?\DOMDocument {
+		$dom = new \DOMDocument();
+		
+		// Suppress warnings for malformed HTML
+		$previous_use_errors = libxml_use_internal_errors( true );
+		
+		try {
+			// Load HTML with UTF-8 encoding
+			$success = $dom->loadHTML( '<?xml encoding="UTF-8">' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+			
+			if ( ! $success ) {
+				error_log( "INTELLIGENT_EXTRACTION_FULL_HTML: Failed to load HTML into DOM" );
+				return null;
+			}
+			
+			return $dom;
+		} catch ( \Exception $e ) {
+			error_log( "INTELLIGENT_EXTRACTION_FULL_HTML: DOM creation failed: " . $e->getMessage() );
+			return null;
+		} finally {
+			// Restore error handling
+			libxml_use_internal_errors( $previous_use_errors );
+		}
 	}
 
 	private function fetch_html_from_url( string $url ): string {
@@ -327,9 +662,31 @@ class Atomic_Widgets_Route {
 	private function css_selector_to_xpath( string $selector ): string {
 		$selector = trim( $selector );
 
+		// Handle compound class selectors like .class1.class2
 		if ( 0 === strpos( $selector, '.' ) ) {
-			$class_name = substr( $selector, 1 );
-			return "//*[contains(concat(' ', normalize-space(@class), ' '), ' {$class_name} ')]";
+			$class_part = substr( $selector, 1 ); // Remove first dot
+			
+			// Check if this is a compound class selector (contains more dots)
+			if ( strpos( $class_part, '.' ) !== false ) {
+				// Split into individual classes
+				$classes = explode( '.', $class_part );
+				$xpath_conditions = [];
+				
+				foreach ( $classes as $class ) {
+					$class = trim( $class );
+					if ( ! empty( $class ) ) {
+						$xpath_conditions[] = "contains(concat(' ', normalize-space(@class), ' '), ' {$class} ')";
+					}
+				}
+				
+				if ( ! empty( $xpath_conditions ) ) {
+					$combined_condition = implode( ' and ', $xpath_conditions );
+					return "//*[{$combined_condition}]";
+				}
+			} else {
+				// Single class selector
+				return "//*[contains(concat(' ', normalize-space(@class), ' '), ' {$class_part} ')]";
+			}
 		}
 
 		if ( 0 === strpos( $selector, '#' ) ) {
@@ -739,6 +1096,36 @@ class Atomic_Widgets_Route {
 				'type' => 'boolean',
 				'description' => 'Enable additional validation',
 				'default' => false,
+			],
+			'extraction_strategy' => [
+				'required' => false,
+				'type' => 'string',
+				'enum' => [ 'semantic', 'heuristic', 'sections', 'full' ],
+				'description' => 'Content extraction strategy when no selector is provided',
+				'default' => 'semantic',
+			],
+			'content_options' => [
+				'required' => false,
+				'type' => 'object',
+				'description' => 'Options for intelligent content extraction',
+				'default' => [],
+				'properties' => [
+					'max_sections' => [
+						'type' => 'integer',
+						'description' => 'Maximum number of content sections to extract',
+						'default' => 3,
+					],
+					'min_content_length' => [
+						'type' => 'integer',
+						'description' => 'Minimum text length for content sections',
+						'default' => 100,
+					],
+					'exclude_navigation' => [
+						'type' => 'boolean',
+						'description' => 'Whether to exclude navigation elements',
+						'default' => true,
+					],
+				],
 			],
 		];
 	}

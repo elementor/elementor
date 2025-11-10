@@ -402,3 +402,4 @@ The solution requires extending the selector matching logic to recognize Element
 
 **Scope**: This affects ALL Elementor child element selectors, not just font-size. Any CSS targeting `.elementor-heading-title`, `.elementor-button-text`, etc. is currently being lost.
 
+
