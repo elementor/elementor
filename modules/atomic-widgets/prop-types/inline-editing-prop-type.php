@@ -68,7 +68,24 @@ class Inline_Editing_Prop_Type extends Plain_Prop_Type {
 		return preg_replace_callback( '/^(\s*)(.*?)(\s*)$/', function ( $matches ) {
 			[, $leading, $value, $trailing ] = $matches;
 
-			return $leading . ( $value ) . $trailing;
+			$allowed_tags = [
+				'b'           => [],
+				'i'           => [],
+				'u'           => [],
+				'ul'          => [],
+				'ol'          => [],
+				'li'          => [],
+				'blockquote'  => [],
+				'a'           => ['href'  => true],
+				'del'         => [],
+				'span'        => [],
+				'br'          => [],
+				'strong'      => [],
+			];
+
+			$sanitized = wp_kses( $value, $allowed_tags );
+
+			return $leading . $sanitized . $trailing;
 		}, $value );
 	}
 }
