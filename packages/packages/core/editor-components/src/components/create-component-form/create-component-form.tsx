@@ -77,10 +77,9 @@ export function CreateComponentForm() {
 
 			dispatch(
 				slice.actions.addUnpublished( {
-					id: uuid,
+					uuid,
 					name: values.componentName,
 					elements: [ element.element ],
-					uuid,
 				} )
 			);
 

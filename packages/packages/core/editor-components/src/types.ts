@@ -9,19 +9,17 @@ export type ComponentId = number;
 
 export type StylesDefinition = Record< ComponentId, StyleDefinition[] >;
 
-export type Component = {
-	id?: number;
-	name: string;
-	uuid: string;
-};
+export type Component = PublishedComponent | UnpublishedComponent;
 
 export type PublishedComponent = {
+	uuid: string;
 	id: number;
 	name: string;
-	uuid: string;
 };
 
-export type UnpublishedComponent = Component & {
+export type UnpublishedComponent = {
+	uuid: string;
+	name: string;
 	elements: V1ElementData[];
 };
 

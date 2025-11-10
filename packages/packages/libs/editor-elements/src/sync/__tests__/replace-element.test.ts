@@ -12,7 +12,12 @@ jest.mock( '@elementor/editor-v1-adapters' );
 const mockRunCommand = jest.mocked( runCommand );
 const mockRunCommandSync = jest.mocked( runCommandSync );
 
-const currentElementData = { model: { id: 'current-element' }, view: { _index: 1 }, elType: 'widget', id: 'current-element' };
+const currentElementData = {
+	model: { id: 'current-element' },
+	view: { _index: 1 },
+	elType: 'widget',
+	id: 'current-element',
+};
 const currentElement = createMockElement( currentElementData );
 const siblingElement1 = createMockElement( { model: { id: 'sibling-element-1' }, view: { _index: 0 } } );
 const siblingElement2 = createMockElement( { model: { id: 'sibling-element-2' }, view: { _index: 2 } } );

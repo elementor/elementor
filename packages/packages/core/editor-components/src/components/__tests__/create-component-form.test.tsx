@@ -1,6 +1,10 @@
 import * as React from 'react';
 import { createMockElement, renderWithStore } from 'test-utils';
-import { getElementLabel, replaceElement, V1ElementModelProps, type V1Element, type V1ElementData } from '@elementor/editor-elements';
+import {
+	getElementLabel,
+	replaceElement,
+	type V1ElementModelProps,
+} from '@elementor/editor-elements';
 import { __createStore, __dispatch, __registerSlice, type SliceState, type Store } from '@elementor/store';
 import { __getState as getState } from '@elementor/store';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -19,7 +23,9 @@ const mockGetComponents = jest.mocked( apiClient.get );
 
 const mockReplaceElement = jest.mocked( replaceElement );
 
-const mockElement: V1ElementModelProps = createMockElement( { model: { id: 'test-element' } } ).model.toJSON( { remove: [ 'default' ] } );
+const mockElement: V1ElementModelProps = createMockElement( { model: { id: 'test-element' } } ).model.toJSON( {
+	remove: [ 'default' ],
+} );
 
 const GENERATED_UUID = 'f73880da-522c-442e-815a-b2c9849b7414';
 const EXISTING_COMPONENT_UUID = 'f73880da-522c-442e-815a-b2c9849b7415';
@@ -41,9 +47,7 @@ describe( 'CreateComponentForm', () => {
 
 		act( () => {
 			__dispatch(
-				slice.actions.load( [
-					{ name: 'Existing Component', id: 123, uuid: EXISTING_COMPONENT_UUID },
-				] )
+				slice.actions.load( [ { name: 'Existing Component', id: 123, uuid: EXISTING_COMPONENT_UUID } ] )
 			);
 		} );
 	} );

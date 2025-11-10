@@ -51,7 +51,7 @@ export const slice = createSlice( {
 		load: ( state, { payload }: PayloadAction< PublishedComponent[] > ) => {
 			state.data = payload;
 		},
-		addUnpublished: ( state, { payload } ) => {
+		addUnpublished: ( state, { payload }: PayloadAction< UnpublishedComponent > ) => {
 			state.unpublishedData.unshift( payload );
 		},
 		resetUnpublished: ( state ) => {
