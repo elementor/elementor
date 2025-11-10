@@ -24,6 +24,7 @@ class Inline_Editing_Prop_Type extends Plain_Prop_Type {
 			$allowed_tags = [
 				'b'           => [],
 				'i'           => [],
+				'em'          => [],
 				'u'           => [],
 				'ul'          => [],
 				'ol'          => [],
