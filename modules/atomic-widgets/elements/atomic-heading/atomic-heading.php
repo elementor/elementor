@@ -5,6 +5,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Inline_Editing_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
@@ -67,9 +68,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
 
 		$control = $is_feature_active
-			? Text_Control::bind_to( 'title' )
-				->set_placeholder( __( 'Inline editing', 'elementor' ) )
-				->set_label( __( 'Inline editing', 'elementor' ) )
+			? Inline_Editing_Control::bind_to( 'title' )
+				->set_placeholder( __( 'Type your title here', 'elementor' ) )
+				->set_label( __( 'Title', 'elementor' ) )
 			: Textarea_Control::bind_to( 'title' )
 				->set_placeholder( __( 'Type your title here', 'elementor' ) )
 				->set_label( __( 'Title', 'elementor' ) );
