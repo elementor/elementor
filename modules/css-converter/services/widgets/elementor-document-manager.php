@@ -60,14 +60,12 @@ class Elementor_Document_Manager {
 		try {
 			$post_id = $document->get_main_id();
 
-			update_post_meta( $post_id, '_elementor_data', wp_json_encode( $elementor_elements ) );
-			update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
-			update_post_meta( $post_id, '_elementor_template_type', 'wp-post' );
-			update_post_meta( $post_id, '_elementor_version', '3.33.0' );
+			$json_value = wp_slash( wp_json_encode( $elementor_elements ) );
 
-			$document->save( [
-				'elements' => $elementor_elements,
-			] );
+			update_metadata( 'post', $post_id, '_elementor_data', $json_value );
+			update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
+			update_post_meta( $post_id, '_elementor_template_type', 'wp-page' );
+			update_post_meta( $post_id, '_elementor_version', '3.34.0' );
 		} catch ( \Exception $e ) {
 			throw new \Exception( 'Failed to save elements to document: ' . $e->getMessage() );
 		}
