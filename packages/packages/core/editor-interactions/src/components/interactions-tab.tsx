@@ -9,6 +9,14 @@ import { EmptyState } from './empty-state';
 import { PredefinedInteractionsList } from './interactions-list';
 
 export const InteractionsTab = ( { elementId }: { elementId: string } ) => {
+	return (
+		<PopupStateProvider>
+			<InteractionsTabContent elementId={ elementId } />
+		</PopupStateProvider>
+	);
+};
+
+function InteractionsTabContent( { elementId }: { elementId: string } ) {
 	const existingInteractions = useElementInteractions( elementId );
 	const { triggerDefaultOpen } = usePopupStateContext();
 
@@ -17,24 +25,22 @@ export const InteractionsTab = ( { elementId }: { elementId: string } ) => {
 	} );
 
 	return (
-		<PopupStateProvider>
-			<SessionStorageProvider prefix={ elementId }>
-				{ showInteractions ? (
-					<InteractionsProvider elementId={ elementId }>
-						<InteractionsContent />
-					</InteractionsProvider>
-				) : (
-					<EmptyState
-						onCreateInteraction={ () => {
-							setShowInteractions( true );
-							triggerDefaultOpen();
-						} }
-					/>
-				) }
-			</SessionStorageProvider>
-		</PopupStateProvider>
+		<SessionStorageProvider prefix={ elementId }>
+			{ showInteractions ? (
+				<InteractionsProvider elementId={ elementId }>
+					<InteractionsContent />
+				</InteractionsProvider>
+			) : (
+				<EmptyState
+					onCreateInteraction={ () => {
+						setShowInteractions( true );
+						triggerDefaultOpen();
+					} }
+				/>
+			) }
+		</SessionStorageProvider>
 	);
-};
+}
 
 function InteractionsContent() {
 	const { interactions, setInteractions } = useInteractionsContext();
