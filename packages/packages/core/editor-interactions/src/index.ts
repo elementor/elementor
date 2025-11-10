@@ -1,5 +1,4 @@
 export * from './components/empty-state';
-export * from './components/interactions-list';
+export * from './components/interactions-tab';
 export * from './types';
 export * from './utils/get-interactions-config';
-export * from './contexts/popup-state-contex';
