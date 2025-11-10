@@ -5,7 +5,6 @@ import { Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
-import { PopupStateProvider } from '../contexts/popup-state-contex';
 import { ScrollProvider } from '../contexts/scroll-context';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { useStateByElement } from '../hooks/use-state-by-element';
@@ -63,9 +62,7 @@ const PanelTabContent = () => {
 				</TabPanel>
 				{ isInteractionsActive && (
 					<TabPanel { ...getTabPanelProps( 'interactions' ) } disablePadding>
-						<PopupStateProvider>
-							<InteractionsTab />
-						</PopupStateProvider>
+						<InteractionsTab />
 					</TabPanel>
 				) }
 			</Stack>
