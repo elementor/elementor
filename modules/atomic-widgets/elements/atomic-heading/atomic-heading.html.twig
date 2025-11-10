@@ -9,7 +9,7 @@
     data-interactions="{{ interactions | json_encode | e('html_attr') }}"
 {% endif %}
 	>
-	{% set allowed_tags = '<b><em><u><ul><ol><li><blockquote><a><del><span><br>' %}
+	{% set allowed_tags = '<b><em><i><u><ul><ol><li><blockquote><a><del><span><br>' %}
 
 	{% if settings.link.href %}
 		<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
