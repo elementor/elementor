@@ -144,6 +144,19 @@ class OnboardingTracker {
 		}, true );
 
 		this.setupUrlChangeDetection();
+		this.setupSessionRecordingCleanup();
+	}
+
+	setupSessionRecordingCleanup() {
+		if ( 'undefined' === typeof window ) {
+			return;
+		}
+
+		const handleBeforeUnload = () => {
+			this.stopSessionRecordingIfNeeded();
+		};
+
+		window.addEventListener( 'beforeunload', handleBeforeUnload );
 	}
 
 	setupUrlChangeDetection() {
@@ -611,6 +624,10 @@ class OnboardingTracker {
 
 		eventData = TimingManager.addTimingToEventData( eventData, stepNumber );
 		eventData[ endStateProperty ] = actions;
+
+		if ( 4 === stepNumber ) {
+			this.stopSessionRecordingIfNeeded();
+		}
 
 		if ( EventDispatcher.canSendEvents() ) {
 			this.dispatchEventWithoutTrigger( eventName, eventData );
@@ -1081,6 +1098,18 @@ class OnboardingTracker {
 		} );
 
 		elementorCommon.eventsManager.startSessionRecording();
+	}
+
+	stopSessionRecordingIfNeeded() {
+		if ( ! elementorCommon?.eventsManager?.stopSessionRecording ) {
+			return;
+		}
+
+		if ( ! elementorCommon.eventsManager.isSessionRecordingInProgress() ) {
+			return;
+		}
+
+		elementorCommon.eventsManager.stopSessionRecording();
 	}
 
 	onStepLoad( currentStep ) {
