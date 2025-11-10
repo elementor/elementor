@@ -38,4 +38,3 @@ export type InteractionsProvider = {
 		all: () => InteractionItem[];
 	};
 };
-

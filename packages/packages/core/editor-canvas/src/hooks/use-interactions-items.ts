@@ -1,9 +1,6 @@
 import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from 'react';
+import { type InteractionItem, interactionsRepository } from '@elementor/editor-interactions';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
-import {
-	interactionsRepository,
-	type InteractionItem,
-} from '@elementor/editor-interactions';
 
 import { useOnMount } from './use-on-mount';
 
@@ -35,7 +32,7 @@ export function useInteractionsItems() {
 				};
 			} );
 			return mapped;
-		} catch ( error ) {
+		} catch {
 			return [];
 		}
 	}, [] );
@@ -49,8 +46,7 @@ export function useInteractionsItems() {
 			const safeSubscriber = () => {
 				try {
 					subscriber();
-				} catch ( error ) {
-				}
+				} catch {}
 			};
 			const unsubscribe = provider.subscribe( safeSubscriber );
 			return unsubscribe;
@@ -70,9 +66,7 @@ export function useInteractionsItems() {
 			providerAndSubscribers.forEach( ( { subscriber } ) => {
 				try {
 					subscriber();
-				} catch ( error ) {
-					// Silently handle errors
-				}
+				} catch {}
 			} );
 		} );
 	} );
@@ -98,10 +92,7 @@ type CreateProviderSubscriberArgs = {
 	setInteractionItems: Dispatch< SetStateAction< ProviderAndInteractionItemsMap > >;
 };
 
-function createProviderSubscriber( {
-	provider,
-	setInteractionItems,
-}: CreateProviderSubscriberArgs ) {
+function createProviderSubscriber( { provider, setInteractionItems }: CreateProviderSubscriberArgs ) {
 	return () => {
 		try {
 			const items = provider.actions.all();
@@ -111,8 +102,6 @@ function createProviderSubscriber( {
 				...prev,
 				[ providerKey ]: { provider, items },
 			} ) );
-		} catch ( error ) {
-		}
+		} catch {}
 	};
 }
-

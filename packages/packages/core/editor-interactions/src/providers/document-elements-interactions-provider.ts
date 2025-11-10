@@ -1,8 +1,4 @@
-import {
-	getCurrentDocumentId,
-	getElements,
-	getElementInteractions,
-} from '@elementor/editor-elements';
+import { getCurrentDocumentId, getElementInteractions, getElements } from '@elementor/editor-elements';
 import { __privateListenTo as listenTo, windowEvent } from '@elementor/editor-v1-adapters';
 
 import { createInteractionsProvider } from '../utils/create-interactions-provider';
@@ -64,4 +60,3 @@ export const documentElementsInteractionsProvider = createInteractionsProvider( 
 		},
 	},
 } );
-

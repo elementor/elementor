@@ -1,5 +1,5 @@
-import { documentElementsInteractionsProvider } from './providers/document-elements-interactions-provider';
 import { interactionsRepository } from './interactions-repository';
+import { documentElementsInteractionsProvider } from './providers/document-elements-interactions-provider';
 
 export function init() {
 	try {
@@ -8,4 +8,3 @@ export function init() {
 		throw error;
 	}
 }
-

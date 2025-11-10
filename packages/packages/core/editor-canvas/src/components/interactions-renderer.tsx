@@ -29,9 +29,5 @@ export function InteractionsRenderer() {
 }
 
 function usePortalContainer() {
-	return useListenTo(
-		commandEndEvent( 'editor/documents/attach-preview' ),
-		() => getCanvasIframeDocument()?.head
-	);
+	return useListenTo( commandEndEvent( 'editor/documents/attach-preview' ), () => getCanvasIframeDocument()?.head );
 }
-
