@@ -1,12 +1,15 @@
+{% set allowed_tags = '<b><em><u><ul><ol><li><blockquote><a><del><span><br>' %}
+
 {% if settings.paragraph is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
 		<p class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" {{ id_attribute }} {{ settings.attributes | raw }}>
 				{% if settings.link.href %}
 						<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
-								{{ settings.paragraph }}
+								{{ settings.paragraph | striptags(allowed_tags) | raw }}
+
 						</a>
 				{% else %}
-						{{ settings.paragraph }}
+						{{ settings.paragraph | striptags(allowed_tags) | raw }}
 				{% endif %}
 		</p>
 {% endif %}
