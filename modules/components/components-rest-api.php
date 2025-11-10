@@ -232,17 +232,11 @@ class Components_REST_API {
 				function ( $result, Component $component ) use ( $status ) {
 					$post = $component->get_post();
 
-					$post->post_status = $status;
+					$is_updated = $component->save( [
+						'settings' => [ 'post_status' => $status ],
+					] );
 
-					$is_updated = wp_update_post( $post );
-
-					if ( ! $is_updated || is_wp_error( $is_updated ) ) {
-						$result['failed'][] = $post->ID;
-
-						return $result;
-					}
-
-					$result['success'][] = $post->ID;
+					$result[ $is_updated ? 'success' : 'failed' ][] = $post->ID;
 
 					return $result;
 				},
