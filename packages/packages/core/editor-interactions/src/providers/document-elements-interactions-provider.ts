@@ -5,7 +5,6 @@ import {
 } from '@elementor/editor-elements';
 import { __privateListenTo as listenTo, windowEvent } from '@elementor/editor-v1-adapters';
 
-import { ActiveDocumentMustExistError } from '../errors';
 import { createInteractionsProvider } from '../utils/create-interactions-provider';
 
 export const ELEMENTS_INTERACTIONS_PROVIDER_KEY_PREFIX = 'document-elements-interactions-';
