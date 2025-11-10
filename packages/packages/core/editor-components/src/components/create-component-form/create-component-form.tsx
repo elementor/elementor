@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { getElementLabel, type V1Element } from '@elementor/editor-elements';
+import { getElementLabel, type V1Element, type V1ElementData } from '@elementor/editor-elements';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { StarIcon } from '@elementor/icons';
 import { __useDispatch as useDispatch } from '@elementor/store';
@@ -52,33 +52,32 @@ export function CreateComponentForm() {
 		};
 	}, [] );
 
-	const handleSave = async ( values: ComponentFormValues ) => {
+	const handleSave = ( values: ComponentFormValues ) => {
 		try {
 			if ( ! element ) {
 				throw new Error( `Can't save element as component: element not found` );
 			}
 
-			const tempId = generateTempId();
+			const uuid = crypto.randomUUID();
 
 			dispatch(
 				slice.actions.addUnpublished( {
-					id: tempId,
+					uuid,
 					name: values.componentName,
-					elements: [ element.element.model.toJSON( { remove: [ 'default' ] } ) ],
+					elements: [ element.element.model.toJSON( { remove: [ 'default' ] } ) as V1ElementData ],
 				} )
 			);
 
-			replaceElementWithComponent( element.element, {
-				id: tempId,
-				name: values.componentName,
-			} );
+			dispatch( slice.actions.addCreatedThisSession( uuid ) );
+
+			replaceElementWithComponent( element.element, { uuid, name: values.componentName } );
 
 			setResultNotification( {
 				show: true,
-				// Translators: %1$s: Component name, %2$s: Component temp ID
-				message: __( 'Component saved successfully as: %1$s (temp ID: %2$s)', 'elementor' )
+				// Translators: %1$s: Component name, %2$s: Component UUID
+				message: __( 'Component saved successfully as: %1$s (UUID: %2$s)', 'elementor' )
 					.replace( '%1$s', values.componentName )
-					.replace( '%2$s', tempId.toString() ),
+					.replace( '%2$s', uuid ),
 				type: 'success',
 			} );
 
@@ -98,11 +97,15 @@ export function CreateComponentForm() {
 		setAnchorPosition( undefined );
 	};
 
+	const cancelSave = () => {
+		resetAndClosePopup();
+	};
+
 	return (
 		<ThemeProvider>
 			<Popover
 				open={ element !== null }
-				onClose={ resetAndClosePopup }
+				onClose={ cancelSave }
 				anchorReference="anchorPosition"
 				anchorPosition={ anchorPosition }
 			>
@@ -110,7 +113,7 @@ export function CreateComponentForm() {
 					<Form
 						initialValues={ { componentName: element.elementLabel } }
 						handleSave={ handleSave }
-						closePopup={ resetAndClosePopup }
+						closePopup={ cancelSave }
 					/>
 				) }
 			</Popover>
