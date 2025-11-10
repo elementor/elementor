@@ -88,6 +88,7 @@ class Convert_Widgets_To_Elementor_Command implements Widget_Creation_Command_In
 						$child_elements = $this->convert_widgets_hierarchically( $widget['elements'] );
 						$fallback_widget['elements'] = $child_elements;
 					}
+					
 					$elementor_elements[] = $fallback_widget;
 					$this->stats_collector->increment_widgets_created();
 				} else {
@@ -97,6 +98,73 @@ class Convert_Widgets_To_Elementor_Command implements Widget_Creation_Command_In
 		}
 
 		return $elementor_elements;
+	}
+
+	private function flatten_excessive_nesting( array $elements ): array {
+		$flattened = [];
+
+		foreach ( $elements as $element ) {
+			if ( $this->should_flatten_container( $element ) ) {
+				$children = $this->flatten_excessive_nesting( $element['elements'] ?? [] );
+				$flattened = array_merge( $flattened, $children );
+			} else {
+				if ( ! empty( $element['elements'] ) ) {
+					$element['elements'] = $this->flatten_excessive_nesting( $element['elements'] );
+				}
+				$flattened[] = $element;
+			}
+		}
+
+		return $flattened;
+	}
+
+	private function should_flatten_container( array $element ): bool {
+		if ( $element['elType'] !== 'e-div-block' ) {
+			return false;
+		}
+
+		$classes = $element['settings']['classes']['value'] ?? [];
+		$meaningful_class_prefixes = [ 'e-con', 'e-flex', 'e-grid' ];
+		$has_meaningful_classes = ! empty( array_filter( $classes, function( $class ) use ( $meaningful_class_prefixes ) {
+			foreach ( $meaningful_class_prefixes as $prefix ) {
+				if ( strpos( $class, $prefix ) === 0 ) {
+					return true;
+				}
+			}
+			return false;
+		} ) );
+
+		if ( $has_meaningful_classes ) {
+			return false;
+		}
+
+		$has_styles = ! empty( $element['styles'] );
+		if ( $has_styles ) {
+			return false;
+		}
+
+		$has_meaningful_settings = ! empty( array_filter( $element['settings'] ?? [], function( $value, $key ) {
+			if ( $key === 'classes' ) {
+				return false;
+			}
+			if ( is_array( $value ) && isset( $value['$$type'] ) ) {
+				$atomic_value = $value['value'] ?? null;
+				return ! empty( $atomic_value );
+			}
+			return ! empty( $value );
+		}, ARRAY_FILTER_USE_BOTH ) );
+
+		$is_empty = empty( $element['elements'] );
+
+		if ( $is_empty ) {
+			return true;
+		}
+
+		if ( ! $has_meaningful_settings ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public function get_command_name(): string {

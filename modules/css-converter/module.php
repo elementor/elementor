@@ -30,6 +30,7 @@ class Module extends BaseModule {
 	private function register_base_styles_override_hooks(): void {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_base_styles_override_script' ], 10 );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_variables_reload_script' ], 10 );
+		add_action( 'elementor/frontend/after_enqueue_scripts', [ $this, 'enqueue_fix_document_handles_script' ], 10 );
 	}
 
 	public function enqueue_base_styles_override_script(): void {
@@ -49,6 +50,21 @@ class Module extends BaseModule {
 			'css-converter-variables-reload',
 			plugins_url( 'modules/css-converter/assets/js/editor/variables-reload.js', $plugin_file ),
 			[ 'jquery', 'elementor-editor' ],
+			'1.0.0',
+			true
+		);
+	}
+
+	public function enqueue_fix_document_handles_script(): void {
+		if ( ! \Elementor\Plugin::$instance->preview->is_preview_mode() ) {
+			return;
+		}
+
+		$plugin_file = dirname( dirname( __DIR__ ) ) . '/elementor.php';
+		wp_enqueue_script(
+			'css-converter-fix-document-handles',
+			plugins_url( 'modules/css-converter/assets/js/editor/fix-document-handles.js', $plugin_file ),
+			[ 'jquery', 'elementor-frontend' ],
 			'1.0.0',
 			true
 		);

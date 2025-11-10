@@ -78,6 +78,14 @@ class Elements_Manager {
 		}
 
 		if ( ! $element_type ) {
+			$el_type = $element_data['elType'] ?? 'unknown';
+			$widget_type = $element_data['widgetType'] ?? 'N/A';
+			error_log( sprintf(
+				'[ELEMENTOR-CSS DEBUG] create_element_instance failed: Element type not found. elType: %s, widgetType: %s, element_id: %s',
+				$el_type,
+				$widget_type,
+				$element_data['id'] ?? 'no-id'
+			) );
 			return null;
 		}
 
@@ -88,6 +96,13 @@ class Elements_Manager {
 		try {
 			$element = new $element_class( $element_data, $args );
 		} catch ( \Exception $e ) {
+			error_log( sprintf(
+				'[ELEMENTOR-CSS DEBUG] create_element_instance exception: %s. elType: %s, element_id: %s, class: %s',
+				$e->getMessage(),
+				$element_data['elType'] ?? 'unknown',
+				$element_data['id'] ?? 'no-id',
+				$element_class
+			) );
 			return null;
 		}
 

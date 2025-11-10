@@ -64,8 +64,10 @@ class Elementor_Document_Manager {
 
 			update_metadata( 'post', $post_id, '_elementor_data', $json_value );
 			update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
-			update_post_meta( $post_id, '_elementor_template_type', 'wp-page' );
-			update_post_meta( $post_id, '_elementor_version', '3.34.0' );
+			update_post_meta( $post_id, '_elementor_template_type', 'wp-post' );
+			update_post_meta( $post_id, '_elementor_version', '3.33.0' );
+
+			$document->set_is_built_with_elementor( true );
 		} catch ( \Exception $e ) {
 			throw new \Exception( 'Failed to save elements to document: ' . $e->getMessage() );
 		}
