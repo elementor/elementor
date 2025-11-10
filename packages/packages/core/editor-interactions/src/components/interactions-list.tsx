@@ -53,10 +53,10 @@ function InteractionsList( { onSelectInteraction, selectedInteraction, defaultSt
 	const { openByDefault, resetDefaultOpen } = usePopupStateContext();
 
 	useEffect( () => {
-		if ( interactionId && interactionId !== selectedInteraction ) {
+		if ( interactionId ) {
 			onSelectInteraction( interactionId );
 		}
-	}, [ interactionId, selectedInteraction, onSelectInteraction ] );
+	}, [ interactionId, onSelectInteraction ] );
 
 	useEffect( () => {
 		if ( openByDefault && anchorEl.current ) {
