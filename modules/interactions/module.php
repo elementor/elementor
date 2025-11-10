@@ -201,13 +201,16 @@ class Module extends BaseModule {
 	}
 
 	private function sanitize_interactions( $interactions ) {
-		if ( ! is_array( $interactions ) ) {
-			return [];
+		$sanitized = [
+			'items' => [],
+			'version' => 1,
+		];
+
+		if ( ! is_array( $interactions ) || ! isset( $interactions['items'] ) ) {
+			return $sanitized;
 		}
 
-		$sanitized = [];
-
-		foreach ( $interactions as $interaction ) {
+		foreach ( $interactions['items'] as $interaction ) {
 			$animation_id = null;
 
 			if ( is_string( $interaction ) ) {
@@ -217,7 +220,7 @@ class Module extends BaseModule {
 			}
 
 			if ( $animation_id && $this->is_valid_animation_id( $animation_id ) ) {
-				$sanitized[] = $interaction;
+				$sanitized['items'][] = $interaction;
 			}
 		}
 

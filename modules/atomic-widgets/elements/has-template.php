@@ -55,7 +55,7 @@ trait Has_Template {
 		$animation_ids = [];
 
 		if ( ! empty( $this->interactions ) && is_array( $this->interactions ) ) {
-			foreach ( $this->interactions as $interaction ) {
+			foreach ( $this->interactions['items'] as $interaction ) {
 				if ( isset( $interaction['animation']['animation_id'] ) ) {
 					$animation_ids[] = $interaction['animation']['animation_id'];
 				}
