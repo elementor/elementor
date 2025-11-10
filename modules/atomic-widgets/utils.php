@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets;
 
 use Elementor\Plugin;
+use Elementor\Core\Base\Document;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 
@@ -28,6 +29,10 @@ class Utils {
 		} while ( in_array( $id, $existing_ids, true ) );
 
 		return $id;
+	}
+
+	public static function is_post_published( Document $document ): bool {
+		return $document->get_post()->post_status === Document::STATUS_PUBLISH;
 	}
 
 	public static function traverse_post_elements( string $post_id, callable $callback ): void {

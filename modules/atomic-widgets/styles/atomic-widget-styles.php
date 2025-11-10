@@ -20,9 +20,7 @@ class Atomic_Widget_Styles {
 
 		add_action( 'elementor/document/after_save', fn( Document $document ) => $this->invalidate_cache(
 			[ $document->get_main_post()->ID ],
-			$document->get_post()->post_status === Document::STATUS_PUBLISH
-				? self::CONTEXT_FRONTEND
-				: self::CONTEXT_PREVIEW
+			$this->get_context( ! Utils::is_post_published( $document ) )
 		), 20, 2 );
 
 		add_action(
@@ -37,7 +35,7 @@ class Atomic_Widget_Styles {
 	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
-		$context = is_preview() ? self::CONTEXT_PREVIEW : self::CONTEXT_FRONTEND;
+		$context = $this->get_context( is_preview() );
 
 		foreach ( $post_ids as $post_id ) {
 			$get_styles = fn() => $this->parse_post_styles( $post_id );
@@ -89,5 +87,9 @@ class Atomic_Widget_Styles {
 
 	private function get_style_key( $post_id, $context ) {
 		return self::STYLES_KEY . '-' . $post_id . '-' . $context;
+	}
+
+	private function get_context( bool $is_preview ) {
+		return $is_preview ? self::CONTEXT_PREVIEW : self::CONTEXT_FRONTEND;
 	}
 }
