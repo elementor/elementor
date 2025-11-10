@@ -1,9 +1,11 @@
 import { register } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
 
+const SELECTED_CLASS = 'e--selected';
 register( {
 	elementType: 'e-tabs',
-	uniqueId: 'e-tabs-handler',
+	id: 'e-tabs-handler',
+	dependsOn: [ 'e-tabs-content-area', 'e-tabs-menu' ],
 	callback: ( { element, settings } ) => {
 		const TAB_ELEMENT_TYPE = 'e-tab';
 		const TAB_CONTENT_ELEMENT_TYPE = 'e-tab-content';
@@ -42,6 +44,11 @@ register( {
 
 					this.activeTab = id;
 				},
+				':class'() {
+					const id = this.$el.id;
+
+					return this.activeTab === id ? SELECTED_CLASS : '';
+				},
 				':aria-selected'() {
 					const id = this.$el.id;
 
@@ -64,6 +71,12 @@ register( {
 					const index = getIndex( this.$el, TAB_ELEMENT_TYPE );
 
 					return getTabId( index );
+				},
+				':class'() {
+					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
+					const tabId = getTabId( index );
+
+					return this.activeTab === tabId ? SELECTED_CLASS : '';
 				},
 				'x-show'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );

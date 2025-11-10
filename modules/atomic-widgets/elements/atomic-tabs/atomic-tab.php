@@ -14,6 +14,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Render_Context;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Inline_Editing_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -146,7 +147,7 @@ class Atomic_Tab extends Atomic_Element_Base {
 		return [
 			Atomic_Heading::generate()
 				->settings( [
-					'title' => String_Prop_Type::generate( 'Tab' ),
+					'title' => Inline_Editing_Prop_Type::generate( 'Tab' ),
 					'tag' => String_Prop_Type::generate( 'h3' ),
 				] )
 				->build(),
