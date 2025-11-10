@@ -2,6 +2,7 @@ import WpAdminPage from '../../../pages/wp-admin-page';
 import { parallelTest as test } from '../../../parallelTest';
 import { expect } from '@playwright/test';
 import ContextMenu from '../../../pages/widgets/context-menu';
+import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Atomic Widgets Wrapper @v4-tests', () => {
 	const atomicWidgets = [
@@ -41,7 +42,10 @@ test.describe( 'Atomic Widgets Wrapper @v4-tests', () => {
 
 			await test.step( 'Verify widget is wrapped in e-flexbox', async () => {
 				const parentElement = widgetElement.locator( '..' );
+				const classAttr = await parentElement.getAttribute( 'class' );
+
 				await expect( parentElement ).toHaveAttribute( 'data-element_type', 'e-flexbox' );
+				expect( classAttr ).toContain( 'e-flexbox-base' );
 			} );
 		} );
 	} );
@@ -57,24 +61,26 @@ test.describe( 'Atomic Widgets Wrapper @v4-tests', () => {
 		await test.step( 'Add atomic widget by clicking on panel', async () => {
 			widgetElement = await editor.v4Panel.addAtomicWidget( 'Button', 'e-button' );
 			widgetElementId = await widgetElement.getAttribute( 'data-id' );
+
 			expect( widgetElementId ).toBeTruthy();
 		} );
 
 		await test.step( 'Copy the atomic widget from navigator', async () => {
-			const navigatorItem = page.locator( `#elementor-navigator .elementor-navigator__element[data-id="${ widgetElementId }"] .elementor-navigator__item` );
+			const navigatorItem = page.locator( EditorSelectors.panels.navigator.getElementItem( widgetElementId ) );
 			await navigatorItem.click( { button: 'right' } );
 			const copyMenuItem = page.getByRole( 'menuitem', { name: 'Copy' } );
 			await copyMenuItem.click();
 		} );
 
 		await test.step( 'Paste the atomic widget', async () => {
-			await contextMenu.pasteElement( '.elementor-add-section-inner' );
+			await contextMenu.pasteElement( EditorSelectors.addSectionInner );
 		} );
 
 		await test.step( 'Verify pasted widget is wrapped in e-flexbox', async () => {
-			const pastedWidget = editor.getPreviewFrame().locator( '[data-widget_type="e-button.default"]' ).last();
+			const pastedWidget = editor.getPreviewFrame().locator( EditorSelectors.eflexboxWidget( 'e-button' ) ).last();
 			await pastedWidget.waitFor( { state: 'visible' } );
 			const parentElement = pastedWidget.locator( '..' );
+
 			await expect( parentElement ).toHaveAttribute( 'data-element_type', 'e-flexbox' );
 		} );
 	} );

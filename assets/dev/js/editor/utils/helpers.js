@@ -755,7 +755,7 @@ module.exports = {
 	},
 
 	getWidgetCache( model ) {
-		const isModel = model && typeof 'function' === model.get;
+		const isModel = model && typeof model.get === 'function';
 		const elType = isModel ? model.get( 'elType' ) : model?.elType;
 		const widgetType = isModel ? model.get( 'widgetType' ) : model?.widgetType;
 		const elementType = 'widget' === elType ? widgetType : elType;
