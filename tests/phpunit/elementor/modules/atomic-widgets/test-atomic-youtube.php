@@ -52,4 +52,29 @@ class Test_Atomic_Youtube extends Elementor_Test_Base {
 		// Assert.
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
+
+	public function test__render_youtube_with_interactions(): void {
+		// Arrange.
+		$mock_with_interactions = [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [],
+			'widgetType' => Atomic_Youtube::get_element_type(),
+			'interactions' => [
+				'click' => [
+					'id' => 'e8e55a1',
+					'type' => 'click',
+				],
+			],
+		];
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock_with_interactions );
+
+		// Act.
+		ob_start();
+		$widget_instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
 }
