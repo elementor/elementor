@@ -4,8 +4,8 @@ import { EyeIcon, XIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, IconButton, Popover, Stack, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { usePopupStateContext } from '../contexts/popup-state-contex';
-import { formatInteractionLabel } from '../utils/format-interaction-label';
+import { usePopupStateContext } from '../contexts/popup-state-context';
+import { getInteractionsConfig } from '../utils/get-interactions-config';
 import { Header } from './header';
 import { InteractionDetails } from './interaction-details';
 
@@ -66,7 +66,14 @@ function InteractionsList( { onSelectInteraction, selectedInteraction, defaultSt
 	}, [ defaultStateRef, openByDefault, popupState, resetDefaultOpen ] );
 
 	const displayLabel = useMemo( () => {
-		return formatInteractionLabel( interactionId );
+		if ( ! interactionId ) {
+			return '';
+		}
+
+		const animationOptions = getInteractionsConfig()?.animationOptions;
+		const option = animationOptions.find( ( opt ) => opt.value === interactionId );
+
+		return option?.label || interactionId;
 	}, [ interactionId ] );
 
 	return (
