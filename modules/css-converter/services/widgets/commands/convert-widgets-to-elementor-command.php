@@ -72,19 +72,13 @@ class Convert_Widgets_To_Elementor_Command implements Widget_Creation_Command_In
 				// Convert the current widget
 				$elementor_widget = $this->widget_factory_registry->create_widget( $widget );
 				
-				// FIXED: Skip empty container widgets, only process content widgets
-				if ( $this->is_empty_container_widget( $widget ) && ! empty( $widget['elements'] ) ) {
-					// Skip the empty container, process its children directly
+				// If the widget has children (elements), convert them recursively
+				if ( ! empty( $widget['elements'] ) ) {
 					$child_elements = $this->convert_widgets_hierarchically( $widget['elements'] );
-					$elementor_elements = array_merge( $elementor_elements, $child_elements );
-				} else {
-					// Process widget normally (content widgets or containers with actual content)
-					if ( ! empty( $widget['elements'] ) ) {
-						$child_elements = $this->convert_widgets_hierarchically( $widget['elements'] );
-						$elementor_widget['elements'] = $child_elements;
-					}
-					$elementor_elements[] = $elementor_widget;
+					$elementor_widget['elements'] = $child_elements;
 				}
+
+				$elementor_elements[] = $elementor_widget;
 				$this->stats_collector->increment_widgets_created();
 			} catch ( \Exception $e ) {
 				$fallback_widget = $this->handle_widget_creation_failure( $widget, $e );
@@ -116,15 +110,6 @@ class Convert_Widgets_To_Elementor_Command implements Widget_Creation_Command_In
 				$factory->set_css_processing_result( $css_processing_result );
 			}
 		}
-	}
-
-	private function is_empty_container_widget( array $widget ): bool {
-		// Check if widget is an empty container (div-block with no meaningful content)
-		$widget_type = $widget['widget_type'] ?? '';
-		$has_content = ! empty( $widget['content'] ) || ! empty( $widget['settings'] );
-		
-		// Skip div-block containers that have no content but have children
-		return $widget_type === 'e-div-block' && ! $has_content;
 	}
 
 	private function handle_widget_creation_failure( array $widget, \Exception $exception ): ?array {

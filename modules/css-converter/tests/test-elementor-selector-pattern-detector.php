@@ -264,4 +264,3 @@ class Test_Elementor_Selector_Pattern_Detector {
 	}
 }
 
-

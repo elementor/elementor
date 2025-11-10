@@ -346,4 +346,3 @@ private function extract_rules_with_context($document): array {
 **Recommendation:** Use Sabberworm for specificity, improve our selector parser
 
 
-

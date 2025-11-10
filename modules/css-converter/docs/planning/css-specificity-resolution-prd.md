@@ -326,4 +326,3 @@ $specificity = $specificity_calculator->calculate($selector);
 - Future: Support for CSS layers and cascade layers
 
 
-

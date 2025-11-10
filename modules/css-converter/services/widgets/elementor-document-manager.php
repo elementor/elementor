@@ -59,9 +59,6 @@ class Elementor_Document_Manager {
 
 		try {
 			$post_id = $document->get_main_id();
-			error_log( "SAVE_DEBUG: Saving to post ID: {$post_id}" );
-			error_log( "SAVE_DEBUG: Elements count: " . count( $elementor_elements ) );
-			error_log( "SAVE_DEBUG: First element: " . wp_json_encode( array_slice( $elementor_elements, 0, 1 ) ) );
 
 			update_post_meta( $post_id, '_elementor_data', wp_json_encode( $elementor_elements ) );
 			update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
@@ -71,10 +68,7 @@ class Elementor_Document_Manager {
 			$document->save( [
 				'elements' => $elementor_elements,
 			] );
-			
-			error_log( "SAVE_DEBUG: Successfully saved to post {$post_id}" );
 		} catch ( \Exception $e ) {
-			error_log( "SAVE_DEBUG: Save failed: " . $e->getMessage() );
 			throw new \Exception( 'Failed to save elements to document: ' . $e->getMessage() );
 		}
 	}
