@@ -9,6 +9,9 @@ import { type NumberPropValue } from '@elementor/editor-props';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
+import { type ExtendedWindow } from './types';
+import { trackComponentEvent } from './utils/tracking';
+
 export const TYPE = 'e-component';
 
 export function createComponentType( options: CreateTemplatedElementTypeOptions ): typeof ElementType {
@@ -27,7 +30,8 @@ export function createComponentType( options: CreateTemplatedElementTypeOptions 
 
 function createComponentView( options: CreateTemplatedElementTypeOptions ): typeof ElementView {
 	return class extends createTemplatedElementView( options ) {
-		legacyWindow = window as unknown as LegacyWindow;
+		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
+		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
 			if ( settings.component ) {
@@ -71,11 +75,30 @@ function createComponentView( options: CreateTemplatedElementTypeOptions ): type
 						icon: 'eicon-edit',
 						title: () => __( 'Edit Component', 'elementor' ),
 						isEnabled: () => true,
-						callback: () => this.switchDocument(),
+						callback: () =>
+							this.editComponent( {
+								trigger: this.eventsManagerConfig.triggers.click,
+								secondaryLocation: this.eventsManagerConfig.secondaryLocations.contextMenu,
+							} ),
 					},
 				],
 			};
 			return [ ...filteredGroups, newGroup ];
+		}
+
+		editComponent( { trigger, secondaryLocation }: { trigger: string; secondaryLocation: string } ) {
+			this.switchDocument();
+
+			const editorSettings = this.model.get( 'editor_settings' );
+
+			trackComponentEvent( {
+				action: 'edited',
+				component_uuid: editorSettings?.component_uuid,
+				component_name: editorSettings?.title,
+				location: this.eventsManagerConfig.locations.canvas,
+				secondary_location: secondaryLocation,
+				trigger,
+			} );
 		}
 
 		switchDocument() {
@@ -96,7 +119,10 @@ function createComponentView( options: CreateTemplatedElementTypeOptions ): type
 		events() {
 			return {
 				...super.events(),
-				'dblclick @ui.doubleClick': this.switchDocument,
+				'dblclick @ui.doubleClick': this.editComponent( {
+					trigger: this.eventsManagerConfig.triggers.doubleClick,
+					secondaryLocation: this.eventsManagerConfig.secondaryLocations.canvasElement,
+				} ),
 			};
 		}
 	};

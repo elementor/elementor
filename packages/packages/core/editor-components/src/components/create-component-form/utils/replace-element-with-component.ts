@@ -1,8 +1,11 @@
 import { replaceElement, type V1ElementData } from '@elementor/editor-elements';
 
-import { type Component } from '../../../types';
-
-export const replaceElementWithComponent = ( element: V1ElementData, component: Component ) => {
+type ComponentInstanceParams = {
+	id?: number;
+	name: string;
+	uuid: string;
+};
+export const replaceElementWithComponent = ( element: V1ElementData, component: ComponentInstanceParams ) => {
 	replaceElement( {
 		currentElement: element,
 		newElement: createComponentModel( component ),
@@ -10,18 +13,19 @@ export const replaceElementWithComponent = ( element: V1ElementData, component: 
 	} );
 };
 
-export const createComponentModel = ( component: Component ) => {
+export const createComponentModel = ( component: ComponentInstanceParams ) => {
 	return {
 		elType: 'widget',
 		widgetType: 'e-component',
 		settings: {
 			component: {
 				$$type: 'component-id',
-				value: component.id,
+				value: component.id ?? component.uuid,
 			},
 		},
 		editor_settings: {
 			title: component.name,
+			component_uuid: component.uuid,
 		},
 	};
 };

@@ -73,27 +73,38 @@ export function CreateComponentForm() {
 				throw new Error( `Can't save element as component: element not found` );
 			}
 
-			const tempId = generateTempId();
+			const uuid = crypto.randomUUID();
 
 			dispatch(
 				slice.actions.addUnpublished( {
-					id: tempId,
+					id: uuid,
 					name: values.componentName,
 					elements: [ element.element ],
+					uuid,
 				} )
 			);
 
+			dispatch( slice.actions.addCreatedThisSession( uuid ) );
+
 			replaceElementWithComponent( element.element, {
-				id: tempId,
+				id: uuid,
 				name: values.componentName,
+				uuid,
+			} );
+
+			trackComponentEvent( {
+				action: 'created',
+				component_uuid: uuid,
+				component_name: values.componentName,
+				...eventData.current,
 			} );
 
 			setResultNotification( {
 				show: true,
-				// Translators: %1$s: Component name, %2$s: Component temp ID
-				message: __( 'Component saved successfully as: %1$s (temp ID: %2$s)', 'elementor' )
+				// Translators: %1$s: Component name, %2$s: Component UUID
+				message: __( 'Component saved successfully as: %1$s (UUID: %2$s)', 'elementor' )
 					.replace( '%1$s', values.componentName )
-					.replace( '%2$s', tempId.toString() ),
+					.replace( '%2$s', uuid ),
 				type: 'success',
 			} );
 

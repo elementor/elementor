@@ -2,6 +2,7 @@ const eventsConfig = {
 	triggers: {
 		click: 'Click',
 		rightClick: 'Right Click',
+		doubleClick: 'Double Click',
 		accordionClick: 'Accordion Click',
 		toggleClick: 'Toggle Click',
 		dropdownClick: 'Click Dropdown',
@@ -102,6 +103,7 @@ const eventsConfig = {
 			pluginWebsiteTemplatesTab: 'plugin_website_templates_tab',
 		},
 		componentsTab: 'Components Tab',
+		canvasElement: 'Canvas Element',
 	},
 
 	elements: {
@@ -174,7 +176,7 @@ const eventsConfig = {
 			createCancelled: 'component_creation_cancelled',
 			created: 'component_created',
 			instanceAdded: 'component_instance_added',
-			sameSessionReuse: 'component_same_session_reuse',
+			edited: 'component_edited',
 		},
 	},
 };

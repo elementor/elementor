@@ -2,20 +2,20 @@ import { type V1ElementData } from '@elementor/editor-elements';
 import { ajax } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 
-import { type Component, type DocumentStatus } from './types';
+import { type DocumentStatus, type PublishedComponent } from './types';
 
 const BASE_URL = 'elementor/v1/components';
 
 export type CreateComponentPayload = {
 	status: DocumentStatus;
 	items: Array< {
-		temp_id: number;
+		uuid: string;
 		title: string;
 		elements: V1ElementData[];
 	} >;
 };
 
-type GetComponentResponse = Array< Component >;
+type GetComponentResponse = Array< PublishedComponent >;
 
 export type CreateComponentResponse = Record< number, number >;
 

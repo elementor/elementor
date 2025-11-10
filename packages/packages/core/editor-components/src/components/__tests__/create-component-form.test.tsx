@@ -30,10 +30,16 @@ describe( 'CreateComponentForm', () => {
 		store = __createStore();
 
 		mockGetElementLabel.mockReturnValue( 'Div Block' );
-		mockGetComponents.mockReturnValue( Promise.resolve( [ { name: 'Existing Component', id: 123 } ] ) );
+		mockGetComponents.mockReturnValue(
+			Promise.resolve( [ { name: 'Existing Component', id: 123, uuid: 'f73880da-522c-442e-815a-b2c9849b7415' } ] )
+		);
 
 		act( () => {
-			__dispatch( slice.actions.load( [ { name: 'Existing Component', id: 123 } ] ) );
+			__dispatch(
+				slice.actions.load( [
+					{ name: 'Existing Component', id: 123, uuid: 'f73880da-522c-442e-815a-b2c9849b7415' },
+				] )
+			);
 		} );
 	} );
 

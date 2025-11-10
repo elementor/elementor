@@ -102,6 +102,7 @@ type BackboneCollection< Model extends object > = {
 type ElementModel = {
 	id: string;
 	settings: BackboneModel< Props >;
+	editor_settings: Record< string, unknown >;
 	widgetType: string;
 };
 

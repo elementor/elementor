@@ -1,11 +1,12 @@
 import { type V1Element } from '@elementor/editor-elements';
-import { type TransformablePropValue } from '@elementor/editor-props';
 import { getMixpanel } from '@elementor/mixpanel';
+import { __getState as getState } from '@elementor/store';
 
+import { selectCreatedThisSession } from '../store/store';
 import { type ExtendedWindow } from '../types';
 
 type ComponentEventData = Record< string, unknown > & {
-	action: 'createClicked' | 'createCancelled' | 'instanceAdded' | 'sameSessionReuse';
+	action: 'createClicked' | 'created' | 'createCancelled' | 'instanceAdded' | 'edited';
 };
 
 export const trackComponentEvent = ( { action, ...data }: ComponentEventData ) => {
@@ -20,19 +21,23 @@ export const trackComponentEvent = ( { action, ...data }: ComponentEventData ) =
 
 export const onElementCreation = ( _args: unknown, result: V1Element ) => {
 	if ( result.model.get( 'widgetType' ) === 'e-component' ) {
-		const componentName = result.model.get( 'editor_settings' )?.title;
-		const componentId = ( result.settings?.get( 'component' ) as TransformablePropValue< 'component-id', number > )
-			?.value;
+		const editorSettings = result.model.get( 'editor_settings' );
+		const componentName = editorSettings?.title;
+		const componentUUID = editorSettings?.component_uuid;
 		const instanceId = result.id;
+
+		const createdThisSession = selectCreatedThisSession( getState() );
+		const isSameSessionReuse = componentUUID && createdThisSession.includes( componentUUID );
 
 		const eventsManagerConfig = ( window as unknown as ExtendedWindow ).elementorCommon.eventsManager.config;
 		trackComponentEvent( {
 			action: 'instanceAdded',
 			instance_id: instanceId,
-			component_id: componentId,
+			component_uuid: componentUUID,
 			component_name: componentName,
+			is_same_session_reuse: isSameSessionReuse,
 			location: eventsManagerConfig.locations.widgetPanel,
-			secondaryLocation: eventsManagerConfig.secondaryLocations.componentsTab,
+			secondary_location: eventsManagerConfig.secondaryLocations.componentsTab,
 		} );
 	}
 };

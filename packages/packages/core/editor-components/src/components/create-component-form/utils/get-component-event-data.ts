@@ -5,7 +5,7 @@ export type ComponentEventData = {
 	nested_components_count: number;
 	top_element_type: string;
 	location?: string;
-	secondaryLocation?: string;
+	secondary_location?: string;
 	trigger?: string;
 };
 
@@ -26,7 +26,7 @@ export const getComponentEventData = (
 		nested_components_count: componentsCount,
 		top_element_type: containerElement.elType,
 		location: options?.location,
-		secondaryLocation: options?.secondaryLocation,
+		secondary_location: options?.secondaryLocation,
 		trigger: options?.trigger,
 	};
 };
