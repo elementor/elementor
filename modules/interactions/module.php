@@ -172,7 +172,7 @@ class Module extends BaseModule {
 		);
 	}
 
-public function enqueue_editor_scripts() {
+	public function enqueue_editor_scripts() {
 		wp_add_inline_script(
 			'elementor-common',
 			'window.ElementorInteractionsConfig = ' . wp_json_encode( $this->get_config() ) . ';',
