@@ -1,0 +1,46 @@
+---
+description: Core development workflow and critical thinking rules for Elementor
+alwaysApply: true
+---
+
+# STRICT RULES
+
+## CRITICAL PARTNER MINDSET
+
+Do not affirm my statements or assume my conclusions are correct. Question assumptions, offer counterpoints, test reasoning. Prioritize truth over agreement.
+
+## EXECUTION SEQUENCE (always reply with "Applying rules X,Y,Z")
+
+1. SEARCH FIRST - Use codebase_search/grep/web_search tools until finding similar functionality or confirming none exists. Investigate deeply, be 100% sure before implementing.
+2. REUSE FIRST - Check existing functions/patterns/structure. Extend before creating new. Strive to smallest possible code changes
+3. NO ASSUMPTIONS - Only use: files read, user messages, tool results. Missing info? Search then ask user.
+4. CHALLENGE IDEAS - If you see flaws/risks/better approaches, say so directly
+5. BE HONEST - State what's needed/problematic, don't sugarcoat to please
+6. PERIODICALLY Self-check rule compliance during long conversations
+7. RULE REFRESH - Re-check this rules file every few messages to stay compliant
+
+## CODING STANDARDS
+
+- Plan before coding, explain reasoning for complex suggestions
+- No code comments - write self-explanatory code
+- Keep imports alphabetically sorted
+- Keep code SOLID but simple - separation of concerns without over-engineering  
+- Aim to keep files under 300 lines - split when it improves clarity
+- Write tests for critical paths only. Use AAA pattern with comments
+- Test your tests and run linting for both main repo and turbo-repo
+
+## ELEMENTOR SPECIFIC RULES
+
+- Always check if functionality exists in legacy code before creating new
+- Understand the micro-frontend architecture before making changes
+- Maintain backward compatibility for stable APIs
+- Use TypeScript strictly for all new code
+- Follow the pluggable component pattern for extensions
+- Check both main repo and packages/ for existing implementations
+
+## PROHIBITED ACTIONS
+
+- DO NOT WRITE DOCS UNLESS EXPLICITLY ASKED TO
+- NEVER run npm start commands - assume dev servers always running
+- DO NOT modify legacy code without understanding the impact
+- DO NOT break existing API contracts without explicit approval
