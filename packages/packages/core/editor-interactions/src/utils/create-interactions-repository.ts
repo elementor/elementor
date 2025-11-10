@@ -4,17 +4,12 @@ export const createInteractionsRepository = () => {
 	const providers: InteractionsProvider[] = [];
 
 	const getProviders = () => {
-		console.log( '[Interactions Repository] getProviders() called, providers count:', providers.length );
 		const sorted = providers.slice( 0 ).sort( ( a, b ) => ( a.priority > b.priority ? -1 : 1 ) );
-		console.log( '[Interactions Repository] Returning sorted providers:', sorted.length );
 		return sorted;
 	};
 
 	const register = ( provider: InteractionsProvider ) => {
-		console.log( '[Interactions Repository] register() called' );
-		// NOTE: We do NOT call getKey() here - it should only be called when needed (in subscribers)
 		providers.push( provider );
-		console.log( '[Interactions Repository] Provider registered, total providers:', providers.length );
 	};
 
 	const all = () => {

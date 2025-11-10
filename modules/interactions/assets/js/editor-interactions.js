@@ -55,24 +55,14 @@
 			easing: config.easing,
 		};
 
-		console.log( '[Editor Interactions Handler] Calling animateFunc with:', {
-			element,
-			keyframes,
-			options,
-		} );
-
 		try {
 			animateFunc( element, keyframes, options );
-			console.log( '[Editor Interactions Handler] Animation applied successfully' );
 		} catch ( error ) {
-			console.error( '[Editor Interactions Handler] Error applying animation:', error );
 		}
 	}
 
 	function getInteractionsData() {
-		console.log( '[Editor Interactions Handler] Getting interactions data...' );
 		const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
-		console.log( '[Editor Interactions Handler] Script tag found:', scriptTag );
 		if ( ! scriptTag ) {
 			return [];
 		}
@@ -80,7 +70,6 @@
 		try {
 			return JSON.parse( scriptTag.textContent || '[]' );
 		} catch ( error ) {
-			console.error( '[Editor Interactions Handler] Error parsing interactions data:', error );
 			return [];
 		}
 	}
@@ -137,36 +126,15 @@
 	}
 
 	function applyInteractionsToElement( element, interactionsData ) {
-		console.log( '[Editor Interactions Handler] applyInteractionsToElement called', {
-			element,
-			elementTagName: element?.tagName,
-			elementId: element?.id,
-			elementDataId: element?.getAttribute( 'data-id' ),
-			interactionsData,
-		} );
-
-		// Check for animate function
 		const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
-		
-		console.log( '[Editor Interactions Handler] animateFunc check:', {
-			hasAnimate: 'undefined' !== typeof animate,
-			hasMotionAnimate: !!window.Motion?.animate,
-			animateFunc: !!animateFunc,
-		} );
 
 		if ( ! animateFunc ) {
-			console.error( '[Editor Interactions Handler] animateFunc not available! animate:', typeof animate, 'Motion:', window.Motion );
-			// Still try to play a simple CSS animation as fallback
-			console.log( '[Editor Interactions Handler] Trying CSS animation fallback' );
 			element.style.animation = 'none';
 			setTimeout( () => {
 				element.style.animation = 'fadeInScale 0.5s ease-out';
 			}, 10 );
 			return;
 		}
-
-		// TEST: Play a hardcoded animation every time to verify the system works
-		console.log( '[Editor Interactions Handler] TEST: Playing hardcoded animation on element:', element );
 		
 		try {
 			// Store original styles to restore later
@@ -190,10 +158,8 @@
 				{
 					duration: 0.5,
 					easing: 'ease-out',
-				}
-			);
-			
-			console.log( '[Editor Interactions Handler] TEST: Hardcoded animation created:', animation );
+			}
+		);
 			
 			// Clean up styles after animation completes
 			if ( animation && typeof animation.then === 'function' ) {
@@ -209,8 +175,6 @@
 			}
 			
 		} catch ( error ) {
-			console.error( '[Editor Interactions Handler] TEST: Error applying hardcoded animation:', error );
-			console.error( '[Editor Interactions Handler] Error stack:', error.stack );
 			// Restore styles on error
 			element.style.opacity = '';
 			element.style.transform = '';
@@ -240,45 +204,23 @@
 
 	function handleInteractionsUpdate() {
 		const currentInteractionsData = getInteractionsData();
-		console.log( '[Editor Interactions Handler] Current interactions data:', currentInteractionsData );
 
-		// Find elements that changed (added or modified)
 		const changedItems = currentInteractionsData.filter( ( currentItem ) => {
 			const previousItem = previousInteractionsData.find(
 				( prev ) => prev.dataId === currentItem.dataId
 			);
 
-			// New item or interactions changed
 			const hasChanged = ! previousItem || previousItem.interactions !== currentItem.interactions;
-			if ( hasChanged ) {
-				console.log( '[Editor Interactions Handler] Item changed:', {
-					dataId: currentItem.dataId,
-					interactions: currentItem.interactions,
-					isNew: ! previousItem,
-				} );
-			}
 			return hasChanged;
 		} );
 
-		console.log( '[Editor Interactions Handler] Changed items:', changedItems.length );
-		console.log( '[Editor Interactions Handler] Total items:', currentInteractionsData.length );
-
-		// Apply animations to changed elements only
 		changedItems.forEach( ( item ) => {
-			console.log( '[Editor Interactions Handler] Looking for element with data-id:', item.dataId );
 			const element = findElementByDataId( item.dataId );
 			if ( element ) {
-				console.log( '[Editor Interactions Handler] Found element:', element );
-				// Get the actual target element to animate (might be a child)
 				const targetElement = getAnimationTarget( element );
-				console.log( '[Editor Interactions Handler] Animation target element:', targetElement );
 				if ( targetElement ) {
 					applyInteractionsToElement( targetElement, item.interactions );
-				} else {
-					console.warn( '[Editor Interactions Handler] No animation target found for element' );
 				}
-			} else {
-				console.warn( '[Editor Interactions Handler] Element not found for data-id:', item.dataId );
 			}
 		} );
 
@@ -286,16 +228,10 @@
 	}
 
 	function initEditorInteractionsHandler() {
-		console.log( '[Editor Interactions Handler] Initializing...' );
-
-		// Wait for motion.dev to be available
 		if ( 'undefined' === typeof animate && ! window.Motion?.animate ) {
-			console.log( '[Editor Interactions Handler] Waiting for motion.dev...' );
 			setTimeout( initEditorInteractionsHandler, 100 );
 			return;
 		}
-
-		console.log( '[Editor Interactions Handler] motion.dev is available' );
 
 		// Watch the head for when the script tag appears (Portal injects it later)
 		const head = document.head;
@@ -307,9 +243,7 @@
 				observer.disconnect();
 			}
 
-			console.log( '[Editor Interactions Handler] Setting up MutationObserver for script tag' );
-			observer = new MutationObserver( ( mutations ) => {
-				console.log( '[Editor Interactions Handler] Mutation detected:', mutations );
+			observer = new MutationObserver( () => {
 				handleInteractionsUpdate();
 			} );
 
@@ -327,10 +261,9 @@
 		const headObserver = new MutationObserver( () => {
 			const foundScriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
 			if ( foundScriptTag && foundScriptTag !== scriptTag ) {
-				console.log( '[Editor Interactions Handler] Script tag appeared in head!' );
 				scriptTag = foundScriptTag;
 				setupObserver( scriptTag );
-				headObserver.disconnect(); // Stop watching head once we found it
+				headObserver.disconnect();
 			}
 		} );
 
@@ -339,14 +272,10 @@
 			subtree: true,
 		} );
 
-		// Also check immediately in case it's already there
 		scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
 		if ( scriptTag ) {
-			console.log( '[Editor Interactions Handler] Script tag already exists' );
 			setupObserver( scriptTag );
 			headObserver.disconnect();
-		} else {
-			console.log( '[Editor Interactions Handler] Script tag not found yet, watching head for it...' );
 		}
 	}
 

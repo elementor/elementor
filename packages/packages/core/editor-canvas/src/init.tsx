@@ -21,9 +21,7 @@ export function init() {
 
 	initSettingsTransformers();
 
-	console.log( '[Canvas Init] About to initialize interactions repository' );
 	initInteractionsRepository();
-	console.log( '[Canvas Init] Interactions repository initialized' );
 
 	injectIntoTop( {
 		id: 'elements-overlays',
@@ -35,12 +33,10 @@ export function init() {
 		component: StyleRenderer,
 	} );
 
-	console.log( '[Canvas Init] About to inject InteractionsRenderer' );
 	injectIntoTop( {
 		id: 'canvas-interactions-render',
 		component: InteractionsRenderer,
 	} );
-	console.log( '[Canvas Init] InteractionsRenderer injected' );
 
 	injectIntoLogic( {
 		id: 'classes-rename',

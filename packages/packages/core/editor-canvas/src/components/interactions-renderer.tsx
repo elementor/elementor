@@ -13,10 +13,7 @@ export function InteractionsRenderer() {
 		return null;
 	}
 
-	// Create a script tag with JSON data for motion.dev to read
-	// The editor-interactions.js script (loaded via preview hook) will watch this for changes
 	const interactionsData = JSON.stringify( interactionItems );
-    console.log( '[Interactions Renderer] Interactions data:', interactionsData );
 
 	return (
 		<Portal container={ container }>

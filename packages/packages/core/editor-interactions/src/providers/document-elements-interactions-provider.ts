@@ -11,31 +11,23 @@ export const ELEMENTS_INTERACTIONS_PROVIDER_KEY_PREFIX = 'document-elements-inte
 
 export const documentElementsInteractionsProvider = createInteractionsProvider( {
 	key: () => {
-		console.log( '[Interactions Provider] getKey() called' );
 		const documentId = getCurrentDocumentId();
-		console.log( '[Interactions Provider] documentId:', documentId );
 
 		if ( ! documentId ) {
-			// Return a temporary key instead of throwing to prevent errors during initialization
 			const pendingKey = `${ ELEMENTS_INTERACTIONS_PROVIDER_KEY_PREFIX }pending`;
-			console.log( '[Interactions Provider] Returning pending key:', pendingKey );
 			return pendingKey;
 		}
 
 		const key = `${ ELEMENTS_INTERACTIONS_PROVIDER_KEY_PREFIX }${ documentId }`;
-		console.log( '[Interactions Provider] Returning key:', key );
 		return key;
 	},
 	priority: 50,
 	subscribe: ( cb ) => {
-		// Listen to interaction update events
 		return listenTo( [ windowEvent( 'elementor/element/update_interactions' ) ], () => cb() );
 	},
 	actions: {
 		all: () => {
-			console.log( '[Interactions Provider] actions.all() called' );
 			const elements = getElements();
-			console.log( '[Interactions Provider] Found elements:', elements.length );
 
 			return elements
 				.filter( ( element ) => {
