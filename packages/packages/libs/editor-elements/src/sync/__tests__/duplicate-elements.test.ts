@@ -4,7 +4,7 @@ import { act } from '@testing-library/react';
 import { createElement } from '../create-element';
 import { deleteElement } from '../delete-element';
 import { duplicateElement } from '../duplicate-element';
-import { type DuplicatedElement, duplicateElements } from '../duplicate-elements';
+import { duplicateElements } from '../duplicate-elements';
 import { getContainer } from '../get-container';
 import { type V1ElementModelProps } from '../types';
 
