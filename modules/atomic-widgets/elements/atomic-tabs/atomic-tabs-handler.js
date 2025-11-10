@@ -4,8 +4,7 @@ import { Alpine } from '@elementor/alpinejs';
 const SELECTED_CLASS = 'e--selected';
 register( {
 	elementType: 'e-tabs',
-	id: 'e-tabs-handler',
-	dependsOn: [ 'e-tabs-content-area', 'e-tabs-menu' ],
+	uniqueId: 'e-tabs-handler',
 	callback: ( { element, settings } ) => {
 		const TAB_ELEMENT_TYPE = 'e-tab';
 		const TAB_CONTENT_ELEMENT_TYPE = 'e-tab-content';
@@ -60,7 +59,7 @@ register( {
 					return this.activeTab === id ? '0' : '-1';
 				},
 				':aria-controls'() {
-					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
+					const index = getIndex( this.$el, TAB_ELEMENT_TYPE );
 
 					return getTabContentId( index );
 				},
@@ -68,7 +67,7 @@ register( {
 
 			tabContent: {
 				':aria-labelledby'() {
-					const index = getIndex( this.$el, TAB_ELEMENT_TYPE );
+					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
 
 					return getTabId( index );
 				},
