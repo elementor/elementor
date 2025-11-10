@@ -1,0 +1,150 @@
+---
+description: Turbo-repo and micro-frontend architecture rules
+globs: ["packages/**/*.ts", "packages/**/*.tsx", "packages/**/*.js", "packages/**/*.jsx"]
+alwaysApply: true
+---
+
+# Turbo-Repo Development Rules
+
+## Package Architecture
+
+### Package Categories
+- **Core**: Standalone applications (editor, app-bar, canvas)
+- **Libs**: Reusable libraries (controls, elements, utils)  
+- **Tools**: Development tools and build utilities
+
+### Package Development
+- Each package must be independently developable
+- Use typed APIs for inter-package communication
+- Follow the pluggable component pattern for extensions
+- Maintain backward compatibility for stable packages
+
+## Micro-Frontend Principles
+
+### Dynamic Extensibility
+- All extensions load dynamically at runtime
+- Use the locations system for pluggable components
+- Avoid direct imports between packages when possible
+- Use the pluggable pattern for component injection
+
+### State Management
+- Keep state local to packages when possible
+- Use React context for shared state within packages
+- Avoid global state unless absolutely necessary
+- Use the locations system for cross-package communication
+
+## TypeScript Standards
+
+### Type Safety
+- Use strict TypeScript for all new code
+- Define clear interfaces for all public APIs
+- Avoid `any` type unless absolutely necessary
+- Use existing types from other packages when available
+
+### API Design
+- Design APIs for external consumption
+- Use concrete types instead of strings for communication
+- Provide clear error handling in APIs
+- Document all public interfaces with JSDoc
+
+## Package Structure
+
+### File Organization
+```
+packages/packages/[category]/[package-name]/
+├── src/
+│   ├── index.ts          # Main exports
+│   ├── types.ts          # Type definitions
+│   ├── components/       # React components
+│   ├── hooks/           # Custom hooks
+│   └── utils/           # Utility functions
+├── package.json
+└── README.md
+```
+
+### Naming Conventions
+- Package names: `@elementor/[category]-[name]`
+- File names: kebab-case
+- Component names: PascalCase
+- Hook names: camelCase starting with 'use'
+- Function names: camelCase
+
+## Development Workflow
+
+### Before Making Changes
+1. Check if functionality exists in other packages
+2. Understand the package's role in the architecture
+3. Identify all dependencies and consumers
+4. Plan the API design for external usage
+
+### During Development
+1. Write TypeScript interfaces first
+2. Implement with proper error handling
+3. Add tests for critical paths
+4. Update package exports in index.ts
+
+### After Implementation
+1. Run package tests: `cd packages && npm test`
+2. Run linting: `cd packages && npm run lint`
+3. Check for unused dependencies: `cd packages && npm run check-unused`
+4. Verify no circular dependencies
+
+## Common Patterns
+
+### Pluggable Components
+```typescript
+// Register component
+locations.register('editor.app-bar.menu', MyMenuComponent);
+
+// Use component
+const menuItems = locations.get('editor.app-bar.menu');
+```
+
+### Package Communication
+```typescript
+// Define API interface
+export interface EditorAPI {
+  getCurrentDocument(): Document;
+  updateElement(id: string, props: ElementProps): void;
+}
+
+// Use in consuming package
+const editorAPI = useEditorAPI();
+```
+
+### Error Handling
+```typescript
+// Always handle errors gracefully
+try {
+  const result = await riskyOperation();
+  return { success: true, data: result };
+} catch (error) {
+  console.error('Operation failed:', error);
+  return { success: false, error: error.message };
+}
+```
+
+## Testing Requirements
+
+### Unit Tests
+- Test all public APIs
+- Mock external dependencies
+- Test error scenarios
+- Use descriptive test names
+
+### Integration Tests
+- Test package interactions
+- Verify API contracts
+- Test with real data when possible
+
+## Build and Deployment
+
+### Build Process
+- Use `npm run build` to build all packages
+- Use `npm run dev` for development with watch mode
+- Individual packages build automatically when dependencies change
+
+### Version Management
+- Use semantic versioning
+- Update versions with `npm run version`
+- Publish with `npm run release`
