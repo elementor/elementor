@@ -174,6 +174,7 @@ const externals = [
 		'@elementor/editor-app-bar': 'elementorV2.editorAppBar',
 		'@elementor/editor-v1-adapters': 'elementorV2.editorV1Adapters',
 		'@elementor/frontend-handlers': 'elementorV2.frontendHandlers',
+		'@elementor/alpinejs': 'elementorV2.alpinejs',
 		'@elementor/query': 'elementorV2.query',
 		'@wordpress/dom-ready': 'wp.domReady',
 		'@wordpress/components': 'wp.components',
