@@ -7,6 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Default;
+use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Initial_Value;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
@@ -32,6 +33,7 @@ trait Dimensional_Prop_Type {
 	protected function get_prop_type( $bind ): Prop_Type {
 		$prop_type = Size_Prop_Type::make();
 		$units = $this->units( $bind );
+		// TODO discuss if we need this with the peacock team as its usage its only display the value on the UI
 		$default_value = $this->get_default_value_by_bind( $bind );
 
 		if ( $units ) {
@@ -41,6 +43,9 @@ trait Dimensional_Prop_Type {
 		if ( $default_value ) {
 			$prop_type->default_unit( $default_value['unit'] );
 			$prop_type->default( $default_value );
+
+			// copy default to be initial too
+			$prop_type->initial_value( $default_value );
 		}
 
 		return $prop_type;
