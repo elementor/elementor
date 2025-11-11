@@ -16,7 +16,7 @@
 			{{ settings.title | striptags(allowed_tags) | raw }}
 		</a>
 	{% else %}
-			{{ settings.title | striptags(allowed_tags) | raw }}
+		{{ settings.title | striptags(allowed_tags) | raw }}
 	{% endif %}
 	</{{ settings.tag | e('html_tag') }}>
 {% endif %}
