@@ -1,14 +1,10 @@
 import { getWidgetsCache, type V1ElementConfig } from '@elementor/editor-elements';
-import { zodToJsonSchema } from '@elementor/editor-mcp';
-import { z } from '@elementor/schema';
-
-import { getElementSchemaAsZod } from './get-element-configuration-schema';
 
 type ElTypedElementConfig = V1ElementConfig< {
 	elType?: string;
 } >;
 
-export const generateAvailableTags = (): { tag: string; description: string }[] => {
+export const generateAvailableTags = () => {
 	const cache = getWidgetsCache< ElTypedElementConfig >();
 	if ( ! cache ) {
 		return [];
@@ -16,11 +12,11 @@ export const generateAvailableTags = (): { tag: string; description: string }[] 
 	const customTags = Object.entries( cache )
 		.filter( ( [ , widgetData ] ) => !! widgetData.atomic_controls )
 		.map( ( [ widgetType, widgetData ] ) => {
-			const configurationSchema = getElementSchemaAsZod( widgetType, true ).zodSchema;
+			const configurationSchema = widgetData; //getElementSchemaAsJsonSchema( widgetType );
 			return {
 				tag: `${ widgetType }`,
 				description: widgetData.title || widgetData.elType || `A ${ widgetType } element`,
-				configurationSchema: JSON.stringify( zodToJsonSchema( z.object( configurationSchema ) ) ),
+				configurationSchema: JSON.stringify( configurationSchema ),
 			};
 		} );
 	return customTags;

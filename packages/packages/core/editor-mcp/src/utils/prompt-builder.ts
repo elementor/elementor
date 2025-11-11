@@ -45,15 +45,15 @@ class ToolPrompts {
 # Description
 ${ this._description }
 
-# Parameters
+${ this._parameters.length ? '# Parameters' : '' }
 ${ Object.values( this._parameters ).join( '\n\n' ) }
 
-# Examples
+${ this._examples.length ? '# Examples' : '' }
 ${ this.examples }
 
-# Further Instructions
+${ this._furtherInstructions.length ? '# Further Instructions' : '' }
 ${ this._furtherInstructions.join( '\n\n' ) }
-`;
+`.trim();
 	}
 }
 

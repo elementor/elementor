@@ -48,23 +48,31 @@ const isAlphabet = ( str: string ): string | never => {
 
 /**
  *
- * @param namespace The namespace of the MCP server. It should contain only lowercase alphabetic characters.
+ * @param namespace            The namespace of the MCP server. It should contain only lowercase alphabetic characters.
+ * @param options
+ * @param options.instructions
  */
-export const getMCPByDomain = ( namespace: string ): MCPRegistryEntry => {
+export const getMCPByDomain = ( namespace: string, options?: { instructions?: string } ): MCPRegistryEntry => {
 	const mcpName = `editor-${ isAlphabet( namespace ) }`;
 	// @ts-ignore - QUnit fails this
 	if ( typeof globalThis.jest !== 'undefined' ) {
 		return mockMcpRegistry();
 	}
 	if ( ! mcpRegistry[ namespace ] ) {
-		mcpRegistry[ namespace ] = new McpServer( {
-			name: mcpName,
-			version: '1.0.0',
-		} );
+		mcpRegistry[ namespace ] = new McpServer(
+			{
+				name: mcpName,
+				version: '1.0.0',
+			},
+			{
+				instructions: options?.instructions,
+			}
+		);
 	}
 	const mcpServer = mcpRegistry[ namespace ];
 	const { addTool } = createToolRegistrator( mcpServer );
 	return {
+		mcpServer,
 		addTool,
 		setMCPDescription: ( description: string ) => {
 			mcpDescriptions[ namespace ] = description;
@@ -92,7 +100,18 @@ export interface MCPRegistryEntry {
 	) => void;
 	setMCPDescription: ( description: string ) => void;
 	getActiveChatInfo: () => { sessionId: string; expiresAt: number };
+	mcpServer: McpServer;
 }
+
+type ResourceList = {
+	type: 'resource_link';
+	uri: string;
+	name: string;
+	description: string;
+	_meta: Record< string, string >;
+	mimeType?: string;
+	annotations?: Record< string, unknown >;
+}[];
 
 type ToolRegistrationOptions<
 	InputArgs extends undefined | z.ZodRawShape = undefined,
@@ -113,6 +132,7 @@ type ToolRegistrationOptions<
 				extra: RequestHandlerExtra< ServerRequest, ServerNotification >
 		  ) => ExpectedOutput | Promise< ExpectedOutput >;
 	isDestrcutive?: boolean;
+	resourceList?: ResourceList;
 };
 
 function createToolRegistrator( server: McpServer ) {
@@ -139,6 +159,7 @@ function createToolRegistrator( server: McpServer ) {
 									? invocationResult
 									: JSON.stringify( invocationResult ),
 						},
+						...( opts.resourceList || [] ),
 					],
 				};
 			} catch ( error ) {

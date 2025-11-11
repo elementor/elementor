@@ -1,43 +1,55 @@
 import {
 	createElementStyle,
 	getElementStyles,
+	getWidgetsCache,
 	updateElementSettings,
 	updateElementStyle,
 } from '@elementor/editor-elements';
-import { getPropSchemaFromCache, type PropValue } from '@elementor/editor-props';
+import { getPropSchemaFromCache, type PropValue, Schema, type TransformablePropValue } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
-
-import { getElementSchemaAsZod } from './get-element-configuration-schema';
 
 type OwnParams = {
 	elementId: string;
 	elementType: string;
 	propertyName: string;
-	propertyValue: unknown;
+	propertyValue: string | PropValue | TransformablePropValue< string, unknown >;
 };
 
-export const doUpdateElementProperty = async ( params: OwnParams ) => {
+function resolvePropValue( value: unknown, forceKey?: string ): PropValue {
+	return Schema.adjustLlmPropValueSchema( value as PropValue, forceKey );
+}
+
+export const doUpdateElementProperty = ( params: OwnParams ) => {
 	const { elementId, propertyName, propertyValue, elementType } = params;
 
 	if ( propertyName === '_styles' ) {
 		const elementStyles = getElementStyles( elementId ) || {};
-		const styleValues: Record< string, PropValue > = {};
-		Object.keys( propertyValue as Record< string, unknown > ).forEach( ( stylePropName ) => {
-			const schema = getStylesSchema();
-			const expectedType = schema[ stylePropName ]?.meta?.llm?.propType;
-
-			if ( ! expectedType ) {
-				throw new Error(
-					`Property ${ propertyName } on element type ${ params.elementType } does not support LLM configuration.`
-				);
+		const propertyMapValue = propertyValue as Record< string, PropValue >;
+		const styleSchema = getStylesSchema();
+		const transformedStyleValues = Object.fromEntries(
+			Object.entries( propertyMapValue ).map( ( [ key, val ] ) => {
+				const { key: propKey, kind } = styleSchema[ key ];
+				if ( ! propKey && kind !== 'union' ) {
+					throw new Error( `_styles property ${ key } is not supported.` );
+				}
+				return [ key, resolvePropValue( val, propKey ) ];
+			} )
+		);
+		Object.keys( propertyMapValue as Record< string, unknown > ).forEach( ( stylePropName ) => {
+			const propertyRawSchema = styleSchema[ stylePropName ];
+			const isSupported = !! propertyRawSchema;
+			if ( ! isSupported ) {
+				throw new Error( `_styles property ${ stylePropName } is not supported.` );
 			}
-
-			const propUtil = getPropSchemaFromCache( expectedType );
-			if ( ! propUtil ) {
-				return;
+			if ( propertyRawSchema.kind === 'plain' ) {
+				if ( typeof ( propertyMapValue as Record< string, unknown > )[ stylePropName ] !== 'object' ) {
+					const propUtil = getPropSchemaFromCache( propertyRawSchema.key );
+					if ( propUtil ) {
+						const plainValue = propUtil.create( propertyMapValue[ stylePropName ] );
+						propertyMapValue[ stylePropName ] = plainValue;
+					}
+				}
 			}
-			const value = ( propertyValue as Record< string, unknown > )[ stylePropName ];
-			styleValues[ stylePropName ] = propUtil.create( value as PropValue );
 		} );
 		const localStyle = Object.values( elementStyles ).find( ( style ) => style.label === 'local' );
 		if ( ! localStyle ) {
@@ -50,53 +62,30 @@ export const doUpdateElementProperty = async ( params: OwnParams ) => {
 					state: null,
 				},
 				props: {
-					...styleValues,
+					...transformedStyleValues,
 				},
 			} );
 		} else {
-			const styleId = localStyle.id;
 			updateElementStyle( {
 				elementId,
-				styleId,
+				styleId: localStyle.id,
 				meta: {
 					breakpoint: 'desktop',
 					state: null,
 				},
 				props: {
-					...styleValues,
+					...transformedStyleValues,
 				},
 			} );
 		}
 		return;
 	}
 
-	const { schema } = getElementSchemaAsZod( elementType, true );
-	const rawPropertySchema = schema[ propertyName ];
-
-	const expectedType = rawPropertySchema.meta?.llm?.propType;
-
-	if ( ! expectedType ) {
-		throw new Error(
-			`Property ${ propertyName } on element type ${ params.elementType } does not support LLM configuration.`
-		);
+	const elementPropSchema = getWidgetsCache()?.[ elementType ]?.atomic_props_schema;
+	if ( ! elementPropSchema ) {
+		throw new Error( `No prop schema found for element type: ${ elementType }` );
 	}
-
-	const propUtil = getPropSchemaFromCache( expectedType );
-
-	if ( ! propUtil ) {
-		throw new Error(
-			`No prop util found for expected type ${ expectedType } on property ${ propertyName } of element type ${ params.elementType }.`
-		);
-	}
-
-	if ( ! rawPropertySchema ) {
-		throw new Error(
-			`Property ${ propertyName } does not exist on element type ${ params.elementType }. Use the 'get-element-configuration-schema' tool first!`
-		);
-	}
-
-	const value = propUtil.create( propertyValue as PropValue );
-
+	const value = resolvePropValue( propertyValue );
 	updateElementSettings( {
 		id: elementId,
 		props: {
