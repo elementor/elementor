@@ -437,3 +437,57 @@ Once all questions are answered, I will create the comprehensive PRD document wi
 - Implementation Plan
 - Test Plan
 - Success Criteria
+
+---
+
+## Implementation Complete
+
+### Changes Made
+
+1. **Created `body-styles-processor.php`**
+   - Extracts body/html CSS rules from parsed CSS
+   - Handles complex selectors like `body.elementor-page-1140:not(...)`
+   - Converts CSS to Elementor page settings format
+   - Supports background (classic colors and gradients), margin, and padding
+
+2. **Registered Processor**
+   - Added to `css-processor-factory.php` with priority 11
+
+3. **Integrated Page Settings Saving**
+   - Updated `unified-widget-conversion-service.php` to save body styles after page creation
+   - Uses Elementor's `_elementor_page_settings` meta key
+
+4. **Fixed Complex Selector Matching**
+   - Enhanced `is_body_selector()` to handle:
+     - `body.class-name`
+     - `body:not(...)`
+     - `body > ...`
+     - Comma-separated selectors
+
+### Testing
+
+To test the implementation:
+
+1. **Import with selector:**
+```json
+{
+    "type": "url",
+    "content": "https://oboxthemes.com/",
+    "selector": ".elementor-1140"
+}
+```
+
+2. **Check debug logs:**
+   - Look for `BODY_STYLES_PROCESSOR: Found body selector: body.elementor-page-1140:not(...)`
+   - Look for `BODY_STYLES_PROCESSOR: Extracted X body style properties`
+
+3. **Verify in Elementor editor:**
+   - Open the imported page in Elementor editor
+   - Go to Page Settings → Style → Body Style
+   - Check that background-color `#FFFFF3` is applied
+
+### Known Issues Fixed
+
+- ✅ Complex body selectors now matched correctly
+- ✅ Body styles extracted even when using a selector
+- ✅ Page settings saved to correct meta key

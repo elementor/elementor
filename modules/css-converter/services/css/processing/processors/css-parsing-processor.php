@@ -43,6 +43,17 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			return $context;
 		}
 
+		if ( strpos( $css, 'body.elementor-page-1140' ) !== false ) {
+			error_log( 'CSS_PARSING_PROCESSOR: Found body.elementor-page-1140 in raw CSS' );
+			preg_match_all( '/body\.elementor-page-1140[^{]*\{[^}]*\}/', $css, $matches );
+			if ( ! empty( $matches[0] ) ) {
+				error_log( 'CSS_PARSING_PROCESSOR: Found ' . count( $matches[0] ) . ' body.elementor-page-1140 rules in CSS' );
+				foreach ( array_slice( $matches[0], 0, 2 ) as $match ) {
+					error_log( 'CSS_PARSING_PROCESSOR: Rule: ' . substr( $match, 0, 200 ) );
+				}
+			}
+		}
+
 		$beautified_css = $this->beautify_css( $css );
 		$context->set_metadata( 'beautified_css', $beautified_css );
 
@@ -68,6 +79,16 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 				return strpos( $rule['selector'] ?? '', 'elementor-kit-' ) === false;
 			} );
 			$css_rules = array_merge( $css_rules, $manual_kit_rules );
+		}
+
+		$parsed_1140_count = 0;
+		foreach ( $css_rules as $rule ) {
+			if ( strpos( $rule['selector'] ?? '', 'elementor-page-1140' ) !== false ) {
+				$parsed_1140_count++;
+			}
+		}
+		if ( $parsed_1140_count > 0 ) {
+			error_log( 'CSS_PARSING_PROCESSOR: Parsed ' . $parsed_1140_count . ' CSS rules with elementor-page-1140' );
 		}
 
 		// Store results in context

@@ -220,16 +220,45 @@ class Unified_Widget_Conversion_Service {
 	}
 	private function save_page_settings( int $post_id, array $body_styles ): void {
 		if ( empty( $body_styles ) ) {
+			error_log( 'BODY_STYLES_SAVE: No body styles to save for post ' . $post_id );
 			return;
 		}
 
-		$existing_settings = get_post_meta( $post_id, '_elementor_page_settings', true );
+		error_log( 'BODY_STYLES_SAVE: Saving body styles for post ' . $post_id . ': ' . print_r( $body_styles, true ) );
+
+		if ( ! class_exists( '\Elementor\Plugin' ) ) {
+			error_log( 'BODY_STYLES_SAVE: Elementor Plugin class not found' );
+			return;
+		}
+
+		$page_settings_manager = \Elementor\Core\Settings\Manager::get_settings_managers( 'page' );
+		if ( ! $page_settings_manager ) {
+			error_log( 'BODY_STYLES_SAVE: Page settings manager not found' );
+			return;
+		}
+
+		$existing_settings = $page_settings_manager->get_model( $post_id )->get_settings();
 		if ( ! is_array( $existing_settings ) ) {
 			$existing_settings = [];
 		}
 
+		error_log( 'BODY_STYLES_SAVE: Existing settings: ' . print_r( $existing_settings, true ) );
+
 		$merged_settings = array_merge( $existing_settings, $body_styles );
-		update_metadata( 'post', $post_id, '_elementor_page_settings', wp_slash( $merged_settings ) );
+		error_log( 'BODY_STYLES_SAVE: Merged settings: ' . print_r( $merged_settings, true ) );
+
+		$page_settings_manager->save_settings( $merged_settings, $post_id );
+
+		$saved_settings = $page_settings_manager->get_model( $post_id )->get_settings();
+		error_log( 'BODY_STYLES_SAVE: Verified saved settings: ' . print_r( $saved_settings, true ) );
+
+		$document = \Elementor\Plugin::$instance->documents->get( $post_id );
+		if ( $document ) {
+			$css_file = \Elementor\Core\Files\CSS\Post::create( $post_id );
+			if ( $css_file ) {
+				$css_file->delete();
+			}
+		}
 	}
 
 	private function extract_styles_by_source_from_widgets( array $widgets ): array {

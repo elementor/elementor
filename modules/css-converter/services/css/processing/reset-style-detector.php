@@ -185,6 +185,14 @@ class Reset_Style_Detector {
 	public function is_simple_element_selector( string $selector ): bool {
 		$selector = trim( $selector );
 
+		// CRITICAL FIX: Exclude body/html selectors with classes, pseudo-classes, or combinators
+		// These should be processed by Body_Styles_Processor, not Reset_Styles_Processor
+		if ( strpos( $selector, 'body' ) === 0 || strpos( $selector, 'html' ) === 0 ) {
+			if ( preg_match( '/[.#:\[\]()>+~\s]/', $selector ) ) {
+				return false;
+			}
+		}
+
 		// Must be ONLY an element name (no classes, IDs, pseudo-classes, combinators)
 		if ( ! in_array( $selector, $this->supported_simple_selectors, true ) ) {
 			return false;

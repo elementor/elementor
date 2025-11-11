@@ -91,8 +91,34 @@ class Widget_Class_Processor implements Css_Processor_Interface
 
         $styles_applied = $this->apply_widget_specific_styles($widget_specific_rules, $widgets, $context);
 
+        // CRITICAL FIX: Don't remove body/html selectors - they should be processed by Body_Styles_Processor
+        $body_html_rules = [];
+        foreach ( $css_rules as $rule ) {
+            $selector = trim( $rule['selector'] ?? '' );
+            if ( strpos( $selector, 'body' ) === 0 || strpos( $selector, 'html' ) === 0 ) {
+                if ( preg_match( '/[.#:\[\]()>+~\s]/', $selector ) ) {
+                    $body_html_rules[] = $rule;
+                }
+            }
+        }
+
         // Remove processed rules from css_rules so they don't get processed as global classes
         $remaining_rules = $this->remove_processed_rules($css_rules, $widget_specific_rules);
+        
+        // CRITICAL FIX: Re-add body/html rules that were removed
+        foreach ( $body_html_rules as $body_rule ) {
+            $selector = trim( $body_rule['selector'] ?? '' );
+            $found = false;
+            foreach ( $remaining_rules as $remaining_rule ) {
+                if ( trim( $remaining_rule['selector'] ?? '' ) === $selector ) {
+                    $found = true;
+                    break;
+                }
+            }
+            if ( ! $found ) {
+                $remaining_rules[] = $body_rule;
+            }
+        }
         
         $context->set_metadata('css_rules', $remaining_rules);
 
