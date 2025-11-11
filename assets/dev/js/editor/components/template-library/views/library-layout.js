@@ -27,6 +27,14 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		};
 	},
 
+	initModal() {
+		elementorModules.common.views.modal.Layout.prototype.initModal.call( this );
+
+		this.modal.on( 'hide', () => {
+			elementor.templates.eventManager.stopSessionRecording();
+		} );
+	},
+
 	getLogoOptions() {
 		return {
 			title: __( 'Library', 'elementor' ),
@@ -212,10 +220,5 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		Array.from( this.modalContent.currentView.ui?.orderInputs || [] ).forEach( function( input ) {
 			input.checked = false;
 		} );
-	},
-
-	hideModal() {
-		elementor.templates.eventManager.stopSessionRecording();
-		elementorModules.common.views.modal.Layout.prototype.hideModal.call( this );
 	},
 } );
