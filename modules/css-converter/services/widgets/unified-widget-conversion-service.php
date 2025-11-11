@@ -50,6 +50,8 @@ class Unified_Widget_Conversion_Service {
 		$this->use_zero_defaults = true;
 		// Use the widget creator passed in constructor instead of creating a new one
 
+		error_log( "PARADIGM_DEBUG: convert_from_html called with " . count( $css_urls ) . " CSS URLs" );
+		error_log( "PARADIGM_DEBUG: CSS URLs passed: " . implode( ', ', $css_urls ) );
 		error_log( "CONTEXT_DEBUG: convert_from_html called with options: " . json_encode( array_keys( $options ) ) );
 
 		// Initialize logging
@@ -75,7 +77,12 @@ class Unified_Widget_Conversion_Service {
 			$this->logger->add_mapping_stats( $mapping_stats );
 
 			// DELEGATE CSS extraction to unified processor (proper separation of concerns)
+			error_log( "PARADIGM_DEBUG: About to extract CSS from " . count( $css_urls ) . " URLs" );
 			$all_css = $this->unified_css_processor->extract_and_process_css_from_html_and_urls( $html, $css_urls, $follow_imports, $elements );
+			error_log( "PARADIGM_DEBUG: Extracted CSS length: " . strlen( $all_css ) . " bytes" );
+			if ( strlen( $all_css ) < 100 ) {
+				error_log( "PARADIGM_DEBUG: WARNING - CSS is very short! First 500 chars: " . substr( $all_css, 0, 500 ) );
+			}
 			$this->logger->add_css_size( strlen( $all_css ) );
 
 		try {

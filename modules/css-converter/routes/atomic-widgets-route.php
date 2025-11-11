@@ -119,6 +119,10 @@ class Atomic_Widgets_Route {
 			return $this->create_missing_html_error_response();
 		}
 
+		error_log( "PARADIGM_DEBUG: Starting conversion with " . count( $conversion_params['css_urls'] ) . " CSS URLs" );
+		error_log( "PARADIGM_DEBUG: CSS URLs: " . implode( ', ', $conversion_params['css_urls'] ) );
+		error_log( "PARADIGM_DEBUG: HTML length: " . strlen( $conversion_params['html'] ) . " bytes" );
+
 		try {
 			$service = $this->get_conversion_service();
 
@@ -356,13 +360,16 @@ class Atomic_Widgets_Route {
 	}
 
 	private function extract_stylesheet_urls_from_html( string $html, string $base_url ): array {
+		error_log( "PARADIGM_DEBUG: extract_stylesheet_urls_from_html called with base_url: $base_url" );
 		error_log( "CSS Variables DEBUG: extract_stylesheet_urls_from_html called with base_url: $base_url" );
 		$stylesheet_urls = [];
 
 		preg_match_all( '/<link[^>]+rel=["\']stylesheet["\'][^>]*href=["\']([^"\']+)["\'][^>]*>/i', $html, $link_matches );
+		error_log( "PARADIGM_DEBUG: Found " . count( $link_matches[1] ?? [] ) . " stylesheet links (first pattern)" );
 		if ( ! empty( $link_matches[1] ) ) {
 			foreach ( $link_matches[1] as $href ) {
 				$absolute_url = $this->resolve_relative_url( $href, $base_url );
+				error_log( "PARADIGM_DEBUG: Extracted CSS URL: $href -> $absolute_url" );
 				$stylesheet_urls[] = $absolute_url;
 			}
 		}
@@ -504,12 +511,11 @@ class Atomic_Widgets_Route {
 		}
 
 		$base_path = $parsed_base['path'] ?? '/';
-		$base_directory = dirname( $base_path );
-		if ( '/' !== $base_directory ) {
-			$base_directory .= '/';
+		if ( '/' !== substr( $base_path, -1 ) ) {
+			$base_path .= '/';
 		}
 
-		return $scheme . '://' . $host . $base_directory . $url;
+		return $scheme . '://' . $host . $base_path . $url;
 	}
 
 	private function create_missing_html_error_response(): \WP_REST_Response {

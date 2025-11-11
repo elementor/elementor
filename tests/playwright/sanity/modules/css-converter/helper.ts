@@ -157,6 +157,7 @@ export class CssConverterHelper {
 		cssUrls: string[] = [],
 		followImports: boolean = false,
 		options: CssConverterOptions = {},
+		selector?: string,
 	): Promise<CssConverterResponse> {
 		const defaultOptions: CssConverterOptions = {
 			postType: 'page',
@@ -164,18 +165,24 @@ export class CssConverterHelper {
 			...options,
 		};
 
+		const payload: any = {
+			type: 'url',
+			content: url,
+			cssUrls,
+			followImports,
+			options: defaultOptions,
+		};
+
+		if ( selector ) {
+			payload.selector = selector;
+		}
+
 		const apiResponse = await request.post( '/wp-json/elementor/v2/widget-converter', {
 			headers: {
 				'X-DEV-TOKEN': this.devToken,
 				'Content-Type': 'application/json',
 			},
-			data: {
-				type: 'url',
-				content: url,
-				cssUrls,
-				followImports,
-				options: defaultOptions,
-			},
+			data: payload,
 			timeout: 15000,
 		} );
 

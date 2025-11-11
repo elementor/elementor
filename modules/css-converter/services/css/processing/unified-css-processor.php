@@ -1354,6 +1354,9 @@ class Unified_Css_Processor
     }
     public function extract_and_process_css_from_html_and_urls( string $html, array $css_urls, bool $follow_imports, array &$elements ): string
     {
+        error_log( "PARADIGM_DEBUG: extract_and_process_css_from_html_and_urls called with " . count( $css_urls ) . " CSS URLs" );
+        error_log( "PARADIGM_DEBUG: CSS URLs: " . implode( ', ', $css_urls ) );
+        
         $css_sources = [];
         $html_style_tags = [];
         $inline_element_styles = [];
@@ -1361,6 +1364,7 @@ class Unified_Css_Processor
         // Extract inline <style> tags from HTML (process LAST for correct cascade)
         preg_match_all('/<style[^>]*>(.*?)<\/style>/is', $html, $matches);
         if (! empty($matches[1]) ) {
+            error_log( "PARADIGM_DEBUG: Found " . count( $matches[1] ) . " inline style tags" );
             foreach ( $matches[1] as $index => $css_content ) {
 
                 $html_style_tags[] = [
@@ -1369,6 +1373,8 @@ class Unified_Css_Processor
                  'content' => $css_content,
                 ];
             }
+        } else {
+            error_log( "PARADIGM_DEBUG: No inline style tags found" );
         }
 
         // Extract inline styles from elements and convert to CSS rules (process LAST for correct cascade)
@@ -1384,7 +1390,9 @@ class Unified_Css_Processor
             }
         }
 
+        error_log( "PARADIGM_DEBUG: Starting to fetch CSS from " . count( $css_urls ) . " URLs" );
         foreach ( $css_urls as $css_url ) {
+            error_log( "PARADIGM_DEBUG: Fetching CSS from: $css_url" );
             $is_elementor_kit_css = strpos($css_url, '/elementor/css/') !== false;
 
             if ($is_elementor_kit_css ) {
@@ -1398,7 +1406,14 @@ class Unified_Css_Processor
                 ]
             );
             if (! is_wp_error($response) ) {
+                $response_code = wp_remote_retrieve_response_code($response);
                 $css_content = wp_remote_retrieve_body($response);
+                error_log( "PARADIGM_DEBUG: Fetched CSS from $css_url - HTTP $response_code, size: " . strlen( $css_content ) . " bytes" );
+                if ( empty( $css_content ) ) {
+                    error_log( "PARADIGM_DEBUG: WARNING - Empty CSS content from $css_url" );
+                } else {
+                    error_log( "PARADIGM_DEBUG: CSS content preview (first 200 chars): " . substr( $css_content, 0, 200 ) );
+                }
 
                 if ($is_elementor_kit_css ) {
                     $has_e_global_vars = preg_match('/--e-global-[^:]+:/', $css_content);
@@ -1459,6 +1474,9 @@ class Unified_Css_Processor
                         }
                     }
                 }
+            } else {
+                $error_message = $response->get_error_message();
+                error_log( "PARADIGM_DEBUG: ERROR - Failed to fetch CSS from $css_url: $error_message" );
             }
         }
 
@@ -1470,7 +1488,13 @@ class Unified_Css_Processor
         // Inline styles should override everything else
         $css_sources = array_merge($css_sources, $inline_element_styles);
 
+        error_log( "PARADIGM_DEBUG: Total CSS sources collected: " . count( $css_sources ) );
+        foreach ( $css_sources as $index => $source ) {
+            error_log( "PARADIGM_DEBUG: CSS source #" . ( $index + 1 ) . ": type=" . $source['type'] . ", size=" . strlen( $source['content'] ?? '' ) . " bytes" );
+        }
+        
         $combined_css = $this->parse_css_sources_safely($css_sources);
+        error_log( "PARADIGM_DEBUG: Combined CSS length: " . strlen( $combined_css ) . " bytes" );
         
         // STEP 2: Check if Kit CSS definitions survive combination
         $debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
