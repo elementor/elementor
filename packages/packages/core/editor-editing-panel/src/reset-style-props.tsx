@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useIsStyle } from './contexts/style-context';
 import { controlActionsMenu } from './controls-actions';
+import { isEqual } from "./utils/is-equal";
 
 const { registerAction } = controlActionsMenu;
 
@@ -20,15 +21,41 @@ export function initResetStyleProps() {
 export function useResetStyleValueProps() {
 	const isStyle = useIsStyle();
 	const { value, resetValue, path, propType } = useBoundProp();
+	const hasValue = value !== null && value !== undefined;
+	const hasInitial = propType.initial_value !== undefined && propType.initial_value !== null;
+	const isRequired = !!propType.settings?.required;
 
 	const isInRepeater = path?.some( ( key ) => ! isNaN( Number( key ) ) );
-	const isRepeaterTypeSupported = REPEATERS_SUPPORTED_FOR_RESET.includes( path?.[ 0 ] );
-	const isRequired = propType?.settings?.required;
+	const canResetInRepeater = REPEATERS_SUPPORTED_FOR_RESET.includes( path?.[0] );
 
-	const shouldShowResetForRepeater = ! isRequired && ( ! isInRepeater || isRepeaterTypeSupported );
+	function calculateVisibility() {
+		if ( ! isStyle || ! hasValue) {
+			return false;
+		}
+
+		if ( ! isInRepeater ) {
+			return true;
+		}
+
+		if ( ! canResetInRepeater ) {
+			return false;
+		}
+
+		if ( hasInitial ) {
+			return ! isEqual( value, propType.initial_value );
+		}
+
+		if ( isRequired ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	const visible = calculateVisibility();
 
 	return {
-		visible: isStyle && value !== null && value !== undefined && shouldShowResetForRepeater,
+		visible,
 		title: __( 'Clear', 'elementor' ),
 		icon: BrushBigIcon,
 		onClick: () => resetValue(),
