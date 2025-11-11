@@ -53,8 +53,9 @@ class Module extends BaseModule {
 		}
 
 		add_action( 'elementor/frontend/after_register_scripts', fn () => $this->register_frontend_scripts() );
-		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
+		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 		add_action( 'elementor/frontend/before_enqueue_scripts', fn () => $this->enqueue_interactions() );
+		add_action( 'elementor/preview/enqueue_scripts', fn () => $this->enqueue_preview_scripts() );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 		add_filter( 'elementor/document/save/data', fn ( $data ) => $this->sanitize_document_data( $data ), 10, 1 );
 	}
@@ -159,6 +160,14 @@ class Module extends BaseModule {
 			'1.0.0',
 			true
 		);
+
+		wp_register_script(
+			'elementor-editor-interactions',
+			ELEMENTOR_URL . 'modules/interactions/assets/js/editor-interactions.js',
+			[ 'motion-js' ],
+			'1.0.0',
+			true
+		);
 	}
 
 	public function enqueue_interactions(): void {
@@ -177,6 +186,18 @@ class Module extends BaseModule {
 			'elementor-common',
 			'window.ElementorInteractionsConfig = ' . wp_json_encode( $this->get_config() ) . ';',
 			'before'
+		);
+	}
+
+	public function enqueue_preview_scripts() {
+		// Ensure motion-js and editor-interactions handler are available in preview iframe
+		wp_enqueue_script( 'motion-js' );
+		wp_enqueue_script( 'elementor-editor-interactions' );
+
+		wp_localize_script(
+			'elementor-editor-interactions',
+			'ElementorInteractionsConfig',
+			$this->get_config()
 		);
 	}
 
@@ -201,13 +222,16 @@ class Module extends BaseModule {
 	}
 
 	private function sanitize_interactions( $interactions ) {
-		if ( ! is_array( $interactions ) ) {
-			return [];
+		$sanitized = [
+			'items' => [],
+			'version' => 1,
+		];
+
+		if ( ! is_array( $interactions ) || ! isset( $interactions['items'] ) ) {
+			return $sanitized;
 		}
 
-		$sanitized = [];
-
-		foreach ( $interactions as $interaction ) {
+		foreach ( $interactions['items'] as $interaction ) {
 			$animation_id = null;
 
 			if ( is_string( $interaction ) ) {
@@ -217,7 +241,7 @@ class Module extends BaseModule {
 			}
 
 			if ( $animation_id && $this->is_valid_animation_id( $animation_id ) ) {
-				$sanitized[] = $interaction;
+				$sanitized['items'][] = $interaction;
 			}
 		}
 
