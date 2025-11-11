@@ -1,3 +1,5 @@
+import ContainerHelper from 'elementor-editor-utils/container-helper';
+
 export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 	validateArgs( args ) {
 		this.requireContainer( args );
@@ -81,7 +83,9 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 
 			data.forEach( ( model ) => {
 				switch ( model.elType ) {
-					case 'container': {
+					case 'container':
+					case 'e-flexbox':
+					case 'e-div-block':	{
 						// Push the cloned container to the 'document'.
 						result.push( this.pasteTo(
 							[ targetContainer ],
@@ -146,12 +150,22 @@ export class Paste extends $e.modules.editor.document.CommandHistoryBase {
 					default: {
 						// The 'default' case is widget.
 						let target;
+						const isAtomic = elementor.helpers.isAtomicWidget( model );
 
 						if ( 'section' === targetContainer.model.get( 'elType' ) ) {
 							// On trying to paste widget on section, the paste should be at the first column.
 							target = [ targetContainer.view.children.findByIndex( 0 ).getContainer() ];
 						} else if ( 'container' === targetContainer.model.get( 'elType' ) ) {
 							target = [ targetContainer ];
+						} else if ( isAtomic ) {
+							const options = { at: createNewElementAtTheBottomOfThePage ? ++index : index, useHistory: false };
+							target = ContainerHelper.createContainerFromModel(
+								{ elType: ContainerHelper.V4_DEFAULT_CONTAINER_TYPE },
+								targetContainer,
+								{ options },
+							);
+
+							target = [ target ];
 						} else if ( elementorCommon.config.experimentalFeatures.container ) {
 							// If the container experiment is active, create a new wrapper container.
 							target = $e.run( 'document/elements/create', {

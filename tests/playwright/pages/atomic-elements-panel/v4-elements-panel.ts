@@ -63,4 +63,16 @@ export default class v4Panel extends BasePage {
 		await this.page.locator( sectionButtonSelector ).click();
 		await this.page.locator( sectionContentSelector ).waitFor();
 	}
+
+	async addAtomicWidget( widgetTitle: string, widgetName: string ) {
+		await this.editor.openElementsPanel();
+		const panelWidgetButton = this.page.locator( `#elementor-panel-category-v4-elements .elementor-panel-category-items :text-is("${ widgetTitle }")` );
+		await panelWidgetButton.waitFor( { state: 'visible' } );
+		await panelWidgetButton.click();
+
+		const widgetElement = this.editor.getPreviewFrame().locator( `[data-widget_type="${ widgetName }.default"]` ).first();
+		await widgetElement.waitFor( { state: 'visible' } );
+
+		return widgetElement;
+	}
 }
