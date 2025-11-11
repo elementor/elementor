@@ -1,58 +1,95 @@
 import { register } from '@elementor/frontend-handlers';
+import { Alpine } from '@elementor/alpinejs';
 
 const SELECTED_CLASS = 'e--selected';
-
 register( {
 	elementType: 'e-tabs',
 	uniqueId: 'e-tabs-handler',
-	callback: ( { element, signal, settings } ) => {
-		const tabs = element.querySelectorAll( '[data-element_type="e-tab"]' );
-		const tabPanels = element.querySelectorAll( '[data-element_type="e-tab-content"]' );
+	callback: ( { element, settings } ) => {
+		const TAB_ELEMENT_TYPE = 'e-tab';
+		const TAB_CONTENT_ELEMENT_TYPE = 'e-tab-content';
 
-		const setActiveTab = ( id ) => {
-			tabs.forEach( ( tab ) => {
-				if ( tab.getAttribute( 'data-id' ) === id ) {
-					tab.classList.add( SELECTED_CLASS );
-					tab.setAttribute( 'aria-selected', 'true' );
-					return;
-				}
-
-				tab.classList.remove( SELECTED_CLASS );
-				tab.setAttribute( 'aria-selected', 'false' );
-			} );
-
-			tabPanels.forEach( ( tabPanel ) => {
-				const activeTab = tabPanel.getAttribute( 'data-tab-id' ) === id;
-
-				if ( activeTab ) {
-					tabPanel.style.removeProperty( 'display' );
-					tabPanel.removeAttribute( 'hidden' );
-					// Add the selected class after the display property is removed so the transition animation is applied
-					requestAnimationFrame( () => {
-						tabPanel.classList.add( SELECTED_CLASS );
-					}, 0 );
-
-					return;
-				}
-
-				tabPanel.classList.remove( SELECTED_CLASS );
-
-				tabPanel.style.display = 'none';
-				tabPanel.setAttribute( 'hidden', 'true' );
-			} );
+		const getTabId = ( tabIndex ) => {
+			const tabsId = element.dataset.id;
+			return `${ tabsId }-tab-${ tabIndex }`;
 		};
 
-		const defaultActiveTab = settings[ 'default-active-tab' ];
+		const getTabContentId = ( tabIndex ) => {
+			const tabsId = element.dataset.id;
+			return `${ tabsId }-tab-content-${ tabIndex }`;
+		};
 
-		setActiveTab( defaultActiveTab );
+		const getIndex = ( el, elementType ) => {
+			const parent = el.parentElement;
 
-		tabs.forEach( ( tab ) => {
-			const clickHandler = () => {
-				const tabId = tab.getAttribute( 'data-id' );
-				setActiveTab( tabId );
-			};
+			const children = Array.from( parent.children ).filter( ( child ) => {
+				return child.dataset.element_type === elementType;
+			} );
 
-			tab.addEventListener( 'click', clickHandler, { signal } );
-		} );
+			return children.indexOf( el );
+		};
+
+		Alpine.data( 'atomicTabs', () => ( {
+			activeTab: settings[ 'default-active-tab' ],
+
+			tab: {
+				':id'() {
+					const index = getIndex( this.$el, TAB_ELEMENT_TYPE );
+
+					return getTabId( index );
+				},
+				'@click'() {
+					const id = this.$el.id;
+
+					this.activeTab = id;
+				},
+				':class'() {
+					const id = this.$el.id;
+
+					return this.activeTab === id ? SELECTED_CLASS : '';
+				},
+				':aria-selected'() {
+					const id = this.$el.id;
+
+					return this.activeTab === id ? 'true' : 'false';
+				},
+				':tabindex'() {
+					const id = this.$el.id;
+
+					return this.activeTab === id ? '0' : '-1';
+				},
+				':aria-controls'() {
+					const index = getIndex( this.$el, TAB_ELEMENT_TYPE );
+
+					return getTabContentId( index );
+				},
+			},
+
+			tabContent: {
+				':aria-labelledby'() {
+					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
+
+					return getTabId( index );
+				},
+				':class'() {
+					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
+					const tabId = getTabId( index );
+
+					return this.activeTab === tabId ? SELECTED_CLASS : '';
+				},
+				'x-show'() {
+					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
+					const tabId = getTabId( index );
+
+					return this.activeTab === tabId;
+				},
+				':id'() {
+					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
+
+					return getTabContentId( index );
+				},
+			},
+		} ) );
 	},
 } );
+
