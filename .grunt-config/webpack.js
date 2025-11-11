@@ -122,6 +122,8 @@ const entry = {
 	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
 	'import-export-admin': path.resolve( __dirname, '../app/modules/import-export/assets/js/admin.js' ),
 	'import-export-customization-admin': path.resolve( __dirname, '../app/modules/import-export-customization/assets/js/admin.js' ),
+	'interactions': path.resolve( __dirname, '../modules/interactions/assets/js/interactions.js' ),
+	'editor-interactions': path.resolve( __dirname, '../modules/interactions/assets/js/editor-interactions.js' ),
 	'kit-elements-defaults-editor': path.resolve( __dirname, '../modules/kit-elements-defaults/assets/js/editor/index.js' ),
 	'editor-loader-v1': path.resolve( __dirname, '../core/editor/loader/v1/js/editor-loader-v1.js' ),
 	'editor-loader-v2': path.resolve( __dirname, '../core/editor/loader/v2/js/editor-loader-v2.js' ),
