@@ -17,7 +17,7 @@ export function EffectType( { value, onChange }: FieldProps ) {
 					{ __( 'Type', 'elementor' ) }
 				</Typography>
 			</Grid>
-			<Grid item xs={ 12 } md={ 6 }>
+			<Grid item xs={ 12 } md={ 6 } sx={ { display: 'flex', justifyContent: 'flex-end', overflow: 'hidden' } }>
 				<ToggleButtonGroup
 					size="tiny"
 					exclusive

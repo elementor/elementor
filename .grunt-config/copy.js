@@ -4,6 +4,8 @@
  */
 const getBuildFiles = [
 	'**',
+	'!.cursor/**',
+	'!.vscode/**',
 	'!.git/**',
 	'!.github/**',
 	'!.run/**',
