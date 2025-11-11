@@ -198,24 +198,48 @@ class Test_Transform_Prop_Type extends TestCase {
 			'transform-move' => [
 				'source' => 'transform-functions',
 				'fields' => [
-					'x' => [ 'size' => 0, 'unit' => 'px' ],
-					'y' => [ 'size' => 0, 'unit' => 'px' ],
-					'z' => [ 'size' => 0, 'unit' => 'px' ],
+					'x' => [
+						'$$type' => 'size',
+						'value' => [ 'size' => 0, 'unit' => 'px' ]
+					],
+					'y' => [
+						'$$type' => 'size',
+						'value' => [ 'size' => 0, 'unit' => 'px' ]
+					],
+					'z' => [
+						'$$type' => 'size',
+						'value' => [ 'size' => 0, 'unit' => 'px' ]
+					],
 				],
 			],
 			'transform-rotate' => [
 				'source' => 'transform-functions',
 				'fields' => [
-					'x' => [ 'size' => 0, 'unit' => 'deg' ],
-					'y' => [ 'size' => 0, 'unit' => 'deg' ],
-					'z' => [ 'size' => 0, 'unit' => 'deg' ],
+					'x' => [
+						'$$type' => 'size',
+						'value' => [ 'size' => 0, 'unit' => 'deg' ]
+					],
+					'y' => [
+						'$$type' => 'size',
+						'value' => [ 'size' => 0, 'unit' => 'deg' ]
+					],
+					'z' => [
+						'$$type' => 'size',
+						'value' => [ 'size' => 0, 'unit' => 'deg' ]
+					],
 				],
 			],
 			'transform-origin' => [
 				'source' => 'prop-type',
 				'fields' => [
-					'x' => [ 'size' => 50, 'unit' => '%' ],
-					'y' => [ 'size' => 50, 'unit' => '%' ],
+					'x' => [
+						'$$type' => 'size',
+						'value' => [ 'size' => 50, 'unit' => '%' ]
+					],
+					'y' => [
+						'$$type' => 'size',
+						'value' => [ 'size' => 50, 'unit' => '%' ]
+					],
 					'z' => null,
 				],
 			],
@@ -226,7 +250,7 @@ class Test_Transform_Prop_Type extends TestCase {
 		// Act & Assert.
 		foreach ( $test_cases as $transform_name => $config ) {
 			if ( $config['source'] === 'transform-functions' ) {
-				$transform = $transform_functions->get_prop_type( $transform_name );
+				$transform = $transform_functions->get_item_type()->get_prop_type( $transform_name );
 			} else {
 				$transform = $prop_type->get_shape_field( $transform_name );
 			}
