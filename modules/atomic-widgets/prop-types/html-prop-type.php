@@ -8,9 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Inline_Editing_Prop_Type extends Plain_Prop_Type {
+class Html_Prop_Type extends Plain_Prop_Type {
 	public static function get_key(): string {
-		return 'inline-editing';
+		return 'html';
 	}
 
 	protected function validate_value( $value ): bool {
