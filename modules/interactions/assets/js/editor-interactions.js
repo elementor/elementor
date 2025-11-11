@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 
 ( function() {
 	'use strict';
@@ -96,9 +97,9 @@
 		}
 
 		// If element has direct text content and no block children, animate the element itself
-		const hasBlockChildren = Array.from( element.children ).some( child => {
+		const hasBlockChildren = Array.from( element.children ).some( ( child ) => {
 			const style = window.getComputedStyle( child );
-			return style.display === 'block' || style.display === 'flex' || style.display === 'grid';
+			return 'block' === style.display || 'flex' === style.display || 'grid' === style.display;
 		} );
 
 		const isContentElement = /^(h[1-6]|p|button|a|span|div)$/i.test( element.tagName );
@@ -138,8 +139,6 @@
 			element.style.opacity = '0';
 			element.style.transform = 'scale(0.2)';
 
-			element.offsetHeight;
-
 			const animation = animateFunc(
 				element,
 				{
@@ -149,10 +148,10 @@
 				{
 					duration: 0.5,
 					easing: 'ease-out',
-				}
+				},
 			);
 
-			if ( animation && typeof animation.then === 'function' ) {
+			if ( animation && 'function' === typeof animation.then ) {
 				animation.then( () => {
 					element.style.opacity = '';
 					element.style.transform = '';
@@ -195,7 +194,7 @@
 
 		const changedItems = currentInteractionsData.filter( ( currentItem ) => {
 			const previousItem = previousInteractionsData.find(
-				( prev ) => prev.dataId === currentItem.dataId
+				( prev ) => prev.dataId === currentItem.dataId,
 			);
 
 			const hasChanged = ! previousItem || previousItem.interactions !== currentItem.interactions;
@@ -256,7 +255,7 @@
 		} );
 
 		headObserver.observe( head, {
-			childList: true,  // Watch for new script tags being added
+			childList: true, // Watch for new script tags being added
 			subtree: true,
 		} );
 
