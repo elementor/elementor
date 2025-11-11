@@ -566,6 +566,11 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
+		$image_opt_first_time = get_user_meta( get_current_user_id(), 'plugin_image_optimization_first_time', true );
+		if ( ! $image_opt_first_time || strtotime( $image_opt_first_time ) > ( time() - 7 * DAY_IN_SECONDS ) ) {
+			return false;
+		}
+
 		$plugin_file_path = 'pojo-accessibility/pojo-accessibility.php';
 		$plugin_slug = 'pojo-accessibility';
 
@@ -725,6 +730,10 @@ class Admin_Notices extends Module {
 
 		if ( ! current_user_can( 'manage_options' ) || User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
+		}
+
+		if ( ! get_user_meta( get_current_user_id(), 'plugin_image_optimization_first_time', true ) ) {
+			update_user_meta( get_current_user_id(), 'plugin_image_optimization_first_time', current_time( 'mysql' ) );
 		}
 
 		$attachments = new \WP_Query( [
