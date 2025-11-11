@@ -14,24 +14,32 @@ type HookType = 'after' | 'dependency';
 
 export type Args = Record< string, unknown >;
 
-export declare class DataHook {
+export declare class DataHook< TArgs extends Args = Args, TResult = unknown > {
 	getCommand(): string;
 	getId(): string;
-	apply( args: Args ): unknown;
+	apply( args: TArgs, result?: TResult ): unknown;
 	register(): void;
 }
 
 let hookId = 0;
 
-export function registerDataHook( type: 'dependency', command: string, callback: ( args: Args ) => boolean ): DataHook;
+export function registerDataHook< TArgs extends Args = Args >(
+	type: 'dependency',
+	command: string,
+	callback: ( args: TArgs ) => boolean
+): DataHook< TArgs >;
 
-export function registerDataHook(
+export function registerDataHook< TArgs extends Args = Args, TResult = unknown >(
 	type: 'after',
 	command: string,
-	callback: ( args: Args ) => void | Promise< void >
-): DataHook;
+	callback: ( args: TArgs, result: TResult ) => void | Promise< void >
+): DataHook< TArgs, TResult >;
 
-export function registerDataHook( type: HookType, command: string, callback: ( args: Args ) => unknown ): DataHook {
+export function registerDataHook< TArgs extends Args = Args, TResult = unknown >(
+	type: HookType,
+	command: string,
+	callback: ( args: TArgs, result?: TResult ) => unknown
+): DataHook< TArgs, TResult > {
 	const eWindow = window as unknown as WindowWithDataHooks;
 	const hooksClasses = eWindow.$e?.modules?.hookData;
 
@@ -48,7 +56,7 @@ export function registerDataHook( type: HookType, command: string, callback: ( a
 
 	const currentHookId = ++hookId;
 
-	const hook = new ( class extends HookClass {
+	const hook = new ( class extends HookClass< TArgs, TResult > {
 		getCommand() {
 			return command;
 		}
@@ -57,8 +65,8 @@ export function registerDataHook( type: HookType, command: string, callback: ( a
 			return `${ command }--data--${ currentHookId }`;
 		}
 
-		apply( args: Args ) {
-			return callback( args );
+		apply( ...args: [ TArgs, TResult ] ) {
+			return callback( ...args );
 		}
 	} )();
 

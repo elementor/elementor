@@ -65,11 +65,13 @@ class Library extends Common_App {
 		/** @var ConnectModule $connect */
 		$connect = Plugin::$instance->common->get_component( 'connect' );
 		$user_id = $this->get_user_id();
+		$user_roles = $this->get_user_roles();
 
 		return array_replace_recursive( $settings, [
 			'library_connect' => [
 				'is_connected' => $is_connected,
 				'user_id' => $user_id,
+				'user_roles' => $user_roles,
 				'subscription_plans' => $connect->get_subscription_plans( 'template-library' ),
 				// TODO: Remove `base_access_level`.
 				'base_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
@@ -125,6 +127,11 @@ class Library extends Common_App {
 			error_log( 'JWT Decoding Error: ' . $e->getMessage() );
 			return null;
 		}
+	}
+
+	private function get_user_roles() {
+		$user = wp_get_current_user();
+		return $user->roles ?? [];
 	}
 
 	/**

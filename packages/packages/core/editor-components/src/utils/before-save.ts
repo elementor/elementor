@@ -3,8 +3,8 @@ import { type TransformablePropValue } from '@elementor/editor-props';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { apiClient } from '../api';
-import { selectUnpublishedComponents, slice, type UnpublishedComponent } from '../store/store';
-import { type DocumentStatus } from '../types';
+import { selectUnpublishedComponents, slice } from '../store/store';
+import { type DocumentStatus, type UnpublishedComponent } from '../types';
 
 type Container = {
 	model: {
@@ -22,16 +22,17 @@ export const beforeSave = async ( { container, status }: { container: Container;
 	}
 
 	try {
-		const tempIdToComponentId = await createComponents( unpublishedComponents, status );
+		const UUIDToComponentId = await createComponents( unpublishedComponents, status );
 
 		const elements = container.model.get( 'elements' ).toJSON();
-		updateComponentInstances( elements, tempIdToComponentId );
+		updateComponentInstances( elements, UUIDToComponentId );
 
 		dispatch(
 			slice.actions.add(
 				unpublishedComponents.map( ( component ) => ( {
-					id: tempIdToComponentId.get( component.id ) as number,
+					id: UUIDToComponentId.get( component.uuid ) as number,
 					name: component.name,
+					uuid: component.uuid,
 				} ) )
 			)
 		);
@@ -44,47 +45,47 @@ export const beforeSave = async ( { container, status }: { container: Container;
 async function createComponents(
 	components: UnpublishedComponent[],
 	status: DocumentStatus
-): Promise< Map< number, number > > {
+): Promise< Map< string, number > > {
 	const response = await apiClient.create( {
 		status,
 		items: components.map( ( component ) => ( {
-			temp_id: component.id,
+			uuid: component.uuid,
 			title: component.name,
 			elements: component.elements,
 		} ) ),
 	} );
 
-	const map = new Map< number, number >();
+	const map = new Map< string, number >();
 
 	Object.entries( response ).forEach( ( [ key, value ] ) => {
-		map.set( Number( key ), value );
+		map.set( key, value );
 	} );
 
 	return map;
 }
 
-function updateComponentInstances( elements: V1ElementData[], tempIdToComponentId: Map< number, number > ): void {
+function updateComponentInstances( elements: V1ElementData[], UUIDIdToComponentId: Map< string, number > ): void {
 	elements.forEach( ( element ) => {
-		const { shouldUpdate, newComponentId } = shouldUpdateElement( element, tempIdToComponentId );
+		const { shouldUpdate, newComponentId } = shouldUpdateElement( element, UUIDIdToComponentId );
 		if ( shouldUpdate ) {
 			updateElementComponentId( element.id, newComponentId );
 		}
 
 		if ( element.elements ) {
-			updateComponentInstances( element.elements, tempIdToComponentId );
+			updateComponentInstances( element.elements, UUIDIdToComponentId );
 		}
 	} );
 }
 
 function shouldUpdateElement(
 	element: V1ElementData,
-	tempIdToComponentId: Map< number, number >
+	UUIDIdToComponentId: Map< string, number >
 ): { shouldUpdate: true; newComponentId: number } | { shouldUpdate: false; newComponentId: null } {
 	if ( element.widgetType === 'e-component' ) {
-		const currentComponentId = ( element.settings?.component as TransformablePropValue< 'component-id', number > )
+		const currentComponentId = ( element.settings?.component as TransformablePropValue< 'component-id', string > )
 			?.value;
-		if ( currentComponentId && tempIdToComponentId.has( currentComponentId ) ) {
-			return { shouldUpdate: true, newComponentId: tempIdToComponentId.get( currentComponentId ) as number };
+		if ( currentComponentId && UUIDIdToComponentId.has( currentComponentId ) ) {
+			return { shouldUpdate: true, newComponentId: UUIDIdToComponentId.get( currentComponentId ) as number };
 		}
 	}
 	return { shouldUpdate: false, newComponentId: null };

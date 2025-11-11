@@ -30,13 +30,14 @@ class Components_Repository {
 		foreach ( $posts as $post ) {
 			$doc = Plugin::$instance->documents->get( $post->ID );
 
-			if ( ! $doc ) {
+			if ( ! $doc || ! $doc instanceof Component_Document ) {
 				continue;
 			}
 
 			$components[] = [
 				'id' => $doc->get_main_id(),
 				'name' => $doc->get_post()->post_title,
+				'uuid' => $doc->get_component_uuid(),
 				'styles' => $this->extract_styles( $doc->get_elements_data() ),
 			];
 		}
@@ -44,12 +45,15 @@ class Components_Repository {
 		return Collection::make( $components );
 	}
 
-	public function create( string $name, array $content, string $status ) {
+	public function create( string $name, array $content, string $status, string $uuid ) {
 		$document = Plugin::$instance->documents->create(
 			Component_Document::get_type(),
 			[
 				'post_title' => $name,
 				'post_status' => $status,
+			],
+			[
+				Component_Document::COMPONENT_UUID_META_KEY => $uuid,
 			]
 		);
 

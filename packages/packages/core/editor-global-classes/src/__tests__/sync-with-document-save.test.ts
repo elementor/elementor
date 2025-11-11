@@ -136,7 +136,7 @@ describe( 'syncWithDocumentSave', () => {
 } );
 
 function mockRegisterDataHook() {
-	const callbacks = new Map< string, ( args: Record< string, unknown > ) => unknown >();
+	const callbacks = new Map< string, ( args: Record< string, unknown >, result?: unknown ) => unknown >();
 
 	jest.mocked( registerDataHook ).mockImplementation( ( type, command, callback ) => {
 		const key = `${ command }-${ type }`;
@@ -150,13 +150,13 @@ function mockRegisterDataHook() {
 		return {} as never;
 	} );
 
-	return ( type: string, command: string, args: Record< string, unknown > = {} ) => {
+	return ( type: string, command: string, args: Record< string, unknown > = {}, result: unknown = undefined ) => {
 		const key = `${ command }-${ type }`;
 
 		const callback = callbacks.get( key );
 
 		callbacks.delete( key );
 
-		return callback?.( args );
+		return callback?.( args, result );
 	};
 }
