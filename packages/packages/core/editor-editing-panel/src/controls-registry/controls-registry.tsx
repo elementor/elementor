@@ -22,10 +22,10 @@ import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
 	DateTimePropTypeUtil,
+	htmlPropTypeUtil,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
-	htmlPropTypeUtil,
 	linkPropTypeUtil,
 	numberPropTypeUtil,
 	type PropTypeUtil,
