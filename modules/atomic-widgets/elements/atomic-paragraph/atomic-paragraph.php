@@ -49,7 +49,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
 
 		$paragraph_prop = $is_feature_active
-			? Inline_Editing_Prop_Type::make()->default( __( 'Type your paragraph here', 'elementor' ) )
+			? Html_Prop_Type::make()->default( __( 'Type your paragraph here', 'elementor' ) )
 			: String_Prop_Type::make()->default( __( 'Type your paragraph here', 'elementor' ) );
 
 		$props = [
