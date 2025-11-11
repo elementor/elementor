@@ -10,6 +10,8 @@ use Elementor\Plugin;
 
 class Atomic_Widget_Styles {
 	const STYLES_KEY = 'local';
+	const CONTEXT_FRONTEND = 'frontend';
+	const CONTEXT_PREVIEW = 'preview';
 
 	public function register_hooks() {
 		add_action( 'elementor/atomic-widgets/styles/register', function( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
@@ -17,7 +19,8 @@ class Atomic_Widget_Styles {
 		}, 30, 2 );
 
 		add_action( 'elementor/document/after_save', fn( Document $document ) => $this->invalidate_cache(
-			[ $document->get_main_post()->ID ]
+			[ $document->get_main_post()->ID ],
+			$this->get_context( ! Utils::is_post_published( $document ) )
 		), 20, 2 );
 
 		add_action(
@@ -32,12 +35,14 @@ class Atomic_Widget_Styles {
 	}
 
 	private function register_styles( Atomic_Styles_Manager $styles_manager, array $post_ids ) {
+		$context = $this->get_context( is_preview() );
+
 		foreach ( $post_ids as $post_id ) {
 			$get_styles = fn() => $this->parse_post_styles( $post_id );
 
-			$style_key = $this->get_style_key( $post_id );
+			$style_key = $this->get_style_key( $post_id, $context );
 
-			$styles_manager->register( $style_key, $get_styles, [ self::STYLES_KEY, $post_id ] );
+			$styles_manager->register( $style_key, $get_styles, [ self::STYLES_KEY, $post_id, $context ] );
 		}
 	}
 
@@ -62,7 +67,7 @@ class Atomic_Widget_Styles {
 		return $element_data['styles'] ?? [];
 	}
 
-	private function invalidate_cache( ?array $post_ids = null ) {
+	private function invalidate_cache( ?array $post_ids = null, ?string $context = null ) {
 		$cache_validity = new Cache_Validity();
 
 		if ( empty( $post_ids ) ) {
@@ -72,11 +77,19 @@ class Atomic_Widget_Styles {
 		}
 
 		foreach ( $post_ids as $post_id ) {
-			$cache_validity->invalidate( [ self::STYLES_KEY, $post_id ] );
+			$cache_validity->invalidate(
+				null !== $context
+					? [ self::STYLES_KEY, $post_id, $context ]
+					: [ self::STYLES_KEY, $post_id ]
+			);
 		}
 	}
 
-	private function get_style_key( $post_id ) {
-		return self::STYLES_KEY . '-' . $post_id;
+	private function get_style_key( $post_id, $context ) {
+		return self::STYLES_KEY . '-' . $post_id . '-' . $context;
+	}
+
+	private function get_context( bool $is_preview ) {
+		return $is_preview ? self::CONTEXT_PREVIEW : self::CONTEXT_FRONTEND;
 	}
 }

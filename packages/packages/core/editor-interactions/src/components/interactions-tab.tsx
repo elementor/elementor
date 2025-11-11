@@ -21,7 +21,11 @@ function InteractionsTabContent( { elementId }: { elementId: string } ) {
 	const { triggerDefaultOpen } = usePopupStateContext();
 
 	const [ showInteractions, setShowInteractions ] = useState( () => {
-		return !! JSON.parse( existingInteractions || '[]' ).length;
+		const parsed = JSON.parse( existingInteractions || '{}' );
+		if ( parsed && parsed?.items?.length > 0 ) {
+			return true;
+		}
+		return false;
 	} );
 
 	return (
@@ -47,14 +51,17 @@ function InteractionsContent() {
 
 	const applyInteraction = useCallback(
 		( interaction: string ) => {
-			const newInteractions = [
-				{
-					animation: {
-						animation_type: 'full-preset',
-						animation_id: interaction,
+			const newInteractions = {
+				version: 1,
+				items: [
+					{
+						animation: {
+							animation_type: 'full-preset',
+							animation_id: interaction,
+						},
 					},
-				},
-			];
+				],
+			};
 
 			setInteractions( JSON.stringify( newInteractions ) );
 		},
@@ -63,8 +70,11 @@ function InteractionsContent() {
 
 	const selectedInteraction = useMemo( () => {
 		try {
-			const parsed = JSON.parse( interactions || '[]' );
-			return parsed[ 0 ]?.animation?.animation_id || '';
+			const parsed = JSON.parse( interactions || '{}' );
+			if ( parsed && parsed?.items ) {
+				return parsed.items[ 0 ]?.animation?.animation_id || '';
+			}
+			return '';
 		} catch {
 			return '';
 		}

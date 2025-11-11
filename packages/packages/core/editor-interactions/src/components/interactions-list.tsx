@@ -24,7 +24,7 @@ export const PredefinedInteractionsList = ( {
 		<Stack sx={ { m: 1, p: 1.5 } } gap={ 2 }>
 			<Header label={ __( 'Interactions', 'elementor' ) } />
 			<InteractionsList
-				onDelete={ () => onDelete?.() }
+				onDelete={ onDelete }
 				selectedInteraction={ selectedInteraction }
 				onSelectInteraction={ onSelectInteraction }
 			/>
@@ -33,13 +33,15 @@ export const PredefinedInteractionsList = ( {
 };
 
 type InteractionListProps = {
-	onDelete: () => void;
+	onDelete?: () => void;
 	onSelectInteraction: ( interaction: string ) => void;
 	selectedInteraction: string;
 	defaultStateRef?: React.MutableRefObject< boolean | undefined >;
 };
 
-function InteractionsList( { onSelectInteraction, selectedInteraction, defaultStateRef }: InteractionListProps ) {
+function InteractionsList( props: InteractionListProps ) {
+	const { onSelectInteraction, selectedInteraction, defaultStateRef, onDelete } = props;
+
 	const [ interactionId, setInteractionId ] = useState( selectedInteraction );
 
 	const anchorEl = useRef< HTMLDivElement | null >( null );
@@ -53,17 +55,18 @@ function InteractionsList( { onSelectInteraction, selectedInteraction, defaultSt
 	const { openByDefault, resetDefaultOpen } = usePopupStateContext();
 
 	useEffect( () => {
-		if ( interactionId ) {
+		if ( interactionId && interactionId !== selectedInteraction ) {
 			onSelectInteraction( interactionId );
 		}
-	}, [ interactionId, onSelectInteraction ] );
+	}, [ interactionId, selectedInteraction, onSelectInteraction ] );
 
 	useEffect( () => {
 		if ( openByDefault && anchorEl.current ) {
+			popupState.setAnchorEl( anchorEl.current );
 			popupState.open();
 			resetDefaultOpen();
 		}
-	}, [ defaultStateRef, openByDefault, popupState, resetDefaultOpen ] );
+	}, [ defaultStateRef, popupState, anchorEl, openByDefault, resetDefaultOpen ] );
 
 	const displayLabel = useMemo( () => {
 		if ( ! interactionId ) {
@@ -89,7 +92,7 @@ function InteractionsList( { onSelectInteraction, selectedInteraction, defaultSt
 						<IconButton size="tiny" disabled>
 							<EyeIcon fontSize="tiny" />
 						</IconButton>
-						<IconButton size="tiny">
+						<IconButton size="tiny" onClick={ () => onDelete?.() }>
 							<XIcon fontSize="tiny" />
 						</IconButton>
 					</>
