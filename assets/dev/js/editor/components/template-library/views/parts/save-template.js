@@ -80,9 +80,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		} );
 
 		if ( ! elementor.templates.eventManager.isSessionRecordingInProgress() ) {
-			elementor.templates.eventManager.sendCloudTemplatesSessionRecordingStartEvent();
-
 			elementor.templates.eventManager.startSessionRecording();
+			elementor.templates.eventManager.sendCloudTemplatesSessionRecordingStartEvent();
 		}
 
 		if ( SAVE_CONTEXTS.SAVE === context ) {
