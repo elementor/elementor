@@ -89,14 +89,14 @@ class Line_Height_Property_Mapper extends Atomic_Property_Mapper_Base {
 	private function create_unitless_line_height( float $value ): array {
 		return [
 			'size' => $value,
-			'unit' => '',
+			'unit' => Size_Constants::UNIT_EM,
 		];
 	}
 
 	private function create_normal_line_height(): array {
 		return [
 			'size' => self::NORMAL_LINE_HEIGHT_VALUE,
-			'unit' => '',
+			'unit' => Size_Constants::UNIT_EM,
 		];
 	}
 }
