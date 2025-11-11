@@ -24,7 +24,6 @@ import {
 	DateTimePropTypeUtil,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
-	inlineEditingPropTypeUtil,
 	keyValuePropTypeUtil,
 	linkPropTypeUtil,
 	numberPropTypeUtil,
@@ -59,7 +58,7 @@ const controlTypes = {
 	'html-tag': { component: HtmlTagControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
-	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: inlineEditingPropTypeUtil },
+	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;
