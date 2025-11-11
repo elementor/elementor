@@ -54,7 +54,7 @@ trait Has_Template {
 	public function get_interactions_ids() {
 		$animation_ids = [];
 
-		if ( ! empty( $this->interactions ) && is_array( $this->interactions ) ) {
+		if ( ! empty( $this->interactions ) && is_array( $this->interactions ) && isset( $this->interactions['items'] ) ) {
 			foreach ( $this->interactions['items'] as $interaction ) {
 				if ( isset( $interaction['animation']['animation_id'] ) ) {
 					$animation_ids[] = $interaction['animation']['animation_id'];
