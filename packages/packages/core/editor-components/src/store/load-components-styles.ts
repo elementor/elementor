@@ -3,11 +3,11 @@ import { type StyleDefinition } from '@elementor/editor-styles';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { apiClient } from '../api';
-import { type ComponentId, type Element } from '../types';
+import { type ComponentId } from '../types';
 import { getComponentIds } from '../utils/get-component-ids';
 import { selectStyles, slice } from './store';
 
-export async function loadComponentsStyles( elements: Element[] ) {
+export async function loadComponentsStyles( elements: V1ElementData[] ) {
 	const componentIds = getComponentIds( elements );
 
 	if ( ! componentIds.length ) {
@@ -30,7 +30,7 @@ async function addComponentStyles( ids: ComponentId[] ) {
 	addStyles( newComponents );
 
 	Object.values( newComponents ).forEach( ( [ , data ] ) => {
-		loadComponentsStyles( data.elements as Element[] );
+		loadComponentsStyles( data.elements ?? ( [] as V1ElementData[] ) );
 	} );
 }
 
