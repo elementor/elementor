@@ -62,10 +62,11 @@ function InteractionsList( props: InteractionListProps ) {
 
 	useEffect( () => {
 		if ( openByDefault && anchorEl.current ) {
+			popupState.setAnchorEl( anchorEl.current );
 			popupState.open();
 			resetDefaultOpen();
 		}
-	}, [ defaultStateRef, openByDefault, popupState, resetDefaultOpen ] );
+	}, [ defaultStateRef, popupState, anchorEl, openByDefault, resetDefaultOpen ] );
 
 	const displayLabel = useMemo( () => {
 		if ( ! interactionId ) {
