@@ -31,22 +31,6 @@ class Convert_Widgets_To_Elementor_Command implements Widget_Creation_Command_In
 		try {
 			$elementor_elements = [];
 			$processed_widgets = $context->get_processed_widgets();
-			
-			// DEBUG: Track widget data at conversion stage
-			$debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-			foreach ( $processed_widgets as $widget ) {
-				$widget_type = $widget['widget_type'] ?? '';
-				$element_id = $widget['element_id'] ?? '';
-				if ( $widget_type === 'e-heading' ) {
-					$widget_classes = $widget['attributes']['class'] ?? '';
-					file_put_contents(
-						$debug_log,
-						date( '[H:i:s] ' ) . "CONVERT_WIDGETS_COMMAND: Processing {$widget_type} {$element_id}\n" .
-						"  Widget classes: '{$widget_classes}'\n",
-						FILE_APPEND
-					);
-				}
-			}
 
 		// Set CSS processing result on factories that need it
 		$this->configure_factories_with_css_result( $context->get_css_processing_result() );

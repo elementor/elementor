@@ -70,15 +70,11 @@ class Global_Classes_Conversion_Service {
 			}
 		}
 
-		// Get custom CSS for this class
 		$has_custom = $this->custom_css_collector->has_custom_css( $class_name );
-		error_log( "CUSTOM_CSS_DEBUG: convert_properties_to_atomic_with_fallback - class_name={$class_name}, has_custom={$has_custom}" );
 		
 		$custom_css = $has_custom 
 			? $this->custom_css_collector->get_custom_css_for_widget( $class_name )
 			: '';
-		
-		error_log( "CUSTOM_CSS_DEBUG: convert_properties_to_atomic_with_fallback - class_name={$class_name}, custom_css=" . ( $custom_css ?: 'EMPTY' ) );
 
 		return [
 			'atomic_props' => $atomic_props,

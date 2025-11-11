@@ -122,17 +122,7 @@ class Widget_Child_Element_Selector_Processor implements Css_Processor_Interface
 	}
 
 	private function is_child_element_selector( string $selector ): bool {
-		// Pattern: .any-class element-tag
-		// Examples: .widget img, .container p, .box button
-		// Must end with a simple element tag (no classes, IDs, pseudo-selectors)
 		$result = preg_match( '/\.[a-zA-Z0-9_-]+\s+[a-z][a-z0-9]*$/i', trim( $selector ) );
-
-		// DEBUG WIDTH ISSUE: Track why selector is not matching
-		if ( strpos( $selector, 'img' ) !== false ) {
-			$log_file = WP_CONTENT_DIR . '/width-debug.log';
-			$match_status = $result ? 'MATCHES' : 'NO_MATCH';
-			file_put_contents( $log_file, date( '[H:i:s] ' ) . "CHILD_ELEMENT_SELECTOR_CHECK: {$match_status} - {$selector}\n", FILE_APPEND );
-		}
 
 		return $result;
 	}

@@ -240,12 +240,8 @@ class Global_Classes_Integration_Service {
 	private function collect_custom_css_rules( array $converted_classes, array $class_name_mappings ): array {
 		$custom_css_rules = [];
 
-		error_log( "CUSTOM_CSS_DEBUG: collect_custom_css_rules called with " . count( $converted_classes ) . " converted classes" );
-
 		foreach ( $converted_classes as $original_class_name => $class_data ) {
 			$custom_css = $class_data['custom_css'] ?? '';
-			
-			error_log( "CUSTOM_CSS_DEBUG: Class {$original_class_name} has custom_css: " . ( empty( $custom_css ) ? 'EMPTY' : 'YES (' . strlen( $custom_css ) . ' chars)' ) );
 			
 			if ( ! empty( $custom_css ) ) {
 				$final_class_name = $class_name_mappings[ $original_class_name ] ?? $original_class_name;
@@ -254,11 +250,9 @@ class Global_Classes_Integration_Service {
 					'css' => $custom_css,
 					'original_class' => $original_class_name,
 				];
-				error_log( "CUSTOM_CSS_DEBUG: Added custom CSS rule for {$final_class_name}: {$custom_css}" );
 			}
 		}
 
-		error_log( "CUSTOM_CSS_DEBUG: Returning " . count( $custom_css_rules ) . " custom CSS rules" );
 		return $custom_css_rules;
 	}
 }

@@ -45,9 +45,6 @@ class Process_CSS_Variables_Command implements Widget_Creation_Command_Interface
 			if ( ! empty( $css_result['css_variable_definitions'] ) ) {
 				$provider = Variables_Service_Provider::instance();
 				
-				$log = WP_CONTENT_DIR . '/smart-vars.log';
-				file_put_contents( $log, date('[H:i:s] ') . "COMMAND: Received " . count( $css_result['css_variable_definitions'] ) . " variables from processor\n", FILE_APPEND );
-				
 				if ( $provider->is_available() ) {
 					$update_mode = $context->get_options()['update_mode'] ?? 'update';
 					$integration_service = $provider->get_integration_service( $update_mode );
@@ -57,8 +54,6 @@ class Process_CSS_Variables_Command implements Widget_Creation_Command_Interface
 					$variables_created = $registration_result['variables_created'] ?? 0;
 					$variables_reused = $registration_result['reused'] ?? 0;
 					$definitions_processed = count( $css_result['css_variable_definitions'] );
-					
-					file_put_contents( $log, date('[H:i:s] ') . "COMMAND: Result - created=$variables_created, reused=$variables_reused\n", FILE_APPEND );
 
 					for ( $i = 0; $i < $variables_created; $i++ ) {
 						$this->stats_collector->increment_variables_created();

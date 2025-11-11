@@ -47,16 +47,6 @@ class Nested_Selector_Flattening_Processor implements Css_Processor_Interface {
 	public function process( Css_Processing_Context $context ): Css_Processing_Context {
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 
-		// DEBUG: Check for .loading selectors BEFORE flattening
-		$loading_before = [];
-		foreach ( $css_rules as $rule ) {
-			$selector = $rule['selector'] ?? '';
-			if ( false !== strpos( $selector, 'loading' ) ) {
-				$loading_before[] = $selector;
-			}
-		}
-		file_put_contents( '/tmp/flattening_debug.log', 'NESTED_FLATTENING BEFORE: ' . count( $loading_before ) . ' loading selectors: ' . implode( ', ', $loading_before ) . "\n", FILE_APPEND );
-
 		if ( empty( $css_rules ) ) {
 			return $context;
 		}
@@ -64,18 +54,7 @@ class Nested_Selector_Flattening_Processor implements Css_Processor_Interface {
 		$existing_class_names = $this->get_existing_class_names( $context );
 		$result = $this->transform_nested_selectors_in_place( $css_rules, $existing_class_names );
 
-		// Update css_rules with transformed selectors
 		$context->set_metadata( 'css_rules', $result['css_rules'] );
-
-		// DEBUG: Check for .loading selectors AFTER flattening
-		$loading_after = [];
-		foreach ( $result['css_rules'] as $rule ) {
-			$selector = $rule['selector'] ?? '';
-			if ( false !== strpos( $selector, 'loading' ) ) {
-				$loading_after[] = $selector;
-			}
-		}
-		file_put_contents( '/tmp/flattening_debug.log', 'NESTED_FLATTENING AFTER: ' . count( $loading_after ) . ' loading selectors: ' . implode( ', ', $loading_after ) . "\n", FILE_APPEND );
 
 		// Store HTML modification instructions
 		$css_class_modifiers = $context->get_metadata( 'css_class_modifiers', [] );

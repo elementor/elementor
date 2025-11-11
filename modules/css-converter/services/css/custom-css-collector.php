@@ -8,11 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Custom_Css_Collector {
 
 	private $custom_css_buffer = [];
-	private $tracking_log;
 	private $instance_id;
 
 	public function __construct() {
-		$this->tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
 		$this->instance_id = substr( uniqid(), -6 );
 	}
 
@@ -31,12 +29,6 @@ class Custom_Css_Collector {
 				'important' => $important,
 			];
 		}
-
-		file_put_contents( 
-			$this->tracking_log, 
-			date('[H:i:s] ') . "CUSTOM_CSS_COLLECTOR: Added to widget {$widget_id}: {$property}: {$value}" . ( $important ? ' !important' : '' ) . "\n", 
-			FILE_APPEND 
-		);
 	}
 
 	private function should_override_existing_property( string $widget_id, string $property_key, bool $new_important ): bool {
@@ -76,7 +68,6 @@ class Custom_Css_Collector {
 
 	public function get_custom_css_for_widget( string $widget_id ): string {
 		if ( ! isset( $this->custom_css_buffer[ $widget_id ] ) ) {
-			error_log( "CUSTOM_CSS_DEBUG: get_custom_css_for_widget - widget_id={$widget_id}, instance_id={$this->instance_id}, NOT FOUND in buffer" );
 			return '';
 		}
 
@@ -93,14 +84,10 @@ class Custom_Css_Collector {
 			$formatted_css .= ';';
 		}
 
-		error_log( "CUSTOM_CSS_DEBUG: get_custom_css_for_widget - widget_id={$widget_id}, instance_id={$this->instance_id}, returning: " . substr( $formatted_css, 0, 100 ) );
 		return $formatted_css;
 	}
 
 	public function has_custom_css( string $widget_id ): bool {
-		$buffer_content = isset( $this->custom_css_buffer[ $widget_id ] ) ? $this->custom_css_buffer[ $widget_id ] : [];
-		$is_empty = empty( $this->custom_css_buffer[ $widget_id ] );
-		error_log( "CUSTOM_CSS_DEBUG: has_custom_css called with widget_id={$widget_id}, instance_id={$this->instance_id}, available_ids: " . implode( ', ', array_keys( $this->custom_css_buffer ) ) . ", buffer_content_count=" . count( $buffer_content ) . ", is_empty=" . ( $is_empty ? 'true' : 'false' ) );
 		return isset( $this->custom_css_buffer[ $widget_id ] ) && 
 			   ! empty( $this->custom_css_buffer[ $widget_id ] );
 	}

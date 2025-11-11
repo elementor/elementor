@@ -32,78 +32,17 @@ class Css_Variable_Resolver implements Css_Processor_Interface
         $css_rules = $context->get_metadata('css_rules', []);
         $variable_definitions = $context->get_metadata('css_variable_definitions', []);
         
-        $log_path = WP_CONTENT_DIR . '/css-variable-resolution.log';
-        $rules_count = count($css_rules);
-        $defs_count = count($variable_definitions);
-        $has_e66ebc9 = isset($variable_definitions['e-global-color-e66ebc9']);
-        file_put_contents($log_path, date('Y-m-d H:i:s') . " SUPPORTS_CONTEXT: css_rules={$rules_count}, variable_definitions={$defs_count}, has_e66ebc9=" . ($has_e66ebc9 ? 'yes' : 'no') . "\n", FILE_APPEND);
-
-        // Require both css_rules and variable_definitions (populated by CSS Variable Registry at priority 9)
-        $supports = ! empty($css_rules) && ! empty($variable_definitions);
-        file_put_contents($log_path, date('Y-m-d H:i:s') . " SUPPORTS_CONTEXT RESULT: " . ($supports ? 'YES' : 'NO') . "\n", FILE_APPEND);
-        return $supports;
+        return ! empty($css_rules) && ! empty($variable_definitions);
     }
 
     public function process( Css_Processing_Context $context ): Css_Processing_Context
     {
-        $log_path = WP_CONTENT_DIR . '/css-variable-resolution.log';
-        file_put_contents($log_path, date('Y-m-d H:i:s') . " CSS_VARIABLE_RESOLVER: Starting process()\n", FILE_APPEND);
-        
-        $tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-        $debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-        
-        file_put_contents($tracking_log, "\n" . str_repeat('~', 80) . "\n", FILE_APPEND);
-        file_put_contents($tracking_log, date('[H:i:s] ') . "CSS_VARIABLE_RESOLVER: Started\n", FILE_APPEND);
-
         $css_rules = $context->get_metadata('css_rules', []);
-        
-        // DEBUG: Check what rules the resolver is processing
-        file_put_contents($log_path, date('Y-m-d H:i:s') . " CSS_VARIABLE_RESOLVER: Processing " . count($css_rules) . " rules\n", FILE_APPEND);
-        foreach ($css_rules as $i => $rule) {
-            $selector = $rule['selector'] ?? 'NO_SELECTOR';
-            $prop_count = count($rule['properties'] ?? []);
-            file_put_contents($log_path, date('Y-m-d H:i:s') . " RULE {$i}: '{$selector}' with {$prop_count} properties\n", FILE_APPEND);
-            
-            // Check if this rule has var() references
-            $has_var_refs = false;
-            foreach ($rule['properties'] ?? [] as $prop) {
-                $value = $prop['value'] ?? '';
-                if (strpos($value, 'var(') !== false) {
-                    $has_var_refs = true;
-                    file_put_contents($log_path, date('Y-m-d H:i:s') . "   VAR REF: {$prop['property']} = {$value}\n", FILE_APPEND);
-                }
-            }
-            if (!$has_var_refs && $i < 3) {
-                file_put_contents($log_path, date('Y-m-d H:i:s') . "   NO VAR REFS in rule {$i}\n", FILE_APPEND);
-            }
-        }
         $variable_definitions = $context->get_metadata('css_variable_definitions', []);
-
-        // DEBUG: Track specific target rule at START
-        $target_rule_before = $this->find_target_rule($css_rules, 'elementor-element-9856e95', 'elementor-heading-title');
-        file_put_contents(
-            $debug_log,
-            date('[H:i:s] ') . "CSS_VARIABLE_RESOLVER START: Target rule font-weight = " . 
-            ($target_rule_before['font-weight'] ?? 'NOT_FOUND') . "\n",
-            FILE_APPEND
-        );
-
-        file_put_contents($tracking_log, date('[H:i:s] ') . 'CSS_VARIABLE_RESOLVER: Processing ' . count($css_rules) . ' rules with ' . count($variable_definitions) . " variable definitions\n", FILE_APPEND);
 
         $resolved_rules = $this->resolve_variables_in_rules($css_rules, $variable_definitions);
 
-        // DEBUG: Track specific target rule at END
-        $target_rule_after = $this->find_target_rule($resolved_rules, 'elementor-element-9856e95', 'elementor-heading-title');
-        file_put_contents(
-            $debug_log,
-            date('[H:i:s] ') . "CSS_VARIABLE_RESOLVER END: Target rule font-weight = " . 
-            ($target_rule_after['font-weight'] ?? 'NOT_FOUND') . "\n",
-            FILE_APPEND
-        );
-
         $context->set_metadata('css_rules', $resolved_rules);
-
-        file_put_contents($tracking_log, date('[H:i:s] ') . "CSS_VARIABLE_RESOLVER: Completed\n", FILE_APPEND);
 
         return $context;
     }
@@ -111,8 +50,6 @@ class Css_Variable_Resolver implements Css_Processor_Interface
     private function resolve_variables_in_rules( array $css_rules, array $variable_definitions ): array
     {
         $resolved_rules = [];
-        $variables_resolved = 0;
-        $tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
 
         foreach ( $css_rules as $rule ) {
             $resolved_properties = [];
@@ -124,33 +61,10 @@ class Css_Variable_Resolver implements Css_Processor_Interface
                 if (strpos($value, 'var(') !== false ) {
                     $variable_type = $this->get_variable_type_from_value($value, $variable_definitions);
 
-                    // DEBUG: Track specific properties for comparison
-                    if ( in_array($property, ['display', 'align-items', 'text-align']) ) {
-                        $debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
-                        file_put_contents($debug_log, "STEP 3 - VARIABLE_RESOLVER: {$property}: {$value} (type: {$variable_type})\n", FILE_APPEND);
-                    }
-
-                    // CRITICAL FIX: Process ALL variable types, not just 'local' and 'unsupported'
                     $resolved_value = $this->resolve_variable_reference($value, $variable_definitions);
                     if ($resolved_value !== $value ) {
                         $property_data['value'] = $resolved_value;
                         $property_data['resolved_from_variable'] = true;
-                        ++$variables_resolved;
-                        file_put_contents($tracking_log, date('[H:i:s] ') . "CSS_VARIABLE_RESOLVER: Resolved {$property}: {$value} -> {$resolved_value} (type: {$variable_type})\n", FILE_APPEND);
-                        
-                        // DEBUG: Track specific properties for comparison
-                        if ( in_array($property, ['display', 'align-items', 'text-align']) ) {
-                            $debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
-                            file_put_contents($debug_log, "STEP 3 - RESOLVED: {$property}: {$value} -> {$resolved_value}\n", FILE_APPEND);
-                        }
-                    } else {
-                        file_put_contents($tracking_log, date('[H:i:s] ') . "CSS_VARIABLE_RESOLVER: Could not resolve {$property}: {$value} (type: {$variable_type})\n", FILE_APPEND);
-                        
-                        // DEBUG: Track failed resolutions
-                        if ( in_array($property, ['display', 'align-items', 'text-align']) ) {
-                            $debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
-                            file_put_contents($debug_log, "STEP 3 - FAILED: {$property}: {$value} (type: {$variable_type})\n", FILE_APPEND);
-                        }
                     }
                 }
 
@@ -161,49 +75,27 @@ class Css_Variable_Resolver implements Css_Processor_Interface
             $resolved_rules[] = $rule;
         }
 
-        file_put_contents($tracking_log, date('[H:i:s] ') . "CSS_VARIABLE_RESOLVER: Resolved {$variables_resolved} variable references\n", FILE_APPEND);
-
         return $resolved_rules;
     }
 
     private function resolve_variable_reference( string $value, array $variable_definitions ): string
     {
-        $log_path = WP_CONTENT_DIR . '/css-variable-resolution.log';
-        
         return preg_replace_callback(
             '/var\s*\(\s*(--[a-zA-Z0-9_-]+)\s*(?:,\s*([^)]+))?\s*\)/',
-            function ( $matches ) use ( $variable_definitions, $log_path ) {
+            function ( $matches ) use ( $variable_definitions ) {
                 $var_name = trim($matches[1]);
                 $fallback = $matches[2] ?? '';
                 $original_var = $matches[0];
 
-                // Try definitions first
                 $resolved_value = $this->get_variable_value($var_name, $variable_definitions);
 
                 if ($resolved_value !== null ) {
-                    file_put_contents(
-                        $log_path,
-                        date('Y-m-d H:i:s') . " RESOLVED (definitions): {$original_var} → {$resolved_value}\n",
-                        FILE_APPEND
-                    );
                     return $resolved_value;
                 }
 
-                // Use fallback if provided
                 if (! empty($fallback) ) {
-                    file_put_contents(
-                        $log_path,
-                        date('Y-m-d H:i:s') . " RESOLVED (fallback): {$original_var} → {$fallback}\n",
-                        FILE_APPEND
-                    );
                     return trim($fallback);
                 }
-
-                file_put_contents(
-                    $log_path,
-                    date('Y-m-d H:i:s') . " UNRESOLVED: {$original_var} (keeping as variable)\n",
-                    FILE_APPEND
-                );
 
                 return $original_var;
             },
@@ -214,15 +106,6 @@ class Css_Variable_Resolver implements Css_Processor_Interface
     private function get_variable_value( string $var_name, array $variable_definitions ): ?string
     {
         $clean_name = $this->clean_variable_name($var_name);
-        
-        // DEBUG: Check if e66ebc9 variable is being resolved
-        if ( strpos( $var_name, 'e66ebc9' ) !== false || strpos( $clean_name, 'e66ebc9' ) !== false ) {
-            $log_path = WP_CONTENT_DIR . '/css-variable-resolution.log';
-            $has_definition = isset( $variable_definitions[ $clean_name ] );
-            $def_value = $has_definition ? ( $variable_definitions[ $clean_name ]['value'] ?? 'EMPTY' ) : 'NOT_FOUND';
-            $total_defs = count( $variable_definitions );
-            file_put_contents( $log_path, date('Y-m-d H:i:s') . " DEBUG RESOLVE e66ebc9: var_name='{$var_name}', clean_name='{$clean_name}', has_definition=" . ($has_definition ? 'yes' : 'no') . ", value='{$def_value}', total_definitions={$total_defs}\n", FILE_APPEND );
-        }
 
         if (isset($variable_definitions[ $clean_name ]) ) {
             $var_value = $variable_definitions[ $clean_name ]['value'] ?? '';

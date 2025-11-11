@@ -59,12 +59,6 @@ class Container_Variable_Resolver implements Css_Processor_Interface {
 	}
 
 	public function process( Css_Processing_Context $context ): Css_Processing_Context {
-		$debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
-		file_put_contents( $debug_log, "STEP 3.5 - CONTAINER_VARIABLE_RESOLVER: Starting\n", FILE_APPEND );
-		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-		file_put_contents( $tracking_log, "\n" . str_repeat( '-', 80 ) . "\n", FILE_APPEND );
-		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CONTAINER_VARIABLE_RESOLVER: Started\n", FILE_APPEND );
-
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$variable_definitions = $context->get_metadata( 'css_variable_definitions', [] );
 
@@ -82,12 +76,6 @@ class Container_Variable_Resolver implements Css_Processor_Interface {
 						$property_data['value'] = $resolved_value;
 						$property_data['container_variable_resolved'] = true;
 						++$resolved_count;
-
-						file_put_contents(
-							$tracking_log,
-							date( '[H:i:s] ' ) . "  Resolved: {$original_value} → {$resolved_value}\n",
-							FILE_APPEND
-						);
 					}
 				}
 			}
@@ -95,12 +83,6 @@ class Container_Variable_Resolver implements Css_Processor_Interface {
 
 		$context->set_metadata( 'css_rules', $css_rules );
 		$context->add_statistic( 'container_variables_resolved', $resolved_count );
-
-		file_put_contents(
-			$tracking_log,
-			date( '[H:i:s] ' ) . "CONTAINER_VARIABLE_RESOLVER: Resolved {$resolved_count} container variables\n",
-			FILE_APPEND
-		);
 
 		return $context;
 	}
@@ -135,13 +117,6 @@ class Container_Variable_Resolver implements Css_Processor_Interface {
 
 				if ( isset( self::ELEMENTOR_CONTAINER_VARIABLES[ $var_name ] ) ) {
 					$default_value = self::ELEMENTOR_CONTAINER_VARIABLES[ $var_name ];
-					
-					// DEBUG: Log when default container variables are applied
-					if ( $var_name === '--text-align' ) {
-						$debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
-						file_put_contents( $debug_log, "STEP 3.5 - CONTAINER_DEFAULT: Applying {$var_name} = '{$default_value}' (overriding resolved value)\n", FILE_APPEND );
-					}
-					
 					return $default_value;
 				}
 

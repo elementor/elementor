@@ -22,13 +22,9 @@ class Css_Processor_Factory {
 	}
 
 	public static function execute_css_processing( Css_Processing_Context $context ): Css_Processing_Context {
-		$debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
-		file_put_contents( $debug_file, "CSS_PROCESSOR_FACTORY: Starting pipeline execution\n", FILE_APPEND );
-
 		$registry = self::get_registry();
 		$result = $registry->execute_pipeline( $context );
 
-		file_put_contents( $debug_file, "CSS_PROCESSOR_FACTORY: Pipeline execution completed\n", FILE_APPEND );
 		return $result;
 	}
 
@@ -50,6 +46,7 @@ class Css_Processor_Factory {
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Nested_Element_Selector_Processor(),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Compound_Class_Selector_Processor(),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Style_Collection_Processor(),
+			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Body_Styles_Processor(),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Reset_Styles_Processor( $reset_style_detector, $property_converter ),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Widget_Child_Element_Selector_Processor( $property_converter ),
 			new \Elementor\Modules\CssConverter\Services\Css\Processing\Processors\Global_Classes_Processor(),

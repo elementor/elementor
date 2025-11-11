@@ -48,11 +48,6 @@ class Unified_Widget_Conversion_Service {
 	}
 	public function convert_from_html( $html, $css_urls = [], $follow_imports = false, $options = [] ): array {
 		$this->use_zero_defaults = true;
-		// Use the widget creator passed in constructor instead of creating a new one
-
-		error_log( "PARADIGM_DEBUG: convert_from_html called with " . count( $css_urls ) . " CSS URLs" );
-		error_log( "PARADIGM_DEBUG: CSS URLs passed: " . implode( ', ', $css_urls ) );
-		error_log( "CONTEXT_DEBUG: convert_from_html called with options: " . json_encode( array_keys( $options ) ) );
 
 		// Initialize logging
 		$conversion_log = $this->logger->start_conversion_log( $html, $css_urls );
@@ -68,21 +63,10 @@ class Unified_Widget_Conversion_Service {
 			// This preserves all context for CSS selector matching
 			$mapped_widgets = $this->widget_mapper->map_elements( $elements );
 			
-			$conversion_selector = $options['conversion_selector'] ?? null;
-			if ( ! empty( $conversion_selector ) ) {
-				error_log( "FULL_HTML_CONVERSION: Using full HTML with selector context: {$conversion_selector}" );
-			}
-			
 			$mapping_stats = $this->widget_mapper->get_mapping_stats( $elements );
 			$this->logger->add_mapping_stats( $mapping_stats );
 
-			// DELEGATE CSS extraction to unified processor (proper separation of concerns)
-			error_log( "PARADIGM_DEBUG: About to extract CSS from " . count( $css_urls ) . " URLs" );
 			$all_css = $this->unified_css_processor->extract_and_process_css_from_html_and_urls( $html, $css_urls, $follow_imports, $elements );
-			error_log( "PARADIGM_DEBUG: Extracted CSS length: " . strlen( $all_css ) . " bytes" );
-			if ( strlen( $all_css ) < 100 ) {
-				error_log( "PARADIGM_DEBUG: WARNING - CSS is very short! First 500 chars: " . substr( $all_css, 0, 500 ) );
-			}
 			$this->logger->add_css_size( strlen( $all_css ) );
 
 		try {
@@ -94,43 +78,17 @@ class Unified_Widget_Conversion_Service {
 		$resolved_widgets = $unified_processing_result['widgets'];
 		$global_classes = $unified_processing_result['global_classes'] ?? [];
 		$css_variable_definitions = $unified_processing_result['css_variable_definitions'] ?? [];
+		$body_styles = $unified_processing_result['body_styles'] ?? [];
 
-		// DEBUG: Track widget data being passed to widget creation
-		$debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-		foreach ( $resolved_widgets as $widget ) {
-			$widget_type = $widget['widget_type'] ?? '';
-			$element_id = $widget['element_id'] ?? '';
-			if ( $widget_type === 'e-heading' ) {
-				$widget_classes = $widget['attributes']['class'] ?? '';
-				file_put_contents(
-					$debug_log,
-					date( '[H:i:s] ' ) . "UNIFIED_CONVERSION_SERVICE: Passing {$widget_type} {$element_id} to widget creation\n" .
-					"  Widget classes: '{$widget_classes}'\n",
-					FILE_APPEND
-				);
-			}
-		}
-
-		// Filter widgets for output if selector was provided
 		$conversion_selector = $options['conversion_selector'] ?? null;
-		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CONVERSION_SELECTOR: Received selector = '" . ($conversion_selector ?? 'NULL') . "'\n", FILE_APPEND );
 		if ( ! empty( $conversion_selector ) ) {
-			$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "WIDGET_FILTERING: Before filtering - " . count($resolved_widgets) . " widgets\n", FILE_APPEND );
 			$output_widgets = $this->filter_widgets_for_output( $resolved_widgets, $conversion_selector );
-			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "WIDGET_FILTERING: After filtering - " . count($output_widgets) . " widgets for selector '{$conversion_selector}'\n", FILE_APPEND );
-			error_log( "WIDGET_FILTERING: Filtered " . count( $resolved_widgets ) . " widgets down to " . count( $output_widgets ) . " for output" );
 		} else {
 			$output_widgets = $resolved_widgets;
 		}
 
-		// Create widgets with resolved styles
-		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "WIDGET_CREATION: Before creation - " . count($output_widgets) . " widgets\n", FILE_APPEND );
-		$creation_result = $this->create_widgets_with_resolved_styles( $output_widgets, $options, $global_classes, $css_variable_definitions );
+		$creation_result = $this->create_widgets_with_resolved_styles( $output_widgets, $options, $global_classes, $css_variable_definitions, $body_styles );
 		$final_widgets = $creation_result['widgets'] ?? [];
-		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "WIDGET_CREATION: After creation - " . count($final_widgets) . " widgets\n", FILE_APPEND );
 
 			// Log CSS processing and widget creation stats
 			$this->logger->add_css_processing_stats( $unified_processing_result['stats'] ?? [] );
@@ -167,11 +125,9 @@ class Unified_Widget_Conversion_Service {
 		$this->find_widgets_matching_class_recursively( $widgets, $class_name, $target_widgets );
 
 		if ( empty( $target_widgets ) ) {
-			error_log( "WIDGET_FILTERING: No widgets found matching selector {$selector}, returning all widgets" );
 			return $widgets;
 		}
 
-		error_log( "WIDGET_FILTERING: Found " . count( $target_widgets ) . " widgets matching selector {$selector}" );
 		return $target_widgets;
 	}
 
@@ -201,7 +157,7 @@ class Unified_Widget_Conversion_Service {
 
 
 
-	private function create_widgets_with_resolved_styles( array $widgets, array $options, array $global_classes, array $css_variable_definitions = [] ): array {
+	private function create_widgets_with_resolved_styles( array $widgets, array $options, array $global_classes, array $css_variable_definitions = [], array $body_styles = [] ): array {
 		$post_id = $options['postId'] ?? null;
 		$post_type = $options['postType'] ?? 'page';
 		if ( null === $post_id ) {
@@ -246,39 +202,9 @@ class Unified_Widget_Conversion_Service {
 			$post_id = $creation_result['post_id'];
 		}
 		$elementor_data = $creation_result['element_data'] ?? [];
-		
-		// DEBUG: Check what elementor_data contains
-		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "ELEMENTOR_DATA: " . count($elementor_data) . " elements in elementor_data\n", FILE_APPEND );
-		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "ORIGINAL_WIDGETS: " . count($widgets) . " widgets with applied styles\n", FILE_APPEND );
-		
-		// DEBUG: Check element IDs in both datasets
-		if ( !empty($widgets) ) {
-			$widget_ids = array_map( function($w) { return $w['element_id'] ?? 'no-id'; }, $widgets );
-			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "ORIGINAL_WIDGET_IDS: " . implode(', ', $widget_ids) . "\n", FILE_APPEND );
-			
-			// Check if root widget has children
-			if ( isset($widgets[0]['children']) ) {
-				$child_count = count($widgets[0]['children']);
-				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "ROOT WIDGET HAS {$child_count} CHILDREN\n", FILE_APPEND );
-				
-				// Check if children have styles
-				foreach ( $widgets[0]['children'] as $child ) {
-					$child_id = $child['element_id'] ?? 'no-id';
-					$child_styles = $child['styles'] ?? [];
-					$style_count = 0;
-					foreach ( $child_styles as $style_obj ) {
-						if ( isset( $style_obj['variants'][0]['props'] ) ) {
-							$style_count += count( $style_obj['variants'][0]['props'] );
-						}
-					}
-					file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CHILD WIDGET {$child_id} HAS {$style_count} STYLES\n", FILE_APPEND );
-				}
-			}
-		}
-		if ( !empty($elementor_data) ) {
-			$elementor_ids = array_map( function($e) { return $e['id'] ?? ($e['element_id'] ?? 'no-id'); }, $elementor_data );
-			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "ELEMENTOR_DATA_IDS: " . implode(', ', $elementor_ids) . "\n", FILE_APPEND );
+
+		if ( ! empty( $body_styles ) && $post_id ) {
+			$this->save_page_settings( $post_id, $body_styles );
 		}
 		
 		return [
@@ -292,6 +218,20 @@ class Unified_Widget_Conversion_Service {
 			'stats' => $creation_result['stats'] ?? [],
 		];
 	}
+	private function save_page_settings( int $post_id, array $body_styles ): void {
+		if ( empty( $body_styles ) ) {
+			return;
+		}
+
+		$existing_settings = get_post_meta( $post_id, '_elementor_page_settings', true );
+		if ( ! is_array( $existing_settings ) ) {
+			$existing_settings = [];
+		}
+
+		$merged_settings = array_merge( $existing_settings, $body_styles );
+		update_metadata( 'post', $post_id, '_elementor_page_settings', wp_slash( $merged_settings ) );
+	}
+
 	private function extract_styles_by_source_from_widgets( array $widgets ): array {
 		$id_styles = [];
 		$inline_styles = [];

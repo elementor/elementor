@@ -39,27 +39,19 @@ class Css_Processor_Registry {
 	}
 
 	public function execute_pipeline( Css_Processing_Context $context ): Css_Processing_Context {
-		$debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
 		$sorted_processors = $this->get_sorted_processors();
-
-		file_put_contents( $debug_file, 'REGISTRY: Processing ' . count( $sorted_processors ) . " processors\n", FILE_APPEND );
 
 		foreach ( $sorted_processors as $processor ) {
 			$processor_name = $processor->get_processor_name();
 			$priority = $processor->get_priority();
 
 			if ( ! $processor->supports_context( $context ) ) {
-				file_put_contents( $debug_file, "REGISTRY: Skipping {$processor_name} (priority {$priority}) - context not supported\n", FILE_APPEND );
 				continue;
 			}
 
-			file_put_contents( $debug_file, "REGISTRY: Executing {$processor_name} (priority {$priority})\n", FILE_APPEND );
-
 			try {
 				$context = $processor->process( $context );
-				file_put_contents( $debug_file, "REGISTRY: Completed {$processor_name}\n", FILE_APPEND );
 			} catch ( \Exception $e ) {
-				file_put_contents( $debug_file, "REGISTRY: ERROR in {$processor_name}: " . $e->getMessage() . "\n", FILE_APPEND );
 				throw new \Exception( "Processor '{$processor_name}' failed: " . $e->getMessage(), 0, $e );
 			}
 		}

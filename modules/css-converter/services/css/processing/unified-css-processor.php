@@ -42,22 +42,6 @@ class Unified_Css_Processor
     }
     public function process_css_and_widgets( string $css, array $widgets, array $options = [] ): array
     {
-        $debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
-        file_put_contents($debug_file, "\n" . str_repeat('=', 80) . "\n", FILE_APPEND);
-        file_put_contents($debug_file, 'UNIFIED CSS PROCESSOR STARTED: ' . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
-        file_put_contents($debug_file, 'CSS size: ' . strlen($css) . " bytes\n", FILE_APPEND);
-        file_put_contents($debug_file, 'Widgets count: ' . count($widgets) . "\n", FILE_APPEND);
-        
-        // STEP 1: Check if Kit CSS definitions are in input CSS
-        $has_kit_css = strpos($css, '.elementor-kit-') !== false;
-        $has_e66ebc9_def = strpos($css, '--e-global-color-e66ebc9:#222A5A') !== false;
-        file_put_contents($debug_file, "STEP 1 - INPUT CSS: hasKitCSS=$has_kit_css, hasE66ebc9Definition=$has_e66ebc9_def\n", FILE_APPEND);
-        
-        if ($has_e66ebc9_def) {
-            $pos = strpos($css, '--e-global-color-e66ebc9');
-            $sample = substr($css, max(0, $pos - 50), 150);
-            file_put_contents($debug_file, "STEP 1 - E66EBC9 FOUND: " . str_replace("\n", ' ', $sample) . "\n", FILE_APPEND);
-        }
 
         // Create processing context with input data
         $context = new Css_Processing_Context();
@@ -70,39 +54,17 @@ class Unified_Css_Processor
         if (method_exists($this->property_converter, 'get_custom_css_collector') ) {
             $custom_css_collector = $this->property_converter->get_custom_css_collector();
             $context->set_metadata('custom_css_collector', $custom_css_collector);
-            file_put_contents($debug_file, "Custom CSS collector set in context\n", FILE_APPEND);
         }
 
         // Set the shared property converter in context so all processors use the same instance
         $context->set_metadata('property_converter', $this->property_converter);
 
-        file_put_contents($debug_file, "EXECUTING REGISTRY PIPELINE...\n", FILE_APPEND);
         // Execute the complete registry pipeline
         $context = Css_Processor_Factory::execute_css_processing($context);
-        file_put_contents($debug_file, "REGISTRY PIPELINE COMPLETED\n", FILE_APPEND);
 
         // Extract results from context
         // Note: global_classes already includes compound classes (merged by Global_Classes_Processor)
         $processed_widgets = $context->get_widgets();
-        
-        // DEBUG: Check widget count at final output
-        $debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
-        $all_widget_ids = [];
-        $this->collect_widget_ids_recursively( $processed_widgets, $all_widget_ids );
-        file_put_contents($debug_file, "FINAL OUTPUT: " . count($processed_widgets) . " root widgets, " . count($all_widget_ids) . " total widgets (IDs: " . implode(', ', array_slice($all_widget_ids, 0, 10)) . ")\n", FILE_APPEND);
-        
-        // DEBUG: Check if styles are preserved in the widgets
-        foreach ( $processed_widgets as $widget ) {
-            $element_id = $widget['element_id'] ?? 'unknown';
-            $styles = $widget['styles'] ?? [];
-            $style_count = 0;
-            foreach ( $styles as $style_obj ) {
-                if ( isset( $style_obj['variants'][0]['props'] ) ) {
-                    $style_count += count( $style_obj['variants'][0]['props'] );
-                }
-            }
-            file_put_contents($debug_file, "WIDGET STYLES: {$element_id} has {$style_count} applied styles\n", FILE_APPEND);
-        }
         $statistics = $context->get_statistics();
         $css_class_rules = $context->get_metadata('css_class_rules', []);
         $css_variable_definitions = $context->get_metadata('css_variable_definitions', []);
@@ -115,10 +77,12 @@ class Unified_Css_Processor
         $complex_reset_styles = $context->get_metadata('complex_reset_styles', []);
         $html_class_modifications = $context->get_metadata('html_class_modifications', []);
         $html_class_modifier = $context->get_metadata('html_class_modifier');
+        $body_styles = $context->get_metadata('body_styles', []);
 
         // Build legacy result format for backward compatibility
         return [
         'widgets' => $processed_widgets,
+        'body_styles' => $body_styles,
         'stats' => $statistics,
         'css_class_rules' => $css_class_rules,
         'css_variable_definitions' => $css_variable_definitions,
@@ -1194,7 +1158,6 @@ class Unified_Css_Processor
                             }
                         }
                     }
-                    error_log("CSS Variables DEBUG: Processing selector with elementor-kit: '$sel_str' with " . count($declarations) . " total declarations, $varDeclarationCount CSS variable declarations");
                     break;
                 }
             }
@@ -1264,8 +1227,6 @@ class Unified_Css_Processor
 
     private function merge_duplicate_selector_rules( array $rules ): array
     {
-        $merge_log_path = WP_CONTENT_DIR . '/css-rule-merge.log';
-
         $grouped_by_selector = [];
 
         foreach ( $rules as $rule ) {
@@ -1283,12 +1244,6 @@ class Unified_Css_Processor
                 $merged_rules[] = $selector_rules[0];
                 continue;
             }
-
-            file_put_contents(
-                $merge_log_path,
-                date('Y-m-d H:i:s') . ' MERGE: Found ' . count($selector_rules) . " rules for selector: {$selector}\n",
-                FILE_APPEND
-            );
 
             $merged_properties = [];
             $property_index_map = [];
@@ -1312,24 +1267,8 @@ class Unified_Css_Processor
 
                         if ($property_important && ! $existing_important ) {
                             $merged_properties[ $existing_index ] = $property;
-                            file_put_contents(
-                                $merge_log_path,
-                                date('Y-m-d H:i:s') . "  OVERRIDE (important): {$property_name}: {$existing_property['value']} -> {$property_value} !important\n",
-                                FILE_APPEND
-                            );
                         } elseif (! $property_important && ! $existing_important ) {
                             $merged_properties[ $existing_index ] = $property;
-                            file_put_contents(
-                                $merge_log_path,
-                                date('Y-m-d H:i:s') . "  OVERRIDE (cascade): {$property_name}: {$existing_property['value']} -> {$property_value}\n",
-                                FILE_APPEND
-                            );
-                        } else {
-                            file_put_contents(
-                                $merge_log_path,
-                                date('Y-m-d H:i:s') . "  KEPT (important wins): {$property_name}: {$existing_property['value']} !important (ignoring: {$property_value})\n",
-                                FILE_APPEND
-                            );
                         }
                     } else {
                         $property_index_map[ $property_name ] = count($merged_properties);
@@ -1342,21 +1281,12 @@ class Unified_Css_Processor
             'selector' => $selector,
             'properties' => $merged_properties,
             ];
-
-            file_put_contents(
-                $merge_log_path,
-                date('Y-m-d H:i:s') . '  RESULT: Merged into ' . count($merged_properties) . " properties\n",
-                FILE_APPEND
-            );
         }
 
         return $merged_rules;
     }
     public function extract_and_process_css_from_html_and_urls( string $html, array $css_urls, bool $follow_imports, array &$elements ): string
     {
-        error_log( "PARADIGM_DEBUG: extract_and_process_css_from_html_and_urls called with " . count( $css_urls ) . " CSS URLs" );
-        error_log( "PARADIGM_DEBUG: CSS URLs: " . implode( ', ', $css_urls ) );
-        
         $css_sources = [];
         $html_style_tags = [];
         $inline_element_styles = [];
@@ -1364,7 +1294,6 @@ class Unified_Css_Processor
         // Extract inline <style> tags from HTML (process LAST for correct cascade)
         preg_match_all('/<style[^>]*>(.*?)<\/style>/is', $html, $matches);
         if (! empty($matches[1]) ) {
-            error_log( "PARADIGM_DEBUG: Found " . count( $matches[1] ) . " inline style tags" );
             foreach ( $matches[1] as $index => $css_content ) {
 
                 $html_style_tags[] = [
@@ -1373,8 +1302,6 @@ class Unified_Css_Processor
                  'content' => $css_content,
                 ];
             }
-        } else {
-            error_log( "PARADIGM_DEBUG: No inline style tags found" );
         }
 
         // Extract inline styles from elements and convert to CSS rules (process LAST for correct cascade)
@@ -1390,14 +1317,8 @@ class Unified_Css_Processor
             }
         }
 
-        error_log( "PARADIGM_DEBUG: Starting to fetch CSS from " . count( $css_urls ) . " URLs" );
         foreach ( $css_urls as $css_url ) {
-            error_log( "PARADIGM_DEBUG: Fetching CSS from: $css_url" );
             $is_elementor_kit_css = strpos($css_url, '/elementor/css/') !== false;
-
-            if ($is_elementor_kit_css ) {
-                error_log("CSS Variables DEBUG: Fetching Elementor Kit CSS: $css_url");
-            }
 
             $response = wp_remote_get(
                 $css_url, [
@@ -1408,24 +1329,6 @@ class Unified_Css_Processor
             if (! is_wp_error($response) ) {
                 $response_code = wp_remote_retrieve_response_code($response);
                 $css_content = wp_remote_retrieve_body($response);
-                error_log( "PARADIGM_DEBUG: Fetched CSS from $css_url - HTTP $response_code, size: " . strlen( $css_content ) . " bytes" );
-                if ( empty( $css_content ) ) {
-                    error_log( "PARADIGM_DEBUG: WARNING - Empty CSS content from $css_url" );
-                } else {
-                    error_log( "PARADIGM_DEBUG: CSS content preview (first 200 chars): " . substr( $css_content, 0, 200 ) );
-                }
-
-                if ($is_elementor_kit_css ) {
-                    $has_e_global_vars = preg_match('/--e-global-[^:]+:/', $css_content);
-                    $content_size = strlen($css_content);
-                    error_log("CSS Variables DEBUG: Elementor Kit CSS fetched: size=$content_size, has --e-global- vars: " . ( $has_e_global_vars ? 'yes' : 'no' ));
-                    if ($has_e_global_vars ) {
-                        preg_match_all('/(--e-global-[^:]+):\s*([^;]+);/', $css_content, $var_matches);
-                        if (! empty($var_matches[1]) ) {
-                            error_log('CSS Variables DEBUG: Found ' . count($var_matches[1]) . ' --e-global- variables in Kit CSS. Sample: ' . $var_matches[1][0] . ' = ' . $var_matches[2][0]);
-                        }
-                    }
-                }
 
                 $reset_patterns = [
                  'html, body, div, span',
@@ -1474,9 +1377,6 @@ class Unified_Css_Processor
                         }
                     }
                 }
-            } else {
-                $error_message = $response->get_error_message();
-                error_log( "PARADIGM_DEBUG: ERROR - Failed to fetch CSS from $css_url: $error_message" );
             }
         }
 
@@ -1487,28 +1387,8 @@ class Unified_Css_Processor
         // FIXED: Add inline element styles LAST for highest priority
         // Inline styles should override everything else
         $css_sources = array_merge($css_sources, $inline_element_styles);
-
-        error_log( "PARADIGM_DEBUG: Total CSS sources collected: " . count( $css_sources ) );
-        foreach ( $css_sources as $index => $source ) {
-            error_log( "PARADIGM_DEBUG: CSS source #" . ( $index + 1 ) . ": type=" . $source['type'] . ", size=" . strlen( $source['content'] ?? '' ) . " bytes" );
-        }
         
         $combined_css = $this->parse_css_sources_safely($css_sources);
-        error_log( "PARADIGM_DEBUG: Combined CSS length: " . strlen( $combined_css ) . " bytes" );
-        
-        // STEP 2: Check if Kit CSS definitions survive combination
-        $debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
-        $has_kit_after_combine = strpos($combined_css, '.elementor-kit-') !== false;
-        $has_e66ebc9_after_combine = strpos($combined_css, '--e-global-color-e66ebc9:#222A5A') !== false;
-        file_put_contents($debug_file, "STEP 2 - AFTER COMBINATION: hasKitCSS=$has_kit_after_combine, hasE66ebc9Definition=$has_e66ebc9_after_combine\n", FILE_APPEND);
-        
-        if ($has_e66ebc9_after_combine) {
-            $pos = strpos($combined_css, '--e-global-color-e66ebc9');
-            $sample = substr($combined_css, max(0, $pos - 50), 150);
-            file_put_contents($debug_file, "STEP 2 - E66EBC9 SURVIVED: " . str_replace("\n", ' ', $sample) . "\n", FILE_APPEND);
-        } else {
-            file_put_contents($debug_file, "STEP 2 - E66EBC9 LOST during CSS combination\n", FILE_APPEND);
-        }
         
         return $combined_css;
     }
@@ -1519,26 +1399,13 @@ class Unified_Css_Processor
         $failed_sources = [];
         $successful_count = 0;
         $failed_count = 0;
-        
-        $debug_file = WP_CONTENT_DIR . '/unified-processor-trace.log';
-        file_put_contents($debug_file, "STEP 3 - CSS SOURCES: Processing " . count($css_sources) . " sources\n", FILE_APPEND);
 
         foreach ( $css_sources as $source ) {
             $type = $source['type'];
             $source_name = $source['source'];
             $content = $source['content'];
-            
-            $is_kit_css = strpos($source_name, '/elementor/css/') !== false;
-            $has_e66ebc9 = strpos($content, '--e-global-color-e66ebc9:#222A5A') !== false;
-            
-            if ($is_kit_css || $has_e66ebc9) {
-                file_put_contents($debug_file, "STEP 3 - SOURCE: $source_name (isKit=$is_kit_css, hasE66ebc9=$has_e66ebc9, size=" . strlen($content) . ")\n", FILE_APPEND);
-            }
 
             if (empty(trim($content)) ) {
-                if ($is_kit_css) {
-                    file_put_contents($debug_file, "STEP 3 - SKIPPED: Kit CSS source is empty\n", FILE_APPEND);
-                }
                 continue;
             }
 
@@ -1553,23 +1420,8 @@ class Unified_Css_Processor
                         $document = $parsed->get_document();
                         $format = \Sabberworm\CSS\OutputFormat::createPretty();
                         $beautified_content = $document->render($format);
-                        
-                        // STEP 3: Check if beautification preserves Kit CSS
-                        if ($has_e66ebc9) {
-                            $has_e66ebc9_after_beautify = strpos($beautified_content, '--e-global-color-e66ebc9:#222A5A') !== false;
-                            file_put_contents($debug_file, "STEP 3 - BEAUTIFY: $source_name hasE66ebc9After=$has_e66ebc9_after_beautify\n", FILE_APPEND);
-                            if (!$has_e66ebc9_after_beautify) {
-                                file_put_contents($debug_file, "STEP 3 - LOST: E66ebc9 lost during beautification of $source_name\n", FILE_APPEND);
-                            }
-                        }
-                        
                         $sanitized_content = $beautified_content;
                     } catch ( \Exception $beautify_error ) {
-                        if ($has_e66ebc9) {
-                            file_put_contents($debug_file, "STEP 3 - ERROR: Beautification failed for Kit CSS $source_name: " . $beautify_error->getMessage() . "\n", FILE_APPEND);
-                            file_put_contents($debug_file, "STEP 3 - FALLBACK: Using original content for Kit CSS to preserve variables\n", FILE_APPEND);
-                        }
-                        error_log("CSS Beautification failed for source: $source_name - " . $beautify_error->getMessage());
                         // CRITICAL FIX: Keep original content if beautification fails (especially for Kit CSS)
                         // Don't throw error - just use the sanitized content as-is
                     }
@@ -2089,31 +1941,15 @@ class Unified_Css_Processor
 
     private function process_css_variable_declarations( string $selector, array $declarations ): void
     {
-        $isKitSelector = strpos($selector, 'elementor-kit') !== false;
-
-        if ($isKitSelector ) {
-            error_log("CSS Variables DEBUG: Processing Kit selector '$selector' with " . count($declarations) . ' declarations');
-        }
-
         foreach ( $declarations as $index => $declaration ) {
             if (! $this->is_valid_declaration($declaration) ) {
-                if ($isKitSelector ) {
-                    error_log("CSS Variables DEBUG: Declaration $index is invalid");
-                }
                 continue;
             }
 
             $property = $declaration->getRule();
             $value = (string) $declaration->getValue();
 
-            if ($isKitSelector && $index < 5 ) {
-                error_log("CSS Variables DEBUG: Kit selector declaration $index: property='$property', value='" . substr($value, 0, 50) . "', value_empty=" . ( empty($value) ? 'yes' : 'no' ));
-            }
-
             if (0 === strpos($property, '--') ) {
-                if ($isKitSelector || strpos($property, 'e-global') !== false ) {
-                    error_log("CSS Variables DEBUG: Found definition in selector '$selector': $property = '$value' (empty: " . ( empty($value) ? 'yes' : 'no' ) . ')');
-                }
                 $this->store_css_variable_definition($property, $value, $selector);
             } else {
                 $this->extract_variable_references_from_value($value, $selector);
@@ -2127,10 +1963,6 @@ class Unified_Css_Processor
             foreach ( $matches[1] as $variable_name ) {
                 $variable_name = trim($variable_name);
 
-                if (strpos($variable_name, 'e-global') !== false ) {
-                    error_log("CSS Variables DEBUG: Found reference to '$variable_name' in selector '$selector', value: $value");
-                }
-
                 if (! isset($this->css_variable_definitions[ $variable_name ]) ) {
                     $this->css_variable_definitions[ $variable_name ] = [
                     'name' => $variable_name,
@@ -2138,9 +1970,6 @@ class Unified_Css_Processor
                     'selector' => $selector,
                     'source' => 'extracted_from_reference',
                     ];
-                    if (strpos($variable_name, 'e-global') !== false ) {
-                        error_log("CSS Variables DEBUG: Created reference entry for '$variable_name' (no value yet)");
-                    }
                 }
             }
         }
@@ -2152,8 +1981,6 @@ class Unified_Css_Processor
             return;
         }
 
-        $isEGlobal = strpos($variable_name, 'e-global') !== false;
-
         if (! isset($this->css_variable_definitions[ $variable_name ]) ) {
             $this->css_variable_definitions[ $variable_name ] = [
             'name' => $variable_name,
@@ -2161,21 +1988,12 @@ class Unified_Css_Processor
             'selector' => $selector,
             'source' => 'extracted_from_css',
             ];
-            if ($isEGlobal ) {
-                error_log("CSS Variables DEBUG: Stored NEW definition for '$variable_name' = '$value' from selector '$selector'");
-            }
         } elseif (empty($this->css_variable_definitions[ $variable_name ]['value']) || $this->css_variable_definitions[ $variable_name ]['source'] === 'extracted_from_reference' ) {
-            $oldSource = $this->css_variable_definitions[ $variable_name ]['source'];
             $this->css_variable_definitions[ $variable_name ]['value'] = $value;
             $this->css_variable_definitions[ $variable_name ]['source'] = 'extracted_from_css';
             if (empty($this->css_variable_definitions[ $variable_name ]['selector']) || $this->css_variable_definitions[ $variable_name ]['selector'] === $selector ) {
                 $this->css_variable_definitions[ $variable_name ]['selector'] = $selector;
             }
-            if ($isEGlobal ) {
-                error_log("CSS Variables DEBUG: UPDATED definition for '$variable_name' = '$value' (was: source=$oldSource, had_empty_value=" . ( empty($this->css_variable_definitions[ $variable_name ]['value']) ? 'yes' : 'no' ) . ')');
-            }
-        } elseif ($isEGlobal ) {
-            error_log("CSS Variables DEBUG: Skipped storing definition for '$variable_name' (already exists with value)");
         }
     }
 

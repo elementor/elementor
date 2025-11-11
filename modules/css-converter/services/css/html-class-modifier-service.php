@@ -71,8 +71,6 @@ class Html_Class_Modifier_Service {
 	private function apply_generic_modifiers( string $type, array $mappings, array $metadata ): void {
 		if ( 'widget-classes' === $type ) {
 			$this->widget_classes_to_remove = $mappings;
-			// DEBUG: Log what classes we're set to remove
-			file_put_contents( '/tmp/html_modifier_debug.log', 'HTML Modifier received widget classes to remove: ' . implode( ', ', $mappings ) . "\n", FILE_APPEND );
 		}
 	}
 
@@ -119,48 +117,21 @@ class Html_Class_Modifier_Service {
 		$original_classes = $this->extract_classes_from_element( $element );
 		$modified_classes = [];
 
-		// DEBUG: Log original classes
-		file_put_contents( '/tmp/html_modifier_debug.log', 'HTML Modifier processing element with classes: ' . implode( ', ', $original_classes ) . "\n", FILE_APPEND );
-
-		// EVIDENCE: Track if fixed classes are being processed
-		$has_fixed_class = false;
-		foreach ( $original_classes as $class ) {
-			if ( strpos( $class, 'fixed' ) !== false ) {
-				$has_fixed_class = true;
-				break;
-			}
-		}
-		if ( $has_fixed_class ) {
-		}
-
 		foreach ( $original_classes as $class_name ) {
-			// DEBUG: Log each class being processed
-			file_put_contents( '/tmp/html_modifier_debug.log', "Processing class: {$class_name}\n", FILE_APPEND );
-
-			// CRITICAL FIX: Widget class removal takes precedence over flattening
 			if ( in_array( $class_name, $this->widget_classes_to_remove, true ) ) {
-				file_put_contents( '/tmp/html_modifier_debug.log', "  -> Removed (widget class): {$class_name}\n", FILE_APPEND );
-				continue; // Skip this class entirely
+				continue;
 			}
 
-			// FIXED: For flattening, keep BOTH original and flattened classes
 			if ( $this->mapping_service->has_mapping_for_class( $class_name ) ) {
-				// Add original class
 				$modified_classes[] = $class_name;
-				// Add flattened class
 				$flattened_name = $this->mapping_service->get_flattened_class_name( $class_name );
 				if ( ! empty( $flattened_name ) ) {
 					$modified_classes[] = $flattened_name;
 				}
-				file_put_contents( '/tmp/html_modifier_debug.log', "  -> Flattened: kept {$class_name}, added {$flattened_name}\n", FILE_APPEND );
 			} else {
-				// For non-flattened classes, use the normal processing
 				$modified_class = $this->process_single_class( $class_name );
 				if ( null !== $modified_class ) {
 					$modified_classes[] = $modified_class;
-					file_put_contents( '/tmp/html_modifier_debug.log', "  -> Kept: {$modified_class}\n", FILE_APPEND );
-				} else {
-					file_put_contents( '/tmp/html_modifier_debug.log', "  -> Removed: {$class_name}\n", FILE_APPEND );
 				}
 			}
 		}
@@ -213,10 +184,7 @@ class Html_Class_Modifier_Service {
 	}
 
 	private function process_single_class( string $class_name ): ?string {
-		// Check if this class should be removed (widget classes applied as direct styles)
 		if ( in_array( $class_name, $this->widget_classes_to_remove, true ) ) {
-			// DEBUG: Log what classes we're removing
-			file_put_contents( '/tmp/html_modifier_debug.log', "HTML Modifier REMOVING class: {$class_name}\n", FILE_APPEND );
 			return null;
 		}
 

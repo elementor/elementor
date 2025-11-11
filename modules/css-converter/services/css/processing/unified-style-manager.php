@@ -87,12 +87,6 @@ class Unified_Style_Manager
             $base_specificity = $this->calculate_css_specificity($selector, $property_data['important'] ?? false);
             $boosted_specificity = $this->boost_specificity_for_target_element( $selector, $base_specificity );
             
-            // DEBUG: Log display property collection
-            if ( $property === 'display' ) {
-                $tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-                file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "UNIFIED_STYLE_MANAGER: Collecting display: {$value} for element {$element_id} from selector '{$selector}'\n", FILE_APPEND );
-            }
-            
             $this->collected_styles[] = [
             'source' => 'css-selector',
             'selector' => $selector,
@@ -166,13 +160,7 @@ class Unified_Style_Manager
         foreach ( $properties as $property_data ) {
             $important = $property_data['important'] ?? false;
 
-            // Use passed specificity if provided, otherwise calculate default
             $final_specificity = $specificity > 0 ? $specificity : $this->calculate_element_specificity($important);
-
-            // Debug image widget style collection (DEBUGGING - ROOT CAUSE FOUND: CSS selector pollution)
-            if ($element_type === 'e-image' ) {
-                // error_log( "DEBUG COLLECT IMAGE STYLE: element_type={$element_type}, element_id={$element_id}, property={$property_data['property']}, value={$property_data['value']}, selector={$selector}, specificity={$final_specificity}, converted_property=" . ( $property_data['converted_property'] ? 'YES' : 'NO' ) );
-            }
 
             $this->collected_styles[] = [
             'source' => 'element',
@@ -329,54 +317,17 @@ class Unified_Style_Manager
     private function resolve_styles_for_widget_legacy( array $widget ): array
     {
         $widget_id = $this->get_widget_identifier($widget);
-        $html_id = $widget['attributes']['id'] ?? 'NO_HTML_ID';
         
-        // DEBUG: Log style resolution for specific elements
         $element_id = $widget['element_id'] ?? 'unknown';
-        if ( in_array( $element_id, ['element-div-2', 'element-div-3'] ) ) {
-            $tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-            file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "STYLE_RESOLUTION: Resolving styles for {$element_id}\n", FILE_APPEND );
-        }
         
-        // Get all styles that apply to this widget
         $applicable_styles = $this->filter_styles_for_widget($widget);
 
-        // Group by property
         $by_property = $this->group_by_property($applicable_styles);
         
-        // For each property, find the winning style based on specificity
         $winning_styles = [];
-        $duplicate_log_path = WP_CONTENT_DIR . '/css-duplicate-properties.log';
-        
-        // DEBUG: Log property resolution for comparison properties
-        if ( in_array( $element_id, ['element-div-2', 'element-div-3', 'element-div-4'] ) ) {
-            $debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
-            
-            foreach ( ['display', 'align-items', 'text-align'] as $debug_property ) {
-                $property_styles = $by_property[$debug_property] ?? [];
-                file_put_contents( $debug_log, "STEP 6 - STYLE_RESOLUTION: {$element_id} has " . count($property_styles) . " {$debug_property} styles\n", FILE_APPEND );
-                
-                // Log all competing styles for this property
-                foreach ( $property_styles as $i => $style ) {
-                    $selector = $style['selector'] ?? 'no-selector';
-                    $value = $style['value'] ?? 'no-value';
-                    $specificity = $style['specificity'] ?? 0;
-                    file_put_contents( $debug_log, "STEP 6 - COMPETING_STYLE: {$element_id} {$debug_property} #{$i}: '{$selector}' = '{$value}' (specificity: {$specificity})\n", FILE_APPEND );
-                }
-            }
-        }
         
         foreach ( $by_property as $property => $styles ) {
             $winning_style = $this->find_winning_style($styles);
-            
-            // DEBUG: Log winning styles for comparison properties
-            if ( in_array($property, ['display', 'align-items', 'text-align']) && in_array( $element_id, ['element-div-2', 'element-div-3', 'element-div-4'] ) ) {
-                $debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
-                $winning_value = $winning_style ? ($winning_style['value'] ?? 'NO_VALUE') : 'NO_WINNER';
-                $winning_selector = $winning_style ? ($winning_style['selector'] ?? 'NO_SELECTOR') : 'NO_WINNER';
-                $winning_specificity = $winning_style ? ($winning_style['specificity'] ?? 0) : 0;
-                file_put_contents( $debug_log, "STEP 6 - WINNER: {$element_id} {$property} = '{$winning_value}' from '{$winning_selector}' (specificity: {$winning_specificity})\n", FILE_APPEND );
-            }
             if ($winning_style ) {
                 // Map CSS property name to atomic property name
                 $atomic_property_name = $this->get_atomic_property_name($property);
@@ -389,34 +340,10 @@ class Unified_Style_Manager
                     $new_specificity = $winning_style['specificity'] ?? 0;
                     $new_important = $winning_style['important'] ?? false;
                     
-                    // Log duplication for debugging
-                    $existing_selector = $existing_style['selector'] ?? 'unknown';
-                    $new_selector = $winning_style['selector'] ?? 'unknown';
-                    
-                    file_put_contents(
-                        $duplicate_log_path,
-                        date('Y-m-d H:i:s') . " DUPLICATE: {$atomic_property_name} for {$widget_id}\n" .
-                        "  Existing: {$existing_style['property']} = {$existing_style['value']} (specificity: {$existing_specificity}, !important: " . ($existing_important ? 'yes' : 'no') . ") from {$existing_selector}\n" .
-                        "  New:      {$property} = {$winning_style['value']} (specificity: {$new_specificity}, !important: " . ($new_important ? 'yes' : 'no') . ") from {$new_selector}\n",
-                        FILE_APPEND
-                    );
-                    
-                    // Resolve using CSS cascade rules
                     $should_override = $this->should_override_style($existing_style, $winning_style);
                     
                     if ($should_override ) {
-                              $winning_styles[ $atomic_property_name ] = $winning_style;
-                            file_put_contents(
-                                $duplicate_log_path,
-                                "  DECISION: Using NEW value\n",
-                                FILE_APPEND
-                            );
-                    } else {
-                        file_put_contents(
-                            $duplicate_log_path,
-                            "  DECISION: Keeping EXISTING value\n",
-                            FILE_APPEND
-                        );
+                        $winning_styles[ $atomic_property_name ] = $winning_style;
                     }
                 } else {
                     $winning_styles[ $atomic_property_name ] = $winning_style;
@@ -844,32 +771,9 @@ class Unified_Style_Manager
             case 'css-selector':
                 $applies = ( $style['element_id'] === $element_id );
                 
-                // DEBUG: Track our target widget specifically
-                if ($element_id === 'element-h2-6' && in_array($style['property'], [ 'font-weight', 'color' ], true) ) {
-                    $debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-                    $style_selector = $style['selector'] ?? 'no-selector';
-                    $style_specificity = $style['specificity'] ?? 0;
-                    file_put_contents(
-                        $debug_log,
-                        date('[H:i:s] ') . "FILTER_STYLES: css-selector style for element-h2-6\n" .
-                        "  Property: {$style['property']}, Value: {$style['value']}, Specificity: {$style_specificity}, Applies: " . ( $applies ? 'YES' : 'NO' ) . "\n" .
-                        "  Selector: {$style_selector}\n",
-                        FILE_APPEND
-                    );
-                }
-                
                 break;
             case 'element':
                 $applies = ( $style['element_type'] === $element_type );
-
-                // Debug image widget styles (DEBUGGING - ROOT CAUSE FOUND: CSS selector pollution)
-                if ($element_type === 'e-image' ) {
-                    // error_log( "DEBUG IMAGE STYLE: element_type={$element_type}, style_element_type={$style['element_type']}, property={$style['property']}, value={$style['value']}, applies=" . ( $applies ? 'YES' : 'NO' ) . ", selector={$style['selector']}, specificity={$style['specificity']}" );
-                }
-
-                // Debug element styles for flex widgets
-                if (( $widget_type === 'e-flexbox' || $widget_type === 'e-div-block' ) && in_array($style['property'], [ 'display', 'flex-direction' ]) ) {
-                }
                 break;
             case 'reset-element':
                 // Reset element styles apply to widgets that match the element selector
@@ -887,21 +791,6 @@ class Unified_Style_Manager
             }
             if ($applies ) {
                 $applicable_styles[] = $style;
-            }
-        }
-        // Debug final applicable styles for flex widgets
-        if ($widget_type === 'e-flexbox' || $widget_type === 'e-div-block' ) {
-            $display_styles = array_filter(
-                $applicable_styles, function ( $s ) {
-                    return $s['property'] === 'display';
-                } 
-            );
-            $flex_styles = array_filter(
-                $applicable_styles, function ( $s ) {
-                    return $s['property'] === 'flex-direction';
-                } 
-            );
-            if (! empty($display_styles) || ! empty($flex_styles) ) {
             }
         }
         return $applicable_styles;
@@ -924,54 +813,16 @@ class Unified_Style_Manager
             return null;
         }
 
-        // DEBUG: Track specificity comparison for font-weight and color
-        $debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-        $first_style = $styles[0] ?? [];
-        $property = $first_style['property'] ?? 'unknown';
-        
-        if (in_array($property, [ 'font-weight', 'color' ], true) && count($styles) > 1 ) {
-            file_put_contents(
-                $debug_log,
-                date('[H:i:s] ') . "FIND_WINNING_STYLE: Comparing {$property} styles (" . count($styles) . " candidates)\n",
-                FILE_APPEND
-            );
-            
-            foreach ( $styles as $idx => $style ) {
-                $selector = $style['selector'] ?? 'no-selector';
-                $specificity = $style['specificity'] ?? 0;
-                $order = $style['order'] ?? 0;
-                $value = $style['value'] ?? 'no-value';
-                file_put_contents(
-                    $debug_log,
-                    "  [{$idx}] Value: {$value}, Specificity: {$specificity}, Order: {$order}, Selector: {$selector}\n",
-                    FILE_APPEND
-                );
-            }
-        }
-
-        // Sort by specificity (highest first), then by element-specificity preference, then by order (latest first)
         usort(
             $styles, function ( $a, $b ) {
                 if ($a['specificity'] !== $b['specificity'] ) {
-                    return $b['specificity'] - $a['specificity']; // Higher specificity wins
+                    return $b['specificity'] - $a['specificity'];
                 }
                 
-                // CRITICAL FIX: When specificity is equal, prefer element-specific selectors
                 $a_selector = $a['selector'] ?? '';
                 $b_selector = $b['selector'] ?? '';
                 $a_is_element_specific = $this->is_element_specific_selector( $a_selector );
                 $b_is_element_specific = $this->is_element_specific_selector( $b_selector );
-                
-                // DEBUG: Track element-specific preference logic
-                if ( in_array( $property, [ 'font-weight', 'color' ], true ) ) {
-                    $debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-                    file_put_contents(
-                        $debug_log,
-                        "    ELEMENT_SPECIFIC_CHECK: A({$a_selector}) = " . ( $a_is_element_specific ? 'YES' : 'NO' ) . 
-                        ", B({$b_selector}) = " . ( $b_is_element_specific ? 'YES' : 'NO' ) . "\n",
-                        FILE_APPEND
-                    );
-                }
                 
                 if ( $a_is_element_specific && ! $b_is_element_specific ) {
                     return -1; // A wins (element-specific beats generic)
@@ -984,18 +835,6 @@ class Unified_Style_Manager
             }
         );
         $winner = $styles[0];
-        
-        // DEBUG: Show the winner
-        if (in_array($property, [ 'font-weight', 'color' ], true) && count($styles) > 1 ) {
-            $winner_selector = $winner['selector'] ?? 'no-selector';
-            $winner_specificity = $winner['specificity'] ?? 0;
-            $winner_value = $winner['value'] ?? 'no-value';
-            file_put_contents(
-                $debug_log,
-                "  WINNER: {$winner_value} (Specificity: {$winner_specificity}) from {$winner_selector}\n",
-                FILE_APPEND
-            );
-        }
 
 
         return $winner;

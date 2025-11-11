@@ -87,10 +87,6 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$widgets = $context->get_widgets();
 		$css = $context->get_metadata( 'css', '' );
-		
-		// DEBUG: Check widget count in Style Collection Processor
-		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "STYLE_COLLECTION_PROCESSOR: Processing " . count($widgets) . " widgets\n", FILE_APPEND );
 
 		$existing_style_manager = $context->get_metadata( 'unified_style_manager' );
 
@@ -490,8 +486,6 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		try {
 			return $this->selector_matcher->find_matching_widgets( $selector, $widgets );
 		} catch ( \InvalidArgumentException $e ) {
-			// Skip malformed selectors gracefully
-			error_log( "Style_Collection_Processor: Skipping malformed selector '{$selector}': " . $e->getMessage() );
 			return [];
 		}
 	}
@@ -500,8 +494,6 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		try {
 			return $this->selector_matcher->widget_matches_selector( $selector, $widget );
 		} catch ( \InvalidArgumentException $e ) {
-			// Skip malformed selectors gracefully
-			error_log( "Style_Collection_Processor: Skipping malformed selector '{$selector}': " . $e->getMessage() );
 			return false;
 		}
 	}

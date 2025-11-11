@@ -63,10 +63,6 @@ class Html_Class_Modifier_Processor implements Css_Processor_Interface {
 		// Apply HTML class modifications (flattening, compound, duplicate mappings)
 		$widgets_with_applied_classes = $this->apply_html_class_modifications_to_widgets( $widgets_with_final_class_names );
 
-		// DEBUG: Track widget class modifications for heading widgets
-		$debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-		$this->debug_widget_class_changes( $widgets_with_final_class_names, $widgets_with_applied_classes, $debug_log );
-
 		// Get modification summary
 		$html_modification_summary = $this->html_class_modifier->get_modification_summary();
 
@@ -144,55 +140,8 @@ class Html_Class_Modifier_Processor implements Css_Processor_Interface {
 	}
 
 	private function widget_has_class_modifications( array $widget ): bool {
-		// Check if widget has any class attributes that might have been modified
 		$classes = $widget['attributes']['class'] ?? '';
 
-		// Simple heuristic: if widget has classes, assume they might have been modified
-		// In a more sophisticated implementation, we could track actual modifications
 		return ! empty( $classes );
-	}
-
-	private function debug_widget_class_changes( array $widgets_before, array $widgets_after, string $debug_log ): void {
-		$this->debug_widget_class_changes_recursive( $widgets_before, $widgets_after, $debug_log );
-	}
-
-	private function debug_widget_class_changes_recursive( array $widgets_before, array $widgets_after, string $debug_log ): void {
-		foreach ( $widgets_before as $index => $widget_before ) {
-			$widget_after = $widgets_after[ $index ] ?? null;
-			
-			if ( ! $widget_after ) {
-				continue;
-			}
-			
-			$widget_type = $widget_before['widget_type'] ?? '';
-			$element_id = $widget_before['element_id'] ?? '';
-			
-			// Only debug heading widgets
-			if ( $widget_type === 'e-heading' ) {
-				$classes_before = $widget_before['attributes']['class'] ?? '';
-				$classes_after = $widget_after['attributes']['class'] ?? '';
-				
-				if ( $classes_before !== $classes_after ) {
-					file_put_contents(
-						$debug_log,
-						date( '[H:i:s] ' ) . "HTML_CLASS_MODIFIER: Widget {$element_id} classes changed\n" .
-						"  Before: {$classes_before}\n" .
-						"  After:  {$classes_after}\n",
-						FILE_APPEND
-					);
-				} else {
-					file_put_contents(
-						$debug_log,
-						date( '[H:i:s] ' ) . "HTML_CLASS_MODIFIER: Widget {$element_id} classes unchanged: {$classes_before}\n",
-						FILE_APPEND
-					);
-				}
-			}
-			
-			// Recurse through children
-			if ( ! empty( $widget_before['children'] ) && ! empty( $widget_after['children'] ) ) {
-				$this->debug_widget_class_changes_recursive( $widget_before['children'], $widget_after['children'], $debug_log );
-			}
-		}
 	}
 }

@@ -156,28 +156,6 @@ class CSS_Selector_Parser {
 		$tokens = $this->tokenize_selector( $selector );
 		$current_compound = '';
 
-		// Debug: Log tokens for problematic selectors
-		if ( strpos( $selector, 'elementor-1140' ) !== false && strpos( $selector, 'elementor-heading-title' ) !== false ) {
-			$debug_log = WP_CONTENT_DIR . '/selector-parsing-debug.log';
-			file_put_contents(
-				$debug_log,
-				date('[H:i:s] ') . "TOKENIZE_DEBUG: Selector '{$selector}'\n" .
-				"  Tokens: " . json_encode( $tokens ) . "\n" .
-				"  Token count: " . count( $tokens ) . "\n",
-				FILE_APPEND
-			);
-			
-			// Debug each token processing
-			foreach ( $tokens as $i => $token ) {
-				$is_comb = $this->is_combinator( $token ) ? 'YES' : 'NO';
-				file_put_contents(
-					$debug_log,
-					"  Token {$i}: '{$token}' (combinator: {$is_comb})\n",
-					FILE_APPEND
-				);
-			}
-		}
-
 		foreach ( $tokens as $token ) {
 			if ( $this->is_combinator( $token ) ) {
 				if ( ! empty( trim( $current_compound ) ) ) {

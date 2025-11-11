@@ -25,8 +25,6 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 	}
 
 	public function process( Css_Processing_Context $context ): Css_Processing_Context {
-		$log_file = WP_CONTENT_DIR . '/scoped-vars.log';
-
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$css = $context->get_metadata( 'css', '' );
 		$beautified_css = $context->get_metadata( 'beautified_css', '' );
@@ -36,64 +34,29 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 
 		$this->css_variable_definitions = $context->get_metadata( 'css_variable_definitions', [] );
 
-		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-		file_put_contents( $tracking_log, "\n" . str_repeat( '-', 80 ) . "\n", FILE_APPEND );
-		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CSS_VARIABLES_PROCESSOR: Started (LATE - filtering/merging)\n", FILE_APPEND );
-		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . 'CSS_VARIABLES_PROCESSOR: Received ' . count( $this->css_variable_definitions ) . " variables from registry\n", FILE_APPEND );
-
-		// CRITICAL FIX: Check if CSS rules have already been resolved by CSS Variable Resolver
 		$has_resolved_variables = $this->detect_resolved_variables_in_rules( $css_rules );
 		if ( $has_resolved_variables ) {
-			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CSS_VARIABLES_PROCESSOR: SKIPPING - CSS rules already contain resolved variables from CSS Variable Resolver\n", FILE_APPEND );
-			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CSS_VARIABLES_PROCESSOR: Preserving resolved CSS rules to prevent overwriting display:flex with var(--display)\n", FILE_APPEND );
-
-			// Only process variable definitions, do not re-extract from CSS rules
-			$this->process_variable_definitions_only( $context, $tracking_log );
+			$this->process_variable_definitions_only( $context );
 			return $context;
 		}
 
 		if ( empty( $this->css_variable_definitions ) ) {
-			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CSS_VARIABLES_PROCESSOR: WARNING - No variables from registry, performing fallback extraction\n", FILE_APPEND );
-
 			$variables_extracted = $this->extract_css_variable_definitions_from_rules( $css_rules );
 
 			if ( ! empty( $cssToCheck ) ) {
-				$before_kit = count( $this->css_variable_definitions );
 				$kitVariablesExtracted = $this->extract_kit_css_variables_from_raw_css( $cssToCheck );
-				$after_kit = count( $this->css_variable_definitions );
 				$variables_extracted += $kitVariablesExtracted;
-				file_put_contents( $log_file, date( '[H:i:s] ' ) . "Kit variables: before=$before_kit, after=$after_kit, extracted=$kitVariablesExtracted\n", FILE_APPEND );
 			}
-		} else {
-			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CSS_VARIABLES_PROCESSOR: Using variables from registry processor\n", FILE_APPEND );
 		}
 
 		$options = $context->get_metadata( 'options', [] );
 		$target_selector = $options['selector'] ?? '';
 
-		$log_file = WP_CONTENT_DIR . '/scoped-vars.log';
-		file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Options: ' . json_encode( array_keys( $options ) ) . "\n", FILE_APPEND );
-		file_put_contents( $log_file, date( '[H:i:s] ' ) . "Target selector: '$target_selector'\n", FILE_APPEND );
-		file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Total CSS rules: ' . count( $css_rules ) . "\n", FILE_APPEND );
-
 		if ( ! empty( $target_selector ) ) {
 			$target_classes = $this->extract_classes_from_selector( $target_selector );
 			$scoped_css_rules = $this->filter_css_rules_by_classes( $css_rules, $target_classes );
-			file_put_contents( $log_file, date( '[H:i:s] ' ) . "SCOPED: Selector='$target_selector', classes=" . implode( ',', $target_classes ) . ', scoped rules=' . count( $scoped_css_rules ) . ' of ' . count( $css_rules ) . "\n", FILE_APPEND );
-
-			if ( count( $scoped_css_rules ) === 0 && count( $css_rules ) > 0 ) {
-				// DEBUG: Log sample rules for debugging when scoped rules are empty
-				$sample_rules = array_slice( $css_rules, 0, 5 );
-				foreach ( $sample_rules as $idx => $rule ) {
-					$selector = $rule['selector'] ?? 'NO_SELECTOR_KEY';
-					file_put_contents( $log_file, date( '[H:i:s] ' ) . "Rule $idx: selector='$selector'\n", FILE_APPEND );
-				}
-			}
 		} else {
-			// Use all CSS rules when no target selector is provided
-			// This ensures we don't miss global variable definitions
 			$scoped_css_rules = $css_rules;
-			file_put_contents( $log_file, date( '[H:i:s] ' ) . 'FALLBACK: No target selector, using all CSS rules (' . count( $scoped_css_rules ) . ")\n", FILE_APPEND );
 		}
 
 		try {
@@ -104,18 +67,10 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 				$scoped_css_string = $this->extract_css_rules_containing_selector( $cssToCheck, $target_selector );
 
 				$html = $context->get_metadata( 'html', '' );
-				file_put_contents( $log_file, date( '[H:i:s] ' ) . 'HTML length: ' . strlen( $html ) . " bytes\n", FILE_APPEND );
-				if ( strlen( $html ) > 0 ) {
-					$sample = substr( $html, 0, 500 );
-					file_put_contents( $log_file, date( '[H:i:s] ' ) . 'HTML sample: ' . $sample . "\n", FILE_APPEND );
-				}
 				$original_element_classes = $this->extract_classes_from_html_element( $html, $target_selector );
-				file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Original HTML element classes: ' . implode( ', ', $original_element_classes ) . "\n", FILE_APPEND );
 
 				$widgets = $context->get_widgets();
 				$widget_types = $this->extract_widget_types_from_widgets( $widgets );
-
-				file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Widget types found: ' . implode( ', ', $widget_types ) . "\n", FILE_APPEND );
 
 				$widget_css = '';
 				foreach ( $widget_types as $widget_type ) {
@@ -126,19 +81,12 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 				foreach ( $original_element_classes as $class ) {
 					if ( strpos( $class, 'elementor-widget-' ) === 0 ) {
 						$widget_css .= $this->extract_css_rules_containing_selector( $cssToCheck, '.' . $class );
-						file_put_contents( $log_file, date( '[H:i:s] ' ) . "Adding CSS for original widget class: .$class\n", FILE_APPEND );
 					}
 				}
 
 				$combined_css = $scoped_css_string . "\n" . $widget_css;
 
-				file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Filtered CSS: scoped=' . strlen( $scoped_css_string ) . ', widget=' . strlen( $widget_css ) . ', total=' . strlen( $combined_css ) . " bytes\n", FILE_APPEND );
-				if ( strlen( $combined_css ) > 0 && strlen( $combined_css ) < 2000 ) {
-					file_put_contents( $log_file, date( '[H:i:s] ' ) . "Combined CSS:\n" . substr( $combined_css, 0, 1500 ) . "\n", FILE_APPEND );
-				}
-
 				$referenced_variables_from_css_string = $this->extract_variable_references_from_css_string( $combined_css );
-				file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Found ' . count( $referenced_variables_from_css_string ) . " references in filtered CSS\n", FILE_APPEND );
 			} else {
 				$referenced_variables_from_css_string = $this->extract_variable_references_from_css_string( $cssToCheck );
 			}
@@ -150,60 +98,11 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 				$referenced_variables_from_css_string,
 				$widget_variable_references
 			) );
-
-			file_put_contents( $log_file, date( '[H:i:s] ' ) . 'References: ' . count( $referenced_variables_from_rules ) . ' from scoped rules, ' . count( $referenced_variables_from_css_string ) . ' from CSS string, ' . count( $widget_variable_references ) . ' from widget properties, total=' . count( $all_referenced_variables ) . "\n", FILE_APPEND );
 		} catch ( \Exception $e ) {
-			error_log( 'Error extracting references: ' . $e->getMessage() );
-			file_put_contents( $log_file, date( '[H:i:s] ' ) . 'ERROR extracting references: ' . $e->getMessage() . "\n", FILE_APPEND );
 			$all_referenced_variables = [];
 		}
-		if ( ! empty( $all_referenced_variables ) ) {
-			file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Sample references: ' . implode( ', ', array_slice( $all_referenced_variables, 0, 10 ) ) . "\n", FILE_APPEND );
-		}
-		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-		file_put_contents( $tracking_log, "\n" . str_repeat( '-', 80 ) . "\n", FILE_APPEND );
-		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CSS_VARIABLES_PROCESSOR: Started\n", FILE_APPEND );
-		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . 'Total CSS variable definitions extracted: ' . count( $this->css_variable_definitions ) . "\n", FILE_APPEND );
-
-		// DEBUG: Filter for flexbox-related variables for debugging purposes only
-		$relevant_vars = array_filter( $this->css_variable_definitions, function( $var ) {
-			$name = $var['name'] ?? '';
-			return strpos( $name, 'display' ) !== false ||
-					strpos( $name, 'flex' ) !== false ||
-					strpos( $name, 'gap' ) !== false ||
-					strpos( $name, 'justify' ) !== false ||
-					strpos( $name, 'align' ) !== false;
-		} );
-
-		if ( ! empty( $relevant_vars ) ) {
-			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . 'Relevant CSS variables extracted (' . count( $relevant_vars ) . "):\n", FILE_APPEND );
-			foreach ( $relevant_vars as $var ) {
-				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "  {$var['name']}: {$var['value']}\n", FILE_APPEND );
-			}
-		}
-
-		file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Before filter: ' . count( $this->css_variable_definitions ) . " definitions\n", FILE_APPEND );
-		if ( count( $this->css_variable_definitions ) > 0 ) {
-			$all_def_keys = array_keys( $this->css_variable_definitions );
-			$sample_defs = array_slice( $all_def_keys, 0, 10 );
-			file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Sample definitions: ' . implode( ', ', $sample_defs ) . "\n", FILE_APPEND );
-
-			$ec_global_defs = array_filter( $all_def_keys, function( $key ) {
-				return strpos( $key, 'e-global-color' ) !== false || strpos( $key, 'e-global-typography' ) !== false;
-			} );
-			file_put_contents( $log_file, date( '[H:i:s] ' ) . 'EC-global definitions found: ' . count( $ec_global_defs ) . ' (' . implode( ', ', array_slice( $ec_global_defs, 0, 10 ) ) . ")\n", FILE_APPEND );
-
-			if ( ! empty( $all_referenced_variables ) ) {
-				foreach ( $all_referenced_variables as $ref ) {
-					$found = in_array( $ref, $all_def_keys, true );
-					file_put_contents( $log_file, date( '[H:i:s] ' ) . "Reference '$ref': " . ( $found ? 'FOUND' : 'NOT FOUND' ) . " in definitions\n", FILE_APPEND );
-				}
-			}
-		}
 
 		if ( ! empty( $all_referenced_variables ) ) {
-			$before_filter = count( $this->css_variable_definitions );
-
 			foreach ( $all_referenced_variables as $ref_var ) {
 				if ( ! isset( $this->css_variable_definitions[ $ref_var ] ) ) {
 					$original_name = $ref_var;
@@ -213,7 +112,6 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 					try {
 						$this->store_css_variable_definition( $original_name, '', 'extracted_from_reference' );
 					} catch ( \Exception $e ) {
-						error_log( "Error storing variable '$original_name': " . $e->getMessage() );
 					}
 				}
 			}
@@ -223,56 +121,18 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 					$this->css_variable_definitions,
 					$all_referenced_variables
 				);
-				$after_filter = count( $this->css_variable_definitions );
-				file_put_contents( $log_file, date( '[H:i:s] ' ) . "After filter: $after_filter definitions (removed " . ( $before_filter - $after_filter ) . ")\n", FILE_APPEND );
-				if ( $after_filter > 0 ) {
-					$sample_vars = array_slice( array_keys( $this->css_variable_definitions ), 0, 10 );
-					file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Sample variables: ' . implode( ', ', $sample_vars ) . "\n", FILE_APPEND );
-				}
 			} catch ( \Exception $e ) {
-				error_log( 'Error filtering variables: ' . $e->getMessage() );
-				file_put_contents( $log_file, date( '[H:i:s] ' ) . 'ERROR filtering: ' . $e->getMessage() . "\n", FILE_APPEND );
 			}
-		} else {
-			file_put_contents( $log_file, date( '[H:i:s] ' ) . "WARNING: No referenced variables found!\n", FILE_APPEND );
 		}
 
-		// Merge widget-specific CSS variables with global ones
 		$widget_variable_references = $context->get_metadata( 'widget_variable_references', [] );
 		$widget_css_variable_definitions = $context->get_metadata( 'widget_css_variable_definitions', [] );
 		$this->merge_widget_variables_with_definitions( $widget_variable_references, $widget_css_variable_definitions, $context );
 
-		// Store results in context
 		$context->set_metadata( 'css_variable_definitions', $this->css_variable_definitions );
 
-		$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . 'CSS_VARIABLES_PROCESSOR: Stored ' . count( $this->css_variable_definitions ) . " variable definitions in context\n", FILE_APPEND );
-
-		// DEBUG: Filter for flexbox-related variables for debugging purposes only
-		$relevant_stored = array_filter( $this->css_variable_definitions, function( $var ) {
-			$name = is_array( $var ) ? ( $var['name'] ?? '' ) : '';
-			if ( empty( $name ) && is_string( $var ) ) {
-				return false;
-			}
-			return strpos( $name, 'display' ) !== false ||
-					strpos( $name, 'flex' ) !== false ||
-					strpos( $name, 'gap' ) !== false ||
-					strpos( $name, 'justify' ) !== false ||
-					strpos( $name, 'align' ) !== false;
-		} );
-		if ( ! empty( $relevant_stored ) ) {
-			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . 'CSS_VARIABLES_PROCESSOR: Relevant variables stored (' . count( $relevant_stored ) . "):\n", FILE_APPEND );
-			foreach ( array_slice( $relevant_stored, 0, 20 ) as $var ) {
-				$name = is_array( $var ) ? ( $var['name'] ?? 'unknown' ) : 'unknown';
-				$value = is_array( $var ) ? ( $var['value'] ?? '' ) : '';
-				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "  {$name}: {$value}\n", FILE_APPEND );
-			}
-		}
 		$variables_extracted = count( $this->css_variable_definitions );
 		$context->add_statistic( 'css_variables_extracted', $variables_extracted );
-
-		// DEBUG: Log CSS rules after processing (should be unchanged)
-		$css_rules_after = $context->get_metadata( 'css_rules', [] );
 
 		return $context;
 	}
@@ -286,17 +146,6 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 	private function extract_css_variable_definitions_from_rules( array $css_rules ): int {
 		$variables_extracted = 0;
 
-		$kitSelectors = array_filter( $css_rules, function( $rule ) {
-			return strpos( $rule['selector'] ?? '', 'elementor-kit' ) !== false;
-		} );
-
-		if ( ! empty( $kitSelectors ) ) {
-			error_log( 'CSS Variables DEBUG: Css_Variables_Processor found ' . count( $kitSelectors ) . ' Kit selectors in ' . count( $css_rules ) . ' total rules' );
-			$firstKit = array_values( $kitSelectors )[0];
-			error_log( "CSS Variables DEBUG: First Kit selector: '" . ( $firstKit['selector'] ?? 'unknown' ) . "' with " . count( $firstKit['properties'] ?? [] ) . ' properties' );
-		} else {
-			error_log( 'CSS Variables DEBUG: Css_Variables_Processor found NO Kit selectors in ' . count( $css_rules ) . ' total rules' );
-		}
 
 		foreach ( $css_rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
@@ -342,11 +191,6 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 			$varProps = array_filter( $properties, function( $prop ) {
 				return strpos( $prop['property'] ?? '', '--' ) === 0;
 			} );
-			error_log( "CSS Variables DEBUG: Css_Variables_Processor processing Kit selector '$selector' with " . count( $properties ) . ' total properties, ' . count( $varProps ) . ' CSS variable properties' );
-			if ( ! empty( $varProps ) ) {
-				$firstVar = array_values( $varProps )[0];
-				error_log( 'CSS Variables DEBUG: First Kit variable: ' . ( $firstVar['property'] ?? 'unknown' ) . " = '" . ( $firstVar['value'] ?? '' ) . "' (empty: " . ( empty( $firstVar['value'] ?? '' ) ? 'yes' : 'no' ) . ')' );
-			}
 		}
 
 		foreach ( $properties as $property_data ) {
@@ -354,9 +198,6 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 			$value = $property_data['value'] ?? '';
 
 			if ( 0 === strpos( $property, '--' ) ) {
-				if ( $isKitSelector ) {
-					error_log( "CSS Variables DEBUG: Storing Kit variable '$property' = '$value' (empty: " . ( empty( $value ) ? 'yes' : 'no' ) . ')' );
-				}
 				$this->store_css_variable_definition( $property, $value, $selector );
 				++$variables_processed;
 			} else {
@@ -420,12 +261,6 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 			$this->css_variable_definitions[ $clean_name ]['value'] = $value;
 			$this->css_variable_definitions[ $clean_name ]['selector'] = $selector;
 			$this->css_variable_definitions[ $clean_name ]['specificity'] = $new_specificity;
-			error_log( "CSS Variables: Overriding '$clean_name' with higher specificity: '$selector' (specificity: $new_specificity) > previous (specificity: $existing_specificity). Value: '$old_value' -> '$value'" );
-		} else {
-			// Lower specificity - keep existing
-			if ( $clean_name === 'justify-content' || $clean_name === 'align-items' ) {
-				error_log( "CSS Variables: Keeping existing '$clean_name' with higher specificity. Existing: '{$this->css_variable_definitions[ $clean_name ]['selector']}' (specificity: $existing_specificity), New: '$selector' (specificity: $new_specificity)" );
-			}
 		}
 	}
 
@@ -443,23 +278,7 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 			return 0;
 		}
 
-		$log_file = WP_CONTENT_DIR . '/scoped-vars.log';
-
-		file_put_contents( $log_file, date( '[H:i:s] ' ) . "Kit extraction: hasKitSelector=$hasKitSelector, hasEGlobal=$hasEGlobal\n", FILE_APPEND );
-		file_put_contents( $log_file, date( '[H:i:s] ' ) . 'CSS length: ' . strlen( $css ) . " bytes\n", FILE_APPEND );
-		if ( strlen( $css ) > 0 ) {
-			$sample = substr( $css, 0, 300 );
-			$trimmed_sample = trim( $sample );
-			file_put_contents( $log_file, date( '[H:i:s] ' ) . 'CSS sample (first 300 chars): ' . $trimmed_sample . "\n", FILE_APPEND );
-
-			$kit_pos = strpos( $css, '.elementor-kit-' );
-			if ( $kit_pos !== false ) {
-				$kit_sample = substr( $css, $kit_pos, 200 );
-				file_put_contents( $log_file, date( '[H:i:s] ' ) . "Kit CSS found at position $kit_pos: " . $kit_sample . "\n", FILE_APPEND );
-			} else {
-				file_put_contents( $log_file, date( '[H:i:s] ' ) . "No .elementor-kit- found in CSS\n", FILE_APPEND );
-			}
-		}
+		$kit_pos = strpos( $css, '.elementor-kit-' );
 
 		if ( $hasEGlobal ) {
 			$patterns = [
@@ -475,8 +294,6 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 					break;
 				}
 			}
-
-			file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Direct extraction: Found ' . count( $allVarMatches ) . " --e-global-* variables in CSS\n", FILE_APPEND );
 
 			foreach ( $allVarMatches as $match ) {
 				$varName = trim( $match[1] );
@@ -500,8 +317,6 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 			return $extracted;
 		}
 
-		file_put_contents( $log_file, date( '[H:i:s] ' ) . "Kit extraction: Searching for .elementor-kit- selectors\n", FILE_APPEND );
-
 		preg_match_all( '/\.elementor-kit-[^{]+\{([^}]+)\}/', $css, $kitMatches );
 
 		if ( empty( $kitMatches[1] ) ) {
@@ -511,8 +326,6 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 		if ( empty( $kitMatches[1] ) ) {
 			return $extracted;
 		}
-
-		file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Kit extraction: Found ' . count( $kitMatches[1] ) . " Kit selector blocks\n", FILE_APPEND );
 
 		foreach ( $kitMatches[1] as $kitIndex => $kitContent ) {
 			$patterns = [
@@ -598,17 +411,11 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 
 
 	private function extract_widget_types_from_widgets( array $widgets ): array {
-		$log_file = WP_CONTENT_DIR . '/scoped-vars.log';
-		file_put_contents( $log_file, date( '[H:i:s] ' ) . 'extract_widget_types: Received ' . count( $widgets ) . " widgets\n", FILE_APPEND );
-
 		$widget_types = [];
 
 		foreach ( $widgets as $idx => $widget ) {
-			file_put_contents( $log_file, date( '[H:i:s] ' ) . "Widget $idx keys: " . implode( ', ', array_keys( $widget ) ) . "\n", FILE_APPEND );
-
 			if ( isset( $widget['widget_type'] ) ) {
 				$widget_types[] = $widget['widget_type'];
-				file_put_contents( $log_file, date( '[H:i:s] ' ) . 'Found widget_type: ' . $widget['widget_type'] . "\n", FILE_APPEND );
 			}
 
 			if ( isset( $widget['children'] ) && is_array( $widget['children'] ) ) {
@@ -616,8 +423,6 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 				$widget_types = array_merge( $widget_types, $child_types );
 			}
 		}
-
-		file_put_contents( $log_file, date( '[H:i:s] ' ) . 'extract_widget_types: Returning ' . count( $widget_types ) . ' types: ' . implode( ', ', $widget_types ) . "\n", FILE_APPEND );
 
 		return array_unique( $widget_types );
 	}
@@ -769,9 +574,6 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 
 		$after_count = count( $filtered );
 
-		if ( $before_count > 0 ) {
-			error_log( "CSS Variables: Smart extraction - filtered from $before_count total variables to $after_count referenced variables (saved " . ( $before_count - $after_count ) . ' unused)' );
-		}
 
 		return $filtered;
 	}
@@ -835,10 +637,7 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 	 * Widget variables have higher priority due to their element-specific nature
 	 */
 	private function merge_widget_variables_with_definitions( array $widget_variable_references, array $widget_css_variable_definitions, $context ): void {
-		error_log( 'CSS Variables: merge_widget_variables_with_definitions called with ' . count( $widget_variable_references ) . ' references and ' . count( $widget_css_variable_definitions ) . ' widget definitions' );
-
 		if ( empty( $widget_variable_references ) ) {
-			error_log( 'CSS Variables: No widget variable references to merge' );
 			return;
 		}
 
@@ -850,8 +649,6 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 				$widget_definition = $widget_css_variable_definitions[ $clean_name ];
 				$widget_value = $widget_definition['value'] ?? '';
 
-				error_log( "CSS Variables: Processing widget reference '$var_name' -> clean: '$clean_name', value: '$widget_value' (from widget definitions)" );
-
 				if ( ! empty( $widget_value ) ) {
 					// Always override with widget values (they have element-specific context)
 					$this->css_variable_definitions[ $clean_name ] = [
@@ -861,11 +658,7 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 						'specificity' => 1000, // Highest priority for widget-specific
 						'source' => 'widget_specific',
 					];
-
-					error_log( "CSS Variables: Widget override '$clean_name' = '$widget_value' from widget definitions" );
 				}
-			} else {
-				error_log( "CSS Variables: No widget definition found for '$var_name' (clean: '$clean_name')" );
 			}
 		}
 	}
@@ -911,21 +704,12 @@ class Css_Variables_Processor implements Css_Processor_Interface {
 	 *
 	 * This preserves resolved CSS rules while still handling variable definitions
 	 */
-	private function process_variable_definitions_only( Css_Processing_Context $context, string $tracking_log ): void {
-		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CSS_VARIABLES_PROCESSOR: Processing variable definitions only (preserving resolved rules)\n", FILE_APPEND );
-
-		// Update context with current variable definitions (no rule extraction)
+	private function process_variable_definitions_only( Css_Processing_Context $context ): void {
 		$context->set_metadata( 'css_variable_definitions', $this->css_variable_definitions );
 
-		// Process widget variable references if they exist
 		$widget_variable_references = $context->get_metadata( 'widget_variable_references', [] );
 		if ( ! empty( $widget_variable_references ) ) {
-			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . 'CSS_VARIABLES_PROCESSOR: Processing ' . count( $widget_variable_references ) . " widget variable references\n", FILE_APPEND );
-
-			// Only merge widget variables, don't re-extract CSS rules
 			$this->merge_widget_variables_with_definitions( $widget_variable_references, [], $context );
 		}
-
-		file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "CSS_VARIABLES_PROCESSOR: Completed (definitions only - rules preserved)\n", FILE_APPEND );
 	}
 }

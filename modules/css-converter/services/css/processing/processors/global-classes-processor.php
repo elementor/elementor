@@ -24,21 +24,14 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 	}
 
 	public function process( Css_Processing_Context $context ): Css_Processing_Context {
-		error_log( 'CUSTOM_CSS_DEBUG: Global_Classes_Processor - Starting process method' );
-		file_put_contents( '/tmp/global_classes_debug.log', "GLOBAL_CLASSES_PROCESSOR: Starting process method\n", FILE_APPEND );
 		$css_rules = $context->get_metadata( 'css_rules', [] );
 		$widgets = $context->get_widgets();
 
-		// PHASE 1: Extract classes actually used in widgets
 		$class_extractor = new \Elementor\Modules\CssConverter\Services\Widgets\Widget_Class_Extractor();
 		$used_classes = $class_extractor->extract_all_classes_from_widgets( $widgets );
 
-		file_put_contents( '/tmp/global_classes_debug.log', 'Found ' . count( $used_classes ) . ' classes in widgets: ' . implode( ', ', array_slice( $used_classes, 0, 10 ) ) . ( count( $used_classes ) > 10 ? '...' : '' ) . "\n", FILE_APPEND );
-
-		// PHASE 2: Detect and filter CSS classes
 		$provider = \Elementor\Modules\CssConverter\Services\GlobalClasses\Unified\Global_Classes_Service_Provider::instance();
 
-		// Set the custom CSS collector from context to ensure consistency
 		$custom_css_collector = $context->get_metadata( 'custom_css_collector' );
 		if ( $custom_css_collector ) {
 			$provider->set_custom_css_collector( $custom_css_collector );
@@ -48,63 +41,9 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 
 		$all_detected = $detection_service->detect_css_class_selectors( $css_rules );
 
-		// DEBUG: Check for specific classes we expect
-		$sample_css_selectors = array_slice( array_keys( $all_detected ), 0, 10 );
-		$sample_widget_classes = array_slice( $used_classes, 0, 10 );
-
-		file_put_contents( '/tmp/global_classes_debug.log', 'Sample CSS selectors: ' . implode( ', ', $sample_css_selectors ) . "\n", FILE_APPEND );
-		file_put_contents( '/tmp/global_classes_debug.log', 'Sample widget classes: ' . implode( ', ', $sample_widget_classes ) . "\n", FILE_APPEND );
-
-		// Check for specific loading/copy classes
-		$has_loading_in_css = isset( $all_detected['loading'] ) || isset( $all_detected['loading--loaded'] ) || isset( $all_detected['loading--loaded-2'] );
-		$has_loading_in_widgets = in_array( 'loading', $used_classes, true ) || in_array( 'loading--loaded', $used_classes, true ) || in_array( 'loading--loaded-2', $used_classes, true );
-		$has_copy_in_css = isset( $all_detected['copy'] );
-		$has_copy_in_widgets = in_array( 'copy', $used_classes, true );
-
-		file_put_contents( '/tmp/global_classes_debug.log', 'Loading in CSS: ' . ( $has_loading_in_css ? 'YES' : 'NO' ) . ', in widgets: ' . ( $has_loading_in_widgets ? 'YES' : 'NO' ) . "\n", FILE_APPEND );
-		file_put_contents( '/tmp/global_classes_debug.log', 'Copy in CSS: ' . ( $has_copy_in_css ? 'YES' : 'NO' ) . ', in widgets: ' . ( $has_copy_in_widgets ? 'YES' : 'NO' ) . "\n", FILE_APPEND );
-
 		$filtered_detected = $detection_service->filter_classes_by_usage( $all_detected, $used_classes );
 
-		file_put_contents( '/tmp/global_classes_debug.log', 'Detected ' . count( $all_detected ) . ' classes, filtered to ' . count( $filtered_detected ) . " used classes\n", FILE_APPEND );
-		file_put_contents( '/tmp/global_classes_debug.log', 'Filtered classes: ' . implode( ', ', array_keys( $filtered_detected ) ) . "\n", FILE_APPEND );
-
-		// Debug the loading class properties
-		if ( isset( $filtered_detected['loading'] ) ) {
-			$loading_data = $filtered_detected['loading'];
-			file_put_contents( '/tmp/global_classes_debug.log', 'Loading class properties: ' . print_r( $loading_data, true ) . "\n", FILE_APPEND );
-		}
-
-		// Debug: Check ALL detected selectors that contain "loading"
-		$loading_related = [];
-		foreach ( $all_detected as $class_name => $class_data ) {
-			if ( false !== strpos( $class_name, 'loading' ) || false !== strpos( $class_data['selector'], 'loading' ) ) {
-				$loading_related[] = [
-					'class_name' => $class_name,
-					'selector' => $class_data['selector'],
-				];
-			}
-		}
-		file_put_contents( '/tmp/global_classes_debug.log', 'All loading-related detections: ' . print_r( $loading_related, true ) . "\n", FILE_APPEND );
-
-		// Check if there's a simple .loading selector in css_rules
-		$simple_loading_rules = [];
-		foreach ( $css_rules as $rule ) {
-			$selector = $rule['selector'] ?? '';
-			if ( '.loading' === $selector || false !== strpos( $selector, '.loading' ) ) {
-				$simple_loading_rules[] = [
-					'selector' => $selector,
-					'property_count' => count( $rule['properties'] ?? [] ),
-				];
-			}
-		}
-		file_put_contents( '/tmp/global_classes_debug.log', 'CSS rules with .loading: ' . print_r( $simple_loading_rules, true ) . "\n", FILE_APPEND );
-
-		// PHASE 3: Process filtered classes with duplicate detection
 		$global_classes_result = $this->process_global_classes_with_duplicate_detection_from_detected( $filtered_detected );
-
-		file_put_contents( '/tmp/global_classes_debug.log', 'Global classes created: ' . count( $global_classes_result['global_classes'] ?? [] ) . "\n", FILE_APPEND );
-		file_put_contents( '/tmp/global_classes_debug.log', 'Overflow styles when maximum number of global classes has been reached: ' . count( $global_classes_result['overflow_styles_when_maximum_number_of_global_classes_has_been_reached'] ?? [] ) . "\n", FILE_APPEND );
 
 		// PHASE 4: Handle overflow classes (apply directly to widgets)
 		$overflow_styles_when_maximum_number_of_global_classes_has_been_reached = $global_classes_result['overflow_styles_when_maximum_number_of_global_classes_has_been_reached'] ?? [];
@@ -217,10 +156,6 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 		$result = $integration_service->process_css_rules( $css_rules );
 
 		$custom_css_rules = $result['custom_css_rules'] ?? [];
-		error_log( 'CUSTOM_CSS_DEBUG: Global_Classes_Processor - custom_css_rules count: ' . count( $custom_css_rules ) );
-		if ( ! empty( $custom_css_rules ) ) {
-			error_log( 'CUSTOM_CSS_DEBUG: Global_Classes_Processor - custom_css_rules keys: ' . implode( ', ', array_keys( $custom_css_rules ) ) );
-		}
 
 		return [
 			'global_classes' => $result['global_classes'] ?? [],

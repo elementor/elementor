@@ -16,26 +16,9 @@ class Atomic_Widget_Data_Formatter {
 		return new self();
 	}
 	public function format_widget_data( array $resolved_styles, array $widget, string $widget_id, Custom_Css_Collector $custom_css_collector = null ): array {
-		$element_id = $widget['element_id'] ?? 'NONE';
-		error_log( "CUSTOM_CSS_DEBUG: format_widget_data - element_id={$element_id}, resolved_styles_count=" . count($resolved_styles) . ", inline_css_count=" . count($widget['inline_css'] ?? []) );
-		error_log( "CUSTOM_CSS_DEBUG: format_widget_data - resolved_styles keys: " . implode(', ', array_keys($resolved_styles)) );
-		
-		// DEBUG: Check for display property specifically
-		if ( in_array( $element_id, ['element-div-2', 'element-div-3', 'element-div-4'] ) ) {
-			$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-			$has_display = isset($resolved_styles['display']);
-			file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "FORMAT_WIDGET_DATA: {$element_id} has_display={$has_display}, total_styles=" . count($resolved_styles) . "\n", FILE_APPEND );
-			if ( $has_display ) {
-				$display_data = json_encode($resolved_styles['display']);
-				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "FORMAT_WIDGET_DATA: {$element_id} display data: {$display_data}\n", FILE_APPEND );
-			}
-		}
-		
-		// Generate atomic-style widget ID (7-char hex)
 		$atomic_widget_id = $this->generate_atomic_widget_id();
 		$class_id = $this->create_atomic_style_class_name( $atomic_widget_id );
 		$atomic_props = $this->extract_atomic_props_from_resolved_styles( $resolved_styles );
-		error_log( "CUSTOM_CSS_DEBUG: format_widget_data - atomic_props count: " . count($atomic_props) );
 		$css_classes = $this->extract_css_classes_from_widget( $widget );
 
 		// Note: Base classes (e.g., e-heading-base) are added automatically by atomic widget Twig templates
@@ -85,30 +68,12 @@ class Atomic_Widget_Data_Formatter {
 		$atomic_props = [];
 		
 		foreach ( $resolved_styles as $property => $style_data ) {
-			$converted_value = $style_data['converted_property'] ?? 'NULL';
-			error_log( "CUSTOM_CSS_DEBUG: extract_atomic_props - property={$property}, converted_property=" . ( is_null($converted_value) ? 'NULL' : ( is_array($converted_value) ? 'ARRAY:' . json_encode($converted_value) : 'NOT_ARRAY' ) ) );
-			
-			// DEBUG: Specific logging for display property
-			if ( $property === 'display' ) {
-				$tracking_log = WP_CONTENT_DIR . '/css-property-tracking.log';
-				$element_id = $style_data['element_id'] ?? 'unknown';
-				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "EXTRACT_ATOMIC_PROPS: {$element_id} processing display property\n", FILE_APPEND );
-				file_put_contents( $tracking_log, date( '[H:i:s] ' ) . "EXTRACT_ATOMIC_PROPS: converted_property = " . json_encode($converted_value) . "\n", FILE_APPEND );
-			}
-			
 			if ( isset( $style_data['converted_property'] ) && is_array( $style_data['converted_property'] ) ) {
 				$converted_property = $style_data['converted_property'];
 				
 				if ( isset( $converted_property['$$type'] ) ) {
 					$target_property = $this->get_target_property_name( $property );
 					$atomic_props[ $target_property ] = $converted_property;
-					
-					// DEBUG: Log atomic props creation for comparison properties
-					if ( in_array($property, ['display', 'align-items', 'text-align']) ) {
-						$debug_log = WP_CONTENT_DIR . '/css-variable-property-comparison.log';
-						$element_id = $style_data['element_id'] ?? 'unknown';
-						file_put_contents( $debug_log, "STEP 7 - ATOMIC_PROPS: {$element_id} {$property} -> {$target_property} = " . json_encode($converted_property) . "\n", FILE_APPEND );
-					}
 				} else {
 					foreach ( $converted_property as $prop_name => $atomic_format ) {
 						if ( isset( $atomic_format['$$type'] ) ) {
@@ -204,37 +169,23 @@ class Atomic_Widget_Data_Formatter {
 			}
 		}
 
-		// Add custom CSS if present - check both widget ID and class names
-		$collector_id = $custom_css_collector ? 'COLLECTOR_PRESENT' : 'NULL';
-		error_log( "CUSTOM_CSS_DEBUG: format_widget_settings checking for custom CSS with widget_id={$widget_id}, collector={$collector_id}" );
 		$custom_css = '';
 		
-		// First try the widget ID
 		if ( $custom_css_collector && $custom_css_collector->has_custom_css( $widget_id ) ) {
-			error_log( "CUSTOM_CSS_DEBUG: Custom CSS found for widget_id={$widget_id}" );
 			$custom_css = $custom_css_collector->get_custom_css_for_widget( $widget_id );
 		}
 		
-		// If not found, try the widget's class names (for global classes)
 		if ( empty( $custom_css ) && ! empty( $css_classes ) ) {
 			foreach ( $css_classes as $class_name ) {
 				if ( $custom_css_collector && $custom_css_collector->has_custom_css( $class_name ) ) {
-					error_log( "CUSTOM_CSS_DEBUG: Custom CSS found for class_name={$class_name}" );
 					$custom_css = $custom_css_collector->get_custom_css_for_widget( $class_name );
-					error_log( "CUSTOM_CSS_DEBUG: Retrieved custom_css length: " . strlen( $custom_css ) . ", content: " . substr( $custom_css, 0, 50 ) );
 					break;
 				}
 			}
 		}
 		
-		error_log( "CUSTOM_CSS_DEBUG: Final custom_css before check - length: " . strlen( $custom_css ) . ", empty: " . ( empty( $custom_css ) ? 'true' : 'false' ) );
-		
 		if ( ! empty( $custom_css ) ) {
-			// Store as plain string for legacy editor compatibility
 			$formatted_settings['custom_css'] = $custom_css;
-			error_log( "CUSTOM_CSS_DEBUG: Custom CSS SET in formatted_settings: " . substr( $custom_css, 0, 100 ) );
-		} else {
-			error_log( "CUSTOM_CSS_DEBUG: No custom CSS found for widget_id={$widget_id} or classes: " . implode( ', ', $css_classes ) );
 		}
 
 		return $formatted_settings;
@@ -265,33 +216,11 @@ class Atomic_Widget_Data_Formatter {
 			$class_string = $widget['attributes']['class'];
 			$class_array = explode( ' ', $class_string );
 			
-			// DEBUG: Track classes being extracted for heading widgets
-			if ( $widget_type === 'e-heading' ) {
-				$debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-				file_put_contents(
-					$debug_log,
-					date( '[H:i:s] ' ) . "ATOMIC_DATA_FORMATTER: Extracting classes for {$widget_type} {$element_id}\n" .
-					"  Class string: '{$class_string}'\n" .
-					"  Class array: " . implode( ', ', $class_array ) . "\n",
-					FILE_APPEND
-				);
-			}
-			
 			foreach ( $class_array as $class ) {
 				$class = trim( $class );
 				if ( ! empty( $class ) ) {
 					$classes[] = $class;
 				}
-			}
-		} else {
-			// DEBUG: Track when no classes found
-			if ( $widget_type === 'e-heading' ) {
-				$debug_log = WP_CONTENT_DIR . '/processor-data-flow.log';
-				file_put_contents(
-					$debug_log,
-					date( '[H:i:s] ' ) . "ATOMIC_DATA_FORMATTER: No classes found for {$widget_type} {$element_id}\n",
-					FILE_APPEND
-				);
 			}
 		}
 		return $classes;
