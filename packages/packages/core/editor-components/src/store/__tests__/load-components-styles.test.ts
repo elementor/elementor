@@ -5,7 +5,6 @@ import { ajax } from '@elementor/editor-v1-adapters';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { getParams } from '../../api';
-import { type Element } from '../../types';
 import { loadComponentsStyles } from '../load-components-styles';
 import { selectStyles, SLICE_NAME } from '../store';
 
@@ -140,7 +139,7 @@ describe( 'loadComponentsStyles', () => {
 		const uniqueIds = new Set( Object.keys( data ) );
 
 		// Act
-		await loadComponentsStyles( ( document.config.elements as Element[] ) ?? [] );
+		await loadComponentsStyles( ( document.config.elements as V1ElementData[] ) ?? [] );
 
 		// as it recursively calls itself, we need to run all timers
 		await jest.runAllTimersAsync();
