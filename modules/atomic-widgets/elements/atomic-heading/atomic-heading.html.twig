@@ -6,8 +6,8 @@
 		{{ id_attribute }} 
 		{{ settings.attributes | raw }}
 		{% if interactions and interactions is not empty %} 
-    data-interactions="{{ interactions | json_encode | e('html_attr') }}"
-{% endif %}
+			data-interactions="{{ interactions | json_encode | e('html_attr') }}"
+		{% endif %}
 	>
 	{% if settings.link.href %}
 		<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">

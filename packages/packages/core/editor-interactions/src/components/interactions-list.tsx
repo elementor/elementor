@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { EyeIcon, XIcon } from '@elementor/icons';
+import { PlayerPlayIcon, XIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, IconButton, Popover, Stack, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -39,7 +39,9 @@ type InteractionListProps = {
 	defaultStateRef?: React.MutableRefObject< boolean | undefined >;
 };
 
-function InteractionsList( { onSelectInteraction, selectedInteraction, defaultStateRef }: InteractionListProps ) {
+function InteractionsList( props: InteractionListProps ) {
+	const { onSelectInteraction, selectedInteraction, defaultStateRef, onDelete } = props;
+
 	const [ interactionId, setInteractionId ] = useState( selectedInteraction );
 
 	const anchorEl = useRef< HTMLDivElement | null >( null );
@@ -87,7 +89,7 @@ function InteractionsList( { onSelectInteraction, selectedInteraction, defaultSt
 				actions={
 					<>
 						<IconButton size="tiny" disabled>
-							<EyeIcon fontSize="tiny" />
+							<PlayerPlayIcon fontSize="tiny" />
 						</IconButton>
 						<IconButton size="tiny">
 							<XIcon fontSize="tiny" />
