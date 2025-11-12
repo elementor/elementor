@@ -54,7 +54,7 @@ class Size_Constants {
 		return [ ...self::LENGTH_UNITS, self::UNIT_PERCENT ];
 	}
 
-	public static function layout() {
+	public static function layout(): array {
 		return self::units_without_auto();
 	}
 
@@ -66,7 +66,7 @@ class Size_Constants {
 		return self::units_without_auto();
 	}
 
-	public static function anchor_offset() {
+	public static function anchor_offset(): array {
 		return self::LENGTH_UNITS;
 	}
 
@@ -74,7 +74,7 @@ class Size_Constants {
 		return self::units_without_auto();
 	}
 
-	public static function stroke_width() {
+	public static function stroke_width(): array {
 		return [
 			self::UNIT_PX,
 			self::UNIT_EM,
@@ -82,7 +82,7 @@ class Size_Constants {
 		];
 	}
 
-	public static function transition() {
+	public static function transition(): array {
 		return self::TIME_UNITS;
 	}
 
@@ -107,23 +107,23 @@ class Size_Constants {
 		return self::units_without_auto();
 	}
 
-	public static function drop_shadow() {
+	public static function drop_shadow(): array {
 		return self::LENGTH_UNITS;
 	}
 
-	public static function blur_filter() {
+	public static function blur_filter(): array {
 		return self::LENGTH_UNITS;
 	}
 
-	public static function intensity_filter() {
+	public static function intensity_filter(): array {
 		return [ self::UNIT_PERCENT ];
 	}
 
-	public static function color_tone_filter() {
+	public static function color_tone_filter(): array {
 		return [ self::UNIT_PERCENT ];
 	}
 
-	public static function hue_rotate_filter() {
+	public static function hue_rotate_filter(): array {
 		return self::ANGLE_UNITS;
 	}
 }
