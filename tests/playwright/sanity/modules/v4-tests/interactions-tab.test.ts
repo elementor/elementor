@@ -96,7 +96,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await selectOption( page.getByText( '300 MS', { exact: true } ), '100 MS' );
 
 			const effectTypeOption = page.getByRole( 'button', { name: 'Out' } );
-			const directionOption = page.getByRole( 'button', { name: 'Up' } );
+			const directionOption = page.getByRole( 'button', { name: 'From bottom' } );
 
 			await expect( effectTypeOption ).toBeVisible();
 			await effectTypeOption.click();
