@@ -494,6 +494,7 @@ class Atomic_Widgets_Route {
 	}
 
 	private function create_conversion_error_response( \Exception $e ): \WP_REST_Response {
+		error_log( 'WIDGET_CONVERTER_ERROR: ' . $e->getMessage() . ' | File: ' . $e->getFile() . ' | Line: ' . $e->getLine() . ' | Trace: ' . $e->getTraceAsString() );
 		return new \WP_REST_Response(
 			[
 				'success' => false,

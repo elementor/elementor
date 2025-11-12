@@ -133,6 +133,7 @@ const entry = {
 	'ai-layout': path.resolve( __dirname, '../modules/ai/assets/js/editor/layout-module.js' ),
 	'ai-gutenberg': path.resolve( __dirname, '../modules/ai/assets/js/gutenberg/index.js' ),
 	'element-manager-admin': path.resolve( __dirname, '../modules/element-manager/assets/js/admin.js' ),
+	'css-converter-admin': path.resolve( __dirname, '../modules/css-converter/admin/assets/js/admin.js' ),
 	'media-hints': path.resolve( __dirname, '../assets/dev/js/admin/hints/media.js' ),
 	'ai-media-library': path.resolve( __dirname, '../modules/ai/assets/js/media-library/index.js' ),
 	'ai-unify-product-images': path.resolve( __dirname, '../modules/ai/assets/js/woocommerce/index.js' ),

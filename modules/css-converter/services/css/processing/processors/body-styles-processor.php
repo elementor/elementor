@@ -76,6 +76,8 @@ class Body_Styles_Processor implements Css_Processor_Interface {
 				continue;
 			}
 
+			$properties = $this->expand_margin_padding_shorthand( $properties );
+
 			if ( strpos( $selector, 'body' ) !== false || strpos( $selector, 'elementor-page-' ) !== false ) {
 				error_log( 'BODY_STYLES_PROCESSOR: Checking selector: ' . $selector . ' - is_body: ' . ( $this->is_body_selector( $selector ) ? 'YES' : 'NO' ) );
 				if ( strpos( $selector, 'elementor-page-1140' ) !== false ) {
@@ -133,6 +135,14 @@ class Body_Styles_Processor implements Css_Processor_Interface {
 
 		$elementor_format = $this->convert_to_elementor_format( $resolved_styles );
 		error_log( 'BODY_STYLES_PROCESSOR: Elementor format: ' . print_r( $elementor_format, true ) );
+		if ( isset( $elementor_format['margin'] ) ) {
+			$margin = $elementor_format['margin'];
+			error_log( 'BODY_STYLES_PROCESSOR: Margin settings: top=' . ( $margin['top'] ?? '' ) . ( $margin['unit'] ?? '' ) . ', right=' . ( $margin['right'] ?? '' ) . ( $margin['unit'] ?? '' ) );
+		}
+		if ( isset( $elementor_format['padding'] ) ) {
+			$padding = $elementor_format['padding'];
+			error_log( 'BODY_STYLES_PROCESSOR: Padding settings: top=' . ( $padding['top'] ?? '' ) . ( $padding['unit'] ?? '' ) . ', right=' . ( $padding['right'] ?? '' ) . ( $padding['unit'] ?? '' ) );
+		}
 
 		return $elementor_format;
 	}
@@ -266,14 +276,6 @@ class Body_Styles_Processor implements Css_Processor_Interface {
 			return 'background';
 		}
 
-		if ( $normalized === 'margin' || strpos( $normalized, 'margin-' ) === 0 ) {
-			return 'margin';
-		}
-
-		if ( $normalized === 'padding' || strpos( $normalized, 'padding-' ) === 0 ) {
-			return 'padding';
-		}
-
 		return $normalized;
 	}
 
@@ -287,17 +289,33 @@ class Body_Styles_Processor implements Css_Processor_Interface {
 			}
 		}
 
-		if ( isset( $resolved_styles['margin'] ) ) {
-			$margin_settings = $this->convert_dimensions( $resolved_styles['margin']['value'], 'margin' );
-			if ( ! empty( $margin_settings ) ) {
-				$elementor_settings = array_merge( $elementor_settings, $margin_settings );
+		$has_margin = false;
+		foreach ( $resolved_styles as $key => $style ) {
+			if ( strpos( $key, 'margin-' ) === 0 ) {
+				$has_margin = true;
+				break;
 			}
 		}
 
-		if ( isset( $resolved_styles['padding'] ) ) {
-			$padding_settings = $this->convert_dimensions( $resolved_styles['padding']['value'], 'padding' );
+		if ( $has_margin ) {
+			$margin_settings = $this->convert_margin_padding_from_resolved( $resolved_styles, 'margin' );
+			if ( ! empty( $margin_settings ) ) {
+				$elementor_settings['margin'] = $margin_settings;
+			}
+		}
+
+		$has_padding = false;
+		foreach ( $resolved_styles as $key => $style ) {
+			if ( strpos( $key, 'padding-' ) === 0 ) {
+				$has_padding = true;
+				break;
+			}
+		}
+
+		if ( $has_padding ) {
+			$padding_settings = $this->convert_margin_padding_from_resolved( $resolved_styles, 'padding' );
 			if ( ! empty( $padding_settings ) ) {
-				$elementor_settings = array_merge( $elementor_settings, $padding_settings );
+				$elementor_settings['padding'] = $padding_settings;
 			}
 		}
 
@@ -536,6 +554,51 @@ class Body_Styles_Processor implements Css_Processor_Interface {
 		return $stops;
 	}
 
+	private function convert_margin_padding_from_resolved( array $resolved_styles, string $property_prefix ): array {
+		$top_value = null;
+		$right_value = null;
+		$bottom_value = null;
+		$left_value = null;
+
+		foreach ( $resolved_styles as $key => $style ) {
+			if ( $key === $property_prefix ) {
+				continue;
+			}
+			if ( strpos( $key, $property_prefix . '-' ) === 0 ) {
+				$direction = str_replace( $property_prefix . '-', '', $key );
+				if ( $direction === 'top' ) {
+					$top_value = $style['value'] ?? null;
+				} elseif ( $direction === 'right' ) {
+					$right_value = $style['value'] ?? null;
+				} elseif ( $direction === 'bottom' ) {
+					$bottom_value = $style['value'] ?? null;
+				} elseif ( $direction === 'left' ) {
+					$left_value = $style['value'] ?? null;
+				}
+			}
+		}
+
+		if ( $top_value === null && $right_value === null && $bottom_value === null && $left_value === null ) {
+			return [];
+		}
+
+		$top_parts = $this->parse_dimension( $top_value ?? '0' );
+		$right_parts = $this->parse_dimension( $right_value ?? $top_value ?? '0' );
+		$bottom_parts = $this->parse_dimension( $bottom_value ?? $top_value ?? '0' );
+		$left_parts = $this->parse_dimension( $left_value ?? $right_value ?? $top_value ?? '0' );
+
+		$unit = $top_parts['unit'];
+
+		return [
+			'top' => (string) $top_parts['size'],
+			'right' => (string) $right_parts['size'],
+			'bottom' => (string) $bottom_parts['size'],
+			'left' => (string) $left_parts['size'],
+			'unit' => $unit,
+			'isLinked' => false,
+		];
+	}
+
 	private function convert_dimensions( string $css_value, string $property_prefix ): array {
 		$css_value = trim( $css_value );
 		$values = preg_split( '/\s+/', $css_value );
@@ -587,6 +650,94 @@ class Body_Styles_Processor implements Css_Processor_Interface {
 			'size' => 0,
 			'unit' => 'px',
 		];
+	}
+
+	private function expand_margin_padding_shorthand( array $properties ): array {
+		$expanded = [];
+		$margin_value = null;
+		$padding_value = null;
+
+		foreach ( $properties as $property ) {
+			$property_name = $property['property'] ?? '';
+			$property_value = $property['value'] ?? '';
+			$important = $property['important'] ?? false;
+
+			if ( $property_name === 'margin' ) {
+				$margin_value = $property_value;
+				continue;
+			}
+
+			if ( $property_name === 'padding' ) {
+				$padding_value = $property_value;
+				continue;
+			}
+
+			if ( strpos( $property_name, 'margin-' ) === 0 || strpos( $property_name, 'padding-' ) === 0 ) {
+				$expanded[] = $property;
+			} else {
+				$expanded[] = $property;
+			}
+		}
+
+		if ( $margin_value !== null ) {
+			$margin_parts = preg_split( '/\s+/', trim( $margin_value ) );
+			$top = $margin_parts[0] ?? '0';
+			$right = $margin_parts[1] ?? $top;
+			$bottom = $margin_parts[2] ?? $top;
+			$left = $margin_parts[3] ?? $right;
+
+			$expanded[] = [
+				'property' => 'margin-top',
+				'value' => $top,
+				'important' => false,
+			];
+			$expanded[] = [
+				'property' => 'margin-right',
+				'value' => $right,
+				'important' => false,
+			];
+			$expanded[] = [
+				'property' => 'margin-bottom',
+				'value' => $bottom,
+				'important' => false,
+			];
+			$expanded[] = [
+				'property' => 'margin-left',
+				'value' => $left,
+				'important' => false,
+			];
+		}
+
+		if ( $padding_value !== null ) {
+			$padding_parts = preg_split( '/\s+/', trim( $padding_value ) );
+			$top = $padding_parts[0] ?? '0';
+			$right = $padding_parts[1] ?? $top;
+			$bottom = $padding_parts[2] ?? $top;
+			$left = $padding_parts[3] ?? $right;
+
+			$expanded[] = [
+				'property' => 'padding-top',
+				'value' => $top,
+				'important' => false,
+			];
+			$expanded[] = [
+				'property' => 'padding-right',
+				'value' => $right,
+				'important' => false,
+			];
+			$expanded[] = [
+				'property' => 'padding-bottom',
+				'value' => $bottom,
+				'important' => false,
+			];
+			$expanded[] = [
+				'property' => 'padding-left',
+				'value' => $left,
+				'important' => false,
+			];
+		}
+
+		return $expanded;
 	}
 }
 

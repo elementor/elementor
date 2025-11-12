@@ -79,4 +79,21 @@ class Elementor_Document_Manager {
 		}
 		return admin_url( 'post.php?post=' . $post_id . '&action=elementor' );
 	}
+
+	public function get_preview_url( int $post_id ): string {
+		$document = \Elementor\Plugin::$instance->documents->get( $post_id );
+		if ( $document ) {
+			return $document->get_preview_url();
+		}
+
+		$permalink = get_permalink( $post_id );
+		if ( ! $permalink ) {
+			$permalink = home_url( '/?p=' . $post_id );
+		}
+
+		return add_query_arg( [
+			'elementor-preview' => $post_id,
+			'ver' => time(),
+		], $permalink );
+	}
 }

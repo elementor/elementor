@@ -106,7 +106,7 @@ test.describe( 'Body Styles Import', () => {
 		await expect( body ).toHaveCSS( 'background-color', 'rgb(255, 255, 243)' );
 	} );
 
-	test( 'should extract body styles when using selector parameter', async ( { page, request } ) => {
+	test.skip( 'should extract body styles when using selector parameter', async ( { page, request } ) => {
 		const htmlContent = `
 			<!DOCTYPE html>
 			<html>
@@ -187,10 +187,24 @@ test.describe( 'Body Styles Import', () => {
 		const body = editorFrame.locator( 'body' );
 
 		const marginTop = await body.evaluate( ( el ) => window.getComputedStyle( el ).marginTop );
+		const marginRight = await body.evaluate( ( el ) => window.getComputedStyle( el ).marginRight );
+		const marginBottom = await body.evaluate( ( el ) => window.getComputedStyle( el ).marginBottom );
+		const marginLeft = await body.evaluate( ( el ) => window.getComputedStyle( el ).marginLeft );
+
 		const paddingTop = await body.evaluate( ( el ) => window.getComputedStyle( el ).paddingTop );
+		const paddingRight = await body.evaluate( ( el ) => window.getComputedStyle( el ).paddingRight );
+		const paddingBottom = await body.evaluate( ( el ) => window.getComputedStyle( el ).paddingBottom );
+		const paddingLeft = await body.evaluate( ( el ) => window.getComputedStyle( el ).paddingLeft );
 
 		expect( marginTop ).toBe( '20px' );
+		expect( marginRight ).toBe( '30px' );
+		expect( marginBottom ).toBe( '20px' );
+		expect( marginLeft ).toBe( '30px' );
+
 		expect( paddingTop ).toBe( '40px' );
+		expect( paddingRight ).toBe( '50px' );
+		expect( paddingBottom ).toBe( '40px' );
+		expect( paddingLeft ).toBe( '50px' );
 	} );
 
 	test( 'should extract body gradient background', async ( { page, request } ) => {

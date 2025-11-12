@@ -47,10 +47,14 @@ class Widget_Creation_Orchestrator {
 			$stats = $this->service_locator->get_statistics_collector();
 			$stats->merge_hierarchy_stats( $context->get_hierarchy_stats() );
 
+			$post_id = $context->get_post_id();
+			$document_manager = $this->service_locator->get_document_manager();
+
 			$orchestrator_result = [
 				'success' => true,
-				'post_id' => $context->get_post_id(),
-				'edit_url' => $this->service_locator->get_document_manager()->get_edit_url( $context->get_post_id() ),
+				'post_id' => $post_id,
+				'edit_url' => $document_manager->get_edit_url( $post_id ),
+				'preview_url' => $document_manager->get_preview_url( $post_id ),
 				'widgets_created' => $stats->get_stats()['widgets_created'],
 				'global_classes_created' => $stats->get_stats()['global_classes_created'],
 				'variables_created' => $stats->get_stats()['variables_created'],

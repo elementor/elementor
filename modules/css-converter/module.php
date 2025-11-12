@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 use Elementor\Core\Base\Module as BaseModule;
+use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Plugin;
 
 class Module extends BaseModule {
@@ -25,6 +26,7 @@ class Module extends BaseModule {
 		$this->register_base_styles_override_hooks();
 		$this->register_editor_debug_hooks();
 		$this->initialize_css_converter_global_styles();
+		$this->register_admin_menu();
 	}
 
 	private function register_base_styles_override_hooks(): void {
@@ -256,5 +258,43 @@ class Module extends BaseModule {
 
 	private function check_widget_registration( string $type ): void {
 		$widget = Plugin::$instance->widgets_manager->get_widget_types( $type );
+	}
+
+	private function register_admin_menu(): void {
+		require_once __DIR__ . '/admin/css-converter-admin-menu.php';
+
+		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+			$admin_menu->register( \Elementor\Modules\CssConverter\Admin\Css_Converter_Admin_Menu::MENU_SLUG, new \Elementor\Modules\CssConverter\Admin\Css_Converter_Admin_Menu() );
+		}, 140 );
+
+		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
+			if ( ! empty( $hooks[ \Elementor\Modules\CssConverter\Admin\Css_Converter_Admin_Menu::MENU_SLUG ] ) ) {
+				add_action( "admin_print_scripts-{$hooks[ \Elementor\Modules\CssConverter\Admin\Css_Converter_Admin_Menu::MENU_SLUG ]}", [ $this, 'enqueue_admin_assets' ] );
+			}
+		}, 10, 2 );
+	}
+
+	public function enqueue_admin_assets(): void {
+		wp_enqueue_script(
+			'css-converter-admin',
+			$this->get_js_assets_url( 'css-converter-admin' ),
+			[
+				'react',
+				'react-dom',
+				'wp-api-fetch',
+				'wp-dom-ready',
+				'wp-i18n',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
+			],
+			ELEMENTOR_VERSION
+		);
+
+		wp_localize_script( 'css-converter-admin', 'cssConverterConfig', [
+			'nonce' => wp_create_nonce( 'wp_rest' ),
+			'apiUrl' => rest_url( 'elementor/v2/widget-converter' ),
+		] );
+
+		wp_set_script_translations( 'css-converter-admin', 'elementor' );
 	}
 }

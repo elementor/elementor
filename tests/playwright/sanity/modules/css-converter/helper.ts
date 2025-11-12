@@ -168,13 +168,22 @@ export class CssConverterHelper {
 		const payload: any = {
 			type: 'url',
 			content: url,
-			cssUrls,
-			followImports,
-			options: defaultOptions,
 		};
 
 		if ( selector ) {
 			payload.selector = selector;
+		}
+
+		if ( cssUrls.length > 0 ) {
+			payload.cssUrls = cssUrls;
+		}
+
+		if ( followImports ) {
+			payload.followImports = followImports;
+		}
+
+		if ( Object.keys( defaultOptions ).length > 0 ) {
+			payload.options = defaultOptions;
 		}
 
 		const apiResponse = await request.post( '/wp-json/elementor/v2/widget-converter', {
