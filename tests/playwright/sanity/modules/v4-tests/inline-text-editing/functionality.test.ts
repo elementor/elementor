@@ -81,7 +81,7 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 
 			const publishedParagraph = page.locator( `.elementor-element-${ paragraphId } .e-paragraph-base` ).first();
 
-			await expect.soft( publishedParagraph ).toHaveScreenshot( 'inline-edited-paragraph.png' );
+			await expect.soft( publishedParagraph ).toHaveScreenshot( 'published-inline-edited-paragraph.png' );
 		} );
 	} );
 } );
