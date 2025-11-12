@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Includes\Elements\Container;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -184,7 +183,7 @@ class Elements_Manager {
 	 *
 	 * @param string $element_name Optional. Element name. Default is null.
 	 *
-	 * @return null|Element_Base|Element_Base[]|Atomic_Element_Base Element types, or a list of all the element
+	 * @return null|Element_Base|Element_Base[] Element types, or a list of all the element
 	 *                             types, or null if element does not exist.
 	 */
 	public function get_element_types( $element_name = null ) {
@@ -364,6 +363,12 @@ class Elements_Manager {
 	public function enqueue_elements_scripts() {
 		foreach ( $this->get_element_types() as $element ) {
 			$element->enqueue_scripts();
+		}
+	}
+
+	public function register_frontend_handlers() {
+		foreach ( $this->get_element_types() as $element ) {
+			$element->register_frontend_handlers();
 		}
 	}
 
