@@ -14,6 +14,7 @@ export function InteractionsRenderer() {
 	}
 
 	const interactionsData = JSON.stringify( interactionItems );
+    console.log( '[Interactions Renderer] Interactions data:', interactionsData );
 
 	return (
 		<Portal container={ container }>
