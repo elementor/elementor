@@ -79,7 +79,7 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 		await test.step( 'Publish and verify content', async () => {
 			await editor.publishAndViewPage();
 
-			const publishedParagraph = page.locator( `.elementor-element-${ paragraphId } .e-paragraph-base` ).first();
+			const publishedParagraph = page.locator( '.e-paragraph-base' ).last();
 
 			await expect.soft( publishedParagraph ).toHaveScreenshot( 'published-inline-edited-paragraph.png' );
 		} );
