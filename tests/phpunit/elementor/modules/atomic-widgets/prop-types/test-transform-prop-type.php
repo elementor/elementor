@@ -48,10 +48,10 @@ class Test_Transform_Prop_Type extends TestCase {
 		// Arrange.
 		$prop_type = Transform_Prop_Type::make();
 		$value = [
-			'$$type' => 'object',
+			'$$type' => 'transform',
 			'value' => [
 				'transform-functions' => [
-					'$$type' => 'array',
+					'$$type' => 'transform-functions',
 					'value' => [
 						[
 							'$$type' => 'transform-move',
@@ -115,7 +115,7 @@ class Test_Transform_Prop_Type extends TestCase {
 					],
 				],
 				'perspective-origin' => [
-					'$$type' => 'object',
+					'$$type' => 'perspective-origin',
 					'value' => [
 						'x' => [
 							'$$type' => 'size',
