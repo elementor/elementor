@@ -132,7 +132,7 @@
 	function applyInteractionsToElement( element, interactionsData ) {
 		const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
 
-		if ( ! animateFunc || ! inViewFunc ) {
+		if ( ! animateFunc ) {
 			return;
 		}
 
