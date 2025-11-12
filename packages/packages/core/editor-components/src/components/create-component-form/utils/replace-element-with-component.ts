@@ -10,7 +10,9 @@ export const replaceElementWithComponent = ( element: V1Element, component: Comp
 	} );
 };
 
-export const createComponentModel = ( component: Component ) => {
+export const createComponentModel = (
+	component: Component
+): Parameters< typeof replaceElement >[ 0 ][ 'newElement' ] => {
 	return {
 		elType: 'widget',
 		widgetType: 'e-component',
