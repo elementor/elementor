@@ -31,20 +31,22 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.addWidget( { widgetType: INLINE_EDITING_SELECTORS.e_paragraph, container: containerId } );
 
-			await expect.soft( page.getByLabel( 'Content section content' ) ).toHaveScreenshot( 'paragraph-control-panel.png' );
+			await expect.soft( page.getByLabel( INLINE_EDITING_SELECTORS.contentSection ) ).toHaveScreenshot( 'paragraph-control-panel.png' );
 		} );
 	} );
 
 	test( 'Edit paragraph with formatting', async () => {
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const paragraphId = await editor.addWidget( { widgetType: INLINE_EDITING_SELECTORS.e_paragraph, container: containerId } );
+		await editor.closeNavigatorIfOpen();
 
 		await test.step( 'Edit paragraph text with inline editing', async () => {
 			const previewFrame = editor.getPreviewFrame();
 			const paragraphElement = previewFrame.locator( `.elementor-element-${ paragraphId } .e-paragraph-base` );
 			await paragraphElement.click();
-			const textarea = page.getByLabel( 'Content section' ).locator( '.tiptap' );
+			const textarea = page.getByLabel( INLINE_EDITING_SELECTORS.contentSection ).locator( '.tiptap' );
 
+			await expect( textarea ).toBeVisible();
 			await textarea.fill( 'a' );
 			await page.keyboard.press( 'ControlOrMeta+A' );
 			await page.keyboard.press( 'Backspace' );
@@ -64,12 +66,13 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 			await page.keyboard.type( INLINE_EDITING_SELECTORS.paragraphSuffix );
 			await page.keyboard.press( 'Enter' );
 			await page.keyboard.type( INLINE_EDITING_SELECTORS.secondLine );
-			await paragraphElement.hover();
+
 			await expect.soft( paragraphElement ).toHaveScreenshot( 'inline-edited-paragraph.png' );
 		} );
 
 		await test.step( 'Edited control panel display', async () => {
-			const contentSection = page.getByLabel( 'Content section' );
+			const contentSection = page.getByLabel( INLINE_EDITING_SELECTORS.contentSection );
+
 			await expect.soft( contentSection ).toHaveScreenshot( 'inline-edited-paragraph-control-panel.png' );
 		} );
 
@@ -77,7 +80,6 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 			await editor.publishAndViewPage();
 
 			const publishedParagraph = page.locator( '.e-paragraph-base' );
-			await publishedParagraph.highlight();
 			const boldText = publishedParagraph.locator( 'strong:has-text("bold")' );
 			const underlineText = publishedParagraph.locator( 'u:has-text("underline")' );
 
