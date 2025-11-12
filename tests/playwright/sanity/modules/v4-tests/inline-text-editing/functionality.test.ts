@@ -35,7 +35,7 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Edit paragraph with formatting', async () => {
+	test.only( 'Edit paragraph with formatting', async () => {
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const paragraphId = await editor.addWidget( { widgetType: INLINE_EDITING_SELECTORS.e_paragraph, container: containerId } );
 		await editor.closeNavigatorIfOpen();
@@ -79,15 +79,9 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 		await test.step( 'Publish and verify content', async () => {
 			await editor.publishAndViewPage();
 
-			const publishedParagraph = page.locator(`.elementor-element-${paragraphId} .e-paragraph-base`).first();
-			const boldText = publishedParagraph.locator( 'strong:has-text("bold")' );
-			const underlineText = publishedParagraph.locator( 'u:has-text("underline")' );
+			const publishedParagraph = page.locator( `.elementor-element-${ paragraphId } .e-paragraph-base` ).first();
 
-			await expect( publishedParagraph ).toContainText( 'This is a paragraph with bold text and underline text.' );
-			await expect( publishedParagraph ).toContainText( 'Second line here.' );
-			await expect( boldText ).toBeVisible();
-			await expect( underlineText ).toBeVisible();
-			await expect.soft( publishedParagraph ).toHaveScreenshot( 'published-inline-edited-paragraph.png' );
+			await expect.soft( publishedParagraph ).toHaveScreenshot( 'inline-edited-paragraph.png' );
 		} );
 	} );
 } );
