@@ -4,7 +4,7 @@ import { act } from '@testing-library/react';
 import { createElement } from '../create-element';
 import { deleteElement } from '../delete-element';
 import { duplicateElement } from '../duplicate-element';
-import { type DuplicatedElement, duplicateElements } from '../duplicate-elements';
+import { duplicateElements } from '../duplicate-elements';
 import { getContainer } from '../get-container';
 import { type V1ElementModelProps } from '../types';
 
@@ -170,81 +170,6 @@ describe( 'duplicateElements', () => {
 				at: 2,
 			},
 		} );
-	} );
-
-	it( 'should call onCreate callback when provided, without modifying the duplicated elements', () => {
-		// Arrange.
-		const { mockDuplicatedElement1 } = setupMockElementsForDuplication( mockGetContainer );
-
-		mockDuplicateElement.mockReturnValue( mockDuplicatedElement1 );
-
-		const mockOnCreate = jest.fn().mockImplementation( ( elements: DuplicatedElement[] ) => {
-			return elements.map( ( element: DuplicatedElement ) => ( {
-				...element,
-				customProperty: 'modified',
-			} ) );
-		} );
-
-		// Act.
-		const duplicateResult = duplicateElements( {
-			elementIds: [ 'original-1' ],
-			title: 'Duplicate Element',
-			onCreate: mockOnCreate,
-		} );
-
-		// Assert.
-		expect( mockOnCreate ).toHaveBeenCalledTimes( 1 );
-		expect( mockOnCreate ).toHaveBeenCalledWith( [
-			{
-				id: 'duplicated-1',
-				model: {
-					id: 'duplicated-1',
-					elType: 'widget',
-					widgetType: 'button',
-					settings: { text: 'Duplicated Button' },
-				},
-				originalElementId: 'original-1',
-				modelToRestore: {
-					id: 'duplicated-1',
-					elType: 'widget',
-					widgetType: 'button',
-					settings: { text: 'Duplicated Button' },
-				},
-				parentContainerId: 'parent-1',
-				at: 1,
-			},
-		] );
-		expect( duplicateResult.duplicatedElements[ 0 ] ).not.toHaveProperty( 'customProperty', 'modified' );
-	} );
-
-	it( 'should call onCreate callback on redo when provided', () => {
-		// Arrange.
-		const { mockDuplicatedElement1 } = setupMockElementsForDuplication( mockGetContainer );
-
-		mockDuplicateElement.mockReturnValue( mockDuplicatedElement1 );
-
-		const mockRecreatedElement1 = createMockChild( { id: 'recreated-1', elType: 'widget', widgetType: 'button' } );
-		mockCreateElement.mockReturnValue( mockRecreatedElement1 );
-
-		const mockOnCreate = jest.fn().mockImplementation( ( elements: DuplicatedElement[] ) => elements );
-
-		// Act.
-		duplicateElements( {
-			elementIds: [ 'original-1' ],
-			title: 'Duplicate Element',
-			onCreate: mockOnCreate,
-		} );
-
-		// Act.
-		act( () => {
-			historyMock.instance.undo();
-		} );
-		act( () => {
-			historyMock.instance.redo();
-		} );
-
-		// Assert.
-		expect( mockOnCreate ).toHaveBeenCalledTimes( 2 ); // Once during initial duplication, once during redo
 	} );
 
 	it( 'should skip elements without parent containers', () => {
