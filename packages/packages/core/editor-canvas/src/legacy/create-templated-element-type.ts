@@ -117,7 +117,7 @@ export function createTemplatedElementView( {
 					const context = {
 						id: this.model.get( 'id' ),
 						type,
-						settings: resolvedSettings,
+						settings,
 						base_styles: this.isCssConverterWidget() ? {} : baseStylesDictionary,
 					};
 
@@ -130,6 +130,10 @@ export function createTemplatedElementView( {
 			this.bindUIElements();
 
 			this.triggerMethod( 'render:template' );
+		}
+
+		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
+			return settings;
 		}
 
 		isCssConverterWidget(): boolean {
