@@ -1,7 +1,7 @@
+import { createMockPropType } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { renderHook } from '@testing-library/react';
-import { createMockPropType } from 'test-utils';
 
 import { useIsStyle } from '../contexts/style-context';
 import { useResetStyleValueProps } from '../reset-style-props';
@@ -22,7 +22,7 @@ describe( 'Reset Style Props Tests', () => {
 			setValue: jest.fn(),
 			path: [],
 			bind: '',
-			propType: createMockPropType()
+			propType: createMockPropType(),
 		} );
 	} );
 
@@ -93,7 +93,7 @@ describe( 'Reset Style Props Tests', () => {
 				setValue: jest.fn(),
 				path: [ 'style' ],
 				bind: 'flex-grow',
-				propType: createMockPropType()
+				propType: createMockPropType(),
 			} );
 
 			const { result } = renderHook( () => useResetStyleValueProps() );
@@ -151,7 +151,7 @@ describe( 'Reset Style Props Tests', () => {
 					value: {
 						size: 89,
 						unit: 'rem',
-					}
+					},
 				},
 				resetValue: jest.fn(),
 				path: [ 'background', '0', 'color' ],
@@ -162,7 +162,7 @@ describe( 'Reset Style Props Tests', () => {
 						value: {
 							size: 89,
 							unit: 'rem',
-						}
+						},
 					},
 					settings: { required: false },
 				},
@@ -177,7 +177,7 @@ describe( 'Reset Style Props Tests', () => {
 			( useBoundProp as jest.Mock ).mockReturnValue( {
 				value: {
 					$$type: 'string',
-					value: 'string value'
+					value: 'string value',
 				},
 				resetValue: jest.fn(),
 				path: [ 'background', '0', 'color' ],
@@ -185,7 +185,7 @@ describe( 'Reset Style Props Tests', () => {
 				propType: {
 					initial_value: {
 						$$type: 'string',
-						value: 'initial value'
+						value: 'initial value',
 					},
 					settings: { required: false },
 				},

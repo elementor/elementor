@@ -11,7 +11,6 @@ export function isEqual( a: unknown, b: unknown ): boolean {
 		return false;
 	}
 
-
 	if ( Array.isArray( a ) && Array.isArray( b ) ) {
 		if ( a.length !== b.length ) {
 			return false;
@@ -27,8 +26,8 @@ export function isEqual( a: unknown, b: unknown ): boolean {
 	}
 
 	if ( typeof a === 'object' && typeof b === 'object' ) {
-		const objA = a as Record<string, unknown>;
-		const objB = b as Record<string, unknown>;
+		const objA = a as Record< string, unknown >;
+		const objB = b as Record< string, unknown >;
 
 		const keysA = Object.keys( objA );
 		const keysB = Object.keys( objB );
@@ -42,7 +41,7 @@ export function isEqual( a: unknown, b: unknown ): boolean {
 				return false;
 			}
 
-			if ( ! isEqual( objA[key], objB[key] ) ) {
+			if ( ! isEqual( objA[ key ], objB[ key ] ) ) {
 				return false;
 			}
 		}

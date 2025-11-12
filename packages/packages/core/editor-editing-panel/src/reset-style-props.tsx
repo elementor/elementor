@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useIsStyle } from './contexts/style-context';
 import { controlActionsMenu } from './controls-actions';
-import { isEqual } from "./utils/is-equal";
+import { isEqual } from './utils/is-equal';
 
 const { registerAction } = controlActionsMenu;
 
@@ -23,13 +23,13 @@ export function useResetStyleValueProps() {
 	const { value, resetValue, path, propType } = useBoundProp();
 	const hasValue = value !== null && value !== undefined;
 	const hasInitial = propType.initial_value !== undefined && propType.initial_value !== null;
-	const isRequired = !!propType.settings?.required;
+	const isRequired = !! propType.settings?.required;
 
 	const isInRepeater = path?.some( ( key ) => ! isNaN( Number( key ) ) );
-	const canResetInRepeater = REPEATERS_SUPPORTED_FOR_RESET.includes( path?.[0] );
+	const canResetInRepeater = REPEATERS_SUPPORTED_FOR_RESET.includes( path?.[ 0 ] );
 
 	function calculateVisibility() {
-		if ( ! isStyle || ! hasValue) {
+		if ( ! isStyle || ! hasValue ) {
 			return false;
 		}
 
@@ -45,11 +45,7 @@ export function useResetStyleValueProps() {
 			return ! isEqual( value, propType.initial_value );
 		}
 
-		if ( isRequired ) {
-			return false;
-		}
-
-		return true;
+		return ! isRequired;
 	}
 
 	const visible = calculateVisibility();
