@@ -40,7 +40,7 @@ jobs:
   build-plugin:
     if: |
       contains(github.event.pull_request.labels.*.name, 'run-tests') ||
-      (!github.event.pull_request.draft && github.event.action == 'ready_for_review') ||
+      (!github.event.pull_request.draft && github.event_name == 'pull_request') ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch'
     name: Build plugin
@@ -53,7 +53,7 @@ jobs:
     if: |
       github.event.inputs.tag == '' &&
       (contains(github.event.pull_request.labels.*.name, 'run-tests') ||
-      (!github.event.pull_request.draft && github.event.action == 'ready_for_review') ||
+      (!github.event.pull_request.draft && github.event_name == 'pull_request') ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch')
     strategy:
