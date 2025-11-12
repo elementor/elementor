@@ -144,7 +144,7 @@ class Test_Transform_Prop_Type extends TestCase {
 	}
 
 	public function test_validate__rejects_invalid_transform_function() {
-		// Arrange - Test with invalid transform function type
+		// Arrange.
 		$prop_type = Transform_Prop_Type::make();
 		$value = [
 			'$$type' => 'object',
@@ -169,7 +169,7 @@ class Test_Transform_Prop_Type extends TestCase {
 	}
 
 	public function test_validate__rejects_invalid_perspective_unit() {
-		// Arrange - Test with invalid unit for perspective
+		// Arrange.
 		$prop_type = Transform_Prop_Type::make();
 		$value = [
 			'$$type' => 'object',
@@ -178,7 +178,7 @@ class Test_Transform_Prop_Type extends TestCase {
 					'$$type' => 'size',
 					'value' => [
 						'size' => 1000,
-						'unit' => '%', // Invalid - perspective only accepts length units
+						'unit' => '%',
 					],
 				],
 			],
