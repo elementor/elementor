@@ -158,6 +158,7 @@ class Module extends BaseModule {
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
 			add_action( 'elementor/frontend/before_register_scripts', fn () => $this->register_frontend_scripts() );
+			add_action( 'elementor/preview/enqueue_scripts', fn() => $this->enqueue_preview_scripts() );
 
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
@@ -371,6 +372,16 @@ class Module extends BaseModule {
 			'elementor-atomic-widgets-editor',
 			$this->get_js_assets_url( 'atomic-widgets-editor' ),
 			[ 'elementor-editor' ],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
+	private function enqueue_preview_scripts() {
+		wp_enqueue_script(
+			'elementor-tabs-preview-handler',
+			$this->get_js_assets_url( 'tabs-preview-handler' ),
+			[ Frontend_Assets_Loader::ALPINEJS_HANDLE ],
 			ELEMENTOR_VERSION,
 			true
 		);
