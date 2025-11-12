@@ -38,6 +38,7 @@
 
 	function parseAnimationName( name ) {
 		const [ trigger, effect, type, direction, duration, delay ] = name.split( '-' );
+
 		return {
 			trigger,
 			effect,
@@ -56,9 +57,13 @@
 			easing: config.easing,
 		};
 
-		try {
-			animateFunc( element, keyframes, options );
-		} catch {}
+		const initialKeyframes = {};
+		Object.keys( keyframes ).forEach( ( key ) => {
+			initialKeyframes[ key ] = keyframes[ key ][ 0 ];
+		} );
+		animateFunc( element, initialKeyframes, { duration: 0 } );
+
+		animateFunc( element, keyframes, options );
 	}
 
 	function getInteractionsData() {
@@ -127,64 +132,39 @@
 	function applyInteractionsToElement( element, interactionsData ) {
 		const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
 
-		if ( ! animateFunc ) {
-			element.style.animation = 'none';
-			setTimeout( () => {
-				element.style.animation = 'fadeInScale 0.5s ease-out';
-			}, 10 );
+		if ( ! animateFunc || ! inViewFunc ) {
 			return;
 		}
 
+		let parsedData;
 		try {
-			element.style.opacity = '0';
-			element.style.transform = 'scale(0.2)';
-
-			const animation = animateFunc(
-				element,
-				{
-					opacity: [ 0, 1 ],
-					scale: [ 0.2, 1 ],
-				},
-				{
-					duration: 0.5,
-					easing: 'ease-out',
-				},
-			);
-
-			if ( animation && 'function' === typeof animation.then ) {
-				animation.then( () => {
-					element.style.opacity = '';
-					element.style.transform = '';
-				} );
-			} else {
-				setTimeout( () => {
-					element.style.opacity = '';
-					element.style.transform = '';
-				}, 500 );
-			}
-		} catch {
-			element.style.opacity = '';
-			element.style.transform = '';
+			parsedData = JSON.parse( interactionsData );
+		} catch ( error ) {
+			return;
 		}
 
-		// TODO: Parse and apply actual interactions once we verify the system works
-		// let interactions = [];
-		// try {
-		// 	interactions = JSON.parse( interactionsData );
-		// } catch ( error ) {
-		// 	console.error( '[Editor Interactions Handler] Error parsing interactions:', error );
-		// 	return;
-		// }
-		// interactions.forEach( ( interaction ) => {
-		// 	const animationName =
-		// 		'string' === typeof interaction
-		// 			? interaction
-		// 			: interaction?.animation?.animation_id;
-		// 	const animConfig = animationName && parseAnimationName( animationName );
-		// 	if ( animConfig ) {
-		// 		applyAnimation( element, animConfig, animateFunc );
-		// 	}
-		// } );
+		let interactions = [];
+
+		if ( Array.isArray( parsedData ) ) {
+			interactions = parsedData;
+		} else if ( parsedData && 'object' === typeof parsedData && parsedData.items ) {
+			interactions = Object.values( parsedData.items );
+		} else {
+			return;
+		}
+
+		interactions.forEach( ( interaction ) => {
+			const animationName =
+				'string' === typeof interaction
+					? interaction
+					: interaction?.animation?.animation_id;
+
+			const animConfig = animationName && parseAnimationName( animationName );
+
+			if ( animConfig ) {
+				applyAnimation( element, animConfig, animateFunc );
+			}
+		} );
 	}
 
 	let previousInteractionsData = [];
@@ -255,7 +235,7 @@
 		} );
 
 		headObserver.observe( head, {
-			childList: true, // Watch for new script tags being added
+			childList: true,
 			subtree: true,
 		} );
 
@@ -266,7 +246,6 @@
 		}
 	}
 
-	// Initialize when DOM is ready
 	if ( 'loading' === document.readyState ) {
 		document.addEventListener( 'DOMContentLoaded', initEditorInteractionsHandler );
 	} else {
