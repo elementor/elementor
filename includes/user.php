@@ -281,7 +281,7 @@ class User {
 	 * @return void
 	 */
 	public static function set_user_notice_first_time( $plugin_name ) {
-		if ( !$plugin_name ) {
+		if ( ! $plugin_name ) {
 			return;
 		}
 		if ( ! self::get_user_notice_first_time( $plugin_name ) ) {
@@ -295,7 +295,7 @@ class User {
 	 * @return string|false
 	 */
 	public static function get_user_notice_first_time( $plugin_name = '' ) {
-		if ( !$plugin_name ) {
+		if ( ! $plugin_name ) {
 			return false;
 		}
 
