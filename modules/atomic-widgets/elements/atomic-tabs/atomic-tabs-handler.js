@@ -71,25 +71,13 @@ register( {
 
 					return getTabId( index );
 				},
-				'x-effect'() {
-					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
-					const tabId = getTabId( index );
-					const isActive = this.activeTab === tabId;
-
-					if ( isActive ) {
-						this.$el.style.removeProperty( 'display' );
-						this.$el.removeAttribute( 'hidden' );
-
-						requestAnimationFrame( () => {
-							this.$el.classList.add( SELECTED_CLASS );
-						} );
-					} else {
-						this.$el.classList.remove( SELECTED_CLASS );
-					}
-				},
 				'x-show'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
 					const tabId = getTabId( index );
+
+					this.$nextTick( () => {
+						this.$el.classList.toggle( SELECTED_CLASS, this.activeTab === tabId );
+					} );
 
 					return this.activeTab === tabId;
 				},
