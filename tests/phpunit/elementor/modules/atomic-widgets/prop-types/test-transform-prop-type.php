@@ -31,7 +31,7 @@ class Test_Transform_Prop_Type extends TestCase {
 		$this->assertArrayHasKey( 'perspective-origin', $shape );
 	}
 
-	public function test_perspective__has_length_restricted_units() {
+	public function test_perspective__has_restricted_units() {
 		// Arrange.
 		$prop_type = Transform_Prop_Type::make();
 
@@ -232,15 +232,16 @@ class Test_Transform_Prop_Type extends TestCase {
 			'transform-origin' => [
 				'source' => 'prop-type',
 				'fields' => [
-					'x' => [
-						'$$type' => 'size',
-						'value' => [ 'size' => 50, 'unit' => '%' ]
-					],
-					'y' => [
-						'$$type' => 'size',
-						'value' => [ 'size' => 50, 'unit' => '%' ]
-					],
+					'x' => null,
+					'y' => null,
 					'z' => null,
+				],
+			],
+			'perspective-origin' => [
+				'source' => 'prop-type',
+				'fields' => [
+					'x' => null,
+					'y' => null,
 				],
 			],
 		];
