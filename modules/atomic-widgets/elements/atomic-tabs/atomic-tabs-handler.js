@@ -2,6 +2,9 @@ import { register } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
 
 const SELECTED_CLASS = 'e--selected';
+const NAVIGATE_UP_KEYS = [ 'ArrowUp', 'ArrowLeft' ];
+const NAVIGATE_DOWN_KEYS = [ 'ArrowDown', 'ArrowRight' ];
+
 register( {
 	elementType: 'e-tabs',
 	uniqueId: 'e-tabs-handler',
@@ -19,19 +22,43 @@ register( {
 			return `${ tabsId }-tab-content-${ tabIndex }`;
 		};
 
-		const getIndex = ( el, elementType ) => {
+		const getChildren = ( el, elementType ) => {
 			const parent = el.parentElement;
 
-			const children = Array.from( parent.children ).filter( ( child ) => {
+			return Array.from( parent.children ).filter( ( child ) => {
 				return child.dataset.element_type === elementType;
 			} );
+		};
+
+		const getIndex = ( el, elementType ) => {
+			const children = getChildren( el, elementType );
 
 			return children.indexOf( el );
+		};
+
+		const getNextTab = ( key, tab ) => {
+			const tabs = getChildren( tab, TAB_ELEMENT_TYPE );
+			const tabsLength = tabs.length;
+
+			const currentIndex = getIndex( tab, TAB_ELEMENT_TYPE );
+
+			if ( NAVIGATE_DOWN_KEYS.includes( key ) ) {
+				return tabs[ ( currentIndex + 1 ) % tabsLength ];
+			}
+
+			if ( NAVIGATE_UP_KEYS.includes( key ) ) {
+				return tabs[ ( currentIndex - 1 + tabsLength ) % tabsLength ];
+			}
 		};
 
 		Alpine.data( 'atomicTabs', () => ( {
 			activeTab: settings[ 'default-active-tab' ],
 
+			navigateTabs( { key, target: tab } ) {
+				const nextTab = getNextTab( key, tab );
+
+				nextTab.focus();
+			},
 			tab: {
 				':id'() {
 					const index = getIndex( this.$el, TAB_ELEMENT_TYPE );
@@ -42,6 +69,18 @@ register( {
 					const id = this.$el.id;
 
 					this.activeTab = id;
+				},
+				'@keydown.arrow-right.prevent'( event ) {
+					this.navigateTabs( event );
+				},
+				'@keydown.arrow-left.prevent'( event ) {
+					this.navigateTabs( event );
+				},
+				'@keydown.arrow-down.prevent'( event ) {
+					this.navigateTabs( event );
+				},
+				'@keydown.arrow-up.prevent'( event ) {
+					this.navigateTabs( event );
 				},
 				':class'() {
 					const id = this.$el.id;
