@@ -318,7 +318,10 @@ class Widget_Error_Handler {
 			'post_creation' => [
 				'post_title' => 'Elementor Widget Conversion',
 				'post_type' => 'page',
-				'post_status' => 'draft',
+				'post_status' => 'publish',
+				'meta_input' => [
+					'_wp_page_template' => 'elementor_canvas',
+				],
 			],
 			'widget_creation' => [
 				'widgetType' => 'html',

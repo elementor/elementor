@@ -41,7 +41,7 @@ export const FeedbackPanel = ( {
 		}
 
 		const baseUrl = window.location.origin;
-		return `${ baseUrl }/?p=${ postId }&elementor-preview=${ postId }&ver=${ Date.now() }`;
+		return `${ baseUrl }/?p=${ postId }`;
 	};
 
 	const handleOpenEditor = () => {

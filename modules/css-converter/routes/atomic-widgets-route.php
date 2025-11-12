@@ -148,6 +148,9 @@ class Atomic_Widgets_Route {
 		$content = $request->get_param( 'content' );
 		$html_param = $request->get_param( 'html' );
 		$selector = $request->get_param( 'selector' );
+		if ( empty( $selector ) ) {
+			$selector = 'body';
+		}
 		$auto_extracted_css_urls = [];
 
 		$html_result = $this->resolve_html_content( $type, $content, $html_param, $selector, $auto_extracted_css_urls );

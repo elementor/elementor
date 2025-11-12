@@ -275,6 +275,14 @@ class Module extends BaseModule {
 	}
 
 	public function enqueue_admin_assets(): void {
+		$plugin_file = dirname( dirname( __DIR__ ) ) . '/elementor.php';
+		wp_enqueue_style(
+			'css-converter-admin',
+			plugins_url( 'modules/css-converter/admin/assets/css/admin.css', $plugin_file ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
 		wp_enqueue_script(
 			'css-converter-admin',
 			$this->get_js_assets_url( 'css-converter-admin' ),

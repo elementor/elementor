@@ -29,6 +29,14 @@ export const ImportForm = ( {
 	isLoading,
 } ) => {
 	const [ urlError, setUrlError ] = useState( '' );
+	const [ selectedExample, setSelectedExample ] = useState( '' );
+
+	const htmlExamples = [
+		{
+			label: __( 'Widget html', 'elementor' ),
+			code: '<div><h1>Updated Content</h1><p>This will update an existing post.</p></div>',
+		},
+	];
 
 	const handleSubmit = ( e ) => {
 		e.preventDefault();
@@ -67,6 +75,17 @@ export const ImportForm = ( {
 		setUrlContent( e.target.value );
 		if ( urlError && validateUrl( e.target.value ) ) {
 			setUrlError( '' );
+		}
+	};
+
+	const handleExampleSelect = ( e ) => {
+		const exampleId = e.target.value;
+		setSelectedExample( exampleId );
+		if ( exampleId ) {
+			const example = htmlExamples.find( ( ex ) => ex.label === exampleId );
+			if ( example ) {
+				setHtmlContent( example.code );
+			}
 		}
 	};
 
@@ -228,28 +247,61 @@ export const ImportForm = ( {
 					) }
 
 					{ 'html' === importType && (
-						<TextField
-							value={ htmlContent }
-							onChange={ ( e ) => setHtmlContent( e.target.value ) }
-							placeholder={ htmlPlaceholder }
-							multiline
-							minRows={ 20 }
-							sx={ {
-								minHeight: '500px',
-								'& .MuiInputBase-input:focus': {
-									outline: 'none !important',
-									border: 'none !important',
-									boxShadow: 'none !important',
-								},
-								'& textarea:focus': {
-									outline: 'none !important',
-									border: 'none !important',
-									boxShadow: 'none !important',
-								},
-							} }
-							fullWidth
-							size="small"
-						/>
+						<Box sx={ { position: 'relative' } }>
+							<Box
+								sx={ {
+									position: 'absolute',
+									top: -60,
+									right: -70,
+									zIndex: 1,
+									minWidth: '200px',
+								} }
+							>
+								<Select
+									value={ selectedExample }
+									onChange={ handleExampleSelect }
+									displayEmpty
+									size="small"
+									sx={ {
+										backgroundColor: 'background.paper',
+										'& .MuiSelect-select': {
+											padding: '6px 32px 6px 12px',
+										},
+									} }
+								>
+									<MenuItem value="">
+										<em>{ __( 'Import Examples', 'elementor' ) }</em>
+									</MenuItem>
+									{ htmlExamples.map( ( example ) => (
+										<MenuItem key={ example.label } value={ example.label }>
+											{ example.label }
+										</MenuItem>
+									) ) }
+								</Select>
+							</Box>
+							<TextField
+								value={ htmlContent }
+								onChange={ ( e ) => setHtmlContent( e.target.value ) }
+								placeholder={ htmlPlaceholder }
+								multiline
+								minRows={ 20 }
+								sx={ {
+									minHeight: '500px',
+									'& .MuiInputBase-input:focus': {
+										outline: 'none !important',
+										border: 'none !important',
+										boxShadow: 'none !important',
+									},
+									'& textarea:focus': {
+										outline: 'none !important',
+										border: 'none !important',
+										boxShadow: 'none !important',
+									},
+								} }
+								fullWidth
+								size="small"
+							/>
+						</Box>
 					) }
 
 					<Box>

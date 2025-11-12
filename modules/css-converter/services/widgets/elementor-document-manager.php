@@ -22,12 +22,14 @@ class Elementor_Document_Manager {
 		$post_data = [
 			'post_title' => 'Elementor Widget Conversion - ' . date( 'Y-m-d H:i:s' ),
 			'post_type' => $post_type,
-			'post_status' => 'draft',
+			'post_status' => 'publish',
 			'post_content' => '',
 			'meta_input' => [
 				'_elementor_edit_mode' => 'builder',
 				'_elementor_template_type' => 'wp-post',
 				'_elementor_version' => ELEMENTOR_VERSION,
+				'_wp_page_template' => 'elementor_canvas',
+				'_elementor_css_converter_post' => true,
 			],
 		];
 
@@ -81,19 +83,11 @@ class Elementor_Document_Manager {
 	}
 
 	public function get_preview_url( int $post_id ): string {
-		$document = \Elementor\Plugin::$instance->documents->get( $post_id );
-		if ( $document ) {
-			return $document->get_preview_url();
-		}
-
 		$permalink = get_permalink( $post_id );
 		if ( ! $permalink ) {
 			$permalink = home_url( '/?p=' . $post_id );
 		}
 
-		return add_query_arg( [
-			'elementor-preview' => $post_id,
-			'ver' => time(),
-		], $permalink );
+		return $permalink;
 	}
 }

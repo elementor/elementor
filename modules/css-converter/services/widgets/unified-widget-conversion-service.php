@@ -163,8 +163,12 @@ class Unified_Widget_Conversion_Service {
 		if ( null === $post_id ) {
 			$post_id = wp_insert_post( [
 				'post_title' => 'Elementor Widget Conversion - ' . gmdate( 'Y-m-d H:i:s' ),
-				'post_status' => 'draft',
+				'post_status' => 'publish',
 				'post_type' => $post_type,
+				'meta_input' => [
+					'_wp_page_template' => 'elementor_canvas',
+					'_elementor_css_converter_post' => true,
+				],
 			] );
 		}
 		if ( is_wp_error( $post_id ) || ! $post_id ) {
@@ -181,6 +185,8 @@ class Unified_Widget_Conversion_Service {
 		update_post_meta( $post_id, '_elementor_edit_mode', 'builder' );
 		update_post_meta( $post_id, '_elementor_template_type', 'wp-page' );
 		update_post_meta( $post_id, '_elementor_version', ELEMENTOR_VERSION );
+		update_post_meta( $post_id, '_wp_page_template', 'elementor_canvas' );
+		update_post_meta( $post_id, '_elementor_css_converter_post', true );
 		// Extract resolved styles from widgets by source type for widget_creator compatibility
 		$extracted_styles = $this->extract_styles_by_source_from_widgets( $widgets );
 		$css_processing_result = [
