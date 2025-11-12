@@ -86,7 +86,7 @@ class Control_Number extends Base_Data_Control {
 		}
 
 		if ( ! is_numeric( $value ) ) {
-			return !empty( $control['default'] ) ? $control['default'] : '';
+			return ! empty( $control['default'] ) ? $control['default'] : '';
 		}
 
 		return (string) $value;
