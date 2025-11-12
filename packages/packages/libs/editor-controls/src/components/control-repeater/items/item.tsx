@@ -6,7 +6,12 @@ import { useRepeaterContext } from '../context/repeater-context';
 import { RepeaterItemActionsSlot, RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../locations';
 import { type ItemProps, type RepeatablePropValue } from '../types';
 
-export const Item = < T extends RepeatablePropValue >( { Label, Icon, actions, disableOpen = false }: ItemProps< T > ) => {
+export const Item = < T extends RepeatablePropValue >( {
+	Label,
+	Icon,
+	actions,
+	disableOpen = false,
+}: ItemProps< T > ) => {
 	const { items, popoverState, setRowRef, openItemIndex, setOpenItemIndex, index = -1, value } = useRepeaterContext();
 	const triggerProps = bindTrigger( popoverState );
 	const key = items[ index ].key ?? -1;
