@@ -79,7 +79,7 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 		await test.step( 'Publish and verify content', async () => {
 			await editor.publishAndViewPage();
 
-			const publishedParagraph = page.locator( '.e-paragraph-base' );
+			const publishedParagraph = page.locator(`.elementor-element-${paragraphId} .e-paragraph-base`).first();
 			const boldText = publishedParagraph.locator( 'strong:has-text("bold")' );
 			const underlineText = publishedParagraph.locator( 'u:has-text("underline")' );
 
