@@ -76,7 +76,7 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 			await expect.soft( contentSection ).toHaveScreenshot( 'inline-edited-paragraph-control-panel.png' );
 		} );
 
-		await test.step( 'Publish and verify content', async () => {
+		await test.step( 'Publish and verify content .', async () => {
 			await editor.publishAndViewPage();
 
 			const publishedParagraph = page.locator( '.e-paragraph-base' ).last();
