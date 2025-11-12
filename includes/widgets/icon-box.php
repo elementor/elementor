@@ -361,7 +361,7 @@ class Widget_Icon_Box extends Widget_Base {
 					],
 				],
 				'selectors' => [
-					'{{WRAPPER}}' => '--icon-box-icon-margin: {{SIZE}}{{UNIT}}',
+					'{{WRAPPER}} .elementor-icon-box-wrapper' => 'gap: {{SIZE}}{{UNIT}};',
 				],
 				'condition' => [
 					'selected_icon[value]!' => '',

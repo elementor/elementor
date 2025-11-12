@@ -190,8 +190,12 @@ class Test_Style_Schema extends TestCase {
 				$bg_color_shape = $prop_type->get_shape();
 
 				$bg_color_shape['color'] = Union_Prop_Type::make()
-					->add_prop_type( Color_Prop_Type::make() )
-					->add_prop_type( Color_Variable_Prop_Type::make() );
+					->add_prop_type( Color_Prop_Type::make()->initial_value( '#00000033' ) )
+					->add_prop_type( Color_Variable_Prop_Type::make() )
+					->initial_value( [
+							'$$type' => 'color',
+							'value' => '#00000033'
+					] );
 
 				$prop_type->set_shape( $bg_color_shape );
 			}
