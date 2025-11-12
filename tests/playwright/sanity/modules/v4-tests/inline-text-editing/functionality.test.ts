@@ -35,7 +35,7 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 		} );
 	} );
 
-	test.only( 'Edit paragraph with formatting', async () => {
+	test( 'Edit paragraph with formatting', async () => {
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const paragraphId = await editor.addWidget( { widgetType: INLINE_EDITING_SELECTORS.e_paragraph, container: containerId } );
 		await editor.closeNavigatorIfOpen();
