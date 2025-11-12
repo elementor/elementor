@@ -231,9 +231,15 @@ class Components_REST_API {
 			->reduce(
 				function ( $result, Component $component ) use ( $status ) {
 					$post = $component->get_post();
+					$autosave = $component->get_newer_autosave();
+
+					$elements = $autosave
+						? $autosave->get_json_meta( Document::ELEMENTOR_DATA_META_KEY )
+						: $component->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
 
 					$is_updated = $component->save( [
 						'settings' => [ 'post_status' => $status ],
+						'elements' => $elements,
 					] );
 
 					$result[ $is_updated ? 'success' : 'failed' ][] = $post->ID;

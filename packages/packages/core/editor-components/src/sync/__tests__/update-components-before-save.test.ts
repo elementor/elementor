@@ -8,12 +8,16 @@ jest.mock( '../../api' );
 
 describe( 'updateComponentsBeforeSave', () => {
 	const PUBLISHED_COMPONENT_ID = 2000;
+	const HAS_AUTOSAVE_COMPONENT_ID = 4000;
 
 	beforeEach( () => {
 		jest.mocked( getComponentDocumentData ).mockImplementation( async ( id: number ) => {
 			return Promise.resolve( {
 				id,
-				status: { value: id === PUBLISHED_COMPONENT_ID ? 'publish' : 'draft' },
+				status: {
+					value: id === PUBLISHED_COMPONENT_ID || id === HAS_AUTOSAVE_COMPONENT_ID ? 'publish' : 'draft',
+				},
+				revisions: { current_id: HAS_AUTOSAVE_COMPONENT_ID === id ? 9000 : id },
 			} );
 		} );
 	} );
@@ -50,6 +54,12 @@ describe( 'updateComponentsBeforeSave', () => {
 						widgetType: 'e-component',
 						settings: { component: { $$type: 'component-id', value: 3000 } },
 					},
+					{
+						elType: 'widget',
+						id: '6',
+						widgetType: 'e-component',
+						settings: { component: { $$type: 'component-id', value: HAS_AUTOSAVE_COMPONENT_ID } },
+					},
 				],
 			},
 		] );
@@ -61,10 +71,11 @@ describe( 'updateComponentsBeforeSave', () => {
 		} );
 
 		// Assert
-		expect( apiClient.updateStatuses ).toHaveBeenCalledWith( [ 1000, 3000 ], 'publish' );
-		expect( invalidateComponentDocumentData ).toHaveBeenCalledTimes( 2 );
+		expect( apiClient.updateStatuses ).toHaveBeenCalledWith( [ 1000, 3000, 4000 ], 'publish' );
+		expect( invalidateComponentDocumentData ).toHaveBeenCalledTimes( 3 );
 		expect( invalidateComponentDocumentData ).toHaveBeenNthCalledWith( 1, 1000 );
 		expect( invalidateComponentDocumentData ).toHaveBeenNthCalledWith( 2, 3000 );
+		expect( invalidateComponentDocumentData ).toHaveBeenNthCalledWith( 3, 4000 );
 	} );
 
 	it( 'should not update any components when not publishing', async () => {

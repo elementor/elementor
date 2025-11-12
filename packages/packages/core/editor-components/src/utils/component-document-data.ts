@@ -6,6 +6,7 @@ type ComponentDocumentData = {
 	id: number;
 	elements?: V1ElementData[];
 	status: { value: DocumentStatus };
+	revisions: { current_id: number };
 };
 
 type ComponentIdTransformerWindow = Window & {
@@ -20,7 +21,11 @@ type ComponentIdTransformerWindow = Window & {
 export const getComponentDocumentData = async ( id: number ) => {
 	const documentManager = getDocumentsManager();
 
-	return await documentManager.request( id );
+	try {
+		return await documentManager.request( id );
+	} catch {
+		return null;
+	}
 };
 
 export const invalidateComponentDocumentData = ( id: number ) => {

@@ -15,10 +15,20 @@ export async function updateComponentsBeforeSave( { status, container }: Options
 
 	const elements = container.model.get( 'elements' ).toJSON();
 
-	const componentDocumentData = await Promise.all( getComponentIds( elements ).map( getComponentDocumentData ) );
+	const componentDocumentData = await Promise.all(
+		getComponentIds( elements ).map( ( id ) => getComponentDocumentData( id ) )
+	);
 
 	const draftIds = componentDocumentData
-		.filter( ( data ) => data.status.value === 'draft' )
+		.filter( ( data ) => !! data )
+		.filter( ( data ) => {
+			const isDraft = data.status.value === 'draft';
+
+			// When the component is published, but have draft version.
+			const hasAutosave = data.revisions.current_id !== data.id;
+
+			return isDraft || hasAutosave;
+		} )
 		.map( ( data ) => data.id );
 
 	if ( draftIds.length === 0 ) {

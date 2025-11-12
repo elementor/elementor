@@ -15,5 +15,5 @@ export const componentIdTransformer = createTransformer( async ( id: number ) =>
 
 	const data = await getComponentDocumentData( id );
 
-	return data.elements ?? [];
+	return data?.elements ?? [];
 } );
