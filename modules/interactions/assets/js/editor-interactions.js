@@ -56,13 +56,34 @@
 			easing: config.easing,
 		};
 
-		try {
+		const viewOptions = { amount: 0.1, root: null };
+
+		if ( 'scrollOut' === animConfig.trigger ) {
+			inViewFunc( element, () => {
+				const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
+				animateFunc( element, resetKeyframes, { duration: 0 } );
+
+				return () => {
+					animateFunc( element, keyframes, options );
+				};
+			}, viewOptions );
+		} else if ( 'scrollIn' === animConfig.trigger ) {
+			inViewFunc( element, () => {
+				animateFunc( element, keyframes, options );
+
+				return () => {
+					const resetKeyframes = getKeyframes( animConfig.effect, 'out', animConfig.direction );
+					animateFunc( element, resetKeyframes, { duration: 0 } );
+				};
+			}, viewOptions );
+		} else {
 			animateFunc( element, keyframes, options );
-		} catch {}
+		}
 	}
 
 	function getInteractionsData() {
 		const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+		console.log( 'scriptTag', scriptTag );
 		if ( ! scriptTag ) {
 			return [];
 		}
@@ -76,6 +97,7 @@
 
 	function findElementByDataId( dataId ) {
 		const element = document.querySelector( '[data-id="' + dataId + '"]' );
+		console.log( 'element-id', { element, dataId } );
 		if ( ! element ) {
 			const byId = document.getElementById( dataId );
 			if ( byId ) {
@@ -128,6 +150,7 @@
 		const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
 
 		if ( ! animateFunc ) {
+			console.log( 'animate-func', animateFunc );
 			element.style.animation = 'none';
 			setTimeout( () => {
 				element.style.animation = 'fadeInScale 0.5s ease-out';
@@ -135,37 +158,44 @@
 			return;
 		}
 
-		try {
-			element.style.opacity = '0';
-			element.style.transform = 'scale(0.2)';
+		console.log( 'animate-real', { animateFunc, interactionsData } );
 
-			const animation = animateFunc(
-				element,
-				{
-					opacity: [ 0, 1 ],
-					scale: [ 0.2, 1 ],
-				},
-				{
-					duration: 0.5,
-					easing: 'ease-out',
-				},
-			);
+		const animationName = JSON.parse( interactionsData )?.items[ 0 ]?.animation.animation_id;
+		const animConfig = animationName && parseAnimationName( animationName );
 
-			if ( animation && 'function' === typeof animation.then ) {
-				animation.then( () => {
-					element.style.opacity = '';
-					element.style.transform = '';
-				} );
-			} else {
-				setTimeout( () => {
-					element.style.opacity = '';
-					element.style.transform = '';
-				}, 500 );
-			}
-		} catch {
-			element.style.opacity = '';
-			element.style.transform = '';
-		}
+		applyAnimation( element, animConfig, animateFunc );
+
+		// try {
+		// 	element.style.opacity = '0';
+		// 	element.style.transform = 'scale(0.2)';
+
+		// 	const animation = animateFunc(
+		// 		element,
+		// 		{
+		// 			opacity: [ 0, 1 ],
+		// 			scale: [ 0.2, 1 ],
+		// 		},
+		// 		{
+		// 			duration: 0.5,
+		// 			easing: 'ease-out',
+		// 		},
+		// 	);
+
+		// 	if ( animation && 'function' === typeof animation.then ) {
+		// 		animation.then( () => {
+		// 			element.style.opacity = '';
+		// 			element.style.transform = '';
+		// 		} );
+		// 	} else {
+		// 		setTimeout( () => {
+		// 			element.style.opacity = '';
+		// 			element.style.transform = '';
+		// 		}, 500 );
+		// 	}
+		// } catch {
+		// 	element.style.opacity = '';
+		// 	element.style.transform = '';
+		// }
 
 		// TODO: Parse and apply actual interactions once we verify the system works
 		// let interactions = [];
@@ -247,6 +277,7 @@
 		// Watch head for script tag to appear
 		const headObserver = new MutationObserver( () => {
 			const foundScriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+			console.log( 'foundScriptTag', foundScriptTag );
 			if ( foundScriptTag && foundScriptTag !== scriptTag ) {
 				scriptTag = foundScriptTag;
 				setupObserver( scriptTag );
@@ -260,6 +291,7 @@
 		} );
 
 		scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+		console.log( 'scriptTag-2', scriptTag );
 		if ( scriptTag ) {
 			setupObserver( scriptTag );
 			headObserver.disconnect();
