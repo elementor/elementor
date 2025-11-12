@@ -12,4 +12,5 @@ export type ItemProps< T > = {
 	Label: React.ComponentType< { value: T } >;
 	Icon: React.ComponentType< { value: T } >;
 	actions?: React.ReactNode;
+	disableOpen?: boolean;
 };

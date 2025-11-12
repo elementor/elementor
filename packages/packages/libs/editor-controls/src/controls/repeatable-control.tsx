@@ -97,6 +97,7 @@ export const RepeatableControl = createControl(
 										<RemoveItemAction />
 									</>
 								}
+								disableOpen={ !! childControlConfig?.props?.readOnly }
 							/>
 						</ItemsContainer>
 						<EditItemPopover>
@@ -216,20 +217,20 @@ const shouldShowPlaceholder = ( pattern: string, data: Record< string, unknown >
 	return false;
 };
 
+const getTextColor = ( isReadOnly: boolean, showPlaceholder: boolean ): string => {
+	if ( isReadOnly ) {
+		return 'text.disabled';
+	}
+	return showPlaceholder ? 'text.tertiary' : 'text.primary';
+};
+
 const ItemLabel = ( { value }: { value: Record< string, unknown > } ) => {
 	const { placeholder, patternLabel, props: childProps } = useRepeatableControlContext();
 	const showPlaceholder = shouldShowPlaceholder( patternLabel, value );
 	const label = showPlaceholder ? placeholder : interpolate( patternLabel, value );
 	const isReadOnly = !! childProps?.readOnly;
 
-	let color: string;
-	if ( isReadOnly ) {
-		color = 'text.disabled';
-	} else if ( showPlaceholder ) {
-		color = 'text.tertiary';
-	} else {
-		color = 'text.primary';
-	}
+	const color = getTextColor( isReadOnly, showPlaceholder );
 
 	return (
 		<Box component="span" color={ color }>
