@@ -566,8 +566,8 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		$image_opt_first_time = get_user_meta( get_current_user_id(), 'plugin_image_optimization_first_time', true );
-		if ( ! $image_opt_first_time || strtotime( $image_opt_first_time ) > ( time() - 7 * DAY_IN_SECONDS ) ) {
+		$image_opt_first_time = User::get_user_notice_first_time( 'image_optimization' );
+		if ( ! $image_opt_first_time || strtotime( $image_opt_first_time ) > ( time() - WEEK_IN_SECONDS ) ) {
 			return false;
 		}
 
@@ -732,9 +732,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! get_user_meta( get_current_user_id(), 'plugin_image_optimization_first_time', true ) ) {
-			update_user_meta( get_current_user_id(), 'plugin_image_optimization_first_time', current_time( 'mysql' ) );
-		}
+		User::set_user_notice_first_time( 'image_optimization' );
 
 		$attachments = new \WP_Query( [
 			'post_type' => 'attachment',
