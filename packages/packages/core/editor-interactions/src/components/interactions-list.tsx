@@ -24,7 +24,7 @@ export const PredefinedInteractionsList = ( {
 		<Stack sx={ { m: 1, p: 1.5 } } gap={ 2 }>
 			<Header label={ __( 'Interactions', 'elementor' ) } />
 			<InteractionsList
-				onDelete={ () => onDelete?.() }
+				onDelete={ onDelete }
 				selectedInteraction={ selectedInteraction }
 				onSelectInteraction={ onSelectInteraction }
 			/>
@@ -33,7 +33,7 @@ export const PredefinedInteractionsList = ( {
 };
 
 type InteractionListProps = {
-	onDelete: () => void;
+	onDelete?: () => void;
 	onSelectInteraction: ( interaction: string ) => void;
 	selectedInteraction: string;
 	defaultStateRef?: React.MutableRefObject< boolean | undefined >;
@@ -62,10 +62,11 @@ function InteractionsList( props: InteractionListProps ) {
 
 	useEffect( () => {
 		if ( openByDefault && anchorEl.current ) {
+			popupState.setAnchorEl( anchorEl.current );
 			popupState.open();
 			resetDefaultOpen();
 		}
-	}, [ defaultStateRef, openByDefault, popupState, resetDefaultOpen ] );
+	}, [ defaultStateRef, popupState, anchorEl, openByDefault, resetDefaultOpen ] );
 
 	const displayLabel = useMemo( () => {
 		if ( ! interactionId ) {
@@ -91,7 +92,7 @@ function InteractionsList( props: InteractionListProps ) {
 						<IconButton size="tiny" disabled>
 							<PlayerPlayIcon fontSize="tiny" />
 						</IconButton>
-						<IconButton size="tiny">
+						<IconButton size="tiny" onClick={ () => onDelete?.() }>
 							<XIcon fontSize="tiny" />
 						</IconButton>
 					</>
