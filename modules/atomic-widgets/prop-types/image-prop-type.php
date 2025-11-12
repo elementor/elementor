@@ -18,7 +18,10 @@ class Image_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'src' => Image_Src_Prop_Type::make()->required(),
-			'size' => String_Prop_Type::make()->enum( Image_Sizes::get_keys() )->required(),
+			'size' => String_Prop_Type::make()
+				->enum( Image_Sizes::get_keys() )
+				->initial_value( Image_Sizes::DEFAULT_SIZE )
+				->required(),
 		];
 	}
 
