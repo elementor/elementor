@@ -4,17 +4,15 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 
 import { apiClient } from '../api';
 import { selectUnpublishedComponents, slice, type UnpublishedComponent } from '../store/store';
-import { type DocumentStatus } from '../types';
+import { type Container, type DocumentSaveStatus } from '../types';
 
-type Container = {
-	model: {
-		get: ( key: 'elements' ) => {
-			toJSON: () => V1ElementData[];
-		};
-	};
-};
-
-export const beforeSave = async ( { container, status }: { container: Container; status: DocumentStatus } ) => {
+export async function createComponentsBeforeSave( {
+	container,
+	status,
+}: {
+	container: Container;
+	status: DocumentSaveStatus;
+} ) {
 	const unpublishedComponents = selectUnpublishedComponents( getState() );
 
 	if ( ! unpublishedComponents.length ) {
@@ -39,11 +37,11 @@ export const beforeSave = async ( { container, status }: { container: Container;
 	} catch ( error ) {
 		throw new Error( `Failed to publish components and update component instances: ${ error }` );
 	}
-};
+}
 
 async function createComponents(
 	components: UnpublishedComponent[],
-	status: DocumentStatus
+	status: DocumentSaveStatus
 ): Promise< Map< number, number > > {
 	const response = await apiClient.create( {
 		status,
