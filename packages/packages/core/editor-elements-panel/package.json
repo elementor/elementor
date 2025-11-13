@@ -39,7 +39,7 @@
     "dev": "tsup --config=../../tsup.dev.ts"
   },
   "dependencies": {
-    "@elementor/ui": "1.36.12",
+    "@elementor/ui": "1.36.17",
     "@elementor/editor": "3.33.0",
     "@elementor/editor-v1-adapters": "3.33.0",
     "@elementor/utils": "3.33.0"
