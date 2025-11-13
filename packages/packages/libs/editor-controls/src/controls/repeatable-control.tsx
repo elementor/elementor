@@ -97,7 +97,6 @@ export const RepeatableControl = createControl(
 										<RemoveItemAction />
 									</>
 								}
-								disableOpen={ !! childControlConfig?.props?.readOnly }
 							/>
 						</ItemsContainer>
 						<EditItemPopover>
