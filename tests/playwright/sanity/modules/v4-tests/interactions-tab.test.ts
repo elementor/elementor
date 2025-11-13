@@ -96,7 +96,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await selectOption( page.getByText( '300 MS', { exact: true } ), '100 MS' );
 
 			const effectTypeOption = page.getByRole( 'button', { name: 'Out' } );
-			const directionOption = page.getByRole( 'button', { name: 'Up' } );
+			const directionOption = page.getByRole( 'button', { name: 'From bottom' } );
 
 			await expect( effectTypeOption ).toBeVisible();
 			await effectTypeOption.click();
@@ -104,7 +104,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect( directionOption ).toBeVisible();
 			await directionOption.click();
 
-			await expect( interactionTag ).toContainText( 'Scroll Into View - Slide Out Top (100ms)' );
+			await expect( interactionTag ).toContainText( 'Scroll into view: Slide Out Top (100ms/0ms)' );
 
 			await page.locator( 'body' ).click();
 		} );

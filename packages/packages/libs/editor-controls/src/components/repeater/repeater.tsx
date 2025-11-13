@@ -35,6 +35,7 @@ type RepeaterItemContentProps< T > = {
 	anchorEl: AnchorEl;
 	bind: PropKey;
 	value: T;
+	index: number;
 };
 
 type RepeaterItemContent< T > = React.ComponentType< RepeaterItemContentProps< T > >;
@@ -76,7 +77,7 @@ type RepeaterProps< T > = {
 	disabled?: boolean;
 	itemSettings: {
 		initialValues: T;
-		Label: React.ComponentType< { value: T } >;
+		Label: React.ComponentType< { value: T; index: number } >;
 		Icon: React.ComponentType< { value: T } >;
 		Content: RepeaterItemContent< T >;
 	};
@@ -143,7 +144,7 @@ export const Repeater = < T, >( {
 		const atPosition = 1 + index;
 
 		setItems( [ ...items.slice( 0, atPosition ), newItem, ...items.slice( atPosition ) ], undefined, {
-			action: { type: 'duplicate', payload: [ { index: atPosition, item: newItem } ] },
+			action: { type: 'duplicate', payload: [ { index, item: newItem } ] },
 		} );
 		setUniqueKeys( [ ...uniqueKeys.slice( 0, atPosition ), newKey, ...uniqueKeys.slice( atPosition ) ] );
 	};
@@ -226,7 +227,7 @@ export const Repeater = < T, >( {
 									propDisabled={ value?.disabled }
 									label={
 										<RepeaterItemLabelSlot value={ value }>
-											<itemSettings.Label value={ value } />
+											<itemSettings.Label value={ value } index={ index } />
 										</RepeaterItemLabelSlot>
 									}
 									startIcon={
@@ -243,7 +244,12 @@ export const Repeater = < T, >( {
 									showToggle={ showToggle }
 								>
 									{ ( props ) => (
-										<itemSettings.Content { ...props } value={ value } bind={ String( index ) } />
+										<itemSettings.Content
+											{ ...props }
+											value={ value }
+											bind={ String( index ) }
+											index={ index }
+										/>
 									) }
 								</RepeaterItem>
 							</SortableItem>

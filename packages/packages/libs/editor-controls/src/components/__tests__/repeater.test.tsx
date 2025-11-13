@@ -203,7 +203,7 @@ describe( 'Repeater', () => {
 				},
 			],
 			undefined,
-			{ action: { type: 'duplicate', payload: [ { index: 1, item: values[ 0 ] } ] } }
+			{ action: { type: 'duplicate', payload: [ { index: 0, item: values[ 0 ] } ] } }
 		);
 	} );
 

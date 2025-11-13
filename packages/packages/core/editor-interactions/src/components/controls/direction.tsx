@@ -7,10 +7,10 @@ import { type FieldProps } from '../../types';
 
 export function Direction( { value, onChange }: FieldProps ) {
 	const availableDirections = [
-		{ key: 'top', label: __( 'Up', 'elementor' ), icon: <ArrowUpSmallIcon fontSize="tiny" /> },
-		{ key: 'bottom', label: __( 'Down', 'elementor' ), icon: <ArrowDownSmallIcon fontSize="tiny" /> },
-		{ key: 'left', label: __( 'Left', 'elementor' ), icon: <ArrowLeftIcon fontSize="tiny" /> },
-		{ key: 'right', label: __( 'Right', 'elementor' ), icon: <ArrowRightIcon fontSize="tiny" /> },
+		{ key: 'top', label: __( 'From bottom', 'elementor' ), icon: <ArrowUpSmallIcon fontSize="tiny" /> },
+		{ key: 'bottom', label: __( 'From top', 'elementor' ), icon: <ArrowDownSmallIcon fontSize="tiny" /> },
+		{ key: 'left', label: __( 'From right', 'elementor' ), icon: <ArrowLeftIcon fontSize="tiny" /> },
+		{ key: 'right', label: __( 'From left', 'elementor' ), icon: <ArrowRightIcon fontSize="tiny" /> },
 	];
 
 	return (
@@ -20,7 +20,7 @@ export function Direction( { value, onChange }: FieldProps ) {
 					{ __( 'Direction', 'elementor' ) }
 				</Typography>
 			</Grid>
-			<Grid item xs={ 12 } md={ 6 }>
+			<Grid item xs={ 12 } md={ 6 } sx={ { display: 'flex', justifyContent: 'flex-end', overflow: 'hidden' } }>
 				<ToggleButtonGroup
 					size="tiny"
 					exclusive
