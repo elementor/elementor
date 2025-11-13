@@ -143,7 +143,11 @@ function createComponentView(
 		handleDblClick( e: MouseEvent ) {
 			e.stopPropagation();
 
-			this.switchDocument();
+			this.editComponent( {
+				trigger: this.eventsManagerConfig.triggers.doubleClick,
+				location: this.eventsManagerConfig.locations.canvas,
+				secondaryLocation: this.eventsManagerConfig.secondaryLocations.canvasElement,
+			} );
 		}
 
 		events() {

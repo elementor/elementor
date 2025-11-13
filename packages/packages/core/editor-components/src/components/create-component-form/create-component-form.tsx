@@ -122,6 +122,7 @@ export function CreateComponentForm() {
 
 	const cancelSave = () => {
 		resetAndClosePopup();
+
 		trackComponentEvent( {
 			action: 'createCancelled',
 			...eventData.current,
