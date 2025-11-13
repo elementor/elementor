@@ -216,11 +216,19 @@ const shouldShowPlaceholder = ( pattern: string, data: Record< string, unknown >
 	return false;
 };
 
+const getTextColor = ( isReadOnly: boolean, showPlaceholder: boolean ): string => {
+	if ( isReadOnly ) {
+		return 'text.disabled';
+	}
+	return showPlaceholder ? 'text.tertiary' : 'text.primary';
+};
+
 const ItemLabel = ( { value }: { value: Record< string, unknown > } ) => {
-	const { placeholder, patternLabel } = useRepeatableControlContext();
+	const { placeholder, patternLabel, props: childProps } = useRepeatableControlContext();
 	const showPlaceholder = shouldShowPlaceholder( patternLabel, value );
 	const label = showPlaceholder ? placeholder : interpolate( patternLabel, value );
-	const color = showPlaceholder ? 'text.tertiary' : 'text.primary';
+	const isReadOnly = !! childProps?.readOnly;
+	const color = getTextColor( isReadOnly, showPlaceholder );
 
 	return (
 		<Box component="span" color={ color }>

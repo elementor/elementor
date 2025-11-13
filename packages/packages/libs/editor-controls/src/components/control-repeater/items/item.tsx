@@ -2,6 +2,7 @@ import * as React from 'react';
 import { bindTrigger } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { RepeatableControlContext } from '../../../hooks/use-repeatable-control-context';
 import { RepeaterTag } from '../../repeater/repeater-tag';
 import { useRepeaterContext } from '../context/repeater-context';
 import { RepeaterItemActionsSlot, RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../locations';
@@ -9,9 +10,14 @@ import { type ItemProps, type RepeatablePropValue } from '../types';
 
 export const Item = < T extends RepeatablePropValue >( { Label, Icon, actions }: ItemProps< T > ) => {
 	const { popoverState, setRowRef, openItemIndex, setOpenItemIndex, index = -1, value } = useRepeaterContext();
+	const repeatableContext = React.useContext( RepeatableControlContext );
+	const disableOpen = !! repeatableContext?.props?.readOnly;
 	const triggerProps = bindTrigger( popoverState );
 
 	const onClick = ( ev: React.MouseEvent ) => {
+		if ( disableOpen ) {
+			return;
+		}
 		triggerProps.onClick( ev );
 		setOpenItemIndex( index );
 	};
