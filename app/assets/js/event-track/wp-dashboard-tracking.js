@@ -9,6 +9,7 @@ const SESSION_TIMEOUT_MINUTES = 30;
 const MINUTE_MS = 60 * 1000;
 const SESSION_TIMEOUT = SESSION_TIMEOUT_MINUTES * MINUTE_MS;
 const ACTIVITY_CHECK_INTERVAL = 1 * MINUTE_MS;
+const SESSION_STORAGE_KEY = 'elementor_wpdash_session';
 
 export const CONTROL_TYPES = {
 	BUTTON: 'button',
@@ -30,7 +31,6 @@ export const SCREEN_TYPES = {
 	TAB: 'tab',
 	POPUP: 'popup',
 	APP_SCREEN: 'app_screen',
-	TOP_LEVEL_PAGE: 'top_level_page',
 };
 
 export default class WpDashboardTracking {
@@ -42,16 +42,16 @@ export default class WpDashboardTracking {
 	static config = null;
 	static canSendEvents = false;
 	static initialized = false;
+	static navigationListeners = [];
+	static isNavigatingToElementor = false;
 
 	static init() {
 		if ( this.initialized ) {
 			return;
 		}
 
-		this.sessionStartTime = Date.now();
-		this.lastActivityTime = Date.now();
-		this.sessionEnded = false;
-		this.navItemsVisited = new Set();
+		this.restoreOrCreateSession();
+
 		this.config = elementorCommon?.config || {};
 		const editorEvents = this.config.editor_events || {};
 		this.canSendEvents = editorEvents.can_send_events || false;
@@ -59,7 +59,53 @@ export default class WpDashboardTracking {
 		if ( this.isEventsManagerAvailable() ) {
 			this.startSessionMonitoring();
 			this.attachActivityListeners();
+			this.attachNavigationListener();
 			this.initialized = true;
+		}
+	}
+
+	static restoreOrCreateSession() {
+		const storedSession = this.getStoredSession();
+
+		if ( storedSession ) {
+			this.sessionStartTime = storedSession.sessionStartTime;
+			this.navItemsVisited = new Set( storedSession.navItemsVisited );
+			this.lastActivityTime = Date.now();
+			this.sessionEnded = false;
+		} else {
+			this.sessionStartTime = Date.now();
+			this.lastActivityTime = Date.now();
+			this.sessionEnded = false;
+			this.navItemsVisited = new Set();
+		}
+
+		this.saveSessionToStorage();
+	}
+
+	static getStoredSession() {
+		try {
+			const stored = sessionStorage.getItem( SESSION_STORAGE_KEY );
+			return stored ? JSON.parse( stored ) : null;
+		} catch ( error ) {
+			return null;
+		}
+	}
+
+	static saveSessionToStorage() {
+		try {
+			const sessionData = {
+				sessionStartTime: this.sessionStartTime,
+				navItemsVisited: Array.from( this.navItemsVisited ),
+			};
+			sessionStorage.setItem( SESSION_STORAGE_KEY, JSON.stringify( sessionData ) );
+		} catch ( error ) {
+		}
+	}
+
+	static clearStoredSession() {
+		try {
+			sessionStorage.removeItem( SESSION_STORAGE_KEY );
+		} catch ( error ) {
 		}
 	}
 
@@ -91,7 +137,9 @@ export default class WpDashboardTracking {
 		}, ACTIVITY_CHECK_INTERVAL );
 
 		window.addEventListener( 'beforeunload', () => {
-			this.trackSessionEnd( 'page_unload' );
+			if ( ! this.isNavigatingToElementor ) {
+				this.trackSessionEnd( 'tab_closed' );
+			}
 		} );
 
 		document.addEventListener( 'visibilitychange', () => {
@@ -102,6 +150,67 @@ export default class WpDashboardTracking {
 				}
 			}
 		} );
+	}
+
+	static isElementorPage( url ) {
+		try {
+			const urlObj = new URL( url, window.location.origin );
+			const params = urlObj.searchParams;
+
+			return ( params.has( 'page' ) && params.get( 'page' ).includes( 'elementor' ) ) ||
+				( params.has( 'post_type' ) && 'elementor_library' === params.get( 'post_type' ) ) ||
+				( params.has( 'action' ) && params.get( 'action' ).includes( 'elementor' ) );
+		} catch ( error ) {
+			return false;
+		}
+	}
+
+	static isNavigatingAwayFromElementor( targetUrl ) {
+		if ( ! targetUrl ) {
+			return false;
+		}
+
+		if ( targetUrl.startsWith( '#' ) ) {
+			return false;
+		}
+
+		if ( targetUrl.startsWith( 'javascript:' ) ) {
+			return false;
+		}
+
+		return ! this.isElementorPage( targetUrl );
+	}
+
+	static attachNavigationListener() {
+		const handleLinkClick = ( event ) => {
+			const link = event.target.closest( 'a' );
+			if ( link && link.href ) {
+				if ( this.isNavigatingAwayFromElementor( link.href ) ) {
+					this.trackSessionEnd( 'navigate_away' );
+				} else if ( this.isElementorPage( link.href ) ) {
+					this.isNavigatingToElementor = true;
+				}
+			}
+		};
+
+		const handleFormSubmit = ( event ) => {
+			const form = event.target;
+			if ( form.action ) {
+				if ( this.isNavigatingAwayFromElementor( form.action ) ) {
+					this.trackSessionEnd( 'navigate_away' );
+				} else if ( this.isElementorPage( form.action ) ) {
+					this.isNavigatingToElementor = true;
+				}
+			}
+		};
+
+		document.addEventListener( 'click', handleLinkClick, true );
+		document.addEventListener( 'submit', handleFormSubmit, true );
+
+		this.navigationListeners.push(
+			{ type: 'click', handler: handleLinkClick },
+			{ type: 'submit', handler: handleFormSubmit },
+		);
 	}
 
 	static checkSessionTimeout() {
@@ -124,13 +233,14 @@ export default class WpDashboardTracking {
 
 	static formatDuration( milliseconds ) {
 		const totalSeconds = Math.floor( milliseconds / 1000 );
-		return Number( ( totalSeconds / 60 ).toFixed( 2 ) );
+		return Number( ( totalSeconds ).toFixed( 2 ) );
 	}
 
 	static trackNavClicked( itemId, rootItem = null, area = NAV_AREAS.LEFT_MENU ) {
 		this.updateActivity();
 
 		this.navItemsVisited.add( itemId );
+		this.saveSessionToStorage();
 
 		const properties = {
 			wpdash_nav_item_id: itemId,
@@ -155,11 +265,11 @@ export default class WpDashboardTracking {
 		this.dispatchEvent( 'wpdash_screen_viewed', properties );
 	}
 
-	static trackActionControl( controlData, controlType ) {
+	static trackActionControl( controlIdentifier, controlType ) {
 		this.updateActivity();
 
 		const properties = {
-			wpdash_action_control_interacted: controlData,
+			wpdash_action_control_interacted: controlIdentifier,
 			wpdash_control_type: controlType,
 		};
 
@@ -195,12 +305,18 @@ export default class WpDashboardTracking {
 		};
 
 		this.dispatchEvent( 'wpdash_session_end_state', properties );
+		this.clearStoredSession();
 	}
 
 	static destroy() {
 		if ( this.activityCheckInterval ) {
 			clearInterval( this.activityCheckInterval );
 		}
+
+		this.navigationListeners.forEach( ( { type, handler } ) => {
+			document.removeEventListener( type, handler, true );
+		} );
+		this.navigationListeners = [];
 
 		NavigationTracking.destroy();
 		TopBarTracking.destroy();
