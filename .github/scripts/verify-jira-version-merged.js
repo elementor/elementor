@@ -77,10 +77,11 @@ const getJiraOAuthToken = () => {
 			});
 		}).on('error', reject);
 
-		req.write(JSON.stringify({
+		const requestBody = {
 			grant_type: 'client_credentials',
-			scope: 'read:jira-work read:me',
-		}));
+		};
+		
+		req.write(JSON.stringify(requestBody));
 		req.end();
 	});
 };
@@ -154,7 +155,13 @@ const getVersionTickets = async (accessToken) => {
 		console.error('   - Invalid OAuth credentials (JIRA_CLIENT_ID or JIRA_CLIENT_SECRET)');
 		console.error('   - Invalid JIRA_CLOUD_INSTANCE_BASE_URL');
 		console.error('   - Version name not found in Jira');
+		console.error('   - Missing permissions in OAuth app');
 		console.error('   - Network connectivity issues');
+		console.error('');
+		console.error('   📋 Debugging steps:');
+		console.error('   1. Check your Jira OAuth app config at: https://developer.atlassian.com/console/myapps/');
+		console.error('   2. Verify the app has "Search Jira issues" permission');
+		console.error('   3. Try a manual Jira API call with your credentials');
 		
 		setGitHubOutput('total_tickets', '0');
 		setGitHubOutput('merged_tickets', '0');
