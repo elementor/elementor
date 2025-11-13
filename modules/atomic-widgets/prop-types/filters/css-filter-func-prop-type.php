@@ -42,7 +42,7 @@ class Css_Filter_Func_Prop_Type extends Object_Prop_Type {
 					'size' => 0,
 					'unit' => 'px',
 				] )
-				->required()
+				->required(),
 		];
 	}
 }

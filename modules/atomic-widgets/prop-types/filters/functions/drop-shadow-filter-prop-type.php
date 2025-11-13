@@ -31,8 +31,8 @@ class Drop_Shadow_Filter_Prop_Type extends Object_Prop_Type {
 
 		return [
 			'xAxis' => Size_Prop_Type::make()
-			    ->default( $axis_size )
-			    ->initial_value( $axis_size )
+				->default( $axis_size )
+				->initial_value( $axis_size )
 				->required()
 				->units( $units ),
 			'yAxis' => Size_Prop_Type::make()
