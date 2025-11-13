@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { createContext, type ReactNode, useContext } from 'react';
-import { updateElementInteractions, useElementInteractions } from '@elementor/editor-elements';
+import { playElementInteractions, updateElementInteractions, useElementInteractions } from '@elementor/editor-elements';
 
 type InteractionsContextValue = {
 	interactions: string;
 	setInteractions: ( value: string ) => void;
+	playInteractions: () => void;
 };
 
 const InteractionsContext = createContext< InteractionsContextValue | null >( null );
@@ -19,9 +20,14 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 		} );
 	};
 
+	const playInteractions = () => {
+		playElementInteractions( elementId );
+	};
+
 	const contextValue: InteractionsContextValue = {
 		interactions: interactions || '',
 		setInteractions,
+		playInteractions,
 	};
 
 	return <InteractionsContext.Provider value={ contextValue }>{ children }</InteractionsContext.Provider>;
