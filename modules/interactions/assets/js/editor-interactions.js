@@ -143,15 +143,7 @@
 			return;
 		}
 
-		let interactions = [];
-
-		if ( Array.isArray( parsedData ) ) {
-			interactions = parsedData;
-		} else if ( parsedData && 'object' === typeof parsedData && parsedData.items ) {
-			interactions = Object.values( parsedData.items );
-		} else {
-			return;
-		}
+		const interactions = Object.values( parsedData?.items );
 
 		interactions.forEach( ( interaction ) => {
 			const animationName =
