@@ -19,6 +19,6 @@ class Transform_Scale_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function get_prop_type(): Prop_Type {
-		return Number_Prop_Type::make()->default( 1 );
+		return Number_Prop_Type::make()->float()->default( 1 );
 	}
 }

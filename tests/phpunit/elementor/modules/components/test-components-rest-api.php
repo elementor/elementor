@@ -753,7 +753,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
-		
+
 		// Lock component with first user
 		$lock_manager = \Elementor\Modules\Components\Component_Lock_Manager::get_instance();
 		$lock_manager->lock( $component_id );
@@ -778,7 +778,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
-		
+
 		// Lock component with current user
 		$lock_manager = \Elementor\Modules\Components\Component_Lock_Manager::get_instance();
 		$lock_manager->lock( $component_id );
@@ -826,7 +826,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
-		
+
 		// Lock component first
 		$lock_manager = \Elementor\Modules\Components\Component_Lock_Manager::get_instance();
 		$lock_manager->lock( $component_id );
@@ -863,8 +863,51 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 'unlock_failed', $data['code'] );
 	}
 
+	public function test_update_statuses() {
+		$this->act_as_admin();
 
+		$draft_id = $this->create_test_component( 'Draft Component', [], 'draft' );
+		$draft_id_2 = $this->create_test_component( 'Draft 2 Component', [], 'draft' );
+		$publish_id = $this->create_test_component( 'Publish Component', [] );
 
+		$page_id = Plugin::$instance->documents->create(
+			'wp-page',
+			[ 'post_title' => 'Page', 'post_status' => 'draft' ]
+		)->get_main_id();
+
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components/status' );
+		$request->set_param( 'ids', [ $draft_id, $draft_id_2, $publish_id, $page_id ] );
+		$request->set_param( 'status', 'publish' );
+
+		$response = rest_do_request( $request );
+
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertEquals( [ $draft_id, $draft_id_2, $publish_id ], $response->get_data()['data']['success'] );
+		$this->assertEquals( [], $response->get_data()['data']['failed'] );
+
+		foreach ( [ $draft_id, $draft_id_2, $publish_id ] as $id ) {
+			$doc = Plugin::$instance->documents->get( $id );
+
+			$this->assertEquals( 'publish', $doc->get_post()->post_status );
+		}
+
+		$page = Plugin::$instance->documents->get( $page_id );
+
+		$this->assertEquals( 'draft', $page->get_post()->post_status );
+	}
+
+	public function test_update_statuses__only_admins_can_update_statuses() {
+		$this->act_as_editor();
+
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components/status' );
+		$request->set_param( 'status', 'publish' );
+		$request->set_param( 'ids', [] );
+
+		$response = rest_do_request( $request );
+
+		$this->assertEquals( 403, $response->get_status() );
+		$this->assertEquals( 'rest_forbidden', $response->get_data()['code'] );
+	}
 
 	// Helpers
 	private function create_test_component( string $name, array $content, string $status = 'publish' ): int {

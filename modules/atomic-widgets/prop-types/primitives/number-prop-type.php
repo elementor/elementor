@@ -9,8 +9,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Number_Prop_Type extends Plain_Prop_Type {
+	private bool $is_float = false;
+
 	public static function get_key(): string {
 		return 'number';
+	}
+
+	public function float(): self {
+		$this->is_float = true;
+
+		return $this;
 	}
 
 	protected function validate_value( $value ): bool {
@@ -18,6 +26,6 @@ class Number_Prop_Type extends Plain_Prop_Type {
 	}
 
 	protected function sanitize_value( $value ) {
-		return (int) $value;
+		return $this->is_float ? (float) $value : (int) $value;
 	}
 }
