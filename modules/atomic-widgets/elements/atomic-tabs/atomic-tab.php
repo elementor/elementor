@@ -166,7 +166,6 @@ class Atomic_Tab extends Atomic_Element_Base {
 
 		$index = $get_tab_index( $this->get_id() );
 		$is_active = $default_active_tab === $index;
-		$tab_id = Atomic_Tabs::get_tab_id( $tabs_id, $index );
 
 		$attributes = [
 			'class' => [
@@ -179,8 +178,7 @@ class Atomic_Tab extends Atomic_Element_Base {
 			'tabindex' => $is_active ? '0' : '-1',
 			'aria-selected' => $is_active ? 'true' : 'false',
 			'x-bind' => 'tab',
-			'x-ref' => $tab_id,
-			'id' => $tab_id,
+			'id' => Atomic_Tabs::get_tab_id( $tabs_id, $index ),
 			'aria-controls' => Atomic_Tabs::get_tab_content_id( $tabs_id, $index ),
 		];
 
