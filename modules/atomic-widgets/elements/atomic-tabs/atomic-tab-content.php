@@ -153,6 +153,7 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 			],
 			'data-interactions' => json_encode( $this->interactions ),
 			'x-bind' => 'tabContent',
+			'x-ref' => $this->get_id(),
 			'id' => Atomic_Tabs::get_tab_content_id( $tabs_id, $index ),
 			'aria-labelledby' => Atomic_Tabs::get_tab_id( $tabs_id, $index ),
 		];
