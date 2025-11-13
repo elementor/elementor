@@ -22,6 +22,11 @@ console.log(`   JIRA_CLIENT_SECRET: ${JIRA_CLIENT_SECRET ? '✅ SET' : '❌ NOT 
 console.log(`   JIRA_CLOUD_INSTANCE_BASE_URL: ${JIRA_CLOUD_INSTANCE_BASE_URL || '❌ NOT SET'}`);
 console.log('');
 
+const setGitHubOutput = (key, value) => {
+	const output = `${key}=${value}\n`;
+	fs.appendFileSync(process.env.GITHUB_OUTPUT, output);
+};
+
 const REQUIRED_VARS = ['JIRA_VERSION', 'TARGET_BRANCH', 'BASE_BRANCH', 'JIRA_CLIENT_ID', 'JIRA_CLIENT_SECRET', 'JIRA_CLOUD_INSTANCE_BASE_URL'];
 const missingVars = REQUIRED_VARS.filter(v => !process.env[v]);
 
@@ -35,11 +40,6 @@ if (missingVars.length > 0) {
 	
 	process.exit(1);
 }
-
-const setGitHubOutput = (key, value) => {
-	const output = `${key}=${value}\n`;
-	fs.appendFileSync(process.env.GITHUB_OUTPUT, output);
-};
 
 const getJiraOAuthToken = () => {
 	return new Promise((resolve, reject) => {
@@ -79,7 +79,7 @@ const getJiraOAuthToken = () => {
 
 		req.write(JSON.stringify({
 			grant_type: 'client_credentials',
-			scope: 'read:jira-work',
+			scope: 'read:jira-work read:me',
 		}));
 		req.end();
 	});
