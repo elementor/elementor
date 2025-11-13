@@ -3,10 +3,10 @@
 		<p class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" {{ id_attribute }} {{ settings.attributes | raw }}>
 				{% if settings.link.href %}
 						<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
-								{{ settings.paragraph }}
+								{{ settings.paragraph | striptags(allowed_tags) | raw }}
 						</a>
 				{% else %}
-						{{ settings.paragraph }}
+						{{ settings.paragraph | striptags('<b><strong><em><u><ul><ol><li><blockquote><a><del><span><br>') | raw }}
 				{% endif %}
 		</p>
 {% endif %}
