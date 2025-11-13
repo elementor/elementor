@@ -71,17 +71,17 @@ register( {
 
 					return getTabId( index );
 				},
-				':class'() {
-					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
-					const tabId = getTabId( index );
-
-					return this.activeTab === tabId ? SELECTED_CLASS : '';
-				},
 				'x-show'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
 					const tabId = getTabId( index );
 
-					return this.activeTab === tabId;
+					const isActive = this.activeTab === tabId;
+
+					this.$nextTick( () => {
+						this.$el.classList.toggle( SELECTED_CLASS, isActive );
+					} );
+
+					return isActive;
 				},
 				':id'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
