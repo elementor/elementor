@@ -22,6 +22,10 @@ class Component_Overridable_Prop_Type extends Plain_Prop_Type {
 			return false;
 		}
 
+		if (!isset( $value['default']['$$type'] ) || $value['default']['$$type'] !== $this->get_default_type()) {
+			return false;
+		}
+
 		return Props_Parser::make( Has_Atomic_Base::get_props_schema() )
 			->validate( $value['default'] )
 			->is_valid();
@@ -37,5 +41,15 @@ class Component_Overridable_Prop_Type extends Plain_Prop_Type {
 			'override-key' => $sanitized_override_key,
 			'default' => $sanitized_default,
 		];
+	}
+
+	public function set_default_type( $default_type ) {
+		$this->settings['default_type'] = $default_type;
+
+		return $this;
+	}
+
+	public function get_default_type() {
+		return $this->settings['default_type'] ?? null;
 	}
 }

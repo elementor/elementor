@@ -7,10 +7,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\Components\Styles\Component_Styles;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Component_Lock_Manager;
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
+use Elementor\Modules\Components\PropTypes\Component_Overridable_Schema_Modifier;
 use Elementor\Modules\Components\PropTypes\Component_Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -63,51 +60,7 @@ class Module extends BaseModule {
 	}
 
 	private function modify_props_schema( array $schema ) {
-		$result = [];
-
-		foreach ( $schema as $key => $prop_type ) {
-			if ( ! ( $prop_type instanceof Prop_Type ) ) {
-				$result[ $key ] = $prop_type;
-
-				continue;
-			}
-
-			$result[ $key ] = $this->get_modified_prop_type( $prop_type );
-		}
-
-		return $result;
-	}
-	
-	private function get_modified_prop_type( Prop_Type $prop_type ) {
-		$transformable_prop_types = $prop_type instanceof Union_Prop_Type ?
-			$prop_type->get_prop_types() :
-			[ $prop_type ];
-
-		foreach ( $transformable_prop_types as $transformable_prop_type ) {
-			if ( $transformable_prop_type instanceof Object_Prop_Type ) {
-				$transformable_prop_type->set_shape(
-					$this->get_modified_prop_types( $transformable_prop_type->get_shape() )
-				);
-			}
-
-			if ( $transformable_prop_type instanceof Array_Prop_Type ) {
-				$transformable_prop_type->set_item_type(
-					$this->get_modified_prop_type( $transformable_prop_type->get_item_type() )
-				);
-			}
-		}
-
-
-		$overridable_prop_type = Component_Overridable_Prop_Type::make();
-		$union_prop_type = $prop_type;
-
-		if ( $prop_type instanceof Transformable_Prop_Type ) {
-			$union_prop_type = Union_Prop_Type::create_from( $prop_type );
-		}
-
-		$union_prop_type->add_prop_type( $overridable_prop_type );
-
-		return $union_prop_type;
+		return ( new Component_Overridable_Schema_Modifier() )->get_extended_prop_types( $schema );
 	}
 
 	private function register_component_post_type() {
@@ -128,5 +81,6 @@ class Module extends BaseModule {
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
 		$transformers->register( Component_Id_Prop_Type::get_key(), new Component_Id_Transformer() );
+		$transformers->register( Component_Overridable_Prop_Type::get_key(), new Component_Overridable_Transformer() );
 	}
 }
