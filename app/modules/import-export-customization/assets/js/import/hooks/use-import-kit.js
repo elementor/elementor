@@ -76,7 +76,10 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 		}
 
 		setImportStatus( IMPORT_PROCESSING_STATUS.DONE );
-		dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.COMPLETED } );
+
+		if ( ! stopIterations ) {
+			dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.COMPLETED } );
+		}
 	};
 
 	async function importKit() {
