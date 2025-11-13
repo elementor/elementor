@@ -97,20 +97,35 @@ const getVersionTickets = async () => {
 		console.log(`🔍 Fetching tickets for version: ${JIRA_VERSION}`);
 		
 		const sanitizedVersion = JIRA_VERSION.replace(/^v/, '');
-		const jql = encodeURIComponent(`project = ED AND fixVersion = "${sanitizedVersion}"`);
-		const path = `/rest/api/3/search/jql?jql=${jql}&maxResults=500&fields=key`;
+		
+		let jql = encodeURIComponent(`project = ED AND fixVersion = "${sanitizedVersion}"`);
+		let path = `/rest/api/3/search/jql?jql=${jql}&maxResults=500&fields=key`;
 
 		console.log(`   JQL Query: project = ED AND fixVersion = "${sanitizedVersion}"`);
 		console.log(`   Request path: ${path}`);
 
-		const response = await makeJiraRequest(path);
+		let response = await makeJiraRequest(path);
 		
 		if (!response.issues) {
 			console.error('❌ Unexpected Jira response format:', JSON.stringify(response, null, 2));
 			throw new Error('Jira response missing "issues" field');
 		}
 
-		const tickets = response.issues.map(issue => issue.key);
+		let tickets = response.issues.map(issue => issue.key);
+
+		if (tickets.length === 0 && sanitizedVersion.includes('.')) {
+			console.log(`   No tickets found with "${sanitizedVersion}", trying without patch version...`);
+			const majorMinor = sanitizedVersion.split('.').slice(0, 2).join('.');
+			jql = encodeURIComponent(`project = ED AND fixVersion = "${majorMinor}"`);
+			path = `/rest/api/3/search/jql?jql=${jql}&maxResults=500&fields=key`;
+			
+			console.log(`   Retrying with: project = ED AND fixVersion = "${majorMinor}"`);
+			response = await makeJiraRequest(path);
+			
+			if (response.issues) {
+				tickets = response.issues.map(issue => issue.key);
+			}
+		}
 
 		console.log(`✅ Found ${tickets.length} tickets in version ${JIRA_VERSION}`);
 		if (tickets.length > 0) {
@@ -145,6 +160,12 @@ const getBranchCommits = () => {
 	try {
 		console.log(`\n🔍 Fetching commits from ${TARGET_BRANCH}...`);
 
+		try {
+			execSync('git fetch origin --all', { encoding: 'utf-8', stdio: 'pipe' });
+		} catch (e) {
+			console.warn('   ⚠️  Could not fetch all branches');
+		}
+
 		const commits = execSync(
 			`git log ${BASE_BRANCH}..origin/${TARGET_BRANCH} --pretty=format:%B`,
 			{ encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }
@@ -152,7 +173,8 @@ const getBranchCommits = () => {
 
 		return commits;
 	} catch (error) {
-		console.warn(`⚠️  Could not fetch commits (this might be expected): ${error.message}`);
+		console.warn(`⚠️  Could not fetch commits: ${error.message}`);
+		console.warn('   Try checking if the branch exists locally with: git branch -a');
 		return '';
 	}
 };
