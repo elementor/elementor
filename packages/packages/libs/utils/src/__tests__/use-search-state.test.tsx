@@ -115,6 +115,8 @@ describe( 'useSearchState', () => {
 
 	it( 'should throw error when localStorage.getItem fails', () => {
 		// Arrange
+		const mockConsoleError = jest.fn();
+		window.console.error = mockConsoleError;
 		mockLocalStorage.getItem.mockImplementation( () => {
 			throw new Error( 'localStorage error' );
 		} );
@@ -125,7 +127,7 @@ describe( 'useSearchState', () => {
 		} ).toThrow( 'localStorage error' );
 
 		// Suppress console.error from React.
-		expect( console ).toHaveErrored();
+		expect( mockConsoleError ).toHaveBeenCalled();
 	} );
 
 	it( 'should handle empty string stored value correctly', () => {
