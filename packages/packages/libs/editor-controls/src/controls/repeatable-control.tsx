@@ -228,7 +228,6 @@ const ItemLabel = ( { value }: { value: Record< string, unknown > } ) => {
 	const showPlaceholder = shouldShowPlaceholder( patternLabel, value );
 	const label = showPlaceholder ? placeholder : interpolate( patternLabel, value );
 	const isReadOnly = !! childProps?.readOnly;
-
 	const color = getTextColor( isReadOnly, showPlaceholder );
 
 	return (
