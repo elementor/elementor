@@ -12,7 +12,7 @@ const BASE_URL_LOCK_STATUS = `${ BASE_URL }/lock-status`;
 export type CreateComponentPayload = {
 	status: DocumentStatus;
 	items: Array< {
-		uuid: string;
+		uid: string;
 		title: string;
 		elements: V1ElementData[];
 	} >;

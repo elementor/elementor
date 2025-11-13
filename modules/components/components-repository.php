@@ -37,7 +37,7 @@ class Components_Repository {
 			$components[] = [
 				'id' => $doc->get_main_id(),
 				'name' => $doc->get_post()->post_title,
-				'uuid' => $doc->get_component_uuid(),
+				'uid' => $doc->get_component_uid(),
 				'styles' => $this->extract_styles( $doc->get_elements_data() ),
 			];
 		}
@@ -45,7 +45,7 @@ class Components_Repository {
 		return Collection::make( $components );
 	}
 
-	public function create( string $name, array $content, string $status, string $uuid ) {
+	public function create( string $name, array $content, string $status, string $uid ) {
 		$document = Plugin::$instance->documents->create(
 			Component_Document::get_type(),
 			[
@@ -53,7 +53,7 @@ class Components_Repository {
 				'post_status' => $status,
 			],
 			[
-				Component_Document::COMPONENT_UUID_META_KEY => $uuid,
+				Component_Document::COMPONENT_UID_META_KEY => $uid,
 			]
 		);
 

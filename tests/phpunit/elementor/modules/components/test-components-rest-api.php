@@ -172,12 +172,12 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'uuid' => '100',
+							'uid' => '100',
 							'title' => 'New Test Component 1',
 							'elements' => Component_Mocks::get_component_1_data(),
 						],
 						[
-							'uuid' => '200',
+							'uid' => '200',
 							'title' => 'New Test Component 2',
 							'elements' => Component_Mocks::get_component_2_data(),
 						],
@@ -201,7 +201,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'draft',
 					'items' => [
 						[
-							'uuid' => '100',
+							'uid' => '100',
 							'title' => 'New Test Component 1',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
@@ -220,7 +220,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'autosave',
 					'items' => [
 						[
-							'uuid' => '100',
+							'uid' => '100',
 							'title' => 'New Test Component 1',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
@@ -239,7 +239,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'uuid' => '100',
+							'uid' => '100',
 							'title' => '  <script>alert(1)</script>Sanitized Component ',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
@@ -297,7 +297,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 			'status' => 'publish',
 			'items' => [
 				[
-					'uuid' => '100',
+					'uid' => '100',
 					'title' => 'Test Component',
 					'elements' => $this->mock_component_1_content,
 				]
@@ -318,7 +318,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'uuid' => '100',
+							'uid' => '100',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
 					],
@@ -334,7 +334,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'uuid' => '1',
+							'uid' => '1',
 							'title' => 'A',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
@@ -351,7 +351,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'uuid' => '1',
+							'uid' => '1',
 							'title' => str_repeat( 'A', 201 ),
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
@@ -368,7 +368,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'uuid' => '1',
+							'uid' => '1',
 							'title' => [ 'not', 'a', 'string' ],
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
@@ -385,7 +385,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'uuid' => '1',
+							'uid' => '1',
 							'title' => 'Test Component',
 						]
 					],
@@ -401,7 +401,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'uuid' => '1',
+							'uid' => '1',
 							'title' => 'Test Component',
 							'elements' => 'not-an-array',
 						]
@@ -418,7 +418,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'uuid' => '1',
+							'uid' => '1',
 							'title' => 'Test Component',
 							'elements' => Component_Mocks::get_invalid_component_data(),
 						]
@@ -429,7 +429,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'code' => 'unexpected_error',
 				],
 			],
-			'UUID is missing' => [
+			'UID is missing' => [
 				'input' => [
 					'status' => 'publish',
 					'items' => [
@@ -442,15 +442,15 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 				'expected' => [
 					'status_code' => 400,
 					'code' => 'rest_invalid_param',
-					'errors' => [ 'items' => "uuid is a required property of items[0]." ],
+					'errors' => [ 'items' => "uid is a required property of items[0]." ],
 				],
 			],
-			'UUID not a string' => [
+			'UID not a string' => [
 				'input' => [
 					'status' => 'publish',
 					'items' => [
 						[
-							'uuid' => 456,
+							'uid' => 456,
 							'title' => 'Test Component',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
@@ -459,14 +459,14 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 				'expected' => [
 					'status_code' => 400,
 					'code' => 'rest_invalid_param',
-					'errors' => [ 'items' => "items[0][uuid] is not of type string." ],
+					'errors' => [ 'items' => "items[0][uid] is not of type string." ],
 				],
 			],
 			'Status is missing' => [
 				'input' => [
 					'items' => [
 						[
-							'uuid' => '1',
+							'uid' => '1',
 							'title' => 'Test Component',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
@@ -483,7 +483,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'invalid-status',
 					'items' => [
 						[
-							'uuid' => '1',
+							'uid' => '1',
 							'title' => 'Test Component',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
@@ -531,7 +531,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 			'status' => 'publish',
 			'items' => [
 				[
-					'uuid' => '1',
+					'uid' => '1',
 					'title' => 'Test Component',
 					'elements' => $this->mock_component_1_content,
 				]

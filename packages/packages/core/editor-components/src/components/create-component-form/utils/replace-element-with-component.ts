@@ -3,8 +3,9 @@ import { replaceElement, type V1Element } from '@elementor/editor-elements';
 type ComponentInstanceParams = {
 	id?: number;
 	name: string;
-	uuid: string;
+	uid: string;
 };
+
 export const replaceElementWithComponent = ( element: V1Element, component: ComponentInstanceParams ) => {
 	replaceElement( {
 		currentElement: element,
@@ -20,12 +21,12 @@ export const createComponentModel = ( component: ComponentInstanceParams ) => {
 		settings: {
 			component: {
 				$$type: 'component-id',
-				value: component.id ?? component.uuid,
+				value: component.id ?? component.uid,
 			},
 		},
 		editor_settings: {
 			title: component.name,
-			component_uuid: component.uuid,
+			component_uid: component.uid,
 		},
 	};
 };

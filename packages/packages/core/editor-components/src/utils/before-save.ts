@@ -22,17 +22,17 @@ export const beforeSave = async ( { container, status }: { container: Container;
 	}
 
 	try {
-		const UUIDToComponentId = await createComponents( unpublishedComponents, status );
+		const uidToComponentId = await createComponents( unpublishedComponents, status );
 
 		const elements = container.model.get( 'elements' ).toJSON();
-		updateComponentInstances( elements, UUIDToComponentId );
+		updateComponentInstances( elements, uidToComponentId );
 
 		dispatch(
 			slice.actions.add(
 				unpublishedComponents.map( ( component ) => ( {
-					id: UUIDToComponentId.get( component.uuid ) as number,
+					id: uidToComponentId.get( component.uid ) as number,
 					name: component.name,
-					uuid: component.uuid,
+					uid: component.uid,
 				} ) )
 			)
 		);
@@ -49,7 +49,7 @@ async function createComponents(
 	const response = await apiClient.create( {
 		status,
 		items: components.map( ( component ) => ( {
-			uuid: component.uuid,
+			uid: component.uid,
 			title: component.name,
 			elements: component.elements,
 		} ) ),
@@ -64,28 +64,28 @@ async function createComponents(
 	return map;
 }
 
-function updateComponentInstances( elements: V1ElementData[], UUIDToComponentId: Map< string, number > ): void {
+function updateComponentInstances( elements: V1ElementData[], uidToComponentId: Map< string, number > ): void {
 	elements.forEach( ( element ) => {
-		const { shouldUpdate, newComponentId } = shouldUpdateElement( element, UUIDToComponentId );
+		const { shouldUpdate, newComponentId } = shouldUpdateElement( element, uidToComponentId );
 		if ( shouldUpdate ) {
 			updateElementComponentId( element.id, newComponentId );
 		}
 
 		if ( element.elements ) {
-			updateComponentInstances( element.elements, UUIDToComponentId );
+			updateComponentInstances( element.elements, uidToComponentId );
 		}
 	} );
 }
 
 function shouldUpdateElement(
 	element: V1ElementData,
-	UUIDToComponentId: Map< string, number >
+	uidToComponentId: Map< string, number >
 ): { shouldUpdate: true; newComponentId: number } | { shouldUpdate: false; newComponentId: null } {
 	if ( element.widgetType === 'e-component' ) {
 		const currentComponentId = ( element.settings?.component as TransformablePropValue< 'component-id', string > )
 			?.value;
-		if ( currentComponentId && UUIDToComponentId.has( currentComponentId ) ) {
-			return { shouldUpdate: true, newComponentId: UUIDToComponentId.get( currentComponentId ) as number };
+		if ( currentComponentId && uidToComponentId.has( currentComponentId ) ) {
+			return { shouldUpdate: true, newComponentId: uidToComponentId.get( currentComponentId ) as number };
 		}
 	}
 	return { shouldUpdate: false, newComponentId: null };

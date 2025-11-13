@@ -11,12 +11,21 @@ type ComponentIdTransformerWindow = Window & {
 	};
 };
 
-export const componentIdTransformer = createTransformer( async ( id: number | string ) => {
+type PublishedComponentId = number;
+type UnpublishedComponentId = string;
+
+type ComponentId = PublishedComponentId | UnpublishedComponentId;
+
+export const componentIdTransformer = createTransformer( async ( id: ComponentId ) => {
 	const unpublishedComponents = selectUnpublishedComponents( getState() );
 
-	const unpublishedComponent = unpublishedComponents.find( ( component ) => component.uuid === id );
+	const unpublishedComponent = unpublishedComponents.find( ( component ) => component.uid === id );
 	if ( unpublishedComponent ) {
 		return structuredClone( unpublishedComponent.elements );
+	}
+
+	if ( typeof id !== 'number' ) {
+		throw new Error( `Component ID "${ id }" not found.` );
 	}
 
 	const extendedWindow = window as unknown as ComponentIdTransformerWindow;
@@ -25,10 +34,6 @@ export const componentIdTransformer = createTransformer( async ( id: number | st
 
 	if ( ! documentManager ) {
 		throw new Error( 'Elementor documents manager not found' );
-	}
-
-	if ( typeof id === 'string' ) {
-		throw new Error( 'Component ID of a published component must be a number' );
 	}
 
 	const data = await documentManager.request( id );

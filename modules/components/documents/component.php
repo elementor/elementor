@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Component extends Document {
 	const TYPE = 'elementor_component';
-	const COMPONENT_UUID_META_KEY = 'elementor_component_uuid';
+	const COMPONENT_UID_META_KEY = 'elementor_component_uid';
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -55,7 +55,7 @@ class Component extends Document {
 		];
 	}
 
-	public function get_component_uuid() {
-		return $this->get_meta( self::COMPONENT_UUID_META_KEY );
+	public function get_component_uid() {
+		return $this->get_meta( self::COMPONENT_UID_META_KEY );
 	}
 }

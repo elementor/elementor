@@ -41,8 +41,8 @@ class Component extends Atomic_Widget_Base {
 	protected function parse_editor_settings( array $data ): array {
 		$editor_data = parent::parse_editor_settings( $data );
 
-		if ( isset( $data['component_uuid'] ) && is_string( $data['component_uuid'] ) ) {
-			$editor_data['component_uuid'] = sanitize_text_field( $data['component_uuid'] );
+		if ( isset( $data['component_uid'] ) && is_string( $data['component_uid'] ) ) {
+			$editor_data['component_uid'] = sanitize_text_field( $data['component_uid'] );
 		}
 
 		return $editor_data;

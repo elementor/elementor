@@ -9,20 +9,20 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { apiClient } from '../../api';
 import { selectComponents, slice } from '../../store/store';
 import { CreateComponentForm } from '../create-component-form/create-component-form';
+import { generateUniqueId } from '@elementor/utils';
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../api' );
 
 const mockGetElementLabel = jest.mocked( getElementLabel );
-
 const mockGetComponents = jest.mocked( apiClient.get );
-
 const mockReplaceElement = jest.mocked( replaceElement );
+const mockGenerateUniqueId = jest.mocked( generateUniqueId );
 
 const mockElement: V1Element = createMockElement( { model: { id: 'test-element' } } );
 
-const GENERATED_UUID = 'f73880da-522c-442e-815a-b2c9849b7414';
-const EXISTING_COMPONENT_UUID = 'f73880da-522c-442e-815a-b2c9849b7415';
+const GENERATED_UID = 'component-1763024534191-ojwasax';
+const EXISTING_COMPONENT_UID = 'component-1763024534191-v9kz881z';
 
 describe( 'CreateComponentForm', () => {
 	let store: Store< SliceState< typeof slice > >;
@@ -34,14 +34,13 @@ describe( 'CreateComponentForm', () => {
 
 		mockGetElementLabel.mockReturnValue( 'Div Block' );
 		mockGetComponents.mockReturnValue(
-			Promise.resolve( [ { name: 'Existing Component', id: 123, uuid: EXISTING_COMPONENT_UUID } ] )
+			Promise.resolve( [ { name: 'Existing Component', id: 123, uid: EXISTING_COMPONENT_UID } ] )
 		);
-
-		window.crypto.randomUUID = jest.fn().mockReturnValue( GENERATED_UUID );
+		mockGenerateUniqueId.mockReturnValue( GENERATED_UID );
 
 		act( () => {
 			__dispatch(
-				slice.actions.load( [ { name: 'Existing Component', id: 123, uuid: EXISTING_COMPONENT_UUID } ] )
+				slice.actions.load( [ { name: 'Existing Component', id: 123, uid: EXISTING_COMPONENT_UID } ] )
 			);
 		} );
 	} );
@@ -226,15 +225,15 @@ describe( 'CreateComponentForm', () => {
 			// Assert.
 			expect( spyAddUnpublished ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					uuid: GENERATED_UUID,
+					uid: GENERATED_UID,
 					name: 'My Test Component',
 					elements: [ mockElement.model.toJSON( { remove: [ 'default' ] } ) as V1ElementData ],
 				} )
 			);
 
 			expect( selectComponents( getState() ) ).toEqual( [
-				{ uuid: GENERATED_UUID, name: 'My Test Component' },
-				{ id: 123, name: 'Existing Component', uuid: EXISTING_COMPONENT_UUID },
+				{ uid: GENERATED_UID, name: 'My Test Component' },
+				{ id: 123, name: 'Existing Component', uid: EXISTING_COMPONENT_UID },
 			] );
 		} );
 
@@ -256,12 +255,12 @@ describe( 'CreateComponentForm', () => {
 					settings: {
 						component: {
 							$$type: 'component-id',
-							value: GENERATED_UUID,
+							value: GENERATED_UID,
 						},
 					},
 					editor_settings: {
 						title: 'My Test Component',
-						component_uuid: GENERATED_UUID,
+						component_uid: GENERATED_UID,
 					},
 				},
 				withHistory: false,

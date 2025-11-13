@@ -61,7 +61,7 @@ export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {
 
 export type V1ElementEditorSettingsProps = {
 	title?: string;
-	component_uuid?: string;
+	component_uid?: string;
 };
 
 export type V1ElementSettingsProps = Record< string, PropValue >;

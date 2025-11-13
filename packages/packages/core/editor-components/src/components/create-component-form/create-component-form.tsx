@@ -5,6 +5,7 @@ import { ThemeProvider } from '@elementor/editor-ui';
 import { StarIcon } from '@elementor/icons';
 import { __useDispatch as useDispatch } from '@elementor/store';
 import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Typography } from '@elementor/ui';
+import { generateUniqueId } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
@@ -58,26 +59,26 @@ export function CreateComponentForm() {
 				throw new Error( `Can't save element as component: element not found` );
 			}
 
-			const uuid = crypto.randomUUID();
+			const uid = generateUniqueId('component');
 
 			dispatch(
 				slice.actions.addUnpublished( {
-					uuid,
+					uid,
 					name: values.componentName,
 					elements: [ element.element.model.toJSON( { remove: [ 'default' ] } ) as V1ElementData ],
 				} )
 			);
 
-			dispatch( slice.actions.addCreatedThisSession( uuid ) );
+			dispatch( slice.actions.addCreatedThisSession( uid ) );
 
-			replaceElementWithComponent( element.element, { uuid, name: values.componentName } );
+			replaceElementWithComponent( element.element, { uid, name: values.componentName } );
 
 			setResultNotification( {
 				show: true,
-				// Translators: %1$s: Component name, %2$s: Component UUID
-				message: __( 'Component saved successfully as: %1$s (UUID: %2$s)', 'elementor' )
+				// Translators: %1$s: Component name, %2$s: Component UID
+				message: __( 'Component saved successfully as: %1$s (UID: %2$s)', 'elementor' )
 					.replace( '%1$s', values.componentName )
-					.replace( '%2$s', uuid ),
+					.replace( '%2$s', uid ),
 				type: 'success',
 			} );
 
@@ -217,8 +218,4 @@ const Form = ( {
 			</Stack>
 		</Stack>
 	);
-};
-
-export const generateTempId = () => {
-	return Date.now() + Math.floor( Math.random() * 1000000 );
 };

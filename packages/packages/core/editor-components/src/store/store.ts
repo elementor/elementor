@@ -23,7 +23,7 @@ type ComponentsState = {
 	unpublishedData: UnpublishedComponent[];
 	loadStatus: Status;
 	styles: StylesDefinition;
-	createdThisSession: Component[ 'uuid' ][];
+	createdThisSession: Component[ 'uid' ][];
 };
 
 type ComponentsSlice = SliceState< typeof slice >;
@@ -92,8 +92,8 @@ const getCreatedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].
 export const selectComponents = createSelector(
 	selectData,
 	selectUnpublishedData,
-	( data: Component[], unpublishedData: UnpublishedComponent[] ) => [
-		...unpublishedData.map( ( item ) => ( { uuid: item.uuid, name: item.name } ) ),
+	( data: PublishedComponent[], unpublishedData: UnpublishedComponent[] ) => [
+		...unpublishedData.map( ( item ) => ( { uid: item.uid, name: item.name } ) ),
 		...data,
 	]
 );

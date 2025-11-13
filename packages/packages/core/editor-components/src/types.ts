@@ -11,16 +11,17 @@ export type StylesDefinition = Record< ComponentId, StyleDefinition[] >;
 
 export type Component = PublishedComponent | UnpublishedComponent;
 
-export type PublishedComponent = {
-	uuid: string;
+export type PublishedComponent = BaseComponent & {
 	id: number;
-	name: string;
 };
 
-export type UnpublishedComponent = {
-	uuid: string;
-	name: string;
+export type UnpublishedComponent = BaseComponent & {
 	elements: V1ElementData[];
+};
+
+type BaseComponent = {
+	uid: string;
+	name: string;
 };
 
 export type DocumentStatus = 'publish' | 'draft' | 'autosave';
