@@ -9,8 +9,8 @@ import {
 } from '@elementor/editor-v1-adapters';
 
 import { apiClient } from '../../api';
-import { ComponentModal } from './component-modal';
 import { COMPONENT_DOCUMENT_TYPE } from '../consts';
+import { ComponentModal } from './component-modal';
 
 type ComponentsPathItem = {
 	instanceId: string | undefined;

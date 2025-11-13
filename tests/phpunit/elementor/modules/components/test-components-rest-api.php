@@ -543,7 +543,38 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertEquals( 'components_validation_failed', $response->get_data()['code'] );
-		$this->assertEquals( 'Validation failed: Component name &#039;Test Component&#039; is duplicated.', $response->get_data()['message'] );
+		$this->assertEquals( 'Validation failed: Component title &#039;Test Component&#039; is duplicated.', $response->get_data()['message'] );
+	}
+
+	public function test_post_create_component__fails_when_uid_is_duplicated() {
+		// Arrange
+		$this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'items' => [
+				[
+					'uid' => '1',
+					'title' => 'Test Component 1',
+					'elements' => $this->mock_component_1_content,
+				],
+				[
+					'uid' => '1',
+					'title' => 'Test Component 2',
+					'elements' => $this->mock_component_1_content,
+				]
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'components_validation_failed', $response->get_data()['code'] );
+		$this->assertEquals( 'Validation failed: Component uid &#039;1&#039; is duplicated.', $response->get_data()['message'] );
 	}
 
 	public function test_register_routes__endpoints_exist() {

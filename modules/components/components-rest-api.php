@@ -172,7 +172,7 @@ class Components_REST_API {
 
 		$components_list = $components->map( fn( $component ) => [
 			'id' => $component['id'],
-			'name' => $component['name'],
+			'name' => $component['title'],
 			'uid' => $component['uid'],
 		])->all();
 
@@ -206,7 +206,7 @@ class Components_REST_API {
 		}
 
 		$created = $items->map_with_keys( function ( $item ) use ( $save_status ) {
-			$name = sanitize_text_field( $item['title'] );
+			$title = sanitize_text_field( $item['title'] );
 			$content = $item['elements'];
 			$uid = $item['uid'];
 
@@ -214,7 +214,7 @@ class Components_REST_API {
 				? Document::STATUS_DRAFT
 				: $save_status;
 
-			$component_id = $this->get_repository()->create( $name, $content, $status, $uid );
+			$component_id = $this->get_repository()->create( $title, $content, $status, $uid );
 
 			return [ $uid => $component_id ];
 		} );

@@ -1,4 +1,4 @@
-import { replaceElement, V1ElementModelProps, type V1Element } from '@elementor/editor-elements';
+import { replaceElement, type V1Element, type V1ElementModelProps } from '@elementor/editor-elements';
 
 type ComponentInstanceParams = {
 	id?: number;

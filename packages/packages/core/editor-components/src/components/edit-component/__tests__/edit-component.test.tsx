@@ -7,8 +7,8 @@ import { act, fireEvent, screen } from '@testing-library/react';
 
 import { apiClient } from '../../../api';
 import { selectLoadIsPending, slice } from '../../../store/store';
-import { EditComponent } from '../edit-component';
 import { COMPONENT_DOCUMENT_TYPE } from '../../consts';
+import { EditComponent } from '../edit-component';
 
 jest.mock( '../component-modal', () => ( {
 	ComponentModal: ( { onClose }: { onClose: () => void } ) =>

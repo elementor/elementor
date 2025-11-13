@@ -59,17 +59,17 @@ class Save_Components_Validator {
 				$title = $component['title'];
 				$uid = $component['uid'];
 
-				$is_name_exists = $this->components->some(
-					fn ( $component ) => $component['name'] === $title
-				) || $data->some(
-					fn ( $component ) => $component['name'] === $title
-				);
-
-				if ( $is_name_exists ) {
+				$is_title_exists = $this->components->some(
+					fn ( $component ) => $component['title'] === $title
+				) || $data->filter(
+					fn ( $component ) => $component['title'] === $title
+				)->count() > 1;
+					
+				if ( $is_title_exists ) {
 					$errors[] = [
 						sprintf(
-							// translators: %s Component name.
-							esc_html__( "Component name '%s' is duplicated.", 'elementor' ),
+							// translators: %s Component title.
+							esc_html__( "Component title '%s' is duplicated.", 'elementor' ),
 							$title
 						),
 					];
@@ -77,9 +77,9 @@ class Save_Components_Validator {
 
 				$is_uid_exists = $this->components->some(
 					fn ( $component ) => $component['uid'] === $uid
-				) || $data->some(
+				) || $data->filter(
 					fn ( $component ) => $component['uid'] === $uid
-				);
+				)->count() > 1;
 
 				if ( $is_uid_exists ) {
 					$errors[] = [
@@ -94,6 +94,8 @@ class Save_Components_Validator {
 				return $errors;
 			} )
 			->flatten()
+			->flatten()
+			->unique()
 			->values();
 	}
 }
