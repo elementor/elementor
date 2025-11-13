@@ -132,18 +132,11 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$data_attributes_string = '';
 
 		if ( ! empty( $interaction_ids ) ) {
-			$data_attributes = [
-				'data-interaction-id' => $this->get_id(),
-				'data-interactions' => json_encode( $interaction_ids ),
-			];
-
-			$data_attributes_string = implode( ' ', array_map(
-				function( $key, $value ) {
-					return esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
-				},
-				array_keys( $data_attributes ),
-				$data_attributes
-			) );
+			$data_attributes_string = sprintf(
+				'data-interaction-id="%s" data-interactions="%s"',
+				esc_attr( $this->get_id() ),
+				esc_attr( json_encode( $interaction_ids ) )
+			);
 		}
 
 		$attributes_string = trim( $data_attributes_string . ' ' . $all_attributes );
