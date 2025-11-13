@@ -42,7 +42,6 @@
     "@typescript-eslint/eslint-plugin": "^8.6.0",
     "@typescript-eslint/parser": "^8.6.0",
     "@wordpress/eslint-plugin": "^21.1.0",
-    "@wordpress/jest-console": "^8.13.0",
     "concurrently": "^9.1.0",
     "cspell": "^8.17.1",
     "eslint": "^8.57.1",
