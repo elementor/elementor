@@ -76,25 +76,37 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await addInteractionButton.click();
 		} );
 
-		await test.step( 'Add interaction using plus button', async () => {
-			const addInteractionButton = page.locator( '[aria-label="Add interaction"]' );
-			await expect( addInteractionButton ).toBeVisible();
-			await addInteractionButton.click();
-		} );
-
-		await test.step( 'Select animation option from dropdown', async () => {
+		await test.step( 'Select animation options from popover controls', async () => {
 			const interactionTag = page.locator( '.MuiTag-root' ).first();
 
 			await expect( interactionTag ).toBeVisible();
-			await interactionTag.click();
 			await page.waitForSelector( '.MuiPopover-root' );
-			await page.waitForSelector( '.MuiMenuItem-root' );
 
-			const animationOption = page.locator( '.MuiMenuItem-root' ).nth( 1 );
+			const selectOption = async ( openSelector, optionName ) => {
+				await expect( openSelector ).toBeVisible();
+				await openSelector.click();
 
-			await expect( animationOption ).toBeVisible();
-			await animationOption.click();
-			await expect( interactionTag ).toContainText( 'Page Load - Fade In Right' );
+				const option = page.getByRole( 'option', { name: optionName } );
+				await expect( option ).toBeVisible();
+				await option.click();
+			};
+
+			await selectOption( page.getByText( 'Page load', { exact: true } ), 'Scroll into view' );
+			await selectOption( page.getByText( 'Fade', { exact: true } ), 'Slide' );
+			await selectOption( page.getByText( '300 MS', { exact: true } ), '100 MS' );
+
+			const effectTypeOption = page.getByRole( 'button', { name: 'Out' } );
+			const directionOption = page.getByRole( 'button', { name: 'From bottom' } );
+
+			await expect( effectTypeOption ).toBeVisible();
+			await effectTypeOption.click();
+
+			await expect( directionOption ).toBeVisible();
+			await directionOption.click();
+
+			await expect( interactionTag ).toContainText( 'Scroll into view: Slide Out Top (100ms/0ms)' );
+
+			await page.locator( 'body' ).click();
 		} );
 
 		await test.step( 'Publish and view the page', async () => {
@@ -112,3 +124,4 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 } );
+
