@@ -123,6 +123,9 @@ class Atomic_Widgets_Route {
 			$service = $this->get_conversion_service();
 
 			$processed_html = $this->embed_css_if_provided( $conversion_params['html'], $conversion_params['css'] );
+			
+			$is_js_app = $this->is_javascript_app( $conversion_params['html'] );
+			
 			$result = $service->convert_from_html(
 				$processed_html,
 				$conversion_params['css_urls'],
@@ -135,6 +138,10 @@ class Atomic_Widgets_Route {
 			} );
 			$result['debug_kit_css_urls'] = array_values( $kit_css_urls );
 			$result['debug_total_css_urls'] = count( $conversion_params['css_urls'] );
+
+			if ( $is_js_app ) {
+				$result['warning'] = 'This appears to be a JavaScript-rendered application (React, Vue, Next.js, etc.). The converter only receives the initial HTML structure, not the rendered content. For best results, please provide the rendered HTML or use a tool to extract the static HTML after JavaScript execution.';
+			}
 
 			return new \WP_REST_Response( $result, 200 );
 
@@ -250,6 +257,35 @@ class Atomic_Widgets_Route {
 		}
 
 		return $html;
+	}
+
+	private function is_javascript_app( string $html ): bool {
+		$js_app_indicators = [
+			'<div id="root"></div>',
+			'<div id="app"></div>',
+			'<div id="__next"></div>',
+			'<div id="main"></div>',
+			'<div id="react-root"></div>',
+			'<div id="vue-app"></div>',
+			'<div id="app-root"></div>',
+		];
+
+		foreach ( $js_app_indicators as $indicator ) {
+			if ( false !== strpos( $html, $indicator ) ) {
+				return true;
+			}
+		}
+
+		if ( preg_match( '/<script[^>]*type=["\']module["\'][^>]*>/i', $html ) ) {
+			return true;
+		}
+
+		if ( preg_match( '/<script[^>]*src=["\'][^"\']*\.(js|mjs)["\'][^>]*>/i', $html ) && 
+			 preg_match( '/<div[^>]*id=["\'][^"\']*["\'][^>]*>\s*<\/div>/i', $html ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	private function extract_html_by_selector( string $html, string $selector ): array {

@@ -106,6 +106,13 @@ export const FeedbackPanel = ( {
 						</Stack>
 					</Alert>
 
+					{ result.warning && (
+						<Alert severity="error">
+							<AlertTitle>{ __( 'Warning', 'elementor' ) }</AlertTitle>
+							<Typography variant="body2">{ result.warning }</Typography>
+						</Alert>
+					) }
+
 					{ result.stats && (
 						<Box sx={ { p: 2, bgcolor: 'action.hover', borderRadius: 1 } }>
 							<Typography variant="subtitle2" sx={ { mb: 1 } }>
