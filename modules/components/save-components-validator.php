@@ -64,7 +64,7 @@ class Save_Components_Validator {
 				) || $data->filter(
 					fn ( $component ) => $component['title'] === $title
 				)->count() > 1;
-					
+
 				if ( $is_title_exists ) {
 					$errors[] = [
 						sprintf(
