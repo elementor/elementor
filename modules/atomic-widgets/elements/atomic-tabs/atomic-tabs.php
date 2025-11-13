@@ -16,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Tabs_Control;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader;
 use Elementor\Utils;
+use Elementor\Plugin;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -153,6 +154,10 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	}
 
 	public function get_script_depends() {
+		if ( Plugin::$instance->preview->is_preview_mode() ) {
+			return [ 'elementor-tabs-handler', 'elementor-tabs-preview-handler' ];
+		}
+
 		return [ 'elementor-tabs-handler' ];
 	}
 
@@ -163,6 +168,14 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		wp_register_script(
 			'elementor-tabs-handler',
 			"{$assets_url}js/tabs-handler{$min_suffix}.js",
+			[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE, Frontend_Assets_Loader::ALPINEJS_HANDLE ],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
+			'elementor-tabs-preview-handler',
+			"{$assets_url}js/tabs-preview-handler{$min_suffix}.js",
 			[ Frontend_Assets_Loader::FRONTEND_HANDLERS_HANDLE, Frontend_Assets_Loader::ALPINEJS_HANDLE ],
 			ELEMENTOR_VERSION,
 			true
