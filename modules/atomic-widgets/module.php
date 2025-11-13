@@ -127,7 +127,7 @@ class Module extends BaseModule {
 		'editor-interactions',
 	];
 
-	public function get_name() {
+	public function get_name(): string {
 		return 'atomic-widgets';
 	}
 
