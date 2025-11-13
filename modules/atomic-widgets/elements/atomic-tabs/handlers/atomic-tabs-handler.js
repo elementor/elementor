@@ -1,16 +1,12 @@
 import { register } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
-
-const TAB_ELEMENT_TYPE = 'e-tab';
-const TAB_CONTENT_ELEMENT_TYPE = 'e-tab-content';
+import { TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE, getTabId, getTabContentId, getIndex, getNextTab } from './utils';
 
 const SELECTED_CLASS = 'e--selected';
-const NAVIGATE_UP_KEYS = [ 'ArrowUp', 'ArrowLeft' ];
-const NAVIGATE_DOWN_KEYS = [ 'ArrowDown', 'ArrowRight' ];
 
 register( {
 	elementType: 'e-tabs',
-	uniqueId: 'e-tabs-handler',
+	id: 'e-tabs-handler',
 	callback: ( { element, settings } ) => {
 		Alpine.data( 'atomicTabs', () => ( {
 			activeTab: settings[ 'default-active-tab' ],
@@ -24,7 +20,7 @@ register( {
 				':id'() {
 					const index = getIndex( this.$el, TAB_ELEMENT_TYPE );
 
-					return getTabId( index );
+					return getTabId( element.dataset.id, index );
 				},
 				'@click'() {
 					const id = this.$el.id;
@@ -61,7 +57,7 @@ register( {
 				':aria-controls'() {
 					const index = getIndex( this.$el, TAB_ELEMENT_TYPE );
 
-					return getTabContentId( index );
+					return getTabContentId( element.dataset.id, index );
 				},
 			},
 
@@ -69,11 +65,11 @@ register( {
 				':aria-labelledby'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
 
-					return getTabId( index );
+					return getTabId( element.dataset.id, index );
 				},
 				'x-show'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
-					const tabId = getTabId( index );
+					const tabId = getTabId( element.dataset.id, index );
 
 					const isActive = this.activeTab === tabId;
 
@@ -86,49 +82,10 @@ register( {
 				':id'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
 
-					return getTabContentId( index );
+					return getTabContentId( element.dataset.id, index );
 				},
 			},
 		} ) );
-
-		const getTabId = ( tabIndex ) => {
-			const tabsId = element.dataset.id;
-			return `${ tabsId }-tab-${ tabIndex }`;
-		};
-
-		const getTabContentId = ( tabIndex ) => {
-			const tabsId = element.dataset.id;
-			return `${ tabsId }-tab-content-${ tabIndex }`;
-		};
-
-		const getChildren = ( el, elementType ) => {
-			const parent = el.parentElement;
-
-			return Array.from( parent.children ).filter( ( child ) => {
-				return child.dataset.element_type === elementType;
-			} );
-		};
-
-		const getIndex = ( el, elementType ) => {
-			const children = getChildren( el, elementType );
-
-			return children.indexOf( el );
-		};
-
-		const getNextTab = ( key, tab ) => {
-			const tabs = getChildren( tab, TAB_ELEMENT_TYPE );
-			const tabsLength = tabs.length;
-
-			const currentIndex = getIndex( tab, TAB_ELEMENT_TYPE );
-
-			if ( NAVIGATE_DOWN_KEYS.includes( key ) ) {
-				return tabs[ ( currentIndex + 1 ) % tabsLength ];
-			}
-
-			if ( NAVIGATE_UP_KEYS.includes( key ) ) {
-				return tabs[ ( currentIndex - 1 + tabsLength ) % tabsLength ];
-			}
-		};
 	},
 } );
 
