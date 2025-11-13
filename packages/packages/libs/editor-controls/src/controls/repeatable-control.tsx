@@ -4,17 +4,17 @@ import { createArrayPropUtils, type SizePropValue } from '@elementor/editor-prop
 import { Box } from '@elementor/ui';
 
 import { PropProvider, useBoundProp } from '../bound-prop-context';
-import { ControlRepeater, Header, Item, TooltipAddItemAction } from '../components/control-repeater';
+import { ControlRepeater, Item, TooltipAddItemAction } from '../components/control-repeater';
 import { DisableItemAction } from '../components/control-repeater/actions/disable-item-action';
 import { DuplicateItemAction } from '../components/control-repeater/actions/duplicate-item-action';
 import { RemoveItemAction } from '../components/control-repeater/actions/remove-item-action';
 import { type TooltipAddItemActionProps } from '../components/control-repeater/actions/tooltip-add-item-action';
 import { EditItemPopover } from '../components/control-repeater/items/edit-item-popover';
 import { ItemsContainer } from '../components/control-repeater/items/items-container';
-import { type RepeatablePropValue } from '../components/control-repeater/types';
+import { type CollectionPropUtil, type RepeatablePropValue } from '../components/control-repeater/types';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
-import { type CollectionPropUtil } from '../components/repeater';
+import { RepeaterHeader } from '../components/repeater/repeater-header';
 import { createControl } from '../create-control';
 import {
 	type ChildControlConfig,
@@ -79,13 +79,13 @@ export const RepeatableControl = createControl(
 						initial={ childPropTypeUtil.create( initialValues || null ) }
 						propTypeUtil={ childArrayPropTypeUtil as CollectionPropUtil< RepeatablePropValue > }
 					>
-						<Header label={ repeaterLabel }>
+						<RepeaterHeader label={ repeaterLabel }>
 							<TooltipAddItemAction
 								{ ...addItemTooltipProps }
 								newItemIndex={ 0 }
 								ariaLabel={ repeaterLabel }
 							/>
-						</Header>
+						</RepeaterHeader>
 						<ItemsContainer isSortable={ false }>
 							<Item
 								Icon={ ItemIcon }
