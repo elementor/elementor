@@ -147,7 +147,7 @@ class Module extends BaseModule {
 	private function register_frontend_scripts() {
 		wp_register_script(
 			'motion-js',
-			ELEMENTOR_URL . 'assets/lib/motion.js',
+			ELEMENTOR_ASSETS_URL . 'lib/motion/motion.js',
 			[],
 			'11.13.5',
 			true
@@ -155,7 +155,7 @@ class Module extends BaseModule {
 
 		wp_register_script(
 			'elementor-interactions',
-			ELEMENTOR_URL . 'modules/interactions/assets/js/interactions.js',
+			$this->get_js_assets_url( 'interactions' ),
 			[ 'motion-js' ],
 			'1.0.0',
 			true
@@ -163,7 +163,7 @@ class Module extends BaseModule {
 
 		wp_register_script(
 			'elementor-editor-interactions',
-			ELEMENTOR_URL . 'modules/interactions/assets/js/editor-interactions.js',
+			$this->get_js_assets_url( 'editor-interactions' ),
 			[ 'motion-js' ],
 			'1.0.0',
 			true
@@ -222,13 +222,16 @@ class Module extends BaseModule {
 	}
 
 	private function sanitize_interactions( $interactions ) {
-		if ( ! is_array( $interactions ) ) {
-			return [];
+		$sanitized = [
+			'items' => [],
+			'version' => 1,
+		];
+
+		if ( ! is_array( $interactions ) || ! isset( $interactions['items'] ) ) {
+			return $sanitized;
 		}
 
-		$sanitized = [];
-
-		foreach ( $interactions as $interaction ) {
+		foreach ( $interactions['items'] as $interaction ) {
 			$animation_id = null;
 
 			if ( is_string( $interaction ) ) {
@@ -238,7 +241,7 @@ class Module extends BaseModule {
 			}
 
 			if ( $animation_id && $this->is_valid_animation_id( $animation_id ) ) {
-				$sanitized[] = $interaction;
+				$sanitized['items'][] = $interaction;
 			}
 		}
 

@@ -10,9 +10,5 @@ export function getElementInteractions( elementId: ElementID ) {
 		return interactions;
 	}
 
-	if ( Array.isArray( interactions ) ) {
-		return JSON.stringify( interactions );
-	}
-
-	return '';
+	return JSON.stringify( interactions );
 }
