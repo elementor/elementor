@@ -47,7 +47,7 @@ class Import extends Base_Route {
 
 			return Response::success( $import );
 
-		} catch ( \Error $e ) {
+		} catch ( \Error | \Exception $e ) {
 			Plugin::$instance->logger->get_logger()->error( $e->getMessage(), [
 				'meta' => [
 					'trace' => $e->getTraceAsString(),

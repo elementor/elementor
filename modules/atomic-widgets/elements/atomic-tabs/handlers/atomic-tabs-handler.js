@@ -1,47 +1,43 @@
 import { register } from '@elementor/frontend-handlers';
 import { Alpine } from '@elementor/alpinejs';
+import { TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE, getTabId, getTabContentId, getIndex, getNextTab } from './utils';
 
 const SELECTED_CLASS = 'e--selected';
+
 register( {
 	elementType: 'e-tabs',
-	uniqueId: 'e-tabs-handler',
+	id: 'e-tabs-handler',
 	callback: ( { element, settings } ) => {
-		const TAB_ELEMENT_TYPE = 'e-tab';
-		const TAB_CONTENT_ELEMENT_TYPE = 'e-tab-content';
-
-		const getTabId = ( tabIndex ) => {
-			const tabsId = element.dataset.id;
-			return `${ tabsId }-tab-${ tabIndex }`;
-		};
-
-		const getTabContentId = ( tabIndex ) => {
-			const tabsId = element.dataset.id;
-			return `${ tabsId }-tab-content-${ tabIndex }`;
-		};
-
-		const getIndex = ( el, elementType ) => {
-			const parent = el.parentElement;
-
-			const children = Array.from( parent.children ).filter( ( child ) => {
-				return child.dataset.element_type === elementType;
-			} );
-
-			return children.indexOf( el );
-		};
-
 		Alpine.data( 'atomicTabs', () => ( {
 			activeTab: settings[ 'default-active-tab' ],
 
+			navigateTabs( { key, target: tab } ) {
+				const nextTab = getNextTab( key, tab );
+
+				nextTab.focus();
+			},
 			tab: {
 				':id'() {
 					const index = getIndex( this.$el, TAB_ELEMENT_TYPE );
 
-					return getTabId( index );
+					return getTabId( element.dataset.id, index );
 				},
 				'@click'() {
 					const id = this.$el.id;
 
 					this.activeTab = id;
+				},
+				'@keydown.arrow-right.prevent'( event ) {
+					this.navigateTabs( event );
+				},
+				'@keydown.arrow-left.prevent'( event ) {
+					this.navigateTabs( event );
+				},
+				'@keydown.arrow-down.prevent'( event ) {
+					this.navigateTabs( event );
+				},
+				'@keydown.arrow-up.prevent'( event ) {
+					this.navigateTabs( event );
 				},
 				':class'() {
 					const id = this.$el.id;
@@ -61,7 +57,7 @@ register( {
 				':aria-controls'() {
 					const index = getIndex( this.$el, TAB_ELEMENT_TYPE );
 
-					return getTabContentId( index );
+					return getTabContentId( element.dataset.id, index );
 				},
 			},
 
@@ -69,24 +65,24 @@ register( {
 				':aria-labelledby'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
 
-					return getTabId( index );
-				},
-				':class'() {
-					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
-					const tabId = getTabId( index );
-
-					return this.activeTab === tabId ? SELECTED_CLASS : '';
+					return getTabId( element.dataset.id, index );
 				},
 				'x-show'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
-					const tabId = getTabId( index );
+					const tabId = getTabId( element.dataset.id, index );
 
-					return this.activeTab === tabId;
+					const isActive = this.activeTab === tabId;
+
+					this.$nextTick( () => {
+						this.$el.classList.toggle( SELECTED_CLASS, isActive );
+					} );
+
+					return isActive;
 				},
 				':id'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
 
-					return getTabContentId( index );
+					return getTabContentId( element.dataset.id, index );
 				},
 			},
 		} ) );
