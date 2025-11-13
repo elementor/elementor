@@ -8,28 +8,93 @@ const {
 	JIRA_VERSION,
 	TARGET_BRANCH,
 	BASE_BRANCH,
-	JIRA_HOST,
-	JIRA_USER,
-	JIRA_API_TOKEN,
+	JIRA_CLIENT_ID,
+	JIRA_CLIENT_SECRET,
+	JIRA_CLOUD_INSTANCE_BASE_URL,
 } = process.env;
 
-const REQUIRED_VARS = ['JIRA_VERSION', 'TARGET_BRANCH', 'BASE_BRANCH', 'JIRA_HOST', 'JIRA_USER', 'JIRA_API_TOKEN'];
+console.log('🔧 Environment Variables Check:');
+console.log(`   JIRA_VERSION: ${JIRA_VERSION || '❌ NOT SET'}`);
+console.log(`   TARGET_BRANCH: ${TARGET_BRANCH || '❌ NOT SET'}`);
+console.log(`   BASE_BRANCH: ${BASE_BRANCH || '❌ NOT SET'}`);
+console.log(`   JIRA_CLIENT_ID: ${JIRA_CLIENT_ID ? '✅ SET' : '❌ NOT SET'}`);
+console.log(`   JIRA_CLIENT_SECRET: ${JIRA_CLIENT_SECRET ? '✅ SET' : '❌ NOT SET'}`);
+console.log(`   JIRA_CLOUD_INSTANCE_BASE_URL: ${JIRA_CLOUD_INSTANCE_BASE_URL || '❌ NOT SET'}`);
+console.log('');
+
+const REQUIRED_VARS = ['JIRA_VERSION', 'TARGET_BRANCH', 'BASE_BRANCH', 'JIRA_CLIENT_ID', 'JIRA_CLIENT_SECRET', 'JIRA_CLOUD_INSTANCE_BASE_URL'];
 const missingVars = REQUIRED_VARS.filter(v => !process.env[v]);
 
 if (missingVars.length > 0) {
 	console.error(`❌ Missing environment variables: ${missingVars.join(', ')}`);
-	console.error('Please set JIRA_HOST, JIRA_USER, and JIRA_API_TOKEN as repository secrets');
+	
+	setGitHubOutput('total_tickets', '0');
+	setGitHubOutput('merged_tickets', '0');
+	setGitHubOutput('result', 'error');
+	setGitHubOutput('missing_tickets', `ERROR: Missing variables: ${missingVars.join(', ')}`);
+	
 	process.exit(1);
 }
 
-const makeJiraRequest = (path) => {
+const setGitHubOutput = (key, value) => {
+	const output = `${key}=${value}\n`;
+	fs.appendFileSync(process.env.GITHUB_OUTPUT, output);
+};
+
+const getJiraOAuthToken = () => {
 	return new Promise((resolve, reject) => {
+		const authString = Buffer.from(`${JIRA_CLIENT_ID}:${JIRA_CLIENT_SECRET}`).toString('base64');
+
 		const options = {
-			hostname: JIRA_HOST,
-			path,
-			method: 'GET',
-			auth: `${JIRA_USER}:${JIRA_API_TOKEN}`,
+			hostname: 'auth.atlassian.com',
+			path: '/oauth/token',
+			method: 'POST',
 			headers: {
+				'Authorization': `Basic ${authString}`,
+				'Content-Type': 'application/json',
+			},
+		};
+
+		const req = https.request(options, (res) => {
+			let data = '';
+
+			res.on('data', (chunk) => {
+				data += chunk;
+			});
+
+			res.on('end', () => {
+				if (res.statusCode >= 400) {
+					reject(new Error(`OAuth token request failed (${res.statusCode}): ${data}`));
+					return;
+				}
+
+				try {
+					const response = JSON.parse(data);
+					resolve(response.access_token);
+				} catch (err) {
+					reject(new Error(`Failed to parse OAuth response: ${err.message}`));
+				}
+			});
+		}).on('error', reject);
+
+		req.write(JSON.stringify({
+			grant_type: 'client_credentials',
+			scope: 'read:jira-work',
+		}));
+		req.end();
+	});
+};
+
+const makeJiraRequest = (accessToken, path) => {
+	return new Promise((resolve, reject) => {
+		const url = new URL(`https://${JIRA_CLOUD_INSTANCE_BASE_URL}${path}`);
+
+		const options = {
+			hostname: url.hostname,
+			path: url.pathname + url.search,
+			method: 'GET',
+			headers: {
+				'Authorization': `Bearer ${accessToken}`,
 				'Accept': 'application/json',
 			},
 		};
@@ -57,7 +122,7 @@ const makeJiraRequest = (path) => {
 	});
 };
 
-const getVersionTickets = async () => {
+const getVersionTickets = async (accessToken) => {
 	try {
 		console.log(`🔍 Fetching tickets for version: ${JIRA_VERSION}`);
 		
@@ -65,15 +130,37 @@ const getVersionTickets = async () => {
 		const jql = encodeURIComponent(`project = ED AND fixVersion = "${sanitizedVersion}"`);
 		const path = `/rest/api/3/search?jql=${jql}&maxResults=500&fields=key`;
 
-		const response = await makeJiraRequest(path);
+		console.log(`   JQL Query: project = ED AND fixVersion = "${sanitizedVersion}"`);
+		console.log(`   Request path: ${path}`);
+
+		const response = await makeJiraRequest(accessToken, path);
+		
+		if (!response.issues) {
+			console.error('❌ Unexpected Jira response format:', JSON.stringify(response, null, 2));
+			throw new Error('Jira response missing "issues" field');
+		}
+
 		const tickets = response.issues.map(issue => issue.key);
 
 		console.log(`✅ Found ${tickets.length} tickets in version ${JIRA_VERSION}`);
-		console.log(`   Tickets: ${tickets.join(', ')}`);
+		if (tickets.length > 0) {
+			console.log(`   Tickets: ${tickets.join(', ')}`);
+		}
 
 		return tickets;
 	} catch (error) {
 		console.error('❌ Failed to fetch Jira version tickets:', error.message);
+		console.error('   This could be due to:');
+		console.error('   - Invalid OAuth credentials (JIRA_CLIENT_ID or JIRA_CLIENT_SECRET)');
+		console.error('   - Invalid JIRA_CLOUD_INSTANCE_BASE_URL');
+		console.error('   - Version name not found in Jira');
+		console.error('   - Network connectivity issues');
+		
+		setGitHubOutput('total_tickets', '0');
+		setGitHubOutput('merged_tickets', '0');
+		setGitHubOutput('result', 'error');
+		setGitHubOutput('missing_tickets', `ERROR: Failed to fetch Jira tickets: ${error.message}`);
+		
 		process.exit(1);
 	}
 };
@@ -111,14 +198,13 @@ const findMissingTickets = (jiraTickets, branchTickets) => {
 	return missing;
 };
 
-const setGitHubOutput = (key, value) => {
-	const output = `${key}=${value}\n`;
-	fs.appendFileSync(process.env.GITHUB_OUTPUT, output);
-};
-
 (async () => {
 	try {
-		const jiraTickets = await getVersionTickets();
+		console.log('🔐 Obtaining OAuth token...\n');
+		const accessToken = await getJiraOAuthToken();
+		console.log('✅ OAuth token obtained\n');
+
+		const jiraTickets = await getVersionTickets(accessToken);
 		const commitMessages = getBranchCommits();
 		const branchTickets = extractTicketsFromCommits(commitMessages);
 
@@ -132,8 +218,8 @@ const setGitHubOutput = (key, value) => {
 		console.log(`   Merged tickets: ${jiraTickets.length - missingTickets.length}`);
 		console.log(`   Missing tickets: ${missingTickets.length}`);
 
-		setGitHubOutput('total_tickets', jiraTickets.length);
-		setGitHubOutput('merged_tickets', jiraTickets.length - missingTickets.length);
+		setGitHubOutput('total_tickets', String(jiraTickets.length));
+		setGitHubOutput('merged_tickets', String(jiraTickets.length - missingTickets.length));
 
 		if (missingTickets.length === 0) {
 			console.log(`\n✅ Success! All ${jiraTickets.length} tickets from ${JIRA_VERSION} are merged to ${TARGET_BRANCH}`);
@@ -147,7 +233,13 @@ const setGitHubOutput = (key, value) => {
 		}
 	} catch (error) {
 		console.error('❌ Verification failed:', error.message);
+		console.error('   Stack trace:', error.stack);
+		
+		setGitHubOutput('total_tickets', '0');
+		setGitHubOutput('merged_tickets', '0');
+		setGitHubOutput('result', 'error');
+		setGitHubOutput('missing_tickets', `ERROR: ${error.message}`);
+		
 		process.exit(1);
 	}
 })();
-
