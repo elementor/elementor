@@ -6,6 +6,7 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\Components\Documents\Component;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -91,6 +92,29 @@ class Components_REST_API {
 									],
 								],
 							],
+						],
+					],
+				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/status', [
+			[
+				'methods' => 'PUT',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->update_statuses( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'status' => [
+						'type' => 'string',
+						'required' => true,
+						'enum' => [ Document::STATUS_PUBLISH ],
+					],
+					'ids' => [
+						'type' => 'array',
+						'required' => true,
+						'items' => [
+							'type' => 'number',
+							'required' => true,
 						],
 					],
 				],
@@ -196,6 +220,39 @@ class Components_REST_API {
 		return Response_Builder::make( (object) $created->all() )
 			->set_status( 201 )
 			->build();
+	}
+
+	private function update_statuses( \WP_REST_Request $request ) {
+		$status = $request->get_param( 'status' );
+
+		$result = Collection::make( $request->get_param( 'ids' ) )
+			->map( fn( $id ) => $this->get_repository()->get( $id ) )
+			->filter( fn( $component ) => (bool) $component )
+			->reduce(
+				function ( $result, Component $component ) use ( $status ) {
+					$post = $component->get_post();
+					$autosave = $component->get_newer_autosave();
+
+					$elements = $autosave
+						? $autosave->get_json_meta( Document::ELEMENTOR_DATA_META_KEY )
+						: $component->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
+
+					$is_updated = $component->save( [
+						'settings' => [ 'post_status' => $status ],
+						'elements' => $elements,
+					] );
+
+					$result[ $is_updated ? 'success' : 'failed' ][] = $post->ID;
+
+					return $result;
+				},
+				[
+					'success' => [],
+					'failed' => [],
+				]
+			);
+
+		return Response_Builder::make( $result )->build();
 	}
 
 	private function lock_component( \WP_REST_Request $request ) {

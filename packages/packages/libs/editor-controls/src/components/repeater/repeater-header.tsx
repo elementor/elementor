@@ -1,9 +1,10 @@
 import * as React from 'react';
+import { forwardRef } from 'react';
 import { Box, Stack, Typography } from '@elementor/ui';
 
-import { ControlAdornments } from '../../../control-adornments/control-adornments';
+import { ControlAdornments } from '../../control-adornments/control-adornments';
 
-export const Header = React.forwardRef(
+export const RepeaterHeader = forwardRef(
 	(
 		{
 			label,
