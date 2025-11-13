@@ -5,7 +5,7 @@ const createAtomicTabView = () => {
 		attributes() {
 			const attributes = super.attributes();
 
-			return { 'x-bind': 'tab', ...attributes };
+			return { 'x-bind': 'tab', 'x-ref': this.model.id, ...attributes };
 		}
 	};
 };
