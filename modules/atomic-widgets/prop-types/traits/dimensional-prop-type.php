@@ -32,9 +32,7 @@ trait Dimensional_Prop_Type {
 	protected function get_prop_type( $bind ): Prop_Type {
 		$prop_type = Size_Prop_Type::make();
 		$units = $this->units( $bind );
-		// TODO discuss if we need this with the peacock team as its usage its only display the value on the UI
 		$default_value = $this->get_default_value_by_bind( $bind );
-		$initial_value = $this->get_bind_initial_value();
 
 		if ( $units ) {
 			$prop_type->units( $units );
@@ -43,10 +41,6 @@ trait Dimensional_Prop_Type {
 		if ( $default_value ) {
 			$prop_type->default_unit( $default_value['unit'] );
 			$prop_type->default( $default_value );
-		}
-
-		if ( $initial_value ) {
-			$prop_type->initial_value( $initial_value );
 		}
 
 		return $prop_type;
@@ -73,9 +67,5 @@ trait Dimensional_Prop_Type {
 			'size' => $this->get_default_value_size(),
 			'unit' => $this->get_default_value_unit(),
 		];
-	}
-
-	protected function get_bind_initial_value() {
-		return $this->get_default_value_by_bind();
 	}
 }
