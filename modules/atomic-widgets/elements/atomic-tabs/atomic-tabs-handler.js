@@ -75,11 +75,13 @@ register( {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
 					const tabId = getTabId( index );
 
+					const isActive = this.activeTab === tabId;
+
 					this.$nextTick( () => {
-						this.$el.classList.toggle( SELECTED_CLASS, this.activeTab === tabId );
+						this.$el.classList.toggle( SELECTED_CLASS, isActive );
 					} );
 
-					return this.activeTab === tabId;
+					return isActive;
 				},
 				':id'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
