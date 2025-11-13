@@ -151,8 +151,6 @@ class Flexbox extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
-			// 'data-interaction-id' => $this->get_id(),
-			// 'data-interactions' => json_encode( $this->get_interactions_ids() ),
 		];
 
 		if ( ! empty( $settings['_cssid'] ) ) {
