@@ -20,16 +20,16 @@ export async function updateComponentsBeforeSave( { status, container }: Options
 	);
 
 	const draftIds = componentDocumentData
-		.filter( ( data ) => !! data )
-		.filter( ( data ) => {
-			const isDraft = data.status.value === 'draft';
+		.filter( ( document ) => !! document )
+		.filter( ( document ) => {
+			const isDraft = document.status.value === 'draft';
 
 			// When the component is published, but have draft version.
-			const hasAutosave = data.revisions.current_id !== data.id;
+			const hasAutosave = document.revisions.current_id !== document.id;
 
 			return isDraft || hasAutosave;
 		} )
-		.map( ( data ) => data.id );
+		.map( ( document ) => document.id );
 
 	if ( draftIds.length === 0 ) {
 		return;
