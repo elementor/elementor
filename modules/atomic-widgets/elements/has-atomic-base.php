@@ -231,4 +231,20 @@ trait Has_Atomic_Base {
 			$schema
 		);
 	}
+
+	public function get_interactions_ids() {
+		$animation_ids = [];
+
+		$list_of_interactions = ( is_array( $this->interactions ) && isset( $this->interactions['items'] ) )
+			? $this->interactions['items']
+			: [];
+
+		foreach ( $list_of_interactions as $interaction ) {
+			if ( isset( $interaction['animation']['animation_id'] ) ) {
+				$animation_ids[] = $interaction['animation']['animation_id'];
+			}
+		}
+
+		return $animation_ids;
+	}
 }

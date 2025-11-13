@@ -1,11 +1,11 @@
 {% if settings.image.src is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}	
 	{% if settings.link.href %}
-		<a href="{{ settings.link.href }}" class="{{ base_styles['link-base'] }}" target="{{ settings.link.target }}" data-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}">
+		<a href="{{ settings.link.href }}" class="{{ base_styles['link-base'] }}" target="{{ settings.link.target }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}">
 	{% endif %}
 	<img class="{{ base_styles['base'] }} {{ settings.classes | join(' ') }}" 
 		{% if not settings.link.href %}
-			data-id="{{ id }}" 
+			data-interaction-id="{{ id }}" 
 			data-interactions="{{ interactions | json_encode | e('html_attr') }}"
 		{% endif %} 
 		{{ id_attribute }} {{ settings.attributes | raw }}

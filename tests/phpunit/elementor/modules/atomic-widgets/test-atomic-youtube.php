@@ -61,9 +61,14 @@ class Test_Atomic_Youtube extends Elementor_Test_Base {
 			'settings' => [],
 			'widgetType' => Atomic_Youtube::get_element_type(),
 			'interactions' => [
-				'click' => [
-					'id' => 'e8e55a1',
-					'type' => 'click',
+				'version' => 1,
+				'items' => [
+					[
+						'animation' => [
+							'animation_type' => 'full-preset',
+							'animation_id' => 'load-fade-in--300-0',
+						],
+					],
 				],
 			],
 		];
