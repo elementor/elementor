@@ -98,7 +98,7 @@ const getVersionTickets = async () => {
 		
 		const sanitizedVersion = JIRA_VERSION.replace(/^v/, '');
 		const jql = encodeURIComponent(`project = ED AND fixVersion = "${sanitizedVersion}"`);
-		const path = `/rest/api/3/search?jql=${jql}&maxResults=500&fields=key`;
+		const path = `/rest/api/3/search/jql?jql=${jql}&maxResults=500&fields=key`;
 
 		console.log(`   JQL Query: project = ED AND fixVersion = "${sanitizedVersion}"`);
 		console.log(`   Request path: ${path}`);
