@@ -17,6 +17,10 @@
 	@return map-deep-get($eps-theme-elements-colors, $keys...);
 }
 
+@function get-type($keys...) {
+	@return map-deep-get($eps-type-map, $keys...);
+}
+
 @function z-index($keys...) {
 	@return map-deep-get($eps-z-index-levels, $keys...);
 }
