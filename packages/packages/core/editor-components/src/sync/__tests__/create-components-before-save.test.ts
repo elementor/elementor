@@ -12,8 +12,8 @@ jest.mock( '../../api' );
 const mockUpdateElementSettings = jest.mocked( updateElementSettings );
 const mockCreateComponents = jest.mocked( apiClient.create );
 
-const COMPONENT_1_UID = 'f73880da-522c-442e-815a-b2c9849b7418';
-const COMPONENT_2_UID = 'f73880da-522c-442e-815a-b2c9849b7419';
+const COMPONENT_1_UID = 'component-1763032631845-jlu78sd';
+const COMPONENT_2_UID = 'component-1763032631846-jlu78sdz';
 
 describe( 'createComponentsBeforeSave', () => {
 	beforeEach( () => {
@@ -194,12 +194,12 @@ describe( 'createComponentsBeforeSave', () => {
 
 		it( 'should add newly published components to the main component store', async () => {
 			// Arrange
-			const publishedComponentuid = 'f73880da-522c-442e-815a-b2c9849b7421';
+			const publishedComponentUid = 'component-1763032631849-jlu78sd';
 			__dispatch(
 				slice.actions.add( {
 					id: 4444,
 					name: 'Published Component',
-					uid: publishedComponentuid,
+					uid: publishedComponentUid,
 				} )
 			);
 			const container = createMockContainer( [] );
@@ -209,7 +209,7 @@ describe( 'createComponentsBeforeSave', () => {
 
 			// Assert
 			expect( getState().components.data ).toEqual( [
-				{ id: 4444, name: 'Published Component', uid: publishedComponentuid },
+				{ id: 4444, name: 'Published Component', uid: publishedComponentUid },
 				{ id: 3333, name: 'Test Component 2', uid: COMPONENT_2_UID },
 				{ id: 1111, name: 'Test Component 1', uid: COMPONENT_1_UID },
 			] );

@@ -7,11 +7,10 @@ import {
 	__privateRunCommand as runCommand,
 	commandEndEvent,
 } from '@elementor/editor-v1-adapters';
-import { __useSelector as useSelector } from '@elementor/store';
 
 import { apiClient } from '../../api';
-import { selectComponentsObject } from '../../store/store';
 import { ComponentModal } from './component-modal';
+import { COMPONENT_DOCUMENT_TYPE } from '../consts';
 
 type ComponentsPathItem = {
 	instanceId: string | undefined;
@@ -41,7 +40,6 @@ function useHandleDocumentSwitches(
 	path: ComponentsPathItem[],
 	setPath: Dispatch< SetStateAction< ComponentsPathItem[] > >
 ) {
-	const components = useSelector( selectComponentsObject );
 	const documentsManager = getV1DocumentsManager();
 
 	useEffect(
@@ -59,7 +57,7 @@ function useHandleDocumentSwitches(
 					apiClient.unlockComponent( currentComponentId );
 				}
 
-				const isComponent = !! components?.[ nextDocument.id ];
+				const isComponent = nextDocument.config.type === COMPONENT_DOCUMENT_TYPE;
 
 				if ( ! isComponent ) {
 					setPath( [] );
@@ -69,7 +67,7 @@ function useHandleDocumentSwitches(
 
 				setPath( getUpdatedComponentPath( path, nextDocument ) );
 			} ),
-		[ path, setPath, components, documentsManager ]
+		[ path, setPath, documentsManager ]
 	);
 }
 

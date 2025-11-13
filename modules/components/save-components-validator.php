@@ -53,16 +53,20 @@ class Save_Components_Validator {
 
 	private function validate_duplicated_values( Collection $data ): array {
 		return $data
-			->map( function ( $component ) {
+			->map( function ( $component ) use ( $data ) {
+				$errors = [];
+
 				$title = $component['title'];
 				$uid = $component['uid'];
 
 				$is_name_exists = $this->components->some(
 					fn ( $component ) => $component['name'] === $title
+				) || $data->some(
+					fn ( $component ) => $component['name'] === $title
 				);
 
 				if ( $is_name_exists ) {
-					return [
+					$errors[] = [
 						sprintf(
 							// translators: %s Component name.
 							esc_html__( "Component name '%s' is duplicated.", 'elementor' ),
@@ -73,10 +77,12 @@ class Save_Components_Validator {
 
 				$is_uid_exists = $this->components->some(
 					fn ( $component ) => $component['uid'] === $uid
+				) || $data->some(
+					fn ( $component ) => $component['uid'] === $uid
 				);
 
 				if ( $is_uid_exists ) {
-					return [
+					$errors[] = [
 						sprintf(
 							// translators: %s Component uid.
 							esc_html__( "Component uid '%s' is duplicated.", 'elementor' ),
@@ -85,7 +91,7 @@ class Save_Components_Validator {
 					];
 				}
 
-				return [];
+				return $errors;
 			} )
 			->flatten()
 			->values();

@@ -6,8 +6,9 @@ import { __createStore, __registerSlice as registerSlice, type SliceState, type 
 import { act, fireEvent, screen } from '@testing-library/react';
 
 import { apiClient } from '../../../api';
-import { selectComponentsObject, selectLoadIsPending, slice } from '../../../store/store';
+import { selectLoadIsPending, slice } from '../../../store/store';
 import { EditComponent } from '../edit-component';
+import { COMPONENT_DOCUMENT_TYPE } from '../../consts';
 
 jest.mock( '../component-modal', () => ( {
 	ComponentModal: ( { onClose }: { onClose: () => void } ) =>
@@ -91,17 +92,6 @@ describe( '<EditComponent />', () => {
 			if ( command === 'editor/documents/switch' ) {
 				switchDocumentCallback( args );
 			}
-		} );
-
-		jest.mocked( selectComponentsObject ).mockReturnValue( {
-			[ MOCK_COMPONENT_ID ]: {
-				id: MOCK_COMPONENT_ID,
-				name: 'Mock Component',
-			},
-			[ MOCK_NESTED_COMPONENT_ID ]: {
-				id: MOCK_NESTED_COMPONENT_ID,
-				name: 'Mock Nested Component',
-			},
 		} );
 
 		jest.mocked( selectLoadIsPending ).mockReturnValue( false );
@@ -229,6 +219,9 @@ function mockDocument( id: number, isComponent: boolean = false ) {
 					],
 				} ),
 			},
+		},
+		config: {
+			type: isComponent ? COMPONENT_DOCUMENT_TYPE : 'wp-page',
 		},
 	} as unknown as V1Document;
 }

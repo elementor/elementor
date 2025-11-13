@@ -101,15 +101,6 @@ export const selectUnpublishedComponents = createSelector(
 	selectUnpublishedData,
 	( unpublishedData: UnpublishedComponent[] ) => unpublishedData
 );
-export const selectComponentsObject = createSelector(
-	selectData,
-	selectUnpublishedData,
-	( data: Component[], unpublishedData: UnpublishedComponent[] ) =>
-		data.concat( unpublishedData ).reduce< Record< ComponentId, Component > >( ( acc, component ) => {
-			acc[ component.id ] = component;
-			return acc;
-		}, {} )
-);
 export const selectLoadIsPending = createSelector( selectLoadStatus, ( status ) => status === 'pending' );
 export const selectLoadIsError = createSelector( selectLoadStatus, ( status ) => status === 'error' );
 export const selectStyles = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};

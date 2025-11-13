@@ -2,26 +2,24 @@ import { createTransformer } from '@elementor/editor-canvas';
 import { __getState as getState } from '@elementor/store';
 
 import { selectUnpublishedComponents } from './store/store';
+import { type PublishedComponent, type UnpublishedComponent } from './types';
 import { getComponentDocumentData } from './utils/component-document-data';
 
-type PublishedComponentId = number;
-type UnpublishedComponentId = string;
+export const componentIdTransformer = createTransformer(
+	async ( id: PublishedComponent[ 'id' ] | UnpublishedComponent[ 'uid' ] ) => {
+		const unpublishedComponents = selectUnpublishedComponents( getState() );
 
-type ComponentId = PublishedComponentId | UnpublishedComponentId;
+		const unpublishedComponent = unpublishedComponents.find( ( { uid } ) => uid === id );
+		if ( unpublishedComponent ) {
+			return structuredClone( unpublishedComponent.elements );
+		}
 
-export const componentIdTransformer = createTransformer( async ( id: ComponentId ) => {
-	const unpublishedComponents = selectUnpublishedComponents( getState() );
+		if ( typeof id !== 'number' ) {
+			throw new Error( `Component ID "${ id }" not found.` );
+		}
 
-	const unpublishedComponent = unpublishedComponents.find( ( component ) => component.uid === id );
-	if ( unpublishedComponent ) {
-		return structuredClone( unpublishedComponent.elements );
+		const data = await getComponentDocumentData( id );
+
+		return data?.elements ?? [];
 	}
-
-	if ( typeof id !== 'number' ) {
-		throw new Error( `Component ID "${ id }" not found.` );
-	}
-
-	const data = await getComponentDocumentData( id );
-
-	return data?.elements ?? [];
-} );
+);

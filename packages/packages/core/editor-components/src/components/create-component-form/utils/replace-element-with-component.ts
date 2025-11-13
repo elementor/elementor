@@ -1,4 +1,4 @@
-import { replaceElement, type V1Element } from '@elementor/editor-elements';
+import { replaceElement, V1ElementModelProps, type V1Element } from '@elementor/editor-elements';
 
 type ComponentInstanceParams = {
 	id?: number;
@@ -14,7 +14,7 @@ export const replaceElementWithComponent = ( element: V1Element, component: Comp
 	} );
 };
 
-export const createComponentModel = ( component: ComponentInstanceParams ) => {
+export const createComponentModel = ( component: ComponentInstanceParams ): Omit< V1ElementModelProps, 'id' > => {
 	return {
 		elType: 'widget',
 		widgetType: 'e-component',
