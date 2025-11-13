@@ -10,7 +10,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Functions\Hue_Rotate_Prop_
 use Elementor\Modules\AtomicWidgets\PropTypes\Filters\Functions\Intensity_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -41,7 +40,7 @@ class Css_Filter_Func_Prop_Type extends Object_Prop_Type {
 				->add_prop_type( Drop_Shadow_Filter_Prop_Type::make() )
 				->initial_value( [
 					'size' => 0,
-					'unit' => Size_Constants::UNIT_PX,
+					'unit' => 'px',
 				] )
 				->required(),
 		];
