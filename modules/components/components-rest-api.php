@@ -6,7 +6,6 @@ use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\Components\Documents\Component as Component_Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -227,14 +226,6 @@ class Components_REST_API {
 
 	private function get_lock_status( \WP_REST_Request $request ) {
 		$component_id = (int) $request->get_param( 'componentId' );
-
-		if ( ! $this->is_valid_component( $component_id ) ) {
-			return Response_Builder::make( [
-				'is_current_user_allow_to_edit' => true,
-				'locked_by' => '',
-			] )->build();
-		}
-
 		$lock_data = $this->get_component_lock_manager()->get_updated_status( $component_id );
 		$is_current_user_allow_to_edit = $this->is_current_user_allow_to_edit( $component_id );
 
@@ -251,24 +242,10 @@ class Components_REST_API {
 	}
 
 	private function is_current_user_allow_to_edit( $component_id ) {
-		if ( ! $this->is_valid_component( $component_id ) ) {
-			return true;
-		}
-
 		$current_user_id = get_current_user_id();
 		$lock_data = $this->get_component_lock_manager()->get_updated_status( $component_id );
 
 		return ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] === (int) $current_user_id;
-	}
-
-	private function is_valid_component( $post_id ) {
-		$post = get_post( $post_id );
-
-		if ( ! $post ) {
-			return false;
-		}
-
-		return get_post_type( $post_id ) === Component_Document::TYPE;
 	}
 
 	private function route_wrapper( callable $cb ) {

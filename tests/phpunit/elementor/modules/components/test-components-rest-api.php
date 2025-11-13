@@ -795,22 +795,6 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertNotNull( $data['locked_by'], 'Should show who locked the component' );
 	}
 
-	public function test_get_lock_status__fails_when_component_not_found() {
-		// Arrange
-		$this->act_as_admin();
-
-		// Act
-		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/lock-status' );
-		$request->set_param( 'componentId', '999999' );
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( 200, $response->get_status() );
-		$data = $response->get_data()['data'];
-		$this->assertTrue( $data['is_current_user_allow_to_edit'], 'User should be allowed to edit non-existent component' );
-		$this->assertEquals( '', $data['locked_by'], 'Non-existent component should not be locked' );
-	}
-
 	// Lock endpoint tests
 	public function test_post_lock_component__successfully_locks_component() {
 		// Arrange
