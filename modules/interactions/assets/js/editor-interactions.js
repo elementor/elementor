@@ -242,6 +242,7 @@
 
 			// Initial load
 			handleInteractionsUpdate();
+			registerWindowEvents();
 		}
 
 		// Watch head for script tag to appear
@@ -263,6 +264,26 @@
 		if ( scriptTag ) {
 			setupObserver( scriptTag );
 			headObserver.disconnect();
+		}
+	}
+
+	function registerWindowEvents() {
+		window.top.addEventListener( 'atomic/play_interactions', handlePlayInteractions );
+	}
+
+	function handlePlayInteractions( event ) {
+		const elementId = event.detail.elementId;
+		const interactionsData = getInteractionsData();
+		const item = interactionsData.find( ( elementItemData ) => elementItemData.dataId === elementId );
+		if ( ! item ) {
+			return;
+		}
+		const element = findElementByDataId( elementId );
+		if ( element ) {
+			const targetElement = getAnimationTarget( element );
+			if ( targetElement ) {
+				applyInteractionsToElement( targetElement, item.interactions );
+			}
 		}
 	}
 
