@@ -1,4 +1,4 @@
-import { type V1ElementData, type V1ElementModelProps, type V1ElementSettingsProps } from '@elementor/editor-elements';
+import { type V1ElementData } from '@elementor/editor-elements';
 import type { StyleDefinition } from '@elementor/editor-styles';
 
 export type ComponentFormValues = {
@@ -24,17 +24,8 @@ type BaseComponent = {
 	name: string;
 };
 
-export type DocumentStatus = 'publish' | 'draft' | 'autosave';
-
-export type Element = V1ElementModelProps & {
-	elements?: Element[];
-	settings?: V1ElementSettingsProps & {
-		component?: {
-			$$type: 'component-id';
-			value: number;
-		};
-	};
-};
+export type DocumentStatus = 'publish' | 'draft';
+export type DocumentSaveStatus = DocumentStatus | 'autosave';
 
 export type ExtendedWindow = Window & {
 	elementorCommon: Record< string, unknown > & {
@@ -44,6 +35,14 @@ export type ExtendedWindow = Window & {
 				secondaryLocations: Record< string, string >;
 				triggers: Record< string, string >;
 			};
+		};
+	};
+};
+
+export type Container = {
+	model: {
+		get: ( key: 'elements' ) => {
+			toJSON: () => V1ElementData[];
 		};
 	};
 };

@@ -3,13 +3,13 @@ import { createMockElement, renderWithStore } from 'test-utils';
 import { getElementLabel, replaceElement, type V1Element, type V1ElementData } from '@elementor/editor-elements';
 import { __createStore, __dispatch, __registerSlice, type SliceState, type Store } from '@elementor/store';
 import { __getState as getState } from '@elementor/store';
+import { generateUniqueId } from '@elementor/utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { apiClient } from '../../api';
 import { selectComponents, slice } from '../../store/store';
 import { CreateComponentForm } from '../create-component-form/create-component-form';
-import { generateUniqueId } from '@elementor/utils';
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../api' );

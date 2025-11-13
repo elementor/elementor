@@ -2,14 +2,7 @@ import { createTransformer } from '@elementor/editor-canvas';
 import { __getState as getState } from '@elementor/store';
 
 import { selectUnpublishedComponents } from './store/store';
-
-type ComponentIdTransformerWindow = Window & {
-	elementor?: {
-		documents?: {
-			request: ( id: number ) => Promise< { elements?: unknown[] } >;
-		};
-	};
-};
+import { getComponentDocumentData } from './utils/component-document-data';
 
 type PublishedComponentId = number;
 type UnpublishedComponentId = string;
@@ -28,15 +21,7 @@ export const componentIdTransformer = createTransformer( async ( id: ComponentId
 		throw new Error( `Component ID "${ id }" not found.` );
 	}
 
-	const extendedWindow = window as unknown as ComponentIdTransformerWindow;
+	const data = await getComponentDocumentData( id );
 
-	const documentManager = extendedWindow.elementor?.documents;
-
-	if ( ! documentManager ) {
-		throw new Error( 'Elementor documents manager not found' );
-	}
-
-	const data = await documentManager.request( id );
-
-	return data.elements ?? [];
+	return data?.elements ?? [];
 } );

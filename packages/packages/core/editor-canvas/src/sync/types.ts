@@ -39,5 +39,10 @@ export type CanvasExtendedWindow = Window & {
 		storage?: {
 			get: ( key?: string ) => StorageContent;
 		};
+		config?: {
+			urls?: {
+				assets?: string;
+			};
+		};
 	};
 };

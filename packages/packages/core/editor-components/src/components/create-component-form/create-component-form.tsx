@@ -59,7 +59,7 @@ export function CreateComponentForm() {
 				throw new Error( `Can't save element as component: element not found` );
 			}
 
-			const uid = generateUniqueId('component');
+			const uid = generateUniqueId( 'component' );
 
 			dispatch(
 				slice.actions.addUnpublished( {

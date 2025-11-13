@@ -1,7 +1,7 @@
 import { generateUniqueId } from '../generate-unique-id';
 
 describe( 'generateUniqueId', () => {
-    const ID_LENGTH = 21;
+	const ID_LENGTH = 21;
 
 	it( 'should generate a unique ID with prefix', () => {
 		// Arrange.
@@ -11,12 +11,11 @@ describe( 'generateUniqueId', () => {
 		const id = generateUniqueId( prefix );
 
 		// Assert.
-        expect( typeof id ).toBe( 'string' );
-		expect( id.length ).toBe( `${prefix}-`.length + ID_LENGTH );
+		expect( typeof id ).toBe( 'string' );
+		expect( id.length ).toBe( `${ prefix }-`.length + ID_LENGTH );
 
-        const regex = new RegExp(`^${prefix}-\\d+-[a-z0-9]{7}$`);
-        expect( id).toMatch(regex);
-		
+		const regex = new RegExp( `^${ prefix }-\\d+-[a-z0-9]{7}$` );
+		expect( id ).toMatch( regex );
 	} );
 
 	it( 'should generate a unique ID without prefix', () => {
@@ -24,12 +23,11 @@ describe( 'generateUniqueId', () => {
 		const id = generateUniqueId();
 
 		// Assert.
-        expect( typeof id ).toBe( 'string' );
-        expect( id.length ).toBe( ID_LENGTH );
+		expect( typeof id ).toBe( 'string' );
+		expect( id.length ).toBe( ID_LENGTH );
 
-        const regex = new RegExp(`^\\d+-[a-z0-9]{7}$`);
-        expect( id).toMatch(regex);
-		
+		const regex = new RegExp( `^\\d+-[a-z0-9]{7}$` );
+		expect( id ).toMatch( regex );
 	} );
 
 	it( 'should generate different IDs on subsequent calls', () => {
