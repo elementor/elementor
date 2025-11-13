@@ -42,7 +42,7 @@
   "dependencies": {
     "@elementor/editor": "3.33.0",
     "@elementor/store": "3.33.0",
-    "@elementor/ui": "1.36.15",
+    "@elementor/ui": "1.36.17",
     "notistack": "^3.0.2"
   },
   "peerDependencies": {
