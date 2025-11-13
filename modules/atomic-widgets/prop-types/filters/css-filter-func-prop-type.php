@@ -30,7 +30,6 @@ class Css_Filter_Func_Prop_Type extends Object_Prop_Type {
 			'func' => String_Prop_Type::make()
 				->enum( [ 'blur', 'brightness', 'contrast', 'grayscale', 'invert', 'saturate', 'sepia', 'hue-rotate', 'drop-shadow' ] )
 				->default( 'blur' )
-				->initial_value( 'blur' )
 				->required(),
 			'args' => Union_Prop_Type::make()
 				->add_prop_type( Blur_Prop_Type::make() )
@@ -38,10 +37,6 @@ class Css_Filter_Func_Prop_Type extends Object_Prop_Type {
 				->add_prop_type( Hue_Rotate_Prop_Type::make() )
 				->add_prop_type( Color_Tone_Prop_Type::make() )
 				->add_prop_type( Drop_Shadow_Filter_Prop_Type::make() )
-				->initial_value( [
-					'size' => 0,
-					'unit' => 'px',
-				] )
 				->required(),
 		];
 	}
