@@ -413,13 +413,6 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onItemClick( event ) {
-		window.dispatchEvent( new CustomEvent( 'elementor/navigator/item/click', {
-			detail: {
-				id: this.model.get( 'id' ),
-				type: this.model.get( 'elType' ),
-			},
-		} ) );
-
 		this.model.trigger( 'request:edit', {
 			append: event.ctrlKey || event.metaKey,
 			scrollIntoView: true,
