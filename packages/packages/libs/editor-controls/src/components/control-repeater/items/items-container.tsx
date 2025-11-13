@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { SortableItem, SortableProvider } from '../../sortable';
+import { SortableItem, SortableProvider } from '../../repeater/sortable';
 import { ItemContext } from '../context/item-context';
 import { useRepeaterContext } from '../context/repeater-context';
 import { type Item, type RepeatablePropValue } from '../types';
