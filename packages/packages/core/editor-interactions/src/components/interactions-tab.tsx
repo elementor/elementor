@@ -47,7 +47,7 @@ function InteractionsTabContent( { elementId }: { elementId: string } ) {
 }
 
 function InteractionsContent() {
-	const { interactions, setInteractions } = useInteractionsContext();
+	const { interactions, setInteractions, playInteractions } = useInteractionsContext();
 
 	const applyInteraction = useCallback(
 		( interaction: string ) => {
@@ -85,6 +85,7 @@ function InteractionsContent() {
 			<PredefinedInteractionsList
 				selectedInteraction={ selectedInteraction }
 				onSelectInteraction={ applyInteraction }
+				onPlayInteraction={ playInteractions }
 			/>
 		</>
 	);

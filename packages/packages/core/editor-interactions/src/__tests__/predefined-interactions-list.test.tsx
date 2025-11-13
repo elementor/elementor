@@ -47,6 +47,7 @@ describe( 'PredefinedInteractionsList', () => {
 				<PredefinedInteractionsList
 					selectedInteraction={ selectedInteraction }
 					onSelectInteraction={ onSelectInteraction }
+					onPlayInteraction={ jest.fn() }
 				/>
 			</PopupStateProvider>
 		);
