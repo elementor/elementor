@@ -162,6 +162,7 @@
 			} );
 
 			handleInteractionsUpdate();
+			registerWindowEvents();
 		}
 
 		const headObserver = new MutationObserver( () => {
@@ -185,6 +186,27 @@
 		}
 	}
 
+	function registerWindowEvents() {
+		window.top.addEventListener( 'atomic/play_interactions', handlePlayInteractions );
+	}
+
+	function handlePlayInteractions( event ) {
+		const elementId = event.detail.elementId;
+		const interactionsData = getInteractionsData();
+		const item = interactionsData.find( ( elementItemData ) => elementItemData.dataId === elementId );
+		if ( ! item ) {
+			return;
+		}
+		const element = findElementByDataId( elementId );
+		if ( element ) {
+			const targetElement = getAnimationTarget( element );
+			if ( targetElement ) {
+				applyInteractionsToElement( targetElement, item.interactions );
+			}
+		}
+	}
+
+	// Initialize when DOM is ready
 	if ( 'loading' === document.readyState ) {
 		document.addEventListener( 'DOMContentLoaded', initEditorInteractionsHandler );
 	} else {
