@@ -194,7 +194,7 @@ export function ProcessingErrorDialog( {
 } ) {
 	const [ open, setOpen ] = useState( Boolean( error ) );
 	const errorType = error?.code || 'general';
-	const errorMessageContent = messagesContent[ errorType ];
+	const errorMessageContent = messagesContent[ errorType ] ?? messagesContent.general;
 
 	const resolveText = () => {
 		const details = error?.details || error?.message;
@@ -223,6 +223,7 @@ export function ProcessingErrorDialog( {
 			'insufficient-quota',
 			'error-loading-resource',
 			'media-processing-error',
+			'import-runner-error',
 		].includes( errorType );
 	};
 
