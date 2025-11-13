@@ -73,8 +73,8 @@ class Components_REST_API {
 						'items' => [
 							'type' => 'object',
 							'properties' => [
-								'temp_id' => [
-									'type' => 'number',
+								'uid' => [
+									'type' => 'string',
 									'required' => true,
 								],
 								'title' => [
@@ -171,7 +171,8 @@ class Components_REST_API {
 
 		$components_list = $components->map( fn( $component ) => [
 			'id' => $component['id'],
-			'name' => $component['name'],
+			'name' => $component['title'],
+			'uid' => $component['uid'],
 		])->all();
 
 		return Response_Builder::make( $components_list )->build();
@@ -204,16 +205,17 @@ class Components_REST_API {
 		}
 
 		$created = $items->map_with_keys( function ( $item ) use ( $save_status ) {
-			$name = sanitize_text_field( $item['title'] );
+			$title = sanitize_text_field( $item['title'] );
 			$content = $item['elements'];
+			$uid = $item['uid'];
 
 			$status = Document::STATUS_AUTOSAVE === $save_status
 				? Document::STATUS_DRAFT
 				: $save_status;
 
-			$component_id = $this->get_repository()->create( $name, $content, $status );
+			$component_id = $this->get_repository()->create( $title, $content, $status, $uid );
 
-			return [ $item['temp_id'] => $component_id ];
+			return [ $uid => $component_id ];
 		} );
 
 		return Response_Builder::make( (object) $created->all() )
