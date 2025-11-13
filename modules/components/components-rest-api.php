@@ -20,7 +20,6 @@ class Components_REST_API {
 	const MAX_COMPONENTS = 50;
 
 	private $repository = null;
-	private $lock_component_manager_instance = null;
 	public function register_hooks() {
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
 	}
@@ -34,10 +33,10 @@ class Components_REST_API {
 	}
 
 	/**
-	 * @return Lock_Component_Manager instance
+	 * @return Component_Lock_Manager instance
 	 */
-	private function get_lock_component_manager() {
-		return Lock_Component_Manager::get_instance();
+	private function get_component_lock_manager() {
+		return Component_Lock_Manager::get_instance();
 	}
 
 	private function register_routes() {
@@ -259,7 +258,15 @@ class Components_REST_API {
 
 	private function lock_component( \WP_REST_Request $request ) {
 		$component_id = $request->get_param( 'componentId' );
-		$success = $this->get_lock_component_manager()->lock( $component_id );
+		try {
+			$success = $this->get_component_lock_manager()->lock( $component_id );
+		} catch ( \Exception $e ) {
+			error_log( 'Components REST API lock_component error: ' . $e->getMessage() );
+			return Error_Builder::make( 'lock_failed' )
+				->set_status( 500 )
+				->set_message( __( 'Failed to lock component', 'elementor' ) )
+				->build();
+		}
 
 		if ( ! $success ) {
 			return Error_Builder::make( 'lock_failed' )
@@ -268,12 +275,20 @@ class Components_REST_API {
 				->build();
 		}
 
-		return Response_Builder::make( [ 'locked' => true ] )->build();
+		return Response_Builder::make( [ 'locked' => $success ] )->build();
 	}
 
 	private function unlock_component( \WP_REST_Request $request ) {
 		$component_id = $request->get_param( 'componentId' );
-		$success = $this->get_lock_component_manager()->unlock( $component_id );
+		try {
+			$success = $this->get_component_lock_manager()->unlock( $component_id );
+		} catch ( \Exception $e ) {
+			error_log( 'Components REST API unlock_component error: ' . $e->getMessage() );
+			return Error_Builder::make( 'unlock_failed' )
+				->set_status( 500 )
+				->set_message( __( 'Failed to unlock component', 'elementor' ) )
+				->build();
+		}
 
 		if ( ! $success ) {
 			return Error_Builder::make( 'unlock_failed' )
@@ -285,25 +300,38 @@ class Components_REST_API {
 	}
 
 	private function get_lock_status( \WP_REST_Request $request ) {
-		$component_id = $request->get_param( 'componentId' );
-		$lock_data = $this->get_lock_component_manager()->is_locked( $component_id );
-		$is_current_user_allow_to_edit = $this->is_current_user_allow_to_edit( $component_id );
+		$component_id = (int) $request->get_param( 'componentId' );
+		try {
+			$lock_data = $this->get_component_lock_manager()->get_updated_status( $component_id );
+			$is_current_user_allow_to_edit = $this->is_current_user_allow_to_edit( $component_id );
 
-		$locked_by = '';
-		if ( $lock_data['is_locked'] ) {
-			$locked_user = get_user_by( 'id', $lock_data['lock_user'] );
-			$locked_by = $locked_user ? $locked_user->display_name : '';
+			$locked_by = '';
+			if ( $lock_data['is_locked'] ) {
+				$locked_user = get_user_by( 'id', $lock_data['lock_user'] );
+				$locked_by = $locked_user ? $locked_user->display_name : '';
+			}
+
+			return Response_Builder::make( [
+				'is_current_user_allow_to_edit' => $is_current_user_allow_to_edit,
+				'locked_by' => $locked_by,
+			] )->build();
+		} catch ( \Exception $e ) {
+			error_log( 'Components REST API get_lock_status error: ' . $e->getMessage() );
+			return Error_Builder::make( 'get_lock_status_failed' )
+				->set_status( 500 )
+				->set_message( __( 'Failed to get lock status', 'elementor' ) )
+				->build();
 		}
-
-		return Response_Builder::make( [
-			'is_current_user_allow_to_edit' => $is_current_user_allow_to_edit,
-			'locked_by' => $locked_by,
-		] )->build();
 	}
 
 	private function is_current_user_allow_to_edit( $component_id ) {
 		$current_user_id = get_current_user_id();
-		$lock_data = $this->get_lock_component_manager()->is_locked( $component_id );
+		try {
+			$lock_data = $this->get_component_lock_manager()->get_updated_status( $component_id );
+		} catch ( \Exception $e ) {
+			error_log( 'Components REST API is_current_user_allow_to_edit error: ' . $e->getMessage() );
+			return false;
+		}
 
 		return ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] === (int) $current_user_id;
 	}
