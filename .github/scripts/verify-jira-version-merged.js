@@ -41,52 +41,12 @@ if (missingVars.length > 0) {
 	process.exit(1);
 }
 
-const getJiraOAuthToken = () => {
-	return new Promise((resolve, reject) => {
-		const authString = Buffer.from(`${JIRA_CLIENT_ID}:${JIRA_CLIENT_SECRET}`).toString('base64');
-
-		const options = {
-			hostname: 'auth.atlassian.com',
-			path: '/oauth/token',
-			method: 'POST',
-			headers: {
-				'Authorization': `Basic ${authString}`,
-				'Content-Type': 'application/json',
-			},
-		};
-
-		const req = https.request(options, (res) => {
-			let data = '';
-
-			res.on('data', (chunk) => {
-				data += chunk;
-			});
-
-			res.on('end', () => {
-				if (res.statusCode >= 400) {
-					reject(new Error(`OAuth token request failed (${res.statusCode}): ${data}`));
-					return;
-				}
-
-				try {
-					const response = JSON.parse(data);
-					resolve(response.access_token);
-				} catch (err) {
-					reject(new Error(`Failed to parse OAuth response: ${err.message}`));
-				}
-			});
-		}).on('error', reject);
-
-		const requestBody = {
-			grant_type: 'client_credentials',
-		};
-		
-		req.write(JSON.stringify(requestBody));
-		req.end();
-	});
+const getBasicAuthHeader = () => {
+	const authString = Buffer.from(`${JIRA_CLIENT_ID}:${JIRA_CLIENT_SECRET}`).toString('base64');
+	return `Basic ${authString}`;
 };
 
-const makeJiraRequest = (accessToken, path) => {
+const makeJiraRequest = (path) => {
 	return new Promise((resolve, reject) => {
 		let baseUrl = JIRA_CLOUD_INSTANCE_BASE_URL.trim();
 		
@@ -104,7 +64,7 @@ const makeJiraRequest = (accessToken, path) => {
 			path: url.pathname + url.search,
 			method: 'GET',
 			headers: {
-				'Authorization': `Bearer ${accessToken}`,
+				'Authorization': getBasicAuthHeader(),
 				'Accept': 'application/json',
 			},
 		};
@@ -132,7 +92,7 @@ const makeJiraRequest = (accessToken, path) => {
 	});
 };
 
-const getVersionTickets = async (accessToken) => {
+const getVersionTickets = async () => {
 	try {
 		console.log(`🔍 Fetching tickets for version: ${JIRA_VERSION}`);
 		
@@ -143,7 +103,7 @@ const getVersionTickets = async (accessToken) => {
 		console.log(`   JQL Query: project = ED AND fixVersion = "${sanitizedVersion}"`);
 		console.log(`   Request path: ${path}`);
 
-		const response = await makeJiraRequest(accessToken, path);
+		const response = await makeJiraRequest(path);
 		
 		if (!response.issues) {
 			console.error('❌ Unexpected Jira response format:', JSON.stringify(response, null, 2));
@@ -216,11 +176,9 @@ const findMissingTickets = (jiraTickets, branchTickets) => {
 
 (async () => {
 	try {
-		console.log('🔐 Obtaining OAuth token...\n');
-		const accessToken = await getJiraOAuthToken();
-		console.log('✅ OAuth token obtained\n');
+		console.log('🔐 Authenticating with Jira...\n');
 
-		const jiraTickets = await getVersionTickets(accessToken);
+		const jiraTickets = await getVersionTickets();
 		const commitMessages = getBranchCommits();
 		const branchTickets = extractTicketsFromCommits(commitMessages);
 
