@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type RefObject, useEffect, useState } from 'react';
+import { type RefObject, useEffect } from 'react';
 import { type PropType, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { usePopupState } from '@elementor/ui';
@@ -108,7 +108,6 @@ export const SizeControl = createControl(
 			propType,
 		} = useBoundProp( sizePropTypeUtil );
 		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[ variant ];
-		const [ internalState, setInternalState ] = useState( createStateFromSizeProp( sizeValue, actualDefaultUnit ) );
 		const activeBreakpoint = useActiveBreakpoint();
 		const actualUnits = resolveUnits( propType, enablePropTypeUnits, variant, units );
 
@@ -116,7 +115,7 @@ export const SizeControl = createControl(
 		const popupState = usePopupState( { variant: 'popover' } );
 
 		const [ state, setState ] = useSyncExternalState( {
-			external: internalState,
+			external: createStateFromSizeProp( sizeValue, actualDefaultUnit ),
 			setExternal: ( newState: State | null, options, meta ) =>
 				setSizeValue( extractValueFromState( newState ), options, meta ),
 			persistWhen: ( newState ) => !! extractValueFromState( newState ),
@@ -184,7 +183,7 @@ export const SizeControl = createControl(
 			}
 
 			if ( state.unit === newState.unit ) {
-				setInternalState( mergedStates );
+				setState( mergedStates );
 
 				return;
 			}
