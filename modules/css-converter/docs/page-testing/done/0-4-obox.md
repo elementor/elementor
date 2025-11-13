@@ -1,0 +1,5 @@
+tests/playwright/sanity/modules/css-converter/html-widget-conversion/html-widget-conversion-structure.test.ts:42:6 › HTML to Widget Conversion Structure › Simple Div with Paragraph - Correct Widget Hierarchy 
+    tests/playwright/sanity/modules/css-converter/html-widget-conversion/html-widget-conversion-structure.test.ts:128:6 › HTML to Widget Conversion Structure › Multiple Nested Elements - Complex Widget Hierarchy 
+    tests/playwright/sanity/modules/css-converter/html-widget-conversion/html-widget-conversion-structure.test.ts:207:6 › HTML to Widget Conversion Structure › OboxThemes.com Real-World Structure - Element 6d397c1 
+    tests/playwright/sanity/modules/css-converter/html-widget-conversion/html-widget-conversion-structure.test.ts:305:6 › HTML to Widget Conversion Structure › Widget Type Mapping Verification - Semantic Elements 
+    tests/playwright/sanity/modules/css-converter/html-widget-conversion/html-widget-conversion-structure.test.ts:398:6 › HTML to Widget Conversion Structure › Class Application Verification - CSS Classes on Widgets 

@@ -1,0 +1,242 @@
+<?php
+namespace Elementor\Modules\CssConverter\Services\AtomicWidgets;
+
+use Elementor\Modules\CssConverter\Convertors\CssProperties\Implementations\Class_Property_Mapper_Factory;
+
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+class CSS_To_Atomic_Props_Converter {
+
+	private $property_mapper_registry;
+
+	public function __construct() {
+		$this->property_mapper_registry = Class_Property_Mapper_Factory::get_registry();
+	}
+
+	public function convert_css_to_atomic_prop( string $property, $value ): ?array {
+
+		if ( empty( $property ) || $value === null || $value === '' ) {
+			return null;
+		}
+
+		$mapper = $this->get_property_mapper( $property );
+		
+		
+		if ( ! $mapper ) {
+			return null;
+		}
+
+		$result = $mapper->map_to_v4_atomic( $property, $value );
+		
+		
+		return $result;
+	}
+
+	public function convert_multiple_css_props( array $css_properties ): array {
+		$expanded_properties = $this->expand_shorthand_properties_for_class_based_css( $css_properties );
+
+		$atomic_props = [];
+
+		foreach ( $expanded_properties as $property => $value ) {
+
+			$atomic_prop = $this->convert_css_to_atomic_prop( $property, $value );
+			if ( $atomic_prop ) {
+				$target_property = $this->get_target_property_name( $property );
+
+				if ( isset( $atomic_props[ $target_property ] ) && $this->is_dimensions_property( $atomic_prop ) ) {
+
+					$atomic_props[ $target_property ] = $this->merge_dimensions_properties(
+						$atomic_props[ $target_property ],
+						$atomic_prop
+					);
+
+				} else {
+					$atomic_props[ $target_property ] = $atomic_prop;
+				}
+			} else {
+			}
+		}
+
+		return $atomic_props;
+	}
+
+	private function get_target_property_name( string $property ): string {
+		$mapper = $this->get_property_mapper( $property );
+
+		if ( $mapper && method_exists( $mapper, 'get_target_property_name' ) ) {
+			return $mapper->get_target_property_name( $property );
+		}
+
+		return $property;
+	}
+
+	public function is_supported_property( string $property ): bool {
+		$mapper = $this->get_property_mapper( $property );
+		return $mapper !== null;
+	}
+
+	public function get_supported_properties(): array {
+		return $this->property_mapper_registry->get_supported_properties();
+	}
+
+	public function validate_atomic_prop( array $atomic_prop ): bool {
+		if ( ! isset( $atomic_prop['$$type'] ) || ! isset( $atomic_prop['value'] ) ) {
+			return false;
+		}
+
+		return $this->validate_atomic_prop_structure( $atomic_prop );
+	}
+
+	private function get_property_mapper( string $property ) {
+		return $this->property_mapper_registry->get_mapper( $property );
+	}
+
+	private function expand_shorthand_properties_for_class_based_css( array $css_properties ): array {
+		return \Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander::expand_shorthand_properties( $css_properties );
+	}
+
+	private function both_properties_are_dimensions_type( array $existing, array $new ): bool {
+		return $this->is_dimensions_property( $existing ) && $this->is_dimensions_property( $new );
+	}
+
+	private function is_dimensions_property( array $atomic_prop ): bool {
+		return isset( $atomic_prop['$$type'] ) && $atomic_prop['$$type'] === 'dimensions';
+	}
+
+	private function merge_dimensions_properties( array $existing, array $new ): array {
+		if ( ! $this->both_properties_are_dimensions_type( $existing, $new ) ) {
+			return $new;
+		}
+
+		$merged_value = $existing['value'] ?? [];
+		$new_value = $new['value'] ?? [];
+
+		foreach ( [ 'block-start', 'block-end', 'inline-start', 'inline-end' ] as $direction ) {
+			if ( isset( $new_value[ $direction ] ) && $new_value[ $direction ] !== null ) {
+				$merged_value[ $direction ] = $new_value[ $direction ];
+			}
+			if ( ! isset( $merged_value[ $direction ] ) ) {
+				$merged_value[ $direction ] = null;
+			}
+		}
+
+		return [
+			'$$type' => 'dimensions',
+			'value' => $merged_value,
+		];
+	}
+
+	private function validate_atomic_prop_structure( array $atomic_prop ): bool {
+		$type = $atomic_prop['$$type'];
+		$value = $atomic_prop['value'];
+
+		switch ( $type ) {
+			case 'size':
+				return $this->validate_size_prop( $value );
+			case 'color':
+				return $this->validate_color_prop( $value );
+			case 'dimensions':
+				return $this->validate_dimensions_prop( $value );
+			case 'string':
+				return is_string( $value );
+			case 'background':
+				return $this->validate_background_prop( $value );
+			case 'box-shadow':
+				return $this->validate_box_shadow_prop( $value );
+			case 'border-radius':
+				return $this->validate_border_radius_prop( $value );
+			default:
+				return true; // Allow unknown types for extensibility
+		}
+	}
+
+	private function validate_size_prop( $value ): bool {
+		if ( ! is_array( $value ) ) {
+			return false;
+		}
+
+		return isset( $value['size'] ) &&
+				isset( $value['unit'] ) &&
+				is_numeric( $value['size'] ) &&
+				is_string( $value['unit'] );
+	}
+
+	private function validate_color_prop( $value ): bool {
+		return is_string( $value ) && preg_match( '/^#[0-9a-fA-F]{6}$/', $value );
+	}
+
+	private function validate_dimensions_prop( $value ): bool {
+		if ( ! is_array( $value ) ) {
+			return false;
+		}
+
+		$logical_properties = [ 'block-start', 'inline-end', 'block-end', 'inline-start' ];
+
+		foreach ( $logical_properties as $prop ) {
+			if ( isset( $value[ $prop ] ) ) {
+				if ( ! $this->validate_nested_atomic_prop( $value[ $prop ], 'size' ) ) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	private function validate_background_prop( $value ): bool {
+		if ( ! is_array( $value ) ) {
+			return false;
+		}
+
+		// Basic background validation - can be extended
+		return true;
+	}
+
+	private function validate_box_shadow_prop( $value ): bool {
+		if ( ! is_array( $value ) ) {
+			return false;
+		}
+
+		// Validate array of shadow objects
+		foreach ( $value as $shadow ) {
+			if ( ! $this->validate_nested_atomic_prop( $shadow, 'shadow' ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private function validate_border_radius_prop( $value ): bool {
+		if ( ! is_array( $value ) ) {
+			return false;
+		}
+
+		$corner_properties = [ 'start-start', 'start-end', 'end-start', 'end-end' ];
+
+		foreach ( $corner_properties as $corner ) {
+			if ( isset( $value[ $corner ] ) ) {
+				if ( ! $this->validate_nested_atomic_prop( $value[ $corner ], 'size' ) ) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	private function validate_nested_atomic_prop( $prop, string $expected_type ): bool {
+		if ( ! is_array( $prop ) ) {
+			return false;
+		}
+
+		if ( ! isset( $prop['$$type'] ) || $prop['$$type'] !== $expected_type ) {
+			return false;
+		}
+
+		return isset( $prop['value'] );
+	}
+}

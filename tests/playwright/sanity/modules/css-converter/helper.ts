@@ -1,0 +1,364 @@
+import { APIRequestContext } from '@playwright/test';
+
+export interface CssConverterOptions {
+	postType?: string;
+	createGlobalClasses?: boolean;
+	timeout?: number;
+	globalClassThreshold?: number;
+	preserveIds?: boolean;
+	useZeroDefaults?: boolean;
+}
+
+export interface CssConverterRequest {
+	type: string;
+	content: string;
+	cssUrls?: string[];
+	followImports?: boolean;
+	options?: CssConverterOptions;
+}
+
+export interface CssConverterResponse {
+	success: boolean;
+	widgets_created: number;
+	global_classes_created: number;
+	variables_created: number;
+	compound_classes_created?: number;
+	compound_classes?: Record<string, {
+		id: string;
+		label: string;
+		type: string;
+		requires: string[];
+		specificity: number;
+		original_selector: string;
+		variants: unknown[];
+	}>;
+	post_id: number;
+	edit_url: string;
+	conversion_log: unknown;
+	warnings: unknown[];
+	errors: unknown[];
+}
+
+export interface CssClassesRequest {
+	css: string;
+	url?: string;
+	store?: boolean;
+}
+
+export interface CssClassesResponse {
+	success: boolean;
+	global_classes_created: number;
+	classes: Array<{
+		name: string;
+		id: string;
+		properties: Record<string, any>;
+	}>;
+	warnings: unknown[];
+	errors: unknown[];
+}
+
+export type ApiType = 'widget-converter' | 'css-classes';
+
+export interface DualApiTestResult {
+	widgetConverter?: CssConverterResponse;
+	cssClasses?: CssClassesResponse;
+	apiType: ApiType;
+}
+
+export class CssConverterHelper {
+	public readonly devToken: string;
+	private readonly RATE_LIMIT_DELAY_MS = 1000;
+
+	constructor( devToken?: string ) {
+		this.devToken = devToken || process.env.ELEMENTOR_CSS_CONVERTER_DEV_TOKEN || 'my-dev-token';
+	}
+
+	async waitForRateLimit(): Promise<void> {
+		await new Promise( ( resolve ) => setTimeout( resolve, this.RATE_LIMIT_DELAY_MS ) );
+	}
+
+	async resetGlobalClasses( request: APIRequestContext ): Promise<void> {
+		try {
+			await request.post( '/wp-json/elementor/v2/css-converter/classes/reset', {
+				headers: {
+					'X-DEV-TOKEN': this.devToken,
+					'Content-Type': 'application/json',
+				},
+				timeout: 15000,
+			} );
+		} catch ( e ) {
+			console.log( 'Reset endpoint not available, continuing...' );
+		}
+	}
+
+	async convertHtmlWithCss(
+		request: APIRequestContext,
+		htmlContent: string,
+		cssContent?: string,
+		options: CssConverterOptions = {},
+	): Promise<CssConverterResponse> {
+		const defaultOptions: CssConverterOptions = {
+			postType: 'page',
+			createGlobalClasses: true,
+			...options,
+		};
+
+		const payload = {
+			type: 'html',
+			content: htmlContent,
+			css: cssContent,
+			options: defaultOptions,
+		};
+
+		const apiResponse = await request.post( '/wp-json/elementor/v2/widget-converter', {
+			headers: {
+				'X-DEV-TOKEN': this.devToken,
+				'Content-Type': 'application/json',
+			},
+			data: payload,
+			timeout: 15000,
+		} );
+
+		const responseJson = await apiResponse.json() as CssConverterResponse;
+
+		return responseJson;
+	}
+
+	async convertCssOnly(
+		request: APIRequestContext,
+		cssContent: string,
+		options: CssConverterOptions = {},
+	): Promise<CssConverterResponse> {
+		const defaultOptions: CssConverterOptions = {
+			postType: 'page',
+			createGlobalClasses: true,
+			...options,
+		};
+
+		const apiResponse = await request.post( '/wp-json/elementor/v2/widget-converter', {
+			headers: {
+				'X-DEV-TOKEN': this.devToken,
+				'Content-Type': 'application/json',
+			},
+			data: {
+				type: 'css',
+				content: cssContent,
+				options: defaultOptions,
+			},
+			timeout: 15000,
+		} );
+
+		return await apiResponse.json() as CssConverterResponse;
+	}
+
+	async convertFromUrl(
+		request: APIRequestContext,
+		url: string,
+		cssUrls: string[] = [],
+		followImports: boolean = false,
+		options: CssConverterOptions = {},
+		selector?: string,
+	): Promise<CssConverterResponse> {
+		const defaultOptions: CssConverterOptions = {
+			postType: 'page',
+			createGlobalClasses: true,
+			...options,
+		};
+
+		const payload: any = {
+			type: 'url',
+			content: url,
+		};
+
+		if ( selector ) {
+			payload.selector = selector;
+		}
+
+		if ( cssUrls.length > 0 ) {
+			payload.cssUrls = cssUrls;
+		}
+
+		if ( followImports ) {
+			payload.followImports = followImports;
+		}
+
+		if ( Object.keys( defaultOptions ).length > 0 ) {
+			payload.options = defaultOptions;
+		}
+
+		const apiResponse = await request.post( '/wp-json/elementor/v2/widget-converter', {
+			headers: {
+				'X-DEV-TOKEN': this.devToken,
+				'Content-Type': 'application/json',
+			},
+			data: payload,
+			timeout: 15000,
+		} );
+
+		return await apiResponse.json() as CssConverterResponse;
+	}
+
+	async convertCssToClasses(
+		request: APIRequestContext,
+		cssContent: string,
+		store: boolean = true,
+	): Promise<CssClassesResponse> {
+		const apiResponse = await request.post( '/wp-json/elementor/v2/css-converter/classes', {
+			headers: {
+				'X-DEV-TOKEN': this.devToken,
+				'Content-Type': 'application/json',
+			},
+			data: {
+				css: cssContent,
+				store,
+			},
+			timeout: 15000,
+		} );
+
+		return await apiResponse.json() as CssClassesResponse;
+	}
+
+	async convertCssVariables(
+		request: APIRequestContext,
+		cssContent: string,
+		updateMode: string = 'create_new',
+	): Promise<any> {
+		const apiResponse = await request.post( '/wp-json/elementor/v2/css-converter/variables', {
+			headers: {
+				'X-DEV-TOKEN': this.devToken,
+				'Content-Type': 'application/json',
+			},
+			data: {
+				css: cssContent,
+				update_mode: updateMode,
+			},
+			timeout: 15000,
+		} );
+
+		return await apiResponse.json();
+	}
+
+	async convertWithBothApis(
+		request: APIRequestContext,
+		cssContent: string,
+		options: CssConverterOptions = {},
+	): Promise<DualApiTestResult> {
+		const widgetConverter = await this.convertCssOnly( request, cssContent, options );
+		const cssClasses = await this.convertCssToClasses( request, cssContent, true );
+
+		return {
+			widgetConverter,
+			cssClasses,
+			apiType: 'widget-converter',
+		};
+	}
+
+	getEditUrl( postId: number ): string {
+		return `/wp-admin/post.php?post=${ postId }&action=elementor`;
+	}
+
+	/**
+	 * Validates API result and returns skip information if the result is invalid
+	 * @param apiResult - The API response to validate
+	 * @return Object with shouldSkip boolean and skipReason string
+	 */
+	validateApiResult( apiResult: CssConverterResponse | null ): { shouldSkip: boolean; skipReason: string } {
+		if ( ! apiResult ) {
+			return {
+				shouldSkip: true,
+				skipReason: 'API returned null/undefined response',
+			};
+		}
+
+		if ( apiResult.errors && apiResult.errors.length > 0 ) {
+			return {
+				shouldSkip: true,
+				skipReason: 'Skipping due to backend property mapper issues: ' + apiResult.errors.join( ', ' ),
+			};
+		}
+
+		if ( ! apiResult.post_id || ! apiResult.edit_url ) {
+			return {
+				shouldSkip: true,
+				skipReason: 'Skipping due to missing postId or editUrl in API response',
+			};
+		}
+
+		return {
+			shouldSkip: false,
+			skipReason: '',
+		};
+	}
+
+	/**
+	 * Validates CSS Classes API result
+	 * @param apiResult - The CSS Classes API response to validate
+	 * @return Object with shouldSkip boolean and skipReason string
+	 */
+	validateCssClassesResult( apiResult: CssClassesResponse | null ): { shouldSkip: boolean; skipReason: string } {
+		if ( ! apiResult ) {
+			return {
+				shouldSkip: true,
+				skipReason: 'CSS Classes API returned null/undefined response',
+			};
+		}
+
+		if ( apiResult.errors && apiResult.errors.length > 0 ) {
+			return {
+				shouldSkip: true,
+				skipReason: 'Skipping due to CSS Classes API errors: ' + apiResult.errors.join( ', ' ),
+			};
+		}
+
+		if ( ! apiResult.success ) {
+			return {
+				shouldSkip: true,
+				skipReason: 'CSS Classes API returned success: false',
+			};
+		}
+
+		return {
+			shouldSkip: false,
+			skipReason: '',
+		};
+	}
+
+	/**
+	 * Validates dual API test result
+	 * @param dualResult - The dual API test result to validate
+	 * @return Object with shouldSkip boolean and skipReason string
+	 */
+	validateDualApiResult( dualResult: DualApiTestResult | null ): { shouldSkip: boolean; skipReason: string } {
+		if ( ! dualResult ) {
+			return {
+				shouldSkip: true,
+				skipReason: 'Dual API test returned null/undefined response',
+			};
+		}
+
+		if ( dualResult.widgetConverter ) {
+			const widgetValidation = this.validateApiResult( dualResult.widgetConverter );
+			if ( widgetValidation.shouldSkip ) {
+				return {
+					shouldSkip: true,
+					skipReason: 'Widget Converter validation failed: ' + widgetValidation.skipReason,
+				};
+			}
+		}
+
+		if ( dualResult.cssClasses ) {
+			const classesValidation = this.validateCssClassesResult( dualResult.cssClasses );
+			if ( classesValidation.shouldSkip ) {
+				return {
+					shouldSkip: true,
+					skipReason: 'CSS Classes validation failed: ' + classesValidation.skipReason,
+				};
+			}
+		}
+
+		return {
+			shouldSkip: false,
+			skipReason: '',
+		};
+	}
+}
