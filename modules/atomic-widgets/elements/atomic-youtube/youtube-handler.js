@@ -34,7 +34,7 @@ const loadYouTubeAPI = () => {
 
 register( {
 	elementType: 'e-youtube',
-	uniqueId: 'e-youtube-handler',
+	id: 'e-youtube-handler',
 	callback: ( { element } ) => {
 		const youtubeElement = document.createElement( 'div' );
 		youtubeElement.style.height = '100%';
