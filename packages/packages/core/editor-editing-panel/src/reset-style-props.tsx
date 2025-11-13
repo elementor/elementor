@@ -9,7 +9,7 @@ import { isEqual } from './utils/is-equal';
 const { registerAction } = controlActionsMenu;
 
 // TODO: BC: Only background repeater supports reset; remove this constant once all repeaters support it.
-const REPEATERS_SUPPORTED_FOR_RESET = [ 'background', 'transform', 'filter', 'backdrop-filter', 'box-shadow' ];
+const REPEATERS_SUPPORTED_FOR_RESET = [ 'background', 'transform', 'filter', 'backdrop-filter' ];
 
 export function initResetStyleProps() {
 	registerAction( {

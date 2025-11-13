@@ -21,11 +21,11 @@ class Drop_Shadow_Filter_Prop_Type extends Object_Prop_Type {
 		$units = Size_Constants::drop_shadow();
 		$axis_size = [
 			'size' => 0,
-			'unit' => Size_Constants::UNIT_PX,
+			'unit' => 'px',
 		];
 		$blur = [
 			'size' => 10,
-			'unit' => Size_Constants::UNIT_PX,
+			'unit' => 'px',
 		];
 		$color = 'rgba(0, 0, 0, 1)';
 
