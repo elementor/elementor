@@ -19,8 +19,14 @@ class Drop_Shadow_Filter_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		$units = Size_Constants::drop_shadow();
-		$axis_size = [ 'size' => 0, 'unit' => 'px' ];
-		$blur = [ 'size' => 10, 'unit' => 'px' ];
+		$axis_size = [
+			'size' => 0,
+			'unit' => 'px',
+		];
+		$blur = [
+			'size' => 10,
+			'unit' => 'px',
+		];
 		$color = 'rgba(0, 0, 0, 1)';
 
 		return [
@@ -30,17 +36,17 @@ class Drop_Shadow_Filter_Prop_Type extends Object_Prop_Type {
 				->required()
 				->units( $units ),
 			'yAxis' => Size_Prop_Type::make()
-			    ->default( $axis_size )
+				->default( $axis_size )
 				->initial_value( $axis_size )
 				->required()
 				->units( $units ),
 			'blur' => Size_Prop_Type::make()
-			    ->default( $blur )
+				->default( $blur )
 				->initial_value( $blur )
 				->required()
 				->units( $units ),
 			'color' => Color_Prop_Type::make()
-			    ->default( $color )
+				->default( $color )
 				->initial_value( $color )
 				->required(),
 		];
