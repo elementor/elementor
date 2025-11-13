@@ -13,6 +13,7 @@ import { CreateComponentForm } from '../create-component-form/create-component-f
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../api' );
+jest.mock( '@elementor/utils' );
 
 const mockGetElementLabel = jest.mocked( getElementLabel );
 const mockGetComponents = jest.mocked( apiClient.get );
