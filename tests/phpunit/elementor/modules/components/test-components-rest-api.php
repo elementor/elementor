@@ -172,24 +172,24 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'temp_id' => 100,
+							'uid' => '100',
 							'title' => 'New Test Component 1',
 							'elements' => Component_Mocks::get_component_1_data(),
 						],
 						[
-							'temp_id' => 200,
+							'uid' => '200',
 							'title' => 'New Test Component 2',
 							'elements' => Component_Mocks::get_component_2_data(),
 						],
 					]
 				],
 				'expected' => [
-					100 => [
+					'100' => [
 						'title' => 'New Test Component 1',
 						'content' => Component_Mocks::get_component_1_data(),
 						'status' => 'publish',
 					],
-					200 => [
+					'200' => [
 						'title' => 'New Test Component 2',
 						'content' => Component_Mocks::get_component_2_data(),
 						'status' => 'publish',
@@ -201,14 +201,14 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'draft',
 					'items' => [
 						[
-							'temp_id' => 100,
+							'uid' => '100',
 							'title' => 'New Test Component 1',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
 					]
 				],
 				'expected' => [
-					100 => [
+					'100' => [
 						'title' => 'New Test Component 1',
 						'content' => Component_Mocks::get_component_1_data(),
 						'status' => 'draft',
@@ -220,14 +220,14 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'autosave',
 					'items' => [
 						[
-							'temp_id' => 100,
+							'uid' => '100',
 							'title' => 'New Test Component 1',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
 					]
 				],
 				'expected' => [
-					100 => [
+					'100' => [
 						'title' => 'New Test Component 1',
 						'content' => Component_Mocks::get_component_1_data(),
 						'status' => 'draft',
@@ -239,14 +239,14 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'temp_id' => 100,
+							'uid' => '100',
 							'title' => '  <script>alert(1)</script>Sanitized Component ',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
 					]
 				],
 				'expected' => [
-					100 => [
+					'100' => [
 						'title' => 'Sanitized Component',
 						'content' => Component_Mocks::get_component_1_data(),
 						'status' => 'publish',
@@ -297,7 +297,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 			'status' => 'publish',
 			'items' => [
 				[
-					'temp_id' => 1,
+					'uid' => '100',
 					'title' => 'Test Component',
 					'elements' => $this->mock_component_1_content,
 				]
@@ -318,7 +318,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'temp_id' => 1,
+							'uid' => '100',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
 					],
@@ -334,7 +334,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'temp_id' => 1,
+							'uid' => '1',
 							'title' => 'A',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
@@ -351,7 +351,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'temp_id' => 1,
+							'uid' => '1',
 							'title' => str_repeat( 'A', 201 ),
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
@@ -368,7 +368,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'temp_id' => 1,
+							'uid' => '1',
 							'title' => [ 'not', 'a', 'string' ],
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
@@ -385,7 +385,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'temp_id' => 1,
+							'uid' => '1',
 							'title' => 'Test Component',
 						]
 					],
@@ -401,7 +401,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'temp_id' => 1,
+							'uid' => '1',
 							'title' => 'Test Component',
 							'elements' => 'not-an-array',
 						]
@@ -418,7 +418,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'publish',
 					'items' => [
 						[
-							'temp_id' => 1,
+							'uid' => '1',
 							'title' => 'Test Component',
 							'elements' => Component_Mocks::get_invalid_component_data(),
 						]
@@ -429,7 +429,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'code' => 'unexpected_error',
 				],
 			],
-			'Temp ID is missing' => [
+			'UID is missing' => [
 				'input' => [
 					'status' => 'publish',
 					'items' => [
@@ -442,15 +442,15 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 				'expected' => [
 					'status_code' => 400,
 					'code' => 'rest_invalid_param',
-					'errors' => [ 'items' => "temp_id is a required property of items[0]." ],
+					'errors' => [ 'items' => "uid is a required property of items[0]." ],
 				],
 			],
-			'Temp ID not a number' => [
+			'UID not a string' => [
 				'input' => [
 					'status' => 'publish',
 					'items' => [
 						[
-							'temp_id' => 'not-a-number',
+							'uid' => 456,
 							'title' => 'Test Component',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
@@ -459,14 +459,14 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 				'expected' => [
 					'status_code' => 400,
 					'code' => 'rest_invalid_param',
-					'errors' => [ 'items' => "items[0][temp_id] is not of type number." ],
+					'errors' => [ 'items' => "items[0][uid] is not of type string." ],
 				],
 			],
 			'Status is missing' => [
 				'input' => [
 					'items' => [
 						[
-							'temp_id' => 1,
+							'uid' => '1',
 							'title' => 'Test Component',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
@@ -483,7 +483,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'status' => 'invalid-status',
 					'items' => [
 						[
-							'temp_id' => 1,
+							'uid' => '1',
 							'title' => 'Test Component',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
@@ -531,7 +531,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 			'status' => 'publish',
 			'items' => [
 				[
-					'temp_id' => 1,
+					'uid' => '1',
 					'title' => 'Test Component',
 					'elements' => $this->mock_component_1_content,
 				]
@@ -543,7 +543,38 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( 400, $response->get_status() );
 		$this->assertEquals( 'components_validation_failed', $response->get_data()['code'] );
-		$this->assertEquals( 'Validation failed: Component name &#039;Test Component&#039; is duplicated.', $response->get_data()['message'] );
+		$this->assertEquals( 'Validation failed: Component title &#039;Test Component&#039; is duplicated.', $response->get_data()['message'] );
+	}
+
+	public function test_post_create_component__fails_when_uid_is_duplicated() {
+		// Arrange
+		$this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'items' => [
+				[
+					'uid' => '1',
+					'title' => 'Test Component 1',
+					'elements' => $this->mock_component_1_content,
+				],
+				[
+					'uid' => '1',
+					'title' => 'Test Component 2',
+					'elements' => $this->mock_component_1_content,
+				]
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'components_validation_failed', $response->get_data()['code'] );
+		$this->assertEquals( 'Validation failed: Component uid &#039;1&#039; is duplicated.', $response->get_data()['message'] );
 	}
 
 	public function test_register_routes__endpoints_exist() {

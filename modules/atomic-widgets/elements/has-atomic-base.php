@@ -212,7 +212,7 @@ trait Has_Atomic_Base {
 		return $resolved[ $key ] ?? null;
 	}
 
-	private function parse_editor_settings( array $data ): array {
+	protected function parse_editor_settings( array $data ): array {
 		$editor_data = [];
 
 		if ( isset( $data['title'] ) && is_string( $data['title'] ) ) {
