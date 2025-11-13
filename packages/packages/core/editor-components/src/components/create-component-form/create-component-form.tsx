@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { getElementLabel, type V1Element, type V1ElementData } from '@elementor/editor-elements';
+import { getElementLabel, type V1ElementData } from '@elementor/editor-elements';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { StarIcon } from '@elementor/icons';
 import { __useDispatch as useDispatch } from '@elementor/store';
@@ -11,13 +11,20 @@ import { __ } from '@wordpress/i18n';
 import { useComponents } from '../../hooks/use-components';
 import { slice } from '../../store/store';
 import { type ComponentFormValues } from '../../types';
+import { trackComponentEvent } from '../../utils/tracking';
 import { useForm } from './hooks/use-form';
 import { createBaseComponentSchema, createSubmitComponentSchema } from './utils/component-form-schema';
+import {
+	type ComponentEventData,
+	type ContextMenuEventOptions,
+	getComponentEventData,
+} from './utils/get-component-event-data';
 import { replaceElementWithComponent } from './utils/replace-element-with-component';
 
 type SaveAsComponentEventData = {
-	element: V1Element;
+	element: V1ElementData;
 	anchorPosition: { top: number; left: number };
+	options?: ContextMenuEventOptions;
 };
 
 type ResultNotification = {
@@ -28,7 +35,7 @@ type ResultNotification = {
 
 export function CreateComponentForm() {
 	const [ element, setElement ] = useState< {
-		element: V1Element;
+		element: V1ElementData;
 		elementLabel: string;
 	} | null >( null );
 
@@ -38,12 +45,20 @@ export function CreateComponentForm() {
 
 	const dispatch = useDispatch();
 
+	const eventData = React.useRef< ComponentEventData | null >( null );
+
 	useEffect( () => {
 		const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
 
 		const openPopup = ( event: CustomEvent< SaveAsComponentEventData > ) => {
 			setElement( { element: event.detail.element, elementLabel: getElementLabel( event.detail.element.id ) } );
 			setAnchorPosition( event.detail.anchorPosition );
+
+			eventData.current = getComponentEventData( event.detail.element, event.detail.options );
+			trackComponentEvent( {
+				action: 'createClicked',
+				...eventData.current,
+			} );
 		};
 
 		window.addEventListener( OPEN_SAVE_AS_COMPONENT_FORM_EVENT, openPopup as EventListener );
@@ -65,13 +80,20 @@ export function CreateComponentForm() {
 				slice.actions.addUnpublished( {
 					uid,
 					name: values.componentName,
-					elements: [ element.element.model.toJSON( { remove: [ 'default' ] } ) as V1ElementData ],
+					elements: [ element.element ],
 				} )
 			);
 
 			dispatch( slice.actions.addCreatedThisSession( uid ) );
 
 			replaceElementWithComponent( element.element, { uid, name: values.componentName } );
+
+			trackComponentEvent( {
+				action: 'created',
+				component_uid: uid,
+				component_name: values.componentName,
+				...eventData.current,
+			} );
 
 			setResultNotification( {
 				show: true,
@@ -100,6 +122,10 @@ export function CreateComponentForm() {
 
 	const cancelSave = () => {
 		resetAndClosePopup();
+		trackComponentEvent( {
+			action: 'createCancelled',
+			...eventData.current,
+		} );
 	};
 
 	return (
