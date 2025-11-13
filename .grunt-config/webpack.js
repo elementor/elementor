@@ -158,7 +158,8 @@ const frontendEntries = {
 	'frontend-modules': path.resolve( __dirname, '../assets/dev/js/frontend/modules.js' ),
 	'frontend': { import: path.resolve( __dirname, '../assets/dev/js/frontend/frontend.js' ), dependOn: 'frontend-modules' },
 	'youtube-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-youtube/youtube-handler.js' ),
-	'tabs-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/atomic-tabs-handler.js' ),
+	'tabs-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-handler.js' ),
+	'tabs-preview-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-preview-handler.js' ),
 };
 
 const externals = [
