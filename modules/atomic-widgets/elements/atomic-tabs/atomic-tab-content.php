@@ -138,6 +138,7 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 
 		$tabs_context = Render_Context::get( Atomic_Tabs::class );
 		$default_active_tab = $tabs_context['default-active-tab'];
+		var_dump( $default_active_tab );
 		$get_tab_content_index = $tabs_context['get-tab-content-index'];
 		$tabs_id = $tabs_context['tabs-id'];
 
@@ -153,7 +154,6 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 			],
 			'data-interactions' => json_encode( $this->interactions ),
 			'x-bind' => 'tabContent',
-			'x-ref' => $this->get_id(),
 			'id' => Atomic_Tabs::get_tab_content_id( $tabs_id, $index ),
 			'aria-labelledby' => Atomic_Tabs::get_tab_id( $tabs_id, $index ),
 		];
