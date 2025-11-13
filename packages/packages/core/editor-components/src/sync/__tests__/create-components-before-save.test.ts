@@ -3,7 +3,8 @@ import { __createStore, __dispatch, __getState as getState, __registerSlice } fr
 
 import { apiClient } from '../../api';
 import { selectUnpublishedComponents, slice } from '../../store/store';
-import { beforeSave } from '../before-save';
+import { createComponentsBeforeSave } from '../create-components-before-save';
+import { createMockContainer } from './utils';
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../api' );
@@ -11,19 +12,11 @@ jest.mock( '../../api' );
 const mockUpdateElementSettings = jest.mocked( updateElementSettings );
 const mockCreateComponents = jest.mocked( apiClient.create );
 
-describe( 'beforeSave', () => {
+describe( 'createComponentsBeforeSave', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		__registerSlice( slice );
 		__createStore();
-	} );
-
-	const createMockContainer = ( elements: V1ElementData[] = [] ) => ( {
-		model: {
-			get: () => ( {
-				toJSON: () => elements,
-			} ),
-		},
 	} );
 
 	const setupUnpublishedComponents = () => {
@@ -66,7 +59,7 @@ describe( 'beforeSave', () => {
 			const container = createMockContainer();
 
 			// Act
-			await beforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { container, status: 'draft' } );
 
 			// Assert
 			expect( mockCreateComponents ).not.toHaveBeenCalled();
@@ -81,7 +74,7 @@ describe( 'beforeSave', () => {
 
 		it( 'should send create requests for unpublished components', async () => {
 			// Act
-			await beforeSave( { container: createMockContainer(), status: 'publish' } );
+			await createComponentsBeforeSave( { container: createMockContainer(), status: 'publish' } );
 
 			// Assert
 			expect( mockCreateComponents ).toHaveBeenCalledTimes( 1 );
@@ -108,7 +101,7 @@ describe( 'beforeSave', () => {
 			mockCreateComponents.mockRejectedValue( new Error( 'API Error' ) );
 
 			// Act & Assert
-			await expect( beforeSave( { container, status: 'draft' } ) ).rejects.toThrow(
+			await expect( createComponentsBeforeSave( { container, status: 'draft' } ) ).rejects.toThrow(
 				'Failed to publish components and update component instances'
 			);
 		} );
@@ -124,7 +117,7 @@ describe( 'beforeSave', () => {
 			const container = createMockContainer( mockPageElements );
 
 			// Act
-			await beforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { container, status: 'draft' } );
 
 			// Assert
 			expect( mockUpdateElementSettings ).toHaveBeenCalledTimes( 2 );
@@ -155,7 +148,7 @@ describe( 'beforeSave', () => {
 			const container = createMockContainer( mockPageElements );
 
 			// Act
-			await beforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { container, status: 'draft' } );
 
 			// Assert
 			expect( mockUpdateElementSettings ).not.toHaveBeenCalledWith(
@@ -168,7 +161,7 @@ describe( 'beforeSave', () => {
 			const container = createMockContainer( mockPageElements );
 
 			// Act
-			await beforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { container, status: 'draft' } );
 
 			// Assert
 			expect( mockUpdateElementSettings ).not.toHaveBeenCalledWith(
@@ -184,7 +177,7 @@ describe( 'beforeSave', () => {
 			const container = createMockContainer( [] );
 
 			// Act
-			await beforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { container, status: 'draft' } );
 
 			// Assert
 			expect( mockUpdateElementSettings ).not.toHaveBeenCalled();
@@ -207,7 +200,7 @@ describe( 'beforeSave', () => {
 			const container = createMockContainer( [] );
 
 			// Act
-			await beforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { container, status: 'draft' } );
 
 			// Assert
 			expect( getState().components.data ).toEqual( [
@@ -225,7 +218,7 @@ describe( 'beforeSave', () => {
 			] );
 
 			// Act
-			await beforeSave( { container: createMockContainer(), status: 'draft' } );
+			await createComponentsBeforeSave( { container: createMockContainer(), status: 'draft' } );
 
 			// Assert
 			expect( selectUnpublishedComponents( getState() ) ).toEqual( [] );
