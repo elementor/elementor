@@ -8,20 +8,6 @@ export default class VariablesManagerPage {
 		this.page = page;
 	}
 
-	async addFontVariable() {
-		const variableData = { name: `test-font-variable-${ Date.now() }`, value: 'Arial', type: 'font' as const };
-		await this.addVariable( variableData, 'Typography', 'font-family' );
-		await this.detachVariable( 'Typography', 'Font Family', variableData.name );
-		return variableData;
-	}
-
-	async addColorVariable() {
-		const variableData = { name: `test-color-variable-${ Date.now() }`, value: '#ff0000', type: 'color' as const };
-		await this.addVariable( variableData, 'Typography', 'text-color' );
-		await this.detachVariable( 'Typography', 'Text Color', variableData.name );
-		return variableData;
-	}
-
 	private async getControl( styleSectionSelector: string, controlToAccessFrom: string ) {
 		await this.page.frameLocator( EditorSelectors.canvas ).locator( 'body' ).getByText( 'This is a title' ).click();
 		await this.page.getByRole( 'tab', { name: 'Style' } ).click();
@@ -37,21 +23,6 @@ export default class VariablesManagerPage {
 		await this.page.mouse.move( controlBoundingBox.x + ( controlBoundingBox.width / 2 ), controlBoundingBox.y + ( controlBoundingBox.height / 2 ) );
 		await this.page.click( EditorSelectors.floatingElements.v4.floatingActionsBar );
 		return control;
-	}
-
-	private async addVariable( variable: { name: string, value: string, type: 'font' | 'color' }, styleSectionSelector: string, controlToAccessFrom: string ) {
-		await this.openVariablesPopover( styleSectionSelector, controlToAccessFrom );
-		await this.page.click( EditorSelectors.variables.manager.addButton );
-		await this.page.getByRole( 'textbox', { name: 'Name' } ).fill( variable.name );
-		if ( 'font' === variable.type ) {
-			await this.page.locator( EditorSelectors.variables.manager.valueInputWrapper ).getByRole( 'button' ).click();
-			await this.page.locator( `#${ controlToAccessFrom }-variables-selector-search` ).fill( variable.value );
-			await this.page.locator( `#${ controlToAccessFrom }-variables-selector` ).getByText( variable.value ).click();
-		} else if ( 'color' === variable.type ) {
-			await this.page.locator( EditorSelectors.variables.manager.valueInputWrapper ).getByRole( 'textbox' ).fill( variable.value );
-		}
-		await this.page.locator( EditorSelectors.variables.manager.createButton ).click();
-		await this.page.getByRole( 'button', { name: variable.name } ).waitFor();
 	}
 
 	async detachVariable( styleSectionSelector: string, controlLabelToDetach: string, variableName: string ) {
@@ -76,11 +47,32 @@ export default class VariablesManagerPage {
 		await this.page.click( EditorSelectors.variables.manager.managerButton );
 	}
 
-	async createVariableFromManager( type: 'font' | 'color' ) {
+	async createVariableFromManager( { name, value, type }: { name: string, value: string, type: 'font' | 'color' } ) {
 		await this.openVariableManager( 'Typography', 'text-color' );
 
 		await this.page.getByRole( 'button', { name: 'Add variable' } ).click();
 		await this.page.locator( 'li' ).filter( { hasText: type } ).click();
+
+		const rows = this.page.locator( 'tbody tr' );
+		const rowCount = await rows.count();
+		const latestRow = rows.nth( rowCount - 1 );
+
+		await latestRow.getByRole( 'textbox', { name: 'Name' } ).fill( name );
+		await this.page.keyboard.press( 'Enter' );
+		await latestRow.getByRole( 'button' ).nth( 2 ).dblclick();
+		if ( 'color' === type ) {
+			await latestRow.locator( '#color-variable-field' ).getByRole( 'textbox' ).fill( value );
+		}
+		if ( 'font' === type ) {
+			await latestRow.getByRole( 'button' ).nth( 2 ).click();
+			await this.page.locator( `#font-family-variables-selector-search` ).fill( value );
+			await this.page.locator( `#font-family-variables-selector` ).getByText( value ).click();
+		}
+		await this.page.keyboard.press( 'Enter' );
+
+		await this.saveVariablesManager( true );
+
+		return latestRow;
 	}
 
 	async deleteVariable( variableName: string ) {
@@ -93,25 +85,32 @@ export default class VariablesManagerPage {
 	}
 
 	async saveAndExitVariableManager( shouldSave: boolean ) {
+		await this.saveVariablesManager( shouldSave );
+		await this.page.locator( '#elementor-panel' ).getByRole( 'button', { name: 'Close' } ).click();
+		if ( await this.page.locator( '#save-changes-dialog' ).isVisible() ) {
+			const saveChangesDialog = this.page.locator( '[aria-labelledby="save-changes-dialog"]' );
+			await saveChangesDialog.getByRole( 'button', { name: /Save/ } ).click();
+			await this.page.waitForRequest( ( response ) => response.url().includes( 'list' ) && null === response.failure() );
+			await saveChangesDialog.waitFor( { state: 'hidden' } );
+		}
+	}
+
+	private async saveVariablesManager( shouldSave: boolean ) {
 		const isSaveEnabled = await this.page.locator( '#elementor-panel' ).getByRole( 'button', { name: /Save/ } ).isEnabled();
 		if ( shouldSave || isSaveEnabled ) {
 			await this.page.locator( '#elementor-panel' ).getByRole( 'button', { name: /Save/ } ).click();
 			await this.page.waitForRequest( ( response ) => response.url().includes( 'list' ) && null === response.failure() );
-		}
-		await this.page.locator( '#elementor-panel' ).getByRole( 'button', { name: 'Close' } ).click();
-		if ( await this.page.locator( '#save-changes-dialog' ).isVisible() ) {
-			await this.page.locator( '[aria-labelledby="save-changes-dialog"]' ).getByRole( 'button', { name: /Save/ } ).click();
 		}
 	}
 
 	async deleteAllVariables() {
 		await this.openVariableManager( 'Typography', 'text-color' );
 
-		const testVariableRows = this.page.locator( 'tbody tr' ).filter( { hasText: /test-.*-variable/i } );
+		const testVariableRows = this.page.locator( 'tbody tr' );
 		const rowCount = await testVariableRows.count();
 
 		for ( let i = rowCount - 1; i >= 0; i-- ) {
-			const variableName = await testVariableRows.nth( i ).getByText( /test-.*-variable/i ).textContent();
+			const variableName = await testVariableRows.nth( i ).textContent();
 
 			if ( variableName ) {
 				await this.deleteVariable( variableName );

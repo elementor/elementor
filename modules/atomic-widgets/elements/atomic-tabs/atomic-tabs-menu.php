@@ -3,7 +3,6 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
@@ -64,25 +63,15 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 	}
 
 	protected function define_base_styles(): array {
-		$display = String_Prop_Type::generate( 'flex' );
-		$gap = Size_Prop_Type::generate( [
-			'size' => 10,
-			'unit' => 'px',
-		] );
-		$justify_content = String_Prop_Type::generate( 'space-between' );
-		$min_width = Size_Prop_Type::generate( [
-			'size' => 30,
-			'unit' => 'px',
-		] );
-
+		$styles = [
+			'display' => String_Prop_Type::generate( 'flex' ),
+			'justify-content' => String_Prop_Type::generate( 'center' ),
+		];
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
 					Style_Variant::make()
-						->add_prop( 'display', $display )
-						->add_prop( 'min-width', $min_width )
-						->add_prop( 'gap', $gap )
-						->add_prop( 'justify-content', $justify_content )
+						->add_props( $styles )
 				),
 		];
 	}
@@ -100,6 +89,8 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
+			'data-id' => $this->get_id(),
+			'data-interactions' => json_encode( $this->interactions ),
 		];
 
 		if ( ! empty( $settings['_cssid'] ) ) {

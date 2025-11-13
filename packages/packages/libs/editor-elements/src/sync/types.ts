@@ -52,7 +52,7 @@ export type V1ElementModelProps = {
 	elements?: V1Model< V1ElementModelProps >[];
 	settings?: V1ElementSettingsProps;
 	editor_settings?: V1ElementEditorSettingsProps;
-	interactions?: string | Array< { animation: { animation_type: string; animation_id: string } } >;
+	interactions?: string | Record< string, unknown >;
 };
 
 export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {
@@ -61,6 +61,7 @@ export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {
 
 export type V1ElementEditorSettingsProps = {
 	title?: string;
+	component_uid?: string;
 };
 
 export type V1ElementSettingsProps = Record< string, PropValue >;

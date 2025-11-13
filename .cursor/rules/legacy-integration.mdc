@@ -1,0 +1,304 @@
+---
+description: Legacy code integration and migration rules
+globs: ["core/**/*.php", "includes/**/*.php", "modules/**/*.js", "assets/**/*.js"]
+alwaysApply: true
+---
+
+# Legacy Integration Rules
+
+## Legacy Code Understanding
+
+### Architecture Overview
+- **Legacy Editor**: jQuery-based, monolithic structure
+- **New Editor V2**: React-based, micro-frontend architecture
+- **Integration Layer**: Adapters and bridges between systems
+
+### Key Legacy Components
+- `core/` - Core PHP functionality
+- `includes/` - PHP includes and utilities
+- `modules/` - Legacy JavaScript modules
+- `assets/` - Built assets (CSS, JS)
+
+## Migration Strategy
+
+### Gradual Migration
+- Maintain backward compatibility
+- Use adapters for new functionality
+- Migrate components incrementally
+- Test thoroughly at each step
+
+### Adapter Pattern
+```typescript
+// Legacy API adapter
+class LegacyEditorAdapter {
+  static getCurrentDocument(): Document {
+    return elementor.documents.getCurrent();
+  }
+
+  static updateElement(id: string, props: any): void {
+    elementor.getPreviewView().addChildView(
+      new ElementView({ model: { id, ...props } })
+    );
+  }
+}
+```
+
+## Legacy Code Rules
+
+### PHP Legacy Code
+- **Don't modify** without understanding impact
+- **Use adapters** for new functionality
+- **Maintain compatibility** with existing APIs
+- **Document changes** thoroughly
+
+### JavaScript Legacy Code
+- **Avoid direct modification** of legacy modules
+- **Create wrappers** for new functionality
+- **Use event system** for communication
+- **Test integration** thoroughly
+
+## Integration Patterns
+
+### Event-Based Communication
+```javascript
+// Legacy to new
+elementor.hooks.addAction('frontend/element_ready', (element) => {
+  // Notify new editor
+  window.dispatchEvent(new CustomEvent('elementor:element:ready', {
+    detail: { element }
+  }));
+});
+
+// New to legacy
+window.addEventListener('elementor:update:element', (event) => {
+  const { id, props } = event.detail;
+  elementor.getPreviewView().addChildView(
+    new ElementView({ model: { id, ...props } })
+  );
+});
+```
+
+### State Synchronization
+```typescript
+// Sync legacy state with new editor
+class StateSync {
+  private legacyState: any;
+  private newState: any;
+
+  syncStates() {
+    // Sync from legacy to new
+    this.newState = this.adaptLegacyState(this.legacyState);
+    
+    // Sync from new to legacy
+    this.legacyState = this.adaptNewState(this.newState);
+  }
+
+  private adaptLegacyState(legacy: any): EditorState {
+    return {
+      currentDocument: legacy.documents.getCurrent(),
+      selectedElement: legacy.selection.getSelected(),
+      // ... other adaptations
+    };
+  }
+}
+```
+
+## Data Flow Management
+
+### Legacy Data Format
+```javascript
+// Legacy element format
+const legacyElement = {
+  id: 'element-123',
+  elType: 'widget',
+  widgetType: 'button',
+  settings: {
+    text: 'Click me',
+    link: { url: '#' }
+  }
+};
+```
+
+### New Data Format
+```typescript
+// New element format
+interface Element {
+  id: string;
+  type: 'button';
+  props: {
+    text: string;
+    link: { url: string };
+  };
+}
+```
+
+### Data Transformation
+```typescript
+class DataTransformer {
+  static legacyToNew(legacy: any): Element {
+    return {
+      id: legacy.id,
+      type: legacy.widgetType,
+      props: {
+        text: legacy.settings.text,
+        link: legacy.settings.link
+      }
+    };
+  }
+
+  static newToLegacy(element: Element): any {
+    return {
+      id: element.id,
+      elType: 'widget',
+      widgetType: element.type,
+      settings: {
+        text: element.props.text,
+        link: element.props.link
+      }
+    };
+  }
+}
+```
+
+## API Compatibility
+
+### Legacy API Preservation
+- **Maintain existing APIs** during transition
+- **Add deprecation warnings** for old APIs
+- **Provide migration guides** for developers
+- **Version APIs** properly
+
+### New API Design
+```typescript
+// New API with legacy compatibility
+interface EditorAPI {
+  // New methods
+  getCurrentDocument(): Document;
+  updateElement(id: string, props: ElementProps): void;
+  
+  // Legacy compatibility methods
+  legacy: {
+    getElementorInstance(): any;
+    getPreviewView(): any;
+  };
+}
+```
+
+## Testing Legacy Integration
+
+### Integration Tests
+```typescript
+describe('Legacy Integration', () => {
+  test('should sync state between legacy and new editor', () => {
+    // Arrange
+    const legacyState = createMockLegacyState();
+    const adapter = new LegacyEditorAdapter();
+
+    // Act
+    const newState = adapter.adaptState(legacyState);
+
+    // Assert
+    expect(newState.currentDocument).toBeDefined();
+    expect(newState.selectedElement).toBeDefined();
+  });
+});
+```
+
+### Compatibility Tests
+```typescript
+describe('API Compatibility', () => {
+  test('should maintain legacy API compatibility', () => {
+    // Test that legacy APIs still work
+    const elementor = window.elementor;
+    expect(elementor.documents.getCurrent).toBeDefined();
+    expect(elementor.selection.getSelected).toBeDefined();
+  });
+});
+```
+
+## Performance Considerations
+
+### Legacy Code Impact
+- **Minimize legacy code execution** in new editor
+- **Use lazy loading** for legacy components
+- **Optimize data transformation** between systems
+- **Monitor performance** impact
+
+### Memory Management
+```typescript
+class LegacyIntegration {
+  private cleanup: (() => void)[] = [];
+
+  addCleanup(fn: () => void) {
+    this.cleanup.push(fn);
+  }
+
+  destroy() {
+    this.cleanup.forEach(fn => fn());
+    this.cleanup = [];
+  }
+}
+```
+
+## Error Handling
+
+### Legacy Error Handling
+```typescript
+class LegacyErrorHandler {
+  static handleLegacyError(error: any): void {
+    console.error('Legacy integration error:', error);
+    
+    // Fallback to new editor
+    this.fallbackToNewEditor();
+  }
+
+  static fallbackToNewEditor(): void {
+    // Implement fallback logic
+  }
+}
+```
+
+### Graceful Degradation
+```typescript
+// Graceful degradation when legacy fails
+const useLegacyIntegration = () => {
+  const [isLegacyAvailable, setIsLegacyAvailable] = useState(false);
+
+  useEffect(() => {
+    try {
+      // Check if legacy is available
+      if (window.elementor) {
+        setIsLegacyAvailable(true);
+      }
+    } catch (error) {
+      console.warn('Legacy integration not available:', error);
+      setIsLegacyAvailable(false);
+    }
+  }, []);
+
+  return { isLegacyAvailable };
+};
+```
+
+## Migration Checklist
+
+### Before Modifying Legacy Code
+- [ ] Understand the legacy architecture
+- [ ] Identify all dependencies
+- [ ] Create comprehensive tests
+- [ ] Plan rollback strategy
+- [ ] Document all changes
+
+### During Migration
+- [ ] Maintain backward compatibility
+- [ ] Test integration thoroughly
+- [ ] Monitor performance impact
+- [ ] Update documentation
+- [ ] Communicate changes to team
+
+### After Migration
+- [ ] Verify all functionality works
+- [ ] Run full test suite
+- [ ] Monitor for issues
+- [ ] Update migration guides
+- [ ] Plan next migration phase

@@ -10,12 +10,14 @@ use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Inline_Editing_Control;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,12 +46,17 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
+		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
+
+		$paragraph_prop = $is_feature_active
+			? Html_Prop_Type::make()->default( __( 'Type your paragraph here', 'elementor' ) )
+			: String_Prop_Type::make()->default( __( 'Type your paragraph here', 'elementor' ) );
+
 		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'paragraph' => String_Prop_Type::make()
-				->default( __( 'Type your paragraph here', 'elementor' ) ),
+			'paragraph' => $paragraph_prop,
 
 			'link' => Link_Prop_Type::make(),
 
@@ -63,9 +70,9 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
 
 		$control = $is_feature_active
-			? Text_Control::bind_to( 'paragraph' )
-				->set_placeholder( __( 'Inline editing', 'elementor' ) )
-				->set_label( __( 'Inline editing', 'elementor' ) )
+			? Inline_Editing_Control::bind_to( 'paragraph' )
+				->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
+				->set_label( __( 'Paragraph', 'elementor' ) )
 			: Textarea_Control::bind_to( 'paragraph' )
 				->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
 				->set_label( __( 'Paragraph', 'elementor' ) );

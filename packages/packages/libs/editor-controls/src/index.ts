@@ -34,12 +34,19 @@ export { PopoverContent } from './components/popover-content';
 export { enqueueFont } from './controls/font-family-control/enqueue-font';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 export { DateTimeControl } from './controls/date-time-control';
+export { InlineEditingControl } from './controls/inline-editing-control';
+export { InlineEditor } from './components/inline-editor';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
 export { ClearIconButton } from './components/icon-buttons/clear-icon-button';
-export { Repeater, type SetRepeaterValuesMeta, type ItemActionPayload, type RepeaterItem } from './components/repeater';
+export {
+	Repeater,
+	type SetRepeaterValuesMeta,
+	type ItemActionPayload,
+	type RepeaterItem,
+} from './components/repeater/repeater';
 export { FloatingActionsBar } from './components/floating-bar';
 
 // types
