@@ -9,8 +9,12 @@ import { type Component } from '../../types';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
 import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
 
-export const ComponentItem = ( { component }: { component: Component } ) => {
-	const componentModel = createComponentModel( { id: component.id, name: component.name } );
+type ComponentItemProps = {
+	component: Omit< Component, 'id' > & { id?: number };
+};
+
+export const ComponentItem = ( { component }: ComponentItemProps ) => {
+	const componentModel = createComponentModel( component );
 
 	const handleClick = () => {
 		addComponentToPage( componentModel );
