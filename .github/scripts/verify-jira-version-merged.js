@@ -88,7 +88,16 @@ const getJiraOAuthToken = () => {
 
 const makeJiraRequest = (accessToken, path) => {
 	return new Promise((resolve, reject) => {
-		const url = new URL(`https://${JIRA_CLOUD_INSTANCE_BASE_URL}${path}`);
+		let baseUrl = JIRA_CLOUD_INSTANCE_BASE_URL.trim();
+		
+		if (!baseUrl.startsWith('https://')) {
+			baseUrl = `https://${baseUrl}`;
+		}
+		
+		const fullUrl = `${baseUrl}${path}`;
+		console.log(`   Full URL: ${fullUrl.substring(0, 100)}...`);
+		
+		const url = new URL(fullUrl);
 
 		const options = {
 			hostname: url.hostname,
