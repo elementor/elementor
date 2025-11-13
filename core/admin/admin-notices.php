@@ -19,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Admin_Notices extends Module {
 
 	const DEFAULT_EXCLUDED_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
+	const LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID = 'local_google_fonts_disabled';
 
 	private $plain_notices = [
 		'api_notice',
@@ -32,6 +33,7 @@ class Admin_Notices extends Module {
 		'site_mailer_promotion',
 		'plugin_image_optimization',
 		'ally_pages_promotion',
+		self::LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID,
 	];
 
 	private $elementor_pages_count = null;
@@ -133,11 +135,11 @@ class Admin_Notices extends Module {
 			/* translators: 1: Details URL, 2: Accessibility text, 3: Version number, 4: Update URL, 5: Accessibility text. */
 			__( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
 			esc_url( $details_url ),
-			esc_attr( sprintf(
+			sprintf(
 				/* translators: %s: Elementor version. */
-				__( 'View Elementor version %s details', 'elementor' ),
+				esc_attr__( 'View Elementor version %s details', 'elementor' ),
 				$new_version
-			) ),
+			),
 			$new_version,
 			esc_url( $upgrade_url ),
 			esc_attr__( 'Update Now', 'elementor' )
@@ -502,6 +504,46 @@ class Admin_Notices extends Module {
 			'button_secondary' => [
 				'text' => esc_html__( 'Learn more', 'elementor' ),
 				'url' => 'https://go.elementor.com/Formslearnmore',
+				'new_tab' => true,
+				'type' => 'cta',
+			],
+		];
+
+		$this->print_admin_notice( $options );
+
+		return true;
+	}
+
+	private function notice_local_google_fonts_disabled() {
+
+		if ( ! $this->is_elementor_page() && ! $this->is_elementor_admin_screen() ) {
+			return false;
+		}
+
+		if ( User::is_user_notice_viewed( self::LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID ) ) {
+			return false;
+		}
+
+		$is_local_gf_enabled = (bool) get_option( 'elementor_local_google_fonts', '0' );
+
+		if ( $is_local_gf_enabled ) {
+			return false;
+		}
+
+		$options = [
+			'title' => esc_html__( 'Important: Local Google Fonts Settings in Elementor', 'elementor' ),
+			'description' => esc_html__( 'Please note: The "Load Google Fonts Locally" feature has been disabled by default on all websites. To turn it back on, go to Elementor → Settings → Performance → Enable Load Google Fonts Locally.', 'elementor' ),
+			'id' => self::LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID,
+			'type' => '',
+			'button' => [
+				'text' => esc_html__( 'Take me there', 'elementor' ),
+				'url' => '../wp-admin/admin.php?page=elementor-settings#tab-performance',
+				'new_tab' => false,
+				'type' => 'cta',
+			],
+			'button_secondary' => [
+				'text' => esc_html__( 'Learn more', 'elementor' ),
+				'url' => 'https://go.elementor.com/wp-dash-google-fonts-locally-notice/',
 				'new_tab' => true,
 				'type' => 'cta',
 			],

@@ -1,26 +1,27 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { createArrayPropUtils } from '@elementor/editor-props';
+import { createArrayPropUtils, type SizePropValue } from '@elementor/editor-props';
 import { Box } from '@elementor/ui';
 
 import { PropProvider, useBoundProp } from '../bound-prop-context';
-import { ControlRepeater, Header, Item, TooltipAddItemAction } from '../components/control-repeater';
+import { ControlRepeater, Item, TooltipAddItemAction } from '../components/control-repeater';
 import { DisableItemAction } from '../components/control-repeater/actions/disable-item-action';
 import { DuplicateItemAction } from '../components/control-repeater/actions/duplicate-item-action';
 import { RemoveItemAction } from '../components/control-repeater/actions/remove-item-action';
 import { type TooltipAddItemActionProps } from '../components/control-repeater/actions/tooltip-add-item-action';
 import { EditItemPopover } from '../components/control-repeater/items/edit-item-popover';
 import { ItemsContainer } from '../components/control-repeater/items/items-container';
-import { type RepeatablePropValue } from '../components/control-repeater/types';
+import { type CollectionPropUtil, type RepeatablePropValue } from '../components/control-repeater/types';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
-import { type CollectionPropUtil } from '../components/repeater';
+import { RepeaterHeader } from '../components/repeater/repeater-header';
 import { createControl } from '../create-control';
 import {
 	type ChildControlConfig,
 	RepeatableControlContext,
 	useRepeatableControlContext,
 } from '../hooks/use-repeatable-control-context';
+import { CUSTOM_SIZE_LABEL } from './size-control';
 
 type RepeatableControlProps = {
 	label: string;
@@ -78,13 +79,13 @@ export const RepeatableControl = createControl(
 						initial={ childPropTypeUtil.create( initialValues || null ) }
 						propTypeUtil={ childArrayPropTypeUtil as CollectionPropUtil< RepeatablePropValue > }
 					>
-						<Header label={ repeaterLabel }>
+						<RepeaterHeader label={ repeaterLabel }>
 							<TooltipAddItemAction
 								{ ...addItemTooltipProps }
 								newItemIndex={ 0 }
 								ariaLabel={ repeaterLabel }
 							/>
-						</Header>
+						</RepeaterHeader>
 						<ItemsContainer isSortable={ false }>
 							<Item
 								Icon={ ItemIcon }
@@ -131,7 +132,7 @@ const interpolate = ( template: string, data: Record< string, unknown > ) => {
 		const value = getNestedValue( data, path );
 
 		if ( typeof value === 'object' && value !== null && ! Array.isArray( value ) ) {
-			if ( value.name ) {
+			if ( 'name' in value && value.name ) {
 				return value.name as string;
 			}
 
@@ -147,12 +148,32 @@ const interpolate = ( template: string, data: Record< string, unknown > ) => {
 };
 
 const getNestedValue = ( obj: Record< string, unknown >, path: string ) => {
-	return path.split( '.' ).reduce( ( current: Record< string, unknown >, key ) => {
-		if ( current && typeof current === 'object' ) {
-			return current[ key ] as Record< string, unknown >;
+	let parentObj: Record< string, unknown > = {};
+	const pathKeys = path.split( '.' );
+	const key = pathKeys.slice( -1 )[ 0 ];
+
+	let value: unknown = pathKeys.reduce( ( current: Record< string, unknown >, currentKey, currentIndex ) => {
+		if ( currentIndex === pathKeys.length - 2 ) {
+			parentObj = current;
 		}
+
+		if ( current && typeof current === 'object' ) {
+			return current[ currentKey ] as Record< string, unknown >;
+		}
+
 		return {};
 	}, obj );
+
+	value = !! value ? value : '';
+	const propType = parentObj?.$$type;
+	const propValue = parentObj?.value as SizePropValue[ 'value' ];
+	const doesValueRepresentCustomSize = key === 'unit' && propType === 'size' && propValue?.unit === 'custom';
+
+	if ( ! doesValueRepresentCustomSize ) {
+		return value;
+	}
+
+	return propValue?.size ? '' : CUSTOM_SIZE_LABEL;
 };
 
 const isEmptyValue = ( val: unknown ) => {

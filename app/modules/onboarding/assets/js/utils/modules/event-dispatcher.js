@@ -1,23 +1,29 @@
+
 export const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
-	HELLO_BIZ_CONTINUE: 'core_onboarding_s2_hellobiz',
+	THEME_INSTALLED: 'core_onboarding_s2_theme_installed',
+	THEME_MARKED: 'core_onboarding_s2_theme_marked',
 	CORE_ONBOARDING: 'core_onboarding',
 	CONNECT_STATUS: 'core_onboarding_connect_status',
 	STEP1_END_STATE: 'core_onboarding_s1_end_state',
 	STEP2_END_STATE: 'core_onboarding_s2_end_state',
+	STEP2_THEMES_LOADED: 'core_onboarding_s2_themes_loaded',
 	STEP3_END_STATE: 'core_onboarding_s3_end_state',
 	STEP4_END_STATE: 'core_onboarding_s4_end_state',
+	STEP4_LOADED: 'core_onboarding_s4_loaded',
+	STEP4_SITE_STARTER: 'core_onboarding_s4_site_starter',
 	STEP4_RETURN_STEP4: 'core_onboarding_s4_return',
 	EDITOR_LOADED_FROM_ONBOARDING: 'editor_loaded_from_onboarding',
 	POST_ONBOARDING_1ST_CLICK: 'post_onboarding_1st_click',
 	POST_ONBOARDING_2ND_CLICK: 'post_onboarding_2nd_click',
 	POST_ONBOARDING_3RD_CLICK: 'post_onboarding_3rd_click',
-	EXIT_BUTTON: 'core_onboarding_exit_button',
+	EXIT: 'core_onboarding_exit',
 	SKIP: 'core_onboarding_skip',
 	TOP_UPGRADE: 'core_onboarding_top_upgrade',
 	CREATE_MY_ACCOUNT: 'core_onboarding_s1_create_my_account',
 	CREATE_ACCOUNT_STATUS: 'core_onboarding_create_account_status',
 	STEP1_CLICKED_CONNECT: 'core_onboarding_s1_clicked_connect',
+	AB_101_START_AS_FREE_USER: 'ab_101_start_as_free_user',
 };
 
 export const ONBOARDING_STEP_NAMES = {
@@ -66,29 +72,35 @@ export function dispatchIfAllowed( eventName, payload = {} ) {
 export function createEventPayload( basePayload = {} ) {
 	return {
 		location: 'plugin_onboarding',
-		trigger: 'user_action',
 		...basePayload,
 	};
 }
 
 export function createStepEventPayload( stepNumber, stepName, additionalData = {} ) {
-	return createEventPayload( {
+	const basePayload = {
 		step_number: stepNumber,
 		step_name: stepName,
 		...additionalData,
-	} );
+	};
+
+	return createEventPayload( basePayload );
 }
 
 export function createEditorEventPayload( additionalData = {} ) {
-	return {
+	const basePayload = {
 		location: 'editor',
-		trigger: 'elementor_loaded',
 		...additionalData,
 	};
+
+	return basePayload;
 }
 
 export function dispatchStepEvent( eventName, stepNumber, stepName, additionalData = {} ) {
 	const payload = createStepEventPayload( stepNumber, stepName, additionalData );
+	return dispatch( eventName, payload );
+}
+
+export function dispatchVariantAwareEvent( eventName, payload ) {
 	return dispatch( eventName, payload );
 }
 
@@ -107,6 +119,22 @@ export function getClickEventName( clickCount ) {
 	return eventMap[ clickCount ] || null;
 }
 
+export function formatClickAction( title, selector ) {
+	if ( ! title && ! selector ) {
+		return '';
+	}
+
+	if ( ! title ) {
+		return selector;
+	}
+
+	if ( ! selector ) {
+		return title;
+	}
+
+	return `${ title } / ${ selector }`;
+}
+
 export function dispatchClickEvent( clickCount, clickData, siteStarterChoice = null ) {
 	const eventName = getClickEventName( clickCount );
 	if ( ! eventName ) {
@@ -118,8 +146,8 @@ export function dispatchClickEvent( clickCount, clickData, siteStarterChoice = n
 		editor_loaded_from_onboarding_source: siteStarterChoice,
 	} );
 
-	eventData[ `post_onboarding_${ clickNumber }_click_action_title` ] = clickData.title;
-	eventData[ `post_onboarding_${ clickNumber }_click_action_selector` ] = clickData.selector;
+	const formattedAction = formatClickAction( clickData.title, clickData.selector );
+	eventData[ `post_onboarding_${ clickNumber }_click_action` ] = formattedAction;
 
 	return dispatch( eventName, eventData );
 }
@@ -150,6 +178,7 @@ const EventDispatcher = {
 	createStepEventPayload,
 	createEditorEventPayload,
 	dispatchStepEvent,
+	dispatchVariantAwareEvent,
 	dispatchEditorEvent,
 	getClickEventName,
 	dispatchClickEvent,

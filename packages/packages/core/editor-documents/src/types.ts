@@ -65,6 +65,7 @@ export type V1Document = {
 			main_dashboard: string;
 			all_post_type: string;
 		};
+		elements: unknown[];
 	};
 	editor: {
 		isChanged: boolean;
@@ -75,6 +76,9 @@ export type V1Document = {
 			post_title: string;
 			exit_to: ExitTo;
 		} >;
+		view: {
+			el: HTMLElement;
+		};
 	};
 };
 

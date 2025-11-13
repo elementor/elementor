@@ -6,6 +6,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
 use Elementor\Core\Files\Uploads_Manager;
+use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Plugin_Upgrader;
@@ -26,6 +27,14 @@ class Module extends BaseModule {
 	const VERSION = '1.0.0';
 	const ONBOARDING_OPTION = 'elementor_onboarded';
 
+	const EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS = 'emphasizeConnectBenefits101';
+	const EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ = 'offerThemeChoicesHelloBiz201';
+	const EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202 = 'emphasizeThemeValueAudience202';
+	const EXPERIMENT_UPDATE_COPY_VISUALS = 'updateCopyVisuals401';
+	const EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION = 'reduceHierarchyBlankOption402';
+
+	private ?API $editor_assets_api = null;
+
 	/**
 	 * Get name.
 	 *
@@ -36,6 +45,42 @@ class Module extends BaseModule {
 	 */
 	public function get_name() {
 		return 'onboarding';
+	}
+
+	private function is_experiment_enabled( string $experiment_key ) {
+		$editor_assets_api = $this->get_editor_assets_api();
+
+		if ( null === $editor_assets_api ) {
+			return false;
+		}
+
+		return $editor_assets_api->is_experiment_enabled( $experiment_key );
+	}
+
+	private function is_hello_theme_activated(): bool {
+		$current_theme = get_option( 'template' );
+		$hello_theme_variants = [ 'hello-elementor', 'hello-biz', 'hello-commerce', 'hello-theme' ];
+
+		return in_array( $current_theme, $hello_theme_variants, true );
+	}
+
+	private function get_editor_assets_api(): ?API {
+		if ( null !== $this->editor_assets_api ) {
+			return $this->editor_assets_api;
+		}
+
+		$editor_assets_api_instance = new EditorAssetsAPI( $this->get_editor_assets_api_config() );
+		$this->editor_assets_api = new API( $editor_assets_api_instance );
+
+		return $this->editor_assets_api;
+	}
+
+	private function get_editor_assets_api_config(): array {
+		return [
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/ab-testing/v1/ab-testing.json',
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_ab_testing_data',
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'ab-testing',
+		];
 	}
 
 	/**
@@ -76,13 +121,13 @@ class Module extends BaseModule {
 			'isLibraryConnected' => $library->is_connected(),
 			// Used to check if the Hello Elementor theme is installed but not activated.
 			'helloInstalled' => empty( $hello_theme_errors['theme_not_found'] ),
-			'helloActivated' => 'hello-elementor' === get_option( 'template' ),
+			'helloActivated' => $this->is_hello_theme_activated(),
 			// The "Use Hello theme on my site" checkbox should be checked by default only if this condition is met.
 			'helloOptOut' => count( $pages_and_posts->posts ) < 5,
 			'siteName' => esc_html( $site_name ),
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
 			'urls' => [
-				'kitLibrary' => Plugin::$instance->app->get_base_url() . '#/kit-library?order[direction]=desc&order[by]=featuredIndex',
+				'kitLibrary' => Plugin::$instance->app->get_base_url() . '&source=onboarding#/kit-library?order[direction]=desc&order[by]=featuredIndex',
 				'sitePlanner' => add_query_arg( [
 					'type' => 'editor',
 					'siteUrl' => esc_url( home_url() ),
@@ -121,6 +166,18 @@ class Module extends BaseModule {
 			],
 			'nonce' => wp_create_nonce( 'onboarding' ),
 			'experiment' => true,
+			'isExperiment101Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS ),
+			'isExperiment201Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ ),
+			'isExperiment202Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202 ),
+			'isExperiment401Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_UPDATE_COPY_VISUALS ),
+			'isExperiment402Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION ),
+			'experimentNames' => [
+				'101' => self::EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS,
+				'201' => self::EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ,
+				'202' => self::EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202,
+				'401' => self::EXPERIMENT_UPDATE_COPY_VISUALS,
+				'402' => self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION,
+			],
 		] );
 	}
 
@@ -325,7 +382,13 @@ class Module extends BaseModule {
 			return $this->get_permission_error_response();
 		}
 
-		switch_theme( 'hello-biz' );
+		$theme_slug = Utils::get_super_global_value( $_POST, 'theme_slug' ) ?? 'hello-biz'; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		$allowed_themes = [ 'hello-elementor', 'hello-biz' ];
+		if ( ! in_array( $theme_slug, $allowed_themes, true ) ) {
+			$theme_slug = 'hello-biz';
+		}
+
+		switch_theme( $theme_slug );
 
 		return [
 			'status' => 'success',

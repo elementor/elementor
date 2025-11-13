@@ -1,4 +1,5 @@
 import { useEffect, useContext, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { OnboardingContext } from '../context/context';
 import { OnboardingEventTracking } from './onboarding-event-tracking';
 

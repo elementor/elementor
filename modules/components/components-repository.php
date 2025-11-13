@@ -2,9 +2,10 @@
 
 namespace Elementor\Modules\Components;
 
+use Elementor\Core\Utils\Collection;
+use Elementor\Modules\Components\Documents\Component;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Plugin;
-use Elementor\Modules\Components\Components_REST_API;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -20,7 +21,7 @@ class Components_Repository {
 		// Components count is limited to 50, if we increase this number, we need to iterate the posts in batches.
 		$posts = get_posts( [
 			'post_type' => Component_Document::TYPE,
-			'post_status' => 'publish',
+			'post_status' => 'any',
 			'posts_per_page' => Components_REST_API::MAX_COMPONENTS,
 		] );
 
@@ -40,15 +41,25 @@ class Components_Repository {
 			];
 		}
 
-		return Components::make( $components );
+		return Collection::make( $components );
 	}
 
-	public function create( string $name, array $content ) {
+	public function get( $id ) {
+		$doc = Plugin::$instance->documents->get( $id );
+
+		if ( ! $doc instanceof Component ) {
+			return null;
+		}
+
+		return $doc;
+	}
+
+	public function create( string $name, array $content, string $status ) {
 		$document = Plugin::$instance->documents->create(
 			Component_Document::get_type(),
 			[
 				'post_title' => $name,
-				'post_status' => 'publish',
+				'post_status' => $status,
 			]
 		);
 

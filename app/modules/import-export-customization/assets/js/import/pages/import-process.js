@@ -16,27 +16,30 @@ const headerContent = (
 export default function ImportProcess() {
 	const { data, dispatch, isProcessing, runnersState } = useImportContext();
 	const { includes, customization } = data;
-	const { status, error, importKit } = useImportKit( {
+	const { status, error, importKit, duration } = useImportKit( {
 		data,
 		includes,
 		customization,
 		isProcessing,
 		dispatch,
 	} );
+
 	const navigate = useNavigate();
+	const title = data.uploadedData?.manifest?.title || '';
+	const id = data.kitUploadParams?.id || '';
 
 	useEffect( () => {
 		if ( ! error ) {
 			if ( IMPORT_PROCESSING_STATUS.DONE === status ) {
-				AppsEventTracking.sendKitImportStatus();
+				AppsEventTracking.sendKitImportStatus( null, id, title, duration );
 				navigate( 'import-customization/complete' );
 			} else if ( ! isProcessing ) {
 				navigate( 'import-customization', { replace: true } );
 			}
 		} else {
-			AppsEventTracking.sendKitImportStatus( error );
+			AppsEventTracking.sendKitImportStatus( error, id, title );
 		}
-	}, [ status, error, navigate, isProcessing ] );
+	}, [ status, error, navigate, isProcessing, title, id, duration ] );
 
 	const handleTryAgain = () => {
 		importKit();

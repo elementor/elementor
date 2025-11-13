@@ -127,4 +127,29 @@ class Test_Flexbox extends Elementor_Test_Base {
 		// Assert.
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
+
+	public function test__render_flexbox_with_interactions(): void {
+		// Arrange.
+		$mock_flexbox = [
+			'id' => 'e8e55a1',
+			'elType' => Flexbox::get_element_type(),
+			'settings' => [],
+			'widgetType' => Flexbox::get_element_type(),
+			'interactions' => [
+				'click' => [
+					'id' => 'e8e55a1',
+					'type' => 'click',
+				],
+			],
+		];
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock_flexbox );
+
+		// Act.
+		ob_start();
+		$widget_instance->print_element();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
 }

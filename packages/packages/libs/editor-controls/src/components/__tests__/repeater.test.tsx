@@ -2,7 +2,7 @@ import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { Repeater } from '../repeater';
+import { Repeater } from '../repeater/repeater';
 
 describe( 'Repeater', () => {
 	it( 'should render the repeater with no items', () => {
@@ -203,7 +203,7 @@ describe( 'Repeater', () => {
 				},
 			],
 			undefined,
-			{ action: { type: 'duplicate', payload: [ { index: 1, item: values[ 0 ] } ] } }
+			{ action: { type: 'duplicate', payload: [ { index: 0, item: values[ 0 ] } ] } }
 		);
 	} );
 

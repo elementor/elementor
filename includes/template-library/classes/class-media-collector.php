@@ -15,6 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Media_Collector {
 
 	/**
+	 * Filename for the media mapping JSON file within the ZIP.
+	 */
+	private const MAPPING_FILENAME = 'media-mapping.json';
+
+	/**
 	 * Collected media URLs and their metadata.
 	 *
 	 * @var array
@@ -156,7 +161,7 @@ class Media_Collector {
 		return array_keys( $this->collected_media );
 	}
 
-	public function process_media_collection( array $media_urls ): array {
+	public function process_media_collection( array $media_urls ) {
 		$this->start_processing();
 
 		foreach ( $media_urls as $url ) {
@@ -166,19 +171,13 @@ class Media_Collector {
 		return $this->create_media_zip();
 	}
 
-	public function create_media_zip(): array {
+	public function create_media_zip() {
 		if ( empty( $this->collected_media ) ) {
-			return [
-				'mapping' => [],
-				'zip_path' => null,
-			];
+			return null;
 		}
 
 		if ( ! class_exists( '\ZipArchive' ) ) {
-			return [
-				'mapping' => [],
-				'zip_path' => null,
-			];
+			return null;
 		}
 
 		$zip = new \ZipArchive();
@@ -186,10 +185,7 @@ class Media_Collector {
 		$zip_path = $this->temp_dir . '/' . $zip_filename;
 
 		if ( $zip->open( $zip_path, \ZipArchive::CREATE ) !== true ) {
-			return [
-				'mapping' => [],
-				'zip_path' => null,
-			];
+			return null;
 		}
 
 		$mapping = [];
@@ -204,12 +200,16 @@ class Media_Collector {
 			}
 		}
 
+		if ( empty( $mapping ) ) {
+			$zip->close();
+			return null;
+		}
+
+		$mapping_json = wp_json_encode( $mapping, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
+		$zip->addFromString( self::MAPPING_FILENAME, $mapping_json );
 		$zip->close();
 
-		return [
-			'mapping' => $mapping,
-			'zip_path' => $zip_path,
-		];
+		return $zip_path;
 	}
 
 	public function cleanup() {

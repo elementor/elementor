@@ -1,9 +1,8 @@
 import { replaceElement, type V1Element } from '@elementor/editor-elements';
-import { numberPropTypeUtil } from '@elementor/editor-props';
 
 import { type Component } from '../../../types';
 
-export const replaceElementWithComponent = async ( element: V1Element, component: Component ) => {
+export const replaceElementWithComponent = ( element: V1Element, component: Component ) => {
 	replaceElement( {
 		currentElement: element,
 		newElement: createComponentModel( component ),
@@ -11,12 +10,17 @@ export const replaceElementWithComponent = async ( element: V1Element, component
 	} );
 };
 
-export const createComponentModel = ( component: Component ) => {
+export const createComponentModel = (
+	component: Component
+): Parameters< typeof replaceElement >[ 0 ][ 'newElement' ] => {
 	return {
 		elType: 'widget',
 		widgetType: 'e-component',
 		settings: {
-			component_id: numberPropTypeUtil.create( component.id ),
+			component: {
+				$$type: 'component-id',
+				value: component.id,
+			},
 		},
 		editor_settings: {
 			title: component.name,
