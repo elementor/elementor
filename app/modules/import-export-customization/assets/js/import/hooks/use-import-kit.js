@@ -76,7 +76,7 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 		}
 
 		setImportStatus( IMPORT_PROCESSING_STATUS.DONE );
-		
+
 		if ( ! stopIterations ) {
 			dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.COMPLETED } );
 		}
