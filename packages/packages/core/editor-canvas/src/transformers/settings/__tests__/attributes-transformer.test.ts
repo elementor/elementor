@@ -1,6 +1,6 @@
 import { attributesTransformer } from '../attributes-transformer';
 
-describe( 'attributesTransformer (core no-op)', () => {
+describe( 'attributesTransformer', () => {
 	it( 'always returns empty string in core', () => {
 		const result = attributesTransformer(
 			[
