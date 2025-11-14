@@ -11,10 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Attributes_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
-		if ( ! is_array( $value ) ) {
-			return null;
-		}
-
 		return null;
 	}
 }
