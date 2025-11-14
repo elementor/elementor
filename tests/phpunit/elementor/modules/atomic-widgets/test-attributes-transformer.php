@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Test_Attributes_Transformer extends Elementor_Test_Base {
-
 	public function test_core_attributes_transformer_always_returns_null() {
 		// Arrange.
 		$transformer = new Attributes_Transformer();
@@ -27,5 +26,3 @@ class Test_Attributes_Transformer extends Elementor_Test_Base {
 		$this->assertNull( $result );
 	}
 }
-
-
