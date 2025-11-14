@@ -24,6 +24,7 @@ const parseTickets = (ticketsStr) => {
 	return ticketsStr
 		.split(',')
 		.map(t => t.trim().toUpperCase())
+		.map(t => t.replace(/ED(\d+)/, 'ED-$1'))
 		.filter(t => t.match(/^ED-\d+$/));
 };
 
@@ -48,9 +49,12 @@ const getBranchCommits = () => {
 
 const extractTickets = (commitMessages) => {
 	const tickets = new Set();
-	const matches = commitMessages.match(/ED-\d+/g) || [];
-	matches.forEach(t => tickets.add(t));
-	return Array.from(tickets);
+	const matches = commitMessages.match(/ED-?\d+/g) || [];
+	matches.forEach(t => {
+		const normalized = t.replace(/ED(\d+)/, 'ED-$1');
+		tickets.add(normalized);
+	});
+	return Array.from(tickets).sort();
 };
 
 const main = () => {
