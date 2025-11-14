@@ -42,50 +42,87 @@ const parseTickets = (ticketsStr) => {
 const getTicketsFromJira = async () => {
 	return new Promise((resolve, reject) => {
 		if (!JIRA_CLIENT_ID || !JIRA_CLIENT_SECRET || !JIRA_CLOUD_INSTANCE_BASE_URL) {
-			reject(new Error('Missing Jira credentials (JIRA_CLIENT_ID, JIRA_CLIENT_SECRET, JIRA_CLOUD_INSTANCE_BASE_URL)'));
+			reject(new Error('Missing Jira credentials'));
 			return;
 		}
 
-		const auth = Buffer.from(`${JIRA_CLIENT_ID}:${JIRA_CLIENT_SECRET}`).toString('base64');
+		const versionsToTry = [];
 		const sanitizedVersion = JIRA_VERSION.replace(/^v/, '');
-		const jql = encodeURIComponent(`project = ED AND fixVersion = "${sanitizedVersion}" ORDER BY created DESC`);
 		
-		let baseUrl = JIRA_CLOUD_INSTANCE_BASE_URL.trim();
-		if (!baseUrl.startsWith('https://')) {
-			baseUrl = `https://${baseUrl}`;
+		versionsToTry.push(sanitizedVersion);
+		versionsToTry.push(JIRA_VERSION);
+		
+		const majorMinor = sanitizedVersion.split('.').slice(0, 2).join('.');
+		if (majorMinor !== sanitizedVersion) {
+			versionsToTry.push(majorMinor);
+			if (!JIRA_VERSION.startsWith('v')) {
+				versionsToTry.push(`v${majorMinor}`);
+			}
 		}
 
-		const url = new URL(`${baseUrl}/rest/api/3/search/jql?jql=${jql}&maxResults=500&fields=key`);
+		console.log(`🔍 Fetching tickets from Jira version: ${JIRA_VERSION}`);
+		console.log(`   Trying formats: ${versionsToTry.join(', ')}\n`);
 
-		console.log(`🔍 Fetching tickets from Jira version: ${JIRA_VERSION}\n`);
-
-		const req = https.request(url, {
-			method: 'GET',
-			headers: {
-				'Authorization': `Basic ${auth}`,
-				'Accept': 'application/json',
+		const tryNextVersion = (index = 0) => {
+			if (index >= versionsToTry.length) {
+				console.log(`❌ No tickets found with any version format\n`);
+				resolve([]);
+				return;
 			}
-		}, (res) => {
-			let data = '';
-			res.on('data', chunk => data += chunk);
-			res.on('end', () => {
-				if (res.statusCode >= 400) {
-					reject(new Error(`Jira API error (${res.statusCode})`));
-					return;
-				}
-				try {
-					const response = JSON.parse(data);
-					const tickets = (response.issues || []).map(i => i.key).sort();
-					console.log(`✅ Found ${tickets.length} tickets in Jira version\n`);
-					resolve(tickets);
-				} catch (e) {
-					reject(new Error(`Failed to parse Jira response: ${e.message}`));
-				}
-			});
-		});
 
-		req.on('error', reject);
-		req.end();
+			const versionToTry = versionsToTry[index];
+			const auth = Buffer.from(`${JIRA_CLIENT_ID}:${JIRA_CLIENT_SECRET}`).toString('base64');
+			const jql = encodeURIComponent(`project = ED AND fixVersion = "${versionToTry}" ORDER BY created DESC`);
+			
+			let baseUrl = JIRA_CLOUD_INSTANCE_BASE_URL.trim();
+			if (!baseUrl.startsWith('https://')) {
+				baseUrl = `https://${baseUrl}`;
+			}
+
+			const url = new URL(`${baseUrl}/rest/api/3/search/jql?jql=${jql}&maxResults=500&fields=key`);
+
+			const req = https.request(url, {
+				method: 'GET',
+				headers: {
+					'Authorization': `Basic ${auth}`,
+					'Accept': 'application/json',
+				}
+			}, (res) => {
+				let data = '';
+				res.on('data', chunk => data += chunk);
+				res.on('end', () => {
+					if (res.statusCode >= 400) {
+						console.log(`   ❌ "${versionToTry}" - API error (${res.statusCode})`);
+						tryNextVersion(index + 1);
+						return;
+					}
+
+					try {
+						const response = JSON.parse(data);
+						const tickets = (response.issues || []).map(i => i.key).sort();
+						
+						if (tickets.length > 0) {
+							console.log(`   ✅ Found ${tickets.length} tickets with "${versionToTry}"\n`);
+							resolve(tickets);
+						} else {
+							console.log(`   ⚠️  "${versionToTry}" - 0 tickets found`);
+							tryNextVersion(index + 1);
+						}
+					} catch (e) {
+						console.log(`   ❌ "${versionToTry}" - Parse error`);
+						tryNextVersion(index + 1);
+					}
+				});
+			});
+
+			req.on('error', () => {
+				console.log(`   ❌ "${versionToTry}" - Network error`);
+				tryNextVersion(index + 1);
+			});
+			req.end();
+		};
+
+		tryNextVersion();
 	});
 };
 
