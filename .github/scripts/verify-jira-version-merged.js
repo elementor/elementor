@@ -31,7 +31,10 @@ const getBranchCommits = () => {
 	try {
 		console.log(`\n🔍 Fetching commits from branch: ${TARGET_BRANCH}\n`);
 		
-		const cmd = `git log ${BASE_BRANCH}..origin/${TARGET_BRANCH} --pretty=format:"%B"`;
+		const baseRef = `remotes/origin/${BASE_BRANCH}`;
+		const targetRef = `remotes/origin/${TARGET_BRANCH}`;
+		
+		const cmd = `git log ${baseRef}..${targetRef} --pretty=format:"%B"`;
 		console.log(`   Running: ${cmd}`);
 		
 		const commits = execSync(cmd, { encoding: 'utf-8' });
