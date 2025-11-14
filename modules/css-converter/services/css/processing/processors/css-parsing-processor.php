@@ -91,6 +91,32 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			error_log( 'CSS_PARSING_PROCESSOR: Parsed ' . $parsed_1140_count . ' CSS rules with elementor-page-1140' );
 		}
 
+		$brxe_section_in_raw_css = 0;
+		if ( strpos( $css, '.brxe-section' ) !== false ) {
+			preg_match_all( '/\.brxe-section[^{]*\{[^}]*\}/', $css, $matches );
+			$brxe_section_in_raw_css = count( $matches[0] ?? [] );
+			error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - Found ' . $brxe_section_in_raw_css . ' .brxe-section rules in raw CSS' );
+			if ( $brxe_section_in_raw_css > 0 && $brxe_section_in_raw_css <= 3 ) {
+				foreach ( array_slice( $matches[0], 0, 2 ) as $match ) {
+					error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - Raw CSS rule: ' . substr( $match, 0, 200 ) );
+				}
+			}
+		}
+
+		$brxe_section_parsed = 0;
+		foreach ( $css_rules as $rule ) {
+			$selector = $rule['selector'] ?? '';
+			if ( strpos( $selector, 'brxe-section' ) !== false ) {
+				$brxe_section_parsed++;
+				if ( $brxe_section_parsed <= 3 ) {
+					error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - Parsed .brxe-section rule: ' . $selector );
+					$properties_count = count( $rule['properties'] ?? [] );
+					error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - .brxe-section properties count: ' . $properties_count );
+				}
+			}
+		}
+		error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - Total .brxe-section rules parsed: ' . $brxe_section_parsed );
+
 		// Store results in context
 		$context->set_metadata( 'css_rules', $css_rules );
 		$context->add_statistic( 'css_rules_parsed', count( $css_rules ) );

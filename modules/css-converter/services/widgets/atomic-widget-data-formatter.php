@@ -163,9 +163,16 @@ class Atomic_Widget_Data_Formatter {
 				return ! $is_widget_class;
 			});
 			
-			// Only add classes if we have global classes
 			if ( ! empty( $global_classes_only ) ) {
+				foreach ( $global_classes_only as $class ) {
+					if ( strpos( $class, 'intro-section' ) !== false ) {
+						error_log( 'CSS_CONVERTER_DEBUG: Adding intro-section to settings.classes for widget ' . $widget_id );
+					}
+				}
+				error_log( 'CSS_CONVERTER_DEBUG: Adding ' . count( $global_classes_only ) . ' global classes to settings.classes for widget ' . $widget_id );
 				$formatted_settings['classes'] = $this->format_css_classes_in_atomic_format( $global_classes_only );
+			} else {
+				error_log( 'CSS_CONVERTER_DEBUG: No global classes to add (all filtered out as widget classes) for widget ' . $widget_id );
 			}
 		}
 
@@ -214,14 +221,19 @@ class Atomic_Widget_Data_Formatter {
 		
 		if ( ! empty( $widget['attributes']['class'] ) ) {
 			$class_string = $widget['attributes']['class'];
+			error_log( 'CSS_CONVERTER_DEBUG: Extracting classes from widget ' . $element_id . ' (' . $widget_type . '): ' . $class_string );
 			$class_array = explode( ' ', $class_string );
 			
 			foreach ( $class_array as $class ) {
 				$class = trim( $class );
 				if ( ! empty( $class ) ) {
 					$classes[] = $class;
+					if ( strpos( $class, 'intro-section' ) !== false ) {
+						error_log( 'CSS_CONVERTER_DEBUG: Found intro-section class in widget ' . $element_id );
+					}
 				}
 			}
+			error_log( 'CSS_CONVERTER_DEBUG: Extracted ' . count( $classes ) . ' classes from widget ' . $element_id );
 		}
 		return $classes;
 	}

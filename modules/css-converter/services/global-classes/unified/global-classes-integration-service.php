@@ -22,7 +22,7 @@ class Global_Classes_Integration_Service {
 		$this->registration_service = $registration_service;
 	}
 
-	public function process_css_rules( array $css_rules ): array {
+	public function process_css_rules( array $css_rules, array $css_variable_definitions = [] ): array {
 		$start_time = microtime( true );
 
 		$detected = $this->detection_service->detect_css_class_selectors( $css_rules );
@@ -41,7 +41,7 @@ class Global_Classes_Integration_Service {
 			];
 		}
 
-		$converted = $this->conversion_service->convert_to_atomic_props( $detected );
+		$converted = $this->conversion_service->convert_to_atomic_props( $detected, $css_variable_definitions );
 
 		if ( empty( $converted ) ) {
 			return [
@@ -61,7 +61,7 @@ class Global_Classes_Integration_Service {
 
 		// Build global_classes array with FINAL class names (after duplicate processing)
 		$class_name_mappings = $result['class_name_mappings'] ?? [];
-		$global_classes = $this->build_global_classes_with_final_names( $detected, $class_name_mappings );
+		$global_classes = $this->build_global_classes_with_final_names( $converted, $class_name_mappings );
 		
 		// Collect custom CSS from conversion service
 		$custom_css_rules = $this->collect_custom_css_rules( $converted, $class_name_mappings );
@@ -226,12 +226,17 @@ class Global_Classes_Integration_Service {
 		return $message;
 	}
 
-	private function build_global_classes_with_final_names( array $detected, array $class_name_mappings ): array {
+	private function build_global_classes_with_final_names( array $converted, array $class_name_mappings ): array {
 		$global_classes = [];
 
-		foreach ( $detected as $original_class_name => $class_data ) {
+		foreach ( $converted as $original_class_name => $class_data ) {
 			$final_class_name = $class_name_mappings[ $original_class_name ] ?? $original_class_name;
-			$global_classes[ $final_class_name ] = $class_data;
+			$global_classes[ $final_class_name ] = [
+				'atomic_props' => $class_data['atomic_props'] ?? [],
+				'custom_css' => $class_data['custom_css'] ?? '',
+				'source' => $class_data['source'] ?? 'css-converter',
+				'original_selector' => $class_data['original_selector'] ?? '.' . $original_class_name,
+			];
 		}
 
 		return $global_classes;

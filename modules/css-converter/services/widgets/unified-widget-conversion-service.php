@@ -68,10 +68,16 @@ class Unified_Widget_Conversion_Service {
 
 			$all_css = $this->unified_css_processor->extract_and_process_css_from_html_and_urls( $html, $css_urls, $follow_imports, $elements );
 			$this->logger->add_css_size( strlen( $all_css ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Extracted CSS length: ' . strlen( $all_css ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Mapped widgets count before CSS processing: ' . count( $mapped_widgets ) );
 
 		try {
 			$unified_processing_result = $this->unified_css_processor->process_css_and_widgets( $all_css, $mapped_widgets, $options );
+			error_log( 'CSS_CONVERTER_DEBUG: CSS processing completed' );
+			error_log( 'CSS_CONVERTER_DEBUG: Processed widgets count: ' . count( $unified_processing_result['widgets'] ?? [] ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Processing stats: ' . print_r( $unified_processing_result['stats'] ?? [], true ) );
 		} catch ( \Exception $e ) {
+			error_log( 'CSS_CONVERTER_DEBUG: CSS processing error: ' . $e->getMessage() );
 			throw $e;
 		}
 
@@ -79,16 +85,23 @@ class Unified_Widget_Conversion_Service {
 		$global_classes = $unified_processing_result['global_classes'] ?? [];
 		$css_variable_definitions = $unified_processing_result['css_variable_definitions'] ?? [];
 		$body_styles = $unified_processing_result['body_styles'] ?? [];
+		error_log( 'CSS_CONVERTER_DEBUG: Resolved widgets count: ' . count( $resolved_widgets ) );
+		error_log( 'CSS_CONVERTER_DEBUG: Global classes count: ' . count( $global_classes ) );
 
 		$conversion_selector = $options['conversion_selector'] ?? null;
 		if ( ! empty( $conversion_selector ) ) {
+			error_log( 'CSS_CONVERTER_DEBUG: Filtering widgets with selector: ' . $conversion_selector );
 			$output_widgets = $this->filter_widgets_for_output( $resolved_widgets, $conversion_selector );
+			error_log( 'CSS_CONVERTER_DEBUG: Filtered widgets count: ' . count( $output_widgets ) );
 		} else {
 			$output_widgets = $resolved_widgets;
 		}
 
+		error_log( 'CSS_CONVERTER_DEBUG: Creating widgets with resolved styles' );
 		$creation_result = $this->create_widgets_with_resolved_styles( $output_widgets, $options, $global_classes, $css_variable_definitions, $body_styles );
 		$final_widgets = $creation_result['widgets'] ?? [];
+		error_log( 'CSS_CONVERTER_DEBUG: Final widgets created: ' . count( $final_widgets ) );
+		error_log( 'CSS_CONVERTER_DEBUG: Creation stats: ' . print_r( $creation_result['stats'] ?? [], true ) );
 
 			// Log CSS processing and widget creation stats
 			$this->logger->add_css_processing_stats( $unified_processing_result['stats'] ?? [] );

@@ -155,9 +155,16 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 		}
 
 		$widget_classes = $widget_data['attributes']['class'] ?? '';
+		$widget_id = $widget_data['element_id'] ?? 'unknown';
 
 		if ( empty( $widget_classes ) ) {
 			return $final_settings;
+		}
+
+		if ( strpos( $widget_classes, 'intro-section' ) !== false ) {
+			error_log( 'CSS_CONVERTER_DEBUG: apply_global_classes - widget ' . $widget_id . ' has intro-section in attributes.class: ' . $widget_classes );
+			error_log( 'CSS_CONVERTER_DEBUG: Global classes available: ' . count( $global_classes ) );
+			error_log( 'CSS_CONVERTER_DEBUG: intro-section in global_classes: ' . ( isset( $global_classes['intro-section'] ) ? 'YES' : 'NO' ) );
 		}
 
 		$classes_array = explode( ' ', $widget_classes );
@@ -171,6 +178,9 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 
 			if ( isset( $global_classes[ $mapped_class_name ] ) ) {
 				$applicable_global_classes[] = $mapped_class_name;
+				if ( strpos( $mapped_class_name, 'intro-section' ) !== false ) {
+					error_log( 'CSS_CONVERTER_DEBUG: Found intro-section as global class, adding to settings' );
+				}
 			}
 		}
 
@@ -182,6 +192,13 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 				'$$type' => 'classes',
 				'value' => array_values( array_unique( $merged_classes ) ),
 			];
+			if ( in_array( 'intro-section', $merged_classes, true ) ) {
+				error_log( 'CSS_CONVERTER_DEBUG: intro-section successfully added to final_settings.classes' );
+			}
+		} else {
+			if ( strpos( $widget_classes, 'intro-section' ) !== false ) {
+				error_log( 'CSS_CONVERTER_DEBUG: WARNING - intro-section NOT found in global_classes, not adding to settings' );
+			}
 		}
 
 		return $final_settings;

@@ -59,12 +59,23 @@ class Css_Variable_Resolver implements Css_Processor_Interface
                 $value = $property_data['value'] ?? '';
 
                 if (strpos($value, 'var(') !== false ) {
-                    $variable_type = $this->get_variable_type_from_value($value, $variable_definitions);
-
-                    $resolved_value = $this->resolve_variable_reference($value, $variable_definitions);
-                    if ($resolved_value !== $value ) {
-                        $property_data['value'] = $resolved_value;
-                        $property_data['resolved_from_variable'] = true;
+                    $should_resolve = $this->should_resolve_variable($value);
+                    if ( strpos( $rule['selector'] ?? '', 'class-color-test' ) !== false ) {
+                        error_log( 'CSS_VAR_RESOLVER: Selector ' . ( $rule['selector'] ?? '' ) . ' - Property ' . $property . ' = ' . $value . ' - Should resolve: ' . ( $should_resolve ? 'YES' : 'NO' ) );
+                    }
+                    if ($should_resolve ) {
+                        $resolved_value = $this->resolve_variable_reference($value, $variable_definitions);
+                        if ($resolved_value !== $value ) {
+                            $property_data['value'] = $resolved_value;
+                            $property_data['resolved_from_variable'] = true;
+                            if ( strpos( $rule['selector'] ?? '', 'class-color-test' ) !== false ) {
+                                error_log( 'CSS_VAR_RESOLVER: RESOLVED ' . $value . ' to ' . $resolved_value );
+                            }
+                        }
+                    } else {
+                        if ( strpos( $rule['selector'] ?? '', 'class-color-test' ) !== false ) {
+                            error_log( 'CSS_VAR_RESOLVER: NOT resolving ' . $value . ' (preserving as var reference)' );
+                        }
                     }
                 }
 
@@ -172,6 +183,16 @@ class Css_Variable_Resolver implements Css_Processor_Interface
             if (strpos($var_name, $prefix) === 0 ) {
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    private function should_resolve_variable( string $value ): bool
+    {
+        if (preg_match('/var\s*\(\s*(--[a-zA-Z0-9_-]+)/', $value, $matches) ) {
+            $var_name = $matches[1];
+            return $this->is_global_variable($var_name);
         }
 
         return false;

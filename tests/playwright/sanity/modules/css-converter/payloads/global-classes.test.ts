@@ -16,10 +16,8 @@ test.describe( 'Global Classes Payload Integration @payloads', () => {
 		await wpAdminPage.setExperiments( {
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
-		} );
-
-		await wpAdminPage.setExperiments( {
 			e_nested_elements: 'active',
+			e_classes: 'active',
 		} );
 
 		await page.close();

@@ -72,7 +72,8 @@ class Global_Classes_Registration_Service {
 		$skipped = count( $converted_classes ) - count( $classes_after_limit );
 
 		foreach ( $classes_after_limit as $class_name => $class_data ) {
-			$class_config = $this->create_class_config( $class_name, $class_data['atomic_props'] );
+			$custom_css = $class_data['custom_css'] ?? '';
+			$class_config = $this->create_class_config( $class_name, $class_data['atomic_props'], $custom_css );
 
 			$items[ $class_name ] = $class_config;
 			$order[] = $class_name;
@@ -82,8 +83,11 @@ class Global_Classes_Registration_Service {
 		try {
 			// Debug: Log what we're about to save
 			$new_class_labels = array_keys( $classes_after_limit );
+			error_log( 'GLOBAL_CLASSES_REG: Saving ' . count( $items ) . ' classes to kit, ' . $registered . ' new' );
+			error_log( 'GLOBAL_CLASSES_REG: New class labels: ' . implode( ', ', $new_class_labels ) );
 
 			$repository->put( $items, $order );
+			error_log( 'GLOBAL_CLASSES_REG: Successfully saved to repository' );
 
 			// Debug: Verify data was saved by reading it back immediately
 			$verify_repository = $this->get_global_classes_repository();
@@ -139,7 +143,7 @@ class Global_Classes_Registration_Service {
 
 		try {
 			return \Elementor\Modules\GlobalClasses\Global_Classes_Repository::make()
-				->context( \Elementor\Modules\GlobalClasses\Global_Classes_Repository::CONTEXT_FRONTEND );
+				->context( \Elementor\Modules\GlobalClasses\Global_Classes_Repository::CONTEXT_PREVIEW );
 		} catch ( \Exception $e ) {
 			return null;
 		}
@@ -307,8 +311,8 @@ class Global_Classes_Registration_Service {
 		];
 	}
 
-	private function create_class_config( string $class_name, array $atomic_props ): array {
-		return [
+	private function create_class_config( string $class_name, array $atomic_props, string $custom_css = '' ): array {
+		$config = [
 			'id' => $this->generate_class_id( $class_name ),
 			'label' => $class_name,
 			'type' => 'class',
@@ -326,6 +330,12 @@ class Global_Classes_Registration_Service {
 				'imported_at' => time(),
 			],
 		];
+
+		if ( ! empty( $custom_css ) ) {
+			$config['meta']['custom_css'] = $custom_css;
+		}
+
+		return $config;
 	}
 
 	private function generate_class_id( string $class_name ): string {

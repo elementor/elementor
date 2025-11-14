@@ -120,17 +120,17 @@ class Variables_Integration_Service {
 
 		// Color detection
 		if ( $this->is_color_value( $value ) ) {
-			return 'color';
+			return 'global-color-variable';
 		}
 
 		// Size detection
 		if ( $this->is_size_value( $value ) ) {
-			return 'size';
+			return 'global-size-variable';
 		}
 
 		// Font detection
 		if ( $this->is_font_value( $value ) ) {
-			return 'font';
+			return 'global-font-variable';
 		}
 
 		// Default to string

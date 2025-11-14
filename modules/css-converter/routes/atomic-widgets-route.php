@@ -113,7 +113,17 @@ class Atomic_Widgets_Route {
 
 	public function convert_html_to_widgets( \WP_REST_Request $request ): \WP_REST_Response {
 
-		$conversion_params = $this->extract_conversion_parameters( $request );
+		try {
+			$conversion_params = $this->extract_conversion_parameters( $request );
+		} catch ( \Exception $e ) {
+			return $this->create_conversion_error_response( $e );
+		}
+
+		error_log( 'CSS_CONVERTER_DEBUG: Starting conversion' );
+		error_log( 'CSS_CONVERTER_DEBUG: HTML length: ' . strlen( $conversion_params['html'] ?? '' ) );
+		error_log( 'CSS_CONVERTER_DEBUG: CSS URLs count: ' . count( $conversion_params['css_urls'] ?? [] ) );
+		error_log( 'CSS_CONVERTER_DEBUG: CSS URLs: ' . print_r( $conversion_params['css_urls'] ?? [], true ) );
+		error_log( 'CSS_CONVERTER_DEBUG: Follow imports: ' . ( $conversion_params['follow_imports'] ? 'true' : 'false' ) );
 
 		if ( empty( $conversion_params['html'] ) ) {
 			return $this->create_missing_html_error_response();
@@ -126,12 +136,18 @@ class Atomic_Widgets_Route {
 			
 			$is_js_app = $this->is_javascript_app( $conversion_params['html'] );
 			
+			error_log( 'CSS_CONVERTER_DEBUG: Processed HTML length: ' . strlen( $processed_html ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Is JS app: ' . ( $is_js_app ? 'true' : 'false' ) );
+			
 			$result = $service->convert_from_html(
 				$processed_html,
 				$conversion_params['css_urls'],
 				$conversion_params['follow_imports'],
 				$conversion_params['options']
 			);
+			
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion result widgets count: ' . count( $result['widgets'] ?? [] ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion result stats: ' . print_r( $result['stats'] ?? [], true ) );
 
 			$kit_css_urls = array_filter( $conversion_params['css_urls'], function( $url ) {
 				return strpos( $url, '/elementor/css/' ) !== false;
@@ -204,6 +220,8 @@ class Atomic_Widgets_Route {
 
 			if ( ! empty( $selector ) ) {
 				$auto_extracted_css_urls = $this->extract_stylesheet_urls_from_html( $html, $content );
+				error_log( 'CSS_CONVERTER_DEBUG: Extracted CSS URLs count: ' . count( $auto_extracted_css_urls ) );
+				error_log( 'CSS_CONVERTER_DEBUG: Extracted CSS URLs: ' . print_r( $auto_extracted_css_urls, true ) );
 			} else {
 				$auto_extracted_css_urls = [];
 			}
@@ -236,27 +254,140 @@ class Atomic_Widgets_Route {
 	}
 
 	private function fetch_html_from_url( string $url ): string {
-		$response = wp_remote_get( $url, [
-			'timeout' => 15,
-			'sslverify' => false,
-		] );
+		error_log( 'CSS_CONVERTER_DEBUG: Fetching HTML from URL: ' . $url );
+		
+		$cookies = [];
+		$max_redirects = 5;
+		$current_url = $url;
+		
+		for ( $redirect_count = 0; $redirect_count < $max_redirects; $redirect_count++ ) {
+			$response = wp_remote_get( $current_url, [
+				'timeout' => 15,
+				'sslverify' => false,
+				'headers' => [
+					'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+					'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+					'Accept-Language' => 'en-US,en;q=0.5',
+					'Connection' => 'keep-alive',
+					'Upgrade-Insecure-Requests' => '1',
+				],
+				'cookies' => $cookies,
+				'redirection' => 0,
+			] );
 
-		if ( is_wp_error( $response ) ) {
-			throw new \Exception( 'Failed to fetch URL: ' . esc_html( $response->get_error_message() ) );
+			if ( is_wp_error( $response ) ) {
+				error_log( 'CSS_CONVERTER_DEBUG: URL fetch error: ' . $response->get_error_message() );
+				throw new \Exception( 'Failed to fetch URL: ' . esc_html( $response->get_error_message() ) );
+			}
+
+			$status_code = wp_remote_retrieve_response_code( $response );
+			
+			if ( $status_code >= 300 && $status_code < 400 ) {
+				$location = wp_remote_retrieve_header( $response, 'location' );
+				if ( $location ) {
+					$current_url = $location;
+					error_log( 'CSS_CONVERTER_DEBUG: Following redirect to: ' . $current_url );
+					continue;
+				}
+			}
+
+			if ( 403 === $status_code && $redirect_count < $max_redirects - 1 ) {
+				error_log( 'CSS_CONVERTER_DEBUG: Got 403 Forbidden, trying with different headers' );
+				
+				$set_cookie_headers = wp_remote_retrieve_header( $response, 'set-cookie' );
+				if ( is_array( $set_cookie_headers ) ) {
+					foreach ( $set_cookie_headers as $cookie_header ) {
+						if ( preg_match( '/([^=]+)=([^;]+)/', $cookie_header, $matches ) ) {
+							$cookies[ $matches[1] ] = $matches[2];
+						}
+					}
+				} elseif ( is_string( $set_cookie_headers ) ) {
+					if ( preg_match( '/([^=]+)=([^;]+)/', $set_cookie_headers, $matches ) ) {
+						$cookies[ $matches[1] ] = $matches[2];
+					}
+				}
+				
+				if ( ! empty( $cookies ) ) {
+					error_log( 'CSS_CONVERTER_DEBUG: Found cookies, retrying with cookies' );
+					continue;
+				}
+				
+				error_log( 'CSS_CONVERTER_DEBUG: No cookies found, trying with Referer header' );
+				$retry_response = wp_remote_get( $current_url, [
+					'timeout' => 15,
+					'sslverify' => false,
+					'headers' => [
+						'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+						'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+						'Accept-Language' => 'en-US,en;q=0.5',
+						'Connection' => 'keep-alive',
+						'Upgrade-Insecure-Requests' => '1',
+						'Referer' => $current_url,
+					],
+					'cookies' => $cookies,
+					'redirection' => 0,
+				] );
+				
+				if ( ! is_wp_error( $retry_response ) ) {
+					$retry_status = wp_remote_retrieve_response_code( $retry_response );
+					if ( 200 === $retry_status ) {
+						$html = wp_remote_retrieve_body( $retry_response );
+						if ( ! empty( $html ) && stripos( $html, 'Cookie check failed' ) === false ) {
+							error_log( 'CSS_CONVERTER_DEBUG: Successfully fetched with Referer header' );
+							return $html;
+						}
+					}
+				}
+				
+				error_log( 'CSS_CONVERTER_DEBUG: 403 retry failed, website may require JavaScript or additional security checks' );
+				throw new \Exception( 'Website returned 403 Forbidden. The website may have security protection that blocks automated requests. Please try copying the HTML manually or contact the website administrator.' );
+			}
+
+			if ( 200 !== $status_code ) {
+				error_log( 'CSS_CONVERTER_DEBUG: URL returned status: ' . $status_code );
+				$html_body = wp_remote_retrieve_body( $response );
+				if ( ! empty( $html_body ) && strlen( $html_body ) > 100 ) {
+					error_log( 'CSS_CONVERTER_DEBUG: Response body preview: ' . substr( $html_body, 0, 200 ) );
+				}
+				throw new \Exception( 'URL returned HTTP status ' . esc_html( (string) $status_code ) );
+			}
+
+			$html = wp_remote_retrieve_body( $response );
+			error_log( 'CSS_CONVERTER_DEBUG: Fetched HTML length: ' . strlen( $html ) );
+
+			if ( empty( $html ) ) {
+				error_log( 'CSS_CONVERTER_DEBUG: URL returned empty HTML' );
+				throw new \Exception( 'URL returned empty response' );
+			}
+
+			if ( stripos( $html, 'Cookie check failed' ) !== false || stripos( $html, 'cookie check' ) !== false ) {
+				error_log( 'CSS_CONVERTER_DEBUG: Response contains cookie check error, attempting with cookies' );
+				
+				$set_cookie_headers = wp_remote_retrieve_header( $response, 'set-cookie' );
+				if ( is_array( $set_cookie_headers ) ) {
+					foreach ( $set_cookie_headers as $cookie_header ) {
+						if ( preg_match( '/([^=]+)=([^;]+)/', $cookie_header, $matches ) ) {
+							$cookies[ $matches[1] ] = $matches[2];
+						}
+					}
+				} elseif ( is_string( $set_cookie_headers ) ) {
+					if ( preg_match( '/([^=]+)=([^;]+)/', $set_cookie_headers, $matches ) ) {
+						$cookies[ $matches[1] ] = $matches[2];
+					}
+				}
+				
+				if ( ! empty( $cookies ) && $redirect_count < $max_redirects - 1 ) {
+					error_log( 'CSS_CONVERTER_DEBUG: Retrying with cookies: ' . print_r( $cookies, true ) );
+					continue;
+				}
+				
+				throw new \Exception( 'Cookie check failed' );
+			}
+
+			return $html;
 		}
 
-		$status_code = wp_remote_retrieve_response_code( $response );
-		if ( 200 !== $status_code ) {
-			throw new \Exception( 'URL returned HTTP status ' . esc_html( (string) $status_code ) );
-		}
-
-		$html = wp_remote_retrieve_body( $response );
-
-		if ( empty( $html ) ) {
-			throw new \Exception( 'URL returned empty response' );
-		}
-
-		return $html;
+		throw new \Exception( 'Too many redirects or cookie check failed' );
 	}
 
 	private function is_javascript_app( string $html ): bool {
@@ -534,14 +665,29 @@ class Atomic_Widgets_Route {
 
 	private function create_conversion_error_response( \Exception $e ): \WP_REST_Response {
 		error_log( 'WIDGET_CONVERTER_ERROR: ' . $e->getMessage() . ' | File: ' . $e->getFile() . ' | Line: ' . $e->getLine() . ' | Trace: ' . $e->getTraceAsString() );
+		
+		$status_code = 500;
+		$error_code = 'conversion_error';
+		
+		if ( strpos( $e->getMessage(), '403' ) !== false || strpos( $e->getMessage(), 'Forbidden' ) !== false ) {
+			$status_code = 403;
+			$error_code = 'access_forbidden';
+		} elseif ( strpos( $e->getMessage(), '404' ) !== false || strpos( $e->getMessage(), 'Not Found' ) !== false ) {
+			$status_code = 404;
+			$error_code = 'url_not_found';
+		} elseif ( strpos( $e->getMessage(), 'timeout' ) !== false ) {
+			$status_code = 408;
+			$error_code = 'request_timeout';
+		}
+		
 		return new \WP_REST_Response(
 			[
 				'success' => false,
-				'error' => 'Internal conversion error',
+				'error' => 'Conversion error',
 				'message' => $e->getMessage(),
-				'code' => 'conversion_error',
+				'code' => $error_code,
 			],
-			500
+			$status_code
 		);
 	}
 

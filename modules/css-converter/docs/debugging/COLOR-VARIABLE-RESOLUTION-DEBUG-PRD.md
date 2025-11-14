@@ -150,3 +150,7 @@ color: rgb(51, 51, 51) ✗
 4. `widget-class-processor.php` - Rule filtering
 5. Color property mappers - Value conversion
 
+
+
+
+

@@ -23,9 +23,7 @@ class Widget_Creation_Orchestrator {
 		$this->pipeline = new Widget_Creation_Command_Pipeline();
 		$this->initialize_pipeline();
 
-		if ( $use_zero_defaults ) {
-			$this->enable_css_converter_base_styles_override();
-		}
+		$this->enable_css_converter_base_styles_override();
 	}
 
 	public function create_widgets( array $styled_widgets, array $css_processing_result, array $options = [] ): array {

@@ -422,3 +422,7 @@ function parse_selector_via_api(string $selector): array {
 **Reason:** Performance + compatibility + simplicity > technical superiority
 
 
+
+
+
+

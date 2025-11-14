@@ -170,6 +170,7 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		}
 
 		$global_classes = $this->context->get_metadata( 'global_classes', [] );
+		$class_name_mappings = $this->context->get_metadata( 'class_name_mappings', [] );
 
 		if ( empty( $global_classes ) ) {
 			return false;
@@ -177,7 +178,10 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 
 		if ( substr( $selector, 0, 1 ) === '.' && strpos( $selector, ' ' ) === false ) {
 			$class_name = substr( $selector, 1 );
-			return isset( $global_classes[ $class_name ] );
+			
+			$final_class_name = $class_name_mappings[ $class_name ] ?? $class_name;
+			
+			return isset( $global_classes[ $final_class_name ] );
 		}
 
 		return false;
@@ -277,6 +281,19 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 
 		$converted_properties = $this->prepare_properties_for_collection( $properties );
 		$matched_elements = $this->find_matching_widgets( $selector, $widgets );
+
+		if ( strpos( $selector, 'intro-section' ) !== false ) {
+			error_log( 'CSS_CONVERTER_DEBUG: Style Collection Processor - processing .intro-section selector' );
+			error_log( 'CSS_CONVERTER_DEBUG: .intro-section matched ' . count( $matched_elements ) . ' widgets' );
+			error_log( 'CSS_CONVERTER_DEBUG: .intro-section properties count: ' . count( $properties ) );
+			foreach ( $properties as $prop ) {
+				$prop_name = $prop['property'] ?? 'unknown';
+				if ( in_array( $prop_name, [ 'display', 'flex-direction', 'align-items', 'justify-content', 'padding' ], true ) ) {
+					error_log( 'CSS_CONVERTER_DEBUG: .intro-section property: ' . $prop_name . ' = ' . ( $prop['value'] ?? 'no value' ) );
+				}
+			}
+			error_log( 'CSS_CONVERTER_DEBUG: .intro-section converted properties count: ' . count( $converted_properties ) );
+		}
 
 		if ( ! empty( $matched_elements ) ) {
 

@@ -540,7 +540,7 @@ class Widget_Mapper {
 			'settings' => [
 				'tag' => $element['tag'] !== 'div' ? $element['tag'] : null, // Only set if not default div
 			],
-			'attributes' => $element['attributes'] ?? [], // Preserve all attributes (id, class, etc.)
+			'attributes' => $element['attributes'] ?? [],
 			'inline_css' => $element['inline_css'] ?? [], // Preserve all inline CSS
 			'children' => [ $paragraph_widget ], // Contains the paragraph widget
 		];

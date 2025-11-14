@@ -87,6 +87,10 @@ class Container_Variable_Resolver implements Css_Processor_Interface {
 		return $context;
 	}
 
+	private function is_container_variable( string $var_name ): bool {
+		return isset( self::ELEMENTOR_CONTAINER_VARIABLES[ $var_name ] );
+	}
+
 	private function resolve_container_variables( string $value, array $variable_definitions ): string {
 		return preg_replace_callback(
 			'/var\s*\(\s*(--[a-zA-Z0-9_-]+)\s*(?:,\s*([^)]+))?\s*\)/i',
@@ -95,14 +99,16 @@ class Container_Variable_Resolver implements Css_Processor_Interface {
 				$fallback = $matches[2] ?? null;
 				$clean_name = ltrim( $var_name, '-' );
 
-				if ( isset( $variable_definitions[ $clean_name ]['value'] ) && ! empty( $variable_definitions[ $clean_name ]['value'] ) ) {
-					$resolved = $variable_definitions[ $clean_name ]['value'];
+				if ( $this->is_container_variable( $var_name ) ) {
+					if ( isset( $variable_definitions[ $clean_name ]['value'] ) && ! empty( $variable_definitions[ $clean_name ]['value'] ) ) {
+						$resolved = $variable_definitions[ $clean_name ]['value'];
 
-					if ( strpos( $resolved, 'var(' ) !== false ) {
-						return $this->resolve_container_variables( $resolved, $variable_definitions );
+						if ( strpos( $resolved, 'var(' ) !== false ) {
+							return $this->resolve_container_variables( $resolved, $variable_definitions );
+						}
+
+						return $resolved;
 					}
-
-					return $resolved;
 				}
 
 				if ( $fallback !== null ) {
