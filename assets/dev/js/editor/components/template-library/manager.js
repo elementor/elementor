@@ -918,7 +918,11 @@ const TemplateLibraryManager = function() {
 			options.refresh = true;
 		}
 
-		if ( 'cloud' === query.source && ! elementor.templates.eventManager.isSessionRecordingInProgress() ) {
+		const shouldStartSessionRecording = 'cloud' === query.source &&
+			elementorCommon.config.editor_events.session_replays?.cloudTemplates &&
+			! elementor.templates.eventManager.isSessionRecordingInProgress();
+
+		if ( shouldStartSessionRecording ) {
 			elementor.templates.eventManager.startSessionRecording();
 			elementor.templates.eventManager.sendCloudTemplatesSessionRecordingStartEvent();
 		}
