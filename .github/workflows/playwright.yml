@@ -2,11 +2,7 @@ name: Playwright
 
 on:
   pull_request:
-    types: [ labeled, synchronize, opened, reopened ]
-  push:
-    branches:
-      - 'main'
-      - '3.[0-9][0-9]'
+    types: [ labeled, synchronize, opened, reopened, ready_for_review ]
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -42,7 +38,11 @@ jobs:
     uses: ./.github/workflows/calculate_php_version.yml
 
   build-plugin:
-    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests')
+    if: |
+      contains(github.event.pull_request.labels.*.name, 'run-tests') ||
+      (!github.event.pull_request.draft && github.event_name == 'pull_request' && github.base_ref == 'main') ||
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch'
     name: Build plugin
     uses: ./.github/workflows/build.yml
   
@@ -50,7 +50,12 @@ jobs:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
     needs: [build-plugin, get-php-version]
-    if: github.event.inputs.tag == '' && (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'run-tests'))
+    if: |
+      github.event.inputs.tag == '' &&
+      (contains(github.event.pull_request.labels.*.name, 'run-tests') ||
+      (!github.event.pull_request.draft && github.event_name == 'pull_request' && github.base_ref == 'main') ||
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch')
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
