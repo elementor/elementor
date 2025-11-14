@@ -30,19 +30,15 @@ const parseTickets = (ticketsStr) => {
 
 const getBranchCommits = () => {
 	try {
-		console.log(`\nFetching commits from branch: ${TARGET_BRANCH}\n`);
-		
 		const baseRef = `remotes/origin/${BASE_BRANCH}`;
 		const targetRef = `remotes/origin/${TARGET_BRANCH}`;
 		
 		const cmd = `git log ${baseRef}..${targetRef} --pretty=format:"%B"`;
-		console.log(`   Running: ${cmd}`);
-		
 		const commits = execSync(cmd, { encoding: 'utf-8' });
-		console.log(`   Got commits\n`);
 		return commits;
 	} catch (error) {
-		console.error(`   Error: ${error.message}`);
+		console.error(`Error: Could not fetch commits from ${TARGET_BRANCH}`);
+		console.error(error.message);
 		return '';
 	}
 };
@@ -66,15 +62,8 @@ const setOutput = (name, value) => {
 const main = () => {
 	try {
 		const requiredTickets = parseTickets(TICKETS_LIST);
-		console.log(`Checking for ${requiredTickets.length} tickets:`);
-		console.log(`   ${requiredTickets.join(', ')}\n`);
-
 		const commits = getBranchCommits();
 		const mergedTickets = extractTickets(commits);
-
-		console.log(`Branch commits contain ${mergedTickets.length} tickets:`);
-		console.log(`   ${mergedTickets.length > 0 ? mergedTickets.join(', ') : 'None'}\n`);
-
 		const missing = requiredTickets.filter(t => !mergedTickets.includes(t));
 
 		console.log(`Results:`);
