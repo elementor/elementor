@@ -139,6 +139,11 @@ const getVersionTickets = async () => {
 		console.log(`✅ Found ${tickets.length} tickets in version ${JIRA_VERSION}`);
 		if (tickets.length > 0) {
 			console.log(`   Tickets: ${tickets.join(', ')}`);
+		} else {
+			console.warn('\n⚠️  No tickets found. Possible reasons:');
+			console.warn('   - Version name might be different in Jira');
+			console.warn('   - Tickets might not be assigned to this version');
+			console.warn('   - Try checking: https://elementor.atlassian.net/projects/ED/versions');
 		}
 
 		return tickets;
@@ -170,17 +175,33 @@ const getBranchCommits = () => {
 		console.log(`\n🔍 Fetching commits from ${TARGET_BRANCH}...`);
 
 		try {
-			execSync('git fetch origin --all', { encoding: 'utf-8', stdio: 'pipe' });
+			execSync('git fetch --all --tags', { encoding: 'utf-8', stdio: 'pipe' });
+			console.log('   ✅ Fetched all branches and tags');
 		} catch (e) {
-			console.warn('   ⚠️  Could not fetch all branches');
+			console.warn('   ⚠️  Could not fetch all branches, continuing...');
 		}
 
-		const commits = execSync(
-			`git log ${BASE_BRANCH}..origin/${TARGET_BRANCH} --pretty=format:%B`,
-			{ encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }
-		);
+		let commits = '';
+		const branchRefs = [
+			`origin/${TARGET_BRANCH}`,
+			TARGET_BRANCH,
+		];
 
-		return commits;
+		for (const ref of branchRefs) {
+			try {
+				console.log(`   Trying to fetch from: ${ref}`);
+				commits = execSync(
+					`git log ${BASE_BRANCH}..${ref} --pretty=format:%B`,
+					{ encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }
+				);
+				console.log(`   ✅ Successfully fetched commits from ${ref}`);
+				return commits;
+			} catch (e) {
+				console.log(`   ❌ Failed with ${ref}, trying next...`);
+			}
+		}
+
+		throw new Error('Could not find branch in any expected location');
 	} catch (error) {
 		console.warn(`⚠️  Could not fetch commits: ${error.message}`);
 		console.warn('   Try checking if the branch exists locally with: git branch -a');
