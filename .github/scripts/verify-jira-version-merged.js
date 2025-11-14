@@ -139,11 +139,6 @@ const getVersionTickets = async () => {
 		console.log(`✅ Found ${tickets.length} tickets in version ${JIRA_VERSION}`);
 		if (tickets.length > 0) {
 			console.log(`   Tickets: ${tickets.join(', ')}`);
-		} else {
-			console.warn('\n⚠️  No tickets found. Possible reasons:');
-			console.warn('   - Version name might be different in Jira');
-			console.warn('   - Tickets might not be assigned to this version');
-			console.warn('   - Try checking: https://elementor.atlassian.net/projects/ED/versions');
 		}
 
 		return tickets;
