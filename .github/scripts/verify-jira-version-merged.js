@@ -25,8 +25,15 @@ console.log(`   JIRA_CLOUD_INSTANCE_BASE_URL: ${JIRA_CLOUD_INSTANCE_BASE_URL || 
 console.log('');
 
 const setGitHubOutput = (key, value) => {
-	const output = `${key}=${value}\n`;
-	fs.appendFileSync(process.env.GITHUB_OUTPUT, output);
+	if (!process.env.GITHUB_OUTPUT) return;
+	
+	let output = value;
+	if (typeof value === 'string' && value.includes('\n')) {
+		output = value.replace(/\n/g, '%0A');
+	}
+	
+	const line = `${key}=${output}\n`;
+	fs.appendFileSync(process.env.GITHUB_OUTPUT, line);
 };
 
 const REQUIRED_VARS = ['JIRA_VERSION', 'TARGET_BRANCH', 'BASE_BRANCH', 'JIRA_CLIENT_ID', 'JIRA_CLIENT_SECRET', 'JIRA_CLOUD_INSTANCE_BASE_URL'];
@@ -196,7 +203,8 @@ const getBranchCommits = () => {
 		console.log(`\n🔍 Fetching commits from ${TARGET_BRANCH}...`);
 
 		try {
-			execSync('git fetch --all --tags', { encoding: 'utf-8', stdio: 'pipe' });
+			execSync('git config --global --add safe.directory "*"', { encoding: 'utf-8', stdio: 'pipe' });
+			execSync('git fetch origin --all --tags', { encoding: 'utf-8', stdio: 'pipe' });
 			console.log('   ✅ Fetched all branches and tags');
 		} catch (e) {
 			console.warn('   ⚠️  Could not fetch all branches, continuing...');
