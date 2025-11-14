@@ -210,27 +210,40 @@ const getBranchCommits = () => {
 			console.warn('   ⚠️  Could not fetch all branches, continuing...');
 		}
 
-		let commits = '';
-		const branchRefs = [
-			`origin/${TARGET_BRANCH}`,
-			TARGET_BRANCH,
-		];
+	try {
+		const branches = execSync('git branch -a', { encoding: 'utf-8', stdio: 'pipe' });
+		console.log(`   Available branches matching target:`);
+		branches.split('\n')
+			.filter(b => b.includes(TARGET_BRANCH))
+			.forEach(b => console.log(`     ${b.trim()}`));
+	} catch (e) {
+		console.warn('   Could not list branches');
+	}
 
-		for (const ref of branchRefs) {
-			try {
-				console.log(`   Trying to fetch from: ${ref}`);
-				commits = execSync(
-					`git log ${BASE_BRANCH}..${ref} --pretty=format:%B`,
-					{ encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }
-				);
+	let commits = '';
+	const branchRefs = [
+		`origin/${TARGET_BRANCH}`,
+		TARGET_BRANCH,
+	];
+
+	for (const ref of branchRefs) {
+		try {
+			console.log(`   Trying to fetch from: ${ref}`);
+			commits = execSync(
+				`git log ${BASE_BRANCH}..${ref} --pretty=format:%B 2>/dev/null || echo ""`,
+				{ encoding: 'utf-8', shell: '/bin/bash' }
+			);
+			if (commits.trim()) {
 				console.log(`   ✅ Successfully fetched commits from ${ref}`);
 				return commits;
-			} catch (e) {
-				console.log(`   ❌ Failed with ${ref}, trying next...`);
 			}
+		} catch (e) {
+			console.log(`   ❌ Failed with ${ref}: ${e.message.split('\n')[0]}`);
 		}
+	}
 
-		throw new Error('Could not find branch in any expected location');
+	console.warn(`   ⚠️  No commits found, but continuing with empty list...`);
+	return '';
 	} catch (error) {
 		console.warn(`⚠️  Could not fetch commits: ${error.message}`);
 		console.warn('   Try checking if the branch exists locally with: git branch -a');
