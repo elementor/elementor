@@ -144,6 +144,19 @@ class OnboardingTracker {
 		}, true );
 
 		this.setupUrlChangeDetection();
+		this.setupSessionRecordingCleanup();
+	}
+
+	setupSessionRecordingCleanup() {
+		if ( 'undefined' === typeof window ) {
+			return;
+		}
+
+		const handleBeforeUnload = () => {
+			this.stopSessionRecordingIfNeeded();
+		};
+
+		window.addEventListener( 'beforeunload', handleBeforeUnload );
 	}
 
 	setupUrlChangeDetection() {
@@ -612,6 +625,10 @@ class OnboardingTracker {
 		eventData = TimingManager.addTimingToEventData( eventData, stepNumber );
 		eventData[ endStateProperty ] = actions;
 
+		if ( 4 === stepNumber ) {
+			this.stopSessionRecordingIfNeeded();
+		}
+
 		if ( EventDispatcher.canSendEvents() ) {
 			this.dispatchEventWithoutTrigger( eventName, eventData );
 			StorageManager.remove( storageKey );
@@ -1054,6 +1071,40 @@ class OnboardingTracker {
 		StorageManager.remove( storageKey );
 	}
 
+	startSessionRecordingIfNeeded( stepNumber ) {
+		if ( ! EventDispatcher.canSendEvents() ) {
+			return;
+		}
+
+		if ( ! elementorCommon?.eventsManager?.isSessionRecordingInProgress ) {
+			return;
+		}
+
+		if ( elementorCommon.eventsManager.isSessionRecordingInProgress() ) {
+			return;
+		}
+
+		EventDispatcher.dispatch( ONBOARDING_EVENTS_MAP.SESSION_REPLAY_START, {
+			location: 'plugin_onboarding',
+			step_number: stepNumber,
+			step_name: this.getStepName( stepNumber ),
+		} );
+
+		elementorCommon.eventsManager.startSessionRecording();
+	}
+
+	stopSessionRecordingIfNeeded() {
+		if ( ! elementorCommon?.eventsManager?.stopSessionRecording ) {
+			return;
+		}
+
+		if ( ! elementorCommon.eventsManager.isSessionRecordingInProgress() ) {
+			return;
+		}
+
+		elementorCommon.eventsManager.stopSessionRecording();
+	}
+
 	onStepLoad( currentStep ) {
 		const stepNumber = this.getStepNumber( currentStep );
 
@@ -1064,6 +1115,7 @@ class OnboardingTracker {
 		}
 
 		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
+			this.startSessionRecordingIfNeeded( stepNumber );
 			this.sendStoredStep1EventsOnStep2();
 			this.sendExperimentStarted( 201 );
 			this.sendExperimentStarted( 202 );
