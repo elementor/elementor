@@ -6,6 +6,7 @@ const { execSync } = require('child_process');
 
 const {
 	JIRA_VERSION,
+	TICKETS_LIST,
 	TARGET_BRANCH,
 	BASE_BRANCH,
 	JIRA_CLIENT_ID,
@@ -15,6 +16,7 @@ const {
 
 console.log('🔧 Environment Variables Check:');
 console.log(`   JIRA_VERSION: ${JIRA_VERSION || '❌ NOT SET'}`);
+console.log(`   TICKETS_LIST: ${TICKETS_LIST ? '✅ SET' : '❌ NOT SET'}`);
 console.log(`   TARGET_BRANCH: ${TARGET_BRANCH || '❌ NOT SET'}`);
 console.log(`   BASE_BRANCH: ${BASE_BRANCH || '❌ NOT SET'}`);
 console.log(`   JIRA_CLIENT_ID: ${JIRA_CLIENT_ID ? '✅ SET' : '❌ NOT SET'}`);
@@ -40,6 +42,17 @@ if (missingVars.length > 0) {
 	
 	process.exit(1);
 }
+
+const getTicketsFromList = () => {
+	if (!TICKETS_LIST) return [];
+	
+	const tickets = TICKETS_LIST
+		.split(',')
+		.map(t => t.trim().toUpperCase())
+		.filter(t => t.match(/^ED-\d+$/));
+	
+	return tickets;
+};
 
 const getBasicAuthHeader = () => {
 	const authString = Buffer.from(`${JIRA_CLIENT_ID}:${JIRA_CLIENT_SECRET}`).toString('base64');
@@ -236,9 +249,23 @@ const findMissingTickets = (jiraTickets, branchTickets) => {
 
 (async () => {
 	try {
-		console.log('🔐 Authenticating with Jira...\n');
+		let jiraTickets = [];
 
-		const jiraTickets = await getVersionTickets();
+		if (TICKETS_LIST) {
+			console.log('📋 Using provided tickets list...\n');
+			jiraTickets = getTicketsFromList();
+			console.log(`✅ Parsed ${jiraTickets.length} tickets from list`);
+			console.log(`   Tickets: ${jiraTickets.join(', ')}\n`);
+		} else if (JIRA_VERSION) {
+			console.log('🔐 Authenticating with Jira...\n');
+			jiraTickets = await getVersionTickets();
+		} else {
+			console.error('❌ Error: Either TICKETS_LIST or JIRA_VERSION must be provided');
+			setGitHubOutput('result', 'error');
+			setGitHubOutput('missing_tickets', 'ERROR: Either tickets list or Jira version must be provided');
+			process.exit(1);
+		}
+
 		const commitMessages = getBranchCommits();
 		const branchTickets = extractTicketsFromCommits(commitMessages);
 

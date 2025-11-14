@@ -5,7 +5,11 @@ on:
     inputs:
       jira_version:
         description: 'Jira Version (e.g., v3.33.1)'
-        required: true
+        required: false
+        type: string
+      tickets_list:
+        description: 'Comma-separated list of tickets to check (e.g., ED-20358, ED-21219, ED-21422)'
+        required: false
         type: string
       target_branch:
         description: 'Target branch to check (e.g., 3.33)'
@@ -49,6 +53,7 @@ jobs:
         id: verify
         env:
           JIRA_VERSION: ${{ github.event.inputs.jira_version }}
+          TICKETS_LIST: ${{ github.event.inputs.tickets_list }}
           TARGET_BRANCH: ${{ github.event.inputs.target_branch }}
           BASE_BRANCH: ${{ github.event.inputs.base_branch }}
           JIRA_CLIENT_ID: ${{ secrets.JIRA_CLIENT_ID }}
