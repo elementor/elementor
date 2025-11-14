@@ -1,3 +1,4 @@
+import { type V1ElementData } from '@elementor/editor-elements';
 import type { StyleDefinition } from '@elementor/editor-styles';
 
 export type ComponentFormValues = {
@@ -8,13 +9,40 @@ export type ComponentId = number;
 
 export type StylesDefinition = Record< ComponentId, StyleDefinition[] >;
 
-export type Component = {
+export type Component = PublishedComponent | UnpublishedComponent;
+
+export type PublishedComponent = BaseComponent & {
 	id: number;
+};
+
+export type UnpublishedComponent = BaseComponent & {
+	elements: V1ElementData[];
+};
+
+type BaseComponent = {
+	uid: string;
 	name: string;
 };
 
-export type DocumentStatus = 'publish' | 'draft' | 'autosave';
+export type DocumentStatus = 'publish' | 'draft';
+export type DocumentSaveStatus = DocumentStatus | 'autosave';
 
 export type ExtendedWindow = Window & {
-	elementorCommon: Record< string, unknown >;
+	elementorCommon: Record< string, unknown > & {
+		eventsManager: {
+			config: {
+				locations: Record< string, string >;
+				secondaryLocations: Record< string, string >;
+				triggers: Record< string, string >;
+			};
+		};
+	};
+};
+
+export type Container = {
+	model: {
+		get: ( key: 'elements' ) => {
+			toJSON: () => V1ElementData[];
+		};
+	};
 };
