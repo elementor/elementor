@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../../bound-prop-context';
 import { ItemSelector } from '../../components/item-selector';
+import ControlActions from '../../control-actions/control-actions';
 import { transitionProperties, transitionsItemsList } from './data';
 
 const toTransitionSelectorValue = ( label: string ) => {
@@ -95,13 +96,15 @@ export const TransitionSelector = ( {
 
 	return (
 		<Box ref={ defaultRef }>
-			<UnstableTag
-				variant="outlined"
-				label={ transitionLabel }
-				endIcon={ <ChevronDownIcon fontSize="tiny" /> }
-				{ ...bindTrigger( popoverState ) }
-				fullWidth
-			/>
+			<ControlActions>
+				<UnstableTag
+					variant="outlined"
+					label={ transitionLabel }
+					endIcon={ <ChevronDownIcon fontSize="tiny" /> }
+					{ ...bindTrigger( popoverState ) }
+					fullWidth
+				/>
+			</ControlActions>
 			<Popover
 				disablePortal
 				disableScrollLock
