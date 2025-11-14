@@ -134,7 +134,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			} );
 
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
-			$styles_manager->register( $this->test_style_key, $get_style_defs, [ $this->test_style_key ] );
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
 		}, 100, 1 );
 
 		do_action( 'elementor/post/render', 1 );
@@ -197,11 +197,11 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			} );
 
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_additional_style_defs ) {
-			$styles_manager->register( $this->test_additional_style_key, $get_additional_style_defs, [ $this->test_additional_style_key ] );
+			$styles_manager->register( [ $this->test_additional_style_key ], $get_additional_style_defs );
 		}, 10, 1 );
 
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
-			$styles_manager->register( $this->test_style_key, $get_style_defs, [ $this->test_style_key ] );
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
 		}, 20, 1 );
 
 		do_action( 'elementor/post/render', 1 );
@@ -250,7 +250,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
 
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
-			$styles_manager->register( $this->test_style_key, $get_style_defs, [ $this->test_style_key ] );
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
 		}, 20, 1 );
 
 		do_action( 'elementor/post/render', 1 );
@@ -269,9 +269,8 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) {
 			$styles_manager->register(
-				$this->test_style_key,
+				[ $this->test_style_key ],
 				fn () => $this->get_test_style_defs(),
-				[ $this->test_style_key ]
 			);
 		}, 10, 1 );
 
@@ -296,7 +295,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		};
 
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
-			$styles_manager->register( $this->test_style_key, $get_style_defs, [ $this->test_style_key ] );
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
 		}, 10, 1 );
 
 		do_action( 'elementor/post/render', 1 );

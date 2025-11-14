@@ -46,12 +46,17 @@ class Atomic_Styles_Manager {
 
 	public function register_hooks() {
 		add_action( 'elementor/frontend/after_enqueue_post_styles', fn() => $this->enqueue_styles() );
+
 		add_action( 'elementor/post/render', function( $post_id ) {
 			$this->post_ids[] = $post_id;
 		} );
+
+		add_action( 'elementor/atomic-widgets/styles/clear', fn( array $cache_keys ) => $this->clear_files( $cache_keys ) );
 	}
 
-	public function register( string $key, callable $get_style_defs, array $cache_keys ) {
+	public function register( array $cache_keys, callable $get_style_defs ) {
+		$key = $this->convert_cache_keys_to_handle( $cache_keys );
+
 		$this->registered_styles_by_key[ $key ] = [
 			'get_styles' => $get_style_defs,
 			'cache_keys' => $cache_keys,
@@ -121,7 +126,7 @@ class Atomic_Styles_Manager {
 				$breakpoint_cache_keys = array_merge( $cache_keys, [ $breakpoint_key ] );
 
 				$style_file = $this->css_files_manager->get(
-					$style_key . '-' . $breakpoint_key,
+					$this->convert_cache_keys_to_handle( $breakpoint_cache_keys ),
 					$breakpoint_media,
 					$render_css,
 					$this->cache_validity->is_valid( $breakpoint_cache_keys )
@@ -223,5 +228,35 @@ class Atomic_Styles_Manager {
 		foreach ( $this->fonts as $font ) {
 			Plugin::instance()->frontend->enqueue_font( $font );
 		}
+	}
+
+	private function clear_files( array $cache_keys ) {
+		$node = $this->cache_validity->get_node( $cache_keys );
+
+		$this->clear_by_node( $cache_keys, $node );
+
+		$this->cache_validity->invalidate( $cache_keys );
+	}
+
+	private function clear_by_node( array $path, $node ) {
+		if ( ! $node ) {
+			return;
+		}
+
+		if ( true === $node || $node['state'] ) {
+			$this->css_files_manager->delete( $this->convert_cache_keys_to_handle( $path ) );
+		}
+
+		if ( is_bool( $node ) || empty( $node['children'] ) ) {
+			return;
+		}
+
+		foreach ( $node['children'] as $child_key => $child_node ) {
+			$this->clear_by_node( array_merge( $path, [ $child_key ] ), $child_node );
+		}
+	}
+
+	private function convert_cache_keys_to_handle( array $cache_keys ) {
+		return implode( '-', $cache_keys );
 	}
 }
