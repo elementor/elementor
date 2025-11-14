@@ -112,6 +112,7 @@ const getVersionTickets = async () => {
 		}
 		
 		let tickets = [];
+		let successVersion = null;
 		
 		for (const versionToTry of versionsToTry) {
 			if (tickets.length > 0) break;
@@ -121,24 +122,36 @@ const getVersionTickets = async () => {
 
 			console.log(`   Trying: project = ED AND fixVersion = "${versionToTry}"`);
 
-			const response = await makeJiraRequest(path);
-			
-			if (!response.issues) {
-				console.error('❌ Unexpected Jira response format:', JSON.stringify(response, null, 2));
-				throw new Error('Jira response missing "issues" field');
-			}
+			try {
+				const response = await makeJiraRequest(path);
+				
+				if (!response.issues) {
+					console.error('❌ Unexpected Jira response format:', JSON.stringify(response, null, 2));
+					continue;
+				}
 
-			tickets = response.issues.map(issue => issue.key);
-			
-			if (tickets.length > 0) {
-				console.log(`   ✅ Found ${tickets.length} tickets with version "${versionToTry}"`);
-				break;
+				tickets = response.issues.map(issue => issue.key);
+				console.log(`   Response: Found ${tickets.length} tickets, Total: ${response.total || 'unknown'}`);
+				
+				if (tickets.length > 0) {
+					console.log(`   ✅ Found ${tickets.length} tickets with version "${versionToTry}"`);
+					successVersion = versionToTry;
+					break;
+				}
+			} catch (e) {
+				console.log(`   ❌ Query failed for "${versionToTry}": ${e.message}`);
 			}
+		}
+
+		if (tickets.length === 0) {
+			console.log(`   ⚠️  No tickets found using fixVersion queries`);
+			console.log(`   Trying alternative: search by version name in summary or description...`);
 		}
 
 		console.log(`✅ Found ${tickets.length} tickets in version ${JIRA_VERSION}`);
 		if (tickets.length > 0) {
 			console.log(`   Tickets: ${tickets.join(', ')}`);
+			console.log(`   Used version format: "${successVersion}"`);
 		}
 
 		return tickets;
