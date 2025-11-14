@@ -96,34 +96,43 @@ const getVersionTickets = async () => {
 	try {
 		console.log(`🔍 Fetching tickets for version: ${JIRA_VERSION}`);
 		
+		const versionsToTry = [];
+		
 		const sanitizedVersion = JIRA_VERSION.replace(/^v/, '');
+		versionsToTry.push(sanitizedVersion);
 		
-		let jql = encodeURIComponent(`project = ED AND fixVersion = "${sanitizedVersion}"`);
-		let path = `/rest/api/3/search/jql?jql=${jql}&maxResults=500&fields=key`;
-
-		console.log(`   JQL Query: project = ED AND fixVersion = "${sanitizedVersion}"`);
-		console.log(`   Request path: ${path}`);
-
-		let response = await makeJiraRequest(path);
-		
-		if (!response.issues) {
-			console.error('❌ Unexpected Jira response format:', JSON.stringify(response, null, 2));
-			throw new Error('Jira response missing "issues" field');
+		if (!JIRA_VERSION.startsWith('v')) {
+			versionsToTry.push(`v${JIRA_VERSION}`);
 		}
-
-		let tickets = response.issues.map(issue => issue.key);
-
-		if (tickets.length === 0 && sanitizedVersion.includes('.')) {
-			console.log(`   No tickets found with "${sanitizedVersion}", trying without patch version...`);
-			const majorMinor = sanitizedVersion.split('.').slice(0, 2).join('.');
-			jql = encodeURIComponent(`project = ED AND fixVersion = "${majorMinor}"`);
-			path = `/rest/api/3/search/jql?jql=${jql}&maxResults=500&fields=key`;
+		
+		const majorMinor = sanitizedVersion.split('.').slice(0, 2).join('.');
+		if (majorMinor !== sanitizedVersion) {
+			versionsToTry.push(majorMinor);
+			versionsToTry.push(`v${majorMinor}`);
+		}
+		
+		let tickets = [];
+		
+		for (const versionToTry of versionsToTry) {
+			if (tickets.length > 0) break;
 			
-			console.log(`   Retrying with: project = ED AND fixVersion = "${majorMinor}"`);
-			response = await makeJiraRequest(path);
+			const jql = encodeURIComponent(`project = ED AND fixVersion = "${versionToTry}"`);
+			const path = `/rest/api/3/search/jql?jql=${jql}&maxResults=500&fields=key`;
+
+			console.log(`   Trying: project = ED AND fixVersion = "${versionToTry}"`);
+
+			const response = await makeJiraRequest(path);
 			
-			if (response.issues) {
-				tickets = response.issues.map(issue => issue.key);
+			if (!response.issues) {
+				console.error('❌ Unexpected Jira response format:', JSON.stringify(response, null, 2));
+				throw new Error('Jira response missing "issues" field');
+			}
+
+			tickets = response.issues.map(issue => issue.key);
+			
+			if (tickets.length > 0) {
+				console.log(`   ✅ Found ${tickets.length} tickets with version "${versionToTry}"`);
+				break;
 			}
 		}
 
