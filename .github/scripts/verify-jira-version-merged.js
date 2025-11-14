@@ -72,7 +72,11 @@ const getTicketsFromJira = async () => {
 
 			const versionToTry = versionsToTry[index];
 			const auth = Buffer.from(`${JIRA_CLIENT_ID}:${JIRA_CLIENT_SECRET}`).toString('base64');
-			const jql = encodeURIComponent(`project = ED AND fixVersion = "${versionToTry}" ORDER BY created DESC`);
+			
+			let jqlQuery = `project = ED AND fixVersion = "${versionToTry}" ORDER BY created DESC`;
+			const jql = encodeURIComponent(jqlQuery);
+			
+			console.log(`   Trying query: ${jqlQuery}`);
 			
 			let baseUrl = JIRA_CLOUD_INSTANCE_BASE_URL.trim();
 			if (!baseUrl.startsWith('https://')) {
