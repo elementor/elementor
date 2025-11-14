@@ -1,327 +1,86 @@
 'use strict';
 
 const fs = require('fs');
-const https = require('https');
 const { execSync } = require('child_process');
 
 const {
-	JIRA_VERSION,
 	TICKETS_LIST,
 	TARGET_BRANCH,
 	BASE_BRANCH,
-	JIRA_CLIENT_ID,
-	JIRA_CLIENT_SECRET,
-	JIRA_CLOUD_INSTANCE_BASE_URL,
 } = process.env;
 
-console.log('🔧 Environment Variables Check:');
-console.log(`   JIRA_VERSION: ${JIRA_VERSION || '❌ NOT SET'}`);
-console.log(`   TICKETS_LIST: ${TICKETS_LIST ? '✅ SET' : '❌ NOT SET'}`);
-console.log(`   TARGET_BRANCH: ${TARGET_BRANCH || '❌ NOT SET'}`);
-console.log(`   BASE_BRANCH: ${BASE_BRANCH || '❌ NOT SET'}`);
-console.log(`   JIRA_CLIENT_ID: ${JIRA_CLIENT_ID ? '✅ SET' : '❌ NOT SET'}`);
-console.log(`   JIRA_CLIENT_SECRET: ${JIRA_CLIENT_SECRET ? '✅ SET' : '❌ NOT SET'}`);
-console.log(`   JIRA_CLOUD_INSTANCE_BASE_URL: ${JIRA_CLOUD_INSTANCE_BASE_URL || '❌ NOT SET'}`);
+console.log('🔧 Configuration:');
+console.log(`   Tickets: ${TICKETS_LIST || '❌ NOT SET'}`);
+console.log(`   Target Branch: ${TARGET_BRANCH || '❌ NOT SET'}`);
+console.log(`   Base Branch: ${BASE_BRANCH || '❌ NOT SET'}`);
 console.log('');
 
-const setGitHubOutput = (key, value) => {
-	if (!process.env.GITHUB_OUTPUT) return;
-	
-	let output = value;
-	if (typeof value === 'string' && value.includes('\n')) {
-		output = value.replace(/\n/g, '%0A');
-	}
-	
-	const line = `${key}=${output}\n`;
-	fs.appendFileSync(process.env.GITHUB_OUTPUT, line);
-};
-
-const REQUIRED_VARS = ['JIRA_VERSION', 'TARGET_BRANCH', 'BASE_BRANCH', 'JIRA_CLIENT_ID', 'JIRA_CLIENT_SECRET', 'JIRA_CLOUD_INSTANCE_BASE_URL'];
-const missingVars = REQUIRED_VARS.filter(v => !process.env[v]);
-
-if (missingVars.length > 0) {
-	console.error(`❌ Missing environment variables: ${missingVars.join(', ')}`);
-	
-	setGitHubOutput('total_tickets', '0');
-	setGitHubOutput('merged_tickets', '0');
-	setGitHubOutput('result', 'error');
-	setGitHubOutput('missing_tickets', `ERROR: Missing variables: ${missingVars.join(', ')}`);
-	
+if (!TICKETS_LIST || !TARGET_BRANCH) {
+	console.error('❌ Error: TICKETS_LIST and TARGET_BRANCH are required');
 	process.exit(1);
 }
 
-const getTicketsFromList = () => {
-	if (!TICKETS_LIST) return [];
-	
-	const tickets = TICKETS_LIST
+const parseTickets = (ticketsStr) => {
+	return ticketsStr
 		.split(',')
 		.map(t => t.trim().toUpperCase())
 		.filter(t => t.match(/^ED-\d+$/));
-	
-	return tickets;
-};
-
-const getBasicAuthHeader = () => {
-	const authString = Buffer.from(`${JIRA_CLIENT_ID}:${JIRA_CLIENT_SECRET}`).toString('base64');
-	return `Basic ${authString}`;
-};
-
-const makeJiraRequest = (path) => {
-	return new Promise((resolve, reject) => {
-		let baseUrl = JIRA_CLOUD_INSTANCE_BASE_URL.trim();
-		
-		if (!baseUrl.startsWith('https://')) {
-			baseUrl = `https://${baseUrl}`;
-		}
-		
-		const fullUrl = `${baseUrl}${path}`;
-		console.log(`   Full URL: ${fullUrl.substring(0, 100)}...`);
-		
-		const url = new URL(fullUrl);
-
-		const options = {
-			hostname: url.hostname,
-			path: url.pathname + url.search,
-			method: 'GET',
-			headers: {
-				'Authorization': getBasicAuthHeader(),
-				'Accept': 'application/json',
-			},
-		};
-
-		https.request(options, (res) => {
-			let data = '';
-
-			res.on('data', (chunk) => {
-				data += chunk;
-			});
-
-			res.on('end', () => {
-				if (res.statusCode >= 400) {
-					reject(new Error(`Jira API error (${res.statusCode}): ${data}`));
-					return;
-				}
-
-				try {
-					resolve(JSON.parse(data));
-				} catch (err) {
-					reject(new Error(`Failed to parse Jira response: ${err.message}`));
-				}
-			});
-		}).on('error', reject).end();
-	});
-};
-
-const getVersionTickets = async () => {
-	try {
-		console.log(`🔍 Fetching tickets for version: ${JIRA_VERSION}`);
-		
-		const versionsToTry = [];
-		
-		const sanitizedVersion = JIRA_VERSION.replace(/^v/, '');
-		versionsToTry.push(sanitizedVersion);
-		
-		if (!JIRA_VERSION.startsWith('v')) {
-			versionsToTry.push(`v${JIRA_VERSION}`);
-		}
-		
-		const majorMinor = sanitizedVersion.split('.').slice(0, 2).join('.');
-		if (majorMinor !== sanitizedVersion) {
-			versionsToTry.push(majorMinor);
-			versionsToTry.push(`v${majorMinor}`);
-		}
-		
-		let tickets = [];
-		let successVersion = null;
-		
-		for (const versionToTry of versionsToTry) {
-			if (tickets.length > 0) break;
-			
-			const jql = encodeURIComponent(`project = ED AND fixVersion = "${versionToTry}"`);
-			const path = `/rest/api/3/search/jql?jql=${jql}&maxResults=500&fields=key`;
-
-			console.log(`   Trying: project = ED AND fixVersion = "${versionToTry}"`);
-
-			try {
-				const response = await makeJiraRequest(path);
-				
-				if (!response.issues) {
-					console.error('❌ Unexpected Jira response format:', JSON.stringify(response, null, 2));
-					continue;
-				}
-
-				tickets = response.issues.map(issue => issue.key);
-				console.log(`   Response: Found ${tickets.length} tickets, Total: ${response.total || 'unknown'}`);
-				
-				if (tickets.length > 0) {
-					console.log(`   ✅ Found ${tickets.length} tickets with version "${versionToTry}"`);
-					successVersion = versionToTry;
-					break;
-				}
-			} catch (e) {
-				console.log(`   ❌ Query failed for "${versionToTry}": ${e.message}`);
-			}
-		}
-
-		if (tickets.length === 0) {
-			console.log(`   ⚠️  No tickets found using fixVersion queries`);
-			console.log(`   Trying alternative: search by version name in summary or description...`);
-		}
-
-		console.log(`✅ Found ${tickets.length} tickets in version ${JIRA_VERSION}`);
-		if (tickets.length > 0) {
-			console.log(`   Tickets: ${tickets.join(', ')}`);
-			console.log(`   Used version format: "${successVersion}"`);
-		}
-
-		return tickets;
-	} catch (error) {
-		console.error('❌ Failed to fetch Jira version tickets:', error.message);
-		console.error('   This could be due to:');
-		console.error('   - Invalid OAuth credentials (JIRA_CLIENT_ID or JIRA_CLIENT_SECRET)');
-		console.error('   - Invalid JIRA_CLOUD_INSTANCE_BASE_URL');
-		console.error('   - Version name not found in Jira');
-		console.error('   - Missing permissions in OAuth app');
-		console.error('   - Network connectivity issues');
-		console.error('');
-		console.error('   📋 Debugging steps:');
-		console.error('   1. Check your Jira OAuth app config at: https://developer.atlassian.com/console/myapps/');
-		console.error('   2. Verify the app has "Search Jira issues" permission');
-		console.error('   3. Try a manual Jira API call with your credentials');
-		
-		setGitHubOutput('total_tickets', '0');
-		setGitHubOutput('merged_tickets', '0');
-		setGitHubOutput('result', 'error');
-		setGitHubOutput('missing_tickets', `ERROR: Failed to fetch Jira tickets: ${error.message}`);
-		
-		process.exit(1);
-	}
 };
 
 const getBranchCommits = () => {
 	try {
-		console.log(`\n🔍 Fetching commits from ${TARGET_BRANCH}...`);
-
-		try {
-			execSync('git config --global --add safe.directory "*"', { encoding: 'utf-8', stdio: 'pipe' });
-			execSync('git fetch origin --all --tags', { encoding: 'utf-8', stdio: 'pipe' });
-			console.log('   ✅ Fetched all branches and tags');
-		} catch (e) {
-			console.warn('   ⚠️  Could not fetch all branches, continuing...');
-		}
-
-	try {
-		const branches = execSync('git branch -a', { encoding: 'utf-8', stdio: 'pipe' });
-		console.log(`   Available branches matching target:`);
-		branches.split('\n')
-			.filter(b => b.includes(TARGET_BRANCH))
-			.forEach(b => console.log(`     ${b.trim()}`));
-	} catch (e) {
-		console.warn('   Could not list branches');
-	}
-
-	let commits = '';
-	const branchRefs = [
-		`origin/${TARGET_BRANCH}`,
-		TARGET_BRANCH,
-	];
-
-	for (const ref of branchRefs) {
-		try {
-			console.log(`   Trying to fetch from: ${ref}`);
-			commits = execSync(
-				`git log ${BASE_BRANCH}..${ref} --pretty=format:%B 2>/dev/null || echo ""`,
-				{ encoding: 'utf-8', shell: '/bin/bash' }
-			);
-			if (commits.trim()) {
-				console.log(`   ✅ Successfully fetched commits from ${ref}`);
-				return commits;
-			}
-		} catch (e) {
-			console.log(`   ❌ Failed with ${ref}: ${e.message.split('\n')[0]}`);
-		}
-	}
-
-	console.warn(`   ⚠️  No commits found, but continuing with empty list...`);
-	return '';
+		console.log(`\n🔍 Fetching commits from branch: ${TARGET_BRANCH}\n`);
+		
+		const cmd = `git log ${BASE_BRANCH}..origin/${TARGET_BRANCH} --pretty=format:"%B"`;
+		console.log(`   Running: ${cmd}`);
+		
+		const commits = execSync(cmd, { encoding: 'utf-8' });
+		console.log(`   ✅ Got commits\n`);
+		return commits;
 	} catch (error) {
-		console.warn(`⚠️  Could not fetch commits: ${error.message}`);
-		console.warn('   Try checking if the branch exists locally with: git branch -a');
+		console.error(`   ❌ Error: ${error.message}`);
 		return '';
 	}
 };
 
-const extractTicketsFromCommits = (commitMessages) => {
-	const ticketRegex = /ED-\d+/g;
+const extractTickets = (commitMessages) => {
 	const tickets = new Set();
-
-	const matches = commitMessages.match(ticketRegex) || [];
-	matches.forEach(ticket => tickets.add(ticket));
-
+	const matches = commitMessages.match(/ED-\d+/g) || [];
+	matches.forEach(t => tickets.add(t));
 	return Array.from(tickets);
 };
 
-const findMissingTickets = (jiraTickets, branchTickets) => {
-	const branchTicketSet = new Set(branchTickets);
-	const missing = jiraTickets.filter(ticket => !branchTicketSet.has(ticket));
-
-	return missing;
-};
-
-(async () => {
+const main = () => {
 	try {
-		let jiraTickets = [];
+		const requiredTickets = parseTickets(TICKETS_LIST);
+		console.log(`📋 Checking for ${requiredTickets.length} tickets:`);
+		console.log(`   ${requiredTickets.join(', ')}\n`);
 
-		if (TICKETS_LIST) {
-			console.log('📋 Using provided tickets list...\n');
-			jiraTickets = getTicketsFromList();
-			console.log(`✅ Parsed ${jiraTickets.length} tickets from list`);
-			console.log(`   Tickets: ${jiraTickets.join(', ')}\n`);
-		} else if (JIRA_VERSION) {
-			console.log('🔐 Authenticating with Jira...\n');
-			jiraTickets = await getVersionTickets();
+		const commits = getBranchCommits();
+		const mergedTickets = extractTickets(commits);
+
+		console.log(`📊 Branch commits contain ${mergedTickets.length} tickets:`);
+		console.log(`   ${mergedTickets.length > 0 ? mergedTickets.join(', ') : 'None'}\n`);
+
+		const missing = requiredTickets.filter(t => !mergedTickets.includes(t));
+
+		console.log(`📈 Results:`);
+		console.log(`   Total required: ${requiredTickets.length}`);
+		console.log(`   Found: ${requiredTickets.length - missing.length}`);
+		console.log(`   Missing: ${missing.length}\n`);
+
+		if (missing.length === 0) {
+			console.log(`✅ SUCCESS! All tickets are merged to ${TARGET_BRANCH}`);
+			process.exit(0);
 		} else {
-			console.error('❌ Error: Either TICKETS_LIST or JIRA_VERSION must be provided');
-			setGitHubOutput('result', 'error');
-			setGitHubOutput('missing_tickets', 'ERROR: Either tickets list or Jira version must be provided');
+			console.log(`⚠️  Missing tickets:`);
+			missing.forEach(t => console.log(`   - ${t}`));
 			process.exit(1);
 		}
-
-		const commitMessages = getBranchCommits();
-		const branchTickets = extractTicketsFromCommits(commitMessages);
-
-		console.log(`\n📊 Branch "${TARGET_BRANCH}" has ${branchTickets.length} unique tickets`);
-		console.log(`   Tickets: ${branchTickets.length > 0 ? branchTickets.join(', ') : 'None found'}`);
-
-		const missingTickets = findMissingTickets(jiraTickets, branchTickets);
-
-		console.log(`\n📋 Verification Results:`);
-		console.log(`   Total Jira tickets: ${jiraTickets.length}`);
-		console.log(`   Merged tickets: ${jiraTickets.length - missingTickets.length}`);
-		console.log(`   Missing tickets: ${missingTickets.length}`);
-
-		setGitHubOutput('total_tickets', String(jiraTickets.length));
-		setGitHubOutput('merged_tickets', String(jiraTickets.length - missingTickets.length));
-
-		if (missingTickets.length === 0) {
-			console.log(`\n✅ Success! All ${jiraTickets.length} tickets from ${JIRA_VERSION} are merged to ${TARGET_BRANCH}`);
-			setGitHubOutput('result', 'success');
-			setGitHubOutput('missing_tickets', 'None');
-		} else {
-			console.log(`\n⚠️  ${missingTickets.length} tickets are missing from ${TARGET_BRANCH}:`);
-			missingTickets.forEach(ticket => console.log(`   - ${ticket}`));
-			setGitHubOutput('result', 'failure');
-			setGitHubOutput('missing_tickets', missingTickets.join('\n'));
-		}
 	} catch (error) {
-		console.error('❌ Verification failed:', error.message);
-		console.error('   Stack trace:', error.stack);
-		
-		setGitHubOutput('total_tickets', '0');
-		setGitHubOutput('merged_tickets', '0');
-		setGitHubOutput('result', 'error');
-		setGitHubOutput('missing_tickets', `ERROR: ${error.message}`);
-		
+		console.error('❌ Error:', error.message);
 		process.exit(1);
 	}
-})();
+};
+
+main();
