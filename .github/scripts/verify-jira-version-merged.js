@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const { execSync } = require('child_process');
 
 const {
@@ -56,6 +57,12 @@ const extractTickets = (commitMessages) => {
 	return Array.from(tickets).sort();
 };
 
+const setOutput = (name, value) => {
+	if (!process.env.GITHUB_OUTPUT) return;
+	const output = `${name}=${value}\n`;
+	fs.appendFileSync(process.env.GITHUB_OUTPUT, output);
+};
+
 const main = () => {
 	try {
 		const requiredTickets = parseTickets(TICKETS_LIST);
@@ -74,6 +81,14 @@ const main = () => {
 		console.log(`   Total required: ${requiredTickets.length}`);
 		console.log(`   Found: ${requiredTickets.length - missing.length}`);
 		console.log(`   Missing: ${missing.length}\n`);
+
+		// Write outputs for GitHub summary
+		setOutput('searched_tickets', requiredTickets.join(', '));
+		setOutput('found_tickets', (requiredTickets.filter(t => mergedTickets.includes(t))).join(', ') || 'None');
+		setOutput('missing_tickets', missing.length > 0 ? missing.join(', ') : 'None');
+		setOutput('total_required', String(requiredTickets.length));
+		setOutput('total_found', String(requiredTickets.length - missing.length));
+		setOutput('result', missing.length === 0 ? 'success' : 'failure');
 
 		if (missing.length === 0) {
 			console.log(`✅ SUCCESS! All tickets are merged to ${TARGET_BRANCH}`);
