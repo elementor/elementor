@@ -38,10 +38,7 @@ jobs:
           fetch-depth: 0
 
       - name: Fetch all branches and tags
-        run: |
-          git config --global --add safe.directory "$PWD"
-          git fetch --all --tags
-          git branch -a
+        run: git fetch --all --tags
 
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
