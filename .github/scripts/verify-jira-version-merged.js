@@ -1,22 +1,33 @@
 'use strict';
 
 const fs = require('fs');
+const https = require('https');
 const { execSync } = require('child_process');
 
 const {
 	TICKETS_LIST,
+	JIRA_VERSION,
 	TARGET_BRANCH,
 	BASE_BRANCH,
+	JIRA_CLIENT_ID,
+	JIRA_CLIENT_SECRET,
+	JIRA_CLOUD_INSTANCE_BASE_URL,
 } = process.env;
 
 console.log('🔧 Configuration:');
-console.log(`   Tickets: ${TICKETS_LIST || '❌ NOT SET'}`);
+console.log(`   Tickets List: ${TICKETS_LIST ? '✅ SET' : '❌ NOT SET'}`);
+console.log(`   Jira Version: ${JIRA_VERSION ? '✅ SET' : '❌ NOT SET'}`);
 console.log(`   Target Branch: ${TARGET_BRANCH || '❌ NOT SET'}`);
 console.log(`   Base Branch: ${BASE_BRANCH || '❌ NOT SET'}`);
 console.log('');
 
-if (!TICKETS_LIST || !TARGET_BRANCH) {
-	console.error('❌ Error: TICKETS_LIST and TARGET_BRANCH are required');
+if (!TARGET_BRANCH) {
+	console.error('❌ Error: TARGET_BRANCH is required');
+	process.exit(1);
+}
+
+if (!TICKETS_LIST && !JIRA_VERSION) {
+	console.error('❌ Error: Either TICKETS_LIST or JIRA_VERSION must be provided');
 	process.exit(1);
 }
 
@@ -26,6 +37,56 @@ const parseTickets = (ticketsStr) => {
 		.map(t => t.trim().toUpperCase())
 		.map(t => t.replace(/ED(\d+)/, 'ED-$1'))
 		.filter(t => t.match(/^ED-\d+$/));
+};
+
+const getTicketsFromJira = async () => {
+	return new Promise((resolve, reject) => {
+		if (!JIRA_CLIENT_ID || !JIRA_CLIENT_SECRET || !JIRA_CLOUD_INSTANCE_BASE_URL) {
+			reject(new Error('Missing Jira credentials (JIRA_CLIENT_ID, JIRA_CLIENT_SECRET, JIRA_CLOUD_INSTANCE_BASE_URL)'));
+			return;
+		}
+
+		const auth = Buffer.from(`${JIRA_CLIENT_ID}:${JIRA_CLIENT_SECRET}`).toString('base64');
+		const sanitizedVersion = JIRA_VERSION.replace(/^v/, '');
+		const jql = encodeURIComponent(`project = ED AND fixVersion = "${sanitizedVersion}" ORDER BY created DESC`);
+		
+		let baseUrl = JIRA_CLOUD_INSTANCE_BASE_URL.trim();
+		if (!baseUrl.startsWith('https://')) {
+			baseUrl = `https://${baseUrl}`;
+		}
+
+		const url = new URL(`${baseUrl}/rest/api/3/search/jql?jql=${jql}&maxResults=500&fields=key`);
+
+		console.log(`🔍 Fetching tickets from Jira version: ${JIRA_VERSION}\n`);
+
+		const req = https.request(url, {
+			method: 'GET',
+			headers: {
+				'Authorization': `Basic ${auth}`,
+				'Accept': 'application/json',
+			}
+		}, (res) => {
+			let data = '';
+			res.on('data', chunk => data += chunk);
+			res.on('end', () => {
+				if (res.statusCode >= 400) {
+					reject(new Error(`Jira API error (${res.statusCode})`));
+					return;
+				}
+				try {
+					const response = JSON.parse(data);
+					const tickets = (response.issues || []).map(i => i.key).sort();
+					console.log(`✅ Found ${tickets.length} tickets in Jira version\n`);
+					resolve(tickets);
+				} catch (e) {
+					reject(new Error(`Failed to parse Jira response: ${e.message}`));
+				}
+			});
+		});
+
+		req.on('error', reject);
+		req.end();
+	});
 };
 
 const getBranchCommits = () => {
@@ -57,9 +118,17 @@ const extractTickets = (commitMessages) => {
 	return Array.from(tickets).sort();
 };
 
-const main = () => {
+const main = async () => {
 	try {
-		const requiredTickets = parseTickets(TICKETS_LIST);
+		let requiredTickets = [];
+
+		if (TICKETS_LIST) {
+			console.log(`📋 Using provided tickets list\n`);
+			requiredTickets = parseTickets(TICKETS_LIST);
+		} else if (JIRA_VERSION) {
+			requiredTickets = await getTicketsFromJira();
+		}
+
 		console.log(`📋 Checking for ${requiredTickets.length} tickets:`);
 		console.log(`   ${requiredTickets.join(', ')}\n`);
 

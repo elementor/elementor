@@ -4,8 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       tickets_list:
-        description: 'Comma-separated tickets (e.g., ED-20358, ED-21219, ED-21422)'
-        required: true
+        description: 'Comma-separated tickets (e.g., ED-20358, ED-21219) - leave empty to use Jira version'
+        required: false
+        type: string
+      jira_version:
+        description: 'Or provide Jira version (e.g., v3.33.1, 3.33) - will fetch tickets from Jira'
+        required: false
         type: string
       target_branch:
         description: 'Target branch to check (e.g., 3.33)'
@@ -43,8 +47,12 @@ jobs:
         id: verify
         env:
           TICKETS_LIST: ${{ github.event.inputs.tickets_list }}
+          JIRA_VERSION: ${{ github.event.inputs.jira_version }}
           TARGET_BRANCH: ${{ github.event.inputs.target_branch }}
           BASE_BRANCH: ${{ github.event.inputs.base_branch }}
+          JIRA_CLIENT_ID: ${{ secrets.JIRA_CLIENT_ID }}
+          JIRA_CLIENT_SECRET: ${{ secrets.JIRA_CLIENT_SECRET }}
+          JIRA_CLOUD_INSTANCE_BASE_URL: ${{ secrets.JIRA_CLOUD_INSTANCE_BASE_URL }}
         run: node .github/scripts/verify-jira-version-merged.js
 
       - name: Create Summary
