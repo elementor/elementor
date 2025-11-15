@@ -2,7 +2,7 @@ import { transitionProperties } from '@elementor/editor-controls';
 
 import { createTransformer } from '../create-transformer';
 
-type TransitionValue = {
+export type TransitionValue = {
 	selection: {
 		key: string;
 		value: string;
