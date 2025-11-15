@@ -97,8 +97,10 @@ class Unified_Widget_Conversion_Service {
 			$output_widgets = $resolved_widgets;
 		}
 
+		$custom_css_rules = $unified_processing_result['custom_css_rules'] ?? [];
 		error_log( 'CSS_CONVERTER_DEBUG: Creating widgets with resolved styles' );
-		$creation_result = $this->create_widgets_with_resolved_styles( $output_widgets, $options, $global_classes, $css_variable_definitions, $body_styles );
+		error_log( 'CSS_CONVERTER_DEBUG: Passing custom_css_rules count: ' . count( $custom_css_rules ) );
+		$creation_result = $this->create_widgets_with_resolved_styles( $output_widgets, $options, $global_classes, $css_variable_definitions, $body_styles, $custom_css_rules );
 		$final_widgets = $creation_result['widgets'] ?? [];
 		error_log( 'CSS_CONVERTER_DEBUG: Final widgets created: ' . count( $final_widgets ) );
 		error_log( 'CSS_CONVERTER_DEBUG: Creation stats: ' . print_r( $creation_result['stats'] ?? [], true ) );
@@ -170,7 +172,7 @@ class Unified_Widget_Conversion_Service {
 
 
 
-	private function create_widgets_with_resolved_styles( array $widgets, array $options, array $global_classes, array $css_variable_definitions = [], array $body_styles = [] ): array {
+	private function create_widgets_with_resolved_styles( array $widgets, array $options, array $global_classes, array $css_variable_definitions = [], array $body_styles = [], array $custom_css_rules = [] ): array {
 		$post_id = $options['postId'] ?? null;
 		$post_type = $options['postType'] ?? 'page';
 		if ( null === $post_id ) {
@@ -202,9 +204,16 @@ class Unified_Widget_Conversion_Service {
 		update_post_meta( $post_id, '_elementor_css_converter_post', true );
 		// Extract resolved styles from widgets by source type for widget_creator compatibility
 		$extracted_styles = $this->extract_styles_by_source_from_widgets( $widgets );
+		error_log( 'UNIFIED_WIDGET_CONVERSION: custom_css_rules received as parameter: ' . count( $custom_css_rules ) );
+		foreach ( array_keys( $custom_css_rules ) as $class_name ) {
+			if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
+				error_log( 'UNIFIED_WIDGET_CONVERSION: custom_css_rules for ' . $class_name . ': ' . substr( $custom_css_rules[ $class_name ]['css'] ?? '', 0, 150 ) );
+			}
+		}
 		$css_processing_result = [
 			'global_classes' => $global_classes,
 			'css_variable_definitions' => $css_variable_definitions,
+			'custom_css_rules' => $custom_css_rules,
 			'widget_styles' => array_merge( $extracted_styles['css_selector_styles'], $extracted_styles['reset_element_styles'] ),
 			'element_styles' => $extracted_styles['element_styles'],
 			'id_styles' => $extracted_styles['id_styles'],

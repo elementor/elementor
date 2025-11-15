@@ -61,10 +61,24 @@ class Global_Classes_Conversion_Service {
 
 			$has_var_reference = strpos( $value, 'var(' ) !== false;
 			
+			if ( 'brxw-intro-02' === $class_name && in_array( $property, [ 'display', 'grid-gap', 'grid-template-columns', 'align-items' ], true ) ) {
+				error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 property: ' . $property . ' = ' . $value . ' (has_var: ' . ( $has_var_reference ? 'YES' : 'NO' ) . ')' );
+			}
+			
 			if ( $has_var_reference ) {
 				$variable_info = $this->get_variable_id_from_var_reference( $value );
 				
 				if ( $variable_info ) {
+					if ( 'brxw-intro-02' === $class_name ) {
+						error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 variable_info found: ' . print_r( $variable_info, true ) );
+					}
+					
+					$resolved_value = $this->resolve_css_variable_for_custom_css( $value, $css_variable_definitions );
+					$this->custom_css_collector->add_property( $class_name, $property, $resolved_value, $important );
+					if ( 'brxw-intro-02' === $class_name && in_array( $property, [ 'grid-gap', 'grid-template-columns' ], true ) ) {
+						error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 ALSO adding (early path) ' . $property . ' to custom CSS (resolved): ' . $resolved_value );
+					}
+					
 					$target_property_name = $this->get_target_property_name( $property );
 					$variable_type = $variable_info['type'];
 					
@@ -85,11 +99,27 @@ class Global_Classes_Conversion_Service {
 						];
 					}
 					
+					if ( 'brxw-intro-02' === $class_name ) {
+						error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 added to atomic_props: ' . $target_property_name );
+					}
+					
 					continue;
 				}
 				
+				if ( 'brxw-intro-02' === $class_name ) {
+					error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 variable_info NOT found, checking should_resolve' );
+				}
+				
 				if ( ! empty( $css_variable_definitions ) && $this->should_resolve_variable( $value ) ) {
-					$value = $this->resolve_css_variable( $value, $css_variable_definitions );
+					$resolved_value = $this->resolve_css_variable( $value, $css_variable_definitions );
+					if ( 'brxw-intro-02' === $class_name ) {
+						error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 resolved: ' . $value . ' -> ' . $resolved_value );
+					}
+					$value = $resolved_value;
+				} else {
+					if ( 'brxw-intro-02' === $class_name ) {
+						error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 NOT resolving variable (should_resolve: ' . ( $this->should_resolve_variable( $value ) ? 'YES' : 'NO' ) . ', has_definitions: ' . ( ! empty( $css_variable_definitions ) ? 'YES' : 'NO' ) . ')' );
+					}
 				}
 			}
 			
@@ -100,10 +130,59 @@ class Global_Classes_Conversion_Service {
 				$important
 			);
 
+			if ( 'brxw-intro-02' === $class_name && in_array( $property, [ 'display', 'grid-gap', 'grid-template-columns', 'align-items' ], true ) ) {
+				error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 conversion result: ' . ( $converted && isset( $converted['$$type'] ) ? 'SUCCESS' : 'FAILED' ) );
+				if ( $converted ) {
+					error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 converted: ' . print_r( $converted, true ) );
+				} else {
+					error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 conversion FAILED for: ' . $property . ' = ' . $value );
+					$has_custom = $this->custom_css_collector->has_custom_css( $class_name );
+					error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 has_custom_css after failed conversion: ' . ( $has_custom ? 'YES' : 'NO' ) );
+				}
+			}
+
 			if ( $converted && isset( $converted['$$type'] ) ) {
+				if ( $has_var_reference ) {
+					$resolved_value = $this->resolve_css_variable_for_custom_css( $value, $css_variable_definitions );
+					$this->custom_css_collector->add_property( $class_name, $property, $resolved_value, $important );
+					if ( 'brxw-intro-02' === $class_name && in_array( $property, [ 'grid-gap', 'grid-template-columns' ], true ) ) {
+						error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 ALSO adding ' . $property . ' to custom CSS (resolved): ' . $resolved_value );
+					}
+				}
 				$target_property_name = $this->get_target_property_name( $property );
 				$atomic_props[ $target_property_name ] = $converted;
+			} elseif ( ! $converted && $has_var_reference ) {
+				$resolved_value = $this->resolve_css_variable_for_custom_css( $value, $css_variable_definitions );
+				if ( 'brxw-intro-02' === $class_name && 'grid-template-columns' === $property ) {
+					error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 resolving variable: ' . $value . ' -> ' . $resolved_value );
+				}
+				
+				if ( $this->custom_css_collector->has_custom_css( $class_name ) ) {
+					$existing_css = $this->custom_css_collector->get_custom_css_for_widget( $class_name );
+					if ( strpos( $existing_css, $property ) !== false ) {
+						if ( 'brxw-intro-02' === $class_name && 'grid-template-columns' === $property ) {
+							error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 grid-template-columns already in custom CSS, replacing with resolved value' );
+						}
+						$this->custom_css_collector->add_property( $class_name, $property, $resolved_value, $important );
+					} else {
+						$this->custom_css_collector->add_property( $class_name, $property, $resolved_value, $important );
+						if ( 'brxw-intro-02' === $class_name && 'grid-template-columns' === $property ) {
+							error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 explicitly added grid-template-columns to custom CSS with resolved value' );
+						}
+					}
+				} else {
+					$this->custom_css_collector->add_property( $class_name, $property, $resolved_value, $important );
+					if ( 'brxw-intro-02' === $class_name && 'grid-template-columns' === $property ) {
+						error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 explicitly added grid-template-columns to custom CSS with resolved value' );
+					}
+				}
 			}
+		}
+
+		if ( 'brxw-intro-02' === $class_name ) {
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 BEFORE retrieving custom CSS from collector' );
+			$has_custom_check = $this->custom_css_collector->has_custom_css( $class_name );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 has_custom_css: ' . ( $has_custom_check ? 'YES' : 'NO' ) );
 		}
 
 		$has_custom = $this->custom_css_collector->has_custom_css( $class_name );
@@ -111,6 +190,17 @@ class Global_Classes_Conversion_Service {
 		$custom_css = $has_custom 
 			? $this->custom_css_collector->get_custom_css_for_widget( $class_name )
 			: '';
+
+		if ( 'brxw-intro-02' === $class_name ) {
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 final result:' );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 atomic_props count: ' . count( $atomic_props ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 atomic_props keys: ' . implode( ', ', array_keys( $atomic_props ) ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 custom_css length: ' . strlen( $custom_css ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 custom_css: ' . ( $custom_css ? $custom_css : 'EMPTY' ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 has grid-template-columns: ' . ( strpos( $custom_css, 'grid-template-columns' ) !== false ? 'YES' : 'NO' ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 has grid-gap: ' . ( strpos( $custom_css, 'grid-gap' ) !== false ? 'YES' : 'NO' ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 has align-items: ' . ( strpos( $custom_css, 'align-items' ) !== false ? 'YES' : 'NO' ) );
+		}
 
 		return [
 			'atomic_props' => $atomic_props,
@@ -180,6 +270,40 @@ class Global_Classes_Conversion_Service {
 		}
 
 		return null;
+	}
+
+	private function resolve_css_variable_for_custom_css( string $value, array $variable_definitions, int $recursion_depth = 0 ): string {
+		if ( empty( $variable_definitions ) || $recursion_depth > 5 ) {
+			return $value;
+		}
+
+		$resolved = preg_replace_callback(
+			'/var\s*\(\s*(--[a-zA-Z0-9_-]+)\s*(?:,\s*([^)]+))?\s*\)/',
+			function ( $matches ) use ( $variable_definitions ) {
+				$var_name = trim( $matches[1] );
+				$fallback = isset( $matches[2] ) ? trim( $matches[2] ) : '';
+				$original_var = $matches[0];
+
+				$resolved_value = $this->get_variable_value( $var_name, $variable_definitions );
+
+				if ( $resolved_value !== null ) {
+					return $resolved_value;
+				}
+
+				if ( ! empty( $fallback ) ) {
+					return $fallback;
+				}
+
+				return $original_var;
+			},
+			$value
+		);
+
+		if ( $resolved !== $value && strpos( $resolved, 'var(' ) !== false ) {
+			return $this->resolve_css_variable_for_custom_css( $resolved, $variable_definitions, $recursion_depth + 1 );
+		}
+
+		return $resolved;
 	}
 
 	private function should_resolve_variable( string $value ): bool {

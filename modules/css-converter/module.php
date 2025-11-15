@@ -130,6 +130,7 @@ class Module extends BaseModule {
 		$css_converter_global_styles = \Elementor\Modules\CssConverter\Services\Styles\CSS_Converter_Global_Styles::make();
 		$css_converter_global_styles->register_hooks();
 	}
+
 	private function initialize_classes_route(): void {
 		require_once __DIR__ . '/routes/classes-route.php';
 		$this->classes_route = new \Elementor\Modules\CssConverter\Routes\Classes_Route();

@@ -138,6 +138,9 @@ class Atomic_Property_Validator {
 					'self-start',
 					'self-end',
 					'anchor-center',
+					'initial',
+					'inherit',
+					'unset',
 				],
 			],
 			'align-self' => [

@@ -27,6 +27,20 @@ class Global_Classes_Detection_Service
                 error_log( 'CSS_CONVERTER_DEBUG: Detection Service - .brxe-section properties count: ' . $properties_count );
             }
             
+            if ( strpos( $selector, 'brxw-intro-02' ) !== false ) {
+                error_log( 'CSS_CONVERTER_DEBUG: Detection Service - Found .brxw-intro-02 selector: ' . $selector );
+                error_log( 'CSS_CONVERTER_DEBUG: Detection Service - Is compound: ' . ( $this->is_compound_class_selector($selector) ? 'YES' : 'NO' ) );
+                $properties_count = count( $rule['properties'] ?? [] );
+                error_log( 'CSS_CONVERTER_DEBUG: Detection Service - .brxw-intro-02 properties count: ' . $properties_count );
+                foreach ( $rule['properties'] ?? [] as $prop ) {
+                    $prop_name = $prop['property'] ?? '';
+                    $prop_value = $prop['value'] ?? '';
+                    if ( in_array( $prop_name, [ 'display', 'grid-gap', 'grid-template-columns', 'align-items' ], true ) ) {
+                        error_log( 'CSS_CONVERTER_DEBUG: Detection Service - .brxw-intro-02 property: ' . $prop_name . ' = ' . $prop_value );
+                    }
+                }
+            }
+            
             if ( strpos( $selector, 'intro-section' ) !== false ) {
                 $intro_section_rules_found++;
                 error_log( 'CSS_CONVERTER_DEBUG: Detection Service - Found .intro-section selector: ' . $selector );
@@ -55,6 +69,14 @@ class Global_Classes_Detection_Service
             foreach ( $class_names as $class_name ) {
                 if ( 'brxe-section' === $class_name ) {
                     error_log( 'CSS_CONVERTER_DEBUG: Detection Service - Processing brxe-section class name' );
+                    error_log( 'CSS_CONVERTER_DEBUG: Detection Service - Should skip: ' . ( $this->should_skip_class_name($class_name) ? 'YES' : 'NO' ) );
+                    error_log( 'CSS_CONVERTER_DEBUG: Detection Service - Too long: ' . ( $this->is_class_name_too_long($class_name) ? 'YES' : 'NO' ) );
+                    $is_simple = ( '.' . $class_name === $selector );
+                    error_log( 'CSS_CONVERTER_DEBUG: Detection Service - Is simple selector: ' . ( $is_simple ? 'YES' : 'NO' ) );
+                }
+                
+                if ( 'brxw-intro-02' === $class_name ) {
+                    error_log( 'CSS_CONVERTER_DEBUG: Detection Service - Processing brxw-intro-02 class name' );
                     error_log( 'CSS_CONVERTER_DEBUG: Detection Service - Should skip: ' . ( $this->should_skip_class_name($class_name) ? 'YES' : 'NO' ) );
                     error_log( 'CSS_CONVERTER_DEBUG: Detection Service - Too long: ' . ( $this->is_class_name_too_long($class_name) ? 'YES' : 'NO' ) );
                     $is_simple = ( '.' . $class_name === $selector );
@@ -99,15 +121,28 @@ class Global_Classes_Detection_Service
                     }
                     
                     $detected_classes[ $class_name ] = [
-                    'selector' => $selector,
-                    'properties' => $rule['properties'] ?? [],
-                    'source' => 'css-converter',
+                        'selector' => $selector,
+                        'properties' => $rule['properties'] ?? [],
+                        'source' => 'css-converter',
                     ];
                     
                     if ( 'brxe-section' === $class_name ) {
                         error_log( 'CSS_CONVERTER_DEBUG: Detection Service - ADDED brxe-section (simple selector)' );
                         $props_count = count( $rule['properties'] ?? [] );
                         error_log( 'CSS_CONVERTER_DEBUG: Detection Service - brxe-section properties added: ' . $props_count );
+                    }
+                    
+                    if ( 'brxw-intro-02' === $class_name ) {
+                        error_log( 'CSS_CONVERTER_DEBUG: Detection Service - ADDED brxw-intro-02 (simple selector)' );
+                        $props_count = count( $rule['properties'] ?? [] );
+                        error_log( 'CSS_CONVERTER_DEBUG: Detection Service - brxw-intro-02 properties added: ' . $props_count );
+                        foreach ( $rule['properties'] ?? [] as $prop ) {
+                            $prop_name = $prop['property'] ?? '';
+                            $prop_value = $prop['value'] ?? '';
+                            if ( in_array( $prop_name, [ 'display', 'grid-gap', 'grid-template-columns', 'align-items' ], true ) ) {
+                                error_log( 'CSS_CONVERTER_DEBUG: Detection Service - brxw-intro-02 property in detected: ' . $prop_name . ' = ' . $prop_value );
+                            }
+                        }
                     }
                     
                     if ( 'intro-section' === $class_name ) {

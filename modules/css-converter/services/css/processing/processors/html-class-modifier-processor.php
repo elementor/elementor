@@ -42,6 +42,7 @@ class Html_Class_Modifier_Processor implements Css_Processor_Interface {
 	public function process( Css_Processing_Context $context ): Css_Processing_Context {
 		$css_class_modifiers = $context->get_metadata( 'css_class_modifiers', [] );
 		$class_name_mappings = $context->get_metadata( 'class_name_mappings', [] );
+		$overflow_styles = $context->get_metadata( 'overflow_styles_when_maximum_number_of_global_classes_has_been_reached', [] );
 		$widgets = $context->get_widgets();
 
 		foreach ( $css_class_modifiers as $index => $modifier ) {
@@ -55,6 +56,11 @@ class Html_Class_Modifier_Processor implements Css_Processor_Interface {
 		// Initialize HTML class modifier with unified modifiers
 		if ( ! empty( $css_class_modifiers ) ) {
 			$this->html_class_modifier->initialize_with_modifiers( $css_class_modifiers );
+		}
+
+		if ( ! empty( $overflow_styles ) ) {
+			error_log( 'HTML_CLASS_MODIFIER_PROCESSOR: Setting ' . count( $overflow_styles ) . ' overflow classes for removal' );
+			$this->html_class_modifier->set_overflow_classes( $overflow_styles );
 		}
 
 		// Apply class name mappings from duplicate detection
@@ -87,7 +93,15 @@ class Html_Class_Modifier_Processor implements Css_Processor_Interface {
 
 	private function apply_class_name_mappings_to_widgets( array $widgets, array $class_name_mappings ): array {
 		if ( empty( $class_name_mappings ) ) {
+			error_log( 'HTML_CLASS_MODIFIER_PROCESSOR: No class_name_mappings provided' );
 			return $widgets;
+		}
+
+		error_log( 'HTML_CLASS_MODIFIER_PROCESSOR: Applying ' . count( $class_name_mappings ) . ' class name mappings' );
+		foreach ( $class_name_mappings as $original => $mapped ) {
+			if ( strpos( $original, 'brxw-intro-02' ) !== false || strpos( $mapped, 'brxw-intro-02' ) !== false ) {
+				error_log( 'HTML_CLASS_MODIFIER_PROCESSOR: Mapping: ' . $original . ' => ' . $mapped );
+			}
 		}
 
 		// Set the mappings on the HTML class modifier

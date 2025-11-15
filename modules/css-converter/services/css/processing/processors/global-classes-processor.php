@@ -119,15 +119,26 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 			}
 		}
 
-		// PHASE 4: Handle overflow classes (apply directly to widgets)
+		// PHASE 4: Handle overflow classes (apply directly to widgets as local styles)
 		$overflow_styles_when_maximum_number_of_global_classes_has_been_reached = $global_classes_result['overflow_styles_when_maximum_number_of_global_classes_has_been_reached'] ?? [];
 
+		error_log( 'GLOBAL_CLASSES_PROCESSOR: PHASE 4 - Overflow classes from result: ' . count( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached ) );
 		if ( ! empty( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached ) ) {
-			// Store overflow styles for direct application in Style Collection Processor
+			error_log( 'GLOBAL_CLASSES_PROCESSOR: Overflow classes count: ' . count( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached ) );
+			foreach ( array_keys( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached ) as $overflow_class ) {
+				if ( strpos( $overflow_class, 'brxw-intro-02' ) !== false ) {
+					error_log( 'GLOBAL_CLASSES_PROCESSOR: Overflow class: ' . $overflow_class . ', atomic_props: ' . ( ! empty( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached[ $overflow_class ]['atomic_props'] ) ? 'YES' : 'NO' ) . ', custom_css: ' . ( ! empty( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached[ $overflow_class ]['custom_css'] ) ? substr( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached[ $overflow_class ]['custom_css'], 0, 100 ) : 'NO' ) );
+				}
+			}
+			// Store overflow styles for direct application to widgets (not as global classes)
 			$context->set_metadata( 'overflow_styles_when_maximum_number_of_global_classes_has_been_reached', $overflow_styles_when_maximum_number_of_global_classes_has_been_reached );
+			$verify_set = $context->get_metadata( 'overflow_styles_when_maximum_number_of_global_classes_has_been_reached', [] );
+			error_log( 'GLOBAL_CLASSES_PROCESSOR: Verified overflow set in context, count: ' . count( $verify_set ) );
 			if ( isset( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached['intro-section'] ) ) {
 				error_log( 'CSS_CONVERTER_DEBUG: intro-section found in overflow_styles: YES' );
 			}
+		} else {
+			error_log( 'GLOBAL_CLASSES_PROCESSOR: PHASE 4 - No overflow classes to set' );
 		}
 
 		// Store results in context
@@ -190,8 +201,19 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 
 		// Register with Elementor (includes overflow handling)
 		error_log( 'GLOBAL_CLASSES_PROCESSOR: Calling register_with_elementor with ' . count( $converted ) . ' classes' );
+		if ( isset( $converted['brxw-intro-02'] ) ) {
+			error_log( 'GLOBAL_CLASSES_PROCESSOR: brxw-intro-02 in converted classes: YES' );
+		}
 		$result = $registration_service->register_with_elementor( $converted );
 		error_log( 'GLOBAL_CLASSES_PROCESSOR: Registration result: ' . print_r( $result, true ) );
+		
+		if ( ! empty( $result['class_name_mappings'] ) ) {
+			foreach ( $result['class_name_mappings'] as $original => $mapped ) {
+				if ( strpos( $original, 'brxw-intro-02' ) !== false || strpos( $mapped, 'brxw-intro-02' ) !== false ) {
+					error_log( 'GLOBAL_CLASSES_PROCESSOR: Mapping: ' . $original . ' => ' . $mapped );
+				}
+			}
+		}
 
 		// Build global_classes array with FINAL class names (after duplicate processing)
 		$class_name_mappings = $result['class_name_mappings'] ?? [];
@@ -215,7 +237,7 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 		return [
 			'global_classes' => $global_classes,
 			'class_name_mappings' => $class_name_mappings,
-			'overflow_classes' => $result['overflow_classes'] ?? [],
+			'overflow_styles_when_maximum_number_of_global_classes_has_been_reached' => $result['overflow_styles_when_maximum_number_of_global_classes_has_been_reached'] ?? [],
 			'custom_css_rules' => $custom_css_rules,
 			'debug_duplicate_detection' => $result['debug_duplicate_detection'] ?? [],
 		];

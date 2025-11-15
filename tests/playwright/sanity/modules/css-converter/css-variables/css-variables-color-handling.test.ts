@@ -66,7 +66,7 @@ test.describe( 'CSS Variables Color Handling', () => {
 		expect( apiResult.widgets_created ).toBeGreaterThan( 0 );
 
 
-		// await page.pause();
+		await page.pause();
 		// Navigate to editor
 		await page.goto( apiResult.edit_url );
 		editor = new EditorPage( page, testInfo );

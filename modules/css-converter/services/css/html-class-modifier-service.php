@@ -11,6 +11,7 @@ class Html_Class_Modifier_Service {
 	private $mapping_service;
 	private $compound_mappings = [];
 	private $duplicate_class_mappings = [];
+	private $overflow_classes = [];
 	private $widget_classes_to_remove = [];
 
 	public function __construct(
@@ -110,7 +111,26 @@ class Html_Class_Modifier_Service {
 	}
 
 	public function set_duplicate_class_mappings( array $duplicate_class_mappings ): void {
+		if ( ! empty( $duplicate_class_mappings ) ) {
+			foreach ( $duplicate_class_mappings as $original => $mapped ) {
+				if ( strpos( $original, 'brxw-intro-02' ) !== false ) {
+					error_log( 'HTML_CLASS_MODIFIER_SERVICE: set_duplicate_class_mappings - ' . $original . ' => ' . $mapped );
+				}
+			}
+		}
 		$this->duplicate_class_mappings = $duplicate_class_mappings;
+	}
+
+	public function set_overflow_classes( array $overflow_classes ): void {
+		if ( ! empty( $overflow_classes ) ) {
+			error_log( 'HTML_CLASS_MODIFIER_SERVICE: set_overflow_classes - ' . count( $overflow_classes ) . ' classes' );
+			foreach ( array_keys( $overflow_classes ) as $overflow_class ) {
+				if ( strpos( $overflow_class, 'brxw-intro-02' ) !== false ) {
+					error_log( 'HTML_CLASS_MODIFIER_SERVICE: Overflow class to remove: ' . $overflow_class );
+				}
+			}
+		}
+		$this->overflow_classes = $overflow_classes;
 	}
 
 	public function modify_element_classes( array $element ): array {
@@ -188,6 +208,13 @@ class Html_Class_Modifier_Service {
 			return null;
 		}
 
+		if ( isset( $this->overflow_classes[ $class_name ] ) ) {
+			if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
+				error_log( 'HTML_CLASS_MODIFIER_SERVICE: Removing overflow class from HTML: ' . $class_name . ' (will apply as local styles)' );
+			}
+			return null;
+		}
+
 		// Check if this class has a flattened mapping first (highest priority for meaningful transformations)
 		if ( $this->mapping_service->has_mapping_for_class( $class_name ) ) {
 			$flattened_name = $this->mapping_service->get_flattened_class_name( $class_name );
@@ -197,6 +224,9 @@ class Html_Class_Modifier_Service {
 		// Check if this class has a duplicate class mapping (lower priority than flattening)
 		if ( isset( $this->duplicate_class_mappings[ $class_name ] ) ) {
 			$mapped_name = $this->duplicate_class_mappings[ $class_name ];
+			if ( strpos( $class_name, 'brxw-intro-02' ) !== false || strpos( $mapped_name, 'brxw-intro-02' ) !== false ) {
+				error_log( 'HTML_CLASS_MODIFIER_SERVICE: Applying duplicate mapping: ' . $class_name . ' => ' . $mapped_name );
+			}
 			return $mapped_name;
 		}
 
@@ -204,6 +234,9 @@ class Html_Class_Modifier_Service {
 		// The CSS converter should preserve all classes from the original HTML
 		// even if they don't have global styles, as they may have CSS rules
 		// that should be applied to the elements
+		if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
+			error_log( 'HTML_CLASS_MODIFIER_SERVICE: No mapping for ' . $class_name . ', preserving original' );
+		}
 		return $class_name;
 	}
 

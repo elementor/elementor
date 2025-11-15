@@ -79,17 +79,23 @@ class Unified_Css_Processor
         $html_class_modifier = $context->get_metadata('html_class_modifier');
         $body_styles = $context->get_metadata('body_styles', []);
 
-        // Build legacy result format for backward compatibility
-        return [
-        'widgets' => $processed_widgets,
-        'body_styles' => $body_styles,
-        'stats' => $statistics,
-        'css_class_rules' => $css_class_rules,
-        'css_variable_definitions' => $css_variable_definitions,
-        'global_classes' => $global_classes,
-        'global_classes_created' => count($global_classes),
-        'class_name_mappings' => $class_name_mappings,
-        'custom_css_rules' => $custom_css_rules,
+		// Build legacy result format for backward compatibility
+		error_log( 'UNIFIED_CSS_PROCESSOR: Returning custom_css_rules count: ' . count( $custom_css_rules ) );
+		foreach ( array_keys( $custom_css_rules ) as $class_name ) {
+			if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
+				error_log( 'UNIFIED_CSS_PROCESSOR: Returning custom_css_rules for ' . $class_name . ': ' . substr( $custom_css_rules[ $class_name ]['css'] ?? '', 0, 150 ) );
+			}
+		}
+		return [
+		'widgets' => $processed_widgets,
+		'body_styles' => $body_styles,
+		'stats' => $statistics,
+		'css_class_rules' => $css_class_rules,
+		'css_variable_definitions' => $css_variable_definitions,
+		'global_classes' => $global_classes,
+		'global_classes_created' => count($global_classes),
+		'class_name_mappings' => $class_name_mappings,
+		'custom_css_rules' => $custom_css_rules,
         'debug_duplicate_detection' => $debug_duplicate_detection,
         'flattened_classes' => $this->get_flattened_classes_from_unified_structure($context),
         'flattened_classes_count' => $this->count_modifiers_by_type($css_class_modifiers, 'flattening'),

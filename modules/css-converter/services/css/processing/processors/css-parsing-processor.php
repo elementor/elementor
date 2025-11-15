@@ -103,6 +103,18 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			}
 		}
 
+		$brxw_intro_02_in_raw_css = 0;
+		if ( strpos( $css, '.brxw-intro-02' ) !== false ) {
+			preg_match_all( '/\.brxw-intro-02[^{]*\{[^}]*\}/', $css, $matches );
+			$brxw_intro_02_in_raw_css = count( $matches[0] ?? [] );
+			error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - Found ' . $brxw_intro_02_in_raw_css . ' .brxw-intro-02 rules in raw CSS' );
+			if ( $brxw_intro_02_in_raw_css > 0 ) {
+				foreach ( array_slice( $matches[0], 0, 2 ) as $match ) {
+					error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - .brxw-intro-02 Raw CSS rule: ' . substr( $match, 0, 300 ) );
+				}
+			}
+		}
+
 		$brxe_section_parsed = 0;
 		foreach ( $css_rules as $rule ) {
 			$selector = $rule['selector'] ?? '';
@@ -116,6 +128,28 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			}
 		}
 		error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - Total .brxe-section rules parsed: ' . $brxe_section_parsed );
+
+		$brxw_intro_02_parsed = 0;
+		foreach ( $css_rules as $rule ) {
+			$selector = $rule['selector'] ?? '';
+			if ( strpos( $selector, 'brxw-intro-02' ) !== false ) {
+				$brxw_intro_02_parsed++;
+				if ( $brxw_intro_02_parsed <= 3 ) {
+					error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - Parsed .brxw-intro-02 rule: ' . $selector );
+					$properties = $rule['properties'] ?? [];
+					$properties_count = count( $properties );
+					error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - .brxw-intro-02 properties count: ' . $properties_count );
+					foreach ( $properties as $prop ) {
+						$prop_name = $prop['property'] ?? '';
+						$prop_value = $prop['value'] ?? '';
+						if ( in_array( $prop_name, [ 'display', 'grid-gap', 'grid-template-columns', 'align-items' ], true ) ) {
+							error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - .brxw-intro-02 property: ' . $prop_name . ' = ' . $prop_value );
+						}
+					}
+				}
+			}
+		}
+		error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - Total .brxw-intro-02 rules parsed: ' . $brxw_intro_02_parsed );
 
 		// Store results in context
 		$context->set_metadata( 'css_rules', $css_rules );

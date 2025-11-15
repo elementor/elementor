@@ -80,6 +80,9 @@ class Flex_Properties_Mapper extends Atomic_Property_Mapper_Base {
 		'self-start',
 		'self-end',
 		'anchor-center',
+		'initial',
+		'inherit',
+		'unset',
 	];
 
 	private const ALIGN_CONTENT_VALUES = [
