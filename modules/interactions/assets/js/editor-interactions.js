@@ -211,12 +211,9 @@
 		if ( ! item ) {
 			return;
 		}
-		const element = findElementByDataId( elementId );
+		const element = findElementByInteractionId( elementId );
 		if ( element ) {
-			const targetElement = getAnimationTarget( element );
-			if ( targetElement ) {
-				applyInteractionsToElement( targetElement, item.interactions );
-			}
+			applyInteractionsToElement( element, item.interactions );
 		}
 	}
 
