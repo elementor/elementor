@@ -165,7 +165,7 @@ const eventsConfig = {
 			add: 'add_new_variable',
 			connect: 'connect_variable',
 			save: 'save_new_variable',
-			openManager: 'open_variable_manager',
+			openManager: 'open_variables_manager',
 			saveChanges: 'save_variables_changes',
 			delete: 'delete_variable',
 		},

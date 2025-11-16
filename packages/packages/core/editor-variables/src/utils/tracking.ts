@@ -23,13 +23,13 @@ export const trackVariableEvent = ( { varType, controlPath, action }: VariableEv
 	} );
 };
 
-type VariableManagerEventData = {
+type VariablesManagerEventData = {
 	action: 'openManager' | 'add' | 'saveChanges' | 'delete';
 	varType?: string;
 	controlPath?: string;
 };
 
-export const trackVariableManagerEvent = ( { action, varType, controlPath }: VariableManagerEventData ) => {
+export const trackVariablesManagerEvent = ( { action, varType, controlPath }: VariablesManagerEventData ) => {
 	const { dispatchEvent, config } = getMixpanel();
 	if ( ! config?.names?.variables?.[ action ] ) {
 		return;

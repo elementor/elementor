@@ -24,8 +24,9 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { trackVariableManagerEvent } from '../../utils/tracking';
+import { trackVariablesManagerEvent } from '../../utils/tracking';
 import { type ErrorResponse, type MappedError, mapServerError } from '../../utils/validations';
+import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
@@ -101,7 +102,7 @@ export function VariablesManagerPanel() {
 	);
 
 	const handleSaveClick = async () => {
-		trackVariableManagerEvent( { action: 'saveChanges' } );
+		trackVariablesManagerEvent( { action: 'saveChanges' } );
 
 		try {
 			setServerError( null );
@@ -132,7 +133,9 @@ export function VariablesManagerPanel() {
 
 	const handleDeleteVariableWithConfirmation = useCallback(
 		( itemId: string ) => {
-			trackVariableManagerEvent( { action: 'delete', varType: variables[ itemId ]?.type } );
+			const variable = variables[ itemId ];
+			const variableTypeOptions = variable ? getVariableType( variable.type ) : null;
+			trackVariablesManagerEvent( { action: 'delete', varType: variableTypeOptions?.variableType } );
 			handleDeleteVariable( itemId );
 			setDeleteConfirmation( null );
 		},
@@ -145,9 +148,11 @@ export function VariablesManagerPanel() {
 			icon: TrashIcon,
 			color: 'error.main',
 			onClick: ( itemId: string ) => {
-				if ( variables[ itemId ] ) {
-					trackVariableManagerEvent( { action: 'delete', varType: variables[ itemId ]?.type } );
-					setDeleteConfirmation( { id: itemId, label: variables[ itemId ].label } );
+				const variable = variables[ itemId ];
+				if ( variable ) {
+					const variableTypeOptions = getVariableType( variable.type );
+					trackVariablesManagerEvent( { action: 'delete', varType: variableTypeOptions?.variableType } );
+					setDeleteConfirmation( { id: itemId, label: variable.label } );
 				}
 			},
 		},

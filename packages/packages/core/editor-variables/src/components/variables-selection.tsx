@@ -10,7 +10,7 @@ import { useVariableType } from '../context/variable-type-context';
 import { useFilteredVariables } from '../hooks/use-prop-variables';
 import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
 import { type ExtendedVirtualizedItem } from '../types';
-import { trackVariableEvent, trackVariableManagerEvent } from '../utils/tracking';
+import { trackVariableEvent, trackVariablesManagerEvent } from '../utils/tracking';
 import { EmptyState } from './ui/empty-state';
 import { MenuItemContent } from './ui/menu-item-content';
 import { NoSearchResults } from './ui/no-search-results';
@@ -78,7 +78,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 
 	if ( onSettings ) {
 		const handleOpenManager = () => {
-			trackVariableManagerEvent( {
+			trackVariablesManagerEvent( {
 				action: 'openManager',
 				varType: variableType,
 				controlPath: path.join( '.' ),
