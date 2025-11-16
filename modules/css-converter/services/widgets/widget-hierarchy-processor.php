@@ -7,7 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Widget_Hierarchy_Processor {
 	private $processing_stats;
-	private $error_log;
 
 	public function __construct() {
 		$this->processing_stats = [
@@ -17,7 +16,6 @@ class Widget_Hierarchy_Processor {
 			'depth_levels' => 0,
 			'hierarchy_errors' => 0,
 		];
-		$this->error_log = [];
 	}
 
 	public function process_widget_hierarchy( $widgets ) {
@@ -37,7 +35,6 @@ class Widget_Hierarchy_Processor {
 		return [
 			'widgets' => $processed_widgets,
 			'stats' => $this->processing_stats,
-			'errors' => $this->error_log,
 		];
 	}
 
@@ -66,13 +63,6 @@ class Widget_Hierarchy_Processor {
 				if ( isset( $widget_map[ $parent_id ] ) ) {
 					$widget_map[ $parent_id ]['children'][] = &$widget_map[ $widget_id ];
 				} else {
-					// Orphaned widget - add to root level
-					$this->error_log[] = [
-						'type' => 'orphaned_widget',
-						'widget_id' => $widget_id,
-						'missing_parent_id' => $parent_id,
-						'message' => "Widget {$widget_id} references missing parent {$parent_id}",
-					];
 					$tree[] = &$widget_map[ $widget_id ];
 				}
 			}
@@ -335,12 +325,9 @@ class Widget_Hierarchy_Processor {
 		$container_types = [ 'e-flexbox', 'e-div-block' ];
 
 		if ( ! in_array( $parent_widget['widget_type'], $container_types, true ) ) {
-			$this->error_log[] = [
-				'type' => 'invalid_parent_child_relationship',
-				'parent_type' => $parent_widget['widget_type'],
-				'message' => "Widget type {$parent_widget['widget_type']} cannot contain child widgets",
-			];
+			return false;
 		}
+		return true;
 	}
 
 	private function handle_hierarchy_processing_error( $widget, $exception, $depth ) {
@@ -354,7 +341,6 @@ class Widget_Hierarchy_Processor {
 			'error' => $exception->getMessage(),
 		];
 
-		$this->error_log[] = $error_data;
 
 		// Re-throw for now, but could implement graceful degradation here
 		throw $exception;
@@ -397,9 +383,5 @@ class Widget_Hierarchy_Processor {
 
 	public function get_processing_stats() {
 		return $this->processing_stats;
-	}
-
-	public function get_error_log() {
-		return $this->error_log;
 	}
 }

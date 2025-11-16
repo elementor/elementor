@@ -105,16 +105,13 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		$overflow_styles_when_maximum_number_of_global_classes_has_been_reached = $context->get_metadata( 'overflow_styles_when_maximum_number_of_global_classes_has_been_reached', [] );
 		$overflow_styles_when_maximum_number_of_global_classes_has_been_reached_collected = 0;
 
-		error_log( 'STYLE_COLLECTION_PROCESSOR: Retrieved overflow from context, count: ' . count( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached ) );
 		if ( ! empty( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached ) ) {
 			foreach ( array_keys( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached ) as $overflow_class ) {
 				if ( strpos( $overflow_class, 'brxw-intro-02' ) !== false ) {
-					error_log( 'STYLE_COLLECTION_PROCESSOR: Overflow class from context: ' . $overflow_class );
 				}
 			}
 			$overflow_styles_when_maximum_number_of_global_classes_has_been_reached_collected = $this->collect_overflow_styles_when_maximum_number_of_global_classes_has_been_reached( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached, $widgets );
 		} else {
-			error_log( 'STYLE_COLLECTION_PROCESSOR: Overflow array is empty, skipping collection' );
 		}
 
 		// Store collection results in context
@@ -291,16 +288,11 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		$matched_elements = $this->find_matching_widgets( $selector, $widgets );
 
 		if ( strpos( $selector, 'intro-section' ) !== false ) {
-			error_log( 'CSS_CONVERTER_DEBUG: Style Collection Processor - processing .intro-section selector' );
-			error_log( 'CSS_CONVERTER_DEBUG: .intro-section matched ' . count( $matched_elements ) . ' widgets' );
-			error_log( 'CSS_CONVERTER_DEBUG: .intro-section properties count: ' . count( $properties ) );
 			foreach ( $properties as $prop ) {
 				$prop_name = $prop['property'] ?? 'unknown';
 				if ( in_array( $prop_name, [ 'display', 'flex-direction', 'align-items', 'justify-content', 'padding' ], true ) ) {
-					error_log( 'CSS_CONVERTER_DEBUG: .intro-section property: ' . $prop_name . ' = ' . ( $prop['value'] ?? 'no value' ) );
 				}
 			}
-			error_log( 'CSS_CONVERTER_DEBUG: .intro-section converted properties count: ' . count( $converted_properties ) );
 		}
 
 		if ( ! empty( $matched_elements ) ) {
@@ -526,11 +518,9 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 	private function collect_overflow_styles_when_maximum_number_of_global_classes_has_been_reached( array $overflow_styles_when_maximum_number_of_global_classes_has_been_reached, array $widgets ): int {
 		$styles_collected = 0;
 
-		error_log( 'STYLE_COLLECTION_PROCESSOR: Processing ' . count( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached ) . ' overflow classes' );
 
 		foreach ( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached as $class_name => $class_data ) {
 			if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-				error_log( 'STYLE_COLLECTION_PROCESSOR: Processing overflow class: ' . $class_name );
 			}
 
 			$atomic_props = $class_data['atomic_props'] ?? [];
@@ -538,7 +528,6 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 
 			if ( empty( $atomic_props ) && empty( $custom_css ) ) {
 				if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-					error_log( 'STYLE_COLLECTION_PROCESSOR: Skipping ' . $class_name . ' - no atomic props or custom CSS' );
 				}
 				continue;
 			}
@@ -547,23 +536,18 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 
 			if ( empty( $matched_widgets ) ) {
 				if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-					error_log( 'STYLE_COLLECTION_PROCESSOR: Skipping ' . $class_name . ' - no matched widgets' );
 				}
 				continue;
 			}
 
 			if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-				error_log( 'STYLE_COLLECTION_PROCESSOR: Matched widgets for ' . $class_name . ': ' . implode( ', ', $matched_widgets ) );
 			}
 
 			if ( ! empty( $atomic_props ) ) {
 				$css_properties = $this->convert_atomic_props_to_css_properties( $atomic_props );
 
 				if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-					error_log( 'STYLE_COLLECTION_PROCESSOR: brxw-intro-02 atomic_props keys: ' . implode( ', ', array_keys( $atomic_props ) ) );
-					error_log( 'STYLE_COLLECTION_PROCESSOR: brxw-intro-02 converted CSS properties count: ' . count( $css_properties ) );
 					foreach ( $css_properties as $css_prop ) {
-						error_log( 'STYLE_COLLECTION_PROCESSOR: brxw-intro-02 CSS property: ' . $css_prop['property'] . ' = ' . $css_prop['value'] );
 					}
 				}
 
@@ -579,12 +563,10 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 						}
 						$this->unified_style_manager->collect_inline_styles( $widget_id, $inline_styles );
 						if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-							error_log( 'STYLE_COLLECTION_PROCESSOR: Applied ' . count( $css_properties ) . ' atomic props as inline styles to widget ' . $widget_id . ' for ' . $class_name );
 						}
 					}
 				} else {
 					if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-						error_log( 'STYLE_COLLECTION_PROCESSOR: WARNING - brxw-intro-02 atomic_props not empty but css_properties is empty' );
 					}
 				}
 			}
@@ -607,16 +589,13 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 								$value = trim( $matches[2] );
 								$custom_css_collector->add_property( $widget_id, $property, $value, false );
 								if ( strpos( $class_name, 'brxw-intro-02' ) !== false && in_array( $property, [ 'grid-gap', 'grid-template-columns' ], true ) ) {
-									error_log( 'STYLE_COLLECTION_PROCESSOR: Added ' . $property . ' = ' . $value . ' to widget ' . $widget_id );
 								}
 							}
 						}
 						if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-							error_log( 'STYLE_COLLECTION_PROCESSOR: Applied custom CSS to widget ' . $widget_id . ' for ' . $class_name . ', Full CSS: ' . $custom_css );
 						}
 					}
 				} else {
-					error_log( 'STYLE_COLLECTION_PROCESSOR: WARNING - No custom_css_collector found in context' );
 				}
 			}
 
@@ -633,7 +612,6 @@ class Style_Collection_Processor implements Css_Processor_Interface {
 		$mapped_class_name = $class_name_mappings[ $class_name ] ?? $class_name;
 
 		if ( $mapped_class_name !== $class_name ) {
-			error_log( 'STYLE_COLLECTION_PROCESSOR: find_widgets_with_class - Original: ' . $class_name . ', Mapped: ' . $mapped_class_name );
 		}
 
 		foreach ( $widgets as $widget ) {

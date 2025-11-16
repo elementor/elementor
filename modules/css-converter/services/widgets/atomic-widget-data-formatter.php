@@ -27,10 +27,8 @@ class Atomic_Widget_Data_Formatter {
 		$element_id = $widget['element_id'] ?? 'unknown';
 		
 		if ( strpos( $element_id, 'element-div-11' ) !== false ) {
-			error_log( 'CSS_CONVERTER_DEBUG: format_widget_data for ' . $element_id . ' - resolved_styles keys: ' . implode( ', ', array_keys( $resolved_styles ) ) );
 			foreach ( $resolved_styles as $prop => $style_data ) {
 				if ( in_array( $prop, [ 'display', 'align-items' ], true ) ) {
-					error_log( 'CSS_CONVERTER_DEBUG: format_widget_data - resolved_styles[' . $prop . ']: ' . print_r( $style_data, true ) );
 				}
 			}
 		}
@@ -42,7 +40,6 @@ class Atomic_Widget_Data_Formatter {
 		// CSS Converter should only add generated style classes and user-defined classes
 		$widget_type = $widget['widget_type'] ?? 'e-div-block';
 		if ( strpos( $element_id, 'element-div-11' ) !== false || strpos( implode( ' ', $css_classes ), 'brxw-intro-02-2' ) !== false ) {
-			error_log( 'CSS_CONVERTER_DEBUG: format_widget_data for ' . $element_id . ' - atomic_props: ' . count( $atomic_props ) . ' (' . implode( ', ', array_keys( $atomic_props ) ) . '), css_classes: ' . count( $css_classes ) . ' (' . implode( ', ', $css_classes ) . ')' );
 		}
 		if ( empty( $atomic_props ) && empty( $css_classes ) ) {
 			return [
@@ -116,14 +113,12 @@ class Atomic_Widget_Data_Formatter {
 		$classes_string = implode( ' ', $css_classes );
 		$is_brxw_intro_02 = strpos( $classes_string, 'brxw-intro-02' ) !== false;
 		if ( $is_brxw_intro_02 ) {
-			error_log( 'CSS_CONVERTER_DEBUG: get_custom_css_for_widget - element_id: ' . $element_id . ', classes: ' . $classes_string );
 		}
 
 		// Check widget_id first
 		if ( $widget_id && $custom_css_collector->has_custom_css( $widget_id ) ) {
 			$css = $custom_css_collector->get_custom_css_for_widget( $widget_id );
 			if ( $is_brxw_intro_02 ) {
-				error_log( 'CSS_CONVERTER_DEBUG: get_custom_css_for_widget - Found CSS for widget_id ' . $widget_id . ': ' . substr( $css, 0, 100 ) );
 			}
 			return $css;
 		}
@@ -132,7 +127,6 @@ class Atomic_Widget_Data_Formatter {
 		if ( $element_id && $custom_css_collector->has_custom_css( $element_id ) ) {
 			$css = $custom_css_collector->get_custom_css_for_widget( $element_id );
 			if ( $is_brxw_intro_02 ) {
-				error_log( 'CSS_CONVERTER_DEBUG: get_custom_css_for_widget - Found CSS for element_id ' . $element_id . ': ' . substr( $css, 0, 100 ) );
 			}
 			return $css;
 		}
@@ -142,7 +136,6 @@ class Atomic_Widget_Data_Formatter {
 			if ( $custom_css_collector->has_custom_css( $class_name ) ) {
 				$css = $custom_css_collector->get_custom_css_for_widget( $class_name );
 				if ( $is_brxw_intro_02 ) {
-					error_log( 'CSS_CONVERTER_DEBUG: get_custom_css_for_widget - Found CSS for class ' . $class_name . ': ' . substr( $css, 0, 100 ) );
 				}
 				return $css;
 			}
@@ -150,21 +143,16 @@ class Atomic_Widget_Data_Formatter {
 
 		// Check mapped class names (reverse lookup)
 		if ( $is_brxw_intro_02 ) {
-			error_log( 'CSS_CONVERTER_DEBUG: get_custom_css_for_widget - No CSS found for classes, checking mapped names' );
-			error_log( 'CSS_CONVERTER_DEBUG: get_custom_css_for_widget - class_name_mappings: ' . print_r( $this->class_name_mappings, true ) );
 		}
 		foreach ( $css_classes as $class_name ) {
 			if ( $is_brxw_intro_02 && strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-				error_log( 'CSS_CONVERTER_DEBUG: get_custom_css_for_widget - Checking reverse lookup for: ' . $class_name );
 			}
 			$original_class_name = $this->find_original_class_name_for_mapped( $class_name );
 			if ( $is_brxw_intro_02 && strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-				error_log( 'CSS_CONVERTER_DEBUG: get_custom_css_for_widget - Reverse lookup result for ' . $class_name . ': ' . ( $original_class_name ?? 'NULL' ) );
 			}
 			if ( $original_class_name && $original_class_name !== $class_name && $custom_css_collector->has_custom_css( $original_class_name ) ) {
 				$css = $custom_css_collector->get_custom_css_for_widget( $original_class_name );
 				if ( $is_brxw_intro_02 ) {
-					error_log( 'CSS_CONVERTER_DEBUG: get_custom_css_for_widget - Found CSS for mapped class ' . $class_name . ' using original ' . $original_class_name . ': ' . substr( $css, 0, 150 ) );
 				}
 				return $css;
 			}
@@ -184,10 +172,8 @@ class Atomic_Widget_Data_Formatter {
 		if ( strpos( $class_id, 'e-' ) === 0 ) {
 			$element_id_from_class = str_replace( 'e-', '', $class_id );
 			if ( strpos( $element_id_from_class, 'element-div-11' ) !== false || in_array( 'display', array_keys( $atomic_props ), true ) ) {
-				error_log( 'CSS_CONVERTER_DEBUG: create_unified_style_definition for ' . $class_id . ' - atomic_props keys: ' . implode( ', ', array_keys( $atomic_props ) ) );
 				foreach ( $atomic_props as $prop => $atomic_value ) {
 					if ( in_array( $prop, [ 'display', 'align-items' ], true ) ) {
-						error_log( 'CSS_CONVERTER_DEBUG: create_unified_style_definition - atomic_props[' . $prop . ']: ' . print_r( $atomic_value, true ) );
 					}
 				}
 			}
@@ -238,13 +224,10 @@ class Atomic_Widget_Data_Formatter {
 			if ( ! empty( $global_classes_only ) ) {
 				foreach ( $global_classes_only as $class ) {
 					if ( strpos( $class, 'intro-section' ) !== false ) {
-						error_log( 'CSS_CONVERTER_DEBUG: Adding intro-section to settings.classes for widget ' . $widget_id );
 					}
 				}
-				error_log( 'CSS_CONVERTER_DEBUG: Adding ' . count( $global_classes_only ) . ' global classes to settings.classes for widget ' . $widget_id );
 				$formatted_settings['classes'] = $this->format_css_classes_in_atomic_format( $global_classes_only );
 			} else {
-				error_log( 'CSS_CONVERTER_DEBUG: No global classes to add (all filtered out as widget classes) for widget ' . $widget_id );
 			}
 		}
 
@@ -258,19 +241,16 @@ class Atomic_Widget_Data_Formatter {
 		if ( empty( $custom_css ) && $element_id && $custom_css_collector && $custom_css_collector->has_custom_css( $element_id ) ) {
 			$custom_css = $custom_css_collector->get_custom_css_for_widget( $element_id );
 			if ( strpos( implode( ' ', $css_classes ), 'brxw-intro-02' ) !== false ) {
-				error_log( 'CSS_CONVERTER_DEBUG: format_widget_settings - Found CSS for element_id ' . $element_id . ': ' . substr( $custom_css, 0, 100 ) );
 			}
 		}
 		
 		if ( empty( $custom_css ) && ! empty( $css_classes ) ) {
 			if ( strpos( implode( ' ', $css_classes ), 'brxw-intro-02' ) !== false ) {
-				error_log( 'CSS_CONVERTER_DEBUG: format_widget_settings - css_classes for widget ' . $widget_id . ': ' . implode( ', ', $css_classes ) );
 			}
 			foreach ( $css_classes as $class_name ) {
 				if ( $custom_css_collector && $custom_css_collector->has_custom_css( $class_name ) ) {
 					$custom_css = $custom_css_collector->get_custom_css_for_widget( $class_name );
 					if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-						error_log( 'CSS_CONVERTER_DEBUG: Found custom CSS for ' . $class_name . ': ' . substr( $custom_css, 0, 100 ) );
 					}
 					break;
 				}
@@ -279,18 +259,14 @@ class Atomic_Widget_Data_Formatter {
 			if ( empty( $custom_css ) ) {
 				foreach ( $css_classes as $class_name ) {
 					if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-						error_log( 'CSS_CONVERTER_DEBUG: Checking mapped class for custom CSS: ' . $class_name );
 					}
 					$original_class_name = $this->find_original_class_name_for_mapped( $class_name );
 					if ( $original_class_name && $original_class_name !== $class_name ) {
 						if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-							error_log( 'CSS_CONVERTER_DEBUG: Mapped class ' . $class_name . ' -> original ' . $original_class_name );
-							error_log( 'CSS_CONVERTER_DEBUG: Original class has custom CSS: ' . ( $custom_css_collector && $custom_css_collector->has_custom_css( $original_class_name ) ? 'YES' : 'NO' ) );
 						}
 						if ( $custom_css_collector && $custom_css_collector->has_custom_css( $original_class_name ) ) {
 							$custom_css = $custom_css_collector->get_custom_css_for_widget( $original_class_name );
 							if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-								error_log( 'CSS_CONVERTER_DEBUG: Found custom CSS for mapped class ' . $class_name . ' using original ' . $original_class_name . ': ' . substr( $custom_css, 0, 150 ) );
 							}
 							break;
 						}
@@ -329,7 +305,6 @@ class Atomic_Widget_Data_Formatter {
 		
 		if ( ! empty( $widget['attributes']['class'] ) ) {
 			$class_string = $widget['attributes']['class'];
-			error_log( 'CSS_CONVERTER_DEBUG: Extracting classes from widget ' . $element_id . ' (' . $widget_type . '): ' . $class_string );
 			$class_array = explode( ' ', $class_string );
 			
 			foreach ( $class_array as $class ) {
@@ -337,11 +312,9 @@ class Atomic_Widget_Data_Formatter {
 				if ( ! empty( $class ) ) {
 					$classes[] = $class;
 					if ( strpos( $class, 'intro-section' ) !== false ) {
-						error_log( 'CSS_CONVERTER_DEBUG: Found intro-section class in widget ' . $element_id );
 					}
 				}
 			}
-			error_log( 'CSS_CONVERTER_DEBUG: Extracted ' . count( $classes ) . ' classes from widget ' . $element_id );
 		}
 		return $classes;
 	}
@@ -382,13 +355,10 @@ class Atomic_Widget_Data_Formatter {
 	private function find_original_class_name_for_mapped( string $mapped_class_name ): ?string {
 		if ( ! empty( $this->class_name_mappings ) ) {
 			if ( strpos( $mapped_class_name, 'brxw-intro-02' ) !== false ) {
-				error_log( 'CSS_CONVERTER_DEBUG: find_original_class_name_for_mapped - Looking for original of: ' . $mapped_class_name );
-				error_log( 'CSS_CONVERTER_DEBUG: find_original_class_name_for_mapped - Available mappings: ' . print_r( $this->class_name_mappings, true ) );
 			}
 			foreach ( $this->class_name_mappings as $original => $mapped ) {
 				if ( $mapped === $mapped_class_name ) {
 					if ( strpos( $mapped_class_name, 'brxw-intro-02' ) !== false ) {
-						error_log( 'CSS_CONVERTER_DEBUG: find_original_class_name_for_mapped - Found match: ' . $original . ' => ' . $mapped );
 					}
 					return $original;
 				}
@@ -399,13 +369,11 @@ class Atomic_Widget_Data_Formatter {
 			$possible_original = preg_replace( '/-(\d+)$/', '', $mapped_class_name );
 			if ( $possible_original !== $mapped_class_name ) {
 				if ( strpos( $mapped_class_name, 'brxw-intro-02' ) !== false ) {
-					error_log( 'CSS_CONVERTER_DEBUG: find_original_class_name_for_mapped - Using regex fallback: ' . $mapped_class_name . ' => ' . $possible_original );
 				}
 				return $possible_original;
 			}
 		}
 		if ( strpos( $mapped_class_name, 'brxw-intro-02' ) !== false ) {
-			error_log( 'CSS_CONVERTER_DEBUG: find_original_class_name_for_mapped - No match found for: ' . $mapped_class_name );
 		}
 		return null;
 	}

@@ -47,16 +47,11 @@ class Global_Classes_Registration_Service {
 		$new_classes = $result['new_classes'];
 		$class_name_mappings = $result['class_name_mappings'];
 
-		error_log( 'GLOBAL_CLASSES_REG: new_classes count: ' . count( $new_classes ) );
-		error_log( 'GLOBAL_CLASSES_REG: class_name_mappings count: ' . count( $class_name_mappings ) );
 		if ( isset( $class_name_mappings['brxw-intro-02'] ) ) {
-			error_log( 'GLOBAL_CLASSES_REG: brxw-intro-02 mapped to: ' . $class_name_mappings['brxw-intro-02'] );
 			$mapped_name = $class_name_mappings['brxw-intro-02'];
-			error_log( 'GLOBAL_CLASSES_REG: brxw-intro-02-2 in new_classes: ' . ( isset( $new_classes[ $mapped_name ] ) ? 'YES' : 'NO' ) );
 		}
 
 		if ( empty( $new_classes ) ) {
-			error_log( 'GLOBAL_CLASSES_REG: No new classes to register' );
 			return [
 				'registered' => 0,
 				'skipped' => count( $converted_classes ),
@@ -65,17 +60,12 @@ class Global_Classes_Registration_Service {
 			];
 		}
 
-		error_log( 'GLOBAL_CLASSES_REG: Existing items count: ' . count( $items ) . ', MAX_LIMIT: ' . self::MAX_CLASSES_LIMIT );
 		$limit_result = $this->apply_classes_limit( $new_classes, count( $items ) );
 		$classes_after_limit = $limit_result['classes_for_global'];
 		$overflow_styles_when_maximum_number_of_global_classes_has_been_reached = $limit_result['overflow_styles_when_maximum_number_of_global_classes_has_been_reached'];
 		
-		error_log( 'GLOBAL_CLASSES_REG: classes_after_limit count: ' . count( $classes_after_limit ) );
-		error_log( 'GLOBAL_CLASSES_REG: overflow count: ' . count( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached ) );
 		if ( isset( $class_name_mappings['brxw-intro-02'] ) ) {
 			$mapped_name = $class_name_mappings['brxw-intro-02'];
-			error_log( 'GLOBAL_CLASSES_REG: brxw-intro-02-2 in classes_after_limit: ' . ( isset( $classes_after_limit[ $mapped_name ] ) ? 'YES' : 'NO' ) );
-			error_log( 'GLOBAL_CLASSES_REG: brxw-intro-02-2 in overflow: ' . ( isset( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached[ $mapped_name ] ) ? 'YES' : 'NO' ) );
 		}
 
 		$overflow_with_original_names = [];
@@ -83,14 +73,11 @@ class Global_Classes_Registration_Service {
 		$successfully_registered_classes = array_keys( $classes_after_limit );
 		foreach ( $class_name_mappings as $original => $mapped ) {
 			if ( in_array( $mapped, $overflow_mapped_classes, true ) ) {
-				error_log( 'GLOBAL_CLASSES_REG: Class in overflow: ' . $original . ' => ' . $mapped . ' (will apply as local widget styles)' );
 				$overflow_with_original_names[ $original ] = $overflow_styles_when_maximum_number_of_global_classes_has_been_reached[ $mapped ];
 				unset( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached[ $mapped ] );
 				unset( $class_name_mappings[ $original ] );
 			} elseif ( in_array( $mapped, $successfully_registered_classes, true ) && $mapped !== $original ) {
-				error_log( 'GLOBAL_CLASSES_REG: Class successfully registered with mapped name: ' . $original . ' => ' . $mapped . ' (keeping mapping for HTML)' );
 			} elseif ( in_array( $original, $successfully_registered_classes, true ) && $mapped === $original ) {
-				error_log( 'GLOBAL_CLASSES_REG: Class successfully registered with original name: ' . $original . ' (removing mapping from class_name_mappings)' );
 				unset( $class_name_mappings[ $original ] );
 			}
 		}
@@ -113,7 +100,6 @@ class Global_Classes_Registration_Service {
 		foreach ( $classes_after_limit as $class_name => $class_data ) {
 			$custom_css = $class_data['custom_css'] ?? '';
 			if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-				error_log( 'GLOBAL_CLASSES_REG: Registering class ' . $class_name . ' with custom CSS: ' . substr( $custom_css, 0, 150 ) );
 			}
 			$class_config = $this->create_class_config( $class_name, $class_data['atomic_props'], $custom_css );
 
@@ -125,11 +111,8 @@ class Global_Classes_Registration_Service {
 		try {
 			// Debug: Log what we're about to save
 			$new_class_labels = array_keys( $classes_after_limit );
-			error_log( 'GLOBAL_CLASSES_REG: Saving ' . count( $items ) . ' classes to kit, ' . $registered . ' new' );
-			error_log( 'GLOBAL_CLASSES_REG: New class labels: ' . implode( ', ', $new_class_labels ) );
 
 			$repository->put( $items, $order );
-			error_log( 'GLOBAL_CLASSES_REG: Successfully saved to repository' );
 
 			// Debug: Verify data was saved by reading it back immediately
 			$verify_repository = $this->get_global_classes_repository();
@@ -264,19 +247,15 @@ class Global_Classes_Registration_Service {
 		if ( $atomic_props_identical && $custom_css_identical ) {
 			// Styles are identical - reuse existing class
 			if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-				error_log( 'GLOBAL_CLASSES_REG: handle_duplicate_class - Styles identical for ' . $class_name . ', reusing existing class' );
 			}
 			return null;
 		}
 
 		// Styles are different - create new class with suffix
 		if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-			error_log( 'GLOBAL_CLASSES_REG: handle_duplicate_class - Styles different for ' . $class_name . ', atomic_props_identical: ' . ( $atomic_props_identical ? 'YES' : 'NO' ) . ', custom_css_identical: ' . ( $custom_css_identical ? 'YES' : 'NO' ) );
 			if ( ! $atomic_props_identical ) {
-				error_log( 'GLOBAL_CLASSES_REG: handle_duplicate_class - Atomic props differ. Existing: ' . substr( wp_json_encode( $existing_atomic_props ), 0, 200 ) . ', New: ' . substr( wp_json_encode( $new_atomic_props ), 0, 200 ) );
 			}
 			if ( ! $custom_css_identical ) {
-				error_log( 'GLOBAL_CLASSES_REG: handle_duplicate_class - Custom CSS differs. Existing: ' . substr( $existing_custom_css_normalized, 0, 200 ) . ', New: ' . substr( $new_custom_css_normalized, 0, 200 ) );
 			}
 		}
 		$new_suffix = $this->find_next_available_suffix( $class_name, $existing_items );
@@ -416,7 +395,6 @@ class Global_Classes_Registration_Service {
 				'raw' => \Elementor\Utils::encode_string( $custom_css ),
 			];
 			if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-				error_log( 'GLOBAL_CLASSES_REG: create_class_config - Added custom CSS for ' . $class_name . ' in standard format: ' . substr( $custom_css, 0, 150 ) );
 			}
 		}
 

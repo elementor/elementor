@@ -61,7 +61,6 @@ class Css_Variable_Resolver implements Css_Processor_Interface
                 if (strpos($value, 'var(') !== false ) {
                     $should_resolve = $this->should_resolve_variable($value);
                     if ( strpos( $rule['selector'] ?? '', 'class-color-test' ) !== false ) {
-                        error_log( 'CSS_VAR_RESOLVER: Selector ' . ( $rule['selector'] ?? '' ) . ' - Property ' . $property . ' = ' . $value . ' - Should resolve: ' . ( $should_resolve ? 'YES' : 'NO' ) );
                     }
                     if ($should_resolve ) {
                         $resolved_value = $this->resolve_variable_reference($value, $variable_definitions);
@@ -69,12 +68,10 @@ class Css_Variable_Resolver implements Css_Processor_Interface
                             $property_data['value'] = $resolved_value;
                             $property_data['resolved_from_variable'] = true;
                             if ( strpos( $rule['selector'] ?? '', 'class-color-test' ) !== false ) {
-                                error_log( 'CSS_VAR_RESOLVER: RESOLVED ' . $value . ' to ' . $resolved_value );
                             }
                         }
                     } else {
                         if ( strpos( $rule['selector'] ?? '', 'class-color-test' ) !== false ) {
-                            error_log( 'CSS_VAR_RESOLVER: NOT resolving ' . $value . ' (preserving as var reference)' );
                         }
                     }
                 }

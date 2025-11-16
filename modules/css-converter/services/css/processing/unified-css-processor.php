@@ -80,10 +80,8 @@ class Unified_Css_Processor
         $body_styles = $context->get_metadata('body_styles', []);
 
 		// Build legacy result format for backward compatibility
-		error_log( 'UNIFIED_CSS_PROCESSOR: Returning custom_css_rules count: ' . count( $custom_css_rules ) );
 		foreach ( array_keys( $custom_css_rules ) as $class_name ) {
 			if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-				error_log( 'UNIFIED_CSS_PROCESSOR: Returning custom_css_rules for ' . $class_name . ': ' . substr( $custom_css_rules[ $class_name ]['css'] ?? '', 0, 150 ) );
 			}
 		}
 		return [
@@ -1221,14 +1219,12 @@ class Unified_Css_Processor
 
         // FILTER: Skip font-family properties (not supported in current implementation)
         if ('font-family' === $property ) {
-            error_log( 'CSS_CONVERTER_DEBUG: Skipping font-family property: ' . $property . ' = ' . $value );
             return []; // Return empty array to skip this property
         }
 
         // DEBUG: Log properties that should be applied
         $should_apply_properties = [ 'display', 'font-size', 'color', 'background-color', 'padding', 'margin', 'width', 'height', 'line-height' ];
         if ( in_array( $property, $should_apply_properties, true ) || strpos( $property, 'font-' ) === 0 || strpos( $property, 'background' ) === 0 ) {
-            error_log( 'CSS_CONVERTER_DEBUG: Property extracted: ' . $property . ' = ' . $value . ( $important ? ' !important' : '' ) );
         }
 
         return [
@@ -1300,9 +1296,6 @@ class Unified_Css_Processor
     }
     public function extract_and_process_css_from_html_and_urls( string $html, array $css_urls, bool $follow_imports, array &$elements ): string
     {
-        error_log( 'CSS_CONVERTER_DEBUG: extract_and_process_css_from_html_and_urls called' );
-        error_log( 'CSS_CONVERTER_DEBUG: CSS URLs to fetch: ' . count( $css_urls ) );
-        error_log( 'CSS_CONVERTER_DEBUG: CSS URLs list: ' . print_r( $css_urls, true ) );
         
         $css_sources = [];
         $html_style_tags = [];
@@ -1310,10 +1303,8 @@ class Unified_Css_Processor
 
         // Extract inline <style> tags from HTML (process LAST for correct cascade)
         preg_match_all('/<style[^>]*>(.*?)<\/style>/is', $html, $matches);
-        error_log( 'CSS_CONVERTER_DEBUG: Found inline style tags: ' . count( $matches[1] ?? [] ) );
         if (! empty($matches[1]) ) {
             foreach ( $matches[1] as $index => $css_content ) {
-                error_log( 'CSS_CONVERTER_DEBUG: Inline style tag ' . $index . ' length: ' . strlen( $css_content ) );
 
                 $html_style_tags[] = [
                  'type' => 'inline_style_tag',
@@ -1337,7 +1328,6 @@ class Unified_Css_Processor
         }
 
         foreach ( $css_urls as $css_url ) {
-            error_log( 'CSS_CONVERTER_DEBUG: Fetching CSS from URL: ' . $css_url );
             $is_elementor_kit_css = strpos($css_url, '/elementor/css/') !== false;
 
             $response = wp_remote_get(
@@ -1349,7 +1339,6 @@ class Unified_Css_Processor
             if (! is_wp_error($response) ) {
                 $response_code = wp_remote_retrieve_response_code($response);
                 $css_content = wp_remote_retrieve_body($response);
-                error_log( 'CSS_CONVERTER_DEBUG: CSS URL ' . $css_url . ' fetched successfully, status: ' . $response_code . ', length: ' . strlen( $css_content ) );
 
                 $reset_patterns = [
                  'html, body, div, span',
@@ -1409,8 +1398,6 @@ class Unified_Css_Processor
         // Inline styles should override everything else
         $css_sources = array_merge($css_sources, $inline_element_styles);
         
-        error_log( 'CSS_CONVERTER_DEBUG: Total CSS sources: ' . count( $css_sources ) );
-        error_log( 'CSS_CONVERTER_DEBUG: CSS sources types: ' . print_r( array_column( $css_sources, 'type' ), true ) );
         
         $brxe_section_in_sources = 0;
         foreach ( $css_sources as $index => $source ) {
@@ -1420,27 +1407,21 @@ class Unified_Css_Processor
                 $brxe_section_in_sources++;
                 preg_match_all( '/\.brxe-section[^{]*\{[^}]*\}/', $source_content, $matches );
                 $count = count( $matches[0] ?? [] );
-                error_log( 'CSS_CONVERTER_DEBUG: Found .brxe-section in CSS source ' . $index . ' (type: ' . $source_type . '): ' . $count . ' rules' );
                 if ( $count > 0 && $count <= 2 ) {
                     foreach ( array_slice( $matches[0], 0, 1 ) as $match ) {
-                        error_log( 'CSS_CONVERTER_DEBUG: .brxe-section rule in source: ' . substr( $match, 0, 200 ) );
                     }
                 }
             }
         }
-        error_log( 'CSS_CONVERTER_DEBUG: Total CSS sources containing .brxe-section: ' . $brxe_section_in_sources );
         
         $combined_css = $this->parse_css_sources_safely($css_sources);
         
         if ( strpos( $combined_css, '.brxe-section' ) !== false ) {
             preg_match_all( '/\.brxe-section[^{]*\{[^}]*\}/', $combined_css, $matches );
             $combined_count = count( $matches[0] ?? [] );
-            error_log( 'CSS_CONVERTER_DEBUG: Found .brxe-section in combined CSS: ' . $combined_count . ' rules' );
         } else {
-            error_log( 'CSS_CONVERTER_DEBUG: .brxe-section NOT found in combined CSS' );
         }
         
-        error_log( 'CSS_CONVERTER_DEBUG: Combined CSS length: ' . strlen( $combined_css ) );
         
         return $combined_css;
     }

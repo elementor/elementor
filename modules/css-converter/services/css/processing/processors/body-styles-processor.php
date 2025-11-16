@@ -41,7 +41,6 @@ class Body_Styles_Processor implements Css_Processor_Interface {
 		$context->set_metadata( 'body_styles', $body_styles );
 
 		if ( ! empty( $body_styles ) ) {
-			error_log( 'BODY_STYLES_PROCESSOR: Extracted ' . count( $body_styles ) . ' body style properties: ' . implode( ', ', array_keys( $body_styles ) ) );
 		}
 
 		return $context;
@@ -55,7 +54,6 @@ class Body_Styles_Processor implements Css_Processor_Interface {
 		$body_rules = [];
 		$html_rules = [];
 
-		error_log( 'BODY_STYLES_PROCESSOR: Processing ' . count( $css_rules ) . ' CSS rules' );
 
 		$found_1140_selectors = [];
 		foreach ( $css_rules as $rule ) {
@@ -65,7 +63,6 @@ class Body_Styles_Processor implements Css_Processor_Interface {
 			}
 		}
 		if ( ! empty( $found_1140_selectors ) ) {
-			error_log( 'BODY_STYLES_PROCESSOR: Found ' . count( $found_1140_selectors ) . ' selectors with elementor-page-1140: ' . implode( ', ', array_slice( $found_1140_selectors, 0, 10 ) ) );
 		}
 
 		foreach ( $css_rules as $rule ) {
@@ -79,17 +76,13 @@ class Body_Styles_Processor implements Css_Processor_Interface {
 			$properties = $this->expand_margin_padding_shorthand( $properties );
 
 			if ( strpos( $selector, 'body' ) !== false || strpos( $selector, 'elementor-page-' ) !== false ) {
-				error_log( 'BODY_STYLES_PROCESSOR: Checking selector: ' . $selector . ' - is_body: ' . ( $this->is_body_selector( $selector ) ? 'YES' : 'NO' ) );
 				if ( strpos( $selector, 'elementor-page-1140' ) !== false ) {
-					error_log( 'BODY_STYLES_PROCESSOR: FOUND elementor-page-1140 selector: ' . $selector . ' - Properties count: ' . count( $properties ) );
 				}
 			}
 
 			if ( $this->is_body_selector( $selector ) ) {
-				error_log( 'BODY_STYLES_PROCESSOR: Found body selector: ' . $selector );
 				$important = false;
 				foreach ( $properties as $prop ) {
-					error_log( 'BODY_STYLES_PROCESSOR: Property: ' . ( $prop['property'] ?? 'unknown' ) . ' = ' . ( $prop['value'] ?? 'unknown' ) );
 					if ( ! empty( $prop['important'] ) ) {
 						$important = true;
 						break;
@@ -131,17 +124,13 @@ class Body_Styles_Processor implements Css_Processor_Interface {
 		} );
 
 		$resolved_styles = $this->resolve_conflicting_styles( $merged_rules );
-		error_log( 'BODY_STYLES_PROCESSOR: Resolved styles: ' . print_r( $resolved_styles, true ) );
 
 		$elementor_format = $this->convert_to_elementor_format( $resolved_styles );
-		error_log( 'BODY_STYLES_PROCESSOR: Elementor format: ' . print_r( $elementor_format, true ) );
 		if ( isset( $elementor_format['margin'] ) ) {
 			$margin = $elementor_format['margin'];
-			error_log( 'BODY_STYLES_PROCESSOR: Margin settings: top=' . ( $margin['top'] ?? '' ) . ( $margin['unit'] ?? '' ) . ', right=' . ( $margin['right'] ?? '' ) . ( $margin['unit'] ?? '' ) );
 		}
 		if ( isset( $elementor_format['padding'] ) ) {
 			$padding = $elementor_format['padding'];
-			error_log( 'BODY_STYLES_PROCESSOR: Padding settings: top=' . ( $padding['top'] ?? '' ) . ( $padding['unit'] ?? '' ) . ', right=' . ( $padding['right'] ?? '' ) . ( $padding['unit'] ?? '' ) );
 		}
 
 		return $elementor_format;

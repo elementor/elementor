@@ -114,7 +114,6 @@ class Html_Class_Modifier_Service {
 		if ( ! empty( $duplicate_class_mappings ) ) {
 			foreach ( $duplicate_class_mappings as $original => $mapped ) {
 				if ( strpos( $original, 'brxw-intro-02' ) !== false ) {
-					error_log( 'HTML_CLASS_MODIFIER_SERVICE: set_duplicate_class_mappings - ' . $original . ' => ' . $mapped );
 				}
 			}
 		}
@@ -123,10 +122,8 @@ class Html_Class_Modifier_Service {
 
 	public function set_overflow_classes( array $overflow_classes ): void {
 		if ( ! empty( $overflow_classes ) ) {
-			error_log( 'HTML_CLASS_MODIFIER_SERVICE: set_overflow_classes - ' . count( $overflow_classes ) . ' classes' );
 			foreach ( array_keys( $overflow_classes ) as $overflow_class ) {
 				if ( strpos( $overflow_class, 'brxw-intro-02' ) !== false ) {
-					error_log( 'HTML_CLASS_MODIFIER_SERVICE: Overflow class to remove: ' . $overflow_class );
 				}
 			}
 		}
@@ -210,7 +207,6 @@ class Html_Class_Modifier_Service {
 
 		if ( isset( $this->overflow_classes[ $class_name ] ) ) {
 			if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-				error_log( 'HTML_CLASS_MODIFIER_SERVICE: Removing overflow class from HTML: ' . $class_name . ' (will apply as local styles)' );
 			}
 			return null;
 		}
@@ -225,7 +221,6 @@ class Html_Class_Modifier_Service {
 		if ( isset( $this->duplicate_class_mappings[ $class_name ] ) ) {
 			$mapped_name = $this->duplicate_class_mappings[ $class_name ];
 			if ( strpos( $class_name, 'brxw-intro-02' ) !== false || strpos( $mapped_name, 'brxw-intro-02' ) !== false ) {
-				error_log( 'HTML_CLASS_MODIFIER_SERVICE: Applying duplicate mapping: ' . $class_name . ' => ' . $mapped_name );
 			}
 			return $mapped_name;
 		}
@@ -235,7 +230,6 @@ class Html_Class_Modifier_Service {
 		// even if they don't have global styles, as they may have CSS rules
 		// that should be applied to the elements
 		if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-			error_log( 'HTML_CLASS_MODIFIER_SERVICE: No mapping for ' . $class_name . ', preserving original' );
 		}
 		return $class_name;
 	}

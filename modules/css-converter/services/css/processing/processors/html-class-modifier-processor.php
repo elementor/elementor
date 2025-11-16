@@ -59,7 +59,6 @@ class Html_Class_Modifier_Processor implements Css_Processor_Interface {
 		}
 
 		if ( ! empty( $overflow_styles ) ) {
-			error_log( 'HTML_CLASS_MODIFIER_PROCESSOR: Setting ' . count( $overflow_styles ) . ' overflow classes for removal' );
 			$this->html_class_modifier->set_overflow_classes( $overflow_styles );
 		}
 
@@ -93,14 +92,11 @@ class Html_Class_Modifier_Processor implements Css_Processor_Interface {
 
 	private function apply_class_name_mappings_to_widgets( array $widgets, array $class_name_mappings ): array {
 		if ( empty( $class_name_mappings ) ) {
-			error_log( 'HTML_CLASS_MODIFIER_PROCESSOR: No class_name_mappings provided' );
 			return $widgets;
 		}
 
-		error_log( 'HTML_CLASS_MODIFIER_PROCESSOR: Applying ' . count( $class_name_mappings ) . ' class name mappings' );
 		foreach ( $class_name_mappings as $original => $mapped ) {
 			if ( strpos( $original, 'brxw-intro-02' ) !== false || strpos( $mapped, 'brxw-intro-02' ) !== false ) {
-				error_log( 'HTML_CLASS_MODIFIER_PROCESSOR: Mapping: ' . $original . ' => ' . $mapped );
 			}
 		}
 

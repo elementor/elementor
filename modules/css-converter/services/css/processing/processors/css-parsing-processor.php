@@ -44,12 +44,9 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 		}
 
 		if ( strpos( $css, 'body.elementor-page-1140' ) !== false ) {
-			error_log( 'CSS_PARSING_PROCESSOR: Found body.elementor-page-1140 in raw CSS' );
 			preg_match_all( '/body\.elementor-page-1140[^{]*\{[^}]*\}/', $css, $matches );
 			if ( ! empty( $matches[0] ) ) {
-				error_log( 'CSS_PARSING_PROCESSOR: Found ' . count( $matches[0] ) . ' body.elementor-page-1140 rules in CSS' );
 				foreach ( array_slice( $matches[0], 0, 2 ) as $match ) {
-					error_log( 'CSS_PARSING_PROCESSOR: Rule: ' . substr( $match, 0, 200 ) );
 				}
 			}
 		}
@@ -88,17 +85,14 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			}
 		}
 		if ( $parsed_1140_count > 0 ) {
-			error_log( 'CSS_PARSING_PROCESSOR: Parsed ' . $parsed_1140_count . ' CSS rules with elementor-page-1140' );
 		}
 
 		$brxe_section_in_raw_css = 0;
 		if ( strpos( $css, '.brxe-section' ) !== false ) {
 			preg_match_all( '/\.brxe-section[^{]*\{[^}]*\}/', $css, $matches );
 			$brxe_section_in_raw_css = count( $matches[0] ?? [] );
-			error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - Found ' . $brxe_section_in_raw_css . ' .brxe-section rules in raw CSS' );
 			if ( $brxe_section_in_raw_css > 0 && $brxe_section_in_raw_css <= 3 ) {
 				foreach ( array_slice( $matches[0], 0, 2 ) as $match ) {
-					error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - Raw CSS rule: ' . substr( $match, 0, 200 ) );
 				}
 			}
 		}
@@ -107,10 +101,8 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 		if ( strpos( $css, '.brxw-intro-02' ) !== false ) {
 			preg_match_all( '/\.brxw-intro-02[^{]*\{[^}]*\}/', $css, $matches );
 			$brxw_intro_02_in_raw_css = count( $matches[0] ?? [] );
-			error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - Found ' . $brxw_intro_02_in_raw_css . ' .brxw-intro-02 rules in raw CSS' );
 			if ( $brxw_intro_02_in_raw_css > 0 ) {
 				foreach ( array_slice( $matches[0], 0, 2 ) as $match ) {
-					error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - .brxw-intro-02 Raw CSS rule: ' . substr( $match, 0, 300 ) );
 				}
 			}
 		}
@@ -121,13 +113,10 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			if ( strpos( $selector, 'brxe-section' ) !== false ) {
 				$brxe_section_parsed++;
 				if ( $brxe_section_parsed <= 3 ) {
-					error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - Parsed .brxe-section rule: ' . $selector );
 					$properties_count = count( $rule['properties'] ?? [] );
-					error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - .brxe-section properties count: ' . $properties_count );
 				}
 			}
 		}
-		error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - Total .brxe-section rules parsed: ' . $brxe_section_parsed );
 
 		$brxw_intro_02_parsed = 0;
 		foreach ( $css_rules as $rule ) {
@@ -135,21 +124,17 @@ class Css_Parsing_Processor implements Css_Processor_Interface {
 			if ( strpos( $selector, 'brxw-intro-02' ) !== false ) {
 				$brxw_intro_02_parsed++;
 				if ( $brxw_intro_02_parsed <= 3 ) {
-					error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - Parsed .brxw-intro-02 rule: ' . $selector );
 					$properties = $rule['properties'] ?? [];
 					$properties_count = count( $properties );
-					error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - .brxw-intro-02 properties count: ' . $properties_count );
 					foreach ( $properties as $prop ) {
 						$prop_name = $prop['property'] ?? '';
 						$prop_value = $prop['value'] ?? '';
 						if ( in_array( $prop_name, [ 'display', 'grid-gap', 'grid-template-columns', 'align-items' ], true ) ) {
-							error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - .brxw-intro-02 property: ' . $prop_name . ' = ' . $prop_value );
 						}
 					}
 				}
 			}
 		}
-		error_log( 'CSS_CONVERTER_DEBUG: CSS Parsing Processor - Total .brxw-intro-02 rules parsed: ' . $brxw_intro_02_parsed );
 
 		// Store results in context
 		$context->set_metadata( 'css_rules', $css_rules );

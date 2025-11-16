@@ -27,3 +27,6 @@ echo "\n=== Testing get_config() ===\n";
 $config = $document->get_config();
 echo "Config has elements: " . ( isset( $config['elements'] ) ? 'YES (' . count( $config['elements'] ) . ')' : 'NO' ) . "\n";
 
+
+
+

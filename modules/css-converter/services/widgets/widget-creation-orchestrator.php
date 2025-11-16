@@ -28,10 +28,8 @@ class Widget_Creation_Orchestrator {
 
 	public function create_widgets( array $styled_widgets, array $css_processing_result, array $options = [] ): array {
 		$custom_css_rules = $css_processing_result['custom_css_rules'] ?? [];
-		error_log( 'WIDGET_CREATION_ORCHESTRATOR: create_widgets - custom_css_rules count: ' . count( $custom_css_rules ) );
 		foreach ( array_keys( $custom_css_rules ) as $class_name ) {
 			if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-				error_log( 'WIDGET_CREATION_ORCHESTRATOR: create_widgets - Found brxw-intro-02: ' . $class_name . ', CSS: ' . substr( $custom_css_rules[ $class_name ]['css'] ?? '', 0, 200 ) );
 			}
 		}
 

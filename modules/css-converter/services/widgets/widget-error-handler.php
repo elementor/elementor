@@ -6,13 +6,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Widget_Error_Handler {
-	private $error_log;
 	private $warning_log;
 	private $recovery_strategies;
 	private $error_stats;
 
 	public function __construct() {
-		$this->error_log = [];
 		$this->warning_log = [];
 		$this->error_stats = [
 			'total_errors' => 0,
@@ -53,7 +51,6 @@ class Widget_Error_Handler {
 		}
 
 		// Log error
-		$this->error_log[] = $error_entry;
 		++$this->error_stats['total_errors'];
 
 		if ( $error_entry['recoverable'] ) {
@@ -436,10 +433,6 @@ class Widget_Error_Handler {
 		return $actions;
 	}
 
-	public function get_error_log() {
-		return $this->error_log;
-	}
-
 	public function get_warning_log() {
 		return $this->warning_log;
 	}
@@ -449,7 +442,6 @@ class Widget_Error_Handler {
 	}
 
 	public function clear_logs() {
-		$this->error_log = [];
 		$this->warning_log = [];
 		$this->error_stats = [
 			'total_errors' => 0,

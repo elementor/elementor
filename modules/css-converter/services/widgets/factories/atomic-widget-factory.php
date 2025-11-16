@@ -37,7 +37,6 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 
 		$class_name_mappings = $this->css_processing_result['class_name_mappings'] ?? [];
 		if ( ! empty( $class_name_mappings ) && ( isset( $class_name_mappings['brxw-intro-02'] ) || strpos( implode( ' ', array_keys( $class_name_mappings ) ), 'brxw-intro-02' ) !== false ) ) {
-			error_log( 'CSS_CONVERTER_DEBUG: Atomic_Widget_Factory - Setting class_name_mappings: ' . print_r( $class_name_mappings, true ) );
 		}
 		$this->data_formatter->set_class_name_mappings( $class_name_mappings );
 		$formatted_widget_data = $this->data_formatter->format_widget_data( $resolved_styles, $widget_data, $widget_id, $this->custom_css_collector );
@@ -167,14 +166,9 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 		}
 
 		if ( strpos( $widget_classes, 'intro-section' ) !== false || strpos( $widget_classes, 'brxw-intro-02' ) !== false || strpos( $widget_classes, 'brxe-section' ) !== false ) {
-			error_log( 'CSS_CONVERTER_DEBUG: apply_global_classes - widget ' . $widget_id . ' has classes: ' . $widget_classes );
-			error_log( 'CSS_CONVERTER_DEBUG: Global classes available: ' . count( $global_classes ) );
-			error_log( 'CSS_CONVERTER_DEBUG: Class name mappings: ' . print_r( $class_name_mappings, true ) );
 			if ( strpos( $widget_classes, 'brxe-section' ) !== false ) {
-				error_log( 'CSS_CONVERTER_DEBUG: brxe-section in global_classes: ' . ( isset( $global_classes['brxe-section'] ) ? 'YES' : 'NO' ) );
 				if ( isset( $global_classes['brxe-section'] ) ) {
 					$brxe_props = $global_classes['brxe-section']['atomic_props'] ?? [];
-					error_log( 'CSS_CONVERTER_DEBUG: brxe-section atomic_props keys: ' . implode( ', ', array_keys( $brxe_props ) ) );
 				}
 			}
 		}
@@ -186,8 +180,6 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 			$class_name = trim( $class_name );
 
 			if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
-				error_log( 'CSS_CONVERTER_DEBUG: Checking class: ' . $class_name );
-				error_log( 'CSS_CONVERTER_DEBUG: Class in global_classes: ' . ( isset( $global_classes[ $class_name ] ) ? 'YES' : 'NO' ) );
 			}
 
 			$mapped_class_name = $class_name_mappings[ $class_name ] ?? $class_name;
@@ -204,25 +196,20 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 			
 			if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
 				if ( $original_class_name ) {
-					error_log( 'CSS_CONVERTER_DEBUG: Class ' . $class_name . ' is mapped from original: ' . $original_class_name );
-					error_log( 'CSS_CONVERTER_DEBUG: Original class in global_classes: ' . ( isset( $global_classes[ $original_class_name ] ) ? 'YES' : 'NO' ) );
 				}
 			}
 
 			if ( isset( $global_classes[ $mapped_class_name ] ) ) {
 				$applicable_global_classes[] = $mapped_class_name;
 				if ( strpos( $mapped_class_name, 'intro-section' ) !== false || strpos( $mapped_class_name, 'brxw-intro-02' ) !== false || strpos( $mapped_class_name, 'brxe-section' ) !== false ) {
-					error_log( 'CSS_CONVERTER_DEBUG: Found ' . $mapped_class_name . ' as global class (mapped), adding to settings' );
 				}
 			} elseif ( $original_class_name && isset( $global_classes[ $original_class_name ] ) ) {
 				$applicable_global_classes[] = $original_class_name;
 				if ( strpos( $original_class_name, 'intro-section' ) !== false || strpos( $original_class_name, 'brxw-intro-02' ) !== false || strpos( $original_class_name, 'brxe-section' ) !== false ) {
-					error_log( 'CSS_CONVERTER_DEBUG: Found ' . $original_class_name . ' as global class (reverse lookup), adding to settings' );
 				}
 			} elseif ( isset( $global_classes[ $class_name ] ) ) {
 				$applicable_global_classes[] = $class_name;
 				if ( strpos( $class_name, 'intro-section' ) !== false || strpos( $class_name, 'brxw-intro-02' ) !== false || strpos( $class_name, 'brxe-section' ) !== false ) {
-					error_log( 'CSS_CONVERTER_DEBUG: Found ' . $class_name . ' as global class (direct match), adding to settings' );
 				}
 			}
 		}
@@ -236,15 +223,10 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 				'value' => array_values( array_unique( $merged_classes ) ),
 			];
 			if ( strpos( $widget_classes, 'brxw-intro-02' ) !== false ) {
-				error_log( 'CSS_CONVERTER_DEBUG: Widget ' . $widget_id . ' - Successfully added classes to final_settings.classes: ' . implode( ', ', $merged_classes ) );
-				error_log( 'CSS_CONVERTER_DEBUG: Widget ' . $widget_id . ' - brxw-intro-02-2 in merged_classes: ' . ( in_array( 'brxw-intro-02-2', $merged_classes, true ) ? 'YES' : 'NO' ) );
 			} elseif ( in_array( 'intro-section', $merged_classes, true ) ) {
-				error_log( 'CSS_CONVERTER_DEBUG: Successfully added classes to final_settings.classes: ' . implode( ', ', $merged_classes ) );
 			}
 		} else {
 			if ( strpos( $widget_classes, 'intro-section' ) !== false || strpos( $widget_classes, 'brxw-intro-02' ) !== false || strpos( $widget_classes, 'brxe-section' ) !== false ) {
-				error_log( 'CSS_CONVERTER_DEBUG: WARNING - ' . $widget_classes . ' NOT found in global_classes, not adding to settings' );
-				error_log( 'CSS_CONVERTER_DEBUG: Available global classes keys: ' . implode( ', ', array_slice( array_keys( $global_classes ), 0, 10 ) ) );
 			}
 		}
 

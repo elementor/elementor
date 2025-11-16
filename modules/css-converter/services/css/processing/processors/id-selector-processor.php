@@ -39,13 +39,10 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 			if ( strpos( $selector, 'intro-section' ) !== false ) {
 				$intro_section_before++;
 				if ( $intro_section_before <= 3 ) {
-					error_log( 'CSS_CONVERTER_DEBUG: ID Selector Processor - Found .intro-section rule BEFORE processing: ' . $selector );
 					$has_id = strpos( $selector, '#' ) !== false;
-					error_log( 'CSS_CONVERTER_DEBUG: ID Selector Processor - Contains #: ' . ( $has_id ? 'YES' : 'NO' ) );
 				}
 			}
 		}
-		error_log( 'CSS_CONVERTER_DEBUG: ID Selector Processor - Total .intro-section rules BEFORE: ' . $intro_section_before );
 
 		$id_rules = $this->extract_id_selectors( $css_rules );
 		
@@ -55,11 +52,9 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 			if ( strpos( $selector, 'intro-section' ) !== false ) {
 				$intro_section_in_id_rules++;
 				if ( $intro_section_in_id_rules <= 3 ) {
-					error_log( 'CSS_CONVERTER_DEBUG: ID Selector Processor - .intro-section rule EXTRACTED as ID selector: ' . $selector );
 				}
 			}
 		}
-		error_log( 'CSS_CONVERTER_DEBUG: ID Selector Processor - Total .intro-section rules EXTRACTED as ID: ' . $intro_section_in_id_rules );
 		
 		$remaining_rules = $this->remove_id_selectors( $css_rules );
 		
@@ -70,7 +65,6 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 				$intro_section_after++;
 			}
 		}
-		error_log( 'CSS_CONVERTER_DEBUG: ID Selector Processor - Total .intro-section rules AFTER removal: ' . $intro_section_after );
 
 		// CRITICAL: Use the EXISTING unified style manager from context (created by Style Collection Processor)
 		// This ensures all styles (inline, ID, CSS selectors) are in the same manager for proper specificity resolution
@@ -130,22 +124,18 @@ class Id_Selector_Processor implements Css_Processor_Interface {
 			$selector = $rule['selector'] ?? '';
 			$properties = $rule['properties'] ?? [];
 
-			error_log( 'CSS_CONVERTER_DEBUG: ID selector processor - processing selector: ' . $selector . ', properties count: ' . count( $properties ) );
 
 			// Find widgets that match this ID selector
 			$matched_elements = $this->find_widgets_matching_id_selector( $selector, $widgets );
 
-			error_log( 'CSS_CONVERTER_DEBUG: ID selector ' . $selector . ' matched ' . count( $matched_elements ) . ' widgets' );
 
 			if ( ! empty( $matched_elements ) ) {
 				// Convert properties to the format expected by unified style manager
 				$converted_properties = $this->convert_rule_properties_to_atomic( $properties );
 
-				error_log( 'CSS_CONVERTER_DEBUG: ID selector ' . $selector . ' - converted properties count: ' . count( $converted_properties ) );
 				foreach ( $converted_properties as $prop ) {
 					$prop_name = $prop['property'] ?? 'unknown';
 					if ( in_array( $prop_name, [ 'display', 'font-size', 'color', 'background-color' ], true ) ) {
-						error_log( 'CSS_CONVERTER_DEBUG: ID selector property: ' . $prop_name . ' = ' . ( $prop['value'] ?? 'no value' ) );
 					}
 				}
 

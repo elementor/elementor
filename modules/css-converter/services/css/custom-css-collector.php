@@ -29,11 +29,9 @@ class Custom_Css_Collector {
 				'important' => $important,
 			];
 			if ( strpos( $widget_id, 'brxw-intro-02' ) !== false && in_array( $property_key, [ 'grid-gap', 'grid-template-columns', 'align-items' ], true ) ) {
-				error_log( 'CUSTOM_CSS_COLLECTOR: Added ' . $property . ' = ' . $value . ' to ' . $widget_id );
 			}
 		} else {
 			if ( strpos( $widget_id, 'brxw-intro-02' ) !== false && in_array( $property_key, [ 'grid-gap', 'grid-template-columns', 'align-items' ], true ) ) {
-				error_log( 'CUSTOM_CSS_COLLECTOR: Skipped (should_override=false) ' . $property . ' = ' . $value . ' to ' . $widget_id );
 			}
 		}
 	}
@@ -79,7 +77,6 @@ class Custom_Css_Collector {
 		}
 
 		if ( strpos( $widget_id, 'brxw-intro-02' ) !== false ) {
-			error_log( 'CUSTOM_CSS_COLLECTOR: get_custom_css_for_widget - ' . $widget_id . ' buffer keys: ' . implode( ', ', array_keys( $this->custom_css_buffer[ $widget_id ] ) ) );
 		}
 
 		$property_data_array = $this->custom_css_buffer[ $widget_id ];
