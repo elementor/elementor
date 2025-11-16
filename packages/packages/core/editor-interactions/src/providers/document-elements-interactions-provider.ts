@@ -35,7 +35,7 @@ export const documentElementsInteractionsProvider = createInteractionsProvider( 
 				if ( Array.isArray( interactions ) ) {
 					return interactions.length > 0;
 				}
-				
+
 				if ( typeof interactions === 'string' ) {
 					try {
 						const parsed = JSON.parse( interactions );
@@ -46,7 +46,6 @@ export const documentElementsInteractionsProvider = createInteractionsProvider( 
 				}
 
 				if ( typeof interactions === 'object' && interactions !== null ) {
-					
 					if ( Array.isArray( interactions.items ) ) {
 						return interactions.items.length > 0;
 					}
@@ -58,7 +57,7 @@ export const documentElementsInteractionsProvider = createInteractionsProvider( 
 
 			return filtered.map( ( element ) => {
 				const interactions = getElementInteractions( element.id );
-				
+
 				const dataId = String( element.id );
 
 				return {

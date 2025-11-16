@@ -48,7 +48,7 @@ export function useInteractionsItems() {
 					subscriber();
 				} catch {}
 			};
-			
+
 			const unsubscribe = provider.subscribe( safeSubscriber );
 			return unsubscribe;
 		} );
@@ -76,8 +76,8 @@ export function useInteractionsItems() {
 		const result = Object.values( interactionItems )
 			.sort( sortByProviderPriority )
 			.flatMap( ( { items } ) => items );
-			
-			return result;
+
+		return result;
 	}, [ interactionItems ] );
 }
 

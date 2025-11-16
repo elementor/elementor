@@ -16,7 +16,7 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 	useEffect( () => {
 		window.dispatchEvent( new CustomEvent( 'elementor/element/update_interactions' ) );
 	}, [] );
-	
+
 	const setInteractions = ( value: string | undefined ) => {
 		updateElementInteractions( {
 			elementId,
