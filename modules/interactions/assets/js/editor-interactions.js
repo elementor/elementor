@@ -64,6 +64,20 @@
 		animateFunc( element, initialKeyframes, { duration: 0 } );
 
 		animateFunc( element, keyframes, options );
+
+		if ( 'out' === animConfig.type ) {
+			const totalAnimationTime = animConfig.duration + animConfig.delay;
+			const resetValues = { opacity: 1, scale: 1, x: 0, y: 0 };
+
+			setTimeout( () => {
+				const resetKeyframes = {};
+				Object.keys( keyframes ).forEach( ( key ) => {
+					resetKeyframes[ key ] = resetValues[ key ];
+				} );
+
+				animateFunc( element, resetKeyframes, { duration: 0 } );
+			}, totalAnimationTime );
+		}
 	}
 
 	function getInteractionsData() {
