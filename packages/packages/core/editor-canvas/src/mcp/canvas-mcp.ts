@@ -1,8 +1,8 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
-import { initConfigureElementTool } from './configure-element-tool';
 import { initWidgetsSchemaResource } from './resources/widgets-schema-resource';
-import { initBuildCompositionsTool } from './tools/build-compositions-tool';
+import { initBuildCompositionsTool } from './tools/build-composition/tool';
+import { initConfigureElementTool } from './tools/configure-element/tool';
 
 export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
 	const { setMCPDescription } = reg;
@@ -11,6 +11,5 @@ export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
 	);
 	initWidgetsSchemaResource( reg );
 	initBuildCompositionsTool( reg );
-	// initBuildHtmlTool( reg );
 	initConfigureElementTool( reg );
 };
