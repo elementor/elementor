@@ -2,7 +2,7 @@ import { type V1ElementData } from '@elementor/editor-elements';
 import { ajax } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 
-import { type Component, type DocumentSaveStatus } from './types';
+import { type DocumentSaveStatus, type PublishedComponent } from './types';
 
 const BASE_URL = 'elementor/v1/components';
 const LOCK_COMPONENT = `${ BASE_URL }/lock`;
@@ -12,7 +12,7 @@ const BASE_URL_LOCK_STATUS = `${ BASE_URL }/lock-status`;
 export type CreateComponentPayload = {
 	status: DocumentSaveStatus;
 	items: Array< {
-		temp_id: number;
+		uid: string;
 		title: string;
 		elements: V1ElementData[];
 	} >;
@@ -23,9 +23,9 @@ type ComponentLockStatusResponse = {
 	locked_by: string;
 };
 
-type GetComponentResponse = Array< Component >;
+type GetComponentResponse = Array< PublishedComponent >;
 
-export type CreateComponentResponse = Record< number, number >;
+export type CreateComponentResponse = Record< string, number >;
 
 export const getParams = ( id: number ) => ( {
 	action: 'get_document_config',
