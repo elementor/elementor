@@ -25,6 +25,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { type ErrorResponse, type MappedError, mapServerError } from '../../utils/validations';
+import { trackVariableManagerEvent } from '../../utils/tracking';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
@@ -100,6 +101,8 @@ export function VariablesManagerPanel() {
 	);
 
 	const handleSaveClick = async () => {
+		trackVariableManagerEvent( { action: 'saveChanges' } );
+
 		try {
 			setServerError( null );
 			resetNavigation();
@@ -129,10 +132,11 @@ export function VariablesManagerPanel() {
 
 	const handleDeleteVariableWithConfirmation = useCallback(
 		( itemId: string ) => {
+			trackVariableManagerEvent( { action: 'delete', varType: variables[ itemId ]?.type } );
 			handleDeleteVariable( itemId );
 			setDeleteConfirmation( null );
 		},
-		[ handleDeleteVariable ]
+		[ handleDeleteVariable, variables ]
 	);
 
 	const menuActions = [
@@ -142,6 +146,7 @@ export function VariablesManagerPanel() {
 			color: 'error.main',
 			onClick: ( itemId: string ) => {
 				if ( variables[ itemId ] ) {
+					trackVariableManagerEvent( { action: 'delete', varType: variables[ itemId ]?.type  } );
 					setDeleteConfirmation( { id: itemId, label: variables[ itemId ].label } );
 				}
 			},
