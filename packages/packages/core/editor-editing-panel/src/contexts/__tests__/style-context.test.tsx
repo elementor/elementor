@@ -48,6 +48,8 @@ describe( 'StyleContext', () => {
 
 	it( 'should throw when style provider does not exist', () => {
 		// Arrange.
+		const mockConsoleError = jest.fn();
+		window.console.error = mockConsoleError;
 		const mockProvider = createMockStylesProvider( { key: 'style-provider' }, [
 			createMockStyleDefinition( { id: 'style-id-1' } ),
 		] );
@@ -68,7 +70,7 @@ describe( 'StyleContext', () => {
 			);
 		} ).toThrow( StylesProviderNotFoundError );
 
-		expect( console ).toHaveErrored();
+		expect( mockConsoleError ).toHaveBeenCalled();
 	} );
 
 	it( 'should disable editing when user does not have updateProps capability', () => {
