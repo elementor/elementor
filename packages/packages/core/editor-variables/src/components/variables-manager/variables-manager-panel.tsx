@@ -24,8 +24,8 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type ErrorResponse, type MappedError, mapServerError } from '../../utils/validations';
 import { trackVariableManagerEvent } from '../../utils/tracking';
+import { type ErrorResponse, type MappedError, mapServerError } from '../../utils/validations';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
@@ -146,7 +146,7 @@ export function VariablesManagerPanel() {
 			color: 'error.main',
 			onClick: ( itemId: string ) => {
 				if ( variables[ itemId ] ) {
-					trackVariableManagerEvent( { action: 'delete', varType: variables[ itemId ]?.type  } );
+					trackVariableManagerEvent( { action: 'delete', varType: variables[ itemId ]?.type } );
 					setDeleteConfirmation( { id: itemId, label: variables[ itemId ].label } );
 				}
 			},
