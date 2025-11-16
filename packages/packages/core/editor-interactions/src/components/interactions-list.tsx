@@ -8,6 +8,8 @@ import { __ } from '@wordpress/i18n';
 import { getInteractionsConfig } from '../utils/get-interactions-config';
 import { InteractionDetails } from './interaction-details';
 
+const DEFAULT_INTERACTION = 'load-fade-in-left-300-0';
+
 export type InteractionListProps = {
 	onSelectInteraction: ( interaction: string | null ) => void;
 	selectedInteraction: string | null;
@@ -21,7 +23,7 @@ export function InteractionsList( props: InteractionListProps ) {
 	const [ interactionId, setInteractionId ] = useState< string | null >( selectedInteraction );
 
 	if ( triggerCreateOnShowEmpty && ! interactionId ) {
-		setInteractionId( 'load-fade-in-left-300-0' );
+		setInteractionId( DEFAULT_INTERACTION );
 	}
 
 	useEffect( () => {
@@ -56,7 +58,7 @@ export function InteractionsList( props: InteractionListProps ) {
 			isSortable={ false }
 			disableAddItemButton={ !! interactionId }
 			itemSettings={ {
-				initialValues: interactionId ?? 'load-fade-in-left-100-0',
+				initialValues: DEFAULT_INTERACTION,
 				Label: ( { value } ) => displayLabel( value ),
 				Icon: () => null,
 				Content: ( { value } ) => (
