@@ -22,7 +22,7 @@ const DURATION_CONFIG = {
 
 // this config needs to be loaded at runtime/render since it's the transitionProperties object will be mutated by the pro plugin.
 // See: https://elementor.atlassian.net/browse/ED-20285
-const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: string[] ) => {
+const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: string[], readOnly?: boolean ) => {
 	return {
 		selectionLabel: __( 'Type', 'elementor' ),
 		sizeLabel: __( 'Duration', 'elementor' ),
@@ -34,6 +34,7 @@ const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: stri
 			},
 		},
 		isRepeaterControl: true,
+		readOnly,
 		sizeConfigMap: {
 			...transitionProperties.reduce(
 				( acc, category ) => {
@@ -48,11 +49,13 @@ const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: stri
 	};
 };
 
-function getChildControlConfig( recentlyUsedList: string[], disabledItems?: string[] ) {
+function getChildControlConfig( recentlyUsedList: string[], disabledItems?: string[], readOnly?: boolean ) {
 	return {
 		propTypeUtil: selectionSizePropTypeUtil,
 		component: SelectionSizeControl as unknown as React.ComponentType< Record< string, unknown > >,
-		props: getSelectionSizeProps( recentlyUsedList, disabledItems ),
+		props: {
+			...getSelectionSizeProps( recentlyUsedList, disabledItems, readOnly ),
+		},
 	};
 }
 
@@ -88,9 +91,11 @@ export const TransitionRepeaterControl = createControl(
 	( {
 		recentlyUsedListGetter,
 		currentStyleState,
+		readOnly,
 	}: {
 		recentlyUsedListGetter: () => Promise< string[] >;
 		currentStyleState: StyleDefinitionState;
+		readOnly?: boolean;
 	} ) => {
 		const currentStyleIsNormal = currentStyleState === null;
 		const [ recentlyUsedList, setRecentlyUsedList ] = useState< string[] >( [] );
@@ -106,7 +111,11 @@ export const TransitionRepeaterControl = createControl(
 		const allowedTransitionSet = useMemo( () => {
 			const set = new Set< string >();
 			transitionProperties.forEach( ( category ) => {
-				category.properties.forEach( ( prop ) => set.add( prop.value ) );
+				category.properties.forEach( ( prop ) => {
+					if ( ! prop.unavailable ) {
+						set.add( prop.value );
+					}
+				} );
 			} );
 			return set;
 		}, [] );
@@ -143,7 +152,7 @@ export const TransitionRepeaterControl = createControl(
 				showDuplicate={ false }
 				showToggle={ true }
 				initialValues={ initialTransitionValue }
-				childControlConfig={ getChildControlConfig( recentlyUsedList, disabledItems ) }
+				childControlConfig={ getChildControlConfig( recentlyUsedList, disabledItems, readOnly ) }
 				propKey="transition"
 				addItemTooltipProps={ {
 					disabled: isAddItemDisabled,

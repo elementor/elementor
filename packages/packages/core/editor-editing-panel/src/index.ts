@@ -9,6 +9,7 @@ export { StyleIndicator } from './components/style-indicator';
 export { useFontFamilies } from './components/style-sections/typography-section/hooks/use-font-families';
 export { injectIntoStyleTab } from './components/style-tab';
 export { StyleTabSection } from './components/style-tab-section';
+export { registerLicensedTransitionControl } from './components/style-sections/effects-section/effects-section';
 export { useClassesProp } from './contexts/classes-prop-context';
 export { useElement } from './contexts/element-context';
 export { useSectionWidth } from './contexts/section-context';

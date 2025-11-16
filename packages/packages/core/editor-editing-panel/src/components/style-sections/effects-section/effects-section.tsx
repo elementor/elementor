@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import {
 	BoxShadowRepeaterControl,
 	FilterRepeaterControl,
@@ -16,6 +17,14 @@ import { SectionContent } from '../../section-content';
 import { BlendModeField } from './blend-mode-field';
 import { OpacityControlField } from './opacity-control-field';
 
+let LicensedTransitionControl: typeof TransitionRepeaterControl | null = null;
+
+export function registerLicensedTransitionControl(
+	control: typeof TransitionRepeaterControl
+) {
+	LicensedTransitionControl = control;
+}
+
 const BOX_SHADOW_LABEL = __( 'Box shadow', 'elementor' );
 const FILTER_LABEL = __( 'Filters', 'elementor' );
 const TRANSFORM_LABEL = __( 'Transform', 'elementor' );
@@ -25,6 +34,10 @@ const TRANSITIONS_LABEL = __( 'Transitions', 'elementor' );
 export const EffectsSection = () => {
 	const { element } = useSelectedElement();
 	const { meta } = useStyle();
+	const TransitionControl = useMemo(
+		() => LicensedTransitionControl || TransitionRepeaterControl,
+		[]
+	);
 
 	return (
 		<SectionContent gap={ 1 }>
@@ -41,7 +54,7 @@ export const EffectsSection = () => {
 			</StylesField>
 			<PanelDivider />
 			<StylesField bind="transition" propDisplayName={ TRANSITIONS_LABEL }>
-				<TransitionRepeaterControl
+				<TransitionControl
 					currentStyleState={ meta.state }
 					recentlyUsedListGetter={ () => getRecentlyUsedList( element?.id ?? '' ) }
 				/>
