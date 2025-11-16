@@ -51,7 +51,7 @@ class Atomic_Styles_Manager {
 			$this->post_ids[] = $post_id;
 		} );
 
-		add_action( 'elementor/atomic-widgets/styles/clear', fn( array $cache_keys ) => $this->clear_files( $cache_keys ) );
+		add_action( 'elementor/atomic-widgets/styles/clear', fn( array $cache_keys ) => $this->clear_styles( $cache_keys ) );
 	}
 
 	public function register( array $cache_keys, callable $get_style_defs ) {
@@ -230,15 +230,15 @@ class Atomic_Styles_Manager {
 		}
 	}
 
-	private function clear_files( array $cache_keys ) {
+	private function clear_styles( array $cache_keys ) {
 		$node = $this->cache_validity->get_node( $cache_keys );
 
-		$this->clear_by_node( $cache_keys, $node );
+		$this->clear_styles_by_node( $cache_keys, $node );
 
 		$this->cache_validity->invalidate( $cache_keys );
 	}
 
-	private function clear_by_node( array $path, $node ) {
+	private function clear_styles_by_node( array $path, $node ) {
 		if ( ! $node ) {
 			return;
 		}
@@ -252,7 +252,7 @@ class Atomic_Styles_Manager {
 		}
 
 		foreach ( $node['children'] as $child_key => $child_node ) {
-			$this->clear_by_node( array_merge( $path, [ $child_key ] ), $child_node );
+			$this->clear_styles_by_node( array_merge( $path, [ $child_key ] ), $child_node );
 		}
 	}
 
