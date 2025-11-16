@@ -1,127 +1,82 @@
 import * as React from 'react';
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { PlayerPlayIcon, XIcon } from '@elementor/icons';
-import { bindPopover, bindTrigger, IconButton, Popover, Stack, UnstableTag, usePopupState } from '@elementor/ui';
+import { useEffect, useState } from 'react';
+import { Repeater } from '@elementor/editor-controls';
+import { PlayerPlayIcon } from '@elementor/icons';
+import { IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { usePopupStateContext } from '../contexts/popup-state-context';
 import { getInteractionsConfig } from '../utils/get-interactions-config';
-import { Header } from './header';
 import { InteractionDetails } from './interaction-details';
 
-type PredefinedInteractionsListProps = {
-	onSelectInteraction: ( interaction: string ) => void;
-	selectedInteraction: string;
-	onDelete?: () => void;
+export type InteractionListProps = {
+	onSelectInteraction: ( interaction: string | null ) => void;
+	selectedInteraction: string | null;
 	onPlayInteraction: () => void;
+	triggerCreateOnShowEmpty?: boolean;
 };
 
-export const PredefinedInteractionsList = ( {
-	onSelectInteraction,
-	selectedInteraction,
-	onDelete,
-	onPlayInteraction,
-}: PredefinedInteractionsListProps ) => {
-	return (
-		<Stack sx={ { m: 1, p: 1.5 } } gap={ 2 }>
-			<Header label={ __( 'Interactions', 'elementor' ) } />
-			<InteractionsList
-				onDelete={ onDelete }
-				selectedInteraction={ selectedInteraction }
-				onSelectInteraction={ onSelectInteraction }
-				onPlayInteraction={ onPlayInteraction }
-			/>
-		</Stack>
-	);
-};
+export function InteractionsList( props: InteractionListProps ) {
+	const { onSelectInteraction, selectedInteraction, onPlayInteraction, triggerCreateOnShowEmpty } = props;
 
-type InteractionListProps = {
-	onDelete?: () => void;
-	onSelectInteraction: ( interaction: string ) => void;
-	selectedInteraction: string;
-	defaultStateRef?: React.MutableRefObject< boolean | undefined >;
-	onPlayInteraction: () => void;
-};
+	const [ interactionId, setInteractionId ] = useState< string | null >( selectedInteraction );
 
-function InteractionsList( props: InteractionListProps ) {
-	const { onSelectInteraction, selectedInteraction, defaultStateRef, onDelete, onPlayInteraction } = props;
-
-	const [ interactionId, setInteractionId ] = useState( selectedInteraction );
-
-	const anchorEl = useRef< HTMLDivElement | null >( null );
-
-	const popupId = useId();
-	const popupState = usePopupState( {
-		variant: 'popover',
-		popupId: `elementor-interactions-list-${ popupId }`,
-	} );
-
-	const { openByDefault, resetDefaultOpen } = usePopupStateContext();
+	if ( triggerCreateOnShowEmpty && ! interactionId ) {
+		setInteractionId( 'load-fade-in-left-100-0' );
+	}
 
 	useEffect( () => {
-		if ( interactionId && interactionId !== selectedInteraction ) {
+		if ( interactionId !== selectedInteraction ) {
 			onSelectInteraction( interactionId );
 		}
 	}, [ interactionId, selectedInteraction, onSelectInteraction ] );
 
-	useEffect( () => {
-		if ( openByDefault && anchorEl.current ) {
-			popupState.setAnchorEl( anchorEl.current );
-			popupState.open();
-			resetDefaultOpen();
-		}
-	}, [ defaultStateRef, popupState, anchorEl, openByDefault, resetDefaultOpen ] );
-
-	const displayLabel = useMemo( () => {
-		if ( ! interactionId ) {
+	const displayLabel = ( interactionForDisplay: string ) => {
+		if ( ! interactionForDisplay ) {
 			return '';
 		}
 
 		const animationOptions = getInteractionsConfig()?.animationOptions;
-		const option = animationOptions.find( ( opt ) => opt.value === interactionId );
+		const option = animationOptions.find( ( opt ) => opt.value === interactionForDisplay );
 
-		return option?.label || interactionId;
-	}, [ interactionId ] );
+		return option?.label || interactionForDisplay;
+	};
 
 	return (
-		<Stack gap={ 1.5 } ref={ anchorEl }>
-			<UnstableTag
-				{ ...bindTrigger( popupState ) }
-				fullWidth
-				variant="outlined"
-				label={ displayLabel }
-				showActionsOnHover
-				actions={
+		<Repeater
+			addToBottom
+			openOnAdd
+			openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
+			label={ __( 'Interactions', 'elementor' ) }
+			values={ interactionId ? [ interactionId ] : [] }
+			setValues={ ( newValue: string[] ) => {
+				setInteractionId( newValue.length > 0 ? newValue[ 0 ] : null );
+			} }
+			showDuplicate={ false }
+			showToggle={ false }
+			isSortable={ false }
+			disableAddItemButton={ !! interactionId }
+			itemSettings={ {
+				initialValues: interactionId ?? 'load-fade-in-left-100-0',
+				Label: ( { value } ) => displayLabel( value ),
+				Icon: () => null,
+				Content: ( { value } ) => (
+					<InteractionDetails
+						interaction={ value }
+						onChange={ ( newValue: string ) => {
+							if ( value !== newValue ) {
+								setInteractionId( newValue );
+							}
+						} }
+					/>
+				),
+				actions: (
 					<>
 						<IconButton size="tiny" onClick={ onPlayInteraction }>
 							<PlayerPlayIcon fontSize="tiny" />
 						</IconButton>
-						<IconButton size="tiny" onClick={ () => onDelete?.() }>
-							<XIcon fontSize="tiny" />
-						</IconButton>
 					</>
-				}
-			/>
-			<Popover
-				{ ...bindPopover( popupState ) }
-				disableScrollLock
-				anchorEl={ anchorEl.current }
-				anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
-				transformOrigin={ { vertical: 'top', horizontal: 'left' } }
-				PaperProps={ {
-					sx: { my: 1 },
-				} }
-				onClose={ () => {
-					popupState.close();
-				} }
-			>
-				<InteractionDetails
-					interaction={ selectedInteraction }
-					onChange={ ( newValue: string ) => {
-						setInteractionId( newValue );
-					} }
-				/>
-			</Popover>
-		</Stack>
+				),
+			} }
+		/>
 	);
 }
