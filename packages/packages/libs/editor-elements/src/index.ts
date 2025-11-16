@@ -66,3 +66,9 @@ export {
 	getLinkInLinkRestriction,
 	type LinkInLinkRestriction,
 } from './link-restriction';
+
+export { getElementInteractions } from './sync/get-element-interactions';
+export { updateElementInteractions, playElementInteractions } from './sync/update-element-interactions';
+export { useElementInteractions } from './hooks/use-element-interactions';
+
+export { initMcp as initElementsMcp } from './mcp';

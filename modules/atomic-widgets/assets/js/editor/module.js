@@ -7,8 +7,8 @@ import createFlexboxType from './atomic-element-types/create-flexbox-type';
 import createAtomicTabsType from './atomic-element-types/atomic-tabs/create-atomic-tabs-type';
 import createAtomicTabContentType from './atomic-element-types/atomic-tab-content/create-atomic-tab-content-type';
 import createAtomicTabType from './atomic-element-types/atomic-tab/create-atomic-tab-type';
-import createAtomicTabsMenuType from './atomic-element-types/create-atomic-tabs-menu-type';
-import createAtomicTabsContentAreaType from './atomic-element-types/create-atomic-tabs-content-area-type';
+import createAtomicTabsMenuType from './atomic-element-types/atomic-tabs-menu/create-atomic-tabs-menu-type';
+import createAtomicTabsContentAreaType from './atomic-element-types/atomic-tabs-content-area/create-atomic-tabs-content-area-type';
 
 class Module extends elementorModules.editor.utils.Module {
 	onInit() {

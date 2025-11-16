@@ -108,6 +108,26 @@ trait Has_Atomic_Base {
 		return $result->unwrap();
 	}
 
+	private function parse_atomic_interactions( $interactions ) {
+
+		if ( empty( $interactions ) ) {
+			return [];
+		}
+
+		if ( is_string( $interactions ) ) {
+			$decoded = json_decode( $interactions, true );
+			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+				return $decoded;
+			}
+		}
+
+		if ( is_array( $interactions ) ) {
+			return $interactions;
+		}
+
+		return [];
+	}
+
 	public function get_atomic_controls() {
 		$controls = apply_filters(
 			'elementor/atomic-widgets/controls',
@@ -145,6 +165,7 @@ trait Has_Atomic_Base {
 		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
 		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
 		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
+		$data['interactions'] = $this->parse_atomic_interactions( $data['interactions'] );
 
 		return $data;
 	}
@@ -153,6 +174,7 @@ trait Has_Atomic_Base {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
 		$raw_data['styles'] = $this->styles;
+		$raw_data['interactions'] = $this->interactions ?? [];
 		$raw_data['editor_settings'] = $this->editor_settings;
 
 		return $raw_data;
@@ -190,7 +212,7 @@ trait Has_Atomic_Base {
 		return $resolved[ $key ] ?? null;
 	}
 
-	private function parse_editor_settings( array $data ): array {
+	protected function parse_editor_settings( array $data ): array {
 		$editor_data = [];
 
 		if ( isset( $data['title'] ) && is_string( $data['title'] ) ) {

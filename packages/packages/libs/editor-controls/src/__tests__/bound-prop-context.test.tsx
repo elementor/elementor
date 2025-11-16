@@ -7,17 +7,23 @@ import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-conte
 
 describe( 'useBoundProp', () => {
 	it( 'should throw error if used outside of context', () => {
+		// Arrange
+		const mockConsoleError = jest.fn();
+		window.console.error = mockConsoleError;
+
 		// Act & Assert.
 		expect( () => {
 			renderHook( () => useBoundProp() );
 		} ).toThrow( 'Hook used outside of provider' );
 
 		// Suppress console.error from React.
-		expect( console ).toHaveErrored();
+		expect( mockConsoleError ).toHaveBeenCalled();
 	} );
 
 	it( 'should throw error if the prop type does not exist', () => {
 		// Arrange.
+		const mockConsoleError = jest.fn();
+		window.console.error = mockConsoleError;
 		const value = {
 			'key-1': { $$type: 'nested-key', value: 'nested-value' },
 			'key-2': { $$type: 'nested-key', value: 'nested-value' },
@@ -36,7 +42,7 @@ describe( 'useBoundProp', () => {
 		} ).toThrow( 'Prop type is missing' );
 
 		// Suppress console.error from React.
-		expect( console ).toHaveErrored();
+		expect( mockConsoleError ).toHaveBeenCalled();
 	} );
 
 	it( 'should return the nested object value by bind', () => {
@@ -252,6 +258,8 @@ describe( 'useBoundProp', () => {
 		'should throw error if PropKeyProvider is rendered inside $kind prop provider',
 		( { kind } ) => {
 			// Arrange.
+			const mockConsoleError = jest.fn();
+			window.console.error = mockConsoleError;
 			const propType = createMockPropType( { kind } as never ) as PropType;
 			const value = {
 				'key-2': { $$type: 'nested-key', value: 'nested-value' },
@@ -267,7 +275,7 @@ describe( 'useBoundProp', () => {
 			} ).toThrow( 'Parent prop type is not supported' );
 
 			// Suppress console.error from React.
-			expect( console ).toHaveErrored();
+			expect( mockConsoleError ).toHaveBeenCalled();
 		}
 	);
 
