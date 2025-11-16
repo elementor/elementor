@@ -38,6 +38,7 @@
 
 	function parseAnimationName( name ) {
 		const [ trigger, effect, type, direction, duration, delay ] = name.split( '-' );
+
 		return {
 			trigger,
 			effect,
@@ -56,9 +57,13 @@
 			easing: config.easing,
 		};
 
-		try {
-			animateFunc( element, keyframes, options );
-		} catch {}
+		const initialKeyframes = {};
+		Object.keys( keyframes ).forEach( ( key ) => {
+			initialKeyframes[ key ] = keyframes[ key ][ 0 ];
+		} );
+		animateFunc( element, initialKeyframes, { duration: 0 } );
+
+		animateFunc( element, keyframes, options );
 	}
 
 	function getInteractionsData() {
@@ -82,63 +87,30 @@
 		const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
 
 		if ( ! animateFunc ) {
-			element.style.animation = 'none';
-			setTimeout( () => {
-				element.style.animation = 'fadeInScale 0.5s ease-out';
-			}, 10 );
 			return;
 		}
 
+		let parsedData;
 		try {
-			element.style.opacity = '0';
-			element.style.transform = 'scale(0.2)';
-
-			const animation = animateFunc(
-				element,
-				{
-					opacity: [ 0, 1 ],
-					scale: [ 0.2, 1 ],
-				},
-				{
-					duration: 0.5,
-					easing: 'ease-out',
-				},
-			);
-
-			if ( animation && 'function' === typeof animation.then ) {
-				animation.then( () => {
-					element.style.opacity = '';
-					element.style.transform = '';
-				} );
-			} else {
-				setTimeout( () => {
-					element.style.opacity = '';
-					element.style.transform = '';
-				}, 500 );
-			}
-		} catch {
-			element.style.opacity = '';
-			element.style.transform = '';
+			parsedData = JSON.parse( interactionsData );
+		} catch ( error ) {
+			return;
 		}
 
-		// TODO: Parse and apply actual interactions once we verify the system works
-		// let interactions = [];
-		// try {
-		// 	interactions = JSON.parse( interactionsData );
-		// } catch ( error ) {
-		// 	console.error( '[Editor Interactions Handler] Error parsing interactions:', error );
-		// 	return;
-		// }
-		// interactions.forEach( ( interaction ) => {
-		// 	const animationName =
-		// 		'string' === typeof interaction
-		// 			? interaction
-		// 			: interaction?.animation?.animation_id;
-		// 	const animConfig = animationName && parseAnimationName( animationName );
-		// 	if ( animConfig ) {
-		// 		applyAnimation( element, animConfig, animateFunc );
-		// 	}
-		// } );
+		const interactions = Object.values( parsedData?.items );
+
+		interactions.forEach( ( interaction ) => {
+			const animationName =
+				'string' === typeof interaction
+					? interaction
+					: interaction?.animation?.animation_id;
+
+			const animConfig = animationName && parseAnimationName( animationName );
+
+			if ( animConfig ) {
+				applyAnimation( element, animConfig, animateFunc );
+			}
+		} );
 	}
 
 	let previousInteractionsData = [];
@@ -151,8 +123,7 @@
 				( prev ) => prev.dataId === currentItem.dataId,
 			);
 
-			const hasChanged = ! previousItem || previousItem.interactions !== currentItem.interactions;
-			return hasChanged;
+			return ! previousItem || previousItem.interactions !== currentItem.interactions;
 		} );
 
 		changedItems.forEach( ( item ) => {
@@ -171,7 +142,6 @@
 			return;
 		}
 
-		// Watch the head for when the script tag appears (Portal injects it later)
 		const head = document.head;
 		let scriptTag = null;
 		let observer = null;
@@ -191,12 +161,10 @@
 				subtree: true,
 			} );
 
-			// Initial load
 			handleInteractionsUpdate();
 			registerWindowEvents();
 		}
 
-		// Watch head for script tag to appear
 		const headObserver = new MutationObserver( () => {
 			const foundScriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
 			if ( foundScriptTag && foundScriptTag !== scriptTag ) {
@@ -207,7 +175,7 @@
 		} );
 
 		headObserver.observe( head, {
-			childList: true, // Watch for new script tags being added
+			childList: true,
 			subtree: true,
 		} );
 
@@ -238,7 +206,6 @@
 		}
 	}
 
-	// Initialize when DOM is ready
 	if ( 'loading' === document.readyState ) {
 		document.addEventListener( 'DOMContentLoaded', initEditorInteractionsHandler );
 	} else {
