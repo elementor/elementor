@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createContext, type ReactNode, useContext } from 'react';
+import { createContext, type ReactNode, useContext, useEffect } from 'react';
 import { playElementInteractions, updateElementInteractions, useElementInteractions } from '@elementor/editor-elements';
 
 type InteractionsContextValue = {
@@ -13,6 +13,10 @@ const InteractionsContext = createContext< InteractionsContextValue | null >( nu
 export const InteractionsProvider = ( { children, elementId }: { children: ReactNode; elementId: string } ) => {
 	const interactions = useElementInteractions( elementId );
 
+	useEffect( () => {
+		window.dispatchEvent( new CustomEvent( 'elementor/element/update_interactions' ) );
+	}, [] );
+	
 	const setInteractions = ( value: string | undefined ) => {
 		updateElementInteractions( {
 			elementId,

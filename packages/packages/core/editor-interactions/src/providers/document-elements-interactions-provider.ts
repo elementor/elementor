@@ -25,38 +25,48 @@ export const documentElementsInteractionsProvider = createInteractionsProvider( 
 		all: () => {
 			const elements = getElements();
 
-			return elements
-				.filter( ( element ) => {
-					const interactions = element.model.get( 'interactions' );
-					if ( ! interactions ) {
-						return false;
-					}
-					// Check if interactions array has items or string is not empty
-					if ( Array.isArray( interactions ) ) {
-						return interactions.length > 0;
-					}
-					if ( typeof interactions === 'string' ) {
-						try {
-							const parsed = JSON.parse( interactions );
-							return Array.isArray( parsed ) ? parsed.length > 0 : !! parsed;
-						} catch {
-							return !! interactions.trim();
-						}
-					}
-					return false;
-				} )
-				.map( ( element ) => {
-					const interactions = getElementInteractions( element.id );
-					// data-id in template is always set to element.id (from $this->get_id())
-					// So we use element.id, not _cssid (which is used for id attribute, not data-id)
-					const dataId = String( element.id );
+			const filtered = elements.filter( ( element ) => {
+				const interactions = element.model.get( 'interactions' );
 
-					return {
-						elementId: element.id,
-						dataId,
-						interactions: interactions || '[]',
-					};
-				} );
+				if ( ! interactions ) {
+					return false;
+				}
+
+				if ( Array.isArray( interactions ) ) {
+					return interactions.length > 0;
+				}
+				
+				if ( typeof interactions === 'string' ) {
+					try {
+						const parsed = JSON.parse( interactions );
+						return Array.isArray( parsed ) ? parsed.length > 0 : !! parsed;
+					} catch {
+						return !! interactions.trim();
+					}
+				}
+
+				if ( typeof interactions === 'object' && interactions !== null ) {
+					
+					if ( Array.isArray( interactions.items ) ) {
+						return interactions.items.length > 0;
+					}
+
+					return Object.keys( interactions ).length > 0;
+				}
+				return false;
+			} );
+
+			return filtered.map( ( element ) => {
+				const interactions = getElementInteractions( element.id );
+				
+				const dataId = String( element.id );
+
+				return {
+					elementId: element.id,
+					dataId,
+					interactions: interactions || '[]',
+				};
+			} );
 		},
 	},
 } );

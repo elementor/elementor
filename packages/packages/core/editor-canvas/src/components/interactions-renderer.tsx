@@ -13,9 +13,9 @@ export function InteractionsRenderer() {
 		return null;
 	}
 
-	const interactionsData = JSON.stringify( interactionItems );
-
-	return (
+	const interactionsData = JSON.stringify( Array.isArray( interactionItems ) ? interactionItems : [] );
+    
+    return (
 		<Portal container={ container }>
 			<script
 				type="application/json"
