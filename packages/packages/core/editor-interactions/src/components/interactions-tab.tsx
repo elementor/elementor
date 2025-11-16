@@ -2,12 +2,12 @@ import * as React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useElementInteractions } from '@elementor/editor-elements';
 import { SessionStorageProvider } from '@elementor/session';
+import { Stack } from '@elementor/ui';
 
 import { InteractionsProvider, useInteractionsContext } from '../contexts/interactions-context';
-import { PopupStateProvider, usePopupStateContext } from '../contexts/popup-state-context';
+import { PopupStateProvider } from '../contexts/popup-state-context';
 import { EmptyState } from './empty-state';
 import { InteractionsList } from './interactions-list';
-import { Stack } from '@elementor/ui';
 
 export const InteractionsTab = ( { elementId }: { elementId: string } ) => {
 	return (
@@ -19,7 +19,7 @@ export const InteractionsTab = ( { elementId }: { elementId: string } ) => {
 
 function InteractionsTabContent( { elementId }: { elementId: string } ) {
 	const existingInteractions = useElementInteractions( elementId );
-	const [ firstInteraction, setFirstInteraction ] = useState<boolean>( false );
+	const [ firstInteraction, setFirstInteraction ] = useState< boolean >( false );
 	const [ showInteractions, setShowInteractions ] = useState( () => {
 		const parsed = JSON.parse( existingInteractions || '{}' );
 		if ( parsed && parsed?.items?.length > 0 ) {

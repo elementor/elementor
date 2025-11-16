@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Divider, Grid, Stack } from '@elementor/ui';
+import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { Direction } from './controls/direction';
@@ -33,7 +33,7 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 	useEffect( () => {
 		const newValue = Object.values( interactionDetails ).join( DELIMITER );
 		onChange( newValue );
-	}, [ interactionDetails ] );
+	}, [ interactionDetails, onChange ] );
 
 	const handleChange = < K extends keyof typeof interactionDetails >(
 		key: K,
