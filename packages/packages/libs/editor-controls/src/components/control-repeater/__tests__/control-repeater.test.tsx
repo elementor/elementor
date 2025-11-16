@@ -4,12 +4,12 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { usePropContext } from '../../../bound-prop-context';
 import { useBoundProp } from '../../../bound-prop-context/use-bound-prop';
+import { RepeaterHeader } from '../../repeater/repeater-header';
 import { DisableItemAction } from '../actions/disable-item-action';
 import { DuplicateItemAction } from '../actions/duplicate-item-action';
 import { RemoveItemAction } from '../actions/remove-item-action';
 import { TooltipAddItemAction } from '../actions/tooltip-add-item-action';
 import { ControlRepeater } from '../control-repeater';
-import { Header } from '../header/header';
 import { EditItemPopover } from '../items/edit-item-popover';
 import { Item } from '../items/item';
 import { ItemsContainer } from '../items/items-container';
@@ -33,6 +33,7 @@ const globalUseBoundPropArgs = {
 	propType: createMockPropType.prototype,
 	path: [],
 	restoreValue: jest.fn(),
+	resetValue: jest.fn(),
 };
 
 const setValuesWrapper = ( setValues: ( value: unknown ) => void ) => {
@@ -61,9 +62,9 @@ describe( 'ControlRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<ControlRepeater { ...defaultProps }>
-				<Header label={ 'Test Repeater' }>
+				<RepeaterHeader label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
-				</Header>
+				</RepeaterHeader>
 				<ItemsContainer>
 					<Item { ...createItemSettings() } />
 				</ItemsContainer>
@@ -102,9 +103,9 @@ describe( 'ControlRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<ControlRepeater { ...defaultProps }>
-				<Header label={ 'Test Repeater' }>
+				<RepeaterHeader label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
-				</Header>
+				</RepeaterHeader>
 				<ItemsContainer>
 					<Item { ...createItemSettings() } />
 				</ItemsContainer>
@@ -143,9 +144,9 @@ describe( 'ControlRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<ControlRepeater { ...defaultProps }>
-				<Header label={ 'Test Repeater' }>
+				<RepeaterHeader label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
-				</Header>
+				</RepeaterHeader>
 				<ItemsContainer>
 					<Item { ...createItemSettings() } />
 				</ItemsContainer>
@@ -191,9 +192,9 @@ describe( 'ControlRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<ControlRepeater { ...defaultProps }>
-				<Header label={ 'Test Repeater' }>
+				<RepeaterHeader label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
-				</Header>
+				</RepeaterHeader>
 				<ItemsContainer>
 					<Item { ...createItemSettings() } />
 				</ItemsContainer>
@@ -228,9 +229,9 @@ describe( 'ControlRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<ControlRepeater { ...defaultProps }>
-				<Header label={ 'Test Repeater' }>
+				<RepeaterHeader label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
-				</Header>
+				</RepeaterHeader>
 				<ItemsContainer>
 					<Item { ...createItemSettings() } />
 				</ItemsContainer>
@@ -314,9 +315,9 @@ describe( 'ControlRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<ControlRepeater { ...defaultProps } initial={ customInitialValues }>
-				<Header label={ 'Test Repeater' }>
+				<RepeaterHeader label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
-				</Header>
+				</RepeaterHeader>
 				<ItemsContainer>
 					<Item { ...customItemSettings } />
 				</ItemsContainer>
@@ -359,9 +360,9 @@ describe( 'ControlRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<ControlRepeater { ...defaultProps }>
-				<Header label={ 'Test Repeater' }>
+				<RepeaterHeader label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
-				</Header>
+				</RepeaterHeader>
 				<ItemsContainer>
 					<Item { ...itemSettings } actions={ <DuplicateItemAction /> } />
 				</ItemsContainer>
@@ -418,9 +419,9 @@ describe( 'ControlRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<ControlRepeater { ...defaultProps }>
-				<Header label={ 'Test Repeater' }>
+				<RepeaterHeader label={ 'Test Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Test repeater' } />
-				</Header>
+				</RepeaterHeader>
 				<ItemsContainer>
 					<Item { ...itemSettings } actions={ <RemoveItemAction /> } />
 				</ItemsContainer>
@@ -471,9 +472,9 @@ describe( 'ControlRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<ControlRepeater { ...defaultProps } initial={ initialValues }>
-				<Header label={ 'Repeater' }>
+				<RepeaterHeader label={ 'Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Repeater' } />
-				</Header>
+				</RepeaterHeader>
 				<ItemsContainer>
 					<Item { ...itemSettings } actions={ <DisableItemAction /> } />
 				</ItemsContainer>
@@ -521,9 +522,9 @@ describe( 'ControlRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<ControlRepeater { ...defaultProps } initial={ initialValues }>
-				<Header label={ 'Repeater' }>
+				<RepeaterHeader label={ 'Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Repeater' } />
-				</Header>
+				</RepeaterHeader>
 				<ItemsContainer>
 					<Item { ...itemSettings } actions={ <DisableItemAction /> } />
 				</ItemsContainer>
@@ -573,9 +574,9 @@ describe( 'ControlRepeater', () => {
 		// Act.
 		renderWithTheme(
 			<ControlRepeater { ...defaultProps } initial={ initialValues }>
-				<Header label={ 'Repeater' }>
+				<RepeaterHeader label={ 'Repeater' }>
 					<TooltipAddItemAction ariaLabel={ 'Repeater' } />
-				</Header>
+				</RepeaterHeader>
 				<ItemsContainer>
 					<Item { ...itemSettings } />
 				</ItemsContainer>

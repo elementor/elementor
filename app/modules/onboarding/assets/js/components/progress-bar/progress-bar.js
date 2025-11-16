@@ -3,11 +3,17 @@ import { OnboardingContext } from '../../context/context';
 import { useNavigate } from '@reach/router';
 
 import ProgressBarItem from './progress-bar-item';
-import { OnboardingEventTracking } from '../../utils/onboarding-event-tracking';
+import { OnboardingEventTracking, ONBOARDING_STORAGE_KEYS } from '../../utils/onboarding-event-tracking';
 
 export default function ProgressBar() {
 	const { state } = useContext( OnboardingContext ),
 		navigate = useNavigate(),
+		experiment201Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT ),
+		isExperiment201VariantB = 'B' === experiment201Variant,
+		experiment401Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT401_VARIANT ),
+		isExperiment401VariantB = 'B' === experiment401Variant,
+		experiment402Variant = localStorage.getItem( ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT ),
+		isExperiment402VariantB = 'B' === experiment402Variant,
 		progressBarItemsConfig = [
 			{
 				id: 'account',
@@ -20,7 +26,7 @@ export default function ProgressBar() {
 	if ( ! elementorAppConfig.onboarding.helloActivated ) {
 		progressBarItemsConfig.push( {
 			id: 'hello',
-			title: __( 'Hello Biz Theme', 'elementor' ),
+			title: isExperiment201VariantB ? __( 'Choose Theme', 'elementor' ) : __( 'Hello Biz Theme', 'elementor' ),
 			route: 'hello',
 		} );
 	}
@@ -44,10 +50,12 @@ export default function ProgressBar() {
 		} );
 	}
 
+	const goodToGoTitle = ( isExperiment401VariantB || isExperiment402VariantB ) ? __( 'Start Creating Site', 'elementor' ) : __( 'Good to Go', 'elementor' );
+
 	progressBarItemsConfig.push(
 		{
 			id: 'goodToGo',
-			title: __( 'Good to Go', 'elementor' ),
+			title: goodToGoTitle,
 			route: 'good-to-go',
 		},
 	);

@@ -5,7 +5,7 @@ import { FormLabel, Grid, styled, type SxProps, type Theme, UnstableColorIndicat
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
-import { ControlRepeater, Header, Item, ItemsContainer, TooltipAddItemAction } from '../components/control-repeater';
+import { ControlRepeater, Item, ItemsContainer, TooltipAddItemAction } from '../components/control-repeater';
 import { DisableItemAction } from '../components/control-repeater/actions/disable-item-action';
 import { DuplicateItemAction } from '../components/control-repeater/actions/duplicate-item-action';
 import { RemoveItemAction } from '../components/control-repeater/actions/remove-item-action';
@@ -13,10 +13,11 @@ import { useRepeaterContext } from '../components/control-repeater/context/repea
 import { EditItemPopover } from '../components/control-repeater/items/edit-item-popover';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
+import { RepeaterHeader } from '../components/repeater/repeater-header';
 import { createControl } from '../create-control';
 import { ColorControl } from './color-control';
 import { SelectControl } from './select-control';
-import { SizeControl } from './size-control';
+import { CUSTOM_SIZE_LABEL, SizeControl } from './size-control';
 
 export const BoxShadowRepeaterControl = createControl( () => {
 	const { propType, value, setValue, disabled } = useBoundProp( boxShadowPropTypeUtil );
@@ -24,9 +25,9 @@ export const BoxShadowRepeaterControl = createControl( () => {
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ () => disabled }>
 			<ControlRepeater initial={ initialShadow } propTypeUtil={ boxShadowPropTypeUtil }>
-				<Header label={ __( 'Box shadow', 'elementor' ) }>
+				<RepeaterHeader label={ __( 'Box shadow', 'elementor' ) }>
 					<TooltipAddItemAction newItemIndex={ 0 } disabled={ disabled } ariaLabel={ 'Box shadow' } />
-				</Header>
+				</RepeaterHeader>
 				<ItemsContainer>
 					<Item
 						Icon={ ItemIcon }
@@ -135,11 +136,19 @@ const ItemLabel = ( { value }: { value: ShadowPropValue } ) => {
 	const positionLabel = position?.value || 'outset';
 
 	const sizes = [
-		hOffsetSize + hOffsetUnit,
-		vOffsetSize + vOffsetUnit,
-		blurSize + blurUnit,
-		spreadSize + spreadUnit,
-	].join( ' ' );
+		[ hOffsetSize, hOffsetUnit ],
+		[ vOffsetSize, vOffsetUnit ],
+		[ blurSize, blurUnit ],
+		[ spreadSize, spreadUnit ],
+	]
+		.map( ( [ size, unit ] ) => {
+			if ( unit !== 'custom' ) {
+				return size + unit;
+			}
+
+			return ! size ? CUSTOM_SIZE_LABEL : size;
+		} )
+		.join( ' ' );
 
 	return (
 		<span style={ { textTransform: 'capitalize' } }>

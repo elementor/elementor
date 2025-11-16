@@ -209,9 +209,6 @@ class Widget_Star_Rating extends Widget_Base {
 			]
 		);
 
-		$start = is_rtl() ? 'right' : 'left';
-		$end = ! is_rtl() ? 'right' : 'left';
-
 		$this->add_responsive_control(
 			'align',
 			[
@@ -220,7 +217,7 @@ class Widget_Star_Rating extends Widget_Base {
 				'options' => [
 					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => "eicon-text-align-$start",
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
@@ -228,13 +225,14 @@ class Widget_Star_Rating extends Widget_Base {
 					],
 					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => "eicon-text-align-$end",
+						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
+				'classes' => 'elementor-control-start-end',
 				'classes_dictionary' => [
 					'left' => is_rtl() ? 'end' : 'start',
 					'right' => is_rtl() ? 'start' : 'end',

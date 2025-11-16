@@ -29,6 +29,8 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS = 'emphasizeConnectBenefits101';
 	const EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ = 'offerThemeChoicesHelloBiz201';
+	const EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202 = 'emphasizeThemeValueAudience202';
+	const EXPERIMENT_UPDATE_COPY_VISUALS = 'updateCopyVisuals401';
 	const EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION = 'reduceHierarchyBlankOption402';
 
 	private ?API $editor_assets_api = null;
@@ -55,6 +57,12 @@ class Module extends BaseModule {
 		return $editor_assets_api->is_experiment_enabled( $experiment_key );
 	}
 
+	private function is_hello_theme_activated(): bool {
+		$current_theme = get_option( 'template' );
+		$hello_theme_variants = [ 'hello-elementor', 'hello-biz', 'hello-commerce', 'hello-theme' ];
+
+		return in_array( $current_theme, $hello_theme_variants, true );
+	}
 
 	private function get_editor_assets_api(): ?API {
 		if ( null !== $this->editor_assets_api ) {
@@ -113,7 +121,7 @@ class Module extends BaseModule {
 			'isLibraryConnected' => $library->is_connected(),
 			// Used to check if the Hello Elementor theme is installed but not activated.
 			'helloInstalled' => empty( $hello_theme_errors['theme_not_found'] ),
-			'helloActivated' => 'hello-elementor' === get_option( 'template' ),
+			'helloActivated' => $this->is_hello_theme_activated(),
 			// The "Use Hello theme on my site" checkbox should be checked by default only if this condition is met.
 			'helloOptOut' => count( $pages_and_posts->posts ) < 5,
 			'siteName' => esc_html( $site_name ),
@@ -160,10 +168,14 @@ class Module extends BaseModule {
 			'experiment' => true,
 			'isExperiment101Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS ),
 			'isExperiment201Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ ),
+			'isExperiment202Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202 ),
+			'isExperiment401Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_UPDATE_COPY_VISUALS ),
 			'isExperiment402Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION ),
 			'experimentNames' => [
 				'101' => self::EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS,
 				'201' => self::EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ,
+				'202' => self::EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202,
+				'401' => self::EXPERIMENT_UPDATE_COPY_VISUALS,
 				'402' => self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION,
 			],
 		] );

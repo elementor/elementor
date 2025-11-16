@@ -39,6 +39,7 @@ type BasePropTypeMeta = {
 
 type BasePropType< TValue > = {
 	default?: TValue | null;
+	initial_value?: TValue | null;
 	settings: Record< string, unknown >;
 	meta: BasePropTypeMeta;
 	dependencies?: Dependency;

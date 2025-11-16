@@ -2,8 +2,11 @@
 
 namespace Elementor\Modules\Components;
 
+use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
+use Elementor\Core\Utils\Collection;
+use Elementor\Modules\Components\Documents\Component;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -12,11 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Components_REST_API {
 	const API_NAMESPACE = 'elementor/v1';
 	const API_BASE = 'components';
+	const LOCK_DOCUMENT_TYPE_NAME = 'components';
 	const STYLES_ROUTE = 'styles';
 	const MAX_COMPONENTS = 50;
 
 	private $repository = null;
-
 	public function register_hooks() {
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
 	}
@@ -29,12 +32,19 @@ class Components_REST_API {
 		return $this->repository;
 	}
 
+	/**
+	 * @return Component_Lock_Manager instance
+	 */
+	private function get_component_lock_manager() {
+		return Component_Lock_Manager::get_instance();
+	}
+
 	private function register_routes() {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
 				'methods' => 'GET',
 				'callback' => fn() => $this->route_wrapper( fn() => $this->get_components() ),
-				'permission_callback' => fn() => is_user_logged_in(),
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 			],
 		] );
 
@@ -42,26 +52,114 @@ class Components_REST_API {
 			[
 				'methods' => 'GET',
 				'callback' => fn() => $this->route_wrapper( fn() => $this->get_styles() ),
-				'permission_callback' => fn() => is_user_logged_in(),
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 			],
 		] );
 
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
 			[
 				'methods' => 'POST',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->create_component( $request ) ),
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->create_components( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 				'args' => [
-					'name' => [
+					'status' => [
 						'type' => 'string',
+						'enum' => [ Document::STATUS_PUBLISH, Document::STATUS_DRAFT, Document::STATUS_AUTOSAVE ],
 						'required' => true,
 					],
-					'content' => [
+					'items' => [
 						'type' => 'array',
 						'required' => true,
 						'items' => [
 							'type' => 'object',
+							'properties' => [
+								'uid' => [
+									'type' => 'string',
+									'required' => true,
+								],
+								'title' => [
+									'type' => 'string',
+									'required' => true,
+									'minLength' => 2,
+									'maxLength' => 200,
+								],
+								'elements' => [
+									'type' => 'array',
+									'required' => true,
+									'items' => [
+										'type' => 'object',
+									],
+								],
+							],
 						],
+					],
+				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/status', [
+			[
+				'methods' => 'PUT',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->update_statuses( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'status' => [
+						'type' => 'string',
+						'required' => true,
+						'enum' => [ Document::STATUS_PUBLISH ],
+					],
+					'ids' => [
+						'type' => 'array',
+						'required' => true,
+						'items' => [
+							'type' => 'number',
+							'required' => true,
+						],
+					],
+				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/lock', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->lock_component( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'componentId' => [
+						'type' => 'number',
+						'required' => true,
+						'description' => 'The component ID to unlock',
+					],
+				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/unlock', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->unlock_component( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'componentId' => [
+						'type' => 'number',
+						'required' => true,
+						'description' => 'The component ID to unlock',
+					],
+				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/lock-status', [
+			[
+				'methods' => 'GET',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_lock_status( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'componentId' => [
+						'type' => 'string',
+						'required' => true,
+						'description' => 'The component ID to check lock status',
 					],
 				],
 			],
@@ -71,9 +169,10 @@ class Components_REST_API {
 	private function get_components() {
 		$components = $this->get_repository()->all();
 
-		$components_list = $components->get_components()->map( fn( $component ) => [
+		$components_list = $components->map( fn( $component ) => [
 			'id' => $component['id'],
-			'name' => $component['name'],
+			'name' => $component['title'],
+			'uid' => $component['uid'],
 		])->all();
 
 		return Response_Builder::make( $components_list )->build();
@@ -83,62 +182,158 @@ class Components_REST_API {
 		$components = $this->get_repository()->all();
 
 		$styles = [];
-		$components->get_components()->each( function( $component ) use ( &$styles ) {
+		$components->each( function( $component ) use ( &$styles ) {
 			$styles[ $component['id'] ] = $component['styles'];
 		} );
 
 		return Response_Builder::make( $styles )->build();
 	}
-	private function create_component( \WP_REST_Request $request ) {
+
+	private function create_components( \WP_REST_Request $request ) {
+		$save_status = $request->get_param( 'status' );
+
+		$items = Collection::make( $request->get_param( 'items' ) );
 		$components = $this->get_repository()->all();
-		$components_count = $components->get_components()->count();
 
-		if ( $components_count >= static::MAX_COMPONENTS ) {
-			return Error_Builder::make( 'components_limit_exceeded' )
+		$result = Save_Components_Validator::make( $components )->validate( $items );
+
+		if ( ! $result['success'] ) {
+			return Error_Builder::make( 'components_validation_failed' )
 				->set_status( 400 )
-				->set_message( sprintf(
-					/* translators: %d: maximum components limit. */
-					__( 'Components limit exceeded. Maximum allowed: %d', 'elementor' ),
-					static::MAX_COMPONENTS
-				) )
+				->set_message( 'Validation failed: ' . implode( ', ', $result['messages'] ) )
 				->build();
 		}
 
-		$parser = Components_Parser::make();
+		$created = $items->map_with_keys( function ( $item ) use ( $save_status ) {
+			$title = sanitize_text_field( $item['title'] );
+			$content = $item['elements'];
+			$uid = $item['uid'];
 
-		$name_result = $parser->parse_name( $request->get_param( 'name' ), $components->get_components()->map( fn( $component ) => $component['name'] )->all() );
+			$status = Document::STATUS_AUTOSAVE === $save_status
+				? Document::STATUS_DRAFT
+				: $save_status;
 
-		if ( ! $name_result->is_valid() ) {
-			return Error_Builder::make( 'invalid_name' )
-				->set_status( 400 )
-				->set_message( 'Invalid component name: ' . $name_result->errors()->to_string() )
-				->build();
-		}
+			$component_id = $this->get_repository()->create( $title, $content, $status, $uid );
 
-		$name = $name_result->unwrap();
-		// The content is validated & sanitized in the document save process.
-		$content = $request->get_param( 'content' );
+			return [ $uid => $component_id ];
+		} );
 
+		return Response_Builder::make( (object) $created->all() )
+			->set_status( 201 )
+			->build();
+	}
+
+	private function update_statuses( \WP_REST_Request $request ) {
+		$status = $request->get_param( 'status' );
+
+		$result = Collection::make( $request->get_param( 'ids' ) )
+			->map( fn( $id ) => $this->get_repository()->get( $id ) )
+			->filter( fn( $component ) => (bool) $component )
+			->reduce(
+				function ( $result, Component $component ) use ( $status ) {
+					$post = $component->get_post();
+					$autosave = $component->get_newer_autosave();
+
+					$elements = $autosave
+						? $autosave->get_json_meta( Document::ELEMENTOR_DATA_META_KEY )
+						: $component->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
+
+					$is_updated = $component->save( [
+						'settings' => [ 'post_status' => $status ],
+						'elements' => $elements,
+					] );
+
+					$result[ $is_updated ? 'success' : 'failed' ][] = $post->ID;
+
+					return $result;
+				},
+				[
+					'success' => [],
+					'failed' => [],
+				]
+			);
+
+		return Response_Builder::make( $result )->build();
+	}
+
+	private function lock_component( \WP_REST_Request $request ) {
+		$component_id = $request->get_param( 'componentId' );
 		try {
-			$component_id = $this->get_repository()->create( $name, $content );
-
-			return Response_Builder::make( [ 'component_id' => $component_id ] )->set_status( 201 )->build();
+			$success = $this->get_component_lock_manager()->lock( $component_id );
 		} catch ( \Exception $e ) {
-			$error_message = $e->getMessage();
+			error_log( 'Components REST API lock_component error: ' . $e->getMessage() );
+			return Error_Builder::make( 'lock_failed' )
+				->set_status( 500 )
+				->set_message( __( 'Failed to lock component', 'elementor' ) )
+				->build();
+		}
 
-			$invalid_elements_structure_error = str_contains( $error_message, 'Invalid data' );
-			$atomic_styles_validation_error = str_contains( $error_message, 'Styles validation failed' );
-			$atomic_settings_validation_error = str_contains( $error_message, 'Settings validation failed' );
+		if ( ! $success ) {
+			return Error_Builder::make( 'lock_failed' )
+				->set_status( 500 )
+				->set_message( __( 'Failed to lock component', 'elementor' ) )
+				->build();
+		}
 
-			if ( $invalid_elements_structure_error || $atomic_styles_validation_error || $atomic_settings_validation_error ) {
-				return Error_Builder::make( 'content_validation_failed' )
-											->set_status( 400 )
-											->set_message( $error_message )
-											->build();
+		return Response_Builder::make( [ 'locked' => $success ] )->build();
+	}
+
+	private function unlock_component( \WP_REST_Request $request ) {
+		$component_id = $request->get_param( 'componentId' );
+		try {
+			$success = $this->get_component_lock_manager()->unlock( $component_id );
+		} catch ( \Exception $e ) {
+			error_log( 'Components REST API unlock_component error: ' . $e->getMessage() );
+			return Error_Builder::make( 'unlock_failed' )
+				->set_status( 500 )
+				->set_message( __( 'Failed to unlock component', 'elementor' ) )
+				->build();
+		}
+
+		if ( ! $success ) {
+			return Error_Builder::make( 'unlock_failed' )
+				->set_status( 500 )
+				->set_message( __( 'Failed to unlock component', 'elementor' ) )
+				->build();
+		}
+		return Response_Builder::make( [ 'unlocked' => $success ] )->build();
+	}
+
+	private function get_lock_status( \WP_REST_Request $request ) {
+		$component_id = (int) $request->get_param( 'componentId' );
+		try {
+			$lock_data = $this->get_component_lock_manager()->get_updated_status( $component_id );
+			$is_current_user_allow_to_edit = $this->is_current_user_allow_to_edit( $component_id );
+
+			$locked_by = '';
+			if ( $lock_data['is_locked'] ) {
+				$locked_user = get_user_by( 'id', $lock_data['lock_user'] );
+				$locked_by = $locked_user ? $locked_user->display_name : '';
 			}
 
-			throw $e;
+			return Response_Builder::make( [
+				'is_current_user_allow_to_edit' => $is_current_user_allow_to_edit,
+				'locked_by' => $locked_by,
+			] )->build();
+		} catch ( \Exception $e ) {
+			error_log( 'Components REST API get_lock_status error: ' . $e->getMessage() );
+			return Error_Builder::make( 'get_lock_status_failed' )
+				->set_status( 500 )
+				->set_message( __( 'Failed to get lock status', 'elementor' ) )
+				->build();
 		}
+	}
+
+	private function is_current_user_allow_to_edit( $component_id ) {
+		$current_user_id = get_current_user_id();
+		try {
+			$lock_data = $this->get_component_lock_manager()->get_updated_status( $component_id );
+		} catch ( \Exception $e ) {
+			error_log( 'Components REST API is_current_user_allow_to_edit error: ' . $e->getMessage() );
+			return false;
+		}
+
+		return ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] === (int) $current_user_id;
 	}
 
 	private function route_wrapper( callable $cb ) {

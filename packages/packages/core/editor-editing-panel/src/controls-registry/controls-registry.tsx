@@ -1,7 +1,9 @@
 import {
 	type ControlComponent,
+	DateTimeControl,
 	HtmlTagControl,
 	ImageControl,
+	InlineEditingControl,
 	KeyValueControl,
 	LinkControl,
 	NumberControl,
@@ -19,6 +21,8 @@ import {
 import { type ControlLayout } from '@elementor/editor-elements';
 import {
 	booleanPropTypeUtil,
+	DateTimePropTypeUtil,
+	htmlPropTypeUtil,
 	imagePropTypeUtil,
 	imageSrcPropTypeUtil,
 	keyValuePropTypeUtil,
@@ -54,6 +58,8 @@ const controlTypes = {
 	'key-value': { component: KeyValueControl, layout: 'full', propTypeUtil: keyValuePropTypeUtil },
 	'html-tag': { component: HtmlTagControl, layout: 'two-columns', propTypeUtil: stringPropTypeUtil },
 	toggle: { component: ToggleControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
+	'date-time': { component: DateTimeControl, layout: 'full', propTypeUtil: DateTimePropTypeUtil },
+	'inline-editing': { component: InlineEditingControl, layout: 'full', propTypeUtil: htmlPropTypeUtil },
 } as const satisfies ControlRegistry;
 
 export type ControlType = keyof typeof controlTypes;

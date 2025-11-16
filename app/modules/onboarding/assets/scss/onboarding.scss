@@ -73,6 +73,11 @@
 		width: 325px;
 		text-align: center;
 
+		&:not(:has(p))::before {
+			content: '*';
+			margin-right: 5px;
+		}
+
 		a {
 			text-decoration: underline;
 			color: $platform-darker-gray;
@@ -80,7 +85,7 @@
 	}
 }
 
-#e-app ~ #__wp-uploader-id-2 .media-modal {
+#e-app~#__wp-uploader-id-2 .media-modal {
 	max-width: 1024px;
 	max-height: 768px;
 	margin: auto;

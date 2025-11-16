@@ -364,42 +364,6 @@ class OnboardingTracker {
 		return allFeatures;
 	}
 
-	sendHelloBizContinue( stepNumber ) {
-		const numericStepNumber = this.mapPageIdToStepNumber( stepNumber ) || stepNumber;
-
-		this.trackStepAction( numericStepNumber, 'hello_biz_continue' );
-
-		if ( EventDispatcher.canSendEvents() ) {
-			return EventDispatcher.dispatchStepEvent(
-				ONBOARDING_EVENTS_MAP.HELLO_BIZ_CONTINUE,
-				numericStepNumber,
-				ONBOARDING_STEP_NAMES.HELLO_BIZ,
-				{
-					location: 'plugin_onboarding',
-				},
-			);
-		}
-	}
-
-	sendThemeChoiceEvent( currentStep, themeValue ) {
-		this.trackStepAction( 2, 'theme_choice', {
-			theme: themeValue,
-		} );
-
-		if ( EventDispatcher.canSendEvents() ) {
-			const payload = EventDispatcher.createStepEventPayload(
-				2,
-				ONBOARDING_STEP_NAMES.HELLO_BIZ,
-				{
-					location: 'plugin_onboarding',
-					trigger: 'theme_selected',
-					theme: themeValue,
-				},
-			);
-			return this.dispatchEventWithoutTrigger( ONBOARDING_EVENTS_MAP.THEME_CHOICE, payload );
-		}
-	}
-
 	sendTopUpgrade( currentStep, upgradeClicked ) {
 		const stepNumber = this.getStepNumber( currentStep );
 		if ( stepNumber ) {
@@ -545,7 +509,22 @@ class OnboardingTracker {
 		this.trackStepAction( 4, 'site_starter', {
 			source_type: siteStarter,
 		} );
+		this.sendStep4SiteStarter( siteStarter );
 		this.sendStepEndState( 4 );
+	}
+
+	sendStep4SiteStarter( siteStarter ) {
+		if ( EventDispatcher.canSendEvents() ) {
+			return EventDispatcher.dispatchStepEvent(
+				ONBOARDING_EVENTS_MAP.STEP4_SITE_STARTER,
+				4,
+				ONBOARDING_STEP_NAMES.SITE_STARTER,
+				{
+					location: 'plugin_onboarding',
+					site_starter: siteStarter,
+				},
+			);
+		}
 	}
 
 	checkAndSendEditorLoadedFromOnboarding() {
@@ -771,21 +750,14 @@ class OnboardingTracker {
 
 	sendAppropriateStatusEvent( status, data = null ) {
 		const hasCreateAccountAction = StorageManager.exists( ONBOARDING_STORAGE_KEYS.PENDING_CREATE_MY_ACCOUNT );
-		const hasConnectAction = StorageManager.exists( ONBOARDING_STORAGE_KEYS.PENDING_STEP1_CLICKED_CONNECT );
 
 		if ( hasCreateAccountAction ) {
 			this.sendEventDirect( 'CREATE_ACCOUNT_STATUS', { status, currentStep: 1 } );
-		} else if ( hasConnectAction ) {
-			if ( data ) {
-				this.sendEventDirect( 'CONNECT_STATUS', { status, trackingOptedIn: data.tracking_opted_in, userTier: data.access_tier } );
-			} else {
-				this.sendEventDirect( 'CONNECT_STATUS', { status, trackingOptedIn: false, userTier: null } );
-			}
-		} else if ( data ) {
-			this.sendEventDirect( 'CONNECT_STATUS', { status, trackingOptedIn: data.tracking_opted_in, userTier: data.access_tier } );
-		} else {
-			this.sendEventDirect( 'CONNECT_STATUS', { status, trackingOptedIn: false, userTier: null } );
 		}
+
+		const trackingOptedIn = data?.tracking_opted_in || false;
+		const userTier = data?.access_tier || null;
+		this.sendEventDirect( 'CONNECT_STATUS', { status, trackingOptedIn, userTier } );
 	}
 
 	sendAllStoredEvents() {
@@ -1094,11 +1066,74 @@ class OnboardingTracker {
 		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
 			this.sendStoredStep1EventsOnStep2();
 			this.sendExperimentStarted( 201 );
+			this.sendExperimentStarted( 202 );
+			this.sendStep2ThemesLoaded();
 		}
 
 		if ( 4 === stepNumber || 'goodToGo' === currentStep ) {
 			this.checkAndSendReturnToStep4();
+			this.sendExperimentStarted( 401 );
 			this.sendExperimentStarted( 402 );
+			this.sendStep4Loaded();
+		}
+	}
+
+	sendStep2ThemesLoaded() {
+		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.STEP2_THEMES_LOADED_SENT ) ) {
+			return;
+		}
+
+		if ( EventDispatcher.canSendEvents() ) {
+			StorageManager.setString( ONBOARDING_STORAGE_KEYS.STEP2_THEMES_LOADED_SENT, 'true' );
+			return EventDispatcher.dispatchStepEvent(
+				ONBOARDING_EVENTS_MAP.STEP2_THEMES_LOADED,
+				2,
+				ONBOARDING_STEP_NAMES.HELLO_BIZ,
+				{
+					location: 'plugin_onboarding',
+				},
+			);
+		}
+	}
+
+	sendThemeInstalled( theme ) {
+		if ( EventDispatcher.canSendEvents() ) {
+			return EventDispatcher.dispatchStepEvent(
+				ONBOARDING_EVENTS_MAP.THEME_INSTALLED,
+				2,
+				ONBOARDING_STEP_NAMES.HELLO_BIZ,
+				{
+					location: 'plugin_onboarding',
+					theme,
+				},
+			);
+		}
+	}
+
+	sendThemeMarked( theme ) {
+		if ( EventDispatcher.canSendEvents() ) {
+			return EventDispatcher.dispatchStepEvent(
+				ONBOARDING_EVENTS_MAP.THEME_MARKED,
+				2,
+				ONBOARDING_STEP_NAMES.HELLO_BIZ,
+				{
+					location: 'plugin_onboarding',
+					theme,
+				},
+			);
+		}
+	}
+
+	sendStep4Loaded() {
+		if ( EventDispatcher.canSendEvents() ) {
+			return EventDispatcher.dispatchStepEvent(
+				ONBOARDING_EVENTS_MAP.STEP4_LOADED,
+				4,
+				ONBOARDING_STEP_NAMES.SITE_STARTER,
+				{
+					location: 'plugin_onboarding',
+				},
+			);
 		}
 	}
 
@@ -1139,6 +1174,18 @@ class OnboardingTracker {
 				enabledKey: 'isExperiment201Enabled',
 				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
 				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT201_STARTED,
+			},
+			202: {
+				name: 'core_onboarding_experiment202',
+				enabledKey: 'isExperiment202Enabled',
+				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT202_VARIANT,
+				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT202_STARTED,
+			},
+			401: {
+				name: 'core_onboarding_experiment401',
+				enabledKey: 'isExperiment401Enabled',
+				variantKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT401_VARIANT,
+				startedKey: ONBOARDING_STORAGE_KEYS.EXPERIMENT401_STARTED,
 			},
 			402: {
 				name: 'core_onboarding_experiment402',

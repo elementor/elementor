@@ -69,6 +69,8 @@ export default function createAtomicElementBaseView( type ) {
 				local.href = href;
 			}
 
+			local[ 'data-interaction-id' ] = this.model.get( 'id' );
+
 			customAttributes.forEach( ( attribute ) => {
 				const key = attribute.value?.key?.value;
 				const value = attribute.value?.value?.value;
@@ -302,7 +304,7 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		isDroppingAllowed() {
-			return true;
+			return this.getContainer().isEditable();
 		},
 
 		behaviors() {

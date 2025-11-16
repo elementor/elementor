@@ -76,24 +76,16 @@ class Style_Schema {
 	}
 
 	private function update_union( Union_Prop_Type $union_prop_type ): Union_Prop_Type {
-		$new_union = Union_Prop_Type::make();
-		$dependencies = $union_prop_type->get_dependencies();
-		$new_union->set_dependencies( $dependencies );
-
 		foreach ( $union_prop_type->get_prop_types() as $prop_type ) {
 			$updated = $this->update( $prop_type );
 
 			if ( $updated instanceof Union_Prop_Type ) {
 				foreach ( $updated->get_prop_types() as $updated_prop_type ) {
-					$new_union->add_prop_type( $updated_prop_type );
+					$union_prop_type->add_prop_type( $updated_prop_type );
 				}
-
-				continue;
 			}
-
-			$new_union->add_prop_type( $updated );
 		}
 
-		return $new_union;
+		return $union_prop_type;
 	}
 }

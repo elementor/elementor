@@ -5,27 +5,35 @@ import {
 	type SliceState,
 } from '@elementor/store';
 
-import { type Component, type ComponentId, type StylesDefinition } from '../types';
-import { createComponent, loadComponents } from './thunks';
+import {
+	type Component,
+	type ComponentId,
+	type PublishedComponent,
+	type StylesDefinition,
+	type UnpublishedComponent,
+} from '../types';
+import { loadComponents } from './thunks';
 
-type GetComponentResponse = Component[];
+type GetComponentResponse = PublishedComponent[];
 
 type Status = 'idle' | 'pending' | 'error';
 
 type ComponentsState = {
-	data: Component[];
+	data: PublishedComponent[];
+	unpublishedData: UnpublishedComponent[];
 	loadStatus: Status;
-	createStatus: Status;
 	styles: StylesDefinition;
+	createdThisSession: Component[ 'uid' ][];
 };
 
 type ComponentsSlice = SliceState< typeof slice >;
 
 export const initialState: ComponentsState = {
 	data: [],
+	unpublishedData: [],
 	loadStatus: 'idle',
-	createStatus: 'idle',
 	styles: {},
+	createdThisSession: [],
 };
 
 export const SLICE_NAME = 'components';
@@ -33,11 +41,21 @@ export const slice = createSlice( {
 	name: SLICE_NAME,
 	initialState,
 	reducers: {
-		add: ( state, { payload } ) => {
-			state.data = { ...payload };
+		add: ( state, { payload }: PayloadAction< PublishedComponent | PublishedComponent[] > ) => {
+			if ( Array.isArray( payload ) ) {
+				state.data = [ ...state.data, ...payload ];
+			} else {
+				state.data.unshift( payload );
+			}
 		},
-		load: ( state, { payload } ) => {
+		load: ( state, { payload }: PayloadAction< PublishedComponent[] > ) => {
 			state.data = payload;
+		},
+		addUnpublished: ( state, { payload }: PayloadAction< UnpublishedComponent > ) => {
+			state.unpublishedData.unshift( payload );
+		},
+		resetUnpublished: ( state ) => {
+			state.unpublishedData = [];
 		},
 		removeStyles( state, { payload }: PayloadAction< { id: ComponentId } > ) {
 			const { [ payload.id ]: _, ...rest } = state.styles;
@@ -46,6 +64,9 @@ export const slice = createSlice( {
 		},
 		addStyles: ( state, { payload } ) => {
 			state.styles = { ...state.styles, ...payload };
+		},
+		addCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
+			state.createdThisSession.push( payload );
 		},
 	},
 	extraReducers: ( builder ) => {
@@ -59,31 +80,32 @@ export const slice = createSlice( {
 		builder.addCase( loadComponents.rejected, ( state ) => {
 			state.loadStatus = 'error';
 		} );
-		builder.addCase( createComponent.fulfilled, ( state, { payload, meta } ) => {
-			state.createStatus = 'idle';
-			state.data.push( {
-				id: payload.component_id,
-				name: meta.arg.name,
-			} );
-		} );
-		builder.addCase( createComponent.pending, ( state ) => {
-			state.createStatus = 'pending';
-		} );
-		builder.addCase( createComponent.rejected, ( state ) => {
-			state.createStatus = 'error';
-		} );
 	},
 } );
 
 const selectData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].data;
 const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadStatus;
-const selectCreateStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].createStatus;
 const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
+const selectUnpublishedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].unpublishedData;
+const getCreatedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].createdThisSession;
 
-export const selectComponents = createSelector( selectData, ( data: Component[] ) => data );
+export const selectComponents = createSelector(
+	selectData,
+	selectUnpublishedData,
+	( data: PublishedComponent[], unpublishedData: UnpublishedComponent[] ) => [
+		...unpublishedData.map( ( item ) => ( { uid: item.uid, name: item.name } ) ),
+		...data,
+	]
+);
+export const selectUnpublishedComponents = createSelector(
+	selectUnpublishedData,
+	( unpublishedData: UnpublishedComponent[] ) => unpublishedData
+);
 export const selectLoadIsPending = createSelector( selectLoadStatus, ( status ) => status === 'pending' );
 export const selectLoadIsError = createSelector( selectLoadStatus, ( status ) => status === 'error' );
-export const selectCreateIsPending = createSelector( selectCreateStatus, ( status ) => status === 'pending' );
-export const selectCreateIsError = createSelector( selectCreateStatus, ( status ) => status === 'error' );
 export const selectStyles = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
 export const selectFlatStyles = createSelector( selectStylesDefinitions, ( data ) => Object.values( data ).flat() );
+export const selectCreatedThisSession = createSelector(
+	getCreatedThisSession,
+	( createdThisSession ) => createdThisSession
+);

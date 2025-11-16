@@ -1,13 +1,15 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { getElementLabel, type V1Element } from '@elementor/editor-elements';
+import { getElementLabel, type V1Element, type V1ElementData } from '@elementor/editor-elements';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { StarIcon } from '@elementor/icons';
+import { __useDispatch as useDispatch } from '@elementor/store';
 import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Typography } from '@elementor/ui';
+import { generateUniqueId } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
-import { useCreateComponent } from '../../hooks/use-create-component';
+import { slice } from '../../store/store';
 import { type ComponentFormValues } from '../../types';
 import { useForm } from './hooks/use-form';
 import { createBaseComponentSchema, createSubmitComponentSchema } from './utils/component-form-schema';
@@ -34,7 +36,8 @@ export function CreateComponentForm() {
 
 	const [ resultNotification, setResultNotification ] = useState< ResultNotification | null >( null );
 
-	const { createComponent, isPending } = useCreateComponent();
+	const dispatch = useDispatch();
+
 	useEffect( () => {
 		const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
 
@@ -50,32 +53,32 @@ export function CreateComponentForm() {
 		};
 	}, [] );
 
-	const handleSave = async ( values: ComponentFormValues ) => {
-		if ( ! element ) {
-			throw new Error( `Can't save element as component: element not found` );
-		}
-
+	const handleSave = ( values: ComponentFormValues ) => {
 		try {
-			const result = await createComponent( {
-				name: values.componentName,
-				content: [ element.element.model.toJSON( { remove: [ 'default' ] } ) ],
-			} );
-
 			if ( ! element ) {
-				throw new Error( `Can't replace element with component: element not found` );
+				throw new Error( `Can't save element as component: element not found` );
 			}
 
-			replaceElementWithComponent( element.element, {
-				id: result.component_id,
-				name: values.componentName,
-			} );
+			const uid = generateUniqueId( 'component' );
+
+			dispatch(
+				slice.actions.addUnpublished( {
+					uid,
+					name: values.componentName,
+					elements: [ element.element.model.toJSON( { remove: [ 'default' ] } ) as V1ElementData ],
+				} )
+			);
+
+			dispatch( slice.actions.addCreatedThisSession( uid ) );
+
+			replaceElementWithComponent( element.element, { uid, name: values.componentName } );
 
 			setResultNotification( {
 				show: true,
-				// Translators: %1$s: Component name, %2$s: Component ID
-				message: __( 'Component saved successfully as: %1$s (ID: %2$s)', 'elementor' )
+				// Translators: %1$s: Component name, %2$s: Component UID
+				message: __( 'Component saved successfully as: %1$s (UID: %2$s)', 'elementor' )
 					.replace( '%1$s', values.componentName )
-					.replace( '%2$s', result.component_id.toString() ),
+					.replace( '%2$s', uid ),
 				type: 'success',
 			} );
 
@@ -95,11 +98,15 @@ export function CreateComponentForm() {
 		setAnchorPosition( undefined );
 	};
 
+	const cancelSave = () => {
+		resetAndClosePopup();
+	};
+
 	return (
 		<ThemeProvider>
 			<Popover
 				open={ element !== null }
-				onClose={ resetAndClosePopup }
+				onClose={ cancelSave }
 				anchorReference="anchorPosition"
 				anchorPosition={ anchorPosition }
 			>
@@ -107,8 +114,7 @@ export function CreateComponentForm() {
 					<Form
 						initialValues={ { componentName: element.elementLabel } }
 						handleSave={ handleSave }
-						isSubmitting={ isPending }
-						closePopup={ resetAndClosePopup }
+						closePopup={ cancelSave }
 					/>
 				) }
 			</Popover>
@@ -130,12 +136,10 @@ const FONT_SIZE = 'tiny';
 const Form = ( {
 	initialValues,
 	handleSave,
-	isSubmitting,
 	closePopup,
 }: {
 	initialValues: ComponentFormValues;
 	handleSave: ( values: ComponentFormValues ) => void;
-	isSubmitting: boolean;
 	closePopup: () => void;
 } ) => {
 	const { values, errors, isValid, handleChange, validateForm } = useForm< ComponentFormValues >( initialValues );
@@ -199,17 +203,17 @@ const Form = ( {
 				</Grid>
 			</Grid>
 			<Stack direction="row" justifyContent="flex-end" alignSelf="end" py={ 1 } px={ 1.5 }>
-				<Button onClick={ closePopup } disabled={ isSubmitting } color="secondary" variant="text" size="small">
+				<Button onClick={ closePopup } color="secondary" variant="text" size="small">
 					{ __( 'Cancel', 'elementor' ) }
 				</Button>
 				<Button
 					onClick={ handleSubmit }
-					disabled={ isSubmitting || ! isValid }
+					disabled={ ! isValid }
 					variant="contained"
 					color="primary"
 					size="small"
 				>
-					{ isSubmitting ? __( 'Creating…', 'elementor' ) : __( 'Create', 'elementor' ) }
+					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</Stack>
 		</Stack>

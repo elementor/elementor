@@ -28,6 +28,10 @@ export const ONBOARDING_STORAGE_KEYS = {
 	EXPERIMENT101_STARTED: 'elementor_onboarding_experiment101_started',
 	EXPERIMENT201_VARIANT: 'elementor_onboarding_experiment201_variant',
 	EXPERIMENT201_STARTED: 'elementor_onboarding_experiment201_started',
+	EXPERIMENT202_VARIANT: 'elementor_onboarding_experiment202_variant',
+	EXPERIMENT202_STARTED: 'elementor_onboarding_experiment202_started',
+	EXPERIMENT401_VARIANT: 'elementor_onboarding_experiment401_variant',
+	EXPERIMENT401_STARTED: 'elementor_onboarding_experiment401_started',
 	EXPERIMENT402_VARIANT: 'elementor_onboarding_experiment402_variant',
 	EXPERIMENT402_STARTED: 'elementor_onboarding_experiment402_started',
 	PENDING_EXPERIMENT_DATA: 'elementor_onboarding_pending_experiment_data',
@@ -35,6 +39,7 @@ export const ONBOARDING_STORAGE_KEYS = {
 	STEP2_END_STATE_SENT: 'elementor_onboarding_step2_end_state_sent',
 	STEP3_END_STATE_SENT: 'elementor_onboarding_step3_end_state_sent',
 	STEP4_END_STATE_SENT: 'elementor_onboarding_step4_end_state_sent',
+	STEP2_THEMES_LOADED_SENT: 'elementor_onboarding_step2_themes_loaded_sent',
 };
 
 export function getString( key ) {
@@ -157,6 +162,7 @@ export function clearAllOnboardingData() {
 	remove( ONBOARDING_STORAGE_KEYS.STEP2_END_STATE_SENT );
 	remove( ONBOARDING_STORAGE_KEYS.STEP3_END_STATE_SENT );
 	remove( ONBOARDING_STORAGE_KEYS.STEP4_END_STATE_SENT );
+	remove( ONBOARDING_STORAGE_KEYS.STEP2_THEMES_LOADED_SENT );
 }
 
 export function clearExperimentData() {
@@ -165,6 +171,10 @@ export function clearExperimentData() {
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT101_STARTED,
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT201_VARIANT,
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT201_STARTED,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT202_VARIANT,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT202_STARTED,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT401_VARIANT,
+		ONBOARDING_STORAGE_KEYS.EXPERIMENT401_STARTED,
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT402_VARIANT,
 		ONBOARDING_STORAGE_KEYS.EXPERIMENT402_STARTED,
 		ONBOARDING_STORAGE_KEYS.PENDING_EXPERIMENT_DATA,
