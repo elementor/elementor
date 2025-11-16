@@ -26,6 +26,7 @@ export function Direction( { value, onChange }: FieldProps ) {
 					exclusive
 					onChange={ ( event: React.MouseEvent< HTMLElement >, newValue: string ) => onChange( newValue ) }
 					value={ value }
+					aria-label={ __( 'Direction', 'elementor' ) }
 				>
 					{ availableDirections.map( ( direction ) => {
 						return (
