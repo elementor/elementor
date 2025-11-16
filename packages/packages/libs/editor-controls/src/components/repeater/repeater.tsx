@@ -86,6 +86,7 @@ type RepeaterProps< T > = {
 	showDuplicate?: boolean;
 	showToggle?: boolean;
 	isSortable?: boolean;
+	openItem?: number;
 };
 
 const EMPTY_OPEN_ITEM = -1;
@@ -102,8 +103,9 @@ export const Repeater = < T, >( {
 	showToggle = true,
 	isSortable = true,
 	disableAddItemButton = false,
+	openItem: initialOpenItem = EMPTY_OPEN_ITEM,
 }: RepeaterProps< RepeaterItem< T > > ) => {
-	const [ openItem, setOpenItem ] = useState( EMPTY_OPEN_ITEM );
+	const [ openItem, setOpenItem ] = useState( initialOpenItem );
 
 	const [ items, setItems ] = useSyncExternalState( {
 		external: repeaterValues,

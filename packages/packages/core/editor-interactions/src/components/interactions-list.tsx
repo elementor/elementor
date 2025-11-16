@@ -8,38 +8,21 @@ import { getInteractionsConfig } from '../utils/get-interactions-config';
 import { InteractionDetails } from './interaction-details';
 import { Repeater } from '@elementor/editor-controls';
 
-type PredefinedInteractionsListProps = {
-	onSelectInteraction: ( interaction: string | null ) => void;
-	selectedInteraction: string;
-	onPlayInteraction: () => void;
-};
-
-export const PredefinedInteractionsList = ( {
-	onSelectInteraction,
-	selectedInteraction,
-	onPlayInteraction,
-}: PredefinedInteractionsListProps ) => {
-	return (
-		<Stack sx={ { m: 1, p: 1.5 } } gap={ 2 }>
-			<InteractionsList
-				selectedInteraction={ selectedInteraction }
-				onSelectInteraction={ onSelectInteraction }
-				onPlayInteraction={ onPlayInteraction }
-			/>
-		</Stack>
-	);
-};
-
-type InteractionListProps = {
+export type InteractionListProps = {
 	onSelectInteraction: ( interaction: string | null ) => void;
 	selectedInteraction: string | null;
 	onPlayInteraction: () => void;
+	triggerCreateOnShowEmpty?: boolean;
 };
 
-function InteractionsList( props: InteractionListProps ) {
-	const { onSelectInteraction, selectedInteraction, onPlayInteraction } = props;
+export function InteractionsList( props: InteractionListProps ) {
+	const { onSelectInteraction, selectedInteraction, onPlayInteraction, triggerCreateOnShowEmpty } = props;
 
 	const [ interactionId, setInteractionId ] = useState<string | null>( selectedInteraction );
+
+	if ( triggerCreateOnShowEmpty && ! interactionId ) {
+		setInteractionId( 'load-fade-in-left-100-0' );
+	}
 
 	useEffect( () => {
 		if ( interactionId !== selectedInteraction ) {
@@ -62,6 +45,7 @@ function InteractionsList( props: InteractionListProps ) {
 			<Repeater
 				addToBottom
 				openOnAdd
+				openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
 				label={ __( 'Interactions', 'elementor' ) }
 				values={ interactionId ? [ interactionId ] : [] }
 				setValues={ ( newValue: string[] ) => {
