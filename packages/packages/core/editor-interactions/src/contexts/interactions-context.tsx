@@ -4,7 +4,7 @@ import { playElementInteractions, updateElementInteractions, useElementInteracti
 
 type InteractionsContextValue = {
 	interactions: string;
-	setInteractions: ( value: string ) => void;
+	setInteractions: ( value: string | undefined ) => void;
 	playInteractions: () => void;
 };
 
@@ -13,10 +13,10 @@ const InteractionsContext = createContext< InteractionsContextValue | null >( nu
 export const InteractionsProvider = ( { children, elementId }: { children: ReactNode; elementId: string } ) => {
 	const interactions = useElementInteractions( elementId );
 
-	const setInteractions = ( value: string ) => {
+	const setInteractions = ( value: string | undefined ) => {
 		updateElementInteractions( {
 			elementId,
-			interactions: value,
+			interactions: value || undefined,
 		} );
 	};
 

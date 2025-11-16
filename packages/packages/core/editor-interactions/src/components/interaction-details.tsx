@@ -44,11 +44,11 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 
 	return (
 		<>
-			<Grid container spacing={ 2 } sx={ { width: '300px', p: 1 } }>
+			<Grid container spacing={ 2 } sx={ { p: 1.5 } }>
 				<Trigger value={ interactionDetails.trigger } onChange={ ( v ) => handleChange( 'trigger', v ) } />
 			</Grid>
-			<Divider />
-			<Grid container spacing={ 2 } sx={ { width: '300px', p: 1 } }>
+			<Divider sx={ { mx: 1.5 } } />
+			<Grid container spacing={ 2 } sx={ { p: 1.5 } }>
 				<Effect value={ interactionDetails.effect } onChange={ ( v ) => handleChange( 'effect', v ) } />
 				<EffectType value={ interactionDetails.type } onChange={ ( v ) => handleChange( 'type', v ) } />
 				<Direction
