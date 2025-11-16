@@ -8,8 +8,6 @@ import { __ } from '@wordpress/i18n';
 import { getInteractionsConfig } from '../utils/get-interactions-config';
 import { DEFAULT_INTERACTION, InteractionDetails } from './interaction-details';
 
-const DEFAULT_INTERACTION = 'load-fade-in-left-300-0';
-
 export type InteractionListProps = {
 	onSelectInteraction: ( interaction: string | null ) => void;
 	selectedInteraction: string | null;
