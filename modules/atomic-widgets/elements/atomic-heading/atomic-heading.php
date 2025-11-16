@@ -156,6 +156,76 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		];
 	}
 
+	public function get_script_depends() {
+		return [ 'elementor-heading-action-handler' ];
+	}
+
+	public function register_frontend_handlers() {
+		$min_suffix = ( \Elementor\Utils::is_script_debug() || \Elementor\Utils::is_elementor_tests() ) ? '' : '.min';
+
+		wp_register_script(
+			'elementor-heading-action-handler',
+			ELEMENTOR_URL . 'modules/atomic-widgets/elements/atomic-heading/atomic-heading-handler' . $min_suffix . '.js',
+			[ 'elementor-frontend' ],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
+	protected function has_action_in_link(): bool {
+		$raw_settings = $this->get_settings();
+		$link = $raw_settings['link'] ?? null;
+
+		if ( ! is_array( $link ) || ! isset( $link['value']['destination'] ) ) {
+			return false;
+		}
+
+		$destination = $link['value']['destination'];
+
+		if ( ! isset( $destination['$$type'] ) || $destination['$$type'] !== 'dynamic' ) {
+			return false;
+		}
+
+		$dynamic_tag_name = $destination['value']['name'] ?? '';
+		$dynamic_tag_settings = $destination['value']['settings'] ?? [];
+
+		if ( isset( $dynamic_tag_settings['action'] ) ) {
+			return true;
+		}
+
+		$action_based_tags = [ 'popup' ];
+		return in_array( $dynamic_tag_name, $action_based_tags, true );
+	}
+
+	protected function render() {
+		try {
+			$renderer = \Elementor\Modules\AtomicWidgets\TemplateRenderer\Template_Renderer::instance();
+
+			foreach ( $this->get_templates() as $name => $path ) {
+				if ( $renderer->is_registered( $name ) ) {
+					continue;
+				}
+
+				$renderer->register( $name, $path );
+			}
+
+			$context = [
+				'id' => $this->get_id(),
+				'type' => $this->get_name(),
+				'settings' => $this->get_atomic_settings(),
+				'base_styles' => $this->get_base_styles_dictionary(),
+				'interactions' => $this->get_interactions_ids(),
+				'has_action_in_link' => $this->has_action_in_link(),
+			];
+
+			echo $renderer->render( $this->get_main_template(), $context );
+		} catch ( \Exception $e ) {
+			if ( \Elementor\Utils::is_elementor_debug() ) {
+				throw $e;
+			}
+		}
+	}
+
 	protected function get_templates(): array {
 		return [
 			'elementor/elements/atomic-heading' => __DIR__ . '/atomic-heading.html.twig',

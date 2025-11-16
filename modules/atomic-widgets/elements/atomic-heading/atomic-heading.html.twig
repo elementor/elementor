@@ -12,9 +12,18 @@
 	{% set allowed_tags = '<b><strong><em><i><u><a><del><span><br>' %}
 
 	{% if settings.link.href %}
-		<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
-			{{ settings.title | striptags(allowed_tags) | raw }}
-		</a>
+		{% if has_action_in_link %}
+			<button
+				data-href="{{ settings.link.href }}"
+				class="{{ base_styles['link-base'] }} e-heading-action-button"
+			>
+				{{ settings.title | striptags(allowed_tags) | raw }}
+			</button>
+		{% else %}
+			<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
+				{{ settings.title | striptags(allowed_tags) | raw }}
+			</a>
+		{% endif %}
 	{% else %}
 		{{ settings.title | striptags(allowed_tags) | raw }}
 	{% endif %}
