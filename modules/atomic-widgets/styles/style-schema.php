@@ -60,10 +60,7 @@ class Style_Schema {
 				'visible',
 				'hidden',
 				'auto',
-			] )->meta('llm', [
-				'propType' => 'string',
-				'description' => 'The overflow CSS property. CSS values: visible, hidden, auto',
-			]),
+			] )->description( 'The overflow CSS property. CSS values: visible, hidden, auto' ),
 			'aspect-ratio' => String_Prop_Type::make(),
 			'object-fit' => String_Prop_Type::make()->enum( [
 				'fill',
@@ -71,10 +68,7 @@ class Style_Schema {
 				'contain',
 				'none',
 				'scale-down',
-			] )->meta('llm', [
-				'propType' => 'string',
-				'description' => 'The object-fit CSS. CSS values: fill, cover, contain, none, scale-down',
-			]),
+			] )->description( 'The object-fit CSS. CSS values: fill, cover, contain, none, scale-down' ),
 			'object-position' => Union_Prop_Type::make()
 				->add_prop_type( String_Prop_Type::make()->enum( Position_Prop_Type::get_position_enum_values() ) )
 				->add_prop_type( Position_Prop_Type::make() )
@@ -102,19 +96,13 @@ class Style_Schema {
 				'absolute',
 				'fixed',
 				'sticky',
-			] )->meta('llm', [
-				'propType' => 'string',
-				'description' => 'The CSS position property specifies the type of positioning method used for an element (static, relative, absolute, fixed, or sticky).',
-			]),
+			] )->description( 'The CSS position property specifies the type of positioning method used for an element (static, relative, absolute, fixed, or sticky).' ),
 			'inset-block-start' => Size_Prop_Type::make(),
 			'inset-inline-end' => Size_Prop_Type::make(),
 			'inset-block-end' => Size_Prop_Type::make(),
 			'inset-inline-start' => Size_Prop_Type::make(),
 			'z-index' => Number_Prop_Type::make()
-				->meta('llm', [
-					'propType' => 'number',
-					'description' => 'The z-index CSS property sets the z-order of a positioned element and its descendants or flex items. It specifies the stack order of elements.',
-				]),
+				->description( 'The z-index CSS property sets the z-order of a positioned element and its descendants or flex items. It specifies the stack order of elements.' ),
 			'scroll-margin-top' => Size_Prop_Type::make()->units( Size_Constants::anchor_offset() ),
 		];
 	}
@@ -136,16 +124,11 @@ class Style_Schema {
 				'bold',
 				'bolder',
 				'lighter',
-			] )->meta('llm', [
-				'propType' => 'string',
-				'description' => 'The weight (or boldness) of the font. Values should match css font-weight specifications.',
-			]),
+			] )
+				->description( 'The weight (or boldness) of the font. Values should match css font-weight specifications.' ),
 			'font-size' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
 			'color' => Color_Prop_Type::make()
-				->meta('llm', [
-					'propType' => 'color',
-					'description' => 'The text color, specified as a hex code, rgb(a), hsl(a), or a standard css color name.',
-				]),
+				->description( 'The text color, specified as a hex code, rgb(a), hsl(a), or a standard css color name.' ),
 			'letter-spacing' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
 			'word-spacing' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
 			'column-count' => Number_Prop_Type::make(),
@@ -165,41 +148,28 @@ class Style_Schema {
 				'center',
 				'end',
 				'justify',
-			] )->meta('llm', [
-				'propType' => 'string',
-				'description' => 'The horizontal alignment of the text content. Allowed values: start, center, end, justify.',
-			]),
+			] )
+				->description( 'The horizontal alignment of the text content. Allowed values: start, center, end, justify.' ),
 			'font-style' => String_Prop_Type::make()->enum( [
 				'normal',
 				'italic',
 				'oblique',
 			] )
-			->meta('llm', [
-				'propType' => 'string',
-				'description' => 'The font style of the text content. CSS values: normal, italic, oblique',
-			]),
+			->description( 'The font style of the text content. CSS values: normal, italic, oblique' ),
 			// TODO: validate text-decoration in more specific way [EDS-524]
 			'text-decoration' => String_Prop_Type::make()
-				->meta('llm', [
-					'propType' => 'string',
-					'description' => 'The text decoration style. CSS values like: none, underline, overline, line-through, blink, etc.',
-				]),
+				->description( 'The text decoration style. CSS values like: none, underline, overline, line-through, blink, etc.' ),
 			'text-transform' => String_Prop_Type::make()->enum( [
 				'none',
 				'capitalize',
 				'uppercase',
 				'lowercase',
-			] )->meta('llm', [
-				'propType' => 'string',
-				'description' => 'Controls the capitalization of text. CSS values: none, capitalize, uppercase, lowercase',
-			]),
+			] )
+				->description( 'Controls the capitalization of text. CSS values: none, capitalize, uppercase, lowercase' ),
 			'direction' => String_Prop_Type::make()->enum( [
 				'ltr',
 				'rtl',
-			] )->meta('llm', [
-				'propType' => 'string',
-				'description' => 'The text direction. CSS values: ltr (left to right), rtl (right to left)',
-			]),
+			] )->description( 'The text direction. CSS values: ltr (left to right), rtl (right to left)' ),
 			'stroke' => Stroke_Prop_Type::make(),
 			'all' => String_Prop_Type::make()->enum( [
 				'initial',
@@ -210,10 +180,8 @@ class Style_Schema {
 			] ),
 			'cursor' => String_Prop_Type::make()->enum( [
 				'pointer',
-			] )->meta('llm', [
-				'propType' => 'string',
-				'description' => 'The type of cursor to be displayed when pointing over the element. E.g., pointer.',
-			]),
+			] )
+				->description( 'The type of cursor to be displayed when pointing over the element. E.g., pointer.' ),
 		];
 	}
 
@@ -282,52 +250,12 @@ class Style_Schema {
 				'soft-light',
 				'hard-light',
 				'color-burn',
-			] )->meta('llm', [
-				'propType' => 'string',
-				'description' => 'Applied as mix-blend mode css effect.',
-			]),
+			] )->description( 'Applied as mix-blend mode css effect.' ),
 			'box-shadow' => Box_Shadow_Prop_Type::make(),
 			'opacity' => Size_Prop_Type::make()
+				->description( 'The opacity of the element, specified as a percentage between 0 (fully transparent) and 100 (fully opaque).' )
 				->units( Size_Constants::opacity() )
-				->default_unit( Size_Constants::UNIT_PERCENT )
-				->meta('llm', [
-					'propType' => 'size',
-					'description' => 'Equivalent to CSS opacity',
-					'schema' => [
-						'type' => 'object',
-						'required' => [ 'size', 'unit' ],
-						'properties' => [
-							'size' => [
-								'type' => 'number',
-								'description' => 'The opacity size value between 0 and 100',
-							],
-							'unit' => [
-								'type' => 'string',
-								'enum' => [ Size_Constants::UNIT_PERCENT ],
-							],
-						],
-					],
-				]),
-				// ->meta([
-				// 	'llm' => [
-				// 		'propType' => 'number',
-				// 		'description' => 'Equivalent to CSS opacity',
-				// 		// 'schema' => [
-				// 		// 	'type' => 'object',
-				// 		// 	'required' => [ 'size', 'unit' ],
-				// 		// 	'properties' => [
-				// 		// 		'size' => [
-				// 		// 			'type' => 'number',
-				// 		// 			'minimum' => 0,
-				// 		// 			'exclusiveMaximum' => 100,
-				// 		// 		],
-				// 		// 		'unit' => [
-				// 		// 			'const' => Size_Constants::UNIT_PERCENT,
-				// 		// 		],
-				// 		// 	],
-				// 		// ],
-				// 	],
-				// ]),
+				->default_unit( Size_Constants::UNIT_PERCENT ),
 			'filter' => Filter_Prop_Type::make(),
 			'backdrop-filter' => Backdrop_Filter_Prop_Type::make(),
 			'transform' => Transform_Prop_Type::make(),
@@ -348,23 +276,15 @@ class Style_Schema {
 				'flow-root',
 				'none',
 				'contents',
-			] )->meta('llm', [
-				'propType' => 'string',
-				'description' => 'The CSS display property defines the display behavior (the type of rendering box) of an element.',
-			]),
-			'flex-direction' => String_Prop_Type::make()->enum( [
+			] )->description( 'The CSS display property defines the display behavior (the type of rendering box) of an element.' ),
+			'flex-direction' => String_Prop_Type::make()
+				->description( 'The direction of the contained items.' )
+				->enum( [
 				'row',
 				'row-reverse',
 				'column',
 				'column-reverse',
-			] )->meta('llm', [
-				'propType' => 'string',
-				'description' => 'The direction of the contained items.',
-				'schema' => [
-					'type' => 'string',
-					'enum' => [ 'row', 'row-reverse', 'column', 'column-reverse' ],
-				],
-			]),
+			] ),
 			'gap' => Union_Prop_Type::make()
 				->add_prop_type( Layout_Direction_Prop_Type::make() )
 				->add_prop_type( Size_Prop_Type::make(true)->units( Size_Constants::layout() ) ),
@@ -372,10 +292,7 @@ class Style_Schema {
 				'wrap',
 				'nowrap',
 				'wrap-reverse',
-			] )->meta('llm', [
-				'propType' => 'string',
-				'description' => 'Specifies whether the flex items should wrap or not. CSS values: wrap, nowrap, wrap-reverse',
-			]),
+			] )->description( 'Specifies whether the flex items should wrap or not. CSS values: wrap, nowrap, wrap-reverse' ),
 			'flex' => Flex_Prop_Type::make(),
 		];
 	}
@@ -395,10 +312,8 @@ class Style_Schema {
 				'space-around',
 				'space-evenly',
 				'stretch',
-			] )->meta('llm', [
-				'propType' => 'string',
-				'description' => 'Defines how the browser distributes space between and around content items along the main-axis of a flex container. CSS values: center, start, end, flex-start, flex-end, left, right, normal, space-between, space-around, space-evenly, stretch',
-			]),
+			] )
+			->description( 'Defines how the browser distributes space between and around content items along the main-axis of a flex container. CSS values: center, start, end, flex-start, flex-end, left, right, normal, space-between, space-around, space-evenly, stretch' ),
 			'align-content' => String_Prop_Type::make()->enum( [
 				'center',
 				'start',
@@ -406,10 +321,8 @@ class Style_Schema {
 				'space-between',
 				'space-around',
 				'space-evenly',
-			] )->meta('llm', [
-				'propType' => 'string',
-				'description' => 'Aligns a flex container’s lines within when there is extra space in the cross-axis. CSS values: center, start, end, space-between, space-around, space-evenly',
-			]),
+			] )
+			->description( 'Aligns a flex container\'s lines within when there is extra space in the cross-axis. CSS values: center, start, end, space-between, space-around, space-evenly' ),
 			'align-items' => String_Prop_Type::make()->enum( [
 				'normal',
 				'stretch',
@@ -421,10 +334,7 @@ class Style_Schema {
 				'self-start',
 				'self-end',
 				'anchor-center',
-			] )->meta('llm', [
-				'propType' => 'string',
-				'description' => 'Defines the default behavior for how flex items are laid out along the cross axis on the current line. CSS values: normal, stretch, center, start, end, flex-start, flex-end, self-start, self-end, anchor-center',
-			]),
+			] )->description( 'Defines the default behavior for how flex items are laid out along the cross axis on the current line. CSS values: normal, stretch, center, start, end, flex-start, flex-end, self-start, self-end, anchor-center' ),
 			'align-self' => String_Prop_Type::make()->enum( [
 				'auto',
 				'normal',
@@ -440,16 +350,8 @@ class Style_Schema {
 				'first baseline',
 				'last baseline',
 				'stretch',
-			] )->meta(
-					'description',
-					'Allows the default alignment (or the one specified by align-items) to be overridden for individual flex items. CSS values: auto, normal, center, start, end, self-start, self-end, flex-start, flex-end, anchor-center, baseline, first baseline, last baseline, stretch'
-				)->meta('llm', [
-				'propType' => 'string'
-			]),
-			'order' => Number_Prop_Type::make()->meta('llm', [
-				'propType' => 'number',
-				'description' => 'Specifies the order of the flex items. Items with lower order values are displayed first.',
-			]),
+			] )->description( 'Allows the default alignment (or the one specified by align-items) to be overridden for individual flex items. CSS values: auto, normal, center, start, end, self-start, self-end, flex-start, flex-end, anchor-center, baseline, first baseline, last baseline, stretch' ),
+			'order' => Number_Prop_Type::make()->description( 'Specifies the order of the flex items. Items with lower order values are displayed first.' ),
 		];
 	}
 }

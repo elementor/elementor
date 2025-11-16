@@ -47,7 +47,7 @@ Every widget property has a PropType schema, including styles under the "_styles
 A PropType schema looks like the following:
 \`\`\`json
 {
-  kind: 'string' | 'number' | 'plain' | 'array' | 'object' | 'union' | 'custom', // The kind of the prop type. "plain" is an alias for "string" in this context.
+  kind: 'string' | 'number' | 'plain' | 'array' | 'object' | 'union' | 'custom', // The kind of the prop type.
 	key: string, // The parser type to run when a PropValue is received. the "key" must be used as "$$type" in the PropValue and is MANDATORY.
 }\`\`\`
 
@@ -85,9 +85,22 @@ The PropValue structure to be used when configuring properties is as follows:
 \`\`\`json
 {
 		"$$type": string, // MANDATORY as defined in the PropType schema under the "key" property
-		value: unknown // The value according to the PropType schema for kinds of "array", use array with PropValues items inside. For "object", read the shape property of the PropType schema. For "plain", use strings.
+		value: unknown // The value according to the PropType schema for kinds of "array", use array with PropValues items inside. For "object", read the shape property of the PropType schema. For "plain", use string PropValues but ALWAYS KEEP "$$type" with the original PropType key.
 }
 \`\`\`
+
+Additionaly, some PropTypes have metadata information (meta property) that can help in understaind the PropType usage, such as description or other useful information.
+
+# Note about null values
+If a PropValue's value is null, omit the entire PropValue object.
+
+Example of "image" PropType schema and PropValue structure:
+
+PropType schema:
+{kind:'object',key:'image',shape:{src:{kind:'union',prop_types:{dynamic:{},'image-src':{kind:'object',key:'image-src',settings:{required:true},shape:{id:{kind:'plain',key:'image-attachment-id'},url:{kind:'union',prop_types:{url:{kind:'plain',key:'url'},dynamic:{}}}}}}},size:{kind:'plain',key:'string',default:{$$type:'string',value:'full'},meta:{description:"The image file size to use, affecting quality. This DOES NOT affect dimensions on the page. For affecting dimensions, use the wrapping element's style schema"},settings:{enum:['thumbnail','medium','medium_large','large','1536x1536','2048x2048','full'],required:true}}}}
+
+PropValue structure:
+{$$type:'image',value:{src:{$$type:'image-src',value:{url:{$$type:'url',value:'https://example.com/image.jpg'}}},size:{$$type:'string',value:'full'}}}
 `,
 		} )
 	);

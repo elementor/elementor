@@ -48,6 +48,8 @@ Prefer this tool over any other tool for building HTML structure, unless you are
 7. Do not add any inline styles, classes, id's, and no text nodes allowed.
 8. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-div-block" and "e-flexbox".
 9. Make sure that non-container elements do NOT have any nested elements.
+10. Unsless the user specifically requires structure only, read carefully the styles schema, and BE EXPRESSIVE AS POSSIBLE IN APPLYING STYLE CONFIGURATION.
+    In the case of doubt, prefer adding more styles to make the composition visually appealing.
 
 # Additional Guidelines
 - Most users expect the structure to be well designed and visually appealing.
@@ -57,12 +59,22 @@ Prefer this tool over any other tool for building HTML structure, unless you are
 - You are encouraged to use colors, typography, and other style properties to enhance the visual appeal, as long as they are part of the configuration schema for the elements used.
 - Always aim for a clean and professional look that aligns with modern design principles.
 - When you are required to create placeholder texts, use texts that have a length that fits the goal. When long texts are required, use longer placeholder texts. When the user specifies exact texts, use the exact texts.
+- Image size does not affect the actual size on the screen, only which quality to use. If you use images, specifically add _styles PropValues to define the image sizes.
 
 # CONSTRAINTS
 When a tool execution fails, retry up to 10 more times, read the error message carefully, and adjust the XML structure or the configurations accordingly.
 If a "$$type" is missing, update the invalid object, if the XML has parsing errors, fix it, etc. and RETRY.
 VALIDATE the XML structure before delivering it as the final result.
 VALIDATE the JSON structure used in the "configuration" attributes for each element before delivering the final result. The configuration must MATCH the PropValue schemas.
+NO LINKS ALLOWED. Never apply links to elements, even if they appear in the PropType schema.
+elementConfig values must align with the widget's PropType schema, available at the resource [${ WIDGET_SCHEMA_URI }].
+stylesConfig values must align with the common styles PropType schema, available at the resource [${ STYLE_SCHEMA_URI }].
+
+# Parameters
+All parameters are MANDATORY.
+- xmlStructure
+- elementConfig
+- stylesConfig
 
 If unsure about the configuration of a specific property, read the schema resources carefully.
 
@@ -93,17 +105,17 @@ A Heading and a button inside a flexbox
 
 	buildCompositionsToolPrompt.parameter(
 		'xmlStructure',
-		`A valid XML structure representing the composition to be built, using custom elementor tags, styling and configuration PropValues.`
+		`**MANDATORY** A valid XML structure representing the composition to be built, using custom elementor tags, styling and configuration PropValues.`
 	);
 
 	buildCompositionsToolPrompt.parameter(
 		'elementConfig',
-		`A record mapping configuration IDs to their corresponding configuration objects, defining the PropValues for each element created.`
+		`**MANDATORY** A record mapping configuration IDs to their corresponding configuration objects, defining the PropValues for each element created.`
 	);
 
 	buildCompositionsToolPrompt.parameter(
 		'styleConfig',
-		`A record mapping style PropTypes to their corresponding style configuration objects, defining the PropValues for styles to be applied to elements.`
+		`**MANDATORY** A record mapping style PropTypes to their corresponding style configuration objects, defining the PropValues for styles to be applied to elements.`
 	);
 
 	buildCompositionsToolPrompt.instruction(

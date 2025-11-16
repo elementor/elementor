@@ -48,10 +48,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 			'paragraph' => String_Prop_Type::make()
 				->default( __( 'Type your paragraph here', 'elementor' ) )
-				->meta('llm', [
-					'propType' => 'string',
-					'description' => 'The text content of the paragraph.',
-				]),
+				->description( 'The text content of the paragraph.' ),
 
 			'link' => Link_Prop_Type::make(),
 

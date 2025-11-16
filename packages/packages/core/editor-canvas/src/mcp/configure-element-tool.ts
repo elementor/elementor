@@ -1,6 +1,7 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { z } from '@elementor/schema';
 
+import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from './resources/widgets-schema-resource';
 import { doUpdateElementProperty } from './utils/do-update-element-property';
 
 export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
@@ -9,6 +10,15 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 	addTool( {
 		name: 'configure-element',
 		description: `Configure an existing element on the page, or retreiving the configuration schema of an element.
+
+# **CRITICAL - REQUIRED RESOURCES (Must read before using this tool)**
+1. [${ WIDGET_SCHEMA_URI }]
+	 Required to understand which widgets are available, and what are their configuration schemas.
+	 Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply property values correctly.
+2. [${ STYLE_SCHEMA_URI }]
+	 Required to understand the styles schema for the widgets. All widgets share the same styles schema, grouped by categories.
+	 Use this resource to understand which style properties are available for each element, and how to structure the "_styles" configuration property.
+
 
 Before using this tool, check the definitions of the elements PropTypes at the resource "widget-schema-by-type" at editor-canvas__elementor://widgets/schema/{widgetType}
 All widgets share a common _style property for styling, which uses the common styles schema.
@@ -121,12 +131,25 @@ The $$type property is MANDATORY for every value, it is required to parse the va
 					);
 				}
 
-				doUpdateElementProperty( {
-					elementId,
-					elementType,
-					propertyName,
-					propertyValue,
-				} );
+				try {
+					doUpdateElementProperty( {
+						elementId,
+						elementType,
+						propertyName,
+						propertyValue,
+					} );
+				} catch ( error ) {
+					throw new Error(
+						`Failed to update property "${ propertyName }" on element "${ elementId }": ${
+							( error as Error ).message
+						}.
+Check the element's PropType schema at the resource [${ WIDGET_SCHEMA_URI.replace(
+							'{widgetType}',
+							elementType
+						) }] for type "${ elementType }" to ensure the property exists and the value matches the expected PropType.
+Now that you have this information, ensure you have the schema and try again.`
+					);
+				}
 			}
 			return {
 				success: true,

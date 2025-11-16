@@ -12,11 +12,6 @@ export const adjustLlmPropValueSchema = ( value: Readonly< PropValue >, forceKey
 		}
 		const transformablePropValue = clone as TransformablePropValue< string >;
 		if ( forceKey ) {
-			if ( transformablePropValue.$$type && transformablePropValue.$$type !== forceKey ) {
-				throw new Error(
-					`Conflicting $$type in property. Expected: ${ forceKey }, Found: ${ transformablePropValue.$$type }`
-				);
-			}
 			transformablePropValue.$$type = forceKey;
 		}
 
@@ -24,13 +19,6 @@ export const adjustLlmPropValueSchema = ( value: Readonly< PropValue >, forceKey
 			throw new Error( 'Missing $$type in property: ' + JSON.stringify( transformablePropValue ) );
 		}
 
-		// validate structure
-		if ( Object.keys( transformablePropValue ).length !== 2 ) {
-			throw (
-				new Error( 'Invalid structure for PropValue: ' + JSON.stringify( transformablePropValue ) ) +
-				'\nStrcuture must include only $$type and value properties.'
-			);
-		}
 		if ( ! ( 'value' in transformablePropValue ) ) {
 			throw new Error( 'Missing value property in PropValue: ' + JSON.stringify( transformablePropValue ) );
 		}
@@ -68,15 +56,16 @@ export const adjustLlmPropValueSchema = ( value: Readonly< PropValue >, forceKey
 				) as PropValue[];
 			} else {
 				const { value: objectValue } = transformablePropValue as ObjectPropValue;
+				const clonedObject = clone as ObjectPropValue;
+				clonedObject.value = {} as Record< string, PropValue >;
 				Object.keys( objectValue ).forEach( ( key ) => {
 					const childProp = ( objectValue as Record< string, unknown > )[ key ];
-					( transformablePropValue.value as Record< string, unknown > )[ key ] = adjustLlmPropValueSchema(
+					( clonedObject.value as Record< string, unknown > )[ key ] = adjustLlmPropValueSchema(
 						childProp as PropValue,
 						undefined
 					);
 				} );
 			}
-			return transformablePropValue;
 		}
 	}
 	return clone;

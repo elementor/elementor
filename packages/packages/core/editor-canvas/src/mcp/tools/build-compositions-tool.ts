@@ -29,26 +29,28 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 						z.any().describe( 'The PropValue for the property' )
 					)
 				)
-				.describe( 'A record mapping element IDs to their configuration objects' ),
+				.describe( 'A record mapping element IDs to their configuration objects. REQUIRED' ),
 			stylesConfig: z
 				.record(
 					z.string().describe( 'The configuration id' ),
 					z.record(
 						z.string().describe( '_styles property name' ),
-						z.any().describe( 'The PropValue for the style property' )
+						z.any().describe( 'The PropValue for the style property. MANDATORY' )
 					)
 				)
-				.optional()
+				.describe( 'A record mapping element IDs to their styles configuration objects.' )
 				.default( {} ),
 		},
 		outputSchema: {
 			errors: z.string().describe( 'Error message if the composition building failed' ).optional(),
 			xmlStructure: z.string().describe( 'The built XML structure as a string' ).optional(),
+			llmInstructions: z.string().describe( 'Instructions used to further actions for you' ).optional(),
 		},
 		handler: async ( params ) => {
 			let xml: Document | null = null;
 			const { xmlStructure, elementConfig, stylesConfig } = params;
 			const errors: Error[] = [];
+			const softErrors: Error[] = [];
 			const widgetsCache = getWidgetsCache() || {};
 			const documentContainer = getContainer( 'document' ) as unknown as V1Element;
 			const rootContainer = createElement( {
@@ -99,6 +101,16 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 						const styleObject = stylesConfig[ configId ] || {};
 						configObject._styles = styleObject;
 						for ( const [ propertyName, propertyValue ] of Object.entries( configObject ) ) {
+							// validate property existance
+							const widgetSchema = widgetsCache[ elementTag ];
+							if ( ! widgetSchema?.atomic_props_schema?.[ propertyName ] && propertyName !== '_styles' ) {
+								softErrors.push(
+									new Error(
+										`Property "${ propertyName }" does not exist on element type "${ elementTag }".`
+									)
+								);
+								continue;
+							}
 							try {
 								doUpdateElementProperty( {
 									elementId: newElement.id,
@@ -107,7 +119,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 									elementType: elementTag,
 								} );
 							} catch ( error ) {
-								errors.push( error as Error );
+								softErrors.push( error as Error );
 							}
 						}
 						if ( isContainer ) {
@@ -118,20 +130,13 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 							node.innerHTML = '';
 							node.removeAttribute( 'configuration' );
 						}
-					} catch ( error ) {
-						errors.push(
-							new Error(
-								`Invalid configuration JSON for element <${ elementTag }>: ${
-									( error as Error ).message
-								}`
-							)
-						);
+					} finally {
 					}
 				};
 
 				for ( const childNode of children ) {
+					iterate( childNode, rootContainer );
 					try {
-						iterate( childNode, rootContainer );
 					} catch ( error ) {
 						errors.push( error as Error );
 					}
@@ -148,17 +153,30 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			}
 
 			if ( errors.length > 0 ) {
-				return {
-					errors: errors.map( ( e ) => e.message ).join( '\n\n' ),
-				};
+				const errorText = `Failed to build composition with the following errors:\n\n
+${ errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n\n' ) }
+"Missing $$type" errors indicate that the configuration objects are invalid. Try again and apply **ALL** object entries with correct $$type.
+Now that you have these errors, fix them and try again. Errors regarding configuration objects, please check again the PropType schemas`;
+				throw new Error( errorText );
 			}
 			if ( ! xml ) {
-				return {
-					errors: 'Failed to parse XML structure.',
-				};
+				throw new Error( 'XML structure is null after parsing.' );
 			}
 			return {
 				xmlStructure: new XMLSerializer().serializeToString( xml ),
+				llmInstructions:
+					( softErrors.length
+						? `The composition was built successfully, but there were some issues with the provided configurations:
+
+${ softErrors.map( ( e ) => `- ${ e.message }` ).join( '\n' ) }
+
+Please use confiugure-element tool to fix these issues.`
+						: '' ) +
+					`
+Next Steps:
+- Use "apply-global-class" tool as there may be global styles ready to be applied to elements.
+- Use "configure-element" tool to further configure elements as needed, including styles.
+`,
 			};
 		},
 	} );

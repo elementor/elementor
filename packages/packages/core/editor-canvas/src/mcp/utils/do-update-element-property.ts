@@ -28,7 +28,7 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 		const styleSchema = getStylesSchema();
 		const transformedStyleValues = Object.fromEntries(
 			Object.entries( propertyMapValue ).map( ( [ key, val ] ) => {
-				const { key: propKey, kind } = styleSchema[ key ];
+				const { key: propKey, kind } = styleSchema?.[ key ] || {};
 				if ( ! propKey && kind !== 'union' ) {
 					throw new Error( `_styles property ${ key } is not supported.` );
 				}
@@ -84,6 +84,14 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 	const elementPropSchema = getWidgetsCache()?.[ elementType ]?.atomic_props_schema;
 	if ( ! elementPropSchema ) {
 		throw new Error( `No prop schema found for element type: ${ elementType }` );
+	}
+	if ( ! elementPropSchema[ propertyName ] ) {
+		const propertyNames = Object.keys( elementPropSchema );
+		throw new Error(
+			`Property "${ propertyName }" does not exist on element type "${ elementType }". Available properties are: ${ propertyNames.join(
+				', '
+			) }`
+		);
 	}
 	const value = resolvePropValue( propertyValue );
 	updateElementSettings( {
