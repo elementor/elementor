@@ -21,4 +21,11 @@ export const DashboardUtils = {
 			( cls.includes( 'page' ) || cls.includes( 'post-type' ) ),
 		);
 	},
+
+	isPluginsPage() {
+		const body = document.body;
+		const bodyClasses = body.className.split( ' ' );
+
+		return bodyClasses.includes( 'plugins-php' ) || bodyClasses.includes( 'plugins-network-php' );
+	},
 };
