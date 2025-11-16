@@ -30,7 +30,10 @@ export const adjustLlmPropValueSchema = ( value: Readonly< PropValue >, forceKey
 					string,
 					{ size: StringPropValue | NumberPropValue; unit: StringPropValue }
 				>;
-				const unit = rawSizePropValue.unit.value;
+				const unit =
+					typeof rawSizePropValue.unit === 'string'
+						? rawSizePropValue.unit
+						: ensureNotNull( stringPropTypeUtil.extract( rawSizePropValue.unit ), 'px' );
 				const size =
 					typeof rawSizePropValue.size === 'string' || typeof rawSizePropValue.size === 'number'
 						? rawSizePropValue.size

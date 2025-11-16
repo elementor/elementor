@@ -145,7 +145,7 @@ Now that you have these errors, fix them and try again. Errors regarding configu
 
 ${ softErrors.map( ( e ) => `- ${ e.message }` ).join( '\n' ) }
 
-Please use confiugure-element tool to fix these issues.`
+Please use confiugure-element tool to fix these issues. Now that you have information about these issues, use the configure-element tool to fix them!`
 						: '' ) +
 					`
 Next Steps:
