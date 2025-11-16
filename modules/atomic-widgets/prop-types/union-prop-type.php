@@ -44,19 +44,16 @@ class Union_Prop_Type implements Prop_Type {
 		$result = static::make()
 			->add_prop_type( $prop_type )
 			->default( $prop_type->get_default() )
-<<<<<<< HEAD
 			->set_dependencies( $dependencies );
 
 		foreach ( $prop_meta as $key => $value ) {
 			$result->meta( $key, $value );
 		}
 
-		return $result;
-=======
+		return $result
 			->initial_value( $prop_type->get_initial_value() )
 			->set_dependencies( $dependencies )
 			->set_required_settings( $prop_type );
->>>>>>> origin/main
 	}
 
 	public function get_type(): string {

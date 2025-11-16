@@ -61,13 +61,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 				->default( 'h2' )
 				->description( 'The HTML tag for the heading element. Could be h1, h2, up to h6' ),
 
-<<<<<<< HEAD
-			'title' => String_Prop_Type::make()
-				->description('The text content of the heading.')
-				->default( __( 'This is a title', 'elementor' ) ),
-=======
-			'title' => $title_prop,
->>>>>>> origin/main
+			'title' => $title_prop
+				->description('The text content of the heading.'),
 
 			'link' => Link_Prop_Type::make(),
 

@@ -19,18 +19,8 @@ Prefer this tool over any other tool for building HTML structure, unless you are
 2. [${ STYLE_SCHEMA_URI }]
    Required to understand the styles schema for the widgets. All widgets share the same styles schema, grouped by categories.
    Use this resource to understand which style properties are available for each element, and how to structure the "_styles" configuration property.
-  
-3. MCP Description: Understading PropTypes and PropValues schemas in Elementor.
-   Follow the rules to structure configuration properties for the elements.
 
-4. Predefined global styles and classes in the current project.
-   Use the "list-all-global-classes" tool from the element_classes MCP, when available.
-   Generally, the global classes provides a consistent look and feel accross the site, and should be used when possible.
-   When you think a style can be achieved using existing global classes, prefer using them over inline styles.
-   This can be done AFTER the tool execution, when you are given the element IDs created,
-   you can apply global styles to any element using the "apply-global-class" tool from the element_classes MCP.
-
-5. List of allowed custom tags for building the structure is derived from the list of widgets schema resources.
+3. List of allowed custom tags for building the structure is derived from the list of widgets schema resources.
 
 # Instructions
 1. Understand the user requirements carefully.
@@ -41,15 +31,15 @@ Prefer this tool over any other tool for building HTML structure, unless you are
    \`<e-flexbox configuration-id="flex1"><e-heading configuration-id="heading2"></e-heading></e-flexbox>\`
    In the elementConfig property, provide the actual configuration object for each configuration-id used in the XML structure.
    In the stylesConfig property, provide the actual styles configuration object for each configuration-id used in the XML structure.
+   For easy execution, prefer using the "custom_css" category from the styles schema resource to apply inline styles to elements, as it is faster and safer.
    Read the PropTypes schemas at [${ WIDGET_SCHEMA_URI }] to understand how to structure the elementConfig record of PropValues.
-   Read the PropTypes schema at [${ STYLE_SCHEMA_URI }] to understand how to structure the "_styles" record of PropValue.
+   Read the PropTypes schema at [${ STYLE_SCHEMA_URI }] to understand how to structure the "_styles" record of PropValue to apply complex changes that cannot be achieved with custom_css.
 5. Ensure the XML structure is valid and parsable.
-6. Deliver only the XML structure as the result.
-7. Do not add any inline styles, classes, id's, and no text nodes allowed.
-8. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-div-block" and "e-flexbox".
-9. Make sure that non-container elements do NOT have any nested elements.
-10. Unsless the user specifically requires structure only, read carefully the styles schema, and BE EXPRESSIVE AS POSSIBLE IN APPLYING STYLE CONFIGURATION.
-    In the case of doubt, prefer adding more styles to make the composition visually appealing.
+6. Do not add any inline styles, classes, id's, and no text nodes allowed, for inline styles prefer using the [${ STYLE_SCHEMA_URI }] resource for custom_css.
+7. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-div-block" and "e-flexbox".
+8. Make sure that non-container elements do NOT have any nested elements.
+9. Unsless the user specifically requires structure only, read carefully the styles schema, and BE EXPRESSIVE AS POSSIBLE IN APPLYING STYLE CONFIGURATION.
+   In the case of doubt, prefer adding more styles to make the composition visually appealing.
 
 # Additional Guidelines
 - Most users expect the structure to be well designed and visually appealing.
@@ -97,7 +87,8 @@ A Heading and a button inside a flexbox
       "text-align": {
         "$$type": "string",
         "value": "center"
-      }
+      },
+      "custom_css": "font-size: 24px; color: #333;"
     }
   },
 }

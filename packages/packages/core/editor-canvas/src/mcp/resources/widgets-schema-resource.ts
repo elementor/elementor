@@ -19,7 +19,7 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 		'styles-schema',
 		new ResourceTemplate( STYLE_SCHEMA_URI, {
 			list: () => {
-				const categories = Object.keys( getStylesSchema() );
+				const categories = [ ...Object.keys( getStylesSchema() ), 'custom_css' ];
 				return {
 					resources: categories.map( ( category ) => ( {
 						uri: `elementor://styles/schema/${ category }`,
@@ -33,6 +33,16 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 		},
 		async ( uri, variables ) => {
 			const category = typeof variables.category === 'string' ? variables.category : variables.category?.[ 0 ];
+			if ( category === 'custom_css' ) {
+				return {
+					contents: [
+						{
+							uri: uri.toString(),
+							text: 'Free style inline CSS string of properties and their values. Applicable for a single element, only the properties and values are accepted.',
+						},
+					],
+				};
+			}
 			const stylesSchema = getStylesSchema()[ category ];
 			if ( ! stylesSchema ) {
 				throw new Error( `No styles schema found for category: ${ category }` );

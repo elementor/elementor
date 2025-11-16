@@ -6,7 +6,7 @@ import {
 	updateElementStyle,
 } from '@elementor/editor-elements';
 import { getPropSchemaFromCache, type PropValue, Schema, type TransformablePropValue } from '@elementor/editor-props';
-import { getStylesSchema } from '@elementor/editor-styles';
+import { type CustomCss, getStylesSchema } from '@elementor/editor-styles';
 
 type OwnParams = {
 	elementId: string;
@@ -28,6 +28,9 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 		const styleSchema = getStylesSchema();
 		const transformedStyleValues = Object.fromEntries(
 			Object.entries( propertyMapValue ).map( ( [ key, val ] ) => {
+				if ( key === 'custom_css' ) {
+					return [ key, val ];
+				}
 				const { key: propKey, kind } = styleSchema?.[ key ] || {};
 				if ( ! propKey && kind !== 'union' ) {
 					throw new Error( `_styles property ${ key } is not supported.` );
@@ -35,8 +38,15 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 				return [ key, resolvePropValue( val, propKey ) ];
 			} )
 		);
+		let customCss: CustomCss | undefined;
 		Object.keys( propertyMapValue as Record< string, unknown > ).forEach( ( stylePropName ) => {
 			const propertyRawSchema = styleSchema[ stylePropName ];
+			if ( stylePropName === 'custom_css' ) {
+				customCss = {
+					raw: btoa( propertyMapValue[ stylePropName ] as string ),
+				};
+				return;
+			}
 			const isSupported = !! propertyRawSchema;
 			if ( ! isSupported ) {
 				throw new Error( `_styles property ${ stylePropName } is not supported.` );
@@ -55,6 +65,7 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 		if ( ! localStyle ) {
 			createElementStyle( {
 				elementId,
+				custom_css: customCss,
 				classesProp: 'classes',
 				label: 'local',
 				meta: {
