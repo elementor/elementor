@@ -35,9 +35,9 @@ export const VariableManagerCreateMenu = ( {
 			name: displayName,
 			icon: variable.icon,
 			onClick: () => {
-				trackVariablesManagerEvent( { action: 'add', varType: variable.variableType } );
 				const defaultName = getDefaultName( variables, key, variable.variableType );
 				onCreate( key, defaultName, variable.defaultValue || '' );
+				trackVariablesManagerEvent( { action: 'add', varType: variable.variableType } );
 			},
 		};
 	} );

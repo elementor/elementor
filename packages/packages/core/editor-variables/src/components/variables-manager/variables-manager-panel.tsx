@@ -102,13 +102,13 @@ export function VariablesManagerPanel() {
 	);
 
 	const handleSaveClick = async () => {
-		trackVariablesManagerEvent( { action: 'saveChanges' } );
-
 		try {
 			setServerError( null );
 			resetNavigation();
 
-			return await handleSave();
+			const result = await handleSave();
+			trackVariablesManagerEvent( { action: 'saveChanges' } );
+			return result;
 		} catch ( error ) {
 			const mappedError = mapServerError( error as ErrorResponse );
 			const duplicatedIds = mappedError?.action?.data?.duplicatedIds;
@@ -133,13 +133,10 @@ export function VariablesManagerPanel() {
 
 	const handleDeleteVariableWithConfirmation = useCallback(
 		( itemId: string ) => {
-			const variable = variables[ itemId ];
-			const variableTypeOptions = variable ? getVariableType( variable.type ) : null;
-			trackVariablesManagerEvent( { action: 'delete', varType: variableTypeOptions?.variableType } );
 			handleDeleteVariable( itemId );
 			setDeleteConfirmation( null );
 		},
-		[ handleDeleteVariable, variables ]
+		[ handleDeleteVariable ]
 	);
 
 	const menuActions = [
@@ -150,9 +147,10 @@ export function VariablesManagerPanel() {
 			onClick: ( itemId: string ) => {
 				const variable = variables[ itemId ];
 				if ( variable ) {
+					setDeleteConfirmation( { id: itemId, label: variable.label } );
+
 					const variableTypeOptions = getVariableType( variable.type );
 					trackVariablesManagerEvent( { action: 'delete', varType: variableTypeOptions?.variableType } );
-					setDeleteConfirmation( { id: itemId, label: variable.label } );
 				}
 			},
 		},

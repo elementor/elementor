@@ -78,12 +78,12 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 
 	if ( onSettings ) {
 		const handleOpenManager = () => {
+			onSettings();
 			trackVariablesManagerEvent( {
 				action: 'openManager',
 				varType: variableType,
 				controlPath: path.join( '.' ),
 			} );
-			onSettings();
 		};
 
 		actions.push(
