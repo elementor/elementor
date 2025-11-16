@@ -15,7 +15,7 @@ type InteractionDetailsProps = {
 	interaction: string;
 	onChange: ( interaction: string ) => void;
 };
-export const DEFAULT_INTERACTION = 'load-fade-in-left-300-0';
+export const DEFAULT_INTERACTION = 'load-fade-in--300-0';
 
 const getDefaultInteractionDetails = () => {
 	const [ trigger, effect, type, direction, duration, delay ] = DEFAULT_INTERACTION.split( DELIMITER );
