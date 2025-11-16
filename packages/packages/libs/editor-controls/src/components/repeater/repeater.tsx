@@ -75,11 +75,13 @@ type RepeaterProps< T > = {
 	openOnAdd?: boolean;
 	setValues: ( newValue: T[], _: CreateOptions, meta?: SetRepeaterValuesMeta< T > ) => void;
 	disabled?: boolean;
+	disableAddItemButton?: boolean;
 	itemSettings: {
 		initialValues: T;
 		Label: React.ComponentType< { value: T; index: number } >;
 		Icon: React.ComponentType< { value: T } >;
 		Content: RepeaterItemContent< T >;
+		actions?: React.ReactNode;
 	};
 	showDuplicate?: boolean;
 	showToggle?: boolean;
@@ -99,6 +101,7 @@ export const Repeater = < T, >( {
 	showDuplicate = true,
 	showToggle = true,
 	isSortable = true,
+	disableAddItemButton = false,
 }: RepeaterProps< RepeaterItem< T > > ) => {
 	const [ openItem, setOpenItem ] = useState( EMPTY_OPEN_ITEM );
 
@@ -204,7 +207,7 @@ export const Repeater = < T, >( {
 				<IconButton
 					size={ SIZE }
 					sx={ { ml: 'auto' } }
-					disabled={ disabled }
+					disabled={ disabled || disableAddItemButton }
 					onClick={ addRepeaterItem }
 					aria-label={ __( 'Add item', 'elementor' ) }
 				>
@@ -242,6 +245,7 @@ export const Repeater = < T, >( {
 									onOpen={ () => setOpenItem( EMPTY_OPEN_ITEM ) }
 									showDuplicate={ showDuplicate }
 									showToggle={ showToggle }
+									actions={ itemSettings.actions }
 								>
 									{ ( props ) => (
 										<itemSettings.Content
@@ -274,6 +278,7 @@ type RepeaterItemProps< T > = {
 	showDuplicate: boolean;
 	showToggle: boolean;
 	disabled?: boolean;
+	actions?: React.ReactNode;
 };
 
 const RepeaterItem = < T, >( {
@@ -289,6 +294,7 @@ const RepeaterItem = < T, >( {
 	showDuplicate,
 	showToggle,
 	disabled,
+	actions,
 }: RepeaterItemProps< T > ) => {
 	const { popoverState, popoverProps, ref, setRef } = usePopover( openOnMount, onOpen );
 
@@ -321,6 +327,7 @@ const RepeaterItem = < T, >( {
 								</IconButton>
 							</Tooltip>
 						) }
+						{ actions }
 						<Tooltip title={ removeLabel } placement="top">
 							<IconButton size={ SIZE } onClick={ removeItem } aria-label={ removeLabel }>
 								<XIcon fontSize={ SIZE } />

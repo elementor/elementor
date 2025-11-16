@@ -50,7 +50,12 @@ function InteractionsContent() {
 	const { interactions, setInteractions, playInteractions } = useInteractionsContext();
 
 	const applyInteraction = useCallback(
-		( interaction: string ) => {
+		( interaction: string | null ) => {
+			if ( ! interaction ) {
+				setInteractions( undefined );
+				return;
+			}
+
 			const newInteractions = {
 				version: 1,
 				items: [

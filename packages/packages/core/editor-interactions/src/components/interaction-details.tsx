@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Divider, Grid } from '@elementor/ui';
+import { Divider, Grid, Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { Direction } from './controls/direction';
@@ -33,7 +33,7 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 	useEffect( () => {
 		const newValue = Object.values( interactionDetails ).join( DELIMITER );
 		onChange( newValue );
-	}, [ interactionDetails, onChange ] );
+	}, [ interactionDetails ] );
 
 	const handleChange = < K extends keyof typeof interactionDetails >(
 		key: K,
@@ -44,11 +44,11 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 
 	return (
 		<>
-			<Grid container spacing={ 2 } sx={ { width: '300px', p: 1 } }>
+			<Grid container spacing={ 2 } sx={ { p: 1.5 } }>
 				<Trigger value={ interactionDetails.trigger } onChange={ ( v ) => handleChange( 'trigger', v ) } />
 			</Grid>
-			<Divider />
-			<Grid container spacing={ 2 } sx={ { width: '300px', p: 1 } }>
+			<Divider sx={ { mx: 1.5 } } />
+			<Grid container spacing={ 2 } sx={ { p: 1.5 } }>
 				<Effect value={ interactionDetails.effect } onChange={ ( v ) => handleChange( 'effect', v ) } />
 				<EffectType value={ interactionDetails.type } onChange={ ( v ) => handleChange( 'type', v ) } />
 				<Direction
