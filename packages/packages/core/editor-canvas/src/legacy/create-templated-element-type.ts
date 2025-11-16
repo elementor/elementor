@@ -139,12 +139,6 @@ export function createTemplatedElementView( {
 		}
 
 		hasActionInLink?(): boolean {
-			const widgetType = this.model.get( 'widgetType' );
-
-			if ( widgetType !== 'e-heading' ) {
-				return false;
-			}
-
 			const settings = this.model.get( 'settings' ) as any;
 			const link = settings?.get?.( 'link' ) || settings?.attributes?.link;
 			const destination = link?.value?.destination;
@@ -160,7 +154,7 @@ export function createTemplatedElementView( {
 				return true;
 			}
 
-			const actionBasedTags = [ 'popup' ];
+			const actionBasedTags = [ 'popup', 'off-canvas', 'lightbox' ];
 			return actionBasedTags.includes( dynamicTagName );
 		}
 

@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Inline_Editing_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Has_Action_Link_Support;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -26,6 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Heading extends Atomic_Widget_Base {
 	use Has_Template;
+	use Has_Action_Link_Support;
 
 	const LINK_BASE_STYLE_KEY = 'link-base';
 
@@ -154,47 +156,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 						->add_prop( 'cursor', 'pointer' )
 				),
 		];
-	}
-
-	public function get_script_depends() {
-		return [ 'elementor-heading-action-handler' ];
-	}
-
-	public function register_frontend_handlers() {
-		$min_suffix = ( \Elementor\Utils::is_script_debug() || \Elementor\Utils::is_elementor_tests() ) ? '' : '.min';
-
-		wp_register_script(
-			'elementor-heading-action-handler',
-			ELEMENTOR_URL . 'modules/atomic-widgets/elements/atomic-heading/atomic-heading-handler' . $min_suffix . '.js',
-			[ 'elementor-frontend' ],
-			ELEMENTOR_VERSION,
-			true
-		);
-	}
-
-	protected function has_action_in_link(): bool {
-		$raw_settings = $this->get_settings();
-		$link = $raw_settings['link'] ?? null;
-
-		if ( ! is_array( $link ) || ! isset( $link['value']['destination'] ) ) {
-			return false;
-		}
-
-		$destination = $link['value']['destination'];
-
-		if ( ! isset( $destination['$$type'] ) || $destination['$$type'] !== 'dynamic' ) {
-			return false;
-		}
-
-		$dynamic_tag_name = $destination['value']['name'] ?? '';
-		$dynamic_tag_settings = $destination['value']['settings'] ?? [];
-
-		if ( isset( $dynamic_tag_settings['action'] ) ) {
-			return true;
-		}
-
-		$action_based_tags = [ 'popup' ];
-		return in_array( $dynamic_tag_name, $action_based_tags, true );
 	}
 
 	protected function render() {
