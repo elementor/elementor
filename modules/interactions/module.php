@@ -19,14 +19,14 @@ class Module extends BaseModule {
 		return self::MODULE_NAME;
 	}
 
-	private $animations;
+	private $preset_animations;
 
-	private function get_animations() {
-		if ( ! $this->animations ) {
-			$this->animations = new Animations();
+	private function get_presets() {
+		if ( ! $this->preset_animations ) {
+			$this->preset_animations = new Presets();
 		}
 
-		return $this->animations;
+		return $this->preset_animations;
 	}
 
 	public static function get_experimental_data() {
@@ -63,8 +63,8 @@ class Module extends BaseModule {
 
 	private function get_config() {
 		return [
-			'constants' => $this->get_animations()->defaults(),
-			'animationOptions' => $this->get_animations()->list(),
+			'constants' => $this->get_presets()->defaults(),
+			'animationOptions' => $this->get_presets()->list(),
 		];
 	}
 
@@ -129,7 +129,7 @@ class Module extends BaseModule {
 		static $valid_ids = null;
 
 		if ( null === $valid_ids ) {
-			$valid_ids = array_column( $this->get_animations()->list(), 'value' );
+			$valid_ids = array_column( $this->get_presets()->list(), 'value' );
 		}
 
 		if ( ! is_string( $animation_id ) || empty( $animation_id ) ) {

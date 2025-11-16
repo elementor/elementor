@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Animations {
+class Presets {
 	const DEFAULT_DURATION = 300;
 	const DEFAULT_DELAY = 0;
 	const DEFAULT_SLIDE_DISTANCE = 100;
