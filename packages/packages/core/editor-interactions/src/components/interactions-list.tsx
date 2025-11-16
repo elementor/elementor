@@ -6,7 +6,7 @@ import { IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsConfig } from '../utils/get-interactions-config';
-import { InteractionDetails } from './interaction-details';
+import { DEFAULT_INTERACTION, InteractionDetails } from './interaction-details';
 
 const DEFAULT_INTERACTION = 'load-fade-in-left-300-0';
 
