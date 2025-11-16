@@ -21,7 +21,7 @@ export function InteractionsList( props: InteractionListProps ) {
 	const [ interactionId, setInteractionId ] = useState< string | null >( selectedInteraction );
 
 	if ( triggerCreateOnShowEmpty && ! interactionId ) {
-		setInteractionId( 'load-fade-in-left-100-0' );
+		setInteractionId( 'load-fade-in-left-300-0' );
 	}
 
 	useEffect( () => {
