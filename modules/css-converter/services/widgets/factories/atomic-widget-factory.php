@@ -166,10 +166,17 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 			return $final_settings;
 		}
 
-		if ( strpos( $widget_classes, 'intro-section' ) !== false || strpos( $widget_classes, 'brxw-intro-02' ) !== false ) {
+		if ( strpos( $widget_classes, 'intro-section' ) !== false || strpos( $widget_classes, 'brxw-intro-02' ) !== false || strpos( $widget_classes, 'brxe-section' ) !== false ) {
 			error_log( 'CSS_CONVERTER_DEBUG: apply_global_classes - widget ' . $widget_id . ' has classes: ' . $widget_classes );
 			error_log( 'CSS_CONVERTER_DEBUG: Global classes available: ' . count( $global_classes ) );
 			error_log( 'CSS_CONVERTER_DEBUG: Class name mappings: ' . print_r( $class_name_mappings, true ) );
+			if ( strpos( $widget_classes, 'brxe-section' ) !== false ) {
+				error_log( 'CSS_CONVERTER_DEBUG: brxe-section in global_classes: ' . ( isset( $global_classes['brxe-section'] ) ? 'YES' : 'NO' ) );
+				if ( isset( $global_classes['brxe-section'] ) ) {
+					$brxe_props = $global_classes['brxe-section']['atomic_props'] ?? [];
+					error_log( 'CSS_CONVERTER_DEBUG: brxe-section atomic_props keys: ' . implode( ', ', array_keys( $brxe_props ) ) );
+				}
+			}
 		}
 
 		$classes_array = explode( ' ', $widget_classes );
@@ -204,17 +211,17 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 
 			if ( isset( $global_classes[ $mapped_class_name ] ) ) {
 				$applicable_global_classes[] = $mapped_class_name;
-				if ( strpos( $mapped_class_name, 'intro-section' ) !== false || strpos( $mapped_class_name, 'brxw-intro-02' ) !== false ) {
+				if ( strpos( $mapped_class_name, 'intro-section' ) !== false || strpos( $mapped_class_name, 'brxw-intro-02' ) !== false || strpos( $mapped_class_name, 'brxe-section' ) !== false ) {
 					error_log( 'CSS_CONVERTER_DEBUG: Found ' . $mapped_class_name . ' as global class (mapped), adding to settings' );
 				}
 			} elseif ( $original_class_name && isset( $global_classes[ $original_class_name ] ) ) {
 				$applicable_global_classes[] = $original_class_name;
-				if ( strpos( $original_class_name, 'intro-section' ) !== false || strpos( $original_class_name, 'brxw-intro-02' ) !== false ) {
+				if ( strpos( $original_class_name, 'intro-section' ) !== false || strpos( $original_class_name, 'brxw-intro-02' ) !== false || strpos( $original_class_name, 'brxe-section' ) !== false ) {
 					error_log( 'CSS_CONVERTER_DEBUG: Found ' . $original_class_name . ' as global class (reverse lookup), adding to settings' );
 				}
 			} elseif ( isset( $global_classes[ $class_name ] ) ) {
 				$applicable_global_classes[] = $class_name;
-				if ( strpos( $class_name, 'intro-section' ) !== false || strpos( $class_name, 'brxw-intro-02' ) !== false ) {
+				if ( strpos( $class_name, 'intro-section' ) !== false || strpos( $class_name, 'brxw-intro-02' ) !== false || strpos( $class_name, 'brxe-section' ) !== false ) {
 					error_log( 'CSS_CONVERTER_DEBUG: Found ' . $class_name . ' as global class (direct match), adding to settings' );
 				}
 			}
@@ -235,7 +242,7 @@ class Atomic_Widget_Factory implements Widget_Factory_Interface {
 				error_log( 'CSS_CONVERTER_DEBUG: Successfully added classes to final_settings.classes: ' . implode( ', ', $merged_classes ) );
 			}
 		} else {
-			if ( strpos( $widget_classes, 'intro-section' ) !== false || strpos( $widget_classes, 'brxw-intro-02' ) !== false ) {
+			if ( strpos( $widget_classes, 'intro-section' ) !== false || strpos( $widget_classes, 'brxw-intro-02' ) !== false || strpos( $widget_classes, 'brxe-section' ) !== false ) {
 				error_log( 'CSS_CONVERTER_DEBUG: WARNING - ' . $widget_classes . ' NOT found in global_classes, not adding to settings' );
 				error_log( 'CSS_CONVERTER_DEBUG: Available global classes keys: ' . implode( ', ', array_slice( array_keys( $global_classes ), 0, 10 ) ) );
 			}

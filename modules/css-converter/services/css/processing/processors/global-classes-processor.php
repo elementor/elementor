@@ -60,6 +60,12 @@ class Global_Classes_Processor implements Css_Processor_Interface {
 					error_log( 'CSS_CONVERTER_DEBUG: CSS rule with .brxe-section found: ' . $selector );
 					$properties_count = count( $rule['properties'] ?? [] );
 					error_log( 'CSS_CONVERTER_DEBUG: .brxe-section rule properties count: ' . $properties_count );
+					foreach ( $rule['properties'] ?? [] as $prop ) {
+						$prop_name = $prop['property'] ?? '';
+						if ( in_array( $prop_name, [ 'display', 'flex-direction', 'align-items' ], true ) ) {
+							error_log( 'CSS_CONVERTER_DEBUG: .brxe-section property: ' . $prop_name . ' = ' . ( $prop['value'] ?? '' ) );
+						}
+					}
 				}
 			}
 		}

@@ -65,6 +65,10 @@ class Global_Classes_Conversion_Service {
 				error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 property: ' . $property . ' = ' . $value . ' (has_var: ' . ( $has_var_reference ? 'YES' : 'NO' ) . ')' );
 			}
 			
+			if ( 'brxe-section' === $class_name && in_array( $property, [ 'display', 'flex-direction', 'align-items', 'margin-left', 'margin-right', 'width' ], true ) ) {
+				error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxe-section property: ' . $property . ' = ' . $value . ' (has_var: ' . ( $has_var_reference ? 'YES' : 'NO' ) . ')' );
+			}
+			
 			if ( $has_var_reference ) {
 				$variable_info = $this->get_variable_id_from_var_reference( $value );
 				
@@ -140,6 +144,15 @@ class Global_Classes_Conversion_Service {
 					error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 has_custom_css after failed conversion: ' . ( $has_custom ? 'YES' : 'NO' ) );
 				}
 			}
+			
+			if ( 'brxe-section' === $class_name && in_array( $property, [ 'display', 'flex-direction', 'align-items', 'margin-left', 'margin-right', 'width' ], true ) ) {
+				error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxe-section conversion result: ' . ( $converted && isset( $converted['$$type'] ) ? 'SUCCESS' : 'FAILED' ) );
+				if ( $converted ) {
+					error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxe-section converted: ' . print_r( $converted, true ) );
+				} else {
+					error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxe-section conversion FAILED for: ' . $property . ' = ' . $value );
+				}
+			}
 
 			if ( $converted && isset( $converted['$$type'] ) ) {
 				if ( $has_var_reference ) {
@@ -200,6 +213,17 @@ class Global_Classes_Conversion_Service {
 			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 has grid-template-columns: ' . ( strpos( $custom_css, 'grid-template-columns' ) !== false ? 'YES' : 'NO' ) );
 			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 has grid-gap: ' . ( strpos( $custom_css, 'grid-gap' ) !== false ? 'YES' : 'NO' ) );
 			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxw-intro-02 has align-items: ' . ( strpos( $custom_css, 'align-items' ) !== false ? 'YES' : 'NO' ) );
+		}
+		
+		if ( 'brxe-section' === $class_name ) {
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxe-section final result:' );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxe-section atomic_props count: ' . count( $atomic_props ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxe-section atomic_props keys: ' . implode( ', ', array_keys( $atomic_props ) ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxe-section custom_css length: ' . strlen( $custom_css ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxe-section custom_css: ' . ( $custom_css ? $custom_css : 'EMPTY' ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxe-section has display: ' . ( strpos( $custom_css, 'display' ) !== false ? 'YES' : 'NO' ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxe-section has flex-direction: ' . ( strpos( $custom_css, 'flex-direction' ) !== false ? 'YES' : 'NO' ) );
+			error_log( 'CSS_CONVERTER_DEBUG: Conversion Service - brxe-section has align-items: ' . ( strpos( $custom_css, 'align-items' ) !== false ? 'YES' : 'NO' ) );
 		}
 
 		return [

@@ -80,11 +80,17 @@ class Global_Classes_Registration_Service {
 
 		$overflow_with_original_names = [];
 		$overflow_mapped_classes = array_keys( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached );
+		$successfully_registered_classes = array_keys( $classes_after_limit );
 		foreach ( $class_name_mappings as $original => $mapped ) {
 			if ( in_array( $mapped, $overflow_mapped_classes, true ) ) {
 				error_log( 'GLOBAL_CLASSES_REG: Class in overflow: ' . $original . ' => ' . $mapped . ' (will apply as local widget styles)' );
 				$overflow_with_original_names[ $original ] = $overflow_styles_when_maximum_number_of_global_classes_has_been_reached[ $mapped ];
 				unset( $overflow_styles_when_maximum_number_of_global_classes_has_been_reached[ $mapped ] );
+				unset( $class_name_mappings[ $original ] );
+			} elseif ( in_array( $mapped, $successfully_registered_classes, true ) && $mapped !== $original ) {
+				error_log( 'GLOBAL_CLASSES_REG: Class successfully registered with mapped name: ' . $original . ' => ' . $mapped . ' (keeping mapping for HTML)' );
+			} elseif ( in_array( $original, $successfully_registered_classes, true ) && $mapped === $original ) {
+				error_log( 'GLOBAL_CLASSES_REG: Class successfully registered with original name: ' . $original . ' (removing mapping from class_name_mappings)' );
 				unset( $class_name_mappings[ $original ] );
 			}
 		}
@@ -243,16 +249,36 @@ class Global_Classes_Registration_Service {
 
 		$existing_class = $existing_items[ $class_name ];
 		$existing_atomic_props = $this->extract_atomic_props( $existing_class );
+		$existing_custom_css = $this->extract_custom_css( $existing_class );
 		$new_atomic_props = $class_data['atomic_props'];
+		$new_custom_css = $class_data['custom_css'] ?? '';
 
 		// Compare atomic properties
-		$are_identical = $this->are_styles_identical( $existing_atomic_props, $new_atomic_props );
-		if ( $are_identical ) {
+		$atomic_props_identical = $this->are_styles_identical( $existing_atomic_props, $new_atomic_props );
+		
+		// Compare custom CSS (normalize whitespace for comparison)
+		$existing_custom_css_normalized = $this->normalize_css_string( $existing_custom_css );
+		$new_custom_css_normalized = $this->normalize_css_string( $new_custom_css );
+		$custom_css_identical = $existing_custom_css_normalized === $new_custom_css_normalized;
+
+		if ( $atomic_props_identical && $custom_css_identical ) {
 			// Styles are identical - reuse existing class
+			if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
+				error_log( 'GLOBAL_CLASSES_REG: handle_duplicate_class - Styles identical for ' . $class_name . ', reusing existing class' );
+			}
 			return null;
 		}
 
 		// Styles are different - create new class with suffix
+		if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
+			error_log( 'GLOBAL_CLASSES_REG: handle_duplicate_class - Styles different for ' . $class_name . ', atomic_props_identical: ' . ( $atomic_props_identical ? 'YES' : 'NO' ) . ', custom_css_identical: ' . ( $custom_css_identical ? 'YES' : 'NO' ) );
+			if ( ! $atomic_props_identical ) {
+				error_log( 'GLOBAL_CLASSES_REG: handle_duplicate_class - Atomic props differ. Existing: ' . substr( wp_json_encode( $existing_atomic_props ), 0, 200 ) . ', New: ' . substr( wp_json_encode( $new_atomic_props ), 0, 200 ) );
+			}
+			if ( ! $custom_css_identical ) {
+				error_log( 'GLOBAL_CLASSES_REG: handle_duplicate_class - Custom CSS differs. Existing: ' . substr( $existing_custom_css_normalized, 0, 200 ) . ', New: ' . substr( $new_custom_css_normalized, 0, 200 ) );
+			}
+		}
 		$new_suffix = $this->find_next_available_suffix( $class_name, $existing_items );
 		return $new_suffix;
 	}
@@ -263,6 +289,24 @@ class Global_Classes_Registration_Service {
 			return $class_config['variants'][0]['props'];
 		}
 		return [];
+	}
+
+	private function extract_custom_css( array $class_config ): string {
+		// Extract custom CSS from the class config structure
+		if ( isset( $class_config['variants'][0]['custom_css']['raw'] ) ) {
+			$encoded = $class_config['variants'][0]['custom_css']['raw'];
+			return \Elementor\Utils::decode_string( $encoded );
+		}
+		return '';
+	}
+
+	private function normalize_css_string( string $css ): string {
+		// Normalize whitespace and remove trailing semicolons for comparison
+		$css = trim( $css );
+		$css = preg_replace( '/\s+/', ' ', $css );
+		$css = preg_replace( '/;\s*/', ';', $css );
+		$css = trim( $css, ';' );
+		return $css;
 	}
 
 	private function are_styles_identical( array $props1, array $props2 ): bool {

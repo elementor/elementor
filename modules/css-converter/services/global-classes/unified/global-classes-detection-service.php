@@ -110,26 +110,44 @@ class Global_Classes_Detection_Service
                         if ( 'brxe-section' === $class_name ) {
                             $existing_props = count( $detected_classes[ $class_name ]['properties'] ?? [] );
                             $new_props = count( $rule['properties'] ?? [] );
-                            error_log( 'CSS_CONVERTER_DEBUG: Detection Service - brxe-section already detected, overwriting simple selector (Existing: ' . $existing_props . ', New: ' . $new_props . ')' );
+                            error_log( 'CSS_CONVERTER_DEBUG: Detection Service - brxe-section already detected, merging simple selector (Existing: ' . $existing_props . ', New: ' . $new_props . ')' );
                         }
-                    }
-                    
-                    if ( 'class-color-test' === $class_name ) {
-                        foreach ( $rule['properties'] ?? [] as $prop ) {
-                            error_log( 'DETECTION_SERVICE: Class ' . $class_name . ' - Property ' . ( $prop['property'] ?? '' ) . ' = ' . ( $prop['value'] ?? '' ) );
+                        
+                        $existing_properties = $detected_classes[ $class_name ]['properties'] ?? [];
+                        $new_properties = $rule['properties'] ?? [];
+                        
+                        $merged_properties = $this->merge_properties( $existing_properties, $new_properties );
+                        
+                        $detected_classes[ $class_name ] = [
+                            'selector' => $selector,
+                            'properties' => $merged_properties,
+                            'source' => 'css-converter',
+                        ];
+                    } else {
+                        if ( 'class-color-test' === $class_name ) {
+                            foreach ( $rule['properties'] ?? [] as $prop ) {
+                                error_log( 'DETECTION_SERVICE: Class ' . $class_name . ' - Property ' . ( $prop['property'] ?? '' ) . ' = ' . ( $prop['value'] ?? '' ) );
+                            }
                         }
+                        
+                        $detected_classes[ $class_name ] = [
+                            'selector' => $selector,
+                            'properties' => $rule['properties'] ?? [],
+                            'source' => 'css-converter',
+                        ];
                     }
-                    
-                    $detected_classes[ $class_name ] = [
-                        'selector' => $selector,
-                        'properties' => $rule['properties'] ?? [],
-                        'source' => 'css-converter',
-                    ];
                     
                     if ( 'brxe-section' === $class_name ) {
                         error_log( 'CSS_CONVERTER_DEBUG: Detection Service - ADDED brxe-section (simple selector)' );
                         $props_count = count( $rule['properties'] ?? [] );
                         error_log( 'CSS_CONVERTER_DEBUG: Detection Service - brxe-section properties added: ' . $props_count );
+                        foreach ( $rule['properties'] ?? [] as $prop ) {
+                            $prop_name = $prop['property'] ?? '';
+                            $prop_value = $prop['value'] ?? '';
+                            if ( in_array( $prop_name, [ 'display', 'flex-direction', 'align-items', 'margin-left', 'margin-right', 'width' ], true ) ) {
+                                error_log( 'CSS_CONVERTER_DEBUG: Detection Service - brxe-section property: ' . $prop_name . ' = ' . $prop_value );
+                            }
+                        }
                     }
                     
                     if ( 'brxw-intro-02' === $class_name ) {
@@ -288,6 +306,27 @@ class Global_Classes_Detection_Service
 
 
         return $filtered;
+    }
+
+    private function merge_properties( array $existing_properties, array $new_properties ): array {
+        $merged = [];
+        $property_map = [];
+        
+        foreach ( $existing_properties as $prop ) {
+            $property_name = $prop['property'] ?? '';
+            if ( ! empty( $property_name ) ) {
+                $property_map[ $property_name ] = $prop;
+            }
+        }
+        
+        foreach ( $new_properties as $prop ) {
+            $property_name = $prop['property'] ?? '';
+            if ( ! empty( $property_name ) ) {
+                $property_map[ $property_name ] = $prop;
+            }
+        }
+        
+        return array_values( $property_map );
     }
 
     public function get_detection_stats( array $css_rules ): array

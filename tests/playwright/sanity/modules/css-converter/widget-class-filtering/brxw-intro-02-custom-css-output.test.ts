@@ -54,7 +54,11 @@ test.describe( 'brxw-intro-02 Custom CSS Output @custom-css-output', () => {
 		await test.step( 'Navigate to preview and check Elementor CSS files', async () => {
 			await page.goto( previewUrl );
 			await page.waitForLoadState( 'networkidle' );
-			await page.waitForTimeout( 2000 );
+			await page.waitForTimeout( 3000 );
+			
+			await page.waitForSelector( '.brxw-intro-02, [class*="brxw-intro-02"]', { timeout: 10000 } ).catch( () => {
+				console.log( 'Element with brxw-intro-02 class not found immediately' );
+			} );
 
 			const cssLinks = await page.locator( 'link[rel="stylesheet"][href*="elementor/css"]' ).all();
 			let foundBrxwIntro02 = false;
@@ -118,8 +122,23 @@ test.describe( 'brxw-intro-02 Custom CSS Output @custom-css-output', () => {
 			const display = await introElement.evaluate( ( el ) => window.getComputedStyle( el ).display );
 			const gridGap = await introElement.evaluate( ( el ) => window.getComputedStyle( el ).gap );
 			const gridTemplateColumns = await introElement.evaluate( ( el ) => window.getComputedStyle( el ).gridTemplateColumns );
+			const classList = await introElement.evaluate( ( el ) => Array.from( el.classList ).join( ' ' ) );
 
-			console.log( 'Computed styles:', { display, gridGap, gridTemplateColumns } );
+			console.log( 'Computed styles:', { display, gridGap, gridTemplateColumns, classList } );
+
+			if ( gridGap === 'normal' || gridTemplateColumns === 'none' ) {
+				const allStyles = await introElement.evaluate( ( el ) => {
+					const computed = window.getComputedStyle( el );
+					return {
+						display: computed.display,
+						gap: computed.gap,
+						gridGap: computed.gridGap,
+						gridTemplateColumns: computed.gridTemplateColumns,
+						alignItems: computed.alignItems,
+					};
+				} );
+				console.log( 'All computed styles:', allStyles );
+			}
 
 			expect( gridGap ).not.toBe( 'normal' );
 			expect( gridTemplateColumns ).not.toBe( 'none' );

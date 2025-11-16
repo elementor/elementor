@@ -30,15 +30,15 @@ class Widget_Mapper {
 			'p' => 'e-paragraph',
 			'blockquote' => 'e-paragraph', // Treat blockquote as paragraph with special styling
 
-			// Container elements - use div-block for simple containers
-			'div' => 'e-div-block',
-			'section' => 'e-div-block',
-			'article' => 'e-div-block',
-			'aside' => 'e-div-block',
-			'header' => 'e-div-block',
-			'footer' => 'e-div-block',
-			'main' => 'e-div-block',
-			'nav' => 'e-div-block',
+		// Container elements - use div-block for simple containers
+		'div' => 'e-div-block',
+		'section' => 'e-div-block',
+		'article' => 'e-div-block',
+		'aside' => 'e-div-block',
+		'header' => 'e-div-block',
+		'footer' => 'e-div-block',
+		'main' => 'e-div-block',
+		'nav' => 'e-div-block',
 
 			// Interactive elements
 			'a' => 'e-link',
@@ -347,19 +347,11 @@ class Widget_Mapper {
 			$children = $this->map_elements( $element['children'], false );
 		}
 
-		// Determine flexbox direction from CSS or default to column
-		$direction = $this->determine_flex_direction( $element );
-
 		return [
 			'widget_type' => 'e-flexbox',
 			'element_id' => $element_id,
 			'original_tag' => $element['tag'],
-			'settings' => [
-				'direction' => $direction,
-				'wrap' => 'nowrap', // Default, can be overridden by CSS
-				'justify_content' => 'flex-start', // Default
-				'align_items' => 'stretch', // Default
-			],
+			'settings' => [],
 			'attributes' => $element['attributes'],
 			'inline_css' => $element['inline_css'] ?? [],
 			'children' => $children,
@@ -723,28 +715,6 @@ class Widget_Mapper {
 		);
 	}
 
-	private function determine_flex_direction( $element ) {
-		// Check inline CSS for flex-direction
-		if ( ! empty( $element['inline_css']['flex-direction'] ) ) {
-			return $element['inline_css']['flex-direction']['value'];
-		}
-
-		// Check for display: flex and other flex properties
-		if ( ! empty( $element['inline_css']['display'] ) &&
-			'flex' === $element['inline_css']['display']['value'] ) {
-			// Default to row for explicit flex containers
-			return 'row';
-		}
-
-		// Default to column for block-level elements
-		$block_elements = [ 'div', 'section', 'article', 'aside', 'header', 'footer', 'main', 'nav' ];
-		if ( in_array( $element['tag'], $block_elements, true ) ) {
-			return 'column';
-		}
-
-		// Default to row for inline elements
-		return 'row';
-	}
 
 	public function get_supported_tags() {
 		return array_keys( $this->mapping_rules );
