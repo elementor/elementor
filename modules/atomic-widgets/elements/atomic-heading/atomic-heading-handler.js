@@ -13,10 +13,10 @@ class HeadingActionHandler extends elementorModules.frontend.handlers.Base {
 
 	onActionButtonClick( event ) {
 		event.preventDefault();
-		
+
 		const $button = jQuery( event.currentTarget );
 		const actionUrl = $button.data( 'href' );
-		
+
 		if ( actionUrl ) {
 			elementorFrontend.utils.urlActions.runAction( actionUrl, event );
 		}
@@ -25,12 +25,12 @@ class HeadingActionHandler extends elementorModules.frontend.handlers.Base {
 
 jQuery( window ).on( 'elementor/frontend/init', () => {
 	elementorFrontend.elementsHandler.attachHandler( 'e-heading', HeadingActionHandler );
-	
+
 	jQuery( document ).on( 'click', '.e-heading-action-button', function( event ) {
 		event.preventDefault();
-		
+
 		const actionUrl = jQuery( this ).data( 'href' );
-		
+
 		if ( actionUrl ) {
 			elementorFrontend.utils.urlActions.runAction( actionUrl, event );
 		}

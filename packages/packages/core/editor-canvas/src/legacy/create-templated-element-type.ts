@@ -140,7 +140,7 @@ export function createTemplatedElementView( {
 
 		hasActionInLink?(): boolean {
 			const widgetType = this.model.get( 'widgetType' );
-			
+
 			if ( widgetType !== 'e-heading' ) {
 				return false;
 			}
