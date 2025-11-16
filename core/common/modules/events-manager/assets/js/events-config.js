@@ -25,6 +25,7 @@ const eventsConfig = {
 			cloudKitLibrary: 'Cloud Kit Library',
 		},
 		variables: 'Variables Panel',
+		variablesManager: 'Variables Manager',
 		admin: 'WP admin',
 		structurePanel: 'Structure Panel',
 		canvas: 'Canvas',
@@ -170,6 +171,9 @@ const eventsConfig = {
 			add: 'add_new_variable',
 			connect: 'connect_variable',
 			save: 'save_new_variable',
+			openManager: 'open_variables_manager',
+			saveChanges: 'save_variables_changes',
+			delete: 'delete_variable',
 		},
 		components: {
 			createClicked: 'component_create_clicked',
