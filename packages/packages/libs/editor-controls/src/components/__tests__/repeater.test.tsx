@@ -458,7 +458,43 @@ describe( 'Repeater', () => {
 		);
 
 		// Assert.
-		const toggleButton = screen.queryByRole( 'button', { name: 'Hide' } );
+		const toggleButton = screen.queryByLabelText( 'Hide' );
 		expect( toggleButton ).not.toBeInTheDocument();
+	} );
+
+	it( 'should hide the remove button when showRemove is false', () => {
+		// Arrange.
+		const itemSettings = {
+			Icon: () => <span>Item Icon</span>,
+			Label: () => <span>Item label</span>,
+			Content: () => <span>Content</span>,
+			initialValues: {
+				$$type: 'example',
+				value: 'First item',
+			},
+			getId: ( { index }: { index: number } ) => `item-${ index }`,
+		};
+
+		const values = [
+			{
+				$$type: 'example',
+				value: 'First item',
+			},
+		];
+
+		// Act.
+		renderWithTheme(
+			<Repeater
+				label={ 'Repeater' }
+				itemSettings={ itemSettings }
+				values={ values }
+				setValues={ jest.fn() }
+				showRemove={ false }
+			/>
+		);
+
+		// Assert.
+		const removeButton = screen.queryByLabelText( 'Remove' );
+		expect( removeButton ).not.toBeInTheDocument();
 	} );
 } );

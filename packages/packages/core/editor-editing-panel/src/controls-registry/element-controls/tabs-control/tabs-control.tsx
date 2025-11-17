@@ -100,6 +100,7 @@ export const TabsControl = ( { label }: { label: string } ) => {
 			showToggle={ false }
 			values={ repeaterValues }
 			setValues={ setValue }
+			showRemove={ repeaterValues.length > 1 }
 			label={ label }
 			itemSettings={ {
 				getId: ( { item } ) => item.id,

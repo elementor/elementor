@@ -90,6 +90,7 @@ type RepeaterProps< T > = {
 	};
 	showDuplicate?: boolean;
 	showToggle?: boolean;
+	showRemove?: boolean;
 	openItem?: number;
 };
 
@@ -104,6 +105,7 @@ export const Repeater = < T, >( {
 	setValues: setItems,
 	showDuplicate = true,
 	showToggle = true,
+	showRemove = true,
 	disableAddItemButton = false,
 	openItem: initialOpenItem = EMPTY_OPEN_ITEM,
 }: RepeaterProps< RepeaterItem< T > > ) => {
@@ -226,6 +228,7 @@ export const Repeater = < T, >( {
 									onOpen={ () => setOpenItem( EMPTY_OPEN_ITEM ) }
 									showDuplicate={ showDuplicate }
 									showToggle={ showToggle }
+									showRemove={ showRemove }
 									actions={ itemSettings.actions }
 								>
 									{ ( props ) => (
@@ -258,6 +261,7 @@ type RepeaterItemProps< T > = {
 	onOpen: () => void;
 	showDuplicate: boolean;
 	showToggle: boolean;
+	showRemove: boolean;
 	disabled?: boolean;
 	actions?: React.ReactNode;
 };
@@ -274,6 +278,7 @@ const RepeaterItem = < T, >( {
 	onOpen,
 	showDuplicate,
 	showToggle,
+	showRemove,
 	disabled,
 	actions,
 }: RepeaterItemProps< T > ) => {
@@ -309,11 +314,13 @@ const RepeaterItem = < T, >( {
 							</Tooltip>
 						) }
 						{ actions }
-						<Tooltip title={ removeLabel } placement="top">
-							<IconButton size={ SIZE } onClick={ removeItem } aria-label={ removeLabel }>
-								<XIcon fontSize={ SIZE } />
-							</IconButton>
-						</Tooltip>
+						{ showRemove && (
+							<Tooltip title={ removeLabel } placement="top">
+								<IconButton size={ SIZE } onClick={ removeItem } aria-label={ removeLabel }>
+									<XIcon fontSize={ SIZE } />
+								</IconButton>
+							</Tooltip>
+						) }
 					</>
 				}
 			/>
