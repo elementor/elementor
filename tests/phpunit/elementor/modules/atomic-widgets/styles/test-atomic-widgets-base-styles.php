@@ -86,7 +86,7 @@ class Test_Atomic_Widgets_Base_Styles extends Elementor_Test_Base {
 			->expects( $this->once() )
 			->method( 'register' )
 			->with(
-				Atomic_Widget_Base_Styles::STYLES_KEY,
+				[ Atomic_Widget_Base_Styles::STYLES_KEY ],
 				$this->callback(function( $callback ) use ( $widget, $element ) {
 					$styles = $callback( [ 1 ] );
 
