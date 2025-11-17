@@ -5,7 +5,7 @@ import {
 	settingsTransformersRegistry,
 } from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
-import { type V1Element, type V1ElementData } from '@elementor/editor-elements';
+import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { __privateListenTo as listenTo, commandStartEvent, registerDataHook } from '@elementor/editor-v1-adapters';

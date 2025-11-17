@@ -91,10 +91,8 @@ function createComponentView(
 							icon: 'eicon-edit',
 							title: () => __( 'Edit Component', 'elementor' ),
 							isEnabled: () => true,
-							callback: (
-								_: unknown,
-								eventData: ContextMenuEventData
-							) => this.editComponent( eventData ),
+							callback: ( _: unknown, eventData: ContextMenuEventData ) =>
+								this.editComponent( eventData ),
 						},
 					],
 				},
