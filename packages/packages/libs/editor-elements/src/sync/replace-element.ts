@@ -1,3 +1,4 @@
+import { ElementIndexNotFoundError, ElementNotFoundError, ElementParentNotFoundError } from '../errors';
 import { createElement } from './create-element';
 import { deleteElement } from './delete-element';
 import { getContainer } from './get-container';
@@ -34,16 +35,17 @@ function getNewElementLocation(
 
 	const currentElementContainer = getContainer( currentElement.id );
 	if ( ! currentElementContainer ) {
-		throw new Error( `Element ${ currentElement.id } not found. Cannot replace element.` );
+		throw new ElementNotFoundError( { context: { elementId: currentElement.id } } );
 	}
+
 	const parent = currentElementContainer.parent;
 	if ( ! parent ) {
-		throw new Error( `Parent not found for element ${ currentElement.id }. Cannot replace element.` );
+		throw new ElementParentNotFoundError( { context: { elementId: currentElement.id } } );
 	}
 
 	const elementIndex = currentElementContainer.view?._index ?? 0;
 	if ( elementIndex === undefined || elementIndex === -1 ) {
-		throw new Error( `Element ${ currentElement.id } not found in parent container. Cannot replace element.` );
+		throw new ElementIndexNotFoundError( { context: { elementId: currentElement.id } } );
 	}
 
 	location = { containerId: parent.id, index: elementIndex };

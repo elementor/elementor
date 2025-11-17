@@ -15,6 +15,8 @@ import { apiClient } from './api';
 import { type ExtendedWindow } from './types';
 import { trackComponentEvent } from './utils/tracking';
 
+type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
+
 export const TYPE = 'e-component';
 
 export function createComponentType(
@@ -91,7 +93,7 @@ function createComponentView(
 							isEnabled: () => true,
 							callback: (
 								_: unknown,
-								eventData: { location: string; secondaryLocation: string; trigger: string }
+								eventData: ContextMenuEventData
 							) => this.editComponent( eventData ),
 						},
 					],
@@ -117,15 +119,7 @@ function createComponentView(
 			}
 		}
 
-		editComponent( {
-			trigger,
-			location,
-			secondaryLocation,
-		}: {
-			trigger: string;
-			location: string;
-			secondaryLocation: string;
-		} ) {
+		editComponent( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
 			this.switchDocument();
 
 			const editorSettings = this.model.get( 'editor_settings' );
@@ -143,10 +137,12 @@ function createComponentView(
 		handleDblClick( e: MouseEvent ) {
 			e.stopPropagation();
 
+			const { triggers, locations, secondaryLocations } = this.eventsManagerConfig;
+
 			this.editComponent( {
-				trigger: this.eventsManagerConfig.triggers.doubleClick,
-				location: this.eventsManagerConfig.locations.canvas,
-				secondaryLocation: this.eventsManagerConfig.secondaryLocations.canvasElement,
+				trigger: triggers.doubleClick,
+				location: locations.canvas,
+				secondaryLocation: secondaryLocations.canvasElement,
 			} );
 		}
 

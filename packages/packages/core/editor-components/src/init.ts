@@ -46,7 +46,7 @@ export function init() {
 		return true;
 	} );
 
-	registerDataHook< Record< string, unknown >, V1Element >( 'after', 'preview/drop', onElementDrop );
+	registerDataHook( 'after', 'preview/drop', onElementDrop );
 
 	( window as unknown as ExtendedWindow ).elementorCommon.__beforeSave = beforeSave;
 

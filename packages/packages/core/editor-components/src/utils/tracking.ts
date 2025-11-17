@@ -19,25 +19,29 @@ export const trackComponentEvent = ( { action, ...data }: ComponentEventData ) =
 	dispatchEvent?.( name, data );
 };
 
-export const onElementDrop = ( _args: unknown, result: V1Element ) => {
-	if ( result.model.get( 'widgetType' ) === 'e-component' ) {
-		const editorSettings = result.model.get( 'editor_settings' );
-		const componentName = editorSettings?.title;
-		const componentUID = editorSettings?.component_uid;
-		const instanceId = result.id;
-
-		const createdThisSession = selectCreatedThisSession( getState() );
-		const isSameSessionReuse = componentUID && createdThisSession.includes( componentUID );
-
-		const eventsManagerConfig = ( window as unknown as ExtendedWindow ).elementorCommon.eventsManager.config;
-		trackComponentEvent( {
-			action: 'instanceAdded',
-			instance_id: instanceId,
-			component_uid: componentUID,
-			component_name: componentName,
-			is_same_session_reuse: isSameSessionReuse,
-			location: eventsManagerConfig.locations.widgetPanel,
-			secondary_location: eventsManagerConfig.secondaryLocations.componentsTab,
-		} );
+export const onElementDrop = ( _args: unknown, element: V1Element ) => {
+	if ( ! ( element.model.get( 'widgetType' ) === 'e-component' ) ) {
+		return;
 	}
+
+	const editorSettings = element.model.get( 'editor_settings' );
+	const componentName = editorSettings?.title;
+	const componentUID = editorSettings?.component_uid;
+	const instanceId = element.id;
+
+	const createdThisSession = selectCreatedThisSession( getState() );
+	const isSameSessionReuse = componentUID && createdThisSession.includes( componentUID );
+
+	const eventsManagerConfig = ( window as unknown as ExtendedWindow ).elementorCommon.eventsManager.config;
+	const { locations, secondaryLocations } = eventsManagerConfig;
+
+	trackComponentEvent( {
+		action: 'instanceAdded',
+		instance_id: instanceId,
+		component_uid: componentUID,
+		component_name: componentName,
+		is_same_session_reuse: isSameSessionReuse,
+		location: locations.widgetPanel,
+		secondary_location: secondaryLocations.componentsTab,
+	} );
 };

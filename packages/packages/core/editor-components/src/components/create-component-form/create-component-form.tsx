@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { getElementLabel, type V1ElementData } from '@elementor/editor-elements';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { StarIcon } from '@elementor/icons';
@@ -45,7 +45,7 @@ export function CreateComponentForm() {
 
 	const dispatch = useDispatch();
 
-	const eventData = React.useRef< ComponentEventData | null >( null );
+	const eventData = useRef< ComponentEventData | null >( null );
 
 	useEffect( () => {
 		const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
