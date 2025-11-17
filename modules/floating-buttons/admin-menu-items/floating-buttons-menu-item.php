@@ -2,7 +2,6 @@
 namespace Elementor\Modules\FloatingButtons\AdminMenuItems;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
-use Elementor\Core\Editor\Editor;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
