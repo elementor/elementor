@@ -74,6 +74,10 @@ class Validation {
 			}
 		}
 
+		if ( empty( $sanitized['items'] ) ) {
+			return [];
+		}
+
 		return wp_json_encode( $sanitized );
 	}
 

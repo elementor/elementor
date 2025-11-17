@@ -78,19 +78,13 @@ class Test_Validation extends TestCase {
 					'id' => '1',
 					'elType' => 'e-flexbox',
 					'settings' => [],
-					'interactions' => json_encode( [
-						'items' => [],
-						'version' => 1,
-					] ),
+					'interactions' => [],
 					'elements' => [
 						[
 							'id' => '2',
 							'elType' => 'widget',
 							'widgetType' => 'e-heading',
-							'interactions' => json_encode( [
-								'items' => [],
-								'version' => 1,
-							] ),
+							'interactions' => [],
 						],
 					],
 				],
