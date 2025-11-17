@@ -718,7 +718,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			return;
 		}
 
-		this.$el.off( 'click', this.documentClickHandler );
+		elementor.templates.layout.modalContent.$el.off( 'click', this.documentClickHandler );
 		this.documentClickHandler = null;
 	},
 
