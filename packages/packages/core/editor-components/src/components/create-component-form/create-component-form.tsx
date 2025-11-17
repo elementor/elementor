@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { getElementLabel, type V1ElementData } from '@elementor/editor-elements';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { StarIcon } from '@elementor/icons';
+import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __useDispatch as useDispatch } from '@elementor/store';
 import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Typography } from '@elementor/ui';
 import { generateUniqueId } from '@elementor/utils';
@@ -103,6 +104,8 @@ export function CreateComponentForm() {
 					.replace( '%2$s', uid ),
 				type: 'success',
 			} );
+
+			runCommand( 'document/save/auto' );
 
 			resetAndClosePopup();
 		} catch {
