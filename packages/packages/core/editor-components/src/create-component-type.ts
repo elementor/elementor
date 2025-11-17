@@ -14,6 +14,7 @@ import { __ } from '@wordpress/i18n';
 import { apiClient } from './api';
 import { type ExtendedWindow } from './types';
 import { trackComponentEvent } from './utils/tracking';
+import { getCurrentDocument } from '@elementor/editor-documents';
 
 type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
 
@@ -118,6 +119,14 @@ function createComponentView(
 		}
 
 		editComponent( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
+			const currentDocument = getCurrentDocument();
+
+			// as the double click handling could occur already when editing the component - putting this minor check
+			// to prevent reinvoking the switch mechanism in case the component is already the currently edited document
+			if ( currentDocument?.id === this.getComponentId().value ) {
+				return;
+			}
+
 			this.switchDocument();
 
 			const editorSettings = this.model.get( 'editor_settings' );

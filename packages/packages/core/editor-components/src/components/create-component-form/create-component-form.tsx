@@ -3,14 +3,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { getElementLabel, type V1ElementData } from '@elementor/editor-elements';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { StarIcon } from '@elementor/icons';
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
-import { __useDispatch as useDispatch } from '@elementor/store';
 import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Typography } from '@elementor/ui';
-import { generateUniqueId } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
-import { slice } from '../../store/store';
 import { type ComponentFormValues } from '../../types';
 import { trackComponentEvent } from '../../utils/tracking';
 import { useForm } from './hooks/use-form';
@@ -20,7 +16,7 @@ import {
 	type ContextMenuEventOptions,
 	getComponentEventData,
 } from './utils/get-component-event-data';
-import { replaceElementWithComponent } from './utils/replace-element-with-component';
+import { createUnpublishedComponent } from '../../store/create-unpublished-component';
 
 type SaveAsComponentEventData = {
 	element: V1ElementData;
@@ -43,8 +39,6 @@ export function CreateComponentForm() {
 	const [ anchorPosition, setAnchorPosition ] = useState< { top: number; left: number } >();
 
 	const [ resultNotification, setResultNotification ] = useState< ResultNotification | null >( null );
-
-	const dispatch = useDispatch();
 
 	const eventData = useRef< ComponentEventData | null >( null );
 
@@ -75,26 +69,7 @@ export function CreateComponentForm() {
 				throw new Error( `Can't save element as component: element not found` );
 			}
 
-			const uid = generateUniqueId( 'component' );
-
-			dispatch(
-				slice.actions.addUnpublished( {
-					uid,
-					name: values.componentName,
-					elements: [ element.element ],
-				} )
-			);
-
-			dispatch( slice.actions.addCreatedThisSession( uid ) );
-
-			replaceElementWithComponent( element.element, { uid, name: values.componentName } );
-
-			trackComponentEvent( {
-				action: 'created',
-				component_uid: uid,
-				component_name: values.componentName,
-				...eventData.current,
-			} );
+			const uid = createUnpublishedComponent( values.componentName, element.element, eventData.current);
 
 			setResultNotification( {
 				show: true,
@@ -104,8 +79,6 @@ export function CreateComponentForm() {
 					.replace( '%2$s', uid ),
 				type: 'success',
 			} );
-
-			runCommand( 'document/save/auto' );
 
 			resetAndClosePopup();
 		} catch {
