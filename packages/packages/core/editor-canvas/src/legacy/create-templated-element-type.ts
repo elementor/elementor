@@ -148,18 +148,18 @@ export function createTemplatedElementView( {
 			}
 
 			const dynamicTagName = destination?.value?.name || '';
-			// const dynamicTagSettings = destination?.value?.settings || {};
 
-			// We can use this approach for all action based tags, the data comes from the tag definition in pro.
-			// The issue is that contact-url dynamic tag is action based, so we need to change its group.
-			// if ( dynamicTagSettings.action ) {
-			// 	return true;
-			// }
+			const legacyWindow = window as any;
+			const atomicDynamicTags =
+				legacyWindow.elementorCommon?.config?.atomicDynamicTags?.tags ||
+				legacyWindow.elementor?.config?.atomicDynamicTags?.tags ||
+				legacyWindow.elementorCommon?.config?.settings?.atomicDynamicTags?.tags ||
+				{};
 
-			// This is the list approach, we can use one or the other.
-			// This way we wont need to change the contact-url dynamic tag group.
-			const actionBasedTags = [ 'popup', 'off-canvas', 'lightbox' ];
-			return actionBasedTags.includes( dynamicTagName );
+			const tagInfo = atomicDynamicTags[ dynamicTagName ];
+			const tagGroup = tagInfo?.group || '';
+
+			return tagGroup === 'action';
 		}
 
 		#beforeRender() {

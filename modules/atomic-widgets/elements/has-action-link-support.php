@@ -2,15 +2,14 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements;
 
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 trait Has_Action_Link_Support {
-
-	protected function get_action_based_dynamic_tags(): array {
-		return [ 'popup', 'off-canvas', 'lightbox' ];
-	}
 
 	protected function has_action_in_link(): bool {
 		$raw_settings = $this->get_settings();
@@ -27,17 +26,30 @@ trait Has_Action_Link_Support {
 		}
 
 		$dynamic_tag_name = $destination['value']['name'] ?? '';
-		$dynamic_tag_settings = $destination['value']['settings'] ?? [];
 
-		// We can use this approach for all action based tags, the data comes from the tag definition in pro.
-		// The issue is that contact-url dynamic tag is action based, so we need to change its group.
-		// if ( isset( $dynamic_tag_settings['action'] ) ) {
-		// 	return true;
-		// }
+		if ( ! $dynamic_tag_name ) {
+			return false;
+		}
 
-		// This is the list approach, we can use one or the other.
-		// This way we wont need to change the contact-url dynamic tag group.
-		return in_array( $dynamic_tag_name, $this->get_action_based_dynamic_tags(), true );
+		$tag_info = Plugin::$instance->dynamic_tags->get_tag_info( $dynamic_tag_name );
+
+		if ( ! $tag_info || ! isset( $tag_info['instance'] ) ) {
+			return false;
+		}
+
+		$tag_instance = $tag_info['instance'];
+
+		if ( ! method_exists( $tag_instance, 'get_group' ) ) {
+			return false;
+		}
+
+		$tag_group = $tag_instance->get_group();
+
+		if ( $dynamic_tag_name === 'contact-url' && $tag_group === 'action' ) {
+			return false;
+		}
+
+		return 'action' === $tag_group;
 	}
 
 	public function get_script_depends() {
