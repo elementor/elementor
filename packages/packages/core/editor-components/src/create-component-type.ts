@@ -119,11 +119,7 @@ function createComponentView(
 		}
 
 		editComponent( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
-			const currentDocument = getCurrentDocument();
-
-			// as the double click handling could occur already when editing the component - putting this minor check
-			// to prevent reinvoking the switch mechanism in case the component is already the currently edited document
-			if ( currentDocument?.id === this.getComponentId().value ) {
+			if( this.isComponentCurrentlyEdited() ) {
 				return;
 			}
 
@@ -165,6 +161,12 @@ function createComponentView(
 				...super.attributes(),
 				'data-elementor-id': this.getComponentId().value,
 			};
+		}
+
+		isComponentCurrentlyEdited() {
+			const currentDocument = getCurrentDocument();
+
+			return currentDocument?.id === this.getComponentId()?.value;
 		}
 	};
 }
