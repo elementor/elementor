@@ -4,7 +4,6 @@ namespace Elementor\Modules\GlobalClasses;
 
 use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
-use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
 
 class Atomic_Global_Styles {
 	const STYLES_KEY = 'global';
@@ -12,7 +11,7 @@ class Atomic_Global_Styles {
 	public function register_hooks() {
 		add_action(
 			'elementor/atomic-widgets/styles/register',
-			fn( Atomic_Styles_Manager $styles_manager, array $post_ids ) => $this->register_styles( $styles_manager ),
+			fn( Atomic_Styles_Manager $styles_manager ) => $this->register_styles( $styles_manager ),
 			20,
 			2
 		);
@@ -45,9 +44,8 @@ class Atomic_Global_Styles {
 		};
 
 		$styles_manager->register(
-			self::STYLES_KEY . '-' . $context,
+			[ self::STYLES_KEY, $context ],
 			$get_styles,
-			[ self::STYLES_KEY, $context ]
 		);
 	}
 
@@ -60,15 +58,13 @@ class Atomic_Global_Styles {
 	}
 
 	private function invalidate_cache( ?string $context = null ) {
-		$cache_validity = new Cache_Validity();
-
 		if ( empty( $context ) || Global_Classes_Repository::CONTEXT_FRONTEND === $context ) {
-			$cache_validity->invalidate( [ self::STYLES_KEY ] );
+			do_action( 'elementor/atomic-widgets/styles/clear', [ self::STYLES_KEY ] );
 
 			return;
 		}
 
-		$cache_validity->invalidate( [ self::STYLES_KEY, $context ] );
+		do_action( 'elementor/atomic-widgets/styles/clear', [ self::STYLES_KEY, $context ] );
 	}
 
 	private function transform_classes_names( $ids ) {
