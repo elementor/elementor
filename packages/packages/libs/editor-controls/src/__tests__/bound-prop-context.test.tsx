@@ -1,7 +1,7 @@
-import { type PropType, stringPropTypeUtil } from '@elementor/editor-props';
-import { act, fireEvent, render, renderHook, screen } from '@testing-library/react';
 import * as React from 'react';
 import { createMockPropType, createMockPropUtil, createMockSchema } from 'test-utils';
+import { type PropType, sizePropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
+import { act, fireEvent, render, renderHook, screen } from '@testing-library/react';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 
@@ -434,7 +434,7 @@ describe( 'useBoundProp', () => {
 		const propType = createMockPropType( {
 			kind: 'object',
 			shape: {
-				key: createMockPropType( { kind: 'plain' } ),
+				key: createMockPropType(),
 			},
 		} );
 
@@ -459,5 +459,49 @@ describe( 'useBoundProp', () => {
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( { key: null }, undefined, { bind: 'key' } );
+	} );
+
+	it( 'should resetValue to initial_value when initial_value is set', () => {
+		// Arrange.
+		const initialValue = sizePropTypeUtil.create( { size: 201, unit: 'rem' } );
+		const propType = createMockPropType( {
+			kind: 'object',
+			shape: {
+				key: createMockPropType( {
+					kind: 'plain',
+					initial_value: initialValue,
+				} ),
+			},
+		} );
+
+		const value = {
+			key: stringPropTypeUtil.create( 'current-value' ),
+		};
+
+		const setValue = jest.fn();
+
+		const { result } = renderHook( () => useBoundProp(), {
+			wrapper: ( { children } ) => (
+				<PropProvider value={ value } setValue={ setValue } propType={ propType }>
+					<PropKeyProvider bind="key">{ children }</PropKeyProvider>
+				</PropProvider>
+			),
+		} );
+
+		// Act.
+		act( () => {
+			result.current.resetValue();
+		} );
+
+		const expected = {
+			$$type: 'size',
+			value: {
+				size: 201,
+				unit: 'rem',
+			},
+		};
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( { key: expected }, undefined, { bind: 'key' } );
 	} );
 } );
