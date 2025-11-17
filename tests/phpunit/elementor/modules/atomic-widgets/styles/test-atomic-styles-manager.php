@@ -372,7 +372,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'color: red;', Utils::decode_string( $parsed['variants'][0]['custom_css']['raw'] ) );
 	}
 
-	public function test_clear_files__invalidates_cache_for_cache_keys() {
+	public function test_clear_files__invalidates_cache_for_path() {
 		// Arrange
 		$styles_manager = new Atomic_Styles_Manager();
 		$styles_manager->register_hooks();
@@ -432,7 +432,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		$this->assertTrue( true, 'Clear should not fail when files do not exist' );
 	}
 
-	public function test_clear_files__with_nested_cache_keys_deletes_all_descendant_files() {
+	public function test_clear_files__with_nested_path_deletes_all_descendant_files() {
 		// Arrange
 		$styles_manager = new Atomic_Styles_Manager();
 		$styles_manager->register_hooks();
@@ -485,7 +485,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		$this->assertContains( implode( '-', $nested_cache_key_2 ) . '-tablet', $deleted_handles );
 	}
 
-	public function test_clear_files__should_not_clear_files_not_under_the_given_cache_keys() {
+	public function test_clear_files__should_not_clear_files_not_under_the_given_path() {
 		// Arrange
 		$styles_manager = new Atomic_Styles_Manager();
 		$styles_manager->register_hooks();
@@ -501,9 +501,17 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			return $this->get_additional_test_style_defs();
 		};
 
+		$upload_dir = wp_upload_dir();
+		$base_path = trailingslashit( $upload_dir['basedir'] ) . 'elementor/css/';
+		$existing_files = [
+			$base_path . implode( '-', $nested_cache_key_1 ) . '-desktop.css',
+			$base_path . implode( '-', $nested_cache_key_1 ) . '-mobile.css',
+			$base_path . implode( '-', $nested_cache_key_2 ) . '-desktop.css',
+			$base_path . implode( '-', $nested_cache_key_2 ) . '-tablet.css',
+		];
+
 		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
 
-		$existing_files = [];
 		$this->filesystemMock->method( 'exists' )
 			->willReturnCallback( function ( $path ) use ( &$existing_files ) {
 				return in_array( $path, $existing_files, true );
@@ -527,16 +535,6 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		}, 20, 1 );
 
 		do_action( 'elementor/post/render', 1 );
-
-		$upload_dir = wp_upload_dir();
-		$base_path = trailingslashit( $upload_dir['basedir'] ) . 'elementor/css/';
-
-		$existing_files = [
-			$base_path . implode( '-', $nested_cache_key_1 ) . '-desktop.css',
-			$base_path . implode( '-', $nested_cache_key_1 ) . '-mobile.css',
-			$base_path . implode( '-', $nested_cache_key_2 ) . '-desktop.css',
-			$base_path . implode( '-', $nested_cache_key_2 ) . '-tablet.css',
-		];
 
 		do_action( 'elementor/frontend/after_enqueue_post_styles' );
 
