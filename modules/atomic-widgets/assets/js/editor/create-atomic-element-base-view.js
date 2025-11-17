@@ -278,6 +278,8 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		saveAsTemplate() {
+			elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
+
 			$e.route( 'library/save-template', {
 				model: this.model,
 			} );
