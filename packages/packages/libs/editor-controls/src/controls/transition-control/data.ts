@@ -4,6 +4,7 @@ export type TransitionProperty = {
 	label: string;
 	value: string;
 	unavailable?: boolean;
+	isDisabled?: boolean;
 };
 
 export type TransitionCategory = {

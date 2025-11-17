@@ -28,7 +28,7 @@ const findByValue = ( value: string ) => {
 	for ( const category of transitionProperties ) {
 		const property = category.properties.find( ( prop ) => prop.value === value );
 		if ( property ) {
-			return property.label;
+			return property;
 		}
 	}
 };
@@ -49,7 +49,7 @@ export const TransitionSelector = ( {
 
 	const getItemList = () => {
 		const recentItems = recentlyUsedList
-			.map( ( item ) => findByValue( item ) )
+			.map( ( item ) => findByValue( item )?.label )
 			.filter( ( item ) => !! item ) as string[];
 		const filteredItems = transitionsItemsList.map( ( category ) => {
 			return {

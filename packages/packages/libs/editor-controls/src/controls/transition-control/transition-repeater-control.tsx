@@ -23,6 +23,7 @@ const DURATION_CONFIG = {
 // this config needs to be loaded at runtime/render since it's the transitionProperties object will be mutated by the pro plugin.
 // See: https://elementor.atlassian.net/browse/ED-20285
 const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: string[] ) => {
+	console.log(transitionProperties);
 	return {
 		selectionLabel: __( 'Type', 'elementor' ),
 		sizeLabel: __( 'Duration', 'elementor' ),
@@ -33,6 +34,7 @@ const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: stri
 				disabledItems,
 			},
 		},
+		// readOnly: true,
 		isRepeaterControl: true,
 		sizeConfigMap: {
 			...transitionProperties.reduce(
