@@ -10,6 +10,5 @@ export default function safeRedirect( url ) {
 	} catch ( e ) {
 		return false;
 	}
-	return false;
 }
 
