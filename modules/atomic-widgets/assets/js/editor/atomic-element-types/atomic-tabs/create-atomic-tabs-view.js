@@ -9,7 +9,7 @@ const createAtomicTabsView = () => {
 			const eSettings = JSON.stringify( { 'default-active-tab': defaultActiveTabId } );
 			const attributes = super.attributes();
 
-			return { 'x-data': 'atomicTabs', 'data-e-settings': eSettings, ...attributes };
+			return { 'x-data': `eTabs${ this.model.id }`, 'data-e-settings': eSettings, ...attributes };
 		}
 	};
 };
