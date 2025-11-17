@@ -1,7 +1,7 @@
-import { type PropType, stringPropTypeUtil } from '@elementor/editor-props';
-import { act, fireEvent, render, renderHook, screen } from '@testing-library/react';
 import * as React from 'react';
 import { createMockPropType, createMockPropUtil, createMockSchema } from 'test-utils';
+import { type PropType, stringPropTypeUtil } from '@elementor/editor-props';
+import { act, fireEvent, render, renderHook, screen } from '@testing-library/react';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 
@@ -174,7 +174,7 @@ describe( 'useBoundProp', () => {
 					<p>Path: { propContext.path.join( ' -> ' ) }</p>
 					<input
 						placeholder={ propContext.bind }
-						value={ propContext.value as unknown as string }
+						value={ propContext.value as string }
 						onChange={ ( e ) => propContext.setValue( e.target.value ) }
 					/>
 				</div>
