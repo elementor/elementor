@@ -7,10 +7,8 @@ export const init = () => {
 
 	registerFieldIndicator( {
 		fieldType: 'styles',
+		id: 'styles-inheritance',
 		priority: 1,
-		indicator: {
-			id: 'styles-inheritance',
-			Adornment: StylesInheritanceIndicator,
-		},
+		indicator: StylesInheritanceIndicator,
 	} );
 };
