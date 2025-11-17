@@ -19,9 +19,12 @@ export function PluginActivation( { plugins } ) {
 		return null;
 	}
 
-	const pluginsArray = Array.isArray( plugins ) 
-		? plugins 
-		: ( plugins && typeof plugins === 'object' ? Object.values( plugins ) : [] );
+	let pluginsArray = [];
+	if ( Array.isArray( plugins ) ) {
+		pluginsArray = plugins;
+	} else if ( plugins && 'object' === typeof plugins ) {
+		pluginsArray = Object.values( plugins );
+	}
 
 	return (
 		<Box>
