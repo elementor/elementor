@@ -46,7 +46,7 @@ const EditorSelectors = {
 			footer: '#elementor-navigator__footer',
 			closeButton: '#elementor-navigator__close',
 			footerButton: '#elementor-panel-footer-navigator i',
-			getElement: ( elementId: string ) => `#elementor-navigator .elementor-navigator__element[data-id="${ elementId }"]`,
+			getElement: ( elementId: string ) => `#elementor-navigator .elementor-navigator__element[data-id="${ elementId }"], #elementor-navigator .elementor-navigator__element[data-interaction-id="${ elementId }"]`,
 			getElementItem: ( elementId: string ) => `${ EditorSelectors.panels.navigator.getElement( elementId ) } .elementor-navigator__item`,
 		},
 		promotionCard: '[data-testid="e-promotion-card"]',

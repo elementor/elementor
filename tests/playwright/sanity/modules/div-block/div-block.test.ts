@@ -65,9 +65,9 @@ test.describe( 'Div Block tests @div-block', () => {
 
 			const headingEl = await editor.getElementHandle( heading );
 
-			const headingParent = await headingEl.evaluate( ( node ) => {
-				return node.closest( '.elementor-element' ).parentElement?.closest( '.e-con' )?.getAttribute( 'data-id' );
-			} );
+		const headingParent = await headingEl.evaluate( ( node ) => {
+			return node.closest( '.elementor-element' ).parentElement?.closest( '.e-con' )?.getAttribute( 'data-interaction-id' ) || node.closest( '.elementor-element' ).parentElement?.closest( '.e-con' )?.getAttribute( 'data-id' );
+		} );
 
 			expect( headingParent ).toBe( targetContainer );
 
@@ -131,7 +131,7 @@ test.describe( 'Div Block tests @div-block', () => {
 		await inputLocator.fill( '#8d101080' );
 		await editor.saveAndReloadPage();
 
-		const divBlockLocator = editor.getPreviewFrame().locator( `[data-id="${ divBlock }"]` );
+		const divBlockLocator = editor.getPreviewFrame().locator( `[data-id="${ divBlock }"], [data-interaction-id="${ divBlock }"]` );
 
 		await expect( divBlockLocator ).toHaveCSS( 'background-color', /[rgba\(141, 16, 16, 0.5\)|\#8d101080]/ );
 	} );
@@ -145,8 +145,8 @@ test.describe( 'Div Block tests @div-block', () => {
 			const firstDivBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 			const secondContainerId = await editor.addElement( { elType: 'container' }, 'document' );
 
-			const firstDivBlock = editor.getPreviewFrame().locator( `[data-id="${ firstDivBlockId }"]` );
-			const secondContainer = editor.getPreviewFrame().locator( `[data-id="${ secondContainerId }"]` );
+		const firstDivBlock = editor.getPreviewFrame().locator( `[data-id="${ firstDivBlockId }"], [data-interaction-id="${ firstDivBlockId }"]` );
+		const secondContainer = editor.getPreviewFrame().locator( `[data-id="${ secondContainerId }"], [data-interaction-id="${ secondContainerId }"]` );
 
 			const firstDivBlockHandles = firstDivBlock.locator( '.elementor-editor-element-settings' );
 			const secondContainerHandles = secondContainer.locator( '.elementor-editor-element-settings' );
@@ -172,7 +172,7 @@ test.describe( 'Div Block tests @div-block', () => {
 		const editor = await wpAdmin.openNewPage();
 		const divBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 
-		const divBlock = editor.getPreviewFrame().locator( `[data-id="${ divBlockId }"]` );
+		const divBlock = editor.getPreviewFrame().locator( `[data-id="${ divBlockId }"], [data-interaction-id="${ divBlockId }"]` );
 		await divBlock.waitFor( { state: 'visible' } );
 		const divBlockHandles = divBlock.locator( '.elementor-editor-element-settings' );
 		const divBlockEmptyView = divBlock.locator( '.elementor-empty-view' );
