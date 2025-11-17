@@ -43,6 +43,12 @@ function createComponentView(
 		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
 		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
 
+		isComponentCurrentlyEdited() {
+			const currentDocument = getCurrentDocument();
+
+			return currentDocument?.id === this.getComponentId()?.value;
+		}
+
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
 			if ( settings.component ) {
 				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection( settings.component );
@@ -161,12 +167,6 @@ function createComponentView(
 				...super.attributes(),
 				'data-elementor-id': this.getComponentId().value,
 			};
-		}
-
-		isComponentCurrentlyEdited() {
-			const currentDocument = getCurrentDocument();
-
-			return currentDocument?.id === this.getComponentId()?.value;
 		}
 	};
 }
