@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements;
 
-use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,7 +20,7 @@ trait Has_Action_Link_Support {
 
 		$destination = $link['value']['destination'];
 
-		if ( ! isset( $destination['$$type'] ) || $destination['$$type'] !== 'dynamic' ) {
+		if ( ! isset( $destination['$$type'] ) || 'dynamic' !== $destination['$$type'] ) {
 			return false;
 		}
 
@@ -45,7 +44,7 @@ trait Has_Action_Link_Support {
 
 		$tag_group = $tag_instance->get_group();
 
-		if ( $dynamic_tag_name === 'contact-url' && $tag_group === 'action' ) {
+		if ( 'contact-url' === $dynamic_tag_name && 'action' === $tag_group ) {
 			return false;
 		}
 
@@ -68,4 +67,3 @@ trait Has_Action_Link_Support {
 		);
 	}
 }
-
