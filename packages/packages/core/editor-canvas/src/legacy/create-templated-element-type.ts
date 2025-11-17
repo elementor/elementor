@@ -138,25 +138,25 @@ export function createTemplatedElementView( {
 			return settings;
 		}
 
-		hasActionInLink?(): boolean {
-			const settings = this.model.get( 'settings' ) as any;
-			const link = settings?.get?.( 'link' ) || settings?.attributes?.link;
-			const destination = link?.value?.destination;
+		// hasActionInLink?(): boolean {
+		// 	const settings = this.model.get( 'settings' ) as any;
+		// 	const link = settings?.get?.( 'link' ) || settings?.attributes?.link;
+		// 	const destination = link?.value?.destination;
 
-			if ( destination?.$$type !== 'dynamic' ) {
-				return false;
-			}
+		// 	if ( destination?.$$type !== 'dynamic' ) {
+		// 		return false;
+		// 	}
 
-			const dynamicTagName = destination?.value?.name || '';
-			const dynamicTagSettings = destination?.value?.settings || {};
+		// 	const dynamicTagName = destination?.value?.name || '';
+		// 	const dynamicTagSettings = destination?.value?.settings || {};
 
-			if ( dynamicTagSettings.action ) {
-				return true;
-			}
+		// 	if ( dynamicTagSettings.action ) {
+		// 		return true;
+		// 	}
 
-			const actionBasedTags = [ 'popup', 'off-canvas', 'lightbox' ];
-			return actionBasedTags.includes( dynamicTagName );
-		}
+		// 	const actionBasedTags = [ 'popup', 'off-canvas', 'lightbox' ];
+		// 	return actionBasedTags.includes( dynamicTagName );
+		// }
 
 		#beforeRender() {
 			this._ensureViewIsIntact();

@@ -40,6 +40,7 @@ trait Has_Template {
 				'settings' => $this->get_atomic_settings(),
 				'base_styles' => $this->get_base_styles_dictionary(),
 				'interactions' => $this->get_interactions_ids(),
+				'has_action_in_link' => method_exists( $this, 'has_action_in_link' ) ? $this->has_action_in_link() : false,
 			];
 
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

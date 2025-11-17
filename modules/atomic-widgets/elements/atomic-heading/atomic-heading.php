@@ -158,35 +158,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 		];
 	}
 
-	protected function render() {
-		try {
-			$renderer = \Elementor\Modules\AtomicWidgets\TemplateRenderer\Template_Renderer::instance();
-
-			foreach ( $this->get_templates() as $name => $path ) {
-				if ( $renderer->is_registered( $name ) ) {
-					continue;
-				}
-
-				$renderer->register( $name, $path );
-			}
-
-			$context = [
-				'id' => $this->get_id(),
-				'type' => $this->get_name(),
-				'settings' => $this->get_atomic_settings(),
-				'base_styles' => $this->get_base_styles_dictionary(),
-				'interactions' => $this->get_interactions_ids(),
-				'has_action_in_link' => $this->has_action_in_link(),
-			];
-
-			echo $renderer->render( $this->get_main_template(), $context );
-		} catch ( \Exception $e ) {
-			if ( \Elementor\Utils::is_elementor_debug() ) {
-				throw $e;
-			}
-		}
-	}
-
 	protected function get_templates(): array {
 		return [
 			'elementor/elements/atomic-heading' => __DIR__ . '/atomic-heading.html.twig',
