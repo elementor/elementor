@@ -239,7 +239,6 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
-			'data-interactions' => json_encode( $this->interactions ),
 			'x-data' => 'eTabs' . $this->get_id(),
 			'data-e-settings' => json_encode( [ 'default-active-tab' => esc_js( $default_active_tab_id ) ] ),
 		];
