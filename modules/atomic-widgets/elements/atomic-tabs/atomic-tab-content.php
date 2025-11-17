@@ -136,8 +136,13 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 		$initial_attributes = $this->define_initial_attributes();
 
-		$default_active_tab = Render_Context::get( Atomic_Tabs::class )['default-active-tab'] ?? null;
-		$is_active = $default_active_tab === $this->get_atomic_setting( 'tab-id' );
+		$tabs_context = Render_Context::get( Atomic_Tabs::class );
+		$default_active_tab = $tabs_context['default-active-tab'];
+		$get_tab_content_index = $tabs_context['get-tab-content-index'];
+		$tabs_id = $tabs_context['tabs-id'];
+
+		$index = $get_tab_content_index( $this->get_id() );
+		$is_active = $default_active_tab === $index;
 
 		$attributes = [
 			'class' => [
@@ -146,18 +151,14 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
-			'data-id' => $this->get_id(),
-			'data-interactions' => json_encode( $this->interactions ),
+			'x-bind' => 'tabContent',
+			'id' => Atomic_Tabs::get_tab_content_id( $tabs_id, $index ),
+			'aria-labelledby' => Atomic_Tabs::get_tab_id( $tabs_id, $index ),
 		];
 
 		if ( ! $is_active ) {
 			$attributes['hidden'] = 'true';
 			$attributes['style'] = 'display: none;';
-		}
-
-		if ( ! empty( $settings['tab-id'] ) ) {
-			$attributes['data-tab-id'] = esc_attr( $settings['tab-id'] );
-			$attributes['aria-labelledby'] = esc_attr( $settings['tab-id'] );
 		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {
