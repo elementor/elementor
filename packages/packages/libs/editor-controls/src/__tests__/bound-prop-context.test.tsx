@@ -174,7 +174,7 @@ describe( 'useBoundProp', () => {
 					<p>Path: { propContext.path.join( ' -> ' ) }</p>
 					<input
 						placeholder={ propContext.bind }
-						value={ propContext.value as unknown as string }
+						value={ propContext.value as string }
 						onChange={ ( e ) => propContext.setValue( e.target.value ) }
 					/>
 				</div>

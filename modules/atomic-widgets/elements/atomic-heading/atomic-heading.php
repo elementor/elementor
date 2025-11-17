@@ -58,11 +58,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
-				->default( 'h2' )
-				->description( 'The HTML tag for the heading element. Could be h1, h2, up to h6' ),
+				->default( 'h2' ),
 
-			'title' => $title_prop
-				->description( 'The text content of the heading.' ),
+			'title' => $title_prop,
 
 			'link' => Link_Prop_Type::make(),
 
