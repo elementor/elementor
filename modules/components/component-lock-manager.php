@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Lock_Component_Manager extends Document_Lock_Manager {
+class Component_Lock_Manager extends Document_Lock_Manager {
 	const ONE_HOUR = 60 * 60;
 	private static $instance = null;
 	public function __construct() {
@@ -27,6 +27,10 @@ class Lock_Component_Manager extends Document_Lock_Manager {
 	}
 
 	public function unlock( $post_id ) {
+		if ( ! $this->is_component_post( $post_id ) ) {
+				throw new \Exception( 'Post is not a component type' );
+		}
+
 		$lock_data = $this->is_locked( $post_id );
 		$current_user_id = get_current_user_id();
 
@@ -60,5 +64,39 @@ class Lock_Component_Manager extends Document_Lock_Manager {
 		}
 
 		return $response;
+	}
+
+	public function get_updated_status( $post_id ) {
+		if ( ! $this->is_component_post( $post_id ) ) {
+			throw new \Exception( 'Post is not a component type' );
+		}
+
+		$lock_data = $this->is_locked( $post_id );
+
+		if ( ! $lock_data['is_locked'] ) {
+			if ( null !== $lock_data['lock_time'] ) {
+				parent::unlock( $post_id );
+			}
+			return [
+				'is_locked' => false,
+				'lock_user' => null,
+				'lock_time' => null,
+			];
+		}
+
+		$current_user_id = get_current_user_id();
+		if ( $current_user_id === (int) $lock_data['lock_user'] ) {
+			$lock_data['is_locked'] = false;
+		}
+
+		return $lock_data;
+	}
+
+	public function lock( $document_id ) {
+		if ( ! $this->is_component_post( $document_id ) ) {
+			throw new \Exception( 'Post is not a component type' );
+		}
+
+		return parent::lock( $document_id );
 	}
 }

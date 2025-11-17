@@ -50,7 +50,6 @@ class Atomic_Tab extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-			'tab-content-id' => String_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
@@ -159,9 +158,14 @@ class Atomic_Tab extends Atomic_Element_Base {
 		$settings = $this->get_atomic_settings();
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 		$initial_attributes = $this->define_initial_attributes();
-		$default_active_tab = Render_Context::get( Atomic_Tabs::class )['default-active-tab'] ?? null;
 
-		$is_active = $default_active_tab === $this->get_id();
+		$tabs_context = Render_Context::get( Atomic_Tabs::class );
+		$default_active_tab = $tabs_context['default-active-tab'];
+		$get_tab_index = $tabs_context['get-tab-index'];
+		$tabs_id = $tabs_context['tabs-id'];
+
+		$index = $get_tab_index( $this->get_id() );
+		$is_active = $default_active_tab === $index;
 
 		$attributes = [
 			'class' => [
@@ -170,15 +174,13 @@ class Atomic_Tab extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
-			'data-id' => $this->get_id(),
-			'data-interactions' => json_encode( $this->interactions ),
 			'tabindex' => $is_active ? '0' : '-1',
 			'aria-selected' => $is_active ? 'true' : 'false',
+			'x-bind' => 'tab',
+			'x-ref' => $this->get_id(),
+			'id' => Atomic_Tabs::get_tab_id( $tabs_id, $index ),
+			'aria-controls' => Atomic_Tabs::get_tab_content_id( $tabs_id, $index ),
 		];
-
-		if ( ! empty( $settings['tab-content-id'] ) ) {
-			$attributes['aria-controls'] = esc_attr( $settings['tab-content-id'] );
-		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );

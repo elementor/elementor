@@ -9,13 +9,13 @@
 		margin-block-start: spacing(10);
 		margin-inline-end: spacing(10);
 		z-index: $eps-zindex-modal;
-		font-size: type(size, "20");
+		font-size: get-type(size, "20");
 		color: theme-colors(light);
 	}
 
 	&__content {
 		padding: spacing(24) spacing(30) spacing(16);
-		font-size: type(text, xs);
+		font-size: get-type(text, xs);
 	}
 
 	&__title, &__text {
