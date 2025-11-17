@@ -2,7 +2,7 @@ import { type PropsSchema, type PropType } from '../types';
 import { type JsonSchema7 } from './prop-json-schema';
 
 export function propTypeToJsonSchema( propType: PropType, key?: string ): JsonSchema7 {
-	const description = propType.meta?.description || propType.meta?.llm?.description;
+	const description = propType.meta?.description;
 
 	const schema: JsonSchema7 = {};
 
@@ -79,7 +79,7 @@ function convertUnionPropType( propType: PropType & { kind: 'union' }, baseSchem
 			properties: {
 				$$type: {
 					type: 'string',
-					enum: [ typeKey ],
+					const: typeKey,
 					description: `Discriminator for union type variant: ${ typeKey }`,
 				},
 				value: subSchema,
@@ -91,6 +91,10 @@ function convertUnionPropType( propType: PropType & { kind: 'union' }, baseSchem
 		schema.anyOf = schemas;
 	}
 
+	const propTypeDescription = propType.meta?.description;
+	if ( propTypeDescription ) {
+		schema.description = propTypeDescription;
+	}
 	return schema;
 }
 
@@ -129,7 +133,6 @@ function convertArrayPropType( propType: PropType & { kind: 'array' }, baseSchem
 
 	schema.type = 'array';
 	schema.key = propType.key;
-	schema.description = propType.key;
 
 	const itemPropType = propType.item_prop_type;
 

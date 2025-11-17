@@ -2,6 +2,8 @@ import { toolPrompts } from '@elementor/editor-mcp';
 
 import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 
+const CUSTOM_CSS_URI = STYLE_SCHEMA_URI.replace( '{category}', 'custom_css' );
+
 export const generatePrompt = () => {
 	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
 
@@ -16,10 +18,9 @@ Prefer this tool over any other tool for building HTML structure, unless you are
 1. [${ WIDGET_SCHEMA_URI }]
    Required to understand which widgets are available, and what are their configuration schemas.
    Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply property values correctly.
-2. [${ STYLE_SCHEMA_URI }]
-   Required to understand the styles schema for the widgets. All widgets share the same styles schema, grouped by categories.
-   Use this resource to understand which style properties are available for each element, and how to structure the "_styles" configuration property.
-
+2. [${ CUSTOM_CSS_URI }]
+   Required to understand the styles schema for the widgets. All widgets share the same styles schema.
+   USE ONLY THE "custom_css" CATEGORY FROM THE STYLES SCHEMA FOR STYLING THE ELEMENTS with this tool.
 3. List of allowed custom tags for building the structure is derived from the list of widgets schema resources.
 
 # Instructions
@@ -27,18 +28,18 @@ Prefer this tool over any other tool for building HTML structure, unless you are
 2. Build a valid XML structure using only the allowed custom tags provided. For example, if you
    use the "e-button" element, it would be represented as <e-button></e-button> in the XML structure.
 3. Plan the configuration for each element according to the user requirements, using the configuration schema provided for each custom tag.
+   Every widget type has it's own configuration schema, retreivable from the resource [${ WIDGET_SCHEMA_URI }].
+   PropValues must follow the exact PropType schema provided in the resource.
 4. For every element, provide a "configuration-id" attribute. For example:
    \`<e-flexbox configuration-id="flex1"><e-heading configuration-id="heading2"></e-heading></e-flexbox>\`
    In the elementConfig property, provide the actual configuration object for each configuration-id used in the XML structure.
    In the stylesConfig property, provide the actual styles configuration object for each configuration-id used in the XML structure.
-   For easy execution, prefer using the "custom_css" category from the styles schema resource to apply inline styles to elements, as it is faster and safer.
-   Read the PropTypes schemas at [${ WIDGET_SCHEMA_URI }] to understand how to structure the elementConfig record of PropValues.
-   Read the PropTypes schema at [${ STYLE_SCHEMA_URI }] to understand how to structure the "_styles" record of PropValue to apply complex changes that cannot be achieved with custom_css.
+   For easy execution, USE ONLY "custom_css" category from the styles schema resource to apply styles.
 5. Ensure the XML structure is valid and parsable.
-6. Do not add any inline styles, classes, id's, and no text nodes allowed, for inline styles prefer using the [${ STYLE_SCHEMA_URI }] resource for custom_css.
+6. Do not add any attribute nodes, classes, id's, and no text nodes allowed, for inline styles prefer USE the [${ CUSTOM_CSS_URI }] resource for custom_css.
 7. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-div-block" and "e-flexbox".
 8. Make sure that non-container elements do NOT have any nested elements.
-9. Unsless the user specifically requires structure only, read carefully the styles schema, and BE EXPRESSIVE AS POSSIBLE IN APPLYING STYLE CONFIGURATION.
+9. Unsless the user specifically requires structure only, BE EXPRESSIVE AND VISUALLY CREATIVE AS POSSIBLE IN APPLYING STYLE CONFIGURATION.
    In the case of doubt, prefer adding more styles to make the composition visually appealing.
 
 # Additional Guidelines
@@ -84,10 +85,6 @@ A Heading and a button inside a flexbox
   },
   styleConfig: {
     "heading1": {
-      "text-align": {
-        "$$type": "string",
-        "value": "center"
-      },
       "custom_css": "font-size: 24px; color: #333;"
     }
   },

@@ -4,6 +4,7 @@ import {
 	type ArrayPropType,
 	type ObjectPropType,
 	type PropType,
+	Schema,
 	type TransformablePropType,
 	type UnionPropType,
 } from '@elementor/editor-props';
@@ -47,11 +48,13 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 			if ( ! stylesSchema ) {
 				throw new Error( `No styles schema found for category: ${ category }` );
 			}
+			const cleanedupPropSchema = cleanupPropType( stylesSchema );
+			const asJson = Schema.propTypeToJsonSchema( cleanedupPropSchema as PropType );
 			return {
 				contents: [
 					{
 						uri: uri.toString(),
-						text: JSON.stringify( cleanupPropType( stylesSchema ) ),
+						text: JSON.stringify( asJson ),
 					},
 				],
 			};
@@ -84,11 +87,21 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 			if ( ! propSchema ) {
 				throw new Error( `No prop schema found for element type: ${ widgetType }` );
 			}
+			const cleanedupPropSchema = cleanupPropSchema( propSchema );
+			const asJson = Object.fromEntries(
+				Object.entries( cleanedupPropSchema ).map( ( [ key, propType ] ) => [
+					key,
+					Schema.propTypeToJsonSchema( propType ),
+				] )
+			);
+			delete asJson.classes;
+			delete asJson._cssid;
+			delete asJson.attributes;
 			return {
 				contents: [
 					{
 						uri: uri.toString(),
-						text: JSON.stringify( cleanupPropSchema( propSchema ) ),
+						text: JSON.stringify( asJson ),
 					},
 				],
 			};

@@ -1,64 +1,33 @@
+import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from './resources/widgets-schema-resource';
+
 export const mcpDescription = `Canvas MCP - Working with widgets and styles: how to use the PropType schemas and generate PropValue structures
 
-# PropType schema and PropValue structure
-A PropType defines the type of a property, including its structure and constraints, while a PropValue represents the actual value assigned to that property based on its PropType.
+# Elementor's PropValue configuration system
 
-Every widget property has a PropType schema, including styles under the "_styles" property.
-A PropType schema looks like the following:
-\`\`\`json
-{
-  kind: 'string' | 'number' | 'plain' | 'array' | 'object' | 'union' | 'custom', // The kind of the prop type.
-	key: string, // The parser type to run when a PropValue is received. the "key" must be used as "$$type" in the PropValue and is MANDATORY.
-}\`\`\`
+Every widget in Elementor has a set of properties that can be configured. These properties are defined using a strict schema, which specifies the type and structure of each property's value.
+All values are wrapped in a special structure called a "PropValue", which includes data and additional information about the type of the value.
 
-For *union* kinds, the schema includes "prop_types" property defining the possible types and DOES NOT include "key", the key to be used is declared in each option inside "prop_types".
-\`\`\`json
-{
-  kind: 'union',
-	key: never, // No key property for union kinds. The key is defined in each option inside "prop_types".
-	prop_types: Record<string, PropType>, // The possible prop types for the union. The keys are used for debugging, no need to remember the record's identifiers. Use the "key" property from each PropType used inside the record.
-}
-\`\`\`
+To correctly configure a widget's properties, you must follow the PropType schema defined for that widget. This schema outlines the expected structure and types for each property, ensuring that the values you provide are valid and can be properly interpreted by Elementor.
+Every widget has it's own PropType schema, retreivable from the resource [${ WIDGET_SCHEMA_URI }].
+ALL WIDGETS share a common _styles property with a uniform styles schema, retreivable from the resource [${ STYLE_SCHEMA_URI }].
+The style schema is grouped by categories, such as "typography", "background", "border", etc.
 
-For *object* kinds, the schema includes "shape" property defining the child properties inside the object.
-\`\`\`json
-{
-	kind: 'object',
-	key: string, // The parser type to run when a PropValue is received. the "key" must be used as "$$type" in the PropValue and is MANDATORY.
-	shape: Record<string, PropType | UnionPropType>, // The child properties inside the object.
-}
-\`\`\`
+All array types that can receive union types, are typed as mixed array, which means that each item in the array can be of any of the allowed types defined in the PropType schema.
+Example: the "background" can have a background-overlay property, which can contain multiple overlays, such as color, gradient, image, etc. Each item in the array must follow the PropType schema for each overlay type.
+All _style properties are OPTIONAL. When a _style is defined, we MERGE the values with existing styles, so only the properties you define will be changed, and the rest will remain as is.
 
-For *array* kinds, the schema includes "item_prop_type" property defining the type of each item in the array.
-\`\`\`json
-{
-  kind: 'array',
-	key: string, // The parser type to run when a PropValue is received. the "key" must be used as "$$type" in the PropValue and is MANDATORY.
-	item_prop_type: PropType | UnionPropType, // The prop type schema for each item in the array.
-}
-\`\`\`
-
-Arrays are NOT typed arrays, which means that an array can be a mixture of different types, as long as each item follows the "item_prop_type" schema.
-An example for such usage is the _styles schema "background", which is an "object" kind. It has in it's shape a property "background-overlay" kind of a mixed array of different types. It could work with multiple overlay types, such as color, gradient, image, etc.
-
-The PropValue structure to be used when configuring properties is as follows:
-\`\`\`json
-{
-		"$$type": string, // MANDATORY as defined in the PropType schema under the "key" property
-		value: unknown // The value according to the PropType schema for kinds of "array", use array with PropValues items inside. For "object", read the shape property of the PropType schema. For "plain", use string PropValues but ALWAYS KEEP "$$type" with the original PropType key.
-}
-\`\`\`
+When applicable for styles, use the "custom_css" property for free-form CSS styling. This property accepts a string of CSS rules that will be applied directly to the element.
+The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.
 
 Additionaly, some PropTypes have metadata information (meta property) that can help in understaind the PropType usage, such as description or other useful information.
 
 # Note about null values
 If a PropValue's value is null, omit the entire PropValue object.
 
-Example of "image" PropType schema and PropValue structure:
-
-PropType schema:
-{kind:'object',key:'image',shape:{src:{kind:'union',prop_types:{dynamic:{},'image-src':{kind:'object',key:'image-src',settings:{required:true},shape:{id:{kind:'plain',key:'image-attachment-id'},url:{kind:'union',prop_types:{url:{kind:'plain',key:'url'},dynamic:{}}}}}}},size:{kind:'plain',key:'string',default:{$$type:'string',value:'full'},meta:{description:"The image file size to use, affecting quality. This DOES NOT affect dimensions on the page. For affecting dimensions, use the wrapping element's style schema"},settings:{enum:['thumbnail','medium','medium_large','large','1536x1536','2048x2048','full'],required:true}}}}
+Example of "image" PropValue structure:
 
 PropValue structure:
 {$$type:'image',value:{src:{$$type:'image-src',value:{url:{$$type:'url',value:'https://example.com/image.jpg'}}},size:{$$type:'string',value:'full'}}}
+
+Example of 
 `;
