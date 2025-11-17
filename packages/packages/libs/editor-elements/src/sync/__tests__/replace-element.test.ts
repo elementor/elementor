@@ -12,7 +12,13 @@ jest.mock( '@elementor/editor-v1-adapters' );
 const mockRunCommand = jest.mocked( runCommand );
 const mockRunCommandSync = jest.mocked( runCommandSync );
 
-const currentElement = createMockElement( { model: { id: 'current-element' }, view: { _index: 1 } } );
+const currentElementData = {
+	model: { id: 'current-element' },
+	view: { _index: 1 },
+	elType: 'widget',
+	id: 'current-element',
+};
+const currentElement = createMockElement( currentElementData );
 const siblingElement1 = createMockElement( { model: { id: 'sibling-element-1' }, view: { _index: 0 } } );
 const siblingElement2 = createMockElement( { model: { id: 'sibling-element-2' }, view: { _index: 2 } } );
 const parentElement = createMockElement( {
@@ -42,7 +48,7 @@ describe( 'replaceElement', () => {
 		};
 
 		// Act.
-		replaceElement( { currentElement, newElement } );
+		replaceElement( { currentElement: currentElementData, newElement } );
 
 		// Assert.
 		expect( mockRunCommandSync ).toHaveBeenCalledWith( 'document/elements/create', {
@@ -81,7 +87,7 @@ describe( 'replaceElement', () => {
 		mockRunCommandSync.mockReturnValueOnce( createdContainerElement );
 
 		// Act.
-		replaceElement( { currentElement, newElement } );
+		replaceElement( { currentElement: currentElementData, newElement } );
 
 		// Assert.
 		expect( mockRunCommandSync ).toHaveBeenNthCalledWith( 1, 'document/elements/create', {
