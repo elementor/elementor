@@ -99,6 +99,7 @@ export default class WpDashboardTracking {
 			};
 			sessionStorage.setItem( SESSION_STORAGE_KEY, JSON.stringify( sessionData ) );
 		} catch ( error ) {
+			console.error( 'Error saving session to storage:', error );
 		}
 	}
 
@@ -106,6 +107,7 @@ export default class WpDashboardTracking {
 		try {
 			sessionStorage.removeItem( SESSION_STORAGE_KEY );
 		} catch ( error ) {
+			console.error( 'Error clearing stored session:', error );
 		}
 	}
 
@@ -157,9 +159,16 @@ export default class WpDashboardTracking {
 			const urlObj = new URL( url, window.location.origin );
 			const params = urlObj.searchParams;
 
-			return ( params.has( 'page' ) && params.get( 'page' ).includes( 'elementor' ) ) ||
-				( params.has( 'post_type' ) && 'elementor_library' === params.get( 'post_type' ) ) ||
-				( params.has( 'action' ) && params.get( 'action' ).includes( 'elementor' ) );
+			const page = params.get( 'page' );
+			const postType = params.get( 'post_type' );
+			const action = params.get( 'action' );
+
+			const elementorPages = [ 'elementor', 'go_knowledge_base_site', 'e-form-submissions' ];
+			const elementorPostTypes = [ 'elementor_library', 'e-floating-buttons' ];
+
+			return ( page && elementorPages.some( ( p ) => page.includes( p ) ) ) ||
+				( postType && elementorPostTypes.includes( postType ) ) ||
+				( action && action.includes( 'elementor' ) );
 		} catch ( error ) {
 			return false;
 		}
@@ -316,6 +325,7 @@ export default class WpDashboardTracking {
 		this.navigationListeners.forEach( ( { type, handler } ) => {
 			document.removeEventListener( type, handler, true );
 		} );
+
 		this.navigationListeners = [];
 
 		NavigationTracking.destroy();
@@ -330,6 +340,10 @@ export default class WpDashboardTracking {
 }
 
 window.addEventListener( 'elementor/admin/init', () => {
+	if ( ! WpDashboardTracking.isElementorPage( window.location.href ) ) {
+		return;
+	}
+
 	WpDashboardTracking.init();
 	NavigationTracking.init();
 	TopBarTracking.init();
