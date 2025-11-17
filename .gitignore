@@ -46,4 +46,3 @@ tests/playwright/blob-report
 **/allure-results
 playwright-test-results
 **/.env
-elementor.zip
