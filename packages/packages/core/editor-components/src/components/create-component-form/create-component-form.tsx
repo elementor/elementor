@@ -7,6 +7,7 @@ import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Ty
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
+import { createUnpublishedComponent } from '../../store/create-unpublished-component';
 import { type ComponentFormValues } from '../../types';
 import { trackComponentEvent } from '../../utils/tracking';
 import { useForm } from './hooks/use-form';
@@ -16,7 +17,6 @@ import {
 	type ContextMenuEventOptions,
 	getComponentEventData,
 } from './utils/get-component-event-data';
-import { createUnpublishedComponent } from '../../store/create-unpublished-component';
 
 type SaveAsComponentEventData = {
 	element: V1ElementData;
@@ -69,7 +69,7 @@ export function CreateComponentForm() {
 				throw new Error( `Can't save element as component: element not found` );
 			}
 
-			const uid = createUnpublishedComponent( values.componentName, element.element, eventData.current);
+			const uid = createUnpublishedComponent( values.componentName, element.element, eventData.current );
 
 			setResultNotification( {
 				show: true,

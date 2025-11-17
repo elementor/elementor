@@ -7,6 +7,7 @@ import {
 	type ElementView,
 	type LegacyWindow,
 } from '@elementor/editor-canvas';
+import { getCurrentDocument } from '@elementor/editor-documents';
 import { type NumberPropValue } from '@elementor/editor-props';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
@@ -14,7 +15,6 @@ import { __ } from '@wordpress/i18n';
 import { apiClient } from './api';
 import { type ExtendedWindow } from './types';
 import { trackComponentEvent } from './utils/tracking';
-import { getCurrentDocument } from '@elementor/editor-documents';
 
 type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
 
