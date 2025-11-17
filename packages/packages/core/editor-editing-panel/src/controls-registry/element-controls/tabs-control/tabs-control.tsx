@@ -68,7 +68,12 @@ export const TabsControl = ( { label }: { label: string } ) => {
 		if ( meta?.action?.type === 'remove' ) {
 			const items = meta.action.payload;
 
-			return removeItem( { items, tabContentAreaId: tabContentArea.id } );
+			return removeItem( {
+				items,
+				tabContentAreaId: tabContentArea.id,
+				removedIndex: meta.action.payload?.[ 0 ]?.index,
+				tabsContainerId: element.id,
+			} );
 		}
 
 		if ( meta?.action?.type === 'duplicate' ) {
@@ -92,14 +97,13 @@ export const TabsControl = ( { label }: { label: string } ) => {
 
 	return (
 		<Repeater
-			addToBottom
 			showToggle={ false }
-			openOnAdd={ false }
 			values={ repeaterValues }
 			setValues={ setValue }
 			label={ label }
 			itemSettings={ {
-				initialValues: { title: 'Tab' },
+				getId: ( { item } ) => item.id,
+				initialValues: { id: '', title: 'Tab' },
 				Label: ItemLabel,
 				Content: ItemContent,
 				Icon: () => null,

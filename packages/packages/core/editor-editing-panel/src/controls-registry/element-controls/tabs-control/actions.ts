@@ -1,15 +1,20 @@
+import { elementType } from 'prop-types';
+import { createPropsResolver } from '@elementor/editor-canvas';
 import { type ItemActionPayload } from '@elementor/editor-controls';
 import {
 	createElements,
 	duplicateElements,
 	getContainer,
+	getElementSetting,
 	moveElements,
 	removeElements,
+	updateElementSettings,
 } from '@elementor/editor-elements';
+import { numberPropTypeUtil, type NumberPropValue } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
 
 export type TabItem = {
-	id?: string;
+	id: string;
 	title?: string;
 };
 
@@ -79,10 +84,17 @@ export const moveItem = ( {
 export const removeItem = ( {
 	items,
 	tabContentAreaId,
+	tabsContainerId,
+	removedIndex,
 }: {
 	items: ItemActionPayload< TabItem >;
 	tabContentAreaId: string;
+	tabsContainerId: string;
+	removedIndex: number;
 } ) => {
+	// TODO: Resolve the default active tab using the props resolver.
+	const defaultActiveTab = getElementSetting< NumberPropValue >( tabsContainerId, 'default-active-tab' );
+
 	removeElements( {
 		title: __( 'Tabs', 'elementor' ),
 		elementIds: items.flatMap( ( { item, index } ) => {
@@ -96,6 +108,24 @@ export const removeItem = ( {
 
 			return [ tabId, tabContentId ];
 		} ),
+		onRemoveElements: () => {
+			if ( removedIndex === defaultActiveTab?.value ) {
+				updateElementSettings( {
+					id: tabsContainerId,
+					props: { 'default-active-tab': numberPropTypeUtil.create( 0 ) },
+					withHistory: false,
+				} );
+			}
+		},
+		onRestoreElements: () => {
+			if ( removedIndex === defaultActiveTab?.value ) {
+				updateElementSettings( {
+					id: tabsContainerId,
+					props: { 'default-active-tab': defaultActiveTab },
+					withHistory: false,
+				} );
+			}
+		},
 	} );
 };
 
