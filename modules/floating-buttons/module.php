@@ -393,7 +393,16 @@ class Module extends BaseModule {
 			'public' => true,
 			'show_in_menu' => 'edit.php?post_type=elementor_library&tabs_group=library',
 			'show_in_nav_menus' => false,
-			'capability_type' => 'post',
+			'capabilities' => [
+				'edit_post' => 'manage_options',
+				'read_post' => 'manage_options',
+				'delete_post' => 'manage_options',
+				'edit_posts' => 'manage_options',
+				'edit_others_posts' => 'manage_options',
+				'publish_posts' => 'manage_options',
+				'read_private_posts' => 'manage_options',
+				'create_posts' => 'manage_options',
+			],
 			'taxonomies' => [ Source_Local::TAXONOMY_TYPE_SLUG ],
 			'show_in_rest' => true,
 			'supports' => [
