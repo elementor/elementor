@@ -134,7 +134,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			} );
 
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
-			$styles_manager->register( $this->test_style_key, $get_style_defs, [ $this->test_style_key ] );
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
 		}, 100, 1 );
 
 		do_action( 'elementor/post/render', 1 );
@@ -197,11 +197,11 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			} );
 
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_additional_style_defs ) {
-			$styles_manager->register( $this->test_additional_style_key, $get_additional_style_defs, [ $this->test_additional_style_key ] );
+			$styles_manager->register( [ $this->test_additional_style_key ], $get_additional_style_defs );
 		}, 10, 1 );
 
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
-			$styles_manager->register( $this->test_style_key, $get_style_defs, [ $this->test_style_key ] );
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
 		}, 20, 1 );
 
 		do_action( 'elementor/post/render', 1 );
@@ -250,7 +250,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
 
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
-			$styles_manager->register( $this->test_style_key, $get_style_defs, [ $this->test_style_key ] );
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
 		}, 20, 1 );
 
 		do_action( 'elementor/post/render', 1 );
@@ -269,9 +269,8 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) {
 			$styles_manager->register(
-				$this->test_style_key,
+				[ $this->test_style_key ],
 				fn () => $this->get_test_style_defs(),
-				[ $this->test_style_key ]
 			);
 		}, 10, 1 );
 
@@ -296,7 +295,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		};
 
 		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
-			$styles_manager->register( $this->test_style_key, $get_style_defs, [ $this->test_style_key ] );
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
 		}, 10, 1 );
 
 		do_action( 'elementor/post/render', 1 );
@@ -371,5 +370,186 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'custom_css', $parsed['variants'][0] );
 		$this->assertStringContainsString( 'background: yellow;', Utils::decode_string( $parsed['variants'][0]['custom_css']['raw'] ) );
 		$this->assertStringContainsString( 'color: red;', Utils::decode_string( $parsed['variants'][0]['custom_css']['raw'] ) );
+	}
+
+	public function test_clear_files__invalidates_cache_for_path() {
+		// Arrange
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$get_style_defs = function () {
+			return $this->get_test_style_defs();
+		};
+
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+		$this->filesystemMock->method( 'exists' )->willReturn( true );
+		$this->filesystemMock->method( 'delete' )->willReturn( true );
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
+		}, 10, 1 );
+
+		do_action( 'elementor/post/render', 1 );
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		$cache_validity = new Cache_Validity();
+		$version_before = $cache_validity->get_meta( [ $this->test_style_key ] );
+		$this->assertNotNull( $version_before, 'Cache should have version before clear' );
+
+		// Act
+		do_action( 'elementor/atomic-widgets/styles/clear', [ $this->test_style_key ] );
+
+		// Assert
+		$is_valid = $cache_validity->is_valid( [ $this->test_style_key ] );
+		$this->assertFalse( $is_valid, 'Cache should be invalidated after clear' );
+	}
+
+	public function test_clear_files__does_not_fail_when_files_do_not_exist() {
+		// Arrange
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$get_style_defs = function () {
+			return $this->get_test_style_defs();
+		};
+
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+		$this->filesystemMock->method( 'exists' )->willReturn( false );
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs ) {
+			$styles_manager->register( [ $this->test_style_key ], $get_style_defs );
+		}, 10, 1 );
+
+		do_action( 'elementor/post/render', 1 );
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		$this->filesystemMock->expects( $this->never() )->method( 'delete' );
+
+		// Act
+		do_action( 'elementor/atomic-widgets/styles/clear', [ $this->test_style_key ] );
+
+		// Assert - no exception thrown
+		$this->assertTrue( true, 'Clear should not fail when files do not exist' );
+	}
+
+	public function test_clear_files__with_nested_path_deletes_all_descendant_files() {
+		// Arrange
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$nested_cache_key_1 = [ $this->test_style_key, '123', 'frontend' ];
+		$nested_cache_key_2 = [ $this->test_style_key, '456', 'preview' ];
+
+		$get_style_defs_1 = function () {
+			return $this->get_test_style_defs();
+		};
+
+		$get_style_defs_2 = function () {
+			return $this->get_additional_test_style_defs();
+		};
+
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+		$this->filesystemMock->method( 'exists' )->willReturn( true );
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs_1, $nested_cache_key_1 ) {
+			$styles_manager->register( $nested_cache_key_1, $get_style_defs_1 );
+		}, 10, 1 );
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs_2, $nested_cache_key_2 ) {
+			$styles_manager->register( $nested_cache_key_2, $get_style_defs_2 );
+		}, 20, 1 );
+
+		do_action( 'elementor/post/render', 1 );
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		$deleted_files = [];
+		$this->filesystemMock->method( 'delete' )
+			->willReturnCallback( function ( $path ) use ( &$deleted_files ) {
+				$deleted_files[] = $path;
+				return true;
+			} );
+
+		// Act
+		do_action( 'elementor/atomic-widgets/styles/clear', [ $this->test_style_key ] );
+
+		// Assert
+		$this->assertGreaterThan( 0, count( $deleted_files ), 'Expected descendant files to be deleted' );
+
+		$deleted_handles = array_map( function ( $path ) {
+			return basename( $path, '.css' );
+		}, $deleted_files );
+
+		$this->assertContains( implode( '-', $nested_cache_key_1 ) . '-desktop', $deleted_handles );
+		$this->assertContains( implode( '-', $nested_cache_key_1 ) . '-mobile', $deleted_handles );
+		$this->assertContains( implode( '-', $nested_cache_key_2 ) . '-desktop', $deleted_handles );
+		$this->assertContains( implode( '-', $nested_cache_key_2 ) . '-tablet', $deleted_handles );
+	}
+
+	public function test_clear_files__should_not_clear_files_not_under_the_given_path() {
+		// Arrange
+		$styles_manager = new Atomic_Styles_Manager();
+		$styles_manager->register_hooks();
+
+		$nested_cache_key_1 = [ $this->test_style_key, '123', 'frontend' ];
+		$nested_cache_key_2 = [ $this->test_style_key, '456', 'preview' ];
+
+		$get_style_defs_1 = function () {
+			return $this->get_test_style_defs();
+		};
+
+		$get_style_defs_2 = function () {
+			return $this->get_additional_test_style_defs();
+		};
+
+		$upload_dir = wp_upload_dir();
+		$base_path = trailingslashit( $upload_dir['basedir'] ) . 'elementor/css/';
+		$existing_files = [
+			$base_path . implode( '-', $nested_cache_key_1 ) . '-desktop.css',
+			$base_path . implode( '-', $nested_cache_key_1 ) . '-mobile.css',
+			$base_path . implode( '-', $nested_cache_key_2 ) . '-desktop.css',
+			$base_path . implode( '-', $nested_cache_key_2 ) . '-tablet.css',
+		];
+
+		$this->filesystemMock->method( 'put_contents' )->willReturn( true );
+
+		$this->filesystemMock->method( 'exists' )
+			->willReturnCallback( function ( $path ) use ( &$existing_files ) {
+				return in_array( $path, $existing_files, true );
+			} );
+
+		$this->filesystemMock->method( 'delete' )
+			->willReturnCallback( function ( $path ) use ( &$existing_files ) {
+				$key = array_search( $path, $existing_files, true );
+				if ( false !== $key ) {
+					unset( $existing_files[ $key ] );
+				}
+				return true;
+			} );
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs_1, $nested_cache_key_1 ) {
+			$styles_manager->register( $nested_cache_key_1, $get_style_defs_1 );
+		}, 10, 1 );
+
+		add_action( 'elementor/atomic-widgets/styles/register', function ( $styles_manager ) use ( $get_style_defs_2, $nested_cache_key_2 ) {
+			$styles_manager->register( $nested_cache_key_2, $get_style_defs_2 );
+		}, 20, 1 );
+
+		do_action( 'elementor/post/render', 1 );
+
+		do_action( 'elementor/frontend/after_enqueue_post_styles' );
+
+		$this->assertCount( 4, $existing_files, 'All nested files should exist before clear' );
+
+		// Act
+		do_action( 'elementor/atomic-widgets/styles/clear', $nested_cache_key_1 );
+
+		// Assert
+		$this->assertCount( 2, $existing_files, 'No nested breakpoint files should remain after clear' );
+
+		$remaining_files_with_key = array_filter( $existing_files, function ( $file ) use ( $nested_cache_key_2 ) {
+			return strpos( $file, implode( '-', $nested_cache_key_2 ) ) !== false;
+		} );
+
+		$this->assertCount( 2, $remaining_files_with_key, 'All files not nested under the provided keys should remain' );
 	}
 }
