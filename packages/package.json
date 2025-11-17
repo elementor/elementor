@@ -72,7 +72,6 @@
     "nwsapi": "2.2.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "form-data": "4.0.4",
-    "esbuild": "0.25.10"
+    "form-data": "4.0.4"
   }
 }
