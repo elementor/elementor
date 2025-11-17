@@ -1,6 +1,8 @@
 const eventsConfig = {
 	triggers: {
 		click: 'Click',
+		rightClick: 'Right Click',
+		doubleClick: 'Double Click',
 		accordionClick: 'Accordion Click',
 		toggleClick: 'Toggle Click',
 		dropdownClick: 'Click Dropdown',
@@ -25,6 +27,8 @@ const eventsConfig = {
 		variables: 'Variables Panel',
 		variablesManager: 'Variables Manager',
 		admin: 'WP admin',
+		structurePanel: 'Structure Panel',
+		canvas: 'Canvas',
 	},
 
 	secondaryLocations: {
@@ -99,6 +103,8 @@ const eventsConfig = {
 			pluginToolsTab: 'plugin_tools_tab',
 			pluginWebsiteTemplatesTab: 'plugin_website_templates_tab',
 		},
+		componentsTab: 'Components Tab',
+		canvasElement: 'Canvas Element',
 	},
 
 	elements: {
@@ -168,6 +174,13 @@ const eventsConfig = {
 			openManager: 'open_variables_manager',
 			saveChanges: 'save_variables_changes',
 			delete: 'delete_variable',
+		},
+		components: {
+			createClicked: 'component_create_clicked',
+			createCancelled: 'component_creation_cancelled',
+			created: 'component_created',
+			instanceAdded: 'component_instance_added',
+			edited: 'component_edited',
 		},
 	},
 };
