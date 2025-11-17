@@ -463,8 +463,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 			return;
 		}
 
-		$image_opt_first_time = User::get_user_notice_first_time( 'image_optimization' );
-		if ( ! $image_opt_first_time || strtotime( $image_opt_first_time ) > ( time() - WEEK_IN_SECONDS ) ) {
+		if ( ! User::has_plugin_notice_been_displayed_for_required_time( 'image_optimization', WEEK_IN_SECONDS ) ) {
 			return;
 		}
 		$notice_content = esc_html__( 'Make sure your page is structured with accessibility in mind. Ally helps detect and fix common issues across your site.', 'elementor' );

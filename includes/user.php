@@ -290,6 +290,22 @@ class User {
 	}
 
 	/**
+	 * Check if a plugin notice has been displayed for a required time.
+	 *
+	 * @param mixed $plugin_name
+	 * @param mixed $required_seconds
+	 * @return bool
+	 */
+	public static function has_plugin_notice_been_displayed_for_required_time( $plugin_name, $required_seconds ) {
+		$first_time = self::get_user_notice_first_time( $plugin_name );
+		if ( ! $first_time ) {
+			return false;
+		}
+		
+		return strtotime( $first_time ) <= ( time() - $required_seconds );
+	}
+
+	/**
 	 * @param string $plugin_name
 	 *
 	 * @return string|false

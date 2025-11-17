@@ -566,8 +566,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		$image_opt_first_time = User::get_user_notice_first_time( 'image_optimization' );
-		if ( ! $image_opt_first_time || strtotime( $image_opt_first_time ) > ( time() - WEEK_IN_SECONDS ) ) {
+		if ( ! User::has_plugin_notice_been_displayed_for_required_time( 'image_optimization', WEEK_IN_SECONDS ) ) {
 			return false;
 		}
 
