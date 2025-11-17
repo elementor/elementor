@@ -41,7 +41,12 @@ export { InlineEditor } from './components/inline-editor';
 export { ControlFormLabel } from './components/control-form-label';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
 export { ClearIconButton } from './components/icon-buttons/clear-icon-button';
-export { Repeater, type SetRepeaterValuesMeta, type ItemActionPayload, type RepeaterItem } from './components/repeater';
+export {
+	Repeater,
+	type SetRepeaterValuesMeta,
+	type ItemsActionPayload,
+	type RepeaterItem,
+} from './components/repeater/repeater';
 export { FloatingActionsBar } from './components/floating-bar';
 
 // types

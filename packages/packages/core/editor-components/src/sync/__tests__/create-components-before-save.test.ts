@@ -3,7 +3,8 @@ import { __createStore, __dispatch, __getState as getState, __registerSlice } fr
 
 import { apiClient } from '../../api';
 import { selectUnpublishedComponents, slice } from '../../store/store';
-import { beforeSave } from '../before-save';
+import { createComponentsBeforeSave } from '../create-components-before-save';
+import { createMockContainer } from './utils';
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../api' );
@@ -11,47 +12,42 @@ jest.mock( '../../api' );
 const mockUpdateElementSettings = jest.mocked( updateElementSettings );
 const mockCreateComponents = jest.mocked( apiClient.create );
 
-describe( 'beforeSave', () => {
+const COMPONENT_1_UID = 'component-1763032631845-jlu78sd';
+const COMPONENT_2_UID = 'component-1763032631846-jlu78sdz';
+
+describe( 'createComponentsBeforeSave', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		__registerSlice( slice );
 		__createStore();
 	} );
 
-	const createMockContainer = ( elements: V1ElementData[] = [] ) => ( {
-		model: {
-			get: () => ( {
-				toJSON: () => elements,
-			} ),
-		},
-	} );
-
 	const setupUnpublishedComponents = () => {
 		__dispatch(
 			slice.actions.addUnpublished( {
-				id: 1000,
+				uid: COMPONENT_1_UID,
 				name: 'Test Component 1',
 				elements: mockComponent1Content,
 			} )
 		);
 		__dispatch(
 			slice.actions.addUnpublished( {
-				id: 3000,
+				uid: COMPONENT_2_UID,
 				name: 'Test Component 2',
 				elements: mockComponent2Content,
 			} )
 		);
 
 		mockCreateComponents.mockImplementation( ( payload ) => {
-			const map = new Map< number, number >( [
-				[ 1000, 1111 ],
-				[ 3000, 3333 ],
+			const map = new Map< string, number >( [
+				[ COMPONENT_1_UID, 1111 ],
+				[ COMPONENT_2_UID, 3333 ],
 			] );
 
 			return Promise.resolve(
-				payload.items.reduce< Record< number, number > >( ( acc, item ) => {
-					if ( map.has( item.temp_id ) ) {
-						acc[ item.temp_id ] = map.get( item.temp_id ) as number;
+				payload.items.reduce< Record< string, number > >( ( acc, item ) => {
+					if ( map.has( item.uid ) ) {
+						acc[ item.uid ] = map.get( item.uid ) as number;
 					}
 
 					return acc;
@@ -66,7 +62,7 @@ describe( 'beforeSave', () => {
 			const container = createMockContainer();
 
 			// Act
-			await beforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { container, status: 'draft' } );
 
 			// Assert
 			expect( mockCreateComponents ).not.toHaveBeenCalled();
@@ -81,7 +77,7 @@ describe( 'beforeSave', () => {
 
 		it( 'should send create requests for unpublished components', async () => {
 			// Act
-			await beforeSave( { container: createMockContainer(), status: 'publish' } );
+			await createComponentsBeforeSave( { container: createMockContainer(), status: 'publish' } );
 
 			// Assert
 			expect( mockCreateComponents ).toHaveBeenCalledTimes( 1 );
@@ -89,12 +85,12 @@ describe( 'beforeSave', () => {
 				status: 'publish',
 				items: [
 					{
-						temp_id: 3000,
+						uid: COMPONENT_2_UID,
 						title: 'Test Component 2',
 						elements: mockComponent2Content,
 					},
 					{
-						temp_id: 1000,
+						uid: COMPONENT_1_UID,
 						title: 'Test Component 1',
 						elements: mockComponent1Content,
 					},
@@ -108,7 +104,7 @@ describe( 'beforeSave', () => {
 			mockCreateComponents.mockRejectedValue( new Error( 'API Error' ) );
 
 			// Act & Assert
-			await expect( beforeSave( { container, status: 'draft' } ) ).rejects.toThrow(
+			await expect( createComponentsBeforeSave( { container, status: 'draft' } ) ).rejects.toThrow(
 				'Failed to publish components and update component instances'
 			);
 		} );
@@ -124,7 +120,7 @@ describe( 'beforeSave', () => {
 			const container = createMockContainer( mockPageElements );
 
 			// Act
-			await beforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { container, status: 'draft' } );
 
 			// Assert
 			expect( mockUpdateElementSettings ).toHaveBeenCalledTimes( 2 );
@@ -155,7 +151,7 @@ describe( 'beforeSave', () => {
 			const container = createMockContainer( mockPageElements );
 
 			// Act
-			await beforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { container, status: 'draft' } );
 
 			// Assert
 			expect( mockUpdateElementSettings ).not.toHaveBeenCalledWith(
@@ -168,7 +164,7 @@ describe( 'beforeSave', () => {
 			const container = createMockContainer( mockPageElements );
 
 			// Act
-			await beforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { container, status: 'draft' } );
 
 			// Assert
 			expect( mockUpdateElementSettings ).not.toHaveBeenCalledWith(
@@ -184,7 +180,7 @@ describe( 'beforeSave', () => {
 			const container = createMockContainer( [] );
 
 			// Act
-			await beforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { container, status: 'draft' } );
 
 			// Assert
 			expect( mockUpdateElementSettings ).not.toHaveBeenCalled();
@@ -198,34 +194,36 @@ describe( 'beforeSave', () => {
 
 		it( 'should add newly published components to the main component store', async () => {
 			// Arrange
+			const publishedComponentUid = 'component-1763032631849-jlu78sd';
 			__dispatch(
 				slice.actions.add( {
 					id: 4444,
 					name: 'Published Component',
+					uid: publishedComponentUid,
 				} )
 			);
 			const container = createMockContainer( [] );
 
 			// Act
-			await beforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { container, status: 'draft' } );
 
 			// Assert
 			expect( getState().components.data ).toEqual( [
-				{ id: 4444, name: 'Published Component' },
-				{ id: 3333, name: 'Test Component 2' },
-				{ id: 1111, name: 'Test Component 1' },
+				{ id: 4444, name: 'Published Component', uid: publishedComponentUid },
+				{ id: 3333, name: 'Test Component 2', uid: COMPONENT_2_UID },
+				{ id: 1111, name: 'Test Component 1', uid: COMPONENT_1_UID },
 			] );
 		} );
 
 		it( 'should clear all unpublished components from store after successful save', async () => {
 			// Assert
 			expect( selectUnpublishedComponents( getState() ) ).toEqual( [
-				{ id: 3000, name: 'Test Component 2', elements: mockComponent2Content },
-				{ id: 1000, name: 'Test Component 1', elements: mockComponent1Content },
+				{ uid: COMPONENT_2_UID, name: 'Test Component 2', elements: mockComponent2Content },
+				{ uid: COMPONENT_1_UID, name: 'Test Component 1', elements: mockComponent1Content },
 			] );
 
 			// Act
-			await beforeSave( { container: createMockContainer(), status: 'draft' } );
+			await createComponentsBeforeSave( { container: createMockContainer(), status: 'draft' } );
 
 			// Assert
 			expect( selectUnpublishedComponents( getState() ) ).toEqual( [] );
@@ -269,7 +267,7 @@ const mockPageElements: V1ElementData[] = [
 		settings: {
 			component: {
 				$$type: 'component-id',
-				value: 1000,
+				value: COMPONENT_1_UID,
 			},
 		},
 	},
@@ -284,7 +282,7 @@ const mockPageElements: V1ElementData[] = [
 				settings: {
 					component: {
 						$$type: 'component-id',
-						value: 3000,
+						value: COMPONENT_2_UID,
 					},
 				},
 			},

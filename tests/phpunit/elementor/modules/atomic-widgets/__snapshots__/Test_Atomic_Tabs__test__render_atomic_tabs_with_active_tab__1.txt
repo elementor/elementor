@@ -1,14 +1,14 @@
-		<div class="elementor-element elementor-element-tabs-container e-con e-atomic-element e-tabs-base" data-id="tabs-container" data-element_type="e-tabs" data-e-type="e-tabs" data-interactions="[]" x-data="atomicTabs" data-e-settings="{&quot;default-active-tab&quot;:&quot;tabs-container-tab-tab-1&quot;}">
-				<div class="elementor-element elementor-element-tabs-list e-con e-atomic-element e-tabs-menu-base" data-id="tabs-list tabs-list" data-element_type="e-tabs-menu" data-interactions="[]">
-				<button class="elementor-element elementor-element-tab-1 e-con e-atomic-element e-tab-base" data-id="tab-1" data-element_type="e-tab" role="tab" tabindex="-1" data-interactions="[]" aria-selected="false" x-bind="tab" id="tabs-container-tab-0" aria-controls="tabs-container-tab-content-0">
+		<div class="elementor-element elementor-element-tabscontainer e-con e-atomic-element e-tabs-base" data-id="tabscontainer" data-element_type="e-tabs" data-e-type="e-tabs" x-data="eTabstabscontainer" data-e-settings="{&quot;default-active-tab&quot;:&quot;tabscontainer-tab-tab1&quot;}">
+				<div class="elementor-element elementor-element-tabs-list e-con e-atomic-element e-tabs-menu-base" data-id="tabs-list" data-element_type="e-tabs-menu">
+				<button class="elementor-element elementor-element-tab1 e-con e-atomic-element e-tab-base" data-id="tab1" data-element_type="e-tab" role="tab" tabindex="-1" aria-selected="false" x-bind="tab" x-ref="tab1" id="tabscontainer-tab-0" aria-controls="tabscontainer-tab-content-0">
 				</button>
-				<button class="elementor-element elementor-element-tab-2 e-con e-atomic-element e-tab-base" data-id="tab-2" data-element_type="e-tab" role="tab" tabindex="-1" data-interactions="[]" aria-selected="false" x-bind="tab" id="tabs-container-tab-1" aria-controls="tabs-container-tab-content-1">
+				<button class="elementor-element elementor-element-tab2 e-con e-atomic-element e-tab-base" data-id="tab2" data-element_type="e-tab" role="tab" tabindex="-1" aria-selected="false" x-bind="tab" x-ref="tab2" id="tabscontainer-tab-1" aria-controls="tabscontainer-tab-content-1">
 				</button>
 				</div>
-				<div class="elementor-element elementor-element-tabs-content e-con e-atomic-element e-tabs-content-area-base" data-id="tabs-content tabs-content" data-element_type="e-tabs-content-area" data-interactions="[]">
-				<div class="elementor-element elementor-element-content-1 e-con e-atomic-element e-tab-content-base" data-id="content-1" data-element_type="e-tab-content" role="tabpanel" data-interactions="[]" x-bind="tabContent" id="tabs-container-tab-content-0" aria-labelledby="tabs-container-tab-0" hidden="true" style="display: none;">
+				<div class="elementor-element elementor-element-tabs-content e-con e-atomic-element e-tabs-content-area-base" data-id="tabs-content" data-element_type="e-tabs-content-area">
+				<div class="elementor-element elementor-element-content1 e-con e-atomic-element e-tab-content-base" data-id="content1" data-element_type="e-tab-content" role="tabpanel" x-bind="tabContent" id="tabscontainer-tab-content-0" aria-labelledby="tabscontainer-tab-0" hidden="true" style="display: none;">
 				</div>
-				<div class="elementor-element elementor-element-content-2 e-con e-atomic-element e-tab-content-base" data-id="content-2" data-element_type="e-tab-content" role="tabpanel" data-interactions="[]" x-bind="tabContent" id="tabs-container-tab-content-1" aria-labelledby="tabs-container-tab-1" hidden="true" style="display: none;">
+				<div class="elementor-element elementor-element-content2 e-con e-atomic-element e-tab-content-base" data-id="content2" data-element_type="e-tab-content" role="tabpanel" x-bind="tabContent" id="tabscontainer-tab-content-1" aria-labelledby="tabscontainer-tab-1" hidden="true" style="display: none;">
 				</div>
 				</div>
 				</div>

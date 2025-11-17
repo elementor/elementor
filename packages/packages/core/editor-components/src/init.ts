@@ -23,17 +23,21 @@ import { componentsStylesProvider } from './store/components-styles-provider';
 import { loadComponentsStyles } from './store/load-components-styles';
 import { removeComponentStyles } from './store/remove-component-styles';
 import { slice } from './store/store';
+import { beforeSave } from './sync/before-save';
 import { type ExtendedWindow } from './types';
-import { beforeSave } from './utils/before-save';
+import { onElementDrop } from './utils/tracking';
 
 const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
 
 export function init() {
 	stylesRepository.register( componentsStylesProvider );
+
 	registerSlice( slice );
+
 	registerElementType( TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
 		createComponentType( { ...options, showLockedByModal: openEditModeDialog } )
 	);
+
 	registerDataHook( 'dependency', 'editor/documents/close', ( args ) => {
 		const document = getV1CurrentDocument();
 		if ( document.config.type === COMPONENT_DOCUMENT_TYPE ) {
@@ -41,6 +45,8 @@ export function init() {
 		}
 		return true;
 	} );
+
+	registerDataHook( 'after', 'preview/drop', onElementDrop );
 
 	( window as unknown as ExtendedWindow ).elementorCommon.__beforeSave = beforeSave;
 
