@@ -128,11 +128,6 @@ class ActionControlTracking extends BaseTracking {
 	}
 
 	static extractControlIdentifier( element, controlType ) {
-		const text = this.extractTextFromElement( element, controlType );
-		if ( text ) {
-			return text;
-		}
-
 		const id = element.getAttribute( 'id' );
 		if ( id ) {
 			return id;
@@ -143,11 +138,14 @@ class ActionControlTracking extends BaseTracking {
 			return name;
 		}
 
-		if ( CONTROL_TYPES.LINK === controlType ) {
-			const href = element.getAttribute( 'href' );
-			if ( href && ! href.startsWith( '#' ) ) {
-				return href;
-			}
+		const dataAction = element.getAttribute( 'data-action' );
+		if ( dataAction ) {
+			return dataAction;
+		}
+
+		const dataEvent = element.getAttribute( 'data-event' );
+		if ( dataEvent ) {
+			return dataEvent;
 		}
 
 		const classes = this.extractRelevantClasses( element );
@@ -155,7 +153,45 @@ class ActionControlTracking extends BaseTracking {
 			return classes;
 		}
 
+		if ( CONTROL_TYPES.LINK === controlType ) {
+			const href = element.getAttribute( 'href' );
+			if ( href && ! href.startsWith( '#' ) ) {
+				return this.extractPathFromUrl( href );
+			}
+		}
+
+		const value = element.getAttribute( 'value' );
+		if ( value && CONTROL_TYPES.BUTTON === controlType ) {
+			return value;
+		}
+
+		const text = this.extractTextFromElement( element, controlType );
+		if ( text ) {
+			return this.sanitizeText( text );
+		}
+
 		return 'unknown';
+	}
+
+	static extractPathFromUrl( href ) {
+		try {
+			const url = new URL( href, window.location.origin );
+			const page = url.searchParams.get( 'page' );
+			if ( page ) {
+				return page;
+			}
+			return url.pathname.split( '/' ).filter( Boolean ).pop() || href;
+		} catch ( error ) {
+			return href;
+		}
+	}
+
+	static sanitizeText( text ) {
+		return text
+			.toLowerCase()
+			.replace( /[^\w\s-]/g, '' )
+			.replace( /\s+/g, '_' )
+			.substring( 0, 50 );
 	}
 
 	static extractTextFromElement( element, controlType ) {
