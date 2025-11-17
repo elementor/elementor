@@ -44,7 +44,7 @@ export { ClearIconButton } from './components/icon-buttons/clear-icon-button';
 export {
 	Repeater,
 	type SetRepeaterValuesMeta,
-	type ItemActionPayload,
+	type ItemsActionPayload as ItemActionPayload,
 	type RepeaterItem,
 } from './components/repeater/repeater';
 export { FloatingActionsBar } from './components/floating-bar';

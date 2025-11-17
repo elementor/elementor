@@ -39,11 +39,12 @@ type RepeaterItemContentProps< T > = {
 
 type RepeaterItemContent< T > = React.ComponentType< RepeaterItemContentProps< T > >;
 
-export type ItemActionPayload< T > = Array< { index: number; item: T } >;
+export type ItemActionPayload< T > = { index: number; item: T };
+export type ItemsActionPayload< T > = Array< ItemActionPayload<T> >;
 
 type AddItemMeta< T > = {
 	type: 'add';
-	payload: ItemActionPayload< T >;
+	payload: ItemsActionPayload< T >;
 };
 
 type RemoveItemMeta< T > = {
@@ -53,7 +54,7 @@ type RemoveItemMeta< T > = {
 
 type DuplicateItemMeta< T > = {
 	type: 'duplicate';
-	payload: ItemActionPayload< T >;
+	payload: ItemsActionPayload< T >;
 };
 
 type ReorderItemMeta = {
@@ -115,17 +116,17 @@ export const Repeater = < T, >( {
 
 	const addRepeaterItem = () => {
 		const newItem = structuredClone( itemSettings.initialValues );
-
+		const newIndex = items.length;
 		setItems(
 			[ ...items, newItem ],
 			{},
 			{
-				action: { type: 'add', payload: [ { index: items.length, item: newItem } ] },
+				action: { type: 'add', payload: [ { index: newIndex, item: newItem } ] },
 			}
 		);
 
 		if ( openOnAdd ) {
-			setOpenItem( items.length );
+			setOpenItem( newIndex );
 		}
 	};
 
@@ -152,7 +153,7 @@ export const Repeater = < T, >( {
 				return pos !== index;
 			} ),
 			{},
-			{ action: { type: 'remove', payload: [ { index, item: removedItem } ] } }
+			{ action: { type: 'remove', payload: { index, item: removedItem } } }
 		);
 	};
 
@@ -198,8 +199,7 @@ export const Repeater = < T, >( {
 			</RepeaterHeader>
 			{ 0 < uniqueKeys.length && (
 				<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder }>
-					{ uniqueKeys.map( ( key ) => {
-						const index = uniqueKeys.indexOf( key );
+					{ uniqueKeys.map( ( key, index ) => {
 						const value = items[ index ];
 
 						if ( ! value ) {

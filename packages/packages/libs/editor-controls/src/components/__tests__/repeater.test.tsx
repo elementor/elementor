@@ -202,7 +202,7 @@ describe( 'Repeater', () => {
 				},
 			],
 			{},
-			{ action: { type: 'remove', payload: [ { index: 0, item: values[ 0 ] } ] } }
+			{ action: { type: 'remove', payload: { index: 0, item: values[ 0 ] } } }
 		);
 	} );
 
