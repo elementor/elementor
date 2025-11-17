@@ -68,6 +68,10 @@ export const ImportForm = ( {
 			label: __( 'Background styling', 'elementor' ),
 			code: '<div style="padding: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"><div style="background: white; border: 2px solid #dee2e6; border-radius: 15px; padding: 30px; margin-bottom: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);"><h2 style="color: #343a40; border-bottom: 3px solid #007bff; padding-bottom: 10px; margin-bottom: 20px;">Border Styles</h2><div style="border: 1px dashed #6c757d; padding: 15px; margin: 15px 0; border-radius: 8px;">Dashed border example</div><div style="border: 3px solid #28a745; padding: 15px; margin: 15px 0; border-radius: 8px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">Solid border with inset shadow</div><div style="border: 2px dotted #dc3545; padding: 15px; margin: 15px 0; border-radius: 8px;">Dotted border example</div></div></div>',
 		},
+		{
+			label: __( 'Background gradient & Grid', 'elementor' ),
+			code: '<div style="background: linear-gradient(to right, #ff7e5f, #feb47b); padding: 40px;"><div style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-radius: 20px; padding: 30px; margin-bottom: 20px;"><h2 style="color: #2d3748; text-align: center; margin-bottom: 30px;">Color Variations</h2><div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;"><div style="background: #e53e3e; color: white; padding: 20px; border-radius: 10px; text-align: center;">Red Background</div><div style="background: #38a169; color: white; padding: 20px; border-radius: 10px; text-align: center;">Green Background</div><div style="background: #3182ce; color: white; padding: 20px; border-radius: 10px; text-align: center;">Blue Background</div><div style="background: #805ad5; color: white; padding: 20px; border-radius: 10px; text-align: center;">Purple Background</div></div></div></div>',
+		},
 	];
 
 	const handleSubmit = ( e ) => {
