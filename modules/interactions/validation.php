@@ -31,8 +31,8 @@ class Validation {
 		}
 
 		foreach ( $elements as &$element ) {
-			if ( isset( $element['settings']['interactions'] ) ) {
-				$element['settings']['interactions'] = $this->sanitize_interactions( $element['settings']['interactions'] );
+			if ( isset( $element['interactions'] ) ) {
+				$element['interactions'] = $this->sanitize_interactions( $element['interactions'] );
 			}
 
 			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
@@ -49,11 +49,18 @@ class Validation {
 			'version' => 1,
 		];
 
-		if ( ! is_array( $interactions ) || ! isset( $interactions['items'] ) ) {
-			return $sanitized;
+		$list_of_interactions = [];
+
+		if ( is_array( $interactions ) ) {
+			$list_of_interactions = isset( $interactions['items'] ) ? $interactions['items'] : [];
+		} elseif ( is_string( $interactions ) ) {
+			$decoded = json_decode( $interactions, true );
+			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+				$list_of_interactions = isset( $decoded['items'] ) ? $decoded['items'] : [];
+			}
 		}
 
-		foreach ( $interactions['items'] as $interaction ) {
+		foreach ( $list_of_interactions as $interaction ) {
 			$animation_id = null;
 
 			if ( is_string( $interaction ) ) {
@@ -67,7 +74,11 @@ class Validation {
 			}
 		}
 
-		return $sanitized;
+		if ( empty( $sanitized['items'] ) ) {
+			return [];
+		}
+
+		return wp_json_encode( $sanitized );
 	}
 
 	private function is_valid_animation_id( $animation_id ) {
