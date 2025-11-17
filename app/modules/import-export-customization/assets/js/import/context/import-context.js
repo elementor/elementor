@@ -28,6 +28,8 @@ const importReducer = ( state, { type, payload } ) => {
 			return { ...state, kitUploadParams: payload };
 		case 'SET_ACTION_TYPE':
 			return { ...state, actionType: payload };
+		case 'SET_RETURN_TO':
+			return { ...state, returnTo: payload };
 		case 'SET_RUNNERS_STATE':
 			return {
 				...state,
@@ -81,6 +83,7 @@ const initialState = {
 	importedData: null,
 	kitUploadParams: null,
 	actionType: null,
+	returnTo: null,
 	plugins: [],
 	includes: [ 'plugins' ],
 	importStatus: IMPORT_STATUS.PENDING,
