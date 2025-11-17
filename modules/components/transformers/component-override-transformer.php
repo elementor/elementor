@@ -9,9 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Component_Overridable_Transformer extends Transformer_Base {
+class Component_Override_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
-		// todo: render component overrides logic
-		return $value['default'];
+		return [ $value['override-key'] => $value['value'] ];
 	}
 }

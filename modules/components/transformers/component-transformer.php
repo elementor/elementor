@@ -11,9 +11,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Component_Id_Transformer extends Transformer_Base {
+class Component_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
-		$document = Plugin::$instance->documents->get_doc_for_frontend( $value );
+		if ( ! isset( $value[ 'component_id' ] ) || !isset( $value[ 'component_id' ]['value'] ) || ! is_numeric( $value[ 'component_id' ]['value'] ) ) {
+			throw new \Exception( 'component id must be a number' );
+		}
+
+		$component_id = $value[ 'component_id' ]['value'];
+
+		$document = Plugin::$instance->documents->get_doc_for_frontend( $component_id );
 
 		if (
 			! $document ||
@@ -28,7 +34,7 @@ class Component_Id_Transformer extends Transformer_Base {
 
 		$data = $document->get_elements_data();
 
-		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $value );
+		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $component_id );
 
 		$content = '';
 

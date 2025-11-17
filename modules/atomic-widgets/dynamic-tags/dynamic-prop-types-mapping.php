@@ -21,8 +21,14 @@ class Dynamic_Prop_Types_Mapping extends Prop_Types_Schema_Extender {
 		return new static();
 	}
 
-	protected function get_prop_types_to_add( Prop_Type $prop_type ): array {
-		$categories = $this->get_related_categories( $prop_type );
+	protected function get_prop_types_to_add( Prop_Type $prop_type, array $nested_prop_types ): array {
+		$categories = [];
+
+		foreach ( $nested_prop_types as $nested_prop_type ) {
+			if ( $nested_prop_type instanceof Transformable_Prop_Type ) {
+				$categories = array_merge( $categories, $this->get_related_categories( $nested_prop_type ) );
+			}
+		}
 
 		if ( empty( $categories ) ) {
 			return [];
