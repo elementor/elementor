@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { PropKeyProvider, PropProvider } from '@elementor/editor-controls';
+import { ControlAdornmentsProvider, PropKeyProvider, PropProvider } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	type ElementID,
@@ -14,6 +14,7 @@ import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
+import { getFieldIndicators } from '../field-indicators-registry';
 import { extractOrderedDependencies, getUpdatedValues, type Values } from '../utils/prop-dependency-utils';
 import { createTopLevelObjectType } from './create-top-level-object-type';
 
@@ -58,9 +59,11 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues ).isMet;
 
 	return (
-		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
-			<PropKeyProvider bind={ bind }>{ children }</PropKeyProvider>
-		</PropProvider>
+		<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
+			<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
+				<PropKeyProvider bind={ bind }>{ children }</PropKeyProvider>
+			</PropProvider>
+		</ControlAdornmentsProvider>
 	);
 };
 
