@@ -1,8 +1,7 @@
-import { type ExtendedWindow, type V1ElementConfig } from '../sync/types.js';
-type WidgetsCache< T > = Record< string, T >;
+import { type ExtendedWindow } from './types';
 
-export function getWidgetsCache< T extends V1ElementConfig >(): WidgetsCache< T > | null {
+export function getWidgetsCache() {
 	const extendedWindow = window as unknown as ExtendedWindow;
 
-	return ( extendedWindow?.elementor?.widgetsCache as WidgetsCache< T > ) || null;
+	return extendedWindow?.elementor?.widgetsCache || null;
 }
