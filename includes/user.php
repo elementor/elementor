@@ -301,7 +301,7 @@ class User {
 		if ( ! $first_time ) {
 			return false;
 		}
-		
+
 		return strtotime( $first_time ) <= ( time() - $required_seconds );
 	}
 
