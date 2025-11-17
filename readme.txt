@@ -348,6 +348,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.33.1 - 2025-11-17 =
+
+* Security Fix: Improved code security enforcement in Floating Elements
+
 = 3.33.0 - 2025-11-10 =
 
 * New: Introducing Variables Manager to manage design variables like colors, fonts, and sizes from a centralized panel - Editor V4

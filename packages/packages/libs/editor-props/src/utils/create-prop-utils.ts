@@ -9,6 +9,8 @@ export type CreateOptions = {
 	disabled?: boolean;
 };
 
+const SCHEMA_CACHE = new Map< string, unknown >();
+
 export type PropTypeUtil< TKey extends string, TValue extends PropValue > = ReturnType<
 	typeof createPropUtils< TKey, TValue >
 >;
@@ -27,6 +29,10 @@ export type PropTypeUtil< TKey extends string, TValue extends PropValue > = Retu
  *
  * ```
  */
+
+export function getPropSchemaFromCache( key: string ) {
+	return SCHEMA_CACHE.get( key ) as PropTypeUtil< string, PropValue > | undefined;
+}
 
 export function createPropUtils< TKey extends string, TValue extends PropValue >(
 	key: TKey,
@@ -79,13 +85,16 @@ export function createPropUtils< TKey extends string, TValue extends PropValue >
 		return prop.value;
 	}
 
-	return {
+	const propUtil = {
 		extract,
 		isValid,
 		create,
 		schema,
 		key: key as TKey,
 	};
+
+	SCHEMA_CACHE.set( key, propUtil );
+	return propUtil;
 }
 
 export function createArrayPropUtils< TKey extends string, TValue extends PropValue >(
