@@ -58,11 +58,6 @@ class NavigationTracking extends BaseTracking {
 		const itemId = this.extractItemId( link );
 		const area = this.determineNavArea( link );
 
-		console.log( 'itemId', itemId );
-		console.log( 'isTopLevel', isTopLevel );
-		console.log( 'menuName', menuName );
-		console.log( 'area', area );
-
 		WpDashboardTracking.trackNavClicked( itemId, isTopLevel ? null : menuName, area );
 	}
 

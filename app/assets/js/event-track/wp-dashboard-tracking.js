@@ -87,7 +87,7 @@ export default class WpDashboardTracking {
 	static processPendingNavClick() {
 		try {
 			const pendingNav = sessionStorage.getItem( PENDING_NAV_CLICK_KEY );
-			console.log( 'pendingNav', pendingNav );
+
 			if ( pendingNav ) {
 				const { itemId, rootItem, area } = JSON.parse( pendingNav );
 				this.navItemsVisited.add( itemId );
@@ -101,7 +101,6 @@ export default class WpDashboardTracking {
 					properties.wpdash_nav_item_root = rootItem;
 				}
 
-				console.log( 'properties', properties );
 				this.dispatchEvent( 'wpdash_nav_clicked', properties );
 				sessionStorage.removeItem( PENDING_NAV_CLICK_KEY );
 			}
