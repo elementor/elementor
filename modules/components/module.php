@@ -7,7 +7,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\Components\Styles\Component_Styles;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Component_Lock_Manager;
-use Elementor\Modules\Components\PropTypes\Component_Overridable_Schema_Modifier;
+use Elementor\Modules\Components\PropTypes\Component_Overridable_Schema_Extender;
 use Elementor\Modules\Components\PropTypes\Component_Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -60,7 +60,7 @@ class Module extends BaseModule {
 	}
 
 	private function modify_props_schema( array $schema ) {
-		return ( new Component_Overridable_Schema_Modifier() )->get_extended_prop_types( $schema );
+		return ( new Component_Overridable_Schema_Extender() )->get_extended_schema( $schema );
 	}
 
 	private function register_component_post_type() {
@@ -80,7 +80,7 @@ class Module extends BaseModule {
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
-		$transformers->register( Component_Id_Prop_Type::get_key(), new Component_Id_Transformer() );
+		$transformers->register( Component_Prop_Type::get_key(), new Component_Transformer() );
 		$transformers->register( Component_Overridable_Prop_Type::get_key(), new Component_Overridable_Transformer() );
 	}
 }

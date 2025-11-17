@@ -4,7 +4,6 @@ namespace Elementor\Modules\Components\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Atomic_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +14,7 @@ class Component_Overridable_Prop_Type extends Plain_Prop_Type {
 
 	public static function get_key(): string {
 		return 'component-overridable';
-	}
+	}	
 
 	protected function validate_value( $value ): bool {
 		if ( ! isset( $value['override-key'] ) || ! is_string( $value['override-key'] ) || ! isset( $value['default'] ) || ! is_array( $value['default'] ) ) {
