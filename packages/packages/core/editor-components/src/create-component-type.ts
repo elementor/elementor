@@ -125,7 +125,7 @@ function createComponentView(
 		}
 
 		editComponent( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
-			if( this.isComponentCurrentlyEdited() ) {
+			if ( this.isComponentCurrentlyEdited() ) {
 				return;
 			}
 
