@@ -58,7 +58,9 @@ class Module extends BaseModule {
 		add_action( 'elementor/preview/enqueue_scripts', fn () => $this->enqueue_preview_scripts() );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 
-		add_filter( 'elementor/document/save/data', fn ( $data ) => $this->sanitize_document_data( $data ), 10, 1 );
+		add_filter( 'elementor/document/save/data', function( $document ) {
+			return ( new Validation( $this->get_presets() ) )->sanitize( $document );
+		}, 10, 1 );
 	}
 
 	private function get_config() {
@@ -123,78 +125,5 @@ class Module extends BaseModule {
 			'ElementorInteractionsConfig',
 			$this->get_config()
 		);
-	}
-
-	private function is_valid_animation_id( $animation_id ) {
-		static $valid_ids = null;
-
-		if ( null === $valid_ids ) {
-			$valid_ids = array_column( $this->get_presets()->list(), 'value' );
-		}
-
-		if ( ! is_string( $animation_id ) || empty( $animation_id ) ) {
-			return false;
-		}
-
-		$sanitized_id = sanitize_text_field( $animation_id );
-
-		if ( $sanitized_id !== $animation_id ) {
-			return false;
-		}
-
-		return in_array( $animation_id, $valid_ids, true );
-	}
-
-	private function sanitize_interactions( $interactions ) {
-		$sanitized = [
-			'items' => [],
-			'version' => 1,
-		];
-
-		if ( ! is_array( $interactions ) || ! isset( $interactions['items'] ) ) {
-			return $sanitized;
-		}
-
-		foreach ( $interactions['items'] as $interaction ) {
-			$animation_id = null;
-
-			if ( is_string( $interaction ) ) {
-				$animation_id = $interaction;
-			} elseif ( is_array( $interaction ) && isset( $interaction['animation']['animation_id'] ) ) {
-				$animation_id = $interaction['animation']['animation_id'];
-			}
-
-			if ( $animation_id && $this->is_valid_animation_id( $animation_id ) ) {
-				$sanitized['items'][] = $interaction;
-			}
-		}
-
-		return $sanitized;
-	}
-
-	private function sanitize_elements_interactions( $elements ) {
-		if ( ! is_array( $elements ) ) {
-			return $elements;
-		}
-
-		foreach ( $elements as &$element ) {
-			if ( isset( $element['settings']['interactions'] ) ) {
-				$element['settings']['interactions'] = $this->sanitize_interactions( $element['settings']['interactions'] );
-			}
-
-			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
-				$element['elements'] = $this->sanitize_elements_interactions( $element['elements'] );
-			}
-		}
-
-		return $elements;
-	}
-
-	private function sanitize_document_data( $data ) {
-		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
-			$data['elements'] = $this->sanitize_elements_interactions( $data['elements'] );
-		}
-
-		return $data;
 	}
 }
