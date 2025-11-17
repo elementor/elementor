@@ -120,7 +120,7 @@ export function createTemplatedElementView( {
 					settings,
 					base_styles: baseStylesDictionary,
 					interactions: [],
-					has_action_in_link: this.hasActionInLink?.() || false,
+					has_action_in_link: this.hasActionInLink() || false,
 				};
 
 				return renderer.render( templateKey, context );
@@ -138,25 +138,29 @@ export function createTemplatedElementView( {
 			return settings;
 		}
 
-		// hasActionInLink?(): boolean {
-		// 	const settings = this.model.get( 'settings' ) as any;
-		// 	const link = settings?.get?.( 'link' ) || settings?.attributes?.link;
-		// 	const destination = link?.value?.destination;
+		hasActionInLink(): boolean {
+			const settings = this.model.get( 'settings' ) as any;
+			const link = settings?.get?.( 'link' ) || settings?.attributes?.link;
+			const destination = link?.value?.destination;
 
-		// 	if ( destination?.$$type !== 'dynamic' ) {
-		// 		return false;
-		// 	}
+			if ( destination?.$$type !== 'dynamic' ) {
+				return false;
+			}
 
-		// 	const dynamicTagName = destination?.value?.name || '';
-		// 	const dynamicTagSettings = destination?.value?.settings || {};
+			const dynamicTagName = destination?.value?.name || '';
+			// const dynamicTagSettings = destination?.value?.settings || {};
 
-		// 	if ( dynamicTagSettings.action ) {
-		// 		return true;
-		// 	}
+			// We can use this approach for all action based tags, the data comes from the tag definition in pro.
+			// The issue is that contact-url dynamic tag is action based, so we need to change its group.
+			// if ( dynamicTagSettings.action ) {
+			// 	return true;
+			// }
 
-		// 	const actionBasedTags = [ 'popup', 'off-canvas', 'lightbox' ];
-		// 	return actionBasedTags.includes( dynamicTagName );
-		// }
+			// This is the list approach, we can use one or the other.
+			// This way we wont need to change the contact-url dynamic tag group.
+			const actionBasedTags = [ 'popup', 'off-canvas', 'lightbox' ];
+			return actionBasedTags.includes( dynamicTagName );
+		}
 
 		#beforeRender() {
 			this._ensureViewIsIntact();

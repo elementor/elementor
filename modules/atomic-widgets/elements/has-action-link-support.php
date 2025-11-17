@@ -29,10 +29,14 @@ trait Has_Action_Link_Support {
 		$dynamic_tag_name = $destination['value']['name'] ?? '';
 		$dynamic_tag_settings = $destination['value']['settings'] ?? [];
 
-		if ( isset( $dynamic_tag_settings['action'] ) ) {
-			return true;
-		}
+		// We can use this approach for all action based tags, the data comes from the tag definition in pro.
+		// The issue is that contact-url dynamic tag is action based, so we need to change its group.
+		// if ( isset( $dynamic_tag_settings['action'] ) ) {
+		// 	return true;
+		// }
 
+		// This is the list approach, we can use one or the other.
+		// This way we wont need to change the contact-url dynamic tag group.
 		return in_array( $dynamic_tag_name, $this->get_action_based_dynamic_tags(), true );
 	}
 
