@@ -15,6 +15,11 @@ const indicatorsRegistry: Record< FieldType, Map< string, FieldIndicator > > = {
 
 const DEFAULT_PRIORITY = 10;
 
+export const FIELD_TYPE = {
+	SETTINGS: 'settings',
+	STYLES: 'styles',
+} as const;
+
 export const registerFieldIndicator = ( {
 	fieldType,
 	id,
