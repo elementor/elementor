@@ -7,6 +7,7 @@ import {
 	type ElementView,
 	type LegacyWindow,
 } from '@elementor/editor-canvas';
+import { getCurrentDocument } from '@elementor/editor-documents';
 import { type NumberPropValue } from '@elementor/editor-props';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
@@ -41,6 +42,12 @@ function createComponentView(
 	return class extends createTemplatedElementView( options ) {
 		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
 		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
+
+		isComponentCurrentlyEdited() {
+			const currentDocument = getCurrentDocument();
+
+			return currentDocument?.id === this.getComponentId()?.value;
+		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
 			if ( settings.component ) {
@@ -118,6 +125,10 @@ function createComponentView(
 		}
 
 		editComponent( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
+			if ( this.isComponentCurrentlyEdited() ) {
+				return;
+			}
+
 			this.switchDocument();
 
 			const editorSettings = this.model.get( 'editor_settings' );
