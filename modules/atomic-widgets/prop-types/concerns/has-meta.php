@@ -33,7 +33,7 @@ trait Has_Meta {
 		return $this->meta;
 	}
 
-	public function description(string $description): self {
+	public function description( string $description ): self {
 		$this->meta['description'] = $description;
 		return $this;
 	}

@@ -18,10 +18,10 @@ class Style_Schema {
 	public function augment( array $schema ): array {
 		foreach ( $schema as $key => $prop_type ) {
 			$schema[ $key ] = $this->update( $prop_type );
-			if (method_exists($prop_type, 'get_meta') && method_exists($schema[ $key ], 'meta')) {
+			if ( method_exists( $prop_type, 'get_meta' ) && method_exists( $schema[ $key ], 'meta' ) ) {
 				$meta = $schema[ $key ]->get_meta() ?? [];
-				foreach ($meta as $meta_key => $meta_value) {
-					$schema[ $key ]->meta($meta_key, $meta_value);
+				foreach ( $meta as $meta_key => $meta_value ) {
+					$schema[ $key ]->meta( $meta_key, $meta_value );
 				}
 			}
 		}

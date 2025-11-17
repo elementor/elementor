@@ -281,11 +281,11 @@ class Style_Schema {
 			'flex-direction' => String_Prop_Type::make()
 				->description( 'The direction of the contained items.' )
 				->enum( [
-				'row',
-				'row-reverse',
-				'column',
-				'column-reverse',
-			] ),
+					'row',
+					'row-reverse',
+					'column',
+					'column-reverse',
+				] ),
 			'gap' => Union_Prop_Type::make()
 				->add_prop_type( Layout_Direction_Prop_Type::make() )
 				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::layout() ) ),
