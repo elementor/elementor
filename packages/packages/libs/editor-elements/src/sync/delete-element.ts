@@ -7,14 +7,20 @@ type Options = {
 	at?: number;
 };
 
-export function deleteElement( { elementId, options = {} }: { elementId: string; options?: Options } ): void {
+export function deleteElement( {
+	elementId,
+	options = {},
+}: {
+	elementId: string;
+	options?: Options;
+} ): Promise< void > {
 	const container = getContainer( elementId );
 
 	if ( ! container ) {
 		throw new Error( `Element with ID "${ elementId }" not found` );
 	}
 
-	runCommand( 'document/elements/delete', {
+	return runCommand( 'document/elements/delete', {
 		container,
 		options,
 	} );

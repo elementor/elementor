@@ -10,6 +10,8 @@ type RemoveNestedElementsParams = {
 	elementIds: string[];
 	title: string;
 	subtitle?: string;
+	onRemoveElements?: () => void;
+	onRestoreElements?: () => void;
 };
 
 type RemovedElement = {
@@ -30,6 +32,8 @@ export const removeElements = ( {
 	elementIds,
 	title,
 	subtitle = __( 'Item removed', 'elementor' ),
+	onRemoveElements,
+	onRestoreElements,
 }: RemoveNestedElementsParams ): RemovedElementsResult => {
 	const undoableRemove = undoable(
 		{
@@ -54,11 +58,16 @@ export const removeElements = ( {
 					}
 				} );
 
-				elementIdsParam.forEach( ( elementId ) => {
-					deleteElement( {
+				const results = elementIdsParam.map( ( elementId ) => {
+					return deleteElement( {
 						elementId,
 						options: { useHistory: false },
 					} );
+				} );
+
+				// Wait for all elements to be deleted to avoid conflicts between commands
+				Promise.all( results ).then( () => {
+					onRemoveElements?.();
 				} );
 
 				return { elementIds: elementIdsParam, removedElements };
@@ -74,6 +83,7 @@ export const removeElements = ( {
 						} );
 					}
 				} );
+				onRestoreElements?.();
 			},
 			redo: (
 				_: { elementIds: string[] },
@@ -86,6 +96,7 @@ export const removeElements = ( {
 					} );
 				} );
 
+				onRemoveElements?.();
 				return { elementIds: originalElementIds, removedElements };
 			},
 		},

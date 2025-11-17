@@ -15,7 +15,6 @@ import { __ } from '@wordpress/i18n';
 
 import { type SetValueMeta } from '../../bound-prop-context';
 import { ControlAdornments } from '../../control-adornments/control-adornments';
-import { useSyncExternalState } from '../../hooks/use-sync-external-state';
 import { RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../control-repeater/locations';
 import { SectionContent } from '../section-content';
 import { RepeaterHeader } from './repeater-header';
@@ -40,21 +39,21 @@ type RepeaterItemContentProps< T > = {
 
 type RepeaterItemContent< T > = React.ComponentType< RepeaterItemContentProps< T > >;
 
-export type ItemActionPayload< T > = Array< { index: number; item: T } >;
+export type ItemsActionPayload< T > = Array< { index: number; item: T } >;
 
 type AddItemMeta< T > = {
 	type: 'add';
-	payload: ItemActionPayload< T >;
+	payload: ItemsActionPayload< T >;
 };
 
 type RemoveItemMeta< T > = {
 	type: 'remove';
-	payload: ItemActionPayload< T >;
+	payload: ItemsActionPayload< T >;
 };
 
 type DuplicateItemMeta< T > = {
 	type: 'duplicate';
-	payload: ItemActionPayload< T >;
+	payload: ItemsActionPayload< T >;
 };
 
 type ReorderItemMeta = {
@@ -62,11 +61,16 @@ type ReorderItemMeta = {
 	payload: { from: number; to: number };
 };
 
+type ToggleDisableItemMeta = {
+	type: 'toggle-disable';
+};
+
 export type SetRepeaterValuesMeta< T > =
 	| SetValueMeta< AddItemMeta< T > >
 	| SetValueMeta< RemoveItemMeta< T > >
 	| SetValueMeta< DuplicateItemMeta< T > >
-	| SetValueMeta< ReorderItemMeta >;
+	| SetValueMeta< ReorderItemMeta >
+	| SetValueMeta< ToggleDisableItemMeta >;
 
 type RepeaterProps< T > = {
 	label: string;
@@ -75,14 +79,19 @@ type RepeaterProps< T > = {
 	openOnAdd?: boolean;
 	setValues: ( newValue: T[], _: CreateOptions, meta?: SetRepeaterValuesMeta< T > ) => void;
 	disabled?: boolean;
+	disableAddItemButton?: boolean;
 	itemSettings: {
+		getId: ( { item, index }: { item: T; index: number } ) => string;
 		initialValues: T;
 		Label: React.ComponentType< { value: T; index: number } >;
 		Icon: React.ComponentType< { value: T } >;
 		Content: RepeaterItemContent< T >;
+		actions?: React.ReactNode;
 	};
 	showDuplicate?: boolean;
 	showToggle?: boolean;
+	showRemove?: boolean;
+	openItem?: number;
 	isSortable?: boolean;
 };
 
@@ -93,76 +102,58 @@ export const Repeater = < T, >( {
 	itemSettings,
 	disabled = false,
 	openOnAdd = false,
-	addToBottom = false,
-	values: repeaterValues = [],
-	setValues: setRepeaterValues,
+	values: items = [],
+	setValues: setItems,
 	showDuplicate = true,
 	showToggle = true,
+	showRemove = true,
+	disableAddItemButton = false,
+	openItem: initialOpenItem = EMPTY_OPEN_ITEM,
 	isSortable = true,
 }: RepeaterProps< RepeaterItem< T > > ) => {
-	const [ openItem, setOpenItem ] = useState( EMPTY_OPEN_ITEM );
+	const [ openItem, setOpenItem ] = useState( initialOpenItem );
 
-	const [ items, setItems ] = useSyncExternalState( {
-		external: repeaterValues,
-		// @ts-expect-error - as long as persistWhen => true, value will never be null
-		setExternal: setRepeaterValues,
-		persistWhen: () => true,
-	} );
-
-	const [ uniqueKeys, setUniqueKeys ] = useState( items.map( ( _, index ) => index ) );
-
-	const generateNextKey = ( source: number[] ) => {
-		return 1 + Math.max( 0, ...source );
-	};
+	const uniqueKeys = items.map( ( item, index ) => itemSettings.getId( { item, index } ) );
 
 	const addRepeaterItem = () => {
 		const newItem = structuredClone( itemSettings.initialValues );
-		const newKey = generateNextKey( uniqueKeys );
-
-		if ( addToBottom ) {
-			setItems( [ ...items, newItem ], undefined, {
-				action: { type: 'add', payload: [ { index: items.length, item: newItem } ] },
-			} );
-			setUniqueKeys( [ ...uniqueKeys, newKey ] );
-		} else {
-			setItems( [ newItem, ...items ], undefined, {
-				action: { type: 'add', payload: [ { index: 0, item: newItem } ] },
-			} );
-			setUniqueKeys( [ newKey, ...uniqueKeys ] );
-		}
+		const newIndex = items.length;
+		setItems(
+			[ ...items, newItem ],
+			{},
+			{
+				action: { type: 'add', payload: [ { index: newIndex, item: newItem } ] },
+			}
+		);
 
 		if ( openOnAdd ) {
-			setOpenItem( newKey );
+			setOpenItem( newIndex );
 		}
 	};
 
 	const duplicateRepeaterItem = ( index: number ) => {
 		const newItem = structuredClone( items[ index ] );
-		const newKey = generateNextKey( uniqueKeys );
 
 		// Insert the new (cloned item) at the next spot (after the current index)
 		const atPosition = 1 + index;
 
-		setItems( [ ...items.slice( 0, atPosition ), newItem, ...items.slice( atPosition ) ], undefined, {
-			action: { type: 'duplicate', payload: [ { index, item: newItem } ] },
-		} );
-		setUniqueKeys( [ ...uniqueKeys.slice( 0, atPosition ), newKey, ...uniqueKeys.slice( atPosition ) ] );
+		setItems(
+			[ ...items.slice( 0, atPosition ), newItem, ...items.slice( atPosition ) ],
+			{},
+			{
+				action: { type: 'duplicate', payload: [ { index, item: newItem } ] },
+			}
+		);
 	};
 
 	const removeRepeaterItem = ( index: number ) => {
-		setUniqueKeys(
-			uniqueKeys.filter( ( _, pos ) => {
-				return pos !== index;
-			} )
-		);
-
 		const removedItem = items[ index ];
 
 		setItems(
 			items.filter( ( _, pos ) => {
 				return pos !== index;
 			} ),
-			undefined,
+			{},
 			{ action: { type: 'remove', payload: [ { index, item: removedItem } ] } }
 		);
 	};
@@ -179,21 +170,17 @@ export const Repeater = < T, >( {
 
 				return value;
 			} ),
-			undefined,
+			{},
 			{ action: { type: 'toggle-disable' } }
 		);
 	};
 
-	const onChangeOrder = ( reorderedKeys: number[], meta: { from: number; to: number } ) => {
-		setUniqueKeys( reorderedKeys );
+	const onChangeOrder = ( reorderedKeys: string[], meta: { from: number; to: number } ) => {
 		setItems(
-			( prevItems ) => {
-				return reorderedKeys.map( ( keyValue ) => {
-					const index = uniqueKeys.indexOf( keyValue );
-					return prevItems[ index ];
-				} );
-			},
-			undefined,
+			reorderedKeys.map( ( id ) => {
+				return items[ uniqueKeys.indexOf( id ) ];
+			} ),
+			{},
 			{ action: { type: 'reorder', payload: { ...meta } } }
 		);
 	};
@@ -204,7 +191,7 @@ export const Repeater = < T, >( {
 				<IconButton
 					size={ SIZE }
 					sx={ { ml: 'auto' } }
-					disabled={ disabled }
+					disabled={ disabled || disableAddItemButton }
 					onClick={ addRepeaterItem }
 					aria-label={ __( 'Add item', 'elementor' ) }
 				>
@@ -212,8 +199,9 @@ export const Repeater = < T, >( {
 				</IconButton>
 			</RepeaterHeader>
 			{ 0 < uniqueKeys.length && (
-				<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder }>
-					{ uniqueKeys.map( ( key, index ) => {
+				<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder } >
+					{ uniqueKeys.map( ( key ) => {
+						const index = uniqueKeys.indexOf( key );
 						const value = items[ index ];
 
 						if ( ! value ) {
@@ -238,10 +226,12 @@ export const Repeater = < T, >( {
 									removeItem={ () => removeRepeaterItem( index ) }
 									duplicateItem={ () => duplicateRepeaterItem( index ) }
 									toggleDisableItem={ () => toggleDisableRepeaterItem( index ) }
-									openOnMount={ openOnAdd && openItem === key }
+									openOnMount={ openOnAdd && openItem === index }
 									onOpen={ () => setOpenItem( EMPTY_OPEN_ITEM ) }
 									showDuplicate={ showDuplicate }
 									showToggle={ showToggle }
+									showRemove={ showRemove }
+									actions={ itemSettings.actions }
 								>
 									{ ( props ) => (
 										<itemSettings.Content
@@ -273,7 +263,9 @@ type RepeaterItemProps< T > = {
 	onOpen: () => void;
 	showDuplicate: boolean;
 	showToggle: boolean;
+	showRemove: boolean;
 	disabled?: boolean;
+	actions?: React.ReactNode;
 };
 
 const RepeaterItem = < T, >( {
@@ -288,7 +280,9 @@ const RepeaterItem = < T, >( {
 	onOpen,
 	showDuplicate,
 	showToggle,
+	showRemove,
 	disabled,
+	actions,
 }: RepeaterItemProps< T > ) => {
 	const { popoverState, popoverProps, ref, setRef } = usePopover( openOnMount, onOpen );
 
@@ -321,11 +315,14 @@ const RepeaterItem = < T, >( {
 								</IconButton>
 							</Tooltip>
 						) }
-						<Tooltip title={ removeLabel } placement="top">
-							<IconButton size={ SIZE } onClick={ removeItem } aria-label={ removeLabel }>
-								<XIcon fontSize={ SIZE } />
-							</IconButton>
-						</Tooltip>
+						{ actions }
+						{ showRemove && (
+							<Tooltip title={ removeLabel } placement="top">
+								<IconButton size={ SIZE } onClick={ removeItem } aria-label={ removeLabel }>
+									<XIcon fontSize={ SIZE } />
+								</IconButton>
+							</Tooltip>
+						) }
 					</>
 				}
 			/>

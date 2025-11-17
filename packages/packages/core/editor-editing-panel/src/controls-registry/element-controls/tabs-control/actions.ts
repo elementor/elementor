@@ -1,15 +1,18 @@
-import { type ItemActionPayload } from '@elementor/editor-controls';
+import { type ItemsActionPayload } from '@elementor/editor-controls';
 import {
 	createElements,
 	duplicateElements,
 	getContainer,
+	getElementSetting,
 	moveElements,
 	removeElements,
+	updateElementSettings,
 } from '@elementor/editor-elements';
+import { numberPropTypeUtil, type NumberPropValue } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
 
 export type TabItem = {
-	id?: string;
+	id: string;
 	title?: string;
 };
 
@@ -20,7 +23,7 @@ export const duplicateItem = ( {
 	items,
 	tabContentAreaId,
 }: {
-	items: ItemActionPayload< TabItem >;
+	items: ItemsActionPayload< TabItem >;
 	tabContentAreaId: string;
 } ) => {
 	items.forEach( ( { item, index } ) => {
@@ -79,10 +82,16 @@ export const moveItem = ( {
 export const removeItem = ( {
 	items,
 	tabContentAreaId,
+	tabsContainerId,
 }: {
-	items: ItemActionPayload< TabItem >;
+	items: ItemsActionPayload< TabItem >;
 	tabContentAreaId: string;
+	tabsContainerId: string;
 } ) => {
+	// TODO: Resolve the default active tab using the props resolver.
+	const defaultActiveTab = getElementSetting< NumberPropValue >( tabsContainerId, 'default-active-tab' );
+	const isDefault = items.some( ( { index } ) => index === defaultActiveTab?.value );
+
 	removeElements( {
 		title: __( 'Tabs', 'elementor' ),
 		elementIds: items.flatMap( ( { item, index } ) => {
@@ -96,6 +105,24 @@ export const removeItem = ( {
 
 			return [ tabId, tabContentId ];
 		} ),
+		onRemoveElements: () => {
+			if ( isDefault ) {
+				updateElementSettings( {
+					id: tabsContainerId,
+					props: { 'default-active-tab': numberPropTypeUtil.create( 0 ) },
+					withHistory: false,
+				} );
+			}
+		},
+		onRestoreElements: () => {
+			if ( isDefault ) {
+				updateElementSettings( {
+					id: tabsContainerId,
+					props: { 'default-active-tab': defaultActiveTab },
+					withHistory: false,
+				} );
+			}
+		},
 	} );
 };
 
@@ -106,7 +133,7 @@ export const addItem = ( {
 }: {
 	tabContentAreaId: string;
 	tabsMenuId: string;
-	items: ItemActionPayload< TabItem >;
+	items: ItemsActionPayload< TabItem >;
 } ) => {
 	items.forEach( ( { index } ) => {
 		createElements( {
