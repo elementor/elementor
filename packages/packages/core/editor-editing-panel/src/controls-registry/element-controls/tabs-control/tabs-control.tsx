@@ -66,12 +66,11 @@ export const TabsControl = ( { label }: { label: string } ) => {
 		}
 
 		if ( meta?.action?.type === 'remove' ) {
-			const item = meta.action.payload;
+			const items = meta.action.payload;
 
 			return removeItem( {
-				items: [ item ],
+				items,
 				tabContentAreaId: tabContentArea.id,
-				removedIndex: item.index,
 				tabsContainerId: element.id,
 			} );
 		}

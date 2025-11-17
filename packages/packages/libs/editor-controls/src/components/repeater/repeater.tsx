@@ -39,8 +39,7 @@ type RepeaterItemContentProps< T > = {
 
 type RepeaterItemContent< T > = React.ComponentType< RepeaterItemContentProps< T > >;
 
-export type ItemActionPayload< T > = { index: number; item: T };
-export type ItemsActionPayload< T > = Array< ItemActionPayload<T> >;
+export type ItemsActionPayload< T > = Array< { index: number; item: T } >;
 
 type AddItemMeta< T > = {
 	type: 'add';
@@ -49,7 +48,7 @@ type AddItemMeta< T > = {
 
 type RemoveItemMeta< T > = {
 	type: 'remove';
-	payload: ItemActionPayload< T >;
+	payload: ItemsActionPayload< T >;
 };
 
 type DuplicateItemMeta< T > = {
@@ -93,6 +92,7 @@ type RepeaterProps< T > = {
 	showToggle?: boolean;
 	showRemove?: boolean;
 	openItem?: number;
+	isSortable?: boolean;
 };
 
 const EMPTY_OPEN_ITEM = -1;
@@ -109,6 +109,7 @@ export const Repeater = < T, >( {
 	showRemove = true,
 	disableAddItemButton = false,
 	openItem: initialOpenItem = EMPTY_OPEN_ITEM,
+	isSortable = true,
 }: RepeaterProps< RepeaterItem< T > > ) => {
 	const [ openItem, setOpenItem ] = useState( initialOpenItem );
 
@@ -153,7 +154,7 @@ export const Repeater = < T, >( {
 				return pos !== index;
 			} ),
 			{},
-			{ action: { type: 'remove', payload: { index, item: removedItem } } }
+			{ action: { type: 'remove', payload: [ { index, item: removedItem } ] } }
 		);
 	};
 
@@ -198,8 +199,9 @@ export const Repeater = < T, >( {
 				</IconButton>
 			</RepeaterHeader>
 			{ 0 < uniqueKeys.length && (
-				<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder }>
-					{ uniqueKeys.map( ( key, index ) => {
+				<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder } >
+					{ uniqueKeys.map( ( key ) => {
+						const index = uniqueKeys.indexOf( key );
 						const value = items[ index ];
 
 						if ( ! value ) {
@@ -207,7 +209,7 @@ export const Repeater = < T, >( {
 						}
 
 						return (
-							<SortableItem id={ key } key={ `sortable-${ key }` }>
+							<SortableItem id={ key } key={ `sortable-${ key }` } disabled={ ! isSortable }>
 								<RepeaterItem
 									disabled={ disabled }
 									propDisabled={ value?.disabled }

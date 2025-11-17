@@ -1,6 +1,4 @@
-import { elementType } from 'prop-types';
-import { createPropsResolver } from '@elementor/editor-canvas';
-import { type ItemActionPayload } from '@elementor/editor-controls';
+import { type ItemsActionPayload } from '@elementor/editor-controls';
 import {
 	createElements,
 	duplicateElements,
@@ -25,7 +23,7 @@ export const duplicateItem = ( {
 	items,
 	tabContentAreaId,
 }: {
-	items: ItemActionPayload< TabItem >;
+	items: ItemsActionPayload< TabItem >;
 	tabContentAreaId: string;
 } ) => {
 	items.forEach( ( { item, index } ) => {
@@ -85,15 +83,14 @@ export const removeItem = ( {
 	items,
 	tabContentAreaId,
 	tabsContainerId,
-	removedIndex,
 }: {
-	items: ItemActionPayload< TabItem >;
+	items: ItemsActionPayload< TabItem >;
 	tabContentAreaId: string;
 	tabsContainerId: string;
-	removedIndex: number;
 } ) => {
 	// TODO: Resolve the default active tab using the props resolver.
 	const defaultActiveTab = getElementSetting< NumberPropValue >( tabsContainerId, 'default-active-tab' );
+	const isDefault = items.some( ( { index } ) => index === defaultActiveTab?.value );
 
 	removeElements( {
 		title: __( 'Tabs', 'elementor' ),
@@ -109,7 +106,7 @@ export const removeItem = ( {
 			return [ tabId, tabContentId ];
 		} ),
 		onRemoveElements: () => {
-			if ( removedIndex === defaultActiveTab?.value ) {
+			if ( isDefault ) {
 				updateElementSettings( {
 					id: tabsContainerId,
 					props: { 'default-active-tab': numberPropTypeUtil.create( 0 ) },
@@ -118,7 +115,7 @@ export const removeItem = ( {
 			}
 		},
 		onRestoreElements: () => {
-			if ( removedIndex === defaultActiveTab?.value ) {
+			if ( isDefault ) {
 				updateElementSettings( {
 					id: tabsContainerId,
 					props: { 'default-active-tab': defaultActiveTab },
@@ -136,7 +133,7 @@ export const addItem = ( {
 }: {
 	tabContentAreaId: string;
 	tabsMenuId: string;
-	items: ItemActionPayload< TabItem >;
+	items: ItemsActionPayload< TabItem >;
 } ) => {
 	items.forEach( ( { index } ) => {
 		createElements( {
