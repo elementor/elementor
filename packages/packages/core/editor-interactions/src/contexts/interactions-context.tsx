@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { createContext, type ReactNode, useContext, useEffect } from 'react';
-import { playElementInteractions, updateElementInteractions, useElementInteractions } from '@elementor/editor-elements';
-import { type ElementInteractions } from '@elementor/editor-elements';
+import { type ElementInteractions, playElementInteractions, updateElementInteractions, useElementInteractions } from '@elementor/editor-elements';
 
 type InteractionsContextValue = {
 	interactions: ElementInteractions;
 	setInteractions: ( value: ElementInteractions | undefined ) => void;
-	playInteractions: () => void;
+	playInteractions: (animationId: string) => void;
 };
 
 const InteractionsContext = createContext< InteractionsContextValue | null >( null );
@@ -25,8 +24,8 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 		} );
 	};
 
-	const playInteractions = () => {
-		playElementInteractions( elementId );
+	const playInteractions = (animationId: string) => {
+		playElementInteractions( elementId, animationId );
 	};
 
 	const contextValue: InteractionsContextValue = {

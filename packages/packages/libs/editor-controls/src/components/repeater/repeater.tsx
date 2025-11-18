@@ -77,7 +77,7 @@ type BaseItemSettings< T > = {
 	Label: React.ComponentType< { value: T; index: number } >;
 	Icon: React.ComponentType< { value: T } >;
 	Content: RepeaterItemContent< T >;
-	actions?: React.ReactNode;
+	actions?: ( value: T ) => React.ReactNode;
 };
 
 type SortableItemSettings< T > = BaseItemSettings< T > & {
@@ -253,6 +253,7 @@ export const Repeater = < T, >( {
 									showToggle={ showToggle }
 									showRemove={ showRemove }
 									actions={ itemSettings.actions }
+									value={ value }
 								>
 									{ ( props ) => (
 										<itemSettings.Content
@@ -286,7 +287,8 @@ type RepeaterItemProps< T > = {
 	showToggle: boolean;
 	showRemove: boolean;
 	disabled?: boolean;
-	actions?: React.ReactNode;
+	actions?: ( value: T ) => React.ReactNode;
+	value: T;
 };
 
 const RepeaterItem = < T, >( {
@@ -304,6 +306,7 @@ const RepeaterItem = < T, >( {
 	showRemove,
 	disabled,
 	actions,
+	value,
 }: RepeaterItemProps< T > ) => {
 	const { popoverState, popoverProps, ref, setRef } = usePopover( openOnMount, onOpen );
 
@@ -336,7 +339,7 @@ const RepeaterItem = < T, >( {
 								</IconButton>
 							</Tooltip>
 						) }
-						{ actions }
+						{ actions?.( value ) }
 						{ showRemove && (
 							<Tooltip title={ removeLabel } placement="top">
 								<IconButton size={ SIZE } onClick={ removeItem } aria-label={ removeLabel }>
