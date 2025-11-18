@@ -38,6 +38,7 @@
 
 	function parseAnimationName( name ) {
 		const [ trigger, effect, type, direction, duration, delay ] = name.split( '-' );
+
 		return {
 			trigger,
 			effect,
@@ -56,9 +57,27 @@
 			easing: config.easing,
 		};
 
-		try {
-			animateFunc( element, keyframes, options );
-		} catch {}
+		const initialKeyframes = {};
+		Object.keys( keyframes ).forEach( ( key ) => {
+			initialKeyframes[ key ] = keyframes[ key ][ 0 ];
+		} );
+		animateFunc( element, initialKeyframes, { duration: 0 } );
+
+		animateFunc( element, keyframes, options );
+
+		if ( 'out' === animConfig.type ) {
+			const totalAnimationTime = animConfig.duration + animConfig.delay;
+			const resetValues = { opacity: 1, scale: 1, x: 0, y: 0 };
+
+			setTimeout( () => {
+				const resetKeyframes = {};
+				Object.keys( keyframes ).forEach( ( key ) => {
+					resetKeyframes[ key ] = resetValues[ key ];
+				} );
+
+				animateFunc( element, resetKeyframes, { duration: 0 } );
+			}, totalAnimationTime );
+		}
 	}
 
 	function getInteractionsData() {
@@ -74,117 +93,38 @@
 		}
 	}
 
-	function findElementByDataId( dataId ) {
-		const element = document.querySelector( '[data-id="' + dataId + '"]' );
-		if ( ! element ) {
-			const byId = document.getElementById( dataId );
-			if ( byId ) {
-				return byId;
-			}
-			const byClass = document.querySelector( '.elementor-element-' + dataId );
-			if ( byClass ) {
-				return byClass;
-			}
-		}
-		return element;
-	}
-
-	function getAnimationTarget( element ) {
-		// For atomic widgets, the data-id is on the wrapper, but we need to animate the actual content
-		// Try to find the first meaningful child element (not just text nodes)
-		if ( ! element ) {
-			return null;
-		}
-
-		// If element has direct text content and no block children, animate the element itself
-		const hasBlockChildren = Array.from( element.children ).some( ( child ) => {
-			const style = window.getComputedStyle( child );
-			return 'block' === style.display || 'flex' === style.display || 'grid' === style.display;
-		} );
-
-		const isContentElement = /^(h[1-6]|p|button|a|span|div)$/i.test( element.tagName );
-
-		if ( isContentElement && ! hasBlockChildren ) {
-			return element;
-		}
-
-		// Otherwise, try to find the first meaningful child
-		// Look for direct child elements (not nested deeply)
-		const firstChild = element.firstElementChild;
-		if ( firstChild ) {
-			// If first child is a link or button, use it
-			if ( /^(a|button)$/i.test( firstChild.tagName ) ) {
-				return firstChild;
-			}
-			// Otherwise use the first child element
-			return firstChild;
-		}
-
-		// Fallback: animate the element itself
-		return element;
+	function findElementByInteractionId( interactionId ) {
+		return document.querySelector( '[data-interaction-id="' + interactionId + '"]' );
 	}
 
 	function applyInteractionsToElement( element, interactionsData ) {
 		const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
 
 		if ( ! animateFunc ) {
-			element.style.animation = 'none';
-			setTimeout( () => {
-				element.style.animation = 'fadeInScale 0.5s ease-out';
-			}, 10 );
 			return;
 		}
 
+		let parsedData;
 		try {
-			element.style.opacity = '0';
-			element.style.transform = 'scale(0.2)';
-
-			const animation = animateFunc(
-				element,
-				{
-					opacity: [ 0, 1 ],
-					scale: [ 0.2, 1 ],
-				},
-				{
-					duration: 0.5,
-					easing: 'ease-out',
-				},
-			);
-
-			if ( animation && 'function' === typeof animation.then ) {
-				animation.then( () => {
-					element.style.opacity = '';
-					element.style.transform = '';
-				} );
-			} else {
-				setTimeout( () => {
-					element.style.opacity = '';
-					element.style.transform = '';
-				}, 500 );
-			}
-		} catch {
-			element.style.opacity = '';
-			element.style.transform = '';
+			parsedData = JSON.parse( interactionsData );
+		} catch ( error ) {
+			return;
 		}
 
-		// TODO: Parse and apply actual interactions once we verify the system works
-		// let interactions = [];
-		// try {
-		// 	interactions = JSON.parse( interactionsData );
-		// } catch ( error ) {
-		// 	console.error( '[Editor Interactions Handler] Error parsing interactions:', error );
-		// 	return;
-		// }
-		// interactions.forEach( ( interaction ) => {
-		// 	const animationName =
-		// 		'string' === typeof interaction
-		// 			? interaction
-		// 			: interaction?.animation?.animation_id;
-		// 	const animConfig = animationName && parseAnimationName( animationName );
-		// 	if ( animConfig ) {
-		// 		applyAnimation( element, animConfig, animateFunc );
-		// 	}
-		// } );
+		const interactions = Object.values( parsedData?.items );
+
+		interactions.forEach( ( interaction ) => {
+			const animationName =
+				'string' === typeof interaction
+					? interaction
+					: interaction?.animation?.animation_id;
+
+			const animConfig = animationName && parseAnimationName( animationName );
+
+			if ( animConfig ) {
+				applyAnimation( element, animConfig, animateFunc );
+			}
+		} );
 	}
 
 	let previousInteractionsData = [];
@@ -197,17 +137,13 @@
 				( prev ) => prev.dataId === currentItem.dataId,
 			);
 
-			const hasChanged = ! previousItem || previousItem.interactions !== currentItem.interactions;
-			return hasChanged;
+			return ! previousItem || previousItem.interactions !== currentItem.interactions;
 		} );
 
 		changedItems.forEach( ( item ) => {
-			const element = findElementByDataId( item.dataId );
+			const element = findElementByInteractionId( item.dataId );
 			if ( element ) {
-				const targetElement = getAnimationTarget( element );
-				if ( targetElement ) {
-					applyInteractionsToElement( targetElement, item.interactions );
-				}
+				applyInteractionsToElement( element, item.interactions );
 			}
 		} );
 
@@ -220,7 +156,6 @@
 			return;
 		}
 
-		// Watch the head for when the script tag appears (Portal injects it later)
 		const head = document.head;
 		let scriptTag = null;
 		let observer = null;
@@ -240,12 +175,10 @@
 				subtree: true,
 			} );
 
-			// Initial load
 			handleInteractionsUpdate();
 			registerWindowEvents();
 		}
 
-		// Watch head for script tag to appear
 		const headObserver = new MutationObserver( () => {
 			const foundScriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
 			if ( foundScriptTag && foundScriptTag !== scriptTag ) {
@@ -256,7 +189,7 @@
 		} );
 
 		headObserver.observe( head, {
-			childList: true, // Watch for new script tags being added
+			childList: true,
 			subtree: true,
 		} );
 
@@ -278,16 +211,12 @@
 		if ( ! item ) {
 			return;
 		}
-		const element = findElementByDataId( elementId );
+		const element = findElementByInteractionId( elementId );
 		if ( element ) {
-			const targetElement = getAnimationTarget( element );
-			if ( targetElement ) {
-				applyInteractionsToElement( targetElement, item.interactions );
-			}
+			applyInteractionsToElement( element, item.interactions );
 		}
 	}
 
-	// Initialize when DOM is ready
 	if ( 'loading' === document.readyState ) {
 		document.addEventListener( 'DOMContentLoaded', initEditorInteractionsHandler );
 	} else {
