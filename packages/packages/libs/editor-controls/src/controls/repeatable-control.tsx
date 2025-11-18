@@ -90,6 +90,7 @@ export const RepeatableControl = createControl(
 							<Item
 								Icon={ ItemIcon }
 								Label={ ItemLabel }
+								// disabled={}
 								actions={
 									<>
 										{ showDuplicate && <DuplicateItemAction /> }
