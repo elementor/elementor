@@ -47,7 +47,6 @@ export function OverridableProp() {
 function OverridablePropIndicator() {
 	const popupState = usePopupState( {
 		variant: 'popover',
-		popupId: 'component-overridable-prop',
 	} );
 
 	const triggerProps = bindTrigger( popupState );
@@ -84,27 +83,15 @@ function OverridablePropIndicator() {
 function OverridablePropForm( { close }: { close: () => void } ) {
 	return (
 		<Stack alignItems="start" width="268px">
-			<Stack
-				direction="row"
-				alignItems="center"
-				py={ 1 }
-				px={ 1.5 }
-				sx={ { columnGap: 0.5, borderBottom: '1px solid', borderColor: 'divider', width: '100%' } }
-			>
-				<StarIcon fontSize={ SIZE } />
-				<Typography variant="caption" sx={ { color: 'text.primary', fontWeight: '500', lineHeight: 1 } }>
-					{ __( 'Override Property', 'elementor' ) }
-				</Typography>
-			</Stack>
 			<Grid container gap={ 0.75 } alignItems="start" p={ 1.5 }>
 				<Grid item xs={ 12 }>
 					<FormLabel htmlFor="override-value" size="tiny">
-						{ __( 'Value', 'elementor' ) }
+						{ __( 'Name', 'elementor' ) }
 					</FormLabel>
 				</Grid>
 				<Grid item xs={ 12 }>
 					<TextField
-						id="override-value"
+						id="override-label"
 						size={ SIZE }
 						fullWidth
 						placeholder={ __( 'Enter value', 'elementor' ) }
