@@ -60,7 +60,9 @@ class Atomic_Tabs_Content_Area extends Atomic_Element_Base {
 				->set_items( [
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
-						->set_meta( $this->get_css_id_control_meta() ),
+						->set_meta( [
+							'layout' => 'two-columns',
+						] ),
 				] ),
 		];
 	}
