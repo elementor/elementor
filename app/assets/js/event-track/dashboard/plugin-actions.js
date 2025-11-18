@@ -131,7 +131,7 @@ class PluginActions extends BaseTracking {
 
 		const userInput = this.getUserInput();
 		if ( userInput ) {
-			properties.user_input = userInput;
+			properties.deactivate_feedback_reason += `/${ userInput }`;
 		}
 
 		WpDashboardTracking.dispatchEvent( 'wpdash_deactivate_plugin', properties, { send_immediately: true } );
