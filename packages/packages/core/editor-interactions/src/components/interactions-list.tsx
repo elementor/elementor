@@ -27,11 +27,6 @@ export function InteractionsList( props: InteractionListProps ) {
 		}
 	}, [ interactions.items, interactionsState, onSelectInteractions ] );
 
-	// const [ interactionIds, setInteractionIds ] = useState< Record<number, string> >( interactions.items.reduce( ( acc: Record<number, string>, item, index ) => {
-	// 	acc[ index ] = item.animation.animation_id;
-	// 	return acc;
-	// }, {} ) );
-
 	if ( triggerCreateOnShowEmpty && interactionsState.items.length === 0 ) {
 		setInteractionsState( {
 			version: 1,
@@ -45,12 +40,6 @@ export function InteractionsList( props: InteractionListProps ) {
 			],
 		} );
 	}
-
-	// useEffect( () => {
-	// 	if ( Object.values( interactionIds ).join( ',' ) !== interactions.items.map( ( item ) => item.animation.animation_id ).join( ',' ) ) {
-	// 		onSelectInteraction( Object.values( interactionIds ) );
-	// 	}
-	// }, [ interactionIds, interactions, onSelectInteraction ] );
 
 	const displayLabel = ( interactionForDisplay: string ) => {
 		if ( ! interactionForDisplay ) {

@@ -30,7 +30,6 @@ export const documentElementsInteractionsProvider = createInteractionsProvider( 
 				if ( ! interactions ) {
 					return false;
 				}
-				// Check if interactions array has items or string is not empty
 				return interactions?.items?.length > 0;
 			} );
 
