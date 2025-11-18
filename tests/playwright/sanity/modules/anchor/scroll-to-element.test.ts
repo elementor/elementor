@@ -25,10 +25,10 @@ test.describe( 'Scrolling tests in editor @scroll-to-element', () => {
 		await editor.selectElement( spacerID );
 		await editor.setSliderControlValue( 'space', '1500' );
 
-	const buttonElem = editor.getPreviewFrame().locator( `[data-id="${ buttonID }"] a.elementor-button-link, [data-interaction-id="${ buttonID }"] a.elementor-button-link` );
-	await buttonElem.click();
+		const buttonElem = editor.getPreviewFrame().locator( `[data-id="${ buttonID }"] a.elementor-button-link` );
+		await buttonElem.click();
 
-	const scrollToElem = editor.getPreviewFrame().locator( `[data-id="${ elemWithID }"], [data-interaction-id="${ elemWithID }"]` );
+		const scrollToElem = editor.getPreviewFrame().locator( `[data-id="${ elemWithID }"]` );
 
 		// Assert.
 		await expect( scrollToElem ).toBeInViewport( { timeout: 500 } );
@@ -60,10 +60,10 @@ test.describe( 'Scrolling tests in editor @scroll-to-element', () => {
 		await editor.selectElement( spacerID );
 		await editor.setSliderControlValue( 'space', '1500' );
 
-	const containerElem = editor.getPreviewFrame().locator( `[data-id="${ container }"], [data-interaction-id="${ container }"]` );
-	await containerElem.click();
+		const containerElem = editor.getPreviewFrame().locator( `[data-id="${ container }"]` );
+		await containerElem.click();
 
-	const scrollToElem = editor.getPreviewFrame().locator( `[data-id="${ elemWithID }"], [data-interaction-id="${ elemWithID }"]` );
+		const scrollToElem = editor.getPreviewFrame().locator( `[data-id="${ elemWithID }"]` );
 
 		// Assert.
 		await expect( scrollToElem ).toBeInViewport( { timeout: 500 } );

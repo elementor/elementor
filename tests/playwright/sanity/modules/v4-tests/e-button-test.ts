@@ -112,7 +112,7 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 			height: 60,
 		} );
 
-		const button = editor.getPreviewFrame().locator( `[data-id="${ buttonId }"] button, [data-interaction-id="${ buttonId }"] button` );
+		const button = editor.getPreviewFrame().locator( `[data-id="${ buttonId }"] button` );
 		const buttonBox = await button.boundingBox();
 
 		expect( buttonBox.width ).toBe( 200 );
