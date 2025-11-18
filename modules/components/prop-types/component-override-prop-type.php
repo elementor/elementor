@@ -41,7 +41,8 @@ class Component_Override_Prop_type extends Plain_Prop_Type {
 		] = $this->get_component_overridable_prop( sanitize_text_field( $override_key ) );
 
 		if ( ! $override_key_exists ) {
-			// If the override key is not in the component overridable props, we'll remove it in the sanitize_value method.
+			// If the override is not one of the component overridable props we'll remove it in sanitize_value method.
+			// This is a valid scenario, as the user can delete overridable props from the component after the override created.
 			return true;
 		}
 
@@ -90,11 +91,13 @@ class Component_Override_Prop_type extends Plain_Prop_Type {
 
 		$overridable_element = Plugin::$instance->elements_manager->get_element( $el_type, $widget_type );
 
-		if ( ! $overridable_element || ! ( $overridable_element instanceof Atomic_Element_Base || $overridable_element instanceof Atomic_Widget_Base ) ) {
-			throw new \Exception( "Invalid overridable element: $el_type $widget_type. Component inner elements must be atomic." );
+		if ( ! $overridable_element ||
+			! ( $overridable_element instanceof Atomic_Element_Base || $overridable_element instanceof Atomic_Widget_Base )
+		) {
+			throw new \Exception( "Invalid overridable element: $el_type $widget_type." );
 		}
 
-		$props_type = (new $overridable_element)->get_props_schema()[$prop_key];
+		$props_type = ( new $overridable_element() )->get_props_schema()[ $prop_key ];
 
 		return [
 			'override_key_exists' => true,
