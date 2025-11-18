@@ -1,41 +1,4 @@
-const config = window.ElementorInteractionsConfig?.constants;
-
-function getKeyframes( effect, type, direction ) {
-	const isIn = 'in' === type;
-	const keyframes = {};
-
-	keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
-
-	if ( 'scale' === effect ) {
-		keyframes.scale = isIn ? [ config.scaleStart, 1 ] : [ 1, config.scaleStart ];
-	}
-
-	if ( direction ) {
-		const distance = config.slideDistance;
-		const movement = {
-			left: { x: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
-			right: { x: isIn ? [ distance, 0 ] : [ 0, distance ] },
-			top: { y: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
-			bottom: { y: isIn ? [ distance, 0 ] : [ 0, distance ] },
-		};
-
-		Object.assign( keyframes, movement[ direction ] );
-	}
-
-	return keyframes;
-}
-
-function parseAnimationName( name ) {
-	const [ trigger, effect, type, direction, duration, delay ] = name.split( '-' );
-	return {
-		trigger,
-		effect,
-		type,
-		direction: direction || null,
-		duration: duration ? parseInt( duration, 10 ) : config.defaultDuration,
-		delay: delay ? parseInt( delay, 10 ) : config.defaultDelay,
-	};
-}
+import { config, getKeyframes, parseAnimationName } from './interactions-utils.js';
 
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
