@@ -73,7 +73,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					await expect( editor.getPreviewFrame().locator( widgetSelector ).first() ).toBeVisible();
 				} );
 
-				test( 'Check frontend display', async () => {
+				await test.step( 'Check frontend display', async () => {
 					const containerSelector = editor.getWidgetSelector( containerId );
 					await editor.publishAndViewPage();
 
