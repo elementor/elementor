@@ -9,7 +9,7 @@ export type ChildControlConfig = {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	propTypeUtil: PropTypeUtil< string, any >;
 	label?: string;
-	getIsDisabled?: ( item: Item< RepeatablePropValue > ) => boolean;
+	isItemDisabled?: ( item: Item< RepeatablePropValue > ) => boolean;
 };
 
 type RepeatableControlContextType = ChildControlConfig & {

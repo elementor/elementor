@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { keyValuePropTypeUtil } from '@elementor/editor-props';
+import { keyValuePropTypeUtil, type StringPropValue } from '@elementor/editor-props';
 import { ChevronDownIcon, VariationsIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Box, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -9,7 +9,6 @@ import { useBoundProp } from '../../bound-prop-context';
 import { ItemSelector } from '../../components/item-selector';
 import ControlActions from '../../control-actions/control-actions';
 import { transitionProperties, transitionsItemsList } from './data';
-import { getTransitionPropertyByValue } from './transition-repeater-control';
 
 const toTransitionSelectorValue = ( label: string ) => {
 	for ( const category of transitionProperties ) {
@@ -24,6 +23,22 @@ const toTransitionSelectorValue = ( label: string ) => {
 
 	return null;
 };
+
+export function getTransitionPropertyByValue( item?: StringPropValue | null ) {
+	if ( ! item?.value ) {
+		return null;
+	}
+
+	for ( const category of transitionProperties ) {
+		for ( const property of category.properties ) {
+			if ( property.value === item.value ) {
+				return property;
+			}
+		}
+	}
+
+	return null;
+}
 
 export const TransitionSelector = ( {
 	recentlyUsedList = [],

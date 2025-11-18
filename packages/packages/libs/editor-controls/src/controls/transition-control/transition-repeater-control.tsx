@@ -19,7 +19,7 @@ import { RepeatableControl } from '../repeatable-control';
 import { SelectionSizeControl } from '../selection-size-control';
 import { initialTransitionValue, transitionProperties } from './data';
 import { subscribeToTransitionEvent } from './trainsition-events';
-import { TransitionSelector } from './transition-selector';
+import { getTransitionPropertyByValue, TransitionSelector } from './transition-selector';
 
 const DURATION_CONFIG = {
 	variant: 'time',
@@ -54,22 +54,6 @@ const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: stri
 		},
 	};
 };
-
-export function getTransitionPropertyByValue( item?: StringPropValue | null ) {
-	if ( ! item?.value ) {
-		return null;
-	}
-
-	for ( const category of transitionProperties ) {
-		for ( const property of category.properties ) {
-			if ( property.value === item.value ) {
-				return property;
-			}
-		}
-	}
-
-	return null;
-}
 
 function getIsDisabled( item: Item< RepeatablePropValue > ) {
 	const property = getTransitionPropertyByValue(
@@ -167,6 +151,7 @@ export const TransitionRepeaterControl = createControl(
 
 		const allPropertiesUsed = value?.length === transitionProperties.length;
 		const isAddItemDisabled = ! currentStyleIsNormal || allPropertiesUsed;
+
 		return (
 			<RepeatableControl
 				label={ __( 'Transitions', 'elementor' ) }

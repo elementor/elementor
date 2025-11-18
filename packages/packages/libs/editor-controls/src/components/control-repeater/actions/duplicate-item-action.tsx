@@ -4,16 +4,11 @@ import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useRepeaterContext } from '../context/repeater-context';
-import { type Item, type RepeatablePropValue } from '../types';
 
 const SIZE = 'tiny';
 
-export const DuplicateItemAction = ( {
-	getIsDisabled = () => false,
-}: {
-	getIsDisabled?: ( item: Item< RepeatablePropValue > ) => boolean;
-} ) => {
-	const { items, addItem, index = -1 } = useRepeaterContext();
+export const DuplicateItemAction = () => {
+	const { items, addItem, index = -1, isItemDisabled } = useRepeaterContext();
 
 	if ( index === -1 ) {
 		return null;
@@ -34,7 +29,7 @@ export const DuplicateItemAction = ( {
 				size={ SIZE }
 				onClick={ onClick }
 				aria-label={ duplicateLabel }
-				disabled={ getIsDisabled( item ) }
+				disabled={ isItemDisabled( index ) }
 			>
 				<CopyIcon fontSize={ SIZE } />
 			</IconButton>
