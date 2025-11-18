@@ -204,14 +204,6 @@ export default class WpDashboardTracking {
 			return false;
 		}
 
-		if ( targetUrl.startsWith( 'javascript:' ) ) {
-			return false;
-		}
-
-		if ( this.isPluginsPage( targetUrl ) ) {
-			return false;
-		}
-
 		return ! this.isElementorPage( targetUrl );
 	}
 
