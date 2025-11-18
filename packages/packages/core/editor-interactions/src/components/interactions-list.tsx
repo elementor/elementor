@@ -12,7 +12,7 @@ import { DEFAULT_INTERACTION, InteractionDetails } from './interaction-details';
 export type InteractionListProps = {
 	onSelectInteractions: ( interactions: ElementInteractions ) => void;
 	interactions: ElementInteractions;
-	onPlayInteraction: (interactionId: string) => void;
+	onPlayInteraction: ( interactionId: string ) => void;
 	triggerCreateOnShowEmpty?: boolean;
 };
 
