@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Repeater } from '@elementor/editor-controls';
+import { type ElementInteractions } from '@elementor/editor-elements';
 import { PlayerPlayIcon } from '@elementor/icons';
 import { IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsConfig } from '../utils/get-interactions-config';
 import { DEFAULT_INTERACTION, InteractionDetails } from './interaction-details';
-import { ElementInteractions } from '@elementor/editor-elements';
 
 export type InteractionListProps = {
 	onSelectInteractions: ( interactions: ElementInteractions ) => void;
@@ -35,12 +35,15 @@ export function InteractionsList( props: InteractionListProps ) {
 	if ( triggerCreateOnShowEmpty && interactionsState.items.length === 0 ) {
 		setInteractionsState( {
 			version: 1,
-			items: [ {
-			animation: {
-				animation_id: DEFAULT_INTERACTION,
-				animation_type: 'full-preset',
-			},
-		} ] } );
+			items: [
+				{
+					animation: {
+						animation_id: DEFAULT_INTERACTION,
+						animation_type: 'full-preset',
+					},
+				},
+			],
+		} );
 	}
 
 	// useEffect( () => {
@@ -66,7 +69,7 @@ export function InteractionsList( props: InteractionListProps ) {
 			openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
 			label={ __( 'Interactions', 'elementor' ) }
 			values={ interactionsState.items }
-			setValues={ ( newValue: ElementInteractions['items'] ) => {
+			setValues={ ( newValue: ElementInteractions[ 'items' ] ) => {
 				setInteractionsState( {
 					...interactionsState,
 					items: newValue,

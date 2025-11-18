@@ -47,14 +47,14 @@ export type V1Element = {
 export type ElementInteractions = {
 	version: number;
 	items: InteractionItem[];
-}
+};
 
 export type InteractionItem = {
 	animation: {
 		animation_type: string;
 		animation_id: string;
 	};
-}
+};
 
 export type V1ElementModelProps = {
 	widgetType?: string;

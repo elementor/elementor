@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useCallback, useMemo, useState } from 'react';
-import { useElementInteractions, type ElementInteractions } from '@elementor/editor-elements';
+import { useCallback, useState } from 'react';
+import { type ElementInteractions, useElementInteractions } from '@elementor/editor-elements';
 import { SessionStorageProvider } from '@elementor/session';
 import { Stack } from '@elementor/ui';
 
@@ -49,13 +49,13 @@ function InteractionsContent( { firstInteraction }: { firstInteraction: boolean 
 	const { interactions, setInteractions, playInteractions } = useInteractionsContext();
 
 	const applyInteraction = useCallback(
-		( interactions: ElementInteractions ) => {
-			if ( ! interactions ) {
+		( newInteractions: ElementInteractions ) => {
+			if ( ! newInteractions ) {
 				setInteractions( undefined );
 				return;
 			}
 
-			setInteractions( interactions );
+			setInteractions( newInteractions );
 		},
 		[ setInteractions ]
 	);

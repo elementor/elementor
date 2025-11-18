@@ -1,4 +1,4 @@
-import { type ElementInteractions } from "@elementor/editor-elements";
+import { type ElementInteractions } from '@elementor/editor-elements';
 
 export type AnimationOption = {
 	value: string;

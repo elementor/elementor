@@ -1,6 +1,6 @@
 import { type ElementID } from '../types';
 import { getContainer } from './get-container';
-import { ElementInteractions } from './types';
+import { type ElementInteractions } from './types';
 
 export function getElementInteractions( elementId: ElementID ): ElementInteractions | undefined {
 	const container = getContainer( elementId );

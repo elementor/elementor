@@ -39,14 +39,17 @@ describe( 'InteractionsList', () => {
 		[ 'scrollIn-slide-in-top-600-0', 'Scroll into view: Slide In Top (600ms/0ms)' ],
 	] )( 'displays formatted label "%s" for interaction "%s"', ( selectedInteraction, expectedLabel ) => {
 		// Arrange.
-		const onSelectInteraction = jest.fn();
+		const onSelectInteractions = jest.fn();
 
 		// Act.
 		render(
 			<PopupStateProvider>
 				<InteractionsList
-					selectedInteraction={ selectedInteraction }
-					onSelectInteraction={ onSelectInteraction }
+					interactions={ {
+						version: 1,
+						items: [ { animation: { animation_type: 'load-fade-in', animation_id: selectedInteraction } } ],
+					} }
+					onSelectInteractions={ onSelectInteractions }
 					onPlayInteraction={ jest.fn() }
 				/>
 			</PopupStateProvider>
