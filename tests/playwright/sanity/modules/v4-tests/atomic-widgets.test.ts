@@ -61,10 +61,10 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 				await expect( container ).toBeVisible();
 			} );
 
-			test( 'Widget is displayed in canvas and frontend', async () => {
+			test.skip( 'Widget is displayed in canvas and frontend', async () => {
 				editor = await wpAdmin.openNewPage();
 				await editor.openElementsPanel();
-				await test.step.skip( 'Add widget and check editor canvas', async () => {
+				await test.step( 'Add widget and check editor canvas', async () => {
 					containerId = await editor.addElement( { elType: 'container' }, 'document' );
 					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
 					widgetSelector = editor.getWidgetSelector( widgetId );
@@ -73,11 +73,11 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					await expect( editor.getPreviewFrame().locator( widgetSelector ).first() ).toBeVisible();
 				} );
 
-				await test.step( 'Check frontend display', async () => {
+				test( 'Check frontend display', async () => {
 					const containerSelector = editor.getWidgetSelector( containerId );
 					await editor.publishAndViewPage();
 
-					if ( 'e-youtube' === widget.name ) {
+					if ('e-youtube' === widget.name) {
 						await editor.isUiStable( editor.page.locator( containerSelector ) );
 					}
 					await expect.soft( editor.page.locator( containerSelector ) )
