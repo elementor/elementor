@@ -44,6 +44,18 @@ export type V1Element = {
 	parent?: V1Element;
 };
 
+export type ElementInteractions = {
+	version: number;
+	items: InteractionItem[];
+};
+
+export type InteractionItem = {
+	animation: {
+		animation_type: string;
+		animation_id: string;
+	};
+};
+
 export type V1ElementModelProps = {
 	widgetType?: string;
 	elType: string;
@@ -52,7 +64,7 @@ export type V1ElementModelProps = {
 	elements?: V1Model< V1ElementModelProps >[];
 	settings?: V1ElementSettingsProps;
 	editor_settings?: V1ElementEditorSettingsProps;
-	interactions?: string | Record< string, unknown >;
+	interactions?: string | ElementInteractions;
 };
 
 export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {
