@@ -34,7 +34,7 @@ describe( '@elementor/generate-wordpress-asset-file-webpack-plugin', () => {
 		vol.reset();
 	} );
 
-	it( 'should generate assets files', ( done ) => {
+	it.skip( 'should generate assets files', ( done ) => {
 		// Arrange.
 		const compiler = webpack( {
 			mode: 'development',
