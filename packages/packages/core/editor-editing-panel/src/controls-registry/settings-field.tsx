@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { ControlAdornmentsProvider, PropKeyProvider, PropProvider } from '@elementor/editor-controls';
+import { PropKeyProvider, PropProvider } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	type ElementID,
@@ -59,11 +59,9 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues ).isMet;
 
 	return (
-		<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
-			<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
-				<PropKeyProvider bind={ bind }>{ children }</PropKeyProvider>
-			</PropProvider>
-		</ControlAdornmentsProvider>
+		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
+			<PropKeyProvider bind={ bind }>{ children }</PropKeyProvider>
+		</PropProvider>
 	);
 };
 
