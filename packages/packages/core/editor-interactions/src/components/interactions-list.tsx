@@ -6,7 +6,7 @@ import { IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsConfig } from '../utils/get-interactions-config';
-import { InteractionDetails } from './interaction-details';
+import { DEFAULT_INTERACTION, InteractionDetails } from './interaction-details';
 
 export type InteractionListProps = {
 	onSelectInteraction: ( interaction: string | null ) => void;
@@ -21,7 +21,7 @@ export function InteractionsList( props: InteractionListProps ) {
 	const [ interactionId, setInteractionId ] = useState< string | null >( selectedInteraction );
 
 	if ( triggerCreateOnShowEmpty && ! interactionId ) {
-		setInteractionId( 'load-fade-in-left-100-0' );
+		setInteractionId( DEFAULT_INTERACTION );
 	}
 
 	useEffect( () => {
@@ -43,7 +43,6 @@ export function InteractionsList( props: InteractionListProps ) {
 
 	return (
 		<Repeater
-			addToBottom
 			openOnAdd
 			openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
 			label={ __( 'Interactions', 'elementor' ) }
@@ -56,7 +55,7 @@ export function InteractionsList( props: InteractionListProps ) {
 			isSortable={ false }
 			disableAddItemButton={ !! interactionId }
 			itemSettings={ {
-				initialValues: interactionId ?? 'load-fade-in-left-100-0',
+				initialValues: DEFAULT_INTERACTION,
 				Label: ( { value } ) => displayLabel( value ),
 				Icon: () => null,
 				Content: ( { value } ) => (
