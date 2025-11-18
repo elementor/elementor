@@ -8,6 +8,7 @@ import { IMPORT_STATUS, useImportContext } from '../context/import-context';
 import { PluginActivation } from '../components/plugin-activation';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { ProcessingErrorDialog } from '../../shared/components/error/processing-error-dialog';
+import useReturnToRedirect from '../../shared/hooks/use-return-to-redirect';
 
 const headerContent = (
 	<PageHeader title={ __( 'Import', 'elementor' ) } />
@@ -25,11 +26,16 @@ export default function ImportProcess() {
 	} );
 
 	const navigate = useNavigate();
+	const { attemptRedirect } = useReturnToRedirect( data.returnTo );
 
 	useEffect( () => {
 		if ( ! error ) {
 			if ( IMPORT_PROCESSING_STATUS.DONE === status ) {
 				AppsEventTracking.sendKitImportStatus( null );
+				if ( attemptRedirect() ) {
+					return;
+				}
+
 				navigate( 'import-customization/complete' );
 			} else if ( ! isProcessing ) {
 				navigate( 'import-customization', { replace: true } );
@@ -37,12 +43,16 @@ export default function ImportProcess() {
 		} else {
 			AppsEventTracking.sendKitImportStatus( error );
 		}
-	}, [ status, error, navigate, isProcessing ] );
+	}, [ status, error, navigate, isProcessing, attemptRedirect ] );
 
 	const handleTryAgain = () => {
 		importKit();
 	};
 	const handleCloseError = () => {
+		if ( attemptRedirect() ) {
+			return;
+		}
+
 		dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.CUSTOMIZING } );
 		navigate( 'import-customization/content' );
 	};

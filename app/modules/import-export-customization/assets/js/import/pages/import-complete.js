@@ -6,15 +6,21 @@ import { BaseLayout, TopBar, Footer, PageHeader, CenteredContent, CompleteIcon, 
 import { useImportContext } from '../context/import-context';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { buildKitSettingsSummary } from '../../shared/utils/utils';
-
-const handleDone = () => {
-	window.top.location = elementorAppConfig.admin_url;
-};
+import useReturnToRedirect from '../../shared/hooks/use-return-to-redirect';
 
 export default function ImportComplete() {
 	const { data, isCompleted, runnersState } = useImportContext();
 	const { includes, analytics, uploadedData, duration } = data;
 	const navigate = useNavigate();
+	const { attemptRedirect } = useReturnToRedirect( data.returnTo );
+
+	const handleDone = () => {
+		if ( attemptRedirect() ) {
+			return;
+		}
+
+		window.top.location = elementorAppConfig.admin_url;
+	};
 
 	const title = data?.uploadedData?.manifest?.title || '';
 	const kitId = data?.kitUploadParams?.id || '';
