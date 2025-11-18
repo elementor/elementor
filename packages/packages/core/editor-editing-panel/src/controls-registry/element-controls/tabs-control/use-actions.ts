@@ -64,29 +64,10 @@ export const useActions = () => {
 			throw new Error( 'Content ID is required' );
 		}
 
-		const getNewDefaultActiveTab = ( { from, to }: { from: number; to: number } ) => {
-			if ( from === defaultActiveTab ) {
-				return to;
-			}
-
-			if ( to === defaultActiveTab ) {
-				return from;
-			}
-
-			if ( from < defaultActiveTab && to > defaultActiveTab ) {
-				return defaultActiveTab - 1;
-			}
-
-			if ( from > defaultActiveTab && to < defaultActiveTab ) {
-				return defaultActiveTab + 1;
-			}
-
-			return defaultActiveTab;
-		};
-
 		const newDefault = getNewDefaultActiveTab( {
 			from: movedElementIndex,
 			to: toIndex,
+			defaultActiveTab,
 		} );
 
 		moveElements( {
@@ -191,4 +172,32 @@ export const useActions = () => {
 		removeItem,
 		addItem,
 	};
+};
+
+const getNewDefaultActiveTab = ( {
+	from,
+	to,
+	defaultActiveTab,
+}: {
+	from: number;
+	to: number;
+	defaultActiveTab: number;
+} ) => {
+	if ( from === defaultActiveTab ) {
+		return to;
+	}
+
+	if ( to === defaultActiveTab ) {
+		return from;
+	}
+
+	if ( from < defaultActiveTab && to > defaultActiveTab ) {
+		return defaultActiveTab - 1;
+	}
+
+	if ( from > defaultActiveTab && to < defaultActiveTab ) {
+		return defaultActiveTab + 1;
+	}
+
+	return defaultActiveTab;
 };
