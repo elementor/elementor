@@ -469,8 +469,7 @@ class Admin_Notices extends Module {
 	}
 
 	private function notice_send_app_promotion() {
-
-        return EXIT_EARLY_FOR_BACKWARD_COMPATIBILITY;
+		return self::EXIT_EARLY_FOR_BACKWARD_COMPATIBILITY;
 
 		$notice_id = 'send_app_promotion';
 
