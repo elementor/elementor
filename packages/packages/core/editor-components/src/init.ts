@@ -5,6 +5,7 @@ import {
 	settingsTransformersRegistry,
 } from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
+import { FIELD_TYPE, registerFieldIndicator } from '@elementor/editor-editing-panel';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
@@ -17,6 +18,7 @@ import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
 import { openEditModeDialog } from './components/in-edit-mode';
+import { OverridableProp } from './components/overridable-props';
 import { createComponentType, TYPE } from './create-component-type';
 import { PopulateStore } from './populate-store';
 import { componentsStylesProvider } from './store/components-styles-provider';
@@ -82,4 +84,11 @@ export function init() {
 	} );
 
 	settingsTransformersRegistry.register( 'component-id', componentIdTransformer );
+
+	registerFieldIndicator( {
+		fieldType: FIELD_TYPE.SETTINGS,
+		id: 'component-overridable-prop',
+		priority: 1,
+		indicator: OverridableProp,
+	} );
 }
