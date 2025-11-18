@@ -78,7 +78,7 @@ export type V1ElementEditorSettingsProps = {
 
 export type V1ElementSettingsProps = Record< string, PropValue >;
 
-export type V1ElementConfig = {
+export type V1ElementConfig< T = object > = {
 	title: string;
 	controls: object;
 	atomic?: boolean;
@@ -90,7 +90,7 @@ export type V1ElementConfig = {
 	base_styles?: Record< string, StyleDefinition >;
 	base_styles_dictionary?: Record< string, string >;
 	atomic_style_states?: ClassState[];
-};
+} & T;
 
 type V1Model< T > = {
 	get: < K extends keyof T >( key: K ) => T[ K ];
