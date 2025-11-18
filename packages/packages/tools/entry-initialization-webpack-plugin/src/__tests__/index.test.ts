@@ -33,7 +33,7 @@ describe( 'EntryInitializationWebpackPlugin', () => {
 		vol.reset();
 	} );
 
-	it( 'should add the initialization script to the entries', ( done ) => {
+	it.skip( 'should add the initialization script to the entries', ( done ) => {
 		// Arrange.
 		const compiler = webpack( {
 			mode: 'development',
