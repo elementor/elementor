@@ -96,7 +96,7 @@ type RepeaterProps< T > =
 			showToggle?: boolean;
 			showRemove?: boolean;
 			openItem?: number;
-			isSortable?: false;
+			isSortable: false;
 			itemSettings: BaseItemSettings< T >;
 	  }
 	| {
@@ -110,7 +110,7 @@ type RepeaterProps< T > =
 			showToggle?: boolean;
 			showRemove?: boolean;
 			openItem?: number;
-			isSortable: true;
+			isSortable?: true;
 			itemSettings: SortableItemSettings< T >;
 	  };
 
@@ -128,7 +128,7 @@ export const Repeater = < T, >( {
 	showRemove = true,
 	disableAddItemButton = false,
 	openItem: initialOpenItem = EMPTY_OPEN_ITEM,
-	isSortable = false,
+	isSortable = true,
 }: RepeaterProps< RepeaterItem< T > > ) => {
 	const [ openItem, setOpenItem ] = useState( initialOpenItem );
 

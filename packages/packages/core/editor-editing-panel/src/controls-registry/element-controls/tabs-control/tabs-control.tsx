@@ -101,7 +101,6 @@ export const TabsControl = ( { label }: { label: string } ) => {
 			setValues={ setValue }
 			showRemove={ repeaterValues.length > 1 }
 			label={ label }
-			isSortable={ true }
 			itemSettings={ {
 				getId: ( { item } ) => item.id,
 				initialValues: { id: '', title: 'Tab' },
