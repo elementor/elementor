@@ -56,12 +56,15 @@ export const Item = < T extends RepeatablePropValue >( {
 			}
 			sx={
 				! getIsDisabled( item )
-					? undefined
+					? {
+							minHeight: ( theme ) => theme.spacing( 3.5 ),
+					  }
 					: {
 							minHeight: ( theme ) => theme.spacing( 3.5 ),
 							'[role="button"]': {
 								cursor: 'not-allowed',
-						} }
+							},
+					  }
 			}
 			actions={
 				<>
