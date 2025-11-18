@@ -133,9 +133,7 @@ export const Repeater = < T, >( {
 	const [ openItem, setOpenItem ] = useState( initialOpenItem );
 
 	const uniqueKeys = items.map( ( item, index ) =>
-		isSortable && 'getId' in itemSettings
-			? itemSettings.getId( { item, index } )
-			: String( index )
+		isSortable && 'getId' in itemSettings ? itemSettings.getId( { item, index } ) : String( index )
 	);
 
 	const addRepeaterItem = () => {
@@ -222,7 +220,7 @@ export const Repeater = < T, >( {
 				</IconButton>
 			</RepeaterHeader>
 			{ 0 < uniqueKeys.length && (
-				<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder } >
+				<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder }>
 					{ uniqueKeys.map( ( key ) => {
 						const index = uniqueKeys.indexOf( key );
 						const value = items[ index ];
