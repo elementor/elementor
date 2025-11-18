@@ -467,6 +467,10 @@ class Admin_Notices extends Module {
 	}
 
 	private function notice_send_app_promotion() {
+
+		// not deleting it just exiting early for backwards compatibility with elementor pro older versions
+		return false;
+
 		$notice_id = 'send_app_promotion';
 
 		if ( ! $this->is_elementor_page() && ! $this->is_elementor_admin_screen() ) {
