@@ -1,23 +1,27 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
-import { getElementLabel, type V1Element, type V1ElementData } from '@elementor/editor-elements';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { getElementLabel, type V1ElementData } from '@elementor/editor-elements';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { StarIcon } from '@elementor/icons';
-import { __useDispatch as useDispatch } from '@elementor/store';
 import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Typography } from '@elementor/ui';
-import { generateUniqueId } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
-import { slice } from '../../store/store';
+import { createUnpublishedComponent } from '../../store/create-unpublished-component';
 import { type ComponentFormValues } from '../../types';
+import { trackComponentEvent } from '../../utils/tracking';
 import { useForm } from './hooks/use-form';
 import { createBaseComponentSchema, createSubmitComponentSchema } from './utils/component-form-schema';
-import { replaceElementWithComponent } from './utils/replace-element-with-component';
+import {
+	type ComponentEventData,
+	type ContextMenuEventOptions,
+	getComponentEventData,
+} from './utils/get-component-event-data';
 
 type SaveAsComponentEventData = {
-	element: V1Element;
+	element: V1ElementData;
 	anchorPosition: { top: number; left: number };
+	options?: ContextMenuEventOptions;
 };
 
 type ResultNotification = {
@@ -28,7 +32,7 @@ type ResultNotification = {
 
 export function CreateComponentForm() {
 	const [ element, setElement ] = useState< {
-		element: V1Element;
+		element: V1ElementData;
 		elementLabel: string;
 	} | null >( null );
 
@@ -36,7 +40,7 @@ export function CreateComponentForm() {
 
 	const [ resultNotification, setResultNotification ] = useState< ResultNotification | null >( null );
 
-	const dispatch = useDispatch();
+	const eventData = useRef< ComponentEventData | null >( null );
 
 	useEffect( () => {
 		const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
@@ -44,6 +48,12 @@ export function CreateComponentForm() {
 		const openPopup = ( event: CustomEvent< SaveAsComponentEventData > ) => {
 			setElement( { element: event.detail.element, elementLabel: getElementLabel( event.detail.element.id ) } );
 			setAnchorPosition( event.detail.anchorPosition );
+
+			eventData.current = getComponentEventData( event.detail.element, event.detail.options );
+			trackComponentEvent( {
+				action: 'createClicked',
+				...eventData.current,
+			} );
 		};
 
 		window.addEventListener( OPEN_SAVE_AS_COMPONENT_FORM_EVENT, openPopup as EventListener );
@@ -59,19 +69,7 @@ export function CreateComponentForm() {
 				throw new Error( `Can't save element as component: element not found` );
 			}
 
-			const uid = generateUniqueId( 'component' );
-
-			dispatch(
-				slice.actions.addUnpublished( {
-					uid,
-					name: values.componentName,
-					elements: [ element.element.model.toJSON( { remove: [ 'default' ] } ) as V1ElementData ],
-				} )
-			);
-
-			dispatch( slice.actions.addCreatedThisSession( uid ) );
-
-			replaceElementWithComponent( element.element, { uid, name: values.componentName } );
+			const uid = createUnpublishedComponent( values.componentName, element.element, eventData.current );
 
 			setResultNotification( {
 				show: true,
@@ -100,6 +98,11 @@ export function CreateComponentForm() {
 
 	const cancelSave = () => {
 		resetAndClosePopup();
+
+		trackComponentEvent( {
+			action: 'createCancelled',
+			...eventData.current,
+		} );
 	};
 
 	return (
