@@ -55,7 +55,7 @@ const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: stri
 	};
 };
 
-function getIsDisabled( item: Item< RepeatablePropValue > ) {
+function isItemDisabled( item: Item< RepeatablePropValue > ) {
 	const property = getTransitionPropertyByValue(
 		( ( item as Item< SelectionSizePropValue > ).value.selection.value as KeyValuePropValue )
 			?.value as StringPropValue
@@ -69,7 +69,7 @@ function getChildControlConfig( recentlyUsedList: string[], disabledItems?: stri
 		propTypeUtil: selectionSizePropTypeUtil,
 		component: SelectionSizeControl as unknown as React.ComponentType< Record< string, unknown > >,
 		props: getSelectionSizeProps( recentlyUsedList, disabledItems ),
-		getIsDisabled,
+		isItemDisabled,
 	};
 }
 
