@@ -1,17 +1,18 @@
 <?php
 
-namespace Elementor\Modules\Components;
+namespace Elementor\Modules\Components\Transformers;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\Components\Documents\Component;
 use Elementor\Plugin;
 
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Component_Transformer extends Transformer_Base {
+class Component_Instance_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
 		if ( ! isset( $value[ 'component_id' ] ) || !isset( $value[ 'component_id' ]['value'] ) || ! is_numeric( $value[ 'component_id' ]['value'] ) ) {
 			throw new \Exception( 'component id must be a number' );

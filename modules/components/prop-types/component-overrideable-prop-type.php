@@ -3,52 +3,61 @@
 namespace Elementor\Modules\Components\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
-use Elementor\Modules\AtomicWidgets\Elements\Has_Atomic_Base;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Component_Overridable_Prop_Type extends Plain_Prop_Type {
-
 	public static function get_key(): string {
 		return 'component-overridable';
-	}	
+	}
 
 	protected function validate_value( $value ): bool {
-		if ( ! isset( $value['override-key'] ) || ! is_string( $value['override-key'] ) || ! isset( $value['default'] ) || ! is_array( $value['default'] ) ) {
+		if ( ! is_array( $value ) ) {
 			return false;
 		}
 
-		if (!isset( $value['default']['$$type'] ) || $value['default']['$$type'] !== $this->get_default_type()) {
+		$is_valid_structure = (
+			isset( $value['override_key'] ) &&
+			is_string( $value['override_key'] ) &&
+			isset( $value['default_value'] ) &&
+			is_array( $value['default_value'] )
+		);
+
+		$origin_prop_type = $this->get_origin_prop_type();
+
+		if ( ! $is_valid_structure || ! $origin_prop_type ) {
 			return false;
 		}
 
-		return Props_Parser::make( Has_Atomic_Base::get_props_schema() )
-			->validate( $value['default'] )
-			->is_valid();
+		['default_value' => $default_value] = $value;
+
+		return $origin_prop_type->validate( $default_value );
 	}
 
 	protected function sanitize_value( $value ): array {
-		$sanitized_override_key = sanitize_text_field( $value['override-key'] );
-		$sanitized_default = Props_Parser::make( Has_Atomic_Base::get_props_schema() )
-			->sanitize( $value['default'] )
-			->unwrap();
+		['override_key' => $override_key, 'default_value' => $default_value] = $value;
+
+		$origin_prop_type = $this->get_origin_prop_type();
+
+		$sanitized_override_key = sanitize_text_field( $override_key );
+		$sanitized_default_value = $origin_prop_type->sanitize( $default_value );
 
 		return [
-			'override-key' => $sanitized_override_key,
-			'default' => $sanitized_default,
+			'override_key' => $sanitized_override_key,
+			'default_value' => $sanitized_default_value,
 		];
 	}
 
-	public function set_default_type( $default_type ) {
-		$this->settings['default_type'] = $default_type;
+	public function set_origin_prop_type( Prop_Type $origin_prop_type ) {
+		$this->settings['origin_prop_type'] = $origin_prop_type;
 
 		return $this;
 	}
 
-	public function get_default_type() {
-		return $this->settings['default_type'] ?? null;
+	private function get_origin_prop_type(): Prop_Type | null {
+		return $this->settings['origin_prop_type'] ?? null;
 	}
 }
