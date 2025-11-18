@@ -1,12 +1,19 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { createArrayPropUtils, selectionSizePropTypeUtil, type SelectionSizePropValue } from '@elementor/editor-props';
+import {
+	createArrayPropUtils,
+	KeyValuePropValue,
+	selectionSizePropTypeUtil,
+	type SelectionSizePropValue,
+	type StringPropValue,
+} from '@elementor/editor-props';
 import { type StyleDefinitionState } from '@elementor/editor-styles';
 import { InfoCircleFilledIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../../bound-prop-context';
+import { type Item, type RepeatablePropValue } from '../../components/control-repeater/types';
 import { createControl } from '../../create-control';
 import { RepeatableControl } from '../repeatable-control';
 import { SelectionSizeControl } from '../selection-size-control';
@@ -23,7 +30,6 @@ const DURATION_CONFIG = {
 // this config needs to be loaded at runtime/render since it's the transitionProperties object will be mutated by the pro plugin.
 // See: https://elementor.atlassian.net/browse/ED-20285
 const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: string[] ) => {
-	console.log(transitionProperties);
 	return {
 		selectionLabel: __( 'Type', 'elementor' ),
 		sizeLabel: __( 'Duration', 'elementor' ),
@@ -50,11 +56,37 @@ const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: stri
 	};
 };
 
+function getTransitionPropertyByValue( item?: StringPropValue | null ) {
+	if ( ! item?.value ) {
+		return null;
+	}
+
+	for ( const category of transitionProperties ) {
+		for ( const property of category.properties ) {
+			if ( property.value === item.value ) {
+				return property;
+			}
+		}
+	}
+
+	return null;
+}
+
+function getIsDisabled( item: Item< RepeatablePropValue > ) {
+	const property = getTransitionPropertyByValue(
+		( ( item as Item< SelectionSizePropValue > ).value.selection.value as KeyValuePropValue )
+			?.value as StringPropValue
+	);
+
+	return ! property ? false : !! property.isDisabled;
+}
+
 function getChildControlConfig( recentlyUsedList: string[], disabledItems?: string[] ) {
 	return {
 		propTypeUtil: selectionSizePropTypeUtil,
 		component: SelectionSizeControl as unknown as React.ComponentType< Record< string, unknown > >,
 		props: getSelectionSizeProps( recentlyUsedList, disabledItems ),
+		getIsDisabled,
 	};
 }
 

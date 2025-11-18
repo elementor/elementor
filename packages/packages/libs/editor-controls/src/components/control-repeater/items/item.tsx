@@ -8,17 +8,23 @@ import { useRepeaterContext } from '../context/repeater-context';
 import { RepeaterItemActionsSlot, RepeaterItemIconSlot, RepeaterItemLabelSlot } from '../locations';
 import { type ItemProps, type RepeatablePropValue } from '../types';
 
-export const Item = < T extends RepeatablePropValue >( { Label, Icon, actions, disabled = false }: ItemProps< T > ) => {
-	const { popoverState, setRowRef, openItemIndex, setOpenItemIndex, index = -1, value } = useRepeaterContext();
+export const Item = < T extends RepeatablePropValue >( {
+	Label,
+	Icon,
+	actions,
+	getIsDisabled = () => false,
+}: ItemProps< T > ) => {
+	const { popoverState, setRowRef, openItemIndex, setOpenItemIndex, index = -1, value, items } = useRepeaterContext();
 	const repeatableContext = React.useContext( RepeatableControlContext );
 	const disableOpen = !! repeatableContext?.props?.readOnly;
 	const triggerProps = bindTrigger( popoverState );
-
+	const item = items[ index ]?.item;
 
 	const onClick = ( ev: React.MouseEvent ) => {
-		if ( disableOpen ) {
+		if ( disableOpen || getIsDisabled( item ) ) {
 			return;
 		}
+
 		triggerProps.onClick( ev );
 		setOpenItemIndex( index );
 	};
@@ -35,7 +41,6 @@ export const Item = < T extends RepeatablePropValue >( { Label, Icon, actions, d
 	return (
 		<RepeaterTag
 			ref={ setRef }
-			disabled={ disabled }
 			label={
 				<RepeaterItemLabelSlot value={ value }>
 					<Label value={ value as T } />
@@ -48,6 +53,15 @@ export const Item = < T extends RepeatablePropValue >( { Label, Icon, actions, d
 				<RepeaterItemIconSlot value={ value }>
 					<Icon value={ value as T } />
 				</RepeaterItemIconSlot>
+			}
+			sx={
+				! getIsDisabled( item )
+					? undefined
+					: {
+							minHeight: ( theme ) => theme.spacing( 3.5 ),
+							'[role="button"]': {
+								cursor: 'not-allowed',
+						} }
 			}
 			actions={
 				<>

@@ -4,10 +4,15 @@ import { IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useRepeaterContext } from '../context/repeater-context';
+import { type Item, type RepeatablePropValue } from '../types';
 
 const SIZE = 'tiny';
 
-export const DuplicateItemAction = () => {
+export const DuplicateItemAction = ( {
+	getIsDisabled = () => false,
+}: {
+	getIsDisabled?: ( item: Item< RepeatablePropValue > ) => boolean;
+} ) => {
 	const { items, addItem, index = -1 } = useRepeaterContext();
 
 	if ( index === -1 ) {
@@ -15,16 +20,22 @@ export const DuplicateItemAction = () => {
 	}
 
 	const duplicateLabel = __( 'Duplicate', 'elementor' );
+	const item = items[ index ]?.item;
 
 	const onClick = ( ev: React.MouseEvent ) => {
-		const newItem = structuredClone( items[ index ]?.item );
+		const newItem = structuredClone( item );
 
 		addItem( ev, { item: newItem, index: index + 1 } );
 	};
 
 	return (
 		<Tooltip title={ duplicateLabel } placement="top">
-			<IconButton size={ SIZE } onClick={ onClick } aria-label={ duplicateLabel }>
+			<IconButton
+				size={ SIZE }
+				onClick={ onClick }
+				aria-label={ duplicateLabel }
+				disabled={ getIsDisabled( item ) }
+			>
 				<CopyIcon fontSize={ SIZE } />
 			</IconButton>
 		</Tooltip>

@@ -50,7 +50,7 @@ export const RepeatableControl = createControl(
 		propKey,
 		addItemTooltipProps,
 	}: RepeatableControlProps ) => {
-		const { propTypeUtil: childPropTypeUtil } = childControlConfig;
+		const { propTypeUtil: childPropTypeUtil, getIsDisabled = () => false } = childControlConfig;
 
 		if ( ! childPropTypeUtil ) {
 			return null;
@@ -90,10 +90,10 @@ export const RepeatableControl = createControl(
 							<Item
 								Icon={ ItemIcon }
 								Label={ ItemLabel }
-								// disabled={}
+								getIsDisabled={ getIsDisabled }
 								actions={
 									<>
-										{ showDuplicate && <DuplicateItemAction /> }
+										{ showDuplicate && <DuplicateItemAction getIsDisabled={ getIsDisabled } /> }
 										{ showToggle && <DisableItemAction /> }
 										<RemoveItemAction />
 									</>
