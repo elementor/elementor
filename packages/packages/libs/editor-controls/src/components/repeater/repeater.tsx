@@ -72,27 +72,47 @@ export type SetRepeaterValuesMeta< T > =
 	| SetValueMeta< ReorderItemMeta >
 	| SetValueMeta< ToggleDisableItemMeta >;
 
-type RepeaterProps< T > = {
-	label: string;
-	values?: T[];
-	openOnAdd?: boolean;
-	setValues: ( newValue: T[], _: CreateOptions, meta?: SetRepeaterValuesMeta< T > ) => void;
-	disabled?: boolean;
-	disableAddItemButton?: boolean;
-	itemSettings: {
-		getId: ( { item, index }: { item: T; index: number } ) => string;
-		initialValues: T;
-		Label: React.ComponentType< { value: T; index: number } >;
-		Icon: React.ComponentType< { value: T } >;
-		Content: RepeaterItemContent< T >;
-		actions?: React.ReactNode;
-	};
-	showDuplicate?: boolean;
-	showToggle?: boolean;
-	showRemove?: boolean;
-	openItem?: number;
-	isSortable?: boolean;
+type BaseItemSettings< T > = {
+	initialValues: T;
+	Label: React.ComponentType< { value: T; index: number } >;
+	Icon: React.ComponentType< { value: T } >;
+	Content: RepeaterItemContent< T >;
+	actions?: React.ReactNode;
 };
+
+type SortableItemSettings< T > = BaseItemSettings< T > & {
+	getId: ( { item, index }: { item: T; index: number } ) => string;
+};
+
+type RepeaterProps< T > =
+	| {
+			label: string;
+			values?: T[];
+			openOnAdd?: boolean;
+			setValues: ( newValue: T[], _: CreateOptions, meta?: SetRepeaterValuesMeta< T > ) => void;
+			disabled?: boolean;
+			disableAddItemButton?: boolean;
+			showDuplicate?: boolean;
+			showToggle?: boolean;
+			showRemove?: boolean;
+			openItem?: number;
+			isSortable?: false;
+			itemSettings: BaseItemSettings< T >;
+	  }
+	| {
+			label: string;
+			values?: T[];
+			openOnAdd?: boolean;
+			setValues: ( newValue: T[], _: CreateOptions, meta?: SetRepeaterValuesMeta< T > ) => void;
+			disabled?: boolean;
+			disableAddItemButton?: boolean;
+			showDuplicate?: boolean;
+			showToggle?: boolean;
+			showRemove?: boolean;
+			openItem?: number;
+			isSortable: true;
+			itemSettings: SortableItemSettings< T >;
+	  };
 
 const EMPTY_OPEN_ITEM = -1;
 
@@ -108,11 +128,15 @@ export const Repeater = < T, >( {
 	showRemove = true,
 	disableAddItemButton = false,
 	openItem: initialOpenItem = EMPTY_OPEN_ITEM,
-	isSortable = true,
+	isSortable = false,
 }: RepeaterProps< RepeaterItem< T > > ) => {
 	const [ openItem, setOpenItem ] = useState( initialOpenItem );
 
-	const uniqueKeys = items.map( ( item, index ) => itemSettings.getId( { item, index } ) );
+	const uniqueKeys = items.map( ( item, index ) =>
+		isSortable && 'getId' in itemSettings
+			? itemSettings.getId( { item, index } )
+			: String( index )
+	);
 
 	const addRepeaterItem = () => {
 		const newItem = structuredClone( itemSettings.initialValues );

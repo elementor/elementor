@@ -55,7 +55,6 @@ export function InteractionsList( props: InteractionListProps ) {
 			isSortable={ false }
 			disableAddItemButton={ !! interactionId }
 			itemSettings={ {
-				getId: ( { item, index } ) => item,
 				initialValues: DEFAULT_INTERACTION,
 				Label: ( { value } ) => displayLabel( value ),
 				Icon: () => null,
