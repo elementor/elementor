@@ -10,7 +10,7 @@ register( {
 	callback: ( { element, settings } ) => {
 		const tabsId = element.dataset.id;
 
-		Alpine.data( `Tabs${ tabsId }`, () => ( {
+		Alpine.data( `eTabs${ tabsId }`, () => ( {
 			activeTab: settings[ 'default-active-tab' ],
 
 			navigateTabs( { key, target: tab } ) {

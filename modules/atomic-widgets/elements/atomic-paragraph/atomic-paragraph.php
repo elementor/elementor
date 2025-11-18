@@ -57,12 +57,11 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'paragraph' => $paragraph_prop
-				->description( 'The text content of the paragraph.' ),
-
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'p', 'span' ] )
 				->default( 'p' ),
+
+			'paragraph' => $paragraph_prop,
 
 			'link' => Link_Prop_Type::make(),
 
