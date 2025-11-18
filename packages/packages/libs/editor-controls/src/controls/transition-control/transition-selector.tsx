@@ -9,6 +9,7 @@ import { useBoundProp } from '../../bound-prop-context';
 import { ItemSelector } from '../../components/item-selector';
 import ControlActions from '../../control-actions/control-actions';
 import { transitionProperties, transitionsItemsList } from './data';
+import { getTransitionPropertyByValue } from './transition-repeater-control';
 
 const toTransitionSelectorValue = ( label: string ) => {
 	for ( const category of transitionProperties ) {
@@ -22,15 +23,6 @@ const toTransitionSelectorValue = ( label: string ) => {
 	}
 
 	return null;
-};
-
-const findByValue = ( value: string ) => {
-	for ( const category of transitionProperties ) {
-		const property = category.properties.find( ( prop ) => prop.value === value );
-		if ( property ) {
-			return property;
-		}
-	}
 };
 
 export const TransitionSelector = ( {
@@ -49,7 +41,7 @@ export const TransitionSelector = ( {
 
 	const getItemList = () => {
 		const recentItems = recentlyUsedList
-			.map( ( item ) => findByValue( item )?.label )
+			.map( ( item ) => getTransitionPropertyByValue( { value: item, $$type: 'string' } )?.label )
 			.filter( ( item ) => !! item ) as string[];
 		const filteredItems = transitionsItemsList.map( ( category ) => {
 			return {
