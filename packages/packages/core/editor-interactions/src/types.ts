@@ -1,3 +1,5 @@
+import { type ElementInteractions } from "@elementor/editor-elements";
+
 export type AnimationOption = {
 	value: string;
 	label: string;
@@ -25,7 +27,7 @@ export type FieldProps = {
 export type InteractionItem = {
 	elementId: string;
 	dataId: string; // The data-id attribute for DOM selection
-	interactions: string; // JSON string of interactions array
+	interactions: ElementInteractions;
 };
 
 export type InteractionsCollection = InteractionItem[];

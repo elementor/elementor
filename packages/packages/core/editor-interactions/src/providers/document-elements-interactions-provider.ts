@@ -26,44 +26,20 @@ export const documentElementsInteractionsProvider = createInteractionsProvider( 
 			const elements = getElements();
 
 			const filtered = elements.filter( ( element ) => {
-				const interactions = element.model.get( 'interactions' );
-
+				const interactions = getElementInteractions( element.id );
 				if ( ! interactions ) {
 					return false;
 				}
-
-				if ( Array.isArray( interactions ) ) {
-					return interactions.length > 0;
-				}
-
-				if ( typeof interactions === 'string' ) {
-					try {
-						const parsed = JSON.parse( interactions );
-						return Array.isArray( parsed ) ? parsed.length > 0 : !! parsed;
-					} catch {
-						return !! interactions.trim();
-					}
-				}
-
-				if ( typeof interactions === 'object' && interactions !== null ) {
-					if ( Array.isArray( interactions.items ) ) {
-						return interactions.items.length > 0;
-					}
-
-					return Object.keys( interactions ).length > 0;
-				}
-				return false;
+				// Check if interactions array has items or string is not empty
+				return interactions?.items?.length > 0;
 			} );
 
 			return filtered.map( ( element ) => {
 				const interactions = getElementInteractions( element.id );
-
-				const dataId = String( element.id );
-
 				return {
 					elementId: element.id,
-					dataId,
-					interactions: interactions || '[]',
+					dataId: element.id,
+					interactions: interactions || { version: 1, items: [] },
 				};
 			} );
 		},
