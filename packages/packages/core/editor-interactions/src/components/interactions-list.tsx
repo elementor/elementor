@@ -43,7 +43,6 @@ export function InteractionsList( props: InteractionListProps ) {
 
 	return (
 		<Repeater
-			addToBottom
 			openOnAdd
 			openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
 			label={ __( 'Interactions', 'elementor' ) }
