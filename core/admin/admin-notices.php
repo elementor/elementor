@@ -21,6 +21,8 @@ class Admin_Notices extends Module {
 	const DEFAULT_EXCLUDED_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
 	const LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID = 'local_google_fonts_disabled';
 
+	const EXIT_EARLY_FOR_BACKWARD_COMPATIBILITY = false;
+
 	private $plain_notices = [
 		'api_notice',
 		'api_upgrade_plugin',
@@ -468,8 +470,7 @@ class Admin_Notices extends Module {
 
 	private function notice_send_app_promotion() {
 
-		// not deleting it just exiting early for backwards compatibility with elementor pro older versions
-		return false;
+        return EXIT_EARLY_FOR_BACKWARD_COMPATIBILITY;
 
 		$notice_id = 'send_app_promotion';
 
