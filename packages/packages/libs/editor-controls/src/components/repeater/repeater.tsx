@@ -75,7 +75,6 @@ export type SetRepeaterValuesMeta< T > =
 type RepeaterProps< T > = {
 	label: string;
 	values?: T[];
-	addToBottom?: boolean;
 	openOnAdd?: boolean;
 	setValues: ( newValue: T[], _: CreateOptions, meta?: SetRepeaterValuesMeta< T > ) => void;
 	disabled?: boolean;
