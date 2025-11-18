@@ -21,7 +21,7 @@ export const EmptyState = ( { onCreateInteraction }: { onCreateInteraction: () =
 
 			<Typography align="center" variant="caption" maxWidth="170px">
 				{ __(
-					'Add entrance animations and effects triggered by user interactions such as click, hover, or scroll.',
+					'Add entrance animations and effects triggered by user interactions such as page load or scroll.',
 					'elementor'
 				) }
 			</Typography>

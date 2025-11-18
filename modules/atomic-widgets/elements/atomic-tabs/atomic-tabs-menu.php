@@ -57,7 +57,9 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 				->set_items( [
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
-						->set_meta( $this->get_css_id_control_meta() ),
+						->set_meta( [
+							'layout' => 'two-columns',
+						] ),
 				] ),
 		];
 	}
@@ -67,6 +69,7 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 			'display' => String_Prop_Type::generate( 'flex' ),
 			'justify-content' => String_Prop_Type::generate( 'center' ),
 		];
+
 		return [
 			static::BASE_STYLE_KEY => Style_Definition::make()
 				->add_variant(
