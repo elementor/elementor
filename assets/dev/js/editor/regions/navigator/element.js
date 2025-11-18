@@ -519,7 +519,7 @@ export default class extends Marionette.CompositeView {
 	}
 
 	onContextMenu( event ) {
-		this.model.trigger( 'request:contextmenu', event );
+		this.model.trigger( 'request:contextmenu', event, { location: elementorCommon.eventsManager.config.locations.structurePanel } );
 	}
 
 	onEditRequest() {

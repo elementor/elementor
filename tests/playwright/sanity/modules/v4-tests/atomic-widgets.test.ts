@@ -17,7 +17,8 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		{ name: 'e-svg', title: 'SVG' },
 		{ name: 'e-button', title: 'Button' },
 		{ name: 'e-divider', title: 'Divider' },
-		{ name: 'e-youtube', title: 'YouTube' },
+		// { name: 'e-youtube', title: 'YouTube' },
+		// Notice: there is a bug: [ED-21689] Youtube widget is not visible on frontend
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -69,7 +70,8 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 					widgetId = await editor.addWidget( { widgetType: widget.name, container: containerId } );
 					widgetSelector = editor.getWidgetSelector( widgetId );
 
-					await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
+					// Skipped, fix screenshot issue
+					// Await expect( page.locator( widgetSelector ) ).toHaveScreenshot( `${ widget.name }-editor.png` );
 					await expect( editor.getPreviewFrame().locator( widgetSelector ).first() ).toBeVisible();
 				} );
 

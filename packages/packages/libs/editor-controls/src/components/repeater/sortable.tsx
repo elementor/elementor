@@ -13,7 +13,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-export const SortableProvider = < T extends number >( props: UnstableSortableProviderProps< T > ) => {
+export const SortableProvider = < T extends string | number >( props: UnstableSortableProviderProps< T > ) => {
 	return (
 		<List sx={ { p: 0, my: -0.5, mx: 0 } }>
 			<UnstableSortableProvider restrictAxis disableDragOverlay={ false } variant={ 'static' } { ...props } />
