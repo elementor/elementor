@@ -54,18 +54,14 @@ export const Item = < T extends RepeatablePropValue >( {
 					<Icon value={ value as T } />
 				</RepeaterItemIconSlot>
 			}
-			sx={
-				! getIsDisabled( item )
-					? {
-							minHeight: ( theme ) => theme.spacing( 3.5 ),
-					  }
-					: {
-							minHeight: ( theme ) => theme.spacing( 3.5 ),
-							'[role="button"]': {
-								cursor: 'not-allowed',
-							},
-					  }
-			}
+			sx={ {
+				minHeight: ( theme ) => theme.spacing( 3.5 ),
+				...( getIsDisabled( item ) && {
+					'[role="button"]': {
+						cursor: 'not-allowed',
+					},
+				} ),
+			} }
 			actions={
 				<>
 					<RepeaterItemActionsSlot index={ index ?? -1 } />
