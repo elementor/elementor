@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import {
 	createArrayPropUtils,
-	KeyValuePropValue,
+	type KeyValuePropValue,
 	selectionSizePropTypeUtil,
 	type SelectionSizePropValue,
 	type StringPropValue,
