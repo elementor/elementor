@@ -21,6 +21,7 @@ type SelectionSizeControlProps = {
 	selectionConfig: SelectionComponentConfig;
 	sizeConfigMap: Record< string, SizeControlConfig >;
 	isRepeaterControl?: boolean;
+	readOnly?: boolean;
 };
 
 export const SelectionSizeControl = createControl(
@@ -30,6 +31,7 @@ export const SelectionSizeControl = createControl(
 		selectionConfig,
 		sizeConfigMap,
 		isRepeaterControl = false,
+		readOnly = false,
 	}: SelectionSizeControlProps ) => {
 		const { value, setValue, propType } = useBoundProp( selectionSizePropTypeUtil );
 		const rowRef = useRef< HTMLDivElement >( null );
@@ -49,7 +51,7 @@ export const SelectionSizeControl = createControl(
 		const SelectionComponent = selectionConfig.component;
 
 		return (
-			<PropProvider value={ value } setValue={ setValue } propType={ propType }>
+			<PropProvider value={ value } setValue={ setValue } propType={ propType } isDisabled={ () => readOnly }>
 				<Grid container spacing={ 1.5 } ref={ rowRef }>
 					<Grid item xs={ 6 } sx={ { display: 'flex', alignItems: 'center' } }>
 						<ControlFormLabel>{ selectionLabel }</ControlFormLabel>
