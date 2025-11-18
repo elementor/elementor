@@ -3,7 +3,7 @@ namespace Elementor\Modules\Components\Widgets;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
-use Elementor\Modules\Components\Component_Prop_Type;
+use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -25,7 +25,7 @@ class Component extends Atomic_Widget_Base {
 	}
 
 	public function get_keywords() {
-		return [ 'component' ];
+		return [ 'component-instance' ];
 	}
 
 	public function get_icon() {
@@ -34,7 +34,7 @@ class Component extends Atomic_Widget_Base {
 
 	protected static function define_props_schema(): array {
 		return [
-			'component' => Component_Prop_Type::make(),
+			'component_instance' => Component_Instance_Prop_Type::make()->required(),
 		];
 	}
 
