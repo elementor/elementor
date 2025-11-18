@@ -10,6 +10,7 @@ import {
 	Grid,
 	IconButton,
 	Popover,
+	Select,
 	Stack,
 	TextField,
 	Tooltip,
@@ -83,7 +84,18 @@ function OverridablePropIndicator() {
 function OverridablePropForm( { close }: { close: () => void } ) {
 	return (
 		<Stack alignItems="start" width="268px">
-			<Grid container gap={ 0.75 } alignItems="start" p={ 1.5 }>
+			<Stack
+				direction="row"
+				alignItems="center"
+				py={ 1 }
+				px={ 1.5 }
+				sx={ { columnGap: 0.5, borderBottom: '1px solid', borderColor: 'divider', width: '100%', mb: 1.5 } }
+			>
+				<Typography variant="caption" sx={ { color: 'text.primary', fontWeight: '500', lineHeight: 1 } }>
+					{ __( 'Create new property', 'elementor' ) }
+				</Typography>
+			</Stack>
+			<Grid container gap={ 0.75 } alignItems="start" px={ 1.5 } mb={ 1.5 }>
 				<Grid item xs={ 12 }>
 					<FormLabel htmlFor="override-value" size="tiny">
 						{ __( 'Name', 'elementor' ) }
@@ -99,12 +111,25 @@ function OverridablePropForm( { close }: { close: () => void } ) {
 					/>
 				</Grid>
 			</Grid>
-			<Stack direction="row" justifyContent="flex-end" alignSelf="end" py={ 1 } px={ 1.5 }>
-				<Button onClick={ close } color="secondary" variant="text" size="small">
-					{ __( 'Cancel', 'elementor' ) }
-				</Button>
+			<Grid container gap={ 0.75 } alignItems="start" px={ 1.5 } mb={ 1.5 }>
+				<Grid item xs={ 12 }>
+					<FormLabel htmlFor="override-value" size="tiny">
+						{ __( 'Name', 'elementor' ) }
+					</FormLabel>
+				</Grid>
+				<Grid item xs={ 12 }>
+					<Select
+						id="override-label"
+						size={ SIZE }
+						fullWidth
+						placeholder={ __( 'Enter value', 'elementor' ) }
+						inputProps={ { style: { color: 'text.primary', fontWeight: '600' } } }
+					/>
+				</Grid>
+			</Grid>
+			<Stack direction="row" justifyContent="flex-end" alignSelf="end" mt={ 1.5 } py={ 1 } px={ 1.5 }>
 				<Button onClick={ close } variant="contained" color="primary" size="small">
-					{ __( 'Apply', 'elementor' ) }
+					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</Stack>
 		</Stack>
