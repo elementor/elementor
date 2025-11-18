@@ -1,8 +1,8 @@
 import NavigationTracking from './dashboard/navigation';
-import TopBarTracking from './dashboard/top-bar';
-import ScreenViewTracking from './dashboard/screen-view';
-import ActionControlTracking from './dashboard/action-control';
+import PluginActions from './dashboard/plugin-actions';
 import PromotionTracking from './dashboard/promotion';
+import ScreenViewTracking from './dashboard/screen-view';
+import TopBarTracking from './dashboard/top-bar';
 import MenuPromotionTracking from './dashboard/menu-promotion';
 
 const SESSION_TIMEOUT_MINUTES = 30;
@@ -40,8 +40,6 @@ export default class WpDashboardTracking {
 	static sessionEnded = false;
 	static navItemsVisited = new Set();
 	static activityCheckInterval = null;
-	static config = null;
-	static canSendEvents = false;
 	static initialized = false;
 	static navigationListeners = [];
 	static isNavigatingToElementor = false;
@@ -52,10 +50,6 @@ export default class WpDashboardTracking {
 		}
 
 		this.restoreOrCreateSession();
-
-		this.config = elementorCommon?.config || {};
-		const editorEvents = this.config.editor_events || {};
-		this.canSendEvents = editorEvents.can_send_events || false;
 
 		if ( this.isEventsManagerAvailable() ) {
 			this.startSessionMonitoring();
@@ -101,7 +95,7 @@ export default class WpDashboardTracking {
 					properties.wpdash_nav_item_root = rootItem;
 				}
 
-				this.dispatchEvent( 'wpdash_nav_clicked', properties );
+				this.dispatchEvent( 'wpdash_nav_clicked', properties, { send_immediately: true } );
 				sessionStorage.removeItem( PENDING_NAV_CLICK_KEY );
 			}
 		} catch ( error ) {
@@ -135,16 +129,16 @@ export default class WpDashboardTracking {
 			'function' === typeof elementorCommon.eventsManager.dispatchEvent;
 	}
 
-	static dispatchEvent( eventName, properties = {} ) {
-		if ( ! this.canSendEvents || ! this.isEventsManagerAvailable() ) {
+	static canSendEvents() {
+		return elementorCommon?.config?.editor_events?.can_send_events || false;
+	}
+
+	static dispatchEvent( eventName, properties = {}, options = {} ) {
+		if ( ! this.isEventsManagerAvailable() || ! this.canSendEvents() ) {
 			return;
 		}
 
-		try {
-			elementorCommon.eventsManager.dispatchEvent( eventName, properties );
-		} catch ( error ) {
-			this.canSendEvents = false;
-		}
+		elementorCommon.eventsManager.dispatchEvent( eventName, properties, options );
 	}
 
 	static updateActivity() {
@@ -192,6 +186,15 @@ export default class WpDashboardTracking {
 		}
 	}
 
+	static isPluginsPage( url ) {
+		try {
+			const urlObj = new URL( url, window.location.origin );
+			return urlObj.pathname.includes( 'plugins.php' );
+		} catch ( error ) {
+			return false;
+		}
+	}
+
 	static isNavigatingAwayFromElementor( targetUrl ) {
 		if ( ! targetUrl ) {
 			return false;
@@ -205,13 +208,26 @@ export default class WpDashboardTracking {
 			return false;
 		}
 
+		if ( this.isPluginsPage( targetUrl ) ) {
+			return false;
+		}
+
 		return ! this.isElementorPage( targetUrl );
+	}
+
+	static isLinkOpeningInNewTab( link ) {
+		const target = link.getAttribute( 'target' );
+		return '_blank' === target || '_new' === target;
 	}
 
 	static attachNavigationListener() {
 		const handleLinkClick = ( event ) => {
 			const link = event.target.closest( 'a' );
 			if ( link && link.href ) {
+				if ( this.isLinkOpeningInNewTab( link ) ) {
+					return;
+				}
+
 				if ( ! this.sessionEnded && this.isNavigatingAwayFromElementor( link.href ) ) {
 					this.trackSessionEnd( 'navigate_away' );
 				} else if ( this.isElementorPage( link.href ) ) {
@@ -359,7 +375,6 @@ export default class WpDashboardTracking {
 
 		TopBarTracking.destroy();
 		ScreenViewTracking.destroy();
-		ActionControlTracking.destroy();
 		PromotionTracking.destroy();
 		MenuPromotionTracking.destroy();
 
@@ -368,13 +383,20 @@ export default class WpDashboardTracking {
 }
 
 window.addEventListener( 'elementor/admin/init', () => {
+	const currentUrl = window.location.href;
+	const isPluginsPage = WpDashboardTracking.isPluginsPage( currentUrl );
+	const isElementorPage = WpDashboardTracking.isElementorPage( currentUrl );
+
+	if ( isPluginsPage ) {
+		PluginActions.init();
+	}
+
 	NavigationTracking.init();
 
-	if ( WpDashboardTracking.isElementorPage( window.location.href ) ) {
+	if ( isElementorPage ) {
 		WpDashboardTracking.init();
 		TopBarTracking.init();
 		ScreenViewTracking.init();
-		ActionControlTracking.init();
 		PromotionTracking.init();
 		MenuPromotionTracking.init();
 	}
@@ -382,5 +404,6 @@ window.addEventListener( 'elementor/admin/init', () => {
 
 window.addEventListener( 'beforeunload', () => {
 	NavigationTracking.destroy();
+	PluginActions.destroy();
 	WpDashboardTracking.destroy();
 } );
