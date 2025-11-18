@@ -27,12 +27,12 @@ const TAB_CONTENT_AREA_ELEMENT_TYPE = 'e-tabs-content-area';
 export const TabsControl = ( { label }: { label: string } ) => {
 	return (
 		<SettingsField bind="default-active-tab" propDisplayName={ __( 'Tabs', 'elementor' ) }>
-			<TabsControlCmp label={ label } />
+			<TabsControlContent label={ label } />
 		</SettingsField>
 	);
 };
 
-export const TabsControlCmp = ( { label }: { label: string } ) => {
+export const TabsControlContent = ( { label }: { label: string } ) => {
 	const { element } = useElement();
 	const { addItem, duplicateItem, moveItem, removeItem } = useActions();
 
