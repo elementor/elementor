@@ -54,12 +54,12 @@ describe( 'StylesField with inheritance', () => {
 		jest.mocked( getStylesSchema ).mockReturnValue( mockStylesSchema );
 		jest.mocked( useElementSetting ).mockReturnValue( {} );
 		jest.mocked( getBreakpointsTree ).mockImplementation( createMockBreakpointsTree );
-		
+
 		registerFieldIndicator( {
 			fieldType: 'styles',
 			id: 'inheritance-indicator',
 			indicator: StylesInheritanceIndicator,
-			priority: 10,
+			priority: 1,
 		} );
 	} );
 
