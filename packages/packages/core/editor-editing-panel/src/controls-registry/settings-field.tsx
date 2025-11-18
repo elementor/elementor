@@ -14,7 +14,6 @@ import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
-import { getFieldIndicators } from '../field-indicators-registry';
 import { extractOrderedDependencies, getUpdatedValues, type Values } from '../utils/prop-dependency-utils';
 import { createTopLevelObjectType } from './create-top-level-object-type';
 
