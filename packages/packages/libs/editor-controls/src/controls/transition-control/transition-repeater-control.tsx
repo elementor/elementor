@@ -55,7 +55,7 @@ const getSelectionSizeProps = ( recentlyUsedList: string[], disabledItems?: stri
 	};
 };
 
-function getTransitionPropertyByValue( item?: StringPropValue | null ) {
+export function getTransitionPropertyByValue( item?: StringPropValue | null ) {
 	if ( ! item?.value ) {
 		return null;
 	}
