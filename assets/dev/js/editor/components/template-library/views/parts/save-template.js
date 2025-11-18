@@ -69,11 +69,11 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	handleOnRender() {
 		setTimeout( () => this.ui.templateNameInput.trigger( 'focus' ) );
 
+		const context = this.getOption( 'context' );
+
 		elementor.templates.eventManager.sendPageViewEvent( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary[ `${ context }Modal` ],
 		} );
-
-		const context = this.getOption( 'context' );
 
 		if ( SAVE_CONTEXTS.SAVE === context ) {
 			this.handleSaveAction();
@@ -194,8 +194,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	onFormSubmit( event ) {
 		event.preventDefault();
-
-		elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
 
 		var formData = this.ui.form.elementorSerializeObject(),
 			JSONParams = { remove: [ 'default' ] };
