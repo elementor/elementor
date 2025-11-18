@@ -57,7 +57,7 @@ class Component_Overridable_Prop_Type extends Plain_Prop_Type {
 		return $this;
 	}
 
-	private function get_origin_prop_type(): Prop_Type | null {
+	private function get_origin_prop_type(): Prop_Type|null {
 		return $this->settings['origin_prop_type'] ?? null;
 	}
 }
