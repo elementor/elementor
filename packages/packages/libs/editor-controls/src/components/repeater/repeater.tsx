@@ -199,7 +199,7 @@ export const Repeater = < T, >( {
 				</IconButton>
 			</RepeaterHeader>
 			{ 0 < uniqueKeys.length && (
-				<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder } >
+				<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder }>
 					{ uniqueKeys.map( ( key ) => {
 						const index = uniqueKeys.indexOf( key );
 						const value = items[ index ];
