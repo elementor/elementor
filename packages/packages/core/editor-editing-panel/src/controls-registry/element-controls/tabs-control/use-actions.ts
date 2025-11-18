@@ -64,7 +64,7 @@ export const useActions = () => {
 			throw new Error( 'Content ID is required' );
 		}
 
-		const newDefault = getNewDefaultActiveTab( {
+		const newDefault = calculateDefaultOnMove( {
 			from: movedElementIndex,
 			to: toIndex,
 			defaultActiveTab,
@@ -104,9 +104,10 @@ export const useActions = () => {
 		items: ItemsActionPayload< TabItem >;
 		tabContentAreaId: string;
 	} ) => {
-		const isDefault = items.some( ( { index } ) => index === defaultActiveTab );
-		const defaultGap = items.reduce( ( acc, { index } ) => ( index < defaultActiveTab ? acc + 1 : acc ), 0 );
-		const newDefault = isDefault ? 0 : defaultActiveTab - defaultGap;
+		const newDefault = calculateDefaultOnRemove( {
+			items,
+			defaultActiveTab,
+		} );
 
 		removeElements( {
 			title: __( 'Tabs', 'elementor' ),
@@ -174,7 +175,7 @@ export const useActions = () => {
 	};
 };
 
-const getNewDefaultActiveTab = ( {
+const calculateDefaultOnMove = ( {
 	from,
 	to,
 	defaultActiveTab,
@@ -200,4 +201,21 @@ const getNewDefaultActiveTab = ( {
 	}
 
 	return defaultActiveTab;
+};
+
+const calculateDefaultOnRemove = ( {
+	items,
+	defaultActiveTab,
+}: {
+	items: ItemsActionPayload< TabItem >;
+	defaultActiveTab: number;
+} ) => {
+	const isDefault = items.some( ( { index } ) => index === defaultActiveTab );
+
+	if ( isDefault ) {
+		return 0;
+	}
+
+	const defaultGap = items.reduce( ( acc, { index } ) => ( index < defaultActiveTab ? acc + 1 : acc ), 0 );
+	return defaultActiveTab - defaultGap;
 };
