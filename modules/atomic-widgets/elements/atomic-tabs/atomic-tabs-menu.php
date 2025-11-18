@@ -59,7 +59,6 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 						->set_label( __( 'ID', 'elementor' ) )
 						->set_meta( [
 							'layout' => 'two-columns',
-							'topDivider' => false,
 						] ),
 				] ),
 		];
