@@ -64,10 +64,10 @@ class Module extends BaseModule {
 			 */
 			function( $document ) {
 				$validation = new Validation( $this->get_presets() );
-				$validation->sanitize( $document );
+				$documentAfterSanitization = $validation->sanitize( $document );
 				$validation->validate();
 
-				return $document;
+				return $documentAfterSanitization;
 			},
 		10, 1 );
 	}

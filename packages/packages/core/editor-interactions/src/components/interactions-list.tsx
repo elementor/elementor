@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Repeater } from '@elementor/editor-controls';
 import { type ElementInteractions } from '@elementor/editor-elements';
 import { PlayerPlayIcon } from '@elementor/icons';
@@ -30,10 +30,10 @@ export function InteractionsList( props: InteractionListProps ) {
 	}, [ interactions.items, interactionsState, onSelectInteractions ] );
 
 	const isMaxNumberOfInteractionsReached = useMemo( () => {
-		return interactionsState.items.length >= MAX_NUMBER_OF_INTERACTIONS;
-	}, [ interactionsState.items.length ] );
+		return interactionsState.items?.length >= MAX_NUMBER_OF_INTERACTIONS;
+	}, [ interactionsState.items ] );
 
-	if ( triggerCreateOnShowEmpty && interactionsState.items.length === 0 ) {
+	if ( triggerCreateOnShowEmpty && ( ! interactionsState.items || interactionsState.items?.length === 0 ) ) {
 		setInteractionsState( {
 			version: 1,
 			items: [
