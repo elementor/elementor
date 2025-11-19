@@ -252,10 +252,12 @@ function useCreateAction() {
 	}
 
 	const create = ( classLabel: string ) => {
-		createAction( { classLabel } );
-		trackStyles( provider.getKey(), 'class_created', {
+		const { createdId } = createAction( { classLabel } );
+		trackStyles( provider.getKey() ?? '', 'class_created', {
 			source: 'created',
+			location: 'from useCreateAction',
 			classTitle: classLabel,
+			classId: createdId,
 		} );
 	};
 
@@ -314,10 +316,20 @@ function useHandleSelect() {
 		switch ( reason ) {
 			case 'selectOption':
 				apply( { classId: option.value, classLabel: option.label } );
+				trackStyles( option.provider ?? '', 'class_applied', {
+					location: 'from useHandleSelect',
+					classId: option.value,
+					source: 'style-tab',
+				} );
 				break;
 
 			case 'removeOption':
 				unapply( { classId: option.value, classLabel: option.label } );
+				trackStyles( option.provider ?? '', 'class_removed', {
+					location: 'from useHandleSelect',
+					classId: option.value,
+					source: 'style-tab',
+				} );
 				break;
 		}
 	};

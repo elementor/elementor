@@ -114,6 +114,7 @@ export const trackGlobalClasses = async < T extends Event >( payload: TrackingEv
 	const { runAction } = payload as TrackingEventWithComputed< T > & { runAction?: () => void };
 	const data = await getSanitizedData( payload );
 	if ( data ) {
+		console.log( 'LOG:: 🔍 trackGlobalClasses', data );
 		track( data, true );
 	}
 	runAction?.();
@@ -134,6 +135,7 @@ const getSanitizedData = async < T extends Event >( payload: TrackingEvent< T > 
 			}
 			break;
 		case 'class_deleted':
+			console.log( 'LOG:: 🔍 class_deleted', payload );
 			if ( 'classId' in payload && payload.classId ) {
 				const deleteInfo = await trackDeleteClass( payload.classId );
 				return { ...payload, ...deleteInfo };
@@ -177,7 +179,7 @@ const getRemovedInfo = async ( classId: StyleDefinitionID ) => {
 const track = < T extends Event >( data: TrackingEvent< T >, testing = false ) => {
 	if ( testing ) {
 		// eslint-disable-next-line no-console
-		console.log( 'LOG:: event', data );
+		console.log( 'LOG:: ✈️ event', data );
 		return;
 	}
 	const { dispatchEvent, config } = getMixpanel();
