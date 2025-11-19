@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render, screen } from '@testing-library/react';
 
-import { PredefinedInteractionsList } from '../components/interactions-list';
+import { InteractionsList } from '../components/interactions-list';
 import { PopupStateProvider } from '../contexts/popup-state-context';
 import { getInteractionsConfig } from '../utils/get-interactions-config';
 
@@ -9,7 +9,7 @@ jest.mock( '../utils/get-interactions-config' );
 
 const mockedGetInteractionsConfig = getInteractionsConfig as jest.MockedFunction< typeof getInteractionsConfig >;
 
-describe( 'PredefinedInteractionsList', () => {
+describe( 'InteractionsList', () => {
 	beforeEach( () => {
 		mockedGetInteractionsConfig.mockReturnValue( {
 			animationOptions: [
@@ -39,14 +39,17 @@ describe( 'PredefinedInteractionsList', () => {
 		[ 'scrollIn-slide-in-top-600-0', 'Scroll into view: Slide In Top (600ms/0ms)' ],
 	] )( 'displays formatted label "%s" for interaction "%s"', ( selectedInteraction, expectedLabel ) => {
 		// Arrange.
-		const onSelectInteraction = jest.fn();
+		const onSelectInteractions = jest.fn();
 
 		// Act.
 		render(
 			<PopupStateProvider>
-				<PredefinedInteractionsList
-					selectedInteraction={ selectedInteraction }
-					onSelectInteraction={ onSelectInteraction }
+				<InteractionsList
+					interactions={ {
+						version: 1,
+						items: [ { animation: { animation_type: 'load-fade-in', animation_id: selectedInteraction } } ],
+					} }
+					onSelectInteractions={ onSelectInteractions }
 					onPlayInteraction={ jest.fn() }
 				/>
 			</PopupStateProvider>

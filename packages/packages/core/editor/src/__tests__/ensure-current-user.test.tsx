@@ -16,7 +16,7 @@ describe( 'ensureCurrentUser', () => {
 	it( 'should not fail the attach preview command if user fetch failed', async () => {
 		// Arrange.
 		jest.mocked( registerDataHook ).mockImplementation( ( _hook, _command, callback ) => {
-			return callback( {} ) as never;
+			return callback( {}, undefined ) as never;
 		} );
 
 		jest.mocked( ensureUser ).mockRejectedValue( new Error( 'User fetch failed' ) );
