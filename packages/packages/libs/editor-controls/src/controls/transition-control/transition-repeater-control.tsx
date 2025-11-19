@@ -101,7 +101,7 @@ const getChildControlConfig = ( recentlyUsedList: string[], disabledItems?: stri
 };
 
 const isPropertyUsed = ( value: SelectionSizePropValue[], property: TransitionProperty ) => {
-	return value.some( ( item ) => {
+	return ( value ?? [] ).some( ( item ) => {
 		return ( item?.value?.selection?.value as KeyValuePropValue )?.value?.value === property.value;
 	} );
 };
@@ -123,7 +123,7 @@ const getDisabledItemLabels = ( values: SelectionSizePropValue[] = [] ) => {
 };
 
 const getInitialValue = ( values: SelectionSizePropValue[] = [] ): TransitionValue => {
-	if ( ! values.length ) {
+	if ( ! values?.length ) {
 		return initialTransitionValue;
 	}
 
