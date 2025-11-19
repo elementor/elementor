@@ -107,7 +107,7 @@ const isPropertyUsed = ( value: SelectionSizePropValue[], property: TransitionPr
 };
 
 const getDisabledItemLabels = ( values: SelectionSizePropValue[] = [] ) => {
-	const itemLabelsInUse: string[] = values.map(
+	const itemLabelsInUse: string[] = ( values || [] ).map(
 		( item ) => ( item.value?.selection?.value as KeyValuePropValue )?.value?.key?.value
 	);
 
