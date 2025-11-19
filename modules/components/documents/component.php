@@ -60,6 +60,6 @@ class Component extends Document {
 	}
 
 	public function get_overridable_props() {
-		return $this->get_meta( self::OVERRIDABLE_PROPS_META_KEY );
+		return $this->get_meta( self::OVERRIDABLE_PROPS_META_KEY ) ?? null;
 	}
 }

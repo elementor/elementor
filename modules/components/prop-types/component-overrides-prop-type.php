@@ -50,7 +50,7 @@ class Component_Overrides_Prop_type extends Array_Prop_Type {
 		return count( $sanitized ) > 0 ? $sanitized : null;
 	}
 
-	public function set_component_overridable_props( array $component_overridable_props ) {
+	public function set_component_overridable_props( $component_overridable_props ) {
 		$this->settings['component_overridable_props'] = $component_overridable_props;
 
 		return $this;
