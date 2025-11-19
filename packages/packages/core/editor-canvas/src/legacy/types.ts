@@ -119,7 +119,6 @@ type BackboneCollection< Model extends object > = {
 export type ElementModel = {
 	id: string;
 	settings: BackboneModel< Props >;
-	editor_settings: Record< string, unknown >;
 	widgetType: string;
 	elType: string;
 	editor_settings: {
