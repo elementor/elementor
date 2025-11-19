@@ -11,42 +11,47 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	template: '#tmpl-elementor-template-library-save-template',
 
-	ui: {
-		form: '#elementor-template-library-save-template-form',
-		submitButton: '#elementor-template-library-save-template-submit',
-		ellipsisIcon: '.cloud-library-form-inputs .ellipsis-container',
-		foldersList: '.cloud-folder-selection-dropdown ul',
-		foldersDropdown: '.cloud-folder-selection-dropdown',
-		foldersListContainer: '.cloud-folder-selection-dropdown-list',
-		removeFolderSelection: '.source-selections .selected-folder i',
-		selectedFolder: '.selected-folder',
-		selectedFolderText: '.selected-folder-text',
-		hiddenInputSelectedFolder: '#parentId',
-		templateNameInput: '#elementor-template-library-save-template-name',
-		localInput: '.source-selections-input.local',
-		cloudInput: '.source-selections-input.cloud',
-		sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
-		infoIcon: '.source-selections-input.cloud .eicon-info',
-		connect: '#elementor-template-library-connect__badge',
-		connectBadge: '.source-selections-input.cloud .connect-badge',
-		cloudFormInputs: '.cloud-library-form-inputs',
-		upgradeBadge: '.source-selections-input.cloud upgrade-badge',
+	ui() {
+		return {
+			form: '#elementor-template-library-save-template-form',
+			submitButton: '#elementor-template-library-save-template-submit',
+			ellipsisIcon: '.cloud-library-form-inputs .ellipsis-container',
+			foldersList: '.cloud-folder-selection-dropdown ul',
+			foldersDropdown: '.cloud-folder-selection-dropdown',
+			foldersListContainer: '.cloud-folder-selection-dropdown-list',
+			removeFolderSelection: '.source-selections .selected-folder i',
+			selectedFolder: '.selected-folder',
+			selectedFolderText: '.selected-folder-text',
+			hiddenInputSelectedFolder: '#parentId',
+			templateNameInput: '#elementor-template-library-save-template-name',
+			localInput: '.source-selections-input.local',
+			cloudInput: '.source-selections-input.cloud',
+			sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
+			infoIcon: '.source-selections-input.cloud .eicon-info',
+			connect: '#elementor-template-library-connect__badge',
+			connectBadge: '.source-selections-input.cloud .connect-badge',
+			cloudFormInputs: '.cloud-library-form-inputs',
+			upgradeBadge: '.source-selections-input.cloud upgrade-badge',
+		};
 	},
 
-	events: {
-		'submit @ui.form': 'onFormSubmit',
-		'click @ui.ellipsisIcon': 'onEllipsisIconClick',
-		'click @ui.foldersList': 'onFoldersListClick',
-		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
-		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
-		'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
-		'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
-		'mouseenter @ui.infoIcon': 'showInfoTip',
-		'mouseenter @ui.connect': 'showConnectInfoTip',
-		'input @ui.templateNameInput': 'onTemplateNameInputChange',
+	events() {
+		return {
+			'submit @ui.form': 'onFormSubmit',
+			'click @ui.ellipsisIcon': 'onEllipsisIconClick',
+			'click @ui.foldersList': 'onFoldersListClick',
+			'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
+			'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
+			'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
+			'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
+			'mouseenter @ui.infoIcon': 'showInfoTip',
+			'mouseenter @ui.connect': 'showConnectInfoTip',
+			'input @ui.templateNameInput': 'onTemplateNameInputChange',
+		};
 	},
 
 	onRender() {
+		console.log('!_RENDER_!')
 		if ( 'undefined' === typeof elementorAppConfig[ 'cloud-library' ]?.quota && this.templateHelpers()?.canSaveToCloud ) {
 			elementor.templates.layout.showLoadingView();
 
@@ -370,6 +375,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	onSelectedFolderTextClick() {
+		console.log('!_ON_SELECT_!');
 		if ( ! this.folderCollectionView ) {
 			this.onEllipsisIconClick();
 
@@ -630,6 +636,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	showConnectInfoTip() {
+		console.log('!_CONECT_MOUSE_!')
 		if ( this.connectInfoTipDialog ) {
 			this.connectInfoTipDialog.hide();
 		}
@@ -668,6 +675,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	handleElementorConnect() {
+		console.log('!_THIS_UI_!', this.ui)
 		elementor.templates.eventManager.sendPageViewEvent( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.saveModalSelectConnect,
 		} );

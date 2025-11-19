@@ -19,6 +19,25 @@ const TemplateLibraryManager = function() {
 		bulkSelectedItems = new Set(),
 		lastDeletedItems = new Set();
 
+	const variantsConfig = {
+		control: {
+			saveBtnText: __( 'Save', 'elementor' ),
+			saveDialogDescription: sprintf(
+				/* Translators: 1: Opening bold tag, 2: Closing bold tag.  2: Line break tag. 4: Opening bold tag, 5: Closing bold tag. */
+				__( "You can save it to %1$sCloud Templates%2$s to reuse across any of your Elementor sites at any time%3$sor to %4$sSite Templates%5$s so it's always ready when editing this website.", 'elementor' ),
+				'<b>', '</b>', '<br>', '<b>', '</b>',
+			),
+		},
+		B: {
+			saveBtnText: __( 'Save page', 'elementor' ),
+			saveDialogDescription: sprintf(
+				/* Translators: 1: Opening bold tag, 2: Closing bold tag. 3: Opening bold tag, 4: Closing bold tag. */
+				__( 'Store your design in %1$sCloud Templates%2$s for future Elementor projects. Or save it to %3$sSite Templates%4$s, to reuse anywhere on this site.', 'elementor' ),
+				'<b>', '</b>', '<b>', '</b>',
+			),
+		},
+	};
+
 	let deleteDialog,
 		errorDialog,
 		templatesCollection,
@@ -132,12 +151,22 @@ const TemplateLibraryManager = function() {
 		document.addEventListener( 'keydown', this.handleKeydown );
 	};
 
+	this.getExperimentVariant = () => {
+		if ( ! elementorCommon?.eventsManager ) {
+			return 'control';
+		}
+
+		return elementorCommon?.eventsManager.getExperimentVariant( 'template-library-save' );
+	};
+
 	this.getDefaultTemplateTypeData = function() {
+		const experimentVariant = this.getExperimentVariant( );
+
 		return {
 			saveDialog: {
 				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
 				canSaveToCloud: true,
-				saveBtnText: __( 'Save', 'elementor' ),
+				saveBtnText: variantsConfig[ experimentVariant ]?.saveBtnText,
 			},
 			moveDialog: {
 				description: __( 'Alternatively, you can copy the template.', 'elementor' ),
@@ -169,13 +198,11 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.getDefaultTemplateTypeSafeData = function( title ) {
+		const experimentVariant = this.getExperimentVariant();
+
 		return {
 			saveDialog: {
-				description: sprintf(
-					/* Translators: 1: Opening bold tag, 2: Closing bold tag.  2: Line break tag. 4: Opening bold tag, 5: Closing bold tag. */
-					__( 'You can save it to %1$sCloud Templates%2$s to reuse across any of your Elementor sites at any time%3$sor to %4$sSite Templates%5$s so it’s always ready when editing this website.', 'elementor' ),
-					'<b>', '</b>', '<br>', '<b>', '</b>',
-				),
+				description: variantsConfig[ experimentVariant ]?.saveDialogDescription,
 				/* Translators: %s: Template type. */
 				title: sprintf( __( 'Save this %s to your library', 'elementor' ), title ),
 			},

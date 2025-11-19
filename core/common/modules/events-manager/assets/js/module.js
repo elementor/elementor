@@ -7,7 +7,11 @@ export default class extends elementorModules.Module {
 	onInit() {
 		this.config = eventsConfig;
 
-		mixpanel.init( elementorCommon.config.editor_events?.token, { persistence: 'localStorage', autocapture: false } );
+		mixpanel.init( elementorCommon.config.editor_events?.token, {
+			persistence: 'localStorage',
+			autocapture: false,
+			flags: true,
+		} );
 
 		if ( elementorCommon.config.editor_events?.can_send_events ) {
 			this.enableTracking();
@@ -60,5 +64,36 @@ export default class extends elementorModules.Module {
 				...eventData,
 			},
 		);
+	}
+
+	getExperimentVariant( experimentName, defaultValue = 'control' ) {
+		try {
+			return 'B';
+			if ( ! mixpanel ) {
+				return defaultValue;
+			}
+
+			if ( ! this.trackingEnabled ) {
+				return defaultValue;
+			}
+
+			if ( mixpanel.flags && 'function' === typeof mixpanel.flags.isLoaded ) {
+				const flagsLoaded = mixpanel.flags.isLoaded();
+
+				if ( ! flagsLoaded && 'function' === typeof mixpanel.flags.reload ) {
+					mixpanel.flags.reload();
+				}
+			}
+
+			const variant = mixpanel.getExperimentVariant( experimentName );
+
+			if ( undefined === variant || null === variant ) {
+				return defaultValue;
+			}
+
+			return variant;
+		} catch ( error ) {
+			return defaultValue;
+		}
 	}
 }
