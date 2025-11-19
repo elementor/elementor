@@ -12,7 +12,7 @@ import { DEFAULT_INTERACTION, InteractionDetails } from './interaction-details';
 export type InteractionListProps = {
 	onSelectInteractions: ( interactions: ElementInteractions ) => void;
 	interactions: ElementInteractions;
-	onPlayInteraction: () => void;
+	onPlayInteraction: ( interactionId: string ) => void;
 	triggerCreateOnShowEmpty?: boolean;
 };
 
@@ -93,9 +93,9 @@ export function InteractionsList( props: InteractionListProps ) {
 						} }
 					/>
 				),
-				actions: (
+				actions: ( value ) => (
 					<>
-						<IconButton size="tiny" onClick={ onPlayInteraction }>
+						<IconButton size="tiny" onClick={ () => onPlayInteraction( value.animation.animation_id ) }>
 							<PlayerPlayIcon fontSize="tiny" />
 						</IconButton>
 					</>
