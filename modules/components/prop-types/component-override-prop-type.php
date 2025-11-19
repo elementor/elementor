@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Has_Atomic_Base;
 use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -91,13 +92,17 @@ class Component_Override_Prop_type extends Plain_Prop_Type {
 
 		$overridable_element = Plugin::$instance->elements_manager->get_element( $el_type, $widget_type );
 
-		if ( ! $overridable_element ||
-			! ( $overridable_element instanceof Atomic_Element_Base || $overridable_element instanceof Atomic_Widget_Base )
-		) {
-			throw new \Exception( "Invalid overridable element: Element type $el_type with widget type $widget_type is either not registered or is not an Atomic Element/Widget." );
+		if ( ! $overridable_element ) {
+			throw new \Exception( "Invalid overridable element: Element type $el_type with widget type $widget_type is not registered." );
 		}
 
 		$element_instance = new $overridable_element();
+
+		/** @var Atomic_Element_Base | Atomic_Widget_Base $element_instance */
+		if ( ! Utils::is_atomic( $element_instance ) ) {
+			throw new \Exception( "Invalid overridable element: Element type $el_type with widget type $widget_type is not an atomic element/widget." );
+		}
+		
 		$props_schema = $element_instance->get_props_schema();
 		
 		if ( ! isset( $props_schema[ $prop_key ] ) ) {

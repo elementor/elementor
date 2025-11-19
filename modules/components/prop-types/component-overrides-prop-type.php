@@ -56,7 +56,7 @@ class Component_Overrides_Prop_type extends Array_Prop_Type {
 		return $this;
 	}
 
-	private function get_component_overridable_props(): array|null {
+	private function get_component_overridable_props() {
 		return $this->settings['component_overridable_props'] ?? null;
 	}
 }
