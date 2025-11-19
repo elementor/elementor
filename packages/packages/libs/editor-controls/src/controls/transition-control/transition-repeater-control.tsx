@@ -41,16 +41,20 @@ const childArrayPropTypeUtil = createArrayPropUtils(
 subscribeToTransitionEvent();
 
 const areAllPropertiesUsed = ( value: SelectionSizePropValue[] = [] ) => {
-	return transitionProperties.every( ( category ) => {
-		return category.properties.every( ( property ) => {
-			return (
-				property.isDisabled ||
-				!! value?.find( ( item ) => {
-					return ( item.value?.selection?.value as KeyValuePropValue )?.value?.value === property.value;
-				} )
-			);
-		} );
-	} );
+	return value.length
+		? transitionProperties.every( ( category ) => {
+				return category.properties.every( ( property ) => {
+					return (
+						property.isDisabled ||
+						!! value?.find( ( item ) => {
+							return (
+								( item.value?.selection?.value as KeyValuePropValue )?.value?.value === property.value
+							);
+						} )
+					);
+				} );
+		  } )
+		: false;
 };
 
 // this config needs to be loaded at runtime/render since it's the transitionProperties object will be mutated by the pro plugin.
@@ -117,6 +121,10 @@ const getDisabledItemLabels = ( value: SelectionSizePropValue[] = [] ) => {
 };
 
 const getInitialValue = ( values: SelectionSizePropValue[] = [] ): TransitionValue => {
+	if ( ! values.length ) {
+		return initialTransitionValue;
+	}
+
 	for ( const category of transitionProperties ) {
 		for ( const property of category.properties ) {
 			if ( isPropertyUsed( values, property ) ) {
