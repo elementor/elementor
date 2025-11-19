@@ -1,12 +1,6 @@
 // types
-export type {
-	V1Element,
-	V1ElementConfig,
-	V1ElementData,
-	V1ElementModelProps,
-	V1ElementSettingsProps,
-} from './sync/types';
 export * from './types';
+export type * from './sync/types';
 
 // hooks
 export { useElementChildren, type ElementChildren, type ElementModel } from './hooks/use-element-children';
