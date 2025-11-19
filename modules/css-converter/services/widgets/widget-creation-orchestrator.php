@@ -5,7 +5,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-
 use Elementor\Modules\CssConverter\Services\Widgets\Commands\Create_Elementor_Post_Command;
 use Elementor\Modules\CssConverter\Services\Widgets\Commands\Process_CSS_Variables_Command;
 use Elementor\Modules\CssConverter\Services\Widgets\Commands\Process_Widget_Hierarchy_Command;
@@ -22,14 +21,13 @@ class Widget_Creation_Orchestrator {
 		$this->service_locator = new Widget_Creation_Service_Locator( $use_zero_defaults, $custom_css_collector );
 		$this->pipeline = new Widget_Creation_Command_Pipeline();
 		$this->initialize_pipeline();
-
-		$this->enable_css_converter_base_styles_override();
 	}
 
 	public function create_widgets( array $styled_widgets, array $css_processing_result, array $options = [] ): array {
 		$custom_css_rules = $css_processing_result['custom_css_rules'] ?? [];
 		foreach ( array_keys( $custom_css_rules ) as $class_name ) {
 			if ( strpos( $class_name, 'brxw-intro-02' ) !== false ) {
+				continue;
 			}
 		}
 
@@ -53,7 +51,6 @@ class Widget_Creation_Orchestrator {
 			$post_id = $context->get_post_id();
 			$document_manager = $this->service_locator->get_document_manager();
 
-
 			$orchestrator_result = [
 				'success' => true,
 				'post_id' => $post_id,
@@ -68,7 +65,7 @@ class Widget_Creation_Orchestrator {
 				'error_report' => $this->service_locator->get_error_handler()->generate_error_report(),
 				'element_data' => $context->get_elementor_elements(), // FIXED: Return the processed widgets
 			];
-			
+
 			return $orchestrator_result;
 		} catch ( \Exception $e ) {
 			$this->service_locator->get_statistics_collector()->add_error( [
@@ -113,42 +110,5 @@ class Widget_Creation_Orchestrator {
 			->add_command( new Clear_Cache_Command(
 				$this->service_locator->get_cache_manager()
 			) );
-	}
-
-	private function enable_css_converter_base_styles_override(): void {
-		add_action( 'wp_head', [ $this, 'inject_base_styles_override_css' ], 999 );
-		add_action( 'elementor/editor/wp_head', [ $this, 'inject_base_styles_override_css' ], 999 );
-		add_action( 'elementor/preview/enqueue_styles', [ $this, 'inject_base_styles_override_css' ], 999 );
-
-		add_action( 'wp_head', [ $this, 'inject_css_converter_specific_overrides' ], 1000 );
-		add_action( 'elementor/editor/wp_head', [ $this, 'inject_css_converter_specific_overrides' ], 1000 );
-		add_action( 'elementor/preview/enqueue_styles', [ $this, 'inject_css_converter_specific_overrides' ], 1000 );
-	}
-
-	public function inject_base_styles_override_css(): void {
-		$post_id = get_the_ID();
-		if ( ! $post_id ) {
-			return;
-		}
-	}
-
-
-	public function inject_css_converter_specific_overrides(): void {
-		$post_id = get_the_ID();
-		if ( ! $post_id ) {
-			return;
-		}
-
-		if ( ! $this->service_locator->get_cache_manager()->page_has_css_converter_widgets( $post_id ) ) {
-			return;
-		}
-
-		echo '<style id="css-converter-specific-overrides">';
-		echo '/* CSS Converter: Target widgets with CSS converter class patterns */';
-		echo '.elementor [class*="e-"][class*="-"]:not(.e-paragraph-base):not(.e-heading-base) { ';
-		echo '  margin: revert !important; ';
-		echo '  padding: revert !important; ';
-		echo '} ';
-		echo '</style>';
 	}
 }
