@@ -443,7 +443,7 @@ class Widget_Star_Rating extends Widget_Base {
 			}
 		}
 
-		return $stars_html;
+		return esc_html( $stars_html );
 	}
 
 	/**
