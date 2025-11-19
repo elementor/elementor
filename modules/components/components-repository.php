@@ -3,9 +3,9 @@
 namespace Elementor\Modules\Components;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\Components\Documents\Component;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Plugin;
-use Elementor\Modules\Components\Components_REST_API;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -30,13 +30,14 @@ class Components_Repository {
 		foreach ( $posts as $post ) {
 			$doc = Plugin::$instance->documents->get( $post->ID );
 
-			if ( ! $doc ) {
+			if ( ! $doc || ! $doc instanceof Component_Document ) {
 				continue;
 			}
 
 			$components[] = [
 				'id' => $doc->get_main_id(),
-				'name' => $doc->get_post()->post_title,
+				'title' => $doc->get_post()->post_title,
+				'uid' => $doc->get_component_uid(),
 				'styles' => $this->extract_styles( $doc->get_elements_data() ),
 			];
 		}
@@ -44,12 +45,25 @@ class Components_Repository {
 		return Collection::make( $components );
 	}
 
-	public function create( string $name, array $content, string $status ) {
+	public function get( $id ) {
+		$doc = Plugin::$instance->documents->get( $id );
+
+		if ( ! $doc instanceof Component ) {
+			return null;
+		}
+
+		return $doc;
+	}
+
+	public function create( string $title, array $content, string $status, string $uid ) {
 		$document = Plugin::$instance->documents->create(
 			Component_Document::get_type(),
 			[
-				'post_title' => $name,
+				'post_title' => $title,
 				'post_status' => $status,
+			],
+			[
+				Component_Document::COMPONENT_UID_META_KEY => $uid,
 			]
 		);
 

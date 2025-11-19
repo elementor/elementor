@@ -18,6 +18,7 @@ class Document_Lock_Manager {
 	private $lock_duration;
 	private const LOCK_USER_META = '_lock_user';
 	private const LOCK_TIME_META = '_lock_time';
+	private const LOCK_EDIT_LOCK_META = '_edit_lock';
 
 	/**
 	 * Initialize the lock manager.
@@ -86,12 +87,13 @@ class Document_Lock_Manager {
 	 * @return bool Always returns true
 	 */
 	public function unlock( $document_id ) {
-		// Remove WordPress post lock
-		delete_post_meta( $document_id, '_edit_lock' );
 
 		// Remove custom document lock metadata
 		delete_post_meta( $document_id, self::LOCK_USER_META );
 		delete_post_meta( $document_id, self::LOCK_TIME_META );
+
+		// Remove edit lock metadata
+		delete_post_meta( $document_id, self::LOCK_EDIT_LOCK_META );
 
 		return true;
 	}
@@ -109,12 +111,8 @@ class Document_Lock_Manager {
 		$lock_time = get_post_meta( $document_id, self::LOCK_TIME_META, true );
 		$is_locked = false;
 
-		if ( $lock_user && $lock_time ) {
-			if ( time() - $lock_time > $this->lock_duration ) {
-				$this->unlock( $document_id );
-			} else {
-				$is_locked = true;
-			}
+		if ( $lock_user && $lock_time && time() - $lock_time <= $this->lock_duration ) {
+			$is_locked = true;
 		}
 
 		return [

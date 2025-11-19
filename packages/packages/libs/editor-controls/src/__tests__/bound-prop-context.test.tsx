@@ -1,23 +1,29 @@
 import * as React from 'react';
 import { createMockPropType, createMockPropUtil, createMockSchema } from 'test-utils';
-import { type PropType, stringPropTypeUtil } from '@elementor/editor-props';
+import { type PropType, sizePropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { act, fireEvent, render, renderHook, screen } from '@testing-library/react';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 
 describe( 'useBoundProp', () => {
 	it( 'should throw error if used outside of context', () => {
+		// Arrange
+		const mockConsoleError = jest.fn();
+		window.console.error = mockConsoleError;
+
 		// Act & Assert.
 		expect( () => {
 			renderHook( () => useBoundProp() );
 		} ).toThrow( 'Hook used outside of provider' );
 
 		// Suppress console.error from React.
-		expect( console ).toHaveErrored();
+		expect( mockConsoleError ).toHaveBeenCalled();
 	} );
 
 	it( 'should throw error if the prop type does not exist', () => {
 		// Arrange.
+		const mockConsoleError = jest.fn();
+		window.console.error = mockConsoleError;
 		const value = {
 			'key-1': { $$type: 'nested-key', value: 'nested-value' },
 			'key-2': { $$type: 'nested-key', value: 'nested-value' },
@@ -36,7 +42,7 @@ describe( 'useBoundProp', () => {
 		} ).toThrow( 'Prop type is missing' );
 
 		// Suppress console.error from React.
-		expect( console ).toHaveErrored();
+		expect( mockConsoleError ).toHaveBeenCalled();
 	} );
 
 	it( 'should return the nested object value by bind', () => {
@@ -168,7 +174,7 @@ describe( 'useBoundProp', () => {
 					<p>Path: { propContext.path.join( ' -> ' ) }</p>
 					<input
 						placeholder={ propContext.bind }
-						value={ propContext.value as string }
+						value={ propContext.value as unknown as string }
 						onChange={ ( e ) => propContext.setValue( e.target.value ) }
 					/>
 				</div>
@@ -252,6 +258,8 @@ describe( 'useBoundProp', () => {
 		'should throw error if PropKeyProvider is rendered inside $kind prop provider',
 		( { kind } ) => {
 			// Arrange.
+			const mockConsoleError = jest.fn();
+			window.console.error = mockConsoleError;
 			const propType = createMockPropType( { kind } as never ) as PropType;
 			const value = {
 				'key-2': { $$type: 'nested-key', value: 'nested-value' },
@@ -267,7 +275,7 @@ describe( 'useBoundProp', () => {
 			} ).toThrow( 'Parent prop type is not supported' );
 
 			// Suppress console.error from React.
-			expect( console ).toHaveErrored();
+			expect( mockConsoleError ).toHaveBeenCalled();
 		}
 	);
 
@@ -426,7 +434,7 @@ describe( 'useBoundProp', () => {
 		const propType = createMockPropType( {
 			kind: 'object',
 			shape: {
-				key: createMockPropType( { kind: 'plain' } ),
+				key: createMockPropType(),
 			},
 		} );
 
@@ -451,5 +459,49 @@ describe( 'useBoundProp', () => {
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( { key: null }, undefined, { bind: 'key' } );
+	} );
+
+	it( 'should resetValue to initial_value when initial_value is set', () => {
+		// Arrange.
+		const initialValue = sizePropTypeUtil.create( { size: 201, unit: 'rem' } );
+		const propType = createMockPropType( {
+			kind: 'object',
+			shape: {
+				key: createMockPropType( {
+					kind: 'plain',
+					initial_value: initialValue,
+				} ),
+			},
+		} );
+
+		const value = {
+			key: stringPropTypeUtil.create( 'current-value' ),
+		};
+
+		const setValue = jest.fn();
+
+		const { result } = renderHook( () => useBoundProp(), {
+			wrapper: ( { children } ) => (
+				<PropProvider value={ value } setValue={ setValue } propType={ propType }>
+					<PropKeyProvider bind="key">{ children }</PropKeyProvider>
+				</PropProvider>
+			),
+		} );
+
+		// Act.
+		act( () => {
+			result.current.resetValue();
+		} );
+
+		const expected = {
+			$$type: 'size',
+			value: {
+				size: 201,
+				unit: 'rem',
+			},
+		};
+
+		// Assert.
+		expect( setValue ).toHaveBeenCalledWith( { key: expected }, undefined, { bind: 'key' } );
 	} );
 } );
