@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { keyValuePropTypeUtil, type StringPropValue } from '@elementor/editor-props';
+import { keyValuePropTypeUtil, type KeyValuePropValue, type StringPropValue } from '@elementor/editor-props';
 import { ChevronDownIcon, VariationsIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Box, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -39,6 +39,12 @@ export function getTransitionPropertyByValue( item?: StringPropValue | null ) {
 
 	return null;
 }
+
+const includeCurrentValueInOptions = ( value: KeyValuePropValue[ 'value' ], disabledItems: string[] ) => {
+	return disabledItems.filter( ( item ) => {
+		return item !== value.key.value;
+	} );
+};
 
 export const TransitionSelector = ( {
 	recentlyUsedList = [],
@@ -129,7 +135,7 @@ export const TransitionSelector = ( {
 					sectionWidth={ 268 }
 					title={ __( 'Transition Property', 'elementor' ) }
 					icon={ VariationsIcon as React.ElementType< { fontSize: string } > }
-					disabledItems={ disabledItems }
+					disabledItems={ includeCurrentValueInOptions( value, disabledItems ) }
 				/>
 			</Popover>
 		</Box>

@@ -1,3 +1,4 @@
+import { type KeyValuePropValue, type SizePropValue } from '@elementor/editor-props';
 import { __ } from '@wordpress/i18n';
 
 export type TransitionProperty = {
@@ -13,7 +14,20 @@ export type TransitionCategory = {
 	properties: TransitionProperty[];
 };
 
-export const initialTransitionValue = {
+export type TransitionValue = {
+	selection: KeyValuePropValue;
+	size: SizePropValue;
+};
+
+export type TransitionItem = {
+	$$type: 'selection-size';
+	value: {
+		$$type: 'key-value';
+		value: TransitionValue;
+	};
+};
+
+export const initialTransitionValue: TransitionValue = {
 	selection: {
 		$$type: 'key-value',
 		value: {
