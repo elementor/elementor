@@ -106,18 +106,20 @@ const isPropertyUsed = ( value: SelectionSizePropValue[], property: TransitionPr
 	} );
 };
 
-const getDisabledItemLabels = ( value: SelectionSizePropValue[] = [] ) => {
-	const disabledItems: string[] = [];
+const getDisabledItemLabels = ( values: SelectionSizePropValue[] = [] ) => {
+	const disabledItemLabels: string[] = values.map(
+		( item ) => ( item.value?.selection?.value as KeyValuePropValue )?.value?.key?.value
+	);
 
 	transitionProperties.forEach( ( category ) => {
 		category.properties.forEach( ( property ) => {
-			if ( property.isDisabled || isPropertyUsed( value, property ) ) {
-				disabledItems.push( property.label );
+			if ( property.isDisabled && ! disabledItemLabels.includes( property.label ) ) {
+				disabledItemLabels.push( property.label );
 			}
 		} );
 	} );
 
-	return disabledItems;
+	return disabledItemLabels;
 };
 
 const getInitialValue = ( values: SelectionSizePropValue[] = [] ): TransitionValue => {
