@@ -41,7 +41,7 @@ const childArrayPropTypeUtil = createArrayPropUtils(
 subscribeToTransitionEvent();
 
 const areAllPropertiesUsed = ( value: SelectionSizePropValue[] = [] ) => {
-	return value.length
+	return value?.length
 		? transitionProperties.every( ( category ) => {
 				return category.properties.every( ( property ) => {
 					return (
