@@ -8,8 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Validation {
 	private $valid_ids = [];
-	private $elementsToInteractionsCounter = [];
-	private $maxNumberOfInteractions = 5;
+	private $elements_to_interactions_counter = [];
+	private $max_number_of_interactions = 5;
 
 	public function __construct( Presets $presets ) {
 		$this->valid_ids = array_column( $presets->list(), 'value' );
@@ -20,9 +20,16 @@ class Validation {
 	}
 
 	public function validate() {
-		foreach ( $this->elementsToInteractionsCounter as $elementId => $numberOfInteractions ) {
-			if ( $numberOfInteractions > $this->maxNumberOfInteractions ) {
-				throw new \Exception( sprintf( __( 'Element %s has more than %d interactions', 'elementor' ), $elementId, $this->maxNumberOfInteractions ) );
+		foreach ( $this->elements_to_interactions_counter as $element_id => $number_of_interactions ) {
+			if ( $number_of_interactions > $this->max_number_of_interactions ) {
+				throw new \Exception(
+					sprintf(
+						// translators: %1 is the element ID and %2 is the maximum number of interactions
+						esc_html__( 'Element %1$s has more than %2$d interactions', 'elementor' ),
+						esc_html( $element_id ),
+						esc_html( $this->max_number_of_interactions )
+					)
+				);
 			}
 		}
 
@@ -55,7 +62,7 @@ class Validation {
 		return $elements;
 	}
 
-	private function sanitize_interactions( $interactions, $elementId ) {
+	private function sanitize_interactions( $interactions, $element_id ) {
 		$sanitized = [
 			'items' => [],
 			'version' => 1,
@@ -83,7 +90,7 @@ class Validation {
 
 			if ( $animation_id && $this->is_valid_animation_id( $animation_id ) ) {
 				$sanitized['items'][] = $interaction;
-				$this->elementsToInteractionsCounter[ $elementId ]++;
+				++$this->elements_to_interactions_counter[ $element_id ];
 			}
 		}
 
