@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
-import { StarIcon } from '@elementor/icons';
+import { CheckIcon, PlusIcon } from '@elementor/icons';
 import {
 	bindPopover,
 	bindTrigger,
+	Box,
 	Button,
 	FormLabel,
 	Grid,
-	IconButton,
 	Popover,
 	Select,
 	Stack,
+	styled,
 	TextField,
 	Tooltip,
 	Typography,
@@ -20,6 +21,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { COMPONENT_DOCUMENT_TYPE } from './consts';
+import { isTransformable } from '@elementor/editor-props';
 
 const SIZE = 'tiny';
 
@@ -28,24 +30,75 @@ const FORBIDDEN_KEYS = [
     'attributes',
 ]
 
+const IconContainer = styled(Box)`
+	position: absolute;
+	display: flex;
+	pointer-events: none;
+	opacity: 0;
+	color: ${ ( { theme } ) => theme.palette.primary.contrastText };
+	transition: opacity 0.2s ease-in-out;
+
+	& > svg {
+		fill: ${ ( { theme } ) => theme.palette.primary.contrastText };
+	}
+`;
+
+const IconWrapper = styled(Box)`
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	margin-inline: ${ ( { theme } ) => theme.spacing( 0.5 ) };
+	width: 16px;
+	height: 16px;
+
+	&:before {
+		position: absolute;
+		content: '';
+		display: block;
+		width: 5px;
+		height: 5px;
+		border-radius: 2px;
+		transform: rotate(45deg);
+		background-color: ${ ( { theme } ) => theme.palette.primary.main };
+		transition: all 0.2s ease-in-out;
+	}
+
+	&:hover, &.enlarged {
+		&:before {
+			width: 16px;
+			height: 16px;
+		}
+
+		.icon {
+			opacity: 1;
+		}
+	}
+
+`
+
 export function OverridableProp() {
-	const control = useBoundProp();
+	const { bind, value } = useBoundProp();
 	const currentDocument = getV1CurrentDocument();
 
 	if ( currentDocument.config.type !== COMPONENT_DOCUMENT_TYPE ) {
         return null;
 	}
 
-    if ( ! isPropAllowed( control.bind ) ) {
+    if ( ! isPropAllowed( bind ) ) {
         return null;
     }
 
-    console.log( 'bound prop', control );
-    
-    return <OverridablePropIndicator />;
+
+    return <OverridablePropIndicator 
+		isOverridable={ isTransformable( value ) && value.$$type === 'component-overridable-prop' }
+	/>;
 }
 
-function OverridablePropIndicator() {
+function OverridablePropIndicator({ isOverridable }: { isOverridable: boolean }) {
+	const { value, setValue } = useBoundProp();
+
 	const popupState = usePopupState( {
 		variant: 'popover',
 	} );
@@ -53,12 +106,25 @@ function OverridablePropIndicator() {
 	const triggerProps = bindTrigger( popupState );
 	const popoverProps = bindPopover( popupState );
 
+	const handleSubmit = ( data: { label: string, group: string }) => {
+		setValue( {
+			$$type: 'component-overridable-prop',
+			value: {
+				label: data.label,
+				group: data.group,
+			},
+		} )
+		popupState.close();
+	}
+
 	return (
 		<>
 			<Tooltip placement="top" title={ __( 'Override Property', 'elementor' ) }>
-				<IconButton aria-label={ __( 'Override Property', 'elementor' ) } size={ SIZE } { ...triggerProps }>
-					<StarIcon fontSize={ SIZE } />
-				</IconButton>
+				<IconWrapper {...triggerProps} className={popoverProps.open || isOverridable ? 'enlarged' : ''}>
+					<IconContainer className="icon">
+						{isOverridable ? <CheckIcon fontSize={ SIZE } /> : <PlusIcon fontSize={ SIZE } />}
+					</IconContainer>
+				</IconWrapper>
 			</Tooltip>
 			<Popover
 				disableScrollLock
@@ -75,13 +141,20 @@ function OverridablePropIndicator() {
 				} }
 				{ ...popoverProps }
 			>
-				<OverridablePropForm close={ popupState.close } />
+				<OverridablePropForm onSubmit={ handleSubmit } />
 			</Popover>
 		</>
 	);
 }
 
-function OverridablePropForm( { close }: { close: () => void } ) {
+function OverridablePropForm( { onSubmit }: { onSubmit: (data: {label: string, group: string}) => void } ) {
+	const handleCreate = () => {
+		onSubmit({
+			label: 'aaaa',
+			group: 'abababa'
+		});
+	}
+
 	return (
 		<Stack alignItems="start" width="268px">
 			<Stack
@@ -97,7 +170,7 @@ function OverridablePropForm( { close }: { close: () => void } ) {
 			</Stack>
 			<Grid container gap={ 0.75 } alignItems="start" px={ 1.5 } mb={ 1.5 }>
 				<Grid item xs={ 12 }>
-					<FormLabel htmlFor="override-value" size="tiny">
+					<FormLabel htmlFor="override-label" size="tiny">
 						{ __( 'Name', 'elementor' ) }
 					</FormLabel>
 				</Grid>
@@ -113,13 +186,13 @@ function OverridablePropForm( { close }: { close: () => void } ) {
 			</Grid>
 			<Grid container gap={ 0.75 } alignItems="start" px={ 1.5 } mb={ 1.5 }>
 				<Grid item xs={ 12 }>
-					<FormLabel htmlFor="override-value" size="tiny">
-						{ __( 'Name', 'elementor' ) }
+					<FormLabel htmlFor="override-props-group" size="tiny">
+						{ __( 'Group Name', 'elementor' ) }
 					</FormLabel>
 				</Grid>
 				<Grid item xs={ 12 }>
 					<Select
-						id="override-label"
+						id="override-props-group"
 						size={ SIZE }
 						fullWidth
 						placeholder={ __( 'Enter value', 'elementor' ) }
@@ -128,7 +201,7 @@ function OverridablePropForm( { close }: { close: () => void } ) {
 				</Grid>
 			</Grid>
 			<Stack direction="row" justifyContent="flex-end" alignSelf="end" mt={ 1.5 } py={ 1 } px={ 1.5 }>
-				<Button onClick={ close } variant="contained" color="primary" size="small">
+				<Button onClick={ handleCreate } variant="contained" color="primary" size="small">
 					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</Stack>
