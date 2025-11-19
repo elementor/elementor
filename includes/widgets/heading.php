@@ -11,6 +11,7 @@ use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
 use Elementor\Core\Utils\Hints;
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Modules\Promotions\Controls\Promotion_Control;
+use Elementor\User;
 
 /**
  * Elementor heading widget.
@@ -459,6 +460,10 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		$notice_id = 'ally_heading_notice';
 		$plugin_slug = 'pojo-accessibility';
 		if ( ! Hints::should_display_hint( $notice_id ) ) {
+			return;
+		}
+
+		if ( ! User::has_plugin_notice_been_displayed_for_required_time( 'image_optimization', WEEK_IN_SECONDS ) ) {
 			return;
 		}
 		$notice_content = esc_html__( 'Make sure your page is structured with accessibility in mind. Ally helps detect and fix common issues across your site.', 'elementor' );
