@@ -59,7 +59,11 @@ class Module extends BaseModule {
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 
 		add_filter( 'elementor/document/save/data', function( $document ) {
-			return ( new Validation( $this->get_presets() ) )->sanitize( $document );
+			$validation = new Validation( $this->get_presets() );
+			$validation->sanitize( $document );
+			$validation->validate();
+
+			return $document;
 		}, 10, 1 );
 	}
 
