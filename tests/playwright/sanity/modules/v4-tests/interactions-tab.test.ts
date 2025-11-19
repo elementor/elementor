@@ -104,7 +104,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect( directionOption ).toBeVisible();
 			await directionOption.click();
 
-			await expect( interactionTag ).toContainText( 'Scroll into view: Slide' );
+			await expect( interactionTag ).toContainText( 'Scroll into view: Slide Out' );
 
 			await page.locator( 'body' ).click();
 		} );
