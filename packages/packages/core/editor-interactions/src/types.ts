@@ -24,6 +24,10 @@ export type FieldProps = {
 	label?: string;
 };
 
+export type DirectionsFieldProps = FieldProps & {
+	interactionType: string;
+};
+
 export type InteractionItem = {
 	elementId: string;
 	dataId: string; // The data-id attribute for DOM selection

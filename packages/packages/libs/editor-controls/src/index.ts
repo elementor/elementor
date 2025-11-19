@@ -48,6 +48,7 @@ export {
 	type RepeaterItem,
 } from './components/repeater/repeater';
 export { FloatingActionsBar } from './components/floating-bar';
+export { ToggleButtonGroupUi } from './components/control-toggle-button-group';
 
 // types
 export type { ControlComponent } from './create-control';
