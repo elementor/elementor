@@ -12,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Component_Instance_Prop_Type extends Object_Prop_Type {
+	private $component_overridable_props = null;
+
 	public static function get_key(): string {
 		return 'component-instance';
 	}
@@ -89,7 +91,7 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 			->set_component_overridable_props( $component_overridable_props )
 			->sanitize( $value['overrides'] );
 
-		if ( $sanitized_overrides ) {
+		if ( count( $sanitized_overrides ) > 0 ) {
 			$sanitized['overrides'] = $sanitized_overrides;
 		}
 
@@ -97,12 +99,18 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 	}
 
 	private function get_component_overridable_props( int $component_id ) {
+		if ( $this->component_overridable_props ) {
+			return $this->component_overridable_props;
+		}
+
 		$component = Plugin::$instance->documents->get( $component_id );
 
 		if ( ! $component instanceof Component ) {
-			throw new \Exception( "Component not found: $component_id" );
+			return null;
 		}
 
-		return $component->get_overridable_props();
+		$this->component_overridable_props = $component->get_overridable_props();
+
+		return $this->component_overridable_props;
 	}
 }

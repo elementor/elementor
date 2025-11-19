@@ -47,7 +47,7 @@ class Component_Overrides_Prop_type extends Array_Prop_Type {
 			}
 		}
 
-		return count( $sanitized ) > 0 ? $sanitized : null;
+		return $sanitized;
 	}
 
 	public function set_component_overridable_props( $component_overridable_props ) {
