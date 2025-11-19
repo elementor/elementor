@@ -159,13 +159,13 @@ class Document_Lock_Manager {
 	 *
 	 * Only works if the current user owns the lock.
 	 *
-	 * @param int $document_id The document ID to extend lock for
+	 * @param int        $document_id The document ID to extend lock for
 	 * @param array|null $lock_data Optional lock data to avoid duplicate is_locked() call
 	 * @return bool True if lock was extended, false otherwise
 	 */
 	public function extend_lock( $document_id, $lock_data = null ) {
 		$user_id = get_current_user_id();
-		
+
 		// Allow passing lock_data to avoid duplicate is_locked() call
 		if ( null === $lock_data ) {
 			$lock_data = $this->is_locked( $document_id );
@@ -186,35 +186,35 @@ class Document_Lock_Manager {
 	}
 
 	/**
- * Get the WordPress lock user ID if WordPress has locked the document.
- *
- * @param int $document_id The document ID to check
- * @return int|null WordPress lock user ID, or null if not locked by WordPress
- */
-protected function get_wp_lock_user( $document_id ) {
-	if ( ! function_exists( 'wp_check_post_lock' ) ) {
-		require_once ABSPATH . 'wp-admin/includes/post.php';
+	 * Get the WordPress lock user ID if WordPress has locked the document.
+	 *
+	 * @param int $document_id The document ID to check
+	 * @return int|null WordPress lock user ID, or null if not locked by WordPress
+	 */
+	protected function get_wp_lock_user( $document_id ) {
+		if ( ! function_exists( 'wp_check_post_lock' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/post.php';
+		}
+
+		$wp_lock_user = wp_check_post_lock( $document_id );
+		return $wp_lock_user ? (int) $wp_lock_user : null;
 	}
 
-	$wp_lock_user = wp_check_post_lock( $document_id );
-	return $wp_lock_user ? (int) $wp_lock_user : null;
-}
+	/**
+	 * Check if current user owns the WordPress lock.
+	 *
+	 * @param int $document_id The document ID to check
+	 * @return bool True if current user owns WordPress lock, false otherwise
+	 */
+	protected function current_user_owns_wp_lock( $document_id ) {
+		$current_user_id = get_current_user_id();
+		$wp_lock_user = $this->get_wp_lock_user( $document_id );
 
-/**
- * Check if current user owns the WordPress lock.
- *
- * @param int $document_id The document ID to check
- * @return bool True if current user owns WordPress lock, false otherwise
- */
-protected function current_user_owns_wp_lock( $document_id ) {
-	$current_user_id = get_current_user_id();
-	$wp_lock_user = $this->get_wp_lock_user( $document_id );
-	
-	return $wp_lock_user && $wp_lock_user === $current_user_id;
-}
+		return $wp_lock_user && $wp_lock_user === $current_user_id;
+	}
 
 
-public function is_post_type( $document_id, $post_type ) {
-	return get_post_type( $document_id ) === $post_type;
-}
+	public function is_post_type( $document_id, $post_type ) {
+		return get_post_type( $document_id ) === $post_type;
+	}
 }
