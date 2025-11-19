@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { createContext, type ReactNode, useContext, useEffect } from 'react';
 import { playElementInteractions, updateElementInteractions, useElementInteractions } from '@elementor/editor-elements';
+import { type ElementInteractions } from '@elementor/editor-elements';
 
 type InteractionsContextValue = {
-	interactions: string;
-	setInteractions: ( value: string | undefined ) => void;
+	interactions: ElementInteractions;
+	setInteractions: ( value: ElementInteractions | undefined ) => void;
 	playInteractions: () => void;
 };
 
@@ -17,10 +18,10 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 		window.dispatchEvent( new CustomEvent( 'elementor/element/update_interactions' ) );
 	}, [] );
 
-	const setInteractions = ( value: string | undefined ) => {
+	const setInteractions = ( value: ElementInteractions | undefined ) => {
 		updateElementInteractions( {
 			elementId,
-			interactions: value || undefined,
+			interactions: value,
 		} );
 	};
 
@@ -29,7 +30,7 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 	};
 
 	const contextValue: InteractionsContextValue = {
-		interactions: interactions || '',
+		interactions,
 		setInteractions,
 		playInteractions,
 	};

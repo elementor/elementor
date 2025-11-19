@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Repeater } from '@elementor/editor-controls';
+import { type ElementInteractions } from '@elementor/editor-elements';
 import { PlayerPlayIcon } from '@elementor/icons';
 import { IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -9,26 +10,36 @@ import { getInteractionsConfig } from '../utils/get-interactions-config';
 import { DEFAULT_INTERACTION, InteractionDetails } from './interaction-details';
 
 export type InteractionListProps = {
-	onSelectInteraction: ( interaction: string | null ) => void;
-	selectedInteraction: string | null;
+	onSelectInteractions: ( interactions: ElementInteractions ) => void;
+	interactions: ElementInteractions;
 	onPlayInteraction: () => void;
 	triggerCreateOnShowEmpty?: boolean;
 };
 
 export function InteractionsList( props: InteractionListProps ) {
-	const { onSelectInteraction, selectedInteraction, onPlayInteraction, triggerCreateOnShowEmpty } = props;
+	const { interactions, onSelectInteractions, onPlayInteraction, triggerCreateOnShowEmpty } = props;
 
-	const [ interactionId, setInteractionId ] = useState< string | null >( selectedInteraction );
-
-	if ( triggerCreateOnShowEmpty && ! interactionId ) {
-		setInteractionId( DEFAULT_INTERACTION );
-	}
+	const [ interactionsState, setInteractionsState ] = useState< ElementInteractions >( interactions );
 
 	useEffect( () => {
-		if ( interactionId !== selectedInteraction ) {
-			onSelectInteraction( interactionId );
+		if ( JSON.stringify( interactions.items ) !== JSON.stringify( interactionsState ) ) {
+			onSelectInteractions( interactionsState );
 		}
-	}, [ interactionId, selectedInteraction, onSelectInteraction ] );
+	}, [ interactions.items, interactionsState, onSelectInteractions ] );
+
+	if ( triggerCreateOnShowEmpty && interactionsState.items.length === 0 ) {
+		setInteractionsState( {
+			version: 1,
+			items: [
+				{
+					animation: {
+						animation_id: DEFAULT_INTERACTION,
+						animation_type: 'full-preset',
+					},
+				},
+			],
+		} );
+	}
 
 	const displayLabel = ( interactionForDisplay: string ) => {
 		if ( ! interactionForDisplay ) {
@@ -43,29 +54,42 @@ export function InteractionsList( props: InteractionListProps ) {
 
 	return (
 		<Repeater
-			addToBottom
 			openOnAdd
 			openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
 			label={ __( 'Interactions', 'elementor' ) }
-			values={ interactionId ? [ interactionId ] : [] }
-			setValues={ ( newValue: string[] ) => {
-				setInteractionId( newValue.length > 0 ? newValue[ 0 ] : null );
+			values={ interactionsState.items }
+			setValues={ ( newValue: ElementInteractions[ 'items' ] ) => {
+				setInteractionsState( {
+					...interactionsState,
+					items: newValue,
+				} );
 			} }
 			showDuplicate={ false }
 			showToggle={ false }
 			isSortable={ false }
-			disableAddItemButton={ !! interactionId }
 			itemSettings={ {
-				initialValues: DEFAULT_INTERACTION,
-				Label: ( { value } ) => displayLabel( value ),
+				initialValues: {
+					animation: {
+						animation_id: DEFAULT_INTERACTION,
+						animation_type: 'full-preset',
+					},
+				},
+				Label: ( { value } ) => displayLabel( value.animation.animation_id ),
 				Icon: () => null,
-				Content: ( { value } ) => (
+				Content: ( { index, value } ) => (
 					<InteractionDetails
-						interaction={ value }
+						key={ index }
+						interaction={ value.animation.animation_id }
 						onChange={ ( newValue: string ) => {
-							if ( value !== newValue ) {
-								setInteractionId( newValue );
-							}
+							const newInteractions = { ...interactionsState };
+							newInteractions.items[ index ] = {
+								...newInteractions.items[ index ],
+								animation: {
+									...newInteractions.items[ index ].animation,
+									animation_id: newValue,
+								},
+							};
+							setInteractionsState( { ...interactionsState, items: newInteractions.items } );
 						} }
 					/>
 				),
