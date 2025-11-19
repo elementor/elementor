@@ -45,7 +45,7 @@ ControlNumberItemView = ControlBaseDataView.extend( {
 			return controlValue;
 		}
 
-		var numValue = Number( controlValue );
+		const numValue = Number( controlValue );
 
 		if ( ! isFinite( numValue ) || isNaN( numValue ) ) {
 			return controlData.default ?? '';
