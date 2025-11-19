@@ -18,7 +18,23 @@ const EVENTS_MAP = {
 	DELETION_UNDO: 'deletion_undo',
 };
 
+const CLOUD_TEMPLATES_EXPERIMENTS = {
+	SAVE_TEMPLATE: 'template-library-save'
+};
+
 export class EventManager {
+	getExperimentVariant( experimentName ) {
+		if ( ! elementorCommon?.eventsManager ) {
+			return 'control';
+		}
+
+		return elementorCommon?.eventsManager?.getExperimentVariant( experimentName ) || 'control';
+	}
+
+	getSaveTemplateExperimentVariant() {
+		return this.getExperimentVariant( CLOUD_TEMPLATES_EXPERIMENTS.SAVE_TEMPLATE );
+	}
+
 	sendEvent( eventName, data ) {
 		return elementorCommon.eventsManager.dispatchEvent(
 			eventName,

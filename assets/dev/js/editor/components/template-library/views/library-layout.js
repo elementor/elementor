@@ -13,10 +13,16 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 
 import { SAVE_CONTEXTS } from './../constants';
 
-const TemplateLibrarySaveTemplateMap = {
-	control: TemplateLibrarySaveTemplateView,
-	B: TemplateLibrarySaveTemplateVariantBView,
-};
+function resolveSaveTemplateByVariant( variant ) {
+	switch ( variant ) {
+		case 'B':
+			return TemplateLibrarySaveTemplateVariantBView;
+		case 'control':
+		case 'A':
+		default:
+			return TemplateLibrarySaveTemplateView;
+	}
+}
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
 	getModalOptions() {
@@ -123,10 +129,6 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.modalContent.show( new TemplateLibraryCloudStateView() );
 	},
 
-	getExperimentVariant() {
-		return elementorCommon?.eventsManager?.getExperimentVariant( 'template-library-save' ) || 'control';
-	},
-
 	showSaveTemplateView( elementModel, context = SAVE_CONTEXTS.SAVE ) {
 		const headerView = this.getHeaderView();
 
@@ -136,8 +138,8 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 			headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
 		}
 
-		const experimentVariant = this.getExperimentVariant();
-		const SaveTemplateView = TemplateLibrarySaveTemplateMap[ experimentVariant ];
+		const experimentVariant = elementor.templates.eventManager.getSaveTemplateExperimentVariant();
+		const SaveTemplateView = resolveSaveTemplateByVariant( experimentVariant );
 
 		this.modalContent.show( new SaveTemplateView( { model: elementModel, context } ) );
 	},

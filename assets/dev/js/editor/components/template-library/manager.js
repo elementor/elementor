@@ -151,16 +151,8 @@ const TemplateLibraryManager = function() {
 		document.addEventListener( 'keydown', this.handleKeydown );
 	};
 
-	this.getExperimentVariant = () => {
-		if ( ! elementorCommon?.eventsManager ) {
-			return 'control';
-		}
-
-		return elementorCommon?.eventsManager.getExperimentVariant( 'template-library-save' );
-	};
-
 	this.getDefaultTemplateTypeData = function() {
-		const experimentVariant = this.getExperimentVariant( );
+		const experimentVariant = this.eventManager.getSaveTemplateExperimentVariant();
 
 		return {
 			saveDialog: {
@@ -198,7 +190,7 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.getDefaultTemplateTypeSafeData = function( title ) {
-		const experimentVariant = this.getExperimentVariant();
+		const experimentVariant = this.eventManager.getSaveTemplateExperimentVariant();
 
 		return {
 			saveDialog: {

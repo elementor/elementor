@@ -68,7 +68,6 @@ export default class extends elementorModules.Module {
 
 	getExperimentVariant( experimentName, defaultValue = 'control' ) {
 		try {
-			return 'B';
 			if ( ! mixpanel ) {
 				return defaultValue;
 			}
