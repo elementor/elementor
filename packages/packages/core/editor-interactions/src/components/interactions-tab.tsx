@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useCallback, useMemo, useState } from 'react';
-import { useElementInteractions } from '@elementor/editor-elements';
+import { useCallback, useState } from 'react';
+import { type ElementInteractions, useElementInteractions } from '@elementor/editor-elements';
 import { SessionStorageProvider } from '@elementor/session';
 import { Stack } from '@elementor/ui';
 
@@ -21,8 +21,7 @@ function InteractionsTabContent( { elementId }: { elementId: string } ) {
 	const existingInteractions = useElementInteractions( elementId );
 	const [ firstInteraction, setFirstInteraction ] = useState< boolean >( false );
 	const [ showInteractions, setShowInteractions ] = useState( () => {
-		const parsed = JSON.parse( existingInteractions || '{}' );
-		if ( parsed && parsed?.items?.length > 0 ) {
+		if ( existingInteractions?.items?.length > 0 ) {
 			return true;
 		}
 		return false;
@@ -50,47 +49,23 @@ function InteractionsContent( { firstInteraction }: { firstInteraction: boolean 
 	const { interactions, setInteractions, playInteractions } = useInteractionsContext();
 
 	const applyInteraction = useCallback(
-		( interaction: string | null ) => {
-			if ( ! interaction ) {
+		( newInteractions: ElementInteractions ) => {
+			if ( ! newInteractions ) {
 				setInteractions( undefined );
 				return;
 			}
 
-			const newInteractions = {
-				version: 1,
-				items: [
-					{
-						animation: {
-							animation_type: 'full-preset',
-							animation_id: interaction,
-						},
-					},
-				],
-			};
-
-			setInteractions( JSON.stringify( newInteractions ) );
+			setInteractions( newInteractions );
 		},
 		[ setInteractions ]
 	);
-
-	const selectedInteraction = useMemo( () => {
-		try {
-			const parsed = JSON.parse( interactions || '{}' );
-			if ( parsed && parsed?.items ) {
-				return parsed.items[ 0 ]?.animation?.animation_id || '';
-			}
-			return '';
-		} catch {
-			return '';
-		}
-	}, [ interactions ] );
 
 	return (
 		<Stack sx={ { m: 1, p: 1.5 } } gap={ 2 }>
 			<InteractionsList
 				triggerCreateOnShowEmpty={ firstInteraction }
-				selectedInteraction={ selectedInteraction }
-				onSelectInteraction={ applyInteraction }
+				interactions={ interactions }
+				onSelectInteractions={ applyInteraction }
 				onPlayInteraction={ playInteractions }
 			/>
 		</Stack>
