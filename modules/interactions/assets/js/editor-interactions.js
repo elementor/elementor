@@ -158,7 +158,7 @@ function registerWindowEvents() {
 }
 
 function handlePlayInteractions( event ) {
-	const elementId = event.detail.elementId;
+	const { elementId, animationId } = event.detail;
 	const interactionsData = getInteractionsData();
 	const item = interactionsData.find( ( elementItemData ) => elementItemData.dataId === elementId );
 	if ( ! item ) {
@@ -166,7 +166,9 @@ function handlePlayInteractions( event ) {
 	}
 	const element = findElementByInteractionId( elementId );
 	if ( element ) {
-		applyInteractionsToElement( element, item.interactions );
+		const interactionsCopy = item.interactions;
+		interactionsCopy.items = interactionsCopy.items.filter( ( interactionItem ) => interactionItem.animation.animation_id === animationId );
+		applyInteractionsToElement( element, JSON.stringify( interactionsCopy ) );
 	}
 }
 
