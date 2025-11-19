@@ -82,9 +82,6 @@ jobs:
         with:
           node-version: 20.x
           cache: 'npm'
-      - name: Install dependencies
-        run: |
-          npm run prepare-environment:ci
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -106,16 +103,16 @@ jobs:
           npm run start-local-server
       - name: Update wordpress to nightly build
         if: ${{ github.event_name == 'schedule' }}
-        run: npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
+        run: npx -y @elementor/wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
       - name: Setup test data
         run: npm run test:setup:playwright
       - name: WordPress debug information
         run: |
-          npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
-          npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
+          npx -y @elementor/wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
+          npx -y @elementor/wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
       - name: Install playwright/test
         run: |
-          npx playwright install chromium
+          npx -y playwright install chromium
       - name: Run Playwright tests
         if: ${{
           matrix.shardIndex != 'elements-regression' &&
@@ -187,11 +184,11 @@ jobs:
         run: npm run test:setup:playwright
       - name: WordPress debug information
         run: |
-          npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
-          npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
+          npx -y @elementor/wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core version"
+          npx -y @elementor/wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp --info"
       - name: Install playwright/test
         run: |
-          npx playwright install chromium
+          npx -y playwright install chromium
       - name: Run Playwright tests
         env:
           TEST_TAG: ${{ inputs.tag }}
