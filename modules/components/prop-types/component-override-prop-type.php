@@ -33,7 +33,7 @@ class Component_Override_Prop_type extends Plain_Prop_Type {
 			return false;
 		}
 
-		['override_key' => $override_key, 'value' => $value] = $value;
+		['override_key' => $override_key, 'value' => $override_value] = $value;
 
 		[
 			'override_key_exists' => $override_key_exists,
@@ -46,7 +46,7 @@ class Component_Override_Prop_type extends Plain_Prop_Type {
 			return true;
 		}
 
-		return $prop_type->validate( $value );
+		return $prop_type->validate( $override_value );
 	}
 
 	protected function sanitize_value( $value ) {
@@ -62,7 +62,7 @@ class Component_Override_Prop_type extends Plain_Prop_Type {
 		}
 
 		return [
-			'override-key' => sanitize_text_field( $value['override-key'] ),
+			'override_key' => sanitize_text_field( $value['override_key'] ),
 			'value' => $prop_type->sanitize( $value['value'] ),
 		];
 	}
@@ -94,10 +94,17 @@ class Component_Override_Prop_type extends Plain_Prop_Type {
 		if ( ! $overridable_element ||
 			! ( $overridable_element instanceof Atomic_Element_Base || $overridable_element instanceof Atomic_Widget_Base )
 		) {
-			throw new \Exception( "Invalid overridable element: $el_type $widget_type." );
+			throw new \Exception( "Invalid overridable element: Element type $el_type with widget type $widget_type is either not registered or is not an Atomic Element/Widget." );
 		}
 
-		$props_type = ( new $overridable_element() )->get_props_schema()[ $prop_key ];
+		$element_instance = new $overridable_element();
+		$props_schema = $element_instance->get_props_schema();
+		
+		if ( ! isset( $props_schema[ $prop_key ] ) ) {
+			throw new \Exception( "Prop key '$prop_key' does not exist in the schema of element '{$element_instance->get_element_type()}'." );
+		}
+		
+		$props_type = $props_schema[ $prop_key ];
 
 		return [
 			'override_key_exists' => true,

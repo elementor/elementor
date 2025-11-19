@@ -12,6 +12,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Component_Overridable_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
 		// todo: render component overrides logic
-		return $value['default'];
+		return $value['default_value'];
 	}
 }
