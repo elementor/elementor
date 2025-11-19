@@ -1,0 +1,255 @@
+---
+description: Testing rules for both main repo and turbo-repo
+globs: ["**/*.test.ts", "**/*.spec.ts", "**/*.test.js", "**/*.spec.js", "tests/**/*.php"]
+---
+
+# Testing Rules
+
+## Testing Philosophy
+
+### Focus Areas
+- Test critical paths thoroughly
+- Follow the 80/20 rule: cover most common scenarios
+- Include basic failure scenarios
+- Don't aim for exhaustive edge case coverage
+
+### Test Structure
+- Use descriptive test names that explain expected behavior
+- Write deterministic tests with proper assertions
+- Structure tests using AAA (Arrange-Act-Assert) principles
+- Include explicit comments for each section
+
+## Main Repository Testing
+
+### PHP Testing (PHPUnit)
+```bash
+# Run all PHP tests
+npm run test:php
+
+# Run specific test file
+docker-compose run --rm wordpress_phpunit phpunit tests/phpunit/test-specific.php
+```
+
+### JavaScript Testing (Jest)
+```bash
+# Run all JS tests
+npm run test:jest
+
+# Run specific test file
+npx jest tests/jest/specific-test.js --verbose
+```
+
+### E2E Testing (Playwright)
+```bash
+# Run all E2E tests
+npm run test:playwright
+
+# Run specific test
+npx playwright test tests/playwright/specific-test.spec.ts
+
+# Debug mode
+npm run test:playwright:debug
+```
+
+## Turbo-Repo Testing
+
+### Package Testing
+```bash
+# Run all package tests
+cd packages && npm test
+
+# Run specific package tests
+cd packages && npx jest packages/core/editor --verbose
+
+# Run with coverage
+cd packages && npm run test:coverage
+```
+
+### Test Organization
+```
+packages/packages/[package-name]/
+├── src/
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── __mocks__/
+└── package.json
+```
+
+## Test Writing Standards
+
+### Unit Tests
+```typescript
+describe('calculateTotal', () => {
+  test('should calculate total price correctly', () => {
+    // Arrange
+    const items = [
+      { price: 10, quantity: 2 },
+      { price: 5, quantity: 1 }
+    ];
+
+    // Act
+    const total = calculateTotal(items);
+
+    // Assert
+    expect(total).toBe(25);
+  });
+
+  test('should handle empty array', () => {
+    // Arrange
+    const items = [];
+
+    // Act
+    const total = calculateTotal(items);
+
+    // Assert
+    expect(total).toBe(0);
+  });
+});
+```
+
+### Integration Tests
+```typescript
+describe('Editor API Integration', () => {
+  test('should create and update element', async () => {
+    // Arrange
+    const editorAPI = new EditorAPI();
+    const elementData = { type: 'button', text: 'Click me' };
+
+    // Act
+    const element = await editorAPI.createElement(elementData);
+    await editorAPI.updateElement(element.id, { text: 'Updated' });
+
+    // Assert
+    const updatedElement = await editorAPI.getElement(element.id);
+    expect(updatedElement.text).toBe('Updated');
+  });
+});
+```
+
+### React Component Tests
+```typescript
+import { render, screen, fireEvent } from '@testing-library/react';
+import { Button } from '../Button';
+
+describe('Button Component', () => {
+  test('should render with correct text', () => {
+    // Arrange
+    const buttonText = 'Click me';
+
+    // Act
+    render(<Button>{buttonText}</Button>);
+
+    // Assert
+    expect(screen.getByText(buttonText)).toBeInTheDocument();
+  });
+
+  test('should call onClick when clicked', () => {
+    // Arrange
+    const handleClick = jest.fn();
+    render(<Button onClick={handleClick}>Click me</Button>);
+
+    // Act
+    fireEvent.click(screen.getByText('Click me'));
+
+    // Assert
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+});
+```
+
+## Mocking Guidelines
+
+### Minimal Mocking
+- Mock only external dependencies
+- Use real implementations when possible
+- Mock at the boundary of your system
+- Avoid mocking internal functions
+
+### Mock Examples
+```typescript
+// Mock external API
+jest.mock('@elementor/api', () => ({
+  fetchElements: jest.fn(),
+  updateElement: jest.fn(),
+}));
+
+// Mock React hooks
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useState: jest.fn(),
+}));
+```
+
+## Test Data Management
+
+### Test Fixtures
+```typescript
+// Create reusable test data
+export const mockElement = {
+  id: 'test-element-1',
+  type: 'button',
+  props: {
+    text: 'Test Button',
+    className: 'test-class',
+  },
+};
+
+export const mockDocument = {
+  id: 'test-doc-1',
+  elements: [mockElement],
+  settings: {},
+};
+```
+
+### Test Utilities
+```typescript
+// Create test helpers
+export const renderWithProviders = (component: ReactElement) => {
+  return render(
+    <Provider store={mockStore}>
+      {component}
+    </Provider>
+  );
+};
+```
+
+## Performance Testing
+
+### Load Testing
+- Test with large datasets
+- Measure rendering performance
+- Test memory usage
+- Monitor bundle size
+
+### Benchmark Tests
+```typescript
+describe('Performance Tests', () => {
+  test('should render 1000 elements within 1 second', () => {
+    // Arrange
+    const elements = generateMockElements(1000);
+    const startTime = performance.now();
+
+    // Act
+    render(<ElementList elements={elements} />);
+    const endTime = performance.now();
+
+    // Assert
+    expect(endTime - startTime).toBeLessThan(1000);
+  });
+});
+```
+
+## Test Maintenance
+
+### Regular Updates
+- Update tests when APIs change
+- Remove obsolete tests
+- Refactor test code regularly
+- Keep test data current
+
+### Test Documentation
+- Document complex test scenarios
+- Explain test setup requirements
+- Document test data sources
+- Include troubleshooting guides

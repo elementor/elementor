@@ -12,7 +12,9 @@ const EditorSelectors = {
 	pageHeader: '.page-header',
 	toast: '#elementor-toast',
 	addNewSection: '#elementor-add-new-section',
+	addSectionInner: '.elementor-add-section-inner',
 	removeContainer: '.elementor-editor-element-setting.elementor-editor-element-remove',
+	eflexboxWidget: ( widgetType: string ) => `[data-widget_type="${ widgetType }.default"]`,
 	panels: {
 		topBar: {
 			wrapper: '#elementor-editor-wrapper-v2',
@@ -44,6 +46,8 @@ const EditorSelectors = {
 			footer: '#elementor-navigator__footer',
 			closeButton: '#elementor-navigator__close',
 			footerButton: '#elementor-panel-footer-navigator i',
+			getElement: ( elementId: string ) => `#elementor-navigator .elementor-navigator__element[data-id="${ elementId }"]`,
+			getElementItem: ( elementId: string ) => `${ EditorSelectors.panels.navigator.getElement( elementId ) } .elementor-navigator__item`,
 		},
 		promotionCard: '[data-testid="e-promotion-card"]',
 		popoverCard: '[data-testid="e-popover-card"]',

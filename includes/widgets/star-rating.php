@@ -209,9 +209,6 @@ class Widget_Star_Rating extends Widget_Base {
 			]
 		);
 
-		$start = is_rtl() ? 'right' : 'left';
-		$end = ! is_rtl() ? 'right' : 'left';
-
 		$this->add_responsive_control(
 			'align',
 			[
@@ -220,7 +217,7 @@ class Widget_Star_Rating extends Widget_Base {
 				'options' => [
 					'start' => [
 						'title' => esc_html__( 'Start', 'elementor' ),
-						'icon' => "eicon-text-align-$start",
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
@@ -228,13 +225,14 @@ class Widget_Star_Rating extends Widget_Base {
 					],
 					'end' => [
 						'title' => esc_html__( 'End', 'elementor' ),
-						'icon' => "eicon-text-align-$end",
+						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
 				],
+				'classes' => 'elementor-control-start-end',
 				'classes_dictionary' => [
 					'left' => is_rtl() ? 'end' : 'start',
 					'right' => is_rtl() ? 'start' : 'end',
@@ -414,7 +412,7 @@ class Widget_Star_Rating extends Widget_Base {
 	protected function get_rating() {
 		$settings = $this->get_settings_for_display();
 		$rating_scale = (int) $settings['rating_scale'];
-		$rating = (float) $settings['rating'] > $rating_scale ? $rating_scale : $settings['rating'];
+		$rating = min( (float) $settings['rating'], $rating_scale );
 
 		return [ $rating, $rating_scale ];
 	}
@@ -445,7 +443,7 @@ class Widget_Star_Rating extends Widget_Base {
 			}
 		}
 
-		return $stars_html;
+		Utils::print_unescaped_internal_string( $stars_html );
 	}
 
 	/**
@@ -487,7 +485,7 @@ class Widget_Star_Rating extends Widget_Base {
 				<div class="elementor-star-rating__title"><?php echo esc_html( $settings['title'] ); ?></div>
 			<?php endif; ?>
 			<div <?php $this->print_render_attribute_string( 'icon_wrapper' ); ?>>
-				<?php echo $this->render_stars( $icon ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<?php $this->render_stars( $icon ); ?>
 				<span itemprop="ratingValue" class="elementor-screen-only"><?php echo esc_html( $textual_rating ); ?></span>
 			</div>
 		</div>

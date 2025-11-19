@@ -1,48 +1,36 @@
-const config = window.ElementorInteractionsConfig?.constants || {
-	defaultDuration: 0.3,
-	defaultDelay: 0,
-	slideDistance: 100,
-	scaleStart: 0.5,
-	easing: 'ease-in-out',
-};
+import { config, getKeyframes, parseAnimationName } from './interactions-utils.js';
 
-function getKeyframes( effect, type, direction ) {
-	const isIn = 'in' === type;
-	const keyframes = {};
-
-	keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
-
-	if ( 'scale' === effect ) {
-		keyframes.scale = isIn ? [ config.scaleStart, 1 ] : [ 1, config.scaleStart ];
-	}
-
-	if ( direction ) {
-		const distance = config.slideDistance;
-		const movement = {
-			left: { x: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
-			right: { x: isIn ? [ distance, 0 ] : [ 0, distance ] },
-			top: { y: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
-			bottom: { y: isIn ? [ distance, 0 ] : [ 0, distance ] },
-		};
-
-		Object.assign( keyframes, movement[ direction ] );
-	}
-
-	return keyframes;
-}
-
-function parseAnimationName( name ) {
-	const parts = name.split( '-' );
-
-	if ( parts.length < 3 ) {
-		return null;
-	}
-
-	return {
-		effect: parts[ 0 ],
-		type: parts[ 1 ],
-		direction: 4 === parts.length ? parts[ 2 ] : null,
+function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
+	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+	const options = {
+		duration: animConfig.duration / 1000,
+		delay: animConfig.delay / 1000,
+		easing: config.easing,
 	};
+
+	const viewOptions = { amount: 0.1, root: null };
+
+	if ( 'scrollOut' === animConfig.trigger ) {
+		inViewFunc( element, () => {
+			const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
+			animateFunc( element, resetKeyframes, { duration: 0 } );
+
+			return () => {
+				animateFunc( element, keyframes, options );
+			};
+		}, viewOptions );
+	} else if ( 'scrollIn' === animConfig.trigger ) {
+		inViewFunc( element, () => {
+			animateFunc( element, keyframes, options );
+
+			return () => {
+				const resetKeyframes = getKeyframes( animConfig.effect, 'out', animConfig.direction );
+				animateFunc( element, resetKeyframes, { duration: 0 } );
+			};
+		}, viewOptions );
+	} else {
+		animateFunc( element, keyframes, options );
+	}
 }
 
 function initInteractions() {
@@ -75,23 +63,11 @@ function initInteractions() {
 				? interaction
 				: interaction?.animation?.animation_id;
 
-			if ( ! animationName ) {
-				return;
+			const animConfig = animationName && parseAnimationName( animationName );
+
+			if ( animConfig ) {
+				applyAnimation( element, animConfig, animateFunc, inViewFunc );
 			}
-
-			const animConfig = parseAnimationName( animationName );
-			if ( ! animConfig ) {
-				return;
-			}
-
-			const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
-			const options = {
-				duration: config.defaultDuration,
-				delay: config.defaultDelay,
-				easing: config.easing,
-			};
-
-			animateFunc( element, keyframes, options );
 		} );
 	} );
 }

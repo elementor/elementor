@@ -6,15 +6,24 @@ import { BaseLayout, TopBar, Footer, PageHeader, CenteredContent, CompleteIcon, 
 import { useImportContext } from '../context/import-context';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { buildKitSettingsSummary } from '../../shared/utils/utils';
-
-const handleDone = () => {
-	window.top.location = elementorAppConfig.admin_url;
-};
+import useReturnToRedirect from '../../shared/hooks/use-return-to-redirect';
 
 export default function ImportComplete() {
 	const { data, isCompleted, runnersState } = useImportContext();
-	const { includes, analytics, uploadedData } = data;
+	const { includes, analytics, uploadedData, duration } = data;
 	const navigate = useNavigate();
+	const { attemptRedirect } = useReturnToRedirect( data.returnTo );
+
+	const handleDone = () => {
+		if ( attemptRedirect() ) {
+			return;
+		}
+
+		window.top.location = elementorAppConfig.admin_url;
+	};
+
+	const title = data?.uploadedData?.manifest?.title || '';
+	const kitId = data?.kitUploadParams?.id || '';
 
 	const getTemplatesSummary = useCallback( () => {
 		const templatesSummary = runnersState?.templates?.succeed_summary;
@@ -32,8 +41,8 @@ export default function ImportComplete() {
 					return null;
 				}
 
-				const title = count > 1 ? label.plural : label.single;
-				return `${ count } ${ title }`;
+				const itemTitle = count > 1 ? label.plural : label.single;
+				return `${ count } ${ itemTitle }`;
 			} ).filter( ( part ) => part !== null );
 
 		return summaryParts.length > 0 ? summaryParts.join( ' | ' ) : __( 'No templates imported', 'elementor' );
@@ -99,8 +108,8 @@ export default function ImportComplete() {
 		Object.entries( contentCounts ).forEach( ( [ docType, count ] ) => {
 			const label = summaryTitles[ docType ];
 			if ( label && count > 0 ) {
-				const title = count > 1 ? label.plural : label.single;
-				summaryParts.push( `${ count } ${ title }` );
+				const itemTitle = count > 1 ? label.plural : label.single;
+				summaryParts.push( `${ count } ${ itemTitle }` );
 			}
 		} );
 
@@ -193,17 +202,23 @@ export default function ImportComplete() {
 		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportSummary );
 	}, [] );
 
+	const kitSource = data?.kitUploadParams?.source || 'file';
+	const isFromKitsLibrary = 'kit-library' === kitSource;
+
 	useEffect( () => {
 		AppsEventTracking.sendImportKitCustomization( {
-			kit_source: data?.kitUploadParams?.source || 'file',
+			kit_source: kitSource,
 			kit_import_content: includes.includes( 'content' ),
 			kit_import_templates: includes.includes( 'templates' ),
 			kit_import_settings: includes.includes( 'settings' ),
 			kit_import_plugins: includes.includes( 'plugins' ),
 			kit_import_deselected: analytics?.customization,
 			kit_description: !! uploadedData?.manifest?.description,
+			...( kitId && isFromKitsLibrary && { kit_import_id: kitId } ),
+			...( title && isFromKitsLibrary && { kit_import_title: title } ),
+			...( duration && { kit_import_duration: duration } ),
 		} );
-	}, [ includes, analytics, uploadedData, data ] );
+	}, [ includes, analytics, uploadedData, data, kitId, title, duration, kitSource, isFromKitsLibrary ] );
 
 	return (
 		<BaseLayout

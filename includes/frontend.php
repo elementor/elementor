@@ -451,6 +451,8 @@ class Frontend extends App {
 			true
 		);
 
+		$this->register_frontend_handlers();
+
 		/**
 		 * After frontend register scripts.
 		 *
@@ -550,7 +552,7 @@ class Frontend extends App {
 
 		wp_register_style(
 			'elementor-frontend',
-			$this->get_frontend_file_url( "frontend{$direction_suffix}{$min_suffix}.css", $has_custom_breakpoints ),
+			$this->get_frontend_file_url( "frontend{$min_suffix}.css", $has_custom_breakpoints ),
 			[],
 			$has_custom_breakpoints ? null : ELEMENTOR_VERSION
 		);
@@ -583,6 +585,21 @@ class Frontend extends App {
 		 * @since 1.2.0
 		 */
 		do_action( 'elementor/frontend/after_register_styles' );
+	}
+
+	/**
+	 * Register frontend handlers.
+	 *
+	 * Registers all the frontend handlers for widgets and elements.
+	 *
+	 * Fired by `wp_enqueue_scripts` action.
+	 *
+	 * @since 3.25.0
+	 * @access public
+	 */
+	public function register_frontend_handlers() {
+		Plugin::$instance->widgets_manager->register_frontend_handlers();
+		Plugin::$instance->elements_manager->register_frontend_handlers();
 	}
 
 	/**
