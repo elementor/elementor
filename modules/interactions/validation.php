@@ -90,7 +90,7 @@ class Validation {
 
 			if ( $animation_id && $this->is_valid_animation_id( $animation_id ) ) {
 				$sanitized['items'][] = $interaction;
-				$this->elements_to_interactions_counter[ $element_id ]++;
+				++$this->elements_to_interactions_counter[ $element_id ];
 			}
 		}
 
