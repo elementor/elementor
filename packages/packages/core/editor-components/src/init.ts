@@ -18,7 +18,7 @@ import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
 import { openEditModeDialog } from './components/in-edit-mode';
-import { OverridableProp } from './components/overridable-props';
+import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
 import { createComponentType, TYPE } from './create-component-type';
 import { PopulateStore } from './populate-store';
 import { componentsStylesProvider } from './store/components-styles-provider';
@@ -89,6 +89,6 @@ export function init() {
 		fieldType: FIELD_TYPE.SETTINGS,
 		id: 'component-overridable-prop',
 		priority: 1,
-		indicator: OverridableProp,
+		indicator: OverridablePropIndicator,
 	} );
 }

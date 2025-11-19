@@ -42,7 +42,9 @@
   "dependencies": {
     "@elementor/editor": "3.33.0",
     "@elementor/editor-canvas": "3.33.0",
+    "@elementor/editor-controls": "3.33.0",
     "@elementor/editor-documents": "^3.33.0",
+    "@elementor/editor-editing-panel": "3.33.0",
     "@elementor/editor-elements": "3.33.0",
     "@elementor/editor-elements-panel": "3.33.0",
     "@elementor/editor-props": "3.33.0",

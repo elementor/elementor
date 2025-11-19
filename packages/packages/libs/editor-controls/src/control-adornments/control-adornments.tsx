@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { type PropType } from '@elementor/editor-props';
+import { Stack } from '@elementor/ui';
 
 import { useControlAdornments } from './control-adornments-context';
-import { Stack } from '@elementor/ui';
 
 export function ControlAdornments( {
 	customContext,
