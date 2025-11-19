@@ -29,11 +29,11 @@ export function useElementChildren< T extends ElementChildren >(
 					( { model } ) => model.get( 'elType' ) === parentType
 				);
 
-				if ( parent?.children ) {
-					acc[ childType ] = parent.children
-						.filter( ( { model } ) => model.get( 'elType' ) === childType )
-						.map( ( { id } ) => ( { id } ) );
-				}
+				const children = parent?.children ?? [];
+
+				acc[ childType ] = children
+					.filter( ( { model } ) => model.get( 'elType' ) === childType )
+					.map( ( { id } ) => ( { id } ) );
 
 				return acc;
 			}, {} as ElementChildren );
