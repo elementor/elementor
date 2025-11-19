@@ -46,7 +46,7 @@ export default class extends elementorModules.Module {
 		this.trackingEnabled = true;
 	}
 
-	dispatchEvent( name, data ) {
+	dispatchEvent( name, data, options = {} ) {
 		if ( ! elementorCommon.config.editor_events?.can_send_events ) {
 			return;
 		}
@@ -68,11 +68,7 @@ export default class extends elementorModules.Module {
 			...data,
 		};
 
-		mixpanel.track(
-			name, {
-				...eventData,
-			},
-		);
+		mixpanel.track( name, eventData, options );
 	}
 
 	startSessionRecording() {

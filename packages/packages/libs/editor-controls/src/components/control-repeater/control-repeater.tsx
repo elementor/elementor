@@ -3,16 +3,25 @@ import { type PropTypeUtil } from '@elementor/editor-props';
 
 import { SectionContent } from '../section-content';
 import { RepeaterContextProvider } from './context/repeater-context';
-import { type RepeatablePropValue } from './types';
+import { type Item, type RepeatablePropValue } from './types';
 
 export const ControlRepeater = < T extends RepeatablePropValue >( {
 	children,
 	initial,
 	propTypeUtil,
-}: React.PropsWithChildren< { initial: T; propTypeUtil: PropTypeUtil< string, T[] > } > ) => {
+	isItemDisabled,
+}: React.PropsWithChildren< {
+	initial: T;
+	propTypeUtil: PropTypeUtil< string, T[] >;
+	isItemDisabled?: ( item: Item< T > ) => boolean;
+} > ) => {
 	return (
 		<SectionContent>
-			<RepeaterContextProvider initial={ initial } propTypeUtil={ propTypeUtil }>
+			<RepeaterContextProvider
+				initial={ initial }
+				propTypeUtil={ propTypeUtil }
+				isItemDisabled={ isItemDisabled }
+			>
 				{ children }
 			</RepeaterContextProvider>
 		</SectionContent>
