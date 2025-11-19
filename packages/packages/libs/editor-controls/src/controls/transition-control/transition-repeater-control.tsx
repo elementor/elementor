@@ -107,19 +107,19 @@ const isPropertyUsed = ( value: SelectionSizePropValue[], property: TransitionPr
 };
 
 const getDisabledItemLabels = ( values: SelectionSizePropValue[] = [] ) => {
-	const disabledItemLabels: string[] = values.map(
+	const itemLabelsInUse: string[] = values.map(
 		( item ) => ( item.value?.selection?.value as KeyValuePropValue )?.value?.key?.value
 	);
 
 	transitionProperties.forEach( ( category ) => {
-		category.properties.forEach( ( property ) => {
-			if ( property.isDisabled && ! disabledItemLabels.includes( property.label ) ) {
-				disabledItemLabels.push( property.label );
-			}
-		} );
+		const disabledProperties = category.properties
+			.filter( ( property ) => property.isDisabled && ! itemLabelsInUse.includes( property.label ) )
+			.map( ( property ) => property.label );
+
+		itemLabelsInUse.push( ...disabledProperties );
 	} );
 
-	return disabledItemLabels;
+	return itemLabelsInUse;
 };
 
 const getInitialValue = ( values: SelectionSizePropValue[] = [] ): TransitionValue => {
