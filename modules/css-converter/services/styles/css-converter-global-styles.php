@@ -127,9 +127,8 @@ class CSS_Converter_Global_Styles {
 		};
 
 		$styles_manager->register(
-			self::STYLES_KEY,
-			$get_styles,
-			[ 'css-converter', 'global-classes' ]
+			[ 'css-converter', 'global-classes' ],
+			$get_styles
 		);
 	}
 

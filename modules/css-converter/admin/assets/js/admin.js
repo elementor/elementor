@@ -5,6 +5,8 @@ import { ThemeProvider, DirectionProvider } from '@elementor/ui';
 import { App } from './app';
 
 const injectStylesIntoShadow = ( shadowRoot ) => {
+	const injectedStyleIds = new Set();
+
 	const injectStyleSheet = ( styleSheet ) => {
 		try {
 			if ( styleSheet.href ) {
@@ -55,10 +57,27 @@ const injectStylesIntoShadow = ( shadowRoot ) => {
 		}
 	} );
 
-	const styleElements = document.querySelectorAll( 'style[data-emotion], style[id*="mui"], style[id*="elementor"]' );
+	const styleElements = document.querySelectorAll( 'style[data-emotion], style[id*="mui"], style[id*="elementor"], style[id*="emotion"]' );
 	styleElements.forEach( ( styleEl ) => {
-		const clonedStyle = styleEl.cloneNode( true );
-		shadowRoot.appendChild( clonedStyle );
+		const styleId = styleEl.id || styleEl.getAttribute( 'data-emotion' ) || styleEl.textContent?.substring( 0, 50 );
+		if ( styleId && ! injectedStyleIds.has( styleId ) ) {
+			const clonedStyle = styleEl.cloneNode( true );
+			shadowRoot.appendChild( clonedStyle );
+			injectedStyleIds.add( styleId );
+		}
+	} );
+
+	const allStyleElements = document.querySelectorAll( 'style' );
+	allStyleElements.forEach( ( styleEl ) => {
+		const styleId = styleEl.id || styleEl.getAttribute( 'data-emotion' ) || styleEl.textContent?.substring( 0, 50 );
+		if ( styleId && ! injectedStyleIds.has( styleId ) ) {
+			const textContent = styleEl.textContent || '';
+			if ( textContent.includes( 'Mui' ) || textContent.includes( 'eui-' ) || styleEl.id?.includes( 'emotion' ) ) {
+				const clonedStyle = styleEl.cloneNode( true );
+				shadowRoot.appendChild( clonedStyle );
+				injectedStyleIds.add( styleId );
+			}
+		}
 	} );
 };
 
@@ -76,25 +95,31 @@ const initializeApp = () => {
 		const shadowContainer = document.createElement( 'div' );
 		shadowRoot.appendChild( shadowContainer );
 
-		injectStylesIntoShadow( shadowRoot );
-
-		setTimeout( () => {
+		const scheduleStyleInjection = () => {
 			injectStylesIntoShadow( shadowRoot );
-		}, 100 );
+		};
 
-		setTimeout( () => {
-			injectStylesIntoShadow( shadowRoot );
-		}, 500 );
+		scheduleStyleInjection();
 
-		window.addEventListener( 'load', () => {
-			injectStylesIntoShadow( shadowRoot );
-		} );
+		setTimeout( scheduleStyleInjection, 100 );
+		setTimeout( scheduleStyleInjection, 500 );
+		setTimeout( scheduleStyleInjection, 1000 );
+		setTimeout( scheduleStyleInjection, 2000 );
+
+		window.addEventListener( 'load', scheduleStyleInjection );
 
 		const styleObserver = new MutationObserver( () => {
-			injectStylesIntoShadow( shadowRoot );
+			scheduleStyleInjection();
 		} );
 
 		styleObserver.observe( document.head, {
+			childList: true,
+			subtree: true,
+			attributes: true,
+			attributeFilter: [ 'id', 'data-emotion' ],
+		} );
+
+		styleObserver.observe( document.body, {
 			childList: true,
 			subtree: true,
 		} );
@@ -107,6 +132,10 @@ const initializeApp = () => {
 			</DirectionProvider>,
 			shadowContainer
 		);
+
+		requestAnimationFrame( () => {
+			scheduleStyleInjection();
+		} );
 	} else {
 		render(
 			<DirectionProvider rtl={ isRTL }>

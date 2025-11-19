@@ -69,9 +69,8 @@ class CSS_Converter_Global_Classes_Override {
 		};
 
 		$styles_manager->register(
-			'global-' . $context,
-			$get_styles,
-			[ 'global', $context ]
+			[ 'global', $context ],
+			$get_styles
 		);
 	}
 
