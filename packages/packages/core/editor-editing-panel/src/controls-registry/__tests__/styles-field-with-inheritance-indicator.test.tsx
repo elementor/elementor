@@ -18,10 +18,10 @@ import { screen } from '@testing-library/react';
 import { ControlLabel } from '../../components/control-label';
 import { useStyle } from '../../contexts/style-context';
 import { useStylesInheritanceChain } from '../../contexts/styles-inheritance-context';
-import { useStylesFields } from '../../hooks/use-styles-fields';
-import { StylesField } from '../styles-field';
 import { registerFieldIndicator } from '../../field-indicators-registry';
+import { useStylesFields } from '../../hooks/use-styles-fields';
 import { StylesInheritanceIndicator } from '../../styles-inheritance/components/styles-inheritance-indicator';
+import { StylesField } from '../styles-field';
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '@elementor/editor-responsive' );
