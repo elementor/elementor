@@ -17,10 +17,10 @@ class ScreenViewTracking {
 			return;
 		}
 
-		this.trackInitialPageView();
 		this.attachTabChangeTracking();
 	}
 
+<<<<<<< HEAD
 	static trackInitialPageView() {
 		const run = () => {
 			const screenData = this.getScreenData();
@@ -34,6 +34,11 @@ class ScreenViewTracking {
 		} else {
 			run();
 		}
+=======
+	static destroy() {
+		super.destroy();
+		this.trackedScreens.clear();
+>>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 	}
 
 	static getScreenData() {
@@ -43,7 +48,11 @@ class ScreenViewTracking {
 		const hash = window.location.hash;
 
 		let screenId = '';
+<<<<<<< HEAD
 		let screenType = SCREEN_TYPES.APP_SCREEN;
+=======
+		let screenType = '';
+>>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 
 		if ( page ) {
 			screenId = page;
@@ -119,13 +128,23 @@ class ScreenViewTracking {
 			return;
 		}
 
+<<<<<<< HEAD
 		const observer = new MutationObserver( ( mutations ) => {
 			for ( const mutation of mutations ) {
 				if ( 'childList' === mutation.type ) {
+=======
+		this.addEventListenerTracked(
+			wrapper,
+			'click',
+			( event ) => {
+				const navTab = event.target.closest( SCREEN_SELECTORS.NAV_TAB );
+				if ( navTab && ! navTab.classList.contains( 'nav-tab-active' ) ) {
+>>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 					const screenData = this.getScreenData();
 					if ( screenData ) {
 						this.trackScreen( screenData.screenId, screenData.screenType );
 					}
+<<<<<<< HEAD
 					break;
 				}
 
@@ -138,6 +157,8 @@ class ScreenViewTracking {
 						}
 						break;
 					}
+=======
+>>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 				}
 			}
 		} );
@@ -160,6 +181,7 @@ class ScreenViewTracking {
 	}
 
 	static attachSettingsTabTracking() {
+<<<<<<< HEAD
 		const observer = new MutationObserver( () => {
 			const screenData = this.getScreenData();
 			if ( screenData ) {
@@ -168,11 +190,28 @@ class ScreenViewTracking {
 		} );
 
 		const settingsPages = document.querySelectorAll( SCREEN_SELECTORS.SETTINGS_FORM_PAGE );
+=======
+		const settingsPages = document.querySelectorAll( SCREEN_SELECTORS.SETTINGS_FORM_PAGE );
+
+		if ( 0 === settingsPages.length ) {
+			return;
+		}
+
+>>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 		settingsPages.forEach( ( page ) => {
-			observer.observe( page, {
-				attributes: true,
-				attributeFilter: [ 'class' ],
-			} );
+			this.addObserver(
+				page,
+				{
+					attributes: true,
+					attributeFilter: [ 'class' ],
+				},
+				() => {
+					const screenData = this.getScreenData();
+					if ( screenData ) {
+						this.trackScreen( screenData.screenId, screenData.screenType );
+					}
+				},
+			);
 		} );
 	}
 

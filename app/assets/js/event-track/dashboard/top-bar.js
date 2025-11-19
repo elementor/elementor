@@ -21,19 +21,22 @@ class TopBarTracking {
 			return;
 		}
 
-		const observer = new MutationObserver( ( mutations, observerInstance ) => {
-			const foundTopBar = document.querySelector( TOP_BAR_SELECTORS.TOP_BAR_ROOT );
+		const observer = this.addObserver(
+			document.body,
+			{
+				childList: true,
+				subtree: true,
+			},
+			() => {
+				const foundTopBar = document.querySelector( TOP_BAR_SELECTORS.TOP_BAR_ROOT );
 
-			if ( foundTopBar ) {
-				this.attachTopBarTracking( foundTopBar );
-				observerInstance.disconnect();
-			}
-		} );
-
-		observer.observe( document.body, {
-			childList: true,
-			subtree: true,
-		} );
+				if ( foundTopBar ) {
+					this.attachTopBarTracking( foundTopBar );
+					observer.disconnect();
+					clearTimeout( timeoutId );
+				}
+			},
+		);
 
 		setTimeout( () => {
 			observer.disconnect();

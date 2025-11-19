@@ -170,6 +170,12 @@ export default function ItemHeader( props ) {
 			} );
 			tracking.trackKitdemoApplyClicked( props.model.id, props.model.title, props.model.accessTier );
 		},
+<<<<<<< HEAD
+=======
+		onUpgrade: () => {
+			tracking.trackKitdemoUpgradeClicked( props.model.id, props.model.title, subscriptionPlan.label );
+		},
+>>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 	} );
 
 	const downloadButton = useMemo( () => {

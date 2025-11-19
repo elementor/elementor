@@ -24,11 +24,23 @@ export default function ImportProcess() {
 		dispatch,
 	} );
 	const navigate = useNavigate();
+<<<<<<< HEAD
+=======
+	const { attemptRedirect } = useReturnToRedirect( data.returnTo );
+>>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 
 	useEffect( () => {
 		if ( ! error ) {
 			if ( IMPORT_PROCESSING_STATUS.DONE === status ) {
+<<<<<<< HEAD
 				AppsEventTracking.sendKitImportStatus();
+=======
+				AppsEventTracking.sendKitImportStatus( null );
+				if ( attemptRedirect() ) {
+					return;
+				}
+
+>>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 				navigate( 'import-customization/complete' );
 			} else if ( ! isProcessing ) {
 				navigate( 'import-customization', { replace: true } );
@@ -36,7 +48,11 @@ export default function ImportProcess() {
 		} else {
 			AppsEventTracking.sendKitImportStatus( error );
 		}
+<<<<<<< HEAD
 	}, [ status, error, navigate, isProcessing ] );
+=======
+	}, [ status, error, navigate, isProcessing, attemptRedirect ] );
+>>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 
 	const handleTryAgain = () => {
 		importKit();

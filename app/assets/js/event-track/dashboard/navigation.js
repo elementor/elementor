@@ -37,6 +37,7 @@ class NavigationTracking {
 	}
 
 	static attachMenuTracking( menuElement, menuName ) {
+<<<<<<< HEAD
 		const topLevelLink = menuElement.querySelector( 'a.menu-top' );
 		const submenuContainer = menuElement.querySelector( ELEMENTOR_MENU_SELECTORS.SUBMENU_CONTAINER );
 
@@ -81,22 +82,29 @@ class NavigationTracking {
 			childList: true,
 			subtree: false,
 		} );
+=======
+		this.addEventListenerTracked(
+			menuElement,
+			'click',
+			( event ) => {
+				this.handleMenuClick( event, menuName );
+			},
+		);
+>>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 	}
 
-	static handleTopLevelClick( event ) {
-		const link = event.currentTarget;
+	static handleMenuClick( event, menuName ) {
+		const link = event.target.closest( 'a' );
+
+		if ( ! link ) {
+			return;
+		}
+
+		const isTopLevel = link.classList.contains( 'menu-top' );
 		const itemId = this.extractItemId( link );
 		const area = this.determineNavArea( link );
 
-		WpDashboardTracking.trackNavClicked( itemId, null, area );
-	}
-
-	static handleSubmenuClick( event, menuName ) {
-		const link = event.currentTarget;
-		const itemId = this.extractItemId( link );
-		const area = this.determineNavArea( link );
-
-		WpDashboardTracking.trackNavClicked( itemId, menuName, area );
+		WpDashboardTracking.trackNavClicked( itemId, isTopLevel ? null : menuName, area );
 	}
 
 	static extractItemId( link ) {

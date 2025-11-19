@@ -83,6 +83,11 @@ export class AppsEventTracking {
 	}
 
 	static sendKitImportStatus( error = null ) {
+<<<<<<< HEAD
+=======
+		const isError = !! error;
+
+>>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 		return this.dispatchEvent( EVENTS_MAP.KIT_IMPORT_STATUS, {
 			kit_import_status: ! error,
 			...( error && { kit_import_error: error.message } ),
