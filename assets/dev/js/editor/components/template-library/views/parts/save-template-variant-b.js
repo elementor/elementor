@@ -9,33 +9,45 @@ const TemplateLibrarySaveTemplateVariantBView = TemplateLibrarySaveTemplateView.
 		return _.extend( TemplateLibrarySaveTemplateView.prototype.ui.apply( this, arguments ), {
 			selectFolderLink: '.select-folder-link',
 			cloudAccountBadge: '.cloud-account-badge',
+			connect: '#elementor-template-library-connect__badge-variant-b',
 		} );
 	},
 
 	events() {
 		return _.extend( TemplateLibrarySaveTemplateView.prototype.events.apply( this, arguments ), {
-			'input @ui.selectFolderLink': 'onEllipsisIconClick',
+			'click @ui.selectFolderLink': 'onEllipsisIconClick',
+			'mouseenter @ui.upgradeBadge': 'showInfoTip',
 		} );
 	},
 
-	handleElementorConnect() {
-		elementor.templates.eventManager.sendPageViewEvent( {
-			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.saveModalSelectConnect,
-		} );
+	showInfoTip() {
+		if ( this.infoTipDialog ) {
+			this.infoTipDialog.hide();
+		}
 
-		this.ui.connect.elementorConnect( {
-			success: () => {
-				elementor.config.library_connect.is_connected = true;
+		const message = elementor.templates.hasCloudLibraryQuota()
+			? __( 'Upgrade your subscription to get more space and reuse saved assets across all your sites.', 'elementor' )
+			: __( 'Upgrade your subscription to access Cloud Templates and reuse saved assets across all your sites.', 'elementor' );
 
-				$e.run( 'library/close' );
-				elementor.notifications.showToast( {
-					message: __( 'Connected successfully.', 'elementor' ),
-				} );
+		const goLink = elementor.templates.hasCloudLibraryQuota()
+			? 'https://go.elementor.com/go-pro-cloud-templates-save-to-100-usage-notice'
+			: 'https://go.elementor.com/go-pro-cloud-templates-save-to-free-tooltip/';
+
+		this.infoTipDialog = elementor.dialogsManager.createWidget( 'buttons', {
+			id: 'elementor-library--infotip__dialog',
+			effects: {
+				show: 'show',
+				hide: 'hide',
 			},
-			error: () => {
-				elementor.config.library_connect.is_connected = false;
+			position: {
+				of: this.ui.upgradeBadge,
+				at: 'top-75',
 			},
-		} );
+		} )
+			.setMessage( message );
+
+		this.infoTipDialog.getElements( 'header' ).remove();
+		this.infoTipDialog.show();
 	},
 } );
 

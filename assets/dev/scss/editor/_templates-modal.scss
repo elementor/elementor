@@ -1575,6 +1575,55 @@ label.elementor-template-library-order-label {
 						}
 					}
 
+					.upgrade-badge {
+						display: none;
+						border: none;
+						padding: 0;
+						border-radius: 0;
+						margin-inline-start: 0;
+						background: transparent;
+						transition: background-color 0.2s;
+						padding: 3px 8px;
+
+						&:hover {
+							background-color: var(--e-a-btn-bg-primary-hover);
+							border-radius: 3px;
+						}
+
+						a {
+							color: var(--e-a-btn-bg-accent);
+							text-decoration: none;
+							display: flex;
+							align-items: center;
+							gap: 4px;
+							font-size: 14px;
+							font-weight: 500;
+
+							i {
+								margin: 0;
+								font-size: 14px;
+							}
+						}
+					}
+
+					.connect-badge {
+						display: none;
+
+						.connect-divider {
+							color: var(--e-a-color-txt-muted);
+							margin-inline: 5px;
+						}
+
+						a {
+							color: var(--e-a-color-primary-bold);
+							text-decoration: none;
+
+							&:hover {
+								text-decoration: underline;
+							}
+						}
+					}
+
 					.account-badge {
 						display: flex;
 						align-items: center;
@@ -1582,7 +1631,7 @@ label.elementor-template-library-order-label {
 						padding: 6px 12px;
 						border: none;
 						border-radius: 20px;
-						font-size: 12px;
+						font-size: 14px;
 						font-weight: 500;
 						cursor: pointer;
 						transition: opacity 0.2s;
@@ -1641,6 +1690,77 @@ label.elementor-template-library-order-label {
 
 			.cloud-folder-selection-dropdown {
 				inset-block-start: 70px;
+			}
+
+			.source-selections-input.cloud {
+				&:not(:has(.connect-badge)) {
+					.connect-badge {
+						display: none;
+					}
+				}
+
+				&:has(.connect-badge) {
+					.connect-badge {
+						display: inline;
+					}
+
+					.upgrade-badge {
+						display: none;
+					}
+
+					border-color: var(--e-a-border-color);
+
+					> i:first-of-type,
+					label,
+					.divider {
+						color: var(--e-a-color-txt-disabled);
+					}
+
+					input[type="checkbox"]::after {
+						background-color: var(--e-a-color-txt-disabled);
+					}
+				}
+			}
+
+			&.promotion,
+			&.max-capacity {
+				.source-selections-input.cloud {
+					border-color: var(--e-a-border-color);
+
+					> i:first-of-type,
+					label,
+					.divider {
+						color: var(--e-a-color-txt-disabled);
+					}
+
+					input[type="checkbox"]::after {
+						background-color: var(--e-a-color-txt-disabled);
+					}
+
+					.upgrade-badge {
+						display: inline-flex;
+					}
+
+					.ellipsis-container {
+						display: none;
+					}
+
+					.divider {
+						display: block;
+					}
+
+					input[type="checkbox"],
+					label {
+						pointer-events: none;
+					}
+				}
+			}
+
+			&.max-capacity {
+				.quota-cta {
+					display: block;
+					margin-block-start: 15px;
+				}
 			}
 
 			#elementor-template-library-save-template-submit {

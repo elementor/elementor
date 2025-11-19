@@ -32,6 +32,7 @@ export class EventManager {
 	}
 
 	getSaveTemplateExperimentVariant() {
+		return 'B';
 		return this.getExperimentVariant( CLOUD_TEMPLATES_EXPERIMENTS.SAVE_TEMPLATE );
 	}
 

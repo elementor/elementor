@@ -569,23 +569,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<i class="eicon-library-cloud-empty" aria-hidden="true"></i>
 					<label for="cloud-variant-b"><?php echo esc_html__( 'Cloud Templates', 'elementor' ); ?></label>
 					<span class="divider">/</span>
-					<# if ( elementor.config.library_connect.is_connected ) { #>
-						<#
-						const goLink = elementor.templates.hasCloudLibraryQuota()
-						? 'https://go.elementor.com/go-pro-cloud-templates-save-to-100-usage-badge'
-						: 'https://go.elementor.com/go-pro-cloud-templates-save-to-free-badge/';
-						#>
-						<div class="ellipsis-container">
-							<?php echo esc_html__( 'Select folder', 'elementor' ); ?>
-						</div>
-					<# } else { #>
-						<span class="connect-badge">
-							<span class="connect-divider">|</span>
-							<a id="elementor-template-library-connect__badge" href="{{{ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url }}}">
-								<?php echo esc_html__( 'Connect', 'elementor' ); ?>
-							</a>
-						</span>
-					<# } #>
+					<div class="ellipsis-container">
+						<?php echo esc_html__( 'Select folder', 'elementor' ); ?>
+					</div>
 					<span class="selected-folder">
 						<span class="selected-folder-text"></span>
 						<i class="eicon-editor-close" aria-hidden="true"></i>
@@ -596,17 +582,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 								? 'https://go.elementor.com/go-pro-cloud-templates-save-to-100-usage-badge'
 								: 'https://go.elementor.com/go-pro-cloud-templates-save-to-free-badge/';
 						#>
-						<button class="account-badge cloud-account-badge" type="button" aria-hidden="true" title="<?php esc_attr_e( 'Only {email} Elementor account can access Cloud Templates from any connected site.', 'elementor' ); ?>">
-							<i class="eicon-lock" aria-hidden="true"></i>
-							<?php echo esc_html__( 'My Elementor account', 'elementor' ); ?>
-						</button>
-						<i class="eicon-info upgrade-tooltip" aria-hidden="true"></i>
+					<span class="upgrade-badge">
+						<a href="{{{ goLink }}}" target="_blank">
+							<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
+						</a>
+					</span>
 					<# } else { #>
-						<button class="account-badge cloud-account-badge" type="button" id="elementor-template-library-connect__badge-variant-b" aria-hidden="true" title="<?php esc_attr_e( 'Only {email} Elementor account can access Cloud Templates from any connected site.', 'elementor' ); ?>">
-							<i class="eicon-lock" aria-hidden="true"></i>
-							<?php echo esc_html__( 'My Elementor account', 'elementor' ); ?>
-						</button>
+					<span class="connect-badge">
+						<a id="elementor-template-library-connect__badge-variant-b" href="{{{ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url }}}">
+							<?php echo esc_html__( 'Connect', 'elementor' ); ?>
+						</a>
+					</span>
 					<# } #>
+					<button class="account-badge cloud-account-badge" type="button" id="elementor-template-library-connect__badge-variant-b-button" aria-hidden="true" title="<?php esc_attr_e( 'Only {email} Elementor account can access Cloud Templates from any connected site.', 'elementor' ); ?>">
+						<i class="eicon-lock" aria-hidden="true"></i>
+						<?php echo esc_html__( 'My Elementor account', 'elementor' ); ?>
+					</button>
 				</div>
 				<div class="source-selections-input local variant-b">
 					<input type="checkbox" id="local-variant-b" name="local" value="local">

@@ -31,7 +31,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			connect: '#elementor-template-library-connect__badge',
 			connectBadge: '.source-selections-input.cloud .connect-badge',
 			cloudFormInputs: '.cloud-library-form-inputs',
-			upgradeBadge: '.source-selections-input.cloud upgrade-badge',
+			upgradeBadge: '.source-selections-input.cloud .upgrade-badge',
 		};
 	},
 
@@ -45,13 +45,12 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
 			'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
 			'mouseenter @ui.infoIcon': 'showInfoTip',
-			'mouseenter @ui.connect': 'showConnectInfoTip',
+			'mouseenter @ui.connectBadge': 'showConnectInfoTip',
 			'input @ui.templateNameInput': 'onTemplateNameInputChange',
 		};
 	},
 
 	onRender() {
-		console.log('!_RENDER_!')
 		if ( 'undefined' === typeof elementorAppConfig[ 'cloud-library' ]?.quota && this.templateHelpers()?.canSaveToCloud ) {
 			elementor.templates.layout.showLoadingView();
 
@@ -375,7 +374,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	onSelectedFolderTextClick() {
-		console.log('!_ON_SELECT_!');
 		if ( ! this.folderCollectionView ) {
 			this.onEllipsisIconClick();
 
@@ -636,7 +634,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	showConnectInfoTip() {
-		console.log('!_CONECT_MOUSE_!')
 		if ( this.connectInfoTipDialog ) {
 			this.connectInfoTipDialog.hide();
 		}
@@ -675,7 +672,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	},
 
 	handleElementorConnect() {
-		console.log('!_THIS_UI_!', this.ui)
 		elementor.templates.eventManager.sendPageViewEvent( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.saveModalSelectConnect,
 		} );
