@@ -10,7 +10,7 @@ use Elementor\Modules\Components\Component_Lock_Manager;
 use Elementor\Modules\Components\PropTypes\Component_Overridable_Prop_Type;
 use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 use Elementor\Modules\Components\Transformers\Component_Instance_Transformer;
-
+use Elementor\Modules\Components\Transformers\Component_Overridable_Transformer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -69,7 +69,7 @@ class Module extends BaseModule {
 		register_post_type( Component_Document::TYPE, [
 			'label'    => Component_Document::get_title(),
 			'labels'   => Component_Document::get_labels(),
-			'public'   => false,
+			'public'   => true,
 			'supports' => Component_Document::get_supported_features(),
 		] );
 	}

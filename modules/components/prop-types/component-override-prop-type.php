@@ -66,7 +66,7 @@ class Component_Override_Prop_type extends Plain_Prop_Type {
 			'value' => $prop_type->sanitize( $value['value'] ),
 		];
 	}
-	public function set_component_overridable_props( array $component_overridable_props ) {
+	public function set_component_overridable_props( $component_overridable_props ) {
 		$this->settings['component_overridable_props'] = $component_overridable_props;
 
 		return $this;

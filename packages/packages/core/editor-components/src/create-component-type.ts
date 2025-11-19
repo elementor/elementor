@@ -13,7 +13,7 @@ import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
-import { type ExtendedWindow } from './types';
+import { ComponentInstancePropValue, type ExtendedWindow } from './types';
 import { trackComponentEvent } from './utils/tracking';
 
 type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
@@ -50,12 +50,12 @@ function createComponentView(
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
-			if ( settings.component ) {
-				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection( settings.component );
+			if ( settings.component_instance ) {
+				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection( settings.component_instance );
 
 				this.collection.models.forEach( setInactiveRecursively );
 
-				settings.component = '<template data-children-placeholder></template>';
+				settings.component_instance = '<template data-children-placeholder></template>';
 			}
 
 			return settings;
@@ -79,7 +79,9 @@ function createComponentView(
 		}
 
 		getComponentId() {
-			return this.options?.model?.get( 'settings' )?.get( 'component' ) as NumberPropValue;
+			const componentInstance = (this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstancePropValue< number >)?.value;
+
+			return componentInstance.component_id;
 		}
 
 		getContextMenuGroups() {

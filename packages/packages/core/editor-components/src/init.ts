@@ -81,5 +81,5 @@ export function init() {
 		loadComponentsStyles( ( config?.elements as V1ElementData[] ) ?? [] );
 	} );
 
-	settingsTransformersRegistry.register( 'component-id', componentIdTransformer );
+	settingsTransformersRegistry.register( 'component-instance', componentIdTransformer );
 }

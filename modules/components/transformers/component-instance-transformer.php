@@ -14,11 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Component_Instance_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
-		if ( ! isset( $value['component_id'] ) || ! isset( $value['component_id']['value'] ) || ! is_numeric( $value['component_id']['value'] ) ) {
-			throw new \Exception( 'component id must be a number' );
-		}
-
-		$component_id = $value['component_id']['value'];
+		$component_id = $value['component_id'];
 
 		$document = Plugin::$instance->documents->get_doc_for_frontend( $component_id );
 

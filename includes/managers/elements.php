@@ -69,7 +69,7 @@ class Elements_Manager {
 	 */
 	public function create_element_instance( array $element_data, array $element_args = [], ?Element_Base $element_type = null ) {
 		if ( null === $element_type ) {
-			$element_type = $this->get_element( $element_data['elType'], $element_data['widgetType'] );
+			$element_type = $this->get_element( $element_data['elType'],  isset( $element_data['widgetType'] ) ? $element_data['widgetType'] : null );
 		}
 
 		if ( ! $element_type ) {
