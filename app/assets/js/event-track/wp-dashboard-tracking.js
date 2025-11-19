@@ -1,22 +1,12 @@
 import NavigationTracking from './dashboard/navigation';
-<<<<<<< HEAD
 import TopBarTracking from './dashboard/top-bar';
 import ScreenViewTracking from './dashboard/screen-view';
 import ActionControlTracking from './dashboard/action-control';
-=======
-import PluginActions from './dashboard/plugin-actions';
-import PromotionTracking from './dashboard/promotion';
-import ScreenViewTracking from './dashboard/screen-view';
-import TopBarTracking from './dashboard/top-bar';
-import MenuPromotionTracking from './dashboard/menu-promotion';
->>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 
 const SESSION_TIMEOUT_MINUTES = 30;
 const MINUTE_MS = 60 * 1000;
 const SESSION_TIMEOUT = SESSION_TIMEOUT_MINUTES * MINUTE_MS;
 const ACTIVITY_CHECK_INTERVAL = 1 * MINUTE_MS;
-const SESSION_STORAGE_KEY = 'elementor_wpdash_session';
-const PENDING_NAV_CLICK_KEY = 'elementor_wpdash_pending_nav';
 
 export const CONTROL_TYPES = {
 	BUTTON: 'button',
@@ -46,88 +36,28 @@ export default class WpDashboardTracking {
 	static sessionEnded = false;
 	static navItemsVisited = new Set();
 	static activityCheckInterval = null;
+	static config = null;
+	static canSendEvents = false;
 	static initialized = false;
-	static navigationListeners = [];
-	static isNavigatingToElementor = false;
 
 	static init() {
 		if ( this.initialized ) {
 			return;
 		}
 
-		this.restoreOrCreateSession();
+		this.sessionStartTime = Date.now();
+		this.lastActivityTime = Date.now();
+		this.sessionEnded = false;
+		this.navItemsVisited = new Set();
+		this.config = elementorCommon?.config || {};
+		const editorEvents = this.config.editor_events || {};
+		this.canSendEvents = editorEvents.can_send_events || false;
 
 		if ( this.isEventsManagerAvailable() ) {
 			this.startSessionMonitoring();
 			this.attachActivityListeners();
-			this.attachNavigationListener();
 			this.initialized = true;
 		}
-	}
-
-	static restoreOrCreateSession() {
-		const storedSession = this.getStoredSession();
-
-		if ( storedSession ) {
-			this.sessionStartTime = storedSession.sessionStartTime;
-			this.navItemsVisited = new Set( storedSession.navItemsVisited );
-			this.lastActivityTime = Date.now();
-			this.sessionEnded = false;
-		} else {
-			this.sessionStartTime = Date.now();
-			this.lastActivityTime = Date.now();
-			this.sessionEnded = false;
-			this.navItemsVisited = new Set();
-		}
-
-		this.processPendingNavClick();
-		this.saveSessionToStorage();
-	}
-
-	static processPendingNavClick() {
-		try {
-			const pendingNav = sessionStorage.getItem( PENDING_NAV_CLICK_KEY );
-
-			if ( pendingNav ) {
-				const { itemId, rootItem, area } = JSON.parse( pendingNav );
-				this.navItemsVisited.add( itemId );
-
-				const properties = {
-					wpdash_nav_item_id: itemId,
-					wpdash_nav_area: area,
-				};
-
-				if ( rootItem ) {
-					properties.wpdash_nav_item_root = rootItem;
-				}
-
-				this.dispatchEvent( 'wpdash_nav_clicked', properties, { send_immediately: true } );
-				sessionStorage.removeItem( PENDING_NAV_CLICK_KEY );
-			}
-		} catch ( error ) {
-			sessionStorage.removeItem( PENDING_NAV_CLICK_KEY );
-		}
-	}
-
-	static getStoredSession() {
-		try {
-			const stored = sessionStorage.getItem( SESSION_STORAGE_KEY );
-			return stored ? JSON.parse( stored ) : null;
-		} catch ( error ) {
-			return null;
-		}
-	}
-
-	static saveSessionToStorage() {
-		const sessionData = {
-			sessionStartTime: this.sessionStartTime,
-			navItemsVisited: Array.from( this.navItemsVisited ),
-		};
-		sessionStorage.setItem( SESSION_STORAGE_KEY, JSON.stringify( sessionData ) );
-	}
-
-	static clearStoredSession() {
-		sessionStorage.removeItem( SESSION_STORAGE_KEY );
 	}
 
 	static isEventsManagerAvailable() {
@@ -135,20 +65,21 @@ export default class WpDashboardTracking {
 			'function' === typeof elementorCommon.eventsManager.dispatchEvent;
 	}
 
-	static canSendEvents() {
-		return elementorCommon?.config?.editor_events?.can_send_events || false;
-	}
-
-	static dispatchEvent( eventName, properties = {}, options = {} ) {
-		if ( ! this.isEventsManagerAvailable() || ! this.canSendEvents() ) {
+	static dispatchEvent( eventName, properties = {} ) {
+		if ( ! this.canSendEvents || ! this.isEventsManagerAvailable() ) {
 			return;
 		}
 
-		elementorCommon.eventsManager.dispatchEvent( eventName, properties, options );
+		try {
+			elementorCommon.eventsManager.dispatchEvent( eventName, properties );
+		} catch ( error ) {
+			this.canSendEvents = false;
+		}
 	}
 
 	static updateActivity() {
 		this.lastActivityTime = Date.now();
+		this.sessionEnded = false;
 	}
 
 	static startSessionMonitoring() {
@@ -157,101 +88,17 @@ export default class WpDashboardTracking {
 		}, ACTIVITY_CHECK_INTERVAL );
 
 		window.addEventListener( 'beforeunload', () => {
-			if ( ! this.sessionEnded && ! this.isNavigatingToElementor ) {
-				this.trackSessionEnd( 'tab_closed' );
-			}
+			this.trackSessionEnd( 'page_unload' );
 		} );
 
 		document.addEventListener( 'visibilitychange', () => {
-			if ( ! this.sessionEnded && document.hidden ) {
+			if ( document.hidden ) {
 				const timeSinceLastActivity = Date.now() - this.lastActivityTime;
 				if ( timeSinceLastActivity > SESSION_TIMEOUT ) {
 					this.trackSessionEnd( 'tab_inactive' );
 				}
 			}
 		} );
-	}
-
-	static isElementorPage( url ) {
-		try {
-			const urlObj = new URL( url, window.location.origin );
-			const params = urlObj.searchParams;
-
-			const page = params.get( 'page' );
-			const postType = params.get( 'post_type' );
-			const action = params.get( 'action' );
-
-			const elementorPages = [ 'elementor', 'go_knowledge_base_site', 'e-form-submissions' ];
-			const elementorPostTypes = [ 'elementor_library', 'e-floating-buttons' ];
-
-			return ( page && elementorPages.some( ( p ) => page.includes( p ) ) ) ||
-				( postType && elementorPostTypes.includes( postType ) ) ||
-				( action && action.includes( 'elementor' ) );
-		} catch ( error ) {
-			return false;
-		}
-	}
-
-	static isPluginsPage( url ) {
-		try {
-			const urlObj = new URL( url, window.location.origin );
-			return urlObj.pathname.includes( 'plugins.php' );
-		} catch ( error ) {
-			return false;
-		}
-	}
-
-	static isNavigatingAwayFromElementor( targetUrl ) {
-		if ( ! targetUrl ) {
-			return false;
-		}
-
-		if ( targetUrl.startsWith( '#' ) ) {
-			return false;
-		}
-
-		return ! this.isElementorPage( targetUrl );
-	}
-
-	static isLinkOpeningInNewTab( link ) {
-		const target = link.getAttribute( 'target' );
-		return '_blank' === target || '_new' === target;
-	}
-
-	static attachNavigationListener() {
-		const handleLinkClick = ( event ) => {
-			const link = event.target.closest( 'a' );
-			if ( link && link.href ) {
-				if ( this.isLinkOpeningInNewTab( link ) ) {
-					return;
-				}
-
-				if ( ! this.sessionEnded && this.isNavigatingAwayFromElementor( link.href ) ) {
-					this.trackSessionEnd( 'navigate_away' );
-				} else if ( this.isElementorPage( link.href ) ) {
-					this.isNavigatingToElementor = true;
-				}
-			}
-		};
-
-		const handleFormSubmit = ( event ) => {
-			const form = event.target;
-			if ( form.action ) {
-				if ( ! this.sessionEnded && this.isNavigatingAwayFromElementor( form.action ) ) {
-					this.trackSessionEnd( 'navigate_away' );
-				} else if ( this.isElementorPage( form.action ) ) {
-					this.isNavigatingToElementor = true;
-				}
-			}
-		};
-
-		document.addEventListener( 'click', handleLinkClick, true );
-		document.addEventListener( 'submit', handleFormSubmit, true );
-
-		this.navigationListeners.push(
-			{ type: 'click', handler: handleLinkClick },
-			{ type: 'submit', handler: handleFormSubmit },
-		);
 	}
 
 	static checkSessionTimeout() {
@@ -274,26 +121,15 @@ export default class WpDashboardTracking {
 
 	static formatDuration( milliseconds ) {
 		const totalSeconds = Math.floor( milliseconds / 1000 );
-<<<<<<< HEAD
 		const minutes = Math.floor( totalSeconds / 60 );
 		const seconds = totalSeconds % 60;
 		return `${ minutes }:${ seconds.toString().padStart( 2, '0' ) }`;
-=======
-		return Number( ( totalSeconds ).toFixed( 2 ) );
->>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 	}
 
 	static trackNavClicked( itemId, rootItem = null, area = NAV_AREAS.LEFT_MENU ) {
-		if ( ! this.initialized ) {
-			const pendingNav = { itemId, rootItem, area };
-			sessionStorage.setItem( PENDING_NAV_CLICK_KEY, JSON.stringify( pendingNav ) );
-			return;
-		}
-
 		this.updateActivity();
 
 		this.navItemsVisited.add( itemId );
-		this.saveSessionToStorage();
 
 		const properties = {
 			wpdash_nav_item_id: itemId,
@@ -318,11 +154,11 @@ export default class WpDashboardTracking {
 		this.dispatchEvent( 'wpdash_screen_viewed', properties );
 	}
 
-	static trackActionControl( controlIdentifier, controlType ) {
+	static trackActionControl( controlData, controlType ) {
 		this.updateActivity();
 
 		const properties = {
-			wpdash_action_control_interacted: controlIdentifier,
+			wpdash_action_control_interacted: controlData,
 			wpdash_control_type: controlType,
 		};
 
@@ -348,11 +184,6 @@ export default class WpDashboardTracking {
 
 		this.sessionEnded = true;
 
-		if ( this.activityCheckInterval ) {
-			clearInterval( this.activityCheckInterval );
-			this.activityCheckInterval = null;
-		}
-
 		const duration = Date.now() - this.sessionStartTime;
 
 		const properties = {
@@ -363,60 +194,20 @@ export default class WpDashboardTracking {
 		};
 
 		this.dispatchEvent( 'wpdash_session_end_state', properties );
-		this.clearStoredSession();
 	}
 
 	static destroy() {
 		if ( this.activityCheckInterval ) {
 			clearInterval( this.activityCheckInterval );
 		}
-<<<<<<< HEAD
-=======
-
-		this.navigationListeners.forEach( ( { type, handler } ) => {
-			document.removeEventListener( type, handler, true );
-		} );
-
-		this.navigationListeners = [];
-
-		TopBarTracking.destroy();
-		ScreenViewTracking.destroy();
-		PromotionTracking.destroy();
-		MenuPromotionTracking.destroy();
-
->>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 		this.initialized = false;
 	}
 }
 
 window.addEventListener( 'elementor/admin/init', () => {
-	const currentUrl = window.location.href;
-	const isPluginsPage = WpDashboardTracking.isPluginsPage( currentUrl );
-	const isElementorPage = WpDashboardTracking.isElementorPage( currentUrl );
-
-	if ( isPluginsPage ) {
-		PluginActions.init();
-	}
-
+	WpDashboardTracking.init();
 	NavigationTracking.init();
-<<<<<<< HEAD
 	TopBarTracking.init();
 	ScreenViewTracking.init();
 	ActionControlTracking.init();
-=======
-
-	if ( isElementorPage ) {
-		WpDashboardTracking.init();
-		TopBarTracking.init();
-		ScreenViewTracking.init();
-		PromotionTracking.init();
-		MenuPromotionTracking.init();
-	}
-} );
-
-window.addEventListener( 'beforeunload', () => {
-	NavigationTracking.destroy();
-	PluginActions.destroy();
-	WpDashboardTracking.destroy();
->>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 } );

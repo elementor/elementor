@@ -37,10 +37,6 @@ export const IMPORT_PROCESSING_STATUS = {
 export function useImportKit( { data, includes, customization, isProcessing, dispatch } ) {
 	const [ status, setImportStatus ] = useState( IMPORT_PROCESSING_STATUS.PENDING );
 	const [ error, setError ] = useState( null );
-<<<<<<< HEAD
-=======
-	const [ startTime, setStartTime ] = useState( null );
->>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 
 	const runImportRunners = async () => {
 		setImportStatus( IMPORT_PROCESSING_STATUS.IN_PROGRESS );
@@ -70,16 +66,6 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 			}
 		}
 
-<<<<<<< HEAD
-=======
-		if ( startTime ) {
-			const endTime = Date.now();
-			const millisecondsToSeconds = 1000;
-			const importDuration = ( endTime - startTime ) / millisecondsToSeconds;
-			dispatch( { type: 'SET_DURATION', payload: Number( importDuration.toFixed( 2 ) ) } );
-		}
-
->>>>>>> e7570d9a08 (Internal: Update kits library and dashboard flows [ED-21265] (#33168))
 		setImportStatus( IMPORT_PROCESSING_STATUS.DONE );
 		dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.COMPLETED } );
 	};
