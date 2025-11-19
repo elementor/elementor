@@ -21,14 +21,15 @@ const IconWrapper = styled( Box )`
 	cursor: pointer;
 	width: 16px;
 	height: 16px;
+	margin-inline: ${ ( { theme } ) => theme.spacing( 0.5 ) };
 
 	&:before {
 		content: '';
+		display: block;
 		position: absolute;
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%) rotate(45deg);
-		display: block;
 		width: 5px;
 		height: 5px;
 		border-radius: 2px;
@@ -54,14 +55,13 @@ const IconContainer = styled( Box )`
 	opacity: 0;
 	transition: opacity 0.2s ease-in-out;
 	
-
 	& > svg {
 		position: absolute;
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
-		width: 10px;
-		height: 10px;
+		width: 8px;
+		height: 8px;
 		fill: ${ ( { theme } ) => theme.palette.primary.contrastText };
 	}
 `;
