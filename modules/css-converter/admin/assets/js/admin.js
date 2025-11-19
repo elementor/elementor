@@ -6,6 +6,58 @@ import { App } from './app';
 
 const injectStylesIntoShadow = ( shadowRoot ) => {
 	const injectedStyleIds = new Set();
+	const injectedStyleHashes = new Set();
+
+	const getStyleIdentifier = ( styleEl ) => {
+		return styleEl.id || 
+			styleEl.getAttribute( 'data-emotion' ) || 
+			styleEl.getAttribute( 'data-s' ) ||
+			styleEl.textContent?.substring( 0, 100 ) ||
+			'';
+	};
+
+	const getStyleHash = ( textContent ) => {
+		if ( ! textContent ) return '';
+		let hash = 0;
+		for ( let i = 0; i < Math.min( textContent.length, 200 ); i++ ) {
+			const char = textContent.charCodeAt( i );
+			hash = ( ( hash << 5 ) - hash ) + char;
+			hash = hash & hash;
+		}
+		return hash.toString();
+	};
+
+	const injectStyleElement = ( styleEl ) => {
+		const styleId = getStyleIdentifier( styleEl );
+		const textContent = styleEl.textContent || '';
+		const styleHash = getStyleHash( textContent );
+
+		if ( ! styleId && ! textContent ) {
+			return;
+		}
+
+		if ( injectedStyleIds.has( styleId ) || injectedStyleHashes.has( styleHash ) ) {
+			return;
+		}
+
+		const isMuiStyle = textContent.includes( 'Mui' ) || 
+			textContent.includes( 'eui-' ) || 
+			styleEl.id?.includes( 'emotion' ) ||
+			styleEl.getAttribute( 'data-emotion' ) ||
+			styleEl.getAttribute( 'data-s' ) ||
+			styleEl.id?.includes( 'mui' );
+
+		if ( isMuiStyle || styleId ) {
+			const clonedStyle = styleEl.cloneNode( true );
+			shadowRoot.appendChild( clonedStyle );
+			if ( styleId ) {
+				injectedStyleIds.add( styleId );
+			}
+			if ( styleHash ) {
+				injectedStyleHashes.add( styleHash );
+			}
+		}
+	};
 
 	const injectStyleSheet = ( styleSheet ) => {
 		try {
@@ -57,28 +109,28 @@ const injectStylesIntoShadow = ( shadowRoot ) => {
 		}
 	} );
 
-	const styleElements = document.querySelectorAll( 'style[data-emotion], style[id*="mui"], style[id*="elementor"], style[id*="emotion"]' );
-	styleElements.forEach( ( styleEl ) => {
-		const styleId = styleEl.id || styleEl.getAttribute( 'data-emotion' ) || styleEl.textContent?.substring( 0, 50 );
-		if ( styleId && ! injectedStyleIds.has( styleId ) ) {
-			const clonedStyle = styleEl.cloneNode( true );
-			shadowRoot.appendChild( clonedStyle );
-			injectedStyleIds.add( styleId );
-		}
-	} );
-
 	const allStyleElements = document.querySelectorAll( 'style' );
-	allStyleElements.forEach( ( styleEl ) => {
-		const styleId = styleEl.id || styleEl.getAttribute( 'data-emotion' ) || styleEl.textContent?.substring( 0, 50 );
-		if ( styleId && ! injectedStyleIds.has( styleId ) ) {
-			const textContent = styleEl.textContent || '';
-			if ( textContent.includes( 'Mui' ) || textContent.includes( 'eui-' ) || styleEl.id?.includes( 'emotion' ) ) {
-				const clonedStyle = styleEl.cloneNode( true );
-				shadowRoot.appendChild( clonedStyle );
-				injectedStyleIds.add( styleId );
+	allStyleElements.forEach( injectStyleElement );
+
+	if ( typeof elementorV2 !== 'undefined' && elementorV2?.ui ) {
+		try {
+			const emotionCache = elementorV2.ui.__emotion_cache || 
+				elementorV2.ui.cache ||
+				( window.__EMOTION_CACHE__ );
+			
+			if ( emotionCache && emotionCache.sheet ) {
+				const emotionStyles = emotionCache.sheet.tags || [];
+				emotionStyles.forEach( ( tag ) => {
+					if ( tag && tag.textContent ) {
+						const styleEl = document.createElement( 'style' );
+						styleEl.textContent = tag.textContent;
+						injectStyleElement( styleEl );
+					}
+				} );
 			}
+		} catch ( e ) {
 		}
-	} );
+	}
 };
 
 const initializeApp = () => {
@@ -101,10 +153,13 @@ const initializeApp = () => {
 
 		scheduleStyleInjection();
 
+		setTimeout( scheduleStyleInjection, 50 );
 		setTimeout( scheduleStyleInjection, 100 );
+		setTimeout( scheduleStyleInjection, 250 );
 		setTimeout( scheduleStyleInjection, 500 );
 		setTimeout( scheduleStyleInjection, 1000 );
 		setTimeout( scheduleStyleInjection, 2000 );
+		setTimeout( scheduleStyleInjection, 3000 );
 
 		window.addEventListener( 'load', scheduleStyleInjection );
 
@@ -116,13 +171,21 @@ const initializeApp = () => {
 			childList: true,
 			subtree: true,
 			attributes: true,
-			attributeFilter: [ 'id', 'data-emotion' ],
+			attributeFilter: [ 'id', 'data-emotion', 'data-s' ],
 		} );
 
 		styleObserver.observe( document.body, {
 			childList: true,
 			subtree: true,
 		} );
+
+		const continuousInterval = setInterval( () => {
+			scheduleStyleInjection();
+		}, 500 );
+
+		setTimeout( () => {
+			clearInterval( continuousInterval );
+		}, 10000 );
 
 		render(
 			<DirectionProvider rtl={ isRTL }>
@@ -135,6 +198,7 @@ const initializeApp = () => {
 
 		requestAnimationFrame( () => {
 			scheduleStyleInjection();
+			requestAnimationFrame( scheduleStyleInjection );
 		} );
 	} else {
 		render(
