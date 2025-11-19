@@ -25,15 +25,11 @@ export default function ImportProcess() {
 	} );
 
 	const navigate = useNavigate();
-	const { attemptRedirect } = useReturnToRedirect( data.returnTo );
 
 	useEffect( () => {
 		if ( ! error ) {
 			if ( IMPORT_PROCESSING_STATUS.DONE === status ) {
 				AppsEventTracking.sendKitImportStatus( null );
-				if ( attemptRedirect() ) {
-					return;
-				}
 
 				navigate( 'import-customization/complete' );
 			} else if ( ! isProcessing ) {
@@ -42,7 +38,7 @@ export default function ImportProcess() {
 		} else {
 			AppsEventTracking.sendKitImportStatus( error );
 		}
-	}, [ status, error, navigate, isProcessing, attemptRedirect ] );
+	}, [ status, error, navigate, isProcessing ] );
 
 	const handleTryAgain = () => {
 		importKit();
