@@ -1,17 +1,25 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { ArrowDownSmallIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpSmallIcon } from '@elementor/icons';
 import { Grid, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type FieldProps } from '../../types';
+import { type DirectionFieldProps } from '../../types';
 
-export function Direction( { value, onChange }: FieldProps ) {
-	const availableDirections = [
-		{ key: 'top', label: __( 'From bottom', 'elementor' ), icon: <ArrowUpSmallIcon fontSize="tiny" /> },
-		{ key: 'bottom', label: __( 'From top', 'elementor' ), icon: <ArrowDownSmallIcon fontSize="tiny" /> },
-		{ key: 'left', label: __( 'From right', 'elementor' ), icon: <ArrowLeftIcon fontSize="tiny" /> },
-		{ key: 'right', label: __( 'From left', 'elementor' ), icon: <ArrowRightIcon fontSize="tiny" /> },
-	];
+export function Direction( { value, onChange, interactionType }: DirectionFieldProps ) {
+	const availableDirections = useMemo( () => {
+		return interactionType === 'in' ? [
+			{ key: 'top', label: __( 'From top', 'elementor' ), icon: <ArrowDownSmallIcon fontSize="tiny" /> },
+			{ key: 'bottom', label: __( 'From bottom', 'elementor' ), icon: <ArrowUpSmallIcon fontSize="tiny" /> },
+			{ key: 'left', label: __( 'From left', 'elementor' ), icon: <ArrowRightIcon fontSize="tiny" /> },
+			{ key: 'right', label: __( 'From right', 'elementor' ), icon: <ArrowLeftIcon fontSize="tiny" /> },
+		] : [
+			{ key: 'top', label: __( 'To top', 'elementor' ), icon: <ArrowUpSmallIcon fontSize="tiny" /> },
+			{ key: 'bottom', label: __( 'To bottom', 'elementor' ), icon: <ArrowDownSmallIcon fontSize="tiny" /> },
+			{ key: 'left', label: __( 'To left', 'elementor' ), icon: <ArrowLeftIcon fontSize="tiny" /> },
+			{ key: 'right', label: __( 'To right', 'elementor' ), icon: <ArrowRightIcon fontSize="tiny" /> },
+		];
+	}, [ interactionType ] );
 
 	return (
 		<>
@@ -24,7 +32,7 @@ export function Direction( { value, onChange }: FieldProps ) {
 				<ToggleButtonGroup
 					size="tiny"
 					exclusive
-					onChange={ ( event: React.MouseEvent< HTMLElement >, newValue: string ) => onChange( newValue ) }
+					onChange={ ( _: React.MouseEvent< HTMLElement >, newValue: string ) => onChange( newValue ) }
 					value={ value }
 					aria-label={ __( 'Direction', 'elementor' ) }
 				>
