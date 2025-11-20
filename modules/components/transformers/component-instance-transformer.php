@@ -1,19 +1,22 @@
 <?php
 
-namespace Elementor\Modules\Components;
+namespace Elementor\Modules\Components\Transformers;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\Components\Documents\Component;
 use Elementor\Plugin;
 
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Component_Id_Transformer extends Transformer_Base {
+class Component_Instance_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
-		$document = Plugin::$instance->documents->get_doc_for_frontend( $value );
+		$component_id = $value['component_id'];
+
+		$document = Plugin::$instance->documents->get_doc_for_frontend( $component_id );
 
 		if (
 			! $document ||
@@ -28,7 +31,7 @@ class Component_Id_Transformer extends Transformer_Base {
 
 		$data = $document->get_elements_data();
 
-		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $value );
+		$data = apply_filters( 'elementor/frontend/builder_content_data', $data, $component_id );
 
 		$content = '';
 
