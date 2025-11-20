@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getElements, useSelectedElement } from '@elementor/editor-elements';
+import { getContainer, getElements, useSelectedElement } from '@elementor/editor-elements';
 import {
 	__privateUseIsRouteActive as useIsRouteActive,
 	__privateUseListenTo as useListenTo,
@@ -7,7 +7,27 @@ import {
 	windowEvent,
 } from '@elementor/editor-v1-adapters';
 
-import { ElementOverlay } from './element-overlay';
+import type { ElementOverlayConfig } from '../types/element-overlay';
+import { InlineEditorOverlay } from './inline-editor-overlay';
+import { OutlineOverlay } from './outline-overlay';
+
+const overlayRegistry: ElementOverlayConfig[] = [
+	{
+		component: OutlineOverlay,
+		filter: () => true, // Show outline for all elements
+	},
+	{
+		component: InlineEditorOverlay,
+		filter: ( element, elementId, isSelected ) => {
+			if ( ! isSelected ) {
+				return false;
+			}
+			const container = getContainer( elementId );
+			const widgetType = container?.model.get( 'widgetType' ) || container?.model.get( 'elType' );
+			return widgetType === 'atomic-heading';
+		},
+	},
+];
 
 export function ElementsOverlays() {
 	const selected = useSelectedElement();
@@ -21,9 +41,23 @@ export function ElementsOverlays() {
 
 	return (
 		isActive &&
-		elements.map( ( [ id, element ] ) => (
-			<ElementOverlay key={ id } id={ id } element={ element } isSelected={ selected.element?.id === id } />
-		) )
+		elements.map( ( [ id, element ] ) => {
+			const isSelected = selected.element?.id === id;
+
+		return overlayRegistry
+			.filter( ( overlay ) => overlay.filter( element, id, isSelected ) )
+			.map( ( overlay, index ) => {
+					const OverlayComponent = overlay.component;
+					return (
+						<OverlayComponent
+							key={ `${ id }-${ index }` }
+							id={ id }
+							element={ element }
+							isSelected={ isSelected }
+						/>
+					);
+				} );
+		} )
 	);
 }
 

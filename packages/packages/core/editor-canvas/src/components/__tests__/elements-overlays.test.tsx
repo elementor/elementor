@@ -4,7 +4,7 @@ import { getElements, useSelectedElement } from '@elementor/editor-elements';
 import { __privateUseIsRouteActive as useIsRouteActive, useEditMode } from '@elementor/editor-v1-adapters';
 import { act, screen } from '@testing-library/react';
 
-import { CANVAS_WRAPPER_ID } from '../element-overlay';
+import { CANVAS_WRAPPER_ID } from '../outline-overlay';
 import { ElementsOverlays } from '../elements-overlays';
 
 jest.mock( '@elementor/editor-elements' );
