@@ -5,11 +5,11 @@ import { ArrowDownSmallIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpSmallIcon } f
 import { Grid, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type DirectionsFieldProps } from '../../types';
+import { type DirectionFieldProps } from '../../types';
 
 type Direction = 'top' | 'bottom' | 'left' | 'right';
 
-export function Direction( { value, onChange, interactionType }: DirectionsFieldProps ) {
+export function Direction( { value, onChange, interactionType }: DirectionFieldProps ) {
 	const options: ToggleButtonGroupItem< Direction >[] = useMemo( () => {
 		const isIn = interactionType === 'in';
 
