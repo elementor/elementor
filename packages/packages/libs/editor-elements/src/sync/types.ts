@@ -73,7 +73,7 @@ export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {
 
 export type V1ElementEditorSettingsProps = {
 	title?: string;
-	position?: number;
+	initial_position?: number;
 	component_uid?: string;
 };
 

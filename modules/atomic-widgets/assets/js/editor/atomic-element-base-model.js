@@ -31,18 +31,16 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 	}
 
 	onElementCreate() {
-		const elements = this.getDefaultChildren();
-
-		this.set( 'elements', elements.map( ( element ) => this.buildElement( element ) ) );
+		this.set( 'elements', this.getDefaultChildren().map( ( element ) => this.buildElement( element ) ) );
 	}
 
-	updateSettings( elements ) {
+	modifyDefaultChildren( elements ) {
 		return elements.settings ?? {};
 	}
 
 	buildElement( element ) {
 		const id = elementorCommon.helpers.getUniqueId();
-		const elementSettings = this.updateSettings( element );
+		const elementSettings = this.modifyDefaultChildren( element );
 
 		const elements = ( element.elements || [] ).map( ( el ) => this.buildElement( el ) );
 

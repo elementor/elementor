@@ -154,14 +154,14 @@ export const useActions = () => {
 						containerId: tabContentAreaId,
 						model: {
 							elType: TAB_CONTENT_ELEMENT_TYPE,
-							editor_settings: { title: `Tab ${ position } content`, position },
+							editor_settings: { title: `Tab ${ position } content`, initial_position: position },
 						},
 					},
 					{
 						containerId: tabsMenuId,
 						model: {
 							elType: TAB_ELEMENT_TYPE,
-							editor_settings: { title: `Tab ${ position } trigger`, position },
+							editor_settings: { title: `Tab ${ position } trigger`, initial_position: position },
 						},
 					},
 				],
