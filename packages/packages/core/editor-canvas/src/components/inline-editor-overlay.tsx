@@ -8,13 +8,13 @@ import { htmlPropTypeUtil } from '@elementor/editor-props';
 import { useFloatingOnElement } from '../hooks/use-floating-on-element';
 import type { ElementOverlayProps } from '../types/element-overlay';
 import { CANVAS_WRAPPER_ID } from './outline-overlay';
+import { getInlineEditablePropertyName } from '../utils/inline-editing-utils';
 
 export function InlineEditorOverlay( { element, isSelected, id }: ElementOverlayProps ) {
 	const { floating, isVisible } = useFloatingOnElement( { element, isSelected } );
 	
 	const container = getContainer( id );
-	const widgetType = container?.model.get( 'widgetType' ) || container?.model.get( 'elType' );
-	const propertyName = widgetType === 'e-heading' ? 'title' : 'paragraph';
+	const propertyName = getInlineEditablePropertyName( container );
 	
 	const contentProp = useElementSetting( id, propertyName );
 	const contentValue = htmlPropTypeUtil.extract( contentProp );

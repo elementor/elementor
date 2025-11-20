@@ -10,6 +10,9 @@ import {
 import type { ElementOverlayConfig } from '../types/element-overlay';
 import { InlineEditorOverlay } from './inline-editor-overlay';
 import { OutlineOverlay } from './outline-overlay';
+import { hasInlineEditableProperty } from '../utils/inline-editing-utils';
+
+const ELEMENTS_DATA_ATTR = 'atomic';
 
 const overlayRegistry: ElementOverlayConfig[] = [
 	{
@@ -18,13 +21,12 @@ const overlayRegistry: ElementOverlayConfig[] = [
 	},
 	{
 		component: InlineEditorOverlay,
-		filter: ( element, elementId, isSelected ) => {
+		filter: ( { id, isSelected } ) => {
 			if ( ! isSelected ) {
 				return false;
 			}
-			const container = getContainer( elementId );
-			const widgetType = container?.model.get( 'widgetType' ) || container?.model.get( 'elType' );
-			return widgetType === 'e-heading' || widgetType === 'e-paragraph';
+			const container = getContainer( id );
+			return hasInlineEditableProperty( container );
 		},
 	},
 ];
@@ -45,7 +47,7 @@ export function ElementsOverlays() {
 			const isSelected = selected.element?.id === id;
 
 		return overlayRegistry
-			.filter( ( overlay ) => overlay.filter( element, id, isSelected ) )
+			.filter( ( overlay ) => overlay.filter( { id, element, isSelected } ) )
 			.map( ( overlay, index ) => {
 					const OverlayComponent = overlay.component;
 					return (
@@ -61,7 +63,6 @@ export function ElementsOverlays() {
 	);
 }
 
-const ELEMENTS_DATA_ATTR = 'atomic';
 
 type IdElementTuple = [ string, HTMLElement ];
 

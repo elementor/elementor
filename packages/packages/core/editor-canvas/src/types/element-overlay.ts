@@ -6,8 +6,14 @@ export type ElementOverlayProps = {
 	isSelected: boolean;
 };
 
+export type OverlayFilterArgs = {
+	id: string;
+	element: HTMLElement;
+	isSelected: boolean;
+};
+
 export type ElementOverlayConfig = {
 	component: React.ComponentType< ElementOverlayProps >;
-	filter: ( element: HTMLElement, elementId: string, isSelected: boolean ) => boolean;
+	filter: ( args: OverlayFilterArgs ) => boolean;
 };
 
