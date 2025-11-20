@@ -87,21 +87,34 @@ class Document_Lock_Manager {
 	 * @return bool Always returns true
 	 */
 	public function unlock( $document_id ) {
+		try {
+			// Remove custom document lock metadata
+			delete_post_meta( $document_id, self::LOCK_USER_META );
+			delete_post_meta( $document_id, self::LOCK_TIME_META );
 
-		// Remove custom document lock metadata
-		delete_post_meta( $document_id, self::LOCK_USER_META );
-		delete_post_meta( $document_id, self::LOCK_TIME_META );
+			// Remove WordPress post lock
+			if ( ! function_exists( 'wp_clear_post_lock' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/post.php';
+			}
 
-		// Remove edit lock metadata
-		delete_post_meta( $document_id, self::LOCK_EDIT_LOCK_META );
+			if ( function_exists( 'wp_clear_post_lock' ) ) {
+				call_user_func( 'wp_clear_post_lock', $document_id );
+			} else {
+				delete_post_meta( $document_id, self::LOCK_EDIT_LOCK_META );
+			}
 
-		return true;
+			return true;
+		} catch ( \Exception $e ) {
+			error_log( 'Document unlock error: ' . $e->getMessage() );
+			return false;
+		}
 	}
 
 	/**
 	 * Check if a document is currently locked.
 	 *
 	 * Also handles automatic lock expiration based on lock duration.
+	 * Checks both custom lock metadata and WordPress's built-in post lock.
 	 *
 	 * @param int $document_id The document ID to check
 	 * @return array|false Lock data array if locked, false if not locked
@@ -113,12 +126,31 @@ class Document_Lock_Manager {
 
 		if ( $lock_user && $lock_time && time() - $lock_time <= $this->lock_duration ) {
 			$is_locked = true;
+		} else {
+			$wp_lock_user = $this->get_wp_lock_user( $document_id );
+			if ( $wp_lock_user ) {
+				$is_locked = true;
+				if ( ! $lock_user ) {
+					$lock_user = $wp_lock_user;
+					update_post_meta( $document_id, self::LOCK_USER_META, $wp_lock_user );
+				}
+				if ( ! $lock_time ) {
+					$wp_edit_lock = get_post_meta( $document_id, self::LOCK_EDIT_LOCK_META, true );
+					if ( $wp_edit_lock ) {
+						$lock_parts = explode( ':', $wp_edit_lock );
+						if ( isset( $lock_parts[1] ) ) {
+							$lock_time = (int) $lock_parts[1];
+							update_post_meta( $document_id, self::LOCK_TIME_META, $lock_time );
+						}
+					}
+				}
+			}
 		}
 
 		return [
 			'is_locked'  => $is_locked,
-			'lock_user'  => $lock_user ? $lock_user : null,
-			'lock_time'  => $lock_time ? $lock_time : null,
+			'lock_user'  => $lock_user ? (int) $lock_user : null,
+			'lock_time'  => $lock_time ? (int) $lock_time : null,
 		];
 	}
 
@@ -127,18 +159,23 @@ class Document_Lock_Manager {
 	 *
 	 * Only works if the current user owns the lock.
 	 *
-	 * @param int $document_id The document ID to extend lock for
+	 * @param int        $document_id The document ID to extend lock for
+	 * @param array|null $lock_data Optional lock data to avoid duplicate is_locked() call
 	 * @return bool True if lock was extended, false otherwise
 	 */
-	public function extend_lock( $document_id ) {
+	public function extend_lock( $document_id, $lock_data = null ) {
 		$user_id = get_current_user_id();
-		$lock_data = $this->is_locked( $document_id );
+
+		// Allow passing lock_data to avoid duplicate is_locked() call
+		if ( null === $lock_data ) {
+			$lock_data = $this->is_locked( $document_id );
+		}
 
 		if ( ! $lock_data['is_locked'] ) {
 			return false;
 		}
 
-		if ( (int) $lock_data['lock_user'] !== (int) $user_id ) {
+		if ( null === $lock_data['lock_user'] || (int) $lock_data['lock_user'] !== (int) $user_id ) {
 			return false;
 		}
 
@@ -146,5 +183,38 @@ class Document_Lock_Manager {
 		update_post_meta( $document_id, self::LOCK_TIME_META, time() );
 
 		return true;
+	}
+
+	/**
+	 * Get the WordPress lock user ID if WordPress has locked the document.
+	 *
+	 * @param int $document_id The document ID to check
+	 * @return int|null WordPress lock user ID, or null if not locked by WordPress
+	 */
+	protected function get_wp_lock_user( $document_id ) {
+		if ( ! function_exists( 'wp_check_post_lock' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/post.php';
+		}
+
+		$wp_lock_user = wp_check_post_lock( $document_id );
+		return $wp_lock_user ? (int) $wp_lock_user : null;
+	}
+
+	/**
+	 * Check if current user owns the WordPress lock.
+	 *
+	 * @param int $document_id The document ID to check
+	 * @return bool True if current user owns WordPress lock, false otherwise
+	 */
+	protected function current_user_owns_wp_lock( $document_id ) {
+		$current_user_id = get_current_user_id();
+		$wp_lock_user = $this->get_wp_lock_user( $document_id );
+
+		return $wp_lock_user && $wp_lock_user === $current_user_id;
+	}
+
+
+	public function is_post_type( $document_id, $post_type ) {
+		return get_post_type( $document_id ) === $post_type;
 	}
 }

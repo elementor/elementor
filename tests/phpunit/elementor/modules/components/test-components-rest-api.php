@@ -878,20 +878,29 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertFalse( $lock_data['is_locked'], 'Component should be unlocked' );
 	}
 
-	public function test_post_unlock_component__fails_when_not_locked() {
+	public function test_post_unlock_component__succeeds_when_lock_expired() {
 		// Arrange
 		$this->act_as_admin();
 		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
 
-		// Act - try to unlock component that's not locked
+		// Lock component first
+		$lock_manager = \Elementor\Modules\Components\Component_Lock_Manager::get_instance();
+		$lock_manager->lock( $component_id );
+
+		// Simulate expired lock by setting old timestamp (61 minutes ago, beyond 1 hour lock duration)
+		$expired_timestamp = time() - ( 61 * 60 );
+		update_post_meta( $component_id, '_lock_time', $expired_timestamp );
+
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/unlock' );
 		$request->set_param( 'componentId', $component_id );
 		$response = rest_do_request( $request );
 
-		// Assert - should fail because there's no lock to unlock
-		$this->assertEquals( 500, $response->get_status() );
-		$data = $response->get_data();
-		$this->assertEquals( 'unlock_failed', $data['code'] );
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+		$this->assertTrue( $data['unlocked'], 'Component should be unlocked successfully' );
+
+		$lock_data = $lock_manager->is_locked( $component_id );
+		$this->assertFalse( $lock_data['is_locked'], 'Component should be unlocked after expired lock cleanup' );
 	}
 
 	public function test_update_statuses() {
