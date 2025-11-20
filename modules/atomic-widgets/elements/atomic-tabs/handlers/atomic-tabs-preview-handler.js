@@ -23,6 +23,8 @@ register( {
 			Alpine.$data( element ).activeTab = getTabId( element.dataset.id, targetIndex );
 		}, { signal } );
 
-		listenToChildren( [ TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE ] ).render( () => reinitTree( element ) );
+		// Re-initialize Alpine to sync with editor DOM manipulations that bypass Alpine's reactivity.
+		listenToChildren( [ TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE ] )
+			.render( () => reinitTree( element ) );
 	},
 } );

@@ -2,11 +2,11 @@ type Settings = Record< string, unknown >;
 
 type ChildRenderCallback = () => void;
 
-interface ListenToChildrenAPI {
+interface ListenToChildren {
 	render: ( callback: ChildRenderCallback ) => void;
 }
 
-type ListenToChildrenFunction = ( elementTypes: string[] ) => ListenToChildrenAPI;
+type ListenToChildrenFunction = ( elementTypes: string[] ) => ListenToChildren;
 
 type Handler = < TSettings extends Settings = Settings >( params: {
 	element: Element;
