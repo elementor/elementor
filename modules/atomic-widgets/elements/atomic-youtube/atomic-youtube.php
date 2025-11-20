@@ -4,6 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -53,8 +54,8 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 			'source' => String_Prop_Type::make()
 				->default( 'https://www.youtube.com/watch?v=XHOmBV4js_E' ),
 
-			'start' => String_Prop_Type::make(),
-			'end' => String_Prop_Type::make(),
+			'start' => String_Prop_Type::make()->meta( Dynamic_Prop_Type::ignore() ),
+			'end' => String_Prop_Type::make()->meta( Dynamic_Prop_Type::ignore() ),
 			'autoplay' => Boolean_Prop_Type::make()->default( false ),
 			'mute' => Boolean_Prop_Type::make()->default( false ),
 			'loop' => Boolean_Prop_Type::make()->default( false ),
