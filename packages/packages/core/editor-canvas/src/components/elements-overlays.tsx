@@ -14,7 +14,7 @@ import { OutlineOverlay } from './outline-overlay';
 const overlayRegistry: ElementOverlayConfig[] = [
 	{
 		component: OutlineOverlay,
-		filter: () => true, // Show outline for all elements
+		filter: () => true,
 	},
 	{
 		component: InlineEditorOverlay,
@@ -24,7 +24,7 @@ const overlayRegistry: ElementOverlayConfig[] = [
 			}
 			const container = getContainer( elementId );
 			const widgetType = container?.model.get( 'widgetType' ) || container?.model.get( 'elType' );
-			return widgetType === 'e-heading';
+			return widgetType === 'e-heading' || widgetType === 'e-paragraph';
 		},
 	},
 ];

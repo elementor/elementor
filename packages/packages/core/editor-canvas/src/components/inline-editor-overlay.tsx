@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Box } from '@elementor/ui';
 import { InlineEditor } from '@elementor/editor-controls';
 import { FloatingPortal } from '@floating-ui/react';
-import { updateElementSettings, useElementSetting } from '@elementor/editor-elements';
+import { getContainer, updateElementSettings, useElementSetting } from '@elementor/editor-elements';
 import { htmlPropTypeUtil } from '@elementor/editor-props';
 
 import { useFloatingOnElement } from '../hooks/use-floating-on-element';
@@ -12,14 +12,18 @@ import { CANVAS_WRAPPER_ID } from './outline-overlay';
 export function InlineEditorOverlay( { element, isSelected, id }: ElementOverlayProps ) {
 	const { floating, isVisible } = useFloatingOnElement( { element, isSelected } );
 	
-	const titleProp = useElementSetting( id, 'title' );
-	const titleValue = htmlPropTypeUtil.extract( titleProp );
-	const [ value, setValue ] = React.useState( titleValue || '' );
+	const container = getContainer( id );
+	const widgetType = container?.model.get( 'widgetType' ) || container?.model.get( 'elType' );
+	const propertyName = widgetType === 'e-heading' ? 'title' : 'paragraph';
+	
+	const contentProp = useElementSetting( id, propertyName );
+	const contentValue = htmlPropTypeUtil.extract( contentProp );
+	const [ value, setValue ] = React.useState( contentValue || '' );
 
 	React.useEffect( () => {
-		const extractedValue = htmlPropTypeUtil.extract( titleProp );
+		const extractedValue = htmlPropTypeUtil.extract( contentProp );
 		setValue( extractedValue || '' );
-	}, [ titleProp ] );
+	}, [ contentProp ] );
 
 	const handleValueChange = React.useCallback( ( newValue: string ) => {
 		setValue( newValue );
@@ -27,11 +31,11 @@ export function InlineEditorOverlay( { element, isSelected, id }: ElementOverlay
 		updateElementSettings( {
 			id,
 			props: {
-				title: htmlPropTypeUtil.create( newValue ),
+				[ propertyName ]: htmlPropTypeUtil.create( newValue ),
 			},
 			withHistory: true,
 		} );
-	}, [ id ] );
+	}, [ id, propertyName ] );
 
 	if ( ! isVisible ) {
 		return null;
