@@ -24,7 +24,7 @@ export type FieldProps = {
 	label?: string;
 };
 
-export type DirectionFieldProps = FieldProps & {
+export type DirectionsFieldProps = FieldProps & {
 	interactionType: string;
 };
 
