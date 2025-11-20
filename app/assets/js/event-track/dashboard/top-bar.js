@@ -1,4 +1,5 @@
 import WpDashboardTracking, { NAV_AREAS } from '../wp-dashboard-tracking';
+import BaseTracking from './base-tracking';
 
 const TOP_BAR_SELECTORS = {
 	TOP_BAR_ROOT: '.e-admin-top-bar',
@@ -8,7 +9,7 @@ const TOP_BAR_SELECTORS = {
 	SECONDARY_AREA: '.e-admin-top-bar__secondary-area',
 };
 
-class TopBarTracking {
+class TopBarTracking extends BaseTracking {
 	static init() {
 		this.waitForTopBar();
 	}
@@ -21,21 +22,24 @@ class TopBarTracking {
 			return;
 		}
 
-		const observer = new MutationObserver( ( mutations, observerInstance ) => {
-			const foundTopBar = document.querySelector( TOP_BAR_SELECTORS.TOP_BAR_ROOT );
+		const observer = this.addObserver(
+			document.body,
+			{
+				childList: true,
+				subtree: true,
+			},
+			() => {
+				const foundTopBar = document.querySelector( TOP_BAR_SELECTORS.TOP_BAR_ROOT );
 
-			if ( foundTopBar ) {
-				this.attachTopBarTracking( foundTopBar );
-				observerInstance.disconnect();
-			}
-		} );
+				if ( foundTopBar ) {
+					this.attachTopBarTracking( foundTopBar );
+					observer.disconnect();
+					clearTimeout( timeoutId );
+				}
+			},
+		);
 
-		observer.observe( document.body, {
-			childList: true,
-			subtree: true,
-		} );
-
-		setTimeout( () => {
+		const timeoutId = setTimeout( () => {
 			observer.disconnect();
 		}, 10000 );
 	}
@@ -44,42 +48,56 @@ class TopBarTracking {
 		const buttons = topBar.querySelectorAll( TOP_BAR_SELECTORS.BAR_BUTTON );
 
 		buttons.forEach( ( button ) => {
-			button.addEventListener( 'click', ( event ) => {
-				this.handleTopBarClick( event );
-			} );
+			this.addEventListenerTracked(
+				button,
+				'click',
+				( event ) => {
+					this.handleTopBarClick( event );
+				},
+			);
 		} );
 
 		this.observeTopBarChanges( topBar );
 	}
 
 	static observeTopBarChanges( topBar ) {
-		const observer = new MutationObserver( ( mutations ) => {
-			mutations.forEach( ( mutation ) => {
-				if ( 'childList' === mutation.type ) {
-					mutation.addedNodes.forEach( ( node ) => {
-						if ( 1 === node.nodeType ) {
-							if ( node.matches && node.matches( TOP_BAR_SELECTORS.BAR_BUTTON ) ) {
-								node.addEventListener( 'click', ( event ) => {
-									this.handleTopBarClick( event );
-								} );
-							} else {
-								const buttons = node.querySelectorAll ? node.querySelectorAll( TOP_BAR_SELECTORS.BAR_BUTTON ) : [];
-								buttons.forEach( ( button ) => {
-									button.addEventListener( 'click', ( event ) => {
-										this.handleTopBarClick( event );
+		this.addObserver(
+			topBar,
+			{
+				childList: true,
+				subtree: true,
+			},
+			( mutations ) => {
+				mutations.forEach( ( mutation ) => {
+					if ( 'childList' === mutation.type ) {
+						mutation.addedNodes.forEach( ( node ) => {
+							if ( 1 === node.nodeType ) {
+								if ( node.matches && node.matches( TOP_BAR_SELECTORS.BAR_BUTTON ) ) {
+									this.addEventListenerTracked(
+										node,
+										'click',
+										( event ) => {
+											this.handleTopBarClick( event );
+										},
+									);
+								} else {
+									const buttons = node.querySelectorAll ? node.querySelectorAll( TOP_BAR_SELECTORS.BAR_BUTTON ) : [];
+									buttons.forEach( ( button ) => {
+										this.addEventListenerTracked(
+											button,
+											'click',
+											( event ) => {
+												this.handleTopBarClick( event );
+											},
+										);
 									} );
-								} );
+								}
 							}
-						}
-					} );
-				}
-			} );
-		} );
-
-		observer.observe( topBar, {
-			childList: true,
-			subtree: true,
-		} );
+						} );
+					}
+				} );
+			},
+		);
 	}
 
 	static handleTopBarClick( event ) {
