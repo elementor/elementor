@@ -83,7 +83,6 @@ export default function createAtomicElementBaseView( type ) {
 			return {
 				...attr,
 				...initialAttributes,
-				...customAttributes,
 				...local,
 			};
 		},
