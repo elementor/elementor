@@ -41,6 +41,18 @@ export const InlineEditor = React.forwardRef(
 			onUpdate: ( { editor: updatedEditor } ) => setValue( updatedEditor.getHTML() ),
 		} );
 
+		React.useEffect( () => {
+			if ( ! editor ) {
+				return;
+			}
+
+			const currentContent = editor.getHTML();
+			
+			if ( currentContent !== value ) {
+				editor.commands.setContent( value, { emitUpdate: false } );
+			}
+		}, [ editor, value ] );
+
 		return (
 			<Box
 				ref={ ref }
