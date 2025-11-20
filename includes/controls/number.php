@@ -89,7 +89,7 @@ class Control_Number extends Base_Data_Control {
 			return ! empty( $control['default'] ) ? $control['default'] : '';
 		}
 
-		return (string) $value;
+		return $value;
 	}
 
 	public function get_style_value( $css_property, $control_value, array $control_data ) {
@@ -105,6 +105,6 @@ class Control_Number extends Base_Data_Control {
 			return ! empty( $control_data['default'] ) ? $control_data['default'] : '';
 		}
 
-		return (string) $control_value;
+		return $control_value;
 	}
 }

@@ -39,14 +39,14 @@ class Test_Number extends Elementor_Test_Base {
 
 	public function get_value_data_provider() {
 		return [
-			'valid_integer' => [ 1, 0, '1' ],
-			'valid_float' => [ 1.5, 0, '1.5' ],
+			'valid_integer' => [ 1, 0, 1 ],
+			'valid_float' => [ 1.5, 0, 1.5 ],
 			'valid_string_number' => [ '2', 0, '2' ],
-			'valid_zero' => [ 0, 1, '0' ],
-			'valid_negative' => [ -1, 0, '-1' ],
-			'default_when_not_set' => [ null, 1, '1' ],
+			'valid_zero' => [ 0, 1, 0 ],
+			'valid_negative' => [ -1, 0, -1 ],
+			'default_when_not_set' => [ null, 1, 1 ],
 			'default_when_empty_string' => [ '', 1, '' ],
-			'default_when_null' => [ null, 0, '0' ],
+			'default_when_null' => [ null, 0, 0 ],
 			'xss_script_tag' => [ '<script>test</script>', 1, 1 ],
 			'xss_script_with_alert' => [ '<script>alert("XSS")</script>', 0, '' ],
 			'xss_css_injection' => [ '1; color: red', 1, 1 ],
@@ -75,11 +75,11 @@ class Test_Number extends Elementor_Test_Base {
 
 	public function get_style_value_data_provider() {
 		return [
-			'valid_integer' => [ 1, 0, '1' ],
-			'valid_float' => [ 1.5, 0, '1.5' ],
+			'valid_integer' => [ 1, 0, 1 ],
+			'valid_float' => [ 1.5, 0, 1.5 ],
 			'valid_string_number' => [ '2', 0, '2' ],
-			'valid_zero' => [ 0, 1, '0' ],
-			'valid_negative' => [ -1, 0, '-1' ],
+			'valid_zero' => [ 0, 1, 0 ],
+			'valid_negative' => [ -1, 0, -1 ],
 			'default_empty_string' => [ '', 1, '' ],
 			'default_null' => [ null, 1, null ],
 			'default_non_numeric' => [ 'not-a-number', 1, 1 ],

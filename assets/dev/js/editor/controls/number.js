@@ -51,7 +51,7 @@ ControlNumberItemView = ControlBaseDataView.extend( {
 			return controlData.default ?? '';
 		}
 
-		return String( numValue );
+		return numValue;
 	},
 } );
 
