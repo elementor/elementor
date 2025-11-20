@@ -27,20 +27,19 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 	getDefaultChildren() {
 		const { default_children: defaultChildren } = this.config;
 
-		return defaultChildren;
+		return this.modifyDefaultChildren( defaultChildren );
 	}
 
 	onElementCreate() {
 		this.set( 'elements', this.getDefaultChildren().map( ( element ) => this.buildElement( element ) ) );
 	}
 
-	modifyDefaultChildren( elements ) {
-		return elements.settings ?? {};
+	modifyDefaultChildren( element ) {
+		return element;
 	}
 
 	buildElement( element ) {
 		const id = elementorCommon.helpers.getUniqueId();
-		const elementSettings = this.modifyDefaultChildren( element );
 
 		const elements = ( element.elements || [] ).map( ( el ) => this.buildElement( el ) );
 
@@ -48,7 +47,7 @@ export default class AtomicElementBaseModel extends elementor.modules.elements.m
 			elType: element.elType,
 			widgetType: element.widgetType,
 			id,
-			settings: elementSettings,
+			settings: element.settings ?? {},
 			elements,
 			isLocked: element.isLocked || false,
 			editor_settings: element.editor_settings || {},
