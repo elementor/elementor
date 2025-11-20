@@ -140,6 +140,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 
 		const experimentVariant = elementor.templates.eventManager.getSaveTemplateExperimentVariant();
 		const SaveTemplateView = resolveSaveTemplateByVariant( experimentVariant );
+		elementor.templates.eventManager.startSaveTemplateExperiment( experimentVariant );
 
 		this.modalContent.show( new SaveTemplateView( { model: elementModel, context } ) );
 	},

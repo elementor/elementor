@@ -19,7 +19,7 @@ const EVENTS_MAP = {
 };
 
 const CLOUD_TEMPLATES_EXPERIMENTS = {
-	SAVE_TEMPLATE: 'template-library-save'
+	SAVE_TEMPLATE: 'template-library-save',
 };
 
 export class EventManager {
@@ -33,6 +33,14 @@ export class EventManager {
 
 	getSaveTemplateExperimentVariant() {
 		return this.getExperimentVariant( CLOUD_TEMPLATES_EXPERIMENTS.SAVE_TEMPLATE );
+	}
+
+	startSaveTemplateExperiment( variant ) {
+		if ( ! elementorCommon?.eventsManager ) {
+			return;
+		}
+
+		return elementorCommon?.eventsManager?.startExperiment( CLOUD_TEMPLATES_EXPERIMENTS.SAVE_TEMPLATE, variant );
 	}
 
 	sendEvent( eventName, data ) {

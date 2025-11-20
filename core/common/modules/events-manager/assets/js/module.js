@@ -95,4 +95,12 @@ export default class extends elementorModules.Module {
 			return defaultValue;
 		}
 	}
+
+	startExperiment( experimentName, experimentVariant ) {
+		if ( ! this.trackingEnabled ) {
+			return;
+		}
+
+		mixpanel.track( '$experiment_started', { 'Experiment name': experimentName, 'Variant name': experimentVariant } );
+	}
 }
