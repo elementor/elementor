@@ -1,10 +1,6 @@
 import { getCurrentUser } from '@elementor/editor-current-user';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
-import {
-	__privateListenTo as listenTo,
-	type CommandEvent,
-	commandStartEvent,
-} from '@elementor/editor-v1-adapters';
+import { __privateListenTo as listenTo, type CommandEvent, commandStartEvent } from '@elementor/editor-v1-adapters';
 import { __getState as getState, __subscribeWithSelector as subscribeWithSelector } from '@elementor/store';
 
 import { UPDATE_CLASS_CAPABILITY_KEY } from './capabilities';
