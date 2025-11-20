@@ -24,7 +24,7 @@ const overlayRegistry: ElementOverlayConfig[] = [
 			}
 			const container = getContainer( elementId );
 			const widgetType = container?.model.get( 'widgetType' ) || container?.model.get( 'elType' );
-			return widgetType === 'atomic-heading';
+			return widgetType === 'e-heading';
 		},
 	},
 ];
