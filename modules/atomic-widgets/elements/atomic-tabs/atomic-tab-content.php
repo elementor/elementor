@@ -89,7 +89,7 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( $styles )
-				)
+				),
 		];
 	}
 
