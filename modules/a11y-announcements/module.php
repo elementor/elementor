@@ -20,4 +20,3 @@ class Module extends BaseModule {
 		( new A11yAnnouncement() )->init();
 	}
 }
-

@@ -134,4 +134,3 @@ class A11yAnnouncement {
 		return $current_user->ID ?? 0;
 	}
 }
-
