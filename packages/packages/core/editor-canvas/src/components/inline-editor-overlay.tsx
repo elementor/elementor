@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Box } from '@elementor/ui';
 import { InlineEditor } from '@elementor/editor-controls';
 import { FloatingPortal } from '@floating-ui/react';
-import { selectElement, updateElementSettings, useElementSetting } from '@elementor/editor-elements';
+import { updateElementSettings, useElementSetting } from '@elementor/editor-elements';
 import { htmlPropTypeUtil } from '@elementor/editor-props';
 
 import { useFloatingOnElement } from '../hooks/use-floating-on-element';
@@ -10,7 +10,7 @@ import type { ElementOverlayProps } from '../types/element-overlay';
 import { CANVAS_WRAPPER_ID } from './outline-overlay';
 
 export function InlineEditorOverlay( { element, isSelected, id }: ElementOverlayProps ) {
-	const { floating } = useFloatingOnElement( { element, isSelected } );
+	const { floating, isVisible } = useFloatingOnElement( { element, isSelected } );
 	
 	const titleProp = useElementSetting( id, 'title' );
 	const titleValue = htmlPropTypeUtil.extract( titleProp );
@@ -33,9 +33,9 @@ export function InlineEditorOverlay( { element, isSelected, id }: ElementOverlay
 		} );
 	}, [ id ] );
 
-	const handleClick = React.useCallback( () => {
-		selectElement( id );
-	}, [ id ] );
+	if ( ! isVisible ) {
+		return null;
+	}
 
 	return (
 		<FloatingPortal id={ CANVAS_WRAPPER_ID }>
@@ -46,7 +46,6 @@ export function InlineEditorOverlay( { element, isSelected, id }: ElementOverlay
 					zIndex: 1000,
 					pointerEvents: 'auto',
 				} }
-				onClick={ handleClick }
 			>
 				<InlineEditor value={ value } setValue={ handleValueChange } />
 			</Box>

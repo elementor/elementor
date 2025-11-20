@@ -41,7 +41,6 @@ export const InlineEditor = React.forwardRef(
 			onUpdate: ( { editor: updatedEditor } ) => setValue( updatedEditor.getHTML() ),
 		} );
 
-		// Update editor content when value prop changes externally
 		React.useEffect( () => {
 			if ( ! editor ) {
 				return;
@@ -49,7 +48,6 @@ export const InlineEditor = React.forwardRef(
 
 			const currentContent = editor.getHTML();
 			
-			// Only update if the content is actually different to avoid unnecessary updates
 			if ( currentContent !== value ) {
 				editor.commands.setContent( value, { emitUpdate: false } );
 			}

@@ -19,6 +19,9 @@ const overlayRegistry: ElementOverlayConfig[] = [
 	{
 		component: InlineEditorOverlay,
 		filter: ( element, elementId, isSelected ) => {
+			if ( ! isSelected ) {
+				return false;
+			}
 			const container = getContainer( elementId );
 			const widgetType = container?.model.get( 'widgetType' ) || container?.model.get( 'elType' );
 			return widgetType === 'e-heading';
