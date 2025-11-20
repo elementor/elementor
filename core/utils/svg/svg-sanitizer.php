@@ -106,7 +106,6 @@ class Svg_Sanitizer {
 		// Export sanitized svg to string
 		// Using documentElement to strip out <?xml version="1.0" encoding="UTF-8"...
 		$sanitized = $this->svg_dom->saveXML( $this->svg_dom->documentElement, LIBXML_NOEMPTYTAG );
-
 		// Restore defaults
 		if ( $php_version_under_eight ) {
 			libxml_disable_entity_loader( $libxml_disable_entity_loader ); // phpcs:ignore Generic.PHP.DeprecatedFunctions.Deprecated

@@ -37,7 +37,7 @@ class Atomic_Global_Styles {
 		$context = is_preview() ? Global_Classes_Repository::CONTEXT_PREVIEW : Global_Classes_Repository::CONTEXT_FRONTEND;
 
 		$get_styles = function () use ( $context ) {
-			return Global_Classes_Repository::make()->context( $context )->all()->get_items()->map( function( $item ) {
+			return Global_Classes_Repository::make()->context( $context )->all()->get_items_sorted_by_order()->map( function( $item ) {
 				$item['id'] = $item['label'];
 				return $item;
 			})->all();
@@ -73,7 +73,7 @@ class Atomic_Global_Styles {
 		$classes = Global_Classes_Repository::make()
 			->context( $context )
 			->all()
-			->get_items();
+			->get_items_sorted_by_order();
 
 		return array_map(
 			function( $id ) use ( $classes ) {

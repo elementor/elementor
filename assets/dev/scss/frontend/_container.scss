@@ -94,19 +94,19 @@
 	}
 
 	&-full,
-	& > .e-con-inner {
+	&>.e-con-inner {
 		text-align: var(--text-align);
 		padding-block-start: var(--padding-block-start);
 		padding-block-end: var(--padding-block-end);
 	}
 
 	&-full.e-flex,
-	&.e-flex > .e-con-inner {
+	&.e-flex>.e-con-inner {
 		flex-direction: var(--flex-direction);
 	}
 
-	&,
-	& > .e-con-inner {
+	&:where(:not([data-element_type="e-div-block"])),
+	&>.e-con-inner {
 		display: var(--display);
 	}
 
@@ -117,9 +117,9 @@
 	}
 
 	&.e-grid,
-	&.e-grid > .e-con-inner {
-		grid-template-columns: var( --e-con-grid-template-columns );
-		grid-template-rows: var( --e-con-grid-template-rows );
+	&.e-grid>.e-con-inner {
+		grid-template-columns: var(--e-con-grid-template-columns);
+		grid-template-rows: var(--e-con-grid-template-rows);
 		justify-content: var(--grid-justify-content);
 		align-content: var(--grid-align-content);
 		grid-auto-flow: var(--grid-auto-flow);
@@ -147,7 +147,7 @@
 		gap: initial;
 	}
 
-	&.e-flex > .e-con-inner {
+	&.e-flex>.e-con-inner {
 		flex-wrap: var(--flex-wrap);
 		justify-content: var(--justify-content);
 		align-items: var(--align-items);
@@ -160,12 +160,12 @@
 		align-self: initial;
 	}
 
-	&.e-grid > .e-con-inner {
+	&.e-grid>.e-con-inner {
 		justify-items: var(--justify-items);
 		align-items: var(--align-items);
 	}
 
-	& > .e-con-inner {
+	&>.e-con-inner {
 		gap: var(--row-gap) var(--column-gap);
 		width: 100%;
 		max-width: var(--content-width);
@@ -175,7 +175,7 @@
 		height: 100%;
 	}
 
-	:is( .elementor-section-wrap, [data-elementor-id] ) > & {
+	:is(.elementor-section-wrap, [data-elementor-id])>& {
 		// Default top-level containers to be centered.
 		--margin-left: auto;
 		--margin-right: auto;
@@ -208,9 +208,9 @@
 
 	// Background overlay.
 	&::before,
-	:is( &, & > .e-con-inner ) > .elementor-background-video-container::before,
-	> .elementor-motion-effects-container > .elementor-motion-effects-layer::before,
-	> .elementor-background-slideshow::before {
+	:is(&, & > .e-con-inner)>.elementor-background-video-container::before,
+	>.elementor-motion-effects-container>.elementor-motion-effects-layer::before,
+	>.elementor-background-slideshow::before {
 		// Render the background overlay only if it's being used - Determined by passing a CSS var from the background
 		// control with an empty string (e.g. `--background-overlay: '';`).
 		content: var(--background-overlay);
@@ -226,22 +226,22 @@
 		transition: background var(--overlay-transition, 0.3s), border-radius var(--border-transition, 0.3s), opacity var(--overlay-transition, 0.3s);
 	}
 
-	> .elementor-background-slideshow,
-	:is( &, & > .e-con-inner ) > .elementor-background-video-container {
+	>.elementor-background-slideshow,
+	:is(&, & > .e-con-inner)>.elementor-background-video-container {
 		@include border-radius-for-background-elements;
 	}
 
 	@media (max-width: $screen-mobile-max) {
-		:is( &, & > .e-con-inner ) > .elementor-background-video-container.elementor-hidden-mobile {
+		:is(&, & > .e-con-inner)>.elementor-background-video-container.elementor-hidden-mobile {
 			display: none;
 		}
 	}
 
-	:is( &, & > .e-con-inner ) > .elementor-background-video-container::before {
+	:is(&, & > .e-con-inner)>.elementor-background-video-container::before {
 		z-index: $first-layer;
 	}
 
-	:is( &, & > .e-con-inner ) > .elementor-background-slideshow::before {
+	:is(&, & > .e-con-inner)>.elementor-background-slideshow::before {
 		z-index: $second-layer;
 	}
 
@@ -249,6 +249,7 @@
 		// Fix swiper-based widgets (ED-6716).
 		// Since the default is `min-width: auto` for flex items.
 		min-width: 0;
+
 		// Fix iframe-based widgets (ED-5338) & widget with empty placeholder.
 		&-video,
 		&-google_maps,
@@ -264,11 +265,11 @@
 	}
 
 	&,
-	& > .e-con-inner {
+	&>.e-con-inner {
 
-		& > .elementor-widget {
+		&>.elementor-widget {
 
-			& > .elementor-widget-container {
+			&>.elementor-widget-container {
 				// Fix align-self:stretch (ED-7359)
 				height: 100%;
 			}
@@ -277,9 +278,10 @@
 
 	// Hack with repeated classnames to increase the specificity.
 	.elementor.elementor &,
-	&.e-con > .e-con-inner {
+	&.e-con>.e-con-inner {
+
 		// This was done to make sure that the widgets inside containers do not exceed the container's max width.
-		& > .elementor-widget {
+		&>.elementor-widget {
 			max-width: 100%;
 		}
 	}
