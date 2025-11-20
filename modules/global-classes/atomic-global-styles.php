@@ -58,7 +58,7 @@ class Atomic_Global_Styles {
 	}
 
 	private function invalidate_cache( ?string $context = null ) {
-		if ( empty( $context ) || Global_Classes_Repository::CONTEXT_FRONTEND === $context ) {
+		if ( empty( $context ) || Global_Classes_Repository::CONTEXT_PREVIEW !== $context ) {
 			do_action( 'elementor/atomic-widgets/styles/clear', [ self::STYLES_KEY ] );
 
 			return;

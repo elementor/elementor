@@ -73,7 +73,7 @@ class Atomic_Widget_Styles {
 
 		foreach ( $post_ids as $post_id ) {
 			do_action( 'elementor/atomic-widgets/styles/clear',
-				null !== $context
+				self::CONTEXT_PREVIEW === $context
 					? [ self::STYLES_KEY, $post_id, $context ]
 					: [ self::STYLES_KEY, $post_id ]
 			);
