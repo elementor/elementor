@@ -20,10 +20,11 @@ export const InteractionsTab = ( { elementId }: { elementId: string } ) => {
 function InteractionsTabContent( { elementId }: { elementId: string } ) {
 	const existingInteractions = useElementInteractions( elementId );
 	const [ firstInteraction, setFirstInteraction ] = useState< boolean >( false );
+	const hasInteractions = existingInteractions?.items?.length || firstInteraction;
 
 	return (
 		<SessionStorageProvider prefix={ elementId }>
-			{ firstInteraction || existingInteractions ? (
+			{ hasInteractions ? (
 				<InteractionsProvider elementId={ elementId }>
 					<InteractionsContent firstInteraction={ firstInteraction } />
 				</InteractionsProvider>
