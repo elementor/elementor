@@ -17,8 +17,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		{ name: 'e-svg', title: 'SVG' },
 		{ name: 'e-button', title: 'Button' },
 		{ name: 'e-divider', title: 'Divider' },
-		// { name: 'e-youtube', title: 'YouTube' },
-		// Notice: there is a bug: [ED-21689] Youtube widget is not visible on frontend
+		{ name: 'e-youtube', title: 'YouTube' },
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
