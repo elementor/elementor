@@ -40,6 +40,7 @@ const getMockRepeaterContext = ( value: RepeatablePropValue, setValue?: ReturnTy
 	removeItem: jest.fn(),
 	rowRef: document.body as HTMLElement,
 	setRowRef: jest.fn(),
+	isItemDisabled: () => false,
 	popoverState: {
 		isOpen: false,
 		setOpen: jest.fn(),

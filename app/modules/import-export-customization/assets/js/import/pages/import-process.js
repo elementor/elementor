@@ -17,7 +17,7 @@ const headerContent = (
 export default function ImportProcess() {
 	const { data, dispatch, isProcessing, runnersState } = useImportContext();
 	const { includes, customization } = data;
-	const { status, error, importKit, duration } = useImportKit( {
+	const { status, error, importKit } = useImportKit( {
 		data,
 		includes,
 		customization,
@@ -27,24 +27,23 @@ export default function ImportProcess() {
 
 	const navigate = useNavigate();
 	const { attemptRedirect } = useReturnToRedirect( data.returnTo );
-	const title = data.uploadedData?.manifest?.title || '';
-	const id = data.kitUploadParams?.id || '';
 
 	useEffect( () => {
 		if ( ! error ) {
 			if ( IMPORT_PROCESSING_STATUS.DONE === status ) {
-				AppsEventTracking.sendKitImportStatus( null, id, title, duration );
+				AppsEventTracking.sendKitImportStatus( null );
 				if ( attemptRedirect() ) {
 					return;
 				}
+
 				navigate( 'import-customization/complete' );
 			} else if ( ! isProcessing ) {
 				navigate( 'import-customization', { replace: true } );
 			}
 		} else {
-			AppsEventTracking.sendKitImportStatus( error, id, title );
+			AppsEventTracking.sendKitImportStatus( error );
 		}
-	}, [ status, error, navigate, isProcessing, title, id, duration, attemptRedirect ] );
+	}, [ status, error, navigate, isProcessing, attemptRedirect ] );
 
 	const handleTryAgain = () => {
 		importKit();

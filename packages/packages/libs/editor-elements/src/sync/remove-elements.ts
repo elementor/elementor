@@ -58,21 +58,21 @@ export const removeElements = ( {
 					}
 				} );
 
-				const results = elementIdsParam.map( ( elementId ) => {
-					return deleteElement( {
+				// Call onRemoveElements before deleting elements to avoid conflicts between commands
+				onRemoveElements?.();
+
+				elementIdsParam.forEach( ( elementId ) => {
+					deleteElement( {
 						elementId,
 						options: { useHistory: false },
 					} );
 				} );
 
-				// Wait for all elements to be deleted to avoid conflicts between commands
-				Promise.all( results ).then( () => {
-					onRemoveElements?.();
-				} );
-
 				return { elementIds: elementIdsParam, removedElements };
 			},
 			undo: ( _: { elementIds: string[] }, { removedElements }: RemovedElementsResult ) => {
+				onRestoreElements?.();
+
 				// Restore elements in reverse order to maintain proper hierarchy
 				[ ...removedElements ].reverse().forEach( ( { model, parent, at } ) => {
 					if ( parent && model ) {
@@ -83,12 +83,13 @@ export const removeElements = ( {
 						} );
 					}
 				} );
-				onRestoreElements?.();
 			},
 			redo: (
 				_: { elementIds: string[] },
 				{ elementIds: originalElementIds, removedElements }: RemovedElementsResult
 			): RemovedElementsResult => {
+				onRemoveElements?.();
+
 				originalElementIds.forEach( ( elementId ) => {
 					deleteElement( {
 						elementId,
@@ -96,7 +97,6 @@ export const removeElements = ( {
 					} );
 				} );
 
-				onRemoveElements?.();
 				return { elementIds: originalElementIds, removedElements };
 			},
 		},
