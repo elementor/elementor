@@ -14,17 +14,49 @@ export const onElementRender = ( {
 	const controller = new AbortController();
 	const manualUnmount: ( () => void )[] = [];
 
+	element.dispatchEvent(
+		new CustomEvent( 'elementor/element/rendered', {
+			bubbles: true,
+			detail: {
+				element,
+				elementType,
+				elementId,
+			},
+		} )
+	);
+
 	if ( ! handlers.has( elementType ) ) {
 		return;
 	}
 
-	Array.from( handlers.get( elementType )?.values() ?? [] ).forEach( ( handler ) => {
+	Array.from( handlers.get( elementType )?.values() ?? [] ).forEach( ( registration ) => {
 		const settings = element.getAttribute( 'data-e-settings' );
 
-		const unmount = handler( {
+		const listenToChildren = ( elementTypes: string[] ) => ( {
+			render: ( callback: () => void ) => {
+				element.addEventListener(
+					'elementor/element/rendered',
+					( event ) => {
+						const { elementType: childType } = ( event as CustomEvent ).detail;
+
+						if ( ! elementTypes.includes( childType ) ) {
+							return;
+						}
+
+						callback();
+
+						event.stopPropagation();
+					},
+					{ signal: controller.signal }
+				);
+			},
+		} );
+
+		const unmount = registration.callback( {
 			element,
 			signal: controller.signal,
 			settings: settings ? JSON.parse( settings ) : {},
+			listenToChildren,
 		} );
 
 		if ( typeof unmount === 'function' ) {
