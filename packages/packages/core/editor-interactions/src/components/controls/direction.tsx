@@ -1,8 +1,13 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { type ToggleButtonGroupItem, ToggleButtonGroupUi } from '@elementor/editor-controls';
+import {
+	ControlFormLabel,
+	PopoverGridContainer,
+	type ToggleButtonGroupItem,
+	ToggleButtonGroupUi,
+} from '@elementor/editor-controls';
 import { ArrowDownSmallIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpSmallIcon } from '@elementor/icons';
-import { Grid, Typography } from '@elementor/ui';
+import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type DirectionFieldProps } from '../../types';
@@ -46,15 +51,15 @@ export function Direction( { value, onChange, interactionType }: DirectionFieldP
 	}, [ interactionType ] );
 
 	return (
-		<>
-			<Grid item xs={ 12 } md={ 6 }>
-				<Typography variant="caption" color="text.secondary">
-					{ __( 'Direction', 'elementor' ) }
-				</Typography>
-			</Grid>
-			<Grid item xs={ 12 } md={ 6 } sx={ { display: 'flex', justifyContent: 'flex-end', overflow: 'hidden' } }>
-				<ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ value } />
-			</Grid>
-		</>
+		<Grid item xs={ 12 }>
+			<PopoverGridContainer>
+				<Grid item xs={ 6 }>
+					<ControlFormLabel> { __( 'Direction', 'elementor' ) }</ControlFormLabel>
+				</Grid>
+				<Grid item xs={ 6 }>
+					<ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ value } />
+				</Grid>
+			</PopoverGridContainer>
+		</Grid>
 	);
 }
