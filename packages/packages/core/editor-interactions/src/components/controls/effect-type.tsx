@@ -16,7 +16,7 @@ export function EffectType( { value, onChange }: FieldProps ) {
 		{
 			value: 'out',
 			label: __( 'Out', 'elementor' ),
-			renderContent: () => __( 'out', 'elementor' ),
+			renderContent: () => __( 'Out', 'elementor' ),
 		},
 	];
 
