@@ -145,6 +145,8 @@ export const useActions = () => {
 		items: ItemsActionPayload< TabItem >;
 	} ) => {
 		items.forEach( ( { index } ) => {
+			const position = index + 1;
+
 			createElements( {
 				title: __( 'Tabs', 'elementor' ),
 				elements: [
@@ -152,14 +154,14 @@ export const useActions = () => {
 						containerId: tabContentAreaId,
 						model: {
 							elType: TAB_CONTENT_ELEMENT_TYPE,
-							editor_settings: { title: `Tab ${ index + 1 } content` },
+							editor_settings: { title: `Tab ${ position } content`, position },
 						},
 					},
 					{
 						containerId: tabsMenuId,
 						model: {
 							elType: TAB_ELEMENT_TYPE,
-							editor_settings: { title: `Tab ${ index + 1 } trigger` },
+							editor_settings: { title: `Tab ${ position } trigger`, position },
 						},
 					},
 				],
