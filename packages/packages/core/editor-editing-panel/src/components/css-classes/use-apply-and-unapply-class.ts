@@ -9,6 +9,8 @@ import { doApplyClasses, doGetAppliedClasses } from '../../apply-unapply-actions
 import { useClassesProp } from '../../contexts/classes-prop-context';
 import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
+import { trackStyles } from '../../utils/tracking/subscribe';
+import { trackGlobalClasses } from '../../../../editor-global-classes/src/utils/tracking';
 
 type UndoableClassActionPayload = {
 	classId: StyleDefinitionID;
@@ -140,7 +142,7 @@ export function useCreateAndApplyClass() {
 
 function useApply() {
 	const { element } = useElement();
-	const { setId: setActiveId } = useStyle();
+	const { setId: setActiveId, provider } = useStyle();
 	const { setClasses, getAppliedClasses } = useClasses();
 
 	return useCallback(
@@ -156,8 +158,11 @@ function useApply() {
 			const updatedClassesIds = [ ...appliedClasses, classIDToApply ];
 			setClasses( updatedClassesIds );
 			setActiveId( classIDToApply );
+			trackStyles( provider?.getKey() ?? '', 'class_applied', {
+				classId: classIDToApply,
+			} );
 		},
-		[ element.id, getAppliedClasses, setActiveId, setClasses ]
+		[ element.id, getAppliedClasses, setActiveId, setClasses, provider ]
 	);
 }
 
@@ -182,6 +187,10 @@ function useUnapply() {
 			if ( activeId === classIDToUnapply ) {
 				setActiveId( updatedClassesIds[ 0 ] ?? null );
 			}
+			trackGlobalClasses( {
+				classId: classIDToUnapply,
+				event: 'class_removed',
+			} );
 		},
 		[ activeId, element.id, getAppliedClasses, setActiveId, setClasses ]
 	);
