@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { PopoverContent } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -7,7 +8,6 @@ import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
 import { Trigger } from './controls/trigger';
-import { PopoverContent } from '@elementor/editor-controls';
 
 const DELIMITER = '-';
 

@@ -5,7 +5,7 @@ import {
 	type ToggleButtonGroupItem,
 	ToggleButtonGroupUi,
 } from '@elementor/editor-controls';
-import { Grid, Typography } from '@elementor/ui';
+import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type FieldProps } from '../../types';
