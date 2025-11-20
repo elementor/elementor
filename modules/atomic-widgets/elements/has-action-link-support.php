@@ -11,42 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Has_Action_Link_Support {
 
 	protected function has_action_in_link(): bool {
-		$raw_settings = $this->get_settings();
-		$link = $raw_settings['link'] ?? null;
+		$atomic_settings = $this->get_atomic_settings();
+		$link = $atomic_settings['link'] ?? null;
 
-		if ( ! is_array( $link ) || ! isset( $link['value']['destination'] ) ) {
+		if ( ! is_array( $link ) ) {
 			return false;
 		}
 
-		$destination = $link['value']['destination'];
-
-		if ( ! isset( $destination['$$type'] ) || 'dynamic' !== $destination['$$type'] ) {
-			return false;
-		}
-
-		$dynamic_tag_name = $destination['value']['name'] ?? '';
-
-		if ( ! $dynamic_tag_name ) {
-			return false;
-		}
-
-		$tag_info = Plugin::$instance->dynamic_tags->get_tag_info( $dynamic_tag_name );
-
-		if ( ! $tag_info || ! isset( $tag_info['instance'] ) ) {
-			return false;
-		}
-
-		$tag_instance = $tag_info['instance'];
-
-		if ( ! method_exists( $tag_instance, 'get_group' ) ) {
-			return false;
-		}
-
-		$tag_group = $tag_instance->get_group();
-
-		if ( 'contact-url' === $dynamic_tag_name && 'action' === $tag_group ) {
-			return false;
-		}
+		$tag_group = $link['data-dynamic-tag-group'] ?? '';
 
 		return 'action' === $tag_group;
 	}
