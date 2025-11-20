@@ -95,7 +95,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await selectOption( page.getByText( 'Fade', { exact: true } ), 'Slide' );
 			await selectOption( page.getByText( '300 MS', { exact: true } ), '100 MS' );
 
-			const effectTypeOption = page.getByLabel( 'Out', { exact: true } );
+			const effectTypeOption = page.getByLabel( 'out', { exact: true } );
 			const directionOption = page.getByLabel( 'To bottom', { exact: true } );
 
 			await expect( effectTypeOption ).toBeVisible();
