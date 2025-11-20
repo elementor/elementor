@@ -2,11 +2,11 @@ type Settings = Record< string, unknown >;
 
 type ChildRenderCallback = () => void;
 
-interface ListenToChildren {
+interface ListenToChildrenAPI {
 	render: ( callback: ChildRenderCallback ) => void;
 }
 
-type ListenToChildrenFunction = ( elementTypes: string[] ) => ListenToChildren;
+type ListenToChildrenFunction = ( elementTypes: string[] ) => ListenToChildrenAPI;
 
 type Handler = < TSettings extends Settings = Settings >( params: {
 	element: Element;
@@ -15,11 +15,7 @@ type Handler = < TSettings extends Settings = Settings >( params: {
 	listenToChildren: ListenToChildrenFunction;
 } ) => ( () => void ) | undefined;
 
-interface HandlerRegistration {
-	callback: Handler;
-}
-
-export const handlers: Map< string, Map< string, HandlerRegistration > > = new Map();
+export const handlers: Map< string, Map< string, Handler > > = new Map();
 
 export const register = ( { elementType, id, callback }: { elementType: string; id: string; callback: Handler } ) => {
 	if ( ! handlers.has( elementType ) ) {
@@ -27,7 +23,7 @@ export const register = ( { elementType, id, callback }: { elementType: string; 
 	}
 
 	if ( ! handlers.get( elementType )?.has( id ) ) {
-		handlers.get( elementType )?.set( id, { callback } );
+		handlers.get( elementType )?.set( id, callback );
 	}
 };
 

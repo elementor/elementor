@@ -2,6 +2,8 @@ import { handlers } from './handlers-registry';
 
 const unmountCallbacks: Map< string, Map< string, () => void > > = new Map();
 
+const ELEMENT_RENDERED_EVENT_NAME = 'elementor/element/rendered';
+
 export const onElementRender = ( {
 	element,
 	elementType,
@@ -15,7 +17,7 @@ export const onElementRender = ( {
 	const manualUnmount: ( () => void )[] = [];
 
 	element.dispatchEvent(
-		new CustomEvent( 'elementor/element/rendered', {
+		new CustomEvent( ELEMENT_RENDERED_EVENT_NAME, {
 			bubbles: true,
 			detail: {
 				element,
@@ -29,13 +31,13 @@ export const onElementRender = ( {
 		return;
 	}
 
-	Array.from( handlers.get( elementType )?.values() ?? [] ).forEach( ( registration ) => {
+	Array.from( handlers.get( elementType )?.values() ?? [] ).forEach( ( handler ) => {
 		const settings = element.getAttribute( 'data-e-settings' );
 
 		const listenToChildren = ( elementTypes: string[] ) => ( {
 			render: ( callback: () => void ) => {
 				element.addEventListener(
-					'elementor/element/rendered',
+					ELEMENT_RENDERED_EVENT_NAME,
 					( event ) => {
 						const { elementType: childType } = ( event as CustomEvent ).detail;
 
@@ -52,7 +54,7 @@ export const onElementRender = ( {
 			},
 		} );
 
-		const unmount = registration.callback( {
+		const unmount = handler( {
 			element,
 			signal: controller.signal,
 			settings: settings ? JSON.parse( settings ) : {},

@@ -1,5 +1,5 @@
 import { register } from '@elementor/frontend-handlers';
-import { Alpine, reinitTree } from '@elementor/alpinejs';
+import { Alpine, refreshTree } from '@elementor/alpinejs';
 import { TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE, getTabId, getIndex } from './utils';
 
 register( {
@@ -25,6 +25,6 @@ register( {
 
 		// Re-initialize Alpine to sync with editor DOM manipulations that bypass Alpine's reactivity.
 		listenToChildren( [ TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE ] )
-			.render( () => reinitTree( element ) );
+			.render( () => refreshTree( element ) );
 	},
 } );
