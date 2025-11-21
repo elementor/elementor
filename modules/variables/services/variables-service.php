@@ -6,8 +6,6 @@ use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
-use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
-use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 
 class Variables_Service {
 	private Variables_Repository $repo;
@@ -18,8 +16,6 @@ class Variables_Service {
 
 	/**
 	 * @throws FatalError If variable create fails or validation errors occur.
-	 * @throws DuplicatedLabel If there is a duplicate label in the database.
-	 * @throws VariablesLimitReached If variable limit reached.
 	 */
 	public function create( array $data ): array {
 		$collection = $this->repo->load();
@@ -46,7 +42,6 @@ class Variables_Service {
 	}
 
 	/**
-	 * @throws DuplicatedLabel If there is a duplicate label in the database.
 	 * @throws FatalError If variable update fails.
 	 * @throws RecordNotFound WHen variable is not found.
 	 */
@@ -76,6 +71,4 @@ class Variables_Service {
 			'watermark' => $watermark,
 		];
 	}
-
-	public function delete() {}
 }

@@ -7,9 +7,11 @@ use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 
-// a tradeoff when you want to use collection base methods they are
-// performing immutable process ( creating new instances ) we will see if we need to extend collection as time goes on
-
+/*
+ * TODO: a tradeoff when you want to use collection base methods they are
+ * performing immutable process ( creating new instances )
+ * we will see if we need to extend collection as time goes on
+ */
 class Variables_Collection extends Collection {
 	const FORMAT_VERSION_V1 = 1;
 	const TOTAL_VARIABLES_COUNT = 100;
@@ -80,37 +82,37 @@ class Variables_Collection extends Collection {
 	}
 
 	/**
-	 * @throws DuplicatedLabel
+	 * @throws DuplicatedLabel If there is a duplicate label in the database.
 	 */
-	public function assert_label_is_unique( string $label, ?string $ignoreId = null ): void {
+	public function assert_label_is_unique( string $label, ?string $ignore_id = null ): void {
 		foreach ( $this->all() as $variable ) {
 			if ( $variable->is_deleted() ) {
 				continue;
 			}
 
-			if ( $ignoreId !== null && $variable->id() === $ignoreId ) {
+			if ( null !== $ignore_id && $variable->id() === $ignore_id ) {
 				continue;
 			}
 
-			if ( strcasecmp( $variable->label(), $label ) === 0) {
-				throw new DuplicatedLabel( "Variable label '$label' already exists." );
+			if ( strcasecmp( $variable->label(), $label ) === 0 ) {
+				throw new DuplicatedLabel( esc_html( "Variable label '$label' already exists." ) );
 			}
 		}
 	}
 
 	/**
-	 * @throws VariablesLimitReached
+	 * @throws VariablesLimitReached If variable limit reached.
 	 */
 	public function assert_limit_not_reached(): void {
-		$activeCount = 0;
+		$active_count = 0;
 
 		foreach ( $this->all() as $variable ) {
 			if ( ! $variable->is_deleted()) {
-				$activeCount++;
+				$active_count++;
 			}
 		}
 
-		if ( self::TOTAL_VARIABLES_COUNT <= $activeCount ) {
+		if ( self::TOTAL_VARIABLES_COUNT <= $active_count ) {
 			throw new VariablesLimitReached( 'Total variables count limit reached' );
 		}
 	}

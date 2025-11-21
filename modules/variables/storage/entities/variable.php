@@ -19,7 +19,7 @@ class Variable {
 		int $order,
 		?string $deleted_at,
 		?string $updated_at
-    ) {
+	) {
 		$this->id = $id;
 		$this->type = $type;
 		$this->label = $label;
@@ -29,8 +29,6 @@ class Variable {
 		$this->deleted_at = $deleted_at;
 	}
 
-	// what if we dont have some values
-	// we cant save without value if we are going to prop type
 	public static function from_array( array $data ): self {
 		return new self(
 			$data['id'],
@@ -47,7 +45,7 @@ class Variable {
 		$this->deleted_at = $this->now();
 	}
 
-	private function now(){
+	private function now() {
 		return gmdate( 'Y-m-d H:i:s' );
 	}
 
