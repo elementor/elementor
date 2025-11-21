@@ -6,8 +6,10 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
-// a tradeoff when you want to use collection base methods are performing immutable
-// creating new instance
+
+// a tradeoff when you want to use collection base methods they are
+// performing immutable process ( creating new instances ) we will see if we need to extend collection as time goes on
+
 class Variables_Collection extends Collection {
 	const FORMAT_VERSION_V1 = 1;
 	const TOTAL_VARIABLES_COUNT = 100;
@@ -16,7 +18,6 @@ class Variables_Collection extends Collection {
 
 	private int $version;
 
-
 	private function __construct( array $items = [], ?int $watermark = 0, ?int $version = null ) {
 		parent::__construct();
 
@@ -24,7 +25,6 @@ class Variables_Collection extends Collection {
 		$this->watermark = $watermark;
 		$this->version = $version ?? self::FORMAT_VERSION_V1;
 	}
-
 
 	public static function hydrate( array $record ): self {
 		$variables = [];
@@ -83,14 +83,11 @@ class Variables_Collection extends Collection {
 	 * @throws DuplicatedLabel
 	 */
 	public function assert_label_is_unique( string $label, ?string $ignoreId = null ): void {
-		// This , ?string $ignoreId = null might be good but i  have to check if its goog at updating
-
 		foreach ( $this->all() as $variable ) {
 			if ( $variable->is_deleted() ) {
 				continue;
 			}
 
-			// Skip the variable being updated
 			if ( $ignoreId !== null && $variable->id() === $ignoreId ) {
 				continue;
 			}
@@ -113,7 +110,7 @@ class Variables_Collection extends Collection {
 			}
 		}
 
-		if ( self::TOTAL_VARIABLES_COUNT < $activeCount ) {
+		if ( self::TOTAL_VARIABLES_COUNT <= $activeCount ) {
 			throw new VariablesLimitReached( 'Total variables count limit reached' );
 		}
 	}

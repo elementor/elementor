@@ -16,9 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @group Elementor\Modules\Variables
  */
 class Test_Variables_Collection extends TestCase {
-	private function mock_collection() {
-
-	}
 
 	public function test_empty_variables__creates_empty_collection() {
 		// Act
@@ -321,6 +318,32 @@ class Test_Variables_Collection extends TestCase {
 
 		// Act - Ignoring id-1 but id-2 has the same label
 		$collection->assert_label_is_unique( 'Secondary', 'id-1' );
+	}
+
+	public function test_assert_limit_not_reached__throws_when_at_limit() {
+		// Arrange
+		$variables = [];
+		for ( $i = 0; $i < Variables_Collection::TOTAL_VARIABLES_COUNT; $i++ ) {
+			$variables[ "id-{$i}" ] = [
+				'type' => 'color',
+				'label' => "Label {$i}",
+				'value' => '#000',
+				'order' => $i
+			];
+		}
+
+		$collection = Variables_Collection::hydrate( [
+			'data' => $variables,
+			'watermark' => 30,
+			'version' => 1,
+		] );
+
+		// Assert
+		$this->expectException( VariablesLimitReached::class );
+		$this->expectExceptionMessage( 'Total variables count limit reached' );
+
+		// Act
+		$collection->assert_limit_not_reached();
 	}
 
 	public function test_assert_limit_not_reached__throws_error_when_over_limit() {

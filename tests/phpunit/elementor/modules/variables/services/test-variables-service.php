@@ -106,6 +106,7 @@ class Test_Variables_Service extends TestCase {
 		$data = [
 			'label' => 'Updated Color',
 			'value' => '#FFFFFF',
+			'order' => 10,
 		];
 
 		$this->repository->method( 'load' )->willReturn( $collection );
@@ -118,6 +119,7 @@ class Test_Variables_Service extends TestCase {
 		$this->assertEquals( 'id-2', $result['variable']['id'] );
 		$this->assertEquals( 'Updated Color', $result['variable']['label'] );
 		$this->assertEquals( '#FFFFFF', $result['variable']['value'] );
+		$this->assertEquals( 10, $result['variable']['order'] );
 		$this->assertEquals( 2, $result['watermark'] );
 	}
 
@@ -155,23 +157,6 @@ class Test_Variables_Service extends TestCase {
 
 		// Act
 		$this->service->update( 'id-1', $data );
-	}
-
-	public function test_update_updates_order() {
-		// Arrange
-		$collection = $this->mock_collection();
-		$data = [
-			'order' => 10,
-		];
-
-		$this->repository->method( 'load' )->willReturn( $collection );
-		$this->repository->method( 'save' )->willReturn( 2 );
-
-		// Act
-		$result = $this->service->update( 'id-2', $data );
-
-		// Assert
-		$this->assertEquals( 10, $result['variable']['order'] );
 	}
 }
 
