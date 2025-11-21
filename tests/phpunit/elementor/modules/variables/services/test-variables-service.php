@@ -158,5 +158,130 @@ class Test_Variables_Service extends TestCase {
 		// Act
 		$this->service->update( 'id-1', $data );
 	}
+
+	public function test_delete__successfully_deletes_variable() {
+		// Arrange
+		$collection = $this->mock_collection();
+
+		$this->repository->method( 'load' )->willReturn( $collection );
+		$this->repository->method( 'save' )->willReturn( 11 );
+
+		// Act
+		$result = $this->service->delete( 'id-1' );
+
+		// Assert
+		$this->assertEquals( 'id-1', $result['variable']['id'] );
+		$this->assertNotNull( $result['variable']['deleted_at'] );
+		$this->assertEquals( 11, $result['watermark'] );
+	}
+
+	public function test_delete__throws_fatal_error_when_save_fails() {
+		// Arrange
+		$collection = $this->mock_collection();
+
+		$this->repository->method( 'load' )->willReturn( $collection );
+		$this->repository->method( 'save' )->willReturn( false );
+
+		// Assert
+		$this->expectException( FatalError::class );
+		$this->expectExceptionMessage( 'Failed to delete variable' );
+
+		// Act
+		$this->service->delete( 'id-1' );
+	}
+
+	public function test_restore__successfully_restores_deleted_variable() {
+		// Arrange
+		$collection = Variables_Collection::hydrate( [
+			'data' => [
+				'id-1' => [
+					'type' => 'global-color',
+					'label' => 'Deleted Variable',
+					'value' => '#000000',
+					'deleted_at' => '2024-01-01 10:00:00',
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		] );
+
+		$this->repository->method( 'load' )->willReturn( $collection );
+		$this->repository->method( 'save' )->willReturn( 6 );
+
+		// Act
+		$result = $this->service->restore( 'id-1' );
+
+		// Assert
+		$this->assertEquals( 'id-1', $result['variable']['id'] );
+		$this->assertNull( $result['variable']['deleted_at'] );
+		$this->assertEquals( 6, $result['watermark'] );
+	}
+
+	public function test_restore__with_overrides() {
+		// Arrange
+		$collection = Variables_Collection::hydrate( [
+			'data' => [
+				'id-1' => [
+					'type' => 'global-color',
+					'label' => 'Deleted Variable',
+					'value' => '#000000',
+					'deleted_at' => '2024-01-01 10:00:00',
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		] );
+
+		$overrides = [
+			'label' => 'Restored Variable',
+			'value' => '#FFFFFF',
+		];
+
+		$this->repository->method( 'load' )->willReturn( $collection );
+		$this->repository->method( 'save' )->willReturn( 6 );
+
+		// Act
+		$result = $this->service->restore( 'id-1', $overrides );
+
+		// Assert
+		$this->assertEquals( 'id-1', $result['variable']['id'] );
+		$this->assertEquals( 'Restored Variable', $result['variable']['label'] );
+		$this->assertEquals( '#FFFFFF', $result['variable']['value'] );
+		$this->assertNull( $result['variable']['deleted_at'] );
+		$this->assertEquals( 6, $result['watermark'] );
+	}
+
+	public function test_restore__throws_duplicated_label_when_label_exists() {
+		// Arrange
+		$collection = Variables_Collection::hydrate( [
+			'data' => [
+				'id-1' => [
+					'type' => 'global-color',
+					'label' => 'Active Variable',
+					'value' => '#000000',
+				],
+				'id-2' => [
+					'type' => 'global-color',
+					'label' => 'Deleted Variable',
+					'value' => '#FFFFFF',
+					'deleted_at' => '2024-01-01 10:00:00',
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		] );
+
+		$overrides = [
+			'label' => 'Active Variable',
+		];
+
+		$this->repository->method( 'load' )->willReturn( $collection );
+
+		// Assert
+		$this->expectException( DuplicatedLabel::class );
+
+		// Act
+		$this->service->restore( 'id-2', $overrides );
+	}
 }
 
