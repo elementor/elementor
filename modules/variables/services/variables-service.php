@@ -105,7 +105,6 @@ class Variables_Service {
 
 		$variable->apply_changes( $overrides );
 
-		// Perform the actual restore
 		$variable->restore();
 
 		$watermark = $this->repo->save( $collection );
