@@ -285,7 +285,12 @@ jobs:
       - name: Build test report
         run: |
           npm ci
-          cd ./allure-results && npx allure generate clean ./ --output ../allure-report
+          if [ -d "./allure-results" ]; then
+            cd ./allure-results && npx allure generate clean ./ --output ../allure-report
+          else
+            echo "Warning: allure-results directory not found. Skipping report generation."
+            mkdir -p allure-report
+          fi
 
       - uses: actions/upload-artifact@v4
         name: Upload generated Allure report
@@ -296,6 +301,7 @@ jobs:
           retention-days: 1
 
       - name: Upload Allure report to GCP bucket
+        if: hashFiles('allure-report/**') != ''
         uses: google-github-actions/upload-cloud-storage@v2
         with:
           path: allure-report/
