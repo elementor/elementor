@@ -222,7 +222,7 @@ class Test_Variables_Collection extends TestCase {
 
 		// Assert
 		$this->expectException( DuplicatedLabel::class );
-		$this->expectExceptionMessage( "Variable label 'Primary' already exists." );
+		$this->expectExceptionMessage( "Variable label &#039;Primary&#039; already exists." );
 
 		// Act
 		$collection->assert_label_is_unique( 'Primary' );
@@ -314,7 +314,7 @@ class Test_Variables_Collection extends TestCase {
 
 		// Assert
 		$this->expectException( DuplicatedLabel::class );
-		$this->expectExceptionMessage( "Variable label 'Secondary' already exists." );
+		$this->expectExceptionMessage( "Variable label &#039;Secondary&#039; already exists." );
 
 		// Act - Ignoring id-1 but id-2 has the same label
 		$collection->assert_label_is_unique( 'Secondary', 'id-1' );
