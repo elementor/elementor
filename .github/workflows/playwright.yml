@@ -238,7 +238,7 @@ jobs:
     needs: Playwright
     runs-on: ubuntu-22.04
     name: Merge reports and build Allure report
-    if: ${{ needs.Playwright.result != 'skipped' }}
+    if: ${{ always() && needs.Playwright.result != 'skipped' }}
     steps:
       - name: Pull repo
         uses: actions/checkout@v4
