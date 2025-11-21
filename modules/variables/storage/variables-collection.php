@@ -7,7 +7,7 @@ use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 
-/*
+/**
  * TODO: a tradeoff when you want to use collection base methods they are
  * performing immutable process ( creating new instances )
  * we will see if we need to extend collection as time goes on
@@ -107,7 +107,7 @@ class Variables_Collection extends Collection {
 		$active_count = 0;
 
 		foreach ( $this->all() as $variable ) {
-			if ( ! $variable->is_deleted()) {
+			if ( ! $variable->is_deleted() ) {
 				$active_count++;
 			}
 		}

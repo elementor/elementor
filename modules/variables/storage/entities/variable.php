@@ -45,6 +45,11 @@ class Variable {
 		$this->deleted_at = $this->now();
 	}
 
+	public function restore(): void {
+		$this->deleted_at = null;
+		$this->updated_at = $this->now();
+	}
+
 	private function now() {
 		return gmdate( 'Y-m-d H:i:s' );
 	}
