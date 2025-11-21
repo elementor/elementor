@@ -93,7 +93,7 @@ class Variables_Service {
 	/**
 	 * @throws FatalError If variable restore fails.
 	 */
-	public function restore( string $id, $overrides = []  ) {
+	public function restore( string $id, $overrides = [] ) {
 		$collection = $this->repo->load();
 		$variable = $this->find_or_fail( $collection, $id );
 
@@ -123,12 +123,11 @@ class Variables_Service {
 	/**
 	 * @throws RecordNotFound When a variable is not found.
 	 */
-	private function find_or_fail( Variables_Collection $collection, string $id ): Variable
-	{
+	private function find_or_fail( Variables_Collection $collection, string $id ): Variable {
 		$variable = $collection->get( $id );
 
 		if ( ! isset( $variable ) ) {
-			throw new RecordNotFound( "Variable not found" );
+			throw new RecordNotFound( 'Variable not found' );
 		}
 
 		return $variable;
