@@ -38,6 +38,13 @@ class Export {
 	private $settings_kit_info;
 
 	/**
+	 * Customization settings for selective export.
+	 *
+	 * @var array
+	 */
+	private $settings_customization;
+
+	/**
 	 * Selected plugins to export.
 	 * Contains the plugins essential data for export. (e.g: name, path, version, etc.)
 	 *
@@ -70,8 +77,9 @@ class Export {
 	public function __construct( $settings = [] ) {
 		$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 		$this->settings_kit_info = ! empty( $settings['kitInfo'] ) ? $settings['kitInfo'] : null;
+		$this->settings_customization = isset( $settings['customization'] ) ? $settings['customization'] : null;
 		$this->settings_selected_plugins = isset( $settings['plugins'] ) ? $settings['plugins'] : null;
-		$this->settings_selected_custom_post_types = isset( $settings['selectedCustomPostTypes'] ) ? $settings['selectedCustomPostTypes'] : null;
+		$this->settings_selected_custom_post_types = isset( $settings['customization']['content']['customPostTypes'] ) ? $settings['customization']['content']['customPostTypes'] : null;
 	}
 
 	/**
@@ -111,15 +119,27 @@ class Export {
 
 		$data = [
 			'include' => $this->settings_include,
+			'customization' => $this->settings_customization,
 			'selected_plugins' => $this->settings_selected_plugins,
 			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
 		];
+
+		$media_collector = null;
+		if ( $this->should_collect_media( $data ) ) {
+			$media_collector = new \Elementor\TemplateLibrary\Classes\Media_Collector();
+			$media_collector->start_collection();
+		}
 
 		foreach ( $this->runners as $runner ) {
 			if ( $runner->should_export( $data ) ) {
 				$export_result = $runner->export( $data );
 				$this->handle_export_result( $export_result );
 			}
+		}
+
+		$media_urls = null;
+		if ( $media_collector ) {
+			$media_urls = $media_collector->get_collected_urls();
 		}
 
 		$this->add_json_file( 'manifest', $this->manifest_data );
@@ -130,6 +150,7 @@ class Export {
 		return [
 			'manifest' => $this->manifest_data,
 			'file_name' => $zip_file_name,
+			'media_urls' => $media_urls,
 		];
 	}
 
@@ -152,10 +173,14 @@ class Export {
 		if ( ! is_array( $this->get_settings_selected_plugins() ) && in_array( 'plugins', $this->settings_include, true ) ) {
 			$this->settings_selected_plugins( $this->get_default_settings_selected_plugins() );
 		}
+
+		if ( ! is_array( $this->get_settings_customization() ) ) {
+			$this->settings_customization( $this->get_default_settings_customization() );
+		}
 	}
 
-	public function settings_include( $included_settings ) {
-		$this->settings_include = $included_settings;
+	public function settings_include( $settings_include ) {
+		$this->settings_include = $settings_include;
 	}
 
 	public function get_settings_include() {
@@ -168,6 +193,14 @@ class Export {
 
 	private function get_settings_kit_info() {
 		return $this->settings_kit_info;
+	}
+
+	public function settings_customization( $customization ) {
+		$this->settings_customization = $customization;
+	}
+
+	public function get_settings_customization() {
+		return $this->settings_customization;
 	}
 
 	public function settings_selected_custom_post_types( $selected_custom_post_types ) {
@@ -215,14 +248,29 @@ class Export {
 	private function get_default_settings_selected_plugins() {
 		$installed_plugins = Plugin::$instance->wp->get_plugins();
 
-		return $installed_plugins->map( function ( $item, $key ) {
-			return [
+		$result = [];
+		foreach ( $installed_plugins->all() as $key => $item ) {
+			$plugin_key = str_replace( '.php', '', $key ); // Inconsistency between get_plugins() and WP Rest API's key format.
+
+			$result[ $plugin_key ] = [
 				'name' => $item['Name'],
-				'plugin' => $key,
+				'plugin' => $plugin_key,
 				'pluginUri' => $item['PluginURI'],
 				'version' => $item['Version'],
 			];
-		} )->all();
+		}
+		return $result;
+	}
+
+	private function get_default_settings_customization() {
+		return [
+			'settings' => null,
+			'templates' => null,
+			'content' => [
+				'mediaFormat' => 'link',
+			],
+			'plugins' => null,
+		];
 	}
 
 	/**
@@ -332,5 +380,12 @@ class Export {
 	 */
 	private function add_file( $file, $content ) {
 		$this->zip->addFromString( $file, $content );
+	}
+
+	private function should_collect_media( $data ) {
+		return (
+			isset( $data['customization']['content']['mediaFormat'] ) &&
+			'cloud' === $data['customization']['content']['mediaFormat']
+		);
 	}
 }

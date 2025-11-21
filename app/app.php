@@ -16,9 +16,8 @@ use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Assets_Translation_Loader;
 
-use Elementor\App\Modules\ImportExport\Module as ImportExportModule;
 use Elementor\App\Modules\KitLibrary\Module as KitLibraryModule;
-use Elementor\App\Modules\ImportExportCustomization\Module as ImportExportCustomizationModule;
+use Elementor\App\Modules\ImportExport\Module as ImportExportModule;
 use Elementor\App\Modules\SiteEditor\Module as SiteEditorModule;
 use Elementor\App\Modules\Onboarding\Module as OnboardingModule;
 
@@ -290,6 +289,12 @@ class App extends BaseApp {
 			'description' => esc_html__( 'Enhanced import/export for website templates. Selectively include site content, templates, and settings with advanced granular control.', 'elementor' ),
 			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
 			'default' => ExperimentsManager::STATE_ACTIVE,
+			'hidden' => true,
+			'mutable' => false,
+			'new_site' => [
+				'always_active' => true,
+				'minimum_installation_version' => '3.34.0',
+			],
 		] );
 	}
 
@@ -300,10 +305,6 @@ class App extends BaseApp {
 
 		if ( current_user_can( 'manage_options' ) || Utils::is_wp_cli() ) {
 			$this->add_component( 'import-export', new ImportExportModule() );
-
-			if ( Plugin::$instance->experiments->is_feature_active( 'import-export-customization' ) ) {
-				$this->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
-			}
 
 			// Kit library is depended on import-export
 			$this->add_component( 'kit-library', new KitLibraryModule() );

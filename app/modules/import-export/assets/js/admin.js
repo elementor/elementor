@@ -1,240 +1,87 @@
+import { AppsEventTracking } from '../../../../assets/js/event-track/apps-event-tracking';
+import { RevertKitHandler } from './shared/revert-kit-handler';
+
 class Admin {
-	/**
-	 * Session Storage Key
-	 *
-	 * @type {string}
-	 */
-	KIT_DATA_KEY = 'elementor-kit-data';
-
-	/**
-	 * Contains the ID of the referrer Kit and the name of the Kit to remove. Stored in session storage.
-	 *
-	 * @type {Object}
-	 */
-	cachedKitData;
-
-	/**
-	 * The 'Remove Kit' revert button
-	 *
-	 * @type {Element}
-	 */
-	revertButton;
-
-	/**
-	 * Name of the kit currently active (last imported)
-	 *
-	 * @type {string}
-	 */
-	activeKitName;
-
 	constructor() {
-		this.activeKitName = this.getActiveKitName();
-		this.revertButton = document.getElementById( 'elementor-import-export__revert_kit' );
-
-		if ( this.revertButton ) {
-			this.revertButton.addEventListener( 'click', this.onRevertButtonClick.bind( this ) );
-			this.maybeAddRevertBtnMargin();
-			this.maybeScrollToRevertButton();
-		}
-
-		this.maybeShowReferrerKitDialog();
-	}
-
-	shouldScrollToRevert() {
 		const urlParams = new URLSearchParams( window.location.search );
 
-		return !! urlParams.get( 'scroll_to_revert' );
-	}
+		if ( 'elementor-tools' === urlParams.get( 'page' ) ) {
+			this.sendPageToolsViewedEvent();
 
-	maybeAddRevertBtnMargin() {
-		if ( ! this.shouldScrollToRevert() ) {
-			return;
+			elementorAdmin.elements.$settingsTabs.on( 'focus', () => {
+				const location = window.location.hash.slice( 1 );
+
+				this.maybeSendImportExportLocationEvent( location );
+			} );
+
+			this.maybeSendImportExportLocationEvent( window.location.hash.slice( 1 ) );
 		}
 
-		this.revertButton.style.marginBottom = this.calculateMargin();
+		this.revertButton = document.getElementById( 'elementor-import-export__revert_kit' );
+		this.importFroLibraryButton = document.getElementById( 'elementor-import-export__import_from_library' );
+		this.importButton = document.getElementById( 'elementor-import-export__import' );
+		this.exportButton = document.getElementById( 'elementor-import-export__export' );
+
+		this.initializeRevertHandler();
+		this.bindEventListeners();
 	}
 
-	maybeScrollToRevertButton() {
-		if ( ! this.shouldScrollToRevert() ) {
-			return;
+	initializeRevertHandler() {
+		if ( this.revertButton ) {
+			this.revertHandler = new RevertKitHandler( {
+				revertButton: this.revertButton,
+			} );
+
+			this.revertHandler.maybeShowReferrerKitDialog();
+		}
+	}
+
+	bindEventListeners() {
+		if ( this.revertButton ) {
+			this.revertButton.addEventListener( 'click', this.onRevertButtonClick.bind( this ) );
 		}
 
-		this.scrollToBottom();
+		if ( this.importFroLibraryButton ) {
+			this.importFroLibraryButton.addEventListener( 'click', this.onImportFromLibraryButtonClick.bind( this ) );
+		}
+
+		if ( this.importButton ) {
+			this.importButton.addEventListener( 'click', this.onImportButtonClick.bind( this ) );
+		}
+
+		if ( this.exportButton ) {
+			this.exportButton.addEventListener( 'click', this.onExportButtonClick.bind( this ) );
+		}
 	}
 
-	/**
-	 * CalculateMargin
-	 *
-	 * @return {string}
-	 */
-	calculateMargin() {
-		const adminBar = document.getElementById( 'wpadminbar' );
-		const adminBarHeight = adminBar ? adminBar.offsetHeight : 0;
-
-		const revertKitHeight = this.revertButton.parentElement.offsetHeight;
-
-		return (
-			document.body.clientHeight -
-			adminBarHeight -
-			revertKitHeight -
-			document.getElementById( 'wpfooter' ).offsetHeight -
-			15 // Extra margin at the top
-		) + 'px';
+	sendPageToolsViewedEvent() {
+		AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.admin.pluginToolsTab );
 	}
 
-	/**
-	 * Scroll to the bottom of the page
-	 */
-	scrollToBottom() {
-		setTimeout( () => {
-			window.scrollTo( 0, document.body.scrollHeight );
-		} );
+	maybeSendImportExportLocationEvent( location ) {
+		if ( 'tab-import-export-kit' === location ) {
+			AppsEventTracking.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.admin.pluginWebsiteTemplatesTab );
+		}
 	}
 
-	/**
-	 * RevertBtnOnClick
-	 *
-	 * @param {Event} event
-	 */
 	onRevertButtonClick( event ) {
 		event.preventDefault();
 
-		elementorCommon.dialogsManager.createWidget( 'confirm', {
-			headerMessage: __( 'Are you sure?', 'elementor' ),
-			// Translators: %s is the name of the active Kit
-			message: __( 'Removing %s will permanently delete changes made to the Websites Template\'s content and site settings', 'elementor' ).replace( '%s', this.activeKitName ),
-			strings: {
-				confirm: __( 'Delete', 'elementor' ),
-				cancel: __( 'Cancel', 'elementor' ),
-			},
-			onConfirm: () => this.onRevertConfirm(),
-		} ).show();
+		AppsEventTracking.sendImportExportAdminAction( 'Revert' );
+
+		this.revertHandler?.revertKit();
 	}
 
-	onRevertConfirm() {
-		const referrerKitId = new URLSearchParams( this.revertButton.href ).get( 'referrer_kit' );
-
-		this.saveToCache( referrerKitId ?? '' );
-
-		location.href = this.revertButton.href;
+	onExportButtonClick() {
+		AppsEventTracking.sendImportExportAdminAction( 'Export' );
 	}
 
-	maybeShowReferrerKitDialog() {
-		const { referrerKitId } = this.getDataFromCache();
-		if ( undefined === referrerKitId ) {
-			return;
-		}
-
-		if ( 0 === referrerKitId.length ) {
-			this.createKitDeletedWidget( {
-				message: __( 'Try a different Website Template or build your site from scratch.', 'elementor' ),
-				strings: {
-					confirm: __( 'OK', 'elementor' ),
-					cancel: __( 'Library', 'elementor' ),
-				},
-				onCancel: () => {
-					location.href = elementorImportExport.appUrl;
-				},
-			} );
-			this.clearCache();
-
-			return;
-		}
-
-		this.createKitDeletedWidget( {
-			message: __( 'You\'re ready to apply a new Kit!', 'elementor' ),
-			strings: {
-				confirm: __( 'Continue to new Kit', 'elementor' ),
-				cancel: __( 'Close', 'elementor' ),
-			},
-			onConfirm: () => {
-				location.href = elementorImportExport.appUrl + '/preview/' + referrerKitId;
-			},
-		} );
-		this.clearCache();
+	onImportButtonClick() {
+		AppsEventTracking.sendImportExportAdminAction( 'Import' );
 	}
 
-	/**
-	 * CreateKitDeletedWidget
-	 *
-	 * @param {Object} options
-	 */
-	createKitDeletedWidget( options ) {
-		const { activeKitName } = this.getDataFromCache();
-
-		elementorCommon.dialogsManager.createWidget( 'confirm', {
-			id: 'e-revert-kit-deleted-dialog',
-			// Translators: %s is the name of the active Kit
-			headerMessage: __( '%s was successfully deleted', 'elementor' ).replace( '%s', activeKitName ),
-			message: options.message,
-			strings: {
-				confirm: options.strings.confirm,
-				cancel: options.strings.cancel,
-			},
-			onConfirm: options.onConfirm,
-			onCancel: options.onCancel,
-		} ).show();
-	}
-
-	/**
-	 * Retrieving the last imported kit from the elementorAppConfig global
-	 *
-	 * @return {string}
-	 */
-	getActiveKitName() {
-		const lastKit = elementorImportExport.lastImportedSession;
-
-		if ( lastKit.kit_title ) {
-			return lastKit.kit_title;
-		}
-
-		if ( lastKit.kit_name ) {
-			return this.convertNameToTitle( lastKit.kit_name );
-		}
-
-		return __( 'Your Kit', 'elementor' );
-	}
-
-	/**
-	 * ConvertNameToTitle
-	 *
-	 * @param {string} name
-	 *
-	 * @return {string}
-	 */
-	convertNameToTitle( name ) {
-		return name
-			.split( /[-_]+/ )
-			.map( ( word ) => word[ 0 ].toUpperCase() + word.substring( 1 ) )
-			.join( ' ' );
-	}
-
-	saveToCache( referrerKitId ) {
-		sessionStorage.setItem(
-			this.KIT_DATA_KEY,
-			JSON.stringify( {
-				referrerKitId,
-				activeKitName: this.activeKitName,
-			} ),
-		);
-	}
-
-	getDataFromCache() {
-		if ( this.cachedKitData ) {
-			return this.cachedKitData;
-		}
-
-		try {
-			this.cachedKitData = JSON.parse( sessionStorage.getItem( this.KIT_DATA_KEY ) );
-		} catch ( e ) {
-			return {};
-		}
-
-		return this.cachedKitData ?? {};
-	}
-
-	clearCache() {
-		sessionStorage.removeItem( this.KIT_DATA_KEY );
+	onImportFromLibraryButtonClick() {
+		AppsEventTracking.sendImportExportAdminAction( 'Import from Library' );
 	}
 }
 

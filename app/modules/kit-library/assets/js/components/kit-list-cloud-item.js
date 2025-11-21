@@ -16,12 +16,16 @@ import {
 	Popover,
 } from '@elementor/app-ui';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
-import { KIT_SOURCE_MAP } from '../../../../import-export/assets/js/hooks/use-kit';
 import Tooltip from 'elementor-app/molecules/tooltip';
 
 import './kit-list-item.scss';
 
 const PLACEHOLDER_IMAGE_SRC = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzQ1IiBoZWlnaHQ9IjMzMCIgdmlld0JveD0iMCAwIDM0NSAzMzAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzNDUiIGhlaWdodD0iMzMwIiBmaWxsPSIjRjRGNUY4Ii8+CjxwYXRoIGQ9Ik0xNjQuMjY3IDE2Ny42QzE2Ni40NzIgMTYxLjc2MSAxNzAuMjEzIDE1Ni42MjUgMTc1LjA5NCAxNTIuNzM1QzE3OS45NzUgMTQ4Ljg0NiAxODUuODE2IDE0Ni4zNDYgMTkyIDE0NS41QzE5MS4xNTUgMTUxLjY4NCAxODguNjU0IDE1Ny41MjUgMTg0Ljc2NCAxNjIuNDA2QzE4MC44NzQgMTY3LjI4OCAxNzUuNzM5IDE3MS4wMjggMTY5LjkgMTczLjIzM00xNjkuNDY3IDE1OC41QzE3My42NzcgMTYwLjQ0MyAxNzcuMDU3IDE2My44MjMgMTc5IDE2OC4wMzNNMTUzIDE4NC41VjE3NS44MzNDMTUzIDE3NC4xMTkgMTUzLjUwOCAxNzIuNDQ0IDE1NC40NjEgMTcxLjAxOEMxNTUuNDEzIDE2OS41OTMgMTU2Ljc2NiAxNjguNDgyIDE1OC4zNSAxNjcuODI2QzE1OS45MzQgMTY3LjE3IDE2MS42NzYgMTY2Ljk5OSAxNjMuMzU3IDE2Ny4zMzNDMTY1LjAzOSAxNjcuNjY4IDE2Ni41ODMgMTY4LjQ5MyAxNjcuNzk1IDE2OS43MDVDMTY5LjAwNyAxNzAuOTE3IDE2OS44MzIgMTcyLjQ2MSAxNzAuMTY3IDE3NC4xNDNDMTcwLjUwMSAxNzUuODI0IDE3MC4zMyAxNzcuNTY2IDE2OS42NzQgMTc5LjE1QzE2OS4wMTggMTgwLjczNCAxNjcuOTA3IDE4Mi4wODcgMTY2LjQ4MiAxODMuMDM5QzE2NS4wNTYgMTgzLjk5MiAxNjMuMzgxIDE4NC41IDE2MS42NjcgMTg0LjVIMTUzWiIgc3Ryb2tlPSIjQUJBQkFCIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgo8L3N2Zz4K';
+
+const KIT_SOURCE_MAP = {
+	CLOUD: 'cloud',
+	FILE: 'file',
+};
 
 const PopoverItem = ( { className = '', icon, title, onClick } ) => {
 	const handleClick = () => {
@@ -178,8 +182,8 @@ const KitListCloudItem = ( props ) => {
 									onClick={ () => {
 										AppsEventTracking.sendKitCloudLibraryApply( props.model.id );
 
-										const url = elementorCommon?.config?.experimentalFeatures[ 'import-export-customization' ]
-											? `import-customization?referrer=${ KIT_SOURCE_MAP.CLOUD }&id=${ props.model.id }`
+										const url = elementorCommon?.config?.experimentalFeatures[ 'import-export' ]
+											? `import?referrer=${ KIT_SOURCE_MAP.CLOUD }&id=${ props.model.id }`
 											: `import?referrer=kit-library&source=${ KIT_SOURCE_MAP.CLOUD }&kit_id=${ props.model.id }`;
 
 										navigate( url, { replace: true } );

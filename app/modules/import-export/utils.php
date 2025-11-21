@@ -58,17 +58,31 @@ class Utils {
 		return $result;
 	}
 
-	public static function get_elementor_post_types() {
+	public static function get_elementor_post_types( $exclude = [] ) {
 		$elementor_post_types = get_post_types_by_support( 'elementor' );
 
 		return array_filter( $elementor_post_types, function ( $value ) {
 			// Templates are handled in a separate process.
+			if ( 'elementor_library' === $value ) {
+				return false;
+			}
+
+			if ( ! empty( $exclude ) && in_array( $value, $exclude, true ) ) {
+				return false;
+			}
+
 			return 'elementor_library' !== $value;
 		} );
 	}
 
-	public static function get_builtin_wp_post_types() {
-		return [ 'post', 'page', 'nav_menu_item' ];
+	public static function get_builtin_wp_post_types( $exclude = [] ) {
+		$builtin_wp_post_types = [ 'post', 'page', 'nav_menu_item' ];
+
+		if ( ! empty( $exclude ) ) {
+			return array_diff( $builtin_wp_post_types, $exclude );
+		}
+
+		return $builtin_wp_post_types;
 	}
 
 	public static function get_registered_cpt_names() {

@@ -87,28 +87,28 @@ export class ImportExportHelpers {
 	}
 
 	static async waitForExportProcess( page: Page ): Promise<void> {
-		await page.waitForURL( /.*export-customization\/process.*/ );
+		await page.waitForURL( /.*export\/process.*/ );
 		await expect( page.locator( 'text=Setting up your website template...' ) ).toBeVisible();
 		await expect( page.locator( 'text=This usually takes a few moments.' ) ).toBeVisible();
 		await expect( page.locator( 'text=Don\'t close this window until the process is finished.' ) ).toBeVisible();
 	}
 
 	static async waitForImportProcess( page: Page ): Promise<void> {
-		await page.waitForURL( /.*import-customization\/process.*/ );
+		await page.waitForURL( /.*import\/process.*/ );
 		await expect( page.locator( 'text=Settings up your website templates...' ) ).toBeVisible();
 		await expect( page.locator( 'text=This usually take a few moments.' ) ).toBeVisible();
 		await expect( page.locator( 'text=Don\'t close this window until the process is finished.' ) ).toBeVisible();
 	}
 
 	static async waitForExportComplete( page: Page ): Promise<void> {
-		await page.waitForURL( /.*export-customization\/complete.*/, { timeout: 30000 } );
+		await page.waitForURL( /.*export\/complete.*/, { timeout: 30000 } );
 		await expect( page.locator( 'text=Your .zip file is ready' ) ).toBeVisible();
 		await expect( page.locator( 'text=Once the download is complete, you can upload it to be used for other sites.' ) ).toBeVisible();
 		await expect( page.locator( 'text=What\'s included:' ) ).toBeVisible();
 	}
 
 	static async waitForImportComplete( page: Page ): Promise<void> {
-		await page.waitForURL( /.*import-customization\/complete.*/, { timeout: 30000 } );
+		await page.waitForURL( /.*import\/complete.*/, { timeout: 30000 } );
 		await expect( page.locator( 'text=Your website templates is now live on your site!' ) ).toBeVisible();
 		await expect( page.locator( 'text=You\'ve imported and applied the following to your site:' ) ).toBeVisible();
 		await expect( page.locator( 'text=What\'s included:' ) ).toBeVisible();

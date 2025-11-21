@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Testing\Modules\KitElementsDefaults\ImportExportCustomization\Runners;
+namespace Elementor\Testing\Modules\KitElementsDefaults\ImportExport\Runners;
 
 use Elementor\Base_Control;
 

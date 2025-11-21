@@ -5,6 +5,7 @@ namespace Elementor\App\Modules\ImportExport\Processes;
 use Elementor\App\Modules\ImportExport\Compatibility\Base_Adapter;
 use Elementor\App\Modules\ImportExport\Compatibility\Envato;
 use Elementor\App\Modules\ImportExport\Compatibility\Kit_Library;
+use Elementor\App\Modules\ImportExport\Compatibility\Customization;
 use Elementor\App\Modules\ImportExport\Utils;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Kits\Documents\Kit;
@@ -18,6 +19,7 @@ use Elementor\App\Modules\ImportExport\Runners\Import\Taxonomies;
 use Elementor\App\Modules\ImportExport\Runners\Import\Templates;
 use Elementor\App\Modules\ImportExport\Runners\Import\Wp_Content;
 use Elementor\App\Modules\ImportExport\Module;
+use Elementor\App\Modules\ImportExport\Runners\Import\Floating_Elements;
 
 class Import {
 	const MANIFEST_ERROR_KEY = 'manifest-error';
@@ -124,6 +126,13 @@ class Import {
 	private $settings_selected_plugins;
 
 	/**
+	 * Customization settings for selective import.
+	 *
+	 * @var array
+	 */
+	private $settings_customization;
+
+	/**
 	 * The imported data output.
 	 *
 	 * @var array
@@ -141,10 +150,9 @@ class Import {
 	/**
 	 * @param string     $path session_id | zip_file_path
 	 * @param array      $settings Use to determine which content to import.
-	 *                   (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
+	 *           (e.g: include, selected_plugins, selected_cpt, selected_override_conditions, etc.)
 	 * @param array|null $old_instance An array of old instance parameters that will be used for creating new instance.
-	 *                   We are using it for quick creation of the instance when the import process is being split into chunks.
-	 *
+	 *      We are using it for quick creation of the instance when the import process is being split into chunks.
 	 * @throws \Exception If the import session does not exist.
 	 */
 	public function __construct( string $path, array $settings = [], array $old_instance = null ) {
@@ -170,9 +178,10 @@ class Import {
 			$this->settings_include = ! empty( $settings['include'] ) ? $settings['include'] : null;
 
 			// Using isset and not empty is important since empty array is valid option.
-			$this->settings_selected_override_conditions = $settings['overrideConditions'] ?? null;
-			$this->settings_selected_custom_post_types = $settings['selectedCustomPostTypes'] ?? null;
+			$this->settings_selected_override_conditions = $settings['customization']['templates']['themeBuilder']['overrideConditions'] ?? null;
+			$this->settings_selected_custom_post_types = $settings['customization']['content']['customPostTypes'] ?? null;
 			$this->settings_selected_plugins = $settings['plugins'] ?? null;
+			$this->settings_customization = $settings['customization'] ?? null;
 
 			$this->manifest = $this->read_manifest_json();
 			$this->site_settings = $this->read_site_settings_json();
@@ -203,12 +212,14 @@ class Import {
 		$this->manifest = $instance_data['manifest'];
 		$this->site_settings = $instance_data['site_settings'];
 
+		$this->kit_id = $instance_data['kit_id'] ?? '';
 		$this->settings_include = $instance_data['settings_include'];
 		$this->settings_referrer = $instance_data['settings_referrer'];
 		$this->settings_conflicts = $instance_data['settings_conflicts'];
 		$this->settings_selected_override_conditions = $instance_data['settings_selected_override_conditions'];
 		$this->settings_selected_custom_post_types = $instance_data['settings_selected_custom_post_types'];
 		$this->settings_selected_plugins = $instance_data['settings_selected_plugins'];
+		$this->settings_customization = $instance_data['settings_customization'];
 
 		$this->documents_data = $instance_data['documents_data'];
 		$this->imported_data = $instance_data['imported_data'];
@@ -252,6 +263,7 @@ class Import {
 		$this->register( new Taxonomies() );
 		$this->register( new Elementor_Content() );
 		$this->register( new Wp_Content() );
+		$this->register( new Floating_Elements() );
 	}
 
 	/**
@@ -277,6 +289,10 @@ class Import {
 		if ( ! is_array( $this->get_settings_selected_plugins() ) ) {
 			$this->settings_selected_plugins( $this->get_default_settings_plugins() );
 		}
+
+		if ( ! is_array( $this->get_settings_customization() ) ) {
+			$this->settings_customization( $this->get_default_settings_customization() );
+		}
 	}
 
 	/**
@@ -297,6 +313,7 @@ class Import {
 			'manifest' => $this->manifest,
 			'site_settings' => $this->site_settings,
 			'selected_plugins' => $this->settings_selected_plugins,
+			'customization' => $this->settings_customization,
 			'extracted_directory_path' => $this->extracted_directory_path,
 			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
 		];
@@ -351,6 +368,7 @@ class Import {
 			'manifest' => $this->manifest,
 			'site_settings' => $this->site_settings,
 			'selected_plugins' => $this->settings_selected_plugins,
+			'customization' => $this->settings_customization,
 			'extracted_directory_path' => $this->extracted_directory_path,
 			'selected_custom_post_types' => $this->settings_selected_custom_post_types,
 		];
@@ -389,6 +407,7 @@ class Import {
 		return [
 			'status' => 'success',
 			'runner' => $runner_name,
+			'imported_data' => $this->imported_data,
 		];
 	}
 
@@ -399,15 +418,16 @@ class Import {
 	 */
 	public function init_import_session( $save_instance_data = false ) {
 		$import_sessions = Utils::get_import_sessions( true );
+		$existing_session = $import_sessions[ $this->session_id ] ?? [];
 
 		$import_sessions[ $this->session_id ] = [
 			'session_id' => $this->session_id,
 			'kit_title' => $this->manifest['title'] ?? '',
 			'kit_name' => $this->manifest['name'] ?? '',
-			'kit_thumbnail' => $this->get_kit_thumbnail(),
-			'kit_source' => $this->settings_referrer,
+			'kit_thumbnail' => $existing_session['kit_thumbnail'] ?? $this->get_kit_thumbnail(),
+			'kit_source' => $existing_session['kit_source'] ?? $this->settings_referrer,
 			'user_id' => get_current_user_id(),
-			'start_timestamp' => current_time( 'timestamp' ),
+			'start_timestamp' => $existing_session['start_timestamp'] ?? current_time( 'timestamp' ),
 		];
 
 		if ( $save_instance_data ) {
@@ -419,12 +439,14 @@ class Import {
 				'manifest' => $this->manifest,
 				'site_settings' => $this->site_settings,
 
+				'kit_id' => $this->kit_id,
 				'settings_include' => $this->settings_include,
 				'settings_referrer' => $this->settings_referrer,
 				'settings_conflicts' => $this->settings_conflicts,
 				'settings_selected_override_conditions' => $this->settings_selected_override_conditions,
 				'settings_selected_custom_post_types' => $this->settings_selected_custom_post_types,
 				'settings_selected_plugins' => $this->settings_selected_plugins,
+				'settings_customization' => $this->settings_customization,
 
 				'documents_data' => $this->documents_data,
 				'imported_data' => $this->imported_data,
@@ -491,6 +513,9 @@ class Import {
 
 			case 'plugins':
 				return $this->get_settings_selected_plugins();
+
+			case 'customization':
+				return $this->get_settings_customization();
 
 			default:
 				return [];
@@ -605,7 +630,6 @@ class Import {
 	 * Get the manifest file from the extracted directory and adapt it if needed.
 	 *
 	 * @return string The manifest file content.
-	 *
 	 * @throws \Error If import validation fails or processing errors occur.
 	 */
 	private function read_manifest_json() {
@@ -634,7 +658,7 @@ class Import {
 		$this->adapters = [];
 
 		/** @var Base_Adapter[] $adapter_types */
-		$adapter_types = [ Envato::class, Kit_Library::class ];
+		$adapter_types = [ Customization::class, Envato::class, Kit_Library::class ];
 
 		foreach ( $adapter_types as $adapter_type ) {
 			if ( $adapter_type::is_compatibility_needed( $manifest_data, [ 'referrer' => $this->get_settings_referrer() ] ) ) {
@@ -664,13 +688,15 @@ class Import {
 	 * @return array Custom post types names.
 	 */
 	private function get_default_settings_custom_post_types() {
-		if ( empty( $this->manifest['custom-post-type-title'] ) ) {
-			return [];
+		$excluded = [ 'page', 'nav_menu_item' ];
+
+		if ( empty( $this->manifest['content']['post'] ?? [] ) && empty( $this->manifest['wp-content']['post'] ?? [] ) ) {
+			$excluded[] = 'post';
 		}
 
-		$manifest_post_types = array_keys( $this->manifest['custom-post-type-title'] );
+		$manifest_post_types = array_keys( $this->manifest['custom-post-type-title'] ?? [] );
 
-		return array_diff( $manifest_post_types, Utils::get_builtin_wp_post_types() );
+		return array_merge( $manifest_post_types, Utils::get_builtin_wp_post_types( $excluded ) );
 	}
 
 	/**
@@ -715,6 +741,24 @@ class Import {
 	 */
 	private function get_default_settings_include() {
 		return [ 'templates', 'plugins', 'content', 'settings' ];
+	}
+
+	public function settings_customization( $customization ) {
+		$this->settings_customization = $customization;
+		return $this;
+	}
+
+	public function get_settings_customization() {
+		return $this->settings_customization;
+	}
+
+	private function get_default_settings_customization() {
+		return [
+			'settings' => null,
+			'templates' => null,
+			'content' => null,
+			'plugins' => null,
+		];
 	}
 
 	/**

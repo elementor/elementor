@@ -1,10 +1,10 @@
 <?php
-namespace Elementor\Testing\Modules\KitElementsDefaults\ImportExportCustomization\Runners;
+namespace Elementor\Testing\Modules\KitElementsDefaults\ImportExport\Runners;
 
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Modules\KitElementsDefaults\Module;
-use Elementor\Modules\KitElementsDefaults\ImportExportCustomization\Runners\Import;
+use Elementor\Modules\KitElementsDefaults\ImportExport\Runners\Import;
 
 class Test_Import extends Elementor_Test_Base {
 	public function setUp(): void {

@@ -2,7 +2,7 @@ import { Page } from '@playwright/test';
 
 export class NavigationHelpers {
 	static async visitExportCustomizationPage( page: Page ): Promise<void> {
-		await page.goto( '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export-customization' );
+		await page.goto( '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export' );
 		await page.waitForLoadState( 'networkidle' );
 	}
 

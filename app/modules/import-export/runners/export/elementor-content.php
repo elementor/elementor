@@ -24,13 +24,23 @@ class Elementor_Content extends Export_Runner_Base {
 	}
 
 	public function export( array $data ) {
-		$elementor_post_types = ImportExportUtils::get_elementor_post_types();
+		$customization = $data['customization']['content'] ?? null;
+		$selected_custom_post_types = $data['selected_custom_post_types'] ?? null;
+		$excluded_post_types = [];
+
+		if ( $selected_custom_post_types && ! in_array( 'post', $selected_custom_post_types, true ) ) {
+			$excluded_post_types[] = 'post';
+		}
+
+		$elementor_post_types = ImportExportUtils::get_elementor_post_types( $excluded_post_types );
+
+		$elementor_post_types = apply_filters( 'elementor/import-export/elementor-content/post-types/customization', $elementor_post_types, $customization );
 
 		$files = [];
 		$manifest = [];
 
 		foreach ( $elementor_post_types as $post_type ) {
-			$export = $this->export_elementor_post_type( $post_type );
+			$export = $this->export_elementor_post_type( $post_type, $customization );
 			$files = array_merge( $files, $export['files'] );
 
 			$manifest[ $post_type ] = $export['manifest_data'];
@@ -46,7 +56,10 @@ class Elementor_Content extends Export_Runner_Base {
 		];
 	}
 
-	private function export_elementor_post_type( $post_type ) {
+	private function export_elementor_post_type( $post_type, $customization ) {
+		$manifest_data = [];
+		$files = [];
+
 		$query_args = [
 			'post_type' => $post_type,
 			'post_status' => 'publish',
@@ -68,6 +81,8 @@ class Elementor_Content extends Export_Runner_Base {
 			],
 		];
 
+		$query_args = apply_filters( 'elementor/import-export/export/elementor-content/query-args/customization', $query_args, $post_type, $customization );
+
 		$query = new \WP_Query( $query_args );
 
 		if ( empty( $query ) ) {
@@ -78,9 +93,6 @@ class Elementor_Content extends Export_Runner_Base {
 		}
 
 		$post_type_taxonomies = $this->get_post_type_taxonomies( $post_type );
-
-		$manifest_data = [];
-		$files = [];
 
 		foreach ( $query->posts as $post ) {
 			$document = Plugin::$instance->documents->get( $post->ID );
@@ -95,6 +107,10 @@ class Elementor_Content extends Export_Runner_Base {
 				'url' => get_permalink( $post ),
 				'terms' => $terms,
 			];
+
+			if ( isset( $post->post_parent ) && $post->post_parent > 0 ) {
+				$post_manifest_data['post_parent'] = $post->post_parent;
+			}
 
 			if ( $post->ID === $this->page_on_front_id ) {
 				$post_manifest_data['show_on_front'] = true;

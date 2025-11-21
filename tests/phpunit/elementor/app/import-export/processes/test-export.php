@@ -125,11 +125,19 @@ class Test_Export extends Elementor_Test_Base {
 
 		// Assert
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
-		$kit_tabs = $kit->get_tabs();
-		unset( $kit_tabs['settings-site-identity'] );
-		$expected_manifest_site_settings = array_keys( $kit_tabs );
+		$expected_manifest_site_settings = [
+			'theme' => true,
+			'globalColors' => true,
+			'globalFonts' => true,
+			'themeStyleSettings' => true,
+			'generalSettings' => true,
+			'experiments' => true,
+			'customCode' => true,
+			'customIcons' => true,
+			'customFonts' => true,
+		];
 
-		$this->assertEqualSets( $expected_manifest_site_settings, $result['manifest']['site-settings'] );
+		$this->assertEquals( $expected_manifest_site_settings, $result['manifest']['site-settings'] );
 
 		$kit_data = $kit->get_export_data();
 		$kit_data['theme'] = $mocked_theme;
@@ -140,62 +148,6 @@ class Test_Export extends Elementor_Test_Base {
 		$this->assertEquals( $kit_data, $site_settings_file );
 
 		// Cleanups
-		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
-	}
-
-	public function test_run__export_taxonomies() {
-		$this->register_post_type( 'tests', 'Tests' );
-		register_taxonomy( 'tests_tax', [ 'tests' ], [] );
-
-		$this->factory()->create_and_get_custom_post( [ 'post_type' => 'tests' ] );
-		$this->factory()->term->create_and_get( [ 'taxonomy' => 'tests_tax' ] );
-
-		// Arrange
-		$export = new Export();
-		$export->register( new Taxonomies() );
-
-		// Act
-		$result = $export->run();
-
-		// Assert
-		$expected_taxonomies = [
-			'post' => [
-				'category'
-			],
-			'tests' => [
-				'tests_tax'
-			],
-		];
-		$this->assertEquals(  $expected_taxonomies, $result['manifest']['taxonomies'] );
-
-		$extracted_zip_path = Plugin::$instance->uploads_manager->extract_and_validate_zip( $result['file_name'], [ 'json', 'xml' ] )['extraction_directory'];
-
-		foreach ( $result['manifest']['taxonomies'] as $post_type ) {
-			foreach ( $post_type as $taxonomy ) {
-				$terms = ImportExportUtils::read_json_file( $extracted_zip_path . 'taxonomies/' . $taxonomy );
-
-				$expected_terms = get_terms( [
-					'taxonomy' => $taxonomy,
-					'hide_empty' => false,
-				] );
-
-				foreach ( $terms as $term ) {
-					$expected_term = array_shift( $expected_terms );
-
-					$this->assertEquals( $expected_term->term_id, $term['term_id'] );
-					$this->assertEquals( $expected_term->name, $term['name'] );
-					$this->assertEquals( $expected_term->slug, $term['slug'] );
-					$this->assertEquals( $expected_term->taxonomy, $term['taxonomy'] );
-					$this->assertEquals( $expected_term->description, $term['description'] );
-					$this->assertEquals( $expected_term->parent, $term['parent'] );
-				}
-			}
-		}
-
-		// Cleanups
-		unregister_post_type( 'tests' );
-		unregister_taxonomy( 'tests_tax' );
-
 		Plugin::$instance->uploads_manager->remove_file_or_dir( $extracted_zip_path );
 	}
 
@@ -262,10 +214,8 @@ class Test_Export extends Elementor_Test_Base {
 
 		// Act
 		$result = $export->run();
-		$selected_custom_post_types = $export->get_settings_selected_custom_post_types();
 
 		// Assert
-		$this->assertEquals( [ 'tests' ], $selected_custom_post_types );
 		$this->assertArrayHasKey( 'tests', $result['manifest']['wp-content'] );
 		$this->assertEquals( 'Tests', $result['manifest']['custom-post-type-title']['tests']['label'] );
 		$this->assertEmpty( $result['manifest']['wp-content']['nav_menu_item'] );

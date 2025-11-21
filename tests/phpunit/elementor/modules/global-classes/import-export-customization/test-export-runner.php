@@ -1,9 +1,9 @@
 <?php
 
-namespace Elementor\Testing\Modules\GlobalClasses\ImportExportCustomization;
+namespace Elementor\Testing\Modules\GlobalClasses\ImportExport;
 
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
-use Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners\Export as Export_Runner;
+use Elementor\Modules\GlobalClasses\ImportExport\Runners\Export as Export_Runner;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
