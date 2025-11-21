@@ -7,6 +7,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Custom_Fonts_Promotion_Item extends Base_Promotion_Template {
+
+	public function is_visible() {
+		return false;
+	}
+
 	public function get_name() {
 		return 'custom_fonts';
 	}

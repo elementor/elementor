@@ -134,6 +134,8 @@ class Modules_Manager {
 			'atomic-opt-in',
 			'components',
 			'interactions',
+			'editor-screen',
+			'editor-screen-navigation',
 		];
 	}
 

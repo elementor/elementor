@@ -87,6 +87,13 @@ const sass = {
 			},
 			{
 				expand: true,
+				cwd: 'modules/editor-screen-navigation/assets/scss',
+				src: 'editor-screen-navigation.scss',
+				dest: 'assets/css',
+				ext: '.css',
+			},
+			{
+				expand: true,
 				cwd: 'assets/dev/scss/frontend',
 				src: 'admin-bar.scss',
 				dest: 'assets/css',

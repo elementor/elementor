@@ -12,11 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Saved_Templates_Menu_Item implements Admin_Menu_Item {
 
 	public function is_visible() {
-		return true;
+		return false;
 	}
 
 	public function get_parent_slug() {
-		return Source_Local::ADMIN_MENU_SLUG;
+		return 'elementor';
 	}
 
 	public function get_label() {

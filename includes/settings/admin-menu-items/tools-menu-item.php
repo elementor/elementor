@@ -18,7 +18,7 @@ class Tools_Menu_Item implements Admin_Menu_Item_With_Page {
 	}
 
 	public function is_visible() {
-		return true;
+		return false;
 	}
 
 	public function get_parent_slug() {
