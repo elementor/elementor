@@ -284,11 +284,11 @@ jobs:
 
       - name: Build test report
         run: |
-          npm ci
-          if [ -d "./allure-results" ]; then
-            cd ./allure-results && npx allure generate clean ./ --output ../allure-report
+          if [ -d "./allure-results" ] && [ -n "$(find ./allure-results -type f 2>/dev/null | head -1)" ]; then
+            npm install -g allure-commandline
+            allure generate --clean allure-results -o allure-report || mkdir -p allure-report
           else
-            echo "Warning: allure-results directory not found. Skipping report generation."
+            echo "⚠️  No allure-results found. Creating empty report directory."
             mkdir -p allure-report
           fi
 
