@@ -19,7 +19,6 @@ export const UpgradeButton = ( props ) => {
 	);
 };
 
-
 UpgradeButton.propTypes = {
 	className: PropTypes.string,
 };
