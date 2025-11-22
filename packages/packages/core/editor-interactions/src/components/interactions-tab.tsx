@@ -20,16 +20,11 @@ export const InteractionsTab = ( { elementId }: { elementId: string } ) => {
 function InteractionsTabContent( { elementId }: { elementId: string } ) {
 	const existingInteractions = useElementInteractions( elementId );
 	const [ firstInteraction, setFirstInteraction ] = useState< boolean >( false );
-	const [ showInteractions, setShowInteractions ] = useState( () => {
-		if ( existingInteractions?.items?.length > 0 ) {
-			return true;
-		}
-		return false;
-	} );
+	const hasInteractions = existingInteractions?.items?.length || firstInteraction;
 
 	return (
 		<SessionStorageProvider prefix={ elementId }>
-			{ showInteractions ? (
+			{ hasInteractions ? (
 				<InteractionsProvider elementId={ elementId }>
 					<InteractionsContent firstInteraction={ firstInteraction } />
 				</InteractionsProvider>
@@ -37,7 +32,6 @@ function InteractionsTabContent( { elementId }: { elementId: string } ) {
 				<EmptyState
 					onCreateInteraction={ () => {
 						setFirstInteraction( true );
-						setShowInteractions( true );
 					} }
 				/>
 			) }
