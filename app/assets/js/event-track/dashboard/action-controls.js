@@ -252,29 +252,15 @@ class ActionControlTracking extends BaseTracking {
 		try {
 			const urlObj = new URL( url, window.location.origin );
 			urlObj.searchParams.delete( '_wpnonce' );
-			urlObj.searchParams.delete( 'post' );
+			const postParam = urlObj.searchParams.get( 'post' );
+			if ( postParam !== null && /^[0-9]+$/.test( postParam ) ) {
+				urlObj.searchParams.delete( 'post' );
+			}
+
 			return urlObj.pathname + urlObj.search + urlObj.hash;
 		} catch ( e ) {
 			return url;
 		}
-	}
-
-	static extractTextFromElement( element, controlType ) {
-		let text = '';
-
-		if ( CONTROL_TYPES.BUTTON === controlType ) {
-			text = element.value || element.textContent.trim() || element.getAttribute( 'aria-label' );
-		} else if ( CONTROL_TYPES.LINK === controlType ) {
-			text = element.textContent.trim() || element.getAttribute( 'aria-label' ) || element.getAttribute( 'title' );
-		} else if ( CONTROL_TYPES.SELECT === controlType ) {
-			const selectedOption = element.options[ element.selectedIndex ];
-			text = selectedOption ? selectedOption.textContent.trim() : '';
-		} else if ( CONTROL_TYPES.CHECKBOX === controlType || CONTROL_TYPES.TOGGLE === controlType || CONTROL_TYPES.RADIO === controlType ) {
-			const label = element.labels ? element.labels[ 0 ] : null;
-			text = label ? label.textContent.trim() : '';
-		}
-
-		return text;
 	}
 
 	static extractRelevantClasses( element ) {
