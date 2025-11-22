@@ -358,6 +358,7 @@ export const App = () => {
 										__nextHasNoMarginBottom={ true }
 										options={ plugins }
 										name="elementor-element-manager-select-filter-by-plugin"
+
 									/>
 								</FlexItem>
 								<FlexItem
