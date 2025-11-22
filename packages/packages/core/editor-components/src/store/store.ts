@@ -4,10 +4,14 @@ import {
 	type PayloadAction,
 	type SliceState,
 } from '@elementor/store';
+import { generateUniqueId } from '@elementor/utils';
+import { __ } from '@wordpress/i18n';
 
 import {
 	type Component,
 	type ComponentId,
+	type OverridableProp,
+	type OverridablePropGroup,
 	type PublishedComponent,
 	type StylesDefinition,
 	type UnpublishedComponent,
@@ -68,6 +72,88 @@ export const slice = createSlice( {
 		addCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
 			state.createdThisSession.push( payload );
 		},
+		addOverridableProp: (
+			state,
+			{
+				payload: { componentId, ...overridableProp },
+			}: PayloadAction<
+				{ componentId: ComponentId } & Omit< OverridableProp, 'groupId' > & { groupId: string | null }
+			>
+		) => {
+			const component = state.data.find( ( comp ) => comp.id === componentId );
+			const groupId = overridableProp.groupId || generateUniqueId();
+
+			if ( ! component ) {
+				return;
+			}
+
+			const props = component.overrides?.props ?? {};
+			const groups = component.overrides?.groups ?? {
+				items: {},
+				order: [],
+			};
+
+			if ( ! groups.items[ groupId ] ) {
+				groups.items[ groupId ] = {
+					id: groupId,
+					label: __( 'Default', 'elementor' ),
+					props: [],
+				};
+
+				groups.order.push( groupId );
+			}
+			const group: OverridablePropGroup = groups.items[ groupId ];
+
+			props[ overridableProp[ 'override-key' ] ] = {
+				...overridableProp,
+				groupId,
+			};
+
+			group.props.push( overridableProp[ 'override-key' ] );
+
+			groups.items[ groupId ] = group;
+
+			component.overrides = {
+				props,
+				groups,
+			};
+		},
+		removeOverridableProp: (
+			state,
+			{ payload }: PayloadAction< { componentId: ComponentId; overrideKey: string } >
+		) => {
+			const component = state.data.find( ( component ) => component.id === payload.componentId );
+			const { overrides } = component ?? {};
+
+			if ( ! overrides ) {
+				return;
+			}
+
+			const { props, groups } = overrides;
+			const prop = props[ payload.overrideKey ];
+
+			if ( ! prop ) {
+				return;
+			}
+
+			const { groupId } = prop;
+
+			const group = groups.items[ groupId ];
+
+			if ( ! group ) {
+				return;
+			}
+
+			group.props = group.props.filter( ( prop ) => prop !== payload.overrideKey );
+
+			if ( group.props.length === 0 && Object.keys( groups.items ).length > 1 ) {
+				groups.items = Object.fromEntries( 
+					Object.entries( groups.items ).filter( ( [ id ] ) => id !== groupId )
+				);
+
+				groups.order = groups.order.filter( ( id ) => id !== groupId );
+			}
+		},
 	},
 	extraReducers: ( builder ) => {
 		builder.addCase( loadComponents.fulfilled, ( state, { payload }: PayloadAction< GetComponentResponse > ) => {
@@ -88,6 +174,8 @@ const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadS
 const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
 const selectUnpublishedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].unpublishedData;
 const getCreatedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].createdThisSession;
+const selectComponent = ( state: ComponentsSlice, componentId: ComponentId ) =>
+	state[ SLICE_NAME ].data.find( ( component ) => component.id === componentId );
 
 export const selectComponents = createSelector(
 	selectData,
@@ -108,4 +196,8 @@ export const selectFlatStyles = createSelector( selectStylesDefinitions, ( data 
 export const selectCreatedThisSession = createSelector(
 	getCreatedThisSession,
 	( createdThisSession ) => createdThisSession
+);
+export const selectOverridableProps = createSelector(
+	selectComponent,
+	( component: PublishedComponent | undefined ) => component?.overrides
 );

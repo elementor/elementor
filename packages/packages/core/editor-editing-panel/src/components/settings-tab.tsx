@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ControlFormLabel } from '@elementor/editor-controls';
+import { ControlAdornmentsProvider } from '@elementor/editor-controls';
 import {
 	type Control,
 	type ControlItem,
@@ -15,7 +15,9 @@ import { Control as BaseControl } from '../controls-registry/control';
 import { ControlTypeContainer } from '../controls-registry/control-type-container';
 import { controlsRegistry, type ControlType } from '../controls-registry/controls-registry';
 import { SettingsField } from '../controls-registry/settings-field';
+import { getFieldIndicators } from '../field-indicators-registry';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
+import { ControlLabel } from './control-label';
 import { Section } from './section';
 import { SectionsList } from './sections-list';
 
@@ -93,17 +95,15 @@ const ControlLayout = ( {
 	control: Control[ 'value' ] | ElementControl[ 'value' ];
 	layout: ControlLayout;
 	controlProps: Record< string, unknown >;
-} ) => {
-	return (
-		<>
-			{ control.meta?.topDivider && <Divider /> }
-			<ControlTypeContainer layout={ layout }>
-				{ control.label && layout !== 'custom' ? <ControlFormLabel>{ control.label }</ControlFormLabel> : null }
-				<BaseControl type={ control.type as ControlType } props={ controlProps } />
-			</ControlTypeContainer>
-		</>
-	);
-};
+} ) => (
+	<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
+		{ control.meta?.topDivider && <Divider /> }
+		<ControlTypeContainer layout={ layout }>
+			{ control.label && layout !== 'custom' ? <ControlLabel>{ control.label }</ControlLabel> : null }
+			<BaseControl type={ control.type as ControlType } props={ controlProps } />
+		</ControlTypeContainer>
+	</ControlAdornmentsProvider>
+);
 
 function populateChildControlProps( props: Record< string, unknown > ) {
 	if ( props.childControlType ) {
