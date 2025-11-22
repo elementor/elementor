@@ -4,6 +4,7 @@ import PromotionTracking from './dashboard/promotion';
 import ScreenViewTracking from './dashboard/screen-view';
 import TopBarTracking from './dashboard/top-bar';
 import MenuPromotionTracking from './dashboard/menu-promotion';
+import ActionControlTracking from './dashboard/action-controls';
 
 const SESSION_TIMEOUT_MINUTES = 30;
 const MINUTE_MS = 60 * 1000;
@@ -19,6 +20,7 @@ export const CONTROL_TYPES = {
 	LINK: 'link',
 	SELECT: 'select',
 	TOGGLE: 'toggle',
+	FILTER: 'filter',
 };
 
 export const NAV_AREAS = {
@@ -369,6 +371,7 @@ export default class WpDashboardTracking {
 		ScreenViewTracking.destroy();
 		PromotionTracking.destroy();
 		MenuPromotionTracking.destroy();
+		ActionControlTracking.destroy();
 
 		this.initialized = false;
 	}
@@ -391,6 +394,7 @@ window.addEventListener( 'elementor/admin/init', () => {
 		ScreenViewTracking.init();
 		PromotionTracking.init();
 		MenuPromotionTracking.init();
+		ActionControlTracking.init();
 	}
 } );
 
