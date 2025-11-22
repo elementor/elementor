@@ -119,6 +119,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 			$tab_elements[] = Atomic_Tab::generate()
 				->editor_settings( [
 					'title' => "Tab {$i} trigger",
+					'initial_position' => $i,
 				] )
 				->is_locked( true )
 				->build();
@@ -127,6 +128,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				->is_locked( true )
 				->editor_settings( [
 					'title' => "Tab {$i} content",
+					'initial_position' => $i,
 				] )
 				->build();
 		}
@@ -239,8 +241,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
-			'data-interactions' => json_encode( $this->interactions ),
-			'x-data' => 'atomicTabs',
+			'x-data' => 'eTabs' . $this->get_id(),
 			'data-e-settings' => json_encode( [ 'default-active-tab' => esc_js( $default_active_tab_id ) ] ),
 		];
 

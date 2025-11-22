@@ -1,11 +1,16 @@
 import * as React from 'react';
-import { createContext, type ReactNode, useContext } from 'react';
-import { playElementInteractions, updateElementInteractions, useElementInteractions } from '@elementor/editor-elements';
+import { createContext, type ReactNode, useContext, useEffect } from 'react';
+import {
+	type ElementInteractions,
+	playElementInteractions,
+	updateElementInteractions,
+	useElementInteractions,
+} from '@elementor/editor-elements';
 
 type InteractionsContextValue = {
-	interactions: string;
-	setInteractions: ( value: string ) => void;
-	playInteractions: () => void;
+	interactions: ElementInteractions;
+	setInteractions: ( value: ElementInteractions | undefined ) => void;
+	playInteractions: ( animationId: string ) => void;
 };
 
 const InteractionsContext = createContext< InteractionsContextValue | null >( null );
@@ -13,19 +18,23 @@ const InteractionsContext = createContext< InteractionsContextValue | null >( nu
 export const InteractionsProvider = ( { children, elementId }: { children: ReactNode; elementId: string } ) => {
 	const interactions = useElementInteractions( elementId );
 
-	const setInteractions = ( value: string ) => {
+	useEffect( () => {
+		window.dispatchEvent( new CustomEvent( 'elementor/element/update_interactions' ) );
+	}, [] );
+
+	const setInteractions = ( value: ElementInteractions | undefined ) => {
 		updateElementInteractions( {
 			elementId,
 			interactions: value,
 		} );
 	};
 
-	const playInteractions = () => {
-		playElementInteractions( elementId );
+	const playInteractions = ( animationId: string ) => {
+		playElementInteractions( elementId, animationId );
 	};
 
 	const contextValue: InteractionsContextValue = {
-		interactions: interactions || '',
+		interactions,
 		setInteractions,
 		playInteractions,
 	};

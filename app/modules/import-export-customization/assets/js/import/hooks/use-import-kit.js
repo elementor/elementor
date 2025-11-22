@@ -38,7 +38,6 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 	const [ status, setImportStatus ] = useState( IMPORT_PROCESSING_STATUS.PENDING );
 	const [ error, setError ] = useState( null );
 	const [ startTime, setStartTime ] = useState( null );
-	const [ duration, setDuration ] = useState( null );
 
 	const runImportRunners = async () => {
 		setImportStatus( IMPORT_PROCESSING_STATUS.IN_PROGRESS );
@@ -72,7 +71,7 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 			const endTime = Date.now();
 			const millisecondsToSeconds = 1000;
 			const importDuration = ( endTime - startTime ) / millisecondsToSeconds;
-			setDuration( Number( importDuration.toFixed( 2 ) ) );
+			dispatch( { type: 'SET_DURATION', payload: Number( importDuration.toFixed( 2 ) ) } );
 		}
 
 		setImportStatus( IMPORT_PROCESSING_STATUS.DONE );
@@ -126,6 +125,5 @@ export function useImportKit( { data, includes, customization, isProcessing, dis
 		status,
 		error,
 		importKit,
-		duration,
 	};
 }

@@ -40,11 +40,12 @@ export { InlineEditor } from './components/inline-editor';
 // components
 export { ControlFormLabel } from './components/control-form-label';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
+export { ToggleButtonGroupUi } from './components/control-toggle-button-group';
 export { ClearIconButton } from './components/icon-buttons/clear-icon-button';
 export {
 	Repeater,
 	type SetRepeaterValuesMeta,
-	type ItemActionPayload,
+	type ItemsActionPayload,
 	type RepeaterItem,
 } from './components/repeater/repeater';
 export { FloatingActionsBar } from './components/floating-bar';

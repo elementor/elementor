@@ -50,7 +50,7 @@ export const RepeatableControl = createControl(
 		propKey,
 		addItemTooltipProps,
 	}: RepeatableControlProps ) => {
-		const { propTypeUtil: childPropTypeUtil } = childControlConfig;
+		const { propTypeUtil: childPropTypeUtil, isItemDisabled } = childControlConfig;
 
 		if ( ! childPropTypeUtil ) {
 			return null;
@@ -78,6 +78,7 @@ export const RepeatableControl = createControl(
 					<ControlRepeater
 						initial={ childPropTypeUtil.create( initialValues || null ) }
 						propTypeUtil={ childArrayPropTypeUtil as CollectionPropUtil< RepeatablePropValue > }
+						isItemDisabled={ isItemDisabled }
 					>
 						<RepeaterHeader label={ repeaterLabel }>
 							<TooltipAddItemAction
