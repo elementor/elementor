@@ -262,20 +262,6 @@ class ActionControlTracking extends BaseTracking {
 			return url;
 		}
 	}
-
-	static extractRelevantClasses( element ) {
-		const classes = element.className;
-
-		if ( ! classes || 'string' !== typeof classes ) {
-			return '';
-		}
-
-		const relevantClasses = classes.split( ' ' ).filter( ( cls ) =>
-			cls && ! cls.startsWith( 'elementor-control-' ) && ! cls.startsWith( 'wp-' ),
-		).slice( 0, 3 );
-
-		return relevantClasses.length > 0 ? relevantClasses.join( ' ' ) : '';
-	}
 }
 
 export default ActionControlTracking;
