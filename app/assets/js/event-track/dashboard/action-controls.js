@@ -1,4 +1,3 @@
-
 import WpDashboardTracking, { CONTROL_TYPES } from '../wp-dashboard-tracking';
 import { DashboardUtils } from './utils';
 import BaseTracking from './base-tracking';
@@ -253,9 +252,10 @@ class ActionControlTracking extends BaseTracking {
 		try {
 			const urlObj = new URL( url, window.location.origin );
 			urlObj.searchParams.delete( '_wpnonce' );
+			urlObj.searchParams.delete( 'post' );
 			return urlObj.pathname + urlObj.search + urlObj.hash;
 		} catch ( e ) {
-			return url.replace( /[?&]_wpnonce=[^&]+&?/g, '' ).replace( /\?$/, '' );
+			return url;
 		}
 	}
 
