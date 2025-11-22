@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Inline_Editing_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Has_Action_Link_Support;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -26,6 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Heading extends Atomic_Widget_Base {
 	use Has_Template;
+	use Has_Action_Link_Support;
 
 	const LINK_BASE_STYLE_KEY = 'link-base';
 

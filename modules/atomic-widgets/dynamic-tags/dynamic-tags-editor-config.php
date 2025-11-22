@@ -84,7 +84,7 @@ class Dynamic_Tags_Editor_Config {
 			'name'            => $tag['name'],
 			'categories'      => $tag['categories'],
 			'label'           => $tag['title'] ?? '',
-			'group'           => $tag['group'] ?? '',
+			'group'           => $this->set_atomic_group( $tag ),
 			'atomic_controls' => [],
 			'props_schema'    => $this->schemas->get( $tag['name'] ),
 		];
@@ -106,6 +106,16 @@ class Dynamic_Tags_Editor_Config {
 		$converted_tag['atomic_controls'] = $atomic_controls;
 
 		return $converted_tag;
+	}
+
+	private function set_atomic_group( $tag ): string {
+		$group = $tag['group'] ?? '';
+
+		if ( 'contact-url' === $tag['name'] && 'action' === $group ) {
+			return 'site';
+		}
+
+		return $group;
 	}
 
 	private function convert_controls_to_atomic( $tag ) {

@@ -112,17 +112,19 @@ export function createTemplatedElementView( {
 				.then( ( settings ) => {
 					return this.afterSettingsResolve( settings );
 				} )
-				.then( async ( settings ) => {
-					// Same as the Backend.
-					const context = {
-						id: this.model.get( 'id' ),
-						type,
-						settings,
-						base_styles: baseStylesDictionary,
-					};
+			.then( async ( settings ) => {
+				// Same as the Backend.
+				const context = {
+					id: this.model.get( 'id' ),
+					type,
+					settings,
+					base_styles: baseStylesDictionary,
+					interactions: [],
+					has_action_in_link: this.hasActionInLink() || false,
+				};
 
-					return renderer.render( templateKey, context );
-				} )
+				return renderer.render( templateKey, context );
+			} )
 				.then( ( html ) => this.$el.html( html ) );
 
 			await process.execute();
@@ -134,6 +136,30 @@ export function createTemplatedElementView( {
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
 			return settings;
+		}
+
+		hasActionInLink(): boolean {
+			const settings = this.model.get( 'settings' ) as any;
+			const link = settings?.get?.( 'link' ) || settings?.attributes?.link;
+			const destination = link?.value?.destination;
+
+			if ( destination?.$$type !== 'dynamic' ) {
+				return false;
+			}
+
+			const dynamicTagName = destination?.value?.name || '';
+
+			const legacyWindow = window as any;
+			const atomicDynamicTags =
+				legacyWindow.elementorCommon?.config?.atomicDynamicTags?.tags ||
+				legacyWindow.elementor?.config?.atomicDynamicTags?.tags ||
+				legacyWindow.elementorCommon?.config?.settings?.atomicDynamicTags?.tags ||
+				{};
+
+			const tagInfo = atomicDynamicTags[ dynamicTagName ];
+			const tagGroup = tagInfo?.group || '';
+
+			return tagGroup === 'action';
 		}
 
 		#beforeRender() {
