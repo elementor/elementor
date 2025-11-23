@@ -525,7 +525,7 @@ export const App = () => {
 																	? managerPermissions.pro.text
 																	: managerPermissions.advanced.text
 															}
-															className="e-id-elementor-element-manager-button-upgrade-permissions"
+															className={ [ 'e-id-elementor-element-manager-button-upgrade-permissions', 'go-pro' ].join( ' ' ) }
 														/>
 													</FlexItem>
 												) }
