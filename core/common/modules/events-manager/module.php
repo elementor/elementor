@@ -32,7 +32,7 @@ class Module extends BaseModule {
 		$session_replays = self::get_remote_mixpanel_config()[0]['sessionReplays'] ?? [];
 
 		$settings = [
-			'can_send_events' => true,
+			'can_send_events' => $can_send_events,
 			'elementor_version' => ELEMENTOR_VERSION,
 			'site_url' => hash( 'sha256', get_site_url() ),
 			'wp_version' => get_bloginfo( 'version' ),
