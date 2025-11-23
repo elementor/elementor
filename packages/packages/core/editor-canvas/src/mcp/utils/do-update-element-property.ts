@@ -65,7 +65,7 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 		if ( ! localStyle ) {
 			createElementStyle( {
 				elementId,
-				custom_css: customCss,
+				...( typeof customCss !== 'undefined' ? { custom_css: customCss } : {} ),
 				classesProp: 'classes',
 				label: 'local',
 				meta: {
@@ -84,6 +84,7 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 					breakpoint: 'desktop',
 					state: null,
 				},
+				...( typeof customCss !== 'undefined' ? { custom_css: customCss } : {} ),
 				props: {
 					...transformedStyleValues,
 				},

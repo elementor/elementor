@@ -155,7 +155,7 @@ export function propsSchemaToJsonSchema( schema: PropsSchema ): JsonSchema7 {
 
 	for ( const [ key, propType ] of Object.entries( schema ) ) {
 		// Skip internal properties
-		if ( key === '_cssid' || key === 'classes' || key === 'attributes' ) {
+		if ( ! isPropKeyConfigurable( key ) ) {
 			continue;
 		}
 
@@ -169,4 +169,14 @@ export function propsSchemaToJsonSchema( schema: PropsSchema ): JsonSchema7 {
 	}
 
 	return jsonSchema;
+}
+
+export const nonConfigurablePropKeys = [ '_cssid', 'classes', 'attributes' ] as readonly string[];
+
+export function isPropKeyConfigurable( propKey: string ): boolean {
+	return ! nonConfigurablePropKeys.includes( propKey );
+}
+
+export function configurableKeys( schema: PropsSchema ): string[] {
+	return Object.keys( schema ).filter( isPropKeyConfigurable );
 }

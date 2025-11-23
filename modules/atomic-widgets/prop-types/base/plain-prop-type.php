@@ -20,6 +20,15 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Transformable_Validation;
 	use Concerns\Has_Initial_Value;
 
+	public static function get_subclasses(): array {
+		$children = array();
+		foreach (get_declared_classes() as $class) {
+			if (is_subclass_of($class, self::class)) {
+				$children[] = $class;
+			}
+		}
+	}
+
 	private ?array $dependencies = null;
 
 	/**

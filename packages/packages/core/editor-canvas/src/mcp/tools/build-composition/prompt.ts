@@ -37,6 +37,7 @@ Prefer this tool over any other tool for building HTML structure, unless you are
    For easy execution, USE ONLY "custom_css" category from the styles schema resource to apply styles.
 5. Ensure the XML structure is valid and parsable.
 6. Do not add any attribute nodes, classes, id's, and no text nodes allowed, for inline styles prefer USE the [${ CUSTOM_CSS_URI }] resource for custom_css.
+   Layout properties, such as margin, padding, align, etc. must be applied using the [${ STYLE_SCHEMA_URI }] PropValues.
 7. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-div-block" and "e-flexbox".
 8. Make sure that non-container elements do NOT have any nested elements.
 9. Unsless the user specifically requires structure only, BE EXPRESSIVE AND VISUALLY CREATIVE AS POSSIBLE IN APPLYING STYLE CONFIGURATION.
@@ -51,6 +52,8 @@ Prefer this tool over any other tool for building HTML structure, unless you are
 - Always aim for a clean and professional look that aligns with modern design principles.
 - When you are required to create placeholder texts, use texts that have a length that fits the goal. When long texts are required, use longer placeholder texts. When the user specifies exact texts, use the exact texts.
 - Image size does not affect the actual size on the screen, only which quality to use. If you use images, specifically add _styles PropValues to define the image sizes.
+- Attempt to use layout, margin, padding, size properties from the styles schema and not the custom_css, unless necessary.
+- If your elements library is limited, encourage use of nesting containers to achieve complex layouts.
 
 # CONSTRAINTS
 When a tool execution fails, retry up to 10 more times, read the error message carefully, and adjust the XML structure or the configurations accordingly.
@@ -83,7 +86,7 @@ A Heading and a button inside a flexbox
         "value": "section"
       },
   },
-  styleConfig: {
+  stylesConfig: {
     "heading1": {
       "custom_css": "font-size: 24px; color: #333;"
     }
@@ -102,7 +105,7 @@ A Heading and a button inside a flexbox
 	);
 
 	buildCompositionsToolPrompt.parameter(
-		'styleConfig',
+		'stylesConfig',
 		`**MANDATORY** A record mapping style PropTypes to their corresponding style configuration objects, defining the PropValues for styles to be applied to elements.`
 	);
 
