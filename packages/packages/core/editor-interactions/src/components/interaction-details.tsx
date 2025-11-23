@@ -71,6 +71,7 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 				<Direction
 					value={ interactionDetails.direction }
 					onChange={ ( v ) => handleChange( 'direction', v ) }
+					interactionType={ interactionDetails.type }
 				/>
 				<TimeFrameIndicator
 					value={ interactionDetails.duration }
