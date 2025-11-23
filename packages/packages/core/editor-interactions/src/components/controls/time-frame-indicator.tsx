@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { ControlFormLabel, PopoverGridContainer } from '@elementor/editor-controls';
 import { MenuListItem } from '@elementor/editor-ui';
-import { Grid, Select, type SelectChangeEvent, Typography } from '@elementor/ui';
+import { Grid, Select, type SelectChangeEvent } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type FieldProps } from '../../types';
@@ -15,29 +16,29 @@ export function TimeFrameIndicator( { value, onChange, label }: FieldProps ) {
 	);
 
 	return (
-		<>
-			<Grid item xs={ 12 } md={ 6 }>
-				<Typography variant="caption" color="text.secondary">
-					{ label }
-				</Typography>
-			</Grid>
-			<Grid item xs={ 12 } md={ 6 }>
-				<Select
-					fullWidth
-					displayEmpty
-					size="tiny"
-					value={ value }
-					onChange={ ( event: SelectChangeEvent< string > ) => onChange( event.target.value ) }
-				>
-					{ availableTimeFrames.map( ( timeFrame ) => {
-						return (
-							<MenuListItem key={ timeFrame.key } value={ timeFrame.key }>
-								{ timeFrame.label }
-							</MenuListItem>
-						);
-					} ) }
-				</Select>
-			</Grid>
-		</>
+		<Grid item xs={ 12 }>
+			<PopoverGridContainer>
+				<Grid item xs={ 6 }>
+					<ControlFormLabel>{ label }</ControlFormLabel>
+				</Grid>
+				<Grid item xs={ 6 }>
+					<Select
+						fullWidth
+						displayEmpty
+						size="tiny"
+						value={ value }
+						onChange={ ( event: SelectChangeEvent< string > ) => onChange( event.target.value ) }
+					>
+						{ availableTimeFrames.map( ( timeFrame ) => {
+							return (
+								<MenuListItem key={ timeFrame.key } value={ timeFrame.key }>
+									{ timeFrame.label }
+								</MenuListItem>
+							);
+						} ) }
+					</Select>
+				</Grid>
+			</PopoverGridContainer>
+		</Grid>
 	);
 }
