@@ -6,6 +6,7 @@ import { fetchCssClassUsage } from '../../service/css-class-usage-service';
 import { type FilterKey } from '../hooks/use-filtered-css-class-usage';
 import { selectClass } from '../store';
 
+const IS_DEV = true;
 type Event =
 	| 'class_applied'
 	| 'class_removed'
@@ -32,7 +33,7 @@ type BaseTrackingEvent< T extends Event > = {
 type EventMap = {
 	class_created: {
 		source?: 'created' | 'converted';
-		classId?: StyleDefinitionID;
+		classId: StyleDefinitionID;
 		classTitle?: string;
 	};
 	class_deleted: {
@@ -114,10 +115,22 @@ export const trackGlobalClasses = async < T extends Event >( payload: TrackingEv
 	const { runAction } = payload as TrackingEventWithComputed< T > & { runAction?: () => void };
 	const data = await getSanitizedData( payload );
 	if ( data ) {
-		console.log( 'LOG:: 🔍 trackGlobalClasses', data );
-		track( data, true );
+		track( data );
+		if ( data.event === 'class_created' && 'classId' in data ) {
+			fireClassApplied( data.classId as StyleDefinitionID );
+		}
 	}
 	runAction?.();
+};
+
+const fireClassApplied = async ( classId: StyleDefinitionID ) => {
+	const appliedInfo = await getAppliedInfo( classId );
+	track( {
+		event: 'class_applied',
+		classId,
+		...appliedInfo,
+		totalInstancesAfterApply: 1,
+	} as TrackingEvent< 'class_applied' > );
 };
 
 const getSanitizedData = async < T extends Event >( payload: TrackingEvent< T > ) => {
@@ -135,7 +148,6 @@ const getSanitizedData = async < T extends Event >( payload: TrackingEvent< T > 
 			}
 			break;
 		case 'class_deleted':
-			console.log( 'LOG:: 🔍 class_deleted', payload );
 			if ( 'classId' in payload && payload.classId ) {
 				const deleteInfo = await trackDeleteClass( payload.classId );
 				return { ...payload, ...deleteInfo };
@@ -147,7 +159,7 @@ const getSanitizedData = async < T extends Event >( payload: TrackingEvent< T > 
 					return { ...payload, classTitle: getCssClass( payload.classId ).label };
 				}
 			}
-			break;
+			return payload;
 		case 'class_state_clicked':
 			if ( 'classId' in payload && payload.classId ) {
 				return { ...payload, classTitle: getCssClass( payload.classId ).label };
@@ -158,28 +170,10 @@ const getSanitizedData = async < T extends Event >( payload: TrackingEvent< T > 
 	}
 };
 
-const getAppliedInfo = async ( classId: StyleDefinitionID ) => {
-	const { classTitle, totalStyleProperties, hasCostumeCss } = extractCssClassData( classId );
-	const totalInstancesAfterApply = ( await getTotalInstancesByCssClassID( classId ) ) + 1;
-	return {
-		classTitle,
-		totalInstancesAfterApply,
-		totalStyleProperties,
-		hasCostumeCss: Boolean( hasCostumeCss ),
-	};
-};
-
-const getRemovedInfo = async ( classId: StyleDefinitionID ) => {
-	const { classTitle } = extractCssClassData( classId );
-	return {
-		classTitle,
-	};
-};
-
-const track = < T extends Event >( data: TrackingEvent< T >, testing = false ) => {
+const track = < T extends Event >( data: TrackingEvent< T >, testing = IS_DEV ) => {
 	if ( testing ) {
 		// eslint-disable-next-line no-console
-		console.log( 'LOG:: ✈️ event', data );
+		console.log( 'LOG:: ✈️ event:', data.event, data );
 		return;
 	}
 	const { dispatchEvent, config } = getMixpanel();
@@ -233,5 +227,23 @@ const trackDeleteClass = async ( classId: StyleDefinitionID ) => {
 
 const getTotalInstancesByCssClassID = async ( classId: StyleDefinitionID ) => {
 	const cssClassUsage = await fetchCssClassUsage();
-	return cssClassUsage[ classId ]?.total ?? 0;
+	return cssClassUsage[ classId ]?.total ?? 1;
+};
+
+const getAppliedInfo = async ( classId: StyleDefinitionID ) => {
+	const { classTitle, totalStyleProperties, hasCostumeCss } = extractCssClassData( classId );
+	const totalInstancesAfterApply = ( await getTotalInstancesByCssClassID( classId ) ) + 1;
+	return {
+		classTitle,
+		totalInstancesAfterApply,
+		totalStyleProperties,
+		hasCostumeCss: Boolean( hasCostumeCss ),
+	};
+};
+
+const getRemovedInfo = async ( classId: StyleDefinitionID ) => {
+	const { classTitle } = extractCssClassData( classId );
+	return {
+		classTitle,
+	};
 };
