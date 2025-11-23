@@ -58,10 +58,14 @@ function applyInteractionsToElement( element, interactionsData ) {
 	}
 
 	let parsedData;
-	try {
-		parsedData = JSON.parse( interactionsData );
-	} catch ( error ) {
-		return;
+	if ( 'string' === typeof interactionsData ) {
+		try {
+			parsedData = JSON.parse( interactionsData );
+		} catch ( error ) {
+			return;
+		}
+	} else {
+		parsedData = interactionsData;
 	}
 
 	const interactions = Object.values( parsedData?.items );
@@ -95,8 +99,13 @@ function handleInteractionsUpdate() {
 
 	changedItems.forEach( ( item ) => {
 		const element = findElementByInteractionId( item.dataId );
-		if ( element ) {
-			applyInteractionsToElement( element, item.interactions );
+		const prevInteractions = previousInteractionsData.find( ( prev ) => prev.dataId === item.dataId )?.interactions;
+		if ( element && item.interactions?.items?.length > 0 && item.interactions?.items?.length === prevInteractions?.items?.length ) {
+			const interactionsToApply = {
+				...item.interactions,
+				items: [ ...item.interactions.items ].filter( ( interaction, index ) => prevInteractions?.items[ index ]?.animation?.animation_id !== interaction.animation.animation_id ),
+			};
+			applyInteractionsToElement( element, interactionsToApply );
 		}
 	} );
 
@@ -166,7 +175,10 @@ function handlePlayInteractions( event ) {
 	}
 	const element = findElementByInteractionId( elementId );
 	if ( element ) {
-		const interactionsCopy = item.interactions;
+		const interactionsCopy = {
+			...item.interactions,
+			items: [ ...item.interactions.items ],
+		};
 		interactionsCopy.items = interactionsCopy.items.filter( ( interactionItem ) => interactionItem.animation.animation_id === animationId );
 		applyInteractionsToElement( element, JSON.stringify( interactionsCopy ) );
 	}
