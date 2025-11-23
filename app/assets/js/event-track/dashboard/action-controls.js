@@ -20,6 +20,35 @@ class ActionControlTracking extends BaseTracking {
 
 		this.attachDelegatedHandlers();
 		this.addTrackingAttributesToFilterButtons();
+		this.initializeLinkDataIds();
+	}
+
+	static initializeLinkDataIds() {
+		const initializeLinks = () => {
+			const links = document.querySelectorAll( 'a[href]' );
+
+			links.forEach( ( link ) => {
+				if ( this.isExcludedElement( link ) || this.isNavigationLink( link ) || link.hasAttribute( 'data-id' ) ) {
+					return;
+				}
+
+				const href = link.getAttribute( 'href' );
+				if ( ! href ) {
+					return;
+				}
+
+				const cleanedHref = this.removeNonceFromUrl( href );
+				if ( cleanedHref ) {
+					link.setAttribute( 'data-id', cleanedHref );
+				}
+			} );
+		};
+
+		if ( 'loading' === document.readyState ) {
+			document.addEventListener( 'DOMContentLoaded', initializeLinks );
+		} else {
+			initializeLinks();
+		}
 	}
 
 	static addTrackingAttributesToFilterButtons() {
@@ -211,6 +240,11 @@ class ActionControlTracking extends BaseTracking {
 		}
 
 		if ( CONTROL_TYPES.LINK === controlType ) {
+			const dataId = element.getAttribute( 'data-id' );
+			if ( dataId ) {
+				return dataId;
+			}
+
 			const href = element.getAttribute( 'href' );
 			if ( href ) {
 				return this.removeNonceFromUrl( href );
