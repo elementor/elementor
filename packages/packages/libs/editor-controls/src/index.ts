@@ -49,6 +49,7 @@ export {
 	type RepeaterItem,
 } from './components/repeater/repeater';
 export { FloatingActionsBar } from './components/floating-bar';
+export { PopoverGridContainer } from './components/popover-grid-container';
 
 // types
 export type { ControlComponent } from './create-control';

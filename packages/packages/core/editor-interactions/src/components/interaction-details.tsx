@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { PopoverContent } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -60,12 +61,12 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 	};
 
 	return (
-		<>
-			<Grid container spacing={ 2 } sx={ { p: 1.5 } }>
+		<PopoverContent p={ 1.5 }>
+			<Grid container spacing={ 1.5 }>
 				<Trigger value={ interactionDetails.trigger } onChange={ ( v ) => handleChange( 'trigger', v ) } />
 			</Grid>
 			<Divider sx={ { mx: 1.5 } } />
-			<Grid container spacing={ 2 } sx={ { p: 1.5 } }>
+			<Grid container spacing={ 1.5 }>
 				<Effect value={ interactionDetails.effect } onChange={ ( v ) => handleChange( 'effect', v ) } />
 				<EffectType value={ interactionDetails.type } onChange={ ( v ) => handleChange( 'type', v ) } />
 				<Direction
@@ -84,6 +85,6 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 					label={ __( 'Delay', 'elementor' ) }
 				/>
 			</Grid>
-		</>
+		</PopoverContent>
 	);
 };
