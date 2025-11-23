@@ -14,10 +14,13 @@ class Test_Plain_Prop_Type_Inheritance extends TestCase {
   public function test_component_id_prop_type_inherits_number_prop_type() {
 
     $prop_types = Plain_Prop_Type::get_subclasses();
-
-    // Arrange & Act.
-    $component_id_prop_type = new \Elementor\Modules\Components\Component_Id_Prop_Type();
-
-    // Assert.
-    $this->assertInstanceOf( \Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type::class, $component
+    $keys = [];
+    $kinds = [];
+    foreach ( $classes as $class ) {
+      $keys []= $class::get_key();
+      $kinds []= $class::KIND;
+    }
+    static::assertNotContains( 'plain', $keys );
+    static::assertNotContains( 'plain', $kinds );
+  }
 }

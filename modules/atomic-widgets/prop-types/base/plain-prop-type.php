@@ -27,6 +27,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 				$children[] = $class;
 			}
 		}
+		return $children;
 	}
 
 	private ?array $dependencies = null;
