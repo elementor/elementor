@@ -49,8 +49,7 @@ export function OverridablePropForm( { onSubmit, groups, currentValue }: Props )
 						size={ SIZE }
 						fullWidth
 						placeholder={ __( 'Enter value', 'elementor' ) }
-						inputProps={ { style: { color: 'text.primary', fontWeight: '600' } } }
-						value={ label }
+						value={ label ?? '' }
 						onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => setLabel( e.target.value ) }
 					/>
 				</Grid>
@@ -66,10 +65,8 @@ export function OverridablePropForm( { onSubmit, groups, currentValue }: Props )
 						id="override-props-group"
 						size={ SIZE }
 						fullWidth
-						inputProps={ { style: { color: 'text.primary', fontWeight: '600' } } }
-						value={ group }
+						value={ group ?? null }
 						onChange={ setGroup }
-						isNullSelectable={ true }
 						displayEmpty
 						renderValue={ ( selectedValue: string | null ) => {
 							if ( ! selectedValue || selectedValue === '' ) {

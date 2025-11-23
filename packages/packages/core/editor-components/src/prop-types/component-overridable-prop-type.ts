@@ -8,3 +8,5 @@ export const componentOverridablePropTypeUtil = createPropUtils(
 		default_value: z.unknown(),
 	} )
 );
+
+export type ComponentOverridablePropValue = z.infer< typeof componentOverridablePropTypeUtil.schema >;

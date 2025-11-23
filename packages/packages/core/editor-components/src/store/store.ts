@@ -147,7 +147,7 @@ export const slice = createSlice( {
 			group.props = group.props.filter( ( prop ) => prop !== payload.overrideKey );
 
 			if ( group.props.length === 0 && Object.keys( groups.items ).length > 1 ) {
-				groups.items = Object.fromEntries( 
+				groups.items = Object.fromEntries(
 					Object.entries( groups.items ).filter( ( [ id ] ) => id !== groupId )
 				);
 
