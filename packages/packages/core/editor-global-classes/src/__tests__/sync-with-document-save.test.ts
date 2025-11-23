@@ -63,7 +63,7 @@ describe( 'syncWithDocumentSave', () => {
 			dispatch( slice.actions.add( styleDefinition ) );
 
 			// Act.
-			await triggerHook( 'after', 'document/save/save', { status } );
+			await triggerHook( 'dependency', 'document/save/save', { status } );
 
 			// Assert.
 			const method = status === 'publish' ? apiClient.publish : apiClient.saveDraft;
@@ -116,7 +116,7 @@ describe( 'syncWithDocumentSave', () => {
 		dispatch( slice.actions.add( styleDefinition ) );
 
 		// Act.
-		await triggerHook( 'after', 'document/save/save', { status: 'publish' } );
+		await triggerHook( 'dependency', 'document/save/save', { status: 'publish' } );
 
 		// Assert.
 		expect( apiClient.publish ).not.toHaveBeenCalled();
