@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ControlAdornmentsProvider } from '@elementor/editor-controls';
+import { ControlAdornmentsProvider, ControlFormLabel } from '@elementor/editor-controls';
 import {
 	type Control,
 	type ControlItem,
@@ -17,7 +17,6 @@ import { controlsRegistry, type ControlType } from '../controls-registry/control
 import { SettingsField } from '../controls-registry/settings-field';
 import { getFieldIndicators } from '../field-indicators-registry';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
-import { ControlLabel } from './control-label';
 import { Section } from './section';
 import { SectionsList } from './sections-list';
 
@@ -99,7 +98,7 @@ const ControlLayout = ( {
 	<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
 		{ control.meta?.topDivider && <Divider /> }
 		<ControlTypeContainer layout={ layout }>
-			{ control.label && layout !== 'custom' ? <ControlLabel>{ control.label }</ControlLabel> : null }
+			{ control.label && layout !== 'custom' ? <ControlFormLabel>{ control.label }</ControlFormLabel> : null }
 			<BaseControl type={ control.type as ControlType } props={ controlProps } />
 		</ControlTypeContainer>
 	</ControlAdornmentsProvider>
