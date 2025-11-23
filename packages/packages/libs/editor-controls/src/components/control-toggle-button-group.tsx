@@ -80,123 +80,129 @@ type Props< TValue > = {
 			onChange: ( value: ExclusiveValue< TValue > ) => void;
 	  }
 );
-export const ToggleButtonGroupUi = < TValue, >( {
-	justify = 'end',
-	size = 'tiny',
-	value,
-	onChange,
-	items,
-	maxItems,
-	exclusive = false,
-	fullWidth = false,
-	disabled,
-	placeholder,
-}: Props< TValue > ) => {
-	const shouldSliceItems = exclusive && maxItems !== undefined && items.length > maxItems;
-	const menuItems = shouldSliceItems ? items.slice( maxItems - 1 ) : [];
-	const fixedItems = shouldSliceItems ? items.slice( 0, maxItems - 1 ) : items;
-
-	const theme = useTheme();
-	const isRtl = 'rtl' === theme.direction;
-
-	const handleChange = (
-		_: React.MouseEvent< HTMLElement >,
-		newValue: typeof exclusive extends true ? ExclusiveValue< TValue > : NonExclusiveValue< TValue >
+export const ToggleButtonGroupUi = React.forwardRef(
+	< TValue, >(
+		{
+			justify = 'end',
+			size = 'tiny',
+			value,
+			onChange,
+			items,
+			maxItems,
+			exclusive = false,
+			fullWidth = false,
+			disabled,
+			placeholder,
+		}: Props< TValue >,
+		ref: React.Ref< HTMLDivElement >
 	) => {
-		onChange( newValue as never );
-	};
+		const shouldSliceItems = exclusive && maxItems !== undefined && items.length > maxItems;
+		const menuItems = shouldSliceItems ? items.slice( maxItems - 1 ) : [];
+		const fixedItems = shouldSliceItems ? items.slice( 0, maxItems - 1 ) : items;
 
-	const getGridTemplateColumns = useMemo( () => {
-		const isOffLimits = menuItems?.length;
-		const itemsCount = isOffLimits ? fixedItems.length + 1 : fixedItems.length;
-		const templateColumnsSuffix = isOffLimits ? 'auto' : '';
-		return `repeat(${ itemsCount }, minmax(0, 25%)) ${ templateColumnsSuffix }`;
-	}, [ menuItems?.length, fixedItems.length ] );
+		const theme = useTheme();
+		const isRtl = 'rtl' === theme.direction;
 
-	const shouldShowExclusivePlaceholder = exclusive && ( value === null || value === undefined || value === '' );
+		const handleChange = (
+			_: React.MouseEvent< HTMLElement >,
+			newValue: typeof exclusive extends true ? ExclusiveValue< TValue > : NonExclusiveValue< TValue >
+		) => {
+			onChange( newValue as never );
+		};
 
-	const nonExclusiveSelectedValues =
-		! exclusive && Array.isArray( value )
-			? value
-					.map( ( v ) => ( typeof v === 'string' ? v : '' ) )
-					.join( ' ' )
-					.trim()
-					.split( /\s+/ )
-					.filter( Boolean )
-			: [];
+		const getGridTemplateColumns = useMemo( () => {
+			const isOffLimits = menuItems?.length;
+			const itemsCount = isOffLimits ? fixedItems.length + 1 : fixedItems.length;
+			const templateColumnsSuffix = isOffLimits ? 'auto' : '';
+			return `repeat(${ itemsCount }, minmax(0, 25%)) ${ templateColumnsSuffix }`;
+		}, [ menuItems?.length, fixedItems.length ] );
 
-	const shouldShowNonExclusivePlaceholder = ! exclusive && nonExclusiveSelectedValues.length === 0;
+		const shouldShowExclusivePlaceholder = exclusive && ( value === null || value === undefined || value === '' );
 
-	const getPlaceholderArray = ( placeholderValue: TValue | TValue[] | undefined ): string[] => {
-		if ( Array.isArray( placeholderValue ) ) {
-			return placeholderValue.flatMap( ( p ) => {
-				if ( typeof p === 'string' ) {
-					return p.trim().split( /\s+/ ).filter( Boolean );
-				}
-				return [];
-			} );
-		}
+		const nonExclusiveSelectedValues =
+			! exclusive && Array.isArray( value )
+				? value
+						.map( ( v ) => ( typeof v === 'string' ? v : '' ) )
+						.join( ' ' )
+						.trim()
+						.split( /\s+/ )
+						.filter( Boolean )
+				: [];
 
-		if ( typeof placeholderValue === 'string' ) {
-			return placeholderValue.trim().split( /\s+/ ).filter( Boolean );
-		}
+		const shouldShowNonExclusivePlaceholder = ! exclusive && nonExclusiveSelectedValues.length === 0;
 
-		return [];
-	};
+		const getPlaceholderArray = ( placeholderValue: TValue | TValue[] | undefined ): string[] => {
+			if ( Array.isArray( placeholderValue ) ) {
+				return placeholderValue.flatMap( ( p ) => {
+					if ( typeof p === 'string' ) {
+						return p.trim().split( /\s+/ ).filter( Boolean );
+					}
+					return [];
+				} );
+			}
 
-	const placeholderArray = getPlaceholderArray( placeholder );
+			if ( typeof placeholderValue === 'string' ) {
+				return placeholderValue.trim().split( /\s+/ ).filter( Boolean );
+			}
 
-	return (
-		<StyledToggleButtonGroup
-			justify={ justify }
-			value={ value }
-			onChange={ handleChange }
-			exclusive={ exclusive }
-			disabled={ disabled }
-			sx={ {
-				direction: isRtl ? 'rtl /* @noflip */' : 'ltr /* @noflip */',
-				display: 'grid',
-				gridTemplateColumns: getGridTemplateColumns,
-				width: `100%`,
-			} }
-		>
-			{ fixedItems.map( ( { label, value: buttonValue, renderContent: Content, showTooltip } ) => {
-				const isPlaceholder =
-					placeholderArray.length > 0 &&
-					placeholderArray.includes( buttonValue as string ) &&
-					( shouldShowExclusivePlaceholder || shouldShowNonExclusivePlaceholder );
+			return [];
+		};
 
-				return (
-					<ConditionalTooltip
-						key={ buttonValue as string }
-						label={ label }
-						showTooltip={ showTooltip || false }
-					>
-						<StyledToggleButton
-							value={ buttonValue }
-							aria-label={ label }
-							size={ size }
-							fullWidth={ fullWidth }
-							isPlaceholder={ isPlaceholder }
+		const placeholderArray = getPlaceholderArray( placeholder );
+
+		return (
+			<StyledToggleButtonGroup
+				ref={ ref }
+				justify={ justify }
+				value={ value }
+				onChange={ handleChange }
+				exclusive={ exclusive }
+				disabled={ disabled }
+				sx={ {
+					direction: isRtl ? 'rtl /* @noflip */' : 'ltr /* @noflip */',
+					display: 'grid',
+					gridTemplateColumns: getGridTemplateColumns,
+					width: `100%`,
+				} }
+			>
+				{ fixedItems.map( ( { label, value: buttonValue, renderContent: Content, showTooltip } ) => {
+					const isPlaceholder =
+						placeholderArray.length > 0 &&
+						placeholderArray.includes( buttonValue as string ) &&
+						( shouldShowExclusivePlaceholder || shouldShowNonExclusivePlaceholder );
+
+					return (
+						<ConditionalTooltip
+							key={ buttonValue as string }
+							label={ label }
+							showTooltip={ showTooltip || false }
 						>
-							<Content size={ size } />
-						</StyledToggleButton>
-					</ConditionalTooltip>
-				);
-			} ) }
+							<StyledToggleButton
+								value={ buttonValue }
+								aria-label={ label }
+								size={ size }
+								fullWidth={ fullWidth }
+								isPlaceholder={ isPlaceholder }
+							>
+								<Content size={ size } />
+							</StyledToggleButton>
+						</ConditionalTooltip>
+					);
+				} ) }
 
-			{ menuItems.length && exclusive && (
-				<SplitButtonGroup
-					size={ size }
-					value={ ( value as ExclusiveValue< TValue > ) || null }
-					onChange={ onChange as ( v: ExclusiveValue< TValue > ) => void }
-					items={ menuItems }
-					fullWidth={ fullWidth }
-				/>
-			) }
-		</StyledToggleButtonGroup>
-	);
-};
+				{ menuItems.length && exclusive && (
+					<SplitButtonGroup
+						size={ size }
+						value={ ( value as ExclusiveValue< TValue > ) || null }
+						onChange={ onChange as ( v: ExclusiveValue< TValue > ) => void }
+						items={ menuItems }
+						fullWidth={ fullWidth }
+					/>
+				) }
+			</StyledToggleButtonGroup>
+		);
+	}
+) as < TValue >( props: Props< TValue > & { ref?: React.Ref< HTMLDivElement > } ) => React.ReactElement;
 
 export const ControlToggleButtonGroup = < TValue, >( props: Props< TValue > ) => {
 	return (
@@ -252,7 +258,6 @@ const SplitButtonGroup = < TValue, >( {
 					ev.preventDefault();
 					onMenuItemClick( previewButton.value );
 				} }
-				ref={ menuButtonRef }
 			>
 				{ previewButton.renderContent( { size } ) }
 			</ToggleButton>
