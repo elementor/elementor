@@ -306,8 +306,9 @@ class Components_REST_API {
 			$is_current_user_allow_to_edit = $this->is_current_user_allow_to_edit( $component_id );
 
 			$locked_by = '';
-			if ( $lock_data['is_locked'] ) {
-				$locked_user = get_user_by( 'id', $lock_data['lock_user'] );
+			$actual_lock_data = $this->get_component_lock_manager()->is_locked( $component_id );
+			if ( $actual_lock_data['is_locked'] ) {
+				$locked_user = get_user_by( 'id', $actual_lock_data['lock_user'] );
 				$locked_by = $locked_user ? $locked_user->display_name : '';
 			}
 
