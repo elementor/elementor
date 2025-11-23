@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Test_Plain_Prop_Type_Inheritance extends TestCase {
 
-  public function test_component_id_prop_type_inherits_number_prop_type() {
+  public function test_plain_inheritance_has_kind_and_key() {
 
     $prop_types = Plain_Prop_Type::get_subclasses();
     $keys = [];
