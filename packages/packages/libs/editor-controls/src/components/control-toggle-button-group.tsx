@@ -80,7 +80,7 @@ type Props< TValue > = {
 			onChange: ( value: ExclusiveValue< TValue > ) => void;
 	  }
 );
-export const ToggleButtonGroupUi = < TValue, >( {
+export const ToggleButtonGroupUi = React.forwardRef( < TValue, >( {
 	justify = 'end',
 	size = 'tiny',
 	value,
@@ -91,7 +91,7 @@ export const ToggleButtonGroupUi = < TValue, >( {
 	fullWidth = false,
 	disabled,
 	placeholder,
-}: Props< TValue > ) => {
+}: Props< TValue >, ref: React.Ref< HTMLDivElement > ) => {
 	const shouldSliceItems = exclusive && maxItems !== undefined && items.length > maxItems;
 	const menuItems = shouldSliceItems ? items.slice( maxItems - 1 ) : [];
 	const fixedItems = shouldSliceItems ? items.slice( 0, maxItems - 1 ) : items;
@@ -148,6 +148,7 @@ export const ToggleButtonGroupUi = < TValue, >( {
 
 	return (
 		<StyledToggleButtonGroup
+			ref={ ref }
 			justify={ justify }
 			value={ value }
 			onChange={ handleChange }
@@ -196,7 +197,7 @@ export const ToggleButtonGroupUi = < TValue, >( {
 			) }
 		</StyledToggleButtonGroup>
 	);
-};
+} ) as < TValue, >( props: Props< TValue > & { ref?: React.Ref< HTMLDivElement > } ) => React.ReactElement;
 
 export const ControlToggleButtonGroup = < TValue, >( props: Props< TValue > ) => {
 	return (
@@ -252,7 +253,6 @@ const SplitButtonGroup = < TValue, >( {
 					ev.preventDefault();
 					onMenuItemClick( previewButton.value );
 				} }
-				ref={ menuButtonRef }
 			>
 				{ previewButton.renderContent( { size } ) }
 			</ToggleButton>
