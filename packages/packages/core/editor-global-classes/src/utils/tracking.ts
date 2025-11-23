@@ -1,12 +1,11 @@
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
-import { getMixpanel } from '@elementor/mixpanel';
 import { __getState as getState } from '@elementor/store';
 
 import { fetchCssClassUsage } from '../../service/css-class-usage-service';
 import { type FilterKey } from '../hooks/use-filtered-css-class-usage';
 import { selectClass } from '../store';
+import { getMixpanel } from '@elementor/mixpanel';
 
-const IS_DEV = true;
 type Event =
 	| 'class_applied'
 	| 'class_removed'
@@ -170,12 +169,7 @@ const getSanitizedData = async < T extends Event >( payload: TrackingEvent< T > 
 	}
 };
 
-const track = < T extends Event >( data: TrackingEvent< T >, testing = IS_DEV ) => {
-	if ( testing ) {
-		// eslint-disable-next-line no-console
-		console.log( 'LOG:: ✈️ event:', data.event, data );
-		return;
-	}
+const track = < T extends Event >( data: TrackingEvent< T > ) => {
 	const { dispatchEvent, config } = getMixpanel();
 	if ( ! config?.names?.global_classes?.[ data.event ] ) {
 		return;
