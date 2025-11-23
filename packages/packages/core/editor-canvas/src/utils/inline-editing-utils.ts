@@ -1,16 +1,27 @@
-import { type V1Element } from '@elementor/editor-elements';
-import { htmlPropTypeUtil } from '@elementor/editor-props';
+import { getElementType, type V1Element } from '@elementor/editor-elements';
 
-function getSettings( container: V1Element | null ) {
-	return container?.settings?.toJSON() ?? {};
+function getHtmlPropertyName( container: V1Element | null ): string {
+	const widgetType = container?.model?.get( 'widgetType' ) ?? container?.model?.get( 'elType' );
+	
+	if ( ! widgetType ) {
+		return '';
+	}
+
+	const propsSchema = getElementType( widgetType )?.propsSchema;
+
+	if ( ! propsSchema ) {
+		return '';
+	}
+
+	const entry = Object.entries( propsSchema ).find( ( [ , propType ] ) => propType.key === 'html' );
+	return entry?.[0] ?? '';
 }
 
 export function hasInlineEditableProperty( container: V1Element | null ): boolean {
-	return Object.values( getSettings( container ) ).some( ( value ) => htmlPropTypeUtil.isValid( value ) );
+	return !! getHtmlPropertyName( container );
 }
 
 export function getInlineEditablePropertyName( container: V1Element | null ): string {
-	const entry = Object.entries( getSettings( container ) ).find( ( [ , value ] ) => htmlPropTypeUtil.isValid( value ) );
-	return entry?.[ 0 ] ?? '';
+	return getHtmlPropertyName( container );
 }
 
