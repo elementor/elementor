@@ -40,6 +40,7 @@ export { InlineEditor } from './components/inline-editor';
 // components
 export { ControlFormLabel } from './components/control-form-label';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
+export { ToggleButtonGroupUi } from './components/control-toggle-button-group';
 export { ClearIconButton } from './components/icon-buttons/clear-icon-button';
 export {
 	Repeater,

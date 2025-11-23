@@ -63,9 +63,10 @@ class Presets {
 							foreach ( self::DELAYS as $delay ) {
 								$value = "{$trigger}-{$effect}-{$type}-{$direction}-{$duration}-{$delay}";
 								$label = sprintf(
-									'%s: %s',
+									'%s: %s %s',
 									$this->get_label( 'trigger', $trigger ),
 									$this->get_label( 'effect', $effect ),
+									$this->get_label( 'type', $type ),
 								);
 								$options[] = [
 									'value' => $value,
@@ -79,9 +80,10 @@ class Presets {
 						foreach ( self::DELAYS as $delay ) {
 							$value = "{$trigger}-{$effect}-{$type}--{$duration}-{$delay}";
 							$label = sprintf(
-								'%s: %s',
+								'%s: %s %s',
 								$this->get_label( 'trigger', $trigger ),
 								$this->get_label( 'effect', $effect ),
+								$this->get_label( 'type', $type ),
 							);
 							$options[] = [
 								'value' => $value,
