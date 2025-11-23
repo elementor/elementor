@@ -15,7 +15,6 @@ ControlNumberItemView = ControlBaseDataView.extend( {
 		};
 	},
 
-	
 	registerValidators() {
 		ControlBaseDataView.prototype.registerValidators.apply( this, arguments );
 
