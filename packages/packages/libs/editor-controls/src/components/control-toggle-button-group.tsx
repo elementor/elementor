@@ -80,8 +80,7 @@ type Props< TValue > = {
 			onChange: ( value: ExclusiveValue< TValue > ) => void;
 	  }
 );
-
-export const ControlToggleButtonGroup = < TValue, >( {
+export const ToggleButtonGroupUi = < TValue, >( {
 	justify = 'end',
 	size = 'tiny',
 	value,
@@ -148,55 +147,61 @@ export const ControlToggleButtonGroup = < TValue, >( {
 	const placeholderArray = getPlaceholderArray( placeholder );
 
 	return (
-		<ControlActions>
-			<StyledToggleButtonGroup
-				justify={ justify }
-				value={ value }
-				onChange={ handleChange }
-				exclusive={ exclusive }
-				disabled={ disabled }
-				sx={ {
-					direction: isRtl ? 'rtl /* @noflip */' : 'ltr /* @noflip */',
-					display: 'grid',
-					gridTemplateColumns: getGridTemplateColumns,
-					width: `100%`,
-				} }
-			>
-				{ fixedItems.map( ( { label, value: buttonValue, renderContent: Content, showTooltip } ) => {
-					const isPlaceholder =
-						placeholderArray.length > 0 &&
-						placeholderArray.includes( buttonValue as string ) &&
-						( shouldShowExclusivePlaceholder || shouldShowNonExclusivePlaceholder );
+		<StyledToggleButtonGroup
+			justify={ justify }
+			value={ value }
+			onChange={ handleChange }
+			exclusive={ exclusive }
+			disabled={ disabled }
+			sx={ {
+				direction: isRtl ? 'rtl /* @noflip */' : 'ltr /* @noflip */',
+				display: 'grid',
+				gridTemplateColumns: getGridTemplateColumns,
+				width: `100%`,
+			} }
+		>
+			{ fixedItems.map( ( { label, value: buttonValue, renderContent: Content, showTooltip } ) => {
+				const isPlaceholder =
+					placeholderArray.length > 0 &&
+					placeholderArray.includes( buttonValue as string ) &&
+					( shouldShowExclusivePlaceholder || shouldShowNonExclusivePlaceholder );
 
-					return (
-						<ConditionalTooltip
-							key={ buttonValue as string }
-							label={ label }
-							showTooltip={ showTooltip || false }
+				return (
+					<ConditionalTooltip
+						key={ buttonValue as string }
+						label={ label }
+						showTooltip={ showTooltip || false }
+					>
+						<StyledToggleButton
+							value={ buttonValue }
+							aria-label={ label }
+							size={ size }
+							fullWidth={ fullWidth }
+							isPlaceholder={ isPlaceholder }
 						>
-							<StyledToggleButton
-								value={ buttonValue }
-								aria-label={ label }
-								size={ size }
-								fullWidth={ fullWidth }
-								isPlaceholder={ isPlaceholder }
-							>
-								<Content size={ size } />
-							</StyledToggleButton>
-						</ConditionalTooltip>
-					);
-				} ) }
+							<Content size={ size } />
+						</StyledToggleButton>
+					</ConditionalTooltip>
+				);
+			} ) }
 
-				{ menuItems.length && exclusive && (
-					<SplitButtonGroup
-						size={ size }
-						value={ ( value as ExclusiveValue< TValue > ) || null }
-						onChange={ onChange as ( v: ExclusiveValue< TValue > ) => void }
-						items={ menuItems }
-						fullWidth={ fullWidth }
-					/>
-				) }
-			</StyledToggleButtonGroup>
+			{ menuItems.length && exclusive && (
+				<SplitButtonGroup
+					size={ size }
+					value={ ( value as ExclusiveValue< TValue > ) || null }
+					onChange={ onChange as ( v: ExclusiveValue< TValue > ) => void }
+					items={ menuItems }
+					fullWidth={ fullWidth }
+				/>
+			) }
+		</StyledToggleButtonGroup>
+	);
+};
+
+export const ControlToggleButtonGroup = < TValue, >( props: Props< TValue > ) => {
+	return (
+		<ControlActions>
+			<ToggleButtonGroupUi { ...props } />
 		</ControlActions>
 	);
 };

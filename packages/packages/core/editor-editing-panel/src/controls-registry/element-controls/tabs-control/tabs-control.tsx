@@ -20,7 +20,7 @@ import { __ } from '@wordpress/i18n';
 import { useElement } from '../../../contexts/element-context';
 import { SettingsField } from '../../settings-field';
 import { getElementByType } from '../get-element-by-type';
-import { TAB_CONTENT_ELEMENT_TYPE, TAB_ELEMENT_TYPE, type TabItem, useActions } from './use-actions';
+import { TAB_ELEMENT_TYPE, type TabItem, useActions } from './use-actions';
 
 const TAB_MENU_ELEMENT_TYPE = 'e-tabs-menu';
 const TAB_CONTENT_AREA_ELEMENT_TYPE = 'e-tabs-content-area';
@@ -36,10 +36,9 @@ export const TabsControlContent = ( { label }: { label: string } ) => {
 	const { element } = useElement();
 	const { addItem, duplicateItem, moveItem, removeItem } = useActions();
 
-	const { [ TAB_ELEMENT_TYPE ]: tabLinks } = useElementChildren( element.id, [
-		TAB_ELEMENT_TYPE,
-		TAB_CONTENT_ELEMENT_TYPE,
-	] );
+	const { [ TAB_ELEMENT_TYPE ]: tabLinks } = useElementChildren( element.id, {
+		[ TAB_MENU_ELEMENT_TYPE ]: TAB_ELEMENT_TYPE,
+	} );
 
 	const tabList = getElementByType( element.id, TAB_MENU_ELEMENT_TYPE );
 	const tabContentArea = getElementByType( element.id, TAB_CONTENT_AREA_ELEMENT_TYPE );

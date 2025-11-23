@@ -23,8 +23,8 @@ export const updateElementInteractions = ( {
 	setDocumentModifiedStatus( true );
 };
 
-export const playElementInteractions = ( elementId: string ) => {
-	window.top?.dispatchEvent( new CustomEvent( 'atomic/play_interactions', { detail: { elementId } } ) );
+export const playElementInteractions = ( elementId: string, animationId: string ) => {
+	window.top?.dispatchEvent( new CustomEvent( 'atomic/play_interactions', { detail: { elementId, animationId } } ) );
 };
 
 function setDocumentModifiedStatus( status: boolean ) {

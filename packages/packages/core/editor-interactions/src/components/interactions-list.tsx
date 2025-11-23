@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Repeater } from '@elementor/editor-controls';
 import { type ElementInteractions } from '@elementor/editor-elements';
 import { PlayerPlayIcon } from '@elementor/icons';
@@ -9,10 +9,12 @@ import { __ } from '@wordpress/i18n';
 import { getInteractionsConfig } from '../utils/get-interactions-config';
 import { DEFAULT_INTERACTION, InteractionDetails } from './interaction-details';
 
+export const MAX_NUMBER_OF_INTERACTIONS = 5;
+
 export type InteractionListProps = {
 	onSelectInteractions: ( interactions: ElementInteractions ) => void;
 	interactions: ElementInteractions;
-	onPlayInteraction: () => void;
+	onPlayInteraction: ( interactionId: string ) => void;
 	triggerCreateOnShowEmpty?: boolean;
 };
 
@@ -27,7 +29,11 @@ export function InteractionsList( props: InteractionListProps ) {
 		}
 	}, [ interactions.items, interactionsState, onSelectInteractions ] );
 
-	if ( triggerCreateOnShowEmpty && interactionsState.items.length === 0 ) {
+	const isMaxNumberOfInteractionsReached = useMemo( () => {
+		return interactionsState.items?.length >= MAX_NUMBER_OF_INTERACTIONS;
+	}, [ interactionsState.items ] );
+
+	if ( triggerCreateOnShowEmpty && ( ! interactionsState.items || interactionsState.items?.length === 0 ) ) {
 		setInteractionsState( {
 			version: 1,
 			items: [
@@ -67,6 +73,7 @@ export function InteractionsList( props: InteractionListProps ) {
 			showDuplicate={ false }
 			showToggle={ false }
 			isSortable={ false }
+			disableAddItemButton={ isMaxNumberOfInteractionsReached }
 			itemSettings={ {
 				initialValues: {
 					animation: {
@@ -93,9 +100,9 @@ export function InteractionsList( props: InteractionListProps ) {
 						} }
 					/>
 				),
-				actions: (
+				actions: ( value ) => (
 					<>
-						<IconButton size="tiny" onClick={ onPlayInteraction }>
+						<IconButton size="tiny" onClick={ () => onPlayInteraction( value.animation.animation_id ) }>
 							<PlayerPlayIcon fontSize="tiny" />
 						</IconButton>
 					</>

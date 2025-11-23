@@ -70,6 +70,8 @@ const importReducer = ( state, { type, payload } ) => {
 					[ payload.key ]: payload.value,
 				},
 			};
+		case 'SET_DURATION':
+			return { ...state, duration: payload };
 		default:
 			return state;
 	}
@@ -94,6 +96,7 @@ const initialState = {
 		content: null,
 		plugins: null,
 	},
+	duration: null,
 };
 export default function ImportContextProvider( props ) {
 	const [ data, dispatch ] = useReducer( importReducer, initialState );
