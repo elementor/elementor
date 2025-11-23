@@ -96,7 +96,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await selectOption( page.getByText( '300 MS', { exact: true } ), '100 MS' );
 
 			const effectTypeOption = page.getByLabel( 'Out', { exact: true } );
-			const directionOption = page.getByLabel( 'From bottom', { exact: true } );
+			const directionOption = page.getByLabel( 'To bottom', { exact: true } );
 
 			await expect( effectTypeOption ).toBeVisible();
 			await effectTypeOption.click();
@@ -104,7 +104,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect( directionOption ).toBeVisible();
 			await directionOption.click();
 
-			await expect( interactionTag ).toContainText( 'Scroll into view: Slide' );
+			await expect( interactionTag ).toContainText( 'Scroll into view: Slide Out' );
 
 			await page.locator( 'body' ).click();
 		} );
