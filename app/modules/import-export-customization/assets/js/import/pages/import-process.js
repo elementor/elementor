@@ -36,9 +36,9 @@ export default function ImportProcess() {
 					return;
 				}
 
-				navigate( 'import-customization/complete' );
+				navigate( 'import/complete' );
 			} else if ( ! isProcessing ) {
-				navigate( 'import-customization', { replace: true } );
+				navigate( 'import', { replace: true } );
 			}
 		} else {
 			AppsEventTracking.sendKitImportStatus( error );
@@ -54,7 +54,7 @@ export default function ImportProcess() {
 		}
 
 		dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.CUSTOMIZING } );
-		navigate( 'import-customization/content' );
+		navigate( 'import/content' );
 	};
 
 	return (

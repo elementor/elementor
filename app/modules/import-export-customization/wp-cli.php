@@ -54,7 +54,7 @@ class Wp_Cli extends \WP_CLI_Command {
 			 *
 			 * @type  Module $import_export_module
 			 */
-			$import_export_module = Plugin::$instance->app->get_component( 'import-export' );
+			$import_export_module = Plugin::$instance->app->get_component( 'import-export-customization' );
 			$result = $import_export_module->export_kit( $export_settings );
 
 			rename( $result['file_name'], $args[0] );
@@ -156,7 +156,7 @@ class Wp_Cli extends \WP_CLI_Command {
 			 *
 			 * @type  Module $import_export_module
 			 */
-			$import_export_module = Plugin::$instance->app->get_component( 'import-export' );
+			$import_export_module = Plugin::$instance->app->get_component( 'import-export-customization' );
 
 			if ( ! $import_export_module ) {
 				\WP_CLI::error( 'Import Export module is not available.' );
@@ -212,7 +212,7 @@ class Wp_Cli extends \WP_CLI_Command {
 			 *
 			 * @type  Module $import_export_module
 			 */
-			$import_export_module = Plugin::$instance->app->get_component( 'import-export' );
+			$import_export_module = Plugin::$instance->app->get_component( 'import-export-customization' );
 			$import_export_module->revert_last_imported_kit();
 
 		} catch ( \Error | \Exception $error ) {

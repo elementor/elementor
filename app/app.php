@@ -290,6 +290,8 @@ class App extends BaseApp {
 			'description' => esc_html__( 'Enhanced import/export for website templates. Selectively include site content, templates, and settings with advanced granular control.', 'elementor' ),
 			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
 			'default' => ExperimentsManager::STATE_ACTIVE,
+			'hidden' => true,
+			'mutable' => false,
 		] );
 	}
 
@@ -299,11 +301,7 @@ class App extends BaseApp {
 		$this->add_component( 'site-editor', new SiteEditorModule() );
 
 		if ( current_user_can( 'manage_options' ) || Utils::is_wp_cli() ) {
-			$this->add_component( 'import-export', new ImportExportModule() );
-
-			if ( Plugin::$instance->experiments->is_feature_active( 'import-export-customization' ) ) {
-				$this->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
-			}
+			$this->add_component( 'import-export-customization', new ImportExportCustomizationModule() );
 
 			// Kit library is depended on import-export
 			$this->add_component( 'kit-library', new KitLibraryModule() );

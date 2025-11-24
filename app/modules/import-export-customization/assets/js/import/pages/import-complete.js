@@ -166,7 +166,7 @@ export default function ImportComplete() {
 
 	useEffect( () => {
 		if ( ! isCompleted ) {
-			navigate( '/import-customization', { replace: true } );
+			navigate( '/import', { replace: true } );
 		}
 	}, [ isCompleted, navigate ] );
 
