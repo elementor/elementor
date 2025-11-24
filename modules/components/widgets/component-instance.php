@@ -13,7 +13,7 @@ class Component_Instance extends Atomic_Widget_Base {
 	use Has_Template;
 
 	public static function get_element_type(): string {
-		return 'e-component-instance';
+		return 'e-component';
 	}
 
 	public function show_in_panel() {
