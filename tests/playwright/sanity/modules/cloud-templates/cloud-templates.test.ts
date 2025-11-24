@@ -215,6 +215,17 @@ test.describe( 'Cloud Templates', () => {
 		);
 	};
 
+	const mockCreateFolderRoute = async ( page: Page, folderTitle: string, mockResponse: unknown ) => {
+		await mockAdminAjaxCall(
+			page,
+			( actions ) => {
+				const { action, data } = actions?.create_folder || {};
+				return 'create_folder' === action && 'cloud' === data?.source && folderTitle === data?.title;
+			},
+			mockResponse,
+		);
+	};
+
 	const mockConnect = ( page: Page ) => {
 		return page.evaluate( () => {
 			if ( typeof window.elementor !== 'undefined' && window.elementor.config ) {
@@ -240,13 +251,11 @@ test.describe( 'Cloud Templates', () => {
 		await mockConnect( page );
 
 		const folderButton = previewFrame.locator( '.elementor-add-template-button' );
-		await expect( folderButton ).toBeVisible();
 		await folderButton.click();
 
 		await page.waitForSelector( '#elementor-template-library-modal' );
 
 		const templatesTab = page.locator( '[data-tab="templates/my-templates"]', { hasText: 'Templates' } );
-		await expect( templatesTab ).toBeVisible();
 		await templatesTab.click();
 		await page.waitForTimeout( 500 );
 
@@ -348,7 +357,7 @@ test.describe( 'Cloud Templates', () => {
 		await expect( page.locator( `text=${ newTitle }` ).first() ).toBeVisible();
 	} );
 
-	test.only( 'should delete cloud template', async ( { page, apiRequests }, testInfo ) => {
+	test( 'should delete cloud template', async ( { page, apiRequests }, testInfo ) => {
 		await setupCloudTemplatesTab( page, testInfo, apiRequests );
 
 		const templateItems = page.locator( '.elementor-template-library-template-cloud' );
@@ -394,5 +403,82 @@ test.describe( 'Cloud Templates', () => {
 
 		await expect( templateItems.filter( { hasText: title } ) ).toHaveCount( 0 );
 		await expect( templateItems ).toHaveCount( 3 );
+	} );
+
+	test( 'should create new folder', async ( { page, apiRequests }, testInfo ) => {
+		await setupCloudTemplatesTab( page, testInfo, apiRequests );
+
+		const folderTitle = 'TEST';
+		const folderId = 1314;
+
+		const createFolderMockResponse = {
+			success: true,
+			data: {
+				responses: {
+					create_folder: {
+						success: true,
+						code: 200,
+						data: folderId,
+					},
+				},
+			},
+		};
+
+		await mockCreateFolderRoute( page, folderTitle, createFolderMockResponse );
+
+		const addNewFolderButton = page.locator( '#elementor-template-library-add-new-folder' );
+		await addNewFolderButton.click();
+
+		const folderInput = page.getByRole( 'textbox', { name: 'Folder name' } );
+		await folderInput.fill( folderTitle );
+
+		const createResponsePromise = page.waitForResponse( ( response ) => {
+			return response.url().includes( '/wp-admin/admin-ajax.php' );
+		} );
+
+		const createButton = page.locator( '.dialog-confirm-ok', { hasText: 'Create' } );
+		await createButton.click();
+
+		const updatedTemplatesMock = {
+			templates: {
+				templates: [
+					cloudTemplatesMock.templates.templates[ 0 ],
+					{
+						template_id: folderId,
+						source: 'cloud',
+						type: 'folder',
+						subType: 'FOLDER',
+						title: folderTitle,
+						status: 'active',
+						author: 'test@example.com',
+						human_date: new Date().toLocaleDateString( 'en-US', { year: 'numeric', month: 'long', day: 'numeric' } ),
+						export_link: `export-link-${ folderId }`,
+						hasPageSettings: false,
+						parentId: null,
+						preview_url: '',
+						generate_preview_url: '',
+					},
+					...cloudTemplatesMock.templates.templates.slice( 1 ),
+				],
+				total: 5,
+			},
+			config: cloudTemplatesMock.config,
+		};
+
+		const templatesRefreshPromise = page.waitForResponse( ( response ) => {
+			return response.url().includes( '/wp-json/elementor/v1/template-library/templates' ) &&
+				response.url().includes( 'source=cloud' );
+		} );
+
+		await createResponsePromise;
+
+		await mockCloudTemplatesRoute( page, updatedTemplatesMock );
+
+		await templatesRefreshPromise;
+
+		const templateItems = page.locator( '.elementor-template-library-template-cloud' );
+
+		await expect( templateItems ).toHaveCount( 5 );
+		await expect( templateItems.nth( 1 ) ).toContainText( folderTitle );
 	} );
 } );
