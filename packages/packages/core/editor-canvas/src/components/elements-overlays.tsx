@@ -8,9 +8,9 @@ import {
 } from '@elementor/editor-v1-adapters';
 
 import type { ElementOverlayConfig } from '../types/element-overlay';
+import { hasInlineEditableProperty } from '../utils/inline-editing-utils';
 import { InlineEditorOverlay } from './inline-editor-overlay';
 import { OutlineOverlay } from './outline-overlay';
-import { hasInlineEditableProperty } from '../utils/inline-editing-utils';
 
 const ELEMENTS_DATA_ATTR = 'atomic';
 
@@ -46,9 +46,9 @@ export function ElementsOverlays() {
 		elements.map( ( [ id, element ] ) => {
 			const isSelected = selected.element?.id === id;
 
-		return overlayRegistry
-			.filter( ( overlay ) => overlay.filter( { id, element, isSelected } ) )
-			.map( ( overlay, index ) => {
+			return overlayRegistry
+				.filter( ( overlay ) => overlay.filter( { id, element, isSelected } ) )
+				.map( ( overlay, index ) => {
 					const OverlayComponent = overlay.component;
 					return (
 						<OverlayComponent
@@ -62,7 +62,6 @@ export function ElementsOverlays() {
 		} )
 	);
 }
-
 
 type IdElementTuple = [ string, HTMLElement ];
 
