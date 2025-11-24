@@ -17,7 +17,7 @@ class Variable {
 		foreach ( $required as $key ) {
 			if ( ! array_key_exists( $key, $data ) ) {
 				throw new InvalidArgumentException(
-					sprintf( "Missing required field '%s' in %s::from_array()", $key, self::class )
+					sprintf( esc_html( "Missing required field '%s' in %s::from_array()" ), $key, self::class )
 				);
 			}
 		}
@@ -40,7 +40,7 @@ class Variable {
 	}
 
 	public function to_array(): array {
-		return array_diff_key( $this->data, array_flip( ['id'] ) );
+		return array_diff_key( $this->data, array_flip( [ 'id' ] ) );
 	}
 
 	public function id(): string {

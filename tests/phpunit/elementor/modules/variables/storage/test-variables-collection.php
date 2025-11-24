@@ -420,5 +420,151 @@ class Test_Variables_Collection extends TestCase {
 		$collection->assert_limit_not_reached();
 		$this->assertTrue( true ); // If we get here, no exception was thrown
 	}
+
+	public function test_get_next_order__returns_one_for_empty_collection() {
+		// Arrange
+		$collection = Variables_Collection::hydrate( [
+			'data' => [],
+			'watermark' => 0,
+			'version' => 1,
+		] );
+
+		// Act
+		$next_order = $collection->get_next_order();
+
+		// Assert
+		$this->assertEquals( 1, $next_order );
+	}
+
+	public function test_get_next_order__returns_highest_order_plus_one() {
+		// Arrange
+		$collection = Variables_Collection::hydrate( [
+			'data' => [
+				'id-1' => [
+					'type' => 'global-color',
+					'label' => 'Primary',
+					'value' => '#000000',
+					'order' => 5,
+				],
+				'id-2' => [
+					'type' => 'global-color',
+					'label' => 'Secondary',
+					'value' => '#FFFFFF',
+					'order' => 10,
+				],
+				'id-3' => [
+					'type' => 'global-color',
+					'label' => 'Tertiary',
+					'value' => '#FF0000',
+					'order' => 3,
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		] );
+
+		// Act
+		$next_order = $collection->get_next_order();
+
+		// Assert
+		$this->assertEquals( 11, $next_order );
+	}
+
+	public function test_get_next_order__ignores_deleted_variables() {
+		// Arrange
+		$collection = Variables_Collection::hydrate( [
+			'data' => [
+				'id-1' => [
+					'type' => 'global-color',
+					'label' => 'Primary',
+					'value' => '#000000',
+					'order' => 5,
+				],
+				'id-2' => [
+					'type' => 'global-color',
+					'label' => 'Deleted',
+					'value' => '#FFFFFF',
+					'order' => 20,
+					'deleted_at' => '2024-01-01 10:00:00',
+				],
+				'id-3' => [
+					'type' => 'global-color',
+					'label' => 'Tertiary',
+					'value' => '#FF0000',
+					'order' => 8,
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		] );
+
+		// Act
+		$next_order = $collection->get_next_order();
+
+		// Assert
+		$this->assertEquals( 9, $next_order );
+	}
+
+	public function test_get_next_order__handles_variables_with_zero_order() {
+		// Arrange
+		$collection = Variables_Collection::hydrate( [
+			'data' => [
+				'id-1' => [
+					'type' => 'global-color',
+					'label' => 'Primary',
+					'value' => '#000000',
+					'order' => 0,
+				],
+				'id-2' => [
+					'type' => 'global-color',
+					'label' => 'Secondary',
+					'value' => '#FFFFFF',
+					'order' => 0,
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		] );
+
+		// Act
+		$next_order = $collection->get_next_order();
+
+		// Assert
+		$this->assertEquals( 1, $next_order );
+	}
+
+	public function test_get_next_order__handles_mixed_orders() {
+		// Arrange
+		$collection = Variables_Collection::hydrate( [
+			'data' => [
+				'id-1' => [
+					'type' => 'global-color',
+					'label' => 'First',
+					'value' => '#000000',
+					'order' => 1,
+				],
+				'id-2' => [
+					'type' => 'global-color',
+					'label' => 'Third',
+					'value' => '#FFFFFF',
+					'order' => 3,
+				],
+				'id-3' => [
+					'type' => 'global-color',
+					'label' => 'Fifth',
+					'value' => '#FF0000',
+					'order' => 5,
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		] );
+
+		// Act
+		$next_order = $collection->get_next_order();
+
+		// Assert
+		$this->assertEquals( 6, $next_order );
+	}
 }
 
