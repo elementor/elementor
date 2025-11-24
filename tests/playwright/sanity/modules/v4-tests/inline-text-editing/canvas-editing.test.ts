@@ -2,10 +2,7 @@ import { BrowserContext, Page, expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
-
-const CANVAS_INLINE_EDITOR_SELECTOR = '#elementor-preview-responsive-wrapper [contenteditable="true"][class*="ProseMirror"]';
-const PANEL_INLINE_EDITOR_SELECTOR = '.tiptap';
-const CONTENT_SECTION_LABEL = 'Content';
+import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
 
 test.describe( 'Inline Editing Canvas @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
@@ -37,11 +34,13 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
 		const previewFrame = editor.getPreviewFrame();
 		const headingElement = previewFrame.locator( `.elementor-element-${ headingId }` );
+
 		await expect( headingElement ).toBeVisible();
 
 		// Act
 		await headingElement.click();
-		const inlineEditor = page.locator( CANVAS_INLINE_EDITOR_SELECTOR );
+		const inlineEditor = page.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
 		await page.keyboard.press( 'ControlOrMeta+U' );
@@ -52,16 +51,20 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Assert
 		await expect( headingElement ).toContainText( NEW_TITLE );
 
-		const panelInlineEditor = page.getByLabel( CONTENT_SECTION_LABEL ).locator( PANEL_INLINE_EDITOR_SELECTOR );
+		const panelInlineEditor = page.getByLabel( INLINE_EDITING_SELECTORS.contentSectionLabel ).locator( INLINE_EDITING_SELECTORS.panelInlineEditor );
 		const panelHTML = await panelInlineEditor.innerHTML();
+
 		expect( panelHTML ).toContain( '<u>this</u>' );
 
 		await editor.publishAndViewPage();
-		const publishedHeading = page.locator( '.e-heading-base' ).last();
+		const publishedHeading = page.locator( INLINE_EDITING_SELECTORS.headingBase ).last();
+
 		await expect( publishedHeading ).toContainText( NEW_TITLE );
 
 		const underlinedText = publishedHeading.locator( 'u' );
+
 		await expect( underlinedText ).toBeVisible();
+
 		await expect( underlinedText ).toContainText( 'this' );
 	} );
 } );
