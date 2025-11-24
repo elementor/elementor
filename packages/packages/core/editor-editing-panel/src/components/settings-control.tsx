@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ControlAdornmentsProvider } from '@elementor/editor-controls';
 import { type Control, type ControlLayout, type ElementControl } from '@elementor/editor-elements';
-import { Divider } from '@elementor/ui';
+import { Divider, styled } from '@elementor/ui';
 
 import { Control as BaseControl } from '../controls-registry/control';
 import { ControlTypeContainer } from '../controls-registry/control-type-container';
@@ -9,6 +9,10 @@ import { controlsRegistry, type ControlType } from '../controls-registry/control
 import { SettingsField } from '../controls-registry/settings-field';
 import { getFieldIndicators } from '../field-indicators-registry';
 import { ControlLabel } from './control-label';
+
+const SettingsFieldWrapper = styled( 'span' )`
+	display: contents;
+`;
 
 export const SettingsControl = ( {
 	control: { value, type },
@@ -64,24 +68,28 @@ const ControlLayout = ( {
 } ) => {
 	if ( renderOnlyInput ) {
 		if ( layout !== 'custom' || ! control.label ) {
-			return <BaseControl type={ control.type as ControlType } props={ controlProps } />;
+			return <SettingsFieldWrapper data-type="settings-field"><BaseControl type={ control.type as ControlType } props={ controlProps } /></SettingsFieldWrapper>;
 		}
 
 		return (
-			<ControlTypeContainer layout={ layout }>
-				<ControlLabel>{ control.label }</ControlLabel>
-				<BaseControl type={ control.type as ControlType } props={ controlProps } />
-			</ControlTypeContainer>
+			<SettingsFieldWrapper data-type="settings-field">
+				<ControlTypeContainer layout={ layout }>
+					<ControlLabel>{ control.label }</ControlLabel>
+					<BaseControl type={ control.type as ControlType } props={ controlProps } />
+				</ControlTypeContainer>
+			</SettingsFieldWrapper>
 		);
 	}
 
 	return (
 		<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
 			{ control.meta?.topDivider && <Divider /> }
-			<ControlTypeContainer layout={ layout }>
-				{ control.label && layout !== 'custom' ? <ControlLabel>{ control.label }</ControlLabel> : null }
-				<BaseControl type={ control.type as ControlType } props={ controlProps } />
-			</ControlTypeContainer>
+			<SettingsFieldWrapper data-type="settings-field">
+				<ControlTypeContainer layout={ layout }>
+					{ control.label && layout !== 'custom' ? <ControlLabel>{ control.label }</ControlLabel> : null }
+					<BaseControl type={ control.type as ControlType } props={ controlProps } />
+				</ControlTypeContainer>
+			</SettingsFieldWrapper>
 		</ControlAdornmentsProvider>
 	);
 };

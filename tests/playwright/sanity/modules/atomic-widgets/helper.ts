@@ -59,7 +59,7 @@ export class AtomicHelper {
 	}
 
 	public getHtmlTagControl( deeperSelector: string = '' ) {
-		const control = this.page.locator( `.MuiStack-root >.MuiBox-root>label`, { hasText: /Tag/ig } ).locator( '..' );
+		const control = this.page.locator( `[data-type="settings-field"] label`, { hasText: /Tag/ig } ).locator( '..' );
 
 		return deeperSelector
 			? control.locator( deeperSelector )
