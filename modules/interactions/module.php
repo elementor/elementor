@@ -58,18 +58,18 @@ class Module extends BaseModule {
 		add_action( 'elementor/preview/enqueue_scripts', fn () => $this->enqueue_preview_scripts() );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 
-		add_filter( 'elementor/document/save/data',
-			/**
-			 * @throws \Exception
-			 */
-			function( $document ) {
-				$validation = new Validation( $this->get_presets() );
-				$document_after_sanitization = $validation->sanitize( $document );
-				$validation->validate();
+		// add_filter( 'elementor/document/save/data',
+		// 	/**
+		// 	 * @throws \Exception
+		// 	 */
+		// 	function( $document ) {
+		// 		$validation = new Validation( $this->get_presets() );
+		// 		$document_after_sanitization = $validation->sanitize( $document );
+		// 		$validation->validate();
 
-				return $document_after_sanitization;
-			},
-		10, 1 );
+		// 		return $document_after_sanitization;
+		// 	},
+		// 10, 1 );
 	}
 
 	private function get_config() {

@@ -36,7 +36,7 @@ export function getKeyframes( effect, type, direction ) {
 }
 
 export function parseAnimationName( name ) {
-	const [ trigger, effect, type, direction, duration, delay ] = name.split( '-' );
+	const [ _id, trigger, effect, type, direction, duration, delay ] = name.split( '-' );
 
 	return {
 		trigger,
