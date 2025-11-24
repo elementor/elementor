@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\Components\PropTypes;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Modules\Components\Documents\Component;
@@ -11,18 +11,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Component_Instance_Prop_Type extends Object_Prop_Type {
+class Component_Instance_Prop_Type extends Plain_Prop_Type {
 	private $component_overridable_props = null;
 
 	public static function get_key(): string {
 		return 'component-instance';
-	}
-
-	protected function define_shape(): array {
-		return [
-			'component_id' => Number_Prop_Type::make()->required(),
-			'overrides' => Component_Overrides_Prop_Type::make()->optional(),
-		];
 	}
 
 	protected function validate_value( $value ): bool {
@@ -32,6 +25,7 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 
 		$is_valid_structure = (
 			isset( $value['component_id'] ) &&
+			is_numeric( $value['component_id'] ) &&
 			( isset( $value['overrides'] ) ? is_array( $value['overrides'] ) : true )
 		);
 
@@ -39,28 +33,30 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 			return false;
 		}
 
-		$is_valid_component_id = Number_Prop_Type::make()->validate( $value['component_id'] );
-
-		if ( ! $is_valid_component_id ) {
-			return false;
-		}
-
 		if ( ! isset( $value['overrides'] ) ) {
 			return true;
 		}
 
-		$sanitized_component_id = Number_Prop_Type::make()->sanitize( $value['component_id'] );
-		$component_overridable_props = $this->get_component_overridable_props( $sanitized_component_id['value'] );
+		$sanitized_component_id = (int) $value['component_id'];
+		$component_overridable_props = $this->get_component_overridable_props( $sanitized_component_id );
 
-		$is_valid_overrides = Component_Overrides_Prop_Type::make()
-			->set_component_overridable_props( $component_overridable_props )
-			->validate( $value['overrides'] );
+		return $this->validate_component_overrides( $value['overrides'], $component_overridable_props );
+	}
 
-		return $is_valid_overrides;
+	private function validate_component_overrides( array $overrides, array $component_overridable_props ): bool {
+		$component_override_utils = new Component_Override_Utils($component_overridable_props);
+
+		foreach ( $overrides as $override ) {
+			if ( ! $component_override_utils->validate( $override ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	public function sanitize_value( $value ): array {
-		$sanitized_component_id = Number_Prop_Type::make()->sanitize( $value['component_id'] );
+		$sanitized_component_id = (int) $value['component_id'];
 
 		$sanitized = [
 			'component_id' => $sanitized_component_id,
@@ -70,13 +66,28 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 			return $sanitized;
 		}
 
-		$component_overridable_props = $this->get_component_overridable_props( $sanitized_component_id['value'] );
-		$sanitized_overrides = Component_Overrides_Prop_Type::make()
-			->set_component_overridable_props( $component_overridable_props )
-			->sanitize( $value['overrides'] );
+		$component_overridable_props = $this->get_component_overridable_props( $sanitized_component_id );
+		
+		$sanitized_overrides = $this->sanitize_component_overrides( $value['overrides'], $component_overridable_props );
 
-		if ( count( $sanitized_overrides['value'] ) > 0 ) {
+		if ( count( $sanitized_overrides ) > 0 ) {
 			$sanitized['overrides'] = $sanitized_overrides;
+		}
+
+		return $sanitized;
+	}
+
+	private function sanitize_component_overrides( array $overrides, array $component_overridable_props ): array {
+		$component_override_utils = new Component_Override_Utils($component_overridable_props);
+
+		$sanitized = [];
+
+		foreach ( $overrides as $override ) {
+			$sanitized_override = $component_override_utils->sanitize( $override );
+
+			if ( null !== $sanitized_override ) {
+				$sanitized[] = $sanitized_override;
+			}
 		}
 
 		return $sanitized;

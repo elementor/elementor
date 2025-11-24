@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\Components\PropTypes;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
@@ -11,12 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Component_Override_Prop_Type extends Plain_Prop_Type {
-	public static function get_key(): string {
-		return 'component-override';
+class Component_Override_Utils {
+	private ?array $component_overridable_props = null;
+	public function __construct(?array $component_overridable_props = null) {
+		$this->component_overridable_props = $component_overridable_props;
 	}
 
-	protected function validate_value( $value ): bool {
+	public function validate( $value ): bool {
 		if ( ! is_array( $value ) ) {
 			return false;
 		}
@@ -48,7 +48,7 @@ class Component_Override_Prop_Type extends Plain_Prop_Type {
 		return $prop_type->validate( $override_value );
 	}
 
-	protected function sanitize_value( $value ) {
+	public function sanitize( $value ) {
 		if ( ! isset( $value['override_key'] ) ) {
 			return null;
 		}
@@ -69,14 +69,9 @@ class Component_Override_Prop_Type extends Plain_Prop_Type {
 			'value' => $prop_type->sanitize( $value['value'] ),
 		];
 	}
-	public function set_component_overridable_props( $component_overridable_props ) {
-		$this->settings['component_overridable_props'] = $component_overridable_props;
-
-		return $this;
-	}
 
 	private function get_component_overridable_prop( string $override_key ): array {
-		$component_overridable_props = $this->settings['component_overridable_props'] ?? null;
+		$component_overridable_props = $this->component_overridable_props;
 
 		if ( ! $component_overridable_props || ! isset( $component_overridable_props['props'][ $override_key ] ) ) {
 			return [
