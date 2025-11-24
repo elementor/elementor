@@ -66,14 +66,26 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		}
 	},
 
+	onDestroy() {
+		this.unbindDocumentClickHandler();
+	},
+
 	handleOnRender() {
 		setTimeout( () => this.ui.templateNameInput.trigger( 'focus' ) );
+
+		const context = this.getOption( 'context' );
 
 		elementor.templates.eventManager.sendPageViewEvent( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary[ `${ context }Modal` ],
 		} );
 
-		const context = this.getOption( 'context' );
+		const shouldStartSessionRecording = elementorCommon.config.editor_events.session_replays?.cloudTemplates &&
+		! elementor.templates.eventManager.isSessionRecordingInProgress();
+
+		if ( shouldStartSessionRecording ) {
+			elementor.templates.eventManager.startSessionRecording();
+			elementor.templates.eventManager.sendCloudTemplatesSessionRecordingStartEvent();
+		}
 
 		if ( SAVE_CONTEXTS.SAVE === context ) {
 			this.handleSaveAction();
@@ -98,6 +110,8 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		if ( ! elementor.config.library_connect.is_connected ) {
 			this.handleElementorConnect();
 		}
+
+		this.bindDocumentClickHandler();
 	},
 
 	cloudMaxCapacityReached() {
@@ -194,8 +208,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	onFormSubmit( event ) {
 		event.preventDefault();
-
-		elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
 
 		var formData = this.ui.form.elementorSerializeObject(),
 			JSONParams = { remove: [ 'default' ] };
@@ -372,12 +384,14 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		if ( ! this.ui.foldersDropdown.is( ':visible' ) ) {
 			this.ui.foldersDropdown.show();
+		} else {
+			this.hideFoldersDropdown();
 		}
 	},
 
 	async onEllipsisIconClick() {
 		if ( this.ui.foldersDropdown.is( ':visible' ) ) {
-			this.ui.foldersDropdown.hide();
+			this.hideFoldersDropdown();
 
 			return;
 		}
@@ -489,7 +503,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	handleFolderSelected( id, value ) {
 		this.highlightSelectedFolder( id );
-		this.ui.foldersDropdown.hide();
+		this.hideFoldersDropdown();
 		this.ui.ellipsisIcon.hide();
 		this.ui.selectedFolderText.html( value );
 		this.ui.selectedFolder.show();
@@ -513,7 +527,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.ui.selectedFolder.hide();
 		this.ui.ellipsisIcon.show();
 		this.ui.hiddenInputSelectedFolder.val( '' );
-		this.ui.foldersDropdown.hide();
+		this.hideFoldersDropdown();
 	},
 
 	async loadMoreFolders() {
@@ -686,6 +700,39 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	updateSubmitButtonState( shouldDisableSubmitButton ) {
 		this.ui.submitButton.toggleClass( 'e-primary', ! shouldDisableSubmitButton );
 		this.ui.submitButton.prop( 'disabled', shouldDisableSubmitButton );
+	},
+
+	hideFoldersDropdown() {
+		this.ui.foldersDropdown.hide();
+	},
+
+	bindDocumentClickHandler() {
+		this.documentClickHandler = this.hideDropdownIfClickOutside.bind( this );
+		elementor.templates.layout.modalContent.$el.on( 'click', this.documentClickHandler );
+	},
+
+	unbindDocumentClickHandler() {
+		if ( ! this.documentClickHandler ) {
+			return;
+		}
+
+		elementor.templates.layout.modalContent.$el.off( 'click', this.documentClickHandler );
+		this.documentClickHandler = null;
+	},
+
+	hideDropdownIfClickOutside( event ) {
+		if ( ! this.ui.foldersDropdown.is( ':visible' ) ) {
+			return;
+		}
+
+		const target = jQuery( event.target );
+		const isClickInsideDropdown = target.closest( this.ui.foldersDropdown ).length > 0;
+		const isClickOnEllipsisIcon = target.closest( this.ui.ellipsisIcon ).length > 0;
+		const isClickOnSelectedFolderText = target.closest( this.ui.selectedFolderText ).length > 0;
+
+		if ( ! isClickInsideDropdown && ! isClickOnEllipsisIcon && ! isClickOnSelectedFolderText ) {
+			this.hideFoldersDropdown();
+		}
 	},
 
 	onUpgradeBadgeClicked() {
