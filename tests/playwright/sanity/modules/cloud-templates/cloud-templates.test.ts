@@ -492,7 +492,7 @@ test.describe( 'Cloud Templates', () => {
 		await expect( templateItems.nth( 1 ) ).toContainText( folderTitle );
 	} );
 
-	test.only( 'should save template to cloud', async ( { page, apiRequests }, testInfo ) => {
+	test( 'should save template to cloud', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
