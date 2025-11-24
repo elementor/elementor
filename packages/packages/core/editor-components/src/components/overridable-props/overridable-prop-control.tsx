@@ -8,9 +8,8 @@ import {
 } from '@elementor/editor-controls';
 import { createTopLevelObjectType, SettingsControl, useElement } from '@elementor/editor-editing-panel';
 import { type Control, type ControlItem } from '@elementor/editor-elements';
-import { PropType, type PropValue } from '@elementor/editor-props';
+import { type PropType, type PropValue } from '@elementor/editor-props';
 import { generateUniqueId } from '@elementor/utils';
-import { __ } from '@wordpress/i18n';
 
 import {
 	componentOverridablePropTypeUtil,
@@ -20,7 +19,7 @@ import {
 export function OverridablePropControl() {
 	const { elementType } = useElement();
 
-	const { value, bind, setValue, ...propContext } = useBoundProp();
+	const { value, bind, setValue, placeholder, ...propContext } = useBoundProp();
 	const allControls = useAllControls();
 	const { extract, create } = componentOverridablePropTypeUtil;
 
@@ -32,9 +31,10 @@ export function OverridablePropControl() {
 
 	const currentValue = extract( value ) ?? {
 		override_key: generateUniqueId(),
+		default_value: null,
 	};
 
-	const setOverridableValue: SetValue< Record< string, ComponentOverridablePropValue > > = ( newValue ) => {
+	const setOverridableValue = ( newValue: Record< typeof bind, PropValue | null > ) => {
 		setValue(
 			create( {
 				...currentValue,
@@ -42,17 +42,24 @@ export function OverridablePropControl() {
 			} )
 		);
 	};
-	
-	const propType = createTopLevelObjectType( { schema: {
-		[ bind ]: elementType.propsSchema[ bind ]
-	} } );
+
+	const propType = createTopLevelObjectType( {
+		schema: {
+			[ bind ]: elementType.propsSchema[ bind ],
+		},
+	} );
+
+	const objectPlaceholder: Record< string, PropValue > | undefined = placeholder
+		? { [ bind ]: placeholder }
+		: undefined;
 
 	return (
 		<PropProvider
 			{ ...propContext }
-			propType={ propType as PropType }
+			propType={ propType }
 			setValue={ setOverridableValue }
-			value={ { [ bind ]: currentValue.default_value as PropValue } }
+			value={ { [ bind ]: currentValue.default_value ?? null } }
+			placeholder={ objectPlaceholder }
 		>
 			<PropKeyProvider bind={ bind }>
 				<ControlReplacementsProvider replacements={ [] }>
@@ -85,4 +92,3 @@ function iterateControls( controls: ControlItem[] ): Control[] {
 		.filter( Boolean )
 		.flat() as Control[];
 }
-

@@ -69,12 +69,15 @@ export function OverridablePropForm( { onSubmit, groups, currentValue }: Props )
 								if ( ! selectedValue || selectedValue === '' ) {
 									return DEFAULT_GROUP.label;
 								}
-								return groups?.find( ( group ) => group.value === selectedValue )?.label ?? selectedValue;
+
+								return (
+									groups?.find( ( { value } ) => value === selectedValue )?.label ?? selectedValue
+								);
 							} }
 						>
-							{ ( groups ?? [ DEFAULT_GROUP ] ).map( ( { label, ...props } ) => (
+							{ ( groups ?? [ DEFAULT_GROUP ] ).map( ( { label: groupLabel, ...props } ) => (
 								<MenuListItem key={ props.value } { ...props } value={ props.value ?? '' }>
-									{ label }
+									{ groupLabel }
 								</MenuListItem>
 							) ) }
 						</Select>

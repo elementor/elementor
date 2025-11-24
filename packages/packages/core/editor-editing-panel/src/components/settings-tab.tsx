@@ -17,10 +17,10 @@ import { controlsRegistry, type ControlType } from '../controls-registry/control
 import { SettingsField } from '../controls-registry/settings-field';
 import { getFieldIndicators } from '../field-indicators-registry';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
+import { ControlLabel } from './control-label';
 import { Section } from './section';
 import { SectionsList } from './sections-list';
 import { SettingsControl } from './settings-control';
-import { ControlLabel } from './control-label';
 
 export const SettingsTab = () => {
 	const { elementType, element } = useElement();
