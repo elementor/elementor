@@ -7,6 +7,7 @@ use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
+use RuntimeException;
 
 class BatchProcessor {
 	private const OPERATION_MAP = [
@@ -26,6 +27,7 @@ class BatchProcessor {
 
 	/**
 	 * @throws BatchOperationFailed Thrown when one of the operations fails.
+	 * @throws RuntimeException Failed to save after batch.
 	 */
 	public function process_batch( array $operations ) {
 		$collection = $this->repo->load();
@@ -48,13 +50,14 @@ class BatchProcessor {
 		}
 
 		if ( ! empty( $errors ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 			throw new BatchOperationFailed( 'Batch failed', $errors );
 		}
 
 		$watermark = $this->repo->save( $collection );
 
 		if ( false === $watermark ) {
-			throw new \RuntimeException( 'Failed to save after batch.' );
+			throw new RuntimeException( 'Failed to save after batch.' );
 		}
 
 		return [
@@ -65,7 +68,7 @@ class BatchProcessor {
 	}
 
 	/**
-	 * @throws BatchOperationFailed
+	 * @throws BatchOperationFailed Invalid operation type.
 	 */
 	private function apply_operation( Variables_Collection $collection, array $operation ): array {
 		$type = $operation['type'];
