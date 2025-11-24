@@ -47,7 +47,7 @@ export const InlineEditor = React.forwardRef(
 			}
 
 			const currentContent = editor.getHTML();
-			
+
 			if ( currentContent !== value ) {
 				editor.commands.setContent( value, { emitUpdate: false } );
 			}

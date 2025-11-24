@@ -1,4 +1,4 @@
-import * as React from 'react';
+import type * as React from 'react';
 
 export type ElementOverlayProps = {
 	element: HTMLElement;
@@ -16,4 +16,3 @@ export type ElementOverlayConfig = {
 	component: React.ComponentType< ElementOverlayProps >;
 	filter: ( args: OverlayFilterArgs ) => boolean;
 };
-

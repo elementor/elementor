@@ -2,7 +2,7 @@ import { getElementType, type V1Element } from '@elementor/editor-elements';
 
 function getHtmlPropertyName( container: V1Element | null ): string {
 	const widgetType = container?.model?.get( 'widgetType' ) ?? container?.model?.get( 'elType' );
-	
+
 	if ( ! widgetType ) {
 		return '';
 	}
@@ -14,7 +14,7 @@ function getHtmlPropertyName( container: V1Element | null ): string {
 	}
 
 	const entry = Object.entries( propsSchema ).find( ( [ , propType ] ) => propType.key === 'html' );
-	return entry?.[0] ?? '';
+	return entry?.[ 0 ] ?? '';
 }
 
 export function hasInlineEditableProperty( container: V1Element | null ): boolean {
@@ -24,4 +24,3 @@ export function hasInlineEditableProperty( container: V1Element | null ): boolea
 export function getInlineEditablePropertyName( container: V1Element | null ): string {
 	return getHtmlPropertyName( container );
 }
-
