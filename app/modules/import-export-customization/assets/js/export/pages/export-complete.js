@@ -73,7 +73,7 @@ export default function ExportComplete() {
 	};
 
 	if ( ! isCompleted ) {
-		return <Redirect to="/export-customization/" replace />;
+		return <Redirect to="/export/" replace />;
 	}
 
 	const isCloudExport = 'cloud' === kitInfo.source;

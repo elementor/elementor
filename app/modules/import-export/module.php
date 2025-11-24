@@ -96,10 +96,6 @@ class Module extends BaseModule {
 	public function __construct() {
 		$this->register_actions();
 
-		if ( ElementorUtils::is_wp_cli() ) {
-			\WP_CLI::add_command( 'elementor kit', WP_CLI::class );
-		}
-
 		( new Usage() )->register();
 
 		$this->revert = new Revert();

@@ -70,7 +70,7 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 
 			dispatch( { type: 'SET_EXPORTED_DATA', payload: updatedExportedData } );
 			dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
-			navigate( '/export-customization/complete' );
+			navigate( '/export/complete' );
 		} catch ( err ) {
 			setStatus( STATUS_ERROR );
 			setError( err instanceof ImportExportError ? err : new ImportExportError( err.message ) );
@@ -133,7 +133,7 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 
 				dispatch( { type: 'SET_EXPORTED_DATA', payload: kitExportData } );
 				dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
-				navigate( '/export-customization/complete' );
+				navigate( '/export/complete' );
 			} else if ( isExportToCloud ) {
 				kitExportData = {
 					kit: result.data.kit,
@@ -153,7 +153,7 @@ export const useExportKit = ( { includes, kitInfo, customization, isExporting, d
 
 				dispatch( { type: 'SET_EXPORTED_DATA', payload: kitExportData } );
 				dispatch( { type: 'SET_EXPORT_STATUS', payload: EXPORT_STATUS.COMPLETED } );
-				navigate( '/export-customization/complete' );
+				navigate( '/export/complete' );
 			} else {
 				throw new ImportExportError( 'Invalid response format from server' );
 			}

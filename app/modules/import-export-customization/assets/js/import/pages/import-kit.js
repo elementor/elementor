@@ -78,10 +78,10 @@ export default function ImportKit() {
 
 				dispatch( { type: 'ADD_INCLUDES', payload: includes } );
 				dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.IMPORTING } );
-				navigate( 'import-customization/process' );
+				navigate( 'import/process' );
 			} else {
 				dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.CUSTOMIZING } );
-				navigate( 'import-customization/content' );
+				navigate( 'import/content' );
 			}
 		}
 	}, [ data.uploadedData, dispatch, navigate, data.actionType ] );

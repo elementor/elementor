@@ -87,13 +87,13 @@ describe( 'ImportComplete Page', () => {
 		expect( closeBtn.textContent ).toMatch( /Close/i );
 	} );
 
-	it( 'redirects to /import-customization if not completed', () => {
+	it( 'redirects to /import if not completed', () => {
 		// Arrange
 		setup( { isCompleted: false } );
 		// Act
 		render( <ImportComplete /> );
 		// Assert
-		expect( mockNavigate ).toHaveBeenCalledWith( '/import-customization', { replace: true } );
+		expect( mockNavigate ).toHaveBeenCalledWith( '/import', { replace: true } );
 		expect( mockSendImportKitCustomization ).toHaveBeenCalledWith( expect.objectContaining( {
 			kit_description: false,
 			kit_import_content: true,

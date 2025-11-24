@@ -19,7 +19,7 @@ export default function ExportProcess() {
 	} );
 
 	if ( isPending ) {
-		return <Redirect to="/export-customization/" replace />;
+		return <Redirect to="/export/" replace />;
 	}
 
 	const getStatusText = () => {

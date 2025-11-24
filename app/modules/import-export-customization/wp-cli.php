@@ -50,11 +50,11 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		try {
 			/**
-			 * Running the export process through the import-export module so the export property in the module will be available to use.
+			 * Running the export process through the import-export-customization module so the export property in the module will be available to use.
 			 *
 			 * @type  Module $import_export_module
 			 */
-			$import_export_module = Plugin::$instance->app->get_component( 'import-export' );
+			$import_export_module = Plugin::$instance->app->get_component( 'import-export-customization' );
 			$result = $import_export_module->export_kit( $export_settings );
 
 			rename( $result['file_name'], $args[0] );
@@ -152,11 +152,11 @@ class Wp_Cli extends \WP_CLI_Command {
 			\WP_CLI::line( 'Importing data...' );
 
 			/**
-			 * Running the import process through the import-export module so the import property in the module will be available to use.
+			 * Running the import process through the import-export-customization module so the import property in the module will be available to use.
 			 *
 			 * @type  Module $import_export_module
 			 */
-			$import_export_module = Plugin::$instance->app->get_component( 'import-export' );
+			$import_export_module = Plugin::$instance->app->get_component( 'import-export-customization' );
 
 			if ( ! $import_export_module ) {
 				\WP_CLI::error( 'Import Export module is not available.' );
@@ -208,11 +208,11 @@ class Wp_Cli extends \WP_CLI_Command {
 
 		try {
 			/**
-			 * Running the revert process through the import-export module so the revert property in the module will be available to use.
+			 * Running the revert process through the import-export-customization module so the revert property in the module will be available to use.
 			 *
 			 * @type  Module $import_export_module
 			 */
-			$import_export_module = Plugin::$instance->app->get_component( 'import-export' );
+			$import_export_module = Plugin::$instance->app->get_component( 'import-export-customization' );
 			$import_export_module->revert_last_imported_kit();
 
 		} catch ( \Error | \Exception $error ) {
