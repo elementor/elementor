@@ -104,38 +104,4 @@ export default class extends elementorModules.Module {
 	isSessionRecordingInProgress() {
 		return this.#sessionRecordingInProgress;
 	}
-
-	startSessionRecording() {
-		if ( ! elementorCommon.config.editor_events?.can_send_events || this.isSessionRecordingInProgress() ) {
-			return;
-		}
-
-		if ( ! this.trackingEnabled ) {
-			this.enableTracking();
-		}
-
-		mixpanel.start_session_recording();
-		this.setSessionRecordingInProgress( true );
-	}
-
-	stopSessionRecording() {
-		if ( ! elementorCommon.config.editor_events?.can_send_events || ! this.isSessionRecordingInProgress() ) {
-			return;
-		}
-
-		mixpanel.stop_session_recording();
-		this.setSessionRecordingInProgress( false );
-	}
-
-	setSessionRecordingInProgress( value ) {
-		if ( 'boolean' !== typeof value ) {
-			return;
-		}
-
-		this.#sessionRecordingInProgress = value;
-	}
-
-	isSessionRecordingInProgress() {
-		return this.#sessionRecordingInProgress;
-	}
 }
