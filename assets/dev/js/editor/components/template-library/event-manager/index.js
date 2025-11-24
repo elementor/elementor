@@ -152,9 +152,9 @@ export class EventManager {
 		} );
 	}
 
-	sendCloudTemplatesSessionRecordingStartEvent( data ) {
+	sendCloudTemplatesSessionRecordingStartEvent() {
 		return this.sendEvent( EVENTS_MAP.CT_RECORDING_START, {
-			...data,
+			location: elementorCommon.eventsManager.config.locations.templatesLibrary.library,
 		} );
 	}
 

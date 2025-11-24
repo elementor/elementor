@@ -237,9 +237,4 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 			input.checked = false;
 		} );
 	},
-
-	hideModal() {
-		elementor.templates.eventManager.stopSessionRecording();
-		elementorModules.common.views.modal.Layout.prototype.hideModal.call( this );
-	},
 } );
