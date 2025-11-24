@@ -141,7 +141,7 @@ test.describe( 'Cloud Templates', () => {
 		} );
 	};
 
-	type AdminAjaxPredicate = ( actions: Record< string, { action: string; data: Record< string, unknown > } > ) => boolean;
+	type AdminAjaxPredicate = ( actions: Record<string, { action: string; data: Record<string, unknown> }> ) => boolean;
 
 	const mockAdminAjaxCall = async ( page: Page, predicate: AdminAjaxPredicate, mockResponse: unknown ) => {
 		await page.route( '/wp-admin/admin-ajax.php', async ( route ) => {
@@ -160,7 +160,7 @@ test.describe( 'Cloud Templates', () => {
 						} );
 						return;
 					}
-				} catch {}
+				} catch { }
 			}
 
 			await route.continue();
@@ -199,6 +199,17 @@ test.describe( 'Cloud Templates', () => {
 			( actions ) => {
 				const { action, data } = actions?.rename_template || {};
 				return 'rename_template' === action && 'cloud' === data?.source && templateId === data?.id;
+			},
+			mockResponse,
+		);
+	};
+
+	const mockDeleteTemplateRoute = async ( page: Page, templateId: number, mockResponse: unknown ) => {
+		await mockAdminAjaxCall(
+			page,
+			( actions ) => {
+				const { action, data } = actions?.delete_template || {};
+				return 'delete_template' === action && 'cloud' === data?.source && templateId === data?.template_id;
 			},
 			mockResponse,
 		);
@@ -281,7 +292,7 @@ test.describe( 'Cloud Templates', () => {
 		expect( await modal.screenshot( { type: 'jpeg' } ) ).toMatchSnapshot( 'cloud-templates-grid-view.jpeg' );
 	} );
 
-	test.only( 'should rename cloud template', async ( { page, apiRequests }, testInfo ) => {
+	test( 'should rename cloud template', async ( { page, apiRequests }, testInfo ) => {
 		await setupCloudTemplatesTab( page, testInfo, apiRequests );
 
 		const templateItems = page.locator( '.elementor-template-library-template-cloud' );
@@ -336,5 +347,52 @@ test.describe( 'Cloud Templates', () => {
 
 		await expect( page.locator( `text=${ newTitle }` ).first() ).toBeVisible();
 	} );
-} );
 
+	test.only( 'should delete cloud template', async ( { page, apiRequests }, testInfo ) => {
+		await setupCloudTemplatesTab( page, testInfo, apiRequests );
+
+		const templateItems = page.locator( '.elementor-template-library-template-cloud' );
+		await expect( templateItems ).toHaveCount( 4 );
+
+		const { template_id: id, title } = cloudTemplatesMock.templates.templates[ 1 ];
+
+		const deleteMockResponse = {
+			success: true,
+			data: {
+				responses: {
+					delete_template: {
+						success: true,
+						code: 200,
+						data: true,
+					},
+				},
+			},
+		};
+
+		await mockDeleteTemplateRoute( page, id, deleteMockResponse );
+
+		const pageTemplateRow = templateItems.filter( { hasText: title } ).first();
+		const moreToggleButton = pageTemplateRow.locator( '.elementor-template-library-template-more-toggle' );
+		await moreToggleButton.click();
+
+		const contextMenu = pageTemplateRow.locator( '.elementor-template-library-template-more' );
+
+		const deleteOption = contextMenu.locator( '.elementor-template-library-template-delete' );
+		await deleteOption.click();
+
+		const confirmDialog = page.locator( '.dialog-message.dialog-confirm-message' );
+		await expect( confirmDialog ).toContainText( `This will permanently remove "${ title }".` );
+
+		const deleteResponsePromise = page.waitForResponse( ( response ) => {
+			return response.url().includes( '/wp-admin/admin-ajax.php' );
+		} );
+
+		const confirmDeleteButton = page.locator( '.dialog-confirm-ok', { hasText: 'Delete' } );
+		await confirmDeleteButton.click();
+
+		await deleteResponsePromise;
+
+		await expect( templateItems.filter( { hasText: title } ) ).toHaveCount( 0 );
+		await expect( templateItems ).toHaveCount( 3 );
+	} );
+} );
