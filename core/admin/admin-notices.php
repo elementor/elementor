@@ -21,7 +21,7 @@ class Admin_Notices extends Module {
 
 	const DEFAULT_EXCLUDED_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
 	const LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID = 'local_google_fonts_disabled';
-	const LOCAL_GOOGLE_FONTS_NOTICE_MIN_VERSION = '3.33.2';
+	const LOCAL_GOOGLE_FONTS_NOTICE_MIN_VERSION = '3.33.3';
 
 	const EXIT_EARLY_FOR_BACKWARD_COMPATIBILITY = false;
 
