@@ -141,7 +141,9 @@ test.describe( 'Cloud Templates', () => {
 		} );
 	};
 
-	const mockTemplatesQuotaRoute = async ( page: Page ) => {
+	type AdminAjaxPredicate = ( actions: Record< string, { action: string; data: Record< string, unknown > } > ) => boolean;
+
+	const mockAdminAjaxCall = async ( page: Page, predicate: AdminAjaxPredicate, mockResponse: unknown ) => {
 		await page.route( '/wp-admin/admin-ajax.php', async ( route ) => {
 			const request = route.request();
 			const postDataJSON = request.postDataJSON();
@@ -150,28 +152,11 @@ test.describe( 'Cloud Templates', () => {
 				try {
 					const actions = JSON.parse( postDataJSON.actions );
 
-					const { action, data } = actions?.get_templates_quota || {};
-
-					if ( 'get_templates_quota' === action && 'cloud' === data?.source ) {
+					if ( predicate( actions ) ) {
 						await route.fulfill( {
 							status: 200,
 							contentType: 'application/json',
-							json: {
-								success: true,
-								data: {
-									responses: {
-										get_templates_quota: {
-											success: true,
-											code: 200,
-											data: {
-												currentUsage: 500,
-												threshold: 1000,
-												subscriptionId: 'fakeId',
-											},
-										},
-									},
-								},
-							},
+							json: mockResponse,
 						} );
 						return;
 					}
@@ -180,6 +165,43 @@ test.describe( 'Cloud Templates', () => {
 
 			await route.continue();
 		} );
+	};
+
+	const mockTemplatesQuotaRoute = async ( page: Page ) => {
+		await mockAdminAjaxCall(
+			page,
+			( actions ) => {
+				const { action, data } = actions?.get_templates_quota || {};
+				return 'get_templates_quota' === action && 'cloud' === data?.source;
+			},
+			{
+				success: true,
+				data: {
+					responses: {
+						get_templates_quota: {
+							success: true,
+							code: 200,
+							data: {
+								currentUsage: 500,
+								threshold: 1000,
+								subscriptionId: 'fakeId',
+							},
+						},
+					},
+				},
+			},
+		);
+	};
+
+	const mockRenameTemplateRoute = async ( page: Page, templateId: number, mockResponse: unknown ) => {
+		await mockAdminAjaxCall(
+			page,
+			( actions ) => {
+				const { action, data } = actions?.rename_template || {};
+				return 'rename_template' === action && 'cloud' === data?.source && templateId === data?.id;
+			},
+			mockResponse,
+		);
 	};
 
 	const mockConnect = ( page: Page ) => {
@@ -259,5 +281,60 @@ test.describe( 'Cloud Templates', () => {
 		expect( await modal.screenshot( { type: 'jpeg' } ) ).toMatchSnapshot( 'cloud-templates-grid-view.jpeg' );
 	} );
 
+	test.only( 'should rename cloud template', async ( { page, apiRequests }, testInfo ) => {
+		await setupCloudTemplatesTab( page, testInfo, apiRequests );
+
+		const templateItems = page.locator( '.elementor-template-library-template-cloud' );
+
+		const { template_id: id, type, subType, title } = cloudTemplatesMock.templates.templates[ 1 ];
+		const newTitle = 'Renamed Template Test';
+
+		const renameMockResponse = {
+			success: true,
+			data: {
+				responses: {
+					rename_template: {
+						success: true,
+						code: 200,
+						data: {
+							id,
+							title: newTitle,
+							type,
+							templateType: subType,
+							content: '',
+						},
+					},
+				},
+			},
+		};
+
+		await mockRenameTemplateRoute( page, id, renameMockResponse );
+
+		const pageTemplateRow = templateItems.filter( { hasText: title } ).first();
+		const moreToggleButton = pageTemplateRow.locator( '.elementor-template-library-template-more-toggle' );
+		await moreToggleButton.click();
+
+		const contextMenu = pageTemplateRow.locator( '.elementor-template-library-template-more' );
+		await expect( contextMenu ).toBeVisible();
+
+		const renameOption = contextMenu.locator( '.elementor-template-library-template-rename' );
+		await renameOption.click();
+
+		const renameInput = page.locator( '#elementor-rename-template-dialog__input' );
+		await expect( renameInput ).toBeVisible();
+
+		await renameInput.fill( newTitle );
+
+		const renameResponsePromise = page.waitForResponse( ( response ) => {
+			return response.url().includes( '/wp-admin/admin-ajax.php' );
+		} );
+
+		const renameButton = page.locator( '.dialog-button.dialog-ok.dialog-confirm-ok', { hasText: 'Rename' } );
+		await renameButton.click();
+
+		await renameResponsePromise;
+
+		await expect( page.locator( `text=${ newTitle }` ).first() ).toBeVisible();
+	} );
 } );
 
