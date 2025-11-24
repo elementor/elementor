@@ -215,7 +215,7 @@ describe( 'StylesField with inheritance', () => {
 		} );
 
 		// Act.
-		const { container } = renderWithTheme(
+		renderWithTheme(
 			<StylesField bind="font-size" propDisplayName="Label">
 				<ControlLabel>Label</ControlLabel>
 			</StylesField>
@@ -224,13 +224,13 @@ describe( 'StylesField with inheritance', () => {
 		// Assert.
 		if ( expectedLabel !== null ) {
 			expect( screen.getByText( 'Label' ) ).toBeInTheDocument();
-			expect( screen.getByLabelText( expectedLabel ) ).toBeInTheDocument();
 
-			expect( screen.getByTestId('styles-inheritance-indicator') ).toBeInTheDocument();
+			expect( screen.getByRole( 'button' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button' ) ).toHaveAttribute( 'aria-label', expectedLabel );
 		} else {
 			expect( screen.getByText( 'Label' ) ).toBeInTheDocument();
 
-			expect( screen.queryByTestId( 'styles-inheritance-indicator' ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 		}
 	} );
 } );
