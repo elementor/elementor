@@ -152,11 +152,17 @@ class OnboardingTracker {
 			return;
 		}
 
-		const handleBeforeUnload = () => {
-			this.stopSessionRecordingIfNeeded();
-		};
+		this.handleBeforeUnload = this.handleBeforeUnload.bind( this );
+		window.addEventListener( 'beforeunload', this.handleBeforeUnload );
+	}
 
-		window.addEventListener( 'beforeunload', handleBeforeUnload );
+	handleBeforeUnload() {
+		this.stopSessionRecordingIfNeeded();
+	}
+
+	onDestroy() {
+		this.stopSessionRecordingIfNeeded();
+		window.removeEventListener( 'beforeunload', this.handleBeforeUnload );
 	}
 
 	setupUrlChangeDetection() {
