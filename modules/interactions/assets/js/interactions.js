@@ -1,41 +1,4 @@
-const config = window.ElementorInteractionsConfig?.constants;
-
-function getKeyframes( effect, type, direction ) {
-	const isIn = 'in' === type;
-	const keyframes = {};
-
-	keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
-
-	if ( 'scale' === effect ) {
-		keyframes.scale = isIn ? [ config.scaleStart, 1 ] : [ 1, config.scaleStart ];
-	}
-
-	if ( direction ) {
-		const distance = config.slideDistance;
-		const movement = {
-			left: { x: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
-			right: { x: isIn ? [ distance, 0 ] : [ 0, distance ] },
-			top: { y: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
-			bottom: { y: isIn ? [ distance, 0 ] : [ 0, distance ] },
-		};
-
-		Object.assign( keyframes, movement[ direction ] );
-	}
-
-	return keyframes;
-}
-
-function parseAnimationName( name ) {
-	const [ trigger, effect, type, direction, duration, delay ] = name.split( '-' );
-	return {
-		trigger,
-		effect,
-		type,
-		direction: direction || null,
-		duration: duration ? parseInt( duration, 10 ) : config.defaultDuration,
-		delay: delay ? parseInt( delay, 10 ) : config.defaultDelay,
-	};
-}
+import { config, getKeyframes, parseAnimationName } from './interactions-utils.js';
 
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
@@ -48,13 +11,23 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.1, root: null };
 
 	if ( 'scrollOut' === animConfig.trigger ) {
-		inViewFunc( element, ( info ) => {
-			if ( ! info.isIntersecting ) {
+		inViewFunc( element, () => {
+			const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
+			animateFunc( element, resetKeyframes, { duration: 0 } );
+
+			return () => {
 				animateFunc( element, keyframes, options );
-			}
+			};
 		}, viewOptions );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
-		inViewFunc( element, () => animateFunc( element, keyframes, options ), viewOptions );
+		inViewFunc( element, () => {
+			animateFunc( element, keyframes, options );
+
+			return () => {
+				const resetKeyframes = getKeyframes( animConfig.effect, 'out', animConfig.direction );
+				animateFunc( element, resetKeyframes, { duration: 0 } );
+			};
+		}, viewOptions );
 	} else {
 		animateFunc( element, keyframes, options );
 	}

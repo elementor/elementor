@@ -34,9 +34,6 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		$atomic_widget_styles->register_hooks();
 
 		$element_1 = $this->make_mock_widget([
-			'controls' => [],
-			'props_schema' => [],
-			'settings' => [],
 			'styles' => [
 				[
 					'id' => 'test-style-1',
@@ -67,9 +64,6 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 			],
 		]);
 		$element_2 = $this->make_mock_widget([
-			'controls' => [],
-			'props_schema' => [],
-			'settings' => [],
 			'styles' => [
 				[
 					'id' => 'test-style-3',
@@ -93,9 +87,6 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		]);
 
 		$element_3 = $this->make_mock_widget([
-			'controls' => [],
-			'props_schema' => [],
-			'settings' => [],
 			'styles' => [
 				[
 					'id' => 'test-style-4',
@@ -121,10 +112,10 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		$this->mock_styles_manager
 			->expects( $invoked_count )
 			->method( 'register' )
-			->willReturnCallback(function( $key, $callback ) use ( $element_1, $element_2, $element_3, $doc_1_id, $doc_2_id, $invoked_count ) {
+			->willReturnCallback(function( $keys, $callback ) use ( $element_1, $element_2, $element_3, $doc_1_id, $doc_2_id, $invoked_count ) {
 				switch ( $invoked_count->getInvocationCount() ) {
 					case 1:
-						$this->assertEquals( Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_1_id, $key );
+						$this->assertEquals( [ Atomic_Widget_Styles::STYLES_KEY, $doc_1_id, Atomic_Widget_Styles::CONTEXT_FRONTEND ], $keys );
 						$this->callback( function( $callback ) use ( $element_1, $element_2, $doc_1_id ) {
 							$styles = $callback();
 
@@ -138,7 +129,125 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 						});
 						break;
 					case 2:
-						$this->assertEquals( Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_2_id, $key );
+						$this->assertEquals( [ Atomic_Widget_Styles::STYLES_KEY, $doc_2_id, Atomic_Widget_Styles::CONTEXT_FRONTEND ], $keys );
+						$this->callback( function( $callback ) use ( $element_3, $doc_2_id ) {
+							$styles = $callback();
+							$this->assertEquals( $element_3->get_raw_data()['styles'], $styles );
+						});
+						break;
+				}
+			});
+
+		// Act.
+		do_action( 'elementor/atomic-widgets/styles/register', $this->mock_styles_manager, [ $doc_1_id, $doc_2_id ] );
+	}
+
+	public function test_register_styles__does_not_register_styles_for_atomic_widgets_in_preview() {
+		// Arrange.
+		$atomic_widget_styles = new Atomic_Widget_Styles();
+		$atomic_widget_styles->register_hooks();
+
+		global $wp_query;
+
+		$wp_query->is_preview = true;
+
+		$element_1 = $this->make_mock_widget([
+			'styles' => [
+				[
+					'id' => 'test-style-1',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'color' => 'red',
+								'font-size' => '16px',
+							],
+							'meta' => [],
+						],
+					],
+				],
+				[
+					'id' => 'test-style-2',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'color' => 'blue',
+								'font-weight' => 'bold',
+							],
+							'meta' => [],
+						],
+					],
+				],
+			],
+		]);
+		$element_2 = $this->make_mock_widget([
+			'styles' => [
+				[
+					'id' => 'test-style-3',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'color' => 'green',
+								'font-size' => '18px',
+							],
+							'meta' => [],
+						],
+					],
+				],
+			],
+		]);
+
+		$doc_1_id = $this->make_mock_post([
+			$element_1->get_raw_data(),
+			$element_2->get_raw_data(),
+		]);
+
+		$element_3 = $this->make_mock_widget([
+			'styles' => [
+				[
+					'id' => 'test-style-4',
+					'type' => 'class',
+					'variants' => [
+						[
+							'props' => [
+								'color' => 'yellow',
+								'font-size' => '20px',
+							],
+							'meta' => [],
+						],
+					],
+				],
+			],
+		]);
+		$doc_2_id = $this->make_mock_post([
+			$element_3->get_raw_data(),
+		]);
+
+		// Assert.
+		$invoked_count = $this->exactly( 2 );
+		$this->mock_styles_manager
+			->expects( $invoked_count )
+			->method( 'register' )
+			->willReturnCallback(function( $keys, $callback ) use ( $element_1, $element_2, $element_3, $doc_1_id, $doc_2_id, $invoked_count ) {
+				switch ( $invoked_count->getInvocationCount() ) {
+					case 1:
+						$this->assertEquals( [ Atomic_Widget_Styles::STYLES_KEY, $doc_1_id, Atomic_Widget_Styles::CONTEXT_PREVIEW ], $keys );
+						$this->callback( function( $callback ) use ( $element_1, $element_2, $doc_1_id ) {
+							$styles = $callback();
+
+							$this->assertEquals(
+								array_merge(
+									$element_1->get_raw_data()['styles'],
+									$element_2->get_raw_data()['styles']
+								),
+								$styles
+							);
+						});
+						break;
+					case 2:
+						$this->assertEquals( [ Atomic_Widget_Styles::STYLES_KEY, $doc_2_id, Atomic_Widget_Styles::CONTEXT_PREVIEW ], $keys );
 						$this->callback( function( $callback ) use ( $element_3, $doc_2_id ) {
 							$styles = $callback();
 							$this->assertEquals( $element_3->get_raw_data()['styles'], $styles );
@@ -174,9 +283,6 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 			],
 		]);
 		$atomic_element = $this->make_mock_widget([
-			'controls' => [],
-			'props_schema' => [],
-			'settings' => [],
 			'styles' => [
 				[
 					'id' => 'atomic-style',
@@ -203,7 +309,7 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 			->expects( $this->once() )
 			->method( 'register' )
 			->with(
-				Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_id,
+				[ Atomic_Widget_Styles::STYLES_KEY, $doc_id, Atomic_Widget_Styles::CONTEXT_FRONTEND ],
 				$this->callback(function( $callback ) use ( $element, $atomic_element ) {
 					$styles = $callback();
 					$expected = $atomic_element->get_raw_data()['styles'];
@@ -225,37 +331,83 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		$cache_validity = new Cache_Validity();
 
 		// Act.
-		$cache_validity->validate( [ Atomic_Widget_Styles::STYLES_KEY, $id ] );
-
-		// Assert.
-		$this->assertTrue( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id ] ) );
+		$cache_validity->validate( [
+			Atomic_Widget_Styles::STYLES_KEY,
+			$id,
+			Atomic_Widget_Styles::CONTEXT_PREVIEW,
+		] );
+		$cache_validity->validate( [
+			Atomic_Widget_Styles::STYLES_KEY,
+			$id,
+			Atomic_Widget_Styles::CONTEXT_FRONTEND,
+		] );
+		$cache_validity->validate( [
+			Atomic_Widget_Styles::STYLES_KEY,
+			$id,
+		] );
 
 		// Act.
 		wp_delete_post( $id, true );
 
 		// Assert.
-		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id ] ) );
+		$this->assertFalse( $cache_validity->is_valid( [
+			Atomic_Widget_Styles::STYLES_KEY,
+			$id,
+			Atomic_Widget_Styles::CONTEXT_PREVIEW,
+		] ) );
+		$this->assertFalse( $cache_validity->is_valid( [
+			Atomic_Widget_Styles::STYLES_KEY,
+			$id,
+			Atomic_Widget_Styles::CONTEXT_FRONTEND,
+		] ) );
+		$this->assertFalse( $cache_validity->is_valid( [
+			Atomic_Widget_Styles::STYLES_KEY,
+			$id,
+		] ) );
 	}
 
-	public function test_cache_invalidation_on_global_cache_clear() {
+	public function test_cache_invalidation_on_preview_update() {
 		// Arrange.
 		( new Atomic_Widget_Styles() )->register_hooks();
 		$doc = $this->factory()->documents->create_and_get();
+		$doc->update_meta( 'post_status', 'draft' );
 		$id = $doc->get_id();
 
 		$cache_validity = new Cache_Validity();
 
 		// Act.
-		$cache_validity->validate( [ Atomic_Widget_Styles::STYLES_KEY, $id ] );
-
-		// Assert.
-		$this->assertTrue( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id ] ) );
+		$cache_validity->validate( [ Atomic_Widget_Styles::STYLES_KEY, $id, Atomic_Widget_Styles::CONTEXT_PREVIEW ] );
 
 		// Act.
 		do_action( 'elementor/document/after_save', $doc, [] );
 
 		// Assert.
-		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id ] ) );
+		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id, Atomic_Widget_Styles::CONTEXT_PREVIEW ] ) );
+	}
+
+	public function test_cache_invalidation_on_publish_update() {
+		// Arrange.
+		( new Atomic_Widget_Styles() )->register_hooks();
+		$doc = $this->factory()->documents->publish_and_get();
+		$id = $doc->get_id();
+
+		$cache_validity = new Cache_Validity();
+
+		// Act.
+		$cache_validity->validate( [ Atomic_Widget_Styles::STYLES_KEY, $id, Atomic_Widget_Styles::CONTEXT_FRONTEND ] );
+
+		// Act.
+		do_action( 'elementor/document/after_save', $doc, [] );
+
+		// Assert.
+		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id, Atomic_Widget_Styles::CONTEXT_FRONTEND ] ) );
+		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id, Atomic_Widget_Styles::CONTEXT_PREVIEW ] ) );
+	}
+
+	public function test_cache_invalidation_on_global_cache_clear() {
+		// Arrange.
+		( new Atomic_Widget_Styles() )->register_hooks();
+		$cache_validity = new Cache_Validity();
 
 		// Act.
 		do_action( 'elementor/core/files/clear_cache' );
@@ -286,6 +438,8 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 
 				parent::__construct( [
 					'id' => 1,
+					'controls' => $options['controls'] ?? [],
+					'props_schema' => $options['props_schema'] ?? [],
 					'settings' => $options['settings'] ?? [],
 					'styles' => $options['styles'] ?? [],
 					'elType' => 'widget',

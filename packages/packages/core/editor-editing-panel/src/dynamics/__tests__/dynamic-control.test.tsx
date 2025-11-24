@@ -45,6 +45,8 @@ describe( '<DynamicControl />', () => {
 
 	it( 'should throw an error if dynamic tag is not found', () => {
 		// Arrange.
+		const mockConsoleError = jest.fn();
+		window.console.error = mockConsoleError;
 		const bind = 'before';
 		const value = mockDynamicValue( {
 			name: 'not-existing',
@@ -66,7 +68,7 @@ describe( '<DynamicControl />', () => {
 
 		// Assert.
 		expect( renderComponent ).toThrow( 'Dynamic tag not-existing not found' );
-		expect( console ).toHaveErrored();
+		expect( mockConsoleError ).toHaveBeenCalled();
 	} );
 
 	it( 'should render children and set initial value', () => {

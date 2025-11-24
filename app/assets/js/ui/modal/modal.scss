@@ -3,7 +3,7 @@ $eps-modal-width: px-to-rem(700);
 $eps-modal-border-radius: $eps-radius;
 $eps-modal-overlay: rgba(theme-colors(dark), $opacity-05);
 $eps-modal-zindex: $eps-zindex-modal-backdrop;
-$eps-modal-header-type: type(text, md);
+$eps-modal-header-type: get-type(text, md);
 $eps-modal-header-background-color: theme-colors(info);
 $eps-modal-header-color: theme-colors(light);
 $eps-modal-header-height: spacing(44);

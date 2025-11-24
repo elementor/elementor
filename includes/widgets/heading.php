@@ -11,6 +11,7 @@ use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
 use Elementor\Core\Utils\Hints;
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Modules\Promotions\Controls\Promotion_Control;
+use Elementor\User;
 
 /**
  * Elementor heading widget.
@@ -266,22 +267,27 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 				'label' => esc_html__( 'Alignment', 'elementor' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor' ),
 						'icon' => 'eicon-text-align-right',
 					],
 					'justify' => [
 						'title' => esc_html__( 'Justified', 'elementor' ),
 						'icon' => 'eicon-text-align-justify',
 					],
+				],
+				'classes' => 'elementor-control-start-end',
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
 				],
 				'default' => '',
 				'selectors' => [
@@ -459,6 +465,10 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		$notice_id = 'ally_heading_notice';
 		$plugin_slug = 'pojo-accessibility';
 		if ( ! Hints::should_display_hint( $notice_id ) ) {
+			return;
+		}
+
+		if ( ! User::has_plugin_notice_been_displayed_for_required_time( 'image_optimization', WEEK_IN_SECONDS ) ) {
 			return;
 		}
 		$notice_content = esc_html__( 'Make sure your page is structured with accessibility in mind. Ally helps detect and fix common issues across your site.', 'elementor' );

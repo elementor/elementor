@@ -6,12 +6,14 @@
             href="{{ settings.link.href | raw }}"
             target="{{ settings.link.target }}"
             class="{{ classes }}"
+            data-interaction-id="{{ id }}"
+            data-interactions="{{ interactions | json_encode | e('html_attr') }}"
             {{ id_attribute }} {{ settings.attributes | raw }}
         >
             {{ settings.text }}
         </a>
     {% else %}
-        <button class="{{ classes }}" {{ id_attribute }} {{ settings.attributes | raw }}>
+        <button class="{{ classes }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" {{ id_attribute }} {{ settings.attributes | raw }}>
             {{ settings.text }}
         </button>
     {% endif %}

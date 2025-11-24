@@ -304,6 +304,21 @@ const TemplateLibraryManager = function() {
 
 					self.layout.updateViewCollection( self.filterTemplates() );
 
+					const buttons = 'cloud' === source ? [
+						{
+							name: 'undo_bulk',
+							text: __( 'Undo', 'elementor' ),
+							callback: () => {
+								self.onUndoDelete( );
+							},
+						},
+					] : null;
+
+					elementor.notifications.showToast( {
+						message: `1 item deleted successfully`,
+						buttons,
+					} );
+
 					self.triggerQuotaUpdate();
 					self.resetBulkActionBar();
 					self.eventManager.sendItemDeletedEvent( {

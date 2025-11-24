@@ -128,17 +128,30 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		$all_attributes = trim( $cssid_attribute . ' ' . $settings['attributes'] );
 
+		$interaction_ids = $this->get_interactions_ids();
+		$data_attributes_string = '';
+
+		if ( ! empty( $interaction_ids ) ) {
+			$data_attributes_string = sprintf(
+				'data-interaction-id="%s" data-interactions="%s"',
+				esc_attr( $this->get_id() ),
+				esc_attr( json_encode( $interaction_ids ) )
+			);
+		}
+
+		$attributes_string = trim( $data_attributes_string . ' ' . $all_attributes );
+
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
 			$svg_html = sprintf(
 				'<a href="%s" target="%s" class="%s" %s>%s</a>',
 				$settings['link']['href'],
 				esc_attr( $settings['link']['target'] ),
 				esc_attr( $classes_string ),
-				$all_attributes,
+				$attributes_string,
 				$svg_html
 			);
 		} else {
-			$svg_html = sprintf( '<div class="%s" %s>%s</div>', esc_attr( $classes_string ), $all_attributes, $svg_html );
+			$svg_html = sprintf( '<div class="%s" %s>%s</div>', esc_attr( $classes_string ), $attributes_string, $svg_html );
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

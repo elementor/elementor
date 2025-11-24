@@ -35,6 +35,24 @@ ControlNumberItemView = ControlBaseDataView.extend( {
 			} ) );
 		}
 	},
+}, {
+	getStyleValue( placeholder, controlValue, controlData ) {
+		if ( 'DEFAULT' === placeholder ) {
+			return controlData.default;
+		}
+
+		if ( null === controlValue || undefined === controlValue || '' === controlValue ) {
+			return controlValue;
+		}
+
+		const numValue = Number( controlValue );
+
+		if ( ! isFinite( numValue ) || isNaN( numValue ) ) {
+			return controlData.default ?? '';
+		}
+
+		return numValue;
+	},
 } );
 
 module.exports = ControlNumberItemView;

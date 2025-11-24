@@ -80,6 +80,17 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return [];
 	}
 
+	protected function add_render_attributes() {
+		parent::add_render_attributes();
+
+		$interaction_ids = $this->get_interactions_ids();
+
+		if ( ! empty( $interaction_ids ) ) {
+			$this->add_render_attribute( '_wrapper', 'data-interaction-id', $this->get_id() );
+			$this->add_render_attribute( '_wrapper', 'data-interactions', json_encode( $interaction_ids ) );
+		}
+	}
+
 	protected function define_render_context(): array {
 		return [];
 	}

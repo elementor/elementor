@@ -19,6 +19,8 @@ class Union_Prop_Type implements Prop_Type {
 
 	protected $default = null;
 
+	protected $initial_value = null;
+
 	private ?array $dependencies = null;
 
 	/** @var Array<string, Transformable_Prop_Type> */
@@ -37,9 +39,19 @@ class Union_Prop_Type implements Prop_Type {
 
 		$prop_type->set_dependencies( [] );
 
-		return static::make()
+		$prop_meta = $prop_type->get_meta() ?? [];
+
+		$result = static::make()
 			->add_prop_type( $prop_type )
 			->default( $prop_type->get_default() )
+			->set_dependencies( $dependencies );
+
+		foreach ( $prop_meta as $key => $value ) {
+			$result->meta( $key, $value );
+		}
+
+		return $result
+			->initial_value( $prop_type->get_initial_value() )
 			->set_dependencies( $dependencies )
 			->set_required_settings( $prop_type );
 	}
@@ -62,7 +74,7 @@ class Union_Prop_Type implements Prop_Type {
 		return $this->prop_types[ $type ] ?? null;
 	}
 
-	public function get_prop_type_from_value( $value ): ?Prop_Type {
+	private function get_prop_type_from_value( $value ): ?Prop_Type {
 		if ( isset( $value['$$type'] ) ) {
 			return $this->get_prop_type( $value['$$type'] );
 		}
@@ -93,8 +105,23 @@ class Union_Prop_Type implements Prop_Type {
 		return $this;
 	}
 
+	public function initial_value( $value, ?string $type = null ): self {
+		$this->initial_value = ! $type ?
+			$value :
+			[
+				'$$type' => $type,
+				'value' => $value,
+			];
+
+		return $this;
+	}
+
 	public function get_default() {
 		return $this->default;
+	}
+
+	public function get_initial_value() {
+		return $this->initial_value;
 	}
 
 	public function validate( $value ): bool {
@@ -121,6 +148,7 @@ class Union_Prop_Type implements Prop_Type {
 			'settings' => $this->get_settings(),
 			'prop_types' => $this->get_prop_types(),
 			'dependencies' => $this->get_dependencies(),
+			'initial_value' => $this->get_initial_value(),
 		];
 	}
 
