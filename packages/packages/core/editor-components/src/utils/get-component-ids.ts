@@ -2,7 +2,7 @@ import { type V1ElementData } from '@elementor/editor-elements';
 import { isTransformable } from '@elementor/editor-props';
 
 export const getComponentIds = ( elements: V1ElementData[] ) => {
-	return elements.flatMap( ( element ) => {
+	const result = elements.flatMap( ( element ) => {
 		const ids: number[] = [];
 
 		const type = element.widgetType || element.elType;
@@ -17,4 +17,6 @@ export const getComponentIds = ( elements: V1ElementData[] ) => {
 
 		return ids;
 	} );
+
+	return Array.from( new Set( result ) );
 };

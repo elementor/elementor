@@ -114,6 +114,7 @@ class Module extends BaseModule {
 	const EXPERIMENT_NESTED = 'e_nested_elements';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 	const EXPERIMENT_INLINE_EDITING = 'v4-inline-text-editing';
+	const EXPERIMENT_DISPLAY_CONDITIONS = 'v4-display-conditions';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -218,6 +219,15 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_INLINE_EDITING,
 			'title' => esc_html__( 'V4 inline text editing', 'elementor' ),
 			'description' => esc_html__( 'New inline text editor for v4', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+		]);
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_DISPLAY_CONDITIONS,
+			'title' => esc_html__( 'V4 display conditions', 'elementor' ),
+			'description' => esc_html__( 'Display conditions for v4', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,

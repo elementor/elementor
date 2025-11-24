@@ -11,7 +11,7 @@ export type ElementChildren = Record< string, ElementModel[] >;
 
 export function useElementChildren< T extends ElementChildren >(
 	elementId: ElementID,
-	childrenTypes: ( keyof T & string )[]
+	childrenTypes: Record< string, string >
 ): T {
 	return useListenTo(
 		[
@@ -24,19 +24,19 @@ export function useElementChildren< T extends ElementChildren >(
 		() => {
 			const container = getContainer( elementId );
 
-			const elementChildren = childrenTypes.reduce( ( acc, type ) => {
-				acc[ type ] = [];
+			const elementChildren = Object.entries( childrenTypes ).reduce( ( acc, [ parentType, childType ] ) => {
+				const parent = container?.children?.findRecursive?.(
+					( { model } ) => model.get( 'elType' ) === parentType
+				);
+
+				const children = parent?.children ?? [];
+
+				acc[ childType ] = children
+					.filter( ( { model } ) => model.get( 'elType' ) === childType )
+					.map( ( { id } ) => ( { id } ) );
 
 				return acc;
 			}, {} as ElementChildren );
-
-			container?.children?.forEachRecursive?.( ( { model, id } ) => {
-				const elType = model.get( 'elType' );
-
-				if ( elType && elType in elementChildren ) {
-					elementChildren[ elType ].push( { id } );
-				}
-			} );
 
 			return elementChildren;
 		},

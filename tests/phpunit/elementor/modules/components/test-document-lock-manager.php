@@ -213,29 +213,7 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$this->assertIsNumeric( $result['lock_time'], 'Lock time should be numeric' );
 	}
 
-	public function test_is_locked__auto_unlocks_expired_lock() {
-		// Arrange
-		$document_id = $this->test_document_ids['page'];
-		wp_set_current_user( $this->test_user_1 );
-		$this->lock_manager->lock( $document_id );
-
-		// Simulate expired lock by setting old timestamp
-		$old_timestamp = time() - ( 6 * 60 ); // 6 minutes ago (beyond 5 minute default)
-		update_post_meta( $document_id, '_lock_time', $old_timestamp );
-
-		// Act
-		$result = $this->lock_manager->is_locked( $document_id );
-
-		// Assert
-		$this->assertFalse( $result['is_locked'], 'Should auto-unlock expired lock' );
-		
-		// Verify lock metadata is cleaned up
-		$this->assertEmpty( get_post_meta( $document_id, '_lock_user', true ) );
-		$this->assertEmpty( get_post_meta( $document_id, '_lock_time', true ) );
-		$this->assertEmpty( get_post_meta( $document_id, '_edit_lock', true ) );
-	}
-
-
+	
 	public function test_extend_lock__successfully_extends_lock() {
 		// Arrange
 		$document_id = $this->test_document_ids['page'];

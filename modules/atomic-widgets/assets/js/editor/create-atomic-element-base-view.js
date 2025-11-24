@@ -69,6 +69,8 @@ export default function createAtomicElementBaseView( type ) {
 				local.href = href;
 			}
 
+			local[ 'data-interaction-id' ] = this.model.get( 'id' );
+
 			customAttributes.forEach( ( attribute ) => {
 				const key = attribute.value?.key?.value;
 				const value = attribute.value?.value?.value;
@@ -81,7 +83,6 @@ export default function createAtomicElementBaseView( type ) {
 			return {
 				...attr,
 				...initialAttributes,
-				...customAttributes,
 				...local,
 			};
 		},
@@ -276,12 +277,14 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		saveAsTemplate() {
+			elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
+
 			$e.route( 'library/save-template', {
 				model: this.model,
 			} );
 		},
 
-		saveAsComponent( openContextMenuEvent ) {
+		saveAsComponent( openContextMenuEvent, options ) {
 			// Calculate the absolute position where the context menu was opened.
 			const openMenuOriginalEvent = openContextMenuEvent.originalEvent;
 			const iframeRect = elementor.$preview[ 0 ].getBoundingClientRect();
@@ -294,8 +297,9 @@ export default function createAtomicElementBaseView( type ) {
 				'elementor/editor/open-save-as-component-form',
 				{
 					detail: {
-						element: elementor.getContainer( this.model.id ),
+						element: elementor.getContainer( this.model.id ).model.toJSON( { remove: [ 'default' ] } ),
 						anchorPosition,
+						options,
 					},
 				},
 			) );

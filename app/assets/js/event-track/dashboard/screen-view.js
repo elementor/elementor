@@ -25,28 +25,12 @@ class ScreenViewTracking extends BaseTracking {
 			return;
 		}
 
-		this.trackInitialPageView();
 		this.attachTabChangeTracking();
 	}
 
 	static destroy() {
 		super.destroy();
 		this.trackedScreens.clear();
-	}
-
-	static trackInitialPageView() {
-		const run = () => {
-			const screenData = this.getScreenData();
-			if ( screenData ) {
-				this.trackScreen( screenData.screenId, screenData.screenType );
-			}
-		};
-
-		if ( 'loading' === document.readyState ) {
-			document.addEventListener( 'DOMContentLoaded', run, { once: true } );
-		} else {
-			run();
-		}
 	}
 
 	static getScreenData() {
@@ -56,7 +40,7 @@ class ScreenViewTracking extends BaseTracking {
 		const hash = window.location.hash;
 
 		let screenId = '';
-		let screenType = SCREEN_TYPES.TOP_LEVEL_PAGE;
+		let screenType = '';
 
 		if ( page ) {
 			screenId = page;
@@ -168,33 +152,15 @@ class ScreenViewTracking extends BaseTracking {
 			return;
 		}
 
-		this.addObserver(
+		this.addEventListenerTracked(
 			wrapper,
-			{
-				attributes: true,
-				attributeFilter: [ 'class' ],
-				subtree: true,
-				childList: true,
-			},
-			( mutations ) => {
-				for ( const mutation of mutations ) {
-					if ( 'childList' === mutation.type ) {
-						const screenData = this.getScreenData();
-						if ( screenData ) {
-							this.trackScreen( screenData.screenId, screenData.screenType );
-						}
-						break;
-					}
-
-					if ( 'attributes' === mutation.type && 'class' === mutation.attributeName ) {
-						const target = mutation.target;
-						if ( target && target.classList && target.classList.contains( 'nav-tab' ) ) {
-							const screenData = this.getScreenData();
-							if ( screenData ) {
-								this.trackScreen( screenData.screenId, screenData.screenType );
-							}
-							break;
-						}
+			'click',
+			( event ) => {
+				const navTab = event.target.closest( SCREEN_SELECTORS.NAV_TAB );
+				if ( navTab && ! navTab.classList.contains( 'nav-tab-active' ) ) {
+					const screenData = this.getScreenData();
+					if ( screenData ) {
+						this.trackScreen( screenData.screenId, screenData.screenType );
 					}
 				}
 			},
@@ -221,21 +187,21 @@ class ScreenViewTracking extends BaseTracking {
 			return;
 		}
 
-		const observer = new MutationObserver( () => {
-			const screenData = this.getScreenData();
-			if ( screenData ) {
-				this.trackScreen( screenData.screenId, screenData.screenType );
-			}
-		} );
-
 		settingsPages.forEach( ( page ) => {
-			observer.observe( page, {
-				attributes: true,
-				attributeFilter: [ 'class' ],
-			} );
+			this.addObserver(
+				page,
+				{
+					attributes: true,
+					attributeFilter: [ 'class' ],
+				},
+				() => {
+					const screenData = this.getScreenData();
+					if ( screenData ) {
+						this.trackScreen( screenData.screenId, screenData.screenType );
+					}
+				},
+			);
 		} );
-
-		this.observers.push( observer );
 	}
 
 	static attachModalTracking() {

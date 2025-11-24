@@ -10,7 +10,7 @@ import { useVariableType } from '../context/variable-type-context';
 import { useFilteredVariables } from '../hooks/use-prop-variables';
 import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
 import { type ExtendedVirtualizedItem } from '../types';
-import { trackVariableEvent } from '../utils/tracking';
+import { trackVariableEvent, trackVariablesManagerEvent } from '../utils/tracking';
 import { EmptyState } from './ui/empty-state';
 import { MenuItemContent } from './ui/menu-item-content';
 import { NoSearchResults } from './ui/no-search-results';
@@ -77,12 +77,21 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 	}
 
 	if ( onSettings ) {
+		const handleOpenManager = () => {
+			onSettings();
+			trackVariablesManagerEvent( {
+				action: 'openManager',
+				varType: variableType,
+				controlPath: path.join( '.' ),
+			} );
+		};
+
 		actions.push(
 			<Tooltip key="settings" placement="top" title={ MANAGER_LABEL }>
 				<IconButton
 					id="variables-manager-button"
 					size={ SIZE }
-					onClick={ onSettings }
+					onClick={ handleOpenManager }
 					aria-label={ MANAGER_LABEL }
 				>
 					<SettingsIcon fontSize={ SIZE } />

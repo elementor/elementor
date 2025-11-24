@@ -2,32 +2,24 @@ import { createTransformer } from '@elementor/editor-canvas';
 import { __getState as getState } from '@elementor/store';
 
 import { selectUnpublishedComponents } from './store/store';
+import { type PublishedComponent, type UnpublishedComponent } from './types';
+import { getComponentDocumentData } from './utils/component-document-data';
 
-type ComponentIdTransformerWindow = Window & {
-	elementor?: {
-		documents?: {
-			request: ( id: number ) => Promise< { elements?: unknown[] } >;
-		};
-	};
-};
+export const componentIdTransformer = createTransformer(
+	async ( id: PublishedComponent[ 'id' ] | UnpublishedComponent[ 'uid' ] ) => {
+		const unpublishedComponents = selectUnpublishedComponents( getState() );
 
-export const componentIdTransformer = createTransformer( async ( id: number ) => {
-	const unpublishedComponents = selectUnpublishedComponents( getState() );
+		const unpublishedComponent = unpublishedComponents.find( ( { uid } ) => uid === id );
+		if ( unpublishedComponent ) {
+			return structuredClone( unpublishedComponent.elements );
+		}
 
-	const unpublishedComponent = unpublishedComponents.find( ( component ) => component.id === id );
-	if ( unpublishedComponent ) {
-		return structuredClone( unpublishedComponent.elements );
+		if ( typeof id !== 'number' ) {
+			throw new Error( `Component ID "${ id }" not found.` );
+		}
+
+		const data = await getComponentDocumentData( id );
+
+		return data?.elements ?? [];
 	}
-
-	const extendedWindow = window as unknown as ComponentIdTransformerWindow;
-
-	const documentManager = extendedWindow.elementor?.documents;
-
-	if ( ! documentManager ) {
-		throw new Error( 'Elementor documents manager not found' );
-	}
-
-	const data = await documentManager.request( id );
-
-	return data.elements ?? [];
-} );
+);

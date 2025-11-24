@@ -1,9 +1,9 @@
 {% if settings.title is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
-	<{{ settings.tag | e('html_tag') }}
-		data-id="{{ id }}"
-		class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}"
-		{{ id_attribute }}
+	<{{ settings.tag | e('html_tag') }} 
+		data-interaction-id="{{ id }}" 
+		class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" 
+		{{ id_attribute }} 
 		{{ settings.attributes | raw }}
 		{% if interactions and interactions is not empty %}
     data-interactions="{{ interactions | json_encode | e('html_attr') }}"

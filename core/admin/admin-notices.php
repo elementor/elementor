@@ -21,6 +21,8 @@ class Admin_Notices extends Module {
 	const DEFAULT_EXCLUDED_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
 	const LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID = 'local_google_fonts_disabled';
 
+	const EXIT_EARLY_FOR_BACKWARD_COMPATIBILITY = false;
+
 	private $plain_notices = [
 		'api_notice',
 		'api_upgrade_plugin',
@@ -467,6 +469,8 @@ class Admin_Notices extends Module {
 	}
 
 	private function notice_send_app_promotion() {
+		return self::EXIT_EARLY_FOR_BACKWARD_COMPATIBILITY;
+
 		$notice_id = 'send_app_promotion';
 
 		if ( ! $this->is_elementor_page() && ! $this->is_elementor_admin_screen() ) {
@@ -563,6 +567,10 @@ class Admin_Notices extends Module {
 		}
 
 		if ( ! current_user_can( 'manage_options' ) || User::is_user_notice_viewed( $notice_id ) ) {
+			return false;
+		}
+
+		if ( ! User::has_plugin_notice_been_displayed_for_required_time( 'image_optimization', WEEK_IN_SECONDS ) ) {
 			return false;
 		}
 
@@ -726,6 +734,8 @@ class Admin_Notices extends Module {
 		if ( ! current_user_can( 'manage_options' ) || User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
+
+		User::set_user_notice_first_time( 'image_optimization' );
 
 		$attachments = new \WP_Query( [
 			'post_type' => 'attachment',

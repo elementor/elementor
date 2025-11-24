@@ -7,11 +7,16 @@ import {
 	type ElementView,
 	type LegacyWindow,
 } from '@elementor/editor-canvas';
+import { getCurrentDocument } from '@elementor/editor-documents';
 import { type NumberPropValue } from '@elementor/editor-props';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
+import { type ExtendedWindow } from './types';
+import { trackComponentEvent } from './utils/tracking';
+
+type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
 
 export const TYPE = 'e-component';
 
@@ -35,7 +40,14 @@ function createComponentView(
 	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
 ): typeof ElementView {
 	return class extends createTemplatedElementView( options ) {
-		legacyWindow = window as unknown as LegacyWindow;
+		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
+		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
+
+		isComponentCurrentlyEdited() {
+			const currentDocument = getCurrentDocument();
+
+			return currentDocument?.id === this.getComponentId()?.value;
+		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
 			if ( settings.component ) {
@@ -86,7 +98,8 @@ function createComponentView(
 							icon: 'eicon-edit',
 							title: () => __( 'Edit Component', 'elementor' ),
 							isEnabled: () => true,
-							callback: () => this.switchDocument(),
+							callback: ( _: unknown, eventData: ContextMenuEventData ) =>
+								this.editComponent( eventData ),
 						},
 					],
 				},
@@ -111,10 +124,35 @@ function createComponentView(
 			}
 		}
 
+		editComponent( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
+			if ( this.isComponentCurrentlyEdited() ) {
+				return;
+			}
+
+			this.switchDocument();
+
+			const editorSettings = this.model.get( 'editor_settings' );
+
+			trackComponentEvent( {
+				action: 'edited',
+				component_uid: editorSettings?.component_uid,
+				component_name: editorSettings?.title,
+				location,
+				secondary_location: secondaryLocation,
+				trigger,
+			} );
+		}
+
 		handleDblClick( e: MouseEvent ) {
 			e.stopPropagation();
 
-			this.switchDocument();
+			const { triggers, locations, secondaryLocations } = this.eventsManagerConfig;
+
+			this.editComponent( {
+				trigger: triggers.doubleClick,
+				location: locations.canvas,
+				secondaryLocation: secondaryLocations.canvasElement,
+			} );
 		}
 
 		events() {
