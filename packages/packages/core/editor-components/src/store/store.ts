@@ -81,7 +81,7 @@ export const slice = createSlice( {
 				{ componentId: ComponentId } & Omit< OverridableProp, 'groupId' > & { groupId: string | null }
 			>
 		) => {
-			const component = state.data.find( ( comp ) => comp.id === componentId );
+			const component = state.data.find( ( { id } ) => id === componentId );
 			const groupId = overridableProp.groupId || generateUniqueId();
 
 			if ( ! component ) {
@@ -123,7 +123,7 @@ export const slice = createSlice( {
 			state,
 			{ payload }: PayloadAction< { componentId: ComponentId; overrideKey: string } >
 		) => {
-			const component = state.data.find( ( component ) => component.id === payload.componentId );
+			const component = state.data.find( ( { id } ) => id === payload.componentId );
 			const { overrides } = component ?? {};
 
 			if ( ! overrides ) {
@@ -145,7 +145,7 @@ export const slice = createSlice( {
 				return;
 			}
 
-			group.props = group.props.filter( ( prop ) => prop !== payload.overrideKey );
+			group.props = group.props.filter( ( key ) => key !== payload.overrideKey );
 
 			if ( group.props.length === 0 && Object.keys( groups.items ).length > 1 ) {
 				groups.items = Object.fromEntries(

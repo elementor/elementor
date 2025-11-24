@@ -5,6 +5,7 @@ export { injectIntoClassSelectorActions } from './components/css-classes/css-cla
 export { CustomCssIndicator } from './components/custom-css-indicator';
 export { PopoverBody } from './components/popover-body';
 export { SectionContent } from './components/section-content';
+export { SettingsControl } from './components/settings-control';
 export { StyleIndicator } from './components/style-indicator';
 export { useFontFamilies } from './components/style-sections/typography-section/hooks/use-font-families';
 export { injectIntoStyleTab } from './components/style-tab';
@@ -16,6 +17,8 @@ export { useStyle } from './contexts/style-context';
 export { registerControlReplacement } from './control-replacement';
 export { controlActionsMenu } from './controls-actions';
 export { controlsRegistry } from './controls-registry/controls-registry';
+export { Control as BaseControl } from './controls-registry/control';
+export { createTopLevelObjectType } from './controls-registry/create-top-level-object-type';
 export { StylesProviderCannotUpdatePropsError } from './errors';
 export { useCustomCss } from './hooks/use-custom-css';
 export { getSubtitle, getTitle, HISTORY_DEBOUNCE_WAIT } from './hooks/use-styles-fields';

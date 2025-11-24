@@ -5,6 +5,6 @@ export const componentOverridablePropTypeUtil = createPropUtils(
 	'component-overridable',
 	z.object( {
 		override_key: z.string(),
-		default_value: z.unknown(),
+		default_value: z.any().nullable(),
 	} )
 );

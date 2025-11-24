@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ControlAdornmentsProvider, ControlFormLabel } from '@elementor/editor-controls';
+import { ControlAdornmentsProvider } from '@elementor/editor-controls';
 import {
 	type Control,
 	type ControlItem,
@@ -17,8 +17,10 @@ import { controlsRegistry, type ControlType } from '../controls-registry/control
 import { SettingsField } from '../controls-registry/settings-field';
 import { getFieldIndicators } from '../field-indicators-registry';
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
+import { ControlLabel } from './control-label';
 import { Section } from './section';
 import { SectionsList } from './sections-list';
+import { SettingsControl } from './settings-control';
 
 export const SettingsTab = () => {
 	const { elementType, element } = useElement();
@@ -32,7 +34,7 @@ export const SettingsTab = () => {
 			<SectionsList>
 				{ elementType.controls.map( ( control, index ) => {
 					if ( isControl( control ) ) {
-						return <Control key={ getKey( control, element ) } control={ control } />;
+						return <SettingsControl key={ getKey( control, element ) } control={ control } />;
 					}
 
 					const { type, value } = control;
@@ -46,7 +48,7 @@ export const SettingsTab = () => {
 							>
 								{ value.items?.map( ( item ) => {
 									if ( isControl( item ) ) {
-										return <Control key={ getKey( item, element ) } control={ item } />;
+										return <SettingsControl key={ getKey( item, element ) } control={ item } />;
 									}
 
 									// TODO: Handle 2nd level sections
@@ -98,7 +100,7 @@ const ControlLayout = ( {
 	<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
 		{ control.meta?.topDivider && <Divider /> }
 		<ControlTypeContainer layout={ layout }>
-			{ control.label && layout !== 'custom' ? <ControlFormLabel>{ control.label }</ControlFormLabel> : null }
+			{ control.label && layout !== 'custom' ? <ControlLabel>{ control.label }</ControlLabel> : null }
 			<BaseControl type={ control.type as ControlType } props={ controlProps } />
 		</ControlTypeContainer>
 	</ControlAdornmentsProvider>

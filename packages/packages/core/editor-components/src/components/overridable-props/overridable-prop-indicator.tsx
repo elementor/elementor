@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { __getState as getState } from '@elementor/store';
-import { __ } from '@wordpress/i18n';
 
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import { selectOverridableProps } from '../../store/store';
