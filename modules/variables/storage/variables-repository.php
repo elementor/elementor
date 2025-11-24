@@ -22,7 +22,7 @@ class Variables_Repository {
 			return Variables_Collection::hydrate( $db_record );
 		}
 
-		return Variables_Collection::empty_variables();
+		return Variables_Collection::default();
 	}
 
 	public function save( Variables_Collection $variables ) {
@@ -35,15 +35,5 @@ class Variables_Repository {
 		}
 
 		return false;
-	}
-
-	public function next_id(): string {
-		$collection = $this->load();
-
-		do {
-			$id = Utils::generate_id( 'e-gv-' );
-		} while ( $collection->get( $id ) !== null );
-
-		return $id;
 	}
 }

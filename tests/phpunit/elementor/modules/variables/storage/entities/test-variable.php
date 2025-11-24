@@ -2,7 +2,9 @@
 
 namespace Elementor\Modules\Variables\Storage\Entities;
 
+use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use PHPUnit\Framework\TestCase;
+use InvalidArgumentException;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -36,40 +38,33 @@ class Test_Variable extends TestCase {
 		$this->assertEquals( 'Primary Font', $variable->label() );
 		$this->assertEquals( 'Roboto', $result['value'] );
 		$this->assertEquals( 290, $result['order'] );
-		$this->assertEquals( null, $result['deleted_at'] );
+		$this->assertArrayNotHasKey( 'deleted_at', $result );
 		$this->assertEquals( '2024-01-01 10:00:00', $result['updated_at'] );
 	}
 
-	public function test_from_array__with_defaults() {
+	public function test_from_array__throws_error_if_required_field_is_missing() {
 		// Arrange
 		$data = [
 			'id' => 'id-789',
 			'type' => 'global-font',
 		];
 
+		// Assert
+		$this->expectException( InvalidArgumentException::class );
+		$this->expectExceptionMessage( "Missing required field 'label' in Elementor\Modules\Variables\Storage\Entities\Variable::from_array()" );
+
 		// Act
 		$variable = Variable::from_array( $data );
-
-		$result = $variable->to_array();
-
-		// Assert
-		$this->assertEquals( 'id-789', $variable->id() );
-		$this->assertEquals( 'global-font', $result['type'] );
-		$this->assertEquals( '', $result['label'] );
-		$this->assertEquals( '', $result['value'] );
-		$this->assertEquals( 0, $result['order'] );
-		$this->assertEquals( null, $result['deleted_at'] );
-		$this->assertEquals( null, $result['updated_at'] );
 	}
 
 	public function test_soft_delete__sets_deleted_at() {
 		// Arrange
-
 		$variable = Variable::from_array( [
 			'id' => 'id-123',
 			'type' => 'global-color',
 			'label' => 'Primary Color',
 			'value' => 'Orange',
+			'order' => 1
 		] );
 
 		$this->assertFalse( $variable->is_deleted() );
@@ -103,7 +98,7 @@ class Test_Variable extends TestCase {
 		$this->assertEquals( 'Primary Color', $result['label'] );
 		$this->assertEquals( '#000000', $result['value'] );
 		$this->assertEquals( 5, $result['order'] );
-		$this->assertNull( $result['deleted_at'] );
+		$this->assertArrayNotHasKey( 'deleted_at', $result );
 		$this->assertEquals( '2024-01-01 10:00:00', $result['updated_at'] );
 	}
 
@@ -131,6 +126,7 @@ class Test_Variable extends TestCase {
 			'type' => 'color',
 			'label' => 'Primary Color',
 			'value' => '#000000',
+			'order' => 2
 		] );
 
 		// Act
@@ -199,6 +195,7 @@ class Test_Variable extends TestCase {
 			'label' => 'Primary Color',
 			'value' => '#000000',
 			'updated_at' => $updated_at,
+			'order' => 78,
 		] );
 
 		// Act

@@ -3,8 +3,6 @@
 namespace Elementor\Modules\Variables\Services;
 
 use Elementor\Modules\Variables\Storage\Entities\Variable;
-use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
-use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
@@ -26,9 +24,15 @@ class Variables_Service {
 		$collection->assert_limit_not_reached();
 		$collection->assert_label_is_unique( $data['label'] );
 
-		$id = $this->repo->next_id();
+		$id = $collection->next_id();
+		$data['id'] = $id;
 
-		$variable = Variable::from_array( array_merge( [ 'id' => $id ], $data ) );
+		// TODO: we need to look into this maybe we dont need order to be sent from client. Just implemented as it was
+		if ( ! isset( $data['order'] ) ) {
+			$data['order'] = $collection->get_next_order();
+		}
+
+		$variable = Variable::from_array( $data );
 
 		$collection->add_variable( $variable );
 
@@ -122,7 +126,7 @@ class Variables_Service {
 	/**
 	 * @throws RecordNotFound When a variable is not found.
 	 */
-	private function find_or_fail( Variables_Collection $collection, string $id ): Variable {
+	public function find_or_fail( Variables_Collection $collection, string $id ): Variable {
 		$variable = $collection->get( $id );
 
 		if ( ! isset( $variable ) ) {

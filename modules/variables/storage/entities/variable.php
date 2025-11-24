@@ -2,52 +2,37 @@
 
 namespace Elementor\Modules\Variables\Storage\Entities;
 
-class Variable {
-	private string $id;
-	private string $type;
-	private string $label;
-	private $value;
-	private int $order;
-	private ?string $deleted_at;
-	private ?string $updated_at;
+use InvalidArgumentException;
 
-	private function __construct(
-		string $id,
-		string $type,
-		string $label,
-		string $value,
-		int $order,
-		?string $deleted_at,
-		?string $updated_at
-	) {
-		$this->id = $id;
-		$this->type = $type;
-		$this->label = $label;
-		$this->value = $value;
-		$this->order = $order;
-		$this->updated_at = $updated_at;
-		$this->deleted_at = $deleted_at;
+class Variable {
+	private array $data;
+
+	private function __construct( array $data ) {
+		$this->data = $data;
 	}
 
 	public static function from_array( array $data ): self {
-		return new self(
-			$data['id'],
-			$data['type'],
-			$data['label'] ?? '',
-			$data['value'] ?? '',
-			$data['order'] ?? 0,
-			$data['deleted_at'] ?? null,
-			$data['updated_at'] ?? null
-		);
+		$required = [ 'id', 'type', 'label', 'value', 'order' ];
+
+		foreach ( $required as $key ) {
+			if ( ! array_key_exists( $key, $data ) ) {
+				throw new InvalidArgumentException(
+					sprintf( "Missing required field '%s' in %s::from_array()", $key, self::class )
+				);
+			}
+		}
+
+		return new self( $data );
 	}
 
 	public function soft_delete(): void {
-		$this->deleted_at = $this->now();
+		$this->data['deleted_at'] = $this->now();
 	}
 
 	public function restore(): void {
-		$this->deleted_at = null;
-		$this->updated_at = $this->now();
+		unset( $this->data['deleted_at'] );
+
+		$this->data['updated_at'] = $this->now();
 	}
 
 	private function now() {
@@ -55,26 +40,19 @@ class Variable {
 	}
 
 	public function to_array(): array {
-		return [
-			'type' => $this->type,
-			'label' => $this->label,
-			'value' => $this->value,
-			'order' => $this->order,
-			'deleted_at' => $this->deleted_at,
-			'updated_at' => $this->updated_at,
-		];
+		return array_diff_key( $this->data, array_flip( ['id'] ) );
 	}
 
 	public function id(): string {
-		return $this->id;
+		return $this->data['id'];
 	}
 
 	public function label(): string {
-		return $this->label;
+		return $this->data['label'];
 	}
 
 	public function is_deleted(): bool {
-		return ! empty( $this->deleted_at );
+		return isset( $this->data['deleted_at'] );
 	}
 
 	public function apply_changes( array $data ): void {
@@ -83,13 +61,14 @@ class Variable {
 
 		foreach ( $allowed_fields as $field ) {
 			if ( isset( $data[ $field ] ) ) {
-				$this->$field = $data[ $field ];
+				$this->data[ $field ] = $data[ $field ];
+
 				$has_changes = true;
 			}
 		}
 
 		if ( $has_changes ) {
-			$this->updated_at = $this->now();
+			$this->data['updated_at'] = $this->now();
 		}
 	}
 }

@@ -41,11 +41,13 @@ class Test_Variables_Service extends TestCase {
 					'type' => 'global-size-var',
 					'label' => 'Primary',
 					'value' => '100px',
+					'order' => 1,
 				],
 				'id-2' => [
 					'type' => 'global-color-var',
 					'label' => 'Secondary',
 					'value' => '#000000',
+					'order' => 2,
 				],
 			],
 			'watermark' => 10,
@@ -62,8 +64,7 @@ class Test_Variables_Service extends TestCase {
 			'order' => 1,
 		];
 
-		$this->repository->method( 'load' )->willReturn( Variables_Collection::empty_variables() );
-		$this->repository->method( 'next_id' )->willReturn( 'id-123' );
+		$this->repository->method( 'load' )->willReturn( Variables_Collection::default() );
 		$this->repository->method( 'save' )->willReturn( 0 );
 
 		// Act
@@ -71,7 +72,7 @@ class Test_Variables_Service extends TestCase {
 
 		// Assert
 		$this->assertIsArray( $result );
-		$this->assertEquals( 'id-123', $result['variable']['id'] );
+		$this->assertNotEmpty( $result['variable']['id'] );
 		$this->assertEquals( 'Primary Color', $result['variable']['label'] );
 		$this->assertEquals( '#000000', $result['variable']['value'] );
 		$this->assertEquals( 'color', $result['variable']['type'] );
@@ -89,7 +90,6 @@ class Test_Variables_Service extends TestCase {
 		];
 
 		$this->repository->method( 'load' )->willReturn( $collection );
-		$this->repository->method( 'next_id' )->willReturn( 'id-123' );
 		$this->repository->method( 'save' )->willReturn( false );
 
 		// Assert
@@ -199,6 +199,7 @@ class Test_Variables_Service extends TestCase {
 					'label' => 'Deleted Variable',
 					'value' => '#000000',
 					'deleted_at' => '2024-01-01 10:00:00',
+					'order' => 2,
 				],
 			],
 			'watermark' => 5,
@@ -213,7 +214,7 @@ class Test_Variables_Service extends TestCase {
 
 		// Assert
 		$this->assertEquals( 'id-1', $result['variable']['id'] );
-		$this->assertNull( $result['variable']['deleted_at'] );
+		$this->assertArrayNotHasKey( 'deleted_at', $result['variable'] );
 		$this->assertEquals( 6, $result['watermark'] );
 	}
 
@@ -226,6 +227,7 @@ class Test_Variables_Service extends TestCase {
 					'label' => 'Deleted Variable',
 					'value' => '#000000',
 					'deleted_at' => '2024-01-01 10:00:00',
+					'order' => 1,
 				],
 			],
 			'watermark' => 5,
@@ -247,7 +249,7 @@ class Test_Variables_Service extends TestCase {
 		$this->assertEquals( 'id-1', $result['variable']['id'] );
 		$this->assertEquals( 'Restored Variable', $result['variable']['label'] );
 		$this->assertEquals( '#FFFFFF', $result['variable']['value'] );
-		$this->assertNull( $result['variable']['deleted_at'] );
+		$this->assertArrayNotHasKey( 'deleted_at', $result['variable'] );
 		$this->assertEquals( 6, $result['watermark'] );
 	}
 
@@ -259,12 +261,14 @@ class Test_Variables_Service extends TestCase {
 					'type' => 'global-color',
 					'label' => 'Active Variable',
 					'value' => '#000000',
+					'order' => 1,
 				],
 				'id-2' => [
 					'type' => 'global-color',
 					'label' => 'Deleted Variable',
 					'value' => '#FFFFFF',
 					'deleted_at' => '2024-01-01 10:00:00',
+					'order' => 1,
 				],
 			],
 			'watermark' => 5,

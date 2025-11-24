@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Variables\Storage;
 
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
@@ -57,8 +58,12 @@ class Variables_Collection extends Collection {
 		];
 	}
 
-	public static function empty_variables(): self {
-		return new self( [], 0, self::FORMAT_VERSION_V1 );
+	public static function default(): self {
+		return new self(
+			[],
+			0,
+			self::FORMAT_VERSION_V1
+		);
 	}
 
 	public function watermark(): int {
@@ -115,5 +120,26 @@ class Variables_Collection extends Collection {
 		if ( self::TOTAL_VARIABLES_COUNT <= $active_count ) {
 			throw new VariablesLimitReached( 'Total variables count limit reached' );
 		}
+	}
+
+	public function next_id(): string {
+		return Utils::generate_id( 'e-gv-', array_keys( $this->all() ) );
+	}
+
+
+	public function get_next_order(): int {
+		$highest_order = 0;
+
+		foreach ( $this->all() as $variable ) {
+			if ( isset( $variable['deleted'] ) && $variable['deleted'] ) {
+				continue;
+			}
+
+			if ( isset( $variable['order'] ) && $variable['order'] > $highest_order ) {
+				$highest_order = $variable['order'];
+			}
+		}
+
+		return $highest_order + 1;
 	}
 }

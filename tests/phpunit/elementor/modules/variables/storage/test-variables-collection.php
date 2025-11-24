@@ -19,7 +19,7 @@ class Test_Variables_Collection extends TestCase {
 
 	public function test_empty_variables__creates_empty_collection() {
 		// Act
-		$collection = Variables_Collection::empty_variables();
+		$collection = Variables_Collection::default();
 
 		// Assert
 		$this->assertEmpty( $collection->all() );
@@ -90,11 +90,13 @@ class Test_Variables_Collection extends TestCase {
 					'type' => 'global-size',
 					'label' => 'lable',
 					'value' => '22px',
+					'order' => 4
 				],
 				'e-gv-4fdi' => [
 					'type' => 'global-number',
 					'label' => 'number-lable',
 					'value' => 27,
+					'order' => 34,
 				],
 			],
 			'watermark' => 10,
@@ -185,11 +187,13 @@ class Test_Variables_Collection extends TestCase {
 					'type' => 'global-size-var',
 					'label' => 'Secondary',
 					'value' => '22px',
+					'order' => 23,
 				],
 				'e-gv-1111' => [
 					'type' => 'global-font-var',
 					'label' => 'Primary',
 					'value' => 'Roboto',
+					'order' => 1
 				],
 			],
 			'watermark' => 3,
@@ -209,11 +213,13 @@ class Test_Variables_Collection extends TestCase {
 					'type' => 'global-size-var',
 					'label' => 'Secondary',
 					'value' => '22px',
+					'order' => 1,
 				],
 				'e-gv-1111' => [
 					'type' => 'global-font-var',
 					'label' => 'Primary',
 					'value' => 'Roboto',
+					'order' => 2,
 				],
 			],
 			'watermark' => 3,
@@ -236,11 +242,13 @@ class Test_Variables_Collection extends TestCase {
 					'type' => 'global-size-var',
 					'label' => 'Secondary',
 					'value' => '22px',
+					'order' => 2,
 				],
 				'e-gv-1111' => [
 					'type' => 'global-font-var',
 					'label' => 'Primary',
 					'value' => 'Roboto',
+					'order' => 3,
 				],
 			],
 			'watermark' => 3,
@@ -263,6 +271,7 @@ class Test_Variables_Collection extends TestCase {
 					'label' => 'Primary',
 					'value' => 'Roboto',
 					'deleted_at' => '2024-01-01 10:00:00',
+					'order' => 23,
 				],
 			],
 			'watermark' => 3,
@@ -282,6 +291,7 @@ class Test_Variables_Collection extends TestCase {
 					'type' => 'global-font-var',
 					'label' => 'Primary',
 					'value' => 'Roboto',
+					'order' => 23,
 				],
 			],
 			'watermark' => 3,
@@ -301,11 +311,13 @@ class Test_Variables_Collection extends TestCase {
 					'type' => 'global-font-var',
 					'label' => 'Primary',
 					'value' => 'Roboto',
+					'order' => 23,
 				],
 				'id-2' => [
 					'type' => 'global-size-var',
 					'label' => 'Secondary',
 					'value' => '22px',
+					'order' => 23,
 				],
 			],
 			'watermark' => 3,
