@@ -70,24 +70,6 @@ class Admin_Notices extends Module {
 		return $this->install_time;
 	}
 
-	private function has_install_prior_to_local_google_fonts_notice(): bool {
-		$installs_history = Manager::get_installs_history();
-
-		if ( empty( $installs_history ) ) {
-			return false;
-		}
-
-		uksort( $installs_history, 'version_compare' );
-
-		$first_version = array_key_first( $installs_history );
-
-		if ( ! $first_version ) {
-			return false;
-		}
-
-		return version_compare( $first_version, self::LOCAL_GOOGLE_FONTS_NOTICE_MIN_VERSION, '<' );
-	}
-
 	private function get_elementor_pages_count() {
 		if ( null === $this->elementor_pages_count ) {
 			$elementor_pages = new \WP_Query( [
@@ -544,7 +526,7 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
-		if ( ! $this->has_install_prior_to_local_google_fonts_notice() ) {
+		if ( ! Manager::had_install_prior_to( self::LOCAL_GOOGLE_FONTS_NOTICE_MIN_VERSION ) ) {
 			return false;
 		}
 
