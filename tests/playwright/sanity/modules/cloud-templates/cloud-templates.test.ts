@@ -128,7 +128,6 @@ const cloudTemplatesMock = {
 
 test.describe( 'Cloud Templates', () => {
 	const mockCloudTemplatesRoute = async ( page: Page, mockedResponse = cloudTemplatesMock ) => {
-		// Match the API route for cloud templates
 		await page.route( ( url ) => {
 			return url.pathname.includes( '/wp-json/elementor/v1/template-library/templates' ) &&
 				'cloud' === url.searchParams.get( 'source' );
@@ -296,9 +295,6 @@ test.describe( 'Cloud Templates', () => {
 		const templateItems = page.locator( '.elementor-template-library-template-cloud' );
 		await expect( templateItems ).toHaveCount( 4 );
 
-		await page.pause();
-
-		// Verify specific template titles are present
 		await expect( page.locator( 'text=Design Resources' ).first() ).toBeVisible();
 		await expect( page.locator( 'text=Modern Landing Page' ).first() ).toBeVisible();
 		await expect( page.locator( 'text=Business Portfolio' ).first() ).toBeVisible();
@@ -508,7 +504,6 @@ test.describe( 'Cloud Templates', () => {
 		} );
 		const previewFrame = editor.getPreviewFrame();
 		await previewFrame.waitForSelector( '.elementor-add-section-inner', { timeout: 10000 } );
-		await page.pause()
 
 		const arrowButton = page.locator( 'button[aria-label="Save Options"]' ).first();
 		await arrowButton.click();
