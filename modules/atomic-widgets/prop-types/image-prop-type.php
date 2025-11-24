@@ -18,7 +18,11 @@ class Image_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'src' => Image_Src_Prop_Type::make()->required(),
-			'size' => String_Prop_Type::make()->enum( Image_Sizes::get_keys() )->required(),
+			'size' => String_Prop_Type::make()
+				->initial_value( Image_Sizes::DEFAULT_SIZE )
+				->enum( Image_Sizes::get_keys() )
+				->required()
+				->description( 'The image file size to use, affecting quality. This DOES NOT affect dimensions on the page. For affecting dimensions, use the wrapping element\'s style schema' ),
 		];
 	}
 

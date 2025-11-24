@@ -4,8 +4,8 @@ import { type PropKey, type PropValue } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 
 import { useStylesInheritanceChain } from '../contexts/styles-inheritance-context';
+import { getFieldIndicators } from '../field-indicators-registry';
 import { useStylesField } from '../hooks/use-styles-field';
-import { StylesInheritanceIndicator } from '../styles-inheritance/components/styles-inheritance-indicator';
 import { ConditionalField } from './conditional-field';
 import { createTopLevelObjectType } from './create-top-level-object-type';
 
@@ -36,14 +36,7 @@ export const StylesField = ( { bind, propDisplayName, children }: StylesFieldPro
 	};
 
 	return (
-		<ControlAdornmentsProvider
-			items={ [
-				{
-					id: 'styles-inheritance',
-					Adornment: StylesInheritanceIndicator,
-				},
-			] }
-		>
+		<ControlAdornmentsProvider items={ getFieldIndicators( 'styles' ) }>
 			<PropProvider
 				propType={ propType }
 				value={ { [ bind ]: value } }

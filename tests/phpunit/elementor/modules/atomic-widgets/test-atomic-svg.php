@@ -172,6 +172,35 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 				'widgetType' => Atomic_Svg::get_element_type(),
 			];
 	}
+	public function test__render_svg_with_interactions(): void {
+		// Arrange.
+		$mock_with_interactions = [
+			'id' => 'e8e55a1',
+			'elType' => 'widget',
+			'settings' => [],
+			'widgetType' => Atomic_Svg::get_element_type(),
+			'interactions' => [
+				'version' => 1,
+				'items' => [
+					[
+						'animation' => [
+							'animation_type' => 'full-preset',
+							'animation_id' => 'load-fade-in--300-0',
+						],
+					],
+				],
+			],
+		];
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock_with_interactions );
+
+		// Act.
+		ob_start();
+		$widget_instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
 
 	public function link_href_provider(): array {
 		return [

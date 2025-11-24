@@ -1,0 +1,51 @@
+{
+  "name": "@elementor/editor-mcp",
+  "version": "3.33.0",
+  "private": false,
+  "author": "Elementor Team",
+  "homepage": "https://elementor.com/",
+  "license": "GPL-3.0-or-later",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elementor/elementor.git",
+    "directory": "packages/core/editor-mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/elementor/elementor/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "README.md",
+    "CHANGELOG.md",
+    "/dist",
+    "/src",
+    "!**/__tests__"
+  ],
+  "scripts": {
+    "build": "tsup --config=../../tsup.build.ts",
+    "dev": "tsup --config=../../tsup.dev.ts"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
+  },
+  "dependencies": {
+    "@elementor-external/angie-sdk": "npm:@elementor/angie-sdk@1.0.3",
+    "@elementor/schema": "3.33.0",
+    "@modelcontextprotocol/sdk": "1.17.4",
+    "@elementor/store": "3.33.0",
+    "@elementor/editor-v1-adapters": "3.33.0"
+  }
+}

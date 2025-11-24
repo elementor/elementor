@@ -2,6 +2,8 @@
             href="https://example.com"
             target="_blank"
             class="e-button-base"
+            data-interaction-id="e8e55a1"
+            data-interactions="&#x5B;&#x5D;"
              
         >
             Click here

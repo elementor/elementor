@@ -166,6 +166,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 						'settings' => [],
 						'meta' => [],
 						'dependencies' => null,
+						'initial_value' => null,
 					],
 					'key' => [
 						'kind' => 'plain',
@@ -179,6 +180,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 						],
 						'meta' => [],
 						'dependencies' => null,
+						'initial_value' => null,
 					],
 				],
 			],
