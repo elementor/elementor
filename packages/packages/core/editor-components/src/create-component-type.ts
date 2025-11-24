@@ -8,12 +8,11 @@ import {
 	type LegacyWindow,
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
-import { type NumberPropValue } from '@elementor/editor-props';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
-import { type ExtendedWindow } from './types';
+import { type ComponentInstancePropValue, type ExtendedWindow } from './types';
 import { trackComponentEvent } from './utils/tracking';
 
 type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
@@ -46,16 +45,18 @@ function createComponentView(
 		isComponentCurrentlyEdited() {
 			const currentDocument = getCurrentDocument();
 
-			return currentDocument?.id === this.getComponentId()?.value;
+			return currentDocument?.id === this.getComponentId();
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
-			if ( settings.component ) {
-				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection( settings.component );
+			if ( settings.component_instance ) {
+				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection(
+					settings.component_instance
+				);
 
 				this.collection.models.forEach( setInactiveRecursively );
 
-				settings.component = '<template data-children-placeholder></template>';
+				settings.component_instance = '<template data-children-placeholder></template>';
 			}
 
 			return settings;
@@ -79,12 +80,16 @@ function createComponentView(
 		}
 
 		getComponentId() {
-			return this.options?.model?.get( 'settings' )?.get( 'component' ) as NumberPropValue;
+			const componentInstance = (
+				this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstancePropValue
+			 )?.value;
+
+			return componentInstance.component_id.value;
 		}
 
 		getContextMenuGroups() {
 			const filteredGroups = super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
-			const componentId = this.getComponentId()?.value as number;
+			const componentId = this.getComponentId();
 			if ( ! componentId ) {
 				return filteredGroups;
 			}
@@ -108,15 +113,16 @@ function createComponentView(
 		}
 
 		async switchDocument() {
+			//todo: handle unpublished
 			const { isAllowedToSwitchDocument, lockedBy } = await apiClient.getComponentLockStatus(
-				this.getComponentId()?.value as number
+				this.getComponentId() as number
 			);
 
 			if ( ! isAllowedToSwitchDocument ) {
 				options.showLockedByModal?.( lockedBy || '' );
 			} else {
 				runCommand( 'editor/documents/switch', {
-					id: this.getComponentId()?.value as number,
+					id: this.getComponentId(),
 					mode: 'autosave',
 					selector: `[data-id="${ this.model.get( 'id' ) }"]`,
 					shouldScroll: false,
@@ -165,7 +171,7 @@ function createComponentView(
 		attributes() {
 			return {
 				...super.attributes(),
-				'data-elementor-id': this.getComponentId().value,
+				'data-elementor-id': this.getComponentId(),
 			};
 		}
 	};
