@@ -19,7 +19,7 @@ class Variable {
 				throw new InvalidArgumentException(
 					sprintf(
 						"Missing required field '%s' in %s::from_array()",
-						$key,
+						esc_html( $key ),
 						self::class
 					)
 				);
