@@ -39,7 +39,7 @@ class Variables_Collection extends Collection {
 		}
 
 		$watermark = $record['watermark'];
-		$version = $record['version'];
+		$version = $record['version'] ?? null;
 
 		return new self( $variables, $watermark, $version );
 	}
