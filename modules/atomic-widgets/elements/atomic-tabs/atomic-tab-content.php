@@ -74,14 +74,6 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 	protected function define_base_styles(): array {
 		$styles = [
 			'display' => String_Prop_Type::generate( 'block' ),
-			'opacity' => Size_Prop_Type::generate( [
-				'size' => 0,
-				'unit' => '%',
-			] ),
-			'min-height' => Size_Prop_Type::generate( [
-				'size' => 200,
-				'unit' => 'px',
-			] ),
 			'padding' => Size_Prop_Type::generate( [
 				'size' => 10,
 				'unit' => 'px',
@@ -90,24 +82,6 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 				'size' => 30,
 				'unit' => 'px',
 			] ),
-			'transition' => Transition_Prop_Type::generate( [
-				Selection_Size_Prop_Type::generate( [
-					'selection' => Key_Value_Prop_Type::generate( [
-						'value' => 'opacity',
-					] ),
-					'size' => Size_Prop_Type::generate( [
-						'size' => 600,
-						'unit' => 'ms',
-					] ),
-				] ),
-			] ),
-		];
-
-		$selected_styles = [
-			'opacity' => Size_Prop_Type::generate( [
-				'size' => 100,
-				'unit' => '%',
-			] ),
 		];
 
 		return [
@@ -115,11 +89,6 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( $styles )
-				)
-				->add_variant(
-					Style_Variant::make()
-						->set_state( Style_States::SELECTED )
-						->add_props( $selected_styles )
 				),
 		];
 	}
@@ -151,7 +120,6 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
-			'data-interactions' => json_encode( $this->interactions ),
 			'x-bind' => 'tabContent',
 			'id' => Atomic_Tabs::get_tab_content_id( $tabs_id, $index ),
 			'aria-labelledby' => Atomic_Tabs::get_tab_id( $tabs_id, $index ),

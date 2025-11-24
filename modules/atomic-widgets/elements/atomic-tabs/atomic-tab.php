@@ -9,7 +9,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Render_Context;
@@ -144,10 +144,10 @@ class Atomic_Tab extends Atomic_Element_Base {
 
 	protected function define_default_children() {
 		return [
-			Atomic_Heading::generate()
+			Atomic_Paragraph::generate()
 				->settings( [
-					'title' => String_Prop_Type::generate( 'Tab' ),
-					'tag' => String_Prop_Type::generate( 'h3' ),
+					'paragraph' => String_Prop_Type::generate( 'Tab' ),
+					'tag' => String_Prop_Type::generate( 'span' ),
 				] )
 				->build(),
 		];
@@ -174,10 +174,10 @@ class Atomic_Tab extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
-			'data-interactions' => json_encode( $this->interactions ),
 			'tabindex' => $is_active ? '0' : '-1',
 			'aria-selected' => $is_active ? 'true' : 'false',
 			'x-bind' => 'tab',
+			'x-ref' => $this->get_id(),
 			'id' => Atomic_Tabs::get_tab_id( $tabs_id, $index ),
 			'aria-controls' => Atomic_Tabs::get_tab_content_id( $tabs_id, $index ),
 		];

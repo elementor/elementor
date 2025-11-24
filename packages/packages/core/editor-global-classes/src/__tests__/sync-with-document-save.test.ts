@@ -63,7 +63,7 @@ describe( 'syncWithDocumentSave', () => {
 			dispatch( slice.actions.add( styleDefinition ) );
 
 			// Act.
-			await triggerHook( 'after', 'document/save/save', { status } );
+			await triggerHook( 'dependency', 'document/save/save', { status } );
 
 			// Assert.
 			const method = status === 'publish' ? apiClient.publish : apiClient.saveDraft;
@@ -116,7 +116,7 @@ describe( 'syncWithDocumentSave', () => {
 		dispatch( slice.actions.add( styleDefinition ) );
 
 		// Act.
-		await triggerHook( 'after', 'document/save/save', { status: 'publish' } );
+		await triggerHook( 'dependency', 'document/save/save', { status: 'publish' } );
 
 		// Assert.
 		expect( apiClient.publish ).not.toHaveBeenCalled();
@@ -136,7 +136,7 @@ describe( 'syncWithDocumentSave', () => {
 } );
 
 function mockRegisterDataHook() {
-	const callbacks = new Map< string, ( args: Record< string, unknown > ) => unknown >();
+	const callbacks = new Map< string, ( args: Record< string, unknown >, result?: unknown ) => unknown >();
 
 	jest.mocked( registerDataHook ).mockImplementation( ( type, command, callback ) => {
 		const key = `${ command }-${ type }`;
@@ -150,13 +150,13 @@ function mockRegisterDataHook() {
 		return {} as never;
 	} );
 
-	return ( type: string, command: string, args: Record< string, unknown > = {} ) => {
+	return ( type: string, command: string, args: Record< string, unknown > = {}, result: unknown = undefined ) => {
 		const key = `${ command }-${ type }`;
 
 		const callback = callbacks.get( key );
 
 		callbacks.delete( key );
 
-		return callback?.( args );
+		return callback?.( args, result );
 	};
 }

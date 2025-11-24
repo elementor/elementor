@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { useRef } from 'react';
-import { keyValuePropTypeUtil } from '@elementor/editor-props';
+import { keyValuePropTypeUtil, type KeyValuePropValue, type StringPropValue } from '@elementor/editor-props';
 import { ChevronDownIcon, VariationsIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Box, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../../bound-prop-context';
 import { ItemSelector } from '../../components/item-selector';
+import ControlActions from '../../control-actions/control-actions';
 import { transitionProperties, transitionsItemsList } from './data';
 
 const toTransitionSelectorValue = ( label: string ) => {
@@ -23,13 +24,26 @@ const toTransitionSelectorValue = ( label: string ) => {
 	return null;
 };
 
-const findByValue = ( value: string ) => {
+export function getTransitionPropertyByValue( item?: StringPropValue | null ) {
+	if ( ! item?.value ) {
+		return null;
+	}
+
 	for ( const category of transitionProperties ) {
-		const property = category.properties.find( ( prop ) => prop.value === value );
-		if ( property ) {
-			return property.label;
+		for ( const property of category.properties ) {
+			if ( property.value === item.value ) {
+				return property;
+			}
 		}
 	}
+
+	return null;
+}
+
+const includeCurrentValueInOptions = ( value: KeyValuePropValue[ 'value' ], disabledItems: string[] ) => {
+	return disabledItems.filter( ( item ) => {
+		return item !== value.key.value;
+	} );
 };
 
 export const TransitionSelector = ( {
@@ -48,7 +62,7 @@ export const TransitionSelector = ( {
 
 	const getItemList = () => {
 		const recentItems = recentlyUsedList
-			.map( ( item ) => findByValue( item ) )
+			.map( ( item ) => getTransitionPropertyByValue( { value: item, $$type: 'string' } )?.label )
 			.filter( ( item ) => !! item ) as string[];
 		const filteredItems = transitionsItemsList.map( ( category ) => {
 			return {
@@ -95,13 +109,15 @@ export const TransitionSelector = ( {
 
 	return (
 		<Box ref={ defaultRef }>
-			<UnstableTag
-				variant="outlined"
-				label={ transitionLabel }
-				endIcon={ <ChevronDownIcon fontSize="tiny" /> }
-				{ ...bindTrigger( popoverState ) }
-				fullWidth
-			/>
+			<ControlActions>
+				<UnstableTag
+					variant="outlined"
+					label={ transitionLabel }
+					endIcon={ <ChevronDownIcon fontSize="tiny" /> }
+					{ ...bindTrigger( popoverState ) }
+					fullWidth
+				/>
+			</ControlActions>
 			<Popover
 				disablePortal
 				disableScrollLock
@@ -119,7 +135,7 @@ export const TransitionSelector = ( {
 					sectionWidth={ 268 }
 					title={ __( 'Transition Property', 'elementor' ) }
 					icon={ VariationsIcon as React.ElementType< { fontSize: string } > }
-					disabledItems={ disabledItems }
+					disabledItems={ includeCurrentValueInOptions( value, disabledItems ) }
 				/>
 			</Popover>
 		</Box>

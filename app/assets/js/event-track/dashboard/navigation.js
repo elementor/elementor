@@ -38,80 +38,27 @@ class NavigationTracking extends BaseTracking {
 	}
 
 	static attachMenuTracking( menuElement, menuName ) {
-		const topLevelLink = menuElement.querySelector( 'a.menu-top' );
-		const submenuContainer = menuElement.querySelector( ELEMENTOR_MENU_SELECTORS.SUBMENU_CONTAINER );
-
-		if ( topLevelLink ) {
-			this.addEventListenerTracked(
-				topLevelLink,
-				'click',
-				( event ) => {
-					this.handleTopLevelClick( event );
-				},
-			);
-		}
-
-		if ( submenuContainer ) {
-			const submenuItems = submenuContainer.querySelectorAll( 'li a' );
-
-			submenuItems.forEach( ( submenuItem ) => {
-				this.addEventListenerTracked(
-					submenuItem,
-					'click',
-					( event ) => {
-						this.handleSubmenuClick( event, menuName );
-					},
-				);
-			} );
-
-			this.observeSubmenuChanges( submenuContainer, menuName );
-		}
-	}
-
-	static observeSubmenuChanges( submenuContainer, menuName ) {
-		this.addObserver(
-			submenuContainer,
-			{
-				childList: true,
-				subtree: false,
-			},
-			( mutations ) => {
-				mutations.forEach( ( mutation ) => {
-					if ( 'childList' === mutation.type ) {
-						mutation.addedNodes.forEach( ( node ) => {
-							if ( 1 === node.nodeType && 'LI' === node.tagName ) {
-								const link = node.querySelector( 'a' );
-								if ( link ) {
-									this.addEventListenerTracked(
-										link,
-										'click',
-										( event ) => {
-											this.handleSubmenuClick( event, menuName );
-										},
-									);
-								}
-							}
-						} );
-					}
-				} );
+		this.addEventListenerTracked(
+			menuElement,
+			'click',
+			( event ) => {
+				this.handleMenuClick( event, menuName );
 			},
 		);
 	}
 
-	static handleTopLevelClick( event ) {
-		const link = event.currentTarget;
+	static handleMenuClick( event, menuName ) {
+		const link = event.target.closest( 'a' );
+
+		if ( ! link ) {
+			return;
+		}
+
+		const isTopLevel = link.classList.contains( 'menu-top' );
 		const itemId = this.extractItemId( link );
 		const area = this.determineNavArea( link );
 
-		WpDashboardTracking.trackNavClicked( itemId, null, area );
-	}
-
-	static handleSubmenuClick( event, menuName ) {
-		const link = event.currentTarget;
-		const itemId = this.extractItemId( link );
-		const area = this.determineNavArea( link );
-
-		WpDashboardTracking.trackNavClicked( itemId, menuName, area );
+		WpDashboardTracking.trackNavClicked( itemId, isTopLevel ? null : menuName, area );
 	}
 
 	static extractItemId( link ) {

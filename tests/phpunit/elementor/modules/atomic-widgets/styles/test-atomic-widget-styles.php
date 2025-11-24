@@ -112,10 +112,10 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		$this->mock_styles_manager
 			->expects( $invoked_count )
 			->method( 'register' )
-			->willReturnCallback(function( $key, $callback ) use ( $element_1, $element_2, $element_3, $doc_1_id, $doc_2_id, $invoked_count ) {
+			->willReturnCallback(function( $keys, $callback ) use ( $element_1, $element_2, $element_3, $doc_1_id, $doc_2_id, $invoked_count ) {
 				switch ( $invoked_count->getInvocationCount() ) {
 					case 1:
-						$this->assertEquals( Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_1_id . '-' . Atomic_Widget_Styles::CONTEXT_FRONTEND, $key );
+						$this->assertEquals( [ Atomic_Widget_Styles::STYLES_KEY, $doc_1_id, Atomic_Widget_Styles::CONTEXT_FRONTEND ], $keys );
 						$this->callback( function( $callback ) use ( $element_1, $element_2, $doc_1_id ) {
 							$styles = $callback();
 
@@ -129,7 +129,7 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 						});
 						break;
 					case 2:
-						$this->assertEquals( Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_2_id . '-' . Atomic_Widget_Styles::CONTEXT_FRONTEND, $key );
+						$this->assertEquals( [ Atomic_Widget_Styles::STYLES_KEY, $doc_2_id, Atomic_Widget_Styles::CONTEXT_FRONTEND ], $keys );
 						$this->callback( function( $callback ) use ( $element_3, $doc_2_id ) {
 							$styles = $callback();
 							$this->assertEquals( $element_3->get_raw_data()['styles'], $styles );
@@ -230,10 +230,10 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 		$this->mock_styles_manager
 			->expects( $invoked_count )
 			->method( 'register' )
-			->willReturnCallback(function( $key, $callback ) use ( $element_1, $element_2, $element_3, $doc_1_id, $doc_2_id, $invoked_count ) {
+			->willReturnCallback(function( $keys, $callback ) use ( $element_1, $element_2, $element_3, $doc_1_id, $doc_2_id, $invoked_count ) {
 				switch ( $invoked_count->getInvocationCount() ) {
 					case 1:
-						$this->assertEquals( Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_1_id . '-' . Atomic_Widget_Styles::CONTEXT_PREVIEW, $key );
+						$this->assertEquals( [ Atomic_Widget_Styles::STYLES_KEY, $doc_1_id, Atomic_Widget_Styles::CONTEXT_PREVIEW ], $keys );
 						$this->callback( function( $callback ) use ( $element_1, $element_2, $doc_1_id ) {
 							$styles = $callback();
 
@@ -247,7 +247,7 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 						});
 						break;
 					case 2:
-						$this->assertEquals( Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_2_id . '-' . Atomic_Widget_Styles::CONTEXT_PREVIEW, $key );
+						$this->assertEquals( [ Atomic_Widget_Styles::STYLES_KEY, $doc_2_id, Atomic_Widget_Styles::CONTEXT_PREVIEW ], $keys );
 						$this->callback( function( $callback ) use ( $element_3, $doc_2_id ) {
 							$styles = $callback();
 							$this->assertEquals( $element_3->get_raw_data()['styles'], $styles );
@@ -309,7 +309,7 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 			->expects( $this->once() )
 			->method( 'register' )
 			->with(
-				Atomic_Widget_Styles::STYLES_KEY . '-' . $doc_id . '-' . Atomic_Widget_Styles::CONTEXT_FRONTEND,
+				[ Atomic_Widget_Styles::STYLES_KEY, $doc_id, Atomic_Widget_Styles::CONTEXT_FRONTEND ],
 				$this->callback(function( $callback ) use ( $element, $atomic_element ) {
 					$styles = $callback();
 					$expected = $atomic_element->get_raw_data()['styles'];
@@ -401,6 +401,7 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id, Atomic_Widget_Styles::CONTEXT_FRONTEND ] ) );
+		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id, Atomic_Widget_Styles::CONTEXT_PREVIEW ] ) );
 	}
 
 	public function test_cache_invalidation_on_global_cache_clear() {
