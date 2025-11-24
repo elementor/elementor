@@ -12,6 +12,7 @@ import {
 	type ComponentId,
 	type OverridableProp,
 	type OverridablePropGroup,
+	type OverridableProps,
 	type PublishedComponent,
 	type StylesDefinition,
 	type UnpublishedComponent,
@@ -147,12 +148,23 @@ export const slice = createSlice( {
 			group.props = group.props.filter( ( prop ) => prop !== payload.overrideKey );
 
 			if ( group.props.length === 0 && Object.keys( groups.items ).length > 1 ) {
-				groups.items = Object.fromEntries( 
+				groups.items = Object.fromEntries(
 					Object.entries( groups.items ).filter( ( [ id ] ) => id !== groupId )
 				);
 
 				groups.order = groups.order.filter( ( id ) => id !== groupId );
 			}
+		},
+		setOverridableProps: (
+			state,
+			{ payload }: PayloadAction< { componentId: ComponentId; overrides: OverridableProps } >
+		) => {
+			const component = state.data.find( ( comp ) => comp.id === payload.componentId );
+
+			if ( ! component ) {
+				return;
+			}
+			component.overrides = payload.overrides;
 		},
 	},
 	extraReducers: ( builder ) => {

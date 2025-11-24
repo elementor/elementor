@@ -24,8 +24,8 @@ export function OverridablePropIndicator() {
 		return null;
 	}
 
-	const isOverridable = componentOverridablePropTypeUtil.isValid( value );
-
+	const isOverridable = true || componentOverridablePropTypeUtil.isValid( value );
+	console.log( { componentOverrides, isOverridable, value } );
 	return (
 		<Indicator
 			componentId={ currentDocument.id }
