@@ -10,7 +10,7 @@ import { SettingsField } from '../controls-registry/settings-field';
 import { getFieldIndicators } from '../field-indicators-registry';
 import { ControlLabel } from './control-label';
 
-const SettingsFieldWrapper = styled( 'span' )`
+const Wrapper = styled( 'span' )`
 	display: contents;
 `;
 
@@ -66,30 +66,36 @@ const ControlLayout = ( {
 	controlProps: Record< string, unknown >;
 	renderOnlyInput: boolean;
 } ) => {
+	const controlType = control.type as ControlType;
+
 	if ( renderOnlyInput ) {
 		if ( layout !== 'custom' || ! control.label ) {
-			return <SettingsFieldWrapper data-type="settings-field"><BaseControl type={ control.type as ControlType } props={ controlProps } /></SettingsFieldWrapper>;
+			return (
+				<Wrapper data-type="settings-field">
+					<BaseControl type={ controlType } props={ controlProps } />
+				</Wrapper>
+			);
 		}
 
 		return (
-			<SettingsFieldWrapper data-type="settings-field">
+			<Wrapper data-type="settings-field">
 				<ControlTypeContainer layout={ layout }>
 					<ControlLabel>{ control.label }</ControlLabel>
-					<BaseControl type={ control.type as ControlType } props={ controlProps } />
+					<BaseControl type={ controlType } props={ controlProps } />
 				</ControlTypeContainer>
-			</SettingsFieldWrapper>
+			</Wrapper>
 		);
 	}
 
 	return (
 		<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
 			{ control.meta?.topDivider && <Divider /> }
-			<SettingsFieldWrapper data-type="settings-field">
+			<Wrapper data-type="settings-field">
 				<ControlTypeContainer layout={ layout }>
 					{ control.label && layout !== 'custom' ? <ControlLabel>{ control.label }</ControlLabel> : null }
-					<BaseControl type={ control.type as ControlType } props={ controlProps } />
+					<BaseControl type={ controlType } props={ controlProps } />
 				</ControlTypeContainer>
-			</SettingsFieldWrapper>
+			</Wrapper>
 		</ControlAdornmentsProvider>
 	);
 };
