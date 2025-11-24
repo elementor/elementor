@@ -5,6 +5,8 @@ type FieldType = 'settings' | 'styles';
 type FieldIndicator = {
 	id: string;
 	indicator: AdornmentComponent;
+
+	// ordered from lowest to highest
 	priority: number;
 };
 
@@ -18,7 +20,7 @@ const DEFAULT_PRIORITY = 10;
 export const FIELD_TYPE = {
 	SETTINGS: 'settings',
 	STYLES: 'styles',
-} as const;
+} satisfies Record< string, FieldType >;
 
 export const registerFieldIndicator = ( {
 	fieldType,
