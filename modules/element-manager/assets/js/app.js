@@ -202,6 +202,7 @@ export const App = () => {
 				onClick={ onScanUsageElementsClicked }
 				size={ 'small' }
 				variant={ 'secondary' }
+				className="e-id-elementor-element-manager-button-show-usage"
 			>
 				{ __( 'Show', 'elementor' ) }
 			</Button>
@@ -356,6 +357,8 @@ export const App = () => {
 										size={ '__unstable-large' }
 										__nextHasNoMarginBottom={ true }
 										options={ plugins }
+										name="elementor-element-manager-select-filter-by-plugin"
+
 									/>
 								</FlexItem>
 								<FlexItem
@@ -367,6 +370,7 @@ export const App = () => {
 										onChange={ setFilterByStatus }
 										size={ '__unstable-large' }
 										__nextHasNoMarginBottom={ true }
+										name="elementor-element-manager-select-filter-by-status"
 										options={ [
 											{
 												label: __( 'All Statuses', 'elementor' ),
@@ -399,6 +403,7 @@ export const App = () => {
 										disabled={ usageWidgets.isLoading }
 										isBusy={ usageWidgets.isLoading }
 										onClick={ onScanUsageElementsClicked }
+										className="e-id-elementor-element-manager-button-scan-element-usage"
 									>
 										{ __( 'Scan Element Usage', 'elementor' ) }
 									</Button>
@@ -407,6 +412,7 @@ export const App = () => {
 										style={ { marginInlineEnd: '10px' } }
 										onClick={ deactivateAllUnusedWidgets }
 										disabled={ null === usageWidgets.data }
+										className="e-id-elementor-element-manager-button-deactivate-unused-elements"
 									>
 										{ __( 'Deactivate Unused Elements', 'elementor' ) }
 									</Button>
@@ -415,6 +421,7 @@ export const App = () => {
 										disabled={ ! widgetsDisabled.length }
 										style={ { marginInlineEnd: '10px' } }
 										onClick={ enableAllWidgets }
+										className="e-id-elementor-element-manager-button-enable-all"
 									>
 										{ __( 'Enable All', 'elementor' ) }
 									</Button>
@@ -429,6 +436,7 @@ export const App = () => {
 								onClick={ () => {
 									setIsConfirmDialogOpen( true );
 								} }
+								className="e-id-elementor-element-manager-button-save-changes"
 							>
 								{ __( 'Save Changes', 'elementor' ) }
 							</Button>
@@ -452,6 +460,7 @@ export const App = () => {
 													event.preventDefault();
 													onSortingClicked( 'widget' );
 												} }
+												className="e-id-elementor-element-manager-button-sort-by-element"
 											>
 												<span>{ __( 'Element', 'elementor' ) }</span>
 												<span className="sorting-indicators">
@@ -468,6 +477,7 @@ export const App = () => {
 													event.preventDefault();
 													onSortingClicked( 'usage' );
 												} }
+												className="e-id-elementor-element-manager-button-sort-by-usage"
 											>
 												<span>{ __( 'Usage', 'elementor' ) }</span>
 												<span className="sorting-indicators">
@@ -515,6 +525,7 @@ export const App = () => {
 																	? managerPermissions.pro.text
 																	: managerPermissions.advanced.text
 															}
+															className={ [ 'e-id-elementor-element-manager-button-upgrade-permissions', 'go-pro' ].join( ' ' ) }
 														/>
 													</FlexItem>
 												) }
@@ -547,6 +558,7 @@ export const App = () => {
 																setWidgetsDisabled( [ ...widgetsDisabled, widget.name ] );
 															}
 														} }
+														className={ `e-id-elementor-element-manager-toggle-${ widget.name }` }
 													/>
 												</td>
 												<td>
@@ -596,6 +608,7 @@ export const App = () => {
 										<UpgradeButton
 											href={ elementManager.url }
 											text={ elementManager.text }
+											className="e-id-elementor-element-manager-button-upgrade-pro-elements"
 										/>
 									</FlexItem>
 								</Flex>
@@ -649,12 +662,13 @@ export const App = () => {
 															__nextHasNoMarginBottom={ true }
 															checked={ false }
 															disabled={ true }
+															className={ `e-id-elementor-element-manager-toggle-${ widget.name }` }
 														/>
 													</td>
 													<td></td>
 													<td>{ __( 'Elementor Pro', 'elementor' ) }</td>
 													<td>
-														<EditButtonDisabled />
+														<EditButtonDisabled widgetName={ widget.name } />
 													</td>
 												</tr>
 											);
@@ -705,12 +719,14 @@ export const App = () => {
 							onClick={ () => {
 								setIsConfirmDialogOpen( false );
 							} }
+							className="e-id-elementor-element-manager-modal-button-cancel"
 						>
 							{ __( 'Cancel', 'elementor' ) }
 						</Button>
 						<Button
 							variant={ 'primary' }
 							onClick={ onSaveClicked }
+							className="e-id-elementor-element-manager-modal-button-save"
 						>
 							{ __( 'Save', 'elementor' ) }
 						</Button>
