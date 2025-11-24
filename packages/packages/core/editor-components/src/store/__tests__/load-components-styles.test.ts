@@ -161,9 +161,14 @@ function createMockComponentWidget( componentId: number ): V1ElementData {
 		elType: 'widget',
 		widgetType: 'e-component',
 		settings: {
-			component: {
-				$$type: 'component-id',
-				value: componentId,
+			component_instance: {
+				$$type: 'component-instance',
+				value: {
+					component_id: {
+						$$type: 'number',
+						value: componentId,
+					},
+				},
 			},
 		},
 	} );

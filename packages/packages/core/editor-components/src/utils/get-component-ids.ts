@@ -1,6 +1,6 @@
 import { type V1ElementData } from '@elementor/editor-elements';
-import { isTransformable } from '@elementor/editor-props';
-import { ComponentInstancePropValue } from '../types';
+
+import { type ComponentInstancePropValue } from '../types';
 
 export const getComponentIds = ( elements: V1ElementData[] ) => {
 	const result = elements.flatMap( ( element ) => {
@@ -9,13 +9,12 @@ export const getComponentIds = ( elements: V1ElementData[] ) => {
 		const type = element.widgetType || element.elType;
 
 		if ( type === 'e-component' ) {
-			const componentId = (
-				element.settings?.component_instance as ComponentInstancePropValue< number >
-		 )?.value.component_id.value;
+			const componentId = ( element.settings?.component_instance as ComponentInstancePropValue< number > )?.value
+				?.component_id?.value;
 
-		 if ( componentId ) {
- 			ids.push( componentId );
-		 }
+			if ( componentId ) {
+				ids.push( componentId );
+			}
 		}
 
 		if ( element.elements ) {
