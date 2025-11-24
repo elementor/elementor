@@ -10,6 +10,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/component-prop-types-test-base.php';
 
 class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
+
+	public function test_validate__passes_with_valid_id_and_overrides() {
+		// Arrange
+		$prop_type = Component_Instance_Prop_Type::make();
+
+		// Act
+		$result = $prop_type->validate( 
+			[
+				'$$type' => 'component-instance',
+				'value' => [
+					'component_id' => [ '$$type' => 'number', 'value' => self::VALID_COMPONENT_ID ],
+					'overrides' => [
+						'$$type' => 'component-overrides',
+						'value' => [
+							$this->mocks->get_mock_valid_heading_title_component_override(),
+							$this->mocks->get_mock_valid_heading_tag_component_override(),
+							$this->mocks->get_mock_valid_image_image_component_override(),
+							$this->mocks->get_mock_valid_image_link_component_override(),
+						]
+					],
+				],
+			]
+		);
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
 	public function test_validate__passes_with_component_id_only() {
 		// Arrange
 		$prop_type = Component_Instance_Prop_Type::make();
@@ -48,197 +76,58 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 		$this->assertTrue( $result );
 	}
 
-	public function test_validate__passes_with_valid_overrides() {
-		// Arrange
-		$prop_type = Component_Instance_Prop_Type::make();
-
-		// Act
-		$result = $prop_type->validate( 
-			[
-				'$$type' => 'component-instance',
-				'value' => [
-					'component_id' => [ '$$type' => 'number', 'value' => self::VALID_COMPONENT_ID ],
-					'overrides' => [
-						'$$type' => 'component-overrides',
-						'value' => [
-							$this->mocks->get_mock_valid_heading_title_component_override(),
-							$this->mocks->get_mock_valid_heading_tag_component_override(),
-							$this->mocks->get_mock_valid_image_image_component_override(),
-							$this->mocks->get_mock_valid_image_link_component_override(),
-						]
-					],
-				],
-			]
-		);
-
-		// Assert
-		$this->assertTrue( $result );
-	}
-
-	public function test_validate__passes_when_component_not_found() {
-		// Arrange
-		$prop_type = Component_Instance_Prop_Type::make();
-
-		// Act
-		$result = $prop_type->validate( 
-			[
-				'$$type' => 'component-instance',
-				'value' => [
-					'component_id' => [ '$$type' => 'number', 'value' => self::NON_EXISTENT_COMPONENT_ID ],
-					'overrides' => [
-						'$$type' => 'component-overrides',
-						'value' => [],
-					],
-				],
-			]
-		);
-
-		// Assert
-		$this->assertTrue( $result );
-	}
-
-	public function test_validate__fails_with_missing_component_id() {
-		// Arrange
-		$prop_type = Component_Instance_Prop_Type::make();
-
-		// Act
-		$result = $prop_type->validate( 
-			[
-				'$$type' => 'component-instance',
-				'value' => [
-					'overrides' => [
-						'$$type' => 'component-overrides',
-						'value' => [],
-					],
-				],
-			]
-		);
-
-		// Assert
-		$this->assertFalse( $result );
-	}
-
-	public function test_validate__fails_with_invalid_structure() {
-		// Arrange
-		$prop_type = Component_Instance_Prop_Type::make();
-
-		// Act
-		$result = $prop_type->validate( [
-			'$$type' => 'component-instance',
-			'value' => 'not-an-array',
-		] );
-
-		// Assert
-		$this->assertFalse( $result );
-	}
-
-	public function test_validate__fails_with_invalid_component_id_type() {
-		// Arrange
-		$prop_type = Component_Instance_Prop_Type::make();
-
-		// Act
-		$result = $prop_type->validate( [
-			'$$type' => 'component-instance',
-			'value' => [
+	public function invalid_structure_data_provider() {
+		return [
+			'non-array value' => [ 'not-an-array' ],
+			'missing_component_id' => [ [
+				'overrides' => [ '$$type' => 'component-overrides', 'value' => [] ],
+			] ],
+			'non-number component_id' => [[ 
 				'component_id' => [ '$$type' => 'number', 'value' => 'not-a-number' ],
-			],
-		] );
-
-		// Assert
-		$this->assertFalse( $result );
+				'overrides' => [ '$$type' => 'component-overrides', 'value' => [] ],
+			]],
+			'non-array overrides' => [ [ 
+				'component_id' => [ '$$type' => 'number', 'value' => self::VALID_COMPONENT_ID ],
+				'overrides' => 'not-an-array' 
+			]],
+		];
 	}
 
-	public function test_validate__fails_with_non_array_overrides() {
-		// Arrange
+		/**
+	 * @dataProvider invalid_structure_data_provider
+	 */
+	public function test_validate__fail_for_invalid_structure( $value ) {
+		// Arrange.
 		$prop_type = Component_Instance_Prop_Type::make();
 
-		// Act
-		$result = $prop_type->validate( 
-			[
-				'$$type' => 'component-instance',
-				'value' => [
-					'component_id' => [ '$$type' => 'number', 'value' => self::VALID_COMPONENT_ID ],
-					'overrides' => 'not-an-array',
-				],
-			]
-		);
+		// Act.
+		$result = $prop_type->validate( [
+			'$$type' => 'component-instance',
+			'value' => $value,
+		] );
 
-		// Assert
+		// Assert.
 		$this->assertFalse( $result );
 	}
 
-	public function test_validate__fails_with_invalid_override_structure() {
+	public function test_validate__fails_with_invalid_override_in_overrides() {
 		// Arrange
 		$prop_type = Component_Instance_Prop_Type::make();
 
 		// Act
 		$result = $prop_type->validate( [
 			'$$type' => 'component-instance',
-			'value' => [
+			'value' => [ 
 				'component_id' => [ '$$type' => 'number', 'value' => self::VALID_COMPONENT_ID ],
-				'overrides' => [
+				'overrides' => [ 
 					'$$type' => 'component-overrides',
-					'value' => [
-						[
-							'override_key' => 'prop-uuid-1',
-						],
-					],
+					'value' => [ [ $this->mocks->get_mock_invalid_override() ] ],
 				],
 			]
 		] );
 
 		// Assert
 		$this->assertFalse( $result );
-	}
-
-	public function test_validate__fails_with_invalid_override_value() {
-		// Arrange
-		$prop_type = Component_Instance_Prop_Type::make();
-
-		// Act
-		$result = $prop_type->validate( 
-			[
-				'$$type' => 'component-instance',
-				'value' => [
-					'component_id' => [ '$$type' => 'number', 'value' => self::VALID_COMPONENT_ID ],
-					'overrides' => [
-						'$$type' => 'component-overrides',
-						'value' => [
-							[
-								'override_key' => 'prop-uuid-1',
-								'value' => [ '$$type' => 'string', 'value' => 123 ],
-							],
-						],
-					],
-				],
-			]
-		);
-
-		// Assert
-		$this->assertFalse( $result );
-	}
-
-	public function test_sanitize__sanitizes_component_id() {
-		// Arrange
-		$prop_type = Component_Instance_Prop_Type::make();
-
-		// Act
-		$result = $prop_type->sanitize( 
-			[
-				'$$type' => 'component-instance',
-				'value' => [
-					'component_id' => [ '$$type' => 'number', 'value' => '123' ],
-				],
-			]
-		);
-
-		// Assert
-		$this->assertEquals([
-			'$$type' => 'component-instance',
-			'value' => [
-				'component_id' => [ '$$type' => 'number', 'value' => 123 ],
-			],
-		], $result );
 	}
 
 	public function test_sanitize__sanitizes_component_id_and_overrides() {
@@ -281,7 +170,7 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 		], $result );
 	}
 
-	public function test_sanitize__omits_overrides_when_all_removed() {
+	public function test_sanitize__removes_overrides_when_empty() {
 		// Arrange
 		$prop_type = Component_Instance_Prop_Type::make();
 

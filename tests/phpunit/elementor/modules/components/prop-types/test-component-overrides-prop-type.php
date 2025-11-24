@@ -75,16 +75,7 @@ class Test_Component_Overrides_Prop_Type extends Component_Prop_Type_Test_Base {
 			'$$type' => 'component-overrides',
 			'value' => [
 				$this->mocks->get_mock_valid_heading_title_component_override(),
-				[
-					'$$type' => 'component-override',
-					'value' => [
-						'override_key' => 'prop-uuid-2',
-						'value' => [
-							'$$type' => 'string',
-							'value' => 'invalid-value',
-						],
-					]
-				],
+				$this->mocks->get_mock_invalid_override(),
 			],
 		] );
 
@@ -150,7 +141,9 @@ class Test_Component_Overrides_Prop_Type extends Component_Prop_Type_Test_Base {
 		] );
 
 		// Assert
-		$this->assertCount( 1, $result['value'] );
-		$this->assertEquals( 'prop-uuid-1', $result['value'][0]['value']['override_key'] );
+		$overrides_array = $result['value'];
+
+		$this->assertCount( 1, $overrides_array );
+		$this->assertEquals( 'prop-uuid-1', $overrides_array[0]['value']['override_key'] );
 	}
 }

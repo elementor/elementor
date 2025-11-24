@@ -2,8 +2,6 @@
 namespace Elementor\Modules\Components\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
-use Elementor\Modules\AtomicWidgets\Elements\Has_Atomic_Base;
 use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;

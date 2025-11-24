@@ -49,74 +49,43 @@ class Test_Component_Override_Prop_Type extends Component_Prop_Type_Test_Base {
 		$this->assertTrue( $result );
 	}
 
-	public function test_validate__fails_with_invalid_structure() {
-		// Arrange
-		$component_overridable_props = $this->mocks->get_mock_component_overridable_props();;
-		$prop_type = Component_Override_Prop_type::make()
-			->set_component_overridable_props( $component_overridable_props );
+	public function invalid_structure_data_provider() {
+		return [
+			'non-array value' => [ 'not-an-array' ],
+			'missing override_key' => [ [ 'value' => [ '$$type' => 'html', 'value' => 'New Title' ] ] ],
+			`missing value['value']` => [ [ 'value' => [ 'override_key' => 'prop-uuid-1' ] ] ],
+			'non-string override_key' => [ [ 
+				'value' => [ 
+					'override_key' => 123, 
+					'value' => [ '$$type' => 'html', 'value' => 'New Title' ] 
+				], 
+			] ],
+			`non-array value['value']` => [ [ 
+					'override_key' => 'prop-uuid-1',
+					'value' => 'not-an-array' 
+			] ],
+		];
+	}
 
-		// Act
+	/**
+	 * @dataProvider invalid_structure_data_provider
+	 */
+	public function test_validate__fail_for_invalid_structure( $value ) {
+		// Arrange.
+		$prop_type = Component_Override_Prop_type::make()
+			->set_component_overridable_props( $this->mocks->get_mock_component_overridable_props() );
+
+		// Act.
 		$result = $prop_type->validate( [
 			'$$type' => 'component-override',
-			'value' => [	
-				'override_key' => 'prop-uuid-1',
-			],
+			'value' => $value,
 		] );
 
-		// Assert
+		// Assert.
 		$this->assertFalse( $result );
 	}
 
-	public function test_validate__fails_with_non_array_value() {
-		// Arrange
-		$component_overridable_props = $this->mocks->get_mock_component_overridable_props();;
-		$prop_type = Component_Override_Prop_type::make()
-			->set_component_overridable_props( $component_overridable_props );
-
-		// Act
-		$result = $prop_type->validate( 'not-an-array' );
-
-		// Assert
-		$this->assertFalse( $result );
-	}
-
-	public function test_validate__fails_with_non_string_override_key() {
-		// Arrange
-		$component_overridable_props = $this->mocks->get_mock_component_overridable_props();;
-		$prop_type = Component_Override_Prop_type::make()
-			->set_component_overridable_props( $component_overridable_props );
-
-		// Act
-		$result = $prop_type->validate( [
-			'$$type' => 'component-override',
-			'value' => [
-				'override_key' => 123,
-				'value' => [ '$$type' => 'string', 'value' => 'New Title' ],
-			],
-		] );
-
-		// Assert
-		$this->assertFalse( $result );
-	}
-
-	public function test_validate__fails_with_non_array_override_value() {
-		// Arrange
-		$component_overridable_props = $this->mocks->get_mock_component_overridable_props();;
-		$prop_type = Component_Override_Prop_type::make()
-			->set_component_overridable_props( $component_overridable_props );
-
-
-		// Act
-		$result = $prop_type->validate( [
-			'override_key' => 'prop-uuid-1',
-			'value' => 'not-an-array',
-		] );
-
-		// Assert
-		$this->assertFalse( $result );
-	}
-
-	public function test_validate__fails_with_invalid_value() {
+	public function test_validate__fails_when_value_invalid_against_original_prop_type() {
 		// Arrange
 		$component_overridable_props = $this->mocks->get_mock_component_overridable_props();;
 		$prop_type = Component_Override_Prop_type::make()
@@ -128,6 +97,7 @@ class Test_Component_Override_Prop_Type extends Component_Prop_Type_Test_Base {
 			'$$type' => 'component-override',
 			'value' => [
 				'override_key' => 'prop-uuid-1',
+				// number is not a valid html value
 				'value' => [ '$$type' => 'html', 'value' => 123 ],
 			],
 		] );
@@ -147,6 +117,7 @@ class Test_Component_Override_Prop_Type extends Component_Prop_Type_Test_Base {
 		$result = $prop_type->validate( [
 			'$$type' => 'component-override',
 			'value' => [
+				// prop-uuid-1 should be an html
 				'override_key' => 'prop-uuid-1',
 				'value' => [ '$$type' => 'number', 'value' => 123 ],
 			],

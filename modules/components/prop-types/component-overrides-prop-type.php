@@ -4,8 +4,6 @@ namespace Elementor\Modules\Components\PropTypes;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 
-use function PHPSTORM_META\override;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -45,7 +43,7 @@ class Component_Overrides_Prop_Type extends Array_Prop_Type {
 		foreach ( $value as $override ) {
 			$sanitized_override = $component_override_prop_type->sanitize( $override );
 
-			if ( $sanitized_override['value'] ) {
+			if ( null !== $sanitized_override['value'] ) {
 				$sanitized[] = $sanitized_override;
 			}
 		}

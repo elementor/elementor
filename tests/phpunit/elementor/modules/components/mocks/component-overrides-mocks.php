@@ -168,6 +168,19 @@ class Component_Overrides_Mocks {
 		];
 	}
 
+	public function get_mock_invalid_override(): array {
+		return [
+			'$$type' => 'component-override',
+			'value' => [
+				'override_key' => 'prop-uuid-2',
+				'value' => [
+					'$$type' => 'string',
+					'value' => 'invalid-value-not-matching-original-prop-type-enum-h1-h6',
+				],
+			]
+		];
+	}
+
 	public function get_mock_image_image_component_override_to_sanitize(): array {
 		$before_sanitization = [
 			'$$type' => 'component-override',

@@ -24,8 +24,6 @@ abstract class Component_Prop_Type_Test_Base extends Elementor_Test_Base {
 	private Documents_Manager $original_documents_manager;
 	private MockObject $documents_manager_mock;
 
-	private MockObject $component_document_mock;
-
 	protected Component_Overrides_Mocks $mocks;
 
 
@@ -90,7 +88,6 @@ abstract class Component_Prop_Type_Test_Base extends Elementor_Test_Base {
 	public function reset_documents_manager() {
 		Plugin::$instance->documents = $this->original_documents_manager;
 	}
-
 }
 
 class Mock_Component_Document {
