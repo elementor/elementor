@@ -26,12 +26,7 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 	}
 
 	protected function validate_value( $value ): bool {
-		error_log( 'validate_value: ' . print_r( $value, true ) );
 		if ( ! is_array( $value ) ) {
-			error_log( 'is_array: ');
-			error_log( is_array( $value ) ? 'true' : 'false' );
-			error_log( 'value: ');
-			error_log( print_r( $value, true ) );
 			return false;
 		}
 
@@ -41,21 +36,12 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 		);
 
 		if ( ! $is_valid_structure ) {
-			error_log( 'is_valid_structure: ');
-			error_log( $is_valid_structure ? 'true' : 'false' );
-			error_log( 'is_component_id_valid: ');
-			error_log( $value['component_id'] instanceof Number_Prop_Type ? 'true' : 'false' );
-			error_log( 'is_overrides_valid: ');
-			$is_overrides_valid = isset( $value['overrides'] ) ? $value['overrides'] instanceof Component_Overrides_Prop_type : true;
-			error_log( $is_overrides_valid ? 'true' : 'false' );
 			return false;
 		}
 
 		$is_valid_component_id = Number_Prop_Type::make()->validate( $value['component_id'] );
 
 		if ( ! $is_valid_component_id ) {
-			error_log( 'is_valid_component_id: ' . print_r( $is_valid_component_id, true ) );
-			error_log( 'value: ' . print_r( $value, true ) );
 			return false;
 		}
 
@@ -70,8 +56,6 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 			->set_component_overridable_props( $component_overridable_props )
 			->validate( $value['overrides'] );
 
-		error_log( 'is_valid_overrides: ' . print_r( $is_valid_overrides, true ) );
-		error_log( 'value: ' . print_r( $value, true ) );
 		return $is_valid_overrides;
 	}
 
@@ -91,7 +75,7 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 			->set_component_overridable_props( $component_overridable_props )
 			->sanitize( $value['overrides'] );
 
-		if ( count( $sanitized_overrides ) > 0 ) {
+		if ( count( $sanitized_overrides['value'] ) > 0 ) {
 			$sanitized['overrides'] = $sanitized_overrides;
 		}
 
@@ -105,7 +89,8 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 
 		$component = Plugin::$instance->documents->get( $component_id );
 
-		if ( ! $component instanceof Component ) {
+		/** @var Component $component */
+		if ( ! $component || $component->get_type() !== Component::TYPE ) {
 			return null;
 		}
 

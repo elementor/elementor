@@ -102,13 +102,6 @@ trait Has_Atomic_Base {
 		$result = $props_parser->parse( $settings );
 
 		if ( ! $result->is_valid() ) {
-			error_log( 'parse_atomic_settings error: ');
-			error_log( 'schema: ' );
-			error_log( print_r( $schema, true ) );
-			error_log( 'settings: ' );
-			error_log( print_r( $settings, true ) );
-			error_log( 'errors: ' );
-			error_log( print_r( $result->errors(), true ) );
 			throw new \Exception( esc_html( 'Settings validation failed. ' . $result->errors()->to_string() ) );
 		}
 

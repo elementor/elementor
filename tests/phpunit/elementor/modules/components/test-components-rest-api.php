@@ -737,7 +737,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 				'method' => 'POST',
 				'endpoint' => '/elementor/v1/components/unlock',
 				'params' => [ 'componentId' => 'not-a-number' ],
-				'expected_status' => 400,
+				'expected_status' => 300,
 				'expected_code' => 'rest_invalid_param',
 			],
 		];

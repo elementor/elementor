@@ -80,17 +80,10 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function validate( $value ): bool {
-		error_log( 'object_prop_type validate: ' . print_r( $value, true ) );
 		if ( is_null( $value ) ) {
-			error_log( 'is_null: ');
-			error_log( is_null( $value ) ? 'true' : 'false' );
 			return ! $this->is_required();
 		}
 
-		error_log( 'is_transformable: ');
-		error_log( $this->is_transformable( $value ) ? 'true' : 'false' );
-		error_log( 'validate_value: ');
-		error_log( $this->validate_value( $value['value'] ) ? 'true' : 'false' );
 		return (
 			$this->is_transformable( $value ) &&
 			$this->validate_value( $value['value'] )

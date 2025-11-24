@@ -51,6 +51,10 @@ class Component_Override_Prop_type extends Plain_Prop_Type {
 	}
 
 	protected function sanitize_value( $value ) {
+		if ( ! isset( $value['override_key'] ) ) {
+			return null;
+		}
+
 		$sanitized_override_key = sanitize_text_field( $value['override_key'] );
 
 		[
@@ -102,13 +106,13 @@ class Component_Override_Prop_type extends Plain_Prop_Type {
 		if ( ! Utils::is_atomic( $element_instance ) ) {
 			throw new \Exception( "Invalid overridable element: Element type $el_type with widget type $widget_type is not an atomic element/widget." );
 		}
-		
+
 		$props_schema = $element_instance->get_props_schema();
-		
+
 		if ( ! isset( $props_schema[ $prop_key ] ) ) {
 			throw new \Exception( "Prop key '$prop_key' does not exist in the schema of element '{$element_instance->get_element_type()}'." );
 		}
-		
+
 		$props_type = $props_schema[ $prop_key ];
 
 		return [
