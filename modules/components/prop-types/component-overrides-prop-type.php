@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Component_Overrides_Prop_type extends Array_Prop_Type {
+class Component_Overrides_Prop_Type extends Array_Prop_Type {
 	public static function get_key(): string {
 		return 'component-overrides';
 	}

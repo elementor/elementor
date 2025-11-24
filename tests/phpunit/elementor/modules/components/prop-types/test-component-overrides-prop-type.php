@@ -2,7 +2,7 @@
 
 namespace Elementor\Testing\Modules\Components\PropTypes;
 
-use Elementor\Modules\Components\PropTypes\Component_Overrides_Prop_type;
+use Elementor\Modules\Components\PropTypes\Component_Overrides_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -14,7 +14,7 @@ class Test_Component_Overrides_Prop_Type extends Component_Prop_Type_Test_Base {
 	public function test_validate__passes_with_valid_overrides_array() {
 		// Arrange
 		$component_overridable_props = $this->mocks->get_mock_component_overridable_props();
-		$prop_type = Component_Overrides_Prop_type::make()
+		$prop_type = Component_Overrides_Prop_Type::make()
 			->set_component_overridable_props( $component_overridable_props );
 
 		// Act
@@ -35,7 +35,7 @@ class Test_Component_Overrides_Prop_Type extends Component_Prop_Type_Test_Base {
 	public function test_validate__passes_with_empty_array() {
 		// Arrange
 		$component_overridable_props = $this->mocks->get_mock_component_overridable_props();
-		$prop_type = Component_Overrides_Prop_type::make()
+		$prop_type = Component_Overrides_Prop_Type::make()
 			->set_component_overridable_props( $component_overridable_props );
 
 		// Act
@@ -51,7 +51,7 @@ class Test_Component_Overrides_Prop_Type extends Component_Prop_Type_Test_Base {
 	public function test_validate__fails_with_non_array() {
 		// Arrange
 		$component_overridable_props = $this->mocks->get_mock_component_overridable_props();
-		$prop_type = Component_Overrides_Prop_type::make()
+		$prop_type = Component_Overrides_Prop_Type::make()
 			->set_component_overridable_props( $component_overridable_props );
 
 		// Act
@@ -67,7 +67,7 @@ class Test_Component_Overrides_Prop_Type extends Component_Prop_Type_Test_Base {
 	public function test_validate__fails_with_invalid_override_in_array() {
 		// Arrange
 		$component_overridable_props = $this->mocks->get_mock_component_overridable_props();
-		$prop_type = Component_Overrides_Prop_type::make()
+		$prop_type = Component_Overrides_Prop_Type::make()
 			->set_component_overridable_props( $component_overridable_props );
 
 		// Act
@@ -95,7 +95,7 @@ class Test_Component_Overrides_Prop_Type extends Component_Prop_Type_Test_Base {
 	public function test_sanitize__sanitizes_all_valid_overrides() {
 		// Arrange
 		$component_overridable_props = $this->mocks->get_mock_component_overridable_props();
-		$prop_type = Component_Overrides_Prop_type::make()
+		$prop_type = Component_Overrides_Prop_Type::make()
 			->set_component_overridable_props( $component_overridable_props );
 
 		[
@@ -131,7 +131,7 @@ class Test_Component_Overrides_Prop_Type extends Component_Prop_Type_Test_Base {
 	public function test_sanitize__removes_overrides_with_non_existent_keys() {
 		// Arrange
 		$component_overridable_props = $this->mocks->get_mock_component_overridable_props();
-		$prop_type = Component_Overrides_Prop_type::make()
+		$prop_type = Component_Overrides_Prop_Type::make()
 			->set_component_overridable_props( $component_overridable_props );
 
 		// Act

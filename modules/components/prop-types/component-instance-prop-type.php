@@ -21,7 +21,7 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 	protected function define_shape(): array {
 		return [
 			'component_id' => Number_Prop_Type::make()->required(),
-			'overrides' => Component_Overrides_Prop_type::make()->optional(),
+			'overrides' => Component_Overrides_Prop_Type::make()->optional(),
 		];
 	}
 
@@ -52,7 +52,7 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 		$sanitized_component_id = Number_Prop_Type::make()->sanitize( $value['component_id'] );
 		$component_overridable_props = $this->get_component_overridable_props( $sanitized_component_id['value'] );
 
-		$is_valid_overrides = Component_Overrides_Prop_type::make()
+		$is_valid_overrides = Component_Overrides_Prop_Type::make()
 			->set_component_overridable_props( $component_overridable_props )
 			->validate( $value['overrides'] );
 
@@ -71,7 +71,7 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 		}
 
 		$component_overridable_props = $this->get_component_overridable_props( $sanitized_component_id['value'] );
-		$sanitized_overrides = Component_Overrides_Prop_type::make()
+		$sanitized_overrides = Component_Overrides_Prop_Type::make()
 			->set_component_overridable_props( $component_overridable_props )
 			->sanitize( $value['overrides'] );
 
