@@ -237,6 +237,20 @@ test.describe( 'Cloud Templates', () => {
 		} );
 	};
 
+	const mockSaveTemplateRoute = async ( page: Page, templateTitle: string, mockResponse: unknown ) => {
+		await mockAdminAjaxCall(
+			page,
+			( actions ) => {
+				const { action, data } = actions?.save_template || {};
+				return 'save_template' === action &&
+					Array.isArray( data.source ) &&
+					'cloud' === data?.source[ 0 ] &&
+					templateTitle === data?.title;
+			},
+			mockResponse,
+		);
+	};
+
 	const setupCloudTemplatesTab = async ( page: Page, testInfo: TestInfo, apiRequests: ApiRequests ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
@@ -480,5 +494,113 @@ test.describe( 'Cloud Templates', () => {
 
 		await expect( templateItems ).toHaveCount( 5 );
 		await expect( templateItems.nth( 1 ) ).toContainText( folderTitle );
+	} );
+
+	test.only( 'should save template to cloud', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await mockTemplatesQuotaRoute( page );
+		await mockConnect( page );
+
+		const getQuotaResponse = page.waitForResponse( ( response ) => {
+			return response.url().includes( '/wp-admin/admin-ajax.php' );
+		} );
+		const previewFrame = editor.getPreviewFrame();
+		await previewFrame.waitForSelector( '.elementor-add-section-inner', { timeout: 10000 } );
+		await page.pause()
+
+		const arrowButton = page.locator( 'button[aria-label="Save Options"]' ).first();
+		await arrowButton.click();
+
+		const saveAsTemplateMenuItem = page.getByRole( 'menuitem', { name: 'Save as Template' } );
+		await expect( saveAsTemplateMenuItem ).toBeVisible();
+		await saveAsTemplateMenuItem.click();
+		await getQuotaResponse;
+
+		const templateTitle = 'My Saved Template';
+		const templateId = 2000;
+
+		const saveTemplateMockResponse = {
+			success: true,
+			data: {
+				responses: {
+					save_template: {
+						success: true,
+						code: 200,
+						data: {
+							template_id: templateId,
+							source: 'cloud',
+							type: 'page',
+							subType: 'TEMPLATE',
+							title: templateTitle,
+							status: 'active',
+							author: 'test@example.com',
+							human_date: new Date().toLocaleDateString( 'en-US', { year: 'numeric', month: 'long', day: 'numeric' } ),
+							export_link: `export-link-${ templateId }`,
+							hasPageSettings: true,
+							parentId: null,
+							preview_url: '',
+							generate_preview_url: '',
+						},
+					},
+				},
+			},
+		};
+
+		await mockSaveTemplateRoute( page, templateTitle, saveTemplateMockResponse );
+
+		const templateNameInput = page.locator( '#elementor-template-library-save-template-name' );
+		await expect( templateNameInput ).toBeVisible();
+		await templateNameInput.fill( templateTitle );
+
+		const cloudTemplatesCheckbox = page.locator( '.source-selections-input.cloud input[type="checkbox"]' );
+		await cloudTemplatesCheckbox.check();
+
+		const saveResponsePromise = page.waitForResponse( ( response ) => {
+			return response.url().includes( '/wp-admin/admin-ajax.php' );
+		} );
+
+		const saveButton = page.locator( '#elementor-template-library-save-template-submit' );
+		await saveButton.click();
+
+		await saveResponsePromise;
+
+		const updatedTemplatesMock = {
+			templates: {
+				templates: [
+					{
+						template_id: templateId,
+						source: 'cloud',
+						type: 'page',
+						subType: 'TEMPLATE',
+						title: templateTitle,
+						status: 'active',
+						author: 'test@example.com',
+						human_date: new Date().toLocaleDateString( 'en-US', { year: 'numeric', month: 'long', day: 'numeric' } ),
+						export_link: `export-link-${ templateId }`,
+						hasPageSettings: true,
+						parentId: null,
+						preview_url: '',
+						generate_preview_url: '',
+					},
+				],
+				total: 1,
+			},
+			config: cloudTemplatesMock.config,
+		};
+
+		const templatesRefreshPromise = page.waitForResponse( ( response ) => {
+			return response.url().includes( '/wp-json/elementor/v1/template-library/templates' ) &&
+				response.url().includes( 'source=cloud' );
+		} );
+
+		await mockCloudTemplatesRoute( page, updatedTemplatesMock );
+
+		await templatesRefreshPromise;
+
+		const templateItems = page.locator( '.elementor-template-library-template-cloud' );
+		await expect( templateItems ).toHaveCount( 1 );
+		await expect( templateItems.first() ).toContainText( templateTitle );
 	} );
 } );
