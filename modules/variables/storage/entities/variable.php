@@ -17,7 +17,11 @@ class Variable {
 		foreach ( $required as $key ) {
 			if ( ! array_key_exists( $key, $data ) ) {
 				throw new InvalidArgumentException(
-					sprintf( esc_html( "Missing required field '%s' in %s::from_array()" ), $key, self::class )
+					sprintf(
+						"Missing required field '%s' in %s::from_array()",
+						$key,
+						self::class
+					)
 				);
 			}
 		}
