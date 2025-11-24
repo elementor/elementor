@@ -41,13 +41,11 @@ class Test_Variables_Service extends TestCase {
 					'type' => 'global-size-var',
 					'label' => 'Primary',
 					'value' => '100px',
-					'order' => 1,
 				],
 				'id-2' => [
 					'type' => 'global-color-var',
 					'label' => 'Secondary',
 					'value' => '#000000',
-					'order' => 2,
 				],
 			],
 			'watermark' => 10,

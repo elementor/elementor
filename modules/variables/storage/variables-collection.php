@@ -131,12 +131,12 @@ class Variables_Collection extends Collection {
 		$highest_order = 0;
 
 		foreach ( $this->all() as $variable ) {
-			if ( isset( $variable['deleted'] ) && $variable['deleted'] ) {
+			if ( $variable->is_deleted() ) {
 				continue;
 			}
 
-			if ( isset( $variable['order'] ) && $variable['order'] > $highest_order ) {
-				$highest_order = $variable['order'];
+			if ( $variable->has_order() && $variable->order() > $highest_order ) {
+				$highest_order = $variable->order();
 			}
 		}
 

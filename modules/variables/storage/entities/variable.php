@@ -12,7 +12,7 @@ class Variable {
 	}
 
 	public static function from_array( array $data ): self {
-		$required = [ 'id', 'type', 'label', 'value', 'order' ];
+		$required = [ 'id', 'type', 'label', 'value' ];
 
 		foreach ( $required as $key ) {
 			if ( ! array_key_exists( $key, $data ) ) {
@@ -53,6 +53,14 @@ class Variable {
 
 	public function label(): string {
 		return $this->data['label'];
+	}
+
+	public function order(): int {
+		return $this->data['order'];
+	}
+
+	public function has_order(): int {
+		return isset( $this->data['order'] );
 	}
 
 	public function is_deleted(): bool {

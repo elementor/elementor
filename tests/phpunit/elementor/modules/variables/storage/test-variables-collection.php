@@ -35,13 +35,11 @@ class Test_Variables_Collection extends TestCase {
 					'type' => 'color',
 					'label' => 'Primary',
 					'value' => '#000000',
-					'order' => 1,
 				],
 				'id-2' => [
 					'type' => 'font',
 					'label' => 'Primary Font',
 					'value' => 'Roboto',
-					'order' => 2,
 				],
 			],
 			'watermark' => 5,
@@ -90,13 +88,11 @@ class Test_Variables_Collection extends TestCase {
 					'type' => 'global-size',
 					'label' => 'lable',
 					'value' => '22px',
-					'order' => 4
 				],
 				'e-gv-4fdi' => [
 					'type' => 'global-number',
 					'label' => 'number-lable',
 					'value' => 27,
-					'order' => 34,
 				],
 			],
 			'watermark' => 10,
