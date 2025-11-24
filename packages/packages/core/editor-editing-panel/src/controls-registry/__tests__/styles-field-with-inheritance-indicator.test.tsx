@@ -226,11 +226,11 @@ describe( 'StylesField with inheritance', () => {
 			expect( screen.getByText( 'Label' ) ).toBeInTheDocument();
 			expect( screen.getByLabelText( expectedLabel ) ).toBeInTheDocument();
 
-			expect( container.childNodes[ 0 ].childNodes.length ).toBe( 2 );
+			expect( screen.getByTestId('styles-inheritance-indicator') ).toBeInTheDocument();
 		} else {
 			expect( screen.getByText( 'Label' ) ).toBeInTheDocument();
 
-			expect( container.childNodes[ 0 ].childNodes.length ).toBe( 1 );
+			expect( screen.queryByTestId( 'styles-inheritance-indicator' ) ).not.toBeInTheDocument();
 		}
 	} );
 } );

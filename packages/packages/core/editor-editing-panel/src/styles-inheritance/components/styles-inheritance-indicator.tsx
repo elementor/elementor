@@ -70,7 +70,7 @@ const Indicator = ( { inheritanceChain, path, propType, isDisabled }: IndicatorP
 			label={ label }
 			isDisabled={ isDisabled }
 		>
-			<StyleIndicator { ...styleIndicatorProps } />
+			<StyleIndicator { ...styleIndicatorProps } data-testid="styles-inheritance-indicator"/>
 		</StylesInheritanceInfotip>
 	);
 };

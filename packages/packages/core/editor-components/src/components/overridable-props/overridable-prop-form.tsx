@@ -70,9 +70,7 @@ export function OverridablePropForm( { onSubmit, groups, currentValue }: Props )
 									return DEFAULT_GROUP.label;
 								}
 
-								return (
-									groups?.find( ( { value } ) => value === selectedValue )?.label ?? selectedValue
-								);
+								return groups?.find( ( { value } ) => value === selectedValue )?.label ?? selectedValue;
 							} }
 						>
 							{ ( groups ?? [ DEFAULT_GROUP ] ).map( ( { label: groupLabel, ...props } ) => (

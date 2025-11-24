@@ -1,20 +1,11 @@
 import * as React from 'react';
-import {
-	ControlReplacementsProvider,
-	PropKeyProvider,
-	PropProvider,
-	type SetValue,
-	useBoundProp,
-} from '@elementor/editor-controls';
+import { ControlReplacementsProvider, PropKeyProvider, PropProvider, useBoundProp } from '@elementor/editor-controls';
 import { createTopLevelObjectType, SettingsControl, useElement } from '@elementor/editor-editing-panel';
 import { type Control, type ControlItem } from '@elementor/editor-elements';
-import { type PropType, type PropValue } from '@elementor/editor-props';
+import { type PropValue } from '@elementor/editor-props';
 import { generateUniqueId } from '@elementor/utils';
 
-import {
-	componentOverridablePropTypeUtil,
-	type ComponentOverridablePropValue,
-} from '../../prop-types/component-overridable-prop-type';
+import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 
 export function OverridablePropControl() {
 	const { elementType } = useElement();
@@ -23,7 +14,7 @@ export function OverridablePropControl() {
 	const allControls = useAllControls();
 	const { extract, create } = componentOverridablePropTypeUtil;
 
-	const control = allControls.find( ( control ) => control.value.bind === bind );
+	const control = allControls.find( ( { value: { bind: controlBind } } ) => controlBind === bind );
 
 	if ( ! control ) {
 		return null;
