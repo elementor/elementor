@@ -41,8 +41,8 @@ describe( 'OverridablePropIndicator', () => {
 
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { id: MOCK_ELEMENT_ID, type: MOCK_WIDGET_TYPE },
-			elementType: { key: MOCK_WIDGET_TYPE, propsSchema: {} },
-		} as ReturnType< typeof useElement > );
+			elementType: { key: MOCK_WIDGET_TYPE, propsSchema: {}, controls: [], title: 'Test Element' },
+		} );
 	} );
 
 	afterEach( () => {
