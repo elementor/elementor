@@ -10,7 +10,7 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 		createdItems = await setupCompleteTestData( page, test.info(), apiRequests );
 	} );
 
-	test.beforeEach( async ( { page, apiRequests } ) => {
+	test.afterEach( async ( { page, apiRequests } ) => {
 		await cleanupCreatedItems( apiRequests, page.context().request, createdItems );
 		await apiRequests.cleanUpTestPages( page.request );
 	} );
