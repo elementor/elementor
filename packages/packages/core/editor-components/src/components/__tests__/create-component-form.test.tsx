@@ -257,9 +257,11 @@ describe( 'CreateComponentForm', () => {
 					elType: 'widget',
 					widgetType: 'e-component',
 					settings: {
-						component: {
-							$$type: 'component-id',
-							value: GENERATED_UID,
+						component_instance: {
+							$$type: 'component-instance',
+							value: {
+								component_id: GENERATED_UID,
+							},
 						},
 					},
 					editor_settings: {
