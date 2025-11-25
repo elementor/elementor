@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Form, MenuListItem } from '@elementor/editor-ui';
+import { Form as FormElement, MenuListItem } from '@elementor/editor-ui';
 import { Button, FormLabel, Grid, Select, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -16,12 +16,12 @@ type Props = {
 	groups?: { value: string; label: string }[];
 };
 
-export function OverridablePropForm( { onSubmit, groups, currentValue }: Props ) {
+export function Form( { onSubmit, groups, currentValue }: Props ) {
 	const [ label, setLabel ] = useState< string | null >( currentValue?.label ?? null );
 	const [ group, setGroup ] = useState< string | null >( currentValue?.groupId ?? null );
 
 	return (
-		<Form onSubmit={ () => onSubmit( { label: label ?? '', group } ) }>
+		<FormElement onSubmit={ () => onSubmit( { label: label ?? '', group } ) }>
 			<Stack alignItems="start" width="268px">
 				<Stack
 					direction="row"
@@ -87,6 +87,6 @@ export function OverridablePropForm( { onSubmit, groups, currentValue }: Props )
 					</Button>
 				</Stack>
 			</Stack>
-		</Form>
+		</FormElement>
 	);
 }

@@ -59,7 +59,7 @@ export class AtomicHelper {
 	}
 
 	public getHtmlTagControl( deeperSelector: string = '' ) {
-		const control = this.page.locator( `[data-type="settings-field"] label`, { hasText: /Tag/ig } ).locator( '..' );
+		const control = this.page.locator( `[data-type="settings-field"]`, { hasText: /Tag/ig } );
 
 		return deeperSelector
 			? control.locator( deeperSelector )
