@@ -37,7 +37,7 @@ jest.mock( '../../../hooks/use-css-class-usage', () => ( {
 	} ),
 } ) );
 jest.mock( '../../../utils/tracking', () => ( {
-	trackGlobalClasses: jest.fn( async ( payload: any ) => {
+	trackGlobalClasses: jest.fn( async ( payload: unknown & { runAction: () => void } ) => {
 		if ( payload?.runAction ) {
 			payload.runAction();
 		}
