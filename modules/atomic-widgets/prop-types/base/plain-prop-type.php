@@ -45,7 +45,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function get_type(): string {
-		return static::KIND;
+		return static::$KIND;
 	}
 
 	public function validate( $value ): bool {
@@ -59,10 +59,6 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 		);
 	}
 
-	public static function get_kind(): string {
-		return static::$KIND;
-	}
-
 	public function sanitize( $value ) {
 		$value['value'] = $this->sanitize_value( $value['value'] );
 
@@ -71,7 +67,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 
 	public function jsonSerialize(): array {
 		return [
-			'kind' => static::get_kind(),
+			'kind' => static::$KIND,
 			'key' => static::get_key(),
 			'default' => $this->get_default(),
 			'meta' => (object) $this->get_meta(),
