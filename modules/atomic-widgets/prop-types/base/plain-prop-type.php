@@ -45,10 +45,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function get_type(): string {
-		if ( defined( 'static::KIND' ) ) {
-			return static::KIND;
-		}
-		return self::$KIND;
+		return static::KIND;
 	}
 
 	public function validate( $value ): bool {
@@ -63,10 +60,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public static function get_kind(): string {
-		if ( defined( 'static::KIND' ) ) {
-			return static::KIND;
-		}
-		return self::$KIND;
+		return static::$KIND;
 	}
 
 	public function sanitize( $value ) {
