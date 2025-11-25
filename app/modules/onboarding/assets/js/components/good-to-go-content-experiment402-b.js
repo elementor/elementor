@@ -10,6 +10,7 @@ export default function GoodToGoContentExperiment402B( { skipButton } ) {
 
 	const handleBlankCanvasClick = ( event ) => {
 		OnboardingEventTracking.trackStepAction( 4, 'skipped' );
+		OnboardingEventTracking.sendStepEndState( 4 );
 		OnboardingEventTracking.sendEventOrStore( 'SKIP', { currentStep: 4 } );
 		OnboardingEventTracking.sendEventOrStore( 'EXIT', {
 			currentStep: 4,
