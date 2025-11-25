@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type ForwardedRef } from 'react';
+import { type DependencyList, type ForwardedRef, useEffect, useRef } from 'react';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
 import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
@@ -9,6 +9,19 @@ import Strike from '@tiptap/extension-strike';
 import Text from '@tiptap/extension-text';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
+
+const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
+	const hasMounted = useRef( false );
+
+	useEffect( () => {
+		if ( hasMounted.current ) {
+			callback();
+		} else {
+			hasMounted.current = true;
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, dependencies );
+};
 
 type InlineEditorProps = {
 	value: string;
@@ -41,7 +54,7 @@ export const InlineEditor = React.forwardRef(
 			onUpdate: ( { editor: updatedEditor } ) => setValue( updatedEditor.getHTML() ),
 		} );
 
-		React.useEffect( () => {
+		useOnUpdate( () => {
 			if ( ! editor ) {
 				return;
 			}

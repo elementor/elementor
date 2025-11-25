@@ -10,7 +10,9 @@ import type { ElementOverlayProps } from '../types/element-overlay';
 import { getInlineEditablePropertyName } from '../utils/inline-editing-utils';
 import { CANVAS_WRAPPER_ID } from './outline-overlay';
 
-export function InlineEditorOverlay( { element, isSelected, id }: ElementOverlayProps ) {
+const OVERLAY_Z_INDEX = 1000;
+
+export const InlineEditorOverlay = ( { element, isSelected, id }: ElementOverlayProps ): React.ReactElement | null => {
 	const { floating, isVisible } = useFloatingOnElement( { element, isSelected } );
 
 	const propertyName = React.useMemo( () => {
@@ -44,7 +46,7 @@ export function InlineEditorOverlay( { element, isSelected, id }: ElementOverlay
 				ref={ floating.setRef }
 				style={ {
 					...floating.styles,
-					zIndex: 1000,
+					zIndex: OVERLAY_Z_INDEX,
 					pointerEvents: 'auto',
 				} }
 			>

@@ -21,7 +21,7 @@ const OverlayBox = styled( Box, {
 	pointerEvents: 'none',
 } ) );
 
-export function OutlineOverlay( { element, isSelected, id }: Props ) {
+export const OutlineOverlay = ( { element, isSelected, id }: Props ): React.ReactElement | false => {
 	const { context, floating, isVisible } = useFloatingOnElement( { element, isSelected } );
 	const { getFloatingProps, getReferenceProps } = useInteractions( [ useHover( context ) ] );
 	const hasOverlapping = useHasOverlapping();
