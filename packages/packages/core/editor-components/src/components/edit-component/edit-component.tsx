@@ -1,17 +1,15 @@
 import * as React from 'react';
 import { type Dispatch, type SetStateAction, useCallback, useEffect, useState } from 'react';
-import { getV1CurrentDocument, getV1DocumentsManager, type V1Document } from '@elementor/editor-documents';
+import { getV1DocumentsManager, type V1Document } from '@elementor/editor-documents';
 import { type V1Element } from '@elementor/editor-elements';
 import {
 	__privateListenTo as listenTo,
 	__privateRunCommand as runCommand,
 	commandEndEvent,
 } from '@elementor/editor-v1-adapters';
-import { __useDispatch as useDispatch } from '@elementor/store';
 
 import { apiClient } from '../../api';
-import { loadOverridableProps, saveOverrideProps } from '../../hooks/use-save-overide-props';
-import { slice } from '../../store/store';
+import { overrideActions } from '../overridable-props/utils/actions';
 import { COMPONENT_DOCUMENT_TYPE } from '../consts';
 import { ComponentModal } from './component-modal';
 
@@ -58,7 +56,7 @@ function useHandleDocumentSwitches(
 
 				if ( currentComponentId ) {
 					apiClient.unlockComponent( currentComponentId );
-					saveOverrideProps( currentComponentId );
+					overrideActions.save( currentComponentId );
 				}
 
 				const isComponent = nextDocument.config.type === COMPONENT_DOCUMENT_TYPE;
@@ -108,7 +106,6 @@ function useNavigateBack( path: ComponentsPathItem[] ) {
 				setAsInitial: false,
 				shouldScroll: false,
 			} );
-			console.log( 'edit mode' );
 		};
 
 		if ( prevComponentId && prevComponentInstanceId ) {

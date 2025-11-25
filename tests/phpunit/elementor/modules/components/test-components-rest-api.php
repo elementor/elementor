@@ -588,6 +588,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayHasKey( '/elementor/v1/components/lock-status', $routes );
 		$this->assertArrayHasKey( '/elementor/v1/components/lock', $routes );
 		$this->assertArrayHasKey( '/elementor/v1/components/unlock', $routes );
+		$this->assertArrayHasKey( '/elementor/v1/components/get-overridable-props', $routes );
+		$this->assertArrayHasKey( '/elementor/v1/components/save-overridable-props', $routes );
 
 		// Check GET method for components
 		$components_route = $routes['/elementor/v1/components'];
@@ -617,6 +619,16 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$unlock_route = $routes['/elementor/v1/components/unlock'];
 		$unlock_post_methods = array_filter( $unlock_route, fn( $route ) => in_array( 'POST', $route['methods'] ) );
 		$this->assertNotEmpty( $unlock_post_methods );
+
+		// Check GET method for get-overridable-props
+		$get_overridable_route = $routes['/elementor/v1/components/get-overridable-props'];
+		$get_overridable_methods = array_filter( $get_overridable_route, fn( $route ) => in_array( 'GET', $route['methods'] ) );
+		$this->assertNotEmpty( $get_overridable_methods );
+
+		// Check POST method for save-overridable-props
+		$save_overridable_route = $routes['/elementor/v1/components/save-overridable-props'];
+		$save_overridable_methods = array_filter( $save_overridable_route, fn( $route ) => in_array( 'POST', $route['methods'] ) );
+		$this->assertNotEmpty( $save_overridable_methods );
 	}
 
 	public function authentication_test_data_provider() {
@@ -643,6 +655,16 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 				'method' => 'POST',
 				'endpoint' => '/elementor/v1/components/unlock',
 				'params' => [ 'componentId' => 123 ],
+			],
+			'GET get-overridable-props' => [
+				'method' => 'GET',
+				'endpoint' => '/elementor/v1/components/get-overridable-props',
+				'params' => [ 'componentId' => 123 ],
+			],
+			'POST save-overridable-props' => [
+				'method' => 'POST',
+				'endpoint' => '/elementor/v1/components/save-overridable-props',
+				'params' => [ 'componentId' => 123, 'overridable' => [ 'props' => [], 'groups' => [ 'items' => [], 'order' => [] ] ] ],
 			],
 		];
 	}
@@ -678,6 +700,16 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 				'method' => 'POST',
 				'endpoint' => '/elementor/v1/components/unlock',
 				'params' => [ 'componentId' => 123 ],
+			],
+			'GET get-overridable-props' => [
+				'method' => 'GET',
+				'endpoint' => '/elementor/v1/components/get-overridable-props',
+				'params' => [ 'componentId' => 123 ],
+			],
+			'POST save-overridable-props' => [
+				'method' => 'POST',
+				'endpoint' => '/elementor/v1/components/save-overridable-props',
+				'params' => [ 'componentId' => 123, 'overridable' => [ 'props' => [], 'groups' => [ 'items' => [], 'order' => [] ] ] ],
 			],
 		];
 	}
@@ -739,6 +771,27 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 				'params' => [ 'componentId' => 'not-a-number' ],
 				'expected_status' => 400,
 				'expected_code' => 'rest_invalid_param',
+			],
+			'GET get-overridable-props missing componentId' => [
+				'method' => 'GET',
+				'endpoint' => '/elementor/v1/components/get-overridable-props',
+				'params' => [],
+				'expected_status' => 400,
+				'expected_code' => 'rest_missing_callback_param',
+			],
+			'POST save-overridable-props missing componentId' => [
+				'method' => 'POST',
+				'endpoint' => '/elementor/v1/components/save-overridable-props',
+				'params' => [ 'overridable' => [ 'props' => [], 'groups' => [ 'items' => [], 'order' => [] ] ] ],
+				'expected_status' => 400,
+				'expected_code' => 'rest_missing_callback_param',
+			],
+			'POST save-overridable-props missing overridable' => [
+				'method' => 'POST',
+				'endpoint' => '/elementor/v1/components/save-overridable-props',
+				'params' => [ 'componentId' => 123 ],
+				'expected_status' => 400,
+				'expected_code' => 'rest_missing_callback_param',
 			],
 		];
 	}
@@ -947,6 +1000,274 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 		$this->assertEquals( 403, $response->get_status() );
 		$this->assertEquals( 'rest_forbidden', $response->get_data()['code'] );
+	}
+
+	public function test_get_overridable__returns_default_structure_when_no_meta_exists() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/get-overridable-props' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+		$this->assertEquals( [], $data['props'] );
+		$this->assertEquals( [], $data['groups']['items'] );
+		$this->assertEquals( [], $data['groups']['order'] );
+	}
+
+	public function test_get_overridable__returns_existing_overridable_meta() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		$document = Plugin::$instance->documents->get( $component_id );
+		
+		$expected_overridable = [
+			'props' => [
+				[
+					'override-key' => 'test-key-1',
+					'label' => 'Test Label',
+					'elementId' => 'element-123',
+					'propKey' => 'title',
+					'widgetType' => 'heading',
+					'defaultValue' => null,
+					'groupId' => 'group-1',
+				],
+			],
+			'groups' => [
+				'items' => [
+					'group-1' => [
+						'id' => 'group-1',
+						'label' => 'Test Group',
+					],
+				],
+				'order' => [ 'group-1' ],
+			],
+		];
+		
+		$document->update_meta( 'elementor_component_overridable', $expected_overridable );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/get-overridable-props' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+		$this->assertEquals( $expected_overridable, $data );
+	}
+
+	public function test_get_overridable__returns_400_when_component_id_missing() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/get-overridable-props' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_missing_callback_param', $response->get_data()['code'] );
+	}
+
+	public function test_get_overridable__returns_400_when_component_id_invalid() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/get-overridable-props' );
+		$request->set_param( 'componentId', 0 );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'invalid_component_id', $response->get_data()['code'] );
+		$this->assertEquals( 'Invalid component ID', $response->get_data()['message'] );
+	}
+
+	public function test_get_overridable__returns_404_when_component_not_found() {
+		// Arrange
+		$this->act_as_admin();
+		$non_existent_id = 99999;
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/get-overridable-props' );
+		$request->set_param( 'componentId', $non_existent_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 404, $response->get_status() );
+		$this->assertEquals( 'component_not_found', $response->get_data()['code'] );
+		$this->assertEquals( 'Component not found', $response->get_data()['message'] );
+	}
+
+	public function test_save_overridable__successfully_saves_overridable_data() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		
+		$overridable_data = [
+			'props' => [
+				[
+					'override-key' => 'test-key-1',
+					'label' => 'Test Label',
+					'elementId' => 'element-123',
+					'propKey' => 'title',
+					'widgetType' => 'heading',
+					'defaultValue' => null,
+					'groupId' => 'group-1',
+				],
+			],
+			'groups' => [
+				'items' => [
+					'group-1' => [
+						'id' => 'group-1',
+						'label' => 'Test Group',
+					],
+				],
+				'order' => [ 'group-1' ],
+			],
+		];
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/save-overridable-props' );
+		$request->set_param( 'componentId', $component_id );
+		$request->set_param( 'overridable', $overridable_data );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+		$this->assertTrue( $data['saved'] );
+
+		// Verify the data was actually saved
+		$document = Plugin::$instance->documents->get( $component_id );
+		$saved_overridable = $document->get_meta( 'elementor_component_overridable' );
+		$this->assertEquals( $overridable_data, $saved_overridable );
+	}
+
+	public function test_save_overridable__returns_400_when_component_id_missing() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/save-overridable-props' );
+		$request->set_param( 'overridable', [ 'props' => [], 'groups' => [ 'items' => [], 'order' => [] ] ] );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_missing_callback_param', $response->get_data()['code'] );
+	}
+
+	public function test_save_overridable__returns_400_when_component_id_invalid() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/save-overridable-props' );
+		$request->set_param( 'componentId', 0 );
+		$request->set_param( 'overridable', [ 'props' => [], 'groups' => [ 'items' => [], 'order' => [] ] ] );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'invalid_component_id', $response->get_data()['code'] );
+		$this->assertEquals( 'Invalid component ID', $response->get_data()['message'] );
+	}
+
+	public function test_save_overridable__returns_404_when_component_not_found() {
+		// Arrange
+		$this->act_as_admin();
+		$non_existent_id = 99999;
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/save-overridable-props' );
+		$request->set_param( 'componentId', $non_existent_id );
+		$request->set_param( 'overridable', [ 'props' => [], 'groups' => [ 'items' => [], 'order' => [] ] ] );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 404, $response->get_status() );
+		$this->assertEquals( 'component_not_found', $response->get_data()['code'] );
+		$this->assertEquals( 'Component not found', $response->get_data()['message'] );
+	}
+
+	public function test_save_overridable__overwrites_existing_overridable_data() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
+		$document = Plugin::$instance->documents->get( $component_id );
+		
+		$initial_overridable = [
+			'props' => [
+				[
+					'override-key' => 'old-key',
+					'label' => 'Old Label',
+					'elementId' => 'old-element',
+					'propKey' => 'old-prop',
+					'widgetType' => 'old-widget',
+					'defaultValue' => null,
+					'groupId' => 'old-group',
+				],
+			],
+			'groups' => [
+				'items' => [
+					'old-group' => [
+						'id' => 'old-group',
+						'label' => 'Old Group',
+					],
+				],
+				'order' => [ 'old-group' ],
+			],
+		];
+		
+		$document->update_meta( 'elementor_component_overridable', $initial_overridable );
+
+		$new_overridable = [
+			'props' => [
+				[
+					'override-key' => 'new-key',
+					'label' => 'New Label',
+					'elementId' => 'new-element',
+					'propKey' => 'new-prop',
+					'widgetType' => 'new-widget',
+					'defaultValue' => 'default-value',
+					'groupId' => 'new-group',
+				],
+			],
+			'groups' => [
+				'items' => [
+					'new-group' => [
+						'id' => 'new-group',
+						'label' => 'New Group',
+					],
+				],
+				'order' => [ 'new-group' ],
+			],
+		];
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/save-overridable-props' );
+		$request->set_param( 'componentId', $component_id );
+		$request->set_param( 'overridable', $new_overridable );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+		$this->assertTrue( $data['saved'] );
+
+		// Verify the data was overwritten
+		$document = Plugin::$instance->documents->get( $component_id );
+		$saved_overridable = $document->get_meta( 'elementor_component_overridable' );
+		$this->assertEquals( $new_overridable, $saved_overridable );
+		$this->assertNotEquals( $initial_overridable, $saved_overridable );
 	}
 
 	// Helpers

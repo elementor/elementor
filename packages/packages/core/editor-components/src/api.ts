@@ -3,11 +3,14 @@ import { ajax } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 
 import { type DocumentSaveStatus, type PublishedComponent } from './types';
+import { OverridableProps } from './types';
 
 const BASE_URL = 'elementor/v1/components';
 const LOCK_COMPONENT = `${ BASE_URL }/lock`;
 const UNLOCK_COMPONENT = `${ BASE_URL }/unlock`;
-const BASE_URL_LOCK_STATUS = `${ BASE_URL }/lock-status`;
+const BASE_URL_LOCK_STATUS = `${BASE_URL}/lock-status`;
+const BASE_URL_OVERRIDABLE = `${BASE_URL}/get-overridable-props`;
+const BASE_URL_SAVE_OVERRIDABLE = `${BASE_URL}/save-overridable-props`;
 
 export type CreateComponentPayload = {
 	status: DocumentSaveStatus;
@@ -74,14 +77,14 @@ export const apiClient = {
 			.then( ( res ) => res.data ),
 	getOverrideProps: async ( componentId: number ) =>
 		await httpService()
-			.get< { data: Record< string, unknown > } >( `${ BASE_URL }/get-overridable-props`, {
+			.get< { data: Record< string, unknown > } >( `${ BASE_URL_OVERRIDABLE }`, {
 				params: {
 					componentId: componentId.toString(),
 				},
 			} )
 			.then( ( res ) => res.data.data ),
-	setOverrideProps: async ( componentId: number, overridable: Record< string, unknown > ) =>
-		await httpService().post< { data: Record< string, unknown > } >( `${ BASE_URL }/save-overridable-props`, {
+	setOverrideProps: async ( componentId: number, overridable: OverridableProps ) =>
+		await httpService().post< { data: Record< string, unknown > } >( `${ BASE_URL_SAVE_OVERRIDABLE }`, {
 			componentId,
 			overridable,
 		} ),
