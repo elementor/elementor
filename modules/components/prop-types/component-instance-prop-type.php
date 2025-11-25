@@ -1,0 +1,101 @@
+<?php
+
+namespace Elementor\Modules\Components\PropTypes;
+
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Plugin;
+use Elementor\Modules\Components\Documents\Component;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
+class Component_Instance_Prop_Type extends Object_Prop_Type {
+	private $component_overridable_props = null;
+
+	public static function get_key(): string {
+		return 'component-instance';
+	}
+
+	protected function define_shape(): array {
+		return [
+			'component_id' => Number_Prop_Type::make()->required(),
+			'overrides' => Component_Overrides_Prop_Type::make()->optional(),
+		];
+	}
+
+	protected function validate_value( $value ): bool {
+		if ( ! is_array( $value ) ) {
+			return false;
+		}
+
+		$is_valid_structure = (
+			isset( $value['component_id'] ) &&
+			( isset( $value['overrides'] ) ? is_array( $value['overrides'] ) : true )
+		);
+
+		if ( ! $is_valid_structure ) {
+			return false;
+		}
+
+		$is_valid_component_id = Number_Prop_Type::make()->validate( $value['component_id'] );
+
+		if ( ! $is_valid_component_id ) {
+			return false;
+		}
+
+		if ( ! isset( $value['overrides'] ) ) {
+			return true;
+		}
+
+		$sanitized_component_id = Number_Prop_Type::make()->sanitize( $value['component_id'] );
+		$component_overridable_props = $this->get_component_overridable_props( $sanitized_component_id['value'] );
+
+		$is_valid_overrides = Component_Overrides_Prop_Type::make()
+			->set_component_overridable_props( $component_overridable_props )
+			->validate( $value['overrides'] );
+
+		return $is_valid_overrides;
+	}
+
+	public function sanitize_value( $value ): array {
+		$sanitized_component_id = Number_Prop_Type::make()->sanitize( $value['component_id'] );
+
+		$sanitized = [
+			'component_id' => $sanitized_component_id,
+		];
+
+		if ( ! isset( $value['overrides'] ) ) {
+			return $sanitized;
+		}
+
+		$component_overridable_props = $this->get_component_overridable_props( $sanitized_component_id['value'] );
+		$sanitized_overrides = Component_Overrides_Prop_Type::make()
+			->set_component_overridable_props( $component_overridable_props )
+			->sanitize( $value['overrides'] );
+
+		if ( count( $sanitized_overrides['value'] ) > 0 ) {
+			$sanitized['overrides'] = $sanitized_overrides;
+		}
+
+		return $sanitized;
+	}
+
+	private function get_component_overridable_props( int $component_id ) {
+		if ( $this->component_overridable_props ) {
+			return $this->component_overridable_props;
+		}
+
+		$component = Plugin::$instance->documents->get( $component_id );
+
+		/** @var Component $component */
+		if ( ! $component || $component->get_type() !== Component::TYPE ) {
+			return null;
+		}
+
+		$this->component_overridable_props = $component->get_overridable_props();
+
+		return $this->component_overridable_props;
+	}
+}

@@ -340,6 +340,7 @@ class Components_REST_API {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
+			error_log( 'Components REST API route_wrapper error: ' . $e->getMessage() );
 			return Error_Builder::make( 'unexpected_error' )
 				->set_message( __( 'Something went wrong', 'elementor' ) )
 				->build();

@@ -1,4 +1,5 @@
 import { type V1ElementData } from '@elementor/editor-elements';
+import { type TransformablePropValue } from '@elementor/editor-props';
 import type { StyleDefinition } from '@elementor/editor-styles';
 
 export type ComponentFormValues = {
@@ -46,3 +47,18 @@ export type Container = {
 		};
 	};
 };
+
+export type ComponentInstancePropValue< TComponentId extends number | string = number | string > =
+	TransformablePropValue<
+		'component-instance',
+		{
+			component_id: TransformablePropValue< 'number', TComponentId >;
+			overrides?: TransformablePropValue<
+				'component-overrides',
+				Array< {
+					override_key: string;
+					value: TransformablePropValue< string >;
+				} >
+			>;
+		}
+	>;
