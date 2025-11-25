@@ -7,7 +7,7 @@ import { trackGlobalClasses } from '../../utils/tracking';
 
 let isDeleted = false;
 
-export const deleteClass = async ( id: string ) => {
+export const deleteClass = ( id: string ) => {
 	trackGlobalClasses( {
 		event: 'class_deleted',
 		classId: id,

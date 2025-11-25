@@ -36,6 +36,13 @@ jest.mock( '../../../hooks/use-css-class-usage', () => ( {
 		},
 	} ),
 } ) );
+jest.mock( '../../../utils/tracking', () => ( {
+	trackGlobalClasses: jest.fn( async ( payload: any ) => {
+		if ( payload?.runAction ) {
+			payload.runAction();
+		}
+	} ),
+} ) );
 
 const mockUseSearchAndFiltersProps: SearchAndFilterContextType = {
 	search: {
@@ -213,7 +220,9 @@ describe( 'GlobalClassesList', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Delete' } ) );
 
 		// Assert.
-		expect( screen.queryByText( 'Class 1' ) ).not.toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.queryByText( 'Class 1' ) ).not.toBeInTheDocument();
+		} );
 		expect( screen.getByText( 'Class 2' ) ).toBeInTheDocument();
 	} );
 
