@@ -469,8 +469,6 @@ class Module extends BaseModule {
 
 		add_action( 'admin_post_elementor_revert_kit', [ $this, 'handle_revert_last_imported_kit' ] );
 
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
-
 		if ( ! Plugin::$instance->experiments->is_feature_active( 'import-export-customization' ) ) {
 			$page_id = Tools::PAGE_ID;
 
@@ -540,28 +538,6 @@ class Module extends BaseModule {
 		if ( ! class_exists( 'DOMDocument' ) ) {
 			throw new \Error( self::DOMDOCUMENT_MISSING ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
 		}
-	}
-
-	/**
-	 * Enqueue admin scripts
-	 */
-	public function enqueue_scripts() {
-		wp_enqueue_script(
-			'elementor-import-export-admin',
-			$this->get_js_assets_url( 'import-export-admin' ),
-			[ 'elementor-common' ],
-			ELEMENTOR_VERSION,
-			true
-		);
-
-		wp_localize_script(
-			'elementor-import-export-admin',
-			'elementorImportExport',
-			[
-				'lastImportedSession' => $this->revert->get_last_import_session(),
-				'appUrl' => Plugin::$instance->app->get_base_url() . '#/kit-library',
-			]
-		);
 	}
 
 	/**
