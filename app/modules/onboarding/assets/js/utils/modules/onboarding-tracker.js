@@ -1077,16 +1077,24 @@ class OnboardingTracker {
 		StorageManager.remove( storageKey );
 	}
 
-	async startSessionRecordingIfNeeded( stepNumber ) {
-		if ( ! elementorCommon?.eventsManager?.featureFlagIsActive ) {
+	startSessionRecordingIfNeeded( stepNumber ) {
+		const featureFlagPromise = elementorCommon?.eventsManager?.featureFlagIsActive?.( 'core-onboarding-session-replays' );
+		if ( ! featureFlagPromise ) {
 			return;
 		}
 
-		const isFeatureFlagActive = await elementorCommon.eventsManager.featureFlagIsActive( 'core-onboarding-session-replays' );
-		if ( ! isFeatureFlagActive ) {
-			return;
-		}
+		featureFlagPromise
+			.then( ( isFeatureFlagActive ) => {
+				if ( ! isFeatureFlagActive ) {
+					return;
+				}
 
+				this.startSessionRecording( stepNumber );
+			} )
+			.catch( () => {} );
+	}
+
+	startSessionRecording( stepNumber ) {
 		if ( ! EventDispatcher.canSendEvents() ) {
 			return;
 		}
@@ -1130,7 +1138,7 @@ class OnboardingTracker {
 		}
 
 		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
-			this.startSessionRecordingIfNeeded( stepNumber ).catch( () => {} );
+			this.startSessionRecordingIfNeeded( stepNumber );
 			this.sendStoredStep1EventsOnStep2();
 			this.sendExperimentStarted( 201 );
 			this.sendExperimentStarted( 202 );
