@@ -103,4 +103,26 @@ class Manager extends DB_Upgrades_Manager {
 
 		return empty( $installs_history ) || static::install_compare( ELEMENTOR_VERSION, '>=' );
 	}
+
+	public static function had_install_prior_to( string $version ): bool {
+		if ( ! $version ) {
+			return false;
+		}
+
+		$installs_history = self::get_installs_history();
+
+		if ( empty( $installs_history ) ) {
+			return false;
+		}
+
+		uksort( $installs_history, 'version_compare' );
+
+		$first_version = array_key_first( $installs_history );
+
+		if ( ! $first_version ) {
+			return false;
+		}
+
+		return version_compare( $first_version, $version, '<' );
+	}
 }

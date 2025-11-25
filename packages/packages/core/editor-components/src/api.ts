@@ -72,4 +72,17 @@ export const apiClient = {
 				componentId,
 			} )
 			.then( ( res ) => res.data ),
+	getOverrideProps: async ( componentId: number ) =>
+		await httpService()
+			.get< { data: Record< string, unknown > } >( `${ BASE_URL }/get-overridable-props`, {
+				params: {
+					componentId: componentId.toString(),
+				},
+			} )
+			.then( ( res ) => res.data.data ),
+	setOverrideProps: async ( componentId: number, overridable: Record< string, unknown > ) =>
+		await httpService().post< { data: Record< string, unknown > } >( `${ BASE_URL }/save-overridable-props`, {
+			componentId,
+			overridable,
+		} ),
 };

@@ -1,10 +1,14 @@
 import * as React from 'react';
 import { type CSSProperties, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { getV1CurrentDocument } from '@elementor/editor-documents';
+import { __useDispatch as useDispatch } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
 import { useCanvasDocument } from '../../hooks/use-canvas-document';
 import { useElementRect } from '../../hooks/use-element-rect';
+import { loadOverridableProps } from '../../hooks/use-save-overide-props';
+import { slice } from '../../store/store';
 
 type ModalProps = {
 	element: HTMLElement;
@@ -12,6 +16,18 @@ type ModalProps = {
 };
 export function ComponentModal( { element, onClose }: ModalProps ) {
 	const canvasDocument = useCanvasDocument();
+	const currentDocument = getV1CurrentDocument();
+	const componentId = currentDocument?.id;
+	const dispatch = useDispatch();
+	useEffect( () => {
+		const getOverridable = () => {
+			loadOverridableProps( componentId ).then( ( data ) => {
+				dispatch( slice.actions.setOverridableProps( { componentId, overrides: data } ) );
+			} );
+		};
+
+		getOverridable();
+	}, [] );
 
 	useEffect( () => {
 		const handleEsc = ( event: KeyboardEvent ) => {
@@ -85,7 +101,7 @@ function getRoundedRectPath( rect: DOMRect, viewport: Window, borderRadius: numb
 
 	const { innerWidth: vw, innerHeight: vh } = viewport;
 
-	const path = `path(evenodd, 'M 0 0 
+	const path = `path(evenodd, 'M 0 0
 		L ${ vw } 0
 		L ${ vw } ${ vh }
 		L 0 ${ vh }
