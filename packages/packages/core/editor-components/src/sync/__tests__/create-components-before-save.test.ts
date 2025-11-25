@@ -127,9 +127,9 @@ describe( 'createComponentsBeforeSave', () => {
 			expect( mockUpdateElementSettings ).toHaveBeenCalledWith( {
 				id: 'element-1_component-with-temp-id',
 				props: {
-					component: {
-						$$type: 'component-id',
-						value: 1111,
+					component_instance: {
+						$$type: 'component-instance',
+						value: { component_id: 1111 },
 					},
 				},
 				withHistory: false,
@@ -137,9 +137,9 @@ describe( 'createComponentsBeforeSave', () => {
 			expect( mockUpdateElementSettings ).toHaveBeenCalledWith( {
 				id: 'element-3_component-with-temp-id',
 				props: {
-					component: {
-						$$type: 'component-id',
-						value: 3333,
+					component_instance: {
+						$$type: 'component-instance',
+						value: { component_id: 3333 },
 					},
 				},
 				withHistory: false,
@@ -265,9 +265,9 @@ const mockPageElements: V1ElementData[] = [
 		elType: 'widget',
 		widgetType: 'e-component',
 		settings: {
-			component: {
-				$$type: 'component-id',
-				value: COMPONENT_1_UID,
+			component_instance: {
+				$$type: 'component-instance',
+				value: { component_id: COMPONENT_1_UID },
 			},
 		},
 	},
@@ -280,9 +280,9 @@ const mockPageElements: V1ElementData[] = [
 				elType: 'widget',
 				widgetType: 'e-component',
 				settings: {
-					component: {
-						$$type: 'component-id',
-						value: COMPONENT_2_UID,
+					component_instance: {
+						$$type: 'component-instance',
+						value: { component_id: COMPONENT_2_UID },
 					},
 				},
 			},
@@ -304,9 +304,9 @@ const mockPageElements: V1ElementData[] = [
 		elType: 'widget',
 		widgetType: 'e-component',
 		settings: {
-			component: {
-				$$type: 'component-id',
-				value: 4444,
+			component_instance: {
+				$$type: 'component-instance',
+				value: { component_id: 4444 },
 			},
 		},
 	},
