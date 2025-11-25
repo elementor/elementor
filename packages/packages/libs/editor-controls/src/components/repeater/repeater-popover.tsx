@@ -8,7 +8,7 @@ export const RepeaterPopover = ( { children, width, ...props }: PopoverProps & {
 			anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
 			slotProps={ {
 				paper: {
-					sx: { mt: 0.5, width },
+					sx: { marginBlockStart: 0.5, width, overflow: 'visible' },
 				},
 			} }
 			{ ...props }
