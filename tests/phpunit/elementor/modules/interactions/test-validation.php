@@ -2,8 +2,6 @@
 
 use PHPUnit\Framework\TestCase;
 
-use \Exception;
-
 use Elementor\Modules\Interactions\Presets;
 use Elementor\Modules\Interactions\Validation;
 
@@ -259,7 +257,7 @@ class Test_Validation extends TestCase {
 	public function test_sanitize__will_throw_if_number_of_interactions_per_element_exceeds_the_limit() {
 		$document = $this->mock_document_data__with_interactions_overflow( 6 );
 
-		$this->expectException( Exception::class );
+		$this->expectException( \Exception::class );
 
 		$validation = $this->validation( [
 			[

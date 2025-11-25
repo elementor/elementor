@@ -55,6 +55,10 @@ class Parser {
 			}
 		}
 
+		if ( empty( $interactions['items'] ) ) {
+			return [];
+		}
+
 		return wp_json_encode( $interactions );
 	}
 
