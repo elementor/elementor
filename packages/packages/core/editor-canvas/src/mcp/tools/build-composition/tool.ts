@@ -29,14 +29,6 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			const rootContainers: V1Element[] = [];
 			const widgetsCache = getWidgetsCache() || {};
 			const documentContainer = getContainer( 'document' ) as unknown as V1Element;
-			// const rootContainer = createElement( {
-			// 	containerId: documentContainer.id,
-			// 	model: {
-			// 		elType: 'container',
-			// 		id: generateElementId(),
-			// 	},
-			// 	options: { useHistory: false },
-			// } );
 			try {
 				const parser = new DOMParser();
 				xml = parser.parseFromString( xmlStructure, 'application/xml' );
