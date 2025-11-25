@@ -38,7 +38,11 @@ export const createPropValue = <TType extends string, TValue>(
 
 // Generate unique ID for new interactions
 export const generateInteractionId = (): string => {
-	return Math.random().toString( 36 ).substring( 2, 10 );
+	return `temp-${ Math.random().toString( 36 ).substring( 2, 10 ) }`;
+};
+
+export const isTempInteractionId = ( id: string ): boolean => {
+	return id.startsWith( 'temp-' );
 };
 
 // Parse InteractionItem to flat structure for controls
@@ -84,7 +88,11 @@ export const buildInteractionItem = (
 	existingItem?: InteractionItem
 ): InteractionItem => {
 	const existingValue = existingItem ? getPropValue( existingItem, {} as InteractionItemValue ) : undefined;
-	const interactionId = existingValue?.interaction_id?.value || generateInteractionId();
+	const existingId = existingValue?.interaction_id?.value || generateInteractionId();
+
+	const interactionId = existingId && ! isTempInteractionId( existingId ) 
+		? existingId 
+		: generateInteractionId();
 
 	const itemValue: InteractionItemValue = {
 		interaction_id: createPropValue( 'string', interactionId ),
@@ -101,6 +109,28 @@ export const buildInteractionItem = (
 	};
 
 	return createPropValue( 'interaction-item', itemValue );
+};
+
+export const sanitizeInteractionItemForSave = ( item: InteractionItem ): InteractionItem => {
+	const itemValue = getPropValue( item, {} as InteractionItemValue );
+	const interactionId = itemValue.interaction_id?.value;
+	
+	// If ID is temporary, remove it so backend generates a real one
+	if ( isTempInteractionId( interactionId ) ) {
+		const sanitizedValue: InteractionItemValue = {
+			...itemValue,
+			interaction_id: createPropValue( 'string', '' ), // Empty string or omit entirely
+		};
+		return createPropValue( 'interaction-item', sanitizedValue );
+	}
+	
+	// Return as-is if it's a real ID
+	return item;
+};
+
+// Sanitize all interactions before saving
+export const sanitizeInteractionsForSave = ( interactions: InteractionItem[] ): InteractionItem[] => {
+	return interactions.map( sanitizeInteractionItemForSave );
 };
 
 export const getInteractionLabel = ( item: InteractionItem ): string => {

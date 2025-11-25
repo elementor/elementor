@@ -269,6 +269,10 @@ trait Has_Atomic_Base {
 		if ( ! is_array( $interaction ) ) {
 			return '';
 		}
+
+		if ( isset( $interaction['$$type'] ) && $interaction['$$type'] === 'interaction-item' && isset( $interaction['value'] ) ) {
+			$interaction = $interaction['value'];
+		}
 	
 		$interaction_id = $this->get_prop_value( $interaction, 'interaction_id' );
 		$trigger = $this->get_prop_value( $interaction, 'trigger' );

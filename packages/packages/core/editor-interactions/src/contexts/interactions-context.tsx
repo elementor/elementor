@@ -7,6 +7,8 @@ import {
 	useElementInteractions,
 } from '@elementor/editor-elements';
 
+import { sanitizeInteractionsForSave } from '../utils/interactions-helpers';
+
 type InteractionsContextValue = {
 	interactions: ElementInteractions;
 	setInteractions: ( value: ElementInteractions | undefined ) => void;
@@ -23,6 +25,12 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 	}, [] );
 
 	const setInteractions = ( value: ElementInteractions | undefined ) => {
+
+		const sanitizedValue = value ? {
+			...value,
+			items: sanitizeInteractionsForSave( value.items ),
+		} : undefined;
+
 		updateElementInteractions( {
 			elementId,
 			interactions: value,

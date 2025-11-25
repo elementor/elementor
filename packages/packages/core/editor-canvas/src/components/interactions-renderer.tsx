@@ -43,11 +43,18 @@ export function InteractionsRenderer() {
 
 function transformInteractionsToIds( interactions: any ): string[] {
 	if ( ! interactions || ! interactions.items || ! Array.isArray( interactions.items ) ) {
+		console.log('im empty interactions');
 		return [];
 	}
 
 	return interactions.items
-		.map( ( item: any ) => {
+		.map( ( wrappedItem: any ) => {
+			console.log('im wrappedItem', wrappedItem);
+			let item = wrappedItem;
+			if ( wrappedItem?.$$type === 'interaction-item' && wrappedItem?.value ) {
+				item = wrappedItem.value;
+			}
+			console.log('im item', item);
 			const interactionId = getPropValue( item, 'interaction_id' );
 			const trigger = getPropValue( item, 'trigger' );
 			const animation = getPropValue( item, 'animation' );
@@ -81,7 +88,7 @@ function transformInteractionsToIds( interactions: any ): string[] {
 
 			return parts.join( '-' );
 		} )
-		.filter( ( id ): id is string => id !== null );
+		.filter( ( id: string | null ): id is string => id !== null );
 }
 
 function getPropValue( data: any, key: string, defaultValue: any = '' ): any {
