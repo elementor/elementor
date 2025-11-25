@@ -4,6 +4,7 @@ namespace Elementor\Modules\Variables\Storage\Entities;
 
 use InvalidArgumentException;
 
+// TODO client has to handle the deleted_at not deleted boolean
 class Variable {
 	private array $data;
 

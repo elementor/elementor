@@ -4,10 +4,14 @@ namespace Elementor\Tests\Modules\Variables\Classes;
 
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\Variables\Classes\Rest_Api;
-use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
+use Elementor\Modules\Variables\Services\Batch_Operations\BatchProcessor;
+use Elementor\Modules\Variables\Services\Variables_Service;
+use Elementor\Modules\Variables\Storage\Variables_Collection;
+use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
+use PHPUnit\Framework\TestCase;
 use WP_REST_Request;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,6 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @group Elementor
  * @group Elementor\Modules
  * @group Elementor\Modules\Variables
+ * @coversNothing
  */
 class Test_Rest_Api extends Elementor_Test_Base {
 	/**
@@ -34,9 +39,12 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->kit = $this->createMock( Kit::class );
+		$repository = new Variables_Repository( $this->kit );
+		$service = new Variables_Service( $repository );
 
 		$this->rest_api = new Rest_Api(
-			new Variables_Repository( $this->kit )
+			$service,
+			new BatchProcessor( $repository, $service )
 		);
 	}
 
@@ -195,7 +203,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( Color_Variable_Prop_Type::get_key(), $response_data['data']['variable']['type'] );
 		$this->assertEquals( 'Primary Color', $response_data['data']['variable']['label'] );
 		$this->assertEquals( '#FF0000', $response_data['data']['variable']['value'] );
-		$this->assertTrue( $response_data['data']['variable']['deleted'] );
 		$this->assertNotEmpty( $response_data['data']['variable']['deleted_at'] );
 	}
 
@@ -266,7 +273,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 		$this->assertEquals( 'Primary Color', $response_data['data']['variable']['label'] );
 		$this->assertEquals( '#FF0000', $response_data['data']['variable']['value'] );
-		$this->assertArrayNotHasKey( 'deleted', $response_data['data']['variable'] );
 		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
 	}
 
@@ -319,7 +325,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 		$this->assertEquals( 'main-text-color', $response_data['data']['variable']['label'] );
 		$this->assertEquals( '#202020', $response_data['data']['variable']['value'] );
-		$this->assertArrayNotHasKey( 'deleted', $response_data['data']['variable'] );
 		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
 	}
 
@@ -446,7 +451,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 			expects( $this->once() )->
 			method( 'get_json_meta' )->
 			willReturn( [
-				'data' => array_fill( 0, Variables_Repository::TOTAL_VARIABLES_COUNT, [
+				'data' => array_fill( 0, Variables_Collection::TOTAL_VARIABLES_COUNT, [
 					'type' => Color_Variable_Prop_Type::get_key(),
 					'label' => 'primary-color',
 					'value' => '#FF0000',

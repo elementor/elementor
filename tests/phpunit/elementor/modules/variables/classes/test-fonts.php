@@ -2,30 +2,30 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
+use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 
 /**
  * @group Elementor\Modules
  * @group Elementor\Modules\Variables
  */
 class Test_Fonts extends Elementor_Test_Base {
-	private $repository;
+	private $service;
 	private $post_css;
 
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->repository = $this->createMock( Variables_Repository::class );
+		$this->service = $this->createMock( Variables_Service::class );
 
 		$this->post_css = $this->createMock( Post_CSS::class );
 	}
 
 	public function test_append_to__will_skip_regular_post_css() {
 		// Arrange.
-		$this->repository->method( 'variables' )->willReturn( [
+		$this->service->method( 'get_variables' )->willReturn( [
 			'e-gv-a01' => [
 				'type' => 'global-font-variable',
 				'label' => 'primary-font',
@@ -41,12 +41,12 @@ class Test_Fonts extends Elementor_Test_Base {
 			->method( 'add_font' );
 
 		// Act.
-		( new Fonts( $this->repository ) )->append_to( $this->post_css );
+		( new Fonts( $this->service ) )->append_to( $this->post_css );
 	}
 
 	public function test_append_to__will_add_font_variable_to_the_active_kit() {
 		// Arrange.
-		$this->repository->method( 'variables' )->willReturn( [
+		$this->service->method( 'get_variables' )->willReturn( [
 			'e-gv-a01' => [
 				'type' => 'global-font-variable',
 				'label' => 'primary-font',
@@ -63,6 +63,6 @@ class Test_Fonts extends Elementor_Test_Base {
 			->with( 'Roboto' );
 
 		// Act.
-		( new Fonts( $this->repository ) )->append_to( $this->post_css );
+		( new Fonts( $this->service ) )->append_to( $this->post_css );
 	}
 }
