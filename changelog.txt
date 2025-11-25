@@ -1,5 +1,11 @@
 == Changelog ==
 
+= 3.33.2 - 2025-11-23 =
+
+* Security Fix: Improved code security enforcement in repeater widgets
+* Security Fix: Improved code security enforcement in Star Rating widget
+* Fix: Editor not loading with errors in the console in certain scenarios – Editor V4
+
 = 3.33.1 - 2025-11-17 =
 
 * Security Fix: Improved code security enforcement in Floating Elements
