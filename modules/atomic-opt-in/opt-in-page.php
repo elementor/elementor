@@ -20,6 +20,7 @@ class OptInPage {
 		}
 
 		$this->register_assets();
+
 		$this->add_settings_tab();
 	}
 
