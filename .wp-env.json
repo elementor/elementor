@@ -1,6 +1,6 @@
 {
 	"core": null,
-	"phpVersion": "8.5",
+	"phpVersion": "8.0",
 	"plugins": [
 		"./build"
 	],
@@ -16,8 +16,6 @@
 	"config": {
 		"ELEMENTOR_SHOW_HIDDEN_EXPERIMENTS": true,
 		"SCRIPT_DEBUG": false,
-		"WP_DEBUG": true,
-		"WP_DEBUG_LOG": true,
-		"WP_DEBUG_DISPLAY": false
+		"WP_DEBUG": false
 	}
 }

@@ -49,7 +49,6 @@
     "restart:testing": "bash scripts/setup-testing.sh --restart",
     "packages:version": "cd packages && npm run version",
     "packages:release": "cd packages && npm run release",
-    "lint:php:8.5": "php -d memory_limit=512M phpcs -sw --standard=PHPCompatibilityWP --extensions=php --ignore=node_modules,assets,tmp --runtime-set testVersion 8.5 .",
     "experimental:wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json",
     "experimental:wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json",
     "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run experimental:wp-playground\" \"npm run test:playwright -- --ui\""
