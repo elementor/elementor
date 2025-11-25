@@ -28,7 +28,7 @@ class Batch_Processor {
 
 	/**
 	 * @throws BatchOperationFailed Thrown when one of the operations fails.
-	 * @throws RuntimeException Failed to save after batch.
+	 * @throws FatalError Failed to save after batch.
 	 */
 	public function process_batch( array $operations ) {
 		$collection = $this->repo->load();
