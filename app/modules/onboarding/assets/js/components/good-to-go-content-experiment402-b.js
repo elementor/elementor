@@ -9,9 +9,12 @@ export default function GoodToGoContentExperiment402B( { skipButton } ) {
 	const kitLibraryLink = elementorAppConfig.onboarding.urls.kitLibrary + '&referrer=onboarding';
 
 	const handleBlankCanvasClick = ( event ) => {
-		OnboardingEventTracking.handleSiteStarterChoice( 'blank_canvas' );
 		OnboardingEventTracking.trackStepAction( 4, 'skipped' );
 		OnboardingEventTracking.sendEventOrStore( 'SKIP', { currentStep: 4 } );
+		OnboardingEventTracking.sendEventOrStore( 'EXIT', {
+			currentStep: 4,
+			exitType: 'skip_button',
+		} );
 
 		if ( skipButton.href ) {
 			event.preventDefault();
