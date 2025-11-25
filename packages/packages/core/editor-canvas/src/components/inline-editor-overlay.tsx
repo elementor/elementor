@@ -25,10 +25,13 @@ export const InlineEditorOverlay = ( { element, isSelected, id }: ElementOverlay
 
 	const handleValueChange = React.useCallback(
 		( newValue: string ) => {
+			const textContent = newValue.replace( /<[^>]*>/g, '' ).trim();
+			const valueToSave = textContent === '' ? '&nbsp;' : newValue;
+
 			updateElementSettings( {
 				id,
 				props: {
-					[ propertyName ]: htmlPropTypeUtil.create( newValue ),
+					[ propertyName ]: htmlPropTypeUtil.create( valueToSave ),
 				},
 				withHistory: true,
 			} );

@@ -13,6 +13,10 @@ export const onElementRender = ( {
 	elementType: string;
 	elementId: string;
 } ) => {
+	if ( ! element ) {
+		return;
+	}
+
 	const controller = new AbortController();
 	const manualUnmount: ( () => void )[] = [];
 
