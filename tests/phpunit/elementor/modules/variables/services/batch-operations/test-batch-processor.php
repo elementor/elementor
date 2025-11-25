@@ -31,9 +31,8 @@ class Test_Batch_Processor extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->repository = $this->createMock( Variables_Repository::class );
 		$this->service = $this->createMock( Variables_Service::class );
-		$this->processor = new BatchProcessor( $this->repository, $this->service );
+		$this->processor = new Batch_Processor( $this->service );
 	}
 
 	protected function assertArrayContainsArray( array $expected, array $actual ) {
@@ -97,8 +96,8 @@ class Test_Batch_Processor extends TestCase {
 			],
 		];
 
-		$this->repository->method( 'load' )->willReturn( $collection );
-		$this->repository->method( 'save' )->willReturn( 6 );
+		$this->service->method( 'get_collection' )->willReturn( $collection );
+		$this->service->method( 'save_collection' )->willReturn( 6 );
 
 		$this->service->method( 'find_or_fail' )->willReturnCallback( function ( $col, $id ) {
 			return $col->get( $id );
@@ -181,7 +180,7 @@ class Test_Batch_Processor extends TestCase {
 			],
 		];
 
-		$this->repository->method( 'load' )->willReturn( $collection );
+		$this->service->method( 'get_collection' )->willReturn( $collection );
 
 		// Assert
 		$this->expectException( BatchOperationFailed::class );
@@ -205,12 +204,12 @@ class Test_Batch_Processor extends TestCase {
 			],
 		];
 
-		$this->repository->method( 'load' )->willReturn( $collection );
-		$this->repository->method( 'save' )->willReturn( false );
+		$this->service->method( 'get_collection' )->willReturn( $collection );
+		$this->service->method( 'save_collection' )->willReturn( false );
 
 		// Assert
-		$this->expectException( \RuntimeException::class );
-		$this->expectExceptionMessage( 'Failed to save after batch.' );
+		$this->expectException( \Elementor\Modules\Variables\Storage\Exceptions\FatalError::class );
+		$this->expectExceptionMessage( 'Failed to save batch operations' );
 
 		// Act
 		$this->processor->process_batch( $data );
@@ -244,7 +243,7 @@ class Test_Batch_Processor extends TestCase {
 				],
 			]
 		];
-		$this->repository->method( 'load' )->willReturn( $collection );
+		$this->service->method( 'get_collection' )->willReturn( $collection );
 
 		// Act.
 		try {
@@ -267,7 +266,7 @@ class Test_Batch_Processor extends TestCase {
 
 	public function test_process_batch__throws_fatal_error_when_save_fails() {
 		// Arrange
-		$this->repository->method( 'save' )->willReturn( false );
+		$this->service->method( 'save_collection' )->willReturn( false );
 
 		$data = [
 			[

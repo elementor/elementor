@@ -6,9 +6,7 @@ use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
-use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
-use RuntimeException;
 
 class Batch_Processor {
 	private const OPERATION_MAP = [
@@ -18,11 +16,9 @@ class Batch_Processor {
 		'restore' => 'op_restore',
 	];
 
-	private Variables_Repository $repo;
 	private Variables_Service $service;
 
 	public function __construct( Variables_Service $service ) {
-		$this->repo = $service->get_repository();
 		$this->service = $service;
 	}
 
@@ -31,7 +27,7 @@ class Batch_Processor {
 	 * @throws FatalError Failed to save after batch.
 	 */
 	public function process_batch( array $operations ) {
-		$collection = $this->repo->load();
+		$collection = $this->service->get_collection();
 		$results = [];
 		$errors = [];
 
@@ -55,7 +51,7 @@ class Batch_Processor {
 			throw new BatchOperationFailed( 'Batch failed', $errors );
 		}
 
-		$watermark = $this->repo->save( $collection );
+		$watermark = $this->service->save_collection( $collection );
 
 		if ( false === $watermark ) {
 			throw new FatalError( 'Failed to save batch operations' );

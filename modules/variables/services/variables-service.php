@@ -20,14 +20,22 @@ class Variables_Service {
 	}
 
 	public function load() {
-		return $this->repo->load()->serialize();
+		return $this->get_collection()->serialize();
+	}
+
+	public function get_collection(): Variables_Collection {
+		return $this->repo->load();
+	}
+
+	public function save_collection( Variables_Collection $collection ) {
+		return $this->repo->save( $collection );
 	}
 
 	/**
 	 * @throws FatalError If variable create fails or validation errors occur.
 	 */
 	public function create( array $data ): array {
-		$collection = $this->repo->load();
+		$collection = $this->get_collection();
 
 		$collection->assert_limit_not_reached();
 		$collection->assert_label_is_unique( $data['label'] );
@@ -44,7 +52,7 @@ class Variables_Service {
 
 		$collection->add_variable( $variable );
 
-		$watermark = $this->repo->save( $collection );
+		$watermark = $this->save_collection( $collection );
 
 		if ( false === $watermark ) {
 			throw new FatalError( 'Failed to create variable' );
@@ -60,7 +68,7 @@ class Variables_Service {
 	 * @throws FatalError If variable update fails.
 	 */
 	public function update( string $id, array $data ): array {
-		$collection = $this->repo->load();
+		$collection = $this->get_collection();
 		$variable = $this->find_or_fail( $collection, $id );
 
 		if ( isset( $data['label'] ) ) {
@@ -69,7 +77,7 @@ class Variables_Service {
 
 		$variable->apply_changes( $data );
 
-		$watermark = $this->repo->save( $collection );
+		$watermark = $this->save_collection( $collection );
 
 		if ( false === $watermark ) {
 			throw new FatalError( 'Failed to update variable' );
@@ -85,12 +93,12 @@ class Variables_Service {
 	 * @throws FatalError If variable delete fails.
 	 */
 	public function delete( string $id ) {
-		$collection = $this->repo->load();
+		$collection = $this->get_collection();
 		$variable = $this->find_or_fail( $collection, $id );
 
 		$variable->soft_delete();
 
-		$watermark = $this->repo->save( $collection );
+		$watermark = $this->save_collection( $collection );
 
 		if ( false === $watermark ) {
 			throw new FatalError( 'Failed to delete variable' );
@@ -106,7 +114,7 @@ class Variables_Service {
 	 * @throws FatalError If variable restore fails.
 	 */
 	public function restore( string $id, $overrides = [] ) {
-		$collection = $this->repo->load();
+		$collection = $this->get_collection();
 		$variable = $this->find_or_fail( $collection, $id );
 
 		$collection->assert_limit_not_reached();
@@ -119,7 +127,7 @@ class Variables_Service {
 
 		$variable->restore();
 
-		$watermark = $this->repo->save( $collection );
+		$watermark = $this->save_collection( $collection );
 
 		if ( false === $watermark ) {
 			throw new FatalError( 'Failed to delete variable' );
@@ -142,12 +150,5 @@ class Variables_Service {
 		}
 
 		return $variable;
-	}
-
-	/**
-	 * @return Variables_Repository
-	 */
-	public function get_repository(): Variables_Repository {
-		return $this->repo;
 	}
 }
