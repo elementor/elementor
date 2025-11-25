@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Plain_Prop_Type implements Transformable_Prop_Type {
-	const KIND = 'plain';
+	static $KIND = 'plain';
 
 	use Concerns\Has_Default;
 	use Concerns\Has_Generate;
@@ -20,6 +20,9 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	use Concerns\Has_Transformable_Validation;
 	use Concerns\Has_Initial_Value;
 
+	/**
+	 * @return array<Plain_Prop_Type>
+	 */
 	public static function get_subclasses(): array {
 		$children = [];
 		foreach ( get_declared_classes() as $class ) {
@@ -40,7 +43,10 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function get_type(): string {
-		return 'plain';
+		if ( defined( 'static::KIND' ) ) {
+			return static::KIND;
+		}
+		return self::$KIND;
 	}
 
 	public function validate( $value ): bool {
@@ -54,6 +60,13 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 		);
 	}
 
+	public static function get_kind(): string {
+		if ( defined( 'static::KIND' ) ) {
+			return static::KIND;
+		}
+		return self::$KIND;
+	}
+
 	public function sanitize( $value ) {
 		$value['value'] = $this->sanitize_value( $value['value'] );
 
@@ -62,7 +75,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 
 	public function jsonSerialize(): array {
 		return [
-			'kind' => static::KIND,
+			'kind' => static::get_kind(),
 			'key' => static::get_key(),
 			'default' => $this->get_default(),
 			'meta' => (object) $this->get_meta(),

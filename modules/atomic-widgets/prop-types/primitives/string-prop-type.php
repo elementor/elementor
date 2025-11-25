@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class String_Prop_Type extends Plain_Prop_Type {
-	const KIND = 'string';
+	static $KIND = 'string';
 
 	public static function get_key(): string {
 		return 'string';

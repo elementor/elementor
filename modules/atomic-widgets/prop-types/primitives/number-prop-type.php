@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Number_Prop_Type extends Plain_Prop_Type {
-	const KIND = 'number';
+	static $KIND = 'number';
 
 	private bool $is_float = false;
 

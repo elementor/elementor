@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Boolean_Prop_Type extends Plain_Prop_Type {
-	const KIND = 'boolean';
+	static $KIND = 'boolean';
 	
 	public static function get_key(): string {
 		return 'boolean';
