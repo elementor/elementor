@@ -25,6 +25,7 @@ const overlayRegistry: ElementOverlayConfig[] = [
 			if ( ! isSelected ) {
 				return false;
 			}
+			
 			const container = getContainer( id );
 			return hasInlineEditableProperty( container );
 		},
