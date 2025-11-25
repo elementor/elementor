@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-	type Control,
-	type ControlItem,
-	type Element,
-	type ElementControl,
-} from '@elementor/editor-elements';
+import { type Control, type ControlItem, type Element, type ElementControl } from '@elementor/editor-elements';
 import { SessionStorageProvider } from '@elementor/session';
 
 import { useElement } from '../contexts/element-context';
@@ -55,7 +50,6 @@ export const SettingsTab = () => {
 		</SessionStorageProvider>
 	);
 };
-
 
 function getKey( control: Control | ElementControl, element: Element ) {
 	if ( control.type === 'control' ) {
