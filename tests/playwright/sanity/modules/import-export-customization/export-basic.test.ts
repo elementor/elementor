@@ -6,11 +6,11 @@ import { ImportExportHelpers } from './helpers/import-export-helpers';
 test.describe( 'Import Export Customization - Basic Export', () => {
 	let createdItems: CreatedItems;
 
-	test.beforeAll( async ( { page, apiRequests } ) => {
+	test.beforeEach( async ( { page, apiRequests } ) => {
 		createdItems = await setupCompleteTestData( page, test.info(), apiRequests );
 	} );
 
-	test.beforeAll( async ( { page, apiRequests } ) => {
+	test.beforeEach( async ( { page, apiRequests } ) => {
 		await cleanupCreatedItems( apiRequests, page.context().request, createdItems );
 		await apiRequests.cleanUpTestPages( page.request );
 	} );

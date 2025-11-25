@@ -594,6 +594,7 @@ test.describe( 'Cloud Templates', () => {
 
 		await templatesRefreshPromise;
 
+		await page.waitForSelector( '.elementor-template-library-template-cloud' );
 		const templateItems = page.locator( '.elementor-template-library-template-cloud' );
 		await expect( templateItems ).toHaveCount( 1 );
 		await expect( templateItems.first() ).toContainText( templateTitle );
