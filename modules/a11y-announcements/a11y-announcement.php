@@ -61,6 +61,13 @@ class A11yAnnouncement {
 	private function enqueue_scripts() {
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
+		wp_enqueue_style(
+			Module::MODULE_NAME,
+			ELEMENTOR_ASSETS_URL . 'css/modules/a11y-announcements/editor' . $min_suffix . '.css',
+			[],
+			ELEMENTOR_VERSION
+		);
+
 		wp_enqueue_script(
 			Module::MODULE_NAME,
 			ELEMENTOR_ASSETS_URL . 'js/a11y-announcements' . $min_suffix . '.js',

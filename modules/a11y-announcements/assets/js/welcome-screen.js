@@ -17,8 +17,9 @@ const ElementorLogo = () => (
 );
 
 const i18n = {
-	title: __( 'Is your site accessible?', 'elementor' ),
-	description: __( 'Use Ally to scan, detect, and fix accessibility issues with AI by your side.', 'elementor' ),
+	title: __( 'WHAT\'S NEW?', 'elementor' ),
+	bodyTitle: __( 'Make your website more accessible with Ally', 'elementor' ),
+	description: __( 'We\'re excited to introduce our new web accessibility plugin, designed to enhance usability and make your site more inclusive.', 'elementor' ),
 };
 
 export const WelcomeDialog = ( { doClose } ) => {
@@ -46,42 +47,38 @@ export const WelcomeDialog = ( { doClose } ) => {
 			open={ Boolean( anchorElRef.current ) }
 			onClose={ doClose }
 			maxWidth="sm"
+			className="e-a11y-announcement"
 		>
 			<DialogHeader onClose={ doClose } logo={ <ElementorLogo /> }>
 				<DialogTitle>{ i18n.title }</DialogTitle>
 			</DialogHeader>
 
 			<DialogContent dividers>
-				<Box
-					sx={ {
-						aspectRatio: '16/9',
-						width: '100%',
-						mb: 2,
-					} }
-				>
+				<Box className="e-a11y-announcement__video-wrapper">
 					<iframe
-						width="100%"
-						height="100%"
+						className="e-a11y-announcement__iframe"
 						src={ data.videoUrl || 'https://www.youtube.com/embed/uj9TDcpC91I?start=1&loop=1&playlist=uj9TDcpC91I' }
 						title={ i18n.title }
 						frameBorder="0"
 						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 						allowFullScreen
-						style={ {
-							borderRadius: '4px',
-						} }
 					/>
 				</Box>
-				<Typography variant="body1" color="text.secondary">
-					{ i18n.description }
-				</Typography>
+				<Box className="e-a11y-announcement__content-wrapper">
+					<Typography variant="h6" color="text.primary">
+						{ i18n.bodyTitle }
+					</Typography>
+					<Typography variant="body1" color="text.secondary">
+						{ i18n.description }
+					</Typography>
+				</Box>
 			</DialogContent>
 
 			<DialogActions>
 				<Button
 					variant="contained"
-					color="accent"
 					onClick={ handleCtaClick }
+					className="e-a11y-announcement__cta-button"
 				>
 					{ data.ctaText || __( 'Install Plugin', 'elementor' ) }
 				</Button>

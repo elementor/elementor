@@ -1,0 +1,26 @@
+.e-a11y-announcement {
+	&__video-wrapper {
+		aspect-ratio: 16/9;
+		width: 100%;
+		margin-bottom: 16px;
+	}
+
+	&__iframe {
+		width: 100%;
+		height: 100%;
+		border-radius: 4px;
+	}
+
+	&__content-wrapper {
+		margin-top: 25px;
+	}
+
+	&__cta-button {
+		background-color: #524CFF;
+		border-radius: 0;
+
+		&:hover {
+			background-color: #524CFF;
+		}
+	}
+}
