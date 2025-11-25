@@ -7,6 +7,9 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\Components\Styles\Component_Styles;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Component_Lock_Manager;
+use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
+use Elementor\Modules\Components\Transformers\Component_Instance_Transformer;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -46,7 +49,7 @@ class Module extends BaseModule {
 
 	public function get_widgets() {
 		return [
-			'Component',
+			'Component_Instance',
 		];
 	}
 
@@ -71,6 +74,6 @@ class Module extends BaseModule {
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
-		$transformers->register( Component_Id_Prop_Type::get_key(), new Component_Id_Transformer() );
+		$transformers->register( Component_Instance_Prop_Type::get_key(), new Component_Instance_Transformer() );
 	}
 }
