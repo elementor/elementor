@@ -13,6 +13,7 @@ use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use PHPUnit\Framework\TestCase;
+use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -168,6 +169,56 @@ class Test_Variables_Service extends TestCase {
 		$this->assertEquals( 'delete', $delete['type'] );
 		$this->assertEquals( 'delete-me', $delete['id'] );
 		$this->assertTrue( $delete['deleted'] );
+	}
+
+
+	public function test_process_batch__throws_variables_limit_reached() {
+		// Arrange
+		$variables = [];
+		for ( $i = 0; $i < 100; $i++ ) {
+			$variables[ "id-{$i}" ] = [
+				'type' => 'color',
+				'label' => "Label {$i}",
+				'value' => '#000',
+				'order' => $i,
+			];
+		}
+
+		$collection = Variables_Collection::hydrate( [
+			'data' => $variables,
+			'watermark' => 50,
+			'version' => 1,
+		] );
+
+		$data = [
+			[
+				'type' => 'create',
+				'variable' => [
+					'type' => 'global-color',
+					'label' => 'New Color',
+					'value' => '#FF0000',
+				],
+			]
+		];
+		$this->repository->method( 'load' )->willReturn( $collection );
+
+		// Act.
+		try {
+			$this->service->process_batch( $data );
+			$this->fail( 'Expected BatchOperationFailed to be thrown' );
+		} catch ( BatchOperationFailed $e ) {
+			// Assert.
+			$this->assertSame( 'Batch failed', $e->getMessage() );
+
+			$details = $e->getErrorDetails();
+			$error = $details['operation_0'];
+
+			$this->assertEquals( 400, $error['status'] );
+			$this->assertEquals( 'invalid_variable_limit_reached', $error['code'] );
+			$this->assertEquals( 'Total variables count limit reached', $error['message'] );
+		}
+
+		$this->assertTrue( true );
 	}
 	public function test_create__successfully_creates_variable() {
 		// Arrange

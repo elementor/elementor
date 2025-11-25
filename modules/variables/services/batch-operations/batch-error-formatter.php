@@ -9,22 +9,25 @@ use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 
 class Batch_Error_Formatter {
 
-	private const STATUS_MAP = [
-		RecordNotFound::class => 404,
-		DuplicatedLabel::class => 400,
-		VariablesLimitReached::class => 400,
-	];
-
-	private const ERROR_CODE_MAP = [
-		VariablesLimitReached::class => 'invalid_variable_limit_reached',
-		DuplicatedLabel::class => 'duplicated_label',
-		RecordNotFound::class => 'variable_not_found',
+	private const ERROR_MAP = [
+		RecordNotFound::class => [
+			'code' => 'variable_not_found',
+			'status' => 404,
+		],
+		DuplicatedLabel::class => [
+			'code' => 'duplicated_label',
+			'status' => 400,
+		],
+		VariablesLimitReached::class => [
+			'code' => 'invalid_variable_limit_reached',
+			'status' => 400,
+		],
 	];
 
 	public function status_for( Exception $e ): int {
-		foreach ( self::STATUS_MAP as $class => $status ) {
+		foreach ( self::ERROR_MAP as $class => $map ) {
 			if ( $e instanceof $class ) {
-				return $status;
+				return $map['status'];
 			}
 		}
 
@@ -32,9 +35,9 @@ class Batch_Error_Formatter {
 	}
 
 	public function error_code_for( Exception $e ): string {
-		foreach ( self::ERROR_CODE_MAP as $class => $code ) {
+		foreach ( self::ERROR_MAP as $class => $map ) {
 			if ( $e instanceof $class ) {
-				return $code;
+				return $map['code'];
 			}
 		}
 

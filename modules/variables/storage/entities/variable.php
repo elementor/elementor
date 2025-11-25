@@ -12,7 +12,7 @@ class Variable {
 	}
 
 	public static function create_new( array $data ): self {
-		$now = gmdate('Y-m-d H:i:s');
+		$now = gmdate( 'Y-m-d H:i:s' );
 
 		$data['created_at'] = $now;
 		$data['updated_at'] = $now;

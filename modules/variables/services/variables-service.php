@@ -13,7 +13,7 @@ class Variables_Service {
 	private Variables_Repository $repo;
 	private Batch_Processor $batch_processor;
 
-	public function __construct( Variables_Repository $repository, Batch_Processor  $batch_processor ) {
+	public function __construct( Variables_Repository $repository, Batch_Processor $batch_processor ) {
 		$this->repo = $repository;
 		$this->batch_processor = $batch_processor;
 	}
@@ -28,7 +28,7 @@ class Variables_Service {
 
 	/**
 	 * @throws BatchOperationFailed Thrown when one of the operations fails.
-	 * * @throws FatalError Failed to save after batch.
+	 * @throws FatalError Failed to save after batch.
 	 */
 	public function process_batch( array $operations ) {
 		$collection = $this->repo->load();
