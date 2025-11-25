@@ -100,6 +100,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 
 	public function jsonSerialize(): array {
 		return [
+			// phpcs:ignore
 			'kind' => static::$KIND,
 			'key' => static::get_key(),
 			'default' => $this->get_default(),

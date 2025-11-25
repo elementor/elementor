@@ -336,6 +336,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->assertEqualSets( $keys, array_keys( $json ) );
 
 		foreach ( $keys as $key ) {
+			// phpcs:ignore
 			$this->assertEquals( $json[$key]['kind'], $schema[$key]::$KIND );
 			$this->assertEquals( $json[$key]['key'], $schema[$key]::get_key() );
 			$this->assertEquals( $json[$key]['default'], $schema[$key]->get_default() );

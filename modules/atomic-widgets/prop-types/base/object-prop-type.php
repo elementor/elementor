@@ -134,6 +134,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		$default = $this->get_default();
 
 		return [
+			// phpcs:ignore
 			'kind' => static::$KIND,
 			'key' => static::get_key(),
 			'default' => is_array( $default ) ? (object) $default : $default,

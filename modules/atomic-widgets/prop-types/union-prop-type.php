@@ -144,6 +144,7 @@ class Union_Prop_Type implements Prop_Type {
 
 	public function jsonSerialize(): array {
 		return [
+			// phpcs:ignore
 			'kind' => static::$KIND,
 			'default' => $this->get_default(),
 			'meta' => $this->get_meta(),

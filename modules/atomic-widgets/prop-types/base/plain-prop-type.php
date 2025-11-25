@@ -45,6 +45,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 	}
 
 	public function get_type(): string {
+		// phpcs:ignore
 		return static::$KIND;
 	}
 
@@ -67,6 +68,7 @@ abstract class Plain_Prop_Type implements Transformable_Prop_Type {
 
 	public function jsonSerialize(): array {
 		return [
+			// phpcs:ignore
 			'kind' => static::$KIND,
 			'key' => static::get_key(),
 			'default' => $this->get_default(),

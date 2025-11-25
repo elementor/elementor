@@ -113,7 +113,6 @@ class Dynamic_Prop_Types_Mapping {
 			return [ V1_Dynamic_Tags_Module::TEXT_CATEGORY ];
 		}
 
-
 		return [];
 	}
 }
