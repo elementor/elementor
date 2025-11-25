@@ -93,13 +93,13 @@ class Component_Override_Utils {
 		$widget_type = $overridable->widget_type;
 		$prop_key = $overridable->prop_key;
 
-		$Overridable_Element = Plugin::$instance->elements_manager->get_element( $el_type, $widget_type );
+		$overridable_element = Plugin::$instance->elements_manager->get_element( $el_type, $widget_type );
 
-		if ( ! $Overridable_Element ) {
+		if ( ! $overridable_element ) {
 			throw new \Exception( esc_html( "Invalid overridable element: Element type $el_type with widget type $widget_type is not registered." ) );
 		}
 
-		$element_instance = new $Overridable_Element();
+		$element_instance = new $overridable_element();
 
 		/** @var Atomic_Element_Base | Atomic_Widget_Base $element_instance */
 		if ( ! Utils::is_atomic( $element_instance ) ) {
