@@ -1,10 +1,10 @@
 import { type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
+import { getMixpanel } from '@elementor/mixpanel';
 import { __getState as getState } from '@elementor/store';
 
 import { fetchCssClassUsage } from '../../service/css-class-usage-service';
 import { type FilterKey } from '../hooks/use-filtered-css-class-usage';
 import { selectClass } from '../store';
-import { getMixpanel } from '@elementor/mixpanel';
 
 type Event =
 	| 'class_applied'
