@@ -42,6 +42,21 @@ class Test_Variable extends TestCase {
 		$this->assertEquals( '2024-01-01 10:00:00', $result['updated_at'] );
 	}
 
+	public function test_create_new__adds_time_stamps() {
+		// Arrange.
+		$variable = Variable::create_new( [
+			'id' => 'id-4563',
+			'type' => 'font',
+			'label' => 'Primary Font',
+			'value' => 'Roboto',
+		] );
+
+		$result = $variable->to_array();
+
+		$this->assertNotEmpty( $result['created_at'] );
+		$this->assertNotEmpty( $result['updated_at'] );
+	}
+
 	public function test_from_array__throws_error_if_required_field_is_missing() {
 		// Arrange
 		$data = [
