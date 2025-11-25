@@ -18,6 +18,7 @@ export default class extends elementorModules.Module {
 				record_idle_timeout_ms: 60000,
 				record_max_ms: 300000,
 				record_mask_text_selector: '',
+				flags: true,
 			},
 		);
 
@@ -103,5 +104,18 @@ export default class extends elementorModules.Module {
 
 	isSessionRecordingInProgress() {
 		return this.#sessionRecordingInProgress;
+	}
+
+	async featureFlagIsActive( flagName ) {
+		if ( 'undefined' === typeof mixpanel || ! mixpanel.flags ) {
+			return false;
+		}
+
+		try {
+			const isEnabled = await mixpanel.flags.is_enabled( flagName, false );
+			return true === isEnabled;
+		} catch ( error ) {
+			return false;
+		}
 	}
 }
