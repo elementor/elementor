@@ -9,7 +9,6 @@ import { useCanvasDocument } from '../../hooks/use-canvas-document';
 import { useElementRect } from '../../hooks/use-element-rect';
 import { loadOverridableProps } from '../../hooks/use-save-overide-props';
 import { slice } from '../../store/store';
-import { type OverridableProps } from '../../types';
 
 type ModalProps = {
 	element: HTMLElement;
