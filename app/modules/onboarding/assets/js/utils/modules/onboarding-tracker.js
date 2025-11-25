@@ -1077,7 +1077,7 @@ class OnboardingTracker {
 		StorageManager.remove( storageKey );
 	}
 
-	startSessionRecordingIfNeeded( stepNumber ) {
+	startSessionRecordingIfNeeded() {
 		const featureFlagPromise = elementorCommon?.eventsManager?.featureFlagIsActive?.( 'core-onboarding-session-replays' );
 		if ( ! featureFlagPromise ) {
 			return;
@@ -1089,12 +1089,12 @@ class OnboardingTracker {
 					return;
 				}
 
-				this.startSessionRecording( stepNumber );
+				this.startSessionRecording();
 			} )
 			.catch( () => {} );
 	}
 
-	startSessionRecording( stepNumber ) {
+	startSessionRecording() {
 		if ( ! EventDispatcher.canSendEvents() ) {
 			return;
 		}
@@ -1107,10 +1107,8 @@ class OnboardingTracker {
 			return;
 		}
 
-		EventDispatcher.dispatch( ONBOARDING_EVENTS_MAP.SESSION_REPLAY_START, {
+		elementorCommon.eventsManager.dispatchEvent( ONBOARDING_EVENTS_MAP.SESSION_REPLAY_START, {
 			location: 'plugin_onboarding',
-			step_number: stepNumber,
-			step_name: this.getStepName( stepNumber ),
 		} );
 
 		elementorCommon.eventsManager.startSessionRecording();
@@ -1138,7 +1136,7 @@ class OnboardingTracker {
 		}
 
 		if ( 2 === stepNumber || 'hello' === currentStep || 'hello_biz' === currentStep ) {
-			this.startSessionRecordingIfNeeded( stepNumber );
+			this.startSessionRecordingIfNeeded();
 			this.sendStoredStep1EventsOnStep2();
 			this.sendExperimentStarted( 201 );
 			this.sendExperimentStarted( 202 );

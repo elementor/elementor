@@ -107,15 +107,11 @@ export default class extends elementorModules.Module {
 	}
 
 	async featureFlagIsActive( flagName ) {
-		if ( 'undefined' === typeof mixpanel || ! mixpanel.flags ) {
+		if ( 'function' !== typeof mixpanel?.flags?.is_enabled ) {
 			return false;
 		}
 
-		try {
-			const isEnabled = await mixpanel.flags.is_enabled( flagName, false );
-			return true === isEnabled;
-		} catch ( error ) {
-			return false;
-		}
+		const isEnabled = await mixpanel.flags.is_enabled( flagName, false );
+		return true === isEnabled;
 	}
 }
