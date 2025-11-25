@@ -56,6 +56,7 @@ export type { ControlComponent } from './create-control';
 export type { ToggleButtonGroupItem } from './components/control-toggle-button-group';
 export type { EqualUnequalItems } from './controls/equal-unequal-sizes-control';
 export type { ControlActionsItems } from './control-actions/control-actions-context';
+export type { AdornmentComponent } from './control-adornments/control-adornments-context';
 export type { PropProviderProps } from './bound-prop-context';
 export type { SetValue, SetValueMeta } from './bound-prop-context/prop-context';
 export type { ExtendedOption, Unit, LengthUnit, AngleUnit, TimeUnit } from './utils/size-control';
