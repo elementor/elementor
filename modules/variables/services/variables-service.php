@@ -15,6 +15,14 @@ class Variables_Service {
 		$this->repo = $repository;
 	}
 
+	public function get_variables_list(): array {
+		return $this->load()['data'];
+	}
+
+	public function load() {
+		return $this->repo->load()->serialize();
+	}
+
 	/**
 	 * @throws FatalError If variable create fails or validation errors occur.
 	 */
@@ -134,5 +142,12 @@ class Variables_Service {
 		}
 
 		return $variable;
+	}
+
+	/**
+	 * @return Variables_Repository
+	 */
+	public function get_repository(): Variables_Repository {
+		return $this->repo;
 	}
 }

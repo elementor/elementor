@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Variables\Services\Batch_Operations;
 
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
@@ -57,6 +58,11 @@ class Test_Batch_Processor extends TestCase {
 					'value' => '#FFFFFF',
 					'deleted_at' => '2024-01-01 10:00:00',
 				],
+				'delete-me' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Delete Me',
+					'value' => '#000000',
+				],
 			],
 			'watermark' => 5,
 			'version' => 1,
@@ -87,7 +93,7 @@ class Test_Batch_Processor extends TestCase {
 			],
 			[
 				'type' => 'delete',
-				'id' => 'id-1',
+				'id' => 'delete-me',
 			],
 		];
 
@@ -146,7 +152,7 @@ class Test_Batch_Processor extends TestCase {
 			'value' => '#000000',
 		];
 		$this->assertEquals( 'delete', $delete['type'] );
-		$this->assertEquals( 'id-1', $delete['id'] );
+		$this->assertEquals( 'delete-me', $delete['id'] );
 		$this->assertTrue( $delete['deleted'] );
 	}
 
@@ -258,5 +264,29 @@ class Test_Batch_Processor extends TestCase {
 
 		$this->assertTrue( true );
 	}
+
+	public function test_process_batch__throws_fatal_error_when_save_fails() {
+		// Arrange
+		$this->repository->method( 'save' )->willReturn( false );
+
+		$data = [
+			[
+				'type' => 'create',
+				'variable' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Test Label',
+					'value' => '#FF0000',
+				],
+			],
+		];
+
+		// Assert
+		$this->expectException( \Elementor\Modules\Variables\Storage\Exceptions\FatalError::class );
+		$this->expectExceptionMessage( 'Failed to save batch operations' );
+
+		// Act
+		$this->processor->process_batch( $data );
+	}
+
 }
 

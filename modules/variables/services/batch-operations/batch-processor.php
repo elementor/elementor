@@ -4,12 +4,13 @@ namespace Elementor\Modules\Variables\Services\Batch_Operations;
 
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
+use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
 use RuntimeException;
 
-class BatchProcessor {
+class Batch_Processor {
 	private const OPERATION_MAP = [
 		'create'  => 'op_create',
 		'update'  => 'op_update',
@@ -20,21 +21,21 @@ class BatchProcessor {
 	private Variables_Repository $repo;
 	private Variables_Service $service;
 
-	public function __construct( Variables_Repository $repo, Variables_Service $service ) {
-		$this->repo = $repo;
+	public function __construct( Variables_Service $service ) {
+		$this->repo = $service->get_repository();
 		$this->service = $service;
 	}
 
 	/**
 	 * @throws BatchOperationFailed Thrown when one of the operations fails.
-	 * @throws RuntimeException Failed to save after batch.
+	 * @throws FatalError Failed to save after batch.
 	 */
 	public function process_batch( array $operations ) {
 		$collection = $this->repo->load();
 		$results = [];
 		$errors = [];
 
-		$error_formatter = new BatchErrorFormatter();
+		$error_formatter = new Batch_Error_Formatter();
 
 		foreach ( $operations as $index => $operation ) {
 			try {
@@ -57,7 +58,7 @@ class BatchProcessor {
 		$watermark = $this->repo->save( $collection );
 
 		if ( false === $watermark ) {
-			throw new RuntimeException( 'Failed to save after batch.' );
+			throw new FatalError( 'Failed to save batch operations' );
 		}
 
 		return [
@@ -89,16 +90,24 @@ class BatchProcessor {
 		$collection->assert_limit_not_reached();
 		$collection->assert_label_is_unique( $data['label'] );
 
-		$id = $collection->next_id();
+		$data['id'] = $collection->next_id();
 
-		$variable = Variable::from_array( array_merge( [ 'id' => $id ], $data ) );
+		if ( ! isset( $data['order'] ) ) {
+			$data['order'] = $collection->get_next_order();
+		}
+
+		$now = gmdate( 'Y-m-d H:i:s' );
+		$data['created_at'] = $now;
+		$data['updated_at'] = $now;
+
+		$variable = Variable::from_array( $data );
 
 		$collection->add_variable( $variable );
 
 		// TODO: do we need to return all this payload maybe return what the clients want
 		return [
 			'type' => 'create',
-			'id' => $id,
+			'id' => $data['id'],
 			'temp_id' => $temp_id,
 			'variable' => $variable->to_array(),
 		];

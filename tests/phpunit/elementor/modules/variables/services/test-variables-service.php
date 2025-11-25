@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Variables\Services;
 
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
@@ -59,7 +60,6 @@ class Test_Variables_Service extends TestCase {
 			'type' => 'color',
 			'label' => 'Primary Color',
 			'value' => '#000000',
-			'order' => 1,
 		];
 
 		$this->repository->method( 'load' )->willReturn( Variables_Collection::default() );
@@ -285,5 +285,119 @@ class Test_Variables_Service extends TestCase {
 		// Act
 		$this->service->restore( 'id-2', $overrides );
 	}
+
+	public function test_load__returns_serialized_collection_from_repository() {
+		// Arrange
+		$expected_collection = $this->mock_collection();
+		$this->repository->method( 'load' )->willReturn( $expected_collection );
+
+		// Act
+		$result = $this->service->load();
+
+		$expected = [
+			'id-1' => [
+				'type' => 'global-size-var',
+				'label' => 'Primary',
+				'value' => '100px',
+			],
+			'id-2' => [
+				'type' => 'global-color-var',
+				'label' => 'Secondary',
+				'value' => '#000000',
+			]
+		];
+
+		// Assert
+		$this->assertEquals( 10, $result['watermark'] );
+		$this->assertEquals( 1, $result['version'] );
+		$this->assertEquals( $expected, $result['data'] );
+	}
+
+	public function test_load__returns_default_collection_when_empty() {
+		// Arrange
+		$empty_collection = Variables_Collection::default();
+		$this->repository->method( 'load' )->willReturn( $empty_collection );
+
+		// Act
+		$result = $this->service->load();
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertEquals( 0, $result['watermark'] );
+		$this->assertEquals( 1, $result['version'] );
+		$this->assertEmpty( $result['data'] );
+	}
+
+	public function test_get_variables_list__returns_serialized_data() {
+		// Arrange
+		$collection = $this->mock_collection();
+		$this->repository->method( 'load' )->willReturn( $collection );
+
+		// Act
+		$result = $this->service->get_variables_list();
+
+		$expected = [
+			'id-1' => [
+				'type' => 'global-size-var',
+				'label' => 'Primary',
+				'value' => '100px',
+			],
+			'id-2' => [
+				'type' => 'global-color-var',
+				'label' => 'Secondary',
+				'value' => '#000000',
+			]
+		];
+
+		// Assert
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_get_variables_list__returns_empty_array_when_no_variables() {
+		// Arrange
+		$empty_collection = Variables_Collection::default();
+		$this->repository->method( 'load' )->willReturn( $empty_collection );
+
+		// Act
+		$result = $this->service->get_variables_list();
+
+		// Assert
+		$this->assertIsArray( $result );
+		$this->assertEmpty( $result );
+	}
+
+	public function test_get_variables_list__includes_deleted_variables() {
+		// Arrange
+		$collection = Variables_Collection::hydrate( [
+			'data' => [
+				'id-1' => [
+					'type' => 'global-color',
+					'label' => 'Active Variable',
+					'value' => '#000000',
+				],
+				'id-2' => [
+					'type' => 'global-color',
+					'label' => 'Deleted Variable',
+					'value' => '#FFFFFF',
+					'deleted_at' => '2024-01-01 10:00:00',
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		] );
+
+		$this->repository->method( 'load' )->willReturn( $collection );
+
+		// Act
+		$result = $this->service->get_variables_list();
+
+		// Assert
+		$this->assertCount( 2, $result );
+		$this->assertArrayHasKey( 'id-1', $result );
+		$this->assertArrayHasKey( 'id-2', $result );
+		$this->assertArrayNotHasKey( 'deleted_at', $result['id-1'] );
+		$this->assertArrayHasKey( 'deleted_at', $result['id-2'] );
+	}
+
 }
 

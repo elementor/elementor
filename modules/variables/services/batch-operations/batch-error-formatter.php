@@ -7,7 +7,7 @@ use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 
-class BatchErrorFormatter {
+class Batch_Error_Formatter {
 
 	private const STATUS_MAP = [
 		RecordNotFound::class => 404,
