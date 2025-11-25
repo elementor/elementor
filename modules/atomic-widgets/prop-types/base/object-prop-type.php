@@ -12,7 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Object_Prop_Type implements Transformable_Prop_Type {
-	const KIND = 'object';
+	// Backward compatibility, do not change to "const". Keep name in uppercase.
+	// phpcs:ignore
+	static $KIND = 'object';
 
 	use Concerns\Has_Default;
 	use Concerns\Has_Generate;
@@ -132,7 +134,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 		$default = $this->get_default();
 
 		return [
-			'kind' => static::KIND,
+			'kind' => static::$KIND,
 			'key' => static::get_key(),
 			'default' => is_array( $default ) ? (object) $default : $default,
 			'meta' => (object) $this->get_meta(),

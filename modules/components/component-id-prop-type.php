@@ -12,12 +12,4 @@ class Component_Id_Prop_Type extends Number_Prop_Type {
 	public static function get_key(): string {
 		return 'component-id';
 	}
-
-	protected function validate_value( $value ): bool {
-		return is_numeric( $value );
-	}
-
-	protected function sanitize_value( $value ) {
-		return (int) $value;
-	}
 }

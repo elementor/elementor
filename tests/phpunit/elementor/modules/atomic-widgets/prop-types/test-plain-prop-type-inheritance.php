@@ -13,6 +13,7 @@ class Test_Plain_Prop_Type_Inheritance extends TestCase
 {
 	const WHITE_LIST = [
 		'Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type',
+		'Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type',
 	];
 
 	const ALLOWED_PROP_KINDS = [
@@ -39,5 +40,7 @@ class Test_Plain_Prop_Type_Inheritance extends TestCase
 				$kinds[] = $kind;
 			}
 		}
+		static::assertNotContains(null, $kinds, 'Some Plain_Prop_Type subclass is missing KIND definition.');
+		static::assertNotContains('', $kinds, 'Some Plain_Prop_Type subclass has empty KIND definition.');
 	}
 }
