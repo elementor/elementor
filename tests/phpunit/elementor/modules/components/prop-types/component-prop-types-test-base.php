@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
 use Elementor\Testing\Modules\Components\Mocks\Component_Overrides_Mocks;
 use Elementor\Modules\Components\Documents\Component;
+use Elementor\Modules\Components\Documents\Component_Overridable_Props;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -100,7 +101,7 @@ class Mock_Component_Document {
 		return Component::TYPE;
 	}
 
-    public function get_overridable_props(): ?array {
-        return $this->overridable_props;
+    public function get_overridable_props(): Component_Overridable_Props {
+        return Component_Overridable_Props::make( $this->overridable_props );
     }
 }

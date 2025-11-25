@@ -5,14 +5,16 @@ use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Utils;
+use Elementor\Modules\Components\Documents\Component_Overridable_Props;
+use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Component_Override_Utils {
-	private ?array $component_overridable_props = null;
-	public function __construct( ?array $component_overridable_props = null ) {
+	private ?Component_Overridable_Props $component_overridable_props = null;
+	public function __construct( ?Component_Overridable_Props $component_overridable_props = null ) {
 		$this->component_overridable_props = $component_overridable_props;
 	}
 
@@ -34,18 +36,20 @@ class Component_Override_Utils {
 
 		['override_key' => $override_key, 'value' => $override_value] = $value;
 
-		[
-			'override_key_exists' => $override_key_exists,
-			'prop_type' => $prop_type,
-		] = $this->get_component_overridable_prop( sanitize_text_field( $override_key ) );
+		try {
+			[ 'override_key_exists' => $override_key_exists, 'prop_type' => $prop_type ] =
+				$this->get_component_overridable_prop( sanitize_text_field( $override_key ) );
 
-		if ( ! $override_key_exists ) {
-			// If the override is not one of the component overridable props we'll remove it in sanitize_value method.
-			// This is a valid scenario, as the user can delete overridable props from the component after the override created.
-			return true;
+			if ( ! $override_key_exists ) {
+				// If the override is not one of the component overridable props we'll remove it in sanitize_value method.
+				// This is a valid scenario, as the user can delete overridable props from the component after the override created.
+				return true;
+			}
+
+			return $prop_type->validate( $override_value );
+		} catch ( \Exception $e ) {
+			return false;
 		}
-
-		return $prop_type->validate( $override_value );
 	}
 
 	public function sanitize( $value ) {
@@ -55,45 +59,47 @@ class Component_Override_Utils {
 
 		$sanitized_override_key = sanitize_text_field( $value['override_key'] );
 
-		[
-			'override_key_exists' => $override_key_exists,
-			'prop_type' => $prop_type,
-		] = $this->get_component_overridable_prop( $sanitized_override_key );
+		try {
+			[ 'override_key_exists' => $override_key_exists, 'prop_type' => $prop_type ] =
+				$this->get_component_overridable_prop( $sanitized_override_key );
 
-		if ( ! $override_key_exists ) {
+			if ( ! $override_key_exists ) {
+				return null;
+			}
+
+			return [
+				'override_key' => sanitize_text_field( $value['override_key'] ),
+				'value' => $prop_type->sanitize( $value['value'] ),
+			];
+		} catch ( \Exception $e ) {
 			return null;
 		}
-
-		return [
-			'override_key' => sanitize_text_field( $value['override_key'] ),
-			'value' => $prop_type->sanitize( $value['value'] ),
-		];
 	}
 
 	private function get_component_overridable_prop( string $override_key ): array {
 		$component_overridable_props = $this->component_overridable_props;
 
-		if ( ! $component_overridable_props || ! isset( $component_overridable_props['props'][ $override_key ] ) ) {
+		if ( ! $component_overridable_props || ! isset( $component_overridable_props->props[ $override_key ] ) ) {
 			return [
 				'override_key_exists' => false,
 				'prop_type' => null,
 			];
 		}
 
-		$overridable = $component_overridable_props['props'][ $override_key ];
-		[
-			'elType' => $el_type,
-			'widgetType' => $widget_type,
-			'propKey' => $prop_key,
-		] = $overridable;
+		/** @var Component_Overridable_Prop $overridable */
+		$overridable = $component_overridable_props->props[ $override_key ];
 
-		$overridable_element = Plugin::$instance->elements_manager->get_element( $el_type, $widget_type );
+		$el_type = $overridable->el_type;
+		$widget_type = $overridable->widget_type;
+		$prop_key = $overridable->prop_key;
 
-		if ( ! $overridable_element ) {
+		$Overridable_Element = Plugin::$instance->elements_manager->get_element( $el_type, $widget_type );
+
+		if ( ! $Overridable_Element ) {
 			throw new \Exception( esc_html( "Invalid overridable element: Element type $el_type with widget type $widget_type is not registered." ) );
 		}
 
-		$element_instance = new $overridable_element();
+		$element_instance = new $Overridable_Element();
 
 		/** @var Atomic_Element_Base | Atomic_Widget_Base $element_instance */
 		if ( ! Utils::is_atomic( $element_instance ) ) {
@@ -106,11 +112,11 @@ class Component_Override_Utils {
 			throw new \Exception( esc_html( "Prop key '$prop_key' does not exist in the schema of element '{$element_instance->get_element_type()}'." ) );
 		}
 
-		$props_type = $props_schema[ $prop_key ];
+		$prop_type = $props_schema[ $prop_key ];
 
 		return [
 			'override_key_exists' => true,
-			'prop_type' => $props_type,
+			'prop_type' => $prop_type,
 		];
 	}
 }

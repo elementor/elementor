@@ -12,7 +12,7 @@ export const getComponentIds = ( elements: V1ElementData[] ) => {
 			const componentId = ( element.settings?.component_instance as ComponentInstancePropValue< number > )?.value
 				?.component_id;
 
-			if ( componentId ) {
+			if ( Boolean( componentId ) ) {
 				ids.push( componentId );
 			}
 		}

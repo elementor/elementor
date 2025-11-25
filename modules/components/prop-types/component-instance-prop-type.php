@@ -5,6 +5,7 @@ namespace Elementor\Modules\Components\PropTypes;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Modules\Components\Documents\Component;
+use Elementor\Modules\Components\Documents\Component_Overridable_Props;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -36,13 +37,12 @@ class Component_Instance_Prop_Type extends Plain_Prop_Type {
 			return true;
 		}
 
-		$sanitized_component_id = (int) $value['component_id'];
-		$component_overridable_props = $this->get_component_overridable_props( $sanitized_component_id );
+		$component_overridable_props = $this->get_component_overridable_props( $value['component_id'] );
 
 		return $this->validate_component_overrides( $value['overrides'], $component_overridable_props );
 	}
 
-	private function validate_component_overrides( array $overrides, array $component_overridable_props ): bool {
+	private function validate_component_overrides( array $overrides, Component_Overridable_Props $component_overridable_props ): bool {
 		$component_override_utils = new Component_Override_Utils( $component_overridable_props );
 
 		foreach ( $overrides as $override ) {
@@ -76,7 +76,7 @@ class Component_Instance_Prop_Type extends Plain_Prop_Type {
 		return $sanitized;
 	}
 
-	private function sanitize_component_overrides( array $overrides, ?array $component_overridable_props ): array {
+	private function sanitize_component_overrides( array $overrides, ?Component_Overridable_Props $component_overridable_props ): array {
 		$component_override_utils = new Component_Override_Utils( $component_overridable_props );
 
 		$sanitized = [];

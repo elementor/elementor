@@ -3,6 +3,7 @@
 namespace Elementor\Testing\Modules\Components\PropTypes;
 
 use Elementor\Modules\Components\PropTypes\Component_Override_Utils;
+use Elementor\Modules\Components\Documents\Component_Overridable_Props;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -11,9 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/component-prop-types-test-base.php';
 
 class Test_Component_Override_Utils extends Component_Prop_Type_Test_Base {
+
+	private Component_Overridable_Props $component_overridable_props;
+
+	public function setUp(): void {
+		parent::setUp();
+
+		$this->component_overridable_props = Component_Overridable_Props::make( $this->mocks->get_mock_component_overridable_props() );
+	}
+
 	public function test_validate__passes_with_valid_override() {
 		// Arrange
-		$component_override_utils = new Component_Override_Utils($this->mocks->get_mock_component_overridable_props());
+		$component_override_utils = new Component_Override_Utils($this->component_overridable_props);
 
 		// Act
 		$result = $component_override_utils->validate( [
@@ -27,7 +37,7 @@ class Test_Component_Override_Utils extends Component_Prop_Type_Test_Base {
 
 	public function test_validate__passes_when_override_key_not_in_component_props() {
 		// Arrange
-		$component_override_utils = new Component_Override_Utils($this->mocks->get_mock_component_overridable_props());
+		$component_override_utils = new Component_Override_Utils($this->component_overridable_props);
 
 		// Act
 		$result = $component_override_utils->validate( [
@@ -62,7 +72,7 @@ class Test_Component_Override_Utils extends Component_Prop_Type_Test_Base {
 	 */
 	public function test_validate__fail_for_invalid_structure( $value ) {
 		// Arrange.
-		$component_override_utils = new Component_Override_Utils($this->mocks->get_mock_component_overridable_props());
+		$component_override_utils = new Component_Override_Utils($this->component_overridable_props);
 
 		// Act.
 		$result = $component_override_utils->validate( $value );
@@ -73,7 +83,7 @@ class Test_Component_Override_Utils extends Component_Prop_Type_Test_Base {
 
 	public function test_validate__fails_when_value_invalid_against_original_prop_type() {
 		// Arrange
-		$component_override_utils = new Component_Override_Utils($this->mocks->get_mock_component_overridable_props());
+		$component_override_utils = new Component_Override_Utils($this->component_overridable_props);
 
 		// Act
 		$result = $component_override_utils->validate( [
@@ -88,7 +98,7 @@ class Test_Component_Override_Utils extends Component_Prop_Type_Test_Base {
 
 	public function test_validate__fails_with_prop_value_not_matching_component_overridable_props() {
 		// Arrange
-		$component_override_utils = new Component_Override_Utils($this->mocks->get_mock_component_overridable_props());
+		$component_override_utils = new Component_Override_Utils($this->component_overridable_props);
 
 		// Act
 		$result = $component_override_utils->validate( [
@@ -103,7 +113,7 @@ class Test_Component_Override_Utils extends Component_Prop_Type_Test_Base {
 
 	public function test_sanitize__sanitizes_valid_override() {
 		// Arrange
-		$component_override_utils = new Component_Override_Utils($this->mocks->get_mock_component_overridable_props());
+		$component_override_utils = new Component_Override_Utils($this->component_overridable_props);
 
 		[
 			'before_sanitization' => $before_sanitization,
@@ -117,17 +127,20 @@ class Test_Component_Override_Utils extends Component_Prop_Type_Test_Base {
 		$this->assertEquals( $expected_after_sanitization, $result );
 	}
 
-	public function test_sanitize__returns_null_when_override_key_not_in_component_overridable_props() {
+	public function test_sanitize__returns_null_when_override_key_not_in_component_props() {
 		// Arrange
-		$component_override_utils = new Component_Override_Utils($this->mocks->get_mock_component_overridable_props());
+		$component_override_utils = new Component_Override_Utils($this->component_overridable_props);
 
 		// Act
 		$result = $component_override_utils->sanitize( [
-			'override_key' => 'non-existent-key',
-			'value' => [ '$$type' => 'string', 'value' => 'Some Value' ],
+			'$$type' => 'component-override',
+			'value' => [
+				'override_key' => 'non-existent-key',
+				'value' => [ '$$type' => 'string', 'value' => 'Some Value' ],
+			],
 		] );
 
 		// Assert
-		$this->assertNull( $result );
+		$this->assertEquals( null, $result );
 	}
 }
