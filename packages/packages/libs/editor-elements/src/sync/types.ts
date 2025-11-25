@@ -49,7 +49,7 @@ export type ElementInteractions = {
 	items: InteractionItem[];
 };
 
-export type InteractionItem = {
+export type InteractionItemValue = {
 	interaction_id: TransformablePropValue<'string', string>;
 	trigger: TransformablePropValue<'string', string>;
 	animation: TransformablePropValue<'animation-preset-props', {
@@ -62,6 +62,8 @@ export type InteractionItem = {
 		}>;
 	}>;
   };
+
+export type InteractionItem = TransformablePropValue<'interaction-item', InteractionItemValue>;
 
 export type V1ElementModelProps = {
 	widgetType?: string;

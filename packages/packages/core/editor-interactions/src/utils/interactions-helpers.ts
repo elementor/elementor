@@ -1,5 +1,5 @@
 import { type TransformablePropValue } from '@elementor/editor-props';
-import { type InteractionItem } from '@elementor/editor-elements';
+import { type InteractionItem, type InteractionItemValue } from '@elementor/editor-elements';
 
 export const DEFAULT_INTERACTION_DETAILS = {
 	trigger: 'load',
@@ -42,20 +42,23 @@ export const generateInteractionId = (): string => {
 };
 
 // Parse InteractionItem to flat structure for controls
-export const parseInteractionItem = ( item: InteractionItem | undefined ) => {
+export const parseInteractionItem = ( item: InteractionItem | undefined ): InteractionDetailsForUI => {
 	if ( ! item ) {
 		return {
-            trigger: DEFAULT_INTERACTION_DETAILS.trigger,
+			trigger: DEFAULT_INTERACTION_DETAILS.trigger,
 			effect: DEFAULT_INTERACTION_DETAILS.effect,
 			type: DEFAULT_INTERACTION_DETAILS.type,
 			direction: DEFAULT_INTERACTION_DETAILS.direction,
-			duration: String( DEFAULT_INTERACTION_DETAILS.duration ),  // ← Convert to string
-			delay: String( DEFAULT_INTERACTION_DETAILS.delay ),  
-        };
+			duration: String( DEFAULT_INTERACTION_DETAILS.duration ),
+			delay: String( DEFAULT_INTERACTION_DETAILS.delay ),
+		};
 	}
 
-	const trigger = getPropValue( item.trigger, DEFAULT_INTERACTION_DETAILS.trigger );
-	const animation = getPropValue( item.animation, {} as any );
+	// Unwrap the item value
+	const itemValue = getPropValue( item, {} as InteractionItemValue );
+
+	const trigger = getPropValue( itemValue.trigger, DEFAULT_INTERACTION_DETAILS.trigger );
+	const animation = getPropValue( itemValue.animation, {} as any );
 	
 	const effect = getPropValue( animation.effect, DEFAULT_INTERACTION_DETAILS.effect );
 	const type = getPropValue( animation.type, DEFAULT_INTERACTION_DETAILS.type );
@@ -80,25 +83,50 @@ export const buildInteractionItem = (
 	details: InteractionDetailsForUI,
 	existingItem?: InteractionItem
 ): InteractionItem => {
-	const interactionId = existingItem?.interaction_id?.value || generateInteractionId();
+	const existingValue = existingItem ? getPropValue( existingItem, {} as InteractionItemValue ) : undefined;
+	const interactionId = existingValue?.interaction_id?.value || generateInteractionId();
 
-	return {
-		interaction_id: createPropValue( 'string' as const, interactionId ),
-		trigger: createPropValue( 'string' as const, details.trigger ),
-		animation: createPropValue( 'animation-preset-props' as const, {
-			effect: createPropValue( 'string' as const, details.effect ),
-			type: createPropValue( 'string' as const, details.type ),
-			direction: createPropValue( 'string' as const, details.direction ),
-			timing_config: createPropValue( 'timing-config' as const, {
-				duration: createPropValue( 'number' as const, parseInt( details.duration, 10 ) ),
-				delay: createPropValue( 'number' as const, parseInt( details.delay, 10 ) ),
+	const itemValue: InteractionItemValue = {
+		interaction_id: createPropValue( 'string', interactionId ),
+		trigger: createPropValue( 'string', details.trigger ),
+		animation: createPropValue( 'animation-preset-props', {
+			effect: createPropValue( 'string', details.effect ),
+			type: createPropValue( 'string', details.type ),
+			direction: createPropValue( 'string', details.direction ),
+			timing_config: createPropValue( 'timing-config', {
+				duration: createPropValue( 'number', parseInt( details.duration, 10 ) ),
+				delay: createPropValue( 'number', parseInt( details.delay, 10 ) ),
 			} ),
 		} ),
 	};
+
+	return createPropValue( 'interaction-item', itemValue );
 };
 
-// Get display label from interaction item
 export const getInteractionLabel = ( item: InteractionItem ): string => {
 	const details = parseInteractionItem( item );
-	return `${ details.trigger }-${ details.effect }-${ details.type }`;
+	
+	// Map values to human-readable labels
+	const triggerLabels: Record<string, string> = {
+		load: 'On page load',
+		scrollIn: 'Scroll into view',
+		scrollOut: 'Scroll out of view',
+	};
+	
+	const effectLabels: Record<string, string> = {
+		fade: 'Fade',
+		slide: 'Slide',
+		scale: 'Scale',
+	};
+	
+	const typeLabels: Record<string, string> = {
+		in: 'In',
+		out: 'Out',
+	};
+	
+	const triggerLabel = triggerLabels[ details.trigger ] || details.trigger;
+	const effectLabel = effectLabels[ details.effect ] || details.effect;
+	const typeLabel = typeLabels[ details.type ] || details.type;
+	
+	return `${ triggerLabel }: ${ effectLabel } ${ typeLabel }`;
 };

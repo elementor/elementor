@@ -102,7 +102,9 @@ export function InteractionsList( props: InteractionListProps ) {
 					/>
 				),
 				actions: ( value ) => {
-					const interactionId = value.interaction_id?.value || '';
+					const itemValue = value.value;
+
+					const interactionId = itemValue?.interaction_id?.value || '';
 					return (
 						<>
 							<IconButton size="tiny" onClick={ () => onPlayInteraction( interactionId ) }>
