@@ -9,7 +9,7 @@
     {
       "label": "Start All Dev Servers",
       "dependsOrder": "parallel",
-      "dependsOn": ["Main Repo Watch", "Turbo Repo Dev"],
+      "dependsOn": ["Main Repo Watch"],
       "group": {
         "kind": "build",
         "isDefault": true
