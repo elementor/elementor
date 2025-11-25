@@ -210,13 +210,7 @@ const Form = ( {
 					<Button onClick={ closePopup } color="secondary" variant="text" size="small">
 						{ __( 'Cancel', 'elementor' ) }
 					</Button>
-					<Button
-						type="submit"
-						disabled={ ! isValid }
-						variant="contained"
-						color="primary"
-						size="small"
-					>
+					<Button type="submit" disabled={ ! isValid } variant="contained" color="primary" size="small">
 						{ __( 'Create', 'elementor' ) }
 					</Button>
 				</Stack>
