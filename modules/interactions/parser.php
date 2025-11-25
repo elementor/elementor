@@ -45,6 +45,10 @@ class Parser {
 	private function maybe_assign_interaction_ids( $interactions_json, $element_id ) {
 		$interactions = $this->decode_interactions( $interactions_json );
 
+		if ( ! isset( $interactions['items'] ) ) {
+			return [];
+		}
+
 		foreach ( $interactions['items'] as &$interaction ) {
 			if ( array_key_exists( 'interaction_id', $interaction ) ) {
 				$this->ids_lookup[] = $interaction['interaction_id'];
@@ -53,10 +57,6 @@ class Parser {
 					'interaction_id' => $this->get_next_interaction_id( $element_id ),
 				], $interaction );
 			}
-		}
-
-		if ( empty( $interactions['items'] ) ) {
-			return [];
 		}
 
 		return wp_json_encode( $interactions );
