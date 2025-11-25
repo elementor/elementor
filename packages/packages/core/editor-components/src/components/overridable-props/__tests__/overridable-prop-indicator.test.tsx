@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
-import { type V1Document } from '@elementor/editor-documents';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { useElement } from '@elementor/editor-editing-panel';
-import { type PropType, type PropValue } from '@elementor/editor-props';
+import { type PropValue } from '@elementor/editor-props';
 import { ThemeProvider } from '@elementor/ui';
 import { render, screen } from '@testing-library/react';
 
@@ -12,7 +11,7 @@ import { selectOverridableProps, slice } from '../../../store/store';
 import { COMPONENT_DOCUMENT_TYPE } from '../../consts';
 import { FORBIDDEN_KEYS, OverridablePropIndicator } from '../overridable-prop-indicator';
 import { __createStore, __dispatch, __registerSlice, type SliceState, type Store } from '@elementor/store';
-import { createMockDocument, createMockDocumentData, createMockPropType } from 'test-utils';
+import { createMockDocumentData, createMockPropType } from 'test-utils';
 import { generateUniqueId } from '@elementor/utils';
 
 jest.mock( '@elementor/editor-controls', () => ( {
