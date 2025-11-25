@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { CheckIcon, PlusIcon } from '@elementor/icons';
 import { type bindTrigger, Box, styled } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 const SIZE = 'tiny';
 
@@ -65,7 +66,7 @@ type Props = {
 };
 export const Indicator = ( { triggerProps, isOpen, isOverridable }: Props ) => (
 	<IconWrapper { ...triggerProps } className={ isOpen || isOverridable ? 'enlarged' : '' }>
-		<IconContainer className="icon">
+		<IconContainer className="icon" aria-label={ isOverridable ? __( 'Overridable property', 'elementor' ) : __( 'Make prop overridable', 'elementor' ) }>
 			{ isOverridable ? <CheckIcon fontSize={ SIZE } /> : <PlusIcon fontSize={ SIZE } /> }
 		</IconContainer>
 	</IconWrapper>

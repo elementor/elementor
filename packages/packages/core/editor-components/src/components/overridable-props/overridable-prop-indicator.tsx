@@ -15,7 +15,7 @@ import { COMPONENT_DOCUMENT_TYPE } from '../consts';
 import { Form } from './form';
 import { Indicator } from './indicator';
 
-const FORBIDDEN_KEYS = [ '_cssid', 'attributes' ];
+export const FORBIDDEN_KEYS = [ '_cssid', 'attributes' ];
 
 export function OverridablePropIndicator() {
 	const { bind, value } = useBoundProp();

@@ -9,7 +9,6 @@ export const Form = ( { children, onSubmit }: Props ) => {
 
 	const handleSubmit = ( e: RectFormEven< HTMLFormElement > | SubmitEvent ) => {
 		e.preventDefault();
-		e.stopPropagation();
 		onSubmit?.();
 
 		return false;
