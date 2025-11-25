@@ -67,4 +67,36 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		await expect( underlinedText ).toContainText( 'this' );
 	} );
+
+	test( 'Delete entire content and enter new text without errors', async () => {
+		const NEW_CONTENT = 'Brand new heading';
+
+		// Arrange
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
+		const previewFrame = editor.getPreviewFrame();
+		const headingElement = previewFrame.locator( `.elementor-element-${ headingId }` );
+
+		await expect( headingElement ).toBeVisible();
+
+		// Act
+		await headingElement.click();
+		const inlineEditor = page.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+
+		await expect( inlineEditor ).toBeVisible();
+
+		await page.keyboard.press( 'ControlOrMeta+A' );
+		await page.keyboard.press( 'Delete' );
+
+		await page.keyboard.type( NEW_CONTENT );
+
+		// Assert
+		await expect( headingElement ).toContainText( NEW_CONTENT );
+		await expect( headingElement ).toBeVisible();
+
+		const panelInlineEditor = page.getByLabel( INLINE_EDITING_SELECTORS.contentSectionLabel ).locator( INLINE_EDITING_SELECTORS.panelInlineEditor );
+		const panelHTML = await panelInlineEditor.innerHTML();
+
+		expect( panelHTML ).toContain( NEW_CONTENT );
+	} );
 } );
