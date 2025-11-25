@@ -10,7 +10,7 @@ export const getComponentIds = ( elements: V1ElementData[] ) => {
 
 		if ( type === 'e-component' ) {
 			const componentId = ( element.settings?.component_instance as ComponentInstancePropValue< number > )?.value
-				?.component_id?.value;
+				?.component_id;
 
 			if ( componentId ) {
 				ids.push( componentId );

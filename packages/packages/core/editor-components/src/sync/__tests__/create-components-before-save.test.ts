@@ -129,12 +129,7 @@ describe( 'createComponentsBeforeSave', () => {
 				props: {
 					component_instance: {
 						$$type: 'component-instance',
-						value: {
-							component_id: {
-								$$type: 'number',
-								value: 1111,
-							},
-						},
+						value: { component_id: 1111 },
 					},
 				},
 				withHistory: false,
@@ -144,12 +139,7 @@ describe( 'createComponentsBeforeSave', () => {
 				props: {
 					component_instance: {
 						$$type: 'component-instance',
-						value: {
-							component_id: {
-								$$type: 'number',
-								value: 3333,
-							},
-						},
+						value: { component_id: 3333 },
 					},
 				},
 				withHistory: false,
@@ -277,12 +267,7 @@ const mockPageElements: V1ElementData[] = [
 		settings: {
 			component_instance: {
 				$$type: 'component-instance',
-				value: {
-					component_id: {
-						$$type: 'number',
-						value: COMPONENT_1_UID,
-					},
-				},
+				value: { component_id: COMPONENT_1_UID },
 			},
 		},
 	},
@@ -297,12 +282,7 @@ const mockPageElements: V1ElementData[] = [
 				settings: {
 					component_instance: {
 						$$type: 'component-instance',
-						value: {
-							component_id: {
-								$$type: 'number',
-								value: COMPONENT_2_UID,
-							},
-						},
+						value: { component_id: COMPONENT_2_UID },
 					},
 				},
 			},
@@ -326,12 +306,7 @@ const mockPageElements: V1ElementData[] = [
 		settings: {
 			component_instance: {
 				$$type: 'component-instance',
-				value: {
-					component_id: {
-						$$type: 'number',
-						value: 4444,
-					},
-				},
+				value: { component_id: 4444 },
 			},
 		},
 	},

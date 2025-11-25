@@ -22,10 +22,7 @@ export const createComponentModel = ( component: ComponentInstanceParams ): Omit
 			component_instance: {
 				$$type: 'component-instance',
 				value: {
-					component_id: {
-						$$type: 'number',
-						value: component.id ?? component.uid,
-					},
+					component_id: component.id ?? component.uid,
 				},
 			},
 		},

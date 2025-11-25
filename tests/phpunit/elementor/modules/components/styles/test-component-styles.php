@@ -71,12 +71,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'settings' => [
 					'component_instance' => [
 						'$$type' => 'component-instance',
-						'value' => [
-							'component_id' => [
-								'$$type' => 'number',
-								'value' => 50,
-							],
-						],
+						'value' => [ 'component_id' => 50 ],
 					],
 				],
 			],
@@ -88,12 +83,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'settings' => [
 					'component_instance' => [
 						'$$type' => 'component-instance',
-						'value' => [
-							'component_id' => [
-								'$$type' => 'number',
-								'value' => 180,
-							],
-						],
+						'value' => [ 'component_id' => 180 ],
 					],
 				],
 			],
@@ -105,12 +95,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'settings' => [
 					'component_instance' => [
 						'$$type' => 'component-instance',
-						'value' => [
-							'component_id' => [
-								'$$type' => 'number',
-								'value' => 180,
-							],
-						],
+						'value' => [ 'component_id' => 180 ],
 					],
 				],
 			],
@@ -122,12 +107,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'settings' => [
 					'component_instance' => [
 						'$$type' => 'component-instance',
-						'value' => [
-							'component_id' => [
-								'$$type' => 'number',
-								'value' => 250,
-							],
-						],
+						'value' => [ 'component_id' => 250 ],
 					],
 				],
 			],
@@ -193,12 +173,7 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'settings' => [
 					'component_instance' => [
 						'$$type' => 'component-instance',
-						'value' => [
-							'component_id' => [
-								'$$type' => 'number',
-								'value' => 180,
-							],
-						],
+						'value' => [ 'component_id' => 180 ],
 					],
 				],
 			],

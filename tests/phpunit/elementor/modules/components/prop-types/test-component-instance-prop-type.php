@@ -20,15 +20,12 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 			[
 				'$$type' => 'component-instance',
 				'value' => [
-					'component_id' => [ '$$type' => 'number', 'value' => self::VALID_COMPONENT_ID ],
+					'component_id' => self::VALID_COMPONENT_ID,
 					'overrides' => [
-						'$$type' => 'component-overrides',
-						'value' => [
-							$this->mocks->get_mock_valid_heading_title_component_override(),
-							$this->mocks->get_mock_valid_heading_tag_component_override(),
-							$this->mocks->get_mock_valid_image_image_component_override(),
-							$this->mocks->get_mock_valid_image_link_component_override(),
-						]
+						$this->mocks->get_mock_valid_heading_title_component_override(),
+						$this->mocks->get_mock_valid_heading_tag_component_override(),
+						$this->mocks->get_mock_valid_image_image_component_override(),
+						$this->mocks->get_mock_valid_image_link_component_override(),
 					],
 				],
 			]
@@ -47,7 +44,7 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 			[
 				'$$type' => 'component-instance',
 				'value' => [
-					'component_id' => [ '$$type' => 'number', 'value' => self::VALID_COMPONENT_ID ],
+					'component_id' => self::VALID_COMPONENT_ID,
 				],
 			]
 		);
@@ -64,11 +61,8 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 		$result = $prop_type->validate( [
 			'$$type' => 'component-instance',
 			'value' => [
-					'component_id' => [ '$$type' => 'number', 'value' => self::VALID_COMPONENT_ID ],
-					'overrides' => [
-						'$$type' => 'component-overrides',
-						'value' => [],
-					],
+					'component_id' => self::VALID_COMPONENT_ID,
+					'overrides' => [],
 			],
 		] );
 
@@ -80,16 +74,16 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 		return [
 			'non-array value' => [ 'not-an-array' ],
 			'missing_component_id' => [ [
-				'overrides' => [ '$$type' => 'component-overrides', 'value' => [] ],
+				'overrides' => [],
 			] ],
 			'non-number component_id' => [[ 
-				'component_id' => [ '$$type' => 'number', 'value' => 'not-a-number' ],
-				'overrides' => [ '$$type' => 'component-overrides', 'value' => [] ],
-			]],
+				'component_id' => 'not-a-number',
+				'overrides' => [],
+			] ],
 			'non-array overrides' => [ [ 
-				'component_id' => [ '$$type' => 'number', 'value' => self::VALID_COMPONENT_ID ],
+				'component_id' => self::VALID_COMPONENT_ID,
 				'overrides' => 'not-an-array' 
-			]],
+			] ],
 		];
 	}
 
@@ -118,10 +112,11 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 		$result = $prop_type->validate( [
 			'$$type' => 'component-instance',
 			'value' => [ 
-				'component_id' => [ '$$type' => 'number', 'value' => self::VALID_COMPONENT_ID ],
-				'overrides' => [ 
-					'$$type' => 'component-overrides',
-					'value' => [ [ $this->mocks->get_mock_invalid_override() ] ],
+				'component_id' => self::VALID_COMPONENT_ID,
+				'overrides' => [
+					$this->mocks->get_mock_valid_image_image_component_override(),
+					$this->mocks->get_mock_valid_image_link_component_override(),
+					$this->mocks->get_mock_invalid_override(),
 				],
 			]
 		] );
@@ -135,6 +130,11 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 		$prop_type = Component_Instance_Prop_Type::make();
 
 		[
+			'before_sanitization' => $image_image_override_before_sanitization,
+			'expected_after_sanitization' => $image_image_override_expected_after_sanitization,
+		] = $this->mocks->get_mock_image_image_component_override_to_sanitize();
+
+		[
 			'before_sanitization' => $heading_tag_override_before_sanitization,
 			'expected_after_sanitization' => $heading_tag_override_expected_after_sanitization,
 		] = $this->mocks->get_mock_heading_tag_component_override_to_sanitize();
@@ -144,12 +144,10 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 			[
 				'$$type' => 'component-instance',
 				'value' => [
-					'component_id' => [ '$$type' => 'number', 'value' => '123' ],
+					'component_id' => '123',
 					'overrides' => [
-						'$$type' => 'component-overrides',
-						'value' => [
-							$heading_tag_override_before_sanitization
-						],
+						$heading_tag_override_before_sanitization,
+						$image_image_override_before_sanitization,
 					],
 				],
 			]
@@ -159,15 +157,38 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 		$this->assertEquals( [
 			'$$type' => 'component-instance',
 			'value' => [
-				'component_id' => [ '$$type' => 'number', 'value' => self::VALID_COMPONENT_ID ],
+				'component_id' => self::VALID_COMPONENT_ID,
 				'overrides' => [
-					'$$type' => 'component-overrides',
-					'value' => [
-						$heading_tag_override_expected_after_sanitization
-					],
+					$heading_tag_override_expected_after_sanitization,
+					$image_image_override_expected_after_sanitization,
 				],
 			],
 		], $result );
+	}
+
+	public function test_sanitize__filters_out_overrides_with_override_key_not_in_component_overridable_props() {
+		// Arrange
+		$prop_type = Component_Instance_Prop_Type::make();
+
+		// Act
+		$result = $prop_type->sanitize( [
+			'$$type' => 'component-instance',
+			'value' => [
+				'component_id' => self::VALID_COMPONENT_ID,
+				'overrides' => [
+					$this->mocks->get_mock_valid_heading_title_component_override(),
+					[
+						'override_key' => 'non-existent-key',
+						'value' => [ '$$type' => 'string', 'value' => 'Should be removed' ],
+					],
+				],
+			],
+		]);
+
+		// Assert
+		$overrides_array = $result['value']['overrides'];
+		$this->assertCount( 1, $overrides_array );
+		$this->assertEquals( 'prop-uuid-1', $overrides_array[0]['override_key'] );
 	}
 
 	public function test_sanitize__removes_overrides_when_empty() {
@@ -178,14 +199,11 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 		$result = $prop_type->sanitize( [
 			'$$type' => 'component-instance',
 			'value' => [
-				'component_id' => [ '$$type' => 'number', 'value' => self::VALID_COMPONENT_ID ],
+				'component_id' => self::VALID_COMPONENT_ID,
 				'overrides' => [
-					'$$type' => 'component-overrides',
-					'value' => [
-						[
-							'override_key' => 'non-existent-key',
-							'value' => [ '$$type' => 'string', 'value' => 'Should be removed' ],
-						],
+					[
+						'override_key' => 'non-existent-key',
+						'value' => [ '$$type' => 'string', 'value' => 'Should be removed' ],
 					],
 				],
 			],
@@ -203,17 +221,11 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 		$result = $prop_type->sanitize( [
 			'$$type' => 'component-instance',
 			'value' => [
-				'component_id' => [ '$$type' => 'number', 'value' => self::NON_EXISTENT_COMPONENT_ID ],
+				'component_id' => self::NON_EXISTENT_COMPONENT_ID,
 				'overrides' => [
-					'$$type' => 'component-overrides',
-					'value' => [
-						[
-							'$$type' => 'component-override',
-							'value' => [
-								'override_key' => 'prop-uuid-1',
-								'value' => [ '$$type' => 'html', 'value' => 'New Title' ],
-							],
-						],
+					[
+						'override_key' => 'prop-uuid-1',
+						'value' => [ '$$type' => 'html', 'value' => 'New Title' ],
 					],
 				],
 			],
@@ -223,9 +235,8 @@ class Test_Component_Instance_Prop_Type extends Component_Prop_Type_Test_Base {
 		$this->assertEquals( [
 			'$$type' => 'component-instance',
 			'value' => [
-				'component_id' => [ '$$type' => 'number', 'value' => self::NON_EXISTENT_COMPONENT_ID ],
+				'component_id' => self::NON_EXISTENT_COMPONENT_ID,
 			],
 		], $result );
 	}
 }
-

@@ -52,13 +52,12 @@ export type ComponentInstancePropValue< TComponentId extends number | string = n
 	TransformablePropValue<
 		'component-instance',
 		{
-			component_id: TransformablePropValue< 'number', TComponentId >;
-			overrides?: TransformablePropValue<
-				'component-overrides',
-				Array< {
-					override_key: string;
-					value: TransformablePropValue< string >;
-				} >
-			>;
+			component_id: TComponentId;
+			overrides?: ComponentOverride[];
 		}
 	>;
+
+type ComponentOverride = {
+	override_key: string;
+	value: TransformablePropValue< string >;
+};

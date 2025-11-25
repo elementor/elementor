@@ -164,10 +164,7 @@ function createMockComponentWidget( componentId: number ): V1ElementData {
 			component_instance: {
 				$$type: 'component-instance',
 				value: {
-					component_id: {
-						$$type: 'number',
-						value: componentId,
-					},
+					component_id: componentId,
 				},
 			},
 		},

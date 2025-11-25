@@ -103,44 +103,35 @@ class Component_Overrides_Mocks {
 
 	public function get_mock_valid_heading_title_component_override(): array {
 		return [
-			'$$type' => 'component-override',
-			'value' => [
-				'override_key' => 'prop-uuid-1',
-				'value' => [ '$$type' => 'html', 'value' => 'New Title' ],
-			],
+			'override_key' => 'prop-uuid-1',
+			'value' => [ '$$type' => 'html', 'value' => 'New Title' ],
 		];
 	}
 
 	public function get_mock_valid_heading_tag_component_override(): array {
 		return [
-			'$$type' => 'component-override',
-			'value' => [
-				'override_key' => 'prop-uuid-2',
-				'value' => [ '$$type' => 'string', 'value' => 'h1' ],
-			],
+			'override_key' => 'prop-uuid-2',
+			'value' => [ '$$type' => 'string', 'value' => 'h1' ],
 		];
 	}
 
 	public function get_mock_valid_image_image_component_override(): array {
 		return [
-			'$$type' => 'component-override',
+			'override_key' => 'prop-uuid-3',
 			'value' => [
-				'override_key' => 'prop-uuid-3',
+				'$$type' => 'image',
 				'value' => [
-					'$$type' => 'image',
-					'value' => [
-						'src' => [
-							'$$type' => 'image-src',
-							'value' => [
-								'id' => [
-									'$$type' => 'image-attachment-id',
-									'value' => 123
-								],
-								'url' => null,
-							]
-						],
-						'size' => [ '$$type' => 'string', 'value' => 'full' ],
+					'src' => [
+						'$$type' => 'image-src',
+						'value' => [
+							'id' => [
+								'$$type' => 'image-attachment-id',
+								'value' => 123
+							],
+							'url' => null,
+						]
 					],
+					'size' => [ '$$type' => 'string', 'value' => 'full' ],
 				],
 			],
 		];
@@ -148,20 +139,17 @@ class Component_Overrides_Mocks {
 
 	public function get_mock_valid_image_link_component_override(): array {
 		return [
-			'$$type' => 'component-override',
+			'override_key' => 'prop-uuid-4',
 			'value' => [
-				'override_key' => 'prop-uuid-4',
+				'$$type' => 'link',
 				'value' => [
-					'$$type' => 'link',
-					'value' => [
-						'destination' => [
-							'$$type' => 'url',
-							'value' => 'https://elementor.com',
-						],
-						'isTargetBlank' => [
-							'$$type' => 'boolean',
-							'value' => true,
-						],
+					'destination' => [
+						'$$type' => 'url',
+						'value' => 'https://elementor.com',
+					],
+					'isTargetBlank' => [
+						'$$type' => 'boolean',
+						'value' => true,
 					],
 				],
 			],
@@ -170,23 +158,20 @@ class Component_Overrides_Mocks {
 
 	public function get_mock_invalid_override(): array {
 		return [
-			'$$type' => 'component-override',
+			'override_key' => 'prop-uuid-2',
 			'value' => [
-				'override_key' => 'prop-uuid-2',
-				'value' => [
-					'$$type' => 'string',
-					'value' => 'invalid-value-not-matching-original-prop-type-enum-h1-h6',
-				],
-			]
+				'$$type' => 'string',
+				'value' => 'invalid-value-not-matching-original-prop-type-enum-h1-h6',
+			],
 		];
 	}
 
 	public function get_mock_image_image_component_override_to_sanitize(): array {
 		$before_sanitization = [
-			'$$type' => 'component-override',
-			'value' => [
-				'override_key' => ' <script>alert(1)</script>prop-uuid-3 ',
-				'value' => [ '$$type' => 'image', 'value' => [
+			'override_key' => ' <script>alert(1)</script>prop-uuid-3 ',
+			'value' => [ 
+				'$$type' => 'image', 
+				'value' => [
 					'src' => [
 						'$$type' => 'image-src',
 						'value' => [
@@ -197,15 +182,15 @@ class Component_Overrides_Mocks {
 							'url' => null,
 						],
 					],
-				] ],
+				],
 			],
 		];
 
 		$expected_after_sanitization = [
-			'$$type' => 'component-override',
-			'value' => [
-				'override_key' => 'prop-uuid-3',
-				'value' => [ '$$type' => 'image', 'value' => [
+			'override_key' => 'prop-uuid-3',
+			'value' => [ 
+				'$$type' => 'image',
+				'value' => [
 					'src' => [
 						'$$type' => 'image-src',
 						'value' => [
@@ -216,7 +201,7 @@ class Component_Overrides_Mocks {
 							'url' => null,
 						],
 					],
-				] ],
+				] 
 			],
 		];
 
@@ -228,18 +213,12 @@ class Component_Overrides_Mocks {
 
 	public function get_mock_heading_tag_component_override_to_sanitize(): array {
 		$before_sanitization = [
-			'$$type' => 'component-override',
-			'value' => [
-				'override_key' => ' <script>alert(2)</script>prop-uuid-2 ',
-				'value' => [ '$$type' => 'string', 'value' => '<script>alert(3)</script>h1' ],
-			],
+			'override_key' => ' <script>alert(2)</script>prop-uuid-2 ',
+			'value' => [ '$$type' => 'string', 'value' => '<script>alert(3)</script>h1' ],
 		];
 		$expected_after_sanitization = [
-			'$$type' => 'component-override',
-			'value' => [
-				'override_key' => 'prop-uuid-2',
-				'value' => [ '$$type' => 'string', 'value' => 'h1' ],
-			],
+			'override_key' => 'prop-uuid-2',
+			'value' => [ '$$type' => 'string', 'value' => 'h1' ],
 		];
 		return [
 			'before_sanitization' => $before_sanitization,

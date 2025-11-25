@@ -84,7 +84,7 @@ function createComponentView(
 				this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstancePropValue
 			 )?.value;
 
-			return componentInstance.component_id.value;
+			return componentInstance.component_id;
 		}
 
 		getContextMenuGroups() {

@@ -85,7 +85,8 @@ function shouldUpdateElement(
 ): { shouldUpdate: true; newComponentId: number } | { shouldUpdate: false; newComponentId: null } {
 	if ( element.widgetType === 'e-component' ) {
 		const currentComponentId = ( element.settings?.component_instance as ComponentInstancePropValue< string > )
-			?.value?.component_id?.value;
+			?.value?.component_id;
+
 		if ( currentComponentId && uidToComponentId.has( currentComponentId ) ) {
 			return { shouldUpdate: true, newComponentId: uidToComponentId.get( currentComponentId ) as number };
 		}
@@ -99,12 +100,7 @@ function updateElementComponentId( elementId: string, componentId: number ): voi
 		props: {
 			component_instance: {
 				$$type: 'component-instance',
-				value: {
-					component_id: {
-						$$type: 'number',
-						value: componentId,
-					},
-				},
+				value: { component_id: componentId },
 			},
 		},
 		withHistory: false,

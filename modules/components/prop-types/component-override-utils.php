@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Component_Override_Utils {
 	private ?array $component_overridable_props = null;
-	public function __construct(?array $component_overridable_props = null) {
+	public function __construct( ?array $component_overridable_props = null ) {
 		$this->component_overridable_props = $component_overridable_props;
 	}
 

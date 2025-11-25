@@ -3,7 +3,6 @@
 namespace Elementor\Modules\Components\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Modules\Components\Documents\Component;
 
@@ -44,7 +43,7 @@ class Component_Instance_Prop_Type extends Plain_Prop_Type {
 	}
 
 	private function validate_component_overrides( array $overrides, array $component_overridable_props ): bool {
-		$component_override_utils = new Component_Override_Utils($component_overridable_props);
+		$component_override_utils = new Component_Override_Utils( $component_overridable_props );
 
 		foreach ( $overrides as $override ) {
 			if ( ! $component_override_utils->validate( $override ) ) {
@@ -67,7 +66,7 @@ class Component_Instance_Prop_Type extends Plain_Prop_Type {
 		}
 
 		$component_overridable_props = $this->get_component_overridable_props( $sanitized_component_id );
-		
+
 		$sanitized_overrides = $this->sanitize_component_overrides( $value['overrides'], $component_overridable_props );
 
 		if ( count( $sanitized_overrides ) > 0 ) {
@@ -77,8 +76,8 @@ class Component_Instance_Prop_Type extends Plain_Prop_Type {
 		return $sanitized;
 	}
 
-	private function sanitize_component_overrides( array $overrides, array $component_overridable_props ): array {
-		$component_override_utils = new Component_Override_Utils($component_overridable_props);
+	private function sanitize_component_overrides( array $overrides, ?array $component_overridable_props ): array {
+		$component_override_utils = new Component_Override_Utils( $component_overridable_props );
 
 		$sanitized = [];
 
