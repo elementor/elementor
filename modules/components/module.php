@@ -62,7 +62,7 @@ class Module extends BaseModule {
 	}
 
 	private function modify_props_schema( array $schema ) {
-		return ( new Component_Overridable_Schema_Extender() )->get_extended_schema( $schema );
+		return Component_Overridable_Schema_Extender::make()->get_extended_schema( $schema );
 	}
 
 	private function register_component_post_type() {
