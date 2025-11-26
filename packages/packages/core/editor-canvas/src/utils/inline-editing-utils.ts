@@ -14,6 +14,7 @@ const getHtmlPropertyName = ( container: V1Element | null ): string => {
 	}
 
 	const entry = Object.entries( propsSchema ).find( ( [ , propType ] ) => propType.key === 'html' );
+
 	return entry?.[ 0 ] ?? '';
 };
 
