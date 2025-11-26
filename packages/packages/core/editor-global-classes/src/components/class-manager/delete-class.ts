@@ -9,7 +9,7 @@ let isDeleted = false;
 
 export const deleteClass = ( id: string ) => {
 	trackGlobalClasses( {
-		event: 'class_deleted',
+		event: 'classDeleted',
 		classId: id,
 		runAction: () => {
 			dispatch( slice.actions.delete( id ) );

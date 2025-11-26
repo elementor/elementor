@@ -128,7 +128,7 @@ export function CssClassSelector() {
 								if ( ! value.value ) {
 									throw new Error( `Cannot rename a class without style id` );
 								}
-								trackStyles( value.provider ?? '', 'class_renamed', {
+								trackStyles( value.provider ?? '', 'classRenamed', {
 									classId: value.value,
 									newValue: newLabel,
 									oldValue: value.label,
@@ -253,7 +253,7 @@ function useCreateAction() {
 
 	const create = ( classLabel: string ) => {
 		const { createdId } = createAction( { classLabel } );
-		trackStyles( provider.getKey() ?? '', 'class_created', {
+		trackStyles( provider.getKey() ?? '', 'classCreated', {
 			source: 'created',
 			location: 'from useCreateAction',
 			classTitle: classLabel,
@@ -316,7 +316,7 @@ function useHandleSelect() {
 		switch ( reason ) {
 			case 'selectOption':
 				apply( { classId: option.value, classLabel: option.label } );
-				trackStyles( option.provider ?? '', 'class_applied', {
+				trackStyles( option.provider ?? '', 'classApplied', {
 					location: 'from useHandleSelect',
 					classId: option.value,
 					source: 'style-tab',
@@ -325,7 +325,7 @@ function useHandleSelect() {
 
 			case 'removeOption':
 				unapply( { classId: option.value, classLabel: option.label } );
-				trackStyles( option.provider ?? '', 'class_removed', {
+				trackStyles( option.provider ?? '', 'classRemoved', {
 					location: 'from useHandleSelect',
 					classId: option.value,
 					source: 'style-tab',

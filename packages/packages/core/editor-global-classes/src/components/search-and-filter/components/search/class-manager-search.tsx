@@ -21,8 +21,8 @@ export const ClassManagerSearch = () => {
 					value={ inputValue }
 					onFocus={ () => {
 						trackGlobalClasses( {
-							event: 'class_manager_searched',
-						} as TrackingEvent< 'class_manager_searched' > );
+							event: 'classManagerSearched',
+						} as TrackingEvent );
 					} }
 					placeholder={ __( 'Search', 'elementor' ) }
 					onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => handleChange( e.target.value ) }

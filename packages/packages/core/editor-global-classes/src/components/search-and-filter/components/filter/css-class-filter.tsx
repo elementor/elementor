@@ -21,8 +21,8 @@ export const CssClassFilter = () => {
 	React.useEffect( () => {
 		if ( popupState.isOpen ) {
 			trackGlobalClasses( {
-				event: 'class_manager_filters_opened',
-			} as TrackingEvent< 'class_manager_filters_opened' > );
+				event: 'classManagerFiltersOpened',
+			} as TrackingEvent );
 		}
 	}, [ popupState.isOpen ] );
 

@@ -17,7 +17,7 @@ import {
 	slice,
 	type StateWithGlobalClasses,
 } from './store';
-import { trackGlobalClasses } from './utils/tracking';
+import { trackGlobalClasses, type TrackingEvent } from './utils/tracking';
 
 const MAX_CLASSES = 100;
 
@@ -91,8 +91,8 @@ export const globalClassesStylesProvider = createStylesProvider( {
 				} )
 			);
 		},
-		tracking: ( data: unknown ) => {
-			trackGlobalClasses( data as Parameters< typeof trackGlobalClasses >[ 0 ] ).catch( ( error ) => {
+		tracking: ( data: { event: string; [ key: string ]: unknown } ) => {
+			trackGlobalClasses( data as TrackingEvent ).catch( ( error ) => {
 				// eslint-disable-next-line no-console
 				console.error( 'Error tracking global classes event:', error );
 			} );

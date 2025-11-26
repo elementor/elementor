@@ -73,7 +73,7 @@ export const CssClassUsagePopover = ( {
 	const handleSelect = ( value: string ) => {
 		onNavigate( +value );
 		trackGlobalClasses( {
-			event: 'class_usage_locate',
+			event: 'classUsageLocate',
 			classId: cssClassID,
 		} );
 	};

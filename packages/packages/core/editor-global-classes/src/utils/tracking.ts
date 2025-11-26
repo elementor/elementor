@@ -3,119 +3,116 @@ import { getMixpanel } from '@elementor/mixpanel';
 import { __getState as getState } from '@elementor/store';
 
 import { fetchCssClassUsage } from '../../service/css-class-usage-service';
+import { GlobalClassTrackingError } from '../errors';
 import { type FilterKey } from '../hooks/use-filtered-css-class-usage';
 import { selectClass } from '../store';
 
 type Event =
-	| 'class_applied'
-	| 'class_removed'
-	| 'class_manager_filter_cleared'
-	| 'class_deleted'
-	| 'class_publish_conflict'
-	| 'class_renamed'
-	| 'class_created'
-	| 'class_manager_searched'
-	| 'class_manager_filters_opened'
-	| 'class_manager_opened'
-	| 'class_manager_reorder'
-	| 'class_manager_filter_used'
-	| 'class_usage_locate'
-	| 'class_usage_hovered'
-	| 'class_styled'
-	| 'class_state_clicked'
-	| 'class_usage_clicked';
-
-type BaseTrackingEvent< T extends Event > = {
-	event: T;
-};
+	| 'classApplied'
+	| 'classRemoved'
+	| 'classManagerFilterCleared'
+	| 'classDeleted'
+	| 'classPublishConflict'
+	| 'classRenamed'
+	| 'classCreated'
+	| 'classManagerSearched'
+	| 'classManagerFiltersOpened'
+	| 'classManagerOpened'
+	| 'classManagerReorder'
+	| 'classManagerFilterUsed'
+	| 'classUsageLocate'
+	| 'classUsageHovered'
+	| 'classStyled'
+	| 'classStateClicked'
+	| 'classUsageClicked';
 
 type EventMap = {
-	class_created: {
+	classCreated: {
 		source?: 'created' | 'converted';
 		classId: StyleDefinitionID;
 		classTitle?: string;
 	};
-	class_deleted: {
+	classDeleted: {
 		classId: StyleDefinitionID;
 		runAction?: () => void;
 	};
-
-	class_renamed: {
+	classRenamed: {
 		classId: StyleDefinitionID;
 		oldValue: string;
 		newValue: string;
 		source: 'class-manager' | 'style-tab';
 	};
-	class_applied: {
+	classApplied: {
 		classId: StyleDefinitionID;
 		classTitle: string;
 		totalInstancesAfterApply: number;
 		totalStyleProperties: number;
-		hasCostumeCss: boolean;
+		hasCustomCss: boolean;
 	};
-	class_removed: {
+	classRemoved: {
 		classId: StyleDefinitionID;
 		classTitle: string;
 	};
-	class_styled: {
+	classStyled: {
 		classId: StyleDefinitionID;
 		classTitle: string;
 		classType: 'global' | 'local';
 	};
-	class_manager_opened: {
+	classManagerOpened: {
 		source: 'style-panel';
 	};
-	class_manager_searched: Record< string, never >;
-	class_manager_filters_opened: Record< string, never >;
-	class_manager_filter_used: {
+	classManagerSearched: Record< string, never >;
+	classManagerFiltersOpened: Record< string, never >;
+	classManagerFilterUsed: {
 		action: 'apply' | 'remove';
 		type: FilterKey;
 		trigger: 'menu' | 'header';
 	};
-	class_manager_filter_cleared: {
+	classManagerFilterCleared: {
 		trigger: 'menu' | 'header';
 	};
-	class_manager_reorder: {
+	classManagerReorder: {
 		classId: StyleDefinitionID;
 		classTitle: string;
 	};
-	class_publish_conflict: {
+	classPublishConflict: {
 		numOfConflicts: number;
 	};
-	class_usage_hovered: {
+	classUsageHovered: {
 		classId: string;
 		usage: number;
 	};
-	class_usage_clicked: {
+	classUsageClicked: {
 		classId: StyleDefinitionID;
 	};
-
-	class_usage_locate: {
+	classUsageLocate: {
 		classId: StyleDefinitionID;
 	};
-	class_state_clicked: {
+	classStateClicked: {
 		classId: StyleDefinitionID | null;
 		type: string;
 		source: 'global' | 'local';
 	};
 };
 
-export type TrackingEvent< T extends Event > = BaseTrackingEvent< T > & EventMap[ T ];
+export type TrackingEvent = {
+	[ K in Event ]: { event: Event } & EventMap[ K ];
+}[ Event ];
 
-type TrackingEventWithComputed< T extends Event > = TrackingEvent< T > & {
+type TrackingEventWithComputed = TrackingEvent & {
 	classTitle?: string;
 	totalInstancesAfterApply?: number;
 	totalStyleProperties?: number;
-	hasCostumeCss?: boolean;
+	hasCustomCss?: boolean;
 	totalInstances?: number;
 };
 
-export const trackGlobalClasses = async < T extends Event >( payload: TrackingEvent< T > ) => {
-	const { runAction } = payload as TrackingEventWithComputed< T > & { runAction?: () => void };
+export const trackGlobalClasses = async ( payload: TrackingEvent ) => {
+	const { runAction } = payload as TrackingEventWithComputed & { runAction?: () => void };
 	const data = await getSanitizedData( payload );
 	if ( data ) {
 		track( data );
-		if ( data.event === 'class_created' && 'classId' in data ) {
+		if ( data.event === 'classCreated' && 'classId' in data ) {
 			fireClassApplied( data.classId as StyleDefinitionID );
 		}
 	}
@@ -125,41 +122,41 @@ export const trackGlobalClasses = async < T extends Event >( payload: TrackingEv
 const fireClassApplied = async ( classId: StyleDefinitionID ) => {
 	const appliedInfo = await getAppliedInfo( classId );
 	track( {
-		event: 'class_applied',
+		event: 'classApplied',
 		classId,
 		...appliedInfo,
 		totalInstancesAfterApply: 1,
-	} as TrackingEvent< 'class_applied' > );
+	} );
 };
 
-const getSanitizedData = async < T extends Event >( payload: TrackingEvent< T > ) => {
+const getSanitizedData = async ( payload: TrackingEvent ): Promise< Record< string, unknown > | undefined > => {
 	switch ( payload.event ) {
-		case 'class_applied':
+		case 'classApplied':
 			if ( 'classId' in payload && payload.classId ) {
 				const appliedInfo = await getAppliedInfo( payload.classId );
 				return { ...payload, ...appliedInfo };
 			}
 			break;
-		case 'class_removed':
+		case 'classRemoved':
 			if ( 'classId' in payload && payload.classId ) {
 				const deleteInfo = await getRemovedInfo( payload.classId );
 				return { ...payload, ...deleteInfo };
 			}
 			break;
-		case 'class_deleted':
+		case 'classDeleted':
 			if ( 'classId' in payload && payload.classId ) {
 				const deleteInfo = await trackDeleteClass( payload.classId );
 				return { ...payload, ...deleteInfo };
 			}
 			break;
-		case 'class_created':
+		case 'classCreated':
 			if ( 'source' in payload && payload.source !== 'created' ) {
 				if ( 'classId' in payload && payload.classId ) {
 					return { ...payload, classTitle: getCssClass( payload.classId ).label };
 				}
 			}
 			return payload;
-		case 'class_state_clicked':
+		case 'classStateClicked':
 			if ( 'classId' in payload && payload.classId ) {
 				return { ...payload, classTitle: getCssClass( payload.classId ).label };
 			}
@@ -169,13 +166,15 @@ const getSanitizedData = async < T extends Event >( payload: TrackingEvent< T > 
 	}
 };
 
-const track = < T extends Event >( data: TrackingEvent< T > ) => {
+const track = ( data: Record< string, unknown > ) => {
 	const { dispatchEvent, config } = getMixpanel();
-	if ( ! config?.names?.global_classes?.[ data.event ] ) {
+	if ( ! config?.names?.global_classes?.[ data.event as Event ] ) {
+		// eslint-disable-next-line no-console
+		console.error( 'Global class tracking event not found', { event: data.event } );
 		return;
 	}
 
-	const name = config.names.global_classes[ data.event ];
+	const name = config.names.global_classes[ data.event as Event ];
 	const { event, ...eventData } = data;
 
 	try {
@@ -186,8 +185,7 @@ const track = < T extends Event >( data: TrackingEvent< T > ) => {
 			},
 		} );
 	} catch ( error ) {
-		// eslint-disable-next-line no-console
-		console.error( 'Error tracking global classes event:', error );
+		throw new GlobalClassTrackingError( { cause: error } );
 	}
 };
 
@@ -195,14 +193,13 @@ const extractCssClassData = ( classId: StyleDefinitionID ) => {
 	const cssClass: StyleDefinition = getCssClass( classId );
 	const classTitle = cssClass.label;
 	if ( ! cssClass.variants.length ) {
-		return { classTitle, totalStyleProperties: 0, hasCostumeCss: false };
+		return { classTitle, totalStyleProperties: 0, hasCustomCss: false };
 	}
 	const desktopView = cssClass.variants[ 0 ];
 	// only desktop
 	const totalStyleProperties = Object.keys( desktopView.props ).length;
-	const hasCostumeCss = desktopView.custom_css;
-
-	return { classTitle, totalStyleProperties, hasCostumeCss };
+	const hasCustomCss = Boolean( desktopView.custom_css );
+	return { classTitle, totalStyleProperties, hasCustomCss };
 };
 
 const getCssClass = ( classId: StyleDefinitionID ) => {
@@ -225,17 +222,17 @@ const getTotalInstancesByCssClassID = async ( classId: StyleDefinitionID ) => {
 };
 
 const getAppliedInfo = async ( classId: StyleDefinitionID ) => {
-	const { classTitle, totalStyleProperties, hasCostumeCss } = extractCssClassData( classId );
+	const { classTitle, totalStyleProperties, hasCustomCss } = extractCssClassData( classId );
 	const totalInstancesAfterApply = ( await getTotalInstancesByCssClassID( classId ) ) + 1;
 	return {
 		classTitle,
 		totalInstancesAfterApply,
 		totalStyleProperties,
-		hasCostumeCss: Boolean( hasCostumeCss ),
+		hasCustomCss,
 	};
 };
 
-const getRemovedInfo = async ( classId: StyleDefinitionID ) => {
+const getRemovedInfo = ( classId: StyleDefinitionID ) => {
 	const { classTitle } = extractCssClassData( classId );
 	return {
 		classTitle,

@@ -16,7 +16,7 @@ export const ActiveFilters = () => {
 	const handleRemove = ( key: FilterKey ) => {
 		setFilters( ( prev ) => ( { ...prev, [ key ]: false } ) );
 		trackGlobalClasses( {
-			event: 'class_manager_filter_used',
+			event: 'classManagerFilterUsed',
 			action: 'remove',
 			type: key,
 			trigger: 'header',

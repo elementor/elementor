@@ -29,7 +29,7 @@ export const ConvertLocalClassToGlobalClass = ( props: OwnProps ) => {
 			props.successCallback( newId );
 			trackGlobalClasses( {
 				classId: newId,
-				event: 'class_created',
+				event: 'classCreated',
 				source: 'converted',
 				classTitle: newClassName,
 			} );

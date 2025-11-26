@@ -85,7 +85,7 @@ export const GlobalClassesList = ( { disabled }: GlobalClassesListProps ) => {
 										label={ label }
 										renameClass={ ( newLabel: string ) => {
 											trackGlobalClasses( {
-												event: 'class_renamed',
+												event: 'classRenamed',
 												classId: id,
 												oldValue: label,
 												newValue: newLabel,
@@ -153,7 +153,7 @@ const useReorder = (
 
 		if ( draggedItemId ) {
 			trackGlobalClasses( {
-				event: 'class_manager_reorder',
+				event: 'classManagerReorder',
 				classId: draggedItemId,
 				classTitle: draggedItemLabel,
 			} );

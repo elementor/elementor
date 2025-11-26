@@ -16,7 +16,7 @@ import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 
 const trackGlobalClassesButton = () => {
 	trackGlobalClasses( {
-		event: 'class_manager_opened',
+		event: 'classManagerOpened',
 		source: 'style-panel',
 	} );
 };
@@ -45,7 +45,7 @@ export const ClassManagerButton = () => {
 		openPanel();
 		trackGlobalClassesButton();
 		trackGlobalClasses( {
-			event: 'class_manager_opened',
+			event: 'classManagerOpened',
 			source: 'style-panel',
 		} );
 		prefetchClassesUsage();

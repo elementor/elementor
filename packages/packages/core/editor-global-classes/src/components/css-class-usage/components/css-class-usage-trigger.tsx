@@ -35,7 +35,7 @@ export const CssClassUsageTrigger = ( { id, onClick }: { id: CssClassID; onClick
 
 	const handleMouseEnter = () => {
 		trackGlobalClasses( {
-			event: 'class_usage_hovered',
+			event: 'classUsageHovered',
 			classId: id,
 			usage: total,
 		} );
@@ -46,7 +46,7 @@ export const CssClassUsageTrigger = ( { id, onClick }: { id: CssClassID; onClick
 			bindTrigger( cssClassUsagePopover ).onClick( e );
 			onClick( id );
 			trackGlobalClasses( {
-				event: 'class_usage_clicked',
+				event: 'classUsageClicked',
 				classId: id,
 			} );
 		}

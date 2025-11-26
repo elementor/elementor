@@ -21,7 +21,7 @@ export const FilterList = () => {
 	const handleOnClick = ( value: FilterKey ) => {
 		setFilters( ( prev ) => ( { ...prev, [ value ]: ! prev[ value ] } ) );
 		trackGlobalClasses( {
-			event: 'class_manager_filter_used',
+			event: 'classManagerFilterUsed',
 			action: filters[ value ] ? 'remove' : 'apply',
 			type: value,
 			trigger: 'menu',

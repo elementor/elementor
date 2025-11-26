@@ -218,7 +218,7 @@ function StateMenuItem( { state, label, closeMenu, ...props }: StateMenuItemProp
 				if ( ! isActive ) {
 					setActiveId( styleId );
 				}
-				trackStyles( provider ?? '', 'class_state_clicked', {
+				trackStyles( provider ?? '', 'classStateClicked', {
 					location: 'from StateMenuItem',
 					classId: styleId,
 					type: label,
@@ -255,7 +255,7 @@ function UnapplyClassMenuItem( { closeMenu, ...props }: { closeMenu: () => void 
 			{ ...props }
 			onClick={ () => {
 				unapplyClass( { classId, classLabel } );
-				trackStyles( provider ?? '', 'class_removed', {
+				trackStyles( provider ?? '', 'classRemoved', {
 					classId,
 					location: 'from UnapplyClassMenuItem',
 					classTitle: classLabel,

@@ -15,7 +15,7 @@ export const ClearIconButton = ( { tooltipText, sx, trigger }: ClearIconButtonPr
 	const handleClearFilters = () => {
 		onClearFilter( trigger );
 		trackGlobalClasses( {
-			event: 'class_manager_filter_cleared',
+			event: 'classManagerFilterCleared',
 			trigger,
 		} );
 	};
