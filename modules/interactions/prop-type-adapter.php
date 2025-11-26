@@ -9,7 +9,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Prop_Type_Adapter {
 
 	public function interaction_to_prop_type( $data ) {
-		if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
+		error_log( '=== interaction_to_prop_type CALLED ===' );
+	error_log( 'Data structure: ' . print_r( array_keys( $data ), true ) );
+	
+	if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
+		error_log( 'Processing ' . count( $data['elements'] ) . ' top-level elements' );
+		$data['elements'] = $this->process_elements_to_prop_type( $data['elements'] );
+	}
+
+	return $data;
+        if ( isset( $data['elements'] ) && is_array( $data['elements'] ) ) {
 			$data['elements'] = $this->process_elements_to_prop_type( $data['elements'] );
 		}
 
@@ -24,23 +33,34 @@ class Prop_Type_Adapter {
 		return $data;
 	}
 
-	private function process_elements_to_prop_type( $elements ) {
-		if ( ! is_array( $elements ) ) {
-			return $elements;
-		}
-
-		foreach ( $elements as &$element ) {
-			if ( isset( $element['interactions'] ) ) {
-				$element['interactions'] = $this->transform_interactions_to_prop_type( $element['interactions'] );
-			}
-
-			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
-				$element['elements'] = $this->process_elements_to_prop_type( $element['elements'] );
-			}
-		}
-
-		return $elements;
-	}
+    private function process_elements_to_prop_type( $elements ) {
+        if ( ! is_array( $elements ) ) {
+            return $elements;
+        }
+        
+        error_log( 'process_elements_to_prop_type: Processing ' . count( $elements ) . ' elements' );
+    
+        foreach ( $elements as $index => &$element ) {
+            $element_id = $element['id'] ?? 'unknown';
+            error_log( "Processing element [$index] ID: {$element_id}" );
+            
+            if ( isset( $element['interactions'] ) && ! empty( $element['interactions'] ) ) {
+                error_log( "Element ID: {$element_id} - HAS interactions, transforming..." );
+                error_log( "Element ID: {$element_id} - BEFORE: " . (is_string($element['interactions']) ? substr($element['interactions'], 0, 100) : 'array') );
+                
+                $element['interactions'] = $this->transform_interactions_to_prop_type( $element['interactions'] );
+                
+                error_log( "Element ID: {$element_id} - AFTER: " . (is_string($element['interactions']) ? substr($element['interactions'], 0, 100) : 'array') );
+            }
+    
+            if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
+                error_log( "Element ID: {$element_id} - has " . count($element['elements']) . " nested elements, recursing..." );
+                $element['elements'] = $this->process_elements_to_prop_type( $element['elements'] );
+            }
+        }
+    
+        return $elements;
+    }
 
 	private function process_elements_from_prop_type( $elements ) {
 		if ( ! is_array( $elements ) ) {
@@ -61,31 +81,44 @@ class Prop_Type_Adapter {
 	}
 
 	private function transform_interactions_to_prop_type( $interactions ) {
-		$decoded_interactions = $this->decode_interactions( $interactions );
-
-		if ( empty( $decoded_interactions['items'] ) ) {
-			return $interactions;
-		}
-
-		$transformed_items = [];
-
-		foreach ( $decoded_interactions['items'] as $item ) {
-			if ( $this->is_already_prop_type_format( $item ) ) {
-				$transformed_items[] = $item;
-				continue;
-			}
-
-			$transformed_item = $this->convert_legacy_item_to_prop_type( $item );
-			if ( $transformed_item ) {
-				$transformed_items[] = $transformed_item;
-			}
-		}
-
-		return [
-			'version' => 1,
-			'items' => $transformed_items,
-		];
-	}
+        error_log( 'transform_interactions_to_prop_type INPUT: ' . print_r( $interactions, true ) );
+        
+        $decoded_interactions = $this->decode_interactions( $interactions );
+        
+        error_log( 'DECODED interactions: ' . print_r( $decoded_interactions, true ) );
+    
+        if ( empty( $decoded_interactions['items'] ) ) {
+            return $interactions;
+        }
+    
+        $transformed_items = [];
+    
+        foreach ( $decoded_interactions['items'] as $item ) {
+            error_log( 'Processing item: ' . print_r( $item, true ) );
+            
+            if ( $this->is_already_prop_type_format( $item ) ) {
+                error_log( 'Item already in prop-type format' );
+                $transformed_items[] = $item;
+                continue;
+            }
+    
+            $transformed_item = $this->convert_legacy_item_to_prop_type( $item );
+            error_log( 'Transformed item: ' . print_r( $transformed_item, true ) );
+            
+            if ( $transformed_item ) {
+                $transformed_items[] = $transformed_item;
+            }
+        }
+    
+        $result = wp_json_encode( [
+            'version' => 1,
+            'items' => $transformed_items,
+        ] );
+        
+        error_log( 'transform_interactions_to_prop_type OUTPUT: ' . $result );
+    
+        return $result;
+    }
 
 	private function transform_interactions_from_prop_type( $interactions ) {
 		$decoded_interactions = $this->decode_interactions( $interactions );
