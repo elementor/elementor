@@ -182,8 +182,6 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		const editor = await wpAdmin.openNewPage(),
 			frame = editor.getPreviewFrame();
 
-		await editor.addWidget( { widgetType: 'button' } );
-
 		const filePath = _path.resolve( __dirname, `./templates/tabs-accessibility.json` );
 		await editor.loadTemplate( filePath, false );
 		await frame.waitForSelector( '.e-n-tabs' );
@@ -192,15 +190,17 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 
 		// Act
 		await test.step( 'Change CSS ID of second tab in content tab', async () => {
-			await frame.locator( '.elementor-widget-n-tabs' ).hover();
-			await frame.locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
+			// Selecting by tabs widget id as it is in the template
+			await editor.selectElement( '72570cbd' );
 			await editor.waitForPanelToLoad();
+			await editor.openPanelTab( 'content' );
 			await editor.openSection( 'section_tabs' );
-			const secondRepeaterField = page.locator( '.elementor-repeater-fields' ).nth( 1 );
-			await secondRepeaterField.waitFor( { state: 'visible' } );
-			await secondRepeaterField.click();
-			const elementIdInput = secondRepeaterField.locator( '.elementor-control-element_id input' );
-			await elementIdInput.waitFor( { state: 'visible' } );
+
+			await page.locator( '.elementor-control-tabs .elementor-repeater-fields' ).nth( 1 ).waitFor( { state: 'visible' } );
+			await page.locator( '.elementor-control-tabs .elementor-repeater-fields' ).nth( 1 ).click();
+
+			const elementIdInput = page.locator( '.elementor-control-tabs .elementor-repeater-fields' ).nth( 1 ).locator( '.elementor-control-element_id input' );
+			await elementIdInput.waitFor( { state: 'visible', timeout: 10000 } );
 			await elementIdInput.click();
 			await elementIdInput.fill( customCssId );
 
