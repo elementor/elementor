@@ -3,16 +3,13 @@
 namespace Elementor\Modules\Variables\Services\Batch_Operations;
 
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
-use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
-use Elementor\Modules\Variables\Storage\Variables_Repository;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -24,25 +21,40 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Test_Batch_Processor extends TestCase {
 
-	private $repository;
-	private $service;
 	private $processor;
 
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->service = $this->createMock( Variables_Service::class );
-		$this->processor = new Batch_Processor( $this->service );
+		$this->processor = new Batch_Processor();
 	}
 
-	protected function assertArrayContainsArray( array $expected, array $actual ) {
-		foreach ( $expected as $key => $value ) {
-			$this->assertArrayHasKey( $key, $actual, "Missing key: $key" );
-			$this->assertEquals( $value, $actual[$key], "Value mismatch for key: $key" );
-		}
+	public function test_apply_operation__create_successfully() {
+		// Arrange
+		$collection = Variables_Collection::default();
+		$operation = [
+			'type' => 'create',
+			'variable' => [
+				'id' => 'temp-123',
+				'type' => 'global-color',
+				'label' => 'New Color',
+				'value' => '#FF0000',
+			],
+		];
+
+		// Act
+		$result = $this->processor->apply_operation( $collection, $operation );
+
+		// Assert
+		$this->assertEquals( 'create', $result['type'] );
+		$this->assertNotEmpty( $result['id'] );
+		$this->assertEquals( 'temp-123', $result['temp_id'] );
+		$this->assertEquals( 'global-color', $result['variable']['type'] );
+		$this->assertEquals( 'New Color', $result['variable']['label'] );
+		$this->assertEquals( '#FF0000', $result['variable']['value'] );
 	}
 
-	public function test_process_batch_operations__successful() {
+	public function test_apply_operation__update_successfully() {
 		// Arrange
 		$collection = Variables_Collection::hydrate( [
 			'data' => [
@@ -51,14 +63,36 @@ class Test_Batch_Processor extends TestCase {
 					'label' => 'Primary',
 					'value' => '#000000',
 				],
-				'id-2' => [
-					'type' => 'global-color',
-					'label' => 'Deleted Variable',
-					'value' => '#FFFFFF',
-					'deleted_at' => '2024-01-01 10:00:00',
-				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		] );
+
+		$operation = [
+			'type' => 'update',
+			'id' => 'id-1',
+			'variable' => [
+				'label' => 'Updated Primary',
+				'value' => '#00FF00',
+			],
+		];
+
+		// Act
+		$result = $this->processor->apply_operation( $collection, $operation );
+
+		// Assert
+		$this->assertEquals( 'update', $result['type'] );
+		$this->assertEquals( 'id-1', $result['id'] );
+		$this->assertEquals( 'Updated Primary', $result['variable']['label'] );
+		$this->assertEquals( '#00FF00', $result['variable']['value'] );
+	}
+
+	public function test_apply_operation__delete_successfully() {
+		// Arrange
+		$collection = Variables_Collection::hydrate( [
+			'data' => [
 				'delete-me' => [
-					'type' => Color_Variable_Prop_Type::get_key(),
+					'type' => 'global-color',
 					'label' => 'Delete Me',
 					'value' => '#000000',
 				],
@@ -67,95 +101,68 @@ class Test_Batch_Processor extends TestCase {
 			'version' => 1,
 		] );
 
-		$data = [
-			[
-				'type' => 'create',
-				'variable' => [
-					'id' => 'temp-123',
-					'type' => 'global-color',
-					'label' => 'New Color',
-					'value' => '#FF0000',
-				],
-			],
-			[
-				'type' => 'update',
-				'id' => 'id-1',
-				'variable' => [
-					'label' => 'Updated Primary',
-					'value' => '#00FF00',
-				],
-			],
-			[
-				'type' => 'restore',
-				'id' => 'id-2',
-				'label' => 'Restored Color',
-			],
-			[
-				'type' => 'delete',
-				'id' => 'delete-me',
-			],
+		$operation = [
+			'type' => 'delete',
+			'id' => 'delete-me',
 		];
-
-		$this->service->method( 'get_collection' )->willReturn( $collection );
-		$this->service->method( 'save_collection' )->willReturn( 6 );
-
-		$this->service->method( 'find_or_fail' )->willReturnCallback( function ( $col, $id ) {
-			return $col->get( $id );
-		} );
 
 		// Act
-		$result = $this->processor->process_batch( $data );
-		$operations_results = $result['results'];
+		$result = $this->processor->apply_operation( $collection, $operation );
 
 		// Assert
-		$this->assertTrue( $result['success'] );
-		$this->assertEquals( 6, $result['watermark'] );
-		$this->assertCount( 4, $result['results'] );
-
-		$create = $operations_results[0];
-		$expected_variable = [
-			'type' => 'global-color',
-			'label' => 'New Color',
-			'value' => '#FF0000',
-		];
-
-		$this->assertNotEmpty( $create['id'] );
-		$this->assertEquals( 'create', $create['type'] );
-		$this->assertEquals( 'temp-123', $create['temp_id'] );
-		$this->assertArrayContainsArray( $expected_variable, $create['variable'] );
-
-		$update = $operations_results[1];
-		$expected_variable = [
-			'type' => 'global-color',
-			'label' => 'Updated Primary',
-			'value' => '#00FF00',
-		];
-		$this->assertEquals( 'id-1', $update['id'] );
-		$this->assertEquals( 'update', $update['type'] );
-		$this->assertArrayContainsArray( $expected_variable, $update['variable'] );
-
-		$restore = $operations_results[2];
-		$expected_variable = [
-			'type' => 'global-color',
-			'label' => 'Restored Color',
-			'value' => '#FFFFFF',
-		];
-		$this->assertEquals( 'restore', $restore['type'] );
-		$this->assertEquals( 'id-2', $restore['id'] );
-		$this->assertArrayContainsArray( $expected_variable, $restore['variable'] );
-
-		$delete = $operations_results[3];
-		$expected_variable = [
-			'type' => 'global-color',
-			'label' => 'Primary',
-			'value' => '#000000',
-		];
-		$this->assertEquals( 'delete', $delete['type'] );
-		$this->assertEquals( 'delete-me', $delete['id'] );
-		$this->assertTrue( $delete['deleted'] );
+		$this->assertEquals( 'delete', $result['type'] );
+		$this->assertEquals( 'delete-me', $result['id'] );
+		$this->assertTrue( $result['deleted'] );
 	}
 
-	public function test_process_batch__throws_error_when_operation_fails() {
+	public function test_apply_operation__restore_successfully() {
+		// Arrange
+		$collection = Variables_Collection::hydrate( [
+			'data' => [
+				'id-2' => [
+					'type' => 'global-color',
+					'label' => 'Deleted Variable',
+					'value' => '#FFFFFF',
+					'deleted_at' => '2024-01-01 10:00:00',
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		] );
+
+		$operation = [
+			'type' => 'restore',
+			'id' => 'id-2',
+			'label' => 'Restored Color',
+		];
+
+		// Act
+		$result = $this->processor->apply_operation( $collection, $operation );
+
+		// Assert
+		$this->assertEquals( 'restore', $result['type'] );
+		$this->assertEquals( 'id-2', $result['id'] );
+		$this->assertEquals( 'Restored Color', $result['variable']['label'] );
+		$this->assertEquals( '#FFFFFF', $result['variable']['value'] );
+		$this->assertArrayNotHasKey( 'deleted_at', $result['variable'] );
+	}
+
+	public function test_apply_operation__throws_exception_for_invalid_operation_type() {
+		// Arrange
+		$collection = Variables_Collection::default();
+		$operation = [
+			'type' => 'invalid_operation',
+		];
+
+		// Assert
+		$this->expectException( BatchOperationFailed::class );
+		$this->expectExceptionMessage( 'Invalid operation type: invalid_operation' );
+
+		// Act
+		$this->processor->apply_operation( $collection, $operation );
+	}
+
+	public function test_apply_operation__create_throws_duplicated_label() {
 		// Arrange
 		$collection = Variables_Collection::hydrate( [
 			'data' => [
@@ -169,53 +176,23 @@ class Test_Batch_Processor extends TestCase {
 			'version' => 1,
 		] );
 
-		$data = [
-			[
-				'type' => 'create',
-				'variable' => [
-					'type' => 'global-color',
-					'label' => 'Primary',
-					'value' => '#FF0000',
-				],
+		$operation = [
+			'type' => 'create',
+			'variable' => [
+				'type' => 'global-color',
+				'label' => 'Primary',
+				'value' => '#FF0000',
 			],
 		];
 
-		$this->service->method( 'get_collection' )->willReturn( $collection );
-
 		// Assert
-		$this->expectException( BatchOperationFailed::class );
+		$this->expectException( DuplicatedLabel::class );
 
 		// Act
-		$this->processor->process_batch( $data );
+		$this->processor->apply_operation( $collection, $operation );
 	}
 
-	public function test_process_batch__throws_runtime_exception_when_save_fails() {
-		// Arrange
-		$collection = Variables_Collection::default();
-
-		$data = [
-			[
-				'type' => 'create',
-				'variable' => [
-					'type' => 'global-color',
-					'label' => 'New Color',
-					'value' => '#FF0000',
-				],
-			],
-		];
-
-		$this->service->method( 'get_collection' )->willReturn( $collection );
-		$this->service->method( 'save_collection' )->willReturn( false );
-
-		// Assert
-		$this->expectException( \Elementor\Modules\Variables\Storage\Exceptions\FatalError::class );
-		$this->expectExceptionMessage( 'Failed to save batch operations' );
-
-		// Act
-		$this->processor->process_batch( $data );
-	}
-
-	public function test_op_create__throws_variables_limit_reached() {
+	public function test_apply_operation__create_throws_variables_limit_reached() {
 		// Arrange
 		$variables = [];
 		for ( $i = 0; $i < 100; $i++ ) {
@@ -233,58 +210,57 @@ class Test_Batch_Processor extends TestCase {
 			'version' => 1,
 		] );
 
-		$data = [
-			[
-				'type' => 'create',
-				'variable' => [
-					'type' => 'global-color',
-					'label' => 'New Color',
-					'value' => '#FF0000',
-				],
-			]
-		];
-		$this->service->method( 'get_collection' )->willReturn( $collection );
-
-		// Act.
-		try {
-			$this->processor->process_batch( $data );
-			$this->fail( 'Expected BatchOperationFailed to be thrown' );
-		} catch ( BatchOperationFailed $e ) {
-			// Assert.
-			$this->assertSame( 'Batch failed', $e->getMessage() );
-
-			$details = $e->getErrorDetails();
-			$error = $details['operation_0'];
-
-			$this->assertEquals( 400, $error['status'] );
-			$this->assertEquals( 'invalid_variable_limit_reached', $error['code'] );
-			$this->assertEquals( 'Total variables count limit reached', $error['message'] );
-		}
-
-		$this->assertTrue( true );
-	}
-
-	public function test_process_batch__throws_fatal_error_when_save_fails() {
-		// Arrange
-		$this->service->method( 'save_collection' )->willReturn( false );
-
-		$data = [
-			[
-				'type' => 'create',
-				'variable' => [
-					'type' => Color_Variable_Prop_Type::get_key(),
-					'label' => 'Test Label',
-					'value' => '#FF0000',
-				],
+		$operation = [
+			'type' => 'create',
+			'variable' => [
+				'type' => 'global-color',
+				'label' => 'New Color',
+				'value' => '#FF0000',
 			],
 		];
 
 		// Assert
-		$this->expectException( \Elementor\Modules\Variables\Storage\Exceptions\FatalError::class );
-		$this->expectExceptionMessage( 'Failed to save batch operations' );
+		$this->expectException( VariablesLimitReached::class );
+		$this->expectExceptionMessage( 'Total variables count limit reached' );
 
 		// Act
-		$this->processor->process_batch( $data );
+		$this->processor->apply_operation( $collection, $operation );
+	}
+
+	public function test_apply_operation__update_throws_record_not_found() {
+		// Arrange
+		$collection = Variables_Collection::default();
+		$operation = [
+			'type' => 'update',
+			'id' => 'non-existent-id',
+			'variable' => [
+				'label' => 'Updated Label',
+			],
+		];
+
+		// Assert
+		$this->expectException( RecordNotFound::class );
+
+		// Act
+		$this->processor->apply_operation( $collection, $operation );
+	}
+
+	public function test_operation_id__returns_fallback_for_operation_without_id() {
+		// Arrange
+		$operation = [
+			'type' => 'create',
+			'variable' => [
+				'type' => 'global-color',
+				'label' => 'New Color',
+				'value' => '#FF0000',
+			],
+		];
+
+		// Act
+		$result = $this->processor->operation_id( $operation, 5 );
+
+		// Assert
+		$this->assertEquals( 'operation_5', $result );
 	}
 
 }

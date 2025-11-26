@@ -2,19 +2,20 @@ import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-sch
 
 export const configureElementToolPrompt = `Configure an existing element on the page.
 
-# **CRITICAL - REQUIRED RESOURCES (Must read before using this tool)**
+# **CRITICAL - REQUIRED INFORMATION (Must read before using this tool)**
 1. [${ WIDGET_SCHEMA_URI }]
    Required to understand which widgets are available, and what are their configuration schemas.
    Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply property values correctly.
 2. [${ STYLE_SCHEMA_URI }]
    Required to understand the styles schema for the widgets. All widgets share the same styles schema, grouped by categories.
    Use this resource to understand which style properties are available for each element, and how to structure the "_styles" configuration property.
+3. If not sure about the PropValues schema, you can use the "get-element-configuration-values" tool to retreive the current PropValues configuration of the element.
 
 Before using this tool, check the definitions of the elements PropTypes at the resource "widget-schema-by-type" at editor-canvas__elementor://widgets/schema/{widgetType}
 All widgets share a common _style property for styling, which uses the common styles schema.
 Retreive and check the common styles schema at the resource list "styles-schema" at editor-canvas__elementor://styles/schema/{category}
 
-Unless specifically noted, attempt to use the _style property "custom_css" for any styling, read the resource editor-canvas__elementor://styles/schema/custom_css for more information.
+Attempt to use the _style property "custom_css" for any styling that have complicated schemas (such as backgrounds), read the resource editor-canvas__elementor://styles/schema/custom_css for more information.
 
 # Parameters
 - propertiesToChange: An object containing the properties to change, with their new values. MANDATORY
@@ -59,6 +60,7 @@ Use the EXACT "PROP-TYPE" Schema given, and ALWAYS include the "key" property fr
 \`\`\`json
 {
   propertiesToChange: {
+    // List of properties TO CHANGE, following the PropType schema for the element as defined in the resource [${ WIDGET_SCHEMA_URI }]
     title: {
       $$type: 'string',
       value: 'New Title Text'
@@ -68,8 +70,9 @@ Use the EXACT "PROP-TYPE" Schema given, and ALWAYS include the "key" property fr
       value: false
     },
     _styles: {
+      // List of available keys available at the [${ STYLE_SCHEMA_URI }] dynamic resource
       'line-height': {
-        $$type: 'size',
+        $$type: 'size', // MANDATORY do not forget to include the correct $$type for every property
         value: {
           size: {
             $$type: 'number',

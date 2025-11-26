@@ -2,17 +2,20 @@
 
 namespace Elementor\Modules\Variables\Services;
 
+use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Error_Formatter;
+use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
-use Elementor\Modules\Variables\Storage\Variables_Collection;
+use Elementor\Modules\Variables\Storage\Exceptions\BatchOperationFailed;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\Storage\Exceptions\FatalError;
-use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 
 class Variables_Service {
 	private Variables_Repository $repo;
+	private Batch_Processor $batch_processor;
 
-	public function __construct( Variables_Repository $repository ) {
+	public function __construct( Variables_Repository $repository, Batch_Processor $batch_processor ) {
 		$this->repo = $repository;
+		$this->batch_processor = $batch_processor;
 	}
 
 	public function get_variables_list(): array {
@@ -20,22 +23,56 @@ class Variables_Service {
 	}
 
 	public function load() {
-		return $this->get_collection()->serialize();
+		return $this->repo->load()->serialize( true );
 	}
 
-	public function get_collection(): Variables_Collection {
-		return $this->repo->load();
-	}
+	/**
+	 * @throws BatchOperationFailed Thrown when one of the operations fails.
+	 * @throws FatalError Failed to save after batch.
+	 */
+	public function process_batch( array $operations ) {
+		$collection = $this->repo->load();
+		$results = [];
+		$errors = [];
 
-	public function save_collection( Variables_Collection $collection ) {
-		return $this->repo->save( $collection );
+		$error_formatter = new Batch_Error_Formatter();
+
+		foreach ( $operations as $index => $operation ) {
+			try {
+				$results[] = $this->batch_processor->apply_operation( $collection, $operation );
+
+			} catch ( \Exception $e ) {
+				$errors[ $this->batch_processor->operation_id( $operation, $index ) ] = [
+					'status' => $error_formatter->status_for( $e ),
+					'code' => $error_formatter->error_code_for( $e ),
+					'message' => $e->getMessage(),
+				];
+			}
+		}
+
+		if ( ! empty( $errors ) ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+			throw new BatchOperationFailed( 'Batch failed', $errors );
+		}
+
+		$watermark = $this->repo->save( $collection );
+
+		if ( false === $watermark ) {
+			throw new FatalError( 'Failed to save batch operations' );
+		}
+
+		return [
+			'success'   => true,
+			'results'   => $results,
+			'watermark' => $watermark,
+		];
 	}
 
 	/**
 	 * @throws FatalError If variable create fails or validation errors occur.
 	 */
 	public function create( array $data ): array {
-		$collection = $this->get_collection();
+		$collection = $this->repo->load();
 
 		$collection->assert_limit_not_reached();
 		$collection->assert_label_is_unique( $data['label'] );
@@ -52,7 +89,7 @@ class Variables_Service {
 
 		$collection->add_variable( $variable );
 
-		$watermark = $this->save_collection( $collection );
+		$watermark = $this->repo->save( $collection );
 
 		if ( false === $watermark ) {
 			throw new FatalError( 'Failed to create variable' );
@@ -68,8 +105,8 @@ class Variables_Service {
 	 * @throws FatalError If variable update fails.
 	 */
 	public function update( string $id, array $data ): array {
-		$collection = $this->get_collection();
-		$variable = $this->find_or_fail( $collection, $id );
+		$collection = $this->repo->load();
+		$variable = $collection->find_or_fail( $id );
 
 		if ( isset( $data['label'] ) ) {
 			$collection->assert_label_is_unique( $data['label'], $id );
@@ -77,7 +114,7 @@ class Variables_Service {
 
 		$variable->apply_changes( $data );
 
-		$watermark = $this->save_collection( $collection );
+		$watermark = $this->repo->save( $collection );
 
 		if ( false === $watermark ) {
 			throw new FatalError( 'Failed to update variable' );
@@ -93,20 +130,23 @@ class Variables_Service {
 	 * @throws FatalError If variable delete fails.
 	 */
 	public function delete( string $id ) {
-		$collection = $this->get_collection();
-		$variable = $this->find_or_fail( $collection, $id );
+		$collection = $this->repo->load();
+		$variable = $collection->find_or_fail( $id );
 
 		$variable->soft_delete();
 
-		$watermark = $this->save_collection( $collection );
+		$watermark = $this->repo->save( $collection );
 
 		if ( false === $watermark ) {
 			throw new FatalError( 'Failed to delete variable' );
 		}
 
 		return [
-			'variable' => array_merge( [ 'id' => $id ], $variable->to_array() ),
 			'watermark' => $watermark,
+			'variable' => array_merge( [
+				'id' => $id,
+				'deleted' => true,
+			], $variable->to_array() ),
 		];
 	}
 
@@ -114,8 +154,8 @@ class Variables_Service {
 	 * @throws FatalError If variable restore fails.
 	 */
 	public function restore( string $id, $overrides = [] ) {
-		$collection = $this->get_collection();
-		$variable = $this->find_or_fail( $collection, $id );
+		$collection = $this->repo->load();
+		$variable = $collection->find_or_fail( $id );
 
 		$collection->assert_limit_not_reached();
 
@@ -127,7 +167,7 @@ class Variables_Service {
 
 		$variable->restore();
 
-		$watermark = $this->save_collection( $collection );
+		$watermark = $this->repo->save( $collection );
 
 		if ( false === $watermark ) {
 			throw new FatalError( 'Failed to delete variable' );
@@ -137,18 +177,5 @@ class Variables_Service {
 			'variable' => array_merge( [ 'id' => $id ], $variable->to_array() ),
 			'watermark' => $watermark,
 		];
-	}
-
-	/**
-	 * @throws RecordNotFound When a variable is not found.
-	 */
-	public function find_or_fail( Variables_Collection $collection, string $id ): Variable {
-		$variable = $collection->get( $id );
-
-		if ( ! isset( $variable ) ) {
-			throw new RecordNotFound( 'Variable not found' );
-		}
-
-		return $variable;
 	}
 }

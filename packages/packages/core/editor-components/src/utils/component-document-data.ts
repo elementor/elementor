@@ -9,7 +9,7 @@ type ComponentDocumentData = {
 	revisions: { current_id: number };
 };
 
-type ComponentIdTransformerWindow = Window & {
+type ComponentInstanceTransformerWindow = Window & {
 	elementor?: {
 		documents?: {
 			request: ( id: number ) => Promise< ComponentDocumentData >;
@@ -35,7 +35,7 @@ export const invalidateComponentDocumentData = ( id: number ) => {
 };
 
 function getDocumentsManager() {
-	const extendedWindow = window as unknown as ComponentIdTransformerWindow;
+	const extendedWindow = window as unknown as ComponentInstanceTransformerWindow;
 
 	const documentManager = extendedWindow.elementor?.documents;
 

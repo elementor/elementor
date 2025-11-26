@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
+use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 
 /**
@@ -44,11 +45,17 @@ class Variables_Collection extends Collection {
 		return new self( $variables, $watermark, $version );
 	}
 
-	public function serialize(): array {
+	public function serialize( bool $include_deleted_key = false ): array {
 		$data = [];
 
 		foreach ( $this->all() as $variable ) {
-			$data[ $variable->id() ] = $variable->to_array();
+			$var = $variable->to_array();
+
+			if ( $include_deleted_key && $variable->is_deleted() ) {
+				$var['deleted'] = true;
+			}
+
+			$data[ $variable->id() ] = $var;
 		}
 
 		return [
@@ -84,6 +91,19 @@ class Variables_Collection extends Collection {
 
 	public function add_variable( Variable $variable ): void {
 		$this->items[ $variable->id() ] = $variable;
+	}
+
+	/**
+	 * @throws RecordNotFound When a variable is not found.
+	 */
+	public function find_or_fail( string $id ): Variable {
+		$variable = $this->get( $id );
+
+		if ( ! isset( $variable ) ) {
+			throw new RecordNotFound( 'Variable not found' );
+		}
+
+		return $variable;
 	}
 
 	/**

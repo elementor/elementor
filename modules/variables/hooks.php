@@ -6,7 +6,6 @@ use Elementor\Modules\Variables\Classes\Variable_Types_Registry;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
-use Elementor\Modules\Variables\Services\Batch_Operations\BatchProcessor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
@@ -104,10 +103,7 @@ class Hooks {
 	}
 
 	private function rest_api() {
-		return new Variables_API(
-			$this->variables_service(),
-			new Batch_Processor( $this->variables_service() )
-		);
+		return new Variables_API( $this->variables_service() );
 	}
 
 	private function register_api_endpoints() {
@@ -123,6 +119,6 @@ class Hooks {
 			Plugin::$instance->kits_manager->get_active_kit()
 		);
 
-		return new Variables_Service( $repository );
+		return new Variables_Service( $repository, new Batch_Processor() );
 	}
 }

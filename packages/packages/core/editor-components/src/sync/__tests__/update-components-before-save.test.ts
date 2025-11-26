@@ -38,7 +38,12 @@ describe( 'updateComponentsBeforeSave', () => {
 								elType: 'widget',
 								id: '3',
 								widgetType: 'e-component',
-								settings: { component: { $$type: 'component-id', value: 1000 } },
+								settings: {
+									component_instance: {
+										$$type: 'component-instance',
+										value: { component_id: 1000 },
+									},
+								},
 							},
 						],
 					},
@@ -46,19 +51,34 @@ describe( 'updateComponentsBeforeSave', () => {
 						elType: 'widget',
 						id: '4',
 						widgetType: 'e-component',
-						settings: { component: { $$type: 'component-id', value: PUBLISHED_COMPONENT_ID } },
+						settings: {
+							component_instance: {
+								$$type: 'component-instance',
+								value: { component_id: PUBLISHED_COMPONENT_ID },
+							},
+						},
 					},
 					{
 						elType: 'widget',
 						id: '5',
 						widgetType: 'e-component',
-						settings: { component: { $$type: 'component-id', value: 3000 } },
+						settings: {
+							component_instance: {
+								$$type: 'component-instance',
+								value: { component_id: 3000 },
+							},
+						},
 					},
 					{
 						elType: 'widget',
 						id: '6',
 						widgetType: 'e-component',
-						settings: { component: { $$type: 'component-id', value: HAS_AUTOSAVE_COMPONENT_ID } },
+						settings: {
+							component_instance: {
+								$$type: 'component-instance',
+								value: { component_id: HAS_AUTOSAVE_COMPONENT_ID },
+							},
+						},
 					},
 				],
 			},
@@ -85,7 +105,12 @@ describe( 'updateComponentsBeforeSave', () => {
 				elType: 'widget',
 				id: '2',
 				widgetType: 'e-component',
-				settings: { component: { $$type: 'component-id', value: 1000 } },
+				settings: {
+					component_instance: {
+						$$type: 'component-instance',
+						value: { component_id: 1000 },
+					},
+				},
 			},
 		] );
 
@@ -107,7 +132,12 @@ describe( 'updateComponentsBeforeSave', () => {
 				elType: 'widget',
 				id: '2',
 				widgetType: 'e-component',
-				settings: { component: { $$type: 'component-id', value: PUBLISHED_COMPONENT_ID } },
+				settings: {
+					component_instance: {
+						$$type: 'component-instance',
+						value: { component_id: PUBLISHED_COMPONENT_ID },
+					},
+				},
 			},
 		] );
 

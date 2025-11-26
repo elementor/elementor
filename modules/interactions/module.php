@@ -62,14 +62,18 @@ class Module extends BaseModule {
 			/**
 			 * @throws \Exception
 			 */
-			function( $document ) {
+			function( $data, $document ) {
 				$validation = new Validation( $this->get_presets() );
-				$document_after_sanitization = $validation->sanitize( $document );
+				$document_after_sanitization = $validation->sanitize( $data );
 				$validation->validate();
 
 				return $document_after_sanitization;
 			},
-		10, 1 );
+		10, 2 );
+
+		add_filter( 'elementor/document/save/data', function( $data, $document ) {
+			return ( new Parser( $document->get_main_id() ) )->assign_interaction_ids( $data );
+		}, 11, 2 );
 	}
 
 	private function get_config() {
