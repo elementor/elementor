@@ -175,4 +175,68 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 		// Check if child widget doesn't have red tabs.
 		await expect.soft( editor.getPreviewFrame().locator( `.elementor-element-${ parentWidgetId } .e-n-tabs-content .elementor-element > .e-n-tabs > .e-n-tabs-heading .e-n-tab-title[aria-selected="true"] + .e-n-tab-title` ) ).not.toHaveCSS( 'background-color', 'rgb(255, 0, 0)' );
 	} );
+
+	test( 'Keyboard navigation with arrow keys after changing tab CSS ID', async ( { page, apiRequests }, testInfo ) => {
+		// Arrange
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage(),
+			frame = editor.getPreviewFrame();
+
+		await editor.addWidget( { widgetType: 'button' } );
+
+		const filePath = _path.resolve( __dirname, `./templates/tabs-accessibility.json` );
+		await editor.loadTemplate( filePath, false );
+		await frame.waitForSelector( '.e-n-tabs' );
+
+		const customCssId = 'custom-tab-id';
+
+		// Act
+		await test.step( 'Change CSS ID of second tab in content tab', async () => {
+			await frame.locator( '.elementor-widget-n-tabs' ).hover();
+			await frame.locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
+			await editor.waitForPanelToLoad();
+			await editor.openSection( 'section_tabs' );
+			const secondRepeaterField = page.locator( '.elementor-repeater-fields >> nth=1' );
+			await secondRepeaterField.waitFor( { state: 'visible' } );
+			await secondRepeaterField.click();
+			const elementIdInput = page.locator( '.elementor-repeater-fields:nth-child( 2 ) .elementor-control-element_id input' );
+			await elementIdInput.click();
+			await elementIdInput.fill( customCssId );
+
+			// Assert
+			await expect( elementIdInput ).toHaveValue( customCssId );
+		} );
+
+		await test.step( 'Verify keyboard navigation still works after CSS ID change', async () => {
+			const tabTitleOne = frame.locator( '.e-n-tab-title >> nth=0' ),
+				tabTitleTwo = frame.locator( '.e-n-tab-title >> nth=1' ),
+				tabTitleThree = frame.locator( '.e-n-tab-title >> nth=2' );
+
+			// Assert
+			await tabTitleOne.click();
+			await tabTitleOne.focus();
+			await expect( tabTitleOne ).toBeFocused();
+			await expect( tabTitleOne ).toHaveAttribute( 'aria-selected', 'true' );
+
+			await page.keyboard.press( 'ArrowRight' );
+			await expect( tabTitleTwo ).toBeFocused();
+			await expect( tabTitleTwo ).toHaveAttribute( 'aria-selected', 'false' );
+
+			await page.keyboard.press( 'ArrowRight' );
+			await expect( tabTitleThree ).toBeFocused();
+			await expect( tabTitleThree ).toHaveAttribute( 'aria-selected', 'false' );
+
+			await page.keyboard.press( 'ArrowLeft' );
+			await expect( tabTitleTwo ).toBeFocused();
+			await expect( tabTitleTwo ).toHaveAttribute( 'aria-selected', 'false' );
+
+			await page.keyboard.press( 'ArrowLeft' );
+			await expect( tabTitleOne ).toBeFocused();
+			await expect( tabTitleOne ).toHaveAttribute( 'aria-selected', 'true' );
+
+			await page.keyboard.press( 'ArrowLeft' );
+			await expect( tabTitleThree ).toBeFocused();
+			await expect( tabTitleThree ).toHaveAttribute( 'aria-selected', 'false' );
+		} );
+	} );
 } );
