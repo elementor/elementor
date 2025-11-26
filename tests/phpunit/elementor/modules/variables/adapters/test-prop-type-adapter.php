@@ -2,12 +2,14 @@
 
 namespace Elementor\Modules\Variables\Adapters;
 
+use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
+use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\Variables_Schema\Variable_Schema_Entry;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use PHPUnit\Framework\TestCase;
