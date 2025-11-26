@@ -200,6 +200,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( Color_Variable_Prop_Type::get_key(), $response_data['data']['variable']['type'] );
 		$this->assertEquals( 'Primary Color', $response_data['data']['variable']['label'] );
 		$this->assertEquals( '#FF0000', $response_data['data']['variable']['value'] );
+		$this->assertTrue( $response_data['data']['variable']['deleted'] );
 		$this->assertNotEmpty( $response_data['data']['variable']['deleted_at'] );
 	}
 
@@ -270,6 +271,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 		$this->assertEquals( 'Primary Color', $response_data['data']['variable']['label'] );
 		$this->assertEquals( '#FF0000', $response_data['data']['variable']['value'] );
+		$this->assertArrayNotHasKey( 'deleted', $response_data['data']['variable'] );
 		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
 	}
 
@@ -322,6 +324,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 		$this->assertEquals( 'main-text-color', $response_data['data']['variable']['label'] );
 		$this->assertEquals( '#202020', $response_data['data']['variable']['value'] );
+		$this->assertArrayNotHasKey( 'deleted', $response_data['data']['variable'] );
 		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
 	}
 
