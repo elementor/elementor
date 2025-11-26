@@ -290,6 +290,8 @@ class App extends BaseApp {
 			'description' => esc_html__( 'Enhanced import/export for website templates. Selectively include site content, templates, and settings with advanced granular control.', 'elementor' ),
 			'release_status' => ExperimentsManager::RELEASE_STATUS_BETA,
 			'default' => ExperimentsManager::STATE_ACTIVE,
+			'hidden' => true,
+			'mutable' => false,
 		] );
 	}
 
