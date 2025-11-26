@@ -127,10 +127,10 @@ trait Has_Atomic_Base {
 
 		return [];
 	}
-	
+
 	private function convert_prop_type_interactions_to_legacy( $interactions ) {
 		$legacy_items = [];
-	
+
 		foreach ( $interactions['items'] as $item ) {
 			if ( isset( $item['$$type'] ) && $item['$$type'] === 'interaction-item' ) {
 				$legacy_item = $this->extract_legacy_interaction_from_prop_type( $item );
@@ -141,43 +141,43 @@ trait Has_Atomic_Base {
 				$legacy_items[] = $item;
 			}
 		}
-	
+
 		return [
 			'version' => $interactions['version'] ?? 1,
 			'items' => $legacy_items,
 		];
 	}
-	
+
 	private function extract_legacy_interaction_from_prop_type( $item ) {
 		if ( ! isset( $item['value'] ) || ! is_array( $item['value'] ) ) {
 			return null;
 		}
-	
+
 		$item_value = $item['value'];
-	
+
 		$interaction_id = $this->extract_prop_value( $item_value, 'interaction_id' );
 		$trigger = $this->extract_prop_value( $item_value, 'trigger' );
 		$animation = $this->extract_prop_value( $item_value, 'animation' );
-	
+
 		if ( ! is_array( $animation ) ) {
 			return null;
 		}
-	
+
 		$effect = $this->extract_prop_value( $animation, 'effect' );
 		$type = $this->extract_prop_value( $animation, 'type' );
 		$direction = $this->extract_prop_value( $animation, 'direction' );
 		$timing_config = $this->extract_prop_value( $animation, 'timing_config' );
-	
+
 		$duration = 300;
 		$delay = 0;
-	
+
 		if ( is_array( $timing_config ) ) {
 			$duration = $this->extract_prop_value( $timing_config, 'duration', 300 );
 			$delay = $this->extract_prop_value( $timing_config, 'delay', 0 );
 		}
-	
+
 		$animation_id = implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay ] );
-	
+
 		return [
 			'interaction_id' => $interaction_id,
 			'animation' => [
@@ -186,18 +186,18 @@ trait Has_Atomic_Base {
 			],
 		];
 	}
-	
+
 	private function extract_prop_value( $data, $key, $default = '' ) {
 		if ( ! is_array( $data ) || ! isset( $data[ $key ] ) ) {
 			return $default;
 		}
-	
+
 		$value = $data[ $key ];
-	
+
 		if ( is_array( $value ) && isset( $value['$$type'] ) && isset( $value['value'] ) ) {
 			return $value['value'];
 		}
-	
+
 		return $value !== null ? $value : $default;
 	}
 
@@ -249,58 +249,61 @@ trait Has_Atomic_Base {
 
 	private function transform_interactions_for_save( $interactions ) {
 		$decoded = $this->decode_interactions_data( $interactions );
-		
+
 		if ( empty( $decoded['items'] ) ) {
 			return [];
 		}
-	
+
 		$transformed_items = [];
-	
+
 		foreach ( $decoded['items'] as $item ) {
 			if ( isset( $item['$$type'] ) && $item['$$type'] === 'interaction-item' ) {
 				$transformed_items[] = $item;
 				continue;
 			}
-	
+
 			$transformed_item = $this->convert_legacy_to_prop_type( $item );
 			if ( $transformed_item ) {
 				$transformed_items[] = $transformed_item;
 			}
 		}
-	
+
 		return [
 			'version' => 1,
 			'items' => $transformed_items,
 		];
 	}
-	
+
 	private function decode_interactions_data( $interactions ) {
 		if ( is_array( $interactions ) ) {
 			return $interactions;
 		}
-	
+
 		if ( is_string( $interactions ) ) {
 			$decoded = json_decode( $interactions, true );
 			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
 				return $decoded;
 			}
 		}
-	
-		return [ 'items' => [], 'version' => 1 ];
+
+		return [
+			'items' => [],
+			'version' => 1,
+		];
 	}
-	
+
 	private function convert_legacy_to_prop_type( $item ) {
 		if ( ! isset( $item['animation']['animation_id'] ) || ! isset( $item['interaction_id'] ) ) {
 			return null;
 		}
-	
+
 		$animation_id = $item['animation']['animation_id'];
 		$parsed = $this->parse_animation_id_string( $animation_id );
-	
+
 		if ( ! $parsed ) {
 			return null;
 		}
-	
+
 		return $this->create_prop_value( 'interaction-item', [
 			'interaction_id' => $this->create_prop_value( 'string', $item['interaction_id'] ),
 			'trigger' => $this->create_prop_value( 'string', $parsed['trigger'] ),
@@ -315,10 +318,10 @@ trait Has_Atomic_Base {
 			] ),
 		] );
 	}
-	
+
 	private function parse_animation_id_string( $animation_id ) {
 		$pattern = '/^([^-]+)-([^-]+)-([^-]+)-([^-]*)-(\d+)-(\d+)$/';
-		
+
 		if ( preg_match( $pattern, $animation_id, $matches ) ) {
 			return [
 				'trigger' => $matches[1],
@@ -329,10 +332,10 @@ trait Has_Atomic_Base {
 				'delay' => (int) $matches[6],
 			];
 		}
-	
+
 		return null;
 	}
-	
+
 	private function create_prop_value( $type, $value ) {
 		return [
 			'$$type' => $type,
@@ -404,11 +407,11 @@ trait Has_Atomic_Base {
 
 	public function get_interactions_ids() {
 		$animation_ids = [];
-	
+
 		$list_of_interactions = ( is_array( $this->interactions ) && isset( $this->interactions['items'] ) )
 			? $this->interactions['items']
 			: [];
-	
+
 		foreach ( $list_of_interactions as $interaction ) {
 			if ( isset( $interaction['$$type'] ) && $interaction['$$type'] === 'interaction-item' ) {
 				$animation_id = $this->extract_animation_id_from_prop_type( $interaction );
@@ -419,37 +422,37 @@ trait Has_Atomic_Base {
 				$animation_ids[] = $interaction['animation']['animation_id'];
 			}
 		}
-	
+
 		return $animation_ids;
 	}
-	
+
 	private function extract_animation_id_from_prop_type( $item ) {
 		if ( ! isset( $item['value'] ) || ! is_array( $item['value'] ) ) {
 			return null;
 		}
-	
+
 		$item_value = $item['value'];
-		
+
 		$trigger = $this->extract_prop_value( $item_value, 'trigger' );
 		$animation = $this->extract_prop_value( $item_value, 'animation' );
-	
+
 		if ( ! is_array( $animation ) ) {
 			return null;
 		}
-	
+
 		$effect = $this->extract_prop_value( $animation, 'effect' );
 		$type = $this->extract_prop_value( $animation, 'type' );
 		$direction = $this->extract_prop_value( $animation, 'direction' );
 		$timing_config = $this->extract_prop_value( $animation, 'timing_config' );
-	
+
 		$duration = 300;
 		$delay = 0;
-	
+
 		if ( is_array( $timing_config ) ) {
 			$duration = $this->extract_prop_value( $timing_config, 'duration', 300 );
 			$delay = $this->extract_prop_value( $timing_config, 'delay', 0 );
 		}
-	
+
 		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay ] );
 	}
 }

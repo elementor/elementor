@@ -35,28 +35,28 @@ abstract class Atomic_Element_Base extends Element_Base {
 		if ( empty( $interactions ) ) {
 			return [];
 		}
-	
+
 		if ( is_string( $interactions ) ) {
 			$decoded = json_decode( $interactions, true );
 			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
 				$interactions = $decoded;
 			}
 		}
-	
+
 		if ( ! is_array( $interactions ) ) {
 			return [];
 		}
-	
+
 		if ( isset( $interactions['items'] ) && is_array( $interactions['items'] ) ) {
 			return $this->convert_prop_type_interactions_to_legacy_for_runtime( $interactions );
 		}
-	
+
 		return $interactions;
 	}
-	
+
 	private function convert_prop_type_interactions_to_legacy_for_runtime( $interactions ) {
 		$legacy_items = [];
-	
+
 		foreach ( $interactions['items'] as $item ) {
 			if ( isset( $item['$$type'] ) && $item['$$type'] === 'interaction-item' ) {
 				$legacy_item = $this->extract_legacy_interaction_from_prop_type( $item );
@@ -67,7 +67,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 				$legacy_items[] = $item;
 			}
 		}
-	
+
 		return [
 			'version' => $interactions['version'] ?? 1,
 			'items' => $legacy_items,
