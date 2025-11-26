@@ -1,6 +1,6 @@
-import { getElementType, type V1Element } from '@elementor/editor-elements';
+import { getContainer, getElementType, type V1Element } from '@elementor/editor-elements';
 
-function getHtmlPropertyName( container: V1Element | null ): string {
+const getHtmlPropertyName = ( container: V1Element | null ): string => {
 	const widgetType = container?.model?.get( 'widgetType' ) ?? container?.model?.get( 'elType' );
 
 	if ( ! widgetType ) {
@@ -15,12 +15,13 @@ function getHtmlPropertyName( container: V1Element | null ): string {
 
 	const entry = Object.entries( propsSchema ).find( ( [ , propType ] ) => propType.key === 'html' );
 	return entry?.[ 0 ] ?? '';
-}
+};
 
-export function hasInlineEditableProperty( container: V1Element | null ): boolean {
+export const hasInlineEditableProperty = ( containerId: string ): boolean => {
+	const container = getContainer( containerId );
 	return !! getHtmlPropertyName( container );
-}
+};
 
-export function getInlineEditablePropertyName( container: V1Element | null ): string {
+export const getInlineEditablePropertyName = ( container: V1Element | null ): string => {
 	return getHtmlPropertyName( container );
-}
+};

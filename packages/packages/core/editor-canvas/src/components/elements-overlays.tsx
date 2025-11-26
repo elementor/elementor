@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getContainer, getElements, useSelectedElement } from '@elementor/editor-elements';
+import { getElements, useSelectedElement } from '@elementor/editor-elements';
 import {
 	__privateUseIsRouteActive as useIsRouteActive,
 	__privateUseListenTo as useListenTo,
@@ -21,14 +21,7 @@ const overlayRegistry: ElementOverlayConfig[] = [
 	},
 	{
 		component: InlineEditorOverlay,
-		filter: ( { id, isSelected } ) => {
-			if ( ! isSelected ) {
-				return false;
-			}
-			
-			const container = getContainer( id );
-			return hasInlineEditableProperty( container );
-		},
+		filter: ( { id, isSelected } ) => isSelected && hasInlineEditableProperty( id ),
 	},
 ];
 
