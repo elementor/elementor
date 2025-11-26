@@ -77,11 +77,19 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	handleOnRender() {
 		setTimeout( () => this.ui.templateNameInput.trigger( 'focus' ) );
 
+		const context = this.getOption( 'context' );
+
 		elementor.templates.eventManager.sendPageViewEvent( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary[ `${ context }Modal` ],
 		} );
 
-		const context = this.getOption( 'context' );
+		const shouldStartSessionRecording = elementorCommon.config.editor_events.session_replays?.cloudTemplates &&
+		! elementor.templates.eventManager.isSessionRecordingInProgress();
+
+		if ( shouldStartSessionRecording ) {
+			elementor.templates.eventManager.startSessionRecording();
+			elementor.templates.eventManager.sendCloudTemplatesSessionRecordingStartEvent();
+		}
 
 		if ( SAVE_CONTEXTS.SAVE === context ) {
 			this.handleSaveAction();
@@ -204,8 +212,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	onFormSubmit( event ) {
 		event.preventDefault();
-
-		elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
 
 		var formData = this.ui.form.elementorSerializeObject(),
 			JSONParams = { remove: [ 'default' ] };
@@ -714,7 +720,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			return;
 		}
 
-		this.$el.off( 'click', this.documentClickHandler );
+		elementor.templates.layout.modalContent.$el.off( 'click', this.documentClickHandler );
 		this.documentClickHandler = null;
 	},
 

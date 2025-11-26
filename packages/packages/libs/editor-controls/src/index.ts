@@ -40,15 +40,23 @@ export { InlineEditor } from './components/inline-editor';
 // components
 export { ControlFormLabel } from './components/control-form-label';
 export { ControlToggleButtonGroup } from './components/control-toggle-button-group';
+export { ToggleButtonGroupUi } from './components/control-toggle-button-group';
 export { ClearIconButton } from './components/icon-buttons/clear-icon-button';
-export { Repeater, type SetRepeaterValuesMeta, type ItemActionPayload, type RepeaterItem } from './components/repeater';
+export {
+	Repeater,
+	type SetRepeaterValuesMeta,
+	type ItemsActionPayload,
+	type RepeaterItem,
+} from './components/repeater/repeater';
 export { FloatingActionsBar } from './components/floating-bar';
+export { PopoverGridContainer } from './components/popover-grid-container';
 
 // types
 export type { ControlComponent } from './create-control';
 export type { ToggleButtonGroupItem } from './components/control-toggle-button-group';
 export type { EqualUnequalItems } from './controls/equal-unequal-sizes-control';
 export type { ControlActionsItems } from './control-actions/control-actions-context';
+export type { AdornmentComponent } from './control-adornments/control-adornments-context';
 export type { PropProviderProps } from './bound-prop-context';
 export type { SetValue, SetValueMeta } from './bound-prop-context/prop-context';
 export type { ExtendedOption, Unit, LengthUnit, AngleUnit, TimeUnit } from './utils/size-control';

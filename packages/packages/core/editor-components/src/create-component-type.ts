@@ -7,11 +7,15 @@ import {
 	type ElementView,
 	type LegacyWindow,
 } from '@elementor/editor-canvas';
-import { type NumberPropValue } from '@elementor/editor-props';
+import { getCurrentDocument } from '@elementor/editor-documents';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
+import { type ComponentInstancePropValue, type ExtendedWindow } from './types';
+import { trackComponentEvent } from './utils/tracking';
+
+type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
 
 export const TYPE = 'e-component';
 
@@ -35,15 +39,24 @@ function createComponentView(
 	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
 ): typeof ElementView {
 	return class extends createTemplatedElementView( options ) {
-		legacyWindow = window as unknown as LegacyWindow;
+		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
+		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
+
+		isComponentCurrentlyEdited() {
+			const currentDocument = getCurrentDocument();
+
+			return currentDocument?.id === this.getComponentId();
+		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
-			if ( settings.component ) {
-				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection( settings.component );
+			if ( settings.component_instance ) {
+				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection(
+					settings.component_instance
+				);
 
 				this.collection.models.forEach( setInactiveRecursively );
 
-				settings.component = '<template data-children-placeholder></template>';
+				settings.component_instance = '<template data-children-placeholder></template>';
 			}
 
 			return settings;
@@ -67,12 +80,16 @@ function createComponentView(
 		}
 
 		getComponentId() {
-			return this.options?.model?.get( 'settings' )?.get( 'component' ) as NumberPropValue;
+			const componentInstance = (
+				this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstancePropValue
+			 )?.value;
+
+			return componentInstance.component_id;
 		}
 
 		getContextMenuGroups() {
 			const filteredGroups = super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
-			const componentId = this.getComponentId()?.value as number;
+			const componentId = this.getComponentId();
 			if ( ! componentId ) {
 				return filteredGroups;
 			}
@@ -86,7 +103,8 @@ function createComponentView(
 							icon: 'eicon-edit',
 							title: () => __( 'Edit Component', 'elementor' ),
 							isEnabled: () => true,
-							callback: () => this.switchDocument(),
+							callback: ( _: unknown, eventData: ContextMenuEventData ) =>
+								this.editComponent( eventData ),
 						},
 					],
 				},
@@ -95,15 +113,16 @@ function createComponentView(
 		}
 
 		async switchDocument() {
+			//todo: handle unpublished
 			const { isAllowedToSwitchDocument, lockedBy } = await apiClient.getComponentLockStatus(
-				this.getComponentId()?.value as number
+				this.getComponentId() as number
 			);
 
 			if ( ! isAllowedToSwitchDocument ) {
 				options.showLockedByModal?.( lockedBy || '' );
 			} else {
 				runCommand( 'editor/documents/switch', {
-					id: this.getComponentId()?.value as number,
+					id: this.getComponentId(),
 					mode: 'autosave',
 					selector: `[data-id="${ this.model.get( 'id' ) }"]`,
 					shouldScroll: false,
@@ -111,10 +130,35 @@ function createComponentView(
 			}
 		}
 
+		editComponent( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
+			if ( this.isComponentCurrentlyEdited() ) {
+				return;
+			}
+
+			this.switchDocument();
+
+			const editorSettings = this.model.get( 'editor_settings' );
+
+			trackComponentEvent( {
+				action: 'edited',
+				component_uid: editorSettings?.component_uid,
+				component_name: editorSettings?.title,
+				location,
+				secondary_location: secondaryLocation,
+				trigger,
+			} );
+		}
+
 		handleDblClick( e: MouseEvent ) {
 			e.stopPropagation();
 
-			this.switchDocument();
+			const { triggers, locations, secondaryLocations } = this.eventsManagerConfig;
+
+			this.editComponent( {
+				trigger: triggers.doubleClick,
+				location: locations.canvas,
+				secondaryLocation: secondaryLocations.canvasElement,
+			} );
 		}
 
 		events() {
@@ -127,7 +171,7 @@ function createComponentView(
 		attributes() {
 			return {
 				...super.attributes(),
-				'data-elementor-id': this.getComponentId().value,
+				'data-elementor-id': this.getComponentId(),
 			};
 		}
 	};

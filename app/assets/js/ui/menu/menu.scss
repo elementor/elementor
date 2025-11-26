@@ -1,5 +1,5 @@
-$menu-title-font-size: type(text,xxs);
-$menu-title-line-height: type(line-height,sm);
+$menu-title-font-size: get-type(text,xxs);
+$menu-title-line-height: get-type(line-height,sm);
 $menu-title-padding-block: spacing(8);
 $menu-title-padding-inline: spacing(30);
 $menu-item-height: spacing(44);

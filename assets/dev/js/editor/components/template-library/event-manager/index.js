@@ -16,6 +16,7 @@ const EVENTS_MAP = {
 	UPGRADE_CLICKED: 'upgrade_clicked',
 	PAGE_VIEWED: 'page_viewed',
 	DELETION_UNDO: 'deletion_undo',
+	CT_RECORDING_START: 'ctemplates_session_replay_start',
 	CT_BADGE_HOVER: 'ct_badge_hover',
 };
 
@@ -174,6 +175,24 @@ export class EventManager {
 		return this.sendEvent( EVENTS_MAP.DELETION_UNDO, {
 			...data,
 		} );
+	}
+
+	sendCloudTemplatesSessionRecordingStartEvent() {
+		return this.sendEvent( EVENTS_MAP.CT_RECORDING_START, {
+			location: elementorCommon.eventsManager.config.locations.templatesLibrary.library,
+		} );
+	}
+
+	startSessionRecording() {
+		return elementorCommon.eventsManager.startSessionRecording();
+	}
+
+	stopSessionRecording() {
+		return elementorCommon.eventsManager.stopSessionRecording();
+	}
+
+	isSessionRecordingInProgress() {
+		return elementorCommon.eventsManager.isSessionRecordingInProgress();
 	}
 
 	sendCTBadgeEvent( data ) {

@@ -58,7 +58,7 @@ class Wp_Cli extends \WP_CLI_Command {
 			$result = $import_export_module->export_kit( $export_settings );
 
 			rename( $result['file_name'], $args[0] );
-		} catch ( \Error $error ) {
+		} catch ( \Error | \Exception $error ) {
 			\WP_CLI::error( $error->getMessage() );
 		}
 
@@ -185,7 +185,7 @@ class Wp_Cli extends \WP_CLI_Command {
 			}
 
 			\WP_CLI::success( 'Kit imported successfully' );
-		} catch ( \Error $error ) {
+		} catch ( \Error | \Exception $error ) {
 			Plugin::$instance->logger->get_logger()->error( $error->getMessage(), [
 				'meta' => [
 					'trace' => $error->getTraceAsString(),
@@ -215,7 +215,7 @@ class Wp_Cli extends \WP_CLI_Command {
 			$import_export_module = Plugin::$instance->app->get_component( 'import-export' );
 			$import_export_module->revert_last_imported_kit();
 
-		} catch ( \Error $error ) {
+		} catch ( \Error | \Exception $error ) {
 			\WP_CLI::error( $error->getMessage() );
 		}
 

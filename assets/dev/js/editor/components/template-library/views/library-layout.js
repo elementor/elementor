@@ -39,6 +39,30 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		};
 	},
 
+	initialize() {
+		elementorModules.common.views.modal.Layout.prototype.initialize.call( this );
+
+		this.handleBeforeUnload = this.handleBeforeUnload.bind( this );
+		window.addEventListener( 'beforeunload', this.handleBeforeUnload );
+	},
+
+	initModal() {
+		elementorModules.common.views.modal.Layout.prototype.initModal.call( this );
+
+		this.modal.on( 'hide', () => {
+			elementor.templates.eventManager.stopSessionRecording();
+		} );
+	},
+
+	onDestroy() {
+		elementor.templates.eventManager.stopSessionRecording();
+		window.removeEventListener( 'beforeunload', this.handleBeforeUnload );
+	},
+
+	handleBeforeUnload() {
+		elementor.templates.eventManager.stopSessionRecording();
+	},
+
 	getLogoOptions() {
 		return {
 			title: __( 'Library', 'elementor' ),

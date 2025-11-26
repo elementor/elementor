@@ -323,6 +323,21 @@ const TemplateLibraryManager = function() {
 
 					self.layout.updateViewCollection( self.filterTemplates() );
 
+					const buttons = 'cloud' === source ? [
+						{
+							name: 'undo_bulk',
+							text: __( 'Undo', 'elementor' ),
+							callback: () => {
+								self.onUndoDelete( );
+							},
+						},
+					] : null;
+
+					elementor.notifications.showToast( {
+						message: `1 item deleted successfully`,
+						buttons,
+					} );
+
 					self.triggerQuotaUpdate();
 					self.resetBulkActionBar();
 					self.eventManager.sendItemDeletedEvent( {
@@ -935,6 +950,15 @@ const TemplateLibraryManager = function() {
 		// TODO: Remove - it when all the data commands is ready, manage the cache!.
 		if ( 'local' === query.source || 'cloud' === query.source ) {
 			options.refresh = true;
+		}
+
+		const shouldStartSessionRecording = 'cloud' === query.source &&
+			elementorCommon.config.editor_events.session_replays?.cloudTemplates &&
+			! elementor.templates.eventManager.isSessionRecordingInProgress();
+
+		if ( shouldStartSessionRecording ) {
+			elementor.templates.eventManager.startSessionRecording();
+			elementor.templates.eventManager.sendCloudTemplatesSessionRecordingStartEvent();
 		}
 
 		this.setFilter( 'parent', null, query );
