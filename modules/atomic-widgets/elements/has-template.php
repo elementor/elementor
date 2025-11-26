@@ -60,7 +60,7 @@ trait Has_Template {
 
 		foreach ( $list_of_interactions as $interaction ) {
 
-			if ( isset( $interaction['$$type'] ) && $interaction['$$type'] === 'interaction-item' ) {
+			if ( isset( $interaction['$$type'] ) && 'interaction-item' === $interaction['$$type'] ) {
 				$animation_id = $this->extract_animation_id_from_prop_type( $interaction );
 				if ( $animation_id ) {
 					$animation_ids[] = $animation_id;
@@ -114,7 +114,7 @@ trait Has_Template {
 			return $value['value'];
 		}
 
-		return $value !== null ? $value : $default;
+		return null !== $value ? $value : $default;
 	}
 
 	protected function get_templates_contents() {

@@ -53,7 +53,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$legacy_items = [];
 
 		foreach ( $interactions['items'] as $item ) {
-			if ( isset( $item['$$type'] ) && $item['$$type'] === 'interaction-item' ) {
+			if ( isset( $item['$$type'] ) && 'interaction-item' === $item['$$type'] ) {
 				$legacy_item = $this->extract_legacy_interaction_from_prop_type( $item );
 				if ( $legacy_item ) {
 					$legacy_items[] = $legacy_item;

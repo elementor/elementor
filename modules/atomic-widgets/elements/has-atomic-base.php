@@ -132,7 +132,7 @@ trait Has_Atomic_Base {
 		$legacy_items = [];
 
 		foreach ( $interactions['items'] as $item ) {
-			if ( isset( $item['$$type'] ) && $item['$$type'] === 'interaction-item' ) {
+			if ( isset( $item['$$type'] ) && 'interaction-item' === $item['$$type'] ) {
 				$legacy_item = $this->extract_legacy_interaction_from_prop_type( $item );
 				if ( $legacy_item ) {
 					$legacy_items[] = $legacy_item;
@@ -198,7 +198,7 @@ trait Has_Atomic_Base {
 			return $value['value'];
 		}
 
-		return $value !== null ? $value : $default;
+		return null !== $value ? $value : $default;
 	}
 
 	public function get_atomic_controls() {
@@ -257,7 +257,7 @@ trait Has_Atomic_Base {
 		$transformed_items = [];
 
 		foreach ( $decoded['items'] as $item ) {
-			if ( isset( $item['$$type'] ) && $item['$$type'] === 'interaction-item' ) {
+			if ( isset( $item['$$type'] ) && 'interaction-item' === $item['$$type'] ) {
 				$transformed_items[] = $item;
 				continue;
 			}
@@ -413,7 +413,7 @@ trait Has_Atomic_Base {
 			: [];
 
 		foreach ( $list_of_interactions as $interaction ) {
-			if ( isset( $interaction['$$type'] ) && $interaction['$$type'] === 'interaction-item' ) {
+			if ( isset( $interaction['$$type'] ) && 'interaction-item' === $interaction['$$type'] ) {
 				$animation_id = $this->extract_animation_id_from_prop_type( $interaction );
 				if ( $animation_id ) {
 					$animation_ids[] = $animation_id;
