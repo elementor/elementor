@@ -68,7 +68,7 @@ export default function ImportProcess() {
 							<Stack spacing={ 3 } alignItems="center" >
 								<CircularProgress size={ 30 } />
 								<Typography variant="h5" >
-									{ __( 'Settings up your website templates...', 'elementor' ) }
+									{ __( 'Setting up your website templates...', 'elementor' ) }
 								</Typography>
 								<Stack>
 									<Typography variant="subtitle1" >
