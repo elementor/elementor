@@ -1,14 +1,11 @@
 import * as React from 'react';
 import { type CSSProperties, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { getV1CurrentDocument } from '@elementor/editor-documents';
-import { __useDispatch as useDispatch } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
 import { useCanvasDocument } from '../../hooks/use-canvas-document';
 import { useElementRect } from '../../hooks/use-element-rect';
-import { loadOverridableProps } from '../../hooks/use-save-overide-props';
-import { slice } from '../../store/store';
+import { useLoadOverrideProps } from '../../hooks/use-load-override-props';
 
 type ModalProps = {
 	element: HTMLElement;
@@ -16,18 +13,8 @@ type ModalProps = {
 };
 export function ComponentModal( { element, onClose }: ModalProps ) {
 	const canvasDocument = useCanvasDocument();
-	const currentDocument = getV1CurrentDocument();
-	const componentId = currentDocument?.id;
-	const dispatch = useDispatch();
-	useEffect( () => {
-		const getOverridable = () => {
-			loadOverridableProps( componentId ).then( ( data ) => {
-				dispatch( slice.actions.setOverridableProps( { componentId, overrides: data } ) );
-			} );
-		};
 
-		getOverridable();
-	}, [] );
+	useLoadOverrideProps();
 
 	useEffect( () => {
 		const handleEsc = ( event: KeyboardEvent ) => {
