@@ -16,10 +16,11 @@ const EVENTS_MAP = {
 	UPGRADE_CLICKED: 'upgrade_clicked',
 	PAGE_VIEWED: 'page_viewed',
 	DELETION_UNDO: 'deletion_undo',
+	CT_BADGE_HOVER: 'ct_badge_hover',
 };
 
 const CLOUD_TEMPLATES_EXPERIMENTS = {
-	SAVE_TEMPLATE: 'template-library-save',
+	SAVE_TEMPLATE: 'save-template-cloud',
 };
 
 export class EventManager {
@@ -172,6 +173,14 @@ export class EventManager {
 	sendDeletionUndoEvent( data ) {
 		return this.sendEvent( EVENTS_MAP.DELETION_UNDO, {
 			...data,
+		} );
+	}
+
+	sendCTBadgeEvent( data ) {
+		return this.sendEvent( EVENTS_MAP.CT_BADGE_HOVER, {
+			ct_badge_hover_position: data.ct_badge_hover_position,
+			ct_badge_type: data.ct_badge_type,
+			ct_position_state: data.ct_position_state,
 		} );
 	}
 }

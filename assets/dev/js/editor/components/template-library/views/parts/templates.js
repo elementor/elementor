@@ -417,7 +417,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	},
 
 	shouldShowVariantB() {
-		const experimentVariant = elementor.templates.eventManager.getExperimentVariant( 'template-library-save' );
+		const experimentVariant = elementor.templates.eventManager.getSaveTemplateExperimentVariant();
 		return 'B' === experimentVariant;
 	},
 
