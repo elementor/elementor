@@ -23,7 +23,7 @@ class Variables_Service {
 	}
 
 	public function load() {
-		return $this->repo->load()->serialize();
+		return $this->repo->load()->serialize( true );
 	}
 
 	/**
