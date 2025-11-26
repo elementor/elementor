@@ -11,7 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Array_Prop_Type implements Transformable_Prop_Type {
-	const KIND = 'array';
+	// Backward compatibility, do not change to "const". Keep name in uppercase.
+	// phpcs:ignore
+	static $KIND = 'array';
 
 	use Concerns\Has_Default;
 	use Concerns\Has_Generate;
@@ -98,7 +100,8 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 
 	public function jsonSerialize(): array {
 		return [
-			'kind' => static::KIND,
+			// phpcs:ignore
+			'kind' => static::$KIND,
 			'key' => static::get_key(),
 			'default' => $this->get_default(),
 			'meta' => (object) $this->get_meta(),
