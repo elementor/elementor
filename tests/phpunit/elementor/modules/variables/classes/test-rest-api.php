@@ -11,7 +11,6 @@ use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
-use PHPUnit\Framework\TestCase;
 use WP_REST_Request;
 
 if ( ! defined( 'ABSPATH' ) ) {
