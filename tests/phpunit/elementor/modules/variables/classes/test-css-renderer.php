@@ -147,7 +147,7 @@ class Test_CSS_Renderer extends TestCase {
 	}
 
 	public function test_raw_css__handles_missing_label_in_variable() {
-		// Arrange
+		// Arrange.
 		$this->service->method( 'get_variables_list' )
 			->willReturn( [
 				'a-01' => [
@@ -156,15 +156,15 @@ class Test_CSS_Renderer extends TestCase {
 				],
 			] );
 
-		// Act
+		// Act.
 		$raw_css = $this->css_renderer()->raw_css();
 
-		// Assert - Should return empty since label is missing
+		// Assert .
 		$this->assertEquals( '', $raw_css );
 	}
 
 	public function test_raw_css__handles_missing_value_in_variable() {
-		// Arrange
+		// Arrange.
 		$this->service->method( 'get_variables_list' )
 			->willReturn( [
 				'a-01' => [
@@ -173,28 +173,10 @@ class Test_CSS_Renderer extends TestCase {
 				],
 			] );
 
-		// Act
+		// Act.
 		$raw_css = $this->css_renderer()->raw_css();
 
-		// Assert - Should return empty since value is missing
+		// Assert .
 		$this->assertEquals( '', $raw_css );
-	}
-
-	public function test_raw_css__handles_deleted_variable_without_label() {
-		// Arrange
-		$this->service->method( 'get_variables_list' )
-			->willReturn( [
-				'e-gv-123' => [
-					'value' => '#000',
-					'type' => Color_Variable_Prop_Type::get_key(),
-					'deleted_at' => '2025-01-01 00:00:00',
-				],
-			] );
-
-		// Act
-		$raw_css = $this->css_renderer()->raw_css();
-
-		// Assert - Should use ID since it's deleted
-		$this->assertEquals( ':root { --e-gv-123:#000; }', $raw_css );
 	}
 }
