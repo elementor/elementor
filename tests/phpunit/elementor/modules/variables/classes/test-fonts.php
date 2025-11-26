@@ -25,7 +25,7 @@ class Test_Fonts extends Elementor_Test_Base {
 
 	public function test_append_to__will_skip_regular_post_css() {
 		// Arrange.
-		$this->service->method( 'get_variables' )->willReturn( [
+		$this->service->method( 'get_variables_list' )->willReturn( [
 			'e-gv-a01' => [
 				'type' => 'global-font-variable',
 				'label' => 'primary-font',
@@ -46,7 +46,7 @@ class Test_Fonts extends Elementor_Test_Base {
 
 	public function test_append_to__will_add_font_variable_to_the_active_kit() {
 		// Arrange.
-		$this->service->method( 'get_variables' )->willReturn( [
+		$this->service->method( 'get_variables_list' )->willReturn( [
 			'e-gv-a01' => [
 				'type' => 'global-font-variable',
 				'label' => 'primary-font',
