@@ -1,17 +1,13 @@
 import { type PropsSchema, type PropType } from '../types';
 import { type JsonSchema7 } from './prop-json-schema';
 
-export function propTypeToJsonSchema( propType: PropType, key?: string ): JsonSchema7 {
+export function propTypeToJsonSchema( propType: PropType ): JsonSchema7 {
 	const description = propType.meta?.description;
 
 	const schema: JsonSchema7 = {};
 
 	if ( description ) {
 		schema.description = description;
-	}
-
-	if ( key ) {
-		schema.key = key;
 	}
 
 	// Handle different kinds of prop types
@@ -33,7 +29,6 @@ export function propTypeToJsonSchema( propType: PropType, key?: string ): JsonSc
 
 function convertPlainPropType( propType: PropType & { kind: 'plain' }, baseSchema: JsonSchema7 ): JsonSchema7 {
 	const schema = { ...baseSchema };
-	schema.key = propType.key;
 
 	// Determine type based on key
 	const key = propType.key.toLowerCase();
@@ -80,7 +75,8 @@ function convertUnionPropType( propType: PropType & { kind: 'union' }, baseSchem
 				$$type: {
 					type: 'string',
 					const: typeKey,
-					description: `Discriminator for union type variant: ${ typeKey }`,
+					description: subPropType.meta?.description,
+					$comment: `Discriminator for union type variant: ${ typeKey }`,
 				},
 				value: subSchema,
 			},
@@ -132,7 +128,6 @@ function convertArrayPropType( propType: PropType & { kind: 'array' }, baseSchem
 	const schema = structuredClone( baseSchema );
 
 	schema.type = 'array';
-	schema.key = propType.key;
 
 	const itemPropType = propType.item_prop_type;
 
@@ -155,7 +150,7 @@ export function propsSchemaToJsonSchema( schema: PropsSchema ): JsonSchema7 {
 
 	for ( const [ key, propType ] of Object.entries( schema ) ) {
 		// Skip internal properties
-		if ( key === '_cssid' || key === 'classes' || key === 'attributes' ) {
+		if ( ! isPropKeyConfigurable( key ) ) {
 			continue;
 		}
 
@@ -169,4 +164,14 @@ export function propsSchemaToJsonSchema( schema: PropsSchema ): JsonSchema7 {
 	}
 
 	return jsonSchema;
+}
+
+export const nonConfigurablePropKeys = [ '_cssid', 'classes', 'attributes' ] as readonly string[];
+
+export function isPropKeyConfigurable( propKey: string ): boolean {
+	return ! nonConfigurablePropKeys.includes( propKey );
+}
+
+export function configurableKeys( schema: PropsSchema ): string[] {
+	return Object.keys( schema ).filter( isPropKeyConfigurable );
 }

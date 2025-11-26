@@ -16,6 +16,7 @@ class Validation {
 	
 	private $elements_to_interactions_counter = [];
 	private $max_number_of_interactions = 5;
+	private $interaction_id_counter = 0;
 
 	public function __construct( Presets $presets ) {
 		// Presets no longer needed with new structure validation
@@ -68,32 +69,44 @@ class Validation {
 		return $elements;
 	}
 
+	private function decode_interactions( $interactions ) {
+		if ( is_array( $interactions ) ) {
+			return isset( $interactions['items'] ) ? $interactions['items'] : [];
+		}
+
+		if ( is_string( $interactions ) ) {
+			$decoded = json_decode( $interactions, true );
+			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+				return isset( $decoded['items'] ) ? $decoded['items'] : [];
+			}
+		}
+
+		return [];
+	}
+
+	private function increment_interactions_counter_for( $element_id ) {
+		if ( ! array_key_exists( $element_id, $this->elements_to_interactions_counter ) ) {
+			$this->elements_to_interactions_counter[ $element_id ] = 0;
+		}
+
+		++$this->elements_to_interactions_counter[ $element_id ];
+		return $this;
+	}
+
 	private function sanitize_interactions( $interactions, $element_id ) {
 		$sanitized = [
 			'items' => [],
 			'version' => 1,
 		];
 
-		$list_of_interactions = [];
-
-		if ( is_array( $interactions ) ) {
-			$list_of_interactions = isset( $interactions['items'] ) ? $interactions['items'] : [];
-		} elseif ( is_string( $interactions ) ) {
-			$decoded = json_decode( $interactions, true );
-			if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
-				$list_of_interactions = isset( $decoded['items'] ) ? $decoded['items'] : [];
-			}
-		}
+		$list_of_interactions = $this->decode_interactions( $interactions );
 
 		foreach ( $list_of_interactions as $interaction ) {
 			$sanitized_interaction = $this->sanitize_interaction_item( $interaction );
 			
 			if ( $sanitized_interaction !== null ) {
 				$sanitized['items'][] = $sanitized_interaction;
-				if ( ! array_key_exists( $element_id, $this->elements_to_interactions_counter ) ) {
-					$this->elements_to_interactions_counter[ $element_id ] = 0;
-				}
-				++$this->elements_to_interactions_counter[ $element_id ];
+				$this->increment_interactions_counter_for( $element_id );
 			}
 		}
 
@@ -120,9 +133,9 @@ class Validation {
 		$trigger = $this->get_prop_value( $item_value, 'trigger' );
 		$animation = $this->get_prop_value( $item_value, 'animation' );
 
-		// Skip temp IDs - backend will generate real ones
-		if ( $this->is_temp_id( $interaction_id ) ) {
-			$interaction_id = '';
+		// Generate real ID if missing or temporary
+		if ( empty( $interaction_id ) || $this->is_temp_id( $interaction_id ) ) {
+			$interaction_id = $this->generate_interaction_id();
 		}
 
 		if ( empty( $trigger ) || empty( $animation ) ) {
@@ -176,6 +189,11 @@ class Validation {
 
 		// Wrap with $$type: 'interaction-item'
 		return $this->create_prop_value( 'interaction-item', $sanitized_value );
+	}
+
+	private function generate_interaction_id() {
+		// Generate unique ID for interaction
+		return 'interaction_' . time() . '_' . ++$this->interaction_id_counter;
 	}
 
 	private function get_prop_value( $data, $key, $default = '' ) {
