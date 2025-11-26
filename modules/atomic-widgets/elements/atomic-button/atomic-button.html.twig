@@ -11,7 +11,7 @@
             {{ id_attribute }} {{ settings.attributes | raw }}
         >
             {{ settings.text }}
-        </a{{ settings.link.tag | e('html_tag') }}>
+        </{{ settings.link.tag | e('html_tag') }}>
     {% else %}
         <button class="{{ classes }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" {{ id_attribute }} {{ settings.attributes | raw }}>
             {{ settings.text }}
