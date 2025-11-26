@@ -10,6 +10,13 @@ import Text from '@tiptap/extension-text';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, useEditor } from '@tiptap/react';
 
+type InlineEditorProps = {
+	value: string;
+	setValue: ( value: string ) => void;
+	attributes?: Record< string, string >;
+	sx?: SxProps< Theme >;
+};
+
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
 	const hasMounted = useRef( false );
 
@@ -21,13 +28,6 @@ const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, dependencies );
-};
-
-type InlineEditorProps = {
-	value: string;
-	setValue: ( value: string ) => void;
-	attributes?: Record< string, string >;
-	sx?: SxProps< Theme >;
 };
 
 export const InlineEditor = React.forwardRef(
