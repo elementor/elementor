@@ -571,5 +571,293 @@ class Test_Prop_Type_Adapter extends TestCase {
 		// Assert.
 		$this->assertEquals( $expected, $result['data']['e-gv-size']['value'] );
 	}
+
+	public function test_repository_save__converts_prop_values_to_storage_format() {
+		// Arrange.
+		$kit = $this->createMock( Kit::class );
+		$repository = new Variables_Repository( $kit );
+
+		$collection = $this->make_collection( [
+			'data' => [
+				'e-gv-color' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary',
+					'value' => '#ff5733',
+					'order' => 1,
+				],
+				'e-gv-size' => [
+					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'label' => 'Padding',
+					'value' => '20px',
+					'order' => 2,
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		] );
+
+		$saved_data = null;
+		$kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->with(
+				$this->equalTo( '_elementor_global_variables' ),
+				$this->callback( function( $data ) use ( &$saved_data ) {
+					$saved_data = $data;
+					return true;
+				} )
+			)
+			->willReturn( true );
+
+		// Act.
+		$result = $repository->save( $collection );
+
+		// Assert.
+		$this->assertEquals( 6, $result );
+		$this->assertIsArray( $saved_data );
+		$this->assertArrayHasKey( 'data', $saved_data );
+
+		$this->assertEquals( 'color', $saved_data['data']['e-gv-color']['value']['$$type'] );
+		$this->assertEquals( '#ff5733', $saved_data['data']['e-gv-color']['value']['value'] );
+
+		$this->assertEquals( 'size', $saved_data['data']['e-gv-size']['value']['$$type'] );
+		$this->assertEquals( 20, $saved_data['data']['e-gv-size']['value']['value']['size'] );
+		$this->assertEquals( 'px', $saved_data['data']['e-gv-size']['value']['value']['unit'] );
+	}
+
+	public function test_repository_load__converts_storage_format_to_prop_values() {
+		// Arrange.
+		$kit = $this->createMock( Kit::class );
+		$repository = new Variables_Repository( $kit );
+
+		$db_record = [
+			'data' => [
+				'e-gv-color' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary',
+					'value' => [
+						'$$type' => 'color',
+						'value' => '#ff5733',
+					],
+					'order' => 1,
+				],
+				'e-gv-size' => [
+					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'label' => 'Padding',
+					'value' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 20,
+							'unit' => 'px',
+						],
+					],
+					'order' => 2,
+				],
+			],
+			'watermark' => 5,
+			'version' => 1,
+		];
+
+		$kit->method( 'get_json_meta' )->willReturn( $db_record );
+
+		// Act.
+		$collection = $repository->load();
+		$result = $collection->serialize();
+
+		// Assert.
+		$this->assertEquals( '#ff5733', $result['data']['e-gv-color']['value'] );
+		$this->assertEquals( '20px', $result['data']['e-gv-size']['value'] );
+		$this->assertEquals( 5, $collection->watermark() );
+	}
+
+	public function test_full_round_trip__color_variable() {
+		// Arrange.
+		$kit = $this->createMock( Kit::class );
+		$repository = new Variables_Repository( $kit );
+
+		$original_collection = $this->make_collection( [
+			'data' => [
+				'e-gv-primary' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary Color',
+					'value' => '#3498db',
+					'order' => 1,
+				],
+			],
+			'watermark' => 0,
+			'version' => 1,
+		] );
+
+		$saved_data = null;
+		$kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturnCallback( function( $key, $data ) use ( &$saved_data ) {
+				$saved_data = $data;
+				return true;
+			} );
+
+		$kit->method( 'get_json_meta' )->willReturnCallback( function() use ( &$saved_data ) {
+			return $saved_data;
+		} );
+
+		// Act.
+		$repository->save( $original_collection );
+		$loaded_collection = $repository->load();
+		$result = $loaded_collection->serialize();
+
+		// Assert.
+		$this->assertEquals( '#3498db', $result['data']['e-gv-primary']['value'] );
+		$this->assertEquals( 'Primary Color', $result['data']['e-gv-primary']['label'] );
+		$this->assertEquals( Color_Variable_Prop_Type::get_key(), $result['data']['e-gv-primary']['type'] );
+	}
+
+	public function test_full_round_trip__multiple_variable_types() {
+		// Arrange.
+		$kit = $this->createMock( Kit::class );
+		$repository = new Variables_Repository( $kit );
+
+		$original_collection = $this->make_collection( [
+			'data' => [
+				'e-gv-color' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary',
+					'value' => '#e74c3c',
+					'order' => 1,
+				],
+				'e-gv-font' => [
+					'type' => Font_Variable_Prop_Type::get_key(),
+					'label' => 'Main Font',
+					'value' => 'Open Sans',
+					'order' => 2,
+				],
+				'e-gv-size' => [
+					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'label' => 'Spacing',
+					'value' => '16px',
+					'order' => 3,
+				],
+				'e-gv-auto' => [
+					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'label' => 'Width',
+					'value' => 'auto',
+					'order' => 4,
+				],
+				'e-gv-custom' => [
+					'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+					'label' => 'Custom Calc',
+					'value' => 'calc(100% - 32px)',
+					'order' => 5,
+				],
+			],
+			'watermark' => 0,
+			'version' => 1,
+		] );
+
+		$saved_data = null;
+		$kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturnCallback( function( $key, $data ) use ( &$saved_data ) {
+				$saved_data = $data;
+				return true;
+			} );
+
+		$kit->method( 'get_json_meta' )->willReturnCallback( function() use ( &$saved_data ) {
+			return $saved_data;
+		} );
+
+		// Act.
+		$repository->save( $original_collection );
+		$loaded_collection = $repository->load();
+		$result = $loaded_collection->serialize();
+
+		// Assert.
+		$this->assertEquals( '#e74c3c', $result['data']['e-gv-color']['value'] );
+		$this->assertEquals( 'Open Sans', $result['data']['e-gv-font']['value'] );
+		$this->assertEquals( '16px', $result['data']['e-gv-size']['value'] );
+		$this->assertEquals( 'auto', $result['data']['e-gv-auto']['value'] );
+		$this->assertEquals( 'calc(100% - 32px)', $result['data']['e-gv-custom']['value'] );
+	}
+
+	public function test_conversion_performance__large_collection() {
+		// Arrange.
+		$data = [];
+		for ( $i = 1; $i <= 50; $i++ ) {
+			$data["e-gv-color-{$i}"] = [
+				'type' => Color_Variable_Prop_Type::get_key(),
+				'label' => "Color {$i}",
+				'value' => sprintf( '#%06x', mt_rand( 0, 0xFFFFFF ) ),
+				'order' => $i,
+			];
+		}
+
+		for ( $i = 1; $i <= 50; $i++ ) {
+			$data["e-gv-size-{$i}"] = [
+				'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+				'label' => "Size {$i}",
+				'value' => ( $i * 2 ) . 'px',
+				'order' => $i + 50,
+			];
+		}
+
+		$collection = $this->make_collection( [
+			'data' => $data,
+			'watermark' => 0,
+			'version' => 1,
+		] );
+
+		$start_time = microtime( true );
+
+		// Act.
+		$this->adapter->to_storage( $collection );
+		$this->adapter->from_storage( $collection );
+
+		$end_time = microtime( true );
+		$execution_time = $end_time - $start_time;
+
+		$result = $collection->serialize();
+
+		// Assert.
+		$this->assertLessThan( 0.1, $execution_time, 'Conversion should complete within 100ms' );
+		$this->assertCount( 100, $result['data'] );
+		$this->assertEquals( sprintf( '#%06x', mt_rand( 0, 0xFFFFFF ) ), $result['data']['e-gv-color-1']['value'] );
+	}
+
+	public function test_repository_integration__preserves_data_integrity_with_special_characters() {
+		// Arrange.
+		$kit = $this->createMock( Kit::class );
+		$repository = new Variables_Repository( $kit );
+
+		$original_collection = $this->make_collection( [
+			'data' => [
+				'e-gv-custom' => [
+					'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+					'label' => 'Complex Calc',
+					'value' => 'calc((100vw - 20px) * 0.5 + (10px / 2))',
+					'order' => 1,
+				],
+			],
+			'watermark' => 0,
+			'version' => 1,
+		] );
+
+		$saved_data = null;
+		$kit->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturnCallback( function( $key, $data ) use ( &$saved_data ) {
+				$saved_data = $data;
+				return true;
+			} );
+
+		$kit->method( 'get_json_meta' )->willReturnCallback( function() use ( &$saved_data ) {
+			return $saved_data;
+		} );
+
+		// Act.
+		$repository->save( $original_collection );
+		$loaded_collection = $repository->load();
+		$result = $loaded_collection->serialize();
+
+		// Assert.
+		$this->assertEquals( 'calc((100vw - 20px) * 0.5 + (10px / 2))', $result['data']['e-gv-custom']['value'] );
+	}
 }
 
