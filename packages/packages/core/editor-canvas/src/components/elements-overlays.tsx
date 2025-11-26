@@ -17,18 +17,12 @@ const ELEMENTS_DATA_ATTR = 'atomic';
 const overlayRegistry: ElementOverlayConfig[] = [
 	{
 		component: OutlineOverlay,
-		filter: () => true,
+		shouldRender: () => true,
 	},
-	{
-		component: InlineEditorOverlay,
-		filter: ( { id, isSelected } ) => {
-			if ( ! isSelected ) {
-				return false;
-			}
-			const container = getContainer( id );
-			return hasInlineEditableProperty( container );
-		},
-	},
+	// {
+	// 	component: InlineEditorOverlay,
+	// 	shouldRender: ( { id, isSelected } ) => isSelected && hasInlineEditableProperty( id ),
+	// },
 ];
 
 export function ElementsOverlays() {
@@ -46,19 +40,20 @@ export function ElementsOverlays() {
 		elements.map( ( [ id, element ] ) => {
 			const isSelected = selected.element?.id === id;
 
-			return overlayRegistry
-				.filter( ( overlay ) => overlay.filter( { id, element, isSelected } ) )
-				.map( ( overlay, index ) => {
-					const OverlayComponent = overlay.component;
-					return (
+			return overlayRegistry.map( ( overlay, index ) => {
+				const OverlayComponent = overlay.component;
+
+				return (
+					overlay.shouldRender( { id, element, isSelected } ) && (
 						<OverlayComponent
 							key={ `${ id }-${ index }` }
 							id={ id }
 							element={ element }
 							isSelected={ isSelected }
 						/>
-					);
-				} );
+					)
+				);
+			} );
 		} )
 	);
 }

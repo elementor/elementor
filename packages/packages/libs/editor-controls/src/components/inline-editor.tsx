@@ -42,15 +42,13 @@ export const InlineEditor = React.forwardRef(
 		} );
 
 		React.useEffect( () => {
-			if ( ! editor ) {
+			const currentContent = editor?.getHTML();
+
+			if ( ! editor && currentContent === value ) {
 				return;
 			}
 
-			const currentContent = editor.getHTML();
-
-			if ( currentContent !== value ) {
-				editor.commands.setContent( value, { emitUpdate: false } );
-			}
+			// editor.commands.setContent( value, { emitUpdate: false } );
 		}, [ editor, value ] );
 
 		return (

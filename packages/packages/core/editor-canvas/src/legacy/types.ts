@@ -35,6 +35,7 @@ export declare class ElementType {
 
 export declare class ElementView {
 	$el: JQueryElement;
+	el: HTMLElement;
 
 	model: BackboneModel< ElementModel >;
 
@@ -107,6 +108,7 @@ export type BackboneModel< Model extends object > = {
 	get: < T extends keyof Model >( key: T ) => Model[ T ];
 	set: < T extends keyof Model >( key: T, value: Model[ T ] ) => void;
 	toJSON: () => ToJSON< Model >;
+	id: string;
 };
 
 type BackboneCollection< Model extends object > = {

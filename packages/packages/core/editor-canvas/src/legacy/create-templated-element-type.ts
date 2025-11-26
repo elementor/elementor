@@ -1,8 +1,11 @@
+import { type Root } from 'react-dom/client';
+import { reduceEachTrailingCommentRange } from 'typescript';
 import type { V1ElementConfig } from '@elementor/editor-elements';
 
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { createPropsResolver } from '../renderers/create-props-resolver';
 import { settingsTransformersRegistry } from '../settings-transformers-registry';
+import { injectInlineEditorRenderer } from '../utils/inline-editing-utils';
 import { signalizedProcess } from '../utils/signalized-process';
 import { createElementViewClassDeclaration } from './create-element-type';
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
@@ -58,6 +61,10 @@ export function createTemplatedElementView( {
 	const templateKey = element.twig_main_template;
 
 	const baseStylesDictionary = element.base_styles_dictionary;
+
+	let renderMethod: null | ( () => void ) | ( ( root?: Root | null ) => Root ) = null;
+
+	let inlineEditorRoot: Root | null = null;
 
 	Object.entries( element.twig_templates ).forEach( ( [ key, template ] ) => {
 		renderer.register( key, template );
@@ -151,6 +158,17 @@ export function createTemplatedElementView( {
 			this.isRendered = true;
 
 			this.triggerMethod( 'render', this );
+
+			renderMethod = injectInlineEditorRenderer.apply( this );
+			this.render();
+		}
+
+		get inlineEditingRoot() {
+			return inlineEditorRoot;
+		}
+
+		set inlineEditingRoot( root: Root | null ) {
+			inlineEditorRoot = root;
 		}
 	};
 }

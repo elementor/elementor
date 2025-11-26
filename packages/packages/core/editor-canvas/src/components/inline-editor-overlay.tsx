@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { createPortal } from 'react-dom';
 import { InlineEditor } from '@elementor/editor-controls';
 import { getContainer, updateElementSettings, useElementSetting } from '@elementor/editor-elements';
 import { htmlPropTypeUtil } from '@elementor/editor-props';
@@ -11,12 +12,9 @@ import { getInlineEditablePropertyName } from '../utils/inline-editing-utils';
 import { CANVAS_WRAPPER_ID } from './outline-overlay';
 
 export function InlineEditorOverlay( { element, isSelected, id }: ElementOverlayProps ) {
-	const { floating, isVisible } = useFloatingOnElement( { element, isSelected } );
+	// const { floating, isVisible } = useFloatingOnElement( { element, isSelected } );
 
-	const propertyName = React.useMemo( () => {
-		const container = getContainer( id );
-		return getInlineEditablePropertyName( container );
-	}, [ id ] );
+	const propertyName = React.useMemo( () => getInlineEditablePropertyName( id ), [ id ] );
 
 	const contentProp = useElementSetting( id, propertyName );
 	const value = React.useMemo( () => htmlPropTypeUtil.extract( contentProp ) || '', [ contentProp ] );
@@ -34,22 +32,20 @@ export function InlineEditorOverlay( { element, isSelected, id }: ElementOverlay
 		[ id, propertyName ]
 	);
 
-	if ( ! isVisible ) {
+	const container = getContainer( id );
+
+	console.log( container );
+
+	// if ( ! isVisible ) {
+	// 	return null;
+	// }
+	const elementView = container?.view?.el;
+
+	if ( ! elementView ) {
 		return null;
 	}
 
-	return (
-		<FloatingPortal id={ CANVAS_WRAPPER_ID }>
-			<Box
-				ref={ floating.setRef }
-				style={ {
-					...floating.styles,
-					zIndex: 1000,
-					pointerEvents: 'auto',
-				} }
-			>
-				<InlineEditor value={ value } setValue={ handleValueChange } />
-			</Box>
-		</FloatingPortal>
-	);
+	// elementView.innerHTML = '';
+
+	// return createPortal( <InlineEditor value={ value } setValue={ handleValueChange } />, element );
 }
