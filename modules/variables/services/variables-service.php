@@ -142,8 +142,11 @@ class Variables_Service {
 		}
 
 		return [
-			'variable' => array_merge( [ 'id' => $id, 'deleted' => true ], $variable->to_array() ),
 			'watermark' => $watermark,
+			'variable' => array_merge( [
+				'id' => $id,
+				'deleted' => true,
+			], $variable->to_array() ),
 		];
 	}
 
