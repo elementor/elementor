@@ -128,15 +128,15 @@ export default function createAtomicElementBaseView( type ) {
 
 			BaseElementView.prototype.renderOnChange.apply( this, settings );
 
-		if ( changed.attributes ) {
-			const preserveAttrs = [ 'id', 'class', 'href', 'style' ];
-			const $elAttrs = this.$el[ 0 ].attributes;
-			for ( let i = $elAttrs.length - 1; i >= 0; i-- ) {
-				const attrName = $elAttrs[ i ].name;
-				if ( ! preserveAttrs.includes( attrName ) ) {
-					this.$el.removeAttr( attrName );
+			if ( changed.attributes ) {
+				const preserveAttrs = [ 'id', 'class', 'href', 'style' ];
+				const $elAttrs = this.$el[ 0 ].attributes;
+				for ( let i = $elAttrs.length - 1; i >= 0; i-- ) {
+					const attrName = $elAttrs[ i ].name;
+					if ( ! preserveAttrs.includes( attrName ) ) {
+						this.$el.removeAttr( attrName );
+					}
 				}
-			}
 
 				const attrs = this.model.getSetting( 'attributes' )?.value || [];
 				attrs.forEach( ( attribute ) => {
@@ -218,71 +218,62 @@ export default function createAtomicElementBaseView( type ) {
 			const el = this.$el[ 0 ];
 			const { keyframes, duration, delay, type: animType } = animConfig;
 
-			const applyStyles = ( values ) => {
+			const getStyles = ( values, isStart ) => {
+				const styles = {};
 				const transforms = [];
+
 				Object.entries( values ).forEach( ( [ key, value ] ) => {
+					const val = Array.isArray( value ) ? value[ isStart ? 0 : 1 ] : value;
 					if ( 'opacity' === key ) {
-						el.style.opacity = value;
+						styles.opacity = val;
 					} else if ( 'scale' === key ) {
-						transforms.push( `scale(${ value })` );
+						transforms.push( `scale(${ val })` );
 					} else if ( 'x' === key ) {
-						transforms.push( `translateX(${ value }px)` );
+						transforms.push( `translateX(${ val }px)` );
 					} else if ( 'y' === key ) {
-						transforms.push( `translateY(${ value }px)` );
+						transforms.push( `translateY(${ val }px)` );
 					}
 				} );
+
 				if ( transforms.length ) {
-					el.style.transform = transforms.join( ' ' );
-				} else if ( undefined === values.opacity ) {
-					el.style.transform = 'none';
+					styles.transform = transforms.join( ' ' );
+				}
+				return styles;
+			};
+
+			const applyStyles = ( styles ) => {
+				Object.entries( styles ).forEach( ( [ prop, val ] ) => {
+					el.style[ prop ] = val;
+				} );
+			};
+
+			const startStyles = getStyles( keyframes, true );
+			const endStyles = getStyles( keyframes, false );
+
+			el.style.transition = 'none';
+			applyStyles( startStyles );
+
+			// Force reflow then animate with CSS transition
+			// eslint-disable-next-line no-unused-expressions
+			el.offsetHeight;
+
+			const run = () => {
+				el.style.transition = `all ${ duration }ms ease-out`;
+				applyStyles( endStyles );
+
+				if ( 'out' === animType ) {
+					setTimeout( () => {
+						el.style.transition = 'none';
+						el.style.opacity = '';
+						el.style.transform = '';
+					}, duration );
 				}
 			};
 
-			const interpolate = ( start, end, progress ) => start + ( ( end - start ) * progress );
-			const easeOutCubic = ( t ) => 1 - Math.pow( 1 - t, 3 );
-
-			const runAnimation = () => {
-				const startValues = {};
-				const endValues = {};
-				Object.entries( keyframes ).forEach( ( [ key, [ start, end ] ] ) => {
-					startValues[ key ] = start;
-					endValues[ key ] = end;
-				} );
-
-				applyStyles( startValues );
-
-				const startTime = performance.now();
-
-				const tick = ( currentTime ) => {
-					const elapsed = currentTime - startTime;
-					const rawProgress = Math.min( elapsed / duration, 1 );
-					const progress = easeOutCubic( rawProgress );
-
-					const currentValues = {};
-					Object.keys( keyframes ).forEach( ( key ) => {
-						currentValues[ key ] = interpolate( startValues[ key ], endValues[ key ], progress );
-					} );
-
-					applyStyles( currentValues );
-
-					if ( rawProgress < 1 ) {
-						requestAnimationFrame( tick );
-					} else if ( 'out' === animType ) {
-						const resetValues = {};
-						Object.keys( keyframes ).forEach( ( key ) => {
-							resetValues[ key ] = { opacity: 1, scale: 1, x: 0, y: 0 }[ key ];
-						} );
-						applyStyles( resetValues );
-					}
-				};
-
-				requestAnimationFrame( tick );
-			};
-
 			if ( delay > 0 ) {
-				setTimeout( runAnimation, delay );
+				setTimeout( run, delay );
 			} else {
-				runAnimation();
+				run();
 			}
 		},
 

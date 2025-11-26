@@ -17,44 +17,40 @@ function getElementView( element ) {
 }
 
 function applyAnimation( element, animConfig ) {
-	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
-	const durationMs = animConfig.duration;
-	const delayMs = animConfig.delay;
-
 	const view = getElementView( element );
 	if ( view?.playInteraction ) {
 		view.playInteraction( {
-			keyframes,
-			duration: durationMs,
-			delay: delayMs,
+			keyframes: getKeyframes( animConfig.effect, animConfig.type, animConfig.direction ),
+			duration: animConfig.duration,
+			delay: animConfig.delay,
 			type: animConfig.type,
 		} );
 		return;
 	}
 
 	const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
-	if ( animateFunc ) {
-		const options = {
-			duration: durationMs / 1000,
-			delay: delayMs / 1000,
-		};
-		const initialKeyframes = {};
-		Object.keys( keyframes ).forEach( ( key ) => {
-			initialKeyframes[ key ] = keyframes[ key ][ 0 ];
-		} );
-		animateFunc( element, initialKeyframes, { duration: 0 } ).then( () => {
-			animateFunc( element, keyframes, options ).then( () => {
-				if ( 'out' === animConfig.type ) {
-					const resetValues = { opacity: 1, scale: 1, x: 0, y: 0 };
-					const resetKeyframes = {};
-					Object.keys( keyframes ).forEach( ( key ) => {
-						resetKeyframes[ key ] = resetValues[ key ];
-					} );
-					animateFunc( element, resetKeyframes, { duration: 0 } );
-				}
-			} );
-		} );
+	if ( ! animateFunc ) {
+		return;
 	}
+
+	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+	const options = { duration: animConfig.duration / 1000, delay: animConfig.delay / 1000 };
+	const initialKeyframes = {};
+	Object.keys( keyframes ).forEach( ( key ) => {
+		initialKeyframes[ key ] = keyframes[ key ][ 0 ];
+	} );
+
+	animateFunc( element, initialKeyframes, { duration: 0 } ).then( () => {
+		animateFunc( element, keyframes, options ).then( () => {
+			if ( 'out' === animConfig.type ) {
+				const resetKeyframes = {};
+				Object.keys( keyframes ).forEach( ( key ) => {
+					resetKeyframes[ key ] = { opacity: 1, scale: 1, x: 0, y: 0 }[ key ];
+				} );
+				animateFunc( element, resetKeyframes, { duration: 0 } );
+			}
+		} );
+	} );
 }
 
 function getInteractionsData() {
@@ -192,19 +188,14 @@ function registerWindowEvents() {
 
 function handlePlayInteractions( event ) {
 	const { elementId, animationId } = event.detail;
-	const interactionsData = getInteractionsData();
-	const item = interactionsData.find( ( elementItemData ) => elementItemData.dataId === elementId );
-	if ( ! item ) {
+	const element = findElementByInteractionId( elementId );
+	if ( ! element ) {
 		return;
 	}
-	const element = findElementByInteractionId( elementId );
-	if ( element ) {
-		const interactionsCopy = {
-			...item.interactions,
-			items: [ ...item.interactions.items ],
-		};
-		interactionsCopy.items = interactionsCopy.items.filter( ( interactionItem ) => interactionItem.animation.animation_id === animationId );
-		applyInteractionsToElement( element, JSON.stringify( interactionsCopy ) );
+
+	const animConfig = parseAnimationName( animationId );
+	if ( animConfig ) {
+		applyAnimation( element, animConfig );
 	}
 }
 
