@@ -9,7 +9,6 @@ use WP_REST_Server;
 use WP_REST_Request;
 use Elementor\Plugin;
 use WP_REST_Response;
-use Elementor\Modules\Variables\Services\Batch_Operations\BatchProcessor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Module as Variables_Module;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
