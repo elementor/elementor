@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+// TODO: to be deleted later after this PR
 class Repository {
 	const TOTAL_VARIABLES_COUNT = 100;
 	const FORMAT_VERSION_V1 = 1;

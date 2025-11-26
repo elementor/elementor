@@ -35,11 +35,8 @@ class Rest_Api {
 
 	private Variables_Service $service;
 
-	private Batch_Processor $batch_processor;
-
-	public function __construct( Variables_Service $service, Batch_Processor $batch_processor ) {
+	public function __construct( Variables_Service $service ) {
 		$this->service = $service;
-		$this->batch_processor = $batch_processor;
 	}
 
 	public function enough_permissions_to_perform_ro_action() {
@@ -386,7 +383,7 @@ class Rest_Api {
 	}
 
 	private function list_of_variables() {
-		$db_record = $this->service->get();
+		$db_record = $this->service->load();
 
 		return $this->success_response( [
 			'variables' => $db_record['data'] ?? [],
@@ -502,10 +499,9 @@ class Rest_Api {
 	}
 
 	private function process_batch_operations( WP_REST_Request $request ) {
-		$watermark = $request->get_param( 'watermark' );
 		$operations = $request->get_param( 'operations' );
 
-		$result = $this->batch_processor->process_batch( $operations, $watermark );
+		$result = $this->service->process_batch( $operations );
 
 		$this->clear_cache();
 
