@@ -59,7 +59,7 @@ export class AtomicHelper {
 	}
 
 	public getHtmlTagControl( deeperSelector: string = '' ) {
-		const field = this.getSettingsField( 'Tag' );
+		const field = this.getSettingsField( 'HTML Tag' );
 
 		return deeperSelector
 			? field.locator( deeperSelector )

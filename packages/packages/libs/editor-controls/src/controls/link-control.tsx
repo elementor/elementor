@@ -14,6 +14,7 @@ import { createControl } from '../create-control';
 import { type ControlProps } from '../utils/types';
 import { QueryControl } from './query-control';
 import { SwitchControl } from './switch-control';
+import { ControlLabel } from '../components/control-label';
 
 type Props = ControlProps< {
 	queryOptions: {
@@ -102,7 +103,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 						marginInlineEnd: -0.75,
 					} }
 				>
-					<ControlFormLabel>{ label }</ControlFormLabel>
+					<ControlLabel>{ label }</ControlLabel>
 					<RestrictedLinkInfotip isVisible={ ! isActive } linkInLinkRestriction={ linkInLinkRestriction }>
 						<ToggleIconControl
 							disabled={ shouldDisableAddingLink }
