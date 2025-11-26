@@ -624,6 +624,44 @@ $remote-templates-items-space: 30px;
 	}
 }
 
+#elementor-template-library-toolbar {
+
+	.source-option-badge {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		padding: 6px 12px;
+		border: none;
+		border-radius: 20px;
+		font-size: 14px;
+		font-weight: 500;
+		white-space: nowrap;
+
+		i {
+			margin: 0;
+			font-size: 14px;
+		}
+
+		&.cloud-badge {
+			background-color: var(--e-a-bg-info);
+			color: var(--e-a-color-info);
+
+			i {
+				color: var(--e-a-color-info);
+			}
+		}
+
+		&.site-badge {
+			background-color: var(--e-a-bg-warning);
+			color: var(--e-a-btn-bg-warning-hover);
+
+			i {
+				color: var(--e-a-btn-bg-warning-hover);
+			}
+		}
+	}
+}
+
 #elementor-template-library-filter-toolbar-remote {
 	font-size: 11px;
 }

@@ -46,6 +46,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		quotaWarning: '.quota-progress-container .progress-bar-container .quota-warning',
 		quotaUpgrade: '.quota-progress-container .progress-bar-container .quota-warning a',
 		navigationContainer: '#elementor-template-library-navigation-container',
+		sourceOptionBadges: '.source-option-badge.variant-b-only',
 	},
 
 	events: {
@@ -234,6 +235,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.handleQuotaBar = this.handleQuotaBar.bind( this );
 		this.handleQuotaUpdate = this.handleQuotaUpdate.bind( this );
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
+		this.listenTo( elementor.channels.templates, 'filter:change', this.handleSourceOptionBadges );
 		this.listenTo( elementor.channels.templates, 'quota:updated', this.handleQuotaUpdate );
 		this.debouncedSearchTemplates = _.debounce( this.searchTemplates, 300 );
 	},
@@ -410,6 +412,25 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 	},
 
+	shouldShowVariantB() {
+		const experimentVariant = elementor.templates.eventManager.getExperimentVariant( 'template-library-save' );
+		return 'B' === experimentVariant;
+	},
+
+	handleSourceOptionBadges() {
+		const shouldShow = this.shouldShowVariantB();
+
+		if ( ! shouldShow ) {
+			this.ui.sourceOptionBadges.hide();
+			return;
+		}
+
+		const activeSource = elementor.templates.getFilter( 'source' );
+
+		this.$( '.source-option-badge.site-badge' ).toggle( 'local' === activeSource );
+		this.$( '.source-option-badge.cloud-badge' ).toggle( 'cloud' === activeSource );
+	},
+
 	onRender() {
 		elementor.templates.clearBulkSelectionItems();
 		const activeSource = elementor.templates.getFilter( 'source' );
@@ -435,6 +456,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 				location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.siteTab,
 			} );
 		}
+
+		this.handleSourceOptionBadges();
 	},
 
 	onRenderCollection() {
@@ -455,6 +478,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 			this.handleQuotaUpdate();
 		}
+
+		this.handleSourceOptionBadges();
 	},
 
 	onBeforeRenderEmpty() {

@@ -50,6 +50,8 @@ const TemplateLibrarySaveTemplateVariantBView = TemplateLibrarySaveTemplateView.
 		this.infoTipDialog.getElements( 'widget' ).addClass( 'variant-b' );
 
 		this.infoTipDialog.show();
+
+		this.sendCTBadgeEvent( 'cloud' );
 	},
 
 	showCloudAccountBadgeTooltip() {
@@ -105,6 +107,28 @@ const TemplateLibrarySaveTemplateVariantBView = TemplateLibrarySaveTemplateView.
 		this.siteAccountBadgeDialog.getElements( 'buttonsWrapper' ).remove();
 
 		this.siteAccountBadgeDialog.show();
+
+		this.sendCTBadgeEvent( 'site' );
+	},
+
+	sendCTBadgeEvent( badgeType ) {
+		elementor.templates.eventManager.sendCTBadgeEvent( {
+			ct_badge_hover_position: this.getOption( 'context' ),
+			ct_badge_type: badgeType,
+			ct_position_state: this.getPositionState(),
+		} );
+	},
+
+	getPositionState() {
+		if ( ! elementor.config.library_connect.is_connected ) {
+			return 'connect';
+		}
+
+		if ( ! elementor.templates.hasCloudLibraryQuota() || this.cloudMaxCapacityReached() ) {
+			return 'upgrade';
+		}
+
+		return 'eligible';
 	},
 } );
 

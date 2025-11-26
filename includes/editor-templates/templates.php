@@ -126,6 +126,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</div>
 				</div>
 			</div>
+			<span class="source-option-badge site-badge variant-b-only" style="display: none;">
+				<i class="eicon-users" aria-hidden="true"></i>
+				<?php echo esc_html__( 'Anyone on this site', 'elementor' ); ?>
+			</span>
+			<span class="source-option-badge cloud-badge variant-b-only" style="display: none;">
+				<i class="eicon-lock" aria-hidden="true"></i>
+				<?php echo esc_html__( 'My Elementor account', 'elementor' ); ?>
+			</span>
 		<# } #>
 
 		<div class="elementor-template-library-filter-toolbar-side-actions">
