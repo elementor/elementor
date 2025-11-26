@@ -127,43 +127,17 @@ trait Has_Atomic_Base {
 
 		return [];
 	}
-
-	// private function parse_atomic_interactions( $interactions ) {
-	// 	if ( empty( $interactions ) ) {
-	// 		return [];
-	// 	}
-	
-	// 	if ( is_string( $interactions ) ) {
-	// 		$decoded = json_decode( $interactions, true );
-	// 		if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
-	// 			$interactions = $decoded;
-	// 		}
-	// 	}
-	
-	// 	if ( is_array( $interactions ) ) {
-	// 		// Check if interactions are in prop-type format and convert to legacy
-	// 		if ( isset( $interactions['items'] ) && is_array( $interactions['items'] ) ) {
-	// 			$interactions = $this->convert_prop_type_interactions_to_legacy( $interactions );
-	// 		}
-			
-	// 		return $interactions;
-	// 	}
-	
-	// 	return [];
-	// }
 	
 	private function convert_prop_type_interactions_to_legacy( $interactions ) {
 		$legacy_items = [];
 	
 		foreach ( $interactions['items'] as $item ) {
-			// Check if item is in prop-type format
 			if ( isset( $item['$$type'] ) && $item['$$type'] === 'interaction-item' ) {
 				$legacy_item = $this->extract_legacy_interaction_from_prop_type( $item );
 				if ( $legacy_item ) {
 					$legacy_items[] = $legacy_item;
 				}
 			} else {
-				// Already in legacy format
 				$legacy_items[] = $item;
 			}
 		}
@@ -181,7 +155,6 @@ trait Has_Atomic_Base {
 	
 		$item_value = $item['value'];
 	
-		// Extract values from prop-type structure
 		$interaction_id = $this->extract_prop_value( $item_value, 'interaction_id' );
 		$trigger = $this->extract_prop_value( $item_value, 'trigger' );
 		$animation = $this->extract_prop_value( $item_value, 'animation' );
@@ -203,7 +176,6 @@ trait Has_Atomic_Base {
 			$delay = $this->extract_prop_value( $timing_config, 'delay', 0 );
 		}
 	
-		// Build animation_id from components
 		$animation_id = implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay ] );
 	
 		return [
@@ -222,7 +194,6 @@ trait Has_Atomic_Base {
 	
 		$value = $data[ $key ];
 	
-		// Handle TransformablePropValue structure: { $$type: 'string', value: 'actual-value' }
 		if ( is_array( $value ) && isset( $value['$$type'] ) && isset( $value['value'] ) ) {
 			return $value['value'];
 		}
@@ -267,13 +238,7 @@ trait Has_Atomic_Base {
 		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
 		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
 		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
-		// $data['interactions'] = $this->parse_atomic_interactions( $data['interactions'] );
-		// $data['interactions'] = $data['interactions'] ?? [];
 
-		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
-
-error_log( 'get_data_for_save - $data[interactions]: ' . print_r( $data['interactions'] ?? 'NOT SET', true ) );
-error_log( 'get_data_for_save - $this->interactions: ' . print_r( $this->interactions ?? 'NOT SET', true ) );
 		if ( isset( $data['interactions'] ) && ! empty( $data['interactions'] ) ) {
 			$data['interactions'] = $this->transform_interactions_for_save( $data['interactions'] );
 		} else {
@@ -292,20 +257,17 @@ error_log( 'get_data_for_save - $this->interactions: ' . print_r( $this->interac
 		$transformed_items = [];
 	
 		foreach ( $decoded['items'] as $item ) {
-			// Skip if already in prop-type format
 			if ( isset( $item['$$type'] ) && $item['$$type'] === 'interaction-item' ) {
 				$transformed_items[] = $item;
 				continue;
 			}
 	
-			// Transform from legacy to prop-type
 			$transformed_item = $this->convert_legacy_to_prop_type( $item );
 			if ( $transformed_item ) {
 				$transformed_items[] = $transformed_item;
 			}
 		}
 	
-		// Return as JSON string to match format expected by database
 		return [
 			'version' => 1,
 			'items' => $transformed_items,
