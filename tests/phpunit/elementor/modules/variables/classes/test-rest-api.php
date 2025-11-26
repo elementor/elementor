@@ -4,7 +4,7 @@ namespace Elementor\Tests\Modules\Variables\Classes;
 
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\Variables\Classes\Rest_Api;
-use Elementor\Modules\Variables\Services\Batch_Operations\BatchProcessor;
+use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
@@ -38,14 +38,12 @@ class Test_Rest_Api extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		// TODO update to only mock repository not mock kit
 		$this->kit = $this->createMock( Kit::class );
 		$repository = new Variables_Repository( $this->kit );
-		$service = new Variables_Service( $repository );
+		$service = new Variables_Service( $repository, new Batch_Processor() );
 
-		$this->rest_api = new Rest_Api(
-			$service,
-			new BatchProcessor( $repository, $service )
-		);
+		$this->rest_api = new Rest_Api( $service );
 	}
 
 	public function test_admin_user__has__enough_permissions_to_perform_action() {
