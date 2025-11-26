@@ -23,7 +23,7 @@ class Variables_Service {
 	}
 
 	public function load() {
-		return $this->repo->load()->serialize();
+		return $this->repo->load()->serialize( true );
 	}
 
 	/**
@@ -142,8 +142,11 @@ class Variables_Service {
 		}
 
 		return [
-			'variable' => array_merge( [ 'id' => $id ], $variable->to_array() ),
 			'watermark' => $watermark,
+			'variable' => array_merge( [
+				'id' => $id,
+				'deleted' => true,
+			], $variable->to_array() ),
 		];
 	}
 

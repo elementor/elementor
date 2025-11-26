@@ -45,11 +45,17 @@ class Variables_Collection extends Collection {
 		return new self( $variables, $watermark, $version );
 	}
 
-	public function serialize(): array {
+	public function serialize( bool $include_deleted_key = false ): array {
 		$data = [];
 
 		foreach ( $this->all() as $variable ) {
-			$data[ $variable->id() ] = $variable->to_array();
+			$var = $variable->to_array();
+
+			if ( $include_deleted_key && $variable->is_deleted() ) {
+				$var['deleted'] = true;
+			}
+
+			$data[ $variable->id() ] = $var;
 		}
 
 		return [

@@ -2,21 +2,21 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
-use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
+use Elementor\Modules\Variables\Services\Variables_Service;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class CSS_Renderer {
-	private Variables_Repository $repository;
+	private Variables_Service $service;
 
-	public function __construct( Variables_Repository $repository ) {
-		$this->repository = $repository;
+	public function __construct( Variables_Service $service ) {
+		$this->service = $service;
 	}
 
 	private function global_variables(): array {
-		return $this->repository->variables();
+		return $this->service->get_variables_list();
 	}
 
 	public function raw_css(): string {
@@ -54,7 +54,7 @@ class CSS_Renderer {
 	private function build_css_variable_entry( string $id, array $variable ): ?string {
 		$variable_name = sanitize_text_field( $id );
 
-		if ( ! array_key_exists( 'deleted', $variable ) ) {
+		if ( ! array_key_exists( 'deleted_at', $variable ) ) {
 			$variable_name = sanitize_text_field( $variable['label'] ?? '' );
 		}
 

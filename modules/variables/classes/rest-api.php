@@ -2,14 +2,14 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
-use Exception;
 use WP_Error;
-use WP_REST_Response;
-use WP_REST_Request;
+use Exception;
 use WP_REST_Server;
+use WP_REST_Request;
 use Elementor\Plugin;
+use WP_REST_Response;
+use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Modules\Variables\Module as Variables_Module;
-use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
@@ -30,10 +30,11 @@ class Rest_Api {
 	const MAX_ID_LENGTH = 64;
 	const MAX_LABEL_LENGTH = 50;
 	const MAX_VALUE_LENGTH = 512;
-	private Variables_Repository $variables_repository;
 
-	public function __construct( Variables_Repository $variables_repository ) {
-		$this->variables_repository = $variables_repository;
+	private Variables_Service $service;
+
+	public function __construct( Variables_Service $service ) {
+		$this->service = $service;
 	}
 
 	public function enough_permissions_to_perform_ro_action() {
@@ -268,7 +269,7 @@ class Rest_Api {
 		$label = $request->get_param( 'label' );
 		$value = $request->get_param( 'value' );
 
-		$result = $this->variables_repository->create( [
+		$result = $this->service->create( [
 			'type' => $type,
 			'label' => $label,
 			'value' => $value,
@@ -305,7 +306,7 @@ class Rest_Api {
 			$update_data['order'] = $order;
 		}
 
-		$result = $this->variables_repository->update( $id, $update_data );
+		$result = $this->service->update( $id, $update_data );
 
 		$this->clear_cache();
 
@@ -326,7 +327,7 @@ class Rest_Api {
 	private function delete_existing_variable( WP_REST_Request $request ) {
 		$id = $request->get_param( 'id' );
 
-		$result = $this->variables_repository->delete( $id );
+		$result = $this->service->delete( $id );
 
 		$this->clear_cache();
 
@@ -361,7 +362,7 @@ class Rest_Api {
 			$overrides['value'] = $value;
 		}
 
-		$result = $this->variables_repository->restore( $id, $overrides );
+		$result = $this->service->restore( $id, $overrides );
 
 		$this->clear_cache();
 
@@ -380,7 +381,7 @@ class Rest_Api {
 	}
 
 	private function list_of_variables() {
-		$db_record = $this->variables_repository->load();
+		$db_record = $this->service->load();
 
 		return $this->success_response( [
 			'variables' => $db_record['data'] ?? [],
@@ -496,10 +497,9 @@ class Rest_Api {
 	}
 
 	private function process_batch_operations( WP_REST_Request $request ) {
-		$watermark = $request->get_param( 'watermark' );
 		$operations = $request->get_param( 'operations' );
 
-		$result = $this->variables_repository->process_atomic_batch( $operations, $watermark );
+		$result = $this->service->process_batch( $operations );
 
 		$this->clear_cache();
 
