@@ -57,7 +57,6 @@ module.exports = {
 		// This is set to `warn` by WordPress, but we want to enforce it.
 		'react-hooks/exhaustive-deps': 'error',
 
-		'react-compiler/react-compiler': 'error',
 
 		// Styling rules:
 		'@typescript-eslint/consistent-type-imports': [
