@@ -224,7 +224,7 @@ class Style_Schema {
 				'inset',
 				'outset',
 			] )
-			  ->description( 'The border style in CSS values' ),
+				->description( 'The border style in CSS values' ),
 			'outline-width' => Size_Prop_Type::make()
 				->units( Size_Constants::border() )
 				->description( 'The width of the outline in Size PropType format' ),

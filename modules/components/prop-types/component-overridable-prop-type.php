@@ -16,7 +16,6 @@ class Component_Overridable_Prop_Type extends Plain_Prop_Type {
 	 * Return a tuple that lets the developer ignore the component overridable prop type in the props schema
 	 * using `Prop_Type::meta()`, e.g. `String_Prop_Type::make()->meta( Component_Overridable_Prop_Type::ignore() )`.
 	 */
-
 	public static function ignore(): array {
 		return [ static::META_KEY, false ];
 	}
