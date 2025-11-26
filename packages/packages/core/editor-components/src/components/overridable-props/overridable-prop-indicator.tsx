@@ -42,10 +42,9 @@ type Props = {
 	isOverridable: boolean;
 	overridables?: OverridableProps;
 };
-export function Content( { componentId, isOverridable, overridables }: Props ) {
+export function Content( { isOverridable, overridables }: Props ) {
 	const {
 		element: { id: elementId },
-		elementType,
 	} = useElement();
 	const { bind } = useBoundProp();
 
