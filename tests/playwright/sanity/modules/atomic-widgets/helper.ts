@@ -58,10 +58,9 @@ export class AtomicHelper {
 		await optionLocator.waitFor( { state: 'detached' } );
 	}
 
-	
 	public getHtmlTagControl( deeperSelector: string = '' ) {
 		const field = this.getSettingsField( 'Tag' );
-		
+
 		return deeperSelector
 			? field.locator( deeperSelector )
 			: field;
