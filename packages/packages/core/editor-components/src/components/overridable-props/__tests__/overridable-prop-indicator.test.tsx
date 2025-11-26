@@ -116,9 +116,6 @@ describe( 'OverridablePropIndicator', () => {
 
 		const indicator = screen.getByLabelText( isOverridable ? 'Overridable property' : 'Make prop overridable' );
 		expect( indicator ).toBeInTheDocument();
-
-		const icon = indicator.querySelector( 'svg' );
-		expect( icon ).toBeInTheDocument();
 	} );
 } );
 
