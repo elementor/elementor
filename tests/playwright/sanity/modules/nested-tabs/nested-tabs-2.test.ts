@@ -196,10 +196,11 @@ test.describe( 'Nested Tabs tests @nested-tabs', () => {
 			await frame.locator( '.elementor-widget-n-tabs .elementor-editor-element-edit' ).first().click();
 			await editor.waitForPanelToLoad();
 			await editor.openSection( 'section_tabs' );
-			const secondRepeaterField = page.locator( '.elementor-repeater-fields >> nth=1' );
+			const secondRepeaterField = page.locator( '.elementor-repeater-fields' ).nth( 1 );
 			await secondRepeaterField.waitFor( { state: 'visible' } );
 			await secondRepeaterField.click();
-			const elementIdInput = page.locator( '.elementor-repeater-fields:nth-child( 2 ) .elementor-control-element_id input' );
+			const elementIdInput = secondRepeaterField.locator( '.elementor-control-element_id input' );
+			await elementIdInput.waitFor( { state: 'visible' } );
 			await elementIdInput.click();
 			await elementIdInput.fill( customCssId );
 
