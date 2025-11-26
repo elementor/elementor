@@ -7,7 +7,7 @@ use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Variables_Schema\Variable_Value_Schema;
 
 // global - color has to take color prop type
-class PropType_Adapter {
+class Prop_Type_Adapter {
 	public static function to_storage( Variables_Collection $collection ): void {
 		$value_schema = Variable_Value_Schema::get();
 
@@ -25,6 +25,14 @@ class PropType_Adapter {
 				$variable->set_value( $prop_type::generate( $value ) );
 			}
 		} );
+	}
+
+	public static function from_storage( Variables_Collection $collection ): Variables_Collection {
+		$collection->each( function( Variable $variable ) use ( $value_schema ) {
+			$value = $variable->value();
+		} );
+
+		return $collection;
 	}
 }
 
