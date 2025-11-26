@@ -18,10 +18,6 @@ class Validation {
 	private $max_number_of_interactions = 5;
 	private $interaction_id_counter = 0;
 
-	public function __construct( Presets $presets ) {
-		// Presets no longer needed with new structure validation
-	}
-
 	public function sanitize( $document ) {
 		return $this->sanitize_document_data( $document );
 	}
