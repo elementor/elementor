@@ -77,7 +77,7 @@ class Prop_Type_Adapter {
 	private static function parse_size_value( string $value ) {
 		$value = trim( strtolower( $value ) );
 
-		if ( $value === 'auto' ) {
+		if ( 'auto' === $value ) {
 			return [
 				'size' => '',
 				'unit' => 'auto',

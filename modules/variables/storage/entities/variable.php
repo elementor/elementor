@@ -75,7 +75,7 @@ class Variable {
 	}
 
 	public function set_value( $value ) {
-		return $this->data['value'] = $value;
+		$this->data['value'] = $value;
 	}
 
 	public function type() {
