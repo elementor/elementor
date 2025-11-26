@@ -80,11 +80,17 @@ class Dynamic_Tags_Editor_Config {
 			return null;
 		}
 
+		$group_overrides = [
+			'contact-url' => 'site',
+		];
+
+		$group = $group_overrides[ $tag['name'] ] ?? $tag['group'] ?? '';
+
 		$converted_tag = [
 			'name'            => $tag['name'],
 			'categories'      => $tag['categories'],
 			'label'           => $tag['title'] ?? '',
-			'group'           => $tag['group'] ?? '',
+			'group'           => $group,
 			'atomic_controls' => [],
 			'props_schema'    => $this->schemas->get( $tag['name'] ),
 		];

@@ -11,7 +11,7 @@ export default function createAtomicElementBaseView( type ) {
 
 		tagName() {
 			if ( this.haveLink() ) {
-				return 'a';
+				return this.getLinkTag();
 			}
 
 			const tagControl = this.model.getSetting( 'tag' );
@@ -602,6 +602,26 @@ export default function createAtomicElementBaseView( type ) {
 
 		isFirstElementInStructure() {
 			return 0 === this.model.collection.indexOf( this.model );
+		},
+
+		getLinkTag() {
+			if ( 'dynamic' !== this.model.getSetting( 'link' )?.value?.destination?.$$type ) {
+				return 'a';
+			}
+
+			const dynamicTag = this.model.getSetting( 'link' )?.value?.destination?.value?.name;
+
+			if ( ! dynamicTag ) {
+				return 'a';
+			}
+
+			const group = elementor.config.atomicDynamicTags?.tags?.[ dynamicTag ]?.group;
+
+			if ( ! group || 'action' !== group ) {
+				return 'a';
+			}
+
+			return 'button';
 		},
 	} );
 
