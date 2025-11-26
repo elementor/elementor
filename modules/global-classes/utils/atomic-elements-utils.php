@@ -11,7 +11,8 @@ use Elementor\Plugin;
 class Atomic_Elements_Utils {
 
 	public static function is_classes_prop( $prop ) {
-		return 'plain' === $prop::KIND && 'classes' === $prop->get_key();
+		// phpcs:ignore
+		return 'plain' === $prop::$KIND && 'classes' === $prop->get_key();
 	}
 
 	public static function get_element_type( $element ) {

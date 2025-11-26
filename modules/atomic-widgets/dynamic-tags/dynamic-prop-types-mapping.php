@@ -105,12 +105,12 @@ class Dynamic_Prop_Types_Mapping {
 			return [ V1_Dynamic_Tags_Module::IMAGE_CATEGORY ];
 		}
 
-		if ( $prop_type instanceof String_Prop_Type && empty( $prop_type->get_enum() ) ) {
-			return [ V1_Dynamic_Tags_Module::TEXT_CATEGORY ];
-		}
-
 		if ( $prop_type instanceof Url_Prop_Type ) {
 			return [ V1_Dynamic_Tags_Module::URL_CATEGORY ];
+		}
+
+		if ( $prop_type instanceof String_Prop_Type && empty( $prop_type->get_enum() ) ) {
+			return [ V1_Dynamic_Tags_Module::TEXT_CATEGORY ];
 		}
 
 		return [];
