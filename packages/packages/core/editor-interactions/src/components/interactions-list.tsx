@@ -7,6 +7,10 @@ import { IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsConfig } from '../utils/get-interactions-config';
+import {
+	buildInteractionItem,
+	getInteractionLabel,
+} from '../utils/interactions-helpers';
 import { DEFAULT_INTERACTION, InteractionDetails } from './interaction-details';
 
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
@@ -36,28 +40,29 @@ export function InteractionsList( props: InteractionListProps ) {
 	if ( triggerCreateOnShowEmpty && ( ! interactionsState.items || interactionsState.items?.length === 0 ) ) {
 		setInteractionsState( {
 			version: 1,
-			items: [
-				{
-					animation: {
-						animation_id: DEFAULT_INTERACTION,
-						animation_type: 'full-preset',
-					},
-				},
-			],
+			items: [ buildInteractionItem( {
+				trigger: 'load',
+				effect: 'fade',
+				type: 'in',
+				direction: '',
+				duration: '300',
+				delay: '0',
+			} ) ],
 		} );
 	}
 
-	const displayLabel = ( interactionForDisplay: string ) => {
-		if ( ! interactionForDisplay ) {
-			return '';
-		}
+	// const displayLabel = ( interactionForDisplay: string ) => {
+	// 	if ( ! interactionForDisplay ) {
+	// 		return '';
+	// 	}
 
-		const animationOptions = getInteractionsConfig()?.animationOptions;
-		const option = animationOptions.find( ( opt ) => opt.value === interactionForDisplay );
+	// 	const animationOptions = getInteractionsConfig()?.animationOptions;
+	// 	const option = animationOptions.find( ( opt ) => opt.value === interactionForDisplay );
 
-		return option?.label || interactionForDisplay;
-	};
+	// 	return option?.label || interactionForDisplay;
+	// };
 
+	// 
 	return (
 		<Repeater
 			openOnAdd
@@ -75,38 +80,39 @@ export function InteractionsList( props: InteractionListProps ) {
 			isSortable={ false }
 			disableAddItemButton={ isMaxNumberOfInteractionsReached }
 			itemSettings={ {
-				initialValues: {
-					animation: {
-						animation_id: DEFAULT_INTERACTION,
-						animation_type: 'full-preset',
-					},
-				},
-				Label: ( { value } ) => displayLabel( value.animation.animation_id ),
+				initialValues: buildInteractionItem( {
+					trigger: 'load',
+					effect: 'fade',
+					type: 'in',
+					direction: '',
+					duration: '300',
+					delay: '0',
+				} ),
+				Label: ( { value } ) => getInteractionLabel( value ),
 				Icon: () => null,
 				Content: ( { index, value } ) => (
 					<InteractionDetails
 						key={ index }
-						interaction={ value.animation.animation_id }
-						onChange={ ( newValue: string ) => {
+						interactionItem={ value }
+						onChange={ ( newValue ) => {
 							const newInteractions = { ...interactionsState };
-							newInteractions.items[ index ] = {
-								...newInteractions.items[ index ],
-								animation: {
-									...newInteractions.items[ index ].animation,
-									animation_id: newValue,
-								},
-							};
+							newInteractions.items[ index ] = newValue;
 							setInteractionsState( { ...interactionsState, items: newInteractions.items } );
 						} }
 					/>
 				),
-				actions: ( value ) => (
-					<>
-						<IconButton size="tiny" onClick={ () => onPlayInteraction( value.animation.animation_id ) }>
-							<PlayerPlayIcon fontSize="tiny" />
-						</IconButton>
-					</>
-				),
+				actions: ( value ) => {
+					const itemValue = value.value;
+
+					const interactionId = itemValue?.interaction_id?.value || '';
+					return (
+						<>
+							<IconButton size="tiny" onClick={ () => onPlayInteraction( interactionId ) }>
+								<PlayerPlayIcon fontSize="tiny" />
+							</IconButton>
+						</>
+					);
+				},
 			} }
 		/>
 	);

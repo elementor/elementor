@@ -232,19 +232,107 @@ trait Has_Atomic_Base {
 		);
 	}
 
+	// public function get_interactions_ids() {
+	// 	$animation_ids = [];
+
+	// 	$list_of_interactions = ( is_array( $this->interactions ) && isset( $this->interactions['items'] ) )
+	// 		? $this->interactions['items']
+	// 		: [];
+
+	// 	foreach ( $list_of_interactions as $interaction ) {
+	// 		if ( isset( $interaction['animation']['animation_id'] ) ) {
+	// 			$animation_ids[] = $interaction['animation']['animation_id'];
+	// 		}
+	// 	}
+
+	// 	return $animation_ids;
+	// }
 	public function get_interactions_ids() {
 		$animation_ids = [];
-
+	
 		$list_of_interactions = ( is_array( $this->interactions ) && isset( $this->interactions['items'] ) )
 			? $this->interactions['items']
 			: [];
-
+	
 		foreach ( $list_of_interactions as $interaction ) {
-			if ( isset( $interaction['animation']['animation_id'] ) ) {
-				$animation_ids[] = $interaction['animation']['animation_id'];
+			$animation_id = $this->parse_interaction_to_animation_id( $interaction );
+			
+			if ( ! empty( $animation_id ) ) {
+				$animation_ids[] = $animation_id;
 			}
 		}
-
+	
 		return $animation_ids;
+	}
+	
+	private function parse_interaction_to_animation_id( $interaction ) {
+		if ( ! is_array( $interaction ) ) {
+			return '';
+		}
+
+		if ( isset( $interaction['$$type'] ) && $interaction['$$type'] === 'interaction-item' && isset( $interaction['value'] ) ) {
+			$interaction = $interaction['value'];
+		}
+	
+		$interaction_id = $this->get_prop_value( $interaction, 'interaction_id' );
+		$trigger = $this->get_prop_value( $interaction, 'trigger' );
+		$animation = $this->get_prop_value( $interaction, 'animation' );
+	
+		if ( empty( $trigger ) || empty( $animation ) ) {
+			return '';
+		}
+	
+		$effect = $this->get_prop_value( $animation, 'effect' );
+		$type = $this->get_prop_value( $animation, 'type' );
+		$direction = $this->get_prop_value( $animation, 'direction' );
+		$timing_config = $this->get_prop_value( $animation, 'timing_config' );
+	
+		if ( empty( $effect ) || empty( $type ) ) {
+			return '';
+		}
+	
+		$duration = 300;
+		$delay = 0;
+	
+		if ( is_array( $timing_config ) ) {
+			$duration = $this->get_prop_value( $timing_config, 'duration', 300 );
+			$delay = $this->get_prop_value( $timing_config, 'delay', 0 );
+		}
+	
+		$parts = [
+			$interaction_id ?: '',
+			$trigger,
+			$effect,
+			$type,
+			$direction ?: '',
+			$duration,
+			$delay,
+		];
+	
+		return implode( '-', array_filter( $parts, function( $part ) {
+			return '' !== $part && null !== $part;
+		} ) );
+	}
+	
+	private function get_prop_value( $data, $key, $default = '' ) {
+		if ( ! is_array( $data ) || ! isset( $data[ $key ] ) ) {
+			return $default;
+		}
+	
+		$value = $data[ $key ];
+	
+		if ( is_array( $value ) ) {
+			if ( isset( $value['$$type'] ) && isset( $value['value'] ) ) {
+				return $value['value'];
+			}
+	
+			if ( isset( $value['value'] ) ) {
+				return $value['value'];
+			}
+	
+			return $value;
+		}
+	
+		return $value;
 	}
 }

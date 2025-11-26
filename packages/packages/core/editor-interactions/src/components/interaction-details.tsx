@@ -1,7 +1,16 @@
 import * as React from 'react';
 import { PopoverContent } from '@elementor/editor-controls';
+import { type InteractionItem } from '@elementor/editor-elements';
+
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+
+import {
+	buildInteractionItem,
+	DEFAULT_INTERACTION_DETAILS,
+	parseInteractionItem,
+	type InteractionDetailsForUI,
+} from '../utils/interactions-helpers';
 
 import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
@@ -12,52 +21,54 @@ import { Trigger } from './controls/trigger';
 const DELIMITER = '-';
 
 type InteractionDetailsProps = {
-	interaction: string;
-	onChange: ( interaction: string ) => void;
+	interactionItem: InteractionItem;
+	onChange: ( interactionItem: InteractionItem ) => void;
 };
 export const DEFAULT_INTERACTION = 'load-fade-in--300-0';
 
-const getDefaultInteractionDetails = () => {
-	const [ trigger, effect, type, direction, duration, delay ] = DEFAULT_INTERACTION.split( DELIMITER );
+// const getDefaultInteractionDetails = () => {
+// 	const [ trigger, effect, type, direction, duration, delay ] = DEFAULT_INTERACTION.split( DELIMITER );
 
-	return {
-		trigger,
-		effect,
-		type,
-		direction,
-		duration,
-		delay,
-	};
-};
+// 	return {
+// 		trigger,
+// 		effect,
+// 		type,
+// 		direction,
+// 		duration,
+// 		delay,
+// 	};
+// };
 
-const buildInteractionDetails = ( interaction: string ) => {
-	const [ trigger, effect, type, direction, duration, delay ] = interaction.split( DELIMITER );
-	const defaultInteractionDetails = getDefaultInteractionDetails();
+// const buildInteractionDetails = ( interaction: string ) => {
+// 	const [ trigger, effect, type, direction, duration, delay ] = interaction.split( DELIMITER );
+// 	const defaultInteractionDetails = getDefaultInteractionDetails();
 
-	return {
-		trigger: trigger || defaultInteractionDetails.trigger,
-		effect: effect || defaultInteractionDetails.effect,
-		type: type || defaultInteractionDetails.type,
-		direction: direction || defaultInteractionDetails.direction,
-		duration: duration || defaultInteractionDetails.duration,
-		delay: delay || defaultInteractionDetails.delay,
-	};
-};
+// 	return {
+// 		trigger: trigger || defaultInteractionDetails.trigger,
+// 		effect: effect || defaultInteractionDetails.effect,
+// 		type: type || defaultInteractionDetails.type,
+// 		direction: direction || defaultInteractionDetails.direction,
+// 		duration: duration || defaultInteractionDetails.duration,
+// 		delay: delay || defaultInteractionDetails.delay,
+// 	};
+// };
 
-export const InteractionDetails = ( { interaction, onChange }: InteractionDetailsProps ) => {
+export const InteractionDetails = ( { interactionItem, onChange }: InteractionDetailsProps ) => {
 	const interactionDetails = React.useMemo( () => {
-		return buildInteractionDetails( interaction );
-	}, [ interaction ] );
+		return parseInteractionItem( interactionItem );
+	}, [ interactionItem ] );
 
-	const handleChange = < K extends keyof typeof interactionDetails >(
+	const handleChange = < K extends keyof  InteractionDetailsForUI >(
 		key: K,
-		value: ( typeof interactionDetails )[ K ]
+		value: InteractionDetailsForUI[ K ]
 	) => {
-		if ( value === null ) {
-			value = getDefaultInteractionDetails()[ key ];
+		if ( value === null || value === undefined ) {
+			value = DEFAULT_INTERACTION_DETAILS[ key ] as InteractionDetailsForUI[ K ];
 		}
+		
 		const newInteractionDetails = { ...interactionDetails, [ key ]: value };
-		onChange( Object.values( newInteractionDetails ).join( DELIMITER ) );
+		const newInteractionItem = buildInteractionItem( newInteractionDetails, interactionItem );
+		onChange( newInteractionItem );
 	};
 
 	return (

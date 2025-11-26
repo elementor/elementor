@@ -13,7 +13,20 @@ export function InteractionsRenderer() {
 		return null;
 	}
 
-	const interactionsData = JSON.stringify( Array.isArray( interactionItems ) ? interactionItems : [] );
+	// const interactionsData = JSON.stringify( Array.isArray( interactionItems ) ? interactionItems : [] );
+	console.log( 'interactionItems', interactionItems );
+	const simplifiedData = interactionItems.map( ( item ) => {
+		const interactionIds = transformInteractionsToIds( item.interactions );
+		return {
+			elementId: item.elementId,
+			dataId: item.dataId,
+			interactions: interactionIds,
+		};
+	} );
+
+	const interactionsData = JSON.stringify( simplifiedData );
+	console.log( 'interactionsData', interactionsData );
+	// console.log( 'simplifiedData', simplifiedData );
 
 	return (
 		<Portal container={ container }>
@@ -26,6 +39,72 @@ export function InteractionsRenderer() {
 			/>
 		</Portal>
 	);
+}
+
+function transformInteractionsToIds( interactions: any ): string[] {
+	if ( ! interactions || ! interactions.items || ! Array.isArray( interactions.items ) ) {
+		console.log('im empty interactions');
+		return [];
+	}
+
+	return interactions.items
+		.map( ( wrappedItem: any ) => {
+			console.log('im wrappedItem', wrappedItem);
+			let item = wrappedItem;
+			if ( wrappedItem?.$$type === 'interaction-item' && wrappedItem?.value ) {
+				item = wrappedItem.value;
+			}
+			console.log('im item', item);
+			const interactionId = getPropValue( item, 'interaction_id' );
+			const trigger = getPropValue( item, 'trigger' );
+			const animation = getPropValue( item, 'animation' );
+
+			if ( ! trigger || ! animation ) {
+				return null;
+			}
+
+			const effect = getPropValue( animation, 'effect' );
+			const type = getPropValue( animation, 'type' );
+			const direction = getPropValue( animation, 'direction' );
+			const timingConfig = getPropValue( animation, 'timing_config' );
+
+			if ( ! effect || ! type ) {
+				return null;
+			}
+
+			const duration = timingConfig ? getPropValue( timingConfig, 'duration', 300 ) : 300;
+			const delay = timingConfig ? getPropValue( timingConfig, 'delay', 0 ) : 0;
+
+			// Build the ID string: id-trigger-effect-type-direction-duration-delay
+			const parts = [
+				interactionId || '',
+				trigger,
+				effect,
+				type,
+				direction || '',
+				duration,
+				delay,
+			].filter( ( part ) => part !== '' && part !== null && part !== undefined );
+
+			return parts.join( '-' );
+		} )
+		.filter( ( id: string | null ): id is string => id !== null );
+}
+
+function getPropValue( data: any, key: string, defaultValue: any = '' ): any {
+	if ( ! data || typeof data !== 'object' || ! ( key in data ) ) {
+		return defaultValue;
+	}
+
+	const value = data[ key ];
+
+	// Handle prop type structure: { $$type: 'string', value: 'actual-value' }
+	if ( value && typeof value === 'object' && '$$type' in value && 'value' in value ) {
+		return value.value;
+	}
+
+	// Handle plain values
+	return value !== undefined ? value : defaultValue;
 }
 
 function usePortalContainer() {
