@@ -16,7 +16,7 @@ export default class NestedTitleKeyboardHandler extends Base {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				itemTitle: `[data-tab-title-id*="e-n-tab-title-${ this.getWidgetNumber() }"]`,
+				itemTitle: `[id*="e-n-tab-title-${ this.getWidgetNumber() }"]`,
 				itemContainer: `[id*="e-n-tab-content-${ this.getWidgetNumber() }"]`,
 			},
 			ariaAttributes: {
