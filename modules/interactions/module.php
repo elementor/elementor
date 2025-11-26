@@ -74,6 +74,18 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/save/data', function( $data, $document ) {
 			return ( new Parser( $document->get_main_id() ) )->assign_interaction_ids( $data );
 		}, 11, 2 );
+
+		add_filter( 'elementor/document/save/data', function( $data ) {
+			return ( new Prop_Type_Adapter() )->interaction_to_prop_type( $data );
+		}, 12 );
+		
+		add_filter( 'elementor/frontend/builder_content_data', function( $data ) {
+			return ( new Prop_Type_Adapter() )->prop_type_to_interaction( $data );
+		}, 10 );
+
+		add_filter( 'elementor/document/get_elements', function( $data ) {
+			return ( new Prop_Type_Adapter() )->prop_type_to_interaction( $data );
+		}, 10 );
 	}
 
 	private function get_config() {

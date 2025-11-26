@@ -51,21 +51,21 @@ trait Has_Template {
 		}
 	}
 
-	public function get_interactions_ids() {
-		$animation_ids = [];
+	// public function get_interactions_ids() {
+	// 	$animation_ids = [];
 
-		$list_of_interactions = ( is_array( $this->interactions ) && isset( $this->interactions['items'] ) )
-			? $this->interactions['items']
-			: [];
+	// 	$list_of_interactions = ( is_array( $this->interactions ) && isset( $this->interactions['items'] ) )
+	// 		? $this->interactions['items']
+	// 		: [];
 
-		foreach ( $list_of_interactions as $interaction ) {
-			if ( isset( $interaction['animation']['animation_id'] ) ) {
-				$animation_ids[] = $interaction['animation']['animation_id'];
-			}
-		}
+	// 	foreach ( $list_of_interactions as $interaction ) {
+	// 		if ( isset( $interaction['animation']['animation_id'] ) ) {
+	// 			$animation_ids[] = $interaction['animation']['animation_id'];
+	// 		}
+	// 	}
 
-		return $animation_ids;
-	}
+	// 	return $animation_ids;
+	// }
 
 	protected function get_templates_contents() {
 		return array_map(
