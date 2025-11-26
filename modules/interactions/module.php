@@ -74,48 +74,10 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/save/data', function( $data, $document ) {
 			return ( new Parser( $document->get_main_id() ) )->assign_interaction_ids( $data );
 		}, 11, 2 );
-
-		// add_filter( 'elementor/document/save/data', function( $data ) {
-		// 	return ( new Prop_Type_Adapter() )->interaction_to_prop_type( $data, $document );
-		// }, 12, 2 );
 		
 		add_filter( 'elementor/frontend/builder_content_data', function( $data ) {
 			return ( new Prop_Type_Adapter() )->prop_type_to_interaction( $data );
 		}, 10 );
-
-		add_filter( 'elementor/document/get_elements', function( $data ) {
-			return ( new Prop_Type_Adapter() )->prop_type_to_interaction( $data );
-		}, 10 );
-
-		// add_action( 'elementor/document/after_save', function( $document ) {
-		// 	$post_id = $document->get_main_id();
-		// 	$data = get_post_meta( $post_id, '_elementor_data', true );
-			
-		// 	error_log( '=== ACTUAL DATABASE CONTENT ===' );
-		// 	error_log( 'Post ID: ' . $post_id );
-			
-		// 	if ( is_string( $data ) ) {
-		// 		$decoded = json_decode( $data, true );
-		// 		if ( is_array( $decoded ) ) {
-		// 			foreach ( $decoded as $index => $element ) {
-		// 				if ( isset( $element['interactions'] ) && ! empty( $element['interactions'] ) ) {
-		// 					$interactions_data = is_string( $element['interactions'] ) ? $element['interactions'] : json_encode( $element['interactions'] );
-		// 					error_log( "DB Element [$index] interactions: " . $interactions_data );
-		// 				}
-						
-		// 				// Check nested
-		// 				if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
-		// 					foreach ( $element['elements'] as $nested_index => $nested ) {
-		// 						if ( isset( $nested['interactions'] ) && ! empty( $nested['interactions'] ) ) {
-		// 							$interactions_data = is_string( $nested['interactions'] ) ? $nested['interactions'] : json_encode( $nested['interactions'] );
-		// 							error_log( "DB Nested Element [$index][$nested_index] interactions: " . $interactions_data );
-		// 						}
-		// 					}
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-		// }, 999 );
 	}
 
 	private function get_config() {
