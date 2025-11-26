@@ -594,19 +594,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</a>
 					</span>
 					<# } #>
-					<button class="account-badge cloud-account-badge" type="button" id="elementor-template-library-connect__badge-variant-b-button" aria-hidden="true" title="<?php esc_attr_e( 'Only {email} Elementor account can access Cloud Templates from any connected site.', 'elementor' ); ?>">
+					<span class="account-badge cloud-account-badge" type="button" id="elementor-template-library-connect__badge-variant-b-button" aria-hidden="true">
 						<i class="eicon-lock" aria-hidden="true"></i>
 						<?php echo esc_html__( 'My Elementor account', 'elementor' ); ?>
-					</button>
+					</span>
 				</div>
 				<div class="source-selections-input local variant-b">
 					<input type="checkbox" id="local-variant-b" name="local" value="local">
 					<i class="eicon-header" aria-hidden="true"></i>
 					<label for="local-variant-b"><?php echo esc_html__( 'Site Templates', 'elementor' ); ?></label>
-					<button class="account-badge site-account-badge" type="button" aria-hidden="true" title="<?php esc_attr_e( 'Authorized users on this site can access Site Templates.', 'elementor' ); ?>">
+					<span class="account-badge site-account-badge" type="button" aria-hidden="true">
 						<i class="eicon-users" aria-hidden="true"></i>
 						<?php echo esc_html__( 'Anyone on this site', 'elementor' ); ?>
-					</button>
+					</span>
 				</div>
 				<input type="hidden" name="parentId" id="parentId" />
 			</div>

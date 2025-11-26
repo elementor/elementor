@@ -65,6 +65,7 @@ class Library extends Common_App {
 		/** @var ConnectModule $connect */
 		$connect = Plugin::$instance->common->get_component( 'connect' );
 		$user_id = $this->get_user_id();
+		$email = $this->get( 'user' );
 
 		return array_replace_recursive( $settings, [
 			'library_connect' => [
@@ -77,6 +78,7 @@ class Library extends Common_App {
 				'current_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 				'current_access_tier' => ConnectModule::ACCESS_TIER_FREE,
 				'plan_type' => ConnectModule::ACCESS_TIER_FREE,
+				'user_email' => $email->email ?? null,
 			],
 		] );
 	}

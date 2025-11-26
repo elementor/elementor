@@ -1929,12 +1929,23 @@ label.elementor-template-library-order-label {
 }
 
 #elementor-library--infotip__dialog,
-#elementor-library--connect_infotip__dialog {
+#elementor-library--connect_infotip__dialog,
+#elementor-library--cloud-upgrade__dialog,
+#elementor-library--site-info__dialog {
 	position: absolute;
 	z-index: $super-layer;
 	background-color: var(--e-a-bg-default);
 	box-shadow: var(--e-a-popover-shadow);
 	border-radius: var(--e-a-border-radius);
+	&.variant-b {
+		width: 200px;
+		color: var(--e-a-color-txt-invert);
+		background-color: var(--e-a-bg-secondary);
+
+		.dialog-message {
+			padding: 4px 8px 4px 8px;
+		}
+	}
 
 	&__title {
 		font-size: 14px;
@@ -1977,6 +1988,12 @@ label.elementor-template-library-order-label {
 		inset-block-start: 100%;
 		border-block-start-color: var(--e-a-bg-default);
 	}
+
+	&.variant-b {
+		&:after {
+			border-block-start-color: var(--e-a-bg-secondary);
+		}
+	}
 }
 
 #elementor-library--connect_infotip__dialog {
@@ -1989,5 +2006,43 @@ label.elementor-template-library-order-label {
 	&:after {
 		inset-block-end: 100%;
 		border-block-end-color: var(--e-a-bg-default);
+	}
+
+	&.variant-b {
+		&:after {
+			border-block-end-color: var(--e-a-bg-secondary);
+		}
+	}
+}
+
+#elementor-library--cloud-upgrade__dialog{
+	width: 265px;
+
+	&:after {
+		inset-block-start: 100%;
+		border-block-start-color: var(--e-a-bg-default);
+
+	}
+
+	&.variant-b {
+		&:after {
+			border-block-start-color: var(--e-a-bg-secondary);
+		}
+	}
+}
+
+#elementor-library--site-info__dialog{
+	width: 265px;
+
+	&:after {
+		inset-block-start: 100%;
+		border-block-start-color: var(--e-a-bg-default);
+
+	}
+
+	&.variant-b {
+		&:after {
+			border-block-start-color: var(--e-a-bg-secondary);
+		}
 	}
 }
