@@ -1,11 +1,22 @@
 import { getContainer, getElementType, type V1Element } from '@elementor/editor-elements';
 
-const INLINE_EDITABLE_WIDGET_TYPES = new Set( [ 'e-heading', 'e-paragraph' ] );
+const WIDGET_PROPERTY_MAP: Record< string, string > = {
+	'e-heading': 'title',
+	'e-paragraph': 'paragraph',
+};
 
 const getHtmlPropertyName = ( container: V1Element | null ): string => {
 	const widgetType = container?.model?.get( 'widgetType' ) ?? container?.model?.get( 'elType' );
 
-	const propsSchema = widgetType ? getElementType( widgetType )?.propsSchema : null;
+	if ( ! widgetType ) {
+		return '';
+	}
+
+	if ( WIDGET_PROPERTY_MAP[ widgetType ] ) {
+		return WIDGET_PROPERTY_MAP[ widgetType ];
+	}
+
+	const propsSchema = getElementType( widgetType )?.propsSchema;
 
 	if ( ! propsSchema ) {
 		return '';
@@ -24,7 +35,7 @@ export const hasInlineEditableProperty = ( containerId: string ): boolean => {
 		return false;
 	}
 
-	return INLINE_EDITABLE_WIDGET_TYPES.has( widgetType );
+	return widgetType in WIDGET_PROPERTY_MAP;
 };
 
 export const getInlineEditablePropertyName = ( container: V1Element | null ): string => {
