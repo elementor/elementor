@@ -17,11 +17,11 @@ const ELEMENTS_DATA_ATTR = 'atomic';
 const overlayRegistry: ElementOverlayConfig[] = [
 	{
 		component: OutlineOverlay,
-		filter: () => true,
+		shouldRender: () => true,
 	},
 	{
 		component: InlineEditorOverlay,
-		filter: ( { id, isSelected } ) => isSelected && hasInlineEditableProperty( id ),
+		shouldRender: ( { id, isSelected } ) => isSelected && hasInlineEditableProperty( id ),
 	},
 ];
 
@@ -32,29 +32,27 @@ export function ElementsOverlays() {
 
 	const isEditMode = currentEditMode === 'edit';
 	const isKitRouteActive = useIsRouteActive( 'panel/global' );
-
 	const isActive = isEditMode && ! isKitRouteActive;
 
-	return (
-		isActive &&
-		elements.map( ( [ id, element ] ) => {
-			const isSelected = selected.element?.id === id;
+	if ( ! isActive ) {
+		return null;
+	}
 
-			return overlayRegistry
-				.filter( ( overlay ) => overlay.filter( { id, element, isSelected } ) )
-				.map( ( overlay, index ) => {
-					const OverlayComponent = overlay.component;
-					return (
-						<OverlayComponent
-							key={ `${ id }-${ index }` }
-							id={ id }
-							element={ element }
-							isSelected={ isSelected }
-						/>
-					);
-				} );
-		} )
-	);
+	return elements.map( ( [ id, element ] ) => {
+		const isSelected = selected.element?.id === id;
+
+		return overlayRegistry
+			.map( ( { shouldRender, component: Overlay }, index ) =>
+				shouldRender( { id, element, isSelected } ) && (
+					<Overlay
+						key={ `${ id }-${ index }` }
+						id={ id }
+						element={ element }
+						isSelected={ isSelected }
+					/>
+				)
+			);
+	} );
 }
 
 type IdElementTuple = [ string, HTMLElement ];

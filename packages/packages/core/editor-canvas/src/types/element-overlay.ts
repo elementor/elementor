@@ -14,5 +14,5 @@ export type OverlayFilterArgs = {
 
 export type ElementOverlayConfig = {
 	component: React.ComponentType< ElementOverlayProps >;
-	filter: ( args: OverlayFilterArgs ) => boolean;
+	shouldRender: ( args: OverlayFilterArgs ) => boolean;
 };
