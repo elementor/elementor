@@ -47,13 +47,10 @@ export const InlineEditorOverlay = ( { element, isSelected, id }: ElementOverlay
 		};
 	}, [ id, propertyName ] );
 
-	const handleValueChange = React.useCallback(
-		( newValue: string ) => {
-			lastValueRef.current = newValue;
-			debouncedUpdateRef.current?.( newValue );
-		},
-		[]
-	);
+	const handleValueChange = React.useCallback( ( newValue: string ) => {
+		lastValueRef.current = newValue;
+		debouncedUpdateRef.current?.( newValue );
+	}, [] );
 
 	React.useEffect( () => {
 		if ( ! isVisible && debouncedUpdateRef.current?.pending?.() ) {
@@ -79,4 +76,4 @@ export const InlineEditorOverlay = ( { element, isSelected, id }: ElementOverlay
 			</Box>
 		</FloatingPortal>
 	);
-}
+};

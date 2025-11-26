@@ -45,4 +45,4 @@ export const OutlineOverlay = ( { element, isSelected, id }: Props ): React.Reac
 			</FloatingPortal>
 		)
 	);
-}
+};

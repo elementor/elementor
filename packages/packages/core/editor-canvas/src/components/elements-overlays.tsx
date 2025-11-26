@@ -41,17 +41,12 @@ export function ElementsOverlays() {
 	return elements.map( ( [ id, element ] ) => {
 		const isSelected = selected.element?.id === id;
 
-		return overlayRegistry
-			.map( ( { shouldRender, component: Overlay }, index ) =>
+		return overlayRegistry.map(
+			( { shouldRender, component: Overlay }, index ) =>
 				shouldRender( { id, element, isSelected } ) && (
-					<Overlay
-						key={ `${ id }-${ index }` }
-						id={ id }
-						element={ element }
-						isSelected={ isSelected }
-					/>
+					<Overlay key={ `${ id }-${ index }` } id={ id } element={ element } isSelected={ isSelected } />
 				)
-			);
+		);
 	} );
 }
 
