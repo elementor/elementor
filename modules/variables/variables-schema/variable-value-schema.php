@@ -15,18 +15,8 @@ class Variable_Value_Schema {
 
 	private static function schema(): array {
 		return [
-			Color_Variable_Prop_Type::get_key() => Variable_Schema_Entry::make(
-				Union_Prop_Type::make()
-					->add_prop_type( Color_Prop_Type::make() )
-					->add_prop_type( Color_Variable_Prop_Type::make() ),
-				Color_Prop_Type::class
-			),
-			Font_Variable_Prop_Type::get_key() => Variable_Schema_Entry::make(
-				Union_Prop_Type::make()
-					->add_prop_type( String_Prop_Type::make() )
-					->add_prop_type( Font_Variable_Prop_Type::make() ),
-				String_Prop_Type::class
-			),
+			Color_Variable_Prop_Type::get_key() => Color_Prop_Type::class,
+			Font_Variable_Prop_Type::get_key() => String_Prop_Type::class,
 		];
 	}
 }

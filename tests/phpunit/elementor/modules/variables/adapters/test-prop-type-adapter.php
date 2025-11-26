@@ -129,10 +129,13 @@ class Test_Prop_Type_Adapter extends TestCase {
 		$size_variable_key = 'size-variable';
 
 		add_filter( 'elementor/variables/value-schema', function( $schema ) use( $size_variable_key ) {
-			$schema[ $size_variable_key ] = Variable_Schema_Entry::make(
-				Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() ),
-				Size_Prop_Type::class
-			)->normalize_value( fn( $value ) => $this->parse_size_value( $value ) );
+
+
+			$schema[ 'size-variable' ] = Size_Prop_Type::class,
+//				Variable_Schema_Entry::make(
+//				Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() ),
+//				Size_Prop_Type::class
+//			)->normalize_value( fn( $value ) => $this->parse_size_value( $value ) );
 
 			return $schema;
 		} );
@@ -225,9 +228,8 @@ class Test_Prop_Type_Adapter extends TestCase {
 		};
 
 		add_filter( 'elementor/variables/value-schema', function( $schema ) use( $custom_variable_prop_type ) {
-			$schema[ $custom_variable_prop_type::get_key() ] = Variable_Schema_Entry::make(
-				Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() ),
-				Size_Prop_Type::class
+			$schema[ $custom_variable_prop_type::get_key() ] = Variable_Schema_Entry::make( Size_Prop_Type::class,
+
 			)->normalize_value( fn( $value ) => [
 				'size' => $value,
 				'unit' => 'custom',

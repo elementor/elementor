@@ -13,10 +13,21 @@ class Prop_Type_Adapter {
 
 		$collection->each( function( Variable $variable ) use ( $value_schema ) {
 			$value = $variable->value();
+			$prop_type = $value_schema[ $variable->type() ];
 
-			if ( ! is_array( $value ) ) {
-				$entry = $value_schema[ $variable->type() ];
-				$prop_type = $entry->value_prop_type;
+			// size variable prop type not available when pro disabled
+
+
+			if ( ! is_array( $value ) && $prop_type ) {
+//				$prop_type = $entry->value_prop_type;
+
+				// I need parsing here
+				// 12px
+				// string -> prop value
+				$prop_value = [
+					'$$type' => 'color' | 'string' | 'size',
+					'value' => $value,
+				];
 
 				if ( $entry->normalizer ) {
 					$value = ( $entry->normalizer )( $value );
