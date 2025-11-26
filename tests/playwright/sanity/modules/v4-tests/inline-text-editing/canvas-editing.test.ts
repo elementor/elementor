@@ -69,6 +69,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 	} );
 
 	test( 'Delete entire content and enter new text without errors', async () => {
+		const INITIAL_CONTENT = 'Initial heading text';
 		const NEW_CONTENT = 'Brand new heading';
 
 		// Arrange
@@ -79,18 +80,25 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		await expect( headingElement ).toBeVisible();
 
-		// Act
 		await headingElement.click();
 		const inlineEditor = page.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
 
 		await expect( inlineEditor ).toBeVisible();
 
+		// Act 
+		await page.keyboard.press( 'ControlOrMeta+A' );
+		await page.keyboard.type( INITIAL_CONTENT );
+
+		// Assert 
+		await expect( headingElement ).toContainText( INITIAL_CONTENT );
+		await expect( headingElement ).toBeVisible();
+
+		// Act 
 		await page.keyboard.press( 'ControlOrMeta+A' );
 		await page.keyboard.press( 'Delete' );
-
 		await page.keyboard.type( NEW_CONTENT );
 
-		// Assert
+		// Assert 
 		await expect( headingElement ).toContainText( NEW_CONTENT );
 		await expect( headingElement ).toBeVisible();
 
