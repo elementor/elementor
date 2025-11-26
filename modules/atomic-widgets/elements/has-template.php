@@ -51,22 +51,6 @@ trait Has_Template {
 		}
 	}
 
-	// public function get_interactions_ids() {
-	// 	$animation_ids = [];
-
-	// 	$list_of_interactions = ( is_array( $this->interactions ) && isset( $this->interactions['items'] ) )
-	// 		? $this->interactions['items']
-	// 		: [];
-
-	// 	foreach ( $list_of_interactions as $interaction ) {
-	// 		if ( isset( $interaction['animation']['animation_id'] ) ) {
-	// 			$animation_ids[] = $interaction['animation']['animation_id'];
-	// 		}
-	// 	}
-
-	// 	return $animation_ids;
-	// }
-
 	public function get_interactions_ids() {
 		$animation_ids = [];
 	
@@ -75,14 +59,14 @@ trait Has_Template {
 			: [];
 	
 		foreach ( $list_of_interactions as $interaction ) {
-			// Check if it's in prop-type format
+
 			if ( isset( $interaction['$$type'] ) && $interaction['$$type'] === 'interaction-item' ) {
 				$animation_id = $this->extract_animation_id_from_prop_type( $interaction );
 				if ( $animation_id ) {
 					$animation_ids[] = $animation_id;
 				}
+				
 			} elseif ( isset( $interaction['animation']['animation_id'] ) ) {
-				// Legacy format
 				$animation_ids[] = $interaction['animation']['animation_id'];
 			}
 		}
