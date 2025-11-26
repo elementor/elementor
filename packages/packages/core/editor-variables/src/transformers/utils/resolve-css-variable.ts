@@ -8,7 +8,7 @@ export const resolveCssVariable = ( id: string, variable: TVariable ) => {
 		fallbackValue = variable.value;
 	}
 
-	if ( variable && ! variable.deleted ) {
+	if ( variable && ! variable.deleted_at ) {
 		name = variable.label;
 	}
 

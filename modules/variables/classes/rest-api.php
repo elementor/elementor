@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
-use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use WP_Error;
 use Exception;
 use WP_REST_Server;

@@ -22,7 +22,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @group Elementor
  * @group Elementor\Modules
  * @group Elementor\Modules\Variables
- * @coversNothing
  */
 class Test_Rest_Api extends Elementor_Test_Base {
 	/**

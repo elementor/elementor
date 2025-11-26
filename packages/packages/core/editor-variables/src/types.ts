@@ -6,7 +6,6 @@ export type Variable = {
 	label: string;
 	value: string;
 	type: string;
-	deleted?: boolean;
 	deleted_at?: string;
 };
 
