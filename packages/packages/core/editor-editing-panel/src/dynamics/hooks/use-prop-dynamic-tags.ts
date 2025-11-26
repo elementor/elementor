@@ -16,7 +16,6 @@ export const usePropDynamicTags = () => {
 		categories = propDynamicType?.settings.categories || [];
 	}
 
-	// eslint-disable-next-line react-compiler/react-compiler
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	return useMemo( () => getDynamicTagsByCategories( categories ), [ categories.join() ] );
 };

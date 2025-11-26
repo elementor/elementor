@@ -63,7 +63,6 @@ export function useStyleItems() {
 				.flatMap( ( { items } ) => items )
 				.sort( sortByStateType )
 				.sort( sortByBreakpoint( breakpointsOrder ) ),
-		// eslint-disable-next-line
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[ styleItems, breakpointsOrder.join( '-' ) ]
 	);

@@ -1,6 +1,6 @@
 export const INLINE_EDITING_SELECTORS = {
 	e_paragraph: 'e-paragraph',
-    paragraphPrefix: 'This is a paragraph with ',
+	paragraphPrefix: 'This is a paragraph with ',
 	boldText: 'bold',
 	textBetween: ' text and ',
 	underlineText: 'underline',
