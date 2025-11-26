@@ -58,12 +58,18 @@ export class AtomicHelper {
 		await optionLocator.waitFor( { state: 'detached' } );
 	}
 
+	
 	public getHtmlTagControl( deeperSelector: string = '' ) {
-		const control = this.page.locator( `[data-type="settings-field"]`, { hasText: /Tag/ig } );
-
+		const field = this.getSettingsField( 'Tag' );
+		
 		return deeperSelector
-			? control.locator( deeperSelector )
-			: control;
+			? field.locator( deeperSelector )
+			: field;
+	}
+
+	public getSettingsField( label: string ) {
+		return this.page.locator( `[data-type="settings-field"]` )
+			.filter( { has: this.page.getByText( label, { exact: true } ) } );
 	}
 
 	public async isHtmlTagControlDisabled() {
