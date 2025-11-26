@@ -17,8 +17,11 @@ abstract class Props_Resolver {
 
 	protected Transformers_Registry $transformers_registry;
 
+	protected Shared_Props_Context $shared_context;
+
 	protected function __construct( Transformers_Registry $transformers_registry ) {
 		$this->transformers_registry = $transformers_registry;
+		$this->shared_context = new Shared_Props_Context();
 	}
 
 	protected static function instance( string $context ) {
@@ -63,6 +66,8 @@ abstract class Props_Resolver {
 				return null;
 			}
 
+			$this->shared_context->clear();
+
 			$value['value'] = $this->resolve(
 				$prop_type->get_shape(),
 				$value['value']
@@ -90,7 +95,8 @@ abstract class Props_Resolver {
 			$context = Props_Resolver_Context::make()
 				->set_key( $key )
 				->set_disabled( (bool) ( $value['disabled'] ?? false ) )
-				->set_prop_type( $prop_type );
+				->set_prop_type( $prop_type )
+				->set_shared_context( $this->shared_context );
 
 			return $transformer->transform( $value['value'], $context );
 		} catch ( Exception $e ) {

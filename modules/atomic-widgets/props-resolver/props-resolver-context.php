@@ -15,6 +15,8 @@ class Props_Resolver_Context {
 
 	private bool $disabled = false;
 
+	private ?Shared_Props_Context $shared_context = null;
+
 	public static function make(): self {
 		return new static();
 	}
@@ -37,6 +39,12 @@ class Props_Resolver_Context {
 		return $this;
 	}
 
+	public function set_shared_context( Shared_Props_Context $shared_context ): self {
+		$this->shared_context = $shared_context;
+
+		return $this;
+	}
+
 	public function get_key(): ?string {
 		return $this->key;
 	}
@@ -47,5 +55,9 @@ class Props_Resolver_Context {
 
 	public function get_prop_type(): ?Transformable_Prop_Type {
 		return $this->prop_type;
+	}
+
+	public function get_shared_context(): ?Shared_Props_Context {
+		return $this->shared_context;
 	}
 }

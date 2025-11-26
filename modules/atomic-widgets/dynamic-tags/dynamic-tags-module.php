@@ -78,7 +78,8 @@ class Dynamic_Tags_Module {
 			new Dynamic_Transformer(
 				Plugin::$instance->dynamic_tags,
 				$this->schemas,
-				$props_resolver
+				$props_resolver,
+				$this->registry
 			)
 		);
 	}

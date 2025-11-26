@@ -13,12 +13,17 @@ class Link_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ): ?array {
 		$url = $this->extract_url( $value );
 
-		$link_attrs = [
+		$shared_context = $context->get_shared_context();
+		$destination_metadata = $shared_context ? $shared_context->get_field_metadata( 'destination' ) : null;
+		$is_action_group = $destination_metadata && 'action' === ( $destination_metadata['dynamic_group'] ?? '' );
+
+		$tag = $is_action_group ? 'button' : 'a';
+
+		return [
+			'tag' => $tag,
 			'href' => $url,
 			'target' => $value['isTargetBlank'] ? '_blank' : '_self',
 		];
-
-		return array_filter( $link_attrs );
 	}
 
 	private function extract_url( $value ): ?string {
