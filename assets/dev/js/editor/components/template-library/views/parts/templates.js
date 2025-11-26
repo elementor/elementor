@@ -47,6 +47,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		quotaUpgrade: '.quota-progress-container .progress-bar-container .quota-warning a',
 		navigationContainer: '#elementor-template-library-navigation-container',
 		sourceOptionBadges: '.source-option-badge.variant-b-only',
+		cloudBadge: '.source-option-badge.cloud-badge',
+		siteBadge: '.source-option-badge.site-badge',
 	},
 
 	events: {
@@ -66,6 +68,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'click @ui.bulkActionBarDelete': 'onBulkDeleteClick',
 		'click @ui.bulkCopy': 'onClickBulkCopy',
 		'click @ui.quotaUpgrade': 'onQuotaUpgradeClicked',
+		'mouseenter @ui.cloudBadge': 'showCloudBadgeTooltip',
+		'mouseenter @ui.siteBadge': 'showSiteBadgeTooltip',
 	},
 
 	className: 'no-bulk-selections',
@@ -678,6 +682,84 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.quotaBar,
 			upgrade_position: `quota bar ${ value ? value + '%' : '' }`,
 		} );
+	},
+
+	showCloudBadgeTooltip() {
+		if ( this.cloudBadgeDialog ) {
+			this.cloudBadgeDialog.hide();
+		}
+
+		const emailReplacement = elementor.config.library_connect.is_connected ? elementor.config.library_connect.user_email : __( 'connected', 'elementor' );
+		/* Translators: %s: User's email. */
+		const message = sprintf( __( 'Only %s Elementor account can access Cloud Templates from any connected site.', 'elementor' ), emailReplacement );
+
+		this.cloudBadgeDialog = elementor.dialogsManager.createWidget( 'buttons', {
+			id: 'elementor-library--cloud-upgrade__dialog',
+			effects: {
+				show: 'show',
+				hide: 'hide',
+			},
+			position: {
+				of: this.ui.cloudBadge,
+				at: 'top-50',
+			},
+		} )
+			.setMessage( message );
+
+		this.cloudBadgeDialog.getElements( 'widget' ).addClass( 'variant-b' );
+		this.cloudBadgeDialog.getElements( 'header' ).remove();
+		this.cloudBadgeDialog.getElements( 'buttonsWrapper' ).remove();
+		this.cloudBadgeDialog.show();
+
+		this.sendCTBadgeEvent( 'cloud' );
+	},
+
+	showSiteBadgeTooltip() {
+		if ( this.siteBadgeDialog ) {
+			this.siteBadgeDialog.hide();
+		}
+
+		const message = __( 'Authorized users on this site can access Site Templates.', 'elementor' );
+
+		this.siteBadgeDialog = elementor.dialogsManager.createWidget( 'buttons', {
+			id: 'elementor-library--site-info__dialog',
+			effects: {
+				show: 'show',
+				hide: 'hide',
+			},
+			position: {
+				of: this.ui.siteBadge,
+				at: 'top-50',
+			},
+		} )
+			.setMessage( message );
+
+		this.siteBadgeDialog.getElements( 'widget' ).addClass( 'variant-b' );
+		this.siteBadgeDialog.getElements( 'header' ).remove();
+		this.siteBadgeDialog.getElements( 'buttonsWrapper' ).remove();
+		this.siteBadgeDialog.show();
+
+		this.sendCTBadgeEvent( 'site' );
+	},
+
+	sendCTBadgeEvent( badgeType ) {
+		elementor.templates.eventManager.sendCTBadgeEvent( {
+			ct_badge_hover_position: `${ badgeType }-tab`,
+			ct_badge_type: badgeType,
+			ct_position_state: this.getPositionState(),
+		} );
+	},
+
+	getPositionState() {
+		if ( ! elementor.config.library_connect.is_connected ) {
+			return 'connect';
+		}
+
+		if ( ! elementor.templates.hasCloudLibraryQuota() ) {
+			return 'upgrade';
+		}
+
+		return 'eligible';
 	},
 } );
 
