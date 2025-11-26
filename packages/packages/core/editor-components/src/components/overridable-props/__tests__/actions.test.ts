@@ -1,11 +1,11 @@
 // [Found-Testing-Reference===> REDUX,ASYNC,HTTP]
+import { type AxiosResponse } from '@elementor/http-client';
 import { __getState as getState } from '@elementor/store';
 
 import { apiClient } from '../../../api';
 import { selectOverridableProps } from '../../../store/store';
 import { type OverridableProps } from '../../../types';
 import { overrideActions } from '../utils/actions';
-import { AxiosResponse } from '@elementor/http-client';
 
 jest.mock( '@elementor/store', () => ( {
 	...jest.requireActual( '@elementor/store' ),
