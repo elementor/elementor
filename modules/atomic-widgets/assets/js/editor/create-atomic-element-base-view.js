@@ -128,15 +128,15 @@ export default function createAtomicElementBaseView( type ) {
 
 			BaseElementView.prototype.renderOnChange.apply( this, settings );
 
-			if ( changed.attributes ) {
-				const preserveAttrs = [ 'id', 'class', 'href' ];
-				const $elAttrs = this.$el[ 0 ].attributes;
-				for ( let i = $elAttrs.length - 1; i >= 0; i-- ) {
-					const attrName = $elAttrs[ i ].name;
-					if ( ! preserveAttrs.includes( attrName ) ) {
-						this.$el.removeAttr( attrName );
-					}
+		if ( changed.attributes ) {
+			const preserveAttrs = [ 'id', 'class', 'href', 'style' ];
+			const $elAttrs = this.$el[ 0 ].attributes;
+			for ( let i = $elAttrs.length - 1; i >= 0; i-- ) {
+				const attrName = $elAttrs[ i ].name;
+				if ( ! preserveAttrs.includes( attrName ) ) {
+					this.$el.removeAttr( attrName );
 				}
+			}
 
 				const attrs = this.model.getSetting( 'attributes' )?.value || [];
 				attrs.forEach( ( attribute ) => {
@@ -212,6 +212,78 @@ export default function createAtomicElementBaseView( type ) {
 					},
 				} ),
 			);
+		},
+
+		playInteraction( animConfig ) {
+			const el = this.$el[ 0 ];
+			const { keyframes, duration, delay, type: animType } = animConfig;
+
+			const applyStyles = ( values ) => {
+				const transforms = [];
+				Object.entries( values ).forEach( ( [ key, value ] ) => {
+					if ( 'opacity' === key ) {
+						el.style.opacity = value;
+					} else if ( 'scale' === key ) {
+						transforms.push( `scale(${ value })` );
+					} else if ( 'x' === key ) {
+						transforms.push( `translateX(${ value }px)` );
+					} else if ( 'y' === key ) {
+						transforms.push( `translateY(${ value }px)` );
+					}
+				} );
+				if ( transforms.length ) {
+					el.style.transform = transforms.join( ' ' );
+				} else if ( undefined === values.opacity ) {
+					el.style.transform = 'none';
+				}
+			};
+
+			const interpolate = ( start, end, progress ) => start + ( ( end - start ) * progress );
+			const easeOutCubic = ( t ) => 1 - Math.pow( 1 - t, 3 );
+
+			const runAnimation = () => {
+				const startValues = {};
+				const endValues = {};
+				Object.entries( keyframes ).forEach( ( [ key, [ start, end ] ] ) => {
+					startValues[ key ] = start;
+					endValues[ key ] = end;
+				} );
+
+				applyStyles( startValues );
+
+				const startTime = performance.now();
+
+				const tick = ( currentTime ) => {
+					const elapsed = currentTime - startTime;
+					const rawProgress = Math.min( elapsed / duration, 1 );
+					const progress = easeOutCubic( rawProgress );
+
+					const currentValues = {};
+					Object.keys( keyframes ).forEach( ( key ) => {
+						currentValues[ key ] = interpolate( startValues[ key ], endValues[ key ], progress );
+					} );
+
+					applyStyles( currentValues );
+
+					if ( rawProgress < 1 ) {
+						requestAnimationFrame( tick );
+					} else if ( 'out' === animType ) {
+						const resetValues = {};
+						Object.keys( keyframes ).forEach( ( key ) => {
+							resetValues[ key ] = { opacity: 1, scale: 1, x: 0, y: 0 }[ key ];
+						} );
+						applyStyles( resetValues );
+					}
+				};
+
+				requestAnimationFrame( tick );
+			};
+
+			if ( delay > 0 ) {
+				setTimeout( runAnimation, delay );
+			} else {
+				runAnimation();
+			}
 		},
 
 		haveLink() {
