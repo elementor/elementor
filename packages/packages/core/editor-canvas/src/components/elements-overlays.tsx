@@ -42,16 +42,19 @@ export function ElementsOverlays() {
 		const isSelected = selected.element?.id === id;
 
 		return overlayRegistry
-			.map( ( { shouldRender, component: Overlay }, index ) =>
-				shouldRender( { id, element, isSelected } ) && (
-					<Overlay
+			.filter( ( overlay ) => overlay.shouldRender( { id, element, isSelected } ) )
+			.map( ( overlay, index ) => {
+				const OverlayComponent = overlay.component;
+
+				return (
+					<OverlayComponent
 						key={ `${ id }-${ index }` }
 						id={ id }
 						element={ element }
 						isSelected={ isSelected }
 					/>
-				)
-			);
+				);
+			} );
 	} );
 }
 
