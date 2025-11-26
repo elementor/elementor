@@ -4,6 +4,7 @@ namespace Elementor\Modules\Variables\Adapters;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
@@ -25,7 +26,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->adapter = new PropType_Adapter();
+		$this->adapter = new Prop_Type_Adapter();
 	}
 
 	private function make_collection( array $overrides = [] ): Variables_Collection {
@@ -39,28 +40,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		return Variables_Collection::hydrate( array_replace_recursive( $defaults, $overrides ) );
 	}
 
-	private function parse_size_value( $value ) {
-
-		$value = trim( strtolower( $value ) );
-
-		if ( $value === 'auto' ) {
-			return [
-				'size' => '',
-				'unit' => 'auto',
-			];
-		}
-
-		if ( preg_match( '/^(-?\d*\.?\d+)([a-z%]+)$/i', trim( $value ), $matches ) ) {
-			return [
-				'size' => $matches[1] + 0,
-				'unit' => strtolower( $matches[2] ),
-			];
-		}
-
-		return $value;
-	}
-
-	public function test_to_storage__converts_color_string_to_color_prop_type_value() {
+	public function test_to_storage__converts_color_string_to_color_prop_value() {
 		// Arrange.
 		$collection = $this->make_collection( [
 			'data' => [
@@ -92,7 +72,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		$this->assertEquals( $expected, $result['data'] );
 	}
 
-	public function test_to_storage__converts_font_string_to_string_prop_type_value() {
+	public function test_to_storage__converts_font_string_to_string_prop_value() {
 		// Arrange.
 		$collection = $this->make_collection( [
 			'data' => [
@@ -124,26 +104,12 @@ class Test_Prop_Type_Adapter extends TestCase {
 		$this->assertEquals( $expected, $result['data'] );
 	}
 
-	public function test_to_storage__converts_size_string_to_size_prop_type_value() {
+	public function test_to_storage__converts_size_string_to_size_prop_value() {
 		// Arrange.
-		$size_variable_key = 'size-variable';
-
-		add_filter( 'elementor/variables/value-schema', function( $schema ) use( $size_variable_key ) {
-
-
-			$schema[ 'size-variable' ] = Size_Prop_Type::class,
-//				Variable_Schema_Entry::make(
-//				Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() ),
-//				Size_Prop_Type::class
-//			)->normalize_value( fn( $value ) => $this->parse_size_value( $value ) );
-
-			return $schema;
-		} );
-
 		$collection = $this->make_collection( [
 			'data' => [
 				'e-gv-23erty7' => [
-					'type' => $size_variable_key,
+					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
 					'label' => 'Padding',
 					'value' => '249rem',
 				],
@@ -158,7 +124,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		// Assert.
 		$expected = [
 			'e-gv-23erty7' => [
-				'type' => 'size-variable',
+				'type' => 'global-size-variable',
 				'label' => 'Padding',
 				'value' => [
 					'$$type' => 'size',
@@ -173,23 +139,11 @@ class Test_Prop_Type_Adapter extends TestCase {
 		$this->assertEquals( $expected, $result['data'] );
 	}
 
-	public function test_to_storage__converts_size_auto_string_to_size_prop_type_value() {
-		$size_variable_key = 'auto-size-variable';
-
-		// Arrange.
-		add_filter( 'elementor/variables/value-schema', function( $schema ) use( $size_variable_key ) {
-			$schema[ $size_variable_key ] = Variable_Schema_Entry::make(
-				Union_Prop_Type::make()->add_prop_type( Size_Prop_Type::make() ),
-				Size_Prop_Type::class
-			)->normalize_value( fn( $value ) => $this->parse_size_value( $value ) );
-
-			return $schema;
-		} );
-
+	public function test_to_storage__converts_size_auto_string_to_size_prop_value() {
 		$collection = $this->make_collection( [
 			'data' => [
 				'e-gv-23erty7' => [
-					'type' => $size_variable_key,
+					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
 					'label' => 'Width',
 					'value' => 'auto',
 				],
@@ -204,7 +158,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		// Assert.
 		$expected = [
 			'e-gv-23erty7' => [
-				'type' => 'auto-size-variable',
+				'type' => 'global-size-variable',
 				'label' => 'Width',
 				'value' => [
 					'$$type' => 'size',
@@ -219,29 +173,11 @@ class Test_Prop_Type_Adapter extends TestCase {
 		$this->assertEquals( $expected, $result['data'] );
 	}
 
-	public function test_to_storage__converts_custom_size_string_to_size_prop_type_value() {
-		// Arrange.
-		$custom_variable_prop_type = new class extends String_Prop_Type  {
-			public static function get_key(): string {
-				return 'global-custom-size-variable';
-			}
-		};
-
-		add_filter( 'elementor/variables/value-schema', function( $schema ) use( $custom_variable_prop_type ) {
-			$schema[ $custom_variable_prop_type::get_key() ] = Variable_Schema_Entry::make( Size_Prop_Type::class,
-
-			)->normalize_value( fn( $value ) => [
-				'size' => $value,
-				'unit' => 'custom',
-			] );
-
-			return $schema;
-		} );
-
+	public function test_to_storage__converts_custom_size_string_to_size_prop_value() {
 		$collection = $this->make_collection( [
 			'data' => [
 				'e-gv-23erty7' => [
-					'type' => $custom_variable_prop_type::get_key(),
+					'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
 					'label' => 'height',
 					'value' => 'calc((10px * 5) + (20px * 3))',
 				],
@@ -270,76 +206,368 @@ class Test_Prop_Type_Adapter extends TestCase {
 
 		$this->assertEquals( $expected, $result['data'] );
 	}
+
+	public function test_from_storage__converts_prop_values_to_string() {
+		// Arrange.
+		$collection = $this->make_collection( [
+			'data' => [
+				'e-gv-1' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary',
+					'value' => [
+						'$$type' => 'color',
+						'value' => '#53552b',
+					],
+				],
+				'e-gv-2' => [
+					'type' => Font_Variable_Prop_Type::get_key(),
+					'label' => 'Main',
+					'value' => [
+						'$$type' => 'string',
+						'value' => 'Roboto',
+					],
+				],
+				'e-gv-3' => [
+					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'label' => 'font-size',
+					'value' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 12,
+							'unit' => 'vh',
+						],
+					],
+				],
+				'e-gv-4' => [
+					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'label' => 'max-height',
+					'value' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => '',
+							'unit' => 'auto',
+						],
+					],
+				],
+			],
+		] );
+
+		// Act.
+		$this->adapter->from_storage( $collection );
+
+		$result = $collection->serialize();
+
+		// Assert.
+		$expected = [
+			'e-gv-1' => [
+				'type' => Color_Variable_Prop_Type::get_key(),
+				'label' => 'Primary',
+				'value' => '#53552b',
+			],
+			'e-gv-2' => [
+				'type' => Font_Variable_Prop_Type::get_key(),
+				'label' => 'Main',
+				'value' => 'Roboto',
+			],
+			'e-gv-3' => [
+				'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+				'label' => 'font-size',
+				'value' => '12vh',
+			],
+			'e-gv-4' => [
+				'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+				'label' => 'max-height',
+				'value' => 'auto',
+			],
+		];
+
+		$this->assertEquals( $expected, $result['data'] );
+	}
+
+	public function test_from_storage__converts_custom_size_prop_type_value_to_string() {
+		// Arrange.
+		$collection = $this->make_collection( [
+			'data' => [
+				'e-gv-23' => [
+					'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+					'label' => 'margin',
+					'value' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => 'calc((10px * 5) + (20px * 3))',
+							'unit' => 'custom',
+						],
+					],
+				],
+			],
+		] );
+
+		// Act.
+		$this->adapter->from_storage( $collection );
+
+		$result = $collection->serialize();
+
+		// Assert.
+		$expected = [
+			'e-gv-23' => [
+				'type' => 'global-custom-size-variable',
+				'label' => 'margin',
+				'value' => 'calc((10px * 5) + (20px * 3))',
+			]
+		];
+
+		$this->assertEquals( $expected, $result['data'] );
+	}
+
+	public function test_to_storage__skips_already_converted_array_values() {
+		// Arrange.
+		$collection = $this->make_collection( [
+			'data' => [
+				'e-gv-23erty7' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary',
+					'value' => [
+						'$$type' => 'color',
+						'value' => '#53552b',
+					],
+				],
+			],
+		] );
+
+		// Act.
+		$this->adapter->to_storage( $collection );
+
+		$result = $collection->serialize();
+
+		// Assert.
+		$expected = [
+			'e-gv-23erty7' => [
+				'type' => 'global-color-variable',
+				'label' => 'Primary',
+				'value' => [
+					'$$type' => 'color',
+					'value' => '#53552b',
+				],
+			]
+		];
+
+		$this->assertEquals( $expected, $result['data'] );
+	}
+
+	public function test_from_storage__skips_non_array_values() {
+		// Arrange.
+		$collection = $this->make_collection( [
+			'data' => [
+				'e-gv-23erty7' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary',
+					'value' => '#53552b',
+				],
+			],
+		] );
+
+		// Act.
+		$this->adapter->from_storage( $collection );
+
+		$result = $collection->serialize();
+
+		// Assert.
+		$expected = [
+			'e-gv-23erty7' => [
+				'type' => 'global-color-variable',
+				'label' => 'Primary',
+				'value' => '#53552b',
+			]
+		];
+
+		$this->assertEquals( $expected, $result['data'] );
+	}
+
+	public function test_to_storage__converts_all_variables_in_collection() {
+		// Arrange.
+		$collection = $this->make_collection( [
+			'data' => [
+				'e-gv-color1' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary',
+					'value' => '#53552b',
+				],
+				'e-gv-font1' => [
+					'type' => Font_Variable_Prop_Type::get_key(),
+					'label' => 'Main',
+					'value' => 'Roboto',
+				],
+				'e-gv-size1' => [
+					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'label' => 'Padding',
+					'value' => '23px',
+				],
+			],
+		] );
+
+		// Act.
+		$this->adapter->to_storage( $collection );
+
+		$result = $collection->serialize();
+
+		$expected_color = [
+			'$$type' => 'color',
+			'value' => '#53552b',
+		];
+		$expected_font = [
+			'$$type' => 'string',
+			'value' => 'Roboto',
+		];
+		$expected_size = [
+			'$$type' => 'size',
+			'value' => [
+				'size' => 23,
+				'unit' => 'px',
+			],
+		];
+
+		// Assert.
+		$this->assertEquals( $expected_color, $result['data']['e-gv-color1']['value'] );
+		$this->assertEquals( $expected_font, $result['data']['e-gv-font1']['value'] );
+		$this->assertEquals( $expected_size, $result['data']['e-gv-size1']['value'] );
+	}
+
+	public function test_to_storage__preserves_watermark_and_version() {
+		// Arrange.
+		$collection = $this->make_collection( [
+			'data' => [
+				'e-gv-23erty7' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary',
+					'value' => '#53552b',
+				],
+			],
+			'watermark' => 42,
+			'version' => 5,
+		] );
+
+		// Act.
+		$this->adapter->to_storage( $collection );
+
+		$result = $collection->serialize();
+
+		// Assert.
+		$this->assertEquals( 42, $result['watermark'] );
+		$this->assertEquals( 5, $result['version'] );
+	}
+
+	public function test_bidirectional_conversion__size_maintains_data_integrity() {
+		// Arrange.
+		$original_value = '24px';
+		$collection = $this->make_collection( [
+			'data' => [
+				'e-gv-size' => [
+					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'label' => 'Test Size',
+					'value' => $original_value,
+				],
+			],
+		] );
+
+		// Act.
+		$this->adapter->to_storage( $collection );
+		$this->adapter->from_storage( $collection );
+
+		$result = $collection->serialize();
+
+		// Assert.
+		$this->assertEquals( $original_value, $result['data']['e-gv-size']['value'] );
+	}
+
+	public function test_to_storage__handles_negative_size_values() {
+		// Arrange.
+		$collection = $this->make_collection( [
+			'data' => [
+				'e-gv-size' => [
+					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'label' => 'Negative Margin',
+					'value' => '-10px',
+				],
+			],
+		] );
+
+		// Act.
+		$this->adapter->to_storage( $collection );
+
+		$result = $collection->serialize();
+
+		// Assert.
+		$expected = [
+			'e-gv-size' => [
+				'type' => 'global-size-variable',
+				'label' => 'Negative Margin',
+				'value' => [
+					'$$type' => 'size',
+					'value' => [
+						'size' => -10,
+						'unit' => 'px',
+					],
+				]
+			]
+		];
+
+		$this->assertEquals( $expected, $result['data'] );
+	}
+
+	public function test_to_storage__handles_decimal_size_values() {
+		// Arrange.
+		$collection = $this->make_collection( [
+			'data' => [
+				'e-gv-size' => [
+					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'label' => 'Line Height',
+					'value' => '1.5rem',
+				],
+			],
+		] );
+
+		// Act.
+		$this->adapter->to_storage( $collection );
+
+		$result = $collection->serialize();
+
+		$expected = [
+			'$$type' => 'size',
+			'value' => [
+				'size' => 1.5,
+				'unit' => 'rem',
+			],
+		];
+
+		// Assert.
+		$this->assertEquals( $expected, $result['data']['e-gv-size']['value'] );
+	}
+
+	public function test_to_storage__handles_percentage_values() {
+		// Arrange.
+		$collection = $this->make_collection( [
+			'data' => [
+				'e-gv-size' => [
+					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'label' => 'Width Percent',
+					'value' => '50%',
+				],
+			],
+		] );
+
+		// Act.
+		$this->adapter->to_storage( $collection );
+
+		$result = $collection->serialize();
+		$expected = [
+			'$$type' => 'size',
+			'value' => [
+				'size' => 50,
+				'unit' => '%',
+			],
+		];
+		// Assert.
+		$this->assertEquals( $expected, $result['data']['e-gv-size']['value'] );
+	}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
-//<!--
-//color -> <-
-//test from_storage converts color_prop_type value to string
-//
-//font -> <-
-//
-//test from_storage converts font_prop_type_value to string
-//
-//size -> <-
-//
-//test from_storage converts size_prop_type_value to string
-//test dimension
-//test custom
-//test auto
-//	 -->
-//
-//<!--each variable has a type wc tells us how to convert-->
-//
-//<!--edge cases-->
-//<!--
-//test_to_storage__handles_null_value
-//test_from_storage__handles_null_value
-//test_to_storage__throws_exception_for_unknown_prop_type
-//test_from_storage__throws_exception_for_unknown_variable_type
-//
-//test_to_storage__validates_prop_type_structure
-//test_to_storage__validates_prop_type_has_value
-//** test_collection_to_storage__converts_all_variables_in_collection
-//** test_collection_from_storage__converts_all_variables_from_storage
-//test_collection_to_storage__preserves_watermark_and_version
-//test_collection_from_storage__preserves_watermark_and_version
-//
-//test_collection_to_storage__handles_empty_collection
-//test_collection_from_storage__handles_empty_collection
-//
-//test_bidirectional_conversion__color_maintains_data_integrity
-//test_bidirectional_conversion__size_maintains_data_integrity
-//-->
-//
-//<!--Integration Tests-->
-//<!--
-//test_repository_save__converts_prop_values_to_storage_format
-//test_repository_load__converts_storage_format_to_prop_values
-//
-//test_full_round_trip__color_variable
-//test_full_round_trip__multiple_variable_types
-//test_conversion_performance__large_collection
-// complex background is it complex
