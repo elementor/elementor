@@ -3,13 +3,13 @@ namespace Elementor\Modules\Components\Widgets;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
-use Elementor\Modules\Components\Component_Id_Prop_Type;
+use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Component extends Atomic_Widget_Base {
+class Component_Instance extends Atomic_Widget_Base {
 	use Has_Template;
 
 	public static function get_element_type(): string {
@@ -34,7 +34,7 @@ class Component extends Atomic_Widget_Base {
 
 	protected static function define_props_schema(): array {
 		return [
-			'component' => Component_Id_Prop_Type::make(),
+			'component_instance' => Component_Instance_Prop_Type::make()->required(),
 		];
 	}
 
