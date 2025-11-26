@@ -46,7 +46,7 @@ export type StylesProvider = {
 		update?: ( data: UpdateActionPayload ) => void;
 		updateProps?: ( args: UpdatePropsActionPayload, meta?: Meta ) => void;
 		updateCustomCss?: ( args: UpdateCustomCssActionPayload, meta?: Meta ) => void;
-		tracking?: ( data: Record< string, unknown > ) => void;
+		tracking?: ( data: unknown ) => void;
 	};
 	capabilities?: UserCapabilities;
 };

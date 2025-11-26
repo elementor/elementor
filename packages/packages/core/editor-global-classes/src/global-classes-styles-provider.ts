@@ -91,7 +91,12 @@ export const globalClassesStylesProvider = createStylesProvider( {
 				} )
 			);
 		},
-		tracking: trackGlobalClasses,
+		tracking: ( data: unknown ) => {
+			trackGlobalClasses( data as Parameters< typeof trackGlobalClasses >[ 0 ] ).catch( ( error ) => {
+				// eslint-disable-next-line no-console
+				console.error( 'Error tracking global classes event:', error );
+			} );
+		},
 	},
 } );
 
