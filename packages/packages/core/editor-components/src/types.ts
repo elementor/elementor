@@ -1,6 +1,5 @@
 import { type V1ElementData } from '@elementor/editor-elements';
-import { type PropValue } from '@elementor/editor-props';
-import { type TransformablePropValue } from '@elementor/editor-props';
+import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 import type { StyleDefinition } from '@elementor/editor-styles';
 
 export type ComponentFormValues = {

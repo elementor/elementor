@@ -84,7 +84,7 @@ export function Content( { componentId, isOverridable, overridables }: Props ) {
 				} }
 				{ ...popoverProps }
 			>
-				{ JSON.stringify( currentValue ) /** TODO: replace with actual form */}
+				{ JSON.stringify( currentValue ) /** TODO: replace with actual form */ }
 			</Popover>
 		</>
 	);

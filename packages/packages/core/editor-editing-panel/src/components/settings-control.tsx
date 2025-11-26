@@ -14,11 +14,7 @@ const Wrapper = styled( 'span' )`
 	display: contents;
 `;
 
-export const SettingsControl = ( {
-	control: { value, type },
-}: {
-	control: Control | ElementControl;
-} ) => {
+export const SettingsControl = ( { control: { value, type } }: { control: Control | ElementControl } ) => {
 	if ( ! controlsRegistry.get( value.type as ControlType ) ) {
 		return null;
 	}
@@ -31,22 +27,12 @@ export const SettingsControl = ( {
 	}
 
 	if ( type === 'element-control' ) {
-		return (
-			<ControlLayout
-				control={ value }
-				layout={ layout }
-				controlProps={ controlProps }
-			/>
-		);
+		return <ControlLayout control={ value } layout={ layout } controlProps={ controlProps } />;
 	}
 
 	return (
 		<SettingsField bind={ value.bind } propDisplayName={ value.label || value.bind }>
-			<ControlLayout
-				control={ value }
-				layout={ layout }
-				controlProps={ controlProps }
-			/>
+			<ControlLayout control={ value } layout={ layout } controlProps={ controlProps } />
 		</SettingsField>
 	);
 };

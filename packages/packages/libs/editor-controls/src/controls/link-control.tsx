@@ -9,12 +9,12 @@ import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
+import { ControlLabel } from '../components/control-label';
 import { RestrictedLinkInfotip } from '../components/restricted-link-infotip';
 import { createControl } from '../create-control';
 import { type ControlProps } from '../utils/types';
 import { QueryControl } from './query-control';
 import { SwitchControl } from './switch-control';
-import { ControlLabel } from '../components/control-label';
 
 type Props = ControlProps< {
 	queryOptions: {
