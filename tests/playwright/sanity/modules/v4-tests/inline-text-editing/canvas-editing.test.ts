@@ -85,20 +85,20 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		await expect( inlineEditor ).toBeVisible();
 
-		// Act 
+		// Act
 		await page.keyboard.press( 'ControlOrMeta+A' );
 		await page.keyboard.type( INITIAL_CONTENT );
 
-		// Assert 
+		// Assert
 		await expect( headingElement ).toContainText( INITIAL_CONTENT );
 		await expect( headingElement ).toBeVisible();
 
-		// Act 
+		// Act
 		await page.keyboard.press( 'ControlOrMeta+A' );
 		await page.keyboard.press( 'Delete' );
 		await page.keyboard.type( NEW_CONTENT );
 
-		// Assert 
+		// Assert
 		await expect( headingElement ).toContainText( NEW_CONTENT );
 		await expect( headingElement ).toBeVisible();
 
