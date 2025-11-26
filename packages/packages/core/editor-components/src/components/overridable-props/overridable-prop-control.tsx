@@ -49,7 +49,7 @@ export function OverridablePropControl() {
 			{ ...propContext }
 			propType={ propType }
 			setValue={ setOverridableValue }
-			value={ { [ bind ]: currentValue.default_value ?? null } }
+			value={ { [ bind ]: currentValue.default_value } }
 			placeholder={ objectPlaceholder }
 		>
 			<PropKeyProvider bind={ bind }>

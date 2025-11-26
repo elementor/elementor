@@ -1,10 +1,10 @@
+import { useEffect } from 'react';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { __useDispatch as useDispatch } from '@elementor/store';
-import { useEffect } from 'react';
 
+import { overrideActions } from '../components/overridable-props/utils/actions';
 import { slice } from '../store/store';
-import { OverridableProps } from '../types';
-import { overrideActions } from '../components/overridable-props/utils/actions';	
+import { type OverridableProps } from '../types';
 
 export const useLoadOverrideProps = () => {
 	const currentDocument = getV1CurrentDocument();

@@ -2,15 +2,14 @@ import { type V1ElementData } from '@elementor/editor-elements';
 import { ajax } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 
-import { type DocumentSaveStatus, type PublishedComponent } from './types';
-import { OverridableProps } from './types';
+import { type DocumentSaveStatus, type OverridableProps, type PublishedComponent } from './types';
 
 const BASE_URL = 'elementor/v1/components';
 const LOCK_COMPONENT = `${ BASE_URL }/lock`;
 const UNLOCK_COMPONENT = `${ BASE_URL }/unlock`;
-const BASE_URL_LOCK_STATUS = `${BASE_URL}/lock-status`;
-const BASE_URL_OVERRIDABLE = `${BASE_URL}/get-overridable-props`;
-const BASE_URL_SAVE_OVERRIDABLE = `${BASE_URL}/save-overridable-props`;
+const BASE_URL_LOCK_STATUS = `${ BASE_URL }/lock-status`;
+const BASE_URL_OVERRIDABLE = `${ BASE_URL }/get-overridable-props`;
+const BASE_URL_SAVE_OVERRIDABLE = `${ BASE_URL }/save-overridable-props`;
 
 export type CreateComponentPayload = {
 	status: DocumentSaveStatus;

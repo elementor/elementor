@@ -5,6 +5,7 @@ import { apiClient } from '../../../api';
 import { selectOverridableProps } from '../../../store/store';
 import { type OverridableProps } from '../../../types';
 import { overrideActions } from '../utils/actions';
+import { AxiosResponse } from '@elementor/http-client';
 
 jest.mock( '@elementor/store', () => ( {
 	...jest.requireActual( '@elementor/store' ),
@@ -70,7 +71,7 @@ describe( 'overrideActions', () => {
 			statusText: 'OK',
 			headers: {},
 			config: {},
-		} as any );
+		} as AxiosResponse );
 
 		// Act
 		overrideActions.save( componentId );
@@ -130,4 +131,3 @@ describe( 'overrideActions', () => {
 		expect( mockGetOverrideProps ).toHaveBeenCalledWith( componentId );
 	} );
 } );
-

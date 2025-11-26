@@ -66,7 +66,12 @@ type Props = {
 };
 export const Indicator = ( { triggerProps, isOpen, isOverridable }: Props ) => (
 	<IconWrapper { ...triggerProps } className={ isOpen || isOverridable ? 'enlarged' : '' }>
-		<IconContainer className="icon" aria-label={ isOverridable ? __( 'Overridable property', 'elementor' ) : __( 'Make prop overridable', 'elementor' ) }>
+		<IconContainer
+			className="icon"
+			aria-label={
+				isOverridable ? __( 'Overridable property', 'elementor' ) : __( 'Make prop overridable', 'elementor' )
+			}
+		>
 			{ isOverridable ? <CheckIcon fontSize={ SIZE } /> : <PlusIcon fontSize={ SIZE } /> }
 		</IconContainer>
 	</IconWrapper>

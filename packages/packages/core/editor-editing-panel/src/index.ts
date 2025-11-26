@@ -11,7 +11,7 @@ export { useFontFamilies } from './components/style-sections/typography-section/
 export { injectIntoStyleTab } from './components/style-tab';
 export { StyleTabSection } from './components/style-tab-section';
 export { useClassesProp } from './contexts/classes-prop-context';
-export { useElement } from './contexts/element-context';
+export { ElementProvider, useElement } from './contexts/element-context';
 export { useSectionWidth } from './contexts/section-context';
 export { useStyle } from './contexts/style-context';
 export { registerControlReplacement } from './control-replacement';

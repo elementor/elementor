@@ -9,8 +9,8 @@ import {
 } from '@elementor/editor-v1-adapters';
 
 import { apiClient } from '../../api';
-import { overrideActions } from '../overridable-props/utils/actions';
 import { COMPONENT_DOCUMENT_TYPE } from '../consts';
+import { overrideActions } from '../overridable-props/utils/actions';
 import { ComponentModal } from './component-modal';
 
 type ComponentsPathItem = {
