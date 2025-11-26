@@ -8,6 +8,8 @@ local-site/
 tmp/
 8888/
 8889/
+data/languages/
+tests/data
 
 # build outputs
 build/

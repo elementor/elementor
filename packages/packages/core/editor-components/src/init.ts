@@ -13,7 +13,7 @@ import { __privateListenTo as listenTo, commandStartEvent, registerDataHook } fr
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
-import { componentIdTransformer } from './component-id-transformer';
+import { componentInstanceTransformer } from './component-instance-transformer';
 import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
@@ -85,8 +85,6 @@ export function init() {
 		loadComponentsStyles( ( config?.elements as V1ElementData[] ) ?? [] );
 	} );
 
-	settingsTransformersRegistry.register( 'component-id', componentIdTransformer );
-
 	registerFieldIndicator( {
 		fieldType: FIELD_TYPE.SETTINGS,
 		id: 'component-overridable-prop',
@@ -98,4 +96,6 @@ export function init() {
 		component: OverridablePropControl,
 		condition: ( { value } ) => componentOverridablePropTypeUtil.isValid( value ),
 	} );
+
+	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );
 }

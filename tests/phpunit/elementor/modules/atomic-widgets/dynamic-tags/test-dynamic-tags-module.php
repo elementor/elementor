@@ -160,7 +160,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				],
 				'props_schema' => [
 					'before' => [
-						'kind' => 'plain',
+						'kind' => 'string',
 						'key' => 'string',
 						'default' => [ '$$type' => 'string', 'value' => '' ],
 						'settings' => [],
@@ -169,7 +169,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 						'initial_value' => null,
 					],
 					'key' => [
-						'kind' => 'plain',
+						'kind' => 'string',
 						'key' => 'string',
 						'default' => [ '$$type' => 'string', 'value' => '' ],
 						'settings' => [
