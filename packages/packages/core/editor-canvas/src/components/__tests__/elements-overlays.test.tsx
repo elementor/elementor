@@ -6,6 +6,7 @@ import { act, screen } from '@testing-library/react';
 
 import { ElementsOverlays } from '../elements-overlays';
 import { CANVAS_WRAPPER_ID } from '../outline-overlay';
+import { hasInlineEditableProperty } from '../../utils/inline-editing-utils';
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
@@ -13,6 +14,7 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	useEditMode: jest.fn(),
 	__privateUseIsRouteActive: jest.fn(),
 } ) );
+jest.mock( '../../utils/inline-editing-utils' );
 
 describe( '<ElementsOverlays />', () => {
 	beforeEach( () => {
@@ -23,6 +25,7 @@ describe( '<ElementsOverlays />', () => {
 
 		jest.mocked( useEditMode ).mockReturnValue( 'edit' );
 		jest.mocked( useIsRouteActive ).mockReturnValue( false );
+		jest.mocked( hasInlineEditableProperty ).mockReturnValue( false );
 
 		jest.mocked( getElements ).mockReturnValue( [
 			createMockElement( {
@@ -127,5 +130,79 @@ describe( '<ElementsOverlays />', () => {
 
 		// Assert.
 		expect( screen.queryByRole( 'presentation' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should return null when editor is not in edit mode', () => {
+		// Arrange
+		jest.mocked( useEditMode ).mockReturnValue( 'preview' );
+		jest.mocked( useIsRouteActive ).mockReturnValue( false );
+		jest.mocked( useSelectedElement ).mockReturnValue( {
+			element: { id: 'atomic1', type: 'widget' },
+			elementType: createMockElementType(),
+		} );
+
+		// Act
+		const { container } = renderWithTheme( <ElementsOverlays /> );
+
+		// Assert
+		expect( container.firstChild ).toBeNull();
+		expect( screen.queryByRole( 'presentation' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should return null when panel/global route is active', () => {
+		// Arrange
+		jest.mocked( useEditMode ).mockReturnValue( 'edit' );
+		jest.mocked( useIsRouteActive ).mockReturnValue( true );
+		jest.mocked( useSelectedElement ).mockReturnValue( {
+			element: { id: 'atomic1', type: 'widget' },
+			elementType: createMockElementType(),
+		} );
+
+		// Act
+		const { container } = renderWithTheme( <ElementsOverlays /> );
+
+		// Assert
+		expect( container.firstChild ).toBeNull();
+		expect( screen.queryByRole( 'presentation' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should render OutlineOverlay for atomic elements', async () => {
+		// Arrange
+		jest.mocked( useSelectedElement ).mockReturnValue( {
+			element: { id: 'atomic1', type: 'widget' },
+			elementType: createMockElementType(),
+		} );
+
+		// Act
+		await act( () => renderWithTheme( <ElementsOverlays /> ) );
+
+		// Assert
+		const overlay = screen.getByRole( 'presentation' );
+		expect( overlay ).toBeInTheDocument();
+		expect( overlay ).toHaveAttribute( 'data-element-overlay', 'atomic1' );
+	} );
+
+	it( 'should render InlineEditorOverlay only for selected elements that support inline editing', async () => {
+		// Arrange
+		const headingEl = createDOMElement( { tag: 'div', attrs: { 'data-atomic': '', id: '50' } } );
+
+		jest.mocked( getElements ).mockReturnValue( [
+			createMockElement( {
+				model: { id: 'heading-element' },
+				view: { el: headingEl, getDomElement: () => ( { get: () => headingEl } ) },
+			} ),
+		] );
+
+		jest.mocked( useSelectedElement ).mockReturnValue( {
+			element: { id: 'heading-element', type: 'widget' },
+			elementType: createMockElementType(),
+		} );
+
+		// Act
+		await act( () => renderWithTheme( <ElementsOverlays /> ) );
+
+		// Assert
+		const overlay = screen.getByRole( 'presentation' );
+		expect( overlay ).toHaveAttribute( 'data-element-overlay', 'heading-element' );
 	} );
 } );
