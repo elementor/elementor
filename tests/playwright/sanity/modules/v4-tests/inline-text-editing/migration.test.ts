@@ -17,10 +17,8 @@ test.describe( 'Inline Text Editing Migration @v4-tests', () => {
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
 		await test.step( 'Create page with heading widget without inline editing experiment', async () => {
-			await wpAdminPage.setExperiments( {
-				e_atomic_elements: 'active',
-				'v4-inline-text-editing': 'inactive',
-			} );
+			await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
+			await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'inactive' } );
 
 			editor = await wpAdminPage.openNewPage();
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
