@@ -44,6 +44,8 @@ class Variable {
 
 	public function restore(): void {
 		unset( $this->data['deleted_at'] );
+		// TODO to be removed if client is no longer need this
+		unset( $this->data['deleted'] );
 
 		$this->data['updated_at'] = $this->now();
 	}
