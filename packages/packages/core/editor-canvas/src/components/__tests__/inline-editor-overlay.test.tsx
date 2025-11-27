@@ -191,4 +191,55 @@ describe( '<InlineEditorOverlay />', () => {
 			withHistory: true,
 		} );
 	} );
+
+	it( 'should update and display new value after editing', async () => {
+		const initialValue = '<p>Initial content</p>';
+		const newValue = '<p>Updated content</p>';
+
+		jest.mocked( useElementSetting ).mockReturnValue( {
+			$$type: 'html',
+			value: initialValue,
+		} );
+		jest.mocked( htmlPropTypeUtil.extract ).mockReturnValue( initialValue );
+
+		const mockDebounceFn = jest.fn();
+		const debouncedFn = jest.fn( ( fn: ( ...args: unknown[] ) => void ) => {
+			mockDebounceFn.mockImplementation( fn );
+			return mockDebounceFn;
+		} );
+		jest.mocked( debounce ).mockImplementation( debouncedFn as unknown as typeof debounce );
+
+		const { rerender } = renderWithTheme(
+			<InlineEditorOverlay element={ mockElement } isSelected={ true } id={ mockId } />
+		);
+
+		const input = screen.getByRole( 'textbox', { name: 'inline editor' } ) as HTMLInputElement;
+		expect( input ).toHaveValue( initialValue );
+
+		await act( async () => {
+			mockDebounceFn( newValue );
+		} );
+
+		expect( updateElementSettings ).toHaveBeenCalledWith( {
+			id: mockId,
+			props: {
+				[ mockPropertyName ]: {
+					$$type: 'html',
+					value: newValue,
+				},
+			},
+			withHistory: true,
+		} );
+
+		jest.mocked( useElementSetting ).mockReturnValue( {
+			$$type: 'html',
+			value: newValue,
+		} );
+		jest.mocked( htmlPropTypeUtil.extract ).mockReturnValue( newValue );
+
+		rerender( <InlineEditorOverlay element={ mockElement } isSelected={ true } id={ mockId } /> );
+
+		const updatedInput = screen.getByRole( 'textbox', { name: 'inline editor' } ) as HTMLInputElement;
+		expect( updatedInput ).toHaveValue( newValue );
+	} );
 } );
