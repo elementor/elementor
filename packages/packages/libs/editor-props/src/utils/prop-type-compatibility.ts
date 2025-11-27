@@ -1,5 +1,5 @@
 import { type PropType, type PropValue } from '../types';
-import { isTransformable } from '../utils/is-transformable';
+import { isTransformable } from './is-transformable';
 
 export const PROP_TYPE_COMPATIBILITY_MAP: Record< string, string[] > = {
 	html: [ 'string' ],

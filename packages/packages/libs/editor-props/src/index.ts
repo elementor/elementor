@@ -28,7 +28,7 @@ export {
 	getCompatibleTypeKeys,
 	migratePropValue,
 	PROP_TYPE_COMPATIBILITY_MAP,
-} from './constants/prop-type-compatibility';
+} from './utils/prop-type-compatibility';
 
 export const Schema = {
 	jsonSchemaToPropType,
