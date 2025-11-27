@@ -5,7 +5,6 @@ namespace Elementor\Modules\Variables\Classes;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Variables_Service;
-use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use PHPUnit\Framework\TestCase;
 
 if ( ! defined( 'ABSPATH' ) ) {

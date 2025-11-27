@@ -8,7 +8,6 @@ use Elementor\Modules\Variables\Services\Variables_Service;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\Modules\Variables\Classes\Variables;
-use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use \PHPUnit\Framework\TestCase;

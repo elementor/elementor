@@ -531,7 +531,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				],
 			],
 			'watermark' => 10,
-			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+			'version' => Variables_Collection::FORMAT_VERSION_V1,
 		] );
 
 		$this->kit
@@ -597,7 +597,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				],
 			],
 			'watermark' => 5,
-			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+			'version' => Variables_Collection::FORMAT_VERSION_V1,
 		] );
 
 		// Act
@@ -754,7 +754,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				],
 			],
 			'watermark' => 5,
-			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+			'version' => Variables_Collection::FORMAT_VERSION_V1,
 		] );
 
 		// Act

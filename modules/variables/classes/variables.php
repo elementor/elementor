@@ -3,7 +3,6 @@
 namespace Elementor\Modules\Variables\Classes;
 
 use Elementor\Modules\Variables\Services\Variables_Service;
-use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
