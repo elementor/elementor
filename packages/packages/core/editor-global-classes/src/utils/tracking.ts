@@ -7,7 +7,6 @@ import { GlobalClassTrackingError } from '../errors';
 import { type FilterKey } from '../hooks/use-filtered-css-class-usage';
 import { selectClass } from '../store';
 
-
 export type TrackingEvent = {
 	[ K in keyof EventMap ]: { event: K } & EventMap[ K ];
 }[ keyof EventMap ];
