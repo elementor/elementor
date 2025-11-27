@@ -28,4 +28,3 @@ class Module extends BaseModule {
 		];
 	}
 }
-
