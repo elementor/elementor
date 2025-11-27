@@ -128,48 +128,56 @@ You might have custom_css property but prefer to use it only as the last solutio
 		}
 	);
 
-	mcpServer.resource( 'global-variables', new ResourceTemplate( GLOBAL_VARIABLES_URI, {
-		list: () => {
-			return {
-				resources: [ {
-					uri: GLOBAL_VARIABLES_URI,
-					name: 'Global variables',
-				} ],
-			};
-		},
-	} ),
+	mcpServer.resource(
+		'global-variables',
+		new ResourceTemplate( GLOBAL_VARIABLES_URI, {
+			list: () => {
+				return {
+					resources: [
+						{
+							uri: GLOBAL_VARIABLES_URI,
+							name: 'Global variables',
+						},
+					],
+				};
+			},
+		} ),
 		{
-			description: 'Global variables list. Variables are being used in this way: If it is in custom_css, use the variable using the label with -- prefix. If it is directly in the schema, you need to put the ID which is the key inside the object.',
+			description:
+				'Global variables list. Variables are being used in this way: If it is in custom_css, use the variable using the label with -- prefix. If it is directly in the schema, you need to put the ID which is the key inside the object.',
 		},
-		async ( uri, variables ) => {
+		async ( uri, _ ) => {
 			return {
-				contents: [
-					{ uri: uri.toString(), text: localStorage['elementor-global-variables'] },
-				],
+				contents: [ { uri: uri.toString(), text: localStorage[ 'elementor-global-variables' ] } ],
 			};
 		}
 	);
 
-	mcpServer.resource( 'global-classes', new ResourceTemplate( GLOBAL_CLASSES_URI, {
-		list: () => {
-			return {
-				resources: [ { uri: GLOBAL_CLASSES_URI, name: 'Global classes' } ],
-			};
-		},
-	} ),
+	mcpServer.resource(
+		'global-classes',
+		new ResourceTemplate( GLOBAL_CLASSES_URI, {
+			list: () => {
+				return {
+					resources: [ { uri: GLOBAL_CLASSES_URI, name: 'Global classes' } ],
+				};
+			},
+		} ),
 		{
 			description: 'Global classes list.',
 		},
-		async ( uri, variables ) => {
+		async ( uri, _ ) => {
 			return {
-				contents: [ { uri: uri.toString(), text: localStorage['elementor-global-classes'] ?? {} } ],
+				contents: [ { uri: uri.toString(), text: localStorage[ 'elementor-global-classes' ] ?? {} } ],
 			};
 		}
 	);
 
-	window.addEventListener('variables:updated', () => {
-		mcpServer.server.sendResourceUpdated({ uri: GLOBAL_VARIABLES_URI, contents: [{uri: GLOBAL_VARIABLES_URI, text: localStorage['elementor-global-variables']}]});
-	});
+	window.addEventListener( 'variables:updated', () => {
+		mcpServer.server.sendResourceUpdated( {
+			uri: GLOBAL_VARIABLES_URI,
+			contents: [ { uri: GLOBAL_VARIABLES_URI, text: localStorage[ 'elementor-global-variables' ] } ],
+		} );
+	} );
 };
 
 function cleanupPropSchema( propSchema: Record< string, PropType > ): Record< string, PropType > {

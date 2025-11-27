@@ -34,7 +34,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 	capabilities: getCapabilities(),
 	actions: {
 		all: () => {
-			const selectAllClasses = selectOrderedClasses( getState() )
+			const selectAllClasses = selectOrderedClasses( getState() );
 			localStorage.setItem( 'elementor-global-classes', JSON.stringify( selectAllClasses ) );
 			return selectAllClasses;
 		},

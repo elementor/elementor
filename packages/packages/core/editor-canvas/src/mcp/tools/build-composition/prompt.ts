@@ -1,6 +1,11 @@
 import { toolPrompts } from '@elementor/editor-mcp';
 
-import { GLOBAL_CLASSES_URI, GLOBAL_VARIABLES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
+import {
+	GLOBAL_CLASSES_URI,
+	GLOBAL_VARIABLES_URI,
+	STYLE_SCHEMA_URI,
+	WIDGET_SCHEMA_URI,
+} from '../../resources/widgets-schema-resource';
 
 const CUSTOM_CSS_URI = STYLE_SCHEMA_URI.replace( '{category}', 'custom_css' );
 
