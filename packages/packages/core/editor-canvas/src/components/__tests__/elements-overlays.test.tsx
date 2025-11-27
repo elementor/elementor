@@ -2,11 +2,11 @@ import * as React from 'react';
 import { createDOMElement, createMockElement, createMockElementType, renderWithTheme } from 'test-utils';
 import { getElements, useSelectedElement } from '@elementor/editor-elements';
 import { __privateUseIsRouteActive as useIsRouteActive, useEditMode } from '@elementor/editor-v1-adapters';
-import { act, screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 
+import { hasInlineEditableProperty } from '../../utils/inline-editing-utils';
 import { ElementsOverlays } from '../elements-overlays';
 import { CANVAS_WRAPPER_ID } from '../outline-overlay';
-import { hasInlineEditableProperty } from '../../utils/inline-editing-utils';
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
@@ -71,16 +71,15 @@ describe( '<ElementsOverlays />', () => {
 		} );
 
 		// Act.
-		// eslint-disable-next-line testing-library/no-unnecessary-act
-		await act( () => renderWithTheme( <ElementsOverlays /> ) );
+		renderWithTheme( <ElementsOverlays /> );
 
 		// Assert.
-		const overlay = screen.getByRole( 'presentation' );
-
-		expect( overlay ).toHaveAttribute( 'data-element-overlay', 'atomic2' );
-
-		// eslint-disable-next-line testing-library/no-test-id-queries
-		expect( screen.getByTestId( CANVAS_WRAPPER_ID ) ).toContainElement( overlay );
+		await waitFor( () => {
+			const overlay = screen.getByRole( 'presentation' );
+			expect( overlay ).toHaveAttribute( 'data-element-overlay', 'atomic2' );
+			// eslint-disable-next-line testing-library/no-test-id-queries
+			expect( screen.getByTestId( CANVAS_WRAPPER_ID ) ).toContainElement( overlay );
+		} );
 	} );
 
 	it.each( [
@@ -145,7 +144,7 @@ describe( '<ElementsOverlays />', () => {
 		const { container } = renderWithTheme( <ElementsOverlays /> );
 
 		// Assert
-		expect( container.firstChild ).toBeNull();
+		expect( container ).toBeEmptyDOMElement();
 		expect( screen.queryByRole( 'presentation' ) ).not.toBeInTheDocument();
 	} );
 
@@ -162,7 +161,7 @@ describe( '<ElementsOverlays />', () => {
 		const { container } = renderWithTheme( <ElementsOverlays /> );
 
 		// Assert
-		expect( container.firstChild ).toBeNull();
+		expect( container ).toBeEmptyDOMElement();
 		expect( screen.queryByRole( 'presentation' ) ).not.toBeInTheDocument();
 	} );
 
@@ -174,10 +173,10 @@ describe( '<ElementsOverlays />', () => {
 		} );
 
 		// Act
-		await act( () => renderWithTheme( <ElementsOverlays /> ) );
+		renderWithTheme( <ElementsOverlays /> );
 
 		// Assert
-		const overlay = screen.getByRole( 'presentation' );
+		const overlay = await screen.findByRole( 'presentation' );
 		expect( overlay ).toBeInTheDocument();
 		expect( overlay ).toHaveAttribute( 'data-element-overlay', 'atomic1' );
 	} );
@@ -199,10 +198,12 @@ describe( '<ElementsOverlays />', () => {
 		} );
 
 		// Act
-		await act( () => renderWithTheme( <ElementsOverlays /> ) );
+		renderWithTheme( <ElementsOverlays /> );
 
 		// Assert
-		const overlay = screen.getByRole( 'presentation' );
-		expect( overlay ).toHaveAttribute( 'data-element-overlay', 'heading-element' );
+		await waitFor( () => {
+			const overlay = screen.getByRole( 'presentation' );
+			expect( overlay ).toHaveAttribute( 'data-element-overlay', 'heading-element' );
+		} );
 	} );
 } );
