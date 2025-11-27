@@ -47,7 +47,7 @@ abstract class Props_Resolver {
 	}
 
 	protected function transform( $value, $key, Prop_Type $prop_type ) {
-		$value = $this->migrate_prop_type( $value, $prop_type );
+		$value = Prop_Type_Migrator::migrate( $value, $prop_type );
 
 		if ( $prop_type instanceof Union_Prop_Type ) {
 			$prop_type = $prop_type->get_prop_type( $value['$$type'] );
@@ -107,10 +107,6 @@ abstract class Props_Resolver {
 			! empty( $value['$$type'] ) &&
 			array_key_exists( 'value', $value )
 		);
-	}
-
-	protected function migrate_prop_type( $value, Prop_Type $prop_type ) {
-		return Prop_Type_Migrator::migrate( $value, $prop_type );
 	}
 
 	abstract public function resolve( array $schema, array $props ): array;
