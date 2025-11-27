@@ -4,6 +4,7 @@ import { toolsMenu } from '../../locations';
 import ToolbarMenu from '../ui/toolbar-menu';
 import ToolbarMenuMore from '../ui/toolbar-menu-more';
 import IntegrationsMenuLocation from './integrations-menu-location';
+import SendFeedbackPopupLocation from './send-feedbacl-popup-location';
 
 const MAX_TOOLBAR_ACTIONS = 5;
 
@@ -20,6 +21,7 @@ export default function ToolsMenuLocation() {
 			{ toolbarMenuItems.map( ( { MenuItem, id } ) => (
 				<MenuItem key={ id } />
 			) ) }
+			<SendFeedbackPopupLocation />
 			<IntegrationsMenuLocation />
 			{ popoverMenuItems.length > 0 && (
 				<ToolbarMenuMore id="elementor-editor-app-bar-tools-more">
