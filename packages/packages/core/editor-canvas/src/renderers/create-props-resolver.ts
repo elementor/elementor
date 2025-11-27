@@ -1,4 +1,5 @@
 import {
+	getCompatibleTypeKeys,
 	isTransformable,
 	type PropKey,
 	type Props,
@@ -6,8 +7,6 @@ import {
 	type PropType,
 	type PropValue,
 } from '@elementor/editor-props';
-
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 import { type TransformersRegistry } from '../transformers/create-transformers-registry';
 import { getMultiPropsValue, isMultiProps } from './multi-props';
@@ -80,6 +79,10 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 
 		value = migratePropType( value, type );
 
+		if ( ! isTransformable( value ) ) {
+			return value;
+		}
+
 		if ( type.kind === 'union' ) {
 			type = type.prop_types[ value.$$type ];
 
@@ -131,29 +134,33 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 			return value;
 		}
 
-		const isInlineEditingActive = isExperimentActive( 'v4-inline-text-editing' );
-
 		if ( propType.kind === 'union' ) {
 			const propTypes = propType.prop_types;
-			const hasHtmlType = 'html' in propTypes;
-			const hasStringType = 'string' in propTypes;
 
-			if ( isInlineEditingActive && hasHtmlType ) {
-				if ( value.$$type === 'string' ) {
-					return { ...value, $$type: 'html' };
+			for ( const unionPropType of Object.values( propTypes ) ) {
+				const expectedKey = unionPropType.key;
+
+				if ( value.$$type === expectedKey ) {
+					break;
 				}
-			} else if ( ! isInlineEditingActive && hasStringType ) {
-				if ( value.$$type === 'html' ) {
-					return { ...value, $$type: 'string' };
+
+				const compatibleKeys = getCompatibleTypeKeys( unionPropType );
+
+				if ( compatibleKeys.includes( value.$$type ) ) {
+					return { ...value, $$type: expectedKey };
 				}
 			}
-		} else if ( isInlineEditingActive && propType.key === 'html' ) {
-			if ( value.$$type === 'string' ) {
-				return { ...value, $$type: 'html' };
+		} else {
+			const expectedKey = propType.key;
+
+			if ( value.$$type === expectedKey ) {
+				return value;
 			}
-		} else if ( ! isInlineEditingActive && propType.key === 'string' && propType.kind !== 'union' ) {
-			if ( value.$$type === 'html' ) {
-				return { ...value, $$type: 'string' };
+
+			const compatibleKeys = getCompatibleTypeKeys( propType );
+
+			if ( compatibleKeys.includes( value.$$type ) ) {
+				return { ...value, $$type: expectedKey };
 			}
 		}
 
