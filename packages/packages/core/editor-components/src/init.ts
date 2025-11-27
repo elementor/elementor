@@ -13,6 +13,7 @@ import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
 import { componentInstanceTransformer } from './component-instance-transformer';
+import { componentOverridableTransformer } from './component-overridable-transformer';
 import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
@@ -82,4 +83,5 @@ export function init() {
 	} );
 
 	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );
+	settingsTransformersRegistry.register( 'overridable', componentOverridableTransformer );
 }
