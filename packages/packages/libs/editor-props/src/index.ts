@@ -24,11 +24,7 @@ export { mergeProps } from './utils/merge-props';
 export { evaluateTerm, extractValue, isDependency, isDependencyMet } from './utils/prop-dependency-utils';
 
 // constants
-export {
-	getCompatibleTypeKeys,
-	migratePropValue,
-	PROP_TYPE_COMPATIBILITY_MAP,
-} from './utils/prop-type-compatibility';
+export { getCompatibleTypeKeys, migratePropValue, PROP_TYPE_COMPATIBILITY_MAP } from './utils/prop-type-compatibility';
 
 export const Schema = {
 	jsonSchemaToPropType,

@@ -1,9 +1,5 @@
-import {
-	getCompatibleTypeKeys,
-	migratePropValue,
-	PROP_TYPE_COMPATIBILITY_MAP,
-} from '../prop-type-compatibility';
 import { type PropType, type PropValue } from '../../types';
+import { getCompatibleTypeKeys, migratePropValue, PROP_TYPE_COMPATIBILITY_MAP } from '../prop-type-compatibility';
 
 describe( 'prop-type-compatibility', () => {
 	describe( 'PROP_TYPE_COMPATIBILITY_MAP', () => {
@@ -231,7 +227,6 @@ describe( 'prop-type-compatibility', () => {
 			};
 			const propType: PropType = {
 				kind: 'union',
-				key: 'union',
 				prop_types: {
 					html: {
 						kind: 'plain',
@@ -268,7 +263,6 @@ describe( 'prop-type-compatibility', () => {
 			};
 			const propType: PropType = {
 				kind: 'union',
-				key: 'union',
 				prop_types: {
 					html: {
 						kind: 'plain',
@@ -302,7 +296,6 @@ describe( 'prop-type-compatibility', () => {
 			};
 			const propType: PropType = {
 				kind: 'union',
-				key: 'union',
 				prop_types: {
 					html: {
 						kind: 'plain',
