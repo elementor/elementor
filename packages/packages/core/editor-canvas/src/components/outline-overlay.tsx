@@ -5,13 +5,11 @@ import { FloatingPortal, useHover, useInteractions } from '@floating-ui/react';
 import { useBindReactPropsToElement } from '../hooks/use-bind-react-props-to-element';
 import { useFloatingOnElement } from '../hooks/use-floating-on-element';
 import { useHasOverlapping } from '../hooks/use-has-overlapping';
+import type { ElementOverlayProps } from '../types/element-overlay';
 
 export const CANVAS_WRAPPER_ID = 'elementor-preview-responsive-wrapper';
 
-type Props = {
-	element: HTMLElement;
-	isSelected: boolean;
-	id: string;
+type Props = ElementOverlayProps & {
 	isSmallerOffset?: boolean;
 };
 
@@ -23,7 +21,7 @@ const OverlayBox = styled( Box, {
 	pointerEvents: 'none',
 } ) );
 
-export function ElementOverlay( { element, isSelected, id }: Props ) {
+export const OutlineOverlay = ( { element, isSelected, id }: Props ): React.ReactElement | false => {
 	const { context, floating, isVisible } = useFloatingOnElement( { element, isSelected } );
 	const { getFloatingProps, getReferenceProps } = useInteractions( [ useHover( context ) ] );
 	const hasOverlapping = useHasOverlapping();
@@ -47,4 +45,4 @@ export function ElementOverlay( { element, isSelected, id }: Props ) {
 			</FloatingPortal>
 		)
 	);
-}
+};
