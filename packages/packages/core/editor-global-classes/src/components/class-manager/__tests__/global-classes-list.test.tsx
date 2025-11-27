@@ -10,8 +10,8 @@ import {
 } from '@elementor/store';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 
-import { useFilters } from '../../../hooks/use-filters';
 import { mockTrackingModule } from '../../../__tests__/mocks';
+import { useFilters } from '../../../hooks/use-filters';
 import { slice } from '../../../store';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../search-and-filter/context';
 import { GlobalClassesList } from '../global-classes-list';

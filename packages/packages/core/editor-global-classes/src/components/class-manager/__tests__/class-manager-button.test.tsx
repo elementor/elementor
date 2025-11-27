@@ -19,7 +19,7 @@ jest.mock( '@elementor/editor-styles-repository', () => ( {
 
 jest.mock( '../class-manager-panel', () => ( {
 	usePanelActions: jest.fn( () => ( { open: jest.fn() } ) ),
-}));
+} ) );
 
 jest.mock( '../../../utils/tracking', () => mockTrackingModule );
 
