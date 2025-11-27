@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import _path from 'path';
+
 test.describe( 'Nested Tabs tests @nested-tabs', () => {
 	test( 'Accessibility inside the Editor', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
