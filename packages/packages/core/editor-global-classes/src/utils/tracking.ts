@@ -7,6 +7,73 @@ import { GlobalClassTrackingError } from '../errors';
 import { type FilterKey } from '../hooks/use-filtered-css-class-usage';
 import { selectClass } from '../store';
 
+type EventMap = {
+	classCreated: {
+		source?: 'created' | 'converted';
+		classId: StyleDefinitionID;
+		classTitle?: string;
+	};
+	classDeleted: {
+		classId: StyleDefinitionID;
+		runAction?: () => void;
+	};
+	classRenamed: {
+		classId: StyleDefinitionID;
+		oldValue: string;
+		newValue: string;
+		source: 'class-manager' | 'style-tab';
+	};
+	classApplied: {
+		classId: StyleDefinitionID;
+		classTitle: string;
+		totalInstancesAfterApply: number;
+	};
+	classRemoved: {
+		classId: StyleDefinitionID;
+		classTitle: string;
+	};
+	classStyled: {
+		classId: StyleDefinitionID;
+		classTitle: string;
+		classType: 'global' | 'local';
+	};
+	classManagerOpened: {
+		source: 'style-panel';
+	};
+	classManagerSearched: Record< string, never >;
+	classManagerFiltersOpened: Record< string, never >;
+	classManagerFilterUsed: {
+		action: 'apply' | 'remove';
+		type: FilterKey;
+		trigger: 'menu' | 'header';
+	};
+	classManagerFilterCleared: {
+		trigger: 'menu' | 'header';
+	};
+	classManagerReorder: {
+		classId: StyleDefinitionID;
+		classTitle: string;
+	};
+	classPublishConflict: {
+		numOfConflicts: number;
+	};
+	classUsageHovered: {
+		classId: string;
+		usage: number;
+	};
+	classUsageClicked: {
+		classId: StyleDefinitionID;
+	};
+	classUsageLocate: {
+		classId: StyleDefinitionID;
+	};
+	classStateClicked: {
+		classId: StyleDefinitionID | null;
+		type: string;
+		source: 'global' | 'local';
+	};
+};
+
 export type TrackingEvent = {
 	[ K in keyof EventMap ]: { event: K } & EventMap[ K ];
 }[ keyof EventMap ];
