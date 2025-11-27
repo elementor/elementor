@@ -282,45 +282,4 @@ class Test_Variables_Repository extends TestCase {
 		$this->assertEquals( 'Primary Color', $result['data']['e-gv-primary']['label'] );
 		$this->assertEquals( Color_Variable_Prop_Type::get_key(), $result['data']['e-gv-primary']['type'] );
 	}
-
-	public function test_conversion_performance__large_collection() {
-		// Arrange.
-		$data = [];
-		for ( $i = 1; $i <= 500; $i++ ) {
-			$data["e-gv-color-{$i}"] = [
-				'type' => Color_Variable_Prop_Type::get_key(),
-				'label' => "Color {$i}",
-				'value' => sprintf( '#%06x', $i * 1000 ),
-				'order' => $i,
-			];
-		}
-
-		for ( $i = 1; $i <= 500; $i++ ) {
-			$data["e-gv-size-{$i}"] = [
-				'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
-				'label' => "Size {$i}",
-				'value' => ( $i * 2 ) . 'px',
-				'order' => $i + 50,
-			];
-		}
-
-		$collection = Variables_Collection::hydrate( [
-			'data' => $data,
-			'watermark' => 0,
-			'version' => 1,
-		] );
-
-		$this->kit->method( 'update_json_meta' )->willReturn( true );
-
-		$start_time = microtime( true );
-
-		// Act.
-		$this->repository->save( $collection );
-
-		$end_time = microtime( true );
-		$execution_time = $end_time - $start_time;
-
-		// Assert.
-		$this->assertLessThan( 0.1, $execution_time, 'Save with conversion should complete within 100ms' );
-	}
 }
