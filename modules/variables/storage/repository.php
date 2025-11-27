@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Repository {
+	// TODO: deleted this class later after this PR
 	const TOTAL_VARIABLES_COUNT = 100;
 	const FORMAT_VERSION_V1 = 1;
 	const VARIABLES_META_KEY = '_elementor_global_variables';
