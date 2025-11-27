@@ -11,6 +11,7 @@ import {
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 
 import { useFilters } from '../../../hooks/use-filters';
+import { mockTrackingModule } from '../../../__tests__/mocks';
 import { slice } from '../../../store';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../search-and-filter/context';
 import { GlobalClassesList } from '../global-classes-list';
@@ -36,13 +37,8 @@ jest.mock( '../../../hooks/use-css-class-usage', () => ( {
 		},
 	} ),
 } ) );
-jest.mock( '../../../utils/tracking', () => ( {
-	trackGlobalClasses: jest.fn( async ( payload: unknown & { runAction: () => void } ) => {
-		if ( payload?.runAction ) {
-			payload.runAction();
-		}
-	} ),
-} ) );
+
+jest.mock( '../../../utils/tracking', () => mockTrackingModule );
 
 const mockUseSearchAndFiltersProps: SearchAndFilterContextType = {
 	search: {
