@@ -4,8 +4,8 @@ namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Migratable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Type_Migrator;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Exception;
 
@@ -110,48 +110,7 @@ abstract class Props_Resolver {
 	}
 
 	protected function migrate_prop_type( $value, Prop_Type $prop_type ) {
-		if ( ! is_array( $value ) || ! isset( $value['$$type'] ) || ! isset( $value['value'] ) ) {
-			return $value;
-		}
-
-		if ( $prop_type instanceof Union_Prop_Type ) {
-			$prop_types = $prop_type->get_prop_types();
-
-			foreach ( $prop_types as $union_prop_type ) {
-				if ( ! $union_prop_type instanceof Migratable_Prop_Type ) {
-					continue;
-				}
-
-				$expected_key = $union_prop_type::get_key();
-
-				if ( $value['$$type'] === $expected_key ) {
-					break;
-				}
-
-				$compatible_keys = $union_prop_type->get_compatible_type_keys();
-
-				if ( ! in_array( $value['$$type'], $compatible_keys, true ) ) {
-					continue;
-				}
-
-				$value['$$type'] = $expected_key;
-				break;
-			}
-		} elseif ( $prop_type instanceof Migratable_Prop_Type ) {
-			$expected_key = $prop_type::get_key();
-
-			if ( $value['$$type'] === $expected_key ) {
-				return $value;
-			}
-
-			$compatible_keys = $prop_type->get_compatible_type_keys();
-
-			if ( in_array( $value['$$type'], $compatible_keys, true ) ) {
-				$value['$$type'] = $expected_key;
-			}
-		}
-
-		return $value;
+		return Prop_Type_Migrator::migrate( $value, $prop_type );
 	}
 
 	abstract public function resolve( array $schema, array $props ): array;
