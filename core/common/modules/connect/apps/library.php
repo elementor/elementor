@@ -80,7 +80,7 @@ class Library extends Common_App {
 				'current_access_level' => ConnectModule::ACCESS_LEVEL_CORE,
 				'current_access_tier' => ConnectModule::ACCESS_TIER_FREE,
 				'plan_type' => ConnectModule::ACCESS_TIER_FREE,
-				'user_email' => $email->email ?? null,
+				'user_email' => $user->email ?? null,
 			],
 		] );
 	}
