@@ -46,8 +46,6 @@ type EventMap = {
 		classId: StyleDefinitionID;
 		classTitle: string;
 		totalInstancesAfterApply: number;
-		totalStyleProperties: number;
-		hasCustomCss: boolean;
 	};
 	classRemoved: {
 		classId: StyleDefinitionID;
@@ -102,8 +100,6 @@ export type TrackingEvent = {
 type TrackingEventWithComputed = TrackingEvent & {
 	classTitle?: string;
 	totalInstancesAfterApply?: number;
-	totalStyleProperties?: number;
-	hasCustomCss?: boolean;
 	totalInstances?: number;
 };
 
@@ -192,14 +188,8 @@ const track = ( data: Record< string, unknown > ) => {
 const extractCssClassData = ( classId: StyleDefinitionID ) => {
 	const cssClass: StyleDefinition = getCssClass( classId );
 	const classTitle = cssClass.label;
-	if ( ! cssClass.variants.length ) {
-		return { classTitle, totalStyleProperties: 0, hasCustomCss: false };
-	}
-	const desktopView = cssClass.variants[ 0 ];
-	// only desktop
-	const totalStyleProperties = Object.keys( desktopView.props ).length;
-	const hasCustomCss = Boolean( desktopView.custom_css );
-	return { classTitle, totalStyleProperties, hasCustomCss };
+
+	return { classTitle };
 };
 
 const getCssClass = ( classId: StyleDefinitionID ) => {
@@ -222,14 +212,9 @@ const getTotalInstancesByCssClassID = async ( classId: StyleDefinitionID ) => {
 };
 
 const getAppliedInfo = async ( classId: StyleDefinitionID ) => {
-	const { classTitle, totalStyleProperties, hasCustomCss } = extractCssClassData( classId );
+	const { classTitle } = extractCssClassData( classId );
 	const totalInstancesAfterApply = ( await getTotalInstancesByCssClassID( classId ) ) + 1;
-	return {
-		classTitle,
-		totalInstancesAfterApply,
-		totalStyleProperties,
-		hasCustomCss,
-	};
+	return { classTitle, totalInstancesAfterApply };
 };
 
 const getRemovedInfo = ( classId: StyleDefinitionID ) => {
