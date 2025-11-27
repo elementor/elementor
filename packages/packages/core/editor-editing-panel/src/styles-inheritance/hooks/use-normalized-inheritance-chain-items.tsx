@@ -1,12 +1,7 @@
 import { isValidElement, type ReactNode, useEffect, useState } from 'react';
 import { type PropsResolver } from '@elementor/editor-canvas';
 import { type PropKey } from '@elementor/editor-props';
-import {
-	isClassState,
-	isPseudoState,
-	type StyleDefinitionState,
-	type StyleDefinitionVariant,
-} from '@elementor/editor-styles';
+import { getStateSelector, type StyleDefinitionVariant } from '@elementor/editor-styles';
 import { ELEMENTS_BASE_STYLES_PROVIDER_KEY } from '@elementor/editor-styles-repository';
 import { __ } from '@wordpress/i18n';
 
@@ -70,7 +65,7 @@ export const normalizeInheritanceItem = async (
 		style: { label, id },
 	} = item;
 
-	const displayLabel = getLabel( { label, state } );
+	const displayLabel = getStateSelector( { label, state } );
 
 	return {
 		id: id ? id + ( state ?? '' ) : index,
@@ -81,17 +76,6 @@ export const normalizeInheritanceItem = async (
 	};
 };
 
-function getLabel( { label, state }: { label: string; state: StyleDefinitionState } ) {
-	if ( isClassState( state ) ) {
-		return `${ label }.${ state }`;
-	}
-
-	if ( isPseudoState( state ) ) {
-		return `${ label }:${ state }`;
-	}
-
-	return label;
-}
 const getTransformedValue = async (
 	item: SnapshotPropValue,
 	bind: PropKey,
