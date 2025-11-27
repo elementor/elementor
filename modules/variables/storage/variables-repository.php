@@ -3,7 +3,6 @@
 namespace Elementor\Modules\Variables\Storage;
 
 use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Modules\AtomicWidgets\Utils;
 
 class Variables_Repository {
 	private const VARIABLES_META_KEY = '_elementor_global_variables';
