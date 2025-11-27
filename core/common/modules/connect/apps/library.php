@@ -66,7 +66,7 @@ class Library extends Common_App {
 		$connect = Plugin::$instance->common->get_component( 'connect' );
 		$user_id = $this->get_user_id();
 		$user_roles = $this->get_user_roles();
-		$email = $this->get( 'user' );
+		$user = $this->get( 'user' );
 
 		return array_replace_recursive( $settings, [
 			'library_connect' => [
