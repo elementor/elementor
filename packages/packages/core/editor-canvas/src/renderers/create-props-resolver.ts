@@ -1,6 +1,6 @@
 import {
-	getCompatibleTypeKeys,
 	isTransformable,
+	migratePropValue,
 	type PropKey,
 	type Props,
 	type PropsSchema,
@@ -45,7 +45,7 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 			Object.entries( schema ).map( async ( [ key, type ] ) => {
 				const value = props[ key ] ?? type.default;
 
-				const transformed = await transform( { value, key, type, signal } );
+				const transformed = await transform( { value, key, type, signal } ) as PropValue;
 
 				onPropResolve?.( { key, value: transformed } );
 
@@ -77,7 +77,7 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 			return null;
 		}
 
-		value = migratePropType( value, type );
+		value = migratePropValue( value, type );
 
 		if ( ! isTransformable( value ) ) {
 			return value;
@@ -127,44 +127,6 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 		} catch {
 			return null;
 		}
-	}
-
-	function migratePropType( value: PropValue, propType: PropType ): PropValue {
-		if ( ! isTransformable( value ) ) {
-			return value;
-		}
-
-		if ( propType.kind === 'union' ) {
-			const propTypes = propType.prop_types;
-
-			for ( const unionPropType of Object.values( propTypes ) ) {
-				const expectedKey = unionPropType.key;
-
-				if ( value.$$type === expectedKey ) {
-					break;
-				}
-
-				const compatibleKeys = getCompatibleTypeKeys( unionPropType );
-
-				if ( compatibleKeys.includes( value.$$type ) ) {
-					return { ...value, $$type: expectedKey };
-				}
-			}
-		} else {
-			const expectedKey = propType.key;
-
-			if ( value.$$type === expectedKey ) {
-				return value;
-			}
-
-			const compatibleKeys = getCompatibleTypeKeys( propType );
-
-			if ( compatibleKeys.includes( value.$$type ) ) {
-				return { ...value, $$type: expectedKey };
-			}
-		}
-
-		return value;
 	}
 
 	return resolve;
