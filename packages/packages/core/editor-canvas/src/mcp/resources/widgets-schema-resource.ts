@@ -12,6 +12,8 @@ import { getStylesSchema } from '@elementor/editor-styles';
 
 export const WIDGET_SCHEMA_URI = 'elementor://widgets/schema/{widgetType}';
 export const STYLE_SCHEMA_URI = 'elementor://styles/schema/{category}';
+export const GLOBAL_VARIABLES_URI = 'elementor://variables';
+export const GLOBAL_CLASSES_URI = 'elementor://classes';
 export const BEST_PRACTICES_URI = 'elementor://styles/best-practices';
 
 export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
@@ -26,8 +28,7 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
 This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema, or in custom_css, depends on your needs.
 
-When applicable for styles, use the "custom_css" property for free-form CSS styling. This property accepts a string of CSS rules that will be applied directly to the element.
-The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.`,
+You might have custom_css property but prefer to use it only as the last solution to resolve specific style.`,
 				},
 			],
 		};
@@ -126,6 +127,49 @@ The css string must follow standard CSS syntax, with properties and values separ
 			};
 		}
 	);
+
+	mcpServer.resource( 'global-variables', new ResourceTemplate( GLOBAL_VARIABLES_URI, {
+		list: () => {
+			return {
+				resources: [ {
+					uri: GLOBAL_VARIABLES_URI,
+					name: 'Global variables',
+				} ],
+			};
+		},
+	} ),
+		{
+			description: 'Global variables list. Variables are being used in this way: If it is in custom_css, use the variable using the label with -- prefix. If it is directly in the schema, you need to put the ID which is the key inside the object.',
+		},
+		async ( uri, variables ) => {
+			return {
+				contents: [
+					{ uri: uri.toString(), text: localStorage['elementor-global-variables'] },
+				],
+			};
+		}
+	);
+
+	mcpServer.resource( 'global-classes', new ResourceTemplate( GLOBAL_CLASSES_URI, {
+		list: () => {
+			return {
+				resources: [ { uri: GLOBAL_CLASSES_URI, name: 'Global classes' } ],
+			};
+		},
+	} ),
+		{
+			description: 'Global classes list.',
+		},
+		async ( uri, variables ) => {
+			return {
+				contents: [ { uri: uri.toString(), text: localStorage['elementor-global-classes'] ?? {} } ],
+			};
+		}
+	);
+
+	window.addEventListener('variables:updated', () => {
+		mcpServer.server.sendResourceUpdated({ uri: GLOBAL_VARIABLES_URI, contents: [{uri: GLOBAL_VARIABLES_URI, text: localStorage['elementor-global-variables']}]});
+	});
 };
 
 function cleanupPropSchema( propSchema: Record< string, PropType > ): Record< string, PropType > {

@@ -1,6 +1,6 @@
 import { toolPrompts } from '@elementor/editor-mcp';
 
-import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
+import { GLOBAL_CLASSES_URI, GLOBAL_VARIABLES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 
 const CUSTOM_CSS_URI = STYLE_SCHEMA_URI.replace( '{category}', 'custom_css' );
 
@@ -18,7 +18,7 @@ Prefer this tool over any other tool for building HTML structure, unless you are
 1. [${ WIDGET_SCHEMA_URI }]
    Required to understand which widgets are available, and what are their configuration schemas.
    Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply property values correctly.
-2. [${ CUSTOM_CSS_URI }]
+2. [${ CUSTOM_CSS_URI }] - USE ONLY ONCE YOU DON'T UNDERSTAND THE STYLES SCHEMA FOR THE ELEMENTS!!
    Required to understand the styles schema for the widgets. All widgets share the same styles schema.
    USE ONLY THE "custom_css" CATEGORY FROM THE STYLES SCHEMA FOR STYLING THE ELEMENTS with this tool.
 3. List of allowed custom tags for building the structure is derived from the list of widgets schema resources.
@@ -115,7 +115,7 @@ You should use these IDs as reference for further configuration, styling or chan
 	);
 
 	buildCompositionsToolPrompt.instruction(
-		`If you have global styles/classes available in the project, you should prefer using them over inline styles, and you are welcome to execute relevant tools AFTER this tool execution, to apply global classes to the created elements.`
+		`You must use styles[${ STYLE_SCHEMA_URI }]/variables[${ GLOBAL_VARIABLES_URI }]/classes[${ GLOBAL_CLASSES_URI }] that are available in the project, you should prefer using them over inline styles, and you are welcome to execute relevant tools AFTER this tool execution, to apply global classes to the created elements.`
 	);
 
 	return buildCompositionsToolPrompt.prompt();
