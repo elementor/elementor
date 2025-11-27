@@ -106,7 +106,7 @@ export default class extends elementorModules.Module {
 		return this.#sessionRecordingInProgress;
 	}
 
-	getExperimentVariant( experimentName, defaultValue = 'control' ) {
+	async getExperimentVariant( experimentName, defaultValue = 'control' ) {
 		try {
 			if ( ! mixpanel ) {
 				return defaultValue;
@@ -116,15 +116,15 @@ export default class extends elementorModules.Module {
 				return defaultValue;
 			}
 
-			if ( mixpanel.flags && 'function' === typeof mixpanel.flags.isLoaded ) {
-				const flagsLoaded = mixpanel.flags.isLoaded();
-
-				if ( ! flagsLoaded && 'function' === typeof mixpanel.flags.reload ) {
-					mixpanel.flags.reload();
-				}
+			if ( ! mixpanel.flags ) {
+				return defaultValue;
 			}
 
-			const variant = mixpanel.getExperimentVariant( experimentName );
+			if ( 'function' !== typeof mixpanel.flags.get_variant_value ) {
+				return defaultValue;
+			}
+
+			const variant = await mixpanel.flags.get_variant_value( experimentName, defaultValue );
 
 			if ( undefined === variant || null === variant ) {
 				return defaultValue;

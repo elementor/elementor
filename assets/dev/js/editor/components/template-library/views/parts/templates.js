@@ -416,13 +416,13 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		}
 	},
 
-	shouldShowVariantB() {
-		const experimentVariant = elementor.templates.eventManager.getSaveTemplateExperimentVariant();
+	async shouldShowVariantB() {
+		const experimentVariant = await elementor.templates.eventManager.getSaveTemplateExperimentVariant();
 		return 'B' === experimentVariant;
 	},
 
-	handleSourceOptionBadges() {
-		const shouldShow = this.shouldShowVariantB();
+	async handleSourceOptionBadges() {
+		const shouldShow = await this.shouldShowVariantB();
 
 		if ( ! shouldShow ) {
 			this.ui.sourceOptionBadges.hide();
@@ -710,8 +710,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.cloudBadgeDialog.getElements( 'header' ).remove();
 		this.cloudBadgeDialog.getElements( 'buttonsWrapper' ).remove();
 		this.cloudBadgeDialog.show();
-
-		this.sendCTBadgeEvent( 'cloud' );
 	},
 
 	showSiteBadgeTooltip() {
@@ -738,28 +736,6 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.siteBadgeDialog.getElements( 'header' ).remove();
 		this.siteBadgeDialog.getElements( 'buttonsWrapper' ).remove();
 		this.siteBadgeDialog.show();
-
-		this.sendCTBadgeEvent( 'site' );
-	},
-
-	sendCTBadgeEvent( badgeType ) {
-		elementor.templates.eventManager.sendCTBadgeEvent( {
-			ct_badge_hover_position: `${ badgeType }-tab`,
-			ct_badge_type: badgeType,
-			ct_position_state: this.getPositionState(),
-		} );
-	},
-
-	getPositionState() {
-		if ( ! elementor.config.library_connect.is_connected ) {
-			return 'connect';
-		}
-
-		if ( ! elementor.templates.hasCloudLibraryQuota() ) {
-			return 'upgrade';
-		}
-
-		return 'eligible';
 	},
 } );
 

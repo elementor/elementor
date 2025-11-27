@@ -153,7 +153,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.modalContent.show( new TemplateLibraryCloudStateView() );
 	},
 
-	showSaveTemplateView( elementModel, context = SAVE_CONTEXTS.SAVE ) {
+	async showSaveTemplateView( elementModel, context = SAVE_CONTEXTS.SAVE ) {
 		const headerView = this.getHeaderView();
 
 		headerView.menuArea.reset();
@@ -162,7 +162,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 			headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
 		}
 
-		const experimentVariant = elementor.templates.eventManager.getSaveTemplateExperimentVariant();
+		const experimentVariant = await elementor.templates.eventManager.getSaveTemplateExperimentVariant();
 		const SaveTemplateView = resolveSaveTemplateByVariant( experimentVariant );
 		elementor.templates.eventManager.startSaveTemplateExperiment( experimentVariant );
 

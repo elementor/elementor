@@ -30,7 +30,7 @@ export class EventManager {
 			return 'control';
 		}
 
-		return elementorCommon?.eventsManager?.getExperimentVariant( experimentName ) || 'control';
+		return elementorCommon?.eventsManager?.getExperimentVariant( experimentName, 'control' ) || 'control';
 	}
 
 	getSaveTemplateExperimentVariant() {

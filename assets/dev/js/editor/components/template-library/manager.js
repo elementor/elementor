@@ -49,31 +49,32 @@ const TemplateLibraryManager = function() {
 		bulkSelectedItemsTypes = [];
 
 	const registerDefaultTemplateTypes = function() {
-		var data = self.getDefaultTemplateTypeData();
+		self.getDefaultTemplateTypeData().then( ( data ) => {
+			const elements = Object.entries( elementor.getConfig().elements ).reduce( ( acc, [ type, element ] ) => {
+				if ( ! element?.atomic_props_schema ) {
+					return acc;
+				}
 
-		const elements = Object.entries( elementor.getConfig().elements ).reduce( ( acc, [ type, element ] ) => {
-			if ( ! element?.atomic_props_schema ) {
+				acc[ type ] = element.title;
+
 				return acc;
-			}
+			}, {} );
 
-			acc[ type ] = element.title;
+			const translationMap = {
+				page: __( 'Page', 'elementor' ),
+				section: __( 'Section', 'elementor' ),
+				container: __( 'Container', 'elementor' ),
+				...elements,
 
-			return acc;
-		}, {} );
+				[ elementor.config.document.type ]: elementor.config.document.panel.title,
+			};
 
-		const translationMap = {
-			page: __( 'Page', 'elementor' ),
-			section: __( 'Section', 'elementor' ),
-			container: __( 'Container', 'elementor' ),
-			...elements,
-
-			[ elementor.config.document.type ]: elementor.config.document.panel.title,
-		};
-
-		jQuery.each( translationMap, function( type, title ) {
-			var safeData = jQuery.extend( true, {}, data, self.getDefaultTemplateTypeSafeData( title ) );
-
-			self.registerTemplateType( type, safeData );
+			jQuery.each( translationMap, function( type, title ) {
+				self.getDefaultTemplateTypeSafeData( title ).then( ( defaultTemplateData ) => {
+					const safeData = jQuery.extend( true, {}, data, defaultTemplateData );
+					self.registerTemplateType( type, safeData );
+				} );
+			} );
 		} );
 	};
 
@@ -152,61 +153,61 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.getDefaultTemplateTypeData = function() {
-		const experimentVariant = this.eventManager.getSaveTemplateExperimentVariant();
-
-		return {
-			saveDialog: {
-				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
-				canSaveToCloud: true,
-				saveBtnText: variantsConfig[ experimentVariant ]?.saveBtnText,
-			},
-			moveDialog: {
-				description: __( 'Alternatively, you can copy the template.', 'elementor' ),
-				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
-				canSaveToCloud: true,
-				saveBtnText: __( 'Move', 'elementor' ),
-			},
-			copyDialog: {
-				description: __( 'Alternatively, you can move the template.', 'elementor' ),
-				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
-				canSaveToCloud: true,
-				saveBtnText: __( 'Copy', 'elementor' ),
-			},
-			bulkMoveDialog: {
-				description: __( 'Alternatively, you can copy the templates.', 'elementor' ),
-				title: __( 'Move templates to a different location', 'elementor' ),
-				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
-				canSaveToCloud: true,
-				saveBtnText: __( 'Move', 'elementor' ),
-			},
-			bulkCopyDialog: {
-				description: __( 'Alternatively, you can move the templates.', 'elementor' ),
-				title: __( 'Copy templates to a different location', 'elementor' ),
-				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
-				canSaveToCloud: true,
-				saveBtnText: __( 'Copy', 'elementor' ),
-			},
-		};
+		return this.eventManager.getSaveTemplateExperimentVariant().then( ( experimentVariant ) => {
+			return {
+				saveDialog: {
+					icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+					canSaveToCloud: true,
+					saveBtnText: variantsConfig[ experimentVariant ]?.saveBtnText,
+				},
+				moveDialog: {
+					description: __( 'Alternatively, you can copy the template.', 'elementor' ),
+					icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
+					canSaveToCloud: true,
+					saveBtnText: __( 'Move', 'elementor' ),
+				},
+				copyDialog: {
+					description: __( 'Alternatively, you can move the template.', 'elementor' ),
+					icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
+					canSaveToCloud: true,
+					saveBtnText: __( 'Copy', 'elementor' ),
+				},
+				bulkMoveDialog: {
+					description: __( 'Alternatively, you can copy the templates.', 'elementor' ),
+					title: __( 'Move templates to a different location', 'elementor' ),
+					icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
+					canSaveToCloud: true,
+					saveBtnText: __( 'Move', 'elementor' ),
+				},
+				bulkCopyDialog: {
+					description: __( 'Alternatively, you can move the templates.', 'elementor' ),
+					title: __( 'Copy templates to a different location', 'elementor' ),
+					icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
+					canSaveToCloud: true,
+					saveBtnText: __( 'Copy', 'elementor' ),
+				},
+			};
+		} );
 	};
 
 	this.getDefaultTemplateTypeSafeData = function( title ) {
-		const experimentVariant = this.eventManager.getSaveTemplateExperimentVariant();
-
-		return {
-			saveDialog: {
-				description: variantsConfig[ experimentVariant ]?.saveDialogDescription,
-				/* Translators: %s: Template type. */
-				title: sprintf( __( 'Save this %s to your library', 'elementor' ), title ),
-			},
-			moveDialog: {
-				/* Translators: %s: Template type. */
-				title: sprintf( __( 'Move your %s to a different location', 'elementor' ), title ),
-			},
-			copyDialog: {
-				/* Translators: %s: Template type. */
-				title: sprintf( __( 'Copy your %s to a different location', 'elementor' ), title ),
-			},
-		};
+		return this.eventManager.getSaveTemplateExperimentVariant().then( ( experimentVariant ) => {
+			return {
+				saveDialog: {
+					description: variantsConfig[ experimentVariant ]?.saveDialogDescription,
+					/* Translators: %s: Template type. */
+					title: sprintf( __( 'Save this %s to your library', 'elementor' ), title ),
+				},
+				moveDialog: {
+					/* Translators: %s: Template type. */
+					title: sprintf( __( 'Move your %s to a different location', 'elementor' ), title ),
+				},
+				copyDialog: {
+					/* Translators: %s: Template type. */
+					title: sprintf( __( 'Copy your %s to a different location', 'elementor' ), title ),
+				},
+			};
+		} );
 	};
 
 	this.isSelectAllShortcut = function( event ) {
