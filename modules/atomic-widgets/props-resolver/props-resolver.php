@@ -4,12 +4,9 @@ namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Migratable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
-use Elementor\Plugin;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -117,29 +114,40 @@ abstract class Props_Resolver {
 			return $value;
 		}
 
-		$is_inline_editing_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
-
 		if ( $prop_type instanceof Union_Prop_Type ) {
 			$prop_types = $prop_type->get_prop_types();
-			$has_html_type = isset( $prop_types[ Html_Prop_Type::get_key() ] );
-			$has_string_type = isset( $prop_types[ String_Prop_Type::get_key() ] );
 
-			if ( $is_inline_editing_active && $has_html_type ) {
-				if ( $value['$$type'] === String_Prop_Type::get_key() ) {
-					$value['$$type'] = Html_Prop_Type::get_key();
+			foreach ( $prop_types as $union_prop_type ) {
+				if ( ! $union_prop_type instanceof Migratable_Prop_Type ) {
+					continue;
 				}
-			} elseif ( ! $is_inline_editing_active && $has_string_type ) {
-				if ( $value['$$type'] === Html_Prop_Type::get_key() ) {
-					$value['$$type'] = String_Prop_Type::get_key();
+
+				$expected_key = $union_prop_type::get_key();
+
+				if ( $value['$$type'] === $expected_key ) {
+					break;
 				}
+
+				$compatible_keys = $union_prop_type->get_compatible_type_keys();
+
+				if ( ! in_array( $value['$$type'], $compatible_keys, true ) ) {
+					continue;
+				}
+
+				$value['$$type'] = $expected_key;
+				break;
 			}
-		} elseif ( $is_inline_editing_active && $prop_type instanceof Html_Prop_Type ) {
-			if ( $value['$$type'] === String_Prop_Type::get_key() ) {
-				$value['$$type'] = Html_Prop_Type::get_key();
+		} elseif ( $prop_type instanceof Migratable_Prop_Type ) {
+			$expected_key = $prop_type::get_key();
+
+			if ( $value['$$type'] === $expected_key ) {
+				return $value;
 			}
-		} elseif ( ! $is_inline_editing_active && $prop_type instanceof String_Prop_Type && ! ( $prop_type instanceof Html_Prop_Type ) ) {
-			if ( $value['$$type'] === Html_Prop_Type::get_key() ) {
-				$value['$$type'] = String_Prop_Type::get_key();
+
+			$compatible_keys = $prop_type->get_compatible_type_keys();
+
+			if ( in_array( $value['$$type'], $compatible_keys, true ) ) {
+				$value['$$type'] = $expected_key;
 			}
 		}
 
