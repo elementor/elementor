@@ -21,7 +21,7 @@ class Component_Overridable_Prop_Type extends Plain_Prop_Type {
 	}
 
 	public static function get_key(): string {
-		return 'component-overridable';
+		return 'overridable';
 	}
 
 	protected function validate_value( $value ): bool {
@@ -47,10 +47,14 @@ class Component_Overridable_Prop_Type extends Plain_Prop_Type {
 		return $origin_prop_type->validate( $origin_value );
 	}
 
-	protected function sanitize_value( $value ): array {
+	protected function sanitize_value( $value ): ?array {
 		['override_key' => $override_key, 'origin_value' => $origin_value] = $value;
 
 		$origin_prop_type = $this->get_origin_prop_type();
+
+		if ( ! $origin_prop_type ) {
+			return null;
+		}
 
 		$sanitized_override_key = sanitize_text_field( $override_key );
 		$sanitized_origin_value = $origin_prop_type->sanitize( $origin_value );

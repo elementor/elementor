@@ -38,8 +38,6 @@ abstract class Prop_Types_Schema_Extender {
 			$prop_type->get_prop_types() :
 			[ $prop_type ];
 
-		$nested_prop_types = [];
-
 		foreach ( $transformable_prop_types as $transformable_prop_type ) {
 			if ( $transformable_prop_type instanceof Object_Prop_Type ) {
 				$transformable_prop_type->set_shape(
@@ -52,11 +50,9 @@ abstract class Prop_Types_Schema_Extender {
 					$this->get_extended_prop_type( $transformable_prop_type->get_item_type() )
 				);
 			}
-
-			$nested_prop_types = array_merge( $nested_prop_types, [ $transformable_prop_type ] );
 		}
 
-		$prop_types_to_add = $this->get_prop_types_to_add( $prop_type, $nested_prop_types );
+		$prop_types_to_add = $this->get_prop_types_to_add( $prop_type );
 
 		if ( empty( $prop_types_to_add ) ) {
 			return $prop_type;
@@ -77,5 +73,10 @@ abstract class Prop_Types_Schema_Extender {
 		return $union_prop_type;
 	}
 
-	abstract protected function get_prop_types_to_add( Prop_Type $prop_type, array $nested_prop_types ): array;
+	/**
+	 * Get the prop types to add to the prop type we extend
+	 *
+	 * @param Prop_Type $prop_type the prop type we extend
+	 */
+	abstract protected function get_prop_types_to_add( Prop_Type $prop_type ): array;
 }
