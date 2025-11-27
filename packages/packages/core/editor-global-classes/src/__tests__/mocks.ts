@@ -9,4 +9,3 @@ export const mockTrackGlobalClasses = jest.fn( async ( payload: unknown & { runA
 export const mockTrackingModule = {
 	trackGlobalClasses: mockTrackGlobalClasses,
 };
-

@@ -7,8 +7,8 @@ import { __createStore, __dispatch, __registerSlice, type SliceState, type Store
 import { ThemeProvider } from '@elementor/ui';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 
-import { apiClient } from '../../../api';
 import { mockTrackingModule } from '../../../__tests__/mocks';
+import { apiClient } from '../../../api';
 import { slice } from '../../../store';
 import { ClassManagerPanel, usePanelActions } from '../class-manager-panel';
 
@@ -27,7 +27,7 @@ jest.mock( '@elementor/editor-panels', () => ( {
 	__createPanel: jest.fn().mockReturnValue( {
 		usePanelActions: jest.fn( () => ( {} ) ),
 	} ),
-}));
+} ) );
 
 jest.mock( '../../../utils/tracking', () => mockTrackingModule );
 
