@@ -224,7 +224,7 @@ class Style_Schema {
 				'inset',
 				'outset',
 			] )
-			  ->description( 'The border style in CSS values' ),
+				->description( 'The border style in CSS values' ),
 			'outline-width' => Size_Prop_Type::make()
 				->units( Size_Constants::border() )
 				->description( 'The width of the outline in Size PropType format' ),
@@ -236,7 +236,7 @@ class Style_Schema {
 		$background_prop_type = Background_Prop_Type::make();
 		$bg_overlay_prop_type = $background_prop_type->get_shape_field( Background_Overlay_Prop_Type::get_key() );
 		$bg_image_overlay_prop_type = $bg_overlay_prop_type->get_item_type()->get_prop_type( Background_Image_Overlay_Prop_Type::get_key() );
-		Dynamic_Prop_Types_Mapping::make()->get_modified_prop_types( $bg_image_overlay_prop_type->get_shape() );
+		Dynamic_Prop_Types_Mapping::make()->get_extended_schema( $bg_image_overlay_prop_type->get_shape() );
 		return [
 			'background' => $background_prop_type,
 		];

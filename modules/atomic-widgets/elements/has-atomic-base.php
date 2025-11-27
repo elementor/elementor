@@ -13,6 +13,7 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Utils;
+use Elementor\Modules\Components\PropTypes\Component_Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -224,7 +225,7 @@ trait Has_Atomic_Base {
 
 	public static function get_props_schema(): array {
 		$schema = static::define_props_schema();
-		$schema['_cssid'] = String_Prop_Type::make();
+		$schema['_cssid'] = String_Prop_Type::make()->meta( Component_Overridable_Prop_Type::ignore() );
 
 		return apply_filters(
 			'elementor/atomic-widgets/props-schema',

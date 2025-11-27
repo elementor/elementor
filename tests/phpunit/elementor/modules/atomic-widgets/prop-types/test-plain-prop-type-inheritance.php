@@ -15,6 +15,7 @@ class Test_Plain_Prop_Type_Inheritance extends TestCase
 		'Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type',
 		'Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type',
 		'Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type',
+		'Elementor\Modules\Components\PropTypes\Component_Overridable_Prop_Type'
 	];
 
 	const ALLOWED_PROP_KINDS = [
