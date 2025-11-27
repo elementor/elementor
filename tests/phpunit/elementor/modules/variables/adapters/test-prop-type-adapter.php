@@ -55,9 +55,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		] );
 
 		// Act.
-		$this->adapter->to_storage( $collection );
-
-		$result = $collection->serialize();
+		$result = $this->adapter->to_storage( $collection );
 
 		// Assert.
 		$expected = [
@@ -87,9 +85,9 @@ class Test_Prop_Type_Adapter extends TestCase {
 		] );
 
 		// Act.
-		$this->adapter->to_storage( $collection );
 
-		$result = $collection->serialize();
+
+		$result = $this->adapter->to_storage( $collection );
 
 		// Assert.
 		$expected = [
@@ -119,9 +117,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		] );
 
 		// Act.
-		$this->adapter->to_storage( $collection );
-
-		$result = $collection->serialize();
+		$result = $this->adapter->to_storage( $collection );
 
 		// Assert.
 		$expected = [
@@ -153,9 +149,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		] );
 
 		// Act.
-		$this->adapter->to_storage( $collection );
-
-		$result = $collection->serialize();
+		$result = $this->adapter->to_storage( $collection );
 
 		// Assert.
 		$expected = [
@@ -187,9 +181,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		] );
 
 		// Act.
-		$this->adapter->to_storage( $collection );
-
-		$result = $collection->serialize();
+		$result = $this->adapter->to_storage( $collection );
 
 		// Assert.
 		$expected = [
@@ -408,9 +400,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		] );
 
 		// Act.
-		$this->adapter->to_storage( $collection );
-
-		$result = $collection->serialize();
+		$result = $this->adapter->to_storage( $collection );
 
 		$expected_color = [
 			'$$type' => 'color',
@@ -494,9 +484,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		] );
 
 		// Act.
-		$this->adapter->to_storage( $collection );
-
-		$result = $collection->serialize();
+		$result = $this->adapter->to_storage( $collection );
 
 		// Assert.
 		$expected = [
@@ -529,9 +517,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		] );
 
 		// Act.
-		$this->adapter->to_storage( $collection );
-
-		$result = $collection->serialize();
+		$result = $this->adapter->to_storage( $collection );
 
 		$expected = [
 			'$$type' => 'size',
@@ -558,9 +544,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		] );
 
 		// Act.
-		$this->adapter->to_storage( $collection );
-
-		$result = $collection->serialize();
+		$result = $this->adapter->to_storage( $collection );
 		$expected = [
 			'$$type' => 'size',
 			'value' => [
