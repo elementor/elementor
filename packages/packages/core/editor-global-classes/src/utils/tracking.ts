@@ -94,8 +94,8 @@ type EventMap = {
 };
 
 export type TrackingEvent = {
-	[ K in Event ]: { event: Event } & EventMap[ K ];
-}[ Event ];
+	[ K in keyof EventMap ]: { event: K } & EventMap[ K ];
+}[ keyof EventMap ];
 
 type TrackingEventWithComputed = TrackingEvent & {
 	classTitle?: string;
@@ -135,7 +135,7 @@ const getSanitizedData = async ( payload: TrackingEvent ): Promise< Record< stri
 			break;
 		case 'classRemoved':
 			if ( 'classId' in payload && payload.classId ) {
-				const deleteInfo = await getRemovedInfo( payload.classId );
+				const deleteInfo = getRemovedInfo( payload.classId );
 				return { ...payload, ...deleteInfo };
 			}
 			break;

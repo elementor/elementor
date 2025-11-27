@@ -8,7 +8,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { getCapabilities } from './capabilities';
-import { GlobalClassLabelAlreadyExistsError } from './errors';
+import { GlobalClassLabelAlreadyExistsError, GlobalClassTrackingError } from './errors';
 import {
 	selectClass,
 	selectData,
@@ -93,8 +93,7 @@ export const globalClassesStylesProvider = createStylesProvider( {
 		},
 		tracking: ( data: { event: string; [ key: string ]: unknown } ) => {
 			trackGlobalClasses( data as TrackingEvent ).catch( ( error ) => {
-				// eslint-disable-next-line no-console
-				console.error( 'Error tracking global classes event:', error );
+				throw new GlobalClassTrackingError( { cause: error } );
 			} );
 		},
 	},
