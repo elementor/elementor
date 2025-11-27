@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Component_Overridable_Prop_Type extends Plain_Prop_Type {
-	const META_KEY = 'component-overridable';
+	const META_KEY = 'overridable';
 
 	/**
 	 * Return a tuple that lets the developer ignore the component overridable prop type in the props schema

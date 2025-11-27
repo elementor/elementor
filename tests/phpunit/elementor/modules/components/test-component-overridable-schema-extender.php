@@ -38,12 +38,12 @@ class Test_Component_Overridable_Schema_Extender extends Elementor_Test_Base {
 		// Assert
 		$this->assertInstanceof( Union_Prop_Type::class, $schema['prop'] );
 		$this->assertEquals( $prop->get_default(), $schema['prop']->get_default() );
-		$this->assertEquals( [ $prop->get_key(), 'component-overridable' ], array_keys( $schema[ 'prop' ]->get_prop_types() ) );
+		$this->assertEquals( [ $prop->get_key(), 'overridable' ], array_keys( $schema[ 'prop' ]->get_prop_types() ) );
 
         $union = $schema['prop'];
             
         $this->assertEquals( $prop, $union->get_prop_type( $prop->get_key() ) );
-        $this->assertEquals( $prop, $union->get_prop_type( 'component-overridable' )->get_origin_prop_type() );
+        $this->assertEquals( $prop, $union->get_prop_type( 'overridable' )->get_origin_prop_type() );
 	}
 
 	public function test_get_extended_schema__adds_recursively_to_object_types() {
@@ -68,27 +68,27 @@ class Test_Component_Overridable_Schema_Extender extends Elementor_Test_Base {
 		] );
 
 		// Assert
-        // 'prop' is a union prop type, and it has two prop types: the original 'test-prop' and 'component-overridable'
+        // 'prop' is a union prop type, and it has two prop types: the original 'test-prop' and 'overridable'
 		$this->assertInstanceof( Union_Prop_Type::class, $schema['prop'] );
-		$this->assertEquals( [ 'test-prop', 'component-overridable' ], array_keys( $schema['prop']->get_prop_types() ));
+		$this->assertEquals( [ 'test-prop', 'overridable' ], array_keys( $schema['prop']->get_prop_types() ));
 
-        // 'component-overridable' has the original 'test-prop' prop type as its origin prop type
-        $override_component_overridable_prop_type = $schema['prop']->get_prop_type( 'component-overridable' );
+        // 'overridable' has the original 'test-prop' prop type as its origin prop type
+        $override_component_overridable_prop_type = $schema['prop']->get_prop_type( 'overridable' );
         $this->assertEquals( $prop, $override_component_overridable_prop_type->get_origin_prop_type() );
 
         $test_prop_prop_type = $schema['prop']->get_prop_type( 'test-prop' );
         $internal = $test_prop_prop_type->get_shape_field( 'internal' );
 
-        // 'internal' is a union prop type, and it has two prop types: the original 'string' and 'component-overridable'
+        // 'internal' is a union prop type, and it has two prop types: the original 'string' and 'overridable'
 		$this->assertInstanceof( Union_Prop_Type::class, $internal );
-        $this->assertEquals( [ 'string', 'component-overridable' ], array_keys( $internal->get_prop_types() ));
+        $this->assertEquals( [ 'string', 'overridable' ], array_keys( $internal->get_prop_types() ));
 
         // 'string' is the original string prop type, and it has the default value 'test'
         $internal_string_prop_type = $internal->get_prop_type( 'string' );
         $this->assertEquals( 'test', $internal_string_prop_type->get_default()[ 'value' ] );
 
-        // 'component-overridable' has the original 'string' with default value 'test' prop type as its origin prop type
-        $internal_component_overridable_prop_type = $internal->get_prop_type( 'component-overridable' );
+        // 'overridable' has the original 'string' with default value 'test' prop type as its origin prop type
+        $internal_component_overridable_prop_type = $internal->get_prop_type( 'overridable' );
         $this->assertEquals( String_Prop_Type::make()->default( 'test' ), $internal_component_overridable_prop_type->get_origin_prop_type() );
 	}
 

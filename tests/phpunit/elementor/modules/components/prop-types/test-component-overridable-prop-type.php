@@ -20,7 +20,7 @@ class Test_Component_Overridable_Prop_Type extends Elementor_Test_Base {
 
 		// Act
 		$result = $prop_type->validate( [
-			'$$type' => 'component-overridable',
+			'$$type' => 'overridable',
 			'value' => [
 				'override_key' => 'my-override-key',
 				'origin_value' => [ '$$type' => 'string', 'value' => 'Default Text' ],
@@ -77,7 +77,7 @@ class Test_Component_Overridable_Prop_Type extends Elementor_Test_Base {
 
 		// Act
 		$result = $prop_type->validate( [
-			'$$type' => 'component-overridable',
+			'$$type' => 'overridable',
 			'value' => [
 				'override_key' => 'my-key',
 				'origin_value' => [ '$$type' => 'string', 'value' => 'not-in-enum' ],
@@ -94,7 +94,7 @@ class Test_Component_Overridable_Prop_Type extends Elementor_Test_Base {
 
 		// Act
 		$result = $prop_type->validate( [
-			'$$type' => 'component-overridable',
+			'$$type' => 'overridable',
 			'value' => [
 				'override_key' => 'my-key',
 				'origin_value' => [ '$$type' => 'string', 'value' => 'Default Text' ],
@@ -112,7 +112,7 @@ class Test_Component_Overridable_Prop_Type extends Elementor_Test_Base {
 
 		// Act
 		$result = $prop_type->sanitize( [
-			'$$type' => 'component-overridable',
+			'$$type' => 'overridable',
 			'value' => [
 				'override_key' => ' <script>alert(1)</script>my-key ',
 				'origin_value' => [ '$$type' => 'string', 'value' => '<script>alert(2)</script>Text' ],
@@ -121,7 +121,7 @@ class Test_Component_Overridable_Prop_Type extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertEquals( [
-			'$$type' => 'component-overridable',
+			'$$type' => 'overridable',
 			'value' => [
 				'override_key' => 'my-key',
 				'origin_value' => [ '$$type' => 'string', 'value' => 'Text' ],
