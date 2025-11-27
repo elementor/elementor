@@ -20,7 +20,7 @@ class Module extends BaseModule {
 	public static function get_experimental_data() {
 		return [
 			'name'           => static::EXPERIMENT_NAME,
-			'title'          => esc_html__( 'Editor One', 'elementor' ),
+			'title'          => esc_html__( 'Editor one', 'elementor' ),
 			'description'    => esc_html__( 'General', 'elementor' ),
 			'hidden'         => true,
 			'default'        => Experiments_Manager::STATE_INACTIVE,
