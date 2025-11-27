@@ -1,10 +1,14 @@
 import { updateElementSettings, type V1ElementData } from '@elementor/editor-elements';
-import { type TransformablePropValue } from '@elementor/editor-props';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { apiClient } from '../api';
 import { selectUnpublishedComponents, slice } from '../store/store';
-import { type Container, type DocumentSaveStatus, type UnpublishedComponent } from '../types';
+import {
+	type ComponentInstancePropValue,
+	type Container,
+	type DocumentSaveStatus,
+	type UnpublishedComponent,
+} from '../types';
 
 export async function createComponentsBeforeSave( {
 	container,
@@ -80,8 +84,9 @@ function shouldUpdateElement(
 	uidToComponentId: Map< string, number >
 ): { shouldUpdate: true; newComponentId: number } | { shouldUpdate: false; newComponentId: null } {
 	if ( element.widgetType === 'e-component' ) {
-		const currentComponentId = ( element.settings?.component as TransformablePropValue< 'component-id', string > )
-			?.value;
+		const currentComponentId = ( element.settings?.component_instance as ComponentInstancePropValue< string > )
+			?.value?.component_id;
+
 		if ( currentComponentId && uidToComponentId.has( currentComponentId ) ) {
 			return { shouldUpdate: true, newComponentId: uidToComponentId.get( currentComponentId ) as number };
 		}
@@ -93,9 +98,9 @@ function updateElementComponentId( elementId: string, componentId: number ): voi
 	updateElementSettings( {
 		id: elementId,
 		props: {
-			component: {
-				$$type: 'component-id',
-				value: componentId,
+			component_instance: {
+				$$type: 'component-instance',
+				value: { component_id: componentId },
 			},
 		},
 		withHistory: false,
