@@ -45,7 +45,7 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 			Object.entries( schema ).map( async ( [ key, type ] ) => {
 				const value = props[ key ] ?? type.default;
 
-				const transformed = await transform( { value, key, type, signal } ) as PropValue;
+				const transformed = ( await transform( { value, key, type, signal } ) ) as PropValue;
 
 				onPropResolve?.( { key, value: transformed } );
 

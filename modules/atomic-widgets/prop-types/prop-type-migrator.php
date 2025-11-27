@@ -14,7 +14,7 @@ class Prop_Type_Migrator {
 	/**
 	 * Migrate prop type value to match the expected prop type if compatible.
 	 *
-	 * @param mixed $value The prop value to migrate
+	 * @param mixed     $value The prop value to migrate
 	 * @param Prop_Type $prop_type The expected prop type
 	 * @return mixed The migrated value
 	 */
@@ -37,7 +37,7 @@ class Prop_Type_Migrator {
 	/**
 	 * Migrate value for Union prop type.
 	 *
-	 * @param array $value The prop value to migrate
+	 * @param array           $value The prop value to migrate
 	 * @param Union_Prop_Type $union_prop_type The union prop type
 	 * @return array The migrated value
 	 */
@@ -71,7 +71,7 @@ class Prop_Type_Migrator {
 	/**
 	 * Migrate value for Migratable prop type.
 	 *
-	 * @param array $value The prop value to migrate
+	 * @param array                $value The prop value to migrate
 	 * @param Migratable_Prop_Type $migratable_prop_type The migratable prop type
 	 * @return array The migrated value
 	 */
@@ -91,4 +91,3 @@ class Prop_Type_Migrator {
 		return $value;
 	}
 }
-
