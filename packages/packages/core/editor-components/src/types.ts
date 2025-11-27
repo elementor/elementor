@@ -86,3 +86,8 @@ type ComponentOverride = {
 	override_key: string;
 	value: TransformablePropValue< string >;
 };
+
+export type ComponentOverridable = {
+	override_key: string;
+	origin_value: TransformablePropValue< string >;
+};
