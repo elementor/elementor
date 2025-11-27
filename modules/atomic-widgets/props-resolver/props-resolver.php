@@ -5,7 +5,11 @@ namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Plugin;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -46,6 +50,8 @@ abstract class Props_Resolver {
 	}
 
 	protected function transform( $value, $key, Prop_Type $prop_type ) {
+		$value = $this->migrate_prop_type( $value, $prop_type );
+
 		if ( $prop_type instanceof Union_Prop_Type ) {
 			$prop_type = $prop_type->get_prop_type( $value['$$type'] );
 
@@ -103,6 +109,40 @@ abstract class Props_Resolver {
 			! empty( $value['$$type'] ) &&
 			array_key_exists( 'value', $value )
 		);
+	}
+
+	protected function migrate_prop_type( $value, Prop_Type $prop_type ) {
+		if ( ! is_array( $value ) || ! isset( $value['$$type'] ) || ! isset( $value['value'] ) ) {
+			return $value;
+		}
+
+		$is_inline_editing_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
+
+		if ( $prop_type instanceof Union_Prop_Type ) {
+			$prop_types = $prop_type->get_prop_types();
+			$has_html_type = isset( $prop_types[ Html_Prop_Type::get_key() ] );
+			$has_string_type = isset( $prop_types[ String_Prop_Type::get_key() ] );
+
+			if ( $is_inline_editing_active && $has_html_type ) {
+				if ( $value['$$type'] === String_Prop_Type::get_key() ) {
+					$value['$$type'] = Html_Prop_Type::get_key();
+				}
+			} elseif ( ! $is_inline_editing_active && $has_string_type ) {
+				if ( $value['$$type'] === Html_Prop_Type::get_key() ) {
+					$value['$$type'] = String_Prop_Type::get_key();
+				}
+			}
+		} elseif ( $is_inline_editing_active && $prop_type instanceof Html_Prop_Type ) {
+			if ( $value['$$type'] === String_Prop_Type::get_key() ) {
+				$value['$$type'] = Html_Prop_Type::get_key();
+			}
+		} elseif ( ! $is_inline_editing_active && $prop_type instanceof String_Prop_Type && ! ( $prop_type instanceof Html_Prop_Type ) ) {
+			if ( $value['$$type'] === Html_Prop_Type::get_key() ) {
+				$value['$$type'] = String_Prop_Type::get_key();
+			}
+		}
+
+		return $value;
 	}
 
 	abstract public function resolve( array $schema, array $props ): array;
