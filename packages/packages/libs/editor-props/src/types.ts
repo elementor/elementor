@@ -17,6 +17,7 @@ export type DependencyOperator =
 export type DependencyTerm = {
 	operator: DependencyOperator;
 	path: string[];
+	nestedPath?: string[];
 	value: PropValue;
 	newValue?: TransformablePropValue< string >;
 };

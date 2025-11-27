@@ -87,6 +87,7 @@ class Manager {
 		$term = [
 			'operator' => $config['operator'],
 			'path' => $config['path'],
+			'nestedPath' => $config['nestedPath'] ?? null,
 			'value' => $config['value'] ?? null,
 			'newValue' => $config['newValue'] ?? null,
 		];
