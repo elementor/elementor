@@ -7,6 +7,8 @@ import {
 	type PropValue,
 } from '@elementor/editor-props';
 
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
+
 import { type TransformersRegistry } from '../transformers/create-transformers-registry';
 import { getMultiPropsValue, isMultiProps } from './multi-props';
 
@@ -76,6 +78,8 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 			return null;
 		}
 
+		value = migratePropType( value, type );
+
 		if ( type.kind === 'union' ) {
 			type = type.prop_types[ value.$$type ];
 
@@ -120,6 +124,40 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 		} catch {
 			return null;
 		}
+	}
+
+	function migratePropType( value: PropValue, propType: PropType ): PropValue {
+		if ( ! isTransformable( value ) ) {
+			return value;
+		}
+
+		const isInlineEditingActive = isExperimentActive( 'v4-inline-text-editing' );
+
+		if ( propType.kind === 'union' ) {
+			const propTypes = propType.prop_types;
+			const hasHtmlType = 'html' in propTypes;
+			const hasStringType = 'string' in propTypes;
+
+			if ( isInlineEditingActive && hasHtmlType ) {
+				if ( value.$$type === 'string' ) {
+					return { ...value, $$type: 'html' };
+				}
+			} else if ( ! isInlineEditingActive && hasStringType ) {
+				if ( value.$$type === 'html' ) {
+					return { ...value, $$type: 'string' };
+				}
+			}
+		} else if ( isInlineEditingActive && propType.key === 'html' ) {
+			if ( value.$$type === 'string' ) {
+				return { ...value, $$type: 'html' };
+			}
+		} else if ( ! isInlineEditingActive && propType.key === 'string' && propType.kind !== 'union' ) {
+			if ( value.$$type === 'html' ) {
+				return { ...value, $$type: 'string' };
+			}
+		}
+
+		return value;
 	}
 
 	return resolve;
