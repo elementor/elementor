@@ -31,9 +31,7 @@ class Variables_Repository {
 	public function save( Variables_Collection $collection ) {
 		$collection->increment_watermark();
 
-		Prop_Type_Adapter::to_storage( $collection );
-
-		$record = $collection->serialize();
+		$record = Prop_Type_Adapter::to_storage( $collection );
 
 		if ( $this->kit->update_json_meta( static::VARIABLES_META_KEY, $record ) ) {
 			return $collection->watermark();

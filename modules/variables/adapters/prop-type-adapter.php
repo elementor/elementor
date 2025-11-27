@@ -14,10 +14,11 @@ class Prop_Type_Adapter {
 	const GLOBAL_SIZE_VARIABLE_KEY = 'global-size-variable';
 	const GLOBAL_CUSTOM_SIZE_VARIABLE_KEY = 'global-custom-size-variable';
 
-	public static function to_storage( Variables_Collection $collection ): void {
+	public static function to_storage( Variables_Collection $collection ): array {
 		$schema = self::get_schema();
+		$record = $collection->serialize();
 
-		$collection->each( function( Variable $variable ) use ( $schema ) {
+		$collection->each( function( Variable $variable ) use ( $schema, &$record ) {
 			$type = $variable->type();
 			$value = $variable->value();
 			$prop_type = $schema[ $type ] ?? null;
@@ -37,8 +38,10 @@ class Prop_Type_Adapter {
 				];
 			}
 
-			$variable->set_value( $prop_type::generate( $value ) );
+			$record['data'][ $variable->id() ] = array_merge( $variable->to_array(), [ 'value' => $prop_type::generate( $value ) ] );
 		} );
+
+		return $record;
 	}
 
 	public static function from_storage( Variables_Collection $collection ): Variables_Collection {
@@ -77,7 +80,7 @@ class Prop_Type_Adapter {
 	private static function parse_size_value( string $value ) {
 		$value = trim( strtolower( $value ) );
 
-		if ( $value === 'auto' ) {
+		if ( 'auto' === $value ) {
 			return [
 				'size' => '',
 				'unit' => 'auto',
