@@ -40,6 +40,7 @@ export const ONBOARDING_STORAGE_KEYS = {
 	STEP3_END_STATE_SENT: 'elementor_onboarding_step3_end_state_sent',
 	STEP4_END_STATE_SENT: 'elementor_onboarding_step4_end_state_sent',
 	STEP2_THEMES_LOADED_SENT: 'elementor_onboarding_step2_themes_loaded_sent',
+	SESSION_REPLAY_STARTED: 'elementor_onboarding_session_replay_started',
 };
 
 export function getString( key ) {
@@ -163,6 +164,7 @@ export function clearAllOnboardingData() {
 	remove( ONBOARDING_STORAGE_KEYS.STEP3_END_STATE_SENT );
 	remove( ONBOARDING_STORAGE_KEYS.STEP4_END_STATE_SENT );
 	remove( ONBOARDING_STORAGE_KEYS.STEP2_THEMES_LOADED_SENT );
+	remove( ONBOARDING_STORAGE_KEYS.SESSION_REPLAY_STARTED );
 }
 
 export function clearExperimentData() {

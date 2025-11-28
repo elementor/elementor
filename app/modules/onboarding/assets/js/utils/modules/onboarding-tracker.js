@@ -5,8 +5,6 @@ import TimingManager from './timing-manager.js';
 import PostOnboardingTracker from './post-onboarding-tracker.js';
 
 class OnboardingTracker {
-	#hasAttemptedSessionRecording = false;
-
 	constructor() {
 		this.initializeEventConfigs();
 		this.initializeEventListeners();
@@ -1080,7 +1078,7 @@ class OnboardingTracker {
 	}
 
 	startSessionRecordingIfNeeded() {
-		if ( this.#hasAttemptedSessionRecording ) {
+		if ( StorageManager.exists( ONBOARDING_STORAGE_KEYS.SESSION_REPLAY_STARTED ) ) {
 			return;
 		}
 
@@ -1089,7 +1087,7 @@ class OnboardingTracker {
 		}
 
 		if ( elementorCommon.eventsManager.isSessionRecordingInProgress() ) {
-			this.#hasAttemptedSessionRecording = true;
+			StorageManager.setString( ONBOARDING_STORAGE_KEYS.SESSION_REPLAY_STARTED, 'true' );
 			return;
 		}
 
@@ -1098,7 +1096,7 @@ class OnboardingTracker {
 			return;
 		}
 
-		this.#hasAttemptedSessionRecording = true;
+		StorageManager.setString( ONBOARDING_STORAGE_KEYS.SESSION_REPLAY_STARTED, 'true' );
 
 		featureFlagPromise
 			.then( ( isFeatureFlagActive ) => {

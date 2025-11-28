@@ -54,6 +54,7 @@ class PostOnboardingTracker {
 
 	cleanupPostOnboardingTracking() {
 		ClickTracker.cleanup();
+		StorageManager.remove( ONBOARDING_STORAGE_KEYS.SESSION_REPLAY_STARTED );
 	}
 
 	clearAllOnboardingStorage() {
