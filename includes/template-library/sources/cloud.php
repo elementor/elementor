@@ -7,6 +7,7 @@ use Elementor\Modules\CloudLibrary\Connect\Cloud_Library;
 use Elementor\Modules\CloudLibrary\Documents\Cloud_Template_Preview;
 use Elementor\Plugin;
 use Elementor\DB;
+use Elementor\Utils as ElementorUtils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -61,6 +62,14 @@ class Source_Cloud extends Source_Base {
 			return $data;
 		}
 
+		if ( ! empty( $data['mediaDownloadUrl'] ) ) {
+			$media_zip = self::get_remote_kit_zip( $data['mediaDownloadUrl'], 'media.zip' );
+
+			if ( ! is_wp_error( $media_zip ) ) {
+				$this->setup_media_mapping( $media_zip );
+			}
+		}
+
 		$decoded_data = json_decode( $data['content'], true );
 		$data['content'] = $decoded_data['content'];
 
@@ -94,11 +103,107 @@ class Source_Cloud extends Source_Base {
 	public function save_item( $template_data ): int {
 		$app = $this->get_app();
 
+		$media = null;
+		if ( $this->should_collect_media() ) {
+			$media_collector = new \Elementor\TemplateLibrary\Classes\Media_Collector();
+			$media = $this->collect_and_upload_template_media( $template_data['content'], $media_collector );
+		}
+
 		$resource_data = $this->format_resource_item_for_create( $template_data );
 
 		$response = $app->post_resource( $resource_data );
 
+		if ( $media && ! empty( $response['mediaUploadUrl'] ) ) {
+			$zip_file = ElementorUtils::file_get_contents( $media );
+			$app->upload_content_file( $response['mediaUploadUrl'], $zip_file );
+			$media_collector->cleanup();
+		}
+
 		return (int) $response['id'];
+	}
+
+	private function should_collect_media() {
+		return true;
+	}
+
+	private function collect_and_upload_template_media( $content, $media_collector ) {
+		try {
+			$media_collector->start_collection();
+
+			$this->process_export_import_content( $content, 'on_export' );
+
+			$media_urls = $media_collector->get_collected_urls();
+
+			$zip_path = $media_collector->process_media_collection( $media_urls );
+
+			return $zip_path;
+		} catch ( Exception $e ) {
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( 'Elementor: Failed to collect template media: ' . $e->getMessage() );
+			return null;
+		}
+	}
+
+	// Copied.
+	private function setup_media_mapping( $media_zip_path ) {
+		\Elementor\TemplateLibrary\Classes\Media_Mapper::clear_mapping();
+
+		$media_dir = null;
+
+		if ( file_exists( $media_zip_path ) ) {
+			$media_dir = $this->extract_media_zip( $media_zip_path );
+		}
+
+		if ( $media_dir && file_exists( $media_dir . '/media-mapping.json' ) ) {
+			$media_mapping = json_decode( file_get_contents( $media_dir . '/media-mapping.json' ), true );
+
+			\Elementor\TemplateLibrary\Classes\Media_Mapper::set_mapping( $media_mapping, $media_dir );
+		}
+
+		Plugin::$instance->uploads_manager->remove_file_or_dir( $media_zip_path );
+
+		return $media_dir;
+	}
+
+	// Copied.
+	private function extract_media_zip( $zip_path ) {
+		if ( ! class_exists( '\ZipArchive' ) ) {
+			return null;
+		}
+
+		$zip = new \ZipArchive();
+		if ( $zip->open( $zip_path ) !== true ) {
+			return null;
+		}
+
+		$media_dir = dirname( $zip_path ) . '/media';
+		if ( ! $zip->extractTo( $media_dir ) ) {
+			$zip->close();
+			return null;
+		}
+
+		$zip->close();
+
+		return $media_dir;
+	}
+
+	// Copied.
+	public static function get_remote_kit_zip( $url, $file_name = 'kit.zip' ) {
+		$remote_zip_request = wp_safe_remote_get( $url, [
+			'timeout' => 300,
+		] );
+
+		if ( is_wp_error( $remote_zip_request ) ) {
+			Plugin::$instance->logger->get_logger()->error( $remote_zip_request->get_error_message() );
+			// throw new \Error( ImportExportCustomization_Module::CLOUD_KIT_LIBRARY_ERROR_LOADING_RESOURCE ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		if ( 200 !== $remote_zip_request['response']['code'] ) {
+			Plugin::$instance->logger->get_logger()->error( $remote_zip_request['response']['message'] );
+			// throw new \Error( ImportExportCustomization_Module::CLOUD_KIT_LIBRARY_ERROR_LOADING_RESOURCE ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
+		}
+
+		return Plugin::$instance->uploads_manager->create_temp_file( $remote_zip_request['body'], $file_name );
 	}
 
 	private function format_resource_item_for_create( $template_data ) {
