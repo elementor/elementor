@@ -113,15 +113,12 @@ export default class extends elementorModules.Module {
 
 	async getExperimentVariant( experimentName, defaultValue = 'control' ) {
 		try {
-			console.log('!_1_!')
 			const isAbTestingEnabled = elementorCommon.config.editor_events?.flags_enabled ?? false;
 
-			console.log('!_2_!', isAbTestingEnabled);
 			if ( ! isAbTestingEnabled ) {
 				return defaultValue;
 			}
 
-			console.log('!_3_!');
 			if ( ! mixpanel ) {
 				return defaultValue;
 			}
@@ -140,7 +137,6 @@ export default class extends elementorModules.Module {
 
 			const variant = await mixpanel.flags.get_variant_value( experimentName, defaultValue );
 
-			console.log('!_4_!', variant);
 			if ( undefined === variant || null === variant ) {
 				return defaultValue;
 			}
