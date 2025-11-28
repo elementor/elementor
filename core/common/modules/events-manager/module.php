@@ -29,7 +29,9 @@ class Module extends BaseModule {
 			! Tracker::has_terms_changed( '2025-07-07' ) &&
 			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
 
-		$session_replays = self::get_remote_mixpanel_config()[0]['sessionReplays'] ?? [];
+		$mixpanel_config = self::get_remote_mixpanel_config();
+		$session_replays = $mixpanel_config[0]['sessionReplays'] ?? [];
+		$is_ab_testing_enabled = $mixpanel_config[0]['abTesting'] ?? false;
 
 		$settings = [
 			'can_send_events' => $can_send_events,
@@ -43,6 +45,7 @@ class Module extends BaseModule {
 			'subscription' => self::get_subscription(),
 			'token' => ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN,
 			'session_replays' => $session_replays,
+			'ab_testing_enabled' => $is_ab_testing_enabled,
 		];
 
 		return $settings;
@@ -97,4 +100,5 @@ class Module extends BaseModule {
 
 		return $data['mixpanel'];
 	}
+
 }

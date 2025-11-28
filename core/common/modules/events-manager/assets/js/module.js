@@ -9,6 +9,8 @@ export default class extends elementorModules.Module {
 	onInit() {
 		this.config = eventsConfig;
 
+		const isAbTestingEnabled = elementorCommon.config.editor_events?.ab_testing_enabled ?? false;
+
 		mixpanel.init(
 			elementorCommon.config.editor_events?.token,
 			{
@@ -18,7 +20,7 @@ export default class extends elementorModules.Module {
 				record_idle_timeout_ms: 60000,
 				record_max_ms: 300000,
 				record_mask_text_selector: '',
-				flags: true,
+				flags: isAbTestingEnabled,
 			},
 		);
 
@@ -108,6 +110,12 @@ export default class extends elementorModules.Module {
 
 	async getExperimentVariant( experimentName, defaultValue = 'control' ) {
 		try {
+			const isAbTestingEnabled = elementorCommon.config.editor_events?.ab_testing_enabled ?? false;
+
+			if ( ! isAbTestingEnabled ) {
+				return defaultValue;
+			}
+
 			if ( ! mixpanel ) {
 				return defaultValue;
 			}
