@@ -5,6 +5,8 @@ import TimingManager from './timing-manager.js';
 import PostOnboardingTracker from './post-onboarding-tracker.js';
 
 class OnboardingTracker {
+	#hasAttemptedSessionRecording = false;
+
 	constructor() {
 		this.initializeEventConfigs();
 		this.initializeEventListeners();
@@ -1078,10 +1080,25 @@ class OnboardingTracker {
 	}
 
 	startSessionRecordingIfNeeded() {
+		if ( this.#hasAttemptedSessionRecording ) {
+			return;
+		}
+
+		if ( 'function' !== typeof elementorCommon?.eventsManager?.isSessionRecordingInProgress ) {
+			return;
+		}
+
+		if ( elementorCommon.eventsManager.isSessionRecordingInProgress() ) {
+			this.#hasAttemptedSessionRecording = true;
+			return;
+		}
+
 		const featureFlagPromise = elementorCommon?.eventsManager?.featureFlagIsActive?.( 'core-onboarding-session-replays' );
 		if ( ! featureFlagPromise ) {
 			return;
 		}
+
+		this.#hasAttemptedSessionRecording = true;
 
 		featureFlagPromise
 			.then( ( isFeatureFlagActive ) => {
@@ -1099,11 +1116,15 @@ class OnboardingTracker {
 			return;
 		}
 
-		if ( ! elementorCommon?.eventsManager?.isSessionRecordingInProgress ) {
+		if ( 'function' !== typeof elementorCommon?.eventsManager?.isSessionRecordingInProgress ) {
 			return;
 		}
 
 		if ( elementorCommon.eventsManager.isSessionRecordingInProgress() ) {
+			return;
+		}
+
+		if ( 'function' !== typeof elementorCommon?.eventsManager?.startSessionRecording ) {
 			return;
 		}
 
