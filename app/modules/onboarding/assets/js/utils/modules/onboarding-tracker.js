@@ -1109,6 +1109,10 @@ class OnboardingTracker {
 			return;
 		}
 
+		if ( elementorCommon?.eventsManager?.isSessionRecordingInProgress?.() ) {
+			return;
+		}
+
 		elementorCommon.eventsManager?.dispatchEvent( ONBOARDING_EVENTS_MAP.SESSION_REPLAY_START, {
 			location: 'plugin_onboarding',
 		} );
