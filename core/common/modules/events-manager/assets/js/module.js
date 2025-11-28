@@ -19,6 +19,7 @@ export default class extends elementorModules.Module {
 				record_max_ms: 300000,
 				record_mask_text_selector: '',
 				flags: true,
+				api_host: 'https://api-eu.mixpanel.com',
 			},
 		);
 

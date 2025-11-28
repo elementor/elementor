@@ -1109,27 +1109,15 @@ class OnboardingTracker {
 			return;
 		}
 
-		if ( 'function' !== typeof elementorCommon?.eventsManager?.startSessionRecording ) {
-			return;
-		}
-
-		elementorCommon.eventsManager.dispatchEvent( ONBOARDING_EVENTS_MAP.SESSION_REPLAY_START, {
-			location: 'plugin_onboarding',
-		} );
-
-		elementorCommon.eventsManager.startSessionRecording();
+		elementorCommon.eventsManager?.startSessionRecording();
 	}
 
 	stopSessionRecordingIfNeeded() {
-		if ( ! elementorCommon?.eventsManager?.stopSessionRecording ) {
-			return;
-		}
-
 		if ( ! StorageManager.exists( ONBOARDING_STORAGE_KEYS.SESSION_REPLAY_STARTED ) ) {
 			return;
 		}
 
-		elementorCommon.eventsManager.stopSessionRecording();
+		elementorCommon.eventsManager?.stopSessionRecording();
 	}
 
 	onStepLoad( currentStep ) {
