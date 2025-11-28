@@ -31,7 +31,7 @@ class Module extends BaseModule {
 
 		$mixpanel_config = self::get_remote_mixpanel_config();
 		$session_replays = $mixpanel_config[0]['sessionReplays'] ?? [];
-		$is_ab_testing_enabled = $mixpanel_config[0]['abTesting'] ?? false;
+		$is_flags_enabled = $mixpanel_config[0]['flags'] ?? false;
 
 		$settings = [
 			'can_send_events' => $can_send_events,
@@ -45,7 +45,7 @@ class Module extends BaseModule {
 			'subscription' => self::get_subscription(),
 			'token' => ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN,
 			'session_replays' => $session_replays,
-			'ab_testing_enabled' => $is_ab_testing_enabled,
+			'flags_enabled' => $is_flags_enabled,
 		];
 
 		return $settings;

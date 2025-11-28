@@ -9,7 +9,7 @@ export default class extends elementorModules.Module {
 	onInit() {
 		this.config = eventsConfig;
 
-		const isAbTestingEnabled = elementorCommon.config.editor_events?.ab_testing_enabled ?? false;
+		const isAbTestingEnabled = elementorCommon.config.editor_events?.flags_enabled ?? false;
 
 		mixpanel.init(
 			elementorCommon.config.editor_events?.token,
@@ -21,6 +21,9 @@ export default class extends elementorModules.Module {
 				record_max_ms: 300000,
 				record_mask_text_selector: '',
 				flags: isAbTestingEnabled,
+				api_hosts: {
+					flags: 'https://api-eu.mixpanel.com',
+				},
 			},
 		);
 
@@ -110,12 +113,15 @@ export default class extends elementorModules.Module {
 
 	async getExperimentVariant( experimentName, defaultValue = 'control' ) {
 		try {
-			const isAbTestingEnabled = elementorCommon.config.editor_events?.ab_testing_enabled ?? false;
+			console.log('!_1_!')
+			const isAbTestingEnabled = elementorCommon.config.editor_events?.flags_enabled ?? false;
 
+			console.log('!_2_!', isAbTestingEnabled);
 			if ( ! isAbTestingEnabled ) {
 				return defaultValue;
 			}
 
+			console.log('!_3_!');
 			if ( ! mixpanel ) {
 				return defaultValue;
 			}
@@ -134,6 +140,7 @@ export default class extends elementorModules.Module {
 
 			const variant = await mixpanel.flags.get_variant_value( experimentName, defaultValue );
 
+			console.log('!_4_!', variant);
 			if ( undefined === variant || null === variant ) {
 				return defaultValue;
 			}
