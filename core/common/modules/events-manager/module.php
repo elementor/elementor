@@ -100,5 +100,4 @@ class Module extends BaseModule {
 
 		return $data['mixpanel'];
 	}
-
 }
