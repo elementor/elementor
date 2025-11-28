@@ -1082,15 +1082,6 @@ class OnboardingTracker {
 			return;
 		}
 
-		if ( 'function' !== typeof elementorCommon?.eventsManager?.isSessionRecordingInProgress ) {
-			return;
-		}
-
-		if ( elementorCommon.eventsManager.isSessionRecordingInProgress() ) {
-			StorageManager.setString( ONBOARDING_STORAGE_KEYS.SESSION_REPLAY_STARTED, 'true' );
-			return;
-		}
-
 		const featureFlagPromise = elementorCommon?.eventsManager?.featureFlagIsActive?.( 'core-onboarding-session-replays' );
 		if ( ! featureFlagPromise ) {
 			return;
@@ -1114,11 +1105,7 @@ class OnboardingTracker {
 			return;
 		}
 
-		if ( 'function' !== typeof elementorCommon?.eventsManager?.isSessionRecordingInProgress ) {
-			return;
-		}
-
-		if ( elementorCommon.eventsManager.isSessionRecordingInProgress() ) {
+		if ( ! StorageManager.exists( ONBOARDING_STORAGE_KEYS.SESSION_REPLAY_STARTED ) ) {
 			return;
 		}
 
@@ -1138,7 +1125,7 @@ class OnboardingTracker {
 			return;
 		}
 
-		if ( ! elementorCommon.eventsManager.isSessionRecordingInProgress() ) {
+		if ( ! StorageManager.exists( ONBOARDING_STORAGE_KEYS.SESSION_REPLAY_STARTED ) ) {
 			return;
 		}
 
