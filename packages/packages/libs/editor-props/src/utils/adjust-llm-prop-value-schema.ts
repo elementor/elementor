@@ -5,6 +5,13 @@ const ensureNotNull = ( v: unknown, fallback: unknown ) => ( v === null ? fallba
 
 export const adjustLlmPropValueSchema = ( value: Readonly< PropValue >, forceKey?: string ): PropValue => {
 	const clone = structuredClone( value );
+
+	if ( typeof clone === 'string' ) {
+		return stringPropTypeUtil.create( clone );
+	}
+	if ( typeof clone === 'number' ) {
+		return numberPropTypeUtil.create( clone );
+	}
 	// Check for transformable types
 	if ( clone && typeof clone === 'object' ) {
 		if ( Array.isArray( clone ) ) {
