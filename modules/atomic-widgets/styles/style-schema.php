@@ -50,18 +50,18 @@ class Style_Schema {
 
 	private static function get_size_props() {
 		return [
-			'width' => Size_Prop_Type::make(),
-			'height' => Size_Prop_Type::make(),
-			'min-width' => Size_Prop_Type::make(),
-			'min-height' => Size_Prop_Type::make(),
-			'max-width' => Size_Prop_Type::make(),
-			'max-height' => Size_Prop_Type::make(),
+			'width' => Size_Prop_Type::make()->description( 'The width of the element' ),
+			'height' => Size_Prop_Type::make()->description( 'The height of the element' ),
+			'min-width' => Size_Prop_Type::make()->description( 'The minimum width of the element' ),
+			'min-height' => Size_Prop_Type::make()->description( 'The minimum height of the element' ),
+			'max-width' => Size_Prop_Type::make()->description( 'The maximum width of the element' ),
+			'max-height' => Size_Prop_Type::make()->description( 'The maximum height of the element' ),
 			'overflow' => String_Prop_Type::make()->enum( [
 				'visible',
 				'hidden',
 				'auto',
 			] )->description( 'The overflow CSS property. CSS values: visible, hidden, auto' ),
-			'aspect-ratio' => String_Prop_Type::make(),
+			'aspect-ratio' => String_Prop_Type::make()->description( 'Equivalent to CSS aspect-ration property' ),
 			'object-fit' => String_Prop_Type::make()->enum( [
 				'fill',
 				'cover',
@@ -97,10 +97,10 @@ class Style_Schema {
 				'fixed',
 				'sticky',
 			] )->description( 'The CSS position property specifies the type of positioning method used for an element (static, relative, absolute, fixed, or sticky).' ),
-			'inset-block-start' => Size_Prop_Type::make(),
-			'inset-inline-end' => Size_Prop_Type::make(),
-			'inset-block-end' => Size_Prop_Type::make(),
-			'inset-inline-start' => Size_Prop_Type::make(),
+			'inset-block-start' => Size_Prop_Type::make()->description( 'Size PropType for the inset-block-start CSS property' ),
+			'inset-inline-end' => Size_Prop_Type::make()->description( 'Size PropType for the inset-inline-end CSS property' ),
+			'inset-block-end' => Size_Prop_Type::make()->description( 'Size PropType for the inset-block-end CSS property' ),
+			'inset-inline-start' => Size_Prop_Type::make()->description( 'Size PropType for the inset-inline-start CSS property' ),
 			'z-index' => Number_Prop_Type::make()
 				->description( 'The z-index CSS property sets the z-order of a positioned element and its descendants or flex items. It specifies the stack order of elements.' ),
 			'scroll-margin-top' => Size_Prop_Type::make()->units( Size_Constants::anchor_offset() ),
@@ -109,7 +109,7 @@ class Style_Schema {
 
 	private static function get_typography_props() {
 		return [
-			'font-family' => String_Prop_Type::make(),
+			'font-family' => String_Prop_Type::make()->description( 'The font family of the text content.' ),
 			'font-weight' => String_Prop_Type::make()->enum( [
 				'100',
 				'200',
@@ -126,12 +126,12 @@ class Style_Schema {
 				'lighter',
 			] )
 				->description( 'The weight (or boldness) of the font. Values should match css font-weight specifications.' ),
-			'font-size' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
+			'font-size' => Size_Prop_Type::make()->units( Size_Constants::typography() )->description( 'The font size in Size PropType Format' ),
 			'color' => Color_Prop_Type::make()
 				->description( 'The text color, specified as a hex code, rgb(a), hsl(a), or a standard css color name.' ),
-			'letter-spacing' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
-			'word-spacing' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
-			'column-count' => Number_Prop_Type::make(),
+			'letter-spacing' => Size_Prop_Type::make()->units( Size_Constants::typography() )->description( 'The spacing between letters in Size PropType format' ),
+			'word-spacing' => Size_Prop_Type::make()->units( Size_Constants::typography() )->description( 'The spacing between words in Size PropType format' ),
+			'column-count' => Number_Prop_Type::make()->description( 'The number of columns the text content should be divided into.' ),
 			'column-gap' => Size_Prop_Type::make()
 				->set_dependencies(
 					Dependency_Manager::make()
@@ -142,7 +142,7 @@ class Style_Schema {
 					] )
 					->get()
 				),
-			'line-height' => Size_Prop_Type::make()->units( Size_Constants::typography() ),
+			'line-height' => Size_Prop_Type::make()->units( Size_Constants::typography() )->description( 'The line height of the text content in Size PropType format' ),
 			'text-align' => String_Prop_Type::make()->enum( [
 				'start',
 				'center',
@@ -189,10 +189,17 @@ class Style_Schema {
 		return [
 			'padding' => Union_Prop_Type::make()
 				->add_prop_type( Dimensions_Prop_Type::make_with_units( Size_Constants::spacing() ) )
-				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::spacing() ) ),
+				->add_prop_type(
+					Size_Prop_Type::make()
+						->units( Size_Constants::spacing() )
+						->description( 'Padding css in Size PropType format' )
+				),
 			'margin' => Union_Prop_Type::make()
 				->add_prop_type( Dimensions_Prop_Type::make() )
-				->add_prop_type( Size_Prop_Type::make() ),
+				->add_prop_type(
+					Size_Prop_Type::make()
+						->description( 'Margin css in Size PropType format' )
+				),
 		];
 	}
 
@@ -204,7 +211,7 @@ class Style_Schema {
 			'border-width' => Union_Prop_Type::make()
 				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::border() ) )
 				->add_prop_type( Border_Width_Prop_Type::make() ),
-			'border-color' => Color_Prop_Type::make(),
+			'border-color' => Color_Prop_Type::make()->description( 'The border color, specified as a hex code, rgb(a), hsl(a), or a standard css color name.' ),
 			'border-style' => String_Prop_Type::make()->enum( [
 				'none',
 				'hidden',
@@ -216,8 +223,11 @@ class Style_Schema {
 				'ridge',
 				'inset',
 				'outset',
-			] ),
-			'outline-width' => Size_Prop_Type::make()->units( Size_Constants::border() ),
+			] )
+				->description( 'The border style in CSS values' ),
+			'outline-width' => Size_Prop_Type::make()
+				->units( Size_Constants::border() )
+				->description( 'The width of the outline in Size PropType format' ),
 		];
 	}
 
@@ -226,7 +236,7 @@ class Style_Schema {
 		$background_prop_type = Background_Prop_Type::make();
 		$bg_overlay_prop_type = $background_prop_type->get_shape_field( Background_Overlay_Prop_Type::get_key() );
 		$bg_image_overlay_prop_type = $bg_overlay_prop_type->get_item_type()->get_prop_type( Background_Image_Overlay_Prop_Type::get_key() );
-		Dynamic_Prop_Types_Mapping::make()->get_modified_prop_types( $bg_image_overlay_prop_type->get_shape() );
+		Dynamic_Prop_Types_Mapping::make()->get_extended_schema( $bg_image_overlay_prop_type->get_shape() );
 		return [
 			'background' => $background_prop_type,
 		];
