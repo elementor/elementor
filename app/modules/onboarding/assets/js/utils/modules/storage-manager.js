@@ -164,7 +164,6 @@ export function clearAllOnboardingData() {
 	remove( ONBOARDING_STORAGE_KEYS.STEP3_END_STATE_SENT );
 	remove( ONBOARDING_STORAGE_KEYS.STEP4_END_STATE_SENT );
 	remove( ONBOARDING_STORAGE_KEYS.STEP2_THEMES_LOADED_SENT );
-	remove( ONBOARDING_STORAGE_KEYS.SESSION_REPLAY_STARTED );
 }
 
 export function clearExperimentData() {
