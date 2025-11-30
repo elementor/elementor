@@ -131,7 +131,8 @@ This flexboxes are by default "flex" with "stretch" alignment. To ensure proper 
 			},
 		} ),
 		{
-			description: 'Global variables list. Variables are being used in this way: If it is directly in the schema, you need to put the ID which is the key inside the object.',
+			description:
+				'Global variables list. Variables are being used in this way: If it is directly in the schema, you need to put the ID which is the key inside the object.',
 		},
 		async ( uri ) => {
 			return {

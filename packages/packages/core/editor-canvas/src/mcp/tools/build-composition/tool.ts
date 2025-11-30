@@ -73,10 +73,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 						configObject._styles = styleObject;
 						for ( const [ propertyName, propertyValue ] of Object.entries( configObject ) ) {
 							const widgetSchema = widgetsCache[ elementTag ];
-							if (
-								! widgetSchema?.atomic_props_schema?.[ propertyName ] &&
-								propertyName !== '_styles'
-							) {
+							if ( ! widgetSchema?.atomic_props_schema?.[ propertyName ] && propertyName !== '_styles' ) {
 								softErrors.push(
 									new Error(
 										`Property "${ propertyName }" does not exist on element type "${ elementTag }".`

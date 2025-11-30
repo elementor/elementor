@@ -5,12 +5,7 @@ import {
 	updateElementSettings,
 	updateElementStyle,
 } from '@elementor/editor-elements';
-import {
-	getPropSchemaFromCache,
-	type PropValue,
-	Schema,
-	type TransformablePropValue,
-} from '@elementor/editor-props';
+import { getPropSchemaFromCache, type PropValue, Schema, type TransformablePropValue } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
 
 type OwnParams = {
