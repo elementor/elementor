@@ -88,6 +88,8 @@ const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadS
 const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
 const selectUnpublishedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].unpublishedData;
 const getCreatedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].createdThisSession;
+const selectComponent = ( state: ComponentsSlice, componentId: ComponentId ) =>
+	state[ SLICE_NAME ].data.find( ( component ) => component.id === componentId );
 
 export const selectComponents = createSelector(
 	selectData,
@@ -108,4 +110,8 @@ export const selectFlatStyles = createSelector( selectStylesDefinitions, ( data 
 export const selectCreatedThisSession = createSelector(
 	getCreatedThisSession,
 	( createdThisSession ) => createdThisSession
+);
+export const selectOverridableProps = createSelector(
+	selectComponent,
+	( component: PublishedComponent | undefined ) => component?.overridableProps
 );
