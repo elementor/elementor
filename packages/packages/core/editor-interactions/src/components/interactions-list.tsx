@@ -24,10 +24,10 @@ export function InteractionsList( props: InteractionListProps ) {
 	const [ interactionsState, setInteractionsState ] = useState< ElementInteractions >( interactions );
 
 	useEffect( () => {
-		if ( JSON.stringify( interactions.items ) !== JSON.stringify( interactionsState ) ) {
+		if ( JSON.stringify( interactions ) !== JSON.stringify( interactionsState ) ) {
 			onSelectInteractions( interactionsState );
 		}
-	}, [ interactions.items, interactionsState, onSelectInteractions ] );
+	}, [ interactions, interactionsState, onSelectInteractions ] );
 
 	const isMaxNumberOfInteractionsReached = useMemo( () => {
 		return interactionsState.items?.length >= MAX_NUMBER_OF_INTERACTIONS;
@@ -63,7 +63,7 @@ export function InteractionsList( props: InteractionListProps ) {
 			<AlertTitle>{ __( 'Interactions', 'elementor' ) }</AlertTitle>
 			<Box component="span">
 				{ __(
-					"You've reached the limit of 5 interactions for this element. Please remove an existing interaction before creating a new one.",
+					"You've reached the limit of 5 interactions for this element. Please remove an interaction before creating a new one.",
 					'elementor'
 				) }
 			</Box>

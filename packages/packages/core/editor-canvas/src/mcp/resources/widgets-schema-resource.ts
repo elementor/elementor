@@ -56,7 +56,7 @@ The css string must follow standard CSS syntax, with properties and values separ
 					contents: [
 						{
 							uri: uri.toString(),
-							text: 'Free style inline CSS string of properties and their values. Applicable for a single element, only the properties and values are accepted.',
+							text: 'Free style inline CSS string of properties and their values. Applicable for a single element, only the properties and values are accepted. Use this as a last resort for properties that are not covered with the schema.',
 						},
 					],
 				};
