@@ -34,11 +34,14 @@ const buildInteractionDetails = ( interaction: string ) => {
 	const [ trigger, effect, type, direction, duration, delay ] = interaction.split( DELIMITER );
 	const defaultInteractionDetails = getDefaultInteractionDetails();
 
+	const parsedDirection = direction || defaultInteractionDetails.direction;
+	const shouldAutoSelectDirection = effect === 'slide' && ! parsedDirection;
+
 	return {
 		trigger: trigger || defaultInteractionDetails.trigger,
 		effect: effect || defaultInteractionDetails.effect,
 		type: type || defaultInteractionDetails.type,
-		direction: direction || defaultInteractionDetails.direction,
+		direction: shouldAutoSelectDirection ? 'top' : parsedDirection,
 		duration: duration || defaultInteractionDetails.duration,
 		delay: delay || defaultInteractionDetails.delay,
 	};
@@ -57,6 +60,14 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 			value = getDefaultInteractionDetails()[ key ];
 		}
 		const newInteractionDetails = { ...interactionDetails, [ key ]: value };
+
+		if ( key === 'effect' && value === 'slide' ) {
+			const currentDirection = newInteractionDetails.direction;
+			if ( ! currentDirection || currentDirection === '' ) {
+				newInteractionDetails.direction = 'top';
+			}
+		}
+
 		onChange( Object.values( newInteractionDetails ).join( DELIMITER ) );
 	};
 
@@ -70,8 +81,11 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 				<Effect value={ interactionDetails.effect } onChange={ ( v ) => handleChange( 'effect', v ) } />
 				<EffectType value={ interactionDetails.type } onChange={ ( v ) => handleChange( 'type', v ) } />
 				<Direction
-					value={ interactionDetails.direction }
-					onChange={ ( v ) => handleChange( 'direction', v ) }
+					value={ interactionDetails.effect === 'slide' && ! interactionDetails.direction ? 'top' : interactionDetails.direction }
+					onChange={ ( v ) => {
+						const directionValue = interactionDetails.effect === 'slide' && ( ! v || v === '' ) ? 'top' : v;
+						handleChange( 'direction', directionValue );
+					} }
 					interactionType={ interactionDetails.type }
 				/>
 				<TimeFrameIndicator
