@@ -8,26 +8,27 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 		easing: config.easing,
 	};
 
-	const viewOptions = { amount: 0.1, root: null };
-
 	if ( 'scrollOut' === animConfig.trigger ) {
-		inViewFunc( element, () => {
-			const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
-			animateFunc( element, resetKeyframes, { duration: 0 } );
 
+		const viewOptions = { amount: 0.85, root: null };
+
+		const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
+		animateFunc( element, resetKeyframes, { duration: 0 } );
+	
+		const stop = inViewFunc( element, () => {
 			return () => {
 				animateFunc( element, keyframes, options );
+				stop();
 			};
 		}, viewOptions );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
+
+		const viewOptions = { amount: 0.15, root: null, once: true };
+		
 		inViewFunc( element, () => {
 			animateFunc( element, keyframes, options );
-
-			return () => {
-				const resetKeyframes = getKeyframes( animConfig.effect, 'out', animConfig.direction );
-				animateFunc( element, resetKeyframes, { duration: 0 } );
-			};
 		}, viewOptions );
+
 	} else {
 		animateFunc( element, keyframes, options );
 	}
