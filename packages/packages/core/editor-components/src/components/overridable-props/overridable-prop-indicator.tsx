@@ -4,7 +4,6 @@ import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { useElement } from '@elementor/editor-editing-panel';
 import { __getState as getState } from '@elementor/store';
 import { bindPopover, bindTrigger, Popover, Tooltip, usePopupState } from '@elementor/ui';
-import { generateUniqueId } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
@@ -60,14 +59,24 @@ export function Content( { componentId, isOverridable, overridables }: Props ) {
 	const popoverProps = bindPopover( popupState );
 
 	const handleSubmit = ( { label, group }: { label: string; group: string | null } ) => {
-		setValue(
-			componentOverridablePropTypeUtil.create( {
-				override_key: generateUniqueId(),
-				default_value: value,
-			} )
+		const overridableProp = setOverridableProp(
+			componentId,
+			elementId,
+			label,
+			group,
+			bind,
+			elementType.key,
+			value
 		);
 
-		setOverridableProp( componentId, elementId, label, group, bind, elementType.key, value );
+		if ( overridableProp ) {
+			setValue(
+				componentOverridablePropTypeUtil.create( {
+					override_key: overridableProp[ 'override-key' ],
+					default_value: overridableProp.defaultValue,
+				} )
+			);
+		}
 
 		popupState.close();
 	};
@@ -78,7 +87,7 @@ export function Content( { componentId, isOverridable, overridables }: Props ) {
 
 	return (
 		<>
-			<Tooltip placement="top" title={ __( 'Override Property', 'elementor' ) }>
+			<Tooltip title={ __( 'Override Property', 'elementor' ) }>
 				<Indicator
 					triggerProps={ triggerProps }
 					isOpen={ !! popoverProps.open }

@@ -14,7 +14,13 @@ const Wrapper = styled( 'span' )`
 	display: contents;
 `;
 
-export const SettingsControl = ( { control: { value, type } }: { control: Control | ElementControl } ) => {
+export const SettingsControl = ( {
+	control: { value, type },
+	renderOnlyInput = false,
+}: {
+	control: Control | ElementControl;
+	renderOnlyInput?: boolean;
+} ) => {
 	if ( ! controlsRegistry.get( value.type as ControlType ) ) {
 		return null;
 	}
@@ -26,13 +32,25 @@ export const SettingsControl = ( { control: { value, type } }: { control: Contro
 		controlProps.label = value.label;
 	}
 
-	if ( type === 'element-control' ) {
-		return <ControlLayout control={ value } layout={ layout } controlProps={ controlProps } />;
+	if ( type === 'element-control' || renderOnlyInput ) {
+		return (
+			<ControlLayout
+				control={ value }
+				layout={ layout }
+				controlProps={ controlProps }
+				renderOnlyInput={ renderOnlyInput }
+			/>
+		);
 	}
 
 	return (
 		<SettingsField bind={ value.bind } propDisplayName={ value.label || value.bind }>
-			<ControlLayout control={ value } layout={ layout } controlProps={ controlProps } />
+			<ControlLayout
+				control={ value }
+				layout={ layout }
+				controlProps={ controlProps }
+				renderOnlyInput={ renderOnlyInput }
+			/>
 		</SettingsField>
 	);
 };
@@ -41,12 +59,33 @@ const ControlLayout = ( {
 	control,
 	layout,
 	controlProps,
+	renderOnlyInput,
 }: {
 	control: Control[ 'value' ] | ElementControl[ 'value' ];
 	layout: ControlLayout;
 	controlProps: Record< string, unknown >;
+	renderOnlyInput: boolean;
 } ) => {
 	const controlType = control.type as ControlType;
+
+	if ( renderOnlyInput ) {
+		if ( layout !== 'custom' || ! control.label ) {
+			return (
+				<Wrapper data-type="settings-field">
+					<BaseControl type={ controlType } props={ controlProps } />
+				</Wrapper>
+			);
+		}
+
+		return (
+			<Wrapper data-type="settings-field">
+				<ControlTypeContainer layout={ layout }>
+					<ControlLabel>{ control.label }</ControlLabel>
+					<BaseControl type={ controlType } props={ controlProps } />
+				</ControlTypeContainer>
+			</Wrapper>
+		);
+	}
 
 	return (
 		<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
