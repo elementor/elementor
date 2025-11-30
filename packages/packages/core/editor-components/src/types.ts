@@ -1,4 +1,5 @@
 import { type V1ElementData } from '@elementor/editor-elements';
+import { type PropValue } from '@elementor/editor-props';
 import { type TransformablePropValue } from '@elementor/editor-props';
 import type { StyleDefinition } from '@elementor/editor-styles';
 
@@ -20,9 +21,34 @@ export type UnpublishedComponent = BaseComponent & {
 	elements: V1ElementData[];
 };
 
+export type OverridableProp = {
+	'override-key': string;
+	label: string;
+	elementId: string;
+	propKey: string;
+	widgetType: string;
+	defaultValue: PropValue;
+	groupId: string;
+};
+
+export type OverridablePropGroup = {
+	id: string;
+	label: string;
+	props: string[];
+};
+
+export type OverridableProps = {
+	props: Record< string, OverridableProp >;
+	groups: {
+		items: Record< string, OverridablePropGroup >;
+		order: string[];
+	};
+};
+
 type BaseComponent = {
 	uid: string;
 	name: string;
+	overrides?: OverridableProps;
 };
 
 export type DocumentStatus = 'publish' | 'draft';

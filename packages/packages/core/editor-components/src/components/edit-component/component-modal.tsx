@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useCanvasDocument } from '../../hooks/use-canvas-document';
 import { useElementRect } from '../../hooks/use-element-rect';
+import { useLoadOverrideProps } from '../../hooks/use-load-override-props';
 
 type ModalProps = {
 	element: HTMLElement;
@@ -12,6 +13,8 @@ type ModalProps = {
 };
 export function ComponentModal( { element, onClose }: ModalProps ) {
 	const canvasDocument = useCanvasDocument();
+
+	useLoadOverrideProps();
 
 	useEffect( () => {
 		const handleEsc = ( event: KeyboardEvent ) => {
@@ -85,7 +88,7 @@ function getRoundedRectPath( rect: DOMRect, viewport: Window, borderRadius: numb
 
 	const { innerWidth: vw, innerHeight: vh } = viewport;
 
-	const path = `path(evenodd, 'M 0 0 
+	const path = `path(evenodd, 'M 0 0
 		L ${ vw } 0
 		L ${ vw } ${ vh }
 		L 0 ${ vh }

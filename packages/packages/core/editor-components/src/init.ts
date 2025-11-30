@@ -5,6 +5,7 @@ import {
 	settingsTransformersRegistry,
 } from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
+import { FIELD_TYPE, registerControlReplacement, registerFieldIndicator } from '@elementor/editor-editing-panel';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
@@ -18,8 +19,11 @@ import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
 import { openEditModeDialog } from './components/in-edit-mode';
+import { OverridablePropControl } from './components/overridable-props/overridable-prop-control';
+import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
 import { createComponentType, TYPE } from './create-component-type';
 import { PopulateStore } from './populate-store';
+import { componentOverridablePropTypeUtil } from './prop-types/component-overridable-prop-type';
 import { componentsStylesProvider } from './store/components-styles-provider';
 import { loadComponentsStyles } from './store/load-components-styles';
 import { removeComponentStyles } from './store/remove-component-styles';
@@ -80,6 +84,18 @@ export function init() {
 		}
 
 		loadComponentsStyles( ( config?.elements as V1ElementData[] ) ?? [] );
+	} );
+
+	registerFieldIndicator( {
+		fieldType: FIELD_TYPE.SETTINGS,
+		id: 'component-overridable-prop',
+		priority: 1,
+		indicator: OverridablePropIndicator,
+	} );
+
+	registerControlReplacement( {
+		component: OverridablePropControl,
+		condition: ( { value } ) => componentOverridablePropTypeUtil.isValid( value ),
 	} );
 
 	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );

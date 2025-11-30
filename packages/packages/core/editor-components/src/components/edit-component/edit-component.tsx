@@ -10,6 +10,7 @@ import {
 
 import { apiClient } from '../../api';
 import { COMPONENT_DOCUMENT_TYPE } from '../consts';
+import { overrideActions } from '../overridable-props/utils/actions';
 import { ComponentModal } from './component-modal';
 
 type ComponentsPathItem = {
@@ -55,6 +56,7 @@ function useHandleDocumentSwitches(
 
 				if ( currentComponentId ) {
 					apiClient.unlockComponent( currentComponentId );
+					overrideActions.save( currentComponentId );
 				}
 
 				const isComponent = nextDocument.config.type === COMPONENT_DOCUMENT_TYPE;

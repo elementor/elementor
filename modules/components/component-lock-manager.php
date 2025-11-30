@@ -34,8 +34,20 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 		$lock_data = $this->is_locked( $post_id );
 		$current_user_id = get_current_user_id();
 
-		// Only allow unlocking if the current user owns the lock
-		if ( ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] !== (int) $current_user_id ) {
+		if ( ! $lock_data['is_locked'] ) {
+			return parent::unlock( $post_id );
+		}
+
+		if ( null === $lock_data['lock_user'] ) {
+			// Use parent method instead of direct WordPress call
+			if ( $this->current_user_owns_wp_lock( $post_id ) ) {
+				return parent::unlock( $post_id );
+			}
+
+			return false;
+		}
+
+		if ( (int) $lock_data['lock_user'] !== (int) $current_user_id ) {
 			return false;
 		}
 
@@ -43,7 +55,7 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 	}
 
 	private function is_component_post( $post_id ) {
-		return get_post_type( $post_id ) === Component_Document::TYPE;
+		return $this->is_post_type( $post_id, Component_Document::TYPE );
 	}
 
 	public function heartbeat_received( $response, $data ) {
@@ -59,8 +71,9 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 
 		$lock_data = $this->is_locked( $post_id );
 		$current_user_id = get_current_user_id();
-		if ( $lock_data['is_locked'] && $current_user_id === (int) $lock_data['lock_user'] ) {
-			$this->extend_lock( $post_id );
+		if ( $lock_data['is_locked'] && null !== $lock_data['lock_user'] && $current_user_id === (int) $lock_data['lock_user'] ) {
+			// Pass lock_data to avoid duplicate is_locked() call
+			$this->extend_lock( $post_id, $lock_data );
 		}
 
 		return $response;
