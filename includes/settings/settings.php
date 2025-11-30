@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Admin\Menu\Admin_Menu_Loader;
 use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Includes\Settings\AdminMenuItems\Admin_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Get_Help_Menu_Item;
@@ -599,6 +600,8 @@ class Settings extends Settings_Page {
 		parent::__construct();
 
 		$this->home_module = new Home_Module();
+
+		Admin_Menu_Loader::instance();
 
 		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
 		add_filter( 'elementor/generator_tag/settings', [ $this, 'add_generator_tag_settings' ] );
