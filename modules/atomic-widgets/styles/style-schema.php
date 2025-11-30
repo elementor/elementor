@@ -128,7 +128,7 @@ class Style_Schema {
 				->description( 'The weight (or boldness) of the font. Values should match css font-weight specifications.' ),
 			'font-size' => Size_Prop_Type::make()->units( Size_Constants::typography() )->description( 'The font size in Size PropType Format' ),
 			'color' => Color_Prop_Type::make()
-				->description( 'The text color, specified as a hex code, rgb(a), hsl(a), or a standard css color name.' ),
+				->description( 'The text color, specified as a hex code, rgb(a), hsl(a), or a standard css color name. If using plain value, acts the same as String_Prop_Type.\nExample: {"$$type":"color","value":"#000000"} or {"$$type":"color","value":"black"} or {"$$type":"color","value":"rgb(0, 0, 0)"} or {"$$type":"color","value":"hsl(0, 0%, 0%)"}' ),
 			'letter-spacing' => Size_Prop_Type::make()->units( Size_Constants::typography() )->description( 'The spacing between letters in Size PropType format' ),
 			'word-spacing' => Size_Prop_Type::make()->units( Size_Constants::typography() )->description( 'The spacing between words in Size PropType format' ),
 			'column-count' => Number_Prop_Type::make()->description( 'The number of columns the text content should be divided into.' ),
@@ -177,7 +177,7 @@ class Style_Schema {
 				'unset',
 				'revert',
 				'revert-layer',
-			] ),
+			] )->description( 'The all CSS property. CSS values: initial, inherit, unset, revert, revert-layer' ),
 			'cursor' => String_Prop_Type::make()->enum( [
 				'pointer',
 			] )

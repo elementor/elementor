@@ -1,5 +1,6 @@
 import { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from '@elementor/editor-editing-panel';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import { StyleDefinitionVariant } from '@elementor/editor-styles';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { z } from '@elementor/schema';
 
@@ -19,6 +20,13 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 				z.object( {
 					id: z.string().describe( 'The ID of the class' ),
 					label: z.string().describe( 'The label of the class' ),
+					variants: z.array( z.object( {
+						meta: z.object( {
+							breakpoint: z.string().optional(),
+							state: z.string().optional(),
+						} ),
+						props: z.object( {} ),
+					} ) ),	
 				} )
 			),
 		},
@@ -27,10 +35,10 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 			if ( ! globalClassesProvider ) {
 				throw new Error( 'Global classes provider not found' );
 			}
-			const result: { id: string; label: string }[] = [];
+			const result: { id: string; label: string; variants: { meta: { breakpoint?: string | undefined; state?: string | undefined; }; props: {}; }[] }[] = [];
 			globalClassesProvider.actions.all().forEach( ( style ) => {
-				const { id, label } = style;
-				result.push( { id, label } );
+				const { id, label, variants } = style;
+				result.push( { id, label, variants: variants.map( ( variant ) => ({ meta: { breakpoint: variant.meta.breakpoint as string | undefined, state: variant.meta.state as string | undefined }, props: variant.props as {} }) ) } );
 			} );
 			return { appliedClasses: result };
 		},
