@@ -113,5 +113,5 @@ export const selectCreatedThisSession = createSelector(
 );
 export const selectOverridableProps = createSelector(
 	selectComponent,
-	( component: PublishedComponent | undefined ) => component?.overrides
+	( component: PublishedComponent | undefined ) => component?.overridableProps
 );
