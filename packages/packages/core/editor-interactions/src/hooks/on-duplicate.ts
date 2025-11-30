@@ -1,7 +1,5 @@
-import { type ElementID, getContainer, type V1Element } from '@elementor/editor-elements';
+import { type ElementID, type ElementInteractions, getContainer, type V1Element } from '@elementor/editor-elements';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
-
-import type { InteractionsData } from '../types';
 
 export function initCleanInteractionIdsOnDuplicate() {
 	registerDataHook( 'after', 'document/elements/duplicate', ( _args, result: V1Element | V1Element[] ) => {
@@ -37,13 +35,13 @@ function cleanInteractionIds( elementId: ElementID ) {
 		return;
 	}
 
-	const interactions = container.model.get( 'interactions' ) as InteractionsData;
+	const interactions = container.model.get( 'interactions' ) as ElementInteractions;
 
 	if ( ! interactions || ! interactions.items ) {
 		return;
 	}
 
-	const updatedInteractions = structuredClone( interactions ) as InteractionsData;
+	const updatedInteractions = structuredClone( interactions ) as ElementInteractions;
 
 	updatedInteractions?.items?.forEach( ( interaction ) => {
 		if ( interaction.interaction_id ) {
