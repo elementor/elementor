@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Repeater } from '@elementor/editor-controls';
 import { type ElementInteractions } from '@elementor/editor-elements';
-import { PlayerPlayIcon } from '@elementor/icons';
-import { IconButton } from '@elementor/ui';
+import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
+import { Alert, AlertTitle, Box, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsConfig } from '../utils/get-interactions-config';
@@ -58,6 +58,18 @@ export function InteractionsList( props: InteractionListProps ) {
 		return option?.label || interactionForDisplay;
 	};
 
+	const infotipContent = isMaxNumberOfInteractionsReached ? (
+		<Alert color="secondary" icon={ <InfoCircleFilledIcon /> }>
+			<AlertTitle>{ __( 'Interactions', 'elementor' ) }</AlertTitle>
+			<Box component="span">
+				{ __(
+					'You\'ve reached the limit of 5 interactions for this element. Please remove an existing interaction before creating a new one.',
+					'elementor'
+				) }
+			</Box>
+		</Alert>
+	) : undefined;
+
 	return (
 		<Repeater
 			openOnAdd
@@ -74,6 +86,7 @@ export function InteractionsList( props: InteractionListProps ) {
 			showToggle={ false }
 			isSortable={ false }
 			disableAddItemButton={ isMaxNumberOfInteractionsReached }
+			addButtonInfotipContent={ infotipContent }
 			itemSettings={ {
 				initialValues: {
 					animation: {
