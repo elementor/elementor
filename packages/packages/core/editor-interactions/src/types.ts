@@ -44,3 +44,14 @@ export type InteractionsProvider = {
 		all: () => InteractionItem[];
 	};
 };
+
+export type InteractionsData = {
+	version: number;
+	items: Array< {
+		interaction_id?: string;
+		animation: {
+			animation_type: string;
+			animation_id: string;
+		};
+	} >;
+};
