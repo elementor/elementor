@@ -190,15 +190,19 @@ const calculateDefaultOnMove = ( {
 		return to;
 	}
 
-	if ( to === defaultActiveTab ) {
-		return from;
-	}
-
 	if ( from < defaultActiveTab && to > defaultActiveTab ) {
 		return defaultActiveTab - 1;
 	}
 
 	if ( from > defaultActiveTab && to < defaultActiveTab ) {
+		return defaultActiveTab + 1;
+	}
+
+	if ( to === defaultActiveTab && to > from ) {
+		return defaultActiveTab - 1;
+	}
+
+	if ( to === defaultActiveTab && to < from ) {
 		return defaultActiveTab + 1;
 	}
 
