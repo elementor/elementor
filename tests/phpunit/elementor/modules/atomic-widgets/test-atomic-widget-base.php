@@ -16,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Modules\Components\PropTypes\Component_Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -349,7 +350,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$schema = [
 			'string_prop' => String_Prop_Type::make()
 				->enum( [ 'value-a', 'value-b' ] )
-				->default( 'value-a' ),
+				->default( 'value-a' )
+				->meta( Component_Overridable_Prop_Type::ignore() ),
 		];
 
 		$widget = $this->make_mock_widget( [ 'props_schema' => $schema ] );
