@@ -21,10 +21,11 @@ export type UnpublishedComponent = BaseComponent & {
 };
 
 export type OverridableProp = {
-	'override-key': string;
+	overrideKey: string;
 	label: string;
 	elementId: string;
 	propKey: string;
+	elType: string;
 	widgetType: string;
 	defaultValue: PropValue;
 	groupId: string;
@@ -47,7 +48,7 @@ export type OverridableProps = {
 type BaseComponent = {
 	uid: string;
 	name: string;
-	overrides?: OverridableProps;
+	overridableProps?: OverridableProps;
 };
 
 export type DocumentStatus = 'publish' | 'draft';

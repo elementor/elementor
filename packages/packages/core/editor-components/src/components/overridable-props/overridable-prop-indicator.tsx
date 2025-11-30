@@ -12,12 +12,11 @@ import { type OverridableProps } from '../../types';
 import { COMPONENT_DOCUMENT_TYPE } from '../consts';
 import { Indicator } from './indicator';
 
-export const FORBIDDEN_KEYS = [ '_cssid', 'attributes' ];
+const FORBIDDEN_KEYS = [ '_cssid', 'attributes' ];
 
 export function OverridablePropIndicator() {
 	const { bind, value } = useBoundProp();
 	const currentDocument = getV1CurrentDocument();
-	const componentOverrides = selectOverridableProps( getState(), currentDocument.id );
 
 	if ( currentDocument.config.type !== COMPONENT_DOCUMENT_TYPE || ! currentDocument.id ) {
 		return null;
@@ -27,12 +26,14 @@ export function OverridablePropIndicator() {
 		return null;
 	}
 
+	const overridableProps = selectOverridableProps( getState(), currentDocument.id );
 	const isOverridable = componentOverridablePropTypeUtil.isValid( value );
+
 	return (
 		<Content
 			componentId={ currentDocument.id }
 			isOverridable={ isOverridable }
-			overridables={ componentOverrides }
+			overridableProps={ overridableProps }
 		/>
 	);
 }
@@ -40,9 +41,9 @@ export function OverridablePropIndicator() {
 type Props = {
 	componentId: number;
 	isOverridable: boolean;
-	overridables?: OverridableProps;
+	overridableProps?: OverridableProps;
 };
-export function Content( { isOverridable, overridables }: Props ) {
+export function Content( { isOverridable, overridableProps }: Props ) {
 	const {
 		element: { id: elementId },
 	} = useElement();
@@ -55,7 +56,7 @@ export function Content( { isOverridable, overridables }: Props ) {
 	const triggerProps = bindTrigger( popupState );
 	const popoverProps = bindPopover( popupState );
 
-	const currentValue = Object.values( overridables?.props ?? {} ).find(
+	const overridableConfig = Object.values( overridableProps?.props ?? {} ).find(
 		( prop ) => prop.elementId === elementId && prop.propKey === bind
 	);
 
@@ -83,7 +84,7 @@ export function Content( { isOverridable, overridables }: Props ) {
 				} }
 				{ ...popoverProps }
 			>
-				{ JSON.stringify( currentValue ) /** TODO: replace with actual form */ }
+				{ JSON.stringify( overridableConfig ) /** TODO: replace with actual form */ }
 			</Popover>
 		</>
 	);
