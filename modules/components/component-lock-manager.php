@@ -9,12 +9,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Component_Lock_Manager extends Document_Lock_Manager {
-	const ONE_HOUR = 60 * 60;
+	const ONE_HOUR = 10; 
 	private static $instance = null;
 	public function __construct() {
 		parent::__construct( self::ONE_HOUR );
 	}
 
+	// todo: move this to the document lock manager
 	public static function get_instance() {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -24,38 +25,6 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 
 	public function register_hooks() {
 		add_filter( 'heartbeat_received', [ $this, 'heartbeat_received' ], 10, 2 );
-	}
-
-	public function unlock( $post_id ) {
-		if ( ! $this->is_component_post( $post_id ) ) {
-				throw new \Exception( 'Post is not a component type' );
-		}
-
-		$lock_data = $this->is_locked( $post_id );
-		$current_user_id = get_current_user_id();
-
-		if ( ! $lock_data['is_locked'] ) {
-			return parent::unlock( $post_id );
-		}
-
-		if ( null === $lock_data['lock_user'] ) {
-			// Use parent method instead of direct WordPress call
-			if ( $this->current_user_owns_wp_lock( $post_id ) ) {
-				return parent::unlock( $post_id );
-			}
-
-			return false;
-		}
-
-		if ( (int) $lock_data['lock_user'] !== (int) $current_user_id ) {
-			return false;
-		}
-
-		return parent::unlock( $post_id );
-	}
-
-	private function is_component_post( $post_id ) {
-		return $this->is_post_type( $post_id, Component_Document::TYPE );
 	}
 
 	public function heartbeat_received( $response, $data ) {
@@ -69,47 +38,55 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 			return $response;
 		}
 
-		$lock_data = $this->is_locked( $post_id );
-		$current_user_id = get_current_user_id();
-		if ( $lock_data['is_locked'] && null !== $lock_data['lock_user'] && $current_user_id === (int) $lock_data['lock_user'] ) {
-			// Pass lock_data to avoid duplicate is_locked() call
-			$this->extend_lock( $post_id, $lock_data );
+
+		$lock_data = $this->get_lock_data( $post_id );
+		$user_id = get_current_user_id();
+		if ( $user_id === (int) $lock_data['locked_by'] ) {
+			$this->extend_lock( $post_id );
 		}
 
 		return $response;
 	}
 
-	public function get_updated_status( $post_id ) {
+
+	/**
+	 * Unlock a component.
+	 * @param int $post_id The component ID to unlock
+	 * @return bool True if unlock was successful, false otherwise
+	 */
+	public function unlock_component( $post_id ) {
+		if ( ! $this->is_component_post( $post_id ) ) {
+				throw new \Exception( 'Post is not a component type' );
+		}
+
+		$lock_data = $this->get_lock_data( $post_id );
+		$current_user_id = get_current_user_id();
+		if ( $lock_data['locked_by'] && (int) $lock_data['locked_by'] !== (int) $current_user_id  ) {
+			return false;	
+		}
+		return parent::unlock( $post_id );
+	}
+
+		/**
+	 * Lock a component.
+	 * @param int $document_id The component ID to lock
+	 * @return bool True if lock was successful, false otherwise
+	 */
+	public function lock_component( $post_id ) {
 		if ( ! $this->is_component_post( $post_id ) ) {
 			throw new \Exception( 'Post is not a component type' );
 		}
 
-		$lock_data = $this->is_locked( $post_id );
-
-		if ( ! $lock_data['is_locked'] ) {
-			if ( null !== $lock_data['lock_time'] ) {
-				parent::unlock( $post_id );
-			}
-			return [
-				'is_locked' => false,
-				'lock_user' => null,
-				'lock_time' => null,
-			];
+		$existing_lock = $this->get_lock_data( $post_id );
+		if ( $existing_lock['locked_by'] ) {
+			return false;
 		}
 
-		$current_user_id = get_current_user_id();
-		if ( $current_user_id === (int) $lock_data['lock_user'] ) {
-			$lock_data['is_locked'] = false;
-		}
-
-		return $lock_data;
+		return parent::lock( $post_id );
 	}
 
-	public function lock( $document_id ) {
-		if ( ! $this->is_component_post( $document_id ) ) {
-			throw new \Exception( 'Post is not a component type' );
-		}
-
-		return parent::lock( $document_id );
+	private function is_component_post( $post_id ) {
+		return get_post_type( $post_id ) === Component_Document::TYPE;
 	}
+
 }

@@ -88,7 +88,7 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		wp_set_current_user( $this->test_user_1 );
 
 		// Act
-		$result = $this->lock_manager->lock( $this->test_component_id );
+		$result = $this->lock_manager->lock_component	( $this->test_component_id );
 
 		// Assert
 		$this->assertTrue( $result, 'Should successfully lock component' );
@@ -108,7 +108,7 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		// Act & Assert
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'Post is not a component type' );
-		$this->lock_manager->lock( $post_id );
+		$this->lock_manager->lock_component( $post_id );
 
 		// Cleanup
 		wp_delete_post( $post_id, true );
@@ -126,7 +126,7 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		// Act & Assert
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'Post is not a component type' );
-		$this->lock_manager->lock( $page_id );
+		$this->lock_manager->lock_component( $page_id );
 
 		// Cleanup
 		wp_delete_post( $page_id, true );
@@ -137,7 +137,7 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		wp_set_current_user( 0 );
 
 		// Act
-		$result = $this->lock_manager->lock( $this->test_component_id );
+		$result = $this->lock_manager->lock_component( $this->test_component_id );
 
 		// Assert
 		$this->assertFalse( $result, 'Should fail when no user is logged in' );
@@ -154,16 +154,16 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		// Act & Assert
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'Post is not a component type' );
-		$this->lock_manager->lock( $invalid_document_id );
+		$this->lock_manager->lock_component( $invalid_document_id );
 	}
 
 	public function test_unlock__successfully_unlocks_component() {
 		// Arrange
 		wp_set_current_user( $this->test_user_1 );
-		$this->lock_manager->lock( $this->test_component_id );
+		$this->lock_manager->lock_component( $this->test_component_id );
 
 		// Act
-		$result = $this->lock_manager->unlock( $this->test_component_id );
+		$result = $this->lock_manager->unlock_component( $this->test_component_id );
 
 		// Assert
 		$this->assertTrue( $result, 'Should successfully unlock component' );
@@ -184,7 +184,7 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		// Act & Assert
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'Post is not a component type' );
-		$this->lock_manager->unlock( $post_id );
+		$this->lock_manager->unlock_component( $post_id );
 
 		// Cleanup
 		wp_delete_post( $post_id, true );
@@ -202,7 +202,7 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		// Act & Assert
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'Post is not a component type' );
-		$this->lock_manager->unlock( $page_id );
+		$this->lock_manager->unlock_component( $page_id );
 
 		// Cleanup
 		wp_delete_post( $page_id, true );
@@ -212,50 +212,48 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		// Arrange
 
 		// Act
-		$result = $this->lock_manager->is_locked( $this->test_component_id );
+		$result = $this->lock_manager->get_lock_data( $this->test_component_id );
 
 		// Assert
-		$this->assertFalse( $result['is_locked'], 'Should return false when component is not locked' );
-		$this->assertNull( $result['lock_user'], 'Lock user should be null when not locked' );
-		$this->assertNull( $result['lock_time'], 'Lock time should be null when not locked' );
+		$this->assertNull( $result['locked_by'], 'Lock user should be null when not locked' );
+		$this->assertNull( $result['locked_at'], 'Lock time should be null when not locked' );
 	}
 
 	public function test_is_locked__returns_lock_data_when_locked() {
 		// Arrange
 		wp_set_current_user( $this->test_user_1 );
-		$this->lock_manager->lock( $this->test_component_id );
+		$this->lock_manager->lock_component( $this->test_component_id );
 
 		// Act
-		$result = $this->lock_manager->is_locked( $this->test_component_id );
+		$result = $this->lock_manager->get_lock_data( $this->test_component_id );
 
 		// Assert
 		$this->assertIsArray( $result, 'Should return array when component is locked' );
 		$this->assertArrayHasKey( 'is_locked', $result );
-		$this->assertArrayHasKey( 'lock_user', $result );
-		$this->assertArrayHasKey( 'lock_time', $result );
+		$this->assertArrayHasKey( 'locked_by', $result );
+		$this->assertArrayHasKey( 'locked_at', $result );
 		$this->assertTrue( $result['is_locked'], 'Should be locked' );
-		$this->assertEquals( $this->test_user_1, $result['lock_user'] );
-		$this->assertIsNumeric( $result['lock_time'], 'Lock time should be numeric' );
+		$this->assertEquals( $this->test_user_1, $result['locked_by'] );
+		$this->assertIsNumeric( $result['locked_at'], 'Lock time should be numeric' );
 	}
 
 	public function test_is_locked__auto_unlocks_expired_lock() {
 		// Arrange
 		wp_set_current_user( $this->test_user_1 );
-		$this->lock_manager->lock( $this->test_component_id );
+		$this->lock_manager->lock_component( $this->test_component_id );
 
 		// Arrange: Simulate expired lock by setting old timestamp
 		$old_timestamp = time() - ( 61 * 60 ); // 61 minutes ago (beyond 60 minute default)
 		update_post_meta( $this->test_component_id, '_lock_time', $old_timestamp );
 
 		// Act
-		$result = $this->lock_manager->get_updated_status( $this->test_component_id );
+			$result = $this->lock_manager->get_lock_data( $this->test_component_id );
 
 		// Assert
-		$this->assertFalse( $result['is_locked'], 'Should auto-unlock expired lock' );
+		$this->assertNull( $result['locked_by'], 'Should auto-unlock expired lock' );
 		$this->assertEmpty( get_post_meta( $this->test_component_id, '_lock_user', true ) );
-		$this->assertEmpty( get_post_meta( $this->test_component_id, '_lock_time', true ) );
-		$this->assertEmpty( get_post_meta( $this->test_component_id, '_edit_lock', true ) );
-	}
+		$this->assertNull( $result['locked_at'], 'Lock time should be null when not locked' );
+	}	
 
 	public function test_get_updated_status__fails_for_regular_post() {
 		// Arrange
@@ -268,7 +266,7 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		// Act & Assert
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'Post is not a component type' );
-		$this->lock_manager->get_updated_status( $post_id );
+		$this->lock_manager->get_lock_data( $post_id );
 
 		// Cleanup
 		wp_delete_post( $post_id, true );
@@ -278,7 +276,7 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 	public function test_extend_lock__successfully_extends_lock() {
 		// Arrange
 		wp_set_current_user( $this->test_user_1 );
-		$this->lock_manager->lock( $this->test_component_id );
+		$this->lock_manager->lock_component( $this->test_component_id );
 		$original_timestamp = get_post_meta( $this->test_component_id, '_lock_time', true );
 
 		// Wait a moment to ensure timestamp difference
@@ -300,13 +298,13 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		$result = $this->lock_manager->extend_lock( $this->test_component_id );
 
 		// Assert
-		$this->assertFalse( $result, 'Should fail to extend lock when component is not locked' );
+		$this->assertNull( $result, 'Should fail to extend lock when component is not locked' );
 	}
 
 	public function test_extend_lock__fails_when_locked_by_another_user() {
 		// Arrange
 		wp_set_current_user( $this->test_user_1 );
-		$this->lock_manager->lock( $this->test_component_id );
+		$this->lock_manager->lock_component( $this->test_component_id );
 
 		// Arrange: Switch to different user
 		wp_set_current_user( $this->test_user_2 );
@@ -315,25 +313,25 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		$result = $this->lock_manager->extend_lock( $this->test_component_id );
 
 		// Assert
-		$this->assertFalse( $result, 'Should fail to extend lock when locked by another user' );
+		$this->assertNull( $result, 'Should fail to extend lock when locked by another user' );
 	}
 
 	public function test_concurrent_lock_attempts() {
 		// Arrange
 		wp_set_current_user( $this->test_user_1 );
-		$this->lock_manager->lock( $this->test_component_id );
+		$this->lock_manager->lock_component( $this->test_component_id );
 
 		// Arrange: Switch to different user
 		wp_set_current_user( $this->test_user_2 );
 
 		// Act
-		$result = $this->lock_manager->lock( $this->test_component_id );
+		$result = $this->lock_manager->lock_component( $this->test_component_id );
 
 		// Assert
-		$this->assertFalse( $result, 'Should reject lock attempt when component is locked by another user' );
-		$lock_data = $this->lock_manager->is_locked( $this->test_component_id );
-		$this->assertTrue( $lock_data['is_locked'], 'Component should still be locked' );
-		$this->assertEquals( $this->test_user_1, $lock_data['lock_user'], 'Lock should still be owned by first user' );
+		$this->assertNull( $result, 'Should reject lock attempt when component is locked by another user' );
+		$lock_data = $this->lock_manager->get_lock_data( $this->test_component_id );
+		$this->assertNotNull( $lock_data['locked_by'], 'Component should still be locked' );
+		$this->assertEquals( $this->test_user_1, $lock_data['locked_by'], 'Lock should still be owned by first user' );
 	}
 
 	public function test_lock_metadata_consistency() {
@@ -341,15 +339,15 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		wp_set_current_user( $this->test_user_1 );
 
 		// Act
-		$this->lock_manager->lock( $this->test_component_id );
+		$this->lock_manager->lock_component( $this->test_component_id );
 
 		// Assert
-		$meta_lock_user = get_post_meta( $this->test_component_id, '_lock_user', true );
-		$lock_time = get_post_meta( $this->test_component_id, '_lock_time', true );
+		$meta_locked_by = get_post_meta( $this->test_component_id, '_locked_by', true );
+		$locked_at = get_post_meta( $this->test_component_id, '_locked_at', true );
 
-		$this->assertEquals( $this->test_user_1, $meta_lock_user, 'Meta lock should match user' );
-		$this->assertIsNumeric( $lock_time, 'Lock time should be numeric timestamp' );
-		$this->assertLessThanOrEqual( time(), (int) $lock_time, 'Lock time should not be in the future' );
+		$this->assertEquals( $this->test_user_1, $meta_locked_by, 'Meta lock should match user' );
+		$this->assertIsNumeric( $locked_at, 'Lock time should be numeric timestamp' );
+		$this->assertLessThanOrEqual( time(), (int) $locked_at, 'Lock time should not be in the future' );
 	}
 
 }
