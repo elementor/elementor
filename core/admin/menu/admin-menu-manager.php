@@ -240,17 +240,12 @@ class Admin_Menu_Manager {
 	}
 
 	private function enqueue_admin_menu_assets() {
-		wp_enqueue_style(
-			'elementor-admin-menu',
-			ELEMENTOR_ASSETS_URL . 'css/admin-menu.css',
-			[],
-			ELEMENTOR_VERSION
-		);
+		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 		wp_enqueue_script(
 			'elementor-admin-menu',
-			ELEMENTOR_ASSETS_URL . 'js/admin-menu.js',
-			[],
+			ELEMENTOR_ASSETS_URL . 'js/admin-menu' . $suffix . '.js',
+			[ 'jquery' ],
 			ELEMENTOR_VERSION,
 			true
 		);
