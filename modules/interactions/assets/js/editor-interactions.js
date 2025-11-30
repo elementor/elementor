@@ -39,14 +39,15 @@ function applyAnimation( element, animConfig ) {
 	Object.keys( keyframes ).forEach( ( key ) => {
 		initialKeyframes[ key ] = keyframes[ key ][ 0 ];
 	} );
-
 	animateFunc( element, initialKeyframes, { duration: 0 } ).then( () => {
 		animateFunc( element, keyframes, options ).then( () => {
 			if ( 'out' === animConfig.type ) {
+				const resetValues = { opacity: 1, scale: 1, x: 0, y: 0 };
 				const resetKeyframes = {};
 				Object.keys( keyframes ).forEach( ( key ) => {
-					resetKeyframes[ key ] = { opacity: 1, scale: 1, x: 0, y: 0 }[ key ];
+					resetKeyframes[ key ] = resetValues[ key ];
 				} );
+
 				animateFunc( element, resetKeyframes, { duration: 0 } );
 			}
 		} );
