@@ -2,7 +2,7 @@ import { createPropUtils } from '@elementor/editor-props';
 import { z } from '@elementor/schema';
 
 export const componentOverridablePropTypeUtil = createPropUtils(
-	'component-overridable',
+	'overridable',
 	z.object( {
 		override_key: z.string(),
 		default_value: z
