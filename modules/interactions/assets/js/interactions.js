@@ -11,24 +11,21 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	if ( 'scrollOut' === animConfig.trigger ) {
 		const viewOptions = { amount: 0.85, root: null };
 		const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
-		
+
 		animateFunc( element, resetKeyframes, { duration: 0 } );
-	
+
 		const stop = inViewFunc( element, () => {
 			return () => {
 				animateFunc( element, keyframes, options );
 				stop();
 			};
 		}, viewOptions );
-		
 	} else if ( 'scrollIn' === animConfig.trigger ) {
-
 		const viewOptions = { amount: 0.15, root: null, once: true };
-		
+
 		inViewFunc( element, () => {
 			animateFunc( element, keyframes, options );
 		}, viewOptions );
-
 	} else {
 		animateFunc( element, keyframes, options );
 	}
