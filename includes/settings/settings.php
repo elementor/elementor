@@ -100,11 +100,44 @@ class Settings extends Settings_Page {
 			'58.5'
 		);
 
-		if ( $this->home_module->is_experiment_active() ) {
-			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-				$admin_menu->register( 'elementor-settings', new Admin_Menu_Item( $this ) );
-			}, 0 );
-		}
+		$this->register_unified_submenus();
+
+		// Note: Settings submenu is now registered in register_unified_submenus()
+		// The old hook-based registration is no longer needed
+	}
+
+	/**
+	 * Register unified submenus for the new menu structure.
+	 * 
+	 * Structure:
+	 * - Elementor (Level 1)
+	 *   - Editor (Level 2) - with flyout containing Templates, Settings, etc.
+	 *   - [Other plugins can add Level 2 items here]
+	 *
+	 * @since 3.x.x
+	 * @access private
+	 */
+	private function register_unified_submenus() {
+		add_submenu_page(
+			self::PAGE_ID,
+			esc_html__( 'Editor', 'elementor' ),
+			esc_html__( 'Editor', 'elementor' ),
+			'edit_posts',
+			'elementor-editor',
+			[ $this, 'render_editor_page' ]
+		);
+
+		do_action( 'elementor/admin/menu/register_submenus', self::PAGE_ID );
+	}
+
+	/**
+	 * Render the editor page - redirects to the home or a default editor page.
+	 *
+	 * @since 3.x.x
+	 * @access public
+	 */
+	public function render_editor_page() {
+		$this->home_module->is_experiment_active() ? $this->display_home_screen() : $this->display_settings_page();
 	}
 
 	public function display_home_screen() {
@@ -121,31 +154,48 @@ class Settings extends Settings_Page {
 	 * @return array
 	 */
 	public function menu_order( $menu_order ) {
-		// Initialize our custom order array.
 		$elementor_menu_order = [];
 
-		// Get the index of our custom separator.
 		$elementor_separator = array_search( 'separator-elementor', $menu_order, true );
 
-		// Get index of library menu.
 		$elementor_library = array_search( Source_Local::ADMIN_MENU_SLUG, $menu_order, true );
 
-		// Loop through menu order and do some rearranging.
 		foreach ( $menu_order as $index => $item ) {
 			if ( 'elementor' === $item ) {
 				$elementor_menu_order[] = 'separator-elementor';
 				$elementor_menu_order[] = $item;
-				$elementor_menu_order[] = Source_Local::ADMIN_MENU_SLUG;
 
-				unset( $menu_order[ $elementor_separator ] );
-				unset( $menu_order[ $elementor_library ] );
-			} elseif ( ! in_array( $item, [ 'separator-elementor' ], true ) ) {
+				if ( false !== $elementor_library ) {
+					$elementor_menu_order[] = Source_Local::ADMIN_MENU_SLUG;
+					unset( $menu_order[ $elementor_library ] );
+				}
+
+				if ( false !== $elementor_separator ) {
+					unset( $menu_order[ $elementor_separator ] );
+				}
+			} elseif ( ! in_array( $item, [ 'separator-elementor', Source_Local::ADMIN_MENU_SLUG ], true ) ) {
 				$elementor_menu_order[] = $item;
 			}
 		}
 
-		// Return order.
 		return $elementor_menu_order;
+	}
+
+	/**
+	 * Add inline CSS to hide the legacy Templates menu.
+	 * This keeps backward compatibility while hiding the menu visually.
+	 *
+	 * @since 3.x.x
+	 * @access public
+	 */
+	public function hide_legacy_templates_menu() {
+		?>
+		<style type="text/css">
+			#menu-posts-elementor_library {
+				display: none !important;
+			}
+		</style>
+		<?php
 	}
 
 	/**
@@ -563,6 +613,8 @@ class Settings extends Settings_Page {
 
 		add_filter( 'custom_menu_order', '__return_true' );
 		add_filter( 'menu_order', [ $this, 'menu_order' ] );
+
+		add_action( 'admin_head', [ $this, 'hide_legacy_templates_menu' ] );
 
 		$clear_cache_callback = [ Plugin::$instance->files_manager, 'clear_cache' ];
 
