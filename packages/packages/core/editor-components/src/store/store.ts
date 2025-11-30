@@ -8,6 +8,7 @@ import {
 import {
 	type Component,
 	type ComponentId,
+	type OverridableProps,
 	type PublishedComponent,
 	type StylesDefinition,
 	type UnpublishedComponent,
@@ -68,6 +69,18 @@ export const slice = createSlice( {
 		addCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
 			state.createdThisSession.push( payload );
 		},
+		setOverridableProps: (
+			state,
+			{ payload }: PayloadAction< { componentId: ComponentId; overrides: OverridableProps } >
+		) => {
+			const component = state.data.find( ( comp ) => comp.id === payload.componentId );
+
+			if ( ! component ) {
+				return;
+			}
+
+			component.overrides = payload.overrides;
+		},
 	},
 	extraReducers: ( builder ) => {
 		builder.addCase( loadComponents.fulfilled, ( state, { payload }: PayloadAction< GetComponentResponse > ) => {
@@ -111,7 +124,15 @@ export const selectCreatedThisSession = createSelector(
 	getCreatedThisSession,
 	( createdThisSession ) => createdThisSession
 );
-export const selectOverridableProps = createSelector(
-	selectComponent,
-	( component: PublishedComponent | undefined ) => component?.overrides
+export const selectOverridableProps = createSelector( selectComponent, ( component: PublishedComponent | undefined ) =>
+	component
+		? component.overrides ??
+		  ( {
+				props: {},
+				groups: {
+					items: {},
+					order: [],
+				},
+		  } satisfies OverridableProps )
+		: undefined
 );

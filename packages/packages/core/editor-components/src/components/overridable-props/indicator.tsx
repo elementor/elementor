@@ -56,6 +56,8 @@ const IconContainer = styled( Box )`
 		width: 10px;
 		height: 10px;
 		fill: ${ ( { theme } ) => theme.palette.primary.contrastText };
+		stroke: ${ ( { theme } ) => theme.palette.primary.contrastText };
+		stroke-width: 3px;
 	}
 `;
 

@@ -4,12 +4,15 @@ import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { useElement } from '@elementor/editor-editing-panel';
 import { __getState as getState } from '@elementor/store';
 import { bindPopover, bindTrigger, Popover, Tooltip, usePopupState } from '@elementor/ui';
+import { generateUniqueId } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
+import { setOverridableProp } from '../../store/set-overridable-prop';
 import { selectOverridableProps } from '../../store/store';
 import { type OverridableProps } from '../../types';
 import { COMPONENT_DOCUMENT_TYPE } from '../consts';
+import { Form } from './form';
 import { Indicator } from './indicator';
 
 export const FORBIDDEN_KEYS = [ '_cssid', 'attributes' ];
@@ -42,11 +45,12 @@ type Props = {
 	isOverridable: boolean;
 	overridables?: OverridableProps;
 };
-export function Content( { isOverridable, overridables }: Props ) {
+export function Content( { componentId, isOverridable, overridables }: Props ) {
 	const {
 		element: { id: elementId },
+		elementType,
 	} = useElement();
-	const { bind } = useBoundProp();
+	const { value, setValue, bind } = useBoundProp();
 
 	const popupState = usePopupState( {
 		variant: 'popover',
@@ -54,6 +58,19 @@ export function Content( { isOverridable, overridables }: Props ) {
 
 	const triggerProps = bindTrigger( popupState );
 	const popoverProps = bindPopover( popupState );
+
+	const handleSubmit = ( { label, group }: { label: string; group: string | null } ) => {
+		setValue(
+			componentOverridablePropTypeUtil.create( {
+				override_key: generateUniqueId(),
+				default_value: value,
+			} )
+		);
+
+		setOverridableProp( componentId, elementId, label, group, bind, elementType.key, value );
+
+		popupState.close();
+	};
 
 	const currentValue = Object.values( overridables?.props ?? {} ).find(
 		( prop ) => prop.elementId === elementId && prop.propKey === bind
@@ -83,7 +100,14 @@ export function Content( { isOverridable, overridables }: Props ) {
 				} }
 				{ ...popoverProps }
 			>
-				{ JSON.stringify( currentValue ) /** TODO: replace with actual form */ }
+				<Form
+					onSubmit={ handleSubmit }
+					groups={ overridables?.groups.order.map( ( groupId ) => ( {
+						value: groupId,
+						label: overridables.groups.items[ groupId ].label,
+					} ) ) }
+					currentValue={ currentValue }
+				/>
 			</Popover>
 		</>
 	);

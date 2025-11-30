@@ -8,3 +8,5 @@ export const componentOverridablePropTypeUtil = createPropUtils(
 		default_value: z.any().nullable(),
 	} )
 );
+
+export type ComponentOverridablePropValue = z.infer< typeof componentOverridablePropTypeUtil.schema >[ 'value' ];
