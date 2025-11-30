@@ -42,9 +42,9 @@
     "tsup": "^8.3.5"
   },
   "dependencies": {
-    "@elementor-external/angie-sdk": "npm:@elementor/angie-sdk@1.0.1",
+    "@elementor-external/angie-sdk": "npm:@elementor/angie-sdk@1.0.3",
     "@elementor/schema": "3.33.0",
-    "@modelcontextprotocol/sdk": "1.17.3",
+    "@modelcontextprotocol/sdk": "1.17.4",
     "@elementor/store": "3.33.0",
     "@elementor/editor-v1-adapters": "3.33.0"
   }

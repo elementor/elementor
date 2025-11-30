@@ -1,8 +1,18 @@
 type Settings = Record< string, unknown >;
+
+type ChildRenderCallback = () => void;
+
+interface ListenToChildrenAPI {
+	render: ( callback: ChildRenderCallback ) => void;
+}
+
+type ListenToChildrenFunction = ( elementTypes: string[] ) => ListenToChildrenAPI;
+
 type Handler = < TSettings extends Settings = Settings >( params: {
 	element: Element;
 	signal: AbortSignal;
 	settings: TSettings;
+	listenToChildren: ListenToChildrenFunction;
 } ) => ( () => void ) | undefined;
 
 export const handlers: Map< string, Map< string, Handler > > = new Map();

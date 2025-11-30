@@ -39,6 +39,9 @@
     "build": "tsup --config=../../tsup.build.ts",
     "dev": "tsup --config=../../tsup.dev.ts"
   },
+  "peerDependencies": {
+    "react": "^18.3.1"
+  },
   "devDependencies": {
     "tsup": "^8.3.5"
   }

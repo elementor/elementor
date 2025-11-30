@@ -48,6 +48,7 @@ export function useInteractionsItems() {
 					subscriber();
 				} catch {}
 			};
+
 			const unsubscribe = provider.subscribe( safeSubscriber );
 			return unsubscribe;
 		} );
@@ -71,13 +72,13 @@ export function useInteractionsItems() {
 		} );
 	} );
 
-	return useMemo(
-		() =>
-			Object.values( interactionItems )
-				.sort( sortByProviderPriority )
-				.flatMap( ( { items } ) => items ),
-		[ interactionItems ]
-	);
+	return useMemo( () => {
+		const result = Object.values( interactionItems )
+			.sort( sortByProviderPriority )
+			.flatMap( ( { items } ) => items );
+
+		return result;
+	}, [ interactionItems ] );
 }
 
 function sortByProviderPriority(

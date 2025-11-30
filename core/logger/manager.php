@@ -246,7 +246,6 @@ class Manager extends BaseModule {
 			E_COMPILE_ERROR => Logger_Interface::LEVEL_ERROR,
 			E_RECOVERABLE_ERROR => Logger_Interface::LEVEL_ERROR,
 			E_PARSE => Logger_Interface::LEVEL_ERROR,
-			E_STRICT => Logger_Interface::LEVEL_ERROR,
 
 			E_WARNING => Logger_Interface::LEVEL_WARNING,
 			E_USER_WARNING => Logger_Interface::LEVEL_WARNING,

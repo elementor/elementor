@@ -21,10 +21,6 @@ jobs:
     uses: ./.github/workflows/build.yml
 
   compare-v4-to-v3:
-    # NOTE: This workflow is temporarily disabled due to PR #33167 causing performance check failures.
-    # To re-enable: Remove the 'if: false' condition below.
-    # Task: https://elementor.atlassian.net/browse/ED-21486
-    if: false
     name: Compare V4 to V3
     runs-on: ubuntu-24.04
     needs: [build-plugin]

@@ -1,123 +1,126 @@
 import * as React from 'react';
-import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { EyeIcon, XIcon } from '@elementor/icons';
-import { bindPopover, bindTrigger, IconButton, Popover, Stack, UnstableTag, usePopupState } from '@elementor/ui';
+import { useEffect, useMemo, useState } from 'react';
+import { Repeater } from '@elementor/editor-controls';
+import { type ElementInteractions } from '@elementor/editor-elements';
+import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
+import { Alert, AlertTitle, Box, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { usePopupStateContext } from '../contexts/popup-state-context';
 import { getInteractionsConfig } from '../utils/get-interactions-config';
-import { Header } from './header';
-import { InteractionDetails } from './interaction-details';
+import { DEFAULT_INTERACTION, InteractionDetails } from './interaction-details';
 
-type PredefinedInteractionsListProps = {
-	onSelectInteraction: ( interaction: string ) => void;
-	selectedInteraction: string;
-	onDelete?: () => void;
+export const MAX_NUMBER_OF_INTERACTIONS = 5;
+
+export type InteractionListProps = {
+	onSelectInteractions: ( interactions: ElementInteractions ) => void;
+	interactions: ElementInteractions;
+	onPlayInteraction: ( interactionId: string ) => void;
+	triggerCreateOnShowEmpty?: boolean;
 };
 
-export const PredefinedInteractionsList = ( {
-	onSelectInteraction,
-	selectedInteraction,
-	onDelete,
-}: PredefinedInteractionsListProps ) => {
-	return (
-		<Stack sx={ { m: 1, p: 1.5 } } gap={ 2 }>
-			<Header label={ __( 'Interactions', 'elementor' ) } />
-			<InteractionsList
-				onDelete={ onDelete }
-				selectedInteraction={ selectedInteraction }
-				onSelectInteraction={ onSelectInteraction }
-			/>
-		</Stack>
-	);
-};
+export function InteractionsList( props: InteractionListProps ) {
+	const { interactions, onSelectInteractions, onPlayInteraction, triggerCreateOnShowEmpty } = props;
 
-type InteractionListProps = {
-	onDelete?: () => void;
-	onSelectInteraction: ( interaction: string ) => void;
-	selectedInteraction: string;
-	defaultStateRef?: React.MutableRefObject< boolean | undefined >;
-};
-
-function InteractionsList( props: InteractionListProps ) {
-	const { onSelectInteraction, selectedInteraction, defaultStateRef, onDelete } = props;
-
-	const [ interactionId, setInteractionId ] = useState( selectedInteraction );
-
-	const anchorEl = useRef< HTMLDivElement | null >( null );
-
-	const popupId = useId();
-	const popupState = usePopupState( {
-		variant: 'popover',
-		popupId: `elementor-interactions-list-${ popupId }`,
-	} );
-
-	const { openByDefault, resetDefaultOpen } = usePopupStateContext();
+	const [ interactionsState, setInteractionsState ] = useState< ElementInteractions >( interactions );
 
 	useEffect( () => {
-		if ( interactionId && interactionId !== selectedInteraction ) {
-			onSelectInteraction( interactionId );
+		if ( JSON.stringify( interactions.items ) !== JSON.stringify( interactionsState ) ) {
+			onSelectInteractions( interactionsState );
 		}
-	}, [ interactionId, selectedInteraction, onSelectInteraction ] );
+	}, [ interactions.items, interactionsState, onSelectInteractions ] );
 
-	useEffect( () => {
-		if ( openByDefault && anchorEl.current ) {
-			popupState.setAnchorEl( anchorEl.current );
-			popupState.open();
-			resetDefaultOpen();
-		}
-	}, [ defaultStateRef, popupState, anchorEl, openByDefault, resetDefaultOpen ] );
+	const isMaxNumberOfInteractionsReached = useMemo( () => {
+		return interactionsState.items?.length >= MAX_NUMBER_OF_INTERACTIONS;
+	}, [ interactionsState.items ] );
 
-	const displayLabel = useMemo( () => {
-		if ( ! interactionId ) {
+	if ( triggerCreateOnShowEmpty && ( ! interactionsState.items || interactionsState.items?.length === 0 ) ) {
+		setInteractionsState( {
+			version: 1,
+			items: [
+				{
+					animation: {
+						animation_id: DEFAULT_INTERACTION,
+						animation_type: 'full-preset',
+					},
+				},
+			],
+		} );
+	}
+
+	const displayLabel = ( interactionForDisplay: string ) => {
+		if ( ! interactionForDisplay ) {
 			return '';
 		}
 
 		const animationOptions = getInteractionsConfig()?.animationOptions;
-		const option = animationOptions.find( ( opt ) => opt.value === interactionId );
+		const option = animationOptions.find( ( opt ) => opt.value === interactionForDisplay );
 
-		return option?.label || interactionId;
-	}, [ interactionId ] );
+		return option?.label || interactionForDisplay;
+	};
+
+	const infotipContent = isMaxNumberOfInteractionsReached ? (
+		<Alert color="secondary" icon={ <InfoCircleFilledIcon /> }>
+			<AlertTitle>{ __( 'Interactions', 'elementor' ) }</AlertTitle>
+			<Box component="span">
+				{ __(
+					"You've reached the limit of 5 interactions for this element. Please remove an existing interaction before creating a new one.",
+					'elementor'
+				) }
+			</Box>
+		</Alert>
+	) : undefined;
 
 	return (
-		<Stack gap={ 1.5 } ref={ anchorEl }>
-			<UnstableTag
-				{ ...bindTrigger( popupState ) }
-				fullWidth
-				variant="outlined"
-				label={ displayLabel }
-				showActionsOnHover
-				actions={
+		<Repeater
+			openOnAdd
+			openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
+			label={ __( 'Interactions', 'elementor' ) }
+			values={ interactionsState.items }
+			setValues={ ( newValue: ElementInteractions[ 'items' ] ) => {
+				setInteractionsState( {
+					...interactionsState,
+					items: newValue,
+				} );
+			} }
+			showDuplicate={ false }
+			showToggle={ false }
+			isSortable={ false }
+			disableAddItemButton={ isMaxNumberOfInteractionsReached }
+			addButtonInfotipContent={ infotipContent }
+			itemSettings={ {
+				initialValues: {
+					animation: {
+						animation_id: DEFAULT_INTERACTION,
+						animation_type: 'full-preset',
+					},
+				},
+				Label: ( { value } ) => displayLabel( value.animation.animation_id ),
+				Icon: () => null,
+				Content: ( { index, value } ) => (
+					<InteractionDetails
+						key={ index }
+						interaction={ value.animation.animation_id }
+						onChange={ ( newValue: string ) => {
+							const newInteractions = { ...interactionsState };
+							newInteractions.items[ index ] = {
+								...newInteractions.items[ index ],
+								animation: {
+									...newInteractions.items[ index ].animation,
+									animation_id: newValue,
+								},
+							};
+							setInteractionsState( { ...interactionsState, items: newInteractions.items } );
+						} }
+					/>
+				),
+				actions: ( value ) => (
 					<>
-						<IconButton size="tiny" disabled>
-							<EyeIcon fontSize="tiny" />
-						</IconButton>
-						<IconButton size="tiny" onClick={ () => onDelete?.() }>
-							<XIcon fontSize="tiny" />
+						<IconButton size="tiny" onClick={ () => onPlayInteraction( value.animation.animation_id ) }>
+							<PlayerPlayIcon fontSize="tiny" />
 						</IconButton>
 					</>
-				}
-			/>
-			<Popover
-				{ ...bindPopover( popupState ) }
-				disableScrollLock
-				anchorEl={ anchorEl.current }
-				anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
-				transformOrigin={ { vertical: 'top', horizontal: 'left' } }
-				PaperProps={ {
-					sx: { my: 1 },
-				} }
-				onClose={ () => {
-					popupState.close();
-				} }
-			>
-				<InteractionDetails
-					interaction={ selectedInteraction }
-					onChange={ ( newValue: string ) => {
-						setInteractionId( newValue );
-					} }
-				/>
-			</Popover>
-		</Stack>
+				),
+			} }
+		/>
 	);
 }

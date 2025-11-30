@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type RefObject, useEffect, useState } from 'react';
+import { type RefObject, useEffect, useMemo } from 'react';
 import { type PropType, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { usePopupState } from '@elementor/ui';
@@ -108,15 +108,19 @@ export const SizeControl = createControl(
 			propType,
 		} = useBoundProp( sizePropTypeUtil );
 		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[ variant ];
-		const [ internalState, setInternalState ] = useState( createStateFromSizeProp( sizeValue, actualDefaultUnit ) );
 		const activeBreakpoint = useActiveBreakpoint();
 		const actualUnits = resolveUnits( propType, enablePropTypeUnits, variant, units );
 
 		const actualExtendedOptions = useSizeExtendedOptions( extendedOptions || [], disableCustom ?? false );
 		const popupState = usePopupState( { variant: 'popover' } );
 
+		const memorizedExternalState = useMemo(
+			() => createStateFromSizeProp( sizeValue, actualDefaultUnit ),
+			[ sizeValue, actualDefaultUnit ]
+		);
+
 		const [ state, setState ] = useSyncExternalState( {
-			external: internalState,
+			external: memorizedExternalState,
 			setExternal: ( newState: State | null, options, meta ) =>
 				setSizeValue( extractValueFromState( newState ), options, meta ),
 			persistWhen: ( newState ) => !! extractValueFromState( newState ),
@@ -184,7 +188,7 @@ export const SizeControl = createControl(
 			}
 
 			if ( state.unit === newState.unit ) {
-				setInternalState( mergedStates );
+				setState( mergedStates );
 
 				return;
 			}
@@ -297,17 +301,20 @@ function extractValueFromState( state: State | null, allowEmpty: boolean = false
 		return { size: '', unit };
 	}
 
-	if (
-		! allowEmpty &&
-		( ( unit === 'custom' && ! state.custom ) || ( unit !== 'custom' && ! state.numeric && state.numeric !== 0 ) )
-	) {
+	if ( unit === 'custom' ) {
+		return { size: state.custom ?? '', unit: 'custom' };
+	}
+
+	const numeric = state.numeric;
+
+	if ( ! allowEmpty && ( numeric === undefined || numeric === null || Number.isNaN( numeric ) ) ) {
 		return null;
 	}
 
 	return {
-		size: state[ unit === 'custom' ? 'custom' : 'numeric' ],
+		size: numeric,
 		unit,
-	} as SizeValue;
+	};
 }
 
 function areStatesEqual( state1: State, state2: State ): boolean {

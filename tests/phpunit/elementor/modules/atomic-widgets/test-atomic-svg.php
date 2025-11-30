@@ -180,9 +180,14 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 			'settings' => [],
 			'widgetType' => Atomic_Svg::get_element_type(),
 			'interactions' => [
-				'click' => [
-					'id' => 'e8e55a1',
-					'type' => 'click',
+				'version' => 1,
+				'items' => [
+					[
+						'animation' => [
+							'animation_type' => 'full-preset',
+							'animation_id' => 'load-fade-in--300-0',
+						],
+					],
 				],
 			],
 		];
@@ -195,6 +200,54 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertMatchesSnapshot( $rendered_output );
+	}
+
+	public function test__svg_element_has_data_interaction_id_attribute(): void {
+		// Arrange
+		$mock_svg = [
+			'id' => 'test123',
+			'elType' => 'widget',
+			'settings' => [],
+			'widgetType' => Atomic_Svg::get_element_type(),
+		];
+		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $mock_svg );
+
+		// Act
+		ob_start();
+		$this->instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert
+		$this->assertStringContainsString( 'data-interaction-id="test123"', $rendered_output );
+		$this->assertMatchesRegularExpression( '/<svg[^>]*data-interaction-id="test123"/', $rendered_output );
+	}
+
+	public function test__svg_element_has_data_interaction_id_attribute_when_wrapped_in_link(): void {
+		// Arrange
+		$element = [
+			'id' => 'linked456',
+			'elType' => 'widget',
+			'settings' => [
+				'svg' => [
+					'id' => 123,
+				],
+				'link' => [
+					'href' => 'https://elementor.com',
+					'target' => '_blank',
+				]
+			],
+			'widgetType' => Atomic_Svg::get_element_type(),
+		];
+		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $element );
+
+		// Act
+		ob_start();
+		$this->instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert
+		$this->assertStringContainsString( 'data-interaction-id="linked456"', $rendered_output );
+		$this->assertMatchesRegularExpression( '/<svg[^>]*data-interaction-id="linked456"/', $rendered_output );
 	}
 
 	public function link_href_provider(): array {

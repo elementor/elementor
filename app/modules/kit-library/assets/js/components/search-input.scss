@@ -18,17 +18,17 @@ $root: eps-search-input;
 
 .eps-search-input {
 	width: 100%;
-	font-size: type(size, "15");
+	font-size: get-type(size, "15");
 	padding: spacing(10) spacing(44);
 	border: none;
 	background: var(--eps-search-input-background-color);
 	outline: none;
 	color: var(--eps-search-input-color);
-	line-height: type( line-height, 'flat' );
+	line-height: get-type( line-height, 'flat' );
 	height: spacing(44);
 
 	&--sm {
-		font-size: type(size, "13");
+		font-size: get-type(size, "13");
 		padding: spacing(8) spacing(30);
 	}
 
@@ -46,7 +46,7 @@ $root: eps-search-input;
 	}
 
 	&__icon {
-		font-size: type(size, "20");
+		font-size: get-type(size, "20");
 		padding: spacing(10);
 		color: tints(500);
 		position: absolute;
@@ -58,12 +58,12 @@ $root: eps-search-input;
 		justify-content: center;
 
 		&--sm {
-			font-size: type(size, "12");
+			font-size: get-type(size, "12");
 		}
 	}
 
 	&__clear-icon {
-		font-size: type(size, "14");
+		font-size: get-type(size, "14");
 		padding: spacing(10);
 		color: tints(500);
 		position: absolute;
@@ -75,7 +75,7 @@ $root: eps-search-input;
 		justify-content: center;
 
 		&--sm {
-			font-size: type(size, "11");
+			font-size: get-type(size, "11");
 		}
 	}
 }

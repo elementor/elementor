@@ -12,7 +12,8 @@ import { __privateListenTo as listenTo, commandStartEvent, registerDataHook } fr
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
-import { componentIdTransformer } from './component-id-transformer';
+import { componentInstanceTransformer } from './component-instance-transformer';
+import { componentOverridableTransformer } from './component-overridable-transformer';
 import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
@@ -23,17 +24,21 @@ import { componentsStylesProvider } from './store/components-styles-provider';
 import { loadComponentsStyles } from './store/load-components-styles';
 import { removeComponentStyles } from './store/remove-component-styles';
 import { slice } from './store/store';
+import { beforeSave } from './sync/before-save';
 import { type ExtendedWindow } from './types';
-import { beforeSave } from './utils/before-save';
+import { onElementDrop } from './utils/tracking';
 
 const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
 
 export function init() {
 	stylesRepository.register( componentsStylesProvider );
+
 	registerSlice( slice );
+
 	registerElementType( TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
 		createComponentType( { ...options, showLockedByModal: openEditModeDialog } )
 	);
+
 	registerDataHook( 'dependency', 'editor/documents/close', ( args ) => {
 		const document = getV1CurrentDocument();
 		if ( document.config.type === COMPONENT_DOCUMENT_TYPE ) {
@@ -41,6 +46,8 @@ export function init() {
 		}
 		return true;
 	} );
+
+	registerDataHook( 'after', 'preview/drop', onElementDrop );
 
 	( window as unknown as ExtendedWindow ).elementorCommon.__beforeSave = beforeSave;
 
@@ -75,5 +82,6 @@ export function init() {
 		loadComponentsStyles( ( config?.elements as V1ElementData[] ) ?? [] );
 	} );
 
-	settingsTransformersRegistry.register( 'component-id', componentIdTransformer );
+	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );
+	settingsTransformersRegistry.register( 'overridable', componentOverridableTransformer );
 }

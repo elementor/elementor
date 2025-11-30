@@ -21,8 +21,7 @@
     "prepare-environment:ci": "npm ci && cd packages && npm ci",
     "composer:no-dev": "composer install --optimize-autoloader --prefer-dist && composer install --no-scripts --no-dev && composer dump-autoload",
     "reinstall": "rm -rf node_modules packages/node_modules && npm cache clean --force && npm ci && cd packages && npm ci",
-    "hard-reinstall": "rm -rf **/node_modules && npm cache clean --force && npm i && cd packages && npm i",
-    "update-packages": "rm -rf **/node_modules **/package-lock.json && npm cache clean --force && npm i && cd packages && npm i",
+    "hard-reinstall": "rm -rf **/node_modules **/package-lock.json && npm cache clean --force && npm i && cd packages && npm i",
     "env:setup": "bash scripts/setup-test-environment.sh",
     "env:setup:with-playwright": "bash scripts/setup-test-environment.sh && npx playwright install chromium",
     "wp-env": "wp-env",
@@ -50,9 +49,9 @@
     "restart:testing": "bash scripts/setup-testing.sh --restart",
     "packages:version": "cd packages && npm run version",
     "packages:release": "cd packages && npm run release",
-    "experimental:wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json",
-    "experimental:wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json",
-    "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run experimental:wp-playground\" \"npm run test:playwright -- --ui\""
+    "wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json",
+    "wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json",
+    "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run wp-playground\" \"npm run test:playwright -- --ui\""
   },
   "engines": {
     "node": ">=20.19.0",
@@ -145,7 +144,7 @@
     "write": "^2.0.0"
   },
   "dependencies": {
-    "@elementor/icons": "1.59.0",
+    "@elementor/icons": "1.61.0",
     "@elementor/ui": "1.36.17",
     "@reach/router": "1.3.4",
     "@reduxjs/toolkit": "^1.8.3",

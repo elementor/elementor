@@ -11,9 +11,8 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 ## When to use this tool:
 - When a user requests to see which classes or global classes exists.
 - When you need the list of global classes to allow the user to select from.
+- At least once before applying or unapplying a class, to ensure the class ID is correct.
 
-## Prerequisites:
-- Ensure you have the correct element ID for which you want to list the applied classes.
 `,
 		outputSchema: {
 			appliedClasses: z.array(

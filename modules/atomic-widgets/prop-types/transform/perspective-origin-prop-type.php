@@ -32,4 +32,8 @@ class Perspective_Origin_Prop_Type extends Object_Prop_Type {
 	protected function get_default_value_size(): int {
 		return 50;
 	}
+
+	protected function get_bind_initial_value() {
+		return null;
+	}
 }
