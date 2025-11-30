@@ -1,8 +1,6 @@
 import { toolPrompts } from '@elementor/editor-mcp';
 
 import {
-	GLOBAL_CLASSES_URI,
-	GLOBAL_VARIABLES_URI,
 	STYLE_SCHEMA_URI,
 	WIDGET_SCHEMA_URI,
 } from '../../resources/widgets-schema-resource';
@@ -126,7 +124,7 @@ You should use these IDs as reference for further configuration, styling or chan
 	);
 
 	buildCompositionsToolPrompt.instruction(
-		`You must use styles[${ STYLE_SCHEMA_URI }]/variables[${ GLOBAL_VARIABLES_URI }]/classes[${ GLOBAL_CLASSES_URI }] that are available in the project, you should prefer using them over inline styles, and you are welcome to execute relevant tools AFTER this tool execution, to apply global classes to the created elements.`
+		`You must use styles/variables/classes that are available in the project resources, you should prefer using them over inline styles, and you are welcome to execute relevant tools AFTER this tool execution, to apply global classes to the created elements.`
 	);
 
 	return buildCompositionsToolPrompt.prompt();
