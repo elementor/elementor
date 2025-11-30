@@ -72,12 +72,10 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 						const styleObject = stylesConfig[ configId ] || {};
 						configObject._styles = styleObject;
 						for ( const [ propertyName, propertyValue ] of Object.entries( configObject ) ) {
-							// validate property existance
 							const widgetSchema = widgetsCache[ elementTag ];
 							if (
 								! widgetSchema?.atomic_props_schema?.[ propertyName ] &&
-								propertyName !== '_styles' &&
-								propertyName !== 'custom_css'
+								propertyName !== '_styles'
 							) {
 								softErrors.push(
 									new Error(
@@ -90,10 +88,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 								doUpdateElementProperty( {
 									elementId: newElement.id,
 									propertyName,
-									propertyValue:
-										propertyName === 'custom_css'
-											? { _styles: propertyValue }
-											: ( propertyValue as unknown as PropValue ),
+									propertyValue: propertyValue as unknown as PropValue,
 									elementType: elementTag,
 								} );
 							} catch ( error ) {

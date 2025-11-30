@@ -7,8 +7,6 @@ import {
 	WIDGET_SCHEMA_URI,
 } from '../../resources/widgets-schema-resource';
 
-const CUSTOM_CSS_URI = STYLE_SCHEMA_URI.replace( '{category}', 'custom_css' );
-
 export const generatePrompt = () => {
 	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
 
@@ -23,9 +21,8 @@ Prefer this tool over any other tool for building HTML structure, unless you are
 1. [${ WIDGET_SCHEMA_URI }]
    Required to understand which widgets are available, and what are their configuration schemas.
    Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply property values correctly.
-2. [${ CUSTOM_CSS_URI }] - USE ONLY ONCE YOU DON'T UNDERSTAND THE STYLES SCHEMA FOR THE ELEMENTS!!
+2. [${ STYLE_SCHEMA_URI }]
    Required to understand the styles schema for the widgets. All widgets share the same styles schema.
-   USE ONLY THE "custom_css" CATEGORY FROM THE STYLES SCHEMA FOR STYLING THE ELEMENTS with this tool.
 3. List of allowed custom tags for building the structure is derived from the list of widgets schema resources.
 
 # Instructions
@@ -39,9 +36,8 @@ Prefer this tool over any other tool for building HTML structure, unless you are
    \`<e-flexbox configuration-id="flex1"><e-heading configuration-id="heading2"></e-heading></e-flexbox>\`
    In the elementConfig property, provide the actual configuration object for each configuration-id used in the XML structure.
    In the stylesConfig property, provide the actual styles configuration object for each configuration-id used in the XML structure.
-   For easy execution, USE ONLY "custom_css" category from the styles schema resource to apply styles.
 5. Ensure the XML structure is valid and parsable.
-6. Do not add any attribute nodes, classes, id's, and no text nodes allowed, for inline styles prefer USE the [${ CUSTOM_CSS_URI }] resource for custom_css.
+6. Do not add any attribute nodes, classes, id's, and no text nodes allowed.
    Layout properties, such as margin, padding, align, etc. must be applied using the [${ STYLE_SCHEMA_URI }] PropValues.
 7. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-div-block" and "e-flexbox".
 8. Make sure that non-container elements do NOT have any nested elements.
@@ -57,7 +53,7 @@ Prefer this tool over any other tool for building HTML structure, unless you are
 - Always aim for a clean and professional look that aligns with modern design principles.
 - When you are required to create placeholder texts, use texts that have a length that fits the goal. When long texts are required, use longer placeholder texts. When the user specifies exact texts, use the exact texts.
 - Image size does not affect the actual size on the screen, only which quality to use. If you use images, specifically add _styles PropValues to define the image sizes.
-- Attempt to use layout, margin, padding, size properties from the styles schema and not the custom_css, unless necessary.
+- Attempt to use layout, margin, padding, size properties from the styles schema.
 - If your elements library is limited, encourage use of nesting containers to achieve complex layouts.
 
 # CONSTRAINTS
@@ -93,7 +89,17 @@ A Heading and a button inside a flexbox
   },
   stylesConfig: {
     "heading1": {
-      "custom_css": "font-size: 24px; color: #333;"
+      "font-size": {
+        "$$type": "size",
+        "value": {
+          "size": { "$$type": "number", "value": 24 },
+          "unit": { "$$type": "string", "value": "px" }
+        }
+      },
+      "color": {
+        "$$type": "color",
+        "value": { "$$type": "string", "value": "#333" }
+      }
     }
   },
 }

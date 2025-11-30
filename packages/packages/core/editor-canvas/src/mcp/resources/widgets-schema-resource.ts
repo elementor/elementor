@@ -26,9 +26,7 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 					uri: BEST_PRACTICES_URI,
 					text: `# Styling best practices
 Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
-This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema, or in custom_css, depends on your needs.
-
-You might have custom_css property but prefer to use it only as the last solution to resolve specific style.`,
+This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema.`,
 				},
 			],
 		};
@@ -38,7 +36,7 @@ You might have custom_css property but prefer to use it only as the last solutio
 		'styles-schema',
 		new ResourceTemplate( STYLE_SCHEMA_URI, {
 			list: () => {
-				const categories = [ ...Object.keys( getStylesSchema() ), 'custom_css' ];
+				const categories = Object.keys( getStylesSchema() );
 				return {
 					resources: categories.map( ( category ) => ( {
 						uri: `elementor://styles/schema/${ category }`,
@@ -52,16 +50,6 @@ You might have custom_css property but prefer to use it only as the last solutio
 		},
 		async ( uri, variables ) => {
 			const category = typeof variables.category === 'string' ? variables.category : variables.category?.[ 0 ];
-			if ( category === 'custom_css' ) {
-				return {
-					contents: [
-						{
-							uri: uri.toString(),
-							text: 'Free style inline CSS string of properties and their values. Applicable for a single element, only the properties and values are accepted.',
-						},
-					],
-				};
-			}
 			const stylesSchema = getStylesSchema()[ category ];
 			if ( ! stylesSchema ) {
 				throw new Error( `No styles schema found for category: ${ category }` );
@@ -143,8 +131,7 @@ You might have custom_css property but prefer to use it only as the last solutio
 			},
 		} ),
 		{
-			description:
-				'Global variables list. Variables are being used in this way: If it is in custom_css, use the variable using the label with -- prefix. If it is directly in the schema, you need to put the ID which is the key inside the object.',
+			description: 'Global variables list. Variables are being used in this way: If it is directly in the schema, you need to put the ID which is the key inside the object.',
 		},
 		async ( uri ) => {
 			return {

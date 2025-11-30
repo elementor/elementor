@@ -1,4 +1,5 @@
 import { z } from '@elementor/schema';
+import { STYLE_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 
 export const inputSchema = {
 	xmlStructure: z.string().describe( 'The XML structure representing the composition to be built' ),
@@ -16,7 +17,7 @@ export const inputSchema = {
 				z.any().describe( 'The PropValue for the style property. MANDATORY' )
 			)
 		)
-		.describe( 'A record mapping element IDs to their styles configuration objects.' )
+		.describe( `A record mapping element IDs to their styles configuration objects. Use the actual styles schema from [${ STYLE_SCHEMA_URI }].` )
 		.default( {} ),
 };
 
