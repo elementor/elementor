@@ -32,6 +32,12 @@ class Render_Props_Resolver extends Props_Resolver {
 	}
 
 	public function resolve( array $schema, array $props ): array {
+		$this->resolution_depth++;
+
+		if ( 1 === $this->resolution_depth ) {
+			$this->shared_context->clear();
+		}
+
 		$resolved = [];
 
 		foreach ( $schema as $key => $prop_type ) {
@@ -53,6 +59,8 @@ class Render_Props_Resolver extends Props_Resolver {
 
 			$resolved[ $key ] = $transformed;
 		}
+
+		$this->resolution_depth--;
 
 		return $resolved;
 	}

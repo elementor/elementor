@@ -19,6 +19,8 @@ abstract class Props_Resolver {
 
 	protected Shared_Props_Context $shared_context;
 
+	protected int $resolution_depth = 0;
+
 	protected function __construct( Transformers_Registry $transformers_registry ) {
 		$this->transformers_registry = $transformers_registry;
 		$this->shared_context = new Shared_Props_Context();
@@ -65,8 +67,6 @@ abstract class Props_Resolver {
 			if ( ! is_array( $value['value'] ) ) {
 				return null;
 			}
-
-			$this->shared_context->clear();
 
 			$value['value'] = $this->resolve(
 				$prop_type->get_shape(),

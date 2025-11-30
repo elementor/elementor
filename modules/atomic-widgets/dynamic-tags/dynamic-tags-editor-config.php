@@ -80,11 +80,8 @@ class Dynamic_Tags_Editor_Config {
 			return null;
 		}
 
-		$group_overrides = [
-			'contact-url' => 'site',
-		];
-
-		$group = $group_overrides[ $tag['name'] ] ?? $tag['group'] ?? '';
+		$group = $tag['group'] ?? '';
+		$group = Plugin::$instance->dynamic_tags->get_v4_tag_group( $tag['name'], $group );
 
 		$converted_tag = [
 			'name'            => $tag['name'],

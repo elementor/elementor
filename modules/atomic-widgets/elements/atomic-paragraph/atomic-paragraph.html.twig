@@ -1,11 +1,17 @@
 {% if settings.paragraph is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
 		<{{ settings.tag | e('html_tag') }} class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" {{ id_attribute }} {{ settings.attributes | raw }}>
-				{% if settings.link.href %}
-						<{{ settings.link.tag | e('html_tag') }} href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
-								{{ settings.paragraph | striptags(allowed_tags) | raw }}
-						</{{ settings.link.tag | e('html_tag') }}>
+			{% if settings.link.href %}
+				{% if settings.link.tag == 'button' %}
+					<button type="button" class="{{ base_styles['link-base'] }} atomic-action-button" data-link-href="{{ settings.link.href }}">
+						{{ settings.paragraph | striptags(allowed_tags) | raw }}
+					</button>
 				{% else %}
+					<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
+						{{ settings.paragraph | striptags(allowed_tags) | raw }}
+					</a>
+				{% endif %}
+			{% else %}
 						{{ settings.paragraph | striptags('<b><strong><em><u><ul><ol><li><blockquote><a><del><span><br>') | raw }}
 				{% endif %}
 		</{{ settings.tag | e('html_tag') }}>

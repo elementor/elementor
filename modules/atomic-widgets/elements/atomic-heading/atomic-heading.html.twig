@@ -12,9 +12,15 @@
 	{% set allowed_tags = '<b><strong><em><i><u><a><del><span><br>' %}
 
 	{% if settings.link.href %}
-		<{{ settings.link.tag | e('html_tag') }} href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
-			{{ settings.title | striptags(allowed_tags) | raw }}
-		</{{ settings.link.tag | e('html_tag') }}>
+		{% if settings.link.tag == 'button' %}
+			<button type="button" class="{{ base_styles['link-base'] }} atomic-action-button" data-link-href="{{ settings.link.href }}">
+				{{ settings.title | striptags(allowed_tags) | raw }}
+			</button>
+		{% else %}
+			<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
+				{{ settings.title | striptags(allowed_tags) | raw }}
+			</a>
+		{% endif %}
 	{% else %}
 		{{ settings.title | striptags(allowed_tags) | raw }}
 	{% endif %}

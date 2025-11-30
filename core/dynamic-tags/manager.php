@@ -29,6 +29,10 @@ class Manager {
 
 	private $parsing_mode = self::MODE_RENDER;
 
+	private $v4_tags_groups = [
+		'contact-url' => 'site',
+	];
+
 	/**
 	 * Dynamic tags manager constructor.
 	 *
@@ -263,6 +267,21 @@ class Manager {
 		}
 
 		return $tags[ $tag_name ];
+	}
+
+	/**
+	 * Get v4/atomic-specific group override for a dynamic tag.
+	 *
+	 * @since 3.26.0
+	 * @access public
+	 *
+	 * @param string $tag_name Dynamic tag name.
+	 * @param string $fallback_group Default group from tag definition.
+	 *
+	 * @return string Group name to use for v4/atomic context.
+	 */
+	public function get_v4_tag_group( $tag_name, $fallback_group ) {
+		return $this->v4_tags_groups[ $tag_name ] ?? $fallback_group;
 	}
 
 	/**

@@ -1,7 +1,11 @@
 {% if settings.image.src is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
 	{% if settings.link.href %}
-		<{{ settings.link.tag | e('html_tag') }} href="{{ settings.link.href }}" class="{{ base_styles['link-base'] }}" target="{{ settings.link.target }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}">
+		{% if settings.link.tag == 'button' %}
+			<button type="button" class="{{ base_styles['link-base'] }} atomic-action-button" data-link-href="{{ settings.link.href }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}">
+		{% else %}
+			<a href="{{ settings.link.href }}" class="{{ base_styles['link-base'] }}" target="{{ settings.link.target }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}">
+		{% endif %}
 	{% endif %}
 	<img class="{{ base_styles['base'] }} {{ settings.classes | join(' ') }}"
 		{% if not settings.link.href %}
@@ -18,6 +22,10 @@
 		{% endfor %}
 	/>
 	{% if settings.link.href %}
-		</{{ settings.link.tag | e('html_tag') }}>
+		{% if settings.link.tag == 'button' %}
+			</button>
+		{% else %}
+			</a>
+		{% endif %}
 	{% endif %}
 {% endif %}

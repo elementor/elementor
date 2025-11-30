@@ -14,18 +14,15 @@ class Dynamic_Transformer extends Transformer_Base {
 	private Dynamic_Tags_Manager $dynamic_tags_manager;
 	private Dynamic_Tags_Schemas $dynamic_tags_schemas;
 	private Render_Props_Resolver $props_resolver;
-	private Dynamic_Tags_Editor_Config $editor_config;
 
 	public function __construct(
 		Dynamic_Tags_Manager $dynamic_tags_manager,
 		Dynamic_Tags_Schemas $dynamic_tags_schemas,
-		Render_Props_Resolver $props_resolver,
-		Dynamic_Tags_Editor_Config $editor_config
+		Render_Props_Resolver $props_resolver
 	) {
 		$this->dynamic_tags_manager = $dynamic_tags_manager;
 		$this->dynamic_tags_schemas = $dynamic_tags_schemas;
 		$this->props_resolver = $props_resolver;
-		$this->editor_config = $editor_config;
 	}
 
 	public function transform( $value, $context ) {
@@ -37,12 +34,15 @@ class Dynamic_Transformer extends Transformer_Base {
 			throw new \Exception( 'Dynamic tag settings must be an array' );
 		}
 
-		$tag = $this->editor_config->get_tag( $value['name'] );
+		$tag_info = $this->dynamic_tags_manager->get_tag_info( $value['name'] );
 
-		if ( $tag && $context->get_key() && $context->get_shared_context() ) {
+		if ( $tag_info && isset( $tag_info['instance'] ) && $context->get_key() && $context->get_shared_context() ) {
+			$group = $tag_info['instance']->get_group();
+			$group = $this->dynamic_tags_manager->get_v4_tag_group( $value['name'], $group );
+
 			$context->get_shared_context()->store_field_metadata( $context->get_key(), [
-				'dynamic_group' => $tag['group'],
-				'dynamic_tag' => $tag['name'],
+				'dynamic_group' => $group,
+				'dynamic_tag' => $value['name'],
 			] );
 		}
 
