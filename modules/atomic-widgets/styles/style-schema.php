@@ -177,7 +177,7 @@ class Style_Schema {
 				'unset',
 				'revert',
 				'revert-layer',
-			] ),
+			] )->description( 'The all CSS property. CSS values: initial, inherit, unset, revert, revert-layer' ),
 			'cursor' => String_Prop_Type::make()->enum( [
 				'pointer',
 			] )
