@@ -63,7 +63,7 @@ export function InteractionsList( props: InteractionListProps ) {
 			<AlertTitle>{ __( 'Interactions', 'elementor' ) }</AlertTitle>
 			<Box component="span">
 				{ __(
-					"You've reached the limit of 5 interactions for this element. Please remove an existing interaction before creating a new one.",
+					"You've reached the limit of 5 interactions for this element. Please remove an interaction before creating a new one.",
 					'elementor'
 				) }
 			</Box>
