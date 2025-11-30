@@ -81,7 +81,11 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 				<Effect value={ interactionDetails.effect } onChange={ ( v ) => handleChange( 'effect', v ) } />
 				<EffectType value={ interactionDetails.type } onChange={ ( v ) => handleChange( 'type', v ) } />
 				<Direction
-					value={ interactionDetails.effect === 'slide' && ! interactionDetails.direction ? 'top' : interactionDetails.direction }
+					value={
+						interactionDetails.effect === 'slide' && ! interactionDetails.direction
+							? 'top'
+							: interactionDetails.direction
+					}
 					onChange={ ( v ) => {
 						const directionValue = interactionDetails.effect === 'slide' && ( ! v || v === '' ) ? 'top' : v;
 						handleChange( 'direction', directionValue );
