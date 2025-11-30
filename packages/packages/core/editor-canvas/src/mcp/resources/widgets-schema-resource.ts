@@ -12,8 +12,6 @@ import { getStylesSchema } from '@elementor/editor-styles';
 
 export const WIDGET_SCHEMA_URI = 'elementor://widgets/schema/{widgetType}';
 export const STYLE_SCHEMA_URI = 'elementor://styles/schema/{category}';
-export const GLOBAL_VARIABLES_URI = 'elementor://variables';
-export const GLOBAL_CLASSES_URI = 'elementor://classes';
 export const BEST_PRACTICES_URI = 'elementor://styles/best-practices';
 
 export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
@@ -26,7 +24,10 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 					uri: BEST_PRACTICES_URI,
 					text: `# Styling best practices
 Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
-This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema.`,
+This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema, or in custom_css, depends on your needs.
+
+When applicable for styles, use the "custom_css" property for free-form CSS styling. This property accepts a string of CSS rules that will be applied directly to the element.
+The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.`,
 				},
 			],
 		};
@@ -36,7 +37,7 @@ This flexboxes are by default "flex" with "stretch" alignment. To ensure proper 
 		'styles-schema',
 		new ResourceTemplate( STYLE_SCHEMA_URI, {
 			list: () => {
-				const categories = Object.keys( getStylesSchema() );
+				const categories = [ ...Object.keys( getStylesSchema() ), 'custom_css' ];
 				return {
 					resources: categories.map( ( category ) => ( {
 						uri: `elementor://styles/schema/${ category }`,
@@ -50,6 +51,16 @@ This flexboxes are by default "flex" with "stretch" alignment. To ensure proper 
 		},
 		async ( uri, variables ) => {
 			const category = typeof variables.category === 'string' ? variables.category : variables.category?.[ 0 ];
+			if ( category === 'custom_css' ) {
+				return {
+					contents: [
+						{
+							uri: uri.toString(),
+							text: 'Free style inline CSS string of properties and their values. Applicable for a single element, only the properties and values are accepted. Use this as a last resort for properties that are not covered with the schema.',
+						},
+					],
+				};
+			}
 			const stylesSchema = getStylesSchema()[ category ];
 			if ( ! stylesSchema ) {
 				throw new Error( `No styles schema found for category: ${ category }` );
@@ -115,57 +126,6 @@ This flexboxes are by default "flex" with "stretch" alignment. To ensure proper 
 			};
 		}
 	);
-
-	mcpServer.resource(
-		'global-variables',
-		new ResourceTemplate( GLOBAL_VARIABLES_URI, {
-			list: () => {
-				return {
-					resources: [
-						{
-							uri: GLOBAL_VARIABLES_URI,
-							name: 'Global variables',
-						},
-					],
-				};
-			},
-		} ),
-		{
-			description:
-				'Global variables list. Variables are being used in this way: If it is directly in the schema, you need to put the ID which is the key inside the object.',
-		},
-		async ( uri ) => {
-			return {
-				contents: [ { uri: uri.toString(), text: localStorage[ 'elementor-global-variables' ] } ],
-			};
-		}
-	);
-
-	mcpServer.resource(
-		'global-classes',
-		new ResourceTemplate( GLOBAL_CLASSES_URI, {
-			list: () => {
-				return {
-					resources: [ { uri: GLOBAL_CLASSES_URI, name: 'Global classes' } ],
-				};
-			},
-		} ),
-		{
-			description: 'Global classes list.',
-		},
-		async ( uri ) => {
-			return {
-				contents: [ { uri: uri.toString(), text: localStorage[ 'elementor-global-classes' ] ?? {} } ],
-			};
-		}
-	);
-
-	window.addEventListener( 'variables:updated', () => {
-		mcpServer.server.sendResourceUpdated( {
-			uri: GLOBAL_VARIABLES_URI,
-			contents: [ { uri: GLOBAL_VARIABLES_URI, text: localStorage[ 'elementor-global-variables' ] } ],
-		} );
-	} );
 };
 
 function cleanupPropSchema( propSchema: Record< string, PropType > ): Record< string, PropType > {

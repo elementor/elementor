@@ -72,8 +72,13 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 						const styleObject = stylesConfig[ configId ] || {};
 						configObject._styles = styleObject;
 						for ( const [ propertyName, propertyValue ] of Object.entries( configObject ) ) {
+							// validate property existance
 							const widgetSchema = widgetsCache[ elementTag ];
-							if ( ! widgetSchema?.atomic_props_schema?.[ propertyName ] && propertyName !== '_styles' ) {
+							if (
+								! widgetSchema?.atomic_props_schema?.[ propertyName ] &&
+								propertyName !== '_styles' &&
+								propertyName !== 'custom_css'
+							) {
 								softErrors.push(
 									new Error(
 										`Property "${ propertyName }" does not exist on element type "${ elementTag }".`
@@ -85,7 +90,10 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 								doUpdateElementProperty( {
 									elementId: newElement.id,
 									propertyName,
-									propertyValue: propertyValue as unknown as PropValue,
+									propertyValue:
+										propertyName === 'custom_css'
+											? { _styles: propertyValue }
+											: ( propertyValue as unknown as PropValue ),
 									elementType: elementTag,
 								} );
 							} catch ( error ) {
