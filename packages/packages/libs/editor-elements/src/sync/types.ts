@@ -1,4 +1,4 @@
-import { type PropsSchema, type PropValue } from '@elementor/editor-props';
+import { type PropsSchema, type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 import { type ClassState, type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 
 import { type ControlItem } from '../types';
@@ -49,12 +49,21 @@ export type ElementInteractions = {
 	items: InteractionItem[];
 };
 
-export type InteractionItem = {
-	animation: {
-		animation_type: string;
-		animation_id: string;
-	};
-};
+export type InteractionItemValue = {
+	interaction_id: TransformablePropValue<'string', string>;
+	trigger: TransformablePropValue<'string', string>;
+	animation: TransformablePropValue<'animation-preset-props', {
+		effect: TransformablePropValue<'string', string>;
+		type: TransformablePropValue<'string', string>;
+		direction: TransformablePropValue<'string', string>;
+		timing_config: TransformablePropValue<'timing-config', {
+			duration: TransformablePropValue<'number', number>;
+			delay: TransformablePropValue<'number', number>;
+		}>;
+	}>;
+  };
+
+export type InteractionItem = TransformablePropValue<'interaction-item', InteractionItemValue>;
 
 export type V1ElementModelProps = {
 	widgetType?: string;

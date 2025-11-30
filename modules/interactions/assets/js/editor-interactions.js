@@ -64,7 +64,7 @@ function applyInteractionsToElement( element, interactionsData ) {
 		parsedData = interactionsData;
 	}
 
-	const interactions = Object.values( parsedData?.items );
+	const interactions = Array.isArray( parsedData ) ? parsedData : Object.values( parsedData?.items || [] );
 
 	interactions.forEach( ( interaction ) => {
 		const animationName =
@@ -90,18 +90,25 @@ function handleInteractionsUpdate() {
 			( prev ) => prev.dataId === currentItem.dataId,
 		);
 
-		return ! previousItem || previousItem.interactions !== currentItem.interactions;
+		const currentInteractionsStr = JSON.stringify( currentItem.interactions );
+		const previousInteractionsStr = previousItem ? JSON.stringify( previousItem.interactions ) : '';
+
+		return ! previousItem || currentInteractionsStr !== previousInteractionsStr;
 	} );
 
 	changedItems.forEach( ( item ) => {
 		const element = findElementByInteractionId( item.dataId );
-		const prevInteractions = previousInteractionsData.find( ( prev ) => prev.dataId === item.dataId )?.interactions;
-		if ( element && item.interactions?.items?.length > 0 && item.interactions?.items?.length === prevInteractions?.items?.length ) {
-			const interactionsToApply = {
-				...item.interactions,
-				items: [ ...item.interactions.items ].filter( ( interaction, index ) => prevInteractions?.items[ index ]?.animation?.animation_id !== interaction.animation.animation_id ),
-			};
-			applyInteractionsToElement( element, interactionsToApply );
+		// const prevInteractions = previousInteractionsData.find( ( prev ) => prev.dataId === item.dataId )?.interactions;
+		// if ( element && item.interactions?.items?.length > 0 && item.interactions?.items?.length === prevInteractions?.items?.length ) {
+		// 	const interactionsToApply = {
+		// 		...item.interactions,
+		// 		items: [ ...item.interactions.items ].filter( ( interaction, index ) => prevInteractions?.items[ index ]?.animation?.animation_id !== interaction.animation.animation_id ),
+		// 	};
+		// 	applyInteractionsToElement( element, interactionsToApply );
+		// }
+
+		if ( element && item.interactions && Array.isArray( item.interactions ) && item.interactions.length > 0 ) {
+			applyInteractionsToElement( element, item.interactions );
 		}
 	} );
 
@@ -171,12 +178,21 @@ function handlePlayInteractions( event ) {
 	}
 	const element = findElementByInteractionId( elementId );
 	if ( element ) {
-		const interactionsCopy = {
-			...item.interactions,
-			items: [ ...item.interactions.items ],
-		};
-		interactionsCopy.items = interactionsCopy.items.filter( ( interactionItem ) => interactionItem.animation.animation_id === animationId );
-		applyInteractionsToElement( element, JSON.stringify( interactionsCopy ) );
+		// const interactionsCopy = {
+		// 	...item.interactions,
+		// 	items: [ ...item.interactions.items ],
+		// };
+		// interactionsCopy.items = interactionsCopy.items.filter( ( interactionItem ) => interactionItem.animation.animation_id === animationId );
+		// applyInteractionsToElement( element, JSON.stringify( interactionsCopy ) );
+		// Filter interactions array to only the ones matching the animationId
+		const filteredInteractions = item.interactions.filter( ( interactionStr ) => {
+			// The animationId should match the full string or be the first part (ID)
+			return interactionStr.startsWith( animationId + '-' ) || interactionStr === animationId;
+		} );
+
+		if ( filteredInteractions.length > 0 ) {
+			applyInteractionsToElement( element, filteredInteractions );
+		}
 	}
 }
 

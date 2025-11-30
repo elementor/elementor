@@ -50,12 +50,15 @@ class Parser {
 		}
 
 		foreach ( $interactions['items'] as &$interaction ) {
-			if ( array_key_exists( 'interaction_id', $interaction ) ) {
-				$this->ids_lookup[] = $interaction['interaction_id'];
+			if ( array_key_exists( 'interaction_id', $interaction['value'] ) ) {
+				$this->ids_lookup[] = $interaction['value']['interaction_id'];
 			} else {
-				$interaction = array_merge( [
-					'interaction_id' => $this->get_next_interaction_id( $element_id ),
-				], $interaction );
+				$interaction['value'] = array_merge( [
+					'interaction_id' => [
+						'$$type' => 'string',
+						'value' => $this->get_next_interaction_id( $element_id ),
+					],
+				], $interaction['value'] );
 			}
 		}
 
@@ -81,7 +84,7 @@ class Parser {
 	}
 
 	protected function get_next_interaction_id( $prefix ) {
-		$next_id = Utils::generate_id( "{$this->post_id}-{$prefix}-", $this->ids_lookup );
+		$next_id = Utils::generate_id( "{$this->post_id}_{$prefix}_", $this->ids_lookup );
 		$this->ids_lookup[] = $next_id;
 		return $next_id;
 	}
