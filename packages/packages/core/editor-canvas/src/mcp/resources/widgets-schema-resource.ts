@@ -146,7 +146,7 @@ You might have custom_css property but prefer to use it only as the last solutio
 			description:
 				'Global variables list. Variables are being used in this way: If it is in custom_css, use the variable using the label with -- prefix. If it is directly in the schema, you need to put the ID which is the key inside the object.',
 		},
-		async ( uri, _ ) => {
+		async ( uri ) => {
 			return {
 				contents: [ { uri: uri.toString(), text: localStorage[ 'elementor-global-variables' ] } ],
 			};
@@ -165,7 +165,7 @@ You might have custom_css property but prefer to use it only as the last solutio
 		{
 			description: 'Global classes list.',
 		},
-		async ( uri, _ ) => {
+		async ( uri ) => {
 			return {
 				contents: [ { uri: uri.toString(), text: localStorage[ 'elementor-global-classes' ] ?? {} } ],
 			};
