@@ -4,27 +4,26 @@
     "ABSPATH",
     "customfonts",
     "elementor",
-    "flexbox",
     "googlefonts",
-    "infotip",
     "minifiers",
     "noflip",
-    "notistack",
-    "overridables",
-    "overscan",
-    "plupload",
     "styledef",
-    "stylesheet",
-    "syncpack",
     "totalpages",
     "transpiling",
-    "TSES",
     "Turborepo",
-    "twing",
     "unapply",
     "undoable",
     "vmax",
-    "vmin"
+    "vmin",
+    "plupload",
+    "syncpack",
+    "TSES",
+    "overscan",
+    "twing",
+    "infotip",
+    "notistack",
+    "stylesheet",
+    "flexbox",
   ],
   "enableGlobDot": true,
   "ignorePaths": [
@@ -43,7 +42,7 @@
     "./apps/demo/mockServiceWorker.js"
   ],
   "ignoreRegExpList": [
-    "/from\\s+(['\"]).*\\1/"
+	  "/from\\s+(['\"]).*\\1/"
   ],
   "cache": {
     "useCache": true,
