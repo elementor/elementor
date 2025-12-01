@@ -31,7 +31,6 @@ describe( 'getElementType', () => {
 		// Arrange.
 		jest.mocked( getWidgetsCache ).mockReturnValue( {
 			'atomic-heading': {
-				elType: 'widget',
 				title: 'Heading',
 				controls: {},
 				atomic_controls: [],
@@ -52,7 +51,6 @@ describe( 'getElementType', () => {
 		jest.mocked( getWidgetsCache ).mockReturnValue( {
 			heading: {
 				title: 'Heading',
-				elType: 'widget',
 				controls: {},
 				atomic_controls: undefined,
 				atomic_props_schema: {},
@@ -87,7 +85,6 @@ describe( 'getElementType', () => {
 		jest.mocked( getWidgetsCache ).mockReturnValue( {
 			'atomic-heading': {
 				title: 'Heading',
-				elType: 'widget',
 				controls: {},
 				atomic_controls: [ mockAtomicControl ],
 				atomic_props_schema: mockAtomicPropsSchema,
@@ -115,7 +112,6 @@ describe( 'getElementType', () => {
 		jest.mocked( getWidgetsCache ).mockReturnValue( {
 			'atomic-heading': {
 				title: 'Heading',
-				elType: 'widget',
 				controls: {},
 				atomic_controls: [],
 				atomic_props_schema: {},
@@ -123,7 +119,6 @@ describe( 'getElementType', () => {
 			},
 			'atomic-image': {
 				title: 'Image',
-				elType: 'widget',
 				controls: {},
 				atomic_controls: [],
 				atomic_props_schema: {},
