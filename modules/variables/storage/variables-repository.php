@@ -3,7 +3,7 @@
 namespace Elementor\Modules\Variables\Storage;
 
 use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Modules\AtomicWidgets\Utils;
+use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 
 class Variables_Repository {
 	private const VARIABLES_META_KEY = '_elementor_global_variables';
@@ -18,20 +18,23 @@ class Variables_Repository {
 		$db_record = $this->kit->get_json_meta( self::VARIABLES_META_KEY );
 
 		if ( is_array( $db_record ) && ! empty( $db_record ) ) {
-			// before send load process thru adapter ( value -> string ) // work with collection in adapter
-			return Variables_Collection::hydrate( $db_record );
+			$collection = Variables_Collection::hydrate( $db_record );
+
+			Prop_Type_Adapter::from_storage( $collection );
+
+			return $collection;
 		}
 
 		return Variables_Collection::default();
 	}
 
-	public function save( Variables_Collection $variables ) {
-		$variables->increment_watermark();
-		$record = $variables->serialize();
-		// before save process thru adapter ( value -> prop value ) // work with collection in adapter
+	public function save( Variables_Collection $collection ) {
+		$collection->increment_watermark();
+
+		$record = Prop_Type_Adapter::to_storage( $collection );
 
 		if ( $this->kit->update_json_meta( static::VARIABLES_META_KEY, $record ) ) {
-			return $variables->watermark();
+			return $collection->watermark();
 		}
 
 		return false;
