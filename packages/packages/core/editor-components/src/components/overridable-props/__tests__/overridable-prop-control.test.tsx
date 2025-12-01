@@ -2,13 +2,13 @@ import * as React from 'react';
 import { createMockElementType, createMockPropType, renderControl } from 'test-utils';
 import { ElementProvider, useElement } from '@elementor/editor-editing-panel';
 import { numberPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
+import { __createStore, __registerSlice } from '@elementor/store';
 import { generateUniqueId } from '@elementor/utils';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
-import { OverridablePropControl } from '../overridable-prop-control';
-import { __createStore, __registerSlice } from '@elementor/store';
 import { slice } from '../../../store/store';
+import { OverridablePropControl } from '../overridable-prop-control';
 
 jest.mock( '@elementor/utils', () => ( {
 	...jest.requireActual( '@elementor/utils' ),
