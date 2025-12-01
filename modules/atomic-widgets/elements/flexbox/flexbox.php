@@ -139,7 +139,8 @@ class Flexbox extends Atomic_Element_Base {
 		}
 
 		if ( ! empty( $settings['link']['href'] ) ) {
-			$attributes = array_merge( $attributes, $settings['link'] );
+			$link_attributes = $this->get_link_attributes( $settings['link'] );
+			$attributes = array_merge( $attributes, $link_attributes );
 		}
 
 		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );

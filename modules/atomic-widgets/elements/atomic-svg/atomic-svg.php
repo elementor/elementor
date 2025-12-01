@@ -134,6 +134,8 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$cssid_attribute = ! empty( $settings['_cssid'] ) ? 'id="' . esc_attr( $settings['_cssid'] ) . '"' : '';
 
 		$all_attributes = trim( $cssid_attribute . ' ' . $settings['attributes'] );
+		$all_attributes .= ' data-id="' . esc_attr( $this->get_id() ) . '"';
+		$all_attributes .= ' data-e-type="' . esc_attr( static::get_element_type() ) . '"';
 
 		$data_attributes_string = '';
 
@@ -148,13 +150,17 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		$attributes_string = trim( $data_attributes_string . ' ' . $all_attributes );
 
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
+			$html_tag = Utils::validate_html_tag( $settings['link']['tag'] ?? 'a' );
 			$svg_html = sprintf(
-				'<a href="%s" target="%s" class="%s" %s>%s</a>',
+				'<%s %s="%s" target="%s" class="%s" %s>%s</%s>',
+				$html_tag,
+				'button' === $html_tag ? 'data-href' : 'href',
 				$settings['link']['href'],
 				esc_attr( $settings['link']['target'] ),
 				esc_attr( $classes_string ),
 				$attributes_string,
-				$svg_html
+				$svg_html,
+				$html_tag
 			);
 		} else {
 			$svg_html = sprintf( '<div class="%s" %s>%s</div>', esc_attr( $classes_string ), $attributes_string, $svg_html );

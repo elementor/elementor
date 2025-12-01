@@ -120,7 +120,10 @@ abstract class Atomic_Element_Base extends Element_Base {
 	}
 
 	protected function define_initial_attributes() {
-		return [];
+		return [
+			'data-e-type' => esc_attr( static::get_element_type() ),
+			'data-id' => esc_attr( $this->get_id() )
+		];
 	}
 
 	protected function add_render_attributes() {
@@ -166,7 +169,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$settings = $this->get_atomic_settings();
 		$default_html_tag = $this->define_default_html_tag();
 
-		return ! empty( $settings['link']['href'] ) ? 'a' : ( $settings['tag'] ?? $default_html_tag );
+		return ! empty( $settings['link']['href'] ) ? $settings['link']['tag'] : ( $settings['tag'] ?? $default_html_tag );
 	}
 
 	/**
@@ -260,5 +263,19 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	public static function generate() {
 		return Element_Builder::make( static::get_type() );
+	}
+
+	protected function get_link_attributes( $link_settings ) {
+		$tag = $link_settings['tag'] ?? 'a';
+		$href = $link_settings['href'];
+		$target = $link_settings['target'] ?? '_self';
+
+		$is_button = 'button' === $tag;
+		$href_attribute_key = $is_button ? 'data-href' : 'href';
+
+		return [
+			$href_attribute_key => $href,
+			'target' => $target,
+		];
 	}
 }

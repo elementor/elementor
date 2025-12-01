@@ -1,61 +1,82 @@
 import { register } from '@elementor/frontend-handlers';
 
 const ATOMIC_ELEMENT_TYPES_WITH_LINKS_WITHIN = [
-    'e-divider',
-    'e-heading',
-    'e-image',
-    'e-paragraph',
-    'e-svg',
+	'e-heading',
+	'e-paragraph',
 ];
 
-const ATOMIC_ELEMENT_TYPES_WITH_LINKS_OUTSIDE = [
-    'e-div-block',
-    'e-flexbox',
-];
+const ATOMIC_ELEMENT_TYPES_WITH_LINKS_OUTSIDE = [];
 
 const ATOMIC_ELEMENT_TYPES_WITH_LINKS_AS_THEM = [
-    'e-button',
+    'e-svg',
+	'e-div-block',
+	'e-flexbox',
+	'e-image',
+	'e-button',
 ];
 
 registerLinkActionsHandler();
 
 function registerLinkActionsHandler() {
-    ATOMIC_ELEMENT_TYPES_WITH_LINKS_WITHIN.forEach((elementType) => register({
-        elementType,
-        id: `${elementType}-link-action-handler`,
-        callback: ({ element }) => {
-            const actionLinks = Array.from(element?.children || [])
-                .filter((child) => child.dataset && child.dataset.href);
+	[
+        ...ATOMIC_ELEMENT_TYPES_WITH_LINKS_WITHIN,
+        ...ATOMIC_ELEMENT_TYPES_WITH_LINKS_OUTSIDE,
+        ...ATOMIC_ELEMENT_TYPES_WITH_LINKS_AS_THEM,
+    ].forEach( ( elementType ) => register( {
+		elementType,
+		id: `${ elementType }-link-action-handler`,
+		callback: ( { element } ) => {
+			const actionLinks = getActionLinkElements( element, elementType );
 
-            if (!actionLinks?.length) {
-                return;
-            }
+			if ( ! actionLinks?.length ) {
+				return;
+			}
 
-            const cleanupFunctions = actionLinks.map(handleLinkActions);
+			const cleanupFunctions = actionLinks.map( handleLinkActions );
 
-            return () => cleanupFunctions.forEach((cleanup) => cleanup?.());
-        }
-    }));
+			return () => cleanupFunctions.forEach( ( cleanup ) => cleanup?.() );
+		},
+	} ) );
 }
 
-function handleLinkActions(element) {
-    const url = element.dataset.href;
-
-    if (!url) {
-        return;
+function getActionLinkElements( element, type ) {
+    switch ( true ) {
+        case ATOMIC_ELEMENT_TYPES_WITH_LINKS_WITHIN.includes( type ):
+            return Array.from( element?.children || [] )
+                .filter( ( child ) => child.dataset && child.dataset.href );
+        case ATOMIC_ELEMENT_TYPES_WITH_LINKS_OUTSIDE.includes( type ):
+            return [ element?.parentNode ].filter( ( parent ) => parent.dataset && parent.dataset.href )
+                .filter( ( child ) => child.dataset && child.dataset.href );
+        case ATOMIC_ELEMENT_TYPES_WITH_LINKS_AS_THEM.includes( type ):
+            return [ element ].filter( ( self ) => self.dataset && self.dataset.href );
     }
 
-    const handler = (event) => {
-        event.preventDefault();
+    return [];
+}
 
-        if (!window.elementorFrontend?.utils?.urlActions) {
-            return;
-        }
+function handleLinkActions( element ) {
+	const url = element.dataset.href;
+	const isEditorContext = !! window.elementor;
 
-        elementorFrontend.utils.urlActions.runAction(url, event);
-    };
+	if ( ! url ) {
+		return;
+	}
 
-    element.addEventListener('click', handler);
+	const handler = ( event ) => {
+		if ( isEditorContext ) {
+			return;
+		}
 
-    return () => element.removeEventListener('click', handler);
+		event.preventDefault();
+
+		if ( ! window.elementorFrontend?.utils?.urlActions ) {
+			return;
+		}
+
+		elementorFrontend.utils.urlActions.runAction( url, event );
+	};
+
+	element.addEventListener( 'click', handler );
+
+	return () => element.removeEventListener( 'click', handler );
 }

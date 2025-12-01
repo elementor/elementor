@@ -77,7 +77,7 @@ class Div_Block extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tag' => String_Prop_Type::make()
-				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a' ] )
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a', 'button' ] )
 				->default( 'div' )
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
@@ -184,7 +184,8 @@ class Div_Block extends Atomic_Element_Base {
 		}
 
 		if ( ! empty( $settings['link']['href'] ) ) {
-			$attributes = array_merge( $attributes, $settings['link'] );
+			$link_attributes = $this->get_link_attributes( $settings['link'] );
+			$attributes = array_merge( $attributes, $link_attributes );
 		}
 
 		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
