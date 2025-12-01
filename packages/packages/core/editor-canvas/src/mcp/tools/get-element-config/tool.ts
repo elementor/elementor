@@ -2,7 +2,6 @@ import { getContainer, getElementStyles, getWidgetsCache } from '@elementor/edit
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { type PropValue, Schema } from '@elementor/editor-props';
 import { z } from '@elementor/schema';
-import { decodeString } from '@elementor/utils';
 
 const schema = {
 	elementId: z.string(),
@@ -14,7 +13,6 @@ const outputSchema = {
 		.describe(
 			'A record mapping PropTypes to their corresponding PropValues, with _styles record for style-related PropValues'
 		),
-	customCss: z.string().optional().describe( 'The custom CSS string associated with the element, if any.' ),
 };
 
 export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
@@ -57,10 +55,6 @@ export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
 							stylePropValues[ stylePropName ] = structuredClone( styleProps[ stylePropName ] );
 						}
 					} );
-
-					if ( defaultVariant.custom_css?.raw ) {
-						stylePropValues.custom_css = decodeString( defaultVariant.custom_css.raw, undefined );
-					}
 				}
 			}
 

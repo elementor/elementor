@@ -21,12 +21,13 @@ export type UnpublishedComponent = BaseComponent & {
 };
 
 export type OverridableProp = {
-	'override-key': string;
+	overrideKey: string;
 	label: string;
 	elementId: string;
 	propKey: string;
+	elType: string;
 	widgetType: string;
-	defaultValue: PropValue;
+	originValue: PropValue;
 	groupId: string;
 };
 
@@ -47,7 +48,7 @@ export type OverridableProps = {
 type BaseComponent = {
 	uid: string;
 	name: string;
-	overrides?: OverridableProps;
+	overridableProps?: OverridableProps;
 };
 
 export type DocumentStatus = 'publish' | 'draft';
@@ -85,4 +86,9 @@ export type ComponentInstancePropValue< TComponentId extends number | string = n
 type ComponentOverride = {
 	override_key: string;
 	value: TransformablePropValue< string >;
+};
+
+export type ComponentOverridable = {
+	override_key: string;
+	origin_value: TransformablePropValue< string >;
 };

@@ -50,6 +50,7 @@ export type ElementInteractions = {
 };
 
 export type InteractionItem = {
+	interaction_id?: string;
 	animation: {
 		animation_type: string;
 		animation_id: string;
@@ -80,6 +81,7 @@ export type V1ElementEditorSettingsProps = {
 export type V1ElementSettingsProps = Record< string, PropValue >;
 
 export type V1ElementConfig< T = object > = {
+	elType: string;
 	title: string;
 	controls: object;
 	atomic?: boolean;

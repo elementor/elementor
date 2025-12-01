@@ -3,17 +3,17 @@ import { createMockDocumentData, createMockPropType } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { useElement } from '@elementor/editor-editing-panel';
-import { type PropValue, stringPropTypeUtil } from '@elementor/editor-props';
+import { stringPropTypeUtil, type TransformablePropValue } from '@elementor/editor-props';
 import { __createStore, __registerSlice } from '@elementor/store';
 import { ThemeProvider } from '@elementor/ui';
 import { generateUniqueId } from '@elementor/utils';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
 import { setOverridableProp } from '../../../store/set-overridable-prop';
 import { selectOverridableProps, slice } from '../../../store/store';
 import { COMPONENT_DOCUMENT_TYPE } from '../../consts';
-import { FORBIDDEN_KEYS, OverridablePropIndicator } from '../overridable-prop-indicator';
+import { OverridablePropIndicator } from '../overridable-prop-indicator';
 
 jest.mock( '@elementor/editor-controls', () => ( {
 	...jest.requireActual( '@elementor/editor-controls' ),
@@ -36,6 +36,7 @@ jest.mock( '../../../store/set-overridable-prop', () => ( {
 const MOCK_ELEMENT_ID = 'test-element-123';
 const MOCK_COMPONENT_ID = 456;
 const MOCK_WIDGET_TYPE = 'e-heading';
+const MOCK_EL_TYPE = 'widget';
 const MOCK_OVERRIDABLE_KEY = 'mock-overridable-key';
 
 describe( 'OverridablePropIndicator', () => {
@@ -57,73 +58,84 @@ describe( 'OverridablePropIndicator', () => {
 		{
 			should: 'not show indicator on fields when not editing a component',
 			bind: 'title',
-			currentValue: componentOverridablePropTypeUtil.create( {
-				override_key: generateUniqueId(),
-				default_value: { $$type: 'string', value: 'Test' },
-			} ),
+			currentValue: stringPropTypeUtil.create( 'Test' ),
 			overridableData: {
 				label: 'Test',
 				groupId: 'default',
 			},
 			isComponent: false,
+			expect: {
+				isShowingIndicator: false,
+				isChecked: false,
+			},
 		},
 		{
 			should: 'be a plus icon if prop is not overridable',
 			bind: 'title',
 			currentValue: stringPropTypeUtil.create( 'Test' ),
 			overridableData: null,
-			expectedLabel: '',
-			expectedGroupId: null,
 			isComponent: true,
+			expect: {
+				isShowingIndicator: true,
+				isChecked: false,
+				groupId: null,
+			},
 		},
 		{
 			should: 'be a check icon if prop is overridable',
 			bind: 'title',
 			currentValue: componentOverridablePropTypeUtil.create( {
 				override_key: generateUniqueId(),
-				default_value: { $$type: 'string', value: 'Test' },
+				origin_value: { $$type: 'string', value: 'Test' },
 			} ),
 			overridableData: {
 				label: 'Test Label',
 				groupId: 'default',
 			},
-			expectedLabel: 'Test Label',
-			expectedGroupId: 'default',
 			isComponent: true,
+			expect: {
+				isShowingIndicator: true,
+				isChecked: true,
+				label: 'Test Label',
+				groupId: 'default',
+			},
 		},
 		{
 			should: 'not show indicator on fields bound to forbidden keys',
 			bind: '_cssid',
 			currentValue: componentOverridablePropTypeUtil.create( {
 				override_key: generateUniqueId(),
-				default_value: { $$type: 'string', value: 'Test' },
+				origin_value: { $$type: 'string', value: 'Test' },
 			} ),
 			overridableData: {
 				label: 'Test',
 				groupId: 'default',
 			},
 			isComponent: true,
+			expect: {
+				isShowingIndicator: false,
+				isChecked: false,
+			},
 		},
 	] )(
 		'should $should',
-		async ( {
+		( {
 			bind,
-			currentValue = null,
-			overridableData = null,
-			expectedLabel,
-			expectedGroupId,
+			overridableData,
+			currentValue,
 			isComponent,
+			expect: { isShowingIndicator, isChecked, label: expectedLabel, groupId: expectedGroupId },
 		} ) => {
 			// Arrange
 			const mockDocument = createMockDocumentData( {
 				id: MOCK_COMPONENT_ID,
 				type: isComponent ? COMPONENT_DOCUMENT_TYPE : 'wp-page',
 			} );
+
 			const boundProp = mockBoundProp( {
 				bind,
 				value: currentValue,
 			} );
-			const isOverridable = componentOverridablePropTypeUtil.isValid( currentValue );
 
 			jest.mocked( getV1CurrentDocument ).mockReturnValue( mockDocument );
 			jest.mocked( useBoundProp ).mockReturnValue( boundProp );
@@ -132,11 +144,12 @@ describe( 'OverridablePropIndicator', () => {
 					? {
 							props: {
 								[ MOCK_OVERRIDABLE_KEY ]: {
-									'override-key': MOCK_OVERRIDABLE_KEY,
+									overrideKey: MOCK_OVERRIDABLE_KEY,
 									elementId: MOCK_ELEMENT_ID,
 									propKey: bind,
 									widgetType: MOCK_WIDGET_TYPE,
-									defaultValue: currentValue,
+									elType: MOCK_EL_TYPE,
+									originValue: currentValue,
 									...overridableData,
 								},
 							},
@@ -161,60 +174,62 @@ describe( 'OverridablePropIndicator', () => {
 			);
 
 			// Act
-			renderFieldWithIndicator();
+			render(
+				<ThemeProvider>
+					<OverridablePropIndicator />
+				</ThemeProvider>
+			);
 
 			// Assert
-			if ( ! isComponent ) {
+			if ( ! isShowingIndicator ) {
 				expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
 
 				return;
 			}
 
-			if ( FORBIDDEN_KEYS.includes( bind ) ) {
-				expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
-
-				return;
-			}
-
-			const indicator = screen.getByLabelText( isOverridable ? 'Overridable property' : 'Make prop overridable' );
+			const indicator = screen.getByLabelText( isChecked ? 'Overridable property' : 'Make prop overridable' );
 			expect( indicator ).toBeInTheDocument();
 
 			// Act
 			fireEvent.click( indicator );
 
 			// Assert
-			expect( screen.getByText( 'Create new property' ) ).toBeInTheDocument();
+			expect( screen.getByText( ! isChecked ? 'Create new property' : 'Update property' ) ).toBeInTheDocument();
+
 			const nameInput = screen.getByPlaceholderText( 'Enter value' );
-			expect( nameInput ).toHaveValue( expectedLabel );
+			expect( nameInput ).toHaveValue( expectedLabel ?? '' );
 
 			// Act
 			const newLabel = 'Updated Label';
 			fireEvent.change( nameInput, { target: { value: newLabel } } );
 
-			await waitFor( () => {
-				expect( nameInput ).toHaveValue( newLabel );
-			} );
+			expect( nameInput ).toHaveValue( newLabel );
 
-			const createButton = screen.getByRole( 'button', { name: 'Create' } );
-			fireEvent.click( createButton );
+			const button = screen.getByRole( 'button', { name: ! isChecked ? 'Create' : 'Update' } );
+			fireEvent.click( button );
 
 			// Assert
-			await waitFor( () => {
-				expect( setOverridableProp ).toHaveBeenCalledWith(
-					MOCK_COMPONENT_ID,
-					MOCK_ELEMENT_ID,
-					newLabel,
-					expectedGroupId,
-					bind,
-					MOCK_WIDGET_TYPE,
-					currentValue
-				);
+			expect( setOverridableProp ).toHaveBeenCalledWith( {
+				componentId: MOCK_COMPONENT_ID,
+				elementId: MOCK_ELEMENT_ID,
+				label: newLabel,
+				groupId: expectedGroupId,
+				propKey: bind,
+				widgetType: MOCK_WIDGET_TYPE,
+				elType: MOCK_EL_TYPE,
+				originValue: { $$type: 'string', value: 'Test' },
 			} );
 		}
 	);
 } );
 
-function mockBoundProp( { bind, value }: { bind: string; value: PropValue } ): ReturnType< typeof useBoundProp > {
+function mockBoundProp( {
+	bind,
+	value,
+}: {
+	bind: string;
+	value: TransformablePropValue< string, unknown >;
+} ): ReturnType< typeof useBoundProp > {
 	const params = {
 		value,
 		setValue: jest.fn(),
@@ -228,10 +243,3 @@ function mockBoundProp( { bind, value }: { bind: string; value: PropValue } ): R
 	return params;
 }
 
-function renderFieldWithIndicator() {
-	return render(
-		<ThemeProvider>
-			<OverridablePropIndicator />
-		</ThemeProvider>
-	);
-}

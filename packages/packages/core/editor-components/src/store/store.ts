@@ -71,7 +71,7 @@ export const slice = createSlice( {
 		},
 		setOverridableProps: (
 			state,
-			{ payload }: PayloadAction< { componentId: ComponentId; overrides: OverridableProps } >
+			{ payload }: PayloadAction< { componentId: ComponentId; overridableProps: OverridableProps } >
 		) => {
 			const component = state.data.find( ( comp ) => comp.id === payload.componentId );
 
@@ -79,7 +79,7 @@ export const slice = createSlice( {
 				return;
 			}
 
-			component.overrides = payload.overrides;
+			component.overridableProps = payload.overridableProps;
 		},
 	},
 	extraReducers: ( builder ) => {
@@ -124,9 +124,10 @@ export const selectCreatedThisSession = createSelector(
 	getCreatedThisSession,
 	( createdThisSession ) => createdThisSession
 );
+
 export const selectOverridableProps = createSelector( selectComponent, ( component: PublishedComponent | undefined ) =>
 	component
-		? component.overrides ??
+		? component.overridableProps ??
 		  ( {
 				props: {},
 				groups: {
