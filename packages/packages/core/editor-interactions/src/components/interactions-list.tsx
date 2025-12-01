@@ -59,7 +59,7 @@ export function InteractionsList( props: InteractionListProps ) {
 	};
 
 	const infotipContent = isMaxNumberOfInteractionsReached ? (
-		<Alert color="secondary" icon={ <InfoCircleFilledIcon /> }>
+		<Alert color="secondary" icon={ <InfoCircleFilledIcon /> } size="small">
 			<AlertTitle>{ __( 'Interactions', 'elementor' ) }</AlertTitle>
 			<Box component="span">
 				{ __(
@@ -101,7 +101,10 @@ export function InteractionsList( props: InteractionListProps ) {
 						key={ index }
 						interaction={ value.animation.animation_id }
 						onChange={ ( newValue: string ) => {
-							const newInteractions = { ...interactionsState };
+							const newInteractions = {
+								...interactionsState,
+								items: structuredClone( interactionsState.items ),
+							};
 							newInteractions.items[ index ] = {
 								...newInteractions.items[ index ],
 								animation: {
