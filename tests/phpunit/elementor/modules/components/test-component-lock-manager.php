@@ -208,7 +208,7 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		wp_delete_post( $page_id, true );
 	}
 
-	public function test_is_locked__returns_false_when_not_locked() {
+	public function test_get_lock_data__returns_false_when_not_locked() {
 		// Arrange
 
 		// Act
@@ -219,7 +219,7 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		$this->assertNull( $result['locked_at'], 'Lock time should be null when not locked' );
 	}
 
-	public function test_is_locked__returns_lock_data_when_locked() {
+	public function test_get_lock_data__returns_lock_data_when_locked() {
 		// Arrange
 		wp_set_current_user( $this->test_user_1 );
 		$this->lock_manager->lock_component( $this->test_component_id );
@@ -229,15 +229,14 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertIsArray( $result, 'Should return array when component is locked' );
-		$this->assertArrayHasKey( 'is_locked', $result );
 		$this->assertArrayHasKey( 'locked_by', $result );
 		$this->assertArrayHasKey( 'locked_at', $result );
-		$this->assertTrue( $result['is_locked'], 'Should be locked' );
+		$this->assertNotNull( $result['locked_by'], 'Should be locked' );
 		$this->assertEquals( $this->test_user_1, $result['locked_by'] );
 		$this->assertIsNumeric( $result['locked_at'], 'Lock time should be numeric' );
 	}
 
-	public function test_is_locked__auto_unlocks_expired_lock() {
+	public function test_get_lock_data__auto_unlocks_expired_lock() {
 		// Arrange
 		wp_set_current_user( $this->test_user_1 );
 		$this->lock_manager->lock_component( $this->test_component_id );
@@ -342,8 +341,8 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		$this->lock_manager->lock_component( $this->test_component_id );
 
 		// Assert
-		$meta_locked_by = get_post_meta( $this->test_component_id, '_locked_by', true );
-		$locked_at = get_post_meta( $this->test_component_id, '_locked_at', true );
+		$meta_locked_by = get_post_meta( $this->test_component_id, '_lock_user', true );
+		$locked_at = get_post_meta( $this->test_component_id, '_lock_time', true );
 
 		$this->assertEquals( $this->test_user_1, $meta_locked_by, 'Meta lock should match user' );
 		$this->assertIsNumeric( $locked_at, 'Lock time should be numeric timestamp' );
