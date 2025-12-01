@@ -52,6 +52,7 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 	 *
 	 * @param int $post_id The component ID to unlock
 	 * @return bool True if unlock was successful, false otherwise
+	 * @throws \Exception If post is not a component type.
 	 */
 	public function unlock_component( $post_id ) {
 		if ( ! $this->is_component_post( $post_id ) ) {
@@ -69,8 +70,9 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 	/**
 	 * Lock a component.
 	 *
-	 * @param int $document_id The component ID to lock
+	 * @param int $post_id The component ID to lock
 	 * @return bool|null True if lock was successful, null if locked by another user, false otherwise
+	 * @throws \Exception If post is not a component type.
 	 */
 	public function lock_component( $post_id ) {
 		if ( ! $this->is_component_post( $post_id ) ) {
@@ -90,7 +92,7 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 	 *
 	 * @param int $post_id The component ID
 	 * @return array Lock data with 'locked_by' (int|null), 'locked_at' (int|null)
-	 * @throws \Exception If post is not a component type
+	 * @throws \Exception If post is not a component type.
 	 */
 	public function get_lock_data( $post_id ) {
 		if ( ! $this->is_component_post( $post_id ) ) {
@@ -105,6 +107,7 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 	 *
 	 * @param int $post_id The component ID
 	 * @return bool|null True if extended successfully, null if not locked or locked by another user
+	 * @throws \Exception If post is not a component type.
 	 */
 	public function extend_lock( $post_id ) {
 		if ( ! $this->is_component_post( $post_id ) ) {
