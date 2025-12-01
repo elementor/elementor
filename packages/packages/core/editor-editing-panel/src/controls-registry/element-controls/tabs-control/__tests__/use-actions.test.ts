@@ -75,27 +75,6 @@ describe( 'tabs-control actions', () => {
 				expect( mockSetValue ).toHaveBeenCalledWith( 0 );
 			} );
 
-			it( 'should swap active to old position (from 0 to 2)', () => {
-				// Arrange
-				setupBoundProp( 2 );
-				const { result } = renderHook( () => useActions() );
-
-				// Act
-				result.current.moveItem( {
-					toIndex: 2,
-					tabsMenuId: TABS_MENU_ID,
-					tabContentAreaId: TAB_CONTENT_AREA_ID,
-					movedElementId: MOVED_ELEMENT_ID,
-					movedElementIndex: 0,
-				} );
-
-				const onMoveElements = jest.mocked( moveElements ).mock.calls[ 0 ][ 0 ].onMoveElements;
-				onMoveElements?.();
-
-				// Assert
-				expect( mockSetValue ).toHaveBeenCalledWith( 0 );
-			} );
-
 			it( 'should decrement active tab (from 0 to 3, active at 2)', () => {
 				// Arrange
 				setupBoundProp( 2 );
@@ -157,6 +136,48 @@ describe( 'tabs-control actions', () => {
 
 				// Assert
 				expect( mockSetValue ).not.toHaveBeenCalled();
+			} );
+
+			it( 'should decrement active tab when moving from top to active position (from 0 to 2, active at 2)', () => {
+				// Arrange
+				setupBoundProp( 2 );
+				const { result } = renderHook( () => useActions() );
+
+				// Act
+				result.current.moveItem( {
+					toIndex: 2,
+					tabsMenuId: TABS_MENU_ID,
+					tabContentAreaId: TAB_CONTENT_AREA_ID,
+					movedElementId: MOVED_ELEMENT_ID,
+					movedElementIndex: 0,
+				} );
+
+				const onMoveElements = jest.mocked( moveElements ).mock.calls[ 0 ][ 0 ].onMoveElements;
+				onMoveElements?.();
+
+				// Assert
+				expect( mockSetValue ).toHaveBeenCalledWith( 1 );
+			} );
+
+			it( 'should increment active tab when moving from bottom to active position (from 4 to 2, active at 2)', () => {
+				// Arrange
+				setupBoundProp( 2 );
+				const { result } = renderHook( () => useActions() );
+
+				// Act
+				result.current.moveItem( {
+					toIndex: 2,
+					tabsMenuId: TABS_MENU_ID,
+					tabContentAreaId: TAB_CONTENT_AREA_ID,
+					movedElementId: MOVED_ELEMENT_ID,
+					movedElementIndex: 4,
+				} );
+
+				const onMoveElements = jest.mocked( moveElements ).mock.calls[ 0 ][ 0 ].onMoveElements;
+				onMoveElements?.();
+
+				// Assert
+				expect( mockSetValue ).toHaveBeenCalledWith( 3 );
 			} );
 
 			it( 'should restore original value on undo', () => {
