@@ -24,6 +24,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Manager {
 
+	const ERROR_TEMPLATE_SOURCE_NOT_FOUND = 'Template source not found.';
+	const ERROR_TEMPLATE_IDS_MISSING = 'Template IDs are missing.';
+
 	/**
 	 * Registered template sources.
 	 *
@@ -279,7 +282,7 @@ class Manager {
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		$args['content'] = json_decode( $args['content'], true );
@@ -328,7 +331,7 @@ class Manager {
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		if ( $this->is_action_to_same_source( $args ) ) {
@@ -338,7 +341,7 @@ class Manager {
 		$from_source = $this->get_source( $args['from_source'] );
 
 		if ( ! $from_source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		$args = $from_source->format_args_for_single_action( $args );
@@ -362,13 +365,13 @@ class Manager {
 		$source = $this->get_source( $args['source'][0] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		$from_source = $this->get_source( $args['from_source'] );
 
 		if ( ! $from_source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		$args = $from_source->format_args_for_single_action( $args );
@@ -409,7 +412,7 @@ class Manager {
 		$source = $this->get_source( $template_data['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		$template_data['content'] = json_decode( $template_data['content'], true );
@@ -433,7 +436,7 @@ class Manager {
 		$source = $this->get_source( $template_data['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		$update = $source->update_item( $template_data );
@@ -491,7 +494,7 @@ class Manager {
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		if ( method_exists( $source, 'is_allowed_to_read_template' ) && ! $source->is_allowed_to_read_template( $args ) ) {
@@ -537,7 +540,7 @@ class Manager {
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		return $source->delete_template( $args['template_id'] );
@@ -566,7 +569,7 @@ class Manager {
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		return $source->export_template( $args['template_id'] );
@@ -689,7 +692,7 @@ class Manager {
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		return $source->get_item_children( $args );
@@ -705,7 +708,7 @@ class Manager {
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		return $source->search_templates( $args );
@@ -721,7 +724,7 @@ class Manager {
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		return $source->get_items( $args );
@@ -737,7 +740,7 @@ class Manager {
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		return $source->save_folder( $args );
@@ -862,11 +865,11 @@ class Manager {
 		$source = $this->get_source( $data['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		if ( empty( $data['template_ids'] ) || ! is_array( $data['template_ids'] ) ) {
-			return new \WP_Error( 'template_error', 'Template IDs are missing.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_IDS_MISSING );
 		}
 
 		return $source->bulk_delete_items( $data['template_ids'] );
@@ -882,11 +885,11 @@ class Manager {
 		$source = $this->get_source( $data['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		if ( empty( $data['template_ids'] ) || ! is_array( $data['template_ids'] ) ) {
-			return new \WP_Error( 'template_error', 'Template IDs are missing.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_IDS_MISSING );
 		}
 
 		return $source->bulk_undo_delete_items( $data['template_ids'] );
@@ -1045,7 +1048,7 @@ class Manager {
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		if ( $this->is_action_to_same_source( $args ) ) {
@@ -1055,7 +1058,7 @@ class Manager {
 		$from_source = $this->get_source( $args['from_source'] );
 
 		if ( ! $from_source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		$bulk_args = $from_source->format_args_for_bulk_action( $args );
@@ -1100,13 +1103,13 @@ class Manager {
 		$source = $this->get_source( $args['source'] );
 
 		if ( ! $source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		$from_source = $this->get_source( $args['from_source'] );
 
 		if ( ! $from_source ) {
-			return new \WP_Error( 'template_error', 'Template source not found.' );
+			return new \WP_Error( 'template_error', self::ERROR_TEMPLATE_SOURCE_NOT_FOUND );
 		}
 
 		$bulk_args = $from_source->format_args_for_bulk_action( $args );
