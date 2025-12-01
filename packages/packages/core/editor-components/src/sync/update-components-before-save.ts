@@ -1,3 +1,5 @@
+import { isDocumentDrafted } from '@elementor/editor-documents';
+
 import { apiClient } from '../api';
 import { type Container, type DocumentSaveStatus } from '../types';
 import { getComponentDocumentData, invalidateComponentDocumentData } from '../utils/component-document-data';
@@ -15,20 +17,13 @@ export async function updateComponentsBeforeSave( { status, container }: Options
 
 	const elements = container.model.get( 'elements' ).toJSON();
 
-	const componentDocumentData = await Promise.all(
-		getComponentIds( elements ).map( ( id ) => getComponentDocumentData( id ) )
-	);
+	const componentIds = await getComponentIds( elements );
+
+	const componentDocumentData = await Promise.all( componentIds.map( getComponentDocumentData ) );
 
 	const draftIds = componentDocumentData
 		.filter( ( document ) => !! document )
-		.filter( ( document ) => {
-			const isDraft = document.status.value === 'draft';
-
-			// When the component is published, but have draft version.
-			const hasAutosave = document.revisions.current_id !== document.id;
-
-			return isDraft || hasAutosave;
-		} )
+		.filter( isDocumentDrafted )
 		.map( ( document ) => document.id );
 
 	if ( draftIds.length === 0 ) {
@@ -37,5 +32,5 @@ export async function updateComponentsBeforeSave( { status, container }: Options
 
 	await apiClient.updateStatuses( draftIds, 'publish' );
 
-	draftIds.forEach( ( id ) => invalidateComponentDocumentData( id ) );
+	draftIds.forEach( invalidateComponentDocumentData );
 }

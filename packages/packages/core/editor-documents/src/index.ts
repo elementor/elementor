@@ -12,6 +12,11 @@ export { slice } from './store';
 
 export { getCurrentDocument } from './store/get-current-document';
 
-export { setDocumentModifiedStatus, getV1DocumentsManager, getV1CurrentDocument } from './sync/utils';
+export {
+	setDocumentModifiedStatus,
+	getV1DocumentsManager,
+	getV1CurrentDocument,
+	isDocumentDrafted,
+} from './sync/utils';
 
 export * from './types';
