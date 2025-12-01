@@ -147,7 +147,16 @@ describe( 'Reset Style Props Tests', () => {
 			( useBoundProp as jest.Mock ).mockReturnValue( {
 				value: {
 					$$type: 'key-value',
-					value: { key: { value: 'Margin left', $$type: 'string' }, value: { value: 'margin-inline-start', $$type: 'string' } },
+					value: {
+						key: {
+							$$type: 'string',
+							value: 'Margin left',
+						},
+						value: {
+							value: 'margin-inline-start',
+							$$type: 'string',
+						},
+					},
 				},
 				resetValue: jest.fn(),
 				path: [ 'transition', '0', 'selection' ],
