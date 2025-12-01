@@ -60,6 +60,7 @@ class Test_Flexbox extends Elementor_Test_Base {
 				'link' => [
 					'href' => 'https://example.com',
 					'target' => '_blank',
+					'tag' => 'a',
 				],
 			],
 			'widgetType' => Flexbox::get_element_type(),

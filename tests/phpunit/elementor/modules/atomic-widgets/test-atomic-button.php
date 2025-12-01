@@ -37,6 +37,7 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 				'link' => [
 					'href' => 'https://example.com',
 					'target' => '_blank',
+					'tag' => 'a',
 				],
 			],
 			'widgetType' => Atomic_Button::get_element_type(),
@@ -62,6 +63,7 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 				'link' => [
 					'href' => 'https://example.com',
 					'target' => '_self',
+					'tag' => 'a',
 				],
 			],
 			'widgetType' => Atomic_Button::get_element_type(),

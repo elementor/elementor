@@ -1,6 +1,8 @@
 					
 		<img class="e-image-base " 
-					data-interaction-id="e8e55a1" 
+					data-id="e8e55a1"
+			data-e-type="e-image"
+			data-interaction-id="e8e55a1" 
 			data-interactions="&#x5B;&#x5D;"
 		 
 		 

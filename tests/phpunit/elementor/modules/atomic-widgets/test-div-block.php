@@ -60,6 +60,7 @@ class Test_Div_Block extends Elementor_Test_Base {
 				'link' => [
 					'href' => 'https://example.com',
 					'target' => '_blank',
+					'tag' => 'a',
 				],
 			],
 			'widgetType' => Div_Block::get_element_type(),

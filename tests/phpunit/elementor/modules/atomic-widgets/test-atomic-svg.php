@@ -107,6 +107,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 				'link' => [
 					'href' => $href,
 					'target' => '_blank',
+					'tag' => 'a',
 				]
 			],
 			'widgetType' => Atomic_Svg::get_element_type(),
@@ -134,6 +135,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 				'link' => [
 					'href' => '',
 					'target' => '_blank',
+					'tag' => 'a',
 				]
 			],
 			'widgetType' => Atomic_Svg::get_element_type(),
@@ -234,6 +236,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 				'link' => [
 					'href' => 'https://elementor.com',
 					'target' => '_blank',
+					'tag' => 'a',
 				]
 			],
 			'widgetType' => Atomic_Svg::get_element_type(),

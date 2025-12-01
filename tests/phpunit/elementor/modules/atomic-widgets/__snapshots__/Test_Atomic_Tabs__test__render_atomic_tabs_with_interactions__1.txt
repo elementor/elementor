@@ -1,11 +1,11 @@
 		<div class="elementor-element elementor-element-tabscontainer e-con e-atomic-element e-tabs-base" data-id="tabscontainer" data-element_type="e-tabs" data-interaction-id="tabscontainer" data-interactions="[&quot;load-fade-in--300-0&quot;]" data-e-type="e-tabs" x-data="eTabstabscontainer" data-e-settings="{&quot;default-active-tab&quot;:&quot;tabscontainer-tab-0&quot;}">
-				<div class="elementor-element elementor-element-tabs-list e-con e-atomic-element e-tabs-menu-base" data-id="tabs-list" data-element_type="e-tabs-menu">
+				<div class="elementor-element elementor-element-tabs-list e-con e-atomic-element e-tabs-menu-base" data-id="tabs-list tabs-list" data-element_type="e-tabs-menu" data-e-type="e-tabs-menu">
 				<button class="elementor-element elementor-element-tab1 e-con e-atomic-element e-tab-base" data-id="tab1" data-element_type="e-tab" role="tab" tabindex="0" aria-selected="true" x-bind="tab" x-ref="tab1" id="tabscontainer-tab-0" aria-controls="tabscontainer-tab-content-0">
 				</button>
 				<button class="elementor-element elementor-element-tab2 e-con e-atomic-element e-tab-base" data-id="tab2" data-element_type="e-tab" role="tab" tabindex="-1" aria-selected="false" x-bind="tab" x-ref="tab2" id="tabscontainer-tab-1" aria-controls="tabscontainer-tab-content-1">
 				</button>
 				</div>
-				<div class="elementor-element elementor-element-tabs-content e-con e-atomic-element e-tabs-content-area-base" data-id="tabs-content" data-element_type="e-tabs-content-area">
+				<div class="elementor-element elementor-element-tabs-content e-con e-atomic-element e-tabs-content-area-base" data-id="tabs-content tabs-content" data-element_type="e-tabs-content-area" data-e-type="e-tabs-content-area">
 				<div class="elementor-element elementor-element-content1 e-con e-atomic-element e-tab-content-base" data-id="content1" data-element_type="e-tab-content" role="tabpanel" x-bind="tabContent" id="tabscontainer-tab-content-0" aria-labelledby="tabscontainer-tab-0">
 				</div>
 				<div class="elementor-element elementor-element-content2 e-con e-atomic-element e-tab-content-base" data-id="content2" data-element_type="e-tab-content" role="tabpanel" x-bind="tabContent" id="tabscontainer-tab-content-1" aria-labelledby="tabscontainer-tab-1" hidden="true" style="display: none;">
