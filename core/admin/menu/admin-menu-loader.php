@@ -33,7 +33,7 @@ class Admin_Menu_Loader {
 		wp_enqueue_script(
 			'elementor-admin-menu',
 			ELEMENTOR_ASSETS_URL . 'js/admin-menu' . $suffix . '.js',
-			[ 'jquery' ],
+			[],
 			ELEMENTOR_VERSION,
 			true
 		);
