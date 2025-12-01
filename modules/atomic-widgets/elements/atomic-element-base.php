@@ -122,7 +122,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 	protected function define_initial_attributes() {
 		return [
 			'data-e-type' => esc_attr( static::get_element_type() ),
-			'data-id' => esc_attr( $this->get_id() ),
 		];
 	}
 

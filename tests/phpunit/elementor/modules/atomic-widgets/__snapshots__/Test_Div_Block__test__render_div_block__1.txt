@@ -1,6 +1,6 @@
-		<div class="elementor-element elementor-element-e8e55a1 e-con e-atomic-element e-div-block-base" data-id="e8e55a1" data-element_type="e-div-block">
-								<p class="e-paragraph-base" data-interaction-id="e8e55a1" data-interactions="&#x5B;&#x5D;"  >
-										Type your paragraph here
-						</p>
+		<div class="elementor-element elementor-element-e8e55a1 e-con e-atomic-element e-div-block-base" data-id="e8e55a1" data-element_type="e-div-block" data-e-type="e-div-block">
+								<p data-id="e8e55a1" data-e-type="e-paragraph" class="e-paragraph-base" data-interaction-id="e8e55a1" data-interactions="&#x5B;&#x5D;"  >
+								Type your paragraph here
+					</p>
 				</div>
 		
