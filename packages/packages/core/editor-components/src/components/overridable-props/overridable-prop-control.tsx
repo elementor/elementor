@@ -5,7 +5,7 @@ import { type Control, type ControlItem, getCurrentDocumentId } from '@elementor
 import { type PropValue } from '@elementor/editor-props';
 import { generateUniqueId } from '@elementor/utils';
 
-import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
+import { componentOverridablePropTypeUtil, ComponentOverridablePropValue } from '../../prop-types/component-overridable-prop-type';
 import { updateOverridablePropDefaultValue } from '../../store/update-overridable-prop-default-value';
 
 export function OverridablePropControl() {
@@ -24,16 +24,16 @@ export function OverridablePropControl() {
 
 	const currentValue = extract( value ) ?? {
 		override_key: generateUniqueId(),
-		default_value: null,
+		origin_value: null,
 	};
 
 	const setOverridableValue = ( newValue: Record< typeof bind, PropValue | null > ) => {
 		const propValue = {
 			...currentValue,
-			default_value: newValue[ bind ],
-		};
-		setValue( create( propValue ) );
+			origin_value: newValue[ bind ],
+		} as ComponentOverridablePropValue;
 
+		setValue( create( propValue ) );
 		updateOverridablePropDefaultValue( componentId, propValue );
 	};
 
@@ -52,7 +52,7 @@ export function OverridablePropControl() {
 			{ ...propContext }
 			propType={ propType }
 			setValue={ setOverridableValue }
-			value={ { [ bind ]: currentValue.default_value } }
+			value={ { [ bind ]: currentValue.origin_value } }
 			placeholder={ objectPlaceholder }
 		>
 			<PropKeyProvider bind={ bind }>

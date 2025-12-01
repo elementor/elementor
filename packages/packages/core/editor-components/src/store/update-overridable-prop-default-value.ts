@@ -25,7 +25,7 @@ export function updateOverridablePropDefaultValue( componentId: number, propValu
 			...overridableProps.props,
 			[ existingOverridableProp.overrideKey ]: {
 				...existingOverridableProp,
-				defaultValue: propValue.origin_value,
+				originValue: propValue.origin_value,
 			},
 		},
 	} satisfies OverridableProps;
