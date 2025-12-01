@@ -29,7 +29,7 @@ export function isDependencyMet(
 			? isDependencyMet( term, values ).isMet
 			: evaluateTerm( term, extractValue( term.path, values, term.nestedPath )?.value );
 
-		if ( ! result && ! isNestedDependency ) {
+		if ( ! result ) {
 			failingDependencies.push( term );
 		}
 
@@ -136,5 +136,5 @@ export function extractValue(
 }
 
 export function isDependency( term: DependencyTerm | Dependency ): term is Dependency {
-	return 'relation' in term;
+	return 'terms' in term;
 }

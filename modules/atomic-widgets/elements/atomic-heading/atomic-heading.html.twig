@@ -1,6 +1,8 @@
 {% if settings.title is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
 	<{{ settings.tag | e('html_tag') }} 
+		data-id="{{ id }}"
+		data-e-type="{{ type }}"
 		data-interaction-id="{{ id }}" 
 		class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" 
 		{{ id_attribute }} 
@@ -12,9 +14,16 @@
 	{% set allowed_tags = '<b><strong><em><i><u><a><del><span><br>' %}
 
 	{% if settings.link.href %}
-		<a href="{{ settings.link.href }}" target="{{ settings.link.target }}" class="{{ base_styles['link-base'] }}">
+		<{{ settings.link.tag | e('html_tag') }} 
+			{% if settings.link.tag == 'a' %}
+				href="{{ settings.link.href | raw }}"
+			{% else %}
+				data-href="{{ settings.link.href | raw }}"
+			{% endif %}
+			target="{{ settings.link.target }}" 
+			class="{{ base_styles['link-base'] }}">
 			{{ settings.title | striptags(allowed_tags) | raw }}
-		</a>
+		</{{ settings.link.tag | e('html_tag') }}>
 	{% else %}
 		{{ settings.title | striptags(allowed_tags) | raw }}
 	{% endif %}

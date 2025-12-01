@@ -43,16 +43,35 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$tag_dependencies = Dependency_Manager::make()
-			->where( [
+		$tag_dependencies = Dependency_Manager::make( Dependency_Manager::RELATION_AND )
+			->where( Dependency_Manager::make()
+				->where( [
+					'operator' => 'not_exist',
+					'path' => [ 'link', 'destination' ],
+				] )
+				->where( [
+					'operator' => 'ne',
+					'path' => [ 'link', 'tag' ],
+					'value' => 'button',
+				] )
+				->where( [
+					'operator' => 'not_exist',
+					'path' => [ 'link', 'destination' ],
+					'nestedPath' => [ 'settings', 'popup', 'value', 'id' ],
+				] )
+				->get(),
+				[
+					'$$type' => 'string',
+					'value' => 'button',
+				]
+			)->where( [
 				'operator' => 'not_exist',
 				'path' => [ 'link', 'destination' ],
 				'newValue' => [
 					'$$type' => 'string',
 					'value' => 'a',
 				],
-			] )
-			->get();
+			] )->get();
 
 		return [
 			'classes' => Classes_Prop_Type::make()
@@ -101,6 +120,7 @@ class Div_Block extends Atomic_Element_Base {
 						])
 						->set_fallback_labels( [
 							'a' => 'a (link)',
+							'button' => 'button (link)',
 						] )
 						->set_label( esc_html__( 'HTML Tag', 'elementor' ) ),
 					Link_Control::bind_to( 'link' )
