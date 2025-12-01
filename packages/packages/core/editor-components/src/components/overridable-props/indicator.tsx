@@ -1,11 +1,30 @@
 import * as React from 'react';
+import { forwardRef } from 'react';
 import { CheckIcon, PlusIcon } from '@elementor/icons';
 import { type bindTrigger, Box, styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 const SIZE = 'tiny';
 
-const IconWrapper = styled( Box )`
+const IconContainer = styled( Box )`
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+
+	& > svg {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
+		width: 10px;
+		height: 10px;
+		fill: ${ ( { theme } ) => theme.palette.primary.contrastText };
+		stroke: ${ ( { theme } ) => theme.palette.primary.contrastText };
+		stroke-width: 2px;
+	}
+`;
+
+const Content = styled( Box )`
 	position: relative;
 	display: flex;
 	align-items: center;
@@ -43,31 +62,13 @@ const IconWrapper = styled( Box )`
 	}
 `;
 
-const IconContainer = styled( Box )`
-	pointer-events: none;
-	opacity: 0;
-	transition: opacity 0.2s ease-in-out;
-
-	& > svg {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate( -50%, -50% );
-		width: 10px;
-		height: 10px;
-		fill: ${ ( { theme } ) => theme.palette.primary.contrastText };
-		stroke: ${ ( { theme } ) => theme.palette.primary.contrastText };
-		stroke-width: 3px;
-	}
-`;
-
 type Props = {
 	isOverridable: boolean;
 	triggerProps: ReturnType< typeof bindTrigger >;
 	isOpen: boolean;
 };
-export const Indicator = ( { triggerProps, isOpen, isOverridable }: Props ) => (
-	<IconWrapper { ...triggerProps } className={ isOpen || isOverridable ? 'enlarged' : '' }>
+export const Indicator = forwardRef< HTMLDivElement, Props >( ( { triggerProps, isOpen, isOverridable }, ref ) => (
+	<Content ref={ ref } { ...triggerProps } className={ isOpen || isOverridable ? 'enlarged' : '' }>
 		<IconContainer
 			className="icon"
 			aria-label={
@@ -76,5 +77,5 @@ export const Indicator = ( { triggerProps, isOpen, isOverridable }: Props ) => (
 		>
 			{ isOverridable ? <CheckIcon fontSize={ SIZE } /> : <PlusIcon fontSize={ SIZE } /> }
 		</IconContainer>
-	</IconWrapper>
-);
+	</Content>
+) );

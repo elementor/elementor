@@ -12,7 +12,7 @@ export function updateOverridablePropDefaultValue( componentId: number, propValu
 	}
 
 	const existingOverridableProp = Object.values( overridableProps.props ).find(
-		( { 'override-key': overrideKey } ) => overrideKey === propValue.override_key
+		( { overrideKey } ) => overrideKey === propValue.override_key
 	);
 
 	if ( ! existingOverridableProp ) {
@@ -23,7 +23,7 @@ export function updateOverridablePropDefaultValue( componentId: number, propValu
 		...overridableProps,
 		props: {
 			...overridableProps.props,
-			[ existingOverridableProp[ 'override-key' ] ]: {
+			[ existingOverridableProp.overrideKey ]: {
 				...existingOverridableProp,
 				defaultValue: propValue.default_value,
 			},
@@ -33,7 +33,7 @@ export function updateOverridablePropDefaultValue( componentId: number, propValu
 	dispatch(
 		slice.actions.setOverridableProps( {
 			componentId,
-			overrides: newOverridableProps,
+			overridableProps: newOverridableProps,
 		} )
 	);
 }

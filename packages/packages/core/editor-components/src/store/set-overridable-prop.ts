@@ -7,15 +7,26 @@ import { getOverridableProp } from '../components/overridable-props/utils/get-ov
 import { type OverridableProp, type OverridablePropGroup, type OverridableProps } from '../types';
 import { selectOverridableProps, slice } from './store';
 
-export function setOverridableProp(
-	componentId: number,
-	elementId: string,
-	label: string,
-	groupId: string | null,
-	propKey: string,
-	widgetType: string,
-	defaultValue: PropValue
-): OverridableProp | undefined {
+type Props = {
+	componentId: number;
+	elementId: string;
+	label: string;
+	groupId: string | null;
+	propKey: string;
+	elType: string;
+	widgetType: string;
+	defaultValue: PropValue;
+};
+export function setOverridableProp( {
+	componentId,
+	elementId,
+	label,
+	groupId,
+	propKey,
+	elType,
+	widgetType,
+	defaultValue,
+}: Props ): OverridableProp | undefined {
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
 	if ( ! overridableProps ) {
@@ -27,6 +38,7 @@ export function setOverridableProp(
 		elementId,
 		propKey,
 		widgetType,
+		elType,
 	} );
 
 	let currentGroupId = groupId || existingOverridableProp?.groupId;
@@ -40,11 +52,12 @@ export function setOverridableProp(
 	}
 
 	const overridableProp = {
-		'override-key': existingOverridableProp?.[ 'override-key' ] || generateUniqueId(),
+		overrideKey: existingOverridableProp?.overrideKey || generateUniqueId(),
 		label,
 		elementId,
 		propKey,
 		widgetType,
+		elType,
 		defaultValue,
 		groupId: currentGroupId,
 	};
@@ -55,18 +68,18 @@ export function setOverridableProp(
 		const oldGroup = updatedGroups.items[ existingOverridableProp.groupId ];
 
 		if ( oldGroup ) {
-			oldGroup.props = oldGroup.props.filter( ( key ) => key !== overridableProp[ 'override-key' ] );
+			oldGroup.props = oldGroup.props.filter( ( key ) => key !== overridableProp.overrideKey );
 		}
 	}
 
-	if ( ! group.props.includes( overridableProp[ 'override-key' ] ) ) {
-		group.props.push( overridableProp[ 'override-key' ] );
+	if ( ! group.props.includes( overridableProp.overrideKey ) ) {
+		group.props.push( overridableProp.overrideKey );
 	}
 
 	const newOverridableProps = {
 		props: {
 			...props,
-			[ overridableProp[ 'override-key' ] ]: overridableProp,
+			[ overridableProp.overrideKey ]: overridableProp,
 		},
 		groups: {
 			items: {
@@ -82,7 +95,7 @@ export function setOverridableProp(
 	dispatch(
 		slice.actions.setOverridableProps( {
 			componentId,
-			overrides: newOverridableProps,
+			overridableProps: newOverridableProps,
 		} )
 	);
 

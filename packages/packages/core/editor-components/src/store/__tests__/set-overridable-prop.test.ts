@@ -17,10 +17,11 @@ jest.mock( '@elementor/utils', () => ( {
 } ) );
 
 describe( 'setOverridableProp', () => {
-	const SET_COMPONENT_ID = 1;
-	const SET_ELEMENT_ID = 'element-1';
-	const SET_PROP_KEY = 'text';
-	const SET_WIDGET_TYPE = 'button';
+	const MOCK_COMPONENT_ID = 1;
+	const MOCK_WIDGET_ID = 'widget-1';
+	const MOCK_PROP_KEY = 'text';
+	const MOCK_WIDGET_TYPE = 'button';
+	const MOCK_EL_TYPE = 'widget';
 	const LABEL = 'Button Text';
 	const DEFAULT_VALUE = 'Click me';
 	const GROUP_ID_1 = 'group-1';
@@ -39,7 +40,7 @@ describe( 'setOverridableProp', () => {
 		mockState = {
 			data: [
 				{
-					id: SET_COMPONENT_ID,
+					id: MOCK_COMPONENT_ID,
 					uid: 'comp-uid',
 					name: 'Test Component',
 				},
@@ -67,11 +68,12 @@ describe( 'setOverridableProp', () => {
 			expectedDispatch: {
 				props: {
 					[ GENERATED_ID_2 ]: {
-						'override-key': GENERATED_ID_2,
+						overrideKey: GENERATED_ID_2,
 						label: LABEL,
-						elementId: SET_ELEMENT_ID,
-						propKey: SET_PROP_KEY,
-						widgetType: SET_WIDGET_TYPE,
+						elementId: MOCK_WIDGET_ID,
+						propKey: MOCK_PROP_KEY,
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
 						defaultValue: DEFAULT_VALUE,
 						groupId: GENERATED_ID_1,
 					},
@@ -93,11 +95,12 @@ describe( 'setOverridableProp', () => {
 			initialOverrides: {
 				props: {
 					[ EXISTING_OVERRIDE_KEY ]: {
-						'override-key': EXISTING_OVERRIDE_KEY,
+						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: 'Existing Label',
 						elementId: 'element-0',
 						propKey: 'color',
-						widgetType: SET_WIDGET_TYPE,
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
 						defaultValue: 'red',
 						groupId: GROUP_ID_1,
 					},
@@ -120,20 +123,22 @@ describe( 'setOverridableProp', () => {
 			expectedDispatch: {
 				props: {
 					[ EXISTING_OVERRIDE_KEY ]: {
-						'override-key': EXISTING_OVERRIDE_KEY,
+						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: 'Existing Label',
 						elementId: 'element-0',
 						propKey: 'color',
-						widgetType: SET_WIDGET_TYPE,
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
 						defaultValue: 'red',
 						groupId: GROUP_ID_1,
 					},
 					[ GENERATED_ID_1 ]: {
-						'override-key': GENERATED_ID_1,
+						overrideKey: GENERATED_ID_1,
 						label: LABEL,
-						elementId: SET_ELEMENT_ID,
-						propKey: SET_PROP_KEY,
-						widgetType: SET_WIDGET_TYPE,
+						elementId: MOCK_WIDGET_ID,
+						propKey: MOCK_PROP_KEY,
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
 						defaultValue: DEFAULT_VALUE,
 						groupId: GROUP_ID_1,
 					},
@@ -155,11 +160,12 @@ describe( 'setOverridableProp', () => {
 			initialOverrides: {
 				props: {
 					[ EXISTING_OVERRIDE_KEY ]: {
-						'override-key': EXISTING_OVERRIDE_KEY,
+						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: 'Old Label',
-						elementId: SET_ELEMENT_ID,
-						propKey: SET_PROP_KEY,
-						widgetType: SET_WIDGET_TYPE,
+						elementId: MOCK_WIDGET_ID,
+						propKey: MOCK_PROP_KEY,
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
 						defaultValue: 'Old value',
 						groupId: GROUP_ID_1,
 					},
@@ -183,11 +189,12 @@ describe( 'setOverridableProp', () => {
 			expectedDispatch: {
 				props: {
 					[ EXISTING_OVERRIDE_KEY ]: {
-						'override-key': EXISTING_OVERRIDE_KEY,
+						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: 'Updated Label',
-						elementId: SET_ELEMENT_ID,
-						propKey: SET_PROP_KEY,
-						widgetType: SET_WIDGET_TYPE,
+						elementId: MOCK_WIDGET_ID,
+						propKey: MOCK_PROP_KEY,
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
 						defaultValue: 'Updated value',
 						groupId: GROUP_ID_1,
 					},
@@ -210,11 +217,12 @@ describe( 'setOverridableProp', () => {
 			initialOverrides: {
 				props: {
 					[ EXISTING_OVERRIDE_KEY ]: {
-						'override-key': EXISTING_OVERRIDE_KEY,
+						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: LABEL,
-						elementId: SET_ELEMENT_ID,
-						propKey: SET_PROP_KEY,
-						widgetType: SET_WIDGET_TYPE,
+						elementId: MOCK_WIDGET_ID,
+						propKey: MOCK_PROP_KEY,
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
 						defaultValue: DEFAULT_VALUE,
 						groupId: GROUP_ID_1,
 					},
@@ -237,11 +245,12 @@ describe( 'setOverridableProp', () => {
 			expectedDispatch: {
 				props: {
 					[ EXISTING_OVERRIDE_KEY ]: {
-						'override-key': EXISTING_OVERRIDE_KEY,
+						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: LABEL,
-						elementId: SET_ELEMENT_ID,
-						propKey: SET_PROP_KEY,
-						widgetType: SET_WIDGET_TYPE,
+						elementId: MOCK_WIDGET_ID,
+						propKey: MOCK_PROP_KEY,
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
 						defaultValue: DEFAULT_VALUE,
 						groupId: GROUP_ID_2,
 					},
@@ -268,11 +277,12 @@ describe( 'setOverridableProp', () => {
 			initialOverrides: {
 				props: {
 					[ EXISTING_OVERRIDE_KEY ]: {
-						'override-key': EXISTING_OVERRIDE_KEY,
+						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: 'Existing Label',
 						elementId: 'element-0',
 						propKey: 'color',
-						widgetType: SET_WIDGET_TYPE,
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
 						defaultValue: 'red',
 						groupId: GROUP_ID_1,
 					},
@@ -295,20 +305,22 @@ describe( 'setOverridableProp', () => {
 			expectedDispatch: {
 				props: {
 					[ EXISTING_OVERRIDE_KEY ]: {
-						'override-key': EXISTING_OVERRIDE_KEY,
+						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: 'Existing Label',
 						elementId: 'element-0',
 						propKey: 'color',
-						widgetType: SET_WIDGET_TYPE,
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
 						defaultValue: 'red',
 						groupId: GROUP_ID_1,
 					},
 					[ GENERATED_ID_1 ]: {
-						'override-key': GENERATED_ID_1,
+						overrideKey: GENERATED_ID_1,
 						label: LABEL,
-						elementId: SET_ELEMENT_ID,
-						propKey: SET_PROP_KEY,
-						widgetType: SET_WIDGET_TYPE,
+						elementId: MOCK_WIDGET_ID,
+						propKey: MOCK_PROP_KEY,
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
 						defaultValue: DEFAULT_VALUE,
 						groupId: GROUP_ID_2,
 					},
@@ -335,11 +347,12 @@ describe( 'setOverridableProp', () => {
 			initialOverrides: {
 				props: {
 					[ EXISTING_OVERRIDE_KEY ]: {
-						'override-key': EXISTING_OVERRIDE_KEY,
+						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: 'Existing Label',
-						elementId: SET_ELEMENT_ID,
-						propKey: SET_PROP_KEY,
-						widgetType: SET_WIDGET_TYPE,
+						elementId: MOCK_WIDGET_ID,
+						propKey: MOCK_PROP_KEY,
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
 						defaultValue: 'Old value',
 						groupId: GROUP_ID_1,
 					},
@@ -363,11 +376,12 @@ describe( 'setOverridableProp', () => {
 			expectedDispatch: {
 				props: {
 					[ EXISTING_OVERRIDE_KEY ]: {
-						'override-key': EXISTING_OVERRIDE_KEY,
+						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: 'Updated Label',
-						elementId: SET_ELEMENT_ID,
-						propKey: SET_PROP_KEY,
-						widgetType: SET_WIDGET_TYPE,
+						elementId: MOCK_WIDGET_ID,
+						propKey: MOCK_PROP_KEY,
+						widgetType: MOCK_WIDGET_TYPE,
+						elType: MOCK_EL_TYPE,
 						defaultValue: 'Updated value',
 						groupId: GROUP_ID_1,
 					},
@@ -387,26 +401,27 @@ describe( 'setOverridableProp', () => {
 	] )( 'should $should', ( { initialOverrides, callParams, expectedDispatch, expectNoIdGeneration } ) => {
 		// Arrange
 		if ( initialOverrides ) {
-			mockState.data[ 0 ].overrides = initialOverrides;
+			mockState.data[ 0 ].overridableProps = initialOverrides;
 		}
 
 		// Act
-		setOverridableProp(
-			SET_COMPONENT_ID,
-			SET_ELEMENT_ID,
-			callParams.label,
-			callParams.groupId,
-			SET_PROP_KEY,
-			SET_WIDGET_TYPE,
-			callParams.defaultValue ?? DEFAULT_VALUE
-		);
+		setOverridableProp( {
+			componentId: MOCK_COMPONENT_ID,
+			elementId: MOCK_WIDGET_ID,
+			label: callParams.label,
+			groupId: callParams.groupId,
+			propKey: MOCK_PROP_KEY,
+			widgetType: MOCK_WIDGET_TYPE,
+			elType: MOCK_EL_TYPE,
+			defaultValue: callParams.defaultValue ?? DEFAULT_VALUE,
+		} );
 
 		// Assert
 		expect( dispatch ).toHaveBeenCalledWith( {
 			type: `${ SLICE_NAME }/setOverridableProps`,
 			payload: {
-				componentId: SET_COMPONENT_ID,
-				overrides: expectedDispatch,
+				componentId: MOCK_COMPONENT_ID,
+				overridableProps: expectedDispatch,
 			},
 		} );
 
@@ -420,15 +435,16 @@ describe( 'setOverridableProp', () => {
 		mockState.data = [];
 
 		// Act
-		setOverridableProp(
-			SET_COMPONENT_ID,
-			SET_ELEMENT_ID,
-			LABEL,
-			null,
-			SET_PROP_KEY,
-			SET_WIDGET_TYPE,
-			DEFAULT_VALUE
-		);
+		setOverridableProp( {
+			componentId: MOCK_COMPONENT_ID,
+			elementId: MOCK_WIDGET_ID,
+			label: LABEL,
+			groupId: null,
+			propKey: MOCK_PROP_KEY,
+			widgetType: MOCK_WIDGET_TYPE,
+			elType: MOCK_WIDGET_TYPE,
+			defaultValue: DEFAULT_VALUE,
+		} );
 
 		// Assert
 		expect( dispatch ).not.toHaveBeenCalled();
