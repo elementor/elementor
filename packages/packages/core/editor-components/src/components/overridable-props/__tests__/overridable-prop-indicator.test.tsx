@@ -152,7 +152,7 @@ function mockPropType(
 
 	const overridablePropValue = componentOverridablePropTypeUtil.create( {
 		override_key: generateUniqueId(),
-		default_value: value,
+		origin_value: value,
 	} );
 
 	return {
