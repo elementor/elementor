@@ -242,4 +242,3 @@ function mockBoundProp( {
 
 	return params;
 }
-

@@ -5,7 +5,10 @@ import { type Control, type ControlItem, getCurrentDocumentId } from '@elementor
 import { type PropValue } from '@elementor/editor-props';
 import { generateUniqueId } from '@elementor/utils';
 
-import { componentOverridablePropTypeUtil, ComponentOverridablePropValue } from '../../prop-types/component-overridable-prop-type';
+import {
+	componentOverridablePropTypeUtil,
+	type ComponentOverridablePropValue,
+} from '../../prop-types/component-overridable-prop-type';
 import { updateOverridablePropDefaultValue } from '../../store/update-overridable-prop-default-value';
 
 export function OverridablePropControl() {
