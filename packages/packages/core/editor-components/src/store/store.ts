@@ -68,6 +68,9 @@ export const slice = createSlice( {
 		addCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
 			state.createdThisSession.push( payload );
 		},
+		archive: ( state, { payload }: PayloadAction< number > ) => {
+			state.data = state.data.filter( ( component ) => component.id !== payload );
+		},
 	},
 	extraReducers: ( builder ) => {
 		builder.addCase( loadComponents.fulfilled, ( state, { payload }: PayloadAction< GetComponentResponse > ) => {

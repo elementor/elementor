@@ -38,6 +38,7 @@ class Components_Repository {
 				'id' => $doc->get_main_id(),
 				'title' => $doc->get_post()->post_title,
 				'uid' => $doc->get_component_uid(),
+				'is_archived' => (bool) $doc->get_main_meta( '_elementor_component_is_archived' ),
 				'styles' => $this->extract_styles( $doc->get_elements_data() ),
 			];
 		}
@@ -89,5 +90,13 @@ class Components_Repository {
 		}
 
 		return $styles;
+	}
+	public function archive( $id ) {
+		$doc = Plugin::$instance->documents->get( $id );
+		if ( ! $doc instanceof Component ) {
+			return false;
+		}
+		$doc->update_main_meta( '_elementor_component_is_archived', true );
+		return true;
 	}
 }

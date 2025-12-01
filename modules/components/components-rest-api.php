@@ -164,16 +164,35 @@ class Components_REST_API {
 				],
 			],
 		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/archive', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->archive_component( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'componentId' => [
+						'type' => 'number',
+						'required' => true,
+						'description' => 'The component ID to archive',
+					],
+				],
+			],
+		] );
 	}
 
 	private function get_components() {
 		$components = $this->get_repository()->all();
 
-		$components_list = $components->map( fn( $component ) => [
-			'id' => $component['id'],
-			'name' => $component['title'],
-			'uid' => $component['uid'],
-		])->all();
+		$components_list = array_values( $components
+			->filter( fn( $component ) => empty( $component['is_archived'] ) )
+			->map( fn( $component ) => [
+				'id' => $component['id'],
+				'name' => $component['title'],
+				'uid' => $component['uid'],
+				'is_archived' => $component['is_archived'],
+			] )
+			->all() );
 
 		return Response_Builder::make( $components_list )->build();
 	}
@@ -336,6 +355,19 @@ class Components_REST_API {
 		return ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] === (int) $current_user_id;
 	}
 
+	private function archive_component( \WP_REST_Request $request ) {
+		$component_id = $request->get_param( 'componentId' );
+		try {
+			$success = $this->get_repository()->archive( $component_id );
+		} catch ( \Exception $e ) {
+			error_log( 'Components REST API archive_component error: ' . $e->getMessage() );
+			return Error_Builder::make( 'archive_failed' )
+				->set_status( 500 )
+				->set_message( __( 'Failed to archive component', 'elementor' ) )
+				->build();
+		}
+		return Response_Builder::make( [ 'success' => $success ] )->build();
+	}	
 	private function route_wrapper( callable $cb ) {
 		try {
 			$response = $cb();
