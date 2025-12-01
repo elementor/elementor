@@ -6,13 +6,14 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Custom_Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 
 class Prop_Type_Adapter {
+	public const CUSTOM_SIZE_KEY = 'global-custom-size-variable';
+
 	public static function to_storage( Variables_Collection $collection ): array {
 		$schema = self::get_schema();
 
@@ -33,7 +34,7 @@ class Prop_Type_Adapter {
 				$value = self::parse_size_value( $value );
 			}
 
-			if ( Custom_Size_Variable_Prop_Type::get_key() === $type ) {
+			if ( self::CUSTOM_SIZE_KEY === $type ) {
 				$value = [
 					'size' => $value,
 					'unit' => 'custom',
@@ -60,7 +61,7 @@ class Prop_Type_Adapter {
 				$value = $value['size'] . $value['unit'];
 			}
 
-			if ( Custom_Size_Variable_Prop_Type::get_key() === $variable->type() ) {
+			if ( self::CUSTOM_SIZE_KEY === $variable->type() ) {
 				$value = $value['size'];
 			}
 
@@ -77,7 +78,7 @@ class Prop_Type_Adapter {
 			Color_Variable_Prop_Type::get_key() => Color_Prop_Type::class,
 			Font_Variable_Prop_Type::get_key() => String_Prop_Type::class,
 			Size_Variable_Prop_Type::get_key() => Size_Prop_Type::class,
-			Custom_Size_Variable_Prop_Type::get_key() => Size_Prop_Type::class,
+			self::CUSTOM_SIZE_KEY => Size_Prop_Type::class,
 		];
 	}
 

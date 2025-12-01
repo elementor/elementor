@@ -9,7 +9,6 @@ use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Custom_Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\Variables_Schema\Variable_Schema_Entry;
@@ -175,7 +174,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		$collection = $this->make_collection( [
 			'data' => [
 				'e-gv-23erty7' => [
-					'type' => Custom_Size_Variable_Prop_Type::get_key(),
+					'type' => Prop_Type_Adapter::CUSTOM_SIZE_KEY,
 					'label' => 'height',
 					'value' => 'calc((10px * 5) + (20px * 3))',
 				],
@@ -285,7 +284,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		$collection = $this->make_collection( [
 			'data' => [
 				'e-gv-23' => [
-					'type' => Custom_Size_Variable_Prop_Type::get_key(),
+					'type' => Prop_Type_Adapter::CUSTOM_SIZE_KEY,
 					'label' => 'margin',
 					'value' => [
 						'$$type' => 'size',
