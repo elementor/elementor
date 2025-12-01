@@ -976,9 +976,9 @@ export default class EditorPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async publishPage(): Promise<void> {
-		await this.clickTopBarItem( TopBarSelectors.publish );
+		await this.page.locator( '#elementor-editor-wrapper-v2' ).getByText( 'Publish' ).click();
 		await this.page.waitForLoadState();
-		await this.page.locator( EditorSelectors.panels.topBar.wrapper + ' button[disabled]', { hasText: 'Publish' } ).waitFor( { timeout: timeouts.longAction } );
+		await expect( this.page.locator( '#elementor-editor-wrapper-v2' ).getByText( 'Publish' ) ).toBeDisabled( { timeout: timeouts.longAction } );
 	}
 
 	/**
@@ -988,8 +988,6 @@ export default class EditorPage extends BasePage {
 	 */
 	async publishAndViewPage(): Promise<void> {
 		await this.publishPage();
-		await this.clickTopBarItem( TopBarSelectors.saveOptions );
-		await this.page.getByRole( 'menuitem', { name: 'View Page' } ).click();
 		const pageId = await this.getPageId();
 		await this.page.goto( `/?p=${ pageId }` );
 		await this.page.waitForLoadState( 'domcontentloaded', { timeout: timeouts.longAction } );
