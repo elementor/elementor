@@ -15,7 +15,6 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 		parent::__construct( self::ONE_HOUR );
 	}
 
-	// todo: move this to the document lock manager
 	public static function get_instance() {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
