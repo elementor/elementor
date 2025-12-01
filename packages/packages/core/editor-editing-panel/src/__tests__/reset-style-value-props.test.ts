@@ -162,7 +162,6 @@ describe( 'Reset Style Props Tests', () => {
 				path: [ 'transition', '0', 'selection' ],
 				bind: 'selection',
 				propType: createMockPropType(),
-
 			} );
 			const { result } = renderHook( () => useResetStyleValueProps() );
 			expect( result.current.visible ).toBe( false );
