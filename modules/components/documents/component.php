@@ -64,4 +64,21 @@ class Component extends Document {
 
 		return new Component_Overridable_Props( $meta );
 	}
+
+	public function set_overridable_props( $data ) {
+		$parser = Component_Overridable_Props_Parser::make();
+
+		$result = $parser->parse( $data );
+
+
+		if ( ! $result->is_valid() ) {
+			throw new \Exception( esc_html( 'Settings validation failed. ' . $result->errors()->to_string() ) );
+		}
+
+		$sanitized_data = $result->unwrap();
+
+		$this->update_json_meta( self::OVERRIDABLE_PROPS_META_KEY, $sanitized_data );
+
+		return $result;
+	}
 }

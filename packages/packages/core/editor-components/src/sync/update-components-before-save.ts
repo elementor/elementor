@@ -1,21 +1,19 @@
 import { isDocumentDirty } from '@elementor/editor-documents';
-
 import { apiClient } from '../api';
-import { type Container, type DocumentSaveStatus } from '../types';
+import { type DocumentSaveStatus } from '../types';
+import { type V1ElementData } from '@elementor/editor-elements';
 import { getComponentDocumentData, invalidateComponentDocumentData } from '../utils/component-document-data';
 import { getComponentIds } from '../utils/get-component-ids';
 
 type Options = {
 	status: DocumentSaveStatus;
-	container: Container;
+	elements: V1ElementData[];	
 };
 
-export async function updateComponentsBeforeSave( { status, container }: Options ) {
+export async function updateComponentsBeforeSave( { status, elements }: Options ) {
 	if ( status !== 'publish' ) {
 		return;
 	}
-
-	const elements = container.model.get( 'elements' ).toJSON();
 
 	const componentIds = await getComponentIds( elements );
 

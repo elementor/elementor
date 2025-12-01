@@ -66,14 +66,6 @@ export type ExtendedWindow = Window & {
 	};
 };
 
-export type Container = {
-	model: {
-		get: ( key: 'elements' ) => {
-			toJSON: () => V1ElementData[];
-		};
-	};
-};
-
 export type ComponentInstancePropValue< TComponentId extends number | string = number | string > =
 	TransformablePropValue<
 		'component-instance',
