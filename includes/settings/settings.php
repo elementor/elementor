@@ -100,23 +100,11 @@ class Settings extends Settings_Page {
 			'58.5'
 		);
 
-		$this->register_unified_submenus();
-
-		// Note: Settings submenu is now registered in register_unified_submenus()
-		// The old hook-based registration is no longer needed
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
+			$this->register_unified_submenus();
+		}
 	}
 
-	/**
-	 * Register unified submenus for the new menu structure.
-	 * 
-	 * Structure:
-	 * - Elementor (Level 1)
-	 *   - Editor (Level 2) - with flyout containing Templates, Settings, etc.
-	 *   - [Other plugins can add Level 2 items here]
-	 *
-	 * @since 3.x.x
-	 * @access private
-	 */
 	private function register_unified_submenus() {
 		add_submenu_page(
 			self::PAGE_ID,
@@ -139,12 +127,6 @@ class Settings extends Settings_Page {
 		do_action( 'elementor/admin/menu/register_submenus', self::PAGE_ID );
 	}
 
-	/**
-	 * Render the editor page - redirects to the home or a default editor page.
-	 *
-	 * @since 3.x.x
-	 * @access public
-	 */
 	public function render_editor_page() {
 		$this->home_module->is_experiment_active() ? $this->display_home_screen() : $this->display_settings_page();
 	}
