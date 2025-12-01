@@ -62,7 +62,7 @@ export function setOverridableProp( {
 		groupId: currentGroupId,
 	};
 
-	const group: OverridablePropGroup = updatedGroups.items[ currentGroupId ];
+	const group: OverridablePropGroup = { ...updatedGroups.items[ currentGroupId ] };
 
 	if ( existingOverridableProp && existingOverridableProp.groupId !== currentGroupId ) {
 		const oldGroup = updatedGroups.items[ existingOverridableProp.groupId ];
@@ -73,7 +73,7 @@ export function setOverridableProp( {
 	}
 
 	if ( ! group.props.includes( overridableProp.overrideKey ) ) {
-		group.props.push( overridableProp.overrideKey );
+		group.props = [ ...group.props, overridableProp.overrideKey ];
 	}
 
 	const newOverridableProps = {
