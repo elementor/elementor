@@ -22,6 +22,11 @@ describe( 'setOverridableProp', () => {
 	const MOCK_PROP_KEY = 'text';
 	const MOCK_WIDGET_TYPE = 'button';
 	const MOCK_EL_TYPE = 'widget';
+	const MOCK_WIDGET = {
+		elementId: MOCK_WIDGET_ID,
+		widgetType: MOCK_WIDGET_TYPE,
+		elType: MOCK_EL_TYPE,
+	};
 	const LABEL = 'Button Text';
 	const ORIGIN_VALUE = 'Click me';
 	const GROUP_ID_1 = 'group-1';
@@ -70,10 +75,8 @@ describe( 'setOverridableProp', () => {
 					[ GENERATED_ID_2 ]: {
 						overrideKey: GENERATED_ID_2,
 						label: LABEL,
-						elementId: MOCK_WIDGET_ID,
 						propKey: MOCK_PROP_KEY,
-						widgetType: MOCK_WIDGET_TYPE,
-						elType: MOCK_EL_TYPE,
+						...MOCK_WIDGET,
 						originValue: ORIGIN_VALUE,
 						groupId: GENERATED_ID_1,
 					},
@@ -135,10 +138,8 @@ describe( 'setOverridableProp', () => {
 					[ GENERATED_ID_1 ]: {
 						overrideKey: GENERATED_ID_1,
 						label: LABEL,
-						elementId: MOCK_WIDGET_ID,
 						propKey: MOCK_PROP_KEY,
-						widgetType: MOCK_WIDGET_TYPE,
-						elType: MOCK_EL_TYPE,
+						...MOCK_WIDGET,
 						originValue: ORIGIN_VALUE,
 						groupId: GROUP_ID_1,
 					},
@@ -162,10 +163,8 @@ describe( 'setOverridableProp', () => {
 					[ EXISTING_OVERRIDE_KEY ]: {
 						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: 'Old Label',
-						elementId: MOCK_WIDGET_ID,
 						propKey: MOCK_PROP_KEY,
-						widgetType: MOCK_WIDGET_TYPE,
-						elType: MOCK_EL_TYPE,
+						...MOCK_WIDGET,
 						originValue: 'Old value',
 						groupId: GROUP_ID_1,
 					},
@@ -191,10 +190,8 @@ describe( 'setOverridableProp', () => {
 					[ EXISTING_OVERRIDE_KEY ]: {
 						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: 'Updated Label',
-						elementId: MOCK_WIDGET_ID,
 						propKey: MOCK_PROP_KEY,
-						widgetType: MOCK_WIDGET_TYPE,
-						elType: MOCK_EL_TYPE,
+						...MOCK_WIDGET,
 						originValue: 'Updated value',
 						groupId: GROUP_ID_1,
 					},
@@ -219,10 +216,8 @@ describe( 'setOverridableProp', () => {
 					[ EXISTING_OVERRIDE_KEY ]: {
 						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: LABEL,
-						elementId: MOCK_WIDGET_ID,
 						propKey: MOCK_PROP_KEY,
-						widgetType: MOCK_WIDGET_TYPE,
-						elType: MOCK_EL_TYPE,
+						...MOCK_WIDGET,
 						originValue: ORIGIN_VALUE,
 						groupId: GROUP_ID_1,
 					},
@@ -247,10 +242,8 @@ describe( 'setOverridableProp', () => {
 					[ EXISTING_OVERRIDE_KEY ]: {
 						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: LABEL,
-						elementId: MOCK_WIDGET_ID,
 						propKey: MOCK_PROP_KEY,
-						widgetType: MOCK_WIDGET_TYPE,
-						elType: MOCK_EL_TYPE,
+						...MOCK_WIDGET,
 						originValue: ORIGIN_VALUE,
 						groupId: GROUP_ID_2,
 					},
@@ -349,10 +342,8 @@ describe( 'setOverridableProp', () => {
 					[ EXISTING_OVERRIDE_KEY ]: {
 						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: 'Existing Label',
-						elementId: MOCK_WIDGET_ID,
 						propKey: MOCK_PROP_KEY,
-						widgetType: MOCK_WIDGET_TYPE,
-						elType: MOCK_EL_TYPE,
+						...MOCK_WIDGET,
 						originValue: 'Old value',
 						groupId: GROUP_ID_1,
 					},
@@ -378,10 +369,8 @@ describe( 'setOverridableProp', () => {
 					[ EXISTING_OVERRIDE_KEY ]: {
 						overrideKey: EXISTING_OVERRIDE_KEY,
 						label: 'Updated Label',
-						elementId: MOCK_WIDGET_ID,
 						propKey: MOCK_PROP_KEY,
-						widgetType: MOCK_WIDGET_TYPE,
-						elType: MOCK_EL_TYPE,
+						...MOCK_WIDGET,
 						originValue: 'Updated value',
 						groupId: GROUP_ID_1,
 					},
@@ -407,12 +396,10 @@ describe( 'setOverridableProp', () => {
 		// Act
 		setOverridableProp( {
 			componentId: MOCK_COMPONENT_ID,
-			elementId: MOCK_WIDGET_ID,
 			label: callParams.label,
 			groupId: callParams.groupId,
 			propKey: MOCK_PROP_KEY,
-			widgetType: MOCK_WIDGET_TYPE,
-			elType: MOCK_EL_TYPE,
+			...MOCK_WIDGET,
 			originValue: callParams.originValue ?? ORIGIN_VALUE,
 		} );
 
@@ -437,12 +424,10 @@ describe( 'setOverridableProp', () => {
 		// Act
 		setOverridableProp( {
 			componentId: MOCK_COMPONENT_ID,
-			elementId: MOCK_WIDGET_ID,
 			label: LABEL,
 			groupId: null,
 			propKey: MOCK_PROP_KEY,
-			widgetType: MOCK_WIDGET_TYPE,
-			elType: MOCK_WIDGET_TYPE,
+			...MOCK_WIDGET,
 			originValue: ORIGIN_VALUE,
 		} );
 

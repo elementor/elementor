@@ -18,7 +18,7 @@ type Props = {
 
 export function Form( { onSubmit, groups, currentValue }: Props ) {
 	const [ propLabel, setPropLabel ] = useState< string | null >( currentValue?.label ?? null );
-	const [ group, setGroup ] = useState< string | null >( currentValue?.groupId ?? null );
+	const [ group, setGroup ] = useState< string | null >( currentValue?.groupId ?? groups?.[0]?.value ?? null );
 
 	const name = __( 'Name', 'elementor' );
 	const groupName = __( 'Group Name', 'elementor' );
@@ -71,7 +71,7 @@ export function Form( { onSubmit, groups, currentValue }: Props ) {
 							displayEmpty
 							renderValue={ ( selectedValue: string | null ) => {
 								if ( ! selectedValue || selectedValue === '' ) {
-									return DEFAULT_GROUP.label;
+									return groups && groups.length > 0 ? groups[0].label : DEFAULT_GROUP.label;
 								}
 
 								return groups?.find( ( { value } ) => value === selectedValue )?.label ?? selectedValue;
