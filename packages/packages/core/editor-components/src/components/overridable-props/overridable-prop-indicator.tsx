@@ -9,7 +9,7 @@ import { bindPopover, bindTrigger, Popover, Tooltip, usePopupState } from '@elem
 import { generateUniqueId } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
-import { componentOverridablePropTypeUtil, ComponentOverridablePropValue } from '../../prop-types/component-overridable-prop-type';
+import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import { setOverridableProp } from '../../store/set-overridable-prop';
 import { selectOverridableProps } from '../../store/store';
 import { type OverridableProps } from '../../types';

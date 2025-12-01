@@ -50,6 +50,7 @@ export type ElementInteractions = {
 };
 
 export type InteractionItem = {
+	interaction_id?: string;
 	animation: {
 		animation_type: string;
 		animation_id: string;
