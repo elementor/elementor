@@ -26,16 +26,9 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			const { xmlStructure, elementConfig, stylesConfig } = params;
 			const errors: Error[] = [];
 			const softErrors: Error[] = [];
+			const rootContainers: V1Element[] = [];
 			const widgetsCache = getWidgetsCache() || {};
 			const documentContainer = getContainer( 'document' ) as unknown as V1Element;
-			const rootContainer = createElement( {
-				containerId: documentContainer.id,
-				model: {
-					elType: 'container',
-					id: generateElementId(),
-				},
-				options: { useHistory: false },
-			} );
 			try {
 				const parser = new DOMParser();
 				xml = parser.parseFromString( xmlStructure, 'application/xml' );
@@ -45,7 +38,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				}
 
 				const children = Array.from( xml.children );
-				const iterate = ( node: Element, containerElement: V1Element ) => {
+				const iterate = ( node: Element, containerElement: V1Element = documentContainer ) => {
 					const elementTag = node.tagName;
 					if ( ! widgetsCache[ elementTag ] ) {
 						errors.push( new Error( `Unknown widget type: ${ elementTag }` ) );
@@ -69,6 +62,9 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 								},
 								options: { useHistory: false },
 						  } );
+					if ( containerElement === documentContainer ) {
+						rootContainers.push( newElement );
+					}
 					node.setAttribute( 'id', newElement.id );
 					const configId = node.getAttribute( 'configuration-id' ) || '';
 					try {
@@ -78,7 +74,11 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 						for ( const [ propertyName, propertyValue ] of Object.entries( configObject ) ) {
 							// validate property existance
 							const widgetSchema = widgetsCache[ elementTag ];
-							if ( ! widgetSchema?.atomic_props_schema?.[ propertyName ] && propertyName !== '_styles' ) {
+							if (
+								! widgetSchema?.atomic_props_schema?.[ propertyName ] &&
+								propertyName !== '_styles' &&
+								propertyName !== 'custom_css'
+							) {
 								softErrors.push(
 									new Error(
 										`Property "${ propertyName }" does not exist on element type "${ elementTag }".`
@@ -90,7 +90,10 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 								doUpdateElementProperty( {
 									elementId: newElement.id,
 									propertyName,
-									propertyValue: propertyValue as unknown as PropValue,
+									propertyValue:
+										propertyName === 'custom_css'
+											? { _styles: propertyValue }
+											: ( propertyValue as unknown as PropValue ),
 									elementType: elementTag,
 								} );
 							} catch ( error ) {
@@ -110,7 +113,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				};
 
 				for ( const childNode of children ) {
-					iterate( childNode, rootContainer );
+					iterate( childNode, documentContainer );
 					try {
 					} catch ( error ) {
 						errors.push( error as Error );
@@ -121,9 +124,11 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			}
 
 			if ( errors.length ) {
-				deleteElement( {
-					elementId: rootContainer.id,
-					options: { useHistory: false },
+				rootContainers.forEach( ( rootContainer ) => {
+					deleteElement( {
+						elementId: rootContainer.id,
+						options: { useHistory: false },
+					} );
 				} );
 			}
 
