@@ -12,7 +12,9 @@ export function getKeyframes( effect, type, direction ) {
 	const isIn = 'in' === type;
 	const keyframes = {};
 
-	keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
+	if ( 'fade' === effect ) {
+		keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
+	}
 
 	if ( 'scale' === effect ) {
 		keyframes.scale = isIn ? [ config.scaleStart, 1 ] : [ 1, config.scaleStart ];

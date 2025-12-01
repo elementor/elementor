@@ -1,6 +1,11 @@
 import * as React from 'react';
-import { type ToggleButtonGroupItem, ToggleButtonGroupUi } from '@elementor/editor-controls';
-import { Grid, Typography } from '@elementor/ui';
+import {
+	ControlFormLabel,
+	PopoverGridContainer,
+	type ToggleButtonGroupItem,
+	ToggleButtonGroupUi,
+} from '@elementor/editor-controls';
+import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type FieldProps } from '../../types';
@@ -22,13 +27,15 @@ export function EffectType( { value, onChange }: FieldProps ) {
 
 	return (
 		<>
-			<Grid item xs={ 12 } md={ 6 }>
-				<Typography variant="caption" color="text.secondary">
-					{ __( 'Type', 'elementor' ) }
-				</Typography>
-			</Grid>
-			<Grid item xs={ 12 } md={ 6 } sx={ { display: 'flex', justifyContent: 'flex-end', overflow: 'hidden' } }>
-				<ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ value } />
+			<Grid item xs={ 12 }>
+				<PopoverGridContainer>
+					<Grid item xs={ 6 }>
+						<ControlFormLabel>{ __( 'Type', 'elementor' ) }</ControlFormLabel>
+					</Grid>
+					<Grid item xs={ 6 }>
+						<ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ value } />
+					</Grid>
+				</PopoverGridContainer>
 			</Grid>
 		</>
 	);
