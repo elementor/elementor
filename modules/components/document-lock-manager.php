@@ -110,7 +110,22 @@ class Document_Lock_Manager {
 		];
 	}
 
+	/**
+	 * Extend the lock for a document.
+	 * @param int $document_id The document ID
+	 * @return bool True if extended successfully, false if not locked or locked by another user
+	 */
 	public function extend_lock( $document_id ) {
+		$lock_data = $this->get_lock_data( $document_id );
+		if ( ! $lock_data['locked_by'] ) {
+			return false;
+		}
+
+		$current_user_id = get_current_user_id();
+		if ( (int) $lock_data['locked_by'] !== (int) $current_user_id ) {
+			return false;
+		}
+
 		update_post_meta( $document_id, self::LOCK_TIME_META, time() );
 		return true;
 	}
