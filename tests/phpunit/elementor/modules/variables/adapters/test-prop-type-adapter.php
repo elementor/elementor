@@ -437,7 +437,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 				],
 			],
 			'watermark' => 42,
-			'version' => 5,
+			'version' => 1,
 		] );
 
 		// Act.
@@ -447,7 +447,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 
 		// Assert.
 		$this->assertEquals( 42, $result['watermark'] );
-		$this->assertEquals( 5, $result['version'] );
+		$this->assertEquals( 2, $result['version'] );
 	}
 
 	public function test_bidirectional_conversion__size_maintains_data_integrity() {

@@ -15,6 +15,9 @@ use Elementor\Modules\Variables\Storage\Variables_Collection;
 class Prop_Type_Adapter {
 	public static function to_storage( Variables_Collection $collection ): array {
 		$schema = self::get_schema();
+
+		$collection->set_version( Variables_Collection::FORMAT_VERSION_V2 );
+
 		$record = $collection->serialize();
 
 		$collection->each( function( Variable $variable ) use ( $schema, &$record ) {
@@ -63,6 +66,8 @@ class Prop_Type_Adapter {
 
 			$variable->set_value( $value );
 		} );
+
+		$collection->set_version( Variables_Collection::FORMAT_VERSION_V1 );
 
 		return $collection;
 	}

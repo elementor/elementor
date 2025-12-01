@@ -36,11 +36,13 @@ class Test_Variables_Repository extends TestCase {
 
 		// Act
 		$collection = $this->repository->load();
+		$result = $collection->serialize();
 
 		// Assert
 		$this->assertInstanceOf( Variables_Collection::class, $collection );
 		$this->assertEmpty( $collection->all() );
-		$this->assertEquals( 0, $collection->watermark() );
+		$this->assertEquals( 0, $result['watermark'] );
+		$this->assertEquals( 1, $result['version'] );
 	}
 
 	public function test_load__returns_hydrated_collection_when_data_exists() {
@@ -188,6 +190,7 @@ class Test_Variables_Repository extends TestCase {
 			],
 		];
 		$this->assertEquals( $expected, $saved_data['data'] );
+		$this->assertEquals( 2, $saved_data['version'] );
 	}
 
 	public function test_load__converts_prop_values_to_strings() {
@@ -244,6 +247,7 @@ class Test_Variables_Repository extends TestCase {
 		// Assert.
 		$this->assertEquals( $expected, $result['data'] );
 		$this->assertEquals( 5, $collection->watermark() );
+		$this->assertEquals( 1, $result['version'] );
 	}
 
 	public function test_full_round_trip__color_variable() {
@@ -282,5 +286,7 @@ class Test_Variables_Repository extends TestCase {
 		$this->assertEquals( '#3498db', $result['data']['e-gv-primary']['value'] );
 		$this->assertEquals( 'Primary Color', $result['data']['e-gv-primary']['label'] );
 		$this->assertEquals( Color_Variable_Prop_Type::get_key(), $result['data']['e-gv-primary']['type'] );
+		$this->assertEquals( 1, $result['watermark'] );
+		$this->assertEquals( 1, $result['version'] );
 	}
 }
