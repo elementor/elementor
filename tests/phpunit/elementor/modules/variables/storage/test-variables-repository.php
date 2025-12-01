@@ -8,6 +8,7 @@ use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use PHPUnit\Framework\TestCase;
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
