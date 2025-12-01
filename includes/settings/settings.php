@@ -128,6 +128,15 @@ class Settings extends Settings_Page {
 			[ $this, 'render_editor_page' ]
 		);
 
+		add_submenu_page(
+			self::PAGE_ID,
+			esc_html__( 'Settings', 'elementor' ),
+			esc_html__( 'Settings', 'elementor' ),
+			'manage_options',
+			'elementor-settings',
+			[ $this, 'display_settings_page' ]
+		);
+
 		do_action( 'elementor/admin/menu/register_submenus', self::PAGE_ID );
 	}
 
@@ -190,6 +199,8 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function hide_legacy_templates_menu() {
+		remove_submenu_page( self::PAGE_ID, 'elementor-settings' );
+
 		?>
 		<style type="text/css">
 			#menu-posts-elementor_library {

@@ -160,6 +160,10 @@ class Admin_Menu_Manager {
 			$this->register_wp_menus();
 		}, 20 );
 
+		add_action( 'admin_menu', function () {
+			$this->intercept_legacy_submenus();
+		}, 999 );
+
 		add_action( 'admin_head', function () {
 			$this->hide_invisible_menus();
 			$this->render_flyout_menus();
@@ -185,7 +189,61 @@ class Admin_Menu_Manager {
 			}
 		}
 
+		$this->register_flyout_items_as_hidden_submenus( $hooks );
+
 		do_action( 'elementor/admin/menu/after_register', $this, $hooks );
+	}
+
+	private function register_flyout_items_as_hidden_submenus( array &$hooks ) {
+		foreach ( $this->level3_items as $group_items ) {
+			foreach ( $group_items as $item_slug => $item ) {
+				$hooks[ $item_slug ] = $this->register_hidden_submenu( $item_slug, $item );
+			}
+		}
+
+		foreach ( $this->level4_items as $group_items ) {
+			foreach ( $group_items as $item_slug => $item ) {
+				$hooks[ $item_slug ] = $this->register_hidden_submenu( $item_slug, $item );
+			}
+		}
+	}
+
+	private function register_hidden_submenu( $item_slug, Admin_Menu_Item $item ) {
+		$has_page = ( $item instanceof Admin_Menu_Item_With_Page );
+
+		$page_title = $has_page ? $item->get_page_title() : '';
+		$callback = $has_page ? [ $item, 'render' ] : '';
+
+		$original_parent = $item instanceof Remapped_Menu_Item
+			? $item->get_original_parent_slug()
+			: $item->get_parent_slug();
+
+		$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
+
+		return add_submenu_page(
+			$parent_slug,
+			$page_title,
+			$item->get_label(),
+			$item->get_capability(),
+			$item_slug,
+			$callback
+		);
+	}
+
+	private function resolve_hidden_submenu_parent( $parent_slug ) {
+		if ( in_array( $parent_slug, [ self::EDITOR_GROUP_ID, self::EDITOR_MENU_SLUG ], true ) ) {
+			return self::ELEMENTOR_MENU_SLUG;
+		}
+
+		if ( in_array( $parent_slug, [ self::TEMPLATES_GROUP_ID, self::LEGACY_TEMPLATES_SLUG ], true ) ) {
+			return self::ELEMENTOR_MENU_SLUG;
+		}
+
+		if ( $parent_slug === self::SETTINGS_GROUP_ID ) {
+			return self::ELEMENTOR_MENU_SLUG;
+		}
+
+		return $parent_slug;
 	}
 
 	private function register_top_level_menu( $item_slug, Admin_Menu_Item $item ) {
@@ -237,6 +295,151 @@ class Admin_Menu_Manager {
 				remove_submenu_page( $item->get_parent_slug(), $item_slug );
 			}
 		}
+
+		$this->hide_flyout_items_from_wp_menu();
+	}
+
+	private function hide_flyout_items_from_wp_menu() {
+		foreach ( $this->level3_items as $group_items ) {
+			foreach ( $group_items as $item_slug => $item ) {
+				$original_parent = $item instanceof Remapped_Menu_Item
+					? $item->get_original_parent_slug()
+					: $item->get_parent_slug();
+
+				$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
+				remove_submenu_page( $parent_slug, $item_slug );
+			}
+		}
+
+		foreach ( $this->level4_items as $group_items ) {
+			foreach ( $group_items as $item_slug => $item ) {
+				$original_parent = $item instanceof Remapped_Menu_Item
+					? $item->get_original_parent_slug()
+					: $item->get_parent_slug();
+
+				$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
+				remove_submenu_page( $parent_slug, $item_slug );
+			}
+		}
+	}
+
+	private function intercept_legacy_submenus() {
+		$this->intercept_elementor_menu_legacy_items();
+		$this->intercept_templates_menu_legacy_items();
+	}
+
+	private function intercept_elementor_menu_legacy_items() {
+		global $submenu;
+
+		if ( empty( $submenu[ self::ELEMENTOR_MENU_SLUG ] ) ) {
+			return;
+		}
+
+		$items_to_intercept = [];
+		$protected_slugs = $this->get_protected_submenu_slugs();
+
+		foreach ( $submenu[ self::ELEMENTOR_MENU_SLUG ] as $index => $submenu_item ) {
+			$item_slug = $submenu_item[2] ?? '';
+
+			if ( empty( $item_slug ) ) {
+				continue;
+			}
+
+			if ( in_array( $item_slug, $protected_slugs, true ) ) {
+				continue;
+			}
+
+			if ( $this->is_item_already_registered( $item_slug ) ) {
+				continue;
+			}
+
+			$items_to_intercept[ $index ] = $submenu_item;
+		}
+
+		foreach ( $items_to_intercept as $index => $submenu_item ) {
+			$item_slug = $submenu_item[2];
+			$legacy_item = new Legacy_Submenu_Item( $submenu_item );
+
+			$this->register_level3_item( $item_slug, $legacy_item, self::EDITOR_GROUP_ID );
+
+			unset( $submenu[ self::ELEMENTOR_MENU_SLUG ][ $index ] );
+		}
+	}
+
+	private function intercept_templates_menu_legacy_items() {
+		global $submenu;
+
+		if ( empty( $submenu[ self::LEGACY_TEMPLATES_SLUG ] ) ) {
+			return;
+		}
+
+		$items_to_intercept = [];
+		$protected_templates_slugs = $this->get_protected_templates_submenu_slugs();
+
+		foreach ( $submenu[ self::LEGACY_TEMPLATES_SLUG ] as $index => $submenu_item ) {
+			$item_slug = $submenu_item[2] ?? '';
+
+			if ( empty( $item_slug ) ) {
+				continue;
+			}
+
+			if ( in_array( $item_slug, $protected_templates_slugs, true ) ) {
+				continue;
+			}
+
+			if ( $this->is_item_already_registered( $item_slug ) ) {
+				unset( $submenu[ self::LEGACY_TEMPLATES_SLUG ][ $index ] );
+				continue;
+			}
+
+			$items_to_intercept[ $index ] = $submenu_item;
+		}
+
+		foreach ( $items_to_intercept as $index => $submenu_item ) {
+			$item_slug = $submenu_item[2];
+			$legacy_item = new Legacy_Submenu_Item( $submenu_item, self::LEGACY_TEMPLATES_SLUG );
+
+			$this->register_level4_item( $item_slug, $legacy_item, self::TEMPLATES_GROUP_ID );
+
+			unset( $submenu[ self::LEGACY_TEMPLATES_SLUG ][ $index ] );
+		}
+	}
+
+	private function get_protected_submenu_slugs() {
+		return [
+			self::ELEMENTOR_MENU_SLUG,
+			self::EDITOR_MENU_SLUG,
+			'elementor-settings',
+			'go_knowledge_base_site',
+		];
+	}
+
+	private function get_protected_templates_submenu_slugs() {
+		return [
+			self::LEGACY_TEMPLATES_SLUG,
+			'post-new.php?post_type=elementor_library',
+			'edit-tags.php?taxonomy=elementor_library_category&amp;post_type=elementor_library',
+		];
+	}
+
+	private function is_item_already_registered( $item_slug ) {
+		if ( isset( $this->items[ $item_slug ] ) ) {
+			return true;
+		}
+
+		foreach ( $this->level3_items as $group_items ) {
+			if ( isset( $group_items[ $item_slug ] ) ) {
+				return true;
+			}
+		}
+
+		foreach ( $this->level4_items as $group_items ) {
+			if ( isset( $group_items[ $item_slug ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private function enqueue_admin_menu_assets() {

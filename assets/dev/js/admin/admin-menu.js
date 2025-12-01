@@ -2,12 +2,12 @@
 	'use strict';
 
 	var AdminMenu = {
-		init: function() {
+		init() {
 			this.setupFlyoutMenus();
 			this.setupMobileSupport();
 		},
 
-		setupFlyoutMenus: function() {
+		setupFlyoutMenus() {
 			var self = this;
 
 			$( '#adminmenu li.elementor-has-flyout' ).each( function() {
@@ -40,7 +40,7 @@
 			} );
 		},
 
-		positionFlyout: function( $parentLi, $flyoutMenu ) {
+		positionFlyout( $parentLi, $flyoutMenu ) {
 			var windowHeight = $( window ).height();
 			var flyoutHeight = $flyoutMenu.outerHeight();
 			var parentOffset = $parentLi.offset();
@@ -59,7 +59,7 @@
 			}
 		},
 
-		setupKeyboardNavigation: function( $parentLi, $flyoutMenu ) {
+		setupKeyboardNavigation( $parentLi, $flyoutMenu ) {
 			$parentLi.on( 'keydown', function( e ) {
 				var $focusedItem = $flyoutMenu.find( 'a:focus' );
 				var $allItems = $flyoutMenu.find( 'a' );
@@ -70,7 +70,7 @@
 						if ( ! $flyoutMenu.hasClass( 'elementor-submenu-flyout-visible' ) ) {
 							e.preventDefault();
 							$flyoutMenu.addClass( 'elementor-submenu-flyout-visible' );
-							$allItems.first().focus();
+							$allItems.first().trigger( 'focus' );
 						}
 						break;
 
@@ -78,7 +78,7 @@
 						if ( $flyoutMenu.hasClass( 'elementor-submenu-flyout-visible' ) ) {
 							e.preventDefault();
 							$flyoutMenu.removeClass( 'elementor-submenu-flyout-visible' );
-							$parentLi.children( 'a' ).focus();
+							$parentLi.children( 'a' ).trigger( 'focus' );
 						}
 						break;
 
@@ -86,7 +86,7 @@
 						if ( $flyoutMenu.hasClass( 'elementor-submenu-flyout-visible' ) && currentIndex >= 0 ) {
 							e.preventDefault();
 							var nextIndex = ( currentIndex + 1 ) % $allItems.length;
-							$allItems.eq( nextIndex ).focus();
+							$allItems.eq( nextIndex ).trigger( 'focus' );
 						}
 						break;
 
@@ -94,7 +94,7 @@
 						if ( $flyoutMenu.hasClass( 'elementor-submenu-flyout-visible' ) && currentIndex >= 0 ) {
 							e.preventDefault();
 							var prevIndex = ( currentIndex - 1 + $allItems.length ) % $allItems.length;
-							$allItems.eq( prevIndex ).focus();
+							$allItems.eq( prevIndex ).trigger( 'focus' );
 						}
 						break;
 
@@ -102,14 +102,14 @@
 						if ( $flyoutMenu.hasClass( 'elementor-submenu-flyout-visible' ) ) {
 							e.preventDefault();
 							$flyoutMenu.removeClass( 'elementor-submenu-flyout-visible' );
-							$parentLi.children( 'a' ).focus();
+							$parentLi.children( 'a' ).trigger( 'focus' );
 						}
 						break;
 				}
 			} );
 		},
 
-		setupMobileSupport: function() {
+		setupMobileSupport() {
 			if ( window.innerWidth > 782 ) {
 				return;
 			}
@@ -137,7 +137,7 @@
 		},
 	};
 
-	$( document ).ready( function() {
+	$( function() {
 		AdminMenu.init();
 	} );
 } )( jQuery );
