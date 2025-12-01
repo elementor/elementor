@@ -136,7 +136,7 @@ class Test_Variables_Repository extends TestCase {
 					'order' => 1,
 				],
 				'e-gv-size' => [
-					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'type' => Size_Variable_Prop_Type::get_key(),
 					'label' => 'Padding',
 					'value' => '20px',
 					'order' => 2,
@@ -174,7 +174,7 @@ class Test_Variables_Repository extends TestCase {
 				'order' => 1,
 			],
 			'e-gv-size' => [
-				'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+				'type' => Size_Variable_Prop_Type::get_key(),
 				'label' => 'Padding',
 				'value' => [
 					'$$type' => 'size',
@@ -203,7 +203,7 @@ class Test_Variables_Repository extends TestCase {
 					'order' => 1,
 				],
 				'e-gv-size' => [
-					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'type' => Size_Variable_Prop_Type::get_key(),
 					'label' => 'Padding',
 					'value' => [
 						'$$type' => 'size',
@@ -233,7 +233,7 @@ class Test_Variables_Repository extends TestCase {
 				'order' => 1,
 			],
 			'e-gv-size' => [
-				'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+				'type' => Size_Variable_Prop_Type::get_key(),
 				'label' => 'Padding',
 				'value' => '20px',
 				'order' => 2,
