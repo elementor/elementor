@@ -86,7 +86,7 @@ describe( 'OverridablePropIndicator', () => {
 			bind: 'title',
 			currentValue: componentOverridablePropTypeUtil.create( {
 				override_key: generateUniqueId(),
-				default_value: { $$type: 'string', value: 'Test' },
+				origin_value: { $$type: 'string', value: 'Test' },
 			} ),
 			overridableData: {
 				label: 'Test Label',
@@ -105,7 +105,7 @@ describe( 'OverridablePropIndicator', () => {
 			bind: '_cssid',
 			currentValue: componentOverridablePropTypeUtil.create( {
 				override_key: generateUniqueId(),
-				default_value: { $$type: 'string', value: 'Test' },
+				origin_value: { $$type: 'string', value: 'Test' },
 			} ),
 			overridableData: {
 				label: 'Test',
@@ -149,7 +149,7 @@ describe( 'OverridablePropIndicator', () => {
 									propKey: bind,
 									widgetType: MOCK_WIDGET_TYPE,
 									elType: MOCK_EL_TYPE,
-									defaultValue: currentValue,
+									originValue: currentValue,
 									...overridableData,
 								},
 							},
@@ -217,7 +217,7 @@ describe( 'OverridablePropIndicator', () => {
 				propKey: bind,
 				widgetType: MOCK_WIDGET_TYPE,
 				elType: MOCK_EL_TYPE,
-				defaultValue: { $$type: 'string', value: 'Test' },
+				originValue: { $$type: 'string', value: 'Test' },
 			} );
 		}
 	);

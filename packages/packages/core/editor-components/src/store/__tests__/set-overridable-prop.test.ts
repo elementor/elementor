@@ -23,7 +23,7 @@ describe( 'setOverridableProp', () => {
 	const MOCK_WIDGET_TYPE = 'button';
 	const MOCK_EL_TYPE = 'widget';
 	const LABEL = 'Button Text';
-	const DEFAULT_VALUE = 'Click me';
+	const ORIGIN_VALUE = 'Click me';
 	const GROUP_ID_1 = 'group-1';
 	const GROUP_ID_2 = 'group-2';
 	const EXISTING_OVERRIDE_KEY = 'override-1';
@@ -74,7 +74,7 @@ describe( 'setOverridableProp', () => {
 						propKey: MOCK_PROP_KEY,
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						defaultValue: DEFAULT_VALUE,
+						originValue: ORIGIN_VALUE,
 						groupId: GENERATED_ID_1,
 					},
 				},
@@ -101,7 +101,7 @@ describe( 'setOverridableProp', () => {
 						propKey: 'color',
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						defaultValue: 'red',
+						originValue: 'red',
 						groupId: GROUP_ID_1,
 					},
 				},
@@ -129,7 +129,7 @@ describe( 'setOverridableProp', () => {
 						propKey: 'color',
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						defaultValue: 'red',
+						originValue: 'red',
 						groupId: GROUP_ID_1,
 					},
 					[ GENERATED_ID_1 ]: {
@@ -139,7 +139,7 @@ describe( 'setOverridableProp', () => {
 						propKey: MOCK_PROP_KEY,
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						defaultValue: DEFAULT_VALUE,
+						originValue: ORIGIN_VALUE,
 						groupId: GROUP_ID_1,
 					},
 				},
@@ -166,7 +166,7 @@ describe( 'setOverridableProp', () => {
 						propKey: MOCK_PROP_KEY,
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						defaultValue: 'Old value',
+						originValue: 'Old value',
 						groupId: GROUP_ID_1,
 					},
 				},
@@ -184,7 +184,7 @@ describe( 'setOverridableProp', () => {
 			callParams: {
 				label: 'Updated Label',
 				groupId: GROUP_ID_1,
-				defaultValue: 'Updated value',
+				originValue: 'Updated value',
 			},
 			expectedDispatch: {
 				props: {
@@ -195,7 +195,7 @@ describe( 'setOverridableProp', () => {
 						propKey: MOCK_PROP_KEY,
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						defaultValue: 'Updated value',
+						originValue: 'Updated value',
 						groupId: GROUP_ID_1,
 					},
 				},
@@ -223,7 +223,7 @@ describe( 'setOverridableProp', () => {
 						propKey: MOCK_PROP_KEY,
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						defaultValue: DEFAULT_VALUE,
+						originValue: ORIGIN_VALUE,
 						groupId: GROUP_ID_1,
 					},
 				},
@@ -251,7 +251,7 @@ describe( 'setOverridableProp', () => {
 						propKey: MOCK_PROP_KEY,
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						defaultValue: DEFAULT_VALUE,
+						originValue: ORIGIN_VALUE,
 						groupId: GROUP_ID_2,
 					},
 				},
@@ -283,7 +283,7 @@ describe( 'setOverridableProp', () => {
 						propKey: 'color',
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						defaultValue: 'red',
+						originValue: 'red',
 						groupId: GROUP_ID_1,
 					},
 				},
@@ -311,7 +311,7 @@ describe( 'setOverridableProp', () => {
 						propKey: 'color',
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						defaultValue: 'red',
+						originValue: 'red',
 						groupId: GROUP_ID_1,
 					},
 					[ GENERATED_ID_1 ]: {
@@ -321,7 +321,7 @@ describe( 'setOverridableProp', () => {
 						propKey: MOCK_PROP_KEY,
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						defaultValue: DEFAULT_VALUE,
+						originValue: ORIGIN_VALUE,
 						groupId: GROUP_ID_2,
 					},
 				},
@@ -353,7 +353,7 @@ describe( 'setOverridableProp', () => {
 						propKey: MOCK_PROP_KEY,
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						defaultValue: 'Old value',
+						originValue: 'Old value',
 						groupId: GROUP_ID_1,
 					},
 				},
@@ -371,7 +371,7 @@ describe( 'setOverridableProp', () => {
 			callParams: {
 				label: 'Updated Label',
 				groupId: null,
-				defaultValue: 'Updated value',
+				originValue: 'Updated value',
 			},
 			expectedDispatch: {
 				props: {
@@ -382,7 +382,7 @@ describe( 'setOverridableProp', () => {
 						propKey: MOCK_PROP_KEY,
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						defaultValue: 'Updated value',
+						originValue: 'Updated value',
 						groupId: GROUP_ID_1,
 					},
 				},
@@ -413,7 +413,7 @@ describe( 'setOverridableProp', () => {
 			propKey: MOCK_PROP_KEY,
 			widgetType: MOCK_WIDGET_TYPE,
 			elType: MOCK_EL_TYPE,
-			defaultValue: callParams.defaultValue ?? DEFAULT_VALUE,
+			originValue: callParams.originValue ?? ORIGIN_VALUE,
 		} );
 
 		// Assert
@@ -443,7 +443,7 @@ describe( 'setOverridableProp', () => {
 			propKey: MOCK_PROP_KEY,
 			widgetType: MOCK_WIDGET_TYPE,
 			elType: MOCK_WIDGET_TYPE,
-			defaultValue: DEFAULT_VALUE,
+			originValue: ORIGIN_VALUE,
 		} );
 
 		// Assert

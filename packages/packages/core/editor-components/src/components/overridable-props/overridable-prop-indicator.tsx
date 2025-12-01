@@ -66,13 +66,13 @@ export function Content( { componentId, isOverridable, overridableProps }: Props
 
 	const handleSubmit = ( { label, group }: { label: string; group: string | null } ) => {
 		const { extract, create } = componentOverridablePropTypeUtil;
-		const defaultValue = ( ! isOverridable ? value : extract( value )?.default_value );
+		const originValue = ( ! isOverridable ? value : extract( value )?.origin_value );
 
 		if( ! isOverridable ) {
 			setValue(
 				create( {
 					override_key: generateUniqueId(),
-					default_value: defaultValue as TransformablePropValue< string, unknown >,
+					origin_value: originValue as TransformablePropValue< string, unknown >,
 				} )
 			);
 		}
@@ -85,7 +85,7 @@ export function Content( { componentId, isOverridable, overridableProps }: Props
 			propKey: bind,
 			elType,
 			widgetType: elementType.key,
-			defaultValue,
+			originValue,
 		} );
 
 		popupState.close();
