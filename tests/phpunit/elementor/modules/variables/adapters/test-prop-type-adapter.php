@@ -8,6 +8,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\Variables_Schema\Variable_Schema_Entry;
@@ -109,7 +110,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		$collection = $this->make_collection( [
 			'data' => [
 				'e-gv-23erty7' => [
-					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'type' => Size_Variable_Prop_Type::get_key(),
 					'label' => 'Padding',
 					'value' => '249rem',
 				],
@@ -141,7 +142,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		$collection = $this->make_collection( [
 			'data' => [
 				'e-gv-23erty7' => [
-					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'type' => Size_Variable_Prop_Type::get_key(),
 					'label' => 'Width',
 					'value' => 'auto',
 				],
@@ -222,7 +223,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 					],
 				],
 				'e-gv-3' => [
-					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'type' => Size_Variable_Prop_Type::get_key(),
 					'label' => 'font-size',
 					'value' => [
 						'$$type' => 'size',
@@ -233,7 +234,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 					],
 				],
 				'e-gv-4' => [
-					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'type' => Size_Variable_Prop_Type::get_key(),
 					'label' => 'max-height',
 					'value' => [
 						'$$type' => 'size',
@@ -264,12 +265,12 @@ class Test_Prop_Type_Adapter extends TestCase {
 				'value' => 'Roboto',
 			],
 			'e-gv-3' => [
-				'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+				'type' => Size_Variable_Prop_Type::get_key(),
 				'label' => 'font-size',
 				'value' => '12vh',
 			],
 			'e-gv-4' => [
-				'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+				'type' => Size_Variable_Prop_Type::get_key(),
 				'label' => 'max-height',
 				'value' => 'auto',
 			],
@@ -392,7 +393,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 					'value' => 'Roboto',
 				],
 				'e-gv-size1' => [
-					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'type' => Size_Variable_Prop_Type::get_key(),
 					'label' => 'Padding',
 					'value' => '23px',
 				],
@@ -454,7 +455,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		$collection = $this->make_collection( [
 			'data' => [
 				'e-gv-size' => [
-					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'type' => Size_Variable_Prop_Type::get_key(),
 					'label' => 'Test Size',
 					'value' => $original_value,
 				],
@@ -476,7 +477,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		$collection = $this->make_collection( [
 			'data' => [
 				'e-gv-size' => [
-					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'type' => Size_Variable_Prop_Type::get_key(),
 					'label' => 'Negative Margin',
 					'value' => '-10px',
 				],
@@ -509,7 +510,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		$collection = $this->make_collection( [
 			'data' => [
 				'e-gv-size' => [
-					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'type' => Size_Variable_Prop_Type::get_key(),
 					'label' => 'Line Height',
 					'value' => '1.5rem',
 				],
@@ -536,7 +537,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		$collection = $this->make_collection( [
 			'data' => [
 				'e-gv-size' => [
-					'type' => Prop_Type_Adapter::GLOBAL_SIZE_VARIABLE_KEY,
+					'type' => Size_Variable_Prop_Type::get_key(),
 					'label' => 'Width Percent',
 					'value' => '50%',
 				],

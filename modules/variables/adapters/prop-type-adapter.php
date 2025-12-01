@@ -6,14 +6,13 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Custom_Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 
 class Prop_Type_Adapter {
-	const GLOBAL_SIZE_VARIABLE_KEY = 'global-size-variable';
-	const GLOBAL_CUSTOM_SIZE_VARIABLE_KEY = 'global-custom-size-variable';
-
 	public static function to_storage( Variables_Collection $collection ): array {
 		$schema = self::get_schema();
 		$record = $collection->serialize();
@@ -27,11 +26,11 @@ class Prop_Type_Adapter {
 				return;
 			}
 
-			if ( self::GLOBAL_SIZE_VARIABLE_KEY === $type ) {
+			if ( Size_Variable_Prop_Type::get_key() === $type ) {
 				$value = self::parse_size_value( $value );
 			}
 
-			if ( self::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY === $type ) {
+			if ( Custom_Size_Variable_Prop_Type::get_key() === $type ) {
 				$value = [
 					'size' => $value,
 					'unit' => 'custom',
@@ -54,11 +53,11 @@ class Prop_Type_Adapter {
 
 			$value = $value['value'];
 
-			if ( self::GLOBAL_SIZE_VARIABLE_KEY === $variable->type() ) {
+			if ( Size_Variable_Prop_Type::get_key() === $variable->type() ) {
 				$value = $value['size'] . $value['unit'];
 			}
 
-			if ( self::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY === $variable->type() ) {
+			if ( Custom_Size_Variable_Prop_Type::get_key() === $variable->type() ) {
 				$value = $value['size'];
 			}
 
@@ -72,8 +71,8 @@ class Prop_Type_Adapter {
 		return [
 			Color_Variable_Prop_Type::get_key() => Color_Prop_Type::class,
 			Font_Variable_Prop_Type::get_key() => String_Prop_Type::class,
-			self::GLOBAL_SIZE_VARIABLE_KEY => Size_Prop_Type::class,
-			self::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY => Size_Prop_Type::class,
+			Size_Variable_Prop_Type::get_key() => Size_Prop_Type::class,
+			Custom_Size_Variable_Prop_Type::get_key() => Size_Prop_Type::class,
 		];
 	}
 
