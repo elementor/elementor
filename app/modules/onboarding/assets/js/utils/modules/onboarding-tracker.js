@@ -150,10 +150,6 @@ class OnboardingTracker {
 	}
 
 	setupSessionRecordingCleanup() {
-		if ( 'undefined' === typeof window ) {
-			return;
-		}
-
 		this.handleBeforeUnload = this.handleBeforeUnload.bind( this );
 		window.addEventListener( 'beforeunload', this.handleBeforeUnload );
 	}
