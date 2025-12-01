@@ -25,6 +25,7 @@ export type DependencyTerm = {
 export type Dependency = {
 	relation: 'or' | 'and';
 	terms: ( DependencyTerm | Dependency )[];
+	newValue?: TransformablePropValue< string >;
 };
 
 type BasePropTypeMeta = {

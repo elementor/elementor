@@ -1,4 +1,5 @@
 <?php
+
 namespace Elementor\Modules\AtomicWidgets\Elements;
 
 use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader;
@@ -96,6 +97,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	public function before_render() {}
+
 	public function after_render() {}
 
 	abstract protected static function define_props_schema(): array;
@@ -105,6 +107,6 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	public function get_script_depends() {
-        return [ Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER ];
-    }
+		return [ Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER ];
+	}
 }

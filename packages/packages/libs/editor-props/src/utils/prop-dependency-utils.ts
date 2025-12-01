@@ -14,7 +14,7 @@ type Relation = Dependency[ 'relation' ];
 export function isDependencyMet(
 	dependency: Dependency | undefined,
 	values: PropValue
-): { isMet: true } | { isMet: false; failingDependencies: DependencyTerm[] } {
+): { isMet: true } | { isMet: false; failingDependencies: ( DependencyTerm | Dependency )[] } {
 	if ( ! dependency?.terms.length ) {
 		return { isMet: true };
 	}
@@ -22,7 +22,7 @@ export function isDependencyMet(
 	const { relation, terms } = dependency;
 	const method = getRelationMethod( relation );
 
-	const failingDependencies: DependencyTerm[] = [];
+	const failingDependencies: ( DependencyTerm | Dependency )[] = [];
 	const isMet = terms[ method ]( ( term: ParsedTerm | Dependency ) => {
 		const isNestedDependency = isDependency( term );
 		const result = isNestedDependency

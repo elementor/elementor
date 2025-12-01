@@ -1,4 +1,5 @@
 import {
+	type Dependency,
 	type DependencyTerm,
 	extractValue,
 	isDependencyMet,
@@ -152,7 +153,7 @@ function updateValue( path: string[], value: Value, values: Values ) {
 }
 
 function handleUnmetCondition( props: {
-	failingDependencies: DependencyTerm[];
+	failingDependencies: ( DependencyTerm | Dependency )[];
 	dependency: string;
 	elementValues: Values;
 	defaultValue: Value;

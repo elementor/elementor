@@ -22,7 +22,7 @@ class Dynamic_Tags_Module {
 	private Dynamic_Tags_Schemas $schemas;
 
 	private function __construct() {
-		$this->schemas  = new Dynamic_Tags_Schemas();
+		$this->schemas = new Dynamic_Tags_Schemas();
 		$this->registry = new Dynamic_Tags_Editor_Config( $this->schemas );
 	}
 
@@ -92,8 +92,8 @@ class Dynamic_Tags_Module {
 		);
 	}
 
-	// TODO: add support for deeper link controls
 	private function inject_link_prop_dependencies( array $schema ) {
+		// TODO: add support for deeper link controls
 		$tag_dependencies = Dependency_Manager::make()
 			->where( [
 				'operator' => 'ne',
@@ -103,7 +103,7 @@ class Dynamic_Tags_Module {
 				'newValue' => String_Prop_Type::generate( 'button' ),
 			] )->get();
 
-		foreach( $schema as $prop_key => $prop_type ) {
+		foreach ( $schema as $prop_key => $prop_type ) {
 			if ( ! ( $prop_type instanceof Link_Prop_Type ) ) {
 				continue;
 			}
