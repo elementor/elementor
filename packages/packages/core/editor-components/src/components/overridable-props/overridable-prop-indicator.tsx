@@ -66,9 +66,9 @@ export function Content( { componentId, isOverridable, overridableProps }: Props
 
 	const handleSubmit = ( { label, group }: { label: string; group: string | null } ) => {
 		const { extract, create } = componentOverridablePropTypeUtil;
-		const originValue = ( ! isOverridable ? value : extract( value )?.origin_value );
+		const originValue = ! isOverridable ? value : extract( value )?.origin_value;
 
-		if( ! isOverridable ) {
+		if ( ! isOverridable ) {
 			setValue(
 				create( {
 					override_key: generateUniqueId(),
