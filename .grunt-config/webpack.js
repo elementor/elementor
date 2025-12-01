@@ -96,7 +96,6 @@ const entry = {
 	],
 	'admin': path.resolve( __dirname, '../assets/dev/js/admin/admin.js' ),
 	'admin-feedback': path.resolve( __dirname, '../assets/dev/js/admin/admin-feedback.js' ),
-	'admin-menu': path.resolve( __dirname, '../assets/dev/js/admin/admin-menu.js' ),
 	'announcements-app': path.resolve( __dirname, '../modules/announcements/assets/js/index.js' ),
 	'common': path.resolve( __dirname, '../core/common/assets/js/common.js' ),
 	'dev-tools': path.resolve( __dirname, '../modules/dev-tools/assets/js/index.js' ),

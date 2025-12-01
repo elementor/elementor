@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Core\Admin\Menu\Admin_Menu_Loader;
 use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Includes\Settings\AdminMenuItems\Admin_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Get_Help_Menu_Item;
@@ -194,11 +193,16 @@ class Settings extends Settings_Page {
 	/**
 	 * Add inline CSS to hide the legacy Templates menu.
 	 * This keeps backward compatibility while hiding the menu visually.
+	 * Only hides when the editor-one experiment is active.
 	 *
 	 * @since 3.x.x
 	 * @access public
 	 */
 	public function hide_legacy_templates_menu() {
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
+			return;
+		}
+
 		remove_submenu_page( self::PAGE_ID, 'elementor-settings' );
 
 		?>
@@ -611,8 +615,6 @@ class Settings extends Settings_Page {
 		parent::__construct();
 
 		$this->home_module = new Home_Module();
-
-		Admin_Menu_Loader::instance();
 
 		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
 		add_filter( 'elementor/generator_tag/settings', [ $this, 'add_generator_tag_settings' ] );

@@ -4,6 +4,7 @@ namespace Elementor\Modules\EditorOne;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\EditorOne\Components\Admin_Menu_Handler;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,5 +27,13 @@ class Module extends BaseModule {
 			'default'        => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		];
+	}
+
+	public function __construct() {
+		parent::__construct();
+
+		if ( is_admin() ) {
+			$this->add_component( 'admin-menu-handler', new Admin_Menu_Handler() );
+		}
 	}
 }
