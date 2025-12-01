@@ -7,7 +7,7 @@ import { stringPropTypeUtil, type TransformablePropValue } from '@elementor/edit
 import { __createStore, __registerSlice } from '@elementor/store';
 import { ThemeProvider } from '@elementor/ui';
 import { generateUniqueId } from '@elementor/utils';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
 import { setOverridableProp } from '../../../store/set-overridable-prop';
