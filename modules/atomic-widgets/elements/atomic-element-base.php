@@ -206,6 +206,10 @@ abstract class Atomic_Element_Base extends Element_Base {
 			return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
 		}
 
+		if ( ! isset( $element_data['widgetType'] ) ) {
+			return null;
+		}
+
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
 	}
 
