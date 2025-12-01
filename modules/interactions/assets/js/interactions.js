@@ -1,5 +1,28 @@
 import { config, getKeyframes, parseAnimationName } from './interactions-utils.js';
 
+function scrollOutAnimation( element, animConfig, keyframes, options, animateFunc, inViewFunc ) {
+	const viewOptions = { amount: 0.85, root: null };
+	const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
+
+	animateFunc( element, resetKeyframes, { duration: 0 } );
+
+	inViewFunc( element, () => {
+		return () => animateFunc( element, keyframes, options );
+	}, viewOptions );
+}
+
+function scrollInAnimation( element, keyframes, options, animateFunc, inViewFunc ) {
+	const viewOptions = { amount: 0.15, root: null };
+	inViewFunc( element, () => {
+		animateFunc( element, keyframes, options );
+		return () => scrollInAnimation( element, keyframes, options, animateFunc, inViewFunc );
+	}, viewOptions );
+}
+
+function defaultAnimation( element, keyframes, options, animateFunc ) {
+	animateFunc( element, keyframes, options );
+}
+
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
 	const options = {
@@ -8,28 +31,12 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 		easing: config.easing,
 	};
 
-	const viewOptions = { amount: 0.1, root: null };
-
 	if ( 'scrollOut' === animConfig.trigger ) {
-		inViewFunc( element, () => {
-			const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
-			animateFunc( element, resetKeyframes, { duration: 0 } );
-
-			return () => {
-				animateFunc( element, keyframes, options );
-			};
-		}, viewOptions );
+		scrollOutAnimation( element, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
-		inViewFunc( element, () => {
-			animateFunc( element, keyframes, options );
-
-			return () => {
-				const resetKeyframes = getKeyframes( animConfig.effect, 'out', animConfig.direction );
-				animateFunc( element, resetKeyframes, { duration: 0 } );
-			};
-		}, viewOptions );
+		scrollInAnimation( element, keyframes, options, animateFunc, inViewFunc );
 	} else {
-		animateFunc( element, keyframes, options );
+		defaultAnimation( element, keyframes, options, animateFunc );
 	}
 }
 

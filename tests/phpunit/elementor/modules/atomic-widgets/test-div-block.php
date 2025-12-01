@@ -114,4 +114,20 @@ class Test_Div_Block extends Elementor_Test_Base {
 		// Assert.
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
+
+	public function test__add_child_with_non_existent_widget_type(): void {
+		// Arrange.
+		$non_existent_widget_data = [
+			'id' => 'test-child',
+			'elType' => 'widget',
+			'widgetType' => 'non_existent_widget_type',
+		];
+
+		// Act.
+		$result = $this->instance->add_child( $non_existent_widget_data );
+
+		// Assert.
+		$this->assertFalse( $result );
+		$this->assertEmpty( $this->instance->get_children() );
+	}
 }
