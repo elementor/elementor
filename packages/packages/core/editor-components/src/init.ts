@@ -21,6 +21,7 @@ import { EditComponent } from './components/edit-component/edit-component';
 import { openEditModeDialog } from './components/in-edit-mode';
 import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
 import { createComponentType, TYPE } from './create-component-type';
+import { initMcp } from './mcp';
 import { PopulateStore } from './populate-store';
 import { componentsStylesProvider } from './store/components-styles-provider';
 import { loadComponentsStyles } from './store/load-components-styles';
@@ -93,4 +94,6 @@ export function init() {
 
 	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );
 	settingsTransformersRegistry.register( 'overridable', componentOverridableTransformer );
+
+	initMcp();
 }
