@@ -728,6 +728,20 @@ class Source_Local extends Source_Base {
 
 			if ( ! empty( $content ) ) {
 				$content = $this->replace_elements_ids( $content );
+
+				/**
+				 * Filters the template content data.
+				 *
+				 * This filter allows third-party plugins to modify template content
+				 * when loaded via get_template_data(), making the behavior consistent
+				 * with Frontend::get_builder_content().
+				 *
+				 * @since 3.34.0
+				 *
+				 * @param array $content     The template content data.
+				 * @param int   $template_id The template ID.
+				 */
+				$content = apply_filters( 'elementor/frontend/builder_content_data', $content, $template_id );
 			}
 		}
 
