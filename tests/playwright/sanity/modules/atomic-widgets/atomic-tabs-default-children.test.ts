@@ -16,10 +16,6 @@ test.describe( 'Atomic Tabs Default Children @atomic-widgets', () => {
 			e_atomic_elements: 'active',
 		} );
 
-		await wpAdmin.setExperiments( {
-			e_nested_elements: 'active',
-		} );
-
 		editor = await wpAdmin.openNewPage();
 	} );
 

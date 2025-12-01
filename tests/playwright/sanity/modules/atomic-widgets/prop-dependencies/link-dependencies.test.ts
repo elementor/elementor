@@ -17,10 +17,6 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
 		} );
-
-		await wpAdmin.setExperiments( {
-			e_nested_elements: 'active',
-		} );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
