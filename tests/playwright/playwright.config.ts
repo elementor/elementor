@@ -4,8 +4,8 @@ import { config as _config } from 'dotenv';
 import { timeouts } from './config/timeouts';
 
 const isCI = Boolean( process.env.CI );
-const localDevServer = 'http://127.0.0.1:9400';
-const localTestServer = 'http://127.0.0.1:9400';
+const localDevServer = 'http://elementor.local';
+const localTestServer = 'http://elementor.local';
 const ciDevServer = 'http://localhost:8888';
 const ciTestServer = 'http://localhost:8889';
 

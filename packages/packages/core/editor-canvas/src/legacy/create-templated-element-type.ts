@@ -118,7 +118,7 @@ export function createTemplatedElementView( {
 						id: this.model.get( 'id' ),
 						type,
 						settings,
-						base_styles: baseStylesDictionary,
+						base_styles: this.isCssConverterWidget() ? {} : baseStylesDictionary,
 					};
 
 					return renderer.render( templateKey, context );
@@ -134,6 +134,11 @@ export function createTemplatedElementView( {
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
 			return settings;
+		}
+
+		isCssConverterWidget(): boolean {
+			const editorSettings = this.model.get( 'editor_settings' ) || {};
+			return !! editorSettings?.css_converter_widget;
 		}
 
 		#beforeRender() {

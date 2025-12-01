@@ -23,6 +23,7 @@ trait Has_Template {
 	}
 
 	protected function render() {
+		
 		try {
 			$renderer = Template_Renderer::instance();
 
@@ -34,16 +35,22 @@ trait Has_Template {
 				$renderer->register( $name, $path );
 			}
 
+			$base_styles_dict = $this->get_base_styles_dictionary();
+
 			$context = [
 				'id' => $this->get_id(),
 				'type' => $this->get_name(),
 				'settings' => $this->get_atomic_settings(),
 				'base_styles' => $this->get_base_styles_dictionary(),
 				'interactions' => $this->get_interactions_ids(),
+				'base_styles' => $base_styles_dict,
 			];
 
+
 			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-			echo $renderer->render( $this->get_main_template(), $context );
+			$rendered_html = $renderer->render( $this->get_main_template(), $context );
+			
+			echo $rendered_html;
 		} catch ( \Exception $e ) {
 			if ( Utils::is_elementor_debug() ) {
 				throw $e;

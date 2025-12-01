@@ -1078,6 +1078,12 @@ abstract class Document extends Controls_Stack {
 			$element = Plugin::$instance->elements_manager->create_element_instance( $element_data );
 
 			if ( ! $element ) {
+				error_log( sprintf(
+					'[ELEMENTOR-CSS DEBUG] get_elements_raw_data: Element skipped. elType: %s, element_id: %s, post_id: %d',
+					$element_data['elType'] ?? 'unknown',
+					$element_data['id'] ?? 'no-id',
+					$this->get_main_id()
+				) );
 				continue;
 			}
 
