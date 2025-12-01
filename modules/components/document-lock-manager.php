@@ -22,6 +22,7 @@ class Document_Lock_Manager {
 
 	/**
 	 * Initialize the lock manager.
+	 *
 	 * @param int $lock_duration Lock duration in seconds (default: 300 = 5 minutes)
 	 */
 	public function __construct( $lock_duration = self::DEFAULT_TIME ) {
@@ -30,6 +31,7 @@ class Document_Lock_Manager {
 
 	/**
 	 * Lock a document for the current user.
+	 *
 	 * @param int $document_id The document ID to lock
 	 * @return bool True if lock was successful, false otherwise
 	 */
@@ -53,9 +55,9 @@ class Document_Lock_Manager {
 			update_post_meta( $document_id, self::LOCK_USER_META, $user_id );
 			update_post_meta( $document_id, self::LOCK_TIME_META, time() );
 
-			if ( ! function_exists( 'wp_set_post_lock' ) ) {	
-			require_once ABSPATH . 'wp-admin/includes/post.php';
-		}
+			if ( ! function_exists( 'wp_set_post_lock' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/post.php';
+			}
 
 			wp_set_post_lock( $document_id );
 
@@ -68,13 +70,13 @@ class Document_Lock_Manager {
 
 	/**
 	 * Unlock a document.
+	 *
 	 * @param int $document_id The document ID to unlock
 	 * @return bool True if unlock was successful, false otherwise
 	 */
 	public function unlock( $document_id ) {
 		try {
-			
-			
+
 			delete_post_meta( $document_id, self::LOCK_USER_META );
 			delete_post_meta( $document_id, self::LOCK_TIME_META );
 			delete_post_meta( $document_id, self::LOCK_EDIT_LOCK_META );
@@ -88,11 +90,12 @@ class Document_Lock_Manager {
 
 	/**
 	 * Check if a document is currently locked.
+	 *
 	 * @param int $document_id The document ID to check
 	 * @return array Lock data with 'locked_by' (int|null), 'locked_at' (int|null)
 	 */
 	public function get_lock_data( $document_id ) {
-		$locked_by = $this->get_document_lock_user( $document_id );	
+		$locked_by = $this->get_document_lock_user( $document_id );
 		$locked_at = $this->get_document_lock_time( $document_id );
 
 		$is_expired = $locked_at && (int) $locked_at + $this->lock_duration <= time();
@@ -103,7 +106,7 @@ class Document_Lock_Manager {
 				'locked_at' => null,
 			];
 		}
-		
+
 		return [
 			'locked_by' => $locked_by,
 			'locked_at' => $locked_at,
@@ -112,6 +115,7 @@ class Document_Lock_Manager {
 
 	/**
 	 * Extend the lock for a document.
+	 *
 	 * @param int $document_id The document ID
 	 * @return bool True if extended successfully, false if not locked or locked by another user
 	 */
@@ -146,6 +150,7 @@ class Document_Lock_Manager {
 
 	/**
 	 * Get the lock time of a document.
+	 *
 	 * @param int $document_id The document ID to check
 	 * @return int|null Lock time, or null if not locked
 	 */
@@ -157,5 +162,4 @@ class Document_Lock_Manager {
 
 		return null;
 	}
-
 }

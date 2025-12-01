@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Component_Lock_Manager extends Document_Lock_Manager {
-	const ONE_HOUR = 10; 
+	const ONE_HOUR = 10;
 	private static $instance = null;
 	public function __construct() {
 		parent::__construct( self::ONE_HOUR );
@@ -38,7 +38,6 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 			return $response;
 		}
 
-
 		$lock_data = $this->get_lock_data( $post_id );
 		$user_id = get_current_user_id();
 		if ( $user_id === (int) $lock_data['locked_by'] ) {
@@ -51,6 +50,7 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 
 	/**
 	 * Unlock a component.
+	 *
 	 * @param int $post_id The component ID to unlock
 	 * @return bool True if unlock was successful, false otherwise
 	 */
@@ -61,14 +61,15 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 
 		$lock_data = $this->get_lock_data( $post_id );
 		$current_user_id = get_current_user_id();
-		if ( $lock_data['locked_by'] && (int) $lock_data['locked_by'] !== (int) $current_user_id  ) {
-			return false;	
+		if ( $lock_data['locked_by'] && (int) $lock_data['locked_by'] !== (int) $current_user_id ) {
+			return false;
 		}
 		return parent::unlock( $post_id );
 	}
 
 	/**
 	 * Lock a component.
+	 *
 	 * @param int $document_id The component ID to lock
 	 * @return bool|null True if lock was successful, null if locked by another user, false otherwise
 	 */
@@ -87,6 +88,7 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 
 	/**
 	 * Get lock data for a component.
+	 *
 	 * @param int $post_id The component ID
 	 * @return array Lock data with 'locked_by' (int|null), 'locked_at' (int|null)
 	 * @throws \Exception If post is not a component type
@@ -101,6 +103,7 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 
 	/**
 	 * Extend the lock for a component.
+	 *
 	 * @param int $post_id The component ID
 	 * @return bool|null True if extended successfully, null if not locked or locked by another user
 	 */
@@ -125,5 +128,4 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 	private function is_component_post( $post_id ) {
 		return get_post_type( $post_id ) === Component_Document::TYPE;
 	}
-
 }
