@@ -7,6 +7,8 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
 import { OverridablePropControl } from '../overridable-prop-control';
+import { __createStore, __registerSlice } from '@elementor/store';
+import { slice } from '../../../store/store';
 
 jest.mock( '@elementor/utils', () => ( {
 	...jest.requireActual( '@elementor/utils' ),
@@ -83,6 +85,9 @@ const mockElementType = createMockElementType( {
 
 describe( '<OverridablePropControl />', () => {
 	beforeEach( () => {
+		__registerSlice( slice );
+		__createStore();
+
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { id: 'test-widget-id', type: ELEMENT_TYPE },
 			elementType: mockElementType,
@@ -110,7 +115,7 @@ describe( '<OverridablePropControl />', () => {
 			expected: 'Default Title',
 			value: componentOverridablePropTypeUtil.create( {
 				override_key: MOCK_OVERRIDE_KEY,
-				default_value: stringPropTypeUtil.create( 'Default Title' ),
+				origin_value: stringPropTypeUtil.create( 'Default Title' ),
 			} ),
 		},
 		{
@@ -119,7 +124,7 @@ describe( '<OverridablePropControl />', () => {
 			expected: '',
 			value: componentOverridablePropTypeUtil.create( {
 				override_key: MOCK_OVERRIDE_KEY,
-				default_value: null,
+				origin_value: null,
 			} ),
 		},
 		{
@@ -128,7 +133,7 @@ describe( '<OverridablePropControl />', () => {
 			expected: 'Default PropType Text',
 			value: componentOverridablePropTypeUtil.create( {
 				override_key: MOCK_OVERRIDE_KEY,
-				default_value: null,
+				origin_value: null,
 			} ),
 		},
 		{
@@ -137,7 +142,7 @@ describe( '<OverridablePropControl />', () => {
 			expected: 0,
 			value: componentOverridablePropTypeUtil.create( {
 				override_key: MOCK_OVERRIDE_KEY,
-				default_value: numberPropTypeUtil.create( 0 ),
+				origin_value: numberPropTypeUtil.create( 0 ),
 			} ),
 		},
 	] )( 'should render $render', ( { bind, expected, value } ) => {
@@ -179,16 +184,16 @@ describe( '<OverridablePropControl />', () => {
 			$$type: 'component-overridable',
 			value: {
 				override_key: MOCK_UNIQUE_ID,
-				default_value: { $$type: 'string', value: 'New Value' },
+				origin_value: { $$type: 'string', value: 'New Value' },
 			},
 		} );
 	} );
 
-	it( 'should update only the default_value if override_key is set', () => {
+	it( 'should update only the origin_value if override_key is set', () => {
 		// Arrange
 		const value = componentOverridablePropTypeUtil.create( {
 			override_key: MOCK_OVERRIDE_KEY,
-			default_value: stringPropTypeUtil.create( 'Default Title' ),
+			origin_value: stringPropTypeUtil.create( 'Default Title' ),
 		} );
 		const setValue = jest.fn();
 		const props = { value, setValue, bind: BIND, propType: mockPropType };
@@ -204,7 +209,7 @@ describe( '<OverridablePropControl />', () => {
 			$$type: 'component-overridable',
 			value: {
 				override_key: MOCK_OVERRIDE_KEY,
-				default_value: { $$type: 'string', value: 'New Value' },
+				origin_value: { $$type: 'string', value: 'New Value' },
 			},
 		} );
 	} );
