@@ -129,6 +129,36 @@ describe( 'Reset Style Props Tests', () => {
 			expect( result.current.visible ).toBe( false );
 		} );
 
+		it( 'should show reset button for transition duration control (size)', () => {
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: { size: 300, unit: 'ms' },
+				resetValue: jest.fn(),
+				path: [ 'transition', '0', 'size' ],
+				bind: 'size',
+				propType: createMockPropType(),
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+
+			expect( result.current.visible ).toBe( true );
+		} );
+
+		it( 'should not show reset button for transition type control (selector)', () => {
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: {
+					$$type: 'key-value',
+					value: { key: { value: 'Margin left', $$type: 'string' }, value: { value: 'margin-inline-start', $$type: 'string' } },
+				},
+				resetValue: jest.fn(),
+				path: [ 'transition', '0', 'selection' ],
+				bind: 'selection',
+				propType: createMockPropType(),
+
+			} );
+			const { result } = renderHook( () => useResetStyleValueProps() );
+			expect( result.current.visible ).toBe( false );
+		} );
+
 		it( 'should not show reset button when value equals initial_value', () => {
 			( useBoundProp as jest.Mock ).mockReturnValue( {
 				value: {
