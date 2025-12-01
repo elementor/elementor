@@ -342,7 +342,7 @@ class Container extends Element_Base {
 			return Plugin::$instance->elements_manager->get_element_types( $element_data['elType'] );
 		}
 
-		if ( empty( $element_data['widgetType'] ) ) {
+		if ( !isset( $element_data['widgetType'] ) ) {
 			return null;
 		}
 
