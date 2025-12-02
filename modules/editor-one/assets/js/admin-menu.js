@@ -12,11 +12,95 @@
 			this.lastMousePos = null;
 			this.exitPoint = null;
 			this.mouseMoveHandler = null;
+			this.config = window.elementorAdminMenuConfig || {};
 		}
 
 		init() {
+			this.buildFlyoutMenus();
 			this.setupFlyoutMenus();
 			this.setupMobileSupport();
+		}
+
+		buildFlyoutMenus() {
+			const editorFlyout = this.config.editorFlyout;
+			const level4Flyouts = this.config.level4Flyouts;
+
+			if ( ! editorFlyout || ! editorFlyout.items || ! editorFlyout.items.length ) {
+				return;
+			}
+
+			let elementorMenu = document.querySelector( '#adminmenu a[href="admin.php?page=elementor"]' );
+
+			if ( ! elementorMenu ) {
+				elementorMenu = document.querySelector( '#adminmenu .toplevel_page_elementor' );
+			}
+
+			if ( ! elementorMenu ) {
+				return;
+			}
+
+			const menuItem = elementorMenu.closest( 'li.menu-top' );
+
+			if ( ! menuItem ) {
+				return;
+			}
+
+			const submenu = menuItem.querySelector( '.wp-submenu' );
+
+			if ( ! submenu ) {
+				return;
+			}
+
+			const editorItem = submenu.querySelector( 'a[href*="elementor-editor"]' );
+
+			if ( ! editorItem ) {
+				return;
+			}
+
+			const editorLi = editorItem.closest( 'li' );
+
+			if ( ! editorLi ) {
+				return;
+			}
+
+			editorLi.classList.add( 'elementor-has-flyout' );
+
+			const editorFlyoutUl = document.createElement( 'ul' );
+			editorFlyoutUl.className = 'elementor-submenu-flyout elementor-level-3';
+
+			editorFlyout.items.forEach( ( item ) => {
+				const li = document.createElement( 'li' );
+				li.setAttribute( 'data-group-id', item.group_id || '' );
+
+				const a = document.createElement( 'a' );
+				a.href = item.url;
+				a.textContent = item.label;
+
+				if ( item.group_id && level4Flyouts && level4Flyouts[ item.group_id ] ) {
+					li.classList.add( 'elementor-has-flyout' );
+
+					const level4Ul = document.createElement( 'ul' );
+					level4Ul.className = 'elementor-submenu-flyout elementor-level-4';
+
+					level4Flyouts[ item.group_id ].items.forEach( ( subItem ) => {
+						const subLi = document.createElement( 'li' );
+						const subA = document.createElement( 'a' );
+						subA.href = subItem.url;
+						subA.textContent = subItem.label;
+						subLi.appendChild( subA );
+						level4Ul.appendChild( subLi );
+					} );
+
+					li.appendChild( a );
+					li.appendChild( level4Ul );
+				} else {
+					li.appendChild( a );
+				}
+
+				editorFlyoutUl.appendChild( li );
+			} );
+
+			editorLi.appendChild( editorFlyoutUl );
 		}
 
 		setupFlyoutMenus() {
@@ -332,9 +416,15 @@
 		}
 	}
 
-	document.addEventListener( 'DOMContentLoaded', () => {
+	const initAdminMenu = () => {
 		const adminMenu = new AdminMenu();
 		adminMenu.init();
-	} );
+	};
+
+	if ( 'loading' === document.readyState ) {
+		document.addEventListener( 'DOMContentLoaded', initAdminMenu );
+	} else {
+		initAdminMenu();
+	}
 } )();
 

@@ -7,15 +7,14 @@ use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+	exit; // Exit if accessed directly.
 }
 
 class Admin_Menu_Manager {
 
-	const ELEMENTOR_MENU_SLUG = 'elementor';
-
-	const EDITOR_MENU_SLUG = 'elementor-editor';
-
+	/**
+	 * @var Admin_Menu_Item[]
+	 */
 	private $items = [];
 
 	public function register( $item_slug, Admin_Menu_Item $item ) {
@@ -27,11 +26,11 @@ class Admin_Menu_Manager {
 	}
 
 	public function get( $item_slug ) {
-		if ( ! empty( $this->items[ $item_slug ] ) ) {
-			return $this->items[ $item_slug ];
+		if ( empty( $this->items[ $item_slug ] ) ) {
+			return null;
 		}
 
-		return null;
+		return $this->items[ $item_slug ];
 	}
 
 	public function get_all() {
