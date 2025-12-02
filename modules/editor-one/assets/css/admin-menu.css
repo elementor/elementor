@@ -4,8 +4,8 @@
  * Supports 4-level menu hierarchy:
  * - Level 1: Elementor (top-level)
  * - Level 2: Editor (submenu) - other plugins can add here
- * - Level 3: Templates, Settings, Role Manager, etc. (flyout from Editor)
- * - Level 4: Saved Templates, etc. (flyout from Templates/Settings)
+ * - Level 3: Settings, Role Manager, etc. (flyout from Editor)
+ * - Level 4: flyout from Templates/Custom Code
  */
 
 #adminmenu .elementor-has-flyout {
@@ -41,7 +41,8 @@
 }
 
 #adminmenu .elementor-has-flyout:hover > .elementor-submenu-flyout,
-#adminmenu .elementor-has-flyout.elementor-flyout-open > .elementor-submenu-flyout {
+#adminmenu .elementor-has-flyout.elementor-flyout-open > .elementor-submenu-flyout,
+#adminmenu .elementor-submenu-flyout.elementor-submenu-flyout-visible {
 	display: block;
 }
 

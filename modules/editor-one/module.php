@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Elementor\Modules\EditorOne;
 
@@ -14,11 +15,11 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'e_editor_one';
 
-	public function get_name() {
+	public function get_name(): string {
 		return 'editor-one';
 	}
 
-	public static function get_experimental_data() {
+	public static function get_experimental_data(): array {
 		return [
 			'name'           => static::EXPERIMENT_NAME,
 			'title'          => esc_html__( 'Editor one', 'elementor' ),

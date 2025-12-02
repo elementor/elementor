@@ -1,8 +1,10 @@
+import { FlyoutMenuRenderer } from './classes/flyout-menu-renderer.js';
+
 ( function() {
 	'use strict';
 
 	const HOVER_INTENT_DELAY = 300;
-	const TRIANGLE_TOLERANCE = 50;
+	const TRIANGLE_TOLERANCE = 100; // In pixels
 
 	class AdminMenu {
 		constructor() {
@@ -17,90 +19,16 @@
 
 		init() {
 			this.buildFlyoutMenus();
-			this.setupFlyoutMenus();
 			this.setupMobileSupport();
 		}
 
 		buildFlyoutMenus() {
-			const editorFlyout = this.config.editorFlyout;
-			const level4Flyouts = this.config.level4Flyouts;
+			const renderer = new FlyoutMenuRenderer( this.config );
 
-			if ( ! editorFlyout || ! editorFlyout.items || ! editorFlyout.items.length ) {
-				return;
+			if ( renderer.render() ) {
+				// Re-query all elementor-has-flyout items to include newly created ones
+				this.setupFlyoutMenus();
 			}
-
-			let elementorMenu = document.querySelector( '#adminmenu a[href="admin.php?page=elementor"]' );
-
-			if ( ! elementorMenu ) {
-				elementorMenu = document.querySelector( '#adminmenu .toplevel_page_elementor' );
-			}
-
-			if ( ! elementorMenu ) {
-				return;
-			}
-
-			const menuItem = elementorMenu.closest( 'li.menu-top' );
-
-			if ( ! menuItem ) {
-				return;
-			}
-
-			const submenu = menuItem.querySelector( '.wp-submenu' );
-
-			if ( ! submenu ) {
-				return;
-			}
-
-			const editorItem = submenu.querySelector( 'a[href*="elementor-editor"]' );
-
-			if ( ! editorItem ) {
-				return;
-			}
-
-			const editorLi = editorItem.closest( 'li' );
-
-			if ( ! editorLi ) {
-				return;
-			}
-
-			editorLi.classList.add( 'elementor-has-flyout' );
-
-			const editorFlyoutUl = document.createElement( 'ul' );
-			editorFlyoutUl.className = 'elementor-submenu-flyout elementor-level-3';
-
-			editorFlyout.items.forEach( ( item ) => {
-				const li = document.createElement( 'li' );
-				li.setAttribute( 'data-group-id', item.group_id || '' );
-
-				const a = document.createElement( 'a' );
-				a.href = item.url;
-				a.textContent = item.label;
-
-				if ( item.group_id && level4Flyouts && level4Flyouts[ item.group_id ] ) {
-					li.classList.add( 'elementor-has-flyout' );
-
-					const level4Ul = document.createElement( 'ul' );
-					level4Ul.className = 'elementor-submenu-flyout elementor-level-4';
-
-					level4Flyouts[ item.group_id ].items.forEach( ( subItem ) => {
-						const subLi = document.createElement( 'li' );
-						const subA = document.createElement( 'a' );
-						subA.href = subItem.url;
-						subA.textContent = subItem.label;
-						subLi.appendChild( subA );
-						level4Ul.appendChild( subLi );
-					} );
-
-					li.appendChild( a );
-					li.appendChild( level4Ul );
-				} else {
-					li.appendChild( a );
-				}
-
-				editorFlyoutUl.appendChild( li );
-			} );
-
-			editorLi.appendChild( editorFlyoutUl );
 		}
 
 		setupFlyoutMenus() {
@@ -121,6 +49,15 @@
 
 		attachHoverEvents( parentLi, flyoutMenu ) {
 			parentLi.addEventListener( 'mouseenter', () => {
+				// If moving to a new parent that is NOT part of the current active tree
+				if ( this.activeMenu && ! this.activeMenu.contains( parentLi ) && this.activeMenu !== flyoutMenu ) {
+					// If we are moving to a sibling or unrelated menu, close the current one immediately
+					// UNLESS we are in the safe zone triangle of the parent
+					if ( ! this.isCursorInSafeZone() ) {
+						this.hideFlyout( this.activeMenu );
+					}
+				}
+
 				this.clearCloseTimeout();
 				this.showFlyout( parentLi, flyoutMenu );
 			} );
@@ -168,6 +105,7 @@
 				this.hideFlyout( this.activeMenu );
 			}
 
+			this.exitPoint = null;
 			this.positionFlyout( parentLi, flyoutMenu );
 			flyoutMenu.classList.add( 'elementor-submenu-flyout-visible' );
 			this.activeMenu = flyoutMenu;
@@ -180,6 +118,7 @@
 			if ( this.activeMenu === flyoutMenu ) {
 				this.activeMenu = null;
 				this.activeParent = null;
+				this.exitPoint = null;
 				this.stopMouseTracking();
 			}
 		}
@@ -230,7 +169,6 @@
 				this.mouseMoveHandler = null;
 			}
 			this.lastMousePos = null;
-			this.exitPoint = null;
 		}
 
 		isCursorInSafeZone() {
@@ -262,26 +200,36 @@
 		}
 
 		isPointInTriangle( cursor, parentRect, flyoutRect ) {
-			const triangleApex = {
-				x: parentRect.right,
-				y: parentRect.top + ( parentRect.height / 2 ),
-			};
+			const exitX = this.exitPoint ? this.exitPoint.x : parentRect.right;
+			const distParent = Math.abs( exitX - parentRect.right );
+			const distFlyout = Math.abs( exitX - flyoutRect.left );
 
-			const flyoutTopLeft = {
-				x: flyoutRect.left,
-				y: flyoutRect.top - TRIANGLE_TOLERANCE,
-			};
+			let triangleApex, baseTop, baseBottom;
 
-			const flyoutBottomLeft = {
-				x: flyoutRect.left,
-				y: flyoutRect.bottom + TRIANGLE_TOLERANCE,
-			};
+			// Determine direction: Moving towards Flyout (default) or towards Parent (backwards)
+			if ( distParent < distFlyout ) {
+				// Moving towards Flyout
+				triangleApex = this.exitPoint || {
+					x: parentRect.right,
+					y: parentRect.top + ( parentRect.height / 2 ),
+				};
+				baseTop = { x: flyoutRect.left, y: flyoutRect.top - TRIANGLE_TOLERANCE };
+				baseBottom = { x: flyoutRect.left, y: flyoutRect.bottom + TRIANGLE_TOLERANCE };
+			} else {
+				// Moving towards Parent
+				triangleApex = this.exitPoint || {
+					x: flyoutRect.left,
+					y: flyoutRect.top + ( flyoutRect.height / 2 ),
+				};
+				baseTop = { x: parentRect.right, y: parentRect.top - TRIANGLE_TOLERANCE };
+				baseBottom = { x: parentRect.right, y: parentRect.bottom + TRIANGLE_TOLERANCE };
+			}
 
 			return this.pointInTriangle(
 				cursor,
 				triangleApex,
-				flyoutTopLeft,
-				flyoutBottomLeft,
+				baseTop,
+				baseBottom,
 			);
 		}
 
@@ -427,4 +375,3 @@
 		initAdminMenu();
 	}
 } )();
-

@@ -1,4 +1,5 @@
 <?php
+declare( strict_types = 1 );
 
 namespace Elementor\Modules\EditorOne\Classes;
 
@@ -15,28 +16,28 @@ class Remapped_Menu_Item implements Admin_Menu_Item_With_Page {
 
 	private $new_parent_slug;
 
-	public function __construct( Admin_Menu_Item $original_item, $new_parent_slug ) {
+	public function __construct( Admin_Menu_Item $original_item, string $new_parent_slug ) {
 		$this->original_item = $original_item;
 		$this->new_parent_slug = $new_parent_slug;
 	}
 
-	public function get_capability() {
+	public function get_capability(): string {
 		return $this->original_item->get_capability();
 	}
 
-	public function get_label() {
+	public function get_label(): string {
 		return $this->original_item->get_label();
 	}
 
-	public function get_parent_slug() {
+	public function get_parent_slug(): string {
 		return $this->new_parent_slug;
 	}
 
-	public function is_visible() {
+	public function is_visible(): bool {
 		return $this->original_item->is_visible();
 	}
 
-	public function get_page_title() {
+	public function get_page_title(): string {
 		if ( $this->original_item instanceof Admin_Menu_Item_With_Page ) {
 			return $this->original_item->get_page_title();
 		}
@@ -44,18 +45,17 @@ class Remapped_Menu_Item implements Admin_Menu_Item_With_Page {
 		return $this->get_label();
 	}
 
-	public function render() {
+	public function render(): void {
 		if ( $this->original_item instanceof Admin_Menu_Item_With_Page ) {
 			$this->original_item->render();
 		}
 	}
 
-	public function get_original_item() {
+	public function get_original_item(): Admin_Menu_Item {
 		return $this->original_item;
 	}
 
-	public function get_original_parent_slug() {
+	public function get_original_parent_slug(): string {
 		return $this->original_item->get_parent_slug();
 	}
 }
-
