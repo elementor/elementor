@@ -87,7 +87,7 @@ class Module extends BaseModule {
 	private function register_frontend_scripts() {
 		wp_register_script(
 			'motion-js',
-			ELEMENTOR_ASSETS_URL . 'lib/motion/motion' . Utils::is_script_debug() ? '.dev' : '' . '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/motion/motion' . Utils::is_script_debug() ? '.dev.js' : '.js',
 			[],
 			'11.13.5',
 			true
