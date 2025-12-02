@@ -9,7 +9,7 @@ import { FIELD_TYPE, registerFieldIndicator } from '@elementor/editor-editing-pa
 import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
-import { registerDataHook } from '@elementor/editor-v1-adapters';
+import { __privateListenTo as listenTo, commandStartEvent, registerDataHook } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
@@ -74,14 +74,14 @@ export function init() {
 		component: EditComponent,
 	} );
 
-	registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
+	listenTo( commandStartEvent( 'editor/documents/attach-preview' ), () => {
 		const { id, config } = getV1CurrentDocument();
 
 		if ( id ) {
 			removeComponentStyles( id );
 		}
 
-		await loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
+		loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
 	} );
 
 	registerFieldIndicator( {
