@@ -91,12 +91,17 @@ class Components_Repository {
 
 		return $styles;
 	}
-	public function archive( $id ) {
-		$doc = Plugin::$instance->documents->get( $id );
-		if ( ! $doc instanceof Component ) {
-			return false;
+	public function archive( $ids ) {
+		foreach ( $ids as $id ) {
+			$doc = Plugin::$instance->documents->get( $id );
+			if ( ! $doc instanceof Component ) {
+				return false;
+			}
+			$doc->update_main_meta( '_elementor_component_is_archived', [
+				'is_archived' => true,
+				'timestamp' => time(),
+			] );
 		}
-		$doc->update_main_meta( '_elementor_component_is_archived', true );
 		return true;
 	}
 }

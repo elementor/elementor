@@ -171,8 +171,12 @@ class Components_REST_API {
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->archive_component( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 				'args' => [
-					'componentId' => [
-						'type' => 'number',
+					'componentIds' => [
+						'type' => 'array',
+						'items' => [
+							'type' => 'number',
+							'required' => true,
+						],
 						'required' => true,
 						'description' => 'The component ID to archive',
 					],
@@ -356,9 +360,9 @@ class Components_REST_API {
 	}
 
 	private function archive_component( \WP_REST_Request $request ) {
-		$component_id = $request->get_param( 'componentId' );
+		$component_ids = $request->get_param( 'componentIds' );
 		try {
-			$success = $this->get_repository()->archive( $component_id );
+			$success = $this->get_repository()->archive( $component_ids );
 		} catch ( \Exception $e ) {
 			error_log( 'Components REST API archive_component error: ' . $e->getMessage() );
 			return Error_Builder::make( 'archive_failed' )

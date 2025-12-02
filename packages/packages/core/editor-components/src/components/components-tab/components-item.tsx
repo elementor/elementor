@@ -11,6 +11,7 @@ import { createComponentModel } from '../create-component-form/utils/replace-ele
 import { MenuListItem } from '@elementor/editor-ui';
 import { __ } from '@wordpress/i18n';
 import { useArchive } from '../../hooks/use-archive';
+import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 
 type ComponentItemProps = {
 	component: Omit< Component, 'id' > & { id?: number };
@@ -18,6 +19,7 @@ type ComponentItemProps = {
 
 export const ComponentItem = ( { component }: ComponentItemProps ) => {
 	const componentModel = createComponentModel(component);
+	
 	const handleArchive = useArchive();
 	const popupState = usePopupState({
 		variant: 'popover',
@@ -32,6 +34,12 @@ export const ComponentItem = ( { component }: ComponentItemProps ) => {
 		loadComponentsStyles( [ componentModel as V1ElementData ] );
 
 		endDragElementFromPanel();
+	};
+
+	const handleArchiveClick =  () => {
+		popupState.close();
+		handleArchive(component.id as number);
+		setDocumentModifiedStatus(true);
 	};
 
 	return (
@@ -73,10 +81,7 @@ export const ComponentItem = ( { component }: ComponentItemProps ) => {
 			>
 				<MenuListItem
 					sx={ { minWidth: '160px' } }
-					onClick={ () => {
-						popupState.close();
-						handleArchive(component.id as number);
-					} }
+					onClick={ handleArchiveClick}
 				>
 					<Typography variant="caption" sx={ { color: 'text.primary' } }>
 						{ __( 'Archive', 'elementor' ) }

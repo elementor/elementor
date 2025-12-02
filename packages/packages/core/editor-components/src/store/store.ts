@@ -24,6 +24,7 @@ type ComponentsState = {
 	loadStatus: Status;
 	styles: StylesDefinition;
 	createdThisSession: Component[ 'uid' ][];
+	archivedData: PublishedComponent[];
 };
 
 type ComponentsSlice = SliceState< typeof slice >;
@@ -34,6 +35,7 @@ export const initialState: ComponentsState = {
 	loadStatus: 'idle',
 	styles: {},
 	createdThisSession: [],
+	archivedData: [],
 };
 
 export const SLICE_NAME = 'components';
@@ -68,8 +70,9 @@ export const slice = createSlice( {
 		addCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
 			state.createdThisSession.push( payload );
 		},
-		archive: ( state, { payload }: PayloadAction< number > ) => {
-			state.data = state.data.filter( ( component ) => component.id !== payload );
+		archive: (state, { payload }: PayloadAction<number>) => {
+			state.archivedData.push( state.data.find( ( component ) => component.id === payload ) as PublishedComponent );
+			state.data = state.data.filter((component) => component.id !== payload);
 		},
 	},
 	extraReducers: ( builder ) => {
@@ -87,6 +90,7 @@ export const slice = createSlice( {
 } );
 
 const selectData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].data;
+const selectArchivedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].archivedData;
 const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadStatus;
 const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
 const selectUnpublishedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].unpublishedData;
@@ -117,4 +121,9 @@ export const selectCreatedThisSession = createSelector(
 export const selectOverridableProps = createSelector(
 	selectComponent,
 	( component: PublishedComponent | undefined ) => component?.overridableProps
+);
+
+export const selectArchivedComponents = createSelector(
+	selectArchivedData,
+	( archivedData: PublishedComponent[] ) => archivedData
 );
