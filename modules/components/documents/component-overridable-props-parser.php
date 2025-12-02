@@ -297,7 +297,6 @@ class Component_Overridable_Props_Parser {
 
 	private function parse_single_group( string $group_id, array $group ): Parse_Result {
 		$result = Parse_Result::make();
-		$props_labels = [];
 
 		$required_fields = [ 'id', 'label', 'props' ];
 
@@ -355,6 +354,7 @@ class Component_Overridable_Props_Parser {
 			? $result->wrap( $order->values() )
 			: $result;
 	}
+
 	private function cross_validate_props_and_groups( array $props, array $groups ): Parse_Result {
 		$result = Parse_Result::make();
 
@@ -373,7 +373,7 @@ class Component_Overridable_Props_Parser {
 		}
 
 		foreach ( $props as $prop_id => $prop ) {
-			if ( $prop['groupId'] !== $props_in_groups[ $prop_id ] ) {
+			if ( ! isset( $props_in_groups[ $prop_id ] ) || $prop['groupId'] !== $props_in_groups[ $prop_id ] ) {
 				$result->errors()->add( "props.$prop_id.groupId", 'mismatching_value_with_groups.items.props' );
 			}
 		}
@@ -402,7 +402,6 @@ class Component_Overridable_Props_Parser {
 
 		return $result;
 	}
-
 
 	private function get_duplicates( array $array ): array {
 		$duplicates = [];

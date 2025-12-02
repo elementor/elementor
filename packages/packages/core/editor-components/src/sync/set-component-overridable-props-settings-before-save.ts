@@ -20,7 +20,7 @@ const mockComponentOverridableProps = {
 			propKey: 'title',
 			elType: 'widget',
 			widgetType: 'e-heading',
-			defaultValue: {
+			originalValue: {
 				$$type: 'string',
 				value: 'Jane Smith',
 			},

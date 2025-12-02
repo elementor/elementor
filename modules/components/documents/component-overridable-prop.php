@@ -25,7 +25,7 @@ class Component_Overridable_Prop {
 	public $label;
 
 	/** @var array{ $$type: string, value: mixed } */
-	public $default_value;
+	public $original_value;
 
 	/** @var string */
 	public $group_id;
@@ -37,7 +37,7 @@ class Component_Overridable_Prop {
 		$this->widget_type = $overridable_prop['widgetType'];
 		$this->prop_key = $overridable_prop['propKey'];
 		$this->label = $overridable_prop['label'];
-		$this->default_value = $overridable_prop['defaultValue'];
+		$this->original_value = $overridable_prop['originalValue'];
 		$this->group_id = $overridable_prop['groupId'] ?? null;
 	}
 

@@ -27,7 +27,7 @@ export type OverridableProp = {
 	propKey: string;
 	elType: string;
 	widgetType: string;
-	defaultValue: PropValue;
+	originalValue: PropValue;
 	groupId: string;
 };
 

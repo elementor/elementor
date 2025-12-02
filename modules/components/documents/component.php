@@ -2,6 +2,7 @@
 namespace Elementor\Modules\Components\Documents;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Utils\Api\Parse_Result;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -65,7 +66,7 @@ class Component extends Document {
 		return new Component_Overridable_Props( $meta );
 	}
 
-	public function set_overridable_props( $data ) {
+public function set_overridable_props( $data ): Parse_Result {
 		$parser = Component_Overridable_Props_Parser::make();
 
 		$result = $parser->parse( $data );
