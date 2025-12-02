@@ -4,7 +4,7 @@ export const config = window.ElementorInteractionsConfig?.constants || {
 	defaultDuration: 300,
 	defaultDelay: 0,
 	slideDistance: 100,
-	scaleStart: 0.5,
+	scaleStart: 0,
 	easing: 'linear',
 };
 
