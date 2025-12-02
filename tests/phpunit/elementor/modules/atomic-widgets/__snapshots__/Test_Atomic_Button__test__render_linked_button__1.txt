@@ -1,6 +1,5 @@
 			    	            <a
 			data-id="e8e55a1"
-			data-e-type="e-button"
 			                href="https://example.com"
                         target="_blank"
             class="e-button-base"

@@ -1,4 +1,5 @@
-import { onElementDestroy, onElementRender } from './lifecycle-events';
+import { elementSelectorHandlers } from './handlers-registry';
+import { onElementDestroy, onElementRender, onElementSelectorRender } from './lifecycle-events';
 
 export function init() {
 	window.addEventListener( 'elementor/element/render', ( _event ) => {
@@ -19,6 +20,8 @@ export function init() {
 	} );
 
 	document.addEventListener( 'DOMContentLoaded', () => {
+		const controller = new AbortController();
+
 		document.querySelectorAll( '[data-e-type]' ).forEach( ( element ) => {
 			const el = element as HTMLElement;
 
@@ -37,6 +40,14 @@ export function init() {
 					},
 				} )
 			);
+		} );
+
+		Array.from( elementSelectorHandlers.keys() ).forEach( ( selector ) => {
+			Array.from( document.querySelectorAll( selector + '[data-id]' ) ).forEach( ( element ) => {
+				const el = element as HTMLElement;
+
+				onElementSelectorRender( { element, controller, elementId: el.dataset.id ?? '' } );
+			} );
 		} );
 	} );
 }

@@ -1,8 +1,6 @@
 {% if settings.title is not empty %}
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}
 	<{{ settings.tag | e('html_tag') }} 
-		data-id="{{ id }}"
-		data-e-type="{{ type }}"
 		data-interaction-id="{{ id }}" 
 		class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" 
 		{{ id_attribute }} 
@@ -15,10 +13,11 @@
 
 	{% if settings.link.href %}
 		<{{ settings.link.tag | e('html_tag') }} 
+			data-id="{{ id }}"
 			{% if settings.link.tag == 'a' %}
 				href="{{ settings.link.href | raw }}"
 			{% else %}
-				data-href="{{ settings.link.href | raw }}"
+				data-action-link="{{ settings.link.href | raw }}"
 			{% endif %}
 			target="{{ settings.link.target }}" 
 			class="{{ base_styles['link-base'] }}">

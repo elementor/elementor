@@ -2,7 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Flexbox;
 
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
+use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -11,6 +11,9 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Html_Tag_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -40,8 +43,48 @@ class Flexbox extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$schema = Div_Block::get_props_schema();
-		$schema['tag']->description( 'The HTML tag for the flexbox container. Could be div, header, section, article, aside, footer, or a (link).' );
+		$tag_dependencies = Dependency_Manager::make( Dependency_Manager::RELATION_AND )
+			->where( Dependency_Manager::make()
+				->where( [
+					'operator' => 'not_exist',
+					'path' => [ 'link', 'destination' ],
+				] )
+				->where( [
+					'operator' => 'ne',
+					'path' => [ 'link', 'tag' ],
+					'value' => 'button',
+				] )
+				->where( [
+					'operator' => 'eq',
+					'path' => [ 'link', 'destination' ],
+					'nestedPath' => [ 'group' ],
+					'value' => 'action',
+				] )
+				->get(),
+				[
+					'$$type' => 'string',
+					'value' => 'button',
+				]
+			)->where( [
+				'operator' => 'not_exist',
+				'path' => [ 'link', 'destination' ],
+				'newValue' => [
+					'$$type' => 'string',
+					'value' => 'a',
+				],
+			] )->get();
+
+		return [
+			'classes' => Classes_Prop_Type::make()
+				->default( [] ),
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a', 'button' ] )
+				->default( 'div' )
+				->description( 'The HTML tag for the flexbox container. Could be div, header, section, article, aside, footer, or a (link).' )
+				->set_dependencies( $tag_dependencies ),
+			'link' => Link_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make(),
+		];
 
 		return $schema;
 	}

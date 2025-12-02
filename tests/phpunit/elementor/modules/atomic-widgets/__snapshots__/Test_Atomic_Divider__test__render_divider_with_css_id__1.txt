@@ -1,3 +1,3 @@
 			
-<hr data-id="e8e55a1" data-e-type="e-divider" class="e-divider-base" data-interaction-id="e8e55a1" data-interactions="&#x5B;&#x5D;" id=my-custom-divider  />
+<hr class="e-divider-base" data-interaction-id="e8e55a1" data-interactions="&#x5B;&#x5D;" id=my-custom-divider  />
 		

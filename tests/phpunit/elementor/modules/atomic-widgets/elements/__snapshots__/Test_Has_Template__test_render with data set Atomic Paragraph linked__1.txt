@@ -1,5 +1,6 @@
-						<p data-id="e8e55a1" data-e-type="e-paragraph" class="e-paragraph-base" data-interaction-id="e8e55a1" data-interactions="&#x5B;&#x5D;"  >
+						<p class="e-paragraph-base" data-interaction-id="e8e55a1" data-interactions="&#x5B;&#x5D;"  >
 							<a
+					data-id="e8e55a1"
 											href="https://example.com"
 										target="_blank"
 					class="e-paragraph-link-base"

@@ -55,9 +55,10 @@ class Div_Block extends Atomic_Element_Base {
 					'value' => 'button',
 				] )
 				->where( [
-					'operator' => 'not_exist',
+					'operator' => 'eq',
 					'path' => [ 'link', 'destination' ],
-					'nestedPath' => [ 'settings', 'popup', 'value', 'id' ],
+					'nestedPath' => [ 'group' ],
+					'value' => 'action',
 				] )
 				->get(),
 				[

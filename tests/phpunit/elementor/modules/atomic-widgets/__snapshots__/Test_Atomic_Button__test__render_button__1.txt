@@ -1,4 +1,4 @@
-			    	            <button data-id="e8e55a1" data-e-type="e-button" class="e-button-base" data-interaction-id="e8e55a1" data-interactions="&#x5B;&#x5D;"  >
+			    	            <button class="e-button-base" data-interaction-id="e8e55a1" data-interactions="&#x5B;&#x5D;"  >
             Click here
         </button>
     		

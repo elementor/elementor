@@ -4,11 +4,10 @@
     {% if settings.link.href %}
         <{{ settings.link.tag | e('html_tag') }}
 			data-id="{{ id }}"
-			data-e-type="{{ type }}"
 			{% if settings.link.tag == 'a' %}
                 href="{{ settings.link.href | raw }}"
             {% else %}
-                data-href="{{ settings.link.href | raw }}"
+                data-action-link="{{ settings.link.href | raw }}"
             {% endif %}
             target="{{ settings.link.target }}"
             class="{{ classes }}"
@@ -19,7 +18,7 @@
             {{ settings.text }}
         </{{ settings.link.tag | e('html_tag') }}>
     {% else %}
-        <button data-id="{{ id }}" data-e-type="{{ type }}" class="{{ classes }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" {{ id_attribute }} {{ settings.attributes | raw }}>
+        <button class="{{ classes }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" {{ id_attribute }} {{ settings.attributes | raw }}>
             {{ settings.text }}
         </button>
     {% endif %}

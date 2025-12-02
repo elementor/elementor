@@ -1,5 +1,6 @@
 					
 			<a
+			data-action-link="true"
 							href="https://example.com"
 						class="e-image-link-base"
 			target="_blank"

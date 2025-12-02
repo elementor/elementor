@@ -120,9 +120,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 	}
 
 	protected function define_initial_attributes() {
-		return [
-			'data-e-type' => esc_attr( static::get_element_type() ),
-		];
+		return [];
 	}
 
 	protected function add_render_attributes() {
@@ -274,10 +272,11 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$target = $link_settings['target'] ?? '_self';
 
 		$is_button = 'button' === $tag;
-		$href_attribute_key = $is_button ? 'data-href' : 'href';
+		$href_attribute_key = $is_button ? 'data-action-link' : 'href';
 
 		return [
 			$href_attribute_key => $href,
+			'data-id' => $this->get_id(),
 			'target' => $target,
 		];
 	}

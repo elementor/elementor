@@ -24,6 +24,15 @@ class Link_Prop_Type extends Object_Prop_Type {
 			] )
 			->get();
 
+		$tag_dependencies = Dependency_Manager::make()
+			->where( [
+				'operator' => 'ne',
+				'path' => [ 'link', 'destination' ],
+				'nestedPath' => [ 'group' ],
+				'value' => 'action',
+				'newValue' => String_Prop_Type::generate( 'button' ),
+		] )->get();
+
 		return [
 			'destination' => Union_Prop_Type::make()
 				->add_prop_type( Url_Prop_Type::make()->skip_validation() )
@@ -32,7 +41,8 @@ class Link_Prop_Type extends Object_Prop_Type {
 				->set_dependencies( $target_blank_dependencies ),
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'a', 'button' ] )
-				->default( 'a' ),
+				->default( 'a' )
+				->set_dependencies( $tag_dependencies ),
 		];
 	}
 }

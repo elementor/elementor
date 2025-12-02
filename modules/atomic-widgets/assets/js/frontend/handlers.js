@@ -1,61 +1,17 @@
-import { register } from '@elementor/frontend-handlers';
+import { registerBySelector } from '@elementor/frontend-handlers';
 
-const ATOMIC_ELEMENT_TYPES_WITH_LINKS_WITHIN = [
-	'e-heading',
-	'e-paragraph',
-];
+registerBySelector( {
+	id: 'atomic-link-action-handler',
+	selector: '[data-action-link]',
+	callback: ( { element } ) => {
+		const cleanups = handleLinkActions( element );
 
-const ATOMIC_ELEMENT_TYPES_WITH_LINKS_OUTSIDE = [];
-
-const ATOMIC_ELEMENT_TYPES_WITH_LINKS_AS_THEM = [
-    'e-svg',
-	'e-div-block',
-	'e-flexbox',
-	'e-image',
-	'e-button',
-];
-
-registerLinkActionsHandler();
-
-function registerLinkActionsHandler() {
-	[
-        ...ATOMIC_ELEMENT_TYPES_WITH_LINKS_WITHIN,
-        ...ATOMIC_ELEMENT_TYPES_WITH_LINKS_OUTSIDE,
-        ...ATOMIC_ELEMENT_TYPES_WITH_LINKS_AS_THEM,
-    ].forEach( ( elementType ) => register( {
-		elementType,
-		id: `${ elementType }-link-action-handler`,
-		callback: ( { element } ) => {
-			const actionLinks = getActionLinkElements( element, elementType );
-
-			if ( ! actionLinks?.length ) {
-				return;
-			}
-
-			const cleanupFunctions = actionLinks.map( handleLinkActions );
-
-			return () => cleanupFunctions.forEach( ( cleanup ) => cleanup?.() );
-		},
-	} ) );
-}
-
-function getActionLinkElements( element, type ) {
-    switch ( true ) {
-        case ATOMIC_ELEMENT_TYPES_WITH_LINKS_WITHIN.includes( type ):
-            return Array.from( element?.children || [] )
-                .filter( ( child ) => child.dataset && child.dataset.href );
-        case ATOMIC_ELEMENT_TYPES_WITH_LINKS_OUTSIDE.includes( type ):
-            return [ element?.parentNode ].filter( ( parent ) => parent.dataset && parent.dataset.href )
-                .filter( ( child ) => child.dataset && child.dataset.href );
-        case ATOMIC_ELEMENT_TYPES_WITH_LINKS_AS_THEM.includes( type ):
-            return [ element ].filter( ( self ) => self.dataset && self.dataset.href );
-    }
-
-    return [];
-}
+		return () => cleanups.forEach( ( cleanup ) => cleanup?.() );
+	},
+} );
 
 function handleLinkActions( element ) {
-	const url = element.dataset.href;
+	const url = element.dataset.actionLink;
 	const isEditorContext = !! window.elementor;
 
 	if ( ! url ) {
