@@ -13,6 +13,7 @@ import { panel } from './components/class-manager/class-manager-panel';
 import { ConvertLocalClassToGlobalClass } from './components/convert-local-class-to-global-class';
 import { PopulateStore } from './components/populate-store';
 import { GLOBAL_CLASSES_PROVIDER_KEY, globalClassesStylesProvider } from './global-classes-styles-provider';
+import { PrefetchCssClassUsage } from './hooks/use-prefetch-css-class-usage';
 import { initMcpIntegration } from './mcp-integration';
 import { slice } from './store';
 import { SyncWithDocumentSave } from './sync-with-document';
@@ -31,6 +32,11 @@ export function init() {
 	injectIntoLogic( {
 		id: 'global-classes-sync-with-document',
 		component: SyncWithDocumentSave,
+	} );
+
+	injectIntoLogic( {
+		id: 'global-classes-prefetch-css-class-usage',
+		component: PrefetchCssClassUsage,
 	} );
 
 	injectIntoCssClassConvert( {
