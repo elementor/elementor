@@ -79,7 +79,7 @@ export const initSaveAsComponentTool = () => {
 - **Check that the element is one of the following types**: ${ VALID_ELEMENT_TYPES.join( ', ' ) }
 
 ## Required parameters:
-- **element_id**: The unique ID of the element to save. Get this from "list-elements" tool.
+- **element_id**: The unique ID of the element to save.
 - **component_name**: A descriptive name for the component (2-50 characters).
 
 ## Example tool call:
