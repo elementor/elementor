@@ -4,7 +4,7 @@ import { dropElement, type DropElementParams, type V1ElementData } from '@elemen
 import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
 import { bindMenu, bindTrigger, Box, IconButton, ListItemButton, ListItemIcon, ListItemText, Menu, Typography, usePopupState } from '@elementor/ui';
 
-import { loadComponentsStyles } from '../../store/load-components-styles';
+import { loadComponentsAssets } from '../../store/load-components-assets';
 import { type Component } from '../../types';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
 import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
@@ -31,7 +31,7 @@ export const ComponentItem = ( { component }: ComponentItemProps ) => {
 	};
 
 	const handleDragEnd = () => {
-		loadComponentsStyles( [ componentModel as V1ElementData ] );
+		loadComponentsAssets( [ componentModel as V1ElementData ] );
 
 		endDragElementFromPanel();
 	};
@@ -99,7 +99,7 @@ const addComponentToPage = ( model: DropElementParams[ 'model' ] ) => {
 		throw new Error( `Can't find container to drop new component instance at` );
 	}
 
-	loadComponentsStyles( [ model as V1ElementData ] );
+	loadComponentsAssets( [ model as V1ElementData ] );
 
 	dropElement( {
 		containerId: container.id,
