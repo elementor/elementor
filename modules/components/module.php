@@ -87,16 +87,18 @@ class Module extends BaseModule {
 		if ( ! isset( $data['settings'] ) ) {
 			return;
 		}
-		error_log( print_r( $data['settings'], true ) );
-		if ( 
-			( ! $document instanceof Component_Document ) ||
+		if ( ( ! $document instanceof Component_Document ) ||
 			( ! isset( $data['settings']['overridable_props'] ) )
 		) {
 			return;
 		}
 
 		/* @var Component_Document $document */
-		$document->set_overridable_props( $data['settings']['overridable_props'] );
+		$result = $document->set_overridable_props( $data['settings']['overridable_props'] );
+
+		if ( ! $result->is_valid() ) {
+			throw new \Exception( esc_html( 'Settings validation failed for component overridable props: ' . $result->errors()->to_string() ) );
+		}
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {

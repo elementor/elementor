@@ -61,7 +61,7 @@ class Component_Overridable_Props_Parser {
 		$props_result = $this->parse_props( $props );
 
 		if ( ! $props_result->is_valid() ) {
-			$result->errors()->merge( $props_result->errors(), 'props' );
+			$result->errors()->merge( $props_result->errors() );
 
 			return $result;
 		}
@@ -69,7 +69,7 @@ class Component_Overridable_Props_Parser {
 		$groups_result = $this->parse_groups( $groups, $props_result->unwrap() );
 
 		if ( ! $groups_result->is_valid() ) {
-			$result->errors()->merge( $groups_result->errors(), 'groups' );
+			$result->errors()->merge( $groups_result->errors() );
 
 			return $result;
 		}
@@ -97,7 +97,7 @@ class Component_Overridable_Props_Parser {
 
 		foreach ( $props as $prop_id => $prop ) {
 			if ( ! is_array( $prop ) ) {
-				$result->errors()->add( $prop_id, 'invalid_prop' );
+				$result->errors()->add( "props.$prop_id", 'invalid_structure' );
 
 				continue;
 			}
@@ -105,7 +105,7 @@ class Component_Overridable_Props_Parser {
 			$prop_result = $this->parse_single_prop( $prop_id, $prop );
 
 			if ( ! $prop_result->is_valid() ) {
-				$result->errors()->merge( $prop_result->errors(), $prop_id );
+				$result->errors()->merge( $prop_result->errors(), "props.$prop_id" );
 
 				continue;
 			}
@@ -114,8 +114,7 @@ class Component_Overridable_Props_Parser {
 			$sanitized_prop_id = sanitize_key( $prop_id );
 
 			if ( $sanitized_prop_id != $sanitized_prop['overrideKey'] ) {
-				error_log( 'mismatching_override_key: ' . $sanitized_prop_id . ' !== ' . $sanitized_prop['overrideKey'] );
-				$result->errors()->add( $sanitized_prop_id, 'mismatching_override_key' );
+				$result->errors()->add( "props.$sanitized_prop_id", 'mismatching_override_key' );
 
 				continue;
 			}
@@ -123,10 +122,10 @@ class Component_Overridable_Props_Parser {
 			$sanitized_props[ $sanitized_prop_id ] = $sanitized_prop;
 		}
 
-		$duplicate_prop_keys_for_same_element = $this->get_duplicates( array_map( fn( $prop ) => $prop['elementId'] . $prop['propKey'], $sanitized_props ) );
+		$duplicate_prop_keys_for_same_element = $this->get_duplicates( array_map( fn( $prop ) => $prop['elementId'] . '.' . $prop['propKey'], $sanitized_props ) );
 
 		if ( ! empty( $duplicate_prop_keys_for_same_element ) ) {
-			$result->errors()->add( 'props', "duplicate_prop_keys_for_same_element: " . implode( ', ', $duplicate_prop_keys_for_same_element ) );
+			$result->errors()->add( 'props', 'duplicate_prop_keys_for_same_element: ' . implode( ', ', $duplicate_prop_keys_for_same_element ) );
 
 			return $result;
 		}
@@ -144,13 +143,13 @@ class Component_Overridable_Props_Parser {
 			'elType',
 			'widgetType',
 			'propKey',
-			'defaultValue',
+			'originalValue',
 			'groupId',
 		];
 
 		foreach ( $required_fields as $field ) {
 			if ( ! isset( $prop[ $field ] ) ) {
-				$result->errors()->add( "$prop_id.$field", 'missing_field' );
+				$result->errors()->add( $field, 'missing_field' );
 			}
 		}
 
@@ -158,14 +157,14 @@ class Component_Overridable_Props_Parser {
 			return $result;
 		}
 
-		if ( ! is_array( $prop['defaultValue'] ) ) {
-			$result->errors()->add( "$prop_id.defaultValue", 'invalid' );
+		if ( ! is_array( $prop['originalValue'] ) ) {
+			$result->errors()->add( 'originalValue', 'invalid' );
 
 			return $result;
 		}
 
-		if ( ! isset( $prop['defaultValue']['$$type'] ) || ! isset( $prop['defaultValue']['value'] ) ) {
-			$result->errors()->add( "$prop_id.defaultValue", 'missing_required_fields' );
+		if ( ! isset( $prop['originalValue']['$$type'] ) || ! isset( $prop['originalValue']['value'] ) ) {
+			$result->errors()->add( 'originalValue', 'missing_required_fields' );
 
 			return $result;
 		}
@@ -177,9 +176,9 @@ class Component_Overridable_Props_Parser {
 			'propKey' => sanitize_text_field( $prop['propKey'] ),
 			'widgetType' => sanitize_text_field( $prop['widgetType'] ),
 			'elType' => sanitize_text_field( $prop['elType'] ),
-			'defaultValue' => [
-				'$$type' => sanitize_text_field( $prop['defaultValue']['$$type'] ),
-				'value' => $this->sanitize_value( $prop['defaultValue']['value'] ),
+			'originalValue' => [
+				'$$type' => sanitize_text_field( $prop['originalValue']['$$type'] ),
+				'value' => $this->sanitize_value( $prop['originalValue']['value'] ),
 			],
 			'groupId' => sanitize_key( $prop['groupId'] ),
 		];
@@ -232,7 +231,7 @@ class Component_Overridable_Props_Parser {
 		$items_result = $this->parse_group_items( $items );
 
 		if ( ! $items_result->is_valid() ) {
-			$result->errors()->merge( $items_result->errors(), 'groups.items' );
+			$result->errors()->merge( $items_result->errors(), 'groups' );
 
 			return $result;
 		}
@@ -267,7 +266,7 @@ class Component_Overridable_Props_Parser {
 			$group_result = $this->parse_single_group( $group_id, $group );
 
 			if ( ! $group_result->is_valid() ) {
-				$result->errors()->merge( $group_result->errors(), $group_id );
+				$result->errors()->merge( $group_result->errors(), "items.$group_id" );
 
 				continue;
 			}
@@ -275,9 +274,8 @@ class Component_Overridable_Props_Parser {
 			$sanitized_group = $group_result->unwrap();
 			$sanitized_group_id = sanitize_key( $group_id );
 
-			if ( $sanitized_group_id != $sanitized_group['id'] ) {
-				error_log( 'mismatching_group_id: ' . $sanitized_group_id . ' !== ' . $sanitized_group['id'] );
-				$result->errors()->add( "$sanitized_group_id.id", 'mismatching_value' );
+			if ( $sanitized_group_id !== $sanitized_group['id'] ) {
+				$result->errors()->add( "items.$sanitized_group_id.id", 'mismatching_value' );
 
 				continue;
 			}
@@ -289,7 +287,7 @@ class Component_Overridable_Props_Parser {
 		$duplicate_labels = $this->get_duplicates( $labels );
 
 		if ( ! empty( $duplicate_labels ) ) {
-			$result->errors()->add( 'groups.items', "duplicate_labels: " . implode( ', ', $duplicate_labels ) );
+			$result->errors()->add( 'items', 'duplicate_labels: ' . implode( ', ', $duplicate_labels ) );
 
 			return $result;
 		}
@@ -328,7 +326,7 @@ class Component_Overridable_Props_Parser {
 		$duplicate_props = $this->get_duplicates( $sanitized_group['props'] );
 
 		if ( ! empty( $duplicate_props ) ) {
-			$result->errors()->add( "groups.items.$group_id.props", "duplicate_props: " . implode( ', ', $duplicate_props ) );
+			$result->errors()->add( "groups.items.$group_id.props", 'duplicate_props: ' . implode( ', ', $duplicate_props ) );
 
 			return $result;
 		}
@@ -398,7 +396,7 @@ class Component_Overridable_Props_Parser {
 			$duplicate_labels = $this->get_duplicates( $labels );
 
 			if ( ! empty( $duplicate_labels ) ) {
-				$result->errors()->add( "groups.items.$group_id.props", "duplicate_labels: " . implode( ', ', $duplicate_labels ) );
+				$result->errors()->add( "$group_id.props", 'duplicate_labels: ' . implode( ', ', $duplicate_labels ) );
 			}
 		}
 
@@ -406,7 +404,7 @@ class Component_Overridable_Props_Parser {
 	}
 
 
-	private function get_duplicates(array $array): array {
+	private function get_duplicates( array $array ): array {
 		$duplicates = [];
 		$seen = [];
 
@@ -423,4 +421,3 @@ class Component_Overridable_Props_Parser {
 		return $duplicates;
 	}
 }
-

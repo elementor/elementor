@@ -1,8 +1,8 @@
+import { type V1Document } from '@elementor/editor-documents';
 import { type PropsSchema, type PropValue } from '@elementor/editor-props';
 import { type ClassState, type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 
 import { type ControlItem } from '../types';
-import { V1Document } from '@elementor/editor-documents';
 
 export type ExtendedWindow = Window & {
 	elementor?: {

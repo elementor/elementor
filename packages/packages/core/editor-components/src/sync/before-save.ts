@@ -1,4 +1,5 @@
-import { V1Element } from '@elementor/editor-elements';
+import { type V1Element } from '@elementor/editor-elements';
+
 import { type DocumentSaveStatus } from '../types';
 import { createComponentsBeforeSave } from './create-components-before-save';
 import { setComponentOverridablePropsSettingsBeforeSave } from './set-component-overridable-props-settings-before-save';

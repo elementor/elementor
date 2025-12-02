@@ -1,13 +1,9 @@
-import { updateElementSettings, V1Element, type V1ElementData } from '@elementor/editor-elements';
+import { updateElementSettings, type V1ElementData } from '@elementor/editor-elements';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { apiClient } from '../api';
 import { selectUnpublishedComponents, slice } from '../store/store';
-import {
-	type ComponentInstancePropValue,
-	type DocumentSaveStatus,
-	type UnpublishedComponent,
-} from '../types';
+import { type ComponentInstancePropValue, type DocumentSaveStatus, type UnpublishedComponent } from '../types';
 
 export async function createComponentsBeforeSave( {
 	elements,

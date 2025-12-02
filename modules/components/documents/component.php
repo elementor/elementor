@@ -70,10 +70,8 @@ class Component extends Document {
 
 		$result = $parser->parse( $data );
 
-
 		if ( ! $result->is_valid() ) {
-			error_log( 'Component overridable props validation failed. ' . $result->errors()->to_string() );
-			throw new \Exception( esc_html( 'Component overridable props validation failed. ' . $result->errors()->to_string() ) );
+			return $result;
 		}
 
 		$sanitized_data = $result->unwrap();
