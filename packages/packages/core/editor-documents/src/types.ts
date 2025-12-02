@@ -33,16 +33,18 @@ export type Document = {
 	elements?: V1ElementData[];
 };
 
+export type V1DocumentsManager = {
+	documents: Record< string, V1Document >;
+	getCurrentId: () => number;
+	getInitialId: () => number;
+	getCurrent: () => V1Document;
+	invalidateCache: ( id?: number | string ) => void;
+	request: < TData >( id: number | string ) => Promise< TData >;
+};
+
 export type ExtendedWindow = Window & {
 	elementor: {
-		documents: {
-			documents: Record< string, V1Document >;
-			getCurrentId: () => number;
-			getInitialId: () => number;
-			getCurrent: () => V1Document;
-			invalidateCache: ( id?: number | string ) => void;
-			request: < TData >( id: number | string ) => Promise< TData >;
-		};
+		documents: V1DocumentsManager;
 		getPreferences: ( key: 'exit_to' ) => ExitTo;
 	};
 };
