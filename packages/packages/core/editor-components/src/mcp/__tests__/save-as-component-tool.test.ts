@@ -53,100 +53,47 @@ describe( 'save-as-component-tool handler', () => {
 	} );
 
 	describe( 'Error Cases', () => {
-		it( 'should return error when element is not found', async () => {
+		it( 'should throw error when element is not found', async () => {
 			// Arrange
 			mockGetContainer.mockReturnValue( null );
 
-			// Act
-			const result = await handleSaveAsComponent( {
-				element_id: 'non-existent-id',
-				component_name: TEST_COMPONENT_NAME,
-			} );
-
-			// Assert
-			expect( result ).toEqual( {
-				status: 'error',
-				message: ERROR_MESSAGES.ELEMENT_NOT_FOUND,
-			} );
+			// Act & Assert
+			await expect(
+				handleSaveAsComponent( {
+					element_id: 'non-existent-id',
+					component_name: TEST_COMPONENT_NAME,
+				} )
+			).rejects.toThrow( ERROR_MESSAGES.ELEMENT_NOT_FOUND );
 			expect( mockCreateUnpublishedComponent ).not.toHaveBeenCalled();
 		} );
 
-		it( 'should return error when element type is not valid', async () => {
+		it( 'should throw error when element type is not valid', async () => {
 			// Arrange
 			const invalidElType = 'e-button';
 			mockGetContainer.mockReturnValue( createMockContainer( invalidElType ) as V1Element );
 
-			// Act
-			const result = await handleSaveAsComponent( {
-				element_id: TEST_ELEMENT_ID,
-				component_name: TEST_COMPONENT_NAME,
-			} );
-
-			// Assert
-			expect( result ).toEqual( {
-				status: 'error',
-				message: ERROR_MESSAGES.ELEMENT_NOT_ONE_OF_TYPES,
-			} );
+			// Act & Assert
+			await expect(
+				handleSaveAsComponent( {
+					element_id: TEST_ELEMENT_ID,
+					component_name: TEST_COMPONENT_NAME,
+				} )
+			).rejects.toThrow( ERROR_MESSAGES.ELEMENT_NOT_ONE_OF_TYPES );
 			expect( mockCreateUnpublishedComponent ).not.toHaveBeenCalled();
 		} );
 
-		it( 'should return error when element is locked', async () => {
+		it( 'should throw error when element is locked', async () => {
 			// Arrange
 			mockGetContainer.mockReturnValue( createMockContainer( 'e-flexbox', { isLocked: true } ) as V1Element );
-			mockCreateUnpublishedComponent.mockReturnValue( TEST_COMPONENT_UID );
 
-			// Act
-			const result = await handleSaveAsComponent( {
-				element_id: TEST_ELEMENT_ID,
-				component_name: TEST_COMPONENT_NAME,
-			} );
-
-			// Assert
-			expect( result ).toEqual( {
-				status: 'error',
-				message: ERROR_MESSAGES.ELEMENT_IS_LOCKED,
-			} );
-		} );
-
-		it( 'should return error when createUnpublishedComponent throws', async () => {
-			// Arrange
-			const errorMessage = 'Failed to create component in store';
-			mockGetContainer.mockReturnValue( createMockContainer( 'e-div-block' ) as V1Element );
-			mockCreateUnpublishedComponent.mockImplementation( () => {
-				throw new Error( errorMessage );
-			} );
-
-			// Act
-			const result = await handleSaveAsComponent( {
-				element_id: TEST_ELEMENT_ID,
-				component_name: TEST_COMPONENT_NAME,
-			} );
-
-			// Assert
-			expect( result ).toEqual( {
-				status: 'error',
-				message: `Failed to save element as component: ${ errorMessage }`,
-			} );
-		} );
-
-		it( 'should return generic error message when exception has no message', async () => {
-			// Arrange
-			mockGetContainer.mockReturnValue( createMockContainer( 'e-div-block' ) as V1Element );
-			mockCreateUnpublishedComponent.mockImplementation( () => {
-				throw new Error();
-			} );
-
-			// Act
-			const result = await handleSaveAsComponent( {
-				element_id: TEST_ELEMENT_ID,
-				component_name: TEST_COMPONENT_NAME,
-			} );
-
-			// Assert
-			expect( result ).toEqual( {
-				status: 'error',
-				message: 'Failed to save element as component: Unknown error occurred',
-			} );
+			// Act & Assert
+			await expect(
+				handleSaveAsComponent( {
+					element_id: TEST_ELEMENT_ID,
+					component_name: TEST_COMPONENT_NAME,
+				} )
+			).rejects.toThrow( ERROR_MESSAGES.ELEMENT_IS_LOCKED );
+			expect( mockCreateUnpublishedComponent ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
