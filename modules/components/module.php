@@ -33,7 +33,7 @@ class Module extends BaseModule {
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/atomic-widgets/props-schema', fn ( $schema ) => $this->modify_props_schema( $schema ) );
 		add_action( 'elementor/documents/register', fn ( $documents_manager ) => $this->register_document_type( $documents_manager ) );
-		add_action( 'elementor/document/after_save', fn( Document $document ) => $this->set_component_overridable_props( $document ) );
+		add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_overridable_props( $document, $data ), 10, 2 );
 
 		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 
@@ -84,6 +84,10 @@ class Module extends BaseModule {
 	}
 
 	private function set_component_overridable_props( Document $document, array $data ) {
+		if ( ! isset( $data['settings'] ) ) {
+			return;
+		}
+		error_log( print_r( $data['settings'], true ) );
 		if ( 
 			( ! $document instanceof Component_Document ) ||
 			( ! isset( $data['settings']['overridable_props'] ) )

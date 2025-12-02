@@ -72,7 +72,8 @@ class Component extends Document {
 
 
 		if ( ! $result->is_valid() ) {
-			throw new \Exception( esc_html( 'Settings validation failed. ' . $result->errors()->to_string() ) );
+			error_log( 'Component overridable props validation failed. ' . $result->errors()->to_string() );
+			throw new \Exception( esc_html( 'Component overridable props validation failed. ' . $result->errors()->to_string() ) );
 		}
 
 		$sanitized_data = $result->unwrap();

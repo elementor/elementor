@@ -111,14 +111,24 @@ class Component_Overridable_Props_Parser {
 			}
 
 			$sanitized_prop = $prop_result->unwrap();
+			$sanitized_prop_id = sanitize_key( $prop_id );
 
-			if ( $prop_id !== $sanitized_prop['overrideKey'] ) {
-				$result->errors()->add( $prop_id, 'mismatching_override_key' );
+			if ( $sanitized_prop_id != $sanitized_prop['overrideKey'] ) {
+				error_log( 'mismatching_override_key: ' . $sanitized_prop_id . ' !== ' . $sanitized_prop['overrideKey'] );
+				$result->errors()->add( $sanitized_prop_id, 'mismatching_override_key' );
 
 				continue;
 			}
 
-			$sanitized_props[ $prop_id ] = $sanitized_prop;
+			$sanitized_props[ $sanitized_prop_id ] = $sanitized_prop;
+		}
+
+		$duplicate_prop_keys_for_same_element = $this->get_duplicates( array_map( fn( $prop ) => $prop['elementId'] . $prop['propKey'], $sanitized_props ) );
+
+		if ( ! empty( $duplicate_prop_keys_for_same_element ) ) {
+			$result->errors()->add( 'props', "duplicate_prop_keys_for_same_element: " . implode( ', ', $duplicate_prop_keys_for_same_element ) );
+
+			return $result;
 		}
 
 		return $result->wrap( $sanitized_props );
@@ -263,14 +273,16 @@ class Component_Overridable_Props_Parser {
 			}
 
 			$sanitized_group = $group_result->unwrap();
+			$sanitized_group_id = sanitize_key( $group_id );
 
-			if ( $group_id !== $sanitized_group['id'] ) {
-				$result->errors()->add( "$group_id.id", 'mismatching_value' );
+			if ( $sanitized_group_id != $sanitized_group['id'] ) {
+				error_log( 'mismatching_group_id: ' . $sanitized_group_id . ' !== ' . $sanitized_group['id'] );
+				$result->errors()->add( "$sanitized_group_id.id", 'mismatching_value' );
 
 				continue;
 			}
 
-			$sanitized_items[ $group_id ] = $sanitized_group;
+			$sanitized_items[ $sanitized_group_id ] = $sanitized_group;
 			$labels[] = $sanitized_group['label'];
 		}
 
@@ -308,7 +320,7 @@ class Component_Overridable_Props_Parser {
 		}
 
 		$sanitized_group = [
-			'id' => sanitize_text_field( $group['id'] ),
+			'id' => sanitize_key( $group['id'] ),
 			'label' => sanitize_text_field( $group['label'] ),
 			'props' => array_map( 'sanitize_key', $group['props'] ),
 		];

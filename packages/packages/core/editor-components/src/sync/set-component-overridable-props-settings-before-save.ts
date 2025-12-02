@@ -19,7 +19,7 @@ const mockComponentOverridables = {
         "prop1_UUID": {
             overrideKey: "prop1_UUID",
             label: "User Name",
-            elementId: "0ab8060",
+            elementId: "90d25e3",
             propKey: "title",
 			elType: "widget",
             widgetType: "e-heading", // This is for sanitiztion & validation
@@ -27,13 +27,13 @@ const mockComponentOverridables = {
                 "$$type": "string",
                 "value": "Jane Smith"
             },
-            groupId: "<group1_UUID>" // OPEN: can we remove it?
+            groupId: "group1_UUID" // OPEN: can we remove it?
         }
     },
     groups: {
         items: {
             "group1_UUID": {
-                id: "<group1_UUID>",
+                id: "group1_UUID",
                 label: "User Info",
                 props: ["prop1_UUID"]
             }
