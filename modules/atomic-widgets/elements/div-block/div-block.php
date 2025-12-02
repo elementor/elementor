@@ -109,7 +109,6 @@ class Div_Block extends Atomic_Element_Base {
 						])
 						->set_fallback_labels( [
 							'a' => 'a (link)',
-							'button' => 'button (link)',
 						] )
 						->set_label( esc_html__( 'HTML Tag', 'elementor' ) ),
 					Link_Control::bind_to( 'link' )

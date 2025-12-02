@@ -113,7 +113,6 @@ class Flexbox extends Atomic_Element_Base {
 						->set_label( esc_html__( 'HTML Tag', 'elementor' ) )
 						->set_fallback_labels( [
 							'a' => 'a (link)',
-							'button' => 'button (link)',
 						] ),
 					Link_Control::bind_to( 'link' )
 						->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
