@@ -69,10 +69,10 @@ class Component extends Document {
 
 	public function archive() {
 		try {
-			$this->update_main_meta( self::ARCHIVED_META_KEY, json_encode( array(
+			$this->update_main_meta( self::ARCHIVED_META_KEY, json_encode( [
 				'is_archived' => true,
 				'archived_at' => time(),
-			) ) ) ;
+			] ) );
 		} catch ( \Exception $e ) {
 			throw new \Exception( 'Failed to archive component: ' . $e->getMessage() );
 		}

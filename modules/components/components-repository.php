@@ -95,23 +95,23 @@ class Components_Repository {
 	public function archive( $ids ) {
 		$failedArchivedIds = [];
 		$successArchivedIds = [];
-		
+
 		foreach ( $ids as $id ) {
 			try {
 				$doc = Plugin::$instance->documents->get( $id );
-				
+
 				if ( ! $doc instanceof Component_Document ) {
 					$failedArchivedIds[] = $id;
 					continue;
 				}
-				
+
 				$doc->archive();
 				$successArchivedIds[] = $id;
 			} catch ( \Exception $e ) {
 				$failedArchivedIds[] = $id;
 			}
 		}
-		
+
 		return [
 			'success' => true,
 			'failedArchivedIds' => $failedArchivedIds,

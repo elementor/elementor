@@ -195,7 +195,7 @@ class Components_REST_API {
 				'name' => $component['title'],
 				'uid' => $component['uid'],
 			] )
-			->all() );
+		->all() );
 
 		return Response_Builder::make( $components_list )->build();
 	}
