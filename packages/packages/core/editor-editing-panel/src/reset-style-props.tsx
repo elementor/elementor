@@ -8,9 +8,11 @@ import { isEqual } from './utils/is-equal';
 
 const { registerAction } = controlActionsMenu;
 
-function shouldHideResetButton( path: string[], position: number, controlName: string, repeaterName: string ) {
-	return path.at( position ) === controlName && path.includes( repeaterName );
-}
+const HIDDEN_RESET_RULES = [
+	{ group: 'transition', bind: 'selection' },
+	{ group: 'filter', bind: 'func' },
+	{ group: 'backdrop-filter', bind: 'func' },
+];
 
 export function initResetStyleProps() {
 	registerAction( {
@@ -21,16 +23,14 @@ export function initResetStyleProps() {
 
 export function useResetStyleValueProps() {
 	const isStyle = useIsStyle();
-	const { value, resetValue, propType, path } = useBoundProp();
+	const { value, resetValue, propType, path, bind } = useBoundProp();
 	const hasValue = value !== null && value !== undefined;
 	const hasInitial = propType.initial_value !== undefined && propType.initial_value !== null;
 	const isRequired = !! propType.settings?.required;
 
-	const isTransitionTypeControl = shouldHideResetButton( path, -1, 'selection', 'transition' );
-	const isFilterControlOrBackdropFilterControl =
-		shouldHideResetButton( path, -2, 'css-filter-func', 'backdrop-filter' ) ||
-		shouldHideResetButton( path, -2, 'css-filter-func', 'filter' );
-	const shouldHide = isTransitionTypeControl || isFilterControlOrBackdropFilterControl;
+	const shouldHide = HIDDEN_RESET_RULES.some(
+		rule => rule.group === path.at( 0 ) && rule.bind === bind
+	);
 
 	function calculateVisibility() {
 		if ( ! isStyle || ! hasValue || shouldHide ) {
