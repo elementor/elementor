@@ -159,21 +159,17 @@ describe( 'Reset Style Props Tests', () => {
 				hideReset: undefined,
 				expectedVisible: true,
 			},
-		] )(
-			'should set visible to $expectedVisible when $scenario',
-			( { hideReset, expectedVisible } ) => {
-				( useBoundProp as jest.Mock ).mockReturnValue( {
-					value: 'some-value',
-					resetValue: jest.fn(),
-					propType: createMockPropType( { kind: 'plain', settings: { hide_reset: hideReset } } ),
-				} );
+		] )( 'should set visible to $expectedVisible when $scenario', ( { hideReset, expectedVisible } ) => {
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: 'some-value',
+				resetValue: jest.fn(),
+				propType: createMockPropType( { kind: 'plain', settings: { hide_reset: hideReset } } ),
+			} );
 
-				const { result } = renderHook( () => useResetStyleValueProps() );
+			const { result } = renderHook( () => useResetStyleValueProps() );
 
-				expect( result.current.visible ).toBe( expectedVisible );
-			}
-		);
-
+			expect( result.current.visible ).toBe( expectedVisible );
+		} );
 
 		it( 'should not show reset button when value equals initial_value', () => {
 			( useBoundProp as jest.Mock ).mockReturnValue( {
