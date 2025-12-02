@@ -361,16 +361,17 @@ class Components_REST_API {
 	private function archive_components( \WP_REST_Request $request ) {
 		$component_ids = $request->get_param( 'componentIds' );
 		try {
-			$success = $this->get_repository()->archive( $component_ids );
+			$result = $this->get_repository()->archive( $component_ids );
 		} catch ( \Exception $e ) {
 			error_log( 'Components REST API archive_components error: ' . $e->getMessage() );
 			return Error_Builder::make( 'archive_failed' )
+				->set_meta( [ 'error' => $e->getMessage() ] )
 				->set_status( 500 )
 				->set_message( __( 'Failed to archive components', 'elementor' ) )
 				->build();
 		}
-		return Response_Builder::make( [ 'success' => $success ] )->build();
-	}	
+		return Response_Builder::make( $result )->build();
+	}
 	private function route_wrapper( callable $cb ) {
 		try {
 			$response = $cb();

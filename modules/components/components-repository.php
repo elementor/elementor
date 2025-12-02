@@ -38,7 +38,7 @@ class Components_Repository {
 				'id' => $doc->get_main_id(),
 				'title' => $doc->get_post()->post_title,
 				'uid' => $doc->get_component_uid(),
-				'is_archived' => (bool) $doc->get_main_meta( '_elementor_component_is_archived' ),
+				'is_archived' => (bool) $doc->get_is_archived(),
 				'styles' => $this->extract_styles( $doc->get_elements_data() ),
 			];
 		}
@@ -91,17 +91,31 @@ class Components_Repository {
 
 		return $styles;
 	}
+
 	public function archive( $ids ) {
+		$failedArchivedIds = [];
+		$successArchivedIds = [];
+		
 		foreach ( $ids as $id ) {
-			$doc = Plugin::$instance->documents->get( $id );
-			if ( ! $doc instanceof Component ) {
-				return false;
+			try {
+				$doc = Plugin::$instance->documents->get( $id );
+				
+				if ( ! $doc instanceof Component_Document ) {
+					$failedArchivedIds[] = $id;
+					continue;
+				}
+				
+				$doc->archive();
+				$successArchivedIds[] = $id;
+			} catch ( \Exception $e ) {
+				$failedArchivedIds[] = $id;
 			}
-			$doc->update_main_meta( '_elementor_component_is_archived', [
-				'is_archived' => true,
-				'timestamp' => time(),
-			] );
 		}
-		return true;
+		
+		return [
+			'success' => true,
+			'failedArchivedIds' => $failedArchivedIds,
+			'successArchivedIds' => $successArchivedIds,
+		];
 	}
 }
