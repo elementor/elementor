@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type DependencyList, type ForwardedRef, useEffect, useRef } from 'react';
-import { type SxProps, type Theme } from '@elementor/ui';
+import { ClickAwayListener, type SxProps, type Theme } from '@elementor/ui';
 import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
@@ -12,7 +12,7 @@ import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
 import Text from '@tiptap/extension-text';
 import Underline from '@tiptap/extension-underline';
-import { EditorContent, type EditorEvents, useEditor } from '@tiptap/react';
+import { EditorContent, useEditor } from '@tiptap/react';
 
 import { InlineEditorToolbar } from './inline-editor-toolbar';
 
@@ -23,6 +23,7 @@ type InlineEditorProps = {
 	sx?: SxProps< Theme >;
 	onBlur?: ( event: FocusEvent ) => void;
 	showToolbar?: boolean;
+	autofocus?: boolean;
 };
 
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
@@ -75,11 +76,11 @@ const extensions = [
 
 export const InlineEditor = React.forwardRef(
 	(
-		{ value, setValue, attributes = {}, showToolbar = false, ...props }: InlineEditorProps,
+		{ value, setValue, attributes = {}, showToolbar = false, autofocus = false, ...props }: InlineEditorProps,
 		ref: ForwardedRef< HTMLDivElement >
 	) => {
-		const onBlur = ( { editor: updatedEditor, event }: EditorEvents[ 'blur' ] ) => {
-			if ( updatedEditor.view.dom.contains( event.target as Node ) ) {
+		const onBlur = ( event: PointerEvent ) => {
+			if ( editor.view.dom.contains( event.target as Node ) ) {
 				return;
 			}
 
@@ -90,8 +91,10 @@ export const InlineEditor = React.forwardRef(
 			extensions,
 			content: value,
 			onUpdate: ( { editor: updatedEditor } ) => setValue( updatedEditor.getHTML() ),
-			editorProps: { attributes },
-			onBlur,
+			editorProps: {
+				attributes,
+			},
+			autofocus,
 		} );
 
 		useOnUpdate( () => {
@@ -109,7 +112,9 @@ export const InlineEditor = React.forwardRef(
 		return (
 			<>
 				{ showToolbar && <InlineEditorToolbar editor={ editor } /> }
-				<EditorContent ref={ ref } editor={ editor } />
+				<ClickAwayListener onClickAway={ onBlur }>
+					<EditorContent ref={ ref } editor={ editor } />
+				</ClickAwayListener>
 			</>
 		);
 	}

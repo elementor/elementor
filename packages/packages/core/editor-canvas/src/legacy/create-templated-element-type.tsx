@@ -241,6 +241,7 @@ export function createTemplatedElementView( {
 					value={ formatValue() }
 					setValue={ setValue }
 					onBlur={ this.handleUnmountInlineEditor.bind( this ) }
+					autofocus
 				/>
 			);
 		}
