@@ -1,10 +1,13 @@
 import * as React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
+import { mockTrackingModule } from '../../../__tests__/mocks';
 import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
 import { CssClassUsageTrigger } from '../components';
 
 jest.mock( '../../../hooks/use-css-class-usage-by-id' );
+
+jest.mock( '../../../utils/tracking', () => mockTrackingModule );
 
 describe( 'CssClassUsageTrigger', () => {
 	it( 'renders locator icon and does not open on click when total is 0', async () => {

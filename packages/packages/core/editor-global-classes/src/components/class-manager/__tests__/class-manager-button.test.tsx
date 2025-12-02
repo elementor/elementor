@@ -7,8 +7,7 @@ import {
 import { useUserStylesCapability } from '@elementor/editor-styles-repository';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { ClassManagerButton } from '../class-manager-button';
-import { usePanelActions } from '../class-manager-panel';
+import { mockTrackingModule } from '../../../__tests__/mocks';
 
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '@elementor/editor-styles-repository', () => ( {
@@ -21,6 +20,11 @@ jest.mock( '@elementor/editor-styles-repository', () => ( {
 jest.mock( '../class-manager-panel', () => ( {
 	usePanelActions: jest.fn( () => ( { open: jest.fn() } ) ),
 } ) );
+
+jest.mock( '../../../utils/tracking', () => mockTrackingModule );
+
+import { ClassManagerButton } from '../class-manager-button';
+import { usePanelActions } from '../class-manager-panel';
 
 describe( 'ClassManagerButton', () => {
 	const unsavedChangesMessage = 'You have unsaved changes';

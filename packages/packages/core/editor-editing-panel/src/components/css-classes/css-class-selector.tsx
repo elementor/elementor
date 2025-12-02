@@ -30,6 +30,7 @@ import { useClassesProp } from '../../contexts/classes-prop-context';
 import { useElement } from '../../contexts/element-context';
 import { useStyle } from '../../contexts/style-context';
 import { getStylesProviderColorName } from '../../utils/get-styles-provider-color';
+import { trackStyles } from '../../utils/tracking/subscribe';
 import {
 	CreatableAutocomplete,
 	type CreatableAutocompleteProps,
@@ -127,6 +128,13 @@ export function CssClassSelector() {
 								if ( ! value.value ) {
 									throw new Error( `Cannot rename a class without style id` );
 								}
+								trackStyles( value.provider ?? '', 'classRenamed', {
+									classId: value.value,
+									newValue: newLabel,
+									oldValue: value.label,
+									source: 'style-tab',
+								} );
+
 								return updateClassByProvider( value.provider, { label: newLabel, id: value.value } );
 							};
 
@@ -244,7 +252,13 @@ function useCreateAction() {
 	}
 
 	const create = ( classLabel: string ) => {
-		createAction( { classLabel } );
+		const { createdId } = createAction( { classLabel } );
+		trackStyles( provider.getKey() ?? '', 'classCreated', {
+			source: 'created',
+			location: 'from useCreateAction',
+			classTitle: classLabel,
+			classId: createdId,
+		} );
 	};
 
 	const validate = ( newClassLabel: string, event: ValidationEvent ): ValidationResult => {
@@ -302,10 +316,20 @@ function useHandleSelect() {
 		switch ( reason ) {
 			case 'selectOption':
 				apply( { classId: option.value, classLabel: option.label } );
+				trackStyles( option.provider ?? '', 'classApplied', {
+					location: 'from useHandleSelect',
+					classId: option.value,
+					source: 'style-tab',
+				} );
 				break;
 
 			case 'removeOption':
 				unapply( { classId: option.value, classLabel: option.label } );
+				trackStyles( option.provider ?? '', 'classRemoved', {
+					location: 'from useHandleSelect',
+					classId: option.value,
+					source: 'style-tab',
+				} );
 				break;
 		}
 	};

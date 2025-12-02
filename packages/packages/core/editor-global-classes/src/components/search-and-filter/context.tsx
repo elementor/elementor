@@ -17,7 +17,7 @@ type SearchContextType = {
 type FilterAndSortContextType = {
 	filters: CheckedFilters;
 	setFilters: React.Dispatch< React.SetStateAction< CheckedFilters > >;
-	onClearFilter: () => void;
+	onClearFilter: ( type?: 'menu' | 'header' ) => void;
 };
 
 export type SearchAndFilterContextType = {

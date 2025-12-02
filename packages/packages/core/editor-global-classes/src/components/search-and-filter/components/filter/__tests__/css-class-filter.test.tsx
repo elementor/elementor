@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore as createStore, __registerSlice as registerSlice } from '@elementor/store';
 import { fireEvent, screen } from '@testing-library/react';
 
+import { mockTrackingModule } from '../../../../../__tests__/mocks';
 import { useFilteredCssClassUsage } from '../../../../../hooks/use-filtered-css-class-usage';
 import { slice } from '../../../../../store';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../../context';
@@ -14,6 +15,8 @@ import { setupMocks } from './test-utils';
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '../../../context' );
 jest.mock( '../../../../../hooks/use-filtered-css-class-usage' );
+
+jest.mock( '../../../../../utils/tracking', () => mockTrackingModule );
 
 describe( 'CssClassFilter', () => {
 	let store: ReturnType< typeof createStore >;
