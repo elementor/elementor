@@ -129,6 +129,48 @@ describe( 'Reset Style Props Tests', () => {
 			expect( result.current.visible ).toBe( false );
 		} );
 
+		it( 'should show reset button for transition duration control (size)', () => {
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: { size: 300, unit: 'ms' },
+				resetValue: jest.fn(),
+				path: [ 'transition', '0', 'size' ],
+				bind: 'size',
+				propType: createMockPropType(),
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+
+			expect( result.current.visible ).toBe( true );
+		} );
+
+		it.each( [
+			{
+				scenario: 'hide_reset is true',
+				hideReset: true,
+				expectedVisible: false,
+			},
+			{
+				scenario: 'hide_reset is false',
+				hideReset: false,
+				expectedVisible: true,
+			},
+			{
+				scenario: 'hide_reset is undefined',
+				hideReset: undefined,
+				expectedVisible: true,
+			},
+		] )( 'should set visible to $expectedVisible when $scenario', ( { hideReset, expectedVisible } ) => {
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: 'some-value',
+				resetValue: jest.fn(),
+				propType: createMockPropType( { kind: 'plain', settings: { hide_reset: hideReset } } ),
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+
+			expect( result.current.visible ).toBe( expectedVisible );
+		} );
+
 		it( 'should not show reset button when value equals initial_value', () => {
 			( useBoundProp as jest.Mock ).mockReturnValue( {
 				value: {
