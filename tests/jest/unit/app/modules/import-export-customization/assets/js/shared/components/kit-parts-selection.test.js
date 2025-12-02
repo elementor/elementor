@@ -150,8 +150,15 @@ describe( 'KitPartsSelection Component', () => {
 				includes: [ 'templates', 'settings' ],
 				customization: {},
 			};
+
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data,
+				},
+			} );
+
 			const props = {
-				data,
 				onCheckboxChange: mockOnCheckboxChange,
 				handleSaveCustomization: mockHandleSaveCustomization,
 				testId: 'test-kit-parts',
@@ -176,8 +183,15 @@ describe( 'KitPartsSelection Component', () => {
 				includes: [],
 				customization: {},
 			};
+
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data,
+				},
+			} );
+
 			const props = {
-				data,
 				onCheckboxChange: mockOnCheckboxChange,
 				handleSaveCustomization: mockHandleSaveCustomization,
 				testId: 'test-kit-parts',
@@ -460,13 +474,6 @@ describe( 'KitPartsSelection Component', () => {
 
 		it( 'should not call onCheckboxChange when disabled checkbox is clicked', () => {
 			// Arrange
-			useContextDetection.mockReturnValue( {
-				isImport: true,
-				contextData: {
-					isOldExport: false,
-				},
-			} );
-
 			const importData = {
 				includes: [ 'templates' ],
 				customization: {},
@@ -476,8 +483,16 @@ describe( 'KitPartsSelection Component', () => {
 					},
 				},
 			};
+
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					isOldExport: false,
+					data: importData,
+				},
+			} );
+
 			const props = {
-				data: importData,
 				onCheckboxChange: mockOnCheckboxChange,
 				handleSaveCustomization: mockHandleSaveCustomization,
 				testId: 'test-kit-parts',
@@ -558,8 +573,15 @@ describe( 'KitPartsSelection Component', () => {
 				includes: [],
 				customization: {},
 			};
+
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data,
+				},
+			} );
+
 			const props = {
-				data,
 				onCheckboxChange: mockOnCheckboxChange,
 				handleSaveCustomization: mockHandleSaveCustomization,
 				testId: 'test-kit-parts',
@@ -584,8 +606,15 @@ describe( 'KitPartsSelection Component', () => {
 				includes: [ 'non-existent-type' ],
 				customization: {},
 			};
+
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data,
+				},
+			} );
+
 			const props = {
-				data,
 				onCheckboxChange: mockOnCheckboxChange,
 				handleSaveCustomization: mockHandleSaveCustomization,
 				testId: 'test-kit-parts',
@@ -606,8 +635,15 @@ describe( 'KitPartsSelection Component', () => {
 				customization: {},
 				uploadedData: {},
 			};
+
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data: importData,
+				},
+			} );
+
 			const props = {
-				data: importData,
 				onCheckboxChange: mockOnCheckboxChange,
 				handleSaveCustomization: mockHandleSaveCustomization,
 				testId: 'test-kit-parts',

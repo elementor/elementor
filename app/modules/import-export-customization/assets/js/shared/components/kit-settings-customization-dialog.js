@@ -38,8 +38,9 @@ function isExported( contextData ) {
 	return contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme;
 }
 
-export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges, data } ) {
-	const { isImport, contextData } = useContextDetection();
+export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveChanges } ) {
+	const { isImport = false, contextData = {} } = useContextDetection() ?? {};
+	const { data = null } = contextData;
 
 	const initialState = getInitialState( contextData, isImport );
 
@@ -122,5 +123,4 @@ KitSettingsCustomizationDialog.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	handleSaveChanges: PropTypes.func.isRequired,
-	data: PropTypes.object.isRequired,
 };

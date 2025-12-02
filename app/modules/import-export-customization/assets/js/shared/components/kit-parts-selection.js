@@ -7,9 +7,10 @@ import useContextDetection from '../hooks/use-context-detection';
 import { ReExportBanner } from './re-export-banner';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
 
-export default function KitPartsSelection( { data, onCheckboxChange, testId, handleSaveCustomization, isCloudKitsEligible = false, showMediaFormatValidation = false } ) {
+export default function KitPartsSelection( { onCheckboxChange, testId, handleSaveCustomization, isCloudKitsEligible = false, showMediaFormatValidation = false } ) {
 	const [ activeDialog, setActiveDialog ] = useState( null );
-	const { isImport, contextData } = useContextDetection();
+	const { isImport = false, contextData = {} } = useContextDetection() ?? {};
+	const { data = null } = contextData;
 
 	useEffect( () => {
 		if ( showMediaFormatValidation && ! isImport ) {
@@ -226,7 +227,6 @@ export default function KitPartsSelection( { data, onCheckboxChange, testId, han
 }
 
 KitPartsSelection.propTypes = {
-	data: PropTypes.object.isRequired,
 	onCheckboxChange: PropTypes.func.isRequired,
 	testId: PropTypes.string,
 	handleSaveCustomization: PropTypes.func.isRequired,
