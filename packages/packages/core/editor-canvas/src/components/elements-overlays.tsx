@@ -3,11 +3,29 @@ import { getElements, useSelectedElement } from '@elementor/editor-elements';
 import {
 	__privateUseIsRouteActive as useIsRouteActive,
 	__privateUseListenTo as useListenTo,
+	isExperimentActive,
 	useEditMode,
 	windowEvent,
 } from '@elementor/editor-v1-adapters';
 
-import { ElementOverlay } from './element-overlay';
+import type { ElementOverlayConfig } from '../types/element-overlay';
+import { hasInlineEditableProperty } from '../utils/inline-editing-utils';
+import { InlineEditorOverlay } from './inline-editor-overlay';
+import { OutlineOverlay } from './outline-overlay';
+
+const ELEMENTS_DATA_ATTR = 'atomic';
+
+const overlayRegistry: ElementOverlayConfig[] = [
+	{
+		component: OutlineOverlay,
+		shouldRender: () => true,
+	},
+	{
+		component: InlineEditorOverlay,
+		shouldRender: ( { id, isSelected } ) =>
+			isSelected && hasInlineEditableProperty( id ) && isExperimentActive( 'v4-inline-text-editing' ),
+	},
+];
 
 export function ElementsOverlays() {
 	const selected = useSelectedElement();
@@ -16,18 +34,23 @@ export function ElementsOverlays() {
 
 	const isEditMode = currentEditMode === 'edit';
 	const isKitRouteActive = useIsRouteActive( 'panel/global' );
-
 	const isActive = isEditMode && ! isKitRouteActive;
 
-	return (
-		isActive &&
-		elements.map( ( [ id, element ] ) => (
-			<ElementOverlay key={ id } id={ id } element={ element } isSelected={ selected.element?.id === id } />
-		) )
-	);
-}
+	if ( ! isActive ) {
+		return null;
+	}
 
-const ELEMENTS_DATA_ATTR = 'atomic';
+	return elements.map( ( [ id, element ] ) => {
+		const isSelected = selected.element?.id === id;
+
+		return overlayRegistry.map(
+			( { shouldRender, component: Overlay }, index ) =>
+				shouldRender( { id, element, isSelected } ) && (
+					<Overlay key={ `${ id }-${ index }` } id={ id } element={ element } isSelected={ isSelected } />
+				)
+		);
+	} );
+}
 
 type IdElementTuple = [ string, HTMLElement ];
 
