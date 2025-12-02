@@ -505,3 +505,4 @@ POST /wp-json/elementor/v1/variables/delete
 - **Test Example**: `plugins/elementor/tests/playwright/sanity/modules/variables/variables.test.ts`
 - **Variables Manager**: `plugins/elementor/tests/playwright/sanity/modules/v4-tests/editor-variables/variables-manager-page.ts`
 
+
