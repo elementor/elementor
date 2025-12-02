@@ -36,6 +36,7 @@ export { transitionProperties, transitionsItemsList } from './controls/transitio
 export { DateTimeControl } from './controls/date-time-control';
 export { InlineEditingControl } from './controls/inline-editing-control';
 export { InlineEditor } from './components/inline-editor';
+export { InlineEditorToolbar } from './components/inline-editor-toolbar';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
