@@ -31,7 +31,7 @@ describe( 'setOverridableProp', () => {
 	const ORIGIN_VALUE = 'Click me';
 	const GROUP_ID_1 = 'group-1';
 	const GROUP_ID_2 = 'group-2';
-	const EXISTING_OVERRIDE_KEY = 'override-1';
+	const MOCK_OVERRIDE_KEY = 'override-1';
 	const GENERATED_ID_1 = 'generated-1';
 	const GENERATED_ID_2 = 'generated-2';
 
@@ -94,74 +94,11 @@ describe( 'setOverridableProp', () => {
 			},
 		},
 		{
-			should: 'add a new prop to an existing group with existing overridable props',
-			initialOverrides: {
-				props: {
-					[ EXISTING_OVERRIDE_KEY ]: {
-						overrideKey: EXISTING_OVERRIDE_KEY,
-						label: 'Existing Label',
-						elementId: 'element-0',
-						propKey: 'color',
-						widgetType: MOCK_WIDGET_TYPE,
-						elType: MOCK_EL_TYPE,
-						originValue: 'red',
-						groupId: GROUP_ID_1,
-					},
-				},
-				groups: {
-					items: {
-						[ GROUP_ID_1 ]: {
-							id: GROUP_ID_1,
-							label: 'My Group',
-							props: [ EXISTING_OVERRIDE_KEY ],
-						},
-					},
-					order: [ GROUP_ID_1 ],
-				},
-			},
-			callParams: {
-				label: LABEL,
-				groupId: GROUP_ID_1,
-			},
-			expectedDispatch: {
-				props: {
-					[ EXISTING_OVERRIDE_KEY ]: {
-						overrideKey: EXISTING_OVERRIDE_KEY,
-						label: 'Existing Label',
-						elementId: 'element-0',
-						propKey: 'color',
-						widgetType: MOCK_WIDGET_TYPE,
-						elType: MOCK_EL_TYPE,
-						originValue: 'red',
-						groupId: GROUP_ID_1,
-					},
-					[ GENERATED_ID_1 ]: {
-						overrideKey: GENERATED_ID_1,
-						label: LABEL,
-						propKey: MOCK_PROP_KEY,
-						...MOCK_WIDGET,
-						originValue: ORIGIN_VALUE,
-						groupId: GROUP_ID_1,
-					},
-				},
-				groups: {
-					items: {
-						[ GROUP_ID_1 ]: {
-							id: GROUP_ID_1,
-							label: 'My Group',
-							props: [ EXISTING_OVERRIDE_KEY, GENERATED_ID_1 ],
-						},
-					},
-					order: [ GROUP_ID_1 ],
-				},
-			},
-		},
-		{
 			should: 'maintain the same override-key when adding a prop that already exists',
 			initialOverrides: {
 				props: {
-					[ EXISTING_OVERRIDE_KEY ]: {
-						overrideKey: EXISTING_OVERRIDE_KEY,
+					[ MOCK_OVERRIDE_KEY ]: {
+						overrideKey: MOCK_OVERRIDE_KEY,
 						label: 'Old Label',
 						propKey: MOCK_PROP_KEY,
 						...MOCK_WIDGET,
@@ -174,7 +111,7 @@ describe( 'setOverridableProp', () => {
 						[ GROUP_ID_1 ]: {
 							id: GROUP_ID_1,
 							label: 'Group 1',
-							props: [ EXISTING_OVERRIDE_KEY ],
+							props: [ MOCK_OVERRIDE_KEY ],
 						},
 					},
 					order: [ GROUP_ID_1 ],
@@ -187,8 +124,8 @@ describe( 'setOverridableProp', () => {
 			},
 			expectedDispatch: {
 				props: {
-					[ EXISTING_OVERRIDE_KEY ]: {
-						overrideKey: EXISTING_OVERRIDE_KEY,
+					[ MOCK_OVERRIDE_KEY ]: {
+						overrideKey: MOCK_OVERRIDE_KEY,
 						label: 'Updated Label',
 						propKey: MOCK_PROP_KEY,
 						...MOCK_WIDGET,
@@ -201,7 +138,7 @@ describe( 'setOverridableProp', () => {
 						[ GROUP_ID_1 ]: {
 							id: GROUP_ID_1,
 							label: 'Group 1',
-							props: [ EXISTING_OVERRIDE_KEY ],
+							props: [ MOCK_OVERRIDE_KEY ],
 						},
 					},
 					order: [ GROUP_ID_1 ],
@@ -213,8 +150,8 @@ describe( 'setOverridableProp', () => {
 			should: 'move prop to new group when groupId changes',
 			initialOverrides: {
 				props: {
-					[ EXISTING_OVERRIDE_KEY ]: {
-						overrideKey: EXISTING_OVERRIDE_KEY,
+					[ MOCK_OVERRIDE_KEY ]: {
+						overrideKey: MOCK_OVERRIDE_KEY,
 						label: LABEL,
 						propKey: MOCK_PROP_KEY,
 						...MOCK_WIDGET,
@@ -227,7 +164,7 @@ describe( 'setOverridableProp', () => {
 						[ GROUP_ID_1 ]: {
 							id: GROUP_ID_1,
 							label: 'Group 1',
-							props: [ EXISTING_OVERRIDE_KEY ],
+							props: [ MOCK_OVERRIDE_KEY ],
 						},
 					},
 					order: [ GROUP_ID_1 ],
@@ -239,8 +176,8 @@ describe( 'setOverridableProp', () => {
 			},
 			expectedDispatch: {
 				props: {
-					[ EXISTING_OVERRIDE_KEY ]: {
-						overrideKey: EXISTING_OVERRIDE_KEY,
+					[ MOCK_OVERRIDE_KEY ]: {
+						overrideKey: MOCK_OVERRIDE_KEY,
 						label: LABEL,
 						propKey: MOCK_PROP_KEY,
 						...MOCK_WIDGET,
@@ -258,7 +195,7 @@ describe( 'setOverridableProp', () => {
 						[ GROUP_ID_2 ]: {
 							id: GROUP_ID_2,
 							label: 'Default',
-							props: [ EXISTING_OVERRIDE_KEY ],
+							props: [ MOCK_OVERRIDE_KEY ],
 						},
 					},
 					order: [ GROUP_ID_1, GROUP_ID_2 ],
@@ -269,14 +206,14 @@ describe( 'setOverridableProp', () => {
 			should: 'add a prop to a new group',
 			initialOverrides: {
 				props: {
-					[ EXISTING_OVERRIDE_KEY ]: {
-						overrideKey: EXISTING_OVERRIDE_KEY,
+					[ MOCK_OVERRIDE_KEY ]: {
+						overrideKey: MOCK_OVERRIDE_KEY,
 						label: 'Existing Label',
 						elementId: 'element-0',
 						propKey: 'color',
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						originValue: 'red',
+						originValue: 'some prior value',
 						groupId: GROUP_ID_1,
 					},
 				},
@@ -285,7 +222,7 @@ describe( 'setOverridableProp', () => {
 						[ GROUP_ID_1 ]: {
 							id: GROUP_ID_1,
 							label: 'Group 1',
-							props: [ EXISTING_OVERRIDE_KEY ],
+							props: [ MOCK_OVERRIDE_KEY ],
 						},
 					},
 					order: [ GROUP_ID_1 ],
@@ -297,18 +234,8 @@ describe( 'setOverridableProp', () => {
 			},
 			expectedDispatch: {
 				props: {
-					[ EXISTING_OVERRIDE_KEY ]: {
-						overrideKey: EXISTING_OVERRIDE_KEY,
-						label: 'Existing Label',
-						elementId: 'element-0',
-						propKey: 'color',
-						widgetType: MOCK_WIDGET_TYPE,
-						elType: MOCK_EL_TYPE,
-						originValue: 'red',
-						groupId: GROUP_ID_1,
-					},
-					[ GENERATED_ID_1 ]: {
-						overrideKey: GENERATED_ID_1,
+					[ MOCK_OVERRIDE_KEY ]: {
+						overrideKey: MOCK_OVERRIDE_KEY,
 						label: LABEL,
 						elementId: MOCK_WIDGET_ID,
 						propKey: MOCK_PROP_KEY,
@@ -323,12 +250,12 @@ describe( 'setOverridableProp', () => {
 						[ GROUP_ID_1 ]: {
 							id: GROUP_ID_1,
 							label: 'Group 1',
-							props: [ EXISTING_OVERRIDE_KEY ],
+							props: [],
 						},
 						[ GROUP_ID_2 ]: {
 							id: GROUP_ID_2,
 							label: 'Default',
-							props: [ GENERATED_ID_1 ],
+							props: [ MOCK_OVERRIDE_KEY ],
 						},
 					},
 					order: [ GROUP_ID_1, GROUP_ID_2 ],
@@ -339,8 +266,8 @@ describe( 'setOverridableProp', () => {
 			should: 'use existing group when prop exists and groupId is null',
 			initialOverrides: {
 				props: {
-					[ EXISTING_OVERRIDE_KEY ]: {
-						overrideKey: EXISTING_OVERRIDE_KEY,
+					[ MOCK_OVERRIDE_KEY ]: {
+						overrideKey: MOCK_OVERRIDE_KEY,
 						label: 'Existing Label',
 						propKey: MOCK_PROP_KEY,
 						...MOCK_WIDGET,
@@ -353,7 +280,7 @@ describe( 'setOverridableProp', () => {
 						[ GROUP_ID_1 ]: {
 							id: GROUP_ID_1,
 							label: 'Existing Group',
-							props: [ EXISTING_OVERRIDE_KEY ],
+							props: [ MOCK_OVERRIDE_KEY ],
 						},
 					},
 					order: [ GROUP_ID_1 ],
@@ -366,8 +293,8 @@ describe( 'setOverridableProp', () => {
 			},
 			expectedDispatch: {
 				props: {
-					[ EXISTING_OVERRIDE_KEY ]: {
-						overrideKey: EXISTING_OVERRIDE_KEY,
+					[ MOCK_OVERRIDE_KEY ]: {
+						overrideKey: MOCK_OVERRIDE_KEY,
 						label: 'Updated Label',
 						propKey: MOCK_PROP_KEY,
 						...MOCK_WIDGET,
@@ -380,7 +307,7 @@ describe( 'setOverridableProp', () => {
 						[ GROUP_ID_1 ]: {
 							id: GROUP_ID_1,
 							label: 'Existing Group',
-							props: [ EXISTING_OVERRIDE_KEY ],
+							props: [ MOCK_OVERRIDE_KEY ],
 						},
 					},
 					order: [ GROUP_ID_1 ],
@@ -396,6 +323,7 @@ describe( 'setOverridableProp', () => {
 		// Act
 		setOverridableProp( {
 			componentId: MOCK_COMPONENT_ID,
+			overrideKey: MOCK_OVERRIDE_KEY,
 			label: callParams.label,
 			groupId: callParams.groupId,
 			propKey: MOCK_PROP_KEY,
@@ -424,6 +352,7 @@ describe( 'setOverridableProp', () => {
 		// Act
 		setOverridableProp( {
 			componentId: MOCK_COMPONENT_ID,
+			overrideKey: null,
 			label: LABEL,
 			groupId: null,
 			propKey: MOCK_PROP_KEY,

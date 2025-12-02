@@ -6,7 +6,6 @@ import { useElement } from '@elementor/editor-editing-panel';
 import { stringPropTypeUtil, type TransformablePropValue } from '@elementor/editor-props';
 import { __createStore, __registerSlice } from '@elementor/store';
 import { ThemeProvider } from '@elementor/ui';
-import { generateUniqueId } from '@elementor/utils';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
@@ -85,7 +84,7 @@ describe( 'OverridablePropIndicator', () => {
 			should: 'be a check icon if prop is overridable',
 			bind: 'title',
 			currentValue: componentOverridablePropTypeUtil.create( {
-				override_key: generateUniqueId(),
+				override_key: MOCK_OVERRIDABLE_KEY,
 				origin_value: { $$type: 'string', value: 'Test' },
 			} ),
 			overridableData: {
@@ -104,7 +103,7 @@ describe( 'OverridablePropIndicator', () => {
 			should: 'not show indicator on fields bound to forbidden keys',
 			bind: '_cssid',
 			currentValue: componentOverridablePropTypeUtil.create( {
-				override_key: generateUniqueId(),
+				override_key: MOCK_OVERRIDABLE_KEY,
 				origin_value: { $$type: 'string', value: 'Test' },
 			} ),
 			overridableData: {
@@ -137,8 +136,18 @@ describe( 'OverridablePropIndicator', () => {
 				value: currentValue,
 			} );
 
+			const isOverridable = componentOverridablePropTypeUtil.isValid( boundProp.value );
+
 			jest.mocked( getV1CurrentDocument ).mockReturnValue( mockDocument );
-			jest.mocked( useBoundProp ).mockReturnValue( boundProp );
+			jest.mocked( useBoundProp ).mockImplementation( ( propUtil ) => {
+				if ( propUtil ) {
+					return isOverridable
+						? { ...boundProp, value: currentValue?.value }
+						: mockBoundProp( { ...boundProp, value: null } );
+				}
+
+				return boundProp;
+			} );
 			jest.mocked( selectOverridableProps ).mockReturnValue(
 				overridableData
 					? {
@@ -211,6 +220,7 @@ describe( 'OverridablePropIndicator', () => {
 			// Assert
 			expect( setOverridableProp ).toHaveBeenCalledWith( {
 				componentId: MOCK_COMPONENT_ID,
+				overrideKey: ! isChecked ? null : MOCK_OVERRIDABLE_KEY,
 				elementId: MOCK_ELEMENT_ID,
 				label: newLabel,
 				groupId: expectedGroupId,
@@ -228,7 +238,7 @@ function mockBoundProp( {
 	value,
 }: {
 	bind: string;
-	value: TransformablePropValue< string, unknown >;
+	value: TransformablePropValue< string, unknown > | null;
 } ): ReturnType< typeof useBoundProp > {
 	const params = {
 		value,

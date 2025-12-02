@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Form as FormElement, MenuListItem } from '@elementor/editor-ui';
+import { Form, MenuListItem } from '@elementor/editor-ui';
 import { Button, FormLabel, Grid, Select, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -16,7 +16,7 @@ type Props = {
 	groups?: { value: string; label: string }[];
 };
 
-export function Form( { onSubmit, groups, currentValue }: Props ) {
+export function OverridablePropForm( { onSubmit, groups, currentValue }: Props ) {
 	const [ propLabel, setPropLabel ] = useState< string | null >( currentValue?.label ?? null );
 	const [ group, setGroup ] = useState< string | null >( currentValue?.groupId ?? groups?.[ 0 ]?.value ?? null );
 
@@ -29,7 +29,7 @@ export function Form( { onSubmit, groups, currentValue }: Props ) {
 	const ctaLabel = isCreate ? __( 'Create', 'elementor' ) : __( 'Update', 'elementor' );
 
 	return (
-		<FormElement onSubmit={ () => onSubmit( { label: propLabel ?? '', group } ) }>
+		<Form onSubmit={ () => onSubmit( { label: propLabel ?? '', group } ) }>
 			<Stack alignItems="start" width="268px">
 				<Stack
 					direction="row"
@@ -71,7 +71,9 @@ export function Form( { onSubmit, groups, currentValue }: Props ) {
 							displayEmpty
 							renderValue={ ( selectedValue: string | null ) => {
 								if ( ! selectedValue || selectedValue === '' ) {
-									return groups && groups.length > 0 ? groups[ 0 ].label : DEFAULT_GROUP.label;
+									const [ firstGroup = DEFAULT_GROUP ] = groups ?? [];
+
+									return firstGroup.label;
 								}
 
 								return groups?.find( ( { value } ) => value === selectedValue )?.label ?? selectedValue;
@@ -91,6 +93,6 @@ export function Form( { onSubmit, groups, currentValue }: Props ) {
 					</Button>
 				</Stack>
 			</Stack>
-		</FormElement>
+		</Form>
 	);
 }

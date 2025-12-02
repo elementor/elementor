@@ -9,6 +9,7 @@ import { selectOverridableProps, slice } from './store';
 
 type Props = {
 	componentId: number;
+	overrideKey: string | null;
 	elementId: string;
 	label: string;
 	groupId: string | null;
@@ -19,6 +20,7 @@ type Props = {
 };
 export function setOverridableProp( {
 	componentId,
+	overrideKey,
 	elementId,
 	label,
 	groupId,
@@ -33,13 +35,12 @@ export function setOverridableProp( {
 		return;
 	}
 
-	const existingOverridableProp = getOverridableProp( {
-		componentId,
-		elementId,
-		propKey,
-		widgetType,
-		elType,
-	} );
+	const existingOverridableProp = overrideKey
+		? getOverridableProp( {
+				componentId,
+				overrideKey,
+		  } )
+		: null;
 
 	let currentGroupId = groupId || existingOverridableProp?.groupId;
 
@@ -47,12 +48,16 @@ export function setOverridableProp( {
 
 	const updatedGroups = { ...groups };
 
-	if ( ! currentGroupId || ! updatedGroups.items[ currentGroupId ] ) {
-		currentGroupId = addNewGroup( updatedGroups, currentGroupId );
+	if ( ! currentGroupId && updatedGroups.order.length > 0 ) {
+		currentGroupId = updatedGroups.order[ 0 ];
+	} else if ( ! currentGroupId && updatedGroups.order.length === 0 ) {
+		currentGroupId = addNewGroup( updatedGroups );
+	} else if ( ! currentGroupId || ! updatedGroups.items[ currentGroupId ] ) {
+		currentGroupId = addNewGroup( updatedGroups, currentGroupId as string );
 	}
 
 	const overridableProp = {
-		overrideKey: existingOverridableProp?.overrideKey || generateUniqueId(),
+		overrideKey: existingOverridableProp?.overrideKey || generateUniqueId( 'overridable-prop' ),
 		label,
 		elementId,
 		propKey,
@@ -102,8 +107,8 @@ export function setOverridableProp( {
 	return overridableProp;
 }
 
-function addNewGroup( groups: OverridableProps[ 'groups' ], groupId: string | undefined ): string {
-	const currentGroupId = groupId || generateUniqueId();
+function addNewGroup( groups: OverridableProps[ 'groups' ], groupId?: string | undefined ): string {
+	const currentGroupId = groupId || generateUniqueId( 'overridable-group' );
 
 	groups.items = {
 		...groups.items,

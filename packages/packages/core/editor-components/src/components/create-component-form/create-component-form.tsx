@@ -170,6 +170,13 @@ const Form = ( {
 		}
 	};
 
+	const texts = {
+		heading: __( 'Save as a component', 'elementor' ),
+		name: __( 'Name', 'elementor' ),
+		cancel: __( 'Cancel', 'elementor' ),
+		create: __( 'Create', 'elementor' ),
+	};
+
 	return (
 		<FormElement onSubmit={ handleSubmit }>
 			<Stack alignItems="start" width="268px">
@@ -182,13 +189,13 @@ const Form = ( {
 				>
 					<StarIcon fontSize={ FONT_SIZE } />
 					<Typography variant="caption" sx={ { color: 'text.primary', fontWeight: '500', lineHeight: 1 } }>
-						{ __( 'Save as a component', 'elementor' ) }
+						{ texts.heading }
 					</Typography>
 				</Stack>
 				<Grid container gap={ 0.75 } alignItems="start" p={ 1.5 }>
 					<Grid item xs={ 12 }>
 						<FormLabel htmlFor={ 'component-name' } size="tiny">
-							{ __( 'Name', 'elementor' ) }
+							{ texts.name }
 						</FormLabel>
 					</Grid>
 					<Grid item xs={ 12 }>
@@ -208,10 +215,10 @@ const Form = ( {
 				</Grid>
 				<Stack direction="row" justifyContent="flex-end" alignSelf="end" py={ 1 } px={ 1.5 }>
 					<Button onClick={ closePopup } color="secondary" variant="text" size="small">
-						{ __( 'Cancel', 'elementor' ) }
+						{ texts.cancel }
 					</Button>
 					<Button type="submit" disabled={ ! isValid } variant="contained" color="primary" size="small">
-						{ __( 'Create', 'elementor' ) }
+						{ texts.create }
 					</Button>
 				</Stack>
 			</Stack>

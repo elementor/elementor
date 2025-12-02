@@ -5,28 +5,16 @@ import { type OverridableProp } from '../../../types';
 
 export function getOverridableProp( {
 	componentId,
-	elementId,
-	widgetType,
-	elType,
-	propKey,
+	overrideKey,
 }: {
 	componentId: number;
-	elementId: string;
-	widgetType: string;
-	elType: string;
-	propKey: string;
+	overrideKey: string;
 } ): OverridableProp | undefined {
-	const overridables = selectOverridableProps( getState(), componentId );
+	const overridableProps = selectOverridableProps( getState(), componentId );
 
-	if ( ! overridables ) {
+	if ( ! overridableProps ) {
 		return undefined;
 	}
 
-	return Object.values( overridables.props ).find(
-		( prop ) =>
-			prop.elementId === elementId &&
-			prop.propKey === propKey &&
-			prop.widgetType === widgetType &&
-			prop.elType === elType
-	);
+	return overridableProps.props[ overrideKey ];
 }
