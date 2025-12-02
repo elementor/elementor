@@ -50,6 +50,7 @@ export {
 export { FloatingActionsBar } from './components/floating-bar';
 export { PopoverGridContainer } from './components/popover-grid-container';
 export { InlineEditor } from './components/inline-editor';
+export { InlineEditorToolbar } from './components/inline-editor-toolbar';
 
 // types
 export type { ControlComponent } from './create-control';

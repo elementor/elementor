@@ -8,9 +8,13 @@ import Heading from '@tiptap/extension-heading';
 import Italic from '@tiptap/extension-italic';
 import Paragraph from '@tiptap/extension-paragraph';
 import Strike from '@tiptap/extension-strike';
+import Subscript from '@tiptap/extension-subscript';
+import Superscript from '@tiptap/extension-superscript';
 import Text from '@tiptap/extension-text';
 import Underline from '@tiptap/extension-underline';
 import { EditorContent, type EditorEvents, useEditor } from '@tiptap/react';
+
+import { InlineEditorToolbar } from './inline-editor-toolbar';
 
 type InlineEditorProps = {
 	value: string;
@@ -18,6 +22,7 @@ type InlineEditorProps = {
 	attributes?: Record< string, string >;
 	sx?: SxProps< Theme >;
 	onBlur?: ( event: FocusEvent ) => void;
+	showToolbar?: boolean;
 };
 
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
@@ -56,6 +61,8 @@ const extensions = [
 	Bold,
 	Italic,
 	Strike,
+	Superscript,
+	Subscript,
 	Underline,
 	HardBreak.extend( {
 		addKeyboardShortcuts() {
@@ -67,7 +74,10 @@ const extensions = [
 ];
 
 export const InlineEditor = React.forwardRef(
-	( { value, setValue, attributes = {}, ...props }: InlineEditorProps, ref: ForwardedRef< HTMLDivElement > ) => {
+	(
+		{ value, setValue, attributes = {}, showToolbar = false, ...props }: InlineEditorProps,
+		ref: ForwardedRef< HTMLDivElement >
+	) => {
 		const onBlur = ( { editor: updatedEditor, event }: EditorEvents[ 'blur' ] ) => {
 			if ( updatedEditor.view.dom.contains( event.target as Node ) ) {
 				return;
@@ -96,6 +106,11 @@ export const InlineEditor = React.forwardRef(
 			}
 		}, [ editor, value ] );
 
-		return <EditorContent ref={ ref } editor={ editor } />;
+		return (
+			<>
+				{ showToolbar && <InlineEditorToolbar editor={ editor } /> }
+				<EditorContent ref={ ref } editor={ editor } />
+			</>
+		);
 	}
 );
