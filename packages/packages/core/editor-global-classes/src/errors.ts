@@ -9,3 +9,8 @@ export const GlobalClassLabelAlreadyExistsError = createError< { label: string }
 	code: 'global_class_label_already_exists',
 	message: 'Class with this name already exists.',
 } );
+
+export const GlobalClassTrackingError = createError< { cause: string } >( {
+	code: 'global_class_tracking_error',
+	message: 'Error tracking global classes event.',
+} );
