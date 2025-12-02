@@ -20,8 +20,8 @@ export default class extends elementorModules.Module {
 				record_mask_text_selector: '',
 				flags: true,
 				api_hosts: {
-				    flags: 'https://api-eu.mixpanel.com',
-				}
+					flags: 'https://api-eu.mixpanel.com',
+				},
 			},
 		);
 
