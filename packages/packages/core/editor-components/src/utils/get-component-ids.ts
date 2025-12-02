@@ -1,22 +1,36 @@
 import { type V1ElementData } from '@elementor/editor-elements';
-import { isTransformable } from '@elementor/editor-props';
 
-export const getComponentIds = ( elements: V1ElementData[] ) => {
-	const result = elements.flatMap( ( element ) => {
+import { TYPE } from '../create-component-type';
+import { type ComponentInstancePropValue } from '../types';
+import { getComponentDocumentData } from './component-document-data';
+
+export const getComponentIds = async ( elements: V1ElementData[] ) => {
+	const components = elements.map( async ( { widgetType, elType, elements: childElements, settings } ) => {
 		const ids: number[] = [];
 
-		const type = element.widgetType || element.elType;
+		const isComponent = [ widgetType, elType ].includes( TYPE );
 
-		if ( type === 'e-component' && element.settings?.component && isTransformable( element.settings?.component ) ) {
-			ids.push( element.settings.component.value );
+		if ( isComponent ) {
+			const componentId = ( settings?.component_instance as ComponentInstancePropValue< number > )?.value
+				?.component_id;
+
+			const document = await getComponentDocumentData( componentId );
+
+			childElements = document?.elements;
+
+			if ( Boolean( componentId ) ) {
+				ids.push( componentId );
+			}
 		}
 
-		if ( element.elements ) {
-			ids.push( ...getComponentIds( element.elements ) );
+		if ( !! childElements?.length ) {
+			ids.push( ...( await getComponentIds( childElements ) ) );
 		}
 
 		return ids;
 	} );
+
+	const result = ( await Promise.all( components ) ).flat();
 
 	return Array.from( new Set( result ) );
 };

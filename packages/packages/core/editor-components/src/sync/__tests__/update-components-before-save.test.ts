@@ -1,9 +1,13 @@
+import { type Document } from '@elementor/editor-documents';
+
 import { apiClient } from '../../api';
 import { getComponentDocumentData, invalidateComponentDocumentData } from '../../utils/component-document-data';
+import { getComponentIds } from '../../utils/get-component-ids';
 import { updateComponentsBeforeSave } from '../update-components-before-save';
 import { createMockContainer } from './utils';
 
 jest.mock( '../../utils/component-document-data' );
+jest.mock( '../../utils/get-component-ids' );
 jest.mock( '../../api' );
 
 describe( 'updateComponentsBeforeSave', () => {
@@ -18,12 +22,18 @@ describe( 'updateComponentsBeforeSave', () => {
 					value: id === PUBLISHED_COMPONENT_ID || id === HAS_AUTOSAVE_COMPONENT_ID ? 'publish' : 'draft',
 				},
 				revisions: { current_id: HAS_AUTOSAVE_COMPONENT_ID === id ? 9000 : id },
-			} );
+			} as Document );
 		} );
 	} );
 
 	it( 'should update all the components when publishing', async () => {
 		// Arrange.
+		jest.mocked( getComponentIds ).mockResolvedValue( [
+			1000,
+			PUBLISHED_COMPONENT_ID,
+			3000,
+			HAS_AUTOSAVE_COMPONENT_ID,
+		] );
 
 		const container = createMockContainer( [
 			{
@@ -38,7 +48,12 @@ describe( 'updateComponentsBeforeSave', () => {
 								elType: 'widget',
 								id: '3',
 								widgetType: 'e-component',
-								settings: { component: { $$type: 'component-id', value: 1000 } },
+								settings: {
+									component_instance: {
+										$$type: 'component-instance',
+										value: { component_id: 1000 },
+									},
+								},
 							},
 						],
 					},
@@ -46,19 +61,34 @@ describe( 'updateComponentsBeforeSave', () => {
 						elType: 'widget',
 						id: '4',
 						widgetType: 'e-component',
-						settings: { component: { $$type: 'component-id', value: PUBLISHED_COMPONENT_ID } },
+						settings: {
+							component_instance: {
+								$$type: 'component-instance',
+								value: { component_id: PUBLISHED_COMPONENT_ID },
+							},
+						},
 					},
 					{
 						elType: 'widget',
 						id: '5',
 						widgetType: 'e-component',
-						settings: { component: { $$type: 'component-id', value: 3000 } },
+						settings: {
+							component_instance: {
+								$$type: 'component-instance',
+								value: { component_id: 3000 },
+							},
+						},
 					},
 					{
 						elType: 'widget',
 						id: '6',
 						widgetType: 'e-component',
-						settings: { component: { $$type: 'component-id', value: HAS_AUTOSAVE_COMPONENT_ID } },
+						settings: {
+							component_instance: {
+								$$type: 'component-instance',
+								value: { component_id: HAS_AUTOSAVE_COMPONENT_ID },
+							},
+						},
 					},
 				],
 			},
@@ -80,12 +110,19 @@ describe( 'updateComponentsBeforeSave', () => {
 
 	it( 'should not update any components when not publishing', async () => {
 		// Arrange.
+		jest.mocked( getComponentIds ).mockResolvedValue( [ 1000 ] );
+
 		const container = createMockContainer( [
 			{
 				elType: 'widget',
 				id: '2',
 				widgetType: 'e-component',
-				settings: { component: { $$type: 'component-id', value: 1000 } },
+				settings: {
+					component_instance: {
+						$$type: 'component-instance',
+						value: { component_id: 1000 },
+					},
+				},
 			},
 		] );
 
@@ -102,12 +139,19 @@ describe( 'updateComponentsBeforeSave', () => {
 
 	it( 'should not update any components when all components are published', async () => {
 		// Arrange.
+		jest.mocked( getComponentIds ).mockResolvedValue( [ PUBLISHED_COMPONENT_ID ] );
+
 		const container = createMockContainer( [
 			{
 				elType: 'widget',
 				id: '2',
 				widgetType: 'e-component',
-				settings: { component: { $$type: 'component-id', value: PUBLISHED_COMPONENT_ID } },
+				settings: {
+					component_instance: {
+						$$type: 'component-instance',
+						value: { component_id: PUBLISHED_COMPONENT_ID },
+					},
+				},
 			},
 		] );
 

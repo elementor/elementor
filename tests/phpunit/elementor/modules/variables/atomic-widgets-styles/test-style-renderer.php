@@ -4,31 +4,33 @@ namespace Elementor\Modules\Variables;
 
 use Elementor\Modules\AtomicWidgets\Styles\Styles_Renderer;
 use Elementor\Modules\AtomicWidgets\Styles\Style_States;
+use Elementor\Modules\Variables\Services\Variables_Service;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
 use Elementor\Modules\Variables\Classes\Variables;
 use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use \PHPUnit\Framework\TestCase;
 
 /**
  * @gorup Elementor\Modules
  * @group Elementor\Modules\Variables
  */
-class Test_Style_Renderer extends Elementor_Test_Base {
+class Test_Style_Renderer extends TestCase {
 	use MatchesSnapshots;
 
 	/**
 	 * @var Variables_Repository
 	 */
-	private $repository;
+	private $service;
 
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->repository = $this->createMock( Variables_Repository::class );
+		$this->service = $this->createMock( Variables_Service::class );
 
-		$this->repository->method( 'variables' )
+		$this->service->method( 'get_variables_list' )
 			->willReturn( [
 				'e-gv-01' => [
 					'label' => 'primary-color',
@@ -59,7 +61,7 @@ class Test_Style_Renderer extends Elementor_Test_Base {
 				],
 			] );
 
-		Variables::init( $this->repository );
+		Variables::init( $this->service );
 	}
 
 	public function test_render__style_with_color_variable() {
@@ -112,7 +114,7 @@ class Test_Style_Renderer extends Elementor_Test_Base {
 		return;
 
 		// Arrange.
-		Variables::init( $this->repository );
+		Variables::init( $this->service );
 
 		$styles = [
 			[
