@@ -1,21 +1,17 @@
 export const encodeString = ( value: string ): string => {
-	const encoder = new TextEncoder();
-	const bytes = encoder.encode( value );
-	let binary = '';
-
-	for ( const b of bytes ) {
-		binary += String.fromCharCode( b );
-	}
-
-	return btoa( binary );
+	const utf8Bytes = encodeURIComponent( value ).replace( /%([0-9A-F]{2})/g, ( _, hex ) =>
+		String.fromCharCode( parseInt( hex, 16 ) )
+	);
+	return btoa( utf8Bytes );
 };
 
 export const decodeString = < T = string >( value: string, fallback?: T ): string | T => {
 	try {
-		const binary = atob( value );
-		const bytes = new Uint8Array( [ ...binary ].map( ( char ) => char.charCodeAt( 0 ) ) );
-		const decoder = new TextDecoder();
-		return decoder.decode( bytes );
+		const utf8Bytes = atob( value );
+		const percentEncoded = Array.from( utf8Bytes )
+			.map( ( char ) => '%' + ( '00' + char.charCodeAt( 0 ).toString( 16 ) ).slice( -2 ) )
+			.join( '' );
+		return decodeURIComponent( percentEncoded );
 	} catch {
 		return fallback ?? '';
 	}
