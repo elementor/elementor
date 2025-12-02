@@ -117,12 +117,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<# } else { #>
 			<div id="elementor-template-library-filter-toolbar-local" class="elementor-template-library-filter-toolbar">
 				<div id="elementor-template-library-filter">
-					<div class="elementor-template-library-filter-select-source">
-						<div class="source-option<# if ( activeSource === 'local' ) { #> selected<# } #>" data-source="local">
+					<div class="elementor-template-library-filter-select-source" role="radiogroup" aria-label="<?php echo esc_attr__( 'Template source', 'elementor' ); ?>">
+						<div class="source-option<# if ( activeSource === 'local' ) { #> selected<# } #>" data-source="local" role="radio" aria-checked="<# if ( activeSource === 'local' ) { #>true<# } else { #>false<# } #>" tabindex="<# if ( activeSource === 'local' ) { #>0<# } else { #>-1<# } #>">
 							<i class="eicon-header" aria-hidden="true"></i>
 							<?php echo esc_html__( 'Site templates', 'elementor' ); ?>
 						</div>
-						<div class="source-option<# if ( activeSource === 'cloud' ) { #> selected<# } #>" data-source="cloud">
+						<div class="source-option<# if ( activeSource === 'cloud' ) { #> selected<# } #>" data-source="cloud" role="radio" aria-checked="<# if ( activeSource === 'cloud' ) { #>true<# } else { #>false<# } #>" tabindex="<# if ( activeSource === 'cloud' ) { #>0<# } else { #>-1<# } #>">
 							<i class="eicon-library-cloud-empty" aria-hidden="true"></i>
 							<?php echo esc_html__( 'Cloud templates', 'elementor' ); ?>
 							<#
@@ -616,12 +616,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	#>
 	<div id="elementor-template-library-filter-toolbar-local" class="elementor-template-library-filter-toolbar" style="padding-block-end:80px;">
 		<div id="elementor-template-library-filter">
-			<div class="elementor-template-library-filter-select-source">
-				<div class="source-option<# if ( activeSource === 'local' ) { #> selected<# } #>" data-source="local">
+			<div class="elementor-template-library-filter-select-source" role="radiogroup" aria-label="<?php echo esc_attr__( 'Template source', 'elementor' ); ?>">
+				<div class="source-option<# if ( activeSource === 'local' ) { #> selected<# } #>" data-source="local" role="radio" aria-checked="<# if ( activeSource === 'local' ) { #>true<# } else { #>false<# } #>" tabindex="<# if ( activeSource === 'local' ) { #>0<# } else { #>-1<# } #>">
 					<i class="eicon-header" aria-hidden="true"></i>
 					<?php echo esc_html__( 'Site templates', 'elementor' ); ?>
 				</div>
-				<div class="source-option<# if ( activeSource === 'cloud' ) { #> selected<# } #>" data-source="cloud">
+				<div class="source-option<# if ( activeSource === 'cloud' ) { #> selected<# } #>" data-source="cloud" role="radio" aria-checked="<# if ( activeSource === 'cloud' ) { #>true<# } else { #>false<# } #>" tabindex="<# if ( activeSource === 'cloud' ) { #>0<# } else { #>-1<# } #>">
 					<i class="eicon-library-cloud-empty" aria-hidden="true"></i>
 					<?php echo esc_html__( 'Cloud templates', 'elementor' ); ?>
 					<#

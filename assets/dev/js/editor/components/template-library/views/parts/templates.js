@@ -30,6 +30,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		orderLabels: 'label.elementor-template-library-order-label',
 		searchInputIcon: '#elementor-template-library-filter-text-wrapper i',
 		loadMoreAnchor: '#elementor-template-library-load-more-anchor',
+		sourceFilterRadiogroup: '.elementor-template-library-filter-select-source',
 		selectSourceFilter: '.elementor-template-library-filter-select-source .source-option',
 		addNewFolder: '#elementor-template-library-add-new-folder',
 		addNewFolderDivider: '.elementor-template-library-filter-toolbar-side-actions .divider',
@@ -56,6 +57,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'change @ui.myFavoritesFilter': 'onMyFavoritesFilterChange',
 		'mousedown @ui.orderLabels': 'onOrderLabelsClick',
 		'click @ui.selectSourceFilter': 'onSelectSourceFilterChange',
+		'keydown @ui.selectSourceFilter': 'onSelectSourceFilterKeyDown',
 		'click @ui.addNewFolder': 'onCreateNewFolderClick',
 		'click @ui.selectGridView': 'onSelectGridViewClick',
 		'click @ui.selectListView': 'onSelectListViewClick',
@@ -235,7 +237,9 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 	initialize() {
 		this.handleQuotaBar = this.handleQuotaBar.bind( this );
 		this.handleQuotaUpdate = this.handleQuotaUpdate.bind( this );
+		this.handleSourceFilterChange = this.handleSourceFilterChange.bind( this );
 		this.listenTo( elementor.channels.templates, 'filter:change', this._renderChildren );
+		this.listenTo( elementor.channels.templates, 'filter:change', this.handleSourceFilterChange );
 		this.listenTo( elementor.channels.templates, 'quota:updated', this.handleQuotaUpdate );
 		this.debouncedSearchTemplates = _.debounce( this.searchTemplates, 300 );
 	},
@@ -249,6 +253,30 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 					this.handleQuotaBar();
 				} );
 		}
+	},
+
+	handleSourceFilterChange( filterName ) {
+		if ( 'source' === filterName ) {
+			const activeSource = elementor.templates.getFilter( 'source' ) ?? 'local';
+			this.updateSourceFilterAriaAttributes( activeSource );
+		}
+	},
+
+	updateSourceFilterAriaAttributes( selectedSource ) {
+		if ( ! this.ui.selectSourceFilter.length ) {
+			return;
+		}
+
+		this.ui.selectSourceFilter.each( function() {
+			const $option = jQuery( this ),
+				source = $option.data( 'source' ),
+				isSelected = source === selectedSource;
+
+			$option.attr( {
+				'aria-checked': isSelected ? 'true' : 'false',
+				tabindex: isSelected ? '0' : '-1',
+			} );
+		} );
 	},
 
 	filter( childModel ) {
@@ -509,6 +537,31 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 
 	onSelectSourceFilterChange( event ) {
 		elementor.templates.onSelectSourceFilterChange( event );
+	},
+
+	onSelectSourceFilterKeyDown( event ) {
+		const $currentOption = jQuery( event.currentTarget ),
+			$allOptions = this.ui.selectSourceFilter,
+			currentIndex = $allOptions.index( $currentOption );
+
+		let targetIndex = currentIndex;
+
+		if ( 'ArrowLeft' === event.key || 'ArrowUp' === event.key ) {
+			event.preventDefault();
+			targetIndex = currentIndex > 0 ? currentIndex - 1 : $allOptions.length - 1;
+		} else if ( 'ArrowRight' === event.key || 'ArrowDown' === event.key ) {
+			event.preventDefault();
+			targetIndex = currentIndex < $allOptions.length - 1 ? currentIndex + 1 : 0;
+		} else if ( ' ' === event.key || 'Enter' === event.key ) {
+			event.preventDefault();
+			$currentOption.trigger( 'click' );
+			return;
+		} else {
+			return;
+		}
+
+		const $targetOption = $allOptions.eq( targetIndex );
+		$targetOption.trigger( 'focus' ).trigger( 'click' );
 	},
 
 	onSelectGridViewClick() {
