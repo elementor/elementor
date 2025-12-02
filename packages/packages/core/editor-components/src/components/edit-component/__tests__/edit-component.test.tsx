@@ -65,7 +65,7 @@ describe( '<EditComponent />', () => {
 			getInitialId: () => MOCK_DOCUMENT_ID,
 			invalidateCache: jest.fn(),
 			documents: {},
-		} );
+		} as unknown as ReturnType< typeof getV1DocumentsManager > );
 
 		jest.mocked( switchDocumentCallback ).mockImplementation( ( { id }: { id: number } ) => {
 			editedDocument = MOCK_POST_DATA[ id as keyof typeof MOCK_POST_DATA ];

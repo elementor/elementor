@@ -5,7 +5,7 @@ import { slice } from '../../store';
 import { selectActiveDocument } from '../../store/selectors';
 import { type Document, type ExitTo, type ExtendedWindow, type V1Document } from '../../types';
 import { syncStore } from '../index';
-import { getV1DocumentPermalink, getV1DocumentsExitTo } from '../utils';
+import { getV1DocumentPermalink, getV1DocumentsExitTo, type getV1DocumentsManager } from '../utils';
 import { makeDocumentsManager } from './test-utils';
 
 type WindowWithOptionalElementor = Omit< ExtendedWindow, 'elementor' > & {
@@ -478,6 +478,8 @@ function mockV1DocumentsManager(
 ) {
 	( window as unknown as WindowWithOptionalElementor ).elementor = {
 		getPreferences: () => exitTo,
-		documents: makeDocumentsManager( documentsArray, current, initial ),
+		documents: makeDocumentsManager( documentsArray, current, initial ) as unknown as ReturnType<
+			typeof getV1DocumentsManager
+		>,
 	};
 }
