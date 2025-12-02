@@ -36,7 +36,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		// TODO update to only mock repository not mock kit
 		$this->kit = $this->createMock( Kit::class );
 		$repository = new Variables_Repository( $this->kit );
 		$service = new Variables_Service( $repository, new Batch_Processor() );
