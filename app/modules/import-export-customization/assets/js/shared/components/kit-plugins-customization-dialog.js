@@ -17,6 +17,7 @@ import { ExternalLinkIcon } from './icons';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import useKitPlugins from '../hooks/use-kit-plugins';
+import useContextDetection from '../hooks/use-context-detection';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
 import { transformValueForAnalytics } from '../utils/analytics-transformer';
@@ -35,7 +36,10 @@ const REQUIRED_PLUGINS = [
 	'elementor/elementor',
 ];
 
-export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges, data, isImport, isOldElementorVersion } ) {
+export function KitPluginsCustomizationDialog( { open, handleClose, handleSaveChanges } ) {
+	const { isImport = false, contextData = {} } = useContextDetection() ?? {};
+	const { data = null, isOldElementorVersion = false } = contextData;
+
 	const { pluginsList: fetchedPluginsList, isLoading: fetchIsLoading } = useKitPlugins( { open: open && ! isImport } );
 
 	const pluginsList = useMemo( () => {
@@ -314,7 +318,4 @@ KitPluginsCustomizationDialog.propTypes = {
 	open: PropTypes.bool.isRequired,
 	handleClose: PropTypes.func.isRequired,
 	handleSaveChanges: PropTypes.func.isRequired,
-	data: PropTypes.object.isRequired,
-	isImport: PropTypes.bool,
-	isOldElementorVersion: PropTypes.bool,
 };
