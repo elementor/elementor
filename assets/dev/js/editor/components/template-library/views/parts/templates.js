@@ -37,7 +37,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		selectGridView: '#elementor-template-library-view-grid',
 		selectListView: '#elementor-template-library-view-list',
 		bulkSelectionActionBar: '.bulk-selection-action-bar',
-		bulkActionBarDelete: '.bulk-selection-action-bar .bulk-delete i',
+		bulkActionBarDelete: '.bulk-selection-action-bar .bulk-delete',
 		bulkSelectedCount: '.bulk-selection-action-bar .selected-count',
 		bulkSelectAllCheckbox: '#bulk-select-all',
 		clearBulkSelections: '.bulk-selection-action-bar .clear-bulk-selections',

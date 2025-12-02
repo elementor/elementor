@@ -515,14 +515,23 @@ $remote-templates-items-space: 30px;
 		align-items: center;
 		flex: 1;
 
-		i {
+		button {
+			@include button-reset;
 			cursor: pointer;
-			font-size: 18px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 
 			&.disabled {
 				pointer-events: none;
 				opacity: 0.3;
+				cursor: not-allowed;
 			}
+		}
+
+		i {
+			cursor: pointer;
+			font-size: 18px;
 		}
 
 		.eicon-editor-close {

@@ -163,15 +163,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	<# if ( 'local' === activeSource || 'cloud' === activeSource ) { #>
 		<div class="toolbar-container">
-				<div class="bulk-selection-action-bar">
-					<span class="clear-bulk-selections"><i class="eicon-editor-close"></i></span>
-					<span class="selected-count"></span>
+				<section class="bulk-selection-action-bar" role="region" aria-label="<?php echo esc_attr__( 'Bulk actions', 'elementor' ); ?>">
+					<button type="button" class="clear-bulk-selections" aria-label="<?php echo esc_attr__( 'Deselect all and close bulk selection', 'elementor' ); ?>">
+						<i class="eicon-editor-close" aria-hidden="true"></i>
+					</button>
+					<span class="selected-count" aria-live="polite"></span>
 					<# if ( elementor.templates.hasCloudLibraryQuota() && ! elementor.templates.cloudLibraryIsDeactivated() ) { #>
-					<span class="bulk-copy"><i class="eicon-library-copy" aria-hidden="true" title="<?php esc_attr_e( 'Copy', 'elementor' ); ?>"></i></span>
-					<span class="bulk-move"><i class="eicon-library-move"  aria-hidden="true" title="<?php esc_attr_e( 'Move', 'elementor' ); ?>"></i></span>
+					<button type="button" class="bulk-copy" aria-label="<?php echo esc_attr__( 'Copy selected templates', 'elementor' ); ?>">
+						<i class="eicon-library-copy" aria-hidden="true"></i>
+					</button>
+					<button type="button" class="bulk-move" aria-label="<?php echo esc_attr__( 'Move selected templates', 'elementor' ); ?>">
+						<i class="eicon-library-move" aria-hidden="true"></i>
+					</button>
 					<# } #>
-					<span class="bulk-delete"><i class="eicon-library-delete" aria-hidden="true" title="<?php esc_attr_e( 'Delete', 'elementor' ); ?>"></i></span>
-				</div>
+					<button type="button" class="bulk-delete" aria-label="<?php echo esc_attr__( 'Delete selected templates', 'elementor' ); ?>">
+						<i class="eicon-library-delete" aria-hidden="true"></i>
+					</button>
+				</section>
 			<div id="elementor-template-library-navigation-container"></div>
 
 			<# if ( 'cloud' === activeSource ) { #>
