@@ -5,6 +5,7 @@ export { injectIntoClassSelectorActions } from './components/css-classes/css-cla
 export { CustomCssIndicator } from './components/custom-css-indicator';
 export { PopoverBody } from './components/popover-body';
 export { SectionContent } from './components/section-content';
+export { SettingsControl } from './components/settings-control';
 export { StyleIndicator } from './components/style-indicator';
 export { useFontFamilies } from './components/style-sections/typography-section/hooks/use-font-families';
 export { injectIntoStyleTab } from './components/style-tab';
@@ -25,4 +26,6 @@ export { usePanelActions, usePanelStatus } from './panel';
 export type { PopoverActionProps } from './popover-action';
 export { registerStyleProviderToColors } from './provider-colors-registry';
 export { stylesInheritanceTransformersRegistry } from './styles-inheritance/styles-inheritance-transformers-registry';
+export { registerFieldIndicator, FIELD_TYPE } from './field-indicators-registry';
+
 export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-unapply-actions';

@@ -15,8 +15,6 @@ Before using this tool, check the definitions of the elements PropTypes at the r
 All widgets share a common _style property for styling, which uses the common styles schema.
 Retreive and check the common styles schema at the resource list "styles-schema" at editor-canvas__elementor://styles/schema/{category}
 
-Attempt to use the _style property "custom_css" for any styling that have complicated schemas (such as backgrounds), read the resource editor-canvas__elementor://styles/schema/custom_css for more information.
-
 # Parameters
 - propertiesToChange: An object containing the properties to change, with their new values. MANDATORY
 - elementId: The ID of the element to configure. MANDATORY

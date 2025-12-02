@@ -2,8 +2,8 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Repeater } from '@elementor/editor-controls';
 import { type ElementInteractions } from '@elementor/editor-elements';
-import { PlayerPlayIcon } from '@elementor/icons';
-import { IconButton } from '@elementor/ui';
+import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
+import { Alert, AlertTitle, Box, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsConfig } from '../utils/get-interactions-config';
@@ -24,10 +24,10 @@ export function InteractionsList( props: InteractionListProps ) {
 	const [ interactionsState, setInteractionsState ] = useState< ElementInteractions >( interactions );
 
 	useEffect( () => {
-		if ( JSON.stringify( interactions.items ) !== JSON.stringify( interactionsState ) ) {
+		if ( JSON.stringify( interactions ) !== JSON.stringify( interactionsState ) ) {
 			onSelectInteractions( interactionsState );
 		}
-	}, [ interactions.items, interactionsState, onSelectInteractions ] );
+	}, [ interactions, interactionsState, onSelectInteractions ] );
 
 	const isMaxNumberOfInteractionsReached = useMemo( () => {
 		return interactionsState.items?.length >= MAX_NUMBER_OF_INTERACTIONS;
@@ -58,6 +58,18 @@ export function InteractionsList( props: InteractionListProps ) {
 		return option?.label || interactionForDisplay;
 	};
 
+	const infotipContent = isMaxNumberOfInteractionsReached ? (
+		<Alert color="secondary" icon={ <InfoCircleFilledIcon /> } size="small">
+			<AlertTitle>{ __( 'Interactions', 'elementor' ) }</AlertTitle>
+			<Box component="span">
+				{ __(
+					"You've reached the limit of 5 interactions for this element. Please remove an interaction before creating a new one.",
+					'elementor'
+				) }
+			</Box>
+		</Alert>
+	) : undefined;
+
 	return (
 		<Repeater
 			openOnAdd
@@ -74,6 +86,7 @@ export function InteractionsList( props: InteractionListProps ) {
 			showToggle={ false }
 			isSortable={ false }
 			disableAddItemButton={ isMaxNumberOfInteractionsReached }
+			addButtonInfotipContent={ infotipContent }
 			itemSettings={ {
 				initialValues: {
 					animation: {
@@ -88,7 +101,10 @@ export function InteractionsList( props: InteractionListProps ) {
 						key={ index }
 						interaction={ value.animation.animation_id }
 						onChange={ ( newValue: string ) => {
-							const newInteractions = { ...interactionsState };
+							const newInteractions = {
+								...interactionsState,
+								items: structuredClone( interactionsState.items ),
+							};
 							newInteractions.items[ index ] = {
 								...newInteractions.items[ index ],
 								animation: {
