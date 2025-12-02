@@ -3,7 +3,6 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Base\Document;
-use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Utils;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
@@ -40,9 +39,7 @@ class Atomic_Widget_Styles {
 		foreach ( $post_ids as $post_id ) {
 			$get_styles = fn() => $this->parse_post_styles( $post_id );
 
-			$style_key = $this->get_style_key( $post_id, $context );
-
-			$styles_manager->register( $style_key, $get_styles, [ self::STYLES_KEY, $post_id, $context ] );
+			$styles_manager->register( [ self::STYLES_KEY, $post_id, $context ], $get_styles );
 		}
 	}
 
@@ -68,25 +65,22 @@ class Atomic_Widget_Styles {
 	}
 
 	private function invalidate_cache( ?array $post_ids = null, ?string $context = null ) {
-		$cache_validity = new Cache_Validity();
-
 		if ( empty( $post_ids ) ) {
-			$cache_validity->invalidate( [ self::STYLES_KEY ] );
+			do_action( 'elementor/atomic-widgets/styles/clear', [ self::STYLES_KEY ] );
 
 			return;
 		}
 
+		$is_post_status_publish = self::CONTEXT_FRONTEND === $context;
+
+		// When a user publishes a post, we should invalidate the styles of the draft too
 		foreach ( $post_ids as $post_id ) {
-			$cache_validity->invalidate(
-				null !== $context
-					? [ self::STYLES_KEY, $post_id, $context ]
-					: [ self::STYLES_KEY, $post_id ]
+			do_action( 'elementor/atomic-widgets/styles/clear',
+				empty( $context ) || $is_post_status_publish
+					? [ self::STYLES_KEY, $post_id ]
+					: [ self::STYLES_KEY, $post_id, $context ]
 			);
 		}
-	}
-
-	private function get_style_key( $post_id, $context ) {
-		return self::STYLES_KEY . '-' . $post_id . '-' . $context;
 	}
 
 	private function get_context( bool $is_preview ) {

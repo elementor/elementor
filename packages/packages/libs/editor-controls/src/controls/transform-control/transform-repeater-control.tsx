@@ -6,10 +6,11 @@ import { bindTrigger, Box, IconButton, type PopupState, Tooltip, Typography, use
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../../bound-prop-context';
-import { ControlRepeater, Header, Item, ItemsContainer, TooltipAddItemAction } from '../../components/control-repeater';
+import { ControlRepeater, Item, ItemsContainer, TooltipAddItemAction } from '../../components/control-repeater';
 import { DisableItemAction } from '../../components/control-repeater/actions/disable-item-action';
 import { RemoveItemAction } from '../../components/control-repeater/actions/remove-item-action';
 import { EditItemPopover } from '../../components/control-repeater/items/edit-item-popover';
+import { RepeaterHeader } from '../../components/repeater/repeater-header';
 import { ControlAdornments } from '../../control-adornments/control-adornments';
 import { createControl } from '../../create-control';
 import { initialRotateValue, initialScaleValue, initialSkewValue, initialTransformValue } from './initial-values';
@@ -73,7 +74,7 @@ const Repeater = ( {
 				initial={ getInitialValue() ?? initialTransformValue }
 				propTypeUtil={ transformFunctionsPropTypeUtil }
 			>
-				<Header
+				<RepeaterHeader
 					label={ __( 'Transform', 'elementor' ) }
 					adornment={ () => <ControlAdornments customContext={ { path: [ 'transform' ], propType } } /> }
 					ref={ headerRef }
@@ -85,7 +86,7 @@ const Repeater = ( {
 						enableTooltip={ shouldDisableAddItem }
 						ariaLabel={ 'transform' }
 					/>
-				</Header>
+				</RepeaterHeader>
 				<ItemsContainer>
 					<Item
 						Icon={ TransformIcon }

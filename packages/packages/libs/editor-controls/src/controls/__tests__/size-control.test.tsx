@@ -620,7 +620,13 @@ describe( 'SizeControl', () => {
 			fireEvent.keyUp( sizeInput, { key: 't' } );
 
 			// Assert.
-			expect( setValue ).toHaveBeenLastCalledWith( null );
+			expect( setValue ).toHaveBeenLastCalledWith( {
+				$$type: 'size',
+				value: {
+					size: '',
+					unit: 'custom',
+				},
+			} );
 		} );
 		it( 'should handle default unit when defaultUnit is provided', () => {
 			// Arrange.

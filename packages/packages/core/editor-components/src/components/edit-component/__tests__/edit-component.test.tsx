@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { createDOMElement, createMockDocument, renderWithStore } from 'test-utils';
-import { getV1DocumentsManager, type V1Document } from '@elementor/editor-documents';
+import { getV1DocumentsManager, type V1Document, type V1DocumentsManager } from '@elementor/editor-documents';
 import { __privateListenTo, __privateRunCommand } from '@elementor/editor-v1-adapters';
 import { __createStore, __registerSlice as registerSlice, type SliceState, type Store } from '@elementor/store';
 import { act, fireEvent, screen } from '@testing-library/react';
 
 import { apiClient } from '../../../api';
-import { selectComponentsObject, selectLoadIsPending, slice } from '../../../store/store';
+import { selectLoadIsPending, slice } from '../../../store/store';
+import { COMPONENT_DOCUMENT_TYPE } from '../../consts';
 import { EditComponent } from '../edit-component';
 
 jest.mock( '../component-modal', () => ( {
@@ -64,7 +65,7 @@ describe( '<EditComponent />', () => {
 			getInitialId: () => MOCK_DOCUMENT_ID,
 			invalidateCache: jest.fn(),
 			documents: {},
-		} );
+		} as unknown as V1DocumentsManager );
 
 		jest.mocked( switchDocumentCallback ).mockImplementation( ( { id }: { id: number } ) => {
 			editedDocument = MOCK_POST_DATA[ id as keyof typeof MOCK_POST_DATA ];
@@ -91,17 +92,6 @@ describe( '<EditComponent />', () => {
 			if ( command === 'editor/documents/switch' ) {
 				switchDocumentCallback( args );
 			}
-		} );
-
-		jest.mocked( selectComponentsObject ).mockReturnValue( {
-			[ MOCK_COMPONENT_ID ]: {
-				id: MOCK_COMPONENT_ID,
-				name: 'Mock Component',
-			},
-			[ MOCK_NESTED_COMPONENT_ID ]: {
-				id: MOCK_NESTED_COMPONENT_ID,
-				name: 'Mock Nested Component',
-			},
 		} );
 
 		jest.mocked( selectLoadIsPending ).mockReturnValue( false );
@@ -229,6 +219,9 @@ function mockDocument( id: number, isComponent: boolean = false ) {
 					],
 				} ),
 			},
+		},
+		config: {
+			type: isComponent ? COMPONENT_DOCUMENT_TYPE : 'wp-page',
 		},
 	} as unknown as V1Document;
 }

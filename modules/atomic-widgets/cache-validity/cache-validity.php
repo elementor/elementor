@@ -66,4 +66,15 @@ class Cache_Validity {
 
 		$cache_item->invalidate( $keys );
 	}
+
+	/**
+	 * @param array<string> $keys
+	 * @return array{state: boolean, meta: array<string, mixed> | null, children: array<string, self>} | null
+	 */
+	public function get_node( array $keys ): ?array {
+		$root = array_shift( $keys );
+		$cache_item = new Cache_Validity_Item( $root );
+
+		return $cache_item->get( $keys );
+	}
 }

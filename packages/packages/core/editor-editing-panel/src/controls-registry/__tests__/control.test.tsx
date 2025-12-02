@@ -74,12 +74,16 @@ describe( '<Control />', () => {
 	} );
 
 	it( 'should throw error if control type is not found', () => {
+		// Arrange
+		const mockConsoleError = jest.fn();
+		window.console.error = mockConsoleError;
+
 		// Act & Assert.
 		expect( () => {
 			// @ts-expect-error Testing unknown control type.
 			renderWithTheme( <Control type="unknown" /> );
 		} ).toThrow();
 
-		expect( console ).toHaveErrored();
+		expect( mockConsoleError ).toHaveBeenCalled();
 	} );
 } );

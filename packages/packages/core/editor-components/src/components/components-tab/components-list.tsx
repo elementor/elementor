@@ -25,7 +25,7 @@ export function ComponentsList() {
 	return (
 		<List sx={ { display: 'flex', flexDirection: 'column', gap: 1, px: 2 } }>
 			{ components.map( ( component ) => (
-				<ComponentItem key={ component.id } component={ component } />
+				<ComponentItem key={ component.uid } component={ component } />
 			) ) }
 		</List>
 	);

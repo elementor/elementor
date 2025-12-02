@@ -20,26 +20,25 @@ import { __ } from '@wordpress/i18n';
 import { useElement } from '../../../contexts/element-context';
 import { SettingsField } from '../../settings-field';
 import { getElementByType } from '../get-element-by-type';
-import {
-	addItem,
-	duplicateItem,
-	moveItem,
-	removeItem,
-	TAB_CONTENT_ELEMENT_TYPE,
-	TAB_ELEMENT_TYPE,
-	type TabItem,
-} from './actions';
+import { TAB_ELEMENT_TYPE, type TabItem, useActions } from './use-actions';
 
 const TAB_MENU_ELEMENT_TYPE = 'e-tabs-menu';
 const TAB_CONTENT_AREA_ELEMENT_TYPE = 'e-tabs-content-area';
-
 export const TabsControl = ( { label }: { label: string } ) => {
-	const { element } = useElement();
+	return (
+		<SettingsField bind="default-active-tab" propDisplayName={ __( 'Tabs', 'elementor' ) }>
+			<TabsControlContent label={ label } />
+		</SettingsField>
+	);
+};
 
-	const { [ TAB_ELEMENT_TYPE ]: tabLinks } = useElementChildren( element.id, [
-		TAB_ELEMENT_TYPE,
-		TAB_CONTENT_ELEMENT_TYPE,
-	] );
+export const TabsControlContent = ( { label }: { label: string } ) => {
+	const { element } = useElement();
+	const { addItem, duplicateItem, moveItem, removeItem } = useActions();
+
+	const { [ TAB_ELEMENT_TYPE ]: tabLinks } = useElementChildren( element.id, {
+		[ TAB_MENU_ELEMENT_TYPE ]: TAB_ELEMENT_TYPE,
+	} );
 
 	const tabList = getElementByType( element.id, TAB_MENU_ELEMENT_TYPE );
 	const tabContentArea = getElementByType( element.id, TAB_CONTENT_AREA_ELEMENT_TYPE );
@@ -68,7 +67,10 @@ export const TabsControl = ( { label }: { label: string } ) => {
 		if ( meta?.action?.type === 'remove' ) {
 			const items = meta.action.payload;
 
-			return removeItem( { items, tabContentAreaId: tabContentArea.id } );
+			return removeItem( {
+				items,
+				tabContentAreaId: tabContentArea.id,
+			} );
 		}
 
 		if ( meta?.action?.type === 'duplicate' ) {
@@ -92,14 +94,14 @@ export const TabsControl = ( { label }: { label: string } ) => {
 
 	return (
 		<Repeater
-			addToBottom
 			showToggle={ false }
-			openOnAdd={ false }
 			values={ repeaterValues }
 			setValues={ setValue }
+			showRemove={ repeaterValues.length > 1 }
 			label={ label }
 			itemSettings={ {
-				initialValues: { title: 'Tab' },
+				getId: ( { item } ) => item.id,
+				initialValues: { id: '', title: 'Tab' },
 				Label: ItemLabel,
 				Content: ItemContent,
 				Icon: () => null,
@@ -118,9 +120,7 @@ const ItemLabel = ( { value, index }: { value: TabItem; index: number } ) => {
 	return (
 		<Stack sx={ { minHeight: 20 } } direction="row" alignItems="center" gap={ 1.5 }>
 			<span>{ elementTitle }</span>
-			<SettingsField bind="default-active-tab" propDisplayName={ __( 'Tabs', 'elementor' ) }>
-				<ItemDefaultTab index={ index } />
-			</SettingsField>
+			<ItemDefaultTab index={ index } />
 		</Stack>
 	);
 };

@@ -4,20 +4,24 @@ import { dropElement, type DropElementParams, type V1ElementData } from '@elemen
 import { ComponentsIcon } from '@elementor/icons';
 import { Box, ListItemButton, ListItemIcon, ListItemText, Typography } from '@elementor/ui';
 
-import { loadComponentsStyles } from '../../store/load-components-styles';
+import { loadComponentsAssets } from '../../store/load-components-assets';
 import { type Component } from '../../types';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
 import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
 
-export const ComponentItem = ( { component }: { component: Component } ) => {
-	const componentModel = createComponentModel( { id: component.id, name: component.name } );
+type ComponentItemProps = {
+	component: Omit< Component, 'id' > & { id?: number };
+};
+
+export const ComponentItem = ( { component }: ComponentItemProps ) => {
+	const componentModel = createComponentModel( component );
 
 	const handleClick = () => {
 		addComponentToPage( componentModel );
 	};
 
 	const handleDragEnd = () => {
-		loadComponentsStyles( [ componentModel as V1ElementData ] );
+		loadComponentsAssets( [ componentModel as V1ElementData ] );
 
 		endDragElementFromPanel();
 	};
@@ -53,7 +57,7 @@ const addComponentToPage = ( model: DropElementParams[ 'model' ] ) => {
 		throw new Error( `Can't find container to drop new component instance at` );
 	}
 
-	loadComponentsStyles( [ model as V1ElementData ] );
+	loadComponentsAssets( [ model as V1ElementData ] );
 
 	dropElement( {
 		containerId: container.id,

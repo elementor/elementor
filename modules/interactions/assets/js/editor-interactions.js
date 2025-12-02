@@ -1,297 +1,188 @@
-/* eslint-disable no-unused-vars */
+'use strict';
 
-( function() {
-	'use strict';
+import { config, getKeyframes, parseAnimationName } from './interactions-utils.js';
 
-	const config = window.ElementorInteractionsConfig?.constants || {
-		defaultDuration: 300,
-		defaultDelay: 0,
-		slideDistance: 100,
-		scaleStart: 0.5,
-		easing: 'linear',
+function applyAnimation( element, animConfig, animateFunc ) {
+	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+	const options = {
+		duration: animConfig.duration / 1000,
+		delay: animConfig.delay / 1000,
+		easing: config.easing,
 	};
 
-	function getKeyframes( effect, type, direction ) {
-		const isIn = 'in' === type;
-		const keyframes = {};
-
-		keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
-
-		if ( 'scale' === effect ) {
-			keyframes.scale = isIn ? [ config.scaleStart, 1 ] : [ 1, config.scaleStart ];
-		}
-
-		if ( direction ) {
-			const distance = config.slideDistance;
-			const movement = {
-				left: { x: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
-				right: { x: isIn ? [ distance, 0 ] : [ 0, distance ] },
-				top: { y: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
-				bottom: { y: isIn ? [ distance, 0 ] : [ 0, distance ] },
-			};
-
-			Object.assign( keyframes, movement[ direction ] );
-		}
-
-		return keyframes;
-	}
-
-	function parseAnimationName( name ) {
-		const [ trigger, effect, type, direction, duration, delay ] = name.split( '-' );
-		return {
-			trigger,
-			effect,
-			type,
-			direction: direction || null,
-			duration: duration ? parseInt( duration, 10 ) : config.defaultDuration,
-			delay: delay ? parseInt( delay, 10 ) : config.defaultDelay,
-		};
-	}
-
-	function applyAnimation( element, animConfig, animateFunc ) {
-		const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
-		const options = {
-			duration: animConfig.duration / 1000,
-			delay: animConfig.delay / 1000,
-			easing: config.easing,
-		};
-
-		try {
-			animateFunc( element, keyframes, options );
-		} catch {}
-	}
-
-	function getInteractionsData() {
-		const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
-		if ( ! scriptTag ) {
-			return [];
-		}
-
-		try {
-			return JSON.parse( scriptTag.textContent || '[]' );
-		} catch {
-			return [];
-		}
-	}
-
-	function findElementByDataId( dataId ) {
-		const element = document.querySelector( '[data-id="' + dataId + '"]' );
-		if ( ! element ) {
-			const byId = document.getElementById( dataId );
-			if ( byId ) {
-				return byId;
-			}
-			const byClass = document.querySelector( '.elementor-element-' + dataId );
-			if ( byClass ) {
-				return byClass;
-			}
-		}
-		return element;
-	}
-
-	function getAnimationTarget( element ) {
-		// For atomic widgets, the data-id is on the wrapper, but we need to animate the actual content
-		// Try to find the first meaningful child element (not just text nodes)
-		if ( ! element ) {
-			return null;
-		}
-
-		// If element has direct text content and no block children, animate the element itself
-		const hasBlockChildren = Array.from( element.children ).some( ( child ) => {
-			const style = window.getComputedStyle( child );
-			return 'block' === style.display || 'flex' === style.display || 'grid' === style.display;
-		} );
-
-		const isContentElement = /^(h[1-6]|p|button|a|span|div)$/i.test( element.tagName );
-
-		if ( isContentElement && ! hasBlockChildren ) {
-			return element;
-		}
-
-		// Otherwise, try to find the first meaningful child
-		// Look for direct child elements (not nested deeply)
-		const firstChild = element.firstElementChild;
-		if ( firstChild ) {
-			// If first child is a link or button, use it
-			if ( /^(a|button)$/i.test( firstChild.tagName ) ) {
-				return firstChild;
-			}
-			// Otherwise use the first child element
-			return firstChild;
-		}
-
-		// Fallback: animate the element itself
-		return element;
-	}
-
-	function applyInteractionsToElement( element, interactionsData ) {
-		const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
-
-		if ( ! animateFunc ) {
-			element.style.animation = 'none';
-			setTimeout( () => {
-				element.style.animation = 'fadeInScale 0.5s ease-out';
-			}, 10 );
-			return;
-		}
-
-		try {
-			element.style.opacity = '0';
-			element.style.transform = 'scale(0.2)';
-
-			const animation = animateFunc(
-				element,
-				{
-					opacity: [ 0, 1 ],
-					scale: [ 0.2, 1 ],
-				},
-				{
-					duration: 0.5,
-					easing: 'ease-out',
-				},
-			);
-
-			if ( animation && 'function' === typeof animation.then ) {
-				animation.then( () => {
-					element.style.opacity = '';
-					element.style.transform = '';
+	const initialKeyframes = {};
+	Object.keys( keyframes ).forEach( ( key ) => {
+		initialKeyframes[ key ] = keyframes[ key ][ 0 ];
+	} );
+	animateFunc( element, initialKeyframes, { duration: 0 } ).then( () => {
+		animateFunc( element, keyframes, options ).then( () => {
+			if ( 'out' === animConfig.type ) {
+				const resetValues = { opacity: 1, scale: 1, x: 0, y: 0 };
+				const resetKeyframes = {};
+				Object.keys( keyframes ).forEach( ( key ) => {
+					resetKeyframes[ key ] = resetValues[ key ];
 				} );
-			} else {
-				setTimeout( () => {
-					element.style.opacity = '';
-					element.style.transform = '';
-				}, 500 );
-			}
-		} catch {
-			element.style.opacity = '';
-			element.style.transform = '';
-		}
 
-		// TODO: Parse and apply actual interactions once we verify the system works
-		// let interactions = [];
-		// try {
-		// 	interactions = JSON.parse( interactionsData );
-		// } catch ( error ) {
-		// 	console.error( '[Editor Interactions Handler] Error parsing interactions:', error );
-		// 	return;
-		// }
-		// interactions.forEach( ( interaction ) => {
-		// 	const animationName =
-		// 		'string' === typeof interaction
-		// 			? interaction
-		// 			: interaction?.animation?.animation_id;
-		// 	const animConfig = animationName && parseAnimationName( animationName );
-		// 	if ( animConfig ) {
-		// 		applyAnimation( element, animConfig, animateFunc );
-		// 	}
-		// } );
-	}
-
-	let previousInteractionsData = [];
-
-	function handleInteractionsUpdate() {
-		const currentInteractionsData = getInteractionsData();
-
-		const changedItems = currentInteractionsData.filter( ( currentItem ) => {
-			const previousItem = previousInteractionsData.find(
-				( prev ) => prev.dataId === currentItem.dataId,
-			);
-
-			const hasChanged = ! previousItem || previousItem.interactions !== currentItem.interactions;
-			return hasChanged;
-		} );
-
-		changedItems.forEach( ( item ) => {
-			const element = findElementByDataId( item.dataId );
-			if ( element ) {
-				const targetElement = getAnimationTarget( element );
-				if ( targetElement ) {
-					applyInteractionsToElement( targetElement, item.interactions );
-				}
+				animateFunc( element, resetKeyframes, { duration: 0 } );
 			}
 		} );
+	} );
+}
 
-		previousInteractionsData = currentInteractionsData;
+function getInteractionsData() {
+	const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+	if ( ! scriptTag ) {
+		return [];
 	}
 
-	function initEditorInteractionsHandler() {
-		if ( 'undefined' === typeof animate && ! window.Motion?.animate ) {
-			setTimeout( initEditorInteractionsHandler, 100 );
+	try {
+		return JSON.parse( scriptTag.textContent || '[]' );
+	} catch {
+		return [];
+	}
+}
+
+function findElementByInteractionId( interactionId ) {
+	return document.querySelector( '[data-interaction-id="' + interactionId + '"]' );
+}
+
+function applyInteractionsToElement( element, interactionsData ) {
+	const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
+
+	if ( ! animateFunc ) {
+		return;
+	}
+
+	let parsedData;
+	if ( 'string' === typeof interactionsData ) {
+		try {
+			parsedData = JSON.parse( interactionsData );
+		} catch ( error ) {
 			return;
 		}
+	} else {
+		parsedData = interactionsData;
+	}
 
-		// Watch the head for when the script tag appears (Portal injects it later)
-		const head = document.head;
-		let scriptTag = null;
-		let observer = null;
+	const interactions = Object.values( parsedData?.items );
 
-		function setupObserver( tag ) {
-			if ( observer ) {
-				observer.disconnect();
-			}
+	interactions.forEach( ( interaction ) => {
+		const animationName =
+				'string' === typeof interaction
+					? interaction
+					: interaction?.animation?.animation_id;
 
-			observer = new MutationObserver( () => {
-				handleInteractionsUpdate();
-			} );
+		const animConfig = animationName && parseAnimationName( animationName );
 
-			observer.observe( tag, {
-				childList: true,
-				characterData: true,
-				subtree: true,
-			} );
+		if ( animConfig ) {
+			applyAnimation( element, animConfig, animateFunc );
+		}
+	} );
+}
 
-			// Initial load
-			handleInteractionsUpdate();
-			registerWindowEvents();
+let previousInteractionsData = [];
+
+function handleInteractionsUpdate() {
+	const currentInteractionsData = getInteractionsData();
+
+	const changedItems = currentInteractionsData.filter( ( currentItem ) => {
+		const previousItem = previousInteractionsData.find(
+			( prev ) => prev.dataId === currentItem.dataId,
+		);
+
+		return ! previousItem || previousItem.interactions !== currentItem.interactions;
+	} );
+
+	changedItems.forEach( ( item ) => {
+		const element = findElementByInteractionId( item.dataId );
+		const prevInteractions = previousInteractionsData.find( ( prev ) => prev.dataId === item.dataId )?.interactions;
+		if ( element && item.interactions?.items?.length > 0 && item.interactions?.items?.length === prevInteractions?.items?.length ) {
+			const interactionsToApply = {
+				...item.interactions,
+				items: [ ...item.interactions.items ].filter( ( interaction, index ) => prevInteractions?.items[ index ]?.animation?.animation_id !== interaction.animation.animation_id ),
+			};
+			applyInteractionsToElement( element, interactionsToApply );
+		}
+	} );
+
+	previousInteractionsData = currentInteractionsData;
+}
+
+function initEditorInteractionsHandler() {
+	if ( 'undefined' === typeof animate && ! window.Motion?.animate ) {
+		setTimeout( initEditorInteractionsHandler, 100 );
+		return;
+	}
+
+	const head = document.head;
+	let scriptTag = null;
+	let observer = null;
+
+	function setupObserver( tag ) {
+		if ( observer ) {
+			observer.disconnect();
 		}
 
-		// Watch head for script tag to appear
-		const headObserver = new MutationObserver( () => {
-			const foundScriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
-			if ( foundScriptTag && foundScriptTag !== scriptTag ) {
-				scriptTag = foundScriptTag;
-				setupObserver( scriptTag );
-				headObserver.disconnect();
-			}
+		observer = new MutationObserver( () => {
+			handleInteractionsUpdate();
 		} );
 
-		headObserver.observe( head, {
-			childList: true, // Watch for new script tags being added
+		observer.observe( tag, {
+			childList: true,
+			characterData: true,
 			subtree: true,
 		} );
 
-		scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
-		if ( scriptTag ) {
+		handleInteractionsUpdate();
+		registerWindowEvents();
+	}
+
+	const headObserver = new MutationObserver( () => {
+		const foundScriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+		if ( foundScriptTag && foundScriptTag !== scriptTag ) {
+			scriptTag = foundScriptTag;
 			setupObserver( scriptTag );
 			headObserver.disconnect();
 		}
-	}
+	} );
 
-	function registerWindowEvents() {
-		window.top.addEventListener( 'atomic/play_interactions', handlePlayInteractions );
-	}
+	headObserver.observe( head, {
+		childList: true,
+		subtree: true,
+	} );
 
-	function handlePlayInteractions( event ) {
-		const elementId = event.detail.elementId;
-		const interactionsData = getInteractionsData();
-		const item = interactionsData.find( ( elementItemData ) => elementItemData.dataId === elementId );
-		if ( ! item ) {
-			return;
-		}
-		const element = findElementByDataId( elementId );
-		if ( element ) {
-			const targetElement = getAnimationTarget( element );
-			if ( targetElement ) {
-				applyInteractionsToElement( targetElement, item.interactions );
-			}
-		}
+	scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+	if ( scriptTag ) {
+		setupObserver( scriptTag );
+		headObserver.disconnect();
 	}
+}
 
-	// Initialize when DOM is ready
-	if ( 'loading' === document.readyState ) {
-		document.addEventListener( 'DOMContentLoaded', initEditorInteractionsHandler );
-	} else {
-		initEditorInteractionsHandler();
+function registerWindowEvents() {
+	window.top.addEventListener( 'atomic/play_interactions', handlePlayInteractions );
+}
+
+function handlePlayInteractions( event ) {
+	const { elementId, animationId } = event.detail;
+	const interactionsData = getInteractionsData();
+	const item = interactionsData.find( ( elementItemData ) => elementItemData.dataId === elementId );
+	if ( ! item ) {
+		return;
 	}
-} )();
+	const element = findElementByInteractionId( elementId );
+	if ( element ) {
+		const interactionsCopy = {
+			...item.interactions,
+			items: [ ...item.interactions.items ],
+		};
+		interactionsCopy.items = interactionsCopy.items.filter( ( interactionItem ) => interactionItem.animation.animation_id === animationId );
+		applyInteractionsToElement( element, JSON.stringify( interactionsCopy ) );
+	}
+}
+
+if ( 'loading' === document.readyState ) {
+	document.addEventListener( 'DOMContentLoaded', initEditorInteractionsHandler );
+} else {
+	initEditorInteractionsHandler();
+}
 
