@@ -19,6 +19,7 @@ import { CreateComponentForm } from './components/create-component-form/create-c
 import { EditComponent } from './components/edit-component/edit-component';
 import { openEditModeDialog } from './components/in-edit-mode';
 import { createComponentType, TYPE } from './create-component-type';
+import { initMcp } from './mcp';
 import { PopulateStore } from './populate-store';
 import { componentsStylesProvider } from './store/components-styles-provider';
 import { loadComponentsAssets } from './store/load-components-assets';
@@ -84,4 +85,6 @@ export function init() {
 
 	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );
 	settingsTransformersRegistry.register( 'overridable', componentOverridableTransformer );
+
+	initMcp();
 }
