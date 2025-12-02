@@ -3,11 +3,8 @@
 		<{{ settings.tag | e('html_tag') }} class="{{ settings.classes | merge( [ base_styles.base ] ) | join(' ') }}" data-interaction-id="{{ id }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" {{ id_attribute }} {{ settings.attributes | raw }}>
 			{% if settings.link.href %}
 				<{{ settings.link.tag | e('html_tag') }}
-					{% if settings.link.tag == 'a' %}
-						href="{{ settings.link.href | raw }}"
-					{% else %}
-						data-action-link="{{ settings.link.href | raw }}"
-					{% endif %}
+					{% set linkAttr = settings.link.tag == 'a' ? 'href' : 'data-action-link' %}
+					{{ linkAttr }}="{{ settings.link.href | raw }}"
 					target="{{ settings.link.target }}"
 					class="{{ base_styles['link-base'] }}"
 				>

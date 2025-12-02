@@ -44,28 +44,16 @@ class Flexbox extends Atomic_Element_Base {
 
 	protected static function define_props_schema(): array {
 		$tag_dependencies = Dependency_Manager::make( Dependency_Manager::RELATION_AND )
-			->where( Dependency_Manager::make()
-				->where( [
-					'operator' => 'not_exist',
-					'path' => [ 'link', 'destination' ],
-				] )
-				->where( [
-					'operator' => 'ne',
-					'path' => [ 'link', 'tag' ],
-					'value' => 'button',
-				] )
-				->where( [
-					'operator' => 'eq',
-					'path' => [ 'link', 'destination' ],
-					'nestedPath' => [ 'group' ],
-					'value' => 'action',
-				] )
-				->get(),
-				[
+			->where( [
+				'operator' => 'ne',
+				'path' => [ 'link', 'destination' ],
+				'nestedPath' => [ 'group' ],
+				'value' => 'action',
+				'newValue' => [
 					'$$type' => 'string',
 					'value' => 'button',
-				]
-			)->where( [
+				],
+			] )->where( [
 				'operator' => 'not_exist',
 				'path' => [ 'link', 'destination' ],
 				'newValue' => [

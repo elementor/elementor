@@ -31,7 +31,7 @@ class Link_Prop_Type extends Object_Prop_Type {
 				'nestedPath' => [ 'group' ],
 				'value' => 'action',
 				'newValue' => String_Prop_Type::generate( 'button' ),
-		] )->get();
+			] )->get();
 
 		return [
 			'destination' => Union_Prop_Type::make()

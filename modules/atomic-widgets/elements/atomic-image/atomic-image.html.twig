@@ -2,12 +2,8 @@
 	{% set id_attribute = settings._cssid is not empty ? 'id=' ~ settings._cssid | e('html_attr') : '' %}	
 	{% if settings.link.href %}
 		<{{ settings.link.tag | e('html_tag') }}
-			data-action-link-id="{{ id }}"
-			{% if settings.link.tag == 'a' %}
-				href="{{ settings.link.href | raw }}"
-			{% else %}
-				data-action-link="{{ settings.link.href | raw }}"
-			{% endif %}
+			{% set linkAttr = settings.link.tag == 'a' ? 'href' : 'data-action-link' %}
+			{{ linkAttr }}="{{ settings.link.href | raw }}"
 			class="{{ base_styles['link-base'] }}"
 			target="{{ settings.link.target }}"
 			data-interaction-id="{{ id }}"
