@@ -150,11 +150,10 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
 			$html_tag = Utils::validate_html_tag( $settings['link']['tag'] ?? 'a' );
 			$svg_html = sprintf(
-				'<%s %s="%s" data-id="%s" target="%s" class="%s" %s>%s</%s>',
+				'<%s %s="%s" target="%s" class="%s" %s>%s</%s>',
 				$html_tag,
 				'button' === $html_tag ? 'data-action-link' : 'href',
 				$settings['link']['href'],
-				esc_attr( $this->get_id() ),
 				esc_attr( $settings['link']['target'] ),
 				esc_attr( $classes_string ),
 				$attributes_string,

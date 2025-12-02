@@ -276,7 +276,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 		return [
 			$href_attribute_key => $href,
-			'data-id' => $this->get_id(),
 			'target' => $target,
 		];
 	}

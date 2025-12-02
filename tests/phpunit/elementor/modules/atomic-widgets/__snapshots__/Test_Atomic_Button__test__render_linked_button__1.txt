@@ -1,5 +1,4 @@
 			    	            <a
-			data-id="e8e55a1"
 			                href="https://example.com"
                         target="_blank"
             class="e-button-base"

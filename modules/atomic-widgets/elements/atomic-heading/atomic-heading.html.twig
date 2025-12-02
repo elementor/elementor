@@ -13,7 +13,6 @@
 
 	{% if settings.link.href %}
 		<{{ settings.link.tag | e('html_tag') }} 
-			data-id="{{ id }}"
 			{% if settings.link.tag == 'a' %}
 				href="{{ settings.link.href | raw }}"
 			{% else %}

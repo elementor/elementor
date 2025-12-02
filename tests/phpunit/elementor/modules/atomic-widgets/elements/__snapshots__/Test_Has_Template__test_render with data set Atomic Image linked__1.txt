@@ -1,11 +1,9 @@
 					
 			<a
-			data-action-link="true"
+			data-action-link-id="e8e55a1"
 							href="https://example.com"
 						class="e-image-link-base"
 			target="_blank"
-			data-id="e8e55a1"
-			data-e-type="e-image"
 			data-interaction-id="e8e55a1"
 			data-interactions="&#x5B;&#x5D;"
 		>

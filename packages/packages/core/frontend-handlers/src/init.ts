@@ -43,10 +43,15 @@ export function init() {
 		} );
 
 		Array.from( elementSelectorHandlers.keys() ).forEach( ( selector ) => {
-			Array.from( document.querySelectorAll( selector + '[data-id]' ) ).forEach( ( element ) => {
+			Array.from( document.querySelectorAll( selector ) ).forEach( ( element ) => {
 				const el = element as HTMLElement;
+				const elementId = el?.closest( '[data-id]' )?.getAttribute( 'data-id' ) ?? '';
 
-				onElementSelectorRender( { element, controller, elementId: el.dataset.id ?? '' } );
+				onElementSelectorRender( {
+					element,
+					controller,
+					elementId,
+				} );
 			} );
 		} );
 	} );
