@@ -77,3 +77,12 @@ export function setDocumentModifiedStatus( status: boolean ) {
 export function getV1CurrentDocument(): V1Document {
 	return ( window as unknown as ExtendedWindow ).elementor?.documents?.getCurrent();
 }
+
+export function isDocumentDirty( document: Document ) {
+	const isDraft = document.status.value === 'draft';
+
+	// When the document is published, but have draft version.
+	const hasAutosave = document.revisions?.current_id !== document.id;
+
+	return isDraft || hasAutosave;
+}

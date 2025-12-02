@@ -1,9 +1,13 @@
+import { type Document } from '@elementor/editor-documents';
+
 import { apiClient } from '../../api';
 import { getComponentDocumentData, invalidateComponentDocumentData } from '../../utils/component-document-data';
+import { getComponentIds } from '../../utils/get-component-ids';
 import { updateComponentsBeforeSave } from '../update-components-before-save';
 import { createMockContainer } from './utils';
 
 jest.mock( '../../utils/component-document-data' );
+jest.mock( '../../utils/get-component-ids' );
 jest.mock( '../../api' );
 
 describe( 'updateComponentsBeforeSave', () => {
@@ -18,12 +22,18 @@ describe( 'updateComponentsBeforeSave', () => {
 					value: id === PUBLISHED_COMPONENT_ID || id === HAS_AUTOSAVE_COMPONENT_ID ? 'publish' : 'draft',
 				},
 				revisions: { current_id: HAS_AUTOSAVE_COMPONENT_ID === id ? 9000 : id },
-			} );
+			} as Document );
 		} );
 	} );
 
 	it( 'should update all the components when publishing', async () => {
 		// Arrange.
+		jest.mocked( getComponentIds ).mockResolvedValue( [
+			1000,
+			PUBLISHED_COMPONENT_ID,
+			3000,
+			HAS_AUTOSAVE_COMPONENT_ID,
+		] );
 
 		const container = createMockContainer( [
 			{
@@ -100,6 +110,8 @@ describe( 'updateComponentsBeforeSave', () => {
 
 	it( 'should not update any components when not publishing', async () => {
 		// Arrange.
+		jest.mocked( getComponentIds ).mockResolvedValue( [ 1000 ] );
+
 		const container = createMockContainer( [
 			{
 				elType: 'widget',
@@ -127,6 +139,8 @@ describe( 'updateComponentsBeforeSave', () => {
 
 	it( 'should not update any components when all components are published', async () => {
 		// Arrange.
+		jest.mocked( getComponentIds ).mockResolvedValue( [ PUBLISHED_COMPONENT_ID ] );
+
 		const container = createMockContainer( [
 			{
 				elType: 'widget',
