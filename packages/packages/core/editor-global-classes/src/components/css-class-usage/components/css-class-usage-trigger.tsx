@@ -16,6 +16,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
+import { trackGlobalClasses } from '../../../utils/tracking';
 import { type CssClassID } from '../types';
 import { CssClassUsagePopover } from './css-class-usage-popover';
 
@@ -32,20 +33,34 @@ export const CssClassUsageTrigger = ( { id, onClick }: { id: CssClassID; onClick
 
 	const WrapperComponent = total !== 0 ? TooltipWrapper : InfoAlertMessage;
 
+	const handleMouseEnter = () => {
+		trackGlobalClasses( {
+			event: 'classUsageHovered',
+			classId: id,
+			usage: total,
+		} );
+	};
+
+	const handleClick = ( e: MouseEvent ) => {
+		if ( total !== 0 ) {
+			bindTrigger( cssClassUsagePopover ).onClick( e );
+			onClick( id );
+			trackGlobalClasses( {
+				event: 'classUsageClicked',
+				classId: id,
+			} );
+		}
+	};
+
 	return (
 		<>
-			<Box position={ 'relative' }>
+			<Box position={ 'relative' } onMouseEnter={ handleMouseEnter }>
 				<WrapperComponent total={ total }>
 					<CustomIconButton
 						disabled={ total === 0 }
 						size={ 'tiny' }
 						{ ...bindTrigger( cssClassUsagePopover ) }
-						onClick={ ( e: MouseEvent ) => {
-							if ( total !== 0 ) {
-								bindTrigger( cssClassUsagePopover ).onClick( e );
-								onClick( id );
-							}
-						} }
+						onClick={ handleClick }
 					>
 						<CurrentLocationIcon fontSize={ 'tiny' } />
 					</CustomIconButton>
