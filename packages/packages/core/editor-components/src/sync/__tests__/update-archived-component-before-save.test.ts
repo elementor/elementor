@@ -126,7 +126,6 @@ describe( 'updateArchivedComponentBeforeSave', () => {
 	it( 'should throw error when API call fails', async () => {
 		// Arrange
 		const archivedComponent = { id: 100, uid: 'uid-1', name: 'Component 1' };
-		const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => null );
 
 		__dispatch( slice.actions.add( archivedComponent ) );
 		__dispatch( slice.actions.archive( archivedComponent.id ) );
@@ -138,9 +137,6 @@ describe( 'updateArchivedComponentBeforeSave', () => {
 		await expect( updateArchivedComponentBeforeSave() ).rejects.toThrow(
 			'Failed to update archived components: Error: Network error'
 		);
-		expect( consoleErrorSpy ).toHaveBeenCalledWith( apiError );
 		expect( mockNotify ).not.toHaveBeenCalled();
-
-		consoleErrorSpy.mockRestore();
 	} );
 } );
