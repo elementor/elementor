@@ -1,21 +1,19 @@
 import { decodeString, encodeString } from '../encoding';
 
 describe( 'encoding', () => {
-	describe( 'encodeString and decodeString', () => {
-		it( 'should encode and decode mixed Unicode characters', () => {
-			const original = 'Hello שלום مرحبا 你好 🎉 /*...*/';
-			const encoded = encodeString( original );
-			const decoded = decodeString( encoded );
+	it( 'should encode and decode mixed Unicode characters', () => {
+		const original = 'Hello שלום مرحبا 你好 🎉 /*...*/';
+		const encoded = encodeString( original );
+		const decoded = decodeString( encoded );
 
-			expect( decoded ).toBe( original );
-		} );
+		expect( decoded ).toBe( original );
+	} );
 
-		it( 'should return fallback on decode error', () => {
-			const invalid = 'not-valid-base64!!!';
-			const fallback = 'fallback value';
-			const decoded = decodeString( invalid, fallback );
+	it( 'should return fallback on decode error', () => {
+		const invalid = 'not-valid-base64!!!';
+		const fallback = 'fallback value';
+		const decoded = decodeString( invalid, fallback );
 
-			expect( decoded ).toBe( fallback );
-		} );
+		expect( decoded ).toBe( fallback );
 	} );
 } );
