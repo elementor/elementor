@@ -43,13 +43,19 @@ $remote-templates-items-space: 30px;
 	padding: 17px 20px;
 	border-block-end: 3px solid transparent;
 	cursor: pointer;
+	background: transparent;
+	margin: 0;
+	font-size: inherit;
+	font-family: inherit;
+	color: inherit;
 
 	&:hover {
 		background-color: var(--e-a-bg-hover);
 		border-color: var(--e-a-bg-hover);
 	}
 
-	&.elementor-active {
+	&.elementor-active,
+	&[aria-selected="true"] {
 		border-color: var(--e-a-border-color-accent);
 		color: var(--e-a-color-txt-accent);
 	}
