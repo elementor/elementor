@@ -168,7 +168,7 @@ class Components_REST_API {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/archive', [
 			[
 				'methods' => 'POST',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->archive_component( $request ) ),
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->archive_components( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 				'args' => [
 					'componentIds' => [
@@ -194,7 +194,6 @@ class Components_REST_API {
 				'id' => $component['id'],
 				'name' => $component['title'],
 				'uid' => $component['uid'],
-				'is_archived' => $component['is_archived'],
 			] )
 			->all() );
 
@@ -359,15 +358,15 @@ class Components_REST_API {
 		return ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] === (int) $current_user_id;
 	}
 
-	private function archive_component( \WP_REST_Request $request ) {
+	private function archive_components( \WP_REST_Request $request ) {
 		$component_ids = $request->get_param( 'componentIds' );
 		try {
 			$success = $this->get_repository()->archive( $component_ids );
 		} catch ( \Exception $e ) {
-			error_log( 'Components REST API archive_component error: ' . $e->getMessage() );
+			error_log( 'Components REST API archive_components error: ' . $e->getMessage() );
 			return Error_Builder::make( 'archive_failed' )
 				->set_status( 500 )
-				->set_message( __( 'Failed to archive component', 'elementor' ) )
+				->set_message( __( 'Failed to archive components', 'elementor' ) )
 				->build();
 		}
 		return Response_Builder::make( [ 'success' => $success ] )->build();

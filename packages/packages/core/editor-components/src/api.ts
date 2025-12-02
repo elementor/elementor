@@ -78,5 +78,5 @@ export const apiClient = {
 			.post< { success: boolean } >( BASE_URL_ARCHIVE, {
 				componentIds,
 			} )
-			.then( ( res ) => res.data.data ),
+			.then( ( res ) => res.data ),
 };
