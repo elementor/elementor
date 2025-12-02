@@ -5,6 +5,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -84,9 +85,11 @@ class Module extends BaseModule {
 	}
 
 	private function register_frontend_scripts() {
+		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
+
 		wp_register_script(
 			'motion-js',
-			ELEMENTOR_ASSETS_URL . 'lib/motion/motion.js',
+			ELEMENTOR_ASSETS_URL . 'lib/motion/motion' . $suffix . '.js',
 			[],
 			'11.13.5',
 			true
