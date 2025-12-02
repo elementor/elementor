@@ -4,12 +4,9 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 
 import { apiClient } from '../api';
 import { type ComponentId } from '../types';
-import { getComponentIds } from '../utils/get-component-ids';
 import { selectStyles, slice } from './store';
 
-export async function loadComponentsStyles( elements: V1ElementData[] ) {
-	const componentIds = getComponentIds( elements );
-
+export async function loadComponentsStyles( componentIds: number[] ) {
 	if ( ! componentIds.length ) {
 		return;
 	}
@@ -28,10 +25,6 @@ async function addComponentStyles( ids: ComponentId[] ) {
 	const newComponents = await loadStyles( ids );
 
 	addStyles( newComponents );
-
-	Object.values( newComponents ).forEach( ( [ , data ] ) => {
-		loadComponentsStyles( data.elements ?? ( [] as V1ElementData[] ) );
-	} );
 }
 
 async function loadStyles( ids: number[] ): Promise< [ number, V1ElementData ][] > {
