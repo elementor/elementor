@@ -5,7 +5,7 @@ export const ImportExportSelectors = {
 	importNavigationButton: '#elementor-import-export__import',
 	tabContent: '#tab-import-export-kit',
 
-	exportCustomizationPage: '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export-customization',
+	exportCustomizationPage: '/wp-admin/admin.php?page=elementor-app&ver=3.33.0#/export',
 
 	kitNameInput: 'input[placeholder="Type name here..."]',
 	kitDescriptionInput: 'textarea[placeholder="Type description here..."]',

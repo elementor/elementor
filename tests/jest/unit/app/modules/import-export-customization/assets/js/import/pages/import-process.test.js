@@ -98,32 +98,32 @@ describe( 'ImportProcess Page', () => {
 		expect( screen.getByText( 'We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact' ) ).toBeTruthy();
 	} );
 
-	it( 'navigates to /import-customization/complete when status is DONE and no error (first useEffect)', () => {
+	it( 'navigates to /import/complete when status is DONE and no error (first useEffect)', () => {
 		// Arrange
 		setup( { status: 'DONE', error: null } );
 		// Act
 		render( <ImportProcess /> );
 		// Assert
 		waitFor( () => {
-			expect( mockNavigate ).toHaveBeenCalledWith( '/import-customization/complete' );
+			expect( mockNavigate ).toHaveBeenCalledWith( '/import/complete' );
 		} );
 	} );
 
-	it( 'navigates to import-customization/complete when status is DONE and no error (second useEffect)', () => {
+	it( 'navigates to import/complete when status is DONE and no error (second useEffect)', () => {
 		// Arrange
 		setup( { status: 'DONE', error: null } );
 		// Act
 		render( <ImportProcess /> );
 		// Assert
-		expect( mockNavigate ).toHaveBeenCalledWith( 'import-customization/complete' );
+		expect( mockNavigate ).toHaveBeenCalledWith( 'import/complete' );
 	} );
 
-	it( 'navigates to import-customization with replace when isProcessing is false', () => {
+	it( 'navigates to import with replace when isProcessing is false', () => {
 		// Arrange
 		setup( { isProcessing: false, status: 'IN_PROGRESS', error: null } );
 		// Act
 		render( <ImportProcess /> );
 		// Assert
-		expect( mockNavigate ).toHaveBeenCalledWith( 'import-customization', { replace: true } );
+		expect( mockNavigate ).toHaveBeenCalledWith( 'import', { replace: true } );
 	} );
 } );

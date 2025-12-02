@@ -9,7 +9,7 @@ export default function ImportError( { statusText } ) {
 	const { dispatch } = useImportContext();
 	const handleTryAgain = () => {
 		dispatch( { type: 'RESET_STATE' } );
-		window.location.href = elementorAppConfig.base_url + '#/import-customization/';
+		window.location.href = elementorAppConfig.base_url + '#/import/';
 	};
 
 	const handleLearnMore = () => {

@@ -59,7 +59,7 @@ export default function Cloud( {
 	const isCloudKitsAvailable = cloudKitsData?.is_eligible || false;
 	const isDeactivated = quotaData && isCloudKitsDeactivated( quotaData );
 
-	const exportUrl = elementorCommon?.config?.experimentalFeatures?.[ 'import-export-customization' ] ? elementorAppConfig.base_url + '#/export-customization' : elementorAppConfig.base_url + '#/export';
+	const exportUrl = elementorCommon?.config?.experimentalFeatures?.[ 'import-export-customization' ] ? elementorAppConfig.base_url + '#/export' : elementorAppConfig.base_url + '#/export';
 
 	const menuItems = useMenuItems( path );
 

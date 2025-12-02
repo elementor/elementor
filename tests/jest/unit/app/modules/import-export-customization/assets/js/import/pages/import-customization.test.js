@@ -189,7 +189,7 @@ describe( 'ImportCustomization Page', () => {
 		// Assert
 		expect( importButton.textContent ).toBe( 'Import and apply' );
 		expect( mockDispatch ).toHaveBeenCalledWith( { type: 'SET_IMPORT_STATUS', payload: 'IMPORTING' } );
-		expect( mockNavigate ).toHaveBeenCalledWith( 'import-customization/process' );
+		expect( mockNavigate ).toHaveBeenCalledWith( 'import/process' );
 	} );
 
 	it( 'navigates to process if isProcessing is true', () => {
@@ -198,15 +198,15 @@ describe( 'ImportCustomization Page', () => {
 		// Act
 		render( <ImportCustomization /> );
 		// Assert
-		expect( mockNavigate ).toHaveBeenCalledWith( 'import-customization/process' );
+		expect( mockNavigate ).toHaveBeenCalledWith( 'import/process' );
 	} );
 
-	it( 'navigates to import-customization if isCustomizing is false', () => {
+	it( 'navigates to import if isCustomizing is false', () => {
 		// Arrange
 		setup( { isCustomizing: false } );
 		// Act
 		render( <ImportCustomization /> );
 		// Assert
-		expect( mockNavigate ).toHaveBeenCalledWith( 'import-customization', { replace: true } );
+		expect( mockNavigate ).toHaveBeenCalledWith( 'import', { replace: true } );
 	} );
 } );

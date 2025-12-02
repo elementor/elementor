@@ -6,11 +6,11 @@ import Import from './import';
 export default class ImportExportCustomization {
 	routes = [
 		{
-			path: '/export-customization/*',
+			path: '/export/*',
 			component: Export,
 		},
 		{
-			path: '/import-customization/*',
+			path: '/import/*',
 			component: Import,
 		},
 	];
