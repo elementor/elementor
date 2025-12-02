@@ -106,4 +106,26 @@ class Elementor_Test_Elements extends Elementor_Test_Base {
 			}
 		}
 	}
+
+	public function test_addChildWithNonExistentElementType() {
+		// Arrange
+		$container_data = [
+			'id' => 'test-container',
+			'elType' => 'container',
+		];
+
+		$container = $this->elementor()->elements_manager->create_element_instance( $container_data );
+
+		$non_existent_child_data = [
+			'id' => 'test-child',
+			'elType' => 'unregistered_element_type',
+		];
+
+		// Act
+		$result = $container->add_child( $non_existent_child_data );
+
+		// Assert
+		$this->assertFalse( $result );
+		$this->assertEmpty( $container->get_children() );
+	}
 }
