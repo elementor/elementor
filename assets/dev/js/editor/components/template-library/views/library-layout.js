@@ -37,6 +37,11 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 	initModal() {
 		elementorModules.common.views.modal.Layout.prototype.initModal.call( this );
 
+		const $widget = this.modal.getElements( 'widget' );
+		if ( $widget.length && 'true' === $widget.attr( 'aria-modal' ) ) {
+			$widget.attr( 'role', 'dialog' );
+		}
+
 		this.modal.on( 'hide', () => {
 			elementor.templates.eventManager.stopSessionRecording();
 		} );
