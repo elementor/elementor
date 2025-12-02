@@ -173,7 +173,12 @@ export function createTemplatedElementView( {
 		}
 
 		injectInlineEditorHandle() {
-			this.$el.on( 'dblclick', '*', this.handleRenderInlineEditor.bind( this ) );
+			if ( this.inlineEditorRoot ) {
+				this.resetInlineEditorRoot();
+			} else {
+				this.$el.on( 'dblclick', '*', this.handleRenderInlineEditor.bind( this ) );
+			}
+
 			this.plainRender();
 		}
 
@@ -205,6 +210,8 @@ export function createTemplatedElementView( {
 
 			if ( ! this.inlineEditorRoot ) {
 				this.inlineEditorRoot = createRoot( this.el );
+			} else {
+				this.resetInlineEditorRoot();
 			}
 
 			const formatValue = () => {
@@ -228,7 +235,7 @@ export function createTemplatedElementView( {
 					return settingValue;
 				}
 
-				if ( settingValue.startsWith( `<${ getProperlyTaggedValue }` ) ) {
+				if ( settingValue?.trim().startsWith( `<${ getProperlyTaggedValue }` ) ) {
 					return settingValue;
 				}
 
@@ -248,10 +255,14 @@ export function createTemplatedElementView( {
 
 		unmountInlineEditor() {
 			setTimeout( () => {
-				this.inlineEditorRoot?.unmount();
-				this.inlineEditorRoot = null;
+				this.resetInlineEditorRoot();
 				this.render();
 			} );
+		}
+
+		resetInlineEditorRoot() {
+			this.inlineEditorRoot?.unmount?.();
+			this.inlineEditorRoot = null;
 		}
 	};
 }

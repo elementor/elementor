@@ -80,11 +80,11 @@ export const InlineEditor = React.forwardRef(
 		ref: ForwardedRef< HTMLDivElement >
 	) => {
 		const onBlur = ( event: PointerEvent ) => {
-			if ( editor.view.dom.contains( event.target as Node ) ) {
+			if ( ! props.onBlur || editor.view.dom.contains( event.target as Node ) ) {
 				return;
 			}
 
-			props.onBlur?.( event );
+			props.onBlur( event );
 		};
 
 		const editor = useEditor( {
