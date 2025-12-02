@@ -8,8 +8,9 @@ import { loadComponentsStyles } from './load-components-styles';
 export async function loadComponentsAssets( elements: V1ElementData[] ) {
 	const componentIds = await getComponentIds( elements );
 
-	loadComponentsStyles( componentIds );
 	updateDocumentState( componentIds );
+
+	return loadComponentsStyles( componentIds );
 }
 
 async function updateDocumentState( componentIds: number[] ) {
