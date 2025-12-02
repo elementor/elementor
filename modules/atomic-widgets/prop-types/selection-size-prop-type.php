@@ -22,7 +22,10 @@ class Selection_Size_Prop_Type extends Object_Prop_Type {
 		];
 
 		return [
-			'selection' => Key_Value_Prop_Type::make()->required()->initial_value( $initial_value ),
+			'selection' => Key_Value_Prop_Type::make()
+				->required()
+				->initial_value( $initial_value )
+				->setting( 'hide_reset', true ),
 			'size' => Size_Prop_Type::make()
 				->units( Size_Constants::transition() )
 				->default_unit( Size_Constants::UNIT_MILLI_SECOND )
