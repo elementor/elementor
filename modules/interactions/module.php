@@ -85,9 +85,11 @@ class Module extends BaseModule {
 	}
 
 	private function register_frontend_scripts() {
+		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
+
 		wp_register_script(
 			'motion-js',
-			ELEMENTOR_ASSETS_URL . 'lib/motion/motion' . Utils::is_script_debug() ? '.dev.js' : '.js',
+			ELEMENTOR_ASSETS_URL . 'lib/motion/motion' . $suffix . '.js',
 			[],
 			'11.13.5',
 			true
