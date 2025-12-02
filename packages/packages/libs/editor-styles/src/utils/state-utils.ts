@@ -1,6 +1,11 @@
-import { type StyleDefinitionClassState, type StyleDefinitionPseudoState, type StyleDefinitionState } from '../types';
+import {
+	type StyleDefinitionAlternativePseudoState,
+	type StyleDefinitionClassState,
+	type StyleDefinitionPseudoState,
+	type StyleDefinitionState,
+} from '../types';
 
-const PSEUDO_STATES: StyleDefinitionPseudoState[] = [ 'hover', 'focus', 'active' ];
+const PSEUDO_STATES: StyleDefinitionPseudoState[] = [ 'hover', 'focus', 'active', 'focus-visible' ];
 
 const CLASS_STATES: StyleDefinitionClassState[] = [ 'e--selected' ];
 
@@ -12,18 +17,22 @@ export function isPseudoState( state: StyleDefinitionState ): state is StyleDefi
 	return PSEUDO_STATES.includes( state as StyleDefinitionPseudoState );
 }
 
-export function getStateSelector( { label, state }: { label: string; state: StyleDefinitionState } ) {
+export function getAlternativeStates( state: StyleDefinitionState ): StyleDefinitionAlternativePseudoState[] {
+	if ( state === 'hover' ) {
+		return [ 'focus-visible' ];
+	}
+
+	return [];
+}
+
+export function getStateSelector( state: StyleDefinitionState ) {
 	if ( isClassState( state ) ) {
-		return `${ label }.${ state }`;
+		return `.${ state }`;
 	}
 
 	if ( isPseudoState( state ) ) {
-		if ( state === 'hover' ) {
-			return `${ label }:hover, ${ label }:focus-visible`;
-		}
-
-		return `${ label }:${ state }`;
+		return `:${ state }`;
 	}
 
-	return label;
+	return state;
 }

@@ -5,5 +5,5 @@ export * from './types';
 export { generateId } from './utils/generate-id';
 export { getStylesSchema } from './utils/get-styles-schema';
 export { getVariantByMeta } from './utils/get-variant-by-meta';
-export { getStateSelector, isClassState, isPseudoState } from './utils/state-utils';
+export { getStateSelector, getAlternativeStates, isClassState, isPseudoState } from './utils/state-utils';
 export { type ExtendedWindow } from './utils/types';

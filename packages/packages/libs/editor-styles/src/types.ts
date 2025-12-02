@@ -6,7 +6,9 @@ export type ClassState = {
 	value: 'e--selected';
 };
 
-export type StyleDefinitionPseudoState = 'hover' | 'focus' | 'active';
+export type StyleDefinitionPseudoState = 'hover' | 'focus' | 'active' | StyleDefinitionAlternativePseudoState;
+
+export type StyleDefinitionAlternativePseudoState = 'focus-visible';
 
 export type StyleDefinitionClassState = ClassState[ 'value' ];
 
@@ -19,7 +21,7 @@ export type CustomCss = {
 export type StyleDefinitionVariant = {
 	meta: {
 		breakpoint: null | BreakpointId;
-		state: StyleDefinitionState;
+		state: Omit< StyleDefinitionState, StyleDefinitionAlternativePseudoState >;
 	};
 	props: Props;
 	custom_css: CustomCss | null;

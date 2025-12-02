@@ -17,6 +17,27 @@ class Style_States {
 		];
 	}
 
+	public static function get_alternative_states( string $state ): array {
+		switch ( $state ) {
+			case self::HOVER:
+				return [ ':focus-visible' ];
+			default:
+				return [];
+		}
+	}
+
+	public static function get_state_selector(string $state ): string {		
+		if ( Style_States::is_class_state( $state ) ) {
+			return '.' . $state;
+		}
+
+		if ( Style_States::is_pseudo_state( $state ) ) {
+			return ':' . $state;
+		}
+
+		return $state;
+	}
+
 	public static function get_class_states(): array {
 		return [
 			self::SELECTED,
