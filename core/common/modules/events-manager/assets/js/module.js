@@ -9,8 +9,6 @@ export default class extends elementorModules.Module {
 	onInit() {
 		this.config = eventsConfig;
 
-		const isAbTestingEnabled = elementorCommon.config.editor_events?.flags_enabled ?? false;
-
 		mixpanel.init(
 			elementorCommon.config.editor_events?.token,
 			{
@@ -20,7 +18,7 @@ export default class extends elementorModules.Module {
 				record_idle_timeout_ms: 60000,
 				record_max_ms: 300000,
 				record_mask_text_selector: '',
-				flags: isAbTestingEnabled,
+				flags: true,
 				api_hosts: {
 					flags: 'https://api-eu.mixpanel.com',
 				},
@@ -109,6 +107,15 @@ export default class extends elementorModules.Module {
 
 	isSessionRecordingInProgress() {
 		return this.#sessionRecordingInProgress;
+	}
+
+	async featureFlagIsActive( flagName ) {
+		if ( 'function' !== typeof mixpanel?.flags?.is_enabled ) {
+			return false;
+		}
+
+		const isEnabled = await mixpanel.flags.is_enabled( flagName, false );
+		return true === isEnabled;
 	}
 
 	async getExperimentVariant( experimentName, defaultValue = 'control' ) {
