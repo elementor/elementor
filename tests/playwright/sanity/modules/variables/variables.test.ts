@@ -135,6 +135,21 @@ test.describe( 'Variables Module @variables', () => {
 					typeof windowTyped.$e !== 'undefined' &&
 					typeof windowTyped.elementor?.documents?.getCurrent !== 'undefined';
 			}, { timeout: 15000 } );
+
+			await editor.page.evaluate( async () => {
+				const windowTyped = window as unknown as WindowType;
+				const elementor = windowTyped.elementor as unknown as { packages?: { editorVariables?: { service?: { load: () => Promise<unknown> } } } };
+				if ( elementor?.packages?.editorVariables?.service ) {
+					await elementor.packages.editorVariables.service.load();
+				}
+			} );
+
+			await editor.waitForPreviewFrame();
+			const previewFrame = editor.getPreviewFrame();
+			await previewFrame.waitForFunction( ( varName ) => {
+				const bodyStyles = window.getComputedStyle( document.body );
+				return bodyStyles.getPropertyValue( `--${ varName }` ).trim() !== '';
+			}, variableLabel, { timeout: 10000 } );
 		} );
 
 		await test.step( 'List variables via the API and verify the variable is created', async () => {
@@ -168,7 +183,10 @@ test.describe( 'Variables Module @variables', () => {
 
 			await editor.page.evaluate( async ( { targetId, varId } ) => {
 				const windowTyped = window as unknown as WindowType;
-				const elementor = windowTyped.elementor;
+				const elementor = windowTyped.elementor as unknown as {
+					getContainer: ( id: string ) => { model: { get: ( key: string ) => unknown; set: ( key: string, value: unknown ) => void } } | null;
+					files_manager?: { clearCache: () => void };
+				};
 				const $e = windowTyped.$e;
 
 				if ( ! elementor || ! elementor.getContainer ) {
@@ -190,16 +208,97 @@ test.describe( 'Variables Module @variables', () => {
 					value: varId,
 				};
 
-				await $e.run( 'document/elements/settings', {
-					container,
-					settings: {
-						styles: {
+				type StyleDefinition = {
+					id: string;
+					label: string;
+					type: string;
+					variants: Array<{
+						meta: { breakpoint: string; state: string | null };
+						props: Record< string, unknown >;
+						custom_css: string | null;
+					}>;
+				};
+
+				const currentStyles = ( container.model.get( 'styles' ) || {} ) as Record< string, StyleDefinition >;
+				const localStyle = Object.values( currentStyles ).find( ( style ) => 'local' === style.label );
+
+				let styleId: string;
+				if ( localStyle ) {
+					styleId = localStyle.id;
+					const currentVariants = localStyle.variants || [];
+					const desktopVariant = currentVariants.find( ( v ) => 'desktop' === v.meta?.breakpoint && null === v.meta?.state ) || {
+						meta: { breakpoint: 'desktop', state: null },
+						props: {},
+						custom_css: null,
+					};
+
+					const updatedVariants = currentVariants.filter( ( v ) => ! ( 'desktop' === v.meta?.breakpoint && null === v.meta?.state ) );
+					updatedVariants.push( {
+						...desktopVariant,
+						props: {
+							...desktopVariant.props,
 							color: variableSetting,
 						},
-					},
-				} );
+					} );
+
+					const updatedStyles = {
+						...currentStyles,
+						[ styleId ]: {
+							...localStyle,
+							variants: updatedVariants,
+						},
+					};
+
+					container.model.set( 'styles', updatedStyles );
+				} else {
+					styleId = `e-${ targetId }-${ Math.random().toString( 36 ).substr( 2, 9 ) }`;
+					const newStyle: StyleDefinition = {
+						id: styleId,
+						label: 'local',
+						type: 'class',
+						variants: [
+							{
+								meta: { breakpoint: 'desktop', state: null },
+								props: {
+									color: variableSetting,
+								},
+								custom_css: null,
+							},
+						],
+					};
+
+					const updatedStyles = {
+						...currentStyles,
+						[ styleId ]: newStyle,
+					};
+
+					container.model.set( 'styles', updatedStyles );
+
+					const currentClasses = container.model.get( 'settings' ) as { classes?: { $$type: string; value: unknown[] } } | undefined;
+					const classesProp = currentClasses?.classes || { $$type: 'classes', value: [] };
+					const classesValue = Array.isArray( classesProp.value ) ? classesProp.value : [];
+					if ( ! classesValue.includes( styleId ) ) {
+						classesValue.push( styleId );
+					}
+
+					await $e.run( 'document/elements/settings', {
+						container,
+						settings: {
+							classes: {
+								$$type: 'classes',
+								value: classesValue,
+							},
+						},
+					} );
+				}
 
 				await $e.run( 'document/save/draft', {} );
+
+				if ( elementor.files_manager ) {
+					elementor.files_manager.clearCache();
+				}
+
+				await $e.run( 'preview/reload', {} );
 			}, { targetId: firstHeadingId, varId: variableId } );
 
 			await editor.publishPage();
@@ -212,15 +311,24 @@ test.describe( 'Variables Module @variables', () => {
 			}, { timeout: 15000 } );
 
 			await editor.waitForPreviewFrame();
+			const previewFrame = editor.getPreviewFrame();
+			await previewFrame.waitForFunction( ( { selector, expectedColor } ) => {
+				const heading = document.querySelector( selector );
+				if ( ! heading ) {
+					return false;
+				}
+				const computedColor = window.getComputedStyle( heading ).color;
+				return computedColor === expectedColor;
+			}, {
+				selector: `.elementor-element-${ firstHeadingId } .e-heading-base`,
+				expectedColor: 'rgb(0, 0, 0)',
+			}, { timeout: 15000 } );
 		} );
 
 		await test.step( 'Open variables in the manager and verify the variable is in the list', async () => {
 			await editor.waitForPreviewFrame();
 
 			const previewFrame = editor.getPreviewFrame();
-			const firstHeading = previewFrame.locator( `.elementor-element-${ firstHeadingId } .e-heading-base` );
-			// Await firstHeading.click();
-
 			const secondHeading = previewFrame.locator( `.elementor-element-${ secondHeadingId } .e-heading-base` );
 			await secondHeading.click();
 
