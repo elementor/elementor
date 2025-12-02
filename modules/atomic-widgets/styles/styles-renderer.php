@@ -138,10 +138,10 @@ class Styles_Renderer {
 		}
 
 		$alternative_states = Style_States::get_alternative_states( $state );
-		$all_states = [Style_States::get_state_selector( $state ), ...$alternative_states];
+		$all_states = [$state, ...$alternative_states];
 
 		foreach ($all_states as $current_state) {
-			$selector_strings[] = $base_selector . $current_state;
+			$selector_strings[] = $base_selector . Style_States::get_state_selector( $current_state );
 		}
 
 		return implode(', ', $selector_strings);

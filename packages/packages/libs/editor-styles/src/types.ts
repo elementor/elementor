@@ -12,7 +12,10 @@ export type StyleDefinitionAlternativePseudoState = 'focus-visible';
 
 export type StyleDefinitionClassState = ClassState[ 'value' ];
 
-export type StyleDefinitionState = null | StyleDefinitionPseudoState | StyleDefinitionClassState;
+export type StyleDefinitionState =
+	| null
+	| Omit< StyleDefinitionPseudoState, StyleDefinitionAlternativePseudoState >
+	| StyleDefinitionClassState;
 
 export type CustomCss = {
 	raw: string;
@@ -21,7 +24,7 @@ export type CustomCss = {
 export type StyleDefinitionVariant = {
 	meta: {
 		breakpoint: null | BreakpointId;
-		state: Omit< StyleDefinitionState, StyleDefinitionAlternativePseudoState >;
+		state: StyleDefinitionState;
 	};
 	props: Props;
 	custom_css: CustomCss | null;
