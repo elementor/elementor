@@ -3,7 +3,7 @@ import { decodeString, encodeString } from '../encoding';
 describe( 'encoding', () => {
 	describe( 'encodeString and decodeString', () => {
 		it( 'should encode and decode mixed Unicode characters', () => {
-			const original = 'Hello שלום مرحبا 你好 🎉';
+			const original = 'Hello שלום مرحبا 你好 🎉 /*...*/';
 			const encoded = encodeString( original );
 			const decoded = decodeString( encoded );
 
