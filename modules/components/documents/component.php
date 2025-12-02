@@ -74,7 +74,7 @@ class Component extends Document {
 				'archived_at' => time(),
 			] ) );
 		} catch ( \Exception $e ) {
-			throw new \Exception( 'Failed to archive component: ' . $e->getMessage() );
+			throw new \Exception( 'Failed to archive component: ' . esc_html( $e->getMessage() ) );
 		}
 	}
 
