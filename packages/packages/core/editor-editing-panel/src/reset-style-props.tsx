@@ -28,9 +28,7 @@ export function useResetStyleValueProps() {
 	const hasInitial = propType.initial_value !== undefined && propType.initial_value !== null;
 	const isRequired = !! propType.settings?.required;
 
-	const shouldHide = HIDDEN_RESET_RULES.some(
-		rule => rule.group === path.at( 0 ) && rule.bind === bind
-	);
+	const shouldHide = HIDDEN_RESET_RULES.some( rule => rule.group === path.at( 0 ) && rule.bind === bind );
 
 	function calculateVisibility() {
 		if ( ! isStyle || ! hasValue || shouldHide ) {
