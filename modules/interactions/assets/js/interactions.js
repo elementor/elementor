@@ -6,16 +6,22 @@ function scrollOutAnimation( element, animConfig, keyframes, options, animateFun
 
 	animateFunc( element, resetKeyframes, { duration: 0 } );
 
-	inViewFunc( element, () => {
-		return () => animateFunc( element, keyframes, options );
+	const stop = inViewFunc( element, () => {
+		return () => {
+			animateFunc( element, keyframes, options );
+			stop();
+		};
 	}, viewOptions );
 }
 
 function scrollInAnimation( element, keyframes, options, animateFunc, inViewFunc ) {
-	const viewOptions = { amount: 0.15, root: null };
+	const viewOptions = { amount: 0, root: null };
 	inViewFunc( element, () => {
 		animateFunc( element, keyframes, options );
-		return () => scrollInAnimation( element, keyframes, options, animateFunc, inViewFunc );
+		// This block is once the replay scroll animation should operate.
+		if ( true === animConfig.replay ) {
+			return () => scrollInAnimation( element, keyframes, options, animateFunc, inViewFunc );
+		}
 	}, viewOptions );
 }
 
