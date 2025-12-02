@@ -226,11 +226,20 @@ describe( 'ExportKitPartsSelection Component', () => {
 		} );
 
 		it( 'should show unchecked state for items not in includes array', () => {
+			const data = {
+				includes: [ 'content' ],
+			};
+
 			useExportContext.mockReturnValue( {
-				data: {
-					includes: [ 'content' ],
-				},
+				data,
 				dispatch: mockDispatch,
+			} );
+
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data,
+				},
 			} );
 
 			const { container } = render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
@@ -247,11 +256,20 @@ describe( 'ExportKitPartsSelection Component', () => {
 		} );
 
 		it( 'should handle empty includes array', () => {
+			const data = {
+				includes: [],
+			};
+
 			useExportContext.mockReturnValue( {
-				data: {
-					includes: [],
-				},
+				data,
 				dispatch: mockDispatch,
+			} );
+
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data,
+				},
 			} );
 
 			const { container } = render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
@@ -269,11 +287,20 @@ describe( 'ExportKitPartsSelection Component', () => {
 		} );
 
 		it( 'should handle all items included', () => {
+			const data = {
+				includes: [ 'content', 'templates', 'settings', 'plugins' ],
+			};
+
 			useExportContext.mockReturnValue( {
-				data: {
-					includes: [ 'content', 'templates', 'settings', 'plugins' ],
-				},
+				data,
 				dispatch: mockDispatch,
+			} );
+
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data,
+				},
 			} );
 
 			const { container } = render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
@@ -412,6 +439,13 @@ describe( 'ExportKitPartsSelection Component', () => {
 				dispatch: mockDispatch,
 			} );
 
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data: mockData,
+				},
+			} );
+
 			const { container } = render( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
 
 			// Use data-type attributes instead of array indexes
@@ -428,11 +462,20 @@ describe( 'ExportKitPartsSelection Component', () => {
 			expect( getCheckboxByType( container, 'content' ).checked ).toBe( true );
 
 			// Update context data
+			const newData = {
+				includes: [ 'templates', 'plugins' ],
+			};
+
 			useExportContext.mockReturnValue( {
-				data: {
-					includes: [ 'templates', 'plugins' ],
-				},
+				data: newData,
 				dispatch: mockDispatch,
+			} );
+
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data: newData,
+				},
 			} );
 
 			rerender( <ExportKitPartsSelection />, { wrapper: createQueryWrapper() } );
