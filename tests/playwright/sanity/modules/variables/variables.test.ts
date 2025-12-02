@@ -47,7 +47,6 @@ test.describe( 'Variables Module @variables', () => {
 			divBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 			firstHeadingId = await editor.addWidget( { widgetType: 'e-heading', container: divBlockId } );
 			secondHeadingId = await editor.addWidget( { widgetType: 'e-heading', container: divBlockId } );
-			await editor.page.waitForTimeout( 1000 );
 
 			await editor.page.evaluate( async () => {
 				const windowTyped = window as unknown as WindowType;
@@ -328,11 +327,32 @@ test.describe( 'Variables Module @variables', () => {
 		await test.step( 'Open variables in the manager and verify the variable is in the list', async () => {
 			await editor.waitForPreviewFrame();
 
-			const previewFrame = editor.getPreviewFrame();
-			const secondHeading = previewFrame.locator( `.elementor-element-${ secondHeadingId } .e-heading-base` );
-			await secondHeading.click();
+			await editor.page.evaluate( async ( { targetId } ) => {
+				const windowTyped = window as unknown as WindowType;
+				const elementor = windowTyped.elementor;
+				const $e = windowTyped.$e;
+
+				if ( ! elementor || ! elementor.getContainer ) {
+					throw new Error( 'Elementor instance not found' );
+				}
+
+				if ( ! $e || ! $e.run ) {
+					throw new Error( '$e instance not found' );
+				}
+
+				const container = elementor.getContainer( targetId );
+
+				if ( ! container ) {
+					throw new Error( `Container with ID ${ targetId } not found` );
+				}
+
+				await $e.run( 'document/elements/select', {
+					container,
+				} );
+			}, { targetId: secondHeadingId } );
 
 			await editor.page.waitForSelector( '[role="tablist"]', { timeout: 10000 } );
+			await editor.page.getByRole( 'tab', { name: 'Style' } ).waitFor( { state: 'visible', timeout: 10000 } );
 			await editor.page.getByRole( 'tab', { name: 'Style' } ).click();
 
 			const textColorControl = editor.page.locator( '#text-color-control' );
@@ -346,21 +366,20 @@ test.describe( 'Variables Module @variables', () => {
 					controlBoundingBox.x + ( controlBoundingBox.width / 2 ),
 					controlBoundingBox.y + ( controlBoundingBox.height / 2 ),
 				);
-				await editor.page.waitForTimeout( 1000 );
+				await editor.page.waitForTimeout( 500 );
 			}
 
 			await editor.page.waitForSelector( EditorSelectors.floatingElements.v4.floatingActionsBar, { timeout: 5000 } );
 			await editor.page.click( EditorSelectors.floatingElements.v4.floatingActionsBar );
 			await editor.page.waitForTimeout( 500 );
 			await editor.page.click( EditorSelectors.variables.manager.managerButton );
-			await editor.page.waitForTimeout( 2000 );
+			await editor.page.waitForTimeout( 1000 );
 
 			const variableRow = editor.page.locator( 'tbody tr', { hasText: variableLabel } );
 			await expect( variableRow ).toBeVisible( { timeout: 10000 } );
 			await expect( variableRow.getByText( variableValue ) ).toBeVisible();
 
 			await editor.page.getByRole( 'button', { name: 'Close' } ).click();
-			await editor.page.waitForTimeout( 1000 );
 		} );
 
 		await test.step( 'Apply variable to the second heading using the UI', async () => {
@@ -370,7 +389,6 @@ test.describe( 'Variables Module @variables', () => {
 			if ( ! textColorControlVisible ) {
 				await editor.page.waitForSelector( '[role="tablist"]', { timeout: 10000 } );
 				await editor.page.getByRole( 'tab', { name: 'Style' } ).click( { timeout: 10000 } );
-				await editor.page.waitForTimeout( 1000 );
 
 				if ( await textColorControl.isHidden() ) {
 					const typographyButton = editor.page.getByRole( 'button', { name: 'Typography' } );
@@ -378,7 +396,6 @@ test.describe( 'Variables Module @variables', () => {
 
 					if ( typographyButtonVisible ) {
 						await typographyButton.click();
-						await editor.page.waitForTimeout( 1000 );
 					}
 				}
 			}
@@ -394,7 +411,7 @@ test.describe( 'Variables Module @variables', () => {
 				controlBoundingBox.x + ( controlBoundingBox.width / 2 ),
 				controlBoundingBox.y + ( controlBoundingBox.height / 2 ),
 			);
-			await editor.page.waitForTimeout( 1000 );
+			await editor.page.waitForTimeout( 500 );
 
 			const floatingActionBarVisible = await editor.page.locator( EditorSelectors.floatingElements.v4.floatingActionsBar ).isVisible( { timeout: 2000 } ).catch( () => false );
 
@@ -403,7 +420,7 @@ test.describe( 'Variables Module @variables', () => {
 					controlBoundingBox.x + ( controlBoundingBox.width / 2 ),
 					controlBoundingBox.y + ( controlBoundingBox.height / 2 ),
 				);
-				await editor.page.waitForTimeout( 1000 );
+				await editor.page.waitForTimeout( 500 );
 			}
 
 			await editor.page.waitForSelector( EditorSelectors.floatingElements.v4.floatingActionsBar, { timeout: 5000 } );
@@ -411,12 +428,11 @@ test.describe( 'Variables Module @variables', () => {
 			const variablesActionButton = editor.page.locator( EditorSelectors.floatingElements.v4.floatingActionsBar ).getByRole( 'button', { name: /Variables/i } );
 			await variablesActionButton.waitFor( { state: 'visible', timeout: 5000 } );
 			await variablesActionButton.click();
-			await editor.page.waitForTimeout( 2000 );
+			await editor.page.waitForTimeout( 1000 );
 
 			const variableButton = editor.page.getByLabel( variableLabel ).first();
 			await variableButton.waitFor( { state: 'visible', timeout: 10000 } );
 			await variableButton.click();
-			await editor.page.waitForTimeout( 1000 );
 
 			await editor.page.evaluate( async () => {
 				const windowTyped = window as unknown as WindowType;
