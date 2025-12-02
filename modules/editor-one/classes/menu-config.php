@@ -243,4 +243,3 @@ class Menu_Config {
 		return apply_filters( 'elementor/admin_menu/level4_group_mapping', $default_mapping );
 	}
 }
-

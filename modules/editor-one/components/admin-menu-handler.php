@@ -88,7 +88,7 @@ class Admin_Menu_Handler {
 		}
 
 		ksort( $ordered );
-		$submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] = array_merge( array_values( $ordered ), $remaining );
+		$submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] = array_merge( array_values( $ordered ), $remaining ); // WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
 	public function reposition_elementor_menu(): void {
@@ -111,7 +111,7 @@ class Admin_Menu_Handler {
 
 		unset( $menu[ $elementor_menu_key ] );
 
-		$menu['3'] = $elementor_menu_item;
+		$menu['3'] = $elementor_menu_item;  // WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		ksort( $menu );
 	}
