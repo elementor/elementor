@@ -8,12 +8,6 @@ import { isEqual } from './utils/is-equal';
 
 const { registerAction } = controlActionsMenu;
 
-const HIDDEN_RESET_RULES = [
-	{ group: 'transition', bind: 'selection' },
-	{ group: 'filter', bind: 'func' },
-	{ group: 'backdrop-filter', bind: 'func' },
-];
-
 export function initResetStyleProps() {
 	registerAction( {
 		id: 'reset-style-value',
@@ -23,12 +17,11 @@ export function initResetStyleProps() {
 
 export function useResetStyleValueProps() {
 	const isStyle = useIsStyle();
-	const { value, resetValue, propType, path, bind } = useBoundProp();
+	const { value, resetValue, propType } = useBoundProp();
 	const hasValue = value !== null && value !== undefined;
 	const hasInitial = propType.initial_value !== undefined && propType.initial_value !== null;
 	const isRequired = !! propType.settings?.required;
-
-	const shouldHide = HIDDEN_RESET_RULES.some( ( rule ) => rule.group === path.at( 0 ) && rule.bind === bind );
+	const shouldHide = !! propType.settings?.hide_reset;
 
 	function calculateVisibility() {
 		if ( ! isStyle || ! hasValue || shouldHide ) {
