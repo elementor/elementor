@@ -1,5 +1,14 @@
 $remote-templates-items-space: 30px;
 
+@mixin button-reset {
+	background: transparent;
+	margin: 0;
+	font-size: inherit;
+	font-family: inherit;
+	color: inherit;
+	border: none;
+}
+
 #elementor-template-library-modal {
 
 	a.elementor-template-library-blank-footer-link {
@@ -43,11 +52,7 @@ $remote-templates-items-space: 30px;
 	padding: 17px 20px;
 	border-block-end: 3px solid transparent;
 	cursor: pointer;
-	background: transparent;
-	margin: 0;
-	font-size: inherit;
-	font-family: inherit;
-	color: inherit;
+	@include button-reset;
 
 	&:hover {
 		background-color: var(--e-a-bg-hover);
@@ -56,6 +61,7 @@ $remote-templates-items-space: 30px;
 
 	&.elementor-active,
 	&[aria-selected="true"] {
+		border-block-end: 3px solid;
 		border-color: var(--e-a-border-color-accent);
 		color: var(--e-a-color-txt-accent);
 	}
