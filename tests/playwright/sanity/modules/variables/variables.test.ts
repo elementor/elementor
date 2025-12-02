@@ -192,7 +192,7 @@ test.describe( 'Variables Module @variables', () => {
 			await editor.page.click( EditorSelectors.variables.manager.managerButton );
 			await editor.page.waitForTimeout( 2000 );
 
-			const variableRow = editor.page.locator( 'tr' ).filter( { hasText: new RegExp( `^${ variableLabel }$` ) } ).first();
+			const variableRow = editor.page.locator( 'tbody tr', { hasText: variableLabel } );
 			await expect( variableRow ).toBeVisible( { timeout: 10000 } );
 			await expect( variableRow.getByText( variableValue ) ).toBeVisible();
 		} );
