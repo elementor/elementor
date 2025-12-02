@@ -23,7 +23,7 @@ export const getComponentIds = async ( elements: V1ElementData[] ) => {
 			}
 		}
 
-		if ( childElements ) {
+		if ( !! childElements?.length ) {
 			ids.push( ...( await getComponentIds( childElements ) ) );
 		}
 

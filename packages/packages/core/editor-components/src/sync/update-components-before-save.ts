@@ -1,4 +1,4 @@
-import { isDocumentDrafted } from '@elementor/editor-documents';
+import { isDocumentDirty } from '@elementor/editor-documents';
 
 import { apiClient } from '../api';
 import { type Container, type DocumentSaveStatus } from '../types';
@@ -23,7 +23,7 @@ export async function updateComponentsBeforeSave( { status, container }: Options
 
 	const draftIds = componentDocumentData
 		.filter( ( document ) => !! document )
-		.filter( isDocumentDrafted )
+		.filter( isDocumentDirty )
 		.map( ( document ) => document.id );
 
 	if ( draftIds.length === 0 ) {
@@ -32,5 +32,5 @@ export async function updateComponentsBeforeSave( { status, container }: Options
 
 	await apiClient.updateStatuses( draftIds, 'publish' );
 
-	draftIds.forEach( invalidateComponentDocumentData );
+	draftIds.forEach( ( id ) => invalidateComponentDocumentData( id ) );
 }

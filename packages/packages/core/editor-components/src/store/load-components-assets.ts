@@ -1,4 +1,4 @@
-import { isDocumentDrafted, setDocumentModifiedStatus } from '@elementor/editor-documents';
+import { isDocumentDirty, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
 
 import { getComponentDocumentData } from '../utils/component-document-data';
@@ -18,7 +18,7 @@ async function updateDocumentState( componentIds: number[] ) {
 		( document ) => !! document
 	);
 
-	const isDrafted = components.some( isDocumentDrafted );
+	const isDrafted = components.some( isDocumentDirty );
 
 	if ( isDrafted ) {
 		setDocumentModifiedStatus( true );
