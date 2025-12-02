@@ -32,7 +32,7 @@ export function createMockElement( {
 				return model[ key ];
 			},
 			set: jest.fn().mockImplementation( ( key: keyof typeof model, value ) => {
-				model[ key ] = value;
+				model[ key ] = value as never;
 			} ),
 			toJSON: () => model,
 		},
