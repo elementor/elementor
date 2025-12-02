@@ -1,3 +1,5 @@
+import { type V1ElementData } from '@elementor/editor-elements';
+
 export type ExitTo = 'dashboard' | 'all_posts' | 'this_post';
 
 export type Document = {
@@ -25,17 +27,24 @@ export type Document = {
 		allowAddingWidgets: boolean;
 		showCopyAndShare: boolean;
 	};
+	revisions?: {
+		current_id: number;
+	};
+	elements?: V1ElementData[];
+};
+
+export type V1DocumentsManager = {
+	documents: Record< string, V1Document >;
+	getCurrentId: () => number;
+	getInitialId: () => number;
+	getCurrent: () => V1Document;
+	invalidateCache: ( id?: number | string ) => void;
+	request: < TData >( id: number | string ) => Promise< TData >;
 };
 
 export type ExtendedWindow = Window & {
 	elementor: {
-		documents: {
-			documents: Record< string, V1Document >;
-			getCurrentId: () => number;
-			getInitialId: () => number;
-			getCurrent: () => V1Document;
-			invalidateCache: () => void;
-		};
+		documents: V1DocumentsManager;
 		getPreferences: ( key: 'exit_to' ) => ExitTo;
 	};
 };
