@@ -1080,6 +1080,10 @@ class OnboardingTracker {
 			return;
 		}
 
+		if ( ! elementorCommon?.config?.editor_events?.session_replays?.coreOnboarding ) {
+			return;
+		}
+
 		const featureFlagPromise = elementorCommon?.eventsManager?.featureFlagIsActive?.( 'core-onboarding-session-replays' );
 		if ( ! featureFlagPromise ) {
 			return;
