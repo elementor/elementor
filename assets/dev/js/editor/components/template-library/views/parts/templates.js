@@ -6,6 +6,8 @@ import Select2 from 'elementor-editor-utils/select2.js';
 import { SAVE_CONTEXTS, QUOTA_WARNINGS, QUOTA_BAR_STATES } from './../../constants';
 
 const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
+	tagName: 'main',
+
 	template: '#tmpl-elementor-template-library-templates',
 
 	id: 'elementor-template-library-templates',
