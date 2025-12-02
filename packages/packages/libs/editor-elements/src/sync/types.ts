@@ -1,4 +1,3 @@
-import { type V1Document } from '@elementor/editor-documents';
 import { type PropsSchema, type PropValue } from '@elementor/editor-props';
 import { type ClassState, type StyleDefinition, type StyleDefinitionID } from '@elementor/editor-styles';
 
@@ -43,7 +42,6 @@ export type V1Element = {
 		};
 	};
 	parent?: V1Element;
-	document: V1Document;
 };
 
 export type ElementInteractions = {
@@ -65,7 +63,7 @@ export type V1ElementModelProps = {
 	elType: string;
 	id: string;
 	styles?: Record< StyleDefinitionID, StyleDefinition >;
-	elements?: V1Model< V1ElementModelProps, V1ElementData[] >;
+	elements?: V1Model< V1ElementModelProps >[];
 	settings?: V1ElementSettingsProps;
 	editor_settings?: V1ElementEditorSettingsProps;
 	interactions?: string | ElementInteractions;
@@ -99,8 +97,8 @@ export type V1ElementConfig< T = object > = {
 	atomic_style_states?: ClassState[];
 } & T;
 
-type V1Model< T1, T2 = T1 > = {
-	get: < K extends keyof T1 >( key: K ) => T1[ K ];
-	set: < K extends keyof T1 >( key: K, value: T1[ K ] ) => void;
-	toJSON: ( options?: { remove?: string[] } ) => T2;
+type V1Model< T > = {
+	get: < K extends keyof T >( key: K ) => T[ K ];
+	set: < K extends keyof T >( key: K, value: T[ K ] ) => void;
+	toJSON: ( options?: { remove?: string[] } ) => T;
 };

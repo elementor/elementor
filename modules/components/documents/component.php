@@ -66,7 +66,7 @@ class Component extends Document {
 		return new Component_Overridable_Props( $meta );
 	}
 
-public function set_overridable_props( $data ): Parse_Result {
+	public function set_overridable_props( $data ): Parse_Result {
 		$parser = Component_Overridable_Props_Parser::make();
 
 		$result = $parser->parse( $data );
