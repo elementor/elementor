@@ -72,7 +72,7 @@ export const InlineEditorOverlay = ( { element, isSelected, id }: ElementOverlay
 					pointerEvents: 'auto',
 				} }
 			>
-				<InlineEditor value={ value } setValue={ handleValueChange } />
+				<InlineEditor value={ value } setValue={ handleValueChange } showToolbar={ isSelected } />
 			</Box>
 		</FloatingPortal>
 	);
