@@ -191,7 +191,7 @@ describe( 'ImportKit Page', () => {
 		// Assert
 		expect( mockDispatch ).toHaveBeenCalledWith( { type: 'ADD_INCLUDES', payload: [ 'settings', 'templates', 'content', 'plugins' ] } );
 		expect( mockDispatch ).toHaveBeenCalledWith( { type: 'SET_IMPORT_STATUS', payload: 'IMPORTING' } );
-		expect( mockNavigate ).toHaveBeenCalledWith( 'import-customization/process' );
+		expect( mockNavigate ).toHaveBeenCalledWith( 'import/process' );
 	} );
 
 	it( 'goes to customization when no apply-all action is detected', () => {
@@ -213,6 +213,6 @@ describe( 'ImportKit Page', () => {
 		render( <ImportKit /> );
 		// Assert
 		expect( mockDispatch ).toHaveBeenCalledWith( { type: 'SET_IMPORT_STATUS', payload: 'CUSTOMIZING' } );
-		expect( mockNavigate ).toHaveBeenCalledWith( 'import-customization/content' );
+		expect( mockNavigate ).toHaveBeenCalledWith( 'import/content' );
 	} );
 } );

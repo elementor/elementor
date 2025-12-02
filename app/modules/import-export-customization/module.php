@@ -140,7 +140,7 @@ class Module extends BaseModule {
 			'export' => [
 				'title' => esc_html__( 'Export this website', 'elementor' ),
 				'button' => [
-					'url' => Plugin::$instance->app->get_base_url() . '#/export-customization',
+					'url' => Plugin::$instance->app->get_base_url() . '#/export',
 					'text' => esc_html__( 'Export', 'elementor' ),
 					'id' => 'elementor-import-export__export',
 				],
@@ -149,7 +149,7 @@ class Module extends BaseModule {
 			'import' => [
 				'title' => esc_html__( 'Apply a Website Template', 'elementor' ),
 				'button' => [
-					'url' => Plugin::$instance->app->get_base_url() . '#/import-customization',
+					'url' => Plugin::$instance->app->get_base_url() . '#/import',
 					'text' => $is_cloud_kits_available ? esc_html__( 'Upload .zip file', 'elementor' ) : esc_html__( 'Import', 'elementor' ),
 					'id' => 'elementor-import-export__import',
 				],

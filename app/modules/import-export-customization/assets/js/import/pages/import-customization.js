@@ -55,7 +55,7 @@ export default function ImportCustomization() {
 				size="small"
 				onClick={ () => {
 					dispatch( { type: 'SET_IMPORT_STATUS', payload: IMPORT_STATUS.IMPORTING } );
-					navigate( 'import-customization/process' );
+					navigate( 'import/process' );
 				} }
 				data-testid="import-apply-button"
 			>
@@ -66,9 +66,9 @@ export default function ImportCustomization() {
 
 	useEffect( () => {
 		if ( isProcessing ) {
-			navigate( 'import-customization/process' );
+			navigate( 'import/process' );
 		} else if ( ! isCustomizing ) {
-			navigate( 'import-customization', { replace: true } );
+			navigate( 'import', { replace: true } );
 		}
 	}, [ isProcessing, isCustomizing, navigate ] );
 

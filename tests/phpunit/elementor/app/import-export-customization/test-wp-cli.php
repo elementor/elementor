@@ -19,7 +19,7 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 
 	public static function tearDownAfterClass(): void {
 		// TODO: find a better way.
-		Plugin::$instance->app->add_component( 'import-export', new Module() );
+		Plugin::$instance->app->add_component( 'import-export-customization', new Module() );
 	}
 
 	public function setUp(): void {
@@ -29,7 +29,7 @@ class Test_Wp_Cli extends Elementor_Test_Base {
 			->setMethods( [ 'import_kit', 'export_kit', 'revert_last_imported_kit' ] )
 			->getMock();
 
-		Plugin::$instance->app->add_component( 'import-export', $this->mock_import_export_module );
+		Plugin::$instance->app->add_component( 'import-export-customization', $this->mock_import_export_module );
 	}
 
 	public function test_import() {

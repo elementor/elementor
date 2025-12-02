@@ -6,7 +6,7 @@ test.describe( 'Import Export Customization - Navigation', () => {
 	test( 'should navigate to export page from Elementor Tools', async ( { page } ) => {
 		await NavigationHelpers.navigateToExportCustomizationPage( page );
 
-		await expect( page ).toHaveURL( /.*export-customization.*/ );
+		await expect( page ).toHaveURL( /.*export.*/ );
 	} );
 
 	test( 'should display all export sections', async ( { page } ) => {
