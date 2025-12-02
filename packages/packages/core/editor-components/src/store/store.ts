@@ -70,9 +70,11 @@ export const slice = createSlice( {
 		addCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
 			state.createdThisSession.push( payload );
 		},
-		archive: (state, { payload }: PayloadAction<number>) => {
-			state.archivedData.push( state.data.find( ( component ) => component.id === payload ) as PublishedComponent );
-			state.data = state.data.filter((component) => component.id !== payload);
+		archive: ( state, { payload }: PayloadAction< number > ) => {
+			state.archivedData.push(
+				state.data.find( ( component ) => component.id === payload ) as PublishedComponent
+			);
+			state.data = state.data.filter( ( component ) => component.id !== payload );
 		},
 	},
 	extraReducers: ( builder ) => {

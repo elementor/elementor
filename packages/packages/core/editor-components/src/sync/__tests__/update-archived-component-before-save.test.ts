@@ -1,6 +1,6 @@
 // [Found-Testing-Reference===> REDUX,THEME,ERROR]
-import { __createStore, __dispatch, __registerSlice } from '@elementor/store';
 import { notify } from '@elementor/editor-notifications';
+import { __createStore, __dispatch, __registerSlice } from '@elementor/store';
 
 import { apiClient } from '../../api';
 import { slice } from '../../store/store';
@@ -144,4 +144,3 @@ describe( 'updateArchivedComponentBeforeSave', () => {
 		consoleErrorSpy.mockRestore();
 	} );
 } );
-
