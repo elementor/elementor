@@ -26,7 +26,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <script type="text/template" id="tmpl-elementor-template-library-header-menu">
 	<# jQuery.each( tabs, ( tab, args ) => { #>
-		<div class="elementor-component-tab elementor-template-library-menu-item" data-tab="{{{ tab }}}">{{{ args.title }}}</div>
+		<button
+			role="tab"
+			id="tab-{{{ tab }}}"
+			aria-controls="panel-{{{ tab }}}"
+			aria-selected="false"
+			tabindex="-1"
+			class="elementor-component-tab elementor-template-library-menu-item"
+			data-tab="{{{ tab }}}"
+		>
+			{{{ args.title }}}
+		</button>
 	<# } ); #>
 </script>
 
@@ -204,7 +214,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 	<# } #>
-	<div id="elementor-template-library-templates-container"></div>
+	<div id="elementor-template-library-templates-container" role="tabpanel"></div>
 	<# if ( isRemote ) { #>
 		<div id="elementor-template-library-footer-banner">
 			<img class="elementor-nerd-box-icon" src="<?php

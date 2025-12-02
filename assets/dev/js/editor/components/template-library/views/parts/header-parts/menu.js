@@ -8,4 +8,11 @@ module.exports = Marionette.ItemView.extend( {
 			tabs: $e.components.get( 'library' ).getTabs(),
 		};
 	},
+
+	attributes() {
+		return {
+			role: 'tablist',
+			'aria-label': __( 'Library sections', 'elementor' ),
+		};
+	},
 } );
