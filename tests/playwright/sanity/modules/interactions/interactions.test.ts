@@ -52,8 +52,6 @@ test.describe( 'Interactions Module @interactions', () => {
 
 		await expect( editor.page.locator( '.MuiTag-root' ).first() ).toBeVisible();
 
-		await editor.page.waitForTimeout( 1000 );
-
 		await editor.publishAndViewPage();
 
 		const headingElement = editor.page.locator( '.e-heading-base' ).first();
@@ -71,8 +69,6 @@ test.describe( 'Interactions Module @interactions', () => {
 
 	test( 'Add interaction via API call', async () => {
 		const headingId = await editor.addWidget( { widgetType: 'e-heading' } );
-
-		await editor.page.waitForTimeout( 1000 );
 
 		await editor.page.evaluate( async ( { targetId, interactions } ) => {
 			const windowTyped = window as unknown as WindowType;
@@ -113,8 +109,6 @@ test.describe( 'Interactions Module @interactions', () => {
 				},
 			} ],
 		} } );
-
-		await editor.page.waitForTimeout( 2000 );
 
 		const interactionsSaved = await editor.page.evaluate( ( targetId ) => {
 			const windowTyped = window as unknown as WindowType;
