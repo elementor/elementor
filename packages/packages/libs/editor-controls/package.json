@@ -63,6 +63,8 @@
 	"@tiptap/extension-document": "^3.10.4",
 	"@tiptap/extension-hard-break": "^3.10.4",
 	"@tiptap/extension-italic": "^3.10.4",
+	"@tiptap/extension-paragraph": "^3.10.4",
+	"@tiptap/extension-heading": "^3.10.4",
 	"@tiptap/extension-strike": "^3.10.4",
 	"@tiptap/extension-text": "^3.10.4",
 	"@tiptap/extension-underline": "^3.10.4",

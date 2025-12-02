@@ -1,8 +1,18 @@
-import type { V1ElementConfig } from '@elementor/editor-elements';
+import * as React from 'react';
+import { createRoot, type Root } from 'react-dom/client';
+import { InlineEditor } from '@elementor/editor-controls';
+import { getElementType, type V1ElementConfig } from '@elementor/editor-elements';
+import { htmlPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { createPropsResolver } from '../renderers/create-props-resolver';
 import { settingsTransformersRegistry } from '../settings-transformers-registry';
+import {
+	getHtmlPropType,
+	getInlineEditablePropertyName,
+	getWidgetType,
+	hasInlineEditableProperty,
+} from '../utils/inline-editing-utils';
 import { signalizedProcess } from '../utils/signalized-process';
 import { createElementViewClassDeclaration } from './create-element-type';
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
@@ -70,6 +80,7 @@ export function createTemplatedElementView( {
 
 	return class extends BaseView {
 		#abortController: AbortController | null = null;
+		inlineEditorRoot: Root | null = null;
 
 		getTemplateType() {
 			return 'twig';
@@ -82,6 +93,14 @@ export function createTemplatedElementView( {
 		// Override `render` function to support async `_renderTemplate`
 		// Note that `_renderChildren` asynchronity is still NOT supported, so only the parent element rendering can be async
 		render() {
+			if ( hasInlineEditableProperty( this.model.get( 'id' ) ) ) {
+				return this.injectInlineEditorHandle();
+			}
+
+			this.plainRender();
+		}
+
+		plainRender() {
 			this.#abortController?.abort();
 			this.#abortController = new AbortController();
 
@@ -151,6 +170,87 @@ export function createTemplatedElementView( {
 			this.isRendered = true;
 
 			this.triggerMethod( 'render', this );
+		}
+
+		injectInlineEditorHandle() {
+			this.$el.on( 'dblclick', '*', this.handleRenderInlineEditor.bind( this ) );
+			this.plainRender();
+		}
+
+		handleRenderInlineEditor( event: Event ) {
+			event.stopImmediatePropagation();
+			this.$el.off( 'dblclick', '*' );
+			this.renderInlineEditor();
+		}
+
+		handleUnmountInlineEditor( event: Event ) {
+			event.stopImmediatePropagation();
+			this.unmountInlineEditor();
+		}
+
+		renderInlineEditor() {
+			const prop = getHtmlPropType( this.container );
+			const settingKey = getInlineEditablePropertyName( this.container );
+			const settingValue =
+				htmlPropTypeUtil.extract( this.model.get( 'settings' )?.get( settingKey ) ?? null ) ??
+				htmlPropTypeUtil.extract( prop?.default ?? null ) ??
+				'';
+			const classes = this.el?.children?.[ 0 ]?.classList.toString();
+
+			const setValue = ( value: string ) => {
+				this.model.get( 'settings' )?.set( settingKey, htmlPropTypeUtil.create( value ) );
+			};
+
+			this.$el.html( '' );
+
+			if ( ! this.inlineEditorRoot ) {
+				this.inlineEditorRoot = createRoot( this.el );
+			}
+
+			const formatValue = () => {
+				const widgetType = getWidgetType( this.container );
+
+				if ( ! widgetType ) {
+					return settingValue;
+				}
+
+				const propsSchema = getElementType( widgetType )?.propsSchema;
+
+				if ( ! propsSchema?.tag ) {
+					return settingValue;
+				}
+
+				const getProperlyTaggedValue =
+					stringPropTypeUtil.extract( this.model.get( 'settings' ).get( 'tag' ) ?? null ) ??
+					stringPropTypeUtil.extract( propsSchema.tag.default ?? null );
+
+				if ( ! getProperlyTaggedValue ) {
+					return settingValue;
+				}
+
+				if ( settingValue.startsWith( `<${ getProperlyTaggedValue }` ) ) {
+					return settingValue;
+				}
+
+				return `<${ getProperlyTaggedValue }>${ settingValue }</${ getProperlyTaggedValue }>`;
+			};
+
+			this.inlineEditorRoot.render(
+				<InlineEditor
+					attributes={ { class: classes } }
+					value={ formatValue() }
+					setValue={ setValue }
+					onBlur={ this.handleUnmountInlineEditor.bind( this ) }
+				/>
+			);
+		}
+
+		unmountInlineEditor() {
+			setTimeout( () => {
+				this.inlineEditorRoot?.unmount();
+				this.inlineEditorRoot = null;
+				this.render();
+			} );
 		}
 	};
 }
