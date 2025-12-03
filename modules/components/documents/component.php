@@ -3,6 +3,7 @@ namespace Elementor\Modules\Components\Documents;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Api\Parse_Result;
+use Elementor\Modules\Components\OverridableProps\Component_Overridable_Props_Parser;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly

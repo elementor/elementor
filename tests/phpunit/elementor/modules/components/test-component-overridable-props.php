@@ -1,8 +1,7 @@
 <?php
 namespace Elementor\Testing\Modules\Components;
 
-use Elementor\Modules\Components\Documents\Component as Component_Document;
-use Elementor\Modules\Components\Documents\Component_Overridable_Props_Parser;
+use Elementor\Modules\Components\OverridableProps\Component_Overridable_Props_Parser;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -59,8 +58,8 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 					'widgetType' => 'e-heading',
 					'elType' => 'widget',
 					'originalValue' => [
-						'$$type' => 'string',
-						'value' => '<strong>Original text</strong>',
+						'$$type' => 'html',
+						'value' => '<strong>Original text</strong><script>alert("xss")</script>',
 					],
 					'groupId' => 'group-uuid-1',
 				],
@@ -85,7 +84,7 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 
 		$sanitized = $result->unwrap();
 		$this->assertEquals( 'User Name', $sanitized['props']['prop-uuid-1']['label'] );
-		$this->assertEquals( 'Original text', $sanitized['props']['prop-uuid-1']['originalValue']['value'] );
+		$this->assertEquals( '<strong>Original text</strong>alert("xss")', $sanitized['props']['prop-uuid-1']['originalValue']['value'] );
 		$this->assertEquals( 'User Info', $sanitized['groups']['items']['group-uuid-1']['label'] );
 	}
 
@@ -385,7 +384,7 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 			'propKey' => 'title',
 			'widgetType' => 'e-heading',
 			'elType' => 'widget',
-			'originalValue' => [ '$$type' => 'string', 'value' => 'Original text' ],
+			'originalValue' => [ '$$type' => 'html', 'value' => 'Original text' ],
 			'groupId' => 'group-uuid-1' 
 		];
 
