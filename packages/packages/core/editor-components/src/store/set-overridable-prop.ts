@@ -3,7 +3,6 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 import { generateUniqueId } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
-import { getOverridableProp } from '../components/overridable-props/utils/get-overridable-prop';
 import { type OverridableProp, type OverridablePropGroup, type OverridableProps } from '../types';
 import { selectOverridableProps, slice } from './store';
 
@@ -36,10 +35,7 @@ export function setOverridableProp( {
 	}
 
 	const existingOverridableProp = overrideKey
-		? getOverridableProp( {
-				componentId,
-				overrideKey,
-		  } )
+		? overridableProps.props[ overrideKey ]
 		: null;
 
 	let currentGroupId = groupId || existingOverridableProp?.groupId;
