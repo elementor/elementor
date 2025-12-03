@@ -10,8 +10,6 @@ export const Form = ( { children, onSubmit }: Props ) => {
 	const handleSubmit = ( e: RectFormEven< HTMLFormElement > | SubmitEvent ) => {
 		e.preventDefault();
 		onSubmit?.();
-
-		return false;
 	};
 
 	const handleKeyDown = ( e: KeyboardEvent< HTMLFormElement > ) => {
