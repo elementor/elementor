@@ -88,7 +88,9 @@ class Ally_Dashboard_Widget {
 	public static function register_ally_dashboard_widgets() {
 		add_meta_box(
 			'e-dashboard-ally',
-			esc_html__( 'Accessibility', 'elementor' ),
+			'<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M1.6853 15.5557C0.586489 13.9112 0 11.9778 0 10C0 7.34785 1.05357 4.8043 2.92893 2.92893C4.8043 1.05357 7.34785 0 10 0C11.9778 0 13.9112 0.586489 15.5557 1.6853C17.2002 2.78412 18.4819 4.3459 19.2388 6.17316C19.9957 8.00042 20.1937 10.0111 19.8078 11.9509C19.422 13.8907 18.4696 15.6725 17.0711 17.0711C15.6725 18.4696 13.8907 19.422 11.9509 19.8078C10.0111 20.1937 8.00042 19.9957 6.17316 19.2388C4.3459 18.4819 2.78412 17.2002 1.6853 15.5557ZM7.50039 5.83301H5.83398V14.1666H7.50039V5.83301ZM14.166 5.83301H9.16683V7.49941H14.166V5.83301ZM14.166 9.16585H9.16683V10.8323H14.166V9.16585ZM14.166 12.5002H9.16683V14.1666H14.166V12.5002Z" fill="#0C0D0E"/>
+				</svg>' . esc_html__( 'Accessibility', 'elementor' ),
 			[ self::class, 'ally_widget_render' ],
 			'dashboard',
 			'column3',
