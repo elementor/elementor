@@ -174,13 +174,15 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 					</Tooltip>
 				) ) }
 			</ToggleButtonGroup>
-			<UrlPopover
-				popupState={ popupState }
-				anchorRef={ toolbarRef }
-				restoreValue={ handleUrlSubmit }
-				value={ urlValue }
-				onChange={ handleUrlChange }
-			/>
+			{ popupState.isOpen && (
+				<UrlPopover
+					popupState={ popupState }
+					anchorRef={ toolbarRef }
+					restoreValue={ handleUrlSubmit }
+					value={ urlValue }
+					onChange={ handleUrlChange }
+				/>
+			) }
 		</Box>
 	);
 };
