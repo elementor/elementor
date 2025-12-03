@@ -41,19 +41,19 @@ class Ally_Dashboard_Widget {
 			</div>
 			<div class="e-dashboard-ally-info">
 				<h4 class="e-dashboard-ally-title">
-					<?php echo $is_scanner_run
-						? esc_html__( "Don't leave accessibility issues unresolved", 'elementor' )
-						: esc_html__( 'Accessibility check recommended', 'elementor' ); ?>
+					<?php $is_scanner_run
+						? esc_html_e( "Don't leave accessibility issues unresolved", 'elementor' )
+						: esc_html_e( 'Accessibility check recommended', 'elementor' ); ?>
 				</h4>
 				<p class="e-dashboard-ally-description">
-					<?php echo $is_scanner_run
-						? esc_html__( 'Install Ally for free to fix accessibility issues directly in WordPress.', 'elementor' )
-						: esc_html__( 'Check your site now - no installation required.', 'elementor' ) ?>
+					<?php $is_scanner_run
+						? esc_html_e( 'Install Ally for free to fix accessibility issues directly in WordPress.', 'elementor' )
+						: esc_html_e( 'Check your site now - no installation required.', 'elementor' ) ?>
 				</p>
 				<a href="<?php echo esc_url( $link ); ?>" target="_blank" rel="noreferrer" id="<?php echo esc_html( $submit_id ); ?>" class="button button-primary">
-					<?php echo $is_scanner_run
-						? esc_html__( 'Get it free', 'elementor' )
-						: esc_html__( 'Run free scan', 'elementor' ); ?>
+					<?php $is_scanner_run
+						? esc_html_e( 'Get it free', 'elementor' )
+						: esc_html_e( 'Run free scan', 'elementor' ); ?>
 				</a>
 			</div>
 			<script>
