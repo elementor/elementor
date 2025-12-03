@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import {
 	BoldIcon,
 	ItalicIcon,
+	LinkIcon,
 	MinusIcon,
 	StrikethroughIcon,
 	SubscriptIcon,
@@ -72,6 +73,22 @@ const toolbarButtons = {
 		action: 'subscript',
 		method: ( editor: Editor ) => {
 			editor.chain().focus().toggleSubscript().run();
+		},
+	},
+	link: {
+		label: __( 'Link', 'elementor' ),
+		icon: <LinkIcon fontSize="tiny" />,
+		action: 'link',
+		method: ( editor: Editor ) => {
+			if ( editor.isActive( 'link' ) ) {
+				editor.chain().focus().unsetLink().run();
+			} else {
+				const url = window.prompt( 'URL' );
+
+				if ( url ) {
+					editor.chain().focus().setLink( { href: url } ).run();
+				}
+			}
 		},
 	},
 } as const;
