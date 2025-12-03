@@ -1,21 +1,17 @@
 import * as React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
-import { InlineEditor } from '@elementor/editor-controls';
-import { getElementType, type V1ElementConfig } from '@elementor/editor-elements';
-import { htmlPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
+import { type V1ElementConfig } from '@elementor/editor-elements';
 
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { createPropsResolver } from '../renderers/create-props-resolver';
 import { settingsTransformersRegistry } from '../settings-transformers-registry';
-import {
-	getHtmlPropType,
-	getInlineEditablePropertyName,
-	getWidgetType,
-	hasInlineEditableProperty,
-} from '../utils/inline-editing-utils';
+import { getWidgetType } from '../utils/inline-editing-utils';
 import { signalizedProcess } from '../utils/signalized-process';
+import { widgetRendererRegistry, type MountTrigger } from '../widget-renderer-location';
 import { createElementViewClassDeclaration } from './create-element-type';
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
+
+type WidgetRendererRegistration = ReturnType< typeof widgetRendererRegistry.getRegistrations >[ number ];
 
 export type CreateTemplatedElementTypeOptions = {
 	type: string;
@@ -80,7 +76,7 @@ export function createTemplatedElementView( {
 
 	return class extends BaseView {
 		#abortController: AbortController | null = null;
-		inlineEditorRoot: Root | null = null;
+		customRendererRoot: Root | null = null;
 
 		getTemplateType() {
 			return 'twig';
@@ -90,14 +86,91 @@ export function createTemplatedElementView( {
 			this.render();
 		}
 
-		// Override `render` function to support async `_renderTemplate`
-		// Note that `_renderChildren` asynchronity is still NOT supported, so only the parent element rendering can be async
 		render() {
-			if ( hasInlineEditableProperty( this.model.get( 'id' ) ) ) {
-				return this.injectInlineEditorHandle();
+			const widgetType = getWidgetType( this.container );
+			const customRenderer = this.#getCustomRenderer( widgetType );
+
+			if ( customRenderer ) {
+				return this.#renderWithCustomRenderer( customRenderer );
 			}
 
 			this.plainRender();
+		}
+
+		/**
+		 * Checks the widget renderer registry for a custom renderer matching this widget type.
+		 */
+		#getCustomRenderer( widgetType: string | null ): WidgetRendererRegistration | null {
+			if ( ! widgetType ) {
+				return null;
+			}
+
+			const registrations = widgetRendererRegistry.getRegistrations();
+
+			return registrations.find( ( { condition } ) => condition( { widgetType } ) ) ?? null;
+		}
+
+		/**
+		 * Renders the default widget output and sets up the mount trigger.
+		 * The trigger determines when the custom React component replaces the default rendering.
+		 */
+		#renderWithCustomRenderer( registration: WidgetRendererRegistration ) {
+			this.plainRender();
+
+			const mountTrigger = registration.mountTrigger ?? this.#defaultMountTrigger;
+
+			mountTrigger( {
+				$el: this.$el,
+				mount: () => this.#mountCustomRenderer( registration ),
+			} );
+		}
+
+		#defaultMountTrigger: MountTrigger = ( { $el, mount } ) => {
+			$el.on( 'dblclick', '*', ( event: Event ) => {
+				event.stopImmediatePropagation();
+				$el.off( 'dblclick', '*' );
+				mount();
+			} );
+		};
+
+		/**
+		 * Replaces the widget's DOM content with a React component via createPortal.
+		 * The custom component receives props for interacting with the legacy Backbone model.
+		 */
+		#mountCustomRenderer( registration: WidgetRendererRegistration ) {
+			this.$el.html( '' );
+
+			if ( ! this.customRendererRoot ) {
+				this.customRendererRoot = createRoot( this.el );
+			}
+
+			const Component = registration.component;
+
+			this.customRendererRoot.render(
+				<Component
+					widgetType={ getWidgetType( this.container ) ?? '' }
+					container={ this.container }
+					el={ this.el }
+					model={ this.model }
+					reactRoot={ this.customRendererRoot }
+					onUnmount={ () => this.#unmountCustomRenderer() }
+				/>
+			);
+		}
+
+		/**
+		 * Unmounts the custom renderer and restores the default widget rendering.
+		 */
+		#unmountCustomRenderer() {
+			setTimeout( () => {
+				this.#resetCustomRendererRoot();
+				this.render();
+			} );
+		}
+
+		#resetCustomRendererRoot() {
+			this.customRendererRoot?.unmount?.();
+			this.customRendererRoot = null;
 		}
 
 		plainRender() {
@@ -170,99 +243,6 @@ export function createTemplatedElementView( {
 			this.isRendered = true;
 
 			this.triggerMethod( 'render', this );
-		}
-
-		injectInlineEditorHandle() {
-			if ( this.inlineEditorRoot ) {
-				this.resetInlineEditorRoot();
-			} else {
-				this.$el.on( 'dblclick', '*', this.handleRenderInlineEditor.bind( this ) );
-			}
-
-			this.plainRender();
-		}
-
-		handleRenderInlineEditor( event: Event ) {
-			event.stopImmediatePropagation();
-			this.$el.off( 'dblclick', '*' );
-			this.renderInlineEditor();
-		}
-
-		handleUnmountInlineEditor( event: Event ) {
-			event.stopImmediatePropagation();
-			this.unmountInlineEditor();
-		}
-
-		renderInlineEditor() {
-			const prop = getHtmlPropType( this.container );
-			const settingKey = getInlineEditablePropertyName( this.container );
-			const settingValue =
-				htmlPropTypeUtil.extract( this.model.get( 'settings' )?.get( settingKey ) ?? null ) ??
-				htmlPropTypeUtil.extract( prop?.default ?? null ) ??
-				'';
-			const classes = this.el?.children?.[ 0 ]?.classList.toString();
-
-			const setValue = ( value: string ) => {
-				this.model.get( 'settings' )?.set( settingKey, htmlPropTypeUtil.create( value ) );
-			};
-
-			this.$el.html( '' );
-
-			if ( ! this.inlineEditorRoot ) {
-				this.inlineEditorRoot = createRoot( this.el );
-			} else {
-				this.resetInlineEditorRoot();
-			}
-
-			const formatValue = () => {
-				const widgetType = getWidgetType( this.container );
-
-				if ( ! widgetType ) {
-					return settingValue;
-				}
-
-				const propsSchema = getElementType( widgetType )?.propsSchema;
-
-				if ( ! propsSchema?.tag ) {
-					return settingValue;
-				}
-
-				const getProperlyTaggedValue =
-					stringPropTypeUtil.extract( this.model.get( 'settings' ).get( 'tag' ) ?? null ) ??
-					stringPropTypeUtil.extract( propsSchema.tag.default ?? null );
-
-				if ( ! getProperlyTaggedValue ) {
-					return settingValue;
-				}
-
-				if ( settingValue?.trim().startsWith( `<${ getProperlyTaggedValue }` ) ) {
-					return settingValue;
-				}
-
-				return `<${ getProperlyTaggedValue }>${ settingValue }</${ getProperlyTaggedValue }>`;
-			};
-
-			this.inlineEditorRoot.render(
-				<InlineEditor
-					attributes={ { class: classes } }
-					value={ formatValue() }
-					setValue={ setValue }
-					onBlur={ this.handleUnmountInlineEditor.bind( this ) }
-					autofocus
-				/>
-			);
-		}
-
-		unmountInlineEditor() {
-			setTimeout( () => {
-				this.resetInlineEditorRoot();
-				this.render();
-			} );
-		}
-
-		resetInlineEditorRoot() {
-			this.inlineEditorRoot?.unmount?.();
-			this.inlineEditorRoot = null;
 		}
 	};
 }
