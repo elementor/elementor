@@ -8,15 +8,24 @@ interface ListenToChildrenAPI {
 
 type ListenToChildrenFunction = ( elementTypes: string[] ) => ListenToChildrenAPI;
 
-export type Handler = < TSettings extends Settings = Settings >( params: {
+type SharedHandlerParams< TSettings extends Settings = Settings > = {
 	element: Element;
 	signal: AbortSignal;
 	settings: TSettings;
-	listenToChildren: ListenToChildrenFunction;
-} ) => ( () => void ) | undefined;
+};
+
+export type Handler = < TSettings extends Settings = Settings >(
+	params: SharedHandlerParams< TSettings > & {
+		listenToChildren: ListenToChildrenFunction;
+	}
+) => ( () => void ) | undefined;
+
+export type SelectorHandler = < TSettings extends Settings = Settings >(
+	params: SharedHandlerParams< TSettings >
+) => ( () => void ) | undefined;
 
 export const elementTypeHandlers: Map< string, Map< string, Handler > > = new Map();
-export const elementSelectorHandlers: Map< string, Map< string, Handler > > = new Map();
+export const elementSelectorHandlers: Map< string, Map< string, SelectorHandler > > = new Map();
 
 export const register = ( { elementType, id, callback }: { elementType: string; id: string; callback: Handler } ) => {
 	if ( ! elementTypeHandlers.has( elementType ) ) {
@@ -51,7 +60,7 @@ export const registerBySelector = ( {
 }: {
 	selector: string;
 	id: string;
-	callback: Handler;
+	callback: SelectorHandler;
 } ) => {
 	if ( ! elementSelectorHandlers.has( selector ) ) {
 		elementSelectorHandlers.set( selector, new Map() );

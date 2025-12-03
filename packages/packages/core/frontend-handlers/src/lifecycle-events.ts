@@ -97,31 +97,10 @@ export const onElementSelectorRender = ( {
 		Array.from( handlers.values() ?? [] ).forEach( ( handler ) => {
 			const settings = element.getAttribute( 'data-e-settings' );
 
-			const listenToChildren = ( elementTypes: string[] ) => ( {
-				render: ( callback: () => void ) => {
-					element.addEventListener(
-						ELEMENT_RENDERED_EVENT_NAME,
-						( event ) => {
-							const { elementType: childType } = ( event as CustomEvent ).detail;
-
-							if ( ! elementTypes.includes( childType ) ) {
-								return;
-							}
-
-							callback();
-
-							event.stopPropagation();
-						},
-						{ signal: controller.signal }
-					);
-				},
-			} );
-
 			const unmount = handler( {
 				element,
 				signal: controller.signal,
 				settings: settings ? JSON.parse( settings ) : {},
-				listenToChildren,
 			} );
 
 			if ( typeof unmount === 'function' ) {
