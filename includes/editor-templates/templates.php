@@ -156,8 +156,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<# } #>
 			<div id="elementor-template-library-filter-text-wrapper">
 				<label for="elementor-template-library-filter-text" class="elementor-screen-only"><?php echo esc_html__( 'Search Templates:', 'elementor' ); ?></label>
-				<input id="elementor-template-library-filter-text" placeholder="<?php echo esc_attr__( 'Search', 'elementor' ); ?>">
-				<i class="eicon-search"></i>
+				<input type="search" id="elementor-template-library-filter-text" placeholder="<?php echo esc_attr__( 'Search', 'elementor' ); ?>">
+				<i class="eicon-search" aria-hidden="true"></i>
 			</div>
 		</div>
 	</div>
