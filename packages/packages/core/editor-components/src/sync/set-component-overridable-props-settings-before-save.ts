@@ -14,33 +14,6 @@ export const setComponentOverridablePropsSettingsBeforeSave = ( {
 		return;
 	}
 
-	container.settings.set( 'overridable_props', mockComponentOverridableProps );
-};
-
-const mockComponentOverridableProps = {
-	props: {
-		prop1_UUID: {
-			overrideKey: 'prop1_UUID',
-			label: 'User Name',
-			elementId: '90d25e3',
-			propKey: 'title',
-			elType: 'widget',
-			widgetType: 'e-heading',
-			originalValue: {
-				$$type: 'string',
-				value: 'Jane Smith',
-			},
-			groupId: 'group1_UUID',
-		},
-	},
-	groups: {
-		items: {
-			group1_UUID: {
-				id: 'group1_UUID',
-				label: 'User Info',
-				props: [ 'prop1_UUID' ],
-			},
-		},
-		order: [ 'group1_UUID' ],
-	},
+	// todo: get overridable props from redux store
+	// container.settings.set( 'overridable_props', overridableProps );
 };

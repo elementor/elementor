@@ -71,7 +71,6 @@ class Component extends Document {
 		$parser = Component_Overridable_Props_Parser::make();
 
 		$result = $parser->parse( $data );
-		$result = $parser->parse( [] );
 
 		if ( ! $result->is_valid() ) {
 			return $result;
