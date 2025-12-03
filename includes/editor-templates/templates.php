@@ -313,36 +313,44 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="elementor-button-title"><?php echo esc_html__( 'Insert', 'elementor' ); ?></span>
 		</button>
 		<# } #>
-		<div class="elementor-template-library-template-more-toggle">
+		<button type="button" class="elementor-template-library-template-more-toggle" aria-haspopup="menu" aria-expanded="false" aria-label="<?php echo esc_attr__( 'More actions for template', 'elementor' ); ?> {{{ title }}}">
 			<i class="eicon-ellipsis-h" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo esc_html__( 'More actions', 'elementor' ); ?></span>
-		</div>
-		<div class="elementor-template-library-template-more">
+		</button>
+		<ul class="elementor-template-library-template-more" role="menu" aria-label="<?php echo esc_attr__( 'More actions for template', 'elementor' ); ?> {{{ title }}}">
 				<# if ( ( typeof subType === 'undefined' || 'FOLDER' !== subType ) && elementor.templates.hasCloudLibraryQuota() && ! elementor.templates.cloudLibraryIsDeactivated() ) { #>
-					<div class="elementor-template-library-template-move">
-						<i class="eicon-library-move" aria-hidden="true"></i>
-						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
-					</div>
-					<div class="elementor-template-library-template-copy">
-						<i class="eicon-library-copy" aria-hidden="true"></i>
-						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Copy to', 'elementor' ); ?></span>
-					</div>
+					<li role="menuitem">
+						<button type="button" class="elementor-template-library-template-move">
+							<i class="eicon-library-move" aria-hidden="true"></i>
+							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
+						</button>
+					</li>
+					<li role="menuitem">
+						<button type="button" class="elementor-template-library-template-copy">
+							<i class="eicon-library-copy" aria-hidden="true"></i>
+							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Copy to', 'elementor' ); ?></span>
+						</button>
+					</li>
 				<# } #>
-			<div class="elementor-template-library-template-export">
-				<a href="{{ export_link }}">
+			<li role="menuitem">
+				<a href="{{ export_link }}" class="elementor-template-library-template-export">
 					<i class="eicon-library-download" aria-hidden="true"></i>
 					<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Export', 'elementor' ); ?></span>
 				</a>
-			</div>
-			<div class="elementor-template-library-template-rename">
-				<i class="eicon-library-edit" aria-hidden="true"></i>
-				<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Rename', 'elementor' ); ?></span>
-			</div>
-			<div class="elementor-template-library-template-delete">
-				<i class="eicon-library-delete" aria-hidden="true"></i>
-				<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Delete', 'elementor' ); ?></span>
-			</div>
-		</div>
+			</li>
+			<li role="menuitem">
+				<button type="button" class="elementor-template-library-template-rename">
+					<i class="eicon-library-edit" aria-hidden="true"></i>
+					<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Rename', 'elementor' ); ?></span>
+				</button>
+			</li>
+			<li role="menuitem">
+				<button type="button" class="elementor-template-library-template-delete">
+					<i class="eicon-library-delete" aria-hidden="true"></i>
+					<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Delete', 'elementor' ); ?></span>
+				</button>
+			</li>
+		</ul>
 	</div>
 	<# } else {
 		if ( typeof subType !== 'undefined' && 'FOLDER' === subType ) {
@@ -354,26 +362,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="elementor-template-library-template-name">
 			<span>{{ title }}</span>
 		</div>
-		<div class="elementor-template-library-template-more-toggle">
+		<button type="button" class="elementor-template-library-template-more-toggle" aria-haspopup="menu" aria-expanded="false" aria-label="<?php echo esc_attr__( 'More actions for template', 'elementor' ); ?> {{{ title }}}">
 			<i class="eicon-ellipsis-v" aria-hidden="true"></i>
 			<span class="elementor-screen-only"><?php echo esc_html__( 'More actions', 'elementor' ); ?></span>
-		</div>
-		<div class="elementor-template-library-template-more" style="display: none;">
-			<div class="elementor-template-library-template-export">
-				<a href="{{ export_link }}">
+		</button>
+		<ul class="elementor-template-library-template-more" role="menu" aria-label="<?php echo esc_attr__( 'More actions for template', 'elementor' ); ?> {{{ title }}}" style="display: none;">
+			<li role="menuitem">
+				<a href="{{ export_link }}" class="elementor-template-library-template-export">
 					<i class="eicon-library-download" aria-hidden="true"></i>
 					<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Export', 'elementor' ); ?></span>
 				</a>
-			</div>
-			<div class="elementor-template-library-template-rename">
-				<i class="eicon-library-edit" aria-hidden="true"></i>
-				<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Rename', 'elementor' ); ?></span>
-			</div>
-			<div class="elementor-template-library-template-delete">
-				<i class="eicon-library-delete" aria-hidden="true"></i>
-				<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Delete', 'elementor' ); ?></span>
-			</div>
-		</div>
+			</li>
+			<li role="menuitem">
+				<button type="button" class="elementor-template-library-template-rename">
+					<i class="eicon-library-edit" aria-hidden="true"></i>
+					<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Rename', 'elementor' ); ?></span>
+				</button>
+			</li>
+			<li role="menuitem">
+				<button type="button" class="elementor-template-library-template-delete">
+					<i class="eicon-library-delete" aria-hidden="true"></i>
+					<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Delete', 'elementor' ); ?></span>
+				</button>
+			</li>
+		</ul>
 		<# } else { #>
 			<#
 				const imageSource = preview_url || '<?php echo esc_html( ELEMENTOR_ASSETS_URL . 'images/placeholder-cloud-grid.png' ); ?>';
@@ -399,34 +411,44 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="elementor-template-library-template-meta">{{{ human_date }}}</div>
 					</div>
 				</div>
-				<div class="elementor-template-library-template-more-toggle">
+				<button type="button" class="elementor-template-library-template-more-toggle" aria-haspopup="menu" aria-expanded="false" aria-label="<?php echo esc_attr__( 'More actions for template', 'elementor' ); ?> {{{ title }}}">
 					<i class="eicon-ellipsis-v" aria-hidden="true"></i>
 					<span class="elementor-screen-only"><?php echo esc_html__( 'More actions', 'elementor' ); ?></span>
-				</div>
-				<div class="elementor-template-library-template-more" style="display: none;">
-					<div class="elementor-template-library-template-move">
-						<i class="eicon-library-move" aria-hidden="true"></i>
-						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
-					</div>
-					<div class="elementor-template-library-template-copy">
-						<i class="eicon-library-copy" aria-hidden="true"></i>
-						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Copy to', 'elementor' ); ?></span>
-					</div>
-					<div class="elementor-template-library-template-export">
-						<a href="{{ export_link }}">
+				</button>
+				<ul class="elementor-template-library-template-more" role="menu" aria-label="<?php echo esc_attr__( 'More actions for template', 'elementor' ); ?> {{{ title }}}" style="display: none;">
+					<# if ( elementor.templates.hasCloudLibraryQuota() && ! elementor.templates.cloudLibraryIsDeactivated() ) { #>
+					<li role="menuitem">
+						<button type="button" class="elementor-template-library-template-move">
+							<i class="eicon-library-move" aria-hidden="true"></i>
+							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Move to', 'elementor' ); ?></span>
+						</button>
+					</li>
+					<li role="menuitem">
+						<button type="button" class="elementor-template-library-template-copy">
+							<i class="eicon-library-copy" aria-hidden="true"></i>
+							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Copy to', 'elementor' ); ?></span>
+						</button>
+					</li>
+					<# } #>
+					<li role="menuitem">
+						<a href="{{ export_link }}" class="elementor-template-library-template-export">
 							<i class="eicon-library-download" aria-hidden="true"></i>
 							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Export', 'elementor' ); ?></span>
 						</a>
-					</div>
-					<div class="elementor-template-library-template-rename">
-						<i class="eicon-library-edit" aria-hidden="true"></i>
-						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Rename', 'elementor' ); ?></span>
-					</div>
-					<div class="elementor-template-library-template-delete">
-						<i class="eicon-library-delete" aria-hidden="true"></i>
-						<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Delete', 'elementor' ); ?></span>
-					</div>
-				</div>
+					</li>
+					<li role="menuitem">
+						<button type="button" class="elementor-template-library-template-rename">
+							<i class="eicon-library-edit" aria-hidden="true"></i>
+							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Rename', 'elementor' ); ?></span>
+						</button>
+					</li>
+					<li role="menuitem">
+						<button type="button" class="elementor-template-library-template-delete">
+							<i class="eicon-library-delete" aria-hidden="true"></i>
+							<span class="elementor-template-library-template-control-title"><?php echo esc_html__( 'Delete', 'elementor' ); ?></span>
+						</button>
+					</li>
+				</ul>
 			</div>
 	<# } } #>
 </script>

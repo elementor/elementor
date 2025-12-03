@@ -1037,31 +1037,32 @@ label.elementor-template-library-order-label {
 		inset-block-start: 100%;
 		inset-inline-end: 0;
 		z-index: 1;
+		list-style: none;
+		margin: 0;
+		padding: 0;
 
-		> div {
-			padding: 10px 20px;
-			font-size: 11px;
-			cursor: pointer;
-			display: flex;
-			align-items: center;
-			gap: 8px;
+		> li {
+			button,
+			a {
+				@include button-reset;
+				padding: 10px 20px;
+				font-size: 11px;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				width: 100%;
 
-			&.disabled {
-				cursor: not-allowed;
-				color: var(--e-a-color-txt-disabled);
-
-				a {
-					color: var(--e-a-color-txt-disabled);
+				&.disabled {
 					cursor: not-allowed;
+					color: var(--e-a-color-txt-disabled);
 				}
 			}
-		}
 
-		a {
-			color: var(--e-a-color-txt);
-			display: flex;
-			align-items: center;
-			gap: 8px;
+			a {
+				color: var(--e-a-color-txt);
+				text-decoration: none;
+			}
 		}
 
 		.elementor-template-library-template-delete {
@@ -1076,6 +1077,12 @@ label.elementor-template-library-order-label {
 	.elementor-template-library-template-more-toggle {
 		margin-inline-start: auto;
 		cursor: pointer;
+		background: none;
+		border: none;
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
 		i {
 			font-size: 20px;

@@ -38,6 +38,15 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		'change:title': 'onTitleChange',
 	},
 
+	onRender() {
+		if ( this.ui.toggleMore.length ) {
+			this.ui.toggleMore.attr( {
+				'aria-haspopup': 'menu',
+				'aria-expanded': 'false',
+			} );
+		}
+	},
+
 	handleLockedTemplate() {
 		const isLocked = this.model.isLocked();
 
@@ -111,7 +120,14 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 		this.handleLockedTemplate();
 
-		this.ui.morePopup.show();
+		const isExpanded = 'true' === this.ui.toggleMore.attr( 'aria-expanded' );
+		this.ui.toggleMore.attr( 'aria-expanded', ! isExpanded );
+
+		if ( isExpanded ) {
+			this.ui.morePopup.hide();
+		} else {
+			this.ui.morePopup.show();
+		}
 
 		elementor.templates.eventManager.sendPageViewEvent( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.morePopup,
