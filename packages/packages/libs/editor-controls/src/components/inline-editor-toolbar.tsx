@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
 	BoldIcon,
+	ExternalLinkIcon,
 	ItalicIcon,
 	LinkIcon,
 	MinusIcon,
@@ -10,7 +11,7 @@ import {
 	SuperscriptIcon,
 	UnderlineIcon,
 } from '@elementor/icons';
-import { Box, IconButton, ToggleButton, ToggleButtonGroup, Tooltip } from '@elementor/ui';
+import { Box, IconButton, TextField, ToggleButton, ToggleButtonGroup, Tooltip } from '@elementor/ui';
 import { type Editor, useEditorState } from '@tiptap/react';
 import { __ } from '@wordpress/i18n';
 
@@ -79,17 +80,7 @@ const toolbarButtons = {
 		label: __( 'Link', 'elementor' ),
 		icon: <LinkIcon fontSize="tiny" />,
 		action: 'link',
-		method: ( editor: Editor ) => {
-			if ( editor.isActive( 'link' ) ) {
-				editor.chain().focus().unsetLink().run();
-			} else {
-				const url = window.prompt( 'URL' );
-
-				if ( url ) {
-					editor.chain().focus().setLink( { href: url } ).run();
-				}
-			}
-		},
+		method: null,
 	},
 } as const;
 
@@ -102,6 +93,12 @@ const { clear: clearButton, ...formatButtons } = toolbarButtons;
 const possibleFormats: FormatAction[] = Object.keys( formatButtons ) as FormatAction[];
 
 export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
+	const [ isLinkMode, setIsLinkMode ] = useState( false );
+	const [ urlValue, setUrlValue ] = useState( '' );
+	const [ toolbarWidth, setToolbarWidth ] = useState< number | null >( null );
+	const inputRef = useRef< HTMLInputElement >( null );
+	const toolbarRef = useRef< HTMLDivElement >( null );
+
 	const editorState = useEditorState( {
 		editor,
 		selector: ( ctx ) => possibleFormats.filter( ( format ) => ctx.editor.isActive( format ) ),
@@ -109,8 +106,49 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 
 	const formatButtonsList = useMemo( () => Object.values( formatButtons ), [] );
 
+	useEffect( () => {
+		if ( isLinkMode ) {
+			requestAnimationFrame( () => inputRef.current?.focus() );
+		}
+	}, [ isLinkMode ] );
+
+	const handleLinkClick = () => {
+		if ( toolbarRef.current ) {
+			setToolbarWidth( toolbarRef.current.offsetWidth );
+		}
+		const currentUrl = editor.getAttributes( 'link' ).href || '';
+		setUrlValue( currentUrl );
+		setIsLinkMode( true );
+	};
+
+	const handleUrlSubmit = () => {
+		if ( urlValue ) {
+			editor.chain().focus().setLink( { href: urlValue } ).run();
+		} else {
+			editor.chain().focus().unsetLink().run();
+		}
+		setIsLinkMode( false );
+	};
+
+	const handleKeyDown = ( event: React.KeyboardEvent ) => {
+		if ( event.key === 'Enter' ) {
+			handleUrlSubmit();
+		} else if ( event.key === 'Escape' ) {
+			setIsLinkMode( false );
+		}
+	};
+
+	const handleButtonClick = ( button: ( typeof formatButtonsList )[ number ] ) => {
+		if ( button.action === 'link' ) {
+			handleLinkClick();
+		} else {
+			button.method?.( editor );
+		}
+	};
+
 	return (
 		<Box
+			ref={ toolbarRef }
 			sx={ {
 				position: 'absolute',
 				top: -40,
@@ -121,34 +159,61 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 				backgroundColor: 'background.paper',
 				boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
 				alignItems: 'center',
+				...( isLinkMode && toolbarWidth ? { width: toolbarWidth } : {} ),
 			} }
 		>
-			<Tooltip title={ clearButton.label } placement="top">
-				<IconButton aria-label={ clearButton.label } onClick={ () => clearButton.method( editor ) } size="tiny">
-					{ clearButton.icon }
-				</IconButton>
-			</Tooltip>
-			<ToggleButtonGroup
-				value={ editorState }
-				size="tiny"
-				sx={ {
-					display: 'flex',
-					gap: 0.5,
-				} }
-			>
-				{ formatButtonsList.map( ( button ) => (
-					<Tooltip title={ button.label } key={ button.action } placement="top">
-						<ToggleButton
-							value={ button.action }
-							aria-label={ button.label }
-							size="tiny"
-							onClick={ () => button.method( editor ) }
-						>
-							{ button.icon }
-						</ToggleButton>
+			{ isLinkMode ? (
+				<>
+					<TextField
+						value={ urlValue }
+						onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => setUrlValue( e.target.value ) }
+						onKeyDown={ handleKeyDown }
+						onBlur={ handleUrlSubmit }
+						size="tiny"
+						placeholder={ __( 'Type a URL', 'elementor' ) }
+						inputProps={ { ref: inputRef } }
+						sx={ { flex: 1 } }
+					/>
+					<ToggleButton
+						size="tiny"
+						value="open"
+						onClick={ () => window.open( urlValue, '_blank' ) }
+						disabled={ ! urlValue }
+						aria-label={ __( 'Open URL', 'elementor' ) }
+					>
+						<ExternalLinkIcon fontSize="tiny" />
+					</ToggleButton>
+				</>
+			) : (
+				<>
+					<Tooltip title={ clearButton.label } placement="top">
+						<IconButton aria-label={ clearButton.label } onClick={ () => clearButton.method( editor ) } size="tiny">
+							{ clearButton.icon }
+						</IconButton>
 					</Tooltip>
-				) ) }
-			</ToggleButtonGroup>
+					<ToggleButtonGroup
+						value={ editorState }
+						size="tiny"
+						sx={ {
+							display: 'flex',
+							gap: 0.5,
+						} }
+					>
+						{ formatButtonsList.map( ( button ) => (
+							<Tooltip title={ button.label } key={ button.action } placement="top">
+								<ToggleButton
+									value={ button.action }
+									aria-label={ button.label }
+									size="tiny"
+									onClick={ () => handleButtonClick( button ) }
+								>
+									{ button.icon }
+								</ToggleButton>
+							</Tooltip>
+						) ) }
+					</ToggleButtonGroup>
+				</>
+			) }
 		</Box>
 	);
 };
