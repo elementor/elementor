@@ -26,13 +26,6 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	dropElement: jest.fn(),
 } ) );
 
-jest.mock( '../../utils/get-container-for-new-element', () => ( {
-	getContainerForNewElement: jest.fn( () => ( {
-		container: { id: 'test-container' },
-		options: { useHistory: false, scrollIntoView: true },
-	} ) ),
-} ) );
-
 jest.mock( '../create-component-form/utils/replace-element-with-component', () => ( {
 	createComponentModel: jest.fn( ( { id, name } ) => ( { id, name, elType: 'component' } ) ),
 } ) );
@@ -130,7 +123,7 @@ describe( 'ComponentsTab', () => {
 			const buttonComponent = mockComponents[ 0 ];
 
 			// Act
-			renderWithTheme( <ComponentItem component={ buttonComponent } /> );
+			renderWithStore( <ComponentItem component={ buttonComponent } />, store );
 
 			// Assert
 			const componentItem = screen.getByRole( 'button', { name: /Button Component/ } );
