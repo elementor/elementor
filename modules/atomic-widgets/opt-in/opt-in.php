@@ -81,4 +81,3 @@ class Opt_In {
 		$ajax->register_ajax_action( 'editor_v4_opt_out', fn() => $this->ajax_opt_out_v4() );
 	}
 }
-
