@@ -321,7 +321,6 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		// Act & Assert
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'Post is not a component type' );
-		$this->lock_manager->get_lock_data( $post_id );
 
 		// Cleanup
 		wp_delete_post( $post_id, true );

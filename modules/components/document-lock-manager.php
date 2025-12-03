@@ -130,11 +130,6 @@ class Document_Lock_Manager {
 	 * @return bool True if extended successfully, false if not locked or locked by another user
 	 */
 	public function extend_lock( $document_id ) {
-		if ( $this->is_lock_expired( $document_id ) ) {
-			$this->unlock( $document_id );
-			return false;
-		}
-
 		$lock_data = $this->get_lock_data( $document_id );
 		if ( ! $lock_data['locked_by'] ) {
 			return false;
