@@ -118,11 +118,6 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 			throw new \Exception( 'Post is not a component type' );
 		}
 
-		if ( $this->is_lock_expired( $post_id ) ) {
-			$this->unlock( $post_id );
-			return null;
-		}
-
 		$lock_data = $this->get_lock_data( $post_id );
 		if ( ! $lock_data['locked_by'] ) {
 			return null;
