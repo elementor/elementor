@@ -310,7 +310,7 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		$this->assertEquals( $this->test_user_2, get_post_meta( $this->test_component_id, '_lock_user', true ), 'Lock should be owned by new user' );
 	}	
 
-	public function test_get_updated_status__fails_for_regular_post() {
+	public function test_get_lock_data__fails_for_regular_post() {
 		// Arrange
 		$post_id = $this->factory()->post->create( [
 			'post_type' => 'post',
@@ -321,6 +321,7 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		// Act & Assert
 		$this->expectException( \Exception::class );
 		$this->expectExceptionMessage( 'Post is not a component type' );
+		$this->lock_manager->get_lock_data( $post_id );
 
 		// Cleanup
 		wp_delete_post( $post_id, true );
@@ -370,7 +371,7 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		$this->assertNull( $result, 'Should fail to extend lock when locked by another user' );
 	}
 
-	public function test_extend_lock__unlocks_expired_lock() {
+	public function test_extend_lock__extends_expired_lock() {
 		// Arrange
 		wp_set_current_user( $this->test_user_1 );
 		$this->lock_manager->lock( $this->test_component_id );
@@ -382,9 +383,11 @@ class Test_Component_Lock_Manager extends Elementor_Test_Base {
 		// Act
 		$result = $this->lock_manager->extend_lock( $this->test_component_id );
 
-		// Assert
-		$this->assertNull( $result, 'Should return null when trying to extend expired lock' );
-		$this->assertEmpty( get_post_meta( $this->test_component_id, '_lock_user', true ), 'Expired lock should be unlocked' );
+		// Assert: Since expiration check was removed, expired locks are extended (timestamp updated)
+		$this->assertTrue( $result, 'Should extend expired lock (expiration check removed)' );
+		$new_timestamp = get_post_meta( $this->test_component_id, '_lock_time', true );
+		$this->assertGreaterThan( $old_timestamp, $new_timestamp, 'Lock timestamp should be updated even if expired' );
+		$this->assertEquals( $this->test_user_1, get_post_meta( $this->test_component_id, '_lock_user', true ), 'Lock should still be owned by same user' );
 	}
 
 	public function test_concurrent_lock_attempts() {
