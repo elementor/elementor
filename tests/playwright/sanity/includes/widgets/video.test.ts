@@ -68,11 +68,13 @@ test.describe( 'Video tests inside a container @video', () => {
 			await editor.setTextControlValue( `${ video }_url`, player.link );
 
 			// Assert 1 - in the Editor.
+			await videoWidget.waitForVideoSrcParams( false, player.expected, video );
 			let src = await videoWidget.getVideoSrc( false );
 			videoWidget.verifySrcParams( src, player.expected, video );
 
 			// Assert 2 - in the Frontend.
 			await editor.publishAndViewPage();
+			await videoWidget.waitForVideoSrcParams( true, player.expected, video );
 			src = await videoWidget.getVideoSrc( true );
 			videoWidget.verifySrcParams( src, player.expected, video );
 		} );

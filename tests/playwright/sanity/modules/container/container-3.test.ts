@@ -70,8 +70,8 @@ test.describe( 'Container tests #3 @container', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await page.goto( '/wp-admin/media-new.php' );
 
-		if ( await page.locator( '.upload-flash-bypass a' ).isVisible() ) {
-			await page.locator( '.upload-flash-bypass a' ).click();
+		if ( await page.locator( '.upload-flash-bypass button' ).isVisible() ) {
+			await page.locator( '.upload-flash-bypass button' ).click();
 		}
 
 		await page.setInputFiles( 'input[name="async-upload"]', './tests/playwright/resources/video.webm' );
