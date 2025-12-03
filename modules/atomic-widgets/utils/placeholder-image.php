@@ -16,4 +16,3 @@ class Placeholder_Image {
 		return ELEMENTOR_ASSETS_URL . 'images/background-placeholder.svg';
 	}
 }
-

@@ -65,4 +65,3 @@ class Image_Sizes {
 		return apply_filters( 'image_size_names_choose', $image_sizes );
 	}
 }
-
