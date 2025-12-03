@@ -213,7 +213,13 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		const selectedCount = elementor.templates.getBulkSelectionItems().size ?? 0;
 		const display = 0 === selectedCount ? 'none' : 'flex';
 
-		this.modalContent.currentView.ui.bulkSelectedCount.html( `${ selectedCount } Selected` );
+		const countText = `${ selectedCount } Selected`;
+		const announcementText = 0 === selectedCount ? '' : `${ selectedCount } ${ 1 === selectedCount ? __( 'template', 'elementor' ) : __( 'templates', 'elementor' ) } ${ __( 'selected. Bulk actions available.', 'elementor' ) }`;
+
+		this.modalContent.currentView.ui.bulkSelectedCount.html( countText );
+		if ( announcementText && this.modalContent.currentView.ui.bulkSelectedCount.length ) {
+			this.modalContent.currentView.ui.bulkSelectedCount.attr( 'aria-label', announcementText );
+		}
 		this.modalContent.currentView.ui.bulkSelectionActionBar.css( 'display', display );
 
 		// TODO: Temporary fix until the bulk action bar will be as separate view.

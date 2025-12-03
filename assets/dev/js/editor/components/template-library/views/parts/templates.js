@@ -49,6 +49,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		quotaWarning: '.quota-progress-container .progress-bar-container .quota-warning',
 		quotaUpgrade: '.quota-progress-container .progress-bar-container .quota-warning a',
 		navigationContainer: '#elementor-template-library-navigation-container',
+		sortStatus: '#elementor-template-library-sort-status',
+		loadStatus: '#elementor-template-library-load-status',
 	},
 
 	events: {
@@ -334,6 +336,33 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.collection.comparator = comparator;
 
 		this.collection.sort();
+
+		this.announceSortStatus( by, reverseOrder );
+	},
+
+	announceSortStatus( by, reverseOrder ) {
+		const orderLabels = {
+			title: __( 'Name', 'elementor' ),
+			type: __( 'Type', 'elementor' ),
+			author: __( 'Created By', 'elementor' ),
+			date: __( 'Creation Date', 'elementor' ),
+		};
+
+		const orderDirection = reverseOrder ? __( 'descending', 'elementor' ) : __( 'ascending', 'elementor' );
+		const sortLabel = orderLabels[ by ] || by;
+		const message = __( 'Sorted by', 'elementor' ) + ' ' + sortLabel + ', ' + orderDirection;
+
+		if ( this.ui.sortStatus.length ) {
+			this.ui.sortStatus.text( message );
+		}
+	},
+
+	announceLoadStatus( count ) {
+		const message = count + ' ' + __( 'more templates loaded', 'elementor' );
+
+		if ( this.ui.loadStatus.length ) {
+			this.ui.loadStatus.text( message );
+		}
 	},
 
 	handleCloudOrder( by, reverseOrder ) {
@@ -349,6 +378,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		elementor.templates.loadMore( {
 			onUpdate: () => {
 				elementor.templates.layout.hideLoadingView();
+				this.announceSortStatus( by, reverseOrder );
 			},
 			search: this.ui.textFilter.val(),
 			refresh: true,
@@ -616,9 +646,16 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
 			elementor.templates.layout.selectAllCheckboxMinus();
 
+			const previousCount = this.collection.length;
+
 			elementor.templates.loadMore( {
 				onUpdate: () => {
 					this.ui.loadMoreAnchor.toggleClass( 'elementor-visibility-hidden' );
+					const newCount = this.collection.length;
+					const loadedCount = newCount - previousCount;
+					if ( loadedCount > 0 ) {
+						this.announceLoadStatus( loadedCount );
+					}
 				},
 				search: this.ui.textFilter.val(),
 			} );

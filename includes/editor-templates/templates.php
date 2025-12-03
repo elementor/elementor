@@ -161,6 +161,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 	</div>
+	<div class="elementor-screen-only" aria-live="polite" id="elementor-template-library-sort-status" aria-atomic="true"></div>
+	<div class="elementor-screen-only" aria-live="polite" id="elementor-template-library-load-status" aria-atomic="true"></div>
 	<# if ( 'local' === activeSource || 'cloud' === activeSource ) { #>
 		<div class="toolbar-container">
 				<section class="bulk-selection-action-bar" role="region" aria-label="<?php echo esc_attr__( 'Bulk actions', 'elementor' ); ?>">
