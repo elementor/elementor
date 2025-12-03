@@ -14,6 +14,7 @@ use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
+use Elementor\Modules\Promotions\Widgets\Ally_Dashboard_Widget;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
@@ -78,6 +79,9 @@ class Module extends Base_Module {
 
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
+
+		// Add Ally dashboard widget
+		Ally_Dashboard_Widget::init();
 	}
 
 	private function handle_external_redirects() {

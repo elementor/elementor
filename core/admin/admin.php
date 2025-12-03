@@ -921,7 +921,6 @@ class Admin extends App {
 
 		// Register Dashboard Widgets.
 		add_action( 'wp_dashboard_setup', [ $this, 'register_dashboard_widgets' ] );
-		Ally_Dashboard_Widget::init();
 
 		// Admin Actions
 		add_action( 'admin_action_elementor_new_post', [ $this, 'admin_action_new_post' ] );
