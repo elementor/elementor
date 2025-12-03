@@ -32,7 +32,8 @@ class Css_Filter_Func_Prop_Type extends Object_Prop_Type {
 				->enum( [ 'blur', 'brightness', 'contrast', 'grayscale', 'invert', 'saturate', 'sepia', 'hue-rotate', 'drop-shadow' ] )
 				->default( 'blur' )
 				->initial_value( 'blur' )
-				->required(),
+				->required()
+				->setting( 'hide_reset', true ),
 			'args' => Union_Prop_Type::make()
 				->add_prop_type( Blur_Prop_Type::make() )
 				->add_prop_type( Intensity_Prop_Type::make() )
