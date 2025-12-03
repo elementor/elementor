@@ -38,7 +38,7 @@ export function setOverridableProp( {
 
 	const { props: existingProps, groups: existingGroups } = { ...overridableProps };
 
-	const { updatedGroups, currentGroupId } = getUpdatedGroups(
+	const { groups: updatedGroups, currentGroupId } = getUpdatedGroups(
 		existingGroups,
 		groupId || existingOverridableProp?.groupId
 	);
@@ -92,46 +92,44 @@ export function setOverridableProp( {
 	return overridableProp;
 }
 
-function getUpdatedGroups(
-	groups: OverridableProps[ 'groups' ],
-	groupId: string | undefined
-): { updatedGroups: OverridableProps[ 'groups' ]; currentGroupId: string } {
-	const updatedGroups = { ...groups };
+type UpdatedGroups = { groups: OverridableProps[ 'groups' ]; currentGroupId: string };
 
+function getUpdatedGroups( groups: OverridableProps[ 'groups' ], groupId: string | undefined ): UpdatedGroups {
 	if ( ! groupId ) {
 		// use first existing group
-		if ( updatedGroups.order.length > 0 ) {
-			return { updatedGroups, currentGroupId: updatedGroups.order[ 0 ] };
+		if ( groups.order.length > 0 ) {
+			return { groups, currentGroupId: groups.order[ 0 ] };
 		}
 
 		// create the first group (default)
-		return { updatedGroups, currentGroupId: addNewGroup( updatedGroups ) };
+		return addNewGroup( groups );
 	}
 
-	if ( ! updatedGroups.items[ groupId ] ) {
+	if ( ! groups.items[ groupId ] ) {
 		// fallback - if for any reason there's no such group - create it
-		return { updatedGroups, currentGroupId: addNewGroup( updatedGroups, groupId ) };
+		return addNewGroup( groups, groupId );
 	}
 
 	// use the existing group
-	return { updatedGroups, currentGroupId: groupId };
+	return { groups, currentGroupId: groupId };
 }
 
-function addNewGroup( groups: OverridableProps[ 'groups' ], groupId?: string | undefined ): string {
+function addNewGroup( groups: OverridableProps[ 'groups' ], groupId?: string | undefined ): UpdatedGroups {
 	const currentGroupId = groupId || generateUniqueId( 'group' );
-
-	groups.items = {
-		...groups.items,
-		[ currentGroupId ]: {
-			id: currentGroupId,
-			label: __( 'Default', 'elementor' ),
-			props: [],
+	const updatedGroups = { 
+		...groups,
+		items: {
+			...groups.items,
+			[ currentGroupId ]: {
+				id: currentGroupId,
+				label: __( 'Default', 'elementor' ),
+				props: [],
+			},
 		},
+		order: [ ...groups.order, currentGroupId ],
 	};
 
-	groups.order = [ ...groups.order, currentGroupId ];
-
-	return currentGroupId;
+	return { groups: updatedGroups, currentGroupId };
 }
 
 function getGroupWithProp(
