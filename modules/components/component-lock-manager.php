@@ -83,7 +83,7 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 		$is_expired = $this->is_lock_expired( $post_id );
 
 		if ( $is_expired ) {
-			$this->unlock( $post_id );
+			parent::unlock( $post_id );
 		} elseif ( $lock_data['locked_by'] ) {
 			return null;
 		}
