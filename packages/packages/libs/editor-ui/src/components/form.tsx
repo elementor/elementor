@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type FormEvent as RectFormEven, type KeyboardEvent, type PropsWithChildren, useRef } from 'react';
+import { type FormEvent as FormEvent, type KeyboardEvent, type PropsWithChildren, useRef } from 'react';
 
 type Props = PropsWithChildren< {
 	onSubmit?: () => void;
@@ -7,7 +7,7 @@ type Props = PropsWithChildren< {
 export const Form = ( { children, onSubmit }: Props ) => {
 	const formRef = useRef< HTMLFormElement >( null );
 
-	const handleSubmit = ( e: RectFormEven< HTMLFormElement > | SubmitEvent ) => {
+	const handleSubmit = ( e: FormEvent< HTMLFormElement > | SubmitEvent ) => {
 		e.preventDefault();
 		onSubmit?.();
 	};
