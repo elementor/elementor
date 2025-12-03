@@ -9,14 +9,10 @@ export const onElementRender = ( {
 	elementType,
 	elementId,
 }: {
-	element: Element | undefined;
+	element: Element;
 	elementType: string;
 	elementId: string;
 } ) => {
-	if ( ! element ) {
-		return;
-	}
-
 	const controller = new AbortController();
 	const manualUnmount: ( () => void )[] = [];
 

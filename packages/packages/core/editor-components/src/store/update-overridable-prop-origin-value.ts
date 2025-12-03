@@ -4,16 +4,14 @@ import { type ComponentOverridablePropValue } from '../prop-types/component-over
 import { type OverridableProps } from '../types';
 import { selectOverridableProps, slice } from './store';
 
-export function updateOverridablePropDefaultValue( componentId: number, propValue: ComponentOverridablePropValue ) {
+export function updateOverridablePropOriginValue( componentId: number, propValue: ComponentOverridablePropValue ) {
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
 	if ( ! overridableProps ) {
 		return;
 	}
 
-	const existingOverridableProp = Object.values( overridableProps.props ).find(
-		( { overrideKey } ) => overrideKey === propValue.override_key
-	);
+	const existingOverridableProp = overridableProps.props[ propValue.override_key ];
 
 	if ( ! existingOverridableProp ) {
 		return;
