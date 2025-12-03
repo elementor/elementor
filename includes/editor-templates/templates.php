@@ -250,9 +250,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="elementor-template-library-template-body">
 		<?php // 'lp' stands for Landing Pages Library type. ?>
 		<# if ( 'page' === type || 'lp' === type ) { #>
-			<div class="elementor-template-library-template-screenshot" style="background-image: url({{ thumbnail }});"></div>
+			<div class="elementor-template-library-template-screenshot" style="background-image: url({{ thumbnail }});" role="img" aria-label="<?php echo esc_attr__( 'Preview of template', 'elementor' ); ?> {{{ title }}}"></div>
 		<# } else { #>
-			<img src="{{ thumbnail }}" loading="lazy">
+			<img src="{{ thumbnail }}" loading="lazy" alt="<?php echo esc_attr__( 'Preview of template', 'elementor' ); ?> {{{ title }}}">
 		<# } #>
 		<div class="elementor-template-library-template-preview">
 			<i class="eicon-zoom-in-bold" aria-hidden="true"></i>
@@ -391,9 +391,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<# } else { #>
 			<#
 				const imageSource = preview_url || '<?php echo esc_html( ELEMENTOR_ASSETS_URL . 'images/placeholder-cloud-grid.png' ); ?>';
+				const hasPreview = preview_url;
+				const altText = hasPreview
+					? '<?php echo esc_attr__( 'Preview of template', 'elementor' ); ?> {{{ title }}}'
+					: '<?php echo esc_attr__( 'No preview available for template', 'elementor' ); ?> {{{ title }}}';
 			#>
 			<div class="elementor-template-library-template-thumbnail">
-				<img src="{{{ imageSource }}}"/>
+				<img src="{{{ imageSource }}}" alt="{{{ altText }}}"/>
 				<div class="elementor-template-library-template-preview"></div>
 			</div>
 			<div class="elementor-template-library-card-footer">
