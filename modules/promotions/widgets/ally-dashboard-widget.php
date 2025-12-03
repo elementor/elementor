@@ -6,13 +6,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-use Elementor\Plugin;
-
 class Ally_Dashboard_Widget {
 	public const SERVICE_URL = 'https://jovial-flan-909d87.netlify.app/';
 	public const ALLY_SCANNER_RUN = 'ea11y_dashboard_widget_scanner_run';
 	public const ALLY_NONCE_KEY = 'ea11y_dashboard_widget_nonce';
 	public const ALLY_PUBLIC_URL = 'https://wordpress.org/plugins/pojo-accessibility/';
+	public const ALLY_PLUGIN_SLUG = 'pojo-accessibility/pojo-accessibility.php';
 
 	/**
 	 * Check is widget already submitted
@@ -98,7 +97,7 @@ class Ally_Dashboard_Widget {
 	}
 
 	public static function init(): void {
-		if ( ! Plugin::$instance->wp->is_plugin_active( 'pojo-accessibility/pojo-accessibility.php' ) ) {
+		if ( ! is_plugin_active( self::ALLY_PLUGIN_SLUG ) ) {
 			// Register action
 			add_action( 'wp_ajax_e-ally-scanner-run', [ self::class, 'handle_click' ] );
 			// Register Dashboard Widgets.
