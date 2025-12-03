@@ -3,8 +3,8 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import _path from 'path';
 
-test.describe( 'Icon Box', () => {
-	test( 'Test icon position with physical properties', async ( { page, apiRequests }, testInfo ) => {
+test.describe( 'Icon Box widget tests', () => {
+	test( 'Test icon position', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setSiteLanguage( '' );
