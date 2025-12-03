@@ -16,7 +16,7 @@ const Typography = styled( TypographySource )< TypographyProps >( ( { theme, var
 
 export default function PanelHeaderTitle( { children, ...props }: TypographyProps ) {
 	return (
-		<Typography component="h2" variant="subtitle1" { ...props }>
+		<Typography component="h2" variant="caption" { ...props }>
 			{ children }
 		</Typography>
 	);

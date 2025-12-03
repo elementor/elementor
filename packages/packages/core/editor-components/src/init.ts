@@ -5,7 +5,7 @@ import {
 	settingsTransformersRegistry,
 } from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
-import { FIELD_TYPE, registerFieldIndicator } from '@elementor/editor-editing-panel';
+import { FIELD_TYPE, injectIntoPanelHeaderTop, registerFieldIndicator } from '@elementor/editor-editing-panel';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
@@ -15,6 +15,7 @@ import { __ } from '@wordpress/i18n';
 
 import { componentInstanceTransformer } from './component-instance-transformer';
 import { componentOverridableTransformer } from './component-overridable-transformer';
+import { ComponentPanelHeader } from './components/component-panel-header/component-panel-header';
 import { Components } from './components/components-tab/components';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
@@ -73,6 +74,11 @@ export function init() {
 	injectIntoTop( {
 		id: 'edit-component',
 		component: EditComponent,
+	} );
+
+	injectIntoPanelHeaderTop( {
+		id: 'component-panel-header',
+		component: ComponentPanelHeader,
 	} );
 
 	registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
