@@ -39,6 +39,8 @@ class Prop_Type_Adapter {
 					'size' => $value,
 					'unit' => 'custom',
 				];
+
+				$variable->set_type( Size_Variable_Prop_Type::get_key() );
 			}
 
 			$record['data'][ $variable->id() ] = array_merge( $variable->to_array(), [ 'value' => $prop_type::generate( $value ) ] );
@@ -57,12 +59,14 @@ class Prop_Type_Adapter {
 
 			$value = $value['value'];
 
-			if ( Size_Variable_Prop_Type::get_key() === $variable->type() ) {
-				$value = $value['size'] . $value['unit'];
+			if ( isset( $value['unit'] ) && $value['unit'] === 'custom' ) {
+				$value = $value['size'];
+
+				$variable->set_type( self::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY );
 			}
 
-			if ( self::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY === $variable->type() ) {
-				$value = $value['size'];
+			if ( Size_Variable_Prop_Type::get_key() === $variable->type() ) {
+				$value = $value['size'] . $value['unit'];
 			}
 
 			$variable->set_value( $value );

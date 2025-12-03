@@ -187,7 +187,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		// Assert.
 		$expected = [
 			'e-gv-23erty7' => [
-				'type' => 'global-custom-size-variable',
+				'type' => 'global-size-variable',
 				'label' => 'height',
 				'value' => [
 					'$$type' => 'size',
