@@ -22,7 +22,7 @@ export const Form = ( { children, onSubmit }: Props ) => {
 
 	return (
 		// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-		<form action="#" onSubmit={ handleSubmit } ref={ formRef } onKeyDown={ handleKeyDown }>
+		<form onSubmit={ handleSubmit } ref={ formRef } onKeyDown={ handleKeyDown }>
 			{ children }
 		</form>
 	);
