@@ -3,11 +3,9 @@ const createAtomicTabContentView = () => {
 
 	return class AtomicTabContentView extends AtomicElementBaseView {
 		attributes() {
-			const tabId = this.model.getSetting( 'tab-id' );
+			const attributes = super.attributes();
 
-			return tabId?.value
-				? { 'data-tab-id': tabId.value, 'aria-labelledby': tabId.value, ...super.attributes() }
-				: super.attributes();
+			return { 'x-bind': 'tabContent', 'x-ref': this.model.id, ...attributes };
 		}
 	};
 };

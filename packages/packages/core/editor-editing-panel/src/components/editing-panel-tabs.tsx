@@ -1,6 +1,5 @@
 import { Fragment } from 'react';
 import * as React from 'react';
-import { PopupStateProvider } from '@elementor/editor-interactions';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Divider, Stack, Tab, TabPanel, Tabs, useTabs } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -63,9 +62,7 @@ const PanelTabContent = () => {
 				</TabPanel>
 				{ isInteractionsActive && (
 					<TabPanel { ...getTabPanelProps( 'interactions' ) } disablePadding>
-						<PopupStateProvider>
-							<InteractionsTab />
-						</PopupStateProvider>
+						<InteractionsTab />
 					</TabPanel>
 				) }
 			</Stack>

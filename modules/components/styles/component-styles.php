@@ -5,7 +5,7 @@ namespace Elementor\Modules\Components\Styles;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
-use Elementor\Modules\AtomicWidgets\Utils;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 
 /**
  * Component styles fetching for render
@@ -39,8 +39,8 @@ class Component_Styles {
 
 		$components = $this->get_components_from_post( $post_id );
 		$component_ids = Collection::make( $components )
-			->filter( fn( $component ) => isset( $component['settings']['component']['value'] ) )
-			->map( fn( $component ) => $component['settings']['component']['value'] )
+			->filter( fn( $component ) => isset( $component['settings']['component_instance']['value']['component_id'] ) )
+			->map( fn( $component ) => $component['settings']['component_instance']['value']['component_id'] )
 			->unique()
 			->all();
 

@@ -14,5 +14,5 @@
 		'privacy': settings.privacy_mode,
 		'lazyload': settings.lazyload,
 	} %}
-	<div data-id="{{ id }}" data-e-type="{{ type }}" {{ id_attribute }} class="{{ classes }}" {{ settings.attributes | raw }} data-settings="{{ data_settings|json_encode|e('html_attr') }}"></div>
+	<div data-id="{{ id }}" data-interaction-id="{{ id }}" data-e-type="{{ type }}" data-interactions="{{ interactions | json_encode | e('html_attr') }}" {{ id_attribute }} class="{{ classes }}" {{ settings.attributes | raw }} data-settings="{{ data_settings|json_encode|e('html_attr') }}"></div>
 {% endif %}

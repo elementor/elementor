@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Includes\Elements\Container;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -70,11 +69,7 @@ class Elements_Manager {
 	 */
 	public function create_element_instance( array $element_data, array $element_args = [], ?Element_Base $element_type = null ) {
 		if ( null === $element_type ) {
-			if ( 'widget' === $element_data['elType'] ) {
-				$element_type = Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
-			} else {
-				$element_type = $this->get_element_types( $element_data['elType'] );
-			}
+			$element_type = $this->get_element( $element_data['elType'], isset( $element_data['widgetType'] ) ? $element_data['widgetType'] : null );
 		}
 
 		if ( ! $element_type ) {
@@ -89,6 +84,18 @@ class Elements_Manager {
 			$element = new $element_class( $element_data, $args );
 		} catch ( \Exception $e ) {
 			return null;
+		}
+
+		return $element;
+	}
+
+	public function get_element( string $el_type, ?string $widget_type = null ) {
+		$element = null;
+
+		if ( 'widget' === $el_type ) {
+			$element = Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
+		} else {
+			$element = $this->get_element_types( $el_type );
 		}
 
 		return $element;
@@ -184,7 +191,7 @@ class Elements_Manager {
 	 *
 	 * @param string $element_name Optional. Element name. Default is null.
 	 *
-	 * @return null|Element_Base|Element_Base[]|Atomic_Element_Base Element types, or a list of all the element
+	 * @return null|Element_Base|Element_Base[] Element types, or a list of all the element
 	 *                             types, or null if element does not exist.
 	 */
 	public function get_element_types( $element_name = null ) {

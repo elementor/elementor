@@ -2,13 +2,14 @@ import * as React from 'react';
 import { type ComponentType, createContext, type PropsWithChildren, useContext } from 'react';
 import { type PropType } from '@elementor/editor-props';
 
-type ControlAdornmentsItems = Array< {
+export type AdornmentComponent = ComponentType< { customContext?: { path: string[]; propType: PropType } } >;
+type ControlAdornmentsItem = {
 	id: string;
-	Adornment: ComponentType< { customContext?: { path: string[]; propType: PropType } } >;
-} >;
+	Adornment: AdornmentComponent;
+};
 
 type ControlAdornmentsContext = {
-	items?: ControlAdornmentsItems;
+	items?: ControlAdornmentsItem[];
 };
 
 const Context = createContext< ControlAdornmentsContext | null >( null );

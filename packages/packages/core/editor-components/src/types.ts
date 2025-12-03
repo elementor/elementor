@@ -1,4 +1,5 @@
-import { type V1ElementModelProps, type V1ElementSettingsProps } from '@elementor/editor-elements';
+import { type V1ElementData } from '@elementor/editor-elements';
+import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 import type { StyleDefinition } from '@elementor/editor-styles';
 
 export type ComponentFormValues = {
@@ -9,23 +10,85 @@ export type ComponentId = number;
 
 export type StylesDefinition = Record< ComponentId, StyleDefinition[] >;
 
-export type Component = {
+export type Component = PublishedComponent | UnpublishedComponent;
+
+export type PublishedComponent = BaseComponent & {
 	id: number;
-	name: string;
 };
 
-export type DocumentStatus = 'publish' | 'draft' | 'autosave';
+export type UnpublishedComponent = BaseComponent & {
+	elements: V1ElementData[];
+};
 
-export type Element = V1ElementModelProps & {
-	elements?: Element[];
-	settings?: V1ElementSettingsProps & {
-		component?: {
-			$$type: 'component-id';
-			value: number;
+export type OverridableProp = {
+	overrideKey: string;
+	label: string;
+	elementId: string;
+	propKey: string;
+	elType: string;
+	widgetType: string;
+	defaultValue: PropValue;
+	groupId: string;
+};
+
+export type OverridablePropGroup = {
+	id: string;
+	label: string;
+	props: string[];
+};
+
+export type OverridableProps = {
+	props: Record< string, OverridableProp >;
+	groups: {
+		items: Record< string, OverridablePropGroup >;
+		order: string[];
+	};
+};
+
+type BaseComponent = {
+	uid: string;
+	name: string;
+	overridableProps?: OverridableProps;
+};
+
+export type DocumentStatus = 'publish' | 'draft';
+export type DocumentSaveStatus = DocumentStatus | 'autosave';
+
+export type ExtendedWindow = Window & {
+	elementorCommon: Record< string, unknown > & {
+		eventsManager: {
+			config: {
+				locations: Record< string, string >;
+				secondaryLocations: Record< string, string >;
+				triggers: Record< string, string >;
+			};
 		};
 	};
 };
 
-export type ExtendedWindow = Window & {
-	elementorCommon: Record< string, unknown >;
+export type Container = {
+	model: {
+		get: ( key: 'elements' ) => {
+			toJSON: () => V1ElementData[];
+		};
+	};
+};
+
+export type ComponentInstancePropValue< TComponentId extends number | string = number | string > =
+	TransformablePropValue<
+		'component-instance',
+		{
+			component_id: TComponentId;
+			overrides?: ComponentOverride[];
+		}
+	>;
+
+type ComponentOverride = {
+	override_key: string;
+	value: TransformablePropValue< string >;
+};
+
+export type ComponentOverridable = {
+	override_key: string;
+	origin_value: TransformablePropValue< string >;
 };

@@ -9,47 +9,51 @@
     "module": "dist/index.mjs",
     "types": "dist/index.d.ts",
     "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.js"
-      },
-      "./package.json": "./package.json"
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.js"
+        },
+        "./package.json": "./package.json"
     },
     "repository": {
-      "type": "git",
-      "url": "git+https://github.com/elementor/elementor.git",
-      "directory": "packages/core/editor-interactions"
+        "type": "git",
+        "url": "git+https://github.com/elementor/elementor.git",
+        "directory": "packages/core/editor-interactions"
     },
     "bugs": {
-      "url": "https://github.com/elementor/elementor/issues"
+        "url": "https://github.com/elementor/elementor/issues"
     },
     "publishConfig": {
-      "access": "public"
+        "access": "public"
     },
     "files": [
-      "README.md",
-      "CHANGELOG.md",
-      "/dist",
-      "/src",
-      "!**/__tests__"
+        "README.md",
+        "CHANGELOG.md",
+        "/dist",
+        "/src",
+        "!**/__tests__"
     ],
     "scripts": {
-      "build": "tsup --config=../../tsup.build.ts",
-      "dev": "tsup --config=../../tsup.dev.ts"
+        "build": "tsup --config=../../tsup.build.ts",
+        "dev": "tsup --config=../../tsup.dev.ts"
     },
     "dependencies": {
+        "@elementor/editor-controls": "3.33.0",
+        "@elementor/editor-elements": "3.33.0",
         "@elementor/editor-ui": "3.33.0",
-        "@elementor/ui": "1.36.15",
-        "@elementor/icons": "1.56.0",
+        "@elementor/icons": "^1.61.0",
+        "@elementor/editor-v1-adapters": "3.33.0",
+        "@elementor/utils": "3.33.0",
+        "@elementor/session": "3.33.0",
+        "@elementor/ui": "1.36.17",
         "@wordpress/i18n": "^5.13.0"
     },
     "peerDependencies": {
-      "react": "^18.3.1",
-      "react-dom": "^18.3.1"
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
     },
     "devDependencies": {
-      "tsup": "^8.3.5"
+        "tsup": "^8.3.5"
     }
-  }
-  
+}

@@ -5,11 +5,13 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -45,12 +47,22 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
+		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
+
+		$paragraph_prop = $is_feature_active
+			? Html_Prop_Type::make()->default( __( 'Type your paragraph here', 'elementor' ) )
+			: String_Prop_Type::make()->default( __( 'Type your paragraph here', 'elementor' ) );
+
 		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'paragraph' => String_Prop_Type::make()
-				->default( __( 'Type your paragraph here', 'elementor' ) ),
+			'paragraph' => $paragraph_prop
+				->description( 'The text content of the paragraph.' ),
+
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'p', 'span' ] )
+				->default( 'p' ),
 
 			'link' => Link_Prop_Type::make(),
 
@@ -84,9 +96,24 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 	protected function get_settings_controls(): array {
 		return [
+			Select_Control::bind_to( 'tag' )
+				->set_options([
+					[
+						'value' => 'p',
+						'label' => 'p',
+					],
+					[
+						'value' => 'span',
+						'label' => 'span',
+					],
+				])
+				->set_label( __( 'Tag', 'elementor' ) ),
 			Link_Control::bind_to( 'link' )
 				->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
-				->set_label( __( 'Link', 'elementor' ) ),
+				->set_label( __( 'Link', 'elementor' ) )
+				->set_meta( [
+					'topDivider' => true,
+				] ),
 			Text_Control::bind_to( '_cssid' )
 				->set_label( __( 'ID', 'elementor' ) )
 				->set_meta( $this->get_css_id_control_meta() ),

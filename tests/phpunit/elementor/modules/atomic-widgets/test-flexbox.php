@@ -127,4 +127,49 @@ class Test_Flexbox extends Elementor_Test_Base {
 		// Assert.
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
+
+	public function test__render_flexbox_with_interactions(): void {
+		// Arrange.
+		$mock_flexbox = [
+			'id' => 'e8e55a1',
+			'elType' => Flexbox::get_element_type(),
+			'settings' => [],
+			'widgetType' => Flexbox::get_element_type(),
+			'interactions' => [
+				'version' => 1,
+				'items' => [
+					[
+						'animation' => [
+							'animation_type' => 'full-preset',
+							'animation_id' => 'load-fade-in--300-0',
+						],
+					],
+				],
+			],
+		];
+		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock_flexbox );
+
+		// Act.
+		ob_start();
+		$widget_instance->print_element();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertMatchesSnapshot( $rendered_output );
+	}
+
+	public function test__add_child_with_non_existent_element_type(): void {
+		// Arrange.
+		$non_existent_child_data = [
+			'id' => 'test-child',
+			'elType' => 'unregistered_element_type',
+		];
+
+		// Act.
+		$result = $this->instance->add_child( $non_existent_child_data );
+
+		// Assert.
+		$this->assertFalse( $result );
+		$this->assertEmpty( $this->instance->get_children() );
+	}
 }

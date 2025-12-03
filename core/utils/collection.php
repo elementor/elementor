@@ -453,6 +453,10 @@ class Collection implements \ArrayAccess, \Countable, \IteratorAggregate {
 		return new static( $result );
 	}
 
+	public function flip() {
+		return new static( array_flip( $this->items ) );
+	}
+
 	/**
 	 * @param array ...$values
 	 *

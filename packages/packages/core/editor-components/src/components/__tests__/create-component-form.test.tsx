@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { createMockElement, renderWithStore } from 'test-utils';
-import { getElementLabel, replaceElement, type V1Element } from '@elementor/editor-elements';
+import { getElementLabel, replaceElement, type V1ElementModelProps } from '@elementor/editor-elements';
 import { __createStore, __dispatch, __registerSlice, type SliceState, type Store } from '@elementor/store';
 import { __getState as getState } from '@elementor/store';
+import { generateUniqueId } from '@elementor/utils';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
@@ -12,14 +13,20 @@ import { CreateComponentForm } from '../create-component-form/create-component-f
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../api' );
+jest.mock( '@elementor/utils' );
+jest.mock( '@elementor/editor-v1-adapters' );
 
 const mockGetElementLabel = jest.mocked( getElementLabel );
-
 const mockGetComponents = jest.mocked( apiClient.get );
-
 const mockReplaceElement = jest.mocked( replaceElement );
+const mockGenerateUniqueId = jest.mocked( generateUniqueId );
 
-const mockElement: V1Element = createMockElement( { model: { id: 'test-element' } } );
+const mockElement: V1ElementModelProps = createMockElement( { model: { id: 'test-element' } } ).model.toJSON( {
+	remove: [ 'default' ],
+} );
+
+const GENERATED_UID = 'component-1763024534191-ojwasax';
+const EXISTING_COMPONENT_UID = 'component-1763024534191-v9kz881z';
 
 describe( 'CreateComponentForm', () => {
 	let store: Store< SliceState< typeof slice > >;
@@ -30,10 +37,15 @@ describe( 'CreateComponentForm', () => {
 		store = __createStore();
 
 		mockGetElementLabel.mockReturnValue( 'Div Block' );
-		mockGetComponents.mockReturnValue( Promise.resolve( [ { name: 'Existing Component', id: 123 } ] ) );
+		mockGetComponents.mockReturnValue(
+			Promise.resolve( [ { name: 'Existing Component', id: 123, uid: EXISTING_COMPONENT_UID } ] )
+		);
+		mockGenerateUniqueId.mockReturnValue( GENERATED_UID );
 
 		act( () => {
-			__dispatch( slice.actions.load( [ { name: 'Existing Component', id: 123 } ] ) );
+			__dispatch(
+				slice.actions.load( [ { name: 'Existing Component', id: 123, uid: EXISTING_COMPONENT_UID } ] )
+			);
 		} );
 	} );
 
@@ -217,15 +229,15 @@ describe( 'CreateComponentForm', () => {
 			// Assert.
 			expect( spyAddUnpublished ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					id: expect.any( Number ),
+					uid: GENERATED_UID,
 					name: 'My Test Component',
-					elements: [ mockElement.model.toJSON( { remove: [ 'default' ] } ) ],
+					elements: [ mockElement ],
 				} )
 			);
 
 			expect( selectComponents( getState() ) ).toEqual( [
-				{ id: expect.any( Number ), name: 'My Test Component' },
-				{ id: 123, name: 'Existing Component' },
+				{ uid: GENERATED_UID, name: 'My Test Component' },
+				{ id: 123, name: 'Existing Component', uid: EXISTING_COMPONENT_UID },
 			] );
 		} );
 
@@ -245,13 +257,16 @@ describe( 'CreateComponentForm', () => {
 					elType: 'widget',
 					widgetType: 'e-component',
 					settings: {
-						component: {
-							$$type: 'component-id',
-							value: expect.any( Number ),
+						component_instance: {
+							$$type: 'component-instance',
+							value: {
+								component_id: GENERATED_UID,
+							},
 						},
 					},
 					editor_settings: {
 						title: 'My Test Component',
+						component_uid: GENERATED_UID,
 					},
 				},
 				withHistory: false,

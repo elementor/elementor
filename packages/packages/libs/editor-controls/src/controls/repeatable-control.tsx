@@ -4,17 +4,17 @@ import { createArrayPropUtils, type SizePropValue } from '@elementor/editor-prop
 import { Box } from '@elementor/ui';
 
 import { PropProvider, useBoundProp } from '../bound-prop-context';
-import { ControlRepeater, Header, Item, TooltipAddItemAction } from '../components/control-repeater';
+import { ControlRepeater, Item, TooltipAddItemAction } from '../components/control-repeater';
 import { DisableItemAction } from '../components/control-repeater/actions/disable-item-action';
 import { DuplicateItemAction } from '../components/control-repeater/actions/duplicate-item-action';
 import { RemoveItemAction } from '../components/control-repeater/actions/remove-item-action';
 import { type TooltipAddItemActionProps } from '../components/control-repeater/actions/tooltip-add-item-action';
 import { EditItemPopover } from '../components/control-repeater/items/edit-item-popover';
 import { ItemsContainer } from '../components/control-repeater/items/items-container';
-import { type RepeatablePropValue } from '../components/control-repeater/types';
+import { type CollectionPropUtil, type RepeatablePropValue } from '../components/control-repeater/types';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
-import { type CollectionPropUtil } from '../components/repeater';
+import { RepeaterHeader } from '../components/repeater/repeater-header';
 import { createControl } from '../create-control';
 import {
 	type ChildControlConfig,
@@ -50,7 +50,7 @@ export const RepeatableControl = createControl(
 		propKey,
 		addItemTooltipProps,
 	}: RepeatableControlProps ) => {
-		const { propTypeUtil: childPropTypeUtil } = childControlConfig;
+		const { propTypeUtil: childPropTypeUtil, isItemDisabled } = childControlConfig;
 
 		if ( ! childPropTypeUtil ) {
 			return null;
@@ -78,14 +78,15 @@ export const RepeatableControl = createControl(
 					<ControlRepeater
 						initial={ childPropTypeUtil.create( initialValues || null ) }
 						propTypeUtil={ childArrayPropTypeUtil as CollectionPropUtil< RepeatablePropValue > }
+						isItemDisabled={ isItemDisabled }
 					>
-						<Header label={ repeaterLabel }>
+						<RepeaterHeader label={ repeaterLabel }>
 							<TooltipAddItemAction
 								{ ...addItemTooltipProps }
 								newItemIndex={ 0 }
 								ariaLabel={ repeaterLabel }
 							/>
-						</Header>
+						</RepeaterHeader>
 						<ItemsContainer isSortable={ false }>
 							<Item
 								Icon={ ItemIcon }
@@ -216,11 +217,19 @@ const shouldShowPlaceholder = ( pattern: string, data: Record< string, unknown >
 	return false;
 };
 
+const getTextColor = ( isReadOnly: boolean, showPlaceholder: boolean ): string => {
+	if ( isReadOnly ) {
+		return 'text.disabled';
+	}
+	return showPlaceholder ? 'text.tertiary' : 'text.primary';
+};
+
 const ItemLabel = ( { value }: { value: Record< string, unknown > } ) => {
-	const { placeholder, patternLabel } = useRepeatableControlContext();
+	const { placeholder, patternLabel, props: childProps } = useRepeatableControlContext();
 	const showPlaceholder = shouldShowPlaceholder( patternLabel, value );
 	const label = showPlaceholder ? placeholder : interpolate( patternLabel, value );
-	const color = showPlaceholder ? 'text.tertiary' : 'text.primary';
+	const isReadOnly = !! childProps?.readOnly;
+	const color = getTextColor( isReadOnly, showPlaceholder );
 
 	return (
 		<Box component="span" color={ color }>

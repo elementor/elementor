@@ -5,6 +5,7 @@ import { bindMenu, bindTrigger, IconButton, Menu, MenuItem, type PopupState, Typ
 import { __ } from '@wordpress/i18n';
 
 import { type TVariablesList } from '../../storage';
+import { trackVariablesManagerEvent } from '../../utils/tracking';
 import { getVariableTypes } from '../../variables-registry/variable-type-registry';
 
 export const SIZE = 'tiny';
@@ -36,6 +37,7 @@ export const VariableManagerCreateMenu = ( {
 			onClick: () => {
 				const defaultName = getDefaultName( variables, key, variable.variableType );
 				onCreate( key, defaultName, variable.defaultValue || '' );
+				trackVariablesManagerEvent( { action: 'add', varType: variable.variableType } );
 			},
 		};
 	} );

@@ -1,3 +1,4 @@
+import { createMockPropType } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { renderHook } from '@testing-library/react';
@@ -21,6 +22,7 @@ describe( 'Reset Style Props Tests', () => {
 			setValue: jest.fn(),
 			path: [],
 			bind: '',
+			propType: createMockPropType(),
 		} );
 	} );
 
@@ -45,6 +47,7 @@ describe( 'Reset Style Props Tests', () => {
 				setValue: jest.fn(),
 				path: [ 'style', 'color' ],
 				bind: 'color',
+				propType: createMockPropType(),
 			} );
 
 			const { result } = renderHook( () => useResetStyleValueProps() );
@@ -59,6 +62,7 @@ describe( 'Reset Style Props Tests', () => {
 				resetValue: resetValueMock,
 				path: [ 'style', 'color' ],
 				bind: 'color',
+				propType: createMockPropType(),
 			} );
 
 			const { result } = renderHook( () => useResetStyleValueProps() );
@@ -68,12 +72,14 @@ describe( 'Reset Style Props Tests', () => {
 			expect( resetValueMock ).toHaveBeenCalled();
 		} );
 
-		it( 'should not show reset button when value is null or undefined', () => {
+		// should also reset to initial value
+		it( 'should not show reset button when value is null', () => {
 			( useBoundProp as jest.Mock ).mockReturnValue( {
 				value: null,
 				setValue: jest.fn(),
 				path: [ 'style', 'color' ],
 				bind: 'color',
+				propType: createMockPropType(),
 			} );
 
 			const { result } = renderHook( () => useResetStyleValueProps() );
@@ -81,26 +87,13 @@ describe( 'Reset Style Props Tests', () => {
 			expect( result.current.visible ).toBe( false );
 		} );
 
-		it.skip( 'should not show reset button for excluded binds', () => {
-			// TODO: Fix me!
+		it( 'should not show reset button when value is undefined', () => {
 			( useBoundProp as jest.Mock ).mockReturnValue( {
-				value: 'some-value',
+				value: undefined,
 				setValue: jest.fn(),
-				path: [ 'style' ],
-				bind: 'flex-grow',
-			} );
-
-			const { result } = renderHook( () => useResetStyleValueProps() );
-
-			expect( result.current.visible ).toBe( false );
-		} );
-
-		it( 'should not show reset button when path is part of repeater', () => {
-			( useBoundProp as jest.Mock ).mockReturnValue( {
-				value: 'some-value',
-				setValue: jest.fn(),
-				path: [ 'style', 'color', '2', 'deep' ],
+				path: [ 'style', 'color' ],
 				bind: 'color',
+				propType: createMockPropType(),
 			} );
 
 			const { result } = renderHook( () => useResetStyleValueProps() );
@@ -108,11 +101,11 @@ describe( 'Reset Style Props Tests', () => {
 			expect( result.current.visible ).toBe( false );
 		} );
 
-		it( 'should show reset when inside supported repeater (background)', () => {
+		it( 'should show reset when inside repeater', () => {
 			( useBoundProp as jest.Mock ).mockReturnValue( {
 				value: 'bg-value',
 				resetValue: jest.fn(),
-				path: [ 'background', '0', 'color' ],
+				path: [ 'background-overlay', '0', 'color' ],
 				bind: 'color',
 				propType: { settings: { required: false } },
 			} );
@@ -122,13 +115,141 @@ describe( 'Reset Style Props Tests', () => {
 			expect( result.current.visible ).toBe( true );
 		} );
 
-		it( 'should not show reset when prop is required', () => {
+		it( 'should not show reset when prop is required and initial value is null', () => {
 			( useBoundProp as jest.Mock ).mockReturnValue( {
 				value: 'some-style-value',
 				resetValue: jest.fn(),
-				path: [ 'style', 'color' ],
+				path: [ 'background', '1', 'move' ],
 				bind: 'color',
-				propType: { settings: { required: true } },
+				propType: createMockPropType( { kind: 'plain', settings: { required: true } } ),
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+
+			expect( result.current.visible ).toBe( false );
+		} );
+
+		it( 'should show reset button for transition duration control (size)', () => {
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: { size: 300, unit: 'ms' },
+				resetValue: jest.fn(),
+				path: [ 'transition', '0', 'size' ],
+				bind: 'size',
+				propType: createMockPropType(),
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+
+			expect( result.current.visible ).toBe( true );
+		} );
+
+		it.each( [
+			{
+				scenario: 'hide_reset is true',
+				hideReset: true,
+				expectedVisible: false,
+			},
+			{
+				scenario: 'hide_reset is false',
+				hideReset: false,
+				expectedVisible: true,
+			},
+			{
+				scenario: 'hide_reset is undefined',
+				hideReset: undefined,
+				expectedVisible: true,
+			},
+		] )( 'should set visible to $expectedVisible when $scenario', ( { hideReset, expectedVisible } ) => {
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: 'some-value',
+				resetValue: jest.fn(),
+				propType: createMockPropType( { kind: 'plain', settings: { hide_reset: hideReset } } ),
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+
+			expect( result.current.visible ).toBe( expectedVisible );
+		} );
+
+		it( 'should not show reset button when value equals initial_value', () => {
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: {
+					$$type: 'size',
+					value: {
+						size: 89,
+						unit: 'rem',
+					},
+				},
+				resetValue: jest.fn(),
+				path: [ 'background', '0', 'color' ],
+				bind: 'color',
+				propType: {
+					initial_value: {
+						$$type: 'size',
+						value: {
+							size: 89,
+							unit: 'rem',
+						},
+					},
+					settings: { required: false },
+				},
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+
+			expect( result.current.visible ).toBe( false );
+		} );
+
+		it( 'should show reset button when value differs from initial_value', () => {
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: {
+					$$type: 'string',
+					value: 'string value',
+				},
+				resetValue: jest.fn(),
+				path: [ 'background', '0', 'color' ],
+				bind: 'color',
+				propType: {
+					initial_value: {
+						$$type: 'string',
+						value: 'initial value',
+					},
+					settings: { required: false },
+				},
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+
+			expect( result.current.visible ).toBe( true );
+		} );
+
+		it( 'should handle array values comparison with initial_value', () => {
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: [ 'value1', 'value2' ],
+				resetValue: jest.fn(),
+				path: [ 'background', '0', 'colors' ],
+				bind: 'colors',
+				propType: {
+					initial_value: [ 'value1', 'value3' ],
+					settings: { required: false },
+				},
+			} );
+
+			const { result } = renderHook( () => useResetStyleValueProps() );
+
+			expect( result.current.visible ).toBe( true );
+		} );
+
+		it( 'should not show reset when in repeater without initial value and has required', () => {
+			( useBoundProp as jest.Mock ).mockReturnValue( {
+				value: 'some-value-to-reset',
+				resetValue: jest.fn(),
+				path: [ 'background', '0', 'color' ],
+				bind: 'color',
+				propType: createMockPropType( {
+					kind: 'plain',
+					settings: { required: true },
+				} ),
 			} );
 
 			const { result } = renderHook( () => useResetStyleValueProps() );

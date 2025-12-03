@@ -17,7 +17,7 @@
 						"value": ["component-2-heading-local-class-id"]
 					},
 					"title": {
-						"$$type": "string",
+						"$$type": "html",
 						"value": "Component 2 Heading"
 					}
 				},

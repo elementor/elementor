@@ -3,13 +3,10 @@ import { type StyleDefinition } from '@elementor/editor-styles';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { apiClient } from '../api';
-import { type ComponentId, type Element } from '../types';
-import { getComponentIds } from '../utils/get-component-ids';
+import { type ComponentId } from '../types';
 import { selectStyles, slice } from './store';
 
-export async function loadComponentsStyles( elements: Element[] ) {
-	const componentIds = Array.from( new Set( getComponentIds( elements ) ) );
-
+export async function loadComponentsStyles( componentIds: number[] ) {
 	if ( ! componentIds.length ) {
 		return;
 	}
@@ -28,10 +25,6 @@ async function addComponentStyles( ids: ComponentId[] ) {
 	const newComponents = await loadStyles( ids );
 
 	addStyles( newComponents );
-
-	Object.values( newComponents ).forEach( ( [ , data ] ) => {
-		loadComponentsStyles( data.elements as Element[] );
-	} );
 }
 
 async function loadStyles( ids: number[] ): Promise< [ number, V1ElementData ][] > {

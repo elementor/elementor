@@ -9,6 +9,8 @@ type MoveElementsParams = {
 	moves: MoveElementParams[];
 	title: string;
 	subtitle?: string;
+	onMoveElements?: () => void;
+	onRestoreElements?: () => void;
 };
 
 type OriginalPosition = {
@@ -34,12 +36,15 @@ export const moveElements = ( {
 	moves: movesToMake,
 	title,
 	subtitle = __( 'Elements moved', 'elementor' ),
+	onMoveElements,
+	onRestoreElements,
 }: MoveElementsParams ): MovedElementsResult => {
 	const undoableMove = undoable(
 		{
 			do: ( { moves }: { moves: MoveElementParams[] } ): MovedElementsResult => {
 				const movedElements: MovedElement[] = [];
-
+				// Call onMoveElements before moving element to avoid conflicts between commands
+				onMoveElements?.();
 				moves.forEach( ( move ) => {
 					const { elementId } = move;
 					const sourceContainer = getContainer( elementId );
@@ -73,6 +78,8 @@ export const moveElements = ( {
 				return { movedElements };
 			},
 			undo: ( _: { moves: MoveElementParams[] }, { movedElements }: MovedElementsResult ) => {
+				onRestoreElements?.();
+
 				[ ...movedElements ].reverse().forEach( ( { originalPosition } ) => {
 					const { elementId, originalContainerId, originalIndex } = originalPosition;
 
@@ -91,6 +98,7 @@ export const moveElements = ( {
 				{ movedElements }: MovedElementsResult
 			): MovedElementsResult => {
 				const newMovedElements: MovedElement[] = [];
+				onMoveElements?.();
 
 				movedElements.forEach( ( { move, originalPosition } ) => {
 					const element = moveElement( {

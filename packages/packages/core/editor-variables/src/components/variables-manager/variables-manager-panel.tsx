@@ -24,7 +24,9 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { trackVariablesManagerEvent } from '../../utils/tracking';
 import { type ErrorResponse, type MappedError, mapServerError } from '../../utils/validations';
+import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { DeleteConfirmationDialog } from '../ui/delete-confirmation-dialog';
 import { EmptyState } from '../ui/empty-state';
 import { NoSearchResults } from '../ui/no-search-results';
@@ -104,7 +106,9 @@ export function VariablesManagerPanel() {
 			setServerError( null );
 			resetNavigation();
 
-			return await handleSave();
+			const result = await handleSave();
+			trackVariablesManagerEvent( { action: 'saveChanges' } );
+			return result;
 		} catch ( error ) {
 			const mappedError = mapServerError( error as ErrorResponse );
 			const duplicatedIds = mappedError?.action?.data?.duplicatedIds;
@@ -141,8 +145,12 @@ export function VariablesManagerPanel() {
 			icon: TrashIcon,
 			color: 'error.main',
 			onClick: ( itemId: string ) => {
-				if ( variables[ itemId ] ) {
-					setDeleteConfirmation( { id: itemId, label: variables[ itemId ].label } );
+				const variable = variables[ itemId ];
+				if ( variable ) {
+					setDeleteConfirmation( { id: itemId, label: variable.label } );
+
+					const variableTypeOptions = getVariableType( variable.type );
+					trackVariablesManagerEvent( { action: 'delete', varType: variableTypeOptions?.variableType } );
 				}
 			},
 		},

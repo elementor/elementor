@@ -38,12 +38,12 @@ jest.mock( '../create-component-form/utils/replace-element-with-component', () =
 } ) );
 
 const mockComponents = [
-	{ id: 1, name: 'Button Component' },
-	{ id: 2, name: 'Text Component' },
-	{ id: 3, name: 'Image Component' },
-	{ id: 4, name: 'Test Component 1' },
-	{ id: 5, name: 'Test Component 2' },
-	{ id: 6, name: 'Valid Component' },
+	{ id: 1, name: 'Button Component', uid: 'f73880da-522c-442e-815a-b2c9849b7415' },
+	{ id: 2, name: 'Text Component', uid: 'f73880da-522c-442e-815a-b2c9849b7416' },
+	{ id: 3, name: 'Image Component', uid: 'f73880da-522c-442e-815a-b2c9849b7417' },
+	{ id: 4, name: 'Test Component 1', uid: 'f73880da-522c-442e-815a-b2c9849b7418' },
+	{ id: 5, name: 'Test Component 2', uid: 'f73880da-522c-442e-815a-b2c9849b7419' },
+	{ id: 6, name: 'Valid Component', uid: 'f73880da-522c-442e-815a-b2c9849b7420' },
 ];
 
 describe( 'ComponentsTab', () => {

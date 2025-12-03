@@ -11,15 +11,23 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 ## When to use this tool:
 - When a user requests to see which classes or global classes exists.
 - When you need the list of global classes to allow the user to select from.
+- At least once before applying or unapplying a class, to ensure the class ID is correct.
 
-## Prerequisites:
-- Ensure you have the correct element ID for which you want to list the applied classes.
 `,
 		outputSchema: {
 			appliedClasses: z.array(
 				z.object( {
 					id: z.string().describe( 'The ID of the class' ),
 					label: z.string().describe( 'The label of the class' ),
+					variants: z.array(
+						z.object( {
+							meta: z.object( {
+								breakpoint: z.string().optional(),
+								state: z.string().optional(),
+							} ),
+							props: z.record( z.any() ),
+						} )
+					),
 				} )
 			),
 		},
@@ -28,10 +36,27 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 			if ( ! globalClassesProvider ) {
 				throw new Error( 'Global classes provider not found' );
 			}
-			const result: { id: string; label: string }[] = [];
+			const result: {
+				id: string;
+				label: string;
+				variants: {
+					meta: { breakpoint?: string | undefined; state?: string | undefined };
+					props: Record< string, unknown >;
+				}[];
+			}[] = [];
 			globalClassesProvider.actions.all().forEach( ( style ) => {
-				const { id, label } = style;
-				result.push( { id, label } );
+				const { id, label, variants } = style;
+				result.push( {
+					id,
+					label,
+					variants: variants.map( ( variant ) => ( {
+						meta: {
+							breakpoint: variant.meta.breakpoint as string | undefined,
+							state: variant.meta.state as string | undefined,
+						},
+						props: variant.props as Record< string, unknown >,
+					} ) ),
+				} );
 			} );
 			return { appliedClasses: result };
 		},

@@ -54,15 +54,67 @@ trait Has_Template {
 	public function get_interactions_ids() {
 		$animation_ids = [];
 
-		if ( ! empty( $this->interactions ) && is_array( $this->interactions ) ) {
-			foreach ( $this->interactions as $interaction ) {
-				if ( isset( $interaction['animation']['animation_id'] ) ) {
-					$animation_ids[] = $interaction['animation']['animation_id'];
+		$list_of_interactions = ( is_array( $this->interactions ) && isset( $this->interactions['items'] ) )
+			? $this->interactions['items']
+			: [];
+
+		foreach ( $list_of_interactions as $interaction ) {
+
+			if ( isset( $interaction['$$type'] ) && 'interaction-item' === $interaction['$$type'] ) {
+				$animation_id = $this->extract_animation_id_from_prop_type( $interaction );
+				if ( $animation_id ) {
+					$animation_ids[] = $animation_id;
 				}
+			} elseif ( isset( $interaction['animation']['animation_id'] ) ) {
+				$animation_ids[] = $interaction['animation']['animation_id'];
 			}
 		}
 
 		return $animation_ids;
+	}
+
+	private function extract_animation_id_from_prop_type( $item ) {
+		if ( ! isset( $item['value'] ) || ! is_array( $item['value'] ) ) {
+			return null;
+		}
+
+		$item_value = $item['value'];
+
+		$trigger = $this->extract_prop_value_simple( $item_value, 'trigger' );
+		$animation = $this->extract_prop_value_simple( $item_value, 'animation' );
+
+		if ( ! is_array( $animation ) ) {
+			return null;
+		}
+
+		$effect = $this->extract_prop_value_simple( $animation, 'effect' );
+		$type = $this->extract_prop_value_simple( $animation, 'type' );
+		$direction = $this->extract_prop_value_simple( $animation, 'direction' );
+		$timing_config = $this->extract_prop_value_simple( $animation, 'timing_config' );
+
+		$duration = 300;
+		$delay = 0;
+
+		if ( is_array( $timing_config ) ) {
+			$duration = $this->extract_prop_value_simple( $timing_config, 'duration', 300 );
+			$delay = $this->extract_prop_value_simple( $timing_config, 'delay', 0 );
+		}
+
+		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay ] );
+	}
+
+	private function extract_prop_value_simple( $data, $key, $default = '' ) {
+		if ( ! is_array( $data ) || ! isset( $data[ $key ] ) ) {
+			return $default;
+		}
+
+		$value = $data[ $key ];
+
+		if ( is_array( $value ) && isset( $value['$$type'] ) && isset( $value['value'] ) ) {
+			return $value['value'];
+		}
+
+		return null !== $value ? $value : $default;
 	}
 
 	protected function get_templates_contents() {

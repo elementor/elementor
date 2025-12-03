@@ -4,11 +4,9 @@ import { __ } from '@wordpress/i18n';
 
 import { useIsStyle } from './contexts/style-context';
 import { controlActionsMenu } from './controls-actions';
+import { isEqual } from './utils/is-equal';
 
 const { registerAction } = controlActionsMenu;
-
-// TODO: BC: Only background repeater supports reset; remove this constant once all repeaters support it.
-const REPEATERS_SUPPORTED_FOR_RESET = [ 'background' ];
 
 export function initResetStyleProps() {
 	registerAction( {
@@ -19,16 +17,28 @@ export function initResetStyleProps() {
 
 export function useResetStyleValueProps() {
 	const isStyle = useIsStyle();
-	const { value, resetValue, path, propType } = useBoundProp();
+	const { value, resetValue, propType } = useBoundProp();
+	const hasValue = value !== null && value !== undefined;
+	const hasInitial = propType.initial_value !== undefined && propType.initial_value !== null;
+	const isRequired = !! propType.settings?.required;
+	const shouldHide = !! propType.settings?.hide_reset;
 
-	const isInRepeater = path?.some( ( key ) => ! isNaN( Number( key ) ) );
-	const isRepeaterTypeSupported = REPEATERS_SUPPORTED_FOR_RESET.includes( path?.[ 0 ] );
-	const isRequired = propType?.settings?.required;
+	function calculateVisibility() {
+		if ( ! isStyle || ! hasValue || shouldHide ) {
+			return false;
+		}
 
-	const shouldShowResetForRepeater = ! isRequired && ( ! isInRepeater || isRepeaterTypeSupported );
+		if ( hasInitial ) {
+			return ! isEqual( value, propType.initial_value );
+		}
+
+		return ! isRequired;
+	}
+
+	const visible = calculateVisibility();
 
 	return {
-		visible: isStyle && value !== null && value !== undefined && shouldShowResetForRepeater,
+		visible,
 		title: __( 'Clear', 'elementor' ),
 		icon: BrushBigIcon,
 		onClick: () => resetValue(),

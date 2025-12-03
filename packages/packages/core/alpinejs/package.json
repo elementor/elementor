@@ -1,0 +1,43 @@
+{
+  "name": "@elementor/alpinejs",
+  "description": "Wrapper around `alpinejs`",
+  "version": "3.33.0",
+  "private": false,
+  "author": "Elementor Team",
+  "homepage": "https://elementor.com/",
+  "license": "GPL-3.0-or-later",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elementor/elementor.git",
+    "directory": "packages/core/alpinejs"
+  },
+  "bugs": {
+    "url": "https://github.com/elementor/elementor/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup --config=./tsup.config.ts",
+    "dev": "tsup --config=../../tsup.dev.ts"
+  },
+  "dependencies": {
+    "@alpinejs/csp": "3.15.0"
+  },
+  "devDependencies": {
+    "@types/alpinejs": "^3.13.11",
+    "tsup": "^8.3.5"
+  }
+}
+

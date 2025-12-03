@@ -4,6 +4,7 @@ namespace Elementor\Core\Admin;
 use Elementor\Api;
 use Elementor\Core\Admin\UI\Components\Button;
 use Elementor\Core\Base\Module;
+use Elementor\Core\Upgrade\Manager;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -20,6 +21,9 @@ class Admin_Notices extends Module {
 
 	const DEFAULT_EXCLUDED_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
 	const LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID = 'local_google_fonts_disabled';
+	const LOCAL_GOOGLE_FONTS_NOTICE_MIN_VERSION = '3.33.3';
+
+	const EXIT_EARLY_FOR_BACKWARD_COMPATIBILITY = false;
 
 	private $plain_notices = [
 		'api_notice',
@@ -467,6 +471,8 @@ class Admin_Notices extends Module {
 	}
 
 	private function notice_send_app_promotion() {
+		return self::EXIT_EARLY_FOR_BACKWARD_COMPATIBILITY;
+
 		$notice_id = 'send_app_promotion';
 
 		if ( ! $this->is_elementor_page() && ! $this->is_elementor_admin_screen() ) {
@@ -517,6 +523,10 @@ class Admin_Notices extends Module {
 	private function notice_local_google_fonts_disabled() {
 
 		if ( ! $this->is_elementor_page() && ! $this->is_elementor_admin_screen() ) {
+			return false;
+		}
+
+		if ( ! Manager::had_install_prior_to( self::LOCAL_GOOGLE_FONTS_NOTICE_MIN_VERSION ) ) {
 			return false;
 		}
 

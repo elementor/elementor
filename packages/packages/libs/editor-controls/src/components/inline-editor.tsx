@@ -1,24 +1,45 @@
 import * as React from 'react';
-import { type ForwardedRef } from 'react';
+import { type DependencyList, type ForwardedRef, useEffect, useRef } from 'react';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
 import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import Italic from '@tiptap/extension-italic';
 import Strike from '@tiptap/extension-strike';
+import Subscript from '@tiptap/extension-subscript';
+import Superscript from '@tiptap/extension-superscript';
 import Text from '@tiptap/extension-text';
 import Underline from '@tiptap/extension-underline';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { type AnyExtension, EditorContent, useEditor } from '@tiptap/react';
+
+import { InlineEditorToolbar } from './inline-editor-toolbar';
 
 type InlineEditorProps = {
 	value: string;
 	setValue: ( value: string ) => void;
 	attributes?: Record< string, string >;
 	sx?: SxProps< Theme >;
+	showToolbar?: boolean;
+};
+
+const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
+	const hasMounted = useRef( false );
+
+	useEffect( () => {
+		if ( hasMounted.current ) {
+			callback();
+		} else {
+			hasMounted.current = true;
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, dependencies );
 };
 
 export const InlineEditor = React.forwardRef(
-	( { value, setValue, attributes = {}, sx }: InlineEditorProps, ref: ForwardedRef< HTMLDivElement > ) => {
+	(
+		{ value, setValue, attributes = {}, showToolbar = false, sx }: InlineEditorProps,
+		ref: ForwardedRef< HTMLDivElement >
+	) => {
 		const editor = useEditor( {
 			extensions: [
 				Document.extend( {
@@ -29,6 +50,8 @@ export const InlineEditor = React.forwardRef(
 				Italic,
 				Strike,
 				Underline,
+				Superscript,
+				Subscript,
 				HardBreak.extend( {
 					addKeyboardShortcuts() {
 						return {
@@ -36,10 +59,22 @@ export const InlineEditor = React.forwardRef(
 						};
 					},
 				} ),
-			],
+			] as AnyExtension[],
 			content: value,
 			onUpdate: ( { editor: updatedEditor } ) => setValue( updatedEditor.getHTML() ),
 		} );
+
+		useOnUpdate( () => {
+			if ( ! editor ) {
+				return;
+			}
+
+			const currentContent = editor.getHTML();
+
+			if ( currentContent !== value ) {
+				editor.commands.setContent( value, { emitUpdate: false } );
+			}
+		}, [ editor, value ] );
 
 		return (
 			<Box
@@ -68,6 +103,7 @@ export const InlineEditor = React.forwardRef(
 				} }
 				{ ...attributes }
 			>
+				{ showToolbar && <InlineEditorToolbar editor={ editor } /> }
 				<EditorContent editor={ editor } />
 			</Box>
 		);

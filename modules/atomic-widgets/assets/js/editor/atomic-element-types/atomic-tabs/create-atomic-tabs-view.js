@@ -3,11 +3,13 @@ const createAtomicTabsView = () => {
 
 	return class AtomicTabsView extends AtomicElementBaseView {
 		attributes() {
-			const defaultActiveTab = this.model.getSetting( 'default-active-tab' );
+			const defaultActiveTab = this.model.getSetting( 'default-active-tab' ).value ?? 0;
+			const defaultActiveTabId = `${ this.model.id }-tab-${ defaultActiveTab }`;
 
-			return defaultActiveTab?.value
-				? { 'data-e-settings': JSON.stringify( { 'default-active-tab': defaultActiveTab.value } ), ...super.attributes() }
-				: super.attributes();
+			const eSettings = JSON.stringify( { 'default-active-tab': defaultActiveTabId } );
+			const attributes = super.attributes();
+
+			return { 'x-data': `eTabs${ this.model.id }`, 'data-e-settings': eSettings, ...attributes };
 		}
 	};
 };

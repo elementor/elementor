@@ -1,6 +1,7 @@
 module.exports = elementorModules.Module.extend( {
 
 	openMenuEvent: null,
+	location: null,
 
 	getDefaultSettings() {
 		return {
@@ -144,7 +145,11 @@ module.exports = elementorModules.Module.extend( {
 			return;
 		}
 
-		action.callback( this.openMenuEvent );
+		action.callback( this.openMenuEvent, {
+			location: this.location,
+			secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.contextMenu,
+			trigger: elementorCommon.eventsManager.config.triggers.rightClick,
+		} );
 
 		this.getModal().hide();
 	},
@@ -176,11 +181,12 @@ module.exports = elementorModules.Module.extend( {
 		};
 	},
 
-	show( event ) {
+	show( event, options = {} ) {
 		var self = this,
 			modal = self.getModal();
 
 		this.openMenuEvent = event;
+		this.location = options.location;
 
 		modal.setSettings( 'position', {
 			of: event,

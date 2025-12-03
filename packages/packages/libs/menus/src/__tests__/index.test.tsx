@@ -194,6 +194,9 @@ describe( 'createMenu', () => {
 			},
 		} );
 
+		const mockConsoleWarn = jest.fn();
+		window.console.warn = mockConsoleWarn;
+
 		menu.registerLink( {
 			id: 'test',
 			props: {
@@ -202,7 +205,7 @@ describe( 'createMenu', () => {
 		} );
 
 		// Assert.
-		expect( console ).toHaveWarned();
+		expect( mockConsoleWarn ).toHaveBeenCalled();
 	} );
 } );
 

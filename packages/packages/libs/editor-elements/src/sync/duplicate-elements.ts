@@ -33,7 +33,6 @@ export const duplicateElements = ( {
 	elementIds,
 	title,
 	subtitle = __( 'Item duplicated', 'elementor' ),
-	onCreate,
 }: DuplicateElementsParams ): DuplicatedElementsResult => {
 	const undoableDuplicate = undoable(
 		{
@@ -59,8 +58,6 @@ export const duplicateElements = ( {
 
 					return acc;
 				}, [] as DuplicatedElement[] );
-
-				onCreate?.( duplicatedElements );
 
 				return { duplicatedElements };
 			},
@@ -101,8 +98,6 @@ export const duplicateElements = ( {
 
 					return acc;
 				}, [] as DuplicatedElement[] );
-
-				onCreate?.( duplicatedElements );
 
 				return { duplicatedElements };
 			},

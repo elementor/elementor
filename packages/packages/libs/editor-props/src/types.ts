@@ -26,10 +26,16 @@ export type Dependency = {
 	terms: ( DependencyTerm | Dependency )[];
 };
 
+type BasePropTypeMeta = {
+	description?: string;
+	[ key: string ]: unknown;
+};
+
 type BasePropType< TValue > = {
 	default?: TValue | null;
+	initial_value?: TValue | null;
 	settings: Record< string, unknown >;
-	meta: Record< string, unknown >;
+	meta: BasePropTypeMeta;
 	dependencies?: Dependency;
 };
 
@@ -72,9 +78,9 @@ export type UnionPropType = BasePropType< PropValue > & {
 	prop_types: Record< string, TransformablePropType >;
 };
 
-export type PropType = TransformablePropType | UnionPropType;
+export type PropType< T = object > = ( TransformablePropType | UnionPropType ) & T;
 
-export type PropsSchema = Record< string, PropType >;
+export type PropsSchema = Record< string, PropType< { key?: string } > >;
 
 type MaybeArray< T > = T | T[];
 

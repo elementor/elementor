@@ -1,43 +1,65 @@
 import * as React from 'react';
+import { useMemo } from 'react';
+import {
+	ControlFormLabel,
+	PopoverGridContainer,
+	type ToggleButtonGroupItem,
+	ToggleButtonGroupUi,
+} from '@elementor/editor-controls';
 import { ArrowDownSmallIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpSmallIcon } from '@elementor/icons';
-import { Grid, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from '@elementor/ui';
+import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { type FieldProps } from '../../types';
+import { type DirectionFieldProps } from '../../types';
 
-export function Direction( { value, onChange }: FieldProps ) {
-	const availableDirections = [
-		{ key: 'top', label: __( 'Up', 'elementor' ), icon: <ArrowUpSmallIcon fontSize="tiny" /> },
-		{ key: 'bottom', label: __( 'Down', 'elementor' ), icon: <ArrowDownSmallIcon fontSize="tiny" /> },
-		{ key: 'left', label: __( 'Left', 'elementor' ), icon: <ArrowLeftIcon fontSize="tiny" /> },
-		{ key: 'right', label: __( 'Right', 'elementor' ), icon: <ArrowRightIcon fontSize="tiny" /> },
-	];
+type Direction = 'top' | 'bottom' | 'left' | 'right';
+
+export function Direction( { value, onChange, interactionType }: DirectionFieldProps ) {
+	const options: ToggleButtonGroupItem< Direction >[] = useMemo( () => {
+		const isIn = interactionType === 'in';
+
+		return [
+			{
+				value: 'top',
+				label: isIn ? __( 'From top', 'elementor' ) : __( 'To top', 'elementor' ),
+				renderContent: ( { size } ) =>
+					isIn ? <ArrowDownSmallIcon fontSize={ size } /> : <ArrowUpSmallIcon fontSize={ size } />,
+				showTooltip: true,
+			},
+			{
+				value: 'bottom',
+				label: interactionType === 'in' ? __( 'From bottom', 'elementor' ) : __( 'To bottom', 'elementor' ),
+				renderContent: ( { size } ) =>
+					isIn ? <ArrowUpSmallIcon fontSize={ size } /> : <ArrowDownSmallIcon fontSize={ size } />,
+				showTooltip: true,
+			},
+			{
+				value: 'left',
+				label: interactionType === 'in' ? __( 'From left', 'elementor' ) : __( 'To left', 'elementor' ),
+				renderContent: ( { size } ) =>
+					isIn ? <ArrowRightIcon fontSize={ size } /> : <ArrowLeftIcon fontSize={ size } />,
+				showTooltip: true,
+			},
+			{
+				value: 'right',
+				label: interactionType === 'in' ? __( 'From right', 'elementor' ) : __( 'To right', 'elementor' ),
+				renderContent: ( { size } ) =>
+					isIn ? <ArrowLeftIcon fontSize={ size } /> : <ArrowRightIcon fontSize={ size } />,
+				showTooltip: true,
+			},
+		];
+	}, [ interactionType ] );
 
 	return (
-		<>
-			<Grid item xs={ 12 } md={ 6 }>
-				<Typography variant="caption" color="text.secondary">
-					{ __( 'Direction', 'elementor' ) }
-				</Typography>
-			</Grid>
-			<Grid item xs={ 12 } md={ 6 }>
-				<ToggleButtonGroup
-					size="tiny"
-					exclusive
-					onChange={ ( event: React.MouseEvent< HTMLElement >, newValue: string ) => onChange( newValue ) }
-					value={ value }
-				>
-					{ availableDirections.map( ( direction ) => {
-						return (
-							<Tooltip key={ direction.key } title={ direction.label } placement="top">
-								<ToggleButton key={ direction.key } value={ direction.key }>
-									{ direction.icon }
-								</ToggleButton>
-							</Tooltip>
-						);
-					} ) }
-				</ToggleButtonGroup>
-			</Grid>
-		</>
+		<Grid item xs={ 12 }>
+			<PopoverGridContainer>
+				<Grid item xs={ 6 }>
+					<ControlFormLabel> { __( 'Direction', 'elementor' ) }</ControlFormLabel>
+				</Grid>
+				<Grid item xs={ 6 }>
+					<ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ value } />
+				</Grid>
+			</PopoverGridContainer>
+		</Grid>
 	);
 }

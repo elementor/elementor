@@ -9,7 +9,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Render_Context;
@@ -50,7 +50,6 @@ class Atomic_Tab extends Atomic_Element_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-			'tab-content-id' => String_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
 	}
@@ -145,10 +144,10 @@ class Atomic_Tab extends Atomic_Element_Base {
 
 	protected function define_default_children() {
 		return [
-			Atomic_Heading::generate()
+			Atomic_Paragraph::generate()
 				->settings( [
-					'title' => String_Prop_Type::generate( 'Tab' ),
-					'tag' => String_Prop_Type::generate( 'h3' ),
+					'paragraph' => String_Prop_Type::generate( 'Tab' ),
+					'tag' => String_Prop_Type::generate( 'span' ),
 				] )
 				->build(),
 		];
@@ -159,9 +158,14 @@ class Atomic_Tab extends Atomic_Element_Base {
 		$settings = $this->get_atomic_settings();
 		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
 		$initial_attributes = $this->define_initial_attributes();
-		$default_active_tab = Render_Context::get( Atomic_Tabs::class )['default-active-tab'] ?? null;
 
-		$is_active = $default_active_tab === $this->get_id();
+		$tabs_context = Render_Context::get( Atomic_Tabs::class );
+		$default_active_tab = $tabs_context['default-active-tab'];
+		$get_tab_index = $tabs_context['get-tab-index'];
+		$tabs_id = $tabs_context['tabs-id'];
+
+		$index = $get_tab_index( $this->get_id() );
+		$is_active = $default_active_tab === $index;
 
 		$attributes = [
 			'class' => [
@@ -172,11 +176,11 @@ class Atomic_Tab extends Atomic_Element_Base {
 			],
 			'tabindex' => $is_active ? '0' : '-1',
 			'aria-selected' => $is_active ? 'true' : 'false',
+			'x-bind' => 'tab',
+			'x-ref' => $this->get_id(),
+			'id' => Atomic_Tabs::get_tab_id( $tabs_id, $index ),
+			'aria-controls' => Atomic_Tabs::get_tab_content_id( $tabs_id, $index ),
 		];
-
-		if ( ! empty( $settings['tab-content-id'] ) ) {
-			$attributes['aria-controls'] = esc_attr( $settings['tab-content-id'] );
-		}
 
 		if ( ! empty( $settings['_cssid'] ) ) {
 			$attributes['id'] = esc_attr( $settings['_cssid'] );

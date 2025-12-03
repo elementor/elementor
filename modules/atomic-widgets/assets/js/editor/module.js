@@ -7,8 +7,8 @@ import createFlexboxType from './atomic-element-types/create-flexbox-type';
 import createAtomicTabsType from './atomic-element-types/atomic-tabs/create-atomic-tabs-type';
 import createAtomicTabContentType from './atomic-element-types/atomic-tab-content/create-atomic-tab-content-type';
 import createAtomicTabType from './atomic-element-types/atomic-tab/create-atomic-tab-type';
-import createAtomicTabsMenuType from './atomic-element-types/create-atomic-tabs-menu-type';
-import createAtomicTabsContentAreaType from './atomic-element-types/create-atomic-tabs-content-area-type';
+import createAtomicTabsMenuType from './atomic-element-types/atomic-tabs-menu/create-atomic-tabs-menu-type';
+import createAtomicTabsContentAreaType from './atomic-element-types/atomic-tabs-content-area/create-atomic-tabs-content-area-type';
 
 class Module extends elementorModules.editor.utils.Module {
 	onInit() {
@@ -25,18 +25,14 @@ class Module extends elementorModules.editor.utils.Module {
 	}
 
 	registerAtomicElements() {
-		const nestedElementsExperiment = 'e_nested_elements';
-
 		elementor.elementsManager.registerElementType( createDivBlockType() );
 		elementor.elementsManager.registerElementType( createFlexboxType() );
 
-		if ( elementorCommon.config.experimentalFeatures[ nestedElementsExperiment ] ) {
-			elementor.elementsManager.registerElementType( createAtomicTabsType() );
-			elementor.elementsManager.registerElementType( createAtomicTabContentType() );
-			elementor.elementsManager.registerElementType( createAtomicTabType() );
-			elementor.elementsManager.registerElementType( createAtomicTabsMenuType() );
-			elementor.elementsManager.registerElementType( createAtomicTabsContentAreaType() );
-		}
+		elementor.elementsManager.registerElementType( createAtomicTabsType() );
+		elementor.elementsManager.registerElementType( createAtomicTabContentType() );
+		elementor.elementsManager.registerElementType( createAtomicTabType() );
+		elementor.elementsManager.registerElementType( createAtomicTabsMenuType() );
+		elementor.elementsManager.registerElementType( createAtomicTabsContentAreaType() );
 	}
 }
 

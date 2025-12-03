@@ -4,6 +4,8 @@
  */
 const getBuildFiles = [
 	'**',
+	'!.cursor/**',
+	'!.vscode/**',
 	'!.git/**',
 	'!.github/**',
 	'!.run/**',
@@ -47,6 +49,14 @@ const getBuildFiles = [
 	'!*~',
 	'!commitlint.config.js',
 	'!scripts/**',
+	'!eslint-local-rules.js',
+	'!run-on-linux.js',
+	'!test*/**',
+	'!8888/**',
+	'!8889/**',
+	'!*.log',
+	'!hello-elementor/**',
+	'!.env',
 
 	// Conflict with above rule.
 	'core/files/assets/**',

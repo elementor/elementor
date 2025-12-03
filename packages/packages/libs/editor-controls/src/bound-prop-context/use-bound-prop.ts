@@ -47,7 +47,7 @@ export function useBoundProp< TKey extends string, TValue extends PropValue >(
 	const disabled = propKeyContext.isDisabled?.( propKeyContext.propType );
 
 	const resetValue = () => {
-		propKeyContext.setValue( null );
+		propKeyContext.setValue( propKeyContext.propType.initial_value ?? null );
 	};
 
 	// allow using the hook without a propTypeUtil, with no modifications or validations.
