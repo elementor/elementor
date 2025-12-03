@@ -28,11 +28,10 @@ export const UrlPopover = ( { popupState, restoreValue, anchorRef, value, onChan
 
 	return (
 		<Popover
-			disablePortal
 			slotProps={ { paper: { sx: { borderRadius: 2, width: anchorRef.current?.offsetWidth + 'px' } } } }
 			{ ...bindPopover( popupState ) }
-			anchorOrigin={ { vertical: 'top', horizontal: 'center' } }
-			transformOrigin={ { vertical: 'bottom', horizontal: 'center' } }
+			anchorOrigin={ { vertical: 'top', horizontal: 'left' } }
+			transformOrigin={ { vertical: 'top', horizontal: 'left' } }
 			onClose={ handleClose }
 		>
 			<Stack direction="row" alignItems="center" gap={ 0.5 } sx={ { p: 1.5 } }>
