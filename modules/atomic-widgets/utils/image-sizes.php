@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Image;
+namespace Elementor\Modules\AtomicWidgets\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -65,3 +65,4 @@ class Image_Sizes {
 		return apply_filters( 'image_size_names_choose', $image_sizes );
 	}
 }
+

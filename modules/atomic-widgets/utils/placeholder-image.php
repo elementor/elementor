@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Image;
+namespace Elementor\Modules\AtomicWidgets\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -16,3 +16,4 @@ class Placeholder_Image {
 		return ELEMENTOR_ASSETS_URL . 'images/background-placeholder.svg';
 	}
 }
+

@@ -1,11 +1,11 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets;
+namespace Elementor\Modules\AtomicWidgets\Utils;
 
-use Elementor\Plugin;
 use Elementor\Core\Base\Document;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -54,3 +54,4 @@ class Utils {
 		} );
 	}
 }
+
