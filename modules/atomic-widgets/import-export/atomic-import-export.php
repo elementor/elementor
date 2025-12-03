@@ -9,7 +9,7 @@ use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Styles_Ids_Modifier;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Styles_Props_Modifier;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Import_Export_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
-use Elementor\Modules\AtomicWidgets\Utils;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {

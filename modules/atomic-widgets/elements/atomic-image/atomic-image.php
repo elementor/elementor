@@ -10,7 +10,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Image_Control;
-use Elementor\Modules\AtomicWidgets\Image\Placeholder_Image;
+use Elementor\Modules\AtomicWidgets\Utils\Image\Placeholder_Image;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;

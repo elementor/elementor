@@ -4,7 +4,7 @@ namespace Elementor\Modules\Components\PropTypes;
 use Elementor\Plugin;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
-use Elementor\Modules\AtomicWidgets\Utils;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\Components\Documents\Component_Overridable_Props;
 use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
 
