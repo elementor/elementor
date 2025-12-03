@@ -107,6 +107,7 @@ jobs:
         run: |
           npm run start-local-server
       - name: Update wordpress to nightly build
+        if: ${{ github.event_name == 'schedule' }}
         run: npx wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command="wp core update https://wordpress.org/nightly-builds/wordpress-latest.zip"
       - name: Setup test data
         run: npm run test:setup:playwright
