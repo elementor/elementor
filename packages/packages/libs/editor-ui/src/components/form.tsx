@@ -13,7 +13,8 @@ export const Form = ( { children, onSubmit }: Props ) => {
 	};
 
 	const handleKeyDown = ( e: KeyboardEvent< HTMLFormElement > ) => {
-		if ( e.key === 'Enter' ) {
+		const { target } = e;
+		if ( e.key === 'Enter' && target instanceof HTMLInputElement && target.type !== 'submit' ) {
 			e.preventDefault();
 
 			formRef.current?.requestSubmit();
