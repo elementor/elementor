@@ -1,3 +1,4 @@
+import { type V1Document } from '@elementor/editor-documents';
 import {
 	__createSelector as createSelector,
 	__createSlice as createSlice,
@@ -24,9 +25,16 @@ type ComponentsState = {
 	loadStatus: Status;
 	styles: StylesDefinition;
 	createdThisSession: Component[ 'uid' ][];
+	path: ComponentsPathItem[];
+	currentComponentId: V1Document[ 'id' ] | null;
 };
 
 type ComponentsSlice = SliceState< typeof slice >;
+
+export type ComponentsPathItem = {
+	instanceId?: string;
+	componentId: V1Document[ 'id' ];
+};
 
 export const initialState: ComponentsState = {
 	data: [],
@@ -34,9 +42,12 @@ export const initialState: ComponentsState = {
 	loadStatus: 'idle',
 	styles: {},
 	createdThisSession: [],
+	path: [],
+	currentComponentId: null,
 };
 
 export const SLICE_NAME = 'components';
+
 export const slice = createSlice( {
 	name: SLICE_NAME,
 	initialState,
@@ -68,6 +79,12 @@ export const slice = createSlice( {
 		addCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
 			state.createdThisSession.push( payload );
 		},
+		setCurrentComponentId: ( state, { payload }: PayloadAction< V1Document[ 'id' ] | null > ) => {
+			state.currentComponentId = payload;
+		},
+		setPath: ( state, { payload }: PayloadAction< ComponentsPathItem[] > ) => {
+			state.path = payload;
+		},
 	},
 	extraReducers: ( builder ) => {
 		builder.addCase( loadComponents.fulfilled, ( state, { payload }: PayloadAction< GetComponentResponse > ) => {
@@ -88,6 +105,8 @@ const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadS
 const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
 const selectUnpublishedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].unpublishedData;
 const getCreatedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].createdThisSession;
+const getPath = ( state: ComponentsSlice ) => state[ SLICE_NAME ].path;
+const getCurrentComponentId = ( state: ComponentsSlice ) => state[ SLICE_NAME ].currentComponentId;
 const selectComponent = ( state: ComponentsSlice, componentId: ComponentId ) =>
 	state[ SLICE_NAME ].data.find( ( component ) => component.id === componentId );
 
@@ -114,4 +133,9 @@ export const selectCreatedThisSession = createSelector(
 export const selectOverridableProps = createSelector(
 	selectComponent,
 	( component: PublishedComponent | undefined ) => component?.overridableProps
+);
+export const selectPath = createSelector( getPath, ( path ) => path );
+export const selectCurrentComponentId = createSelector(
+	getCurrentComponentId,
+	( currentComponentId ) => currentComponentId
 );
