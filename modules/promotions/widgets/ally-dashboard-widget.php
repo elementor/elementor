@@ -50,7 +50,7 @@ class Ally_Dashboard_Widget {
 						? esc_html_e( 'Install Ally for free to fix accessibility issues directly in WordPress.', 'elementor' )
 						: esc_html_e( 'Check your site now - no installation required.', 'elementor' ) ?>
 				</p>
-				<a href="<?php echo esc_url( $link ); ?>" target="_blank" rel="noreferrer" id="<?php echo esc_html( $submit_id ); ?>" class="button button-primary">
+				<a href="<?php echo esc_url( $link ); ?>" target="_blank" rel="noreferrer" id="<?php echo esc_attr( $submit_id ); ?>" class="button button-primary">
 					<?php $is_scanner_run
 						? esc_html_e( 'Get it free', 'elementor' )
 						: esc_html_e( 'Run free scan', 'elementor' ); ?>
