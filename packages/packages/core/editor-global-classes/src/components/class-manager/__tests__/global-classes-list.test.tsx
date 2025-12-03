@@ -10,6 +10,7 @@ import {
 } from '@elementor/store';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 
+import { mockTrackingModule } from '../../../__tests__/mocks';
 import { useFilters } from '../../../hooks/use-filters';
 import { slice } from '../../../store';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../search-and-filter/context';
@@ -36,6 +37,8 @@ jest.mock( '../../../hooks/use-css-class-usage', () => ( {
 		},
 	} ),
 } ) );
+
+jest.mock( '../../../utils/tracking', () => mockTrackingModule );
 
 const mockUseSearchAndFiltersProps: SearchAndFilterContextType = {
 	search: {
@@ -213,7 +216,9 @@ describe( 'GlobalClassesList', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Delete' } ) );
 
 		// Assert.
-		expect( screen.queryByText( 'Class 1' ) ).not.toBeInTheDocument();
+		await waitFor( () => {
+			expect( screen.queryByText( 'Class 1' ) ).not.toBeInTheDocument();
+		} );
 		expect( screen.getByText( 'Class 2' ) ).toBeInTheDocument();
 	} );
 

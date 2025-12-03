@@ -50,7 +50,6 @@ export default function ExportKitPartsSelection() {
 
 	return (
 		<KitPartsSelection
-			data={ data }
 			onCheckboxChange={ handleCheckboxChange }
 			handleSaveCustomization={ handleSaveCustomization }
 			isCloudKitsEligible={ isCloudKitsEligible }
