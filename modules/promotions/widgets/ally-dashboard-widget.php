@@ -6,22 +6,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-Class Ally_Dashboard_Widget {
+use Elementor\Plugin;
+
+class Ally_Dashboard_Widget {
 	public const SERVICE_URL = 'https://jovial-flan-909d87.netlify.app/';
 	public const ALLY_SCANNER_RUN = 'ea11y_dashboard_widget_scanner_run';
 	public const ALLY_NONCE_KEY = 'ea11y_dashboard_widget_nonce';
 	public const ALLY_PUBLIC_URL = 'https://wordpress.org/plugins/pojo-accessibility/';
-
-	/**
-	 * Check is Ally plugin already installed and activated
-	 *
-	 * @access public
-	 */
-	public static function is_ally_active() {
-		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-		return is_plugin_active( 'pojo-accessibility/pojo-accessibility.php' );
-	}
-
 
 	/**
 	 * Check is widget already submitted
@@ -39,10 +30,7 @@ Class Ally_Dashboard_Widget {
 	 */
 	public static function ally_widget_render(): void {
 		$is_scanner_run = self::is_scanner_run();
-		$title = $is_scanner_run ? "Don't leave accessibility issues unresolved" : "Accessibility check recommended";
-		$description = $is_scanner_run ? "Install Ally for free to fix accessibility issues directly in WordPress." : "Check your site now - no installation required.";
-		$submit_text = $is_scanner_run ? "Get it free" : "Run free scan";
-		$submit_id = $is_scanner_run ? "e-dashboard-ally-submitted" : "e-dashboard-ally-submit";
+		$submit_id = $is_scanner_run ? 'e-dashboard-ally-submitted' : 'e-dashboard-ally-submit';
 		$link = $is_scanner_run ? self::ALLY_PUBLIC_URL : self::SERVICE_URL . '?url=' . site_url();
 		?>
 		<div class="e-dashboard-ally e-dashboard-widget">
@@ -54,13 +42,19 @@ Class Ally_Dashboard_Widget {
 			</div>
 			<div class="e-dashboard-ally-info">
 				<h4 class="e-dashboard-ally-title">
-					<?php esc_html_e( $title, 'elementor' ); ?>
+					<?php echo $is_scanner_run
+						? esc_html__( "Don't leave accessibility issues unresolved", 'elementor' )
+						: esc_html__( 'Accessibility check recommended', 'elementor' ); ?>
 				</h4>
 				<p class="e-dashboard-ally-description">
-					<?php esc_html_e( $description, 'elementor' ); ?>
+					<?php echo $is_scanner_run
+						? esc_html__( 'Install Ally for free to fix accessibility issues directly in WordPress.', 'elementor' )
+						: esc_html__( 'Check your site now - no installation required.', 'elementor' ) ?>
 				</p>
-				<a href="<?php echo esc_url($link)?>" target="_blank" rel="noreferrer" id="<?php echo $submit_id; ?>" class="button button-primary">
-					<?php esc_html_e( $submit_text, 'elementor' ); ?>
+				<a href="<?php echo esc_url( $link ); ?>" target="_blank" rel="noreferrer" id="<?php echo esc_html( $submit_id ); ?>" class="button button-primary">
+					<?php echo $is_scanner_run
+						? esc_html__( 'Get it free', 'elementor' )
+						: esc_html__( 'Run free scan', 'elementor' ); ?>
 				</a>
 			</div>
 			<script>
@@ -68,7 +62,7 @@ Class Ally_Dashboard_Widget {
 					$("#e-dashboard-ally-submit").on("click", function() {
 						$.post(ajaxurl, {
 							action: "e-ally-scanner-run",
-							nonce: "<?php echo wp_create_nonce(self::ALLY_NONCE_KEY) ?>"
+							nonce: "<?php echo esc_html( wp_create_nonce( self::ALLY_NONCE_KEY ) ); ?>"
 						});
 					});
 				});
@@ -82,8 +76,8 @@ Class Ally_Dashboard_Widget {
 	 * @access public
 	 */
 	public function handle_click() {
-		check_ajax_referer(self::ALLY_NONCE_KEY, 'nonce');
-		update_option(self::ALLY_SCANNER_RUN, true);
+		check_ajax_referer( self::ALLY_NONCE_KEY, 'nonce' );
+		update_option( self::ALLY_SCANNER_RUN, true );
 		wp_send_json_success();
 	}
 
@@ -96,7 +90,7 @@ Class Ally_Dashboard_Widget {
 		add_meta_box(
 			'e-dashboard-ally',
 			esc_html__( 'Accessibility', 'elementor' ),
-			[self::class, 'ally_widget_render'],
+			[ self::class, 'ally_widget_render' ],
 			'dashboard',
 			'column3',
 			'high'
@@ -104,7 +98,7 @@ Class Ally_Dashboard_Widget {
 	}
 
 	public static function init(): void {
-		if ( ! self::is_ally_active() ) {
+		if ( ! Plugin::$instance->wp->is_plugin_active( 'pojo-accessibility/pojo-accessibility.php' ) ) {
 			// Register action
 			add_action( 'wp_ajax_e-ally-scanner-run', [ self::class, 'handle_click' ] );
 			// Register Dashboard Widgets.
