@@ -1,4 +1,4 @@
-import { forwardRef, type ForwardRefExoticComponent, type JSX, type RefAttributes, RefObject } from 'react';
+import { type ForwardRefExoticComponent, type JSX, type RefAttributes, type RefObject } from 'react';
 import { styleTransformersRegistry } from '@elementor/editor-canvas';
 import { stylesInheritanceTransformersRegistry } from '@elementor/editor-editing-panel';
 import {

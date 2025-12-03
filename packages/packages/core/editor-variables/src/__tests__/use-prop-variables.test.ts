@@ -73,7 +73,7 @@ describe( 'useFilteredVariables', () => {
 			'global-font-variable': { variableType: 'font' },
 		} as never );
 
-		jest.mocked( getVariableType ).mockImplementation( ( propKey: string ): any => {
+		jest.mocked( getVariableType ).mockImplementation( ( propKey: string ): never => {
 			if ( propKey === 'global-color-variable' ) {
 				return { variableType: 'color' };
 			}
