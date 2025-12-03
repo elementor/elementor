@@ -97,13 +97,13 @@ jobs:
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
 
-      - name: Set WP_CORE_VERSION environment variable
-        run: echo "WP_CORE_VERSION=latest" >> $GITHUB_ENV
+      - name: Update PHP version in config
+        run: |
+          jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+          echo "PHP version set to:"
+          cat tests/playwright/.playwright-wp-lite-env.json | grep phpVersion
 
       - name: Install WordPress environment
-        env:
-          PHP_VERSION: ${{ env.PHP_VERSION }}
-          WP_CORE_VERSION: ${{ env.WP_CORE_VERSION }}
         run: |
           npm run start-local-server
       - name: Update wordpress to nightly build
@@ -176,13 +176,13 @@ jobs:
           curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
           unzip hello-elementor
 
-      - name: Set WP_CORE_VERSION environment variable
-        run: echo "WP_CORE_VERSION=latest" >> $GITHUB_ENV
+      - name: Update PHP version in config
+        run: |
+          jq --arg php_version "${{ env.PHP_VERSION }}" '.phpVersion = $php_version' tests/playwright/.playwright-wp-lite-env.json > tmp.json && mv tmp.json tests/playwright/.playwright-wp-lite-env.json
+          echo "PHP version set to:"
+          cat tests/playwright/.playwright-wp-lite-env.json | grep phpVersion
 
       - name: Install WordPress environment
-        env:
-          PHP_VERSION: ${{ env.PHP_VERSION }}
-          WP_CORE_VERSION: ${{ env.WP_CORE_VERSION }}
         run: |
           npm run start-local-server
       - name: Setup test data
