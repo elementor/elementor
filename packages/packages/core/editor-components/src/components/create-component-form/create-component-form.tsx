@@ -177,6 +177,8 @@ const Form = ( {
 		create: __( 'Create', 'elementor' ),
 	};
 
+	const nameInputId = 'component-name';
+
 	return (
 		<FormElement onSubmit={ handleSubmit }>
 			<Stack alignItems="start" width="268px">
@@ -194,13 +196,13 @@ const Form = ( {
 				</Stack>
 				<Grid container gap={ 0.75 } alignItems="start" p={ 1.5 }>
 					<Grid item xs={ 12 }>
-						<FormLabel htmlFor={ 'component-name' } size="tiny">
+						<FormLabel htmlFor={ nameInputId } size="tiny">
 							{ texts.name }
 						</FormLabel>
 					</Grid>
 					<Grid item xs={ 12 }>
 						<TextField
-							id={ 'component-name' }
+							id={ nameInputId }
 							size={ FONT_SIZE }
 							fullWidth
 							value={ values.componentName }
