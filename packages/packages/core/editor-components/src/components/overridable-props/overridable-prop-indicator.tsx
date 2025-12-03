@@ -67,7 +67,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 			label,
 			groupId: group,
 			propKey: bind,
-			elType,
+			elType: elType ?? 'widget',
 			widgetType: elementType.key,
 			originValue,
 		} );

@@ -82,10 +82,9 @@ export type V1ElementEditorSettingsProps = {
 export type V1ElementSettingsProps = Record< string, PropValue >;
 
 export type V1ElementConfig< T = object > = {
-	elType: string;
 	title: string;
-	elType?: string;
 	widgetType?: string;
+	elType?: string;
 	controls: object;
 	atomic?: boolean;
 	atomic_controls?: ControlItem[];
