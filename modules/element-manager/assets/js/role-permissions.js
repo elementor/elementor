@@ -75,6 +75,7 @@ export const RolePermissions = ( props ) => {
 							style={ {
 								textDecoration: 'none',
 							} }
+							className={ `e-id-elementor-element-manager-button-edit-permissions-${ widgetName }` }
 						>
 							{ __( 'Edit', 'elementor' ) }
 						</Button>
@@ -140,7 +141,9 @@ export const RolePermissions = ( props ) => {
 	);
 };
 
-export const EditButtonDisabled = () => {
+export const EditButtonDisabled = ( props ) => {
+	const widgetName = props.widgetName || 'unknown';
+
 	return (
 		<>
 			<Button
@@ -149,6 +152,7 @@ export const EditButtonDisabled = () => {
 				style={ {
 					textDecoration: 'none',
 				} }
+				className={ `e-id-elementor-element-manager-button-edit-permissions-${ widgetName }` }
 			>
 				{ __( 'Edit', 'elementor' ) }
 			</Button>
