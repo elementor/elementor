@@ -45,6 +45,29 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 				'aria-expanded': 'false',
 			} );
 		}
+
+		if ( this.ui.bulkSelectionItemCheckbox.length ) {
+			this.updateRowSelectionAttributes();
+		}
+	},
+
+	updateRowSelectionAttributes() {
+		const isChecked = this.ui.bulkSelectionItemCheckbox.prop( 'checked' );
+		const isSelected = this.$el.hasClass( 'bulk-selected-item' );
+
+		this.ui.bulkSelectionItemCheckbox.attr( 'aria-checked', isChecked );
+
+		if ( isSelected ) {
+			this.$el.attr( {
+				'aria-selected': 'true',
+				tabindex: '0',
+			} );
+		} else {
+			this.$el.attr( {
+				'aria-selected': 'false',
+				tabindex: '-1',
+			} );
+		}
 	},
 
 	handleLockedTemplate() {
@@ -60,6 +83,11 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		const title = _.escape( this.model.get( 'title' ) );
 
 		this.ui.titleCell.text( title );
+
+		if ( this.ui.bulkSelectionItemCheckbox.length ) {
+			const ariaLabel = __( 'Select template', 'elementor' ) + ' ' + title;
+			this.ui.bulkSelectionItemCheckbox.attr( 'aria-label', ariaLabel );
+		}
 	},
 
 	handleItemClicked( event ) {
@@ -205,6 +233,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 			this.$el.removeClass( 'bulk-selected-item' );
 		}
 
+		this.updateRowSelectionAttributes();
 		elementor.templates.layout.handleBulkActionBarUi();
 	},
 } );

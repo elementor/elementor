@@ -280,7 +280,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		if ( ( 'cloud' === activeSource && view === 'list' ) || 'local' === activeSource ) {
 	#>
 		<div class="elementor-template-library-template-name elementor-template-library-local-column-1">
-			<input type="checkbox" class="bulk-selection-item-checkbox" data-template_id="{{ template_id }}" data-type="{{ type }}" data-status="{{ status }}">
+			<input type="checkbox" class="bulk-selection-item-checkbox" data-template_id="{{ template_id }}" data-type="{{ type }}" data-status="{{ status }}" aria-label="<?php echo esc_attr__( 'Select template', 'elementor' ); ?> {{{ title }}}" aria-checked="false">
 			<# if ( 'cloud' === activeSource ) {
 				const sourceIcon = typeof subType !== 'undefined' && 'FOLDER' === subType
 					? '<i class="eicon-library-folder" aria-hidden="true"></i>'
