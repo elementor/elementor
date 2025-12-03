@@ -47,6 +47,10 @@ class Document_Lock_Manager {
 				return false;
 			}
 
+			if ( $this->is_lock_expired( $document_id ) ) {
+				$this->unlock( $document_id );
+			}
+
 			$existing_lock = $this->get_lock_data( $document_id );
 			if ( $existing_lock['locked_by'] ) {
 				return false;
@@ -98,19 +102,25 @@ class Document_Lock_Manager {
 		$locked_by = $this->get_document_lock_user( $document_id );
 		$locked_at = $this->get_document_lock_time( $document_id );
 
-		$is_expired = $locked_at && (int) $locked_at + $this->lock_duration <= time();
-		if ( $is_expired || null === $locked_by ) {
-			$this->unlock( $document_id );
-			return [
-				'locked_by' => null,
-				'locked_at' => null,
-			];
-		}
-
 		return [
 			'locked_by' => $locked_by,
 			'locked_at' => $locked_at,
 		];
+	}
+
+	/**
+	 * Check if a document lock has expired.
+	 *
+	 * @param int $document_id The document ID to check
+	 * @return bool True if lock exists and is expired, false if not locked or not expired
+	 */
+	public function is_lock_expired( $document_id ) {
+		$lock_data = $this->get_lock_data( $document_id );
+		if ( ! $lock_data['locked_by'] ) {
+			return false;
+		}
+
+		return $lock_data['locked_at'] && (int) $lock_data['locked_at'] + $this->lock_duration <= time();
 	}
 
 	/**
@@ -120,6 +130,11 @@ class Document_Lock_Manager {
 	 * @return bool True if extended successfully, false if not locked or locked by another user
 	 */
 	public function extend_lock( $document_id ) {
+		if ( $this->is_lock_expired( $document_id ) ) {
+			$this->unlock( $document_id );
+			return false;
+		}
+
 		$lock_data = $this->get_lock_data( $document_id );
 		if ( ! $lock_data['locked_by'] ) {
 			return false;

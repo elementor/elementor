@@ -259,7 +259,7 @@ class Components_REST_API {
 	private function lock_component( \WP_REST_Request $request ) {
 		$component_id = $request->get_param( 'componentId' );
 		try {
-			$success = $this->get_component_lock_manager()->lock_component( $component_id );
+			$success = $this->get_component_lock_manager()->lock( $component_id );
 		} catch ( \Exception $e ) {
 			error_log( 'Components REST API lock_component error: ' . $e->getMessage() );
 			return Error_Builder::make( 'lock_failed' )
@@ -281,7 +281,7 @@ class Components_REST_API {
 	private function unlock_component( \WP_REST_Request $request ) {
 		$component_id = $request->get_param( 'componentId' );
 		try {
-			$success = $this->get_component_lock_manager()->unlock_component( $component_id );
+			$success = $this->get_component_lock_manager()->unlock( $component_id );
 		} catch ( \Exception $e ) {
 			error_log( 'Components REST API unlock_component error: ' . $e->getMessage() );
 			return Error_Builder::make( 'unlock_failed' )
@@ -302,7 +302,12 @@ class Components_REST_API {
 	private function get_lock_status( \WP_REST_Request $request ) {
 		$component_id = (int) $request->get_param( 'componentId' );
 		try {
-			$lock_status = $this->get_component_lock_manager()->get_lock_data( $component_id );
+			$lock_manager = $this->get_component_lock_manager();
+			if ( $lock_manager->is_lock_expired( $component_id ) ) {
+				$lock_manager->unlock( $component_id );
+			}
+
+			$lock_status = $lock_manager->get_lock_data( $component_id );
 			$current_user_id = get_current_user_id();
 
 			// if current  user is the lock user, return true

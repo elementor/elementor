@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Component_Lock_Manager extends Document_Lock_Manager {
-	const ONE_HOUR = 10;
+	const ONE_HOUR = 60 * 60;
 	private static $instance = null;
 	public function __construct() {
 		parent::__construct( self::ONE_HOUR );
@@ -54,7 +54,7 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 	 * @return bool True if unlock was successful, false otherwise
 	 * @throws \Exception If post is not a component type.
 	 */
-	public function unlock_component( $post_id ) {
+	public function unlock( $post_id ) {
 		if ( ! $this->is_component_post( $post_id ) ) {
 				throw new \Exception( 'Post is not a component type' );
 		}
@@ -74,13 +74,17 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 	 * @return bool|null True if lock was successful, null if locked by another user, false otherwise
 	 * @throws \Exception If post is not a component type.
 	 */
-	public function lock_component( $post_id ) {
+	public function lock( $post_id ) {
 		if ( ! $this->is_component_post( $post_id ) ) {
 			throw new \Exception( 'Post is not a component type' );
 		}
 
-		$existing_lock = $this->get_lock_data( $post_id );
-		if ( $existing_lock['locked_by'] ) {
+		$lock_data = $this->get_lock_data( $post_id );
+		$is_expired = $this->is_lock_expired( $post_id );
+
+		if ( $is_expired ) {
+			$this->unlock( $post_id );
+		} elseif ( $lock_data['locked_by'] ) {
 			return null;
 		}
 
@@ -112,6 +116,11 @@ class Component_Lock_Manager extends Document_Lock_Manager {
 	public function extend_lock( $post_id ) {
 		if ( ! $this->is_component_post( $post_id ) ) {
 			throw new \Exception( 'Post is not a component type' );
+		}
+
+		if ( $this->is_lock_expired( $post_id ) ) {
+			$this->unlock( $post_id );
+			return null;
 		}
 
 		$lock_data = $this->get_lock_data( $post_id );
