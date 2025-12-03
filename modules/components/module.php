@@ -94,7 +94,7 @@ class Module extends BaseModule {
 		}
 
 		/* @var Component_Document $document */
-		$result = $document->set_overridable_props( $data['settings']['overridable_props'] );
+		$result = $document->update_overridable_props( $data['settings']['overridable_props'] );
 
 		if ( ! $result->is_valid() ) {
 			throw new \Exception( esc_html( 'Settings validation failed for component overridable props: ' . $result->errors()->to_string() ) );

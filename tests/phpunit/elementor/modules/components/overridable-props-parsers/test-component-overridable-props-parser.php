@@ -102,10 +102,6 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 
 	public function invalid_overridable_props_data_provider() {
 		return [
-			'non-array value' => [ 
-				'data' => 'not-an-array',
-				'expected_error' => 'component_overridable_props: invalid_structure',
-			],
 			'missing_props' => [ 
 				'data' => [ 'groups' => [] ],
 				'expected_error' => 'props: missing',
@@ -137,176 +133,6 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 			'non-array groups items' => [ 
 				'data' => [ 'props' => [], 'groups' => [ 'items' => 'not-an-array', 'order' => [] ] ],
 				'expected_error' => 'groups.items: invalid_structure',
-			],
-		];
-	}
-
-	/**
-	 * @dataProvider invalid_single_prop_data_provider
-	 */
-	public function test_parse__fails_for_invalid_single_prop( $data, $expected_error ) {
-		// Arrange & Act.
-		$result = $this->parser->parse( [
-			'props' => [ 'prop-uuid-1' => $data ],
-			'groups' => $this->get_mock_groups(),
-		] );
-
-		// Assert.
-		$this->assertFalse( $result->is_valid() );
-		$this->assertEquals( $expected_error, $result->errors()->to_string() );
-	}
-
-	public function invalid_single_prop_data_provider() {
-		return [
-			'non-array prop' => [ 
-				'data' => 'not-an-array',
-				'expected_error' => 'props.prop-uuid-1: invalid_structure',
-			],
-			'missing_field' => [
-				'data' => $this->get_mock_prop_with_changed_fields( [ 'overrideKey' => null ] ),
-				'expected_error' => 'props.prop-uuid-1.overrideKey: missing_field',
-			],
-			'invalid_original_value' => [ 
-				'data' => $this->get_mock_prop_with_changed_fields( [ 'originalValue' => "not a valid prop value" ] ),
-				'expected_error' => 'props.prop-uuid-1.originalValue: invalid',
-			],
-			'mismatching_override_key' => [ 
-				'data' => $this->get_mock_prop_with_changed_fields( [ 'overrideKey' => 'different-uuid' ] ),
-				'expected_error' => 'props.prop-uuid-1: mismatching_override_key',
-			],
-		];
-	}
-
-	/**
-	 * @dataProvider invalid_props_data_provider
-	 */
-	public function test_parse__fails_for_invalid_props( $data, $expected_error ) {
-		// Arrange & Act.
-		$result = $this->parser->parse( [
-			'props' => $data,
-			'groups' => $this->get_mock_groups(),
-		] );
-
-		// Assert.
-		$this->assertFalse( $result->is_valid() );
-		$this->assertEquals( $expected_error, $result->errors()->to_string() );
-	}
-
-	public function invalid_props_data_provider() {
-		return [
-			'duplicate prop keys for same element' => [ 
-				'data' => [
-					'prop-uuid-1' => $this->get_mock_prop_with_changed_fields( [ 
-						'overrideKey' => 'prop-uuid-1',
-						'elementId' => 'element-123',
-						'propKey' => 'title',
-					] ),
-					'prop-uuid-2' => $this->get_mock_prop_with_changed_fields( [ 
-						'overrideKey' => 'prop-uuid-2',
-						'elementId' => 'element-123',
-						'propKey' => 'title',
-					] ),
-				],
-				'expected_error' => 'props: duplicate_prop_keys_for_same_element: element-123.title',
-			],
-		];
-	}
-
-	/**
-	 * @dataProvider invalid_groups_data_provider
-	 */
-	public function test_parse__fails_for_invalid_groups( $data, $expected_error ) {
-		// Arrange & Act.
-		$result = $this->parser->parse( [
-			'props' => $this->get_mock_props(),
-			'groups' => $data,
-		] );
-
-		// Assert.
-		$this->assertFalse( $result->is_valid() );
-		$this->assertEquals( $expected_error, $result->errors()->to_string() );
-	}
-
-	public function invalid_groups_data_provider() {
-		return [
-			// Single group
-			'single group missing field' => [ 
-				'data' => [
-					'items' => [
-						'group-uuid-1' => [
-							'label' => 'User Info',
-							'props' => [ 'prop-uuid-1' ],
-						],
-					],
-					'order' => ['group-uuid-1'],
-				],
-				'expected_error' => 'groups.items.group-uuid-1.id: missing',
-			],
-			'single group non-array props' => [ 
-				'data' => [
-					'items' => [
-						'group-uuid-1' => [
-							'id' => 'group-uuid-1',
-							'label' => 'User Info',
-							'props' => 'not-an-array',
-						],
-					],
-					'order' => ['group-uuid-1'],
-				],
-				'expected_error' => 'groups.items.group-uuid-1.props: invalid_structure',
-			],
-			// Groups items
-			'duplicate group labels' => [ 
-				'data' => [
-					'items' => [
-						'group-uuid-1' => [
-							'id' => 'group-uuid-1',
-							'label' => 'User Info',
-							'props' => [ 'prop-uuid-1' ],
-						],
-						'group-uuid-2' => [
-							'id' => 'group-uuid-2',
-							'label' => 'User Info',
-							'props' => [ 'prop-uuid-2' ],
-						],
-					],
-					'order' => [ 'group-uuid-1', 'group-uuid-2' ],
-				],
-				'expected_error' => 'groups.items: duplicate_labels: User Info',
-			],
-			'mismatching group id' => [ 
-				'data' => [
-					'items' => [
-						'group-uuid-1' => [
-							'id' => 'different-uuid',
-							'label' => 'User Info',
-							'props' => [ 'prop-uuid-1' ],
-						],
-					],
-					'order' => [ 'group-uuid-1' ],
-				],
-				'expected_error' => 'groups.items.group-uuid-1.id: mismatching_value',
-			],
-			// Groups order
-			'a group is missing in groups order' => [ 
-				'data' => [
-					'items' => [
-						'group-uuid-1' => [
-							'id' => 'group-uuid-1',
-							'label' => 'User Info',
-							'props' => [ 'prop-uuid-1' ],
-						],
-					],
-					'order' => [],
-				],
-				'expected_error' => 'groups.order.group-uuid-1: missing',
-			],
-			'a group appears in groups order but not in groups items' => [ 
-				'data' => [
-					'items' => [],
-					'order' => [ 'group-uuid-1' ],
-				],
-				'expected_error' => 'groups.order.group-uuid-1: excess',
 			],
 		];
 	}
@@ -409,13 +235,6 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 				],
 			],
 			'order' => [ 'group-uuid-1' ],
-		];
-	}
-
-	private function get_mock_props() {
-		return [
-			'prop-uuid-1' => $this->get_mock_prop_with_changed_fields( [] ),
-			'prop-uuid-2' => $this->get_mock_prop_with_changed_fields( [ 'overrideKey' => 'prop-uuid-2', 'elementId' => 'element-456', ] ),
 		];
 	}
 }

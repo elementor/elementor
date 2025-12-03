@@ -9,6 +9,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Validates and sanitizes component overridable props object.
+ *
+ * Valid input example:
+ * ```
+ * [
+ *     'props' => [
+ *         'prop1_UUID' => [
+ *             'overrideKey' => 'prop1_UUID',
+ *             'label' => 'User Name',
+ *             'elementId' => '90d25e3',
+ *             'propKey' => 'title',
+ *             'elType' => 'widget',
+ *             'widgetType' => 'e-heading',
+ *             'originalValue' => [
+ *                 '$$type' => 'html',
+ *                 'value' => 'Jane Smith',
+ *             ],
+ *             'groupId' => 'group1_UUID',
+ *         ],
+ *     ],
+ *     'groups' => [
+ *         'items' => [
+ *             'group1_UUID' => [
+ *                 'id' => 'group1_UUID',
+ *                 'label' => 'User Info',
+ *                 'props' => [ 'prop1_UUID' ],
+ *             ],
+ *         ],
+ *         'order' => [ 'group1_UUID' ],
+ *     ],
+ * ];
+ * ```
+ */
 class Component_Overridable_Props_Parser {
 	private Overridable_Props_Parser $props_parser;
 	private Overridable_Groups_Parser $groups_parser;
@@ -28,14 +62,13 @@ class Component_Overridable_Props_Parser {
 		);
 	}
 
-	public function parse( $data ): Parse_Result {
+	/**
+	 * @param array $data
+	 *
+	 * @return Parse_Result
+	 */
+	public function parse( array $data ): Parse_Result {
 		$result = Parse_Result::make();
-
-		if ( ! is_array( $data ) ) {
-			$result->errors()->add( 'component_overridable_props', 'invalid_structure' );
-
-			return $result;
-		}
 
 		if ( empty( $data ) ) {
 			return $result->wrap( [] );
@@ -61,7 +94,7 @@ class Component_Overridable_Props_Parser {
 			return $result;
 		}
 
-		$groups_result = $this->groups_parser->parse( $data['groups'], $props_result->unwrap() );
+		$groups_result = $this->groups_parser->parse( $data['groups'] );
 
 		if ( ! $groups_result->is_valid() ) {
 			$result->errors()->merge( $groups_result->errors() );
