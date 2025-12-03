@@ -12,7 +12,7 @@ use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 
 class Prop_Type_Adapter {
-	public const CUSTOM_SIZE_KEY = 'global-custom-size-variable';
+	public const GLOBAL_CUSTOM_SIZE_VARIABLE_KEY = 'global-custom-size-variable';
 
 	public static function to_storage( Variables_Collection $collection ): array {
 		$schema = self::get_schema();
@@ -34,7 +34,7 @@ class Prop_Type_Adapter {
 				$value = self::parse_size_value( $value );
 			}
 
-			if ( self::CUSTOM_SIZE_KEY === $type ) {
+			if ( self::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY === $type ) {
 				$value = [
 					'size' => $value,
 					'unit' => 'custom',
@@ -61,7 +61,7 @@ class Prop_Type_Adapter {
 				$value = $value['size'] . $value['unit'];
 			}
 
-			if ( self::CUSTOM_SIZE_KEY === $variable->type() ) {
+			if ( self::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY === $variable->type() ) {
 				$value = $value['size'];
 			}
 
@@ -75,10 +75,10 @@ class Prop_Type_Adapter {
 
 	private static function get_schema(): array {
 		return [
-			Color_Variable_Prop_Type::get_key() => Color_Prop_Type::class,
-			Font_Variable_Prop_Type::get_key() => String_Prop_Type::class,
-			Size_Variable_Prop_Type::get_key() => Size_Prop_Type::class,
-			self::CUSTOM_SIZE_KEY => Size_Prop_Type::class,
+			Color_Variable_Prop_Type::get_key()   => Color_Prop_Type::class,
+			Font_Variable_Prop_Type::get_key()    => String_Prop_Type::class,
+			Size_Variable_Prop_Type::get_key()    => Size_Prop_Type::class,
+			self::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY => Size_Prop_Type::class,
 		];
 	}
 
