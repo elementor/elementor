@@ -116,7 +116,7 @@ function getUpdatedGroups( groups: OverridableProps[ 'groups' ], groupId: string
 
 function addNewGroup( groups: OverridableProps[ 'groups' ], groupId?: string | undefined ): UpdatedGroups {
 	const currentGroupId = groupId || generateUniqueId( 'group' );
-	const updatedGroups = { 
+	const updatedGroups = {
 		...groups,
 		items: {
 			...groups.items,
