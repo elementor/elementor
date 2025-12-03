@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets;
+namespace Elementor\Modules\AtomicWidgets\OptIn;
 
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -81,3 +81,4 @@ class Opt_In {
 		$ajax->register_ajax_action( 'editor_v4_opt_out', fn() => $this->ajax_opt_out_v4() );
 	}
 }
+
