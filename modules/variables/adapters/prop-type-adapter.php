@@ -59,7 +59,7 @@ class Prop_Type_Adapter {
 
 			$value = $value['value'];
 
-			if ( isset( $value['unit'] ) && $value['unit'] === 'custom' ) {
+			if ( isset( $value['unit'] ) && 'custom' === $value['unit'] ) {
 				$value = $value['size'];
 
 				$variable->set_type( self::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY );
