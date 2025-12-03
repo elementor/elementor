@@ -323,6 +323,7 @@ $remote-templates-items-space: 30px;
 		gap: 8px;
 
 		.elementor-template-library-action-item {
+			@include button-reset;
 			cursor: pointer;
 			font-size: 20px;
 			padding: 0 5px;

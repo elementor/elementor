@@ -140,19 +140,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<div class="elementor-template-library-filter-toolbar-side-actions">
 				<# if ( 'cloud' === activeSource ) { #>
-					<div id="elementor-template-library-add-new-folder" class="elementor-template-library-action-item">
+					<button type="button" id="elementor-template-library-add-new-folder" class="elementor-template-library-action-item" aria-label="<?php echo esc_attr__( 'Create new folder', 'elementor' ); ?>">
 						<i class="eicon-folder-plus" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Create a New Folder', 'elementor' ); ?></span>
-					</div>
+					</button>
 					<span class="divider"></span>
-					<div id="elementor-template-library-view-grid" class="elementor-template-library-action-item">
+					<button type="button" id="elementor-template-library-view-grid" class="elementor-template-library-action-item" aria-label="<?php echo esc_attr__( 'Change view to grid', 'elementor' ); ?>">
 						<i class="eicon-library-grid" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'Grid view', 'elementor' ); ?></span>
-					</div>
-					<div id="elementor-template-library-view-list" class="elementor-template-library-action-item">
+					</button>
+					<button type="button" id="elementor-template-library-view-list" class="elementor-template-library-action-item" aria-label="<?php echo esc_attr__( 'Change view to list', 'elementor' ); ?>">
 						<i class="eicon-library-list" aria-hidden="true"></i>
 						<span class="elementor-screen-only"><?php echo esc_html__( 'List view', 'elementor' ); ?></span>
-					</div>
+					</button>
 				<# } #>
 			<div id="elementor-template-library-filter-text-wrapper">
 				<label for="elementor-template-library-filter-text" class="elementor-screen-only"><?php echo esc_html__( 'Search Templates:', 'elementor' ); ?></label>
