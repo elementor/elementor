@@ -48,6 +48,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		quotaValue: '.quota-progress-container .quota-progress-bar-value',
 		quotaWarning: '.quota-progress-container .progress-bar-container .quota-warning',
 		quotaUpgrade: '.quota-progress-container .progress-bar-container .quota-warning a',
+		quotaStatus: '#elementor-template-library-quota-status',
 		navigationContainer: '#elementor-template-library-navigation-container',
 		sortStatus: '#elementor-template-library-sort-status',
 		loadStatus: '#elementor-template-library-load-status',
@@ -122,6 +123,23 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.handleQuotaWarning( quotaState, value );
 
 		this.setQuotaBarStyles( quotaState );
+
+		if ( this.ui.quota.length ) {
+			this.ui.quota.attr( {
+				'aria-valuenow': value,
+			} );
+		}
+
+		if ( quota && this.ui.quotaStatus.length ) {
+			// Translators: %1$s: current usage number, %2$s: threshold number
+			const statusText = sprintf(
+				// Translators: %1$s: current usage number, %2$s: threshold number
+				__( '%1$s of %2$s templates used', 'elementor' ),
+				quota.currentUsage.toLocaleString(),
+				quota.threshold.toLocaleString(),
+			);
+			this.ui.quotaStatus.text( statusText );
+		}
 	},
 
 	resolveQuotaState( value ) {

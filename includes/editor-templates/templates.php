@@ -190,12 +190,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<?php echo esc_html__( 'Usage', 'elementor' ); ?>
 					</span>
 					<div class="progress-bar-container">
-						<div class="quota-progress-bar quota-progress-bar-normal">
+						<div class="quota-progress-bar quota-progress-bar-normal" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="<?php echo esc_attr__( 'Cloud library usage', 'elementor' ); ?>">
 							<div class="quota-progress-bar-fill"></div>
 						</div>
 						<span class="quota-warning"></span>
 					</div>
 					<div class="quota-progress-bar-value"></div>
+					<span class="elementor-screen-only" id="elementor-template-library-quota-status"></span>
 				</div>
 			<# } #>
 		</div>
