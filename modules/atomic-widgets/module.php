@@ -103,6 +103,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Query_Tr
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
