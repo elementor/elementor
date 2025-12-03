@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Base\Document;
-use Elementor\Modules\AtomicWidgets\Utils;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
