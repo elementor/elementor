@@ -101,7 +101,7 @@ class Size_Constants {
 	}
 
 	public static function rotate(): array {
-		return [ ...self::ANGLE_UNITS, self::UNIT_CUSTOM];
+		return [ ...self::ANGLE_UNITS, self::UNIT_CUSTOM ];
 	}
 
 	public static function transform(): array {
@@ -113,7 +113,7 @@ class Size_Constants {
 	}
 
 	public static function blur_filter(): array {
-		return [ ...self::LENGTH_UNITS, self::UNIT_CUSTOM];
+		return [ ...self::LENGTH_UNITS, self::UNIT_CUSTOM ];
 	}
 
 	public static function intensity_filter(): array {
