@@ -5,7 +5,7 @@
 @mixin icon-position($device) {
 	&.elementor#{$device}-position- {
 
-		&right {
+		&inline-end {
 
 			.elementor-icon-box-wrapper {
 				text-align: end;
@@ -17,7 +17,7 @@
 			}
 		}
 
-		&left {
+		&inline-start {
 
 			.elementor-icon-box-wrapper {
 				text-align: start;
@@ -29,7 +29,7 @@
 			}
 		}
 
-		&top {
+		&block-start {
 
 			.elementor-icon-box-wrapper {
 				text-align: center;
@@ -38,7 +38,7 @@
 			}
 		}
 
-		&bottom {
+		&block-end {
 
 			.elementor-icon-box-wrapper {
 				text-align: center;
@@ -103,16 +103,5 @@
 
 	@media (max-width: $screen-mobile-max ) {
 		@include icon-position(-mobile);
-
-		&.elementor-position- {
-
-			&left,
-			&right {
-
-				.elementor-icon-box-icon {
-					flex-direction: column;
-				}
-			}
-		}
 	}
 }
