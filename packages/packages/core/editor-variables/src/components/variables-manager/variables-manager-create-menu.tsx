@@ -27,20 +27,22 @@ export const VariableManagerCreateMenu = ( {
 
 	const variableTypes = getVariableTypes();
 
-	const menuOptions = Object.entries( variableTypes ).map( ( [ key, variable ] ) => {
-		const displayName = variable.variableType.charAt( 0 ).toUpperCase() + variable.variableType.slice( 1 );
+	const menuOptions = Object.entries( variableTypes )
+		.filter( ( [ , variable ] ) => !! variable.defaultValue )
+		.map( ( [ key, variable ] ) => {
+			const displayName = variable.variableType.charAt( 0 ).toUpperCase() + variable.variableType.slice( 1 );
 
-		return {
-			key,
-			name: displayName,
-			icon: variable.icon,
-			onClick: () => {
-				const defaultName = getDefaultName( variables, key, variable.variableType );
-				onCreate( key, defaultName, variable.defaultValue || '' );
-				trackVariablesManagerEvent( { action: 'add', varType: variable.variableType } );
-			},
-		};
-	} );
+			return {
+				key,
+				name: displayName,
+				icon: variable.icon,
+				onClick: () => {
+					const defaultName = getDefaultName( variables, key, variable.variableType );
+					onCreate( key, defaultName, variable.defaultValue || '' );
+					trackVariablesManagerEvent( { action: 'add', varType: variable.variableType } );
+				},
+			};
+		} );
 
 	return (
 		<>
