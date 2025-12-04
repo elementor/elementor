@@ -63,6 +63,17 @@ class Module extends BaseApp {
 			'elementorHomeScreenData',
 			$this->get_app_js_config()
 		);
+
+		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'e-home-screen',
+			ELEMENTOR_URL . 'modules/home/assets/css/e-home-screen.css',
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	public function is_experiment_active(): bool {
