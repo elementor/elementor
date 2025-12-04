@@ -70,6 +70,8 @@ const CreateWithAIBanner = ( { ...props } ) => {
 				backgroundSize: 'cover',
 				backgroundPosition: 'right center',
 				backgroundRepeat: 'no-repeat',
+				borderRadius: 1,
+				border: '1px solid rgba(0, 0, 0, 0.12)',
 			} }
 		>
 			<Stack gap={ 1 } justifyContent="center">

@@ -6,7 +6,7 @@ import Divider from '@elementor/ui/Divider';
 
 const ExternalLinksSection = ( { ...props } ) => {
 	return (
-		<Paper elevation={ 0 } sx={ { px: 3 } }>
+		<Paper elevation={ 0 } sx={ { px: 3, borderRadius: 1, border: '1px solid rgba(0, 0, 0, 0.12)' } }>
 			<List>
 				{
 					props.externalLinksData.map( ( item, index ) => {
