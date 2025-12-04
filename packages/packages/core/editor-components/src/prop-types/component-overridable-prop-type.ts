@@ -5,7 +5,7 @@ export const componentOverridablePropTypeUtil = createPropUtils(
 	'overridable',
 	z.object( {
 		override_key: z.string(),
-		default_value: z
+		origin_value: z
 			.object( {
 				$$type: z.string(),
 				value: z.unknown(),
@@ -13,3 +13,5 @@ export const componentOverridablePropTypeUtil = createPropUtils(
 			.nullable(),
 	} )
 );
+
+export type ComponentOverridablePropValue = z.infer< typeof componentOverridablePropTypeUtil.schema >[ 'value' ];

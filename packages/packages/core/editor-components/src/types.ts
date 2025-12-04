@@ -31,7 +31,7 @@ export type OverridableProp = {
 	groupId: string;
 };
 
-export type OverridablePropGroup = {
+export type OverridablePropsGroup = {
 	id: string;
 	label: string;
 	props: string[];
@@ -40,7 +40,7 @@ export type OverridablePropGroup = {
 export type OverridableProps = {
 	props: Record< string, OverridableProp >;
 	groups: {
-		items: Record< string, OverridablePropGroup >;
+		items: Record< string, OverridablePropsGroup >;
 		order: string[];
 	};
 };
