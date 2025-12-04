@@ -1,9 +1,9 @@
 import { type V1Document } from '@elementor/editor-documents';
 import { type V1Element } from '@elementor/editor-elements';
+import { __getState as getState } from '@elementor/store';
 
 import { COMPONENT_DOCUMENT_TYPE } from '../components/consts';
 import { selectOverridableProps } from '../store/store';
-import { __getState as getState } from '@elementor/store';
 
 export const setComponentOverridablePropsSettingsBeforeSave = ( {
 	container,
