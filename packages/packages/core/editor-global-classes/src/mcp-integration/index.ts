@@ -1,6 +1,7 @@
 import { getMCPByDomain } from '@elementor/editor-mcp';
 
 import { initClassesResource } from './classes-resource';
+import { initDesignSystemTool } from './design-system/design-system-tool';
 import initMcpApplyUnapplyGlobalClasses from './mcp-apply-unapply-global-classes';
 import { initCreateGlobalClass } from './mcp-create-global-class';
 import { mcpDescription } from './mcp-description';
@@ -14,5 +15,6 @@ export const initMcpIntegration = () => {
 	initMcpApplyGetGlobalClassUsages( reg );
 	initCreateGlobalClass( reg );
 	initModifyGlobalClass( reg );
+	initDesignSystemTool( reg );
 	initClassesResource();
 };
