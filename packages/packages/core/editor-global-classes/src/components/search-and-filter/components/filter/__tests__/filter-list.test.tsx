@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { mockTrackingModule } from '../../../../../__tests__/mocks';
 import { useFilteredCssClassUsage } from '../../../../../hooks/use-filtered-css-class-usage';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../../context';
 import { FilterList } from '../filter-list';
@@ -8,6 +9,8 @@ import { mockSetFilters, setupMocks } from './test-utils';
 
 jest.mock( '../../../context' );
 jest.mock( '../../../../../hooks/use-filtered-css-class-usage' );
+
+jest.mock( '../../../../../utils/tracking', () => mockTrackingModule );
 
 describe( 'FilterList', () => {
 	beforeEach( () => {
