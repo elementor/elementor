@@ -130,7 +130,7 @@ describe( 'ComponentsTab', () => {
 			const buttonComponent = mockComponents[ 0 ];
 
 			// Act
-			renderWithTheme( <ComponentItem component={ buttonComponent } /> );
+			renderWithStore( <ComponentItem component={ buttonComponent } />, store );
 
 			// Assert
 			const componentItem = screen.getByRole( 'button', { name: /Button Component/ } );
