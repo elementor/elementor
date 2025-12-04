@@ -12,8 +12,6 @@ export function propTypeToJsonSchema( propType: PropType ): JsonSchema7 {
 
 	// Handle different kinds of prop types
 	switch ( propType.kind ) {
-		case 'plain':
-			return convertPlainPropType( propType, schema );
 		case 'union':
 			return convertUnionPropType( propType, schema );
 		case 'object':
@@ -27,7 +25,10 @@ export function propTypeToJsonSchema( propType: PropType ): JsonSchema7 {
 	return schema;
 }
 
-function convertPlainPropType( propType: PropType & { kind: 'plain' }, baseSchema: JsonSchema7 ): JsonSchema7 {
+function convertPlainPropType(
+	propType: PropType & { key: string; kind: string },
+	baseSchema: JsonSchema7
+): JsonSchema7 {
 	const schema = { ...baseSchema };
 
 	// Determine type based on key
@@ -46,10 +47,27 @@ function convertPlainPropType( propType: PropType & { kind: 'plain' }, baseSchem
 
 	// Handle enum from settings
 	if ( Array.isArray( propType.settings?.enum ) ) {
-		schema.enum = propType.settings.enum;
+		if ( schema.type === 'string' ) {
+			schema.enum = propType.settings.enum.map( ( val ) => ( {
+				$$type: 'string',
+				value: val,
+			} ) );
+			schema.type = 'object';
+		} else if ( schema.type === 'number' ) {
+			schema.enum = propType.settings.enum.map( ( val ) => ( {
+				$$type: 'number',
+				value: val,
+			} ) );
+			schema.type = 'object';
+		} else {
+			schema.enum = propType.settings.enum;
+		}
 	}
 
-	return schema;
+	return propTypeToJsonSchema( {
+		...propType,
+		kind: schema.type as PropType[ 'kind' ],
+	} );
 }
 
 /**

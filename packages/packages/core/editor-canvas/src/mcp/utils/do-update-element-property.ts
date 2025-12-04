@@ -22,7 +22,7 @@ type OwnParams = {
 };
 
 function resolvePropValue( value: unknown, forceKey?: string ): PropValue {
-	return Schema.adjustLlmPropValueSchema( value as PropValue, forceKey );
+	return Schema.adjustLlmPropValueSchema( value as PropValue, { forceKey } );
 }
 
 export const doUpdateElementProperty = ( params: OwnParams ) => {

@@ -9,6 +9,13 @@ The default variant is 'desktop', which applies to all devices unless overridden
 Every variant "props" property containes a PropValue for each style property.
 
 The current list of global-classes is available at ${ GLOBAL_CLASSES_URI } resource, which changes whenever the global classes are updated or the list is modified.
+<important>
+Before using tools that require class IDs or names, always refer to the latest data from the global-classes resource to ensure accuracy.
+</important>
 
-For creating or modifying global classes, read the styles schema resource available from 'editor-canvas' mcp.
+<important>
+Global classes shares the same styles schema as element styles.
+Before creating or modifying global classes, read the styles schema dynamic resources available at elementor://styles/schema/{property}.
+</important>
+
 `;

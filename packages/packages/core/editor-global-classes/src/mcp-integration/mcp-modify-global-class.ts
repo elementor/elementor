@@ -1,6 +1,7 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { Schema } from '@elementor/editor-props';
-import { isExistingStyleProperty } from '@elementor/editor-styles';
+import { getStylesSchema } from '@elementor/editor-styles';
+import { Utils } from '@elementor/editor-variables';
 import { z } from '@elementor/schema';
 
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
@@ -26,20 +27,37 @@ const schema = {
 
 const handler = async ( params: z.infer< ReturnType< typeof z.object< typeof schema > > > ) => {
 	const { classId, props } = params;
-	const customCss = params.customCss ? { raw: params.customCss } : null;
+	const customCss = params.customCss ? { raw: btoa( params.customCss ) } : null;
 	const { update, delete: deleteClass } = globalClassesStylesProvider.actions;
 	if ( ! update || ! deleteClass ) {
 		throw new Error( 'Update action is not available' );
 	}
-	const invalidProps = Object.keys( props ).filter( ( key ) => ! isExistingStyleProperty( key ) );
-	if ( invalidProps.length > 0 ) {
-		throw new Error( `Invalid props provided: ${ invalidProps.join( ', ' ) }.
-Available Properties: ${ Object.keys( props ).join( ', ' ) }.
-Read [elementor://styles/schema/{property}] resource for it's schema.
-Now that you have this information, update your input and try again` );
+	const errors: string[] = [];
+	const validProps = Object.keys( getStylesSchema() );
+	Object.keys( props ).forEach( ( key ) => {
+		const propType = getStylesSchema()[ key ];
+		if ( ! propType ) {
+			errors.push( `Property "${ key }" does not exist in styles schema.` );
+			return;
+		}
+		const { valid, errorMessages } = Schema.validatePropValue( propType, props[ key ] );
+		if ( ! valid ) {
+			errors.push(
+				`- Property "${ key }" has invalid value:\n  ${ errorMessages }\n  Refer to elementor://styles/schema/${ key }`
+			);
+		}
+	} );
+	if ( errors.length > 0 ) {
+		throw new Error(
+			`Errors:\n${ errors.join( '\n' ) }\nAvailable Properties: ${ validProps.join(
+				'\n'
+			) }\nNow that you have this information, update your input and try again`
+		);
 	}
 	Object.keys( props ).forEach( ( key ) => {
-		props[ key ] = Schema.adjustLlmPropValueSchema( props[ key ] );
+		props[ key ] = Schema.adjustLlmPropValueSchema( props[ key ], {
+			transformers: Utils.globalVariablesLLMResolvers,
+		} );
 	} );
 	const snapshot = structuredClone( globalClassesStylesProvider.actions.all() );
 	try {

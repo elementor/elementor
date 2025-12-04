@@ -3,7 +3,21 @@ import { type ObjectPropValue, type PropValue, type TransformablePropValue } fro
 
 const ensureNotNull = ( v: unknown, fallback: unknown ) => ( v === null ? fallback : v );
 
-export const adjustLlmPropValueSchema = ( value: Readonly< PropValue >, forceKey?: string ): PropValue => {
+type PropConverter = ( value: unknown ) => PropValue;
+
+type Options = {
+	forceKey?: string;
+	transformers?: Record< string, PropConverter >;
+};
+
+const defaultOptions: Options = {
+	transformers: {},
+};
+
+export const adjustLlmPropValueSchema = (
+	value: Readonly< PropValue >,
+	{ transformers = {}, forceKey = undefined }: Options = defaultOptions
+): PropValue => {
 	const clone = structuredClone( value );
 
 	if ( typeof clone === 'string' ) {
@@ -15,7 +29,7 @@ export const adjustLlmPropValueSchema = ( value: Readonly< PropValue >, forceKey
 	// Check for transformable types
 	if ( clone && typeof clone === 'object' ) {
 		if ( Array.isArray( clone ) ) {
-			return clone.map( ( item ) => adjustLlmPropValueSchema( item, forceKey ) ) as PropValue;
+			return clone.map( ( item ) => adjustLlmPropValueSchema( item, { forceKey, transformers } ) ) as PropValue;
 		}
 		const transformablePropValue = clone as TransformablePropValue< string >;
 		if ( forceKey ) {
@@ -32,6 +46,20 @@ export const adjustLlmPropValueSchema = ( value: Readonly< PropValue >, forceKey
 
 		// fix by type
 		switch ( transformablePropValue.$$type ) {
+			// case 'global-color-variable':
+			// case 'global-font-variable':
+			// 	const idOrLabel = transformablePropValue.value as string;
+			// 	const targetVariableId = service.variables()[ idOrLabel ]
+			// 		? idOrLabel
+			// 		: service.findIdByLabel( idOrLabel );
+			// 	if ( targetVariableId ) {
+			// 		return {
+			// 			$$type: transformablePropValue.$$type,
+			// 			value: targetVariableId,
+			// 		};
+			// 	}
+			// 	return null;
+
 			case 'size': {
 				const { value: rawSizePropValue } = transformablePropValue as TransformablePropValue<
 					string,
@@ -56,13 +84,18 @@ export const adjustLlmPropValueSchema = ( value: Readonly< PropValue >, forceKey
 					},
 				};
 			}
+			default:
+				const transformer = transformers?.[ transformablePropValue.$$type ];
+				if ( transformer ) {
+					return transformer( transformablePropValue.value );
+				}
 		}
 
 		if ( typeof transformablePropValue.value === 'object' ) {
 			if ( Array.isArray( transformablePropValue.value ) ) {
 				transformablePropValue.value = adjustLlmPropValueSchema(
 					transformablePropValue.value,
-					undefined
+					defaultOptions
 				) as PropValue[];
 			} else {
 				const { value: objectValue } = transformablePropValue as ObjectPropValue;
@@ -72,7 +105,7 @@ export const adjustLlmPropValueSchema = ( value: Readonly< PropValue >, forceKey
 					const childProp = ( objectValue as Record< string, unknown > )[ key ];
 					( clonedObject.value as Record< string, unknown > )[ key ] = adjustLlmPropValueSchema(
 						childProp as PropValue,
-						undefined
+						defaultOptions
 					);
 				} );
 			}

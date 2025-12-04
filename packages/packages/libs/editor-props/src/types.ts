@@ -40,7 +40,7 @@ type BasePropType< TValue > = {
 };
 
 export type PlainPropType = BasePropType< PlainPropValue > & {
-	kind: 'plain';
+	kind: 'plain' | 'string' | 'number' | 'boolean';
 	key: PropTypeKey;
 };
 

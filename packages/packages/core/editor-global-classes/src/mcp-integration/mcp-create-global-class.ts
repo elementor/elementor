@@ -1,6 +1,7 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { Schema } from '@elementor/editor-props';
-import { getStylesSchema, isExistingStyleProperty } from '@elementor/editor-styles';
+import { getStylesSchema } from '@elementor/editor-styles';
+import { Utils } from '@elementor/editor-variables';
 import { z } from '@elementor/schema';
 
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
@@ -13,6 +14,13 @@ const inputSchema = {
 		.record( z.any() )
 		.describe(
 			'key-value of style-schema PropValues applied to the global class. Available properties at dynamic resource "elementor://styles/schema/{property-name}"'
+		)
+		.default( {} ),
+	customCss: z
+		.string()
+		.optional()
+		.describe(
+			'Additional CSS styles associated with the global class. Use only if you fail to use the schema, specifically backgrounds'
 		),
 	breakpoint: z
 		.nullable(
@@ -32,21 +40,39 @@ type InputSchema = z.infer< ReturnType< typeof z.object< typeof inputSchema > > 
 type OutputSchema = z.infer< ReturnType< typeof z.object< typeof outputSchema > > >;
 
 const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
-	const customCss = null; // input.customCss ? { raw: input.customCss } : null;
+	const customCss = input.customCss ? { raw: btoa( input.customCss ) } : null;
 	const { delete: deleteClass, create } = globalClassesStylesProvider.actions;
 	if ( ! create || ! deleteClass ) {
 		throw new Error( 'Create action is not available' );
 	}
-	const validProps = Object.keys( getStylesSchema() );
-	const invalidProps = Object.keys( input.props ).filter( ( key ) => ! isExistingStyleProperty( key ) );
-	if ( invalidProps.length > 0 ) {
-		throw new Error( `Invalid props provided: ${ invalidProps.join( ', ' ) }.
-Available Properties: ${ validProps.join( ', ' ) }.
-Read [elementor://styles/schema/{property}] resource for it's schema.
-Now that you have this information, update your input and try again` );
+	const errors: string[] = [];
+	const stylesSchema = getStylesSchema();
+	const validProps = Object.keys( stylesSchema );
+
+	Object.keys( input.props ).forEach( ( key ) => {
+		const propType = getStylesSchema()[ key ];
+		if ( ! propType ) {
+			errors.push( `Property "${ key }" does not exist in styles schema.` );
+			return;
+		}
+		const { valid, jsonSchema } = Schema.validatePropValue( propType, input.props[ key ] );
+		if ( ! valid ) {
+			errors.push(
+				`- Property "${ key }" has invalid value\n  Exact schema: \`\`\`json\n${ jsonSchema }\`\`\`\n`
+			);
+		}
+	} );
+	if ( errors.length > 0 ) {
+		throw new Error(
+			`Errors:\n${ errors.join( '\n' ) }\nAvailable Properties: ${ validProps.join(
+				', '
+			) }\nNow that you have this information, update your input and try again`
+		);
 	}
 	Object.keys( input.props ).forEach( ( key ) => {
-		input.props[ key ] = Schema.adjustLlmPropValueSchema( input.props[ key ] );
+		input.props[ key ] = Schema.adjustLlmPropValueSchema( input.props[ key ], {
+			transformers: Utils.globalVariablesLLMResolvers,
+		} );
 	} );
 	const classId = create( input.globalClassName, [
 		{
@@ -79,6 +105,7 @@ export const initCreateGlobalClass = ( reg: MCPRegistryEntry ) => {
       
 # Prequisites: CRITICAL
 - Read the style schema at [elementor://styles/schema/{category}] to understand the valid properties and values that can be assigned to the global class.
+- Available style properties can be found in the styles schema dynamic resources available from 'canvas' mcp. List the resources to see all available properties.
 - YOU MUST USE THE STYLE SCHEMA TO BUILD THE "props" PARAMETER CORRECTLY, OTHERWISE THE GLOBAL CLASS CREATION WILL FAIL.
 - Ensure that the global class name provided does not already exist to avoid duplication.
 - Read the styles schema resource available from 'canvas' mcp to understand the valid properties and values that can be assigned to the global class.
@@ -113,6 +140,11 @@ export const initCreateGlobalClass = ( reg: MCPRegistryEntry ) => {
   },
   "breakpoint": "desktop"
 }
+
+# Next steps:
+If failed, read the error message carefully, it includes the exact schema that caused the failure for each invalid property.
+Now that you have this information, update your input and try again.
+
 \`\`\`
 `,
 		name: 'create-global-class',

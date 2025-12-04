@@ -1,6 +1,6 @@
 import { getMCPByDomain } from '@elementor/editor-mcp';
 
-export const GLOBAL_VARIABLES_URI = 'elementor://variables';
+export const GLOBAL_VARIABLES_URI = 'elementor://global-variables';
 
 export const initVariablesResource = () => {
 	const { mcpServer } = getMCPByDomain( 'variables' );
