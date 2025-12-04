@@ -127,8 +127,8 @@ function getComponentDOMElement( id: V1Document[ 'id' ] | undefined ) {
 	const currentComponent = documentsManager.get( id );
 
 	const widget = currentComponent?.container as V1Element;
-
-	const elementDom = widget?.children?.[ 0 ].view?.el;
+	const container = ( widget?.view?.el?.children?.[ 0 ] ?? null ) as HTMLElement | null;
+	const elementDom = container?.children[ 0 ] as HTMLElement | null;
 
 	return elementDom ?? null;
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Loader;
+namespace Elementor\Modules\AtomicWidgets\Elements\Loader;
 
 use Elementor\Utils;
 
