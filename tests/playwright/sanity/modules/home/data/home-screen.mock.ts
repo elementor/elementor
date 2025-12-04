@@ -57,7 +57,7 @@ export default {
 					is_relative_url: false,
 					title_small_color: 'text.tertiary',
 					tab_id: 'global-colors',
-					image: `${ ICONS_BASE_PATH }/theme-builder.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'Typography System',
@@ -65,7 +65,7 @@ export default {
 					url: '',
 					is_relative_url: false,
 					tab_id: 'global-typography',
-					image: `${ ICONS_BASE_PATH }/icon-question-mark.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'Template Library',
@@ -73,14 +73,14 @@ export default {
 					url: 'admin.php?page=elementor-app',
 					is_relative_url: false,
 					title_small_color: 'text.secondary',
-					image: `${ ICONS_BASE_PATH }/theme-builder.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'Popup Designer',
 					title_small: 'Create',
 					url: 'edit.php?post_type=elementor_library&page=popup_templates',
 					is_relative_url: true,
-					image: `${ ICONS_BASE_PATH }/icon-crown.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'Icon Collection',
@@ -88,7 +88,7 @@ export default {
 					url: 'admin.php?page=elementor_custom_icons',
 					is_relative_url: false,
 					title_small_color: 'text.tertiary',
-					image: `${ ICONS_BASE_PATH }/icon-youtube.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 			],
 		},
@@ -113,7 +113,7 @@ export default {
 					url: '',
 					is_relative_url: false,
 					tab_id: 'settings-site-identity',
-					image: `${ ICONS_BASE_PATH }/icon-community.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'Design Tokens',
@@ -122,7 +122,7 @@ export default {
 					is_relative_url: false,
 					tab_id: 'global-colors',
 					title_small_color: 'text.secondary',
-					image: `${ ICONS_BASE_PATH }/theme-builder.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'Font Families',
@@ -130,7 +130,7 @@ export default {
 					url: '',
 					is_relative_url: false,
 					tab_id: 'global-typography',
-					image: `${ ICONS_BASE_PATH }/icon-question-mark.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'Theme Templates',
@@ -138,14 +138,14 @@ export default {
 					url: 'admin.php?page=elementor-app',
 					is_relative_url: false,
 					title_small_color: 'text.tertiary',
-					image: `${ ICONS_BASE_PATH }/theme-builder.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'Modal Windows',
 					title_small: 'Build',
 					url: 'edit.php?post_type=elementor_library&tabs_group=popup&elementor_library_type=popup',
 					is_relative_url: true,
-					image: `${ ICONS_BASE_PATH }/icon-crown.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'SVG Icons',
@@ -153,7 +153,7 @@ export default {
 					url: 'admin.php?page=elementor_custom_icons',
 					is_relative_url: false,
 					title_small_color: 'text.secondary',
-					image: `${ ICONS_BASE_PATH }/icon-youtube.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'Web Fonts',
@@ -186,7 +186,7 @@ export default {
 					is_relative_url: false,
 					tab_id: 'settings-site-identity',
 					title_small_color: 'text.tertiary',
-					image: `${ ICONS_BASE_PATH }/icon-community.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'Color Scheme',
@@ -194,7 +194,7 @@ export default {
 					url: '',
 					is_relative_url: false,
 					tab_id: 'global-colors',
-					image: `${ ICONS_BASE_PATH }/theme-builder.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'Text Styling',
@@ -203,14 +203,14 @@ export default {
 					is_relative_url: false,
 					tab_id: 'global-typography',
 					title_small_color: 'text.secondary',
-					image: `${ ICONS_BASE_PATH }/icon-question-mark.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'Layout Templates',
 					title_small: 'View',
 					url: 'admin.php?page=elementor-app',
 					is_relative_url: false,
-					image: `${ ICONS_BASE_PATH }/theme-builder.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'Overlay Popups',
@@ -218,14 +218,14 @@ export default {
 					url: 'edit.php?post_type=elementor_library&tabs_group=popup&elementor_library_type=popup',
 					is_relative_url: true,
 					title_small_color: 'text.tertiary',
-					image: `${ ICONS_BASE_PATH }/icon-crown.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'Custom Symbols',
 					title_small: 'Organize',
 					url: 'admin.php?page=elementor_custom_icons',
 					is_relative_url: false,
-					image: `${ ICONS_BASE_PATH }/icon-youtube.svg`,
+					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
 				},
 				{
 					title: 'Typeface Library',
@@ -582,22 +582,22 @@ export default {
 	external_links: [
 		{
 			label: 'Help Center',
-			image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/icon-question-mark.svg',
+			image: `${ ICONS_BASE_PATH }/icon-question-mark.svg`,
 			url: 'https://test.example.com/help',
 		},
 		{
 			label: 'Youtube',
-			image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/icon-youtube.svg',
+			image: `${ ICONS_BASE_PATH }/icon-youtube.svg`,
 			url: 'https://test.example.com/youtube',
 		},
 		{
 			label: 'Facebook Community',
-			image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/icon-community.svg',
+			image: `${ ICONS_BASE_PATH }/icon-community.svg`,
 			url: 'https://test.example.com/community',
 		},
 		{
 			label: 'Blog',
-			image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/icon-crown.svg',
+			image: `${ ICONS_BASE_PATH }/icon-community.svg`,
 			url: 'https://test.example.com/blog',
 		},
 	],

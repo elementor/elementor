@@ -21,8 +21,20 @@ export const transformMockDataByLicense = ( licenseType: LicenseType ) => {
 };
 
 export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeof transformMockDataByLicense> ) => {
-	await page.addInitScript( ( data ) => {
-		// @ts-expect-error - window.elementorHomeScreenData is dynamically assigned
-		window.elementorHomeScreenData = data;
-	}, mockData );
+	await page.route( '**/wp-admin/admin.php?page=elementor', async ( route ) => {
+		const response = await route.fetch();
+		const body = await response.text();
+		const mockDataJson = JSON.stringify( mockData ).replace( /</g, '\\u003c' );
+
+		const modifiedBody = body.replace(
+			/var elementorHomeScreenData\s*=\s*\{[\s\S]*?\};/,
+			`var elementorHomeScreenData = ${ mockDataJson };`,
+		);
+
+		await route.fulfill( {
+			response,
+			body: modifiedBody,
+			headers: response.headers(),
+		} );
+	} );
 };

@@ -1,8 +1,18 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
 import { type LicenseType, mockHomeScreenData, transformMockDataByLicense } from './home-screen.helper';
 
 test.describe( 'Home screen visual regression tests', () => {
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( { e_editor_one: false } );
+		await page.close();
+		await context.close();
+	} );
+
 	const licenseTypes: LicenseType[] = [ 'free', 'pro' ];
 
 	for ( const licenseType of licenseTypes ) {
