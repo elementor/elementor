@@ -27,7 +27,7 @@ test.describe( 'Home screen visual regression tests', () => {
 				await page.waitForSelector( '#e-home-screen', { timeout: 10000 } );
 				await page.waitForLoadState( 'networkidle' );
 				const homeScreen = page.locator( '#e-home-screen' );
-				await expect( homeScreen ).toHaveScreenshot( `home-screen-${ licenseType }.png` );
+				await expect.soft( homeScreen ).toHaveScreenshot( `home-screen-${ licenseType }.png` );
 			} finally {
 				await requestContext.dispose();
 			}
