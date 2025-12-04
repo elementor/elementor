@@ -126,6 +126,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</div>
 				</div>
 			</div>
+			<span class="source-option-badge site-badge variant-b-only" style="display: none;">
+				<i class="eicon-users" aria-hidden="true"></i>
+				<?php echo esc_html__( 'Anyone on this site', 'elementor' ); ?>
+			</span>
+			<span class="source-option-badge cloud-badge variant-b-only" style="display: none;">
+				<i class="eicon-lock" aria-hidden="true"></i>
+				<?php echo esc_html__( 'My Elementor account', 'elementor' ); ?>
+			</span>
 		<# } #>
 
 		<div class="elementor-template-library-filter-toolbar-side-actions">
@@ -488,19 +496,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 								? 'https://go.elementor.com/go-pro-cloud-templates-save-to-100-usage-badge'
 								: 'https://go.elementor.com/go-pro-cloud-templates-save-to-free-badge/';
 						#>
-					<span class="upgrade-badge">
-						<a href="{{{ goLink }}}" target="_blank">
-							<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
-						</a>
-					</span>
-					<i class="eicon-info upgrade-tooltip" aria-hidden="true"></i>
+						<span class="upgrade-badge">
+							<a href="{{{ goLink }}}" target="_blank">
+								<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
+							</a>
+						</span>
+						<i class="eicon-info upgrade-tooltip" aria-hidden="true"></i>
 					<# } else { #>
-					<span class="connect-badge">
-						<span class="connect-divider">|</span>
-						<a id="elementor-template-library-connect__badge" href="{{{ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url }}}">
-							<?php echo esc_html__( 'Connect', 'elementor' ); ?>
-						</a>
-					</span>
+						<span class="connect-badge">
+							<span class="connect-divider">|</span>
+							<a id="elementor-template-library-connect__badge" href="{{{ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url }}}">
+								<?php echo esc_html__( 'Connect', 'elementor' ); ?>
+							</a>
+						</span>
 					<# } #>
 				</div>
 				<div class="source-selections-input local">
@@ -521,6 +529,107 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</p>
 			</div>
 			<button id="elementor-template-library-save-template-submit" class="elementor-button e-primary">
+				<span class="elementor-state-icon">
+					<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
+				</span>
+				{{{ saveBtnText }}}
+			</button>
+		</div>
+		<# } #>
+	</form>
+	<div class="elementor-template-library-blank-footer">
+		<?php echo esc_html__( 'Learn more about the', 'elementor' ); ?>
+		<a class="elementor-template-library-blank-footer-link" href="https://go.elementor.com/docs-library/" target="_blank"><?php echo esc_html__( 'Template Library', 'elementor' ); ?></a>
+	</div>
+</script>
+
+<script type="text/template" id="tmpl-elementor-template-library-save-template-variant-b">
+	<div class="elementor-template-library-blank-icon">
+		<#
+			const templateIcon = typeof icon === 'undefined' ? '<i class="eicon-library-upload" aria-hidden="true"></i>' : icon;
+			print( templateIcon );
+		#>
+		<span class="elementor-screen-only"><?php echo esc_html__( 'Save', 'elementor' ); ?></span>
+	</div>
+	<div class="elementor-template-library-blank-title">{{{ title }}}</div>
+	<div class="elementor-template-library-blank-message">{{{ description }}}</div>
+	<form id="elementor-template-library-save-template-form">
+		<input type="hidden" name="post_id" value="<?php echo esc_attr( get_the_ID() ); ?>">
+		<# if ( typeof canSaveToCloud === 'undefined' || ! canSaveToCloud ) { #>
+		<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Enter Template Name', 'elementor' ); ?>" required>
+		<button id="elementor-template-library-save-template-submit" class="elementor-button e-primary">
+			<span class="elementor-state-icon">
+				<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
+			</span>
+			<?php echo esc_html__( 'Save', 'elementor' ); ?>
+		</button>
+		<# } else { #>
+		<div class="cloud-library-form-inputs variant-b">
+			<label class="template-name-label"><?php echo esc_html__( 'Page Name', 'elementor' ); ?></label>
+			<input id="elementor-template-library-save-template-name" name="title" placeholder="<?php echo esc_attr__( 'Type the page here', 'elementor' ); ?>" required>
+			<div class="source-selections variant-b">
+				<label class="save-location-label"><?php echo esc_html__( 'Where would you like to save this page?', 'elementor' ); ?></label>
+				<div class="cloud-folder-selection-dropdown">
+					<div class="cloud-folder-selection-dropdown-list"></div>
+				</div>
+				<div class="source-selections-input cloud variant-b">
+					<input type="checkbox" id="cloud-variant-b" name="cloud" value="cloud">
+					<i class="eicon-library-cloud-empty" aria-hidden="true"></i>
+					<label for="cloud-variant-b"><?php echo esc_html__( 'Cloud Templates', 'elementor' ); ?></label>
+					<span class="divider">/</span>
+					<div class="ellipsis-container">
+						<?php echo esc_html__( 'Select folder', 'elementor' ); ?>
+					</div>
+					<span class="selected-folder">
+						<span class="selected-folder-text"></span>
+						<i class="eicon-editor-close" aria-hidden="true"></i>
+					</span>
+					<# if ( elementor.config.library_connect.is_connected ) { #>
+						<#
+							const goLink = elementor.templates.hasCloudLibraryQuota()
+								? 'https://go.elementor.com/go-pro-cloud-templates-save-to-100-usage-badge'
+								: 'https://go.elementor.com/go-pro-cloud-templates-save-to-free-badge/';
+						#>
+					<span class="upgrade-badge">
+						<a href="{{{ goLink }}}" target="_blank">
+							<i class="eicon-upgrade-crown"></i><?php echo esc_html__( 'Upgrade', 'elementor' ); ?>
+						</a>
+					</span>
+					<# } else { #>
+					<span class="connect-badge">
+						<a id="elementor-template-library-connect__badge-variant-b" href="{{{ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url }}}">
+							<?php echo esc_html__( 'Connect', 'elementor' ); ?>
+						</a>
+					</span>
+					<# } #>
+					<span class="account-badge cloud-account-badge" type="button" id="elementor-template-library-connect__badge-variant-b-button" aria-hidden="true">
+						<i class="eicon-lock" aria-hidden="true"></i>
+						<?php echo esc_html__( 'My Elementor account', 'elementor' ); ?>
+					</span>
+				</div>
+				<div class="source-selections-input local variant-b">
+					<input type="checkbox" id="local-variant-b" name="local" value="local">
+					<i class="eicon-header" aria-hidden="true"></i>
+					<label for="local-variant-b"><?php echo esc_html__( 'Site Templates', 'elementor' ); ?></label>
+					<span class="account-badge site-account-badge" type="button" aria-hidden="true">
+						<i class="eicon-users" aria-hidden="true"></i>
+						<?php echo esc_html__( 'Anyone on this site', 'elementor' ); ?>
+					</span>
+				</div>
+				<input type="hidden" name="parentId" id="parentId" />
+			</div>
+			<div class="quota-cta">
+				<p>
+					<?php echo esc_html__( 'You’ve saved 100% of the templates in your plan.', 'elementor' ); ?>
+					<br>
+					<?php printf(
+					/* translators: %s is the "Upgrade now" link */
+						esc_html__( 'To get more space %s', 'elementor' ),
+						'<a href="https://go.elementor.com/go-pro-cloud-templates-save-to-100-usage-notice">' . esc_html__( 'Upgrade now', 'elementor' ) . '</a>'
+					); ?>
+				</p>
+			</div>
+			<button id="elementor-template-library-save-template-submit" class="elementor-button e-primary" disabled>
 				<span class="elementor-state-icon">
 					<i class="eicon-loading eicon-animation-spin" aria-hidden="true"></i>
 				</span>
