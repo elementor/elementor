@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\TemplateRenderer;
+namespace Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer;
 
 use ElementorDeps\Twig\Error\LoaderError;
 use ElementorDeps\Twig\Loader\LoaderInterface;
@@ -88,3 +88,4 @@ class Single_File_Loader implements LoaderInterface {
 		return $is_valid;
 	}
 }
+

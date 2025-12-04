@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Base;
+namespace Elementor\Modules\AtomicWidgets\Controls\Base;
 
 use JsonSerializable;
 
@@ -52,3 +52,4 @@ abstract class Element_Control_Base implements JsonSerializable {
 		];
 	}
 }
+

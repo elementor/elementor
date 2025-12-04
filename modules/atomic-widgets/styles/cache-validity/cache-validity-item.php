@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\CacheValidity;
+namespace Elementor\Modules\AtomicWidgets\Styles\CacheValidity;
 
 use Elementor\Utils;
 
@@ -281,3 +281,4 @@ class Cache_Validity_Item {
 		}
 	}
 }
+
