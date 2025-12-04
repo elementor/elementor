@@ -62,3 +62,4 @@ abstract class Atomic_Control_Base implements JsonSerializable {
 		];
 	}
 }
+

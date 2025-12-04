@@ -41,3 +41,4 @@ class Frontend_Assets_Loader {
 		);
 	}
 }
+
