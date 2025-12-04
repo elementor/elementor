@@ -172,6 +172,107 @@ class Frontend extends App {
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
 		add_filter( 'get_the_excerpt', [ $this, 'end_excerpt_flag' ], 20 );
+
+		if ( version_compare( get_bloginfo( 'version' ), '6.9', '>=' ) ) {
+			add_filter( 'wp_template_enhancement_output_buffer', [ $this, 'ensure_elementor_styles_in_buffer' ], 100, 2 );
+		}
+	}
+
+	/**
+	 * Ensure Elementor late-enqueued styles are included in WordPress 6.9's hoisted output.
+	 *
+	 * WordPress 6.9 introduced a template enhancement output buffer that hoists late-enqueued
+	 * styles to the <head>. This method acts as a fallback to ensure Elementor post CSS
+	 * is included if the hoisting mechanism fails.
+	 *
+	 * @since 3.33.3
+	 * @param string $filtered_output The filtered HTML output.
+	 * @param string $output The original HTML output.
+	 * @return string Modified output with Elementor styles.
+	 */
+	public function ensure_elementor_styles_in_buffer( $filtered_output, $output ) {
+		global $wp_styles;
+
+		if ( ! $wp_styles instanceof \WP_Styles ) {
+			return $filtered_output;
+		}
+
+		$missing_styles = '';
+
+		foreach ( $wp_styles->done as $handle ) {
+			if ( 0 !== strpos( $handle, 'elementor-post-' ) ) {
+				continue;
+			}
+
+			if ( ! isset( $wp_styles->registered[ $handle ] ) ) {
+				continue;
+			}
+
+			if ( $this->style_exists_in_output( $filtered_output, $handle ) ) {
+				continue;
+			}
+
+			$registered_style = $wp_styles->registered[ $handle ];
+
+			if ( empty( $registered_style->src ) ) {
+				continue;
+			}
+
+			$src = $registered_style->src;
+
+			if ( $registered_style->ver ) {
+				$src = add_query_arg( 'ver', $registered_style->ver, $src );
+			}
+
+			$missing_styles .= sprintf(
+				"<link rel='stylesheet' id='%s-css' href='%s' media='all' />\n",
+				esc_attr( $handle ),
+				esc_url( $src )
+			);
+		}
+
+		if ( ! $missing_styles ) {
+			return $filtered_output;
+		}
+
+		return $this->insert_styles( $filtered_output, $missing_styles );
+	}
+
+	/**
+	 * Check if a stylesheet already exists in the HTML output.
+	 *
+	 * Uses fast string searching instead of HTML parsing for performance.
+	 *
+	 * @since 3.33.3
+	 * @param string $html The HTML output.
+	 * @param string $handle The style handle to check for.
+	 * @return bool Whether the stylesheet exists in the output.
+	 */
+	private function style_exists_in_output( $html, $handle ) {
+		$style_id = $handle . '-css';
+
+		return false !== strpos( $html, "id='{$style_id}'" ) ||
+		       false !== strpos( $html, "id=\"{$style_id}\"" );
+	}
+ 
+	/**
+	 * Insert styles at the end of the <head> or <body> section.
+	 *
+	 * @since 3.33.3
+	 * @param string $html The HTML output.
+	 * @param string $styles The style tags to insert.
+	 * @return string Modified HTML with styles inserted.
+	 */
+	private function insert_styles( $html, $styles ) {
+		if ( false !== strpos( $html, '</head>' ) ) {
+			return str_replace( '</head>', $styles . '</head>', $html );
+		}
+
+		if ( false !== strpos( $html, '</body>' ) ) {
+			return str_replace( '</body>', $styles . '</body>', $html );
+		}
+
+		return $html;
 	}
 
 	/**
