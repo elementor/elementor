@@ -4,7 +4,7 @@ import HomeScreen from './components/home-screen/home-screen';
 import EditorScreen from './components/editor-screen/home-screen';
 
 const App = ( props ) => {
-	const ScreenComponent = props.isEditorOneActive ? HomeScreen : EditorScreen;
+	const ScreenComponent = props.isEditorOneActive ? EditorScreen : HomeScreen;
 
 	return (
 		<DirectionProvider rtl={ props.isRTL }>
