@@ -91,6 +91,7 @@ export const slice = createSlice( {
 
 				return ! isArchived;
 			} );
+		},
 		setCurrentComponentId: ( state, { payload }: PayloadAction< V1Document[ 'id' ] | null > ) => {
 			state.currentComponentId = payload;
 		},
