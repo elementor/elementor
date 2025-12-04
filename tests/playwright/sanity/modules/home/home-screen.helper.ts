@@ -1,10 +1,8 @@
 import { type Page, type APIRequestContext } from '@playwright/test';
 import { resolve } from 'path';
-import { createReadStream } from 'fs';
 import homeScreenMockData from './data/home-screen.mock';
 import ApiRequests from '../../../assets/api-requests';
 import { Image } from '../../../types/types';
-import { fetchNonce } from '../../../wp-authentication';
 
 export type LicenseType = 'free' | 'pro' | 'one';
 
@@ -30,7 +28,7 @@ export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeo
 
 	if ( apiRequests && requestContext ) {
 		try {
-			const mediaUrl = await uploadImage( page, requestContext );
+			const mediaUrl = await uploadImage( apiRequests, requestContext );
 			finalMockData = replacePlaceholderImage( mockData, mediaUrl );
 		} catch ( error ) {
 			throw new Error( `Failed to upload and replace upgrade-free.png: ${ error instanceof Error ? error.message : String( error ) }` );
@@ -56,7 +54,7 @@ export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeo
 };
 
 const uploadImage = async (
-	page: Page,
+	apiRequests: ApiRequests,
 	requestContext: APIRequestContext,
 ): Promise<string> => {
 	const imagePath = resolve( __dirname, './assets/upgrade-free.png' );
@@ -66,35 +64,8 @@ const uploadImage = async (
 		filePath: imagePath,
 	};
 
-	let baseUrl = '';
-	const pageUrl = page.url();
-	if ( pageUrl && pageUrl !== 'about:blank' ) {
-		baseUrl = pageUrl.split( '/wp-admin' )[ 0 ];
-	} else {
-		baseUrl = process.env.BASE_URL || process.env.TEST_SERVER || process.env.DEV_SERVER || '';
-	}
-
-	const nonce = await fetchNonce( requestContext, baseUrl );
-
-	const multipart = {
-		file: createReadStream( imagePath ),
-		status: 'publish',
-		...imageData,
-	};
-
-	const response = await requestContext.post( `${ baseUrl }/index.php`, {
-		params: { rest_route: '/wp/v2/media' },
-		headers: {
-			'X-WP-Nonce': nonce,
-		},
-		multipart,
-	} );
-
-	if ( ! response.ok() ) {
-		throw new Error( `Failed to create media: ${ response.status() }. ${ await response.text() }` );
-	}
-
-	const mediaData = await response.json();
+	const mediaId = await apiRequests.createMedia( requestContext, imageData );
+	const mediaData = await apiRequests.getMedia( requestContext, String( mediaId ) );
 	const mediaUrl = mediaData.source_url || mediaData.guid?.rendered || mediaData.link;
 
 	if ( ! mediaUrl ) {

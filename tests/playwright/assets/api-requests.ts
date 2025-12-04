@@ -62,6 +62,21 @@ export default class ApiRequests {
 		return id;
 	}
 
+	public async getMedia( request: APIRequestContext, mediaId: string ) {
+		const response = await request.get( `${ this.baseUrl }/index.php`, {
+			params: { rest_route: `/wp/v2/media/${ mediaId }` },
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+		} );
+
+		if ( ! response.ok() ) {
+			throw new Error( `Failed to get media: ${ response.status() }. ${ await response.text() }` );
+		}
+
+		return await response.json();
+	}
+
 	public async deleteMedia( request: APIRequestContext, ids: string[] ) {
 		const requests = [];
 
