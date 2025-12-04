@@ -1,5 +1,5 @@
 {
-  "name": "@elementor/alpinejs"
+  "name": "@elementor/alpinejs",
   "description": "Wrapper around `alpinejs`",
   "version": "3.35.0",
   "private": false,
