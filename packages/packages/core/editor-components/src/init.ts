@@ -17,6 +17,7 @@ import { componentInstanceTransformer } from './component-instance-transformer';
 import { componentOverridableTransformer } from './component-overridable-transformer';
 import { ComponentPanelHeader } from './components/component-panel-header/component-panel-header';
 import { Components } from './components/components-tab/components';
+import { COMPONENT_DOCUMENT_TYPE } from './components/consts';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
 import { openEditModeDialog } from './components/in-edit-mode';
@@ -31,8 +32,6 @@ import { slice } from './store/store';
 import { beforeSave } from './sync/before-save';
 import { type ExtendedWindow } from './types';
 import { onElementDrop } from './utils/tracking';
-
-const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
 
 export function init() {
 	stylesRepository.register( componentsStylesProvider );

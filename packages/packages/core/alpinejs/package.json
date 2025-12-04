@@ -1,7 +1,7 @@
 {
   "name": "@elementor/alpinejs",
   "description": "Wrapper around `alpinejs`",
-  "version": "3.33.0",
+  "version": "3.35.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -40,4 +40,3 @@
     "tsup": "^8.3.5"
   }
 }
-
