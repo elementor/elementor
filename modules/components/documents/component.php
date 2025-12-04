@@ -2,6 +2,8 @@
 namespace Elementor\Modules\Components\Documents;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Utils\Api\Parse_Result;
+use Elementor\Modules\Components\OverridableProps\Component_Overridable_Props_Parser;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -89,5 +91,19 @@ class Component extends Document {
 			return false;
 		}
 		return json_decode( $archived_meta, true );
+	public function update_overridable_props( $data ): Parse_Result {
+		$parser = Component_Overridable_Props_Parser::make();
+
+		$result = $parser->parse( $data );
+
+		if ( ! $result->is_valid() ) {
+			return $result;
+		}
+
+		$sanitized_data = $result->unwrap();
+
+		$this->update_json_meta( self::OVERRIDABLE_PROPS_META_KEY, $sanitized_data );
+
+		return $result;
 	}
 }

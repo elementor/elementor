@@ -117,4 +117,48 @@ export default class extends elementorModules.Module {
 		const isEnabled = await mixpanel.flags.is_enabled( flagName, false );
 		return true === isEnabled;
 	}
+
+	async getExperimentVariant( experimentName, defaultValue = 'control' ) {
+		try {
+			const isAbTestingEnabled = elementorCommon.config.editor_events?.flags_enabled ?? false;
+
+			if ( ! isAbTestingEnabled ) {
+				return defaultValue;
+			}
+
+			if ( ! mixpanel ) {
+				return defaultValue;
+			}
+
+			if ( ! this.trackingEnabled ) {
+				return defaultValue;
+			}
+
+			if ( ! mixpanel.flags ) {
+				return defaultValue;
+			}
+
+			if ( 'function' !== typeof mixpanel.flags.get_variant_value ) {
+				return defaultValue;
+			}
+
+			const variant = await mixpanel.flags.get_variant_value( experimentName, defaultValue );
+
+			if ( undefined === variant || null === variant ) {
+				return defaultValue;
+			}
+
+			return variant;
+		} catch ( error ) {
+			return defaultValue;
+		}
+	}
+
+	startExperiment( experimentName, experimentVariant ) {
+		if ( ! this.trackingEnabled ) {
+			return;
+		}
+
+		mixpanel.track( '$experiment_started', { 'Experiment name': experimentName, 'Variant name': experimentVariant } );
+	}
 }

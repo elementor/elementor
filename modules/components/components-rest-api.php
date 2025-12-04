@@ -324,19 +324,37 @@ class Components_REST_API {
 	private function get_lock_status( \WP_REST_Request $request ) {
 		$component_id = (int) $request->get_param( 'componentId' );
 		try {
-			$lock_data = $this->get_component_lock_manager()->get_updated_status( $component_id );
-			$is_current_user_allow_to_edit = $this->is_current_user_allow_to_edit( $component_id );
-
-			$locked_by = '';
-			if ( $lock_data['is_locked'] ) {
-				$locked_user = get_user_by( 'id', $lock_data['lock_user'] );
-				$locked_by = $locked_user ? $locked_user->display_name : '';
+			$lock_manager = $this->get_component_lock_manager();
+			if ( $lock_manager->is_lock_expired( $component_id ) ) {
+				$lock_manager->unlock( $component_id );
 			}
 
-			return Response_Builder::make( [
-				'is_current_user_allow_to_edit' => $is_current_user_allow_to_edit,
-				'locked_by' => $locked_by,
-			] )->build();
+			$lock_data = $lock_manager->get_lock_data( $component_id );
+			$current_user_id = get_current_user_id();
+
+			// if current  user is the lock user, return true
+			if ( $lock_data['locked_by'] && $lock_data['locked_by'] === $current_user_id ) {
+				return Response_Builder::make( [
+					'is_current_user_allow_to_edit' => true,
+					'locked_by' => get_user_by( 'id', $lock_data['locked_by'] )->display_name,
+				] )->build();
+			}
+
+			// if the user is not the lock user, return false
+			if ( $lock_data['locked_by'] && $lock_data['locked_by'] !== $current_user_id ) {
+				return Response_Builder::make( [
+					'is_current_user_allow_to_edit' => false,
+					'locked_by' => get_user_by( 'id', $lock_data['locked_by'] )->display_name,
+				] )->build();
+			}
+
+			// if the component is not locked, return true
+			if ( ! $lock_data['locked_by'] ) {
+				return Response_Builder::make( [
+					'is_current_user_allow_to_edit' => true,
+					'locked_by' => null,
+				] )->build();
+			}
 		} catch ( \Exception $e ) {
 			error_log( 'Components REST API get_lock_status error: ' . $e->getMessage() );
 			return Error_Builder::make( 'get_lock_status_failed' )
