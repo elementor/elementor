@@ -35,11 +35,14 @@ export function setOverridableProp( {
 	}
 
 	const existingOverridableProp = overrideKey ? overridableProps.props[ overrideKey ] : null;
+	const duplicatedTargetProps = Object.values( overridableProps.props ).filter(
+		( prop ) => prop.elementId === elementId && prop.propKey === propKey && prop !== existingOverridableProp
+	);
 
-	const { props: existingProps, groups: existingGroups } = { ...overridableProps };
+	const { props: oldProps, groups: oldGroups } = { ...overridableProps };
 
 	const { groups: updatedGroups, currentGroupId } = getUpdatedGroups(
-		existingGroups,
+		oldGroups,
 		groupId || existingOverridableProp?.groupId
 	);
 
@@ -54,26 +57,32 @@ export function setOverridableProp( {
 		groupId: currentGroupId,
 	};
 
+	const { props: propsWithoutDuplicates, groups: groupsWithoutDuplicates } = removeProps( {
+		props: oldProps,
+		groups: updatedGroups,
+		propsToRemove: duplicatedTargetProps,
+	} );
+
 	const props = {
-		...existingProps,
+		...propsWithoutDuplicates,
 		[ overridableProp.overrideKey ]: overridableProp,
 	};
 
 	const groups = {
 		items: {
-			...updatedGroups.items,
-			[ currentGroupId ]: getGroupWithProp( updatedGroups, currentGroupId, overridableProp ),
+			...groupsWithoutDuplicates.items,
+			[ currentGroupId ]: getGroupWithProp( groupsWithoutDuplicates, currentGroupId, overridableProp ),
 		},
-		order: updatedGroups.order.includes( currentGroupId )
-			? updatedGroups.order
-			: [ ...updatedGroups.order, currentGroupId ],
+		order: groupsWithoutDuplicates.order.includes( currentGroupId )
+			? groupsWithoutDuplicates.order
+			: [ ...groupsWithoutDuplicates.order, currentGroupId ],
 	};
 
 	const isChangingGroups = existingOverridableProp && existingOverridableProp.groupId !== currentGroupId;
 
 	if ( isChangingGroups ) {
 		groups.items[ existingOverridableProp.groupId ] = getGroupWithoutProp(
-			updatedGroups,
+			groupsWithoutDuplicates,
 			existingOverridableProp.groupId,
 			overridableProp
 		);
@@ -158,4 +167,34 @@ function getGroupWithoutProp(
 	}
 
 	return group;
+}
+
+function removeProps( {
+	props,
+	groups,
+	propsToRemove,
+}: OverridableProps & { propsToRemove: OverridableProp[] } ): OverridableProps {
+	const allProps = Object.fromEntries(
+		Object.entries( props ).filter( ( [ , prop ] ) => ! propsToRemove.includes( prop ) )
+	);
+
+	const overrideKeysToRemove = propsToRemove.map( ( prop ) => prop.overrideKey );
+
+	const allGroupItems = Object.fromEntries(
+		Object.entries( groups.items ).map( ( [ groupId, group ]: [ string, OverridablePropsGroup ] ) => [
+			groupId,
+			{
+				...group,
+				props: group.props.filter( ( prop ) => ! overrideKeysToRemove.includes( prop ) ),
+			},
+		] )
+	);
+
+	return {
+		props: allProps,
+		groups: {
+			items: allGroupItems,
+			order: groups.order.filter( ( groupId ) => ! overrideKeysToRemove.includes( groupId ) ),
+		},
+	};
 }
