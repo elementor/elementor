@@ -27,7 +27,9 @@ class Admin_Menu_Handler {
 
 	private function register_actions(): void {
 		add_action( 'admin_menu', [ $this, 'register_unified_submenus' ], 21 );
-		add_action( 'elementor/admin/menu/register', [ $this, 'intercept_menu_registration' ], 5 );
+		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu_manager ) {
+			$this->process_registered_items( $admin_menu_manager );
+		}, 5 );
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 999 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 1001 );
 		add_action( 'admin_menu', [ $this, 'reorder_elementor_submenu' ], 1002 );
@@ -88,7 +90,7 @@ class Admin_Menu_Handler {
 		}
 
 		ksort( $ordered );
-		$submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] = array_merge( array_values( $ordered ), $remaining ); // WordPress.WP.GlobalVariablesOverride.Prohibited
+		$submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] = array_merge( array_values( $ordered ), $remaining ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 	}
 
 	public function reposition_elementor_menu(): void {
@@ -111,7 +113,7 @@ class Admin_Menu_Handler {
 
 		unset( $menu[ $elementor_menu_key ] );
 
-		$menu['3'] = $elementor_menu_item;  // WordPress.WP.GlobalVariablesOverride.Prohibited
+		$menu['3'] = $elementor_menu_item;  // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		ksort( $menu );
 	}
@@ -172,12 +174,6 @@ class Admin_Menu_Handler {
 			}
 		</style>
 		<?php
-	}
-
-	public function intercept_menu_registration( $admin_menu_manager ): void {
-		add_action( 'elementor/admin/menu/register', function( $manager ) {
-			$this->process_registered_items( $manager );
-		}, 999 );
 	}
 
 	private function process_registered_items( Admin_Menu_Manager $admin_menu_manager ): void {
@@ -429,20 +425,12 @@ class Admin_Menu_Handler {
 			ELEMENTOR_VERSION
 		);
 
-		wp_enqueue_script(
+		wp_enqueue_script_module(
 			'elementor-admin-menu',
 			ELEMENTOR_URL . 'modules/editor-one/assets/js/admin-menu.js',
 			[],
 			ELEMENTOR_VERSION,
-			true
 		);
-
-		add_filter( 'script_loader_tag', function( $tag, $handle ) {
-			if ( 'elementor-admin-menu' === $handle ) {
-				return str_replace( ' src', ' type="module" src', $tag );
-			}
-			return $tag;
-		}, 10, 2 );
 
 		wp_localize_script(
 			'elementor-admin-menu',
@@ -542,7 +530,7 @@ class Admin_Menu_Handler {
 		return $groups;
 	}
 
-	private function get_item_url( string $item_slug, Admin_Menu_Item $item ): string {
+	private function get_item_url( string $item_slug ): string {
 		if ( 0 === strpos( $item_slug, 'edit.php' ) || 0 === strpos( $item_slug, 'post-new.php' ) ) {
 			return admin_url( $item_slug );
 		}
