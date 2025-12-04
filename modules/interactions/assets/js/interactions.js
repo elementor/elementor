@@ -9,18 +9,19 @@ function scrollOutAnimation( element, animConfig, keyframes, options, animateFun
 	const stop = inViewFunc( element, () => {
 		return () => {
 			animateFunc( element, keyframes, options );
-			stop();
+			if ( false === animConfig.replay ) {
+				stop();
+			}
 		};
 	}, viewOptions );
 }
 
-function scrollInAnimation( element, keyframes, options, animateFunc, inViewFunc ) {
+function scrollInAnimation( element, animConfig, keyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0, root: null };
-	inViewFunc( element, () => {
+	const stop = inViewFunc( element, () => {
 		animateFunc( element, keyframes, options );
-		// This block is once the replay scroll animation should operate.
-		if ( true === animConfig.replay ) {
-			return () => scrollInAnimation( element, keyframes, options, animateFunc, inViewFunc );
+		if ( false === animConfig.replay ) {
+			stop();
 		}
 	}, viewOptions );
 }
@@ -40,7 +41,7 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	if ( 'scrollOut' === animConfig.trigger ) {
 		scrollOutAnimation( element, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
-		scrollInAnimation( element, keyframes, options, animateFunc, inViewFunc );
+		scrollInAnimation( element, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else {
 		defaultAnimation( element, keyframes, options, animateFunc );
 	}
