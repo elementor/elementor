@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\CacheValidity;
+namespace Elementor\Modules\AtomicWidgets\Styles\CacheValidity;
 
-use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity_Item;
+use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity_Item;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
