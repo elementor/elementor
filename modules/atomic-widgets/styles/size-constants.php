@@ -47,6 +47,7 @@ class Size_Constants {
 			...self::LENGTH_UNITS,
 			self::UNIT_PERCENT,
 			self::UNIT_AUTO,
+			self::UNIT_CUSTOM,
 		];
 	}
 
