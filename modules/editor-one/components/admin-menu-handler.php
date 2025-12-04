@@ -425,20 +425,24 @@ class Admin_Menu_Handler {
 			ELEMENTOR_VERSION
 		);
 
+		wp_register_script( 'elementor-admin-menu-config', false, [], ELEMENTOR_VERSION );
+		wp_enqueue_script( 'elementor-admin-menu-config' );
+
+		$config = [
+			'editorFlyout' => $this->get_editor_flyout_data(),
+			'level4Flyouts' => $this->get_level4_flyout_data(),
+		];
+
+		wp_add_inline_script(
+			'elementor-admin-menu-config',
+			'window.elementorAdminMenuConfig = ' . wp_json_encode( $config ) . ';'
+		);
+
 		wp_enqueue_script_module(
 			'elementor-admin-menu',
 			ELEMENTOR_URL . 'modules/editor-one/assets/js/admin-menu.js',
 			[],
 			ELEMENTOR_VERSION,
-		);
-
-		wp_localize_script(
-			'elementor-admin-menu',
-			'elementorAdminMenuConfig',
-			[
-				'editorFlyout' => $this->get_editor_flyout_data(),
-				'level4Flyouts' => $this->get_level4_flyout_data(),
-			]
 		);
 	}
 
