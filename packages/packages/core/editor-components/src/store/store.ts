@@ -71,10 +71,14 @@ export const slice = createSlice( {
 			state.createdThisSession.push( payload );
 		},
 		archive: ( state, { payload }: PayloadAction< number > ) => {
-			state.archivedData.push(
-				state.data.find( ( component ) => component.id === payload ) as PublishedComponent
-			);
-			state.data = state.data.filter( ( component ) => component.id !== payload );
+			state.data = state.data.filter( ( component ) => {
+				const isArchived = component.id === payload;
+				if ( isArchived ) {
+					state.archivedData.push( component );
+				}
+
+				return ! isArchived;
+			} );
 		},
 	},
 	extraReducers: ( builder ) => {

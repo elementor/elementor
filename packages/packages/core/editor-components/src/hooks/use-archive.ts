@@ -1,15 +1,16 @@
-import { useCallback } from 'react';
-import { __useDispatch as useDispatch } from '@elementor/store';
+import { setDocumentModifiedStatus } from '@elementor/editor-documents';
+import { __getStore as getStore } from '@elementor/store';
 
 import { slice } from '../store/store';
 
-export const useArchive = () => {
-	const dispatch = useDispatch();
+export const archiveComponent = ( componentId: number ) => {
+	const store = getStore();
+	const dispatch = store?.dispatch;
 
-	return useCallback(
-		( componentId: number ) => {
-			dispatch( slice.actions.archive( componentId ) );
-		},
-		[ dispatch ]
-	);
+	if ( ! dispatch ) {
+		return;
+	}
+
+	dispatch( slice.actions.archive( componentId ) );
+	setDocumentModifiedStatus( true );
 };

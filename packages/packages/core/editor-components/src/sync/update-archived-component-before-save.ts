@@ -27,12 +27,16 @@ export const updateArchivedComponentBeforeSave = async () => {
 		const result = await apiClient.updateArchivedComponents(
 			archivedComponents.map( ( component ) => component.id )
 		);
-		if ( result.failedArchivedIds.length > 0 ) {
-			notify( failedNotification( result.failedArchivedIds.join( ', ' ) ) );
+
+		const failedIds = result.failedIds.join( ', ' );
+		const successIds = result.successIds.join( ', ' );
+
+		if ( failedIds ) {
+			notify( failedNotification( failedIds ) );
 		}
 
-		if ( result.successArchivedIds.length > 0 ) {
-			notify( successNotification( result.successArchivedIds.join( ', ' ) ) );
+		if ( successIds ) {
+			notify( successNotification( successIds ) );
 		}
 	} catch ( error ) {
 		throw new Error( `Failed to update archived components: ${ error }` );

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
-import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { dropElement, type DropElementParams, type V1ElementData } from '@elementor/editor-elements';
 import { MenuListItem } from '@elementor/editor-ui';
 import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
@@ -18,7 +17,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useArchive } from '../../hooks/use-archive';
+import { archiveComponent } from '../../hooks/use-archive';
 import { loadComponentsAssets } from '../../store/load-components-assets';
 import { type Component } from '../../types';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
@@ -30,8 +29,6 @@ type ComponentItemProps = {
 
 export const ComponentItem = ( { component }: ComponentItemProps ) => {
 	const componentModel = createComponentModel( component );
-
-	const handleArchive = useArchive();
 	const popupState = usePopupState( {
 		variant: 'popover',
 		disableAutoFocus: true,
@@ -49,8 +46,12 @@ export const ComponentItem = ( { component }: ComponentItemProps ) => {
 
 	const handleArchiveClick = () => {
 		popupState.close();
-		handleArchive( component.id as number );
-		setDocumentModifiedStatus( true );
+
+		if ( ! component.id ) {
+			throw new Error( 'Component ID is required' );
+		}
+
+		archiveComponent( component.id );
 	};
 
 	return (
@@ -90,9 +91,7 @@ export const ComponentItem = ( { component }: ComponentItemProps ) => {
 				} }
 			>
 				<MenuListItem sx={ { minWidth: '160px' } } onClick={ handleArchiveClick }>
-					<Typography variant="caption" sx={ { color: 'text.primary' } }>
-						{ __( 'Archive', 'elementor' ) }
-					</Typography>
+					{ __( 'Archive', 'elementor' ) }
 				</MenuListItem>
 			</Menu>
 		</>

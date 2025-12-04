@@ -26,6 +26,13 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	dropElement: jest.fn(),
 } ) );
 
+jest.mock( '../../utils/get-container-for-new-element', () => ( {
+	getContainerForNewElement: jest.fn( () => ( {
+		container: { id: 'test-container' },
+		options: { useHistory: false, scrollIntoView: true },
+	} ) ),
+} ) );
+
 jest.mock( '../create-component-form/utils/replace-element-with-component', () => ( {
 	createComponentModel: jest.fn( ( { id, name } ) => ( { id, name, elType: 'component' } ) ),
 } ) );

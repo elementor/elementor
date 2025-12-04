@@ -8,7 +8,6 @@ const BASE_URL = 'elementor/v1/components';
 const LOCK_COMPONENT = `${ BASE_URL }/lock`;
 const UNLOCK_COMPONENT = `${ BASE_URL }/unlock`;
 const BASE_URL_LOCK_STATUS = `${ BASE_URL }/lock-status`;
-const BASE_URL_ARCHIVE = `${ BASE_URL }/archive`;
 
 export type CreateComponentPayload = {
 	status: DocumentSaveStatus;
@@ -75,8 +74,8 @@ export const apiClient = {
 			.then( ( res ) => res.data ),
 	updateArchivedComponents: async ( componentIds: number[] ) =>
 		await httpService()
-			.post< { data: { failedArchivedIds: number[]; successArchivedIds: number[]; success: boolean } } >(
-				BASE_URL_ARCHIVE,
+			.post< { data: { failedIds: number[]; successIds: number[]; success: boolean } } >(
+				`${ BASE_URL }/archive`,
 				{
 					componentIds,
 				}
