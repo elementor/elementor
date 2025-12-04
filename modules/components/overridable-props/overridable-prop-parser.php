@@ -36,7 +36,6 @@ class Overridable_Prop_Parser {
 			'elType',
 			'widgetType',
 			'propKey',
-			'originValue',
 			'groupId',
 		];
 
@@ -50,15 +49,9 @@ class Overridable_Prop_Parser {
 			return $result;
 		}
 
-		if ( ! is_array( $prop['originValue'] ) ) {
-			$result->errors()->add( 'originValue', 'invalid' );
-
-			return $result;
-		}
-
 		$this->origin_value_prop_type = Parsing_Utils::get_prop_type( $prop['elType'], $prop['widgetType'], $prop['propKey'] );
 
-		if ( ! $this->origin_value_prop_type->validate( $prop['originValue'] ) ) {
+		if ( ! empty( $prop['originValue'] ) && ! $this->origin_value_prop_type->validate( $prop['originValue'] ) ) {
 			$result->errors()->add( 'originValue', 'invalid' );
 
 			return $result;

@@ -10,7 +10,7 @@ import {
 import { __useSelector as useSelector } from '@elementor/store';
 
 import { apiClient } from '../../api';
-import { updateCurrentComponent } from '../../store/actions';
+import { updateCurrentComponent } from '../../store/actions/update-current-component';
 import { type ComponentsPathItem, selectCurrentComponentId, selectPath } from '../../store/store';
 import { COMPONENT_DOCUMENT_TYPE } from '../consts';
 import { ComponentModal } from './component-modal';

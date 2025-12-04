@@ -2,9 +2,9 @@ import { type V1ElementData } from '@elementor/editor-elements';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
-import { apiClient } from '../api';
-import { type ComponentId } from '../types';
-import { selectStyles, slice } from './store';
+import { apiClient } from '../../api';
+import { type ComponentId } from '../../types';
+import { selectStyles, slice } from '../store';
 
 export async function loadComponentsStyles( componentIds: number[] ) {
 	if ( ! componentIds.length ) {

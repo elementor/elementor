@@ -7,7 +7,7 @@ import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Ty
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
-import { createUnpublishedComponent } from '../../store/create-unpublished-component';
+import { createUnpublishedComponent } from '../../store/actions/create-unpublished-component';
 import { type ComponentFormValues } from '../../types';
 import { trackComponentEvent } from '../../utils/tracking';
 import { useForm } from './hooks/use-form';

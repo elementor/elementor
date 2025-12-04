@@ -2,7 +2,7 @@ import { getContainer, type V1ElementData } from '@elementor/editor-elements';
 import { getMCPByDomain } from '@elementor/editor-mcp';
 import { z } from '@elementor/schema';
 
-import { createUnpublishedComponent } from '../store/create-unpublished-component';
+import { createUnpublishedComponent } from '../store/actions/create-unpublished-component';
 
 const InputSchema = {
 	element_id: z
