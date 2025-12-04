@@ -28,7 +28,7 @@ export const UrlPopover = ( { popupState, restoreValue, anchorRef, value, onChan
 
 	return (
 		<Popover
-			slotProps={ { paper: { sx: { borderRadius: 2, width: anchorRef.current?.offsetWidth + 'px' } } } }
+			slotProps={ { paper: { sx: { borderRadius: '16px', width: anchorRef.current?.offsetWidth + 'px', marginTop: -1 } } } }
 			{ ...bindPopover( popupState ) }
 			anchorOrigin={ { vertical: 'top', horizontal: 'left' } }
 			transformOrigin={ { vertical: 'top', horizontal: 'left' } }
@@ -42,12 +42,15 @@ export const UrlPopover = ( { popupState, restoreValue, anchorRef, value, onChan
 					fullWidth
 					placeholder={ __( 'Type a URL', 'elementor' ) }
 					inputProps={ { ref: inputRef } }
+					color="secondary"
+					InputProps={ { sx: { borderRadius: '8px' } } }
 				/>
 				<ToggleButton
 					size="tiny"
 					onClick={ () => window.open( value, '_blank' ) }
 					disabled={ ! value }
 					aria-label={ __( 'Open URL', 'elementor' ) }
+					sx={ { borderRadius: '8px' } }
 				>
 					<ExternalLinkIcon fontSize="tiny" />
 				</ToggleButton>
