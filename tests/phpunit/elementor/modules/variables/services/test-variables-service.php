@@ -172,7 +172,6 @@ class Test_Variables_Service extends TestCase {
 		$this->assertTrue( $delete['deleted'] );
 	}
 
-
 	public function test_process_batch__throws_variables_limit_reached() {
 		// Arrange
 		$variables = [];

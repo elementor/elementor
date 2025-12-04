@@ -25,6 +25,8 @@ class Prop_Type_Adapter {
 			$type = $variable->type();
 			$value = $variable->value();
 			$prop_type = $schema[ $type ] ?? null;
+			$id = $variable->id();
+			$variable = $variable->to_array();
 
 			if ( is_array( $value ) || ! $prop_type ) {
 				return;
@@ -40,10 +42,10 @@ class Prop_Type_Adapter {
 					'unit' => 'custom',
 				];
 
-				$variable->set_type( Size_Variable_Prop_Type::get_key() );
+				$variable['type'] = Size_Variable_Prop_Type::get_key();
 			}
 
-			$record['data'][ $variable->id() ] = array_merge( $variable->to_array(), [ 'value' => $prop_type::generate( $value ) ] );
+			$record['data'][ $id ] = array_merge( $variable, [ 'value' => $prop_type::generate( $value ) ] );
 		} );
 
 		return $record;
