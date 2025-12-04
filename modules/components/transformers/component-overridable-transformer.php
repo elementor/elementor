@@ -16,7 +16,7 @@ class Component_Overridable_Transformer extends Transformer_Base {
 		return $this->transform_origin_value( $value, $context );
 	}
 
-	private function transform_origin_value( array $value, Props_Resolver_Context $context ): ?array {
+	private function transform_origin_value( array $value, Props_Resolver_Context $context ) {
 		if ( ! isset( $value['origin_value'] ) || ! is_array( $value['origin_value'] ) ) {
 			return null;
 		}

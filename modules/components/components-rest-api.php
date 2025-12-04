@@ -19,6 +19,27 @@ class Components_REST_API {
 	const STYLES_ROUTE = 'styles';
 	const MAX_COMPONENTS = 50;
 
+	const MOCK_OVERRIDABLE = [
+		[
+			'override-key' => '1763902269115-av1f7r3',
+			'label' => 'TTLco',
+			'elementId' => '83d136b',
+			'propKey' => 'tag',
+			'widgetType' => 'e-heading',
+			'defaultValue' => null,
+			'groupId' => '1763902269115-rljig3c',
+		],
+		[
+			'override-key' => '1763902732906-10m3e5j',
+			'label' => 'title',
+			'elementId' => '83d136b',
+			'propKey' => 'title',
+			'widgetType' => 'e-heading',
+			'defaultValue' => null,
+			'groupId' => '1763902732906-bao7lbl',
+		],
+	];
+
 	private $repository = null;
 	public function register_hooks() {
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
@@ -92,6 +113,41 @@ class Components_REST_API {
 								],
 							],
 						],
+					],
+				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/get-overridable-props', [
+			[
+				'methods' => 'GET',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_overridable( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'componentId' => [
+						'type' => 'integer',
+						'required' => true,
+						'description' => 'The component ID to get overridable props for',
+					],
+				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/save-overridable-props', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->save_overridable( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'componentId' => [
+						'type' => 'number',
+						'required' => true,
+						'description' => 'The component ID to save overridable props for',
+					],
+					'overridable' => [
+						'type' => 'object',
+						'required' => true,
+						'description' => 'The overridable props data',
 					],
 				],
 			],
@@ -187,6 +243,65 @@ class Components_REST_API {
 		} );
 
 		return Response_Builder::make( $styles )->build();
+	}
+
+	private function get_overridable( \WP_REST_Request $request ) {
+		$component_id = (int) $request->get_param( 'componentId' );
+
+		if ( ! $component_id ) {
+			return Error_Builder::make( 'invalid_component_id' )
+				->set_status( 400 )
+				->set_message( __( 'Invalid component ID', 'elementor' ) )
+				->build();
+		}
+
+		$document = $this->get_repository()->get( $component_id );
+
+		if ( ! $document ) {
+			return Error_Builder::make( 'component_not_found' )
+				->set_status( 404 )
+				->set_message( __( 'Component not found', 'elementor' ) )
+				->build();
+		}
+
+		$overridable = $document->get_meta( 'elementor_component_overridable' );
+
+		if ( ! $overridable ) {
+			$overridable = [
+				'props' => [],
+				'groups' => [
+					'items' => [],
+					'order' => [],
+				],
+			];
+		}
+
+		return Response_Builder::make( $overridable )->build();
+	}
+
+	private function save_overridable( \WP_REST_Request $request ) {
+		$component_id = (int) $request->get_param( 'componentId' );
+		$overridable = $request->get_param( 'overridable' );
+
+		if ( ! $component_id ) {
+			return Error_Builder::make( 'invalid_component_id' )
+				->set_status( 400 )
+				->set_message( __( 'Invalid component ID', 'elementor' ) )
+				->build();
+		}
+
+		$document = $this->get_repository()->get( $component_id );
+
+		if ( ! $document ) {
+			return Error_Builder::make( 'component_not_found' )
+				->set_status( 404 )
+				->set_message( __( 'Component not found', 'elementor' ) )
+				->build();
+		}
+
+		$document->update_meta( 'elementor_component_overridable', $overridable );
+
+		return Response_Builder::make( [ 'saved' => true ] )->build();
 	}
 
 	private function create_components( \WP_REST_Request $request ) {
@@ -306,8 +421,9 @@ class Components_REST_API {
 			$is_current_user_allow_to_edit = $this->is_current_user_allow_to_edit( $component_id );
 
 			$locked_by = '';
-			if ( $lock_data['is_locked'] ) {
-				$locked_user = get_user_by( 'id', $lock_data['lock_user'] );
+			$actual_lock_data = $this->get_component_lock_manager()->is_locked( $component_id );
+			if ( $actual_lock_data['is_locked'] ) {
+				$locked_user = get_user_by( 'id', $actual_lock_data['lock_user'] );
 				$locked_by = $locked_user ? $locked_user->display_name : '';
 			}
 
