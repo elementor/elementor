@@ -60,4 +60,3 @@ class Template_Renderer {
 		return $this->env->render( $name, $context );
 	}
 }
-

@@ -36,4 +36,3 @@ class Render_Context {
 		self::$context_stack = [];
 	}
 }
-

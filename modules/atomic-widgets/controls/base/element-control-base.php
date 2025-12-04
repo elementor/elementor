@@ -52,4 +52,3 @@ abstract class Element_Control_Base implements JsonSerializable {
 		];
 	}
 }
-
