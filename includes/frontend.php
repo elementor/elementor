@@ -224,9 +224,8 @@ class Frontend extends App {
 				$src = add_query_arg( 'ver', $registered_style->ver, $src );
 			}
 
-			// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
 			$missing_styles .= sprintf(
-				"<link rel='stylesheet' id='%s-css' href='%s' media='all' />\n",
+				"<link rel='stylesheet' id='%s-css' href='%s' media='all' />\n", // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet -- Styles already enqueued but not hoisted by WP 6.9.
 				esc_attr( $handle ),
 				esc_url( $src )
 			);
