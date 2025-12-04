@@ -20,23 +20,35 @@ class Components_REST_API {
 	const MAX_COMPONENTS = 50;
 
 	const MOCK_OVERRIDABLE = [
-		[
-			'override-key' => '1763902269115-av1f7r3',
-			'label' => 'TTLco',
-			'elementId' => '83d136b',
-			'propKey' => 'tag',
-			'widgetType' => 'e-heading',
-			'defaultValue' => null,
-			'groupId' => '1763902269115-rljig3c',
+		'props' => [
+			'prop-1763902269115-av1f7r3' => [
+				'overrideKey' => 'prop-1763902269115-av1f7r3',
+				'label' => 'Overridable Tag',
+				'elementId' => '5eaec87',
+				'propKey' => 'tag',
+				'widgetType' => 'e-heading',
+				'originValue' => null,
+				'groupId' => 'group-1763902269115-rljig3c',
+			],
+			'prop-1764840870348-xrh0zdg' => [
+				'overrideKey' => 'prop-1764840870348-xrh0zdg',
+				'label' => 'Overridable Title',
+				'elementId' => '5eaec87',
+				'propKey' => 'title',
+				'widgetType' => 'e-heading',
+				'originValue' => null,
+				'groupId' => 'group-1763902269115-rljig3c',
+			],
 		],
-		[
-			'override-key' => '1763902732906-10m3e5j',
-			'label' => 'title',
-			'elementId' => '83d136b',
-			'propKey' => 'title',
-			'widgetType' => 'e-heading',
-			'defaultValue' => null,
-			'groupId' => '1763902732906-bao7lbl',
+		'groups' => [
+			'items' => [
+				'group-1763902269115-rljig3c' => [
+					'id' => 'group-1763902269115-rljig3c',
+					'label' => 'Default',
+					'props' => [ 'prop-1763902269115-av1f7r3', 'prop-1764840870348-xrh0zdg' ],
+				],
+			],
+			'order' => [ 'group-1763902269115-rljig3c' ],
 		],
 	];
 
@@ -267,13 +279,7 @@ class Components_REST_API {
 		$overridable = $document->get_meta( 'elementor_component_overridable' );
 
 		if ( ! $overridable ) {
-			$overridable = [
-				'props' => [],
-				'groups' => [
-					'items' => [],
-					'order' => [],
-				],
-			];
+			$overridable = self::MOCK_OVERRIDABLE;
 		}
 
 		return Response_Builder::make( $overridable )->build();
