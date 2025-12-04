@@ -251,7 +251,7 @@ export const VariablesManagerTable = ( {
 														onValidationChange,
 														error,
 													} ) =>
-														row.valueField( {
+														row.valueField?.( {
 															value,
 															onChange,
 															onValidationChange: ( errorMsg ) => {
@@ -259,7 +259,7 @@ export const VariablesManagerTable = ( {
 																onFieldError?.( !! errorMsg );
 															},
 															error,
-														} )
+														} ) ?? <></>
 													}
 													onRowRef={ handleRowRef( row.id ) }
 													gap={ 0.25 }

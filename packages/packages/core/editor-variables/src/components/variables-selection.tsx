@@ -25,9 +25,10 @@ type Props = {
 	onAdd?: () => void;
 	onEdit?: ( key: string ) => void;
 	onSettings?: () => void;
+	upgradeUrl?: string;
 };
 
-export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }: Props ) => {
+export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, upgradeUrl }: Props ) => {
 	const { icon: VariableIcon, startIcon, variableType, propTypeUtil } = useVariableType();
 
 	const { value: variable, setValue: setVariable, path } = useVariableBoundProp();
@@ -175,6 +176,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 					) }
 					icon={ <VariableIcon fontSize="large" /> }
 					onAdd={ onAdd }
+					upgradeUrl={ upgradeUrl }
 				/>
 			) }
 
@@ -187,6 +189,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 					) }
 					icon={ <VariableIcon fontSize="large" /> }
 					onAdd={ onAdd }
+					upgradeUrl={ upgradeUrl }
 				/>
 			) }
 		</PopoverBody>

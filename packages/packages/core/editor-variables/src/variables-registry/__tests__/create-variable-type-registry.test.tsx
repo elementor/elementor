@@ -130,6 +130,70 @@ describe( 'createVariableTypeRegistry', () => {
 			expect( registry.hasVariableType( 'existing-key' ) ).toBe( true );
 			expect( registry.hasVariableType( 'non-existent-key' ) ).toBe( false );
 		} );
+
+		it( 'should register a variable type without valueField', () => {
+			// Arrange.
+			const propTypeUtil = createMockPropTypeUtil( 'icon-only-key' );
+			const fallbackPropTypeUtil = createMockPropTypeUtil( 'fallback-key' );
+
+			// Act.
+			registry.registerVariableType( {
+				icon: BrushIcon,
+				variableType: 'icon-only-type',
+				propTypeUtil,
+				fallbackPropTypeUtil,
+			} );
+
+			// Assert.
+			const registeredType = registry.getVariableType( 'icon-only-key' );
+
+			expect( registeredType ).toBeDefined();
+			expect( registeredType?.variableType ).toBe( 'icon-only-type' );
+			expect( registeredType?.icon ).toBe( BrushIcon );
+			expect( registeredType?.valueField ).toBeUndefined();
+		} );
+	} );
+
+	describe( 'updateVariableType', () => {
+		it( 'should update an existing variable type with new options', () => {
+			// Arrange.
+			const propTypeUtil = createMockPropTypeUtil( 'update-key' );
+			const fallbackPropTypeUtil = createMockPropTypeUtil( 'fallback-key' );
+
+			registry.registerVariableType( {
+				icon: BrushIcon,
+				variableType: 'update-type',
+				propTypeUtil,
+				fallbackPropTypeUtil,
+			} );
+
+			// Act.
+			registry.updateVariableType( {
+				propTypeUtil,
+				valueField: ColorField,
+				defaultValue: '#000000',
+			} );
+
+			// Assert.
+			const registeredType = registry.getVariableType( 'update-key' );
+
+			expect( registeredType?.icon ).toBe( BrushIcon );
+			expect( registeredType?.valueField ).toBe( ColorField );
+			expect( registeredType?.defaultValue ).toBe( '#000000' );
+		} );
+
+		it( 'should throw an error when trying to update a non-existent variable type', () => {
+			// Arrange.
+			const propTypeUtil = createMockPropTypeUtil( 'non-existent-key' );
+
+			// Assert.
+			expect( () => {
+				registry.updateVariableType( {
+					propTypeUtil,
+					valueField: ColorField,
+				} );
+			} ).toThrow( 'Variable with key "non-existent-key" is not registered.' );
+		} );
 	} );
 
 	describe( 'isCompatible by default', () => {

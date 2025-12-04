@@ -141,20 +141,22 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 						} }
 					/>
 				</FormField>
-				<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
-					<Typography variant="h5" id="variable-value-wrapper">
-						<ValueField
-							value={ value }
-							onChange={ ( newValue ) => {
-								setValue( newValue );
-								setErrorMessage( '' );
-								setValueFieldError( '' );
-							} }
-							onValidationChange={ setValueFieldError }
-							propType={ propType }
-						/>
-					</Typography>
-				</FormField>
+				{ ValueField && (
+					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+						<Typography variant="h5" id="variable-value-wrapper">
+							<ValueField
+								value={ value }
+								onChange={ ( newValue: string ) => {
+									setValue( newValue );
+									setErrorMessage( '' );
+									setValueFieldError( '' );
+								} }
+								onValidationChange={ setValueFieldError }
+								propType={ propType }
+							/>
+						</Typography>
+					</FormField>
+				) }
 
 				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 			</PopoverContent>
