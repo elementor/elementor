@@ -3,6 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements;
 
 use Elementor\Element_Base;
+use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Render_Context;
@@ -29,6 +30,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$this->styles = $data['styles'] ?? [];
 		$this->interactions = $this->parse_atomic_interactions( $data['interactions'] ?? [] );
 		$this->editor_settings = $data['editor_settings'] ?? [];
+		$this->add_script_depends( Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER );
 	}
 
 	private function parse_atomic_interactions( $interactions ) {
