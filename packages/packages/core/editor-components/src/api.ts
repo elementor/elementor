@@ -73,7 +73,7 @@ export const apiClient = {
 				componentId,
 			} )
 			.then( ( res ) => res.data ),
-	getOverrideProps: async ( componentId: number ) =>
+	getOverridableProps: async ( componentId: number ) =>
 		await httpService()
 			.get< HttpResponse< OverridableProps > >( `${ BASE_URL_OVERRIDABLE }`, {
 				params: {

@@ -588,6 +588,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayHasKey( '/elementor/v1/components/lock-status', $routes );
 		$this->assertArrayHasKey( '/elementor/v1/components/lock', $routes );
 		$this->assertArrayHasKey( '/elementor/v1/components/unlock', $routes );
+		$this->assertArrayHasKey( '/elementor/v1/components/get-overridable-props', $routes );
 
 		// Check GET method for components
 		$components_route = $routes['/elementor/v1/components'];
@@ -617,6 +618,11 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$unlock_route = $routes['/elementor/v1/components/unlock'];
 		$unlock_post_methods = array_filter( $unlock_route, fn( $route ) => in_array( 'POST', $route['methods'] ) );
 		$this->assertNotEmpty( $unlock_post_methods );
+
+		// Check GET method for get-overridable-props
+		$get_overridable_route = $routes['/elementor/v1/components/get-overridable-props'];
+		$get_overridable_methods = array_filter( $get_overridable_route, fn( $route ) => in_array( 'GET', $route['methods'] ) );
+		$this->assertNotEmpty( $get_overridable_methods );
 	}
 
 	public function authentication_test_data_provider() {
@@ -642,6 +648,11 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 			'POST unlock' => [
 				'method' => 'POST',
 				'endpoint' => '/elementor/v1/components/unlock',
+				'params' => [ 'componentId' => 123 ],
+			],
+			'GET get-overridable-props' => [
+				'method' => 'GET',
+				'endpoint' => '/elementor/v1/components/get-overridable-props',
 				'params' => [ 'componentId' => 123 ],
 			],
 		];
@@ -923,6 +934,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 403, $response->get_status() );
 		$this->assertEquals( 'rest_forbidden', $response->get_data()['code'] );
 	}
+
+	// TODO - add tests once we actually write the overrides as a post meta
 
 	// Helpers
 	private function create_test_component( string $name, array $content, string $status = 'publish' ): int {

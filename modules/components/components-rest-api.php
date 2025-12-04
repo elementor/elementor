@@ -133,7 +133,7 @@ class Components_REST_API {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/get-overridable-props', [
 			[
 				'methods' => 'GET',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_overridable( $request ) ),
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_overridable_props( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 				'args' => [
 					'componentId' => [
@@ -237,7 +237,7 @@ class Components_REST_API {
 		return Response_Builder::make( $styles )->build();
 	}
 
-	private function get_overridable( \WP_REST_Request $request ) {
+	private function get_overridable_props( \WP_REST_Request $request ) {
 		$component_id = (int) $request->get_param( 'componentId' );
 
 		if ( ! $component_id ) {
