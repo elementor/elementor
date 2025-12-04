@@ -172,10 +172,6 @@ class Frontend extends App {
 		// Hack to avoid enqueue post CSS while it's a `the_excerpt` call.
 		add_filter( 'get_the_excerpt', [ $this, 'start_excerpt_flag' ], 1 );
 		add_filter( 'get_the_excerpt', [ $this, 'end_excerpt_flag' ], 20 );
-
-		if ( version_compare( get_bloginfo( 'version' ), '6.9', '>=' ) ) {
-			add_filter( 'wp_should_output_buffer_template_for_enhancement', '__return_false', 1 );
-		}
 	}
 
 	/**
