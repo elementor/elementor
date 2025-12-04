@@ -32,7 +32,7 @@ const TopSection = ( { ...props } ) => {
 	};
 
 	return (
-		<Paper elevation={ 0 } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', py: { xs: 3, md: 3 }, px: { xs: 3, md: 4 }, gap: { xs: 2, sm: 3, lg: 22 }, borderRadius: 1, border: '1px solid rgba(0, 0, 0, 0.12)' } }>
+		<Paper elevation={ 0 } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', py: 3, px: { xs: 3, md: 4 }, gap: { xs: 2, sm: 3, lg: 22 }, borderRadius: 1, border: '1px solid rgba(0, 0, 0, 0.12)' } }>
 			<Stack gap={ 3 } justifyContent="center">
 				<Box>
 					<Typography variant="h6">{ title }</Typography>

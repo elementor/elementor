@@ -22,10 +22,12 @@ const EditorScreen = ( props ) => {
 							getStartedData={ props.homeScreenData.get_started }
 							adminUrl={ props.adminUrl }
 						/>
-						<Addons
-							addonsData={ props.homeScreenData.add_ons }
-							adminUrl={ props.adminUrl }
-						/>
+						{ props.homeScreenData.add_ons?.display_with_one_plan && (
+							<Addons
+								addonsData={ props.homeScreenData.add_ons }
+								adminUrl={ props.adminUrl }
+							/>
+						) }
 					</Stack>
 					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' }, display: 'flex', flexDirection: 'column', gap: 3 } }>
 						{ hasSidebarPromotion &&

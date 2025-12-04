@@ -64,7 +64,7 @@ const CreateWithAIBanner = ( { ...props } ) => {
 				display: 'flex',
 				flexDirection: 'column',
 				py: 3,
-				px: 4,
+				px: { xs: 3, md: 4 },
 				gap: 2,
 				backgroundImage: `url(${ backgroundImage })`,
 				backgroundSize: 'cover',
