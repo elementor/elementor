@@ -2,7 +2,7 @@ import { type V1ElementData } from '@elementor/editor-elements';
 import { ajax } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 
-import { OverridableProps, type DocumentSaveStatus, type PublishedComponent } from './types';
+import { type DocumentSaveStatus, type OverridableProps, type PublishedComponent } from './types';
 
 const BASE_URL = 'elementor/v1/components';
 const LOCK_COMPONENT = `${ BASE_URL }/lock`;
@@ -75,7 +75,7 @@ export const apiClient = {
 			.then( ( res ) => res.data ),
 	getOverrideProps: async ( componentId: number ) =>
 		await httpService()
-			.get< { data: Record< string, unknown > } >( `${ BASE_URL_OVERRIDABLE }`, {
+			.get< HttpResponse< OverridableProps > >( `${ BASE_URL_OVERRIDABLE }`, {
 				params: {
 					componentId: componentId.toString(),
 				},

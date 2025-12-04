@@ -4,7 +4,7 @@ import { dropElement, type DropElementParams, type V1ElementData } from '@elemen
 import { ComponentsIcon } from '@elementor/icons';
 import { Box, ListItemButton, ListItemIcon, ListItemText, Typography } from '@elementor/ui';
 
-import { loadComponentsAssets } from '../../store/load-components-assets';
+import { loadComponentsAssets } from '../../store/actions/load-components-assets';
 import { type Component } from '../../types';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
 import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';

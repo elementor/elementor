@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 
 import { useCanvasDocument } from '../../hooks/use-canvas-document';
 import { useElementRect } from '../../hooks/use-element-rect';
-import { useLoadOverrideProps } from '../../hooks/use-load-override-props';
 
 type ModalProps = {
 	element: HTMLElement;
@@ -13,8 +12,6 @@ type ModalProps = {
 };
 export function ComponentModal( { element, onClose }: ModalProps ) {
 	const canvasDocument = useCanvasDocument();
-
-	useLoadOverrideProps();
 
 	useEffect( () => {
 		const handleEsc = ( event: KeyboardEvent ) => {

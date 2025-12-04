@@ -9,7 +9,7 @@ import { ThemeProvider } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
-import { setOverridableProp } from '../../../store/set-overridable-prop';
+import { setOverridableProp } from '../../../store/actions/set-overridable-prop';
 import { selectOverridableProps, slice } from '../../../store/store';
 import { COMPONENT_DOCUMENT_TYPE } from '../../consts';
 import { OverridablePropIndicator } from '../overridable-prop-indicator';

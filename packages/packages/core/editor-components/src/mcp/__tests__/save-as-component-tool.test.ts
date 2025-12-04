@@ -1,6 +1,6 @@
 import { getContainer, type V1Element } from '@elementor/editor-elements';
 
-import { createUnpublishedComponent } from '../../store/create-unpublished-component';
+import { createUnpublishedComponent } from '../../store/actions/create-unpublished-component';
 import { ERROR_MESSAGES, handleSaveAsComponent, VALID_ELEMENT_TYPES } from '../save-as-component-tool';
 
 jest.mock( '@elementor/editor-elements' );

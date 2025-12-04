@@ -3,8 +3,8 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 import { generateUniqueId } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
-import { type OverridableProp, type OverridableProps, type OverridablePropsGroup } from '../types';
-import { selectOverridableProps, slice } from './store';
+import { type OverridableProp, type OverridableProps, type OverridablePropsGroup } from '../../types';
+import { selectOverridableProps, slice } from '../store';
 
 type Props = {
 	componentId: number;

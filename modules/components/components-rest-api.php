@@ -30,8 +30,8 @@ class Components_REST_API {
 				'originValue' => null,
 				'groupId' => 'group-1763902269115-rljig3c',
 			],
-			'prop-1764840870348-xrh0zdg' => [
-				'overrideKey' => 'prop-1764840870348-xrh0zdg',
+			'prop-1764842904963-cx7dwoe' => [
+				'overrideKey' => 'prop-1764842904963-cx7dwoe',
 				'label' => 'Overridable Title',
 				'elementId' => '5eaec87',
 				'propKey' => 'title',
@@ -45,7 +45,7 @@ class Components_REST_API {
 				'group-1763902269115-rljig3c' => [
 					'id' => 'group-1763902269115-rljig3c',
 					'label' => 'Default',
-					'props' => [ 'prop-1763902269115-av1f7r3', 'prop-1764840870348-xrh0zdg' ],
+					'props' => [ 'prop-1763902269115-av1f7r3', 'prop-1764842904963-cx7dwoe' ],
 				],
 			],
 			'order' => [ 'group-1763902269115-rljig3c' ],
