@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Modules\Variables\Classes;
 
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\Classes\Rest_Api;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
