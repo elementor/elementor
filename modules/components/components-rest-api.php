@@ -19,39 +19,6 @@ class Components_REST_API {
 	const STYLES_ROUTE = 'styles';
 	const MAX_COMPONENTS = 50;
 
-	const MOCK_OVERRIDABLE = [
-		'props' => [
-			'prop-1763902269115-av1f7r3' => [
-				'overrideKey' => 'prop-1763902269115-av1f7r3',
-				'label' => 'Overridable Tag',
-				'elementId' => '5eaec87',
-				'propKey' => 'tag',
-				'widgetType' => 'e-heading',
-				'originValue' => null,
-				'groupId' => 'group-1763902269115-rljig3c',
-			],
-			'prop-1764842904963-cx7dwoe' => [
-				'overrideKey' => 'prop-1764842904963-cx7dwoe',
-				'label' => 'Overridable Title',
-				'elementId' => '5eaec87',
-				'propKey' => 'title',
-				'widgetType' => 'e-heading',
-				'originValue' => null,
-				'groupId' => 'group-1763902269115-rljig3c',
-			],
-		],
-		'groups' => [
-			'items' => [
-				'group-1763902269115-rljig3c' => [
-					'id' => 'group-1763902269115-rljig3c',
-					'label' => 'Default',
-					'props' => [ 'prop-1763902269115-av1f7r3', 'prop-1764842904963-cx7dwoe' ],
-				],
-			],
-			'order' => [ 'group-1763902269115-rljig3c' ],
-		],
-	];
-
 	private $repository = null;
 	public function register_hooks() {
 		add_action( 'rest_api_init', fn() => $this->register_routes() );
