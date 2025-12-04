@@ -2,14 +2,14 @@ import * as React from 'react';
 import { type ComponentType } from 'react';
 import { ControlReplacementsProvider, PropKeyProvider, PropProvider, useBoundProp } from '@elementor/editor-controls';
 import { createTopLevelObjectType, useElement } from '@elementor/editor-editing-panel';
-import { getCurrentDocumentId } from '@elementor/editor-elements';
 import { type PropValue } from '@elementor/editor-props';
-import { generateUniqueId } from '@elementor/utils';
+import { __getState as getState } from '@elementor/store';
 
 import {
 	componentOverridablePropTypeUtil,
 	type ComponentOverridablePropValue,
 } from '../../prop-types/component-overridable-prop-type';
+import { selectCurrentComponentId } from '../../store/store';
 import { updateOverridablePropOriginValue } from '../../store/update-overridable-prop-origin-value';
 
 export function OverridablePropControl< T extends object >( {
@@ -18,22 +18,24 @@ export function OverridablePropControl< T extends object >( {
 }: T & { OriginalControl: ComponentType< T > } ) {
 	const { elementType } = useElement();
 
-	const { value, bind, setValue, placeholder, ...propContext } = useBoundProp();
-	const { extract, create } = componentOverridablePropTypeUtil;
-	const componentId = getCurrentDocumentId() ?? 0;
+	const { value, bind, setValue, placeholder, ...propContext } = useBoundProp( componentOverridablePropTypeUtil );
+	const componentId = selectCurrentComponentId( getState() );
 
-	const currentValue = extract( value ) ?? {
-		override_key: generateUniqueId(),
-		origin_value: null,
-	};
+	if ( ! componentId ) {
+		throw new Error( 'Component ID is required' );
+	}
+
+	if ( ! value?.override_key ) {
+		throw new Error( 'Override key is required' );
+	}
 
 	const setOverridableValue = ( newValue: Record< typeof bind, PropValue | null > ) => {
 		const propValue = {
-			...currentValue,
+			...value,
 			origin_value: newValue[ bind ],
 		} as ComponentOverridablePropValue;
 
-		setValue( create( propValue ) );
+		setValue( propValue );
 		updateOverridablePropOriginValue( componentId, propValue );
 	};
 
@@ -52,7 +54,7 @@ export function OverridablePropControl< T extends object >( {
 			{ ...propContext }
 			propType={ propType }
 			setValue={ setOverridableValue }
-			value={ { [ bind ]: currentValue.origin_value } }
+			value={ { [ bind ]: value.origin_value } }
 			placeholder={ objectPlaceholder }
 		>
 			<PropKeyProvider bind={ bind }>

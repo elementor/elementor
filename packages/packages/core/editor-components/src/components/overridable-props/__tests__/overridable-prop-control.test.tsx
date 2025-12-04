@@ -2,14 +2,13 @@ import * as React from 'react';
 import { createMockElementType, createMockPropType, renderControl } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
 import { ElementProvider, useElement } from '@elementor/editor-editing-panel';
-import { getCurrentDocumentId } from '@elementor/editor-elements';
 import { numberPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { __createStore, __registerSlice } from '@elementor/store';
-import { generateUniqueId } from '@elementor/utils';
+import { ErrorBoundary } from '@elementor/ui';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
-import { slice } from '../../../store/store';
+import { selectCurrentComponentId, slice } from '../../../store/store';
 import { updateOverridablePropOriginValue } from '../../../store/update-overridable-prop-origin-value';
 import { OverridablePropControl } from '../overridable-prop-control';
 
@@ -20,23 +19,18 @@ jest.mock( '../../../store/update-overridable-prop-origin-value', () => {
 		updateOverridablePropOriginValue: jest.fn( actual.updateOverridablePropOriginValue ),
 	};
 } );
-jest.mock( '@elementor/utils', () => ( {
-	...jest.requireActual( '@elementor/utils' ),
-	generateUniqueId: jest.fn(),
-} ) );
 jest.mock( '@elementor/editor-editing-panel', () => ( {
 	...jest.requireActual( '@elementor/editor-editing-panel' ),
 	useElement: jest.fn(),
 } ) );
-jest.mock( '@elementor/editor-elements', () => ( {
-	...jest.requireActual( '@elementor/editor-elements' ),
-	getCurrentDocumentId: jest.fn(),
+jest.mock( '../../../store/store', () => ( {
+	...jest.requireActual( '../../../store/store' ),
+	selectCurrentComponentId: jest.fn(),
 } ) );
 
-const MOCK_UNIQUE_ID = 'random-unique-id';
 const MOCK_DOCUMENT_ID = 42;
 
-const BIND_WITH_ORIGIN = 'with-origin';
+const BIND_WITH_PROP_TYPE_DEFAULT = 'with-prop-type-default';
 const BIND = 'without-origin';
 const BIND_NUMBER = 'number';
 
@@ -47,7 +41,7 @@ const mockPropType = createMockPropType( { kind: 'plain', key: 'string' } );
 const mockPropTypeWithDefault = createMockPropType( {
 	kind: 'plain',
 	key: 'string',
-	default: stringPropTypeUtil.create( 'Origin PropType Text' ),
+	default: stringPropTypeUtil.create( 'Default PropType Text' ),
 } );
 const mockNumberPropType = createMockPropType( { kind: 'plain', key: 'number' } );
 
@@ -56,7 +50,7 @@ const mockElementType = createMockElementType( {
 	title: 'Heading',
 	propsSchema: {
 		[ BIND ]: mockPropType,
-		[ BIND_WITH_ORIGIN ]: mockPropTypeWithDefault,
+		[ BIND_WITH_PROP_TYPE_DEFAULT ]: mockPropTypeWithDefault,
 		[ BIND_NUMBER ]: mockNumberPropType,
 	},
 	controls: [
@@ -90,7 +84,7 @@ const mockElementType = createMockElementType( {
 			type: 'control',
 			value: {
 				type: 'text',
-				bind: BIND_WITH_ORIGIN,
+				bind: BIND_WITH_PROP_TYPE_DEFAULT,
 				label: 'Title with Origin',
 				props: {},
 			},
@@ -108,18 +102,14 @@ describe( '<OverridablePropControl />', () => {
 			elementType: mockElementType,
 		} );
 
-		jest.mocked( generateUniqueId ).mockReturnValue( MOCK_UNIQUE_ID );
-		jest.mocked( getCurrentDocumentId ).mockReturnValue( MOCK_DOCUMENT_ID );
-		jest.mocked( updateOverridablePropOriginValue ).mockClear();
+		jest.mocked( selectCurrentComponentId ).mockReturnValue( MOCK_DOCUMENT_ID );
+	} );
+
+	afterEach( () => {
+		jest.clearAllMocks();
 	} );
 
 	it.each( [
-		{
-			render: 'a text control with no value if value is not of overridable propType',
-			bind: BIND,
-			expected: '',
-			value: stringPropTypeUtil.create( 'Hello, World' ),
-		},
 		{
 			render: 'a text control with the value stored in origin_value',
 			bind: BIND,
@@ -139,11 +129,12 @@ describe( '<OverridablePropControl />', () => {
 			} ),
 		},
 		{
-			render: "a text control with the original prop type's origin value",
-			bind: BIND_WITH_ORIGIN,
-			expected: 'Origin PropType Text',
+			render: "a text control with the original prop type's default value, when origin_value is empty",
+			bind: BIND_WITH_PROP_TYPE_DEFAULT,
+			expected: 'Default PropType Text',
 			value: componentOverridablePropTypeUtil.create( {
 				override_key: MOCK_OVERRIDE_KEY,
+				// before the user sets any value to a settings field - we fallback to the default value of its corresponding propType
 				origin_value: null,
 			} ),
 		},
@@ -178,8 +169,10 @@ describe( '<OverridablePropControl />', () => {
 		expect( screen.queryByRole( 'textbox' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'should auto-generate override_key and wrap setValue when value is not overridable first', () => {
+	it( 'should throw error when value is not overridable', () => {
 		// Arrange
+		const mockConsoleError = jest.fn();
+		window.console.error = mockConsoleError;
 		const value = null;
 		const setValue = jest.fn();
 		const props = { value, setValue, bind: BIND, propType: mockPropType };
@@ -187,17 +180,8 @@ describe( '<OverridablePropControl />', () => {
 		// Act
 		renderOverridableControl( props );
 
-		const input = screen.getByRole( 'textbox' );
-		fireEvent.change( input, { target: { value: 'New Value' } } );
-
 		// Assert
-		expect( setValue ).toHaveBeenCalledWith( {
-			$$type: 'overridable',
-			value: {
-				override_key: MOCK_UNIQUE_ID,
-				origin_value: { $$type: 'string', value: 'New Value' },
-			},
-		} );
+		expect( mockConsoleError ).toHaveBeenCalled();
 	} );
 
 	it( 'should update only the origin_value if override_key is set', () => {
@@ -246,7 +230,9 @@ function renderOverridableControl( props: Parameters< typeof renderControl >[ 1 
 
 	return renderControl(
 		<ElementProvider element={ { id: 'test-widget-id', type: ELEMENT_TYPE } } elementType={ mockElementType }>
-			<OverridablePropControl OriginalControl={ OriginalControl } />
+			<ErrorBoundary fallback={ null }>
+				<OverridablePropControl OriginalControl={ OriginalControl } />
+			</ErrorBoundary>
 		</ElementProvider>,
 		props
 	);
