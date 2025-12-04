@@ -1,15 +1,29 @@
-import { type Container, type DocumentSaveStatus } from '../types';
+import { type V1Document } from '@elementor/editor-documents';
+import { type V1Element, type V1ElementData } from '@elementor/editor-elements';
+
+import { type DocumentSaveStatus } from '../types';
 import { createComponentsBeforeSave } from './create-components-before-save';
+import { setComponentOverridablePropsSettingsBeforeSave } from './set-component-overridable-props-settings-before-save';
 import { updateComponentsBeforeSave } from './update-components-before-save';
 
 type Options = {
-	container: Container;
+	container: V1Element & {
+		document: V1Document;
+		model: {
+			get: ( key: 'elements' ) => {
+				toJSON: () => V1ElementData[];
+			};
+		};
+	};
 	status: DocumentSaveStatus;
 };
 
 export const beforeSave = ( { container, status }: Options ) => {
+	const elements = container.model.get( 'elements' )?.toJSON() ?? [];
+
 	return Promise.all( [
-		createComponentsBeforeSave( { container, status } ),
-		updateComponentsBeforeSave( { container, status } ),
+		createComponentsBeforeSave( { elements, status } ),
+		updateComponentsBeforeSave( { elements, status } ),
+		setComponentOverridablePropsSettingsBeforeSave( { container } ),
 	] );
 };
