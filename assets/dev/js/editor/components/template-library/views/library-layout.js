@@ -4,6 +4,7 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 	TemplateLibraryHeaderBackView = require( 'elementor-templates/views/parts/header-parts/back' ),
 	TemplateLibraryCollectionView = require( 'elementor-templates/views/parts/templates' ),
 	TemplateLibrarySaveTemplateView = require( 'elementor-templates/views/parts/save-template' ),
+	TemplateLibrarySaveTemplateVariantBView = require( 'elementor-templates/views/parts/save-template-variant-b' ),
 	TemplateLibraryImportView = require( 'elementor-templates/views/parts/import' ),
 	TemplateLibraryConnectView = require( 'elementor-templates/views/parts/connect' ),
 	TemplateLibraryCloudStateView = require( 'elementor-templates/views/parts/cloud-states' ),
@@ -11,6 +12,17 @@ var TemplateLibraryHeaderActionsView = require( 'elementor-templates/views/parts
 	TemplateLibraryNavigationContainerView = require( 'elementor-templates/views/parts/navigation-container' );
 
 import { SAVE_CONTEXTS } from './../constants';
+
+function resolveSaveTemplateByVariant( variant ) {
+	switch ( variant ) {
+		case 'B':
+			return TemplateLibrarySaveTemplateVariantBView;
+		case 'control':
+		case 'A':
+		default:
+			return TemplateLibrarySaveTemplateView;
+	}
+}
 
 module.exports = elementorModules.common.views.modal.Layout.extend( {
 	getModalOptions() {
@@ -146,7 +158,7 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 		this.modalContent.show( new TemplateLibraryCloudStateView() );
 	},
 
-	showSaveTemplateView( elementModel, context = SAVE_CONTEXTS.SAVE ) {
+	async showSaveTemplateView( elementModel, context = SAVE_CONTEXTS.SAVE ) {
 		const headerView = this.getHeaderView();
 
 		headerView.menuArea.reset();
@@ -155,7 +167,11 @@ module.exports = elementorModules.common.views.modal.Layout.extend( {
 			headerView.logoArea.show( new TemplateLibraryHeaderBackView() );
 		}
 
-		this.modalContent.show( new TemplateLibrarySaveTemplateView( { model: elementModel, context } ) );
+		const experimentVariant = await elementor.templates.eventManager.getSaveTemplateExperimentVariant();
+		const SaveTemplateView = resolveSaveTemplateByVariant( experimentVariant );
+		elementor.templates.eventManager.startSaveTemplateExperiment( experimentVariant );
+
+		this.modalContent.show( new SaveTemplateView( { model: elementModel, context } ) );
 	},
 
 	showPreviewView( templateModel ) {
