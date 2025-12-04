@@ -17,9 +17,34 @@ const EVENTS_MAP = {
 	PAGE_VIEWED: 'page_viewed',
 	DELETION_UNDO: 'deletion_undo',
 	CT_RECORDING_START: 'ctemplates_session_replay_start',
+	CT_BADGE_HOVER: 'ct_badge_hover',
+};
+
+const CLOUD_TEMPLATES_EXPERIMENTS = {
+	SAVE_TEMPLATE: 'save-template-cloud',
 };
 
 export class EventManager {
+	getExperimentVariant( experimentName ) {
+		if ( ! elementorCommon?.eventsManager ) {
+			return 'control';
+		}
+
+		return elementorCommon?.eventsManager?.getExperimentVariant( experimentName, 'control' ) || 'control';
+	}
+
+	getSaveTemplateExperimentVariant() {
+		return this.getExperimentVariant( CLOUD_TEMPLATES_EXPERIMENTS.SAVE_TEMPLATE );
+	}
+
+	startSaveTemplateExperiment( variant ) {
+		if ( ! elementorCommon?.eventsManager ) {
+			return;
+		}
+
+		return elementorCommon?.eventsManager?.startExperiment( CLOUD_TEMPLATES_EXPERIMENTS.SAVE_TEMPLATE, variant );
+	}
+
 	sendEvent( eventName, data ) {
 		return elementorCommon.eventsManager.dispatchEvent(
 			eventName,
@@ -168,6 +193,14 @@ export class EventManager {
 
 	isSessionRecordingInProgress() {
 		return elementorCommon.eventsManager.isSessionRecordingInProgress();
+	}
+
+	sendCTBadgeEvent( data ) {
+		return this.sendEvent( EVENTS_MAP.CT_BADGE_HOVER, {
+			ct_badge_hover_position: data.ct_badge_hover_position,
+			ct_badge_type: data.ct_badge_type,
+			ct_position_state: data.ct_position_state,
+		} );
 	}
 }
 
