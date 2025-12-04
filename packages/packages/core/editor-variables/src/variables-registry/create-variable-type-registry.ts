@@ -109,7 +109,9 @@ export function createVariableTypeRegistry() {
 		return key in variableTypes;
 	};
 
-	const updateVariableType = ( options: Partial< VariableTypeOptions > & { propTypeUtil: PropTypeUtil< string, string > } ) => {
+	const updateVariableType = (
+		options: Partial< VariableTypeOptions > & { propTypeUtil: PropTypeUtil< string, string > }
+	) => {
 		const key = options.propTypeUtil.key;
 
 		if ( ! variableTypes[ key ] ) {

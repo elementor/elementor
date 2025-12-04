@@ -167,31 +167,31 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, u
 				/>
 			) }
 
-		{ ! hasVariables && ! hasNoCompatibleVariables && (
-			<EmptyState
-				title={ noVariableTitle }
-				message={ __(
-					'Variables are saved attributes that you can apply anywhere on your site.',
-					'elementor'
-				) }
-				icon={ <VariableIcon fontSize="large" /> }
-				onAdd={ onAdd }
-				upgradeUrl={ upgradeUrl }
-			/>
-		) }
+			{ ! hasVariables && ! hasNoCompatibleVariables && (
+				<EmptyState
+					title={ noVariableTitle }
+					message={ __(
+						'Variables are saved attributes that you can apply anywhere on your site.',
+						'elementor'
+					) }
+					icon={ <VariableIcon fontSize="large" /> }
+					onAdd={ onAdd }
+					upgradeUrl={ upgradeUrl }
+				/>
+			) }
 
-		{ hasNoCompatibleVariables && (
-			<EmptyState
-				title={ __( 'No compatible variables', 'elementor' ) }
-				message={ __(
-					'Looks like none of your variables work with this control. Create a new variable to use it here.',
-					'elementor'
-				) }
-				icon={ <VariableIcon fontSize="large" /> }
-				onAdd={ onAdd }
-				upgradeUrl={ upgradeUrl }
-			/>
-		) }
+			{ hasNoCompatibleVariables && (
+				<EmptyState
+					title={ __( 'No compatible variables', 'elementor' ) }
+					message={ __(
+						'Looks like none of your variables work with this control. Create a new variable to use it here.',
+						'elementor'
+					) }
+					icon={ <VariableIcon fontSize="large" /> }
+					onAdd={ onAdd }
+					upgradeUrl={ upgradeUrl }
+				/>
+			) }
 		</PopoverBody>
 	);
 };

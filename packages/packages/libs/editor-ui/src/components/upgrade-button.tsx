@@ -19,4 +19,3 @@ export const UpgradeButton = ( { href, children, ...props }: UpgradeButtonProps 
 		{ children ?? __( 'Upgrade Now', 'elementor' ) }
 	</Button>
 );
-

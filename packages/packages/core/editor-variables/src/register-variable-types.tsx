@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { colorPropTypeUtil, sizePropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
-import { ExpandDiagonalIcon, BrushIcon, TextIcon } from '@elementor/icons';
+import { BrushIcon, ExpandDiagonalIcon, TextIcon } from '@elementor/icons';
 
 import { ColorField } from './components/fields/color-field';
 import { FontField } from './components/fields/font-field';
