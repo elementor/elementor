@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets;
+namespace Elementor\Modules\AtomicWidgets\Elements;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -36,3 +36,4 @@ class Render_Context {
 		self::$context_stack = [];
 	}
 }
+
