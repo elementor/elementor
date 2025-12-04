@@ -29,7 +29,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'propKey' => 'title',
 				'widgetType' => 'e-heading',
 				'elType' => 'widget',
-				'originalValue' => [ '$$type' => 'html', 'value' => 'Original text' ],
+				'originValue' => [ '$$type' => 'html', 'value' => 'Original text' ],
 				'groupId' => 'group-uuid-1',
 			]
 		];
@@ -51,7 +51,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'propKey' => 'title',
 				'widgetType' => 'e-heading',
 				'elType' => 'widget',
-				'originalValue' => [
+				'originValue' => [
 					'$$type' => 'html',
 					'value' => '<strong>Original text</strong><script>alert("xss")</script>',
 				],
@@ -67,7 +67,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 
 		$sanitized = $result->unwrap();
 		$this->assertEquals( 'User Name', $sanitized['prop-uuid-1']['label'] );
-		$this->assertEquals( '<strong>Original text</strong>alert("xss")', $sanitized['prop-uuid-1']['originalValue']['value'] );
+		$this->assertEquals( '<strong>Original text</strong>alert("xss")', $sanitized['prop-uuid-1']['originValue']['value'] );
 	}
 
 	/**
@@ -92,9 +92,9 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'data' => $this->get_mock_prop_with_changed_fields( [ 'overrideKey' => null ] ),
 				'expected_error' => 'props.prop-uuid-1.overrideKey: missing_field',
 			],
-			'invalid_original_value' => [ 
-				'data' => $this->get_mock_prop_with_changed_fields( [ 'originalValue' => "not a valid prop value" ] ),
-				'expected_error' => 'props.prop-uuid-1.originalValue: invalid',
+			'invalid_origin_value' => [ 
+				'data' => $this->get_mock_prop_with_changed_fields( [ 'originValue' => "not a valid prop value" ] ),
+				'expected_error' => 'props.prop-uuid-1.originValue: invalid',
 			],
 			'mismatching_override_key' => [ 
 				'data' => $this->get_mock_prop_with_changed_fields( [ 'overrideKey' => 'different-uuid' ] ),
@@ -143,7 +143,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 			'propKey' => 'title',
 			'widgetType' => 'e-heading',
 			'elType' => 'widget',
-			'originalValue' => [ '$$type' => 'html', 'value' => 'Original text' ],
+			'originValue' => [ '$$type' => 'html', 'value' => 'Original text' ],
 			'groupId' => 'group-uuid-1' 
 		];
 

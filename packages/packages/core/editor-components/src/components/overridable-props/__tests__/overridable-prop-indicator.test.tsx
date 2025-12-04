@@ -158,7 +158,7 @@ describe( 'OverridablePropIndicator', () => {
 									propKey: bind,
 									widgetType: MOCK_WIDGET_TYPE,
 									elType: MOCK_EL_TYPE,
-									originalValue: currentValue,
+									originValue: currentValue,
 									...overridableData,
 								},
 							},
@@ -227,7 +227,7 @@ describe( 'OverridablePropIndicator', () => {
 				propKey: bind,
 				widgetType: MOCK_WIDGET_TYPE,
 				elType: MOCK_EL_TYPE,
-				originalValue: { $$type: 'string', value: 'Test' },
+				originValue: { $$type: 'string', value: 'Test' },
 			} );
 		}
 	);

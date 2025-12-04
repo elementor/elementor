@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Overridable_Prop_Parser {
-	private $original_value_prop_type;
+	private $origin_value_prop_type;
 
 	public static function make(): self {
 		return new static();
@@ -36,7 +36,7 @@ class Overridable_Prop_Parser {
 			'elType',
 			'widgetType',
 			'propKey',
-			'originalValue',
+			'originValue',
 			'groupId',
 		];
 
@@ -50,16 +50,16 @@ class Overridable_Prop_Parser {
 			return $result;
 		}
 
-		if ( ! is_array( $prop['originalValue'] ) ) {
-			$result->errors()->add( 'originalValue', 'invalid' );
+		if ( ! is_array( $prop['originValue'] ) ) {
+			$result->errors()->add( 'originValue', 'invalid' );
 
 			return $result;
 		}
 
-		$this->original_value_prop_type = Parsing_Utils::get_prop_type( $prop['elType'], $prop['widgetType'], $prop['propKey'] );
+		$this->origin_value_prop_type = Parsing_Utils::get_prop_type( $prop['elType'], $prop['widgetType'], $prop['propKey'] );
 
-		if ( ! $this->original_value_prop_type->validate( $prop['originalValue'] ) ) {
-			$result->errors()->add( 'originalValue', 'invalid' );
+		if ( ! $this->origin_value_prop_type->validate( $prop['originValue'] ) ) {
+			$result->errors()->add( 'originValue', 'invalid' );
 
 			return $result;
 		}
@@ -77,7 +77,7 @@ class Overridable_Prop_Parser {
 			'propKey' => sanitize_text_field( $prop['propKey'] ),
 			'widgetType' => sanitize_text_field( $prop['widgetType'] ),
 			'elType' => sanitize_text_field( $prop['elType'] ),
-			'originalValue' => $this->original_value_prop_type->sanitize( $prop['originalValue'] ),
+			'originValue' => $this->origin_value_prop_type->sanitize( $prop['originValue'] ),
 			'groupId' => sanitize_key( $prop['groupId'] ),
 		];
 

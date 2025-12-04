@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *             'propKey' => 'title',
  *             'elType' => 'widget',
  *             'widgetType' => 'e-heading',
- *             'originalValue' => [
+ *             'originValue' => [
  *                 '$$type' => 'html',
  *                 'value' => 'Jane Smith',
  *             ],

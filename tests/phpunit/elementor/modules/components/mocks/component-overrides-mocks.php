@@ -16,7 +16,7 @@ class Component_Overrides_Mocks {
 					'elType' => 'widget',
 					'widgetType' => 'e-heading',
 					'propKey' => 'title',
-					'originalValue' => [
+					'originValue' => [
 						'$$type' => 'string',
 						'value' => 'Original Title',
 					],
@@ -29,7 +29,7 @@ class Component_Overrides_Mocks {
 					'elType' => 'widget',
 					'widgetType' => 'e-heading',
 					'propKey' => 'tag',
-					'originalValue' => [
+					'originValue' => [
 						'$$type' => 'string',
 						'value' => 'h3',
 					],
@@ -42,7 +42,7 @@ class Component_Overrides_Mocks {
 					'elType' => 'widget',
 					'widgetType' => 'e-image',
 					'propKey' => 'image',
-					'originalValue' => [
+					'originValue' => [
 						'$$type' => 'image',
 						'value' => [
 							'src' => [
@@ -67,7 +67,7 @@ class Component_Overrides_Mocks {
 					'elType' => 'widget',
 					'widgetType' => 'e-image',
 					'propKey' => 'link',
-					'originalValue' => [
+					'originValue' => [
 						'$$type' => 'link',
 						'value' => [
 							'destination' => [

@@ -77,7 +77,7 @@ describe( 'setOverridableProp', () => {
 						label: LABEL,
 						propKey: MOCK_PROP_KEY,
 						...MOCK_WIDGET,
-						originalValue: ORIGIN_VALUE,
+						originValue: ORIGIN_VALUE,
 						groupId: GENERATED_ID_1,
 					},
 				},
@@ -102,7 +102,7 @@ describe( 'setOverridableProp', () => {
 						label: 'Old Label',
 						propKey: MOCK_PROP_KEY,
 						...MOCK_WIDGET,
-						originalValue: 'Old value',
+						originValue: 'Old value',
 						groupId: GROUP_ID_1,
 					},
 				},
@@ -120,7 +120,7 @@ describe( 'setOverridableProp', () => {
 			callParams: {
 				label: 'Updated Label',
 				groupId: GROUP_ID_1,
-				originalValue: 'Updated value',
+				originValue: 'Updated value',
 			},
 			expectedDispatch: {
 				props: {
@@ -129,7 +129,7 @@ describe( 'setOverridableProp', () => {
 						label: 'Updated Label',
 						propKey: MOCK_PROP_KEY,
 						...MOCK_WIDGET,
-						originalValue: 'Updated value',
+						originValue: 'Updated value',
 						groupId: GROUP_ID_1,
 					},
 				},
@@ -155,7 +155,7 @@ describe( 'setOverridableProp', () => {
 						label: LABEL,
 						propKey: MOCK_PROP_KEY,
 						...MOCK_WIDGET,
-						originalValue: ORIGIN_VALUE,
+						originValue: ORIGIN_VALUE,
 						groupId: GROUP_ID_1,
 					},
 				},
@@ -181,7 +181,7 @@ describe( 'setOverridableProp', () => {
 						label: LABEL,
 						propKey: MOCK_PROP_KEY,
 						...MOCK_WIDGET,
-						originalValue: ORIGIN_VALUE,
+						originValue: ORIGIN_VALUE,
 						groupId: GROUP_ID_2,
 					},
 				},
@@ -213,7 +213,7 @@ describe( 'setOverridableProp', () => {
 						propKey: 'color',
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						originalValue: 'some prior value',
+						originValue: 'some prior value',
 						groupId: GROUP_ID_1,
 					},
 				},
@@ -241,7 +241,7 @@ describe( 'setOverridableProp', () => {
 						propKey: MOCK_PROP_KEY,
 						widgetType: MOCK_WIDGET_TYPE,
 						elType: MOCK_EL_TYPE,
-						originalValue: ORIGIN_VALUE,
+						originValue: ORIGIN_VALUE,
 						groupId: GROUP_ID_2,
 					},
 				},
@@ -271,7 +271,7 @@ describe( 'setOverridableProp', () => {
 						label: 'Existing Label',
 						propKey: MOCK_PROP_KEY,
 						...MOCK_WIDGET,
-						originalValue: 'Old value',
+						originValue: 'Old value',
 						groupId: GROUP_ID_1,
 					},
 				},
@@ -289,7 +289,7 @@ describe( 'setOverridableProp', () => {
 			callParams: {
 				label: 'Updated Label',
 				groupId: null,
-				originalValue: 'Updated value',
+				originValue: 'Updated value',
 			},
 			expectedDispatch: {
 				props: {
@@ -298,7 +298,7 @@ describe( 'setOverridableProp', () => {
 						label: 'Updated Label',
 						propKey: MOCK_PROP_KEY,
 						...MOCK_WIDGET,
-						originalValue: 'Updated value',
+						originValue: 'Updated value',
 						groupId: GROUP_ID_1,
 					},
 				},
@@ -328,7 +328,7 @@ describe( 'setOverridableProp', () => {
 			groupId: callParams.groupId,
 			propKey: MOCK_PROP_KEY,
 			...MOCK_WIDGET,
-			originalValue: callParams.originalValue ?? ORIGIN_VALUE,
+			originValue: callParams.originValue ?? ORIGIN_VALUE,
 		} );
 
 		// Assert
@@ -357,7 +357,7 @@ describe( 'setOverridableProp', () => {
 			groupId: null,
 			propKey: MOCK_PROP_KEY,
 			...MOCK_WIDGET,
-			originalValue: ORIGIN_VALUE,
+			originValue: ORIGIN_VALUE,
 		} );
 
 		// Assert

@@ -15,7 +15,7 @@ type Props = {
 	propKey: string;
 	elType: string;
 	widgetType: string;
-	originalValue: PropValue;
+	originValue: PropValue;
 };
 export function setOverridableProp( {
 	componentId,
@@ -26,7 +26,7 @@ export function setOverridableProp( {
 	propKey,
 	elType,
 	widgetType,
-	originalValue,
+	originValue,
 }: Props ): OverridableProp | undefined {
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
@@ -50,7 +50,7 @@ export function setOverridableProp( {
 		propKey,
 		widgetType,
 		elType,
-		originalValue,
+		originValue,
 		groupId: currentGroupId,
 	};
 

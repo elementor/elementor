@@ -58,7 +58,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 	const { elType } = getWidgetsCache()?.[ elementType.key ] ?? { elType: 'widget' };
 
 	const handleSubmit = ( { label, group }: { label: string; group: string | null } ) => {
-		const originalValue = ! overridableValue ? value : overridableValue?.origin_value ?? {};
+		const originValue = ! overridableValue ? value : overridableValue?.origin_value ?? {};
 
 		const overridablePropConfig = setOverridableProp( {
 			componentId,
@@ -69,13 +69,13 @@ export function Content( { componentId, overridableProps }: Props ) {
 			propKey: bind,
 			elType: elType ?? 'widget',
 			widgetType: elementType.key,
-			originalValue,
+			originValue,
 		} );
 
 		if ( ! overridableValue && overridablePropConfig ) {
 			setOverridableValue( {
 				override_key: overridablePropConfig.overrideKey,
-				origin_value: originalValue as TransformablePropValue< string, unknown >,
+				origin_value: originValue as TransformablePropValue< string, unknown >,
 			} );
 		}
 
