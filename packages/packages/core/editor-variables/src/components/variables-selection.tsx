@@ -25,9 +25,10 @@ type Props = {
 	onAdd?: () => void;
 	onEdit?: ( key: string ) => void;
 	onSettings?: () => void;
+	upgradeUrl?: string;
 };
 
-export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }: Props ) => {
+export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, upgradeUrl }: Props ) => {
 	const { icon: VariableIcon, startIcon, variableType, propTypeUtil } = useVariableType();
 
 	const { value: variable, setValue: setVariable, path } = useVariableBoundProp();
@@ -166,29 +167,31 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 				/>
 			) }
 
-			{ ! hasVariables && ! hasNoCompatibleVariables && (
-				<EmptyState
-					title={ noVariableTitle }
-					message={ __(
-						'Variables are saved attributes that you can apply anywhere on your site.',
-						'elementor'
-					) }
-					icon={ <VariableIcon fontSize="large" /> }
-					onAdd={ onAdd }
-				/>
-			) }
+		{ ! hasVariables && ! hasNoCompatibleVariables && (
+			<EmptyState
+				title={ noVariableTitle }
+				message={ __(
+					'Variables are saved attributes that you can apply anywhere on your site.',
+					'elementor'
+				) }
+				icon={ <VariableIcon fontSize="large" /> }
+				onAdd={ onAdd }
+				upgradeUrl={ upgradeUrl }
+			/>
+		) }
 
-			{ hasNoCompatibleVariables && (
-				<EmptyState
-					title={ __( 'No compatible variables', 'elementor' ) }
-					message={ __(
-						'Looks like none of your variables work with this control. Create a new variable to use it here.',
-						'elementor'
-					) }
-					icon={ <VariableIcon fontSize="large" /> }
-					onAdd={ onAdd }
-				/>
-			) }
+		{ hasNoCompatibleVariables && (
+			<EmptyState
+				title={ __( 'No compatible variables', 'elementor' ) }
+				message={ __(
+					'Looks like none of your variables work with this control. Create a new variable to use it here.',
+					'elementor'
+				) }
+				icon={ <VariableIcon fontSize="large" /> }
+				onAdd={ onAdd }
+				upgradeUrl={ upgradeUrl }
+			/>
+		) }
 		</PopoverBody>
 	);
 };

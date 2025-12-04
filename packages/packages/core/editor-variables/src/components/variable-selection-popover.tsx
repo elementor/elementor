@@ -7,6 +7,7 @@ import { PopoverContentRefContextProvider } from '../context/variable-selection-
 import { VariableTypeProvider } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
 import { type Variable } from '../types';
+import { getVariableType } from '../variables-registry/variable-type-registry';
 import { VariableCreation } from './variable-creation';
 import { VariableEdit } from './variable-edit';
 import { usePanelActions } from './variables-manager/variables-manager-panel';
@@ -73,6 +74,8 @@ type Handlers = {
 
 function RenderView( props: ViewProps ): React.ReactNode {
 	const userPermissions = usePermissions();
+	const variableType = getVariableType( props.propTypeKey );
+	const hasValueField = Boolean( variableType?.valueField );
 
 	const handlers: Handlers = {
 		onClose: () => {
@@ -83,13 +86,13 @@ function RenderView( props: ViewProps ): React.ReactNode {
 		},
 	};
 
-	if ( userPermissions.canAdd() ) {
+	if ( hasValueField && userPermissions.canAdd() ) {
 		handlers.onAdd = () => {
 			props.setCurrentView( VIEW_ADD );
 		};
 	}
 
-	if ( userPermissions.canEdit() ) {
+	if ( hasValueField && userPermissions.canEdit() ) {
 		handlers.onEdit = ( key: string ) => {
 			props.setEditId( key );
 			props.setCurrentView( VIEW_EDIT );
@@ -118,6 +121,7 @@ function RenderView( props: ViewProps ): React.ReactNode {
 				onAdd={ handlers.onAdd }
 				onEdit={ handlers.onEdit }
 				onSettings={ handlers.onSettings }
+				upgradeUrl={ ! hasValueField ? variableType?.upgradeUrl : undefined }
 			/>
 		);
 	}

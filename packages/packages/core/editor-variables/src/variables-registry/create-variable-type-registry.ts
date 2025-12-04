@@ -27,7 +27,7 @@ type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
 type VariableTypeOptions = {
 	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > >;
 	startIcon?: ( { value }: { value: string } ) => JSX.Element;
-	valueField: ( { value, onChange, onValidationChange, propType, error }: ValueFieldProps ) => JSX.Element;
+	valueField?: ( { value, onChange, onValidationChange, propType, error }: ValueFieldProps ) => JSX.Element;
 	variableType: string;
 	defaultValue?: string;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
@@ -35,6 +35,7 @@ type VariableTypeOptions = {
 	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
 	valueTransformer?: ( value: string ) => PropValue;
 	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
+	upgradeUrl?: string;
 };
 
 export type VariableTypesMap = Record< string, VariableTypeOptions >;
@@ -53,6 +54,7 @@ export function createVariableTypeRegistry() {
 		valueTransformer,
 		fallbackPropTypeUtil,
 		isCompatible,
+		upgradeUrl,
 	}: VariableTypeOptions ) => {
 		if ( variableTypes[ propTypeUtil.key ] ) {
 			throw new Error( `Variable with key "${ propTypeUtil.key }" is already registered.` );
@@ -80,6 +82,7 @@ export function createVariableTypeRegistry() {
 			valueTransformer,
 			fallbackPropTypeUtil,
 			isCompatible,
+			upgradeUrl,
 		};
 
 		registerTransformer( propTypeUtil.key );
@@ -106,8 +109,22 @@ export function createVariableTypeRegistry() {
 		return key in variableTypes;
 	};
 
+	const updateVariableType = ( options: Partial< VariableTypeOptions > & { propTypeUtil: PropTypeUtil< string, string > } ) => {
+		const key = options.propTypeUtil.key;
+
+		if ( ! variableTypes[ key ] ) {
+			throw new Error( `Variable with key "${ key }" is not registered.` );
+		}
+
+		variableTypes[ key ] = {
+			...variableTypes[ key ],
+			...options,
+		};
+	};
+
 	return {
 		registerVariableType,
+		updateVariableType,
 		getVariableType,
 		getVariableTypes,
 		hasVariableType,
