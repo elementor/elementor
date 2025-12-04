@@ -1,6 +1,6 @@
 const IMAGES_BASE_URL = 'https://assets.elementor.com/home-screen/v1/images';
 
-const getImageUrl = ( filename: string ): string => `${ IMAGES_BASE_URL }/${ filename }`;
+export const getImageUrl = ( filename: string ): string => `${ IMAGES_BASE_URL }/${ filename }`;
 
 export default {
 	top_with_licences: [
@@ -429,7 +429,7 @@ export default {
 			is_enabled: 'true',
 			type: 'banner',
 			data: {
-				image: getImageUrl( 'cm-sale-2025.svg' ),
+				image: '__UPGRADE_FREE_SVG_PLACEHOLDER__',
 				link: 'https://test.example.com/essential-banner',
 			},
 		},
@@ -438,7 +438,7 @@ export default {
 			is_enabled: 'true',
 			type: 'banner',
 			data: {
-				image: getImageUrl( 'cm-sale-2025.svg' ),
+				image: '__UPGRADE_FREE_SVG_PLACEHOLDER__',
 				link: 'https://test.example.com/free-banner',
 			},
 		},
@@ -447,137 +447,17 @@ export default {
 			is_enabled: 'true',
 			type: 'banner',
 			data: {
-				image: getImageUrl( 'upgrade-free.svg' ),
+				image: '__UPGRADE_FREE_SVG_PLACEHOLDER__',
 				link: 'https://test.example.com/expired-banner',
 			},
 		},
 		{
-			license: [ 'free' ],
-			is_enabled: 'false',
-			type: 'default',
-			data: {
-				header: {
-					title: 'Test Upgrade Title',
-					description: 'Test upgrade description with predictable content for testing.',
-					image: getImageUrl( 'update-sidebar.svg' ),
-				},
-				cta: {
-					label: 'Upgrade Now',
-					url: 'https://test.example.com/upgrade',
-					image: getImageUrl( 'icon-crown.svg' ),
-				},
-				repeater: [
-					{
-						title: 'Test Feature 1',
-					},
-					{
-						title: 'Test Feature 2',
-					},
-					{
-						title: 'Test Feature 3',
-					},
-					{
-						title: 'Test Feature 4',
-					},
-					{
-						title: 'Test Feature 5',
-					},
-					{
-						title: 'Test Feature 6',
-					},
-					{
-						title: 'Test Feature 7',
-					},
-					{
-						title: 'Test Feature 8',
-					},
-				],
-			},
-		},
-		{
-			license: [ 'pro' ],
-			is_enabled: 'false',
-			type: 'default',
-			data: {
-				header: {
-					title: 'Test Upgrade Title',
-					description: 'Test upgrade description with predictable content for testing.',
-					image: getImageUrl( 'update-sidebar.svg' ),
-				},
-				cta: {
-					label: 'Upgrade Now',
-					url: 'https://test.example.com/upgrade',
-					image: getImageUrl( 'icon-crown.svg' ),
-				},
-				repeater: [
-					{
-						title: 'Test Feature 1',
-					},
-					{
-						title: 'Test Feature 2',
-					},
-					{
-						title: 'Test Feature 3',
-					},
-					{
-						title: 'Test Feature 4',
-					},
-					{
-						title: 'Test Feature 5',
-					},
-					{
-						title: 'Test Feature 6',
-					},
-					{
-						title: 'Test Feature 7',
-					},
-					{
-						title: 'Test Feature 8',
-					},
-				],
-			},
-		},
-		{
 			license: [ 'one' ],
-			is_enabled: 'false',
-			type: 'default',
+			is_enabled: 'true',
+			type: 'banner',
 			data: {
-				header: {
-					title: 'Test Upgrade Title',
-					description: 'Test upgrade description with predictable content for testing.',
-					image: getImageUrl( 'update-sidebar.svg' ),
-				},
-				cta: {
-					label: 'Upgrade Now',
-					url: 'https://test.example.com/upgrade',
-					image: getImageUrl( 'icon-crown.svg' ),
-				},
-				repeater: [
-					{
-						title: 'Test Feature 1',
-					},
-					{
-						title: 'Test Feature 2',
-					},
-					{
-						title: 'Test Feature 3',
-					},
-					{
-						title: 'Test Feature 4',
-					},
-					{
-						title: 'Test Feature 5',
-					},
-					{
-						title: 'Test Feature 6',
-					},
-					{
-						title: 'Test Feature 7',
-					},
-					{
-						title: 'Test Feature 8',
-					},
-				],
+				image: '__UPGRADE_FREE_SVG_PLACEHOLDER__',
+				link: 'https://test.example.com/one-banner',
 			},
 		},
 	],
