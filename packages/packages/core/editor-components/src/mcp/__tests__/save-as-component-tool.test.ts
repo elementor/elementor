@@ -7,7 +7,7 @@ jest.mock( '@elementor/editor-elements' );
 jest.mock( '@elementor/editor-mcp', () => ( {
 	getMCPByDomain: () => ( { addTool: jest.fn( ( config ) => config ) } ),
 } ) );
-jest.mock( '../../store/create-unpublished-component' );
+jest.mock( '../../store/actions/create-unpublished-component' );
 
 const mockGetContainer = jest.mocked( getContainer );
 const mockCreateUnpublishedComponent = jest.mocked( createUnpublishedComponent );

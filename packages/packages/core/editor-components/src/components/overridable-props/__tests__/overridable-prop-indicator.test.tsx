@@ -27,8 +27,8 @@ jest.mock( '../../../store/store', () => ( {
 	...jest.requireActual( '../../../store/store' ),
 	selectOverridableProps: jest.fn(),
 } ) );
-jest.mock( '../../../store/set-overridable-prop', () => ( {
-	...jest.requireActual( '../../../store/set-overridable-prop' ),
+jest.mock( '../../../store/actions/set-overridable-prop', () => ( {
+	...jest.requireActual( '../../../store/actions/set-overridable-prop' ),
 	setOverridableProp: jest.fn(),
 } ) );
 
