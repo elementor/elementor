@@ -135,7 +135,14 @@ class Variables_Service {
 			throw new FatalError( 'Failed to delete variable' );
 		}
 
-		return $this->response( $id, $watermark, [ 'variable' => [ 'deleted' => true ] ] );
+		return [
+			'variable' => [
+				'deleted' => true,
+				'id' => $id,
+				...$this->format_variable( $id ),
+			],
+			'watermark' => $watermark,
+		];
 	}
 
 	/**
@@ -174,6 +181,6 @@ class Variables_Service {
 	private function format_variable( string $id ): array {
 		$fresh_variable = $this->repo->load()->find_or_fail( $id );
 
-		return array_merge( ['id' => $id ], $fresh_variable->to_array() );
+		return array_merge( [ 'id' => $id ], $fresh_variable->to_array() );
 	}
 }

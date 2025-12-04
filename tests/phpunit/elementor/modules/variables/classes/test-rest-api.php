@@ -71,15 +71,23 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'get_json_meta' )->
-			willReturn( null );
+		$saved_record = null;
+
+		$this->kit
+			->expects( $this->exactly( 2 ) )
+			->method( 'get_json_meta' )
+			->willReturnCallback( function() use ( &$saved_record ) {
+				return $saved_record;
+			} );
 
 		$this->kit
 			->expects( $this->once() )
 			->method( 'update_json_meta' )
-			->willReturn( true );
+			->willReturnCallback( function( $metaKey, $data ) use ( &$saved_record ) {
+				$saved_record = $data;
+
+				return true;
+			} );
 
 		// Act
 		$request = new WP_REST_Request( 'POST', '/elementor/v1/variables/create' );
@@ -111,24 +119,32 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'get_json_meta' )->
-			willReturn( [
-				'data' => [
-					'color-1' => [
-						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Primary Color',
-						'value' => '#FF0000',
-					],
+		$db_record = [
+			'data' => [
+				'color-1' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary Color',
+					'value' => '#FF0000',
 				],
-				'watermark' => 10,
-			] );
+			],
+			'watermark' => 10,
+		];
+
+		$this->kit
+			->expects( $this->exactly( 2 ) )
+			->method( 'get_json_meta' )
+			->willReturnCallback( function() use ( &$db_record ) {
+				return $db_record;
+			} );
 
 		$this->kit
 			->expects( $this->once() )
 			->method( 'update_json_meta' )
-			->willReturn( true );
+			->willReturnCallback( function( $metaKey, $data ) use ( &$db_record ) {
+				$db_record = $data;
+
+				return true;
+			} );
 
 		// Act
 		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/update' );
@@ -159,24 +175,32 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'get_json_meta' )->
-			willReturn( [
-				'data' => [
-					'color-1' => [
-						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Primary Color',
-						'value' => '#FF0000',
-					],
+		$db_record = [
+			'data' => [
+				'color-1' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary Color',
+					'value' => '#FF0000',
 				],
-				'watermark' => 10,
-			] );
+			],
+			'watermark' => 10,
+		];
+
+		$this->kit
+			->expects( $this->exactly( 2 ) )
+			->method( 'get_json_meta' )
+			->willReturnCallback( function() use ( &$db_record ) {
+				return $db_record;
+			} );
 
 		$this->kit
 			->expects( $this->once() )
 			->method( 'update_json_meta' )
-			->willReturn( true );
+			->willReturnCallback( function( $metaKey, $data ) use ( &$db_record ) {
+				$db_record = $data;
+
+				return true;
+			} );
 
 		// Act
 		$request = new WP_REST_Request( 'DELETE', '/elementor/v1/variables/delete' );
@@ -231,26 +255,34 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'get_json_meta' )->
-			willReturn( [
-				'data' => [
-					'color-1' => [
-						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Primary Color',
-						'value' => '#FF0000',
-						'deleted' => true,
-						'deleted_at' => '2021-01-01 00:00:00',
-					],
+		$db_record = [
+			'data' => [
+				'color-1' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Primary Color',
+					'value' => '#FF0000',
+					'deleted' => true,
+					'deleted_at' => '2021-01-01 00:00:00',
 				],
-				'watermark' => 10,
-			] );
+			],
+			'watermark' => 10,
+		];
+
+		$this->kit
+			->expects( $this->exactly( 2 ) )
+			->method( 'get_json_meta' )
+			->willReturnCallback( function() use ( &$db_record ) {
+				return $db_record;
+			} );
 
 		$this->kit
 			->expects( $this->once() )
 			->method( 'update_json_meta' )
-			->willReturn( true );
+			->willReturnCallback( function( $metaKey, $data ) use ( &$db_record ) {
+				$db_record = $data;
+
+				return true;
+			} );
 
 		// Act
 		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/restore' );
@@ -277,31 +309,39 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'get_json_meta' )->
-			willReturn( [
-				'data' => [
-					'id-a01' => [
-						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'primary-text-color',
-						'value' => '#404040',
-						'deleted' => true,
-						'deleted_at' => '2021-01-01 00:00:00',
-					],
-					'id-a02' => [
-						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'primary-text-color',
-						'value' => '#202020',
-					],
+		$db_record = [
+			'data' => [
+				'id-a01' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'primary-text-color',
+					'value' => '#404040',
+					'deleted' => true,
+					'deleted_at' => '2021-01-01 00:00:00',
 				],
-				'watermark' => 5,
-			] );
+				'id-a02' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'primary-text-color',
+					'value' => '#202020',
+				],
+			],
+			'watermark' => 5,
+		];
+
+		$this->kit
+			->expects( $this->exactly( 2 ) )
+			->method( 'get_json_meta' )
+			->willReturnCallback( function() use ( &$db_record ) {
+				return $db_record;
+			} );
 
 		$this->kit
 			->expects( $this->once() )
 			->method( 'update_json_meta' )
-			->willReturn( true );
+			->willReturnCallback( function( $metaKey, $data ) use ( &$db_record ) {
+				$db_record = $data;
+
+				return true;
+			} );
 
 		// Act
 		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/restore' );

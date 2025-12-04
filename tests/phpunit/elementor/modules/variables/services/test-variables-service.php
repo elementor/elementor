@@ -359,6 +359,8 @@ class Test_Variables_Service extends TestCase {
 		// Assert
 		$this->assertEquals( 'id-1', $result['variable']['id'] );
 		$this->assertNotNull( $result['variable']['deleted_at'] );
+		$this->assertTrue( $result['variable']['deleted'] );
+		$this->assertEquals( 'global-size-var', $result['variable']['type'] );
 		$this->assertEquals( 11, $result['watermark'] );
 	}
 
