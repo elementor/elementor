@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { getV1DocumentsManager } from '@elementor/editor-documents';
 import { ArrowLeftIcon, ComponentsIcon, SettingsIcon } from '@elementor/icons';
 import {
 	Badge,
 	Box,
-	ButtonBase,
 	Divider,
 	IconButton,
 	keyframes,
@@ -16,10 +15,8 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-const COMPONENT_MOCK_DATA = {
-	title: 'Component 1',
-	overrides: [ 'prop-uuid-1', 'prop-uuid-2', 'prop-uuid-3' ],
-};
+import { useCurrentComponent, useNavigateBack } from '../edit-component/edit-component';
+import { useOverridableProps } from './use-overridable-props';
 
 const bounceIn = keyframes`
 	0% { transform: scale(0); }
@@ -32,20 +29,18 @@ const slideUp = keyframes`
 	to { transform: translateY(0); opacity: 1; }
 `;
 
-type ComponentPanelHeaderProps = {
-	componentName?: string;
-	overridesCount?: number;
-	onBack?: () => void;
-	onOverridesClick?: () => void;
-};
+export const ComponentPanelHeader = () => {
+	const { path, currentComponentId } = useCurrentComponent();
+	const overridableProps = useOverridableProps( currentComponentId );
+	const onBack = useNavigateBack( path );
 
-export const ComponentPanelHeader = ( {
-	componentName = COMPONENT_MOCK_DATA.title,
-	overridesCount = COMPONENT_MOCK_DATA.overrides.length,
-	onBack,
-	onOverridesClick,
-}: ComponentPanelHeaderProps ) => {
-	const [ count, setCount ] = useState( overridesCount );
+	if ( ! currentComponentId ) {
+		return null;
+	}
+
+	const componentName = getComponentName();
+	const overridesCount = overridableProps ? Object.keys( overridableProps.props ).length : 0;
+
 	return (
 		<Box>
 			<Stack
@@ -62,8 +57,6 @@ export const ComponentPanelHeader = ( {
 							</IconButton>
 						</Tooltip>
 						<Stack direction="row" alignItems="center" gap={ 0.5 }>
-							<ButtonBase onClick={ () => setCount( count + 1 ) }>Increment</ButtonBase>
-							<ButtonBase onClick={ () => setCount( count - 1 ) }>Decrement</ButtonBase>
 							<ComponentsIcon sx={ { fontSize: 12, color: 'text.primary' } } />
 							<Typography
 								variant="caption"
@@ -83,9 +76,9 @@ export const ComponentPanelHeader = ( {
 					</Stack>
 				</Stack>
 				<Badge
-					key={ count }
-					invisible={ count === 0 }
-					badgeContent={ <StyledBadgeContent>{ count }</StyledBadgeContent> }
+					key={ overridesCount }
+					invisible={ overridesCount === 0 }
+					badgeContent={ <StyledBadgeContent>{ overridesCount }</StyledBadgeContent> }
 					color="primary"
 					anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
 					sx={ {
@@ -96,12 +89,7 @@ export const ComponentPanelHeader = ( {
 						},
 					} }
 				>
-					<ToggleButton
-						value="overrides"
-						size="tiny"
-						onClick={ onOverridesClick }
-						aria-label={ __( 'View overrides', 'elementor' ) }
-					>
+					<ToggleButton value="overrides" size="tiny" aria-label={ __( 'View overrides', 'elementor' ) }>
 						<SettingsIcon fontSize="tiny" />
 					</ToggleButton>
 				</Badge>
@@ -110,6 +98,13 @@ export const ComponentPanelHeader = ( {
 		</Box>
 	);
 };
+
+function getComponentName() {
+	const documentsManager = getV1DocumentsManager();
+	const currentDocument = documentsManager.getCurrent();
+
+	return currentDocument?.container?.settings?.get( 'post_title' ) ?? '';
+}
 
 const StyledBadgeContent = styled( 'span' )( {
 	animation: `${ bounceIn } 300ms ease-out, ${ slideUp } 300ms ease-out`,
