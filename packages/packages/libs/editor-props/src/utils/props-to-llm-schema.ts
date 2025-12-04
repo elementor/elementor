@@ -1,4 +1,4 @@
-import { type PropsSchema, type PropType } from '../types';
+import { type PlainPropType, type PropsSchema, type PropType } from '../types';
 import { type JsonSchema7 } from './prop-json-schema';
 
 export function propTypeToJsonSchema( propType: PropType ): JsonSchema7 {
@@ -33,40 +33,38 @@ function convertPlainPropType(
 
 	// Determine type based on key
 	const key = propType.key.toLowerCase();
-
-	switch ( key ) {
-		case 'number':
-			schema.type = 'number';
-			break;
-		case 'boolean':
-			schema.type = 'boolean';
-			break;
-		default:
-			schema.type = 'string';
-	}
+	schema.type = 'object';
 
 	// Handle enum from settings
 	if ( Array.isArray( propType.settings?.enum ) ) {
-		if ( schema.type === 'string' ) {
+		if ( key === 'object' ) {
 			schema.enum = propType.settings.enum.map( ( val ) => ( {
 				$$type: 'string',
 				value: val,
 			} ) );
-			schema.type = 'object';
-		} else if ( schema.type === 'number' ) {
+		} else if ( schema.key === 'number' ) {
 			schema.enum = propType.settings.enum.map( ( val ) => ( {
 				$$type: 'number',
 				value: val,
 			} ) );
-			schema.type = 'object';
 		} else {
 			schema.enum = propType.settings.enum;
 		}
+	} else {
+		schema.properties = {
+			$$type: {
+				type: 'string',
+				const: 'key',
+			},
+			value: {
+				type: propType.kind === 'plain' ? 'string' : propType.kind,
+			},
+		};
 	}
 
 	return propTypeToJsonSchema( {
 		...propType,
-		kind: schema.type as PropType[ 'kind' ],
+		kind: schema.type as PlainPropType[ 'kind' ],
 	} );
 }
 

@@ -13,7 +13,7 @@ export const initDesignSystemTool = ( reg: MCPRegistryEntry ) => {
 	};
 
 	addTool( {
-		name: 'design-system-tool',
+		name: 'design-system',
 		description: `Manages or Creates a comprehensive design system based on user requirements.
 # When to use this tool:
 - When a user requests to create or manage a design system for their website.
