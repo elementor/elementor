@@ -256,10 +256,10 @@ class Components_REST_API {
 				->build();
 		}
 
-		$overridable = $document->get_meta( 'elementor_component_overridable' );
+		$overridable = $document->get_meta( Component::OVERRIDABLE_PROPS_META_KEY ) ?? null;
 
-		if ( ! $overridable ) {
-			$overridable = self::MOCK_OVERRIDABLE;
+		if ( ! empty( $overridable ) ) {
+			$overridable = json_decode( $overridable );
 		}
 
 		return Response_Builder::make( $overridable )->build();

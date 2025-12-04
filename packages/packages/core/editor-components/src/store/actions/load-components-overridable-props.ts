@@ -1,7 +1,7 @@
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { apiClient } from '../../api';
-import { selectIsOverridablePropsLoaded, slice } from '../store';
+import { DEFAULT_OVERRIDABLE_PROPS, selectIsOverridablePropsLoaded, slice } from '../store';
 
 export function loadComponentsOverridableProps( componentIds: number[] ) {
 	if ( ! componentIds.length ) {
@@ -20,5 +20,10 @@ async function loadComponentOverrides( componentId: number ) {
 
 	const overridableProps = await apiClient.getOverridableProps( componentId );
 
-	dispatch( slice.actions.setOverridableProps( { componentId, overridableProps } ) );
+	dispatch(
+		slice.actions.setOverridableProps( {
+			componentId,
+			overridableProps: overridableProps ?? DEFAULT_OVERRIDABLE_PROPS,
+		} )
+	);
 }

@@ -144,7 +144,7 @@ export const selectCreatedThisSession = createSelector(
 	( createdThisSession ) => createdThisSession
 );
 
-const DEFAULT_OVERRIDABLE_PROPS: OverridableProps = {
+export const DEFAULT_OVERRIDABLE_PROPS: OverridableProps = {
 	props: {},
 	groups: {
 		items: {},
