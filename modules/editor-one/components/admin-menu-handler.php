@@ -425,7 +425,7 @@ class Admin_Menu_Handler {
 			ELEMENTOR_VERSION
 		);
 
-		wp_register_script( 'elementor-admin-menu-config', false, [], ELEMENTOR_VERSION );
+		wp_register_script( 'elementor-admin-menu-config', false, [], ELEMENTOR_VERSION, false );
 		wp_enqueue_script( 'elementor-admin-menu-config' );
 
 		$config = [
