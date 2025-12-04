@@ -18,8 +18,8 @@ const ElementorLogo = () => (
 
 const i18n = {
 	title: __( "What's New?", 'elementor' ),
-	bodyTitle: __( 'Make your website more accessible with Ally', 'elementor' ),
-	description: __( "We're excited to introduce our new web accessibility plugin, designed to enhance usability and make your website more inclusive.", 'elementor' ),
+	bodyTitle: __( 'Is your website accessible?', 'elementor' ),
+	description: __( 'Use Ally to scan, detect, and fix accessibility issues with AI by your side.', 'elementor' ),
 };
 
 export const WelcomeDialog = ( { doClose } ) => {
@@ -36,9 +36,15 @@ export const WelcomeDialog = ( { doClose } ) => {
 		return null;
 	}
 
+	const handleLearnMoreClick = () => {
+		if ( data.learnMoreUrl ) {
+			window.open( data.learnMoreUrl, '_blank' );
+		}
+	};
+
 	const handleCtaClick = () => {
 		if ( data.ctaUrl ) {
-			window.location.href = data.ctaUrl;
+			window.open( data.ctaUrl, '_blank' );
 		}
 	};
 
@@ -75,6 +81,12 @@ export const WelcomeDialog = ( { doClose } ) => {
 			</DialogContent>
 
 			<DialogActions>
+				<Button
+					variant="text"
+					onClick={ handleLearnMoreClick }
+				>
+					{ data.learnMoreText || __( 'Learn more', 'elementor' ) }
+				</Button>
 				<Button
 					variant="contained"
 					onClick={ handleCtaClick }

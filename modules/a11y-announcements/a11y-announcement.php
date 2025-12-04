@@ -3,6 +3,7 @@
 namespace Elementor\Modules\A11yAnnouncements;
 
 use Elementor\Core\Utils\Hints;
+use Elementor\User;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,11 +24,15 @@ class A11yAnnouncement {
 			return;
 		}
 
-		if ( $this->has_announcement_been_displayed() ) {
+		if ( $this->is_ally_active() ) {
 			return;
 		}
 
-		if ( $this->is_ally_active() ) {
+		if ( ! $this->has_ai_announcement_been_displayed() ) {
+			return;
+		}
+
+		if ( $this->has_ally_announcement_been_displayed() ) {
 			return;
 		}
 
@@ -39,12 +44,16 @@ class A11yAnnouncement {
 		return Hints::is_plugin_active( self::PLUGIN_SLUG );
 	}
 
-	private function has_announcement_been_displayed(): bool {
-		return (bool) get_user_meta( $this->get_current_user_id(), Module::ANNOUNCEMENT_DISPLAYED_OPTION, true );
+	private function has_ai_announcement_been_displayed(): bool {
+		return User::get_introduction_meta( 'ai-get-started-announcement' );
+	}
+
+	private function has_ally_announcement_been_displayed(): bool {
+		return User::get_introduction_meta( Module::ANNOUNCEMENT_DISPLAYED_OPTION );
 	}
 
 	private function set_announcement_as_displayed(): void {
-		update_user_meta( $this->get_current_user_id(), Module::ANNOUNCEMENT_DISPLAYED_OPTION, true );
+		User::set_introduction_viewed( [ 'introductionKey' => Module::ANNOUNCEMENT_DISPLAYED_OPTION ] );
 	}
 
 	private function enqueue_scripts() {
@@ -101,11 +110,13 @@ class A11yAnnouncement {
 		}
 
 		return [
-			'ctaText' => $cta_text,
-			'ctaUrl' => $cta_url,
-			'videoUrl' => 'https://www.youtube.com/embed/uj9TDcpC91I?start=1&loop=1&playlist=uj9TDcpC91I',
 			'nonce' => wp_create_nonce( 'elementor_set_a11y_announcement_dismissed' ),
 			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+			'videoUrl' => 'https://www.youtube.com/embed/uj9TDcpC91I?start=1&loop=1&playlist=uj9TDcpC91I',
+			'learnMoreText' => esc_html__( 'Learn more', 'elementor' ),
+			'learnMoreUrl' => 'https://go.elementor.com/acc-editor-announcement-learn-more',
+			'ctaText' => $cta_text,
+			'ctaUrl' => $cta_url,
 		];
 	}
 
@@ -116,13 +127,8 @@ class A11yAnnouncement {
 			wp_send_json_error( [ 'message' => esc_html__( 'You do not have permission to perform this action.', 'elementor' ) ] );
 		}
 
-		update_user_meta( $this->get_current_user_id(), Module::ANNOUNCEMENT_DISPLAYED_OPTION, true );
+		$this->set_announcement_as_displayed();
 
 		wp_send_json_success();
-	}
-
-	private function get_current_user_id(): int {
-		$current_user = wp_get_current_user();
-		return $current_user->ID ?? 0;
 	}
 }
