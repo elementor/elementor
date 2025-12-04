@@ -1,8 +1,9 @@
 import { expect, Page, TestInfo } from '@playwright/test';
+import { Page as PWPage } from 'playwright-core';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import ApiRequests from '../../../assets/api-requests';
-import AxeBuilder from "@axe-core/playwright";
+import AxeBuilder from '@axe-core/playwright';
 
 declare global {
 	interface Window {
@@ -601,11 +602,10 @@ test.describe( 'Cloud Templates', () => {
 		await expect( templateItems.first() ).toContainText( templateTitle );
 	} );
 
-	test.only( 'should pass accessibility test for cloud-templates popup', async ( { page, apiRequests }, testInfo ) => {
+	test( 'should pass accessibility test for cloud-templates popup', async ( { page, apiRequests }, testInfo ) => {
 		await setupCloudTemplatesTab( page, testInfo, apiRequests );
 
-		const accessibilityScanResults = await new AxeBuilder( { page: page as any } ).include( '#elementor-template-library-modal' ).analyze();
-		console.log(accessibilityScanResults);
+		const accessibilityScanResults = await new AxeBuilder( { page: page as PWPage } ).include( '#elementor-template-library-modal' ).analyze();
 		expect.soft( accessibilityScanResults.violations ).toEqual( [] );
 	} );
 } );
