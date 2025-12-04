@@ -224,6 +224,7 @@ class Frontend extends App {
 				$src = add_query_arg( 'ver', $registered_style->ver, $src );
 			}
 
+			// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
 			$missing_styles .= sprintf(
 				"<link rel='stylesheet' id='%s-css' href='%s' media='all' />\n",
 				esc_attr( $handle ),
@@ -252,9 +253,9 @@ class Frontend extends App {
 		$style_id = $handle . '-css';
 
 		return false !== strpos( $html, "id='{$style_id}'" ) ||
-		       false !== strpos( $html, "id=\"{$style_id}\"" );
+			false !== strpos( $html, "id=\"{$style_id}\"" );
 	}
- 
+
 	/**
 	 * Insert styles at the end of the <head> or <body> section.
 	 *
