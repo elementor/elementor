@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\TemplateRenderer;
+namespace Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer;
 
 use Elementor\Utils;
 use ElementorDeps\Twig\Environment;
