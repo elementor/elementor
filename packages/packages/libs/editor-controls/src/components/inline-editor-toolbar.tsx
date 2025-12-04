@@ -124,14 +124,6 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 		popupState.close();
 	};
 
-	const handleButtonClick = ( button: ( typeof formatButtonsList )[ number ] ) => {
-		if ( button.action === 'link' ) {
-			handleLinkClick();
-		} else {
-			button.method?.( editor );
-		}
-	};
-
 	return (
 		<Box
 			ref={ toolbarRef }
@@ -167,7 +159,9 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 							value={ button.action }
 							aria-label={ button.label }
 							size="tiny"
-							onClick={ () => handleButtonClick( button ) }
+							onClick={ () =>
+								button.action === 'link' ? handleLinkClick() : button.method?.( editor )
+							}
 						>
 							{ button.icon }
 						</ToggleButton>

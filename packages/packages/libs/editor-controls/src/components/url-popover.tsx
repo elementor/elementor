@@ -28,7 +28,9 @@ export const UrlPopover = ( { popupState, restoreValue, anchorRef, value, onChan
 
 	return (
 		<Popover
-			slotProps={ { paper: { sx: { borderRadius: '16px', width: anchorRef.current?.offsetWidth + 'px', marginTop: -1 } } } }
+			slotProps={ {
+				paper: { sx: { borderRadius: '16px', width: anchorRef.current?.offsetWidth + 'px', marginTop: -1 } },
+			} }
 			{ ...bindPopover( popupState ) }
 			anchorOrigin={ { vertical: 'top', horizontal: 'left' } }
 			transformOrigin={ { vertical: 'top', horizontal: 'left' } }
