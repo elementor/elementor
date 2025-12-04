@@ -17,9 +17,9 @@ const ElementorLogo = () => (
 );
 
 const i18n = {
-	title: __( 'WHAT\'S NEW?', 'elementor' ),
+	title: __( "What's New?", 'elementor' ),
 	bodyTitle: __( 'Make your website more accessible with Ally', 'elementor' ),
-	description: __( 'We\'re excited to introduce our new web accessibility plugin, designed to enhance usability and make your site more inclusive.', 'elementor' ),
+	description: __( "We're excited to introduce our new web accessibility plugin, designed to enhance usability and make your website more inclusive.", 'elementor' ),
 };
 
 export const WelcomeDialog = ( { doClose } ) => {
@@ -50,7 +50,7 @@ export const WelcomeDialog = ( { doClose } ) => {
 			className="e-a11y-announcement"
 		>
 			<DialogHeader onClose={ doClose } logo={ <ElementorLogo /> }>
-				<DialogTitle>{ i18n.title }</DialogTitle>
+				<DialogTitle className="e-a11y-announcement__title">{ i18n.title }</DialogTitle>
 			</DialogHeader>
 
 			<DialogContent dividers>

@@ -24,8 +24,7 @@ const App = ( props ) => {
 			fetch( window.elementorA11yAnnouncement.ajaxUrl, {
 				method: 'POST',
 				body: formData,
-			} ).catch( () => {
-			} );
+			} ).catch( () => {} );
 		}
 	};
 
@@ -71,4 +70,3 @@ const init = () => {
 };
 
 init();
-

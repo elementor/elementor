@@ -3,7 +3,6 @@
 namespace Elementor\Modules\A11yAnnouncements;
 
 use Elementor\Core\Utils\Hints;
-use Elementor\User;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,16 +31,6 @@ class A11yAnnouncement {
 			return;
 		}
 
-		$first_time = User::get_user_notice_first_time( 'ally' );
-		if ( ! $first_time ) {
-			User::set_user_notice_first_time( 'ally' );
-			return;
-		}
-
-		if ( ! User::has_plugin_notice_been_displayed_for_required_time( 'ally', WEEK_IN_SECONDS ) ) {
-			return;
-		}
-
 		$this->enqueue_scripts();
 		$this->set_announcement_as_displayed();
 	}
@@ -59,18 +48,18 @@ class A11yAnnouncement {
 	}
 
 	private function enqueue_scripts() {
-		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+		$suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_style(
 			Module::MODULE_NAME,
-			ELEMENTOR_ASSETS_URL . 'css/modules/a11y-announcements/editor' . $min_suffix . '.css',
+			ELEMENTOR_ASSETS_URL . "css/modules/a11y-announcements/editor{$suffix}.css",
 			[],
 			ELEMENTOR_VERSION
 		);
 
 		wp_enqueue_script(
 			Module::MODULE_NAME,
-			ELEMENTOR_ASSETS_URL . 'js/a11y-announcements' . $min_suffix . '.js',
+			ELEMENTOR_ASSETS_URL . "js/a11y-announcements{$suffix}.js",
 			[
 				'react',
 				'react-dom',
@@ -92,23 +81,19 @@ class A11yAnnouncement {
 
 	private function prepare_data() {
 		$plugin_slug = self::PLUGIN_SLUG;
-		$is_installed = Hints::is_plugin_installed( $plugin_slug );
-		$is_active = Hints::is_plugin_active( $plugin_slug );
 
-		$cta_text = esc_html__( 'Install Plugin', 'elementor' );
-		$cta_url = '';
-
-		if ( $is_active ) {
+		if ( Hints::is_plugin_active( $plugin_slug ) ) {
 			return [];
 		}
 
-		if ( $is_installed ) {
+		if ( Hints::is_plugin_installed( $plugin_slug ) ) {
 			$cta_text = esc_html__( 'Activate Plugin', 'elementor' );
 			$cta_url = wp_nonce_url(
 				'plugins.php?action=activate&amp;plugin=' . self::PLUGIN_FILE_PATH . '&amp;plugin_status=all&amp;paged=1&amp;s',
 				'activate-plugin_' . self::PLUGIN_FILE_PATH
 			);
 		} else {
+			$cta_text = esc_html__( 'Install Plugin', 'elementor' );
 			$cta_url = wp_nonce_url(
 				self_admin_url( 'update.php?action=install-plugin&plugin=' . $plugin_slug ),
 				'install-plugin_' . $plugin_slug
