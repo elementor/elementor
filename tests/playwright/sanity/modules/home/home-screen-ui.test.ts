@@ -8,7 +8,7 @@ test.describe( 'Home screen visual regression tests', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_editor_one: false } );
+		await wpAdmin.setExperiments( { e_editor_one: 'inactive' } );
 		await wpAdmin.enableAdvancedUploads();
 		await page.close();
 		await context.close();
