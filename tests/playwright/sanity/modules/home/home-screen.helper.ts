@@ -27,12 +27,8 @@ export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeo
 	let finalMockData = mockData;
 
 	if ( apiRequests && requestContext ) {
-		try {
-			const mediaUrl = await uploadImage( apiRequests, requestContext );
-			finalMockData = replacePlaceholderImage( mockData, mediaUrl );
-		} catch ( error ) {
-			throw new Error( `Failed to upload and replace upgrade-free.png: ${ error instanceof Error ? error.message : String( error ) }` );
-		}
+		const mediaUrl = await uploadImage( apiRequests, requestContext );
+		finalMockData = replaceImageUrl( mockData, mediaUrl );
 	}
 
 	await page.route( '**/wp-admin/admin.php?page=elementor', async ( route ) => {
@@ -57,25 +53,20 @@ const uploadImage = async (
 	apiRequests: ApiRequests,
 	requestContext: APIRequestContext,
 ): Promise<string> => {
-	const imagePath = resolve( __dirname, './assets/upgrade-free.png' );
-	const imageData: Image = {
-		title: 'upgrade-free',
-		extension: 'png',
-		filePath: imagePath,
-	};
-
-	const mediaId = await apiRequests.createMedia( requestContext, imageData );
-	const mediaData = await apiRequests.getMedia( requestContext, String( mediaId ) );
-	const mediaUrl = mediaData.source_url || mediaData.guid?.rendered || mediaData.link;
-
-	if ( ! mediaUrl ) {
-		throw new Error( `Media URL not found in response. Media data: ${ JSON.stringify( mediaData ) }` );
+	try {
+		const imagePath = resolve( __dirname, './assets/upgrade-free.png' );
+		const imageData: Image = {
+			title: 'upgrade-free',
+			extension: 'png',
+			filePath: imagePath,
+		};
+		return await apiRequests.uploadImageAndGetUrl( requestContext, imageData );
+	} catch ( error ) {
+		throw new Error( `Failed to upload upgrade-free.png: ${ error instanceof Error ? error.message : String( error ) }` );
 	}
-
-	return mediaUrl;
 };
 
-const replacePlaceholderImage = (
+const replaceImageUrl = (
 	mockData: ReturnType<typeof transformMockDataByLicense>,
 	mediaUrl: string,
 ): ReturnType<typeof transformMockDataByLicense> => {
