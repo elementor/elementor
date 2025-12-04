@@ -28,12 +28,12 @@ const EditorScreen = ( props ) => {
 								adminUrl={ props.adminUrl }
 							/>
 						) }
+						<ExternalLinksSection externalLinksData={ props.homeScreenData.external_links } />
 					</Stack>
 					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' }, display: 'flex', flexDirection: 'column', gap: 3 } }>
 						{ hasSidebarPromotion &&
 							<SideBarPromotion sideData={ props.homeScreenData.sidebar_promotion_variants } />
 						}
-						<ExternalLinksSection externalLinksData={ props.homeScreenData.external_links } />
 					</Container>
 				</Box>
 			</Container>
