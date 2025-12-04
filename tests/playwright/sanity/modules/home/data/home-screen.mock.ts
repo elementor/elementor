@@ -1,4 +1,6 @@
-const ICONS_BASE_PATH = '/wp-content/plugins/elementor/tests/playwright/resources/icons';
+const IMAGES_BASE_URL = 'https://assets.elementor.com/home-screen/v1/images';
+
+const getImageUrl = ( filename: string ): string => `${ IMAGES_BASE_URL }/${ filename }`;
 
 export default {
 	top_with_licences: [
@@ -48,7 +50,7 @@ export default {
 					is_relative_url: false,
 					title_small_color: 'text.secondary',
 					tab_id: 'settings-site-identity',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Color Palette',
@@ -57,7 +59,7 @@ export default {
 					is_relative_url: false,
 					title_small_color: 'text.tertiary',
 					tab_id: 'global-colors',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Typography System',
@@ -65,7 +67,7 @@ export default {
 					url: '',
 					is_relative_url: false,
 					tab_id: 'global-typography',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Template Library',
@@ -73,14 +75,14 @@ export default {
 					url: 'admin.php?page=elementor-app',
 					is_relative_url: false,
 					title_small_color: 'text.secondary',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Popup Designer',
 					title_small: 'Create',
 					url: 'edit.php?post_type=elementor_library&page=popup_templates',
 					is_relative_url: true,
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Icon Collection',
@@ -88,7 +90,7 @@ export default {
 					url: 'admin.php?page=elementor_custom_icons',
 					is_relative_url: false,
 					title_small_color: 'text.tertiary',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 			],
 		},
@@ -105,7 +107,7 @@ export default {
 					url: '',
 					is_relative_url: false,
 					title_small_color: 'text.tertiary',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Logo & Favicon',
@@ -113,7 +115,7 @@ export default {
 					url: '',
 					is_relative_url: false,
 					tab_id: 'settings-site-identity',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Design Tokens',
@@ -122,7 +124,7 @@ export default {
 					is_relative_url: false,
 					tab_id: 'global-colors',
 					title_small_color: 'text.secondary',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Font Families',
@@ -130,7 +132,7 @@ export default {
 					url: '',
 					is_relative_url: false,
 					tab_id: 'global-typography',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Theme Templates',
@@ -138,14 +140,14 @@ export default {
 					url: 'admin.php?page=elementor-app',
 					is_relative_url: false,
 					title_small_color: 'text.tertiary',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Modal Windows',
 					title_small: 'Build',
 					url: 'edit.php?post_type=elementor_library&tabs_group=popup&elementor_library_type=popup',
 					is_relative_url: true,
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'SVG Icons',
@@ -153,14 +155,14 @@ export default {
 					url: 'admin.php?page=elementor_custom_icons',
 					is_relative_url: false,
 					title_small_color: 'text.secondary',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Web Fonts',
 					title_small: 'Add',
 					url: 'admin.php?page=elementor_custom_fonts',
 					is_relative_url: true,
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 			],
 		},
@@ -177,7 +179,7 @@ export default {
 					url: '',
 					is_relative_url: false,
 					title_small_color: 'text.secondary',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Visual Identity',
@@ -186,7 +188,7 @@ export default {
 					is_relative_url: false,
 					tab_id: 'settings-site-identity',
 					title_small_color: 'text.tertiary',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Color Scheme',
@@ -194,7 +196,7 @@ export default {
 					url: '',
 					is_relative_url: false,
 					tab_id: 'global-colors',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Text Styling',
@@ -203,14 +205,14 @@ export default {
 					is_relative_url: false,
 					tab_id: 'global-typography',
 					title_small_color: 'text.secondary',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Layout Templates',
 					title_small: 'View',
 					url: 'admin.php?page=elementor-app',
 					is_relative_url: false,
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Overlay Popups',
@@ -218,14 +220,14 @@ export default {
 					url: 'edit.php?post_type=elementor_library&tabs_group=popup&elementor_library_type=popup',
 					is_relative_url: true,
 					title_small_color: 'text.tertiary',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Custom Symbols',
 					title_small: 'Organize',
 					url: 'admin.php?page=elementor_custom_icons',
 					is_relative_url: false,
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 				{
 					title: 'Typeface Library',
@@ -233,7 +235,7 @@ export default {
 					url: 'admin.php?page=elementor_custom_fonts',
 					is_relative_url: true,
 					title_small_color: 'text.secondary',
-					image: `${ ICONS_BASE_PATH }/site-settings.svg`,
+					image: getImageUrl( 'site-settings.svg' ),
 				},
 			],
 		},
@@ -251,7 +253,7 @@ export default {
 				url: '',
 				description: 'Test plugin description with predictable content for testing.',
 				button_label: 'Install',
-				image: `${ ICONS_BASE_PATH }/icon-community.svg`,
+				image: getImageUrl( 'ally_logo.svg' ),
 				type: 'wporg',
 			},
 			{
@@ -260,7 +262,7 @@ export default {
 				url: '',
 				description: 'Test plugin description with predictable content for testing.',
 				button_label: 'Install',
-				image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/icon-youtube.svg',
+				image: getImageUrl( 'send-logo.svg' ),
 				type: 'wporg',
 			},
 			{
@@ -269,7 +271,7 @@ export default {
 				url: '',
 				description: 'Test plugin description with predictable content for testing.',
 				button_label: 'Install',
-				image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/icon-question-mark.svg',
+				image: getImageUrl( 'site-mailer.svg' ),
 				type: 'wporg',
 			},
 			{
@@ -278,7 +280,7 @@ export default {
 				url: 'https://test.example.com/plugin4',
 				description: 'Test plugin description with predictable content for testing.',
 				button_label: 'Install',
-				image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/icon-crown.svg',
+				image: getImageUrl( 'image-optimizer.svg' ),
 				type: 'wporg',
 			},
 			{
@@ -286,7 +288,7 @@ export default {
 				url: 'https://test.example.com/elementor-ai',
 				description: 'Test AI description with predictable content for testing purposes.',
 				button_label: 'Let\'s go',
-				image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/theme-builder.svg',
+				image: getImageUrl( 'elementor.svg' ),
 				type: 'link',
 				condition: {
 					key: 'introduction_meta',
@@ -306,12 +308,12 @@ export default {
 			header: {
 				title: 'Test Upgrade Title',
 				description: 'Test upgrade description with predictable content for testing.',
-				image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/icon-crown.svg',
+				image: getImageUrl( 'icon-crown.svg' ),
 			},
 			cta: {
 				label: 'Upgrade Now',
 				url: 'https://test.example.com/upgrade',
-				image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/icon-crown.svg',
+				image: getImageUrl( 'icon-crown.svg' ),
 			},
 			repeater: [
 				{
@@ -346,12 +348,12 @@ export default {
 			header: {
 				title: 'Test Upgrade Title',
 				description: 'Test upgrade description with predictable content for testing.',
-				image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/icon-crown.svg',
+				image: getImageUrl( 'icon-crown.svg' ),
 			},
 			cta: {
 				label: 'Upgrade Now',
 				url: 'https://test.example.com/upgrade',
-				image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/icon-crown.svg',
+				image: getImageUrl( 'icon-crown.svg' ),
 			},
 			repeater: [
 				{
@@ -386,12 +388,12 @@ export default {
 			header: {
 				title: 'Test Upgrade Title',
 				description: 'Test upgrade description with predictable content for testing.',
-				image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/icon-crown.svg',
+				image: getImageUrl( 'icon-crown.svg' ),
 			},
 			cta: {
 				label: 'Upgrade Now',
 				url: 'https://test.example.com/upgrade',
-				image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/icon-crown.svg',
+				image: getImageUrl( 'icon-crown.svg' ),
 			},
 			repeater: [
 				{
@@ -427,7 +429,7 @@ export default {
 			is_enabled: 'true',
 			type: 'banner',
 			data: {
-				image: `${ ICONS_BASE_PATH }/icon-community.svg`,
+				image: getImageUrl( 'cm-sale-2025.svg' ),
 				link: 'https://test.example.com/essential-banner',
 			},
 		},
@@ -436,7 +438,7 @@ export default {
 			is_enabled: 'true',
 			type: 'banner',
 			data: {
-				image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/icon-youtube.svg',
+				image: getImageUrl( 'cm-sale-2025.svg' ),
 				link: 'https://test.example.com/free-banner',
 			},
 		},
@@ -445,7 +447,7 @@ export default {
 			is_enabled: 'true',
 			type: 'banner',
 			data: {
-				image: '/wp-content/plugins/elementor/tests/playwright/resources/icons/icon-question-mark.svg',
+				image: getImageUrl( 'upgrade-free.svg' ),
 				link: 'https://test.example.com/expired-banner',
 			},
 		},
@@ -457,12 +459,12 @@ export default {
 				header: {
 					title: 'Test Upgrade Title',
 					description: 'Test upgrade description with predictable content for testing.',
-					image: `${ ICONS_BASE_PATH }/icon-crown.svg`,
+					image: getImageUrl( 'update-sidebar.svg' ),
 				},
 				cta: {
 					label: 'Upgrade Now',
 					url: 'https://test.example.com/upgrade',
-					image: `${ ICONS_BASE_PATH }/icon-crown.svg`,
+					image: getImageUrl( 'icon-crown.svg' ),
 				},
 				repeater: [
 					{
@@ -500,12 +502,12 @@ export default {
 				header: {
 					title: 'Test Upgrade Title',
 					description: 'Test upgrade description with predictable content for testing.',
-					image: `${ ICONS_BASE_PATH }/icon-crown.svg`,
+					image: getImageUrl( 'update-sidebar.svg' ),
 				},
 				cta: {
 					label: 'Upgrade Now',
 					url: 'https://test.example.com/upgrade',
-					image: `${ ICONS_BASE_PATH }/icon-crown.svg`,
+					image: getImageUrl( 'icon-crown.svg' ),
 				},
 				repeater: [
 					{
@@ -543,12 +545,12 @@ export default {
 				header: {
 					title: 'Test Upgrade Title',
 					description: 'Test upgrade description with predictable content for testing.',
-					image: `${ ICONS_BASE_PATH }/icon-crown.svg`,
+					image: getImageUrl( 'update-sidebar.svg' ),
 				},
 				cta: {
 					label: 'Upgrade Now',
 					url: 'https://test.example.com/upgrade',
-					image: `${ ICONS_BASE_PATH }/icon-crown.svg`,
+					image: getImageUrl( 'icon-crown.svg' ),
 				},
 				repeater: [
 					{
@@ -582,22 +584,22 @@ export default {
 	external_links: [
 		{
 			label: 'Help Center',
-			image: `${ ICONS_BASE_PATH }/icon-question-mark.svg`,
+			image: getImageUrl( 'icon-question-mark.svg' ),
 			url: 'https://test.example.com/help',
 		},
 		{
 			label: 'Youtube',
-			image: `${ ICONS_BASE_PATH }/icon-youtube.svg`,
+			image: getImageUrl( 'icon-youtube.svg' ),
 			url: 'https://test.example.com/youtube',
 		},
 		{
 			label: 'Facebook Community',
-			image: `${ ICONS_BASE_PATH }/icon-community.svg`,
+			image: getImageUrl( 'icon-community.svg' ),
 			url: 'https://test.example.com/community',
 		},
 		{
 			label: 'Blog',
-			image: `${ ICONS_BASE_PATH }/icon-community.svg`,
+			image: getImageUrl( 'icon-academic-hat.svg' ),
 			url: 'https://test.example.com/blog',
 		},
 	],
