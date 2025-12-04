@@ -39,7 +39,7 @@ export const EditingPanel = () => {
 						<PanelHeaderTopSlot />
 						<PanelHeader>
 							<PanelHeaderTitle>{ panelTitle }</PanelHeaderTitle>
-							<AtomIcon fontSize="tiny" sx={ { color: 'text.tertiary' } } />
+							<AtomIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
 						</PanelHeader>
 						<PanelBody>
 							<ControlActionsProvider items={ menuItems }>
