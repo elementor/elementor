@@ -2,6 +2,8 @@ import { type V1Document } from '@elementor/editor-documents';
 import { type V1Element } from '@elementor/editor-elements';
 
 import { COMPONENT_DOCUMENT_TYPE } from '../components/consts';
+import { selectOverridableProps } from '../store/store';
+import { __getState as getState } from '@elementor/store';
 
 export const setComponentOverridablePropsSettingsBeforeSave = ( {
 	container,
@@ -14,6 +16,8 @@ export const setComponentOverridablePropsSettingsBeforeSave = ( {
 		return;
 	}
 
-	// todo: get overridable props from redux store
-	// container.settings.set( 'overridable_props', overridableProps );
+	const overridableProps = selectOverridableProps( getState(), currentDocument.id );
+	if ( overridableProps ) {
+		container.settings.set( 'overridable_props', overridableProps );
+	}
 };
