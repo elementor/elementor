@@ -103,6 +103,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Query_Tr
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -111,10 +112,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Module extends BaseModule {
 	const EXPERIMENT_NAME = 'e_atomic_elements';
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
-	const EXPERIMENT_NESTED = 'e_nested_elements';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 	const EXPERIMENT_INLINE_EDITING = 'v4-inline-text-editing';
-	const EXPERIMENT_DISPLAY_CONDITIONS = 'v4-display-conditions';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -198,15 +197,6 @@ class Module extends BaseModule {
 		] );
 
 		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_NESTED,
-			'title' => esc_html__( 'Nested Elements', 'elementor' ),
-			'description' => esc_html__( 'Enable nested elements.', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
-
-		Plugin::$instance->experiments->add_feature([
 			'name' => self::EXPERIMENT_EDITOR_MCP,
 			'title' => esc_html__( 'Editor MCP for atomic widgets', 'elementor' ),
 			'description' => esc_html__( 'Editor MCP for atomic widgets.', 'elementor' ),
@@ -219,15 +209,6 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_INLINE_EDITING,
 			'title' => esc_html__( 'V4 inline text editing', 'elementor' ),
 			'description' => esc_html__( 'New inline text editor for v4', 'elementor' ),
-			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
-		]);
-
-		Plugin::$instance->experiments->add_feature([
-			'name' => self::EXPERIMENT_DISPLAY_CONDITIONS,
-			'title' => esc_html__( 'V4 display conditions', 'elementor' ),
-			'description' => esc_html__( 'Display conditions for v4', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -268,13 +249,11 @@ class Module extends BaseModule {
 		$elements_manager->register_element_type( new Div_Block() );
 		$elements_manager->register_element_type( new Flexbox() );
 
-		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NESTED ) ) {
-			$elements_manager->register_element_type( new Atomic_Tabs() );
-			$elements_manager->register_element_type( new Atomic_Tabs_Menu() );
-			$elements_manager->register_element_type( new Atomic_Tab() );
-			$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
-			$elements_manager->register_element_type( new Atomic_Tab_Content() );
-		}
+		$elements_manager->register_element_type( new Atomic_Tabs() );
+		$elements_manager->register_element_type( new Atomic_Tabs_Menu() );
+		$elements_manager->register_element_type( new Atomic_Tab() );
+		$elements_manager->register_element_type( new Atomic_Tabs_Content_Area() );
+		$elements_manager->register_element_type( new Atomic_Tab_Content() );
 	}
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
