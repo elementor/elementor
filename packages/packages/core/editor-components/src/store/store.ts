@@ -8,6 +8,7 @@ import {
 import {
 	type Component,
 	type ComponentId,
+	type OverridableProps,
 	type PublishedComponent,
 	type StylesDefinition,
 	type UnpublishedComponent,
@@ -68,6 +69,18 @@ export const slice = createSlice( {
 		addCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
 			state.createdThisSession.push( payload );
 		},
+		setOverridableProps: (
+			state,
+			{ payload }: PayloadAction< { componentId: ComponentId; overridableProps: OverridableProps } >
+		) => {
+			const component = state.data.find( ( comp ) => comp.id === payload.componentId );
+
+			if ( ! component ) {
+				return;
+			}
+
+			component.overridableProps = payload.overridableProps;
+		},
 	},
 	extraReducers: ( builder ) => {
 		builder.addCase( loadComponents.fulfilled, ( state, { payload }: PayloadAction< GetComponentResponse > ) => {
@@ -88,6 +101,8 @@ const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadS
 const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
 const selectUnpublishedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].unpublishedData;
 const getCreatedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].createdThisSession;
+const selectComponent = ( state: ComponentsSlice, componentId: ComponentId ) =>
+	state[ SLICE_NAME ].data.find( ( component ) => component.id === componentId );
 
 export const selectComponents = createSelector(
 	selectData,
@@ -108,4 +123,22 @@ export const selectFlatStyles = createSelector( selectStylesDefinitions, ( data 
 export const selectCreatedThisSession = createSelector(
 	getCreatedThisSession,
 	( createdThisSession ) => createdThisSession
+);
+
+const DEFAULT_OVERRIDABLE_PROPS: OverridableProps = {
+	props: {},
+	groups: {
+		items: {},
+		order: [],
+	},
+};
+
+export const selectOverridableProps = createSelector(
+	selectComponent,
+	( component: PublishedComponent | undefined ) => {
+		if ( ! component ) {
+			return undefined;
+		}
+		return component.overridableProps ?? DEFAULT_OVERRIDABLE_PROPS;
+	}
 );
