@@ -78,4 +78,3 @@ class Cache_Validity {
 		return $cache_item->get( $keys );
 	}
 }
-
