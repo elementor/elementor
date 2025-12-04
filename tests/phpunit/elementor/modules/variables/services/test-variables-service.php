@@ -3,6 +3,7 @@
 namespace Elementor\Modules\Variables\Services;
 
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
@@ -240,6 +241,28 @@ class Test_Variables_Service extends TestCase {
 		$this->assertEquals( 'Primary Color', $result['variable']['label'] );
 		$this->assertEquals( '#000000', $result['variable']['value'] );
 		$this->assertEquals( 'color', $result['variable']['type'] );
+		$this->assertEquals( 0, $result['watermark'] );
+	}
+
+	public function test_create__custom_size_variable() {
+		// Arrange
+		$data = [
+			'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+			'label' => 'custom-size',
+			'value' => 'clamp(1rem, 2vw, 3rem)',
+		];
+
+		$this->repository->method( 'load' )->willReturn( Variables_Collection::default() );
+		$this->repository->method( 'save' )->willReturn( 0 );
+
+		// Act
+		$result = $this->service->create( $data );
+
+		// Assert
+		$this->assertNotEmpty( $result['variable']['id'] );
+		$this->assertEquals( 'custom-size', $result['variable']['label'] );
+		$this->assertEquals( 'clamp(1rem, 2vw, 3rem)', $result['variable']['value'] );
+		$this->assertEquals( 'global-custom-size-variable', $result['variable']['type'] );
 		$this->assertEquals( 0, $result['watermark'] );
 	}
 

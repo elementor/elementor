@@ -95,10 +95,7 @@ class Variables_Service {
 			throw new FatalError( 'Failed to create variable' );
 		}
 
-		return [
-			'variable' => array_merge( [ 'id' => $id ], $variable->to_array() ),
-			'watermark' => $collection->watermark(),
-		];
+		return $this->response( $id, $watermark );
 	}
 
 	/**
@@ -120,10 +117,7 @@ class Variables_Service {
 			throw new FatalError( 'Failed to update variable' );
 		}
 
-		return [
-			'variable' => array_merge( [ 'id' => $id ], $variable->to_array() ),
-			'watermark' => $watermark,
-		];
+		return $this->response( $id, $watermark );
 	}
 
 	/**
@@ -141,13 +135,7 @@ class Variables_Service {
 			throw new FatalError( 'Failed to delete variable' );
 		}
 
-		return [
-			'watermark' => $watermark,
-			'variable' => array_merge( [
-				'id' => $id,
-				'deleted' => true,
-			], $variable->to_array() ),
-		];
+		return $this->response( $id, $watermark, [ 'variable' => [ 'deleted' => true ] ] );
 	}
 
 	/**
@@ -173,9 +161,19 @@ class Variables_Service {
 			throw new FatalError( 'Failed to delete variable' );
 		}
 
-		return [
-			'variable' => array_merge( [ 'id' => $id ], $variable->to_array() ),
+		return $this->response( $id, $watermark );
+	}
+
+	private function response( string $id, $watermark, array $extra = [] ): array {
+		return array_merge( [
+			'variable'  => $this->format_variable( $id ),
 			'watermark' => $watermark,
-		];
+		], $extra );
+	}
+
+	private function format_variable( string $id ): array {
+		$fresh_variable = $this->repo->load()->find_or_fail( $id );
+
+		return array_merge( ['id' => $id ], $fresh_variable->to_array() );
 	}
 }
