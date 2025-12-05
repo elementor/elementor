@@ -93,7 +93,7 @@ class Test_Create_Edit_Website_Url extends PHPUnit_TestCase {
 
 class Test_Documents_Manager extends Documents_Manager {
 	private static ?string $test_create_new_post_url = null;
-	protected array $documents = [];
+	protected $documents = [];
 
 	public function __construct( string $create_new_post_url ) {
 		self::$test_create_new_post_url = $create_new_post_url;
