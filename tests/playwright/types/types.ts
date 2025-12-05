@@ -77,6 +77,7 @@ export type WindowType = Window & {
 	$e?: {
 		run: ( s: string, o: object )=> unknown
 	}
+	elementor?: ElementorType
 	wpApiSettings?: { nonce: string }
 };
 export type BackboneType = {
@@ -87,15 +88,65 @@ export type $eType = {
 	run: ( s: string, o: object )=> unknown
 }
 
+export type ElementorElement = {
+	id: string;
+	elements?: ElementorElement[];
+	interactions?: {
+		version: number;
+		items: Array<{
+			animation?: {
+				animation_type?: string;
+				animation_id?: string;
+			};
+		}>;
+	};
+	settings?: {
+		interactions?: unknown;
+		[key: string]: unknown;
+	};
+	[key: string]: unknown;
+};
+
+export type ElementorDocument = {
+	config: {
+		id: string;
+		elements: ElementorElement[];
+		settings?: {
+			[key: string]: unknown;
+		};
+		[key: string]: unknown;
+	};
+	[key: string]: unknown;
+};
+
+export type ElementorContainer = {
+	model?: {
+		set: ( key: string, value: unknown ) => void;
+		toJSON: () => ElementorElement;
+		[key: string]: unknown;
+	};
+	[key: string]: unknown;
+};
+
 export type ElementorType = {
 	navigator?: {
 		isOpen: ()=> unknown
 	},
-	getContainer?: ( id: string )=> unknown,
+	getContainer?: ( id: string )=> ElementorContainer | null | undefined,
+	documents?: {
+		getCurrent: () => ElementorDocument;
+	},
 	config?: {
-		initial_document:{
+		initial_document?: {
 			id: string
-		}
+		},
+		user?: {
+			capabilities?: string[];
+		},
+		library_connect?: {
+			is_connected?: boolean;
+		},
+		[key: string]: unknown;
 	},
 	isDeviceModeActive?: () => unknown
 }
