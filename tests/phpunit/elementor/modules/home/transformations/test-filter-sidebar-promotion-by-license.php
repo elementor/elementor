@@ -13,6 +13,7 @@ class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 
 	public function tearDown(): void {
 		delete_option( 'elementor_experiment-e_editor_one' );
+		remove_all_filters( 'elementor/admin/homescreen_promotion_tier' );
 		parent::tearDown();
 	}
 
