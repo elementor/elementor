@@ -145,7 +145,7 @@
   },
   "dependencies": {
     "@elementor/icons": "1.61.1",
-    "@elementor/ui": "1.36.17",
+    "@elementor/ui": "1.37.2",
     "@reach/router": "1.3.4",
     "@reduxjs/toolkit": "^1.8.3",
     "@woocommerce/admin-layout": "^1.1.0",
