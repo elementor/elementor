@@ -71,7 +71,7 @@ class Module extends BaseApp {
 
 		wp_enqueue_style(
 			'e-home-screen',
-			ELEMENTOR_URL . 'modules/home/assets/css/e-home-screen.css',
+			$this->get_css_assets_url( 'modules/home/e-home-screen' ),
 			[],
 			ELEMENTOR_VERSION
 		);
