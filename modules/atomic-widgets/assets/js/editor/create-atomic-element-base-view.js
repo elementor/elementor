@@ -129,7 +129,7 @@ export default function createAtomicElementBaseView( type ) {
 			BaseElementView.prototype.renderOnChange.apply( this, settings );
 
 			if ( changed.attributes ) {
-				const preserveAttrs = [ 'id', 'class', 'href' ];
+				const preserveAttrs = [ 'id', 'class', 'href', 'style' ];
 				const $elAttrs = this.$el[ 0 ].attributes;
 				for ( let i = $elAttrs.length - 1; i >= 0; i-- ) {
 					const attrName = $elAttrs[ i ].name;
@@ -212,6 +212,69 @@ export default function createAtomicElementBaseView( type ) {
 					},
 				} ),
 			);
+		},
+
+		playInteraction( animConfig ) {
+			const el = this.$el[ 0 ];
+			const { keyframes, duration, delay, type: animType } = animConfig;
+
+			const getStyles = ( values, isStart ) => {
+				const styles = {};
+				const transforms = [];
+
+				Object.entries( values ).forEach( ( [ key, value ] ) => {
+					const val = Array.isArray( value ) ? value[ isStart ? 0 : 1 ] : value;
+					if ( 'opacity' === key ) {
+						styles.opacity = val;
+					} else if ( 'scale' === key ) {
+						transforms.push( `scale(${ val })` );
+					} else if ( 'x' === key ) {
+						transforms.push( `translateX(${ val }px)` );
+					} else if ( 'y' === key ) {
+						transforms.push( `translateY(${ val }px)` );
+					}
+				} );
+
+				if ( transforms.length ) {
+					styles.transform = transforms.join( ' ' );
+				}
+				return styles;
+			};
+
+			const applyStyles = ( styles ) => {
+				Object.entries( styles ).forEach( ( [ prop, val ] ) => {
+					el.style[ prop ] = val;
+				} );
+			};
+
+			const startStyles = getStyles( keyframes, true );
+			const endStyles = getStyles( keyframes, false );
+
+			el.style.transition = 'none';
+			applyStyles( startStyles );
+
+			// Force reflow then animate with CSS transition
+			// eslint-disable-next-line no-unused-expressions
+			el.offsetHeight;
+
+			const run = () => {
+				el.style.transition = `all ${ duration }ms ease-out`;
+				applyStyles( endStyles );
+
+				if ( 'out' === animType ) {
+					setTimeout( () => {
+						el.style.transition = 'none';
+						el.style.opacity = '';
+						el.style.transform = '';
+					}, duration );
+				}
+			};
+
+			if ( delay > 0 ) {
+				setTimeout( run, delay );
+			} else {
+				run();
+			}
 		},
 
 		haveLink() {

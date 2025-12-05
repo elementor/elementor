@@ -1,15 +1,40 @@
 'use strict';
 
-import { config, getKeyframes, parseAnimationName } from './interactions-utils.js';
+import { getKeyframes, parseAnimationName } from './interactions-utils.js';
 
-function applyAnimation( element, animConfig, animateFunc ) {
+function getElementView( element ) {
+	const elementId = element.dataset.id;
+	if ( ! elementId ) {
+		return null;
+	}
+
+	try {
+		const container = window.top?.elementor?.getContainer?.( elementId );
+		return container?.view || null;
+	} catch {
+		return null;
+	}
+}
+
+function applyAnimation( element, animConfig ) {
+	const view = getElementView( element );
+	if ( view?.playInteraction ) {
+		view.playInteraction( {
+			keyframes: getKeyframes( animConfig.effect, animConfig.type, animConfig.direction ),
+			duration: animConfig.duration,
+			delay: animConfig.delay,
+			type: animConfig.type,
+		} );
+		return;
+	}
+
+	const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
+	if ( ! animateFunc ) {
+		return;
+	}
+
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
-	const options = {
-		duration: animConfig.duration / 1000,
-		delay: animConfig.delay / 1000,
-		easing: config.easing,
-	};
-
+	const options = { duration: animConfig.duration / 1000, delay: animConfig.delay / 1000 };
 	const initialKeyframes = {};
 	Object.keys( keyframes ).forEach( ( key ) => {
 		initialKeyframes[ key ] = keyframes[ key ][ 0 ];
@@ -78,7 +103,7 @@ function applyInteractionsToElement( element, interactionsData ) {
 		const animConfig = animationName && parseAnimationName( animationName );
 
 		if ( animConfig ) {
-			applyAnimation( element, animConfig, animateFunc );
+			applyAnimation( element, animConfig );
 		}
 	} );
 }
@@ -167,19 +192,14 @@ function registerWindowEvents() {
 
 function handlePlayInteractions( event ) {
 	const { elementId, animationId } = event.detail;
-	const interactionsData = getInteractionsData();
-	const item = interactionsData.find( ( elementItemData ) => elementItemData.dataId === elementId );
-	if ( ! item ) {
+	const element = findElementByInteractionId( elementId );
+	if ( ! element ) {
 		return;
 	}
-	const element = findElementByInteractionId( elementId );
-	if ( element ) {
-		const interactionsCopy = {
-			...item.interactions,
-			items: [ ...item.interactions.items ],
-		};
-		interactionsCopy.items = interactionsCopy.items.filter( ( interactionItem ) => interactionItem.animation.animation_id === animationId );
-		applyInteractionsToElement( element, JSON.stringify( interactionsCopy ) );
+
+	const animConfig = parseAnimationName( animationId );
+	if ( animConfig ) {
+		applyAnimation( element, animConfig );
 	}
 }
 
