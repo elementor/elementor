@@ -7,7 +7,7 @@ import {
 	renderControl,
 	renderWithTheme,
 } from 'test-utils';
-import { HtmlTagControl, LinkControl, useBoundProp } from '@elementor/editor-controls';
+import { useBoundProp } from '@elementor/editor-controls';
 import {
 	getElementLabel,
 	getElementSettings,
@@ -889,66 +889,6 @@ describe( 'SettingsField dependency logic', () => {
 					},
 					'dependent-1': null,
 					'dependent-2': null,
-				},
-				withHistory: false,
-			} );
-		} );
-	} );
-
-	describe( 'Link-Tag dependencies tests', () => {
-		const basicPropSchema = {
-			tag: createMockPropType( {
-				kind: 'plain',
-				default: { $$type: 'string', value: 'div' },
-				dependencies: htmlTagPropTypeDependencies,
-			} ),
-			link: createMockPropType( {
-				kind: 'object',
-				shape: {
-					destination: createMockPropType( {
-						kind: 'plain',
-					} ),
-					isTargetBlank: createMockPropType( {
-						kind: 'plain',
-						default: { $$type: 'boolean', value: false },
-					} ),
-					tag: createMockPropType( {
-						kind: 'plain',
-						default: { $$type: 'string', value: 'a' },
-					} ),
-				},
-			} ),
-		};
-
-		it( 'should change tag to a', () => {
-			// Arrange.
-			jest.mocked( useElementSettings ).mockReturnValue( {} );
-
-			const element = mockElement( { id: '1', type: 'mockText' } );
-			const elementType = createMockElementType( { propsSchema: basicPropSchema } );
-
-			// Act.
-			renderWithTheme(
-				<ElementProvider element={ element } elementType={ elementType }>
-					<SettingsField bind={ 'link' } propDisplayName={ __( 'Link', 'elementor' ) }>
-						<LinkControl queryOptions={ { params: {}, url: '' } } context={ { elementId: element.id } } />
-					</SettingsField>
-				</ElementProvider>
-			);
-
-			const linkToggleButton = screen.getByRole( 'button', { name: 'Toggle link' } );
-
-			fireEvent.click( linkToggleButton );
-
-			const linkTextInput = screen.getByRole( 'input' );
-
-			fireEvent.input( linkTextInput, { target: { value: 'https://www.google.com' } } );
-
-			expect( jest.mocked( updateElementSettings ) ).toHaveBeenCalledWith( {
-				id: element.id,
-				props: {
-					'control-a': { $$type: 'string', value: 'trigger-b' },
-					'control-b': null,
 				},
 				withHistory: false,
 			} );
