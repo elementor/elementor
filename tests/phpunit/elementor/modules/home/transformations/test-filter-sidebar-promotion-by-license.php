@@ -6,6 +6,16 @@ use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 
+	public function setUp(): void {
+		parent::setUp();
+		update_option( 'elementor_experiment-e_editor_one', 'inactive' );
+	}
+
+	public function tearDown(): void {
+		delete_option( 'elementor_experiment-e_editor_one' );
+		parent::tearDown();
+	}
+
 	public function test_transform__core_plugin() {
 		// Arrange
 		$original_data = $this->mock_home_screen_data();

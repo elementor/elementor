@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 class Test_Create_Edit_Website_Url extends PHPUnit_TestCase {
 
 	private Documents_Manager $original_documents_manager;
-	private MockObject $documents_manager_mock;
+	private Test_Documents_Manager $test_documents_manager;
 	private MockObject $document_mock;
 
 	private const CREATE_NEW_PAGE_URL = 'http://example.com/wp-admin/post-new.php?post_type=page&elementor=true';
@@ -38,9 +38,7 @@ class Test_Create_Edit_Website_Url extends PHPUnit_TestCase {
 		$this->document_mock->method( 'is_built_with_elementor' )
 			->willReturn( false );
 
-		$this->documents_manager_mock->method( 'get' )
-			->with( self::HOMEPAGE_ID )
-			->willReturn( $this->document_mock );
+		$this->test_documents_manager->set_document( self::HOMEPAGE_ID, $this->document_mock );
 
 		$transformation = new Create_Edit_Website_Url( [] );
 		$original_data = $this->mock_home_screen_data();
@@ -61,9 +59,7 @@ class Test_Create_Edit_Website_Url extends PHPUnit_TestCase {
 		$this->document_mock->method( 'get_edit_url' )
 			->willReturn( self::EDIT_PAGE_URL );
 
-		$this->documents_manager_mock->method( 'get' )
-			->with( self::HOMEPAGE_ID )
-			->willReturn( $this->document_mock );
+		$this->test_documents_manager->set_document( self::HOMEPAGE_ID, $this->document_mock );
 
 		$transformation = new Create_Edit_Website_Url( [] );
 		$original_data = $this->mock_home_screen_data();
@@ -76,21 +72,14 @@ class Test_Create_Edit_Website_Url extends PHPUnit_TestCase {
 	}
 
 	private function mock_documents_manager(): void {
-		$this->documents_manager_mock = $this->getMockBuilder( Documents_Manager::class )
-			->disableOriginalConstructor()
-			->onlyMethods( [ 'get', 'get_create_new_post_url' ] )
-			->getMock();
-
-		$this->documents_manager_mock->method( 'get_create_new_post_url' )
-			->with( 'page' )
-			->willReturn( self::CREATE_NEW_PAGE_URL );
+		$this->test_documents_manager = new Test_Documents_Manager( self::CREATE_NEW_PAGE_URL );
 
 		$this->document_mock = $this->getMockBuilder( Document::class )
 			->disableOriginalConstructor()
 			->onlyMethods( [ 'is_built_with_elementor', 'get_edit_url' ] )
 			->getMock();
 
-		Plugin::$instance->documents = $this->documents_manager_mock;
+		Plugin::$instance->documents = $this->test_documents_manager;
 	}
 
 	private function mock_home_screen_data(): array {
@@ -99,5 +88,29 @@ class Test_Create_Edit_Website_Url extends PHPUnit_TestCase {
 			'get_started' => [],
 			'add_ons' => [],
 		];
+	}
+}
+
+class Test_Documents_Manager extends Documents_Manager {
+	private static ?string $test_create_new_post_url = null;
+	private array $documents = [];
+
+	public function __construct( string $create_new_post_url ) {
+		self::$test_create_new_post_url = $create_new_post_url;
+	}
+
+	public function get( $post_id, $from_cache = true ) {
+		return $this->documents[ $post_id ] ?? null;
+	}
+
+	public function set_document( int $post_id, $document ): void {
+		$this->documents[ $post_id ] = $document;
+	}
+
+	public static function get_create_new_post_url( $post_type = 'page', $template_type = null ) {
+		if ( null !== self::$test_create_new_post_url ) {
+			return self::$test_create_new_post_url;
+		}
+		return parent::get_create_new_post_url( $post_type, $template_type );
 	}
 }
