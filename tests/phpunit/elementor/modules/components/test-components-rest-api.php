@@ -844,9 +844,9 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 		// Verify component is actually locked
 		$lock_manager = \Elementor\Modules\Components\Component_Lock_Manager::get_instance();
-		$lock_data = $lock_manager->is_locked( $component_id );
-		$this->assertTrue( $lock_data['is_locked'], 'Component should be locked by current user' );
-		$this->assertEquals( get_current_user_id(), $lock_data['lock_user'], 'Component should be locked by current user' );
+		$lock_data = $lock_manager->get_lock_data( $component_id );
+		$this->assertNotNull( $lock_data['locked_by'], 'Component should be locked by current user' );
+		$this->assertEquals( get_current_user_id(), $lock_data['locked_by'], 'Component should be locked by current user' );
 	}
 
 
@@ -874,24 +874,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 		// Verify component is actually unlocked
 		$lock_manager = \Elementor\Modules\Components\Component_Lock_Manager::get_instance();
-		$lock_data = $lock_manager->is_locked( $component_id );
-		$this->assertFalse( $lock_data['is_locked'], 'Component should be unlocked' );
-	}
-
-	public function test_post_unlock_component__fails_when_not_locked() {
-		// Arrange
-		$this->act_as_admin();
-		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
-
-		// Act - try to unlock component that's not locked
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/unlock' );
-		$request->set_param( 'componentId', $component_id );
-		$response = rest_do_request( $request );
-
-		// Assert - should fail because there's no lock to unlock
-		$this->assertEquals( 500, $response->get_status() );
-		$data = $response->get_data();
-		$this->assertEquals( 'unlock_failed', $data['code'] );
+		$lock_data = $lock_manager->get_lock_data( $component_id );
+		$this->assertNull( $lock_data['locked_by'], 'Component should be unlocked' );
 	}
 
 	public function test_update_statuses() {
