@@ -4,10 +4,10 @@ import homeScreenMockData from './data/home-screen.mock';
 import ApiRequests from '../../../assets/api-requests';
 import { Image } from '../../../types/types';
 
-export interface HomepageSettings {
+export type HomepageSettings = {
 	homepageId: number | null;
 	showOnFront: string | null;
-}
+};
 
 export type LicenseType = 'free' | 'pro' | 'one';
 

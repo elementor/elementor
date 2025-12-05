@@ -24,8 +24,6 @@ const isRTL = elementorCommon.config.isRTL,
 	adminUrl = elementorAppConfig.admin_url,
 	rootElement = document.querySelector( '#e-home-screen' );
 
-const isEditorOneActive = Boolean( elementorHomeScreenData.isEditorOneActive );
-
 App.propTypes = {
 	isRTL: PropTypes.bool,
 	adminUrl: PropTypes.string,
@@ -38,6 +36,6 @@ ReactUtils.render( (
 		isRTL={ isRTL }
 		homeScreenData={ elementorHomeScreenData }
 		adminUrl={ adminUrl }
-		isEditorOneActive={ isEditorOneActive }
+		isEditorOneActive={ Boolean( elementorHomeScreenData.isEditorOneActive ) }
 	/>
 ), rootElement );

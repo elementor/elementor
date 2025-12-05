@@ -24,9 +24,8 @@ class Filter_Get_Started_By_License extends Transformations_Abstract {
 			return true;
 		}
 
-		$item_license = $item['license'][0];
-		$has_pro_json_not_free = $this->has_pro && 'pro' === $item_license;
-		$is_not_pro_json_not_pro = ! $this->has_pro && 'free' === $item_license;
+		$has_pro_json_not_free = $this->has_pro && 'pro' === $item['license'][0];
+		$is_not_pro_json_not_pro = ! $this->has_pro && 'free' === $item['license'][0];
 
 		return $has_pro_json_not_free || $is_not_pro_json_not_pro;
 	}

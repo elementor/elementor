@@ -43,4 +43,3 @@ class Create_Edit_Website_Url extends Transformations_Abstract {
 		return $document->get_edit_url();
 	}
 }
-
