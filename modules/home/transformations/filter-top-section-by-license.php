@@ -36,6 +36,10 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 	}
 
 	private function validate_tier( $item_tier, $user_tier ): bool {
+		if ( 'one' === $user_tier ) {
+			return true;
+		}
+
 		if ( $user_tier === $item_tier ) {
 			return true;
 		}

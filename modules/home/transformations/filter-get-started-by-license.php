@@ -3,6 +3,7 @@ namespace Elementor\Modules\Home\Transformations;
 
 use Elementor\Modules\Home\Transformations\Base\Transformations_Abstract;
 use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -17,6 +18,12 @@ class Filter_Get_Started_By_License extends Transformations_Abstract {
 	}
 
 	private function is_valid_item( $item ) {
+		$user_tier = $this->get_tier();
+
+		if ( 'one' === $user_tier ) {
+			return true;
+		}
+
 		$has_pro_json_not_free = $this->has_pro && 'pro' === $item['license'][0];
 		$is_not_pro_json_not_pro = ! $this->has_pro && 'free' === $item['license'][0];
 
