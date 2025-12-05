@@ -13,7 +13,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader;
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {

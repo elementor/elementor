@@ -27,11 +27,11 @@ export type OverridableProp = {
 	propKey: string;
 	elType: string;
 	widgetType: string;
-	defaultValue: PropValue;
+	originValue: PropValue;
 	groupId: string;
 };
 
-export type OverridablePropGroup = {
+export type OverridablePropsGroup = {
 	id: string;
 	label: string;
 	props: string[];
@@ -40,7 +40,7 @@ export type OverridablePropGroup = {
 export type OverridableProps = {
 	props: Record< string, OverridableProp >;
 	groups: {
-		items: Record< string, OverridablePropGroup >;
+		items: Record< string, OverridablePropsGroup >;
 		order: string[];
 	};
 };
@@ -62,14 +62,6 @@ export type ExtendedWindow = Window & {
 				secondaryLocations: Record< string, string >;
 				triggers: Record< string, string >;
 			};
-		};
-	};
-};
-
-export type Container = {
-	model: {
-		get: ( key: 'elements' ) => {
-			toJSON: () => V1ElementData[];
 		};
 	};
 };
