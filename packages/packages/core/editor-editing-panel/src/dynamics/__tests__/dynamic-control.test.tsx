@@ -50,6 +50,7 @@ describe( '<DynamicControl />', () => {
 		const bind = 'before';
 		const value = mockDynamicValue( {
 			name: 'not-existing',
+			group: 'not-existing-group',
 			settings: {
 				[ bind ]: 'Hello, World!',
 			},
@@ -76,6 +77,7 @@ describe( '<DynamicControl />', () => {
 		const bind = 'before';
 		const value = mockDynamicValue( {
 			name: 'author-info',
+			group: 'author',
 			settings: {
 				[ bind ]: 'Hello, World!',
 			},
@@ -100,6 +102,7 @@ describe( '<DynamicControl />', () => {
 		const bind = 'before';
 		const value = mockDynamicValue( {
 			name: 'author-info',
+			group: 'author',
 			settings: {},
 		} );
 
@@ -122,6 +125,7 @@ describe( '<DynamicControl />', () => {
 		const bind = 'text';
 		const value = mockDynamicValue( {
 			name: 'author-info',
+			group: 'author',
 			settings: {
 				[ bind ]: 'Hello, World!',
 				'other-setting': 'Other setting value',
@@ -148,6 +152,7 @@ describe( '<DynamicControl />', () => {
 		// Assert.
 		const newValue = mockDynamicValue( {
 			name: 'author-info',
+			group: 'author',
 			settings: {
 				[ bind ]: 'Goodbye, World!',
 				'other-setting': 'Other setting value',
@@ -168,7 +173,15 @@ const MockControl = () => {
 	return <input type="text" aria-label={ bind } value={ value } onChange={ handleChange } />;
 };
 
-const mockDynamicValue = ( { name, settings }: { name: string; settings: Record< string, unknown > } ) => ( {
+const mockDynamicValue = ( {
+	name,
+	settings,
+	group,
+}: {
+	name: string;
+	group: string;
+	settings: Record< string, unknown >;
+} ) => ( {
 	$$type: 'dynamic',
-	value: { name, settings },
+	value: { name, settings, group },
 } );

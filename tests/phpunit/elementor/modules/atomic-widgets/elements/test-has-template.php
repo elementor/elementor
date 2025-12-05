@@ -59,6 +59,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 						'link' => [
 							'href' => 'https://example.com',
 							'target' => '_blank',
+							'tag' => 'a',
 						],
 					],
 					'widgetType' => Atomic_Image::get_element_type(),
@@ -80,6 +81,7 @@ class Test_Has_Template extends Elementor_Test_Base {
 						'link' => [
 							'href' => 'https://example.com',
 							'target' => '_blank',
+							'tag' => 'a',
 						],
 					],
 					'widgetType' => Atomic_Paragraph::get_element_type(),

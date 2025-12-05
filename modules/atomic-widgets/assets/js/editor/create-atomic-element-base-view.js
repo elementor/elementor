@@ -10,10 +10,6 @@ export default function createAtomicElementBaseView( type ) {
 		emptyView: AtomicElementEmptyView,
 
 		tagName() {
-			if ( this.haveLink() ) {
-				return 'a';
-			}
-
 			const tagControl = this.model.getSetting( 'tag' );
 			const tagControlValue = tagControl?.value || tagControl;
 			const defaultTag = this.model.config.default_html_tag;

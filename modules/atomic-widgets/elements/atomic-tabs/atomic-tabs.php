@@ -156,11 +156,13 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	}
 
 	public function get_script_depends() {
+		$global_depends = parent::get_script_depends();
+
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
-			return [ 'elementor-tabs-handler', 'elementor-tabs-preview-handler' ];
+			return array_merge( $global_depends, [ 'elementor-tabs-handler', 'elementor-tabs-preview-handler' ] );
 		}
 
-		return [ 'elementor-tabs-handler' ];
+		return array_merge( $global_depends, [ 'elementor-tabs-handler' ] );
 	}
 
 	public function register_frontend_handlers() {

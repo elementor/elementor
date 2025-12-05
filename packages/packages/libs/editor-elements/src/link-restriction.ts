@@ -1,5 +1,7 @@
 import { getContainer } from './sync/get-container';
 
+const ANCHOR_SELECTOR = 'a, [data-action-link]';
+
 export type LinkInLinkRestriction =
 	| {
 			shouldRestrict: true;
@@ -45,7 +47,7 @@ export function getAnchoredDescendantId( elementId: string ): string | null {
 		return null;
 	}
 
-	for ( const childAnchorElement of Array.from( element.querySelectorAll( 'a' ) ) ) {
+	for ( const childAnchorElement of Array.from( element.querySelectorAll( ANCHOR_SELECTOR ) ) ) {
 		// Ensure the child is not in the current element's scope
 		const childElementId = findElementIdOf( childAnchorElement );
 
@@ -64,19 +66,19 @@ export function getAnchoredAncestorId( elementId: string ): string | null {
 		return null;
 	}
 
-	const parentAnchor = element.parentElement.closest( 'a' );
+	const parentAnchor = element.parentElement.closest( ANCHOR_SELECTOR );
 
 	return parentAnchor ? findElementIdOf( parentAnchor ) : null;
 }
 
 export function isElementAnchored( elementId: string ): boolean {
-	const element = getElementDOM( elementId );
+	const element = getElementDOM( elementId ) as HTMLElement;
 
 	if ( ! element ) {
 		return false;
 	}
 
-	if ( isAnchorTag( element.tagName ) ) {
+	if ( element.matches( ANCHOR_SELECTOR ) ) {
 		return true;
 	}
 
@@ -84,12 +86,12 @@ export function isElementAnchored( elementId: string ): boolean {
 }
 
 function doesElementContainAnchor( element: Element ): boolean {
-	for ( const child of element.children ) {
+	for ( const child of Array.from( element.children ) as HTMLElement[] ) {
 		if ( isElementorElement( child ) ) {
 			continue;
 		}
 
-		if ( isAnchorTag( child.tagName ) ) {
+		if ( child.matches( ANCHOR_SELECTOR ) ) {
 			return true;
 		}
 
@@ -111,10 +113,6 @@ function getElementDOM( id: string ) {
 	} catch {
 		return null;
 	}
-}
-
-function isAnchorTag( tagName: string ): boolean {
-	return tagName.toLowerCase() === 'a';
 }
 
 function isElementorElement( element: Element ): boolean {

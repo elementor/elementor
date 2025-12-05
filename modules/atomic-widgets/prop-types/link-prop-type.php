@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\PropTypes;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -17,11 +18,20 @@ class Link_Prop_Type extends Object_Prop_Type {
 
 	protected function define_shape(): array {
 		$target_blank_dependencies = Dependency_Manager::make()
-		->where( [
-			'operator' => 'exists',
-			'path' => [ 'link', 'destination' ],
-		] )
-		->get();
+			->where( [
+				'operator' => 'exists',
+				'path' => [ 'link', 'destination' ],
+			] )
+			->get();
+
+		$tag_dependencies = Dependency_Manager::make()
+			->where( [
+				'operator' => 'ne',
+				'path' => [ 'link', 'destination' ],
+				'nestedPath' => [ 'group' ],
+				'value' => 'action',
+				'newValue' => String_Prop_Type::generate( 'button' ),
+			] )->get();
 
 		return [
 			'destination' => Union_Prop_Type::make()
@@ -29,6 +39,10 @@ class Link_Prop_Type extends Object_Prop_Type {
 				->add_prop_type( Query_Prop_Type::make() ),
 			'isTargetBlank' => Boolean_Prop_Type::make()
 				->set_dependencies( $target_blank_dependencies ),
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'a', 'button' ] )
+				->default( 'a' )
+				->set_dependencies( $tag_dependencies ),
 		];
 	}
 }

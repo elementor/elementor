@@ -1,4 +1,4 @@
-import { handlers } from '../handlers-registry';
+import { elementTypeHandlers } from '../handlers-registry';
 import { init, register, unregister } from '../index';
 
 describe( 'Frontend Handlers', () => {
@@ -11,7 +11,7 @@ describe( 'Frontend Handlers', () => {
 	} );
 
 	beforeEach( () => {
-		handlers.clear();
+		elementTypeHandlers.clear();
 		document.body.innerHTML = '';
 	} );
 
@@ -545,7 +545,7 @@ describe( 'Frontend Handlers', () => {
 	describe( 'DOMContentLoaded Initialization', () => {
 		it( 'should initialize all existing elements on page load', () => {
 			// Arrange
-			handlers.clear();
+			elementTypeHandlers.clear();
 			document.body.innerHTML = '';
 
 			const initializedElements: string[] = [];

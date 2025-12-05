@@ -77,6 +77,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'link' => [
 							'href' => 'https://elementor.com',
 							'target' => '_blank',
+							'tag' => 'a',
 						],
 					],
 				]

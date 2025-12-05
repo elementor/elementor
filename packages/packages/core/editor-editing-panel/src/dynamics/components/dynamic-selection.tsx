@@ -15,6 +15,7 @@ import { dynamicPropTypeUtil } from '../utils';
 type Option = {
 	label: string;
 	value: string;
+	group: string;
 };
 
 type OptionEntry = [ string, Option[] ];
@@ -57,7 +58,7 @@ export const DynamicSelection = ( { close: closePopover }: DynamicSelectionProps
 
 		const selectedOption = options.flatMap( ( [ , items ] ) => items ).find( ( item ) => item.value === value );
 
-		setValue( { name: value, settings: { label: selectedOption?.label } } );
+		setValue( { name: value, group: selectedOption?.group ?? '', settings: { label: selectedOption?.label } } );
 
 		closePopover();
 	};
@@ -174,7 +175,7 @@ const useFilteredOptions = ( searchValue: string ): OptionEntry[] => {
 			categories.set( group, [] );
 		}
 
-		categories.get( group )?.push( { label, value: name } );
+		categories.get( group )?.push( { label, group, value: name } );
 
 		return categories;
 	}, new Map() );

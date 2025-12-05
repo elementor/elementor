@@ -1,20 +1,20 @@
 <?php
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
 
-class Test_Atomic_Button extends Elementor_Test_Base {
+class Test_Atomic_Paragraph extends Elementor_Test_Base {
 	use MatchesSnapshots;
 
-	public function test__render_button(): void {
+	public function test__render_paragraph(): void {
 		// Arrange.
 		$mock = [
 			'id' => 'e8e55a1',
 			'elType' => 'widget',
 			'settings' => [],
-			'widgetType' => Atomic_Button::get_element_type(),
+			'widgetType' => Atomic_Paragraph::get_element_type(),
 		];
 
 		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
@@ -28,7 +28,7 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
 
-	public function test__render_linked_button(): void {
+	public function test__render_linked_paragraph(): void {
 		// Arrange.
 		$mock_link = [
 			'id' => 'e8e55a1',
@@ -40,7 +40,7 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 					'tag' => 'a',
 				],
 			],
-			'widgetType' => Atomic_Button::get_element_type(),
+			'widgetType' => Atomic_Paragraph::get_element_type(),
 		];
 
 		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock_link );
@@ -54,7 +54,7 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
 
-	public function test__render_linked_button_target_self(): void {
+	public function test__render_linked_paragraph_target_self(): void {
 		// Arrange.
 		$mock_link_target_self = [
 			'id' => 'e8e55a1',
@@ -66,7 +66,7 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 					'tag' => 'a',
 				],
 			],
-			'widgetType' => Atomic_Button::get_element_type(),
+			'widgetType' => Atomic_Paragraph::get_element_type(),
 		];
 
 		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock_link_target_self );
@@ -80,7 +80,7 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 		$this->assertMatchesSnapshot( $rendered_output );
 	}
 
-	public function test__render_button_with_action_link(): void {
+	public function test__render_paragraph_with_action_link(): void {
 		// Arrange.
 		$mock_link = [
 			'id' => 'e8e55a1',
@@ -92,7 +92,7 @@ class Test_Atomic_Button extends Elementor_Test_Base {
 					'tag' => 'button',
 				],
 			],
-			'widgetType' => Atomic_Button::get_element_type(),
+			'widgetType' => Atomic_Paragraph::get_element_type(),
 		];
 
 		$widget_instance = Plugin::$instance->elements_manager->create_element_instance( $mock_link );

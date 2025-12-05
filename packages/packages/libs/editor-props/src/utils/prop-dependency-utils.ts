@@ -14,7 +14,7 @@ type Relation = Dependency[ 'relation' ];
 export function isDependencyMet(
 	dependency: Dependency | undefined,
 	values: PropValue
-): { isMet: true } | { isMet: false; failingDependencies: DependencyTerm[] } {
+): { isMet: true } | { isMet: false; failingDependencies: ( DependencyTerm | Dependency )[] } {
 	if ( ! dependency?.terms.length ) {
 		return { isMet: true };
 	}
@@ -22,14 +22,14 @@ export function isDependencyMet(
 	const { relation, terms } = dependency;
 	const method = getRelationMethod( relation );
 
-	const failingDependencies: DependencyTerm[] = [];
+	const failingDependencies: ( DependencyTerm | Dependency )[] = [];
 	const isMet = terms[ method ]( ( term: ParsedTerm | Dependency ) => {
 		const isNestedDependency = isDependency( term );
 		const result = isNestedDependency
 			? isDependencyMet( term, values ).isMet
-			: evaluateTerm( term, extractValue( term.path, values )?.value );
+			: evaluateTerm( term, extractValue( term.path, values, term.nestedPath )?.value );
 
-		if ( ! result && ! isNestedDependency ) {
+		if ( ! result ) {
 			failingDependencies.push( term );
 		}
 
@@ -109,14 +109,32 @@ function getRelationMethod( relation: Relation ) {
 	}
 }
 
-export function extractValue( path: string[], elementValues: PropValue ): TransformablePropValue< PropKey > | null {
-	return path.reduce( ( acc, key, index ) => {
+export function extractValue(
+	path: string[],
+	elementValues: PropValue,
+	nestedPath: string[] = []
+): TransformablePropValue< PropKey > | null {
+	const extractedValue = path.reduce( ( acc, key, index ) => {
 		const value = acc?.[ key as keyof typeof acc ] as PropValue | null;
 
 		return index !== path.length - 1 && isTransformable( value ) ? value.value ?? null : value;
 	}, elementValues ) as TransformablePropValue< PropKey >;
+
+	if ( ! nestedPath?.length ) {
+		return extractedValue;
+	}
+
+	const nestedValue = nestedPath.reduce(
+		( acc: Record< string, unknown >, key ) => acc?.[ key ] as Record< string, unknown >,
+		extractedValue?.value as Record< string, unknown >
+	);
+
+	return {
+		$$type: 'unknown',
+		value: nestedValue,
+	};
 }
 
 export function isDependency( term: DependencyTerm | Dependency ): term is Dependency {
-	return 'relation' in term;
+	return 'terms' in term;
 }
