@@ -82,6 +82,10 @@ class Variable {
 		return $this->data['type'];
 	}
 
+	public function set_type( $type ) {
+		$this->data['type'] = $type;
+	}
+
 	public function has_order(): int {
 		return isset( $this->data['order'] );
 	}
