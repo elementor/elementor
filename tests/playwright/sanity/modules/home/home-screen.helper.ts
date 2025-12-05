@@ -84,6 +84,11 @@ const replaceImageUrl = (
 	return mockData;
 };
 
+export const navigateToHomeScreen = async ( page: Page ) => {
+	await page.goto( 'wp-admin/admin.php?page=elementor' );
+	return page.locator( '#e-home-screen' );
+};
+
 export const saveHomepageSettings = async ( apiRequests: ApiRequests, requestContext: APIRequestContext ): Promise<HomepageSettings> => {
 	try {
 		const homepageResponse = await apiRequests.customGet( requestContext, 'index.php?rest_route=/wp/v2/options/page_on_front' );
@@ -102,7 +107,7 @@ export const saveHomepageSettings = async ( apiRequests: ApiRequests, requestCon
 };
 
 export const restoreHomepageSettings = async ( apiRequests: ApiRequests, requestContext: APIRequestContext, settings: HomepageSettings ): Promise<void> => {
-	if ( settings.homepageId === null && settings.showOnFront === null ) {
+	if ( null === settings.homepageId && null === settings.showOnFront ) {
 		return;
 	}
 
