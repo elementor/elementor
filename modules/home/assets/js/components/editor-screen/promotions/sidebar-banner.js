@@ -1,6 +1,6 @@
 import { Box, Paper } from '@elementor/ui';
 import Link from '@elementor/ui/Link';
-import { trackPromoClick, getHomeScreenPath } from '../../utils/promo-tracking';
+import { trackPromoClick, getHomeScreenPath } from '../../../utils/promo-tracking';
 
 const SidebarBanner = ( { image, link } ) => {
 	const handleClick = () => {

@@ -2,7 +2,7 @@ import { Box, Paper, Stack, TextField } from '@elementor/ui';
 import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
 import { useState } from 'react';
-import { trackPromoClick, getHomeScreenPath } from '../utils/promo-tracking';
+import { trackPromoClick, getHomeScreenPath } from '../../utils/promo-tracking';
 
 const CreateWithAIBanner = ( { ...props } ) => {
 	const { createWithAIData } = props;
