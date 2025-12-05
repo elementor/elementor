@@ -1,5 +1,6 @@
 import { Container, Box, Stack } from '@elementor/ui';
 
+import HeaderSection from './header-section';
 import TopSection from './top-section';
 import SideBarPromotion from './sidebar-promotion';
 import Addons from './addons-section';
@@ -13,7 +14,8 @@ const EditorScreen = ( props ) => {
 	return (
 		/*  Box wrapper around the Container is needed to neutralize wp-content area left-padding */
 		<Box sx={ { pr: 1 } }>
-			<Container disableGutters={ true } maxWidth="lg" sx={ { display: 'flex', flexDirection: 'column', gap: { xs: 1, md: 2.5 }, pt: { xs: 2, md: 6 }, pb: 2 } }>
+			<Container disableGutters={ true } maxWidth="lg" sx={ { display: 'flex', flexDirection: 'column', gap: 2.5, px: { xs: 1.5, md: 4 } } }>
+				<HeaderSection />
 				{ props.homeScreenData.top_with_licences && <TopSection topData={ props.homeScreenData.top_with_licences } buttonCtaUrl={ props.homeScreenData.button_cta_url } /> }
 				<Box sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 2.5 } }>
 					<Stack sx={ { flex: 1, gap: 2.5 } }>

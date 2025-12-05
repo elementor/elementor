@@ -6,7 +6,7 @@ import ListItemText from '@elementor/ui/ListItemText';
 const ExternalLinksSection = ( { ...props } ) => {
 	return (
 		<Paper elevation={ 0 } sx={ { py: 3, px: { xs: 3, md: 4 }, borderRadius: 1, border: '1px solid rgba(0, 0, 0, 0.12)' } }>
-			<List sx={ { display: 'flex', flexDirection: 'row', rowGap: 2, columnGap: 7.5 } }>
+			<List sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, rowGap: 2, columnGap: 7.5, flexWrap: 'wrap' } }>
 				{
 					props.externalLinksData.map( ( item ) => {
 						return (
