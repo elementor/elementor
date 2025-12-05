@@ -54,14 +54,14 @@ const PanelTabContent = () => {
 					</Tabs>
 					<Divider />
 				</Stack>
-				<TabPanel { ...getTabPanelProps( 'settings' ) } disablePadding>
+				<TabPanel sx={ { fontSize: '11px' } } { ...getTabPanelProps( 'settings' ) } disablePadding>
 					<SettingsTab />
 				</TabPanel>
-				<TabPanel { ...getTabPanelProps( 'style' ) } disablePadding>
+				<TabPanel sx={ { fontSize: '11px' } } { ...getTabPanelProps( 'style' ) } disablePadding>
 					<StyleTab />
 				</TabPanel>
 				{ isInteractionsActive && (
-					<TabPanel { ...getTabPanelProps( 'interactions' ) } disablePadding>
+					<TabPanel sx={ { fontSize: '11px' } } { ...getTabPanelProps( 'interactions' ) } disablePadding>
 						<InteractionsTab />
 					</TabPanel>
 				) }

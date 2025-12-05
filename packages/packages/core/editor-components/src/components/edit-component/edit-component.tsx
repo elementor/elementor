@@ -81,7 +81,7 @@ function getUpdatedComponentPath( path: ComponentsPathItem[], nextDocument: V1Do
 	];
 }
 
-function useNavigateBack( path: ComponentsPathItem[] ) {
+export function useNavigateBack( path: ComponentsPathItem[] ) {
 	const documentsManager = getV1DocumentsManager();
 
 	return useCallback( () => {
@@ -107,7 +107,7 @@ function useNavigateBack( path: ComponentsPathItem[] ) {
 	}, [ path, documentsManager ] );
 }
 
-function useCurrentComponent() {
+export function useCurrentComponent() {
 	const path = useSelector( selectPath );
 	const currentComponentId = useSelector( selectCurrentComponentId );
 
