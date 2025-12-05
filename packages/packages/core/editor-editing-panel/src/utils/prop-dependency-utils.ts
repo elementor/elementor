@@ -33,8 +33,8 @@ export function getUpdatedValues(
 	return dependencies.reduce(
 		( newValues, dependency ) => {
 			const path = dependency.split( '.' );
-			const propType = getPropType( propsSchema, elementValues, path );
 			const combinedValues = { ...elementValues, ...newValues };
+			const propType = getPropType( propsSchema, combinedValues, path );
 
 			if ( ! propType ) {
 				return newValues;
