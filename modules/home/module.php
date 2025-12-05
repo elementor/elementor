@@ -34,6 +34,7 @@ class Module extends BaseApp {
 		}, 10, 2 );
 
 		add_filter( 'elementor/document/urls/edit', [ $this, 'add_active_document_to_edit_link' ] );
+		add_filter( 'elementor/admin/homescreen_promotion_tier', [ $this, 'filter_homescreen_promotion_tier' ] );
 	}
 
 	public function enqueue_home_screen_scripts(): void {
@@ -122,6 +123,14 @@ class Module extends BaseApp {
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_home_screen_data',
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'home-screen',
 		];
+	}
+
+	public function filter_homescreen_promotion_tier( $tier ): string {
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
+			return 'one';
+		}
+
+		return $tier;
 	}
 
 	public static function get_elementor_settings_page_id(): string {
