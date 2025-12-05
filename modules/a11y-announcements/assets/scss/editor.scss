@@ -1,29 +1,41 @@
 .e-a11y-announcement {
-	&__title {
+	&__header-logo {
+		font-size: 26px;
+	}
+
+	&__header-title {
+		font-size: 15px;
+		border-radius: 0;
 		text-transform: uppercase;
 	}
 
-	&__video-wrapper {
+	&__content {
+		padding: 0;
+	}
+
+	&__content-video {
 		aspect-ratio: 16/9;
 		width: 100%;
-		margin-block-end: 16px;
 	}
 
-	&__iframe {
+	&__content-video-iframe {
 		width: 100%;
 		height: 100%;
-		border-radius: 4px;
 	}
 
-	&__content-wrapper {
-		margin-block-start: 25px;
+	&__content-text {
+		padding: 50px 36px 36px;
 	}
 
-	&__cta-button {
+	&__buttons-learn-more,
+	&__buttons-learn-more:hover,
+	&__buttons-learn-more:focus {
+		color: #524CFF;
+	}
+
+	&__buttons-cta,
+	&__buttons-cta:hover,
+	&__buttons-cta:focus {
 		background-color: #524CFF;
-
-		&:hover {
-			background-color: #524CFF;
-		}
 	}
 }

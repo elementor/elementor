@@ -13,7 +13,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 
 const ElementorLogo = () => (
-	<i className="eicon-elementor-square" aria-hidden="true" />
+	<i className="eicon-elementor-square e-a11y-announcement__header-logo" aria-hidden="true" />
 );
 
 const i18n = {
@@ -55,14 +55,14 @@ export const WelcomeDialog = ( { doClose } ) => {
 			maxWidth="sm"
 			className="e-a11y-announcement"
 		>
-			<DialogHeader onClose={ doClose } logo={ <ElementorLogo /> }>
-				<DialogTitle className="e-a11y-announcement__title">{ i18n.title }</DialogTitle>
+			<DialogHeader className="e-a11y-announcement__header" onClose={ doClose } logo={ <ElementorLogo /> }>
+				<DialogTitle className="e-a11y-announcement__header-title">{ i18n.title }</DialogTitle>
 			</DialogHeader>
 
-			<DialogContent dividers>
-				<Box className="e-a11y-announcement__video-wrapper">
+			<DialogContent className="e-a11y-announcement__content">
+				<Box className="e-a11y-announcement__content-video">
 					<iframe
-						className="e-a11y-announcement__iframe"
+						className="e-a11y-announcement__content-video-iframe"
 						src={ data.videoUrl || 'https://www.youtube.com/embed/uj9TDcpC91I?start=1&loop=1&playlist=uj9TDcpC91I' }
 						title={ i18n.title }
 						frameBorder="0"
@@ -70,7 +70,7 @@ export const WelcomeDialog = ( { doClose } ) => {
 						allowFullScreen
 					/>
 				</Box>
-				<Box className="e-a11y-announcement__content-wrapper">
+				<Box className="e-a11y-announcement__content-text">
 					<Typography variant="h6" color="text.primary">
 						{ i18n.bodyTitle }
 					</Typography>
@@ -84,13 +84,14 @@ export const WelcomeDialog = ( { doClose } ) => {
 				<Button
 					variant="text"
 					onClick={ handleLearnMoreClick }
+					className="e-a11y-announcement__buttons-learn-more"
 				>
 					{ data.learnMoreText || __( 'Learn more', 'elementor' ) }
 				</Button>
 				<Button
 					variant="contained"
 					onClick={ handleCtaClick }
-					className="e-a11y-announcement__cta-button"
+					className="e-a11y-announcement__buttons-cta"
 				>
 					{ data.ctaText || __( 'Install Plugin', 'elementor' ) }
 				</Button>

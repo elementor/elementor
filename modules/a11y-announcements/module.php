@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	const MODULE_NAME = 'a11y-announcements';
-	const ANNOUNCEMENT_DISPLAYED_OPTION = '_e_a11y_announcement_displayed';
+	const ANNOUNCEMENT_DISPLAYED_OPTION = 'a11y-get-started-announcement';
 
 	public function get_name() {
 		return 'a11y-announcements';
