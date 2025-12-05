@@ -44,6 +44,13 @@ class Module extends BaseApp {
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
+		wp_enqueue_style(
+			'e-home-screen',
+			$this->get_css_assets_url( 'modules/home/e-home-screen' ),
+			[],
+			ELEMENTOR_VERSION
+		);
+
 		wp_enqueue_script(
 			'e-home-screen',
 			ELEMENTOR_ASSETS_URL . 'js/e-home-screen' . $min_suffix . '.js',
@@ -63,17 +70,6 @@ class Module extends BaseApp {
 			'e-home-screen',
 			'elementorHomeScreenData',
 			$this->get_app_js_config()
-		);
-
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
-			return;
-		}
-
-		wp_enqueue_style(
-			'e-home-screen',
-			$this->get_css_assets_url( 'modules/home/e-home-screen' ),
-			[],
-			ELEMENTOR_VERSION
 		);
 	}
 
