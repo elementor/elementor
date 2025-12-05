@@ -2,7 +2,7 @@ import { Paper } from '@elementor/ui';
 import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
 
-const HeaderSection = () => {
+const HeaderSection = ( { editWebsiteUrl } ) => {
 	return (
 		<Paper
 			elevation={ 0 }
@@ -20,11 +20,17 @@ const HeaderSection = () => {
 				variant="contained"
 				size="medium"
 				color="primary"
+				href={ editWebsiteUrl }
+				target="_blank"
 			>
 				Edit Website
 			</Button>
 		</Paper>
 	);
+};
+
+HeaderSection.propTypes = {
+	editWebsiteUrl: PropTypes.string.isRequired,
 };
 
 export default HeaderSection;
