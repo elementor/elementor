@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { htmlPropTypeUtil } from '@elementor/editor-props';
+import { Box } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
 import { InlineEditor } from '../components/inline-editor';
@@ -12,7 +13,31 @@ export const InlineEditingControl = createControl( () => {
 
 	return (
 		<ControlActions>
-			<InlineEditor value={ value || '' } setValue={ handleChange } />
+			<Box
+				sx={ {
+					p: 0.8,
+					border: '1px solid',
+					borderColor: 'grey.200',
+					borderRadius: '8px',
+					transition: 'border-color .2s ease, box-shadow .2s ease',
+					'&:hover': {
+						borderColor: 'black',
+					},
+					'&:focus-within': {
+						borderColor: 'black',
+						boxShadow: '0 0 0 1px black',
+					},
+					'& .ProseMirror:focus': {
+						outline: 'none',
+					},
+					'& .ProseMirror': {
+						minHeight: '70px',
+						fontSize: '12px',
+					},
+				} }
+			>
+				<InlineEditor value={ value || '' } setValue={ handleChange } />
+			</Box>
 		</ControlActions>
 	);
 } );

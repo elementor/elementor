@@ -1,3 +1,4 @@
+import { type V1Element } from '@elementor/editor-elements';
 import { type Props } from '@elementor/editor-props';
 
 export type LegacyWindow = Window & {
@@ -34,7 +35,10 @@ export declare class ElementType {
 }
 
 export declare class ElementView {
+	container: V1Element;
+
 	$el: JQueryElement;
+	el: HTMLElement;
 
 	model: BackboneModel< ElementModel >;
 
@@ -101,6 +105,9 @@ type JQueryElement = {
 	find: ( selector: string ) => JQueryElement;
 	html: ( html: string ) => void;
 	get: ( index: number ) => HTMLElement;
+	attr: ( name: string ) => string;
+	on: ( event: string, childrenSelectors: string, handler: ( event: Event ) => void ) => void;
+	off: ( event: string, childrenSelectors: string, handler?: ( event: Event ) => void ) => void;
 };
 
 export type BackboneModel< Model extends object > = {

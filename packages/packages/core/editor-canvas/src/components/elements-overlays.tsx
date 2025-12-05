@@ -3,14 +3,11 @@ import { getElements, useSelectedElement } from '@elementor/editor-elements';
 import {
 	__privateUseIsRouteActive as useIsRouteActive,
 	__privateUseListenTo as useListenTo,
-	isExperimentActive,
 	useEditMode,
 	windowEvent,
 } from '@elementor/editor-v1-adapters';
 
 import type { ElementOverlayConfig } from '../types/element-overlay';
-import { hasInlineEditableProperty } from '../utils/inline-editing-utils';
-import { InlineEditorOverlay } from './inline-editor-overlay';
 import { OutlineOverlay } from './outline-overlay';
 
 const ELEMENTS_DATA_ATTR = 'atomic';
@@ -19,11 +16,6 @@ const overlayRegistry: ElementOverlayConfig[] = [
 	{
 		component: OutlineOverlay,
 		shouldRender: () => true,
-	},
-	{
-		component: InlineEditorOverlay,
-		shouldRender: ( { id, isSelected } ) =>
-			isSelected && hasInlineEditableProperty( id ) && isExperimentActive( 'v4-inline-text-editing' ),
 	},
 ];
 
