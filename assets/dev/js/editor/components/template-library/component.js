@@ -119,6 +119,30 @@ export default class Component extends ComponentModalBase {
 		$e.routes.saveState( 'library' );
 
 		super.activateTab( tab );
+
+		// Update ARIA attributes for accessibility
+		const $tabsWrapper = jQuery( this.getTabsWrapperSelector() );
+		const $tabs = $tabsWrapper.find( '[role="tab"]' );
+		const $activeTab = $tabs.filter( '[data-tab="' + tab + '"]' );
+
+		const $templatesContainer = this.manager?.layout?.modalContent?.currentView?.$childViewContainer;
+
+		$tabs.attr( {
+			'aria-selected': 'false',
+			tabindex: '-1',
+		} );
+
+		$activeTab.attr( {
+			'aria-selected': 'true',
+			tabindex: '0',
+		} );
+
+		if ( $templatesContainer?.length ) {
+			$templatesContainer.attr( {
+				role: 'tabpanel',
+				'aria-labelledby': 'tab-' + tab,
+			} );
+		}
 	}
 
 	open() {
