@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Styles\CacheValidity;
+namespace Elementor\Modules\AtomicWidgets\CacheValidity;
 
 use Elementor\Utils;
 

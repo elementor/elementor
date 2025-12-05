@@ -5,7 +5,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets\TemplateRenderer;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
-use Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer\Template_Renderer;
+use Elementor\Modules\AtomicWidgets\TemplateRenderer\Template_Renderer;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
 

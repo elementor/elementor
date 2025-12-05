@@ -2,8 +2,8 @@
 
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
-use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
-use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity_Item;
+use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity_Item;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {

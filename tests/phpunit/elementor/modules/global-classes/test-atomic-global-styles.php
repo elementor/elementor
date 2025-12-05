@@ -3,7 +3,7 @@
 namespace Elementor\Testing\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Atomic_Global_Styles;
