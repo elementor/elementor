@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer;
+namespace Elementor\Modules\AtomicWidgets\TemplateRenderer;
 
 use ElementorDeps\Twig\Error\LoaderError;
 use ElementorDeps\Twig\Loader\LoaderInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Controls\Base;
+namespace Elementor\Modules\AtomicWidgets\Base;
 
 use JsonSerializable;
 

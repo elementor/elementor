@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements;
 
-use Elementor\Modules\AtomicWidgets\Elements\TemplateRenderer\Template_Renderer;
+use Elementor\Modules\AtomicWidgets\TemplateRenderer\Template_Renderer;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
