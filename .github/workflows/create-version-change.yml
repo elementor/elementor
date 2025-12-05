@@ -104,7 +104,7 @@ jobs:
       - name: Run create-version-change script
         id: run-script
         run: |
-          node scripts/create-version-change.js ${{ steps.build-args.outputs.args }}
+          node scripts/create-version-change.js --ci ${{ steps.build-args.outputs.args }}
 
       - name: Check for changes and commit
         if: github.event.inputs.dry_run != 'true' && github.event.inputs.skip_branches != 'true'

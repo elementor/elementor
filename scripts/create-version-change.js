@@ -87,6 +87,7 @@ Arguments:
 Options:
   -d, --dry-run             Show what would be done without making changes
   -s, --skip-branches       Skip branch creation, only update version files
+  --ci                      CI mode: use all default values, no prompts
   -h, --help                Show this help message
 
 Examples:
@@ -94,6 +95,7 @@ Examples:
   node scripts/create-version-change.js 3.20.0            # Set version 3.20.0
   node scripts/create-version-change.js 3.20.0 --dry-run  # Dry run with version 3.20.0
   node scripts/create-version-change.js 3.20.0 -s         # Update versions only, no branches
+  node scripts/create-version-change.js --ci               # CI mode with default version
 `);
   process.exit(0);
 }
@@ -122,32 +124,39 @@ async function main() {
 
     // Get command line arguments (skip help flag)
     const args = allArgs.filter(arg => !['--help', '-h'].includes(arg));
-    let nextVersion = args[0];
+    const isCI = allArgs.includes('--ci');
+    const argsWithoutCI = args.filter(arg => arg !== '--ci');
+    
+    let nextVersion = argsWithoutCI[0];
     let dryRun = false;
     let skipBranches = false;
 
     // Parse command line arguments
-    for (let i = 1; i < args.length; i++) {
-      if (args[i] === '--dry-run' || args[i] === '-d') {
+    for (let i = 1; i < argsWithoutCI.length; i++) {
+      if (argsWithoutCI[i] === '--dry-run' || argsWithoutCI[i] === '-d') {
         dryRun = true;
-      } else if (args[i] === '--skip-branches' || args[i] === '-s') {
+      } else if (argsWithoutCI[i] === '--skip-branches' || argsWithoutCI[i] === '-s') {
         skipBranches = true;
       }
     }
 
     // Accept next version as input (default: next minor version)
     if (!nextVersion) {
-      nextVersion = await prompt('Enter next version for main (new dev version)', defaultNextVersion);
+      if (isCI) {
+        nextVersion = defaultNextVersion;
+      } else {
+        nextVersion = await prompt('Enter next version for main (new dev version)', defaultNextVersion);
+      }
     }
 
     // Accept dry-run as argument or prompt if not already set
-    if (!dryRun && args.length <= 1) {
+    if (!dryRun && !isCI && argsWithoutCI.length <= 1) {
       const dryRunInput = await prompt('Dry run? (y/N)', 'N');
       dryRun = /^[Yy]$/.test(dryRunInput);
     }
 
     // Accept skip-branches as prompt if not already set
-    if (!skipBranches && args.length <= 1) {
+    if (!skipBranches && !isCI && argsWithoutCI.length <= 1) {
       const skipBranchesInput = await prompt('Skip branch creation? (y/N)', 'N');
       skipBranches = /^[Yy]$/.test(skipBranchesInput);
     }
