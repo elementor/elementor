@@ -23,7 +23,7 @@ const App = ( props ) => {
 const isRTL = elementorCommon.config.isRTL,
 	adminUrl = elementorAppConfig.admin_url,
 	rootElement = document.querySelector( '#e-home-screen' ),
-	isEditorOneActive = Boolean( elementorCommon?.config?.experimentalFeatures?.e_editor_one );
+	isEditorOneActive = elementorCommon?.config?.experimentalFeatures?.e_editor_one;
 
 App.propTypes = {
 	isRTL: PropTypes.bool,
