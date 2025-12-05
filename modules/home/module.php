@@ -4,6 +4,7 @@ namespace Elementor\Modules\Home;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Settings;
 use Elementor\Plugin;
@@ -107,10 +108,7 @@ class Module extends BaseApp {
 		$editor_assets_api = new EditorAssetsAPI( $this->get_api_config() );
 		$api = new API( $editor_assets_api );
 
-		$config = $api->get_home_screen_items();
-		$config['isEditorOneActive'] = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
-
-		return $config;
+		return $api->get_home_screen_items();
 	}
 
 	private function get_api_config(): array {
