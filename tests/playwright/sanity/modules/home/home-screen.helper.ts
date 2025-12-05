@@ -4,6 +4,11 @@ import homeScreenMockData from './data/home-screen.mock';
 import ApiRequests from '../../../assets/api-requests';
 import { Image } from '../../../types/types';
 
+export interface HomepageSettings {
+	homepageId: number | null;
+	showOnFront: string | null;
+}
+
 export type LicenseType = 'free' | 'pro' | 'one';
 
 export const transformMockDataByLicense = ( licenseType: LicenseType ) => {
@@ -77,4 +82,42 @@ const replaceImageUrl = (
 	}
 
 	return mockData;
+};
+
+export const saveHomepageSettings = async ( apiRequests: ApiRequests, requestContext: APIRequestContext ): Promise<HomepageSettings> => {
+	try {
+		const homepageResponse = await apiRequests.customGet( requestContext, 'index.php?rest_route=/wp/v2/options/page_on_front' );
+		const showOnFrontResponse = await apiRequests.customGet( requestContext, 'index.php?rest_route=/wp/v2/options/show_on_front' );
+
+		return {
+			homepageId: homepageResponse?.value || null,
+			showOnFront: showOnFrontResponse?.value || null,
+		};
+	} catch ( error ) {
+		return {
+			homepageId: null,
+			showOnFront: null,
+		};
+	}
+};
+
+export const restoreHomepageSettings = async ( apiRequests: ApiRequests, requestContext: APIRequestContext, settings: HomepageSettings ): Promise<void> => {
+	if ( settings.homepageId === null && settings.showOnFront === null ) {
+		return;
+	}
+
+	try {
+		if ( settings.homepageId !== null ) {
+			await apiRequests.customPut( requestContext, 'index.php?rest_route=/wp/v2/options/page_on_front', { value: settings.homepageId } );
+		}
+		if ( settings.showOnFront !== null ) {
+			await apiRequests.customPut( requestContext, 'index.php?rest_route=/wp/v2/options/show_on_front', { value: settings.showOnFront } );
+		}
+	} catch ( error ) {
+	}
+};
+
+export const setHomepage = async ( apiRequests: ApiRequests, requestContext: APIRequestContext, pageId: number ): Promise<void> => {
+	await apiRequests.customPut( requestContext, 'index.php?rest_route=/wp/v2/options/page_on_front', { value: pageId } );
+	await apiRequests.customPut( requestContext, 'index.php?rest_route=/wp/v2/options/show_on_front', { value: 'page' } );
 };
