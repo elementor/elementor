@@ -4,8 +4,9 @@ import { type PropValue } from '@elementor/editor-props';
 
 import { useBoundProp } from './bound-prop-context';
 
+type ControlComponent = ComponentType< object & { OriginalControl: ComponentType } >;
 type ControlReplacement = {
-	component: ComponentType;
+	component: ControlComponent;
 	condition: ( { value }: ConditionArgs ) => boolean;
 };
 
@@ -22,16 +23,20 @@ export const ControlReplacementsProvider = ( { replacements, children }: Props )
 	return <ControlReplacementContext.Provider value={ replacements }>{ children }</ControlReplacementContext.Provider>;
 };
 
-export const useControlReplacement = ( OriginalComponent: ComponentType ) => {
+export const useControlReplacement = ( OriginalComponent: ControlComponent ) => {
 	const { value, placeholder } = useBoundProp();
 	const replacements = useContext( ControlReplacementContext );
 
 	try {
 		const replacement = replacements.find( ( r ) => r.condition( { value, placeholder } ) );
 
-		return replacement?.component ?? OriginalComponent;
+		return {
+			ControlToRender: replacement?.component ?? OriginalComponent,
+			OriginalControl: OriginalComponent,
+			isReplaced: !! replacement,
+		};
 	} catch {
-		return OriginalComponent;
+		return { ControlToRender: OriginalComponent, OriginalControl: OriginalComponent };
 	}
 };
 

@@ -11,13 +11,14 @@ export { useFontFamilies } from './components/style-sections/typography-section/
 export { injectIntoStyleTab } from './components/style-tab';
 export { StyleTabSection } from './components/style-tab-section';
 export { useClassesProp } from './contexts/classes-prop-context';
-export { useElement } from './contexts/element-context';
+export { ElementProvider, useElement } from './contexts/element-context';
 export { useSectionWidth } from './contexts/section-context';
 export { useStyle } from './contexts/style-context';
 export { registerControlReplacement } from './control-replacement';
 export { controlActionsMenu } from './controls-actions';
 export { controlsRegistry } from './controls-registry/controls-registry';
 export { StylesProviderCannotUpdatePropsError } from './errors';
+export { createTopLevelObjectType } from './controls-registry/create-top-level-object-type';
 export { useCustomCss } from './hooks/use-custom-css';
 export { getSubtitle, getTitle, HISTORY_DEBOUNCE_WAIT } from './hooks/use-styles-fields';
 export { useStylesRerender } from './hooks/use-styles-rerender';
