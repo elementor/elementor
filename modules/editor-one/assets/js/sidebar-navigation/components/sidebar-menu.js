@@ -25,7 +25,7 @@ const SidebarMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug
 	};
 
 	return (
-		<List sx={ { px: 2, py: 2 } }>
+		<List sx={ { px: 2, py: 1 } }>
 			{ menuItems.map( ( item ) => (
 				<SidebarMenuItem
 					key={ item.slug }

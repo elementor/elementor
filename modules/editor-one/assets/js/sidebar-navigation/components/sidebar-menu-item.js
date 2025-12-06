@@ -49,10 +49,14 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 					selected={ isActive && ! hasChildren }
 					sx={ {
 						borderRadius: 1,
-						mb: 0.5,
+						mb: 1,
+						py: 0.5,
+						pl: 1.5,
+						pr: 1,
+						minHeight: 32,
 					} }
 				>
-					<ListItemIcon sx={ { minWidth: 36 } }>
+					<ListItemIcon sx={ { minWidth: 28 } }>
 						<IconComponent sx={ { fontSize: 20 } } />
 					</ListItemIcon>
 					<ListItemText
@@ -83,8 +87,10 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 									selected={ childItem.slug === activeChildSlug }
 									sx={ {
 										borderRadius: 1,
-										pl: 5.5,
-										mb: 0.5,
+										pl: 5,
+										pr: 2,
+										py: 0.5,
+										minHeight: 32,
 									} }
 								>
 									<ListItemText

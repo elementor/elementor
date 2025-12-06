@@ -5,6 +5,10 @@ import WebsiteIcon from '@elementor/icons/WebsiteIcon';
 import PropTypes from 'prop-types';
 
 const SidebarHeader = ( { siteTitle, onCollapse } ) => {
+	const finderAction = () => {
+		$e.route( 'finder' );
+	};
+
 	return (
 		<Box
 			sx={ {
@@ -49,7 +53,9 @@ const SidebarHeader = ( { siteTitle, onCollapse } ) => {
 				>
 					{ siteTitle }
 				</Typography>
-				<SearchIcon sx={ { fontSize: 20, color: 'text.secondary' } } />
+				<IconButton onClick={ finderAction } sx={ { fontSize: 20, color: 'text.secondary' } }>
+					<SearchIcon />
+				</IconButton>
 			</Box>
 			<IconButton
 				size="small"
