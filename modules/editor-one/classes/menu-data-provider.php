@@ -243,4 +243,3 @@ class Menu_Data_Provider {
 		$this->cached_level4_flyout_data = null;
 	}
 }
-
