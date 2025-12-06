@@ -6,6 +6,7 @@ namespace Elementor\Modules\EditorOne;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\EditorOne\Components\Admin_Menu_Handler;
+use Elementor\Modules\EditorOne\Components\Sidebar_Navigation_Handler;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -35,6 +36,7 @@ class Module extends BaseModule {
 
 		if ( is_admin() ) {
 			$this->add_component( 'admin-menu-handler', new Admin_Menu_Handler() );
+			$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
 		}
 	}
 }

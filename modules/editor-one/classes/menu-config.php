@@ -25,6 +25,7 @@ class Menu_Config {
 			'slug' => 'elementor-home',
 			'label' => esc_html__( 'Home', 'elementor' ),
 			'url' => admin_url( 'admin.php?page=elementor' ),
+			'icon' => 'home',
 			'group_id' => '',
 			'priority' => 10,
 		];
@@ -33,6 +34,7 @@ class Menu_Config {
 			'slug' => 'elementor-settings',
 			'label' => esc_html__( 'Settings', 'elementor' ),
 			'url' => admin_url( 'admin.php?page=elementor-settings' ),
+			'icon' => 'settings',
 			'group_id' => '',
 			'priority' => 20,
 		];
@@ -41,6 +43,7 @@ class Menu_Config {
 			'slug' => 'elementor-tools',
 			'label' => esc_html__( 'Tools', 'elementor' ),
 			'url' => admin_url( 'admin.php?page=elementor-tools' ),
+			'icon' => 'tool',
 			'group_id' => '',
 			'priority' => 30,
 		];
@@ -49,6 +52,7 @@ class Menu_Config {
 			'slug' => 'elementor-role-manager',
 			'label' => esc_html__( 'Role Manager', 'elementor' ),
 			'url' => admin_url( 'admin.php?page=elementor-role-manager' ),
+			'icon' => 'users',
 			'group_id' => '',
 			'priority' => 40,
 		];
@@ -57,6 +61,7 @@ class Menu_Config {
 			'slug' => 'e-form-submissions',
 			'label' => esc_html__( 'Submissions', 'elementor' ),
 			'url' => admin_url( 'admin.php?page=e-form-submissions' ),
+			'icon' => 'send',
 			'group_id' => '',
 			'priority' => 50,
 		];
@@ -65,6 +70,7 @@ class Menu_Config {
 			'slug' => 'elementor-templates',
 			'label' => esc_html__( 'Templates', 'elementor' ),
 			'url' => admin_url( 'edit.php?post_type=elementor_library&tabs_group=library' ),
+			'icon' => 'folder',
 			'group_id' => self::TEMPLATES_GROUP_ID,
 			'priority' => 60,
 		];
@@ -73,6 +79,7 @@ class Menu_Config {
 			'slug' => 'elementor-custom-elements',
 			'label' => esc_html__( 'Custom Elements', 'elementor' ),
 			'url' => admin_url( 'admin.php?page=elementor_custom_fonts' ),
+			'icon' => 'adjustments',
 			'group_id' => self::CUSTOM_ELEMENTS_GROUP_ID,
 			'priority' => 70,
 		];
@@ -81,6 +88,7 @@ class Menu_Config {
 			'slug' => 'elementor-system',
 			'label' => esc_html__( 'System', 'elementor' ),
 			'url' => admin_url( 'admin.php?page=elementor-system-info' ),
+			'icon' => 'info-circle',
 			'group_id' => self::SYSTEM_GROUP_ID,
 			'priority' => 80,
 		];

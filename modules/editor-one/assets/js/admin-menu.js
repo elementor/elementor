@@ -18,8 +18,16 @@ import { FlyoutMenuRenderer } from './classes/flyout-menu-renderer.js';
 		}
 
 		init() {
+			if ( this.isSidebarNavigationActive() ) {
+				return;
+			}
+
 			this.buildFlyoutMenus();
 			this.setupMobileSupport();
+		}
+
+		isSidebarNavigationActive() {
+			return document.body.classList.contains( 'e-has-sidebar-navigation' );
 		}
 
 		buildFlyoutMenus() {

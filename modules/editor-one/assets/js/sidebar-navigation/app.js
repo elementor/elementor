@@ -1,0 +1,29 @@
+import ReactUtils from 'elementor-utils/react';
+import { DirectionProvider, LocalizationProvider, ThemeProvider } from '@elementor/ui';
+import SidebarNavigation from './components/index';
+
+const App = ( { config } ) => {
+	return (
+		<DirectionProvider rtl={ config.isRTL }>
+			<LocalizationProvider>
+				<ThemeProvider colorScheme="light">
+					<SidebarNavigation config={ config } />
+				</ThemeProvider>
+			</LocalizationProvider>
+		</DirectionProvider>
+	);
+};
+
+App.propTypes = {
+	config: PropTypes.object.isRequired,
+};
+
+const rootElement = document.getElementById( 'e-editor-sidebar-navigation' );
+
+if ( rootElement && window.elementorSidebarConfig ) {
+	ReactUtils.render(
+		<App config={ window.elementorSidebarConfig } />,
+		rootElement,
+	);
+}
+
