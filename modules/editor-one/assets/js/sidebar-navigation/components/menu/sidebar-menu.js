@@ -1,8 +1,8 @@
-import { List } from '@elementor/ui';
 import { useMemo } from '@wordpress/element';
-import MenuActiveStateResolver from '../classes/menu-active-state-resolver';
 import PropTypes from 'prop-types';
+import MenuActiveStateResolver from '../../classes/menu-active-state-resolver';
 import SidebarMenuItem from './sidebar-menu-item';
+import { MenuList } from './styled-components';
 
 const SidebarMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug } ) => {
 	const activeStateResolver = useMemo(
@@ -25,7 +25,7 @@ const SidebarMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug
 	};
 
 	return (
-		<List sx={ { px: 2, py: 1 } }>
+		<MenuList>
 			{ menuItems.map( ( item ) => (
 				<SidebarMenuItem
 					key={ item.slug }
@@ -35,7 +35,7 @@ const SidebarMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug
 					activeChildSlug={ activeChildSlug }
 				/>
 			) ) }
-		</List>
+		</MenuList>
 	);
 };
 

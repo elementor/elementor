@@ -1,6 +1,6 @@
-import { Box, Button } from '@elementor/ui';
 import CrownIcon from '@elementor/icons/CrownIcon';
 import PropTypes from 'prop-types';
+import { CtaButton, CtaContainer } from './styled-components';
 
 const SidebarUpgradeCta = ( { upgradeUrl, upgradeText, hasPro } ) => {
 	const isPro = true === hasPro || '1' === hasPro || 'true' === hasPro;
@@ -14,20 +14,11 @@ const SidebarUpgradeCta = ( { upgradeUrl, upgradeText, hasPro } ) => {
 	};
 
 	return (
-		<Box sx={ { p: 2 } }>
-			<Button
-				variant="outlined"
-				color="promotion"
-				fullWidth
-				startIcon={ <CrownIcon /> }
-				onClick={ handleUpgradeClick }
-				sx={ {
-					justifyContent: 'center',
-				} }
-			>
+		<CtaContainer>
+			<CtaButton startIcon={ <CrownIcon /> } onClick={ handleUpgradeClick }>
 				{ upgradeText }
-			</Button>
-		</Box>
+			</CtaButton>
+		</CtaContainer>
 	);
 };
 

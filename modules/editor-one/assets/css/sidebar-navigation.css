@@ -73,10 +73,6 @@
 	}
 }
 
-.e-has-sidebar-navigation #adminmenu .wp-submenu {
-	display: none !important;
-}
-
 .e-has-sidebar-navigation #adminmenu li.wp-has-current-submenu a.wp-has-current-submenu::after,
 .e-has-sidebar-navigation #adminmenu li.wp-has-submenu.wp-not-current-submenu:hover > a::after {
 	display: none !important;

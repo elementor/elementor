@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from '@wordpress/element';
-import { Box } from '@elementor/ui';
-import MenuActiveStateResolver from '../classes/menu-active-state-resolver';
 import PropTypes from 'prop-types';
+import MenuActiveStateResolver from '../../classes/menu-active-state-resolver';
 import SidebarCollapsedMenuItem from './sidebar-collapsed-menu-item';
+import { CollapsedMenuContainer } from './styled-components';
 
 const SidebarCollapsedMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug } ) => {
 	const [ openPopoverSlug, setOpenPopoverSlug ] = useState( null );
@@ -35,7 +35,7 @@ const SidebarCollapsedMenu = ( { menuItems, level4Groups, activeMenuSlug, active
 	}, [] );
 
 	return (
-		<Box sx={ { px: 1, py: 2 } } onMouseLeave={ handleClosePopover }>
+		<CollapsedMenuContainer onMouseLeave={ handleClosePopover }>
 			{ menuItems.map( ( item ) => (
 				<SidebarCollapsedMenuItem
 					key={ item.slug }
@@ -48,7 +48,7 @@ const SidebarCollapsedMenu = ( { menuItems, level4Groups, activeMenuSlug, active
 					onClosePopover={ handleClosePopover }
 				/>
 			) ) }
-		</Box>
+		</CollapsedMenuContainer>
 	);
 };
 
