@@ -99,7 +99,10 @@ class Module extends BaseApp {
 		$editor_assets_api = new EditorAssetsAPI( $this->get_api_config() );
 		$api = new API( $editor_assets_api );
 
-		return $api->get_home_screen_items();
+		$config = $api->get_home_screen_items();
+		$config['isEditorOneActive'] = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
+
+		return $config;
 	}
 
 	private function get_api_config(): array {
