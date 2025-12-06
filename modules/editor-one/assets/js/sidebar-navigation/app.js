@@ -1,6 +1,7 @@
 import ReactUtils from 'elementor-utils/react';
 import { DirectionProvider, LocalizationProvider, ThemeProvider } from '@elementor/ui';
 import SidebarNavigation from './components/index';
+import PropTypes from 'prop-types';
 
 const App = ( { config } ) => {
 	return (

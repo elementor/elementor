@@ -214,8 +214,8 @@ class Sidebar_Navigation_Handler {
 
 	private function get_current_url(): string {
 		$protocol = is_ssl() ? 'https://' : 'http://';
-		$host = isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
-		$uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+		$host = filter_var( $_SERVER['HTTP_HOST'] ?? '', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		$uri = filter_var( $_SERVER['REQUEST_URI'] ?? '', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 
 		return $protocol . $host . $uri;
 	}
