@@ -49,30 +49,17 @@ export const ComponentPanelHeader = () => {
 				justifyContent="space-between"
 				sx={ { height: 44, pl: 1.5, pr: 2, py: 1 } }
 			>
-				<Stack direction="row" alignItems="center" gap={ 1 }>
+				<Stack direction="row" alignItems="center" gap={ 0.5 }>
+					<Tooltip title={ __( 'Back', 'elementor' ) }>
+						<IconButton size="tiny" onClick={ onBack } aria-label={ __( 'Back', 'elementor' ) }>
+							<ArrowLeftIcon />
+						</IconButton>
+					</Tooltip>
 					<Stack direction="row" alignItems="center" gap={ 0.5 }>
-						<Tooltip title={ __( 'Back', 'elementor' ) }>
-							<IconButton size="tiny" onClick={ onBack } aria-label={ __( 'Back', 'elementor' ) }>
-								<ArrowLeftIcon fontSize="tiny" />
-							</IconButton>
-						</Tooltip>
-						<Stack direction="row" alignItems="center" gap={ 0.5 }>
-							<ComponentsIcon sx={ { fontSize: 12, color: 'text.primary' } } />
-							<Typography
-								variant="caption"
-								fontWeight={ 500 }
-								sx={ {
-									maxWidth: 100,
-									overflow: 'hidden',
-									textOverflow: 'ellipsis',
-									whiteSpace: 'nowrap',
-									color: 'text.primary',
-									letterSpacing: '0.1px',
-								} }
-							>
-								{ componentName }
-							</Typography>
-						</Stack>
+						<ComponentsIcon color="secondary" fontSize="tiny" />
+						<Typography variant="caption" sx={ { fontWeight: 500 } }>
+							{ componentName }
+						</Typography>
 					</Stack>
 				</Stack>
 				<Badge
@@ -86,6 +73,8 @@ export const ComponentPanelHeader = () => {
 							minWidth: 16,
 							height: 16,
 							minHeight: 16,
+							maxWidth: 16,
+							fontSize: 10,
 						},
 					} }
 				>
