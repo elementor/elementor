@@ -102,6 +102,9 @@ export const InlineEditor = React.forwardRef(
 					'& .ProseMirror': {
 						minHeight: '70px',
 						fontSize: '12px',
+						'& a': {
+							color: 'inherit',
+						},
 					},
 					...sx,
 				} }
