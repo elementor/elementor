@@ -111,7 +111,6 @@ export function useCreateAndApplyClass() {
 
 					const createdId = createAction( classLabel );
 					applyClass( createdId );
-
 					return { prevActiveId, createdId };
 				},
 				undo: ( _: CreateAndApplyClassPayload, { prevActiveId, createdId }: CreateAndApplyClassUndoData ) => {

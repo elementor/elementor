@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createDOMElement, createMockDocument, renderWithStore } from 'test-utils';
-import { getV1DocumentsManager, type V1Document } from '@elementor/editor-documents';
+import { getV1DocumentsManager, type V1Document, type V1DocumentsManager } from '@elementor/editor-documents';
 import { __privateListenTo, __privateRunCommand } from '@elementor/editor-v1-adapters';
 import { __createStore, __registerSlice as registerSlice, type SliceState, type Store } from '@elementor/store';
 import { act, fireEvent, screen } from '@testing-library/react';
@@ -59,13 +59,16 @@ describe( '<EditComponent />', () => {
 		registerSlice( slice );
 		store = __createStore();
 
+		editedDocument = MOCK_POST_DATA[ MOCK_DOCUMENT_ID ];
+
 		jest.mocked( getV1DocumentsManager ).mockReturnValue( {
 			getCurrent: () => editedDocument,
 			getCurrentId: () => editedDocument.id,
 			getInitialId: () => MOCK_DOCUMENT_ID,
 			invalidateCache: jest.fn(),
+			get: ( id: number ) => MOCK_POST_DATA[ id as keyof typeof MOCK_POST_DATA ],
 			documents: {},
-		} );
+		} as unknown as V1DocumentsManager );
 
 		jest.mocked( switchDocumentCallback ).mockImplementation( ( { id }: { id: number } ) => {
 			editedDocument = MOCK_POST_DATA[ id as keyof typeof MOCK_POST_DATA ];

@@ -1,5 +1,41 @@
 import { config, getKeyframes, parseAnimationName } from './interactions-utils.js';
 
+function scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
+	const viewOptions = { amount: 0.85, root: null };
+	const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
+
+	animateFunc( element, resetKeyframes, { duration: 0 } );
+
+	const stop = inViewFunc( element, () => {
+		return () => {
+			animateFunc( element, keyframes, options ).then( () => {
+				element.style.transition = transition;
+			} );
+			if ( false === animConfig.replay ) {
+				stop();
+			}
+		};
+	}, viewOptions );
+}
+
+function scrollInAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
+	const viewOptions = { amount: 0, root: null };
+	const stop = inViewFunc( element, () => {
+		animateFunc( element, keyframes, options ).then( () => {
+			element.style.transition = transition;
+		} );
+		if ( false === animConfig.replay ) {
+			stop();
+		}
+	}, viewOptions );
+}
+
+function defaultAnimation( element, transition, keyframes, options, animateFunc ) {
+	animateFunc( element, keyframes, options ).then( () => {
+		element.style.transition = transition;
+	} );
+}
+
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
 	const options = {
@@ -8,26 +44,15 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 		easing: config.easing,
 	};
 
+	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
+	const transition = element.style.transition;
+	element.style.transition = 'none';
 	if ( 'scrollOut' === animConfig.trigger ) {
-		const viewOptions = { amount: 0.85, root: null };
-		const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
-
-		animateFunc( element, resetKeyframes, { duration: 0 } );
-
-		const stop = inViewFunc( element, () => {
-			return () => {
-				animateFunc( element, keyframes, options );
-				stop();
-			};
-		}, viewOptions );
+		scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
-		const viewOptions = { amount: 0.15, root: null, once: true };
-
-		inViewFunc( element, () => {
-			animateFunc( element, keyframes, options );
-		}, viewOptions );
+		scrollInAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else {
-		animateFunc( element, keyframes, options );
+		defaultAnimation( element, transition, keyframes, options, animateFunc );
 	}
 }
 

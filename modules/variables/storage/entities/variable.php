@@ -70,6 +70,22 @@ class Variable {
 		return $this->data['order'];
 	}
 
+	public function value() {
+		return $this->data['value'];
+	}
+
+	public function set_value( $value ) {
+		$this->data['value'] = $value;
+	}
+
+	public function type() {
+		return $this->data['type'];
+	}
+
+	public function set_type( $type ) {
+		$this->data['type'] = $type;
+	}
+
 	public function has_order(): int {
 		return isset( $this->data['order'] );
 	}

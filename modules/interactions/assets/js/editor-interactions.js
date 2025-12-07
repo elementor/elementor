@@ -14,6 +14,9 @@ function applyAnimation( element, animConfig, animateFunc ) {
 	Object.keys( keyframes ).forEach( ( key ) => {
 		initialKeyframes[ key ] = keyframes[ key ][ 0 ];
 	} );
+	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
+	const transition = element.style.transition;
+	element.style.transition = 'none';
 	animateFunc( element, initialKeyframes, { duration: 0 } ).then( () => {
 		animateFunc( element, keyframes, options ).then( () => {
 			if ( 'out' === animConfig.type ) {
@@ -22,7 +25,7 @@ function applyAnimation( element, animConfig, animateFunc ) {
 				Object.keys( keyframes ).forEach( ( key ) => {
 					resetKeyframes[ key ] = resetValues[ key ];
 				} );
-
+				element.style.transition = transition;
 				animateFunc( element, resetKeyframes, { duration: 0 } );
 			}
 		} );

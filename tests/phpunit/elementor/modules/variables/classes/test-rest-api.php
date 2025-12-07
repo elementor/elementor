@@ -3,6 +3,7 @@
 namespace Elementor\Tests\Modules\Variables\Classes;
 
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\Classes\Rest_Api;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
@@ -36,7 +37,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		// TODO update to only mock repository not mock kit
 		$this->kit = $this->createMock( Kit::class );
 		$repository = new Variables_Repository( $this->kit );
 		$service = new Variables_Service( $repository, new Batch_Processor() );
@@ -531,7 +531,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				],
 			],
 			'watermark' => 10,
-			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+			'version' => Variables_Collection::FORMAT_VERSION_V1,
 		] );
 
 		$this->kit
@@ -597,7 +597,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				],
 			],
 			'watermark' => 5,
-			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+			'version' => Variables_Collection::FORMAT_VERSION_V1,
 		] );
 
 		// Act
@@ -754,7 +754,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				],
 			],
 			'watermark' => 5,
-			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+			'version' => Variables_Collection::FORMAT_VERSION_V1,
 		] );
 
 		// Act

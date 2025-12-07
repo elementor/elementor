@@ -58,6 +58,7 @@ export type InteractionItem = {
 };
 
 export type V1ElementModelProps = {
+	isLocked?: boolean;
 	widgetType?: string;
 	elType: string;
 	id: string;
@@ -82,6 +83,8 @@ export type V1ElementSettingsProps = Record< string, PropValue >;
 
 export type V1ElementConfig< T = object > = {
 	title: string;
+	widgetType?: string;
+	elType?: string;
 	controls: object;
 	atomic?: boolean;
 	atomic_controls?: ControlItem[];

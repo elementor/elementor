@@ -28,6 +28,7 @@ describe( 'createVariableTypeRegistry', () => {
 
 			// Act.
 			registry.registerVariableType( {
+				key: 'test-key',
 				icon: BrushIcon,
 				valueField: ColorField,
 				variableType: 'test-type',
@@ -54,6 +55,7 @@ describe( 'createVariableTypeRegistry', () => {
 
 			// Act .
 			registry.registerVariableType( {
+				key: 'duplicate-key',
 				icon: TextIcon,
 				valueField: FontField,
 				variableType: 'test-type-1',
@@ -64,6 +66,7 @@ describe( 'createVariableTypeRegistry', () => {
 			// Assert.
 			expect( () => {
 				registry.registerVariableType( {
+					key: 'duplicate-key',
 					icon: BrushIcon,
 					valueField: ColorField,
 					variableType: 'test-type-2',
@@ -79,6 +82,7 @@ describe( 'createVariableTypeRegistry', () => {
 
 			// Act.
 			registry.registerVariableType( {
+				key: 'key-1',
 				icon: TextIcon,
 				valueField: FontField,
 				variableType: 'type-1',
@@ -87,6 +91,7 @@ describe( 'createVariableTypeRegistry', () => {
 			} );
 
 			registry.registerVariableType( {
+				key: 'key-3',
 				icon: BrushIcon,
 				startIcon: StartIcon,
 				valueField: ColorField,
@@ -119,6 +124,7 @@ describe( 'createVariableTypeRegistry', () => {
 		it( 'should return true if a variable type exists and false otherwise', () => {
 			// Arrange.
 			registry.registerVariableType( {
+				key: 'existing-key',
 				icon: BrushIcon,
 				valueField: ColorField,
 				variableType: 'color',
@@ -150,6 +156,7 @@ describe( 'createVariableTypeRegistry', () => {
 			} );
 
 			registry.registerVariableType( {
+				key: 'global-color-variable',
 				icon: BrushIcon,
 				valueField: ColorField,
 				variableType: 'color',
@@ -183,6 +190,7 @@ describe( 'createVariableTypeRegistry', () => {
 			} );
 
 			registry.registerVariableType( {
+				key: 'global-color-variable',
 				icon: BrushIcon,
 				valueField: ColorField,
 				variableType: 'color',
