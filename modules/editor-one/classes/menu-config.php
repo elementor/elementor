@@ -113,12 +113,12 @@ class Menu_Config {
 					'url' => $theme_builder_url,
 					'priority' => 20,
 				],
-				[
-					'slug' => 'website-templates',
-					'label' => esc_html__( 'Website Templates', 'elementor' ),
-					'url' => admin_url( 'admin.php?page=elementor-app#site-editor/templates/pages' ),
-					'priority' => 30,
-				],
+			[
+				'slug' => 'website-templates',
+				'label' => esc_html__( 'Website Templates', 'elementor' ),
+				'url' => admin_url( 'admin.php?page=elementor-app&ver=' . ELEMENTOR_VERSION . '&source=wp_db_templates_menu#/kit-library' ),
+				'priority' => 30,
+			],
 				[
 					'slug' => 'floating-elements',
 					'label' => esc_html__( 'Floating Elements', 'elementor' ),
