@@ -44,31 +44,6 @@ const otherBind = 'other';
 const arrBind = 'arr';
 const objBind = 'obj';
 
-const htmlTagPropTypeDependencies: Dependency = {
-	relation: 'and' as 'or' | 'and',
-	terms: [
-		{
-			operator: 'ne',
-			path: [ 'link', 'destination' ],
-			nestedPath: [ 'group' ],
-			value: 'action',
-			newValue: {
-				$$type: 'string',
-				value: 'button',
-			},
-		},
-		{
-			operator: 'not_exist',
-			path: [ 'link', 'destination' ],
-			value: null,
-			newValue: {
-				$$type: 'string',
-				value: 'a',
-			},
-		},
-	],
-};
-
 const dependencyTestCases: {
 	desc: string;
 	dependencies: Dependency;
