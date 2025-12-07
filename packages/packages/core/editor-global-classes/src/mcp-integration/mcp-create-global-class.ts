@@ -41,10 +41,14 @@ type InputSchema = z.infer< ReturnType< typeof z.object< typeof inputSchema > > 
 type OutputSchema = z.infer< ReturnType< typeof z.object< typeof outputSchema > > >;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 export const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 =======
 const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 >>>>>>> a19e895460 (wip)
+=======
+export const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
+>>>>>>> 58b06e9f3f (wip)
 	const customCss = input.customCss ? { raw: btoa( input.customCss ) } : null;
 	const { delete: deleteClass, create } = globalClassesStylesProvider.actions;
 	if ( ! create || ! deleteClass ) {

@@ -16,7 +16,7 @@ export const resolveCssVariable = ( id: string, variable: TVariable ) => {
 		return null;
 	}
 
-	const validCssVariableName = `--${ name }`;
+	const validCssVariableName = `--${ id.toLowerCase() }`;
 
 	if ( ! fallbackValue.trim() ) {
 		return `var(${ validCssVariableName })`;

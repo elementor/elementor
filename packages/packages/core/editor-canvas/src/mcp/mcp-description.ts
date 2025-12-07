@@ -37,8 +37,8 @@ The tool accepts both the structure, the styling and the configuration of each e
 - Second step: decide which elements to create, and their configuration and styles.
   Retrieve the used elements configuration schema from the resource [${ WIDGET_SCHEMA_URI }/element-name]
 - Third step: define the styles for each element, using the common styles schema from the resource [${ STYLE_SCHEMA_URI }]. List the resource to see all available style properties.
-  For background and complicated layered styles, you can use "custom_css" property, which is supported only for ELEMENTOR PRO users ONLY.
-  The custom css is intented to deal with yet unsupported CSS features that ARE NOT PART OF THE STYLE SCHEMA, to enable PRO users to support new CSS features.
+  For background and complicated layered styles, you can use "custom_css" property, which is supported only for ELEMENTOR PRO users. The custom_css property adds an extra layer of CSS on top of the existing styles, allowing for more advanced styling options.
+  Use with caution, as the custom_css overrides existing styles, prefer to use only when the style schema fails.
 
 # Configuring Elements / Adding Style to Elements
 An element configuration can be retrieved using the "get-element-configuration-values" tool.
