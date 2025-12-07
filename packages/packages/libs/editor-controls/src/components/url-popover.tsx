@@ -10,9 +10,11 @@ type Props = {
 	restoreValue: () => void;
 	value: string;
 	onChange: ( event: React.ChangeEvent< HTMLInputElement > ) => void;
+	openInNewTab: boolean;
+	onToggleNewTab: () => void;
 };
 
-export const UrlPopover = ( { popupState, restoreValue, anchorRef, value, onChange }: Props ) => {
+export const UrlPopover = ( { popupState, restoreValue, anchorRef, value, onChange, openInNewTab, onToggleNewTab }: Props ) => {
 	const inputRef = useRef< HTMLInputElement >( null );
 
 	useEffect( () => {
@@ -49,9 +51,10 @@ export const UrlPopover = ( { popupState, restoreValue, anchorRef, value, onChan
 				/>
 				<ToggleButton
 					size="tiny"
-					onClick={ () => window.open( value, '_blank' ) }
-					disabled={ ! value }
-					aria-label={ __( 'Open URL', 'elementor' ) }
+					value="newTab"
+					selected={ openInNewTab }
+					onClick={ onToggleNewTab }
+					aria-label={ __( 'Open in a new tab', 'elementor' ) }
 					sx={ { borderRadius: '8px' } }
 				>
 					<ExternalLinkIcon fontSize="tiny" />

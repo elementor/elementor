@@ -95,6 +95,7 @@ const possibleFormats: FormatAction[] = Object.keys( formatButtons ) as FormatAc
 
 export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 	const [ urlValue, setUrlValue ] = useState( '' );
+	const [ openInNewTab, setOpenInNewTab ] = useState( false );
 	const toolbarRef = useRef< HTMLDivElement >( null );
 	const popupState = usePopupState( { variant: 'popover' } );
 
@@ -106,8 +107,9 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 	const formatButtonsList = useMemo( () => Object.values( formatButtons ), [] );
 
 	const handleLinkClick = () => {
-		const currentUrl = editor.getAttributes( 'link' ).href || '';
-		setUrlValue( currentUrl );
+		const linkAttrs = editor.getAttributes( 'link' );
+		setUrlValue( linkAttrs.href || '' );
+		setOpenInNewTab( linkAttrs.target === '_blank' );
 		popupState.open( toolbarRef.current );
 	};
 
@@ -115,9 +117,16 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 		setUrlValue( event.target.value );
 	};
 
+	const handleToggleNewTab = () => {
+		setOpenInNewTab( ! openInNewTab );
+	};
+
 	const handleUrlSubmit = () => {
 		if ( urlValue ) {
-			editor.chain().focus().setLink( { href: urlValue } ).run();
+			editor.chain().focus().setLink( { 
+				href: urlValue,
+				target: openInNewTab ? '_blank' : '_self',
+			} ).run();
 		} else {
 			editor.chain().focus().unsetLink().run();
 		}
@@ -175,6 +184,8 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 					restoreValue={ handleUrlSubmit }
 					value={ urlValue }
 					onChange={ handleUrlChange }
+					openInNewTab={ openInNewTab }
+					onToggleNewTab={ handleToggleNewTab }
 				/>
 			) }
 		</Box>

@@ -30,7 +30,7 @@ class Html_Prop_Type extends String_Prop_Type {
 				'ol'          => [],
 				'li'          => [],
 				'blockquote'  => [],
-				'a'           => [ 'href' => true ],
+				'a'           => [ 'href' => true, 'target' => true ],
 				'del'         => [],
 				'span'        => [],
 				'br'          => [],
