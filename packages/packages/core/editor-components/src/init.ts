@@ -5,7 +5,7 @@ import {
 	settingsTransformersRegistry,
 } from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
-import { FIELD_TYPE, registerFieldIndicator } from '@elementor/editor-editing-panel';
+import { FIELD_TYPE, registerControlReplacement, registerFieldIndicator } from '@elementor/editor-editing-panel';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
@@ -20,12 +20,14 @@ import { COMPONENT_DOCUMENT_TYPE } from './components/consts';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
 import { openEditModeDialog } from './components/in-edit-mode';
+import { OverridablePropControl } from './components/overridable-props/overridable-prop-control';
 import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
 import { createComponentType, TYPE } from './create-component-type';
 import { initMcp } from './mcp';
 import { PopulateStore } from './populate-store';
 import { loadComponentsAssets } from './store/actions/load-components-assets';
 import { removeComponentStyles } from './store/actions/remove-component-styles';
+import { componentOverridablePropTypeUtil } from './prop-types/component-overridable-prop-type';
 import { componentsStylesProvider } from './store/components-styles-provider';
 import { slice } from './store/store';
 import { beforeSave } from './sync/before-save';
@@ -89,6 +91,11 @@ export function init() {
 		id: 'component-overridable-prop',
 		priority: 1,
 		indicator: OverridablePropIndicator,
+	} );
+
+	registerControlReplacement( {
+		component: OverridablePropControl,
+		condition: ( { value } ) => componentOverridablePropTypeUtil.isValid( value ),
 	} );
 
 	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );

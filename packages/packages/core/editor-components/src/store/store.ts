@@ -26,6 +26,7 @@ type ComponentsState = {
 	loadStatus: Status;
 	styles: StylesDefinition;
 	createdThisSession: Component[ 'uid' ][];
+	archivedData: PublishedComponent[];
 	path: ComponentsPathItem[];
 	currentComponentId: V1Document[ 'id' ] | null;
 };
@@ -43,6 +44,7 @@ export const initialState: ComponentsState = {
 	loadStatus: 'idle',
 	styles: {},
 	createdThisSession: [],
+	archivedData: [],
 	path: [],
 	currentComponentId: null,
 };
@@ -80,6 +82,16 @@ export const slice = createSlice( {
 		addCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
 			state.createdThisSession.push( payload );
 		},
+		archive: ( state, { payload }: PayloadAction< number > ) => {
+			state.data = state.data.filter( ( component ) => {
+				const isArchived = component.id === payload;
+				if ( isArchived ) {
+					state.archivedData.push( component );
+				}
+
+				return ! isArchived;
+			} );
+		},
 		setCurrentComponentId: ( state, { payload }: PayloadAction< V1Document[ 'id' ] | null > ) => {
 			state.currentComponentId = payload;
 		},
@@ -114,6 +126,7 @@ export const slice = createSlice( {
 } );
 
 const selectData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].data;
+const selectArchivedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].archivedData;
 const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadStatus;
 const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
 const selectUnpublishedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].unpublishedData;
@@ -174,4 +187,9 @@ export const selectPath = createSelector( getPath, ( path ) => path );
 export const selectCurrentComponentId = createSelector(
 	getCurrentComponentId,
 	( currentComponentId ) => currentComponentId
+);
+
+export const selectArchivedComponents = createSelector(
+	selectArchivedData,
+	( archivedData: PublishedComponent[] ) => archivedData
 );

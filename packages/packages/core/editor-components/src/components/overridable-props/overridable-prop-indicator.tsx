@@ -45,7 +45,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 		element: { id: elementId },
 		elementType,
 	} = useElement();
-	const { value, bind } = useBoundProp();
+	const { value, bind, propType } = useBoundProp();
 	const { value: overridableValue, setValue: setOverridableValue } = useBoundProp( componentOverridablePropTypeUtil );
 
 	const popupState = usePopupState( {
@@ -58,7 +58,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 	const { elType } = getWidgetsCache()?.[ elementType.key ] ?? { elType: 'widget' };
 
 	const handleSubmit = ( { label, group }: { label: string; group: string | null } ) => {
-		const originValue = ! overridableValue ? value : overridableValue?.origin_value ?? {};
+		const originValue = ! overridableValue ? value ?? propType.default : overridableValue?.origin_value ?? {};
 
 		const overridablePropConfig = setOverridableProp( {
 			componentId,

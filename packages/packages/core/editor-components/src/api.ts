@@ -81,4 +81,13 @@ export const apiClient = {
 				},
 			} )
 			.then( ( res ) => res.data.data ),
+	updateArchivedComponents: async ( componentIds: number[] ) =>
+		await httpService()
+			.post< { data: { failedIds: number[]; successIds: number[]; success: boolean } } >(
+				`${ BASE_URL }/archive`,
+				{
+					componentIds,
+				}
+			)
+			.then( ( res ) => res.data.data ),
 };

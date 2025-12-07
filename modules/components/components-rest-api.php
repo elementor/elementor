@@ -179,16 +179,38 @@ class Components_REST_API {
 				],
 			],
 		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/archive', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->archive_components( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'componentIds' => [
+						'type' => 'array',
+						'items' => [
+							'type' => 'number',
+							'required' => true,
+						],
+						'required' => true,
+						'description' => 'The component ID to archive',
+					],
+				],
+			],
+		] );
 	}
 
 	private function get_components() {
 		$components = $this->get_repository()->all();
 
-		$components_list = $components->map( fn( $component ) => [
-			'id' => $component['id'],
-			'name' => $component['title'],
-			'uid' => $component['uid'],
-		])->all();
+		$components_list = array_values( $components
+			->filter( fn( $component ) => empty( $component['is_archived'] ) )
+			->map( fn( $component ) => [
+				'id' => $component['id'],
+				'name' => $component['title'],
+				'uid' => $component['uid'],
+			] )
+		->all() );
 
 		return Response_Builder::make( $components_list )->build();
 	}
@@ -387,6 +409,32 @@ class Components_REST_API {
 		}
 	}
 
+	private function is_current_user_allow_to_edit( $component_id ) {
+		$current_user_id = get_current_user_id();
+		try {
+			$lock_data = $this->get_component_lock_manager()->get_updated_status( $component_id );
+		} catch ( \Exception $e ) {
+			error_log( 'Components REST API is_current_user_allow_to_edit error: ' . $e->getMessage() );
+			return false;
+		}
+
+		return ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] === (int) $current_user_id;
+	}
+
+	private function archive_components( \WP_REST_Request $request ) {
+		$component_ids = $request->get_param( 'componentIds' );
+		try {
+			$result = $this->get_repository()->archive( $component_ids );
+		} catch ( \Exception $e ) {
+			error_log( 'Components REST API archive_components error: ' . $e->getMessage() );
+			return Error_Builder::make( 'archive_failed' )
+				->set_meta( [ 'error' => $e->getMessage() ] )
+				->set_status( 500 )
+				->set_message( __( 'Failed to archive components', 'elementor' ) )
+				->build();
+		}
+		return Response_Builder::make( $result )->build();
+	}
 	private function route_wrapper( callable $cb ) {
 		try {
 			$response = $cb();
