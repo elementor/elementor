@@ -12,6 +12,7 @@ import { registerVariableType } from './variables-registry/variable-type-registr
 
 export function registerVariableTypes() {
 	registerVariableType( {
+		key: colorVariablePropTypeUtil.key,
 		valueField: ColorField,
 		icon: BrushIcon,
 		propTypeUtil: colorVariablePropTypeUtil,
@@ -22,6 +23,7 @@ export function registerVariableTypes() {
 	} );
 
 	registerVariableType( {
+		key: fontVariablePropTypeUtil.key,
 		valueField: FontField,
 		icon: TextIcon,
 		propTypeUtil: fontVariablePropTypeUtil,

@@ -148,6 +148,7 @@ export const VariablesManagerTable = ( {
 									return (
 										<TableRow
 											{ ...itemProps }
+											ref={ handleRowRef( 'table-ref-' + row.id ) }
 											selected={ isDragged }
 											sx={ {
 												...( showIndicationBefore && {
@@ -251,9 +252,21 @@ export const VariablesManagerTable = ( {
 														onValidationChange,
 														error,
 													} ) =>
-														row.valueField?.( {
+														row.valueField( {
+															ref: {
+																current: variableRowRefs.current.get(
+																	'table-ref-' + row.id
+																) as HTMLElement,
+															},
 															value,
 															onChange,
+															onPropTypeKeyChange: ( type ) => {
+																handleOnChange( {
+																	...variables,
+																	[ row.id ]: { ...variables[ row.id ], type },
+																} );
+															},
+															propTypeKey: row.type,
 															onValidationChange: ( errorMsg ) => {
 																onValidationChange?.( errorMsg );
 																onFieldError?.( !! errorMsg );

@@ -5,7 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements;
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\Render_Context;
+use Elementor\Modules\AtomicWidgets\Elements\Render_Context;
 use Elementor\Plugin;
 use Elementor\Utils;
 

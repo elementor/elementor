@@ -35,6 +35,7 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 	const [ label, setLabel ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ valueFieldError, setValueFieldError ] = useState( '' );
+	const [ propTypeKey, setPropTypeKey ] = useState( propTypeUtil.key );
 
 	const { labelFieldError, setLabelFieldError } = useLabelError();
 
@@ -54,7 +55,7 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 		createVariable( {
 			value,
 			label,
-			type: propTypeUtil.key,
+			type: propTypeKey,
 		} )
 			.then( ( key ) => {
 				setVariable( key );

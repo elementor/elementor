@@ -19,6 +19,7 @@ class Component_Overridable_Props {
 			$this->props = [];
 			$this->groups = [];
 
+			return;
 		}
 
 		$formatted_props = array_map( function( array $overridable_prop ) {
