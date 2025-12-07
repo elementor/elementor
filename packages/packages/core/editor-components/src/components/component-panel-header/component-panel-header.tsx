@@ -33,15 +33,12 @@ export const ComponentPanelHeader = () => {
 	const { path, currentComponentId } = useCurrentComponent();
 	const overridableProps = useOverridableProps( currentComponentId );
 	const onBack = useNavigateBack( path );
-	const prevCountRef = useRef( 0 );
-
 	const componentName = getComponentName();
-	const overridesCount = overridableProps ? Object.keys( overridableProps.props ).length : 0;
-	const isFirstOverride = prevCountRef.current === 0 && overridesCount === 1;
 
-	useEffect( () => {
-		prevCountRef.current = overridesCount;
-	}, [ overridesCount ] );
+	const overridesCount = overridableProps ? Object.keys( overridableProps.props ).length : 0;
+	const prevCount = usePrevious( overridesCount );
+
+	const isFirstOverride = prevCount === 0 && overridesCount === 1;
 
 	if ( ! currentComponentId ) {
 		return null;
@@ -109,3 +106,11 @@ function getComponentName() {
 const StyledBadgeContent = styled( 'span' )< { shouldAnimate: boolean } >( ( { shouldAnimate } ) => ( {
 	animation: shouldAnimate ? `${ slideUp } 300ms ease-out` : 'none',
 } ) );
+
+function usePrevious< T >( value: T ) {
+	const ref = useRef< T >( value );
+	useEffect( () => {
+		ref.current = value;
+	}, [ value ] );
+	return ref.current;
+}
