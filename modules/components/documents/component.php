@@ -86,11 +86,8 @@ public function get_is_archived() {
 		return false;
 	}
 	return json_decode( $archived_meta, true );
-	$archived_meta = $this->get_main_meta( self::ARCHIVED_META_KEY );
-	if ( ! $archived_meta ) {
-		return false;
-	}
-	return json_decode( $archived_meta, true );
+}
+
 	public function update_overridable_props( $data ): Parse_Result {
 		$parser = Component_Overridable_Props_Parser::make();
 
