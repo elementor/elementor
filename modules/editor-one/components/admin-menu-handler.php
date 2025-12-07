@@ -12,6 +12,8 @@ use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Remapped_Menu_Item;
 use Elementor\Plugin;
 
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -389,24 +391,25 @@ class Admin_Menu_Handler {
 			ELEMENTOR_VERSION
 		);
 
-		wp_register_script( 'elementor-admin-menu-config', false, [], ELEMENTOR_VERSION, false );
-		wp_enqueue_script( 'elementor-admin-menu-config' );
-
 		$config = [
 			'editorFlyout' => $this->get_editor_flyout_data(),
 			'level4Flyouts' => $this->get_level4_flyout_data(),
 		];
 
-		wp_add_inline_script(
-			'elementor-admin-menu-config',
-			'window.elementorAdminMenuConfig = ' . wp_json_encode( $config ) . ';'
-		);
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
-		wp_enqueue_script_module(
+		wp_enqueue_script(
 			'elementor-admin-menu',
-			ELEMENTOR_URL . 'modules/editor-one/assets/js/admin-menu.js',
+			ELEMENTOR_ASSETS_URL . 'js/elementor-admin-menu' . $min_suffix . '.js',
 			[],
 			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'elementor-admin-menu',
+			'elementorAdminMenuConfig',
+			$config
 		);
 	}
 

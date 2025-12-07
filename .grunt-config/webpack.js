@@ -144,6 +144,7 @@ const entry = {
 	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
 	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
 	'e-sidebar-navigation': path.resolve( __dirname, '../modules/editor-one/assets/js/sidebar-navigation/app.js' ),
+	'elementor-admin-menu': path.resolve( __dirname, '../modules/editor-one/assets/js/admin-menu/app.js' ),
 	'editor-v4-opt-in': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/opt-in-page/app.js'),
 	'editor-v4-welcome-opt-in': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/welcome-screen/app.js'),
 	'pro-free-trial-popup': path.resolve( __dirname, '../modules/pro-free-trial-popup/assets/js/pro-free-trial-popup.js'),
