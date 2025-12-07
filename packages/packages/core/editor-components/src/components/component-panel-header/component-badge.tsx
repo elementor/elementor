@@ -17,7 +17,7 @@ export const ComponentsBadge = ( { overridesCount }: { overridesCount: number } 
 			animate={ isFirstOverride }
 			anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
 			badgeContent={
-				<Box sx={ { animation: isFirstOverride ? `${ slideUp } 300ms ease-out` : 'none' } }>
+				<Box sx={ { animation: ! isFirstOverride ? `${ slideUp } 300ms ease-out` : 'none' } }>
 					{ overridesCount }
 				</Box>
 			}
