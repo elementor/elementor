@@ -252,7 +252,7 @@ export const VariablesManagerTable = ( {
 														onValidationChange,
 														error,
 													} ) =>
-														row.valueField( {
+														row.valueField?.( {
 															ref: {
 																current: variableRowRefs.current.get(
 																	'table-ref-' + row.id
