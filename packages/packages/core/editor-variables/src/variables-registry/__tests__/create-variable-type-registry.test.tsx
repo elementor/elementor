@@ -130,7 +130,6 @@ describe( 'createVariableTypeRegistry', () => {
 			expect( registry.hasVariableType( 'existing-key' ) ).toBe( true );
 			expect( registry.hasVariableType( 'non-existent-key' ) ).toBe( false );
 		} );
-
 	} );
 
 	describe( 'isCompatible by default', () => {
