@@ -7,7 +7,7 @@ export function transformValueBeforeUnlink( variable: Variable, propTypeKey: str
 	const { valueTransformer } = getVariableType( propTypeKey );
 
 	if ( valueTransformer ) {
-		return valueTransformer( variable.value );
+		return valueTransformer( variable );
 	}
 
 	return variable.value;

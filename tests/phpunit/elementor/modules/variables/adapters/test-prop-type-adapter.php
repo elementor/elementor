@@ -174,7 +174,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		$collection = $this->make_collection( [
 			'data' => [
 				'e-gv-23erty7' => [
-					'type' => Prop_Type_Adapter::CUSTOM_SIZE_KEY,
+					'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
 					'label' => 'height',
 					'value' => 'calc((10px * 5) + (20px * 3))',
 				],
@@ -187,7 +187,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		// Assert.
 		$expected = [
 			'e-gv-23erty7' => [
-				'type' => 'global-custom-size-variable',
+				'type' => 'global-size-variable',
 				'label' => 'height',
 				'value' => [
 					'$$type' => 'size',
@@ -284,7 +284,7 @@ class Test_Prop_Type_Adapter extends TestCase {
 		$collection = $this->make_collection( [
 			'data' => [
 				'e-gv-23' => [
-					'type' => Prop_Type_Adapter::CUSTOM_SIZE_KEY,
+					'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
 					'label' => 'margin',
 					'value' => [
 						'$$type' => 'size',
