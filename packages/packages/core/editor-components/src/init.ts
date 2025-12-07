@@ -5,8 +5,12 @@ import {
 	settingsTransformersRegistry,
 } from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
-import { FIELD_TYPE, injectIntoPanelHeaderTop, registerFieldIndicator } from '@elementor/editor-editing-panel';
-import { FIELD_TYPE, registerControlReplacement, registerFieldIndicator } from '@elementor/editor-editing-panel';
+import {
+	FIELD_TYPE,
+	injectIntoPanelHeaderTop,
+	registerControlReplacement,
+	registerFieldIndicator,
+} from '@elementor/editor-editing-panel';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
