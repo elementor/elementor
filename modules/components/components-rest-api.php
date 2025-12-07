@@ -97,7 +97,7 @@ class Components_REST_API {
 			],
 		] );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/get-overridable-props', [
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/overridable-props', [
 			[
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_overridable_props( $request ) ),
@@ -226,7 +226,9 @@ class Components_REST_API {
 		$overridable = $document->get_meta( Component::OVERRIDABLE_PROPS_META_KEY ) ?? null;
 
 		if ( ! empty( $overridable ) ) {
-			$overridable = json_decode( $overridable );
+			$overridable = json_decode( $overridable, true );
+		} else {
+			$overridable = null;
 		}
 
 		return Response_Builder::make( $overridable )->build();

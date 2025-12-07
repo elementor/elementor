@@ -8,7 +8,7 @@ const BASE_URL = 'elementor/v1/components';
 const LOCK_COMPONENT = `${ BASE_URL }/lock`;
 const UNLOCK_COMPONENT = `${ BASE_URL }/unlock`;
 const BASE_URL_LOCK_STATUS = `${ BASE_URL }/lock-status`;
-const BASE_URL_OVERRIDABLE = `${ BASE_URL }/get-overridable-props`;
+const BASE_URL_OVERRIDABLE = `${ BASE_URL }/overridable-props`;
 
 export type CreateComponentPayload = {
 	status: DocumentSaveStatus;
