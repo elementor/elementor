@@ -89,7 +89,7 @@ trait Has_Atomic_Base {
 
 			if ( ! $result->is_valid() ) {
 				$element_data = $data['id'] . ' - ' . $data['widgetType'];
-				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. `$element_data` " . $result->errors()->to_string() ) );
+				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`, Element data: `$element_data`. " . $result->errors()->to_string() ) );
 			}
 
 			$styles[ $style_id ] = $result->unwrap();
@@ -107,7 +107,7 @@ trait Has_Atomic_Base {
 
 		if ( ! $result->is_valid() ) {
 			$element_data = $data['id'] . ' - ' . $data['widgetType'];
-			throw new \Exception( esc_html( "Settings validation failed. `$element_data` " . $result->errors()->to_string() ) );
+			throw new \Exception( esc_html( "Settings validation failed, Element data: `$element_data`. " . $result->errors()->to_string() ) );
 		}
 
 		return $result->unwrap();

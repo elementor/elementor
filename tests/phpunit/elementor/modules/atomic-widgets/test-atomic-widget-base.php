@@ -690,7 +690,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. meta.breakpoint: missing_or_invalid_value' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`, Element data: `1 - test-widget`. meta.breakpoint: missing_or_invalid_value' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -727,7 +727,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `1234`. id: missing_or_invalid, label: missing_or_invalid' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `1234`, Element data: `1 - test-widget`. id: missing_or_invalid, label: missing_or_invalid' );
 
 		// Act.
 		$data = $widget->get_data_for_save();
@@ -768,7 +768,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. type: missing_or_invalid' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`, Element data: `1 - test-widget`. type: missing_or_invalid' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -805,7 +805,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. label: missing_or_invalid' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`, Element data: `1 - test-widget`. label: missing_or_invalid' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -848,7 +848,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`. variants[1].padding: invalid_value' );
+		$this->expectExceptionMessage( 'Styles validation failed for style `s-1234`, Element data: `1 - test-widget`. variants[1].padding: invalid_value' );
 
 		// Act.
 		$widget->get_data_for_save();
@@ -869,7 +869,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 
 		// Expect.
 		$this->expectException( \Exception::class );
-		$this->expectExceptionMessage( 'Settings validation failed. mock_prop_1: invalid_value, mock_prop_2: invalid_value' );
+		$this->expectExceptionMessage( 'Settings validation failed, Element data: `1 - test-widget`. mock_prop_1: invalid_value, mock_prop_2: invalid_value' );
 
 		// Act.
 		$widget->get_data_for_save();
