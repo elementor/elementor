@@ -1,0 +1,45 @@
+#e-editor-top-bar {
+	position: fixed;
+	top: 32px;
+	left: 160px;
+	right: 0;
+	height: 48px;
+	z-index: 100;
+	background-color: #0c0d0e;
+}
+
+.folded #e-editor-top-bar {
+	left: 36px;
+}
+
+@media screen and (max-width: 960px) {
+	#e-editor-top-bar {
+		left: 36px;
+	}
+}
+
+@media screen and (max-width: 782px) {
+	#e-editor-top-bar {
+		top: 46px;
+		left: 0;
+	}
+}
+
+.e-has-top-bar #e-editor-sidebar-navigation {
+	top: 80px;
+}
+
+@media screen and (max-width: 782px) {
+	.e-has-top-bar #e-editor-sidebar-navigation {
+		top: 94px;
+	}
+}
+
+.e-has-top-bar #wpcontent {
+	padding-top: 48px;
+}
+
+.e-has-top-bar #e-admin-top-bar-root {
+	display: none !important;
+}
+

@@ -27,7 +27,7 @@ class Sidebar_Navigation_Handler {
 	}
 
 	public function add_body_class( string $classes ): string {
-		if ( ! $this->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
 			return $classes;
 		}
 
@@ -35,7 +35,7 @@ class Sidebar_Navigation_Handler {
 	}
 
 	public function enqueue_sidebar_assets(): void {
-		if ( ! $this->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
 			return;
 		}
 
@@ -72,34 +72,11 @@ class Sidebar_Navigation_Handler {
 	}
 
 	public function render_sidebar_container(): void {
-		if ( ! $this->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
 			return;
 		}
 
 		echo '<div id="e-editor-sidebar-navigation"></div>';
-	}
-
-	private function is_elementor_editor_page(): bool {
-		$screen = get_current_screen();
-
-		if ( ! $screen ) {
-			return false;
-		}
-
-		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
-		$sidebar_pages = $this->menu_data_provider->get_all_sidebar_page_slugs();
-
-		if ( in_array( $page, $sidebar_pages, true ) ) {
-			return true;
-		}
-
-		$post_type = filter_input( INPUT_GET, 'post_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
-
-		if ( 'elementor_library' === $post_type ) {
-			return true;
-		}
-
-		return false;
 	}
 
 	private function get_sidebar_config(): array {

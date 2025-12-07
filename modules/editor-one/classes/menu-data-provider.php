@@ -157,6 +157,29 @@ class Menu_Data_Provider {
 		return array_unique( array_merge( $static_pages, $dynamic_pages ) );
 	}
 
+	public function is_elementor_editor_page(): bool {
+		$screen = get_current_screen();
+
+		if ( ! $screen ) {
+			return false;
+		}
+
+		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
+		$sidebar_pages = $this->get_all_sidebar_page_slugs();
+
+		if ( in_array( $page, $sidebar_pages, true ) ) {
+			return true;
+		}
+
+		$post_type = filter_input( INPUT_GET, 'post_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
+
+		if ( 'elementor_library' === $post_type ) {
+			return true;
+		}
+
+		return false;
+	}
+
 	private function get_dynamic_page_slugs(): array {
 		$slugs = [];
 
