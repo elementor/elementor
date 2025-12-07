@@ -25,9 +25,9 @@ import { OverridablePropIndicator } from './components/overridable-props/overrid
 import { createComponentType, TYPE } from './create-component-type';
 import { initMcp } from './mcp';
 import { PopulateStore } from './populate-store';
+import { componentOverridablePropTypeUtil } from './prop-types/component-overridable-prop-type';
 import { loadComponentsAssets } from './store/actions/load-components-assets';
 import { removeComponentStyles } from './store/actions/remove-component-styles';
-import { componentOverridablePropTypeUtil } from './prop-types/component-overridable-prop-type';
 import { componentsStylesProvider } from './store/components-styles-provider';
 import { slice } from './store/store';
 import { beforeSave } from './sync/before-save';

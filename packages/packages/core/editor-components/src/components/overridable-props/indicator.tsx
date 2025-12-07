@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
 import { CheckIcon, PlusIcon } from '@elementor/icons';
-import { type bindTrigger, Box, styled } from '@elementor/ui';
+import { Box, styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 const SIZE = 'tiny';

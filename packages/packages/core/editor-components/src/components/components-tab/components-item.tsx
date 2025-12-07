@@ -30,7 +30,7 @@ type ComponentItemProps = {
 export const ComponentItem = ( { component }: ComponentItemProps ) => {
 	const componentModel = createComponentModel( component );
 	const popupState = usePopupState( {
-		variant: 'popover', 
+		variant: 'popover',
 		disableAutoFocus: true,
 	} );
 

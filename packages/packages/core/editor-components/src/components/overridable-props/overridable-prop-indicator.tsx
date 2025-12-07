@@ -89,11 +89,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 	return (
 		<>
 			<Tooltip placement="top" title={ __( 'Override Property', 'elementor' ) }>
-				<Indicator
-					{ ...triggerProps }
-					isOpen={ !! popoverProps.open }
-					isOverridable={ !! overridableValue }
-				/>
+				<Indicator { ...triggerProps } isOpen={ !! popoverProps.open } isOverridable={ !! overridableValue } />
 			</Tooltip>
 			<Popover
 				disableScrollLock

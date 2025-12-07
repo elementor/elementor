@@ -9,8 +9,8 @@ import {
 	componentOverridablePropTypeUtil,
 	type ComponentOverridablePropValue,
 } from '../../prop-types/component-overridable-prop-type';
-import { selectCurrentComponentId } from '../../store/store';
 import { updateOverridablePropOriginValue } from '../../store/actions/update-overridable-prop-origin-value';
+import { selectCurrentComponentId } from '../../store/store';
 
 export function OverridablePropControl< T extends object >( {
 	OriginalControl,
