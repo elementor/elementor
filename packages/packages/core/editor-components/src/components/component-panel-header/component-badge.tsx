@@ -29,16 +29,18 @@ export const ComponentsBadge = ( { overridesCount }: { overridesCount: number } 
 	);
 };
 
-const StyledBadge = styled( Badge )( ( { theme, animate } ) => ( {
-	'& .MuiBadge-badge': {
-		minWidth: theme.spacing( 2 ),
-		height: theme.spacing( 2 ),
-		minHeight: theme.spacing( 2 ),
-		maxWidth: theme.spacing( 2 ),
-		fontSize: theme.typography.caption.fontSize as string,
-		animation: animate ? `${ bounceIn } 300ms ease-out` : 'none',
-	},
-} ) );
+const StyledBadge = styled( Badge, { shouldForwardProp: ( prop ) => prop !== 'animate' } )(
+	( { theme, animate } ) => ( {
+		'& .MuiBadge-badge': {
+			minWidth: theme.spacing( 2 ),
+			height: theme.spacing( 2 ),
+			minHeight: theme.spacing( 2 ),
+			maxWidth: theme.spacing( 2 ),
+			fontSize: theme.typography.caption.fontSize as string,
+			animation: animate ? `${ bounceIn } 300ms ease-out` : 'none',
+		},
+	} )
+);
 
 function usePrevious< T >( value: T ) {
 	const ref = useRef< T >( value );
