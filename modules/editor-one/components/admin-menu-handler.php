@@ -384,9 +384,11 @@ class Admin_Menu_Handler {
 	}
 
 	public function enqueue_admin_menu_assets(): void {
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
+
 		wp_enqueue_style(
 			'elementor-admin-menu',
-			ELEMENTOR_URL . 'modules/editor-one/assets/css/admin-menu.css',
+			ELEMENTOR_ASSETS_URL . 'css/modules/editor-one/admin-menu' . $min_suffix . '.css',
 			[],
 			ELEMENTOR_VERSION
 		);

@@ -51,7 +51,7 @@ class Top_Bar_Handler {
 
 		wp_enqueue_style(
 			'elementor-top-bar',
-			ELEMENTOR_URL . 'modules/editor-one/assets/css/top-bar.css',
+			ELEMENTOR_ASSETS_URL . 'css/modules/editor-one/top-bar' . $min_suffix . '.css',
 			[],
 			ELEMENTOR_VERSION
 		);

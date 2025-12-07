@@ -43,7 +43,7 @@ class Sidebar_Navigation_Handler {
 
 		wp_enqueue_style(
 			'elementor-sidebar-navigation',
-			ELEMENTOR_URL . 'modules/editor-one/assets/css/sidebar-navigation.css',
+			ELEMENTOR_ASSETS_URL . 'css/modules/editor-one/sidebar-navigation' . $min_suffix . '.css',
 			[],
 			ELEMENTOR_VERSION
 		);
