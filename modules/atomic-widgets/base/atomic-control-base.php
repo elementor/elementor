@@ -8,6 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+// TODO: Remove this class after 3.64 is released.
+
 /**
  * @deprecated 3.34 Use \Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base instead.
  */
