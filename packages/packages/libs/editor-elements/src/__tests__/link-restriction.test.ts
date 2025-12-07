@@ -56,7 +56,7 @@ describe( 'link-restriction', () => {
 			expect( result ).toBe( false );
 		} );
 
-		it( 'should return true if the element has an button tag', () => {
+		it( 'should return true if the element has a button tag', () => {
 			// Arrange
 			document.body.innerHTML = `<button data-id="button-with-data-id" ${ BUTTON_ACTION_LINK_ATTRIBUTE }="#">Anchor with Data-ID</button>`;
 
@@ -67,7 +67,7 @@ describe( 'link-restriction', () => {
 			expect( result ).toBe( true );
 		} );
 
-		it( 'should return true if the element has a child (within the same element) with an button tag', () => {
+		it( 'should return true if the element has a child (within the same element) with a button tag', () => {
 			// Arrange
 			document.body.innerHTML = `
 				<div data-id="div-with-button">
@@ -204,10 +204,7 @@ describe( 'link-restriction', () => {
 			expect( result ).toBeNull();
 		} );
 
-
-
-
-		it( 'should return the element ID of the parent with an button tag', () => {
+		it( 'should return the element ID of the parent with a button tag', () => {
 			// Arrange
 			document.body.innerHTML = `
                 <button data-id="direct-parent-button" ${ BUTTON_ACTION_LINK_ATTRIBUTE }="#">
@@ -224,7 +221,7 @@ describe( 'link-restriction', () => {
 			expect( result ).toBe( 'direct-parent-button' );
 		} );
 
-		it( 'should return the element ID of the grandparent with an button tag', () => {
+		it( 'should return the element ID of the grandparent with a button tag', () => {
 			// Arrange
 			document.body.innerHTML = `
                 <button data-id="grandparent-button" ${ BUTTON_ACTION_LINK_ATTRIBUTE }="#">
@@ -365,13 +362,7 @@ describe( 'link-restriction', () => {
 			expect( result ).toBeNull();
 		} );
 
-
-
-
-
-
-
-		it( 'should return the element ID of a direct descendant with an button tag', () => {
+		it( 'should return the element ID of a direct descendant with a button tag', () => {
 			// Arrange
 			document.body.innerHTML = `
                 <div data-id="outer-div">
@@ -390,7 +381,7 @@ describe( 'link-restriction', () => {
 			expect( result ).toBe( 'inner-div' );
 		} );
 
-		it( 'should return the element ID of a descendant with an button tag', () => {
+		it( 'should return the element ID of a descendant with a button tag', () => {
 			// Arrange
 			document.body.innerHTML = `
                 <div data-id="outer-div">
@@ -409,7 +400,7 @@ describe( 'link-restriction', () => {
 			expect( result ).toBe( 'inner-div' );
 		} );
 
-		it( 'should return null if the element has an button tag but no descendants', () => {
+		it( 'should return null if the element has a button tag but no descendants', () => {
 			// Arrange
 			document.body.innerHTML = `
                 <button data-id="button-with-data-id" ${ BUTTON_ACTION_LINK_ATTRIBUTE }="#">Button with Data-ID</button>
