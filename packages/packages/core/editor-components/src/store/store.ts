@@ -171,16 +171,14 @@ export const selectOverridableProps = createSelector(
 		if ( ! component ) {
 			return undefined;
 		}
+
 		return component.overridableProps ?? DEFAULT_OVERRIDABLE_PROPS;
 	}
 );
 export const selectIsOverridablePropsLoaded = createSelector(
 	selectComponent,
 	( component: PublishedComponent | undefined ) => {
-		if ( ! component ) {
-			return false;
-		}
-		return !! component.overridableProps;
+		return !! component?.overridableProps;
 	}
 );
 export const selectPath = createSelector( getPath, ( path ) => path );
