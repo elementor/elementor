@@ -141,7 +141,7 @@ class Control_Gallery extends Base_Data_Control {
 	private function maybe_display_io_hints() {
 		if ( Hints::should_display_hint( 'image-optimization' ) ) {
 			$content_text = esc_html__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' );
-			$button_text = Hints::is_plugin_installed( 'image-optimization' ) ? esc_html__( 'Activate Plugin', 'elementor' ) : esc_html__( 'Install Plugin', 'elementor' );
+			$button_text = Hints::get_plugin_action_text( 'image-optimization' );
 			$action_url = Hints::get_plugin_action_url( 'image-optimization' );
 		} elseif ( Hints::should_display_hint( 'image-optimization-connect' ) ) {
 			$content_text = esc_html__( "This image isn't optimized. You need to connect your Image Optimizer account first.", 'elementor' );

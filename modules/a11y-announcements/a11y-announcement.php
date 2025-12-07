@@ -100,7 +100,7 @@ class A11yAnnouncement {
 			'videoUrl' => 'https://www.youtube.com/embed/uj9TDcpC91I?start=1&loop=1&playlist=uj9TDcpC91I',
 			'learnMoreText' => esc_html__( 'Learn more', 'elementor' ),
 			'learnMoreUrl' => 'https://go.elementor.com/acc-editor-announcement-learn-more',
-			'ctaText' => Hints::is_plugin_installed( $plugin_slug ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
+			'ctaText' => Hints::get_plugin_action_text( $plugin_slug ),
 			'ctaUrl' => Hints::get_plugin_action_url( $plugin_slug ),
 		];
 	}
