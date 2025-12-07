@@ -154,48 +154,6 @@ describe( 'createVariableTypeRegistry', () => {
 		} );
 	} );
 
-	describe( 'updateVariableType', () => {
-		it( 'should update an existing variable type with new options', () => {
-			// Arrange.
-			const propTypeUtil = createMockPropTypeUtil( 'update-key' );
-			const fallbackPropTypeUtil = createMockPropTypeUtil( 'fallback-key' );
-
-			registry.registerVariableType( {
-				icon: BrushIcon,
-				variableType: 'update-type',
-				propTypeUtil,
-				fallbackPropTypeUtil,
-			} );
-
-			// Act.
-			registry.updateVariableType( {
-				propTypeUtil,
-				valueField: ColorField,
-				defaultValue: '#000000',
-			} );
-
-			// Assert.
-			const registeredType = registry.getVariableType( 'update-key' );
-
-			expect( registeredType?.icon ).toBe( BrushIcon );
-			expect( registeredType?.valueField ).toBe( ColorField );
-			expect( registeredType?.defaultValue ).toBe( '#000000' );
-		} );
-
-		it( 'should throw an error when trying to update a non-existent variable type', () => {
-			// Arrange.
-			const propTypeUtil = createMockPropTypeUtil( 'non-existent-key' );
-
-			// Assert.
-			expect( () => {
-				registry.updateVariableType( {
-					propTypeUtil,
-					valueField: ColorField,
-				} );
-			} ).toThrow( 'Variable with key "non-existent-key" is not registered.' );
-		} );
-	} );
-
 	describe( 'isCompatible by default', () => {
 		it( 'should return "true" if the variable type is supported by the prop type', () => {
 			// Arrange.

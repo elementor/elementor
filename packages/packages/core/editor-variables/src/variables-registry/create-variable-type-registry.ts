@@ -109,24 +109,8 @@ export function createVariableTypeRegistry() {
 		return key in variableTypes;
 	};
 
-	const updateVariableType = (
-		options: Partial< VariableTypeOptions > & { propTypeUtil: PropTypeUtil< string, string > }
-	) => {
-		const key = options.propTypeUtil.key;
-
-		if ( ! variableTypes[ key ] ) {
-			throw new Error( `Variable with key "${ key }" is not registered.` );
-		}
-
-		variableTypes[ key ] = {
-			...variableTypes[ key ],
-			...options,
-		};
-	};
-
 	return {
 		registerVariableType,
-		updateVariableType,
 		getVariableType,
 		getVariableTypes,
 		hasVariableType,

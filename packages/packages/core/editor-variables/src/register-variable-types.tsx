@@ -30,11 +30,15 @@ export function registerVariableTypes() {
 		defaultValue: 'Roboto',
 	} );
 
-	registerVariableType( {
-		icon: ExpandDiagonalIcon,
-		propTypeUtil: sizeVariablePropTypeUtil,
-		fallbackPropTypeUtil: sizePropTypeUtil,
-		variableType: 'size',
-		upgradeUrl: 'https://go.elementor.com/go-pro-panel-size-variable/',
-	} );
+	const hasPro = !! window.elementorPro;
+
+	if ( ! hasPro ) {
+		registerVariableType( {
+			icon: ExpandDiagonalIcon,
+			propTypeUtil: sizeVariablePropTypeUtil,
+			fallbackPropTypeUtil: sizePropTypeUtil,
+			variableType: 'size',
+			upgradeUrl: 'https://go.elementor.com/go-pro-panel-size-variable/',
+		} );
+	}
 }
