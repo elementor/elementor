@@ -38,7 +38,7 @@ export const UrlPopover = ( { popupState, restoreValue, anchorRef, value, onChan
 			transformOrigin={ { vertical: 'top', horizontal: 'left' } }
 			onClose={ handleClose }
 		>
-			<Stack direction="row" alignItems="center" gap={ 0.5 } sx={ { p: 1.5 } }>
+			<Stack direction="row" alignItems="center" gap={ 1 } sx={ { p: 1.5 } }>
 				<TextField
 					value={ value }
 					onChange={ onChange }

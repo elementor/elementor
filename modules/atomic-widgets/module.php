@@ -158,6 +158,7 @@ class Module extends BaseModule {
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
 			add_action( 'elementor/frontend/before_register_scripts', fn () => $this->register_frontend_scripts() );
+			add_action( 'elementor/frontend/after_enqueue_styles', fn () => $this->add_inline_styles() );
 
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
@@ -377,5 +378,10 @@ class Module extends BaseModule {
 	private function register_frontend_scripts() {
 		$loader = new Frontend_Assets_Loader();
 		$loader->register_scripts();
+	}
+
+	private function add_inline_styles() {
+		$inline_css = '.e-heading a, .e-paragraph a { all: unset; cursor: pointer; }';
+		wp_add_inline_style( 'elementor-frontend', $inline_css );
 	}
 }
