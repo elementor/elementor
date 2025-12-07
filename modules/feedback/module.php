@@ -7,6 +7,9 @@ use Elementor\Modules\Feedback\Data\Controller;
 use Elementor\Plugin;
 use Elementor\Api;
 use Elementor\Utils;
+use http\Cookie as HttpCookie;
+use WP_Http_Cookie;
+use WpOrg\Requests\Cookie;
 
 if ( ! defined( 'ABSPATH' ) ) {
   exit; // Exit if accessed directly.
@@ -47,26 +50,49 @@ class Module extends Module_Base {
     return $data;
   }
 
-  protected function handle_submit( $request ) {
-    $ENDPOINT_URL = Api::$api_feedback_url;
-    // 'https://ebs-feedback.new-stg.elementor.red/v1/product-feedback'; // 
+  protected function handle_submit( $request, $additional_cookies = [] ) {
+    $ENDPOINT_URL = 'https://my.elementor.com/feedback/api/v1/product-feedback';
 
     $user_meta = get_user_meta( get_current_user_id(), 'wp_elementor_connect_common_data' );
 
-    $jwt_token = $this->parseJWT( $user_meta[ 'access_token' ] );
+    $jwt_token = $this->parseJWT( $user_meta[ 0 ][ 'access_token' ] );
+
+    $token_cookie = new \WP_Http_Cookie('DSR');
+    $token_cookie->name = 'DSR';
+    $token_cookie->value = $user_meta[ 0 ]['access_token'];
+    
+    $cookies = array_merge( $additional_cookies, [ $token_cookie ]);
 
 
-		return wp_remote_post( $ENDPOINT_URL, [
+		$response = wp_remote_post( $ENDPOINT_URL, [
       'header' => [
         'Content-Type' => 'application/json',
         'Accept' => 'application/json',
-        'access-token' => $user_meta[ 'access_token' ],
         'app' => 'library',
         'endpoint' => 'taxonomy',
         'home-url' => $jwt_token[ 'aud' ]
       ],
-      'cookies' => [
-        'CF_Authorization' => $user_meta['access_token']
+      'cookies' => $cookies,
+			'body' => [
+				'title' => 'Editor Feedback',
+				'description' => $request->get_param( 'description' ),
+				'product' => 'EDITOR',
+        'subject' => 'Editor Feedback'
+			]
+		]);
+
+    $responseCookies = $response->cookies;
+    if ( $response['response']['code'] === 401) {
+      $cookie_string = implode('; ', 
+        array_merge($response['headers']['set-cookie'], [ $token_cookie->name . '=' . $token_cookie->value ]));
+      $response = wp_remote_post( $ENDPOINT_URL, [
+      'header' => [
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json',
+        'app' => 'library',
+        'endpoint' => 'taxonomy',
+        'home-url' => $jwt_token[ 'aud' ],
+        'cookie' => $cookie_string
       ],
 			'body' => [
 				'title' => 'Editor Feedback',
@@ -75,6 +101,8 @@ class Module extends Module_Base {
         'subject' => 'Editor Feedback'
 			]
 		]);
+    }
+    return $response;
   }
   /**
    * Retrieve the module name.

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
+import { httpService } from '@elementor/http-client';
 import {
 	bindDialog,
 	Button,
@@ -30,6 +31,7 @@ export default function SendFeedbackPopupLocation() {
 		variant: 'dialog',
 		popupId: FEEDBACK_TOGGLE_EVENT,
 	} );
+	const [ isFetching, setIsFetching ] = useState( false );
 	useEffect( () => {
 		const handler = () => {
 			popupState.toggle();
@@ -41,7 +43,12 @@ export default function SendFeedbackPopupLocation() {
 	}, [ popupState ] );
 
 	const submitFeedback = () => {
-		alert( feedbackContent );
+		setIsFetching( true );
+		httpService()
+			.post( 'elementor/v1/feedback/submit', {
+				description: feedbackContent,
+			} )
+			.finally( () => setIsFetching( false ) );
 	};
 
 	if ( ! isUserConnected ) {
@@ -80,6 +87,7 @@ export default function SendFeedbackPopupLocation() {
 										id="elementor-feedback-usercontent"
 										rows={ 6 }
 										cols={ 80 }
+										disabled={ isFetching }
 										onChange={ ( event: React.ChangeEvent< HTMLInputElement > ) =>
 											setFeedbackContent( event.target.value )
 										}
@@ -87,6 +95,7 @@ export default function SendFeedbackPopupLocation() {
 									/>
 									<Stack direction="row" justifyContent="flex-end">
 										<Button
+											disabled={ isFetching }
 											onClick={ submitFeedback }
 											variant="contained"
 											color="primary"
