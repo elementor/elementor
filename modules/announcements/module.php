@@ -125,7 +125,7 @@ class Module extends BaseApp {
 				],
 				[
 					'label' => __( "Let's do it", 'elementor' ),
-					'variant' => 'primary',
+					'variant' => 'accent',
 					'target' => '_top',
 					'url' => '#welcome-ai',
 				],

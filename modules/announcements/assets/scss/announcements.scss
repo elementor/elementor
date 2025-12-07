@@ -132,15 +132,24 @@
 				}
 
 				&.primary {
+					background-color: var(--e-a-btn-bg-info);
+					color: var(--e-a-btn-color-invert);
+
+					&:hover {
+						background-color: var(--e-a-btn-bg-info-hover);
+					}
+
+					&:active {
+						background-color: var(--e-a-btn-bg-info-active);
+					}
+				}
+
+				&.accent {
 					background-color: var(--e-a-btn-bg-accent);
 					color: var(--e-a-btn-color-invert);
 
 					&:hover {
 						background-color: var(--e-a-btn-bg-accent-hover);
-					}
-
-					&:active {
-						background-color: var(--e-a-btn-bg-accent-active);
 					}
 				}
 			}
