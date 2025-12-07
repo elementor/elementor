@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { renderWithStore, renderWithTheme } from 'test-utils';
+import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -7,8 +8,7 @@ import {
 	type SliceState,
 	type Store,
 } from '@elementor/store';
-import { jest } from '@jest/globals';
-import { act, fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { slice } from '../../store/store';
 import { loadComponents } from '../../store/thunks';
@@ -16,6 +16,10 @@ import { ComponentSearch } from '../components-tab/component-search';
 import { ComponentItem } from '../components-tab/components-item';
 import { ComponentsList } from '../components-tab/components-list';
 import { SearchProvider } from '../components-tab/search-provider';
+
+jest.mock( '@elementor/editor-documents', () => ( {
+	setDocumentModifiedStatus: jest.fn(),
+} ) );
 
 jest.mock( '@elementor/editor-canvas', () => ( {
 	startDragElementFromPanel: jest.fn(),
@@ -211,6 +215,41 @@ describe( 'ComponentsTab', () => {
 			// Assert
 			expect( screen.getByText( 'Sorry, nothing matched' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Try something else.' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should remove component from list when archived', async () => {
+			// Arrange
+			act( () => {
+				dispatch( slice.actions.load( mockComponents ) );
+			} );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			// Assert
+			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Text Component' ) ).toBeInTheDocument();
+
+			// Act
+			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
+			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
+			fireEvent.click( buttonComponentMoreActions );
+
+			const archiveButton = await screen.findByText( 'Archive' );
+			fireEvent.click( archiveButton );
+
+			// Assert
+			await waitFor( () => {
+				expect( screen.queryByText( 'Button Component' ) ).not.toBeInTheDocument();
+			} );
+			expect( screen.getByText( 'Text Component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Image Component' ) ).toBeInTheDocument();
+			expect( jest.mocked( setDocumentModifiedStatus ) ).toHaveBeenCalledWith( true );
 		} );
 	} );
 } );
