@@ -42,7 +42,7 @@ const WhatsNewContent = () => {
 		);
 	}
 
-	if ( ! items || items.length === 0 ) {
+	if ( ! items || 0 === items.length ) {
 		return (
 			<ContentContainer>
 				<Typography color="text.secondary">
