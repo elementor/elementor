@@ -105,4 +105,3 @@ class Top_Bar_Handler {
 		return ! empty( $notifications_settings['is_unread'] );
 	}
 }
-
