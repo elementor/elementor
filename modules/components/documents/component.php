@@ -13,6 +13,8 @@ class Component extends Document {
 	const TYPE = 'elementor_component';
 	const COMPONENT_UID_META_KEY = '_elementor_component_uid';
 	const OVERRIDABLE_PROPS_META_KEY = '_elementor_component_overridable_props';
+	const ARCHIVED_META_KEY = '_elementor_component_is_archived';
+	const ARCHIVED_AT_META_KEY = '_elementor_component_archived_at';
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -65,6 +67,25 @@ class Component extends Document {
 		$meta = $this->get_meta( self::OVERRIDABLE_PROPS_META_KEY );
 
 		return new Component_Overridable_Props( $meta );
+	}
+
+	public function archive() {
+		try {
+			$this->update_main_meta( self::ARCHIVED_META_KEY, json_encode( [
+				'is_archived' => true,
+				'archived_at' => time(),
+			] ) );
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'Failed to archive component: ' . esc_html( $e->getMessage() ) );
+		}
+	}
+
+	public function get_is_archived() {
+		$archived_meta = $this->get_main_meta( self::ARCHIVED_META_KEY );
+		if ( ! $archived_meta ) {
+			return false;
+		}
+		return json_decode( $archived_meta, true );
 	}
 
 	public function update_overridable_props( $data ): Parse_Result {
