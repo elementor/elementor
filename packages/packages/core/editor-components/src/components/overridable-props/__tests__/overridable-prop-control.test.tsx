@@ -9,7 +9,7 @@ import { fireEvent, screen } from '@testing-library/react';
 
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
 import { selectCurrentComponentId, slice } from '../../../store/store';
-import { updateOverridablePropOriginValue } from '../../../store/update-overridable-prop-origin-value';
+import { updateOverridablePropOriginValue } from '../../../store/actions/update-overridable-prop-origin-value';
 import { OverridablePropControl } from '../overridable-prop-control';
 
 jest.mock( '../../../store/update-overridable-prop-origin-value', () => {

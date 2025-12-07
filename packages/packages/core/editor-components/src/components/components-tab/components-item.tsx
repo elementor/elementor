@@ -17,8 +17,8 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { archiveComponent } from '../../store/actions';
-import { loadComponentsAssets } from '../../store/load-components-assets';
+import { archiveComponent } from '../../store/actions/archive-component';
+import { loadComponentsAssets } from '../../store/actions/load-components-assets';
 import { type Component } from '../../types';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
 import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
@@ -30,7 +30,7 @@ type ComponentItemProps = {
 export const ComponentItem = ( { component }: ComponentItemProps ) => {
 	const componentModel = createComponentModel( component );
 	const popupState = usePopupState( {
-		variant: 'popover',
+		variant: 'popover', 
 		disableAutoFocus: true,
 	} );
 
