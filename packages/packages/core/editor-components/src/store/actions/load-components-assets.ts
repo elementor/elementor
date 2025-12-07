@@ -9,11 +9,11 @@ import { loadComponentsStyles } from './load-components-styles';
 export async function loadComponentsAssets( elements: V1ElementData[] ) {
 	const componentIds = await getComponentIds( elements );
 
-	updateDocumentState( componentIds );
-
-	loadComponentsOverridableProps( componentIds );
-
-	return loadComponentsStyles( componentIds );
+	return Promise.all( [
+		updateDocumentState( componentIds ),
+		loadComponentsOverridableProps( componentIds ),
+		loadComponentsStyles( componentIds ),
+	] );
 }
 
 async function updateDocumentState( componentIds: number[] ) {

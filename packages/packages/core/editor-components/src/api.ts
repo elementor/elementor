@@ -5,10 +5,6 @@ import { type HttpResponse, httpService } from '@elementor/http-client';
 import { type DocumentSaveStatus, type OverridableProps, type PublishedComponent } from './types';
 
 const BASE_URL = 'elementor/v1/components';
-const LOCK_COMPONENT = `${ BASE_URL }/lock`;
-const UNLOCK_COMPONENT = `${ BASE_URL }/unlock`;
-const BASE_URL_LOCK_STATUS = `${ BASE_URL }/lock-status`;
-const BASE_URL_OVERRIDABLE = `${ BASE_URL }/overridable-props`;
 
 export type CreateComponentPayload = {
 	status: DocumentSaveStatus;
@@ -52,7 +48,7 @@ export const apiClient = {
 	invalidateComponentConfigCache: ( id: number ) => ajax.invalidateCache< { id: number } >( getParams( id ) ),
 	getComponentLockStatus: async ( componentId: number ) =>
 		await httpService()
-			.get< { data: ComponentLockStatusResponse } >( `${ BASE_URL_LOCK_STATUS }`, {
+			.get< { data: ComponentLockStatusResponse } >( `${ BASE_URL }/lock-status`, {
 				params: {
 					componentId,
 				},
@@ -63,19 +59,19 @@ export const apiClient = {
 			} ),
 	lockComponent: async ( componentId: number ) =>
 		await httpService()
-			.post< { success: boolean } >( LOCK_COMPONENT, {
+			.post< { success: boolean } >( `${ BASE_URL }/lock`, {
 				componentId,
 			} )
 			.then( ( res ) => res.data ),
 	unlockComponent: async ( componentId: number ) =>
 		await httpService()
-			.post< { success: boolean } >( UNLOCK_COMPONENT, {
+			.post< { success: boolean } >( `${ BASE_URL }/unlock`, {
 				componentId,
 			} )
 			.then( ( res ) => res.data ),
 	getOverridableProps: async ( componentId: number ) =>
 		await httpService()
-			.get< HttpResponse< OverridableProps > >( `${ BASE_URL_OVERRIDABLE }`, {
+			.get< HttpResponse< OverridableProps > >( `${ BASE_URL }/overridable-props`, {
 				params: {
 					componentId: componentId.toString(),
 				},

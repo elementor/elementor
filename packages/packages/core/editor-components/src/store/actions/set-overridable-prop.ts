@@ -39,10 +39,10 @@ export function setOverridableProp( {
 		( prop ) => prop.elementId === elementId && prop.propKey === propKey && prop !== existingOverridableProp
 	);
 
-	const { props: oldProps, groups: oldGroups } = { ...overridableProps };
+	const { props: prevProps, groups: prevGroups } = { ...overridableProps };
 
 	const { groups: updatedGroups, currentGroupId } = getUpdatedGroups(
-		oldGroups,
+		prevGroups,
 		groupId || existingOverridableProp?.groupId
 	);
 
@@ -58,7 +58,7 @@ export function setOverridableProp( {
 	};
 
 	const { props: propsWithoutDuplicates, groups: groupsWithoutDuplicates } = removeProps( {
-		props: oldProps,
+		props: prevProps,
 		groups: updatedGroups,
 		propsToRemove: duplicatedTargetProps,
 	} );
