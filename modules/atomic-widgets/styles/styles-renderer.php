@@ -121,7 +121,11 @@ class Styles_Renderer {
 			return '';
 		}
 
-		$selector = $this->get_selector_with_state($base_selector, $variant['meta']['state'] );
+		if ( isset($variant['meta']['state']) ) {
+			$selector = $this->get_selector_with_state($base_selector, $variant['meta']['state'] );
+		} else {
+			$selector = $base_selector;
+		}
 
 		$style_declaration = $selector . '{' . $css . $custom_css . '}';
 
@@ -132,11 +136,7 @@ class Styles_Renderer {
 		return $style_declaration;
 	}
 
-	private function get_selector_with_state(string $base_selector, ?string $state ): string {
-		if (empty($state)) {
-			return $base_selector;
-		}
-
+	private function get_selector_with_state(string $base_selector, string $state ): string {
 		$alternative_states = Style_States::get_alternative_states( $state );
 		$all_states = [$state, ...$alternative_states];
 
