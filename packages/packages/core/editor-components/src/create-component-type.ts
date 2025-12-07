@@ -18,65 +18,62 @@ import { trackComponentEvent } from './utils/tracking';
 type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
 
 type ContextMenuAction = {
-	name: string,
-	icon: string,
-	title: string | (() => string),
-	isEnabled: () => boolean,
-	callback: (_: unknown, eventData: ContextMenuEventData) => void
-}
+	name: string;
+	icon: string;
+	title: string | ( () => string );
+	isEnabled: () => boolean;
+	callback: ( _: unknown, eventData: ContextMenuEventData ) => void;
+};
 
 type ContextMenuGroupConfig = {
-	disable: Record<string, string[]>,
-	add: Record<string, { index: number, action: ContextMenuAction }>
-}
+	disable: Record< string, string[] >;
+	add: Record< string, { index: number; action: ContextMenuAction } >;
+};
 
 type ContextMenuGroup = {
-	name: string,
-	actions: ContextMenuAction[]
-}
+	name: string;
+	actions: ContextMenuAction[];
+};
 
 export const TYPE = 'e-component';
 
-	const updateGroups = (groups: ContextMenuGroup[], config: ContextMenuGroupConfig) => {
+const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfig ) => {
 	const { disable, add } = config;
-	const disabledGroupNames = Object.keys(disable);
-	const addedGroupNames = Object.keys(add);
-	const newGroups = groups.map((group: ContextMenuGroup) => {
+	const disabledGroupNames = Object.keys( disable );
+	const addedGroupNames = Object.keys( add );
+	const newGroups = groups.map( ( group: ContextMenuGroup ) => {
 		const groupName = group.name;
-		if (disabledGroupNames.includes(groupName)) {
-			const disabledActions = disable[groupName];
+		if ( disabledGroupNames.includes( groupName ) ) {
+			const disabledActions = disable[ groupName ];
 			return {
 				...group,
-				actions: group.actions.map((action: ContextMenuAction) => {
-					if (disabledActions.includes(action.name)) {
+				actions: group.actions.map( ( action: ContextMenuAction ) => {
+					if ( disabledActions.includes( action.name ) ) {
 						return {
 							...action,
 							isEnabled: () => false,
-						}
+						};
 					}
 					return action;
-
-				}),
-			}
+				} ),
+			};
 		}
 
-		if(addedGroupNames.includes(groupName)) {
+		if ( addedGroupNames.includes( groupName ) ) {
 			return {
 				...group,
-				actions:
-					[...group.actions.slice(0, add[groupName].index),
-				add[groupName].action,
-					...group.actions.slice(add[groupName].index)
+				actions: [
+					...group.actions.slice( 0, add[ groupName ].index ),
+					add[ groupName ].action,
+					...group.actions.slice( add[ groupName ].index ),
 				],
-			}
+			};
 		}
 		return group;
-	})
+	} );
 
-	console.log('LOG:: newGroups', newGroups);
-		return newGroups;
-
-}
+	return newGroups;
+};
 
 export function createComponentType(
 	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
@@ -148,13 +145,12 @@ function createComponentView(
 
 		getContextMenuGroups() {
 			const groups = super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
-			
 			const componentId = this.getComponentId();
 			if ( ! componentId ) {
 				return groups;
 			}
 
-			const newGroups = updateGroups(groups as ContextMenuGroup[],this.getContextMenuConfig());
+			const newGroups = updateGroups( groups as ContextMenuGroup[], this.getContextMenuConfig() );
 			return newGroups;
 		}
 
@@ -166,18 +162,18 @@ function createComponentView(
 						action: {
 							name: 'edit component',
 							icon: 'eicon-edit',
-							title: () => __('Edit Component', 'elementor'),
+							title: () => __( 'Edit Component', 'elementor' ),
 							isEnabled: () => true,
-							callback: (_: unknown, eventData: ContextMenuEventData) =>
-								this.editComponent(eventData),
-						}
-					}
+							callback: ( _: unknown, eventData: ContextMenuEventData ) =>
+								this.editComponent( eventData ),
+						},
+					},
 				},
 				disable: {
-					clipboard: ['pasteStyle','resetStyle'],
-				}
-			}
-		}		
+					clipboard: [ 'pasteStyle', 'resetStyle' ],
+				},
+			};
+		}
 
 		async switchDocument() {
 			//todo: handle unpublished
@@ -258,7 +254,4 @@ function setInactiveRecursively( model: BackboneModel< ElementModel > ) {
 			setInactiveRecursively( childModel );
 		} );
 	}
-
-	
-
 }
