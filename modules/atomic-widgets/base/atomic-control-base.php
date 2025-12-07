@@ -17,4 +17,3 @@ abstract class Atomic_Control_Base extends New_Atomic_Control_Base {
 		parent::__construct( $prop_name );
 	}
 }
-
