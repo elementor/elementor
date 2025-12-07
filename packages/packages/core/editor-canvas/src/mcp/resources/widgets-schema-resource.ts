@@ -12,9 +12,26 @@ import { getStylesSchema } from '@elementor/editor-styles';
 
 export const WIDGET_SCHEMA_URI = 'elementor://widgets/schema/{widgetType}';
 export const STYLE_SCHEMA_URI = 'elementor://styles/schema/{category}';
+export const BEST_PRACTICES_URI = 'elementor://styles/best-practices';
 
 export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 	const { mcpServer } = reg;
+
+	mcpServer.resource( 'styles-best-practices', BEST_PRACTICES_URI, async () => {
+		return {
+			contents: [
+				{
+					uri: BEST_PRACTICES_URI,
+					text: `# Styling best practices
+Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
+This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema, or in custom_css, depends on your needs.
+
+When applicable for styles, use the "custom_css" property for free-form CSS styling. This property accepts a string of CSS rules that will be applied directly to the element.
+The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.`,
+				},
+			],
+		};
+	} );
 
 	mcpServer.resource(
 		'styles-schema',
@@ -39,7 +56,7 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 					contents: [
 						{
 							uri: uri.toString(),
-							text: 'Free style inline CSS string of properties and their values. Applicable for a single element, only the properties and values are accepted.',
+							text: 'Free style inline CSS string of properties and their values. Applicable for a single element, only the properties and values are accepted. Use this as a last resort for properties that are not covered with the schema.',
 						},
 					],
 				};
@@ -94,9 +111,11 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 					Schema.propTypeToJsonSchema( propType ),
 				] )
 			);
-			delete asJson.classes;
-			delete asJson._cssid;
-			delete asJson.attributes;
+			Schema.nonConfigurablePropKeys.forEach( ( key ) => {
+				// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+				delete asJson[ key ];
+			} );
+
 			return {
 				contents: [
 					{

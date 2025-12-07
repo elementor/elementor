@@ -15,6 +15,10 @@ use Elementor\Modules\Library\Documents\Library_Document;
 use Elementor\Plugin;
 use Elementor\Utils;
 use Elementor\User;
+use Elementor\Core\Isolation\Wordpress_Adapter;
+use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
+use Elementor\Core\Isolation\Elementor_Adapter;
+use Elementor\Core\Isolation\Elementor_Adapter_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -90,6 +94,16 @@ class Source_Local extends Source_Base {
 	 * @var \WP_Post_Type
 	 */
 	private $post_type_object;
+
+	/**
+	 * @var Wordpress_Adapter_Interface
+	 */
+	protected $wordpress_adapter = null;
+
+	/**
+	 * @var Elementor_Adapter_Interface
+	 */
+	protected $elementor_adapter = null;
 
 	/**
 	 * @since 2.3.0
@@ -728,6 +742,20 @@ class Source_Local extends Source_Base {
 
 			if ( ! empty( $content ) ) {
 				$content = $this->replace_elements_ids( $content );
+
+				/**
+				 * Filters the template content data.
+				 *
+				 * This filter allows third-party plugins to modify template content
+				 * when loaded via get_template_data(), making the behavior consistent
+				 * with Frontend::get_builder_content().
+				 *
+				 * @since 3.34.0
+				 *
+				 * @param array $content     The template content data.
+				 * @param int   $template_id The template ID.
+				 */
+				$content = apply_filters( 'elementor/frontend/builder_content_data', $content, $template_id );
 			}
 		}
 
@@ -1806,5 +1834,101 @@ class Source_Local extends Source_Base {
 		parent::__construct();
 
 		$this->add_actions();
+	}
+
+	public function format_args_for_bulk_action( $args ) {
+		$bulk_args = [];
+
+		foreach ( $args['from_template_id'] as $from_template_id ) {
+			if ( ! $this->is_allowed_to_read_template( [
+				'template_id' => $from_template_id,
+			] ) ) {
+				continue;
+			}
+
+			$document = Plugin::$instance->documents->get( $from_template_id );
+
+			if ( ! $document ) {
+				continue;
+			}
+
+			$page = SettingsManager::get_settings_managers( 'page' )->get_model( $from_template_id );
+
+			$bulk_args[] = array_merge(
+				$args,
+				[
+					'title' => $document->get_post()->post_title,
+					'type' => $document::get_type(),
+					'content' => $document->get_elements_data(),
+					'page_settings' => $page->get_data( 'settings' ),
+				]
+			);
+		}
+
+		return $bulk_args;
+	}
+
+	public function format_args_for_single_action( $args ) {
+		if ( ! $this->is_allowed_to_read_template( [
+			'template_id' => $args['from_template_id'],
+		] ) ) {
+			return new \WP_Error(
+				'template_error',
+				esc_html__( 'You do not have permission to access this template.', 'elementor' )
+			);
+		}
+
+		$document = Plugin::$instance->documents->get( $args['from_template_id'] );
+
+		if ( ! $document ) {
+			return new \WP_Error( 'template_error', 'Document not found.' );
+		}
+
+		$args['content'] = $document->get_elements_data();
+
+		$page = SettingsManager::get_settings_managers( 'page' )->get_model( $args['from_template_id'] );
+		$args['page_settings'] = $page->get_data( 'settings' );
+
+		return $args;
+	}
+
+	public function is_allowed_to_read_template( array $args ): bool {
+		if ( null === $this->wordpress_adapter ) {
+			$this->set_wordpress_adapter( new WordPress_Adapter() );
+		}
+
+		if ( ! $this->should_check_permissions( $args ) ) {
+			return true;
+		}
+
+		$post_id = intval( $args['template_id'] );
+		$post_status = $this->wordpress_adapter->get_post_status( $post_id );
+		$is_private_or_non_published = ( 'private' === $post_status && ! $this->wordpress_adapter->current_user_can( 'read_private_posts', $post_id ) ) || ( 'publish' !== $post_status );
+
+		$can_read_template = $is_private_or_non_published || $this->wordpress_adapter->current_user_can( 'edit_post', $post_id );
+
+		return apply_filters( 'elementor/template-library/is_allowed_to_read_template', $can_read_template, $args );
+	}
+
+	private function should_check_permissions( array $args ): bool {
+		if ( null === $this->elementor_adapter ) {
+			$this->set_elementor_adapter( new Elementor_Adapter() );
+		}
+
+		$check_permissions = isset( $args['check_permissions'] ) && false === $args['check_permissions'];
+
+		if ( $check_permissions ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public function set_wordpress_adapter( Wordpress_Adapter_Interface $wordpress_adapter ) {
+		$this->wordpress_adapter = $wordpress_adapter;
+	}
+
+	public function set_elementor_adapter( Elementor_Adapter_Interface $elementor_adapter ): void {
+		$this->elementor_adapter = $elementor_adapter;
 	}
 }

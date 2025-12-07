@@ -5,6 +5,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,7 +36,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Interactions', 'elementor' ),
 			'description' => esc_html__( 'Enable element interactions.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		];
 	}
@@ -62,14 +63,18 @@ class Module extends BaseModule {
 			/**
 			 * @throws \Exception
 			 */
-			function( $document ) {
+			function( $data, $document ) {
 				$validation = new Validation( $this->get_presets() );
-				$document_after_sanitization = $validation->sanitize( $document );
+				$document_after_sanitization = $validation->sanitize( $data );
 				$validation->validate();
 
 				return $document_after_sanitization;
 			},
-		10, 1 );
+		10, 2 );
+
+		add_filter( 'elementor/document/save/data', function( $data, $document ) {
+			return ( new Parser( $document->get_main_id() ) )->assign_interaction_ids( $data );
+		}, 11, 2 );
 	}
 
 	private function get_config() {
@@ -80,9 +85,11 @@ class Module extends BaseModule {
 	}
 
 	private function register_frontend_scripts() {
+		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
+
 		wp_register_script(
 			'motion-js',
-			ELEMENTOR_ASSETS_URL . 'lib/motion/motion.js',
+			ELEMENTOR_ASSETS_URL . 'lib/motion/motion' . $suffix . '.js',
 			[],
 			'11.13.5',
 			true

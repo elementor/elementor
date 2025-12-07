@@ -4,7 +4,7 @@ export const config = window.ElementorInteractionsConfig?.constants || {
 	defaultDuration: 300,
 	defaultDelay: 0,
 	slideDistance: 100,
-	scaleStart: 0.5,
+	scaleStart: 0,
 	easing: 'linear',
 };
 
@@ -12,7 +12,9 @@ export function getKeyframes( effect, type, direction ) {
 	const isIn = 'in' === type;
 	const keyframes = {};
 
-	keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
+	if ( 'fade' === effect ) {
+		keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
+	}
 
 	if ( 'scale' === effect ) {
 		keyframes.scale = isIn ? [ config.scaleStart, 1 ] : [ 1, config.scaleStart ];

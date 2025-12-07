@@ -4,7 +4,6 @@ import { __createStore, __dispatch, __getState as getState, __registerSlice } fr
 import { apiClient } from '../../api';
 import { selectUnpublishedComponents, slice } from '../../store/store';
 import { createComponentsBeforeSave } from '../create-components-before-save';
-import { createMockContainer } from './utils';
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../api' );
@@ -58,11 +57,8 @@ describe( 'createComponentsBeforeSave', () => {
 
 	describe( 'No Unpublished Components', () => {
 		it( 'should not update any element settings or make API calls', async () => {
-			// Arrange
-			const container = createMockContainer();
-
 			// Act
-			await createComponentsBeforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { elements: [], status: 'draft' } );
 
 			// Assert
 			expect( mockCreateComponents ).not.toHaveBeenCalled();
@@ -77,7 +73,7 @@ describe( 'createComponentsBeforeSave', () => {
 
 		it( 'should send create requests for unpublished components', async () => {
 			// Act
-			await createComponentsBeforeSave( { container: createMockContainer(), status: 'publish' } );
+			await createComponentsBeforeSave( { elements: [], status: 'publish' } );
 
 			// Assert
 			expect( mockCreateComponents ).toHaveBeenCalledTimes( 1 );
@@ -100,11 +96,10 @@ describe( 'createComponentsBeforeSave', () => {
 
 		it( 'should throw error when component update fails', async () => {
 			// Arrange
-			const container = createMockContainer();
 			mockCreateComponents.mockRejectedValue( new Error( 'API Error' ) );
 
 			// Act & Assert
-			await expect( createComponentsBeforeSave( { container, status: 'draft' } ) ).rejects.toThrow(
+			await expect( createComponentsBeforeSave( { elements: [], status: 'draft' } ) ).rejects.toThrow(
 				'Failed to publish components and update component instances'
 			);
 		} );
@@ -116,20 +111,17 @@ describe( 'createComponentsBeforeSave', () => {
 		} );
 
 		it( 'should replace temporary component IDs with actual IDs from server response', async () => {
-			// Arrange
-			const container = createMockContainer( mockPageElements );
-
 			// Act
-			await createComponentsBeforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { elements: mockPageElements, status: 'draft' } );
 
 			// Assert
 			expect( mockUpdateElementSettings ).toHaveBeenCalledTimes( 2 );
 			expect( mockUpdateElementSettings ).toHaveBeenCalledWith( {
 				id: 'element-1_component-with-temp-id',
 				props: {
-					component: {
-						$$type: 'component-id',
-						value: 1111,
+					component_instance: {
+						$$type: 'component-instance',
+						value: { component_id: 1111 },
 					},
 				},
 				withHistory: false,
@@ -137,9 +129,9 @@ describe( 'createComponentsBeforeSave', () => {
 			expect( mockUpdateElementSettings ).toHaveBeenCalledWith( {
 				id: 'element-3_component-with-temp-id',
 				props: {
-					component: {
-						$$type: 'component-id',
-						value: 3333,
+					component_instance: {
+						$$type: 'component-instance',
+						value: { component_id: 3333 },
 					},
 				},
 				withHistory: false,
@@ -147,11 +139,8 @@ describe( 'createComponentsBeforeSave', () => {
 		} );
 
 		it( 'should not change component instances that already have actual IDs', async () => {
-			// Arrange
-			const container = createMockContainer( mockPageElements );
-
 			// Act
-			await createComponentsBeforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { elements: mockPageElements, status: 'draft' } );
 
 			// Assert
 			expect( mockUpdateElementSettings ).not.toHaveBeenCalledWith(
@@ -160,11 +149,8 @@ describe( 'createComponentsBeforeSave', () => {
 		} );
 
 		it( 'should skip non-component elements', async () => {
-			// Arrange
-			const container = createMockContainer( mockPageElements );
-
 			// Act
-			await createComponentsBeforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { elements: mockPageElements, status: 'draft' } );
 
 			// Assert
 			expect( mockUpdateElementSettings ).not.toHaveBeenCalledWith(
@@ -176,11 +162,8 @@ describe( 'createComponentsBeforeSave', () => {
 		} );
 
 		it( 'should handle empty elements array', async () => {
-			// Arrange
-			const container = createMockContainer( [] );
-
 			// Act
-			await createComponentsBeforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { elements: [], status: 'draft' } );
 
 			// Assert
 			expect( mockUpdateElementSettings ).not.toHaveBeenCalled();
@@ -202,10 +185,9 @@ describe( 'createComponentsBeforeSave', () => {
 					uid: publishedComponentUid,
 				} )
 			);
-			const container = createMockContainer( [] );
 
 			// Act
-			await createComponentsBeforeSave( { container, status: 'draft' } );
+			await createComponentsBeforeSave( { elements: [], status: 'draft' } );
 
 			// Assert
 			expect( getState().components.data ).toEqual( [
@@ -223,7 +205,7 @@ describe( 'createComponentsBeforeSave', () => {
 			] );
 
 			// Act
-			await createComponentsBeforeSave( { container: createMockContainer(), status: 'draft' } );
+			await createComponentsBeforeSave( { elements: [], status: 'draft' } );
 
 			// Assert
 			expect( selectUnpublishedComponents( getState() ) ).toEqual( [] );
@@ -265,9 +247,9 @@ const mockPageElements: V1ElementData[] = [
 		elType: 'widget',
 		widgetType: 'e-component',
 		settings: {
-			component: {
-				$$type: 'component-id',
-				value: COMPONENT_1_UID,
+			component_instance: {
+				$$type: 'component-instance',
+				value: { component_id: COMPONENT_1_UID },
 			},
 		},
 	},
@@ -280,9 +262,9 @@ const mockPageElements: V1ElementData[] = [
 				elType: 'widget',
 				widgetType: 'e-component',
 				settings: {
-					component: {
-						$$type: 'component-id',
-						value: COMPONENT_2_UID,
+					component_instance: {
+						$$type: 'component-instance',
+						value: { component_id: COMPONENT_2_UID },
 					},
 				},
 			},
@@ -304,9 +286,9 @@ const mockPageElements: V1ElementData[] = [
 		elType: 'widget',
 		widgetType: 'e-component',
 		settings: {
-			component: {
-				$$type: 'component-id',
-				value: 4444,
+			component_instance: {
+				$$type: 'component-instance',
+				value: { component_id: 4444 },
 			},
 		},
 	},

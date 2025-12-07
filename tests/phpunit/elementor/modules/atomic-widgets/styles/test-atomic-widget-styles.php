@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
-use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
@@ -401,6 +401,7 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 
 		// Assert.
 		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id, Atomic_Widget_Styles::CONTEXT_FRONTEND ] ) );
+		$this->assertFalse( $cache_validity->is_valid( [ Atomic_Widget_Styles::STYLES_KEY, $id, Atomic_Widget_Styles::CONTEXT_PREVIEW ] ) );
 	}
 
 	public function test_cache_invalidation_on_global_cache_clear() {

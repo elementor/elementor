@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getElementLabel, type V1ElementData } from '@elementor/editor-elements';
-import { ThemeProvider } from '@elementor/editor-ui';
+import { Form as FormElement, ThemeProvider } from '@elementor/editor-ui';
 import { StarIcon } from '@elementor/icons';
 import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
-import { createUnpublishedComponent } from '../../store/create-unpublished-component';
+import { createUnpublishedComponent } from '../../store/actions/create-unpublished-component';
 import { type ComponentFormValues } from '../../types';
 import { trackComponentEvent } from '../../utils/tracking';
 import { useForm } from './hooks/use-form';
@@ -170,55 +170,60 @@ const Form = ( {
 		}
 	};
 
+	const texts = {
+		heading: __( 'Save as a component', 'elementor' ),
+		name: __( 'Name', 'elementor' ),
+		cancel: __( 'Cancel', 'elementor' ),
+		create: __( 'Create', 'elementor' ),
+	};
+
+	const nameInputId = 'component-name';
+
 	return (
-		<Stack alignItems="start" width="268px">
-			<Stack
-				direction="row"
-				alignItems="center"
-				py={ 1 }
-				px={ 1.5 }
-				sx={ { columnGap: 0.5, borderBottom: '1px solid', borderColor: 'divider', width: '100%' } }
-			>
-				<StarIcon fontSize={ FONT_SIZE } />
-				<Typography variant="caption" sx={ { color: 'text.primary', fontWeight: '500', lineHeight: 1 } }>
-					{ __( 'Save as a component', 'elementor' ) }
-				</Typography>
-			</Stack>
-			<Grid container gap={ 0.75 } alignItems="start" p={ 1.5 }>
-				<Grid item xs={ 12 }>
-					<FormLabel htmlFor={ 'component-name' } size="tiny">
-						{ __( 'Name', 'elementor' ) }
-					</FormLabel>
-				</Grid>
-				<Grid item xs={ 12 }>
-					<TextField
-						id={ 'component-name' }
-						size={ FONT_SIZE }
-						fullWidth
-						value={ values.componentName }
-						onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) =>
-							handleChange( e, 'componentName', changeValidationSchema )
-						}
-						inputProps={ { style: { color: 'text.primary', fontWeight: '600' } } }
-						error={ Boolean( errors.componentName ) }
-						helperText={ errors.componentName }
-					/>
-				</Grid>
-			</Grid>
-			<Stack direction="row" justifyContent="flex-end" alignSelf="end" py={ 1 } px={ 1.5 }>
-				<Button onClick={ closePopup } color="secondary" variant="text" size="small">
-					{ __( 'Cancel', 'elementor' ) }
-				</Button>
-				<Button
-					onClick={ handleSubmit }
-					disabled={ ! isValid }
-					variant="contained"
-					color="primary"
-					size="small"
+		<FormElement onSubmit={ handleSubmit }>
+			<Stack alignItems="start" width="268px">
+				<Stack
+					direction="row"
+					alignItems="center"
+					py={ 1 }
+					px={ 1.5 }
+					sx={ { columnGap: 0.5, borderBottom: '1px solid', borderColor: 'divider', width: '100%' } }
 				>
-					{ __( 'Create', 'elementor' ) }
-				</Button>
+					<StarIcon fontSize={ FONT_SIZE } />
+					<Typography variant="caption" sx={ { color: 'text.primary', fontWeight: '500', lineHeight: 1 } }>
+						{ texts.heading }
+					</Typography>
+				</Stack>
+				<Grid container gap={ 0.75 } alignItems="start" p={ 1.5 }>
+					<Grid item xs={ 12 }>
+						<FormLabel htmlFor={ nameInputId } size="tiny">
+							{ texts.name }
+						</FormLabel>
+					</Grid>
+					<Grid item xs={ 12 }>
+						<TextField
+							id={ nameInputId }
+							size={ FONT_SIZE }
+							fullWidth
+							value={ values.componentName }
+							onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) =>
+								handleChange( e, 'componentName', changeValidationSchema )
+							}
+							inputProps={ { style: { color: 'text.primary', fontWeight: '600' } } }
+							error={ Boolean( errors.componentName ) }
+							helperText={ errors.componentName }
+						/>
+					</Grid>
+				</Grid>
+				<Stack direction="row" justifyContent="flex-end" alignSelf="end" py={ 1 } px={ 1.5 }>
+					<Button onClick={ closePopup } color="secondary" variant="text" size="small">
+						{ texts.cancel }
+					</Button>
+					<Button type="submit" disabled={ ! isValid } variant="contained" color="primary" size="small">
+						{ texts.create }
+					</Button>
+				</Stack>
 			</Stack>
-		</Stack>
+		</FormElement>
 	);
 };

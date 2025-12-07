@@ -5,12 +5,14 @@ use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Testing\Modules\Components\Mocks\Component_Mocks;
+use Elementor\Testing\Modules\Components\Mocks\Component_Overrides_Mocks;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 require_once __DIR__ . '/mocks/component-mocks.php';
+require_once __DIR__ . '/mocks/component-overrides-mocks.php';
 
 class Test_Components_Rest_Api extends Elementor_Test_Base {
 
@@ -588,6 +590,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayHasKey( '/elementor/v1/components/lock-status', $routes );
 		$this->assertArrayHasKey( '/elementor/v1/components/lock', $routes );
 		$this->assertArrayHasKey( '/elementor/v1/components/unlock', $routes );
+		$this->assertArrayHasKey( '/elementor/v1/components/overridable-props', $routes );
 
 		// Check GET method for components
 		$components_route = $routes['/elementor/v1/components'];
@@ -617,6 +620,11 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$unlock_route = $routes['/elementor/v1/components/unlock'];
 		$unlock_post_methods = array_filter( $unlock_route, fn( $route ) => in_array( 'POST', $route['methods'] ) );
 		$this->assertNotEmpty( $unlock_post_methods );
+
+		// Check GET method for overridable-props
+		$get_overridable_route = $routes['/elementor/v1/components/overridable-props'];
+		$get_overridable_methods = array_filter( $get_overridable_route, fn( $route ) => in_array( 'GET', $route['methods'] ) );
+		$this->assertNotEmpty( $get_overridable_methods );
 	}
 
 	public function authentication_test_data_provider() {
@@ -642,6 +650,11 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 			'POST unlock' => [
 				'method' => 'POST',
 				'endpoint' => '/elementor/v1/components/unlock',
+				'params' => [ 'componentId' => 123 ],
+			],
+			'GET overridable-props' => [
+				'method' => 'GET',
+				'endpoint' => '/elementor/v1/components/overridable-props',
 				'params' => [ 'componentId' => 123 ],
 			],
 		];
@@ -844,9 +857,9 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 		// Verify component is actually locked
 		$lock_manager = \Elementor\Modules\Components\Component_Lock_Manager::get_instance();
-		$lock_data = $lock_manager->is_locked( $component_id );
-		$this->assertTrue( $lock_data['is_locked'], 'Component should be locked by current user' );
-		$this->assertEquals( get_current_user_id(), $lock_data['lock_user'], 'Component should be locked by current user' );
+		$lock_data = $lock_manager->get_lock_data( $component_id );
+		$this->assertNotNull( $lock_data['locked_by'], 'Component should be locked by current user' );
+		$this->assertEquals( get_current_user_id(), $lock_data['locked_by'], 'Component should be locked by current user' );
 	}
 
 
@@ -874,24 +887,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 		// Verify component is actually unlocked
 		$lock_manager = \Elementor\Modules\Components\Component_Lock_Manager::get_instance();
-		$lock_data = $lock_manager->is_locked( $component_id );
-		$this->assertFalse( $lock_data['is_locked'], 'Component should be unlocked' );
-	}
-
-	public function test_post_unlock_component__fails_when_not_locked() {
-		// Arrange
-		$this->act_as_admin();
-		$component_id = $this->create_test_component( 'Test Component', $this->mock_component_1_content );
-
-		// Act - try to unlock component that's not locked
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/unlock' );
-		$request->set_param( 'componentId', $component_id );
-		$response = rest_do_request( $request );
-
-		// Assert - should fail because there's no lock to unlock
-		$this->assertEquals( 500, $response->get_status() );
-		$data = $response->get_data();
-		$this->assertEquals( 'unlock_failed', $data['code'] );
+		$lock_data = $lock_manager->get_lock_data( $component_id );
+		$this->assertNull( $lock_data['locked_by'], 'Component should be unlocked' );
 	}
 
 	public function test_update_statuses() {
@@ -938,6 +935,70 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 		$this->assertEquals( 403, $response->get_status() );
 		$this->assertEquals( 'rest_forbidden', $response->get_data()['code'] );
+	}
+
+	public function test_get_overridable_props__returns_props_for_existing_component() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Component With Overrides', $this->mock_component_1_content );
+
+		$mocks = new Component_Overrides_Mocks();
+		$overridable_props = $mocks->get_mock_component_overridable_props();
+
+		update_post_meta( $component_id, Component_Document::OVERRIDABLE_PROPS_META_KEY, json_encode( $overridable_props ) );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/overridable-props' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+		$this->assertEquals( $overridable_props, $data );
+	}
+
+	public function test_get_overridable_props__returns_null_when_no_overridable_props() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Component Without Overrides', $this->mock_component_1_content );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/overridable-props' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$this->assertNull( $response->get_data()['data'] );
+	}
+
+	public function test_get_overridable_props__fails_without_component_id() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/overridable-props' );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_missing_callback_param', $response->get_data()['code'] );
+	}
+
+	public function test_get_overridable_props__fails_for_non_existing_component() {
+		// Arrange
+		$this->act_as_admin();
+		$non_existing_component_id = 999999;
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/overridable-props' );
+		$request->set_param( 'componentId', $non_existing_component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 404, $response->get_status() );
+		$this->assertEquals( 'component_not_found', $response->get_data()['code'] );
 	}
 
 	// Helpers
