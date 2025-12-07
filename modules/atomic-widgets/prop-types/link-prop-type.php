@@ -12,6 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Link_Prop_Type extends Object_Prop_Type {
+	public const DEFAULT_TAG = 'a';
+
 	public static function get_key(): string {
 		return 'link';
 	}
@@ -41,7 +43,7 @@ class Link_Prop_Type extends Object_Prop_Type {
 				->set_dependencies( $target_blank_dependencies ),
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'a', 'button' ] )
-				->default( 'a' )
+				->default( self::DEFAULT_TAG )
 				->set_dependencies( $tag_dependencies ),
 		];
 	}

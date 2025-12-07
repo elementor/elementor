@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Render_Context;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -269,7 +270,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 	}
 
 	protected function get_link_attributes( $link_settings ) {
-		$tag = $link_settings['tag'] ?? 'a';
+		$tag = $link_settings['tag'] ?? Link_Prop_Type::DEFAULT_TAG;
 		$href = $link_settings['href'];
 		$target = $link_settings['target'] ?? '_self';
 
