@@ -7,7 +7,7 @@ import { z } from '@elementor/schema';
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 import { saveGlobalClasses } from '../save-global-classes';
 
-const inputSchema = {
+export const inputSchema = {
 	globalClassName: z.string().describe( 'The name of the global class to be created' ),
 	// customCss: z.string().describe( 'The CSS styles associated with the global class' ).optional(),
 	props: z
@@ -39,7 +39,7 @@ const outputSchema = {
 type InputSchema = z.infer< ReturnType< typeof z.object< typeof inputSchema > > >;
 type OutputSchema = z.infer< ReturnType< typeof z.object< typeof outputSchema > > >;
 
-const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
+export const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 	const customCss = input.customCss ? { raw: btoa( input.customCss ) } : null;
 	const { delete: deleteClass, create } = globalClassesStylesProvider.actions;
 	if ( ! create || ! deleteClass ) {

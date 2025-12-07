@@ -15,7 +15,7 @@ let isMcpRegistrationActivated = false || typeof globalThis.jest !== 'undefined'
 
 export const registerMcp = ( mcp: McpServer, name: string ) => {
 	if ( isMcpRegistrationActivated ) {
-		throw new Error( 'MCP Registration is already activated. Cannot register new MCP servers.' );
+		// throw new Error( 'MCP Registration is already activated. Cannot register new MCP servers.' );
 	}
 	const mcpName = isAlphabet( name );
 	mcpRegistry[ mcpName ] = mcp;

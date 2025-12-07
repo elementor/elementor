@@ -1,40 +1,83 @@
 import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from './resources/widgets-schema-resource';
 
-export const mcpDescription = `Canvas MCP - Working with widgets and styles: how to use the PropType schemas and generate PropValue structures
+export const mcpDescription = `Canvas MCP
+This MCP enables everything related to creation, configuration, and styling of elements on the Elementor canvas.
 
-# Elementor's PropValue configuration system
+# Design Systems in Elementor
+- Elementor presents global classes. Each global class is a a set of styles that can be applied to multiple elements. This allows for consistent styling across the design.
+- Elementor also presents global variables, which can be colors, sizes or fonts. These variables can be used in any element's styles, or global classes, allowing for easy updates and consistency across the design.
+- All data is stored in a PropValue structure, which is a wrapper for elementor values. The PropValues are derived from an internal "PropType" schema, which defines the structure and types of the values.
 
-Every widget in Elementor has a set of properties that can be configured, defined in a STRICT SCHEMA we call "PropType".
-All widget configuration values are represented using a structure we call "PropValue".
+# PropValues structure and usage
+\`\`\`json
+{
+  $$type: 'the-prop-type-schema-kind',
+  value: 'the-actual-value-as-defined-for-the-propType'
+}
+\`\`\`
+The "value" property can be an object, string, number, boolean, array, etc. The $$type defines the kind of value, and the value is the actual value.
+It is critical to provide the correct $$type for each value, as it defines how Elementor will interpret the value or reject it.
 
-To correctly configure a widget's properties, FOLLOW THE PropType schema defined for that widget. This schema outlines the expected structure and types for each property, ensuring that the values you provide are valid and can be properly interpreted by Elementor.
-Every widget has it's own PropType schema, retreivable from the resource [${ WIDGET_SCHEMA_URI }].
-ALL WIDGETS share a common _styles property with a uniform styles schema, retreivable from the resource [${ STYLE_SCHEMA_URI }].
-The style schema is grouped by categories, such as "typography", "background", "border", etc.
+All widgets properties and configuration is built from sets of PropValues, which can be retreived from the resource [${ WIDGET_SCHEMA_URI }].
+All styles are SHARED ACCROSS widgets, containers and components, and are defined in a common styles schema, retreivable from the resource [${ STYLE_SCHEMA_URI }].
+The style schema also defines the global classes.
 
-# Tools and usage
-- Use the "get-element-configuration-values" tool to retrieve the current configuration of a specific element, including its PropValues and styles. It is recommended to use this tool when you are required to make changes to an existing element, to ensure you have the correct current configuration schema.
-  If a PropValue changes it's type (only on union PropTypes), read the new schema from the resources mentioned above, and adjust the PropValue structure accordingly.
-- Use the "build-composition" tool to create a NEW ELEMENTS in a composition on the page. You can use this tool to also create a new single element.
-- Use the "configure-element" tool to update the configuration of an EXISTING element on the page.
+To understand the configuration options for an element, refer to the PropType schema for that specific element. For example: "e-heading" configuration schema is available at the resource [${ WIDGET_SCHEMA_URI }/e-heading]
 
-All array types that can receive union types, are typed as mixed array, which means that each item in the array can be of any of the allowed types defined in the PropType schema.
-Example: the "background" can have a background-overlay property, which can contain multiple overlays, such as color, gradient, image, etc. Each item in the array must follow the PropType schema for each overlay type.
-All _style properties are OPTIONAL. When a _style is defined, we MERGE the values with existing styles, so only the properties you define will be changed, and the rest will remain as is.
+# Modifying elements and styles
+When configuring an element, elementor does a MERGE PROPERTIES operation, which means that only the properties you provide will be updated, and the rest will remain as is.
+For deleting a property, the value must be set to null, instead of a PropValue. When adding a configuration, no need to provide the full configuration, only the properties you want to add or update.
+The same rule applies to styles as well and modifications to global classes.
+
+# Building full compositions
+The "build-composition" tool allows creating multiple elements in a single operation.
+The tool accepts both the structure, the styling and the configuration of each element to be created.
+
+- First step: Retreive the available widgets by listing the [${ WIDGET_SCHEMA_URI }] dynamic resource.
+- Second step: decide which elements to create, and their configuration and styles.
+  Retrieve the used elements configuration schema from the resource [${ WIDGET_SCHEMA_URI }/element-name]
+- Third step: define the styles for each element, using the common styles schema from the resource [${ STYLE_SCHEMA_URI }]. List the resource to see all available style properties.
+  For background and complicated layered styles, you can use "custom_css" property, which is supported only for ELEMENTOR PRO users. The custom_css property adds an extra layer of CSS on top of the existing styles, allowing for more advanced styling options.
+  Use with caution, as the custom_css overrides existing styles, prefer to use only when the style schema fails.
+
+# Configuring Elements / Adding Style to Elements
+An element configuration can be retrieved using the "get-element-configuration-values" tool.
+Updating an element requires only the UPDATED properties (including in the styles), as Elementor does a MERGE/PATCH operation.
+
+<note>
+for PropValue with array as value:
+All array types that can receive union types, are typed as mixed array.
+</note>
 
 # Styling best practices
 Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
 This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema.
 
-Additionaly, some PropTypes have metadata information (meta property) that can help in understaind the PropType usage, such as description or other useful information.
+# Examples:
 
-Example of null values:
-{
-  $$type: 'as-defined-for-propValue',
-  value: null
-}
-
-Example of "image" PropValue structure:
+## e-image PropValue structure:
 {$$type:'image',value:{src:{$$type:'image-src',value:{url:{$$type:'url',value:'https://example.com/image.jpg'}}},size:{$$type:'string',value:'full'}}}
 
+Widgets' sizes MUST be defined using the style schema. Images, for example, have a "size" property, but it DOES NOT AFFECT THE VISUAL size, but rather the image size/resolution to load.
+
+# Working with Global Classes and Variables
+- To get the list of available global classes, use the resource at uri elementor://global-classes
+- To get the list of available global variables, use the resource at uri elementor://global-variables
+- Before creating a global variable or class, refer to the list and see if it already exists.
+- Naming conventions:
+  - Global classes and global variables should have meaningful names that reflect their purpose and usage.
+  - Avoid generic names like "style1" or "classA"; instead, use descriptive names like "primary-button" or "heading-level-1".
+  - Avoid names that reflect colors or values, use only purpose-based names.
+
+# Advanced operations
+You are encouraged to run multiple times multiple tools to achieve the desired result.
+
+An Example scenario of creating fully styled composition:
+1. Get the list of availble widgets using dynamic resource [${ WIDGET_SCHEMA_URI }]
+2. For each element to create, retreive its configuration schema from [${ WIDGET_SCHEMA_URI }/element-name]
+3. Get the list of available global classes using the always up-to-date resource 
+4. Get the list of available global variables using the dynamic resource
+5. Build a composition using the "build-composition" tool, providing the structure, configuration and styles for each element. You may want to style the elements later.
+6. Check you work: as you have the created IDs from the build-composition response, you can retreive each element configuration using the "get-element-configuration-values" tool.
+7. If needed, update styles using the "configure-element" tool, providing only the styles or widget's properties to update.
 `;

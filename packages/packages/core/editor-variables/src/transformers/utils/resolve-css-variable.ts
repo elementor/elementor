@@ -16,9 +16,7 @@ export const resolveCssVariable = ( id: string, variable: TVariable ) => {
 		return null;
 	}
 
-	const validCssVariableName = ( name.startsWith( '--' ) ? name : `--${ name }` )
-		.replaceAll( ' ', '---' )
-		.toLowerCase();
+	const validCssVariableName = `--${ id.toLowerCase() }`;
 
 	if ( ! fallbackValue.trim() ) {
 		return `var(${ validCssVariableName })`;

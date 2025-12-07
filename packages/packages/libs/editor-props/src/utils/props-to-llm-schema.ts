@@ -1,4 +1,4 @@
-import { type PlainPropType, type PropsSchema, type PropType } from '../types';
+import { type PropsSchema, type PropType } from '../types';
 import { type JsonSchema7 } from './prop-json-schema';
 
 export function propTypeToJsonSchema( propType: PropType ): JsonSchema7 {
@@ -21,8 +21,6 @@ export function propTypeToJsonSchema( propType: PropType ): JsonSchema7 {
 		default:
 			return convertPlainPropType( propType, schema );
 	}
-
-	return schema;
 }
 
 function convertPlainPropType(
@@ -33,16 +31,18 @@ function convertPlainPropType(
 
 	// Determine type based on key
 	const key = propType.key.toLowerCase();
-	schema.type = 'object';
+	schema.type = propType.kind;
 
 	// Handle enum from settings
 	if ( Array.isArray( propType.settings?.enum ) ) {
 		if ( key === 'object' ) {
+			schema.type = 'object';
 			schema.enum = propType.settings.enum.map( ( val ) => ( {
 				$$type: 'string',
 				value: val,
 			} ) );
-		} else if ( schema.key === 'number' ) {
+		} else if ( key === 'number' ) {
+			schema.type = 'object';
 			schema.enum = propType.settings.enum.map( ( val ) => ( {
 				$$type: 'number',
 				value: val,
@@ -50,22 +50,9 @@ function convertPlainPropType(
 		} else {
 			schema.enum = propType.settings.enum;
 		}
-	} else {
-		schema.properties = {
-			$$type: {
-				type: 'string',
-				const: 'key',
-			},
-			value: {
-				type: propType.kind === 'plain' ? 'string' : propType.kind,
-			},
-		};
 	}
 
-	return propTypeToJsonSchema( {
-		...propType,
-		kind: schema.type as PlainPropType[ 'kind' ],
-	} );
+	return schema;
 }
 
 /**
@@ -84,6 +71,10 @@ function convertUnionPropType( propType: PropType & { kind: 'union' }, baseSchem
 	for ( const [ typeKey, subPropType ] of Object.entries( propTypes ) ) {
 		const subSchema = convertPropTypeToJsonSchema( subPropType );
 
+		if ( typeKey === 'dynamic' ) {
+			continue;
+		}
+
 		schemas.push( {
 			type: 'object',
 			required: [ '$$type', 'value' ],
@@ -91,11 +82,11 @@ function convertUnionPropType( propType: PropType & { kind: 'union' }, baseSchem
 				$$type: {
 					type: 'string',
 					const: typeKey,
-					description: subPropType.meta?.description,
 					$comment: `Discriminator for union type variant: ${ typeKey }`,
 				},
 				value: subSchema,
 			},
+			description: subPropType.meta?.description,
 		} );
 	}
 

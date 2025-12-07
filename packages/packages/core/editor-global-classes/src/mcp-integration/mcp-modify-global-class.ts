@@ -40,17 +40,15 @@ const handler = async ( params: z.infer< ReturnType< typeof z.object< typeof sch
 			errors.push( `Property "${ key }" does not exist in styles schema.` );
 			return;
 		}
-		const { valid, errorMessages } = Schema.validatePropValue( propType, props[ key ] );
+		const { valid, jsonSchema } = Schema.validatePropValue( propType, props[ key ] );
 		if ( ! valid ) {
-			errors.push(
-				`- Property "${ key }" has invalid value:\n  ${ errorMessages }\n  Refer to elementor://styles/schema/${ key }`
-			);
+			errors.push( `- Property "${ key }" has invalid value:\n  expected Schema: ${ jsonSchema }\n` );
 		}
 	} );
 	if ( errors.length > 0 ) {
 		throw new Error(
 			`Errors:\n${ errors.join( '\n' ) }\nAvailable Properties: ${ validProps.join(
-				'\n'
+				', '
 			) }\nNow that you have this information, update your input and try again`
 		);
 	}

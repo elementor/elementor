@@ -5,13 +5,7 @@ import {
 	updateElementSettings,
 	updateElementStyle,
 } from '@elementor/editor-elements';
-import {
-	getPropSchemaFromCache,
-	type PropValue,
-	Schema,
-	stringPropTypeUtil,
-	type TransformablePropValue,
-} from '@elementor/editor-props';
+import { getPropSchemaFromCache, type PropValue, Schema, type TransformablePropValue } from '@elementor/editor-props';
 import { type CustomCss, getStylesSchema } from '@elementor/editor-styles';
 
 type OwnParams = {
@@ -48,12 +42,9 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 		Object.keys( propertyMapValue as Record< string, unknown > ).forEach( ( stylePropName ) => {
 			const propertyRawSchema = styleSchema[ stylePropName ];
 			if ( stylePropName === 'custom_css' ) {
-				let customCssValue = propertyMapValue[ stylePropName ] as object | string;
-				if ( typeof customCssValue === 'object' ) {
-					customCssValue =
-						stringPropTypeUtil.extract( customCssValue ) ||
-						( customCssValue as { value: unknown } )?.value ||
-						'';
+				let customCssValue = propertyMapValue[ stylePropName ] as Record< string, unknown > | string;
+				if ( typeof customCssValue === 'object' && customCssValue.value ) {
+					customCssValue = String( customCssValue.value );
 				}
 				customCss = {
 					raw: btoa( customCssValue as string ),
@@ -74,6 +65,7 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 				}
 			}
 		} );
+		delete transformedStyleValues.custom_css;
 		const localStyle = Object.values( elementStyles ).find( ( style ) => style.label === 'local' );
 		if ( ! localStyle ) {
 			createElementStyle( {

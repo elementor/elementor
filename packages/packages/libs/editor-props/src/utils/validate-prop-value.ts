@@ -1,16 +1,22 @@
 import { validate } from 'jsonschema';
 
-import { type PropType } from '../types';
+import { type PropType, type PropValue } from '../types';
+import { adjustLlmPropValueSchema } from './adjust-llm-prop-value-schema';
 import { propTypeToJsonSchema } from './props-to-llm-schema';
 
-export const validatePropValue = ( schema: PropType, value: unknown ) => {
+type Resolvers = NonNullable< Parameters< typeof adjustLlmPropValueSchema >[ 1 ] >[ 'transformers' ];
+
+export const validatePropValue = ( schema: PropType, value: unknown, transformers: Resolvers = {} ) => {
 	const jsonSchema = propTypeToJsonSchema( schema );
-	const result = validate( value, jsonSchema );
+	const adjustedValue = adjustLlmPropValueSchema( value as PropValue, { transformers } );
+	const resultForAdjusted = validate( adjustedValue, jsonSchema );
+	const resultForValue = validate( value, jsonSchema );
+	const result = resultForAdjusted.valid ? resultForAdjusted : resultForValue;
 	return {
 		valid: result.valid,
 		errors: result.errors,
 		errorMessages: result.errors.map( ( err ) => err.message ),
-		value,
+		value: adjustedValue,
 		jsonSchema: JSON.stringify( jsonSchema ),
 	};
 };
