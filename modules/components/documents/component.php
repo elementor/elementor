@@ -16,77 +16,77 @@ class Component extends Document {
 	const ARCHIVED_META_KEY = '_elementor_component_is_archived';
 	const ARCHIVED_AT_META_KEY = '_elementor_component_archived_at';
 
-public static function get_properties() {
-	$properties = parent::get_properties();
+	public static function get_properties() {
+		$properties = parent::get_properties();
 
-	$properties['cpt'] = [ self::TYPE ];
+		$properties['cpt'] = [ self::TYPE ];
 
-	return $properties;
-}
-
-public static function get_type() {
-	return self::TYPE;
-}
-
-public static function get_title() {
-	return esc_html__( 'Component', 'elementor' );
-}
-
-public static function get_plural_title() {
-	return esc_html__( 'Components', 'elementor' );
-}
-
-public static function get_labels(): array {
-	$plural_label   = static::get_plural_title();
-	$singular_label = static::get_title();
-
-	$labels = [
-		'name' => $plural_label,
-		'singular_name' => $singular_label,
-	];
-
-	return $labels;
-}
-
-public static function get_supported_features(): array {
-	return [
-		'title',
-		'author',
-		'thumbnail',
-		'custom-fields',
-		'revisions',
-		'elementor',
-	];
-}
-
-public function get_component_uid() {
-	return $this->get_meta( self::COMPONENT_UID_META_KEY );
-}
-
-public function get_overridable_props(): Component_Overridable_Props {
-	$meta = $this->get_meta( self::OVERRIDABLE_PROPS_META_KEY );
-
-	return new Component_Overridable_Props( $meta );
-}
-
-public function archive() {
-	try {
-		$this->update_main_meta( self::ARCHIVED_META_KEY, json_encode( [
-			'is_archived' => true,
-			'archived_at' => time(),
-		] ) );
-	} catch ( \Exception $e ) {
-		throw new \Exception( 'Failed to archive component: ' . esc_html( $e->getMessage() ) );
+		return $properties;
 	}
-}
 
-public function get_is_archived() {
-	$archived_meta = $this->get_main_meta( self::ARCHIVED_META_KEY );
-	if ( ! $archived_meta ) {
-		return false;
+	public static function get_type() {
+		return self::TYPE;
 	}
-	return json_decode( $archived_meta, true );
-}
+
+	public static function get_title() {
+		return esc_html__( 'Component', 'elementor' );
+	}
+
+	public static function get_plural_title() {
+		return esc_html__( 'Components', 'elementor' );
+	}
+
+	public static function get_labels(): array {
+		$plural_label   = static::get_plural_title();
+		$singular_label = static::get_title();
+
+		$labels = [
+			'name' => $plural_label,
+			'singular_name' => $singular_label,
+		];
+
+		return $labels;
+	}
+
+	public static function get_supported_features(): array {
+		return [
+			'title',
+			'author',
+			'thumbnail',
+			'custom-fields',
+			'revisions',
+			'elementor',
+		];
+	}
+
+	public function get_component_uid() {
+		return $this->get_meta( self::COMPONENT_UID_META_KEY );
+	}
+
+	public function get_overridable_props(): Component_Overridable_Props {
+		$meta = $this->get_meta( self::OVERRIDABLE_PROPS_META_KEY );
+
+		return new Component_Overridable_Props( $meta );
+	}
+
+	public function archive() {
+		try {
+			$this->update_main_meta( self::ARCHIVED_META_KEY, json_encode( [
+				'is_archived' => true,
+				'archived_at' => time(),
+			] ) );
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'Failed to archive component: ' . esc_html( $e->getMessage() ) );
+		}
+	}
+
+	public function get_is_archived() {
+		$archived_meta = $this->get_main_meta( self::ARCHIVED_META_KEY );
+		if ( ! $archived_meta ) {
+			return false;
+		}
+		return json_decode( $archived_meta, true );
+	}
 
 	public function update_overridable_props( $data ): Parse_Result {
 		$parser = Component_Overridable_Props_Parser::make();
