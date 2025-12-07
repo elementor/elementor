@@ -90,7 +90,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 		<>
 			<Tooltip placement="top" title={ __( 'Override Property', 'elementor' ) }>
 				<Indicator
-					triggerProps={ triggerProps }
+					{ ...triggerProps }
 					isOpen={ !! popoverProps.open }
 					isOverridable={ !! overridableValue }
 				/>
