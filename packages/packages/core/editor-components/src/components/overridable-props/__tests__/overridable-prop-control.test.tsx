@@ -8,12 +8,12 @@ import { ErrorBoundary } from '@elementor/ui';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
+import { updateOverridablePropOriginValue } from '../../../store/actions/update-overridable-prop-origin-value';
 import { selectCurrentComponentId, slice } from '../../../store/store';
-import { updateOverridablePropOriginValue } from '../../../store/update-overridable-prop-origin-value';
 import { OverridablePropControl } from '../overridable-prop-control';
 
-jest.mock( '../../../store/update-overridable-prop-origin-value', () => {
-	const actual = jest.requireActual( '../../../store/update-overridable-prop-origin-value' );
+jest.mock( '../../../store/actions/update-overridable-prop-origin-value', () => {
+	const actual = jest.requireActual( '../../../store/actions/update-overridable-prop-origin-value' );
 	return {
 		...actual,
 		updateOverridablePropOriginValue: jest.fn( actual.updateOverridablePropOriginValue ),
