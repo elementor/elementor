@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useRef } from 'react';
 import { getV1DocumentsManager } from '@elementor/editor-documents';
 import { ArrowLeftIcon, ComponentsIcon, SettingsIcon } from '@elementor/icons';
 import {
@@ -19,11 +20,10 @@ import { useCurrentComponent, useNavigateBack } from '../edit-component/edit-com
 import { useOverridableProps } from './use-overridable-props';
 
 const bounceIn = keyframes`
-	0% { transform: scale(0); }
-	70% { transform: scale(1.1); }
-	100% { transform: scale(1); }
+	0% { transform: scale(0) translate(50%, 50%); opacity: 0; }
+	70% { transform: scale(1.1) translate(50%, -50%); opacity: 1; }
+	100% { transform: scale(1) translate(50%, -50%); opacity: 1; }
 `;
-
 const slideUp = keyframes`
 	from { transform: translateY(100%); opacity: 0; }
 	to { transform: translateY(0); opacity: 1; }
@@ -33,13 +33,19 @@ export const ComponentPanelHeader = () => {
 	const { path, currentComponentId } = useCurrentComponent();
 	const overridableProps = useOverridableProps( currentComponentId );
 	const onBack = useNavigateBack( path );
+	const prevCountRef = useRef( 0 );
+
+	const componentName = getComponentName();
+	const overridesCount = overridableProps ? Object.keys( overridableProps.props ).length : 0;
+	const isFirstOverride = prevCountRef.current === 0 && overridesCount === 1;
+
+	useEffect( () => {
+		prevCountRef.current = overridesCount;
+	}, [ overridesCount ] );
 
 	if ( ! currentComponentId ) {
 		return null;
 	}
-
-	const componentName = getComponentName();
-	const overridesCount = overridableProps ? Object.keys( overridableProps.props ).length : 0;
 
 	return (
 		<Box>
@@ -47,7 +53,7 @@ export const ComponentPanelHeader = () => {
 				direction="row"
 				alignItems="center"
 				justifyContent="space-between"
-				sx={ { height: 44, pl: 1.5, pr: 2, py: 1 } }
+				sx={ { height: 48, pl: 1.5, pr: 2, py: 1 } }
 			>
 				<Stack direction="row" alignItems="center" gap={ 0.5 }>
 					<Tooltip title={ __( 'Back', 'elementor' ) }>
@@ -65,7 +71,9 @@ export const ComponentPanelHeader = () => {
 				<Badge
 					key={ overridesCount }
 					invisible={ overridesCount === 0 }
-					badgeContent={ <StyledBadgeContent>{ overridesCount }</StyledBadgeContent> }
+					badgeContent={
+						<StyledBadgeContent shouldAnimate={ ! isFirstOverride }>{ overridesCount }</StyledBadgeContent>
+					}
 					color="primary"
 					anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
 					sx={ {
@@ -75,6 +83,9 @@ export const ComponentPanelHeader = () => {
 							minHeight: 16,
 							maxWidth: 16,
 							fontSize: 10,
+							transformOrigin: '100% 0%',
+							transition: 'none',
+							animation: isFirstOverride ? `${ bounceIn } 300ms ease-out` : 'none',
 						},
 					} }
 				>
@@ -95,6 +106,6 @@ function getComponentName() {
 	return currentDocument?.container?.settings?.get( 'post_title' ) ?? '';
 }
 
-const StyledBadgeContent = styled( 'span' )( {
-	animation: `${ bounceIn } 300ms ease-out, ${ slideUp } 300ms ease-out`,
-} );
+const StyledBadgeContent = styled( 'span' )< { shouldAnimate: boolean } >( ( { shouldAnimate } ) => ( {
+	animation: shouldAnimate ? `${ slideUp } 300ms ease-out` : 'none',
+} ) );
