@@ -385,7 +385,7 @@ class Hints {
 	}
 
 	/**
-	 * get_plugin_action_text
+	 * Get plugin action text
 	 *
 	 * @param $plugin
 	 *

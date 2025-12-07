@@ -144,7 +144,7 @@ class Module extends BaseApp {
 		return [
 			'heading' => __( "What's new", 'elementor' ),
 			'title' => __( 'Is your website accessible?', 'elementor' ),
-			'description' => '<p>' . __( 'Use Ally to scan, detect, and fix accessibility issues with AI by your side.', 'elementor' ) .'</p>',
+			'description' => '<p>' . __( 'Use Ally to scan, detect, and fix accessibility issues with AI by your side.', 'elementor' ) . '</p>',
 			'media' => [
 				'type' => 'video',
 				'src' => 'https://www.youtube.com/embed/uj9TDcpC91I?start=1&loop=1&playlist=uj9TDcpC91I',
