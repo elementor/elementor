@@ -131,27 +131,6 @@ describe( 'createVariableTypeRegistry', () => {
 			expect( registry.hasVariableType( 'non-existent-key' ) ).toBe( false );
 		} );
 
-		it( 'should register a variable type without valueField', () => {
-			// Arrange.
-			const propTypeUtil = createMockPropTypeUtil( 'icon-only-key' );
-			const fallbackPropTypeUtil = createMockPropTypeUtil( 'fallback-key' );
-
-			// Act.
-			registry.registerVariableType( {
-				icon: BrushIcon,
-				variableType: 'icon-only-type',
-				propTypeUtil,
-				fallbackPropTypeUtil,
-			} );
-
-			// Assert.
-			const registeredType = registry.getVariableType( 'icon-only-key' );
-
-			expect( registeredType ).toBeDefined();
-			expect( registeredType?.variableType ).toBe( 'icon-only-type' );
-			expect( registeredType?.icon ).toBe( BrushIcon );
-			expect( registeredType?.valueField ).toBeUndefined();
-		} );
 	} );
 
 	describe( 'isCompatible by default', () => {

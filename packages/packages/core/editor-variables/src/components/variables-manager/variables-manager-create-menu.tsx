@@ -34,6 +34,7 @@ export const VariableManagerCreateMenu = ( {
 			key,
 			name: displayName,
 			icon: variable.icon,
+			disabled: ! variable.valueField,
 			onClick: () => {
 				const defaultName = getDefaultName( variables, key, variable.variableType );
 				onCreate( key, defaultName, variable.defaultValue || '' );
@@ -77,6 +78,7 @@ export const VariableManagerCreateMenu = ( {
 				{ menuOptions.map( ( option ) => (
 					<MenuItem
 						key={ option.key }
+						disabled={ option.disabled }
 						onClick={ () => {
 							option.onClick?.();
 							menuState.close();
