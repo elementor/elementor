@@ -124,7 +124,7 @@ jobs:
           fi
           
           git add -A
-          git commit -m "chore: bump version to ${{ steps.calculate.outputs.next_version }}"
+          git commit -m "Internal: Bump version to ${{ steps.calculate.outputs.next_version }}"
           
           echo "Changes committed successfully"
 
