@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createDOMElement, createMockDocument, createMockElement, renderWithStore } from 'test-utils';
+import { createDOMElement, createMockDocument, renderWithStore } from 'test-utils';
 import { getV1DocumentsManager, type V1Document, type V1DocumentsManager } from '@elementor/editor-documents';
 import { __privateListenTo, __privateRunCommand } from '@elementor/editor-v1-adapters';
 import { __createStore, __registerSlice as registerSlice, type SliceState, type Store } from '@elementor/store';
@@ -199,35 +199,30 @@ describe( '<EditComponent />', () => {
 } );
 
 function mockDocument( id: number, isComponent: boolean = false ) {
-	const componentRootElement = createDOMElement( { tag: 'div' } );
-
-	const containerElement = createDOMElement( {
-		tag: 'div',
-		dataset: isComponent
-			? {
-					id: id.toString(),
-			  }
-			: {},
-	} );
-
-	const container = createMockElement( {
-		view: {
-			el: containerElement,
-		},
-		children: [
-			createMockElement( {
-				view: {
-					el: componentRootElement,
-				},
-			} ),
-		],
-	} );
-
 	return {
 		...createMockDocument( {
 			id,
 		} ),
-		container: container as unknown as V1Document[ 'container' ],
+		container: {
+			view: {
+				el: createDOMElement( {
+					tag: 'div',
+					dataset: isComponent
+						? {
+								id: id.toString(),
+						  }
+						: {},
+					children: [
+						createDOMElement( {
+							tag: 'div',
+							children: [
+								createDOMElement( { tag: 'div' } ), // the component's actual root element
+							],
+						} ),
+					],
+				} ),
+			},
+		},
 		config: {
 			type: isComponent ? COMPONENT_DOCUMENT_TYPE : 'wp-page',
 		},

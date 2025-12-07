@@ -1,8 +1,8 @@
 import { Box, Paper, Stack } from '@elementor/ui';
 import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
-import YoutubeIcon from '../icons/youtube-icon';
-import { trackPromoClick, getHomeScreenPath } from '../utils/promo-tracking';
+import YoutubeIcon from '../../icons/youtube-icon';
+import { trackPromoClick, getHomeScreenPath } from '../../utils/promo-tracking';
 
 const TopSection = ( { ...props } ) => {
 	const { topData, buttonCtaUrl } = props;
