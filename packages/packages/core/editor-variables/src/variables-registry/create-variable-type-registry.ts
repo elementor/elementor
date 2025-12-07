@@ -30,9 +30,9 @@ type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
 type VariableTypeOptions = {
 	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > >;
 	startIcon?: ( { value }: { value: string } ) => JSX.Element;
-	valueField: ( props: ValueFieldProps ) => JSX.Element;
+	valueField?: ( props: ValueFieldProps ) => JSX.Element;
 	variableType: string;
-	key: string;
+	key?: string;
 	defaultValue?: string;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
@@ -61,7 +61,7 @@ export function createVariableTypeRegistry() {
 		isCompatible,
 		upgradeUrl,
 	}: VariableTypeOptions ) => {
-		if ( variableTypes[ key ] ) {
+		if ( key && variableTypes[ key ] ) {
 			throw new Error( `Variable with key "${ propTypeUtil.key }" is already registered.` );
 		}
 
@@ -76,19 +76,21 @@ export function createVariableTypeRegistry() {
 			};
 		}
 
-		variableTypes[ key ] = {
-			icon,
-			startIcon,
-			valueField,
-			propTypeUtil,
-			variableType,
-			defaultValue,
-			selectionFilter,
-			valueTransformer,
-			fallbackPropTypeUtil,
-			isCompatible,
-			upgradeUrl,
-		};
+		if ( key ) {
+			variableTypes[ key ] = {
+				icon,
+				startIcon,
+				valueField,
+				propTypeUtil,
+				variableType,
+				defaultValue,
+				selectionFilter,
+				valueTransformer,
+				fallbackPropTypeUtil,
+				isCompatible,
+				upgradeUrl,
+			};
+		}
 
 		registerTransformer( propTypeUtil.key );
 		registerInheritanceTransformer( propTypeUtil.key );

@@ -126,7 +126,7 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 							<Typography variant="h5">
 								<ValueField
 									value={ value }
-									onChange={ ( newValue: string ) => {
+									onChange={ ( newValue ) => {
 										setValue( newValue );
 										setErrorMessage( '' );
 										setValueFieldError( '' );

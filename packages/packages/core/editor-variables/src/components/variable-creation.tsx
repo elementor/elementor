@@ -147,7 +147,8 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 						<Typography variant="h5" id="variable-value-wrapper">
 							<ValueField
 								value={ value }
-								onChange={ ( newValue: string ) => {
+								onPropTypeKeyChange={ ( key: string ) => setPropTypeKey( key ) }
+								onChange={ ( newValue ) => {
 									setValue( newValue );
 									setErrorMessage( '' );
 									setValueFieldError( '' );
