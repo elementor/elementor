@@ -1,21 +1,41 @@
-import { useState } from '@wordpress/element';
+import { useCallback, useState } from '@wordpress/element';
 import { Collapse, List, ListItem, ListItemIcon, ListItemText } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import { DEFAULT_ICON, ICON_MAP } from '../shared';
 import { ChildMenuItemButton, ExpandIcon, MenuItemButton } from './styled-components';
 
+const STORAGE_KEY_PREFIX = 'elementor_sidebar_menu_expanded_';
+
+const getStorageKey = ( slug ) => `${ STORAGE_KEY_PREFIX }${ slug }`;
+
+const getInitialExpandedState = ( slug, hasChildren ) => {
+	if ( ! hasChildren ) {
+		return false;
+	}
+
+	const stored = localStorage.getItem( getStorageKey( slug ) );
+
+	if ( null === stored ) {
+		return true;
+	}
+
+	return 'true' === stored;
+};
+
 const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
-	const [ isExpanded, setIsExpanded ] = useState( isActive && !! children );
 	const hasChildren = children && children.length > 0;
+	const [ isExpanded, setIsExpanded ] = useState( () => getInitialExpandedState( item.slug, hasChildren ) );
 	const IconComponent = ICON_MAP[ item.icon ] || DEFAULT_ICON;
 
-	const handleClick = () => {
+	const handleClick = useCallback( () => {
 		if ( hasChildren ) {
-			setIsExpanded( ! isExpanded );
+			const newState = ! isExpanded;
+			setIsExpanded( newState );
+			localStorage.setItem( getStorageKey( item.slug ), String( newState ) );
 		} else {
 			window.location.href = item.url;
 		}
-	};
+	}, [ hasChildren, isExpanded, item.slug, item.url ] );
 
 	return (
 		<>
