@@ -10,6 +10,17 @@ export default function AnnouncementBody( props ) {
 					<img src={ media.src } alt="Announcement" />
 				</div>
 			) }
+			{ 'video' === media.type && (
+				<div className={ `announcement-body-media announcement-body-${ media.type }` }>
+					<iframe
+						src={ media.src }
+						title={ title }
+						frameBorder="0"
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+						allowFullScreen
+					/>
+				</div>
+			) }
 			<div className="announcement-body-content">
 				<div className="announcement-body-title">{ title }</div>
 				<div className="announcement-body-description" dangerouslySetInnerHTML={ { __html: description } }></div>

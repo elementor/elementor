@@ -3,9 +3,9 @@
 namespace Elementor\Modules\Announcements;
 
 use Elementor\Core\Base\App as BaseApp;
+use Elementor\Core\Utils\Hints;
 use Elementor\Modules\Ai\Preferences;
 use Elementor\Modules\Announcements\Classes\Announcement;
-use Elementor\Settings as ElementorSettings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -101,33 +101,71 @@ class Module extends BaseApp {
 			$raw_announcements[] = $this->get_ai_announcement_data();
 		}
 
+		if ( ! Hints::is_plugin_active( 'pojo-accessibility' ) ) {
+			$raw_announcements[] = $this->get_ally_announcement_data();
+		}
+
 		// DO NOT USE THIS FILTER
 		return apply_filters( 'elementor/announcements/raw_announcements', $raw_announcements );
 	}
 
 	private function get_ai_announcement_data(): array {
 		return [
+			'heading' => __( 'Notifications', 'elementor' ),
 			'title' => __( 'Discover your new superpowers ', 'elementor' ),
-			'description' => __( '<p>With AI for text, code, image generation and editing, you can bring your vision to life faster than ever. Start your free trial now - <b>no credit card required!</b></p>', 'elementor' ),
+			'description' => '<p>' . __( 'With AI for text, code, image generation and editing, you can bring your vision to life faster than ever. Start your free trial now - <b>no credit card required!</b>', 'elementor' ) . '</p>',
 			'media' => [
 				'type' => 'image',
 				'src' => self::AI_ASSETS_BASE_URL . 'images/ai-social-hd.gif',
 			],
 			'cta' => [
 				[
-					'label' => __( 'Let\'s do it', 'elementor' ),
+					'label' => __( 'Skip', 'elementor' ),
+					'variant' => 'secondary',
+				],
+				[
+					'label' => __( "Let's do it", 'elementor' ),
 					'variant' => 'primary',
 					'target' => '_top',
 					'url' => '#welcome-ai',
-				],
-				[
-					'label' => __( 'Skip', 'elementor' ),
-					'variant' => 'secondary',
 				],
 			],
 			'triggers' => [
 				[
 					'action' => 'aiStarted',
+				],
+			],
+		];
+	}
+
+	private function get_ally_announcement_data(): array {
+		$plugin_slug = 'pojo-accessibility';
+
+		return [
+			'heading' => __( "What's new", 'elementor' ),
+			'title' => __( 'Is your website accessible?', 'elementor' ),
+			'description' => '<p>' . __( 'Use Ally to scan, detect, and fix accessibility issues with AI by your side.', 'elementor' ) .'</p>',
+			'media' => [
+				'type' => 'video',
+				'src' => 'https://www.youtube.com/embed/uj9TDcpC91I?start=1&loop=1&playlist=uj9TDcpC91I',
+			],
+			'cta' => [
+				[
+					'label' => __( 'Learn more', 'elementor' ),
+					'variant' => 'secondary',
+					'target' => '_blank',
+					'url' => 'https://go.elementor.com/acc-editor-announcement-learn-more',
+				],
+				[
+					'label' => Hints::get_plugin_action_text( $plugin_slug ),
+					'variant' => 'primary',
+					'target' => '_blank',
+					'url' => Hints::get_plugin_action_url( $plugin_slug ),
+				],
+			],
+			'triggers' => [
+				[
+					'action' => 'allyStarted',
 				],
 			],
 		];

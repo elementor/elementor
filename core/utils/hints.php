@@ -385,6 +385,25 @@ class Hints {
 	}
 
 	/**
+	 * get_plugin_action_text
+	 *
+	 * @param $plugin
+	 *
+	 * @return string
+	 */
+	public static function get_plugin_action_text( $plugin ): string {
+		if ( ! self::is_plugin_installed( $plugin ) ) {
+			return __( 'Install Plugin', 'elementor' );
+		}
+
+		if ( ! self::is_plugin_active( $plugin ) ) {
+			return __( 'Activate Plugin', 'elementor' );
+		}
+
+		return '';
+	}
+
+	/**
 	 * Ensure_plugin_folder
 	 *
 	 * @param $plugin
