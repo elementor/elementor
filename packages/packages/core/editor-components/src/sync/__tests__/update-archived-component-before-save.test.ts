@@ -39,8 +39,8 @@ describe( 'updateArchivedComponentBeforeSave', () => {
 		__dispatch( slice.actions.archive( archivedComponent2.id ) );
 
 		mockUpdateArchivedComponents.mockResolvedValue( {
-			failedArchivedIds: [],
-			successArchivedIds: [ 100, 200 ],
+			failedIds: [],
+			successIds: [ 100, 200 ],
 			success: true,
 		} );
 
@@ -68,8 +68,8 @@ describe( 'updateArchivedComponentBeforeSave', () => {
 		__dispatch( slice.actions.archive( archivedComponent2.id ) );
 
 		mockUpdateArchivedComponents.mockResolvedValue( {
-			failedArchivedIds: [ 100, 200 ],
-			successArchivedIds: [],
+			failedIds: [ 100, 200 ],
+			successIds: [],
 			success: false,
 		} );
 
@@ -100,8 +100,8 @@ describe( 'updateArchivedComponentBeforeSave', () => {
 		__dispatch( slice.actions.archive( archivedComponent3.id ) );
 
 		mockUpdateArchivedComponents.mockResolvedValue( {
-			failedArchivedIds: [ 200 ],
-			successArchivedIds: [ 100, 300 ],
+			failedIds: [ 200 ],
+			successIds: [ 100, 300 ],
 			success: true,
 		} );
 
