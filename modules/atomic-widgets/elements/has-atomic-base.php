@@ -80,14 +80,16 @@ trait Has_Atomic_Base {
 		}
 	}
 
-	private function parse_atomic_styles( array $styles ): array {
+	private function parse_atomic_styles( array $data ): array {
+		$styles = $data['styles'] ?? [];
 		$style_parser = Style_Parser::make( Style_Schema::get() );
 
 		foreach ( $styles as $style_id => $style ) {
 			$result = $style_parser->parse( $style );
 
 			if ( ! $result->is_valid() ) {
-				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. " . $result->errors()->to_string() ) );
+				$elementData = $data['id'] . ' - ' . $data['widgetType'];
+				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. `$elementData` " . $result->errors()->to_string() ) );
 			}
 
 			$styles[ $style_id ] = $result->unwrap();
@@ -96,14 +98,16 @@ trait Has_Atomic_Base {
 		return $styles;
 	}
 
-	private function parse_atomic_settings( array $settings ): array {
+	private function parse_atomic_settings( array $data ): array {
+		$settings = $data['settings'] ?? [];
 		$schema = static::get_props_schema();
 		$props_parser = Props_Parser::make( $schema );
 
 		$result = $props_parser->parse( $settings );
 
 		if ( ! $result->is_valid() ) {
-			throw new \Exception( esc_html( 'Settings validation failed. ' . $result->errors()->to_string() ) );
+			$elementData = $data['id'] . ' - ' . $data['widgetType'];
+			throw new \Exception( esc_html( "Settings validation failed. `$elementData` " . $result->errors()->to_string() ) );
 		}
 
 		return $result->unwrap();
@@ -236,8 +240,8 @@ trait Has_Atomic_Base {
 		$data = parent::get_data_for_save();
 
 		$data['version'] = $this->version;
-		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
-		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
+		$data['settings'] = $this->parse_atomic_settings( $data );
+		$data['styles'] = $this->parse_atomic_styles( $data );
 		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
 
 		if ( isset( $data['interactions'] ) && ! empty( $data['interactions'] ) ) {

@@ -9,16 +9,15 @@ export const configureElementToolPrompt = `Configure an existing element on the 
 2. [${ STYLE_SCHEMA_URI }]
    Required to understand the styles schema for the widgets. All widgets share the same styles schema, grouped by categories.
    Use this resource to understand which style properties are available for each element, and how to structure the "_styles" configuration property.
-3. If not sure about the PropValues schema, you can use the "get-element-configuration-values" tool to retreive the current PropValues configuration of the element.
+3. If not sure about the PropValues schema, you can use the "get-element-configuration-values" tool to retrieve the current PropValues configuration of the element.
 
-Before using this tool, check the definitions of the elements PropTypes at the resource "widget-schema-by-type" at editor-canvas__elementor://widgets/schema/{widgetType}
+Before using this tool, check the definitions of the elements PropTypes at the resource "widget-schema-by-type" at [${ WIDGET_SCHEMA_URI }]
 All widgets share a common _style property for styling, which uses the common styles schema.
-Retreive and check the common styles schema at the resource list "styles-schema" at editor-canvas__elementor://styles/schema/{category}
+Retrieve and check the common styles schema at the resource list "styles-schema" at [${ STYLE_SCHEMA_URI }]
 
 # Parameters
 - propertiesToChange: An object containing the properties to change, with their new values. MANDATORY
 - elementId: The ID of the element to configure. MANDATORY
-- elementType: The type of the element to configure (i.e. e-heading, e-button). MANDATORY
 
 # When to use this tool
 When a user requires to change anything in an element, such as updating text, colors, sizes, or other configurable properties.
@@ -38,19 +37,19 @@ PropValue structure:
 }
 
 <IMPORTANT>
-ALWAYS MAKE SURE you have the PropType schemas for the element you are configuring, and the common-styles schema for styling. If you are not sure, retreive the schema from the resources mentioned above.
+ALWAYS MAKE SURE you have the PropType schemas for the element you are configuring, and the common-styles schema for styling. If you are not sure, retrieve the schema from the resources mentioned above.
 </IMPORTANT>
 
 You can use multiple property changes at once by providing multiple entries in the propertiesToChange object, including _style alongside non-style props.
 Some properties are nested, use the root property name, then objects with nested values inside, as the complete schema suggests.
 Nested properties, such as for the _styles, should include a "_styles" property with object containing the definitions to change.
 
-Make sure you have the "widget-schema-by-type" resource available to retreive the PropType schema for the element type you are configuring.
+Make sure you have the "widget-schema-by-type" resource available to retrieve the PropType schema for the element type you are configuring.
 
 # How to configure elements
 We use a dedicated PropType Schema for configuring elements, including styles. When you configure an element, you must use the EXACT PropType Value as defined in the schema.
 For _styles, use the style schema provided, as it also uses the PropType format.
-For all non-primitive types, provide the key property as defined in the schema as $$type in the generated objecct, as it is MANDATORY for parsing.
+For all non-primitive types, provide the key property as defined in the schema as $$type in the generated object, as it is MANDATORY for parsing.
 
 Use the EXACT "PROP-TYPE" Schema given, and ALWAYS include the "key" property from the original configuration for every property you are changing.
 
