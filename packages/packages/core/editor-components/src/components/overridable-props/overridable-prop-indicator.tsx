@@ -9,7 +9,7 @@ import { bindPopover, bindTrigger, Popover, Tooltip, usePopupState } from '@elem
 import { __ } from '@wordpress/i18n';
 
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
-import { setOverridableProp } from '../../store/set-overridable-prop';
+import { setOverridableProp } from '../../store/actions/set-overridable-prop';
 import { selectOverridableProps } from '../../store/store';
 import { type OverridableProps } from '../../types';
 import { COMPONENT_DOCUMENT_TYPE } from '../consts';
@@ -89,11 +89,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 	return (
 		<>
 			<Tooltip placement="top" title={ __( 'Override Property', 'elementor' ) }>
-				<Indicator
-					triggerProps={ triggerProps }
-					isOpen={ !! popoverProps.open }
-					isOverridable={ !! overridableValue }
-				/>
+				<Indicator { ...triggerProps } isOpen={ !! popoverProps.open } isOverridable={ !! overridableValue } />
 			</Tooltip>
 			<Popover
 				disableScrollLock
