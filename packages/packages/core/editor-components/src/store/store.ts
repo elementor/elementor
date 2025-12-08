@@ -31,7 +31,7 @@ type ComponentsState = {
 	currentComponentId: V1Document[ 'id' ] | null;
 };
 
-type ComponentsSlice = SliceState< typeof slice >;
+export type ComponentsSlice = SliceState< typeof slice >;
 
 export type ComponentsPathItem = {
 	instanceId?: string;
@@ -171,7 +171,14 @@ export const selectOverridableProps = createSelector(
 		if ( ! component ) {
 			return undefined;
 		}
+
 		return component.overridableProps ?? DEFAULT_OVERRIDABLE_PROPS;
+	}
+);
+export const selectIsOverridablePropsLoaded = createSelector(
+	selectComponent,
+	( component: PublishedComponent | undefined ) => {
+		return !! component?.overridableProps;
 	}
 );
 export const selectPath = createSelector( getPath, ( path ) => path );
