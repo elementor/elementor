@@ -30,9 +30,6 @@ class Module extends Base_Module {
 
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
 
-	public const ALLY_SCANNER_SERVICE_URL = 'https://apps-a11y-web-render-worker-stg.elementor-account.workers.dev/scanner';
-
-
 	public static function is_active() {
 		return ! Utils::has_pro();
 	}
@@ -87,6 +84,15 @@ class Module extends Base_Module {
 		// Add Ally promo
 		Ally_Dashboard_Widget::init();
 		Ally_Top_Bar_Link::init();
+	}
+
+	/**
+	 * Get Ally Scanner URL
+	 *
+	 * @return string
+	 */
+	public static function get_ally_external_scanner_url(): string {
+		return apply_filters( 'elementor/ally_external_scanner_url', 'https://apps-a11y-web-render-worker-stg.elementor-account.workers.dev/scanner' );
 	}
 
 	private function handle_external_redirects() {

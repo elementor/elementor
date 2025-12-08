@@ -32,7 +32,7 @@ class Ally_Top_Bar_Link {
 		$wp_admin_bar->add_node( [
 			'id' => 'ea11y-scanner-wizard',
 			'title' => $svg_icon . esc_html__( 'Accessibility Assistant', 'elementor' ),
-			'href' => Module::ALLY_SCANNER_SERVICE_URL . '?url=' . $current_url,
+			'href' => Module::get_ally_external_scanner_url() . '?url=' . $current_url,
 			'meta'  => [
 				'target' => '_blank',
 				'rel' => 'noopener noreferrer',

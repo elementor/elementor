@@ -31,7 +31,7 @@ class Ally_Dashboard_Widget {
 	public static function ally_widget_render(): void {
 		$is_scanner_run = self::is_scanner_run();
 		$submit_id = $is_scanner_run ? 'e-dashboard-ally-submitted' : 'e-dashboard-ally-submit';
-		$link = $is_scanner_run ? self::ALLY_PUBLIC_URL : Module::ALLY_SCANNER_SERVICE_URL . '?url=' . home_url();
+		$link = $is_scanner_run ? self::ALLY_PUBLIC_URL : Module::get_ally_external_scanner_url() . '?url=' . home_url();
 		?>
 		<div class="e-dashboard-ally e-dashboard-widget">
 			<div class="e-dashboard-ally-img">
