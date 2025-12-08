@@ -21,7 +21,7 @@ class Menu_Config {
 		return [];
 	}
 
-	public static function get_level4_flyout_groups( string $theme_builder_url ): array {
+	public static function get_level4_flyout_groups(): array {
 		$groups = [];
 
 		$groups[ self::TEMPLATES_GROUP_ID ] = [
@@ -69,7 +69,7 @@ class Menu_Config {
 
 	public static function get_excluded_level3_slugs(): array {
 		$default_slugs = [
-			'elementor-theme-builder'
+			'elementor-theme-builder',
 		];
 
 		return apply_filters( 'elementor/admin_menu/excluded_level3_slugs', $default_slugs );

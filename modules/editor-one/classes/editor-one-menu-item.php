@@ -22,19 +22,19 @@ class Editor_One_Menu_Item implements Admin_Menu_Item_With_Page, Admin_Menu_Item
 
 	private $label;
 
-	public function __construct( 
-		Admin_Menu_Item $original_item, 
-		string $new_parent_slug, 
+	public function __construct(
+		Admin_Menu_Item $original_item,
+		string $new_parent_slug,
 		string $slug = '',
 		?string $label = null,
 		?int $position = null,
-	) {	
+	) {
 		$this->original_item = $original_item;
 		$this->new_parent_slug = $new_parent_slug;
 		$this->slug = $slug;
 		$this->position = $position;
 		$this->label = $label;
-	}	
+	}
 
 	public function get_slug(): string {
 		return $this->slug;
@@ -90,4 +90,3 @@ class Editor_One_Menu_Item implements Admin_Menu_Item_With_Page, Admin_Menu_Item
 		return null;
 	}
 }
-

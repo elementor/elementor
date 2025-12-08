@@ -293,14 +293,14 @@ class Menu_Data_Provider {
 					continue;
 				}
 
-			$priority = $item instanceof Admin_Menu_Item_Has_Position ? $item->get_position() : 100;
+				$priority = $item instanceof Admin_Menu_Item_Has_Position ? $item->get_position() : 100;
 
-			$groups[ $group_id ]['items'][] = [
-				'slug' => $item_slug,
-				'label' => $label,
-				'url' => $this->get_item_url( $item_slug ),
-				'priority' => $priority,
-			];
+				$groups[ $group_id ]['items'][] = [
+					'slug' => $item_slug,
+					'label' => $label,
+					'url' => $this->get_item_url( $item_slug ),
+					'priority' => $priority,
+				];
 
 				$existing_labels[] = $label_lower;
 			}
