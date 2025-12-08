@@ -62,23 +62,14 @@ class Menu_Config {
 	}
 
 	public static function get_excluded_level4_slugs(): array {
-		$default_slugs = [
-			'edit.php?post_type=elementor_library#add_new',
-			'go_knowledge_base_site',
-			'elementor-getting-started',
-		];
+		$default_slugs = [];
 
 		return apply_filters( 'elementor/admin_menu/excluded_level4_slugs', $default_slugs );
 	}
 
 	public static function get_excluded_level3_slugs(): array {
 		$default_slugs = [
-			'elementor-apps',
-			'elementor-connect',
-			'elementor-connect-account',
-			'go_elementor_pro',
-			'elementor-app',
-			'elementor-theme-builder',
+			'elementor-theme-builder'
 		];
 
 		return apply_filters( 'elementor/admin_menu/excluded_level3_slugs', $default_slugs );

@@ -127,6 +127,11 @@ class Admin {
 
 		add_action( 'elementor/admin/menu/register', [ $this, 'register_admin_menu' ] );
 
+		add_action( 'elementor/admin_menu/excluded_level3_slugs', function ( array $excluded_slugs ): array {
+			$excluded_slugs[] = static::PAGE_ID;
+			return $excluded_slugs;
+		} );
+
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
 			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
 				add_action( 'load-' . $hooks[ static::PAGE_ID ], [ $this, 'on_load_page' ] );

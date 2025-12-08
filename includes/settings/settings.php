@@ -623,6 +623,14 @@ class Settings extends Settings_Page {
 			$this->register_knowledge_base_menu( $admin_menu );
 		}, Promotions_Module::ADMIN_MENU_PRIORITY - 1 );
 
+		add_action( 'elementor/admin_menu/excluded_level4_slugs', function ( array $excluded_slugs ): array {
+			$excluded_slugs[] = 'elementor-getting-started';
+			$excluded_slugs[] = 'elementor-connect-account';
+			$excluded_slugs[] = 'edit.php?post_type=elementor_library#add_new';
+			return $excluded_slugs;
+		} );
+
+
 		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 
 		add_filter( 'custom_menu_order', '__return_true' );

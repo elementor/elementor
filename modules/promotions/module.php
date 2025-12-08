@@ -54,6 +54,11 @@ class Module extends Base_Module {
 			$this->register_promotion_menu_item( $admin_menu );
 		}, static::ADMIN_MENU_PROMOTIONS_PRIORITY );
 
+		add_action( 'elementor/admin_menu/excluded_level3_slugs', function ( array $excluded_slugs ): array {
+			$excluded_slugs[] = 'go_elementor_pro';
+			return $excluded_slugs;
+		} );
+
 		add_filter( 'elementor/admin_menu/editor_flyout_items', [ $this, 'add_submissions_flyout_item' ], 50 );
 		add_filter( 'elementor/admin_menu/editor_flyout_items', [ $this, 'add_custom_elements_flyout_item' ], 70 );
 		add_action( 'elementor/admin/menu/register_submenus', [ $this, 'register_submissions_wp_submenu' ] );
