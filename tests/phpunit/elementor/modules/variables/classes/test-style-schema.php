@@ -11,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use \PHPUnit\Framework\TestCase;
 
 /**
@@ -33,8 +34,8 @@ class Test_Style_Schema extends TestCase {
 	public function test_augment__will_skip_regular_style_definitions() {
 		// Arrange.
 		$style_def = [
-			'width' => Size_Prop_Type::make(),
-			'height' => Size_Prop_Type::make(),
+			'width' => String_Prop_Type::make(),
+			'height' => String_Prop_Type::make(),
 		];
 
 		// Act.
@@ -42,8 +43,8 @@ class Test_Style_Schema extends TestCase {
 
 		// Assert.
 		$expected = [
-			'width' => Size_Prop_Type::make(),
-			'height' => Size_Prop_Type::make(),
+			'width' => String_Prop_Type::make(),
+			'height' => String_Prop_Type::make(),
 		];
 
 		$this->assertSchemaIsEqual( $schema, $expected );
@@ -61,11 +62,13 @@ class Test_Style_Schema extends TestCase {
 
 		// Assert.
 		$expected = [
-			'width' => Size_Prop_Type::make(),
 			'color' => Union_Prop_Type::make()
 				->add_prop_type( Color_Prop_Type::make() )
 				->add_prop_type( Color_Variable_Prop_Type::make() ),
-		];
+			'width' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( Size_Variable_Prop_Type::make() ),
+			];
 
 		$this->assertSchemaIsEqual( $expected, $schema );
 	}

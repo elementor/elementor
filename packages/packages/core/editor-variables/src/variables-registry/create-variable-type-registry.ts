@@ -85,6 +85,7 @@ export function createVariableTypeRegistry() {
 			valueTransformer,
 			fallbackPropTypeUtil,
 			isCompatible,
+			upgradeUrl,
 		};
 
 		registerTransformer( propTypeUtil.key );
