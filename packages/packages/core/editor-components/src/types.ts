@@ -1,5 +1,5 @@
 import { type V1ElementData } from '@elementor/editor-elements';
-import { type TransformablePropValue } from '@elementor/editor-props';
+import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 import type { StyleDefinition } from '@elementor/editor-styles';
 
 export type ComponentFormValues = {
@@ -20,9 +20,35 @@ export type UnpublishedComponent = BaseComponent & {
 	elements: V1ElementData[];
 };
 
+export type OverridableProp = {
+	overrideKey: string;
+	label: string;
+	elementId: string;
+	propKey: string;
+	elType: string;
+	widgetType: string;
+	originValue: PropValue;
+	groupId: string;
+};
+
+export type OverridablePropsGroup = {
+	id: string;
+	label: string;
+	props: string[];
+};
+
+export type OverridableProps = {
+	props: Record< string, OverridableProp >;
+	groups: {
+		items: Record< string, OverridablePropsGroup >;
+		order: string[];
+	};
+};
+
 type BaseComponent = {
 	uid: string;
 	name: string;
+	overridableProps?: OverridableProps;
 };
 
 export type DocumentStatus = 'publish' | 'draft';
@@ -36,14 +62,6 @@ export type ExtendedWindow = Window & {
 				secondaryLocations: Record< string, string >;
 				triggers: Record< string, string >;
 			};
-		};
-	};
-};
-
-export type Container = {
-	model: {
-		get: ( key: 'elements' ) => {
-			toJSON: () => V1ElementData[];
 		};
 	};
 };

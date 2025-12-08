@@ -5,6 +5,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Plugin;
+use Elementor\Utils;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -35,7 +36,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Interactions', 'elementor' ),
 			'description' => esc_html__( 'Enable element interactions.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		];
 	}
@@ -84,9 +85,11 @@ class Module extends BaseModule {
 	}
 
 	private function register_frontend_scripts() {
+		$suffix = ( Utils::is_script_debug() || Utils::is_elementor_tests() ) ? '' : '.min';
+
 		wp_register_script(
 			'motion-js',
-			ELEMENTOR_ASSETS_URL . 'lib/motion/motion.js',
+			ELEMENTOR_ASSETS_URL . 'lib/motion/motion' . $suffix . '.js',
 			[],
 			'11.13.5',
 			true
