@@ -123,7 +123,7 @@ class Test_Overridable_Prop_Type extends Elementor_Test_Base {
 		$this->assertEquals( [
 			'$$type' => 'overridable',
 			'value' => [
-				'override_key' => 'my-key',
+				'override_key' => 'scriptalert1scriptmy-key',
 				'origin_value' => [ '$$type' => 'string', 'value' => 'Text' ],
 			],
 		], $result );
