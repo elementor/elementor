@@ -38,6 +38,7 @@ class Components_Repository {
 				'id' => $doc->get_main_id(),
 				'title' => $doc->get_post()->post_title,
 				'uid' => $doc->get_component_uid(),
+				'is_archived' => (bool) $doc->get_is_archived(),
 				'styles' => $this->extract_styles( $doc->get_elements_data() ),
 			];
 		}
@@ -89,5 +90,31 @@ class Components_Repository {
 		}
 
 		return $styles;
+	}
+
+	public function archive( $ids ) {
+		$failed_ids = [];
+		$success_ids = [];
+
+		foreach ( $ids as $id ) {
+			try {
+				$doc = Plugin::$instance->documents->get( $id );
+
+				if ( ! $doc instanceof Component_Document ) {
+					$failed_ids[] = $id;
+					continue;
+				}
+
+				$doc->archive();
+				$success_ids[] = $id;
+			} catch ( \Exception $e ) {
+				$failed_ids[] = $id;
+			}
+		}
+
+		return [
+			'failedIds' => $failed_ids,
+			'successIds' => $success_ids,
+		];
 	}
 }
