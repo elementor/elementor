@@ -59,8 +59,11 @@ export function createVariableTypeRegistry() {
 		fallbackPropTypeUtil,
 		isCompatible,
 	}: VariableTypeOptions ) => {
-		if ( variableTypes[ key ] ) {
-			throw new Error( `Variable with key "${ propTypeUtil.key }" is already registered.` );
+		// TODO remove the prop type key from 3.37
+		const variableTypeKey = key ?? propTypeUtil.key;
+
+		if ( variableTypes[ variableTypeKey ] ) {
+			throw new Error( `Variable with key "${ variableTypeKey }" is already registered.` );
 		}
 
 		if ( ! isCompatible ) {
@@ -74,7 +77,7 @@ export function createVariableTypeRegistry() {
 			};
 		}
 
-		variableTypes[ key ] = {
+		variableTypes[ variableTypeKey ] = {
 			icon,
 			startIcon,
 			valueField,
