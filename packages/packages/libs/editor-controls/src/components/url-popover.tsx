@@ -14,7 +14,15 @@ type Props = {
 	onToggleNewTab: () => void;
 };
 
-export const UrlPopover = ( { popupState, restoreValue, anchorRef, value, onChange, openInNewTab, onToggleNewTab }: Props ) => {
+export const UrlPopover = ( {
+	popupState,
+	restoreValue,
+	anchorRef,
+	value,
+	onChange,
+	openInNewTab,
+	onToggleNewTab,
+}: Props ) => {
 	const inputRef = useRef< HTMLInputElement >( null );
 
 	useEffect( () => {

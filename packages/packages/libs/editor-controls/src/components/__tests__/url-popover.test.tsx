@@ -1,21 +1,22 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
-import { fireEvent, screen } from '@testing-library/react';
 import { type PopupState } from '@elementor/ui';
+import { fireEvent, screen } from '@testing-library/react';
 
 import { UrlPopover } from '../url-popover';
 
-const createMockPopupState = ( isOpen: boolean = true, anchorEl?: Element ) => ( {
-	isOpen,
-	open: jest.fn(),
-	close: jest.fn(),
-	toggle: jest.fn(),
-	setOpen: jest.fn(),
-	anchorEl,
-	setAnchorEl: jest.fn(),
-	popupId: 'test-popup',
-	variant: 'popover',
-} as unknown as PopupState );
+const createMockPopupState = ( isOpen: boolean = true, anchorEl?: Element ) =>
+	( {
+		isOpen,
+		open: jest.fn(),
+		close: jest.fn(),
+		toggle: jest.fn(),
+		setOpen: jest.fn(),
+		anchorEl,
+		setAnchorEl: jest.fn(),
+		popupId: 'test-popup',
+		variant: 'popover',
+	} ) as unknown as PopupState;
 
 const createMockAnchorRef = () => ( {
 	current: {

@@ -53,9 +53,9 @@ export const InlineEditor = React.forwardRef(
 				Underline,
 				Superscript,
 				Subscript,
-			Link.configure( {
-				openOnClick: false,
-			} ),
+				Link.configure( {
+					openOnClick: false,
+				} ),
 				HardBreak.extend( {
 					addKeyboardShortcuts() {
 						return {

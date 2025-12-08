@@ -123,10 +123,14 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 
 	const handleUrlSubmit = () => {
 		if ( urlValue ) {
-			editor.chain().focus().setLink( { 
-				href: urlValue,
-				target: openInNewTab ? '_blank' : '_self',
-			} ).run();
+			editor
+				.chain()
+				.focus()
+				.setLink( {
+					href: urlValue,
+					target: openInNewTab ? '_blank' : '_self',
+				} )
+				.run();
 		} else {
 			editor.chain().focus().unsetLink().run();
 		}
@@ -177,17 +181,15 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 					</Tooltip>
 				) ) }
 			</ToggleButtonGroup>
-			{ popupState.isOpen && (
-				<UrlPopover
-					popupState={ popupState }
-					anchorRef={ toolbarRef }
-					restoreValue={ handleUrlSubmit }
-					value={ urlValue }
-					onChange={ handleUrlChange }
-					openInNewTab={ openInNewTab }
-					onToggleNewTab={ handleToggleNewTab }
-				/>
-			) }
+			<UrlPopover
+				popupState={ popupState }
+				anchorRef={ toolbarRef }
+				restoreValue={ handleUrlSubmit }
+				value={ urlValue }
+				onChange={ handleUrlChange }
+				openInNewTab={ openInNewTab }
+				onToggleNewTab={ handleToggleNewTab }
+			/>
 		</Box>
 	);
 };
