@@ -175,7 +175,7 @@ class Component_Overrides_Mocks {
 
 	public function get_mock_image_image_component_override_to_sanitize(): array {
 		$before_sanitization = [
-			'override_key' => ' <script>alert(1)</script>prop-uuid-3 ',
+			'override_key' => ' </>prop-uuid-3 ',
 			'override_value' => [ 
 				'$$type' => 'image', 
 				'value' => [

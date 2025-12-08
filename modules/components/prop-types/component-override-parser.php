@@ -6,6 +6,7 @@ use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
 use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Plugin;
 use Elementor\Modules\Components\Documents\Component;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -28,18 +29,18 @@ class Component_Override_Parser extends Override_Parser {
 		}
 
 		$component_id = $schema_source['id'];
-
 		$component_overridable_props = $this->get_component_overridable_props( $component_id );
 
 		try {
-			[ 'override_key_exists' => $override_key_exists, 'prop_type' => $prop_type ] =
-				$this->get_component_overridable_prop( sanitize_key( $override_key ), $component_overridable_props );
+			$matching_overridable_prop = $this->get_matching_component_overridable_prop( sanitize_key( $override_key ), $component_overridable_props );
 
-			if ( ! $override_key_exists ) {
+			if ( ! $matching_overridable_prop ) {
 				// If the override is not one of the component overridable props we'll remove it in sanitize_value method.
 				// This is a valid scenario, as the user can delete overridable props from the component after the override created.
 				return true;
 			}
+
+			$prop_type = $this->get_overridable_prop_type( $matching_overridable_prop );
 
 			if ( null === $override_value ) {
 				return true;
@@ -64,12 +65,13 @@ class Component_Override_Parser extends Override_Parser {
 		$component_overridable_props = $this->get_component_overridable_props( $component_id );
 
 		try {
-			[ 'override_key_exists' => $override_key_exists, 'prop_type' => $prop_type ] =
-				$this->get_component_overridable_prop( $sanitized_override_key, $component_overridable_props );
+			$matching_overridable_prop = $this->get_matching_component_overridable_prop( $sanitized_override_key, $component_overridable_props );
 
-			if ( ! $override_key_exists ) {
+			if ( ! $matching_overridable_prop ) {
 				return null;
 			}
+
+			$prop_type = $this->get_overridable_prop_type( $matching_overridable_prop );
 
 			return [
 				'override_key' => $sanitized_override_key,
@@ -81,27 +83,21 @@ class Component_Override_Parser extends Override_Parser {
 		}
 	}
 
-	private function get_component_overridable_prop( string $override_key, ?Component_Overridable_Props $component_overridable_props ): array {
+
+	private function get_matching_component_overridable_prop( string $override_key, ?Component_Overridable_Props $component_overridable_props ): ?Component_Overridable_Prop {
 		if ( ! $component_overridable_props || ! isset( $component_overridable_props->props[ $override_key ] ) ) {
-			return [
-				'override_key_exists' => false,
-				'prop_type' => null,
-			];
+			return null;
 		}
 
-		/** @var Component_Overridable_Prop $overridable */
-		$overridable = $component_overridable_props->props[ $override_key ];
+		return $component_overridable_props->props[ $override_key ];
+	}
 
+	private function get_overridable_prop_type( Component_Overridable_Prop $overridable ): ?Prop_Type {
 		$el_type = $overridable->el_type;
 		$widget_type = $overridable->widget_type;
 		$prop_key = $overridable->prop_key;
 
-		$prop_type = Parsing_Utils::get_prop_type( $el_type, $widget_type, $prop_key );
-
-		return [
-			'override_key_exists' => true,
-			'prop_type' => $prop_type,
-		];
+		return Parsing_Utils::get_prop_type( $el_type, $widget_type, $prop_key );
 	}
 
 	private function get_component_overridable_props( int $component_id ) {
