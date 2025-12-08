@@ -4,7 +4,8 @@ import HomeScreen from './components/home-screen/home-screen';
 import EditorScreen from './components/editor-screen/home-screen';
 
 const App = ( props ) => {
-	const ScreenComponent = props.isEditorOneActive ? EditorScreen : HomeScreen;
+	const isEditorOneActive = props.homeScreenData?.isEditorOneActive || false;
+	const ScreenComponent = isEditorOneActive ? EditorScreen : HomeScreen;
 
 	return (
 		<DirectionProvider rtl={ props.isRTL }>
@@ -13,7 +14,7 @@ const App = ( props ) => {
 					<ScreenComponent
 						homeScreenData={ props.homeScreenData }
 						adminUrl={ props.adminUrl }
-						isEditorOneActive={ props.isEditorOneActive }
+						isEditorOneActive={ isEditorOneActive }
 					/>
 				</ThemeProvider>
 			</LocalizationProvider>
@@ -23,14 +24,12 @@ const App = ( props ) => {
 
 const isRTL = elementorCommon.config.isRTL,
 	adminUrl = elementorAppConfig.admin_url,
-	rootElement = document.querySelector( '#e-home-screen' ),
-	isEditorOneActive = elementorHomeScreenData?.isEditorOneActive || false;
+	rootElement = document.querySelector( '#e-home-screen' );
 
 App.propTypes = {
 	isRTL: PropTypes.bool,
 	adminUrl: PropTypes.string,
 	homeScreenData: PropTypes.object,
-	isEditorOneActive: PropTypes.bool,
 };
 
 ReactUtils.render( (
@@ -38,6 +37,5 @@ ReactUtils.render( (
 		isRTL={ isRTL }
 		homeScreenData={ elementorHomeScreenData }
 		adminUrl={ adminUrl }
-		isEditorOneActive={ isEditorOneActive }
 	/>
 ), rootElement );
