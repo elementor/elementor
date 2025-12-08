@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
-import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { useElement } from '@elementor/editor-editing-panel';
 import { getWidgetsCache } from '@elementor/editor-elements';
 import { type TransformablePropValue } from '@elementor/editor-props';
@@ -9,10 +8,10 @@ import { bindPopover, bindTrigger, Popover, Tooltip, usePopupState } from '@elem
 import { __ } from '@wordpress/i18n';
 
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
+import { useOverridablePropValue } from '../../provider/overridable-prop-context';
 import { setOverridableProp } from '../../store/actions/set-overridable-prop';
-import { selectOverridableProps } from '../../store/store';
+import { selectCurrentComponentId, selectOverridableProps } from '../../store/store';
 import { type OverridableProps } from '../../types';
-import { COMPONENT_DOCUMENT_TYPE } from '../consts';
 import { Indicator } from './indicator';
 import { OverridablePropForm } from './overridable-prop-form';
 import { getOverridableProp } from './utils/get-overridable-prop';
@@ -21,19 +20,15 @@ const FORBIDDEN_KEYS = [ '_cssid', 'attributes' ];
 
 export function OverridablePropIndicator() {
 	const { bind } = useBoundProp();
-	const currentDocument = getV1CurrentDocument();
+	const componentId = selectCurrentComponentId( getState() );
 
-	if ( currentDocument.config.type !== COMPONENT_DOCUMENT_TYPE || ! currentDocument.id ) {
+	if ( ! isPropAllowed( bind ) || ! componentId ) {
 		return null;
 	}
 
-	if ( ! isPropAllowed( bind ) ) {
-		return null;
-	}
+	const overridableProps = selectOverridableProps( getState(), componentId );
 
-	const overridableProps = selectOverridableProps( getState(), currentDocument.id );
-
-	return <Content componentId={ currentDocument.id } overridableProps={ overridableProps } />;
+	return <Content componentId={ componentId } overridableProps={ overridableProps } />;
 }
 
 type Props = {
@@ -46,7 +41,15 @@ export function Content( { componentId, overridableProps }: Props ) {
 		elementType,
 	} = useElement();
 	const { value, bind, propType } = useBoundProp();
-	const { value: overridableValue, setValue: setOverridableValue } = useBoundProp( componentOverridablePropTypeUtil );
+
+	const contextOverridableValue = useOverridablePropValue();
+	const { value: boundPropOverridableValue, setValue: setOverridableValue } = useBoundProp(
+		componentOverridablePropTypeUtil
+	);
+
+	// this is intended to handle custom layout controls, such as the LinkControl, which has its label nested within the control component
+	// so its bound prop value would be the one after the manipulated <PropProvider /> (i.e. won't be considered overridable)
+	const overridableValue = boundPropOverridableValue ?? contextOverridableValue;
 
 	const popupState = usePopupState( {
 		variant: 'popover',
