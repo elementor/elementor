@@ -54,7 +54,7 @@ test.describe( 'Home screen Edit Website button tests', () => {
 		const href = await editWebsiteButton.getAttribute( 'href' );
 		expect( href ).toBeTruthy();
 
-		const isValidElementorUrl = href!.match( /wp-admin\/(post\.php\?post=\d+&action=elementor|edit\.php\?action=elementor_new_post&post_type=page)/ );
+		const isValidElementorUrl = href!.match( /wp-admin\/(post\.php\?post=\d+&action=elementor|edit\.php\?action=elementor_new_post&post_type=page)(&.*)?/ );
 		expect( isValidElementorUrl ).toBeTruthy();
 	} );
 } );
