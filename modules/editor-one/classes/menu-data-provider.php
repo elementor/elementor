@@ -156,16 +156,26 @@ class Menu_Data_Provider {
 			return false;
 		}
 
-		$elementor_post_types = [
-			'elementor_library' => true,
-			'elementor_icons' => true,
-			'elementor_font' => true,
-			'elementor_snippet' => true,
-		];
-
-		return isset( $elementor_post_types[ $post_type ] );
+		return isset( self::get_elementor_post_types()[ $post_type ] );
 	}
 
+	public static function get_elementor_post_types(): array {
+		return [
+			'elementor_library' => true,
+			'elementor_icons' => [
+				'menu_slug' => 'elementor-custom-elements',
+				'child_slug' => 'custom-icons',
+			],
+			'elementor_font' => [
+				'menu_slug' => 'elementor-custom-elements',
+				'child_slug' => 'custom-fonts',
+			],
+			'elementor_snippet' => [
+				'menu_slug' => 'elementor-custom-elements',
+				'child_slug' => 'custom-code',
+			],
+		];
+	}
 	private function get_dynamic_page_slugs(): array {
 		$slugs = [];
 

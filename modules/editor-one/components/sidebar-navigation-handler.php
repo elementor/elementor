@@ -119,6 +119,12 @@ class Sidebar_Navigation_Handler {
 			];
 		}
 
+		$pro_post_type_match = $this->get_pro_post_type_active_state();
+
+		if ( $pro_post_type_match ) {
+			return $pro_post_type_match;
+		}
+
 		$current_url = $this->get_current_url();
 		$best_match = [
 			'menu_slug' => '',
@@ -203,5 +209,17 @@ class Sidebar_Navigation_Handler {
 		$uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
 
 		return $protocol . $host . $uri;
+	}
+
+	private function get_pro_post_type_active_state(): ?array {
+		$current_post_type = filter_input( INPUT_GET, 'post_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
+
+		if ( empty( $current_post_type ) ) {
+			return null;
+		}
+
+		$mapping = Menu_Data_Provider::get_elementor_post_types();
+
+		return $mapping[ $current_post_type ] ?? null;
 	}
 }
