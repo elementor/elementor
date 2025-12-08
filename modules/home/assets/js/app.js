@@ -48,8 +48,10 @@ const App = ( props ) => {
 							background: '#000',
 							color: '#0f0',
 							padding: '10px',
+							paddingTop: '40px',
 							fontFamily: 'monospace',
 							fontSize: '12px',
+							textAlign: 'center',
 							zIndex: 99999,
 							maxHeight: '200px',
 							overflow: 'auto',
@@ -79,6 +81,17 @@ const App = ( props ) => {
 const isRTL = elementorCommon.config.isRTL,
 	adminUrl = elementorAppConfig.admin_url,
 	rootElement = document.querySelector( '#e-home-screen' );
+
+// eslint-disable-next-line no-console
+console.log( '[HOME_SCREEN_DEBUG] ========================================' );
+// eslint-disable-next-line no-console
+console.log( '[HOME_SCREEN_DEBUG] JS: elementorHomeScreenData type:', typeof elementorHomeScreenData );
+// eslint-disable-next-line no-console
+console.log( '[HOME_SCREEN_DEBUG] JS: elementorHomeScreenData:', elementorHomeScreenData );
+// eslint-disable-next-line no-console
+console.log( '[HOME_SCREEN_DEBUG] JS: elementorHomeScreenData keys:', elementorHomeScreenData && 'object' === typeof elementorHomeScreenData ? Object.keys( elementorHomeScreenData ) : 'N/A' );
+// eslint-disable-next-line no-console
+console.log( '[HOME_SCREEN_DEBUG] ========================================' );
 
 App.propTypes = {
 	isRTL: PropTypes.bool,

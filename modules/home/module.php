@@ -63,11 +63,22 @@ class Module extends BaseApp {
 		$is_editor_one_active = $experiments->is_feature_active( 'e_editor_one' );
 
 		$home_screen_data = $this->get_app_js_config();
-		$home_screen_data['isEditorOneActive'] = $is_editor_one_active;
+
+		if ( ! is_array( $home_screen_data ) ) {
+			$home_screen_data = [];
+		}
+
+		$home_screen_data['isEditorOneActive'] = (bool) $is_editor_one_active;
 		$home_screen_data['_debug'] = [
-			'php_isEditorOneActive' => $is_editor_one_active,
+			'php_isEditorOneActive' => (bool) $is_editor_one_active,
 			'experiment_state' => $experiments->get_features()['e_editor_one'] ?? null,
+			'experiment_active_check' => $experiments->is_feature_active( 'e_editor_one' ),
 		];
+
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		error_log( '[HOME_SCREEN_DEBUG] PHP: Before wp_localize_script - isEditorOneActive: ' . ( $home_screen_data['isEditorOneActive'] ? 'true' : 'false' ) );
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+		error_log( '[HOME_SCREEN_DEBUG] PHP: home_screen_data keys: ' . implode( ', ', array_keys( $home_screen_data ) ) );
 
 		wp_localize_script(
 			'e-home-screen',
