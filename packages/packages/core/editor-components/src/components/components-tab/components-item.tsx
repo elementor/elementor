@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
 import { dropElement, type DropElementParams, type V1ElementData } from '@elementor/editor-elements';
-import { MenuListItem } from '@elementor/editor-ui';
+import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable } from '@elementor/editor-ui';
 import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -25,9 +25,22 @@ import { createComponentModel } from '../create-component-form/utils/replace-ele
 
 type ComponentItemProps = {
 	component: Omit< Component, 'id' > & { id?: number };
+	renameComponent: ( newName: string ) => void;
 };
 
-export const ComponentItem = ( { component }: ComponentItemProps ) => {
+export const ComponentItem = ( { component, renameComponent }: ComponentItemProps ) => {
+	const {
+		ref: editableRef,
+		isEditing,
+		openEditMode,
+		getProps: getEditableProps,
+	} = useEditable( {
+		value: component.name,
+		onSubmit: renameComponent,
+		validation: () => {
+			return null;
+		},
+	} );
 	const componentModel = createComponentModel( component );
 	const popupState = usePopupState( {
 		variant: 'popover',
@@ -70,7 +83,16 @@ export const ComponentItem = ( { component }: ComponentItemProps ) => {
 					<ListItemText
 						primary={
 							<Typography variant="caption" sx={ { color: 'text.primary' } }>
-								{ component.name }
+								{ isEditing ? (
+									<EditableField
+										ref={ editableRef }
+										as={ Typography }
+										variant="caption"
+										{ ...getEditableProps() }
+									/>
+								) : (
+									<EllipsisWithTooltip title={ component.name } as={ Typography } variant="caption" />
+								) }
 							</Typography>
 						}
 					/>
@@ -92,6 +114,15 @@ export const ComponentItem = ( { component }: ComponentItemProps ) => {
 			>
 				<MenuListItem sx={ { minWidth: '160px' } } onClick={ handleArchiveClick }>
 					{ __( 'Archive', 'elementor' ) }
+				</MenuListItem>
+				<MenuListItem
+					sx={ { minWidth: '160px' } }
+					onClick={ () => {
+						popupState.close();
+						openEditMode();
+					} }
+				>
+					{ __( 'Rename', 'elementor' ) }
 				</MenuListItem>
 			</Menu>
 		</>

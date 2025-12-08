@@ -11,6 +11,10 @@ import { useSearch } from './search-provider';
 export function ComponentsList() {
 	const { components, isLoading, searchValue } = useFilteredComponents();
 
+	const renameComponent = ( newName: string ) => {
+		console.log( newName );
+	};
+
 	if ( isLoading ) {
 		return <LoadingComponents />;
 	}
@@ -25,7 +29,7 @@ export function ComponentsList() {
 	return (
 		<List sx={ { display: 'flex', flexDirection: 'column', gap: 1, px: 2 } }>
 			{ components.map( ( component ) => (
-				<ComponentItem key={ component.uid } component={ component } />
+				<ComponentItem key={ component.uid } component={ component } renameComponent={ renameComponent } />
 			) ) }
 		</List>
 	);
