@@ -21,12 +21,16 @@ class Admin_Menu_Handler {
 
 	private Menu_Data_Provider $menu_data_provider;
 
+	private bool $is_pro_module_enabled = false;
+
 	public function __construct() {
 		$this->menu_data_provider = Menu_Data_Provider::instance();
+
 		$this->register_actions();
 	}
 
 	private function register_actions(): void {
+		add_action( 'init', [ $this, 'check_if_pro_module_is_enabled' ] );
 		add_action( 'admin_menu', [ $this, 'register_unified_submenus' ], 21 );
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu_manager ) {
 			$this->process_registered_items( $admin_menu_manager );
@@ -42,6 +46,26 @@ class Admin_Menu_Handler {
 		add_action( 'admin_print_scripts-elementor_page_elementor-editor', [ $this, 'enqueue_home_screen_on_editor_page' ] );
 	}
 
+	public function check_if_pro_module_is_enabled(): void {
+		$this->is_pro_module_enabled = apply_filters( 'elementor/modules/editor-one/is_pro_module_enabled', false );
+		if ( ! $this->is_pro_module_enabled && Utils::has_pro() ) {
+			add_filter( 'elementor/admin_menu/editor_flyout_items', [ $this, 'add_custom_elements_flyout_item' ], 70 );
+		}
+	}
+
+	public function add_custom_elements_flyout_item( array $items ): array {
+
+		$items[] = [
+			'slug' => 'elementor-custom-elements',
+			'label' => esc_html__( 'Custom Elements', 'elementor' ),
+			'url' => admin_url( 'admin.php?page=elementor_custom_fonts' ),
+			'icon' => 'adjustments',
+			'group_id' => Menu_Config::CUSTOM_ELEMENTS_GROUP_ID,
+			'priority' => 70,
+		];
+
+		return $items;
+	}
 	public function register_unified_submenus(): void {
 		add_submenu_page(
 			Menu_Config::ELEMENTOR_MENU_SLUG,
@@ -336,10 +360,17 @@ class Admin_Menu_Handler {
 
 		foreach ( $items_to_intercept as $index => $submenu_item ) {
 			$item_slug = $submenu_item[2];
-			$legacy_item = new Legacy_Submenu_Item( $submenu_item );
+			$has_level4_group = isset( $level4_group_mapping[ $item_slug ] );
 
-			if ( isset( $level4_group_mapping[ $item_slug ] ) ) {
-				$this->register_level4_item( $item_slug, $legacy_item, $level4_group_mapping[ $item_slug ] );
+			if ( $has_level4_group && isset( $level4_group_mapping[ $item_slug ]['label'] ) ) {
+				$submenu_item[0] = $level4_group_mapping[ $item_slug ]['label'];
+			}
+
+			$position = Menu_Config::get_position_mapping()[ $item_slug ] ?? 100;
+			$legacy_item = new Legacy_Submenu_Item( $submenu_item, Menu_Config::ELEMENTOR_MENU_SLUG, $position );
+
+			if ( $has_level4_group ) {
+				$this->register_level4_item( $item_slug, $legacy_item, $level4_group_mapping[ $item_slug ]['group'] );
 			} else {
 				$this->register_level3_item( $item_slug, $legacy_item, Menu_Config::EDITOR_GROUP_ID );
 			}

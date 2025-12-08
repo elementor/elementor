@@ -3,21 +3,24 @@
 namespace Elementor\Modules\EditorOne\Classes;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
-use Elementor\Modules\EditorOne\Components\Admin_Menu_Handler;
+use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Legacy_Submenu_Item implements Admin_Menu_Item {
+class Legacy_Submenu_Item implements Admin_Menu_Item, Admin_Menu_Item_Has_Position {
 
 	private $submenu_data;
 
 	private $parent_slug;
 
-	public function __construct( array $submenu_data, ?string $parent_slug = null ) {
+	private $position;
+
+	public function __construct( array $submenu_data, ?string $parent_slug = null, ?int $position = 100 ) {
 		$this->submenu_data = $submenu_data;
 		$this->parent_slug = $parent_slug ?? Menu_Config::ELEMENTOR_MENU_SLUG;
+		$this->position = $position;
 	}
 
 	public function get_label(): string {
@@ -42,5 +45,9 @@ class Legacy_Submenu_Item implements Admin_Menu_Item {
 
 	public function get_page_title(): string {
 		return $this->submenu_data[3] ?? $this->get_label();
+	}
+
+	public function get_position(): int {
+		return $this->position;
 	}
 }

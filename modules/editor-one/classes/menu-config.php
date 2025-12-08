@@ -70,6 +70,7 @@ class Menu_Config {
 	public static function get_excluded_level3_slugs(): array {
 		$default_slugs = [
 			'elementor-theme-builder',
+			'elementor-pro-notes-proxy',
 		];
 
 		return apply_filters( 'elementor/admin_menu/excluded_level3_slugs', $default_slugs );
@@ -86,10 +87,30 @@ class Menu_Config {
 
 	public static function get_level4_group_mapping(): array {
 		$default_mapping = [
-			'elementor-license' => self::SYSTEM_GROUP_ID,
+			'elementor-license' => [ 'group' => self::SYSTEM_GROUP_ID ],
+			'edit.php?post_type=elementor_font' => [
+				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
+				'label' => 'Fonts',
+			],
+			'edit.php?post_type=elementor_icons' => [
+				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
+				'label' => 'Icons',
+			],
+			'edit.php?post_type=elementor_snippet' => [
+				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
+				'label' => 'Code',
+			],
 		];
 
 		return apply_filters( 'elementor/admin_menu/level4_group_mapping', $default_mapping );
+	}
+
+	public static function get_position_mapping(): array {
+		$default_mapping = [
+			'e-form-submissions' => 50,
+		];
+
+		return apply_filters( 'elementor/admin_menu/position_mapping', $default_mapping );
 	}
 
 	public static function get_custom_code_url(): string {

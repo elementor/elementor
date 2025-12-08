@@ -59,6 +59,7 @@ class Module extends Base_Module {
 			return $excluded_slugs;
 		} );
 
+		add_filter( 'elementor/admin_menu/editor_flyout_items', [ $this, 'add_custom_elements_flyout_item' ], 70 );
 		add_filter( 'elementor/admin_menu/items_to_hide_from_wp_menu', [ $this, 'add_items_to_hide' ] );
 
 		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
@@ -90,6 +91,19 @@ class Module extends Base_Module {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
 	}
 
+	public function add_custom_elements_flyout_item( array $items ): array {
+
+		$items[] = [
+			'slug' => 'elementor-custom-elements',
+			'label' => esc_html__( 'Custom Elements', 'elementor' ),
+			'url' => admin_url( 'admin.php?page=elementor_custom_fonts' ),
+			'icon' => 'adjustments',
+			'group_id' => Menu_Config::CUSTOM_ELEMENTS_GROUP_ID,
+			'priority' => 70,
+		];
+
+		return $items;
+	}
 	private function handle_external_redirects() {
 		if ( empty( $_GET['page'] ) ) {
 			return;
