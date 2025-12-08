@@ -348,6 +348,10 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.33.4 - 2025-12-08 =
+
+* Security Fix: Improved code security enforcement in Text Path widget
+
 = 3.33.3 - 2025-12-04 =
 
 * Fix: Improved compatibility with WordPress 6.9
