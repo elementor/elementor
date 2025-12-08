@@ -13,6 +13,8 @@ use Elementor\App\Modules\KitLibrary\Data\Kits\Controller as Kits_Controller;
 use Elementor\App\Modules\KitLibrary\Data\Taxonomies\Controller as Taxonomies_Controller;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Utils as ElementorUtils;
+use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -39,13 +41,30 @@ class Module extends BaseModule {
 		] );
 	}
 
-	/**
-	 * Register the admin menu the old way.
-	 */
 	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register(
+		if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
+			$this->register_editor_one_menu( $admin_menu );
+		} else {
+			$admin_menu->register(
+				Plugin::$instance->app->get_base_url() . '&source=wp_db_templates_menu#/kit-library',
+				new Kit_Library_Menu_Item()
+			);
+		}
+	}
+
+	private function register_editor_one_menu( Admin_Menu_Manager $admin_menu ) {
+		$menu_item = new Kit_Library_Menu_Item();
+		$editor_one_menu = new Editor_One_Menu_Item(
+			$menu_item,
+			'',
 			Plugin::$instance->app->get_base_url() . '&source=wp_db_templates_menu#/kit-library',
-			new Kit_Library_Menu_Item()
+			__( 'Website Templates', 'elementor' ),
+			30
+		);
+
+		$admin_menu->register_editor_one_menu_level_4(
+			$editor_one_menu,
+			Menu_Config::TEMPLATES_GROUP_ID
 		);
 	}
 

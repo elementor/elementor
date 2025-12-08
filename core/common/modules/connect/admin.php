@@ -5,6 +5,8 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Utils;
+use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -45,7 +47,16 @@ class Admin {
 	 * @access public
 	 */
 	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( static::PAGE_ID, new Connect_Menu_Item() );
+		if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
+			$connect_item = new Connect_Menu_Item();
+			$editor_one_connect = new Editor_One_Menu_Item( $connect_item, '', static::PAGE_ID );
+			$admin_menu->register_editor_one_menu_level_4(
+				$editor_one_connect,
+				Menu_Config::SYSTEM_GROUP_ID
+			);
+		} else {
+			$admin_menu->register( static::PAGE_ID, new Connect_Menu_Item() );
+		}
 	}
 
 	/**

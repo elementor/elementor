@@ -15,6 +15,8 @@ use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Assets_Translation_Loader;
+use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 use Elementor\App\Modules\ImportExport\Module as ImportExportModule;
 use Elementor\App\Modules\KitLibrary\Module as KitLibraryModule;
@@ -49,7 +51,27 @@ class App extends BaseApp {
 	}
 
 	private function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( static::PAGE_ID, new Theme_Builder_Menu_Item() );
+		if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
+			$this->register_editor_one_menu( $admin_menu );
+		} else {
+			$admin_menu->register( static::PAGE_ID, new Theme_Builder_Menu_Item() );
+		}
+	}
+
+	private function register_editor_one_menu( Admin_Menu_Manager $admin_menu ) {
+		$menu_item = new Theme_Builder_Menu_Item();
+		$editor_one_menu = new Editor_One_Menu_Item(
+			$menu_item,
+			'',
+			static::PAGE_ID,
+			__( 'Theme Builder', 'elementor' ),
+			20
+		);
+
+		$admin_menu->register_editor_one_menu_level_4(
+			$editor_one_menu,
+			Menu_Config::TEMPLATES_GROUP_ID
+		);
 	}
 
 	public function fix_submenu( $menu ) {

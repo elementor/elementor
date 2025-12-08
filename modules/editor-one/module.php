@@ -34,6 +34,7 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		if ( is_admin() ) {
+
 			$this->add_component( 'admin-menu-handler', new Admin_Menu_Handler() );
 			$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
 		}

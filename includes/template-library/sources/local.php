@@ -19,6 +19,8 @@ use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\Core\Isolation\Elementor_Adapter_Interface;
+use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -420,7 +422,27 @@ class Source_Local extends Source_Base {
 	}
 
 	private function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( static::get_admin_url( true ), new Saved_Templates_Menu_Item() );
+		if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
+			$this->register_editor_one_menu( $admin_menu );
+		} else {
+			$admin_menu->register( static::get_admin_url( true ), new Saved_Templates_Menu_Item() );
+		}
+	}
+
+	private function register_editor_one_menu( Admin_Menu_Manager $admin_menu ) {
+		$menu_item = new Saved_Templates_Menu_Item();
+		$editor_one_menu = new Editor_One_Menu_Item(
+			$menu_item,
+			'',
+			static::get_admin_url( true ),
+			__( 'Saved Templates', 'elementor' ),
+			10
+		);
+
+		$admin_menu->register_editor_one_menu_level_4(
+			$editor_one_menu,
+			Menu_Config::TEMPLATES_GROUP_ID
+		);
 	}
 
 	public function admin_title( $admin_title, $title ) {
@@ -1655,6 +1677,8 @@ class Source_Local extends Source_Base {
 				$this->admin_menu_reorder( $admin_menu );
 			}, 800 );
 
+			add_filter( 'elementor/admin_menu/editor_flyout_items', [ $this, 'add_templates_flyout_item' ], 60 );
+
 			add_action( 'elementor/admin/menu/after_register', function () {
 				$this->admin_menu_set_current();
 			} );
@@ -1817,6 +1841,23 @@ class Source_Local extends Source_Base {
 				'page_settings' => $item['page_settings'],
 			] );
 		}
+
+		return $items;
+	}
+
+	public function add_templates_flyout_item( array $items ): array {
+		if ( ! Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
+			return $items;
+		}
+
+		$items[] = [
+			'slug' => 'elementor-templates',
+			'label' => esc_html__( 'Templates', 'elementor' ),
+			'url' => admin_url( 'edit.php?post_type=elementor_library&tabs_group=library' ),
+			'icon' => 'folder',
+			'group_id' => Menu_Config::TEMPLATES_GROUP_ID,
+			'priority' => 60,
+		];
 
 		return $items;
 	}

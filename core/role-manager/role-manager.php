@@ -3,6 +3,9 @@ namespace Elementor\Core\RoleManager;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Settings_Page;
@@ -307,6 +310,22 @@ class Role_Manager extends Settings_Page {
 		return true;
 	}
 
+	private function register_editor_one_menu( Admin_Menu_Manager $admin_menu ) {
+		$role_manager_menu = new Role_Manager_Menu_Item( $this );
+
+		$editor_one_menu = new Editor_One_Menu_Item( 
+			$role_manager_menu, 
+			'', 
+			static::PAGE_ID 
+		);
+
+		$admin_menu->register_editor_one_menu_level_3( 
+			$editor_one_menu,
+			Menu_Config::EDITOR_GROUP_ID, 
+			'users'
+		);
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
@@ -315,8 +334,13 @@ class Role_Manager extends Settings_Page {
 		parent::__construct();
 
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-			$this->register_admin_menu( $admin_menu );
+			if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
+				$this->register_editor_one_menu( $admin_menu );
+			} else {
+				$this->register_admin_menu( $admin_menu );
+			}
 		}, Settings::ADMIN_MENU_PRIORITY + 10 );
+
 
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_json_enable_control' ] );
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_custom_html_enable_control' ] );

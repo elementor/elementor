@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\EditorOne\Classes;
 
+use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -28,12 +29,15 @@ class Menu_Data_Provider {
 
 	private function __construct() {}
 
-	public function register_level3_item( string $item_slug, $item, string $group_id = Menu_Config::EDITOR_GROUP_ID ): void {
+	public function register_level3_item( string $item_slug, $item, string $group_id = Menu_Config::EDITOR_GROUP_ID, string $icon = '' ): void {
 		if ( ! isset( $this->level3_items[ $group_id ] ) ) {
 			$this->level3_items[ $group_id ] = [];
 		}
 
-		$this->level3_items[ $group_id ][ $item_slug ] = $item;
+		$this->level3_items[ $group_id ][ $item_slug ] = [
+			'item' => $item,
+			'icon' => $icon,
+		];
 		$this->invalidate_cache();
 	}
 
@@ -47,7 +51,18 @@ class Menu_Data_Provider {
 	}
 
 	public function get_level3_items(): array {
-		return $this->level3_items;
+		$items = [];
+
+		foreach ( $this->level3_items as $group_id => $group_items ) {
+			$items[ $group_id ] = [];
+			foreach ( $group_items as $item_slug => $item_data ) {
+				$items[ $group_id ][ $item_slug ] = is_array( $item_data ) && isset( $item_data['item'] )
+					? $item_data['item']
+					: $item_data;
+			}
+		}
+
+		return $items;
 	}
 
 	public function get_level4_items(): array {
@@ -73,6 +88,7 @@ class Menu_Data_Provider {
 
 		$items = Menu_Config::get_editor_flyout_items();
 		$items = apply_filters( 'elementor/admin_menu/editor_flyout_items', $items );
+		$items = $this->merge_level3_legacy_items( $items );
 
 		$this->sort_items_by_priority( $items );
 
@@ -116,23 +132,19 @@ class Menu_Data_Provider {
 	}
 
 	public function get_all_sidebar_page_slugs(): array {
-		$static_pages = [
-			'elementor',
-			'elementor-editor',
-			'elementor-settings',
-			'elementor-tools',
-			'elementor-role-manager',
-			'elementor-system-info',
-			'elementor-element-manager',
-			'elementor_custom_fonts',
-			'elementor_custom_icons',
-			'elementor_custom_code',
-			'e-form-submissions',
+		$base_slugs = [
+			Menu_Config::ELEMENTOR_MENU_SLUG,
+			Menu_Config::EDITOR_MENU_SLUG,
 		];
 
-		$dynamic_pages = $this->get_dynamic_page_slugs();
+		$slugs = array_merge(
+			$base_slugs,
+			Menu_Config::get_protected_submenu_slugs(),
+			Menu_Config::get_items_to_hide_from_wp_menu(),
+			$this->get_dynamic_page_slugs()
+		);
 
-		return array_unique( array_merge( $static_pages, $dynamic_pages ) );
+		return array_values( array_unique( $slugs ) );
 	}
 
 	public function is_elementor_editor_page(): bool {
@@ -162,7 +174,6 @@ class Menu_Data_Provider {
 	public static function get_elementor_post_types(): array {
 		return [
 			'elementor_library' => [],
-			
 			'elementor_icons' => [
 				'menu_slug' => 'elementor-custom-elements',
 				'child_slug' => 'custom-icons',
@@ -175,20 +186,79 @@ class Menu_Data_Provider {
 				'menu_slug' => 'elementor-custom-elements',
 				'child_slug' => 'custom-code',
 			],
+			'e-floating-buttons' => [
+				'menu_slug' => 'elementor-templates',
+				'child_slug' => 'floating-elements',
+			],
 		];
 	}
 	private function get_dynamic_page_slugs(): array {
 		$slugs = [];
 
+		foreach ( $this->level3_items as $group_items ) {
+			$slugs = array_merge( $slugs, array_keys( $group_items ) );
+		}
+
 		foreach ( $this->level4_items as $group_items ) {
 			foreach ( $group_items as $item_slug => $item ) {
-				if ( 0 === strpos( $item_slug, 'elementor' ) || 0 === strpos( $item_slug, 'e-' ) ) {
-					$slugs[] = $item_slug;
-				}
+				$slugs[] = $item_slug;
 			}
 		}
 
-		return $slugs;
+		return array_values( array_filter( $slugs, function( string $slug ): bool {
+			return 0 === strpos( $slug, 'elementor' ) || 0 === strpos( $slug, 'e-' );
+		} ) );
+	}
+
+	private function merge_level3_legacy_items( array $items ): array {
+		$existing_slugs = array_column( $items, 'slug' );
+		$excluded_slugs = Menu_Config::get_excluded_level3_slugs();
+
+		foreach ( $this->level3_items as $group_items ) {
+			foreach ( $group_items as $item_slug => $item_data ) {
+				$item = is_array( $item_data ) && isset( $item_data['item'] )
+					? $item_data['item']
+					: $item_data;
+				$icon = is_array( $item_data ) ? ( $item_data['icon'] ?? '' ) : '';
+
+				if ( ! $item->is_visible() ) {
+					continue;
+				}
+
+				if ( ! current_user_can( $item->get_capability() ) ) {
+					continue;
+				}
+
+				if ( in_array( $item_slug, $existing_slugs, true ) ) {
+					continue;
+				}
+
+				if ( in_array( $item_slug, $excluded_slugs, true ) ) {
+					continue;
+				}
+
+				$label = $item->get_label();
+
+				if ( empty( trim( wp_strip_all_tags( $label ) ) ) ) {
+					continue;
+				}
+
+				$priority = $item instanceof Admin_Menu_Item_Has_Position ? $item->get_position() : 100;
+
+				$items[] = [
+					'slug' => $item_slug,
+					'label' => $label,
+					'url' => $this->get_item_url( $item_slug ),
+					'icon' => $icon,
+					'group_id' => '',
+					'priority' => $priority,
+				];
+
+				$existing_slugs[] = $item_slug;
+			}
+		}
+
+		return $items;
 	}
 
 	private function merge_level4_legacy_items( array $groups ): array {
@@ -223,12 +293,14 @@ class Menu_Data_Provider {
 					continue;
 				}
 
-				$groups[ $group_id ]['items'][] = [
-					'slug' => $item_slug,
-					'label' => $label,
-					'url' => $this->get_item_url( $item_slug ),
-					'priority' => 100,
-				];
+			$priority = $item instanceof Admin_Menu_Item_Has_Position ? $item->get_position() : 100;
+
+			$groups[ $group_id ]['items'][] = [
+				'slug' => $item_slug,
+				'label' => $label,
+				'url' => $this->get_item_url( $item_slug ),
+				'priority' => $priority,
+			];
 
 				$existing_labels[] = $label_lower;
 			}

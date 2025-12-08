@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\System_Info;
 
+use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Settings;
 use Elementor\Modules\System_Info\Module as System_Info_Page;
@@ -9,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class System_Info_Menu_Item implements Admin_Menu_Item_With_Page {
+class System_Info_Menu_Item implements Admin_Menu_Item_With_Page, Admin_Menu_Item_Has_Position {
 
 	private $system_info_page;
 
@@ -39,5 +40,9 @@ class System_Info_Menu_Item implements Admin_Menu_Item_With_Page {
 
 	public function render() {
 		$this->system_info_page->display_page();
+	}
+
+	public function get_position() {
+		return 10;
 	}
 }

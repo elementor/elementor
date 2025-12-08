@@ -8,7 +8,7 @@ use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Item;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Modules\EditorOne\Classes\Remapped_Menu_Item;
+use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
 use Elementor\Plugin;
 
 use Elementor\Utils;
@@ -58,6 +58,15 @@ class Admin_Menu_Handler {
 			esc_html__( 'Theme Builder', 'elementor' ),
 			'edit_posts',
 			'elementor-theme-builder',
+			''
+		);
+
+		add_submenu_page(
+			Menu_Config::ELEMENTOR_MENU_SLUG,
+			esc_html__( 'Submissions', 'elementor' ),
+			esc_html__( 'Submissions', 'elementor' ),
+			'manage_options',
+			'e-form-submissions',
 			''
 		);
 
@@ -178,7 +187,7 @@ class Admin_Menu_Handler {
 
 			if ( isset( $legacy_mapping[ $parent_slug ] ) ) {
 				$new_parent_slug = $legacy_mapping[ $parent_slug ];
-				$wrapped_item = new Remapped_Menu_Item( $item, $new_parent_slug );
+				$wrapped_item = new Editor_One_Menu_Item( $item, $new_parent_slug );
 
 				if ( $this->is_level4_group( $new_parent_slug ) ) {
 					$this->register_level4_item( $item_slug, $wrapped_item, $new_parent_slug );
@@ -220,7 +229,8 @@ class Admin_Menu_Handler {
 	}
 
 	private function register_hidden_submenu( string $item_slug, Admin_Menu_Item $item ) {
-		$parent_slug = $this->resolve_hidden_submenu_parent( $this->get_original_parent_slug( $item ) );
+		$original_parent = $this->get_original_parent_slug( $item );
+		$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
 		$has_page = $item instanceof Admin_Menu_Item_With_Page;
 		$page_title = $has_page ? $item->get_page_title() : '';
 		$callback = $has_page ? [ $item, 'render' ] : '';
@@ -235,7 +245,11 @@ class Admin_Menu_Handler {
 		);
 	}
 
-	private function resolve_hidden_submenu_parent( string $parent_slug ): string {
+	private function resolve_hidden_submenu_parent( ?string $parent_slug ): string {
+		if ( empty( $parent_slug ) ) {
+			return Menu_Config::ELEMENTOR_MENU_SLUG;
+		}
+
 		$elementor_parent_slugs = [
 			Menu_Config::EDITOR_GROUP_ID,
 			Menu_Config::EDITOR_MENU_SLUG,
@@ -266,15 +280,26 @@ class Admin_Menu_Handler {
 		}
 	}
 
-	private function get_original_parent_slug( Admin_Menu_Item $item ): string {
-		return $item instanceof Remapped_Menu_Item
+	private function get_original_parent_slug( Admin_Menu_Item $item ): ?string {
+		return $item instanceof Editor_One_Menu_Item
 			? $item->get_original_parent_slug()
 			: $item->get_parent_slug();
 	}
 
 	public function hide_flyout_items_from_wp_menu(): void {
-		$this->iterate_all_flyout_items( function( string $item_slug, Admin_Menu_Item $item ) {
-			$parent_slug = $this->resolve_hidden_submenu_parent( $this->get_original_parent_slug( $item ) );
+		$protected_wp_menu_slugs = [
+			Menu_Config::EDITOR_MENU_SLUG,
+			'elementor-theme-builder',
+			'e-form-submissions',
+		];
+
+		$this->iterate_all_flyout_items( function( string $item_slug, Admin_Menu_Item $item ) use ( $protected_wp_menu_slugs ) {
+			if ( in_array( $item_slug, $protected_wp_menu_slugs, true ) ) {
+				return;
+			}
+
+			$original_parent = $this->get_original_parent_slug( $item );
+			$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
 			remove_submenu_page( $parent_slug, $item_slug );
 		} );
 

@@ -17,6 +17,9 @@ use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
+use Elementor\Plugin;
+use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -50,6 +53,11 @@ class Module extends Base_Module {
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_promotion_menu_item( $admin_menu );
 		}, static::ADMIN_MENU_PROMOTIONS_PRIORITY );
+
+		add_filter( 'elementor/admin_menu/editor_flyout_items', [ $this, 'add_submissions_flyout_item' ], 50 );
+		add_filter( 'elementor/admin_menu/editor_flyout_items', [ $this, 'add_custom_elements_flyout_item' ], 70 );
+		add_action( 'elementor/admin/menu/register_submenus', [ $this, 'register_submissions_wp_submenu' ] );
+		add_filter( 'elementor/admin_menu/items_to_hide_from_wp_menu', [ $this, 'add_items_to_hide' ] );
 
 		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
 			foreach ( Api::get_promotion_widgets() as $widget_data ) {
@@ -92,11 +100,83 @@ class Module extends Base_Module {
 	}
 
 	private function register_menu_items( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( 'e-form-submissions', new Form_Submissions_Promotion_Item() );
-		$admin_menu->register( 'elementor_custom_fonts', new Custom_Fonts_Promotion_Item() );
-		$admin_menu->register( 'elementor_custom_icons', new Custom_Icons_Promotion_Item() );
-		$admin_menu->register( 'elementor_custom_code', new Custom_Code_Promotion_Item() );
-		$admin_menu->register( 'popup_templates', new Popups_Promotion_Item() );
+		if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
+			$this->register_editor_one_menu_items( $admin_menu );
+		} else {
+			$admin_menu->register( 'e-form-submissions', new Form_Submissions_Promotion_Item() );
+			$admin_menu->register( 'elementor_custom_fonts', new Custom_Fonts_Promotion_Item() );
+			$admin_menu->register( 'elementor_custom_icons', new Custom_Icons_Promotion_Item() );
+			$admin_menu->register( 'elementor_custom_code', new Custom_Code_Promotion_Item() );
+			$admin_menu->register( 'popup_templates', new Popups_Promotion_Item() );
+		}
+	}
+
+	private function register_editor_one_menu_items( Admin_Menu_Manager $admin_menu ) {
+		$form_submissions_item = new Form_Submissions_Promotion_Item();
+		$editor_one_form_submissions = new Editor_One_Menu_Item( 
+			$form_submissions_item, 
+			'', 
+			'e-form-submissions',
+			__( 'Submissions', 'elementor' ),
+			50
+		);
+		$admin_menu->register_editor_one_menu_level_3(
+			$editor_one_form_submissions,
+			Menu_Config::EDITOR_GROUP_ID,
+			'send'
+		);
+
+		$custom_fonts_item = new Custom_Fonts_Promotion_Item();
+		$editor_one_custom_fonts = new Editor_One_Menu_Item( 
+			$custom_fonts_item, 
+			'', 
+			'elementor_custom_fonts', 
+			__( 'Fonts', 'elementor' ),
+			10
+		);
+		$admin_menu->register_editor_one_menu_level_4(
+			$editor_one_custom_fonts,
+			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID
+		);
+
+		$custom_icons_item = new Custom_Icons_Promotion_Item();
+		$editor_one_custom_icons = new Editor_One_Menu_Item( 
+			$custom_icons_item, 
+			'', 
+			'elementor_custom_icons', 
+			__( 'Icons', 'elementor' ),
+			20
+		);
+		$admin_menu->register_editor_one_menu_level_4(
+			$editor_one_custom_icons,
+			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID
+		);
+
+		$custom_code_item = new Custom_Code_Promotion_Item();
+		$editor_one_custom_code = new Editor_One_Menu_Item( 
+			$custom_code_item, 
+			'', 
+			'elementor_custom_code', 
+			__( 'Code', 'elementor' ),
+			30
+		);
+		$admin_menu->register_editor_one_menu_level_4(
+			$editor_one_custom_code,
+			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID
+		);
+
+		$popups_item = new Popups_Promotion_Item();
+		$editor_one_popups = new Editor_One_Menu_Item( 
+			$popups_item, 
+			'', 
+			'popup_templates',
+			__( 'Popups', 'elementor' ),
+			50
+		);
+		$admin_menu->register_editor_one_menu_level_4(
+			$editor_one_popups,
+			Menu_Config::TEMPLATES_GROUP_ID
+		);
 	}
 
 	private function register_promotion_menu_item( Admin_Menu_Manager $admin_menu ) {
@@ -167,5 +247,76 @@ class Module extends Base_Module {
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_free_to_pro_upsell',
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'free-to-pro-upsell',
 		];
+	}
+
+	private function is_editor_one_active(): bool {
+		return Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active();
+	}
+
+	public function add_submissions_flyout_item( array $items ): array {
+		if ( ! $this->is_editor_one_active() ) {
+			return $items;
+		}
+
+		$items[] = [
+			'slug' => 'e-form-submissions',
+			'label' => esc_html__( 'Submissions', 'elementor' ),
+			'url' => admin_url( 'admin.php?page=e-form-submissions' ),
+			'icon' => 'send',
+			'group_id' => '',
+			'priority' => 50,
+		];
+
+		return $items;
+	}
+
+	public function add_custom_elements_flyout_item( array $items ): array {
+		if ( ! $this->is_editor_one_active() ) {
+			return $items;
+		}
+
+		$items[] = [
+			'slug' => 'elementor-custom-elements',
+			'label' => esc_html__( 'Custom Elements', 'elementor' ),
+			'url' => admin_url( 'admin.php?page=elementor_custom_fonts' ),
+			'icon' => 'adjustments',
+			'group_id' => Menu_Config::CUSTOM_ELEMENTS_GROUP_ID,
+			'priority' => 70,
+		];
+
+		return $items;
+	}
+
+	public function register_submissions_wp_submenu( string $parent_slug ): void {
+		if ( ! $this->is_editor_one_active() ) {
+			return;
+		}
+
+		add_submenu_page(
+			$parent_slug,
+			esc_html__( 'Submissions', 'elementor' ),
+			esc_html__( 'Submissions', 'elementor' ),
+			'manage_options',
+			'e-form-submissions',
+			[ $this, 'render_submissions_page' ]
+		);
+	}
+
+	public function render_submissions_page(): void {
+		$form_submissions_item = new Form_Submissions_Promotion_Item();
+		$form_submissions_item->render();
+	}
+
+	public function add_items_to_hide( array $items ): array {
+		if ( ! $this->is_editor_one_active() ) {
+			return $items;
+		}
+
+		$items[] = 'elementor_custom_fonts';
+		$items[] = 'elementor_custom_icons';
+		$items[] = 'elementor_custom_code';
+		$items[] = 'popup_templates';
+
+		return $items;
 	}
 }

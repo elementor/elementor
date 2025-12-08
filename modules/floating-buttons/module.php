@@ -18,6 +18,8 @@ use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils as ElementorUtils;
+use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -61,13 +63,42 @@ class Module extends BaseModule {
 	}
 
 	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
-		$menu_args = $this->get_contact_menu_args();
-		$function = $menu_args['function'];
-		if ( is_callable( $function ) ) {
-			$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Empty_View_Menu_Item( $function ) );
+		if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
+			$this->register_editor_one_menu( $admin_menu );
 		} else {
-			$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Menu_Item() );
+			$menu_args = $this->get_contact_menu_args();
+			$function = $menu_args['function'];
+			if ( is_callable( $function ) ) {
+				$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Empty_View_Menu_Item( $function ) );
+			} else {
+				$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Menu_Item() );
+			}
 		}
+	}
+
+	private function register_editor_one_menu( Admin_Menu_Manager $admin_menu ) {
+		$menu_args = $this->get_contact_menu_args();
+		$menu_slug = $menu_args['menu_slug'];
+		$function = $menu_args['function'];
+
+		if ( is_callable( $function ) ) {
+			$menu_item = new Floating_Buttons_Empty_View_Menu_Item( $function );
+		} else {
+			$menu_item = new Floating_Buttons_Menu_Item();
+		}
+
+		$editor_one_menu = new Editor_One_Menu_Item(
+			$menu_item,
+			'',
+			$menu_slug,
+			__( 'Floating Elements', 'elementor' ),
+			40
+		);
+
+		$admin_menu->register_editor_one_menu_level_4(
+			$editor_one_menu,
+			Menu_Config::TEMPLATES_GROUP_ID
+		);
 	}
 
 	public function __construct() {

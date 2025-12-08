@@ -5,6 +5,8 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\System_Info\Reporters\Base;
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
+use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Plugin;
 use Elementor\Settings;
 
@@ -119,10 +121,49 @@ class Module extends BaseModule {
 	 */
 	private function add_actions() {
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu_manager ) {
-			$this->register_menu( $admin_menu_manager );
+			if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
+				$this->register_editor_one_menu( $admin_menu_manager );
+			} else {
+				$this->register_menu( $admin_menu_manager );
+			}
 		}, Settings::ADMIN_MENU_PRIORITY + 30 );
 
+		add_filter( 'elementor/admin_menu/editor_flyout_items', [ $this, 'add_system_flyout_item' ], 80 );
+		add_filter( 'elementor/admin_menu/items_to_hide_from_wp_menu', [ $this, 'add_items_to_hide' ] );
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );
+	}
+
+	private function is_editor_one_active(): bool {
+		return Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active();
+	}
+
+	public function add_system_flyout_item( array $items ): array {
+		if ( ! $this->is_editor_one_active() ) {
+			return $items;
+		}
+
+		$items[] = [
+			'slug' => 'elementor-system',
+			'label' => esc_html__( 'System', 'elementor' ),
+			'url' => admin_url( 'admin.php?page=elementor-system-info' ),
+			'icon' => 'info-circle',
+			'group_id' => Menu_Config::SYSTEM_GROUP_ID,
+			'priority' => 80,
+		];
+
+		return $items;
+	}
+
+	public function add_items_to_hide( array $items ): array {
+		if ( ! $this->is_editor_one_active() ) {
+			return $items;
+		}
+
+		$items[] = 'elementor-system-info';
+		$items[] = 'elementor-element-manager';
+		$items[] = 'go_knowledge_base_site';
+
+		return $items;
 	}
 
 	/**
@@ -137,6 +178,16 @@ class Module extends BaseModule {
 	 */
 	private function register_menu( Admin_Menu_Manager $admin_menu ) {
 		$admin_menu->register( 'elementor-system-info', new System_Info_Menu_Item( $this ) );
+	}
+
+	private function register_editor_one_menu( Admin_Menu_Manager $admin_menu ) {
+		$menu_item = new System_Info_Menu_Item( $this );
+		$editor_one_menu_item = new Editor_One_Menu_Item( $menu_item, '', 'elementor-system-info' );
+
+		$admin_menu->register_editor_one_menu_level_4(
+			$editor_one_menu_item,
+			Menu_Config::SYSTEM_GROUP_ID
+		);
 	}
 
 	/**
