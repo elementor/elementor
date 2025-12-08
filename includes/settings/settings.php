@@ -175,12 +175,12 @@ class Settings extends Settings_Page {
 
 	private function register_editor_one_settings_menu( Admin_Menu_Manager $admin_menu ) {
 		$menu_item = new Admin_Menu_Item( $this );
-		$editor_one_menu_item = new Editor_One_Menu_Item( 
-			$menu_item, 
-			'', 
-			'elementor-settings', 
+		$editor_one_menu_item = new Editor_One_Menu_Item(
+			$menu_item,
+			'',
+			'elementor-settings',
 			__( 'Settings', 'elementor' ),
-			20 
+			20
 		);
 
 		$admin_menu->register_editor_one_menu_level_3(
@@ -192,12 +192,12 @@ class Settings extends Settings_Page {
 
 	private function register_editor_one_home_menu( Admin_Menu_Manager $admin_menu ) {
 		$menu_item = new Home_Menu_Item( $this );
-		$editor_one_menu_item = new Editor_One_Menu_Item( 
-			$menu_item, 
-			'', 
-			'elementor', 
+		$editor_one_menu_item = new Editor_One_Menu_Item(
+			$menu_item,
+			'',
+			'elementor',
 			__( 'Home', 'elementor' ),
-			10 
+			10
 		);
 
 		$admin_menu->register_editor_one_menu_level_3(
@@ -609,7 +609,6 @@ class Settings extends Settings_Page {
 			$excluded_slugs[] = 'edit.php?post_type=elementor_library#add_new';
 			return $excluded_slugs;
 		} );
-
 
 		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 

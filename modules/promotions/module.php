@@ -105,12 +105,13 @@ class Module extends Base_Module {
 		return $items;
 	}
 	private function handle_external_redirects() {
-		if ( empty( $_GET['page'] ) ) {
+		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		if ( empty( $page ) ) {
 			return;
 		}
 
-		if ( 'go_elementor_pro' === $_GET['page'] ) {
-			wp_redirect( Go_Pro_Promotion_Item::get_url() );
+		if ( 'go_elementor_pro' === $page ) {
+			wp_redirect( Go_Pro_Promotion_Item::get_url() ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 			die;
 		}
 	}
@@ -129,9 +130,9 @@ class Module extends Base_Module {
 
 	private function register_editor_one_menu_items( Admin_Menu_Manager $admin_menu ) {
 		$form_submissions_item = new Form_Submissions_Promotion_Item();
-		$editor_one_form_submissions = new Editor_One_Menu_Item( 
-			$form_submissions_item, 
-			'', 
+		$editor_one_form_submissions = new Editor_One_Menu_Item(
+			$form_submissions_item,
+			'',
 			'e-form-submissions',
 			__( 'Submissions', 'elementor' ),
 			50
@@ -145,10 +146,10 @@ class Module extends Base_Module {
 
 		$custom_fonts_item = new Custom_Fonts_Promotion_Item();
 
-		$editor_one_custom_fonts = new Editor_One_Menu_Item( 
-			$custom_fonts_item, 
-			'', 
-			'elementor_custom_fonts', 
+		$editor_one_custom_fonts = new Editor_One_Menu_Item(
+			$custom_fonts_item,
+			'',
+			'elementor_custom_fonts',
 			__( 'Fonts', 'elementor' ),
 			10
 		);
@@ -159,10 +160,10 @@ class Module extends Base_Module {
 		);
 
 		$custom_icons_item = new Custom_Icons_Promotion_Item();
-		$editor_one_custom_icons = new Editor_One_Menu_Item( 
-			$custom_icons_item, 
-			'', 
-			'elementor_custom_icons', 
+		$editor_one_custom_icons = new Editor_One_Menu_Item(
+			$custom_icons_item,
+			'',
+			'elementor_custom_icons',
 			__( 'Icons', 'elementor' ),
 			20
 		);
@@ -173,10 +174,10 @@ class Module extends Base_Module {
 		);
 
 		$custom_code_item = new Custom_Code_Promotion_Item();
-		$editor_one_custom_code = new Editor_One_Menu_Item( 
-			$custom_code_item, 
-			'', 
-			'elementor_custom_code', 
+		$editor_one_custom_code = new Editor_One_Menu_Item(
+			$custom_code_item,
+			'',
+			'elementor_custom_code',
 			__( 'Code', 'elementor' ),
 			30
 		);
@@ -187,9 +188,9 @@ class Module extends Base_Module {
 		);
 
 		$popups_item = new Popups_Promotion_Item();
-		$editor_one_popups = new Editor_One_Menu_Item( 
-			$popups_item, 
-			'', 
+		$editor_one_popups = new Editor_One_Menu_Item(
+			$popups_item,
+			'',
 			'popup_templates',
 			__( 'Popups', 'elementor' ),
 			50

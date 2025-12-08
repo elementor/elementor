@@ -67,8 +67,8 @@ class Admin_Menu_Manager {
 		do_action( 'elementor/admin/menu/after_register', $this, $hooks );
 	}
 
-	public function register_editor_one_menu_level_3( 
-		Editor_One_Menu_Item $editor_one_item, 
+	public function register_editor_one_menu_level_3(
+		Editor_One_Menu_Item $editor_one_item,
 		string $group_id,
 		string $icon,
 	) {
@@ -80,14 +80,14 @@ class Admin_Menu_Manager {
 		);
 	}
 
-	public function register_editor_one_menu_level_4( 
-		Editor_One_Menu_Item $editor_one_item, 
+	public function register_editor_one_menu_level_4(
+		Editor_One_Menu_Item $editor_one_item,
 		string $group_id,
 	) {
 		Menu_Data_Provider::instance()->register_level4_item(
 			$editor_one_item->get_slug(),
-			$editor_one_item, 
-			$group_id 
+			$editor_one_item,
+			$group_id
 		);
 	}
 

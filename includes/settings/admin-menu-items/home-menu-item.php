@@ -43,4 +43,3 @@ class Home_Menu_Item implements Admin_Menu_Item_With_Page {
 		$this->settings_page->display_home_screen();
 	}
 }
-

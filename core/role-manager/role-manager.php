@@ -194,7 +194,7 @@ class Role_Manager extends Settings_Page {
 		?>
 		<div class="elementor-role-control">
 			<label for="<?php echo esc_attr( $id ); ?>">
-				<input type="checkbox" name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $id ); ?>" value="<?php echo esc_attr( $value ); ?>" <?php checked( in_array( $value, $checked ), true ); ?>>
+				<input type="checkbox" name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $id ); ?>" value="<?php echo esc_attr( $value ); ?>" <?php checked( in_array( $value, $checked, true ), true ); ?>>
 				<?php echo esc_html__( 'Enable the option to upload JSON files', 'elementor' ); ?>
 			</label>
 			<p class="elementor-role-control-warning"><strong><?php echo esc_html__( 'Heads up', 'elementor' ); ?>:</strong> <?php echo esc_html__( 'Giving broad access to upload JSON files can pose a security risk to your website because such files may contain malicious scripts, etc.', 'elementor' ); ?></p>
@@ -212,7 +212,7 @@ class Role_Manager extends Settings_Page {
 		?>
 		<div class="elementor-role-control">
 			<label for="<?php echo esc_attr( $id ); ?>">
-				<input type="checkbox" name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $id ); ?>" value="<?php echo esc_attr( $value ); ?>" <?php checked( in_array( $value, $checked ), true ); ?>>
+				<input type="checkbox" name="<?php echo esc_attr( $name ); ?>" id="<?php echo esc_attr( $id ); ?>" value="<?php echo esc_attr( $value ); ?>" <?php checked( in_array( $value, $checked, true ), true ); ?>>
 				<?php echo esc_html__( 'Enable the option to use the HTML widget', 'elementor' ); ?>
 			</label>
 			<p class="elementor-role-control-warning"><strong><?php echo esc_html__( 'Heads up', 'elementor' ); ?>:</strong> <?php echo esc_html__( 'Giving broad access to edit the HTML widget can pose a security risk to your website because it enables users to run malicious scripts, etc.', 'elementor' ); ?></p>
@@ -313,15 +313,15 @@ class Role_Manager extends Settings_Page {
 	private function register_editor_one_menu( Admin_Menu_Manager $admin_menu ) {
 		$role_manager_menu = new Role_Manager_Menu_Item( $this );
 
-		$editor_one_menu = new Editor_One_Menu_Item( 
-			$role_manager_menu, 
-			'', 
-			static::PAGE_ID 
+		$editor_one_menu = new Editor_One_Menu_Item(
+			$role_manager_menu,
+			'',
+			static::PAGE_ID
 		);
 
-		$admin_menu->register_editor_one_menu_level_3( 
+		$admin_menu->register_editor_one_menu_level_3(
 			$editor_one_menu,
-			Menu_Config::EDITOR_GROUP_ID, 
+			Menu_Config::EDITOR_GROUP_ID,
 			'users'
 		);
 	}
@@ -340,7 +340,6 @@ class Role_Manager extends Settings_Page {
 				$this->register_admin_menu( $admin_menu );
 			}
 		}, Settings::ADMIN_MENU_PRIORITY + 10 );
-
 
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_json_enable_control' ] );
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_custom_html_enable_control' ] );

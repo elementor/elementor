@@ -212,10 +212,10 @@ class Tools extends Settings_Page {
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 			if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
 				$editor_one_menu = new Editor_One_Menu_Item( new Tools_Menu_Item( $this ), '', static::PAGE_ID );
-				$admin_menu->register_editor_one_menu_level_3( 
-					$editor_one_menu, 
-					Menu_Config::EDITOR_GROUP_ID, 
-					'tool' 
+				$admin_menu->register_editor_one_menu_level_3(
+					$editor_one_menu,
+					Menu_Config::EDITOR_GROUP_ID,
+					'tool'
 				);
 			} else {
 				$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
@@ -287,7 +287,7 @@ class Tools extends Settings_Page {
 					continue;
 				}
 
-				$current_index++;
+				++$current_index;
 				$rollback_versions[] = $version;
 			}
 
