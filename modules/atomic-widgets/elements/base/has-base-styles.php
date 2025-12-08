@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Elements;
+namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;

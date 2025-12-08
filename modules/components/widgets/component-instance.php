@@ -1,8 +1,8 @@
 <?php
 namespace Elementor\Modules\Components\Widgets;
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
