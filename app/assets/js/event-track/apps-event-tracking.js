@@ -83,9 +83,11 @@ export class AppsEventTracking {
 	}
 
 	static sendKitImportStatus( error = null ) {
+		const isError = !! error;
+
 		return this.dispatchEvent( EVENTS_MAP.KIT_IMPORT_STATUS, {
-			kit_import_status: ! error,
-			...( error && { kit_import_error: error.message } ),
+			kit_import_status: ! isError,
+			...( isError && { kit_import_error: error.message } ),
 		} );
 	}
 

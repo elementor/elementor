@@ -4,8 +4,13 @@ import List from '@elementor/ui/List';
 import ListItem from '@elementor/ui/ListItem';
 import SideBarCheckIcon from '../../icons/side-bar-check-icon';
 import ListItemText from '@elementor/ui/ListItemText';
+import { trackPromoClick, getHomeScreenPath } from '../../utils/promo-tracking';
 
 const SidebarDefault = ( { header, cta, repeater } ) => {
+	const handleCtaClick = () => {
+		trackPromoClick( header.title, cta.url, getHomeScreenPath( 'sidebar' ) );
+	};
+
 	return (
 		<Paper elevation={ 0 } sx={ { p: 3 } }>
 			<Stack gap={ 1.5 } alignItems="center" textAlign="center" sx={ { pb: 4 } }>
@@ -19,6 +24,7 @@ const SidebarDefault = ( { header, cta, repeater } ) => {
 					size="medium"
 					color="promotion"
 					href={ cta.url }
+					onClick={ handleCtaClick }
 					startIcon={ <Box component="img" src={ cta.image } sx={ { width: '16px' } }></Box> }
 					target="_blank"
 					sx={ { maxWidth: 'fit-content' } }

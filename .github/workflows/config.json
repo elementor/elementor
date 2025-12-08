@@ -2,6 +2,7 @@
   "deployment" : {
     "repository_owner" : "elementor",
     "environment" : "prod",
-    "permitted" : "Batsirai-muchareva,TzviRabinovitch,davseve,louiswol94,mykytamurzin,ronenelementor,hein-obox,MichaelLiamin,elchugreeva,asafdl,mugurelLupu,baghdasarovelementor,mike-elementor,Svitlana-Dykun,IshayMaya,MiryamOren,eyalmrejen-elementor,marcin-elementor,nami-p,Nevoss,Omerisra6,ronros-elementor,YaelAvitan,ntnelbaba"
+    "permitted" : "Batsirai-muchareva,davseve,louiswol94,mykytamurzin,ronenelementor,hein-obox,MichaelLiamin,elchugreeva,asafdl,mike-elementor,Svitlana-Dykun,IshayMaya,MiryamOren,eyalmrejen-elementor,marcin-elementor,nami-p,Omerisra6,ronros-elementor,YaelAvitan,ntnelbaba,max-zu,ManorHazaz,nicoladj77,dima-belkin,annab1"
+
   }
 }

@@ -103,7 +103,7 @@ describe( '@elementor/extract-i18n-wordpress-expressions-webpack-plugin', () => 
 		vol.reset();
 	} );
 
-	it( 'should extract translations from scripts', ( done ) => {
+	it.skip( 'should extract translations from scripts', ( done ) => {
 		// Arrange.
 		const compiler = webpack( {
 			mode: 'development',

@@ -23,12 +23,14 @@ export default function ImportProcess() {
 		isProcessing,
 		dispatch,
 	} );
+
 	const navigate = useNavigate();
 
 	useEffect( () => {
 		if ( ! error ) {
 			if ( IMPORT_PROCESSING_STATUS.DONE === status ) {
-				AppsEventTracking.sendKitImportStatus();
+				AppsEventTracking.sendKitImportStatus( null );
+
 				navigate( 'import-customization/complete' );
 			} else if ( ! isProcessing ) {
 				navigate( 'import-customization', { replace: true } );

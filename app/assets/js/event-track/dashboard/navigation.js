@@ -1,4 +1,5 @@
 import WpDashboardTracking, { NAV_AREAS } from '../wp-dashboard-tracking';
+import BaseTracking from './base-tracking';
 
 const ELEMENTOR_MENU_SELECTORS = {
 	ELEMENTOR_TOP_LEVEL: 'li#toplevel_page_elementor',
@@ -10,7 +11,7 @@ const ELEMENTOR_MENU_SELECTORS = {
 	SUBMENU_ITEM_TOP_LEVEL: '.wp-has-submenu',
 };
 
-class NavigationTracking {
+class NavigationTracking extends BaseTracking {
 	static init() {
 		this.attachElementorMenuTracking();
 		this.attachTemplatesMenuTracking();
@@ -37,66 +38,27 @@ class NavigationTracking {
 	}
 
 	static attachMenuTracking( menuElement, menuName ) {
-		const topLevelLink = menuElement.querySelector( 'a.menu-top' );
-		const submenuContainer = menuElement.querySelector( ELEMENTOR_MENU_SELECTORS.SUBMENU_CONTAINER );
-
-		if ( topLevelLink ) {
-			topLevelLink.addEventListener( 'click', ( event ) => {
-				this.handleTopLevelClick( event );
-			} );
-		}
-
-		if ( submenuContainer ) {
-			const submenuItems = submenuContainer.querySelectorAll( 'li a' );
-
-			submenuItems.forEach( ( submenuItem ) => {
-				submenuItem.addEventListener( 'click', ( event ) => {
-					this.handleSubmenuClick( event, menuName );
-				} );
-			} );
-
-			this.observeSubmenuChanges( submenuContainer, menuName );
-		}
+		this.addEventListenerTracked(
+			menuElement,
+			'click',
+			( event ) => {
+				this.handleMenuClick( event, menuName );
+			},
+		);
 	}
 
-	static observeSubmenuChanges( submenuContainer, menuName ) {
-		const observer = new MutationObserver( ( mutations ) => {
-			mutations.forEach( ( mutation ) => {
-				if ( 'childList' === mutation.type ) {
-					mutation.addedNodes.forEach( ( node ) => {
-						if ( 1 === node.nodeType && 'LI' === node.tagName ) {
-							const link = node.querySelector( 'a' );
-							if ( link ) {
-								link.addEventListener( 'click', ( event ) => {
-									this.handleSubmenuClick( event, menuName );
-								} );
-							}
-						}
-					} );
-				}
-			} );
-		} );
+	static handleMenuClick( event, menuName ) {
+		const link = event.target.closest( 'a' );
 
-		observer.observe( submenuContainer, {
-			childList: true,
-			subtree: false,
-		} );
-	}
+		if ( ! link ) {
+			return;
+		}
 
-	static handleTopLevelClick( event ) {
-		const link = event.currentTarget;
+		const isTopLevel = link.classList.contains( 'menu-top' );
 		const itemId = this.extractItemId( link );
 		const area = this.determineNavArea( link );
 
-		WpDashboardTracking.trackNavClicked( itemId, null, area );
-	}
-
-	static handleSubmenuClick( event, menuName ) {
-		const link = event.currentTarget;
-		const itemId = this.extractItemId( link );
-		const area = this.determineNavArea( link );
-
-		WpDashboardTracking.trackNavClicked( itemId, menuName, area );
+		WpDashboardTracking.trackNavClicked( itemId, isTopLevel ? null : menuName, area );
 	}
 
 	static extractItemId( link ) {
