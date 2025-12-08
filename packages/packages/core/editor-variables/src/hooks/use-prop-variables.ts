@@ -6,6 +6,7 @@ import { useVariableType } from '../context/variable-type-context';
 import { service } from '../service';
 import { type NormalizedVariable, type Variable } from '../types';
 import { filterBySearch } from '../utils/filter-by-search';
+import { getVariableType, getVariableTypes } from '../variables-registry/variable-type-registry';
 
 export const getVariables = ( includeDeleted = true ) => {
 	const variables = service.variables();
@@ -60,11 +61,26 @@ const usePropVariables = ( propKey: PropKey ): NormalizedVariable[] => {
 	return useMemo( () => normalizeVariables( propKey ), [ propKey ] );
 };
 
+const getMatchingTypes = ( propKey: string ): string[] => {
+	const matchingTypes: string[] = [];
+	const allTypes = getVariableTypes();
+	const variableType = getVariableType( propKey );
+
+	Object.entries( allTypes ).forEach( ( [ key, typeOptions ] ) => {
+		if ( variableType.variableType === typeOptions.variableType ) {
+			matchingTypes.push( key );
+		}
+	} );
+
+	return matchingTypes;
+};
+
 const normalizeVariables = ( propKey: string ) => {
 	const variables = getVariables( false );
+	const matchingTypes = getMatchingTypes( propKey );
 
 	return Object.entries( variables )
-		.filter( ( [ , variable ] ) => variable.type === propKey )
+		.filter( ( [ , variable ] ) => matchingTypes.includes( variable.type ) )
 		.map( ( [ key, { label, value, order } ] ) => ( {
 			key,
 			label,

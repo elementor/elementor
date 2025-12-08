@@ -1,12 +1,9 @@
 <?php
 namespace Elementor\Modules\Components\PropTypes;
 
-use Elementor\Plugin;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
-use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\Components\Documents\Component_Overridable_Props;
 use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
+use Elementor\Modules\Components\Utils\Parsing_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -93,26 +90,7 @@ class Component_Override_Utils {
 		$widget_type = $overridable->widget_type;
 		$prop_key = $overridable->prop_key;
 
-		$overridable_element = Plugin::$instance->elements_manager->get_element( $el_type, $widget_type );
-
-		if ( ! $overridable_element ) {
-			throw new \Exception( esc_html( "Invalid overridable element: Element type $el_type with widget type $widget_type is not registered." ) );
-		}
-
-		$element_instance = new $overridable_element();
-
-		/** @var Atomic_Element_Base | Atomic_Widget_Base $element_instance */
-		if ( ! Utils::is_atomic( $element_instance ) ) {
-			throw new \Exception( esc_html( "Invalid overridable element: Element type $el_type with widget type $widget_type is not an atomic element/widget." ) );
-		}
-
-		$props_schema = $element_instance->get_props_schema();
-
-		if ( ! isset( $props_schema[ $prop_key ] ) ) {
-			throw new \Exception( esc_html( "Prop key '$prop_key' does not exist in the schema of element '{$element_instance->get_element_type()}'." ) );
-		}
-
-		$prop_type = $props_schema[ $prop_key ];
+		$prop_type = Parsing_Utils::get_prop_type( $el_type, $widget_type, $prop_key );
 
 		return [
 			'override_key_exists' => true,
