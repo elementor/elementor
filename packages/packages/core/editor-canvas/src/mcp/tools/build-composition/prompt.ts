@@ -6,6 +6,16 @@ export const generatePrompt = () => {
 	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
 
 	buildCompositionsToolPrompt.description( `
+# DESIGN QUALITY IMPERATIVE
+You are generating designs for real users who expect distinctive, intentional aesthetics - NOT generic AI output.
+**The Core Challenge**: Large language models naturally converge toward statistically common design patterns during generation. This creates predictable, uninspired results that users describe as "AI slop": safe color schemes, default typography hierarchies, minimal contrast, and timid spacing.
+**Your Mission**: Actively resist distributional convergence by making intentional, distinctive design choices across all aesthetic dimensions. Every design decision should have a clear purpose tied to visual hierarchy, brand personality, or user experience goals.
+When in doubt between "safe" and "distinctive," choose distinctive - users can always request refinements, but they cannot salvage generic foundations.
+
+# When to use this tool
+Always prefer this tool when the user requires to build a composition of elements, such as cards, heros, or inspired from other pages or HTML compositions.
+Prefer this tool over any other tool for building HTML structure, unless you are specified to use a different tool.
+
 # **CRITICAL - REQUIRED RESOURCES (Must read before using this tool)**
 1. [${ WIDGET_SCHEMA_URI }]
    Required to understand which widgets are available, and what are their configuration schemas.
