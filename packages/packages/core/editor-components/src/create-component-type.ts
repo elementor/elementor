@@ -7,7 +7,6 @@ import {
 	type ElementView,
 	type LegacyWindow,
 } from '@elementor/editor-canvas';
-import { getCurrentUser } from '@elementor/editor-current-user';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
@@ -15,7 +14,6 @@ import { __ } from '@wordpress/i18n';
 import { apiClient } from './api';
 import { type ComponentInstancePropValue, type ExtendedWindow } from './types';
 import { trackComponentEvent } from './utils/tracking';
-
 type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
 
 type ContextMenuAction = {
@@ -39,7 +37,7 @@ type ContextMenuGroup = {
 export const TYPE = 'e-component';
 
 const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfig ) => {
-	const { disable, add } = config;
+	const { disable = {}, add = {} } = config;
 	const disabledGroupNames = Object.keys( disable );
 	const addedGroupNames = Object.keys( add );
 	const newGroups = groups.map( ( group: ContextMenuGroup ) => {
@@ -87,13 +85,20 @@ export function createComponentType(
 		}
 
 		getView() {
-			return createComponentView( options );
+			const elementorWithConfig = legacyWindow.elementor as typeof legacyWindow.elementor & {
+				config?: { user?: { is_administrator?: boolean } };
+			};
+			const isAdministrator = elementorWithConfig.config?.user?.is_administrator ?? false;
+			return createComponentView( { ...options, isAdministrator } );
 		}
 	};
 }
 
 function createComponentView(
-	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
+	options: CreateTemplatedElementTypeOptions & {
+		showLockedByModal?: ( lockedBy: string ) => void;
+		isAdministrator: boolean;
+	}
 ): typeof ElementView {
 	return class extends createTemplatedElementView( options ) {
 		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
@@ -103,14 +108,6 @@ function createComponentView(
 			const currentDocument = getCurrentDocument();
 
 			return currentDocument?.id === this.getComponentId();
-		}
-
-		/**
-		 * Gets the current user data from cache (synchronous, no API calls)
-		 * @return User data or null if not loaded yet
-		 */
-		getCurrentUser() {
-			return getCurrentUser();
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
@@ -170,7 +167,7 @@ function createComponentView(
 		}
 
 		_getContextMenuConfig() {
-			const currentUser = this.getCurrentUser();
+			const { isAdministrator } = options;
 			const addedGroup = {
 				general: {
 					index: 1,
@@ -184,19 +181,11 @@ function createComponentView(
 				},
 			};
 
-			const diabledGroup = {
+			const disabledGroup = {
 				clipboard: [ 'pasteStyle', 'resetStyle' ],
 			};
 
-			if ( currentUser && currentUser?.capabilities.includes( 'administrator' ) ) {
-				return {
-					add: addedGroup,
-					disable: diabledGroup,
-				};
-			}
-			return {
-				disable: diabledGroup,
-			};
+			return { add: isAdministrator ? addedGroup : {}, disable: disabledGroup };
 		}
 
 		async switchDocument() {
