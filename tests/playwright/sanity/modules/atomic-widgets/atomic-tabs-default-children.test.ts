@@ -8,10 +8,9 @@ test.describe( 'Atomic Tabs Default Children @atomic-widgets', () => {
 	let editor: EditorPage;
 
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
+		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpCli( 'wp elementor experiments activate e_opt_in_v4_page e_atomic_elements' );
 
 		editor = await wpAdmin.openNewPage();
 	} );
