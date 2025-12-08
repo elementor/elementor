@@ -61,9 +61,7 @@ export function createVariableTypeRegistry() {
 		isCompatible,
 		upgradeUrl,
 	}: VariableTypeOptions ) => {
-		if ( key && variableTypes[ key ] ) {
-			throw new Error( `Variable with key "${ propTypeUtil.key }" is already registered.` );
-		}
+		const variableTypeKey = key ?? propTypeUtil.key;
 
 		if ( ! isCompatible ) {
 			isCompatible = ( propType, variable: Variable ) => {
@@ -76,21 +74,18 @@ export function createVariableTypeRegistry() {
 			};
 		}
 
-		if ( key ) {
-			variableTypes[ key ] = {
-				icon,
-				startIcon,
-				valueField,
-				propTypeUtil,
-				variableType,
-				defaultValue,
-				selectionFilter,
-				valueTransformer,
-				fallbackPropTypeUtil,
-				isCompatible,
-				upgradeUrl,
-			};
-		}
+		variableTypes[ variableTypeKey ] = {
+			icon,
+			startIcon,
+			valueField,
+			propTypeUtil,
+			variableType,
+			defaultValue,
+			selectionFilter,
+			valueTransformer,
+			fallbackPropTypeUtil,
+			isCompatible,
+		};
 
 		registerTransformer( propTypeUtil.key );
 		registerInheritanceTransformer( propTypeUtil.key );
