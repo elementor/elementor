@@ -1,4 +1,3 @@
-import { useCallback, useEffect, useState } from '@wordpress/element';
 import { Divider } from '@elementor/ui';
 import ChevronRightIcon from '@elementor/icons/ChevronRightIcon';
 import WebsiteIcon from '@elementor/icons/WebsiteIcon';
@@ -9,42 +8,20 @@ import { SidebarUpgradeCta } from './cta';
 import { SidebarHeader } from './header';
 import { SidebarMenu } from './menu';
 import { CollapseButton, NavContainer, ScrollableContent, SiteIconBox } from './shared';
-
-const STORAGE_KEY = 'elementor_sidebar_collapsed';
+import { useSidebarCollapse } from './hooks/use-sidebar-collapse';
 
 const SidebarNavigation = ( { config } ) => {
-	const [ isCollapsed, setIsCollapsed ] = useState( () => {
-		return 'true' === localStorage.getItem( STORAGE_KEY );
-	} );
-
-	const handleToggle = useCallback( () => {
-		const newState = ! isCollapsed;
-		setIsCollapsed( newState );
-		localStorage.setItem( STORAGE_KEY, String( newState ) );
-	}, [ isCollapsed ] );
-
-	useEffect( () => {
-		const container = document.getElementById( 'e-editor-sidebar-navigation' );
-		const body = document.body;
-
-		if ( isCollapsed ) {
-			container?.classList.add( 'e-sidebar-collapsed' );
-			body.classList.add( 'e-sidebar-is-collapsed' );
-		} else {
-			container?.classList.remove( 'e-sidebar-collapsed' );
-			body.classList.remove( 'e-sidebar-is-collapsed' );
-		}
-	}, [ isCollapsed ] );
+	const { isCollapsed, toggleCollapse } = useSidebarCollapse();
 
 	if ( isCollapsed ) {
 		return (
-			<NavContainer>
+			<NavContainer component="nav">
 				<CollapsedHeaderContainer>
 					<SiteIconBox>
-						<WebsiteIcon sx={ { fontSize: 24 } } />
+						<WebsiteIcon />
 					</SiteIconBox>
-					<CollapseButton onClick={ handleToggle }>
-						<ChevronRightIcon sx={ { fontSize: 16 } } />
+					<CollapseButton onClick={ toggleCollapse } size="small">
+						<ChevronRightIcon />
 					</CollapseButton>
 				</CollapsedHeaderContainer>
 				<ScrollableContent>
@@ -60,8 +37,8 @@ const SidebarNavigation = ( { config } ) => {
 	}
 
 	return (
-		<NavContainer>
-			<SidebarHeader siteTitle={ config.siteTitle } onCollapse={ handleToggle } />
+		<NavContainer component="nav">
+			<SidebarHeader siteTitle={ config.siteTitle } onCollapse={ toggleCollapse } />
 			<ScrollableContent>
 				<SidebarMenu
 					menuItems={ config.menuItems }
@@ -85,4 +62,3 @@ SidebarNavigation.propTypes = {
 };
 
 export default SidebarNavigation;
-

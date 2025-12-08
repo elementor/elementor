@@ -8,9 +8,3 @@ export const CtaButton = styled( Button )( {
 	justifyContent: 'center',
 } );
 
-CtaButton.defaultProps = {
-	variant: 'outlined',
-	color: 'promotion',
-	fullWidth: true,
-};
-

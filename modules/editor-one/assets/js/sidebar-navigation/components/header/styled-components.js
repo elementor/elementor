@@ -22,10 +22,6 @@ export const SiteTitle = styled( Typography )( {
 	flex: 1,
 } );
 
-SiteTitle.defaultProps = {
-	variant: 'subtitle1',
-};
-
 export const SearchButton = styled( IconButton )( ( { theme } ) => ( {
 	fontSize: 20,
 	color: theme.palette.text.secondary,

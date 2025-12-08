@@ -14,15 +14,15 @@ const SidebarHeader = ( { siteTitle, onCollapse } ) => {
 		<HeaderContainer>
 			<HeaderContent>
 				<SiteIconBox>
-					<WebsiteIcon sx={ { fontSize: 24 } } />
+					<WebsiteIcon />
 				</SiteIconBox>
-				<SiteTitle>{ siteTitle }</SiteTitle>
+				<SiteTitle variant="subtitle1">{ siteTitle }</SiteTitle>
 				<SearchButton onClick={ finderAction }>
 					<SearchIcon />
 				</SearchButton>
 			</HeaderContent>
-			<CollapseButton onClick={ onCollapse }>
-				<ChevronLeftIcon sx={ { fontSize: 16 } } />
+			<CollapseButton onClick={ onCollapse } size="small">
+				<ChevronLeftIcon />
 			</CollapseButton>
 		</HeaderContainer>
 	);

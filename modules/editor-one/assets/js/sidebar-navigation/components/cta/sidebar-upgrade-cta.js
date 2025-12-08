@@ -15,7 +15,13 @@ const SidebarUpgradeCta = ( { upgradeUrl, upgradeText, hasPro } ) => {
 
 	return (
 		<CtaContainer>
-			<CtaButton startIcon={ <CrownIcon /> } onClick={ handleUpgradeClick }>
+			<CtaButton
+				startIcon={ <CrownIcon /> }
+				onClick={ handleUpgradeClick }
+				variant="outlined"
+				color="promotion"
+				fullWidth
+			>
 				{ upgradeText }
 			</CtaButton>
 		</CtaContainer>

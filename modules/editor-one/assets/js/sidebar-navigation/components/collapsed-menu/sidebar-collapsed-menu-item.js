@@ -1,18 +1,20 @@
 import { useRef } from '@wordpress/element';
-import { List, ListItem, ListItemButton, ListItemText, Popover, Tooltip } from '@elementor/ui';
+import { List, ListItem, ListItemText, Tooltip } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import { DEFAULT_ICON, ICON_MAP } from '../shared';
 import {
 	CollapsedIconButton,
 	CollapsedMenuItemContainer,
 	PopoverContent,
+	PopoverListItemButton,
 	PopoverTitle,
+	StyledPopover,
 } from './styled-components';
 
 const SidebarCollapsedMenuItem = ( {
 	item,
 	isActive,
-	children,
+	children = null,
 	activeChildSlug,
 	isPopoverOpen,
 	onOpenPopover,
@@ -41,18 +43,16 @@ const SidebarCollapsedMenuItem = ( {
 			{ hasChildren ? (
 				<>
 					<CollapsedIconButton isHighlighted={ isActive || isPopoverOpen }>
-						<IconComponent sx={ { fontSize: 20 } } />
+						<IconComponent />
 					</CollapsedIconButton>
-					<Popover
+					<StyledPopover
 						open={ isPopoverOpen }
 						anchorEl={ anchorRef.current }
 						onClose={ onClosePopover }
 						anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
 						transformOrigin={ { vertical: 'top', horizontal: 'left' } }
-						sx={ { pointerEvents: 'none' } }
 						slotProps={ {
 							paper: {
-								sx: { ml: 1, minWidth: 180, borderRadius: 1, pointerEvents: 'auto' },
 								onMouseLeave: onClosePopover,
 							},
 						} }
@@ -60,31 +60,30 @@ const SidebarCollapsedMenuItem = ( {
 						hideBackdrop
 					>
 						<PopoverContent>
-							<PopoverTitle>{ item.label }</PopoverTitle>
+							<PopoverTitle variant="subtitle2">{ item.label }</PopoverTitle>
 							<List disablePadding>
 								{ children.map( ( childItem ) => (
 									<ListItem key={ childItem.slug } disablePadding dense>
-										<ListItemButton
+										<PopoverListItemButton
 											component="a"
 											href={ childItem.url }
 											selected={ childItem.slug === activeChildSlug }
-											sx={ { px: 2, py: 0.5 } }
 										>
 											<ListItemText
 												primary={ childItem.label }
 												primaryTypographyProps={ { variant: 'body2' } }
 											/>
-										</ListItemButton>
+										</PopoverListItemButton>
 									</ListItem>
 								) ) }
 							</List>
 						</PopoverContent>
-					</Popover>
+					</StyledPopover>
 				</>
 			) : (
 				<Tooltip title={ item.label } placement="right">
 					<CollapsedIconButton onClick={ handleClick } isHighlighted={ isActive }>
-						<IconComponent sx={ { fontSize: 20 } } />
+						<IconComponent />
 					</CollapsedIconButton>
 				</Tooltip>
 			) }
@@ -102,9 +101,4 @@ SidebarCollapsedMenuItem.propTypes = {
 	onClosePopover: PropTypes.func.isRequired,
 };
 
-SidebarCollapsedMenuItem.defaultProps = {
-	children: null,
-};
-
 export default SidebarCollapsedMenuItem;
-

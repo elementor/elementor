@@ -1,4 +1,4 @@
-import { Box, IconButton, Typography, styled } from '@elementor/ui';
+import { Box, IconButton, ListItemButton, Popover, Typography, styled } from '@elementor/ui';
 
 export const CollapsedMenuContainer = styled( Box )( ( { theme } ) => ( {
 	paddingLeft: theme.spacing( 1 ),
@@ -23,6 +23,9 @@ export const CollapsedIconButton = styled( IconButton, {
 	'&:hover': {
 		backgroundColor: theme.palette.action.hover,
 	},
+	'& svg': {
+		fontSize: 20,
+	},
 } ) );
 
 export const PopoverTitle = styled( Typography )( ( { theme } ) => ( {
@@ -31,11 +34,8 @@ export const PopoverTitle = styled( Typography )( ( { theme } ) => ( {
 	paddingTop: theme.spacing( 1 ),
 	paddingBottom: theme.spacing( 1 ),
 	fontWeight: 600,
+	color: theme.palette.text.tertiary,
 } ) );
-
-PopoverTitle.defaultProps = {
-	variant: 'subtitle2',
-};
 
 export const PopoverContent = styled( Box )( ( { theme } ) => ( {
 	paddingTop: theme.spacing( 1 ),
@@ -51,3 +51,19 @@ export const CollapsedHeaderContainer = styled( Box )( ( { theme } ) => ( {
 	borderBottom: `1px solid ${ theme.palette.divider }`,
 } ) );
 
+export const PopoverListItemButton = styled( ListItemButton )( ( { theme } ) => ( {
+	paddingLeft: theme.spacing( 2 ),
+	paddingRight: theme.spacing( 2 ),
+	paddingTop: theme.spacing( 0.5 ),
+	paddingBottom: theme.spacing( 0.5 ),
+} ) );
+
+export const StyledPopover = styled( Popover )( ( { theme } ) => ( {
+	pointerEvents: 'none',
+	'& .MuiPaper-root': {
+		marginLeft: theme.spacing( 1 ),
+		minWidth: 180,
+		borderRadius: theme.shape.borderRadius,
+		pointerEvents: 'auto',
+	},
+} ) );

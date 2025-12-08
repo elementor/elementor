@@ -8,10 +8,6 @@ export const NavContainer = styled( Box )( ( { theme } ) => ( {
 	borderRight: `1px solid ${ theme.palette.divider }`,
 } ) );
 
-NavContainer.defaultProps = {
-	component: 'nav',
-};
-
 export const SiteIconBox = styled( Box )( ( { theme } ) => ( {
 	width: 40,
 	height: 40,
@@ -21,6 +17,9 @@ export const SiteIconBox = styled( Box )( ( { theme } ) => ( {
 	alignItems: 'center',
 	justifyContent: 'center',
 	backgroundColor: theme.palette.background.paper,
+	'& svg': {
+		fontSize: 24,
+	},
 } ) );
 
 export const CollapseButton = styled( IconButton )( ( { theme } ) => ( {
@@ -36,11 +35,10 @@ export const CollapseButton = styled( IconButton )( ( { theme } ) => ( {
 	'&:hover': {
 		backgroundColor: theme.palette.action.hover,
 	},
+	'& svg': {
+		fontSize: 16,
+	},
 } ) );
-
-CollapseButton.defaultProps = {
-	size: 'small',
-};
 
 export const ScrollableContent = styled( Box )( {
 	flex: 1,

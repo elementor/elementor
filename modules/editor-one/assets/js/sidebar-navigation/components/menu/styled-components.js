@@ -1,4 +1,4 @@
-import { List, ListItemButton, styled } from '@elementor/ui';
+import { List, ListItemButton, ListItemIcon, styled } from '@elementor/ui';
 import ChevronDownIcon from '@elementor/icons/ChevronDownIcon';
 
 export const MenuList = styled( List )( ( { theme } ) => ( {
@@ -17,6 +17,13 @@ export const MenuItemButton = styled( ListItemButton )( ( { theme } ) => ( {
 	paddingRight: theme.spacing( 1 ),
 	minHeight: 32,
 } ) );
+
+export const MenuIcon = styled( ListItemIcon )( {
+	minWidth: 28,
+	'& svg': {
+		fontSize: 20,
+	},
+} );
 
 export const ChildMenuItemButton = styled( ListItemButton )( ( { theme } ) => ( {
 	borderRadius: theme.shape.borderRadius,

@@ -1,8 +1,8 @@
 import { useCallback, useState } from '@wordpress/element';
-import { Collapse, List, ListItem, ListItemIcon, ListItemText } from '@elementor/ui';
+import { Collapse, List, ListItem, ListItemText } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import { DEFAULT_ICON, ICON_MAP } from '../shared';
-import { ChildMenuItemButton, ExpandIcon, MenuItemButton } from './styled-components';
+import { ChildMenuItemButton, ExpandIcon, MenuIcon, MenuItemButton } from './styled-components';
 
 const STORAGE_KEY_PREFIX = 'elementor_sidebar_menu_expanded_';
 
@@ -41,9 +41,9 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 		<>
 			<ListItem disablePadding dense>
 				<MenuItemButton onClick={ handleClick } selected={ isActive && ! hasChildren }>
-					<ListItemIcon sx={ { minWidth: 28 } }>
-						<IconComponent sx={ { fontSize: 20 } } />
-					</ListItemIcon>
+					<MenuIcon>
+						<IconComponent />
+					</MenuIcon>
 					<ListItemText primary={ item.label } primaryTypographyProps={ { variant: 'body2' } } />
 					{ hasChildren && <ExpandIcon expanded={ isExpanded } /> }
 				</MenuItemButton>
@@ -80,4 +80,3 @@ SidebarMenuItem.propTypes = {
 };
 
 export default SidebarMenuItem;
-
