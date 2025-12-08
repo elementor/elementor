@@ -5,7 +5,7 @@ import { ajax } from '@elementor/editor-v1-adapters';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { getParams } from '../../api';
-import { loadComponentsStyles } from '../load-components-styles';
+import { loadComponentsStyles } from '../actions/load-components-styles';
 import { selectStyles, SLICE_NAME } from '../store';
 
 jest.mock( '@elementor/store', () => ( {
