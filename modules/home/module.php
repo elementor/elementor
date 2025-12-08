@@ -64,6 +64,10 @@ class Module extends BaseApp {
 
 		$home_screen_data = $this->get_app_js_config();
 		$home_screen_data['isEditorOneActive'] = $is_editor_one_active;
+		$home_screen_data['_debug'] = [
+			'php_isEditorOneActive' => $is_editor_one_active,
+			'experiment_state' => $experiments->get_features()['e_editor_one'] ?? null,
+		];
 
 		wp_localize_script(
 			'e-home-screen',

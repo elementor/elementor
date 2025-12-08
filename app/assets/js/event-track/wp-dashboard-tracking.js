@@ -202,11 +202,13 @@ export default class WpDashboardTracking {
 			return false;
 		}
 
-		if ( targetUrl.startsWith( '#' ) ) {
+		const urlString = typeof targetUrl === 'string' ? targetUrl : String( targetUrl );
+
+		if ( urlString.startsWith( '#' ) ) {
 			return false;
 		}
 
-		return ! this.isElementorPage( targetUrl );
+		return ! this.isElementorPage( urlString );
 	}
 
 	static isLinkOpeningInNewTab( link ) {
@@ -233,9 +235,10 @@ export default class WpDashboardTracking {
 		const handleFormSubmit = ( event ) => {
 			const form = event.target;
 			if ( form.action ) {
-				if ( ! this.sessionEnded && this.isNavigatingAwayFromElementor( form.action ) ) {
+				const formAction = typeof form.action === 'string' ? form.action : form.action.href || String( form.action );
+				if ( ! this.sessionEnded && this.isNavigatingAwayFromElementor( formAction ) ) {
 					this.trackSessionEnd( 'navigate_away' );
-				} else if ( this.isElementorPage( form.action ) ) {
+				} else if ( this.isElementorPage( formAction ) ) {
 					this.isNavigatingToElementor = true;
 				}
 			}
