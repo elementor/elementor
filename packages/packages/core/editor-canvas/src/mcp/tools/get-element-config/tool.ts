@@ -29,7 +29,9 @@ export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
 				throw new Error( `Element with ID ${ elementId } not found.` );
 			}
 			const elementRawSettings = element.settings;
-			const propSchema = getWidgetsCache()?.[ element.model.get( 'widgetType' ) || '' ]?.atomic_props_schema;
+			const propSchema =
+				getWidgetsCache()?.[ element.model.get( 'widgetType' ) || element.model.get( 'elType' ) || '' ]
+					?.atomic_props_schema;
 
 			if ( ! elementRawSettings || ! propSchema ) {
 				throw new Error( `No settings or prop schema found for element ID: ${ elementId }` );
@@ -55,6 +57,9 @@ export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
 							stylePropValues[ stylePropName ] = structuredClone( styleProps[ stylePropName ] );
 						}
 					} );
+					if ( defaultVariant.custom_css ) {
+						stylePropValues.custom_css = btoa( defaultVariant.custom_css.raw );
+					}
 				}
 			}
 
