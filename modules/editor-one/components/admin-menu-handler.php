@@ -61,15 +61,6 @@ class Admin_Menu_Handler {
 			''
 		);
 
-		add_submenu_page(
-			Menu_Config::ELEMENTOR_MENU_SLUG,
-			esc_html__( 'Submissions', 'elementor' ),
-			esc_html__( 'Submissions', 'elementor' ),
-			'manage_options',
-			'e-form-submissions',
-			''
-		);
-
 		do_action( 'elementor/admin/menu/register_submenus', Menu_Config::ELEMENTOR_MENU_SLUG );
 	}
 
