@@ -222,32 +222,40 @@ class Test_Style_Schema extends TestCase {
 			if ( 'background-image-overlay' === $prop_type->get_key() ) {
 				$bg_image_shape = $prop_type->get_shape();
 
-				if ( isset( $bg_image_shape['dimensions'] ) ) {
-					$dimensions_shape = $bg_image_shape['dimensions']->get_shape();
+				if ( isset( $bg_image_shape['size'] ) ) {
+					foreach ( $bg_image_shape['size']->get_prop_types() as $size_prop_type ) {
+						if ( $size_prop_type->get_key() === 'background-image-size-scale' ) {
+							$size_scale_shape = $size_prop_type->get_shape();
 
-					$dimensions_shape['width'] = Union_Prop_Type::make()
-						->add_prop_type( Size_Prop_Type::make() )
-						->add_prop_type( Size_Variable_Prop_Type::make() );
+							$size_scale_shape['width'] = Union_Prop_Type::make()
+								->add_prop_type( Size_Prop_Type::make() )
+								->add_prop_type( Size_Variable_Prop_Type::make() );
 
-					$dimensions_shape['height'] = Union_Prop_Type::make()
-						->add_prop_type( Size_Prop_Type::make() )
-						->add_prop_type( Size_Variable_Prop_Type::make() );
+							$size_scale_shape['height'] = Union_Prop_Type::make()
+								->add_prop_type( Size_Prop_Type::make() )
+								->add_prop_type( Size_Variable_Prop_Type::make() );
 
-					$bg_image_shape['dimensions']->set_shape( $dimensions_shape );
+							$size_prop_type->set_shape( $size_scale_shape );
+						}
+					}
 				}
 
 				if ( isset( $bg_image_shape['position'] ) ) {
-					$position_shape = $bg_image_shape['position']->get_shape();
+					foreach ( $bg_image_shape['position']->get_prop_types() as $position_prop_type ) {
+						if ( $position_prop_type->get_key() === 'background-image-position-offset' ) {
+							$position_offset_shape = $position_prop_type->get_shape();
 
-					$position_shape['x'] = Union_Prop_Type::make()
-						->add_prop_type( Size_Prop_Type::make() )
-						->add_prop_type( Size_Variable_Prop_Type::make() );
+							$position_offset_shape['x'] = Union_Prop_Type::make()
+								->add_prop_type( Size_Prop_Type::make() )
+								->add_prop_type( Size_Variable_Prop_Type::make() );
 
-					$position_shape['y'] = Union_Prop_Type::make()
-						->add_prop_type( Size_Prop_Type::make() )
-						->add_prop_type( Size_Variable_Prop_Type::make() );
+							$position_offset_shape['y'] = Union_Prop_Type::make()
+								->add_prop_type( Size_Prop_Type::make() )
+								->add_prop_type( Size_Variable_Prop_Type::make() );
 
-					$bg_image_shape['position']->set_shape( $position_shape );
+							$position_prop_type->set_shape( $position_offset_shape );
+						}
+					}
 				}
 
 				$prop_type->set_shape( $bg_image_shape );
