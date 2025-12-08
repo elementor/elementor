@@ -97,6 +97,21 @@ class Components_REST_API {
 			],
 		] );
 
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/overridable-props', [
+			[
+				'methods' => 'GET',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_overridable_props( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'componentId' => [
+						'type' => 'integer',
+						'required' => true,
+						'description' => 'The component ID to get overridable props for',
+					],
+				],
+			],
+		] );
+
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/status', [
 			[
 				'methods' => 'PUT',
@@ -209,6 +224,36 @@ class Components_REST_API {
 		} );
 
 		return Response_Builder::make( $styles )->build();
+	}
+
+	private function get_overridable_props( \WP_REST_Request $request ) {
+		$component_id = (int) $request->get_param( 'componentId' );
+
+		if ( ! $component_id ) {
+			return Error_Builder::make( 'invalid_component_id' )
+				->set_status( 400 )
+				->set_message( __( 'Invalid component ID', 'elementor' ) )
+				->build();
+		}
+
+		$document = $this->get_repository()->get( $component_id );
+
+		if ( ! $document ) {
+			return Error_Builder::make( 'component_not_found' )
+				->set_status( 404 )
+				->set_message( __( 'Component not found', 'elementor' ) )
+				->build();
+		}
+
+		$overridable = $document->get_meta( Component::OVERRIDABLE_PROPS_META_KEY ) ?? null;
+
+		if ( ! empty( $overridable ) ) {
+			$overridable = json_decode( $overridable, true );
+		} else {
+			$overridable = null;
+		}
+
+		return Response_Builder::make( $overridable )->build();
 	}
 
 	private function create_components( \WP_REST_Request $request ) {
