@@ -161,7 +161,8 @@ class Menu_Data_Provider {
 
 	public static function get_elementor_post_types(): array {
 		return [
-			'elementor_library' => true,
+			'elementor_library' => [],
+			
 			'elementor_icons' => [
 				'menu_slug' => 'elementor-custom-elements',
 				'child_slug' => 'custom-icons',
