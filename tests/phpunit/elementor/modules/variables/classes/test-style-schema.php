@@ -218,6 +218,40 @@ class Test_Style_Schema extends TestCase {
 
 				$prop_type->set_shape( $bg_gradient_shape );
 			}
+
+			if ( 'background-image-overlay' === $prop_type->get_key() ) {
+				$bg_image_shape = $prop_type->get_shape();
+
+				if ( isset( $bg_image_shape['dimensions'] ) ) {
+					$dimensions_shape = $bg_image_shape['dimensions']->get_shape();
+
+					$dimensions_shape['width'] = Union_Prop_Type::make()
+						->add_prop_type( Size_Prop_Type::make() )
+						->add_prop_type( Size_Variable_Prop_Type::make() );
+
+					$dimensions_shape['height'] = Union_Prop_Type::make()
+						->add_prop_type( Size_Prop_Type::make() )
+						->add_prop_type( Size_Variable_Prop_Type::make() );
+
+					$bg_image_shape['dimensions']->set_shape( $dimensions_shape );
+				}
+
+				if ( isset( $bg_image_shape['position'] ) ) {
+					$position_shape = $bg_image_shape['position']->get_shape();
+
+					$position_shape['x'] = Union_Prop_Type::make()
+						->add_prop_type( Size_Prop_Type::make() )
+						->add_prop_type( Size_Variable_Prop_Type::make() );
+
+					$position_shape['y'] = Union_Prop_Type::make()
+						->add_prop_type( Size_Prop_Type::make() )
+						->add_prop_type( Size_Variable_Prop_Type::make() );
+
+					$bg_image_shape['position']->set_shape( $position_shape );
+				}
+
+				$prop_type->set_shape( $bg_image_shape );
+			}
 		}
 
 		$shape['background-overlay']->set_item_type($overlay_item);
