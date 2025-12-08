@@ -52,6 +52,7 @@ export default function SendFeedbackPopupLocation() {
 	};
 
 	if ( ! isUserConnected ) {
+		return null;
 	}
 
 	return (
