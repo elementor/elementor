@@ -56,13 +56,9 @@ class Menu_Data_Provider {
 	}
 
 	public function is_item_already_registered( string $item_slug ): bool {
-		foreach ( $this->level3_items as $group_items ) {
-			if ( isset( $group_items[ $item_slug ] ) ) {
-				return true;
-			}
-		}
+		$all_items = array_merge( $this->level3_items, $this->level4_items );
 
-		foreach ( $this->level4_items as $group_items ) {
+		foreach ( $all_items as $group_items ) {
 			if ( isset( $group_items[ $item_slug ] ) ) {
 				return true;
 			}
@@ -79,11 +75,7 @@ class Menu_Data_Provider {
 		$items = Menu_Config::get_editor_flyout_items();
 		$items = apply_filters( 'elementor/admin_menu/editor_flyout_items', $items );
 
-		usort( $items, function( $a, $b ) {
-			$priority_a = $a['priority'] ?? 100;
-			$priority_b = $b['priority'] ?? 100;
-			return $priority_a - $priority_b;
-		} );
+		$this->sort_items_by_priority( $items );
 
 		$this->cached_editor_flyout_data = [
 			'parent_slug' => Menu_Config::EDITOR_MENU_SLUG,
@@ -104,11 +96,7 @@ class Menu_Data_Provider {
 
 		foreach ( $groups as $group_id => $group ) {
 			if ( ! empty( $group['items'] ) ) {
-				usort( $groups[ $group_id ]['items'], function( $a, $b ) {
-					$priority_a = $a['priority'] ?? 100;
-					$priority_b = $b['priority'] ?? 100;
-					return $priority_a - $priority_b;
-				} );
+				$this->sort_items_by_priority( $groups[ $group_id ]['items'] );
 			}
 		}
 
@@ -119,17 +107,8 @@ class Menu_Data_Provider {
 
 	public function get_theme_builder_url(): string {
 		if ( null === $this->theme_builder_url ) {
-			$pro_url = null;
-
-			if ( Plugin::$instance->app ) {
-				$pro_url = Plugin::$instance->app->get_settings( 'menu_url' );
-			}
-
-			if ( $pro_url ) {
-				$default_url = $pro_url;
-			} else {
-				$default_url = admin_url( 'admin.php?page=elementor-app#site-editor/promotion' );
-			}
+			$pro_url = Plugin::$instance->app ? Plugin::$instance->app->get_settings( 'menu_url' ) : null;
+			$default_url = $pro_url ?: admin_url( 'admin.php?page=elementor-app#site-editor/promotion' );
 
 			$this->theme_builder_url = apply_filters( 'elementor/admin_menu/theme_builder_url', $default_url );
 		}
@@ -158,26 +137,34 @@ class Menu_Data_Provider {
 	}
 
 	public function is_elementor_editor_page(): bool {
-		$screen = get_current_screen();
-
-		if ( ! $screen ) {
+		if ( ! get_current_screen() ) {
 			return false;
 		}
 
 		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
-		$sidebar_pages = $this->get_all_sidebar_page_slugs();
 
-		if ( in_array( $page, $sidebar_pages, true ) ) {
+		if ( in_array( $page, $this->get_all_sidebar_page_slugs(), true ) ) {
 			return true;
 		}
 
 		$post_type = filter_input( INPUT_GET, 'post_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
 
-		if ( 'elementor_library' === $post_type ) {
-			return true;
+		return $this->is_elementor_post_type( $post_type );
+	}
+
+	private function is_elementor_post_type( string $post_type ): bool {
+		if ( empty( $post_type ) ) {
+			return false;
 		}
 
-		return false;
+		$elementor_post_types = [
+			'elementor_library' => true,
+			'elementor_icons' => true,
+			'elementor_font' => true,
+			'elementor_snippet' => true,
+		];
+
+		return isset( $elementor_post_types[ $post_type ] );
 	}
 
 	private function get_dynamic_page_slugs(): array {
@@ -196,7 +183,6 @@ class Menu_Data_Provider {
 
 	private function merge_level4_legacy_items( array $groups ): array {
 		$excluded_level4_slugs = Menu_Config::get_excluded_level4_slugs();
-		$excluded_level4_labels = Menu_Config::get_excluded_level4_labels();
 
 		foreach ( $this->level4_items as $group_id => $items ) {
 			if ( ! isset( $groups[ $group_id ] ) ) {
@@ -216,16 +202,12 @@ class Menu_Data_Provider {
 					continue;
 				}
 
-				if ( in_array( $item_slug, $excluded_level4_slugs, true ) ) {
+				if ( $this->is_slug_excluded( $item_slug, $excluded_level4_slugs ) ) {
 					continue;
 				}
 
 				$label = $item->get_label();
 				$label_lower = strtolower( $label );
-
-				if ( in_array( $label_lower, $excluded_level4_labels, true ) ) {
-					continue;
-				}
 
 				if ( in_array( $label_lower, $existing_labels, true ) ) {
 					continue;
@@ -245,13 +227,42 @@ class Menu_Data_Provider {
 		return $groups;
 	}
 
-	private function get_item_url( string $item_slug ): string {
-		if ( 0 === strpos( $item_slug, 'edit.php' ) || 0 === strpos( $item_slug, 'post-new.php' ) ) {
-			return admin_url( $item_slug );
+	private function is_slug_excluded( string $item_slug, array $excluded_slugs ): bool {
+		if ( in_array( $item_slug, $excluded_slugs, true ) ) {
+			return true;
 		}
 
-		if ( 0 === strpos( $item_slug, 'admin.php' ) ) {
-			return admin_url( $item_slug );
+		$normalized_slug = $this->normalize_slug( $item_slug );
+
+		return in_array( $normalized_slug, $excluded_slugs, true );
+	}
+
+	private function normalize_slug( string $slug ): string {
+		if ( 0 !== strpos( $slug, 'http' ) ) {
+			return $slug;
+		}
+
+		$parsed = wp_parse_url( $slug );
+		$path = basename( $parsed['path'] ?? '' );
+
+		if ( ! empty( $parsed['query'] ) ) {
+			$path .= '?' . $parsed['query'];
+		}
+
+		if ( ! empty( $parsed['fragment'] ) ) {
+			$path .= '#' . $parsed['fragment'];
+		}
+
+		return $path;
+	}
+
+	private function get_item_url( string $item_slug ): string {
+		$admin_path_prefixes = [ 'edit.php', 'post-new.php', 'admin.php' ];
+
+		foreach ( $admin_path_prefixes as $prefix ) {
+			if ( 0 === strpos( $item_slug, $prefix ) ) {
+				return admin_url( $item_slug );
+			}
 		}
 
 		if ( 0 === strpos( $item_slug, 'http' ) ) {
@@ -259,6 +270,12 @@ class Menu_Data_Provider {
 		}
 
 		return admin_url( 'admin.php?page=' . $item_slug );
+	}
+
+	private function sort_items_by_priority( array &$items ): void {
+		usort( $items, function( $a, $b ) {
+			return ( $a['priority'] ?? 100 ) - ( $b['priority'] ?? 100 );
+		} );
 	}
 
 	private function invalidate_cache(): void {

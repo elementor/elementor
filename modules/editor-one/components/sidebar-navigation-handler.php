@@ -111,6 +111,15 @@ class Sidebar_Navigation_Handler {
 	}
 
 	private function get_active_menu_state( array $menu_items, array $level4_groups ): array {
+		$current_page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
+
+		if ( 'elementor-editor' === $current_page ) {
+			return [
+				'menu_slug' => 'elementor-home',
+				'child_slug' => '',
+			];
+		}
+
 		$current_url = $this->get_current_url();
 		$best_match = [
 			'menu_slug' => '',

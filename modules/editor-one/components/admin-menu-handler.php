@@ -36,9 +36,11 @@ class Admin_Menu_Handler {
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 1001 );
 		add_action( 'admin_menu', [ $this, 'reorder_elementor_submenu' ], 1002 );
 		add_action( 'admin_menu', [ $this, 'reposition_elementor_menu' ], 1003 );
+		add_filter( 'add_menu_classes', [ $this, 'fix_theme_builder_submenu_url' ] );
 		add_action( 'admin_head', [ $this, 'hide_flyout_items_from_wp_menu' ] );
 		add_action( 'admin_head', [ $this, 'hide_legacy_templates_menu' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_menu_assets' ] );
+		add_action( 'admin_print_scripts-elementor_page_elementor-editor', [ $this, 'enqueue_home_screen_on_editor_page' ] );
 	}
 
 	public function register_unified_submenus(): void {
@@ -57,7 +59,7 @@ class Admin_Menu_Handler {
 			esc_html__( 'Theme Builder', 'elementor' ),
 			'edit_posts',
 			'elementor-theme-builder',
-			[ $this, 'redirect_to_theme_builder' ]
+			''
 		);
 
 		do_action( 'elementor/admin/menu/register_submenus', Menu_Config::ELEMENTOR_MENU_SLUG );
@@ -121,31 +123,32 @@ class Admin_Menu_Handler {
 	}
 
 	public function render_editor_page(): void {
+		Plugin::$instance->settings->display_home_screen();
+	}
+
+	public function enqueue_home_screen_on_editor_page(): void {
 		$home_module = Plugin::$instance->modules_manager->get_modules( 'home' );
-		if ( $home_module && $home_module->is_experiment_active() ) {
-			Plugin::$instance->settings->display_home_screen();
-		} else {
-			Plugin::$instance->settings->display_settings_page();
+
+		if ( $home_module && method_exists( $home_module, 'enqueue_home_screen_scripts' ) ) {
+			$home_module->enqueue_home_screen_scripts();
 		}
 	}
 
-	public function redirect_to_theme_builder(): void {
-		$url = $this->get_theme_builder_url();
-		?>
-		<!DOCTYPE html>
-		<html>
-		<head>
-			<meta http-equiv="refresh" content="0;url=<?php echo esc_url( $url ); ?>">
-			<script type="text/javascript">
-				window.location.href = <?php echo wp_json_encode( $url ); ?>;
-			</script>
-		</head>
-		<body>
-			<p>Redirecting to Theme Builder...</p>
-		</body>
-		</html>
-		<?php
-		exit;
+	public function fix_theme_builder_submenu_url( $menu ) {
+		global $submenu;
+
+		if ( empty( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] ) ) {
+			return $menu;
+		}
+
+		foreach ( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] as &$item ) {
+			if ( 'elementor-theme-builder' === $item[2] ) {
+				$item[2] = $this->get_theme_builder_url(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				break;
+			}
+		}
+
+		return $menu;
 	}
 
 	private function get_theme_builder_url(): string {
@@ -212,30 +215,16 @@ class Admin_Menu_Handler {
 	}
 
 	public function register_flyout_items_as_hidden_submenus(): void {
-		foreach ( $this->menu_data_provider->get_level3_items() as $group_items ) {
-			foreach ( $group_items as $item_slug => $item ) {
-				$this->register_hidden_submenu( $item_slug, $item );
-			}
-		}
-
-		foreach ( $this->menu_data_provider->get_level4_items() as $group_items ) {
-			foreach ( $group_items as $item_slug => $item ) {
-				$this->register_hidden_submenu( $item_slug, $item );
-			}
-		}
+		$this->iterate_all_flyout_items( function( string $item_slug, Admin_Menu_Item $item ) {
+			$this->register_hidden_submenu( $item_slug, $item );
+		} );
 	}
 
 	private function register_hidden_submenu( string $item_slug, Admin_Menu_Item $item ) {
-		$has_page = ( $item instanceof Admin_Menu_Item_With_Page );
-
+		$parent_slug = $this->resolve_hidden_submenu_parent( $this->get_original_parent_slug( $item ) );
+		$has_page = $item instanceof Admin_Menu_Item_With_Page;
 		$page_title = $has_page ? $item->get_page_title() : '';
 		$callback = $has_page ? [ $item, 'render' ] : '';
-
-		$original_parent = $item instanceof Remapped_Menu_Item
-			? $item->get_original_parent_slug()
-			: $item->get_parent_slug();
-
-		$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
 
 		return add_submenu_page(
 			$parent_slug,
@@ -248,43 +237,47 @@ class Admin_Menu_Handler {
 	}
 
 	private function resolve_hidden_submenu_parent( string $parent_slug ): string {
-		if ( in_array( $parent_slug, [ Menu_Config::EDITOR_GROUP_ID, Menu_Config::EDITOR_MENU_SLUG ], true ) ) {
-			return Menu_Config::ELEMENTOR_MENU_SLUG;
-		}
+		$elementor_parent_slugs = [
+			Menu_Config::EDITOR_GROUP_ID,
+			Menu_Config::EDITOR_MENU_SLUG,
+			Menu_Config::TEMPLATES_GROUP_ID,
+			Menu_Config::LEGACY_TEMPLATES_SLUG,
+			Menu_Config::SETTINGS_GROUP_ID,
+			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID,
+			Menu_Config::SYSTEM_GROUP_ID,
+		];
 
-		if ( in_array( $parent_slug, [ Menu_Config::TEMPLATES_GROUP_ID, Menu_Config::LEGACY_TEMPLATES_SLUG ], true ) ) {
-			return Menu_Config::ELEMENTOR_MENU_SLUG;
-		}
-
-		if ( Menu_Config::SETTINGS_GROUP_ID === $parent_slug ) {
+		if ( in_array( $parent_slug, $elementor_parent_slugs, true ) ) {
 			return Menu_Config::ELEMENTOR_MENU_SLUG;
 		}
 
 		return $parent_slug;
 	}
 
+	private function iterate_all_flyout_items( callable $callback ): void {
+		$all_items = array_merge(
+			$this->menu_data_provider->get_level3_items(),
+			$this->menu_data_provider->get_level4_items()
+		);
+
+		foreach ( $all_items as $group_items ) {
+			foreach ( $group_items as $item_slug => $item ) {
+				$callback( $item_slug, $item );
+			}
+		}
+	}
+
+	private function get_original_parent_slug( Admin_Menu_Item $item ): string {
+		return $item instanceof Remapped_Menu_Item
+			? $item->get_original_parent_slug()
+			: $item->get_parent_slug();
+	}
+
 	public function hide_flyout_items_from_wp_menu(): void {
-		foreach ( $this->menu_data_provider->get_level3_items() as $group_items ) {
-			foreach ( $group_items as $item_slug => $item ) {
-				$original_parent = $item instanceof Remapped_Menu_Item
-					? $item->get_original_parent_slug()
-					: $item->get_parent_slug();
-
-				$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
-				remove_submenu_page( $parent_slug, $item_slug );
-			}
-		}
-
-		foreach ( $this->menu_data_provider->get_level4_items() as $group_items ) {
-			foreach ( $group_items as $item_slug => $item ) {
-				$original_parent = $item instanceof Remapped_Menu_Item
-					? $item->get_original_parent_slug()
-					: $item->get_parent_slug();
-
-				$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
-				remove_submenu_page( $parent_slug, $item_slug );
-			}
-		}
+		$this->iterate_all_flyout_items( function( string $item_slug, Admin_Menu_Item $item ) {
+			$parent_slug = $this->resolve_hidden_submenu_parent( $this->get_original_parent_slug( $item ) );
+			remove_submenu_page( $parent_slug, $item_slug );
+		} );
 
 		$items_to_hide_from_wp_menu = Menu_Config::get_items_to_hide_from_wp_menu();
 		foreach ( $items_to_hide_from_wp_menu as $item_slug ) {

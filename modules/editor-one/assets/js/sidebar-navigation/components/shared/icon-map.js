@@ -5,6 +5,7 @@ import InfoCircleIcon from '@elementor/icons/InfoCircleIcon';
 import SendIcon from '@elementor/icons/SendIcon';
 import SettingsIcon from '@elementor/icons/SettingsIcon';
 import UsersIcon from '@elementor/icons/UsersIcon';
+import ToolIcon from '../icons/tool';
 
 export const ICON_MAP = {
 	adjustments: AdjustmentsIcon,
@@ -13,7 +14,7 @@ export const ICON_MAP = {
 	'info-circle': InfoCircleIcon,
 	send: SendIcon,
 	settings: SettingsIcon,
-	tool: SettingsIcon,
+	tool: ToolIcon,
 	users: UsersIcon,
 };
 

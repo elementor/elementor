@@ -151,7 +151,7 @@ class Menu_Config {
 				[
 					'slug' => 'custom-code',
 					'label' => esc_html__( 'Code', 'elementor' ),
-					'url' => admin_url( 'admin.php?page=elementor_custom_code' ),
+					'url' => static::get_custom_code_url(),
 					'priority' => 30,
 				],
 			],
@@ -225,15 +225,6 @@ class Menu_Config {
 		return apply_filters( 'elementor/admin_menu/excluded_level4_slugs', $default_slugs );
 	}
 
-	public static function get_excluded_level4_labels(): array {
-		$default_labels = [
-			'add new',
-			'categories',
-		];
-
-		return apply_filters( 'elementor/admin_menu/excluded_level4_labels', $default_labels );
-	}
-
 	public static function get_legacy_slug_mapping(): array {
 		$default_mapping = [
 			self::LEGACY_TEMPLATES_SLUG => self::TEMPLATES_GROUP_ID,
@@ -249,5 +240,17 @@ class Menu_Config {
 		];
 
 		return apply_filters( 'elementor/admin_menu/level4_group_mapping', $default_mapping );
+	}
+
+	public static function get_custom_code_url(): string {
+		$pro_custom_code_cpt = 'elementor_snippet';
+
+		if ( post_type_exists( $pro_custom_code_cpt ) ) {
+			$default_url = admin_url( 'edit.php?post_type=' . $pro_custom_code_cpt );
+		} else {
+			$default_url = admin_url( 'admin.php?page=elementor_custom_code' );
+		}
+
+		return apply_filters( 'elementor/admin_menu/custom_code_url', $default_url );
 	}
 }
