@@ -15,7 +15,8 @@ const HeaderSection = ( { editWebsiteUrl } ) => {
 			} }
 		>
 			<Typography variant="h5">
-				Home</Typography>
+				Home
+			</Typography>
 			<Button
 				variant="contained"
 				size="medium"
