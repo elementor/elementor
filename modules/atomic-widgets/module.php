@@ -381,7 +381,7 @@ class Module extends BaseModule {
 	}
 
 	private function add_inline_styles() {
-		$inline_css = '.e-heading a, .e-paragraph a { all: unset; cursor: pointer; }';
+		$inline_css = '.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }';
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 	}
 }
