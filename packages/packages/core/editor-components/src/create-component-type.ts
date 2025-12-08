@@ -7,6 +7,7 @@ import {
 	type ElementView,
 	type LegacyWindow,
 } from '@elementor/editor-canvas';
+import { getCurrentUser } from '@elementor/editor-current-user';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
@@ -96,7 +97,7 @@ function createComponentView(
 ): typeof ElementView {
 	return class extends createTemplatedElementView( options ) {
 		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
-		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
+		eventsManagerConfig = this.legacyWindow?.elementorCommon?.eventsManager?.config;
 
 		isComponentCurrentlyEdited() {
 			const currentDocument = getCurrentDocument();
@@ -104,13 +105,24 @@ function createComponentView(
 			return currentDocument?.id === this.getComponentId();
 		}
 
+		/**
+		 * Gets the current user data from cache (synchronous, no API calls)
+		 * @return User data or null if not loaded yet
+		 */
+		getCurrentUser() {
+			return getCurrentUser();
+		}
+
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
 			if ( settings.component_instance ) {
-				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection(
+				const legacyWindow = this.legacyWindow || ( window as unknown as LegacyWindow & ExtendedWindow );
+				this.collection = legacyWindow?.elementor?.createBackboneElementsCollection?.(
 					settings.component_instance
 				);
 
-				this.collection.models.forEach( setInactiveRecursively );
+				if ( this.collection ) {
+					this.collection.models.forEach( setInactiveRecursively );
+				}
 
 				settings.component_instance = '<template data-children-placeholder></template>';
 			}
@@ -150,28 +162,40 @@ function createComponentView(
 				return groups;
 			}
 
-			const newGroups = updateGroups( groups as ContextMenuGroup[], this.getContextMenuConfig() );
+			const newGroups = updateGroups(
+				groups as ContextMenuGroup[],
+				this._getContextMenuConfig() as unknown as ContextMenuGroupConfig
+			);
 			return newGroups;
 		}
 
-		private getContextMenuConfig() {
-			return {
-				add: {
-					general: {
-						index: 1,
-						action: {
-							name: 'edit component',
-							icon: 'eicon-edit',
-							title: () => __( 'Edit Component', 'elementor' ),
-							isEnabled: () => true,
-							callback: ( _: unknown, eventData: ContextMenuEventData ) =>
-								this.editComponent( eventData ),
-						},
+		_getContextMenuConfig() {
+			const currentUser = this.getCurrentUser();
+			const addedGroup = {
+				general: {
+					index: 1,
+					action: {
+						name: 'edit component',
+						icon: 'eicon-edit',
+						title: () => __( 'Edit Component', 'elementor' ),
+						isEnabled: () => true,
+						callback: ( _: unknown, eventData: ContextMenuEventData ) => this.editComponent( eventData ),
 					},
 				},
-				disable: {
-					clipboard: [ 'pasteStyle', 'resetStyle' ],
-				},
+			};
+
+			const diabledGroup = {
+				clipboard: [ 'pasteStyle', 'resetStyle' ],
+			};
+
+			if ( currentUser && currentUser?.capabilities.includes( 'administrator' ) ) {
+				return {
+					add: addedGroup,
+					disable: diabledGroup,
+				};
+			}
+			return {
+				disable: diabledGroup,
 			};
 		}
 
