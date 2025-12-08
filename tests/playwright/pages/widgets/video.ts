@@ -69,15 +69,17 @@ export default class VideoWidget extends Content {
 	/**
 	 * Wait for the video src to be updated with expected parameters.
 	 *
-	 * @param {boolean} isPublished    - Whether the page is published.
-	 * @param {Object}  expectedValues - Expected values for video src attribute.
-	 * @param {string}  player         - Video player name.
-	 * @param {number}  timeout        - Maximum time to wait in milliseconds. Default is 10000.
+	 * @param {Object}  data                - Parameters object.
+	 * @param {boolean} data.isPublished    - Whether the page is published.
+	 * @param {Object}  data.expectedValues - Expected values for video src attribute.
+	 * @param {string}  data.player         - Video player name.
+	 * @param {number}  data.timeout        - Maximum time to wait in milliseconds. Default is 10000.
 	 *
 	 * @return {Promise<void>}
 	 */
-	async waitForVideoSrcParams( isPublished: boolean, expectedValues: Record<string, string | number>, player: string, timeout: number = 10000 ): Promise<void> {
-		const page = ( true === isPublished )
+	async waitForVideoSrcParams( data: { isPublished: boolean, expectedValues: Record<string, string | number>, player: string, timeout?: number } ): Promise<void> {
+		const timeout = data.timeout ?? 10000;
+		const page = ( true === data.isPublished )
 			? this.page
 			: this.editor.getPreviewFrame();
 		const iframeLocator = page.locator( EditorSelectors.video.iframe );
@@ -91,13 +93,13 @@ export default class VideoWidget extends Content {
 			}
 
 			const videoOptions: Record<string, string | number> = this.parseSrc( src );
-			if ( 'vimeo' === player && src.includes( '#' ) ) {
+			if ( 'vimeo' === data.player && src.includes( '#' ) ) {
 				videoOptions.start = src.split( '#' )[ 1 ];
 			}
 
 			let allParamsMatch = true;
-			for ( const key in expectedValues ) {
-				const expectedValue = String( expectedValues[ key ] );
+			for ( const key in data.expectedValues ) {
+				const expectedValue = String( data.expectedValues[ key ] );
 				const actualValue = videoOptions[ key ];
 				if ( actualValue !== expectedValue ) {
 					allParamsMatch = false;
@@ -117,11 +119,11 @@ export default class VideoWidget extends Content {
 			throw new Error( `Video src does not contain query parameters: ${ finalSrc }` );
 		}
 		const finalVideoOptions: Record<string, string | number> = this.parseSrc( finalSrc );
-		if ( 'vimeo' === player && finalSrc.includes( '#' ) ) {
+		if ( 'vimeo' === data.player && finalSrc.includes( '#' ) ) {
 			finalVideoOptions.start = finalSrc.split( '#' )[ 1 ];
 		}
-		for ( const key in expectedValues ) {
-			expect( finalVideoOptions[ key ], { message: `Parameter is ${ key }` } ).toEqual( String( expectedValues[ key ] ) );
+		for ( const key in data.expectedValues ) {
+			expect( finalVideoOptions[ key ], { message: `Parameter is ${ key }` } ).toEqual( String( data.expectedValues[ key ] ) );
 		}
 	}
 }

@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Atomic Tabs Default Children @atomic-widgets', () => {
 	let editor: EditorPage;
@@ -10,11 +11,7 @@ test.describe( 'Atomic Tabs Default Children @atomic-widgets', () => {
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
-		// Enable atomic elements and nested elements experiments
-		await wpAdmin.setExperiments( {
-			e_opt_in_v4_page: 'active',
-			e_atomic_elements: 'active',
-		} );
+		await wpCli( 'wp elementor experiments activate e_opt_in_v4_page e_atomic_elements' );
 
 		editor = await wpAdmin.openNewPage();
 	} );
