@@ -167,9 +167,7 @@ class Settings extends Settings_Page {
 	 * @access private
 	 */
 	private function register_knowledge_base_menu( Admin_Menu_Manager $admin_menu ) {
-		if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
-			$this->register_editor_one_knowledge_base_menu( $admin_menu );
-		} else {
+		if ( ! Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
 			$admin_menu->register( 'elementor-getting-started', new Getting_Started_Menu_Item() );
 			$admin_menu->register( 'go_knowledge_base_site', new Get_Help_Menu_Item() );
 		}
@@ -206,24 +204,6 @@ class Settings extends Settings_Page {
 			$editor_one_menu_item,
 			Menu_Config::EDITOR_GROUP_ID,
 			'home'
-		);
-	}
-
-	private function register_editor_one_knowledge_base_menu( Admin_Menu_Manager $admin_menu ) {
-		$getting_started_item = new Getting_Started_Menu_Item();
-		$editor_one_getting_started = new Editor_One_Menu_Item( $getting_started_item, '', 'elementor-getting-started' );
-
-		$admin_menu->register_editor_one_menu_level_4(
-			$editor_one_getting_started,
-			Menu_Config::SYSTEM_GROUP_ID
-		);
-
-		$get_help_item = new Get_Help_Menu_Item();
-		$editor_one_get_help = new Editor_One_Menu_Item( $get_help_item, '', 'go_knowledge_base_site' );
-
-		$admin_menu->register_editor_one_menu_level_4(
-			$editor_one_get_help,
-			Menu_Config::SYSTEM_GROUP_ID
 		);
 	}
 
