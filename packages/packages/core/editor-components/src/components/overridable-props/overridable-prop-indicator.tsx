@@ -47,8 +47,10 @@ export function Content( { componentId, overridableProps }: Props ) {
 		componentOverridablePropTypeUtil
 	);
 
-	// this is intended to handle custom layout controls, such as the LinkControl, which has its label nested within the control component
-	// so its bound prop value would be the one after the manipulated <PropProvider /> (i.e. won't be considered overridable)
+	/**
+	 * This is intended to handle custom layout controls, such as <LinkControl />, which has <ControlLabel /> nested within it
+	 * i.e. its bound prop value would be the one manipulated by the new <PropProvider /> thus won't be considered overridable
+	 */
 	const overridableValue = boundPropOverridableValue ?? contextOverridableValue;
 
 	const popupState = usePopupState( {
