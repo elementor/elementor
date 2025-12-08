@@ -1,10 +1,10 @@
 						<p class="e-paragraph-base" data-interaction-id="e8e55a1" data-interactions="&#x5B;&#x5D;"  >
-							<a
-										href="https://example.com"
+							<button
+										data-action-link="https://very.dynamic.content.elementor"
 					target="_blank"
 					class="e-paragraph-link-base"
 				>
 						Type your paragraph here
-				</a>
+				</button>
 					</p>
 		
