@@ -1,12 +1,6 @@
 <?php
 namespace Elementor\Modules\Components\PropTypes;
 
-use Elementor\Modules\Components\Documents\Component_Overridable_Props;
-use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
-use Elementor\Modules\Components\Utils\Parsing_Utils;
-use Elementor\Plugin;
-use Elementor\Modules\Components\Documents\Component;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -15,6 +9,7 @@ abstract class Override_Parser {
 	public static function make(): self {
 		return new static();
 	}
+
 	abstract public static function get_override_type(): string;
 
 	/**
