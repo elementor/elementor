@@ -3,18 +3,13 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 
 import { apiClient } from '../api';
 import { selectUnpublishedComponents, slice } from '../store/store';
-import {
-	type ComponentInstancePropValue,
-	type Container,
-	type DocumentSaveStatus,
-	type UnpublishedComponent,
-} from '../types';
+import { type ComponentInstancePropValue, type DocumentSaveStatus, type UnpublishedComponent } from '../types';
 
 export async function createComponentsBeforeSave( {
-	container,
+	elements,
 	status,
 }: {
-	container: Container;
+	elements: V1ElementData[];
 	status: DocumentSaveStatus;
 } ) {
 	const unpublishedComponents = selectUnpublishedComponents( getState() );
@@ -26,7 +21,6 @@ export async function createComponentsBeforeSave( {
 	try {
 		const uidToComponentId = await createComponents( unpublishedComponents, status );
 
-		const elements = container.model.get( 'elements' ).toJSON();
 		updateComponentInstances( elements, uidToComponentId );
 
 		dispatch(

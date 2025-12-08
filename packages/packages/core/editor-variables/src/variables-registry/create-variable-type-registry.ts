@@ -1,4 +1,4 @@
-import { type ForwardRefExoticComponent, type JSX, type RefAttributes } from 'react';
+import { type ForwardRefExoticComponent, type JSX, type RefAttributes, type RefObject } from 'react';
 import { styleTransformersRegistry } from '@elementor/editor-canvas';
 import { stylesInheritanceTransformersRegistry } from '@elementor/editor-editing-panel';
 import {
@@ -17,9 +17,12 @@ import { type NormalizedVariable, type Variable } from '../types';
 export type ValueFieldProps = {
 	value: string;
 	onChange: ( value: string ) => void;
+	onPropTypeKeyChange?: ( key: string ) => void;
+	propTypeKey?: string;
 	onValidationChange?: ( value: string ) => void;
 	propType?: PropType;
 	error?: { value: string; message: string };
+	ref?: RefObject< HTMLElement | null >;
 };
 
 type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
@@ -27,22 +30,24 @@ type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
 type VariableTypeOptions = {
 	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > >;
 	startIcon?: ( { value }: { value: string } ) => JSX.Element;
-	valueField: ( { value, onChange, onValidationChange, propType, error }: ValueFieldProps ) => JSX.Element;
+	valueField: ( props: ValueFieldProps ) => JSX.Element;
 	variableType: string;
+	key?: string;
 	defaultValue?: string;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
 	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
-	valueTransformer?: ( value: string ) => PropValue;
+	valueTransformer?: ( variable: Variable ) => PropValue;
 	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
 };
 
-export type VariableTypesMap = Record< string, VariableTypeOptions >;
+export type VariableTypesMap = Record< string, Omit< VariableTypeOptions, 'key' > >;
 
 export function createVariableTypeRegistry() {
 	const variableTypes: VariableTypesMap = {};
 
 	const registerVariableType = ( {
+		key,
 		icon,
 		startIcon,
 		valueField,
@@ -54,9 +59,7 @@ export function createVariableTypeRegistry() {
 		fallbackPropTypeUtil,
 		isCompatible,
 	}: VariableTypeOptions ) => {
-		if ( variableTypes[ propTypeUtil.key ] ) {
-			throw new Error( `Variable with key "${ propTypeUtil.key }" is already registered.` );
-		}
+		const variableTypeKey = key ?? propTypeUtil.key;
 
 		if ( ! isCompatible ) {
 			isCompatible = ( propType, variable: Variable ) => {
@@ -69,7 +72,7 @@ export function createVariableTypeRegistry() {
 			};
 		}
 
-		variableTypes[ propTypeUtil.key ] = {
+		variableTypes[ variableTypeKey ] = {
 			icon,
 			startIcon,
 			valueField,
