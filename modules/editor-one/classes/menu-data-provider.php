@@ -1,5 +1,4 @@
 <?php
-declare( strict_types = 1 );
 
 namespace Elementor\Modules\EditorOne\Classes;
 
@@ -108,7 +107,7 @@ class Menu_Data_Provider {
 	public function get_theme_builder_url(): string {
 		if ( null === $this->theme_builder_url ) {
 			$pro_url = Plugin::$instance->app ? Plugin::$instance->app->get_settings( 'menu_url' ) : null;
-			$default_url = $pro_url ?: admin_url( 'admin.php?page=elementor-app#site-editor/promotion' );
+			$default_url = $pro_url ? $pro_url : admin_url( 'admin.php?page=elementor-app#site-editor/promotion' );
 
 			$this->theme_builder_url = apply_filters( 'elementor/admin_menu/theme_builder_url', $default_url );
 		}
