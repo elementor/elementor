@@ -1,9 +1,8 @@
-$admin-bar-height: 32px;
 $admin-top-bar-height: 50px;
 
 #e-editor-sidebar-navigation {
-	position: fixed;
-	top: $admin-bar-height + $admin-top-bar-height;
+	position: absolute;
+	top: $admin-top-bar-height;
 	left: 160px;
 	bottom: 0;
 	width: 237px;

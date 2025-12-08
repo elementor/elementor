@@ -1,15 +1,9 @@
 import { useRef } from '@wordpress/element';
-import { List, ListItem, ListItemText, Tooltip } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import { DEFAULT_ICON, ICON_MAP } from '../shared';
-import {
-	CollapsedIconButton,
-	CollapsedMenuItemContainer,
-	PopoverContent,
-	PopoverListItemButton,
-	PopoverTitle,
-	StyledPopover,
-} from './styled-components';
+import CollapsedMenuItemPopover from './collapsed-menu-item-popover';
+import CollapsedMenuItemTooltip from './collapsed-menu-item-tooltip';
+import { CollapsedMenuItemContainer } from './styled-components';
 
 const SidebarCollapsedMenuItem = ( {
 	item,
@@ -41,51 +35,23 @@ const SidebarCollapsedMenuItem = ( {
 	return (
 		<CollapsedMenuItemContainer ref={ anchorRef } onMouseEnter={ handleMouseEnter }>
 			{ hasChildren ? (
-				<>
-					<CollapsedIconButton isHighlighted={ isActive || isPopoverOpen }>
-						<IconComponent />
-					</CollapsedIconButton>
-					<StyledPopover
-						open={ isPopoverOpen }
-						anchorEl={ anchorRef.current }
-						onClose={ onClosePopover }
-						anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
-						transformOrigin={ { vertical: 'top', horizontal: 'left' } }
-						slotProps={ {
-							paper: {
-								onMouseLeave: onClosePopover,
-							},
-						} }
-						disableRestoreFocus
-						hideBackdrop
-					>
-						<PopoverContent>
-							<PopoverTitle variant="subtitle2">{ item.label }</PopoverTitle>
-							<List disablePadding>
-								{ children.map( ( childItem ) => (
-									<ListItem key={ childItem.slug } disablePadding dense>
-										<PopoverListItemButton
-											component="a"
-											href={ childItem.url }
-											selected={ childItem.slug === activeChildSlug }
-										>
-											<ListItemText
-												primary={ childItem.label }
-												primaryTypographyProps={ { variant: 'body2' } }
-											/>
-										</PopoverListItemButton>
-									</ListItem>
-								) ) }
-							</List>
-						</PopoverContent>
-					</StyledPopover>
-				</>
+				<CollapsedMenuItemPopover
+					item={ item }
+					children={ children }
+					activeChildSlug={ activeChildSlug }
+					isPopoverOpen={ isPopoverOpen }
+					anchorEl={ anchorRef.current }
+					onClose={ onClosePopover }
+					IconComponent={ IconComponent }
+					isActive={ isActive }
+				/>
 			) : (
-				<Tooltip title={ item.label } placement="right">
-					<CollapsedIconButton onClick={ handleClick } isHighlighted={ isActive }>
-						<IconComponent />
-					</CollapsedIconButton>
-				</Tooltip>
+				<CollapsedMenuItemTooltip
+					item={ item }
+					isActive={ isActive }
+					onClick={ handleClick }
+					IconComponent={ IconComponent }
+				/>
 			) }
 		</CollapsedMenuItemContainer>
 	);
