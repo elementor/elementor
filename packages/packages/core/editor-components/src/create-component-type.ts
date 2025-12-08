@@ -14,6 +14,7 @@ import { __ } from '@wordpress/i18n';
 import { apiClient } from './api';
 import { type ComponentInstancePropValue, type ExtendedWindow } from './types';
 import { trackComponentEvent } from './utils/tracking';
+
 type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
 
 type ContextMenuAction = {
@@ -102,7 +103,7 @@ function createComponentView(
 ): typeof ElementView {
 	return class extends createTemplatedElementView( options ) {
 		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
-		eventsManagerConfig = this.legacyWindow?.elementorCommon?.eventsManager?.config;
+		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
 
 		isComponentCurrentlyEdited() {
 			const currentDocument = getCurrentDocument();
@@ -112,14 +113,11 @@ function createComponentView(
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
 			if ( settings.component_instance ) {
-				const legacyWindow = this.legacyWindow || ( window as unknown as LegacyWindow & ExtendedWindow );
-				this.collection = legacyWindow?.elementor?.createBackboneElementsCollection?.(
+				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection(
 					settings.component_instance
 				);
 
-				if ( this.collection ) {
-					this.collection.models.forEach( setInactiveRecursively );
-				}
+				this.collection.models.forEach( setInactiveRecursively );
 
 				settings.component_instance = '<template data-children-placeholder></template>';
 			}
@@ -153,14 +151,14 @@ function createComponentView(
 		}
 
 		getContextMenuGroups() {
-			const groups = super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
+			const filteredGroups = super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
 			const componentId = this.getComponentId();
 			if ( ! componentId ) {
-				return groups;
+				return filteredGroups;
 			}
 
 			const newGroups = updateGroups(
-				groups as ContextMenuGroup[],
+				filteredGroups as ContextMenuGroup[],
 				this._getContextMenuConfig() as unknown as ContextMenuGroupConfig
 			);
 			return newGroups;
