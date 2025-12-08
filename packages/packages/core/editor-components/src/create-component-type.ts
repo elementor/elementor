@@ -37,42 +37,26 @@ type ContextMenuGroup = {
 
 export const TYPE = 'e-component';
 
-const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfig ) => {
-	const { disable = {}, add = {} } = config;
-	const disabledGroupNames = Object.keys( disable );
-	const addedGroupNames = Object.keys( add );
-	const newGroups = groups.map( ( group: ContextMenuGroup ) => {
-		const groupName = group.name;
-		if ( disabledGroupNames.includes( groupName ) ) {
-			const disabledActions = disable[ groupName ];
-			return {
-				...group,
-				actions: group.actions.map( ( action: ContextMenuAction ) => {
-					if ( disabledActions.includes( action.name ) ) {
-						return {
-							...action,
-							isEnabled: () => false,
-						};
-					}
-					return action;
-				} ),
-			};
+const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfig ): ContextMenuGroup[] => {
+	const disableMap = new Map( Object.entries( config.disable ?? {} ) );
+	const addMap = new Map( Object.entries( config.add ?? {} ) );
+
+	return groups.map( ( group ) => {
+		const disabledActions = disableMap.get( group.name ) ?? [];
+		const addConfig = addMap.get( group.name );
+
+		// Update disabled actions
+		const updatedActions = group.actions.map( ( action ) =>
+			disabledActions.includes( action.name ) ? { ...action, isEnabled: () => false } : action
+		);
+
+		// Insert additional action if needed
+		if ( addConfig ) {
+			updatedActions.splice( addConfig.index, 0, addConfig.action );
 		}
 
-		if ( addedGroupNames.includes( groupName ) ) {
-			return {
-				...group,
-				actions: [
-					...group.actions.slice( 0, add[ groupName ].index ),
-					add[ groupName ].action,
-					...group.actions.slice( add[ groupName ].index ),
-				],
-			};
-		}
-		return group;
+		return { ...group, actions: updatedActions };
 	} );
-
-	return newGroups;
 };
 
 export function createComponentType(
@@ -86,11 +70,7 @@ export function createComponentType(
 		}
 
 		getView() {
-			const elementorWithConfig = legacyWindow.elementor as typeof legacyWindow.elementor & {
-				config?: { user?: { is_administrator?: boolean } };
-			};
-			const isAdministrator = elementorWithConfig.config?.user?.is_administrator ?? false;
-			return createComponentView( { ...options, isAdministrator } );
+			return createComponentView( { ...options } );
 		}
 	};
 }
@@ -98,7 +78,6 @@ export function createComponentType(
 function createComponentView(
 	options: CreateTemplatedElementTypeOptions & {
 		showLockedByModal?: ( lockedBy: string ) => void;
-		isAdministrator: boolean;
 	}
 ): typeof ElementView {
 	return class extends createTemplatedElementView( options ) {
@@ -165,7 +144,12 @@ function createComponentView(
 		}
 
 		_getContextMenuConfig() {
-			const { isAdministrator } = options;
+			const legacyWindow = this.legacyWindow || ( window as unknown as LegacyWindow & ExtendedWindow );
+			const elementorWithConfig = legacyWindow.elementor as typeof legacyWindow.elementor & {
+				config?: { user?: { is_administrator?: boolean } };
+			};
+			const isAdministrator = elementorWithConfig.config?.user?.is_administrator ?? false;
+
 			const addedGroup = {
 				general: {
 					index: 1,
