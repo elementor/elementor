@@ -1,0 +1,15 @@
+					<h2 
+		data-interaction-id="e8e55a1" 
+		class="e-heading-base" 
+		 
+		
+			>
+	
+			<a 
+						href="https://example.com"
+			target="_self" 
+			class="e-heading-link-base">
+			This is a title
+		</a>
+		</h2>
+		
