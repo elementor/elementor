@@ -1,11 +1,11 @@
-import { createMockDocumentData, createMockElementData, createMockStyleDefinition } from 'test-utils';
+import { createMockElementData, createMockStyleDefinition } from 'test-utils';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { ajax } from '@elementor/editor-v1-adapters';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { getParams } from '../../api';
-import { loadComponentsStyles } from '../load-components-styles';
+import { loadComponentsStyles } from '../actions/load-components-styles';
 import { selectStyles, SLICE_NAME } from '../store';
 
 jest.mock( '@elementor/store', () => ( {
@@ -33,7 +33,6 @@ const SIMPLE_COMP_ID = 1;
 const SIMPLE_COMP_CONTENT = createMockElementData( {
 	id: String( SIMPLE_COMP_ID ),
 } );
-const SIMPLE_COMP_WIDGET = createMockComponentWidget( SIMPLE_COMP_ID );
 
 const COMP_WITH_STYLES_ID = 2;
 const COMP_WITH_STYLES_CONTENT = createMockElementData( {
@@ -46,7 +45,6 @@ const COMP_WITH_STYLES_CONTENT = createMockElementData( {
 		} ),
 	],
 } );
-const COMP_WITH_STYLES_WIDGET = createMockComponentWidget( COMP_WITH_STYLES_ID );
 
 const NESTED_COMP_ID = 3;
 const NESTED_COMP_CONTENT = createMockElementData( {
@@ -66,20 +64,17 @@ const COMP_WITH_NESTED_COMP_CONTENT = createMockElementData( {
 	id: String( COMP_WITH_NESTED_COMP_ID ),
 	elements: [ NESTED_COMP_WIDGET ],
 } );
-const COMP_WITH_NESTED_COMP_WIDGET = createMockComponentWidget( COMP_WITH_NESTED_COMP_ID );
 
 describe( 'loadComponentsStyles', () => {
 	let mockStateData: Record< number, StyleDefinition[] >;
 
 	const items: {
 		shouldHandle: string;
-		documentElements: V1ElementData[];
 		data: Record< string, V1ElementData >;
 		expected: Record< string, StyleDefinition[] >;
 	}[] = [
 		{
 			shouldHandle: 'components without styles',
-			documentElements: [ SIMPLE_COMP_WIDGET ],
 			data: {
 				[ SIMPLE_COMP_ID ]: SIMPLE_COMP_CONTENT,
 			},
@@ -89,7 +84,6 @@ describe( 'loadComponentsStyles', () => {
 		},
 		{
 			shouldHandle: 'components with style',
-			documentElements: [ COMP_WITH_STYLES_WIDGET ],
 			data: {
 				[ COMP_WITH_STYLES_ID ]: COMP_WITH_STYLES_CONTENT,
 			},
@@ -99,7 +93,6 @@ describe( 'loadComponentsStyles', () => {
 		},
 		{
 			shouldHandle: 'components with nested components',
-			documentElements: [ COMP_WITH_NESTED_COMP_WIDGET, COMP_WITH_STYLES_WIDGET ],
 			data: {
 				[ COMP_WITH_NESTED_COMP_ID ]: COMP_WITH_NESTED_COMP_CONTENT,
 				[ COMP_WITH_STYLES_ID ]: COMP_WITH_STYLES_CONTENT,
@@ -131,15 +124,14 @@ describe( 'loadComponentsStyles', () => {
 		jest.useFakeTimers();
 	} );
 
-	it.each( items )( 'should handle $shouldHandle', async ( { documentElements, data, expected } ) => {
+	it.each( items )( 'should handle $shouldHandle', async ( { data, expected } ) => {
 		// Arrange
 		mockLoad( data );
 
-		const document = createMockDocumentData( { elements: documentElements } );
 		const uniqueIds = new Set( Object.keys( data ) );
 
 		// Act
-		await loadComponentsStyles( ( document.config.elements as V1ElementData[] ) ?? [] );
+		await loadComponentsStyles( Object.keys( data ).map( Number ) );
 
 		// as it recursively calls itself, we need to run all timers
 		await jest.runAllTimersAsync();
@@ -161,9 +153,11 @@ function createMockComponentWidget( componentId: number ): V1ElementData {
 		elType: 'widget',
 		widgetType: 'e-component',
 		settings: {
-			component: {
-				$$type: 'component-id',
-				value: componentId,
+			component_instance: {
+				$$type: 'component-instance',
+				value: {
+					component_id: componentId,
+				},
 			},
 		},
 	} );

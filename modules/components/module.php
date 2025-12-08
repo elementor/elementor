@@ -7,6 +7,12 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers_Registry;
 use Elementor\Modules\Components\Styles\Component_Styles;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Component_Lock_Manager;
+use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
+use Elementor\Modules\Components\Transformers\Component_Instance_Transformer;
+use Elementor\Modules\Components\PropTypes\Component_Overridable_Prop_Type;
+use Elementor\Modules\Components\Transformers\Component_Overridable_Transformer;
+use Elementor\Core\Base\Document;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -25,7 +31,10 @@ class Module extends BaseModule {
 		$this->register_component_post_type();
 
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
+		add_filter( 'elementor/atomic-widgets/props-schema', fn ( $schema ) => $this->modify_props_schema( $schema ) );
 		add_action( 'elementor/documents/register', fn ( $documents_manager ) => $this->register_document_type( $documents_manager ) );
+		add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_overridable_props( $document, $data ), 10, 2 );
+
 		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 
 		( Component_Lock_Manager::get_instance()->register_hooks() );
@@ -46,12 +55,16 @@ class Module extends BaseModule {
 
 	public function get_widgets() {
 		return [
-			'Component',
+			'Component_Instance',
 		];
 	}
 
 	private function add_packages( $packages ) {
 		return array_merge( $packages, self::PACKAGES );
+	}
+
+	private function modify_props_schema( array $schema ) {
+		return Component_Overridable_Schema_Extender::make()->get_extended_schema( $schema );
 	}
 
 	private function register_component_post_type() {
@@ -70,7 +83,26 @@ class Module extends BaseModule {
 		);
 	}
 
+	private function set_component_overridable_props( Document $document, array $data ) {
+		if ( ! isset( $data['settings'] ) ) {
+			return;
+		}
+		if ( ( ! $document instanceof Component_Document ) ||
+			( ! isset( $data['settings']['overridable_props'] ) )
+		) {
+			return;
+		}
+
+		/* @var Component_Document $document */
+		$result = $document->update_overridable_props( $data['settings']['overridable_props'] );
+
+		if ( ! $result->is_valid() ) {
+			throw new \Exception( esc_html( 'Settings validation failed for component overridable props: ' . $result->errors()->to_string() ) );
+		}
+	}
+
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
-		$transformers->register( Component_Id_Prop_Type::get_key(), new Component_Id_Transformer() );
+		$transformers->register( Component_Instance_Prop_Type::get_key(), new Component_Instance_Transformer() );
+		$transformers->register( Component_Overridable_Prop_Type::get_key(), new Component_Overridable_Transformer() );
 	}
 }

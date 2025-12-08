@@ -3,7 +3,7 @@
 namespace Elementor\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Base\Document;
-use Elementor\Modules\AtomicWidgets\Utils;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 use Elementor\Plugin;
 
@@ -71,11 +71,14 @@ class Atomic_Widget_Styles {
 			return;
 		}
 
+		$is_post_status_publish = self::CONTEXT_FRONTEND === $context;
+
+		// When a user publishes a post, we should invalidate the styles of the draft too
 		foreach ( $post_ids as $post_id ) {
 			do_action( 'elementor/atomic-widgets/styles/clear',
-				null !== $context
-					? [ self::STYLES_KEY, $post_id, $context ]
-					: [ self::STYLES_KEY, $post_id ]
+				empty( $context ) || $is_post_status_publish
+					? [ self::STYLES_KEY, $post_id ]
+					: [ self::STYLES_KEY, $post_id, $context ]
 			);
 		}
 	}

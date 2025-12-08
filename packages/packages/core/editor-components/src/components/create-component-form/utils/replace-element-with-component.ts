@@ -19,9 +19,11 @@ export const createComponentModel = ( component: ComponentInstanceParams ): Omit
 		elType: 'widget',
 		widgetType: 'e-component',
 		settings: {
-			component: {
-				$$type: 'component-id',
-				value: component.id ?? component.uid,
+			component_instance: {
+				$$type: 'component-instance',
+				value: {
+					component_id: component.id ?? component.uid,
+				},
 			},
 		},
 		editor_settings: {

@@ -36,6 +36,7 @@ export { transitionProperties, transitionsItemsList } from './controls/transitio
 export { DateTimeControl } from './controls/date-time-control';
 export { InlineEditingControl } from './controls/inline-editing-control';
 export { InlineEditor } from './components/inline-editor';
+export { InlineEditorToolbar } from './components/inline-editor-toolbar';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
@@ -56,6 +57,7 @@ export type { ControlComponent } from './create-control';
 export type { ToggleButtonGroupItem } from './components/control-toggle-button-group';
 export type { EqualUnequalItems } from './controls/equal-unequal-sizes-control';
 export type { ControlActionsItems } from './control-actions/control-actions-context';
+export type { AdornmentComponent } from './control-adornments/control-adornments-context';
 export type { PropProviderProps } from './bound-prop-context';
 export type { SetValue, SetValueMeta } from './bound-prop-context/prop-context';
 export type { ExtendedOption, Unit, LengthUnit, AngleUnit, TimeUnit } from './utils/size-control';

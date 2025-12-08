@@ -13,7 +13,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Render_Context;
+use Elementor\Modules\AtomicWidgets\Elements\Render_Context;
 
 
 if ( ! defined( 'ABSPATH' ) ) {

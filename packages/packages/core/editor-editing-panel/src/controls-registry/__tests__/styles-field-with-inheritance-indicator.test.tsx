@@ -18,7 +18,9 @@ import { screen } from '@testing-library/react';
 import { ControlLabel } from '../../components/control-label';
 import { useStyle } from '../../contexts/style-context';
 import { useStylesInheritanceChain } from '../../contexts/styles-inheritance-context';
+import { registerFieldIndicator } from '../../field-indicators-registry';
 import { useStylesFields } from '../../hooks/use-styles-fields';
+import { StylesInheritanceIndicator } from '../../styles-inheritance/components/styles-inheritance-indicator';
 import { StylesField } from '../styles-field';
 
 jest.mock( '@elementor/editor-elements' );
@@ -52,6 +54,13 @@ describe( 'StylesField with inheritance', () => {
 		jest.mocked( getStylesSchema ).mockReturnValue( mockStylesSchema );
 		jest.mocked( useElementSetting ).mockReturnValue( {} );
 		jest.mocked( getBreakpointsTree ).mockImplementation( createMockBreakpointsTree );
+
+		registerFieldIndicator( {
+			fieldType: 'styles',
+			id: 'inheritance-indicator',
+			indicator: StylesInheritanceIndicator,
+			priority: 1,
+		} );
 	} );
 
 	afterEach( () => {

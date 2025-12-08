@@ -2,15 +2,19 @@
 
 namespace Elementor\Modules\Variables;
 
+use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\Classes\Variable_Types_Registry;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
+use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
+use Elementor\Modules\Variables\Services\Variables_Service;
+use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
 use Elementor\Modules\Variables\Classes\Fonts;
 use Elementor\Modules\Variables\Classes\Rest_Api as Variables_API;
-use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 use Elementor\Modules\Variables\Classes\Style_Schema;
 use Elementor\Modules\Variables\Classes\Style_Transformers;
 use Elementor\Modules\Variables\Classes\Variables;
@@ -40,6 +44,7 @@ class Hooks {
 		add_action( 'elementor/variables/register', function ( Variable_Types_Registry $registry ) {
 			$registry->register( Color_Variable_Prop_Type::get_key(), new Color_Variable_Prop_Type() );
 			$registry->register( Font_Variable_Prop_Type::get_key(), new Font_Variable_Prop_Type() );
+			$registry->register( Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY, new Size_Variable_Prop_Type() );
 		} );
 
 		return $this;
@@ -55,7 +60,7 @@ class Hooks {
 
 	private function register_styles_transformers() {
 		add_action( 'elementor/atomic-widgets/styles/transformers/register', function ( $registry ) {
-			Variables::init( $this->variables_repository() );
+			Variables::init( $this->variables_service() );
 			( new Style_Transformers() )->append_to( $registry );
 		} );
 
@@ -71,7 +76,7 @@ class Hooks {
 	}
 
 	private function css_renderer() {
-		return new Variables_CSS_Renderer( $this->variables_repository() );
+		return new Variables_CSS_Renderer( $this->variables_service() );
 	}
 
 	private function register_css_renderer() {
@@ -89,7 +94,7 @@ class Hooks {
 	}
 
 	private function fonts() {
-		return new Fonts( $this->variables_repository() );
+		return new Fonts( $this->variables_service() );
 	}
 
 	private function register_fonts() {
@@ -101,7 +106,7 @@ class Hooks {
 	}
 
 	private function rest_api() {
-		return new Variables_API( $this->variables_repository() );
+		return new Variables_API( $this->variables_service() );
 	}
 
 	private function register_api_endpoints() {
@@ -112,9 +117,11 @@ class Hooks {
 		return $this;
 	}
 
-	private function variables_repository() {
-		return new Variables_Repository(
+	private function variables_service() {
+		$repository = new Variables_Repository(
 			Plugin::$instance->kits_manager->get_active_kit()
 		);
+
+		return new Variables_Service( $repository, new Batch_Processor() );
 	}
 }
