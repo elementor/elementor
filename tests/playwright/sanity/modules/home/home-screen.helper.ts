@@ -39,7 +39,25 @@ export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeo
 	await page.route( '**/wp-admin/admin.php?page=elementor', async ( route ) => {
 		const response = await route.fetch();
 		const body = await response.text();
-		const mockDataJson = JSON.stringify( finalMockData ).replace( /</g, '\\u003c' );
+		
+		const existingDataMatch = body.match( /var elementorHomeScreenData\s*=\s*(\{[\s\S]*?\});/ );
+		let mergedData = finalMockData;
+		
+		if ( existingDataMatch ) {
+			try {
+				const existingData = JSON.parse( existingDataMatch[1] );
+				mergedData = {
+					...existingData,
+					...finalMockData,
+					isEditorOneActive: existingData.isEditorOneActive,
+					_debug: existingData._debug,
+				};
+			} catch ( e ) {
+				mergedData = finalMockData;
+			}
+		}
+		
+		const mockDataJson = JSON.stringify( mergedData ).replace( /</g, '\\u003c' );
 
 		const modifiedBody = body.replace(
 			/var elementorHomeScreenData\s*=\s*\{[\s\S]*?\};/,
