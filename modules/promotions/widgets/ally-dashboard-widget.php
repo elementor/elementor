@@ -2,16 +2,17 @@
 
 namespace Elementor\Modules\Promotions\Widgets;
 
+use Elementor\Core\Utils\Hints;
+use Elementor\Modules\Promotions\Module;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Ally_Dashboard_Widget {
-	public const SERVICE_URL = 'https://jovial-flan-909d87.netlify.app/';
 	public const ALLY_SCANNER_RUN = 'ea11y_dashboard_widget_scanner_run';
 	public const ALLY_NONCE_KEY = 'ea11y_dashboard_widget_nonce';
 	public const ALLY_PUBLIC_URL = 'https://wordpress.org/plugins/pojo-accessibility/';
-	public const ALLY_PLUGIN_SLUG = 'pojo-accessibility/pojo-accessibility.php';
 
 	/**
 	 * Check is widget already submitted
@@ -30,7 +31,7 @@ class Ally_Dashboard_Widget {
 	public static function ally_widget_render(): void {
 		$is_scanner_run = self::is_scanner_run();
 		$submit_id = $is_scanner_run ? 'e-dashboard-ally-submitted' : 'e-dashboard-ally-submit';
-		$link = $is_scanner_run ? self::ALLY_PUBLIC_URL : self::SERVICE_URL . '?url=' . site_url();
+		$link = $is_scanner_run ? self::ALLY_PUBLIC_URL : Module::ALLY_SCANNER_SERVICE_URL . '?url=' . home_url();
 		?>
 		<div class="e-dashboard-ally e-dashboard-widget">
 			<div class="e-dashboard-ally-img">
@@ -99,7 +100,7 @@ class Ally_Dashboard_Widget {
 	}
 
 	public static function init(): void {
-		if ( ! is_plugin_active( self::ALLY_PLUGIN_SLUG ) ) {
+		if ( ! Hints::is_plugin_active( 'pojo-accessibility' ) ) {
 			// Register action
 			add_action( 'wp_ajax_e-ally-scanner-run', [ self::class, 'handle_click' ] );
 			// Register Dashboard Widgets.

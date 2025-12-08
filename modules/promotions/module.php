@@ -12,6 +12,7 @@ use Elementor\Modules\Promotions\AdminMenuItems\Custom_Icons_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
+use Elementor\Modules\Promotions\AdminMenuItems\Ally_Top_Bar_Link;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Modules\Promotions\Widgets\Ally_Dashboard_Widget;
@@ -28,6 +29,9 @@ class Module extends Base_Module {
 	const ADMIN_MENU_PRIORITY = 100;
 
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
+
+	public const ALLY_SCANNER_SERVICE_URL = 'https://apps-a11y-web-render-worker-stg.elementor-account.workers.dev/scanner';
+
 
 	public static function is_active() {
 		return ! Utils::has_pro();
@@ -80,8 +84,9 @@ class Module extends Base_Module {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
 
-		// Add Ally dashboard widget
+		// Add Ally promo
 		Ally_Dashboard_Widget::init();
+		Ally_Top_Bar_Link::init();
 	}
 
 	private function handle_external_redirects() {
