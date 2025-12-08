@@ -45,18 +45,20 @@ class Feedback extends Common_App {
 
   public function submit($body) {
     $connect_info = $this->get_base_connect_info();
-    $signature = $this->generate_signature($connect_info);
+    $merged_body = array_merge($connect_info, $body);
+    $signature = $this->generate_signature($merged_body);
+    $headers = [
+      'access-token' => $connect_info['access_token'],
+      'app' => 'library',
+      'client-id' => $connect_info['client_id'],
+      'endpoint' => 'taxonomies',
+      'home-url' => $connect_info['home_url'],
+      'local-id' => $connect_info['local_id'],
+      'site-key' => $this->get_site_key(),
+      'X-Elementor-Signature' => $signature,
+    ];
     $response = wp_remote_post( $this->get_api_url(), [
-      'headers' => [
-        'access-token' => $connect_info['access_token'],
-        'app' => 'library',
-        'client-id' => $connect_info['client_id'],
-        'endpoint' => 'taxonomies',
-        'home-url' => $connect_info['home_url'],
-        'local-id' => $connect_info['local_id'],
-        'site-key' => $this->get_site_key(),
-        'X-Elementor-Signature' => $signature,
-      ],
+      'headers' => $headers,
       'body' => $body,
     ]);
     return $response;
