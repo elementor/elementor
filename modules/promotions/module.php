@@ -59,6 +59,9 @@ class Module extends Base_Module {
 			return $excluded_slugs;
 		} );
 
+		add_filter( 'elementor/admin_menu/editor_flyout_items', [ $this, 'add_submissions_flyout_item' ], 50 );
+		add_filter( 'elementor/admin_menu/editor_flyout_items', [ $this, 'add_custom_elements_flyout_item' ], 70 );
+		add_action( 'elementor/admin/menu/register_submenus', [ $this, 'register_submissions_wp_submenu' ] );
 		add_filter( 'elementor/admin_menu/items_to_hide_from_wp_menu', [ $this, 'add_items_to_hide' ] );
 
 		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
@@ -122,7 +125,6 @@ class Module extends Base_Module {
 			__( 'Submissions', 'elementor' ),
 			50
 		);
-
 		$admin_menu->register_editor_one_menu_level_3(
 			$editor_one_form_submissions,
 			Menu_Config::EDITOR_GROUP_ID,
@@ -130,7 +132,6 @@ class Module extends Base_Module {
 		);
 
 		$custom_fonts_item = new Custom_Fonts_Promotion_Item();
-
 		$editor_one_custom_fonts = new Editor_One_Menu_Item( 
 			$custom_fonts_item, 
 			'', 
@@ -138,7 +139,6 @@ class Module extends Base_Module {
 			__( 'Fonts', 'elementor' ),
 			10
 		);
-
 		$admin_menu->register_editor_one_menu_level_4(
 			$editor_one_custom_fonts,
 			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID
@@ -152,7 +152,6 @@ class Module extends Base_Module {
 			__( 'Icons', 'elementor' ),
 			20
 		);
-
 		$admin_menu->register_editor_one_menu_level_4(
 			$editor_one_custom_icons,
 			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID
@@ -166,7 +165,6 @@ class Module extends Base_Module {
 			__( 'Code', 'elementor' ),
 			30
 		);
-
 		$admin_menu->register_editor_one_menu_level_4(
 			$editor_one_custom_code,
 			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID
@@ -180,7 +178,6 @@ class Module extends Base_Module {
 			__( 'Popups', 'elementor' ),
 			50
 		);
-
 		$admin_menu->register_editor_one_menu_level_4(
 			$editor_one_popups,
 			Menu_Config::TEMPLATES_GROUP_ID
@@ -259,6 +256,60 @@ class Module extends Base_Module {
 
 	private function is_editor_one_active(): bool {
 		return Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active();
+	}
+
+	public function add_submissions_flyout_item( array $items ): array {
+		if ( ! $this->is_editor_one_active() ) {
+			return $items;
+		}
+
+		$items[] = [
+			'slug' => 'e-form-submissions',
+			'label' => esc_html__( 'Submissions', 'elementor' ),
+			'url' => admin_url( 'admin.php?page=e-form-submissions' ),
+			'icon' => 'send',
+			'group_id' => '',
+			'priority' => 50,
+		];
+
+		return $items;
+	}
+
+	public function add_custom_elements_flyout_item( array $items ): array {
+		if ( ! $this->is_editor_one_active() ) {
+			return $items;
+		}
+
+		$items[] = [
+			'slug' => 'elementor-custom-elements',
+			'label' => esc_html__( 'Custom Elements', 'elementor' ),
+			'url' => admin_url( 'admin.php?page=elementor_custom_fonts' ),
+			'icon' => 'adjustments',
+			'group_id' => Menu_Config::CUSTOM_ELEMENTS_GROUP_ID,
+			'priority' => 70,
+		];
+
+		return $items;
+	}
+
+	public function register_submissions_wp_submenu( string $parent_slug ): void {
+		if ( ! $this->is_editor_one_active() ) {
+			return;
+		}
+
+		add_submenu_page(
+			$parent_slug,
+			esc_html__( 'Submissions', 'elementor' ),
+			esc_html__( 'Submissions', 'elementor' ),
+			'manage_options',
+			'e-form-submissions',
+			[ $this, 'render_submissions_page' ]
+		);
+	}
+
+	public function render_submissions_page(): void {
+		$form_submissions_item = new Form_Submissions_Promotion_Item();
+		$form_submissions_item->render();
 	}
 
 	public function add_items_to_hide( array $items ): array {
