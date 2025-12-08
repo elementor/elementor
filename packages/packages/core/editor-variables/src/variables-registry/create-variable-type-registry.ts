@@ -32,7 +32,7 @@ type VariableTypeOptions = {
 	startIcon?: ( { value }: { value: string } ) => JSX.Element;
 	valueField: ( props: ValueFieldProps ) => JSX.Element;
 	variableType: string;
-	key: string;
+	key?: string;
 	defaultValue?: string;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
@@ -59,12 +59,7 @@ export function createVariableTypeRegistry() {
 		fallbackPropTypeUtil,
 		isCompatible,
 	}: VariableTypeOptions ) => {
-		// TODO remove the prop type key from 3.37
 		const variableTypeKey = key ?? propTypeUtil.key;
-
-		if ( variableTypes[ variableTypeKey ] ) {
-			throw new Error( `Variable with key "${ variableTypeKey }" is already registered.` );
-		}
 
 		if ( ! isCompatible ) {
 			isCompatible = ( propType, variable: Variable ) => {
