@@ -8,6 +8,7 @@ export const linkPropTypeUtil = createPropUtils(
 	z.strictObject( {
 		destination: unknownChildrenSchema,
 		isTargetBlank: unknownChildrenSchema,
+		tag: unknownChildrenSchema,
 	} )
 );
 
