@@ -32,15 +32,15 @@ class Style_States {
 	}
 
 	public static function get_alternative_states( string $state ): array {
-		return self::get_alternative_states_map()[$state] ?? [];
+		return self::get_alternative_states_map()[ $state ] ?? [];
 	}
 
-	public static function get_state_selector(string $state ): string {		
-		if ( Style_States::is_class_state( $state ) ) {
+	public static function get_state_selector( string $state ): string {	
+		if ( self::is_class_state( $state ) ) {
 			return '.' . $state;
 		}
 
-		if ( Style_States::is_pseudo_state( $state ) ) {
+		if ( self::is_pseudo_state( $state ) ) {
 			return ':' . $state;
 		}
 

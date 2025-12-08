@@ -93,6 +93,10 @@ function createStyleWrapper( value: string = '', wrapper?: ( css: string ) => st
 			createStyleWrapper( [ prefix, value ].filter( Boolean ).join( ' ' ), wrapper ),
 
 		withState: ( state: StyleDefinitionState ) => {
+			if ( ! state ) {
+				return createStyleWrapper( value, wrapper );
+			}
+
 			const alternativeStates = getAlternativeStates( state );
 			const selector = [ state, ...alternativeStates ]
 				.map( ( currentState ) => `${ value }${ getStateSelector( currentState ) }` )
