@@ -47,7 +47,7 @@ jobs:
       github.event_name == 'workflow_dispatch'
     name: Build plugin
     uses: ./.github/workflows/build.yml
-  
+
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
