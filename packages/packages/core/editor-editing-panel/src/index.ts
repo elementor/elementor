@@ -3,6 +3,7 @@ export { type ValidationEvent, type ValidationResult } from './components/creata
 export { injectIntoCssClassConvert } from './components/css-classes/css-class-convert-local';
 export { injectIntoClassSelectorActions } from './components/css-classes/css-class-selector';
 export { CustomCssIndicator } from './components/custom-css-indicator';
+export { injectIntoPanelHeaderTop } from './components/editing-panel';
 export { PopoverBody } from './components/popover-body';
 export { SectionContent } from './components/section-content';
 export { SettingsControl } from './components/settings-control';

@@ -31,7 +31,7 @@ type ComponentsState = {
 	currentComponentId: V1Document[ 'id' ] | null;
 };
 
-type ComponentsSlice = SliceState< typeof slice >;
+export type ComponentsSlice = SliceState< typeof slice >;
 
 export type ComponentsPathItem = {
 	instanceId?: string;

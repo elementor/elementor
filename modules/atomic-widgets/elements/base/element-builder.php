@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Elements;
+namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
 class Element_Builder {
 	protected $element_type;
