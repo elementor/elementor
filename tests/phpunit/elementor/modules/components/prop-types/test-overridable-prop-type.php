@@ -4,18 +4,18 @@ namespace Elementor\Testing\Modules\Components\PropTypes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
-use Elementor\Modules\Components\PropTypes\Component_Overridable_Prop_Type;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Test_Component_Overridable_Prop_Type extends Elementor_Test_Base {
+class Test_Overridable_Prop_Type extends Elementor_Test_Base {
 
 	public function test_validate__passes_with_origin_value_matching_origin_prop_type() {
 		// Arrange
-		$prop_type = Component_Overridable_Prop_Type::make()
+		$prop_type = Overridable_Prop_Type::make()
 			->set_origin_prop_type( String_Prop_Type::make() );
 
 		// Act
@@ -56,7 +56,7 @@ class Test_Component_Overridable_Prop_Type extends Elementor_Test_Base {
 	 */
 	public function test_validate__fail_for_invalid_structure( $value ) {
 		// Arrange
-		$prop_type = Component_Overridable_Prop_Type::make()
+		$prop_type = Overridable_Prop_Type::make()
 			->set_origin_prop_type( String_Prop_Type::make() );
 
 		// Act.
@@ -68,7 +68,7 @@ class Test_Component_Overridable_Prop_Type extends Elementor_Test_Base {
 
 	public function test_validate__fails_when_origin_value_invalid_against_origin_prop_type() {
 		// Arrange
-		$prop_type = Component_Overridable_Prop_Type::make()
+		$prop_type = Overridable_Prop_Type::make()
 			->set_origin_prop_type( 
 				String_Prop_Type::make()
 					->enum( [ 'p', 'span' ] )
@@ -90,7 +90,7 @@ class Test_Component_Overridable_Prop_Type extends Elementor_Test_Base {
 
 	public function test_validate__fails_when_origin_prop_type_not_set() {
 		// Arrange
-		$prop_type = Component_Overridable_Prop_Type::make();
+		$prop_type = Overridable_Prop_Type::make();
 
 		// Act
 		$result = $prop_type->validate( [
@@ -107,7 +107,7 @@ class Test_Component_Overridable_Prop_Type extends Elementor_Test_Base {
 
 	public function test_sanitize__sanitizes_override_key_and_origin_value() {
 		// Arrange
-		$prop_type = Component_Overridable_Prop_Type::make()
+		$prop_type = Overridable_Prop_Type::make()
 			->set_origin_prop_type( String_Prop_Type::make() );
 
 		// Act
