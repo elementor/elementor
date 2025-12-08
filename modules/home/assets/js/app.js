@@ -13,6 +13,7 @@ const App = ( props ) => {
 					<ScreenComponent
 						homeScreenData={ props.homeScreenData }
 						adminUrl={ props.adminUrl }
+						isEditorOneActive={ props.isEditorOneActive }
 					/>
 				</ThemeProvider>
 			</LocalizationProvider>

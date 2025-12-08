@@ -10,6 +10,13 @@ import CreateWithAIBanner from './create-with-ai-banner';
 const HomeScreen = ( props ) => {
 	const hasSidebarPromotion = props.homeScreenData.hasOwnProperty( 'sidebar_promotion_variants' );
 
+	const shouldShowAddons = () => {
+		const hideSection = props.homeScreenData.add_ons?.hide_section || [];
+		const currentTier = elementorCommon?.config?.library_connect?.current_access_tier || 'free';
+
+		return ! hideSection.includes( currentTier );
+	};
+
 	return (
 		/*  Box wrapper around the Container is needed to neutralize wp-content area left-padding */
 		<Box sx={ { pr: 1 } }>
@@ -22,10 +29,12 @@ const HomeScreen = ( props ) => {
 							getStartedData={ props.homeScreenData.get_started }
 							adminUrl={ props.adminUrl }
 						/>
-						<Addons
-							addonsData={ props.homeScreenData.add_ons }
-							adminUrl={ props.adminUrl }
-						/>
+						{ shouldShowAddons() && (
+							<Addons
+								addonsData={ props.homeScreenData.add_ons }
+								adminUrl={ props.adminUrl }
+							/>
+						) }
 					</Stack>
 					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' }, display: 'flex', flexDirection: 'column', gap: 3 } }>
 						{ hasSidebarPromotion &&

@@ -241,7 +241,7 @@ export default {
 		},
 	],
 	add_ons: {
-		display_with_one_plan: true,
+		hide_section: [ 'free' ],
 		header: {
 			title: 'Test Add-ons Title',
 			description: 'Test add-ons description with predictable content for testing purposes.',
