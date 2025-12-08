@@ -116,7 +116,10 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 	}
 
 	public function get_script_depends() {
-		return [ 'elementor-youtube-handler' ];
+		return array_merge(
+			parent::get_script_depends(),
+			[ 'elementor-youtube-handler' ],
+		);
 	}
 
 	public function register_frontend_handlers() {

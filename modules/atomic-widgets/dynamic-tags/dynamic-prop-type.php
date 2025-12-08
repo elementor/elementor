@@ -39,6 +39,8 @@ class Dynamic_Prop_Type extends Plain_Prop_Type {
 		$is_valid_structure = (
 			isset( $value['name'] ) &&
 			is_string( $value['name'] ) &&
+			isset( $value['group'] ) &&
+			is_string( $value['group'] ) &&
 			isset( $value['settings'] ) &&
 			is_array( $value['settings'] )
 		);
@@ -67,6 +69,7 @@ class Dynamic_Prop_Type extends Plain_Prop_Type {
 
 		return [
 			'name' => $value['name'],
+			'group' => $value['group'],
 			'settings' => $sanitized,
 		];
 	}
