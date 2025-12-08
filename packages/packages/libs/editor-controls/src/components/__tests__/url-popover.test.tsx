@@ -101,6 +101,7 @@ describe( 'UrlPopover', () => {
 
 			// Act.
 			renderWithTheme( <UrlPopover { ...props } /> );
+
 			const input = screen.getByPlaceholderText( 'Type a URL' );
 
 			// Assert.

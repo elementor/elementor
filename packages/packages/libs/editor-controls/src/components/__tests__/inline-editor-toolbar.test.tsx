@@ -117,6 +117,7 @@ describe( 'InlineEditorToolbar', () => {
 
 			// Act.
 			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
+
 			const linkButton = screen.getByLabelText( 'Link' );
 			fireEvent.click( linkButton );
 
