@@ -59,13 +59,19 @@ class Module extends BaseApp {
 
 		wp_set_script_translations( 'e-home-screen', 'elementor' );
 
+		$experiments = Plugin::$instance->experiments;
+		$is_editor_one_active = $experiments->is_feature_active( 'e_editor_one' );
+
+		$home_screen_data = $this->get_app_js_config();
+		$home_screen_data['isEditorOneActive'] = $is_editor_one_active;
+
 		wp_localize_script(
 			'e-home-screen',
 			'elementorHomeScreenData',
-			$this->get_app_js_config()
+			$home_screen_data
 		);
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
+		if ( ! $is_editor_one_active ) {
 			return;
 		}
 
