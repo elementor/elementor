@@ -32,9 +32,10 @@ export default class TextPathHandler extends elementorModules.frontend.handlers.
 		this.elements = this.getDefaultElements();
 
 		this.fetchSVG().then( () => {
+			const sanitizedId = DOMPurify.sanitize(this.elements.widgetWrapper.dataset.id);
 			// Generate unique IDs using the wrapper's `data-id`.
-			this.pathId = `e-path-${ this.elements.widgetWrapper.dataset.id }`;
-			this.textPathId = `e-text-path-${ this.elements.widgetWrapper.dataset.id }`;
+			this.pathId = `e-path-${ sanitizedId }`;
+			this.textPathId = `e-text-path-${ sanitizedId }`;
 
 			if ( ! this.elements.svg ) {
 				return;
