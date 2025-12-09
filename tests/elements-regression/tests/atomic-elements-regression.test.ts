@@ -3,14 +3,11 @@ import _path from 'path';
 import WpAdminPage from '../../playwright/pages/wp-admin-page';
 import EditorPage from '../../playwright/pages/editor-page';
 import ElementRegressionHelper from '../helper';
+import { wpCli } from '../../playwright/assets/wp-cli';
 
 test.describe( 'Elementor regression tests with templates for CORE - V4', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const page = await browser.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
-		await page.close();
+	test.beforeAll( async ( {} ) => {
+		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
