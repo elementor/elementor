@@ -4,7 +4,6 @@ import { apiClient } from '../../api';
 import { getComponentDocumentData, invalidateComponentDocumentData } from '../../utils/component-document-data';
 import { getComponentIds } from '../../utils/get-component-ids';
 import { updateComponentsBeforeSave } from '../update-components-before-save';
-import { createMockContainer } from './utils';
 
 jest.mock( '../../utils/component-document-data' );
 jest.mock( '../../utils/get-component-ids' );
@@ -35,7 +34,7 @@ describe( 'updateComponentsBeforeSave', () => {
 			HAS_AUTOSAVE_COMPONENT_ID,
 		] );
 
-		const container = createMockContainer( [
+		const elements = [
 			{
 				elType: 'container',
 				id: '1',
@@ -51,7 +50,9 @@ describe( 'updateComponentsBeforeSave', () => {
 								settings: {
 									component_instance: {
 										$$type: 'component-instance',
-										value: { component_id: 1000 },
+										value: {
+											component_id: { $$type: 'number', value: 1000 },
+										},
 									},
 								},
 							},
@@ -64,7 +65,9 @@ describe( 'updateComponentsBeforeSave', () => {
 						settings: {
 							component_instance: {
 								$$type: 'component-instance',
-								value: { component_id: PUBLISHED_COMPONENT_ID },
+								value: {
+									component_id: { $$type: 'number', value: PUBLISHED_COMPONENT_ID },
+								},
 							},
 						},
 					},
@@ -75,7 +78,9 @@ describe( 'updateComponentsBeforeSave', () => {
 						settings: {
 							component_instance: {
 								$$type: 'component-instance',
-								value: { component_id: 3000 },
+								value: {
+									component_id: { $$type: 'number', value: 3000 },
+								},
 							},
 						},
 					},
@@ -86,17 +91,19 @@ describe( 'updateComponentsBeforeSave', () => {
 						settings: {
 							component_instance: {
 								$$type: 'component-instance',
-								value: { component_id: HAS_AUTOSAVE_COMPONENT_ID },
+								value: {
+									component_id: { $$type: 'number', value: HAS_AUTOSAVE_COMPONENT_ID },
+								},
 							},
 						},
 					},
 				],
 			},
-		] );
+		];
 
 		// Act
 		await updateComponentsBeforeSave( {
-			container,
+			elements,
 			status: 'publish',
 		} );
 
@@ -112,7 +119,7 @@ describe( 'updateComponentsBeforeSave', () => {
 		// Arrange.
 		jest.mocked( getComponentIds ).mockResolvedValue( [ 1000 ] );
 
-		const container = createMockContainer( [
+		const elements = [
 			{
 				elType: 'widget',
 				id: '2',
@@ -120,15 +127,17 @@ describe( 'updateComponentsBeforeSave', () => {
 				settings: {
 					component_instance: {
 						$$type: 'component-instance',
-						value: { component_id: 1000 },
+						value: {
+							component_id: { $$type: 'number', value: 1000 },
+						},
 					},
 				},
 			},
-		] );
+		];
 
 		// Act
 		await updateComponentsBeforeSave( {
-			container,
+			elements,
 			status: 'draft',
 		} );
 
@@ -141,7 +150,7 @@ describe( 'updateComponentsBeforeSave', () => {
 		// Arrange.
 		jest.mocked( getComponentIds ).mockResolvedValue( [ PUBLISHED_COMPONENT_ID ] );
 
-		const container = createMockContainer( [
+		const elements = [
 			{
 				elType: 'widget',
 				id: '2',
@@ -149,15 +158,17 @@ describe( 'updateComponentsBeforeSave', () => {
 				settings: {
 					component_instance: {
 						$$type: 'component-instance',
-						value: { component_id: PUBLISHED_COMPONENT_ID },
+						value: {
+							component_id: { $$type: 'number', value: PUBLISHED_COMPONENT_ID },
+						},
 					},
 				},
 			},
-		] );
+		];
 
 		// Act
 		await updateComponentsBeforeSave( {
-			container,
+			elements,
 			status: 'publish',
 		} );
 

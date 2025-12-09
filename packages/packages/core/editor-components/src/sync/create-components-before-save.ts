@@ -3,18 +3,13 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 
 import { apiClient } from '../api';
 import { selectUnpublishedComponents, slice } from '../store/store';
-import {
-	type ComponentInstancePropValue,
-	type Container,
-	type DocumentSaveStatus,
-	type UnpublishedComponent,
-} from '../types';
+import { type ComponentInstancePropValue, type DocumentSaveStatus, type UnpublishedComponent } from '../types';
 
 export async function createComponentsBeforeSave( {
-	container,
+	elements,
 	status,
 }: {
-	container: Container;
+	elements: V1ElementData[];
 	status: DocumentSaveStatus;
 } ) {
 	const unpublishedComponents = selectUnpublishedComponents( getState() );
@@ -26,7 +21,6 @@ export async function createComponentsBeforeSave( {
 	try {
 		const uidToComponentId = await createComponents( unpublishedComponents, status );
 
-		const elements = container.model.get( 'elements' ).toJSON();
 		updateComponentInstances( elements, uidToComponentId );
 
 		dispatch(
@@ -85,7 +79,7 @@ function shouldUpdateElement(
 ): { shouldUpdate: true; newComponentId: number } | { shouldUpdate: false; newComponentId: null } {
 	if ( element.widgetType === 'e-component' ) {
 		const currentComponentId = ( element.settings?.component_instance as ComponentInstancePropValue< string > )
-			?.value?.component_id;
+			?.value?.component_id.value;
 
 		if ( currentComponentId && uidToComponentId.has( currentComponentId ) ) {
 			return { shouldUpdate: true, newComponentId: uidToComponentId.get( currentComponentId ) as number };
@@ -100,7 +94,9 @@ function updateElementComponentId( elementId: string, componentId: number ): voi
 		props: {
 			component_instance: {
 				$$type: 'component-instance',
-				value: { component_id: componentId },
+				value: {
+					component_id: { $$type: 'number', value: componentId },
+				},
 			},
 		},
 		withHistory: false,

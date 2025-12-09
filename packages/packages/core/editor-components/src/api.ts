@@ -2,12 +2,9 @@ import { type V1ElementData } from '@elementor/editor-elements';
 import { ajax } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 
-import { type DocumentSaveStatus, type PublishedComponent } from './types';
+import { type DocumentSaveStatus, type OverridableProps, type PublishedComponent } from './types';
 
 const BASE_URL = 'elementor/v1/components';
-const LOCK_COMPONENT = `${ BASE_URL }/lock`;
-const UNLOCK_COMPONENT = `${ BASE_URL }/unlock`;
-const BASE_URL_LOCK_STATUS = `${ BASE_URL }/lock-status`;
 
 export type CreateComponentPayload = {
 	status: DocumentSaveStatus;
@@ -51,7 +48,7 @@ export const apiClient = {
 	invalidateComponentConfigCache: ( id: number ) => ajax.invalidateCache< { id: number } >( getParams( id ) ),
 	getComponentLockStatus: async ( componentId: number ) =>
 		await httpService()
-			.get< { data: ComponentLockStatusResponse } >( `${ BASE_URL_LOCK_STATUS }`, {
+			.get< { data: ComponentLockStatusResponse } >( `${ BASE_URL }/lock-status`, {
 				params: {
 					componentId,
 				},
@@ -62,14 +59,31 @@ export const apiClient = {
 			} ),
 	lockComponent: async ( componentId: number ) =>
 		await httpService()
-			.post< { success: boolean } >( LOCK_COMPONENT, {
+			.post< { success: boolean } >( `${ BASE_URL }/lock`, {
 				componentId,
 			} )
 			.then( ( res ) => res.data ),
 	unlockComponent: async ( componentId: number ) =>
 		await httpService()
-			.post< { success: boolean } >( UNLOCK_COMPONENT, {
+			.post< { success: boolean } >( `${ BASE_URL }/unlock`, {
 				componentId,
 			} )
 			.then( ( res ) => res.data ),
+	getOverridableProps: async ( componentId: number ) =>
+		await httpService()
+			.get< HttpResponse< OverridableProps > >( `${ BASE_URL }/overridable-props`, {
+				params: {
+					componentId: componentId.toString(),
+				},
+			} )
+			.then( ( res ) => res.data.data ),
+	updateArchivedComponents: async ( componentIds: number[] ) =>
+		await httpService()
+			.post< { data: { failedIds: number[]; successIds: number[]; success: boolean } } >(
+				`${ BASE_URL }/archive`,
+				{
+					componentIds,
+				}
+			)
+			.then( ( res ) => res.data.data ),
 };

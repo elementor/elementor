@@ -160,6 +160,7 @@ const frontendEntries = {
 	'youtube-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-youtube/youtube-handler.js' ),
 	'tabs-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-handler.js' ),
 	'tabs-preview-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-preview-handler.js' ),
+	'atomic-widgets-frontend-handler': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/frontend/handlers.js' ),
 };
 
 const externals = [
