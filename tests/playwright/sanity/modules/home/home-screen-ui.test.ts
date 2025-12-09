@@ -2,7 +2,7 @@ import { expect, request } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { wpCli } from '../../../assets/wp-cli';
-import { type LicenseType, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen } from './home-screen.helper';
+import { type LicenseType, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, setElementorCommonTier } from './home-screen.helper';
 
 test.describe( 'Home screen visual regression tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -23,6 +23,7 @@ test.describe( 'Home screen visual regression tests', () => {
 			const mockData = transformMockDataByLicense( licenseType );
 			await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 			const homeScreen = await navigateToHomeScreen( page );
+			await setElementorCommonTier( page, licenseType );
 			await expect.soft( homeScreen ).toHaveScreenshot( `home-screen-${ licenseType }.png` );
 			await requestContext.dispose();
 		} );

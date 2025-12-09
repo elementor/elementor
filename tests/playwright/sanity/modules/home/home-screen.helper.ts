@@ -4,6 +4,14 @@ import homeScreenMockData from './data/home-screen.mock';
 import ApiRequests from '../../../assets/api-requests';
 import { Image } from '../../../types/types';
 
+type ElementorCommon = {
+	config?: {
+		library_connect?: {
+			current_access_tier?: string;
+		};
+	};
+};
+
 export type HomepageSettings = {
 	homepageId: number | null;
 	showOnFront: string | null;
@@ -119,6 +127,16 @@ const replaceImageUrl = (
 	}
 
 	return mockData;
+};
+
+export const setElementorCommonTier = async ( page: Page, licenseType: LicenseType ): Promise<void> => {
+	await page.evaluate( ( tier: string ) => {
+		const elementorCommon = ( window as unknown as { elementorCommon: ElementorCommon } ).elementorCommon;
+		if ( ! elementorCommon.config.library_connect ) {
+			elementorCommon.config.library_connect = {};
+		}
+		elementorCommon.config.library_connect.current_access_tier = tier;
+	}, licenseType );
 };
 
 export const navigateToHomeScreen = async ( page: Page ) => {
