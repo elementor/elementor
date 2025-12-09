@@ -433,8 +433,6 @@ class Source_Local extends Source_Base {
 			$menu_item,
 			'',
 			static::get_admin_url( true ),
-			__( 'Saved Templates', 'elementor' ),
-			10
 		);
 
 		$menu_data_provider->register_level4_item(
@@ -1859,9 +1857,6 @@ class Source_Local extends Source_Base {
 	}
 
 	public function add_templates_flyout_item( array $items ): array {
-		if ( ! !! Plugin::instance()->modules_manager->get_modules( 'editor-one' ) ) {
-			return $items;
-		}
 
 		$items[] = [
 			'slug' => 'elementor-templates',

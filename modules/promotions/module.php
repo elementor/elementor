@@ -137,8 +137,6 @@ class Module extends Base_Module {
 			$form_submissions_item,
 			'',
 			'e-form-submissions',
-			__( 'Submissions', 'elementor' ),
-			50
 		);
 
 		$menu_data_provider->register_level3_item(
@@ -155,7 +153,6 @@ class Module extends Base_Module {
 			'',
 			'elementor_custom_fonts',
 			__( 'Fonts', 'elementor' ),
-			10
 		);
 
 		$menu_data_provider->register_level4_item(
@@ -170,7 +167,6 @@ class Module extends Base_Module {
 			'',
 			'elementor_custom_icons',
 			__( 'Icons', 'elementor' ),
-			20
 		);
 
 		$menu_data_provider->register_level4_item(
@@ -185,7 +181,6 @@ class Module extends Base_Module {
 			'',
 			'elementor_custom_code',
 			__( 'Code', 'elementor' ),
-			30
 		);
 
 		$menu_data_provider->register_level4_item(

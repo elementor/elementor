@@ -2,11 +2,13 @@
 
 namespace Elementor\Modules\Promotions\AdminMenuItems;
 
+use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Form_Submissions_Promotion_Item extends Base_Promotion_Template {
+class Form_Submissions_Promotion_Item extends Base_Promotion_Template implements Admin_Menu_Item_Has_Position {
 	public function get_name() {
 		return 'submissions';
 	}
@@ -46,5 +48,9 @@ class Form_Submissions_Promotion_Item extends Base_Promotion_Template {
 
 	protected function get_side_note(): string {
 		return esc_html__( '* Requires an Advanced subscription or higher', 'elementor' );
+	}
+
+	public function get_position() {
+		return 50;
 	}
 }

@@ -3,12 +3,13 @@ namespace Elementor\Modules\FloatingButtons\AdminMenuItems;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
 use Elementor\TemplateLibrary\Source_Local;
+use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Floating_Buttons_Menu_Item implements Admin_Menu_Item {
+class Floating_Buttons_Menu_Item implements Admin_Menu_Item, Admin_Menu_Item_Has_Position {
 
 	public function is_visible() {
 		return true;
@@ -28,5 +29,9 @@ class Floating_Buttons_Menu_Item implements Admin_Menu_Item {
 
 	public function get_capability() {
 		return 'manage_options';
+	}
+
+	public function get_position() {
+		return 40;
 	}
 }

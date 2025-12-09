@@ -90,8 +90,6 @@ class Module extends BaseModule {
 			$menu_item,
 			'',
 			$menu_slug,
-			__( 'Floating Elements', 'elementor' ),
-			40
 		);
 
 		$menu_data_provider->register_level4_item(
