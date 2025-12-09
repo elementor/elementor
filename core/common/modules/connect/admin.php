@@ -6,7 +6,7 @@ use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Utils;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Core\Common\Modules\Connect\AdminMenuItems\Editor_One_License_Menu;
+use Elementor\Core\Common\Modules\Connect\AdminMenuItems\Editor_One_Connect_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -49,7 +49,7 @@ class Admin {
 	}
 
 	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
-		$menu_data_provider->register_menu( new Editor_One_License_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_Connect_Menu() );
 	}
 
 	private function is_editor_one_active(): bool {
