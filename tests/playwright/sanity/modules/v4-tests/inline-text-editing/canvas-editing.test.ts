@@ -16,7 +16,8 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpCli( 'wp elementor experiments activate e_atomic_elements,v4-inline-text-editing' );
+		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
+		await wpCli( 'wp elementor experiments activate v4-inline-text-editing' );
 
 		editor = await wpAdminPage.openNewPage();
 	} );
