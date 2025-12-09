@@ -1,5 +1,6 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
 import { setupCompleteTestData, cleanupCreatedItems, CreatedItems } from './utils/test-seeders';
 import { ImportExportHelpers } from './helpers/import-export-helpers';
 
@@ -15,7 +16,8 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 		await apiRequests.cleanUpTestPages( page.request );
 	} );
 
-	test( 'should complete full export process with progress and summary', async ( { page } ) => {
+	test( 'should complete full export process with progress and summary', async ( { page, apiRequests } ) => {
+		const wpAdmin = new WpAdminPage( page, test.info(), apiRequests );
 		await ImportExportHelpers.navigateToExportCustomizationPage( page );
 
 		await ImportExportHelpers.fillKitInfo( page, 'test-kit', 'Test Description' );
@@ -26,7 +28,7 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 
 		await ImportExportHelpers.waitForExportComplete( page );
 
-		await ImportExportHelpers.verifyContentSection( page, '13 Pages | 2 Floating Elements | 3 Posts | 3 Taxonomies' );
+		await ImportExportHelpers.verifyContentSection( page, '13 Pages | 2 Floating Elements | 3 Posts | 3 Taxonomies', wpAdmin );
 		await ImportExportHelpers.verifyTemplatesSection( page, 'No templates exported' );
 		await ImportExportHelpers.verifySettingsSection( page, 'Theme | Global Colors | Global Fonts | Theme Style Settings | General Settings | Experiments' );
 		await ImportExportHelpers.verifyPluginsSection( page, 'Elementor | Hello Dolly | WordPress Importer' );

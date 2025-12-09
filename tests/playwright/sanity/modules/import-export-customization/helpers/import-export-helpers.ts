@@ -1,5 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import * as path from 'path';
+import WpAdminPage from '../../../../pages/wp-admin-page';
 import { ImportExportSelectors } from '../selectors/import-export-selectors';
 
 export class ImportExportHelpers {
@@ -114,7 +115,8 @@ export class ImportExportHelpers {
 		await expect( page.locator( 'text=What\'s included:' ) ).toBeVisible();
 	}
 
-	static async verifyContentSection( page: Page, expectedText: string ): Promise<void> {
+	static async verifyContentSection( page: Page, expectedText: string, wpAdmin: WpAdminPage ): Promise<void> {
+		await wpAdmin.closeAnnouncementsIfVisible();
 		const contentSection = page.locator( ImportExportSelectors.summaryContentSection );
 		await expect( contentSection ).toBeVisible();
 		await expect( contentSection.locator( `text=${ expectedText }` ) ).toBeVisible();

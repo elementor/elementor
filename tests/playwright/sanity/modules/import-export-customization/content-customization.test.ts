@@ -1,4 +1,5 @@
 import { parallelTest as test } from '../../../parallelTest';
+import WpAdminPage from '../../../pages/wp-admin-page';
 import { setupCompleteTestData, cleanupCreatedItems, CreatedItems } from './utils/test-seeders';
 import { ImportExportHelpers } from './helpers/import-export-helpers';
 
@@ -14,7 +15,8 @@ test.describe( 'Import Export Customization - Content Customization', () => {
 		await apiRequests.cleanUpTestPages( page.request );
 	} );
 
-	test( 'should export kit with all checkboxes unselected except plugins', async ( { page } ) => {
+	test( 'should export kit with all checkboxes unselected except plugins', async ( { page, apiRequests } ) => {
+		const wpAdmin = new WpAdminPage( page, test.info(), apiRequests );
 		await ImportExportHelpers.navigateToExportCustomizationPage( page );
 
 		await ImportExportHelpers.uncheckAllSections( page );
@@ -25,13 +27,14 @@ test.describe( 'Import Export Customization - Content Customization', () => {
 
 		await ImportExportHelpers.waitForExportComplete( page );
 
-		await ImportExportHelpers.verifyContentSection( page, 'No content exported' );
+		await ImportExportHelpers.verifyContentSection( page, 'No content exported', wpAdmin );
 		await ImportExportHelpers.verifyTemplatesSection( page, 'No templates exported' );
 		await ImportExportHelpers.verifySettingsSection( page, 'No settings exported' );
 		await ImportExportHelpers.verifyPluginsSection( page, 'Elementor | Hello Dolly | WordPress Importer' );
 	} );
 
-	test( 'should export kit with Posts unchecked in Content dialog', async ( { page } ) => {
+	test( 'should export kit with Posts unchecked in Content dialog', async ( { page, apiRequests } ) => {
+		const wpAdmin = new WpAdminPage( page, test.info(), apiRequests );
 		await ImportExportHelpers.navigateToExportCustomizationPage( page );
 
 		await ImportExportHelpers.customizeContentSection( page, true );
@@ -43,7 +46,7 @@ test.describe( 'Import Export Customization - Content Customization', () => {
 		await ImportExportHelpers.waitForExportProcess( page );
 		await ImportExportHelpers.waitForExportComplete( page );
 
-		await ImportExportHelpers.verifyContentSection( page, '13 Pages | 2 Floating Elements | 1 Taxonomies' );
+		await ImportExportHelpers.verifyContentSection( page, '13 Pages | 2 Floating Elements | 1 Taxonomies', wpAdmin );
 		await ImportExportHelpers.verifyNotInContentSection( page, '3 Posts' );
 	} );
 
