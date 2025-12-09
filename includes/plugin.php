@@ -2,6 +2,7 @@
 namespace Elementor;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Admin\Menu\Elementor_One_Menu_Manager;
 use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
@@ -400,6 +401,11 @@ class Plugin {
 	public $admin_menu_manager;
 
 	/**
+	 * @var Elementor_One_Menu_Manager
+	 */
+	public $elementor_one_menu_manager;
+
+	/**
 	 * Common functionality.
 	 *
 	 * Holds the plugin common functionality.
@@ -712,6 +718,9 @@ class Plugin {
 
 		$this->admin_menu_manager = new Admin_Menu_Manager();
 		$this->admin_menu_manager->register_actions();
+
+		$this->elementor_one_menu_manager = new Elementor_One_Menu_Manager();
+		$this->elementor_one_menu_manager->register_actions();
 
 		User::init();
 		User_Data::init();

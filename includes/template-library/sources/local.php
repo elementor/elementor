@@ -2,6 +2,11 @@
 namespace Elementor\TemplateLibrary;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Admin\Menu\Elementor_One_Menu_Manager;
+use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Add_New_Template_Elementor_One_Menu_Item;
+use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Templates_Categories_Elementor_One_Menu_Item;
+use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Templates_Elementor_One_Menu_Item;
+use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Templates_Saved_Elementor_One_Menu_Item;
 use Elementor\Core\Base\Document;
 use Elementor\Core\Editor\Editor;
 use Elementor\Core\Utils\Collection;
@@ -1650,6 +1655,21 @@ class Source_Local extends Source_Base {
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->register_admin_menu( $admin_menu );
 			}, static::ADMIN_MENU_PRIORITY );
+
+			add_action( 'elementor-one/admin/menu/register', function ( Elementor_One_Menu_Manager $manager ) {
+				$templates_slug = 'elementor-templates';
+				$templates_url = static::get_admin_url( true );
+				
+				$manager->register_editor_item( $templates_slug, new Templates_Elementor_One_Menu_Item( $templates_url ) );
+				$manager->register_flyout_item( 'elementor-templates-saved', new Templates_Saved_Elementor_One_Menu_Item( $templates_url ) );
+			}, static::ADMIN_MENU_PRIORITY );
+
+			add_action( 'elementor-one/admin/menu/register', function ( Elementor_One_Menu_Manager $manager ) {
+				$category_slug = 'edit-tags.php?taxonomy=' . static::TAXONOMY_CATEGORY_SLUG . '&amp;post_type=' . static::CPT;
+				
+				$manager->register_flyout_item( admin_url( static::ADMIN_MENU_SLUG . '#add_new' ), new Add_New_Template_Elementor_One_Menu_Item() );
+				$manager->register_flyout_item( $category_slug, new Templates_Categories_Elementor_One_Menu_Item() );
+			}, 800 );
 
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->admin_menu_reorder( $admin_menu );

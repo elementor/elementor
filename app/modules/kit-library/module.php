@@ -2,7 +2,9 @@
 namespace Elementor\App\Modules\KitLibrary;
 
 use Elementor\App\Modules\KitLibrary\Data\Repository;
+use Elementor\App\Modules\KitLibrary\AdminMenuItems\Kit_Library_Elementor_One_Menu_Item;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Admin\Menu\Elementor_One_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
@@ -112,6 +114,11 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu_legacy( $admin_menu );
+		}, Source_Local::ADMIN_MENU_PRIORITY + 30 );
+
+		add_action( 'elementor-one/admin/menu/register', function( Elementor_One_Menu_Manager $manager ) {
+			$kit_library_url = Plugin::$instance->app->get_base_url() . '&source=wp_db_templates_menu#/kit-library';
+			$manager->register_flyout_item( $kit_library_url, new Kit_Library_Elementor_One_Menu_Item() );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 30 );
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {

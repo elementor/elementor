@@ -2,6 +2,8 @@
 namespace Elementor\Modules\System_Info;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Admin\Menu\Elementor_One_Menu_Manager;
+use Elementor\Modules\System_Info\System_Info_Elementor_One_Menu_Item;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\System_Info\Reporters\Base;
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
@@ -120,6 +122,10 @@ class Module extends BaseModule {
 	private function add_actions() {
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu_manager ) {
 			$this->register_menu( $admin_menu_manager );
+		}, Settings::ADMIN_MENU_PRIORITY + 30 );
+
+		add_action( 'elementor-one/admin/menu/register', function ( Elementor_One_Menu_Manager $manager ) {
+			$manager->register_editor_item( 'elementor-system-info', new System_Info_Elementor_One_Menu_Item( $this ) );
 		}, Settings::ADMIN_MENU_PRIORITY + 30 );
 
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );

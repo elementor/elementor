@@ -2,6 +2,8 @@
 namespace Elementor\Core\RoleManager;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Admin\Menu\Elementor_One_Menu_Manager;
+use Elementor\Core\RoleManager\Role_Manager_Elementor_One_Menu_Item;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -316,6 +318,10 @@ class Role_Manager extends Settings_Page {
 
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu( $admin_menu );
+		}, Settings::ADMIN_MENU_PRIORITY + 10 );
+
+		add_action( 'elementor-one/admin/menu/register', function ( Elementor_One_Menu_Manager $manager ) {
+			$manager->register_editor_item( static::PAGE_ID, new Role_Manager_Elementor_One_Menu_Item( $this ) );
 		}, Settings::ADMIN_MENU_PRIORITY + 10 );
 
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_json_enable_control' ] );

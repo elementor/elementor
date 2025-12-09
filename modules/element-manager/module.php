@@ -3,6 +3,9 @@ namespace Elementor\Modules\ElementManager;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Admin\Menu\Elementor_One_Menu_Manager;
+use Elementor\Modules\ElementManager\AdminMenuItems\Element_Manager_Elementor_One_Flyout_Menu_Item;
+use Elementor\Modules\ElementManager\AdminMenuItems\Element_Manager_Elementor_One_Menu_Item;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,6 +28,11 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 			$admin_menu->register( static::PAGE_ID, new Admin_Menu_App() );
+		}, 25 );
+
+		add_action( 'elementor-one/admin/menu/register', function( Elementor_One_Menu_Manager $manager ) {
+			$manager->register_editor_item( static::PAGE_ID, new Element_Manager_Elementor_One_Menu_Item() );
+			$manager->register_flyout_item( static::PAGE_ID . '-flyout', new Element_Manager_Elementor_One_Flyout_Menu_Item() );
 		}, 25 );
 
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
