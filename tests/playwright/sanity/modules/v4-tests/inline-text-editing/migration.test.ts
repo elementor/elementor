@@ -12,7 +12,7 @@ test.describe( 'Inline Text Editing Migration @v4-tests', () => {
 	let postId: string;
 	const customTitle = 'My Custom Heading Title';
 
-	test.only( 'Content persists when toggling inline text editing experiment', async ( { browser, apiRequests }, testInfo ) => {
+	test( 'Content persists when toggling inline text editing experiment', async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
