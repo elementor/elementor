@@ -63,8 +63,6 @@ class App extends BaseApp {
 			$menu_item,
 			'',
 			static::PAGE_ID,
-			__( 'Theme Builder', 'elementor' ),
-			20
 		);
 
 		$menu_data_provider->register_level4_item(

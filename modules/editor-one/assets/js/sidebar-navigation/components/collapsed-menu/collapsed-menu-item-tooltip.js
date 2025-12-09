@@ -21,4 +21,3 @@ CollapsedMenuItemTooltip.propTypes = {
 
 export default CollapsedMenuItemTooltip;
 
-

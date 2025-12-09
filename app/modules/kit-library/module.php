@@ -57,8 +57,6 @@ class Module extends BaseModule {
 			$menu_item,
 			'',
 			Plugin::$instance->app->get_base_url() . '&source=wp_db_templates_menu#/kit-library',
-			__( 'Website Templates', 'elementor' ),
-			30
 		);
 
 		$menu_data_provider->register_level4_item(

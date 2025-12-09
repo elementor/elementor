@@ -74,4 +74,3 @@ CollapsedMenuItemPopover.propTypes = {
 
 export default CollapsedMenuItemPopover;
 
-
