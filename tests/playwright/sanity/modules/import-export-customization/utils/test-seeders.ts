@@ -80,19 +80,25 @@ export async function createElementorContent( page: Page, testInfo: TestInfo, ap
 }
 
 export async function createTaxonomies( apiRequests: ApiRequests, request: APIRequestContext ) {
+	const uniqueSuffix = process.env.TEST_PARALLEL_INDEX || Date.now();
+	const categoryName = `Test Category ${ uniqueSuffix }`;
+	const categorySlug = `test-category-${ uniqueSuffix }`;
+	const tagName = `Test Tag ${ uniqueSuffix }`;
+	const tagSlug = `test-tag-${ uniqueSuffix }`;
+
 	const categoryId = await apiRequests.create( request, 'categories', {
-		name: 'Test Category',
-		slug: 'test-category',
+		name: categoryName,
+		slug: categorySlug,
 	} as Post );
 
 	const tagId = await apiRequests.create( request, 'tags', {
-		name: 'Test Tag',
-		slug: 'test-tag',
+		name: tagName,
+		slug: tagSlug,
 	} as Post );
 
 	return {
-		categories: [ { id: categoryId, name: 'Test Category', slug: 'test-category' } ],
-		tags: [ { id: tagId, name: 'Test Tag', slug: 'test-tag' } ],
+		categories: [ { id: categoryId, name: categoryName, slug: categorySlug } ],
+		tags: [ { id: tagId, name: tagName, slug: tagSlug } ],
 	};
 }
 

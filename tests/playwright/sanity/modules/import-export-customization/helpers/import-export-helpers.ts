@@ -6,36 +6,28 @@ export class ImportExportHelpers {
 	static async closeAnnouncementsIfVisible( page: Page ): Promise<void> {
 		const popupContainer = page.locator( '#e-pro-free-trial-popup' );
 
-		if ( await popupContainer.count() > 0 ) {
-			const dialogBackdrop = page.locator( '[role="presentation"]' ).last();
-
-			if ( await dialogBackdrop.count() > 0 ) {
-				try {
-					await dialogBackdrop.click( { force: true, timeout: 2000 } );
-					await page.waitForTimeout( 500 );
-				} catch ( error ) {
-				}
-			}
-
-			const closeButton = page.locator( 'button:has-text("Not now"), button[aria-label*="close" i]' ).first();
-
-			if ( await closeButton.count() > 0 ) {
-				try {
-					await closeButton.click( { timeout: 2000 } );
-					await page.waitForTimeout( 500 );
-				} catch ( error ) {
-				}
-			}
-
-			if ( await popupContainer.count() > 0 ) {
-				await page.evaluate( ( selector ) => {
-					const element = document.getElementById( selector );
-					if ( element ) {
-						element.remove();
-					}
-				}, 'e-pro-free-trial-popup' );
-			}
+		if ( 0 === await popupContainer.count() ) {
+			return;
 		}
+
+		const dialogBackdrop = page.locator( '[role="presentation"]' ).last();
+		if ( await dialogBackdrop.count() > 0 ) {
+			await dialogBackdrop.click( { force: true, timeout: 2000 } ).catch( () => {} );
+			await page.waitForTimeout( 500 );
+		}
+
+		const closeButton = page.locator( 'button:has-text("Not now"), button[aria-label*="close" i]' ).first();
+		if ( await closeButton.count() > 0 ) {
+			await closeButton.click( { timeout: 2000 } ).catch( () => {} );
+			await page.waitForTimeout( 500 );
+		}
+
+		await page.evaluate( ( selector ) => {
+			const element = document.getElementById( selector );
+			if ( element ) {
+				element.remove();
+			}
+		}, 'e-pro-free-trial-popup' );
 	}
 
 	static async navigateToExportCustomizationPage( page: Page ): Promise<void> {
@@ -152,7 +144,9 @@ export class ImportExportHelpers {
 	static async verifyContentSection( page: Page, expectedText: string ): Promise<void> {
 		const contentSection = page.locator( ImportExportSelectors.summaryContentSection );
 		await expect( contentSection ).toBeVisible();
-		await expect( contentSection.locator( `text=${ expectedText }` ) ).toBeVisible();
+		const subtitleLocator = page.locator( '[data-testid="summary_section_content_subtitle"]' );
+		await expect( subtitleLocator ).toBeVisible();
+		await expect( subtitleLocator ).toContainText( expectedText );
 	}
 
 	static async verifyTemplatesSection( page: Page, expectedText: string ): Promise<void> {
