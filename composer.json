@@ -5,8 +5,15 @@
 	"license": "GNU General Public License v3.0",
 	"minimum-stability": "stable",
 	"require": {
-		"php": ">=7.4"
+		"php": ">=7.4",
+		"elementor/wp-one-package": "1.0.3"
 	},
+	"repositories": [
+		{
+			"type": "vcs",
+			"url": "git@github.com:elementor/wp-one-package.git"
+		}
+	],
 	"autoload": {
 		"classmap": [
 			"vendor_prefixed/"

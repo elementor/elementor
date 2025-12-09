@@ -4,8 +4,50 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "436bafdc6f8e14a5746e69a01025f6d9",
-    "packages": [],
+    "content-hash": "02c2abe59bf4a42e49c004bdd5b99ad0",
+    "packages": [
+        {
+            "name": "elementor/wp-one-package",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:elementor/wp-one-package.git",
+                "reference": "64ffd1424747c2fc7ca25236782895459eff5424"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/elementor/wp-one-package/zipball/64ffd1424747c2fc7ca25236782895459eff5424",
+                "reference": "64ffd1424747c2fc7ca25236782895459eff5424",
+                "shasum": ""
+            },
+            "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "^v1.0.0",
+                "squizlabs/php_codesniffer": "^3.10.2",
+                "wp-coding-standards/wpcs": "^3.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "ElementorOne\\": "src/"
+                },
+                "files": [
+                    "runner.php"
+                ]
+            },
+            "scripts": {
+                "lint": [
+                    "vendor/bin/phpcs --standard=./phpcs.xml ./src/"
+                ],
+                "lint:fix": [
+                    "vendor/bin/phpcbf ."
+                ]
+            },
+            "support": {
+                "source": "https://github.com/elementor/wp-one-package/tree/1.0.3"
+            },
+            "time": "2025-12-02T20:42:01+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "composer/package-versions-deprecated",
@@ -4472,12 +4514,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.4"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }
