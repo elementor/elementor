@@ -4,14 +4,6 @@ import homeScreenMockData from './data/home-screen.mock';
 import ApiRequests from '../../../assets/api-requests';
 import { Image } from '../../../types/types';
 
-type ElementorCommon = {
-	config?: {
-		library_connect?: {
-			current_access_tier?: string;
-		};
-	};
-};
-
 export type HomepageSettings = {
 	homepageId: number | null;
 	showOnFront: string | null;
@@ -66,7 +58,7 @@ const deepMergeMockData = ( base: JsonObject, override: JsonObject ): JsonObject
 	return result;
 };
 
-export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeof transformMockDataByLicense>, apiRequests?: ApiRequests, requestContext?: APIRequestContext ) => {
+export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeof transformMockDataByLicense>, apiRequests?: ApiRequests, requestContext?: APIRequestContext, licenseType?: LicenseType ) => {
 	let finalMockData = mockData;
 
 	if ( apiRequests && requestContext ) {
@@ -97,6 +89,10 @@ export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeo
 			headers: response.headers(),
 		} );
 	} );
+
+	if ( licenseType ) {
+		setElementorCommonTierOnWindow( page, licenseType );
+	}
 };
 
 const uploadImage = async (
@@ -129,13 +125,20 @@ const replaceImageUrl = (
 	return mockData;
 };
 
-export const setElementorCommonTier = async ( page: Page, licenseType: LicenseType ): Promise<void> => {
-	await page.evaluate( ( tier: string ) => {
-		const elementorCommon = ( window as unknown as { elementorCommon: ElementorCommon } ).elementorCommon;
-		if ( ! elementorCommon.config.library_connect ) {
-			elementorCommon.config.library_connect = {};
-		}
-		elementorCommon.config.library_connect.current_access_tier = tier;
+const setElementorCommonTierOnWindow = ( page: Page, licenseType: LicenseType ): void => {
+	page.addInitScript( ( tier: string ) => {
+		const setTier = () => {
+			const elementorCommon = ( window as { elementorCommon?: { config?: { library_connect?: { current_access_tier?: string } } } } ).elementorCommon;
+			if ( elementorCommon && elementorCommon.config ) {
+				if ( ! elementorCommon.config.library_connect ) {
+					elementorCommon.config.library_connect = {};
+				}
+				elementorCommon.config.library_connect.current_access_tier = tier;
+			} else {
+				setTimeout( setTier, 10 );
+			}
+		};
+		setTier();
 	}, licenseType );
 };
 

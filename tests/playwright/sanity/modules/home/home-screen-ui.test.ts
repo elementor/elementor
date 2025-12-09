@@ -1,15 +1,15 @@
 import { expect, request } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { wpCli } from '../../../assets/wp-cli';
-import { type LicenseType, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, setElementorCommonTier } from './home-screen.helper';
+import { type LicenseType, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen } from './home-screen.helper';
 
 test.describe( 'Home screen visual regression tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( { e_editor_one: 'inactive' } );
+		await page.waitForTimeout( 1000 );
 		await wpAdmin.enableAdvancedUploads();
 		await page.close();
 		await context.close();
@@ -21,9 +21,8 @@ test.describe( 'Home screen visual regression tests', () => {
 		test( `${ licenseType } license variant - UI renders correctly with mocked data`, async ( { page, apiRequests, storageState } ) => {
 			const requestContext = await request.newContext( { storageState } );
 			const mockData = transformMockDataByLicense( licenseType );
-			await mockHomeScreenData( page, mockData, apiRequests, requestContext );
+			await mockHomeScreenData( page, mockData, apiRequests, requestContext, licenseType );
 			const homeScreen = await navigateToHomeScreen( page );
-			await setElementorCommonTier( page, licenseType );
 			await expect.soft( homeScreen ).toHaveScreenshot( `home-screen-${ licenseType }.png` );
 			await requestContext.dispose();
 		} );
