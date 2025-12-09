@@ -5,9 +5,8 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Utils;
-use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Core\Common\Modules\Connect\AdminMenuItems\Editor_One_License_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -50,13 +49,7 @@ class Admin {
 	}
 
 	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
-		$connect_item = new Connect_Menu_Item();
-		$editor_one_connect = new Editor_One_Menu_Item( $connect_item, '', static::PAGE_ID );
-		$menu_data_provider->register_level4_item(
-			$editor_one_connect->get_slug(),
-			$editor_one_connect,
-			Menu_Config::SYSTEM_GROUP_ID
-		);
+		$menu_data_provider->register_menu( new Editor_One_License_Menu() );
 	}
 
 	private function is_editor_one_active(): bool {

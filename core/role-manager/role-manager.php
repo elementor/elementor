@@ -3,9 +3,7 @@ namespace Elementor\Core\RoleManager;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Settings_Page;
@@ -311,20 +309,7 @@ class Role_Manager extends Settings_Page {
 	}
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
-		$role_manager_menu = new Role_Manager_Menu_Item( $this );
-
-		$editor_one_menu = new Editor_One_Menu_Item(
-			$role_manager_menu,
-			'',
-			static::PAGE_ID
-		);
-
-		$menu_data_provider->register_level3_item(
-			$editor_one_menu->get_slug(),
-			$editor_one_menu,
-			Menu_Config::EDITOR_GROUP_ID,
-			'users'
-		);
+		$menu_data_provider->register_menu( new Editor_One_Role_Manager_Menu() );
 	}
 
 	private function is_editor_one_active(): bool {

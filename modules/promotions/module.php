@@ -10,6 +10,11 @@ use Elementor\Modules\Promotions\AdminMenuItems\Custom_Code_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Fonts_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Icons_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Code_Menu;
+use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Elements_Menu;
+use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Fonts_Menu;
+use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Icons_Menu;
+use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Popups_Menu;
+use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Submissions_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
@@ -19,7 +24,6 @@ use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
-use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 
@@ -133,66 +137,12 @@ class Module extends Base_Module {
 	}
 
 	private function register_editor_one_menu_items( Menu_Data_Provider $menu_data_provider ) {
-		$form_submissions_item = new Form_Submissions_Promotion_Item();
-		$editor_one_form_submissions = new Editor_One_Menu_Item(
-			$form_submissions_item,
-			'',
-			'e-form-submissions',
-		);
-
-		$menu_data_provider->register_level3_item(
-			$editor_one_form_submissions->get_slug(),
-			$editor_one_form_submissions,
-			Menu_Config::EDITOR_GROUP_ID,
-			'send'
-		);
-
-		$custom_fonts_item = new Custom_Fonts_Promotion_Item();
-
-		$editor_one_custom_fonts = new Editor_One_Menu_Item(
-			$custom_fonts_item,
-			'',
-			'elementor_custom_fonts',
-			__( 'Fonts', 'elementor' ),
-		);
-
-		$menu_data_provider->register_level4_item(
-			$editor_one_custom_fonts->get_slug(),
-			$editor_one_custom_fonts,
-			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID
-		);
-
-		$custom_icons_item = new Custom_Icons_Promotion_Item();
-		$editor_one_custom_icons = new Editor_One_Menu_Item(
-			$custom_icons_item,
-			'',
-			'elementor_custom_icons',
-			__( 'Icons', 'elementor' ),
-		);
-
-		$menu_data_provider->register_level4_item(
-			$editor_one_custom_icons->get_slug(),
-			$editor_one_custom_icons,
-			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID
-		);
-
-		$custom_code = new Editor_One_Custom_Code_Menu();
-		$menu_data_provider->register_menu( $custom_code );
-
-		$popups_item = new Popups_Promotion_Item();
-		$editor_one_popups = new Editor_One_Menu_Item(
-			$popups_item,
-			'',
-			'popup_templates',
-			__( 'Popups', 'elementor' ),
-			50
-		);
-
-		$menu_data_provider->register_level4_item(
-			$editor_one_popups->get_slug(),
-			$editor_one_popups,
-			Menu_Config::TEMPLATES_GROUP_ID
-		);
+		$menu_data_provider->register_menu( new Editor_One_Custom_Elements_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_Submissions_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_Fonts_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_Icons_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_Custom_Code_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_Popups_Menu() );
 	}
 
 	private function register_promotion_menu_item( Admin_Menu_Manager $admin_menu ) {

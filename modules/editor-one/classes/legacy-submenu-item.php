@@ -2,14 +2,13 @@
 
 namespace Elementor\Modules\EditorOne\Classes;
 
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
+use Elementor\Modules\EditorOne\Classes\Menu\Interface\Menu_Item_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Legacy_Submenu_Item implements Admin_Menu_Item, Admin_Menu_Item_Has_Position {
+class Legacy_Submenu_Item implements Menu_Item_Interface {
 
 	private $submenu_data;
 
@@ -49,5 +48,9 @@ class Legacy_Submenu_Item implements Admin_Menu_Item, Admin_Menu_Item_Has_Positi
 
 	public function get_position(): int {
 		return $this->position;
+	}
+
+	public function get_group_id(): string {
+		return $this->submenu_data[4] ?? Menu_Config::EDITOR_GROUP_ID;
 	}
 }

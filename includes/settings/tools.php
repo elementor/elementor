@@ -5,9 +5,8 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Kits\Manager;
 use Elementor\Includes\Settings\AdminMenuItems\Tools_Menu_Item;
-use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Tools_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -229,13 +228,7 @@ class Tools extends Settings_Page {
 	}
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
-		$editor_one_menu = new Editor_One_Menu_Item( new Tools_Menu_Item( $this ), '', static::PAGE_ID );
-		$menu_data_provider->register_level3_item(
-			$editor_one_menu->get_slug(),
-			$editor_one_menu,
-			Menu_Config::EDITOR_GROUP_ID,
-			'tool'
-		);
+		$menu_data_provider->register_menu( new Editor_One_Tools_Menu() );
 	}
 
 	private function is_editor_one_active(): bool {

@@ -5,9 +5,10 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\System_Info\Reporters\Base;
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
-use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\System_Info\AdminMenuItems\Editor_One_System_Info_Menu;
+use Elementor\Modules\System_Info\AdminMenuItems\Editor_One_System_Menu;
 use Elementor\Plugin;
 use Elementor\Settings;
 
@@ -176,18 +177,8 @@ class Module extends BaseModule {
 	}
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
-		$menu_item = new System_Info_Menu_Item( $this );
-		$editor_one_menu_item = new Editor_One_Menu_Item( 
-			$menu_item, 
-			'', 
-			'elementor-system-info' 
-		);
-
-		$menu_data_provider->register_level4_item(
-			$editor_one_menu_item->get_slug(),
-			$editor_one_menu_item,
-			Menu_Config::SYSTEM_GROUP_ID
-		);
+		$menu_data_provider->register_menu( new Editor_One_System_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_System_Info_Menu() );
 	}
 
 	/**

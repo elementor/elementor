@@ -18,9 +18,10 @@ use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\Core\Isolation\Elementor_Adapter_Interface;
-use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Editor_One_Saved_Templates_Menu;
+use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Editor_One_Templates_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -428,18 +429,8 @@ class Source_Local extends Source_Base {
 	}
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
-		$menu_item = new Saved_Templates_Menu_Item();
-		$editor_one_menu = new Editor_One_Menu_Item(
-			$menu_item,
-			'',
-			static::get_admin_url( true ),
-		);
-
-		$menu_data_provider->register_level4_item(
-			$editor_one_menu->get_slug(),
-			$editor_one_menu,
-			Menu_Config::TEMPLATES_GROUP_ID
-		);
+		$menu_data_provider->register_menu( new Editor_One_Templates_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_Saved_Templates_Menu() );
 	}
 
 	private function is_editor_one_active(): bool {

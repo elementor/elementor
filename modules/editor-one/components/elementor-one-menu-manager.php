@@ -8,7 +8,7 @@ use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Item;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
+use Elementor\Modules\EditorOne\Classes\Menu\Interface\Menu_Item_Interface;
 use Elementor\Plugin;
 
 use Elementor\Utils;
@@ -190,18 +190,10 @@ class Elementor_One_Menu_Manager {
 		<?php
 	}
 
-	private function register_level3_item( string $item_slug, Admin_Menu_Item $item, string $group_id = Menu_Config::EDITOR_GROUP_ID ): void {
-		$this->menu_data_provider->register_level3_item( $item_slug, $item, $group_id );
-	}
-
-	private function register_level4_item( string $item_slug, Admin_Menu_Item $item, string $group_id ): void {
-		$this->menu_data_provider->register_level4_item( $item_slug, $item, $group_id );
-	}
-
 	public function register_flyout_items_as_hidden_submenus(): void {
 		$hooks = [];
 
-		$this->iterate_all_flyout_items( function( string $item_slug, Admin_Menu_Item $item ) use ( &$hooks ) {
+		$this->iterate_all_flyout_items( function( string $item_slug, Menu_Item_Interface $item ) use ( &$hooks ) {
 			$hook = $this->register_hidden_submenu( $item_slug, $item );
 
 			if ( $hook ) {
@@ -212,18 +204,19 @@ class Elementor_One_Menu_Manager {
 		do_action( 'elementor/editor-one/menu/after_register_hidden_submenus', $hooks );
 	}
 
-	private function register_hidden_submenu( string $item_slug, Admin_Menu_Item $item ) {
+	private function register_hidden_submenu( string $item_slug, Menu_Item_Interface $item ) {
 		$original_parent = $this->get_original_parent_slug( $item );
 		$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
 		$has_page = $item instanceof Admin_Menu_Item_With_Page;
 		$page_title = $has_page ? $item->get_page_title() : '';
 		$callback = $has_page ? [ $item, 'render' ] : '';
+		$capability = $item->get_capability();
 
 		return add_submenu_page(
 			$parent_slug,
 			$page_title,
 			$item->get_label(),
-			$item->get_capability(),
+			$capability,
 			$item_slug,
 			$callback
 		);
@@ -252,10 +245,10 @@ class Elementor_One_Menu_Manager {
 	}
 
 	private function iterate_all_flyout_items( callable $callback ): void {
-		$all_items = array_merge(
-			$this->menu_data_provider->get_level3_items(),
-			$this->menu_data_provider->get_level4_items()
-		);
+		$level3_items = $this->menu_data_provider->get_level3_items();
+		$level4_items = $this->menu_data_provider->get_level4_items();
+
+		$all_items = array_merge_recursive( $level3_items, $level4_items );
 
 		foreach ( $all_items as $group_items ) {
 			foreach ( $group_items as $item_slug => $item ) {
@@ -264,10 +257,8 @@ class Elementor_One_Menu_Manager {
 		}
 	}
 
-	private function get_original_parent_slug( Admin_Menu_Item $item ): ?string {
-		return $item instanceof Editor_One_Menu_Item
-			? $item->get_original_parent_slug()
-			: $item->get_parent_slug();
+	private function get_original_parent_slug( $item ): ?string {
+		return $item->get_parent_slug();
 	}
 
 	public function hide_flyout_items_from_wp_menu(): void {
@@ -277,7 +268,7 @@ class Elementor_One_Menu_Manager {
 			'e-form-submissions',
 		];
 
-		$this->iterate_all_flyout_items( function( string $item_slug, Admin_Menu_Item $item ) use ( $protected_wp_menu_slugs ) {
+		$this->iterate_all_flyout_items( function( string $item_slug, Menu_Item_Interface $item ) use ( $protected_wp_menu_slugs ) {
 			if ( in_array( $item_slug, $protected_wp_menu_slugs, true ) ) {
 				return;
 			}
@@ -336,13 +327,11 @@ class Elementor_One_Menu_Manager {
 			}
 
 			$position = Menu_Config::get_position_mapping()[ $item_slug ] ?? 100;
+			$group_id = $has_level4_group ? $legacy_pro_mapping[ $item_slug ]['group'] : Menu_Config::EDITOR_GROUP_ID;
+			$submenu_item[4] = $group_id;
 			$legacy_item = new Legacy_Submenu_Item( $submenu_item, Menu_Config::ELEMENTOR_MENU_SLUG, $position );
 
-			if ( $has_level4_group ) {
-				$this->register_level4_item( $item_slug, $legacy_item, $legacy_pro_mapping[ $item_slug ]['group'] );
-			} else {
-				$this->register_level3_item( $item_slug, $legacy_item, Menu_Config::EDITOR_GROUP_ID );
-			}
+			$this->menu_data_provider->register_menu( $legacy_item );
 
 			unset( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ][ $index ] );
 		}
@@ -378,10 +367,10 @@ class Elementor_One_Menu_Manager {
 		}
 
 		foreach ( $items_to_intercept as $index => $submenu_item ) {
-			$item_slug = $submenu_item[2];
+			$submenu_item[4] = Menu_Config::TEMPLATES_GROUP_ID;
 			$legacy_item = new Legacy_Submenu_Item( $submenu_item, Menu_Config::LEGACY_TEMPLATES_SLUG );
 
-			$this->register_level4_item( $item_slug, $legacy_item, Menu_Config::TEMPLATES_GROUP_ID );
+			$this->menu_data_provider->register_menu( $legacy_item );
 
 			unset( $submenu[ Menu_Config::LEGACY_TEMPLATES_SLUG ][ $index ] );
 		}

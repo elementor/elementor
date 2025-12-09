@@ -2,9 +2,9 @@
 
 namespace Elementor\Modules\EditorOne\Classes;
 
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
 use Elementor\Plugin;
+use Elementor\Modules\EditorOne\Classes\Menu\Interface\Menu_Item_Interface;
+use Elementor\Modules\EditorOne\Classes\Menu\Interface\Menu_Item_Third_Level_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -30,15 +30,19 @@ class Menu_Data_Provider {
 
 	private function __construct() {}
 
-	public function register_menu( Admin_Menu_Item $item ): void {
-		if ( $item instanceof Elementor_One_Menu_Item_Third_Level ) {
-			$this->register_level3_item( $item->get_slug(), $item, Menu_Config::EDITOR_GROUP_ID, $item->get_icon() );
-		} elseif ( $item instanceof Elementor_One_Menu_Item_Fourth_Level ) {
-			$this->register_level4_item( $item->get_slug(), $item, Menu_Config::EDITOR_GROUP_ID );
+	public function register_menu( Menu_Item_Interface $item ): void {
+		if ( $item instanceof Menu_Item_Third_Level_Interface ) {
+			$this->register_level3_item( $item );
+		} else {
+			$this->register_level4_item( $item );
 		}
 	}
 
-	public function register_level3_item( string $item_slug, Admin_Menu_Item $item, string $group_id = Menu_Config::EDITOR_GROUP_ID, string $icon = '' ): void {
+	public function register_level3_item( Menu_Item_Third_Level_Interface $item ): void {
+		$group_id = $item->get_group_id();
+		$item_slug = $item->get_slug();
+		$icon = $item->get_icon();
+
 		if ( ! isset( $this->level3_items[ $group_id ] ) ) {
 			$this->level3_items[ $group_id ] = [];
 		}
@@ -47,10 +51,14 @@ class Menu_Data_Provider {
 			'item' => $item,
 			'icon' => $icon,
 		];
+
 		$this->invalidate_cache();
 	}
 
-	public function register_level4_item( string $item_slug, Admin_Menu_Item $item, string $group_id ): void {
+	public function register_level4_item( Menu_Item_Interface $item ): void {
+		$group_id = $item->get_group_id();
+		$item_slug = $item->get_slug();
+
 		if ( ! isset( $this->level4_items[ $group_id ] ) ) {
 			$this->level4_items[ $group_id ] = [];
 		}
@@ -249,7 +257,7 @@ class Menu_Data_Provider {
 					continue;
 				}
 
-				$priority = $item instanceof Admin_Menu_Item_Has_Position ? $item->get_position() : 100;
+				$priority = $item->get_position() ?? 100;
 
 				$items[] = [
 					'slug' => $item_slug,
@@ -299,7 +307,7 @@ class Menu_Data_Provider {
 					continue;
 				}
 
-				$priority = $item instanceof Admin_Menu_Item_Has_Position ? $item->get_position() : 100;
+				$priority = $item->get_position() ?? 100;
 
 				$groups[ $group_id ]['items'][] = [
 					'slug' => $item_slug,

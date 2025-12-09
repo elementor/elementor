@@ -3,9 +3,8 @@ namespace Elementor\Modules\ElementManager;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
+use Elementor\Modules\ElementManager\AdminMenuItems\Editor_One_Elements_Manager_Menu;
 use Elementor\Widget_Base;
 use Elementor\Plugin;
 
@@ -83,13 +82,7 @@ class Module extends BaseModule {
 	}
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
-		$admin_menu_item = new Admin_Menu_App();
-		$editor_one_menu = new Editor_One_Menu_Item( $admin_menu_item, '', static::PAGE_ID );
-		$menu_data_provider->register_level4_item(
-			$editor_one_menu->get_slug(),
-			$editor_one_menu,
-			Menu_Config::SYSTEM_GROUP_ID
-		);
+		$menu_data_provider->register_menu( new Editor_One_Elements_Manager_Menu() );
 	}
 
 	private function is_editor_one_active(): bool {

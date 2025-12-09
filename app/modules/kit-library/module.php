@@ -13,9 +13,8 @@ use Elementor\App\Modules\KitLibrary\Data\Kits\Controller as Kits_Controller;
 use Elementor\App\Modules\KitLibrary\Data\Taxonomies\Controller as Taxonomies_Controller;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Utils as ElementorUtils;
-use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\App\Modules\KitLibrary\AdminMenuItems\Editor_One_Website_Templates_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -52,18 +51,7 @@ class Module extends BaseModule {
 	}
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
-		$menu_item = new Kit_Library_Menu_Item();
-		$editor_one_menu = new Editor_One_Menu_Item(
-			$menu_item,
-			'',
-			Plugin::$instance->app->get_base_url() . '&source=wp_db_templates_menu#/kit-library',
-		);
-
-		$menu_data_provider->register_level4_item(
-			$editor_one_menu->get_slug(),
-			$editor_one_menu,
-			Menu_Config::TEMPLATES_GROUP_ID
-		);
+		$menu_data_provider->register_menu( new Editor_One_Website_Templates_Menu() );
 	}
 
 	private function is_editor_one_active(): bool {

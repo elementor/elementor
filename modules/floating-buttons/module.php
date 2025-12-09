@@ -18,9 +18,8 @@ use Elementor\Modules\FloatingButtons\Documents\Floating_Buttons;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils as ElementorUtils;
-use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\FloatingButtons\AdminMenuItems\Editor_One_Floating_Elements_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -76,27 +75,7 @@ class Module extends BaseModule {
 	}
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
-		$menu_args = $this->get_contact_menu_args();
-		$menu_slug = $menu_args['menu_slug'];
-		$function = $menu_args['function'];
-
-		if ( is_callable( $function ) ) {
-			$menu_item = new Floating_Buttons_Empty_View_Menu_Item( $function );
-		} else {
-			$menu_item = new Floating_Buttons_Menu_Item();
-		}
-
-		$editor_one_menu = new Editor_One_Menu_Item(
-			$menu_item,
-			'',
-
-		);
-
-		$menu_data_provider->register_level4_item(
-			$editor_one_menu->get_slug(),
-			$editor_one_menu,
-			Menu_Config::TEMPLATES_GROUP_ID
-		);
+		$menu_data_provider->register_menu( new Editor_One_Floating_Elements_Menu() );
 	}
 
 	private function is_editor_one_active(): bool {

@@ -6,13 +6,12 @@ use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Includes\Settings\AdminMenuItems\Admin_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Get_Help_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Getting_Started_Menu_Item;
-use Elementor\Includes\Settings\AdminMenuItems\Home_Menu_Item;
 use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Modules\Home\Module as Home_Module;
-use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Home_Menu;
+use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Settings_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -172,39 +171,11 @@ class Settings extends Settings_Page {
 	}
 
 	private function register_editor_one_settings_menu( Menu_Data_Provider $menu_data_provider ) {
-		$menu_item = new Admin_Menu_Item( $this );
-		$editor_one_menu_item = new Editor_One_Menu_Item(
-			$menu_item,
-			'',
-			'elementor-settings',
-			__( 'Settings', 'elementor' ),
-			20
-		);
-
-		$menu_data_provider->register_level3_item(
-			$editor_one_menu_item->get_slug(),
-			$editor_one_menu_item,
-			Menu_Config::SETTINGS_GROUP_ID,
-			'settings'
-		);
+		$menu_data_provider->register_menu( new Editor_One_Settings_Menu() );
 	}
 
 	private function register_editor_one_home_menu( Menu_Data_Provider $menu_data_provider ) {
-		$menu_item = new Home_Menu_Item( $this );
-		$editor_one_menu_item = new Editor_One_Menu_Item(
-			$menu_item,
-			'',
-			'elementor',
-			__( 'Home', 'elementor' ),
-			10
-		);
-
-		$menu_data_provider->register_level3_item(
-			$editor_one_menu_item->get_slug(),
-			$editor_one_menu_item,
-			Menu_Config::EDITOR_GROUP_ID,
-			'home'
-		);
+		$menu_data_provider->register_menu( new Editor_One_Home_Menu() );
 	}
 
 	private function is_editor_one_active(): bool {
