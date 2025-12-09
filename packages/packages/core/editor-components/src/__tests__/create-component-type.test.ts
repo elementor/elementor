@@ -1,11 +1,14 @@
 import { createMockElement } from 'test-utils';
-import type { LegacyWindow } from '@elementor/editor-canvas';
+import type {
+	BackboneModel,
+	CreateTemplatedElementTypeOptions,
+	ElementModel,
+	LegacyWindow,
+} from '@elementor/editor-canvas';
 import { jest } from '@jest/globals';
 
-import { createComponentType, TYPE } from '../create-component-type';
+import { type ContextMenuAction, createComponentType, TYPE } from '../create-component-type';
 import type { ExtendedWindow } from '../types';
-
-jest.mock( '../utils/tracking' );
 
 const MOCK_COMPONENT_ID = 123;
 
@@ -86,7 +89,7 @@ describe( 'createComponentType', () => {
 			createBackboneElementsCollection: jest.fn(),
 		} as unknown as LegacyWindow[ 'elementor' ];
 
-		( window as unknown as LegacyWindow ).elementor = mockElementorWindow;
+		( window as unknown as LegacyWindow & ExtendedWindow ).elementor = mockElementorWindow;
 
 		( window as unknown as LegacyWindow & ExtendedWindow ).elementorCommon = {
 			eventsManager: {
@@ -110,17 +113,15 @@ describe( 'createComponentType', () => {
 	} );
 
 	const createMockViewInstance = ( isAdministrator: boolean ) => {
-		(
-			window as unknown as LegacyWindow & {
-				elementor: typeof mockElementorWindow & { config?: { user?: { is_administrator?: boolean } } };
-			}
-		 ).elementor = {
+		( window as unknown as LegacyWindow & ExtendedWindow ).elementor = {
 			...mockElementorWindow,
 			config: {
 				user: {
 					is_administrator: isAdministrator,
 				},
 			},
+		} as LegacyWindow[ 'elementor' ] & {
+			config?: { user?: { is_administrator?: boolean } };
 		};
 
 		const ComponentType = createComponentType( {
@@ -128,7 +129,7 @@ describe( 'createComponentType', () => {
 			renderer: {
 				register: jest.fn(),
 				render: jest.fn( () => Promise.resolve( '<div>Component</div>' ) ),
-			} as any,
+			} as CreateTemplatedElementTypeOptions[ 'renderer' ],
 			element: {
 				twig_templates: {},
 				twig_main_template: 'main',
@@ -163,9 +164,8 @@ describe( 'createComponentType', () => {
 
 		const viewInstance = new ViewClass( {
 			model: mockModel.model,
-		} as any );
+		} as { model: BackboneModel< ElementModel > } );
 
-		// Ensure the view instance has access to the model through options
 		viewInstance.options = {
 			model: {
 				...mockModel.model,
@@ -174,8 +174,8 @@ describe( 'createComponentType', () => {
 						return mockSettings;
 					}
 					return ( mockModel.model.get as jest.Mock )( key );
-				} ) as any,
-			} as any,
+				} ) as BackboneModel< ElementModel >[ 'get' ],
+			} as BackboneModel< ElementModel >,
 		};
 
 		return viewInstance;
@@ -186,10 +186,11 @@ describe( 'createComponentType', () => {
 		const groups = viewInstance.getContextMenuGroups();
 
 		const generalGroup = groups.find( ( group ) => group.name === 'general' );
+		const actions = ( generalGroup?.actions ?? [] ) as ContextMenuAction[];
 		expect( generalGroup ).toBeDefined();
-		expect( generalGroup?.actions ).toHaveLength( 2 );
-		expect( generalGroup?.actions.some( ( action: any ) => action.name === 'edit component' ) ).toBe( true );
-		expect( generalGroup?.actions.some( ( action: any ) => action.name === 'copy' ) ).toBe( true );
+		expect( actions ).toHaveLength( 2 );
+		expect( actions.some( ( action ) => action.name === 'edit component' ) ).toBe( true );
+		expect( actions.some( ( action ) => action.name === 'copy' ) ).toBe( true );
 	} );
 
 	it( 'should not add edit component action to context menu when user is editor', () => {
@@ -197,10 +198,11 @@ describe( 'createComponentType', () => {
 		const groups = viewInstance.getContextMenuGroups();
 
 		const generalGroup = groups.find( ( group ) => group.name === 'general' );
+		const actions = ( generalGroup?.actions ?? [] ) as ContextMenuAction[];
 		expect( generalGroup ).toBeDefined();
-		expect( generalGroup?.actions ).toHaveLength( 1 );
-		expect( generalGroup?.actions.some( ( action: any ) => action.name === 'edit component' ) ).toBe( false );
-		expect( generalGroup?.actions.some( ( action: any ) => action.name === 'copy' ) ).toBe( true );
+		expect( actions ).toHaveLength( 1 );
+		expect( actions.some( ( action ) => action.name === 'edit component' ) ).toBe( false );
+		expect( actions.some( ( action ) => action.name === 'copy' ) ).toBe( true );
 	} );
 
 	it( 'should disable clipboard actions for both admin and editor users', () => {
@@ -216,18 +218,12 @@ describe( 'createComponentType', () => {
 		expect( adminClipboardGroup ).toBeDefined();
 		expect( editorClipboardGroup ).toBeDefined();
 
-		const adminPasteStyleAction = adminClipboardGroup?.actions.find(
-			( action: any ) => action.name === 'pasteStyle'
-		) as { isEnabled: () => boolean } | undefined;
-		const adminResetStyleAction = adminClipboardGroup?.actions.find(
-			( action: any ) => action.name === 'resetStyle'
-		) as { isEnabled: () => boolean } | undefined;
-		const editorPasteStyleAction = editorClipboardGroup?.actions.find(
-			( action: any ) => action.name === 'pasteStyle'
-		) as { isEnabled: () => boolean } | undefined;
-		const editorResetStyleAction = editorClipboardGroup?.actions.find(
-			( action: any ) => action.name === 'resetStyle'
-		) as { isEnabled: () => boolean } | undefined;
+		const adminActions = ( adminClipboardGroup?.actions ?? [] ) as ContextMenuAction[];
+		const editorActions = ( editorClipboardGroup?.actions ?? [] ) as ContextMenuAction[];
+		const adminPasteStyleAction = adminActions.find( ( action ) => action.name === 'pasteStyle' );
+		const adminResetStyleAction = adminActions.find( ( action ) => action.name === 'resetStyle' );
+		const editorPasteStyleAction = editorActions.find( ( action ) => action.name === 'pasteStyle' );
+		const editorResetStyleAction = editorActions.find( ( action ) => action.name === 'resetStyle' );
 
 		expect( adminPasteStyleAction?.isEnabled() ).toBe( false );
 		expect( adminResetStyleAction?.isEnabled() ).toBe( false );
@@ -236,17 +232,15 @@ describe( 'createComponentType', () => {
 	} );
 
 	it( 'should return groups without modifications when componentId is not available', () => {
-		(
-			window as unknown as LegacyWindow & {
-				elementor: typeof mockElementorWindow & { config?: { user?: { is_administrator?: boolean } } };
-			}
-		 ).elementor = {
+		( window as unknown as LegacyWindow & ExtendedWindow ).elementor = {
 			...mockElementorWindow,
 			config: {
 				user: {
 					is_administrator: true,
 				},
 			},
+		} as LegacyWindow[ 'elementor' ] & {
+			config?: { user?: { is_administrator?: boolean } };
 		};
 
 		const ComponentType = createComponentType( {
@@ -254,7 +248,7 @@ describe( 'createComponentType', () => {
 			renderer: {
 				register: jest.fn(),
 				render: jest.fn( () => Promise.resolve( '<div>Component</div>' ) ),
-			} as any,
+			} as CreateTemplatedElementTypeOptions[ 'renderer' ],
 			element: {
 				twig_templates: {},
 				twig_main_template: 'main',
@@ -281,7 +275,7 @@ describe( 'createComponentType', () => {
 
 		const viewInstance = new ViewClass( {
 			model: mockModel.model,
-		} as any );
+		} as { model: BackboneModel< ElementModel > } );
 
 		viewInstance.options = {
 			model: {
@@ -291,13 +285,14 @@ describe( 'createComponentType', () => {
 						return mockSettings;
 					}
 					return ( mockModel.model.get as jest.Mock )( key );
-				} ) as any,
-			} as any,
+				} ) as BackboneModel< ElementModel >[ 'get' ],
+			} as BackboneModel< ElementModel >,
 		};
 
-		// Override getComponentId to handle undefined componentInstance gracefully
-		const originalGetComponentId = ( viewInstance as any ).getComponentId.bind( viewInstance );
-		( viewInstance as any ).getComponentId = jest.fn( () => {
+		const originalGetComponentId = (
+			viewInstance as unknown as { getComponentId: () => number | undefined }
+		 ).getComponentId.bind( viewInstance );
+		( viewInstance as unknown as { getComponentId: () => number | undefined } ).getComponentId = jest.fn( () => {
 			try {
 				return originalGetComponentId();
 			} catch {
@@ -307,8 +302,9 @@ describe( 'createComponentType', () => {
 
 		const groups = viewInstance.getContextMenuGroups();
 		const generalGroup = groups.find( ( group ) => group.name === 'general' );
+		const actions = ( generalGroup?.actions ?? [] ) as ContextMenuAction[];
 
-		expect( generalGroup?.actions ).toHaveLength( 1 );
-		expect( generalGroup?.actions.some( ( action: any ) => action.name === 'edit component' ) ).toBe( false );
+		expect( actions ).toHaveLength( 1 );
+		expect( actions.some( ( action ) => action.name === 'edit component' ) ).toBe( false );
 	} );
 } );

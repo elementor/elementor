@@ -17,7 +17,7 @@ import { trackComponentEvent } from './utils/tracking';
 
 type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
 
-type ContextMenuAction = {
+export type ContextMenuAction = {
 	name: string;
 	icon: string;
 	title: string | ( () => string );
