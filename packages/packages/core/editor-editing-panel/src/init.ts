@@ -1,5 +1,4 @@
 import { injectIntoLogic } from '@elementor/editor';
-import { initElementsMcp } from '@elementor/editor-elements';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { blockCommand } from '@elementor/editor-v1-adapters';
 
@@ -14,8 +13,6 @@ import { isAtomicWidgetSelected } from './sync/is-atomic-widget-selected';
 export function init() {
 	registerPanel( panel );
 	blockV1Panel();
-
-	initElementsMcp();
 
 	injectIntoLogic( {
 		id: 'editing-panel-hooks',
