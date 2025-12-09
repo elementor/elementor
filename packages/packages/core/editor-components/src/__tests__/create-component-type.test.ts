@@ -143,8 +143,12 @@ describe( 'createComponentType', () => {
 			get: jest.fn( ( key: string ) => {
 				if ( key === 'component_instance' ) {
 					return {
+						$$type: 'component-instance',
 						value: {
-							component_id: MOCK_COMPONENT_ID,
+							component_id: {
+								$$type: 'number',
+								value: MOCK_COMPONENT_ID,
+							},
 						},
 					};
 				}
