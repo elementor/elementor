@@ -6,6 +6,14 @@ export const generatePrompt = () => {
 	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
 
 	buildCompositionsToolPrompt.description( `
+# **CRITICAL - REQUIRED RESOURCES (Must read before using this tool)**
+1. [${ WIDGET_SCHEMA_URI }]
+   Required to understand which widgets are available, and what are their configuration schemas.
+   Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply property values correctly.
+2. [${ STYLE_SCHEMA_URI }]
+   Required to understand the styles schema for the widgets. All widgets share the same styles schema.
+3. List of allowed custom tags for building the structure is derived from the list of widgets schema resources.
+
 # DESIGN QUALITY IMPERATIVE
 You are generating designs for real users who expect distinctive, intentional aesthetics - NOT generic AI output.
 **The Core Challenge**: Large language models naturally converge toward statistically common design patterns during generation. This creates predictable, uninspired results that users describe as "AI slop": safe color schemes, default typography hierarchies, minimal contrast, and timid spacing.
