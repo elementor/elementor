@@ -57,4 +57,3 @@ class Editor_One_Settings_Menu implements Menu_Item_Third_Level_Interface, Admin
 		Plugin::$instance->settings->display_settings_page();
 	}
 }
-

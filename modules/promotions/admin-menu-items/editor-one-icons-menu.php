@@ -31,4 +31,3 @@ class Editor_One_Icons_Menu extends Custom_Icons_Promotion_Item implements Menu_
 		return Menu_Config::CUSTOM_ELEMENTS_GROUP_ID;
 	}
 }
-

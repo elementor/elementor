@@ -433,7 +433,7 @@ class Source_Local extends Source_Base {
 	}
 
 	private function is_editor_one_active(): bool {
-		return !! Plugin::instance()->modules_manager->get_modules( 'editor-one' );
+		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	public function admin_title( $admin_title, $title ) {

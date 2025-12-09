@@ -39,4 +39,3 @@ class Editor_One_Submissions_Menu extends Form_Submissions_Promotion_Item implem
 		return false;
 	}
 }
-

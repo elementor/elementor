@@ -31,4 +31,3 @@ class Editor_One_Popups_Menu extends Popups_Promotion_Item implements Menu_Item_
 		return Menu_Config::TEMPLATES_GROUP_ID;
 	}
 }
-

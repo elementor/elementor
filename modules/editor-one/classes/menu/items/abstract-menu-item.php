@@ -39,4 +39,3 @@ abstract class Abstract_Menu_Item implements Menu_Item_Third_Level_Interface {
 
 	abstract public function get_icon(): string;
 }
-

@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 interface Menu_Item_Interface {
-	
+
 	public function get_capability();
 
 	public function get_label();

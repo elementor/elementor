@@ -31,4 +31,3 @@ class Editor_One_Fonts_Menu extends Custom_Fonts_Promotion_Item implements Menu_
 		return Menu_Config::CUSTOM_ELEMENTS_GROUP_ID;
 	}
 }
-

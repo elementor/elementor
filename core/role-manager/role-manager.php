@@ -313,7 +313,7 @@ class Role_Manager extends Settings_Page {
 	}
 
 	private function is_editor_one_active(): bool {
-		return !! Plugin::instance()->modules_manager->get_modules( 'editor-one' );
+		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	/**
