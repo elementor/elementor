@@ -37,7 +37,7 @@ export const ComponentPanelHeader = () => {
 						</IconButton>
 					</Tooltip>
 					<Stack direction="row" alignItems="center" gap={ 0.5 }>
-						<ComponentsFilledIcon fontSize="tiny" stroke="currentColor"/>
+						<ComponentsFilledIcon fontSize="tiny" stroke="currentColor" />
 						<Typography variant="caption" sx={ { fontWeight: 500 } }>
 							{ componentName }
 						</Typography>
