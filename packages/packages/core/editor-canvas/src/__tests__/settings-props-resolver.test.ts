@@ -82,8 +82,8 @@ describe( 'settings props resolver', () => {
 				link2: linkPropType(),
 			},
 			expected: {
-				link1: { href: 'https://elementor.com/blank', target: '_blank' },
-				link2: { href: 'https://elementor.com/self', target: '_self' },
+				link1: { href: 'https://elementor.com/blank', target: '_blank', tag: 'a' },
+				link2: { href: 'https://elementor.com/self', target: '_self', tag: 'a' },
 			},
 		},
 		{
