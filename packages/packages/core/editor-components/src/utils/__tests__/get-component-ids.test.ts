@@ -54,7 +54,7 @@ describe( 'getComponentIds', () => {
 					component_instance: {
 						$$type: 'component-instance',
 						value: {
-							component_id: componentId,
+							component_id: { $$type: 'number', value: componentId },
 						},
 					},
 				},
@@ -77,7 +77,7 @@ describe( 'getComponentIds', () => {
 				component_instance: {
 					$$type: 'component-instance',
 					value: {
-						component_id: componentId,
+						component_id: { $$type: 'number', value: componentId },
 					},
 				},
 			},
@@ -103,7 +103,7 @@ describe( 'getComponentIds', () => {
 					component_instance: {
 						$$type: 'component-instance',
 						value: {
-							component_id: componentId1,
+							component_id: { $$type: 'number', value: componentId1 },
 						},
 					},
 				},
@@ -114,7 +114,7 @@ describe( 'getComponentIds', () => {
 					component_instance: {
 						$$type: 'component-instance',
 						value: {
-							component_id: componentId2,
+							component_id: { $$type: 'number', value: componentId2 },
 						},
 					},
 				},
@@ -138,7 +138,7 @@ describe( 'getComponentIds', () => {
 					component_instance: {
 						$$type: 'component-instance',
 						value: {
-							component_id: componentId,
+							component_id: { $$type: 'number', value: componentId },
 						},
 					},
 				},
@@ -149,7 +149,7 @@ describe( 'getComponentIds', () => {
 					component_instance: {
 						$$type: 'component-instance',
 						value: {
-							component_id: componentId,
+							component_id: { $$type: 'number', value: componentId },
 						},
 					},
 				},
@@ -173,7 +173,7 @@ describe( 'getComponentIds', () => {
 				component_instance: {
 					$$type: 'component-instance',
 					value: {
-						component_id: childComponentId,
+						component_id: { $$type: 'number', value: childComponentId },
 					},
 				},
 			},
@@ -185,7 +185,7 @@ describe( 'getComponentIds', () => {
 				component_instance: {
 					$$type: 'component-instance',
 					value: {
-						component_id: parentComponentId,
+						component_id: { $$type: 'number', value: parentComponentId },
 					},
 				},
 			},
@@ -219,7 +219,7 @@ describe( 'getComponentIds', () => {
 				component_instance: {
 					$$type: 'component-instance',
 					value: {
-						component_id: componentId3,
+						component_id: { $$type: 'number', value: componentId3 },
 					},
 				},
 			},
@@ -231,7 +231,7 @@ describe( 'getComponentIds', () => {
 				component_instance: {
 					$$type: 'component-instance',
 					value: {
-						component_id: componentId2,
+						component_id: { $$type: 'number', value: componentId2 },
 					},
 				},
 			},
@@ -243,7 +243,7 @@ describe( 'getComponentIds', () => {
 				component_instance: {
 					$$type: 'component-instance',
 					value: {
-						component_id: componentId1,
+						component_id: { $$type: 'number', value: componentId1 },
 					},
 				},
 			},
@@ -295,7 +295,7 @@ describe( 'getComponentIds', () => {
 				component_instance: {
 					$$type: 'component-instance',
 					value: {
-						component_id: componentId,
+						component_id: { $$type: 'number', value: componentId },
 					},
 				},
 			},
@@ -322,7 +322,7 @@ describe( 'getComponentIds', () => {
 					component_instance: {
 						$$type: 'component-instance',
 						value: {
-							component_id: componentId,
+							component_id: { $$type: 'number', value: componentId },
 						},
 					},
 				},
