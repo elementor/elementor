@@ -8,6 +8,7 @@ export * from './image';
 export * from './image-attachment-id';
 export * from './image-src';
 export * from './dimensions';
+export * from './dimensions-single';
 export * from './number';
 export * from './shadow';
 export * from './size';
