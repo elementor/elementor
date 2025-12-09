@@ -13,6 +13,7 @@ class Size_Constants {
 	const UNIT_REM = 'rem';
 	const UNIT_VW = 'vw';
 	const UNIT_VH = 'vh';
+	const UNIT_CH = 'ch';
 	const UNIT_AUTO = 'auto';
 	const UNIT_CUSTOM = 'custom';
 	const UNIT_SECOND = 's';
@@ -25,6 +26,7 @@ class Size_Constants {
 		self::UNIT_REM,
 		self::UNIT_VW,
 		self::UNIT_VH,
+		self::UNIT_CH,
 	];
 
 	const TIME_UNITS = [ self::UNIT_SECOND, self::UNIT_MILLI_SECOND ];
