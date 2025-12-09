@@ -11,21 +11,6 @@ import CreateWithAIBanner from './create-with-ai-banner';
 const EditorScreen = ( props ) => {
 	const hasSidebarPromotion = props.homeScreenData.hasOwnProperty( 'sidebar_promotion_variants' );
 
-	const getCurrentTier = () => {
-		if ( props.homeScreenData?.isEditorOneActive ) {
-			return 'one';
-		}
-
-		return elementorCommon?.config?.library_connect?.current_access_tier || 'free';
-	};
-
-	const shouldShowAddons = () => {
-		const hideSectionArray = props.homeScreenData.add_ons?.hide_section || [];
-		const currentTier = getCurrentTier();
-
-		return ! hideSectionArray.includes( currentTier );
-	};
-
 	return (
 		/*  Box wrapper around the Container is needed to neutralize wp-content area left-padding */
 		<Box sx={ { pr: 1 } }>
@@ -39,7 +24,7 @@ const EditorScreen = ( props ) => {
 							getStartedData={ props.homeScreenData.get_started }
 							adminUrl={ props.adminUrl }
 						/>
-						{ shouldShowAddons() && (
+						{ props.homeScreenData.add_ons && (
 							<Addons
 								addonsData={ props.homeScreenData.add_ons }
 								adminUrl={ props.adminUrl }

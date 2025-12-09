@@ -1,7 +1,7 @@
 import { expect, request } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { type LicenseType, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, restoreElementorCommonTier } from './home-screen.helper';
+import { type LicenseType, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen } from './home-screen.helper';
 import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Home screen visual regression tests', () => {
@@ -21,14 +21,10 @@ test.describe( 'Home screen visual regression tests', () => {
 		test( `${ licenseType } license variant - UI renders correctly with mocked data`, async ( { page, apiRequests, storageState } ) => {
 			const requestContext = await request.newContext( { storageState } );
 			const mockData = transformMockDataByLicense( licenseType );
-			await mockHomeScreenData( page, mockData, apiRequests, requestContext, licenseType );
+			await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 			const homeScreen = await navigateToHomeScreen( page );
 			await expect.soft( homeScreen ).toHaveScreenshot( `home-screen-${ licenseType }.png` );
 			await requestContext.dispose();
 		} );
 	}
-
-	test.afterEach( async ( { page } ) => {
-		await restoreElementorCommonTier( page );
-	} );
 } );

@@ -23,12 +23,18 @@ export const transformMockDataByLicense = ( licenseType: LicenseType ) => {
 	const sidebarPromotionItem = homeScreenMockData.sidebar_promotion_variants.find(
 		( item ) => 'true' === item.is_enabled && item.license.includes( licenseType ),
 	);
+	const sidebarUpgradeItem = homeScreenMockData.sidebar_upgrade.find(
+		( item ) => item.license.includes( licenseType ),
+	);
+
+	const hideSection = homeScreenMockData.add_ons?.hide_section || [];
+	const addOns = hideSection.includes( licenseType ) ? null : homeScreenMockData.add_ons;
 
 	return {
 		top_with_licences: topItem,
 		get_started: getStartedItem,
-		add_ons: homeScreenMockData.add_ons,
-		sidebar_upgrade: homeScreenMockData.sidebar_upgrade,
+		add_ons: addOns,
+		sidebar_upgrade: sidebarUpgradeItem || null,
 		sidebar_promotion_variants: sidebarPromotionItem || null,
 		external_links: homeScreenMockData.external_links,
 	};
@@ -63,9 +69,7 @@ const deepMergeMockData = ( base: JsonObject, override: JsonObject ): JsonObject
 	return result;
 };
 
-const LICENSE_TYPE_STORAGE_KEY = '__elementor_test_license_type__';
-
-export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeof transformMockDataByLicense>, apiRequests?: ApiRequests, requestContext?: APIRequestContext, licenseType?: LicenseType ) => {
+export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeof transformMockDataByLicense>, apiRequests?: ApiRequests, requestContext?: APIRequestContext ) => {
 	let finalMockData = mockData;
 
 	if ( apiRequests && requestContext ) {
@@ -96,12 +100,6 @@ export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeo
 			headers: response.headers(),
 		} );
 	} );
-
-	if ( licenseType ) {
-		await page.evaluate( ( key, tier ) => {
-			( window as { [key: string]: string } )[ key ] = tier;
-		}, LICENSE_TYPE_STORAGE_KEY, licenseType );
-	}
 };
 
 const uploadImage = async (
@@ -135,45 +133,8 @@ const replaceImageUrl = (
 };
 
 export const navigateToHomeScreen = async ( page: Page ) => {
-	const licenseType = await page.evaluate( ( key ) => {
-		return ( window as { [key: string]: string } )[ key ] || null;
-	}, LICENSE_TYPE_STORAGE_KEY ).catch( () => null );
-
 	await page.goto( 'wp-admin/admin.php?page=elementor' );
-	
-	if ( licenseType ) {
-		await page.evaluate( ( tier: string ) => {
-			const setTier = () => {
-				const elementorCommon = ( window as { elementorCommon?: { config?: { library_connect?: { current_access_tier?: string } } } } ).elementorCommon;
-				if ( elementorCommon && elementorCommon.config ) {
-					if ( ! elementorCommon.config.library_connect ) {
-						elementorCommon.config.library_connect = {};
-					}
-					elementorCommon.config.library_connect.current_access_tier = tier;
-				} else {
-					setTimeout( setTier, 10 );
-				}
-			};
-			setTier();
-		}, licenseType );
-
-		await page.waitForFunction( ( expectedTier: string ) => {
-			const elementorCommon = ( window as { elementorCommon?: { config?: { library_connect?: { current_access_tier?: string } } } } ).elementorCommon;
-			return elementorCommon?.config?.library_connect?.current_access_tier === expectedTier;
-		}, licenseType, { timeout: 5000 } ).catch( () => {} );
-	}
-
 	return page.locator( '#e-home-screen' );
-};
-
-export const restoreElementorCommonTier = async ( page: Page ): Promise<void> => {
-	await page.evaluate( ( key ) => {
-		delete ( window as { [key: string]: unknown } )[ key ];
-		const elementorCommon = ( window as { elementorCommon?: { config?: { library_connect?: { current_access_tier?: string } } } } ).elementorCommon;
-		if ( elementorCommon && elementorCommon.config && elementorCommon.config.library_connect ) {
-			delete elementorCommon.config.library_connect.current_access_tier;
-		}
-	}, LICENSE_TYPE_STORAGE_KEY ).catch( () => {} );
 };
 
 export const saveHomepageSettings = async ( apiRequests: ApiRequests, requestContext: APIRequestContext ): Promise<HomepageSettings> => {

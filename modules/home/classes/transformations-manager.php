@@ -21,6 +21,7 @@ class Transformations_Manager {
 		'Filter_Condition_Introduction_Meta',
 		'Create_Site_Settings_Url',
 		'Filter_Top_Section_By_License',
+		'Filter_Add_Ons_By_License',
 	];
 
 	protected array $home_screen_data;
