@@ -3,7 +3,7 @@ import * as path from 'path';
 import { ImportExportSelectors } from '../selectors/import-export-selectors';
 
 export class ImportExportHelpers {
-	private static async closeAnnouncementsIfVisible( page: Page ): Promise<void> {
+	static async closeAnnouncementsIfVisible( page: Page ): Promise<void> {
 		const popupContainer = page.locator( '#e-pro-free-trial-popup' );
 
 		if ( await popupContainer.count() > 0 ) {
@@ -150,41 +150,35 @@ export class ImportExportHelpers {
 	}
 
 	static async verifyContentSection( page: Page, expectedText: string ): Promise<void> {
-		await this.closeAnnouncementsIfVisible( page );
 		const contentSection = page.locator( ImportExportSelectors.summaryContentSection );
 		await expect( contentSection ).toBeVisible();
 		await expect( contentSection.locator( `text=${ expectedText }` ) ).toBeVisible();
 	}
 
 	static async verifyTemplatesSection( page: Page, expectedText: string ): Promise<void> {
-		await this.closeAnnouncementsIfVisible( page );
 		const templatesSection = page.locator( ImportExportSelectors.summaryTemplatesSection );
 		await expect( templatesSection ).toBeVisible();
 		await expect( templatesSection.locator( `text=${ expectedText }` ) ).toBeVisible();
 	}
 
 	static async verifySettingsSection( page: Page, expectedText: string ): Promise<void> {
-		await this.closeAnnouncementsIfVisible( page );
 		const settingsSection = page.locator( ImportExportSelectors.summarySettingsSection );
 		await expect( settingsSection ).toBeVisible();
 		await expect( settingsSection.locator( `text=${ expectedText }` ) ).toBeVisible();
 	}
 
 	static async verifyPluginsSection( page: Page, expectedText: string ): Promise<void> {
-		await this.closeAnnouncementsIfVisible( page );
 		const pluginsSection = page.locator( ImportExportSelectors.summaryPluginsSection );
 		await expect( pluginsSection ).toBeVisible();
 		await expect( pluginsSection.locator( `text=${ expectedText }` ) ).toBeVisible();
 	}
 
 	static async verifyNotInContentSection( page: Page, notExpectedText: string ): Promise<void> {
-		await this.closeAnnouncementsIfVisible( page );
 		const contentSection = page.locator( ImportExportSelectors.summaryContentSection );
 		await expect( contentSection.locator( `text=${ notExpectedText }` ) ).not.toBeVisible();
 	}
 
 	static async verifyNotInSettingsSection( page: Page, notExpectedText: string ): Promise<void> {
-		await this.closeAnnouncementsIfVisible( page );
 		const settingsSection = page.locator( ImportExportSelectors.summarySettingsSection );
 		await expect( settingsSection.locator( `text=${ notExpectedText }` ) ).not.toBeVisible();
 	}
