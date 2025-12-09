@@ -8,8 +8,8 @@ import { ColorIndicator } from './components/ui/color-indicator';
 import { colorVariablePropTypeUtil } from './prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from './prop-types/font-variable-prop-type';
 import { sizeVariablePropTypeUtil } from './prop-types/size-variable-prop-type';
-import { registerVariableType } from './variables-registry/variable-type-registry';
 import { LicenseInfo } from './sync/license-info';
+import { registerVariableType } from './variables-registry/variable-type-registry';
 
 export function registerVariableTypes() {
 	registerVariableType( {

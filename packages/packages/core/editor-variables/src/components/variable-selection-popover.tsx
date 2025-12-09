@@ -4,8 +4,9 @@ import type { PropTypeKey } from '@elementor/editor-props';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 import { PopoverContentRefContextProvider } from '../context/variable-selection-popover.context';
-import { useVariableType, VariableTypeProvider } from '../context/variable-type-context';
+import { VariableTypeProvider } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
+import { LicenseInfo } from '../sync/license-info';
 import { type Variable } from '../types';
 import { VariableCreation } from './variable-creation';
 import { VariableEdit } from './variable-edit';
@@ -73,7 +74,6 @@ type Handlers = {
 
 const RenderView: React.FC< ViewProps > = ( props ) => {
 	const userPermissions = usePermissions();
-	const { isUpgradeRequired } = useVariableType();
 
 	const handlers: Handlers = {
 		onClose: () => {
@@ -86,13 +86,13 @@ const RenderView: React.FC< ViewProps > = ( props ) => {
 
 	if ( userPermissions.canAdd() ) {
 		handlers.onAdd = () => {
-			if ( ! isUpgradeRequired ) {
+			if ( ! LicenseInfo.hasPro ) {
 				props.setCurrentView( VIEW_ADD );
 			}
 		};
 	}
 
-	if ( userPermissions.canEdit() && ! isUpgradeRequired ) {
+	if ( userPermissions.canEdit() && ! LicenseInfo.hasPro ) {
 		handlers.onEdit = ( key: string ) => {
 			props.setEditId( key );
 			props.setCurrentView( VIEW_EDIT );
@@ -126,7 +126,7 @@ const RenderView: React.FC< ViewProps > = ( props ) => {
 	}
 
 	if ( VIEW_ADD === props.currentView ) {
-		if ( isUpgradeRequired ) {
+		if ( LicenseInfo.hasPro ) {
 			props.setCurrentView( VIEW_LIST );
 			return null;
 		}
