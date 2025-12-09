@@ -132,7 +132,9 @@ const replaceImageUrl = (
 
 const setElementorCommonTierOnWindow = ( page: Page, licenseType: LicenseType ): void => {
 	page.addInitScript( ( tier: string ) => {
-		if ( ! window.location.href.includes( 'wp-admin/admin.php?page=elementor' ) ) {
+		const url = window.location.href;
+		const homeScreenUrlPattern = /wp-admin\/admin\.php\?page=elementor([&#]|$)/;
+		if ( ! homeScreenUrlPattern.test( url ) ) {
 			return;
 		}
 
