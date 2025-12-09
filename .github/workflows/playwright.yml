@@ -68,6 +68,7 @@ jobs:
           - shardIndex: "elements-regression"
           - shardIndex: "plugin_tester_section"
           - shardIndex: "plugin_tester_container"
+          - shardIndex: "home-screen"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -123,10 +124,11 @@ jobs:
           matrix.shardIndex != 'elements-regression' &&
           matrix.shardIndex != 'plugin_tester_container' &&
           matrix.shardIndex != 'plugin_tester_section' &&
-          matrix.shardIndex != 'v4-tests'
+          matrix.shardIndex != 'v4-tests' &&
+          matrix.shardIndex != 'home-screen'
           }}
         run: |
-          npm run test:playwright -- --grep-invert="@v4-tests|@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          npm run test:playwright -- --grep-invert="@v4-tests|@plugin_tester_container|@plugin_tester_section|Home screen" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run v4 tests
         if: ${{ matrix.shardIndex == 'v4-tests' }}
         run: npm run test:playwright -- --grep="@v4-tests"
@@ -136,6 +138,9 @@ jobs:
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
         run: npm run test:playwright -- --grep="@plugin_tester_section"
+      - name: Run Home screen tests
+        if: ${{ matrix.shardIndex == 'home-screen' }}
+        run: npm run test:playwright -- --grep="Home screen"
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
         run: npm run test:playwright:elements-regression
