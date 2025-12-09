@@ -1,14 +1,15 @@
 import { expect, request } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import { wpCli } from '../../../assets/wp-cli';
 import { type LicenseType, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen } from './home-screen.helper';
 
 test.describe( 'Home screen visual regression tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_editor_one: 'inactive' } );
 		await wpAdmin.enableAdvancedUploads();
 		await page.close();
 		await context.close();
