@@ -33,6 +33,9 @@ export const InlineEditingControl = createControl( () => {
 					'& .ProseMirror': {
 						minHeight: '70px',
 						fontSize: '12px',
+						'& a': {
+							color: 'inherit',
+						},
 					},
 				} }
 			>

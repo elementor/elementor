@@ -70,6 +70,7 @@
     "@tiptap/extension-superscript": "^3.11.1",
     "@tiptap/extension-text": "^3.11.1",
     "@tiptap/extension-underline": "^3.11.1",
+    "@tiptap/extension-link": "^3.11.1",
     "@tiptap/pm": "^3.11.1",
     "@tiptap/react": "^3.11.1",
     "@tiptap/starter-kit": "^3.11.1"

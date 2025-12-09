@@ -1,8 +1,15 @@
 import { getContainer, getElementType, type V1Element } from '@elementor/editor-elements';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 const WIDGET_PROPERTY_MAP: Record< string, string > = {
 	'e-heading': 'title',
 	'e-paragraph': 'paragraph',
+};
+
+const EXPERIMENT_KEY = 'v4-inline-text-editing';
+
+export const shouldRenderInlineEditingView = ( elementType: string ) => {
+	return elementType in WIDGET_PROPERTY_MAP && isExperimentActive( EXPERIMENT_KEY );
 };
 
 export const getWidgetType = ( container: V1Element | null ) => {

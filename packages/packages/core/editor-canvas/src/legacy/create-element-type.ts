@@ -85,7 +85,7 @@ export function createElementViewClassDeclaration(): typeof ElementView {
 					detail: {
 						id: this.model.get( 'id' ),
 						type: this.model.get( 'widgetType' ),
-						element: this.getDomElement().get( 0 ),
+						element: this.getDomElement()?.get( 0 ) ?? this.el,
 					},
 				} )
 			);

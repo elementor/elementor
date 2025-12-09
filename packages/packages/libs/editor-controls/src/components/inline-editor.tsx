@@ -6,13 +6,14 @@ import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import Heading from '@tiptap/extension-heading';
 import Italic from '@tiptap/extension-italic';
+import Link from '@tiptap/extension-link';
 import Paragraph from '@tiptap/extension-paragraph';
 import Strike from '@tiptap/extension-strike';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
 import Text from '@tiptap/extension-text';
 import Underline from '@tiptap/extension-underline';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { type AnyExtension, EditorContent, useEditor } from '@tiptap/react';
 
 import { InlineEditorToolbar } from './inline-editor-toolbar';
 
@@ -58,6 +59,9 @@ const extensions = [
 	} ).configure( {
 		levels: [ 1, 2, 3, 4, 5, 6 ],
 	} ),
+	Link.configure( {
+		openOnClick: false,
+	} ),
 	Text,
 	Bold,
 	Italic,
@@ -72,7 +76,7 @@ const extensions = [
 			};
 		},
 	} ),
-];
+] as AnyExtension[];
 
 export const InlineEditor = React.forwardRef(
 	(
