@@ -4,8 +4,8 @@ import { ImportExportSelectors } from '../selectors/import-export-selectors';
 
 export class ImportExportHelpers {
 	private static async closeAnnouncementsIfVisible( page: Page ): Promise<void> {
-		if ( await page.locator( '#e-announcements-root' ).count() > 0 ) {
-			await page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
+		if ( await page.locator( '#e-pro-free-trial-popup' ).count() > 0 ) {
+			await page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-pro-free-trial-popup' );
 		}
 	}
 
