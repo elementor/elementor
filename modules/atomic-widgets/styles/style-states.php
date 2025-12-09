@@ -35,7 +35,7 @@ class Style_States {
 		return self::get_alternative_states_map()[ $state ] ?? [];
 	}
 
-	public static function get_state_selector( string $state ): string {	
+	public static function get_state_selector( string $state ): string {
 		if ( self::is_class_state( $state ) ) {
 			return '.' . $state;
 		}

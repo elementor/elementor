@@ -65,7 +65,9 @@ export const normalizeInheritanceItem = async (
 		style: { label, id },
 	} = item;
 
-	const displayLabel = `${ label }${ getStateSelector( state ) ?? '' }`;
+	const stateSelector = state && getStateSelector( state );
+
+	const displayLabel = `${ label }${ stateSelector ?? '' }`;
 
 	return {
 		id: id ? id + ( state ?? '' ) : index,
