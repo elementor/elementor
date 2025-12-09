@@ -13,7 +13,6 @@ const App = ( props ) => {
 					<ScreenComponent
 						homeScreenData={ props.homeScreenData }
 						adminUrl={ props.adminUrl }
-						isEditorOneActive={ isEditorOneActive }
 					/>
 				</ThemeProvider>
 			</LocalizationProvider>
@@ -37,6 +36,6 @@ ReactUtils.render( (
 		isRTL={ isRTL }
 		homeScreenData={ elementorHomeScreenData }
 		adminUrl={ adminUrl }
-		isEditorOneActive={ Boolean( elementorHomeScreenData?.isEditorOneActive ) || false }
+		isEditorOneActive={ Boolean( elementorHomeScreenData?.isEditorOneActive ) }
 	/>
 ), rootElement );

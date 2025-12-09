@@ -12,7 +12,7 @@ const EditorScreen = ( props ) => {
 	const hasSidebarPromotion = props.homeScreenData.hasOwnProperty( 'sidebar_promotion_variants' );
 
 	const getCurrentTier = () => {
-		if ( props.isEditorOneActive ) {
+		if ( Boolean( props.homeScreenData?.isEditorOneActive ) ) {
 			return 'one';
 		}
 
@@ -61,7 +61,6 @@ const EditorScreen = ( props ) => {
 EditorScreen.propTypes = {
 	homeScreenData: PropTypes.object,
 	adminUrl: PropTypes.string,
-	isEditorOneActive: PropTypes.bool,
 };
 
 export default EditorScreen;
