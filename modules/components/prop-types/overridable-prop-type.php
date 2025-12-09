@@ -9,12 +9,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Component_Overridable_Prop_Type extends Plain_Prop_Type {
+class Overridable_Prop_Type extends Plain_Prop_Type {
 	const META_KEY = 'overridable';
 
 	/**
 	 * Return a tuple that lets the developer ignore the component overridable prop type in the props schema
-	 * using `Prop_Type::meta()`, e.g. `String_Prop_Type::make()->meta( Component_Overridable_Prop_Type::ignore() )`.
+	 * using `Prop_Type::meta()`, e.g. `String_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() )`.
 	 */
 	public static function ignore(): array {
 		return [ static::META_KEY, false ];
@@ -29,12 +29,18 @@ class Component_Overridable_Prop_Type extends Plain_Prop_Type {
 			return false;
 		}
 
-		$is_valid_structure = (
-			isset( $value['override_key'] ) &&
-			is_string( $value['override_key'] ) &&
-			isset( $value['origin_value'] ) &&
-			is_array( $value['origin_value'] )
-		);
+		$required_fields = [
+			'override_key' => 'is_string',
+			'origin_value' => 'is_array',
+		];
+
+		$is_valid_structure = true;
+		foreach ( $required_fields as $field => $validator ) {
+			if ( ! array_key_exists( $field, $value ) || ! call_user_func( $validator, $value[ $field ] ) ) {
+				$is_valid_structure = false;
+				break;
+			}
+		}
 
 		$origin_prop_type = $this->get_origin_prop_type();
 
@@ -56,7 +62,7 @@ class Component_Overridable_Prop_Type extends Plain_Prop_Type {
 			return null;
 		}
 
-		$sanitized_override_key = sanitize_text_field( $override_key );
+		$sanitized_override_key = sanitize_key( $override_key );
 		$sanitized_origin_value = $origin_prop_type->sanitize( $origin_value );
 
 		return [
