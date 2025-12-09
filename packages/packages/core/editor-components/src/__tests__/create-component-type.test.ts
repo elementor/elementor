@@ -1,8 +1,9 @@
-import { jest } from '@jest/globals';
 import { createMockElement } from 'test-utils';
 import type { LegacyWindow } from '@elementor/editor-canvas';
+import { jest } from '@jest/globals';
 
 import { createComponentType, TYPE } from '../create-component-type';
+import type { ExtendedWindow } from '../types';
 
 jest.mock( '../utils/tracking' );
 
@@ -20,20 +21,44 @@ describe( 'createComponentType', () => {
 					{
 						name: 'general',
 						actions: [
-							{ name: 'copy', icon: 'eicon-copy', title: 'Copy', isEnabled: () => true, callback: jest.fn() },
+							{
+								name: 'copy',
+								icon: 'eicon-copy',
+								title: 'Copy',
+								isEnabled: () => true,
+								callback: jest.fn(),
+							},
 						],
 					},
 					{
 						name: 'clipboard',
 						actions: [
-							{ name: 'pasteStyle', icon: 'eicon-paste', title: 'Paste Style', isEnabled: () => true, callback: jest.fn() },
-							{ name: 'resetStyle', icon: 'eicon-reset', title: 'Reset Style', isEnabled: () => true, callback: jest.fn() },
+							{
+								name: 'pasteStyle',
+								icon: 'eicon-paste',
+								title: 'Paste Style',
+								isEnabled: () => true,
+								callback: jest.fn(),
+							},
+							{
+								name: 'resetStyle',
+								icon: 'eicon-reset',
+								title: 'Reset Style',
+								isEnabled: () => true,
+								callback: jest.fn(),
+							},
 						],
 					},
 					{
 						name: 'save',
 						actions: [
-							{ name: 'save', icon: 'eicon-save', title: 'Save', isEnabled: () => true, callback: jest.fn() },
+							{
+								name: 'save',
+								icon: 'eicon-save',
+								title: 'Save',
+								isEnabled: () => true,
+								callback: jest.fn(),
+							},
 						],
 					},
 				];
@@ -62,6 +87,22 @@ describe( 'createComponentType', () => {
 		} as unknown as LegacyWindow[ 'elementor' ];
 
 		( window as unknown as LegacyWindow ).elementor = mockElementorWindow;
+
+		( window as unknown as LegacyWindow & ExtendedWindow ).elementorCommon = {
+			eventsManager: {
+				config: {
+					triggers: {
+						doubleClick: 'doubleClick',
+					},
+					locations: {
+						canvas: 'canvas',
+					},
+					secondaryLocations: {
+						canvasElement: 'canvasElement',
+					},
+				},
+			},
+		};
 	} );
 
 	afterEach( () => {
@@ -69,7 +110,11 @@ describe( 'createComponentType', () => {
 	} );
 
 	const createMockViewInstance = ( isAdministrator: boolean ) => {
-		( window as unknown as LegacyWindow & { elementor: typeof mockElementorWindow & { config?: { user?: { is_administrator?: boolean } } } } ).elementor = {
+		(
+			window as unknown as LegacyWindow & {
+				elementor: typeof mockElementorWindow & { config?: { user?: { is_administrator?: boolean } } };
+			}
+		 ).elementor = {
 			...mockElementorWindow,
 			config: {
 				user: {
@@ -119,7 +164,7 @@ describe( 'createComponentType', () => {
 		const viewInstance = new ViewClass( {
 			model: mockModel.model,
 		} as any );
-		
+
 		// Ensure the view instance has access to the model through options
 		viewInstance.options = {
 			model: {
@@ -171,10 +216,18 @@ describe( 'createComponentType', () => {
 		expect( adminClipboardGroup ).toBeDefined();
 		expect( editorClipboardGroup ).toBeDefined();
 
-		const adminPasteStyleAction = adminClipboardGroup?.actions.find( ( action: any ) => action.name === 'pasteStyle' ) as { isEnabled: () => boolean } | undefined;
-		const adminResetStyleAction = adminClipboardGroup?.actions.find( ( action: any ) => action.name === 'resetStyle' ) as { isEnabled: () => boolean } | undefined;
-		const editorPasteStyleAction = editorClipboardGroup?.actions.find( ( action: any ) => action.name === 'pasteStyle' ) as { isEnabled: () => boolean } | undefined;
-		const editorResetStyleAction = editorClipboardGroup?.actions.find( ( action: any ) => action.name === 'resetStyle' ) as { isEnabled: () => boolean } | undefined;
+		const adminPasteStyleAction = adminClipboardGroup?.actions.find(
+			( action: any ) => action.name === 'pasteStyle'
+		) as { isEnabled: () => boolean } | undefined;
+		const adminResetStyleAction = adminClipboardGroup?.actions.find(
+			( action: any ) => action.name === 'resetStyle'
+		) as { isEnabled: () => boolean } | undefined;
+		const editorPasteStyleAction = editorClipboardGroup?.actions.find(
+			( action: any ) => action.name === 'pasteStyle'
+		) as { isEnabled: () => boolean } | undefined;
+		const editorResetStyleAction = editorClipboardGroup?.actions.find(
+			( action: any ) => action.name === 'resetStyle'
+		) as { isEnabled: () => boolean } | undefined;
 
 		expect( adminPasteStyleAction?.isEnabled() ).toBe( false );
 		expect( adminResetStyleAction?.isEnabled() ).toBe( false );
@@ -183,7 +236,11 @@ describe( 'createComponentType', () => {
 	} );
 
 	it( 'should return groups without modifications when componentId is not available', () => {
-		( window as unknown as LegacyWindow & { elementor: typeof mockElementorWindow & { config?: { user?: { is_administrator?: boolean } } } } ).elementor = {
+		(
+			window as unknown as LegacyWindow & {
+				elementor: typeof mockElementorWindow & { config?: { user?: { is_administrator?: boolean } } };
+			}
+		 ).elementor = {
 			...mockElementorWindow,
 			config: {
 				user: {
@@ -225,7 +282,7 @@ describe( 'createComponentType', () => {
 		const viewInstance = new ViewClass( {
 			model: mockModel.model,
 		} as any );
-		
+
 		viewInstance.options = {
 			model: {
 				...mockModel.model,
