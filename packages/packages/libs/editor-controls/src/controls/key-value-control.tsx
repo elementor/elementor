@@ -26,15 +26,15 @@ type KeyValueControlProps = {
 	getHelperText?: ( key: string, value: string ) => { keyHelper?: string; valueHelper?: string };
 };
 
-const getInitialFieldValue = ( fieldValue: unknown ): string => {
-	const transformableValue = fieldValue as { $$type?: string; value?: string };
+// const getInitialFieldValue = ( fieldValue: unknown ): string => {
+// 	const transformableValue = fieldValue as { $$type?: string; value?: string };
 
-	if ( ! fieldValue || typeof fieldValue !== 'object' || transformableValue.$$type === 'dynamic' ) {
-		return '';
-	}
+// 	if ( ! fieldValue || typeof fieldValue !== 'object' || transformableValue.$$type === 'dynamic' ) {
+// 		return '';
+// 	}
 
-	return transformableValue.value || '';
-};
+// 	return transformableValue.value || '';
+// };
 
 export const KeyValueControl = createControl( ( props: KeyValueControlProps = {} ) => {
 	const { value, setValue, ...propContext } = useBoundProp( keyValuePropTypeUtil );
@@ -42,8 +42,8 @@ export const KeyValueControl = createControl( ( props: KeyValueControlProps = {}
 	const [ valueError, setValueError ] = useState< string >( '' );
 
 	const [ sessionState, setSessionState ] = useState( {
-		key: getInitialFieldValue( value?.key ),
-		value: getInitialFieldValue( value?.value ),
+		key: value?.key?.value || '',
+		value: value?.value?.value || '',
 	} );
 
 	const keyLabel = props.keyName || __( 'Key', 'elementor' );
