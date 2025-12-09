@@ -12,6 +12,7 @@ use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Modules\Home\Module as Home_Module;
 use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -105,10 +106,7 @@ class Settings extends Settings_Page {
 
 		if ( $this->home_module->is_experiment_active() ) {
 			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-				if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
-					$this->register_editor_one_settings_menu( $admin_menu );
-					$this->register_editor_one_home_menu( $admin_menu );
-				} else {
+				if ( ! $this->is_editor_one_active() ) {
 					$admin_menu->register( 'elementor-settings', new Admin_Menu_Item( $this ) );
 				}
 			}, 0 );
@@ -167,13 +165,13 @@ class Settings extends Settings_Page {
 	 * @access private
 	 */
 	private function register_knowledge_base_menu( Admin_Menu_Manager $admin_menu ) {
-		if ( ! Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
+		if ( ! !! Plugin::instance()->modules_manager->get_modules( 'editor-one' ) ) {
 			$admin_menu->register( 'elementor-getting-started', new Getting_Started_Menu_Item() );
 			$admin_menu->register( 'go_knowledge_base_site', new Get_Help_Menu_Item() );
 		}
 	}
 
-	private function register_editor_one_settings_menu( Admin_Menu_Manager $admin_menu ) {
+	private function register_editor_one_settings_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_item = new Admin_Menu_Item( $this );
 		$editor_one_menu_item = new Editor_One_Menu_Item(
 			$menu_item,
@@ -183,14 +181,15 @@ class Settings extends Settings_Page {
 			20
 		);
 
-		$admin_menu->register_editor_one_menu_level_3(
+		$menu_data_provider->register_level3_item(
+			$editor_one_menu_item->get_slug(),
 			$editor_one_menu_item,
 			Menu_Config::SETTINGS_GROUP_ID,
 			'settings'
 		);
 	}
 
-	private function register_editor_one_home_menu( Admin_Menu_Manager $admin_menu ) {
+	private function register_editor_one_home_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_item = new Home_Menu_Item( $this );
 		$editor_one_menu_item = new Editor_One_Menu_Item(
 			$menu_item,
@@ -200,11 +199,16 @@ class Settings extends Settings_Page {
 			10
 		);
 
-		$admin_menu->register_editor_one_menu_level_3(
+		$menu_data_provider->register_level3_item(
+			$editor_one_menu_item->get_slug(),
 			$editor_one_menu_item,
 			Menu_Config::EDITOR_GROUP_ID,
 			'home'
 		);
+	}
+
+	private function is_editor_one_active(): bool {
+		return !! Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	/**
@@ -599,11 +603,18 @@ class Settings extends Settings_Page {
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			if ( $this->home_module->is_experiment_active() ) {
+				$this->register_editor_one_settings_menu( $menu_data_provider );
+				$this->register_editor_one_home_menu( $menu_data_provider );
+			}
+		} );
+
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_knowledge_base_menu( $admin_menu );
 		}, Promotions_Module::ADMIN_MENU_PRIORITY - 1 );
 
-		add_action( 'elementor/admin_menu/excluded_level4_slugs', function ( array $excluded_slugs ): array {
+		add_action( 'elementor/editor-one/menu/excluded_level4_slugs', function ( array $excluded_slugs ): array {
 			$excluded_slugs[] = 'elementor-getting-started';
 			$excluded_slugs[] = 'elementor-connect-account';
 			$excluded_slugs[] = 'edit.php?post_type=elementor_library#add_new';

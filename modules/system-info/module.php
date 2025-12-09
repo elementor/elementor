@@ -7,6 +7,7 @@ use Elementor\Modules\System_Info\Reporters\Base;
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
 use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
 use Elementor\Settings;
 
@@ -121,20 +122,22 @@ class Module extends BaseModule {
 	 */
 	private function add_actions() {
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu_manager ) {
-			if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
-				$this->register_editor_one_menu( $admin_menu_manager );
-			} else {
+			if ( ! $this->is_editor_one_active() ) {
 				$this->register_menu( $admin_menu_manager );
 			}
 		}, Settings::ADMIN_MENU_PRIORITY + 30 );
 
-		add_filter( 'elementor/admin_menu/editor_flyout_items', [ $this, 'add_system_flyout_item' ], 80 );
-		add_filter( 'elementor/admin_menu/items_to_hide_from_wp_menu', [ $this, 'add_items_to_hide' ] );
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu( $menu_data_provider );
+		} );
+
+		add_filter( 'elementor/editor-one/editor_flyout_items', [ $this, 'add_system_flyout_item' ], 80 );
+		add_filter( 'elementor/editor-one/menu/items_to_hide_from_wp_menu', [ $this, 'add_items_to_hide' ] );
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );
 	}
 
 	private function is_editor_one_active(): bool {
-		return Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active();
+		return !! Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	public function add_system_flyout_item( array $items ): array {
@@ -180,11 +183,16 @@ class Module extends BaseModule {
 		$admin_menu->register( 'elementor-system-info', new System_Info_Menu_Item( $this ) );
 	}
 
-	private function register_editor_one_menu( Admin_Menu_Manager $admin_menu ) {
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_item = new System_Info_Menu_Item( $this );
-		$editor_one_menu_item = new Editor_One_Menu_Item( $menu_item, '', 'elementor-system-info' );
+		$editor_one_menu_item = new Editor_One_Menu_Item( 
+			$menu_item, 
+			'', 
+			'elementor-system-info' 
+		);
 
-		$admin_menu->register_editor_one_menu_level_4(
+		$menu_data_provider->register_level4_item(
+			$editor_one_menu_item->get_slug(),
 			$editor_one_menu_item,
 			Menu_Config::SYSTEM_GROUP_ID
 		);

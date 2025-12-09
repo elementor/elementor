@@ -20,6 +20,7 @@ use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
 use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -50,17 +51,21 @@ class Module extends Base_Module {
 			$this->register_menu_items( $admin_menu );
 		}, static::ADMIN_MENU_PRIORITY );
 
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu_items( $menu_data_provider );
+		} );
+
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_promotion_menu_item( $admin_menu );
 		}, static::ADMIN_MENU_PROMOTIONS_PRIORITY );
 
-		add_action( 'elementor/admin_menu/excluded_level3_slugs', function ( array $excluded_slugs ): array {
+		add_action( 'elementor/editor-one/menu/excluded_level3_slugs', function ( array $excluded_slugs ): array {
 			$excluded_slugs[] = 'go_elementor_pro';
 			return $excluded_slugs;
 		} );
 
-		add_filter( 'elementor/admin_menu/editor_flyout_items', [ $this, 'add_custom_elements_flyout_item' ], 70 );
-		add_filter( 'elementor/admin_menu/items_to_hide_from_wp_menu', [ $this, 'add_items_to_hide' ] );
+		add_filter( 'elementor/editor-one/editor_flyout_items', [ $this, 'add_custom_elements_flyout_item' ], 70 );
+		add_filter( 'elementor/editor-one/menu/items_to_hide_from_wp_menu', [ $this, 'add_items_to_hide' ] );
 
 		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
 			foreach ( Api::get_promotion_widgets() as $widget_data ) {
@@ -117,9 +122,7 @@ class Module extends Base_Module {
 	}
 
 	private function register_menu_items( Admin_Menu_Manager $admin_menu ) {
-		if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
-			$this->register_editor_one_menu_items( $admin_menu );
-		} else {
+		if ( ! $this->is_editor_one_active() ) {
 			$admin_menu->register( 'e-form-submissions', new Form_Submissions_Promotion_Item() );
 			$admin_menu->register( 'elementor_custom_fonts', new Custom_Fonts_Promotion_Item() );
 			$admin_menu->register( 'elementor_custom_icons', new Custom_Icons_Promotion_Item() );
@@ -128,7 +131,7 @@ class Module extends Base_Module {
 		}
 	}
 
-	private function register_editor_one_menu_items( Admin_Menu_Manager $admin_menu ) {
+	private function register_editor_one_menu_items( Menu_Data_Provider $menu_data_provider ) {
 		$form_submissions_item = new Form_Submissions_Promotion_Item();
 		$editor_one_form_submissions = new Editor_One_Menu_Item(
 			$form_submissions_item,
@@ -138,7 +141,8 @@ class Module extends Base_Module {
 			50
 		);
 
-		$admin_menu->register_editor_one_menu_level_3(
+		$menu_data_provider->register_level3_item(
+			$editor_one_form_submissions->get_slug(),
 			$editor_one_form_submissions,
 			Menu_Config::EDITOR_GROUP_ID,
 			'send'
@@ -154,7 +158,8 @@ class Module extends Base_Module {
 			10
 		);
 
-		$admin_menu->register_editor_one_menu_level_4(
+		$menu_data_provider->register_level4_item(
+			$editor_one_custom_fonts->get_slug(),
 			$editor_one_custom_fonts,
 			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID
 		);
@@ -168,7 +173,8 @@ class Module extends Base_Module {
 			20
 		);
 
-		$admin_menu->register_editor_one_menu_level_4(
+		$menu_data_provider->register_level4_item(
+			$editor_one_custom_icons->get_slug(),
 			$editor_one_custom_icons,
 			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID
 		);
@@ -182,7 +188,8 @@ class Module extends Base_Module {
 			30
 		);
 
-		$admin_menu->register_editor_one_menu_level_4(
+		$menu_data_provider->register_level4_item(
+			$editor_one_custom_code->get_slug(),
 			$editor_one_custom_code,
 			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID
 		);
@@ -196,7 +203,8 @@ class Module extends Base_Module {
 			50
 		);
 
-		$admin_menu->register_editor_one_menu_level_4(
+		$menu_data_provider->register_level4_item(
+			$editor_one_popups->get_slug(),
 			$editor_one_popups,
 			Menu_Config::TEMPLATES_GROUP_ID
 		);
@@ -273,7 +281,7 @@ class Module extends Base_Module {
 	}
 
 	private function is_editor_one_active(): bool {
-		return Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active();
+		return !! Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	public function add_items_to_hide( array $items ): array {

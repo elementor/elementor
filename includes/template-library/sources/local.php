@@ -7,7 +7,6 @@ use Elementor\Core\Editor\Editor;
 use Elementor\Core\Utils\Collection;
 use Elementor\DB;
 use Elementor\Core\Settings\Manager as SettingsManager;
-use Elementor\Core\Settings\Page\Model;
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Add_New_Template_Menu_Item;
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Saved_Templates_Menu_Item;
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Templates_Categories_Menu_Item;
@@ -21,6 +20,7 @@ use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\Core\Isolation\Elementor_Adapter_Interface;
 use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -422,14 +422,12 @@ class Source_Local extends Source_Base {
 	}
 
 	private function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
-		if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
-			$this->register_editor_one_menu( $admin_menu );
-		} else {
+		if ( ! $this->is_editor_one_active() ) {
 			$admin_menu->register( static::get_admin_url( true ), new Saved_Templates_Menu_Item() );
 		}
 	}
 
-	private function register_editor_one_menu( Admin_Menu_Manager $admin_menu ) {
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_item = new Saved_Templates_Menu_Item();
 		$editor_one_menu = new Editor_One_Menu_Item(
 			$menu_item,
@@ -439,10 +437,15 @@ class Source_Local extends Source_Base {
 			10
 		);
 
-		$admin_menu->register_editor_one_menu_level_4(
+		$menu_data_provider->register_level4_item(
+			$editor_one_menu->get_slug(),
 			$editor_one_menu,
 			Menu_Config::TEMPLATES_GROUP_ID
 		);
+	}
+
+	private function is_editor_one_active(): bool {
+		return !! Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	public function admin_title( $admin_title, $title ) {
@@ -1673,11 +1676,21 @@ class Source_Local extends Source_Base {
 				$this->register_admin_menu( $admin_menu );
 			}, static::ADMIN_MENU_PRIORITY );
 
+			add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+				$this->register_editor_one_menu( $menu_data_provider );
+			} );
+
+			add_filter( 'elementor/editor-one/menu/elementor_post_types', function ( array $elementor_post_types ): array {
+				$elementor_post_types[ self::CPT ] = [];
+
+				return $elementor_post_types;
+			} );
+
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->admin_menu_reorder( $admin_menu );
 			}, 800 );
 
-			add_filter( 'elementor/admin_menu/editor_flyout_items', [ $this, 'add_templates_flyout_item' ], 60 );
+			add_filter( 'elementor/editor-one/editor_flyout_items', [ $this, 'add_templates_flyout_item' ], 60 );
 
 			add_action( 'elementor/admin/menu/after_register', function () {
 				$this->admin_menu_set_current();
@@ -1846,7 +1859,7 @@ class Source_Local extends Source_Base {
 	}
 
 	public function add_templates_flyout_item( array $items ): array {
-		if ( ! Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
+		if ( ! !! Plugin::instance()->modules_manager->get_modules( 'editor-one' ) ) {
 			return $items;
 		}
 

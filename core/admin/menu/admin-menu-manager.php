@@ -5,8 +5,6 @@ namespace Elementor\Core\Admin\Menu;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
-use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
-use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -65,30 +63,6 @@ class Admin_Menu_Manager {
 		}
 
 		do_action( 'elementor/admin/menu/after_register', $this, $hooks );
-	}
-
-	public function register_editor_one_menu_level_3(
-		Editor_One_Menu_Item $editor_one_item,
-		string $group_id,
-		string $icon,
-	) {
-		Menu_Data_Provider::instance()->register_level3_item(
-			$editor_one_item->get_slug(),
-			$editor_one_item,
-			$group_id,
-			$icon
-		);
-	}
-
-	public function register_editor_one_menu_level_4(
-		Editor_One_Menu_Item $editor_one_item,
-		string $group_id,
-	) {
-		Menu_Data_Provider::instance()->register_level4_item(
-			$editor_one_item->get_slug(),
-			$editor_one_item,
-			$group_id
-		);
 	}
 
 	private function register_top_level_menu( $item_slug, Admin_Menu_Item $item ) {

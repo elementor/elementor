@@ -28,12 +28,14 @@ class Module extends BaseModule {
 		$ajax->register_endpoints();
 
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
-				$this->register_editor_one_menu( $admin_menu );
-			} else {
+			if ( ! $this->is_editor_one_active() ) {
 				$admin_menu->register( static::PAGE_ID, new Admin_Menu_App() );
 			}
 		}, 25 );
+
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu( $menu_data_provider );
+		} );
 
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
 			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
@@ -80,10 +82,18 @@ class Module extends BaseModule {
 		} );
 	}
 
-	public function register_editor_one_menu( Admin_Menu_Manager $admin_menu ): void {
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
 		$admin_menu_item = new Admin_Menu_App();
 		$editor_one_menu = new Editor_One_Menu_Item( $admin_menu_item, '', static::PAGE_ID );
-		$admin_menu->register_editor_one_menu_level_4( $editor_one_menu, Menu_Config::SYSTEM_GROUP_ID );
+		$menu_data_provider->register_level4_item(
+			$editor_one_menu->get_slug(),
+			$editor_one_menu,
+			Menu_Config::SYSTEM_GROUP_ID
+		);
+	}
+
+	private function is_editor_one_active(): bool {
+		return !! Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	public function enqueue_assets() {

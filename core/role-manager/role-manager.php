@@ -310,7 +310,7 @@ class Role_Manager extends Settings_Page {
 		return true;
 	}
 
-	private function register_editor_one_menu( Admin_Menu_Manager $admin_menu ) {
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$role_manager_menu = new Role_Manager_Menu_Item( $this );
 
 		$editor_one_menu = new Editor_One_Menu_Item(
@@ -319,11 +319,16 @@ class Role_Manager extends Settings_Page {
 			static::PAGE_ID
 		);
 
-		$admin_menu->register_editor_one_menu_level_3(
+		$menu_data_provider->register_level3_item(
+			$editor_one_menu->get_slug(),
 			$editor_one_menu,
 			Menu_Config::EDITOR_GROUP_ID,
 			'users'
 		);
+	}
+
+	private function is_editor_one_active(): bool {
+		return !! Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	/**
@@ -334,12 +339,14 @@ class Role_Manager extends Settings_Page {
 		parent::__construct();
 
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-			if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
-				$this->register_editor_one_menu( $admin_menu );
-			} else {
+			if ( ! $this->is_editor_one_active() ) {
 				$this->register_admin_menu( $admin_menu );
 			}
 		}, Settings::ADMIN_MENU_PRIORITY + 10 );
+
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu( $menu_data_provider );
+		} );
 
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_json_enable_control' ] );
 		add_action( 'elementor/role/restrictions/controls', [ $this, 'add_custom_html_enable_control' ] );

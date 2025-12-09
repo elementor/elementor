@@ -20,6 +20,7 @@ use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils as ElementorUtils;
 use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -63,9 +64,7 @@ class Module extends BaseModule {
 	}
 
 	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
-		if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
-			$this->register_editor_one_menu( $admin_menu );
-		} else {
+		if ( ! $this->is_editor_one_active() ) {
 			$menu_args = $this->get_contact_menu_args();
 			$function = $menu_args['function'];
 			if ( is_callable( $function ) ) {
@@ -76,7 +75,7 @@ class Module extends BaseModule {
 		}
 	}
 
-	private function register_editor_one_menu( Admin_Menu_Manager $admin_menu ) {
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_args = $this->get_contact_menu_args();
 		$menu_slug = $menu_args['menu_slug'];
 		$function = $menu_args['function'];
@@ -95,10 +94,15 @@ class Module extends BaseModule {
 			40
 		);
 
-		$admin_menu->register_editor_one_menu_level_4(
+		$menu_data_provider->register_level4_item(
+			$editor_one_menu->get_slug(),
 			$editor_one_menu,
 			Menu_Config::TEMPLATES_GROUP_ID
 		);
+	}
+
+	private function is_editor_one_active(): bool {
+		return !! Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	public function __construct() {
@@ -131,6 +135,14 @@ class Module extends BaseModule {
 				$this->flush_permalinks_on_elementor_version_change();
 			}
 		});
+
+		add_filter( 'elementor/editor-one/menu/elementor_post_types', function ( array $elementor_post_types ): array {
+			$elementor_post_types[ static::CPT_FLOATING_BUTTONS ] = [
+				'menu_slug' => 'elementor-templates',
+				'child_slug' => 'floating-elements',
+			];
+			return $elementor_post_types;
+		} );
 
 		add_action( 'wp_ajax_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
 		add_action( 'wp_ajax_nopriv_elementor_send_clicks', [ $this, 'handle_click_tracking' ] );
@@ -187,6 +199,10 @@ class Module extends BaseModule {
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu_legacy( $admin_menu );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
+
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu( $menu_data_provider );
+		} );
 
 		add_action( 'elementor/admin/localize_settings', function ( array $settings ) {
 			return $this->admin_localize_settings( $settings );

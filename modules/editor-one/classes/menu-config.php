@@ -40,7 +40,7 @@ class Menu_Config {
 	}
 
 	public static function get_items_to_hide_from_wp_menu(): array {
-		return apply_filters( 'elementor/admin_menu/items_to_hide_from_wp_menu', [] );
+		return apply_filters( 'elementor/editor-one/menu/items_to_hide_from_wp_menu', [] );
 	}
 
 	public static function get_protected_submenu_slugs(): array {
@@ -49,22 +49,21 @@ class Menu_Config {
 			self::EDITOR_MENU_SLUG,
 		];
 
-		return apply_filters( 'elementor/admin_menu/protected_submenu_slugs', $default_slugs );
+		return apply_filters( 'elementor/editor-one/menu/protected_submenu_slugs', $default_slugs );
 	}
 
 	public static function get_protected_templates_submenu_slugs(): array {
-		return [
+		$default_slugs = [
 			self::LEGACY_TEMPLATES_SLUG,
-			'post-new.php?post_type=elementor_library',
-			'edit-tags.php?taxonomy=elementor_library_category&amp;post_type=elementor_library',
-			'elementor-app',
 		];
+
+		return apply_filters( 'elementor/editor-one/menu/protected_templates_submenu_slugs', $default_slugs );
 	}
 
 	public static function get_excluded_level4_slugs(): array {
 		$default_slugs = [];
 
-		return apply_filters( 'elementor/admin_menu/excluded_level4_slugs', $default_slugs );
+		return apply_filters( 'elementor/editor-one/menu/excluded_level4_slugs', $default_slugs );
 	}
 
 	public static function get_excluded_level3_slugs(): array {
@@ -73,7 +72,7 @@ class Menu_Config {
 			'elementor-pro-notes-proxy',
 		];
 
-		return apply_filters( 'elementor/admin_menu/excluded_level3_slugs', $default_slugs );
+		return apply_filters( 'elementor/editor-one/menu/excluded_level3_slugs', $default_slugs );
 	}
 
 	public static function get_legacy_slug_mapping(): array {
@@ -82,10 +81,10 @@ class Menu_Config {
 			self::ELEMENTOR_MENU_SLUG => self::EDITOR_GROUP_ID,
 		];
 
-		return apply_filters( 'elementor/admin_menu/legacy_slug_mapping', $default_mapping );
+		return apply_filters( 'elementor/editor-one/menu/legacy_slug_mapping', $default_mapping );
 	}
 
-	public static function get_level4_group_mapping(): array {
+	public static function get_legacy_pro_mapping(): array {
 		$default_mapping = [
 			'elementor-license' => [ 'group' => self::SYSTEM_GROUP_ID ],
 			'edit.php?post_type=elementor_font' => [
@@ -102,7 +101,7 @@ class Menu_Config {
 			],
 		];
 
-		return apply_filters( 'elementor/admin_menu/level4_group_mapping', $default_mapping );
+		return apply_filters( 'elementor/editor-one/menu/legacy_pro_mapping', $default_mapping );
 	}
 
 	public static function get_position_mapping(): array {
@@ -110,7 +109,7 @@ class Menu_Config {
 			'e-form-submissions' => 50,
 		];
 
-		return apply_filters( 'elementor/admin_menu/position_mapping', $default_mapping );
+		return apply_filters( 'elementor/editor-one/menu/position_mapping', $default_mapping );
 	}
 
 	public static function get_custom_code_url(): string {
@@ -122,6 +121,6 @@ class Menu_Config {
 			$default_url = admin_url( 'admin.php?page=elementor_custom_code' );
 		}
 
-		return apply_filters( 'elementor/admin_menu/custom_code_url', $default_url );
+		return apply_filters( 'elementor/editor-one/menu/custom_code_url', $default_url );
 	}
 }

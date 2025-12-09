@@ -17,6 +17,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Core\Utils\Assets_Translation_Loader;
 use Elementor\Modules\EditorOne\Classes\Editor_One_Menu_Item;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 
 use Elementor\App\Modules\ImportExport\Module as ImportExportModule;
 use Elementor\App\Modules\KitLibrary\Module as KitLibraryModule;
@@ -51,14 +52,12 @@ class App extends BaseApp {
 	}
 
 	private function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
-		if ( Plugin::instance()->modules_manager->get_modules( 'editor-one' )->is_active() ) {
-			$this->register_editor_one_menu( $admin_menu );
-		} else {
+		if ( ! $this->is_editor_one_active() ) {
 			$admin_menu->register( static::PAGE_ID, new Theme_Builder_Menu_Item() );
 		}
 	}
 
-	private function register_editor_one_menu( Admin_Menu_Manager $admin_menu ) {
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_item = new Theme_Builder_Menu_Item();
 		$editor_one_menu = new Editor_One_Menu_Item(
 			$menu_item,
@@ -68,10 +67,15 @@ class App extends BaseApp {
 			20
 		);
 
-		$admin_menu->register_editor_one_menu_level_4(
+		$menu_data_provider->register_level4_item(
+			$editor_one_menu->get_slug(),
 			$editor_one_menu,
 			Menu_Config::TEMPLATES_GROUP_ID
 		);
+	}
+
+	private function is_editor_one_active(): bool {
+		return !! Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	public function fix_submenu( $menu ) {
@@ -338,6 +342,10 @@ class App extends BaseApp {
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu( $admin_menu );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 10 );
+
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu( $menu_data_provider );
+		} );
 
 		// Happens after WP plugin page validation.
 		add_filter( 'add_menu_classes', [ $this, 'fix_submenu' ] );

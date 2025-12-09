@@ -22,7 +22,7 @@ class Module extends BaseModule {
 
 		Admin_Pointer::add_hooks();
 
-		add_action( 'elementor/admin_menu/excluded_level3_slugs', function ( array $excluded_slugs ): array {
+		add_action( 'elementor/editor-one/menu/excluded_level3_slugs', function ( array $excluded_slugs ): array {
 			$excluded_slugs[] = static::PAGE_ID;
 			return $excluded_slugs;
 		} );
