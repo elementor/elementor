@@ -46,10 +46,7 @@ class Hooks {
 			$registry->register( Font_Variable_Prop_Type::get_key(), new Font_Variable_Prop_Type() );
 			$registry->register( Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY, new Size_Variable_Prop_Type() );
 
-			// Todo: Remove when 3.36 version is released.
-			if ( ! $registry->get( Size_Variable_Prop_Type::get_key() ) ) {
-				$registry->register( Size_Variable_Prop_Type::get_key(), new Size_Variable_Prop_Type() );
-			}
+			$registry->register( Size_Variable_Prop_Type::get_key(), new Size_Variable_Prop_Type() );
 		} );
 
 		return $this;
