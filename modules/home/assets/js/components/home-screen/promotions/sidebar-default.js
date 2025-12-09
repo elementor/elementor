@@ -13,6 +13,16 @@ const SidebarDefault = ( { header, cta, repeater } ) => {
 
 	return (
 		<Paper elevation={ 0 } sx={ { p: 3 } }>
+			<Box sx={ { p: 2, mb: 2, bgcolor: 'error.light', color: 'error.contrastText', fontSize: '12px', fontFamily: 'monospace', whiteSpace: 'pre-wrap' } }>
+				<div><strong>DEBUG Sidebar Data:</strong></div>
+				<div>header exists: { header ? 'true' : 'false' }</div>
+				<div>cta exists: { cta ? 'true' : 'false' }</div>
+				<div>repeater exists: { repeater ? 'true' : 'false' }</div>
+				<div>repeater length: { repeater?.length || 0 }</div>
+				<div>header.title: { header?.title || 'undefined' }</div>
+				<div>header.image: { header?.image || 'undefined' }</div>
+				<div>Full props: { JSON.stringify( { header, cta, repeater }, null, 2 ) }</div>
+			</Box>
 			<Stack gap={ 1.5 } alignItems="center" textAlign="center" sx={ { pb: 4 } }>
 				<Box component="img" src={ header.image }></Box>
 				<Box>

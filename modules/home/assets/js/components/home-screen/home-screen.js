@@ -17,6 +17,10 @@ const HomeScreen = ( props ) => {
 		return ! hideSection.includes( currentTier );
 	};
 
+	const hideSection = props.homeScreenData.add_ons?.hide_section || [];
+	const currentTier = elementorCommon?.config?.library_connect?.current_access_tier || 'free';
+	const showAddonsResult = shouldShowAddons();
+
 	return (
 		/*  Box wrapper around the Container is needed to neutralize wp-content area left-padding */
 		<Box sx={ { pr: 1 } }>
@@ -29,6 +33,14 @@ const HomeScreen = ( props ) => {
 							getStartedData={ props.homeScreenData.get_started }
 							adminUrl={ props.adminUrl }
 						/>
+						<Box sx={ { p: 2, bgcolor: 'error.light', color: 'error.contrastText', fontSize: '12px', fontFamily: 'monospace', whiteSpace: 'pre-wrap' } }>
+							<div><strong>DEBUG Add-ons Visibility:</strong></div>
+							<div>hide_section: { JSON.stringify( hideSection ) }</div>
+							<div>currentTier: { currentTier }</div>
+							<div>shouldShowAddons: { showAddonsResult ? 'true' : 'false' }</div>
+							<div>add_ons exists: { props.homeScreenData.add_ons ? 'true' : 'false' }</div>
+							<div>add_ons.hide_section: { JSON.stringify( props.homeScreenData.add_ons?.hide_section ) }</div>
+						</Box>
 						{ shouldShowAddons() && (
 							<Addons
 								addonsData={ props.homeScreenData.add_ons }
