@@ -9,6 +9,7 @@ use Elementor\Core\Base\Module as Base_Module;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Code_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Fonts_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Icons_Promotion_Item;
+use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Code_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
@@ -175,19 +176,8 @@ class Module extends Base_Module {
 			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID
 		);
 
-		$custom_code_item = new Custom_Code_Promotion_Item();
-		$editor_one_custom_code = new Editor_One_Menu_Item(
-			$custom_code_item,
-			'',
-			'elementor_custom_code',
-			__( 'Code', 'elementor' ),
-		);
-
-		$menu_data_provider->register_level4_item(
-			$editor_one_custom_code->get_slug(),
-			$editor_one_custom_code,
-			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID
-		);
+		$custom_code = new Editor_One_Custom_Code_Menu();
+		$menu_data_provider->register_menu( $custom_code );
 
 		$popups_item = new Popups_Promotion_Item();
 		$editor_one_popups = new Editor_One_Menu_Item(

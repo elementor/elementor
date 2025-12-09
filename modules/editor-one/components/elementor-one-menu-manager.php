@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Admin_Menu_Handler {
+class Elementor_One_Menu_Manager {
 
 	private Menu_Data_Provider $menu_data_provider;
 

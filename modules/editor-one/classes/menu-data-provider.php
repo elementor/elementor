@@ -30,6 +30,14 @@ class Menu_Data_Provider {
 
 	private function __construct() {}
 
+	public function register_menu( Admin_Menu_Item $item ): void {
+		if ( $item instanceof Elementor_One_Menu_Item_Third_Level ) {
+			$this->register_level3_item( $item->get_slug(), $item, Menu_Config::EDITOR_GROUP_ID, $item->get_icon() );
+		} elseif ( $item instanceof Elementor_One_Menu_Item_Fourth_Level ) {
+			$this->register_level4_item( $item->get_slug(), $item, Menu_Config::EDITOR_GROUP_ID );
+		}
+	}
+
 	public function register_level3_item( string $item_slug, Admin_Menu_Item $item, string $group_id = Menu_Config::EDITOR_GROUP_ID, string $icon = '' ): void {
 		if ( ! isset( $this->level3_items[ $group_id ] ) ) {
 			$this->level3_items[ $group_id ] = [];

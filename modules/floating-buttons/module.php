@@ -89,7 +89,7 @@ class Module extends BaseModule {
 		$editor_one_menu = new Editor_One_Menu_Item(
 			$menu_item,
 			'',
-			$menu_slug,
+
 		);
 
 		$menu_data_provider->register_level4_item(
