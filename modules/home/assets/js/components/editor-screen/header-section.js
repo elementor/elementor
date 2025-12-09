@@ -24,6 +24,7 @@ const HeaderSection = ( props ) => {
 				color="primary"
 				href={ props.editWebsiteUrl }
 				target="_blank"
+				rel="noopener noreferrer"
 			>
 				Edit Website
 			</Button>
