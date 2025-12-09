@@ -60,4 +60,3 @@ class Editor_One_Role_Manager_Menu implements Menu_Item_Third_Level_Interface, A
 		}
 	}
 }
-

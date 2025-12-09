@@ -57,4 +57,3 @@ class Editor_One_Home_Menu implements Menu_Item_Third_Level_Interface, Admin_Men
 		Plugin::$instance->settings->display_home_screen();
 	}
 }
-

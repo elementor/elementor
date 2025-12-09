@@ -52,4 +52,3 @@ class Editor_One_Elements_Manager_Menu implements Menu_Item_Interface, Admin_Men
 		echo '</div>';
 	}
 }
-

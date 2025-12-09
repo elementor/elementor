@@ -44,4 +44,3 @@ class Home_Menu_Item implements Admin_Menu_Item_With_Page, Admin_Menu_Item_Has_P
 		$this->settings_page->display_home_screen();
 	}
 }
-

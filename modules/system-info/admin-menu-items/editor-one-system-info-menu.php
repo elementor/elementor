@@ -49,4 +49,3 @@ class Editor_One_System_Info_Menu implements Menu_Item_Interface, Admin_Menu_Ite
 		Plugin::$instance->system_info->display_page();
 	}
 }
-

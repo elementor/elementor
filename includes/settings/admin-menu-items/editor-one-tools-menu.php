@@ -57,4 +57,3 @@ class Editor_One_Tools_Menu implements Menu_Item_Third_Level_Interface, Admin_Me
 		Plugin::$instance->tools->display_settings_page();
 	}
 }
-

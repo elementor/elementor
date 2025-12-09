@@ -44,4 +44,3 @@ class Editor_One_Website_Templates_Menu implements Menu_Item_Interface {
 		return Menu_Config::TEMPLATES_GROUP_ID;
 	}
 }
-

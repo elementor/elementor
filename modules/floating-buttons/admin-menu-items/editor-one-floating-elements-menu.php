@@ -40,4 +40,3 @@ class Editor_One_Floating_Elements_Menu implements Menu_Item_Interface {
 		return Menu_Config::TEMPLATES_GROUP_ID;
 	}
 }
-
