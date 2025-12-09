@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
-import { wpCli } from '../../../../assets/wp-cli';
+import { DriverFactory } from '../../../../drivers/driver-factory';
 
 test.describe( 'Inline Editing Canvas @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
@@ -16,8 +16,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
-		await wpCli( 'wp elementor experiments activate v4-inline-text-editing' );
+		await DriverFactory.activateExperimentsCli( [ 'e_atomic_elements', 'v4-inline-text-editing' ] );
 
 		editor = await wpAdminPage.openNewPage();
 	} );

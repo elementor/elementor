@@ -5,7 +5,6 @@ import { WIDGET_CONFIGS, FONT_SIZES, UNITS, type Unit } from './typography-const
 import { DriverFactory } from '../../../../drivers/driver-factory';
 import type { EditorDriver } from '../../../../drivers/editor-driver';
 import { timeouts } from '../../../../config/timeouts';
-import { wpCli } from '../../../../assets/wp-cli';
 
 const TEST_FONT_SIZES = {
 	PX_MEDIUM: 24,
@@ -19,7 +18,7 @@ test.describe( 'V4 Typography Font Size Tests @v4-tests', () => {
 	let driver: EditorDriver;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
+		await DriverFactory.activateExperimentsCli( [ 'e_atomic_elements' ] );
 		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests );
 	} );
 

@@ -1,14 +1,11 @@
 import { parallelTest as test } from '../../../parallelTest';
 import { expect } from '@playwright/test';
-import { wpCli } from '../../../assets/wp-cli';
+import { DriverFactory } from '../../../drivers/driver-factory';
+import WpAdminPage from '../../../pages/wp-admin-page';
 
 test.describe( 'Interactions Tab @v4-tests', () => {
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
-		await wpCli( 'wp elementor experiments activate e_interactions' );
-		await page.close();
+	test.beforeAll( async () => {
+		await DriverFactory.activateExperimentsCli( [ 'e_atomic_elements', 'e_interactions' ] );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
