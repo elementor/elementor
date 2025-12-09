@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { getV1DocumentsManager } from '@elementor/editor-documents';
-import { ArrowLeftIcon, ComponentsIcon } from '@elementor/icons';
+import { ArrowLeftIcon, ComponentsFilledIcon } from '@elementor/icons';
 import { __useSelector as useSelector } from '@elementor/store';
 import { Box, Divider, IconButton, Stack, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -37,7 +37,7 @@ export const ComponentPanelHeader = () => {
 						</IconButton>
 					</Tooltip>
 					<Stack direction="row" alignItems="center" gap={ 0.5 }>
-						<ComponentsIcon color="secondary" fontSize="tiny" />
+						<ComponentsFilledIcon fontSize="tiny" />
 						<Typography variant="caption" sx={ { fontWeight: 500 } }>
 							{ componentName }
 						</Typography>
