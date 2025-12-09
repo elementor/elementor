@@ -3,7 +3,7 @@ import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
 import PropTypes from 'prop-types';
 
-const HeaderSection = ( { ...props } ) => {
+const HeaderSection = ( props ) => {
 	return (
 		<Paper
 			elevation={ 0 }

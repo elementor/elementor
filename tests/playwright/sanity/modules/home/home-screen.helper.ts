@@ -11,6 +11,12 @@ export type HomepageSettings = {
 
 export type LicenseType = 'free' | 'pro' | 'one';
 
+type JsonObject = Record<string, unknown>;
+
+const ELEMENTOR_HOME_SCREEN_DATA_REGEX = /var elementorHomeScreenData\s*=\s*(\{[\s\S]*?\});/;
+const HTML_LESS_THAN_ESCAPE_REGEX = /</g;
+const HTML_LESS_THAN_ESCAPE_REPLACEMENT = '\\u003c';
+
 export const transformMockDataByLicense = ( licenseType: LicenseType ) => {
 	const topItem = homeScreenMockData.top_with_licences.find( ( item ) => item.license.includes( licenseType ) )!;
 	const getStartedItem = homeScreenMockData.get_started.find( ( item ) => item.license.includes( licenseType ) )!;
@@ -28,6 +34,23 @@ export const transformMockDataByLicense = ( licenseType: LicenseType ) => {
 	};
 };
 
+const deepMergeMockData = ( base: JsonObject, override: JsonObject ): JsonObject => {
+	const result = { ...base };
+
+	for ( const key in override ) {
+		if ( ! override.hasOwnProperty( key ) ) {
+			continue;
+		}
+
+		const overrideValue = override[ key ];
+		const baseValue = base[ key ];
+
+		result[ key ] = deepMergeMockData( baseValue as JsonObject, overrideValue as JsonObject );
+	}
+
+	return result;
+};
+
 export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeof transformMockDataByLicense>, apiRequests?: ApiRequests, requestContext?: APIRequestContext ) => {
 	let finalMockData = mockData;
 
@@ -39,29 +62,14 @@ export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeo
 	await page.route( '**/wp-admin/admin.php?page=elementor', async ( route ) => {
 		const response = await route.fetch();
 		const body = await response.text();
-		
-		const existingDataMatch = body.match( /var elementorHomeScreenData\s*=\s*(\{[\s\S]*?\});/ );
-		let mergedData = finalMockData;
-		
-		if ( existingDataMatch ) {
-			try {
-				const existingData = JSON.parse( existingDataMatch[1] );
-				mergedData = {
-					...existingData,
-					...finalMockData,
-					isEditorOneActive: existingData.isEditorOneActive,
-					_debug: existingData._debug,
-				};
-			} catch ( e ) {
-				mergedData = finalMockData;
-			}
-		}
-		
-		const mockDataJson = JSON.stringify( mergedData ).replace( /</g, '\\u003c' );
+
+		const existingData = JSON.parse( body.match( ELEMENTOR_HOME_SCREEN_DATA_REGEX )[ 1 ] );
+		const mergedData = deepMergeMockData( existingData, finalMockData );
+		const mockDataJson = JSON.stringify( mergedData ).replace( HTML_LESS_THAN_ESCAPE_REGEX, HTML_LESS_THAN_ESCAPE_REPLACEMENT );
 
 		const modifiedBody = body.replace(
-			/var elementorHomeScreenData\s*=\s*\{[\s\S]*?\};/,
-			`var elementorHomeScreenData = ${ mockDataJson };`,
+			ELEMENTOR_HOME_SCREEN_DATA_REGEX,
+			`const elementorHomeScreenData = ${ mockDataJson };`,
 		);
 
 		await route.fulfill( {

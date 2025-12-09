@@ -37,46 +37,12 @@ test.describe( 'Home screen Edit Website button tests', () => {
 	} );
 
 	test( 'one license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
-		const consoleMessages: string[] = [];
-
-		page.on( 'console', ( msg ) => {
-			const text = msg.text();
-			if ( text.includes( '[HOME_SCREEN_DEBUG]' ) || text.includes( '[PLAYWRIGHT]' ) ) {
-				consoleMessages.push( text );
-				// eslint-disable-next-line no-console
-				console.log( `[PLAYWRIGHT] ${ text }` );
-			}
-		} );
-
 		const requestContext = await request.newContext( { storageState } );
 		const mockData = transformMockDataByLicense( 'one' );
+
 		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
-		
-		// eslint-disable-next-line no-console
-		console.log( '[PLAYWRIGHT] Navigating to home screen...' );
+
 		const homeScreen = await navigateToHomeScreen( page );
-		// eslint-disable-next-line no-console
-		console.log( '[PLAYWRIGHT] Home screen loaded, waiting for debug info...' );
-
-		await page.waitForSelector( '#home-screen-debug-info', { timeout: 5000 } ).catch( () => {
-			// eslint-disable-next-line no-console
-			console.log( '[PLAYWRIGHT] Debug DIV not found!' );
-		} );
-
-		const debugInfo = await page.locator( '#home-screen-debug-info' ).textContent().catch( () => null );
-		if ( debugInfo ) {
-			// eslint-disable-next-line no-console
-			console.log( '[PLAYWRIGHT] Debug DIV content:', debugInfo );
-		}
-
-		if ( consoleMessages.length > 0 ) {
-			// eslint-disable-next-line no-console
-			console.log( '[PLAYWRIGHT] Captured console messages:', consoleMessages );
-		} else {
-			// eslint-disable-next-line no-console
-			console.log( '[PLAYWRIGHT] No console messages captured!' );
-		}
-
 		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-one.png' );
 		await requestContext.dispose();
 	} );
