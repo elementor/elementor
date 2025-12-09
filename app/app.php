@@ -2,7 +2,9 @@
 namespace Elementor\App;
 
 use Elementor\App\AdminMenuItems\Theme_Builder_Menu_Item;
+use Elementor\App\AdminMenuItems\Theme_Builder_Elementor_One_Menu_Item;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Admin\Menu\Elementor_One_Menu_Manager;
 use Elementor\Core\Experiments\Manager as ExperimentsManager;
 use Elementor\Modules\WebCli\Module as WebCLIModule;
 use Elementor\Core\Base\App as BaseApp;
@@ -315,6 +317,10 @@ class App extends BaseApp {
 
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu( $admin_menu );
+		}, Source_Local::ADMIN_MENU_PRIORITY + 10 );
+
+		add_action( 'elementor-one/admin/menu/register', function ( Elementor_One_Menu_Manager $manager ) {
+			$manager->register_flyout_item( static::PAGE_ID, new Theme_Builder_Elementor_One_Menu_Item() );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 10 );
 
 		// Happens after WP plugin page validation.

@@ -2,7 +2,9 @@
 namespace Elementor\Modules\LandingPages;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Admin\Menu\Elementor_One_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
+use Elementor\Modules\LandingPages\AdminMenuItems\Landing_Pages_Elementor_One_Menu_Item;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -494,6 +496,14 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu_legacy( $admin_menu );
+		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
+
+		add_action( 'elementor-one/admin/menu/register', function( Elementor_One_Menu_Manager $manager ) {
+			$menu_args = $this->get_menu_args();
+			$slug = $menu_args['menu_slug'];
+			$function = $menu_args['function'];
+			
+			$manager->register_flyout_item( $slug, new Landing_Pages_Elementor_One_Menu_Item( $function ) );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
 
 		// Add the custom 'Add New' link for Landing Pages into Elementor's admin config.

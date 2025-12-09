@@ -2,6 +2,8 @@
 namespace Elementor;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Admin\Menu\Elementor_One_Menu_Manager;
+use Elementor\Includes\Settings\AdminMenuItems\Settings_Elementor_One_Menu_Item;
 use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Includes\Settings\AdminMenuItems\Admin_Menu_Item;
 use Elementor\Includes\Settings\AdminMenuItems\Get_Help_Menu_Item;
@@ -103,6 +105,10 @@ class Settings extends Settings_Page {
 		if ( $this->home_module->is_experiment_active() ) {
 			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 				$admin_menu->register( 'elementor-settings', new Admin_Menu_Item( $this ) );
+			}, 0 );
+
+			add_action( 'elementor-one/admin/menu/register', function( Elementor_One_Menu_Manager $manager ) {
+				$manager->register_editor_item( 'elementor-settings', new Settings_Elementor_One_Menu_Item( $this ) );
 			}, 0 );
 		}
 	}
