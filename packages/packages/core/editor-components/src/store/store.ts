@@ -110,6 +110,15 @@ export const slice = createSlice( {
 
 			component.overridableProps = payload.overridableProps;
 		},
+		rename: ( state, { payload }: PayloadAction< { componentUid: string; name: string } > ) => {
+			const component = state.data.find( ( comp ) => comp.uid === payload.componentUid );
+
+			if ( ! component ) {
+				return;
+			}
+
+			component.name = payload.name;
+		},
 	},
 	extraReducers: ( builder ) => {
 		builder.addCase( loadComponents.fulfilled, ( state, { payload }: PayloadAction< GetComponentResponse > ) => {
