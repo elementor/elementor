@@ -8,11 +8,9 @@ import { initModifyGlobalClass } from './mcp-modify-global-class';
 
 export const initMcpIntegration = () => {
 	const reg = getMCPByDomain( 'canvas' );
-	// reg.setMCPDescription( mcpDescription );
 	initMcpApplyUnapplyGlobalClasses( reg );
 	initMcpApplyGetGlobalClassUsages( reg );
 	initCreateGlobalClass( reg );
 	initModifyGlobalClass( reg );
-	// initDesignSystemTool( reg );
 	initClassesResource();
 };
