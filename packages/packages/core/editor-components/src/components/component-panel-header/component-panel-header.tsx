@@ -30,14 +30,14 @@ export const ComponentPanelHeader = () => {
 				justifyContent="space-between"
 				sx={ { height: 48, pl: 1.5, pr: 2, py: 1 } }
 			>
-				<Stack direction="row" alignItems="center" gap={ 0.5 }>
+				<Stack direction="row" alignItems="center">
 					<Tooltip title={ __( 'Back', 'elementor' ) }>
 						<IconButton size="tiny" onClick={ onBack } aria-label={ __( 'Back', 'elementor' ) }>
-							<ArrowLeftIcon />
+							<ArrowLeftIcon fontSize="tiny" onClick={ onBack } />
 						</IconButton>
 					</Tooltip>
 					<Stack direction="row" alignItems="center" gap={ 0.5 }>
-						<ComponentsFilledIcon fontSize="tiny" />
+						<ComponentsFilledIcon fontSize="tiny" stroke="currentColor"/>
 						<Typography variant="caption" sx={ { fontWeight: 500 } }>
 							{ componentName }
 						</Typography>
