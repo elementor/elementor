@@ -5,18 +5,6 @@ import { fetchNonce, login } from './wp-authentication';
 import ApiRequests from './assets/api-requests';
 
 export const parallelTest = baseTest.extend< NonNullable<unknown>, { workerStorageState: string, workerBaseURL: string, apiRequests: ApiRequests }>( {
-	page: async ( { page }, use ) => {
-		await page.addInitScript( () => {
-			if ( 'serviceWorker' in navigator ) {
-				navigator.serviceWorker.getRegistrations().then( ( registrations ) => {
-					registrations.forEach( ( registration ) => {
-						registration.unregister().catch( () => {} );
-					} );
-				} );
-			}
-		} );
-		await use( page );
-	},
 	// Use the same storage state for all tests in this worker.
 	baseURL: ( { workerBaseURL }, use ) => use( workerBaseURL ),
 	workerBaseURL: [ async ( {}, use ) => {

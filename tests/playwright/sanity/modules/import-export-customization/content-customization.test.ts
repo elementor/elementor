@@ -43,7 +43,6 @@ test.describe( 'Import Export Customization - Content Customization', () => {
 		await ImportExportHelpers.waitForExportProcess( page );
 		await ImportExportHelpers.waitForExportComplete( page );
 
-		await ImportExportHelpers.closeAnnouncementsIfVisible( page );
 		await ImportExportHelpers.verifyContentSection( page, '13 Pages | 2 Floating Elements | 1 Taxonomies' );
 		await ImportExportHelpers.verifyNotInContentSection( page, '3 Posts' );
 	} );

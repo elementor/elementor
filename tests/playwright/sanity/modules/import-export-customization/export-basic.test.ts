@@ -26,7 +26,6 @@ test.describe( 'Import Export Customization - Basic Export', () => {
 
 		await ImportExportHelpers.waitForExportComplete( page );
 
-		await ImportExportHelpers.closeAnnouncementsIfVisible( page );
 		await ImportExportHelpers.verifyContentSection( page, '13 Pages | 2 Floating Elements | 3 Posts | 3 Taxonomies' );
 		await ImportExportHelpers.verifyTemplatesSection( page, 'No templates exported' );
 		await ImportExportHelpers.verifySettingsSection( page, 'Theme | Global Colors | Global Fonts | Theme Style Settings | General Settings | Experiments' );
