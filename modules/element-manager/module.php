@@ -36,25 +36,13 @@ class Module extends BaseModule {
 			$this->register_editor_one_menu( $menu_data_provider );
 		} );
 
-		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
-			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
-				add_action( "admin_print_scripts-{$hooks[ static::PAGE_ID ]}", [ $this, 'enqueue_assets' ] );
-				add_action( "admin_footer-{$hooks[ static::PAGE_ID ]}", [ $this, 'print_styles' ], 1000 );
-			}
-		}, 10, 2 );
-
-		add_action( 'admin_enqueue_scripts', function( $hook_suffix ) {
-			if ( 'elementor_page_' . static::PAGE_ID === $hook_suffix ) {
-				$this->enqueue_assets();
-			}
+		add_action( 'elementor/editor-one/menu/after_register_hidden_submenus', function ( array $hooks ) {
+			$this->enqueue_assets_for_editor_one_menu( $hooks );
 		} );
 
-		add_action( 'admin_footer', function() {
-			$screen = get_current_screen();
-			if ( $screen && 'elementor_page_' . static::PAGE_ID === $screen->id ) {
-				$this->print_styles();
-			}
-		}, 1000 );
+		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
+			$this->enqueue_assets_for_editor_one_menu( $hooks );
+		}, 10, 2 );
 
 		add_filter( 'elementor/widgets/is_widget_enabled', function( $should_register, Widget_Base $widget_instance ) {
 			return ! Options::is_element_disabled( $widget_instance->get_name() );
@@ -79,6 +67,13 @@ class Module extends BaseModule {
 
 			return $params;
 		} );
+	}
+
+	public function enqueue_assets_for_editor_one_menu( array $hooks ): void {
+		if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
+			add_action( "admin_print_scripts-{$hooks[ static::PAGE_ID ]}", [ $this, 'enqueue_assets' ] );
+			add_action( "admin_footer-{$hooks[ static::PAGE_ID ]}", [ $this, 'print_styles' ], 1000 );
+		}	
 	}
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {

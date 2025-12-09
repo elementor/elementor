@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\ElementManager;
 
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Settings;
 
@@ -9,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Admin_Menu_App implements Admin_Menu_Item_With_Page, Admin_Menu_Item_Has_Position {
+class Admin_Menu_App implements Admin_Menu_Item_With_Page {
 
 	public function is_visible() {
 		return true;
@@ -36,9 +35,5 @@ class Admin_Menu_App implements Admin_Menu_Item_With_Page, Admin_Menu_Item_Has_P
 		echo '<h3 class="wp-heading-inline">' . esc_html__( 'Element Manager', 'elementor' ) . '</h3>';
 		echo '<div id="elementor-element-manager-wrap"></div>';
 		echo '</div>';
-	}
-
-	public function get_position() {
-		return 20;
 	}
 }
