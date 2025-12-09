@@ -33,7 +33,7 @@ export const ComponentPanelHeader = () => {
 				<Stack direction="row" alignItems="center">
 					<Tooltip title={ __( 'Back', 'elementor' ) }>
 						<IconButton size="tiny" onClick={ onBack } aria-label={ __( 'Back', 'elementor' ) }>
-							<ArrowLeftIcon fontSize="tiny" onClick={ onBack } />
+							<ArrowLeftIcon fontSize="tiny" />
 						</IconButton>
 					</Tooltip>
 					<Stack direction="row" alignItems="center" gap={ 0.5 }>
