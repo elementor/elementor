@@ -12,7 +12,7 @@ export const getComponentIds = async ( elements: V1ElementData[] ) => {
 
 		if ( isComponent ) {
 			const componentId = ( settings?.component_instance as ComponentInstancePropValue< number > )?.value
-				?.component_id;
+				?.component_id.value;
 
 			const document = await getComponentDocumentData( componentId );
 

@@ -70,14 +70,22 @@ export type ComponentInstancePropValue< TComponentId extends number | string = n
 	TransformablePropValue<
 		'component-instance',
 		{
-			component_id: TComponentId;
-			overrides?: ComponentOverride[];
+			component_id: TransformablePropValue< 'number', TComponentId >;
+			overrides?: TransformablePropValue< 'overrides', ComponentOverrides >;
 		}
 	>;
 
-type ComponentOverride = {
+type ComponentOverrides = TransformablePropValue< 'overrides', ComponentOverride[] >;
+
+type ComponentOverride = TransformablePropValue< 'override', ComponentOverridePropValue >;
+
+type ComponentOverridePropValue = {
 	override_key: string;
-	value: TransformablePropValue< string >;
+	override_value: TransformablePropValue< string >;
+	schema_source: {
+		type: string;
+		id: number;
+	};
 };
 
 export type ComponentOverridable = {
