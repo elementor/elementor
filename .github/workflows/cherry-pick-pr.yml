@@ -17,13 +17,14 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+      USING_PAT: ${{ secrets.GH_PAT != '' }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
           ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 0
           persist-credentials: true
@@ -177,14 +178,31 @@ jobs:
                 **Trigger:** Label \`${LABEL_NAME}\` added to closed PR"
               fi
 
-              gh pr create \
+              NEW_PR=$(gh pr create \
                 --base "$TARGET" \
                 --head "$BRANCH" \
                 --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} ${DESCRIPTION}" \
                 --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
 
                 **Source:** ${{ github.event.pull_request.head.repo.full_name }}
-                **Original Author:** @${PR_USER_LOGIN}${TRIGGER_INFO}"
+                **Original Author:** @${PR_USER_LOGIN}${TRIGGER_INFO}" \
+                --json number --jq '.number')
+
+              if [ -n "$NEW_PR" ]; then
+                if [ "$USING_PAT" = "true" ]; then
+                  echo "::notice:: PR #${NEW_PR} created with PAT - workflows will trigger automatically"
+                else
+                  echo "Created PR #${NEW_PR} with GITHUB_TOKEN, triggering workflows via empty commit..."
+                  CURRENT_BRANCH=$(git branch --show-current)
+                  if [ "$CURRENT_BRANCH" = "$BRANCH" ]; then
+                    git commit --allow-empty -m "Trigger workflows for PR #${NEW_PR}"
+                    git push origin "$BRANCH"
+                    echo "::notice:: Triggered workflows for PR #${NEW_PR}"
+                  else
+                    echo "::warning:: Not on branch $BRANCH (on $CURRENT_BRANCH), skipping workflow trigger"
+                  fi
+                fi
+              fi
             fi
           done
         shell: bash

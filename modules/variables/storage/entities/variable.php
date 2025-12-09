@@ -44,6 +44,8 @@ class Variable {
 
 	public function restore(): void {
 		unset( $this->data['deleted_at'] );
+		// TODO to be removed if client is no longer need this
+		unset( $this->data['deleted'] );
 
 		$this->data['updated_at'] = $this->now();
 	}
@@ -66,6 +68,22 @@ class Variable {
 
 	public function order(): int {
 		return $this->data['order'];
+	}
+
+	public function value() {
+		return $this->data['value'];
+	}
+
+	public function set_value( $value ) {
+		$this->data['value'] = $value;
+	}
+
+	public function type() {
+		return $this->data['type'];
+	}
+
+	public function set_type( $type ) {
+		$this->data['type'] = $type;
 	}
 
 	public function has_order(): int {

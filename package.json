@@ -1,7 +1,7 @@
 {
   "name": "elementor",
   "slug": "elementor",
-  "version": "3.34.0",
+  "version": "3.35.0",
   "last_beta_version": "3.12.0-beta3",
   "last_cloud_version": "3.13.0-cloud2",
   "last_dev_version": "3.9.0-dev2",
@@ -49,9 +49,9 @@
     "restart:testing": "bash scripts/setup-testing.sh --restart",
     "packages:version": "cd packages && npm run version",
     "packages:release": "cd packages && npm run release",
-    "experimental:wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json",
-    "experimental:wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json",
-    "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run experimental:wp-playground\" \"npm run test:playwright -- --ui\""
+    "wp-playground": "npx -y @wp-playground/cli server --mount=.:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/local.json",
+    "wp-playground:ci": "npx -y @wp-playground/cli server --mount=./build:/wordpress/wp-content/plugins/elementor --blueprint=./tests/playwright/blueprints/ci.json",
+    "full-e2e-local": "npx concurrently \"npm run watch\" \"npm run wp-playground\" \"npm run test:playwright -- --ui\""
   },
   "engines": {
     "node": ">=20.19.0",
@@ -144,7 +144,7 @@
     "write": "^2.0.0"
   },
   "dependencies": {
-    "@elementor/icons": "1.61.0",
+    "@elementor/icons": "1.61.1",
     "@elementor/ui": "1.36.17",
     "@reach/router": "1.3.4",
     "@reduxjs/toolkit": "^1.8.3",

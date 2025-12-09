@@ -3,7 +3,7 @@
 namespace Elementor\Modules\Variables\Storage;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Utils;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
@@ -16,6 +16,7 @@ use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
  */
 class Variables_Collection extends Collection {
 	const FORMAT_VERSION_V1 = 1;
+	const FORMAT_VERSION_V2 = 2;
 	const TOTAL_VARIABLES_COUNT = 100;
 
 	private int $watermark;
@@ -45,11 +46,17 @@ class Variables_Collection extends Collection {
 		return new self( $variables, $watermark, $version );
 	}
 
-	public function serialize(): array {
+	public function serialize( bool $include_deleted_key = false ): array {
 		$data = [];
 
 		foreach ( $this->all() as $variable ) {
-			$data[ $variable->id() ] = $variable->to_array();
+			$var = $variable->to_array();
+
+			if ( $include_deleted_key && $variable->is_deleted() ) {
+				$var['deleted'] = true;
+			}
+
+			$data[ $variable->id() ] = $var;
 		}
 
 		return [
@@ -58,6 +65,12 @@ class Variables_Collection extends Collection {
 			'version' => $this->version,
 		];
 	}
+
+
+	public function set_version( $version ): void {
+		$this->version = $version;
+	}
+
 
 	public static function default(): self {
 		return new self(
