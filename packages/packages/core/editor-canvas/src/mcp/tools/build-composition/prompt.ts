@@ -6,6 +6,14 @@ export const generatePrompt = () => {
 	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
 
 	buildCompositionsToolPrompt.description( `
+# **CRITICAL - REQUIRED RESOURCES (Must read before using this tool)**
+1. [${ WIDGET_SCHEMA_URI }]
+   Required to understand which widgets are available, and what are their configuration schemas.
+   Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply property values correctly.
+2. [${ STYLE_SCHEMA_URI }]
+   Required to understand the styles schema for the widgets. All widgets share the same styles schema.
+3. List of allowed custom tags for building the structure is derived from the list of widgets schema resources.
+
 # DESIGN QUALITY IMPERATIVE
 You are generating designs for real users who expect distinctive, intentional aesthetics - NOT generic AI output.
 **The Core Challenge**: Large language models naturally converge toward statistically common design patterns during generation. This creates predictable, uninspired results that users describe as "AI slop": safe color schemes, default typography hierarchies, minimal contrast, and timid spacing.
@@ -15,14 +23,6 @@ When in doubt between "safe" and "distinctive," choose distinctive - users can a
 # When to use this tool
 Always prefer this tool when the user requires to build a composition of elements, such as cards, heros, or inspired from other pages or HTML compositions.
 Prefer this tool over any other tool for building HTML structure, unless you are specified to use a different tool.
-
-# **CRITICAL - REQUIRED RESOURCES (Must read before using this tool)**
-1. [${ WIDGET_SCHEMA_URI }]
-   Required to understand which widgets are available, and what are their configuration schemas.
-   Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply property values correctly.
-2. [${ STYLE_SCHEMA_URI }]
-   Required to understand the styles schema for the widgets. All widgets share the same styles schema.
-3. List of allowed custom tags for building the structure is derived from the list of widgets schema resources.
 
 # Instructions
 1. Understand the user requirements carefully.
@@ -40,11 +40,14 @@ Prefer this tool over any other tool for building HTML structure, unless you are
    Layout properties, such as margin, padding, align, etc. must be applied using the [${ STYLE_SCHEMA_URI }] PropValues.
 7. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-div-block" and "e-flexbox".
 8. Make sure that non-container elements do NOT have any nested elements.
-9. **CRITICAL - CUSTOM CSS PRIORITY**: Always prioritize using the custom_css property for applying backgrounds, borders and complex styles to elements.
+9. **CRITICAL - CUSTOM CSS PRIORITY**: Prefer using style schema for sizes, layout, text properties, colors, etc.
+   Always prioritize using the custom_css property for applying backgrounds, borders and other complex style settings.
+   For complex design the best outcome is a balanced combination of style schema and custom_css.
    - Use custom_css for: borders, backgrounds, transforms, animations, and any other visual styling
-   - Attempt to use the style schema for font properties, colors, padding, margin.
-   - custom_css allows for more expressive and complete styling, including advanced CSS features like calc(), transitions, pseudo-elements, etc.
-   - Example: Instead of put all styling in custom_css, prefer splitting:
+   - Use the style schema (styleConfig) for font properties, colors, padding, margin. Read the [${ STYLE_SCHEMA_URI }] resource for the full styles schema.
+   - custom_css allows for more expressive and complete styling, including advanced CSS features like calc(), transitions, pseudo-elements, etc But is harder to maintain for our users,
+     as most users prefer using the UI tools that map to the style schema.
+   - Example: Instead of creating all styles in custom_css, prefer splitting:
      stylesConfig: {
        "element-id": {
          "font-size": {
@@ -183,7 +186,13 @@ background:
   },
   "stylesConfig": {
     "heading1": {
-      "custom_css": "font-size: 24px; font-weight: 600; color: #333333;"
+      "font-size": {
+        "$$type": "size",
+        "value": {
+          "size": { "$$type": "number", "value": 24 },
+          "unit": { "$$type": "string", "value": "px" }
+        }
+      },
     },
     "button1": {
       "custom_css": "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 12px 24px;"
@@ -265,6 +274,14 @@ All parameters are MANDATORY.
 - stylesConfig
 
 If unsure about the configuration of a specific property, read the schema resources carefully.
+
+# About our widgets
+Most widgets are self-explanatory by their name. Here is some additional information.
+SVG elements are bound to internal content upload. Avoid usage, unless you have tools to upload SVG content.
+e-div-block - By default is ceneterd aligned and vertically stacked. To modify this, apply style configuration.
+e-flexbox - By default is a flex container with row direction. To modify this, apply style configuration.
+
+When working with containers, do not forget to apply style schema for controlling the layout.
 
 
   ` );

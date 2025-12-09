@@ -2,6 +2,7 @@ import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
+import { validateInput } from '../../utils/validate-input';
 import { configureElementToolPrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
 
@@ -14,19 +15,17 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 		schema,
 		outputSchema,
 		handler: ( { elementId, propertiesToChange, elementType } ) => {
-			if ( ! propertiesToChange ) {
-				throw new Error(
-					'propertiesToChange is required to configure an element. Now that you have this information, ensure you have the schema and try again.'
-				);
-			}
 			const toUpdate = Object.entries( propertiesToChange );
+			const { valid, errors } = validateInput.validatePropSchema( elementType, propertiesToChange, [
+				'_styles',
+			] );
+			if ( ! valid ) {
+				const errorMessage = `Failed to configure element "${ elementId }" due to invalid properties: ${ errors?.join(
+					'\n- '
+				) }`;
+				throw new Error( errorMessage );
+			}
 			for ( const [ propertyName, propertyValue ] of toUpdate ) {
-				if ( ! propertyName && ! elementId && ! elementType ) {
-					throw new Error(
-						'propertyName, elementId, elementType are required to configure an element. If you want to retreive the schema, use the get-element-configuration-schema tool.'
-					);
-				}
-
 				try {
 					doUpdateElementProperty( {
 						elementId,

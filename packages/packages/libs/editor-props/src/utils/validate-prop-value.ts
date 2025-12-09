@@ -8,9 +8,18 @@ type Resolvers = NonNullable< Parameters< typeof adjustLlmPropValueSchema >[ 1 ]
 
 export const validatePropValue = ( schema: PropType, value: unknown, transformers: Resolvers = {} ) => {
 	const jsonSchema = propTypeToJsonSchema( schema );
+	const resultForValue = validate( value, jsonSchema );
+	if ( ! resultForValue.valid ) {
+		return {
+			valid: false,
+			errors: resultForValue.errors,
+			errorMessages: resultForValue.errors.map( ( err ) => err.message ),
+			value: value as PropValue,
+			jsonSchema: JSON.stringify( jsonSchema ),
+		};
+	}
 	const adjustedValue = adjustLlmPropValueSchema( value as PropValue, { transformers } );
 	const resultForAdjusted = validate( adjustedValue, jsonSchema );
-	const resultForValue = validate( value, jsonSchema );
 	const result = resultForAdjusted.valid ? resultForAdjusted : resultForValue;
 	return {
 		valid: result.valid,

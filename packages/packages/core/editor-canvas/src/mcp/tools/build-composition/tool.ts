@@ -7,9 +7,9 @@ import {
 	type V1Element,
 } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { type PropValue } from '@elementor/editor-props';
 
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
+import { validateInput } from '../../utils/validate-input';
 import { generatePrompt } from './prompt';
 import { inputSchema as schema, outputSchema } from './schema';
 
@@ -70,30 +70,25 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 					try {
 						const configObject = elementConfig[ configId ] || {};
 						const styleObject = stylesConfig[ configId ] || {};
-						configObject._styles = styleObject;
+						const { errors: propsValidationErrors } = validateInput.validatePropSchema(
+							elementTag,
+							configObject,
+							[ '_styles' ]
+						);
+						errors.push( ...( propsValidationErrors || [] ).map( ( msg ) => new Error( msg ) ) );
+						const { errors: stylesValidationErrors } = validateInput.validateStyles( styleObject );
+						errors.push( ...( stylesValidationErrors || [] ).map( ( msg ) => new Error( msg ) ) );
+
+						if ( propsValidationErrors?.length || stylesValidationErrors?.length ) {
+							return;
+						}
+						configObject._styles = styleObject || {};
 						for ( const [ propertyName, propertyValue ] of Object.entries( configObject ) ) {
-							// validate property existance
-							const widgetSchema = widgetsCache[ elementTag ];
-							if (
-								! widgetSchema?.atomic_props_schema?.[ propertyName ] &&
-								propertyName !== '_styles' &&
-								propertyName !== 'custom_css'
-							) {
-								softErrors.push(
-									new Error(
-										`Property "${ propertyName }" does not exist on element type "${ elementTag }".`
-									)
-								);
-								continue;
-							}
 							try {
 								doUpdateElementProperty( {
 									elementId: newElement.id,
 									propertyName,
-									propertyValue:
-										propertyName === 'custom_css'
-											? { _styles: propertyValue }
-											: ( propertyValue as unknown as PropValue ),
+									propertyValue,
 									elementType: elementTag,
 								} );
 							} catch ( error ) {
@@ -130,13 +125,10 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 						options: { useHistory: false },
 					} );
 				} );
-			}
-
-			if ( errors.length > 0 ) {
 				const errorText = `Failed to build composition with the following errors:\n\n
 ${ errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n\n' ) }
 "Missing $$type" errors indicate that the configuration objects are invalid. Try again and apply **ALL** object entries with correct $$type.
-Now that you have these errors, fix them and try again. Errors regarding configuration objects, please check again the PropType schemas`;
+Now that you have these errors, fix them and try again. Errors regarding configuration objects, please check against the PropType schemas`;
 				throw new Error( errorText );
 			}
 			if ( ! xml ) {
