@@ -5,63 +5,36 @@ import { ImportExportSelectors } from '../selectors/import-export-selectors';
 export class ImportExportHelpers {
 	private static async closeAnnouncementsIfVisible( page: Page ): Promise<void> {
 		const popupContainer = page.locator( '#e-pro-free-trial-popup' );
-		const popupCount = await popupContainer.count();
 
-		console.log( `[DEBUG] closeAnnouncementsIfVisible: popup container count = ${ popupCount }` );
-
-		if ( popupCount > 0 ) {
+		if ( await popupContainer.count() > 0 ) {
 			const dialogBackdrop = page.locator( '[role="presentation"]' ).last();
-			const backdropCount = await dialogBackdrop.count();
 
-			console.log( `[DEBUG] closeAnnouncementsIfVisible: backdrop count = ${ backdropCount }` );
-
-			if ( backdropCount > 0 ) {
-				console.log( `[DEBUG] closeAnnouncementsIfVisible: Attempting to click backdrop` );
+			if ( await dialogBackdrop.count() > 0 ) {
 				try {
 					await dialogBackdrop.click( { force: true, timeout: 2000 } );
 					await page.waitForTimeout( 500 );
-					console.log( `[DEBUG] closeAnnouncementsIfVisible: Backdrop clicked successfully` );
 				} catch ( error ) {
-					console.log( `[DEBUG] closeAnnouncementsIfVisible: Backdrop click failed: ${ error.message }` );
 				}
 			}
 
-			const closeButton = page.locator( 'button[aria-label*="close" i], button:has-text("Not now")' ).first();
-			const closeButtonCount = await closeButton.count();
+			const closeButton = page.locator( 'button:has-text("Not now"), button[aria-label*="close" i]' ).first();
 
-			console.log( `[DEBUG] closeAnnouncementsIfVisible: close button count = ${ closeButtonCount }` );
-
-			if ( closeButtonCount > 0 ) {
-				console.log( `[DEBUG] closeAnnouncementsIfVisible: Attempting to click close button` );
+			if ( await closeButton.count() > 0 ) {
 				try {
 					await closeButton.click( { timeout: 2000 } );
 					await page.waitForTimeout( 500 );
-					console.log( `[DEBUG] closeAnnouncementsIfVisible: Close button clicked successfully` );
 				} catch ( error ) {
-					console.log( `[DEBUG] closeAnnouncementsIfVisible: Close button click failed: ${ error.message }` );
 				}
 			}
 
-			const finalPopupCount = await popupContainer.count();
-			console.log( `[DEBUG] closeAnnouncementsIfVisible: Final popup count before removal = ${ finalPopupCount }` );
-
-			if ( finalPopupCount > 0 ) {
-				console.log( `[DEBUG] closeAnnouncementsIfVisible: Removing popup container element` );
+			if ( await popupContainer.count() > 0 ) {
 				await page.evaluate( ( selector ) => {
 					const element = document.getElementById( selector );
 					if ( element ) {
-						console.log( `[DEBUG] closeAnnouncementsIfVisible: Element found, removing` );
 						element.remove();
-					} else {
-						console.log( `[DEBUG] closeAnnouncementsIfVisible: Element not found in DOM` );
 					}
 				}, 'e-pro-free-trial-popup' );
-
-				const afterRemovalCount = await popupContainer.count();
-				console.log( `[DEBUG] closeAnnouncementsIfVisible: Popup count after removal = ${ afterRemovalCount }` );
 			}
-		} else {
-			console.log( `[DEBUG] closeAnnouncementsIfVisible: No popup found, skipping` );
 		}
 	}
 
