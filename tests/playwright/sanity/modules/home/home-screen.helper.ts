@@ -132,6 +132,10 @@ const replaceImageUrl = (
 
 const setElementorCommonTierOnWindow = ( page: Page, licenseType: LicenseType ): void => {
 	page.addInitScript( ( tier: string ) => {
+		if ( ! window.location.href.includes( 'wp-admin/admin.php?page=elementor' ) ) {
+			return;
+		}
+
 		const setTier = () => {
 			const elementorCommon = ( window as { elementorCommon?: { config?: { library_connect?: { current_access_tier?: string } } } } ).elementorCommon;
 			if ( elementorCommon && elementorCommon.config ) {
