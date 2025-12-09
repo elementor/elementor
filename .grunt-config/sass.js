@@ -87,6 +87,13 @@ const sass = {
 			},
 			{
 				expand: true,
+				cwd: 'modules/a11y-announcements/assets/scss',
+				src: 'editor.scss',
+				dest: 'assets/css/modules/a11y-announcements',
+				ext: '.css',
+			},
+			{
+				expand: true,
 				cwd: 'assets/dev/scss/frontend',
 				src: 'admin-bar.scss',
 				dest: 'assets/css',
