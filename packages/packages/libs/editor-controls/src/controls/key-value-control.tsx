@@ -31,9 +31,19 @@ export const KeyValueControl = createControl( ( props: KeyValueControlProps = {}
 	const [ keyError, setKeyError ] = useState< string >( '' );
 	const [ valueError, setValueError ] = useState< string >( '' );
 
+	const getInitialFieldValue = ( fieldValue: unknown ): string => {
+		const transformableValue = fieldValue as { $$type?: string; value?: string };
+
+		if ( ! fieldValue || typeof fieldValue !== 'object' || transformableValue.$$type === 'dynamic' ) {
+			return '';
+		}
+
+		return transformableValue.value || '';
+	};
+
 	const [ sessionState, setSessionState ] = useState( {
-		key: value?.key?.value || '',
-		value: value?.value?.value || '',
+		key: getInitialFieldValue( value?.key ),
+		value: getInitialFieldValue( value?.value ),
 	} );
 
 	const keyLabel = props.keyName || __( 'Key', 'elementor' );
