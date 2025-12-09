@@ -46,7 +46,9 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()->default( [] ),
-			'svg' => Image_Src_Prop_Type::make()->default_url( static::DEFAULT_SVG_URL ),
+			'svg' => Image_Src_Prop_Type::make()
+				->default_url( static::DEFAULT_SVG_URL )
+				->meta( 'is_svg', true ),
 			'link' => Link_Prop_Type::make(),
 			'attributes' => Attributes_Prop_Type::make(),
 		];
@@ -165,9 +167,19 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	private function get_svg_content( $settings ) {
-		if ( isset( $settings['svg']['id'] ) ) {
+		$svg_data = $settings['svg'] ?? null;
+
+		if ( ! $svg_data ) {
+			return $this->get_default_svg_content();
+		}
+
+		if ( is_string( $svg_data ) ) {
+			return $this->fetch_svg_from_url( $svg_data );
+		}
+
+		if ( isset( $svg_data['id'] ) ) {
 			$content = Utils::file_get_contents(
-				get_attached_file( $settings['svg']['id'] )
+				get_attached_file( $svg_data['id'] )
 			);
 
 			if ( $content ) {
@@ -175,22 +187,29 @@ class Atomic_Svg extends Atomic_Widget_Base {
 			}
 		}
 
-		if (
-			isset( $settings['svg']['url'] ) &&
-			static::DEFAULT_SVG_URL !== $settings['svg']['url']
-		) {
-			$content = wp_safe_remote_get(
-				$settings['svg']['url']
-			);
-
-			if ( ! is_wp_error( $content ) ) {
-				return $content['body'];
-			}
+		if ( isset( $svg_data['url'] ) && static::DEFAULT_SVG_URL !== $svg_data['url'] ) {
+			return $this->fetch_svg_from_url( $svg_data['url'] );
 		}
 
-		$content = Utils::file_get_contents(
-			static::DEFAULT_SVG_PATH
-		);
+		return $this->get_default_svg_content();
+	}
+
+	private function fetch_svg_from_url( string $url ) {
+		if ( empty( $url ) || static::DEFAULT_SVG_URL === $url ) {
+			return $this->get_default_svg_content();
+		}
+
+		$content = wp_safe_remote_get( $url );
+
+		if ( ! is_wp_error( $content ) ) {
+			return $content['body'];
+		}
+
+		return $this->get_default_svg_content();
+	}
+
+	private function get_default_svg_content() {
+		$content = Utils::file_get_contents( static::DEFAULT_SVG_PATH );
 
 		return $content ? $content : null;
 	}
