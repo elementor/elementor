@@ -50,7 +50,9 @@ describe( 'updateComponentsBeforeSave', () => {
 								settings: {
 									component_instance: {
 										$$type: 'component-instance',
-										value: { component_id: 1000 },
+										value: {
+											component_id: { $$type: 'number', value: 1000 },
+										},
 									},
 								},
 							},
@@ -63,7 +65,9 @@ describe( 'updateComponentsBeforeSave', () => {
 						settings: {
 							component_instance: {
 								$$type: 'component-instance',
-								value: { component_id: PUBLISHED_COMPONENT_ID },
+								value: {
+									component_id: { $$type: 'number', value: PUBLISHED_COMPONENT_ID },
+								},
 							},
 						},
 					},
@@ -74,7 +78,9 @@ describe( 'updateComponentsBeforeSave', () => {
 						settings: {
 							component_instance: {
 								$$type: 'component-instance',
-								value: { component_id: 3000 },
+								value: {
+									component_id: { $$type: 'number', value: 3000 },
+								},
 							},
 						},
 					},
@@ -85,7 +91,9 @@ describe( 'updateComponentsBeforeSave', () => {
 						settings: {
 							component_instance: {
 								$$type: 'component-instance',
-								value: { component_id: HAS_AUTOSAVE_COMPONENT_ID },
+								value: {
+									component_id: { $$type: 'number', value: HAS_AUTOSAVE_COMPONENT_ID },
+								},
 							},
 						},
 					},
@@ -119,7 +127,9 @@ describe( 'updateComponentsBeforeSave', () => {
 				settings: {
 					component_instance: {
 						$$type: 'component-instance',
-						value: { component_id: 1000 },
+						value: {
+							component_id: { $$type: 'number', value: 1000 },
+						},
 					},
 				},
 			},
@@ -148,7 +158,9 @@ describe( 'updateComponentsBeforeSave', () => {
 				settings: {
 					component_instance: {
 						$$type: 'component-instance',
-						value: { component_id: PUBLISHED_COMPONENT_ID },
+						value: {
+							component_id: { $$type: 'number', value: PUBLISHED_COMPONENT_ID },
+						},
 					},
 				},
 			},
