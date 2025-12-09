@@ -32,6 +32,7 @@ export const dynamicPropTypeUtil = createPropUtils(
 	DYNAMIC_PROP_TYPE_KEY,
 	z.strictObject( {
 		name: z.string(),
+		group: z.string(),
 		settings: z.any().optional(),
 	} )
 );
