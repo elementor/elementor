@@ -86,7 +86,7 @@ class Module extends BaseModule {
 	}
 
 	private function is_editor_one_active(): bool {
-		return !! Plugin::instance()->modules_manager->get_modules( 'editor-one' );
+		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	public function enqueue_assets() {
