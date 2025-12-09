@@ -29,7 +29,7 @@ export const transformMockDataByLicense = ( licenseType: LicenseType ) => {
 		get_started: getStartedItem,
 		add_ons: homeScreenMockData.add_ons,
 		sidebar_upgrade: homeScreenMockData.sidebar_upgrade,
-		...( sidebarPromotionItem && { sidebar_promotion_variants: sidebarPromotionItem } ),
+		sidebar_promotion_variants: sidebarPromotionItem || null,
 		external_links: homeScreenMockData.external_links,
 	};
 };
@@ -44,6 +44,11 @@ const deepMergeMockData = ( base: JsonObject, override: JsonObject ): JsonObject
 
 		const overrideValue = override[ key ];
 		const baseValue = base[ key ];
+
+		if ( null === overrideValue || overrideValue === undefined ) {
+			delete result[ key ];
+			continue;
+		}
 
 		const isBaseObject = null !== baseValue && 'object' === typeof baseValue && ! Array.isArray( baseValue );
 		const isOverrideObject = null !== overrideValue && 'object' === typeof overrideValue && ! Array.isArray( overrideValue );
