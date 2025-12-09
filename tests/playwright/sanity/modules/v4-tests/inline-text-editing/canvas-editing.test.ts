@@ -17,7 +17,9 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
 		await DriverFactory.activateExperimentsCli( [ 'e_atomic_elements', 'v4-inline-text-editing' ] );
+	} );
 
+	test.beforeEach( async () => {
 		editor = await wpAdminPage.openNewPage();
 	} );
 
