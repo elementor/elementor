@@ -1,8 +1,9 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\Elements;
 
+namespace Elementor\Modules\AtomicWidgets\Elements\Base;
+
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -95,11 +96,16 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	public function before_render() {}
+
 	public function after_render() {}
 
 	abstract protected static function define_props_schema(): array;
 
 	public static function generate() {
 		return Widget_Builder::make( static::get_element_type() );
+	}
+
+	public function get_script_depends() {
+		return [ Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER ];
 	}
 }

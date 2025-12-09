@@ -1,11 +1,13 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\Elements;
+namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
 use Elementor\Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\Elements\Render_Context;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -29,6 +31,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$this->styles = $data['styles'] ?? [];
 		$this->interactions = $this->parse_atomic_interactions( $data['interactions'] ?? [] );
 		$this->editor_settings = $data['editor_settings'] ?? [];
+		$this->add_script_depends( Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER );
 	}
 
 	private function parse_atomic_interactions( $interactions ) {
@@ -166,7 +169,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$settings = $this->get_atomic_settings();
 		$default_html_tag = $this->define_default_html_tag();
 
-		return ! empty( $settings['link']['href'] ) ? 'a' : ( $settings['tag'] ?? $default_html_tag );
+		return ! empty( $settings['link']['href'] ) ? $settings['link']['tag'] : ( $settings['tag'] ?? $default_html_tag );
 	}
 
 	/**
@@ -264,5 +267,19 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	public static function generate() {
 		return Element_Builder::make( static::get_type() );
+	}
+
+	protected function get_link_attributes( $link_settings ) {
+		$tag = $link_settings['tag'] ?? Link_Prop_Type::DEFAULT_TAG;
+		$href = $link_settings['href'];
+		$target = $link_settings['target'] ?? '_self';
+
+		$is_button = 'button' === $tag;
+		$href_attribute_key = $is_button ? 'data-action-link' : 'href';
+
+		return [
+			$href_attribute_key => $href,
+			'target' => $target,
+		];
 	}
 }

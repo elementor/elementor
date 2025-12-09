@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -156,11 +156,13 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	}
 
 	public function get_script_depends() {
+		$global_depends = parent::get_script_depends();
+
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
-			return [ 'elementor-tabs-handler', 'elementor-tabs-preview-handler' ];
+			return array_merge( $global_depends, [ 'elementor-tabs-handler', 'elementor-tabs-preview-handler' ] );
 		}
 
-		return [ 'elementor-tabs-handler' ];
+		return array_merge( $global_depends, [ 'elementor-tabs-handler' ] );
 	}
 
 	public function register_frontend_handlers() {
