@@ -1,5 +1,4 @@
 import { parallelTest as test } from '../../../parallelTest';
-import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
 import { wpCli } from '../../../assets/wp-cli';
 
@@ -7,7 +6,6 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 		await wpCli( 'wp elementor experiments activate e_interactions' );
 		await page.close();
