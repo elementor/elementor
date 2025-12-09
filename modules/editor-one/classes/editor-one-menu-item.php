@@ -17,9 +17,6 @@ class Editor_One_Menu_Item implements Admin_Menu_Item_With_Page, Admin_Menu_Item
 	private $new_parent_slug;
 
 	private $slug;
-
-	private $position;
-
 	private $label;
 
 	public function __construct(
@@ -27,12 +24,10 @@ class Editor_One_Menu_Item implements Admin_Menu_Item_With_Page, Admin_Menu_Item
 		string $new_parent_slug,
 		string $slug = '',
 		?string $label = null,
-		?int $position = null,
 	) {
 		$this->original_item = $original_item;
 		$this->new_parent_slug = $new_parent_slug;
 		$this->slug = $slug;
-		$this->position = $position;
 		$this->label = $label;
 	}
 
@@ -79,10 +74,6 @@ class Editor_One_Menu_Item implements Admin_Menu_Item_With_Page, Admin_Menu_Item
 	}
 
 	public function get_position() {
-		if ( null !== $this->position ) {
-			return $this->position;
-		}
-
 		if ( $this->original_item instanceof Admin_Menu_Item_Has_Position ) {
 			return $this->original_item->get_position();
 		}
