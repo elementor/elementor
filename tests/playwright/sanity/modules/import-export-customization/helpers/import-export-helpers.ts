@@ -4,8 +4,25 @@ import { ImportExportSelectors } from '../selectors/import-export-selectors';
 
 export class ImportExportHelpers {
 	private static async closeAnnouncementsIfVisible( page: Page ): Promise<void> {
-		if ( await page.locator( '#e-pro-free-trial-popup' ).count() > 0 ) {
-			await page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-pro-free-trial-popup' );
+		const popupContainer = page.locator( '#e-pro-free-trial-popup' );
+		const dialogBackdrop = page.locator( '[role="presentation"]' ).last();
+
+		if ( await popupContainer.count() > 0 || await dialogBackdrop.count() > 0 ) {
+			await page.keyboard.press( 'Escape' );
+			await page.waitForTimeout( 500 );
+
+			if ( await dialogBackdrop.count() > 0 ) {
+				await dialogBackdrop.waitFor( { state: 'hidden', timeout: 2000 } ).catch( () => {} );
+			}
+
+			if ( await popupContainer.count() > 0 ) {
+				await page.evaluate( ( selector ) => {
+					const element = document.getElementById( selector );
+					if ( element ) {
+						element.remove();
+					}
+				}, 'e-pro-free-trial-popup' );
+			}
 		}
 	}
 
