@@ -260,7 +260,10 @@ describe( 'CreateComponentForm', () => {
 						component_instance: {
 							$$type: 'component-instance',
 							value: {
-								component_id: GENERATED_UID,
+								component_id: {
+									$$type: 'number',
+									value: GENERATED_UID,
+								},
 							},
 						},
 					},
