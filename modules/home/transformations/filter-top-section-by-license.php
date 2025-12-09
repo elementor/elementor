@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Filter_Top_Section_By_License extends Transformations_Abstract {
+	private const USER_TIER_ONE = 'one';
+
 	public bool $has_pro;
 	private array $supported_tiers;
 
@@ -36,7 +38,7 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 	}
 
 	private function validate_tier( $item_tier, $user_tier ): bool {
-		if ( 'one' === $user_tier ) {
+		if ( self::USER_TIER_ONE === $user_tier ) {
 			return true;
 		}
 

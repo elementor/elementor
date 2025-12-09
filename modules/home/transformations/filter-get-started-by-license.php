@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Filter_Get_Started_By_License extends Transformations_Abstract {
+	private const USER_TIER_ONE = 'one';
+
 	public bool $has_pro;
 
 	public function __construct( $args ) {
@@ -20,7 +22,7 @@ class Filter_Get_Started_By_License extends Transformations_Abstract {
 	private function is_valid_item( $item ) {
 		$user_tier = $this->get_tier();
 
-		if ( 'one' === $user_tier ) {
+		if ( self::USER_TIER_ONE === $user_tier ) {
 			return true;
 		}
 

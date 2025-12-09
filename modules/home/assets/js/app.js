@@ -36,6 +36,6 @@ ReactUtils.render( (
 		isRTL={ isRTL }
 		homeScreenData={ elementorHomeScreenData }
 		adminUrl={ adminUrl }
-		isEditorOneActive={ Boolean( elementorHomeScreenData?.isEditorOneActive ) }
+		isEditorOneActive={ elementorHomeScreenData?.isEditorOneActive }
 	/>
 ), rootElement );

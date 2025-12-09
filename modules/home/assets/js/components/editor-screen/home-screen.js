@@ -12,7 +12,7 @@ const EditorScreen = ( props ) => {
 	const hasSidebarPromotion = props.homeScreenData.hasOwnProperty( 'sidebar_promotion_variants' );
 
 	const getCurrentTier = () => {
-		if ( Boolean( props.homeScreenData?.isEditorOneActive ) ) {
+		if ( props.homeScreenData?.isEditorOneActive ) {
 			return 'one';
 		}
 

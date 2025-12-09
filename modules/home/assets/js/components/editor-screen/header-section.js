@@ -2,6 +2,7 @@ import { Paper } from '@elementor/ui';
 import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
 import PropTypes from 'prop-types';
+import { __ } from '@wordpress/i18n';
 
 const HeaderSection = ( props ) => {
 	return (
@@ -16,7 +17,7 @@ const HeaderSection = ( props ) => {
 			} }
 		>
 			<Typography variant="h5">
-				Home
+				{ __( 'Home', 'elementor' ) }
 			</Typography>
 			<Button
 				variant="contained"
@@ -26,7 +27,7 @@ const HeaderSection = ( props ) => {
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				Edit Website
+				{ __( 'Edit Website', 'elementor' ) }
 			</Button>
 		</Paper>
 	);
@@ -37,4 +38,3 @@ HeaderSection.propTypes = {
 };
 
 export default HeaderSection;
-

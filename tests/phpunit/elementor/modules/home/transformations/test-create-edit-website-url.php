@@ -17,6 +17,13 @@ class Test_Create_Edit_Website_Url extends PHPUnit_TestCase {
 	private const CREATE_NEW_PAGE_URL = 'http://example.com/wp-admin/post-new.php?post_type=page&elementor=true';
 	private const EDIT_PAGE_URL = 'http://example.com/wp-admin/post.php?post=123&action=elementor';
 	private const HOMEPAGE_ID = 123;
+	private const POST_TYPE_PAGE = 'page';
+	private const OPTION_SHOW_ON_FRONT = 'show_on_front';
+	private const OPTION_PAGE_ON_FRONT = 'page_on_front';
+	private const DATA_KEY_EDIT_WEBSITE_URL = 'edit_website_url';
+	private const DATA_KEY_TOP_WITH_LICENCES = 'top_with_licences';
+	private const DATA_KEY_GET_STARTED = 'get_started';
+	private const DATA_KEY_ADD_ONS = 'add_ons';
 
 	public function setUp(): void {
 		parent::setUp();
@@ -32,8 +39,8 @@ class Test_Create_Edit_Website_Url extends PHPUnit_TestCase {
 	}
 
 	public function test_transform__homepage_exists_but_not_built_with_elementor() {
-		update_option( 'show_on_front', 'page' );
-		update_option( 'page_on_front', self::HOMEPAGE_ID );
+		update_option( self::OPTION_SHOW_ON_FRONT, self::POST_TYPE_PAGE );
+		update_option( self::OPTION_PAGE_ON_FRONT, self::HOMEPAGE_ID );
 
 		$this->document_mock->method( 'is_built_with_elementor' )
 			->willReturn( false );
@@ -45,14 +52,14 @@ class Test_Create_Edit_Website_Url extends PHPUnit_TestCase {
 
 		$transformed_data = $transformation->transform( $original_data );
 		$expected_data = $this->mock_home_screen_data();
-		$expected_data['edit_website_url'] = self::CREATE_NEW_PAGE_URL;
+		$expected_data[ self::DATA_KEY_EDIT_WEBSITE_URL ] = self::CREATE_NEW_PAGE_URL;
 
 		$this->assertEquals( $expected_data, $transformed_data );
 	}
 
 	public function test_transform__homepage_exists_and_built_with_elementor() {
-		update_option( 'show_on_front', 'page' );
-		update_option( 'page_on_front', self::HOMEPAGE_ID );
+		update_option( self::OPTION_SHOW_ON_FRONT, self::POST_TYPE_PAGE );
+		update_option( self::OPTION_PAGE_ON_FRONT, self::HOMEPAGE_ID );
 
 		$this->document_mock->method( 'is_built_with_elementor' )
 			->willReturn( true );
@@ -66,7 +73,7 @@ class Test_Create_Edit_Website_Url extends PHPUnit_TestCase {
 
 		$transformed_data = $transformation->transform( $original_data );
 		$expected_data = $this->mock_home_screen_data();
-		$expected_data['edit_website_url'] = self::EDIT_PAGE_URL;
+		$expected_data[ self::DATA_KEY_EDIT_WEBSITE_URL ] = self::EDIT_PAGE_URL;
 
 		$this->assertEquals( $expected_data, $transformed_data );
 	}
@@ -84,14 +91,16 @@ class Test_Create_Edit_Website_Url extends PHPUnit_TestCase {
 
 	private function mock_home_screen_data(): array {
 		return [
-			'top_with_licences' => [],
-			'get_started' => [],
-			'add_ons' => [],
+			self::DATA_KEY_TOP_WITH_LICENCES => [],
+			self::DATA_KEY_GET_STARTED => [],
+			self::DATA_KEY_ADD_ONS => [],
 		];
 	}
 }
 
 class Test_Documents_Manager extends Documents_Manager {
+	private const POST_TYPE_PAGE = 'page';
+
 	private static ?string $test_create_new_post_url = null;
 	protected $documents = [];
 
@@ -107,7 +116,7 @@ class Test_Documents_Manager extends Documents_Manager {
 		$this->documents[ $post_id ] = $document;
 	}
 
-	public static function get_create_new_post_url( $post_type = 'page', $template_type = null ) {
+	public static function get_create_new_post_url( $post_type = self::POST_TYPE_PAGE, $template_type = null ) {
 		if ( null !== self::$test_create_new_post_url ) {
 			return self::$test_create_new_post_url;
 		}
