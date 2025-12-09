@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import { expect } from '@playwright/test';
 import ContextMenu from '../../../pages/widgets/context-menu';
 import EditorSelectors from '../../../selectors/editor-selectors';
-import { wpCli } from '../../../assets/wp-cli';
+import { DriverFactory } from '../../../drivers/driver-factory';
 
 test.describe( 'Atomic Widgets Wrapper @v4-tests', () => {
 	const atomicWidgets = [
@@ -13,7 +13,7 @@ test.describe( 'Atomic Widgets Wrapper @v4-tests', () => {
 	];
 
 	test.beforeAll( async () => {
-		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
+		await DriverFactory.activateExperimentsCli( [ 'e_atomic_elements' ] );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
