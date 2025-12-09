@@ -45,7 +45,14 @@ const deepMergeMockData = ( base: JsonObject, override: JsonObject ): JsonObject
 		const overrideValue = override[ key ];
 		const baseValue = base[ key ];
 
-		result[ key ] = deepMergeMockData( baseValue as JsonObject, overrideValue as JsonObject );
+		const isBaseObject = null !== baseValue && 'object' === typeof baseValue && ! Array.isArray( baseValue );
+		const isOverrideObject = null !== overrideValue && 'object' === typeof overrideValue && ! Array.isArray( overrideValue );
+
+		if ( isBaseObject && isOverrideObject ) {
+			result[ key ] = deepMergeMockData( baseValue as JsonObject, overrideValue as JsonObject );
+		} else {
+			result[ key ] = overrideValue;
+		}
 	}
 
 	return result;
