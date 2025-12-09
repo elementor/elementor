@@ -8,37 +8,81 @@ interface ListenToChildrenAPI {
 
 type ListenToChildrenFunction = ( elementTypes: string[] ) => ListenToChildrenAPI;
 
-type Handler = < TSettings extends Settings = Settings >( params: {
+type SharedHandlerParams< TSettings extends Settings = Settings > = {
 	element: Element;
 	signal: AbortSignal;
 	settings: TSettings;
-	listenToChildren: ListenToChildrenFunction;
-} ) => ( () => void ) | undefined;
+};
 
-export const handlers: Map< string, Map< string, Handler > > = new Map();
+export type Handler = < TSettings extends Settings = Settings >(
+	params: SharedHandlerParams< TSettings > & {
+		listenToChildren: ListenToChildrenFunction;
+	}
+) => ( () => void ) | undefined;
+
+export type SelectorHandler = < TSettings extends Settings = Settings >(
+	params: SharedHandlerParams< TSettings >
+) => ( () => void ) | undefined;
+
+export const elementTypeHandlers: Map< string, Map< string, Handler > > = new Map();
+export const elementSelectorHandlers: Map< string, Map< string, SelectorHandler > > = new Map();
 
 export const register = ( { elementType, id, callback }: { elementType: string; id: string; callback: Handler } ) => {
-	if ( ! handlers.has( elementType ) ) {
-		handlers.set( elementType, new Map() );
+	if ( ! elementTypeHandlers.has( elementType ) ) {
+		elementTypeHandlers.set( elementType, new Map() );
 	}
 
-	if ( ! handlers.get( elementType )?.has( id ) ) {
-		handlers.get( elementType )?.set( id, callback );
+	if ( ! elementTypeHandlers.get( elementType )?.has( id ) ) {
+		elementTypeHandlers.get( elementType )?.set( id, callback );
 	}
 };
 
 export const unregister = ( { elementType, id }: { elementType: string; id?: string } ) => {
-	if ( ! handlers.has( elementType ) ) {
+	if ( ! elementTypeHandlers.has( elementType ) ) {
 		return;
 	}
 
 	if ( id ) {
-		handlers.get( elementType )?.delete( id );
+		elementTypeHandlers.get( elementType )?.delete( id );
 
-		if ( handlers.get( elementType )?.size === 0 ) {
-			handlers.delete( elementType );
+		if ( elementTypeHandlers.get( elementType )?.size === 0 ) {
+			elementTypeHandlers.delete( elementType );
 		}
 	} else {
-		handlers.delete( elementType );
+		elementTypeHandlers.delete( elementType );
+	}
+};
+
+export const registerBySelector = ( {
+	id,
+	selector,
+	callback,
+}: {
+	selector: string;
+	id: string;
+	callback: SelectorHandler;
+} ) => {
+	if ( ! elementSelectorHandlers.has( selector ) ) {
+		elementSelectorHandlers.set( selector, new Map() );
+	}
+
+	if ( ! elementSelectorHandlers.get( selector )?.has( id ) ) {
+		elementSelectorHandlers.get( selector )?.set( id, callback );
+	}
+};
+
+export const unregisterBySelector = ( { selector, id }: { selector: string; id?: string } ) => {
+	if ( ! elementSelectorHandlers.has( selector ) ) {
+		return;
+	}
+
+	if ( id ) {
+		elementTypeHandlers.get( selector )?.delete( id );
+
+		if ( elementTypeHandlers.get( selector )?.size === 0 ) {
+			elementTypeHandlers.delete( selector );
+		}
+	} else {
+		elementTypeHandlers.delete( selector );
 	}
 };
