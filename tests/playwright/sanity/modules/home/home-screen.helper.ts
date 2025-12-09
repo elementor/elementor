@@ -63,6 +63,8 @@ const deepMergeMockData = ( base: JsonObject, override: JsonObject ): JsonObject
 	return result;
 };
 
+const LICENSE_TYPE_STORAGE_KEY = '__elementor_test_license_type__';
+
 export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeof transformMockDataByLicense>, apiRequests?: ApiRequests, requestContext?: APIRequestContext, licenseType?: LicenseType ) => {
 	let finalMockData = mockData;
 
@@ -96,7 +98,9 @@ export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeo
 	} );
 
 	if ( licenseType ) {
-		setElementorCommonTierOnWindow( page, licenseType );
+		await page.evaluate( ( key, tier ) => {
+			( window as { [key: string]: string } )[ key ] = tier;
+		}, LICENSE_TYPE_STORAGE_KEY, licenseType );
 	}
 };
 
@@ -130,32 +134,46 @@ const replaceImageUrl = (
 	return mockData;
 };
 
-const setElementorCommonTierOnWindow = ( page: Page, licenseType: LicenseType ): void => {
-	page.addInitScript( ( tier: string ) => {
-		const url = window.location.href;
-		const homeScreenUrlPattern = /wp-admin\/admin\.php\?page=elementor([&#]|$)/;
-		if ( ! homeScreenUrlPattern.test( url ) ) {
-			return;
-		}
+export const navigateToHomeScreen = async ( page: Page ) => {
+	const licenseType = await page.evaluate( ( key ) => {
+		return ( window as { [key: string]: string } )[ key ] || null;
+	}, LICENSE_TYPE_STORAGE_KEY ).catch( () => null );
 
-		const setTier = () => {
-			const elementorCommon = ( window as { elementorCommon?: { config?: { library_connect?: { current_access_tier?: string } } } } ).elementorCommon;
-			if ( elementorCommon && elementorCommon.config ) {
-				if ( ! elementorCommon.config.library_connect ) {
-					elementorCommon.config.library_connect = {};
+	await page.goto( 'wp-admin/admin.php?page=elementor' );
+	
+	if ( licenseType ) {
+		await page.evaluate( ( tier: string ) => {
+			const setTier = () => {
+				const elementorCommon = ( window as { elementorCommon?: { config?: { library_connect?: { current_access_tier?: string } } } } ).elementorCommon;
+				if ( elementorCommon && elementorCommon.config ) {
+					if ( ! elementorCommon.config.library_connect ) {
+						elementorCommon.config.library_connect = {};
+					}
+					elementorCommon.config.library_connect.current_access_tier = tier;
+				} else {
+					setTimeout( setTier, 10 );
 				}
-				elementorCommon.config.library_connect.current_access_tier = tier;
-			} else {
-				setTimeout( setTier, 10 );
-			}
-		};
-		setTier();
-	}, licenseType );
+			};
+			setTier();
+		}, licenseType );
+
+		await page.waitForFunction( ( expectedTier: string ) => {
+			const elementorCommon = ( window as { elementorCommon?: { config?: { library_connect?: { current_access_tier?: string } } } } ).elementorCommon;
+			return elementorCommon?.config?.library_connect?.current_access_tier === expectedTier;
+		}, licenseType, { timeout: 5000 } ).catch( () => {} );
+	}
+
+	return page.locator( '#e-home-screen' );
 };
 
-export const navigateToHomeScreen = async ( page: Page ) => {
-	await page.goto( 'wp-admin/admin.php?page=elementor' );
-	return page.locator( '#e-home-screen' );
+export const restoreElementorCommonTier = async ( page: Page ): Promise<void> => {
+	await page.evaluate( ( key ) => {
+		delete ( window as { [key: string]: unknown } )[ key ];
+		const elementorCommon = ( window as { elementorCommon?: { config?: { library_connect?: { current_access_tier?: string } } } } ).elementorCommon;
+		if ( elementorCommon && elementorCommon.config && elementorCommon.config.library_connect ) {
+			delete elementorCommon.config.library_connect.current_access_tier;
+		}
+	}, LICENSE_TYPE_STORAGE_KEY ).catch( () => {} );
 };
 
 export const saveHomepageSettings = async ( apiRequests: ApiRequests, requestContext: APIRequestContext ): Promise<HomepageSettings> => {

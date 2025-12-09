@@ -1,6 +1,6 @@
 import { expect, request } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
-import { saveHomepageSettings, restoreHomepageSettings, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, type HomepageSettings } from './home-screen.helper';
+import { saveHomepageSettings, restoreHomepageSettings, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, restoreElementorCommonTier, type HomepageSettings } from './home-screen.helper';
 import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Home screen Edit Website button tests', () => {
@@ -52,6 +52,10 @@ test.describe( 'Home screen Edit Website button tests', () => {
 
 		const isValidElementorUrl = href!.match( /wp-admin\/(post\.php\?post=\d+&action=elementor|edit\.php\?action=elementor_new_post&post_type=page)(&.*)?/ );
 		expect( isValidElementorUrl ).toBeTruthy();
+	} );
+
+	test.afterEach( async ( { page } ) => {
+		await restoreElementorCommonTier( page );
 	} );
 } );
 

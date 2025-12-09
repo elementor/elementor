@@ -1,7 +1,7 @@
 import { expect, request } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { type LicenseType, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen } from './home-screen.helper';
+import { type LicenseType, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, restoreElementorCommonTier } from './home-screen.helper';
 import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Home screen visual regression tests', () => {
@@ -27,4 +27,8 @@ test.describe( 'Home screen visual regression tests', () => {
 			await requestContext.dispose();
 		} );
 	}
+
+	test.afterEach( async ( { page } ) => {
+		await restoreElementorCommonTier( page );
+	} );
 } );
