@@ -24,7 +24,6 @@ use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
 use Elementor\Plugin;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -69,7 +68,6 @@ class Module extends Base_Module {
 			return $excluded_slugs;
 		} );
 
-		add_filter( 'elementor/editor-one/editor_flyout_items', [ $this, 'add_custom_elements_flyout_item' ], 70 );
 		add_filter( 'elementor/editor-one/menu/items_to_hide_from_wp_menu', [ $this, 'add_items_to_hide' ] );
 
 		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
@@ -101,19 +99,6 @@ class Module extends Base_Module {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
 	}
 
-	public function add_custom_elements_flyout_item( array $items ): array {
-
-		$items[] = [
-			'slug' => 'elementor-custom-elements',
-			'label' => esc_html__( 'Custom Elements', 'elementor' ),
-			'url' => admin_url( 'admin.php?page=elementor_custom_fonts' ),
-			'icon' => 'adjustments',
-			'group_id' => Menu_Config::CUSTOM_ELEMENTS_GROUP_ID,
-			'priority' => 70,
-		];
-
-		return $items;
-	}
 	private function handle_external_redirects() {
 		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
 		if ( empty( $page ) ) {

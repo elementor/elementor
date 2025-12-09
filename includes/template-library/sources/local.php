@@ -18,7 +18,6 @@ use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\Core\Isolation\Elementor_Adapter_Interface;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Editor_One_Saved_Templates_Menu;
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Editor_One_Templates_Menu;
@@ -1679,8 +1678,6 @@ class Source_Local extends Source_Base {
 				$this->admin_menu_reorder( $admin_menu );
 			}, 800 );
 
-			add_filter( 'elementor/editor-one/editor_flyout_items', [ $this, 'add_templates_flyout_item' ], 60 );
-
 			add_action( 'elementor/admin/menu/after_register', function () {
 				$this->admin_menu_set_current();
 			} );
@@ -1843,20 +1840,6 @@ class Source_Local extends Source_Base {
 				'page_settings' => $item['page_settings'],
 			] );
 		}
-
-		return $items;
-	}
-
-	public function add_templates_flyout_item( array $items ): array {
-
-		$items[] = [
-			'slug' => 'elementor-templates',
-			'label' => esc_html__( 'Templates', 'elementor' ),
-			'url' => admin_url( 'edit.php?post_type=elementor_library&tabs_group=library' ),
-			'icon' => 'folder',
-			'group_id' => Menu_Config::TEMPLATES_GROUP_ID,
-			'priority' => 60,
-		];
 
 		return $items;
 	}

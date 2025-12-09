@@ -46,10 +46,7 @@ class Editor_One_System_Info_Menu implements Menu_Item_Interface, Admin_Menu_Ite
 	}
 
 	public function render() {
-		$system_info = Plugin::$instance->modules_manager->get_modules( 'system-info' );
-		if ( $system_info && method_exists( $system_info, 'display_page' ) ) {
-			$system_info->display_page();
-		}
+		Plugin::$instance->system_info->display_page();
 	}
 }
 

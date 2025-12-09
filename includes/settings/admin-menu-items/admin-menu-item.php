@@ -3,13 +3,12 @@ namespace Elementor\Includes\Settings\AdminMenuItems;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Settings;
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Admin_Menu_Item implements Admin_Menu_Item_With_Page, Admin_Menu_Item_Has_Position {
+class Admin_Menu_Item implements Admin_Menu_Item_With_Page {
 	private $settings_page;
 
 	public function __construct( Settings $settings_page ) {
@@ -35,7 +34,7 @@ class Admin_Menu_Item implements Admin_Menu_Item_With_Page, Admin_Menu_Item_Has_
 	}
 
 	public function get_position() {
-		return 20;
+		return '58.5';
 	}
 
 	public function get_capability() {

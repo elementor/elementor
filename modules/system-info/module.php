@@ -5,7 +5,6 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Modules\System_Info\Reporters\Base;
 use Elementor\Modules\System_Info\Helpers\Model_Helper;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\System_Info\AdminMenuItems\Editor_One_System_Info_Menu;
 use Elementor\Modules\System_Info\AdminMenuItems\Editor_One_System_Menu;
@@ -132,26 +131,12 @@ class Module extends BaseModule {
 			$this->register_editor_one_menu( $menu_data_provider );
 		} );
 
-		add_filter( 'elementor/editor-one/editor_flyout_items', [ $this, 'add_system_flyout_item' ], 80 );
 		add_filter( 'elementor/editor-one/menu/items_to_hide_from_wp_menu', [ $this, 'add_items_to_hide' ] );
 		add_action( 'wp_ajax_elementor_system_info_download_file', [ $this, 'download_file' ] );
 	}
 
 	private function is_editor_one_active(): bool {
 		return !! Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-	}
-
-	public function add_system_flyout_item( array $items ): array {
-		$items[] = [
-			'slug' => 'elementor-system',
-			'label' => esc_html__( 'System', 'elementor' ),
-			'url' => admin_url( 'admin.php?page=elementor-system-info' ),
-			'icon' => 'info-circle',
-			'group_id' => Menu_Config::SYSTEM_GROUP_ID,
-			'priority' => 80,
-		];
-
-		return $items;
 	}
 
 	public function add_items_to_hide( array $items ): array {

@@ -164,7 +164,7 @@ class Settings extends Settings_Page {
 	 * @access private
 	 */
 	private function register_knowledge_base_menu( Admin_Menu_Manager $admin_menu ) {
-		if ( ! !! Plugin::instance()->modules_manager->get_modules( 'editor-one' ) ) {
+		if ( ! Plugin::instance()->modules_manager->get_modules( 'editor-one' ) ) {
 			$admin_menu->register( 'elementor-getting-started', new Getting_Started_Menu_Item() );
 			$admin_menu->register( 'go_knowledge_base_site', new Get_Help_Menu_Item() );
 		}

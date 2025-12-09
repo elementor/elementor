@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\EditorOne\Classes;
+namespace Elementor\Modules\EditorOne\Classes\Menu\Items;
 
 use Elementor\Modules\EditorOne\Classes\Menu\Interface\Menu_Item_Interface;
 

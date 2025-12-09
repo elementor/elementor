@@ -103,9 +103,7 @@ class Menu_Data_Provider {
 			return $this->cached_editor_flyout_data;
 		}
 
-		$items = Menu_Config::get_editor_flyout_items();
-		$items = apply_filters( 'elementor/editor-one/editor_flyout_items', $items );
-		$items = $this->merge_level3_legacy_items( $items );
+		$items = $this->merge_level3_legacy_items( [] );
 
 		$this->sort_items_by_priority( $items );
 
@@ -122,9 +120,7 @@ class Menu_Data_Provider {
 			return $this->cached_level4_flyout_data;
 		}
 
-		$groups = Menu_Config::get_level4_flyout_groups();
-		$groups = $this->merge_level4_legacy_items( $groups );
-		$groups = apply_filters( 'elementor/editor-one/menu/level4_flyout_groups', $groups );
+		$groups = $this->merge_level4_legacy_items( [] );
 
 		foreach ( $groups as $group_id => $group ) {
 			if ( ! empty( $group['items'] ) ) {
@@ -259,12 +255,16 @@ class Menu_Data_Provider {
 
 				$priority = $item->get_position() ?? 100;
 
+				// Check if this is a third-level item with children (group header)
+				$has_children = $item instanceof Menu_Item_Third_Level_Interface && $item->has_children();
+				$group_id = $has_children ? $item->get_group_id() : '';
+
 				$items[] = [
 					'slug' => $item_slug,
 					'label' => $label,
 					'url' => $this->get_item_url( $item_slug ),
 					'icon' => $icon,
-					'group_id' => '',
+					'group_id' => $group_id,
 					'priority' => $priority,
 				];
 

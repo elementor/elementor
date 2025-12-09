@@ -6,7 +6,6 @@ use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Modules\EditorOne\Classes\Menu\Interface\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\ElementManager\Module;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -47,10 +46,10 @@ class Editor_One_Elements_Manager_Menu implements Menu_Item_Interface, Admin_Men
 	}
 
 	public function render() {
-		$element_manager = Plugin::$instance->modules_manager->get_modules( 'element-manager' );
-		if ( $element_manager && method_exists( $element_manager, 'render_app' ) ) {
-			$element_manager->render_app();
-		}
+		echo '<div class="wrap">';
+		echo '<h3 class="wp-heading-inline">' . esc_html__( 'Element Manager', 'elementor' ) . '</h3>';
+		echo '<div id="elementor-element-manager-wrap"></div>';
+		echo '</div>';
 	}
 }
 

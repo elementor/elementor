@@ -17,28 +17,6 @@ class Menu_Config {
 	const SYSTEM_GROUP_ID = 'elementor-editor-system';
 	const LEGACY_TEMPLATES_SLUG = 'edit.php?post_type=elementor_library';
 
-	public static function get_editor_flyout_items(): array {
-		return [];
-	}
-
-	public static function get_level4_flyout_groups(): array {
-		$groups = [];
-
-		$groups[ self::TEMPLATES_GROUP_ID ] = [
-			'items' => [],
-		];
-
-		$groups[ self::CUSTOM_ELEMENTS_GROUP_ID ] = [
-			'items' => [],
-		];
-
-		$groups[ self::SYSTEM_GROUP_ID ] = [
-			'items' => [],
-		];
-
-		return $groups;
-	}
-
 	public static function get_items_to_hide_from_wp_menu(): array {
 		return apply_filters( 'elementor/editor-one/menu/items_to_hide_from_wp_menu', [] );
 	}
@@ -104,9 +82,12 @@ class Menu_Config {
 		return apply_filters( 'elementor/editor-one/menu/legacy_pro_mapping', $default_mapping );
 	}
 
-	public static function get_position_mapping(): array {
+	public static function get_aatribute_mapping(): array {
 		$default_mapping = [
-			'e-form-submissions' => 50,
+			'e-form-submissions' => [
+				'position' => 50,
+				'icon' => 'send',
+			],
 		];
 
 		return apply_filters( 'elementor/editor-one/menu/position_mapping', $default_mapping );

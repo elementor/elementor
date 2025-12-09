@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Includes\Settings\AdminMenuItems;
 
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Settings;
 use Elementor\Tools;
@@ -10,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Tools_Menu_Item implements Admin_Menu_Item_With_Page, Admin_Menu_Item_Has_Position {
+class Tools_Menu_Item implements Admin_Menu_Item_With_Page {
 
 	private $tools_page;
 
@@ -40,9 +39,5 @@ class Tools_Menu_Item implements Admin_Menu_Item_With_Page, Admin_Menu_Item_Has_
 
 	public function render() {
 		$this->tools_page->display_settings_page();
-	}
-
-	public function get_position() {
-		return 30;
 	}
 }

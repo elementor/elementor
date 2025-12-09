@@ -2,10 +2,10 @@
 
 namespace Elementor\Modules\EditorOne\Components;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
-use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Item;
+use Elementor\Modules\EditorOne\Classes\Menu\Items\Legacy_Submenu_Item;
+use Elementor\Modules\EditorOne\Classes\Menu\Items\Editor_One_Custom_Elements_Menu;
+use Elementor\Modules\EditorOne\Classes\Menu\Items\Legacy_Submenu_Item_Not_Mapped;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Menu\Interface\Menu_Item_Interface;
@@ -50,22 +50,10 @@ class Elementor_One_Menu_Manager {
 
 	public function check_if_pro_module_is_enabled(): void {
 		$this->is_pro_module_enabled = apply_filters( 'elementor/modules/editor-one/is_pro_module_enabled', false );
+
 		if ( ! $this->is_pro_module_enabled && Utils::has_pro() ) {
-			add_filter( 'elementor/editor-one/editor_flyout_items', [ $this, 'add_custom_elements_flyout_item' ], 70 );
+			$this->menu_data_provider->register_menu( new Editor_One_Custom_Elements_Menu() );
 		}
-	}
-
-	public function add_custom_elements_flyout_item( array $items ): array {
-		$items[] = [
-			'slug' => 'elementor-custom-elements',
-			'label' => esc_html__( 'Custom Elements', 'elementor' ),
-			'url' => admin_url( 'admin.php?page=elementor_custom_fonts' ),
-			'icon' => 'adjustments',
-			'group_id' => Menu_Config::CUSTOM_ELEMENTS_GROUP_ID,
-			'priority' => 70,
-		];
-
-		return $items;
 	}
 
 	public function register_unified_submenus(): void {
@@ -207,7 +195,7 @@ class Elementor_One_Menu_Manager {
 	private function register_hidden_submenu( string $item_slug, Menu_Item_Interface $item ) {
 		$original_parent = $this->get_original_parent_slug( $item );
 		$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
-		$has_page = $item instanceof Admin_Menu_Item_With_Page;
+		$has_page = method_exists( $item, 'render' );
 		$page_title = $has_page ? $item->get_page_title() : '';
 		$callback = $has_page ? [ $item, 'render' ] : '';
 		$capability = $item->get_capability();
@@ -322,16 +310,24 @@ class Elementor_One_Menu_Manager {
 			$item_slug = $submenu_item[2];
 			$has_level4_group = isset( $legacy_pro_mapping[ $item_slug ] );
 
-			if ( $has_level4_group && isset( $legacy_pro_mapping[ $item_slug ]['label'] ) ) {
-				$submenu_item[0] = $legacy_pro_mapping[ $item_slug ]['label'];
+			if ( $has_level4_group ) {
+				if ( isset( $legacy_pro_mapping[ $item_slug ]['label'] ) ) {
+					$submenu_item[0] = $legacy_pro_mapping[ $item_slug ]['label'];
+				}
+
+				$position = Menu_Config::get_aatribute_mapping()[ $item_slug ]['position'] ?? 100;
+				$group_id = $legacy_pro_mapping[ $item_slug ]['group'];
+				$submenu_item[4] = $group_id;
+				$legacy_item = new Legacy_Submenu_Item( $submenu_item, Menu_Config::ELEMENTOR_MENU_SLUG, $position );
+
+				$this->menu_data_provider->register_menu( $legacy_item );
+			} else {
+				$position = Menu_Config::get_aatribute_mapping()[ $item_slug ]['position'] ?? 100;
+				$submenu_item[4] = Menu_Config::get_aatribute_mapping()[ $item_slug ]['icon'] ?? 'tool';
+				$legacy_item = new Legacy_Submenu_Item_Not_Mapped( $submenu_item, Menu_Config::ELEMENTOR_MENU_SLUG, $position );
+
+				$this->menu_data_provider->register_menu( $legacy_item );
 			}
-
-			$position = Menu_Config::get_position_mapping()[ $item_slug ] ?? 100;
-			$group_id = $has_level4_group ? $legacy_pro_mapping[ $item_slug ]['group'] : Menu_Config::EDITOR_GROUP_ID;
-			$submenu_item[4] = $group_id;
-			$legacy_item = new Legacy_Submenu_Item( $submenu_item, Menu_Config::ELEMENTOR_MENU_SLUG, $position );
-
-			$this->menu_data_provider->register_menu( $legacy_item );
 
 			unset( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ][ $index ] );
 		}
