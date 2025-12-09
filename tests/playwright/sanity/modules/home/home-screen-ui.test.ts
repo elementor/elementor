@@ -1,8 +1,8 @@
 import { expect, request } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { wpCli } from '../../../assets/wp-cli';
 import { type LicenseType, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen } from './home-screen.helper';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Home screen visual regression tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
