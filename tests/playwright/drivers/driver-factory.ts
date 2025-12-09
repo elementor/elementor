@@ -21,7 +21,16 @@ export class DriverFactory {
 		return { context, page, wpAdmin };
 	}
 
-	static async createEditorDriver( browser: Browser, testInfo?: TestInfo, apiRequests?: ApiRequests ): Promise<EditorDriver> {
+	static async createEditorDriver(
+		browser: Browser,
+		testInfo?: TestInfo,
+		apiRequests?: ApiRequests,
+		options?: { experiments?: string[] },
+	): Promise<EditorDriver> {
+		if ( options?.experiments?.length ) {
+			await this.activateExperimentsCli( options.experiments );
+		}
+
 		const { context, wpAdmin } = await this.createTemporaryContext( browser, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 

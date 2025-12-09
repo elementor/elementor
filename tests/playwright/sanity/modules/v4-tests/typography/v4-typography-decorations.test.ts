@@ -6,14 +6,14 @@ import { WIDGET_CONFIGS, TYPOGRAPHY_DECORATIONS } from './typography-constants';
 import { EditorAssertions } from '../../../../pages/editor-assertions';
 import { DriverFactory } from '../../../../drivers/driver-factory';
 import type { EditorDriver } from '../../../../drivers/editor-driver';
-import { wpCli } from '../../../../assets/wp-cli';
 
 test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 	let driver: EditorDriver;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
-		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests );
+		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests, {
+			experiments: [ 'e_atomic_elements' ],
+		} );
 	} );
 
 	test.afterAll( async () => {
