@@ -10,7 +10,7 @@ test.describe( 'Home screen Edit Website button tests', () => {
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_editor_one: 'active' } );
+		await wpAdmin.setExperiments( { e_editor_one: true } );
 		const requestContext = page.context().request;
 		originalHomepageSettings = await saveHomepageSettings( apiRequests, requestContext );
 		await page.close();
