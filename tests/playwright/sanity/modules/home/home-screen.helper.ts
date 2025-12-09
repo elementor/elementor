@@ -13,7 +13,7 @@ export type LicenseType = 'free' | 'pro' | 'one';
 
 type JsonObject = Record<string, unknown>;
 
-const ELEMENTOR_HOME_SCREEN_DATA_REGEX = /var\s+elementorHomeScreenData\s*=\s*(\{[\s\S]*?\});/;
+const ELEMENTOR_HOME_SCREEN_DATA_REGEX = /var\s+elementorHomeScreenData\s*=\s*(?<data>\{[\s\S]*?\});/;
 const HTML_LESS_THAN_ESCAPE_REGEX = /</g;
 const HTML_LESS_THAN_ESCAPE_REPLACEMENT = '\\u003c';
 
@@ -82,10 +82,10 @@ export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeo
 		const body = await response.text();
 
 		const match = body.match( ELEMENTOR_HOME_SCREEN_DATA_REGEX );
-		if ( ! match || ! match[ 1 ] ) {
+		if ( ! match || ! match.groups?.data ) {
 			throw new Error( 'Failed to find elementorHomeScreenData in response' );
 		}
-		const existingData = JSON.parse( match[ 1 ] );
+		const existingData = JSON.parse( match.groups.data );
 		const mergedData = deepMergeMockData( existingData, finalMockData );
 		const mockDataJson = JSON.stringify( mergedData ).replace( HTML_LESS_THAN_ESCAPE_REGEX, HTML_LESS_THAN_ESCAPE_REPLACEMENT );
 
