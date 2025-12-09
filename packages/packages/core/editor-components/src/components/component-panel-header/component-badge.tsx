@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
-import { SettingsIcon } from '@elementor/icons';
+import { ComponentPropListIcon } from '@elementor/icons';
 import { Badge, Box, keyframes, styled, ToggleButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -23,7 +23,7 @@ export const ComponentsBadge = ( { overridesCount }: { overridesCount: number } 
 			}
 		>
 			<ToggleButton value="overrides" size="tiny" aria-label={ __( 'View overrides', 'elementor' ) }>
-				<SettingsIcon fontSize="tiny" />
+				<ComponentPropListIcon fontSize="tiny" />
 			</ToggleButton>
 		</StyledBadge>
 	);
