@@ -1,27 +1,25 @@
 import { expect, request } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import { saveHomepageSettings, restoreHomepageSettings, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, type HomepageSettings } from './home-screen.helper';
-import WpAdminPage from '../../../pages/wp-admin-page';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Home screen Edit Website button tests', () => {
 	let originalHomepageSettings: HomepageSettings | null = null;
 
-	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+	test.beforeAll( async ( { browser, apiRequests } ) => {
+		await wpCli( 'wp elementor experiments activate e_editor_one' );
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_editor_one: true } );
 		const requestContext = page.context().request;
 		originalHomepageSettings = await saveHomepageSettings( apiRequests, requestContext );
 		await page.close();
 		await context.close();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+	test.afterAll( async ( { browser, apiRequests } ) => {
+		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 		const context = await browser.newContext();
 		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
 
 		if ( originalHomepageSettings ) {
 			const requestContext = page.context().request;

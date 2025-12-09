@@ -275,9 +275,7 @@ export default class WpAdminPage extends BasePage {
 				}
 			}, `.elementor_experiment-${ id }` );
 
-			const selectLocator = this.page.locator( selector );
-			await selectLocator.waitFor( { state: 'visible' } );
-			await selectLocator.selectOption( state ? 'active' : 'inactive' );
+			await this.page.selectOption( selector, state ? 'active' : 'inactive' );
 
 			// Click to confirm any experiment that has dependencies.
 			await this.confirmExperimentModalIfOpen();
