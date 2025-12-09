@@ -141,10 +141,6 @@ class Module extends BaseModule {
 	}
 
 	public function add_system_flyout_item( array $items ): array {
-		if ( ! $this->is_editor_one_active() ) {
-			return $items;
-		}
-
 		$items[] = [
 			'slug' => 'elementor-system',
 			'label' => esc_html__( 'System', 'elementor' ),
@@ -158,10 +154,6 @@ class Module extends BaseModule {
 	}
 
 	public function add_items_to_hide( array $items ): array {
-		if ( ! $this->is_editor_one_active() ) {
-			return $items;
-		}
-
 		$items[] = 'elementor-system-info';
 		$items[] = 'elementor-element-manager';
 		$items[] = 'go_knowledge_base_site';
