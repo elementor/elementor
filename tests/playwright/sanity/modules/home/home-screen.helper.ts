@@ -63,7 +63,11 @@ export const mockHomeScreenData = async ( page: Page, mockData: ReturnType<typeo
 		const response = await route.fetch();
 		const body = await response.text();
 
-		const existingData = JSON.parse( body.match( ELEMENTOR_HOME_SCREEN_DATA_REGEX )[ 1 ] );
+		const match = body.match( ELEMENTOR_HOME_SCREEN_DATA_REGEX );
+		if ( ! match || ! match[1] ) {
+			throw new Error( 'Failed to find elementorHomeScreenData in response' );
+		}
+		const existingData = JSON.parse( match[1] );
 		const mergedData = deepMergeMockData( existingData, finalMockData );
 		const mockDataJson = JSON.stringify( mergedData ).replace( HTML_LESS_THAN_ESCAPE_REGEX, HTML_LESS_THAN_ESCAPE_REPLACEMENT );
 
