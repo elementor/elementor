@@ -7,7 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Menu_Config {
-
 	const ELEMENTOR_MENU_SLUG = 'elementor';
 	const EDITOR_MENU_SLUG = 'elementor-editor';
 	const TEMPLATES_GROUP_ID = 'elementor-editor-templates';
@@ -16,38 +15,20 @@ class Menu_Config {
 	const CUSTOM_ELEMENTS_GROUP_ID = 'elementor-editor-custom-elements';
 	const SYSTEM_GROUP_ID = 'elementor-editor-system';
 	const LEGACY_TEMPLATES_SLUG = 'edit.php?post_type=elementor_library';
-
-	public static function get_items_to_hide_from_wp_menu(): array {
-		return apply_filters( 'elementor/editor-one/menu/items_to_hide_from_wp_menu', [] );
-	}
-
-	public static function get_protected_submenu_slugs(): array {
-		$default_slugs = [
-			self::ELEMENTOR_MENU_SLUG,
-			self::EDITOR_MENU_SLUG,
-		];
-
-		return apply_filters( 'elementor/editor-one/menu/protected_submenu_slugs', $default_slugs );
-	}
-
-	public static function get_protected_templates_submenu_slugs(): array {
-		$default_slugs = [
-			self::LEGACY_TEMPLATES_SLUG,
-		];
-
-		return apply_filters( 'elementor/editor-one/menu/protected_templates_submenu_slugs', $default_slugs );
-	}
-
 	public static function get_excluded_level4_slugs(): array {
-		$default_slugs = [];
+		// add new which is automatically added to templates and categories
+		$default_slugs = [
+			'edit-tags.php?taxonomy=elementor_library_category&amp;post_type=elementor_library',
+		];
 
 		return apply_filters( 'elementor/editor-one/menu/excluded_level4_slugs', $default_slugs );
 	}
-
 	public static function get_excluded_level3_slugs(): array {
+		// elementor pro slugs
 		$default_slugs = [
 			'elementor-theme-builder',
 			'elementor-pro-notes-proxy',
+			self::EDITOR_MENU_SLUG,
 		];
 
 		return apply_filters( 'elementor/editor-one/menu/excluded_level3_slugs', $default_slugs );
@@ -61,7 +42,6 @@ class Menu_Config {
 
 		return apply_filters( 'elementor/editor-one/menu/legacy_slug_mapping', $default_mapping );
 	}
-
 	public static function get_legacy_pro_mapping(): array {
 		$default_mapping = [
 			'elementor-license' => [ 'group' => self::SYSTEM_GROUP_ID ],
@@ -81,8 +61,7 @@ class Menu_Config {
 
 		return apply_filters( 'elementor/editor-one/menu/legacy_pro_mapping', $default_mapping );
 	}
-
-	public static function get_aatribute_mapping(): array {
+	public static function get_attribute_mapping(): array {
 		$default_mapping = [
 			'e-form-submissions' => [
 				'position' => 50,
@@ -92,7 +71,6 @@ class Menu_Config {
 
 		return apply_filters( 'elementor/editor-one/menu/position_mapping', $default_mapping );
 	}
-
 	public static function get_custom_code_url(): string {
 		$pro_custom_code_cpt = 'elementor_snippet';
 
@@ -103,5 +81,24 @@ class Menu_Config {
 		}
 
 		return apply_filters( 'elementor/editor-one/menu/custom_code_url', $default_url );
+	}
+
+	public static function get_elementor_post_types(): array {
+		$default_values = [
+			'elementor_icons' => [
+				'menu_slug' => 'elementor-custom-elements',
+				'child_slug' => 'custom-icons',
+			],
+			'elementor_font' => [
+				'menu_slug' => 'elementor-custom-elements',
+				'child_slug' => 'custom-fonts',
+			],
+			'elementor_snippet' => [
+				'menu_slug' => 'elementor-custom-elements',
+				'child_slug' => 'custom-code',
+			],
+		];
+
+		return apply_filters( 'elementor/editor-one/menu/elementor_post_types', $default_values );
 	}
 }

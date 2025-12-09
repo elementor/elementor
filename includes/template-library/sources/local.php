@@ -1668,6 +1668,12 @@ class Source_Local extends Source_Base {
 				$this->register_editor_one_menu( $menu_data_provider );
 			} );
 
+			add_action( 'elementor/editor-one/menu/excluded_level4_slugs', function ( array $excluded_slugs ): array {
+				$excluded_slugs[] = 'edit.php?post_type=elementor_library#add_new';
+				$excluded_slugs[] = 'edit-tags.php?taxonomy=elementor_library_category&amp;post_type=elementor_library';
+				return $excluded_slugs;
+			} );
+
 			add_filter( 'elementor/editor-one/menu/elementor_post_types', function ( array $elementor_post_types ): array {
 				$elementor_post_types[ self::CPT ] = [];
 

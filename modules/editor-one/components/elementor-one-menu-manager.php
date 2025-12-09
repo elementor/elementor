@@ -265,11 +265,6 @@ class Elementor_One_Menu_Manager {
 			$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
 			remove_submenu_page( $parent_slug, $item_slug );
 		} );
-
-		$items_to_hide_from_wp_menu = Menu_Config::get_items_to_hide_from_wp_menu();
-		foreach ( $items_to_hide_from_wp_menu as $item_slug ) {
-			remove_submenu_page( Menu_Config::ELEMENTOR_MENU_SLUG, $item_slug );
-		}
 	}
 
 	public function intercept_legacy_submenus(): void {
@@ -285,17 +280,13 @@ class Elementor_One_Menu_Manager {
 		}
 
 		$items_to_intercept = [];
-		$protected_slugs = Menu_Config::get_protected_submenu_slugs();
+
 		$legacy_pro_mapping = Menu_Config::get_legacy_pro_mapping();
 
 		foreach ( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] as $index => $submenu_item ) {
 			$item_slug = $submenu_item[2] ?? '';
 
 			if ( empty( $item_slug ) ) {
-				continue;
-			}
-
-			if ( in_array( $item_slug, $protected_slugs, true ) ) {
 				continue;
 			}
 
@@ -315,15 +306,15 @@ class Elementor_One_Menu_Manager {
 					$submenu_item[0] = $legacy_pro_mapping[ $item_slug ]['label'];
 				}
 
-				$position = Menu_Config::get_aatribute_mapping()[ $item_slug ]['position'] ?? 100;
+				$position = Menu_Config::get_attribute_mapping()[ $item_slug ]['position'] ?? 100;
 				$group_id = $legacy_pro_mapping[ $item_slug ]['group'];
 				$submenu_item[4] = $group_id;
 				$legacy_item = new Legacy_Submenu_Item( $submenu_item, Menu_Config::ELEMENTOR_MENU_SLUG, $position );
 
 				$this->menu_data_provider->register_menu( $legacy_item );
 			} else {
-				$position = Menu_Config::get_aatribute_mapping()[ $item_slug ]['position'] ?? 100;
-				$submenu_item[4] = Menu_Config::get_aatribute_mapping()[ $item_slug ]['icon'] ?? 'tool';
+				$position = Menu_Config::get_attribute_mapping()[ $item_slug ]['position'] ?? 100;
+				$submenu_item[4] = Menu_Config::get_attribute_mapping()[ $item_slug ]['icon'] ?? 'tool';
 				$legacy_item = new Legacy_Submenu_Item_Not_Mapped( $submenu_item, Menu_Config::ELEMENTOR_MENU_SLUG, $position );
 
 				$this->menu_data_provider->register_menu( $legacy_item );
@@ -341,16 +332,11 @@ class Elementor_One_Menu_Manager {
 		}
 
 		$items_to_intercept = [];
-		$protected_templates_slugs = Menu_Config::get_protected_templates_submenu_slugs();
 
 		foreach ( $submenu[ Menu_Config::LEGACY_TEMPLATES_SLUG ] as $index => $submenu_item ) {
 			$item_slug = $submenu_item[2] ?? '';
 
 			if ( empty( $item_slug ) ) {
-				continue;
-			}
-
-			if ( in_array( $item_slug, $protected_templates_slugs, true ) ) {
 				continue;
 			}
 

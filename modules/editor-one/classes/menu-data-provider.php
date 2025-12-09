@@ -19,7 +19,6 @@ class Menu_Data_Provider {
 	private ?string $theme_builder_url = null;
 	private ?array $cached_editor_flyout_data = null;
 	private ?array $cached_level4_flyout_data = null;
-
 	public static function instance(): self {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -27,9 +26,7 @@ class Menu_Data_Provider {
 
 		return self::$instance;
 	}
-
 	private function __construct() {}
-
 	public function register_menu( Menu_Item_Interface $item ): void {
 		if ( $item instanceof Menu_Item_Third_Level_Interface ) {
 			$this->register_level3_item( $item );
@@ -37,20 +34,15 @@ class Menu_Data_Provider {
 			$this->register_level4_item( $item );
 		}
 	}
-
 	public function register_level3_item( Menu_Item_Third_Level_Interface $item ): void {
 		$group_id = $item->get_group_id();
 		$item_slug = $item->get_slug();
-		$icon = $item->get_icon();
 
 		if ( ! isset( $this->level3_items[ $group_id ] ) ) {
 			$this->level3_items[ $group_id ] = [];
 		}
 
-		$this->level3_items[ $group_id ][ $item_slug ] = [
-			'item' => $item,
-			'icon' => $icon,
-		];
+		$this->level3_items[ $group_id ][ $item_slug ] = $item;
 
 		$this->invalidate_cache();
 	}
@@ -66,20 +58,8 @@ class Menu_Data_Provider {
 		$this->level4_items[ $group_id ][ $item_slug ] = $item;
 		$this->invalidate_cache();
 	}
-
 	public function get_level3_items(): array {
-		$items = [];
-
-		foreach ( $this->level3_items as $group_id => $group_items ) {
-			$items[ $group_id ] = [];
-			foreach ( $group_items as $item_slug => $item_data ) {
-				$items[ $group_id ][ $item_slug ] = is_array( $item_data ) && isset( $item_data['item'] )
-					? $item_data['item']
-					: $item_data;
-			}
-		}
-
-		return $items;
+		return $this->level3_items;
 	}
 
 	public function get_level4_items(): array {
@@ -103,7 +83,7 @@ class Menu_Data_Provider {
 			return $this->cached_editor_flyout_data;
 		}
 
-		$items = $this->merge_level3_legacy_items( [] );
+		$items = $this->build_level3_flyout_items();
 
 		$this->sort_items_by_priority( $items );
 
@@ -120,7 +100,7 @@ class Menu_Data_Provider {
 			return $this->cached_level4_flyout_data;
 		}
 
-		$groups = $this->merge_level4_legacy_items( [] );
+		$groups = $this->build_level4_flyout_groups();
 
 		foreach ( $groups as $group_id => $group ) {
 			if ( ! empty( $group['items'] ) ) {
@@ -132,7 +112,6 @@ class Menu_Data_Provider {
 
 		return $this->cached_level4_flyout_data;
 	}
-
 	public function get_theme_builder_url(): string {
 		if ( null === $this->theme_builder_url ) {
 			$pro_url = Plugin::$instance->app ? Plugin::$instance->app->get_settings( 'menu_url' ) : null;
@@ -152,8 +131,6 @@ class Menu_Data_Provider {
 
 		$slugs = array_merge(
 			$base_slugs,
-			Menu_Config::get_protected_submenu_slugs(),
-			Menu_Config::get_items_to_hide_from_wp_menu(),
 			$this->get_dynamic_page_slugs()
 		);
 
@@ -181,26 +158,11 @@ class Menu_Data_Provider {
 			return false;
 		}
 
-		return isset( self::get_elementor_post_types()[ $post_type ] );
+		return isset( Menu_Config::get_elementor_post_types()[ $post_type ] );
 	}
 
 	public static function get_elementor_post_types(): array {
-		$default_values = [
-			'elementor_icons' => [
-				'menu_slug' => 'elementor-custom-elements',
-				'child_slug' => 'custom-icons',
-			],
-			'elementor_font' => [
-				'menu_slug' => 'elementor-custom-elements',
-				'child_slug' => 'custom-fonts',
-			],
-			'elementor_snippet' => [
-				'menu_slug' => 'elementor-custom-elements',
-				'child_slug' => 'custom-code',
-			],
-		];
-
-		return apply_filters( 'elementor/editor-one/menu/elementor_post_types', $default_values );
+		return Menu_Config::get_elementor_post_types();
 	}
 	private function get_dynamic_page_slugs(): array {
 		$slugs = [];
@@ -220,22 +182,14 @@ class Menu_Data_Provider {
 		} ) );
 	}
 
-	private function merge_level3_legacy_items( array $items ): array {
-		$existing_slugs = array_column( $items, 'slug' );
+	private function build_level3_flyout_items(): array {
+		$items = [];
+		$existing_slugs = [];
 		$excluded_slugs = Menu_Config::get_excluded_level3_slugs();
 
 		foreach ( $this->level3_items as $group_items ) {
-			foreach ( $group_items as $item_slug => $item_data ) {
-				$item = is_array( $item_data ) && isset( $item_data['item'] )
-					? $item_data['item']
-					: $item_data;
-				$icon = is_array( $item_data ) ? ( $item_data['icon'] ?? '' ) : '';
-
-				if ( ! $item->is_visible() ) {
-					continue;
-				}
-
-				if ( ! current_user_can( $item->get_capability() ) ) {
+			foreach ( $group_items as $item_slug => $item ) {
+				if ( ! $this->is_item_accessible( $item ) ) {
 					continue;
 				}
 
@@ -253,19 +207,16 @@ class Menu_Data_Provider {
 					continue;
 				}
 
-				$priority = $item->get_position() ?? 100;
-
-				// Check if this is a third-level item with children (group header)
-				$has_children = $item instanceof Menu_Item_Third_Level_Interface && $item->has_children();
+				$has_children = $item->has_children();
 				$group_id = $has_children ? $item->get_group_id() : '';
 
 				$items[] = [
 					'slug' => $item_slug,
 					'label' => $label,
 					'url' => $this->get_item_url( $item_slug ),
-					'icon' => $icon,
+					'icon' => $item->get_icon(),
 					'group_id' => $group_id,
-					'priority' => $priority,
+					'priority' => $item->get_position() ?? 100,
 				];
 
 				$existing_slugs[] = $item_slug;
@@ -275,28 +226,20 @@ class Menu_Data_Provider {
 		return $items;
 	}
 
-	private function merge_level4_legacy_items( array $groups ): array {
-		$excluded_level4_slugs = Menu_Config::get_excluded_level4_slugs();
+	private function build_level4_flyout_groups(): array {
+		$groups = [];
+		$excluded_slugs = Menu_Config::get_excluded_level4_slugs();
 
 		foreach ( $this->level4_items as $group_id => $items ) {
-			if ( ! isset( $groups[ $group_id ] ) ) {
-				$groups[ $group_id ] = [ 'items' => [] ];
-			}
-
-			$existing_labels = array_map( function( $item ) {
-				return strtolower( $item['label'] );
-			}, $groups[ $group_id ]['items'] );
+			$groups[ $group_id ] = [ 'items' => [] ];
+			$existing_labels = [];
 
 			foreach ( $items as $item_slug => $item ) {
-				if ( ! $item->is_visible() ) {
+				if ( ! $this->is_item_accessible( $item ) ) {
 					continue;
 				}
 
-				if ( ! current_user_can( $item->get_capability() ) ) {
-					continue;
-				}
-
-				if ( $this->is_slug_excluded( $item_slug, $excluded_level4_slugs ) ) {
+				if ( $this->is_slug_excluded( $item_slug, $excluded_slugs ) ) {
 					continue;
 				}
 
@@ -307,13 +250,11 @@ class Menu_Data_Provider {
 					continue;
 				}
 
-				$priority = $item->get_position() ?? 100;
-
 				$groups[ $group_id ]['items'][] = [
 					'slug' => $item_slug,
 					'label' => $label,
 					'url' => $this->get_item_url( $item_slug ),
-					'priority' => $priority,
+					'priority' => $item->get_position() ?? 100,
 				];
 
 				$existing_labels[] = $label_lower;
@@ -321,6 +262,10 @@ class Menu_Data_Provider {
 		}
 
 		return $groups;
+	}
+
+	private function is_item_accessible( Menu_Item_Interface $item ): bool {
+		return $item->is_visible() && current_user_can( $item->get_capability() );
 	}
 
 	private function is_slug_excluded( string $item_slug, array $excluded_slugs ): bool {

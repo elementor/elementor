@@ -63,13 +63,6 @@ class Module extends Base_Module {
 			$this->register_promotion_menu_item( $admin_menu );
 		}, static::ADMIN_MENU_PROMOTIONS_PRIORITY );
 
-		add_action( 'elementor/editor-one/menu/excluded_level3_slugs', function ( array $excluded_slugs ): array {
-			$excluded_slugs[] = 'go_elementor_pro';
-			return $excluded_slugs;
-		} );
-
-		add_filter( 'elementor/editor-one/menu/items_to_hide_from_wp_menu', [ $this, 'add_items_to_hide' ] );
-
 		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
 			foreach ( Api::get_promotion_widgets() as $widget_data ) {
 				$manager->register( new Widgets\Pro_Widget_Promotion( [], [
@@ -131,7 +124,9 @@ class Module extends Base_Module {
 	}
 
 	private function register_promotion_menu_item( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( 'go_elementor_pro', new Go_Pro_Promotion_Item() );
+		if ( ! $this->is_editor_one_active() ) {
+			$admin_menu->register( 'go_elementor_pro', new Go_Pro_Promotion_Item() );
+		}
 	}
 
 	public function enqueue_react_data(): void {
@@ -202,18 +197,5 @@ class Module extends Base_Module {
 
 	private function is_editor_one_active(): bool {
 		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-	}
-
-	public function add_items_to_hide( array $items ): array {
-		if ( ! $this->is_editor_one_active() ) {
-			return $items;
-		}
-
-		$items[] = 'elementor_custom_fonts';
-		$items[] = 'elementor_custom_icons';
-		$items[] = 'elementor_custom_code';
-		$items[] = 'popup_templates';
-
-		return $items;
 	}
 }

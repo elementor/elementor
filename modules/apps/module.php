@@ -3,7 +3,7 @@ namespace Elementor\Modules\Apps;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Settings;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -22,13 +22,10 @@ class Module extends BaseModule {
 
 		Admin_Pointer::add_hooks();
 
-		add_action( 'elementor/editor-one/menu/excluded_level3_slugs', function ( array $excluded_slugs ): array {
-			$excluded_slugs[] = static::PAGE_ID;
-			return $excluded_slugs;
-		} );
-
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			$admin_menu->register( static::PAGE_ID, new Admin_Menu_Apps() );
+			if ( ! Plugin::instance()->modules_manager->get_modules( 'editor-one' ) ) {
+				$admin_menu->register( static::PAGE_ID, new Admin_Menu_Apps() );
+			}
 		}, 115 );
 
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
