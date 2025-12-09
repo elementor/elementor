@@ -5,7 +5,14 @@ import { type Editor } from '@tiptap/react';
 
 import { InlineEditorToolbar } from '../inline-editor-toolbar';
 
-const createMockEditor = ( activeFormats: string[] = [] ): Editor => {
+type MockEditorOptions = {
+	activeFormats?: string[];
+	linkAttributes?: { href?: string; target?: string };
+};
+
+const createMockEditor = ( options: MockEditorOptions = {} ): Editor => {
+	const { activeFormats = [], linkAttributes = {} } = options;
+
 	const mockChain = {
 		focus: jest.fn().mockReturnThis(),
 		clearNodes: jest.fn().mockReturnThis(),
@@ -16,12 +23,15 @@ const createMockEditor = ( activeFormats: string[] = [] ): Editor => {
 		toggleStrike: jest.fn().mockReturnThis(),
 		toggleSuperscript: jest.fn().mockReturnThis(),
 		toggleSubscript: jest.fn().mockReturnThis(),
+		setLink: jest.fn().mockReturnThis(),
+		unsetLink: jest.fn().mockReturnThis(),
 		run: jest.fn(),
 	};
 
 	return {
 		chain: jest.fn().mockReturnValue( mockChain ),
 		isActive: jest.fn( ( format: string ) => activeFormats.includes( format ) ),
+		getAttributes: jest.fn( () => linkAttributes ),
 		on: jest.fn(),
 		off: jest.fn(),
 	} as unknown as Editor;
@@ -43,12 +53,12 @@ describe( 'InlineEditorToolbar', () => {
 		expect( screen.getByLabelText( 'Strikethrough' ) ).toBeInTheDocument();
 		expect( screen.getByLabelText( 'Superscript' ) ).toBeInTheDocument();
 		expect( screen.getByLabelText( 'Subscript' ) ).toBeInTheDocument();
+		expect( screen.getByLabelText( 'Link' ) ).toBeInTheDocument();
 	} );
 
 	it( 'should highlight active formats', () => {
 		// Arrange.
-		const activeFormats = [ 'bold', 'italic' ];
-		const mockEditor = createMockEditor( activeFormats );
+		const mockEditor = createMockEditor( { activeFormats: [ 'bold', 'italic' ] } );
 
 		// Act.
 		renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
@@ -98,5 +108,85 @@ describe( 'InlineEditorToolbar', () => {
 		expect( mockChain.clearNodes ).toHaveBeenCalled();
 		expect( mockChain.unsetAllMarks ).toHaveBeenCalled();
 		expect( mockChain.run ).toHaveBeenCalled();
+	} );
+
+	describe( 'Link functionality', () => {
+		it( 'should open URL popover when clicking link button', () => {
+			// Arrange.
+			const mockEditor = createMockEditor();
+
+			// Act.
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
+
+			const linkButton = screen.getByLabelText( 'Link' );
+			fireEvent.click( linkButton );
+
+			// Assert.
+			expect( screen.getByPlaceholderText( 'Type a URL' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should call setLink with target="_blank" when openInNewTab is enabled', () => {
+			// Arrange.
+			const mockEditor = createMockEditor();
+			const mockChain = mockEditor.chain();
+
+			// Act.
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
+
+			const linkButton = screen.getByLabelText( 'Link' );
+			fireEvent.click( linkButton );
+
+			const urlInput = screen.getByPlaceholderText( 'Type a URL' );
+			fireEvent.change( urlInput, { target: { value: 'https://elementor.com' } } );
+
+			const newTabButton = screen.getByLabelText( 'Open in a new tab' );
+			fireEvent.click( newTabButton );
+
+			fireEvent.keyDown( urlInput, { key: 'Escape' } );
+
+			// Assert.
+			expect( mockChain.setLink ).toHaveBeenCalledWith( {
+				href: 'https://elementor.com',
+				target: '_blank',
+			} );
+		} );
+
+		it( 'should call unsetLink when URL is empty', () => {
+			// Arrange.
+			const mockEditor = createMockEditor( { linkAttributes: { href: 'https://old-url.com' } } );
+			const mockChain = mockEditor.chain();
+
+			// Act.
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
+
+			const linkButton = screen.getByLabelText( 'Link' );
+			fireEvent.click( linkButton );
+
+			const urlInput = screen.getByPlaceholderText( 'Type a URL' );
+			fireEvent.change( urlInput, { target: { value: '' } } );
+
+			fireEvent.keyDown( urlInput, { key: 'Escape' } );
+
+			// Assert.
+			expect( mockChain.unsetLink ).toHaveBeenCalled();
+		} );
+
+		it( 'should initialize openInNewTab state from existing link attributes', () => {
+			// Arrange.
+			const mockEditor = createMockEditor( {
+				linkAttributes: { href: 'https://elementor.com', target: '_blank' },
+			} );
+
+			// Act.
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } /> );
+
+			const linkButton = screen.getByLabelText( 'Link' );
+			fireEvent.click( linkButton );
+
+			const newTabButton = screen.getByLabelText( 'Open in a new tab' );
+
+			// Assert.
+			expect( newTabButton ).toHaveAttribute( 'aria-pressed', 'true' );
+		} );
 	} );
 } );
