@@ -25,11 +25,17 @@ type Props = {
 	onAdd?: () => void;
 	onEdit?: ( key: string ) => void;
 	onSettings?: () => void;
-	upgradeUrl?: string;
 };
 
-export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, upgradeUrl }: Props ) => {
-	const { icon: VariableIcon, startIcon, variableType, propTypeUtil } = useVariableType();
+export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }: Props ) => {
+	const {
+		icon: VariableIcon,
+		startIcon,
+		variableType,
+		propTypeUtil,
+		isUpgradeRequired,
+		upgradeUrl,
+	} = useVariableType();
 
 	const { value: variable, setValue: setVariable, path } = useVariableBoundProp();
 	const [ searchValue, setSearchValue ] = useState( '' );
@@ -70,6 +76,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, u
 					size={ SIZE }
 					onClick={ onAddAndTrack }
 					aria-label={ CREATE_LABEL }
+					disabled={ isUpgradeRequired }
 				>
 					<PlusIcon fontSize={ SIZE } />
 				</IconButton>
@@ -120,11 +127,28 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, u
 		setSearchValue( '' );
 	};
 
-	const noVariableTitle = sprintf(
-		/* translators: %s: Variable Type. */
-		__( 'Create your first %s variable', 'elementor' ),
-		variableType
-	);
+	const noVariableTitle = isUpgradeRequired
+		? sprintf(
+				/* translators: %s: Variable Type. */
+				__( 'No %s variables yet', 'elementor' ),
+				variableType
+		  )
+		: sprintf(
+				/* translators: %s: Variable Type. */
+				__( 'Create your first %s variable', 'elementor' ),
+				variableType
+		  );
+
+	const noVariableMessage = isUpgradeRequired
+		? /* translators: %s: Variable Type. */
+		  sprintf(
+				__(
+					'Start by creating your first %s variable to apply consistent sizing across elements.',
+					'elementor'
+				),
+				variableType
+		  )
+		: __( 'Variables are saved attributes that you can apply anywhere on your site.', 'elementor' );
 
 	return (
 		<PopoverBody>
@@ -170,12 +194,9 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, u
 			{ ! hasVariables && ! hasNoCompatibleVariables && (
 				<EmptyState
 					title={ noVariableTitle }
-					message={ __(
-						'Variables are saved attributes that you can apply anywhere on your site.',
-						'elementor'
-					) }
+					message={ noVariableMessage }
 					icon={ <VariableIcon fontSize="large" /> }
-					onAdd={ onAdd }
+					onAdd={ isUpgradeRequired ? undefined : onAdd }
 					upgradeUrl={ upgradeUrl }
 				/>
 			) }
@@ -188,7 +209,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, u
 						'elementor'
 					) }
 					icon={ <VariableIcon fontSize="large" /> }
-					onAdd={ onAdd }
+					onAdd={ isUpgradeRequired ? undefined : onAdd }
 					upgradeUrl={ upgradeUrl }
 				/>
 			) }

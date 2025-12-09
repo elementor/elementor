@@ -73,6 +73,29 @@ class Test_Style_Schema extends TestCase {
 		$this->assertSchemaIsEqual( $expected, $schema );
 	}
 
+	public function test_augment__will_convert_size_prop_type() {
+		// Arrange.
+		$style_def = [
+			'width' => Size_Prop_Type::make(),
+			'height' => Size_Prop_Type::make(),
+		];
+
+		// Act.
+		$schema = $this->style_schema()->augment( $style_def );
+
+		// Assert.
+		$expected = [
+			'width' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( Size_Variable_Prop_Type::make() ),
+			'height' => Union_Prop_Type::make()
+				->add_prop_type( Size_Prop_Type::make() )
+				->add_prop_type( Size_Variable_Prop_Type::make() ),
+		];
+
+		$this->assertSchemaIsEqual( $expected, $schema );
+	}
+
 	public function test_augment__will_convert_font_prop_type() {
 		// Arrange.
 		$style_def = [

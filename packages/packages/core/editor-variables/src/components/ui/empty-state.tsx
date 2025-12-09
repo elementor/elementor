@@ -3,6 +3,7 @@ import { UpgradeButton } from '@elementor/editor-ui';
 import { Button, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useVariableType } from '../../context/variable-type-context';
 import { usePermissions } from '../../hooks/use-permissions';
 
 type Props = {
@@ -15,7 +16,7 @@ type Props = {
 
 export const EmptyState = ( { icon, title, message, upgradeUrl, onAdd }: Props ) => {
 	const canAdd = usePermissions().canAdd();
-	const showUpgrade = ! onAdd && upgradeUrl;
+	const { isUpgradeRequired } = useVariableType();
 
 	return (
 		<Stack
@@ -28,7 +29,7 @@ export const EmptyState = ( { icon, title, message, upgradeUrl, onAdd }: Props )
 		>
 			{ icon }
 
-			{ canAdd || showUpgrade ? (
+			{ canAdd || isUpgradeRequired ? (
 				<>
 					<Content title={ title } message={ message } />
 					{ onAdd && (
@@ -36,7 +37,7 @@ export const EmptyState = ( { icon, title, message, upgradeUrl, onAdd }: Props )
 							{ __( 'Create a variable', 'elementor' ) }
 						</Button>
 					) }
-					{ showUpgrade && <UpgradeButton size="small" href={ upgradeUrl } /> }
+					{ isUpgradeRequired && <UpgradeButton size="small" href={ upgradeUrl ?? '' } /> }
 				</>
 			) : (
 				<Content

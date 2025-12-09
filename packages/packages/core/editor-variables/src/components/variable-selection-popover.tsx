@@ -4,10 +4,9 @@ import type { PropTypeKey } from '@elementor/editor-props';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 import { PopoverContentRefContextProvider } from '../context/variable-selection-popover.context';
-import { VariableTypeProvider } from '../context/variable-type-context';
+import { useVariableType, VariableTypeProvider } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
 import { type Variable } from '../types';
-import { getVariableType } from '../variables-registry/variable-type-registry';
 import { VariableCreation } from './variable-creation';
 import { VariableEdit } from './variable-edit';
 import { usePanelActions } from './variables-manager/variables-manager-panel';
@@ -38,16 +37,16 @@ export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedV
 	return (
 		<VariableTypeProvider propTypeKey={ propTypeKey }>
 			<PopoverContentRefContextProvider>
-				{ RenderView( {
-					propTypeKey,
-					currentView,
-					selectedVariable,
-					editId,
-					setEditId,
-					setCurrentView,
-					closePopover,
-					onSettings: onSettingsAvailable,
-				} ) }
+				<RenderView
+					propTypeKey={ propTypeKey }
+					currentView={ currentView }
+					selectedVariable={ selectedVariable }
+					editId={ editId }
+					setEditId={ setEditId }
+					setCurrentView={ setCurrentView }
+					closePopover={ closePopover }
+					onSettings={ onSettingsAvailable }
+				/>
 			</PopoverContentRefContextProvider>
 		</VariableTypeProvider>
 	);
@@ -72,10 +71,9 @@ type Handlers = {
 	onSettings?: () => void;
 };
 
-function RenderView( props: ViewProps ): React.ReactNode {
+const RenderView: React.FC< ViewProps > = ( props ) => {
 	const userPermissions = usePermissions();
-	const variableType = getVariableType( props.propTypeKey );
-	const hasValueField = Boolean( variableType?.valueField );
+	const { isUpgradeRequired } = useVariableType();
 
 	const handlers: Handlers = {
 		onClose: () => {
@@ -86,13 +84,15 @@ function RenderView( props: ViewProps ): React.ReactNode {
 		},
 	};
 
-	if ( hasValueField && userPermissions.canAdd() ) {
+	if ( userPermissions.canAdd() ) {
 		handlers.onAdd = () => {
-			props.setCurrentView( VIEW_ADD );
+			if ( ! isUpgradeRequired ) {
+				props.setCurrentView( VIEW_ADD );
+			}
 		};
 	}
 
-	if ( hasValueField && userPermissions.canEdit() ) {
+	if ( userPermissions.canEdit() && ! isUpgradeRequired ) {
 		handlers.onEdit = ( key: string ) => {
 			props.setEditId( key );
 			props.setCurrentView( VIEW_EDIT );
@@ -121,12 +121,15 @@ function RenderView( props: ViewProps ): React.ReactNode {
 				onAdd={ handlers.onAdd }
 				onEdit={ handlers.onEdit }
 				onSettings={ handlers.onSettings }
-				upgradeUrl={ ! hasValueField ? variableType?.upgradeUrl : undefined }
 			/>
 		);
 	}
 
 	if ( VIEW_ADD === props.currentView ) {
+		if ( isUpgradeRequired ) {
+			props.setCurrentView( VIEW_LIST );
+			return null;
+		}
 		return <VariableCreation onGoBack={ handlers.onGoBack } onClose={ handlers.onClose } />;
 	}
 
@@ -142,4 +145,4 @@ function RenderView( props: ViewProps ): React.ReactNode {
 	}
 
 	return null;
-}
+};

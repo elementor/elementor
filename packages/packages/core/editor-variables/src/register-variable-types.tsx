@@ -9,6 +9,7 @@ import { colorVariablePropTypeUtil } from './prop-types/color-variable-prop-type
 import { fontVariablePropTypeUtil } from './prop-types/font-variable-prop-type';
 import { sizeVariablePropTypeUtil } from './prop-types/size-variable-prop-type';
 import { registerVariableType } from './variables-registry/variable-type-registry';
+import { LicenseInfo } from './sync/license-info';
 
 export function registerVariableTypes() {
 	registerVariableType( {
@@ -32,9 +33,7 @@ export function registerVariableTypes() {
 		defaultValue: 'Roboto',
 	} );
 
-	const hasPro = !! window.elementorPro;
-
-	if ( ! hasPro ) {
+	if ( ! LicenseInfo.hasPro ) {
 		registerVariableType( {
 			icon: ExpandDiagonalIcon,
 			propTypeUtil: sizeVariablePropTypeUtil,
