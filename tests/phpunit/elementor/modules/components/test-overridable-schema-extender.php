@@ -9,26 +9,26 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
-use Elementor\Modules\Components\Component_Overridable_Schema_Extender;
-use Elementor\Modules\Components\PropTypes\Component_Overridable_Prop_Type;
+use Elementor\Modules\Components\Overridable_Schema_Extender;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Test_Component_Overridable_Schema_Extender extends Elementor_Test_Base {
+class Test_Overridable_Schema_Extender extends Elementor_Test_Base {
 
 	public function set_up() {
 		parent::set_up();
 	}
 
 	/**
-	 * @dataProvider add_component_overridable_prop_type_data_provider
+	 * @dataProvider add_overridable_prop_type_data_provider
 	 */
-	public function test_get_extended_schema__adds_component_overridable_to_props( Prop_Type $prop ) {
+	public function test_get_extended_schema__adds_overridable_to_props( Prop_Type $prop ) {
 		// Arrange
-		$extender = Component_Overridable_Schema_Extender::make();
+		$extender = Overridable_Schema_Extender::make();
 
 		// Act
 		$schema = $extender->get_extended_schema( [
@@ -48,7 +48,7 @@ class Test_Component_Overridable_Schema_Extender extends Elementor_Test_Base {
 
 	public function test_get_extended_schema__adds_recursively_to_object_types() {
 		// Arrange
-		$extender = Component_Overridable_Schema_Extender::make();
+		$extender = Overridable_Schema_Extender::make();
 
 		$prop = new class extends Object_Prop_Type {
 			public static function get_key(): string {
@@ -73,8 +73,8 @@ class Test_Component_Overridable_Schema_Extender extends Elementor_Test_Base {
 		$this->assertEquals( [ 'test-prop', 'overridable' ], array_keys( $schema['prop']->get_prop_types() ));
 
         // 'overridable' has the original 'test-prop' prop type as its origin prop type
-        $override_component_overridable_prop_type = $schema['prop']->get_prop_type( 'overridable' );
-        $this->assertEquals( $prop, $override_component_overridable_prop_type->get_origin_prop_type() );
+        $override_overridable_prop_type = $schema['prop']->get_prop_type( 'overridable' );
+        $this->assertEquals( $prop, $override_overridable_prop_type->get_origin_prop_type() );
 
         $test_prop_prop_type = $schema['prop']->get_prop_type( 'test-prop' );
         $internal = $test_prop_prop_type->get_shape_field( 'internal' );
@@ -88,13 +88,13 @@ class Test_Component_Overridable_Schema_Extender extends Elementor_Test_Base {
         $this->assertEquals( 'test', $internal_string_prop_type->get_default()[ 'value' ] );
 
         // 'overridable' has the original 'string' with default value 'test' prop type as its origin prop type
-        $internal_component_overridable_prop_type = $internal->get_prop_type( 'overridable' );
-        $this->assertEquals( String_Prop_Type::make()->default( 'test' ), $internal_component_overridable_prop_type->get_origin_prop_type() );
+        $internal_overridable_prop_type = $internal->get_prop_type( 'overridable' );
+        $this->assertEquals( String_Prop_Type::make()->default( 'test' ), $internal_overridable_prop_type->get_origin_prop_type() );
 	}
 
 	public function test_get_extended_schema__adds_to_existing_union_prop_type() {
 		// Arrange
-		$extender = Component_Overridable_Schema_Extender::make();
+		$extender = Overridable_Schema_Extender::make();
 
 		$union_prop = Union_Prop_Type::make()
 			->add_prop_type( String_Prop_Type::make() )
@@ -109,8 +109,8 @@ class Test_Component_Overridable_Schema_Extender extends Elementor_Test_Base {
 		// Assert
 		$this->assertInstanceof( Union_Prop_Type::class, $schema['prop'] );
 		$this->assertInstanceof( 
-			Component_Overridable_Prop_Type::class, 
-			$schema['prop']->get_prop_type( Component_Overridable_Prop_Type::get_key() ) 
+			Overridable_Prop_Type::class, 
+			$schema['prop']->get_prop_type( Overridable_Prop_Type::get_key() ) 
 		);
 		$this->assertInstanceof( 
 			String_Prop_Type::class, 
@@ -123,16 +123,16 @@ class Test_Component_Overridable_Schema_Extender extends Elementor_Test_Base {
         $this->assertEquals( String_Prop_Type::generate( 'test' ), $schema['prop']->get_default() );
 	}
 
-    public function test_get_extended_schema__skips_prop_types_that_ignore_component_overridable() {
+    public function test_get_extended_schema__skips_prop_types_that_ignore_overridable() {
 		// Arrange
-		$extender = Component_Overridable_Schema_Extender::make();
+		$extender = Overridable_Schema_Extender::make();
 
 		$prop1 = String_Prop_Type::make()
-			->meta( Component_Overridable_Prop_Type::ignore() )
+			->meta( Overridable_Prop_Type::ignore() )
 			->default( 'default-value' );
 
 		$prop2 = String_Prop_Type::make()
-			->meta( Component_Overridable_Prop_Type::META_KEY, false )
+			->meta( Overridable_Prop_Type::META_KEY, false )
 			->default( 'default-value' );
 
 		// Act
@@ -145,7 +145,7 @@ class Test_Component_Overridable_Schema_Extender extends Elementor_Test_Base {
 		$this->assertSame( [ 'prop1' => $prop1, 'prop2' => $prop2 ], $schema );
 	}
 
-	public function add_component_overridable_prop_type_data_provider() {
+	public function add_overridable_prop_type_data_provider() {
 		return [
 			'string' => [
 				String_Prop_Type::make()->default( 'test' ),
