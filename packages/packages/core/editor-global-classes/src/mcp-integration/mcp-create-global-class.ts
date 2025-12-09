@@ -9,7 +9,6 @@ import { saveGlobalClasses } from '../save-global-classes';
 
 export const inputSchema = {
 	globalClassName: z.string().describe( 'The name of the global class to be created' ),
-	// customCss: z.string().describe( 'The CSS styles associated with the global class' ).optional(),
 	props: z
 		.record( z.any() )
 		.describe(
