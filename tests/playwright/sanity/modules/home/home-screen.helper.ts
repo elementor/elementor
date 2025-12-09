@@ -13,7 +13,7 @@ export type LicenseType = 'free' | 'pro' | 'one';
 
 type JsonObject = Record<string, unknown>;
 
-const ELEMENTOR_HOME_SCREEN_DATA_REGEX = /var elementorHomeScreenData\s*=\s*(\{[\s\S]*?\});/;
+const ELEMENTOR_HOME_SCREEN_DATA_REGEX = /const elementorHomeScreenData\s*=\s*(\{[\s\S]*?\});/;
 const HTML_LESS_THAN_ESCAPE_REGEX = /</g;
 const HTML_LESS_THAN_ESCAPE_REPLACEMENT = '\\u003c';
 
