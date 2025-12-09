@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "02c2abe59bf4a42e49c004bdd5b99ad0",
+    "content-hash": "1e00ee4840e5a9facb61ea759f4a376f",
     "packages": [
         {
             "name": "elementor/wp-one-package",
-            "version": "1.0.3",
+            "version": "1.0.13",
             "source": {
                 "type": "git",
                 "url": "git@github.com:elementor/wp-one-package.git",
-                "reference": "64ffd1424747c2fc7ca25236782895459eff5424"
+                "reference": "99ab68a2a28d465e87a530fae86369d3911ed779"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elementor/wp-one-package/zipball/64ffd1424747c2fc7ca25236782895459eff5424",
-                "reference": "64ffd1424747c2fc7ca25236782895459eff5424",
+                "url": "https://api.github.com/repos/elementor/wp-one-package/zipball/99ab68a2a28d465e87a530fae86369d3911ed779",
+                "reference": "99ab68a2a28d465e87a530fae86369d3911ed779",
                 "shasum": ""
             },
             "require-dev": {
@@ -43,9 +43,9 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/elementor/wp-one-package/tree/1.0.3"
+                "source": "https://github.com/elementor/wp-one-package/tree/1.0.13"
             },
-            "time": "2025-12-02T20:42:01+00:00"
+            "time": "2025-12-08T13:45:36+00:00"
         }
     ],
     "packages-dev": [
