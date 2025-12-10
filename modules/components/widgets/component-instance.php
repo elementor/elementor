@@ -58,13 +58,6 @@ class Component_Instance extends Atomic_Widget_Base {
 		];
 	}
 
-	// protected function define_render_context(): array {
-	// 	$component_instance = $this->get_atomic_setting( 'component_instance' );
-	// 	$overrides = $component_instance['overrides']['value'] ?? [];
-
-	// 	return [ 'overrides' => $overrides ];
-	// }
-
 	public function get_settings( $setting = null ) {
 		$settings = parent::get_settings( $setting );
 

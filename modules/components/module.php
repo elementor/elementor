@@ -61,14 +61,6 @@ class Module extends BaseModule {
 		];
 	}
 
-	// public function get_prop_types() {
-	// 	return [
-	// 		Component_Instance_Prop_Type::class,
-	// 		Overridable_Prop_Type::class,
-	// 		Override_Prop_Type::class,
-	// 	];
-	// }
-
 	private function add_packages( $packages ) {
 		return array_merge( $packages, self::PACKAGES );
 	}
@@ -117,11 +109,3 @@ class Module extends BaseModule {
 		$transformers->register( Override_Prop_Type::get_key(), new Override_Transformer() );
 	}
 }
-
-
-// [
-// 	'link' =>[
-// 		'transformer' => Link_Transformer::class,
-// 		'prop_type' => Link_Prop_Type::class,
-// 	]
-// ]
