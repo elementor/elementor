@@ -7,11 +7,10 @@ export const MenuList = styled( List )( ( { theme } ) => ( {
 } ) );
 
 export const MenuItemButton = styled( ListItemButton )( ( { theme } ) => ( {
-	borderRadius: theme.shape.borderRadius,
 	paddingLeft: theme.spacing( 1 ),
 	paddingRight: theme.spacing( 1 ),
 	marginBottom: 0,
-	paddingBottom: 0,
+	paddingBottom: theme.spacing( 0.5 ),
 } ) );
 
 export const MenuIcon = styled( ListItemIcon )( {
