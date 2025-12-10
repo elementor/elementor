@@ -245,7 +245,7 @@ function StateMenuItem( { state, label, closeMenu, ...props }: StateMenuItemProp
 	);
 }
 
-function UnapplyClassMenuItem( { ...props }: { closeMenu: () => void } ) {
+function UnapplyClassMenuItem( { closeMenu, ...props }: { closeMenu: () => void } ) {
 	const { id: classId, label: classLabel, provider } = useCssClass();
 	const unapplyClass = useUnapplyClass();
 
