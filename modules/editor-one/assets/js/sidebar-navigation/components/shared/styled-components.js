@@ -11,7 +11,7 @@ export const NavContainer = styled( Box )( ( { theme } ) => ( {
 export const SiteIconBox = styled( Box )( ( { theme } ) => ( {
 	width: 40,
 	height: 40,
-	borderRadius: theme.shape.borderRadius,
+	borderRadius: theme.shape.borderRadius * 2,
 	border: `1px solid ${ theme.palette.divider }`,
 	display: 'flex',
 	alignItems: 'center',

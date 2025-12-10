@@ -14,7 +14,7 @@ export const useSidebarCollapse = () => {
 	}, [ isCollapsed ] );
 
 	useEffect( () => {
-		const container = document.getElementById( 'e-editor-sidebar-navigation' );
+		const container = document.getElementById( 'editor-one-sidebar-navigation' );
 		const body = document.body;
 
 		if ( isCollapsed ) {

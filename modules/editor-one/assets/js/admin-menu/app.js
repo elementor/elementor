@@ -2,10 +2,10 @@ import { FlyoutMenuRenderer } from './classes/flyout-menu-renderer';
 import { SidebarMenuHandler } from './classes/sidebar-menu-handler';
 import { FlyoutInteractionHandler } from './classes/flyout-interaction-handler';
 
-class AdminMenu {
+class EditorOneMenu {
 	constructor() {
 		// eslint-disable-next-line no-undef
-		this.config = elementorAdminMenuConfig || {};
+		this.config = editorOneMenuConfig || {};
 	}
 
 	init() {
@@ -30,13 +30,13 @@ class AdminMenu {
 	}
 }
 
-const initAdminMenu = () => {
-	const adminMenu = new AdminMenu();
-	adminMenu.init();
+const initEditorOneMenu = () => {
+	const editorOneMenu = new EditorOneMenu();
+	editorOneMenu.init();
 };
 
 if ( 'loading' === document.readyState ) {
-	document.addEventListener( 'DOMContentLoaded', initAdminMenu );
+	document.addEventListener( 'DOMContentLoaded', initEditorOneMenu );
 } else {
-	initAdminMenu();
+	initEditorOneMenu();
 }

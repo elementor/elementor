@@ -380,16 +380,16 @@ class Elementor_One_Menu_Manager {
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script(
-			'elementor-admin-menu',
-			ELEMENTOR_ASSETS_URL . 'js/elementor-admin-menu' . $min_suffix . '.js',
+			'editor-one-menu',
+			ELEMENTOR_ASSETS_URL . 'js/editor-one-menu' . $min_suffix . '.js',
 			[],
 			ELEMENTOR_VERSION,
 			true
 		);
 
 		wp_localize_script(
-			'elementor-admin-menu',
-			'elementorAdminMenuConfig',
+			'editor-one-menu',
+			'editorOneMenuConfig',
 			$config
 		);
 	}

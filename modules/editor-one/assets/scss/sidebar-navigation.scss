@@ -1,11 +1,13 @@
 $admin-top-bar-height: 50px;
 $navigation-width: 240px;
 $navigation-width-collapsed: 56px;
+$left-offset: 160px;
+$left-offset-collapsed: 36px;
 
-#e-editor-sidebar-navigation {
+#editor-one-sidebar-navigation {
 	position: absolute;
 	top: $admin-top-bar-height;
-	left: 160px;
+	left: $left-offset;
 	bottom: 0;
 	width: $navigation-width;
 	z-index: 99;
@@ -13,11 +15,11 @@ $navigation-width-collapsed: 56px;
 	overflow: visible;
 
 	.folded & {
-		left: 36px;
+		left: $left-offset-collapsed;
 	}
 
 	@media screen and (max-width: 960px) {
-		left: 36px;
+		left: $left-offset-collapsed;
 	}
 
 	@media screen and (max-width: 782px) {

@@ -52,8 +52,8 @@ class Sidebar_Navigation_Handler {
 		);
 
 		wp_enqueue_script(
-			'e-sidebar-navigation',
-			ELEMENTOR_ASSETS_URL . 'js/e-sidebar-navigation' . $min_suffix . '.js',
+			'editor-one-sidebar-navigation',
+			ELEMENTOR_ASSETS_URL . 'js/editor-one-sidebar-navigation' . $min_suffix . '.js',
 			[
 				'react',
 				'react-dom',
@@ -66,12 +66,12 @@ class Sidebar_Navigation_Handler {
 		);
 
 		wp_localize_script(
-			'e-sidebar-navigation',
-			'elementorSidebarConfig',
+			'editor-one-sidebar-navigation',
+			'editorOneSidebarConfig',
 			$this->get_sidebar_config()
 		);
 
-		wp_set_script_translations( 'e-sidebar-navigation', 'elementor' );
+		wp_set_script_translations( 'editor-one-sidebar-navigation', 'elementor' );
 	}
 
 	public function render_sidebar_container(): void {
@@ -79,7 +79,7 @@ class Sidebar_Navigation_Handler {
 			return;
 		}
 
-		echo '<div id="e-editor-sidebar-navigation"></div>';
+		echo '<div id="editor-one-sidebar-navigation"></div>';
 	}
 
 	private function get_sidebar_config(): array {

@@ -19,11 +19,11 @@ App.propTypes = {
 	config: PropTypes.object.isRequired,
 };
 
-const rootElement = document.getElementById( 'e-editor-sidebar-navigation' );
+const rootElement = document.getElementById( 'editor-one-sidebar-navigation' );
 
-if ( rootElement && window.elementorSidebarConfig ) {
+if ( rootElement && window.editorOneSidebarConfig ) {
 	ReactUtils.render(
-		<App config={ window.elementorSidebarConfig } />,
+		<App config={ window.editorOneSidebarConfig } />,
 		rootElement,
 	);
 }
