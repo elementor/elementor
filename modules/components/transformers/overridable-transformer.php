@@ -36,7 +36,7 @@ class Overridable_Transformer extends Transformer_Base {
 		return isset( $origin_value['$$type'] ) && $origin_value['$$type'] === Override_Prop_Type::get_key();
 	}
 
-	private function transform_overridable_override( array $inner_override, array $outer_override_value, Props_Resolver_Context $context ): ?array {
+	private function transform_overridable_override( array $inner_override, ?array $outer_override_value, Props_Resolver_Context $context ): ?array {
 		$override_transformer = new Override_Transformer();
 		$transformed_inner_override = $override_transformer->transform( $inner_override['value'], $context );
 
