@@ -27,7 +27,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
 	{ pluginName: 'post-grid-elementor-addon', installSource: 'api' },
 	{ pluginName: 'powerpack-lite-for-elementor', installSource: 'api', hasInstallationPage: true },
-	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli' },
+	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli', hasInstallationPage: true },
 	{ pluginName: 'rife-elementor-extensions', installSource: 'api' },
 	{ pluginName: 'royal-elementor-addons', installSource: 'cli' },
 	{ pluginName: 'sb-elementor-contact-form-db', installSource: 'api' },
