@@ -2,13 +2,13 @@
 
 namespace Elementor\Modules\EditorOne\Components;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
-use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Item;
+use Elementor\Modules\EditorOne\Classes\Menu\Items\Legacy_Submenu_Item;
+use Elementor\Modules\EditorOne\Classes\Menu\Items\Editor_One_Custom_Elements_Menu;
+use Elementor\Modules\EditorOne\Classes\Menu\Items\Legacy_Submenu_Item_Not_Mapped;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Modules\EditorOne\Classes\Remapped_Menu_Item;
+use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
 use Elementor\Plugin;
 
 use Elementor\Utils;
@@ -17,20 +17,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Admin_Menu_Handler {
+class Elementor_One_Menu_Manager {
 
 	private Menu_Data_Provider $menu_data_provider;
 
+	private bool $is_pro_module_enabled = false;
+
 	public function __construct() {
 		$this->menu_data_provider = Menu_Data_Provider::instance();
+
 		$this->register_actions();
 	}
 
 	private function register_actions(): void {
+		add_action( 'init', [ $this, 'check_if_pro_module_is_enabled' ] );
 		add_action( 'admin_menu', [ $this, 'register_unified_submenus' ], 21 );
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu_manager ) {
-			$this->process_registered_items( $admin_menu_manager );
-		}, 5 );
+
+		add_action( 'admin_menu', function () {
+			do_action( 'elementor/editor-one/menu/register', $this->menu_data_provider );
+		}, 4 );
+
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 999 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 1001 );
 		add_action( 'admin_menu', [ $this, 'reorder_elementor_submenu' ], 1002 );
@@ -40,6 +46,14 @@ class Admin_Menu_Handler {
 		add_action( 'admin_head', [ $this, 'hide_legacy_templates_menu' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_menu_assets' ] );
 		add_action( 'admin_print_scripts-elementor_page_elementor-editor', [ $this, 'enqueue_home_screen_on_editor_page' ] );
+	}
+
+	public function check_if_pro_module_is_enabled(): void {
+		$this->is_pro_module_enabled = apply_filters( 'elementor/modules/editor-one/is_pro_module_enabled', false );
+
+		if ( ! $this->is_pro_module_enabled && Utils::has_pro() ) {
+			$this->menu_data_provider->register_menu( new Editor_One_Custom_Elements_Menu() );
+		}
 	}
 
 	public function register_unified_submenus(): void {
@@ -61,7 +75,7 @@ class Admin_Menu_Handler {
 			''
 		);
 
-		do_action( 'elementor/admin/menu/register_submenus', Menu_Config::ELEMENTOR_MENU_SLUG );
+		do_action( 'elementor/editor-one/menu/register_submenus', Menu_Config::ELEMENTOR_MENU_SLUG );
 	}
 
 	public function reorder_elementor_submenu(): void {
@@ -122,11 +136,11 @@ class Admin_Menu_Handler {
 	}
 
 	public function render_editor_page(): void {
-		Plugin::$instance->settings->display_home_screen();
+		Plugin::instance()->settings->display_home_screen();
 	}
 
 	public function enqueue_home_screen_on_editor_page(): void {
-		$home_module = Plugin::$instance->modules_manager->get_modules( 'home' );
+		$home_module = Plugin::instance()->modules_manager->get_modules( 'home' );
 
 		if ( $home_module && method_exists( $home_module, 'enqueue_home_screen_scripts' ) ) {
 			$home_module->enqueue_home_screen_scripts();
@@ -164,89 +178,54 @@ class Admin_Menu_Handler {
 		<?php
 	}
 
-	private function process_registered_items( Admin_Menu_Manager $admin_menu_manager ): void {
-		$items = $admin_menu_manager->get_all();
-		$protected_slugs = Menu_Config::get_protected_submenu_slugs();
-		$legacy_mapping = Menu_Config::get_legacy_slug_mapping();
-
-		foreach ( $items as $item_slug => $item ) {
-			if ( in_array( $item_slug, $protected_slugs, true ) ) {
-				continue;
-			}
-
-			$parent_slug = $item->get_parent_slug();
-
-			if ( isset( $legacy_mapping[ $parent_slug ] ) ) {
-				$new_parent_slug = $legacy_mapping[ $parent_slug ];
-				$wrapped_item = new Remapped_Menu_Item( $item, $new_parent_slug );
-
-				if ( $this->is_level4_group( $new_parent_slug ) ) {
-					$this->register_level4_item( $item_slug, $wrapped_item, $new_parent_slug );
-					$admin_menu_manager->unregister( $item_slug );
-				} elseif ( $this->is_level3_group( $new_parent_slug ) ) {
-					$this->register_level3_item( $item_slug, $wrapped_item, $new_parent_slug );
-					$admin_menu_manager->unregister( $item_slug );
-				}
-			}
-		}
-	}
-
-	private function is_level4_group( string $parent_slug ): bool {
-		return in_array( $parent_slug, [
-			Menu_Config::TEMPLATES_GROUP_ID,
-			Menu_Config::SETTINGS_GROUP_ID,
-		], true );
-	}
-
-	private function is_level3_group( string $parent_slug ): bool {
-		return in_array( $parent_slug, [
-			Menu_Config::EDITOR_GROUP_ID,
-			Menu_Config::EDITOR_MENU_SLUG,
-		], true );
-	}
-
-	private function register_level3_item( string $item_slug, Admin_Menu_Item $item, string $group_id = Menu_Config::EDITOR_GROUP_ID ): void {
-		$this->menu_data_provider->register_level3_item( $item_slug, $item, $group_id );
-	}
-
-	private function register_level4_item( string $item_slug, Admin_Menu_Item $item, string $group_id ): void {
-		$this->menu_data_provider->register_level4_item( $item_slug, $item, $group_id );
-	}
-
 	public function register_flyout_items_as_hidden_submenus(): void {
-		$this->iterate_all_flyout_items( function( string $item_slug, Admin_Menu_Item $item ) {
-			$this->register_hidden_submenu( $item_slug, $item );
+		$hooks = [];
+
+		$this->iterate_all_flyout_items( function( string $item_slug, Menu_Item_Interface $item ) use ( &$hooks ) {
+			$hook = $this->register_hidden_submenu( $item_slug, $item );
+
+			if ( $hook ) {
+				$hooks[ $item_slug ] = $hook;
+			}
 		} );
+
+		do_action( 'elementor/editor-one/menu/after_register_hidden_submenus', $hooks );
 	}
 
-	private function register_hidden_submenu( string $item_slug, Admin_Menu_Item $item ) {
-		$parent_slug = $this->resolve_hidden_submenu_parent( $this->get_original_parent_slug( $item ) );
-		$has_page = $item instanceof Admin_Menu_Item_With_Page;
+	private function register_hidden_submenu( string $item_slug, Menu_Item_Interface $item ) {
+		$original_parent = $this->get_original_parent_slug( $item );
+		$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
+		$has_page = method_exists( $item, 'render' );
 		$page_title = $has_page ? $item->get_page_title() : '';
 		$callback = $has_page ? [ $item, 'render' ] : '';
+		$capability = $item->get_capability();
 
 		return add_submenu_page(
 			$parent_slug,
 			$page_title,
 			$item->get_label(),
-			$item->get_capability(),
+			$capability,
 			$item_slug,
 			$callback
 		);
 	}
 
-	private function resolve_hidden_submenu_parent( string $parent_slug ): string {
+	private function resolve_hidden_submenu_parent( ?string $parent_slug ): string {
+		if ( empty( $parent_slug ) ) {
+			return Menu_Config::ELEMENTOR_MENU_SLUG;
+		}
+
 		$elementor_parent_slugs = [
-			Menu_Config::EDITOR_GROUP_ID,
-			Menu_Config::EDITOR_MENU_SLUG,
-			Menu_Config::TEMPLATES_GROUP_ID,
-			Menu_Config::LEGACY_TEMPLATES_SLUG,
-			Menu_Config::SETTINGS_GROUP_ID,
-			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID,
-			Menu_Config::SYSTEM_GROUP_ID,
+			Menu_Config::EDITOR_GROUP_ID => true,
+			Menu_Config::EDITOR_MENU_SLUG => true,
+			Menu_Config::TEMPLATES_GROUP_ID => true,
+			Menu_Config::LEGACY_TEMPLATES_SLUG => true,
+			Menu_Config::SETTINGS_GROUP_ID => true,
+			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID => true,
+			Menu_Config::SYSTEM_GROUP_ID => true,
 		];
 
-		if ( in_array( $parent_slug, $elementor_parent_slugs, true ) ) {
+		if ( isset( $elementor_parent_slugs[ $parent_slug ] ) ) {
 			return Menu_Config::ELEMENTOR_MENU_SLUG;
 		}
 
@@ -254,10 +233,10 @@ class Admin_Menu_Handler {
 	}
 
 	private function iterate_all_flyout_items( callable $callback ): void {
-		$all_items = array_merge(
-			$this->menu_data_provider->get_level3_items(),
-			$this->menu_data_provider->get_level4_items()
-		);
+		$level3_items = $this->menu_data_provider->get_level3_items();
+		$level4_items = $this->menu_data_provider->get_level4_items();
+
+		$all_items = array_merge_recursive( $level3_items, $level4_items );
 
 		foreach ( $all_items as $group_items ) {
 			foreach ( $group_items as $item_slug => $item ) {
@@ -266,22 +245,26 @@ class Admin_Menu_Handler {
 		}
 	}
 
-	private function get_original_parent_slug( Admin_Menu_Item $item ): string {
-		return $item instanceof Remapped_Menu_Item
-			? $item->get_original_parent_slug()
-			: $item->get_parent_slug();
+	private function get_original_parent_slug( $item ): ?string {
+		return $item->get_parent_slug();
 	}
 
 	public function hide_flyout_items_from_wp_menu(): void {
-		$this->iterate_all_flyout_items( function( string $item_slug, Admin_Menu_Item $item ) {
-			$parent_slug = $this->resolve_hidden_submenu_parent( $this->get_original_parent_slug( $item ) );
+		$protected_wp_menu_slugs = [
+			Menu_Config::EDITOR_MENU_SLUG,
+			'elementor-theme-builder',
+			'e-form-submissions',
+		];
+
+		$this->iterate_all_flyout_items( function( string $item_slug, Menu_Item_Interface $item ) use ( $protected_wp_menu_slugs ) {
+			if ( in_array( $item_slug, $protected_wp_menu_slugs, true ) ) {
+				return;
+			}
+
+			$original_parent = $this->get_original_parent_slug( $item );
+			$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
 			remove_submenu_page( $parent_slug, $item_slug );
 		} );
-
-		$items_to_hide_from_wp_menu = Menu_Config::get_items_to_hide_from_wp_menu();
-		foreach ( $items_to_hide_from_wp_menu as $item_slug ) {
-			remove_submenu_page( Menu_Config::ELEMENTOR_MENU_SLUG, $item_slug );
-		}
 	}
 
 	public function intercept_legacy_submenus(): void {
@@ -297,17 +280,13 @@ class Admin_Menu_Handler {
 		}
 
 		$items_to_intercept = [];
-		$protected_slugs = Menu_Config::get_protected_submenu_slugs();
-		$level4_group_mapping = Menu_Config::get_level4_group_mapping();
+
+		$legacy_pro_mapping = Menu_Config::get_legacy_pro_mapping();
 
 		foreach ( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] as $index => $submenu_item ) {
 			$item_slug = $submenu_item[2] ?? '';
 
 			if ( empty( $item_slug ) ) {
-				continue;
-			}
-
-			if ( in_array( $item_slug, $protected_slugs, true ) ) {
 				continue;
 			}
 
@@ -320,12 +299,25 @@ class Admin_Menu_Handler {
 
 		foreach ( $items_to_intercept as $index => $submenu_item ) {
 			$item_slug = $submenu_item[2];
-			$legacy_item = new Legacy_Submenu_Item( $submenu_item );
+			$has_level4_group = isset( $legacy_pro_mapping[ $item_slug ] );
 
-			if ( isset( $level4_group_mapping[ $item_slug ] ) ) {
-				$this->register_level4_item( $item_slug, $legacy_item, $level4_group_mapping[ $item_slug ] );
+			if ( $has_level4_group ) {
+				if ( isset( $legacy_pro_mapping[ $item_slug ]['label'] ) ) {
+					$submenu_item[0] = $legacy_pro_mapping[ $item_slug ]['label'];
+				}
+
+				$position = Menu_Config::get_attribute_mapping()[ $item_slug ]['position'] ?? 100;
+				$group_id = $legacy_pro_mapping[ $item_slug ]['group'];
+				$submenu_item[4] = $group_id;
+				$legacy_item = new Legacy_Submenu_Item( $submenu_item, Menu_Config::ELEMENTOR_MENU_SLUG, $position );
+
+				$this->menu_data_provider->register_menu( $legacy_item );
 			} else {
-				$this->register_level3_item( $item_slug, $legacy_item, Menu_Config::EDITOR_GROUP_ID );
+				$position = Menu_Config::get_attribute_mapping()[ $item_slug ]['position'] ?? 100;
+				$submenu_item[4] = Menu_Config::get_attribute_mapping()[ $item_slug ]['icon'] ?? 'tool';
+				$legacy_item = new Legacy_Submenu_Item_Not_Mapped( $submenu_item, Menu_Config::ELEMENTOR_MENU_SLUG, $position );
+
+				$this->menu_data_provider->register_menu( $legacy_item );
 			}
 
 			unset( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ][ $index ] );
@@ -340,16 +332,11 @@ class Admin_Menu_Handler {
 		}
 
 		$items_to_intercept = [];
-		$protected_templates_slugs = Menu_Config::get_protected_templates_submenu_slugs();
 
 		foreach ( $submenu[ Menu_Config::LEGACY_TEMPLATES_SLUG ] as $index => $submenu_item ) {
 			$item_slug = $submenu_item[2] ?? '';
 
 			if ( empty( $item_slug ) ) {
-				continue;
-			}
-
-			if ( in_array( $item_slug, $protected_templates_slugs, true ) ) {
 				continue;
 			}
 
@@ -362,10 +349,10 @@ class Admin_Menu_Handler {
 		}
 
 		foreach ( $items_to_intercept as $index => $submenu_item ) {
-			$item_slug = $submenu_item[2];
+			$submenu_item[4] = Menu_Config::TEMPLATES_GROUP_ID;
 			$legacy_item = new Legacy_Submenu_Item( $submenu_item, Menu_Config::LEGACY_TEMPLATES_SLUG );
 
-			$this->register_level4_item( $item_slug, $legacy_item, Menu_Config::TEMPLATES_GROUP_ID );
+			$this->menu_data_provider->register_menu( $legacy_item );
 
 			unset( $submenu[ Menu_Config::LEGACY_TEMPLATES_SLUG ][ $index ] );
 		}

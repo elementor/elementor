@@ -9,6 +9,9 @@ use Elementor\Includes\Settings\AdminMenuItems\Getting_Started_Menu_Item;
 use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Modules\Home\Module as Home_Module;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Home_Menu;
+use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Settings_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -102,7 +105,9 @@ class Settings extends Settings_Page {
 
 		if ( $this->home_module->is_experiment_active() ) {
 			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-				$admin_menu->register( 'elementor-settings', new Admin_Menu_Item( $this ) );
+				if ( ! $this->is_editor_one_active() ) {
+					$admin_menu->register( 'elementor-settings', new Admin_Menu_Item( $this ) );
+				}
 			}, 0 );
 		}
 	}
@@ -159,8 +164,22 @@ class Settings extends Settings_Page {
 	 * @access private
 	 */
 	private function register_knowledge_base_menu( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( 'elementor-getting-started', new Getting_Started_Menu_Item() );
-		$admin_menu->register( 'go_knowledge_base_site', new Get_Help_Menu_Item() );
+		if ( ! Plugin::instance()->modules_manager->get_modules( 'editor-one' ) ) {
+			$admin_menu->register( 'elementor-getting-started', new Getting_Started_Menu_Item() );
+			$admin_menu->register( 'go_knowledge_base_site', new Get_Help_Menu_Item() );
+		}
+	}
+
+	private function register_editor_one_settings_menu( Menu_Data_Provider $menu_data_provider ) {
+		$menu_data_provider->register_menu( new Editor_One_Settings_Menu() );
+	}
+
+	private function register_editor_one_home_menu( Menu_Data_Provider $menu_data_provider ) {
+		$menu_data_provider->register_menu( new Editor_One_Home_Menu() );
+	}
+
+	private function is_editor_one_active(): bool {
+		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	/**
@@ -554,6 +573,13 @@ class Settings extends Settings_Page {
 		add_filter( 'elementor/generator_tag/settings', [ $this, 'add_generator_tag_settings' ] );
 
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
+
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			if ( $this->home_module->is_experiment_active() ) {
+				$this->register_editor_one_settings_menu( $menu_data_provider );
+				$this->register_editor_one_home_menu( $menu_data_provider );
+			}
+		} );
 
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_knowledge_base_menu( $admin_menu );

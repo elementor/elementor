@@ -45,7 +45,7 @@ export class SidebarMenuHandler {
 		let targetSlug = 'elementor-editor';
 
 		if ( 'elementor' === page ) {
-			targetSlug = 'elementor';
+			targetSlug = 'elementor-editor';
 		} else if ( 'e-form-submissions' === page ) {
 			targetSlug = 'e-form-submissions';
 		} else if ( 'elementor-theme-builder' === page ) {

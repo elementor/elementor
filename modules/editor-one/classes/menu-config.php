@@ -7,7 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Menu_Config {
-
 	const ELEMENTOR_MENU_SLUG = 'elementor';
 	const EDITOR_MENU_SLUG = 'elementor-editor';
 	const TEMPLATES_GROUP_ID = 'elementor-editor-templates';
@@ -16,212 +15,23 @@ class Menu_Config {
 	const CUSTOM_ELEMENTS_GROUP_ID = 'elementor-editor-custom-elements';
 	const SYSTEM_GROUP_ID = 'elementor-editor-system';
 	const LEGACY_TEMPLATES_SLUG = 'edit.php?post_type=elementor_library';
-
-	public static function get_editor_flyout_items(): array {
-		$items = [];
-
-		$items[] = [
-			'slug' => 'elementor-home',
-			'label' => esc_html__( 'Home', 'elementor' ),
-			'url' => admin_url( 'admin.php?page=elementor' ),
-			'icon' => 'home',
-			'group_id' => '',
-			'priority' => 10,
-		];
-
-		$items[] = [
-			'slug' => 'elementor-settings',
-			'label' => esc_html__( 'Settings', 'elementor' ),
-			'url' => admin_url( 'admin.php?page=elementor-settings' ),
-			'icon' => 'settings',
-			'group_id' => '',
-			'priority' => 20,
-		];
-
-		$items[] = [
-			'slug' => 'elementor-tools',
-			'label' => esc_html__( 'Tools', 'elementor' ),
-			'url' => admin_url( 'admin.php?page=elementor-tools' ),
-			'icon' => 'tool',
-			'group_id' => '',
-			'priority' => 30,
-		];
-
-		$items[] = [
-			'slug' => 'elementor-role-manager',
-			'label' => esc_html__( 'Role Manager', 'elementor' ),
-			'url' => admin_url( 'admin.php?page=elementor-role-manager' ),
-			'icon' => 'users',
-			'group_id' => '',
-			'priority' => 40,
-		];
-
-		$items[] = [
-			'slug' => 'e-form-submissions',
-			'label' => esc_html__( 'Submissions', 'elementor' ),
-			'url' => admin_url( 'admin.php?page=e-form-submissions' ),
-			'icon' => 'send',
-			'group_id' => '',
-			'priority' => 50,
-		];
-
-		$items[] = [
-			'slug' => 'elementor-templates',
-			'label' => esc_html__( 'Templates', 'elementor' ),
-			'url' => admin_url( 'edit.php?post_type=elementor_library&tabs_group=library' ),
-			'icon' => 'folder',
-			'group_id' => self::TEMPLATES_GROUP_ID,
-			'priority' => 60,
-		];
-
-		$items[] = [
-			'slug' => 'elementor-custom-elements',
-			'label' => esc_html__( 'Custom Elements', 'elementor' ),
-			'url' => admin_url( 'admin.php?page=elementor_custom_fonts' ),
-			'icon' => 'adjustments',
-			'group_id' => self::CUSTOM_ELEMENTS_GROUP_ID,
-			'priority' => 70,
-		];
-
-		$items[] = [
-			'slug' => 'elementor-system',
-			'label' => esc_html__( 'System', 'elementor' ),
-			'url' => admin_url( 'admin.php?page=elementor-system-info' ),
-			'icon' => 'info-circle',
-			'group_id' => self::SYSTEM_GROUP_ID,
-			'priority' => 80,
-		];
-
-		return $items;
-	}
-
-	public static function get_level4_flyout_groups( string $theme_builder_url ): array {
-		$groups = [];
-
-		$groups[ self::TEMPLATES_GROUP_ID ] = [
-			'items' => [
-				[
-					'slug' => 'saved-templates',
-					'label' => esc_html__( 'Saved Templates', 'elementor' ),
-					'url' => admin_url( 'edit.php?post_type=elementor_library&tabs_group=library' ),
-					'priority' => 10,
-				],
-				[
-					'slug' => 'theme-builder',
-					'label' => esc_html__( 'Theme Builder', 'elementor' ),
-					'url' => $theme_builder_url,
-					'priority' => 20,
-				],
-				[
-					'slug' => 'website-templates',
-					'label' => esc_html__( 'Website Templates', 'elementor' ),
-					'url' => admin_url( 'admin.php?page=elementor-app&ver=' . ELEMENTOR_VERSION . '&source=wp_db_templates_menu#/kit-library' ),
-					'priority' => 30,
-				],
-				[
-					'slug' => 'floating-elements',
-					'label' => esc_html__( 'Floating Elements', 'elementor' ),
-					'url' => admin_url( 'edit.php?post_type=elementor_library&tabs_group=library&elementor_library_type=floating-buttons' ),
-					'priority' => 40,
-				],
-				[
-					'slug' => 'popups',
-					'label' => esc_html__( 'Popups', 'elementor' ),
-					'url' => admin_url( 'edit.php?post_type=elementor_library&tabs_group=library&elementor_library_type=popup' ),
-					'priority' => 50,
-				],
-			],
-		];
-
-		$groups[ self::CUSTOM_ELEMENTS_GROUP_ID ] = [
-			'items' => [
-				[
-					'slug' => 'custom-fonts',
-					'label' => esc_html__( 'Fonts', 'elementor' ),
-					'url' => admin_url( 'admin.php?page=elementor_custom_fonts' ),
-					'priority' => 10,
-				],
-				[
-					'slug' => 'custom-icons',
-					'label' => esc_html__( 'Icons', 'elementor' ),
-					'url' => admin_url( 'admin.php?page=elementor_custom_icons' ),
-					'priority' => 20,
-				],
-				[
-					'slug' => 'custom-code',
-					'label' => esc_html__( 'Code', 'elementor' ),
-					'url' => static::get_custom_code_url(),
-					'priority' => 30,
-				],
-			],
-		];
-
-		$groups[ self::SYSTEM_GROUP_ID ] = [
-			'items' => [
-				[
-					'slug' => 'system-info',
-					'label' => esc_html__( 'System Info', 'elementor' ),
-					'url' => admin_url( 'admin.php?page=elementor-system-info' ),
-					'priority' => 10,
-				],
-				[
-					'slug' => 'element-manager',
-					'label' => esc_html__( 'Elements Manager', 'elementor' ),
-					'url' => admin_url( 'admin.php?page=elementor-element-manager' ),
-					'priority' => 20,
-				],
-			],
-		];
-
-		return $groups;
-	}
-
-	public static function get_items_to_hide_from_wp_menu(): array {
-		return [
-			'elementor-settings',
-			'go_knowledge_base_site',
-			'elementor-getting-started',
-		];
-	}
-
-	public static function get_protected_submenu_slugs(): array {
-		$default_slugs = [
-			self::ELEMENTOR_MENU_SLUG,
-			self::EDITOR_MENU_SLUG,
-			'elementor-settings',
-			'elementor-theme-builder',
-			'e-form-submissions',
-			'go_knowledge_base_site',
-			'elementor-connect',
-			'elementor-app',
-			'elementor-getting-started',
-		];
-
-		return apply_filters( 'elementor/admin_menu/protected_submenu_slugs', $default_slugs );
-	}
-
-	public static function get_protected_templates_submenu_slugs(): array {
-		return [
-			self::LEGACY_TEMPLATES_SLUG,
-			'post-new.php?post_type=elementor_library',
-			'edit-tags.php?taxonomy=elementor_library_category&amp;post_type=elementor_library',
-			'elementor-app',
-		];
-	}
-
 	public static function get_excluded_level4_slugs(): array {
+		// add new which is automatically added to templates and categories
 		$default_slugs = [
-			'edit.php?post_type=elementor_library',
-			'post-new.php?post_type=elementor_library',
 			'edit-tags.php?taxonomy=elementor_library_category&amp;post_type=elementor_library',
-			'edit-tags.php?taxonomy=elementor_library_category&post_type=elementor_library',
-			'edit.php?post_type=elementor_library#add_new',
-			'elementor-app',
-			'e-popups',
-			'e-floating-buttons',
 		];
 
-		return apply_filters( 'elementor/admin_menu/excluded_level4_slugs', $default_slugs );
+		return apply_filters( 'elementor/editor-one/menu/excluded_level4_slugs', $default_slugs );
+	}
+	public static function get_excluded_level3_slugs(): array {
+		// elementor pro slugs
+		$default_slugs = [
+			'elementor-theme-builder',
+			'elementor-pro-notes-proxy',
+			self::EDITOR_MENU_SLUG,
+		];
+
+		return apply_filters( 'elementor/editor-one/menu/excluded_level3_slugs', $default_slugs );
 	}
 
 	public static function get_legacy_slug_mapping(): array {
@@ -230,17 +40,37 @@ class Menu_Config {
 			self::ELEMENTOR_MENU_SLUG => self::EDITOR_GROUP_ID,
 		];
 
-		return apply_filters( 'elementor/admin_menu/legacy_slug_mapping', $default_mapping );
+		return apply_filters( 'elementor/editor-one/menu/legacy_slug_mapping', $default_mapping );
 	}
-
-	public static function get_level4_group_mapping(): array {
+	public static function get_legacy_pro_mapping(): array {
 		$default_mapping = [
-			'elementor-license' => self::SYSTEM_GROUP_ID,
+			'elementor-license' => [ 'group' => self::SYSTEM_GROUP_ID ],
+			'edit.php?post_type=elementor_font' => [
+				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
+				'label' => 'Fonts',
+			],
+			'edit.php?post_type=elementor_icons' => [
+				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
+				'label' => 'Icons',
+			],
+			'edit.php?post_type=elementor_snippet' => [
+				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
+				'label' => 'Code',
+			],
 		];
 
-		return apply_filters( 'elementor/admin_menu/level4_group_mapping', $default_mapping );
+		return apply_filters( 'elementor/editor-one/menu/legacy_pro_mapping', $default_mapping );
 	}
+	public static function get_attribute_mapping(): array {
+		$default_mapping = [
+			'e-form-submissions' => [
+				'position' => 50,
+				'icon' => 'send',
+			],
+		];
 
+		return apply_filters( 'elementor/editor-one/menu/position_mapping', $default_mapping );
+	}
 	public static function get_custom_code_url(): string {
 		$pro_custom_code_cpt = 'elementor_snippet';
 
@@ -250,6 +80,25 @@ class Menu_Config {
 			$default_url = admin_url( 'admin.php?page=elementor_custom_code' );
 		}
 
-		return apply_filters( 'elementor/admin_menu/custom_code_url', $default_url );
+		return apply_filters( 'elementor/editor-one/menu/custom_code_url', $default_url );
+	}
+
+	public static function get_elementor_post_types(): array {
+		$default_values = [
+			'elementor_icons' => [
+				'menu_slug' => 'elementor-custom-elements',
+				'child_slug' => 'custom-icons',
+			],
+			'elementor_font' => [
+				'menu_slug' => 'elementor-custom-elements',
+				'child_slug' => 'custom-fonts',
+			],
+			'elementor_snippet' => [
+				'menu_slug' => 'elementor-custom-elements',
+				'child_slug' => 'custom-code',
+			],
+		];
+
+		return apply_filters( 'elementor/editor-one/menu/elementor_post_types', $default_values );
 	}
 }
