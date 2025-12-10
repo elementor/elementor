@@ -2,16 +2,14 @@
 
 namespace Elementor\Includes\Settings\AdminMenuItems;
 
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Third_Level_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Editor_One_Home_Menu implements Menu_Item_Third_Level_Interface, Admin_Menu_Item_With_Page {
+class Editor_One_Home_Menu implements Menu_Item_Third_Level_Interface {
 
 	public function get_capability() {
 		return 'manage_options';
@@ -51,9 +49,5 @@ class Editor_One_Home_Menu implements Menu_Item_Third_Level_Interface, Admin_Men
 
 	public function get_page_title() {
 		return $this->get_label();
-	}
-
-	public function render() {
-		Plugin::$instance->settings->display_home_screen();
 	}
 }
