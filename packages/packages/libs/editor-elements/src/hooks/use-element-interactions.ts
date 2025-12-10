@@ -8,6 +8,7 @@ import { type ElementID } from '../types';
 export const useElementInteractions = ( elementId: ElementID ) => {
 	const [ interactions, setInteractions ] = useState< ElementInteractions >( () => {
 		const initial = getElementInteractions( elementId );
+		console.log('initial', initial);
 
 		return initial ?? { version: 1, items: [] };
 	} );
