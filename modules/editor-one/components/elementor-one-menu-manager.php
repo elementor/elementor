@@ -8,7 +8,7 @@ use Elementor\Modules\EditorOne\Classes\Menu\Items\Editor_One_Custom_Elements_Me
 use Elementor\Modules\EditorOne\Classes\Menu\Items\Legacy_Submenu_Item_Not_Mapped;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Modules\EditorOne\Classes\Menu\Interface\Menu_Item_Interface;
+use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
 use Elementor\Plugin;
 
 use Elementor\Utils;

@@ -2,7 +2,7 @@
 
 namespace Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems;
 
-use Elementor\Modules\EditorOne\Classes\Menu\Interface\Menu_Item_Interface;
+use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\TemplateLibrary\Source_Local;
 

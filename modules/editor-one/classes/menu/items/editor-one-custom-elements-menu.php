@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\EditorOne\Classes\Menu\Items;
 
-use Elementor\Modules\EditorOne\Classes\Menu\Interface\Menu_Item_Third_Level_Interface;
+use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Third_Level_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -3,8 +3,8 @@
 namespace Elementor\Modules\EditorOne\Classes;
 
 use Elementor\Plugin;
-use Elementor\Modules\EditorOne\Classes\Menu\Interface\Menu_Item_Interface;
-use Elementor\Modules\EditorOne\Classes\Menu\Interface\Menu_Item_Third_Level_Interface;
+use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
+use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Third_Level_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
