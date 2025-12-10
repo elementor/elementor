@@ -5,6 +5,7 @@ import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import Italic from '@tiptap/extension-italic';
+import Link from '@tiptap/extension-link';
 import Strike from '@tiptap/extension-strike';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
@@ -52,6 +53,9 @@ export const InlineEditor = React.forwardRef(
 				Underline,
 				Superscript,
 				Subscript,
+				Link.configure( {
+					openOnClick: false,
+				} ),
 				HardBreak.extend( {
 					addKeyboardShortcuts() {
 						return {
@@ -98,6 +102,9 @@ export const InlineEditor = React.forwardRef(
 					'& .ProseMirror': {
 						minHeight: '70px',
 						fontSize: '12px',
+						'& a': {
+							color: 'inherit',
+						},
 					},
 					...sx,
 				} }
