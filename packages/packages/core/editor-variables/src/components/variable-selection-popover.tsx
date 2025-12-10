@@ -6,6 +6,7 @@ import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { PopoverContentRefContextProvider } from '../context/variable-selection-popover.context';
 import { VariableTypeProvider } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
+import { useQuotaPermissions } from '../hooks/use-quota-permissions';
 import { type Variable } from '../types';
 import { getVariableType } from '../variables-registry/variable-type-registry';
 import { VariableCreation } from './variable-creation';
@@ -57,9 +58,11 @@ type ViewProps = {
 	propTypeKey: string;
 	currentView: View;
 	selectedVariable?: Variable;
+	disabled?: boolean;
 	editId: string;
 	setEditId: ( id: string ) => void;
 	setCurrentView: ( stage: View ) => void;
+	setDisabled?: ( disabled: boolean ) => void;
 	closePopover: () => void;
 	onSettings?: () => void;
 };
@@ -74,7 +77,7 @@ type Handlers = {
 
 function RenderView( props: ViewProps ): React.ReactNode {
 	const userPermissions = usePermissions();
-	const proRequired = Boolean( getVariableType( props.propTypeKey )?.isForPro );
+	const userQuotaPremissions = useQuotaPermissions();
 
 	const handlers: Handlers = {
 		onClose: () => {
@@ -87,13 +90,11 @@ function RenderView( props: ViewProps ): React.ReactNode {
 
 	if ( userPermissions.canAdd() ) {
 		handlers.onAdd = () => {
-			if ( ! proRequired ) {
-				props.setCurrentView( VIEW_ADD );
-			}
+			props.setCurrentView( VIEW_ADD );
 		};
 	}
 
-	if ( userPermissions.canEdit() && ! proRequired ) {
+	if ( userPermissions.canEdit() ) {
 		handlers.onEdit = ( key: string ) => {
 			props.setEditId( key );
 			props.setCurrentView( VIEW_EDIT );
@@ -122,15 +123,12 @@ function RenderView( props: ViewProps ): React.ReactNode {
 				onAdd={ handlers.onAdd }
 				onEdit={ handlers.onEdit }
 				onSettings={ handlers.onSettings }
+				disabled={ userQuotaPremissions.canAdd() }
 			/>
 		);
 	}
 
 	if ( VIEW_ADD === props.currentView ) {
-		if ( proRequired ) {
-			props.setCurrentView( VIEW_LIST );
-			return null;
-		}
 		return <VariableCreation onGoBack={ handlers.onGoBack } onClose={ handlers.onClose } />;
 	}
 

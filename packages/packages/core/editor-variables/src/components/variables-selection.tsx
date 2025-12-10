@@ -25,10 +25,11 @@ type Props = {
 	onAdd?: () => void;
 	onEdit?: ( key: string ) => void;
 	onSettings?: () => void;
+	disabled?: boolean;
 };
 
-export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }: Props ) => {
-	const { icon: VariableIcon, startIcon, variableType, propTypeUtil, isForPro, upgradeUrl } = useVariableType();
+export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, disabled = false }: Props ) => {
+	const { icon: VariableIcon, startIcon, variableType, propTypeUtil, upgradeUrl } = useVariableType();
 
 	const { value: variable, setValue: setVariable, path } = useVariableBoundProp();
 	const [ searchValue, setSearchValue ] = useState( '' );
@@ -70,7 +71,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 						size={ SIZE }
 						onClick={ onAddAndTrack }
 						aria-label={ CREATE_LABEL }
-						disabled={ isForPro }
+						disabled={ disabled }
 					>
 						<PlusIcon fontSize={ SIZE } />
 					</IconButton>
@@ -122,7 +123,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 		setSearchValue( '' );
 	};
 
-	const noVariableTitle = isForPro
+	const noVariableTitle = disabled
 		? sprintf(
 				/* translators: %s: Variable Type. */
 				__( 'No %s variables yet', 'elementor' ),
@@ -134,7 +135,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 				variableType
 		  );
 
-	const noVariableMessage = isForPro
+	const noVariableMessage = disabled
 		? sprintf(
 				/* translators: %s: Variable Type. */
 				__(
@@ -191,9 +192,8 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 					title={ noVariableTitle }
 					message={ noVariableMessage }
 					icon={ <VariableIcon fontSize="large" /> }
-					onAdd={ isForPro ? undefined : onAdd }
+					onAdd={ disabled ? undefined : onAdd }
 					upgradeUrl={ upgradeUrl }
-					upgradeRequired={ isForPro }
 				/>
 			) }
 
@@ -205,9 +205,8 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 						'elementor'
 					) }
 					icon={ <VariableIcon fontSize="large" /> }
-					onAdd={ isForPro ? undefined : onAdd }
+					onAdd={ disabled ? undefined : onAdd }
 					upgradeUrl={ upgradeUrl }
-					upgradeRequired={ isForPro }
 				/>
 			) }
 		</PopoverBody>
