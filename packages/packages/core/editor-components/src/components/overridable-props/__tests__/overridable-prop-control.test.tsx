@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { type ComponentType } from 'react';
 import { createMockElementType, createMockPropType, renderControl } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
 import { ElementProvider, useElement } from '@elementor/editor-editing-panel';
@@ -8,6 +9,7 @@ import { ErrorBoundary } from '@elementor/ui';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
+import { useOverridablePropValue } from '../../../provider/overridable-prop-context';
 import { updateOverridablePropOriginValue } from '../../../store/actions/update-overridable-prop-origin-value';
 import { selectCurrentComponentId, slice } from '../../../store/store';
 import { OverridablePropControl } from '../overridable-prop-control';
@@ -213,6 +215,39 @@ describe( '<OverridablePropControl />', () => {
 			origin_value: { $$type: 'string', value: 'New Value' },
 		} );
 	} );
+
+	it( 'should expose original prop value via useOverridablePropValue', () => {
+		// Arrange
+		const value = componentOverridablePropTypeUtil.create( {
+			override_key: MOCK_OVERRIDE_KEY,
+			origin_value: stringPropTypeUtil.create( 'Origin Title' ),
+		} );
+		const setValue = jest.fn();
+		const props = { value, setValue, bind: BIND, propType: mockPropType };
+
+		// Act
+		renderOverridableControl( props, MockCustomControl );
+
+		// Assert
+		expect( screen.getByText( 'test-override-key' ) ).toBeInTheDocument();
+
+		// Act
+		const input = screen.getByRole( 'textbox' );
+		fireEvent.change( input, { target: { value: 'New Value' } } );
+
+		// Assert
+		expect( setValue ).toHaveBeenCalledWith( {
+			$$type: 'overridable',
+			value: {
+				override_key: MOCK_OVERRIDE_KEY,
+				origin_value: { $$type: 'string', value: 'New Value' },
+			},
+		} );
+		expect( updateOverridablePropOriginValue ).toHaveBeenCalledWith( MOCK_DOCUMENT_ID, {
+			override_key: MOCK_OVERRIDE_KEY,
+			origin_value: { $$type: 'string', value: 'New Value' },
+		} );
+	} );
 } );
 
 function MockTextControl() {
@@ -225,15 +260,30 @@ function MockNumberControl() {
 	return <input type="number" value={ value ?? '' } onChange={ ( e ) => setValue( Number( e.target.value ) ) } />;
 }
 
-function renderOverridableControl( props: Parameters< typeof renderControl >[ 1 ] ) {
+function renderOverridableControl(
+	props: Parameters< typeof renderControl >[ 1 ],
+	AlternativeComponent: ComponentType | null = null
+) {
 	const OriginalControl = props.bind === BIND_NUMBER ? MockNumberControl : MockTextControl;
 
 	return renderControl(
 		<ElementProvider element={ { id: 'test-widget-id', type: ELEMENT_TYPE } } elementType={ mockElementType }>
 			<ErrorBoundary fallback={ null }>
-				<OverridablePropControl OriginalControl={ OriginalControl } />
+				<OverridablePropControl OriginalControl={ AlternativeComponent ?? OriginalControl } />
 			</ErrorBoundary>
 		</ElementProvider>,
 		props
+	);
+}
+
+function MockCustomControl() {
+	const { value, setValue } = useBoundProp( stringPropTypeUtil );
+	const overridablePropValue = useOverridablePropValue();
+
+	return (
+		<div>
+			<div>{ overridablePropValue?.override_key as string }</div>
+			<input type="text" value={ value ?? '' } onChange={ ( e ) => setValue( e.target.value ) } />
+		</div>
 	);
 }
