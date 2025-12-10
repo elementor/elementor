@@ -27,6 +27,6 @@ export function duplicateElement( { elementId, options = {} }: DuplicateElementP
 
 	return runCommandSync< V1Element >( 'document/elements/duplicate', {
 		container: elementToDuplicate,
-		options: { ...options, at: insertPosition, edit: false },
+		options: { at: insertPosition, edit: false, ...options },
 	} );
 }
