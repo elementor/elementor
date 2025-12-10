@@ -129,7 +129,7 @@ class Sidebar_Navigation_Handler {
 	}
 
 	private function find_best_matching_menu_item( array $menu_items, array $level4_groups ): array {
-		$current_uri = wp_unslash( $_SERVER['REQUEST_URI'] ?? '' );
+		$current_uri = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
 		$best_match = $this->create_active_state( '', '', -1 );
 
 		foreach ( $menu_items as $item ) {
