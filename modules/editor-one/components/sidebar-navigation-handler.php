@@ -3,6 +3,7 @@
 namespace Elementor\Modules\EditorOne\Components;
 
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Utils;
 
@@ -11,6 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Sidebar_Navigation_Handler {
+
+	private const HOME_SLUG = 'elementor-home';
+	private const PROMOTION_URL = 'https://go.elementor.com/wp-dash-sidebar-upgrade/';
 
 	private Menu_Data_Provider $menu_data_provider;
 
@@ -81,7 +85,6 @@ class Sidebar_Navigation_Handler {
 	private function get_sidebar_config(): array {
 		$flyout_data = $this->menu_data_provider->get_editor_flyout_data();
 		$level4_groups = $this->menu_data_provider->get_level4_flyout_data();
-
 		$promotion = $this->get_promotion_data();
 		$active_state = $this->get_active_menu_state( $flyout_data['items'], $level4_groups );
 
@@ -102,7 +105,7 @@ class Sidebar_Navigation_Handler {
 		return Filtered_Promotions_Manager::get_filtered_promotion_data(
 			[
 				'text' => esc_html__( 'Upgrade plan', 'elementor' ),
-				'url' => 'https://go.elementor.com/wp-dash-sidebar-upgrade/',
+				'url' => self::PROMOTION_URL,
 			],
 			'elementor/sidebar/promotion',
 			'url'
@@ -112,11 +115,8 @@ class Sidebar_Navigation_Handler {
 	private function get_active_menu_state( array $menu_items, array $level4_groups ): array {
 		$current_page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
 
-		if ( 'elementor-editor' === $current_page ) {
-			return [
-				'menu_slug' => 'elementor-home',
-				'child_slug' => '',
-			];
+		if ( Menu_Config::EDITOR_MENU_SLUG === $current_page ) {
+			return $this->create_active_state( self::HOME_SLUG );
 		}
 
 		$pro_post_type_match = $this->get_pro_post_type_active_state();
@@ -125,90 +125,111 @@ class Sidebar_Navigation_Handler {
 			return $pro_post_type_match;
 		}
 
-		$current_url = $this->get_current_url();
-		$best_match = [
-			'menu_slug' => '',
-			'child_slug' => '',
-			'score' => -1,
-		];
+		return $this->find_best_matching_menu_item( $menu_items, $level4_groups );
+	}
+
+	private function find_best_matching_menu_item( array $menu_items, array $level4_groups ): array {
+		$current_uri = $_SERVER['REQUEST_URI'] ?? '';
+		$best_match = $this->create_active_state( '', '', -1 );
 
 		foreach ( $menu_items as $item ) {
-			if ( ! empty( $item['group_id'] ) && isset( $level4_groups[ $item['group_id'] ] ) ) {
-				$group = $level4_groups[ $item['group_id'] ];
+			$best_match = $this->update_best_match_from_level4(
+				$item,
+				$level4_groups,
+				$current_uri,
+				$best_match
+			);
 
-				if ( ! empty( $group['items'] ) ) {
-					foreach ( $group['items'] as $child_item ) {
-						$score = $this->get_url_match_score( $child_item['url'], $current_url );
-
-						if ( $score > $best_match['score'] ) {
-							$best_match = [
-								'menu_slug' => $item['slug'],
-								'child_slug' => $child_item['slug'],
-								'score' => $score,
-							];
-						}
-					}
-				}
-			}
-
-			$score = $this->get_url_match_score( $item['url'], $current_url );
+			$score = $this->get_url_match_score( $item['url'], $current_uri );
 
 			if ( $score > $best_match['score'] ) {
-				$best_match = [
-					'menu_slug' => $item['slug'],
-					'child_slug' => '',
-					'score' => $score,
-				];
+				$best_match = $this->create_active_state( $item['slug'], '', $score );
 			}
 		}
 
+		return $this->create_active_state( $best_match['menu_slug'], $best_match['child_slug'] );
+	}
+
+	private function update_best_match_from_level4(
+		array $item,
+		array $level4_groups,
+		string $current_uri,
+		array $best_match
+	): array {
+		if ( empty( $item['group_id'] ) || ! isset( $level4_groups[ $item['group_id'] ] ) ) {
+			return $best_match;
+		}
+
+		$group = $level4_groups[ $item['group_id'] ];
+
+		if ( empty( $group['items'] ) ) {
+			return $best_match;
+		}
+
+		foreach ( $group['items'] as $child_item ) {
+			$score = $this->get_url_match_score( $child_item['url'], $current_uri );
+
+			if ( $score > $best_match['score'] ) {
+				$best_match = $this->create_active_state( $item['slug'], $child_item['slug'], $score );
+			}
+		}
+
+		return $best_match;
+	}
+
+	private function create_active_state( string $menu_slug, string $child_slug = '', int $score = 0 ): array {
 		return [
-			'menu_slug' => $best_match['menu_slug'],
-			'child_slug' => $best_match['child_slug'],
+			'menu_slug' => $menu_slug,
+			'child_slug' => $child_slug,
+			'score' => $score,
 		];
 	}
 
-	private function get_url_match_score( string $menu_url, string $current_url ): int {
+	private function get_url_match_score( string $menu_url, string $current_uri ): int {
 		$menu_parsed = wp_parse_url( $menu_url );
-		$current_parsed = wp_parse_url( $current_url );
 
-		if ( empty( $menu_parsed['path'] ) || empty( $current_parsed['path'] ) ) {
+		if ( empty( $menu_parsed['path'] ) ) {
 			return -1;
 		}
 
-		$menu_path = basename( $menu_parsed['path'] );
-		$current_path = basename( $current_parsed['path'] );
+		$current_parsed = wp_parse_url( $current_uri );
 
-		if ( $menu_path !== $current_path ) {
+		if ( empty( $current_parsed['path'] ) ) {
 			return -1;
 		}
 
-		$menu_query = [];
-		$current_query = [];
-
-		if ( ! empty( $menu_parsed['query'] ) ) {
-			parse_str( $menu_parsed['query'], $menu_query );
+		if ( basename( $menu_parsed['path'] ) !== basename( $current_parsed['path'] ) ) {
+			return -1;
 		}
 
-		if ( ! empty( $current_parsed['query'] ) ) {
-			parse_str( $current_parsed['query'], $current_query );
-		}
+		$menu_query = $this->parse_query_string( $menu_parsed['query'] ?? '' );
+		$current_query = $this->parse_query_string( $current_parsed['query'] ?? '' );
 
-		foreach ( $menu_query as $key => $value ) {
-			if ( ! isset( $current_query[ $key ] ) || $current_query[ $key ] !== $value ) {
-				return -1;
-			}
+		if ( ! $this->query_params_match( $menu_query, $current_query ) ) {
+			return -1;
 		}
 
 		return count( $menu_query );
 	}
 
-	private function get_current_url(): string {
-		$protocol = is_ssl() ? 'https://' : 'http://';
-		$host = isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) : '';
-		$uri = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+	private function parse_query_string( string $query ): array {
+		$params = [];
 
-		return $protocol . $host . $uri;
+		if ( '' !== $query ) {
+			parse_str( $query, $params );
+		}
+
+		return $params;
+	}
+
+	private function query_params_match( array $required, array $actual ): bool {
+		foreach ( $required as $key => $value ) {
+			if ( ! isset( $actual[ $key ] ) || $actual[ $key ] !== $value ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	private function get_pro_post_type_active_state(): ?array {
@@ -218,8 +239,7 @@ class Sidebar_Navigation_Handler {
 			return null;
 		}
 
-		$mapping = Menu_Data_Provider::get_elementor_post_types();
-
-		return $mapping[ $current_post_type ] ?? null;
+		return Menu_Data_Provider::get_elementor_post_types()[ $current_post_type ] ?? null;
 	}
 }
+
