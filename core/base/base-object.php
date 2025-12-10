@@ -36,7 +36,7 @@ class Base_Object {
 	 *
 	 * @return mixed An array of all settings, or a single value if `$setting` was specified.
 	 */
-	final public function get_settings( $setting = null ) {
+	public function get_settings( $setting = null ) {
 		$this->ensure_settings();
 
 		return self::get_items( $this->settings, $setting );
