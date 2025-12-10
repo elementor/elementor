@@ -1,14 +1,37 @@
-/**
- * Elementor Admin Menu - Multi-Level Flyout Styles
- *
- * Supports 4-level menu hierarchy:
- * - Level 1: Elementor (top-level)
- * - Level 2: Editor (submenu) - other plugins can add here
- * - Level 3: Settings, Role Manager, etc. (flyout from Editor)
- * - Level 4: flyout from Templates/Custom Code
- */
-
 #adminmenu {
+	--editor-one-flyout-menu-bg: #1d2327;
+	--editor-one-flyout-menu-bg-level-4: #23282d;
+	--editor-one-flyout-menu-bg-hover: #2c3338;
+	--editor-one-flyout-menu-bg-hover-alt: #32373c;
+	--editor-one-flyout-menu-text: #c3c4c7;
+	--editor-one-flyout-menu-text-hover: #72aee6;
+	--editor-one-flyout-menu-border: #3c434a;
+	--editor-one-flyout-menu-scrollbar-thumb-hover: #50575e;
+	--editor-one-flyout-menu-spacing-xs: 5px;
+	--editor-one-flyout-menu-spacing-sm: 8px;
+	--editor-one-flyout-menu-spacing-md: 12px;
+	--editor-one-flyout-menu-spacing-lg: 15px;
+	--editor-one-flyout-menu-spacing-xl: 28px;
+	--editor-one-flyout-menu-arrow-right: 10px;
+	--editor-one-flyout-menu-arrow-size: 4px;
+	--editor-one-flyout-menu-arrow-opacity: 0.7;
+	--editor-one-flyout-menu-min-width: 180px;
+	--editor-one-flyout-menu-padding-y: 5px;
+	--editor-one-flyout-menu-padding-x: 12px;
+	--editor-one-flyout-menu-padding-x-large: 28px;
+	--editor-one-flyout-menu-padding-mobile: 15px;
+	--editor-one-flyout-menu-border-radius: 4px;
+	--editor-one-flyout-menu-border-radius-sm: 3px;
+	--editor-one-flyout-menu-border-width: 1px;
+	--editor-one-flyout-menu-font-size: 13px;
+	--editor-one-flyout-menu-line-height: 1.4;
+	--editor-one-flyout-menu-transition-duration: 0.15s;
+	--editor-one-flyout-menu-z-index: 9999;
+	--editor-one-flyout-menu-max-height: 80vh;
+	--editor-one-flyout-menu-scrollbar-width: 6px;
+	--editor-one-flyout-menu-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+	--editor-one-flyout-menu-folded-left: 36px;
+
 	.elementor-has-flyout {
 		position: relative;
 
@@ -22,12 +45,12 @@
 			display: inline-block;
 			width: 0;
 			height: 0;
-			margin-left: 8px;
-			border-top: 4px solid transparent;
-			border-bottom: 4px solid transparent;
-			border-left: 4px solid currentColor;
+			margin-left: var(--editor-one-flyout-menu-spacing-sm);
+			border-top: var(--editor-one-flyout-menu-arrow-size) solid transparent;
+			border-bottom: var(--editor-one-flyout-menu-arrow-size) solid transparent;
+			border-left: var(--editor-one-flyout-menu-arrow-size) solid currentColor;
 			vertical-align: middle;
-			opacity: 0.7;
+			opacity: var(--editor-one-flyout-menu-arrow-opacity);
 		}
 	}
 
@@ -36,29 +59,29 @@
 		left: 100%;
 		top: 0;
 		display: none;
-		min-width: 180px;
+		min-width: var(--editor-one-flyout-menu-min-width);
 		margin: 0;
-		padding: 5px 0;
+		padding: var(--editor-one-flyout-menu-padding-y) 0;
 		list-style: none;
-		background: #1d2327;
-		box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-		z-index: 9999;
-		border-radius: 0 4px 4px 0;
+		background: var(--editor-one-flyout-menu-bg);
+		box-shadow: var(--editor-one-flyout-menu-box-shadow);
+		z-index: var(--editor-one-flyout-menu-z-index);
+		border-radius: 0 var(--editor-one-flyout-menu-border-radius) var(--editor-one-flyout-menu-border-radius) 0;
 
 		&.elementor-level-3 {
-			min-width: 180px;
-			max-height: 80vh;
+			min-width: var(--editor-one-flyout-menu-min-width);
+			max-height: var(--editor-one-flyout-menu-max-height);
 			overflow: visible;
 		}
 
 		&.elementor-level-4 {
-			min-width: 180px;
+			min-width: var(--editor-one-flyout-menu-min-width);
 			left: 100%;
 			top: 0;
-			background: #23282d;
+			background: var(--editor-one-flyout-menu-bg-level-4);
 
 			li a:hover {
-				background: #32373c;
+				background: var(--editor-one-flyout-menu-bg-hover-alt);
 			}
 		}
 
@@ -74,34 +97,34 @@
 
 			a {
 				display: block;
-				padding: 8px 12px;
-				color: #c3c4c7;
+				padding: var(--editor-one-flyout-menu-spacing-sm) var(--editor-one-flyout-menu-padding-x);
+				color: var(--editor-one-flyout-menu-text);
 				text-decoration: none;
-				font-size: 13px;
-				line-height: 1.4;
+				font-size: var(--editor-one-flyout-menu-font-size);
+				line-height: var(--editor-one-flyout-menu-line-height);
 				white-space: nowrap;
-				transition: background-color 0.15s ease, color 0.15s ease;
+				transition: background-color var(--editor-one-flyout-menu-transition-duration) ease, color var(--editor-one-flyout-menu-transition-duration) ease;
 
 				&:hover,
 				&:focus {
-					background: #2c3338;
-					color: #72aee6;
+					background: var(--editor-one-flyout-menu-bg-hover);
+					color: var(--editor-one-flyout-menu-text-hover);
 				}
 			}
 
 			&.elementor-menu-separator {
-				border-top: 1px solid #3c434a;
-				margin: 5px 0;
+				border-top: var(--editor-one-flyout-menu-border-width) solid var(--editor-one-flyout-menu-border);
+				margin: var(--editor-one-flyout-menu-spacing-xs) 0;
 				padding: 0;
 			}
 		}
 
 		.elementor-has-flyout > a {
-			padding-right: 28px;
+			padding-right: var(--editor-one-flyout-menu-padding-x-large);
 
 			&::after {
 				position: absolute;
-				right: 10px;
+				right: var(--editor-one-flyout-menu-arrow-right);
 				top: 50%;
 				transform: translateY(-50%);
 				margin-left: 0;
@@ -114,19 +137,19 @@
 		}
 
 		&::-webkit-scrollbar {
-			width: 6px;
+			width: var(--editor-one-flyout-menu-scrollbar-width);
 		}
 
 		&::-webkit-scrollbar-track {
-			background: #1d2327;
+			background: var(--editor-one-flyout-menu-bg);
 		}
 
 		&::-webkit-scrollbar-thumb {
-			background: #3c434a;
-			border-radius: 3px;
+			background: var(--editor-one-flyout-menu-border);
+			border-radius: var(--editor-one-flyout-menu-border-radius-sm);
 
 			&:hover {
-				background: #50575e;
+				background: var(--editor-one-flyout-menu-scrollbar-thumb-hover);
 			}
 		}
 	}
@@ -134,7 +157,7 @@
 
 .folded #adminmenu {
 	.elementor-submenu-flyout {
-		left: 36px;
+		left: var(--editor-one-flyout-menu-folded-left);
 
 		.elementor-submenu-flyout {
 			left: 100%;
@@ -157,13 +180,13 @@ body:not(.folded) #adminmenu {
 			position: static;
 			display: none;
 			box-shadow: none;
-			background: #2c3338;
+			background: var(--editor-one-flyout-menu-bg-hover);
 			border-radius: 0;
-			padding-left: 15px;
+			padding-left: var(--editor-one-flyout-menu-padding-mobile);
 
 			.elementor-submenu-flyout {
 				position: static;
-				padding-left: 15px;
+				padding-left: var(--editor-one-flyout-menu-padding-mobile);
 			}
 		}
 
@@ -173,17 +196,17 @@ body:not(.folded) #adminmenu {
 			}
 
 			> a::after {
-				border-left: 4px solid transparent;
-				border-right: 4px solid transparent;
-				border-top: 4px solid currentColor;
-				margin-left: 8px;
+				border-left: var(--editor-one-flyout-menu-arrow-size) solid transparent;
+				border-right: var(--editor-one-flyout-menu-arrow-size) solid transparent;
+				border-top: var(--editor-one-flyout-menu-arrow-size) solid currentColor;
+				margin-left: var(--editor-one-flyout-menu-spacing-sm);
 				position: static;
 				transform: none;
 			}
 
 			&.elementor-flyout-open > a::after {
 				border-top: none;
-				border-bottom: 4px solid currentColor;
+				border-bottom: var(--editor-one-flyout-menu-arrow-size) solid currentColor;
 			}
 		}
 	}
