@@ -36,7 +36,6 @@ export const VariableManagerCreateMenu = ( {
 				key,
 				name: displayName,
 				icon: variable.icon,
-				disabled: ! variable.valueField,
 				onClick: () => {
 					const defaultName = getDefaultName( variables, key, variable.variableType );
 					onCreate( key, defaultName, variable.defaultValue || '' );
@@ -50,7 +49,6 @@ export const VariableManagerCreateMenu = ( {
 			<IconButton
 				{ ...bindTrigger( menuState ) }
 				ref={ buttonRef }
-				disabled={ disabled }
 				size={ SIZE }
 				aria-label={ __( 'Add variable', 'elementor' ) }
 			>
@@ -80,7 +78,6 @@ export const VariableManagerCreateMenu = ( {
 				{ menuOptions.map( ( option ) => (
 					<MenuItem
 						key={ option.key }
-						disabled={ option.disabled }
 						onClick={ () => {
 							option.onClick?.();
 							menuState.close();

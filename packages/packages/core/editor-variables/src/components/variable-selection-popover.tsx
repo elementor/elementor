@@ -6,7 +6,6 @@ import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { PopoverContentRefContextProvider } from '../context/variable-selection-popover.context';
 import { VariableTypeProvider } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
-import { getLicenseInfo } from '../sync/license-info';
 import { type Variable } from '../types';
 import { getVariableType } from '../variables-registry/variable-type-registry';
 import { VariableCreation } from './variable-creation';
