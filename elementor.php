@@ -54,10 +54,6 @@ if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
 	// Autoload classmap doesn't include this file.
 }
 
-if ( file_exists( ELEMENTOR_PATH . 'vendor/elementor/wp-one-package/runner.php' ) ) {
-	require_once ELEMENTOR_PATH . 'vendor/elementor/wp-one-package/runner.php';
-}
-
 if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {
 	add_action( 'admin_notices', 'elementor_fail_php_version' );
 } elseif ( ! version_compare( get_bloginfo( 'version' ), '6.5', '>=' ) ) {
