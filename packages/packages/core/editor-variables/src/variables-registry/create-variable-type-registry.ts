@@ -39,6 +39,7 @@ type VariableTypeOptions = {
 	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
 	valueTransformer?: ( variable: Variable ) => PropValue;
 	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
+	isForPro?: boolean;
 	upgradeUrl?: string;
 };
 
@@ -59,6 +60,7 @@ export function createVariableTypeRegistry() {
 		valueTransformer,
 		fallbackPropTypeUtil,
 		isCompatible,
+		isForPro = false,
 		upgradeUrl,
 	}: VariableTypeOptions ) => {
 		const variableTypeKey = key ?? propTypeUtil.key;
@@ -85,6 +87,7 @@ export function createVariableTypeRegistry() {
 			valueTransformer,
 			fallbackPropTypeUtil,
 			isCompatible,
+			isForPro,
 			upgradeUrl,
 		};
 

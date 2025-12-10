@@ -5,7 +5,7 @@ export type CanvasExtendedWindow = Window & {
 		$preview?: [ HTMLIFrameElement ];
 		helpers?: {
 			enqueueFont?: EnqueueFont;
-			hasPro: () => boolean;
 		};
 	};
+	elementorPro?: object;
 };

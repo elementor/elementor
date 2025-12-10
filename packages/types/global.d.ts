@@ -16,9 +16,6 @@ declare global {
 			};
 		};
 		elementor?: {
-			helpers?: {
-				hasPro: () => boolean;
-			};
 			selection?: {
 				getElements: () => V1Element[];
 			};

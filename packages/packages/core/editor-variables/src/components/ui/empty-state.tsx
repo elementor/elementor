@@ -4,17 +4,17 @@ import { Button, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { usePermissions } from '../../hooks/use-permissions';
-import { LicenseInfo } from '../../sync/license-info';
 
 type Props = {
 	icon?: React.ReactNode;
 	title: string;
 	message: string;
 	onAdd?: () => void;
+	upgradeRequired?: boolean;
 	upgradeUrl?: string;
 };
 
-export const EmptyState = ( { icon, title, message, upgradeUrl, onAdd }: Props ) => {
+export const EmptyState = ( { icon, title, message, upgradeUrl, upgradeRequired = false, onAdd }: Props ) => {
 	const canAdd = usePermissions().canAdd();
 
 	return (
@@ -28,7 +28,7 @@ export const EmptyState = ( { icon, title, message, upgradeUrl, onAdd }: Props )
 		>
 			{ icon }
 
-			{ canAdd || LicenseInfo.hasPro ? (
+			{ canAdd || upgradeRequired ? (
 				<>
 					<Content title={ title } message={ message } />
 					{ onAdd && (
@@ -36,7 +36,7 @@ export const EmptyState = ( { icon, title, message, upgradeUrl, onAdd }: Props )
 							{ __( 'Create a variable', 'elementor' ) }
 						</Button>
 					) }
-					{ LicenseInfo.hasPro && <UpgradeButton size="small" href={ upgradeUrl ?? '' } /> }
+					{ upgradeRequired && <UpgradeButton size="small" href={ upgradeUrl ?? '' } /> }
 				</>
 			) : (
 				<Content

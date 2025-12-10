@@ -28,14 +28,7 @@ type Props = {
 };
 
 export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }: Props ) => {
-	const {
-		icon: VariableIcon,
-		startIcon,
-		variableType,
-		propTypeUtil,
-		isUpgradeRequired,
-		upgradeUrl,
-	} = useVariableType();
+	const { icon: VariableIcon, startIcon, variableType, propTypeUtil, isForPro, upgradeUrl } = useVariableType();
 
 	const { value: variable, setValue: setVariable, path } = useVariableBoundProp();
 	const [ searchValue, setSearchValue ] = useState( '' );
@@ -71,15 +64,17 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 	if ( onAdd ) {
 		actions.push(
 			<Tooltip key="add" placement="top" title={ CREATE_LABEL }>
-				<IconButton
-					id="add-variable-button"
-					size={ SIZE }
-					onClick={ onAddAndTrack }
-					aria-label={ CREATE_LABEL }
-					disabled={ isUpgradeRequired }
-				>
-					<PlusIcon fontSize={ SIZE } />
-				</IconButton>
+				<span>
+					<IconButton
+						id="add-variable-button"
+						size={ SIZE }
+						onClick={ onAddAndTrack }
+						aria-label={ CREATE_LABEL }
+						disabled={ isForPro }
+					>
+						<PlusIcon fontSize={ SIZE } />
+					</IconButton>
+				</span>
 			</Tooltip>
 		);
 	}
@@ -127,7 +122,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 		setSearchValue( '' );
 	};
 
-	const noVariableTitle = isUpgradeRequired
+	const noVariableTitle = isForPro
 		? sprintf(
 				/* translators: %s: Variable Type. */
 				__( 'No %s variables yet', 'elementor' ),
@@ -139,9 +134,9 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 				variableType
 		  );
 
-	const noVariableMessage = isUpgradeRequired
-		? /* translators: %s: Variable Type. */
-		  sprintf(
+	const noVariableMessage = isForPro
+		? sprintf(
+				/* translators: %s: Variable Type. */
 				__(
 					'Start by creating your first %s variable to apply consistent sizing across elements.',
 					'elementor'
@@ -196,8 +191,9 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 					title={ noVariableTitle }
 					message={ noVariableMessage }
 					icon={ <VariableIcon fontSize="large" /> }
-					onAdd={ isUpgradeRequired ? undefined : onAdd }
+					onAdd={ isForPro ? undefined : onAdd }
 					upgradeUrl={ upgradeUrl }
+					upgradeRequired={ isForPro }
 				/>
 			) }
 
@@ -209,8 +205,9 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 						'elementor'
 					) }
 					icon={ <VariableIcon fontSize="large" /> }
-					onAdd={ isUpgradeRequired ? undefined : onAdd }
+					onAdd={ isForPro ? undefined : onAdd }
 					upgradeUrl={ upgradeUrl }
+					upgradeRequired={ isForPro }
 				/>
 			) }
 		</PopoverBody>

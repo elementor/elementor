@@ -8,7 +8,7 @@ import { ColorIndicator } from './components/ui/color-indicator';
 import { colorVariablePropTypeUtil } from './prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from './prop-types/font-variable-prop-type';
 import { sizeVariablePropTypeUtil } from './prop-types/size-variable-prop-type';
-import { LicenseInfo } from './sync/license-info';
+import { getLicenseInfo } from './sync/license-info';
 import { registerVariableType } from './variables-registry/variable-type-registry';
 
 export function registerVariableTypes() {
@@ -33,12 +33,13 @@ export function registerVariableTypes() {
 		defaultValue: 'Roboto',
 	} );
 
-	if ( ! LicenseInfo.hasPro ) {
+	if ( ! getLicenseInfo().hasPro ) {
 		registerVariableType( {
 			icon: ExpandDiagonalIcon,
 			propTypeUtil: sizeVariablePropTypeUtil,
 			fallbackPropTypeUtil: sizePropTypeUtil,
 			variableType: 'size',
+			isForPro: true,
 			upgradeUrl: 'https://go.elementor.com/go-pro-panel-size-variable/',
 		} );
 	}
