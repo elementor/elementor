@@ -7,7 +7,7 @@ import { usePermissions } from '../../hooks/use-permissions';
 import { useQuotaPermissions } from '../../hooks/use-quota-permissions';
 
 type Props = {
-	icon: React.ReactNode;
+	icon?: React.ReactNode;
 	title: string;
 	message: string;
 	onAdd?: () => void;

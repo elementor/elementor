@@ -8,7 +8,6 @@ import { VariableTypeProvider } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
 import { useQuotaPermissions } from '../hooks/use-quota-permissions';
 import { type Variable } from '../types';
-import { getVariableType } from '../variables-registry/variable-type-registry';
 import { VariableCreation } from './variable-creation';
 import { VariableEdit } from './variable-edit';
 import { usePanelActions } from './variables-manager/variables-manager-panel';
@@ -62,7 +61,6 @@ type ViewProps = {
 	editId: string;
 	setEditId: ( id: string ) => void;
 	setCurrentView: ( stage: View ) => void;
-	setDisabled?: ( disabled: boolean ) => void;
 	closePopover: () => void;
 	onSettings?: () => void;
 };
