@@ -6,8 +6,7 @@
 @import "theme-light";
 
 @media (prefers-color-scheme: dark) {
-	 //@import "../../../../assets/dev/scss/direction/theme-dark";
-	//@import "theme-dark";
+
 }
 
 #wpcontent,
@@ -415,7 +414,7 @@ hr {
 
 		&.check-column {
 			text-align: center;
-			border: none;
+			//border: none;
 		}
 
 		&.sortable,
@@ -455,10 +454,6 @@ hr {
 			font-size: 13px;
 			font-weight: 400;
 			padding: 10px;
-			border: 1px solid var(--e-one-palette-divider);
-			border-top: none;
-			border-bottom: none;
-			border-inline-start: none;
 
 			&:last-child {
 				border-inline-end: none;
