@@ -6,7 +6,7 @@
 	"minimum-stability": "stable",
 	"require": {
 		"php": ">=7.4",
-		"elementor/wp-one-package": "1.0.15"
+		"elementor/wp-one-package": "^1.0.15"
 	},
 	"repositories": [
 		{
