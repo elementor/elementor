@@ -1,9 +1,10 @@
 @import "../../../../assets/dev/scss/helpers/variables";
 @import "../../../../assets/dev/scss/helpers/mixins";
-@import "../../../../assets/dev/scss/direction/theme-light";
+@import "variables";
+@import "theme-light";
 
 @media (prefers-color-scheme: dark) {
-	// @import "../../../../assets/dev/scss/direction/theme-dark";
+	@import "theme-dark";
 }
 
 #wpcontent,
