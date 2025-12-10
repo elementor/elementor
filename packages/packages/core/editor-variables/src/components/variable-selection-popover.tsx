@@ -39,16 +39,16 @@ export const VariableSelectionPopover = ( { closePopover, propTypeKey, selectedV
 	return (
 		<VariableTypeProvider propTypeKey={ propTypeKey }>
 			<PopoverContentRefContextProvider>
-				<RenderView
-					propTypeKey={ propTypeKey }
-					currentView={ currentView }
-					selectedVariable={ selectedVariable }
-					editId={ editId }
-					setEditId={ setEditId }
-					setCurrentView={ setCurrentView }
-					closePopover={ closePopover }
-					onSettings={ onSettingsAvailable }
-				/>
+				{ RenderView( {
+					propTypeKey,
+					currentView,
+					selectedVariable,
+					editId,
+					setEditId,
+					setCurrentView,
+					closePopover,
+					onSettings: onSettingsAvailable,
+				} ) }
 			</PopoverContentRefContextProvider>
 		</VariableTypeProvider>
 	);
@@ -73,7 +73,7 @@ type Handlers = {
 	onSettings?: () => void;
 };
 
-const RenderView: React.FC< ViewProps > = ( props ) => {
+function RenderView( props: ViewProps ): React.ReactNode {
 	const userPermissions = usePermissions();
 	const proRequired = Boolean( getVariableType( props.propTypeKey )?.isForPro );
 
