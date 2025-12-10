@@ -126,9 +126,9 @@ class Module extends BaseApp {
 	}
 
 	public function filter_homescreen_promotion_tier( $tier ): string {
-		if ( Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
-			return 'one';
-		}
+		// if ( Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
+		// 	return 'one';
+		// }
 
 		return $tier;
 	}
