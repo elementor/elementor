@@ -2,7 +2,7 @@ import { useCallback, useState } from '@wordpress/element';
 import { Collapse, List, ListItem, ListItemText } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import { DEFAULT_ICON, ICON_MAP } from '../shared';
-import { ChildMenuItemButton, ExpandIcon, MenuIcon, MenuItemButton } from './styled-components';
+import { ChildListItem, ChildMenuItemButton, ExpandIcon, MenuIcon, MenuItemButton } from './styled-components';
 
 const STORAGE_KEY_PREFIX = 'elementor_sidebar_menu_expanded_';
 
@@ -39,7 +39,7 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 
 	return (
 		<>
-			<ListItem disablePadding dense>
+			<ListItem disablePadding dense disableGutters>
 				<MenuItemButton onClick={ handleClick } selected={ isActive && ! hasChildren }>
 					<MenuIcon>
 						<IconComponent />
@@ -50,9 +50,9 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 			</ListItem>
 			{ hasChildren && (
 				<Collapse in={ isExpanded } timeout="auto" unmountOnExit>
-					<List disablePadding>
+					<List disablePadding disableGutters>
 						{ children.map( ( childItem ) => (
-							<ListItem key={ childItem.slug } disablePadding dense>
+							<ChildListItem key={ childItem.slug } disablePadding dense disableGutters>
 								<ChildMenuItemButton
 									component="a"
 									href={ childItem.url }
@@ -63,7 +63,7 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 										primaryTypographyProps={ { variant: 'body2', color: 'text.secondary' } }
 									/>
 								</ChildMenuItemButton>
-							</ListItem>
+							</ChildListItem>
 						) ) }
 					</List>
 				</Collapse>

@@ -1,21 +1,17 @@
-import { List, ListItemButton, ListItemIcon, styled } from '@elementor/ui';
+import { List, ListItem, ListItemButton, ListItemIcon, styled } from '@elementor/ui';
 import ChevronDownIcon from '@elementor/icons/ChevronDownIcon';
 
 export const MenuList = styled( List )( ( { theme } ) => ( {
 	paddingLeft: theme.spacing( 2 ),
 	paddingRight: theme.spacing( 2 ),
-	paddingTop: theme.spacing( 1 ),
-	paddingBottom: theme.spacing( 1 ),
 } ) );
 
 export const MenuItemButton = styled( ListItemButton )( ( { theme } ) => ( {
 	borderRadius: theme.shape.borderRadius,
-	marginBottom: theme.spacing( 1 ),
-	paddingTop: theme.spacing( 0.5 ),
-	paddingBottom: theme.spacing( 0.5 ),
-	paddingLeft: theme.spacing( 1.5 ),
+	paddingLeft: theme.spacing( 1 ),
 	paddingRight: theme.spacing( 1 ),
-	minHeight: 32,
+	marginBottom: 0,
+	paddingBottom: 0,
 } ) );
 
 export const MenuIcon = styled( ListItemIcon )( {
@@ -26,13 +22,14 @@ export const MenuIcon = styled( ListItemIcon )( {
 } );
 
 export const ChildMenuItemButton = styled( ListItemButton )( ( { theme } ) => ( {
-	borderRadius: theme.shape.borderRadius,
-	paddingLeft: theme.spacing( 5 ),
+	paddingLeft: theme.spacing( 6 ),
 	paddingRight: theme.spacing( 2 ),
-	paddingTop: theme.spacing( 0.5 ),
-	paddingBottom: theme.spacing( 0.5 ),
 	minHeight: 32,
 } ) );
+
+export const ChildListItem = styled( ListItem )( {
+	maxHeight: 32,
+} );
 
 export const ExpandIcon = styled( ChevronDownIcon, {
 	shouldForwardProp: ( prop ) => prop !== 'expanded',

@@ -1,11 +1,13 @@
 $admin-top-bar-height: 50px;
+$navigation-width: 240px;
+$navigation-width-collapsed: 56px;
 
 #e-editor-sidebar-navigation {
 	position: absolute;
 	top: $admin-top-bar-height;
 	left: 160px;
 	bottom: 0;
-	width: 237px;
+	width: $navigation-width;
 	z-index: 99;
 	background-color: #fff;
 	overflow: visible;
@@ -23,26 +25,26 @@ $admin-top-bar-height: 50px;
 	}
 
 	&.e-sidebar-collapsed {
-		width: 56px;
+		width: $navigation-width-collapsed;
 	}
 }
 
 .e-has-sidebar-navigation {
 	#wpcontent {
-		padding-left: 237px;
+		padding-left: $navigation-width;
 	}
 
 	&.folded #wpcontent {
-		padding-left: 237px;
+		padding-left: $navigation-width;
 	}
 
 	&.e-sidebar-is-collapsed {
 		#wpcontent {
-			padding-left: 56px;
+			padding-left: $navigation-width-collapsed;
 		}
 
 		&.folded #wpcontent {
-			padding-left: 56px;
+			padding-left: $navigation-width-collapsed;
 		}
 
 		#wpbody-content {
@@ -50,7 +52,7 @@ $admin-top-bar-height: 50px;
 		}
 
 		#wpfooter {
-			margin-left: 56px;
+			margin-left: $navigation-width-collapsed;
 		}
 	}
 
@@ -69,7 +71,7 @@ $admin-top-bar-height: 50px;
 	}
 
 	#wpfooter {
-		margin-left: 237px;
+		margin-left: $navigation-width;
 	}
 
 	#adminmenu {
