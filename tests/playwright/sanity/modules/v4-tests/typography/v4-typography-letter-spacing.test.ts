@@ -8,7 +8,6 @@ import { WIDGET_CONFIGS, SPACING_VALUES, UNITS } from './typography-constants';
 import { DriverFactory } from '../../../../drivers/driver-factory';
 import type { EditorDriver } from '../../../../drivers/editor-driver';
 import { timeouts } from '../../../../config/timeouts';
-import { wpCli } from '../../../../assets/wp-cli';
 
 const LETTER_SPACING_VALUES = {
 	POSITIVE: SPACING_VALUES.POSITIVE,
@@ -20,8 +19,9 @@ test.describe( 'V4 Typography Letter Spacing Tests @v4-tests', () => {
 	let driver: EditorDriver;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
-		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests );
+		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests, {
+			experiments: [ 'e_atomic_elements' ],
+		} );
 	} );
 
 	test.afterAll( async () => {
