@@ -14,6 +14,8 @@ async function transformOriginValue( value: ComponentOverridable, options: { key
 		return null;
 	}
 
+	// return value.origin_value;
+
 	const transformer = settingsTransformersRegistry.get( value.origin_value.$$type );
 
 	if ( ! transformer ) {

@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Exception;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -79,6 +80,11 @@ abstract class Props_Resolver {
 				$value['value']
 			);
 		}
+
+		// if ( $prop_type instanceof Overridable_Prop_Type ) {
+		// 	$origin_prop_type = $prop_type->get_origin_prop_type();
+		// 	$value['value']['origin_value'] = $this->transform( $value['value']['origin_value'], $key, $origin_prop_type );
+		// }
 
 		$transformer = $this->transformers_registry->get( $value['$$type'] );
 

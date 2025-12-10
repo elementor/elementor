@@ -223,10 +223,13 @@ class Component_Instance extends Atomic_Widget_Base {
 
 		if ( $instance_id === $first_instance_id ) {
 			$text = 'First button text';
+			$link = 'https://en.wikipedia.org/wiki/1st_(album)';
 		} else if ( $instance_id === $second_instance_id ) {
 			$text = 'Second button text';
+			$link = 'https://en.wikipedia.org/wiki/Second';
 		} else {
 			$text = 'Button text';
+			$link = 'https://en.wikipedia.org';
 		}
 
 		return [
@@ -249,6 +252,26 @@ class Component_Instance extends Atomic_Widget_Base {
 									'id' => 3076,
 								],
 							],
+						],
+					],
+				],
+				[
+					'$$type' => 'override',
+					'value' => [
+						'override_key' => 'prop-1765354768294-mwp6ezi',
+						'override_value' => [
+							'$$type' => 'link',
+							'value' => [
+								'destination' => [
+									'$$type' => 'url',
+									'value' => $link,
+								],
+								// 'isTargetBlank' => true,
+							],
+						],
+						'schema_source' => [
+							'type' => 'component',
+							'id' => 3076,
 						],
 					],
 				],
