@@ -43,12 +43,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 	} );
 
 	const setValue = ( newValue: Values ) => {
-		const dependents = extractOrderedDependencies(
-			bind,
-			propsSchema,
-			elementSettingValues,
-			dependenciesPerTargetMapping
-		);
+		const dependents = extractOrderedDependencies( dependenciesPerTargetMapping );
 
 		const settings = getUpdatedValues( newValue, dependents, propsSchema, elementSettingValues, elementId );
 
