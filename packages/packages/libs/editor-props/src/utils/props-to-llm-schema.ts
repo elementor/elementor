@@ -10,6 +10,11 @@ export function propTypeToJsonSchema( propType: PropType ): JsonSchema7 {
 		schema.description = description;
 	}
 
+	// Add example from initial_value if it exists
+	if ( propType.initial_value !== null && propType.initial_value !== undefined ) {
+		schema.examples = [ propType.initial_value ];
+	}
+
 	// Handle different kinds of prop types
 	switch ( propType.kind ) {
 		case 'union':
@@ -29,30 +34,41 @@ function convertPlainPropType(
 ): JsonSchema7 {
 	const schema = { ...baseSchema };
 
-	// Determine type based on key
-	const key = propType.key.toLowerCase();
-	schema.type = propType.kind;
-
-	// Handle enum from settings
-	if ( Array.isArray( propType.settings?.enum ) ) {
-		if ( key === 'object' ) {
-			schema.type = 'object';
-			schema.enum = propType.settings.enum.map( ( val ) => ( {
-				$$type: 'string',
-				value: val,
-			} ) );
-		} else if ( key === 'number' ) {
-			schema.type = 'object';
-			schema.enum = propType.settings.enum.map( ( val ) => ( {
-				$$type: 'number',
-				value: val,
-			} ) );
-		} else {
-			schema.enum = propType.settings.enum;
-		}
+	if ( ! propType.kind ) {
+		throw new Error( `PropType kind is undefined for propType with key: ${ propType.key }` );
 	}
 
-	return schema;
+	const enumValues = ( propType.settings?.enum || [] ) as string[] | number[];
+
+	switch ( propType.kind ) {
+		case 'string':
+		case 'number':
+		case 'boolean':
+			return {
+				...schema,
+				type: 'object',
+				properties: {
+					$$type: {
+						type: 'string',
+						const: propType.key ?? propType.kind,
+					},
+					value: {
+						type: propType.kind,
+						...( enumValues.length > 0 ? { enum: enumValues } : {} ),
+					},
+				},
+				required: [ '$$type', 'value' ],
+			};
+		default:
+			return {
+				...schema,
+				type: 'object',
+				$$type: propType.kind,
+				value: {
+					type: propType.kind,
+				},
+			};
+	}
 }
 
 /**
@@ -69,25 +85,11 @@ function convertUnionPropType( propType: PropType & { kind: 'union' }, baseSchem
 
 	// Convert each prop type in the union
 	for ( const [ typeKey, subPropType ] of Object.entries( propTypes ) ) {
-		const subSchema = convertPropTypeToJsonSchema( subPropType );
-
-		if ( typeKey === 'dynamic' ) {
+		if ( typeKey === 'dynamic' || typeKey === 'overridable' ) {
 			continue;
 		}
-
-		schemas.push( {
-			type: 'object',
-			required: [ '$$type', 'value' ],
-			properties: {
-				$$type: {
-					type: 'string',
-					const: typeKey,
-					$comment: `Discriminator for union type variant: ${ typeKey }`,
-				},
-				value: subSchema,
-			},
-			description: subPropType.meta?.description,
-		} );
+		const subSchema = convertPropTypeToJsonSchema( subPropType );
+		schemas.push( subSchema );
 	}
 
 	if ( schemas.length > 0 ) {
@@ -105,43 +107,77 @@ function convertObjectPropType( propType: PropType & { kind: 'object' }, baseSch
 	const schema = structuredClone( baseSchema );
 
 	schema.type = 'object';
-	schema.properties = {};
+	const internalStructure: {
+		properties: {
+			$$type: JsonSchema7;
+			value: JsonSchema7;
+		};
+	} = {
+		properties: {
+			$$type: {
+				type: 'string',
+				const: propType.key,
+			},
+			value: {
+				type: 'object',
+				properties: {} as Record< string, JsonSchema7 >,
+				additionalProperties: false,
+			},
+		},
+	};
 
-	const required: string[] = [];
+	const required: string[] = [ '$$type', 'value' ];
+	const valueRequired: string[] = [];
 
 	const shape = propType.shape || {};
 
 	// Convert each property in the object shape
 	for ( const [ key, subPropType ] of Object.entries( shape ) ) {
-		const propSchema = convertPropTypeToJsonSchema( subPropType );
+		const propSchema = propTypeToJsonSchema( subPropType );
 
 		// Check if this property is required
 		if ( subPropType.settings?.required === true ) {
-			required.push( key );
+			valueRequired.push( key );
 		}
 
-		schema.properties[ key ] = propSchema;
+		if ( internalStructure.properties.value.properties ) {
+			internalStructure.properties.value.properties[ key ] = propSchema;
+		}
 	}
 
-	// Add required array if there are required fields
-	if ( required.length > 0 ) {
-		schema.required = required;
+	schema.required = required;
+	if ( valueRequired.length > 0 ) {
+		internalStructure.properties.value.required = valueRequired;
 	}
 
-	return schema;
+	return {
+		...schema,
+		...internalStructure,
+	};
 }
 
 function convertArrayPropType( propType: PropType & { kind: 'array' }, baseSchema: JsonSchema7 ): JsonSchema7 {
 	const schema = structuredClone( baseSchema );
 
-	schema.type = 'array';
+	schema.type = 'object';
+	let items: unknown;
 
 	const itemPropType = propType.item_prop_type;
 
 	if ( itemPropType ) {
-		schema.items = convertPropTypeToJsonSchema( itemPropType );
+		items = convertPropTypeToJsonSchema( itemPropType );
 	}
 
+	schema.properties = {
+		$$type: {
+			type: 'string',
+			const: propType.key,
+		},
+		value: {
+			type: 'array',
+			...( items ? { items } : {} ),
+		} as JsonSchema7,
+	};
 	return schema;
 }
 

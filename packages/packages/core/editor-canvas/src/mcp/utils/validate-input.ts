@@ -48,9 +48,9 @@ export const validateInput = {
 			} else if ( ! Schema.isPropKeyConfigurable( propName ) ) {
 				errors.push( `Property "${ propName }" is not configurable.` );
 			} else {
-				const { valid, jsonSchema } = Schema.validatePropValue( propSchema, propValue as PropValue );
+				const { valid, errorMessages } = Schema.validatePropValue( propSchema, propValue as PropValue );
 				if ( ! valid ) {
-					errors.push( `Invalid property "${ propName }". Expected schema: ${ jsonSchema }` );
+					errors.push( `Invalid property "${ propName }": ${ errorMessages }` );
 				}
 			}
 		} );
@@ -76,7 +76,7 @@ export const validateInput = {
 			if ( typeof ( customCssValue as Record< string, unknown > ).value !== 'string' ) {
 				appendInvalidCustomCssErr();
 			}
-		} else if ( typeof customCssValue !== 'string' ) {
+		} else if ( typeof customCssValue !== 'string' && typeof customCssValue !== 'undefined' ) {
 			appendInvalidCustomCssErr();
 		}
 		return result;

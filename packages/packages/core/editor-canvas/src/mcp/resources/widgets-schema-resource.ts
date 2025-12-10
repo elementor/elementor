@@ -65,12 +65,12 @@ The css string must follow standard CSS syntax, with properties and values separ
 			if ( ! stylesSchema ) {
 				throw new Error( `No styles schema found for category: ${ category }` );
 			}
-			const cleanedupPropSchema = cleanupPropType( stylesSchema );
-			const asJson = Schema.propTypeToJsonSchema( cleanedupPropSchema as PropType );
+			const asJson = Schema.propTypeToJsonSchema( stylesSchema as PropType );
 			return {
 				contents: [
 					{
 						uri: uri.toString(),
+						mimeType: 'application/json',
 						text: JSON.stringify( asJson ),
 					},
 				],
@@ -104,9 +104,8 @@ The css string must follow standard CSS syntax, with properties and values separ
 			if ( ! propSchema ) {
 				throw new Error( `No prop schema found for element type: ${ widgetType }` );
 			}
-			const cleanedupPropSchema = cleanupPropSchema( propSchema );
 			const asJson = Object.fromEntries(
-				Object.entries( cleanedupPropSchema ).map( ( [ key, propType ] ) => [
+				Object.entries( propSchema ).map( ( [ key, propType ] ) => [
 					key,
 					Schema.propTypeToJsonSchema( propType ),
 				] )
@@ -120,7 +119,11 @@ The css string must follow standard CSS syntax, with properties and values separ
 				contents: [
 					{
 						uri: uri.toString(),
-						text: JSON.stringify( asJson ),
+						mimeType: 'application/json',
+						text: JSON.stringify( {
+							type: 'object',
+							properties: asJson,
+						} ),
 					},
 				],
 			};

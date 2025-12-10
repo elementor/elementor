@@ -8,6 +8,7 @@ import {
 } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
+import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { validateInput } from '../../utils/validate-input';
 import { generatePrompt } from './prompt';
@@ -20,6 +21,10 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 		name: 'build-compositions',
 		description: generatePrompt(),
 		schema,
+		requiredResources: [
+			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
+			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
+		],
 		outputSchema,
 		handler: async ( params ) => {
 			let xml: Document | null = null;
@@ -72,8 +77,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 						const styleObject = stylesConfig[ configId ] || {};
 						const { errors: propsValidationErrors } = validateInput.validatePropSchema(
 							elementTag,
-							configObject,
-							[ '_styles' ]
+							configObject
 						);
 						errors.push( ...( propsValidationErrors || [] ).map( ( msg ) => new Error( msg ) ) );
 						const { errors: stylesValidationErrors } = validateInput.validateStyles( styleObject );

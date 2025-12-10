@@ -8,11 +8,12 @@ const schema = {
 };
 
 const outputSchema = {
-	propValues: z
+	properties: z
 		.record( z.string(), z.any() )
-		.describe(
-			'A record mapping PropTypes to their corresponding PropValues, with _styles record for style-related PropValues'
-		),
+		.describe( 'A record mapping PropTypes to their corresponding PropValues' ),
+	style: z
+		.record( z.string(), z.any() )
+		.describe( 'A record mapping StyleSchema properties to their corresponding PropValues' ),
 };
 
 export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
@@ -58,15 +59,17 @@ export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
 						}
 					} );
 					if ( defaultVariant.custom_css ) {
-						stylePropValues.custom_css = btoa( defaultVariant.custom_css.raw );
+						stylePropValues.custom_css = atob( defaultVariant.custom_css.raw );
 					}
 				}
 			}
 
 			return {
-				propValues: {
+				properties: {
 					...propValues,
-					_styles: stylePropValues,
+				},
+				style: {
+					...stylePropValues,
 				},
 			};
 		},

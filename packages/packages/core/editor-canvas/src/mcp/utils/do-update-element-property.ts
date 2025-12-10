@@ -19,6 +19,10 @@ function resolvePropValue( value: unknown, forceKey?: string ): PropValue {
 	return Schema.adjustLlmPropValueSchema( value as PropValue, { forceKey } );
 }
 
+/*
+ * This function expects a PropValue bag for updaing an element.
+ * Also, it supports updating styles "on-the-way" by checking for "_styles" property with PropValue bag that fits the common style schema.
+ */
 export const doUpdateElementProperty = ( params: OwnParams ) => {
 	const { elementId, propertyName, propertyValue, elementType } = params;
 
@@ -53,7 +57,7 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 			}
 			const isSupported = !! propertyRawSchema;
 			if ( ! isSupported ) {
-				throw new Error( `_styles property ${ stylePropName } is not supported.` );
+				throw new Error( `Style property ${ stylePropName } is not supported.` );
 			}
 			if ( propertyRawSchema.kind === 'plain' ) {
 				if ( typeof ( propertyMapValue as Record< string, unknown > )[ stylePropName ] !== 'object' ) {
@@ -110,7 +114,8 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 			) }`
 		);
 	}
-	const value = resolvePropValue( propertyValue );
+	const propKey = elementPropSchema[ propertyName ].key;
+	const value = resolvePropValue( propertyValue, propKey );
 	updateElementSettings( {
 		id: elementId,
 		props: {
