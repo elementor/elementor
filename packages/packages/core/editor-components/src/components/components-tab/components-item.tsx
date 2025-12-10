@@ -1,7 +1,8 @@
 import * as React from 'react';
+import { useRef } from 'react';
 import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
 import { dropElement, type DropElementParams, type V1ElementData } from '@elementor/editor-elements';
-import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable } from '@elementor/editor-ui';
+import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
 import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -12,6 +13,8 @@ import {
 	ListItemIcon,
 	ListItemText,
 	Menu,
+	styled,
+	type Theme,
 	Typography,
 	usePopupState,
 } from '@elementor/ui';
@@ -20,6 +23,7 @@ import { __ } from '@wordpress/i18n';
 import { archiveComponent } from '../../store/actions/archive-component';
 import { loadComponentsAssets } from '../../store/actions/load-components-assets';
 import { type Component } from '../../types';
+import { validateComponentName } from '../../utils/component-name-validation';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
 import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
 
@@ -29,17 +33,18 @@ type ComponentItemProps = {
 };
 
 export const ComponentItem = ( { component, renameComponent }: ComponentItemProps ) => {
+	const itemRef = useRef< HTMLElement >( null );
+
 	const {
 		ref: editableRef,
 		isEditing,
 		openEditMode,
+		error,
 		getProps: getEditableProps,
 	} = useEditable( {
 		value: component.name,
 		onSubmit: renameComponent,
-		validation: () => {
-			return null;
-		},
+		validation: validateComponentTitle,
 	} );
 	const componentModel = createComponentModel( component );
 	const popupState = usePopupState( {
@@ -69,38 +74,56 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 
 	return (
 		<>
-			<ListItemButton
-				draggable
-				onDragStart={ () => startDragElementFromPanel( componentModel ) }
-				onDragEnd={ handleDragEnd }
-				shape="rounded"
-				sx={ { border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 } }
+			<WarningInfotip
+				open={ Boolean( error ) }
+				text={ error ?? '' }
+				placement="bottom"
+				width={ itemRef.current?.getBoundingClientRect().width }
+				offset={ [ 0, -15 ] }
 			>
-				<Box sx={ { display: 'flex', width: '100%', alignItems: 'center', gap: 1 } } onClick={ handleClick }>
-					<ListItemIcon size="tiny">
-						<ComponentsIcon fontSize="tiny" />
-					</ListItemIcon>
-					<ListItemText
-						primary={
-							<Typography variant="caption" sx={ { color: 'text.primary' } }>
-								{ isEditing ? (
-									<EditableField
-										ref={ editableRef }
-										as={ Typography }
-										variant="caption"
-										{ ...getEditableProps() }
-									/>
-								) : (
-									<EllipsisWithTooltip title={ component.name } as={ Typography } variant="caption" />
-								) }
-							</Typography>
-						}
-					/>
-				</Box>
-				<IconButton size="tiny" { ...bindTrigger( popupState ) } aria-label="More actions">
-					<DotsVerticalIcon fontSize="tiny" />
-				</IconButton>
-			</ListItemButton>
+				<ListItemButton
+					ref={ itemRef }
+					draggable
+					onDragStart={ () => startDragElementFromPanel( componentModel ) }
+					onDragEnd={ handleDragEnd }
+					shape="rounded"
+					sx={ { border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 } }
+				>
+					<Box
+						sx={ { display: 'flex', width: '100%', alignItems: 'center', gap: 1 } }
+						onClick={ handleClick }
+					>
+						<ListItemIcon size="tiny">
+							<ComponentsIcon fontSize="tiny" />
+						</ListItemIcon>
+						<ListItemText
+							primary={
+								<Box>
+									<Indicator isActive={ isEditing } isError={ !! error }>
+										{ isEditing ? (
+											<EditableField
+												ref={ editableRef }
+												as={ Typography }
+												variant="caption"
+												{ ...getEditableProps() }
+											/>
+										) : (
+											<EllipsisWithTooltip
+												title={ component.name }
+												as={ Typography }
+												variant="caption"
+											/>
+										) }
+									</Indicator>
+								</Box>
+							}
+						/>
+					</Box>
+					<IconButton size="tiny" { ...bindTrigger( popupState ) } aria-label="More actions">
+						<DotsVerticalIcon fontSize="tiny" />
+					</IconButton>
+				</ListItemButton>
+			</WarningInfotip>
 			<Menu
 				{ ...bindMenu( popupState ) }
 				anchorOrigin={ {
@@ -112,9 +135,6 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 					horizontal: 'right',
 				} }
 			>
-				<MenuListItem sx={ { minWidth: '160px' } } onClick={ handleArchiveClick }>
-					{ __( 'Archive', 'elementor' ) }
-				</MenuListItem>
 				<MenuListItem
 					sx={ { minWidth: '160px' } }
 					onClick={ () => {
@@ -123,6 +143,11 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 					} }
 				>
 					{ __( 'Rename', 'elementor' ) }
+				</MenuListItem>
+				<MenuListItem sx={ { minWidth: '160px' } } onClick={ handleArchiveClick }>
+					<Typography variant="caption" sx={ { color: 'error.light' } }>
+						{ __( 'Archive', 'elementor' ) }
+					</Typography>
 				</MenuListItem>
 			</Menu>
 		</>
@@ -143,4 +168,39 @@ const addComponentToPage = ( model: DropElementParams[ 'model' ] ) => {
 		model,
 		options: { ...options, useHistory: false, scrollIntoView: true },
 	} );
+};
+
+const validateComponentTitle = ( newTitle: string ) => {
+	const result = validateComponentName( newTitle );
+
+	if ( ! result.errorMessage ) {
+		return null;
+	}
+
+	return result.errorMessage;
+};
+
+const Indicator = styled( Box, {
+	shouldForwardProp: ( prop: string ) => ! [ 'isActive', 'isError' ].includes( prop ),
+} )< { isActive: boolean; isError: boolean } >( ( { theme, isActive, isError } ) => ( {
+	display: 'flex',
+	width: '100%',
+	flexGrow: 1,
+	borderRadius: theme.spacing( 0.5 ),
+	border: getIndicatorBorder( { isActive, isError, theme } ),
+	padding: `0 ${ theme.spacing( 1 ) }`,
+	marginLeft: isActive ? theme.spacing( 1 ) : 0,
+	minWidth: 0,
+} ) );
+
+const getIndicatorBorder = ( { isActive, isError, theme }: { isActive: boolean; isError: boolean; theme: Theme } ) => {
+	if ( isError ) {
+		return `2px solid ${ theme.palette.error.main }`;
+	}
+
+	if ( isActive ) {
+		return `2px solid ${ theme.palette.secondary.main }`;
+	}
+
+	return 'none';
 };

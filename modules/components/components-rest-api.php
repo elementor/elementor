@@ -198,6 +198,52 @@ class Components_REST_API {
 				],
 			],
 		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/update-titles', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->update_component_title( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'components' => [
+						'type' => 'array',
+						'required' => true,
+						'items' => [
+							'type' => 'object',
+							'properties' => [
+								'componentId' => [
+									'type' => 'number',
+									'required' => true,
+									'description' => 'The component ID to update title',
+								],
+								'title' => [
+									'type' => 'string',
+									'required' => true,
+									'description' => 'The new title for the component',
+								],
+							],
+						],
+					],
+				],
+			],
+		] );
+	}
+
+	private function update_component_titles( \WP_REST_Request $request ) {
+		$components = $request->get_param( 'components' );
+		$failed_components = [];
+		$success_components = [];
+		foreach ( $components as $component ) {		
+			try {
+				$result = $this->get_repository()->update_title( $component['componentId'], $component['title'] );
+				$success_components[] = $component['componentId'];
+			}
+			catch ( \Exception $e ) {
+				error_log( 'Components REST API update_component_titles error: ' . $e->getMessage() );
+				$failed_components[] = $component['componentId'];
+			}
+		}
+		return Response_Builder::make( [ 'failedIds' => $failed_components, 'successIds' => $success_components ] )->build();
 	}
 
 	private function get_components() {
@@ -409,18 +455,6 @@ class Components_REST_API {
 		}
 	}
 
-	private function is_current_user_allow_to_edit( $component_id ) {
-		$current_user_id = get_current_user_id();
-		try {
-			$lock_data = $this->get_component_lock_manager()->get_updated_status( $component_id );
-		} catch ( \Exception $e ) {
-			error_log( 'Components REST API is_current_user_allow_to_edit error: ' . $e->getMessage() );
-			return false;
-		}
-
-		return ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] === (int) $current_user_id;
-	}
-
 	private function archive_components( \WP_REST_Request $request ) {
 		$component_ids = $request->get_param( 'componentIds' );
 		try {
@@ -435,7 +469,24 @@ class Components_REST_API {
 		}
 		return Response_Builder::make( $result )->build();
 	}
-	private function route_wrapper( callable $cb ) {
+
+	private function update_component_title( \WP_REST_Request $request ) {
+		$components = $request->get_param( 'components' );
+		try {
+			$result = $this->get_repository()->update_titles( $components );
+		} catch ( \Exception $e ) {
+			error_log( 'Components REST API update_component_title error: ' . $e->getMessage() );
+			return Error_Builder::make( 'update_component_title_failed' )
+				->set_meta( [ 'error' => $e->getMessage() ] )
+				->set_status( 500 )
+				->set_message( __( 'Failed to update component title', 'elementor' ) )
+				->build();
+		}
+		return Response_Builder::make( $result )->build();
+	}
+
+
+	private function route_wrapper( callable $cb ) {	
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {

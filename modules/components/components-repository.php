@@ -117,4 +117,30 @@ class Components_Repository {
 			'successIds' => $success_ids,
 		];
 	}
+
+	public function update_titles( $components ) {
+		$failed_ids = [];
+		$success_ids = [];
+		foreach ( $components as $component ) {
+			try {
+				$doc = Plugin::$instance->documents->get( $component['componentId'] );
+				if ( ! $doc instanceof Component_Document ) {
+					$failed_ids[] = $component['componentId'];
+					continue;
+				}
+				$doc->save( [
+					'post_title' => $component['title'],
+				] );
+				$success_ids[] = $component['componentId'];
+			}
+			catch ( \Exception $e ) {
+				$failed_ids[] = $component['componentId'];
+				throw new \Exception( 'Failed to update component title: ' . $e->getMessage() );
+			}
+		}
+		return [
+			'failedIds' => $failed_ids,
+			'successIds' => $success_ids,
+		];
+	}
 }

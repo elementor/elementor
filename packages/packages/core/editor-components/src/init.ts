@@ -39,6 +39,7 @@ import { slice } from './store/store';
 import { beforeSave } from './sync/before-save';
 import { type ExtendedWindow } from './types';
 import { onElementDrop } from './utils/tracking';
+import { SyncComponentRenameToNavigator } from './sync/sync-component-rename-to-navigator';
 
 export function init() {
 	stylesRepository.register( componentsStylesProvider );
@@ -75,6 +76,11 @@ export function init() {
 	injectIntoLogic( {
 		id: 'components-populate-store',
 		component: PopulateStore,
+	} );
+
+	injectIntoLogic( {
+		id: 'components-sync-rename-to-navigator',
+		component: SyncComponentRenameToNavigator,
 	} );
 
 	injectIntoTop( {

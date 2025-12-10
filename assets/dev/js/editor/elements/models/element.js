@@ -23,7 +23,7 @@ ElementModel = BaseElementModel.extend( {
 	_htmlCache: null,
 	_jqueryXhr: null,
 	renderOnLeave: false,
-
+	componentName: null,
 	initialize( options ) {
 		var elType = this.get( 'elType' ),
 			elements = this.get( 'elements' );
@@ -52,7 +52,158 @@ ElementModel = BaseElementModel.extend( {
 		this.on( {
 			destroy: this.onDestroy,
 			'editor:close': this.onCloseEditor,
+			'change:settings': this.onSettingsChange,
 		} );
+
+		if ( 'widget' === this.get( 'elType' ) && 'e-component' === this.get( 'widgetType' ) ) {
+			const settings = this.get( 'settings' );
+			if ( settings ) {
+				settings.on( 'change:component_instance', this.getComponentTitle, this );
+			}
+
+			this.on( 'change:componentName', this.onComponentNameChange, this );
+
+			this.registerDocumentSettingsHook();
+		}
+
+		this.getComponentTitle();
+	},
+
+	registerDocumentSettingsHook() {
+		if ( ! $e || ! $e.hooks || ! $e.modules || ! $e.modules.hookUI ) {
+			return;
+		}
+
+		const HookAfter = $e.modules.hookUI.After;
+		const self = this;
+
+		this._documentSettingsHook = new ( class extends HookAfter {
+			getCommand() {
+				return 'document/elements/settings';
+			}
+
+			getId() {
+				return 'update-component-title-' + self.cid;
+			}
+
+			getContainerType() {
+				return 'document';
+			}
+
+			getConditions( args ) {
+				return args && args.settings && args.settings.post_title;
+			}
+
+			apply( args ) {
+				self.onDocumentSettingsChange( args );
+			}
+		} )();
+
+		$e.hooks.registerUIAfter( this._documentSettingsHook );
+	},
+
+	onComponentNameChange() {
+		this.trigger( 'change:title' );
+	},
+
+	onDocumentSettingsChange( args ) {
+		if ( 'widget' !== this.get( 'elType' ) || 'e-component' !== this.get( 'widgetType' ) ) {
+			return;
+		}
+
+		if ( ! args.settings || ! args.settings.post_title ) {
+			return;
+		}
+
+		const settings = this.get( 'settings' );
+		if ( ! settings ) {
+			return;
+		}
+
+		const componentInstance = settings.get( 'component_instance' );
+		if ( ! componentInstance || ! componentInstance.value ) {
+			return;
+		}
+
+		const componentId = componentInstance.value.component_id?.value;
+		if ( ! componentId ) {
+			return;
+		}
+
+		const currentDocument = elementor.documents.getCurrent();
+		if ( currentDocument && currentDocument.id === componentId ) {
+			this.componentName = args.settings.post_title;
+			this.trigger( 'change:componentName' );
+		}
+	},
+
+	onSettingsChange( options ) {
+		if ( 'widget' === this.get( 'elType' ) && 'e-component' === this.get( 'widgetType' ) ) {
+			const changedKeys = options && options.changes ? Object.keys( options.changes ) : [];
+			if ( changedKeys.includes( 'component_instance' ) || ! this.componentName ) {
+				this.getComponentTitle();
+			}
+		}
+	},
+
+	getComponentTitle() {
+		if ( 'widget' !== this.get( 'elType' ) || 'e-component' !== this.get( 'widgetType' ) ) {
+			return;
+		}
+
+		const settings = this.get( 'settings' );
+		if ( ! settings ) {
+			return;
+		}
+
+		const componentInstance = settings.get( 'component_instance' );
+		if ( ! componentInstance || ! componentInstance.value ) {
+			return;
+		}
+
+		const componentId = componentInstance.value.component_id?.value;
+		if ( ! componentId ) {
+			return;
+		}
+
+		if ( this._loadingComponentTitle ) {
+			return;
+		}
+
+		this._loadingComponentTitle = true;
+
+		const resetLoading = () => {
+			this._loadingComponentTitle = false;
+		};
+
+		elementor.documents.request( componentId )
+			.then( ( config ) => {
+				let title = null;
+
+				if ( config ) {
+					if ( config.settings && config.settings.settings && config.settings.settings.post_title ) {
+						title = config.settings.settings.post_title;
+					} else if ( config.panel && config.panel.title ) {
+						title = config.panel.title;
+					} else if ( config.container && config.container.settings ) {
+						const containerSettings = config.container.settings;
+						if ( containerSettings.get ) {
+							title = containerSettings.get( 'post_title' );
+						} else if ( containerSettings.post_title ) {
+							title = containerSettings.post_title;
+						}
+					}
+					if ( title ) {
+						this.componentName = title;
+						this.trigger( 'change:componentName' );
+					}
+				}
+				resetLoading();
+			} )
+			.catch( () => {
+				// Silently fail if component document cannot be loaded
+				resetLoading();
+			} );
 	},
 
 	initSettings() {
@@ -151,8 +302,7 @@ ElementModel = BaseElementModel.extend( {
 
 	getTitle() {
 		const editorSettings = this.get( 'editor_settings' );
-		let title = editorSettings?.title || this.getSetting( '_title' ) || this.getSetting( 'presetTitle' );
-
+		let title = this.componentName || editorSettings?.title || this.getSetting( '_title' ) || this.getSetting( 'presetTitle' );
 		const custom = this.get( 'custom' );
 
 		if ( ! title && ( custom?.isPreset ?? false ) ) {
@@ -295,6 +445,17 @@ ElementModel = BaseElementModel.extend( {
 		// Clean the memory for all use instances
 		var settings = this.get( 'settings' ),
 			elements = this.get( 'elements' );
+
+		if ( settings ) {
+			settings.off( 'change:component_instance', this.getComponentTitle, this );
+		}
+
+		this.off( 'change:componentName', this.onComponentNameChange, this );
+
+		if ( this._documentSettingsHook && $e && $e.hooks ) {
+			$e.hooks.ui.remove( 'document/elements/settings', 'after', this._documentSettingsHook.getId() );
+			this._documentSettingsHook = null;
+		}
 
 		if ( undefined !== elements ) {
 			_.each( _.clone( elements.models ), function( model ) {

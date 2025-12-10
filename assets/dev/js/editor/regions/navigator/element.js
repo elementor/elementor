@@ -115,6 +115,7 @@ export default class extends Marionette.CompositeView {
 		this.listenTo( this.model, 'change', this.onModelChange )
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
 		this.listenTo( this.model, 'change:editor_settings', this.onModelEditorSettingsChange );
+		this.listenTo( this.model, 'change:componentName', this.onComponentNameChange );
 	}
 
 	onModelEditorSettingsChange( elementModel, editorSettings ) {
@@ -303,7 +304,7 @@ export default class extends Marionette.CompositeView {
 
 		this.ui.indicators.empty();
 
-		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
+		jQuery.each( elementor.navigator.indicators, ( __indicatorName, indicatorSettings ) => {
 			const isShouldBeIndicated = indicatorSettings.settingKeys.some( ( key ) => settings[ key ] );
 
 			if ( ! isShouldBeIndicated ) {
@@ -374,6 +375,14 @@ export default class extends Marionette.CompositeView {
 		) {
 			this.toggleHiddenClass();
 		}
+
+		if ( undefined !== this.model.changed.componentName ) {
+			this.ui.title.text( this.model.getTitle() );
+		}
+	}
+
+	onComponentNameChange() {
+		this.ui.title.text( this.model.getTitle() );
 	}
 
 	onModelSettingsChange( settingsModel ) {
@@ -389,7 +398,7 @@ export default class extends Marionette.CompositeView {
 			this.ui.icon.html( `<i class="${ this.model.attributes.icon }"></i>` );
 		}
 
-		jQuery.each( elementor.navigator.indicators, ( indicatorName, indicatorSettings ) => {
+		jQuery.each( elementor.navigator.indicators, ( _indicatorName, indicatorSettings ) => {
 			if ( Object.keys( settingsModel.changed ).filter( ( key ) => indicatorSettings.settingKeys.includes( key ) ).length ) {
 				this.renderIndicators();
 
