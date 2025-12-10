@@ -598,7 +598,7 @@ class Component_Instance extends Atomic_Widget_Base {
 				[
 					'$$type' => 'overridable',
 					'value' => [
-						'override_key' => 'madeup-override-key' . '-' . ( $instance_id === $first_instance_id ? 'first' : 'second' ),
+						'override_key' => 'madeup-override-key-' . ( $instance_id === $first_instance_id ? 'first' : 'second' ),
 						'origin_value' => [
 							'$$type' => 'override',
 							'value' => [
