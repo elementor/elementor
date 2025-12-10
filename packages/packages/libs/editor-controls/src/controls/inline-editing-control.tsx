@@ -37,6 +37,9 @@ export const InlineEditingControl = createControl( () => {
 							color: 'inherit',
 						},
 					},
+					'.strip-styles *': {
+						all: 'unset',
+					},
 				} }
 			>
 				<InlineEditor value={ value || '' } setValue={ handleChange } />

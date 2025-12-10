@@ -2,7 +2,13 @@ import * as React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { InlineEditor } from '@elementor/editor-controls';
 import { getElementType } from '@elementor/editor-elements';
-import { htmlPropTypeUtil, stringPropTypeUtil, type StringPropValue } from '@elementor/editor-props';
+import {
+	htmlPropTypeUtil,
+	stringPropTypeUtil,
+	type StringPropValue,
+	type TransformablePropValue,
+} from '@elementor/editor-props';
+import { ThemeProvider } from '@elementor/editor-ui';
 
 import { getHtmlPropType, getInlineEditablePropertyName, getWidgetType } from '../utils/inline-editing-utils';
 import { type CreateTemplatedElementTypeOptions, createTemplatedElementView } from './create-templated-element-type';
@@ -47,7 +53,9 @@ export function createInlineEditingElementView( {
 		render() {
 			if ( this.inlineEditorRoot ) {
 				this.resetInlineEditorRoot();
-			} else {
+			}
+
+			if ( ! this.isValueDynamic() ) {
 				this.$el.on( 'dblclick', '*', this.handleRenderInlineEditor.bind( this ) );
 			}
 
@@ -57,7 +65,10 @@ export function createInlineEditingElementView( {
 		handleRenderInlineEditor( event: Event ) {
 			event.stopImmediatePropagation();
 			this.$el.off( 'dblclick', '*' );
-			this.renderInlineEditor();
+
+			if ( ! this.isValueDynamic() ) {
+				this.renderInlineEditor();
+			}
 		}
 
 		handleUnmountInlineEditor( event: Event ) {
@@ -127,14 +138,17 @@ export function createInlineEditingElementView( {
 			};
 
 			this.inlineEditorRoot.render(
-				<InlineEditor
-					attributes={ { class: classes } }
-					value={ formatValue() }
-					setValue={ setValue }
-					onBlur={ this.handleUnmountInlineEditor.bind( this ) }
-					autofocus
-					showToolbar
-				/>
+				<ThemeProvider>
+					<InlineEditor
+						attributes={ { class: classes } }
+						value={ formatValue() }
+						setValue={ setValue }
+						onBlur={ this.handleUnmountInlineEditor.bind( this ) }
+						autofocus
+						showToolbar
+						stripStyle={ false }
+					/>
+				</ThemeProvider>
 			);
 		}
 
@@ -149,8 +163,17 @@ export function createInlineEditingElementView( {
 		}
 
 		resetInlineEditorRoot() {
+			this.$el.off( 'dblclick', '*' );
 			this.inlineEditorRoot?.unmount?.();
 			this.inlineEditorRoot = null;
+		}
+
+		isValueDynamic() {
+			const settingKey = getInlineEditablePropertyName( this.container );
+
+			const propValue = this.model.get( 'settings' )?.get( settingKey ) as TransformablePropValue< string >;
+
+			return propValue?.$$type === 'dynamic';
 		}
 	};
 }

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { type DependencyList, type ForwardedRef, useEffect, useRef } from 'react';
-import { ClickAwayListener, type SxProps, type Theme } from '@elementor/ui';
+import { type DependencyList, useEffect, useRef } from 'react';
+import { bindPopover, ClickAwayListener, Popover, type SxProps, type Theme, usePopupState } from '@elementor/ui';
 import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
@@ -13,7 +13,7 @@ import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
 import Text from '@tiptap/extension-text';
 import Underline from '@tiptap/extension-underline';
-import { type AnyExtension, EditorContent, useEditor } from '@tiptap/react';
+import { type AnyExtension, EditorContent, type EditorEvents, useEditor } from '@tiptap/react';
 
 import { InlineEditorToolbar } from './inline-editor-toolbar';
 
@@ -25,6 +25,7 @@ type InlineEditorProps = {
 	onBlur?: ( event: FocusEvent ) => void;
 	showToolbar?: boolean;
 	autofocus?: boolean;
+	stripStyle?: boolean;
 };
 
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
@@ -80,24 +81,61 @@ const extensions = [
 
 export const InlineEditor = React.forwardRef(
 	(
-		{ value, setValue, attributes = {}, showToolbar = false, autofocus = false, ...props }: InlineEditorProps,
-		ref: ForwardedRef< HTMLDivElement >
+		{
+			value,
+			setValue,
+			attributes = {},
+			showToolbar = false,
+			autofocus = false,
+			stripStyle = true,
+			...props
+		}: InlineEditorProps,
+		ref
 	) => {
-		const onBlur = ( event: PointerEvent ) => {
-			if ( ! props.onBlur || editor.view.dom.contains( event.target as Node ) ) {
+		const containerRef = React.useRef< HTMLDivElement >( null );
+		const selectionSize = React.useRef( 0 );
+		const popupState = usePopupState( { variant: 'popover' } );
+
+		const onBlur = props.onBlur
+			? ( event: PointerEvent ) => {
+					if ( editor.view.dom.contains( event.target as Node ) ) {
+						return;
+					}
+
+					props?.onBlur?.( event );
+			  }
+			: undefined;
+
+		const onEndSelection = ( event: KeyboardEvent | MouseEvent ) => {
+			if ( ( event.type === 'keyup' && ! event.shiftKey ) || ! selectionSize.current || ! showToolbar ) {
 				return;
 			}
 
-			props.onBlur( event );
+			selectionSize.current = 0;
+			popupState.open( containerRef?.current );
+		};
+
+		const onSelectionStart = ( { transaction }: EditorEvents[ 'selectionUpdate' ] ) => {
+			selectionSize.current = transaction.selection.content().size;
+
+			if ( popupState.isOpen ) {
+				popupState.close();
+			}
 		};
 
 		const editor = useEditor( {
 			extensions,
 			content: value,
-			onUpdate: ( { editor: updatedEditor } ) => setValue( updatedEditor.getHTML() ),
-			editorProps: {
-				attributes,
+			onUpdate: ( { editor: updatedEditor } ) => {
+				setValue( updatedEditor.getHTML() );
 			},
+			editorProps: {
+				attributes: {
+					...attributes,
+					class: attributes.class + ' ' + ( stripStyle ? 'strip-styles' : '' ),
+				},
+			},
+			onSelectionUpdate: onSelectionStart,
 			autofocus,
 		} );
 
@@ -113,12 +151,67 @@ export const InlineEditor = React.forwardRef(
 			}
 		}, [ editor, value ] );
 
+		const computePopupPosition = () => {
+			if ( ! containerRef.current ) {
+				return {
+					left: 0,
+					top: 0,
+				};
+			}
+
+			const framePosition =
+				document.querySelector( '#elementor-preview-iframe' )?.getBoundingClientRect() ??
+				new DOMRect( 0, 0, 0, 0 );
+			const containerPosition = containerRef.current.getBoundingClientRect();
+			const frameScroll = {
+				left: document.querySelector( '#elementor-preview' )?.scrollLeft ?? 0,
+				top: document.querySelector( '#elementor-preview' )?.scrollTop ?? 0,
+			};
+
+			return {
+				left: framePosition.left + containerPosition.left + frameScroll.left,
+				top: framePosition.top + containerPosition.top + frameScroll.top,
+			};
+		};
+
+		const Wrapper = ( { children }: React.PropsWithChildren ) => {
+			const wrappedChildren = <div ref={ containerRef }>{ children }</div>;
+
+			return onBlur ? (
+				<ClickAwayListener onClickAway={ onBlur }>{ wrappedChildren }</ClickAwayListener>
+			) : (
+				<>{ wrappedChildren }</>
+			);
+		};
+
 		return (
 			<>
-				{ showToolbar && <InlineEditorToolbar editor={ editor } /> }
-				<ClickAwayListener onClickAway={ onBlur }>
-					<EditorContent ref={ ref } editor={ editor } />
-				</ClickAwayListener>
+				<Wrapper>
+					<EditorContent
+						ref={ ref }
+						editor={ editor }
+						onMouseUp={ onEndSelection }
+						onKeyUp={ onEndSelection }
+					/>
+				</Wrapper>
+				{ showToolbar && containerRef.current && (
+					<Popover
+						slotProps={ {
+							root: {
+								sx: {
+									pointerEvents: 'none',
+								},
+							},
+						} }
+						{ ...bindPopover( popupState ) }
+						anchorReference="anchorPosition"
+						anchorPosition={ computePopupPosition() }
+						anchorOrigin={ { vertical: 'top', horizontal: 'left' } }
+						transformOrigin={ { vertical: 'bottom', horizontal: 'left' } }
+					>
+						<InlineEditorToolbar editor={ editor } />
+					</Popover>
+				) }
 			</>
 		);
 	}
