@@ -51,9 +51,18 @@ class Module extends BaseModule {
 		}
 
 		$is_elementor_page = strpos( $current_screen->id ?? '', 'elementor' ) !== false;
-		$is_elementor_post_type_page = strpos( $current_screen->post_type ?? '', 'elementor' ) !== false;
 
-		return $is_elementor_page || $is_elementor_post_type_page;
+		$post_type = $current_screen->post_type ?? '';
+
+		if ( empty( $post_type ) ) {
+			return $is_elementor_page;
+		}
+
+		$elementor_post_types = get_post_types_by_support( 'elementor' );
+		$is_elementor_post_type = in_array( $post_type, $elementor_post_types, true )
+			|| strpos( $post_type, 'elementor' ) !== false;
+
+		return $is_elementor_page || $is_elementor_post_type;
 	}
 
 	/**
