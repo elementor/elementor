@@ -41,7 +41,7 @@ const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void
 export const InlineEditor = React.forwardRef(
 	(
 		{ value, setValue, attributes = {}, showToolbar = false, sx, ...props }: InlineEditorProps,
-		ref: ForwardedRef< HTMLDivElement >,
+		ref: ForwardedRef< HTMLDivElement >
 	) => {
 		const editor = useEditor( {
 			extensions: [
