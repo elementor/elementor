@@ -1,5 +1,6 @@
 import {
 	isTransformable,
+	TransformablePropType,
 	type PropKey,
 	type Props,
 	type PropsSchema,
@@ -76,33 +77,37 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 			return null;
 		}
 
+		let transformablePropType = type;
+	
 		if ( type.kind === 'union' ) {
-			type = type.prop_types[ value.$$type ];
+			transformablePropType = type.prop_types[ value.$$type ];
 
-			if ( ! type ) {
+			if ( ! transformablePropType ) {
 				return null;
 			}
 		}
 
-		if ( value.$$type !== type.key ) {
+		transformablePropType = transformablePropType as TransformablePropType;
+
+		if ( value.$$type !== transformablePropType.key ) {
 			return null;
 		}
 
 		// Warning: This variable is loosely-typed - use with caution.
 		let resolvedValue = value.value;
 
-		if ( type.kind === 'object' ) {
+		if ( transformablePropType.kind === 'object' ) {
 			resolvedValue = await resolve( {
 				props: resolvedValue,
-				schema: type.shape,
+				schema: transformablePropType.shape,
 				signal,
 			} );
 		}
 
-		if ( type.kind === 'array' ) {
+		if ( transformablePropType.kind === 'array' ) {
 			resolvedValue = await Promise.all(
 				resolvedValue.map( ( item: PropValue ) =>
-					transform( { value: item, key, type: type.item_prop_type, depth, signal } )
+					transform( { value: item, key, type: transformablePropType.item_prop_type, depth, signal } )
 				)
 			);
 		}

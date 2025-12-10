@@ -2,29 +2,8 @@ import { createTransformer, settingsTransformersRegistry } from '@elementor/edit
 
 import { type ComponentOverridable } from './types';
 
-export const componentOverridableTransformer = createTransformer(
-	async ( value: ComponentOverridable, options: { key: string; signal?: AbortSignal } ) => {
+export const componentOverridableTransformer = createTransformer(( value: ComponentOverridable, options: { key: string; signal?: AbortSignal } ) => {
 		// todo: render component overrides
-		return await transformOriginValue( value, options );
+		return value.origin_value
 	}
 );
-
-async function transformOriginValue( value: ComponentOverridable, options: { key: string; signal?: AbortSignal } ) {
-	if ( ! value.origin_value || ! value.origin_value.value || ! value.origin_value.$$type ) {
-		return null;
-	}
-
-	// return value.origin_value;
-
-	const transformer = settingsTransformersRegistry.get( value.origin_value.$$type );
-
-	if ( ! transformer ) {
-		return null;
-	}
-
-	try {
-		return await transformer( value.origin_value.value, options );
-	} catch {
-		return null;
-	}
-}
