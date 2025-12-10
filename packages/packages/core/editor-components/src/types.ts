@@ -27,11 +27,11 @@ export type OverridableProp = {
 	propKey: string;
 	elType: string;
 	widgetType: string;
-	defaultValue: PropValue;
+	originValue: PropValue;
 	groupId: string;
 };
 
-export type OverridablePropGroup = {
+export type OverridablePropsGroup = {
 	id: string;
 	label: string;
 	props: string[];
@@ -40,7 +40,7 @@ export type OverridablePropGroup = {
 export type OverridableProps = {
 	props: Record< string, OverridableProp >;
 	groups: {
-		items: Record< string, OverridablePropGroup >;
+		items: Record< string, OverridablePropsGroup >;
 		order: string[];
 	};
 };
@@ -66,26 +66,26 @@ export type ExtendedWindow = Window & {
 	};
 };
 
-export type Container = {
-	model: {
-		get: ( key: 'elements' ) => {
-			toJSON: () => V1ElementData[];
-		};
-	};
-};
-
 export type ComponentInstancePropValue< TComponentId extends number | string = number | string > =
 	TransformablePropValue<
 		'component-instance',
 		{
-			component_id: TComponentId;
-			overrides?: ComponentOverride[];
+			component_id: TransformablePropValue< 'number', TComponentId >;
+			overrides?: TransformablePropValue< 'overrides', ComponentOverrides >;
 		}
 	>;
 
-type ComponentOverride = {
+type ComponentOverrides = TransformablePropValue< 'overrides', ComponentOverride[] >;
+
+type ComponentOverride = TransformablePropValue< 'override', ComponentOverridePropValue >;
+
+type ComponentOverridePropValue = {
 	override_key: string;
-	value: TransformablePropValue< string >;
+	override_value: TransformablePropValue< string >;
+	schema_source: {
+		type: string;
+		id: number;
+	};
 };
 
 export type ComponentOverridable = {

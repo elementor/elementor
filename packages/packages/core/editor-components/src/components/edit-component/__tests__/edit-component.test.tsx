@@ -59,11 +59,14 @@ describe( '<EditComponent />', () => {
 		registerSlice( slice );
 		store = __createStore();
 
+		editedDocument = MOCK_POST_DATA[ MOCK_DOCUMENT_ID ];
+
 		jest.mocked( getV1DocumentsManager ).mockReturnValue( {
 			getCurrent: () => editedDocument,
 			getCurrentId: () => editedDocument.id,
 			getInitialId: () => MOCK_DOCUMENT_ID,
 			invalidateCache: jest.fn(),
+			get: ( id: number ) => MOCK_POST_DATA[ id as keyof typeof MOCK_POST_DATA ],
 			documents: {},
 		} as unknown as V1DocumentsManager );
 

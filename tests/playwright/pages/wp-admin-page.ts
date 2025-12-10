@@ -67,8 +67,10 @@ export default class WpAdminPage extends BasePage {
 		await this.openElementorSettings( tab );
 
 		for ( const [ selector, state ] of Object.entries( settings ) ) {
-			await this.page.locator( `select[name="${ selector }"]` ).waitFor();
-			await this.page.selectOption( `[name="${ selector }"]`, state.toString() );
+			const selectLocator = this.page.locator( `select[name="${ selector }"]` );
+			await selectLocator.waitFor( { state: 'attached' } );
+
+			await selectLocator.selectOption( state.toString(), { force: true } );
 		}
 
 		await this.page.click( '#submit' );
@@ -263,8 +265,13 @@ export default class WpAdminPage extends BasePage {
 		for ( const [ id, state ] of Object.entries( experiments ) ) {
 			const selector = `#${ prefix }-${ id }`;
 
-			// Try to make the element visible - Since some experiments may be hidden for the user,
-			// but actually exist and need to be tested.
+			await this.page.waitForSelector( selector, { state: 'attached', timeout: 10000 } );
+
+			const selectElement = this.page.locator( selector );
+			await selectElement.waitFor( { state: 'visible', timeout: 5000 } );
+
+			await this.page.waitForTimeout( 500 );
+
 			await this.page.evaluate( ( el ) => {
 				const element: HTMLElement = document.querySelector( el );
 
@@ -273,9 +280,8 @@ export default class WpAdminPage extends BasePage {
 				}
 			}, `.elementor_experiment-${ id }` );
 
-			await this.page.selectOption( selector, state ? 'active' : 'inactive' );
+			await selectElement.selectOption( state ? 'active' : 'inactive', { timeout: 5000 } );
 
-			// Click to confirm any experiment that has dependencies.
 			await this.confirmExperimentModalIfOpen();
 		}
 

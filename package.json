@@ -1,7 +1,7 @@
 {
   "name": "elementor",
   "slug": "elementor",
-  "version": "3.34.0",
+  "version": "3.35.0",
   "last_beta_version": "3.12.0-beta3",
   "last_cloud_version": "3.13.0-cloud2",
   "last_dev_version": "3.9.0-dev2",
@@ -144,7 +144,7 @@
     "write": "^2.0.0"
   },
   "dependencies": {
-    "@elementor/icons": "1.61.1",
+    "@elementor/icons": "1.62.0",
     "@elementor/ui": "1.36.17",
     "@reach/router": "1.3.4",
     "@reduxjs/toolkit": "^1.8.3",

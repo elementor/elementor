@@ -109,9 +109,9 @@ export const SizeControl = createControl(
 		} = useBoundProp( sizePropTypeUtil );
 		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[ variant ];
 		const activeBreakpoint = useActiveBreakpoint();
-		const actualUnits = resolveUnits( propType, enablePropTypeUnits, variant, units );
-
 		const actualExtendedOptions = useSizeExtendedOptions( extendedOptions || [], disableCustom ?? false );
+		const actualUnits = resolveUnits( propType, enablePropTypeUnits, variant, units, actualExtendedOptions );
+
 		const popupState = usePopupState( { variant: 'popover' } );
 
 		const memorizedExternalState = useMemo(
@@ -218,7 +218,7 @@ export const SizeControl = createControl(
 					disabled={ disabled }
 					size={ controlSize }
 					unit={ controlUnit }
-					units={ [ ...actualUnits, ...( actualExtendedOptions || [] ) ] }
+					units={ [ ...actualUnits ] }
 					placeholder={ placeholder }
 					startIcon={ startIcon }
 					handleSizeChange={ handleSizeChange }
@@ -248,12 +248,13 @@ function resolveUnits(
 	propType: PropType,
 	enablePropTypeUnits: boolean,
 	variant: SizeVariant,
-	externalUnits?: Unit[]
+	externalUnits?: Unit[],
+	actualExtendedOptions?: ExtendedOption[]
 ) {
 	const fallback = [ ...defaultUnits[ variant ] ];
 
 	if ( ! enablePropTypeUnits ) {
-		return externalUnits ?? fallback;
+		return [ ...( externalUnits ?? fallback ), ...( actualExtendedOptions || [] ) ];
 	}
 
 	return ( propType.settings?.available_units as Unit[] ) ?? fallback;
