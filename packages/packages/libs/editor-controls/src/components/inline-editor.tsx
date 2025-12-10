@@ -21,6 +21,7 @@ type InlineEditorProps = {
 	attributes?: Record< string, string >;
 	sx?: SxProps< Theme >;
 	showToolbar?: boolean;
+	// UnstableFloatingActionBar sends props to be used for event handling for floating actions.
 	props?: React.ComponentProps< 'div' >;
 };
 
