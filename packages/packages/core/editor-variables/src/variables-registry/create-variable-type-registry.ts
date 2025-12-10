@@ -37,7 +37,7 @@ type VariableTypeOptions = {
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
 	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
-	valueTransformer?: ( variable: Variable ) => PropValue;
+	valueTransformer?: ( value: string, type?: string ) => PropValue;
 	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
 	isForPro?: boolean;
 	upgradeUrl?: string;
