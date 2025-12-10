@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
+import { DriverFactory } from '../../../../drivers/driver-factory';
 
 test.describe( 'Inline Editing Control @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
@@ -15,8 +16,7 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
-		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
-		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active' } );
+		await DriverFactory.activateExperimentsCli( [ 'e_atomic_elements', 'v4-inline-text-editing' ] );
 
 		editor = await wpAdminPage.openNewPage();
 	} );
