@@ -13,10 +13,16 @@ export const SIZE = 'tiny';
 type VariableManagerCreateMenuProps = {
 	variables: TVariablesList;
 	onCreate: ( type: string, defaultName: string, defaultValue: string ) => void;
+	disabled?: boolean;
 	menuState: PopupState;
 };
 
-export const VariableManagerCreateMenu = ( { variables, onCreate, menuState }: VariableManagerCreateMenuProps ) => {
+export const VariableManagerCreateMenu = ( {
+	variables,
+	onCreate,
+	disabled,
+	menuState,
+}: VariableManagerCreateMenuProps ) => {
 	const buttonRef = useRef< HTMLButtonElement >( null );
 
 	const variableTypes = getVariableTypes();
@@ -43,6 +49,7 @@ export const VariableManagerCreateMenu = ( { variables, onCreate, menuState }: V
 			<IconButton
 				{ ...bindTrigger( menuState ) }
 				ref={ buttonRef }
+				disabled={ disabled }
 				size={ SIZE }
 				aria-label={ __( 'Add variable', 'elementor' ) }
 			>
