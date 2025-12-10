@@ -34,6 +34,10 @@ abstract class Transformations_Abstract {
 	protected function get_tier() {
 		$tier = $this->elementor_adapter->get_tier();
 
+		if ( \Elementor\Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
+			return 'one';
+		}
+
 		return apply_filters( 'elementor/admin/homescreen_promotion_tier', $tier ) ?? $tier;
 	}
 
