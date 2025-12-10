@@ -21,6 +21,7 @@ type InlineEditorProps = {
 	attributes?: Record< string, string >;
 	sx?: SxProps< Theme >;
 	showToolbar?: boolean;
+	props?: React.ComponentProps< 'div' >;
 };
 
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
@@ -38,8 +39,8 @@ const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void
 
 export const InlineEditor = React.forwardRef(
 	(
-		{ value, setValue, attributes = {}, showToolbar = false, sx }: InlineEditorProps,
-		ref: ForwardedRef< HTMLDivElement >
+		{ value, setValue, attributes = {}, showToolbar = false, sx, ...props }: InlineEditorProps,
+		ref: ForwardedRef< HTMLDivElement >,
 	) => {
 		const editor = useEditor( {
 			extensions: [
@@ -109,6 +110,7 @@ export const InlineEditor = React.forwardRef(
 					...sx,
 				} }
 				{ ...attributes }
+				{ ...props }
 			>
 				{ showToolbar && <InlineEditorToolbar editor={ editor } /> }
 				<EditorContent editor={ editor } />
