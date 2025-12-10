@@ -34,9 +34,14 @@ function convertPlainPropType(
 ): JsonSchema7 {
 	const schema = { ...baseSchema };
 
+<<<<<<< HEAD
 	// This could happen when data is malformed due to a bug, added this as a safeguard.
 	if ( ! Object.hasOwn( propType, 'kind' ) ) {
 		throw new Error( `PropType kind is undefined for propType with key: ${ propType.key ?? '[unknown key]' }` );
+=======
+	if ( ! propType.kind ) {
+		throw new Error( `PropType kind is undefined for propType with key: ${ propType.key }` );
+>>>>>>> d3f0ba9dd7 (deep schema work)
 	}
 
 	const enumValues = ( propType.settings?.enum || [] ) as string[] | number[];
