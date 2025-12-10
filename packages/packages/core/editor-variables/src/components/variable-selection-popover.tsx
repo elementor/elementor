@@ -146,4 +146,4 @@ function RenderView( props: ViewProps ): React.ReactNode {
 	}
 
 	return null;
-};
+}

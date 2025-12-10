@@ -13,14 +13,12 @@ export const SIZE = 'tiny';
 type VariableManagerCreateMenuProps = {
 	variables: TVariablesList;
 	onCreate: ( type: string, defaultName: string, defaultValue: string ) => void;
-	disabled?: boolean;
 	menuState: PopupState;
 };
 
 export const VariableManagerCreateMenu = ( {
 	variables,
 	onCreate,
-	disabled,
 	menuState,
 }: VariableManagerCreateMenuProps ) => {
 	const buttonRef = useRef< HTMLButtonElement >( null );
