@@ -96,9 +96,16 @@ export default class VariablesManagerPage {
 	}
 
 	private async saveVariablesManager( shouldSave: boolean ) {
-		const isSaveEnabled = await this.page.locator( '#elementor-panel' ).getByRole( 'button', { name: /Save/ } ).isEnabled();
+		const saveButton = this.page.locator( '#elementor-panel' ).getByRole( 'button', { name: /Save/ } );
+		const isSaveVisible = await saveButton.isVisible( { timeout: 1000 } ).catch( () => false );
+
+		if ( ! isSaveVisible ) {
+			return;
+		}
+
+		const isSaveEnabled = await saveButton.isEnabled();
 		if ( shouldSave || isSaveEnabled ) {
-			await this.page.locator( '#elementor-panel' ).getByRole( 'button', { name: /Save/ } ).click();
+			await saveButton.click();
 			await this.page.waitForRequest( ( response ) => response.url().includes( 'list' ) && null === response.failure() );
 		}
 	}
