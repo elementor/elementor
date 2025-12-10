@@ -73,7 +73,7 @@ class Module extends BaseModule {
 		if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
 			add_action( "admin_print_scripts-{$hooks[ static::PAGE_ID ]}", [ $this, 'enqueue_assets' ] );
 			add_action( "admin_footer-{$hooks[ static::PAGE_ID ]}", [ $this, 'print_styles' ], 1000 );
-		}	
+		}
 	}
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
