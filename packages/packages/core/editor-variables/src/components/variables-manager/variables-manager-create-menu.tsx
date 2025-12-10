@@ -16,11 +16,7 @@ type VariableManagerCreateMenuProps = {
 	menuState: PopupState;
 };
 
-export const VariableManagerCreateMenu = ( {
-	variables,
-	onCreate,
-	menuState,
-}: VariableManagerCreateMenuProps ) => {
+export const VariableManagerCreateMenu = ( { variables, onCreate, menuState }: VariableManagerCreateMenuProps ) => {
 	const buttonRef = useRef< HTMLButtonElement >( null );
 
 	const variableTypes = getVariableTypes();
