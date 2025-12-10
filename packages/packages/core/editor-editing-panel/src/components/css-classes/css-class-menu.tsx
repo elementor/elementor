@@ -219,7 +219,6 @@ function StateMenuItem( { state, label, closeMenu, ...props }: StateMenuItemProp
 					setActiveId( styleId );
 				}
 				trackStyles( provider ?? '', 'classStateClicked', {
-					location: 'from StateMenuItem',
 					classId: styleId,
 					type: label,
 					source: styleId ? 'global' : 'local',
@@ -246,7 +245,7 @@ function StateMenuItem( { state, label, closeMenu, ...props }: StateMenuItemProp
 	);
 }
 
-function UnapplyClassMenuItem( { closeMenu, ...props }: { closeMenu: () => void } ) {
+function UnapplyClassMenuItem( { ...props }: { closeMenu: () => void } ) {
 	const { id: classId, label: classLabel, provider } = useCssClass();
 	const unapplyClass = useUnapplyClass();
 
@@ -257,7 +256,6 @@ function UnapplyClassMenuItem( { closeMenu, ...props }: { closeMenu: () => void 
 				unapplyClass( { classId, classLabel } );
 				trackStyles( provider ?? '', 'classRemoved', {
 					classId,
-					location: 'from UnapplyClassMenuItem',
 					classTitle: classLabel,
 					source: 'style-tab',
 				} );
