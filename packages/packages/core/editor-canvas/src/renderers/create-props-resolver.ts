@@ -1,11 +1,11 @@
 import {
 	isTransformable,
-	TransformablePropType,
 	type PropKey,
 	type Props,
 	type PropsSchema,
 	type PropType,
 	type PropValue,
+	type TransformablePropType,
 } from '@elementor/editor-props';
 
 import { type TransformersRegistry } from '../transformers/create-transformers-registry';
@@ -78,7 +78,7 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 		}
 
 		let transformablePropType = type;
-	
+
 		if ( type.kind === 'union' ) {
 			transformablePropType = type.prop_types[ value.$$type ];
 

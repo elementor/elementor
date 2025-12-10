@@ -70,21 +70,21 @@ class Component_Instance extends Atomic_Widget_Base {
 
 		switch ( $component_id ) {
 			// case 3059:
-			// 	$overrides = $this->get_overrides_3059($instance_id);
-			// 	break;
+			// $overrides = $this->get_overrides_3059($instance_id);
+			// break;
 			// // btn
 			// case 3076:
-			// 	$overrides = $this->get_overridable_overrides_3076($instance_id);
-			// 	break;
+			// $overrides = $this->get_overridable_overrides_3076($instance_id);
+			// break;
 
 			case 3181:
-				$overrides = $this->get_overrides_for_styled_button($instance_id);
+				$overrides = $this->get_overrides_for_styled_button( $instance_id );
 				break;
 			case 3199:
-				$overrides = $this->get_overrides_for_card($instance_id);
+				$overrides = $this->get_overrides_for_card( $instance_id );
 				break;
 			case 3239:
-				$overrides = $this->get_overrides_for_cards_accordion($instance_id);
+				$overrides = $this->get_overrides_for_cards_accordion( $instance_id );
 				break;
 			default:
 				$overrides = [];
@@ -96,7 +96,7 @@ class Component_Instance extends Atomic_Widget_Base {
 		return $settings;
 	}
 
-	private function get_overrides_for_cards_accordion($instance_id) {
+	private function get_overrides_for_cards_accordion( $instance_id ) {
 		$californication_image_id = 3191;
 		$pina_colada_image_id = 3250;
 		$mojito_image_id = 3249;
@@ -111,10 +111,10 @@ class Component_Instance extends Atomic_Widget_Base {
 				[
 					'$$type' => 'override',
 					'value' => [
-						'override_key' => "prop-1765388406486-drc0fpe",
+						'override_key' => 'prop-1765388406486-drc0fpe',
 						'override_value' => [
 							'$$type' => 'string',
-							'value' => "The Cocktail Lounge",
+							'value' => 'The Cocktail Lounge',
 						],
 						'schema_source' => [
 							'type' => 'component',
@@ -125,10 +125,10 @@ class Component_Instance extends Atomic_Widget_Base {
 				[
 					'$$type' => 'override',
 					'value' => [
-						'override_key' => "prop-1765388423234-kte80aq",
+						'override_key' => 'prop-1765388423234-kte80aq',
 						'override_value' => [
 							'$$type' => 'string',
-							'value' => "Experience the newest additions of the cocktail lounge.",
+							'value' => 'Experience the newest additions of the cocktail lounge.',
 						],
 						'schema_source' => [
 							'type' => 'component',
@@ -140,10 +140,10 @@ class Component_Instance extends Atomic_Widget_Base {
 				[
 					'$$type' => 'override',
 					'value' => [
-						'override_key' => "madeup-override-for-card-title" . $first_card_instance_id,
+						'override_key' => 'madeup-override-for-card-title' . $first_card_instance_id,
 						'override_value' => [
 							'$$type' => 'string',
-							'value' => "Californication",
+							'value' => 'Californication',
 						],
 						'schema_source' => [
 							'type' => 'component',
@@ -154,7 +154,7 @@ class Component_Instance extends Atomic_Widget_Base {
 				[
 					'$$type' => 'override',
 					'value' => [
-						'override_key' => "madeup-override-for-card-image" . $first_card_instance_id,
+						'override_key' => 'madeup-override-for-card-image' . $first_card_instance_id,
 						'override_value' => [
 							'$$type' => 'image',
 							'value' => [
@@ -176,7 +176,7 @@ class Component_Instance extends Atomic_Widget_Base {
 				[
 					'$$type' => 'override',
 					'value' => [
-						'override_key' => "madeup-override-for-button-link" . $first_card_instance_id,
+						'override_key' => 'madeup-override-for-button-link' . $first_card_instance_id,
 						'override_value' => [
 							'$$type' => 'link',
 							'value' => [
@@ -197,10 +197,10 @@ class Component_Instance extends Atomic_Widget_Base {
 				[
 					'$$type' => 'override',
 					'value' => [
-						'override_key' => "madeup-override-for-card-title" . $second_card_instance_id,
+						'override_key' => 'madeup-override-for-card-title' . $second_card_instance_id,
 						'override_value' => [
 							'$$type' => 'string',
-							'value' => "Pina Colada",
+							'value' => 'Pina Colada',
 						],
 						'schema_source' => [
 							'type' => 'component',
@@ -211,7 +211,7 @@ class Component_Instance extends Atomic_Widget_Base {
 				[
 					'$$type' => 'override',
 					'value' => [
-						'override_key' => "madeup-override-for-card-image" . $second_card_instance_id,
+						'override_key' => 'madeup-override-for-card-image' . $second_card_instance_id,
 						'override_value' => [
 							'$$type' => 'image',
 							'value' => [
@@ -233,7 +233,7 @@ class Component_Instance extends Atomic_Widget_Base {
 				[
 					'$$type' => 'override',
 					'value' => [
-						'override_key' => "madeup-override-for-button-link" . $second_card_instance_id,
+						'override_key' => 'madeup-override-for-button-link' . $second_card_instance_id,
 						'override_value' => [
 							'$$type' => 'link',
 							'value' => [
@@ -254,10 +254,10 @@ class Component_Instance extends Atomic_Widget_Base {
 				[
 					'$$type' => 'override',
 					'value' => [
-						'override_key' => "madeup-override-for-card-title" . $third_card_instance_id,
+						'override_key' => 'madeup-override-for-card-title' . $third_card_instance_id,
 						'override_value' => [
 							'$$type' => 'string',
-							'value' => "Mojito",
+							'value' => 'Mojito',
 						],
 						'schema_source' => [
 							'type' => 'component',
@@ -268,7 +268,7 @@ class Component_Instance extends Atomic_Widget_Base {
 				[
 					'$$type' => 'override',
 					'value' => [
-						'override_key' => "madeup-override-for-card-image" . $third_card_instance_id,
+						'override_key' => 'madeup-override-for-card-image' . $third_card_instance_id,
 						'override_value' => [
 							'$$type' => 'image',
 							'value' => [
@@ -288,35 +288,34 @@ class Component_Instance extends Atomic_Widget_Base {
 					],
 				],
 				// [
-				// 	'$$type' => 'override',
-				// 	'value' => [
-				// 		'override_key' => "madeup-override-for-button-link" . $third_card_instance_id,
-				// 		'override_value' => [
-				// 			'$$type' => 'link',
-				// 			'value' => [
-				// 				'destination' => [
-				// 					'$$type' => 'url',
-				// 					'value' => 'https://www.loveandlemons.com/mojito-recipe/',
-				// 				],
-				// 				'isTargetBlank' => true,
-				// 			],
-				// 		],
-				// 		'schema_source' => [
-				// 			'type' => 'component',
-				// 			'id' => 3239,	
-				// 		],
-				// 	],
+				// '$$type' => 'override',
+				// 'value' => [
+				// 'override_key' => "madeup-override-for-button-link" . $third_card_instance_id,
+				// 'override_value' => [
+				// '$$type' => 'link',
+				// 'value' => [
+				// 'destination' => [
+				// '$$type' => 'url',
+				// 'value' => 'https://www.loveandlemons.com/mojito-recipe/',
+				// ],
+				// 'isTargetBlank' => true,
+				// ],
+				// ],
+				// 'schema_source' => [
+				// 'type' => 'component',
+				// 'id' => 3239,
+				// ],
+				// ],
 				// ],
 			],
 		];
 	}
 
-	private function get_overrides_for_card($instance_id) {
+	private function get_overrides_for_card( $instance_id ) {
 		$forth_card_instance_id = '2fa9315';
 		$negroni_image_id = 3255;
 
-
-		switch ($instance_id) {
+		switch ( $instance_id ) {
 			case $forth_card_instance_id:
 				$image_override_value = [
 					'$$type' => 'image',
@@ -332,14 +331,14 @@ class Component_Instance extends Atomic_Widget_Base {
 				];
 				$title_override_value = [
 					'$$type' => 'string',
-					'value' => "Negroni",
+					'value' => 'Negroni',
 				];
 				$button_link_override_value = [
 					'$$type' => 'link',
 					'value' => [
 						'destination' => [
 							'$$type' => 'url',
-							'value' => "https://cookidoo.com.au/recipes/recipe/en-AU/r408276",
+							'value' => 'https://cookidoo.com.au/recipes/recipe/en-AU/r408276',
 						],
 						'isTargetBlank' => true,
 					],
@@ -358,11 +357,11 @@ class Component_Instance extends Atomic_Widget_Base {
 				[
 					'$$type' => 'overridable',
 					'value' => [
-						'override_key' => "madeup-override-for-card-image" . $instance_id,
+						'override_key' => 'madeup-override-for-card-image' . $instance_id,
 						'origin_value' => [
 							'$$type' => 'override',
 							'value' => [
-								'override_key' => "prop-1765388360002-x4es95b",
+								'override_key' => 'prop-1765388360002-x4es95b',
 								'override_value' => $image_override_value,
 								'schema_source' => [
 									'type' => 'component',
@@ -375,11 +374,11 @@ class Component_Instance extends Atomic_Widget_Base {
 				[
 					'$$type' => 'overridable',
 					'value' => [
-						'override_key' => "madeup-override-for-card-title" . $instance_id,
+						'override_key' => 'madeup-override-for-card-title' . $instance_id,
 						'origin_value' => [
 							'$$type' => 'override',
 							'value' => [
-								'override_key' => "prop-1765388333485-4zj8554",
+								'override_key' => 'prop-1765388333485-4zj8554',
 								'override_value' => $title_override_value,
 								'schema_source' => [
 									'type' => 'component',
@@ -392,39 +391,39 @@ class Component_Instance extends Atomic_Widget_Base {
 				[
 					'$$type' => 'overridable',
 					'value' => [
-						'override_key' => "madeup-override-for-button-link" . $instance_id,
+						'override_key' => 'madeup-override-for-button-link' . $instance_id,
 						'origin_value' => [
 							'$$type' => 'override',
 							'value' => [
-								'override_key' => "madeup-override-for-button-link",
+								'override_key' => 'madeup-override-for-button-link',
 								'override_value' => $button_link_override_value,
 								'schema_source' => [
 									'type' => 'component',
 									'id' => 3199,
 								],
 							],
-						]
-					]
+						],
+					],
 				],
 			],
 		];
 	}
 
-	private function get_overrides_for_styled_button($instance_id) {
+	private function get_overrides_for_styled_button( $instance_id ) {
 		return [
 			'$$type' => 'overrides',
 			'value' => [
 				[
 					'$$type' => 'overridable',
 					'value' => [
-						'override_key' => "madeup-override-for-button-text",
+						'override_key' => 'madeup-override-for-button-text',
 						'origin_value' => [
 							'$$type' => 'override',
 							'value' => [
-								'override_key' => "prop-1765388284202-a9uogbh",
+								'override_key' => 'prop-1765388284202-a9uogbh',
 								'override_value' => [
 									'$$type' => 'string',
-									'value' => "Learn More",
+									'value' => 'Learn More',
 								],
 								'schema_source' => [
 									'type' => 'component',
@@ -437,11 +436,11 @@ class Component_Instance extends Atomic_Widget_Base {
 				[
 					'$$type' => 'overridable',
 					'value' => [
-						'override_key' => "madeup-override-for-button-link",
+						'override_key' => 'madeup-override-for-button-link',
 						'origin_value' => [
 							'$$type' => 'override',
 							'value' => [
-								'override_key' => "prop-1765390126288-ejypv25",
+								'override_key' => 'prop-1765390126288-ejypv25',
 								'override_value' => null,
 								'schema_source' => [
 									'type' => 'component',
@@ -455,7 +454,7 @@ class Component_Instance extends Atomic_Widget_Base {
 		];
 	}
 
-	private function get_overrides_3059($instance_id) {
+	private function get_overrides_3059( $instance_id ) {
 		// my comp
 
 		$first_instance_id = '0ea9a96';
@@ -466,7 +465,7 @@ class Component_Instance extends Atomic_Widget_Base {
 			$title_tag = 'h1';
 			$first_button_text = 'First Button 🔴';
 			$second_button_text = 'Second Button 🔴';
-		} else if ( $instance_id === $second_instance_id ) {
+		} elseif ( $instance_id === $second_instance_id ) {
 			$title = 'My new title - second';
 			$title_tag = 'h3';
 			$first_button_text = 'First Button 🟢';
@@ -477,7 +476,6 @@ class Component_Instance extends Atomic_Widget_Base {
 			$first_button_text = 'First Button 🟡';
 			$second_button_text = 'Second Button 🟡';
 		}
-
 
 		return [
 			'$$type' => 'overrides',
@@ -542,7 +540,7 @@ class Component_Instance extends Atomic_Widget_Base {
 		];
 	}
 
-	private function get_overrides_3076($instance_id) {
+	private function get_overrides_3076( $instance_id ) {
 		// btn
 
 		$first_instance_id = 'fab70db';
@@ -550,7 +548,7 @@ class Component_Instance extends Atomic_Widget_Base {
 
 		if ( $instance_id === $first_instance_id ) {
 			$text = 'First button text';
-		} else if ( $instance_id === $second_instance_id ) {
+		} elseif ( $instance_id === $second_instance_id ) {
 			$text = 'Second button text';
 		} else {
 			$text = 'Button text';
@@ -577,7 +575,7 @@ class Component_Instance extends Atomic_Widget_Base {
 		];
 	}
 
-	private function get_overridable_overrides_3076($instance_id) {
+	private function get_overridable_overrides_3076( $instance_id ) {
 		// btn
 
 		$first_instance_id = 'fab70db';
@@ -586,7 +584,7 @@ class Component_Instance extends Atomic_Widget_Base {
 		if ( $instance_id === $first_instance_id ) {
 			$text = 'First button text';
 			$link = 'https://en.wikipedia.org/wiki/1st_(album)';
-		} else if ( $instance_id === $second_instance_id ) {
+		} elseif ( $instance_id === $second_instance_id ) {
 			$text = 'Second button text';
 			$link = 'https://en.wikipedia.org/wiki/Second';
 		} else {

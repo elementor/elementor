@@ -11,6 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Override_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
-		return [ 'override_key' => $value['override_key'], 'override_value' => $value['override_value'] ];
+		return [
+			'override_key' => $value['override_key'],
+			'override_value' => $value['override_value'],
+		];
 	}
 }

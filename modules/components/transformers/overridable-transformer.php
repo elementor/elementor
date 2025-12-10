@@ -24,11 +24,11 @@ class Overridable_Transformer extends Transformer_Base {
 
 			if ( $this->is_origin_value_override( $origin_value ) ) {
 				$result = $this->transform_overridable_override( $origin_value, $matching_override_value, $context );
-			} else if ( isset ( $matching_override_value ) ) {
+			} elseif ( isset( $matching_override_value ) ) {
 				$result = $matching_override_value;
 			}
 		}
-		
+
 		return $result;
 	}
 
@@ -40,6 +40,9 @@ class Overridable_Transformer extends Transformer_Base {
 		$override_transformer = new Override_Transformer();
 		$transformed_inner_override = $override_transformer->transform( $inner_override['value'], $context );
 
-		return [ 'override_key' => $transformed_inner_override['override_key'], 'override_value' => $outer_override_value ];
+		return [
+			'override_key' => $transformed_inner_override['override_key'],
+			'override_value' => $outer_override_value,
+		];
 	}
 }
