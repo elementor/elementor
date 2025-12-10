@@ -55,6 +55,10 @@ class Transformations_Manager {
 		return $this->home_screen_data;
 	}
 
+	public static function clear_cache(): void {
+		self::$cached_data = [];
+	}
+
 	private function get_transformation_classes(): array {
 		$classes = [];
 
