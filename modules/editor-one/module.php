@@ -51,8 +51,8 @@ class Module extends BaseModule {
 			add_action( 'admin_enqueue_scripts', function () {
 				$this->enqueue_styles();
 			} );
-
-		}
+		} );
+	}
 
 	/**
 	 * Check if Editor One feature is enabled
