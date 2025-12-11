@@ -5,13 +5,14 @@ import {
 	Tooltip,
 	Switch,
 	IconButton,
+	Typography,
 } from '@elementor/ui';
 import { HelpIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import { UpgradeButton } from '../../upgrade-button';
-import { RolePermissions, EditButtonDisabled } from '../../role-permissions';
+import { RolePermissions, EditButtonDisabled } from './RolePermissions';
 import { UsageTimesColumn } from './UsageTimesColumn';
 
 export const WidgetsTable = ( {
@@ -49,6 +50,10 @@ export const WidgetsTable = ( {
 							} }
 							className="e-id-elementor-element-manager-button-sort-by-element"
 							variant="text"
+							color="secondary"
+							sx={ {
+								color: 'var(--e-one-palette-text-primary)',
+							} }
 						>
 							<span>{ __( 'Element', 'elementor' ) }</span>
 							<span className="sorting-indicators">
@@ -57,7 +62,11 @@ export const WidgetsTable = ( {
 							</span>
 						</Button>
 					</th>
-					<th>{ __( 'Status', 'elementor' ) }</th>
+					<th>
+						<Typography variant="button" color="text.primary">
+							{ __( 'Status', 'elementor' ) }
+						</Typography>
+					</th>
 					<th className={ `manage-column sortable ${ getSortingIndicatorClasses( 'usage' ) }` }>
 						<Button
 							component="a"
@@ -68,6 +77,10 @@ export const WidgetsTable = ( {
 							} }
 							className="e-id-elementor-element-manager-button-sort-by-usage"
 							variant="text"
+							color="secondary"
+							sx={ {
+								color: 'var(--e-one-palette-text-primary)',
+							} }
 						>
 							<span>{ __( 'Usage', 'elementor' ) }</span>
 							<span className="sorting-indicators">
@@ -76,7 +89,11 @@ export const WidgetsTable = ( {
 							</span>
 						</Button>
 					</th>
-					<th>{ __( 'Plugin', 'elementor' ) }</th>
+					<th>
+						<Typography variant="button" color="text.primary">
+							{ __( 'Plugin', 'elementor' ) }
+						</Typography>
+					</th>
 					<th>
 						<Stack
 							direction="row"
@@ -84,7 +101,10 @@ export const WidgetsTable = ( {
 							alignItems="center"
 							gap={ 1 }
 						>
-							<Box>{ __( 'Permission', 'elementor' ) }</Box>
+							<Box>
+								<Typography variant="button" color="text.primary">
+									{ __( 'Permission', 'elementor' ) }
+								</Typography></Box>
 							<Box>
 								<Tooltip
 									placement="top"

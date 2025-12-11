@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
 import { UpgradeButton } from '../../upgrade-button';
-import { EditButtonDisabled } from '../../role-permissions';
+import { EditButtonDisabled } from './RolePermissions';
 
 export const PromotionWidgetsTable = ( { widgets, promotionData } ) => {
 	const { element_manager: elementManager } = promotionData;
