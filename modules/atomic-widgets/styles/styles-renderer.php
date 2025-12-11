@@ -144,7 +144,7 @@ class Styles_Renderer {
 			$selector_strings[] = $base_selector . Style_States::get_state_selector( $current_state );
 		}
 
-		return implode( ', ', $selector_strings );
+		return implode( ',', $selector_strings );
 	}
 
 
