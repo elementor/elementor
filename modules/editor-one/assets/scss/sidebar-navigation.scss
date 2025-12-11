@@ -1,0 +1,111 @@
+.e-has-sidebar-navigation {
+	--editor-one-sidebar-admin-top-bar-height: 50px;
+	--editor-one-sidebar-navigation-width: 240px;
+	--editor-one-sidebar-navigation-width-collapsed: 56px;
+	--editor-one-sidebar-left-offset: 160px;
+	--editor-one-sidebar-left-offset-collapsed: 36px;
+	--editor-one-sidebar-z-index: 99;
+	--editor-one-sidebar-bg: #fff;
+	--editor-one-sidebar-content-padding: 20px;
+}
+
+#editor-one-sidebar-navigation {
+	position: absolute;
+	top: var(--editor-one-sidebar-admin-top-bar-height);
+	left: var(--editor-one-sidebar-left-offset);
+	bottom: 0;
+	width: var(--editor-one-sidebar-navigation-width);
+	z-index: var(--editor-one-sidebar-z-index);
+	background-color: var(--editor-one-sidebar-bg);
+	overflow: visible;
+
+	.folded & {
+		left: var(--editor-one-sidebar-left-offset-collapsed);
+	}
+
+	@media screen and (max-width: 960px) {
+		left: var(--editor-one-sidebar-left-offset-collapsed);
+	}
+
+	@media screen and (max-width: 782px) {
+		display: none;
+	}
+
+	&.e-sidebar-collapsed {
+		width: var(--editor-one-sidebar-navigation-width-collapsed);
+	}
+}
+
+.e-has-sidebar-navigation {
+	#wpcontent {
+		padding-left: var(--editor-one-sidebar-navigation-width);
+	}
+
+	&.folded #wpcontent {
+		padding-left: var(--editor-one-sidebar-navigation-width);
+	}
+
+	&.e-sidebar-is-collapsed {
+		#wpcontent {
+			padding-left: var(--editor-one-sidebar-navigation-width-collapsed);
+		}
+
+		&.folded #wpcontent {
+			padding-left: var(--editor-one-sidebar-navigation-width-collapsed);
+		}
+
+		#wpbody-content {
+			padding-left: var(--editor-one-sidebar-content-padding);
+		}
+
+		#wpfooter {
+			margin-left: var(--editor-one-sidebar-navigation-width-collapsed);
+		}
+	}
+
+	@media screen and (max-width: 782px) {
+		#wpcontent {
+			padding-left: 0;
+		}
+
+		#wpfooter {
+			margin-left: 0;
+		}
+	}
+
+	#wpbody-content {
+		padding-left: var(--editor-one-sidebar-content-padding);
+	}
+
+	#wpfooter {
+		margin-left: var(--editor-one-sidebar-navigation-width);
+	}
+
+	#adminmenu {
+		li {
+			&.wp-has-current-submenu a.wp-has-current-submenu::after,
+			&.wp-has-submenu.wp-not-current-submenu:hover > a::after {
+				display: none !important;
+			}
+
+			&.wp-has-current-submenu,
+			&.wp-has-submenu:hover {
+				background: transparent;
+			}
+
+			&.menu-top:hover,
+			&.opensub > a.menu-top,
+			> a.menu-top:focus {
+				background: transparent;
+			}
+
+			&.elementor-has-flyout .elementor-submenu-flyout {
+				display: none !important;
+			}
+		}
+
+		.wp-submenu-head {
+			display: none !important;
+		}
+	}
+}
