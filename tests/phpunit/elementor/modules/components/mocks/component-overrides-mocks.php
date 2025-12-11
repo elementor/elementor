@@ -6,6 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Component_Overrides_Mocks {
+	const VALID_COMPONENT_ID = 123;
+
 	public function get_mock_component_overridable_props(): array {
 		return [
 			'props' => [
@@ -16,7 +18,7 @@ class Component_Overrides_Mocks {
 					'elType' => 'widget',
 					'widgetType' => 'e-heading',
 					'propKey' => 'title',
-					'defaultValue' => [
+					'originValue' => [
 						'$$type' => 'string',
 						'value' => 'Original Title',
 					],
@@ -29,7 +31,7 @@ class Component_Overrides_Mocks {
 					'elType' => 'widget',
 					'widgetType' => 'e-heading',
 					'propKey' => 'tag',
-					'defaultValue' => [
+					'originValue' => [
 						'$$type' => 'string',
 						'value' => 'h3',
 					],
@@ -42,7 +44,7 @@ class Component_Overrides_Mocks {
 					'elType' => 'widget',
 					'widgetType' => 'e-image',
 					'propKey' => 'image',
-					'defaultValue' => [
+					'originValue' => [
 						'$$type' => 'image',
 						'value' => [
 							'src' => [
@@ -67,7 +69,7 @@ class Component_Overrides_Mocks {
 					'elType' => 'widget',
 					'widgetType' => 'e-image',
 					'propKey' => 'link',
-					'defaultValue' => [
+					'originValue' => [
 						'$$type' => 'link',
 						'value' => [
 							'destination' => [
@@ -103,73 +105,78 @@ class Component_Overrides_Mocks {
 
 	public function get_mock_valid_heading_title_component_override(): array {
 		return [
-			'override_key' => 'prop-uuid-1',
-			'value' => [ '$$type' => 'html', 'value' => 'New Title' ],
+			'$$type' => 'override',
+			'value' => [
+				'override_key' => 'prop-uuid-1',
+				'override_value' => [ '$$type' => 'html', 'value' => 'New Title' ],
+				'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
+			],
 		];
 	}
 
 	public function get_mock_valid_heading_tag_component_override(): array {
 		return [
-			'override_key' => 'prop-uuid-2',
-			'value' => [ '$$type' => 'string', 'value' => 'h1' ],
+			'$$type' => 'override',
+			'value' => [
+				'override_key' => 'prop-uuid-2',
+				'override_value' => [ '$$type' => 'string', 'value' => 'h1' ],
+				'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
+			],
 		];
 	}
 
 	public function get_mock_valid_image_image_component_override(): array {
 		return [
-			'override_key' => 'prop-uuid-3',
+			'$$type' => 'override',
 			'value' => [
-				'$$type' => 'image',
-				'value' => [
-					'src' => [
-						'$$type' => 'image-src',
-						'value' => [
-							'id' => [
-								'$$type' => 'image-attachment-id',
-								'value' => 123
+				'override_key' => 'prop-uuid-3',
+				'override_value' => [
+					'$$type' => 'image',
+					'value' => [
+						'src' => [
+							'$$type' => 'image-src',
+							'value' => [
+								'id' => [
+									'$$type' => 'image-attachment-id',
+									'value' => '123',
+								],
+								'url' => null,
 							],
-							'url' => null,
-						]
+						],
 					],
-					'size' => [ '$$type' => 'string', 'value' => 'full' ],
 				],
+				'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
 			],
 		];
 	}
 
 	public function get_mock_valid_image_link_component_override(): array {
 		return [
-			'override_key' => 'prop-uuid-4',
+			'$$type' => 'override',
 			'value' => [
-				'$$type' => 'link',
-				'value' => [
-					'destination' => [
-						'$$type' => 'url',
-						'value' => 'https://elementor.com',
-					],
-					'isTargetBlank' => [
-						'$$type' => 'boolean',
-						'value' => true,
+				'override_key' => 'prop-uuid-4',
+				'override_value' => [
+					'$$type' => 'link',
+					'value' => [
+						'destination' => [
+							'$$type' => 'url',
+							'value' => 'https://elementor.com',
+						],
+						'isTargetBlank' => [
+							'$$type' => 'boolean',
+							'value' => true,
+						],
 					],
 				],
-			],
-		];
-	}
-
-	public function get_mock_invalid_override(): array {
-		return [
-			'override_key' => 'prop-uuid-2',
-			'value' => [
-				'$$type' => 'string',
-				'value' => 'invalid-value-not-matching-original-prop-type-enum-h1-h6',
+				'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
 			],
 		];
 	}
 
 	public function get_mock_image_image_component_override_to_sanitize(): array {
 		$before_sanitization = [
-			'override_key' => ' <script>alert(1)</script>prop-uuid-3 ',
-			'value' => [ 
+			'override_key' => ' </>prop-uuid-3 ',
+			'override_value' => [ 
 				'$$type' => 'image', 
 				'value' => [
 					'src' => [
@@ -184,11 +191,12 @@ class Component_Overrides_Mocks {
 					],
 				],
 			],
+			'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
 		];
 
 		$expected_after_sanitization = [
 			'override_key' => 'prop-uuid-3',
-			'value' => [ 
+			'override_value' => [ 
 				'$$type' => 'image',
 				'value' => [
 					'src' => [
@@ -203,23 +211,9 @@ class Component_Overrides_Mocks {
 					],
 				] 
 			],
+			'schema_source' => ['type' => 'component', 'id' => self::VALID_COMPONENT_ID ],
 		];
 
-		return [
-			'before_sanitization' => $before_sanitization,
-			'expected_after_sanitization' => $expected_after_sanitization,
-		];
-	}
-
-	public function get_mock_heading_tag_component_override_to_sanitize(): array {
-		$before_sanitization = [
-			'override_key' => ' <script>alert(2)</script>prop-uuid-2 ',
-			'value' => [ '$$type' => 'string', 'value' => '<script>alert(3)</script>h1' ],
-		];
-		$expected_after_sanitization = [
-			'override_key' => 'prop-uuid-2',
-			'value' => [ '$$type' => 'string', 'value' => 'h1' ],
-		];
 		return [
 			'before_sanitization' => $before_sanitization,
 			'expected_after_sanitization' => $expected_after_sanitization,

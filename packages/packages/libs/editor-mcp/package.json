@@ -1,6 +1,6 @@
 {
   "name": "@elementor/editor-mcp",
-  "version": "3.33.0",
+  "version": "3.35.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -43,10 +43,10 @@
   },
   "dependencies": {
     "@elementor-external/angie-sdk": "npm:@elementor/angie-sdk@1.0.3",
-    "@elementor/schema": "3.33.0",
+    "@elementor/schema": "3.35.0",
     "@modelcontextprotocol/sdk": "1.17.4",
-    "@elementor/store": "3.33.0",
-    "@elementor/editor-v1-adapters": "3.33.0",
+    "@elementor/store": "3.35.0",
+    "@elementor/editor-v1-adapters": "3.35.0",
     "zod-to-json-schema": "3.24.6"
   }
 }

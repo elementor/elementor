@@ -20,7 +20,7 @@ use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Menu;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tabs_Content_Area;
 use Elementor\Modules\AtomicWidgets\ImportExport\Atomic_Import_Export;
-use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader;
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Src_Transformer;
@@ -103,6 +103,7 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Query_Tr
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -157,6 +158,7 @@ class Module extends BaseModule {
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
 			add_action( 'elementor/frontend/before_register_scripts', fn () => $this->register_frontend_scripts() );
+			add_action( 'elementor/frontend/after_enqueue_styles', fn () => $this->add_inline_styles() );
 
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
@@ -376,5 +378,10 @@ class Module extends BaseModule {
 	private function register_frontend_scripts() {
 		$loader = new Frontend_Assets_Loader();
 		$loader->register_scripts();
+	}
+
+	private function add_inline_styles() {
+		$inline_css = '.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }';
+		wp_add_inline_style( 'elementor-frontend', $inline_css );
 	}
 }
