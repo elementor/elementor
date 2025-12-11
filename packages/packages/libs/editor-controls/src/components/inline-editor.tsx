@@ -13,7 +13,6 @@ import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
 import Text from '@tiptap/extension-text';
 import Underline from '@tiptap/extension-underline';
-import { type NodeSpec } from '@tiptap/pm/model';
 import { type EditorView } from '@tiptap/pm/view';
 import { EditorContent, useEditor } from '@tiptap/react';
 
@@ -25,11 +24,11 @@ type InlineEditorProps = {
 	setValue: ( value: string | null ) => void;
 	attributes?: Record< string, string >;
 	sx?: SxProps< Theme >;
-	onBlur?: ( event: FocusEvent ) => void;
+	onBlur?: ( event: Event ) => void;
 	showToolbar?: boolean;
 	autofocus?: boolean;
 	getInitialPopoverPosition?: () => { left: number; top: number };
-	documentContentSettings?: NodeSpec[ 'content' ];
+	ensureBlockedValue?: ( value: string ) => string;
 };
 
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
@@ -56,12 +55,14 @@ export const InlineEditor = React.forwardRef(
 			sx = {},
 			onBlur = undefined,
 			getInitialPopoverPosition = undefined,
-			documentContentSettings = 'inline*',
+			...props
 		}: InlineEditorProps,
 		ref
 	) => {
 		const containerRef = React.useRef< HTMLDivElement >( null );
 		const popupState = usePopupState( { variant: 'popover', disableAutoFocus: true } );
+		const ensureBlockedValue = props.ensureBlockedValue ?? ( ( newValue: string ) => newValue );
+		const documentContentSettings = props.ensureBlockedValue ? 'block+' : 'inline*';
 
 		const onSelectionEnd = ( view: EditorView, event: MouseEvent | KeyboardEvent ) => {
 			if ( ! view.state.selection.empty && ! popupState.isOpen ) {
@@ -89,6 +90,12 @@ export const InlineEditor = React.forwardRef(
 				}
 			} else {
 				view.dom.focus();
+			}
+		};
+
+		const onKeyDown = ( _: EditorView, event: KeyboardEvent ) => {
+			if ( event.key === 'Escape' ) {
+				onBlur?.( event );
 			}
 		};
 
@@ -132,9 +139,11 @@ export const InlineEditor = React.forwardRef(
 			],
 			content: value,
 			onUpdate: ( { editor: updatedEditor } ) => {
-				const newValue = updatedEditor.getHTML();
+				let newValue: string | null = updatedEditor.getHTML();
 
-				setValue( isEmpty( newValue ) ? null : newValue );
+				newValue = isEmpty( newValue ) ? null : ensureBlockedValue( newValue );
+				setValue( newValue );
+				updatedEditor.commands?.setContent( newValue, { emitUpdate: false } );
 
 				if ( updatedEditor.state.selection.empty && popupState.isOpen ) {
 					popupState.close();
@@ -155,6 +164,7 @@ export const InlineEditor = React.forwardRef(
 					? {
 							mouseup: onSelectionEnd,
 							keyup: onSelectionEnd,
+							keydown: onKeyDown,
 					  }
 					: undefined,
 			},

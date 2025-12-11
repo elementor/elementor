@@ -116,18 +116,17 @@ export function createInlineEditingElementView( {
 			);
 		}
 
-		getWrappedValue() {
-			const settingValue = this.getValue();
+		getBlockedValue( value: string ) {
 			const widgetType = getWidgetType( this.container );
 
 			if ( ! widgetType ) {
-				return settingValue;
+				return value;
 			}
 
 			const propsSchema = getElementType( widgetType )?.propsSchema;
 
 			if ( ! propsSchema?.tag ) {
-				return settingValue;
+				return value;
 			}
 
 			const expectedTag =
@@ -135,15 +134,15 @@ export function createInlineEditingElementView( {
 				stringPropTypeUtil.extract( propsSchema.tag.default ?? null );
 
 			if ( ! expectedTag ) {
-				return settingValue;
+				return value;
 			}
 
 			const pseudoElement = document.createElement( 'div' );
 
-			pseudoElement.innerHTML = settingValue;
+			pseudoElement.innerHTML = value;
 
 			if ( ! pseudoElement?.children.length ) {
-				return `<${ expectedTag }>${ settingValue }</${ expectedTag }>`;
+				return `<${ expectedTag }>${ value }</${ expectedTag }>`;
 			}
 
 			const firstChild = pseudoElement.children[ 0 ];
@@ -151,27 +150,24 @@ export function createInlineEditingElementView( {
 
 			if ( firstChild === lastChild && pseudoElement.textContent === firstChild.textContent ) {
 				return this.compareTag( firstChild, expectedTag )
-					? settingValue
+					? value
 					: `<${ expectedTag }>${ firstChild.innerHTML }</${ expectedTag }>`;
 			}
 
-			if (
-				! settingValue.startsWith( `<${ expectedTag }` ) ||
-				! settingValue.endsWith( `</${ expectedTag }>` )
-			) {
-				return `<${ expectedTag }>${ settingValue }</${ expectedTag }>`;
+			if ( ! value.startsWith( `<${ expectedTag }` ) || ! value.endsWith( `</${ expectedTag }>` ) ) {
+				return `<${ expectedTag }>${ value }</${ expectedTag }>`;
 			}
 
 			if ( firstChild !== lastChild || ! this.compareTag( firstChild, expectedTag ) ) {
-				return `<${ expectedTag }>${ settingValue }</${ expectedTag }>`;
+				return `<${ expectedTag }>${ value }</${ expectedTag }>`;
 			}
 
-			return settingValue;
+			return value;
 		}
 
 		ensureProperValue() {
 			const actualValue = this.getValue();
-			const wrappedValue = this.getWrappedValue();
+			const wrappedValue = this.getBlockedValue( actualValue );
 			const settingKey = getInlineEditablePropertyName( this.container );
 
 			if ( actualValue !== wrappedValue ) {
@@ -234,8 +230,8 @@ export function createInlineEditingElementView( {
 						onBlur={ this.handleUnmountInlineEditor.bind( this ) }
 						autofocus
 						showToolbar
-						documentContentSettings="block+"
 						getInitialPopoverPosition={ getInitialPopoverPosition }
+						ensureBlockedValue={ this.getBlockedValue.bind( this ) }
 					/>
 				</ThemeProvider>
 			);

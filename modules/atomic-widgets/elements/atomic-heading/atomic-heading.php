@@ -51,7 +51,6 @@ class Atomic_Heading extends Atomic_Widget_Base {
 			? Html_Prop_Type::make()->default( __( 'This is a title', 'elementor' ) )
 			: String_Prop_Type::make()->default( __( 'This is a title', 'elementor' ) );
 
-
 		$props = [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
