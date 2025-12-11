@@ -1,11 +1,14 @@
+import { BREAKPOINTS_SCHEMA_URI } from '@elementor/editor-canvas';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { Schema } from '@elementor/editor-props';
+import { type BreakpointId } from '@elementor/editor-responsive';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { Utils } from '@elementor/editor-variables';
 import { z } from '@elementor/schema';
 
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 import { saveGlobalClasses } from '../save-global-classes';
+import { GLOBAL_CLASSES_URI } from './classes-resource';
 
 const schema = {
 	classId: z.string().describe( 'The ID of the global class to modify' ),
@@ -15,11 +18,7 @@ const schema = {
 			'key-value of style-schema PropValues to update the global class with. Available properties at dynamic resource "elementor://styles/schema/{property-name}"'
 		),
 	breakpoint: z
-		.nullable(
-			z
-				.enum( [ 'desktop', 'tablet', 'mobile', 'laptop', 'widescreen', 'tablet_extra', 'mobile_extra' ] )
-				.describe( 'The responsive breakpoint name for which the global class styles should be applied' )
-		)
+		.nullable( z.string() )
 		.default( null )
 		.describe( 'The responsive breakpoint name for which the global class styles should be applied' ),
 	customCss: z.string().optional().describe( 'The CSS styles associated with the global class.' ),
@@ -66,7 +65,7 @@ const handler = async ( params: z.infer< ReturnType< typeof z.object< typeof sch
 					custom_css: customCss,
 					props,
 					meta: {
-						breakpoint: params.breakpoint === null ? 'desktop' : params.breakpoint,
+						breakpoint: params.breakpoint === null ? 'desktop' : ( params.breakpoint as BreakpointId ),
 						state: null,
 					},
 				},
@@ -91,12 +90,21 @@ export const initModifyGlobalClass = ( reg: MCPRegistryEntry ) => {
 
 	addTool( {
 		name: 'modify-global-class',
+		requiredResources: [
+			{
+				description: 'Breakpoints list',
+				uri: BREAKPOINTS_SCHEMA_URI,
+			},
+			{
+				description: 'Global classes list',
+				uri: GLOBAL_CLASSES_URI,
+			},
+		],
 		description: `Modify an existing global class within the Elementor editor, allowing users to update styles and properties for consistent design across their website.
 # CRITICAL Prequisites:
 - Read the style schema at [elementor://styles/schema/{category}] to understand the valid properties and values that can be assigned to the global class.
-- YOU MUST USE THE STYLE SCHEMA TO BUILD THE "props" PARAMETER CORRECTLY, OTHERWISE THE GLOBAL CLASS MODIFICATION WILL FAIL.
 - Ensure that the global class ID provided exists.
-- Try to AVOID CUSTOM CSS, unless the schema failed after several retries
+- Prefer style schema over custom_css
 
 ## Parameters:
 - \`classId\` (string, required): The ID of the global class to be modified.

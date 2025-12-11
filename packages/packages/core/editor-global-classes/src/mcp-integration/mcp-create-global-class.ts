@@ -1,3 +1,4 @@
+import { STYLE_SCHEMA_URI } from '@elementor/editor-canvas';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { Schema } from '@elementor/editor-props';
 import { getStylesSchema } from '@elementor/editor-styles';
@@ -6,6 +7,7 @@ import { z } from '@elementor/schema';
 
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 import { saveGlobalClasses } from '../save-global-classes';
+import { GLOBAL_CLASSES_URI } from './classes-resource';
 
 export const inputSchema = {
 	globalClassName: z.string().describe( 'The name of the global class to be created' ),
@@ -100,6 +102,10 @@ export const initCreateGlobalClass = ( reg: MCPRegistryEntry ) => {
 	const { addTool } = reg;
 
 	addTool( {
+		requiredResources: [
+			{ uri: GLOBAL_CLASSES_URI, description: 'Global classes list' },
+			{ uri: STYLE_SCHEMA_URI, description: 'Style schema resources' },
+		],
 		description: `Create a new global class within the Elementor editor, allowing users to define reusable styles and properties for consistent design across their website.
       
 # Prequisites: CRITICAL
