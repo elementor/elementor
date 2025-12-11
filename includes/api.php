@@ -46,12 +46,12 @@ class Api {
 	 *
 	 * Holds the URL of the feedback API.
 	 *
-	 * @access public
+	 * @access private
 	 * @static
 	 *
 	 * @var string API feedback URL.
 	 */
-	public static $api_feedback_url = 'https://my.elementor.com/api/v1/feedback/';
+	private static $api_feedback_url = 'https://my.elementor.com/api/v1/feedback/';
 
 	private static $api_library_info_url = 'https://my.elementor.com/api/v1/templates/info/';
 

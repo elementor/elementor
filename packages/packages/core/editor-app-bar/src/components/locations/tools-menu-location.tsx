@@ -4,7 +4,7 @@ import { toolsMenu } from '../../locations';
 import ToolbarMenu from '../ui/toolbar-menu';
 import ToolbarMenuMore from '../ui/toolbar-menu-more';
 import IntegrationsMenuLocation from './integrations-menu-location';
-import SendFeedbackPopupLocation from './send-feedbacl-popup-location';
+import SendFeedbackPopupLocation from './send-feedback-popup-location';
 
 const MAX_TOOLBAR_ACTIONS = 5;
 

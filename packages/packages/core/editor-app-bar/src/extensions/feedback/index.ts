@@ -1,4 +1,5 @@
 import { MessageLinesIcon } from '@elementor/icons';
+import { __ } from '@wordpress/i18n';
 
 import { mainMenu } from '../../locations';
 
@@ -12,7 +13,7 @@ export function init() {
 		useProps: () => {
 			return {
 				icon: MessageLinesIcon,
-				title: 'Send Feedback',
+				title: __( 'Send Feedback', 'elementor' ),
 				onClick: () => {
 					dispatchEvent( new CustomEvent( FEEDBACK_TOGGLE_EVENT ) );
 				},

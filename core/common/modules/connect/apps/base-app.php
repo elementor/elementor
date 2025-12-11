@@ -359,7 +359,7 @@ abstract class Base_App {
 	 *
 	 * @return mixed|\WP_Error
 	 */
-	public function request( $action, $request_body = [], $as_array = false ) {
+	protected function request( $action, $request_body = [], $as_array = false ) {
 		$request_body = $this->get_connect_info() + $request_body;
 
 		return $this->http_request(

@@ -69,7 +69,8 @@ export default function SendFeedbackPopupLocation() {
 					message: response.data.message,
 					success: response.data.success,
 				} );
-				if ( response.data.code.toString().startsWith( '4' ) ) {
+				// check if unauthorized - not signed in or expired, needs to reconnect to my-elementor account
+				if ( response.data.code.toString() === '401' || response.data.code.toString() === '403' ) {
 					setIsUserConnected( false );
 				}
 			} )
@@ -89,7 +90,8 @@ export default function SendFeedbackPopupLocation() {
 								justifyContent="space-between"
 								width="20rem"
 							>
-								Send Feedback <CloseButton onClick={ popupState.close } />
+								{ __( 'Send Feedback', 'elementor' ) }
+								<CloseButton onClick={ popupState.close } />
 							</Stack>
 						</DialogTitle>
 					</DialogHeader>
@@ -156,7 +158,7 @@ export default function SendFeedbackPopupLocation() {
 										rel="noopener"
 										onClick={ popupState.close }
 									>
-										Connect to elementor
+										{ __( 'Connect to Elementor', 'elementor' ) }
 									</Button>
 								</>
 							) }
