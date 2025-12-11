@@ -57,6 +57,18 @@ class Menu_Config {
 				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
 				'label' => 'Code',
 			],
+			'e-custom-fonts' => [
+				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
+				'label' => 'Fonts',
+			],
+			'e-custom-icons' => [
+				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
+				'label' => 'Icons',
+			],
+			'e-custom-code' => [
+				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
+				'label' => 'Code',
+			],
 		];
 
 		return apply_filters( 'elementor/editor-one/menu/legacy_pro_mapping', $default_mapping );

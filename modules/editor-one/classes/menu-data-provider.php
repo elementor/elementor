@@ -33,6 +33,10 @@ class Menu_Data_Provider {
 		$this->slug_normalizer = new Slug_Normalizer();
 	}
 
+	public function get_slug_normalizer(): Slug_Normalizer {
+		return $this->slug_normalizer;
+	}
+
 	public function register_menu( Menu_Item_Interface $item ): void {
 		if ( $item instanceof Menu_Item_Third_Level_Interface ) {
 			$this->register_level3_item( $item );
@@ -187,9 +191,7 @@ class Menu_Data_Provider {
 			}
 		}
 
-		return array_values( array_filter( $slugs, function( string $slug ): bool {
-			return 0 === strpos( $slug, 'elementor' ) || 0 === strpos( $slug, 'e-' );
-		} ) );
+		return array_values( $slugs );
 	}
 
 	private function build_level3_flyout_items(): array {
@@ -223,7 +225,7 @@ class Menu_Data_Provider {
 				$items[] = [
 					'slug' => $item_slug,
 					'label' => $label,
-					'url' => $this->get_item_url( $item_slug ),
+					'url' => $this->get_item_url( $item_slug, $item->get_parent_slug() ),
 					'icon' => $item->get_icon(),
 					'group_id' => $group_id,
 					'priority' => $item->get_position() ?? 100,
@@ -263,7 +265,7 @@ class Menu_Data_Provider {
 				$groups[ $group_id ]['items'][] = [
 					'slug' => $item_slug,
 					'label' => $label,
-					'url' => $this->get_item_url( $item_slug ),
+					'url' => $this->get_item_url( $item_slug, $item->get_parent_slug() ),
 					'priority' => $item->get_position() ?? 100,
 				];
 
@@ -278,7 +280,7 @@ class Menu_Data_Provider {
 		return $item->is_visible() && current_user_can( $item->get_capability() );
 	}
 
-	private function get_item_url( string $item_slug ): string {
+	private function get_item_url( string $item_slug, ?string $parent_slug = null ): string {
 		$admin_path_prefixes = [ 'edit.php', 'post-new.php', 'admin.php' ];
 
 		foreach ( $admin_path_prefixes as $prefix ) {
@@ -291,12 +293,16 @@ class Menu_Data_Provider {
 			return $item_slug;
 		}
 
+		if ( $parent_slug && 0 === strpos( $parent_slug, 'edit.php' ) ) {
+			return admin_url( $parent_slug . '&page=' . $item_slug );
+		}
+
 		return admin_url( 'admin.php?page=' . $item_slug );
 	}
 
 	private function sort_items_by_priority( array &$items ): void {
-		usort( $items, function( $a, $b ) {
-			return ( $a['priority'] ?? 100 ) - ( $b['priority'] ?? 100 );
+		usort( $items, function ( array $a, array $b ): int {
+			return ( $a['priority'] ?? 100 ) <=> ( $b['priority'] ?? 100 );
 		} );
 	}
 
