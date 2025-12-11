@@ -118,7 +118,11 @@ export function InteractionsList( props: InteractionListProps ) {
 				),
 				actions: ( value ) => (
 					<>
-						<IconButton size="tiny" onClick={ () => onPlayInteraction( value.animation.animation_id ) }>
+						<IconButton
+							aria-label={ __( 'Play interaction', 'elementor' ) }
+							size="tiny"
+							onClick={ () => onPlayInteraction( value.animation.animation_id ) }
+						>
 							<PlayerPlayIcon fontSize="tiny" />
 						</IconButton>
 					</>
