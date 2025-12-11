@@ -107,6 +107,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 				'link' => [
 					'href' => $href,
 					'target' => '_blank',
+					'tag' => 'a',
 				]
 			],
 			'widgetType' => Atomic_Svg::get_element_type(),
@@ -134,6 +135,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 				'link' => [
 					'href' => '',
 					'target' => '_blank',
+					'tag' => 'a',
 				]
 			],
 			'widgetType' => Atomic_Svg::get_element_type(),
@@ -234,6 +236,7 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 				'link' => [
 					'href' => 'https://elementor.com',
 					'target' => '_blank',
+					'tag' => 'a',
 				]
 			],
 			'widgetType' => Atomic_Svg::get_element_type(),
@@ -248,6 +251,38 @@ class Test_Atomic_Svg extends Elementor_Test_Base {
 		// Assert
 		$this->assertStringContainsString( 'data-interaction-id="linked456"', $rendered_output );
 		$this->assertMatchesRegularExpression( '/<svg[^>]*data-interaction-id="linked456"/', $rendered_output );
+	}
+
+	public function test__render_svg_with_action_link(): void {
+		// Arrange.
+		$element = [
+			'id' => 'linked456',
+			'elType' => 'widget',
+			'settings' => [
+				'svg' => [
+					'id' => 123,
+				],
+				'link' => [
+					'href' => 'https://very.dynamic.content.elementor',
+					'target' => '_blank',
+					'tag' => 'button',
+				]
+			],
+			'widgetType' => Atomic_Svg::get_element_type(),
+		];
+		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $element );
+
+		// Act
+		ob_start();
+		$this->instance->render_content();
+		$rendered_output = ob_get_clean();
+
+		// Assert.
+		$this->assertMatchesSnapshot( $rendered_output );
+		$this->assertStringContainsString( 'data-action-link="https://very.dynamic.content.elementor"', $rendered_output );
+		$this->assertStringContainsString( '<button', $rendered_output );
+		$this->assertStringNotContainsString( '<a', $rendered_output );
+		$this->assertStringNotContainsString( 'href="', $rendered_output );
 	}
 
 	public function link_href_provider(): array {

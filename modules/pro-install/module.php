@@ -40,6 +40,12 @@ class Module extends BaseModule {
 				)
 			);
 		}, 116 );
+
+		add_action( 'elementor/editor-one/menu/excluded_level3_slugs', function ( array $excluded_slugs ): array {
+			$excluded_slugs[] = 'elementor-connect-account';
+			$excluded_slugs[] = 'elementor-connect';
+			return $excluded_slugs;
+		} );
 	}
 
 	private function get_connect_app(): Connect {
