@@ -14,6 +14,10 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'e_editor_one';
 
+	const CUSTOM_REACT_APP_PAGES = [
+		'elementor-element-manager',
+	];
+
 	public function get_name() {
 		return 'editor-one';
 	}
@@ -66,17 +70,54 @@ class Module extends BaseModule {
 	}
 
 	/**
+	 * Check if current page has a custom React app that uses @elementor/ui
+	 *
+	 * @return bool
+	 */
+	private function is_custom_react_app_page() {
+		$current_screen = get_current_screen();
+
+		if ( ! $current_screen ) {
+			return false;
+		}
+
+		foreach ( self::CUSTOM_REACT_APP_PAGES as $page_slug ) {
+			if ( str_contains($current_screen->id ?? '', $page_slug) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
 	 * Enqueue admin styles
 	 */
 	private function enqueue_styles() {
 		wp_enqueue_style( 'elementor-admin' );
 
 		wp_enqueue_style(
-			'elementor-editor-one-admin',
-			$this->get_css_assets_url( 'editor-one' ),
+			'elementor-editor-one-common',
+			$this->get_css_assets_url( 'editor-one-common' ),
 			[ 'elementor-admin' ],
 			ELEMENTOR_VERSION
 		);
+
+		if ( ! $this->is_custom_react_app_page() ) {
+			wp_enqueue_style(
+				'elementor-editor-one-elements',
+				$this->get_css_assets_url( 'editor-one-elements' ),
+				[ 'elementor-editor-one-common' ],
+				ELEMENTOR_VERSION
+			);
+
+			wp_enqueue_style(
+				'elementor-editor-one-tables',
+				$this->get_css_assets_url( 'editor-one-tables' ),
+				[ 'elementor-editor-one-common' ],
+				ELEMENTOR_VERSION
+			);
+		}
 
 		wp_enqueue_script(
 			'elementor-editor-one-admin',
