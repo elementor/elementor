@@ -1,7 +1,9 @@
+import { STYLE_SCHEMA_URI } from '@elementor/editor-canvas';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { service } from '@elementor/editor-variables';
 import { z } from '@elementor/schema';
 
+import { GLOBAL_CLASSES_URI } from '../classes-resource';
 import { handler, inputSchema as globalClassInputSchema } from '../mcp-create-global-class';
 
 export const initDesignSystemTool = ( reg: MCPRegistryEntry ) => {
@@ -28,10 +30,14 @@ export const initDesignSystemTool = ( reg: MCPRegistryEntry ) => {
 
 	addTool( {
 		name: 'design-system',
+		requiredResources: [
+			{ uri: STYLE_SCHEMA_URI, description: 'Style schema template resource' },
+			{ uri: GLOBAL_CLASSES_URI, description: 'Global classes list' },
+		],
 		description: `Manages or Creates a comprehensive design system based on user requirements.
 # CRITICAL PRE-REQUISITES:
-- Must read the style schema at dynamic resource list [elementor://styles/schema/{category}] to understand the valid properties and values that can be assigned to global classes and variables.
-- Must get the existing global classes from always up-to-date resource 'elementor://global-classes' to avoid duplication when creating new global classes.
+- Must read the style schema at dynamic resource list ${ STYLE_SCHEMA_URI } to understand the valid properties and values that can be assigned to global classes and variables.
+- Must get the existing global classes from always up-to-date resource ${ GLOBAL_CLASSES_URI } to avoid duplication when creating new global classes.
 - Must get the existing global variables from always up-to-date resource 'elementor://global-variables' to avoid duplication when creating new global variables.
 
 # IMPORTANT
@@ -95,19 +101,9 @@ Before you create any class, make sure there is not already an existing class th
 Before creating global variables, read the list, in many cases there are already existing variables that can be re-used. The list is available at resource uri elementor://global-variables
 `,
 		schema,
-		handler: async ( params, reqHandler ) => {
+		handler: async ( params ) => {
 			const { globalClasses, globalVariables } = params;
-			let count = 0;
-			const total = globalVariables.length;
 			for ( const globalVariable of globalVariables ) {
-				reqHandler.sendNotification( {
-					method: 'notifications/progress',
-					params: {
-						progressToken: 'design-system-tool',
-						progress: count++ / total,
-						message: `Creating global variable: ${ globalVariable.variableName }`,
-					},
-				} );
 				const { variableName, variableType, value } = globalVariable;
 				service.create( {
 					label: variableName,
