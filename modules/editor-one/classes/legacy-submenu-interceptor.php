@@ -23,10 +23,12 @@ class Legacy_Submenu_Interceptor {
 	public function intercept_all(): void {
 		global $submenu;
 
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] = $this->intercept_elementor_menu_items(
 			$submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] ?? []
 		);
 
+		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 		$submenu[ Menu_Config::LEGACY_TEMPLATES_SLUG ] = $this->intercept_templates_menu_items(
 			$submenu[ Menu_Config::LEGACY_TEMPLATES_SLUG ] ?? []
 		);
@@ -153,4 +155,3 @@ class Legacy_Submenu_Interceptor {
 		$this->menu_data_provider->register_menu( $legacy_item );
 	}
 }
-

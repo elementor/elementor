@@ -37,4 +37,3 @@ class Slug_Normalizer {
 		return in_array( $normalized_slug, $excluded_slugs, true );
 	}
 }
-

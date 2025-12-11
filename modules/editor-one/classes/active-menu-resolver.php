@@ -96,4 +96,3 @@ class Active_Menu_Resolver {
 		return Menu_Data_Provider::get_elementor_post_types()[ $current_post_type ] ?? null;
 	}
 }
-
