@@ -57,31 +57,15 @@ if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
 // Load the prefixed deprecation-contracts function file for Twig compatibility.
 // This file defines ElementorDeps\trigger_deprecation() which is required by Twig.
 $deprecation_func_file = ELEMENTOR_PATH . 'vendor_prefixed/twig/symfony/deprecation-contracts/function.php';
-// #region debug log
-error_log( '[ELEMENTOR_DEBUG] ELEMENTOR_PATH=' . ELEMENTOR_PATH );
-error_log( '[ELEMENTOR_DEBUG] deprecation_func_file=' . $deprecation_func_file );
-error_log( '[ELEMENTOR_DEBUG] file_exists=' . ( file_exists( $deprecation_func_file ) ? 'true' : 'false' ) );
-// #endregion
 if ( file_exists( $deprecation_func_file ) ) {
 	require_once $deprecation_func_file;
-	// #region debug log
-	error_log( '[ELEMENTOR_DEBUG] function_exists(ElementorDeps\trigger_deprecation)=' . ( function_exists( 'ElementorDeps\trigger_deprecation' ) ? 'true' : 'false' ) );
-	error_log( '[ELEMENTOR_DEBUG] function_exists(trigger_deprecation) before define=' . ( function_exists( 'trigger_deprecation' ) ? 'true' : 'false' ) );
-	// #endregion
 	// Also define the function in global namespace as a fallback, because PHP function
 	// resolution only checks current namespace then global - it doesn't walk up namespaces.
 	if ( ! function_exists( 'trigger_deprecation' ) ) {
 		function trigger_deprecation( string $package, string $version, string $message, ...$args ): void {
 			\ElementorDeps\trigger_deprecation( $package, $version, $message, ...$args );
 		}
-		// #region debug log
-		error_log( '[ELEMENTOR_DEBUG] Global trigger_deprecation() defined successfully' );
-		// #endregion
 	}
-} else {
-	// #region debug log
-	error_log( '[ELEMENTOR_DEBUG] WARNING: deprecation_func_file does NOT exist!' );
-	// #endregion
 }
 
 if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {
