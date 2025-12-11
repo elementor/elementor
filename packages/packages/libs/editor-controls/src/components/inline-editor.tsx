@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type DependencyList, type ForwardedRef, useEffect, useRef } from 'react';
+import { type DependencyList, type ForwardedRef, useEffect, useRef, useState } from 'react';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
 import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
@@ -43,6 +43,8 @@ export const InlineEditor = React.forwardRef(
 		{ value, setValue, attributes = {}, showToolbar = false, sx, ...props }: InlineEditorProps,
 		ref: ForwardedRef< HTMLDivElement >
 	) => {
+		const [ hasTextSelection, setHasTextSelection ] = useState( false );
+
 		const editor = useEditor( {
 			extensions: [
 				Document.extend( {
@@ -68,6 +70,16 @@ export const InlineEditor = React.forwardRef(
 			] as AnyExtension[],
 			content: value,
 			onUpdate: ( { editor: updatedEditor } ) => setValue( updatedEditor.getHTML() ),
+			onSelectionUpdate: ( { editor: updatedEditor } ) => {
+				const { selection } = updatedEditor.state;
+				const hasSelection = ! selection.empty && selection.from !== selection.to;
+				setHasTextSelection( hasSelection );
+			},
+			onCreate: ( { editor: createdEditor } ) => {
+				const { selection } = createdEditor.state;
+				const hasSelection = ! selection.empty && selection.from !== selection.to;
+				setHasTextSelection( hasSelection );
+			},
 		} );
 
 		useOnUpdate( () => {
@@ -81,6 +93,12 @@ export const InlineEditor = React.forwardRef(
 				editor.commands.setContent( value, { emitUpdate: false } );
 			}
 		}, [ editor, value ] );
+
+		useEffect( () => {
+			if ( ! showToolbar ) {
+				setHasTextSelection( false );
+			}
+		}, [ showToolbar ] );
 
 		return (
 			<Box
@@ -113,7 +131,7 @@ export const InlineEditor = React.forwardRef(
 				{ ...attributes }
 				{ ...props }
 			>
-				{ showToolbar && <InlineEditorToolbar editor={ editor } /> }
+				{ showToolbar && hasTextSelection && editor && <InlineEditorToolbar editor={ editor } /> }
 				<EditorContent editor={ editor } />
 			</Box>
 		);
