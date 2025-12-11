@@ -1,3 +1,5 @@
+export { BREAKPOINTS_SCHEMA_URI } from './mcp/resources/breakpoints-resource';
+
 export { init } from './init';
 
 export {
