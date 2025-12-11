@@ -9,10 +9,14 @@ import {
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 =======
 import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 >>>>>>> d3f0ba9dd7 (deep schema work)
+=======
+import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI, BEST_PRACTICES_URI } from '../../resources/widgets-schema-resource';
+>>>>>>> b10f76fe4f (Add styles best practices to required resources)
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { validateInput } from '../../utils/validate-input';
 import { generatePrompt } from './prompt';
@@ -26,6 +30,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 		description: generatePrompt(),
 		schema,
 		requiredResources: [
+		    { description: 'Styles best practices', uri: BEST_PRACTICES_URI },
 			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
 <<<<<<< HEAD
 			{ description: 'Global Classes', uri: 'elementor://global-classes' },
