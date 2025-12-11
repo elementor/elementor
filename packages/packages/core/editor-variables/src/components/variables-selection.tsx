@@ -29,7 +29,7 @@ type Props = {
 };
 
 export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, disabled = false }: Props ) => {
-	const { icon: VariableIcon, startIcon, variableType, propTypeUtil, upgradeUrl } = useVariableType();
+	const { icon: VariableIcon, startIcon, variableType, propTypeUtil, emptyState } = useVariableType();
 
 	const { value: variable, setValue: setVariable, path } = useVariableBoundProp();
 	const [ searchValue, setSearchValue ] = useState( '' );
@@ -193,8 +193,9 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 					message={ noVariableMessage }
 					icon={ <VariableIcon fontSize="large" /> }
 					onAdd={ disabled ? undefined : onAdd }
-					upgradeUrl={ upgradeUrl }
-				/>
+				>
+					{ emptyState }
+				</EmptyState>
 			) }
 
 			{ hasNoCompatibleVariables && (
@@ -206,8 +207,9 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 					) }
 					icon={ <VariableIcon fontSize="large" /> }
 					onAdd={ disabled ? undefined : onAdd }
-					upgradeUrl={ upgradeUrl }
-				/>
+				>
+					{ emptyState }
+				</EmptyState>
 			) }
 		</PopoverBody>
 	);

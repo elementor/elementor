@@ -1,51 +1,33 @@
 import * as React from 'react';
-import { UpgradeButton } from '@elementor/editor-ui';
 import { Button, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { usePermissions } from '../../hooks/use-permissions';
-import { useQuotaPermissions } from '../../hooks/use-quota-permissions';
 
 type Props = {
 	icon?: React.ReactNode;
 	title: string;
 	message: string;
 	onAdd?: () => void;
-	upgradeUrl?: string;
+	children?: React.ReactNode;
 };
 
-export const EmptyState = ( { icon, title, message, upgradeUrl, onAdd }: Props ) => {
+export const EmptyState = ( { icon, title, message, onAdd, children }: Props ) => {
 	const canAdd = usePermissions().canAdd();
-	const canQuotaAdd = useQuotaPermissions().canAdd();
+	const displayTitle = canAdd ? title : __( 'There are no variables', 'elementor' );
+	const displayMessage = canAdd
+		? message
+		: __( 'With your current role, you can only connect and detach variables.', 'elementor' );
 
-	if ( canQuotaAdd ) {
-		return (
-			<>
-				<Content title={ title } message={ message } icon={ icon } />
-				{ upgradeUrl && <UpgradeButton size="small" href={ upgradeUrl } /> }
-			</>
-		);
-	}
-
-	if ( canAdd ) {
-		return (
-			<>
-				<Content title={ title } message={ message } icon={ icon } />
-				{ onAdd && (
+	return (
+		<Content title={ displayTitle } message={ displayMessage } icon={ icon }>
+			{ children ||
+				( onAdd && (
 					<Button variant="outlined" color="secondary" size="small" onClick={ onAdd }>
 						{ __( 'Create a variable', 'elementor' ) }
 					</Button>
-				) }
-			</>
-		);
-	}
-
-	return (
-		<Content
-			title={ __( 'There are no variables', 'elementor' ) }
-			message={ __( 'With your current role, you can only connect and detach variables.', 'elementor' ) }
-			icon={ icon }
-		/>
+				) ) }
+		</Content>
 	);
 };
 
@@ -53,9 +35,10 @@ type NoVariablesContentProps = {
 	title: string;
 	message: string;
 	icon?: React.ReactNode;
+	children?: React.ReactNode;
 };
 
-function Content( { title, message, icon }: NoVariablesContentProps ) {
+function Content( { title, message, icon, children }: NoVariablesContentProps ) {
 	return (
 		<Stack
 			gap={ 1 }
@@ -74,6 +57,8 @@ function Content( { title, message, icon }: NoVariablesContentProps ) {
 			<Typography align="center" variant="caption" maxWidth="180px">
 				{ message }
 			</Typography>
+
+			{ children }
 		</Stack>
 	);
 }

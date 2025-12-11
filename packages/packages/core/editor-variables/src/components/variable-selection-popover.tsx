@@ -75,7 +75,7 @@ type Handlers = {
 
 function RenderView( props: ViewProps ): React.ReactNode {
 	const userPermissions = usePermissions();
-	const userQuotaPremissions = useQuotaPermissions();
+	const userQuotaPremissions = useQuotaPermissions( props.propTypeKey );
 
 	const handlers: Handlers = {
 		onClose: () => {

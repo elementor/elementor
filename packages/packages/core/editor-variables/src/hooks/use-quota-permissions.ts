@@ -1,12 +1,18 @@
-import { useVariableType } from '../context/variable-type-context';
 import { getLicenseInfo } from '../sync/license-info';
 
-export const useQuotaPermissions = () => {
-	const licenseInfo = getLicenseInfo();
-	const { isForPro } = useVariableType();
+declare global {
+	interface Window {
+		ElementorVariablesQuotaConfig: Record< string, number >;
+	}
+}
+
+export const useQuotaPermissions = ( variableType: string ) => {
+	const quotaConfig = window.ElementorVariablesQuotaConfig || {};
+	const limit = quotaConfig[ variableType ] || 0;
+	const hasQuota = limit > 0;
 
 	return {
-		canAdd: () => ! isForPro || licenseInfo.hasPro,
-		canEdit: () => ! isForPro || licenseInfo.hasPro,
+		canAdd: () => ! hasQuota && ! getLicenseInfo().hasPro,
+		canEdit: () => ! hasQuota && ! getLicenseInfo().hasPro,
 	};
 };
