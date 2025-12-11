@@ -1,6 +1,6 @@
 import { STYLE_SCHEMA_URI } from '@elementor/editor-canvas';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { service, GLOBAL_VARIABLES_URI } from '@elementor/editor-variables';
+import { GLOBAL_VARIABLES_URI, service } from '@elementor/editor-variables';
 import { z } from '@elementor/schema';
 
 import { GLOBAL_CLASSES_URI } from '../classes-resource';
