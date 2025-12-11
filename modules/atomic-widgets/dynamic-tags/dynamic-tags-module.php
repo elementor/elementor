@@ -38,6 +38,11 @@ class Dynamic_Tags_Module {
 	public function register_hooks() {
 		add_filter(
 			'elementor/editor/localize_settings',
+			fn( array $settings ) => $this->address_svg( $settings )
+		);
+
+		add_filter(
+			'elementor/editor/localize_settings',
 			fn( array $settings ) => $this->add_atomic_dynamic_tags_to_editor_settings( $settings )
 		);
 
@@ -81,5 +86,17 @@ class Dynamic_Tags_Module {
 				$props_resolver
 			)
 		);
+	}
+
+	private function address_svg( $settings ) {
+		array_walk( $settings['dynamicTags']['tags'], function( &$tag ) {
+			$should_appear_in_svg = ['post-custom-field', 'acf-url'];
+			
+			if( in_array( $tag['name'] , $should_appear_in_svg ) ) {
+				$tag['categories'][] = 'svg';
+			}
+		});
+
+		return $settings;
 	}
 }
