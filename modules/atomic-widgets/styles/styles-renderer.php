@@ -121,13 +121,11 @@ class Styles_Renderer {
 			return '';
 		}
 
-		$state = '';
-
 		if ( isset( $variant['meta']['state'] ) ) {
-			$state = $this->get_state_with_selector( $variant['meta']['state'] );
+			$selector = $this->get_selector_with_state( $base_selector, $variant['meta']['state'] );
+		} else {
+			$selector = $base_selector;
 		}
-
-		$selector = $base_selector . $state;
 
 		$style_declaration = $selector . '{' . $css . $custom_css . '}';
 
@@ -138,16 +136,15 @@ class Styles_Renderer {
 		return $style_declaration;
 	}
 
-	private function get_state_with_selector( string $state ): string {
-		if ( Style_States::is_class_state( $state ) ) {
-			return '.' . $state;
+	private function get_selector_with_state( string $base_selector, string $state ): string {
+		$alternative_states = Style_States::get_alternative_states( $state );
+		$all_states = [ $state, ...$alternative_states ];
+
+		foreach ( $all_states as $current_state ) {
+			$selector_strings[] = $base_selector . Style_States::get_state_selector( $current_state );
 		}
 
-		if ( Style_States::is_pseudo_state( $state ) ) {
-			return ':' . $state;
-		}
-
-		return '';
+		return implode( ',', $selector_strings );
 	}
 
 

@@ -125,7 +125,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 			->method( 'put_contents' )
 			->willReturnCallback( function ( $file, $content ) use ( $invoked_count ) {
 				if ( $invoked_count->getInvocationCount() === 1 ) {
-					$this->assertEquals( '.elementor .test-style{font-family:Poppins;color:red;}.elementor .test-style:hover{color:yellow;}', $content );
+					$this->assertEquals( '.elementor .test-style{font-family:Poppins;color:red;}.elementor .test-style:hover,.elementor .test-style:focus-visible{color:yellow;}', $content );
 					return;
 				}
 
@@ -185,7 +185,7 @@ class Test_Atomic_Styles_Manager extends Elementor_Test_Base {
 						$this->assertEquals( '.elementor .another-style{color:green;}', $content );
 						break;
 					case 2:
-						$this->assertEquals( '.elementor .test-style{font-family:Poppins;color:red;}.elementor .test-style:hover{color:yellow;}', $content );
+						$this->assertEquals( '.elementor .test-style{font-family:Poppins;color:red;}.elementor .test-style:hover,.elementor .test-style:focus-visible{color:yellow;}', $content );
 						break;
 					case 3:
 						$this->assertEquals( '@media(max-width:1024px){.elementor .another-style{color:yellow;}}', $content );
