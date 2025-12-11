@@ -142,7 +142,6 @@ class Components_REST_API {
 			],
 		] );
 
-
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/overridable-props', [
 			[
 				'methods' => 'GET',
@@ -317,7 +316,9 @@ class Components_REST_API {
 				->build();
 		}
 
-		$created = $items->map_with_keys( function ( $item ) use ( $save_status ) {
+		$created = [];
+
+		foreach ( $items as $item ) {
 			$title = sanitize_text_field( $item['title'] );
 			$content = $item['elements'];
 			$uid = $item['uid'];
@@ -337,10 +338,10 @@ class Components_REST_API {
 
 			$component_id = $this->get_repository()->create( $title, $content, $status, $uid, $settings );
 
-			return [ $uid => $component_id ];
-		} );
+			$created[ $uid ] = $component_id;
+		}
 
-		return Response_Builder::make( (object) $created->all() )
+		return Response_Builder::make( (object) $created )
 			->set_status( 201 )
 			->build();
 	}
@@ -504,16 +505,18 @@ class Components_REST_API {
 				->build();
 		}
 
-		$items->map_with_keys( function ( $item ) {
-			try {
-				$settings = isset( $item['settings'] ) ? $this->parse_settings( $item['settings'] ) : [];
-			} catch ( \Exception $e ) {
-				return Error_Builder::make( 'settings_validation_failed' )
-					->set_status( 400 )
-					->set_message( $e->getMessage() )
-					->build();
+		foreach ( $items as $item ) {
+			if ( isset( $item['settings'] ) ) {
+				try {
+					$this->parse_settings( $item['settings'] );
+				} catch ( \Exception $e ) {
+					return Error_Builder::make( 'settings_validation_failed' )
+						->set_status( 400 )
+						->set_message( $e->getMessage() )
+						->build();
+				}
 			}
-		} );
+		}
 
 		return Response_Builder::make()
 			->set_status( 200 )
