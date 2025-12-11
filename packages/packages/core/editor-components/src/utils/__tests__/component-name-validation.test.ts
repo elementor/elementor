@@ -1,0 +1,166 @@
+// [Found-Testing-Reference===> NONE]
+import {
+	__createStore as createStore,
+	__dispatch as dispatch,
+	__registerSlice as registerSlice,
+} from '@elementor/store';
+
+import { slice } from '../../store/store';
+import { validateComponentName } from '../component-name-validation';
+
+describe( 'validateComponentName', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		registerSlice( slice );
+		createStore();
+	} );
+
+	it( 'should pass validation if name is valid', () => {
+		// Act
+		const result = validateComponentName( 'valid-component' );
+
+		// Assert
+		expect( result.isValid ).toBe( true );
+		expect( result.errorMessage ).toBeNull();
+	} );
+
+	it.each( [
+		{
+			reason: 'name is too short',
+			name: 'A',
+			message: 'Component name is too short. Use at least 2 characters.',
+		},
+		{
+			reason: 'name is too long',
+			name: 'A'.repeat( 51 ),
+			message: 'Component name is too long. Please keep it under 50 characters.',
+		},
+		{
+			reason: 'name starts with a digit',
+			name: '1component',
+			message: 'Component name must start with a letter.',
+		},
+		{
+			reason: 'name contains spaces',
+			name: 'my component',
+			message: 'Component name can\u2019t contain spaces.',
+		},
+		{
+			reason: 'name contains special characters',
+			name: 'my@component',
+			message: 'Component name can only use letters, numbers, dashes (-), and underscores (_).',
+		},
+	] )( 'should fail validation if $reason', ( { name, message } ) => {
+		// Act
+		const result = validateComponentName( name );
+
+		// Assert
+		expect( result.isValid ).toBe( false );
+		expect( result.errorMessage ).toBe( message );
+	} );
+
+	it.each( [
+		{ name: 'MyComponent', description: 'mixed case' },
+		{ name: 'my-component', description: 'with dashes' },
+		{ name: 'my_component', description: 'with underscores' },
+		{ name: 'component123', description: 'with numbers' },
+		{ name: 'my-component_name', description: 'with dashes and underscores' },
+		{ name: 'AB', description: 'minimum length' },
+		{ name: 'A'.repeat( 50 ), description: 'maximum length' },
+	] )( 'should pass validation for a name $description', ( { name } ) => {
+		// Act
+		const result = validateComponentName( name );
+
+		// Assert
+		expect( result.isValid ).toBe( true );
+		expect( result.errorMessage ).toBeNull();
+	} );
+
+	it( 'should fail validation if name already exists', () => {
+		// Arrange
+		const existingName = 'existing-component';
+		dispatch( slice.actions.load( [ { name: existingName, id: 1, uid: 'uid-1' } ] ) );
+
+		// Act
+		const result = validateComponentName( existingName );
+
+		// Assert
+		expect( result.isValid ).toBe( false );
+		expect( result.errorMessage ).toBe( 'This component name already exists. Please choose a unique name.' );
+	} );
+
+	it( 'should check for duplicate names case-insensitively', () => {
+		// Arrange
+		const existingName = 'ExistingComponent';
+		dispatch( slice.actions.load( [ { name: existingName.toLowerCase(), id: 1, uid: 'uid-1' } ] ) );
+
+		// Act
+		const result = validateComponentName( 'EXISTINGCOMPONENT' );
+
+		// Assert
+		expect( result.isValid ).toBe( false );
+		expect( result.errorMessage ).toBe( 'This component name already exists. Please choose a unique name.' );
+	} );
+
+	it( 'should convert input to lowercase for validation', () => {
+		// Act
+		const result = validateComponentName( 'MYCOMPONENT' );
+
+		// Assert
+		expect( result.isValid ).toBe( true );
+		expect( result.errorMessage ).toBeNull();
+	} );
+
+	it( 'should handle multiple existing components when checking duplicates', () => {
+		// Arrange
+		dispatch(
+			slice.actions.load( [
+				{ name: 'component1', id: 1, uid: 'uid-1' },
+				{ name: 'component2', id: 2, uid: 'uid-2' },
+				{ name: 'component3', id: 3, uid: 'uid-3' },
+			] )
+		);
+
+		// Act
+		const result = validateComponentName( 'component2' );
+
+		// Assert
+		expect( result.isValid ).toBe( false );
+		expect( result.errorMessage ).toBe( 'This component name already exists. Please choose a unique name.' );
+	} );
+
+	it( 'should pass validation when name is unique among existing components', () => {
+		// Arrange
+		dispatch(
+			slice.actions.load( [
+				{ name: 'component1', id: 1, uid: 'uid-1' },
+				{ name: 'component2', id: 2, uid: 'uid-2' },
+			] )
+		);
+
+		// Act
+		const result = validateComponentName( 'unique-component' );
+
+		// Assert
+		expect( result.isValid ).toBe( true );
+		expect( result.errorMessage ).toBeNull();
+	} );
+
+	it( 'should fail validation when name contains tabs', () => {
+		// Act
+		const result = validateComponentName( 'my\tcomponent' );
+
+		// Assert
+		expect( result.isValid ).toBe( false );
+		expect( result.errorMessage ).toBe( 'Component name can\u2019t contain spaces.' );
+	} );
+
+	it( 'should fail validation when name contains newlines', () => {
+		// Act
+		const result = validateComponentName( 'my\ncomponent' );
+
+		// Assert
+		expect( result.isValid ).toBe( false );
+		expect( result.errorMessage ).toBe( 'Component name must start with a letter.' );
+	} );
+} );
