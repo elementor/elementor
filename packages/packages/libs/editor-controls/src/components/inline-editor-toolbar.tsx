@@ -178,6 +178,13 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 						{
 							borderRadius: '8px',
 							border: 'none',
+							marginLeft: 0,
+							'&.Mui-selected': {
+								marginLeft: 0,
+							},
+							'& + &.Mui-selected': {
+								marginLeft: 0,
+							},
 						},
 				} }
 			>
