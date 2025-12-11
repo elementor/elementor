@@ -87,6 +87,13 @@ const sass = {
 			},
 			{
 				expand: true,
+				cwd: 'modules/editor-one/assets/scss',
+				src: '*.scss',
+				dest: 'assets/css/modules/editor-one',
+				ext: '.css',
+			},
+			{
+				expand: true,
 				cwd: 'modules/home/assets/scss',
 				src: 'e-home-screen.scss',
 				dest: 'assets/css/modules/home',
