@@ -1,0 +1,117 @@
+[
+    {
+        "id": "fbdf748",
+        "elType": "e-div-block",
+        "settings": {},
+        "isInner": false,
+        "elements": [
+            {
+                "id": "26bf8a5",
+                "elType": "widget",
+                "widgetType": "e-heading",
+                "elements": [],
+                "settings": {
+                    "title": {
+                        "$$type": "overridable",
+                        "value": {
+                            "override_key": "prop-1765388406486-drc0fpe",
+                            "origin_value": {
+                                "$$type": "string",
+                                "value": "This is a title"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "id": "7006e19",
+                "elType": "widget",
+                "widgetType": "e-heading",
+                "elements": [],
+                "settings": {
+                    "title": {
+                        "$$type": "overridable",
+                        "value": {
+                            "override_key": "prop-1765388423234-kte80aq",
+                            "origin_value": {
+                                "$$type": "string",
+                                "value": "This is a title"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "id": "312086c",
+                "elType": "e-flexbox",
+                "settings": {},
+                "isInner": false,
+                "elements": [
+                    {
+                        "id": "9e67369",
+                        "elType": "widget",
+                        "widgetType": "e-component",
+                        "elements": [],
+                        "settings": {
+                            "component_instance": {
+                                "$$type": "component-instance",
+                                "value": {
+                                    "component_id": {
+                                        "$$type": "number",
+                                        "value": 2
+                                    }
+                                }
+                            }
+                        },
+                        "editor_settings": {
+                            "title": "Styled Card",
+                            "component_uid": "component-1765383194008-i54tzbi"
+                        }
+                    },
+                    {
+                        "id": "c37a872",
+                        "elType": "widget",
+                        "widgetType": "e-component",
+                        "elements": [],
+                        "settings": {
+                            "component_instance": {
+                                "$$type": "component-instance",
+                                "value": {
+                                    "component_id": {
+                                        "$$type": "number",
+                                        "value": 2
+                                    }
+                                }
+                            }
+                        },
+                        "editor_settings": {
+                            "title": "Styled Card",
+                            "component_uid": "component-1765383194008-i54tzbi"
+                        }
+                    },
+                    {
+                        "id": "6ab307c",
+                        "elType": "widget",
+                        "widgetType": "e-component",
+                        "elements": [],
+                        "settings": {
+                            "component_instance": {
+                                "$$type": "component-instance",
+                                "value": {
+                                    "component_id": {
+                                        "$$type": "number",
+                                        "value": 2
+                                    }
+                                }
+                            }
+                        },
+                        "editor_settings": {
+                            "title": "Styled Card",
+                            "component_uid": "component-1765383194008-i54tzbi"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]

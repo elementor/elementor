@@ -58,43 +58,43 @@ class Component_Instance extends Atomic_Widget_Base {
 		];
 	}
 
-	public function get_settings( $setting = null ) {
-		$settings = parent::get_settings( $setting );
+	// public function get_settings( $setting = null ) {
+	// 	$settings = parent::get_settings( $setting );
 
-		$component_id = $settings['component_instance']['value']['component_id']['value'] ?? null;
-		$instance_id = $this->get_id();
+	// 	$component_id = $settings['component_instance']['value']['component_id']['value'] ?? null;
+	// 	$instance_id = $this->get_id();
 
-		if ( ! $component_id ) {
-			return $settings;
-		}
+	// 	if ( ! $component_id ) {
+	// 		return $settings;
+	// 	}
 
-		switch ( $component_id ) {
-			// case 3059:
-			// $overrides = $this->get_overrides_3059($instance_id);
-			// break;
-			// // btn
-			// case 3076:
-			// $overrides = $this->get_overridable_overrides_3076($instance_id);
-			// break;
+	// 	switch ( $component_id ) {
+	// 		// case 3059:
+	// 		// $overrides = $this->get_overrides_3059($instance_id);
+	// 		// break;
+	// 		// // btn
+	// 		// case 3076:
+	// 		// $overrides = $this->get_overridable_overrides_3076($instance_id);
+	// 		// break;
 
-			case 3181:
-				$overrides = $this->get_overrides_for_styled_button( $instance_id );
-				break;
-			case 3199:
-				$overrides = $this->get_overrides_for_card( $instance_id );
-				break;
-			case 3239:
-				$overrides = $this->get_overrides_for_cards_accordion( $instance_id );
-				break;
-			default:
-				$overrides = [];
-				break;
-		}
+	// 		case 3181:
+	// 			$overrides = $this->get_overrides_for_styled_button( $instance_id );
+	// 			break;
+	// 		case 3199:
+	// 			$overrides = $this->get_overrides_for_card( $instance_id );
+	// 			break;
+	// 		case 3239:
+	// 			$overrides = $this->get_overrides_for_cards_accordion( $instance_id );
+	// 			break;
+	// 		default:
+	// 			$overrides = [];
+	// 			break;
+	// 	}
 
-		$settings['component_instance']['value']['overrides'] = $overrides;
+	// 	$settings['component_instance']['value']['overrides'] = $overrides;
 
-		return $settings;
-	}
+	// 	return $settings;
+	// }
 
 	private function get_overrides_for_cards_accordion( $instance_id ) {
 		$californication_image_id = 3191;
