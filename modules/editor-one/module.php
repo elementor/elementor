@@ -120,8 +120,8 @@ class Module extends BaseModule {
 		}
 
 		wp_enqueue_script(
-			'elementor-editor-one-admin',
-			$this->get_js_assets_url( 'admin' ),
+			'editor-one-admin',
+			$this->get_js_assets_url( 'editor-one-admin' ),
 			[ 'jquery' ],
 			ELEMENTOR_VERSION,
 			true
@@ -142,6 +142,16 @@ class Module extends BaseModule {
 			add_action( 'admin_enqueue_scripts', function () {
 				$this->enqueue_styles();
 			} );
+
+//			add_action('admin_head', function() {
+//				// Удаляем forms.css через вывод JS
+//				echo '<script>
+//					document.addEventListener("DOMContentLoaded", function() {
+//						const links = document.querySelectorAll("link[href*=\"/wp-admin/css/forms.css\"]");
+//						links.forEach(link => link.remove());
+//					});
+//					</script>';
+//			});
 		} );
 	}
 }
