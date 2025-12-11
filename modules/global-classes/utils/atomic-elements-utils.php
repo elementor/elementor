@@ -4,8 +4,8 @@ namespace Elementor\Modules\GlobalClasses\Utils;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Plugin;
 
 class Atomic_Elements_Utils {

@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import { BrowserContext, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import { timeouts } from '../../../config/timeouts';
+import { DriverFactory } from '../../../drivers/driver-factory';
 
 test.describe( 'Editing panel tabs @v4-tests', () => {
 	let editor: EditorPage;
@@ -24,13 +25,15 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		'border',
 	];
 
+	test.beforeAll( async () => {
+		await DriverFactory.activateExperimentsCli( [ 'e_atomic_elements' ] );
+	} );
+
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		const page = await context.newPage();
 
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
-
 		editor = await wpAdmin.openNewPage();
 	} );
 
