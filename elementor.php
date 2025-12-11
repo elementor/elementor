@@ -54,13 +54,9 @@ if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
 	// Autoload classmap doesn't include this file.
 }
 
-// Load the prefixed deprecation-contracts function file for Twig compatibility.
-// This file defines ElementorDeps\trigger_deprecation() which is required by Twig.
 $deprecation_func_file = ELEMENTOR_PATH . 'vendor_prefixed/twig/symfony/deprecation-contracts/function.php';
 if ( file_exists( $deprecation_func_file ) ) {
 	require_once $deprecation_func_file;
-	// Also define the function in global namespace as a fallback, because PHP function
-	// resolution only checks current namespace then global - it doesn't walk up namespaces.
 	if ( ! function_exists( 'trigger_deprecation' ) ) {
 		function trigger_deprecation( string $package, string $version, string $message, ...$args ): void {
 			\ElementorDeps\trigger_deprecation( $package, $version, $message, ...$args );
