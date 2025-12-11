@@ -87,6 +87,23 @@ const sass = {
 			},
 			{
 				expand: true,
+<<<<<<< HEAD
+=======
+				cwd: 'modules/editor-one/assets/scss',
+				src: '*.scss',
+				dest: 'assets/css/modules/editor-one',
+				ext: '.css',
+			},
+			{
+				expand: true,
+				cwd: 'modules/home/assets/scss',
+				src: 'e-home-screen.scss',
+				dest: 'assets/css/modules/home',
+				ext: '.css',
+			},
+			{
+				expand: true,
+>>>>>>> 3a2b6feca4 (Internal: Update Editor menu with fly-out [ED-21801] [ED-21836] [ED-21838] [ED-21903] [ED-21904] (#33689))
 				cwd: 'assets/dev/scss/frontend',
 				src: 'admin-bar.scss',
 				dest: 'assets/css',
