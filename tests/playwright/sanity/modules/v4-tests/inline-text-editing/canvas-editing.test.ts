@@ -72,7 +72,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await expect( underlinedText ).toContainText( 'this' );
 	} );
 
-	test( 'Delete entire content and enter new text without errors', async ( {}, testInfo ) => {
+	test( 'Delete entire content and enter new text without errors', async () => {
 		const INITIAL_CONTENT = 'Initial heading text';
 		const NEW_CONTENT = 'Brand new heading';
 

@@ -2,7 +2,12 @@ import { type ExtendedWindow, type V1Element } from '@elementor/editor-elements'
 import { getElementType } from '@elementor/editor-elements';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
-import { getHtmlPropertyName, getHtmlPropType, shouldRenderInlineEditingView } from '../inline-editing-utils';
+import {
+	getBlockedValue,
+	getHtmlPropertyName,
+	getHtmlPropType,
+	shouldRenderInlineEditingView,
+} from '../inline-editing-utils';
 
 type MockContainer = Pick< V1Element, 'id' | 'model' >;
 
@@ -301,6 +306,224 @@ describe( 'inline-editing-utils', () => {
 
 			// Assert.
 			expect( htmlPropType ).toBeNull();
+		} );
+	} );
+
+	describe( 'getBlockedValue', () => {
+		it( 'should return empty string when value is null', () => {
+			// Arrange.
+			const value = null;
+			const expectedTag = 'div';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '' );
+		} );
+
+		it( 'should return empty string when value is empty string', () => {
+			// Arrange.
+			const value = '';
+			const expectedTag = 'div';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '' );
+		} );
+
+		it( 'should return value as-is when expectedTag is null', () => {
+			// Arrange.
+			const value = '<p>Some content</p>';
+			const expectedTag = null;
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<p>Some content</p>' );
+		} );
+
+		it( 'should return value as-is when expectedTag is empty string', () => {
+			// Arrange.
+			const value = '<p>Some content</p>';
+			const expectedTag = '';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<p>Some content</p>' );
+		} );
+
+		it( 'should wrap plain text with expectedTag when no HTML elements exist', () => {
+			// Arrange.
+			const value = 'Plain text content';
+			const expectedTag = 'h2';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<h2>Plain text content</h2>' );
+		} );
+
+		it( 'should return value as-is when single child matches expectedTag', () => {
+			// Arrange.
+			const value = '<h2>Heading text</h2>';
+			const expectedTag = 'h2';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<h2>Heading text</h2>' );
+		} );
+
+		it( 'should wrap when single child has different tag', () => {
+			// Arrange.
+			const value = '<p>Some content</p>';
+			const expectedTag = 'h2';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<h2><p>Some content</p></h2>' );
+		} );
+
+		it( 'should wrap entire content when multiple children exist', () => {
+			// Arrange.
+			const value = '<p>First paragraph</p><p>Second paragraph</p>';
+			const expectedTag = 'div';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<div><p>First paragraph</p><p>Second paragraph</p></div>' );
+		} );
+
+		it( 'should wrap content when it does not start with expectedTag', () => {
+			// Arrange.
+			const value = '<span>Content</span><h2>More content</h2>';
+			const expectedTag = 'h2';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<h2><span>Content</span><h2>More content</h2></h2>' );
+		} );
+
+		it( 'should wrap content when it does not end with expectedTag', () => {
+			// Arrange.
+			const value = '<h2>Content</h2><span>More content</span>';
+			const expectedTag = 'h2';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<h2><h2>Content</h2><span>More content</span></h2>' );
+		} );
+
+		it( 'should handle case-insensitive tag comparison', () => {
+			// Arrange.
+			const value = '<H2>Heading text</H2>';
+			const expectedTag = 'h2';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<H2>Heading text</H2>' );
+		} );
+
+		it( 'should preserve inner HTML when unwrapping and rewrapping', () => {
+			// Arrange.
+			const value = '<p><strong>Bold</strong> and <em>italic</em></p>';
+			const expectedTag = 'h2';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<h2><p><strong>Bold</strong> and <em>italic</em></p></h2>' );
+		} );
+
+		it( 'should handle nested elements correctly when single child matches expectedTag', () => {
+			// Arrange.
+			const value = '<h2><span>Nested content</span></h2>';
+			const expectedTag = 'h2';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<h2><span>Nested content</span></h2>' );
+		} );
+
+		it( 'should handle self-closing tags in content', () => {
+			// Arrange.
+			const value = 'Text with <br> break';
+			const expectedTag = 'p';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<p>Text with <br> break</p>' );
+		} );
+
+		it( 'should wrap content when first child matches but last child does not', () => {
+			// Arrange.
+			const value = '<h2>First</h2><p>Second</p>';
+			const expectedTag = 'h2';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<h2><h2>First</h2><p>Second</p></h2>' );
+		} );
+
+		it( 'should handle whitespace-only content', () => {
+			// Arrange.
+			const value = '   ';
+			const expectedTag = 'p';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<p>   </p>' );
+		} );
+
+		it( 'should handle special characters in content', () => {
+			// Arrange.
+			const value = 'Content with & < > " \' characters';
+			const expectedTag = 'p';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<p>Content with & < > " \' characters</p>' );
+		} );
+
+		it( 'should wrap content when edges are wrapped correctly but the rest is not', () => {
+			// Arrange.
+			const value = '<h2>this</h2> is <h2>cool</h2>';
+			const expectedTag = 'h2';
+
+			// Act.
+			const result = getBlockedValue( value, expectedTag );
+
+			// Assert.
+			expect( result ).toBe( '<h2><h2>this</h2> is <h2>cool</h2></h2>' );
 		} );
 	} );
 } );

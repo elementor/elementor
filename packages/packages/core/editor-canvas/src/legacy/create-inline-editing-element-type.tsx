@@ -10,11 +10,16 @@ import {
 } from '@elementor/editor-props';
 import { ThemeProvider } from '@elementor/editor-ui';
 
-import { getHtmlPropType, getInlineEditablePropertyName, getWidgetType } from '../utils/inline-editing-utils';
+import {
+	getBlockedValue,
+	getHtmlPropType,
+	getInitialPopoverPosition,
+	getInlineEditablePropertyName,
+	getWidgetType,
+	legacyWindow,
+} from '../utils/inline-editing-utils';
 import { type CreateTemplatedElementTypeOptions, createTemplatedElementView } from './create-templated-element-type';
-import { type ElementType, type ElementView, type LegacyWindow } from './types';
-
-const legacyWindow = window as unknown as LegacyWindow;
+import { type ElementType, type ElementView } from './types';
 
 export function createInlineEditingElementType( {
 	type,
@@ -103,7 +108,7 @@ export function createInlineEditingElementView( {
 			return propValue?.$$type === 'dynamic';
 		}
 
-		getValue() {
+		getContentValue() {
 			const prop = getHtmlPropType( this.container );
 			const defaultValue = ( prop?.default as StringPropValue | null )?.value ?? '';
 			const settingKey = getInlineEditablePropertyName( this.container );
@@ -116,77 +121,47 @@ export function createInlineEditingElementView( {
 			);
 		}
 
-		getBlockedValue( value: string ) {
+		setContentValue( value: string | null ) {
+			const settingKey = getInlineEditablePropertyName( this.container );
+			const valueToSave = value ? htmlPropTypeUtil.create( value ) : null;
+
+			this.model.get( 'settings' )?.set( settingKey, valueToSave );
+		}
+
+		getTagValue() {
 			const widgetType = getWidgetType( this.container );
 
 			if ( ! widgetType ) {
-				return value;
+				return null;
 			}
 
 			const propsSchema = getElementType( widgetType )?.propsSchema;
 
 			if ( ! propsSchema?.tag ) {
-				return value;
+				return null;
 			}
 
-			const expectedTag =
+			return (
 				stringPropTypeUtil.extract( this.model.get( 'settings' ).get( 'tag' ) ?? null ) ??
-				stringPropTypeUtil.extract( propsSchema.tag.default ?? null );
-
-			if ( ! expectedTag ) {
-				return value;
-			}
-
-			const pseudoElement = document.createElement( 'div' );
-
-			pseudoElement.innerHTML = value;
-
-			if ( ! pseudoElement?.children.length ) {
-				return `<${ expectedTag }>${ value }</${ expectedTag }>`;
-			}
-
-			const firstChild = pseudoElement.children[ 0 ];
-			const lastChild = Array.from( pseudoElement.children ).slice( -1 )[ 0 ];
-
-			if ( firstChild === lastChild && pseudoElement.textContent === firstChild.textContent ) {
-				return this.compareTag( firstChild, expectedTag )
-					? value
-					: `<${ expectedTag }>${ firstChild.innerHTML }</${ expectedTag }>`;
-			}
-
-			if ( ! value.startsWith( `<${ expectedTag }` ) || ! value.endsWith( `</${ expectedTag }>` ) ) {
-				return `<${ expectedTag }>${ value }</${ expectedTag }>`;
-			}
-
-			if ( firstChild !== lastChild || ! this.compareTag( firstChild, expectedTag ) ) {
-				return `<${ expectedTag }>${ value }</${ expectedTag }>`;
-			}
-
-			return value;
+				stringPropTypeUtil.extract( propsSchema.tag.default ?? null ) ??
+				null
+			);
 		}
 
 		ensureProperValue() {
-			const actualValue = this.getValue();
-			const wrappedValue = this.getBlockedValue( actualValue );
-			const settingKey = getInlineEditablePropertyName( this.container );
+			const actualValue = this.getContentValue();
+			const expectedTag = this.getTagValue();
+			const wrappedValue = getBlockedValue( actualValue, expectedTag );
 
 			if ( actualValue !== wrappedValue ) {
-				this.model.get( 'settings' )?.set( settingKey, htmlPropTypeUtil.create( wrappedValue ) );
-
-				return false;
+				this.setContentValue( wrappedValue );
 			}
-
-			return true;
-		}
-
-		compareTag( el: Element, tag: string ) {
-			return el.tagName.toUpperCase() === tag.toUpperCase();
 		}
 
 		renderInlineEditor() {
 			this.ensureProperValue();
 
-			const propValue = this.getValue();
+			const propValue = this.getContentValue();
 			const settingKey = getInlineEditablePropertyName( this.container );
 			const classes = ( this.el?.children?.[ 0 ]?.classList.toString() ?? '' ) + ' strip-styles';
 
@@ -204,23 +179,6 @@ export function createInlineEditingElementView( {
 
 			this.inlineEditorRoot = createRoot( this.el );
 
-			const getInitialPopoverPosition = () => {
-				const positionFallback = { left: 0, top: 0 };
-
-				const iFrameElement = legacyWindow?.elementor?.$preview?.get( 0 );
-				const iFramePosition = iFrameElement?.getBoundingClientRect() ?? positionFallback;
-
-				const previewElement = legacyWindow?.elementor?.$previewWrapper?.get( 0 );
-				const previewPosition = previewElement
-					? { left: previewElement.scrollLeft, top: previewElement.scrollTop }
-					: positionFallback;
-
-				return {
-					left: iFramePosition.left + previewPosition.left,
-					top: iFramePosition.top + previewPosition.top,
-				};
-			};
-
 			this.inlineEditorRoot.render(
 				<ThemeProvider>
 					<InlineEditor
@@ -231,7 +189,7 @@ export function createInlineEditingElementView( {
 						autofocus
 						showToolbar
 						getInitialPopoverPosition={ getInitialPopoverPosition }
-						ensureBlockedValue={ this.getBlockedValue.bind( this ) }
+						ensureBlockedValue={ ( newValue: string ) => getBlockedValue( newValue, this.getTagValue() ) }
 					/>
 				</ThemeProvider>
 			);
