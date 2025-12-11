@@ -5,6 +5,7 @@ import { type PropValue } from '@elementor/editor-props';
 import { z } from '@elementor/schema';
 import { generateUniqueId } from '@elementor/utils';
 
+import { apiClient, type ValidateComponentsResponse } from '../api';
 import { createUnpublishedComponent } from '../store/actions/create-unpublished-component';
 import { type OverridableProps } from '../types';
 
@@ -84,7 +85,19 @@ export const handleSaveAsComponent = async ( params: z.infer< z.ZodObject< typeo
 		updateElementDataWithOverridableProps( element, overridableProps );
 	}
 
-	const uid = createUnpublishedComponent( componentName, element, null, overridableProps );
+	const uid = generateUniqueId( 'component' );
+
+	try {
+		await apiClient.validate( {
+			items: [
+				{ uid, title: componentName, elements: [ element ], settings: { overridable_props: overridableProps } },
+			],
+		} );
+	} catch ( error: unknown ) {
+		throw new Error( ( error as ValidateComponentsResponse ).message );
+	}
+
+	createUnpublishedComponent( componentName, element, null, overridableProps, uid );
 
 	return {
 		status: 'ok' as const,
@@ -254,8 +267,9 @@ Use this tool when the user wants to:
 3. Verify the element type is a valid element type
 4. Ensure the element is not locked and is not already a component
 
-## Step 2: Define Overridable Properties (Optional)
-If you want to make child element properties customizable:
+## Step 2: Define Overridable Properties
+Do this step to make child element properties customizable.
+Skip that step ONLY if the user explicitly requests to not make any properties customizable.
 
 1. **Identify Child Elements**
    - Use the [${ DOCUMENT_STRUCTURE_URI }] resource to find all child elements

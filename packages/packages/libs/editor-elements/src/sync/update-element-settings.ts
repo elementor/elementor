@@ -11,15 +11,12 @@ export type UpdateElementSettingsArgs = {
 };
 
 export const updateElementSettings = ( { id, props, withHistory = true }: UpdateElementSettingsArgs ) => {
-	console.log( 'props', props );
 	const container = getContainer( id );
 
 	const args = {
 		container,
 		settings: { ...props },
 	};
-
-	console.log( 'args', args );
 
 	if ( withHistory ) {
 		runCommandSync( 'document/elements/settings', args );

@@ -13,10 +13,11 @@ export function createUnpublishedComponent(
 	name: string,
 	element: V1ElementData,
 	eventData: ComponentEventData | null,
-	overridableProps?: OverridableProps
+	overridableProps?: OverridableProps,
+	uid?: string | null
 ) {
-	const uid = generateUniqueId( 'component' );
-	const componentBase = { uid, name, overridableProps };
+	const generatedUid = uid ?? generateUniqueId( 'component' );
+	const componentBase = { uid: generatedUid, name, overridableProps };
 
 	dispatch(
 		slice.actions.addUnpublished( {
@@ -25,18 +26,18 @@ export function createUnpublishedComponent(
 		} )
 	);
 
-	dispatch( slice.actions.addCreatedThisSession( uid ) );
+	dispatch( slice.actions.addCreatedThisSession( generatedUid ) );
 
 	replaceElementWithComponent( element, componentBase );
 
 	trackComponentEvent( {
 		action: 'created',
-		component_uid: uid,
+		component_uid: generatedUid,
 		component_name: name,
 		...eventData,
 	} );
 
 	runCommand( 'document/save/auto' );
 
-	return uid;
+	return generatedUid;
 }

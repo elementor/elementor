@@ -17,7 +17,7 @@ type MockContainer = Pick< V1Element, 'id' | 'model' >;
 const TEST_ELEMENT_ID = 'test-element-123';
 const TEST_COMPONENT_NAME = 'My Test Component';
 const TEST_COMPONENT_UID = 'component-1234567890-abc123';
-const VALID_ELEMENT_TYPES = ['e-div-block', 'e-flexbox', 'e-tabs'];
+const VALID_ELEMENT_TYPES = [ 'e-div-block', 'e-flexbox', 'e-tabs' ];
 
 describe( 'save-as-component-tool handler', () => {
 	beforeEach( () => {

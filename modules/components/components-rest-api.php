@@ -102,6 +102,47 @@ class Components_REST_API {
 			],
 		] );
 
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/validate', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->validate_components( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'items' => [
+						'type' => 'array',
+						'required' => true,
+						'items' => [
+							'type' => 'object',
+							'properties' => [
+								'uid' => [
+									'type' => 'string',
+									'required' => true,
+								],
+								'title' => [
+									'type' => 'string',
+									'required' => true,
+									'minLength' => 2,
+									'maxLength' => 200,
+								],
+								'elements' => [
+									'type' => 'array',
+									'required' => true,
+									'items' => [
+										'type' => 'object',
+									],
+								],
+								'settings' => [
+									'type' => 'object',
+									'required' => false,
+								],
+							],
+						],
+					],
+				],
+			],
+		] );
+
+
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/overridable-props', [
 			[
 				'methods' => 'GET',
@@ -440,6 +481,28 @@ class Components_REST_API {
 				->build();
 		}
 		return Response_Builder::make( $result )->build();
+	}
+
+	private function validate_components( \WP_REST_Request $request ) {
+		$items = Collection::make( $request->get_param( 'items' ) );
+		$components = $this->get_repository()->all();
+
+		$result = Save_Components_Validator::make( $components )->validate( $items );
+
+		if ( ! $result['success'] ) {
+			return Error_Builder::make( 'components_validation_failed' )
+				->set_status( 400 )
+				->set_message( 'Validation failed: ' . implode( ', ', $result['messages'] ) )
+				->build();
+		}
+
+		$items->map_with_keys( function ( $item ) {
+			$settings = isset( $item['settings'] ) ? $this->parse_settings( $item['settings'] ) : [];
+		} );
+
+		return Response_Builder::make()
+			->set_status( 200 )
+			->build();
 	}
 
 	private function parse_settings( array $settings ): array {

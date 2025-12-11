@@ -14,7 +14,6 @@ export const onElementRender = ( {
 	elementType: string;
 	elementId: string;
 } ) => {
-	console.log( 'onElementRender', elementType, elementId );
 	const controller = new AbortController();
 	const manualUnmount: ( () => void )[] = [];
 
@@ -38,18 +37,13 @@ export const onElementRender = ( {
 
 		const listenToChildren = ( elementTypes: string[] ) => ( {
 			render: ( callback: () => void ) => {
-				console.log( 'listenToRemder' );
 				element.addEventListener(
 					ELEMENT_RENDERED_EVENT_NAME,
 					( event ) => {
 						const { elementType: childType } = ( event as CustomEvent ).detail;
-						console.log( 'childType', childType );
-						console.log( 'elementTypes', elementTypes );
 						if ( ! elementTypes.includes( childType ) ) {
 							return;
 						}
-
-						console.log( 'callback' );
 
 						callback();
 
