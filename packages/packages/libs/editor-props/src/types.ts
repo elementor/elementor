@@ -38,7 +38,7 @@ type BasePropType< TValue > = {
 	initial_value?: TValue | null;
 	settings: Record< string, unknown >;
 	meta: BasePropTypeMeta;
-	dependencies?: Dependency | null;
+	dependencies?: Dependency;
 };
 
 export type PlainPropType = BasePropType< PlainPropValue > & {
