@@ -45,6 +45,8 @@ class Hooks {
 			$registry->register( Color_Variable_Prop_Type::get_key(), new Color_Variable_Prop_Type() );
 			$registry->register( Font_Variable_Prop_Type::get_key(), new Font_Variable_Prop_Type() );
 			$registry->register( Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY, new Size_Variable_Prop_Type() );
+
+			$registry->register( Size_Variable_Prop_Type::get_key(), new Size_Variable_Prop_Type() );
 		} );
 
 		return $this;

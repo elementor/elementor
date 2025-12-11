@@ -7,4 +7,5 @@ export type CanvasExtendedWindow = Window & {
 			enqueueFont?: EnqueueFont;
 		};
 	};
+	elementorPro?: object;
 };

@@ -6,9 +6,11 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -38,6 +40,10 @@ class Style_Schema {
 			return $this->update_color( $prop_type );
 		}
 
+		if ( $prop_type instanceof Size_Prop_Type ) {
+			return $this->update_size( $prop_type );
+		}
+
 		if ( $prop_type instanceof Union_Prop_Type ) {
 			return $this->update_union( $prop_type );
 		}
@@ -61,6 +67,11 @@ class Style_Schema {
 	private function update_color( Color_Prop_Type $color_prop_type ): Union_Prop_Type {
 		return Union_Prop_Type::create_from( $color_prop_type )
 			->add_prop_type( Color_Variable_Prop_Type::make() );
+	}
+
+	private function update_size( Size_Prop_Type $size_prop_type ): Union_Prop_Type {
+		return Union_Prop_Type::create_from( $size_prop_type )
+			->add_prop_type( Size_Variable_Prop_Type::make() );
 	}
 
 	private function update_array( Array_Prop_Type $array_prop_type ): Array_Prop_Type {

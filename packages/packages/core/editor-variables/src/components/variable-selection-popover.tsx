@@ -6,6 +6,7 @@ import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { PopoverContentRefContextProvider } from '../context/variable-selection-popover.context';
 import { VariableTypeProvider } from '../context/variable-type-context';
 import { usePermissions } from '../hooks/use-permissions';
+import { useQuotaPermissions } from '../hooks/use-quota-permissions';
 import { type Variable } from '../types';
 import { VariableCreation } from './variable-creation';
 import { VariableEdit } from './variable-edit';
@@ -56,6 +57,7 @@ type ViewProps = {
 	propTypeKey: string;
 	currentView: View;
 	selectedVariable?: Variable;
+	disabled?: boolean;
 	editId: string;
 	setEditId: ( id: string ) => void;
 	setCurrentView: ( stage: View ) => void;
@@ -73,6 +75,7 @@ type Handlers = {
 
 function RenderView( props: ViewProps ): React.ReactNode {
 	const userPermissions = usePermissions();
+	const userQuotaPremissions = useQuotaPermissions( props.propTypeKey );
 
 	const handlers: Handlers = {
 		onClose: () => {
@@ -118,6 +121,7 @@ function RenderView( props: ViewProps ): React.ReactNode {
 				onAdd={ handlers.onAdd }
 				onEdit={ handlers.onEdit }
 				onSettings={ handlers.onSettings }
+				disabled={ ! userQuotaPremissions.canAdd() }
 			/>
 		);
 	}
