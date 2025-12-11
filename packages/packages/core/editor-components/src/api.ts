@@ -92,7 +92,6 @@ export const apiClient = {
 			)
 			.then( ( res ) => res.data.data ),
 	updateComponentTitle: ( updatedComponentNames: Array< UpdatedComponentNames > ) =>
-		console.log( 'LOG:: enter API with updatedComponentNames', updatedComponentNames ) ||
 		httpService()
 			.post< { data: { failedIds: number[]; successIds: number[]; success: boolean } } >(
 				`${ BASE_URL }/update-titles`,

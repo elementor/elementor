@@ -37,9 +37,9 @@ import { removeComponentStyles } from './store/actions/remove-component-styles';
 import { componentsStylesProvider } from './store/components-styles-provider';
 import { slice } from './store/store';
 import { beforeSave } from './sync/before-save';
+import { SyncComponentRenameToNavigator } from './sync/sync-component-rename-to-navigator';
 import { type ExtendedWindow } from './types';
 import { onElementDrop } from './utils/tracking';
-import { SyncComponentRenameToNavigator } from './sync/sync-component-rename-to-navigator';
 
 export function init() {
 	stylesRepository.register( componentsStylesProvider );

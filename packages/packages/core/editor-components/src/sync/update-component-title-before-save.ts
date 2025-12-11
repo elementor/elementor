@@ -21,7 +21,9 @@ export const updateComponentTitleBeforeSave = async () => {
 	if ( ! updatedComponentNames.length ) {
 		return;
 	}
-	const result = await apiClient.updateComponentTitle( updatedComponentNames.map( ( { componentId, title } ) => ( { componentId: componentId.toString(), title } ) ) );
+	const result = await apiClient.updateComponentTitle(
+		updatedComponentNames.map( ( { componentId, title } ) => ( { componentId: componentId.toString(), title } ) )
+	);
 	if ( result.failedIds.length ) {
 		notify( failedNotification( result.failedIds.join( ', ' ) ) );
 	}

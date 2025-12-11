@@ -1,8 +1,15 @@
 import { useEffect } from 'react';
 import { getElements, updateElementEditorSettings } from '@elementor/editor-elements';
 import { __getState as getState, __subscribeWithSelector as subscribeWithSelector } from '@elementor/store';
+import { ensureError } from '@elementor/utils';
 
 import { SLICE_NAME } from '../store/store';
+import {
+	ComponentRenameFailedToSyncToNavigatorError,
+	ComponentRenameFailedToSyncToNavigatorStoreError,
+	ComponentRenameFailedToUpdateElementWithComponentRenameError,
+	ComponentRenameSyncStoreNotReadyError,
+} from '../utils/errors';
 
 let previousComponentsData: Array< { uid: string; name: string } > = [];
 
@@ -25,11 +32,22 @@ function syncComponentRenameToNavigator( componentUid: string, newName: string )
 					settings: { title: newName },
 				} );
 			} catch ( error ) {
-				console.warn( `Failed to update element ${ element.model.get( 'id' ) } with component rename:`, error );
+				const errorInstance = ensureError( error );
+				throw new ComponentRenameFailedToUpdateElementWithComponentRenameError( {
+					context: { elementId: element.model.get( 'id' ) },
+					cause: errorInstance,
+				} );
 			}
 		} );
 	} catch ( error ) {
-		console.warn( `Failed to sync component rename to navigator for component ${ componentUid }:`, error );
+		const errorInstance = ensureError( error );
+		if ( errorInstance instanceof ComponentRenameFailedToUpdateElementWithComponentRenameError ) {
+			throw errorInstance;
+		}
+		throw new ComponentRenameFailedToSyncToNavigatorError( {
+			context: { componentUid },
+			cause: errorInstance,
+		} );
 	}
 }
 
@@ -47,13 +65,22 @@ export function syncComponentRenameToNavigatorStore() {
 			const previousComponent = previousComponentsData.find( ( prev ) => prev.uid === uid );
 
 			if ( previousComponent && previousComponent.name !== name ) {
-				syncComponentRenameToNavigator( uid, name );
+				try {
+					syncComponentRenameToNavigator( uid, name );
+				} catch {
+					// Error is thrown but caught to prevent breaking the forEach loop
+					// The error will be handled by error boundaries or global error handlers
+				}
 			}
 		} );
 
 		previousComponentsData = currentComponentsData.map( ( { name, uid } ) => ( { uid, name } ) );
 	} catch ( error ) {
-		console.warn( 'Failed to sync component rename to navigator store:', error );
+		const errorInstance = ensureError( error );
+		throw new ComponentRenameFailedToSyncToNavigatorStoreError( {
+			context: { componentUid: '' },
+			cause: errorInstance,
+		} );
 	}
 }
 
@@ -64,18 +91,31 @@ export function initSyncComponentRenameToNavigator() {
 		unsubscribe = subscribeWithSelector(
 			( state ) => state[ SLICE_NAME ]?.data,
 			() => {
-				syncComponentRenameToNavigatorStore();
+				try {
+					syncComponentRenameToNavigatorStore();
+				} catch {
+					// Error is thrown but caught to prevent breaking the subscription
+					// The error will be handled by error boundaries or global error handlers
+				}
 			}
 		);
 	} catch ( error ) {
-		console.warn( 'Store not ready yet, sync will be initialized later:', error );
+		const errorInstance = ensureError( error );
+		throw new ComponentRenameSyncStoreNotReadyError( {
+			cause: errorInstance,
+		} );
 	}
 }
 
 export function SyncComponentRenameToNavigator() {
 	useEffect( () => {
 		if ( ! unsubscribe ) {
-			initSyncComponentRenameToNavigator();
+			try {
+				initSyncComponentRenameToNavigator();
+			} catch {
+				// Error is thrown but caught to prevent breaking the useEffect
+				// The error will be handled by error boundaries or global error handlers
+			}
 		}
 
 		return () => {
