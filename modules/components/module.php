@@ -71,7 +71,7 @@ class Module extends BaseModule {
 		register_post_type( Component_Document::TYPE, [
 			'label'    => Component_Document::get_title(),
 			'labels'   => Component_Document::get_labels(),
-			'public'   => true,
+			'public'   => false,
 			'supports' => Component_Document::get_supported_features(),
 		] );
 	}

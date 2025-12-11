@@ -41,6 +41,7 @@ export const onElementRender = ( {
 					ELEMENT_RENDERED_EVENT_NAME,
 					( event ) => {
 						const { elementType: childType } = ( event as CustomEvent ).detail;
+
 						if ( ! elementTypes.includes( childType ) ) {
 							return;
 						}

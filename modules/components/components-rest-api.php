@@ -321,7 +321,15 @@ class Components_REST_API {
 			$title = sanitize_text_field( $item['title'] );
 			$content = $item['elements'];
 			$uid = $item['uid'];
-			$settings = isset( $item['settings'] ) ? $this->parse_settings( $item['settings'] ) : [];
+
+			try {
+				$settings = isset( $item['settings'] ) ? $this->parse_settings( $item['settings'] ) : [];
+			} catch ( \Exception $e ) {
+				return Error_Builder::make( 'settings_validation_failed' )
+					->set_status( 400 )
+					->set_message( $e->getMessage() )
+					->build();
+			}
 
 			$status = Document::STATUS_AUTOSAVE === $save_status
 				? Document::STATUS_DRAFT
@@ -497,7 +505,14 @@ class Components_REST_API {
 		}
 
 		$items->map_with_keys( function ( $item ) {
-			$settings = isset( $item['settings'] ) ? $this->parse_settings( $item['settings'] ) : [];
+			try {
+				$settings = isset( $item['settings'] ) ? $this->parse_settings( $item['settings'] ) : [];
+			} catch ( \Exception $e ) {
+				return Error_Builder::make( 'settings_validation_failed' )
+					->set_status( 400 )
+					->set_message( $e->getMessage() )
+					->build();
+			}
 		} );
 
 		return Response_Builder::make()
@@ -533,8 +548,8 @@ class Components_REST_API {
 			$response = $cb();
 		} catch ( \Exception $e ) {
 			return Error_Builder::make( 'unexpected_error' )
-				->set_message( __( $e->getMessage(), 'elementor' ) )
-				->build();
+			->set_message( __( 'Something went wrong', 'elementor' ) )
+			->build();
 		}
 
 		return $response;
