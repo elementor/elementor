@@ -34,16 +34,16 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 	test( 'Add link with target="_blank" via inline editor and verify on frontend', async () => {
 		// Arrange.
 		editor = await wpAdminPage.openNewPage();
+
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
-		const previewFrame = editor.getPreviewFrame();
-		const headingElement = previewFrame.locator( `.elementor-element-${ headingId }` );
+		const headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId }` );
 
 		await expect( headingElement ).toBeVisible();
 
 		// Act - Open inline editor and type text.
-		await headingElement.click();
-		const inlineEditor = page.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		await headingElement.dblclick();
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
 
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
@@ -51,7 +51,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 
 		// Act - Select text and add link with target="_blank".
 		await page.keyboard.press( 'ControlOrMeta+A' );
-		const linkButton = page.locator( '[aria-label="Link"]' );
+		const linkButton = page.locator( '[role="presentation"] [aria-label="Link"]' );
 		await linkButton.click();
 
 		const urlInput = page.locator( 'input[placeholder="Type a URL"]' );
@@ -61,6 +61,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		const newTabButton = page.locator( '[aria-label="Open in a new tab"]' );
 		await newTabButton.click();
 		await page.keyboard.press( 'Escape' );
+		await inlineEditor.press( 'Escape' );
 
 		// Assert - Verify link with target="_blank" in editor.
 		const editorLink = headingElement.locator( 'a' );
@@ -84,15 +85,15 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 	test( 'Remove link by clearing URL', async () => {
 		// Arrange.
 		editor = await wpAdminPage.openNewPage();
+
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
-		const previewFrame = editor.getPreviewFrame();
-		const headingElement = previewFrame.locator( `.elementor-element-${ headingId }` );
+		const headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId }` );
 
 		await expect( headingElement ).toBeVisible();
-		await headingElement.click();
+		await headingElement.dblclick();
 
-		const inlineEditor = page.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
 		await page.keyboard.type( TEST_TEXT );
@@ -105,15 +106,18 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		const urlInput = page.locator( 'input[placeholder="Type a URL"]' );
 		await urlInput.fill( TEST_URL );
 		await page.keyboard.press( 'Escape' );
+		await inlineEditor.press( 'Escape' );
 
 		// Assert - Verify link exists.
 		await expect( headingElement.locator( 'a' ) ).toHaveAttribute( 'href', TEST_URL );
 
 		// Act - Remove link by clearing URL.
+		await headingElement.dblclick();
 		await page.keyboard.press( 'ControlOrMeta+A' );
 		await linkButton.click();
 		await urlInput.clear();
 		await page.keyboard.press( 'Escape' );
+		await inlineEditor.press( 'Escape' );
 
 		// Assert - Verify link is removed.
 		await expect( headingElement.locator( 'a' ) ).toHaveCount( 0 );
@@ -122,15 +126,15 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 	test( 'Edit existing link URL', async () => {
 		// Arrange.
 		editor = await wpAdminPage.openNewPage();
+
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
-		const previewFrame = editor.getPreviewFrame();
-		const headingElement = previewFrame.locator( `.elementor-element-${ headingId }` );
+		const headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId }` );
 
 		await expect( headingElement ).toBeVisible();
-		await headingElement.click();
+		await headingElement.dblclick();
 
-		const inlineEditor = page.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
 		await page.keyboard.type( TEST_TEXT );
@@ -143,16 +147,19 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		const urlInput = page.locator( 'input[placeholder="Type a URL"]' );
 		await urlInput.fill( TEST_URL );
 		await page.keyboard.press( 'Escape' );
+		await inlineEditor.press( 'Escape' );
 
 		// Assert - Verify initial link.
 		await expect( headingElement.locator( 'a' ) ).toHaveAttribute( 'href', TEST_URL );
 
 		// Act - Edit link URL.
+		await headingElement.dblclick();
 		await page.keyboard.press( 'ControlOrMeta+A' );
 		await linkButton.click();
 		await urlInput.clear();
 		await urlInput.fill( UPDATED_URL );
 		await page.keyboard.press( 'Escape' );
+		await inlineEditor.press( 'Escape' );
 
 		// Assert - Verify updated link.
 		await expect( headingElement.locator( 'a' ) ).toHaveAttribute( 'href', UPDATED_URL );
@@ -161,32 +168,36 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 	test( 'Add link to partial text selection', async () => {
 		// Arrange.
 		editor = await wpAdminPage.openNewPage();
+
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
-		const previewFrame = editor.getPreviewFrame();
-		const headingElement = previewFrame.locator( `.elementor-element-${ headingId }` );
+		const headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId }` );
 
 		await expect( headingElement ).toBeVisible();
-		await headingElement.click();
+		await headingElement.dblclick();
 
-		const inlineEditor = page.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
 		await page.keyboard.type( MULTI_WORD_TEXT );
 
 		// Act - Select only "World" (double-click to select word).
-		await page.keyboard.press( 'Home' );
 		for ( let i = 0; i < 6; i++ ) {
-			await page.keyboard.press( 'ArrowRight' );
+			await page.keyboard.press( 'ArrowLeft' );
 		}
-		await page.keyboard.press( 'Shift+Control+ArrowRight' );
 
-		const linkButton = page.locator( '[aria-label="Link"]' );
+		for ( let i = 0; i < 5; i++ ) {
+			await page.keyboard.press( 'Shift+ArrowLeft' );
+		}
+
+		const linkButton = page.locator( '[role="presentation"] [aria-label="Link"]' );
 		await linkButton.click();
 
 		const urlInput = page.locator( 'input[placeholder="Type a URL"]' );
 		await urlInput.fill( TEST_URL );
 		await page.keyboard.press( 'Escape' );
+		await inlineEditor.press( 'Escape' );
 
 		// Assert - Verify only "World" is linked.
 		const link = headingElement.locator( 'a' );

@@ -40,8 +40,8 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await expect( headingElement ).toBeVisible();
 
 		// Act
-		await headingElement.click();
-		const inlineEditor = page.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		await headingElement.dblclick();
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
 
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
@@ -53,6 +53,8 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Assert
 		await expect( headingElement ).toContainText( NEW_TITLE );
 
+		await editor.selectElement( containerId );
+		await editor.selectElement( headingId );
 		const panelInlineEditor = page.getByLabel( INLINE_EDITING_SELECTORS.contentSectionLabel ).locator( INLINE_EDITING_SELECTORS.panelInlineEditor );
 		const panelHTML = await panelInlineEditor.innerHTML();
 
@@ -82,14 +84,17 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		await expect( headingElement ).toBeVisible();
 
-		await headingElement.click();
-		const inlineEditor = page.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		await headingElement.dblclick();
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
 
 		await expect( inlineEditor ).toBeVisible();
 
 		// Act
 		await page.keyboard.press( 'ControlOrMeta+A' );
-		await page.keyboard.type( INITIAL_CONTENT );
+
+		for ( let i = 0; i < INITIAL_CONTENT.length; i++ ) {
+			await page.keyboard.type( INITIAL_CONTENT.charAt( i ) );
+		}
 
 		// Assert
 		await expect( headingElement ).toContainText( INITIAL_CONTENT );
@@ -98,12 +103,17 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Act
 		await page.keyboard.press( 'ControlOrMeta+A' );
 		await page.keyboard.press( 'Delete' );
-		await page.keyboard.type( NEW_CONTENT );
+
+		for ( let i = 0; i < NEW_CONTENT.length; i++ ) {
+			await page.keyboard.type( NEW_CONTENT.charAt( i ) );
+		}
 
 		// Assert
 		await expect( headingElement ).toContainText( NEW_CONTENT );
 		await expect( headingElement ).toBeVisible();
 
+		await editor.selectElement( containerId );
+		await editor.selectElement( headingId );
 		const panelInlineEditor = page.getByLabel( INLINE_EDITING_SELECTORS.contentSectionLabel ).locator( INLINE_EDITING_SELECTORS.panelInlineEditor );
 		const panelHTML = await panelInlineEditor.innerHTML();
 

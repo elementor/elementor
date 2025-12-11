@@ -41,10 +41,9 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 		await editor.closeNavigatorIfOpen();
 
 		await test.step( 'Edit paragraph text with inline editing', async () => {
-			const previewFrame = editor.getPreviewFrame();
-			const paragraphElement = previewFrame.locator( `.elementor-element-${ paragraphId } .e-paragraph-base` );
-			await paragraphElement.click();
-			const textarea = page.getByLabel( INLINE_EDITING_SELECTORS.contentSection ).locator( '.tiptap' );
+			const paragraphElement = editor.previewFrame.locator( `.elementor-element-${ paragraphId } .e-paragraph-base` );
+			await paragraphElement.dblclick();
+			const textarea = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
 
 			await expect( textarea ).toBeVisible();
 			await textarea.fill( 'a' );
@@ -73,6 +72,8 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 		await test.step( 'Edited control panel display', async () => {
 			const contentSection = page.getByLabel( INLINE_EDITING_SELECTORS.contentSection );
 
+			await editor.selectElement( containerId );
+			await editor.selectElement( paragraphId );
 			await expect.soft( contentSection ).toHaveScreenshot( 'inline-edited-paragraph-control-panel.png' );
 		} );
 

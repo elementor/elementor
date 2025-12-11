@@ -1,4 +1,4 @@
-import type { V1ElementConfig } from '@elementor/editor-elements';
+import { type V1ElementConfig } from '@elementor/editor-elements';
 
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { createPropsResolver } from '../renderers/create-props-resolver';
@@ -13,7 +13,7 @@ export type CreateTemplatedElementTypeOptions = {
 	element: TemplatedElementConfig;
 };
 
-type TemplatedElementConfig = Required<
+export type TemplatedElementConfig = Required<
 	Pick< V1ElementConfig, 'twig_templates' | 'twig_main_template' | 'atomic_props_schema' | 'base_styles_dictionary' >
 >;
 

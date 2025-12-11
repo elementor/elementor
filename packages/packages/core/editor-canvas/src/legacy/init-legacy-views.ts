@@ -2,7 +2,9 @@ import { getWidgetsCache } from '@elementor/editor-elements';
 import { __privateListenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { createDomRenderer } from '../renderers/create-dom-renderer';
+import { shouldRenderInlineEditingView } from '../utils/inline-editing-utils';
 import { createElementType } from './create-element-type';
+import { createInlineEditingElementType } from './create-inline-editing-element-type';
 import {
 	canBeTemplated,
 	createTemplatedElementType,
@@ -39,7 +41,9 @@ export function initLegacyViews() {
 			if ( !! elementsLegacyTypes[ type ] && canBeTemplated( element ) ) {
 				ElementType = elementsLegacyTypes[ type ]( { type, renderer, element } );
 			} else if ( canBeTemplated( element ) ) {
-				ElementType = createTemplatedElementType( { type, renderer, element } );
+				ElementType = shouldRenderInlineEditingView( type )
+					? createInlineEditingElementType( { type, renderer, element } )
+					: createTemplatedElementType( { type, renderer, element } );
 			} else {
 				ElementType = createElementType( type );
 			}
