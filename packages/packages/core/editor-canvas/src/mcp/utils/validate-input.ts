@@ -48,21 +48,9 @@ export const validateInput = {
 			} else if ( ! Schema.isPropKeyConfigurable( propName ) ) {
 				errors.push( `Property "${ propName }" is not configurable.` );
 			} else {
-<<<<<<< HEAD
-<<<<<<< HEAD
-				const { valid, errorMessages } = Schema.validatePropValue( propSchema, propValue as PropValue );
-				if ( ! valid ) {
-					errors.push( `Invalid property "${ propName }": ${ errorMessages }` );
-=======
 				const { valid, jsonSchema } = Schema.validatePropValue( propSchema, propValue as PropValue );
 				if ( ! valid ) {
 					errors.push( `Invalid property "${ propName }". Expected schema: ${ jsonSchema }` );
->>>>>>> 39752d5127 (wip)
-=======
-				const { valid, errorMessages } = Schema.validatePropValue( propSchema, propValue as PropValue );
-				if ( ! valid ) {
-					errors.push( `Invalid property "${ propName }": ${ errorMessages }` );
->>>>>>> d3f0ba9dd7 (deep schema work)
 				}
 			}
 		} );
@@ -88,19 +76,11 @@ export const validateInput = {
 			if ( typeof ( customCssValue as Record< string, unknown > ).value !== 'string' ) {
 				appendInvalidCustomCssErr();
 			}
-<<<<<<< HEAD
-<<<<<<< HEAD
 		} else if (
 			typeof customCssValue !== 'string' &&
 			typeof customCssValue !== 'undefined' &&
 			customCssValue !== null
 		) {
-=======
-		} else if ( typeof customCssValue !== 'string' ) {
->>>>>>> 39752d5127 (wip)
-=======
-		} else if ( typeof customCssValue !== 'string' && typeof customCssValue !== 'undefined' ) {
->>>>>>> d3f0ba9dd7 (deep schema work)
 			appendInvalidCustomCssErr();
 		}
 		return result;
