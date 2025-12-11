@@ -1,27 +1,32 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Repeater } from '@elementor/editor-controls';
-import { type ElementInteractions } from '@elementor/editor-elements';
 import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { getInteractionsConfig } from '../utils/get-interactions-config';
-import { DEFAULT_INTERACTION, InteractionDetails } from './interaction-details';
+import { InteractionDetails } from './interaction-details';
+import type { InteractionItemPropValue, InteractionItemValue, InteractionsPropType } from '../types';
+import {
+	buildAnimationIdString,
+	buildDisplayLabel,
+	createDefaultInteractionItem,
+	extractString,
+} from '../utils/prop-value-utils';
 
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
 export type InteractionListProps = {
-	onSelectInteractions: ( interactions: ElementInteractions ) => void;
-	interactions: ElementInteractions;
-	onPlayInteraction: ( interactionId: string ) => void;
+	onSelectInteractions: ( interactions: InteractionsPropType ) => void;
+	interactions: InteractionsPropType;
+	onPlayInteraction: ( animationId: string ) => void;
 	triggerCreateOnShowEmpty?: boolean;
 };
 
 export function InteractionsList( props: InteractionListProps ) {
 	const { interactions, onSelectInteractions, onPlayInteraction, triggerCreateOnShowEmpty } = props;
 
-	const [ interactionsState, setInteractionsState ] = useState< ElementInteractions >( interactions );
+	const [ interactionsState, setInteractionsState ] = useState< InteractionsPropType >( interactions );
 
 	useEffect( () => {
 		if ( JSON.stringify( interactions ) !== JSON.stringify( interactionsState ) ) {
@@ -36,27 +41,9 @@ export function InteractionsList( props: InteractionListProps ) {
 	if ( triggerCreateOnShowEmpty && ( ! interactionsState.items || interactionsState.items?.length === 0 ) ) {
 		setInteractionsState( {
 			version: 1,
-			items: [
-				{
-					animation: {
-						animation_id: DEFAULT_INTERACTION,
-						animation_type: 'full-preset',
-					},
-				},
-			],
+			items: [ createDefaultInteractionItem() ],
 		} );
 	}
-
-	const displayLabel = ( interactionForDisplay: string ) => {
-		if ( ! interactionForDisplay ) {
-			return '';
-		}
-
-		const animationOptions = getInteractionsConfig()?.animationOptions;
-		const option = animationOptions.find( ( opt ) => opt.value === interactionForDisplay );
-
-		return option?.label || interactionForDisplay;
-	};
 
 	const infotipContent = isMaxNumberOfInteractionsReached ? (
 		<Alert color="secondary" icon={ <InfoCircleFilledIcon /> } size="small">
@@ -76,7 +63,7 @@ export function InteractionsList( props: InteractionListProps ) {
 			openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
 			label={ __( 'Interactions', 'elementor' ) }
 			values={ interactionsState.items }
-			setValues={ ( newValue: ElementInteractions[ 'items' ] ) => {
+			setValues={ ( newValue: InteractionsPropType[ 'items' ] ) => {
 				setInteractionsState( {
 					...interactionsState,
 					items: newValue,
@@ -88,40 +75,29 @@ export function InteractionsList( props: InteractionListProps ) {
 			disableAddItemButton={ isMaxNumberOfInteractionsReached }
 			addButtonInfotipContent={ infotipContent }
 			itemSettings={ {
-				initialValues: {
-					animation: {
-						animation_id: DEFAULT_INTERACTION,
-						animation_type: 'full-preset',
-					},
-				},
-				Label: ( { value } ) => displayLabel( value.animation.animation_id ),
+				initialValues: createDefaultInteractionItem(),
+				Label: ( { value }: { value: InteractionItemPropValue } ) => buildDisplayLabel( value.value ),
 				Icon: () => null,
-				Content: ( { index, value } ) => (
+				Content: ( { index, value }: { index: number; value: InteractionItemPropValue } ) => (
 					<InteractionDetails
 						key={ index }
-						interaction={ value.animation.animation_id }
-						onChange={ ( newValue: string ) => {
-							const newInteractions = {
-								...interactionsState,
-								items: structuredClone( interactionsState.items ),
+						interaction={ value.value }
+						onChange={ ( newInteractionValue: InteractionItemValue ) => {
+							const newItems = structuredClone( interactionsState.items );
+							newItems[ index ] = {
+								$$type: 'interaction-item',
+								value: newInteractionValue,
 							};
-							newInteractions.items[ index ] = {
-								...newInteractions.items[ index ],
-								animation: {
-									...newInteractions.items[ index ].animation,
-									animation_id: newValue,
-								},
-							};
-							setInteractionsState( { ...interactionsState, items: newInteractions.items } );
+							setInteractionsState( { ...interactionsState, items: newItems } );
 						} }
 					/>
 				),
-				actions: ( value ) => (
+				actions: ( value: InteractionItemPropValue ) => (
 					<>
 						<IconButton
 							aria-label={ __( 'Play interaction', 'elementor' ) }
 							size="tiny"
-							onClick={ () => onPlayInteraction( value.animation.animation_id ) }
+							onClick={ () => onPlayInteraction( buildAnimationIdString( value.value ) ) }
 						>
 							<PlayerPlayIcon fontSize="tiny" />
 						</IconButton>

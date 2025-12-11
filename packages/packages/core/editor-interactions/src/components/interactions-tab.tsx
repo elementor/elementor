@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useCallback, useState } from 'react';
-import { type ElementInteractions, useElementInteractions } from '@elementor/editor-elements';
+import { useElementInteractions } from '@elementor/editor-elements';
 import { SessionStorageProvider } from '@elementor/session';
 import { Stack } from '@elementor/ui';
 
 import { InteractionsProvider, useInteractionsContext } from '../contexts/interactions-context';
 import { PopupStateProvider } from '../contexts/popup-state-context';
+import type { InteractionsPropType } from '../types';
 import { EmptyState } from './empty-state';
 import { InteractionsList } from './interactions-list';
 
@@ -18,7 +19,7 @@ export const InteractionsTab = ( { elementId }: { elementId: string } ) => {
 };
 
 function InteractionsTabContent( { elementId }: { elementId: string } ) {
-	const existingInteractions = useElementInteractions( elementId );
+	const existingInteractions = useElementInteractions( elementId ) as unknown as InteractionsPropType | undefined;
 	const firstInteractionState = useState< boolean >( false );
 	const hasInteractions = existingInteractions?.items?.length || firstInteractionState[ 0 ];
 
@@ -47,7 +48,7 @@ function InteractionsContent( {
 	const { interactions, setInteractions, playInteractions } = useInteractionsContext();
 
 	const applyInteraction = useCallback(
-		( newInteractions: ElementInteractions ) => {
+		( newInteractions: InteractionsPropType ) => {
 			firstInteractionState[ 1 ]( false );
 			if ( ! newInteractions ) {
 				setInteractions( undefined );

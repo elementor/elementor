@@ -8,98 +8,101 @@ import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
 import { Trigger } from './controls/trigger';
-
-const DELIMITER = '-';
+import type { InteractionItemValue } from '../types';
+import {
+	createAnimationPreset,
+	createString,
+	extractNumber,
+	extractString,
+} from '../utils/prop-value-utils';
 
 type InteractionDetailsProps = {
-	interaction: string;
-	onChange: ( interaction: string ) => void;
-};
-export const DEFAULT_INTERACTION = 'load-fade-in--300-0';
-
-const getDefaultInteractionDetails = () => {
-	const [ trigger, effect, type, direction, duration, delay ] = DEFAULT_INTERACTION.split( DELIMITER );
-
-	return {
-		trigger,
-		effect,
-		type,
-		direction,
-		duration,
-		delay,
-	};
+	interaction: InteractionItemValue;
+	onChange: ( interaction: InteractionItemValue ) => void;
 };
 
-const buildInteractionDetails = ( interaction: string ) => {
-	const [ trigger, effect, type, direction, duration, delay ] = interaction.split( DELIMITER );
-	const defaultInteractionDetails = getDefaultInteractionDetails();
-
-	const parsedDirection = direction || defaultInteractionDetails.direction;
-	const shouldAutoSelectDirection = effect === 'slide' && ! parsedDirection;
-
-	return {
-		trigger: trigger || defaultInteractionDetails.trigger,
-		effect: effect || defaultInteractionDetails.effect,
-		type: type || defaultInteractionDetails.type,
-		direction: shouldAutoSelectDirection ? 'top' : parsedDirection,
-		duration: duration || defaultInteractionDetails.duration,
-		delay: delay || defaultInteractionDetails.delay,
-	};
+const DEFAULT_VALUES = {
+	trigger: 'load',
+	effect: 'fade',
+	type: 'in',
+	direction: '',
+	duration: 300,
+	delay: 0,
 };
 
 export const InteractionDetails = ( { interaction, onChange }: InteractionDetailsProps ) => {
-	const interactionDetails = React.useMemo( () => {
-		return buildInteractionDetails( interaction );
-	}, [ interaction ] );
+	const trigger = extractString( interaction.trigger, DEFAULT_VALUES.trigger );
+	const effect = extractString( interaction.animation.value.effect, DEFAULT_VALUES.effect );
+	const type = extractString( interaction.animation.value.type, DEFAULT_VALUES.type );
+	const direction = extractString( interaction.animation.value.direction, DEFAULT_VALUES.direction );
+	const duration = extractNumber( interaction.animation.value.timing_config.value.duration, DEFAULT_VALUES.duration );
+	const delay = extractNumber( interaction.animation.value.timing_config.value.delay, DEFAULT_VALUES.delay );
 
-	const handleChange = < K extends keyof typeof interactionDetails >(
-		key: K,
-		value: ( typeof interactionDetails )[ K ]
-	) => {
-		if ( value === null ) {
-			value = getDefaultInteractionDetails()[ key ];
-		}
-		const newInteractionDetails = { ...interactionDetails, [ key ]: value };
+	const effectiveDirection = effect === 'slide' && ! direction ? 'top' : direction;
 
-		if ( key === 'effect' && value === 'slide' ) {
-			const currentDirection = newInteractionDetails.direction;
-			if ( ! currentDirection || currentDirection === '' ) {
-				newInteractionDetails.direction = 'top';
-			}
-		}
+	const updateInteraction = (
+		newTrigger: string,
+		newEffect: string,
+		newType: string,
+		newDirection: string,
+		newDuration: number,
+		newDelay: number
+	): void => {
+		onChange( {
+			...interaction,
+			trigger: createString( newTrigger ),
+			animation: createAnimationPreset( newEffect, newType, newDirection, newDuration, newDelay ),
+		} );
+	};
 
-		onChange( Object.values( newInteractionDetails ).join( DELIMITER ) );
+	const handleTriggerChange = ( newTrigger: string ) => {
+		updateInteraction( newTrigger, effect, type, direction, duration, delay );
+	};
+
+	const handleEffectChange = ( newEffect: string ) => {
+		const newDirection = newEffect === 'slide' && ! direction ? 'top' : direction;
+		updateInteraction( trigger, newEffect, type, newDirection, duration, delay );
+	};
+
+	const handleTypeChange = ( newType: string ) => {
+		updateInteraction( trigger, effect, newType, direction, duration, delay );
+	};
+
+	const handleDirectionChange = ( newDirection: string ) => {
+		const directionValue = effect === 'slide' && ( ! newDirection || newDirection === '' ) ? 'top' : newDirection;
+		updateInteraction( trigger, effect, type, directionValue, duration, delay );
+	};
+
+	const handleDurationChange = ( newDuration: string ) => {
+		updateInteraction( trigger, effect, type, direction, parseInt( newDuration, 10 ), delay );
+	};
+
+	const handleDelayChange = ( newDelay: string ) => {
+		updateInteraction( trigger, effect, type, direction, duration, parseInt( newDelay, 10 ) );
 	};
 
 	return (
 		<PopoverContent p={ 1.5 }>
 			<Grid container spacing={ 1.5 }>
-				<Trigger value={ interactionDetails.trigger } onChange={ ( v ) => handleChange( 'trigger', v ) } />
+				<Trigger value={ trigger } onChange={ handleTriggerChange } />
 			</Grid>
 			<Divider sx={ { mx: 1.5 } } />
 			<Grid container spacing={ 1.5 }>
-				<Effect value={ interactionDetails.effect } onChange={ ( v ) => handleChange( 'effect', v ) } />
-				<EffectType value={ interactionDetails.type } onChange={ ( v ) => handleChange( 'type', v ) } />
+				<Effect value={ effect } onChange={ handleEffectChange } />
+				<EffectType value={ type } onChange={ handleTypeChange } />
 				<Direction
-					value={
-						interactionDetails.effect === 'slide' && ! interactionDetails.direction
-							? 'top'
-							: interactionDetails.direction
-					}
-					onChange={ ( v ) => {
-						const directionValue = interactionDetails.effect === 'slide' && ( ! v || v === '' ) ? 'top' : v;
-						handleChange( 'direction', directionValue );
-					} }
-					interactionType={ interactionDetails.type }
+					value={ effectiveDirection }
+					onChange={ handleDirectionChange }
+					interactionType={ type }
 				/>
 				<TimeFrameIndicator
-					value={ interactionDetails.duration }
-					onChange={ ( v ) => handleChange( 'duration', v ) }
+					value={ String( duration ) }
+					onChange={ handleDurationChange }
 					label={ __( 'Duration', 'elementor' ) }
 				/>
 				<TimeFrameIndicator
-					value={ interactionDetails.delay }
-					onChange={ ( v ) => handleChange( 'delay', v ) }
+					value={ String( delay ) }
+					onChange={ handleDelayChange }
 					label={ __( 'Delay', 'elementor' ) }
 				/>
 			</Grid>

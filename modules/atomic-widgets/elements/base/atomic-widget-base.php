@@ -43,9 +43,9 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 			return [];
 		}
 
-		if ( isset( $interactions['items'] ) && is_array( $interactions['items'] ) ) {
-			return $this->convert_prop_type_interactions_to_legacy_for_runtime( $interactions );
-		}
+		// if ( isset( $interactions['items'] ) && is_array( $interactions['items'] ) ) {
+		// 	return $this->convert_prop_type_interactions_to_legacy_for_runtime( $interactions );
+		// }
 
 		return $interactions;
 	}

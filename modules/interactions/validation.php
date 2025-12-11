@@ -7,13 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Validation {
-	private $valid_ids = [];
 	private $elements_to_interactions_counter = [];
 	private $max_number_of_interactions = 5;
 
-	public function __construct( Presets $presets ) {
-		$this->valid_ids = array_column( $presets->list(), 'value' );
-	}
+	private const VALID_TRIGGERS = [ 'load', 'scrollIn', 'scrollOut' ];
+	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale' ];
+	private const VALID_TYPES = [ 'in', 'out' ];
+	private const VALID_DIRECTIONS = [ '', 'left', 'right', 'top', 'bottom' ];
 
 	public function sanitize( $document ) {
 		return $this->sanitize_document_data( $document );
@@ -24,7 +24,6 @@ class Validation {
 			if ( $number_of_interactions > $this->max_number_of_interactions ) {
 				throw new \Exception(
 					sprintf(
-						// translators: %1 is the element ID and %2 is the maximum number of interactions
 						esc_html__( 'Element %1$s has more than %2$d interactions', 'elementor' ),
 						esc_html( $element_id ),
 						esc_html( $this->max_number_of_interactions )
@@ -96,15 +95,7 @@ class Validation {
 		$list_of_interactions = $this->decode_interactions( $interactions );
 
 		foreach ( $list_of_interactions as $interaction ) {
-			$animation_id = null;
-
-			if ( is_string( $interaction ) ) {
-				$animation_id = $interaction;
-			} elseif ( is_array( $interaction ) && isset( $interaction['animation']['animation_id'] ) ) {
-				$animation_id = $interaction['animation']['animation_id'];
-			}
-
-			if ( $animation_id && $this->is_valid_animation_id( $animation_id ) ) {
+			if ( $this->is_valid_interaction_item( $interaction ) ) {
 				$sanitized['items'][] = $interaction;
 				$this->increment_interactions_counter_for( $element_id );
 			}
@@ -117,17 +108,145 @@ class Validation {
 		return wp_json_encode( $sanitized );
 	}
 
-	private function is_valid_animation_id( $animation_id ) {
-		if ( ! is_string( $animation_id ) || empty( $animation_id ) ) {
+	private function is_valid_interaction_item( $item ) {
+		if ( ! is_array( $item ) ) {
 			return false;
 		}
 
-		$sanitized_id = sanitize_text_field( $animation_id );
-
-		if ( $sanitized_id !== $animation_id ) {
+		// Validate PropType format: { $$type: 'interaction-item', value: { ... } }
+		if ( ! isset( $item['$$type'] ) || 'interaction-item' !== $item['$$type'] ) {
 			return false;
 		}
 
-		return in_array( $animation_id, $this->valid_ids, true );
+		if ( ! isset( $item['value'] ) || ! is_array( $item['value'] ) ) {
+			return false;
+		}
+
+		$value = $item['value'];
+
+		// Validate required fields exist
+		if ( ! $this->is_valid_string_prop( $value, 'interaction_id' ) ) {
+			return false;
+		}
+
+		if ( ! $this->is_valid_string_prop( $value, 'trigger', self::VALID_TRIGGERS ) ) {
+			return false;
+		}
+
+		if ( ! $this->is_valid_animation_prop( $value ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function is_valid_string_prop( $data, $key, $allowed_values = null ) {
+		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
+			return false;
+		}
+
+		$prop = $data[ $key ];
+
+		if ( ! isset( $prop['$$type'] ) || 'string' !== $prop['$$type'] ) {
+			return false;
+		}
+
+		if ( ! isset( $prop['value'] ) || ! is_string( $prop['value'] ) ) {
+			return false;
+		}
+
+		if ( null !== $allowed_values && ! in_array( $prop['value'], $allowed_values, true ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function is_valid_number_prop( $data, $key ) {
+		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
+			return false;
+		}
+
+		$prop = $data[ $key ];
+
+		if ( ! isset( $prop['$$type'] ) || 'number' !== $prop['$$type'] ) {
+			return false;
+		}
+
+		if ( ! isset( $prop['value'] ) || ! is_numeric( $prop['value'] ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function is_valid_animation_prop( $data ) {
+		if ( ! isset( $data['animation'] ) || ! is_array( $data['animation'] ) ) {
+			return false;
+		}
+
+		$animation = $data['animation'];
+
+		if ( ! isset( $animation['$$type'] ) || 'animation-preset-props' !== $animation['$$type'] ) {
+			return false;
+		}
+
+		if ( ! isset( $animation['value'] ) || ! is_array( $animation['value'] ) ) {
+			return false;
+		}
+
+		$animation_value = $animation['value'];
+
+		// Validate effect
+		if ( ! $this->is_valid_string_prop( $animation_value, 'effect', self::VALID_EFFECTS ) ) {
+			return false;
+		}
+
+		// Validate type
+		if ( ! $this->is_valid_string_prop( $animation_value, 'type', self::VALID_TYPES ) ) {
+			return false;
+		}
+
+		// Validate direction (can be empty string)
+		if ( ! $this->is_valid_string_prop( $animation_value, 'direction', self::VALID_DIRECTIONS ) ) {
+			return false;
+		}
+
+		// Validate timing_config
+		if ( ! $this->is_valid_timing_config( $animation_value ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function is_valid_timing_config( $data ) {
+		if ( ! isset( $data['timing_config'] ) || ! is_array( $data['timing_config'] ) ) {
+			return false;
+		}
+
+		$timing = $data['timing_config'];
+
+		if ( ! isset( $timing['$$type'] ) || 'timing-config' !== $timing['$$type'] ) {
+			return false;
+		}
+
+		if ( ! isset( $timing['value'] ) || ! is_array( $timing['value'] ) ) {
+			return false;
+		}
+
+		$timing_value = $timing['value'];
+
+		// Validate duration
+		if ( ! $this->is_valid_number_prop( $timing_value, 'duration' ) ) {
+			return false;
+		}
+
+		// Validate delay
+		if ( ! $this->is_valid_number_prop( $timing_value, 'delay' ) ) {
+			return false;
+		}
+
+		return true;
 	}
 }

@@ -7,25 +7,34 @@ import {
 	useElementInteractions,
 } from '@elementor/editor-elements';
 
+import type { InteractionsPropType } from '../types';
+
 type InteractionsContextValue = {
-	interactions: ElementInteractions;
-	setInteractions: ( value: ElementInteractions | undefined ) => void;
+	interactions: InteractionsPropType;
+	setInteractions: ( value: InteractionsPropType | undefined ) => void;
 	playInteractions: ( animationId: string ) => void;
 };
 
 const InteractionsContext = createContext< InteractionsContextValue | null >( null );
 
+const DEFAULT_INTERACTIONS: InteractionsPropType = {
+	version: 1,
+	items: [],
+};
+
 export const InteractionsProvider = ( { children, elementId }: { children: ReactNode; elementId: string } ) => {
-	const interactions = useElementInteractions( elementId );
+	const rawInteractions = useElementInteractions( elementId );
 
 	useEffect( () => {
 		window.dispatchEvent( new CustomEvent( 'elementor/element/update_interactions' ) );
 	}, [] );
 
-	const setInteractions = ( value: ElementInteractions | undefined ) => {
+	const interactions: InteractionsPropType = ( rawInteractions as unknown as InteractionsPropType ) ?? DEFAULT_INTERACTIONS;
+
+	const setInteractions = ( value: InteractionsPropType | undefined ) => {
 		updateElementInteractions( {
 			elementId,
-			interactions: value,
+			interactions: value as unknown as ElementInteractions,
 		} );
 	};
 

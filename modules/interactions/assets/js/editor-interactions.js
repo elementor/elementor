@@ -2,6 +2,33 @@
 
 import { config, getKeyframes, parseAnimationName } from './interactions-utils.js';
 
+function extractAnimationId( interaction ) {
+	if ( 'string' === typeof interaction ) {
+		return interaction;
+	}
+
+	if ( interaction?.$$type === 'interaction-item' && interaction?.value ) {
+		const { trigger, animation } = interaction.value;
+		if ( animation?.$$type === 'animation-preset-props' && animation?.value ) {
+			const { effect, type, direction, timing_config } = animation.value;
+			const triggerVal = trigger?.value || 'load';
+			const effectVal = effect?.value || 'fade';
+			const typeVal = type?.value || 'in';
+			const directionVal = direction?.value || '';
+			const duration = timing_config?.value?.duration?.value ?? 300;
+			const delay = timing_config?.value?.delay?.value ?? 0;
+			return `${ triggerVal }-${ effectVal }-${ typeVal }-${ directionVal }-${ duration }-${ delay }`;
+		}
+	}
+
+	// Legacy format: { animation: { animation_id: '...' } }
+	if ( interaction?.animation?.animation_id ) {
+		return interaction.animation.animation_id;
+	}
+
+	return null;
+}
+
 function applyAnimation( element, animConfig, animateFunc ) {
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
 	const options = {
@@ -70,10 +97,7 @@ function applyInteractionsToElement( element, interactionsData ) {
 	const interactions = Object.values( parsedData?.items );
 
 	interactions.forEach( ( interaction ) => {
-		const animationName =
-				'string' === typeof interaction
-					? interaction
-					: interaction?.animation?.animation_id;
+		const animationName = extractAnimationId( interaction ); 
 
 		const animConfig = animationName && parseAnimationName( animationName );
 
@@ -102,7 +126,11 @@ function handleInteractionsUpdate() {
 		if ( element && item.interactions?.items?.length > 0 && item.interactions?.items?.length === prevInteractions?.items?.length ) {
 			const interactionsToApply = {
 				...item.interactions,
-				items: [ ...item.interactions.items ].filter( ( interaction, index ) => prevInteractions?.items[ index ]?.animation?.animation_id !== interaction.animation.animation_id ),
+				items: [ ...item.interactions.items ].filter( ( interaction, index ) => {
+					const currentAnimId = extractAnimationId( interaction );
+					const prevAnimId = extractAnimationId( prevInteractions?.items[ index ] );
+					return currentAnimId !== prevAnimId;
+				} ),
 			};
 			applyInteractionsToElement( element, interactionsToApply );
 		}
@@ -178,7 +206,7 @@ function handlePlayInteractions( event ) {
 			...item.interactions,
 			items: [ ...item.interactions.items ],
 		};
-		interactionsCopy.items = interactionsCopy.items.filter( ( interactionItem ) => interactionItem.animation.animation_id === animationId );
+		interactionsCopy.items = interactionsCopy.items.filter( ( interactionItem ) => extractAnimationId( interactionItem ) === animationId );
 		applyInteractionsToElement( element, JSON.stringify( interactionsCopy ) );
 	}
 }

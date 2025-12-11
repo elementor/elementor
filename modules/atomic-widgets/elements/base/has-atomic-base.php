@@ -254,25 +254,25 @@ trait Has_Atomic_Base {
 		if ( empty( $decoded['items'] ) ) {
 			return [];
 		}
+		return $decoded;
+		// $transformed_items = [];
 
-		$transformed_items = [];
+		// foreach ( $decoded['items'] as $item ) {
+		// 	if ( isset( $item['$$type'] ) && 'interaction-item' === $item['$$type'] ) {
+		// 		$transformed_items[] = $item;
+		// 		continue;
+		// 	}
 
-		foreach ( $decoded['items'] as $item ) {
-			if ( isset( $item['$$type'] ) && 'interaction-item' === $item['$$type'] ) {
-				$transformed_items[] = $item;
-				continue;
-			}
+		// 	$transformed_item = $this->convert_legacy_to_prop_type( $item );
+		// 	if ( $transformed_item ) {
+		// 		$transformed_items[] = $transformed_item;
+		// 	}
+		// }
 
-			$transformed_item = $this->convert_legacy_to_prop_type( $item );
-			if ( $transformed_item ) {
-				$transformed_items[] = $transformed_item;
-			}
-		}
-
-		return [
-			'version' => 1,
-			'items' => $transformed_items,
-		];
+		// return [
+		// 	'version' => 1,
+		// 	'items' => $transformed_items,
+		// ];
 	}
 
 	private function decode_interactions_data( $interactions ) {
@@ -293,32 +293,32 @@ trait Has_Atomic_Base {
 		];
 	}
 
-	private function convert_legacy_to_prop_type( $item ) {
-		if ( ! isset( $item['animation']['animation_id'] ) || ! isset( $item['interaction_id'] ) ) {
-			return null;
-		}
+	// private function convert_legacy_to_prop_type( $item ) {
+	// 	if ( ! isset( $item['animation']['animation_id'] ) || ! isset( $item['interaction_id'] ) ) {
+	// 		return null;
+	// 	}
 
-		$animation_id = $item['animation']['animation_id'];
-		$parsed = $this->parse_animation_id_string( $animation_id );
+	// 	$animation_id = $item['animation']['animation_id'];
+	// 	$parsed = $this->parse_animation_id_string( $animation_id );
 
-		if ( ! $parsed ) {
-			return null;
-		}
+	// 	if ( ! $parsed ) {
+	// 		return null;
+	// 	}
 
-		return $this->create_prop_value( 'interaction-item', [
-			'interaction_id' => $this->create_prop_value( 'string', $item['interaction_id'] ),
-			'trigger' => $this->create_prop_value( 'string', $parsed['trigger'] ),
-			'animation' => $this->create_prop_value( 'animation-preset-props', [
-				'effect' => $this->create_prop_value( 'string', $parsed['effect'] ),
-				'type' => $this->create_prop_value( 'string', $parsed['type'] ),
-				'direction' => $this->create_prop_value( 'string', $parsed['direction'] ),
-				'timing_config' => $this->create_prop_value( 'timing-config', [
-					'duration' => $this->create_prop_value( 'number', (int) $parsed['duration'] ),
-					'delay' => $this->create_prop_value( 'number', (int) $parsed['delay'] ),
-				] ),
-			] ),
-		] );
-	}
+	// 	return $this->create_prop_value( 'interaction-item', [
+	// 		'interaction_id' => $this->create_prop_value( 'string', $item['interaction_id'] ),
+	// 		'trigger' => $this->create_prop_value( 'string', $parsed['trigger'] ),
+	// 		'animation' => $this->create_prop_value( 'animation-preset-props', [
+	// 			'effect' => $this->create_prop_value( 'string', $parsed['effect'] ),
+	// 			'type' => $this->create_prop_value( 'string', $parsed['type'] ),
+	// 			'direction' => $this->create_prop_value( 'string', $parsed['direction'] ),
+	// 			'timing_config' => $this->create_prop_value( 'timing-config', [
+	// 				'duration' => $this->create_prop_value( 'number', (int) $parsed['duration'] ),
+	// 				'delay' => $this->create_prop_value( 'number', (int) $parsed['delay'] ),
+	// 			] ),
+	// 		] ),
+	// 	] );
+	// }
 
 	private function parse_animation_id_string( $animation_id ) {
 		$pattern = '/^([^-]+)-([^-]+)-([^-]+)-([^-]*)-(\d+)-(\d+)$/';

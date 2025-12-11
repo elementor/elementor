@@ -16,6 +16,7 @@ export const updateElementInteractions = ( {
 		throw new Error( `Element with id ${ elementId } not found` );
 	}
 
+	console.log('interactions to save', interactions);
 	element.model.set( 'interactions', interactions );
 
 	window.dispatchEvent( new CustomEvent( 'elementor/element/update_interactions' ) );

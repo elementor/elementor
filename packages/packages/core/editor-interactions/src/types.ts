@@ -44,3 +44,47 @@ export type InteractionsProvider = {
 		all: () => InteractionItem[];
 	};
 };
+
+export type StringPropValue = {
+	$$type: 'string';
+	value: string;
+};
+
+export type NumberPropValue = {
+	$$type: 'number';
+	value: number;
+};
+
+export type TimingConfigPropValue = {
+	$$type: 'timing-config';
+	value: {
+		duration: NumberPropValue;
+		delay: NumberPropValue;
+	};
+};
+
+export type AnimationPresetPropValue = {
+	$$type: 'animation-preset-props';
+	value: {
+		effect: StringPropValue;
+		type: StringPropValue;
+		direction: StringPropValue;
+		timing_config: TimingConfigPropValue;
+	};
+};
+
+export type InteractionItemPropValue = {
+	$$type: 'interaction-item';
+	value: {
+		interaction_id: StringPropValue;
+		trigger: StringPropValue;
+		animation: AnimationPresetPropValue;
+	};
+};
+
+export type InteractionsPropType = {
+	version: number;
+	items: InteractionItemPropValue[];
+};
+
+export type InteractionItemValue = InteractionItemPropValue[ 'value' ];
