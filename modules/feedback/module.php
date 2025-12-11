@@ -21,7 +21,7 @@ class Module extends Module_Base {
 	public function __construct() {
 		add_action( 'rest_api_init', fn() => self::register_routes() );
 	}
-	
+
 	protected function register_routes() {
 		register_rest_route( 'elementor/v1/feedback', '/submit', [
 			'methods' => 'POST',
@@ -31,18 +31,18 @@ class Module extends Module_Base {
 	}
 
 	protected function handle_submit( $request, $additional_cookies = [] ) {
-    $user_meta = get_user_meta( get_current_user_id(), 'wp_elementor_connect_common_data' );
+		$user_meta = get_user_meta( get_current_user_id(), 'wp_elementor_connect_common_data' );
 		$app = Plugin::$instance->common->get_component( 'connect' )->get_app( 'feedback' );
 		$body = [
 			'title' => 'Editor Feedback',
 			'description' => $request->get_param( 'description' ),
 			'product' => 'EDITOR',
-			'subject' => 'Editor Feedback'
+			'subject' => 'Editor Feedback',
 		];
 
-		$response = $app->submit($body);
+		$response = $app->submit( $body );
 		$response_code = $response['response']['code'];
-		if ($response_code) {
+		if ( $response_code ) {
 			return [
 				'success' => true,
 				'message' => esc_html__( 'Feedback submitted successfully.', 'elementor' ),
