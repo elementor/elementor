@@ -4,6 +4,8 @@ namespace Elementor\Modules\EditorOne;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\EditorOne\Components\Elementor_One_Menu_Manager;
+use Elementor\Modules\EditorOne\Components\Sidebar_Navigation_Handler;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,11 +20,11 @@ class Module extends BaseModule {
 		'elementor-element-manager',
 	];
 
-	public function get_name() {
+	public function get_name(): string {
 		return 'editor-one';
 	}
 
-	public static function get_experimental_data() {
+	public static function get_experimental_data(): array {
 		return [
 			'name'           => static::EXPERIMENT_NAME,
 			'title'          => esc_html__( 'Editor one', 'elementor' ),
@@ -32,6 +34,25 @@ class Module extends BaseModule {
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		];
 	}
+
+	public function __construct() {
+		parent::__construct();
+
+		if ( is_admin() ) {
+			$this->add_component( 'editor-one-menu-manager', new Elementor_One_Menu_Manager() );
+			$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
+		}
+
+		add_action( 'current_screen', function () {
+			if ( ! $this->is_feature_enabled() || ! $this->is_elementor_admin_page() ) {
+				return;
+			}
+
+			add_action( 'admin_enqueue_scripts', function () {
+				$this->enqueue_styles();
+			} );
+
+		}
 
 	/**
 	 * Check if Editor One feature is enabled
@@ -126,32 +147,5 @@ class Module extends BaseModule {
 			ELEMENTOR_VERSION,
 			true
 		);
-	}
-
-	/**
-	 * Module constructor.
-	 */
-	public function __construct() {
-		parent::__construct();
-
-		add_action( 'current_screen', function () {
-			if ( ! $this->is_feature_enabled() || ! $this->is_elementor_admin_page() ) {
-				return;
-			}
-
-			add_action( 'admin_enqueue_scripts', function () {
-				$this->enqueue_styles();
-			} );
-
-//			add_action('admin_head', function() {
-//				// Удаляем forms.css через вывод JS
-//				echo '<script>
-//					document.addEventListener("DOMContentLoaded", function() {
-//						const links = document.querySelectorAll("link[href*=\"/wp-admin/css/forms.css\"]");
-//						links.forEach(link => link.remove());
-//					});
-//					</script>';
-//			});
-		} );
 	}
 }

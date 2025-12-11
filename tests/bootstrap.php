@@ -66,6 +66,7 @@ remove_action( 'admin_init', '_maybe_update_plugins' );
 add_action( 'elementor/experiments/feature-registered', function ( Experiments_Manager $experiments_manager, array $experimental_data ) {
 	$exclude = [
 		Elementor\Modules\Home\Module::PAGE_ID,
+		Elementor\Modules\EditorOne\Module::EXPERIMENT_NAME,
 	];
 
 	// Immutable experiments are not real experiments and should not be activated.
