@@ -48,13 +48,10 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 	protected static function define_props_schema(): array {
 		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
-		$title_prop = Union_Prop_Type::make()
-			->add_prop_type( String_Prop_Type::make()->default( __( 'This is a title', 'elementor' ) ) )
-			->default( __( 'This is a title', 'elementor' ), String_Prop_Type::get_key() );
+		$title_prop = $is_feature_active
+			? Html_Prop_Type::make()->default( __( 'This is a title', 'elementor' ) )
+			: String_Prop_Type::make()->default( __( 'This is a title', 'elementor' ) );
 
-		if ( $is_feature_active ) {
-			$title_prop->add_prop_type( Html_Prop_Type::make()->default( __( 'This is a title', 'elementor' ) ) );
-		}
 
 		$props = [
 			'classes' => Classes_Prop_Type::make()
