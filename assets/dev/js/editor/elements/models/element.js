@@ -62,88 +62,23 @@ ElementModel = BaseElementModel.extend( {
 			}
 
 			this.on( 'change:componentName', this.onComponentNameChange, this );
-
-			this.registerDocumentSettingsHook();
 		}
 
 		this.getComponentTitle();
-	},
-
-	registerDocumentSettingsHook() {
-		if ( ! $e || ! $e.hooks || ! $e.modules || ! $e.modules.hookUI ) {
-			return;
-		}
-
-		const HookAfter = $e.modules.hookUI.After;
-		const self = this;
-
-		this._documentSettingsHook = new ( class extends HookAfter {
-			getCommand() {
-				return 'document/elements/settings';
-			}
-
-			getId() {
-				return 'update-component-title-' + self.cid;
-			}
-
-			getContainerType() {
-				return 'document';
-			}
-
-			getConditions( args ) {
-				return args && args.settings && args.settings.post_title;
-			}
-
-			apply( args ) {
-				self.onDocumentSettingsChange( args );
-			}
-		} )();
-
-		$e.hooks.registerUIAfter( this._documentSettingsHook );
 	},
 
 	onComponentNameChange() {
 		this.trigger( 'change:title' );
 	},
 
-	onDocumentSettingsChange( args ) {
-		if ( 'widget' !== this.get( 'elType' ) || 'e-component' !== this.get( 'widgetType' ) ) {
-			return;
-		}
-
-		if ( ! args.settings || ! args.settings.post_title ) {
-			return;
-		}
-
-		const settings = this.get( 'settings' );
-		if ( ! settings ) {
-			return;
-		}
-
-		const componentInstance = settings.get( 'component_instance' );
-		if ( ! componentInstance || ! componentInstance.value ) {
-			return;
-		}
-
-		const componentId = componentInstance.value.component_id?.value;
-		if ( ! componentId ) {
-			return;
-		}
-
-		const currentDocument = elementor.documents.getCurrent();
-		if ( currentDocument && currentDocument.id === componentId ) {
-			this.componentName = args.settings.post_title;
-			this.trigger( 'change:componentName' );
-		}
+	onComponentDocumentTitleChange( postTitle ) {
+		this.componentName = postTitle;
+		this.trigger( 'change:componentName' );
 	},
 
-	onSettingsChange( options ) {
-		if ( 'widget' === this.get( 'elType' ) && 'e-component' === this.get( 'widgetType' ) ) {
-			const changedKeys = options && options.changes ? Object.keys( options.changes ) : [];
-			if ( changedKeys.includes( 'component_instance' ) || ! this.componentName ) {
-				this.getComponentTitle();
-			}
-		}
+	onSettingsChange() {
+		// Component_instance changes are handled by direct listener on line 61
+		// This method is kept for potential future use but currently does nothing
 	},
 
 	getComponentTitle() {
@@ -178,32 +113,60 @@ ElementModel = BaseElementModel.extend( {
 
 		elementor.documents.request( componentId )
 			.then( ( config ) => {
-				let title = null;
-
-				if ( config ) {
-					if ( config.settings && config.settings.settings && config.settings.settings.post_title ) {
-						title = config.settings.settings.post_title;
-					} else if ( config.panel && config.panel.title ) {
-						title = config.panel.title;
-					} else if ( config.container && config.container.settings ) {
-						const containerSettings = config.container.settings;
-						if ( containerSettings.get ) {
-							title = containerSettings.get( 'post_title' );
-						} else if ( containerSettings.post_title ) {
-							title = containerSettings.post_title;
-						}
-					}
-					if ( title ) {
-						this.componentName = title;
-						this.trigger( 'change:componentName' );
-					}
+				if ( ! config ) {
+					resetLoading();
+					return;
 				}
+
+				const title = this.extractTitleFromConfig( config );
+				if ( title ) {
+					this.componentName = title;
+					this.trigger( 'change:componentName' );
+				}
+
+				this.setupDocumentSettingsListener( config );
 				resetLoading();
 			} )
 			.catch( () => {
 				// Silently fail if component document cannot be loaded
 				resetLoading();
 			} );
+	},
+
+	extractTitleFromConfig( config ) {
+		if ( config.settings?.settings?.post_title ) {
+			return config.settings.settings.post_title;
+		}
+		if ( config.panel?.title ) {
+			return config.panel.title;
+		}
+		if ( config.container?.settings ) {
+			const containerSettings = config.container.settings;
+			if ( containerSettings.get ) {
+				return containerSettings.get( 'post_title' );
+			}
+			if ( containerSettings.post_title ) {
+				return containerSettings.post_title;
+			}
+		}
+		return null;
+	},
+
+	setupDocumentSettingsListener( config ) {
+		if ( ! config.container?.settings ) {
+			return;
+		}
+
+		const documentSettings = config.container.settings;
+
+		// Remove old listener if exists
+		if ( this._componentDocumentSettings ) {
+			this._componentDocumentSettings.off( 'change:post_title', this.onComponentDocumentTitleChange, this );
+		}
+
+		// Store reference and listen to changes
+		this._componentDocumentSettings = documentSettings;
+		documentSettings.on( 'change:post_title', this.onComponentDocumentTitleChange, this );
 	},
 
 	initSettings() {
@@ -452,9 +415,10 @@ ElementModel = BaseElementModel.extend( {
 
 		this.off( 'change:componentName', this.onComponentNameChange, this );
 
-		if ( this._documentSettingsHook && $e && $e.hooks ) {
-			$e.hooks.ui.remove( 'document/elements/settings', 'after', this._documentSettingsHook.getId() );
-			this._documentSettingsHook = null;
+		// Clean up document settings listener
+		if ( this._componentDocumentSettings ) {
+			this._componentDocumentSettings.off( 'change:post_title', this.onComponentDocumentTitleChange, this );
+			this._componentDocumentSettings = null;
 		}
 
 		if ( undefined !== elements ) {
