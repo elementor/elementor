@@ -40,25 +40,9 @@ Prefer this tool over any other tool for building HTML structure, unless you are
    Layout properties, such as margin, padding, align, etc. must be applied using the [${ STYLE_SCHEMA_URI }] PropValues.
 7. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-div-block" and "e-flexbox".
 8. Make sure that non-container elements do NOT have any nested elements.
-9. **CRITICAL - CUSTOM CSS PRIORITY**: Prefer using style schema for sizes, layout, text properties, colors, etc.
-   Always prioritize using the custom_css property for applying backgrounds, borders and other complex style settings.
-   For complex design the best outcome is a balanced combination of style schema and custom_css.
-   - Use custom_css for: borders, backgrounds, transforms, animations, and any other visual styling
-   - Use the style schema (styleConfig) for font properties, colors, padding, margin. Read the [${ STYLE_SCHEMA_URI }] resource for the full styles schema.
-   - custom_css allows for more expressive and complete styling, including advanced CSS features like calc(), transitions, pseudo-elements, etc But is harder to maintain for our users,
-     as most users prefer using the UI tools that map to the style schema.
-   - Example: Instead of creating all styles in custom_css, prefer splitting:
-     stylesConfig: {
-       "element-id": {
-         "font-size": {
-            "$$type": "size",
-            "value": {
-              "size": { "$$type": "number", "value": 24 },
-              "unit": { "$$type": "string", "value": "px" }
-         },
-         "custom_css": "background: linear-gradient(135deg, #faf8f6 0%, #f0ebe6 100%); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"
-       }
-     }
+9. **CRITICAL - CUSTOM CSS PRIORITY**: Prefer using style schema. Custom CSS is ONLY FOR UNSUPPRTED schema styles.
+   ALWAYS PRIORITIZE using the style schema PropValues for styling elements as they provide better user experience in the editor, and UI features for the end-users.
+   - Use custom_css only for style attributes that ARE NOT SUPPORTED via the style schema.
 
 # DESIGN VECTORS - Concrete Implementation Guidance
 

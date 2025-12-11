@@ -26,7 +26,7 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
 This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema, or in custom_css, depends on your needs.
 
-When applicable for styles, use the "custom_css" property for free-form CSS styling. This property accepts a string of CSS rules that will be applied directly to the element.
+When applicable for styles, apply style PropValues using the ${ STYLE_SCHEMA_URI }. Custom css is for Elementor PRO users and intended to support only new CSS features not yet available in the UI.
 The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.`,
 				},
 			],
