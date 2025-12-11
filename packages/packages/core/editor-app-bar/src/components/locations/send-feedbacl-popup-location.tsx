@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { httpService } from '@elementor/http-client';
+import { AlertCircleIcon, CheckIcon } from '@elementor/icons';
 import {
 	bindDialog,
 	Button,
@@ -20,13 +21,25 @@ import { __ } from '@wordpress/i18n';
 import { FEEDBACK_TOGGLE_EVENT } from '../../extensions/feedback';
 import { type ExtendedWindow } from '../../types';
 
+const checkIfUserIsConnected = () => {
+	const extendedWindow = window as unknown as ExtendedWindow;
+	return (
+		extendedWindow?.elementorCommon?.config.library_connect.is_connected ||
+		extendedWindow?.elementorPro?.config.isActive
+	);
+};
+
+type FeedbackResult = {
+	success: boolean;
+	message: string;
+};
+
 export default function SendFeedbackPopupLocation() {
 	const extendedWindow = window as unknown as ExtendedWindow;
-	const isUserConnected =
-		extendedWindow?.elementorCommon?.config.library_connect.is_connected ||
-		extendedWindow?.elementorPro?.config.isActive;
+	const [ isUserConnected, setIsUserConnected ] = useState< boolean >( checkIfUserIsConnected() );
 	const connectUrl = extendedWindow?.elementor?.config.user.top_bar.connect_url;
-	const [ feedbackContent, setFeedbackContent ] = React.useState( '' );
+	const [ feedbackContent, setFeedbackContent ] = useState( '' );
+	const [ feedbackResult, setFeedbackResult ] = useState< FeedbackResult | null >( null );
 	const popupState = usePopupState( {
 		variant: 'dialog',
 		popupId: FEEDBACK_TOGGLE_EVENT,
@@ -35,6 +48,9 @@ export default function SendFeedbackPopupLocation() {
 	useEffect( () => {
 		const handler = () => {
 			popupState.toggle();
+			// reason to re-check: clicking "connect to elementor" closes the dialog. At this time the user can perform connect, and the state might change externally.
+			setIsUserConnected( checkIfUserIsConnected() );
+			setFeedbackResult( null );
 		};
 		window.addEventListener( FEEDBACK_TOGGLE_EVENT, handler );
 		return () => {
@@ -46,14 +62,19 @@ export default function SendFeedbackPopupLocation() {
 		setIsFetching( true );
 		httpService()
 			.post( 'elementor/v1/feedback/submit', {
-				description: feedbackContent,
+				description: feedbackContent.trim(),
+			} )
+			.then( ( response ) => {
+				setFeedbackResult( {
+					message: response.data.message,
+					success: response.data.success,
+				} );
+				if ( response.data.code.toString().startsWith( '4' ) ) {
+					setIsUserConnected( false );
+				}
 			} )
 			.finally( () => setIsFetching( false ) );
 	};
-
-	if ( ! isUserConnected ) {
-		return null;
-	}
 
 	return (
 		<ThemeProvider>
@@ -95,8 +116,26 @@ export default function SendFeedbackPopupLocation() {
 										value={ feedbackContent }
 									/>
 									<Stack direction="row" justifyContent="flex-end">
+										<Stack
+											width="100%"
+											direction="row"
+											justifyContent="flex-start"
+											alignItems="center"
+											gap={ 1 }
+										>
+											{ feedbackResult && (
+												<>
+													{ feedbackResult.success ? (
+														<CheckIcon color="success" />
+													) : (
+														<AlertCircleIcon color="error" />
+													) }
+													{ feedbackResult.message }
+												</>
+											) }
+										</Stack>
 										<Button
-											disabled={ isFetching }
+											disabled={ isFetching || feedbackContent.trim().length === 0 }
 											onClick={ submitFeedback }
 											variant="contained"
 											color="primary"
@@ -115,6 +154,7 @@ export default function SendFeedbackPopupLocation() {
 										href={ connectUrl }
 										target="_blank"
 										rel="noopener"
+										onClick={ popupState.close }
 									>
 										Connect to elementor
 									</Button>

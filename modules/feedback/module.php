@@ -41,8 +41,19 @@ class Module extends Module_Base {
 		];
 
 		$response = $app->submit($body);
-
-		return $response;
+		$response_code = $response['response']['code'];
+		if ($response_code) {
+			return [
+				'success' => true,
+				'message' => esc_html__( 'Feedback submitted successfully.', 'elementor' ),
+			];
+		} else {
+			return [
+				'success' => false,
+				'code' => $response_code,
+				'message' => esc_html__( 'Failed to submit feedback. Please try again later.', 'elementor' ),
+			];
+		}
 	}
 	/**
 	 * Retrieve the module name.
