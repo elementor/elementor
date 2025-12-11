@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Component_Overridable_Transformer extends Transformer_Base {
+class Overridable_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
 		// todo: render component overrides
 		return $this->transform_origin_value( $value, $context );
