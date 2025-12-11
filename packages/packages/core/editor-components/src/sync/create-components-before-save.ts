@@ -29,6 +29,7 @@ export async function createComponentsBeforeSave( {
 					id: uidToComponentId.get( component.uid ) as number,
 					name: component.name,
 					uid: component.uid,
+					overridableProps: component.overridableProps ? component.overridableProps : undefined,
 				} ) )
 			)
 		);

@@ -63,11 +63,9 @@ export const slice = createSlice( {
 			}
 		},
 		load: ( state, { payload }: PayloadAction< PublishedComponent[] > ) => {
-			console.log( 'loading components', payload );
 			state.data = payload;
 		},
 		addUnpublished: ( state, { payload }: PayloadAction< UnpublishedComponent > ) => {
-			console.log( 'adding unpublished component', payload );
 			state.unpublishedData.unshift( payload );
 		},
 		resetUnpublished: ( state ) => {
@@ -142,7 +140,11 @@ export const selectComponents = createSelector(
 	selectData,
 	selectUnpublishedData,
 	( data: PublishedComponent[], unpublishedData: UnpublishedComponent[] ) => [
-		...unpublishedData.map( ( item ) => ( { uid: item.uid, name: item.name } ) ),
+		...unpublishedData.map( ( item ) => ( {
+			uid: item.uid,
+			name: item.name,
+			overridableProps: item.overridableProps,
+		} ) ),
 		...data,
 	]
 );
@@ -173,8 +175,6 @@ export const selectOverridableProps = createSelector(
 		if ( ! component ) {
 			return undefined;
 		}
-
-		console.log( 'component when getting overridable props', component );
 
 		return component.overridableProps ?? DEFAULT_OVERRIDABLE_PROPS;
 	}
