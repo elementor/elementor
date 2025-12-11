@@ -22,7 +22,6 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 		description: generatePrompt(),
 		schema,
 		requiredResources: [
-			{ description: 'Styles best practices', uri: BEST_PRACTICES_URI },
 			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
 			{ description: 'Global Classes', uri: 'elementor://global-classes' },
 			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
