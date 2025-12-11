@@ -9,6 +9,12 @@ use Elementor\Core\Base\Module as Base_Module;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Code_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Fonts_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Icons_Promotion_Item;
+use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Code_Menu;
+use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Elements_Menu;
+use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Fonts_Menu;
+use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Icons_Menu;
+use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Popups_Menu;
+use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Submissions_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
@@ -17,6 +23,8 @@ use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
+use Elementor\Plugin;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -46,6 +54,10 @@ class Module extends Base_Module {
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_menu_items( $admin_menu );
 		}, static::ADMIN_MENU_PRIORITY );
+
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu_items( $menu_data_provider );
+		} );
 
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_promotion_menu_item( $admin_menu );
@@ -81,26 +93,40 @@ class Module extends Base_Module {
 	}
 
 	private function handle_external_redirects() {
-		if ( empty( $_GET['page'] ) ) {
+		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+		if ( empty( $page ) ) {
 			return;
 		}
 
-		if ( 'go_elementor_pro' === $_GET['page'] ) {
-			wp_redirect( Go_Pro_Promotion_Item::get_url() );
+		if ( 'go_elementor_pro' === $page ) {
+			wp_redirect( Go_Pro_Promotion_Item::get_url() ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect
 			die;
 		}
 	}
 
 	private function register_menu_items( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( 'e-form-submissions', new Form_Submissions_Promotion_Item() );
-		$admin_menu->register( 'elementor_custom_fonts', new Custom_Fonts_Promotion_Item() );
-		$admin_menu->register( 'elementor_custom_icons', new Custom_Icons_Promotion_Item() );
-		$admin_menu->register( 'elementor_custom_code', new Custom_Code_Promotion_Item() );
-		$admin_menu->register( 'popup_templates', new Popups_Promotion_Item() );
+		if ( ! $this->is_editor_one_active() ) {
+			$admin_menu->register( 'e-form-submissions', new Form_Submissions_Promotion_Item() );
+			$admin_menu->register( 'elementor_custom_fonts', new Custom_Fonts_Promotion_Item() );
+			$admin_menu->register( 'elementor_custom_icons', new Custom_Icons_Promotion_Item() );
+			$admin_menu->register( 'elementor_custom_code', new Custom_Code_Promotion_Item() );
+			$admin_menu->register( 'popup_templates', new Popups_Promotion_Item() );
+		}
+	}
+
+	private function register_editor_one_menu_items( Menu_Data_Provider $menu_data_provider ) {
+		$menu_data_provider->register_menu( new Editor_One_Custom_Elements_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_Submissions_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_Fonts_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_Icons_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_Custom_Code_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_Popups_Menu() );
 	}
 
 	private function register_promotion_menu_item( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( 'go_elementor_pro', new Go_Pro_Promotion_Item() );
+		if ( ! $this->is_editor_one_active() ) {
+			$admin_menu->register( 'go_elementor_pro', new Go_Pro_Promotion_Item() );
+		}
 	}
 
 	public function enqueue_react_data(): void {
@@ -167,5 +193,9 @@ class Module extends Base_Module {
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_free_to_pro_upsell',
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'free-to-pro-upsell',
 		];
+	}
+
+	private function is_editor_one_active(): bool {
+		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 }
