@@ -1,5 +1,3 @@
-import { jest } from '@jest/globals';
-
 const ELEMENT_ID = 'test-element-123';
 const BASE_ATTRIBUTES = {
 	'data-id': 'abc-123',
