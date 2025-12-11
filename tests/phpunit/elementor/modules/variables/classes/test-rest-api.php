@@ -3,8 +3,12 @@
 namespace Elementor\Tests\Modules\Variables\Classes;
 
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\Classes\Rest_Api;
-use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
+use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
+use Elementor\Modules\Variables\Services\Variables_Service;
+use Elementor\Modules\Variables\Storage\Variables_Collection;
+use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -34,10 +38,10 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->kit = $this->createMock( Kit::class );
+		$repository = new Variables_Repository( $this->kit );
+		$service = new Variables_Service( $repository, new Batch_Processor() );
 
-		$this->rest_api = new Rest_Api(
-			new Variables_Repository( $this->kit )
-		);
+		$this->rest_api = new Rest_Api( $service );
 	}
 
 	public function test_admin_user__has__enough_permissions_to_perform_action() {
@@ -446,7 +450,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 			expects( $this->once() )->
 			method( 'get_json_meta' )->
 			willReturn( [
-				'data' => array_fill( 0, Variables_Repository::TOTAL_VARIABLES_COUNT, [
+				'data' => array_fill( 0, Variables_Collection::TOTAL_VARIABLES_COUNT, [
 					'type' => Color_Variable_Prop_Type::get_key(),
 					'label' => 'primary-color',
 					'value' => '#FF0000',
@@ -527,7 +531,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				],
 			],
 			'watermark' => 10,
-			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+			'version' => Variables_Collection::FORMAT_VERSION_V1,
 		] );
 
 		$this->kit
@@ -593,7 +597,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				],
 			],
 			'watermark' => 5,
-			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+			'version' => Variables_Collection::FORMAT_VERSION_V1,
 		] );
 
 		// Act
@@ -750,7 +754,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				],
 			],
 			'watermark' => 5,
-			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+			'version' => Variables_Collection::FORMAT_VERSION_V1,
 		] );
 
 		// Act

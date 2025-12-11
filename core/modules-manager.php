@@ -135,6 +135,7 @@ class Modules_Manager {
 			'components',
 			'interactions',
 			'feedback',
+			'editor-one',
 		];
 	}
 

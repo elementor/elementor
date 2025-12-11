@@ -2,13 +2,13 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Html_Prop_Type extends Plain_Prop_Type {
+class Html_Prop_Type extends String_Prop_Type {
 	public static function get_key(): string {
 		return 'html';
 	}
@@ -22,19 +22,22 @@ class Html_Prop_Type extends Plain_Prop_Type {
 			[, $leading, $value, $trailing ] = $matches;
 
 			$allowed_tags = [
-				'b'           => [],
-				'i'           => [],
-				'em'          => [],
-				'u'           => [],
-				'ul'          => [],
-				'ol'          => [],
-				'li'          => [],
-				'blockquote'  => [],
-				'a'           => [ 'href' => true ],
-				'del'         => [],
-				'span'        => [],
-				'br'          => [],
-				'strong'      => [],
+				'b'          => [],
+				'i'          => [],
+				'em'         => [],
+				'u'          => [],
+				'ul'         => [],
+				'ol'         => [],
+				'li'         => [],
+				'blockquote' => [],
+				'a'          => [
+					'href'   => true,
+					'target' => true,
+				],
+				'del'        => [],
+				'span'       => [],
+				'br'         => [],
+				'strong'     => [],
 			];
 
 			$sanitized = wp_kses( $value, $allowed_tags );

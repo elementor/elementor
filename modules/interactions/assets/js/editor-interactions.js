@@ -14,23 +14,22 @@ function applyAnimation( element, animConfig, animateFunc ) {
 	Object.keys( keyframes ).forEach( ( key ) => {
 		initialKeyframes[ key ] = keyframes[ key ][ 0 ];
 	} );
-	animateFunc( element, initialKeyframes, { duration: 0 } );
-
-	animateFunc( element, keyframes, options );
-
-	if ( 'out' === animConfig.type ) {
-		const totalAnimationTime = animConfig.duration + animConfig.delay;
-		const resetValues = { opacity: 1, scale: 1, x: 0, y: 0 };
-
-		setTimeout( () => {
-			const resetKeyframes = {};
-			Object.keys( keyframes ).forEach( ( key ) => {
-				resetKeyframes[ key ] = resetValues[ key ];
-			} );
-
-			animateFunc( element, resetKeyframes, { duration: 0 } );
-		}, totalAnimationTime );
-	}
+	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
+	const transition = element.style.transition;
+	element.style.transition = 'none';
+	animateFunc( element, initialKeyframes, { duration: 0 } ).then( () => {
+		animateFunc( element, keyframes, options ).then( () => {
+			if ( 'out' === animConfig.type ) {
+				const resetValues = { opacity: 1, scale: 1, x: 0, y: 0 };
+				const resetKeyframes = {};
+				Object.keys( keyframes ).forEach( ( key ) => {
+					resetKeyframes[ key ] = resetValues[ key ];
+				} );
+				element.style.transition = transition;
+				animateFunc( element, resetKeyframes, { duration: 0 } );
+			}
+		} );
+	} );
 }
 
 function getInteractionsData() {
