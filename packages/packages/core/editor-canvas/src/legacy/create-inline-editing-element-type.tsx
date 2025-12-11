@@ -192,7 +192,7 @@ export function createInlineEditingElementView( {
 
 			const propValue = this.getValue();
 			const settingKey = getInlineEditablePropertyName( this.container );
-			const classes = this.el?.children?.[ 0 ]?.classList.toString();
+			const classes = ( this.el?.children?.[ 0 ]?.classList.toString() ?? '' ) + ' strip-styles';
 
 			const setValue = ( value: string | null ) => {
 				const valueToSave = value ? htmlPropTypeUtil.create( value ) : null;
@@ -234,7 +234,7 @@ export function createInlineEditingElementView( {
 						onBlur={ this.handleUnmountInlineEditor.bind( this ) }
 						autofocus
 						showToolbar
-						stripStyle={ false }
+						documentContentSettings="block+"
 						getInitialPopoverPosition={ getInitialPopoverPosition }
 					/>
 				</ThemeProvider>

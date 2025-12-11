@@ -138,7 +138,7 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 	};
 
 	React.useEffect( () => {
-		editor.commands.focus();
+		editor?.commands?.focus();
 	}, [ editor ] );
 
 	return (
@@ -182,7 +182,7 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 									button.method?.( editor );
 								}
 
-								editor.commands.focus();
+								editor?.commands?.focus();
 							} }
 						>
 							{ button.icon }

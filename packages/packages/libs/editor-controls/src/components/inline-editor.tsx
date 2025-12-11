@@ -13,8 +13,9 @@ import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
 import Text from '@tiptap/extension-text';
 import Underline from '@tiptap/extension-underline';
+import { type NodeSpec } from '@tiptap/pm/model';
 import { type EditorView } from '@tiptap/pm/view';
-import { type AnyExtension, EditorContent, useEditor } from '@tiptap/react';
+import { EditorContent, useEditor } from '@tiptap/react';
 
 import { isEmpty } from '../utils/inline-editing';
 import { InlineEditorToolbar } from './inline-editor-toolbar';
@@ -27,8 +28,8 @@ type InlineEditorProps = {
 	onBlur?: ( event: FocusEvent ) => void;
 	showToolbar?: boolean;
 	autofocus?: boolean;
-	stripStyle?: boolean;
 	getInitialPopoverPosition?: () => { left: number; top: number };
+	documentContentSettings?: NodeSpec[ 'content' ];
 };
 
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
@@ -44,44 +45,6 @@ const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void
 	}, dependencies );
 };
 
-const extensions = [
-	Document.extend( {
-		content: 'block+',
-	} ),
-	Paragraph.extend( {
-		renderHTML( { HTMLAttributes } ) {
-			return [ 'p', { ...HTMLAttributes, style: 'margin:0;padding:0;' }, 0 ];
-		},
-	} ),
-	Heading.extend( {
-		renderHTML( { node, HTMLAttributes } ) {
-			const level = this.options.levels.includes( node.attrs.level )
-				? node.attrs.level
-				: this.options.levels[ 0 ];
-			return [ `h${ level }`, { ...HTMLAttributes, style: 'margin:0;padding:0;' }, 0 ];
-		},
-	} ).configure( {
-		levels: [ 1, 2, 3, 4, 5, 6 ],
-	} ),
-	Link.configure( {
-		openOnClick: false,
-	} ),
-	Text,
-	Bold,
-	Italic,
-	Strike,
-	Superscript,
-	Subscript,
-	Underline,
-	HardBreak.extend( {
-		addKeyboardShortcuts() {
-			return {
-				Enter: () => this.editor.commands.setHardBreak(),
-			};
-		},
-	} ),
-] as AnyExtension[];
-
 export const InlineEditor = React.forwardRef(
 	(
 		{
@@ -90,16 +53,15 @@ export const InlineEditor = React.forwardRef(
 			attributes = {},
 			showToolbar = false,
 			autofocus = false,
-			stripStyle = true,
 			sx = {},
 			onBlur = undefined,
 			getInitialPopoverPosition = undefined,
+			documentContentSettings = 'inline*',
 		}: InlineEditorProps,
 		ref
 	) => {
 		const containerRef = React.useRef< HTMLDivElement >( null );
 		const popupState = usePopupState( { variant: 'popover', disableAutoFocus: true } );
-		const classList = ( attributes.class ?? '' ) + ' ' + ( stripStyle ? 'strip-styles' : '' );
 
 		const onSelectionEnd = ( view: EditorView, event: MouseEvent | KeyboardEvent ) => {
 			if ( ! view.state.selection.empty && ! popupState.isOpen ) {
@@ -131,7 +93,43 @@ export const InlineEditor = React.forwardRef(
 		};
 
 		const editor = useEditor( {
-			extensions,
+			extensions: [
+				Document.extend( {
+					content: documentContentSettings,
+				} ),
+				Paragraph.extend( {
+					renderHTML( { HTMLAttributes } ) {
+						return [ 'p', { ...HTMLAttributes, style: 'margin:0;padding:0;' }, 0 ];
+					},
+				} ),
+				Heading.extend( {
+					renderHTML( { node, HTMLAttributes } ) {
+						const level = this.options.levels.includes( node.attrs.level )
+							? node.attrs.level
+							: this.options.levels[ 0 ];
+						return [ `h${ level }`, { ...HTMLAttributes, style: 'margin:0;padding:0;' }, 0 ];
+					},
+				} ).configure( {
+					levels: [ 1, 2, 3, 4, 5, 6 ],
+				} ),
+				Link.configure( {
+					openOnClick: false,
+				} ),
+				Text,
+				Bold,
+				Italic,
+				Strike,
+				Superscript,
+				Subscript,
+				Underline,
+				HardBreak.extend( {
+					addKeyboardShortcuts() {
+						return {
+							Enter: () => this.editor.commands.setHardBreak(),
+						};
+					},
+				} ),
+			],
 			content: value,
 			onUpdate: ( { editor: updatedEditor } ) => {
 				const newValue = updatedEditor.getHTML();
@@ -150,7 +148,8 @@ export const InlineEditor = React.forwardRef(
 			editorProps: {
 				attributes: {
 					...attributes,
-					class: classList,
+					class: attributes.class ?? '',
+					role: 'textbox',
 				},
 				handleDOMEvents: showToolbar
 					? {
