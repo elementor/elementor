@@ -8,6 +8,9 @@ import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
 import { Trigger } from './controls/trigger';
+import { useInteractionsExtensions } from '../contexts/interactions-extensions-context';
+import { Replay } from './controls/replay';
+
 
 const DELIMITER = '-';
 
@@ -48,6 +51,7 @@ const buildInteractionDetails = ( interaction: string ) => {
 };
 
 export const InteractionDetails = ( { interaction, onChange }: InteractionDetailsProps ) => {
+	const { isProControlEnabled } = useInteractionsExtensions();
 	const interactionDetails = React.useMemo( () => {
 		return buildInteractionDetails( interaction );
 	}, [ interaction ] );
@@ -103,6 +107,18 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 					label={ __( 'Delay', 'elementor' ) }
 				/>
 			</Grid>
+			<Divider />
+            <Grid container spacing={1.5}>
+                <Replay 
+                    value={false}
+                    onChange={(v) => handleProFieldChange('replay', v)}
+                    disabled={!isProControlEnabled('replay')}
+                />
+            </Grid>
 		</PopoverContent>
 	);
+
+	function handleProFieldChange(field: string, value: any) {
+       console.log('field', field);
+    }
 };
