@@ -35,11 +35,9 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 	}
 
 	public function test_menu_config__matches_expected_snapshot_via_action() {
-		// Arrange
 		$this->act_as_admin();
 		$menu_data_provider = Menu_Data_Provider::instance();
 
-		// Act
 		do_action( 'elementor/editor-one/menu/register', $menu_data_provider );
 		$this->trigger_admin_only_registrations( $menu_data_provider );
 
@@ -48,7 +46,6 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 			'level4Flyouts' => $menu_data_provider->get_level4_flyout_data(),
 		] );
 
-		// Assert
 		if ( ! file_exists( self::SNAPSHOT_FILE ) ) {
 			$this->save_snapshot( $actual_config );
 			$this->markTestSkipped( 'Snapshot created. Run test again to verify.' );
@@ -59,16 +56,13 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 	}
 
 	public function test_menu_registration_action__registers_menu_items() {
-		// Arrange
 		$this->act_as_admin();
 		$menu_data_provider = Menu_Data_Provider::instance();
 
-		// Act
 		do_action( 'elementor/editor-one/menu/register', $menu_data_provider );
 		$this->trigger_admin_only_registrations( $menu_data_provider );
 		$flyout_data = $menu_data_provider->get_editor_flyout_data();
 
-		// Assert
 		$this->assertNotEmpty( $flyout_data['items'] );
 		$slugs = array_column( $flyout_data['items'], 'slug' );
 		$this->assertContains( 'elementor', $slugs );
@@ -77,17 +71,14 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 	}
 
 	public function test_menu_registration_action__registers_system_menu_with_children() {
-		// Arrange
 		$this->act_as_admin();
 		$menu_data_provider = Menu_Data_Provider::instance();
 
-		// Act
 		do_action( 'elementor/editor-one/menu/register', $menu_data_provider );
 		$this->trigger_admin_only_registrations( $menu_data_provider );
 		$flyout_data = $menu_data_provider->get_editor_flyout_data();
 		$level4_data = $menu_data_provider->get_level4_flyout_data();
 
-		// Assert
 		$slugs = array_column( $flyout_data['items'], 'slug' );
 		$this->assertContains( 'elementor-system', $slugs );
 		$this->assertArrayHasKey( Menu_Config::SYSTEM_GROUP_ID, $level4_data );
@@ -95,17 +86,14 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 	}
 
 	public function test_menu_registration_action__registers_templates_menu_with_children() {
-		// Arrange
 		$this->act_as_admin();
 		$menu_data_provider = Menu_Data_Provider::instance();
 
-		// Act
 		do_action( 'elementor/editor-one/menu/register', $menu_data_provider );
 		$this->trigger_admin_only_registrations( $menu_data_provider );
 		$flyout_data = $menu_data_provider->get_editor_flyout_data();
 		$level4_data = $menu_data_provider->get_level4_flyout_data();
 
-		// Assert
 		$slugs = array_column( $flyout_data['items'], 'slug' );
 		$this->assertContains( 'elementor-templates', $slugs );
 		$this->assertArrayHasKey( Menu_Config::TEMPLATES_GROUP_ID, $level4_data );
@@ -119,16 +107,13 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 	}
 
 	public function test_menu_registration_action__registers_promotions_menu_items() {
-		// Arrange
 		$this->act_as_admin();
 		$menu_data_provider = Menu_Data_Provider::instance();
 
-		// Act
 		do_action( 'elementor/editor-one/menu/register', $menu_data_provider );
 		$this->trigger_admin_only_registrations( $menu_data_provider );
 		$level4_data = $menu_data_provider->get_level4_flyout_data();
 
-		// Assert
 		$this->assertArrayHasKey( Menu_Config::CUSTOM_ELEMENTS_GROUP_ID, $level4_data );
 		$custom_elements_group = $level4_data[ Menu_Config::CUSTOM_ELEMENTS_GROUP_ID ];
 		$this->assertNotEmpty( $custom_elements_group['items'] );
@@ -139,16 +124,13 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 	}
 
 	public function test_menu_registration_action__level3_items_have_required_properties() {
-		// Arrange
 		$this->act_as_admin();
 		$menu_data_provider = Menu_Data_Provider::instance();
 
-		// Act
 		do_action( 'elementor/editor-one/menu/register', $menu_data_provider );
 		$this->trigger_admin_only_registrations( $menu_data_provider );
 		$flyout_data = $menu_data_provider->get_editor_flyout_data();
 
-		// Assert
 		foreach ( $flyout_data['items'] as $item ) {
 			$this->assertArrayHasKey( 'slug', $item );
 			$this->assertArrayHasKey( 'label', $item );
@@ -159,16 +141,13 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 	}
 
 	public function test_menu_registration_action__flyout_has_correct_parent_slug() {
-		// Arrange
 		$this->act_as_admin();
 		$menu_data_provider = Menu_Data_Provider::instance();
 
-		// Act
 		do_action( 'elementor/editor-one/menu/register', $menu_data_provider );
 		$this->trigger_admin_only_registrations( $menu_data_provider );
 		$flyout_data = $menu_data_provider->get_editor_flyout_data();
 
-		// Assert
 		$this->assertEquals( Menu_Config::EDITOR_MENU_SLUG, $flyout_data['parent_slug'] );
 	}
 
@@ -283,4 +262,3 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 		$instance_property->setValue( null, null );
 	}
 }
-

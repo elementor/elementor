@@ -3,7 +3,6 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
 use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Interceptor;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Slug_Normalizer;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
@@ -25,65 +24,40 @@ class Test_Legacy_Submenu_Interceptor extends PHPUnit_TestCase {
 		);
 	}
 
-	public function test_find_mapping_key__returns_direct_match() {
-		// Arrange
-		$item_slug = 'elementor-license';
-		$mapping = [
-			'elementor-license' => [ 'group' => 'system' ],
-			'other-item' => [ 'group' => 'other' ],
-		];
-
-		// Act
+	/**
+	 * @dataProvider data_find_mapping_key
+	 */
+	public function test_find_mapping_key( $item_slug, $mapping, $expected ) {
 		$result = $this->interceptor->find_mapping_key( $item_slug, $mapping );
-
-		// Assert
-		$this->assertEquals( 'elementor-license', $result );
+		$this->assertEquals( $expected, $result );
 	}
 
-	public function test_find_mapping_key__returns_decoded_match() {
-		// Arrange
-		$item_slug = 'edit.php?post_type=elementor_font&amp;test=1';
-		$mapping = [
-			'edit.php?post_type=elementor_font&test=1' => [ 'group' => 'custom-elements' ],
+	public function data_find_mapping_key() {
+		return [
+			'direct_match' => [
+				'elementor-license',
+				[ 'elementor-license' => [ 'group' => 'system' ], 'other-item' => [ 'group' => 'other' ] ],
+				'elementor-license',
+			],
+			'decoded_match' => [
+				'edit.php?post_type=elementor_font&amp;test=1',
+				[ 'edit.php?post_type=elementor_font&test=1' => [ 'group' => 'custom-elements' ] ],
+				'edit.php?post_type=elementor_font&test=1',
+			],
+			'normalized_match' => [
+				'http://example.com/wp-admin/edit.php?post_type=elementor_font',
+				[ 'edit.php?post_type=elementor_font' => [ 'group' => 'custom-elements' ] ],
+				'edit.php?post_type=elementor_font',
+			],
+			'no_match' => [
+				'unknown-slug',
+				[ 'elementor-license' => [ 'group' => 'system' ] ],
+				null,
+			],
 		];
-
-		// Act
-		$result = $this->interceptor->find_mapping_key( $item_slug, $mapping );
-
-		// Assert
-		$this->assertEquals( 'edit.php?post_type=elementor_font&test=1', $result );
-	}
-
-	public function test_find_mapping_key__returns_normalized_match() {
-		// Arrange
-		$item_slug = 'http://example.com/wp-admin/edit.php?post_type=elementor_font';
-		$mapping = [
-			'edit.php?post_type=elementor_font' => [ 'group' => 'custom-elements' ],
-		];
-
-		// Act
-		$result = $this->interceptor->find_mapping_key( $item_slug, $mapping );
-
-		// Assert
-		$this->assertEquals( 'edit.php?post_type=elementor_font', $result );
-	}
-
-	public function test_find_mapping_key__returns_null_for_no_match() {
-		// Arrange
-		$item_slug = 'unknown-slug';
-		$mapping = [
-			'elementor-license' => [ 'group' => 'system' ],
-		];
-
-		// Act
-		$result = $this->interceptor->find_mapping_key( $item_slug, $mapping );
-
-		// Assert
-		$this->assertNull( $result );
 	}
 
 	public function test_intercept_elementor_menu_items__registers_mapped_items_as_level4() {
-		// Arrange
 		$submenu_items = [
 			0 => [ 'License', 'manage_options', 'elementor-license', 'License' ],
 		];
@@ -96,15 +70,12 @@ class Test_Legacy_Submenu_Interceptor extends PHPUnit_TestCase {
 			->expects( $this->once() )
 			->method( 'register_menu' );
 
-		// Act
 		$result = $this->interceptor->intercept_elementor_menu_items( $submenu_items );
 
-		// Assert
 		$this->assertEmpty( $result );
 	}
 
 	public function test_intercept_elementor_menu_items__registers_unmapped_items_as_level3() {
-		// Arrange
 		$submenu_items = [
 			0 => [ 'Custom Plugin', 'manage_options', 'custom-plugin-slug', 'Custom Plugin' ],
 		];
@@ -117,15 +88,12 @@ class Test_Legacy_Submenu_Interceptor extends PHPUnit_TestCase {
 			->expects( $this->once() )
 			->method( 'register_menu' );
 
-		// Act
 		$result = $this->interceptor->intercept_elementor_menu_items( $submenu_items );
 
-		// Assert
 		$this->assertEmpty( $result );
 	}
 
 	public function test_intercept_elementor_menu_items__skips_already_registered_items() {
-		// Arrange
 		$submenu_items = [
 			0 => [ 'Already Registered', 'manage_options', 'existing-item', 'Already Registered' ],
 		];
@@ -138,26 +106,20 @@ class Test_Legacy_Submenu_Interceptor extends PHPUnit_TestCase {
 			->expects( $this->never() )
 			->method( 'register_menu' );
 
-		// Act
 		$result = $this->interceptor->intercept_elementor_menu_items( $submenu_items );
 
-		// Assert
 		$this->assertCount( 1, $result );
 	}
 
 	public function test_intercept_elementor_menu_items__handles_empty_array() {
-		// Arrange
 		$submenu_items = [];
 
-		// Act
 		$result = $this->interceptor->intercept_elementor_menu_items( $submenu_items );
 
-		// Assert
 		$this->assertEmpty( $result );
 	}
 
 	public function test_intercept_templates_menu_items__registers_items_with_templates_group() {
-		// Arrange
 		$submenu_items = [
 			0 => [ 'Popups', 'manage_options', 'e-popups', 'Popups' ],
 		];
@@ -170,15 +132,12 @@ class Test_Legacy_Submenu_Interceptor extends PHPUnit_TestCase {
 			->expects( $this->once() )
 			->method( 'register_menu' );
 
-		// Act
 		$result = $this->interceptor->intercept_templates_menu_items( $submenu_items );
 
-		// Assert
 		$this->assertEmpty( $result );
 	}
 
 	public function test_intercept_templates_menu_items__removes_already_registered_items() {
-		// Arrange
 		$submenu_items = [
 			0 => [ 'Already Registered', 'manage_options', 'existing-template', 'Already Registered' ],
 		];
@@ -191,26 +150,20 @@ class Test_Legacy_Submenu_Interceptor extends PHPUnit_TestCase {
 			->expects( $this->never() )
 			->method( 'register_menu' );
 
-		// Act
 		$result = $this->interceptor->intercept_templates_menu_items( $submenu_items );
 
-		// Assert
 		$this->assertEmpty( $result );
 	}
 
 	public function test_intercept_templates_menu_items__handles_empty_array() {
-		// Arrange
 		$submenu_items = [];
 
-		// Act
 		$result = $this->interceptor->intercept_templates_menu_items( $submenu_items );
 
-		// Assert
 		$this->assertEmpty( $result );
 	}
 
 	public function test_intercept_elementor_menu_items__skips_items_with_empty_slug() {
-		// Arrange
 		$submenu_items = [
 			0 => [ 'No Slug', 'manage_options', '', 'No Slug' ],
 		];
@@ -219,11 +172,8 @@ class Test_Legacy_Submenu_Interceptor extends PHPUnit_TestCase {
 			->expects( $this->never() )
 			->method( 'register_menu' );
 
-		// Act
 		$result = $this->interceptor->intercept_elementor_menu_items( $submenu_items );
 
-		// Assert
 		$this->assertCount( 1, $result );
 	}
 }
-

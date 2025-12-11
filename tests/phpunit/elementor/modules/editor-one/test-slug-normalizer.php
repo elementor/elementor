@@ -14,199 +14,54 @@ class Test_Slug_Normalizer extends PHPUnit_TestCase {
 		$this->normalizer = new Slug_Normalizer();
 	}
 
-	public function test_normalize__returns_non_url_slug_unchanged() {
-		// Arrange
-		$slug = 'elementor-settings';
-
-		// Act
+	/**
+	 * @dataProvider data_normalize
+	 */
+	public function test_normalize( $slug, $expected ) {
 		$result = $this->normalizer->normalize( $slug );
-
-		// Assert
-		$this->assertEquals( 'elementor-settings', $result );
+		$this->assertEquals( $expected, $result );
 	}
 
-	public function test_normalize__returns_path_prefixed_slug_unchanged() {
-		// Arrange
-		$slug = 'edit.php?post_type=elementor_library';
-
-		// Act
-		$result = $this->normalizer->normalize( $slug );
-
-		// Assert
-		$this->assertEquals( 'edit.php?post_type=elementor_library', $result );
+	public function data_normalize() {
+		return [
+			'non_url_slug' => [ 'elementor-settings', 'elementor-settings' ],
+			'path_prefixed_slug' => [ 'edit.php?post_type=elementor_library', 'edit.php?post_type=elementor_library' ],
+			'http_url_basename' => [ 'https://example.com/wp-admin/admin.php', 'admin.php' ],
+			'http_url_query' => [ 'https://example.com/wp-admin/admin.php?page=elementor', 'admin.php?page=elementor' ],
+			'http_url_fragment' => [ 'https://example.com/wp-admin/admin.php#section', 'admin.php#section' ],
+			'http_url_query_fragment' => [ 'https://example.com/wp-admin/admin.php?page=elementor#section', 'admin.php?page=elementor#section' ],
+			'http_no_path' => [ 'http://example.com', '' ],
+			'empty_string' => [ '', '' ],
+			'https_url' => [ 'https://secure.example.com/wp-admin/edit.php?post_type=page', 'edit.php?post_type=page' ],
+		];
 	}
 
-	public function test_normalize__extracts_basename_from_http_url() {
-		// Arrange
-		$slug = 'https://example.com/wp-admin/admin.php';
-
-		// Act
-		$result = $this->normalizer->normalize( $slug );
-
-		// Assert
-		$this->assertEquals( 'admin.php', $result );
-	}
-
-	public function test_normalize__preserves_query_string_from_http_url() {
-		// Arrange
-		$slug = 'https://example.com/wp-admin/admin.php?page=elementor';
-
-		// Act
-		$result = $this->normalizer->normalize( $slug );
-
-		// Assert
-		$this->assertEquals( 'admin.php?page=elementor', $result );
-	}
-
-	public function test_normalize__preserves_fragment_from_http_url() {
-		// Arrange
-		$slug = 'https://example.com/wp-admin/admin.php#section';
-
-		// Act
-		$result = $this->normalizer->normalize( $slug );
-
-		// Assert
-		$this->assertEquals( 'admin.php#section', $result );
-	}
-
-	public function test_normalize__preserves_query_and_fragment_from_http_url() {
-		// Arrange
-		$slug = 'https://example.com/wp-admin/admin.php?page=elementor#section';
-
-		// Act
-		$result = $this->normalizer->normalize( $slug );
-
-		// Assert
-		$this->assertEquals( 'admin.php?page=elementor#section', $result );
-	}
-
-	public function test_normalize__handles_http_url_without_path() {
-		// Arrange
-		$slug = 'http://example.com';
-
-		// Act
-		$result = $this->normalizer->normalize( $slug );
-
-		// Assert
-		$this->assertEquals( '', $result );
-	}
-
-	public function test_normalize__handles_empty_string() {
-		// Arrange
-		$slug = '';
-
-		// Act
-		$result = $this->normalizer->normalize( $slug );
-
-		// Assert
-		$this->assertEquals( '', $result );
-	}
-
-	public function test_normalize__handles_https_url() {
-		// Arrange
-		$slug = 'https://secure.example.com/wp-admin/edit.php?post_type=page';
-
-		// Act
-		$result = $this->normalizer->normalize( $slug );
-
-		// Assert
-		$this->assertEquals( 'edit.php?post_type=page', $result );
-	}
-
-	public function test_is_excluded__returns_true_for_exact_match() {
-		// Arrange
-		$item_slug = 'elementor-settings';
-		$excluded_slugs = [ 'elementor-settings', 'elementor-tools' ];
-
-		// Act
+	/**
+	 * @dataProvider data_is_excluded
+	 */
+	public function test_is_excluded( $item_slug, $excluded_slugs, $expected ) {
 		$result = $this->normalizer->is_excluded( $item_slug, $excluded_slugs );
-
-		// Assert
-		$this->assertTrue( $result );
+		$this->assertEquals( $expected, $result );
 	}
 
-	public function test_is_excluded__returns_false_when_not_in_list() {
-		// Arrange
-		$item_slug = 'elementor-other';
-		$excluded_slugs = [ 'elementor-settings', 'elementor-tools' ];
-
-		// Act
-		$result = $this->normalizer->is_excluded( $item_slug, $excluded_slugs );
-
-		// Assert
-		$this->assertFalse( $result );
-	}
-
-	public function test_is_excluded__returns_true_for_normalized_match() {
-		// Arrange
-		$item_slug = 'https://example.com/wp-admin/admin.php?page=elementor';
-		$excluded_slugs = [ 'admin.php?page=elementor' ];
-
-		// Act
-		$result = $this->normalizer->is_excluded( $item_slug, $excluded_slugs );
-
-		// Assert
-		$this->assertTrue( $result );
-	}
-
-	public function test_is_excluded__returns_false_for_empty_excluded_list() {
-		// Arrange
-		$item_slug = 'elementor-settings';
-		$excluded_slugs = [];
-
-		// Act
-		$result = $this->normalizer->is_excluded( $item_slug, $excluded_slugs );
-
-		// Assert
-		$this->assertFalse( $result );
-	}
-
-	public function test_is_excluded__checks_exact_before_normalized() {
-		// Arrange
-		$item_slug = 'edit.php?post_type=elementor_library';
-		$excluded_slugs = [ 'edit.php?post_type=elementor_library' ];
-
-		// Act
-		$result = $this->normalizer->is_excluded( $item_slug, $excluded_slugs );
-
-		// Assert
-		$this->assertTrue( $result );
-	}
-
-	public function test_is_excluded__handles_special_characters() {
-		// Arrange
-		$item_slug = 'edit-tags.php?taxonomy=elementor_library_category&post_type=elementor_library';
-		$excluded_slugs = [ 'edit-tags.php?taxonomy=elementor_library_category&post_type=elementor_library' ];
-
-		// Act
-		$result = $this->normalizer->is_excluded( $item_slug, $excluded_slugs );
-
-		// Assert
-		$this->assertTrue( $result );
-	}
-
-	public function test_is_excluded__handles_html_encoded_characters() {
-		// Arrange
-		$item_slug = 'edit-tags.php?taxonomy=elementor_library_category&amp;post_type=elementor_library';
-		$excluded_slugs = [ 'edit-tags.php?taxonomy=elementor_library_category&amp;post_type=elementor_library' ];
-
-		// Act
-		$result = $this->normalizer->is_excluded( $item_slug, $excluded_slugs );
-
-		// Assert
-		$this->assertTrue( $result );
-	}
-
-	public function test_is_excluded__returns_false_for_partial_match() {
-		// Arrange
-		$item_slug = 'elementor-settings-advanced';
-		$excluded_slugs = [ 'elementor-settings' ];
-
-		// Act
-		$result = $this->normalizer->is_excluded( $item_slug, $excluded_slugs );
-
-		// Assert
-		$this->assertFalse( $result );
+	public function data_is_excluded() {
+		return [
+			'exact_match' => [ 'elementor-settings', [ 'elementor-settings', 'elementor-tools' ], true ],
+			'not_in_list' => [ 'elementor-other', [ 'elementor-settings', 'elementor-tools' ], false ],
+			'normalized_match' => [ 'https://example.com/wp-admin/admin.php?page=elementor', [ 'admin.php?page=elementor' ], true ],
+			'empty_excluded' => [ 'elementor-settings', [], false ],
+			'exact_before_normalized' => [ 'edit.php?post_type=elementor_library', [ 'edit.php?post_type=elementor_library' ], true ],
+			'special_chars' => [
+				'edit-tags.php?taxonomy=elementor_library_category&post_type=elementor_library',
+				[ 'edit-tags.php?taxonomy=elementor_library_category&post_type=elementor_library' ],
+				true,
+			],
+			'html_encoded' => [
+				'edit-tags.php?taxonomy=elementor_library_category&amp;post_type=elementor_library',
+				[ 'edit-tags.php?taxonomy=elementor_library_category&amp;post_type=elementor_library' ],
+				true,
+			],
+			'partial_match' => [ 'elementor-settings-advanced', [ 'elementor-settings' ], false ],
+		];
 	}
 }
-
