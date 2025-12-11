@@ -39,7 +39,6 @@ class Props_Parser {
 
 			$value = $props[ $key ] ?? null;
 
-			// Migrate prop type before validation
 			if ( ! is_null( $value ) ) {
 				$value = Prop_Type_Migrator::migrate( $value, $prop_type );
 			}
