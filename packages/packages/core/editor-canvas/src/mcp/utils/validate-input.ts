@@ -76,7 +76,11 @@ export const validateInput = {
 			if ( typeof ( customCssValue as Record< string, unknown > ).value !== 'string' ) {
 				appendInvalidCustomCssErr();
 			}
-		} else if ( typeof customCssValue !== 'string' && typeof customCssValue !== 'undefined' ) {
+		} else if (
+			typeof customCssValue !== 'string' &&
+			typeof customCssValue !== 'undefined' &&
+			customCssValue !== null
+		) {
 			appendInvalidCustomCssErr();
 		}
 		return result;

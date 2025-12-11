@@ -47,8 +47,11 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 			const propertyRawSchema = styleSchema[ stylePropName ];
 			if ( stylePropName === 'custom_css' ) {
 				let customCssValue = propertyMapValue[ stylePropName ] as Record< string, unknown > | string;
-				if ( typeof customCssValue === 'object' && customCssValue.value ) {
+				if ( typeof customCssValue === 'object' && customCssValue && customCssValue.value ) {
 					customCssValue = String( customCssValue.value );
+				}
+				if ( ! customCssValue ) {
+					customCssValue = '';
 				}
 				customCss = {
 					raw: btoa( customCssValue as string ),
