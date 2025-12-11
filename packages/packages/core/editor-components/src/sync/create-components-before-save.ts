@@ -48,6 +48,7 @@ async function createComponents(
 			uid: component.uid,
 			title: component.name,
 			elements: component.elements,
+			settings: component.overridableProps ? { overridable_props: component.overridableProps } : undefined,
 		} ) ),
 	} );
 

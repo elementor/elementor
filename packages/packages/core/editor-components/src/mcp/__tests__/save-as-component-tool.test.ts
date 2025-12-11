@@ -1,7 +1,7 @@
 import { getContainer, type V1Element } from '@elementor/editor-elements';
 
 import { createUnpublishedComponent } from '../../store/actions/create-unpublished-component';
-import { ERROR_MESSAGES, handleSaveAsComponent, VALID_ELEMENT_TYPES } from '../save-as-component-tool';
+import { ERROR_MESSAGES, handleSaveAsComponent } from '../save-as-component-tool';
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '@elementor/editor-mcp', () => ( {
@@ -17,6 +17,7 @@ type MockContainer = Pick< V1Element, 'id' | 'model' >;
 const TEST_ELEMENT_ID = 'test-element-123';
 const TEST_COMPONENT_NAME = 'My Test Component';
 const TEST_COMPONENT_UID = 'component-1234567890-abc123';
+const VALID_ELEMENT_TYPES = ['e-div-block', 'e-flexbox', 'e-tabs'];
 
 describe( 'save-as-component-tool handler', () => {
 	beforeEach( () => {
@@ -78,7 +79,7 @@ describe( 'save-as-component-tool handler', () => {
 					element_id: TEST_ELEMENT_ID,
 					component_name: TEST_COMPONENT_NAME,
 				} )
-			).rejects.toThrow( ERROR_MESSAGES.ELEMENT_NOT_ONE_OF_TYPES );
+			).rejects.toThrow( ERROR_MESSAGES.ELEMENT_NOT_ONE_OF_TYPES( VALID_ELEMENT_TYPES ) );
 			expect( mockCreateUnpublishedComponent ).not.toHaveBeenCalled();
 		} );
 

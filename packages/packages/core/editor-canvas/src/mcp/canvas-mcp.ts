@@ -1,5 +1,6 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
+import { initDocumentStructureResource } from './resources/document-structure-resource';
 import { initWidgetsSchemaResource } from './resources/widgets-schema-resource';
 import { initBuildCompositionsTool } from './tools/build-composition/tool';
 import { initConfigureElementTool } from './tools/configure-element/tool';
@@ -11,6 +12,7 @@ export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
 		'Everything related to creative design, layout, styling and building the pages, specifically element of type "widget"'
 	);
 	initWidgetsSchemaResource( reg );
+	initDocumentStructureResource( reg );
 	initBuildCompositionsTool( reg );
 	initGetElementConfigTool( reg );
 	initConfigureElementTool( reg );

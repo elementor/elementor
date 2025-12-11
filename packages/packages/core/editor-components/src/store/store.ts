@@ -63,9 +63,11 @@ export const slice = createSlice( {
 			}
 		},
 		load: ( state, { payload }: PayloadAction< PublishedComponent[] > ) => {
+			console.log( 'loading components', payload );
 			state.data = payload;
 		},
 		addUnpublished: ( state, { payload }: PayloadAction< UnpublishedComponent > ) => {
+			console.log( 'adding unpublished component', payload );
 			state.unpublishedData.unshift( payload );
 		},
 		resetUnpublished: ( state ) => {
@@ -171,6 +173,8 @@ export const selectOverridableProps = createSelector(
 		if ( ! component ) {
 			return undefined;
 		}
+
+		console.log( 'component when getting overridable props', component );
 
 		return component.overridableProps ?? DEFAULT_OVERRIDABLE_PROPS;
 	}

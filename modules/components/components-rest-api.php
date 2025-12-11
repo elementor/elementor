@@ -7,6 +7,7 @@ use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Components\Documents\Component;
+use Elementor\Modules\Components\OverridableProps\Component_Overridable_Props_Parser;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -89,6 +90,10 @@ class Components_REST_API {
 									'items' => [
 										'type' => 'object',
 									],
+								],
+								'settings' => [
+									'type' => 'object',
+									'required' => false,
 								],
 							],
 						],
@@ -275,12 +280,13 @@ class Components_REST_API {
 			$title = sanitize_text_field( $item['title'] );
 			$content = $item['elements'];
 			$uid = $item['uid'];
+			$settings = isset( $item['settings'] ) ? $this->parse_settings( $item['settings'] ) : [];
 
 			$status = Document::STATUS_AUTOSAVE === $save_status
 				? Document::STATUS_DRAFT
 				: $save_status;
 
-			$component_id = $this->get_repository()->create( $title, $content, $status, $uid );
+			$component_id = $this->get_repository()->create( $title, $content, $status, $uid, $settings );
 
 			return [ $uid => $component_id ];
 		} );
@@ -435,12 +441,36 @@ class Components_REST_API {
 		}
 		return Response_Builder::make( $result )->build();
 	}
+
+	private function parse_settings( array $settings ): array {
+		$result = [];
+
+		if ( empty( $settings ) ) {
+			return $result;
+		}
+
+		if ( isset( $settings['overridable_props'] ) ) {
+			$parser = Component_Overridable_Props_Parser::make();
+			$overridable_props_result = $parser->parse( $settings['overridable_props'] );
+
+			if ( ! $overridable_props_result->is_valid() ) {
+				throw new \Exception(
+					esc_html( 'Validation failed for overridable_props: ' . $overridable_props_result->errors()->to_string() )
+				);
+			}
+
+			$result['overridable_props'] = $overridable_props_result->unwrap();
+		}
+
+		return $result;
+	}
+
 	private function route_wrapper( callable $cb ) {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
 			return Error_Builder::make( 'unexpected_error' )
-				->set_message( __( 'Something went wrong', 'elementor' ) )
+				->set_message( __( $e->getMessage(), 'elementor' ) )
 				->build();
 		}
 

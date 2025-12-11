@@ -12,6 +12,9 @@ export type CreateComponentPayload = {
 		uid: string;
 		title: string;
 		elements: V1ElementData[];
+		settings?: {
+			overridable_props?: OverridableProps;
+		};
 	} >;
 };
 
