@@ -7,7 +7,7 @@ export const STUBS = {
 		settings: {},
 		default: null,
 		meta: {},
-		dependencies: null,
+		dependencies: undefined,
 		initial_value: null,
 	},
 	color: {
@@ -28,7 +28,7 @@ export const STUBS = {
 				settings: {
 					required: true,
 				},
-				dependencies: null,
+				dependencies: undefined,
 				initial_value: {
 					$$type: 'color',
 					value: 'rgba(0, 0, 0, 1)',
@@ -40,11 +40,11 @@ export const STUBS = {
 				default: null,
 				meta: {},
 				settings: {},
-				dependencies: null,
+				dependencies: undefined,
 				initial_value: null,
 			},
 		},
-		dependencies: null,
+		dependencies: undefined,
 		initial_value: {
 			$$type: 'color',
 			value: 'rgba(0, 0, 0, 1)',
@@ -61,7 +61,7 @@ export const STUBS = {
 		settings: {
 			enum: [ 'center', 'start', 'end', 'space-between', 'space-around', 'space-evenly' ],
 		},
-		dependencies: null,
+		dependencies: undefined,
 		initial_value: null,
 	},
 	background: {

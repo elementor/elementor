@@ -35,7 +35,7 @@ function convertPlainPropType(
 	const schema = { ...baseSchema };
 
 	if ( ! propType.kind ) {
-		throw new Error( `PropType kind is undefined for propType with key: ${ propType.key }` );
+		throw new Error( `PropType kind is undefined for propType with key: ${ propType?.['key'] ?? 'unknown' }` );
 	}
 
 	const enumValues = ( propType.settings?.enum || [] ) as string[] | number[];
