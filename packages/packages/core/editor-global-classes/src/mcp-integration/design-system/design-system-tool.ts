@@ -1,8 +1,9 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { service } from '@elementor/editor-variables';
+import { service, GLOBAL_VARIABLES_URI } from '@elementor/editor-variables';
 import { z } from '@elementor/schema';
 
 import { handler, inputSchema as globalClassInputSchema } from '../mcp-create-global-class';
+import { GLOBAL_CLASSES_URI } from '../classes-resource';
 
 export const initDesignSystemTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool } = reg;
@@ -95,6 +96,10 @@ Before you create any class, make sure there is not already an existing class th
 Before creating global variables, read the list, in many cases there are already existing variables that can be re-used. The list is available at resource uri elementor://global-variables
 `,
 		schema,
+		requiredResources: [
+			{ description: 'Global variables', uri: GLOBAL_VARIABLES_URI },
+			{ description: 'Global classes', uri: GLOBAL_CLASSES_URI },
+		],
 		handler: async ( params, reqHandler ) => {
 			const { globalClasses, globalVariables } = params;
 			let count = 0;
