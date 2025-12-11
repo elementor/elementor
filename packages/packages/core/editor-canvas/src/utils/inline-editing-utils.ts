@@ -8,7 +8,7 @@ const WIDGET_PROPERTY_MAP: Record< string, string > = {
 
 const EXPERIMENT_KEY = 'v4-inline-text-editing';
 
-export const shouldRenderInlineEditingView = ( elementType: string ) => {
+export const shouldRenderInlineEditingView = ( elementType: string ): boolean => {
 	return elementType in WIDGET_PROPERTY_MAP && isExperimentActive( EXPERIMENT_KEY );
 };
 

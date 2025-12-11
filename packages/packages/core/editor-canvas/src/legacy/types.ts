@@ -18,13 +18,15 @@ export type LegacyWindow = Window & {
 		elementsManager: {
 			registerElementType: ( type: ElementType ) => void;
 		};
-		$preview: [
-			{
-				contentWindow: {
-					dispatchEvent: ( event: Event ) => void;
-				};
-			},
-		];
+		$preview: JQueryElement &
+			[
+				{
+					contentWindow: {
+						dispatchEvent: ( event: Event ) => void;
+					};
+				},
+			];
+		$previewWrapper: JQueryElement;
 	};
 };
 

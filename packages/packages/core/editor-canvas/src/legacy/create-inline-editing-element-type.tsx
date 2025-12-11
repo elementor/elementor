@@ -14,13 +14,13 @@ import { getHtmlPropType, getInlineEditablePropertyName, getWidgetType } from '.
 import { type CreateTemplatedElementTypeOptions, createTemplatedElementView } from './create-templated-element-type';
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
 
+const legacyWindow = window as unknown as LegacyWindow;
+
 export function createInlineEditingElementType( {
 	type,
 	renderer,
 	element,
 }: CreateTemplatedElementTypeOptions ): typeof ElementType {
-	const legacyWindow = window as unknown as LegacyWindow;
-
 	return class extends legacyWindow.elementor.modules.elements.types.Widget {
 		getType() {
 			return type;
@@ -49,22 +49,25 @@ export function createInlineEditingElementView( {
 
 	return class extends TemplatedView {
 		inlineEditorRoot: Root | null = null;
+		handlerAttached = false;
 
 		render() {
 			if ( this.inlineEditorRoot ) {
 				this.resetInlineEditorRoot();
 			}
 
-			if ( ! this.isValueDynamic() ) {
+			if ( ! this.isValueDynamic() && ! this.handlerAttached ) {
 				this.$el.on( 'dblclick', '*', this.handleRenderInlineEditor.bind( this ) );
+				this.handlerAttached = true;
 			}
 
 			TemplatedView.prototype.render.apply( this );
 		}
 
 		handleRenderInlineEditor( event: Event ) {
-			event.stopImmediatePropagation();
+			event.stopPropagation();
 			this.$el.off( 'dblclick', '*' );
+			this.handlerAttached = false;
 
 			if ( ! this.isValueDynamic() ) {
 				this.renderInlineEditor();
@@ -72,84 +75,8 @@ export function createInlineEditingElementView( {
 		}
 
 		handleUnmountInlineEditor( event: Event ) {
-			event.stopImmediatePropagation();
+			event.stopPropagation();
 			this.unmountInlineEditor();
-		}
-
-		renderInlineEditor() {
-			const prop = getHtmlPropType( this.container );
-			const defaultValue = ( prop?.default as StringPropValue | null )?.value ?? '';
-			const settingKey = getInlineEditablePropertyName( this.container );
-			const settingValue =
-				htmlPropTypeUtil.extract( this.model.get( 'settings' )?.get( settingKey ) ?? null ) ??
-				htmlPropTypeUtil.extract( prop?.default ?? null ) ??
-				defaultValue ??
-				'';
-			const classes = this.el?.children?.[ 0 ]?.classList.toString();
-
-			const setValue = ( value: string ) => {
-				this.model.get( 'settings' )?.set( settingKey, htmlPropTypeUtil.create( value ) );
-			};
-
-			this.$el.html( '' );
-
-			if ( ! this.inlineEditorRoot ) {
-				this.inlineEditorRoot = createRoot( this.el );
-			} else {
-				this.resetInlineEditorRoot();
-			}
-
-			const formatValue = () => {
-				const widgetType = getWidgetType( this.container );
-
-				if ( ! widgetType ) {
-					return settingValue;
-				}
-
-				const propsSchema = getElementType( widgetType )?.propsSchema;
-
-				if ( ! propsSchema?.tag ) {
-					return settingValue;
-				}
-
-				const expectedTag =
-					stringPropTypeUtil.extract( this.model.get( 'settings' ).get( 'tag' ) ?? null ) ??
-					stringPropTypeUtil.extract( propsSchema.tag.default ?? null );
-
-				if ( ! expectedTag ) {
-					return settingValue;
-				}
-
-				const pseudoElement = document.createElement( 'div' );
-
-				pseudoElement.innerHTML = settingValue;
-
-				const actualTag = pseudoElement.children?.[ 0 ]?.tagName;
-
-				if ( ! actualTag ) {
-					return `<${ expectedTag }>${ settingValue }</${ expectedTag }>`;
-				}
-
-				if ( actualTag.toUpperCase() === expectedTag.toUpperCase() ) {
-					return settingValue;
-				}
-
-				return `<${ expectedTag }>${ pseudoElement.children?.[ 0 ].innerHTML }</${ expectedTag }>`;
-			};
-
-			this.inlineEditorRoot.render(
-				<ThemeProvider>
-					<InlineEditor
-						attributes={ { class: classes } }
-						value={ formatValue() }
-						setValue={ setValue }
-						onBlur={ this.handleUnmountInlineEditor.bind( this ) }
-						autofocus
-						showToolbar
-						stripStyle={ false }
-					/>
-				</ThemeProvider>
-			);
 		}
 
 		onDestroy( ...args: unknown[] ) {
@@ -157,23 +84,161 @@ export function createInlineEditingElementView( {
 			TemplatedView.prototype.onDestroy.apply( this, args );
 		}
 
+		resetInlineEditorRoot() {
+			this.$el.off( 'dblclick', '*' );
+			this.handlerAttached = false;
+			this.inlineEditorRoot?.unmount?.();
+			this.inlineEditorRoot = null;
+		}
+
 		unmountInlineEditor() {
 			this.resetInlineEditorRoot();
 			this.render();
 		}
 
-		resetInlineEditorRoot() {
-			this.$el.off( 'dblclick', '*' );
-			this.inlineEditorRoot?.unmount?.();
-			this.inlineEditorRoot = null;
-		}
-
 		isValueDynamic() {
 			const settingKey = getInlineEditablePropertyName( this.container );
-
 			const propValue = this.model.get( 'settings' )?.get( settingKey ) as TransformablePropValue< string >;
 
 			return propValue?.$$type === 'dynamic';
+		}
+
+		getValue() {
+			const prop = getHtmlPropType( this.container );
+			const defaultValue = ( prop?.default as StringPropValue | null )?.value ?? '';
+			const settingKey = getInlineEditablePropertyName( this.container );
+
+			return (
+				htmlPropTypeUtil.extract( this.model.get( 'settings' )?.get( settingKey ) ?? null ) ??
+				htmlPropTypeUtil.extract( prop?.default ?? null ) ??
+				defaultValue ??
+				''
+			);
+		}
+
+		getWrappedValue() {
+			const settingValue = this.getValue();
+			const widgetType = getWidgetType( this.container );
+
+			if ( ! widgetType ) {
+				return settingValue;
+			}
+
+			const propsSchema = getElementType( widgetType )?.propsSchema;
+
+			if ( ! propsSchema?.tag ) {
+				return settingValue;
+			}
+
+			const expectedTag =
+				stringPropTypeUtil.extract( this.model.get( 'settings' ).get( 'tag' ) ?? null ) ??
+				stringPropTypeUtil.extract( propsSchema.tag.default ?? null );
+
+			if ( ! expectedTag ) {
+				return settingValue;
+			}
+
+			const pseudoElement = document.createElement( 'div' );
+
+			pseudoElement.innerHTML = settingValue;
+
+			if ( ! pseudoElement?.children.length ) {
+				return `<${ expectedTag }>${ settingValue }</${ expectedTag }>`;
+			}
+
+			const firstChild = pseudoElement.children[ 0 ];
+			const lastChild = Array.from( pseudoElement.children ).slice( -1 )[ 0 ];
+
+			if ( firstChild === lastChild && pseudoElement.textContent === firstChild.textContent ) {
+				return this.compareTag( firstChild, expectedTag )
+					? settingValue
+					: `<${ expectedTag }>${ firstChild.innerHTML }</${ expectedTag }>`;
+			}
+
+			if (
+				! settingValue.startsWith( `<${ expectedTag }` ) ||
+				! settingValue.endsWith( `</${ expectedTag }>` )
+			) {
+				return `<${ expectedTag }>${ settingValue }</${ expectedTag }>`;
+			}
+
+			if ( firstChild !== lastChild || ! this.compareTag( firstChild, expectedTag ) ) {
+				return `<${ expectedTag }>${ settingValue }</${ expectedTag }>`;
+			}
+
+			return settingValue;
+		}
+
+		ensureProperValue() {
+			const actualValue = this.getValue();
+			const wrappedValue = this.getWrappedValue();
+			const settingKey = getInlineEditablePropertyName( this.container );
+
+			if ( actualValue !== wrappedValue ) {
+				this.model.get( 'settings' )?.set( settingKey, htmlPropTypeUtil.create( wrappedValue ) );
+
+				return false;
+			}
+
+			return true;
+		}
+
+		compareTag( el: Element, tag: string ) {
+			return el.tagName.toUpperCase() === tag.toUpperCase();
+		}
+
+		renderInlineEditor() {
+			this.ensureProperValue();
+
+			const propValue = this.getValue();
+			const settingKey = getInlineEditablePropertyName( this.container );
+			const classes = this.el?.children?.[ 0 ]?.classList.toString();
+
+			const setValue = ( value: string | null ) => {
+				const valueToSave = value ? htmlPropTypeUtil.create( value ) : null;
+
+				this.model.get( 'settings' )?.set( settingKey, valueToSave );
+			};
+
+			this.$el.html( '' );
+
+			if ( this.inlineEditorRoot ) {
+				this.resetInlineEditorRoot();
+			}
+
+			this.inlineEditorRoot = createRoot( this.el );
+
+			const getInitialPopoverPosition = () => {
+				const positionFallback = { left: 0, top: 0 };
+
+				const iFrameElement = legacyWindow?.elementor?.$preview?.get( 0 );
+				const iFramePosition = iFrameElement?.getBoundingClientRect() ?? positionFallback;
+
+				const previewElement = legacyWindow?.elementor?.$previewWrapper?.get( 0 );
+				const previewPosition = previewElement
+					? { left: previewElement.scrollLeft, top: previewElement.scrollTop }
+					: positionFallback;
+
+				return {
+					left: iFramePosition.left + previewPosition.left,
+					top: iFramePosition.top + previewPosition.top,
+				};
+			};
+
+			this.inlineEditorRoot.render(
+				<ThemeProvider>
+					<InlineEditor
+						attributes={ { class: classes } }
+						value={ propValue }
+						setValue={ setValue }
+						onBlur={ this.handleUnmountInlineEditor.bind( this ) }
+						autofocus
+						showToolbar
+						stripStyle={ false }
+						getInitialPopoverPosition={ getInitialPopoverPosition }
+					/>
+				</ThemeProvider>
+			);
 		}
 	};
 }

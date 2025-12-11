@@ -16,7 +16,7 @@ on:
     - cron: '30 08 * * 0,1,2,3,4,5'
   workflow_dispatch:
     inputs:
-      fail_fast:
+      fail_fast:50
         type: boolean
         required: true
         description: 'Cancel tests when one of them fails'
@@ -47,7 +47,7 @@ jobs:
       github.event_name == 'workflow_dispatch'
     name: Build plugin
     uses: ./.github/workflows/build.yml
-  
+
   Playwright:
     name: Playwright test - ${{ matrix.shardIndex }} on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
