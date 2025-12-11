@@ -10,9 +10,7 @@ export const inputSchema = {
 				),
 			z.any().describe( "The property's value" )
 		)
-		.describe( 'An object record containing property names and their new values to be set on the element' )
-		.optional(),
-	elementType: z.string().describe( 'The type of the element to retreive the schema' ),
+		.describe( 'An object record containing property names and their new values to be set on the element' ),
 	elementId: z.string().describe( 'The unique id of the element to configure' ),
 };
 

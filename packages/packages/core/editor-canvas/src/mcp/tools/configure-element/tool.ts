@@ -1,3 +1,4 @@
+import { getContainer } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
 import { WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
@@ -13,17 +14,32 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 		description: configureElementToolPrompt,
 		schema,
 		outputSchema,
-		handler: ( { elementId, propertiesToChange, elementType } ) => {
+		handler: ( { elementId, propertiesToChange } ) => {
 			if ( ! propertiesToChange ) {
 				throw new Error(
 					'propertiesToChange is required to configure an element. Now that you have this information, ensure you have the schema and try again.'
 				);
 			}
+			if ( ! elementId ) {
+				throw new Error(
+					'elementId is required to configure an element. Now that you have this information, ensure you have the schema and try again.'
+				);
+			}
+
+			const elementData = getContainer( elementId );
+			const elementType = elementData?.model.get( 'widgetType' ) ?? elementData?.model.get( 'elType' );
+
+			if ( ! elementType ) {
+				throw new Error(
+					'You provided an invalid elementId. Now that you have this information, ensure you have the schema and try again.'
+				);
+			}
+
 			const toUpdate = Object.entries( propertiesToChange );
 			for ( const [ propertyName, propertyValue ] of toUpdate ) {
 				if ( ! propertyName && ! elementId && ! elementType ) {
 					throw new Error(
-						'propertyName, elementId, elementType are required to configure an element. If you want to retreive the schema, use the get-element-configuration-schema tool.'
+						'propertyName, elementId, elementType are required to configure an element. If you want to retrieve the schema, use the get-element-configuration-schema tool.'
 					);
 				}
 
