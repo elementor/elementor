@@ -1,11 +1,11 @@
 import {
-	Button,
 	Stack,
 	Box,
 	Tooltip,
 	Switch,
 	IconButton,
 	Typography,
+	Link,
 } from '@elementor/ui';
 import { HelpIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
@@ -41,18 +41,20 @@ export const WidgetsTable = ( {
 			<thead>
 				<tr>
 					<th className={ `manage-column sortable ${ getSortingIndicatorClasses( 'widget' ) }` }>
-						<Button
-							component="a"
-							href="#"
+						<Link
+							variant="button"
 							onClick={ ( event ) => {
 								event.preventDefault();
 								onSortingClicked( 'widget' );
 							} }
 							className="e-id-elementor-element-manager-button-sort-by-element"
-							variant="text"
 							color="secondary"
+							underline="none"
 							sx={ {
+								display: 'inline-flex',
+								alignItems: 'center',
 								color: 'var(--e-one-palette-text-primary)',
+								cursor: 'pointer',
 							} }
 						>
 							<span>{ __( 'Element', 'elementor' ) }</span>
@@ -60,7 +62,7 @@ export const WidgetsTable = ( {
 								<span className="sorting-indicator asc" aria-hidden="true"></span>
 								<span className="sorting-indicator desc" aria-hidden="true"></span>
 							</span>
-						</Button>
+						</Link>
 					</th>
 					<th>
 						<Typography variant="button" color="text.primary">
@@ -68,15 +70,14 @@ export const WidgetsTable = ( {
 						</Typography>
 					</th>
 					<th className={ `manage-column sortable ${ getSortingIndicatorClasses( 'usage' ) }` }>
-						<Button
-							component="a"
-							href="#"
+						<Link
 							onClick={ ( event ) => {
 								event.preventDefault();
 								onSortingClicked( 'usage' );
 							} }
 							className="e-id-elementor-element-manager-button-sort-by-usage"
-							variant="text"
+							variant="button"
+							underline="none"
 							color="secondary"
 							sx={ {
 								color: 'var(--e-one-palette-text-primary)',
@@ -87,7 +88,7 @@ export const WidgetsTable = ( {
 								<span className="sorting-indicator asc" aria-hidden="true"></span>
 								<span className="sorting-indicator desc" aria-hidden="true"></span>
 							</span>
-						</Button>
+						</Link>
 					</th>
 					<th>
 						<Typography variant="button" color="text.primary">
