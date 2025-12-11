@@ -8,7 +8,7 @@ import {
 } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
-import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI, BEST_PRACTICES_URI } from '../../resources/widgets-schema-resource';
+import { BEST_PRACTICES_URI, STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 import { doUpdateElementProperty } from '../../utils/do-update-element-property';
 import { validateInput } from '../../utils/validate-input';
 import { generatePrompt } from './prompt';
@@ -22,7 +22,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 		description: generatePrompt(),
 		schema,
 		requiredResources: [
-		    { description: 'Styles best practices', uri: BEST_PRACTICES_URI },
+			{ description: 'Styles best practices', uri: BEST_PRACTICES_URI },
 			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
 			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
 		],

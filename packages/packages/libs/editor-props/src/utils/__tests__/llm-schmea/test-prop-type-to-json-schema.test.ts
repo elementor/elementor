@@ -1,5 +1,3 @@
-import { valid } from 'semver';
-
 import type * as Types from '../../../types';
 import { propTypeToJsonSchema } from '../../props-to-llm-schema';
 import { STUBS } from '../../test-utils/stubs';
