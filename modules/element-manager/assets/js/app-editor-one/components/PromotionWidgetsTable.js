@@ -5,6 +5,13 @@ import {
 	Switch,
 	IconButton,
 	Typography,
+	Table,
+	TableHead,
+	TableBody,
+	TableRow,
+	TableCell,
+	TableContainer,
+	Paper,
 } from '@elementor/ui';
 import { HelpIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
@@ -45,17 +52,23 @@ export const PromotionWidgetsTable = ( { widgets, promotionData } ) => {
 					</Box>
 				</Stack>
 			</Box>
-			<Box>
-				<table className="wp-list-table widefat fixed striped table-view-list">
-					<thead>
-						<tr>
-							<th className="manage-column">
-								<span>{ __( 'Element', 'elementor' ) }</span>
-							</th>
-							<th>{ __( 'Status', 'elementor' ) }</th>
-							<th>{ __( 'Usage', 'elementor' ) }</th>
-							<th>{ __( 'Plugin', 'elementor' ) }</th>
-							<th>
+			<TableContainer component={ Paper } variant="outlined">
+				<Table size="small">
+					<TableHead>
+						<TableRow>
+							<TableCell sx={ { width: '200px' } }>
+								{ __( 'Element', 'elementor' ) }
+							</TableCell>
+							<TableCell sx={ { width: '80px' } }>
+								{ __( 'Status', 'elementor' ) }
+							</TableCell>
+							<TableCell>
+								{ __( 'Usage', 'elementor' ) }
+							</TableCell>
+							<TableCell>
+								{ __( 'Plugin', 'elementor' ) }
+							</TableCell>
+							<TableCell>
 								<Stack
 									direction="row"
 									justifyContent="flex-start"
@@ -74,38 +87,39 @@ export const PromotionWidgetsTable = ( { widgets, promotionData } ) => {
 										</Tooltip>
 									</Box>
 								</Stack>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
+							</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
 						{ widgets.map( ( widget ) => (
-							<tr key={ widget.name }>
-								<td>
-									<i
-										style={ { marginInlineEnd: '5px' } }
-										className={ widget.icon }
-									></i>
-									{ ' ' }
-									{ widget.title }
-								</td>
-								<td>
+							<TableRow key={ widget.name } hover>
+								<TableCell>
+									<Box sx={ { display: 'flex', alignItems: 'center' } }>
+										<i
+											style={ { marginInlineEnd: '8px' } }
+											className={ widget.icon }
+										></i>
+										{ widget.title }
+									</Box>
+								</TableCell>
+								<TableCell>
 									<Switch
 										checked={ false }
 										disabled={ true }
 										size="small"
 										className={ `e-id-elementor-element-manager-toggle-${ widget.name }` }
 									/>
-								</td>
-								<td></td>
-								<td>{ __( 'Elementor Pro', 'elementor' ) }</td>
-								<td>
+								</TableCell>
+								<TableCell></TableCell>
+								<TableCell>{ __( 'Elementor Pro', 'elementor' ) }</TableCell>
+								<TableCell>
 									<EditButtonDisabled widgetName={ widget.name } />
-								</td>
-							</tr>
+								</TableCell>
+							</TableRow>
 						) ) }
-					</tbody>
-				</table>
-			</Box>
+					</TableBody>
+				</Table>
+			</TableContainer>
 		</>
 	);
 };
@@ -123,4 +137,3 @@ PromotionWidgetsTable.propTypes = {
 		} ),
 	} ).isRequired,
 };
-

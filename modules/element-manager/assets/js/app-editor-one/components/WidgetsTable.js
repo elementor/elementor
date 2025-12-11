@@ -5,7 +5,14 @@ import {
 	Switch,
 	IconButton,
 	Typography,
-	Link,
+	Table,
+	TableHead,
+	TableBody,
+	TableRow,
+	TableCell,
+	TableSortLabel,
+	TableContainer,
+	Paper,
 } from '@elementor/ui';
 import { HelpIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
@@ -32,162 +39,147 @@ export const WidgetsTable = ( {
 } ) => {
 	const { manager_permissions: managerPermissions } = promotionData;
 
+	const sortingClasses = getSortingIndicatorClasses( 'widget' );
+	const isWidgetSorted = sortingClasses.includes( 'sorted' );
+	const widgetSortDirection = sortingClasses.includes( 'asc' ) ? 'asc' : 'desc';
+
+	const usageSortingClasses = getSortingIndicatorClasses( 'usage' );
+	const isUsageSorted = usageSortingClasses.includes( 'sorted' );
+	const usageSortDirection = usageSortingClasses.includes( 'asc' ) ? 'asc' : 'desc';
+
 	if ( ! widgets.length ) {
-		return <>{ __( 'No elements found.', 'elementor' ) }</>;
+		return (
+			<Typography color="text.secondary">
+				{ __( 'No elements found.', 'elementor' ) }
+			</Typography>
+		);
 	}
 
 	return (
-		<table className="wp-list-table widefat fixed striped table-view-list">
-			<thead>
-				<tr>
-					<th className={ `manage-column sortable ${ getSortingIndicatorClasses( 'widget' ) }` }>
-						<Link
-							variant="button"
-							onClick={ ( event ) => {
-								event.preventDefault();
-								onSortingClicked( 'widget' );
-							} }
-							className="e-id-elementor-element-manager-button-sort-by-element"
-							color="secondary"
-							underline="none"
-							sx={ {
-								display: 'inline-flex',
-								alignItems: 'center',
-								color: 'var(--e-one-palette-text-primary)',
-								cursor: 'pointer',
-							} }
-						>
-							<span>{ __( 'Element', 'elementor' ) }</span>
-							<span className="sorting-indicators">
-								<span className="sorting-indicator asc" aria-hidden="true"></span>
-								<span className="sorting-indicator desc" aria-hidden="true"></span>
-							</span>
-						</Link>
-					</th>
-					<th>
-						<Typography variant="button" color="text.primary">
+		<TableContainer component={ Paper } variant="outlined">
+			<Table size="small">
+				<TableHead>
+					<TableRow>
+						<TableCell sx={ { width: '300px' } }>
+							<TableSortLabel
+								active={ isWidgetSorted }
+								direction={ isWidgetSorted ? widgetSortDirection : 'asc' }
+								onClick={ () => onSortingClicked( 'widget' ) }
+								className="e-id-elementor-element-manager-button-sort-by-element"
+							>
+								{ __( 'Element', 'elementor' ) }
+							</TableSortLabel>
+						</TableCell>
+						<TableCell sx={ { width: '80px' } }>
 							{ __( 'Status', 'elementor' ) }
-						</Typography>
-					</th>
-					<th className={ `manage-column sortable ${ getSortingIndicatorClasses( 'usage' ) }` }>
-						<Link
-							onClick={ ( event ) => {
-								event.preventDefault();
-								onSortingClicked( 'usage' );
-							} }
-							className="e-id-elementor-element-manager-button-sort-by-usage"
-							variant="button"
-							underline="none"
-							color="secondary"
-							sx={ {
-								color: 'var(--e-one-palette-text-primary)',
-							} }
-						>
-							<span>{ __( 'Usage', 'elementor' ) }</span>
-							<span className="sorting-indicators">
-								<span className="sorting-indicator asc" aria-hidden="true"></span>
-								<span className="sorting-indicator desc" aria-hidden="true"></span>
-							</span>
-						</Link>
-					</th>
-					<th>
-						<Typography variant="button" color="text.primary">
+						</TableCell>
+						<TableCell>
+							<TableSortLabel
+								active={ isUsageSorted }
+								direction={ isUsageSorted ? usageSortDirection : 'asc' }
+								onClick={ () => onSortingClicked( 'usage' ) }
+								className="e-id-elementor-element-manager-button-sort-by-usage"
+							>
+								{ __( 'Usage', 'elementor' ) }
+							</TableSortLabel>
+						</TableCell>
+						<TableCell>
 							{ __( 'Plugin', 'elementor' ) }
-						</Typography>
-					</th>
-					<th>
-						<Stack
-							direction="row"
-							justifyContent="flex-start"
-							alignItems="center"
-							gap={ 1 }
-						>
-							<Box>
-								<Typography variant="button" color="text.primary">
+						</TableCell>
+						<TableCell>
+							<Stack
+								direction="row"
+								justifyContent="flex-start"
+								alignItems="center"
+								gap={ 1 }
+							>
+								<Box>
 									{ __( 'Permission', 'elementor' ) }
-								</Typography></Box>
-							<Box>
-								<Tooltip
-									placement="top"
-									title={ __( 'Choose which users will have access to each widget.', 'elementor' ) }
-								>
-									<IconButton size="small">
-										<HelpIcon fontSize="small" />
-									</IconButton>
-								</Tooltip>
-							</Box>
-							{ null === widgetsRoleRestrictions && (
-								<Box sx={ { marginInlineStart: '10px' } }>
-									<UpgradeButton
-										href={
-											promotionWidgets.length
-												? managerPermissions.pro.url
-												: managerPermissions.advanced.url
-										}
-										size="small"
-										text={
-											promotionWidgets.length
-												? managerPermissions.pro.text
-												: managerPermissions.advanced.text
-										}
-										className={ [ 'e-id-elementor-element-manager-button-upgrade-permissions', 'go-pro' ].join( ' ' ) }
-									/>
 								</Box>
-							) }
-						</Stack>
-					</th>
-				</tr>
-			</thead>
-			<tbody>
+								<Box>
+									<Tooltip
+										placement="top"
+										title={ __( 'Choose which users will have access to each widget.', 'elementor' ) }
+									>
+										<IconButton size="small">
+											<HelpIcon fontSize="small" />
+										</IconButton>
+									</Tooltip>
+								</Box>
+								{ null === widgetsRoleRestrictions && (
+									<Box sx={ { marginInlineStart: '10px' } }>
+										<UpgradeButton
+											href={
+												promotionWidgets.length
+													? managerPermissions.pro.url
+													: managerPermissions.advanced.url
+											}
+											size="small"
+											text={
+												promotionWidgets.length
+													? managerPermissions.pro.text
+													: managerPermissions.advanced.text
+											}
+											className={ [ 'e-id-elementor-element-manager-button-upgrade-permissions', 'go-pro' ].join( ' ' ) }
+										/>
+									</Box>
+								) }
+							</Stack>
+						</TableCell>
+					</TableRow>
+				</TableHead>
+				<TableBody>
 				{ widgets.map( ( widget ) => (
-					<tr key={ widget.name } data-key-id={ widget.name }>
-						<td>
-							<i
-								style={ {
-									marginInlineEnd: '5px',
-									marginInlineStart: '0',
-									display: 'inline-block',
-								} }
-								className={ widget.icon }
-							></i>
-							{ ' ' }
-							{ widget.title }
-						</td>
-						<td>
-							<Switch
-								color="secondary"
-								checked={ ! widgetsDisabled.includes( widget.name ) }
-								onChange={ ( event, checked ) => onToggleWidget( widget.name, checked ) }
-								size="small"
-								className={ `e-id-elementor-element-manager-toggle-${ widget.name }` }
-							/>
-						</td>
-						<td>
-							<UsageTimesColumn
-								widgetName={ widget.name }
-								usageData={ usageWidgets.data }
-								isLoading={ usageWidgets.isLoading }
-								getWidgetUsage={ getWidgetUsage }
-								onScanClick={ onScanUsage }
-							/>
-						</td>
-						<td>{ widget.plugin }</td>
-						<td>
-							{ null !== widgetsRoleRestrictions && ! widgetsDisabled.includes( widget.name ) ? (
-								<RolePermissions
-									widgetName={ widget.name }
-									roles={ roles }
-									widgetsRoleRestrictions={ widgetsRoleRestrictions }
-									setWidgetsRoleRestrictions={ setWidgetsRoleRestrictions }
+					<TableRow key={ widget.name } data-key-id={ widget.name } hover>
+							<TableCell>
+								<Box sx={ { display: 'flex', alignItems: 'center' } }>
+									<i
+										style={ {
+											marginInlineEnd: '8px',
+											marginInlineStart: '0',
+											display: 'inline-block',
+										} }
+										className={ widget.icon }
+									></i>
+									{ widget.title }
+								</Box>
+							</TableCell>
+							<TableCell>
+								<Switch
+									color="secondary"
+									checked={ ! widgetsDisabled.includes( widget.name ) }
+									onChange={ ( event, checked ) => onToggleWidget( widget.name, checked ) }
+									size="small"
+									className={ `e-id-elementor-element-manager-toggle-${ widget.name }` }
 								/>
-							) : (
-								<EditButtonDisabled />
-							) }
-						</td>
-					</tr>
-				) ) }
-			</tbody>
-		</table>
+							</TableCell>
+							<TableCell>
+								<UsageTimesColumn
+									widgetName={ widget.name }
+									usageData={ usageWidgets.data }
+									isLoading={ usageWidgets.isLoading }
+									getWidgetUsage={ getWidgetUsage }
+									onScanClick={ onScanUsage }
+								/>
+							</TableCell>
+							<TableCell>{ widget.plugin }</TableCell>
+							<TableCell>
+								{ null !== widgetsRoleRestrictions && ! widgetsDisabled.includes( widget.name ) ? (
+									<RolePermissions
+										widgetName={ widget.name }
+										roles={ roles }
+										widgetsRoleRestrictions={ widgetsRoleRestrictions }
+										setWidgetsRoleRestrictions={ setWidgetsRoleRestrictions }
+									/>
+								) : (
+									<EditButtonDisabled />
+								) }
+							</TableCell>
+						</TableRow>
+					) ) }
+				</TableBody>
+			</Table>
+		</TableContainer>
 	);
 };
 
@@ -201,7 +193,7 @@ const widgetShape = PropTypes.shape( {
 WidgetsTable.propTypes = {
 	widgets: PropTypes.arrayOf( widgetShape ).isRequired,
 	widgetsDisabled: PropTypes.arrayOf( PropTypes.string ).isRequired,
-	widgetsRoleRestrictions: PropTypes.object,
+	widgetsRoleRestrictions: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ),
 	setWidgetsRoleRestrictions: PropTypes.func.isRequired,
 	roles: PropTypes.array.isRequired,
 	promotionWidgets: PropTypes.arrayOf( widgetShape ).isRequired,
@@ -227,4 +219,3 @@ WidgetsTable.propTypes = {
 	getSortingIndicatorClasses: PropTypes.func.isRequired,
 	onSortingClicked: PropTypes.func.isRequired,
 };
-
