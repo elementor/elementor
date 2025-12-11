@@ -12,7 +12,7 @@ export const useQuotaPermissions = ( variableType: string ) => {
 	const hasQuota = limit > 0;
 
 	return {
-		canAdd: () => ! hasQuota && ! getLicenseInfo().hasPro,
-		canEdit: () => ! hasQuota && ! getLicenseInfo().hasPro,
+		canAdd: () => hasQuota || getLicenseInfo().hasPro,
+		canEdit: () => hasQuota || getLicenseInfo().hasPro,
 	};
 };

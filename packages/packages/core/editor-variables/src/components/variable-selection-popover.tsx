@@ -121,7 +121,7 @@ function RenderView( props: ViewProps ): React.ReactNode {
 				onAdd={ handlers.onAdd }
 				onEdit={ handlers.onEdit }
 				onSettings={ handlers.onSettings }
-				disabled={ userQuotaPremissions.canAdd() }
+				disabled={ ! userQuotaPremissions.canAdd() }
 			/>
 		);
 	}
