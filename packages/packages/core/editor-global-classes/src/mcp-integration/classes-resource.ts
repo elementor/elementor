@@ -1,9 +1,11 @@
 import { getMCPByDomain } from '@elementor/editor-mcp';
 
-export const GLOBAL_CLASSES_URI = 'elementor://classes';
+import { globalClassesStylesProvider } from '../global-classes-styles-provider';
+
+export const GLOBAL_CLASSES_URI = 'elementor://global-classes';
 
 export const initClassesResource = () => {
-	const { mcpServer } = getMCPByDomain( 'classes' );
+	const { mcpServer } = getMCPByDomain( 'canvas' );
 
 	mcpServer.resource(
 		'global-classes',
@@ -17,4 +19,8 @@ export const initClassesResource = () => {
 			};
 		}
 	);
+
+	globalClassesStylesProvider.subscribe( () => {
+		mcpServer.sendResourceListChanged();
+	} );
 };

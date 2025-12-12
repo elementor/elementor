@@ -11,6 +11,11 @@ tmp/
 data/languages/
 tests/data
 
+http-playground/
+
+data/languages
+tests/data
+
 # build outputs
 build/
 assets/css/

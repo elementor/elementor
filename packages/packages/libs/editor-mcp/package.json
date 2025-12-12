@@ -46,6 +46,7 @@
     "@elementor/schema": "3.35.0",
     "@modelcontextprotocol/sdk": "1.17.4",
     "@elementor/store": "3.35.0",
-    "@elementor/editor-v1-adapters": "3.35.0"
+    "@elementor/editor-v1-adapters": "3.35.0",
+    "zod-to-json-schema": "3.24.6"
   }
 }

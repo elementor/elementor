@@ -19,9 +19,9 @@ const VariableListSchema = {
 };
 
 export const initListVariablesTool = () => {
-	getMCPByDomain( 'variables' ).addTool( {
+	getMCPByDomain( 'canvas' ).addTool( {
 		name: 'list-global-variables',
-		description: `List editor global variables
+		description: `List the global variables
   
   ## When to use this tool:
   - When a user requests to see all available global variables in the Elementor editor.

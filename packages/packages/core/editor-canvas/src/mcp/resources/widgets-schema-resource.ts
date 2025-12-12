@@ -26,7 +26,7 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
 This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema, or in custom_css, depends on your needs.
 
-When applicable for styles, use the "custom_css" property for free-form CSS styling. This property accepts a string of CSS rules that will be applied directly to the element.
+When applicable for styles, apply style PropValues using the ${ STYLE_SCHEMA_URI }. Custom css is for Elementor PRO users and intended to support only new CSS features not yet available in the UI.
 The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.`,
 				},
 			],
@@ -56,7 +56,7 @@ The css string must follow standard CSS syntax, with properties and values separ
 					contents: [
 						{
 							uri: uri.toString(),
-							text: 'Free style inline CSS string of properties and their values. Applicable for a single element, only the properties and values are accepted. Use this as a last resort for properties that are not covered with the schema.',
+							text: 'Free style inline CSS string of properties and their values. Applicable for a single element, only the properties and values are accepted. Use this as a last resort for properties that are not covered with the schema. Do not use selectors, only the CSS content',
 						},
 					],
 				};
@@ -65,12 +65,12 @@ The css string must follow standard CSS syntax, with properties and values separ
 			if ( ! stylesSchema ) {
 				throw new Error( `No styles schema found for category: ${ category }` );
 			}
-			const cleanedupPropSchema = cleanupPropType( stylesSchema );
-			const asJson = Schema.propTypeToJsonSchema( cleanedupPropSchema as PropType );
+			const asJson = Schema.propTypeToJsonSchema( stylesSchema as PropType );
 			return {
 				contents: [
 					{
 						uri: uri.toString(),
+						mimeType: 'application/json',
 						text: JSON.stringify( asJson ),
 					},
 				],
@@ -104,9 +104,8 @@ The css string must follow standard CSS syntax, with properties and values separ
 			if ( ! propSchema ) {
 				throw new Error( `No prop schema found for element type: ${ widgetType }` );
 			}
-			const cleanedupPropSchema = cleanupPropSchema( propSchema );
 			const asJson = Object.fromEntries(
-				Object.entries( cleanedupPropSchema ).map( ( [ key, propType ] ) => [
+				Object.entries( propSchema ).map( ( [ key, propType ] ) => [
 					key,
 					Schema.propTypeToJsonSchema( propType ),
 				] )
@@ -120,7 +119,11 @@ The css string must follow standard CSS syntax, with properties and values separ
 				contents: [
 					{
 						uri: uri.toString(),
-						text: JSON.stringify( asJson ),
+						mimeType: 'application/json',
+						text: JSON.stringify( {
+							type: 'object',
+							properties: asJson,
+						} ),
 					},
 				],
 			};
