@@ -5,7 +5,7 @@ import WpAdminPage from '../pages/wp-admin-page';
 import { wpCli } from '../assets/wp-cli';
 import ImportTemplatesModal from '../pages/plugins/the-plus-addons/import-templates-modal';
 
-const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean }[] = [
+const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean, dependency?: string }[] = [
 	{ pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
 	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
 	{ pluginName: 'jetgridbuilder', installSource: 'api' },
@@ -15,7 +15,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'addon-elements-for-elementor-page-builder', installSource: 'api' },
 	{ pluginName: 'anywhere-elementor', installSource: 'api' },
 	{ pluginName: 'astra-sites', installSource: 'api', hasInstallationPage: true },
-	{ pluginName: 'connect-polylang-elementor', installSource: 'api' },
+	{ pluginName: 'connect-polylang-elementor', installSource: 'api', dependency: 'polylang' },
 	{ pluginName: 'dynamic-visibility-for-elementor', installSource: 'api' },
 	{ pluginName: 'elementskit-lite', installSource: 'api' },
 	{ pluginName: 'exclusive-addons-for-elementor', installSource: 'api', hasInstallationPage: true },
@@ -53,6 +53,9 @@ export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
 		test( `"${ plugin.pluginName }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
 			let pluginTechnicalName: string;
+			if ( plugin.dependency ) {
+				await apiRequests.installPlugin( page.context().request, plugin.dependency, true );
+			}
 			switch ( plugin.installSource ) {
 				case 'api':
 					pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );
