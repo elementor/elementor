@@ -83,8 +83,8 @@ jobs:
 
       - name: Install dependencies
         uses: ./.github/workflows/install-dependencies
-        env:
-          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.TEMP_DEVOPS_TOKEN }}"}}'
+        with:
+          composer_auth_token: ${{ secrets.TEMP_DEVOPS_TOKEN }}
 
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
