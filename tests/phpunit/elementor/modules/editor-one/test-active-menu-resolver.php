@@ -232,4 +232,31 @@ class Test_Active_Menu_Resolver extends PHPUnit_TestCase {
 		$this->assertEquals( 'elementor-custom-elements', $result['menu_slug'] );
 		$this->assertEquals( 'custom-fonts', $result['child_slug'] );
 	}
+
+	public function test_resolve__matches_popup_templates_page() {
+		$menu_items = [
+			[
+				'slug' => 'elementor-templates',
+				'url' => '/wp-admin/admin.php?page=elementor-templates',
+				'group_id' => 'templates-group',
+			],
+		];
+		$level4_groups = [
+			'templates-group' => [
+				'items' => [
+					[
+						'slug' => 'popup_templates',
+						'url' => '/wp-admin/admin.php?page=popup_templates',
+					],
+				],
+			],
+		];
+		$current_page = 'popup_templates';
+		$current_uri = '/wp-admin/admin.php?page=popup_templates';
+
+		$result = $this->resolver->resolve( $menu_items, $level4_groups, $current_page, $current_uri );
+
+		$this->assertEquals( 'elementor-templates', $result['menu_slug'] );
+		$this->assertEquals( 'popup_templates', $result['child_slug'] );
+	}
 }

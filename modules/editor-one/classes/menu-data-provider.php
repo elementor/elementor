@@ -191,7 +191,16 @@ class Menu_Data_Provider {
 			}
 		}
 
-		return array_values( $slugs );
+		$allowed_prefixes = [ 'elementor', 'e-', 'popup_templates' ];
+
+		return array_values( array_filter( $slugs, function( string $slug ) use ( $allowed_prefixes ): bool {
+			foreach ( $allowed_prefixes as $prefix ) {
+				if ( 0 === strpos( $slug, $prefix ) ) {
+					return true;
+				}
+			}
+			return false;
+		} ) );
 	}
 
 	private function build_level3_flyout_items(): array {
