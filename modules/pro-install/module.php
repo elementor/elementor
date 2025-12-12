@@ -32,17 +32,15 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			if ( ! $this->is_editor_one_active() ) {	
+			if ( ! $this->is_editor_one_active() ) {
 				$admin_menu->register(
-				'elementor-connect-account',
+					'elementor-connect-account',
 					new Pro_Install_Menu_Item(
 						$this->get_connect_app(),
-							$this->get_pro_install_page_assets(),
-						)
+						$this->get_pro_install_page_assets(),
+					)
 				);
 			}
-
-
 		}, 116 );
 
 		add_action( 'elementor/editor-one/menu/excluded_level3_slugs', function ( array $excluded_slugs ): array {
@@ -50,9 +48,9 @@ class Module extends BaseModule {
 			return $excluded_slugs;
 		} );
 
-	add_action( 'elementor/editor-one/menu/register', function( Menu_Data_Provider $menu_data_provider ) {
-		$menu_data_provider->register_menu( new Editor_One_Connect_Account_Menu_Item() );
-	} );
+		add_action( 'elementor/editor-one/menu/register', function( Menu_Data_Provider $menu_data_provider ) {
+			$menu_data_provider->register_menu( new Editor_One_Connect_Account_Menu_Item() );
+		} );
 	}
 
 	private function is_editor_one_active(): bool {

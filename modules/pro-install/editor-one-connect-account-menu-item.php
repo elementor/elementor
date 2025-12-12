@@ -59,4 +59,3 @@ class Editor_One_Connect_Account_Menu_Item implements Menu_Item_Interface {
 		$renderer->render();
 	}
 }
-
