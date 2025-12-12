@@ -129,8 +129,8 @@ export const WidgetsTable = ( {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-				{ widgets.map( ( widget ) => (
-					<TableRow key={ widget.name } data-key-id={ widget.name } hover>
+					{ widgets.map( ( widget ) => (
+						<TableRow key={ widget.name } data-key-id={ widget.name } hover>
 							<TableCell>
 								<Box sx={ { display: 'flex', alignItems: 'center' } }>
 									<i

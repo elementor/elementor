@@ -152,7 +152,7 @@ export const RolePermissions = ( {
 											widgetName,
 											role.id,
 											widgetsRoleRestrictions,
-											setWidgetsRoleRestrictions
+											setWidgetsRoleRestrictions,
 										);
 									} }
 									size="small"

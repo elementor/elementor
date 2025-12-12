@@ -103,7 +103,7 @@ class Module extends BaseModule {
 		}
 
 		foreach ( self::CUSTOM_REACT_APP_PAGES as $page_slug ) {
-			if ( str_contains($current_screen->id ?? '', $page_slug) ) {
+			if ( str_contains( $current_screen->id ?? '', $page_slug ) ) {
 				return true;
 			}
 		}

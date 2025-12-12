@@ -6,7 +6,6 @@ import {
 	Select,
 	MenuItem,
 	FormControl,
-	InputLabel,
 	Divider,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -42,13 +41,11 @@ export const SearchFilters = ( {
 				zIndex: 10,
 				padding: '20px 16px',
 				boxShadow: 'rgba(0, 0, 0, 0.15) 0 5px 10px 0',
-				margin: '-16px -16px 24px',
 			} }
 		>
 			<Box>
 				<Stack direction="row" alignItems="center" gap={ 2 }>
 					<TextField
-						label={ __( 'Search', 'elementor' ) }
 						color="secondary"
 						value={ searchKeyword }
 						size="small"
@@ -62,10 +59,8 @@ export const SearchFilters = ( {
 						sx={ { maxWidth: '130px', minWidth: '130px' } }
 						color="secondary"
 					>
-						<InputLabel size="small">
-							{ __( 'Plugin', 'elementor' ) }
-						</InputLabel>
 						<Select
+							placeholder={ __( 'Plugin', 'elementor' ) }
 							value={ filterByPlugin }
 							onChange={ ( event ) => onPluginFilterChange( event.target.value ) }
 							name="elementor-element-manager-select-filter-by-plugin"
@@ -83,11 +78,11 @@ export const SearchFilters = ( {
 						sx={ { maxWidth: '130px', minWidth: '130px' } }
 						color="secondary"
 					>
-						<InputLabel>{ __( 'Status', 'elementor' ) }</InputLabel>
 						<Select
 							value={ filterByStatus }
 							onChange={ ( event ) => onStatusFilterChange( event.target.value ) }
 							name="elementor-element-manager-select-filter-by-status"
+							placeholder={ __( 'Status', 'elementor' ) }
 						>
 							<MenuItem value="all">{ __( 'All Statuses', 'elementor' ) }</MenuItem>
 							<MenuItem value="active">{ __( 'Active', 'elementor' ) }</MenuItem>
