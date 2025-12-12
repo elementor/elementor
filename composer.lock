@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ae47af715115010a7500a576e192b09e",
+    "content-hash": "b35881813ef7cad7fc31c86dee6bf50a",
     "packages": [
         {
             "name": "elementor/wp-one-package",
-            "version": "1.0.15",
+            "version": "1.0.17",
             "source": {
                 "type": "git",
                 "url": "git@github.com:elementor/wp-one-package.git",
-                "reference": "6ef63e73c3c7886ad155559e90ba3279f29ff26f"
+                "reference": "b967f849016f0f5a236c95836e4a3d6972ca2291"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elementor/wp-one-package/zipball/6ef63e73c3c7886ad155559e90ba3279f29ff26f",
-                "reference": "6ef63e73c3c7886ad155559e90ba3279f29ff26f",
+                "url": "https://api.github.com/repos/elementor/wp-one-package/zipball/b967f849016f0f5a236c95836e4a3d6972ca2291",
+                "reference": "b967f849016f0f5a236c95836e4a3d6972ca2291",
                 "shasum": ""
             },
             "require-dev": {
@@ -43,9 +43,9 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/elementor/wp-one-package/tree/1.0.15"
+                "source": "https://github.com/elementor/wp-one-package/tree/1.0.17"
             },
-            "time": "2025-12-10T20:25:41+00:00"
+            "time": "2025-12-11T19:16:04+00:00"
         }
     ],
     "packages-dev": [
