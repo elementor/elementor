@@ -95,6 +95,7 @@ export type V1ElementConfig< T = object > = {
 	base_styles?: Record< string, StyleDefinition >;
 	base_styles_dictionary?: Record< string, string >;
 	atomic_style_states?: ClassState[];
+	show_in_panel?: boolean;
 } & T;
 
 type V1Model< T > = {

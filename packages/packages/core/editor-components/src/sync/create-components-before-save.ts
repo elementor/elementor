@@ -29,6 +29,7 @@ export async function createComponentsBeforeSave( {
 					id: uidToComponentId.get( component.uid ) as number,
 					name: component.name,
 					uid: component.uid,
+					overridableProps: component.overridableProps ? component.overridableProps : undefined,
 				} ) )
 			)
 		);
@@ -48,6 +49,7 @@ async function createComponents(
 			uid: component.uid,
 			title: component.name,
 			elements: component.elements,
+			settings: component.overridableProps ? { overridable_props: component.overridableProps } : undefined,
 		} ) ),
 	} );
 

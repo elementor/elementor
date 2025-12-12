@@ -77,6 +77,9 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 		setMCPDescription: ( description: string ) => {
 			mcpDescriptions[ namespace ] = description;
 		},
+		sendResourceUpdated: ( params: { uri: string } ) => {
+			mcpServer.server.sendResourceUpdated( params );
+		},
 		getActiveChatInfo: () => {
 			const info = localStorage.getItem( 'angie_active_chat_id' );
 			if ( ! info ) {
@@ -100,6 +103,7 @@ export interface MCPRegistryEntry {
 	) => void;
 	setMCPDescription: ( description: string ) => void;
 	getActiveChatInfo: () => { sessionId: string; expiresAt: number };
+	sendResourceUpdated: ( params: { uri: string } ) => void;
 	mcpServer: McpServer;
 }
 

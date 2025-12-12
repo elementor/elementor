@@ -140,7 +140,11 @@ export const selectComponents = createSelector(
 	selectData,
 	selectUnpublishedData,
 	( data: PublishedComponent[], unpublishedData: UnpublishedComponent[] ) => [
-		...unpublishedData.map( ( item ) => ( { uid: item.uid, name: item.name } ) ),
+		...unpublishedData.map( ( item ) => ( {
+			uid: item.uid,
+			name: item.name,
+			overridableProps: item.overridableProps,
+		} ) ),
 		...data,
 	]
 );

@@ -5,16 +5,19 @@ import { generateUniqueId } from '@elementor/utils';
 
 import { type ComponentEventData } from '../../components/create-component-form/utils/get-component-event-data';
 import { replaceElementWithComponent } from '../../components/create-component-form/utils/replace-element-with-component';
+import { type OverridableProps } from '../../types';
 import { trackComponentEvent } from '../../utils/tracking';
 import { slice } from '../store';
 
 export function createUnpublishedComponent(
 	name: string,
 	element: V1ElementData,
-	eventData: ComponentEventData | null
+	eventData: ComponentEventData | null,
+	overridableProps?: OverridableProps,
+	uid?: string | null
 ) {
-	const uid = generateUniqueId( 'component' );
-	const componentBase = { uid, name };
+	const generatedUid = uid ?? generateUniqueId( 'component' );
+	const componentBase = { uid: generatedUid, name, overridableProps };
 
 	dispatch(
 		slice.actions.addUnpublished( {
@@ -23,18 +26,18 @@ export function createUnpublishedComponent(
 		} )
 	);
 
-	dispatch( slice.actions.addCreatedThisSession( uid ) );
+	dispatch( slice.actions.addCreatedThisSession( generatedUid ) );
 
 	replaceElementWithComponent( element, componentBase );
 
 	trackComponentEvent( {
 		action: 'created',
-		component_uid: uid,
+		component_uid: generatedUid,
 		component_name: name,
 		...eventData,
 	} );
 
 	runCommand( 'document/save/auto' );
 
-	return uid;
+	return generatedUid;
 }
