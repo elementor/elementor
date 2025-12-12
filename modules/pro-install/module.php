@@ -49,7 +49,12 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'elementor/editor-one/menu/register', function( Menu_Data_Provider $menu_data_provider ) {
-			$menu_data_provider->register_menu( new Editor_One_Connect_Account_Menu_Item() );
+			$menu_data_provider->register_menu(
+				new Editor_One_Connect_Account_Menu_Item(
+					$this->get_connect_app(),
+					$this->get_pro_install_page_assets()
+				)
+			);
 		} );
 	}
 

@@ -141,18 +141,18 @@ class Connect_Page_Renderer {
 	}
 
 	private function render_install_or_activate_box() {
-		$ctr_data = $this->get_cta_data();
-		$ctr_url = wp_nonce_url( admin_url( 'admin-post.php?action=elementor_do_pro_install' ), 'elementor_do_pro_install' );
-		$ctr_id = $this->is_pro_installed() ? 'elementor-connect-activate-pro' : 'elementor-connect-install-pro';
+		$cta_data = $this->get_cta_data();
+		$cta_url = wp_nonce_url( admin_url( 'admin-post.php?action=elementor_do_pro_install' ), 'elementor_do_pro_install' );
+		$cta_id = $this->is_pro_installed() ? 'elementor-connect-activate-pro' : 'elementor-connect-install-pro';
 
 		?>
 		<div class="elementor-license-box">
 			<h3><?php echo esc_html__( 'You\'ve got Elementor Pro', 'elementor' ); ?></h3>
 
-			<p><?php echo esc_html( $ctr_data['description'] ); ?></p>
+			<p><?php echo esc_html( $cta_data['description'] ); ?></p>
 			<p class="elementor-box-action">
-				<a id="<?php echo esc_attr( $ctr_id ); ?>" class="button button-primary" href="<?php echo esc_url( $ctr_url ); ?>">
-					<?php echo esc_html( $ctr_data['button_text'] ); ?>
+				<a id="<?php echo esc_attr( $cta_id ); ?>" class="button button-primary" href="<?php echo esc_url( $cta_url ); ?>">
+					<?php echo esc_html( $cta_data['button_text'] ); ?>
 				</a>
 			</p>
 		</div>

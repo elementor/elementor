@@ -12,6 +12,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor_One_Connect_Account_Menu_Item implements Menu_Item_Interface {
 
+	private $connect;
+	private $script_config;
+
+	public function __construct( Connect $connect, array $script_config ) {
+		$this->connect = $connect;
+		$this->script_config = $script_config;
+	}
+
 	public function get_capability() {
 		return 'manage_options';
 	}
@@ -53,9 +61,8 @@ class Editor_One_Connect_Account_Menu_Item implements Menu_Item_Interface {
 	}
 
 	public function render() {
-		$connect = Plugin::$instance->common->get_component( 'connect' )->get_app( 'pro-install' );
 		$page_url = admin_url( 'admin.php?page=elementor-connect-account' );
-		$renderer = new Connect_Page_Renderer( $connect, $page_url );
+		$renderer = new Connect_Page_Renderer( $this->connect, $page_url, $this->script_config );
 		$renderer->render();
 	}
 }
