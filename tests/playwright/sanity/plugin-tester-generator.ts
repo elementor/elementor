@@ -54,7 +54,7 @@ export const generatePluginTests = ( testType: string ) => {
 		test( `"${ plugin.pluginName }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
 			let pluginTechnicalName: string;
 			if ( plugin.dependency ) {
-				await apiRequests.installPlugin( page.context().request, plugin.dependency, true );
+				await wpCli( `wp plugin activate ${ plugin.dependency }` );
 			}
 			switch ( plugin.installSource ) {
 				case 'api':
