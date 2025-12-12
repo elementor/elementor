@@ -3,14 +3,13 @@
 namespace Elementor\Modules\EditorOne\Components;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
-use Elementor\Modules\EditorOne\Classes\Menu\Items\Legacy_Submenu_Item;
+use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Interceptor;
 use Elementor\Modules\EditorOne\Classes\Menu\Items\Editor_One_Custom_Elements_Menu;
-use Elementor\Modules\EditorOne\Classes\Menu\Items\Legacy_Submenu_Item_Not_Mapped;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
+use Elementor\Modules\EditorOne\Classes\Slug_Normalizer;
 use Elementor\Plugin;
-
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,8 +22,14 @@ class Elementor_One_Menu_Manager {
 
 	private bool $is_pro_module_enabled = false;
 
+	private Legacy_Submenu_Interceptor $legacy_submenu_interceptor;
+
 	public function __construct() {
 		$this->menu_data_provider = Menu_Data_Provider::instance();
+		$this->legacy_submenu_interceptor = new Legacy_Submenu_Interceptor(
+			$this->menu_data_provider,
+			new Slug_Normalizer()
+		);
 
 		$this->register_actions();
 	}
@@ -268,98 +273,7 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function intercept_legacy_submenus(): void {
-		$this->intercept_elementor_menu_legacy_items();
-		$this->intercept_templates_menu_legacy_items();
-	}
-
-	private function intercept_elementor_menu_legacy_items(): void {
-		global $submenu;
-
-		if ( empty( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] ) ) {
-			return;
-		}
-
-		$items_to_intercept = [];
-
-		$legacy_pro_mapping = Menu_Config::get_legacy_pro_mapping();
-
-		foreach ( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] as $index => $submenu_item ) {
-			$item_slug = $submenu_item[2] ?? '';
-
-			if ( empty( $item_slug ) ) {
-				continue;
-			}
-
-			if ( $this->is_item_already_registered( $item_slug ) ) {
-				continue;
-			}
-
-			$items_to_intercept[ $index ] = $submenu_item;
-		}
-
-		foreach ( $items_to_intercept as $index => $submenu_item ) {
-			$item_slug = $submenu_item[2];
-			$has_level4_group = isset( $legacy_pro_mapping[ $item_slug ] );
-
-			if ( $has_level4_group ) {
-				if ( isset( $legacy_pro_mapping[ $item_slug ]['label'] ) ) {
-					$submenu_item[0] = $legacy_pro_mapping[ $item_slug ]['label'];
-				}
-
-				$position = Menu_Config::get_attribute_mapping()[ $item_slug ]['position'] ?? 100;
-				$group_id = $legacy_pro_mapping[ $item_slug ]['group'];
-				$submenu_item[4] = $group_id;
-				$legacy_item = new Legacy_Submenu_Item( $submenu_item, Menu_Config::ELEMENTOR_MENU_SLUG, $position );
-
-				$this->menu_data_provider->register_menu( $legacy_item );
-			} else {
-				$position = Menu_Config::get_attribute_mapping()[ $item_slug ]['position'] ?? 100;
-				$submenu_item[4] = Menu_Config::get_attribute_mapping()[ $item_slug ]['icon'] ?? 'tool';
-				$legacy_item = new Legacy_Submenu_Item_Not_Mapped( $submenu_item, Menu_Config::ELEMENTOR_MENU_SLUG, $position );
-
-				$this->menu_data_provider->register_menu( $legacy_item );
-			}
-
-			unset( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ][ $index ] );
-		}
-	}
-
-	private function intercept_templates_menu_legacy_items(): void {
-		global $submenu;
-
-		if ( empty( $submenu[ Menu_Config::LEGACY_TEMPLATES_SLUG ] ) ) {
-			return;
-		}
-
-		$items_to_intercept = [];
-
-		foreach ( $submenu[ Menu_Config::LEGACY_TEMPLATES_SLUG ] as $index => $submenu_item ) {
-			$item_slug = $submenu_item[2] ?? '';
-
-			if ( empty( $item_slug ) ) {
-				continue;
-			}
-
-			if ( $this->is_item_already_registered( $item_slug ) ) {
-				unset( $submenu[ Menu_Config::LEGACY_TEMPLATES_SLUG ][ $index ] );
-				continue;
-			}
-
-			$items_to_intercept[ $index ] = $submenu_item;
-		}
-
-		foreach ( $items_to_intercept as $index => $submenu_item ) {
-			$submenu_item[4] = Menu_Config::TEMPLATES_GROUP_ID;
-			$legacy_item = new Legacy_Submenu_Item( $submenu_item, Menu_Config::LEGACY_TEMPLATES_SLUG );
-
-			$this->menu_data_provider->register_menu( $legacy_item );
-
-			unset( $submenu[ Menu_Config::LEGACY_TEMPLATES_SLUG ][ $index ] );
-		}
-	}
-
-	private function is_item_already_registered( string $item_slug ): bool {
-		return $this->menu_data_provider->is_item_already_registered( $item_slug );
+		$this->legacy_submenu_interceptor->intercept_all();
 	}
 
 	public function enqueue_admin_menu_assets(): void {

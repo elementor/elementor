@@ -19,6 +19,8 @@ class Menu_Data_Provider {
 	private ?string $theme_builder_url = null;
 	private ?array $cached_editor_flyout_data = null;
 	private ?array $cached_level4_flyout_data = null;
+	private Slug_Normalizer $slug_normalizer;
+
 	public static function instance(): self {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
@@ -26,7 +28,15 @@ class Menu_Data_Provider {
 
 		return self::$instance;
 	}
-	private function __construct() {}
+
+	private function __construct() {
+		$this->slug_normalizer = new Slug_Normalizer();
+	}
+
+	public function get_slug_normalizer(): Slug_Normalizer {
+		return $this->slug_normalizer;
+	}
+
 	public function register_menu( Menu_Item_Interface $item ): void {
 		if ( $item instanceof Menu_Item_Third_Level_Interface ) {
 			$this->register_level3_item( $item );
@@ -34,6 +44,7 @@ class Menu_Data_Provider {
 			$this->register_level4_item( $item );
 		}
 	}
+
 	public function register_level3_item( Menu_Item_Third_Level_Interface $item ): void {
 		$group_id = $item->get_group_id();
 		$item_slug = $item->get_slug();
@@ -58,6 +69,7 @@ class Menu_Data_Provider {
 		$this->level4_items[ $group_id ][ $item_slug ] = $item;
 		$this->invalidate_cache();
 	}
+
 	public function get_level3_items(): array {
 		return $this->level3_items;
 	}
@@ -112,6 +124,7 @@ class Menu_Data_Provider {
 
 		return $this->cached_level4_flyout_data;
 	}
+
 	public function get_theme_builder_url(): string {
 		if ( null === $this->theme_builder_url ) {
 			$pro_url = Plugin::$instance->app ? Plugin::$instance->app->get_settings( 'menu_url' ) : null;
@@ -164,6 +177,7 @@ class Menu_Data_Provider {
 	public static function get_elementor_post_types(): array {
 		return Menu_Config::get_elementor_post_types();
 	}
+
 	private function get_dynamic_page_slugs(): array {
 		$slugs = [];
 
@@ -177,8 +191,15 @@ class Menu_Data_Provider {
 			}
 		}
 
-		return array_values( array_filter( $slugs, function( string $slug ): bool {
-			return 0 === strpos( $slug, 'elementor' ) || 0 === strpos( $slug, 'e-' );
+		$allowed_prefixes = [ 'elementor', 'e-', 'popup_templates' ];
+
+		return array_values( array_filter( $slugs, function( string $slug ) use ( $allowed_prefixes ): bool {
+			foreach ( $allowed_prefixes as $prefix ) {
+				if ( 0 === strpos( $slug, $prefix ) ) {
+					return true;
+				}
+			}
+			return false;
 		} ) );
 	}
 
@@ -213,7 +234,7 @@ class Menu_Data_Provider {
 				$items[] = [
 					'slug' => $item_slug,
 					'label' => $label,
-					'url' => $this->get_item_url( $item_slug ),
+					'url' => $this->get_item_url( $item_slug, $item->get_parent_slug() ),
 					'icon' => $item->get_icon(),
 					'group_id' => $group_id,
 					'priority' => $item->get_position() ?? 100,
@@ -239,7 +260,7 @@ class Menu_Data_Provider {
 					continue;
 				}
 
-				if ( $this->is_slug_excluded( $item_slug, $excluded_slugs ) ) {
+				if ( $this->slug_normalizer->is_excluded( $item_slug, $excluded_slugs ) ) {
 					continue;
 				}
 
@@ -253,7 +274,7 @@ class Menu_Data_Provider {
 				$groups[ $group_id ]['items'][] = [
 					'slug' => $item_slug,
 					'label' => $label,
-					'url' => $this->get_item_url( $item_slug ),
+					'url' => $this->get_item_url( $item_slug, $item->get_parent_slug() ),
 					'priority' => $item->get_position() ?? 100,
 				];
 
@@ -268,36 +289,7 @@ class Menu_Data_Provider {
 		return $item->is_visible() && current_user_can( $item->get_capability() );
 	}
 
-	private function is_slug_excluded( string $item_slug, array $excluded_slugs ): bool {
-		if ( in_array( $item_slug, $excluded_slugs, true ) ) {
-			return true;
-		}
-
-		$normalized_slug = $this->normalize_slug( $item_slug );
-
-		return in_array( $normalized_slug, $excluded_slugs, true );
-	}
-
-	private function normalize_slug( string $slug ): string {
-		if ( 0 !== strpos( $slug, 'http' ) ) {
-			return $slug;
-		}
-
-		$parsed = wp_parse_url( $slug );
-		$path = basename( $parsed['path'] ?? '' );
-
-		if ( ! empty( $parsed['query'] ) ) {
-			$path .= '?' . $parsed['query'];
-		}
-
-		if ( ! empty( $parsed['fragment'] ) ) {
-			$path .= '#' . $parsed['fragment'];
-		}
-
-		return $path;
-	}
-
-	private function get_item_url( string $item_slug ): string {
+	private function get_item_url( string $item_slug, ?string $parent_slug = null ): string {
 		$admin_path_prefixes = [ 'edit.php', 'post-new.php', 'admin.php' ];
 
 		foreach ( $admin_path_prefixes as $prefix ) {
@@ -310,12 +302,16 @@ class Menu_Data_Provider {
 			return $item_slug;
 		}
 
+		if ( $parent_slug && 0 === strpos( $parent_slug, 'edit.php' ) ) {
+			return admin_url( $parent_slug . '&page=' . $item_slug );
+		}
+
 		return admin_url( 'admin.php?page=' . $item_slug );
 	}
 
 	private function sort_items_by_priority( array &$items ): void {
-		usort( $items, function( $a, $b ) {
-			return ( $a['priority'] ?? 100 ) - ( $b['priority'] ?? 100 );
+		usort( $items, function ( array $a, array $b ): int {
+			return ( $a['priority'] ?? 100 ) <=> ( $b['priority'] ?? 100 );
 		} );
 	}
 
