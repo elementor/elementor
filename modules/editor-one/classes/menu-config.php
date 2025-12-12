@@ -47,27 +47,27 @@ class Menu_Config {
 			'elementor-license' => [ 'group' => self::SYSTEM_GROUP_ID ],
 			'edit.php?post_type=elementor_font' => [
 				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
-				'label' => 'Fonts',
+				'label' => __('Fonts', 'elementor'),
 			],
 			'edit.php?post_type=elementor_icons' => [
 				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
-				'label' => 'Icons',
+				'label' => __('Icons', 'elementor'),
 			],
 			'edit.php?post_type=elementor_snippet' => [
 				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
-				'label' => 'Code',
+				'label' => __('Code', 'elementor'),
 			],
 			'e-custom-fonts' => [
 				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
-				'label' => 'Fonts',
+				'label' => __('Fonts', 'elementor'),
 			],
 			'e-custom-icons' => [
 				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
-				'label' => 'Icons',
+				'label' => __('Icons', 'elementor'),
 			],
 			'e-custom-code' => [
 				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
-				'label' => 'Code',
+				'label' => __('Code', 'elementor'),
 			],
 		];
 
