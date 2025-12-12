@@ -247,7 +247,7 @@ jobs:
         with:
           github_user: ${{ github.actor }}
         env:
-          GH_TOKEN: ${{ secrets.TEMP_DEVOPS_TOKEN }}
+          GH_TOKEN: ${{ secrets.PUBLIC_CLOUD_DEVOPS_TOKEN }}
           SLACK_TOKEN: ${{ secrets.CLOUD_SLACK_BOT_TOKEN }}
       - name: Send slack message
         if: ${{ needs.Playwright.result == 'failure' && (github.event_name == 'schedule' || (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/3.')))) }}
