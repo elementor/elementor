@@ -1,4 +1,5 @@
 // components
+export { CollapseIcon } from './components/collapse-icon';
 export { EllipsisWithTooltip } from './components/ellipsis-with-tooltip';
 export { EditableField } from './components/editable-field';
 export { IntroductionModal } from './components/introduction-modal';

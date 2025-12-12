@@ -39,6 +39,10 @@ jest.mock( '../../components/variable-selection-popover', () => ( {
 	) ),
 } ) );
 
+jest.mock( '@elementor/editor-ui', () => ( {
+	CollapseIcon: jest.fn().mockReturnValue( <div /> ),
+} ) );
+
 const mockUseBoundProp = jest.mocked( useBoundProp );
 const mockTrackVariableEvent = jest.mocked( trackVariableEvent );
 const mockGetVariableType = getVariableType as jest.Mock;

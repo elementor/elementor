@@ -9,6 +9,7 @@ import {
 	FIELD_TYPE,
 	injectIntoPanelHeaderTop,
 	registerControlReplacement,
+	registerEditingPanelReplacement,
 	registerFieldIndicator,
 } from '@elementor/editor-editing-panel';
 import { type V1ElementData } from '@elementor/editor-elements';
@@ -25,6 +26,7 @@ import { Components } from './components/components-tab/components';
 import { COMPONENT_DOCUMENT_TYPE } from './components/consts';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
+import { EditInstancePanel } from './components/edit-instance-panel/edit-instance-panel';
 import { openEditModeDialog } from './components/in-edit-mode';
 import { OverridablePropControl } from './components/overridable-props/overridable-prop-control';
 import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
@@ -107,6 +109,12 @@ export function init() {
 	registerControlReplacement( {
 		component: OverridablePropControl,
 		condition: ( { value } ) => componentOverridablePropTypeUtil.isValid( value ),
+	} );
+
+	registerEditingPanelReplacement( {
+		id: 'component-instance-panel',
+		condition: ( _, elementType ) => elementType.key === 'e-component',
+		component: EditInstancePanel,
 	} );
 
 	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );
