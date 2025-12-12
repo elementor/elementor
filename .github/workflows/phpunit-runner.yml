@@ -45,6 +45,8 @@ jobs:
             php-version: ${{ matrix.php_versions }}
             coverage: none
         - name: Install Dependencies
+          env:
+            COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.TEMP_DEVOPS_TOKEN }}"}}'
           run: |
             bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:${{ job.services.mysql.ports['3306'] }} ${{ matrix.wordpress_versions }} true
             composer update --no-interaction
@@ -57,6 +59,8 @@ jobs:
           run: |
             composer run test
         - name: Run Test - Multisite
+          env:
+            COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.TEMP_DEVOPS_TOKEN }}"}}'
           run: |
             WP_MULTISITE=1
             composer update --no-interaction
