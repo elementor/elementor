@@ -42,6 +42,11 @@ class Dynamic_Tags_Module {
 		);
 
 		add_filter(
+			'elementor/editor/localize_settings',
+			fn( array $settings ) => $this->address_atomic_svg( $settings )
+		);
+
+		add_filter(
 			'elementor/atomic-widgets/props-schema',
 			fn( array $schema ) => Dynamic_Prop_Types_Mapping::make()->get_extended_schema( $schema )
 		);
@@ -81,5 +86,21 @@ class Dynamic_Tags_Module {
 				$props_resolver
 			)
 		);
+	}
+
+	private function address_atomic_svg( $settings ) {
+		if ( ! isset( $settings['atomicDynamicTags']['tags'] ) ) {
+			return $settings;
+		}
+
+		array_walk( $settings['atomicDynamicTags']['tags'], function( &$tag ) {
+			$should_appear_in_svg = ['post-custom-field', 'acf-url'];
+			
+			if( in_array( $tag['name'] , $should_appear_in_svg ) ) {
+				$tag['categories'][] = 'svg';
+			}
+		});
+
+		return $settings;
 	}
 }
