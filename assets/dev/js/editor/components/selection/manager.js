@@ -202,8 +202,13 @@ export default class Manager extends elementorModules.editor.utils.Module {
 			return;
 		}
 
-		elementor.navigator.getLayout()
-			.elements.currentView.recursiveChildInvoke( 'updateSelection' );
+		const navigatorLayout = elementor.navigator.getLayout();
+
+		if ( ! navigatorLayout ) {
+			return;
+		}
+
+		navigatorLayout.elements?.currentView?.recursiveChildInvoke( 'updateSelection' );
 	}
 
 	/**
