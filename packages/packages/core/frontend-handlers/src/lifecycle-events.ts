@@ -17,16 +17,27 @@ export const onElementRender = ( {
 	const controller = new AbortController();
 	const manualUnmount: ( () => void )[] = [];
 
-	element.dispatchEvent(
-		new CustomEvent( ELEMENT_RENDERED_EVENT_NAME, {
-			bubbles: true,
-			detail: {
-				element,
-				elementType,
-				elementId,
-			},
-		} )
-	);
+	const dispatchRenderedEvent = () => {
+		element.dispatchEvent(
+			new CustomEvent( ELEMENT_RENDERED_EVENT_NAME, {
+				bubbles: true,
+				detail: {
+					element,
+					elementType,
+					elementId,
+				},
+			} )
+		);
+	};
+
+	// When the rendered event is dispatched, the element is not yet connected to the DOM (marrionet view case)
+	if ( ! element.isConnected ) {
+		requestAnimationFrame( () => {
+			dispatchRenderedEvent();
+		} );
+	} else {
+		dispatchRenderedEvent();
+	}
 
 	if ( ! elementTypeHandlers.has( elementType ) ) {
 		return;
@@ -47,8 +58,6 @@ export const onElementRender = ( {
 						}
 
 						callback();
-
-						event.stopPropagation();
 					},
 					{ signal: controller.signal }
 				);
