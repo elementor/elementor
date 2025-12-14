@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { colorPropTypeUtil, sizePropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
+import {
+	colorPropTypeUtil,
+	sizePropTypeUtil,
+	stringPropTypeUtil,
+} from '@elementor/editor-props';
 import { UpgradeButton } from '@elementor/editor-ui';
 import { BrushIcon, ExpandDiagonalIcon, TextIcon } from '@elementor/icons';
 
@@ -39,6 +43,7 @@ export function registerVariableTypes() {
 		propTypeUtil: sizeVariablePropTypeUtil,
 		fallbackPropTypeUtil: sizePropTypeUtil,
 		variableType: 'size',
-		emptyState: <UpgradeButton size="small" href={ 'https://go.elementor.com/go-pro-panel-size-variable/' } />,
+		selectionFilter: () => [],
+		emptyState: <UpgradeButton size="small" href={ 'https://go.elementor.com/go-pro-panel-size-variable/' }/>,
 	} );
 }

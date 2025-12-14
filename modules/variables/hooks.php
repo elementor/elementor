@@ -31,7 +31,8 @@ class Hooks {
 	public function register() {
 		$this->register_styles_transformers()
 			->register_packages()
-			->filter_for_style_schema()
+			->filter_for_style_schema_basic()
+			->filter_for_style_schema_size()
 			->register_css_renderer()
 			->register_fonts()
 			->register_api_endpoints()
@@ -69,10 +70,18 @@ class Hooks {
 		return $this;
 	}
 
-	private function filter_for_style_schema() {
+	private function filter_for_style_schema_basic() {
 		add_filter( 'elementor/atomic-widgets/styles/schema', function ( array $schema ) {
-			return ( new Style_Schema() )->augment( $schema );
+			return ( new Style_Schema() )->augment_basic( $schema );
 		} );
+
+		return $this;
+	}
+
+	private function filter_for_style_schema_size() {
+		add_filter( 'elementor/atomic-widgets/styles/schema', function ( array $schema ) {
+			return ( new Style_Schema() )->augment_size( $schema );
+		}, 20 );
 
 		return $this;
 	}
