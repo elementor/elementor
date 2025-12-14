@@ -41,6 +41,12 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 		return false;
 	}
 
+	public function define_initial_attributes(): array {
+		return [
+			'role' => 'tablist',
+		];
+	}
+
 	protected static function define_props_schema(): array {
 		return [
 			'classes' => Classes_Prop_Type::make()
