@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { type ReactNode, useState } from 'react';
+import { CollapseIcon } from '@elementor/editor-ui';
 import { Button, Collapse, Stack, styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-
-import { CollapseIcon } from './collapse-icon';
 
 type StaticItem< T = unknown > = T extends ( ...args: unknown[] ) => unknown ? never : T;
 
