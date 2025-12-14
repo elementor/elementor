@@ -133,87 +133,63 @@ describe( 'validatePropValueDetailed', () => {
 							{
 								$$type: 'background-image-overlay',
 								value: {
-									$$type: 'background-image-overlay',
-									value: {
-										image: {
-											$$type: 'image',
-											value: {
-												src: {
-													$$type: 'image-src',
-													value: {
-														$$type: 'image-src',
-														value: {
-															id: {
-																$$type: 'image-attachment-id',
-																value: 123,
-															},
-															url: {
-																$$type: 'url',
-																value: 'https://example.com/image.jpg',
-															},
-														},
-													},
-												},
-												size: {
-													$$type: 'string',
-													value: 'large',
-												},
-											},
-										},
-										size: {
-											$$type: 'background-image-size-scale',
-											value: {
-												$$type: 'background-image-size-scale',
+									image: {
+										$$type: 'image',
+										value: {
+											src: {
+												$$type: 'image-src',
 												value: {
-													height: {
-														$$type: 'size',
-														value: {
-															$$type: 'size',
-															value: {
-																size: { $$type: 'number', value: 100 },
-																unit: { $$type: 'string', value: '%' },
-															},
-														},
+													id: {
+														$$type: 'image-attachment-id',
+														value: 123,
 													},
-													width: {
-														$$type: 'size',
-														value: {
-															$$type: 'size',
-															value: {
-																size: { $$type: 'number', value: 100 },
-																unit: { $$type: 'string', value: '%' },
-															},
-														},
+													url: {
+														$$type: 'url',
+														value: 'https://example.com/image.jpg',
 													},
 												},
 											},
+											size: {
+												$$type: 'string',
+												value: 'large',
+											},
 										},
-										repeat: { $$type: 'string', value: 'no-repeat' },
-										position: {
-											$$type: 'background-image-position-offset',
-											value: {
-												$$type: 'background-image-position-offset',
+									},
+									size: {
+										$$type: 'background-image-size-scale',
+										value: {
+											height: {
+												$$type: 'size',
 												value: {
-													y: {
-														$$type: 'size',
-														value: {
-															$$type: 'size',
-															value: {
-																size: { $$type: 'number', value: 50 },
-																unit: { $$type: 'string', value: '%' },
-															},
-														},
-													},
-													x: {
-														$$type: 'size',
-														value: {
-															$$type: 'size',
-															value: {
-																size: { $$type: 'number', value: 50 },
-																unit: { $$type: 'string', value: '%' },
-															},
-														},
-													},
+													size: { $$type: 'number', value: 100 },
+													unit: { $$type: 'string', value: '%' },
+												},
+											},
+											width: {
+												$$type: 'size',
+												value: {
+													size: { $$type: 'number', value: 100 },
+													unit: { $$type: 'string', value: '%' },
+												},
+											},
+										},
+									},
+									repeat: { $$type: 'string', value: 'no-repeat' },
+									position: {
+										$$type: 'background-image-position-offset',
+										value: {
+											y: {
+												$$type: 'size',
+												value: {
+													size: { $$type: 'number', value: 50 },
+													unit: { $$type: 'string', value: '%' },
+												},
+											},
+											x: {
+												$$type: 'size',
+												value: {
+													size: { $$type: 'number', value: 50 },
+													unit: { $$type: 'string', value: '%' },
 												},
 											},
 										},
