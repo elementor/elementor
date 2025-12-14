@@ -152,6 +152,7 @@ class Union_Prop_Type implements Prop_Type {
 			'prop_types' => $this->get_prop_types(),
 			'dependencies' => $this->get_dependencies(),
 			'initial_value' => $this->get_initial_value(),
+			'version' => 1,
 		];
 	}
 
