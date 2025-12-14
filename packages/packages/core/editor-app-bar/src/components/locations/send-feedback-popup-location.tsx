@@ -119,7 +119,7 @@ export default function SendFeedbackPopupLocation() {
 								justifyContent="space-between"
 								width="100%"
 							>
-								{ __( 'Send Feedback', 'elementor' ) }
+								{ __( 'Submit Feedback', 'elementor' ) }
 								<CloseButton onClick={ popupState.close } />
 							</Stack>
 						</DialogTitle>
