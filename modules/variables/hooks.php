@@ -16,6 +16,7 @@ use Elementor\Modules\Variables\Classes\CSS_Renderer as Variables_CSS_Renderer;
 use Elementor\Modules\Variables\Classes\Fonts;
 use Elementor\Modules\Variables\Classes\Rest_Api as Variables_API;
 use Elementor\Modules\Variables\Classes\Style_Schema;
+use Elementor\Modules\Variables\Classes\Size_Style_Schema;
 use Elementor\Modules\Variables\Classes\Style_Transformers;
 use Elementor\Modules\Variables\Classes\Variables;
 
@@ -30,12 +31,11 @@ class Hooks {
 
 	public function register() {
 		$this->register_styles_transformers()
-			->register_packages()
-			->filter_for_style_schema_basic()
-			->filter_for_style_schema_size()
 			->register_css_renderer()
+			->register_packages()
 			->register_fonts()
 			->register_api_endpoints()
+			->filter_for_style_schema()
 			->register_variable_types();
 
 		return $this;
@@ -46,7 +46,6 @@ class Hooks {
 			$registry->register( Color_Variable_Prop_Type::get_key(), new Color_Variable_Prop_Type() );
 			$registry->register( Font_Variable_Prop_Type::get_key(), new Font_Variable_Prop_Type() );
 			$registry->register( Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY, new Size_Variable_Prop_Type() );
-
 			$registry->register( Size_Variable_Prop_Type::get_key(), new Size_Variable_Prop_Type() );
 		} );
 
@@ -70,18 +69,14 @@ class Hooks {
 		return $this;
 	}
 
-	private function filter_for_style_schema_basic() {
+	private function filter_for_style_schema() {
 		add_filter( 'elementor/atomic-widgets/styles/schema', function ( array $schema ) {
-			return ( new Style_Schema() )->augment_basic( $schema );
+			return ( new Style_Schema() )->augment( $schema );
 		} );
 
-		return $this;
-	}
-
-	private function filter_for_style_schema_size() {
 		add_filter( 'elementor/atomic-widgets/styles/schema', function ( array $schema ) {
-			return ( new Style_Schema() )->augment_size( $schema );
-		}, 20 );
+			return ( new Size_Style_Schema() )->augment( $schema );
+		} );
 
 		return $this;
 	}

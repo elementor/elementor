@@ -4,38 +4,48 @@ namespace Elementor\Modules\Variables\Classes;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
-use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Style_Schema {
-	public function augment( array $schema ): array {
-		foreach ( $schema as $key => $prop_type ) {
-			$schema[ $key ] = $this->update( $prop_type );
-			if ( method_exists( $prop_type, 'get_meta' ) && method_exists( $schema[ $key ], 'meta' ) ) {
-				$meta = $schema[ $key ]->get_meta() ?? [];
-				foreach ( $meta as $meta_key => $meta_value ) {
-					$schema[ $key ]->meta( $meta_key, $meta_value );
-				}
-			}
+class Size_Style_Schema {
+	private $blacklist = [
+		'border-width',
+		'border-radius',
+		'box-shadow',
+		'filter',
+		'backdrop-filter',
+		'transform',
+		'transition',
+	];
+
+	private function ignore( $css_property ): bool {
+		if ( in_array( $css_property, $this->blacklist, true ) ) {
+			return true;
 		}
 
-		if ( isset( $schema['font-family'] ) ) {
-			$schema['font-family'] = $this->update_font_family( $schema['font-family'] );
+		return false;
+	}
+
+	public function augment( array $schema ): array {
+		foreach ( $schema as $css_property => $prop_type ) {
+			if ( $this->ignore( $css_property ) ) {
+				continue;
+			}
+
+			$schema[ $css_property ] = $this->update( $prop_type );
 		}
 
 		return $schema;
 	}
 
 	private function update( $prop_type ) {
-		if ( $prop_type instanceof Color_Prop_Type ) {
-			return $this->update_color( $prop_type );
+		if ( $prop_type instanceof Size_Prop_Type ) {
+			return $this->update_size( $prop_type );
 		}
 
 		if ( $prop_type instanceof Union_Prop_Type ) {
@@ -53,14 +63,9 @@ class Style_Schema {
 		return $prop_type;
 	}
 
-	private function update_font_family( String_Prop_Type $prop_type ): Union_Prop_Type {
-		return Union_Prop_Type::create_from( $prop_type )
-		                      ->add_prop_type( Font_Variable_Prop_Type::make() );
-	}
-
-	private function update_color( Color_Prop_Type $color_prop_type ): Union_Prop_Type {
-		return Union_Prop_Type::create_from( $color_prop_type )
-		                      ->add_prop_type( Color_Variable_Prop_Type::make() );
+	private function update_size( Size_Prop_Type $size_prop_type ): Union_Prop_Type {
+		return Union_Prop_Type::create_from( $size_prop_type )
+			->add_prop_type( Size_Variable_Prop_Type::make() );
 	}
 
 	private function update_array( Array_Prop_Type $array_prop_type ): Array_Prop_Type {
