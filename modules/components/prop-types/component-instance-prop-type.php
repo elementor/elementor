@@ -31,8 +31,20 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 
 		$overrides = $sanitized['overrides']['value'] ?? [];
 
-		foreach ( $overrides as $override ) {
-			if ( $override['value']['schema_source']['id'] !== $sanitized['component_id']['value'] ) {
+		foreach ( $overrides as $item ) {
+			$component_id = null;
+
+			switch ($item['$$type']) {
+				case 'override':
+					$component_id = $item['value']['schema_source']['id'];
+					break;
+				case 'overridable':
+					$override = $item['value']['origin_value'];
+					$component_id = $override['value']['schema_source']['id'];
+					break;
+			}
+
+			if ( $component_id !== $sanitized['component_id']['value'] ) {
 				return false;
 			}
 		}

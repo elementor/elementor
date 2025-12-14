@@ -10,7 +10,7 @@ class Component_Overridable_Props {
 	public array $props;
 	public array $groups;
 
-	private function __construct( $overridable_props_meta ) {
+	public function __construct( $overridable_props_meta ) {
 		if ( is_string( $overridable_props_meta ) && ! empty( $overridable_props_meta ) ) {
 			$overridable_props_meta = json_decode( $overridable_props_meta, true );
 		}

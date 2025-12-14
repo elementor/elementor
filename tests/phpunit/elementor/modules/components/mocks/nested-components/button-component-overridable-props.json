@@ -1,0 +1,45 @@
+{
+    "props": {
+      "prop-0": {
+        "overrideKey": "prop-0",
+        "label": "Button Text",
+        "elementId": "07ac447",
+        "propKey": "text",
+        "elType": "widget",
+        "widgetType": "e-button",
+        "originValue": {
+          "$$type": "string",
+          "value": "Click here"
+        },
+        "groupId": "group-0"
+      },
+      "prop-1": {
+        "overrideKey": "prop-1",
+        "label": "Button Link",
+        "elementId": "07ac447",
+        "propKey": "link",
+        "elType": "widget",
+        "widgetType": "e-button",
+        "originValue": {
+          "$$type": "link",
+          "value": {
+            "destination": {
+              "$$type": "url",
+              "value": "https://test-link.com"
+            }
+          }
+        },
+        "groupId": "group-0"
+      }
+    },
+    "groups": {
+      "items": {
+        "group-0": {
+          "id": "group-0",
+          "label": "Button Content",
+          "props": [ "prop-0", "prop-1" ]
+        }
+      },
+      "order": [ "group-0" ]
+    }
+}
