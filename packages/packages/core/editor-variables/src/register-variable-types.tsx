@@ -40,6 +40,6 @@ export function registerVariableTypes() {
 		fallbackPropTypeUtil: sizePropTypeUtil,
 		variableType: 'size',
 		selectionFilter: () => [],
-		emptyState: <UpgradeButton size="small" href={ 'https://go.elementor.com/go-pro-panel-size-variable/' }/>,
+		emptyState: <UpgradeButton size="small" href={ 'https://go.elementor.com/go-pro-panel-size-variable/' } />,
 	} );
 }
