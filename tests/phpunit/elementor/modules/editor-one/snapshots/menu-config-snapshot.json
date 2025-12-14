@@ -1,0 +1,145 @@
+{
+    "editorFlyout": {
+        "parent_slug": "elementor-editor",
+        "items": [
+            {
+                "slug": "elementor",
+                "label": "Home",
+                "url": "/wp-admin/admin.php?page=elementor",
+                "icon": "home",
+                "group_id": "",
+                "priority": 10
+            },
+            {
+                "slug": "elementor-settings",
+                "label": "Settings",
+                "url": "/wp-admin/admin.php?page=elementor-settings",
+                "icon": "settings",
+                "group_id": "",
+                "priority": 20
+            },
+            {
+                "slug": "elementor-tools",
+                "label": "Tools",
+                "url": "/wp-admin/admin.php?page=elementor-tools",
+                "icon": "tool",
+                "group_id": "",
+                "priority": 30
+            },
+            {
+                "slug": "elementor-role-manager",
+                "label": "Role Manager",
+                "url": "/wp-admin/admin.php?page=elementor-role-manager",
+                "icon": "users",
+                "group_id": "",
+                "priority": 40
+            },
+            {
+                "slug": "e-form-submissions",
+                "label": "Submissions",
+                "url": "/wp-admin/admin.php?page=e-form-submissions",
+                "icon": "send",
+                "group_id": "",
+                "priority": 50
+            },
+            {
+                "slug": "elementor-templates",
+                "label": "Templates",
+                "url": "/wp-admin/admin.php?page=elementor-templates",
+                "icon": "folder",
+                "group_id": "elementor-editor-templates",
+                "priority": 60
+            },
+            {
+                "slug": "elementor-custom-elements",
+                "label": "Custom Elements",
+                "url": "/wp-admin/admin.php?page=elementor-custom-elements",
+                "icon": "adjustments",
+                "group_id": "elementor-editor-custom-elements",
+                "priority": 70
+            },
+            {
+                "slug": "elementor-system",
+                "label": "System",
+                "url": "/wp-admin/admin.php?page=elementor-system",
+                "icon": "info-circle",
+                "group_id": "elementor-editor-system",
+                "priority": 80
+            }
+        ]
+    },
+    "level4Flyouts": {
+        "elementor-editor-system": {
+            "items": [
+                {
+                    "slug": "elementor-system-info",
+                    "label": "System Info",
+                    "url": "/wp-admin/admin.php?page=elementor-system-info",
+                    "priority": 10
+                },
+                {
+                    "slug": "elementor-element-manager",
+                    "label": "Elements Manager",
+                    "url": "/wp-admin/admin.php?page=elementor-element-manager",
+                    "priority": 20
+                }
+            ]
+        },
+        "elementor-editor-custom-elements": {
+            "items": [
+                {
+                    "slug": "elementor_custom_fonts",
+                    "label": "Fonts",
+                    "url": "/wp-admin/admin.php?page=elementor_custom_fonts",
+                    "priority": 10
+                },
+                {
+                    "slug": "elementor_custom_icons",
+                    "label": "Icons",
+                    "url": "/wp-admin/admin.php?page=elementor_custom_icons",
+                    "priority": 20
+                },
+                {
+                    "slug": "elementor_custom_code",
+                    "label": "Code",
+                    "url": "/wp-admin/admin.php?page=elementor_custom_code",
+                    "priority": 40
+                }
+            ]
+        },
+        "elementor-editor-templates": {
+            "items": [
+                {
+                    "slug": "edit.php?post_type=elementor_library",
+                    "label": "Saved Templates",
+                    "url": "/wp-admin/edit.php?post_type=elementor_library",
+                    "priority": 10
+                },
+                {
+                    "slug": "elementor-app",
+                    "label": "Theme builder",
+                    "url": "/wp-admin/admin.php?page=elementor-app",
+                    "priority": 20
+                },
+                {
+                    "slug": "http://example.org/wp-admin/admin.php?page=elementor-app&ver=3.35.0&source=wp_db_templates_menu#/kit-library",
+                    "label": "Website Templates",
+                    "url": "/wp-admin/admin.php?page=elementor-app&ver=3.35.0&source=wp_db_templates_menu#/kit-library",
+                    "priority": 30
+                },
+                {
+                    "slug": "edit.php?post_type=e-floating-buttons",
+                    "label": "Floating Elements",
+                    "url": "/wp-admin/edit.php?post_type=e-floating-buttons",
+                    "priority": 40
+                },
+                {
+                    "slug": "popup_templates",
+                    "label": "Popups",
+                    "url": "/wp-admin/admin.php?page=popup_templates",
+                    "priority": 50
+                }
+            ]
+        }
+    }
+}

@@ -8,11 +8,12 @@ const schema = {
 };
 
 const outputSchema = {
-	propValues: z
+	properties: z
 		.record( z.string(), z.any() )
-		.describe(
-			'A record mapping PropTypes to their corresponding PropValues, with _styles record for style-related PropValues'
-		),
+		.describe( 'A record mapping PropTypes to their corresponding PropValues' ),
+	style: z
+		.record( z.string(), z.any() )
+		.describe( 'A record mapping StyleSchema properties to their corresponding PropValues' ),
 };
 
 export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
@@ -29,7 +30,9 @@ export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
 				throw new Error( `Element with ID ${ elementId } not found.` );
 			}
 			const elementRawSettings = element.settings;
-			const propSchema = getWidgetsCache()?.[ element.model.get( 'widgetType' ) || '' ]?.atomic_props_schema;
+			const propSchema =
+				getWidgetsCache()?.[ element.model.get( 'widgetType' ) || element.model.get( 'elType' ) || '' ]
+					?.atomic_props_schema;
 
 			if ( ! elementRawSettings || ! propSchema ) {
 				throw new Error( `No settings or prop schema found for element ID: ${ elementId }` );
@@ -55,13 +58,18 @@ export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
 							stylePropValues[ stylePropName ] = structuredClone( styleProps[ stylePropName ] );
 						}
 					} );
+					if ( defaultVariant.custom_css ) {
+						stylePropValues.custom_css = atob( defaultVariant.custom_css.raw );
+					}
 				}
 			}
 
 			return {
-				propValues: {
+				properties: {
 					...propValues,
-					_styles: stylePropValues,
+				},
+				style: {
+					...stylePropValues,
 				},
 			};
 		},
