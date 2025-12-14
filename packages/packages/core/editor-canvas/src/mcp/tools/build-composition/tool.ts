@@ -51,10 +51,18 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 					if ( ! widgetsCache[ elementTag ] ) {
 						errors.push( new Error( `Unknown widget type: ${ elementTag }` ) );
 					}
-					const isContainer = elementTag === 'e-flexbox' || elementTag === 'e-div-block';
+					const CONTAINER_ELEMENTS = [ 'e-div-block', 'e-flexbox', 'e-tabs' ];
+					const isContainer = CONTAINER_ELEMENTS.includes( elementTag );
+					let targetContainerId =
+						containerElement.model.get( 'elType' ) === 'e-tabs'
+							? containerElement.children?.[ 1 ].id
+							: containerElement.id;
+					if ( ! targetContainerId ) {
+						targetContainerId = containerElement.id;
+					}
 					const newElement = isContainer
 						? createElement( {
-								containerId: containerElement.id,
+								containerId: targetContainerId,
 								model: {
 									elType: elementTag,
 									id: generateElementId(),
@@ -62,7 +70,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 								options: { useHistory: false },
 						  } )
 						: createElement( {
-								containerId: containerElement.id,
+								containerId: targetContainerId,
 								model: {
 									elType: 'widget',
 									widgetType: elementTag,

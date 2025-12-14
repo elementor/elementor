@@ -17,6 +17,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Tabs_Menu extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
+	public function __construct( $data = [], $args = null )
+	{
+		parent::__construct( $data, $args );
+		$this->meta( 'llm_support', false );
+	}
+
 	public static function get_type() {
 		return 'e-tabs-menu';
 	}
