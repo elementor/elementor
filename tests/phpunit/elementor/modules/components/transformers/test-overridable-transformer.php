@@ -181,16 +181,14 @@ class Test_Overridable_Transformer extends Elementor_Test_Base {
         // Arrange.
         $transformer = new Overridable_Transformer();
 
-        $inner_override_value = [
-            '$$type' => 'string',
-            'value' => 'Inner Override Text',
-        ];
-
         $original_value = [
             '$$type' => 'override',
             'value' => [
                 'override_key' => 'inner-override-key',
-                'override_value' => $inner_override_value,
+                'override_value' => [
+                    '$$type' => 'string',
+                    'value' => 'Inner Override Text',
+                ],
             ],
         ];
 
@@ -211,10 +209,7 @@ class Test_Overridable_Transformer extends Elementor_Test_Base {
         Render_Context::pop( Overridable_Transformer::class );
 
         // Assert.
-        $this->assertEquals( [
-            'override_key' => 'inner-override-key',
-            'override_value' => $inner_override_value,
-        ], $result );
+        $this->assertEquals( $original_value, $result );
     }
 
     public function test_overridable_transformer_handles_override_original_value_when_matching_override_not_found() {

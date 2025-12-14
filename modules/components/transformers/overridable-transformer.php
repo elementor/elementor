@@ -19,12 +19,12 @@ class Overridable_Transformer extends Transformer_Base {
 
 		$overrides = Render_Context::get( static::class )['overrides'] ?? [];
 
-		if ( array_key_exists( $override_key, $overrides ) ) {
+		if ( isset( $overrides[ $override_key ] ) ) {
 			$matching_override_value = $overrides[ $override_key ];
 
 			if ( $this->is_origin_value_override( $origin_value ) ) {
 				$result = $this->transform_overridable_override( $origin_value, $matching_override_value, $context );
-			} elseif ( isset( $matching_override_value ) ) {
+			} else {
 				$result = $matching_override_value;
 			}
 		}
@@ -36,17 +36,13 @@ class Overridable_Transformer extends Transformer_Base {
 		return isset( $origin_value['$$type'] ) && Override_Prop_Type::get_key() === $origin_value['$$type'];
 	}
 
-	private function transform_overridable_override( array $inner_override, ?array $outer_override_value, Props_Resolver_Context $context ): ?array {
+	private function transform_overridable_override( array $inner_override, array $outer_override_value, Props_Resolver_Context $context ): ?array {
 		$override_transformer = new Override_Transformer();
 		$transformed_inner_override = $override_transformer->transform( $inner_override['value'], $context );
 
-		if ( isset( $outer_override_value ) ) {
-			return [
-				'override_key' => $transformed_inner_override['override_key'],
-				'override_value' => $outer_override_value,
-			];
-		}
-
-		return $transformed_inner_override;
+		return [
+			'override_key' => $transformed_inner_override['override_key'],
+			'override_value' => $outer_override_value,
+		];
 	}
 }
