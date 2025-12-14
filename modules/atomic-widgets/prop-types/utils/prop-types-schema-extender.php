@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -18,6 +19,32 @@ abstract class Prop_Types_Schema_Extender {
 
 		foreach ( $schema as $key => $prop_type ) {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
+				$result[ $key ] = $prop_type;
+
+				continue;
+			}
+
+			$result[ $key ] = $this->get_extended_prop_type( $prop_type );
+		}
+
+		return $result;
+	}
+
+	public function get_extended_style_schema( array $schema ): array {
+		// right now, only colors support dynamic tags in styles, this list is root level keys that contain color props
+		// ED-21082
+		$allowed_keys = [
+			'backdrop-filter',
+			'background',
+			'border-color',
+			'box-shadow',
+			'color',
+			'filter',
+			'stroke',
+		];
+
+		foreach ( $schema as $key => $prop_type ) {
+			if ( ! in_array( $key, $allowed_keys ) ) {
 				$result[ $key ] = $prop_type;
 
 				continue;
