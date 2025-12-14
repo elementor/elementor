@@ -40,6 +40,8 @@ export function InstanceEditPanel() {
 		)
 		.filter( Boolean ) as OverridablePropsGroup[];
 
+	const isEmpty = groups.length === 0 || Object.keys( overridableProps.props ).length === 0;
+
 	return (
 		<>
 			<PanelHeader sx={ { justifyContent: 'start' } }>
@@ -56,7 +58,7 @@ export function InstanceEditPanel() {
 				</Stack>
 			</PanelHeader>
 			<PanelBody>
-				{ groups.length === 0 ? (
+				{ isEmpty ? (
 					<EmptyState onEditComponent={ handleEditComponent } />
 				) : (
 					<Stack direction="column" alignItems="stretch">
