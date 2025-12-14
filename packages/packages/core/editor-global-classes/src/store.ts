@@ -1,4 +1,4 @@
-import { mergeProps, type Props } from '@elementor/editor-props';
+import { type Props } from '@elementor/editor-props';
 import {
 	type CustomCss,
 	getVariantByMeta,
@@ -203,6 +203,22 @@ export const slice = createSlice( {
 		},
 	},
 } );
+
+const mergeProps = ( current: Props, updates: Props ): Props => {
+	// edge case, the server returns an array instead of an object when empty props because of PHP array / object conversion
+	const props = Array.isArray( current ) ? {} : current;
+
+	Object.entries( updates ).forEach( ( [ key, value ] ) => {
+		if ( value === null || value === undefined ) {
+			// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+			delete props[ key ];
+		} else {
+			props[ key ] = value;
+		}
+	} );
+
+	return props;
+};
 
 const getNonEmptyVariants = ( style: StyleDefinition ) => {
 	return style.variants.filter(
