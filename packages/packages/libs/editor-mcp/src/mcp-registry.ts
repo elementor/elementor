@@ -14,9 +14,6 @@ const mcpDescriptions: { [ namespace: string ]: string } = {};
 let isMcpRegistrationActivated = false || typeof globalThis.jest !== 'undefined';
 
 export const registerMcp = ( mcp: McpServer, name: string ) => {
-	if ( isMcpRegistrationActivated ) {
-		throw new Error( 'MCP Registration is already activated. Cannot register new MCP servers.' );
-	}
 	const mcpName = isAlphabet( name );
 	mcpRegistry[ mcpName ] = mcp;
 };
@@ -29,7 +26,7 @@ export async function activateMcpRegistration( sdk: AngieMcpSdk ) {
 	const mcpServerList = Object.entries( mcpRegistry );
 	for await ( const entry of mcpServerList ) {
 		const [ key, mcpServer ] = entry;
-		await sdk.registerServer( {
+		await sdk.registerLocalServer( {
 			name: `editor-${ key }`,
 			server: mcpServer,
 			version: '1.0.0',
@@ -108,13 +105,8 @@ export interface MCPRegistryEntry {
 }
 
 type ResourceList = {
-	type: 'resource_link';
 	uri: string;
-	name: string;
 	description: string;
-	_meta: Record< string, string >;
-	mimeType?: string;
-	annotations?: Record< string, unknown >;
 }[];
 
 type ToolRegistrationOptions<
@@ -136,7 +128,7 @@ type ToolRegistrationOptions<
 				extra: RequestHandlerExtra< ServerRequest, ServerNotification >
 		  ) => ExpectedOutput | Promise< ExpectedOutput >;
 	isDestrcutive?: boolean;
-	resourceList?: ResourceList;
+	requiredResources?: ResourceList;
 };
 
 function createToolRegistrator( server: McpServer ) {
@@ -147,9 +139,6 @@ function createToolRegistrator( server: McpServer ) {
 		const outputSchema = opts.outputSchema as ZodRawShape | undefined;
 		// @ts-ignore: TS is unable to infer the type here
 		const inputSchema: ZodRawShape = opts.schema ? opts.schema : {};
-		if ( isMcpRegistrationActivated ) {
-			throw new Error( 'MCP Registration is already activated. Cannot add new tools.' );
-		}
 		const toolCallback: ToolCallback< ZodRawShape > = async function ( args, extra ) {
 			try {
 				const invocationResult = await opts.handler( opts.schema ? args : {}, extra );
@@ -163,7 +152,6 @@ function createToolRegistrator( server: McpServer ) {
 									? invocationResult
 									: JSON.stringify( invocationResult ),
 						},
-						...( opts.resourceList || [] ),
 					],
 				};
 			} catch ( error ) {
@@ -178,6 +166,14 @@ function createToolRegistrator( server: McpServer ) {
 				};
 			}
 		};
+		const annotations: Record< string, unknown > = {
+			destructiveHint: opts.isDestrcutive,
+			readOnlyHint: opts.isDestrcutive ? false : undefined,
+			title: opts.name,
+		};
+		if ( opts.requiredResources ) {
+			annotations[ 'angie/requiredResources' ] = opts.requiredResources;
+		}
 		server.registerTool(
 			opts.name,
 			{
@@ -185,14 +181,13 @@ function createToolRegistrator( server: McpServer ) {
 				inputSchema,
 				outputSchema,
 				title: opts.name,
-				annotations: {
-					destructiveHint: opts.isDestrcutive,
-					readOnlyHint: opts.isDestrcutive ? false : undefined,
-					title: opts.name,
-				},
+				annotations,
 			},
 			toolCallback
 		);
+		if ( isMcpRegistrationActivated ) {
+			server.sendToolListChanged();
+		}
 	}
 	return {
 		addTool,

@@ -1,5 +1,6 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 
+import { initBreakpointsResource } from './resources/breakpoints-resource';
 import { initDocumentStructureResource } from './resources/document-structure-resource';
 import { initWidgetsSchemaResource } from './resources/widgets-schema-resource';
 import { initBuildCompositionsTool } from './tools/build-composition/tool';
@@ -16,4 +17,5 @@ export const initCanvasMcp = ( reg: MCPRegistryEntry ) => {
 	initBuildCompositionsTool( reg );
 	initGetElementConfigTool( reg );
 	initConfigureElementTool( reg );
+	initBreakpointsResource( reg );
 };
