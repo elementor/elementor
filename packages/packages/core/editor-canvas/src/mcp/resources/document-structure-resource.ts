@@ -91,33 +91,6 @@ function getDocumentStructure() {
 		return { error: 'No active document found' };
 	}
 
-	function extractElementData( element: ElementorContainer ): Record< string, unknown > | null {
-		if ( ! element || ! element.model ) {
-			return null;
-		}
-
-		const model = element.model.attributes;
-		const result: Record< string, unknown > = {
-			id: model.id,
-			elType: model.elType,
-			widgetType: model.widgetType || undefined,
-		};
-
-		const title = model.title || element.model?.editor_settings?.title;
-
-		if ( title ) {
-			result.title = title;
-		}
-
-		if ( element.children && element.children.length > 0 ) {
-			result.children = element.children
-				.map( ( child: ElementorContainer ) => extractElementData( child ) )
-				.filter( ( child: Record< string, unknown > | null ) => child !== null );
-		}
-
-		return result;
-	}
-
 	const containers = document.container?.children || [];
 	const elements = ( containers as ElementorContainer[] ).map( ( container: ElementorContainer ) =>
 		extractElementData( container )
@@ -129,4 +102,31 @@ function getDocumentStructure() {
 		title: document.config.settings?.post_title || 'Untitled',
 		elements: elements.filter( ( el: Record< string, unknown > | null ) => el !== null ),
 	};
+}
+
+function extractElementData( element: ElementorContainer ): Record< string, unknown > | null {
+	if ( ! element || ! element.model ) {
+		return null;
+	}
+
+	const model = element.model.attributes;
+	const result: Record< string, unknown > = {
+		id: model.id,
+		elType: model.elType,
+		widgetType: model.widgetType || undefined,
+	};
+
+	const title = model.title || element.model?.editor_settings?.title;
+
+	if ( title ) {
+		result.title = title;
+	}
+
+	if ( element.children && element.children.length > 0 ) {
+		result.children = element.children
+			.map( ( child: ElementorContainer ) => extractElementData( child ) )
+			.filter( ( child: Record< string, unknown > | null ) => child !== null );
+	}
+
+	return result;
 }
