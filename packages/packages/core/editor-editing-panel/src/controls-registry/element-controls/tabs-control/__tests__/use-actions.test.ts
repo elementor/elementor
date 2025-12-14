@@ -337,12 +337,7 @@ describe( 'tabs-control actions', () => {
 
 		beforeEach( () => {
 			jest.mocked( getContainer ).mockReturnValue( {
-				children: [
-					{ id: 'content-0' },
-					{ id: 'content-1' },
-					{ id: 'content-2' },
-					{ id: 'content-3' },
-				],
+				children: [ { id: 'content-0' }, { id: 'content-1' }, { id: 'content-2' }, { id: 'content-3' } ],
 			} as unknown as V1Element );
 		} );
 
@@ -377,8 +372,7 @@ describe( 'tabs-control actions', () => {
 				tabContentAreaId: TAB_CONTENT_AREA_ID,
 			} );
 
-			const onDuplicateElements = jest.mocked( duplicateElements ).mock.calls[ 0 ][ 0 ]
-				.onDuplicateElements;
+			const onDuplicateElements = jest.mocked( duplicateElements ).mock.calls[ 0 ][ 0 ].onDuplicateElements;
 			onDuplicateElements?.();
 
 			// Assert
@@ -399,8 +393,7 @@ describe( 'tabs-control actions', () => {
 				tabContentAreaId: TAB_CONTENT_AREA_ID,
 			} );
 
-			const onDuplicateElements = jest.mocked( duplicateElements ).mock.calls[ 0 ][ 0 ]
-				.onDuplicateElements;
+			const onDuplicateElements = jest.mocked( duplicateElements ).mock.calls[ 0 ][ 0 ].onDuplicateElements;
 			onDuplicateElements?.();
 
 			// Assert
@@ -418,8 +411,7 @@ describe( 'tabs-control actions', () => {
 				tabContentAreaId: TAB_CONTENT_AREA_ID,
 			} );
 
-			const onDuplicateElements = jest.mocked( duplicateElements ).mock.calls[ 0 ][ 0 ]
-				.onDuplicateElements;
+			const onDuplicateElements = jest.mocked( duplicateElements ).mock.calls[ 0 ][ 0 ].onDuplicateElements;
 			onDuplicateElements?.();
 
 			// Assert
@@ -437,8 +429,7 @@ describe( 'tabs-control actions', () => {
 				tabContentAreaId: TAB_CONTENT_AREA_ID,
 			} );
 
-			const onDuplicateElements = jest.mocked( duplicateElements ).mock.calls[ 0 ][ 0 ]
-				.onDuplicateElements;
+			const onDuplicateElements = jest.mocked( duplicateElements ).mock.calls[ 0 ][ 0 ].onDuplicateElements;
 			onDuplicateElements?.();
 
 			// Assert
@@ -456,8 +447,7 @@ describe( 'tabs-control actions', () => {
 				tabContentAreaId: TAB_CONTENT_AREA_ID,
 			} );
 
-			const onRestoreElements = jest.mocked( duplicateElements ).mock.calls[ 0 ][ 0 ]
-				.onRestoreElements;
+			const onRestoreElements = jest.mocked( duplicateElements ).mock.calls[ 0 ][ 0 ].onRestoreElements;
 			onRestoreElements?.();
 
 			// Assert
@@ -477,8 +467,7 @@ describe( 'tabs-control actions', () => {
 
 			mockSetValue.mockClear();
 
-			const onRestoreElements = jest.mocked( duplicateElements ).mock.calls[ 0 ][ 0 ]
-				.onRestoreElements;
+			const onRestoreElements = jest.mocked( duplicateElements ).mock.calls[ 0 ][ 0 ].onRestoreElements;
 			onRestoreElements?.();
 
 			// Assert
