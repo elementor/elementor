@@ -125,20 +125,17 @@ export default function createAtomicElementBaseView( type ) {
 			BaseElementView.prototype.renderOnChange.apply( this, settings );
 
 			if ( changed.attributes ) {
-				const preserveAttrs = [ 'id', 'class', 'href' ];
 				const $elAttrs = this.$el[ 0 ].attributes;
 				for ( let i = $elAttrs.length - 1; i >= 0; i-- ) {
 					const attrName = $elAttrs[ i ].name;
-					if ( ! preserveAttrs.includes( attrName ) ) {
+					if ( attrName !== 'class' ) {
 						this.$el.removeAttr( attrName );
 					}
 				}
 
-				const attrs = this.model.getSetting( 'attributes' )?.value || [];
-				attrs.forEach( ( attribute ) => {
-					const key = attribute?.value?.key?.value;
-					const value = attribute?.value?.value?.value;
-					if ( key && value ) {
+				const newAttrs = this.attributes();
+				Object.entries( newAttrs ).forEach( ( [ key, value ] ) => {
+					if ( key !== 'class' && value !== undefined ) {
 						this.$el.attr( key, value );
 					}
 				} );
