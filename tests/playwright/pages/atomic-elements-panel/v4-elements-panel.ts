@@ -5,18 +5,24 @@ import StyleTab from './style-tab';
 
 export default class v4Panel extends BasePage {
 	readonly inputField: string;
+	readonly textareaField: string;
 	readonly editor: EditorPage;
 	readonly style: StyleTab;
 
 	constructor( page: Page, testInfo: TestInfo, editor: EditorPage ) {
 		super( page, testInfo );
 		this.inputField = 'input[class*="MuiInputBase"]';
+		this.textareaField = 'textarea[class*="MuiInputBase"]';
 		this.editor = editor;
 		this.style = new StyleTab( page, testInfo );
 	}
 
 	async fillField( nth: number, text: string ): Promise<void> {
 		await this.page.locator( this.inputField ).nth( nth ).fill( text );
+	}
+
+	async fillTextarea( nth: number, text: string ): Promise<void> {
+		await this.page.locator( this.textareaField ).nth( nth ).fill( text );
 	}
 
 	async setWidgetSize( options: { width?: number, height?: number, minWidth?: number, minHeight?: number, maxWidth?: number, maxHeight?: number, overflow?: string } ): Promise<void> {
