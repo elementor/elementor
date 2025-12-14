@@ -84,7 +84,8 @@ The css string must follow standard CSS syntax, with properties and values separ
 			list: () => {
 				const cache = getWidgetsCache() || {};
 				const availableWidgets = Object.keys( cache || {} ).filter(
-					( widgetType ) => cache[ widgetType ]?.atomic_props_schema
+					( widgetType ) =>
+						cache[ widgetType ]?.atomic_props_schema && cache[ widgetType ].meta?.llm_support !== false
 				);
 				return {
 					resources: availableWidgets.map( ( widgetType ) => ( {
@@ -100,8 +101,9 @@ The css string must follow standard CSS syntax, with properties and values separ
 		async ( uri, variables ) => {
 			const widgetType =
 				typeof variables.widgetType === 'string' ? variables.widgetType : variables.widgetType?.[ 0 ];
-			const propSchema = getWidgetsCache()?.[ widgetType ]?.atomic_props_schema;
-			if ( ! propSchema ) {
+			const widgetData = getWidgetsCache()?.[ widgetType ];
+			const propSchema = widgetData?.atomic_props_schema;
+			if ( ! propSchema || ! widgetData ) {
 				throw new Error( `No prop schema found for element type: ${ widgetType }` );
 			}
 			const asJson = Object.fromEntries(
@@ -115,6 +117,9 @@ The css string must follow standard CSS syntax, with properties and values separ
 				delete asJson[ key ];
 			} );
 
+			const description =
+				typeof widgetData?.meta?.description === 'string' ? widgetData.meta.description : undefined;
+
 			return {
 				contents: [
 					{
@@ -123,6 +128,7 @@ The css string must follow standard CSS syntax, with properties and values separ
 						text: JSON.stringify( {
 							type: 'object',
 							properties: asJson,
+							description,
 						} ),
 					},
 				],
