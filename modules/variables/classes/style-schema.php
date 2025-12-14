@@ -38,7 +38,7 @@ class Style_Schema {
 			$this->preserve_meta( $prop_type, $schema[ $key ] );
 		}
 
-		if ( $mode === self::MODE_BASIC && isset( $schema['font-family'] ) ) {
+		if ( self::MODE_BASIC === $mode && isset( $schema['font-family'] ) ) {
 			$schema['font-family'] = $this->update_font_family( $schema['font-family'] );
 		}
 
@@ -46,11 +46,11 @@ class Style_Schema {
 	}
 
 	private function update_prop_type( $prop_type, string $mode ) {
-		if ( $mode === self::MODE_BASIC && $prop_type instanceof Color_Prop_Type ) {
+		if ( self::MODE_BASIC === $mode && $prop_type instanceof Color_Prop_Type ) {
 			return $this->update_color( $prop_type );
 		}
 
-		if ( $mode === self::MODE_SIZE && $prop_type instanceof Size_Prop_Type ) {
+		if ( self::MODE_SIZE === $mode && $prop_type instanceof Size_Prop_Type ) {
 			return $this->update_size( $prop_type );
 		}
 
@@ -93,7 +93,7 @@ class Style_Schema {
 
 	private function update_object( Object_Prop_Type $object_prop_type, string $mode ): Object_Prop_Type {
 		$shape = $object_prop_type->get_shape();
-		$augmented_shape = $mode === self::MODE_BASIC
+		$augmented_shape = self::MODE_BASIC === $mode
 			? $this->augment_basic( $shape )
 			: $this->augment_size( $shape );
 
