@@ -50,14 +50,14 @@ export default function SendFeedbackPopupLocation() {
 	const [ isFetching, setIsFetching ] = useState( false );
 	useEffect( () => {
 		const handler = () => {
-			trackEvent( 'feedback_modal_opened', {
-				source: 'top_bar',
-				context: 'v4_beta',
-			} );
 			popupState.toggle();
 			// reason to re-check: clicking "connect to elementor" closes the dialog. At this time the user can perform connect, and the state might change externally.
 			setIsUserConnected( checkIfUserIsConnected() );
 			setFeedbackResult( null );
+			trackEvent( 'feedback_modal_opened', {
+				source: 'top_bar',
+				context: 'v4_beta',
+			} );
 		};
 		window.addEventListener( FEEDBACK_TOGGLE_EVENT, handler );
 		return () => {
@@ -70,10 +70,10 @@ export default function SendFeedbackPopupLocation() {
 	}, [ feedbackContent, feedbackResult, isUserConnected, isFetching ] );
 
 	const handleClose = () => {
+		popupState.close();
 		trackEvent( 'feedback_modal_closed', {
 			feedback_text: feedbackContent,
 		} );
-		popupState.close();
 	};
 	const handleStartAntoher = () => {
 		setFeedbackContent( '' );
