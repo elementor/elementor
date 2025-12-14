@@ -42,7 +42,7 @@ class Module extends Module_Base {
 
 		$response = $app->submit( $body );
 		$response_code = $response['response']['code'];
-		if ( $response['response']['message'] === 'OK' ) {
+		if ( 'OK' === $response['response']['message'] ) {
 			return [
 				'success' => true,
 				'code' => $response_code,
