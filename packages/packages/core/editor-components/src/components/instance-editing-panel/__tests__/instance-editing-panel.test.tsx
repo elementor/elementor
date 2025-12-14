@@ -96,7 +96,7 @@ const MOCK_OVERRIDABLE_PROPS = {
 	},
 };
 
-describe( '<EditInstancePanel />', () => {
+describe( '<InstanceEditingPanel />', () => {
 	let store: Store< SliceState< typeof slice > >;
 
 	beforeEach( () => {
