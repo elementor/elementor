@@ -1,5 +1,6 @@
 import {
 	isTransformable,
+	migratePropValue,
 	type PropKey,
 	type Props,
 	type PropsSchema,
@@ -44,7 +45,7 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 			Object.entries( schema ).map( async ( [ key, type ] ) => {
 				const value = props[ key ] ?? type.default;
 
-				const transformed = await transform( { value, key, type, signal } );
+				const transformed = ( await transform( { value, key, type, signal } ) ) as PropValue;
 
 				onPropResolve?.( { key, value: transformed } );
 
@@ -74,6 +75,12 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 
 		if ( value.disabled === true ) {
 			return null;
+		}
+
+		value = migratePropValue( value, type );
+
+		if ( ! isTransformable( value ) ) {
+			return value;
 		}
 
 		if ( type.kind === 'union' ) {
