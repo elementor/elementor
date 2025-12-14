@@ -61,35 +61,12 @@ export const InlineEditor = React.forwardRef(
 	) => {
 		const containerRef = React.useRef< HTMLDivElement >( null );
 		const popupState = usePopupState( { variant: 'popover', disableAutoFocus: true } );
+		const [ hasSelectedContent, setHasSelectedContent ] = React.useState( false )
 		const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
 
 		const onSelectionEnd = ( view: EditorView, event: MouseEvent | KeyboardEvent ) => {
-			if ( ! view.state.selection.empty && ! popupState.isOpen ) {
-				popupState.open( containerRef?.current );
-			}
-
-			if ( view.state.selection.empty && popupState.isOpen ) {
-				popupState.close();
-			}
-
-			if ( 'clientX' in event && 'clientY' in event ) {
-				requestAnimationFrame( () => handleMouseUpFocus( view, event ) );
-			}
-		};
-
-		const handleMouseUpFocus = ( view: EditorView, event: MouseEvent ) => {
-			if ( view.state.selection.empty ) {
-				const positionAtCoords = editor.view.posAtCoords( {
-					left: event.clientX,
-					top: event.clientY,
-				} );
-
-				if ( positionAtCoords ) {
-					editor.chain().focus().setTextSelection( positionAtCoords.pos ).run();
-				}
-			} else {
-				view.dom.focus();
-			}
+			setHasSelectedContent( () => ! view.state.selection.empty );
+			queueMicrotask( () => view.focus() )
 		};
 
 		const onKeyDown = ( _: EditorView, event: KeyboardEvent ) => {
@@ -148,15 +125,11 @@ export const InlineEditor = React.forwardRef(
 
 				newValue = isEmpty( newValue ) ? null : newValue;
 				setValue( newValue );
-				updatedEditor.commands?.setContent( newValue, { emitUpdate: false } );
 
-				if ( updatedEditor.state.selection.empty && popupState.isOpen ) {
-					popupState.close();
-				}
 
-				requestAnimationFrame( () => {
-					updatedEditor.commands.focus();
-				} );
+				// if ( updatedEditor.state.selection.empty && popupState.isOpen ) {
+				// 	popupState.close();
+				// }
 			},
 			autofocus,
 			editorProps: {
@@ -240,6 +213,7 @@ export const InlineEditor = React.forwardRef(
 							},
 						} }
 						{ ...bindPopover( popupState ) }
+						open={ hasSelectedContent }
 						anchorReference="anchorPosition"
 						anchorPosition={ computePopupPosition() }
 						anchorOrigin={ { vertical: 'top', horizontal: 'left' } }
