@@ -264,7 +264,7 @@ export const VariablesManagerTable = ( {
 														onValidationChange,
 														error,
 													} ) =>
-														row.valueField( {
+														row.valueField?.( {
 															ref: {
 																current: variableRowRefs.current.get(
 																	'table-ref-' + row.id
@@ -284,7 +284,7 @@ export const VariablesManagerTable = ( {
 																onFieldError?.( !! errorMsg );
 															},
 															error,
-														} )
+														} ) ?? <></>
 													}
 													onRowRef={ handleRowRef( row.id ) }
 													gap={ 0.25 }
