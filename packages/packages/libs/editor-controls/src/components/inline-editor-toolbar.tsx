@@ -10,7 +10,15 @@ import {
 	SuperscriptIcon,
 	UnderlineIcon,
 } from '@elementor/icons';
-import { Box, IconButton, ToggleButton, ToggleButtonGroup, Tooltip, usePopupState } from '@elementor/ui';
+import {
+	Box,
+	IconButton,
+	ToggleButton,
+	ToggleButtonGroup,
+	toggleButtonGroupClasses,
+	Tooltip,
+	usePopupState,
+} from '@elementor/ui';
 import { type Editor, useEditorState } from '@tiptap/react';
 import { __ } from '@wordpress/i18n';
 
@@ -142,18 +150,19 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 			ref={ toolbarRef }
 			sx={ {
 				position: 'absolute',
+				left: 0,
 				top: -40,
 				display: 'inline-flex',
 				gap: 0.5,
 				padding: 0.5,
-				borderRadius: 1,
+				borderRadius: '8px',
 				backgroundColor: 'background.paper',
 				boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
 				alignItems: 'center',
 				visibility: popupState.isOpen ? 'hidden' : 'visible',
 			} }
 		>
-			<Tooltip title={ clearButton.label } placement="top">
+			<Tooltip title={ clearButton.label } placement="top" sx={ { borderRadius: '8px' } }>
 				<IconButton aria-label={ clearButton.label } onClick={ () => clearButton.method( editor ) } size="tiny">
 					{ clearButton.icon }
 				</IconButton>
@@ -164,6 +173,19 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 				sx={ {
 					display: 'flex',
 					gap: 0.5,
+					border: 'none',
+					[ `& .${ toggleButtonGroupClasses.firstButton }, & .${ toggleButtonGroupClasses.middleButton }, & .${ toggleButtonGroupClasses.lastButton }` ]:
+						{
+							borderRadius: '8px',
+							border: 'none',
+							marginLeft: 0,
+							'&.Mui-selected': {
+								marginLeft: 0,
+							},
+							'& + &.Mui-selected': {
+								marginLeft: 0,
+							},
+						},
 				} }
 			>
 				{ formatButtonsList.map( ( button ) => (
