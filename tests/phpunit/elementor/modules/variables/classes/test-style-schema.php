@@ -65,10 +65,8 @@ class Test_Style_Schema extends TestCase {
 			'color' => Union_Prop_Type::make()
 				->add_prop_type( Color_Prop_Type::make() )
 				->add_prop_type( Color_Variable_Prop_Type::make() ),
-			'width' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( Size_Variable_Prop_Type::make() ),
-			];
+			'width' => Size_Prop_Type::make(),
+		];
 
 		$this->assertSchemaIsEqual( $expected, $schema );
 	}
@@ -85,12 +83,8 @@ class Test_Style_Schema extends TestCase {
 
 		// Assert.
 		$expected = [
-			'width' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( Size_Variable_Prop_Type::make() ),
-			'height' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make() )
-				->add_prop_type( Size_Variable_Prop_Type::make() ),
+			'width' => Size_Prop_Type::make(),
+			'height' => Size_Prop_Type::make(),
 		];
 
 		$this->assertSchemaIsEqual( $expected, $schema );
@@ -250,12 +244,6 @@ class Test_Style_Schema extends TestCase {
 						if ( $size_prop_type->get_key() === 'background-image-size-scale' ) {
 							$size_scale_shape = $size_prop_type->get_shape();
 
-							$size_scale_shape['width'] = Union_Prop_Type::create_from( $size_scale_shape['width'] )
-								->add_prop_type( Size_Variable_Prop_Type::make() );
-
-							$size_scale_shape['height'] = Union_Prop_Type::create_from( $size_scale_shape['height'] )
-								->add_prop_type( Size_Variable_Prop_Type::make() );
-
 							$size_prop_type->set_shape( $size_scale_shape );
 						}
 					}
@@ -265,12 +253,6 @@ class Test_Style_Schema extends TestCase {
 					foreach ( $bg_image_shape['position']->get_prop_types() as $position_prop_type ) {
 						if ( $position_prop_type->get_key() === 'background-image-position-offset' ) {
 							$position_offset_shape = $position_prop_type->get_shape();
-
-							$position_offset_shape['x'] = Union_Prop_Type::create_from( $position_offset_shape['x'] )
-								->add_prop_type( Size_Variable_Prop_Type::make() );
-
-							$position_offset_shape['y'] = Union_Prop_Type::create_from( $position_offset_shape['y'] )
-								->add_prop_type( Size_Variable_Prop_Type::make() );
 
 							$position_prop_type->set_shape( $position_offset_shape );
 						}
