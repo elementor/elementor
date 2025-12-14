@@ -27,7 +27,11 @@ type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
 type VariableTypeOptions = {
 	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > >;
 	startIcon?: ( { value }: { value: string } ) => JSX.Element;
+<<<<<<< HEAD
 	valueField: ( { value, onChange, onValidationChange, propType, error }: ValueFieldProps ) => JSX.Element;
+=======
+	valueField?: ( props: ValueFieldProps ) => JSX.Element;
+>>>>>>> 65a95a01d8 (Internal: Enable variable-size floating action for all users [ED-21159] (#33725))
 	variableType: string;
 	defaultValue?: string;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
@@ -35,6 +39,7 @@ type VariableTypeOptions = {
 	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
 	valueTransformer?: ( value: string ) => PropValue;
 	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
+	emptyState?: JSX.Element;
 };
 
 export type VariableTypesMap = Record< string, VariableTypeOptions >;
@@ -53,6 +58,7 @@ export function createVariableTypeRegistry() {
 		valueTransformer,
 		fallbackPropTypeUtil,
 		isCompatible,
+		emptyState,
 	}: VariableTypeOptions ) => {
 		if ( variableTypes[ propTypeUtil.key ] ) {
 			throw new Error( `Variable with key "${ propTypeUtil.key }" is already registered.` );
@@ -80,6 +86,7 @@ export function createVariableTypeRegistry() {
 			valueTransformer,
 			fallbackPropTypeUtil,
 			isCompatible,
+			emptyState,
 		};
 
 		registerTransformer( propTypeUtil.key );

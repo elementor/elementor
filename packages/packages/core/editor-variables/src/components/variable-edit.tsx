@@ -206,6 +206,7 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 							} }
 						/>
 					</FormField>
+<<<<<<< HEAD
 					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
 						<Typography variant="h5">
 							<ValueField
@@ -220,6 +221,25 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 							/>
 						</Typography>
 					</FormField>
+=======
+					{ ValueField && (
+						<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+							<Typography variant="h5">
+								<ValueField
+									propTypeKey={ variable.type }
+									value={ value }
+									onChange={ ( newValue ) => {
+										setValue( newValue );
+										setErrorMessage( '' );
+										setValueFieldError( '' );
+									} }
+									onValidationChange={ setValueFieldError }
+									propType={ propType }
+								/>
+							</Typography>
+						</FormField>
+					) }
+>>>>>>> 65a95a01d8 (Internal: Enable variable-size floating action for all users [ED-21159] (#33725))
 
 					{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 				</PopoverContent>
