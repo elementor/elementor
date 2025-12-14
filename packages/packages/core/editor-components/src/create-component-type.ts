@@ -91,9 +91,16 @@ function createComponentView(
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
-			if ( settings.component_instance ) {
+			const componentInstance = settings.component_instance as
+				| {
+						overrides?: Record< string, unknown >;
+						elements?: unknown[];
+				  }
+				| undefined;
+
+			if ( componentInstance ) {
 				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection(
-					settings.component_instance
+					componentInstance.elements
 				);
 
 				this.collection.models.forEach( setInactiveRecursively );

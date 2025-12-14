@@ -14,3 +14,4 @@ export {
 } from './legacy/create-templated-element-type';
 export { getCanvasIframeDocument } from './sync/get-canvas-iframe-document';
 export * from './legacy/types';
+export { RenderContext } from './renderers/render-context';
