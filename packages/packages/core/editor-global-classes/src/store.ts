@@ -1,4 +1,4 @@
-import { mergeProps, type Props } from '@elementor/editor-props';
+import { type Props } from '@elementor/editor-props';
 import {
 	type CustomCss,
 	getVariantByMeta,
@@ -200,6 +200,19 @@ export const slice = createSlice( {
 		},
 	},
 } );
+
+const mergeProps = ( current: Props, updates: Props ): Props => {
+	Object.entries( updates ).forEach( ( [ key, value ] ) => {
+		if ( value === null || value === undefined ) {
+			// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+			delete current[ key ];
+		} else {
+			current[ key ] = value;
+		}
+	} );
+
+	return current;
+};
 
 const getNonEmptyVariants = ( style: StyleDefinition ) => {
 	return style.variants.filter(
