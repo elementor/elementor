@@ -1,9 +1,5 @@
 import * as React from 'react';
-import {
-	colorPropTypeUtil,
-	sizePropTypeUtil,
-	stringPropTypeUtil,
-} from '@elementor/editor-props';
+import { colorPropTypeUtil, sizePropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import { UpgradeButton } from '@elementor/editor-ui';
 import { BrushIcon, ExpandDiagonalIcon, TextIcon } from '@elementor/icons';
 
