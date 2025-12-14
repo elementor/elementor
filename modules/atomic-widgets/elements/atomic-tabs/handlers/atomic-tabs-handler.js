@@ -35,12 +35,6 @@ register( {
 				'@keydown.arrow-left.prevent'( event ) {
 					this.navigateTabs( event );
 				},
-				'@keydown.arrow-down.prevent'( event ) {
-					this.navigateTabs( event );
-				},
-				'@keydown.arrow-up.prevent'( event ) {
-					this.navigateTabs( event );
-				},
 				':class'() {
 					const id = this.$el.id;
 
