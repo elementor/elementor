@@ -41,17 +41,18 @@ class Module extends Module_Base {
 		];
 
 		$response = $app->submit( $body );
-		$response_code = $response['response']['code'];
-		if ( $response_code ) {
+		$response_code = $response[ 'response' ][ 'code' ];
+		if ( $response[ 'response' ][ 'message' ] === 'OK' ) {
 			return [
 				'success' => true,
+				'code' => $response_code,
 				'message' => esc_html__( 'Feedback submitted successfully.', 'elementor' ),
 			];
 		} else {
 			return [
 				'success' => false,
 				'code' => $response_code,
-				'message' => esc_html__( 'Failed to submit feedback. Please try again later.', 'elementor' ),
+				'message' => esc_html__( 'Failed to submit feedback.', 'elementor' ),
 			];
 		}
 	}
