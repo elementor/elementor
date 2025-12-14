@@ -66,7 +66,7 @@ export const InlineEditor = React.forwardRef(
 
 		const onSelectionEnd = ( view: EditorView ) => {
 			setHasSelectedContent( () => ! view.state.selection.empty );
-			queueMicrotask( () => view.focus() )
+			queueMicrotask( () => view.focus() );
 		};
 
 		const onKeyDown = ( _: EditorView, event: KeyboardEvent ) => {
@@ -76,12 +76,12 @@ export const InlineEditor = React.forwardRef(
 		};
 
 		const toolbarRelatedListeners = showToolbar
-		? {
-				mouseup: onSelectionEnd,
-				keyup: onSelectionEnd,
-				keydown: onKeyDown,
-		  }
-		: undefined;
+			? {
+					mouseup: onSelectionEnd,
+					keyup: onSelectionEnd,
+					keydown: onKeyDown,
+			  }
+			: undefined;
 
 		const editor = useEditor( {
 			extensions: [
