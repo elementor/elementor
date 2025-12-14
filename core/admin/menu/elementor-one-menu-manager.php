@@ -16,7 +16,7 @@ class Elementor_One_Menu_Manager {
 
 	const ROOT_MENU_SLUG = 'elementor-one';
 
-	const EXPERIMENT_NAME = 'editor-one';
+	const EXPERIMENT_NAME = 'e_editor_one';
 
 	/**
 	 * @var Root_Elementor_One_Menu_Item[]
@@ -95,6 +95,7 @@ class Elementor_One_Menu_Manager {
 		}, 20 );
 
 		add_action( 'admin_head', function () {
+			$this->hide_old_menu();
 			$this->hide_invisible_menus();
 		} );
 	}
@@ -106,10 +107,6 @@ class Elementor_One_Menu_Manager {
 
 		$root_menu_hook = $this->register_root_menu();
 		$hooks[ self::ROOT_MENU_SLUG ] = $root_menu_hook;
-
-		foreach ( $this->get_all_root_items() as $item_slug => $item ) {
-			$hooks[ $item_slug ] = $this->register_root_submenu( $item_slug, $item );
-		}
 
 		foreach ( $this->get_all_editor_items() as $item_slug => $item ) {
 			$hooks[ $item_slug ] = $this->register_editor_menu( $item_slug, $item );
@@ -123,24 +120,24 @@ class Elementor_One_Menu_Manager {
 	}
 
 	private function register_root_menu() {
-		$first_root_item = reset( $this->root_items );
+		$first_editor_item = reset( $this->editor_items );
 		
-		if ( ! $first_root_item ) {
-			$page_title = esc_html__( 'Elementor One', 'elementor' );
+		if ( ! $first_editor_item ) {
+			$page_title = esc_html__( 'Editor', 'elementor' );
 			$callback = '';
 			$icon_url = '';
 			$position = 58.5;
 		} else {
-			$has_page = ( $first_root_item instanceof Elementor_One_Menu_Item_With_Page );
-			$page_title = $has_page ? $first_root_item->get_page_title() : esc_html__( 'Elementor One', 'elementor' );
-			$callback = $has_page ? [ $first_root_item, 'render' ] : '';
-			$icon_url = $first_root_item->get_icon_url();
-			$position = $first_root_item->get_position();
+			$has_page = ( $first_editor_item instanceof Elementor_One_Menu_Item_With_Page );
+			$page_title = $has_page ? $first_editor_item->get_page_title() : esc_html__( 'Editor', 'elementor' );
+			$callback = $has_page ? [ $first_editor_item, 'render' ] : '';
+			$icon_url = '';
+			$position = 58.5;
 		}
 
 		return add_menu_page(
 			$page_title,
-			esc_html__( 'Elementor One', 'elementor' ),
+			esc_html__( 'Editor', 'elementor' ),
 			'manage_options',
 			self::ROOT_MENU_SLUG,
 			$callback,
@@ -199,13 +196,11 @@ class Elementor_One_Menu_Manager {
 		);
 	}
 
-	private function hide_invisible_menus() {
-		foreach ( $this->get_all_root_items() as $item_slug => $item ) {
-			if ( ! $item->is_visible() ) {
-				remove_submenu_page( self::ROOT_MENU_SLUG, $item_slug );
-			}
-		}
+	private function hide_old_menu() {
+		remove_menu_page( 'elementor' );
+	}
 
+	private function hide_invisible_menus() {
 		foreach ( $this->get_all_editor_items() as $item_slug => $item ) {
 			if ( ! $item->is_visible() ) {
 				remove_submenu_page( $item->get_parent_slug(), $item_slug );
@@ -215,6 +210,26 @@ class Elementor_One_Menu_Manager {
 		foreach ( $this->get_all_flyout_items() as $item_slug => $item ) {
 			if ( ! $item->is_visible() ) {
 				remove_submenu_page( $item->get_parent_slug(), $item_slug );
+			} else {
+				$this->hide_flyout_from_submenu( $item->get_parent_slug(), $item_slug );
+			}
+		}
+	}
+
+	private function hide_flyout_from_submenu( $parent_slug, $item_slug ) {
+		global $submenu;
+
+		if ( ! isset( $submenu[ $parent_slug ] ) ) {
+			return;
+		}
+
+		foreach ( $submenu[ $parent_slug ] as $key => $submenu_item ) {
+			if ( isset( $submenu_item[2] ) && $submenu_item[2] === $item_slug ) {
+				if ( ! isset( $submenu[ $parent_slug ][ $key ][4] ) ) {
+					$submenu[ $parent_slug ][ $key ][4] = '';
+				}
+				$submenu[ $parent_slug ][ $key ][4] .= ' e-flyout-menu-item-hidden';
+				break;
 			}
 		}
 	}

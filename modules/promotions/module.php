@@ -110,7 +110,7 @@ class Module extends Base_Module {
 	}
 
 	private function register_elementor_one_menu_items( Elementor_One_Menu_Manager $manager ) {
-		$manager->register_root_item( 'e-form-submissions', new Form_Submissions_Elementor_One_Menu_Item() );
+		$manager->register_editor_item( 'e-form-submissions', new Form_Submissions_Elementor_One_Menu_Item() );
 		$manager->register_editor_item( 'elementor-custom-elements', new Custom_Elements_Elementor_One_Menu_Item() );
 		$manager->register_flyout_item( 'elementor_custom_fonts', new Custom_Fonts_Elementor_One_Menu_Item() );
 		$manager->register_flyout_item( 'elementor_custom_icons', new Custom_Icons_Elementor_One_Menu_Item() );

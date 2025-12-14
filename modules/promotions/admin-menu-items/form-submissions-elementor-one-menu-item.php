@@ -1,28 +1,25 @@
 <?php
 namespace Elementor\Modules\Promotions\AdminMenuItems;
 
-use Elementor\Core\Admin\Menu\Interfaces\Root_Elementor_One_Menu_Item;
+use Elementor\Core\Admin\Menu\Elementor_One_Menu_Manager;
+use Elementor\Core\Admin\Menu\Interfaces\Editor_Elementor_One_Menu_Item;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Form_Submissions_Elementor_One_Menu_Item implements Root_Elementor_One_Menu_Item {
+class Form_Submissions_Elementor_One_Menu_Item implements Editor_Elementor_One_Menu_Item {
 
 	public function get_capability() {
 		return 'manage_options';
 	}
 
 	public function get_label() {
-		return esc_html__( 'Form Submissions', 'elementor' );
+		return esc_html__( 'Submissions', 'elementor' );
 	}
 
-	public function get_icon_url() {
-		return '';
-	}
-
-	public function get_position() {
-		return null;
+	public function get_parent_slug() {
+		return Elementor_One_Menu_Manager::ROOT_MENU_SLUG;
 	}
 
 	public function is_visible() {
