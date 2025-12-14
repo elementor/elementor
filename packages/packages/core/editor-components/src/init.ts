@@ -27,7 +27,7 @@ import { COMPONENT_DOCUMENT_TYPE } from './components/consts';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
 import { openEditModeDialog } from './components/in-edit-mode';
-import { InstanceEditingPanel } from './components/instance-edit-panel/instance-editing-panel';
+import { InstanceEditingPanel } from './components/instance-editing-panel/instance-editing-panel';
 import { OverridablePropControl } from './components/overridable-props/overridable-prop-control';
 import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
 import { createComponentType, TYPE } from './create-component-type';
