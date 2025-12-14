@@ -28,15 +28,18 @@ export default function initMcpApplyGetGlobalClassUsages( reg: MCPRegistryEntry 
 
 	addTool( {
 		name: 'get-global-class-usages',
-		description: `Retreive the usage details of global classes within the Elementor editor, accross all pages.
+		description: `Retreive the usages of global-classes ACCROSS PAGES designed by Elementor editor.
 
-## Prequisites:
-- Use "list-global-classes" tool to be able to match class IDs to class names/labels.
+## Prequisites: CRITICAL
+- The list of global classes and their applid values is available at resource uri elementor://global-classes
 
 ## When to use this tool:
 - When a user requests to see where a specific global class is being used accross the site.
 - When you need to manage or clean up unused global classes.
 - Before deleting a global class, to ensure it is not in use in any other pages.
+
+## When NOT to use this tool:
+- For getting the list of global classes, refer to the resource at uri elementor://global-classes
 `,
 		outputSchema: globalClassesUsageSchema,
 		handler: async () => {
