@@ -21,6 +21,8 @@ type InlineEditorProps = {
 	attributes?: Record< string, string >;
 	sx?: SxProps< Theme >;
 	showToolbar?: boolean;
+	// UnstableFloatingActionBar sends props to be used for event handling for floating actions.
+	props?: React.ComponentProps< 'div' >;
 };
 
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
@@ -38,7 +40,7 @@ const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void
 
 export const InlineEditor = React.forwardRef(
 	(
-		{ value, setValue, attributes = {}, showToolbar = false, sx }: InlineEditorProps,
+		{ value, setValue, attributes = {}, showToolbar = false, sx, ...props }: InlineEditorProps,
 		ref: ForwardedRef< HTMLDivElement >
 	) => {
 		const editor = useEditor( {
@@ -109,6 +111,7 @@ export const InlineEditor = React.forwardRef(
 					...sx,
 				} }
 				{ ...attributes }
+				{ ...props }
 			>
 				{ showToolbar && <InlineEditorToolbar editor={ editor } /> }
 				<EditorContent editor={ editor } />

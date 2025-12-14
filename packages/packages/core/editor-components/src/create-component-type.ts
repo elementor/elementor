@@ -8,11 +8,11 @@ import {
 	type LegacyWindow,
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
 import { type ComponentInstancePropValue, type ExtendedWindow } from './types';
+import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
 type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
@@ -186,12 +186,7 @@ function createComponentView(
 			if ( ! isAllowedToSwitchDocument ) {
 				options.showLockedByModal?.( lockedBy || '' );
 			} else {
-				runCommand( 'editor/documents/switch', {
-					id: this.getComponentId(),
-					mode: 'autosave',
-					selector: `[data-id="${ this.model.get( 'id' ) }"]`,
-					shouldScroll: false,
-				} );
+				switchToComponent( this.getComponentId(), this.model.get( 'id' ) );
 			}
 		}
 
