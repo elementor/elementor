@@ -128,7 +128,7 @@ export function createInlineEditingElementView( {
 			this.model.get( 'settings' )?.set( settingKey, valueToSave );
 		}
 
-		getTagValue() {
+		getExpectedTag() {
 			const widgetType = getWidgetType( this.container );
 
 			if ( ! widgetType ) {
@@ -150,8 +150,8 @@ export function createInlineEditingElementView( {
 
 		ensureProperValue() {
 			const actualValue = this.getContentValue();
-			const expectedTag = this.getTagValue();
-			const wrappedValue = getBlockedValue( actualValue, expectedTag );
+			const tagSettings = this.getExpectedTag();
+			const wrappedValue = getBlockedValue( actualValue, tagSettings );
 
 			if ( actualValue !== wrappedValue ) {
 				this.setContentValue( wrappedValue );
@@ -164,6 +164,7 @@ export function createInlineEditingElementView( {
 			const propValue = this.getContentValue();
 			const settingKey = getInlineEditablePropertyName( this.container );
 			const classes = ( this.el?.children?.[ 0 ]?.classList.toString() ?? '' ) + ' strip-styles';
+			const expectedTag = this.getExpectedTag();
 
 			const setValue = ( value: string | null ) => {
 				const valueToSave = value ? htmlPropTypeUtil.create( value ) : null;
@@ -189,7 +190,7 @@ export function createInlineEditingElementView( {
 						autofocus
 						showToolbar
 						getInitialPopoverPosition={ getInitialPopoverPosition }
-						ensureBlockedValue={ ( newValue: string ) => getBlockedValue( newValue, this.getTagValue() ) }
+						expectedTag={ expectedTag }
 					/>
 				</ThemeProvider>
 			);

@@ -66,7 +66,7 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 			await page.keyboard.press( 'Enter' );
 			await page.keyboard.type( INLINE_EDITING_SELECTORS.secondLine );
 
-			await expect.soft( paragraphElement ).toHaveScreenshot( 'inline-edited-paragraph.png' );
+			await expect.soft( paragraphElement ).toHaveScreenshot( 'inline-edited-paragraph-editor.png' );
 		} );
 
 		await test.step( 'Edited control panel display', async () => {
@@ -82,7 +82,7 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 
 			const publishedParagraph = page.locator( '.e-paragraph-base' ).last();
 
-			await expect.soft( publishedParagraph ).toHaveScreenshot( 'inline-edited-paragraph.png' );
+			await expect.soft( publishedParagraph ).toHaveScreenshot( 'inline-edited-paragraph-frontend.png' );
 		} );
 	} );
 } );

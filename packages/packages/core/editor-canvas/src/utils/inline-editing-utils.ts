@@ -81,12 +81,12 @@ export const getInlineEditablePropertyName = ( container: V1Element | null ): st
 	return getHtmlPropertyName( container ) ?? '';
 };
 
-export const getBlockedValue = ( value: string | null, expectedTag: string | null ) => {
+export const getBlockedValue = ( value: string | null, tag: string | null ) => {
 	if ( ! value ) {
 		return '';
 	}
 
-	if ( ! expectedTag ) {
+	if ( ! tag ) {
 		return value;
 	}
 
@@ -95,22 +95,22 @@ export const getBlockedValue = ( value: string | null, expectedTag: string | nul
 	pseudoElement.innerHTML = value;
 
 	if ( ! pseudoElement?.children.length ) {
-		return `<${ expectedTag }>${ value }</${ expectedTag }>`;
+		return `<${ tag }>${ value }</${ tag }>`;
 	}
 
 	const firstChild = pseudoElement.children[ 0 ];
 	const lastChild = Array.from( pseudoElement.children ).slice( -1 )[ 0 ];
 
 	if ( firstChild === lastChild && pseudoElement.textContent === firstChild.textContent ) {
-		return compareTag( firstChild, expectedTag ) ? value : `<${ expectedTag }>${ value }</${ expectedTag }>`;
+		return compareTag( firstChild, tag ) ? value : `<${ tag }>${ firstChild.innerHTML }</${ tag }>`;
 	}
 
-	if ( ! value.startsWith( `<${ expectedTag }` ) || ! value.endsWith( `</${ expectedTag }>` ) ) {
-		return `<${ expectedTag }>${ value }</${ expectedTag }>`;
+	if ( ! value.startsWith( `<${ tag }` ) || ! value.endsWith( `</${ tag }>` ) ) {
+		return `<${ tag }>${ value }</${ tag }>`;
 	}
 
-	if ( firstChild !== lastChild || ! compareTag( firstChild, expectedTag ) ) {
-		return `<${ expectedTag }>${ value }</${ expectedTag }>`;
+	if ( firstChild !== lastChild || ! compareTag( firstChild, tag ) ) {
+		return `<${ tag }>${ value }</${ tag }>`;
 	}
 
 	return value;

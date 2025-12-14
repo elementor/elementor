@@ -28,7 +28,7 @@ type InlineEditorProps = {
 	showToolbar?: boolean;
 	autofocus?: boolean;
 	getInitialPopoverPosition?: () => { left: number; top: number };
-	ensureBlockedValue?: ( value: string ) => string;
+	expectedTag?: string | null;
 };
 
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
@@ -55,14 +55,13 @@ export const InlineEditor = React.forwardRef(
 			sx = {},
 			onBlur = undefined,
 			getInitialPopoverPosition = undefined,
-			...props
+			expectedTag = null,
 		}: InlineEditorProps,
 		ref
 	) => {
 		const containerRef = React.useRef< HTMLDivElement >( null );
 		const popupState = usePopupState( { variant: 'popover', disableAutoFocus: true } );
-		const ensureBlockedValue = props.ensureBlockedValue ?? ( ( newValue: string ) => newValue );
-		const documentContentSettings = props.ensureBlockedValue ? 'block+' : 'inline*';
+		const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
 
 		const onSelectionEnd = ( view: EditorView, event: MouseEvent | KeyboardEvent ) => {
 			if ( ! view.state.selection.empty && ! popupState.isOpen ) {
@@ -74,7 +73,7 @@ export const InlineEditor = React.forwardRef(
 			}
 
 			if ( 'clientX' in event && 'clientY' in event ) {
-				setTimeout( () => handleMouseUpFocus( view, event ) );
+				requestAnimationFrame( () => handleMouseUpFocus( view, event ) );
 			}
 		};
 
@@ -106,14 +105,20 @@ export const InlineEditor = React.forwardRef(
 				} ),
 				Paragraph.extend( {
 					renderHTML( { HTMLAttributes } ) {
-						return [ 'p', { ...HTMLAttributes, style: 'margin:0;padding:0;' }, 0 ];
+						const tag = expectedTag ?? 'p';
+						return [ tag, { ...HTMLAttributes, style: 'margin:0;padding:0;' }, 0 ];
 					},
 				} ),
 				Heading.extend( {
 					renderHTML( { node, HTMLAttributes } ) {
+						if ( expectedTag ) {
+							return [ expectedTag, { ...HTMLAttributes, style: 'margin:0;padding:0;' }, 0 ];
+						}
+
 						const level = this.options.levels.includes( node.attrs.level )
 							? node.attrs.level
 							: this.options.levels[ 0 ];
+
 						return [ `h${ level }`, { ...HTMLAttributes, style: 'margin:0;padding:0;' }, 0 ];
 					},
 				} ).configure( {
@@ -141,7 +146,7 @@ export const InlineEditor = React.forwardRef(
 			onUpdate: ( { editor: updatedEditor } ) => {
 				let newValue: string | null = updatedEditor.getHTML();
 
-				newValue = isEmpty( newValue ) ? null : ensureBlockedValue( newValue );
+				newValue = isEmpty( newValue ) ? null : newValue;
 				setValue( newValue );
 				updatedEditor.commands?.setContent( newValue, { emitUpdate: false } );
 
@@ -149,7 +154,7 @@ export const InlineEditor = React.forwardRef(
 					popupState.close();
 				}
 
-				setTimeout( () => {
+				requestAnimationFrame( () => {
 					updatedEditor.commands.focus();
 				} );
 			},

@@ -382,7 +382,7 @@ describe( 'inline-editing-utils', () => {
 			expect( result ).toBe( '<h2>Heading text</h2>' );
 		} );
 
-		it( 'should wrap when single child has different tag', () => {
+		it( 'should replace when single child has different tag', () => {
 			// Arrange.
 			const value = '<p>Some content</p>';
 			const expectedTag = 'h2';
@@ -391,7 +391,7 @@ describe( 'inline-editing-utils', () => {
 			const result = getBlockedValue( value, expectedTag );
 
 			// Assert.
-			expect( result ).toBe( '<h2><p>Some content</p></h2>' );
+			expect( result ).toBe( '<h2>Some content</h2>' );
 		} );
 
 		it( 'should wrap entire content when multiple children exist', () => {
@@ -442,7 +442,7 @@ describe( 'inline-editing-utils', () => {
 			expect( result ).toBe( '<H2>Heading text</H2>' );
 		} );
 
-		it( 'should preserve inner HTML when unwrapping and rewrapping', () => {
+		it( 'should preserve inner HTML when unwrapping and rewrapping, with expected tag', () => {
 			// Arrange.
 			const value = '<p><strong>Bold</strong> and <em>italic</em></p>';
 			const expectedTag = 'h2';
@@ -451,7 +451,7 @@ describe( 'inline-editing-utils', () => {
 			const result = getBlockedValue( value, expectedTag );
 
 			// Assert.
-			expect( result ).toBe( '<h2><p><strong>Bold</strong> and <em>italic</em></p></h2>' );
+			expect( result ).toBe( '<h2><strong>Bold</strong> and <em>italic</em></h2>' );
 		} );
 
 		it( 'should handle nested elements correctly when single child matches expectedTag', () => {
