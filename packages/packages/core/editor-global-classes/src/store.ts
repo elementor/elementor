@@ -205,16 +205,19 @@ export const slice = createSlice( {
 } );
 
 const mergeProps = ( current: Props, updates: Props ): Props => {
+	// edge case, the server returns an array instead of an object when empty props because of PHP array / object conversion
+	const props = Array.isArray( current ) ? {} : current;
+
 	Object.entries( updates ).forEach( ( [ key, value ] ) => {
 		if ( value === null || value === undefined ) {
 			// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-			delete current[ key ];
+			delete props[ key ];
 		} else {
-			current[ key ] = value;
+			props[ key ] = value;
 		}
 	} );
 
-	return current;
+	return props;
 };
 
 const getNonEmptyVariants = ( style: StyleDefinition ) => {
