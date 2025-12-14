@@ -46,16 +46,22 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				}
 
 				const children = Array.from( xml.children );
-				const iterate = ( node: Element, containerElement: V1Element = documentContainer ) => {
+				const iterate = async (
+					node: Element,
+					containerElement: V1Element = documentContainer,
+					childIndex: number
+				) => {
 					const elementTag = node.tagName;
 					if ( ! widgetsCache[ elementTag ] ) {
 						errors.push( new Error( `Unknown widget type: ${ elementTag }` ) );
 					}
 					const CONTAINER_ELEMENTS = [ 'e-div-block', 'e-flexbox', 'e-tabs' ];
 					const isContainer = CONTAINER_ELEMENTS.includes( elementTag );
+					const parentElType = containerElement.model.get( 'elType' );
 					let targetContainerId =
-						containerElement.model.get( 'elType' ) === 'e-tabs'
-							? containerElement.children?.[ 1 ].id
+						parentElType === 'e-tabs'
+							? containerElement.children?.[ 1 ].children?.[ childIndex ]?.id ||
+							  containerElement.children?.[ 1 ].id
 							: containerElement.id;
 					if ( ! targetContainerId ) {
 						targetContainerId = containerElement.id;
@@ -111,8 +117,10 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 							}
 						}
 						if ( isContainer ) {
+							let currentChild = 0;
 							for ( const child of node.children ) {
-								iterate( child, newElement );
+								iterate( child, newElement, currentChild );
+								currentChild++;
 							}
 						} else {
 							node.innerHTML = '';
@@ -122,8 +130,10 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 					}
 				};
 
-				for ( const childNode of children ) {
-					iterate( childNode, documentContainer );
+				let currentChild = 0;
+				for await ( const childNode of children ) {
+					await iterate( childNode, documentContainer, currentChild );
+					currentChild++;
 					try {
 					} catch ( error ) {
 						errors.push( error as Error );
