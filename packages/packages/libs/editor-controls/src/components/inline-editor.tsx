@@ -75,6 +75,14 @@ export const InlineEditor = React.forwardRef(
 			}
 		};
 
+		const toolbarRelatedListeners = showToolbar
+		? {
+				mouseup: onSelectionEnd,
+				keyup: onSelectionEnd,
+				keydown: onKeyDown,
+		  }
+		: undefined;
+
 		const editor = useEditor( {
 			extensions: [
 				Document.extend( {
@@ -121,10 +129,9 @@ export const InlineEditor = React.forwardRef(
 			],
 			content: value,
 			onUpdate: ( { editor: updatedEditor } ) => {
-				let newValue: string | null = updatedEditor.getHTML();
+				const newValue: string | null = updatedEditor.getHTML();
 
-				newValue = isEmpty( newValue ) ? null : newValue;
-				setValue( newValue );
+				setValue( isEmpty( newValue ) ? null : newValue );
 			},
 			autofocus,
 			editorProps: {
@@ -133,13 +140,7 @@ export const InlineEditor = React.forwardRef(
 					class: attributes.class ?? '',
 					role: 'textbox',
 				},
-				handleDOMEvents: showToolbar
-					? {
-							mouseup: onSelectionEnd,
-							keyup: onSelectionEnd,
-							keydown: onKeyDown,
-					  }
-					: undefined,
+				handleDOMEvents: toolbarRelatedListeners,
 			},
 		} );
 
