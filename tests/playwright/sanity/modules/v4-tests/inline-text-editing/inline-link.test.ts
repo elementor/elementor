@@ -184,11 +184,11 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 
 		// Act - Select only "World" (double-click to select word).
 		for ( let i = 0; i < 6; i++ ) {
-			await page.keyboard.press( 'ArrowLeft' );
+			await page.keyboard.press( 'ArrowLeft', { delay: 100 } );
 		}
 
 		for ( let i = 0; i < 5; i++ ) {
-			await page.keyboard.press( 'Shift+ArrowLeft' );
+			await page.keyboard.press( 'Shift+ArrowLeft', { delay: 100 } );
 		}
 
 		const linkButton = page.locator( '[role="presentation"] [aria-label="Link"]' );
