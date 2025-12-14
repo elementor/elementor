@@ -27,7 +27,7 @@ import { COMPONENT_DOCUMENT_TYPE } from './components/consts';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
 import { openEditModeDialog } from './components/in-edit-mode';
-import { InstanceEditPanel } from './components/instance-edit-panel/instance-edit-panel';
+import { InstanceEditingPanel } from './components/instance-edit-panel/instance-editing-panel';
 import { OverridablePropControl } from './components/overridable-props/overridable-prop-control';
 import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
 import { createComponentType, TYPE } from './create-component-type';
@@ -114,7 +114,7 @@ export function init() {
 	registerEditingPanelReplacement( {
 		id: 'component-instance-edit-panel',
 		condition: ( _, elementType ) => elementType.key === 'e-component',
-		component: InstanceEditPanel,
+		component: InstanceEditingPanel,
 	} );
 
 	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );

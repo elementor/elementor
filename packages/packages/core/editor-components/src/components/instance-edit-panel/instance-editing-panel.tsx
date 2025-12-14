@@ -15,7 +15,7 @@ import { switchToComponent } from '../../utils/switch-to-component';
 import { EmptyState } from './empty-state';
 import { OverridePropsGroup } from './override-props-group';
 
-export function InstanceEditPanel() {
+export function InstanceEditingPanel() {
 	const { element } = useElement();
 	const settings = useElementSetting( element.id, 'component_instance' );
 	const componentId = ( componentInstancePropTypeUtil.extract( settings )?.component_id as NumberPropValue ).value;

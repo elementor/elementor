@@ -14,7 +14,7 @@ import { fireEvent, screen } from '@testing-library/react';
 import { componentInstancePropTypeUtil } from '../../../prop-types/component-instance-prop-type';
 import { slice } from '../../../store/store';
 import { switchToComponent } from '../../../utils/switch-to-component';
-import { InstanceEditPanel } from '../instance-edit-panel';
+import { InstanceEditingPanel } from '../instance-editing-panel';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
@@ -196,7 +196,7 @@ function setupComponent( isWithOverridableProps: boolean = true ) {
 function renderEditInstancePanel( store: Store< SliceState< typeof slice > > ) {
 	return renderWithStore(
 		<ElementProvider element={ MOCK_ELEMENT } elementType={ MOCK_ELEMENT_TYPE }>
-			<InstanceEditPanel />
+			<InstanceEditingPanel />
 		</ElementProvider>,
 		store
 	);
