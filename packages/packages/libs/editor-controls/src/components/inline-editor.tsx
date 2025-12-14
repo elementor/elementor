@@ -61,10 +61,10 @@ export const InlineEditor = React.forwardRef(
 	) => {
 		const containerRef = React.useRef< HTMLDivElement >( null );
 		const popupState = usePopupState( { variant: 'popover', disableAutoFocus: true } );
-		const [ hasSelectedContent, setHasSelectedContent ] = React.useState( false )
+		const [ hasSelectedContent, setHasSelectedContent ] = React.useState( false );
 		const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
 
-		const onSelectionEnd = ( view: EditorView, event: MouseEvent | KeyboardEvent ) => {
+		const onSelectionEnd = ( view: EditorView ) => {
 			setHasSelectedContent( () => ! view.state.selection.empty );
 			queueMicrotask( () => view.focus() )
 		};
