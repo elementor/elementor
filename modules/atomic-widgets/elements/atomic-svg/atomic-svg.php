@@ -174,12 +174,19 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	private function get_svg_content( $settings ) {
 		$svg_data = $settings['svg'] ?? null;
 
-		if ( ! $svg_data || ! $this->is_svg_by_extension ( $svg_data ) ) {
+		if ( ! $svg_data ) {
 			return $this->get_default_svg_content();
 		}
 
 		if ( is_string( $svg_data ) ) {
+			if ( ! $this->is_svg_by_extension( $svg_data ) ) {
+				return $this->get_default_svg_content();
+			}
 			return $this->fetch_svg_from_url( $svg_data );
+		}
+
+		if ( ! $this->is_svg_by_extension( $svg_data['url'] ?? '' ) ) {
+			return $this->get_default_svg_content();
 		}
 
 		if ( isset( $svg_data['id'] ) ) {
@@ -233,7 +240,7 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	}
 
 	private function is_svg_by_extension( string $url ) {
-		if ( ! filter_var($url, FILTER_VALIDATE_URL ) ) {
+		if ( ! isset( $url ) || empty( $url ) ) {
 			return false;
 		}
 	
