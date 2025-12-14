@@ -125,11 +125,6 @@ export const InlineEditor = React.forwardRef(
 
 				newValue = isEmpty( newValue ) ? null : newValue;
 				setValue( newValue );
-
-
-				// if ( updatedEditor.state.selection.empty && popupState.isOpen ) {
-				// 	popupState.close();
-				// }
 			},
 			autofocus,
 			editorProps: {
