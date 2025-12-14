@@ -12,3 +12,8 @@ export const getStylesSchema = () => {
 
 	return styleSchema;
 };
+
+export const isExistingStyleProperty = ( property: string ): boolean => {
+	const stylesSchema = getStylesSchema();
+	return Object.keys( stylesSchema ).includes( property );
+};
