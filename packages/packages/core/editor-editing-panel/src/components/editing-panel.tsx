@@ -34,6 +34,22 @@ export const EditingPanel = () => {
 
 	const { component: ReplacementComponent } = getEditingPanelReplacement( element, elementType ) ?? {};
 
+	let panelContent = (
+		<>
+			<PanelHeader>
+				<PanelHeaderTitle>{ panelTitle }</PanelHeaderTitle>
+				<AtomIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
+			</PanelHeader>
+			<PanelBody>
+				<EditingPanelTabs />
+			</PanelBody>
+		</>
+	);
+
+	if ( ReplacementComponent ) {
+		panelContent = <ReplacementComponent />;
+	}
+
 	return (
 		<ErrorBoundary fallback={ <EditorPanelErrorFallback /> }>
 			<SessionStorageProvider prefix={ 'elementor' }>
@@ -43,19 +59,7 @@ export const EditingPanel = () => {
 							<ElementProvider element={ element } elementType={ elementType }>
 								<Panel>
 									<PanelHeaderTopSlot />
-									{ ReplacementComponent ? (
-										<ReplacementComponent />
-									) : (
-										<>
-											<PanelHeader>
-												<PanelHeaderTitle>{ panelTitle }</PanelHeaderTitle>
-												<AtomIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
-											</PanelHeader>
-											<PanelBody>
-												<EditingPanelTabs />
-											</PanelBody>
-										</>
-									) }
+									{ panelContent }
 								</Panel>
 							</ElementProvider>
 						</ControlReplacementsProvider>

@@ -14,7 +14,7 @@ import { fireEvent, screen } from '@testing-library/react';
 import { componentInstancePropTypeUtil } from '../../../prop-types/component-instance-prop-type';
 import { slice } from '../../../store/store';
 import { switchToComponent } from '../../../utils/switch-to-component';
-import { EditInstancePanel } from '../edit-instance-panel';
+import { InstanceEditPanel } from '../instance-edit-panel';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
@@ -111,6 +111,7 @@ describe( '<EditInstancePanel />', () => {
 		} );
 		jest.mocked( componentInstancePropTypeUtil.extract ).mockReturnValue( {
 			component_id: { $$type: 'number', value: MOCK_COMPONENT_ID },
+			overrides: { $$type: 'overrides', value: [] },
 		} );
 	} );
 
@@ -156,7 +157,8 @@ describe( '<EditInstancePanel />', () => {
 		// Arrange.
 		setupComponent();
 		jest.mocked( componentInstancePropTypeUtil.extract ).mockReturnValue( {
-			component_id: { $$type: 'number', value: undefined },
+			component_id: { $$type: 'number', value: null },
+			overrides: { $$type: 'overrides', value: [] },
 		} );
 
 		// Act.
@@ -194,7 +196,7 @@ function setupComponent( isWithOverridableProps: boolean = true ) {
 function renderEditInstancePanel( store: Store< SliceState< typeof slice > > ) {
 	return renderWithStore(
 		<ElementProvider element={ MOCK_ELEMENT } elementType={ MOCK_ELEMENT_TYPE }>
-			<EditInstancePanel />
+			<InstanceEditPanel />
 		</ElementProvider>,
 		store
 	);

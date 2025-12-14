@@ -1,11 +1,14 @@
-import { createPropUtils } from '@elementor/editor-props';
+import { createPropUtils, numberPropTypeUtil } from '@elementor/editor-props';
 import { z } from '@elementor/schema';
+
+import { componentInstanceOverridesPropTypeUtil } from './component-instance-overrides-prop-type';
 
 export const componentInstancePropTypeUtil = createPropUtils(
 	'component-instance',
 	z.object( {
-		component_id: z.unknown(),
+		component_id: numberPropTypeUtil.schema,
+		overrides: componentInstanceOverridesPropTypeUtil.schema,
 	} )
 );
 
-export type ComponentOverridablePropValue = z.infer< typeof componentInstancePropTypeUtil.schema >[ 'value' ];
+export type ComponentInstancePropValue = z.infer< typeof componentInstancePropTypeUtil.schema >[ 'value' ];
