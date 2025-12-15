@@ -1,6 +1,6 @@
 import { Box, IconButton, styled } from '@elementor/ui';
 
-export const NavContainer = styled( Box )( ( { theme, collapsed } ) => ( {
+export const NavContainer = styled( Box )( ( { theme } ) => ( {
 	display: 'flex',
 	flexDirection: 'column',
 	height: '100%',

@@ -4,11 +4,19 @@ import PropTypes from 'prop-types';
 import { DEFAULT_ICON, ICON_MAP } from '../shared';
 import { ChildListItem, ChildMenuItemButton, ExpandIcon, MenuIcon, MenuItemButton } from './styled-components';
 
-const STORAGE_KEY_PREFIX = 'elementor_sidebar_menu_expanded_';
+const STORAGE_KEY_PREFIX = 'elementor_sidebar_menu_expanded_v2_';
 
 const getStorageKey = ( slug ) => `${ STORAGE_KEY_PREFIX }${ slug }`;
 
-const getInitialExpandedState = ( slug, hasChildren ) => {
+const shouldExpandByDefault = ( children, activeChildSlug ) => {
+	if ( ! children || ! children.length ) {
+		return false;
+	}
+
+	return children.some( ( child ) => child.slug === activeChildSlug );
+};
+
+const getInitialExpandedState = ( slug, hasChildren, children, activeChildSlug ) => {
 	if ( ! hasChildren ) {
 		return false;
 	}
@@ -16,7 +24,7 @@ const getInitialExpandedState = ( slug, hasChildren ) => {
 	const stored = localStorage.getItem( getStorageKey( slug ) );
 
 	if ( null === stored ) {
-		return true;
+		return shouldExpandByDefault( children, activeChildSlug );
 	}
 
 	return 'true' === stored;
@@ -24,7 +32,7 @@ const getInitialExpandedState = ( slug, hasChildren ) => {
 
 const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 	const hasChildren = children && children.length > 0;
-	const [ isExpanded, setIsExpanded ] = useState( () => getInitialExpandedState( item.slug, hasChildren ) );
+	const [ isExpanded, setIsExpanded ] = useState( () => getInitialExpandedState( item.slug, hasChildren, children, activeChildSlug ) );
 	const IconComponent = ICON_MAP[ item.icon ] || DEFAULT_ICON;
 
 	const handleClick = useCallback( () => {

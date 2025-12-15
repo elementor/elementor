@@ -8,6 +8,7 @@ export const HeaderContainer = styled( Box )( ( { theme } ) => ( {
 	borderBottom: `1px solid ${ theme.palette.divider }`,
 	display: 'flex',
 	alignItems: 'center',
+	marginBottom: theme.spacing( 1 ),
 } ) );
 
 export const HeaderContent = styled( Box )( ( { theme } ) => ( {
