@@ -67,8 +67,10 @@ export default class WpAdminPage extends BasePage {
 		await this.openElementorSettings( tab );
 
 		for ( const [ selector, state ] of Object.entries( settings ) ) {
-			await this.page.locator( `select[name="${ selector }"]` ).waitFor();
-			await this.page.selectOption( `[name="${ selector }"]`, state.toString() );
+			const selectLocator = this.page.locator( `select[name="${ selector }"]` );
+			await selectLocator.waitFor( { state: 'attached' } );
+
+			await selectLocator.selectOption( state.toString(), { force: true } );
 		}
 
 		await this.page.click( '#submit' );
