@@ -92,9 +92,9 @@ class Prop_Type_Adapter {
 
 	private static function get_schema(): array {
 		return [
-			Color_Variable_Prop_Type::get_key()   => Color_Prop_Type::class,
-			Font_Variable_Prop_Type::get_key()    => String_Prop_Type::class,
-			Size_Variable_Prop_Type::get_key()    => Size_Prop_Type::class,
+			Color_Variable_Prop_Type::get_key() => Color_Prop_Type::class,
+			Font_Variable_Prop_Type::get_key() => String_Prop_Type::class,
+			Size_Variable_Prop_Type::get_key() => Size_Prop_Type::class,
 			self::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY => Size_Prop_Type::class,
 		];
 	}
@@ -119,22 +119,10 @@ class Prop_Type_Adapter {
 		if ( empty( $value ) ) {
 			return [
 				'size' => '',
-				'unit' => Size_Constants::DEFAULT_UNIT
+				'unit' => Size_Constants::DEFAULT_UNIT,
 			];
 		}
 
 		return $value;
-	}
-
-	private static function is_valid_string_value( $value ) {
-		if( is_array( $value ) ) {
-			return false;
-		}
-
-		if( empty( $value ) ) {
-			return false;
-		}
-
-		return true;
 	}
 }
