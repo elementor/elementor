@@ -43,7 +43,7 @@
 }
 
 .e-sidebar-transitioning {
-	#editor-one-sidebar-navigation {
+	#editor-one-sidebar-navigation > nav {
 		transition: var(--editor-one-sidebar-transition);
 		overflow: hidden;
 	}
