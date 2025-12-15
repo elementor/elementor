@@ -6,7 +6,7 @@ import Card from '@elementor/ui/Card';
 import CardActions from '@elementor/ui/CardActions';
 import CardContent from '@elementor/ui/CardContent';
 import CardMedia from '@elementor/ui/CardMedia';
-import { trackPromoClick, getHomeScreenPath } from '../utils/promo-tracking';
+import { trackPromoClick, getHomeScreenPath } from '../../utils/promo-tracking';
 
 const Addons = ( { ...props } ) => {
 	const domain = props.adminUrl.replace( 'wp-admin/', '' );
