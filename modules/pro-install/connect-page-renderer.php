@@ -1,6 +1,8 @@
 <?php
 namespace Elementor\Modules\ProInstall;
 
+use Elementor\Utils;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -143,7 +145,7 @@ class Connect_Page_Renderer {
 	private function render_install_or_activate_box() {
 		$cta_data = $this->get_cta_data();
 		$cta_url = wp_nonce_url( admin_url( 'admin-post.php?action=elementor_do_pro_install' ), 'elementor_do_pro_install' );
-		$cta_id = $this->is_pro_installed() ? 'elementor-connect-activate-pro' : 'elementor-connect-install-pro';
+		$cta_id = Utils::is_pro_installed() ? 'elementor-connect-activate-pro' : 'elementor-connect-install-pro';
 
 		?>
 		<div class="elementor-license-box">
@@ -162,23 +164,8 @@ class Connect_Page_Renderer {
 	private function get_cta_data(): array {
 		return [
 			'description' => esc_html__( 'Enjoy full access to powerful design tools, advanced widgets, and everything you need to create next-level websites.', 'elementor' ),
-			'button_text' => $this->is_pro_installed() ? esc_html__( 'Activate Elementor Pro', 'elementor' ) : esc_html__( 'Install & Activate', 'elementor' ),
+			'button_text' => Utils::is_pro_installed() ? esc_html__( 'Activate Elementor Pro', 'elementor' ) : esc_html__( 'Install & Activate', 'elementor' ),
 		];
-	}
-
-	private function is_pro_installed(): bool {
-		if ( ! function_exists( 'get_plugins' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
-		$file_path = $this->get_elementor_pro_file_path();
-		$installed_plugins = get_plugins();
-
-		return isset( $installed_plugins[ $file_path ] );
-	}
-
-	private function get_elementor_pro_file_path(): string {
-		return 'elementor-pro/elementor-pro.php';
 	}
 }
 

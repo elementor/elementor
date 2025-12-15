@@ -20,7 +20,7 @@
 	--editor-one-flyout-menu-padding-x: 12px;
 	--editor-one-flyout-menu-padding-x-large: 28px;
 	--editor-one-flyout-menu-padding-mobile: 15px;
-	--editor-one-flyout-menu-parent-padding: 1px;
+	--editor-one-flyout-menu-parent-padding: 2px;
 	--editor-one-flyout-menu-border-radius: 4px;
 	--editor-one-flyout-menu-border-radius-sm: 3px;
 	--editor-one-flyout-menu-border-width: 1px;
@@ -41,17 +41,21 @@
 			display: block;
 		}
 
-		> a::after {
-			content: '';
-			display: inline-block;
-			width: 0;
-			height: 0;
-			margin-inline-start: var(--editor-one-flyout-menu-spacing-sm);
-			border-top: var(--editor-one-flyout-menu-arrow-size) solid transparent;
-			border-bottom: var(--editor-one-flyout-menu-arrow-size) solid transparent;
-			border-inline-start: var(--editor-one-flyout-menu-arrow-size) solid currentColor;
-			vertical-align: middle;
-			opacity: var(--editor-one-flyout-menu-arrow-opacity);
+		& > a {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			&::after {
+				content: '';
+				display: inline-block;
+				width: 0;
+				height: 0;
+				margin-inline-start: var(--editor-one-flyout-menu-spacing-sm);
+				border-top: var(--editor-one-flyout-menu-arrow-size) solid transparent;
+				border-bottom: var(--editor-one-flyout-menu-arrow-size) solid transparent;
+				border-inline-start: var(--editor-one-flyout-menu-arrow-size) solid currentColor;
+			}
 		}
 	}
 
@@ -77,17 +81,6 @@
 			min-width: var(--editor-one-flyout-menu-min-width);
 			max-height: var(--editor-one-flyout-menu-max-height);
 			overflow: visible;
-		}
-
-		&.elementor-level-4 {
-			min-width: var(--editor-one-flyout-menu-min-width);
-			inset-inline-start: 100%;
-			top: calc(var(--editor-one-flyout-menu-padding-y) * -1);
-			background: var(--editor-one-flyout-menu-bg);
-
-			li a:hover {
-				background: var(--editor-one-flyout-menu-bg-hover);
-			}
 		}
 
 		&.elementor-submenu-flyout-visible {

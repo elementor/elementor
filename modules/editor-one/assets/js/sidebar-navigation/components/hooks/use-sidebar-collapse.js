@@ -1,9 +1,12 @@
-import { useEffect, useState, useCallback } from '@wordpress/element';
+import { useEffect, useState, useCallback, useRef } from '@wordpress/element';
 
 const STORAGE_KEY = 'elementor_sidebar_collapsed';
 const AUTO_COLLAPSE_BREAKPOINT = 960;
+const TRANSITION_DURATION = 300;
 
 export const useSidebarCollapse = () => {
+	const isAnimatingRef = useRef( false );
+
 	const [ isCollapsed, setIsCollapsed ] = useState( () => {
 		const stored = localStorage.getItem( STORAGE_KEY );
 
@@ -21,7 +24,6 @@ export const useSidebarCollapse = () => {
 			if ( e.matches ) {
 				setIsCollapsed( true );
 			} else {
-				// Restore from storage or default to false (expanded)
 				const stored = localStorage.getItem( STORAGE_KEY );
 				setIsCollapsed( 'true' === stored );
 			}
@@ -33,18 +35,36 @@ export const useSidebarCollapse = () => {
 
 	const toggleCollapse = useCallback( () => {
 		const newState = ! isCollapsed;
+		const container = document.getElementById( 'editor-one-sidebar-navigation' );
+		const body = document.body;
+
+		isAnimatingRef.current = true;
+		body.classList.add( 'e-sidebar-transitioning' );
+
+		void container?.offsetHeight;
+
+		if ( newState ) {
+			container?.classList.add( 'e-sidebar-collapsed' );
+			body.classList.add( 'e-sidebar-is-collapsed' );
+		} else {
+			container?.classList.remove( 'e-sidebar-collapsed' );
+			body.classList.remove( 'e-sidebar-is-collapsed' );
+		}
+
 		setIsCollapsed( newState );
 		localStorage.setItem( STORAGE_KEY, String( newState ) );
 
-		const body = document.body;
-		body.classList.add( 'e-sidebar-transitioning' );
-		// Match CSS transition duration (0.3s)
 		setTimeout( () => {
 			body.classList.remove( 'e-sidebar-transitioning' );
-		}, 300 );
+			isAnimatingRef.current = false;
+		}, TRANSITION_DURATION );
 	}, [ isCollapsed ] );
 
 	useEffect( () => {
+		if ( isAnimatingRef.current ) {
+			return;
+		}
+
 		const container = document.getElementById( 'editor-one-sidebar-navigation' );
 		const body = document.body;
 

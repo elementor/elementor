@@ -1,6 +1,6 @@
 import { Box, IconButton, styled } from '@elementor/ui';
 
-export const NavContainer = styled( Box )( ( { theme } ) => ( {
+export const NavContainer = styled( Box )( ( { theme, collapsed } ) => ( {
 	display: 'flex',
 	flexDirection: 'column',
 	height: '100%',
@@ -17,6 +17,7 @@ export const SiteIconBox = styled( Box )( ( { theme } ) => ( {
 	alignItems: 'center',
 	justifyContent: 'center',
 	backgroundColor: theme.palette.background.paper,
+	color: theme.palette.action.active,
 	'& svg': {
 		fontSize: 24,
 	},
@@ -30,10 +31,10 @@ export const CollapseButton = styled( IconButton )( ( { theme } ) => ( {
 	height: 24,
 	backgroundColor: theme.palette.background.paper,
 	border: `1px solid ${ theme.palette.divider }`,
-	color: theme.palette.text.secondary,
+	color: theme.palette.action.active,
 	zIndex: 1,
 	'&:hover': {
-		backgroundColor: theme.palette.action.hover,
+		backgroundColor: theme.palette.background.paper,
 	},
 	'& svg': {
 		fontSize: 16,

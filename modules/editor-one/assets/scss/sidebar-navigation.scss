@@ -2,7 +2,7 @@
 	--editor-one-sidebar-admin-top-bar-height: 50px;
 	--editor-one-wordpress-admin-bar-height: 32px;
 	--editor-one-sidebar-navigation-width: 240px;
-	--editor-one-sidebar-navigation-width-collapsed: 56px;
+	--editor-one-sidebar-navigation-width-collapsed: 72px;
 	--editor-one-sidebar-left-offset: 160px;
 	--editor-one-sidebar-left-offset-collapsed: 36px;
 	--editor-one-sidebar-z-index: 99;
@@ -25,22 +25,27 @@
 		inset-inline-start: var(--editor-one-sidebar-left-offset-collapsed);
 	}
 
+	nav {
+		width: var(--editor-one-sidebar-navigation-width);
+	}
+
 	@media screen and (max-width: 960px) {
 		inset-inline-start: var(--editor-one-sidebar-left-offset-collapsed);
 	}
 
-	@media screen and (max-width: 782px) {
-		display: none;
-	}
-
 	&.e-sidebar-collapsed {
 		width: var(--editor-one-sidebar-navigation-width-collapsed);
+
+		nav {
+			width: var(--editor-one-sidebar-navigation-width-collapsed);
+		}
 	}
 }
 
 .e-sidebar-transitioning {
-	#editor-one-sidebar-navigation {
+	#editor-one-sidebar-navigation > nav {
 		transition: var(--editor-one-sidebar-transition);
+		overflow: hidden;
 	}
 
 	#wpcontent,
