@@ -233,7 +233,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 		$response_data = $response->get_data();
 
-		$this->assertEquals( 'global-cusom-size-variable', $response_data['data']['variable']['type'] );
+		$this->assertEquals( 'global-custom-size-variable', $response_data['data']['variable']['type'] );
 		$this->assertEquals( 'calc(50% + 20px)', $response_data['data']['variable']['value'] );
 	}
 
