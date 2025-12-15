@@ -25,7 +25,7 @@ class Module extends BaseModule {
 		return 'editor-one';
 	}
 
-	public static function get_experimental_data() {
+	public static function get_experimental_data(): array {
 		return [
 			'name'           => static::EXPERIMENT_NAME,
 			'title'          => esc_html__( 'Editor one', 'elementor' ),
