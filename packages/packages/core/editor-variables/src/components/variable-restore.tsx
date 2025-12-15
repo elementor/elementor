@@ -127,22 +127,24 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 							} }
 						/>
 					</FormField>
-					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
-						<Typography variant="h5">
-							<ValueField
-								propTypeKey={ propTypeKey }
-								onPropTypeKeyChange={ ( key: string ) => setPropTypeKey( key ) }
-								value={ value }
-								onChange={ ( newValue ) => {
-									setValue( newValue );
-									setErrorMessage( '' );
-									setValueFieldError( '' );
-								} }
-								onValidationChange={ setValueFieldError }
-								propType={ propType }
-							/>
-						</Typography>
-					</FormField>
+					{ ValueField && (
+						<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+							<Typography variant="h5">
+								<ValueField
+									propTypeKey={ propTypeKey }
+									onPropTypeKeyChange={ ( key: string ) => setPropTypeKey( key ) }
+									value={ value }
+									onChange={ ( newValue ) => {
+										setValue( newValue );
+										setErrorMessage( '' );
+										setValueFieldError( '' );
+									} }
+									onValidationChange={ setValueFieldError }
+									propType={ propType }
+								/>
+							</Typography>
+						</FormField>
+					) }
 
 					{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 				</PopoverContent>
