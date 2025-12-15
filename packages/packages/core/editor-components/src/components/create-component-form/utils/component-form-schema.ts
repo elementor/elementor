@@ -1,13 +1,21 @@
 import { z } from '@elementor/schema';
 import { __ } from '@wordpress/i18n';
 
-import { componentNameSchema, MIN_NAME_LENGTH } from '../../../utils/component-name-validation';
+const MIN_NAME_LENGTH = 2;
+const MAX_NAME_LENGTH = 50;
 
 export const createBaseComponentSchema = ( existingNames: string[] ) => {
 	return z.object( {
-		componentName: componentNameSchema.refine( ( value ) => ! existingNames.includes( value ), {
-			message: __( 'This component name already exists. Please choose a unique name.', 'elementor' ),
-		} ),
+		componentName: z
+			.string()
+			.trim()
+			.max(
+				MAX_NAME_LENGTH,
+				__( 'Component name is too long. Please keep it under 50 characters.', 'elementor' )
+			)
+			.refine( ( value ) => ! existingNames.includes( value ), {
+				message: __( 'Component name already exists', 'elementor' ),
+			} ),
 	} );
 };
 
