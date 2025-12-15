@@ -31,7 +31,7 @@
     "test:php": "docker-compose run --rm wordpress_phpunit phpunit",
     "test:php_multisite": "docker-compose run -e WP_MULTISITE=1 --rm wordpress_phpunit phpunit",
     "test:setup:playwright": "wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8888 --command=\"bash elementor-config/setup.sh\" && wp-lite-env cli --config=./tests/playwright/.playwright-wp-lite-env.json --port=8889 --command=\"bash elementor-config/setup.sh\"",
-    "test:playwright": "playwright test -c tests/playwright/playwright.config.ts tests/playwright/sanity/core/base/document.test.ts",
+    "test:playwright": "playwright test -c tests/playwright/playwright.config.ts",
     "test:playwright:debug": "npm run test:playwright -- --debug",
     "test:playwright:elements-regression": "playwright test -c tests/elements-regression/playwright.config.ts",
     "test:playwright:elements-regression:linux": "node ./tests/elements-regression/scripts/run-on-linux.js",
