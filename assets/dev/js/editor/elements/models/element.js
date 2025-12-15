@@ -62,9 +62,8 @@ ElementModel = BaseElementModel.extend( {
 			}
 
 			this.on( 'change:componentName', this.onComponentNameChange, this );
+			this.getComponentTitle();
 		}
-
-		this.getComponentTitle();
 	},
 
 	onComponentNameChange() {
