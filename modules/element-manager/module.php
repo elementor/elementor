@@ -68,6 +68,8 @@ class Module extends BaseModule {
 				'wp-components',
 				'wp-dom-ready',
 				'wp-i18n',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
 			],
 			ELEMENTOR_VERSION
 		);
