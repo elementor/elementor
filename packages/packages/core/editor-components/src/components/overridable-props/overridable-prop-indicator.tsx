@@ -9,7 +9,7 @@ import { bindPopover, bindTrigger, Popover, Tooltip, usePopupState } from '@elem
 import { __ } from '@wordpress/i18n';
 
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
-import { setOverridableProp } from '../../store/set-overridable-prop';
+import { setOverridableProp } from '../../store/actions/set-overridable-prop';
 import { selectOverridableProps } from '../../store/store';
 import { type OverridableProps } from '../../types';
 import { COMPONENT_DOCUMENT_TYPE } from '../consts';
@@ -45,7 +45,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 		element: { id: elementId },
 		elementType,
 	} = useElement();
-	const { value, bind } = useBoundProp();
+	const { value, bind, propType } = useBoundProp();
 	const { value: overridableValue, setValue: setOverridableValue } = useBoundProp( componentOverridablePropTypeUtil );
 
 	const popupState = usePopupState( {
@@ -58,7 +58,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 	const { elType } = getWidgetsCache()?.[ elementType.key ] ?? { elType: 'widget' };
 
 	const handleSubmit = ( { label, group }: { label: string; group: string | null } ) => {
-		const originValue = ! overridableValue ? value : overridableValue?.origin_value ?? {};
+		const originValue = ! overridableValue ? value ?? propType.default : overridableValue?.origin_value ?? {};
 
 		const overridablePropConfig = setOverridableProp( {
 			componentId,
@@ -89,11 +89,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 	return (
 		<>
 			<Tooltip placement="top" title={ __( 'Override Property', 'elementor' ) }>
-				<Indicator
-					triggerProps={ triggerProps }
-					isOpen={ !! popoverProps.open }
-					isOverridable={ !! overridableValue }
-				/>
+				<Indicator { ...triggerProps } isOpen={ !! popoverProps.open } isOverridable={ !! overridableValue } />
 			</Tooltip>
 			<Popover
 				disableScrollLock

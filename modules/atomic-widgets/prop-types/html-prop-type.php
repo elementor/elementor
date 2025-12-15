@@ -23,19 +23,22 @@ class Html_Prop_Type extends String_Prop_Type implements Migratable_Prop_Type {
 			[, $leading, $value, $trailing ] = $matches;
 
 			$allowed_tags = [
-				'b'           => [],
-				'i'           => [],
-				'em'          => [],
-				'u'           => [],
-				'ul'          => [],
-				'ol'          => [],
-				'li'          => [],
-				'blockquote'  => [],
-				'a'           => [ 'href' => true ],
-				'del'         => [],
-				'span'        => [],
-				'br'          => [],
-				'strong'      => [],
+				'b'          => [],
+				'i'          => [],
+				'em'         => [],
+				'u'          => [],
+				'ul'         => [],
+				'ol'         => [],
+				'li'         => [],
+				'blockquote' => [],
+				'a'          => [
+					'href'   => true,
+					'target' => true,
+				],
+				'del'        => [],
+				'span'       => [],
+				'br'         => [],
+				'strong'     => [],
 			];
 
 			$sanitized = wp_kses( $value, $allowed_tags );

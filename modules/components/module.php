@@ -9,8 +9,8 @@ use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Component_Lock_Manager;
 use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 use Elementor\Modules\Components\Transformers\Component_Instance_Transformer;
-use Elementor\Modules\Components\PropTypes\Component_Overridable_Prop_Type;
-use Elementor\Modules\Components\Transformers\Component_Overridable_Transformer;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Modules\Components\Transformers\Overridable_Transformer;
 use Elementor\Core\Base\Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -64,7 +64,7 @@ class Module extends BaseModule {
 	}
 
 	private function modify_props_schema( array $schema ) {
-		return Component_Overridable_Schema_Extender::make()->get_extended_schema( $schema );
+		return Overridable_Schema_Extender::make()->get_extended_schema( $schema );
 	}
 
 	private function register_component_post_type() {
@@ -103,6 +103,6 @@ class Module extends BaseModule {
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
 		$transformers->register( Component_Instance_Prop_Type::get_key(), new Component_Instance_Transformer() );
-		$transformers->register( Component_Overridable_Prop_Type::get_key(), new Component_Overridable_Transformer() );
+		$transformers->register( Overridable_Prop_Type::get_key(), new Overridable_Transformer() );
 	}
 }
