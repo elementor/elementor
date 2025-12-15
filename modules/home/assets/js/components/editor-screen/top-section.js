@@ -1,8 +1,8 @@
 import { Box, Paper, Stack } from '@elementor/ui';
 import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
-import YoutubeIcon from '../icons/youtube-icon';
-import { trackPromoClick, getHomeScreenPath } from '../utils/promo-tracking';
+import YoutubeIcon from '../../icons/youtube-icon';
+import { trackPromoClick, getHomeScreenPath } from '../../utils/promo-tracking';
 
 const TopSection = ( { ...props } ) => {
 	const { topData, buttonCtaUrl } = props;
@@ -32,7 +32,7 @@ const TopSection = ( { ...props } ) => {
 	};
 
 	return (
-		<Paper elevation={ 0 } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', py: { xs: 3, md: 3 }, px: { xs: 3, md: 4 }, gap: { xs: 2, sm: 3, lg: 22 } } }>
+		<Paper elevation={ 0 } sx={ { display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', py: 3, px: { xs: 3, md: 4 }, gap: { xs: 2, sm: 3, lg: 22 }, borderRadius: 1, border: '1px solid rgba(0, 0, 0, 0.12)' } }>
 			<Stack gap={ 3 } justifyContent="center">
 				<Box>
 					<Typography variant="h6">{ title }</Typography>

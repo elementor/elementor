@@ -2,7 +2,7 @@ import { Box, Paper, Stack, TextField } from '@elementor/ui';
 import Typography from '@elementor/ui/Typography';
 import Button from '@elementor/ui/Button';
 import { useState } from 'react';
-import { trackPromoClick, getHomeScreenPath } from '../utils/promo-tracking';
+import { trackPromoClick, getHomeScreenPath } from '../../utils/promo-tracking';
 
 const CreateWithAIBanner = ( { ...props } ) => {
 	const { createWithAIData } = props;
@@ -64,12 +64,14 @@ const CreateWithAIBanner = ( { ...props } ) => {
 				display: 'flex',
 				flexDirection: 'column',
 				py: 3,
-				px: 4,
+				px: { xs: 3, md: 4 },
 				gap: 2,
 				backgroundImage: `url(${ backgroundImage })`,
 				backgroundSize: 'cover',
 				backgroundPosition: 'right center',
 				backgroundRepeat: 'no-repeat',
+				borderRadius: 1,
+				border: '1px solid rgba(0, 0, 0, 0.12)',
 			} }
 		>
 			<Stack gap={ 1 } justifyContent="center">
