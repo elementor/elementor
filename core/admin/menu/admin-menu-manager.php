@@ -5,6 +5,7 @@ namespace Elementor\Core\Admin\Menu;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_Has_Position;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -39,10 +40,18 @@ class Admin_Menu_Manager {
 
 	public function register_actions() {
 		add_action( 'admin_menu', function () {
+			if ( Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
+				return;
+			}
+
 			$this->register_wp_menus();
 		}, 20 );
 
 		add_action( 'admin_head', function () {
+			if ( Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
+				return;
+			}
+
 			$this->hide_invisible_menus();
 		} );
 	}

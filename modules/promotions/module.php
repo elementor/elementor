@@ -5,6 +5,12 @@ namespace Elementor\Modules\Promotions;
 use Elementor\Api;
 use Elementor\Controls_Manager;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Admin\Menu\Elementor_One_Menu_Manager;
+use Elementor\Modules\Promotions\AdminMenuItems\Custom_Code_Elementor_One_Menu_Item;
+use Elementor\Modules\Promotions\AdminMenuItems\Custom_Elements_Elementor_One_Menu_Item;
+use Elementor\Modules\Promotions\AdminMenuItems\Custom_Fonts_Elementor_One_Menu_Item;
+use Elementor\Modules\Promotions\AdminMenuItems\Custom_Icons_Elementor_One_Menu_Item;
+use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Elementor_One_Menu_Item;
 use Elementor\Core\Base\Module as Base_Module;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Code_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Fonts_Promotion_Item;
@@ -45,6 +51,10 @@ class Module extends Base_Module {
 
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 			$this->register_menu_items( $admin_menu );
+		}, static::ADMIN_MENU_PRIORITY );
+
+		add_action( 'elementor-one/admin/menu/register', function ( Elementor_One_Menu_Manager $manager ) {
+			$this->register_elementor_one_menu_items( $manager );
 		}, static::ADMIN_MENU_PRIORITY );
 
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
@@ -97,6 +107,14 @@ class Module extends Base_Module {
 		$admin_menu->register( 'elementor_custom_icons', new Custom_Icons_Promotion_Item() );
 		$admin_menu->register( 'elementor_custom_code', new Custom_Code_Promotion_Item() );
 		$admin_menu->register( 'popup_templates', new Popups_Promotion_Item() );
+	}
+
+	private function register_elementor_one_menu_items( Elementor_One_Menu_Manager $manager ) {
+		$manager->register_editor_item( 'e-form-submissions', new Form_Submissions_Elementor_One_Menu_Item() );
+		$manager->register_editor_item( 'elementor-custom-elements', new Custom_Elements_Elementor_One_Menu_Item() );
+		$manager->register_flyout_item( 'elementor_custom_fonts', new Custom_Fonts_Elementor_One_Menu_Item() );
+		$manager->register_flyout_item( 'elementor_custom_icons', new Custom_Icons_Elementor_One_Menu_Item() );
+		$manager->register_flyout_item( 'elementor_custom_code', new Custom_Code_Elementor_One_Menu_Item() );
 	}
 
 	private function register_promotion_menu_item( Admin_Menu_Manager $admin_menu ) {

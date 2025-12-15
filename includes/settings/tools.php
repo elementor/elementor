@@ -2,7 +2,9 @@
 namespace Elementor;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Core\Admin\Menu\Elementor_One_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
+use Elementor\Includes\Settings\AdminMenuItems\Tools_Elementor_One_Menu_Item;
 use Elementor\Core\Kits\Manager;
 use Elementor\Includes\Settings\AdminMenuItems\Tools_Menu_Item;
 
@@ -209,6 +211,10 @@ class Tools extends Settings_Page {
 
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 			$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
+		}, Settings::ADMIN_MENU_PRIORITY + 20 );
+
+		add_action( 'elementor-one/admin/menu/register', function( Elementor_One_Menu_Manager $manager ) {
+			$manager->register_editor_item( static::PAGE_ID, new Tools_Elementor_One_Menu_Item( $this ) );
 		}, Settings::ADMIN_MENU_PRIORITY + 20 );
 
 		add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );

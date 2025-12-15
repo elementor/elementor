@@ -120,6 +120,13 @@ const sass = {
 				dest: 'assets/css/templates',
 				ext: '.css',
 			},
+			{
+				expand: true,
+				cwd: 'modules/editor-one/assets/css/admin-menu',
+				src: 'admin-menu.scss',
+				dest: 'assets/css/modules/editor-one',
+				ext: '.css',
+			},
 		]
 	}
 };

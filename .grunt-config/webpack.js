@@ -152,6 +152,7 @@ const entry = {
 	'floating-elements-modal': path.resolve( __dirname, '../assets/dev/js/admin/floating-elements/new-floating-elements.js' ),
 	'cloud-library-screenshot': path.resolve( __dirname, '../modules/cloud-library/assets/js/preview/screenshot.js' ),
 	'pro-install-events': path.resolve( __dirname, '../modules/pro-install/assets/js/pro-install-events.js' ),
+	'elementor-editor-one-admin-menu': path.resolve( __dirname, '../modules/editor-one/assets/js/admin-menu/app.js' ),
 };
 
 const frontendEntries = {
