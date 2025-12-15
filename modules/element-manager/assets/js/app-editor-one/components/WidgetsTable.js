@@ -13,7 +13,10 @@ import {
 	TableSortLabel,
 	TableContainer,
 	Paper,
+<<<<<<< HEAD
 	styled,
+=======
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 } from '@elementor/ui';
 import { HelpIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
@@ -23,6 +26,7 @@ import { UpgradeButton } from '../../upgrade-button';
 import { RolePermissions, EditButtonDisabled } from './RolePermissions';
 import { UsageTimesColumn } from './UsageTimesColumn';
 
+<<<<<<< HEAD
 const StyledSwitch = styled( Switch )( {
 	'& .MuiSwitch-track': {
 		backgroundColor: 'rgba(0, 0, 0, 0.12);',
@@ -38,6 +42,8 @@ const StyledSwitch = styled( Switch )( {
 	},
 } );
 
+=======
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 export const WidgetsTable = ( {
 	widgets,
 	widgetsDisabled,
@@ -76,7 +82,11 @@ export const WidgetsTable = ( {
 			<Table size="small">
 				<TableHead>
 					<TableRow>
+<<<<<<< HEAD
 						<TableCell sx={ ( theme ) => ( { width: theme.spacing( 25 ) } ) }>
+=======
+						<TableCell sx={ { width: ( theme ) => theme.spacing( 25 ) } }>
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 							<TableSortLabel
 								active={ isWidgetSorted }
 								direction={ isWidgetSorted ? widgetSortDirection : 'asc' }
@@ -86,7 +96,11 @@ export const WidgetsTable = ( {
 								{ __( 'Element', 'elementor' ) }
 							</TableSortLabel>
 						</TableCell>
+<<<<<<< HEAD
 						<TableCell sx={ ( theme ) => ( { width: theme.spacing( 10 ) } ) }>
+=======
+						<TableCell sx={ { width: ( theme ) => theme.spacing( 10 ) } }>
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 							{ __( 'Status', 'elementor' ) }
 						</TableCell>
 						<TableCell>
@@ -161,7 +175,11 @@ export const WidgetsTable = ( {
 								</Box>
 							</TableCell>
 							<TableCell>
+<<<<<<< HEAD
 								<StyledSwitch
+=======
+								<Switch
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 									color="secondary"
 									checked={ ! widgetsDisabled.includes( widget.name ) }
 									onChange={ ( event, checked ) => onToggleWidget( widget.name, checked ) }

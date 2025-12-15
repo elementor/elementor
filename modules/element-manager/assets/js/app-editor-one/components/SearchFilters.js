@@ -34,15 +34,25 @@ export const SearchFilters = ( {
 			direction="row"
 			alignItems="center"
 			justifyContent="space-between"
+<<<<<<< HEAD
 			sx={ ( theme ) => ( {
 				position: 'sticky',
 				top: theme.spacing( 4 ),
+=======
+			sx={ {
+				position: 'sticky',
+				top: 4,
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 				backgroundColor: 'var(--e-one-palette-background-default)',
 				zIndex: 10,
 				paddingBlock: 2.5,
 				paddingInline: 2,
 				boxShadow: 'rgba(0, 0, 0, 0.15) 0 5px 10px 0',
+<<<<<<< HEAD
 			} ) }
+=======
+			} }
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 		>
 			<Box>
 				<Stack direction="row" alignItems="center" gap={ 2 }>
@@ -52,12 +62,20 @@ export const SearchFilters = ( {
 						size="small"
 						placeholder={ __( 'Search', 'elementor' ) }
 						onChange={ ( e ) => onSearchChange( e.target.value ) }
+<<<<<<< HEAD
 						sx={ ( theme ) => ( { minWidth: theme.spacing( 14 ) } ) }
+=======
+						sx={ { minWidth: ( theme ) => theme.spacing( 14 ) } }
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 					/>
 					<FormControl
 						fullWidth
 						size="small"
+<<<<<<< HEAD
 						sx={ ( theme ) => ( { width: theme.spacing( 16 ) } ) }
+=======
+						sx={ { width: ( theme ) => theme.spacing( 16 ) } }
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 						color="secondary"
 					>
 						<Select
@@ -76,7 +94,11 @@ export const SearchFilters = ( {
 					<FormControl
 						fullWidth
 						size="small"
+<<<<<<< HEAD
 						sx={ ( theme ) => ( { width: theme.spacing( 16 ) } ) }
+=======
+						sx={ { width: ( theme ) => theme.spacing( 16 ) } }
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 						color="secondary"
 					>
 						<Select

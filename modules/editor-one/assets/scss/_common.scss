@@ -19,6 +19,7 @@ body.wp-admin {
 .wrap {
 	background-color: var(--e-one-palette-background-default);
 	margin: 20px;
+<<<<<<< HEAD
 	margin-block-start: 24px;
 	max-width: 100%;
 	display: flex;
@@ -32,11 +33,17 @@ body.wp-admin {
 	}
 
 	> h1.wp-heading-inline {
+=======
+	max-width: 100%;
+
+	h1.wp-heading-inline {
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 		font-family: var(--e-one-typography-fontFamily);
 		font-weight: 700;
 		font-size: 24px;
 		color: var(--e-one-palette-text-primary);
 		margin: 0;
+<<<<<<< HEAD
 		padding: 0;
 		line-height: 1.2;
 		flex-grow: 1;
@@ -53,6 +60,11 @@ body.wp-admin {
 
 	> *:not(h1.wp-heading-inline):not(.page-title-action):not(hr.wp-header-end) {
 		flex-basis: 100%;
+=======
+		margin-inline-end: 20px;
+		padding: 0;
+		line-height: 1.2;
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 	}
 }
 
@@ -66,10 +78,13 @@ body.wp-admin {
 	background-color: var(--e-one-palette-background-default);
 }
 
+<<<<<<< HEAD
 #wpbody-content {
 	margin-block-start: 50px;
 }
 
+=======
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 .postbox,
 .metabox-holder,
 .postbox .inside {
@@ -92,9 +107,15 @@ body.wp-admin {
 }
 
 .button-primary,
+<<<<<<< HEAD
 .wrap .page-title-action,
 input[type="submit"].button-primary,
 .wp-core-ui .button.button-primary {
+=======
+.page-title-action,
+input[type="submit"].button-primary,
+.wp-core-ui .button-primary {
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 	background-color: var(--e-one-palette-primary-main);
 	border-color: var(--e-one-palette-primary-main);
 	color: var(--e-one-palette-primary-contrastText);
@@ -120,10 +141,15 @@ input[type="submit"].button-primary,
 	}
 }
 
+<<<<<<< HEAD
 .button,
 .button-secondary,
 .wp-core-ui .button,
 .wp-core-ui .button.action,
+=======
+.button-secondary,
+.button,
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 input[type="submit"].button-secondary,
 .wp-core-ui .button-secondary {
 	background-color: transparent;
@@ -149,6 +175,7 @@ input[type="submit"].button-secondary,
 		background-color: var(--e-one-palette-action-selected);
 		border-color: var(--e-one-palette-secondary-dark);
 	}
+<<<<<<< HEAD
 
 	&.elementor-button-spinner,
 	&.elementor-rollback-button {
@@ -156,6 +183,8 @@ input[type="submit"].button-secondary,
 			inset-block-start: 3px;
 		}
 	}
+=======
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 }
 
 hr {

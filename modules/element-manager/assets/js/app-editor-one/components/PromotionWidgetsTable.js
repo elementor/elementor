@@ -56,10 +56,17 @@ export const PromotionWidgetsTable = ( { widgets, promotionData } ) => {
 				<Table size="small">
 					<TableHead>
 						<TableRow>
+<<<<<<< HEAD
 							<TableCell sx={ ( theme ) => ( { width: theme.spacing( 25 ) } ) }>
 								{ __( 'Element', 'elementor' ) }
 							</TableCell>
 							<TableCell sx={ ( theme ) => ( { width: theme.spacing( 10 ) } ) }>
+=======
+							<TableCell sx={ { width: ( theme ) => theme.spacing( 25 ) } }>
+								{ __( 'Element', 'elementor' ) }
+							</TableCell>
+							<TableCell sx={ { width: ( theme ) => theme.spacing( 10 ) } }>
+>>>>>>> 7083481241 (Internal: Editor One redesign [ED-21837] (#33778))
 								{ __( 'Status', 'elementor' ) }
 							</TableCell>
 							<TableCell>
