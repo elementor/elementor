@@ -5,6 +5,7 @@ namespace Elementor\Modules\Variables\Adapters;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
@@ -16,7 +17,6 @@ class Prop_Type_Adapter {
 
 	public static function to_storage( Variables_Collection $collection ): array {
 		$schema = self::get_schema();
-
 		$collection->set_version( Variables_Collection::FORMAT_VERSION_V2 );
 
 		$record = $collection->serialize();
@@ -24,9 +24,10 @@ class Prop_Type_Adapter {
 		$collection->each( function( Variable $variable ) use ( $schema, &$record ) {
 			$type = $variable->type();
 			$value = $variable->value();
-			$prop_type = $schema[ $type ] ?? null;
 			$id = $variable->id();
 			$variable = $variable->to_array();
+
+			$prop_type = $schema[ $type ] ?? null;
 
 			if ( is_array( $value ) || ! $prop_type ) {
 				return;
@@ -68,6 +69,16 @@ class Prop_Type_Adapter {
 			}
 
 			if ( Size_Variable_Prop_Type::get_key() === $variable->type() ) {
+				if ( ! is_array( $value ) ) {
+					$value = [
+						'size' => '',
+						'unit' => Size_Constants::DEFAULT_UNIT,
+					];
+				}
+
+				$value['size'] = $value['size'] ?? '';
+				$value['unit'] = empty( $value['unit'] ) ? Size_Constants::DEFAULT_UNIT : $value['unit'];
+
 				$value = $value['size'] . $value['unit'];
 			}
 
@@ -88,7 +99,7 @@ class Prop_Type_Adapter {
 		];
 	}
 
-	private static function parse_size_value( string $value ) {
+	private static function parse_size_value( ?string $value ) {
 		$value = trim( strtolower( $value ) );
 
 		if ( 'auto' === $value ) {
@@ -105,6 +116,25 @@ class Prop_Type_Adapter {
 			];
 		}
 
+		if ( empty( $value ) ) {
+			return [
+				'size' => '',
+				'unit' => Size_Constants::DEFAULT_UNIT
+			];
+		}
+
 		return $value;
+	}
+
+	private static function is_valid_string_value( $value ) {
+		if( is_array( $value ) ) {
+			return false;
+		}
+
+		if( empty( $value ) ) {
+			return false;
+		}
+
+		return true;
 	}
 }

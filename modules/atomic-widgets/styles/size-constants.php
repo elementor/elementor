@@ -19,6 +19,8 @@ class Size_Constants {
 	const UNIT_MILLI_SECOND = 'ms';
 	const UNIT_ANGLE_DEG = 'deg';
 
+	const DEFAULT_UNIT = self::UNIT_PX;
+
 	const LENGTH_UNITS = [
 		self::UNIT_PX,
 		self::UNIT_EM,
