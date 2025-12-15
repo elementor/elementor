@@ -6,14 +6,11 @@ import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
 	bindTrigger,
-	Box,
 	IconButton,
 	ListItemButton,
 	ListItemIcon,
 	Menu,
 	Stack,
-	styled,
-	type Theme,
 	Typography,
 	usePopupState,
 } from '@elementor/ui';
@@ -69,14 +66,12 @@ export const ComponentItem = ( { component }: ComponentItemProps ) => {
 				<ListItemIcon size="tiny">
 					<ComponentsIcon fontSize="tiny" />
 				</ListItemIcon>
-				<Indicator isActive={ false } isError={ false }>
-					<EllipsisWithTooltip
-						title={ component.name }
-						as={ Typography }
-						variant="caption"
-						color="text.primary"
-					/>
-				</Indicator>
+				<EllipsisWithTooltip
+					title={ component.name }
+					as={ Typography }
+					variant="caption"
+					color="text.primary"
+				/>
 				<IconButton size="tiny" { ...bindTrigger( popupState ) } aria-label="More actions">
 					<DotsVerticalIcon fontSize="tiny" />
 				</IconButton>
@@ -114,29 +109,4 @@ const addComponentToPage = ( model: DropElementParams[ 'model' ] ) => {
 		model,
 		options: { ...options, useHistory: false, scrollIntoView: true },
 	} );
-};
-
-const Indicator = styled( Box, {
-	shouldForwardProp: ( prop: string ) => ! [ 'isActive', 'isError' ].includes( prop ),
-} )< { isActive: boolean; isError: boolean } >( ( { theme, isActive, isError } ) => ( {
-	display: 'flex',
-	width: '100%',
-	flexGrow: 1,
-	borderRadius: theme.spacing( 0.5 ),
-	border: getIndicatorBorder( { isActive, isError, theme } ),
-	padding: `0 ${ theme.spacing( 1 ) }`,
-	marginLeft: isActive ? theme.spacing( 1 ) : 0,
-	minWidth: 0,
-} ) );
-
-const getIndicatorBorder = ( { isActive, isError, theme }: { isActive: boolean; isError: boolean; theme: Theme } ) => {
-	if ( isError ) {
-		return `2px solid ${ theme.palette.error.main }`;
-	}
-
-	if ( isActive ) {
-		return `2px solid ${ theme.palette.secondary.main }`;
-	}
-
-	return 'none';
 };
