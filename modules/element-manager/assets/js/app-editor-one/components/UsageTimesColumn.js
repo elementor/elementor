@@ -28,10 +28,10 @@ export const UsageTimesColumn = ( {
 			variant="outlined"
 			color="secondary"
 			className="e-id-elementor-element-manager-button-show-usage"
-		sx={ {
-			minWidth: ( theme ) => theme.spacing( 6 ),
-			height: 26,
-		} }
+			sx={ {
+				minWidth: ( theme ) => theme.spacing( 6 ),
+				height: 26,
+			} }
 		>
 			{ __( 'Show', 'elementor' ) }
 		</Button>
