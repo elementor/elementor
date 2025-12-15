@@ -124,7 +124,7 @@
                 {
                     "slug": "http://example.org/wp-admin/admin.php?page=elementor-app&ver=3.34.0&source=wp_db_templates_menu#/kit-library",
                     "label": "Website Templates",
-                    "url": "/wp-admin/admin.php?page=elementor-app&ver=3.35.0&source=wp_db_templates_menu#/kit-library",
+                    "url": "/wp-admin/admin.php?page=elementor-app&ver=3.34.0&source=wp_db_templates_menu#/kit-library",
                     "priority": 30
                 },
                 {
