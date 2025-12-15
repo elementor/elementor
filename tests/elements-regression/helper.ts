@@ -42,6 +42,8 @@ export default class ElementRegressionHelper {
 				iframe.style.height = '3000px';
 			} );
 		}
+
+		await locator.waitFor( { timeout: 30_000 } );
 		await expect.soft( locator )
 			.toHaveScreenshot( `${ widgetType }_${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 	}
@@ -92,7 +94,9 @@ export default class ElementRegressionHelper {
 			}
 
 			label = '_published';
-			await expect.soft( page.locator( EditorSelectors.container + ' >> nth=0' ) )
+			const locator = page.locator( EditorSelectors.container + ' >> nth=0' );
+			await locator.waitFor( { timeout: 30_000 } );
+			await expect.soft( locator )
 				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		} else {
 			page = this.editor.getPreviewFrame();
