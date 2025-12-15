@@ -5,7 +5,13 @@ import {
 	settingsTransformersRegistry,
 } from '@elementor/editor-canvas';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
-import { FIELD_TYPE, registerFieldIndicator } from '@elementor/editor-editing-panel';
+import {
+	FIELD_TYPE,
+	injectIntoPanelHeaderTop,
+	registerControlReplacement,
+	registerEditingPanelReplacement,
+	registerFieldIndicator,
+} from '@elementor/editor-editing-panel';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
 import { stylesRepository } from '@elementor/editor-styles-repository';
@@ -15,18 +21,22 @@ import { __ } from '@wordpress/i18n';
 
 import { componentInstanceTransformer } from './component-instance-transformer';
 import { componentOverridableTransformer } from './component-overridable-transformer';
+import { ComponentPanelHeader } from './components/component-panel-header/component-panel-header';
 import { Components } from './components/components-tab/components';
 import { COMPONENT_DOCUMENT_TYPE } from './components/consts';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
 import { openEditModeDialog } from './components/in-edit-mode';
+import { InstanceEditingPanel } from './components/instance-editing-panel/instance-editing-panel';
+import { OverridablePropControl } from './components/overridable-props/overridable-prop-control';
 import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
 import { createComponentType, TYPE } from './create-component-type';
 import { initMcp } from './mcp';
 import { PopulateStore } from './populate-store';
+import { componentOverridablePropTypeUtil } from './prop-types/component-overridable-prop-type';
+import { loadComponentsAssets } from './store/actions/load-components-assets';
+import { removeComponentStyles } from './store/actions/remove-component-styles';
 import { componentsStylesProvider } from './store/components-styles-provider';
-import { loadComponentsAssets } from './store/load-components-assets';
-import { removeComponentStyles } from './store/remove-component-styles';
 import { slice } from './store/store';
 import { beforeSave } from './sync/before-save';
 import { type ExtendedWindow } from './types';
@@ -74,6 +84,11 @@ export function init() {
 		component: EditComponent,
 	} );
 
+	injectIntoPanelHeaderTop( {
+		id: 'component-panel-header',
+		component: ComponentPanelHeader,
+	} );
+
 	registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
 		const { id, config } = getV1CurrentDocument();
 
@@ -89,6 +104,17 @@ export function init() {
 		id: 'component-overridable-prop',
 		priority: 1,
 		indicator: OverridablePropIndicator,
+	} );
+
+	registerControlReplacement( {
+		component: OverridablePropControl,
+		condition: ( { value } ) => componentOverridablePropTypeUtil.isValid( value ),
+	} );
+
+	registerEditingPanelReplacement( {
+		id: 'component-instance-edit-panel',
+		condition: ( _, elementType ) => elementType.key === 'e-component',
+		component: InstanceEditingPanel,
 	} );
 
 	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );

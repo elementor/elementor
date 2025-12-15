@@ -5,6 +5,7 @@ import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
 import Italic from '@tiptap/extension-italic';
+import Link from '@tiptap/extension-link';
 import Strike from '@tiptap/extension-strike';
 import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
@@ -20,6 +21,8 @@ type InlineEditorProps = {
 	attributes?: Record< string, string >;
 	sx?: SxProps< Theme >;
 	showToolbar?: boolean;
+	// UnstableFloatingActionBar sends props to be used for event handling for floating actions.
+	props?: React.ComponentProps< 'div' >;
 };
 
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
@@ -37,7 +40,7 @@ const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void
 
 export const InlineEditor = React.forwardRef(
 	(
-		{ value, setValue, attributes = {}, showToolbar = false, sx }: InlineEditorProps,
+		{ value, setValue, attributes = {}, showToolbar = false, sx, ...props }: InlineEditorProps,
 		ref: ForwardedRef< HTMLDivElement >
 	) => {
 		const editor = useEditor( {
@@ -52,6 +55,9 @@ export const InlineEditor = React.forwardRef(
 				Underline,
 				Superscript,
 				Subscript,
+				Link.configure( {
+					openOnClick: false,
+				} ),
 				HardBreak.extend( {
 					addKeyboardShortcuts() {
 						return {
@@ -98,10 +104,14 @@ export const InlineEditor = React.forwardRef(
 					'& .ProseMirror': {
 						minHeight: '70px',
 						fontSize: '12px',
+						'& a': {
+							color: 'inherit',
+						},
 					},
 					...sx,
 				} }
 				{ ...attributes }
+				{ ...props }
 			>
 				{ showToolbar && <InlineEditorToolbar editor={ editor } /> }
 				<EditorContent editor={ editor } />

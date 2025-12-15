@@ -1,0 +1,217 @@
+#adminmenu {
+	--editor-one-flyout-menu-bg: #1d2327;
+	--editor-one-flyout-menu-bg-level-4: #23282d;
+	--editor-one-flyout-menu-bg-hover: #2c3338;
+	--editor-one-flyout-menu-bg-hover-alt: #32373c;
+	--editor-one-flyout-menu-text: #c3c4c7;
+	--editor-one-flyout-menu-text-hover: #72aee6;
+	--editor-one-flyout-menu-border: #3c434a;
+	--editor-one-flyout-menu-scrollbar-thumb-hover: #50575e;
+	--editor-one-flyout-menu-spacing-xs: 5px;
+	--editor-one-flyout-menu-spacing-sm: 8px;
+	--editor-one-flyout-menu-spacing-md: 12px;
+	--editor-one-flyout-menu-spacing-lg: 15px;
+	--editor-one-flyout-menu-spacing-xl: 28px;
+	--editor-one-flyout-menu-arrow-right: 10px;
+	--editor-one-flyout-menu-arrow-size: 4px;
+	--editor-one-flyout-menu-arrow-opacity: 0.7;
+	--editor-one-flyout-menu-min-width: 180px;
+	--editor-one-flyout-menu-padding-y: 5px;
+	--editor-one-flyout-menu-padding-x: 12px;
+	--editor-one-flyout-menu-padding-x-large: 28px;
+	--editor-one-flyout-menu-padding-mobile: 15px;
+	--editor-one-flyout-menu-border-radius: 4px;
+	--editor-one-flyout-menu-border-radius-sm: 3px;
+	--editor-one-flyout-menu-border-width: 1px;
+	--editor-one-flyout-menu-font-size: 13px;
+	--editor-one-flyout-menu-line-height: 1.4;
+	--editor-one-flyout-menu-transition-duration: 0.15s;
+	--editor-one-flyout-menu-z-index: 9999;
+	--editor-one-flyout-menu-max-height: 80vh;
+	--editor-one-flyout-menu-scrollbar-width: 6px;
+	--editor-one-flyout-menu-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+	--editor-one-flyout-menu-folded-left: 36px;
+
+	.elementor-has-flyout {
+		position: relative;
+
+		&:hover > .elementor-submenu-flyout,
+		&.elementor-flyout-open > .elementor-submenu-flyout {
+			display: block;
+		}
+
+		> a::after {
+			content: '';
+			display: inline-block;
+			width: 0;
+			height: 0;
+			margin-left: var(--editor-one-flyout-menu-spacing-sm);
+			border-top: var(--editor-one-flyout-menu-arrow-size) solid transparent;
+			border-bottom: var(--editor-one-flyout-menu-arrow-size) solid transparent;
+			border-left: var(--editor-one-flyout-menu-arrow-size) solid currentColor;
+			vertical-align: middle;
+			opacity: var(--editor-one-flyout-menu-arrow-opacity);
+		}
+	}
+
+	.elementor-submenu-flyout {
+		position: absolute;
+		left: 100%;
+		top: 0;
+		display: none;
+		min-width: var(--editor-one-flyout-menu-min-width);
+		margin: 0;
+		padding: var(--editor-one-flyout-menu-padding-y) 0;
+		list-style: none;
+		background: var(--editor-one-flyout-menu-bg);
+		box-shadow: var(--editor-one-flyout-menu-box-shadow);
+		z-index: var(--editor-one-flyout-menu-z-index);
+		border-radius: 0 var(--editor-one-flyout-menu-border-radius) var(--editor-one-flyout-menu-border-radius) 0;
+
+		&.elementor-level-3 {
+			min-width: var(--editor-one-flyout-menu-min-width);
+			max-height: var(--editor-one-flyout-menu-max-height);
+			overflow: visible;
+		}
+
+		&.elementor-level-4 {
+			min-width: var(--editor-one-flyout-menu-min-width);
+			left: 100%;
+			top: 0;
+			background: var(--editor-one-flyout-menu-bg-level-4);
+
+			li a:hover {
+				background: var(--editor-one-flyout-menu-bg-hover-alt);
+			}
+		}
+
+		&.elementor-submenu-flyout-visible {
+			display: block;
+		}
+
+		li {
+			margin: 0;
+			padding: 0;
+			position: relative;
+			display: block !important;
+
+			a {
+				display: block;
+				padding: var(--editor-one-flyout-menu-spacing-sm) var(--editor-one-flyout-menu-padding-x);
+				color: var(--editor-one-flyout-menu-text);
+				text-decoration: none;
+				font-size: var(--editor-one-flyout-menu-font-size);
+				line-height: var(--editor-one-flyout-menu-line-height);
+				white-space: nowrap;
+				transition: background-color var(--editor-one-flyout-menu-transition-duration) ease, color var(--editor-one-flyout-menu-transition-duration) ease;
+
+				&:hover,
+				&:focus {
+					background: var(--editor-one-flyout-menu-bg-hover);
+					color: var(--editor-one-flyout-menu-text-hover);
+				}
+			}
+
+			&.elementor-menu-separator {
+				border-top: var(--editor-one-flyout-menu-border-width) solid var(--editor-one-flyout-menu-border);
+				margin: var(--editor-one-flyout-menu-spacing-xs) 0;
+				padding: 0;
+			}
+		}
+
+		.elementor-has-flyout > a {
+			padding-right: var(--editor-one-flyout-menu-padding-x-large);
+
+			&::after {
+				position: absolute;
+				right: var(--editor-one-flyout-menu-arrow-right);
+				top: 50%;
+				transform: translateY(-50%);
+				margin-left: 0;
+			}
+		}
+
+		.elementor-submenu-flyout {
+			left: 100%;
+			top: 0;
+		}
+
+		&::-webkit-scrollbar {
+			width: var(--editor-one-flyout-menu-scrollbar-width);
+		}
+
+		&::-webkit-scrollbar-track {
+			background: var(--editor-one-flyout-menu-bg);
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background: var(--editor-one-flyout-menu-border);
+			border-radius: var(--editor-one-flyout-menu-border-radius-sm);
+
+			&:hover {
+				background: var(--editor-one-flyout-menu-scrollbar-thumb-hover);
+			}
+		}
+	}
+}
+
+.folded #adminmenu {
+	.elementor-submenu-flyout {
+		left: var(--editor-one-flyout-menu-folded-left);
+
+		.elementor-submenu-flyout {
+			left: 100%;
+		}
+	}
+}
+
+body:not(.folded) #adminmenu {
+	.wp-has-current-submenu,
+	.wp-menu-open {
+		.elementor-submenu-flyout {
+			left: 100%;
+		}
+	}
+}
+
+@media screen and (max-width: 782px) {
+	#adminmenu {
+		.elementor-submenu-flyout {
+			position: static;
+			display: none;
+			box-shadow: none;
+			background: var(--editor-one-flyout-menu-bg-hover);
+			border-radius: 0;
+			padding-left: var(--editor-one-flyout-menu-padding-mobile);
+
+			.elementor-submenu-flyout {
+				position: static;
+				padding-left: var(--editor-one-flyout-menu-padding-mobile);
+			}
+		}
+
+		.elementor-has-flyout {
+			&.elementor-flyout-open > .elementor-submenu-flyout {
+				display: block;
+			}
+
+			> a::after {
+				border-left: var(--editor-one-flyout-menu-arrow-size) solid transparent;
+				border-right: var(--editor-one-flyout-menu-arrow-size) solid transparent;
+				border-top: var(--editor-one-flyout-menu-arrow-size) solid currentColor;
+				margin-left: var(--editor-one-flyout-menu-spacing-sm);
+				position: static;
+				transform: none;
+			}
+
+			&.elementor-flyout-open > a::after {
+				border-top: none;
+				border-bottom: var(--editor-one-flyout-menu-arrow-size) solid currentColor;
+			}
+		}
+	}
+}
+
+#menu-posts-elementor_library {
+	display: none !important;
+}
