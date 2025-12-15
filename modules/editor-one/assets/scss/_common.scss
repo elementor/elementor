@@ -6,22 +6,22 @@
 @import "theme-light";
 
 @media (prefers-color-scheme: dark) {
-
+	// import styles for dark theme
 }
 
 #wpcontent,
 #wpbody-content,
 #wpbody-content > * {
-	background-color: var(--e-one-palette-background-default) !important;
+	background-color: var(--e-one-palette-background-default);
 }
 
 body.wp-admin {
-	background-color: var(--e-one-palette-background-default) !important;
+	background-color: var(--e-one-palette-background-default);
 	font-family: var(--e-one-typography-fontFamily);
 }
 
 .wrap {
-	background-color: var(--e-one-palette-background-default) !important;
+	background-color: var(--e-one-palette-background-default);
 	margin: 20px;
 	max-width: 100%;
 
@@ -44,13 +44,13 @@ body.wp-admin {
 .form-table th,
 .form-table td,
 .form-table tr {
-	background-color: var(--e-one-palette-background-default) !important;
+	background-color: var(--e-one-palette-background-default);
 }
 
 .postbox,
 .metabox-holder,
 .postbox .inside {
-	background-color: var(--e-one-palette-background-default) !important;
+	background-color: var(--e-one-palette-background-default);
 }
 
 .e-admin-header {
@@ -72,9 +72,9 @@ body.wp-admin {
 .page-title-action,
 input[type="submit"].button-primary,
 .wp-core-ui .button-primary {
-	background-color: var(--e-one-palette-primary-main) !important;
-	border-color: var(--e-one-palette-primary-main) !important;
-	color: var(--e-one-palette-primary-contrastText) !important;
+	background-color: var(--e-one-palette-primary-main);
+	border-color: var(--e-one-palette-primary-main);
+	color: var(--e-one-palette-primary-contrastText);
 	font-weight: 500;
 	padding: 8px 16px;
 	border-radius: var(--e-a-border-radius);
@@ -86,14 +86,14 @@ input[type="submit"].button-primary,
 
 	&:hover,
 	&:focus {
-		background-color: var(--e-one-palette-primary-dark) !important;
-		border-color: var(--e-one-palette-primary-dark) !important;
-		color: var(--e-one-palette-primary-contrastText) !important;
+		background-color: var(--e-one-palette-primary-dark);
+		border-color: var(--e-one-palette-primary-dark);
+		color: var(--e-one-palette-primary-contrastText);
 	}
 
 	&:active {
-		background-color: var(--e-one-palette-primary-dark) !important;
-		border-color: var(--e-one-palette-primary-dark) !important;
+		background-color: var(--e-one-palette-primary-dark);
+		border-color: var(--e-one-palette-primary-dark);
 	}
 }
 
@@ -101,9 +101,9 @@ input[type="submit"].button-primary,
 .button,
 input[type="submit"].button-secondary,
 .wp-core-ui .button-secondary {
-	background-color: transparent !important;
-	border: 1px solid var(--e-one-palette-secondary-main) !important;
-	color: var(--e-one-palette-text-primary) !important;
+	background-color: transparent;
+	border: 1px solid var(--e-one-palette-secondary-main);
+	color: var(--e-one-palette-text-primary);
 	font-weight: 500;
 	padding: 8px 16px;
 	border-radius: var(--e-a-border-radius);
@@ -115,14 +115,14 @@ input[type="submit"].button-secondary,
 
 	&:hover,
 	&:focus {
-		background-color: var(--e-one-palette-action-hover) !important;
-		border-color: var(--e-one-palette-action-focus) !important;
-		color: var(--e-one-palette-text-primary) !important;
+		background-color: var(--e-one-palette-action-hover);
+		border-color: var(--e-one-palette-action-focus);
+		color: var(--e-one-palette-text-primary);
 	}
 
 	&:active {
-		background-color: var(--e-one-palette-action-selected) !important;
-		border-color: var(--e-one-palette-secondary-dark) !important;
+		background-color: var(--e-one-palette-action-selected);
+		border-color: var(--e-one-palette-secondary-dark);
 	}
 }
 
