@@ -637,7 +637,7 @@ class Utils {
 		return defined( 'ELEMENTOR_PRO_VERSION' );
 	}
 
-	public static function is_pro_installed(): bool {
+	public static function is_pro_installed_and_not_active(): bool {
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}

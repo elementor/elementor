@@ -145,7 +145,7 @@ class Connect_Page_Renderer {
 	private function render_install_or_activate_box() {
 		$cta_data = $this->get_cta_data();
 		$cta_url = wp_nonce_url( admin_url( 'admin-post.php?action=elementor_do_pro_install' ), 'elementor_do_pro_install' );
-		$cta_id = Utils::is_pro_installed() ? 'elementor-connect-activate-pro' : 'elementor-connect-install-pro';
+		$cta_id = Utils::is_pro_installed_and_not_active() ? 'elementor-connect-activate-pro' : 'elementor-connect-install-pro';
 
 		?>
 		<div class="elementor-license-box">
@@ -164,7 +164,7 @@ class Connect_Page_Renderer {
 	private function get_cta_data(): array {
 		return [
 			'description' => esc_html__( 'Enjoy full access to powerful design tools, advanced widgets, and everything you need to create next-level websites.', 'elementor' ),
-			'button_text' => Utils::is_pro_installed() ? esc_html__( 'Activate Elementor Pro', 'elementor' ) : esc_html__( 'Install & Activate', 'elementor' ),
+			'button_text' => Utils::is_pro_installed_and_not_active() ? esc_html__( 'Activate Elementor Pro', 'elementor' ) : esc_html__( 'Install & Activate', 'elementor' ),
 		];
 	}
 }
