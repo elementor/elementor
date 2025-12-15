@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Stack, Box, CircularProgress, Snackbar } from '@elementor/ui';
+import { Stack, Box, CircularProgress, Snackbar, Typography, Link } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useElementManager, useWidgetFilters } from './hooks';
@@ -71,17 +71,22 @@ export const App = () => {
 
 	return (
 		<>
-			<p style={ { marginBlockEnd: '20px', maxWidth: '800px' } }>
+			<Typography
+				variant="body2"
+				color="text.secondary"
+				sx={ { marginBlockEnd: 2.5, maxWidth: 800 } }
+			>
 				{ __( 'Here\'s where you can fine-tune Elementor to your workflow. Disable elements you don\'t use for a cleaner interface, more focused creative experience, and improved performance.', 'elementor' ) }
 				{ ' ' }
-				<a
+				<Link
 					href="https://go.elementor.com/wp-dash-element-manager/"
 					rel="noreferrer"
 					target="_blank"
+					color="info.light"
 				>
 					{ __( 'Learn More', 'elementor' ) }
-				</a>
-			</p>
+				</Link>
+			</Typography>
 
 			{ noticeData && ! noticeData.is_viewed && (
 				<NoticeAlert onDismiss={ dismissNotice } />
