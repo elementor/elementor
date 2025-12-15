@@ -24,6 +24,6 @@ export const SiteTitle = styled( Typography )( {
 
 export const SearchButton = styled( IconButton )( ( { theme } ) => ( {
 	fontSize: 20,
-	color: theme.palette.text.secondary,
+	color: theme.palette.action.active,
 } ) );
 
