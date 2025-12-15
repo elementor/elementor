@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\EditorOne;
 
+use Elementor\Core\Admin\Admin;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\EditorOne\Components\Elementor_One_Menu_Manager;
@@ -44,7 +45,7 @@ class Module extends BaseModule {
 		}
 
 		add_action( 'current_screen', function () {
-			if ( ! $this->is_feature_enabled() || ! $this->is_elementor_admin_page() ) {
+			if ( ! $this->is_feature_enabled() || ! Admin::is_elementor_admin_page() ) {
 				return;
 			}
 
@@ -61,33 +62,6 @@ class Module extends BaseModule {
 	 */
 	private function is_feature_enabled() {
 		return Plugin::$instance->experiments->is_feature_active( static::EXPERIMENT_NAME );
-	}
-
-	/**
-	 * Check if current page is an Elementor admin page
-	 *
-	 * @return bool
-	 */
-	private function is_elementor_admin_page() {
-		$current_screen = get_current_screen();
-
-		if ( ! $current_screen ) {
-			return false;
-		}
-
-		$is_elementor_page = strpos( $current_screen->id ?? '', 'elementor' ) !== false;
-
-		$post_type = $current_screen->post_type ?? '';
-
-		if ( empty( $post_type ) ) {
-			return $is_elementor_page;
-		}
-
-		$elementor_post_types = get_post_types_by_support( 'elementor' );
-		$is_elementor_post_type = in_array( $post_type, $elementor_post_types, true )
-			|| strpos( $post_type, 'elementor' ) !== false;
-
-		return $is_elementor_page || $is_elementor_post_type;
 	}
 
 	/**
