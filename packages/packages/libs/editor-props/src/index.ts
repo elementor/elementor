@@ -6,6 +6,7 @@ import {
 	nonConfigurablePropKeys,
 	propTypeToJsonSchema,
 } from './utils/props-to-llm-schema';
+import { validatePropValue } from './utils/validate-prop-value';
 
 export { type JsonSchema7 } from './utils/prop-json-schema';
 
@@ -33,4 +34,5 @@ export const Schema = {
 	isPropKeyConfigurable,
 	nonConfigurablePropKeys,
 	configurableKeys,
+	validatePropValue,
 };
