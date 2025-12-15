@@ -8,6 +8,7 @@ use Elementor\Core\Base\App;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\FloatingButtons\Module as Floating_Buttons_Module;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -52,19 +53,16 @@ class Admin extends App {
 			return false;
 		}
 
-		$is_elementor_page = strpos( $current_screen->id ?? '', 'elementor' ) !== false;
-
+		$screen_id = $current_screen->id ?? '';
 		$post_type = $current_screen->post_type ?? '';
 
-		if ( empty( $post_type ) ) {
-			return $is_elementor_page;
-		}
+		$is_elementor_screen = strpos( $screen_id, 'elementor' ) !== false
+			|| strpos( $screen_id, Floating_Buttons_Module::CPT_FLOATING_BUTTONS ) !== false;
 
-		$elementor_post_types = get_post_types_by_support( 'elementor' );
-		$is_elementor_post_type = in_array( $post_type, $elementor_post_types, true )
-			|| strpos( $post_type, 'elementor' ) !== false;
+		$is_elementor_post_type = strpos( $post_type, 'elementor' ) !== false
+			|| strpos( $post_type, Floating_Buttons_Module::CPT_FLOATING_BUTTONS ) !== false;
 
-		return $is_elementor_page || $is_elementor_post_type;
+		return $is_elementor_screen || $is_elementor_post_type;
 	}
 
 	/**
