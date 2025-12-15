@@ -36,10 +36,11 @@ export const SearchFilters = ( {
 			justifyContent="space-between"
 			sx={ {
 				position: 'sticky',
-				top: '32px',
+				top: 4,
 				backgroundColor: 'var(--e-one-palette-background-default)',
 				zIndex: 10,
-				padding: '20px 16px',
+				paddingBlock: 2.5,
+				paddingInline: 2,
 				boxShadow: 'rgba(0, 0, 0, 0.15) 0 5px 10px 0',
 			} }
 		>
@@ -51,12 +52,12 @@ export const SearchFilters = ( {
 						size="small"
 						placeholder={ __( 'Search', 'elementor' ) }
 						onChange={ ( e ) => onSearchChange( e.target.value ) }
-						sx={ { minWidth: '113px' } }
+						sx={ { minWidth: ( theme ) => theme.spacing( 14 ) } }
 					/>
 					<FormControl
 						fullWidth
 						size="small"
-						sx={ { maxWidth: '130px', minWidth: '130px' } }
+						sx={ { width: ( theme ) => theme.spacing( 16 ) } }
 						color="secondary"
 					>
 						<Select
@@ -75,7 +76,7 @@ export const SearchFilters = ( {
 					<FormControl
 						fullWidth
 						size="small"
-						sx={ { maxWidth: '130px', minWidth: '130px' } }
+						sx={ { width: ( theme ) => theme.spacing( 16 ) } }
 						color="secondary"
 					>
 						<Select
@@ -92,7 +93,7 @@ export const SearchFilters = ( {
 					<Divider
 						orientation="vertical"
 						flexItem
-						sx={ { height: '30px', margin: '0 5px' } }
+						sx={ { height: 30, marginBlock: 0, marginInline: 0.5 } }
 					/>
 					<Stack direction="row" gap={ 1 }>
 						<Button

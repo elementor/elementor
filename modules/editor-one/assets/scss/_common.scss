@@ -24,6 +24,17 @@ body.wp-admin {
 	background-color: var(--e-one-palette-background-default) !important;
 	margin: 20px;
 	max-width: 100%;
+
+	h1.wp-heading-inline {
+		font-family: var(--e-one-typography-fontFamily);
+		font-weight: 700;
+		font-size: 24px;
+		color: var(--e-one-palette-text-primary);
+		margin: 0;
+		margin-inline-end: 20px;
+		padding: 0;
+		line-height: 1.2;
+	}
 }
 
 #wpbody-content .wrap,
@@ -42,27 +53,13 @@ body.wp-admin {
 	background-color: var(--e-one-palette-background-default) !important;
 }
 
-.wrap {
-	h1.wp-heading-inline {
-		font-family: var(--e-one-typography-fontFamily);
-		font-weight: 700;
-		font-size: 24px;
-		color: var(--e-one-palette-text-primary);
-		margin: 0;
-		margin-inline-end: 20px;
-		padding: 0;
-		line-height: 1.2;
-	}
-}
-
 .e-admin-header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 20px;
-	padding-bottom: 20px;
-	border-bottom: 1px solid var(--e-one-palette-divider);
-	border-bottom-color: var(--e-one-palette-divider);
+	margin-block-end: 20px;
+	padding-block-end: 20px;
+	border-block-end: 1px solid var(--e-one-palette-divider);
 
 	.e-admin-actions {
 		display: flex;
@@ -105,8 +102,7 @@ input[type="submit"].button-primary,
 input[type="submit"].button-secondary,
 .wp-core-ui .button-secondary {
 	background-color: transparent !important;
-	border: 1px solid var(--e-one-palette-divider);
-	border-color: var(--e-one-palette-secondary-main) !important;
+	border: 1px solid var(--e-one-palette-secondary-main) !important;
 	color: var(--e-one-palette-text-primary) !important;
 	font-weight: 500;
 	padding: 8px 16px;
@@ -132,13 +128,14 @@ input[type="submit"].button-secondary,
 
 hr {
 	border: none;
-	border-top: 1px solid var(--e-one-palette-divider);
-	margin: 15px 0;
+	border-block-start: 1px solid var(--e-one-palette-divider);
+	margin-block: 15px;
 	background: transparent;
 }
 
 .nav-tab-wrapper {
-	margin: 20px 0 0;
+	margin-block-start: 20px;
+	margin-block-end: 0;
 	padding: 0;
 	background-color: var(--e-one-palette-background-default);
 	display: flex;
@@ -149,9 +146,9 @@ hr {
 	&::after {
 		content: '';
 		position: absolute;
-		bottom: 0;
-		left: 0;
-		right: 0;
+		inset-block-end: 0;
+		inset-inline-start: 0;
+		inset-inline-end: 0;
 		height: 1px;
 		background-color: var(--e-one-palette-divider);
 		z-index: 0;
@@ -160,8 +157,7 @@ hr {
 	.nav-tab {
 		box-shadow: none;
 		border: 1px solid var(--e-one-palette-divider);
-		border-color: var(--e-one-palette-divider);
-		border-bottom: none;
+		border-block-end: none;
 		border-width: 1px 1px 0;
 		color: var(--e-one-palette-text-primary);
 		font-family: var(--e-one-typography-fontFamily);
@@ -192,16 +188,15 @@ hr {
 			background-color: var(--e-one-palette-background-default);
 			color: var(--e-one-palette-text-primary);
 			max-height: 36px;
-			border-color: var(--e-one-palette-divider);
-			border-bottom: none;
+			border-block-end: none;
 			z-index: 2;
 
 			&::after {
 				content: '';
 				position: absolute;
-				bottom: -1px;
-				left: -1px;
-				right: -1px;
+				inset-block-end: -1px;
+				inset-inline-start: -1px;
+				inset-inline-end: -1px;
 				height: 1px;
 				background-color: var(--e-one-palette-background-default);
 			}
@@ -219,7 +214,7 @@ hr {
 }
 
 .elementor-settings-form-page h2 {
-	margin: 1em 0;
+	margin-block: 1em;
 	font-family: var(--e-one-typography-fontFamily);
 	font-weight: 700;
 	font-size: 24px;
@@ -228,12 +223,12 @@ hr {
 	padding: 0;
 
 	&:first-child {
-		margin-top: 0;
+		margin-block-start: 0;
 	}
 }
 
 .elementor-settings-form-page h2 ~ p {
-	margin: 1em 0;
+	margin-block: 1em;
 	font-size: 1em;
 	color: var(--e-one-palette-text-tertiary);
 	line-height: 1.4;

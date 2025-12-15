@@ -56,10 +56,10 @@ export const PromotionWidgetsTable = ( { widgets, promotionData } ) => {
 				<Table size="small">
 					<TableHead>
 						<TableRow>
-							<TableCell sx={ { width: '200px' } }>
+							<TableCell sx={ { width: ( theme ) => theme.spacing( 25 ) } }>
 								{ __( 'Element', 'elementor' ) }
 							</TableCell>
-							<TableCell sx={ { width: '80px' } }>
+							<TableCell sx={ { width: ( theme ) => theme.spacing( 10 ) } }>
 								{ __( 'Status', 'elementor' ) }
 							</TableCell>
 							<TableCell>
@@ -95,10 +95,10 @@ export const PromotionWidgetsTable = ( { widgets, promotionData } ) => {
 							<TableRow key={ widget.name } hover>
 								<TableCell>
 									<Box sx={ { display: 'flex', alignItems: 'center' } }>
-										<i
-											style={ { marginInlineEnd: '8px' } }
-											className={ widget.icon }
-										></i>
+									<i
+										style={ { marginInlineEnd: 8 } }
+										className={ widget.icon }
+									></i>
 										{ widget.title }
 									</Box>
 								</TableCell>

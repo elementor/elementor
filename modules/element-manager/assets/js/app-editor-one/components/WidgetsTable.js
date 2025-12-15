@@ -60,7 +60,7 @@ export const WidgetsTable = ( {
 			<Table size="small">
 				<TableHead>
 					<TableRow>
-						<TableCell sx={ { width: '300px' } }>
+						<TableCell sx={ { width: ( theme ) => theme.spacing( 25 ) } }>
 							<TableSortLabel
 								active={ isWidgetSorted }
 								direction={ isWidgetSorted ? widgetSortDirection : 'asc' }
@@ -70,7 +70,7 @@ export const WidgetsTable = ( {
 								{ __( 'Element', 'elementor' ) }
 							</TableSortLabel>
 						</TableCell>
-						<TableCell sx={ { width: '80px' } }>
+						<TableCell sx={ { width: ( theme ) => theme.spacing( 10 ) } }>
 							{ __( 'Status', 'elementor' ) }
 						</TableCell>
 						<TableCell>
@@ -107,7 +107,7 @@ export const WidgetsTable = ( {
 									</Tooltip>
 								</Box>
 								{ null === widgetsRoleRestrictions && (
-									<Box sx={ { marginInlineStart: '10px' } }>
+									<Box sx={ { marginInlineStart: 1 } }>
 										<UpgradeButton
 											href={
 												promotionWidgets.length
@@ -135,8 +135,8 @@ export const WidgetsTable = ( {
 								<Box sx={ { display: 'flex', alignItems: 'center' } }>
 									<i
 										style={ {
-											marginInlineEnd: '8px',
-											marginInlineStart: '0',
+											marginInlineEnd: 8,
+											marginInlineStart: 0,
 											display: 'inline-block',
 										} }
 										className={ widget.icon }
