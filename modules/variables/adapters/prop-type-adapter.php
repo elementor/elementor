@@ -60,7 +60,7 @@ class Prop_Type_Adapter {
 				return;
 			}
 
-			$value = $value['value'];
+			$value = $value['value'] ?? '';
 
 			if ( isset( $value['unit'] ) && 'custom' === $value['unit'] ) {
 				$value = $value['size'];

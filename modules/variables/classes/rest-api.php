@@ -106,6 +106,12 @@ class Rest_Api {
 					'type' => 'integer',
 					'validate_callback' => [ $this, 'is_valid_order' ],
 				],
+				'type' => [
+					'required' => false,
+					'type' => 'string',
+					'validate_callback' => [ $this, 'is_valid_variable_type' ],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
+				],
 			],
 		] );
 
@@ -296,10 +302,12 @@ class Rest_Api {
 		$label = $request->get_param( 'label' );
 		$value = $request->get_param( 'value' );
 		$order = $request->get_param( 'order' );
+		$type = $request->get_param( 'type' );
 
 		$update_data = [
 			'label' => $label,
 			'value' => $value,
+			'type' => $type,
 		];
 
 		if ( null !== $order ) {
@@ -360,6 +368,12 @@ class Rest_Api {
 
 		if ( $value ) {
 			$overrides['value'] = $value;
+		}
+
+		$type = $request->get_param( 'type' );
+
+		if ( $value ) {
+			$overrides['type'] = $type;
 		}
 
 		$result = $this->service->restore( $id, $overrides );

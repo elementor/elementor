@@ -23,7 +23,7 @@ type Props = {
 };
 
 export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
-	const { icon: VariableIcon, valueField: ValueField, variableType } = useVariableType();
+	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
 
 	const { setVariableValue: notifyBoundPropChange } = useVariableBoundProp();
 	const { propType } = useBoundProp();
@@ -38,6 +38,7 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 	const [ valueFieldError, setValueFieldError ] = useState( '' );
 	const [ label, setLabel ] = useState( variable.label );
 	const [ value, setValue ] = useState( variable.value );
+	const [ propTypeKey, setPropTypeKey ] = useState( variable?.type ?? propTypeUtil.key );
 
 	const { labelFieldError, setLabelFieldError } = useLabelError( {
 		value: variable.label,
@@ -45,7 +46,12 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 	} );
 
 	const handleRestore = () => {
-		restoreVariable( variableId, label, value )
+		const typeChanged = propTypeKey !== variable.type;
+		const restorePromise = typeChanged
+			? restoreVariable( variableId, label, value, propTypeKey )
+			: restoreVariable( variableId, label, value );
+
+		restorePromise
 			.then( () => {
 				notifyBoundPropChange( variableId );
 				onSubmit?.();
@@ -124,6 +130,8 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
 						<Typography variant="h5">
 							<ValueField
+								propTypeKey={ propTypeKey }
+								onPropTypeKeyChange={ ( key: string ) => setPropTypeKey( key ) }
 								value={ value }
 								onChange={ ( newValue ) => {
 									setValue( newValue );
