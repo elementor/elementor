@@ -193,7 +193,8 @@ class Elementor_One_Menu_Manager {
 		$elementor_parent_slugs = [
 			Menu_Config::EDITOR_GROUP_ID => true,
 			Menu_Config::EDITOR_MENU_SLUG => true,
-			Menu_Config::TEMPLATES_GROUP_ID => true, Menu_Config::LEGACY_TEMPLATES_SLUG => true,
+			Menu_Config::TEMPLATES_GROUP_ID => true,
+			Menu_Config::LEGACY_TEMPLATES_SLUG => true,
 			Menu_Config::SETTINGS_GROUP_ID => true,
 			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID => true,
 			Menu_Config::SYSTEM_GROUP_ID => true,
