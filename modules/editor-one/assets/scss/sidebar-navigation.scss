@@ -19,7 +19,6 @@
 	z-index: var(--editor-one-sidebar-z-index);
 	background-color: var(--editor-one-sidebar-bg);
 	overflow: visible;
-	width: var(--editor-one-sidebar-navigation-width);
 
 	nav {
 		width: var(--editor-one-sidebar-navigation-width);
@@ -37,10 +36,6 @@
 	}
 
 	@media screen and (min-width: 961px) {
-		.folded & {
-			inset-inline-start: var(--editor-one-sidebar-left-offset-collapsed);
-		}
-
 		inset-inline-start: var(--editor-one-sidebar-left-offset);
 	}
 }
@@ -61,6 +56,7 @@
 .e-has-sidebar-navigation {
 	#wpcontent {
 		padding-inline-start: var(--editor-one-sidebar-navigation-width);
+		overflow-x: hidden;
 	}
 
 	#wpbody-content {
