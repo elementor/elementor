@@ -137,10 +137,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 		}
 	}
 
-	protected function define_render_context(): array {
-		return [];
-	}
-
 	/**
 	 * Get Element keywords.
 	 *
@@ -214,22 +210,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 		}
 
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
-	}
-
-	public function print_content() {
-		$element_context = $this->define_render_context();
-
-		$has_context = ! empty( $element_context );
-
-		if ( ! $has_context ) {
-			return parent::print_content();
-		}
-
-		Render_Context::push( static::class, $element_context );
-
-		parent::print_content();
-
-		Render_Context::pop( static::class );
 	}
 
 	/**
