@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { DEFAULT_ICON, ICON_MAP } from '../shared';
 import CollapsedMenuItemPopover from './collapsed-menu-item-popover';
 import CollapsedMenuItemTooltip from './collapsed-menu-item-tooltip';
-import { CollapsedMenuItemContainer } from './styled-components';
+import { ListItem } from '@elementor/ui';
 
 const SidebarCollapsedMenuItem = ( {
 	item,
@@ -33,7 +33,7 @@ const SidebarCollapsedMenuItem = ( {
 	};
 
 	return (
-		<CollapsedMenuItemContainer ref={ anchorRef } onMouseEnter={ handleMouseEnter }>
+		<ListItem dense disableGutters ref={ anchorRef } onMouseEnter={ handleMouseEnter }>
 			{ hasChildren ? (
 				<CollapsedMenuItemPopover
 					item={ item }
@@ -53,7 +53,7 @@ const SidebarCollapsedMenuItem = ( {
 					IconComponent={ IconComponent }
 				/>
 			) }
-		</CollapsedMenuItemContainer>
+		</ListItem>
 	);
 };
 

@@ -1,12 +1,13 @@
 import { List, ListItem, ListItemText, ListSubheader } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import {
-	CollapsedIconButton,
+	MenuItemButton,
+	MenuIcon,
 	PopoverContent,
 	PopoverListItemButton,
 	PopoverTitle,
 	StyledPopover,
-} from './styled-components';
+} from '../menu/styled-components';
 
 const CollapsedMenuItemPopover = ( {
 	item,
@@ -20,9 +21,11 @@ const CollapsedMenuItemPopover = ( {
 } ) => {
 	return (
 		<>
-			<CollapsedIconButton isHighlighted={ isActive || isPopoverOpen }>
-				<IconComponent />
-			</CollapsedIconButton>
+			<MenuItemButton selected={ isActive || isPopoverOpen }>
+				<MenuIcon>
+					<IconComponent />
+				</MenuIcon>
+			</MenuItemButton>
 			<StyledPopover
 				open={ isPopoverOpen }
 				anchorEl={ anchorEl }

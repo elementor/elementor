@@ -1,9 +1,13 @@
-import { List, ListItem, ListItemButton, ListItemIcon, styled } from '@elementor/ui';
+import { Box, IconButton, List, ListItem, ListItemButton, ListItemIcon, Popover, Typography, styled } from '@elementor/ui';
 import ChevronDownSmallIcon from '@elementor/icons/ChevronDownSmallIcon';
 
-export const MenuList = styled( List )( ( { theme } ) => ( {
-	paddingLeft: theme.spacing( 2 ),
-	paddingRight: theme.spacing( 2 ),
+export const MenuList = styled( List, {
+	shouldForwardProp: ( prop ) => prop !== 'isCollapsed',
+} )( ( { theme, isCollapsed } ) => ( {
+	paddingLeft: theme.spacing( isCollapsed ? 1 : 2 ),
+	paddingRight: theme.spacing( isCollapsed ? 1 : 2 ),
+	paddingTop: theme.spacing( 2 ),
+	paddingBottom: theme.spacing( 2 ),
 } ) );
 
 export const MenuItemButton = styled( ListItemButton )( ( { theme } ) => ( {
@@ -39,5 +43,62 @@ export const ExpandIcon = styled( ChevronDownSmallIcon, {
 	fontSize: 20,
 	transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
 	transition: 'transform 0.2s',
+} ) );
+
+export const CollapsedMenuItemContainer = styled( Box )( ( { theme } ) => ( {
+	display: 'flex',
+	justifyContent: 'center',
+	marginBottom: theme.spacing( 0.5 ),
+} ) );
+
+export const CollapsedIconButton = styled( IconButton, {
+	shouldForwardProp: ( prop ) => prop !== 'isHighlighted',
+} )( ( { theme, isHighlighted } ) => ( {
+	width: 36,
+	height: 36,
+	borderRadius: theme.shape.borderRadius,
+	backgroundColor: isHighlighted ? theme.palette.action.selected : 'transparent',
+	color: theme.palette.text.primary,
+	'&:hover': {
+		backgroundColor: theme.palette.action.hover,
+	},
+	'& svg': {
+		fontSize: 20,
+	},
+} ) );
+
+export const PopoverTitle = styled( Typography )( ( { theme } ) => ( {
+	color: theme.palette.text.tertiary,
+} ) );
+
+export const PopoverContent = styled( Box )( ( { theme } ) => ( {
+	paddingTop: theme.spacing( 1 ),
+	paddingBottom: theme.spacing( 1 ),
+} ) );
+
+export const CollapsedHeaderContainer = styled( Box )( ( { theme } ) => ( {
+	position: 'relative',
+	display: 'flex',
+	justifyContent: 'center',
+	alignItems: 'center',
+	height: 80,
+	borderBottom: `1px solid ${ theme.palette.divider }`,
+} ) );
+
+export const PopoverListItemButton = styled( ListItemButton )( ( { theme } ) => ( {
+	paddingLeft: theme.spacing( 2 ),
+	paddingRight: theme.spacing( 2 ),
+	paddingTop: theme.spacing( 0.5 ),
+	paddingBottom: theme.spacing( 0.5 ),
+} ) );
+
+export const StyledPopover = styled( Popover )( ( { theme } ) => ( {
+	pointerEvents: 'none',
+	'& .MuiPaper-root': {
+		marginLeft: theme.spacing( 1 ),
+		minWidth: 180,
+		borderRadius: theme.shape.borderRadius,
+		pointerEvents: 'auto',
+	},
 } ) );
 

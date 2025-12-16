@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from '@wordpress/element';
 import PropTypes from 'prop-types';
 import MenuActiveStateResolver from '../../classes/menu-active-state-resolver';
 import SidebarCollapsedMenuItem from './sidebar-collapsed-menu-item';
-import { CollapsedMenuContainer } from './styled-components';
+import { MenuList } from '../menu/styled-components';
 
 const SidebarCollapsedMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug } ) => {
 	const [ openPopoverSlug, setOpenPopoverSlug ] = useState( null );
@@ -35,7 +35,7 @@ const SidebarCollapsedMenu = ( { menuItems, level4Groups, activeMenuSlug, active
 	}, [] );
 
 	return (
-		<CollapsedMenuContainer onMouseLeave={ handleClosePopover }>
+		<MenuList isCollapsed onMouseLeave={ handleClosePopover }>
 			{ menuItems.map( ( item ) => (
 				<SidebarCollapsedMenuItem
 					key={ item.slug }
@@ -48,7 +48,7 @@ const SidebarCollapsedMenu = ( { menuItems, level4Groups, activeMenuSlug, active
 					onClosePopover={ handleClosePopover }
 				/>
 			) ) }
-		</CollapsedMenuContainer>
+		</MenuList>
 	);
 };
 
