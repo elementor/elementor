@@ -311,14 +311,14 @@ class Components_REST_API {
 
 		if ( ! $result['success'] ) {
 			return Error_Builder::make( 'components_validation_failed' )
-				->set_status( 400 )
+				->set_status( 422 )
 				->set_message( 'Validation failed: ' . implode( ', ', $result['messages'] ) )
 				->build();
 		}
 
-		$created = [];
+		$validation_errors = [];
 
-		foreach ( $items as $item ) {
+		$created = $items->map_with_keys( function ( $item ) use ( $save_status, &$validation_errors ) {
 			$title = sanitize_text_field( $item['title'] );
 			$content = $item['elements'];
 			$uid = $item['uid'];
@@ -326,10 +326,8 @@ class Components_REST_API {
 			try {
 				$settings = isset( $item['settings'] ) ? $this->parse_settings( $item['settings'] ) : [];
 			} catch ( \Exception $e ) {
-				return Error_Builder::make( 'settings_validation_failed' )
-					->set_status( 400 )
-					->set_message( $e->getMessage() )
-					->build();
+				$validation_errors[ $uid ] = $e->getMessage();
+				return [ $uid => null ];
 			}
 
 			$status = Document::STATUS_AUTOSAVE === $save_status
@@ -338,7 +336,14 @@ class Components_REST_API {
 
 			$component_id = $this->get_repository()->create( $title, $content, $status, $uid, $settings );
 
-			$created[ $uid ] = $component_id;
+			return [ $uid => $component_id ];
+		} );
+
+		if ( ! empty( $validation_errors ) ) {
+			return Error_Builder::make( 'settings_validation_failed' )
+				->set_status( 422 )
+				->set_message( 'Settings validation failed: ' . json_encode( $validation_errors ) )
+				->build();
 		}
 
 		return Response_Builder::make( (object) $created )
@@ -500,22 +505,26 @@ class Components_REST_API {
 
 		if ( ! $result['success'] ) {
 			return Error_Builder::make( 'components_validation_failed' )
-				->set_status( 400 )
+				->set_status( 422 )
 				->set_message( 'Validation failed: ' . implode( ', ', $result['messages'] ) )
 				->build();
 		}
 
-		foreach ( $items as $item ) {
-			if ( isset( $item['settings'] ) ) {
-				try {
-					$this->parse_settings( $item['settings'] );
-				} catch ( \Exception $e ) {
-					return Error_Builder::make( 'settings_validation_failed' )
-						->set_status( 400 )
-						->set_message( $e->getMessage() )
-						->build();
-				}
+		$items->map_with_keys( function ( $item ) use ( &$validation_errors ) {
+			try {
+				$this->parse_settings( $item['settings'] );
+			} catch ( \Exception $e ) {
+				return [ $item['uid'] => $e->getMessage() ];
 			}
+
+			return [ $item['uid'] => null ];
+		} )->filter( fn( $value ) => $value !== null );
+
+		if ( ! empty( $items->values() ) ) {
+			return Error_Builder::make( 'settings_validation_failed' )
+				->set_status( 422 )
+				->set_message( 'Settings validation failed: ' . json_encode( $validation_errors ) )
+				->build();
 		}
 
 		return Response_Builder::make()
