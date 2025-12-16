@@ -308,8 +308,11 @@ class Rest_Api {
 		$update_data = [
 			'label' => $label,
 			'value' => $value,
-			'type' => $type,
 		];
+
+		if ( $type ) {
+			$update_data['type'] = $type;
+		}
 
 		if ( null !== $order ) {
 			$update_data['order'] = $order;
