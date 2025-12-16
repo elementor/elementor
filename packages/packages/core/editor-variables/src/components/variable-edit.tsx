@@ -211,7 +211,6 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 							<Typography variant="h5">
 								<ValueField
 									propTypeKey={ variable.type }
-									onPropTypeKeyChange={ ( key: string ) => setPropTypeKey( key ) }
 									value={ value }
 									onChange={ ( newValue ) => {
 										setValue( newValue );

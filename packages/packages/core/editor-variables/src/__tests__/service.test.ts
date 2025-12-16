@@ -199,12 +199,7 @@ describe( 'service', () => {
 				},
 			} );
 
-			expect( apiClient.update ).toHaveBeenCalledWith(
-				'variable-3',
-				'updated-primary-font',
-				'Arial',
-				'global-font-variable'
-			);
+			expect( apiClient.update ).toHaveBeenCalledWith( 'variable-3', 'updated-primary-font', 'Arial' );
 
 			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith(
 				'elementor-global-variables',
@@ -335,7 +330,7 @@ describe( 'service', () => {
 			const result = await service.restore( 'variable-3' );
 
 			// Assert.
-			expect( apiClient.restore ).toHaveBeenCalledWith( 'variable-3', undefined, undefined, undefined );
+			expect( apiClient.restore ).toHaveBeenCalledWith( 'variable-3', undefined, undefined );
 
 			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith(
 				'elementor-global-variables',

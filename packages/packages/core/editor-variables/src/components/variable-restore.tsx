@@ -125,8 +125,6 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 						<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
 							<Typography variant="h5">
 								<ValueField
-									propTypeKey={ propTypeKey }
-									onPropTypeKeyChange={ ( key: string ) => setPropTypeKey( key ) }
 									value={ value }
 									onChange={ ( newValue ) => {
 										setValue( newValue );
