@@ -30,7 +30,7 @@ type Props = {
 };
 
 export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
-	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
+	const { icon: VariableIcon, valueField: ValueField, variableType } = useVariableType();
 
 	const { setVariableValue: notifyBoundPropChange, variableId } = useVariableBoundProp();
 	const { propType } = useBoundProp();
@@ -42,8 +42,6 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 
 	const { labelFieldError, setLabelFieldError } = useLabelError();
 	const variable = useVariable( editId );
-
-	const [ propTypeKey, setPropTypeKey ] = useState( variable?.type ?? propTypeUtil.key );
 
 	if ( ! variable ) {
 		throw new Error( `Global ${ variableType } variable not found` );
@@ -78,10 +76,10 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 	};
 
 	const handleSaveVariable = () => {
-		const typeChanged = propTypeKey !== variable.type;
-		const updatePayload = typeChanged ? { value, label, type: propTypeKey } : { value, label };
-
-		updateVariable( editId, updatePayload )
+		updateVariable( editId, {
+			value,
+			label,
+		} )
 			.then( () => {
 				maybeTriggerBoundPropChange();
 				onSubmit?.();

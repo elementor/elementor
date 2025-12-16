@@ -8,7 +8,6 @@ type RestoreVariablePayload = {
 	id: string;
 	label?: string;
 	value?: string;
-	type?: string;
 };
 
 export type BatchOperation = {
@@ -42,12 +41,11 @@ export const apiClient = {
 		} );
 	},
 
-	update: ( id: string, label: string, value: string, type?: string ) => {
+	update: ( id: string, label: string, value: string ) => {
 		return httpService().put( BASE_PATH + '/update', {
 			id,
 			label,
 			value,
-			type,
 		} );
 	},
 
@@ -55,7 +53,7 @@ export const apiClient = {
 		return httpService().post( BASE_PATH + '/delete', { id } );
 	},
 
-	restore: ( id: string, label?: string, value?: string, type?: string ) => {
+	restore: ( id: string, label?: string, value?: string ) => {
 		const payload: RestoreVariablePayload = { id };
 
 		if ( label ) {
@@ -64,10 +62,6 @@ export const apiClient = {
 
 		if ( value ) {
 			payload.value = value;
-		}
-
-		if ( type ) {
-			payload.type = type;
 		}
 
 		return httpService().post( BASE_PATH + '/restore', payload );

@@ -2,8 +2,6 @@
 
 namespace Elementor\Modules\Variables\Storage\Entities;
 
-use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
-use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use InvalidArgumentException;
 
 class Variable {
@@ -100,26 +98,10 @@ class Variable {
 		$allowed_fields = [ 'label', 'value', 'order' ];
 		$has_changes = false;
 
-		$custom_size_prop_type = Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY;
-		$size_prop_type = Size_Variable_Prop_Type::get_key();
-
 		foreach ( $allowed_fields as $field ) {
 			if ( isset( $data[ $field ] ) ) {
 				$this->data[ $field ] = $data[ $field ];
 
-				$has_changes = true;
-			}
-		}
-
-		if ( array_key_exists( 'type', $data ) ) {
-			$current_type = $this->type();
-			$new_type = $data['type'];
-
-			$is_custom_to_size = ( $current_type === $custom_size_prop_type && $new_type === $size_prop_type );
-			$is_size_to_custom = ( $current_type === $size_prop_type && $new_type === $custom_size_prop_type );
-
-			if ( $is_custom_to_size || $is_size_to_custom ) {
-				$this->set_type( $new_type );
 				$has_changes = true;
 			}
 		}

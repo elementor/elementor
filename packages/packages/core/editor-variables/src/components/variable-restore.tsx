@@ -23,7 +23,7 @@ type Props = {
 };
 
 export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
-	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
+	const { icon: VariableIcon, valueField: ValueField, variableType } = useVariableType();
 
 	const { setVariableValue: notifyBoundPropChange } = useVariableBoundProp();
 	const { propType } = useBoundProp();
@@ -38,7 +38,6 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 	const [ valueFieldError, setValueFieldError ] = useState( '' );
 	const [ label, setLabel ] = useState( variable.label );
 	const [ value, setValue ] = useState( variable.value );
-	const [ propTypeKey, setPropTypeKey ] = useState( variable?.type ?? propTypeUtil.key );
 
 	const { labelFieldError, setLabelFieldError } = useLabelError( {
 		value: variable.label,
@@ -46,12 +45,7 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 	} );
 
 	const handleRestore = () => {
-		const typeChanged = propTypeKey !== variable.type;
-		const restorePromise = typeChanged
-			? restoreVariable( variableId, label, value, propTypeKey )
-			: restoreVariable( variableId, label, value );
-
-		restorePromise
+		restoreVariable( variableId, label, value )
 			.then( () => {
 				notifyBoundPropChange( variableId );
 				onSubmit?.();

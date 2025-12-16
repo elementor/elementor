@@ -89,9 +89,9 @@ export const service = {
 			} );
 	},
 
-	update: ( id: string, { label, value, type }: Omit< Variable, 'type' > & { type?: Variable[ 'type' ] } ) => {
+	update: ( id: string, { label, value }: Omit< Variable, 'type' > ) => {
 		return apiClient
-			.update( id, label, value, type )
+			.update( id, label, value )
 			.then( ( response ) => {
 				const { success, data: payload } = response.data;
 
@@ -154,9 +154,9 @@ export const service = {
 			} );
 	},
 
-	restore: ( id: string, label?: string, value?: string, type?: string ) => {
+	restore: ( id: string, label?: string, value?: string ) => {
 		return apiClient
-			.restore( id, label, value, type )
+			.restore( id, label, value )
 			.then( ( response ) => {
 				const { success, data: payload } = response.data;
 

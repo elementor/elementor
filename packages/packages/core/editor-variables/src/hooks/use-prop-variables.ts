@@ -97,20 +97,15 @@ export const createVariable = ( newVariable: Variable ): Promise< string > => {
 
 export const updateVariable = (
 	updateId: string,
-	{ value, label, type }: { value: string; label: string; type?: string }
+	{ value, label }: { value: string; label: string }
 ): Promise< string > => {
-	return service.update( updateId, { value, label, type } ).then( extractId );
+	return service.update( updateId, { value, label } ).then( extractId );
 };
 
 export const deleteVariable = ( deleteId: string ): Promise< string > => {
 	return service.delete( deleteId ).then( extractId );
 };
 
-export const restoreVariable = (
-	restoreId: string,
-	label?: string,
-	value?: string,
-	type?: string
-): Promise< string > => {
-	return service.restore( restoreId, label, value, type ).then( extractId );
+export const restoreVariable = ( restoreId: string, label?: string, value?: string ): Promise< string > => {
+	return service.restore( restoreId, label, value ).then( extractId );
 };

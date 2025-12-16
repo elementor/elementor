@@ -8,7 +8,6 @@ import { VariableTypeProvider } from '../../context/variable-type-context';
 import * as usePropVariablesModule from '../../hooks/use-prop-variables';
 import { colorVariablePropTypeUtil } from '../../prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from '../../prop-types/font-variable-prop-type';
-import { type ValueFieldProps } from '../../variables-registry/create-variable-type-registry';
 import { getVariableType } from '../../variables-registry/variable-type-registry';
 import { VariableEdit } from '../variable-edit';
 
@@ -143,89 +142,6 @@ describe( 'ColorVariableEdit', () => {
 			expect( setValue ).toHaveBeenCalledWith( {
 				$$type: fontVariablePropTypeUtil.key,
 				value: 'e-gv-75930',
-			} );
-		} );
-	} );
-
-	it( 'should pass type in payload when type is changed', async () => {
-		// Arrange.
-		const setValue = jest.fn();
-		const mockVariableWithType = {
-			key: 'e-gv-123',
-			label: 'Primary Font',
-			value: 'Arial',
-			type: fontVariablePropTypeUtil.key,
-		};
-
-		( usePropVariablesModule.useVariable as jest.Mock ).mockReturnValue( mockVariableWithType );
-		( usePropVariablesModule.updateVariable as jest.Mock ).mockResolvedValue( mockVariableWithType.key );
-
-		// Create a mock ValueField that allows changing the prop type
-		const MockValueField = ( { onPropTypeKeyChange }: ValueFieldProps ) => {
-			return (
-				<button
-					data-testid="change-type-button"
-					onClick={ () => onPropTypeKeyChange?.( colorVariablePropTypeUtil.key ) }
-				>
-					Change Type
-				</button>
-			);
-		};
-
-		mockGetVariableType.mockReturnValue( {
-			icon: TextIcon,
-			valueField: MockValueField,
-			variableType: 'font',
-			propTypeUtil: fontVariablePropTypeUtil,
-			fallbackPropTypeUtil: stringPropTypeUtil,
-		} );
-
-		const props = {
-			setValue,
-			value: {
-				$$type: fontVariablePropTypeUtil.key,
-				value: 'e-gv-123',
-			},
-			bind: 'font',
-			propType,
-		};
-
-		// Act.
-		renderControl(
-			<VariableTypeProvider propTypeKey={ fontVariablePropTypeUtil.key }>
-				<VariableEdit editId="e-gv-123" onClose={ jest.fn() } onSubmit={ jest.fn() } />
-			</VariableTypeProvider>,
-			props
-		);
-
-		// eslint-disable-next-line testing-library/no-test-id-queries
-		const changeTypeButton = screen.getByTestId( 'change-type-button' );
-		fireEvent.click( changeTypeButton );
-
-		// Change the label to enable the save button
-		const labelField = screen.getByRole( 'textbox', { name: /name/i } );
-		fireEvent.change( labelField, { target: { value: 'new-label' } } );
-
-		await waitFor( () => {
-			expect( labelField ).toHaveValue( 'new-label' );
-		} );
-
-		// Click save button
-		const saveButton = screen.getByRole( 'button', { name: /save/i } );
-		fireEvent.click( saveButton );
-
-		// Handle the confirmation dialog if it appears
-		const confirmButton = await screen.findByRole( 'button', { name: /confirm|save/i } );
-		if ( confirmButton ) {
-			fireEvent.click( confirmButton );
-		}
-
-		// Assert - type should be the new type because it has changed
-		await waitFor( () => {
-			expect( usePropVariablesModule.updateVariable ).toHaveBeenCalledWith( 'e-gv-123', {
-				value: 'Arial',
-				label: 'new-label',
-				type: colorVariablePropTypeUtil.key,
 			} );
 		} );
 	} );
