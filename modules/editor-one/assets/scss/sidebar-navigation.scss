@@ -39,6 +39,7 @@
 .e-has-sidebar-navigation {
 	#wpcontent {
 		padding-left: var(--editor-one-sidebar-navigation-width);
+		margin-inline-end: 40px;
 	}
 
 	&.folded #wpcontent {
