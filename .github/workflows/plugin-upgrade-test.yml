@@ -1,89 +1,80 @@
-name: Upgrade Elementor test
+name: Verify Tickets Merged to Branch
 
 on:
-  #push:
-    # branches:
-    #   - 'main'
-    #   - '3.[0-9][0-9]'
-    # paths-ignore:
-    #   - '**.md'
-    #   - '**.txt'
-    #   - '.github/config.json'
-    #   - 'bin/**'
-    #   - '.gitignore'
-    #   - 'docs/**'
   workflow_dispatch:
     inputs:
-      version:
-        description: 'Elementor version from WordPress svn'
+      tickets_list:
+        description: 'Comma-separated tickets (e.g., ED-20358, ED-21219, ED-21422)'
+        required: true
+        type: string
+      target_branch:
+        description: 'Target branch to check (e.g., 3.33)'
+        required: true
+        type: string
+      base_branch:
+        description: 'Base branch for comparison (e.g., main)'
         required: false
-        default: ''
+        default: 'main'
+        type: string
+
+permissions:
+  contents: read
 
 jobs:
-  build-plugin:
-    uses: ./.github/workflows/build.yml
-  run-upgrade-test:
-    name: Playwright plugin upgrade test
-    runs-on: ubuntu-22.04
-    needs: [build-plugin]
-    if: ${{ github.event.pull_request.title == null || needs.build-plugin.outputs.changelog_diff }}
+  verify-tickets:
+    name: Verify Tickets Merged
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout source code
+      - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all branches
+        run: git fetch --all
+
       - name: Install Node.js 20.x
         uses: actions/setup-node@v4
         with:
           node-version: 20.x
-          cache: 'npm'
-      - name: Install dependencies
-        run: |
-          npm run prepare-environment:ci
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.build-plugin.outputs.artifact_name }}
-          path: ./build
-      - name: Download hello-elementor theme
-        run: |
-          curl -L --output hello-elementor.zip "https://downloads.wordpress.org/theme/hello-elementor.zip"
-          unzip hello-elementor
-      - name: Install WordPress environment
-        run: |
-          npm run setup-templates
-          npx wp-lite-env start --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --port=8888
-      - name: Setup test data
-        run: |
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin install elementor" --port=8888
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="bash elementor-config/setup.sh" --port=8888
-      - name: WordPress debug information
-        run: |
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp core version" --port=8888
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp --info" --port=8888
-      - name: Install playwright/test
-        run: |
-          npx playwright install chromium
-      - name: Upgrade site
-        run: |
-          zip -r ./templates/playwright/elementor.zip ./build
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin install ./elementor-playwright-templates/elementor.zip --force" --port=8888
-          npx wp-lite-env cli --config=./tests/playwright/upgrade-test/.upgrade-test-wp-lite-env.json --command="wp plugin list" --port=8888
-      - name: Run Playwright tests
-        run: npm run test:playwright:elements-regression -- --grep="Test heading template"
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-test-results-elements-regression
-          path: test-results/
-          retention-days: 3
 
-  test-result:
-    needs: run-upgrade-test
-    if: ${{ always() }} # Will be run even if 'Playwright' matrix will be skipped
-    runs-on: ubuntu-22.04
-    name: Playwright - Test Results
-    steps:
-      - name: Test status
-        run: echo "Test status is - ${{ needs.run-upgrade-test.result }}"
-      - name: Check Playwright matrix status
-        if: ${{ needs.run-upgrade-test.result != 'success' && needs.run-upgrade-test.result != 'skipped' }}
-        run: exit 1
+      - name: Verify Tickets
+        id: verify
+        env:
+          TICKETS_LIST: ${{ github.event.inputs.tickets_list }}
+          TARGET_BRANCH: ${{ github.event.inputs.target_branch }}
+          BASE_BRANCH: ${{ github.event.inputs.base_branch }}
+        run: node .github/scripts/verify-jira-version-merged.js
+
+      - name: Create Summary
+        if: always()
+        run: |
+          echo "# Verification Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Configuration" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch to check:** ${{ github.event.inputs.target_branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Base branch:** ${{ github.event.inputs.base_branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Tickets Searched For" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.verify.outputs.searched_tickets }}" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Results" >> $GITHUB_STEP_SUMMARY
+          echo "- **Total required:** ${{ steps.verify.outputs.total_required }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Found merged:** ${{ steps.verify.outputs.total_found }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Tickets Found in Branch" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.verify.outputs.found_tickets }}" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Missing Tickets" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.verify.outputs.result }}" = "success" ]; then
+            echo "✅ None - All tickets are merged!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "${{ steps.verify.outputs.missing_tickets }}" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi
