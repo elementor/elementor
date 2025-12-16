@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRef } from 'react';
 import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
 import { dropElement, type DropElementParams, type V1ElementData } from '@elementor/editor-elements';
-import { EllipsisWithTooltip, EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
+import { EllipsisWithTooltip, EditableField, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
 import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
