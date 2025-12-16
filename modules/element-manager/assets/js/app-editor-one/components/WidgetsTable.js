@@ -13,6 +13,7 @@ import {
 	TableSortLabel,
 	TableContainer,
 	Paper,
+	styled,
 } from '@elementor/ui';
 import { HelpIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
@@ -21,6 +22,21 @@ import PropTypes from 'prop-types';
 import { UpgradeButton } from '../../upgrade-button';
 import { RolePermissions, EditButtonDisabled } from './RolePermissions';
 import { UsageTimesColumn } from './UsageTimesColumn';
+
+const StyledSwitch = styled( Switch )( {
+	'& .MuiSwitch-track': {
+		backgroundColor: 'rgba(0, 0, 0, 0.12);',
+	},
+	'& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+		backgroundColor: '#000',
+	},
+	'& .MuiSwitch-switchBase:not(.Mui-checked) .MuiSwitch-thumb': {
+		backgroundColor: '#D5D8DC',
+	},
+	'& .MuiSwitch-switchBase.Mui-checked .MuiSwitch-thumb': {
+		backgroundColor: '#fff',
+	},
+} );
 
 export const WidgetsTable = ( {
 	widgets,
@@ -145,7 +161,7 @@ export const WidgetsTable = ( {
 								</Box>
 							</TableCell>
 							<TableCell>
-								<Switch
+								<StyledSwitch
 									color="secondary"
 									checked={ ! widgetsDisabled.includes( widget.name ) }
 									onChange={ ( event, checked ) => onToggleWidget( widget.name, checked ) }

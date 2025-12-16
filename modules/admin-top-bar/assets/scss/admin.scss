@@ -95,7 +95,7 @@ $top-bar-height: 50px;
 	&.e-admin-top-bar--active {
 		display: block;
 
-		&::not(.e-admin-top-bar--editor-one) {
+		&:not(.e-admin-top-bar--editor-one) {
 			&~ #wpbody {
 				#wpbody-content {
 					margin-block-start: $top-bar-height;
