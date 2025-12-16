@@ -1,15 +1,17 @@
-import { Tooltip } from '@elementor/ui';
+import { Tooltip, ListItem } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import { MenuItemButton, MenuIcon } from '../menu/styled-components';
 
 const CollapsedMenuItemTooltip = ( { item, isActive, onClick, IconComponent } ) => {
 	return (
 		<Tooltip title={ item.label } placement="right">
-			<MenuItemButton onClick={ onClick } selected={ isActive }>
-				<MenuIcon>
-					<IconComponent />
-				</MenuIcon>
-			</MenuItemButton>
+			<ListItem disablePadding dense disableGutters>
+				<MenuItemButton onClick={ onClick } selected={ isActive } sx={ { height: 36 } }>
+					<MenuIcon>
+						<IconComponent />
+					</MenuIcon>
+				</MenuItemButton>
+			</ListItem>
 		</Tooltip>
 	);
 };

@@ -20,8 +20,8 @@ const CollapsedMenuItemPopover = ( {
 	isActive,
 } ) => {
 	return (
-		<>
-			<MenuItemButton selected={ isActive || isPopoverOpen }>
+		<ListItem disablePadding dense disableGutters>
+			<MenuItemButton selected={ isActive || isPopoverOpen } >
 				<MenuIcon>
 					<IconComponent />
 				</MenuIcon>
@@ -60,7 +60,7 @@ const CollapsedMenuItemPopover = ( {
 					</List>
 				</PopoverContent>
 			</StyledPopover>
-		</>
+		</ListItem>
 	);
 };
 

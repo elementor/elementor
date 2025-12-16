@@ -1,13 +1,8 @@
 import { Box, IconButton, List, ListItem, ListItemButton, ListItemIcon, Popover, Typography, styled } from '@elementor/ui';
 import ChevronDownSmallIcon from '@elementor/icons/ChevronDownSmallIcon';
 
-export const MenuList = styled( List, {
-	shouldForwardProp: ( prop ) => prop !== 'isCollapsed',
-} )( ( { theme, isCollapsed } ) => ( {
-	paddingLeft: theme.spacing( isCollapsed ? 1 : 2 ),
-	paddingRight: theme.spacing( isCollapsed ? 1 : 2 ),
-	paddingTop: theme.spacing( 2 ),
-	paddingBottom: theme.spacing( 2 ),
+export const MenuList = styled( List )( ( { theme } ) => ( {
+	padding: theme.spacing( 2 ),
 } ) );
 
 export const MenuItemButton = styled( ListItemButton )( ( { theme } ) => ( {
