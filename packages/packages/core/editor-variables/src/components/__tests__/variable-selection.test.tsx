@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type PropsWithChildren } from 'react';
 import { renderWithTheme } from 'test-utils';
-import { PopoverMenuList } from '@elementor/editor-ui';
+import { PopoverMenuList, UpgradeButton } from '@elementor/editor-ui';
 import { fireEvent, screen } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
 
@@ -332,6 +332,42 @@ describe( 'VariablesSelection', () => {
 			// eslint-disable-next-line testing-library/no-node-access
 			const selectedItem = screen.getByText( 'Primary Color' ).closest( '[aria-selected="true"]' );
 			expect( selectedItem ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'Upgrade Promotion', () => {
+		it( 'should show upgrade empty state with disabled plus button when disabled prop is true', () => {
+			// Arrange.
+			( variablesRegistry.getVariableType as jest.Mock ).mockReturnValue( {
+				...mockVariableType,
+				variableType: 'size',
+				propTypeUtil: { key: 'size' },
+				emptyState: <button>Upgrade Now</button>,
+			} );
+			( useFilteredVariables as jest.Mock ).mockReturnValue( {
+				list: [],
+				hasMatches: false,
+				isSourceNotEmpty: false,
+				hasNoCompatibleVariables: false,
+			} );
+
+			// Act.
+			renderWithTheme(
+				<TestWrapper propTypeKey="size">
+					<VariablesSelection { ...defaultProps } disabled={ true } />
+				</TestWrapper>
+			);
+
+			// Assert.
+			expect( screen.getByText( 'No size variable yet' ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( /Upgrade to create size variables and maintain consistent element sizing/i )
+			).toBeInTheDocument();
+
+			expect( screen.getByText( 'Upgrade Now' ) ).toBeInTheDocument();
+
+			const addButton = screen.getByRole( 'button', { name: __( 'Create variable', 'elementor' ) } );
+			expect( addButton ).toBeDisabled();
 		} );
 	} );
 } );
