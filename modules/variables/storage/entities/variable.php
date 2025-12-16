@@ -4,6 +4,7 @@ namespace Elementor\Modules\Variables\Storage\Entities;
 
 use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
+use Elementor\Modules\Variables\Storage\Exceptions\Type_Mismatch;
 use InvalidArgumentException;
 
 class Variable {
@@ -96,30 +97,56 @@ class Variable {
 		return isset( $this->data['deleted_at'] );
 	}
 
-	public function apply_changes( array $data ): void {
-		$allowed_fields = [ 'label', 'value', 'order' ];
-		$has_changes = false;
+	/**
+	 * @throws Type_Mismatch
+	 */
+	private function maybe_apply_type( array $data ) {
+		if ( ! array_key_exists( 'type', $data ) ) {
+			return false;
+		}
+
+		$current_type = $this->type();
+		$target_type  = $data['type'];
+
+		if ( $current_type === $target_type ) {
+			return false;
+		}
 
 		$custom_size_prop_type = Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY;
 		$size_prop_type = Size_Variable_Prop_Type::get_key();
+
+		$allowed_types = [ $custom_size_prop_type, $size_prop_type ];
+
+		$is_valid_transition =
+			in_array( $current_type, $allowed_types, true ) &&
+			in_array( $target_type, $allowed_types, true );
+
+
+		if ( ! $is_valid_transition ) {
+			throw new Type_Mismatch(
+				sprintf(
+					'Type transition from "%s" to "%s" is not allowed. Only "%s" and "%s" can be switched.',
+					$current_type,
+					$target_type,
+					$custom_size_prop_type,
+					$size_prop_type
+				)
+			);
+		}
+
+		$this->set_type( $data['type'] );
+
+		return true;
+	}
+
+	public function apply_changes( array $data ): void {
+		$allowed_fields = [ 'label', 'value', 'order' ];
+		$has_changes = $this->maybe_apply_type( $data );
 
 		foreach ( $allowed_fields as $field ) {
 			if ( isset( $data[ $field ] ) ) {
 				$this->data[ $field ] = $data[ $field ];
 
-				$has_changes = true;
-			}
-		}
-
-		if ( array_key_exists( 'type', $data ) ) {
-			$current_type = $this->type();
-			$new_type = $data['type'];
-
-			$is_custom_to_size = ( $current_type === $custom_size_prop_type && $new_type === $size_prop_type );
-			$is_size_to_custom = ( $current_type === $size_prop_type && $new_type === $custom_size_prop_type );
-
-			if ( $is_custom_to_size || $is_size_to_custom ) {
-				$this->set_type( $new_type );
 				$has_changes = true;
 			}
 		}

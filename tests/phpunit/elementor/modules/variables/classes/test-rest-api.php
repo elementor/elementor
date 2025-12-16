@@ -7,6 +7,8 @@ use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\Classes\Rest_Api;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
+use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
+use Elementor\Modules\Variables\Storage\Exceptions\Type_Mismatch;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
@@ -235,6 +237,40 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 		$this->assertEquals( 'global-custom-size-variable', $response_data['data']['variable']['type'] );
 		$this->assertEquals( 'calc(50% + 20px)', $response_data['data']['variable']['value'] );
+	}
+	public function test_update_variable__switches_non_size_to_custom_size_throws_exception() {
+		// Arrange
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
+				'data' => [
+					'size-2' => [
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'Normal',
+						'value' => '#ffffff',
+					],
+				],
+				'watermark' => 15,
+			] );
+
+		// Act
+		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/update' );
+		$request->set_body_params( [
+			'id' => 'size-2',
+			'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+			'value' => 'calc(50% + 20px)',
+		] );
+
+		$response = $this->rest_api->update_variable( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+
+		$response_data = $response->get_data();
+
+		$this->assertEquals( 'type_mismatch', $response_data['code'] );
+		$this->assertEquals( 'Type transition from "global-color-variable" to "global-custom-size-variable" is not allowed. Only "global-custom-size-variable" and "global-size-variable" can be switched.', $response_data['message'] );
 	}
 
 	public function test_delete_variable() {

@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
+use Elementor\Modules\Variables\Storage\Exceptions\Type_Mismatch;
 use WP_Error;
 use Exception;
 use WP_REST_Server;
@@ -436,6 +437,14 @@ class Rest_Api {
 			);
 		}
 
+		if ( $e instanceof Type_Mismatch ) {
+			return $this->prepare_error_response(
+				self::HTTP_BAD_REQUEST,
+				'type_mismatch',
+				$e->getMessage()
+			);
+		}
+
 		return $this->prepare_error_response(
 			self::HTTP_SERVER_ERROR,
 			'unexpected_server_error',
@@ -463,7 +472,6 @@ class Rest_Api {
 
 		return true;
 	}
-
 
 	public function is_valid_operations_array( $operations ) {
 		if ( ! is_array( $operations ) || empty( $operations ) ) {
