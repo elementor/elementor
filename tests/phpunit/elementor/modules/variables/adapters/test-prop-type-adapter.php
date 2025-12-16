@@ -721,6 +721,14 @@ class Test_Prop_Type_Adapter extends TestCase {
 						],
 					],
 				],
+				'e-gv-size-malformed' => [
+					'type' => Size_Variable_Prop_Type::get_key(),
+					'label' => 'Size Malformed',
+					'value' => [
+						'$$type' => 'size',
+						'value' => [],
+					],
+				]
 			],
 		] );
 
@@ -772,6 +780,11 @@ class Test_Prop_Type_Adapter extends TestCase {
 			'e-gv-size-null' => [
 				'type' => Size_Variable_Prop_Type::get_key(),
 				'label' => 'Size Null',
+				'value' => 'px',
+			],
+			'e-gv-size-malformed' => [
+				'type' => 'global-size-variable',
+				'label' => 'Size Malformed',
 				'value' => 'px',
 			],
 		];
