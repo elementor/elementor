@@ -8,7 +8,30 @@ export const config = window.ElementorInteractionsConfig?.constants || {
 	easing: 'linear',
 };
 
-export function getKeyframes( effect, type, direction ) {
+function calculateSlideDistance( element, direction ) {
+	if ( ! element ) {
+		return config.slideDistance;
+	}
+
+	const rect = element.getBoundingClientRect();
+	const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+	const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+	switch ( direction ) {
+		case 'left':
+			return viewportWidth + rect.width;
+		case 'right':
+			return viewportWidth + rect.width;
+		case 'top':
+			return viewportHeight + rect.height;
+		case 'bottom':
+			return viewportHeight + rect.height;
+		default:
+			return config.slideDistance;
+	}
+}
+
+export function getKeyframes( effect, type, direction, element = null ) {
 	const isIn = 'in' === type;
 	const keyframes = {};
 
@@ -21,7 +44,7 @@ export function getKeyframes( effect, type, direction ) {
 	}
 
 	if ( direction ) {
-		const distance = config.slideDistance;
+		const distance = calculateSlideDistance( element, direction );
 		const movement = {
 			left: { x: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
 			right: { x: isIn ? [ distance, 0 ] : [ 0, distance ] },
