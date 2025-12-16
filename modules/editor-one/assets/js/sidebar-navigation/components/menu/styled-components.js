@@ -1,5 +1,5 @@
 import { List, ListItem, ListItemButton, ListItemIcon, styled } from '@elementor/ui';
-import ChevronDownIcon from '@elementor/icons/ChevronDownIcon';
+import ChevronDownSmallIcon from '@elementor/icons/ChevronDownSmallIcon';
 
 export const MenuList = styled( List )( ( { theme } ) => ( {
 	paddingLeft: theme.spacing( 2 ),
@@ -11,26 +11,29 @@ export const MenuItemButton = styled( ListItemButton )( ( { theme } ) => ( {
 	paddingRight: theme.spacing( 1 ),
 	marginBottom: 0,
 	paddingBottom: theme.spacing( 0.5 ),
+	whiteSpace: 'nowrap',
 } ) );
 
-export const MenuIcon = styled( ListItemIcon )( {
+export const MenuIcon = styled( ListItemIcon )( ( { theme } ) => ( {
 	minWidth: 28,
+	color: theme.palette.text.primary,
 	'& svg': {
 		fontSize: 20,
 	},
-} );
+} ) );
 
 export const ChildMenuItemButton = styled( ListItemButton )( ( { theme } ) => ( {
 	paddingLeft: theme.spacing( 6 ),
 	paddingRight: theme.spacing( 2 ),
 	minHeight: 32,
+	whiteSpace: 'nowrap',
 } ) );
 
 export const ChildListItem = styled( ListItem )( {
 	maxHeight: 32,
 } );
 
-export const ExpandIcon = styled( ChevronDownIcon, {
+export const ExpandIcon = styled( ChevronDownSmallIcon, {
 	shouldForwardProp: ( prop ) => prop !== 'expanded',
 } )( ( { expanded } ) => ( {
 	fontSize: 20,
