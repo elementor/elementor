@@ -104,11 +104,11 @@ $top-bar-height: 50px;
 				// Since there is no h1 tag (in the normal place of the admin page) we need to break the page content under screen options button.
 				clear: both;
 				padding-block-start: 10px;
-
-				h1 {
-					display: none;
-				}
 			}
+		}
+
+		&:not(.e-admin-top-bar--editor-one) ~ #wpbody .wrap h1 {
+			display: none;
 		}
 	}
 
@@ -166,7 +166,8 @@ $top-bar-height: 50px;
 	}
 
 	// The title and buttons are not visible by default in the original place. They might be visible according to the result of the admin top bar.
-	&~ #wpbody {
+	// Exception: When Editor One is enabled, keep h1 and .page-title-action visible in .wrap
+	&:not(.e-admin-top-bar--editor-one) ~ #wpbody {
 		.wrap {
 			h1, .page-title-action {
 				display: none;
