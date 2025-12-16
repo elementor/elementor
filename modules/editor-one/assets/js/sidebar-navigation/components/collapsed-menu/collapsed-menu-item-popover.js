@@ -1,4 +1,4 @@
-import { List, ListItem, ListItemText } from '@elementor/ui';
+import { List, ListItem, ListItemText, ListSubheader } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import {
 	CollapsedIconButton,
@@ -38,10 +38,10 @@ const CollapsedMenuItemPopover = ( {
 				hideBackdrop
 			>
 				<PopoverContent>
-					<PopoverTitle variant="subtitle2">{ item.label }</PopoverTitle>
 					<List disablePadding>
+						<ListSubheader><PopoverTitle elementType="div" variant="caption">{ item.label }</PopoverTitle></ListSubheader>
 						{ children.map( ( childItem ) => (
-							<ListItem key={ childItem.slug } disablePadding dense>
+							<ListItem key={ childItem.slug } disablePadding disableGutters dense>
 								<PopoverListItemButton
 									component="a"
 									href={ childItem.url }
