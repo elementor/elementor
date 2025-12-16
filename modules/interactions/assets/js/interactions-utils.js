@@ -53,6 +53,10 @@ export function getKeyframes( effect, type, direction, element = null ) {
 		};
 
 		Object.assign( keyframes, movement[ direction ] );
+
+		if ( 'fade' !== effect ) {
+			keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
+		}
 	}
 
 	return keyframes;
