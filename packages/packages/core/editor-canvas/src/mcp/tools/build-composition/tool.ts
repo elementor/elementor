@@ -55,7 +55,9 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 					if ( ! widgetsCache[ elementTag ] ) {
 						errors.push( new Error( `Unknown widget type: ${ elementTag }` ) );
 					}
-					const CONTAINER_ELEMENTS = [ 'e-div-block', 'e-flexbox', 'e-tabs' ];
+					const CONTAINER_ELEMENTS = Object.values( widgetsCache )
+						.filter( ( widget ) => widget.meta?.is_container )
+						.map( ( widget ) => widget.elType );
 					const isContainer = CONTAINER_ELEMENTS.includes( elementTag );
 					const parentElType = containerElement.model.get( 'elType' );
 					let targetContainerId =

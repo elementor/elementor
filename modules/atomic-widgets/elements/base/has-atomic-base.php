@@ -80,14 +80,16 @@ trait Has_Atomic_Base {
 		}
 	}
 
-	private function parse_atomic_styles( array $styles ): array {
+	private function parse_atomic_styles( array $data ): array {
+		$styles = $data['styles'] ?? [];
 		$style_parser = Style_Parser::make( Style_Schema::get() );
 
 		foreach ( $styles as $style_id => $style ) {
 			$result = $style_parser->parse( $style );
 
 			if ( ! $result->is_valid() ) {
-				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. " . $result->errors()->to_string() ) );
+				$widget_id = $data[ 'id' ] ?? 'unknown';
+				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. Widget ID: `$widget_id`" . $result->errors()->to_string() ) );
 			}
 
 			$styles[ $style_id ] = $result->unwrap();
@@ -237,7 +239,7 @@ trait Has_Atomic_Base {
 
 		$data['version'] = $this->version;
 		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
-		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
+		$data['styles'] = $this->parse_atomic_styles( $data );
 		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
 
 		if ( isset( $data['interactions'] ) && ! empty( $data['interactions'] ) ) {
