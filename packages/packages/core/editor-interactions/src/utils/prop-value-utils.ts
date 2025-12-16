@@ -2,7 +2,7 @@ import type {
 	AnimationPresetPropValue,
 	InteractionItemPropValue,
 	InteractionItemValue,
-	InteractionsPropType,
+	ElementInteractions,
 	NumberPropValue,
 	StringPropValue,
 	TimingConfigPropValue,
@@ -43,32 +43,24 @@ export const createAnimationPreset = (
 } );
 
 export const createInteractionItem = (
-	interactionId: string,
 	trigger: string,
 	effect: string,
 	type: string,
 	direction: string,
 	duration: number,
-	delay: number
+	delay: number,
+    interactionId?: string
 ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
-		interaction_id: createString( interactionId ),
+		...( interactionId && { interaction_id: createString( interactionId ) } ),
 		trigger: createString( trigger ),
 		animation: createAnimationPreset( effect, type, direction, duration, delay ),
 	},
 } );
 
-export const generateInteractionId = (): string => {
-	const timestamp = Date.now().toString( 16 ).slice( -4 );
-	const random1 = Math.random().toString( 16 ).slice( 2, 8 );
-	const random2 = Math.random().toString( 16 ).slice( 2, 9 );
-	return `${ timestamp }-${ random1 }-${ random2 }`;
-};
-
 export const createDefaultInteractionItem = (): InteractionItemPropValue => {
 	return createInteractionItem(
-		generateInteractionId(),
 		'load',
 		'fade',
 		'in',
@@ -78,7 +70,7 @@ export const createDefaultInteractionItem = (): InteractionItemPropValue => {
 	);
 };
 
-export const createDefaultInteractions = (): InteractionsPropType => ( {
+export const createDefaultInteractions = (): ElementInteractions => ( {
 	version: 1,
 	items: [ createDefaultInteractionItem() ],
 } );
@@ -92,6 +84,7 @@ export const extractNumber = ( prop: NumberPropValue | undefined, fallback = 0 )
 };
 
 export const buildAnimationIdString = ( item: InteractionItemValue ): string => {
+    console.log('item', item);
 	const trigger = extractString( item.trigger );
 	const effect = extractString( item.animation.value.effect );
 	const type = extractString( item.animation.value.type );

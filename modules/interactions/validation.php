@@ -125,7 +125,7 @@ class Validation {
 		$value = $item['value'];
 
 		// Validate required fields exist
-		if ( ! $this->is_valid_string_prop( $value, 'interaction_id' ) ) {
+		if (  isset( $value['interaction_id'] ) && ! $this->is_valid_string_prop( $value, 'interaction_id' ) ) {
 			return false;
 		}
 
@@ -134,7 +134,7 @@ class Validation {
 		}
 
 		if ( ! $this->is_valid_animation_prop( $value ) ) {
-			return false;
+			return false; 
 		}
 
 		return true;

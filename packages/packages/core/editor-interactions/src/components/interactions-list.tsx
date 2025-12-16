@@ -6,7 +6,7 @@ import { Alert, AlertTitle, Box, IconButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { InteractionDetails } from './interaction-details';
-import type { InteractionItemPropValue, InteractionItemValue, InteractionsPropType } from '../types';
+import type { InteractionItemPropValue, InteractionItemValue, ElementInteractions } from '../types';
 import {
 	buildAnimationIdString,
 	buildDisplayLabel,
@@ -17,8 +17,8 @@ import {
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
 export type InteractionListProps = {
-	onSelectInteractions: ( interactions: InteractionsPropType ) => void;
-	interactions: InteractionsPropType;
+	onSelectInteractions: ( interactions: ElementInteractions ) => void;
+	interactions: ElementInteractions;
 	onPlayInteraction: ( animationId: string ) => void;
 	triggerCreateOnShowEmpty?: boolean;
 };
@@ -26,7 +26,7 @@ export type InteractionListProps = {
 export function InteractionsList( props: InteractionListProps ) {
 	const { interactions, onSelectInteractions, onPlayInteraction, triggerCreateOnShowEmpty } = props;
 
-	const [ interactionsState, setInteractionsState ] = useState< InteractionsPropType >( interactions );
+	const [ interactionsState, setInteractionsState ] = useState< ElementInteractions >( interactions );
 
 	useEffect( () => {
 		if ( JSON.stringify( interactions ) !== JSON.stringify( interactionsState ) ) {
@@ -63,7 +63,7 @@ export function InteractionsList( props: InteractionListProps ) {
 			openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
 			label={ __( 'Interactions', 'elementor' ) }
 			values={ interactionsState.items }
-			setValues={ ( newValue: InteractionsPropType[ 'items' ] ) => {
+			setValues={ ( newValue: ElementInteractions[ 'items' ] ) => {
 				setInteractionsState( {
 					...interactionsState,
 					items: newValue,

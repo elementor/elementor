@@ -50,12 +50,26 @@ class Parser {
 		}
 
 		foreach ( $interactions['items'] as &$interaction ) {
-			if ( array_key_exists( 'interaction_id', $interaction ) ) {
-				$this->ids_lookup[] = $interaction['interaction_id'];
+			if ( isset( $interaction['$$type'] ) && 'interaction-item' === $interaction['$$type'] ) {
+				if ( isset( $interaction['value']['interaction_id']['value'] ) ) {
+					// Already has an ID - add to lookup
+					$this->ids_lookup[] = $interaction['value']['interaction_id']['value'];
+				} else {
+					// Assign new permanent ID
+					$interaction['value']['interaction_id'] = [
+						'$$type' => 'string',
+						'value' => $this->get_next_interaction_id( $element_id ),
+					];
+				}
 			} else {
-				$interaction = array_merge( [
-					'interaction_id' => $this->get_next_interaction_id( $element_id ),
-				], $interaction );
+				// Legacy format fallback
+				if ( array_key_exists( 'interaction_id', $interaction ) ) {
+					$this->ids_lookup[] = $interaction['interaction_id'];
+				} else {
+					$interaction = array_merge( [
+						'interaction_id' => $this->get_next_interaction_id( $element_id ),
+					], $interaction );
+				}
 			}
 		}
 
