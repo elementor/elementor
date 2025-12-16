@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { PropKeyProvider, PropProvider } from '@elementor/editor-controls';
+import { PropKeyProvider, PropProvider, type SetValueMeta } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	type ElementID,
@@ -10,6 +10,7 @@ import {
 	useElementSettings,
 } from '@elementor/editor-elements';
 import {
+	type CreateOptions,
 	isDependencyMet,
 	migratePropValue,
 	type PropKey,
@@ -54,7 +55,9 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		propDisplayName,
 	} );
 
-	const setValue = ( newValue: Values ) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const setValue = ( newValue: Values, _: CreateOptions = {}, meta?: SetValueMeta ) => {
+		const { withHistory = true } = meta ?? {};
 		const dependents = extractOrderedDependencies(
 			bind,
 			propsSchema,
@@ -63,8 +66,11 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		);
 
 		const settings = getUpdatedValues( newValue, dependents, propsSchema, migratedValues, elementId );
-
-		undoableUpdateElementProp( settings );
+		if ( withHistory ) {
+			undoableUpdateElementProp( settings );
+		} else {
+			updateElementSettings( { id: elementId, props: settings, withHistory: false } );
+		}
 	};
 
 	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, migratedValues ).isMet;
