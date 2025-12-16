@@ -186,7 +186,6 @@ class Elementor_One_Menu_Manager {
 
 	private function resolve_hidden_submenu_parent( ?string $parent_slug ): string {
 		$default_parent = Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
-
 		if ( empty( $parent_slug ) ) {
 			return $default_parent;
 		}
@@ -194,8 +193,7 @@ class Elementor_One_Menu_Manager {
 		$elementor_parent_slugs = [
 			Menu_Config::EDITOR_GROUP_ID => true,
 			Menu_Config::EDITOR_MENU_SLUG => true,
-			Menu_Config::TEMPLATES_GROUP_ID => true,
-			Menu_Config::LEGACY_TEMPLATES_SLUG => true,
+			Menu_Config::TEMPLATES_GROUP_ID => true, Menu_Config::LEGACY_TEMPLATES_SLUG => true,
 			Menu_Config::SETTINGS_GROUP_ID => true,
 			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID => true,
 			Menu_Config::SYSTEM_GROUP_ID => true,
