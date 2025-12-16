@@ -4,15 +4,16 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Youtube;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Switch_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
-use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader;
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -53,8 +54,8 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 			'source' => String_Prop_Type::make()
 				->default( 'https://www.youtube.com/watch?v=XHOmBV4js_E' ),
 
-			'start' => String_Prop_Type::make(),
-			'end' => String_Prop_Type::make(),
+			'start' => String_Prop_Type::make()->meta( Dynamic_Prop_Type::ignore() ),
+			'end' => String_Prop_Type::make()->meta( Dynamic_Prop_Type::ignore() ),
 			'autoplay' => Boolean_Prop_Type::make()->default( false ),
 			'mute' => Boolean_Prop_Type::make()->default( false ),
 			'loop' => Boolean_Prop_Type::make()->default( false ),
@@ -115,7 +116,10 @@ class Atomic_Youtube extends Atomic_Widget_Base {
 	}
 
 	public function get_script_depends() {
-		return [ 'elementor-youtube-handler' ];
+		return array_merge(
+			parent::get_script_depends(),
+			[ 'elementor-youtube-handler' ],
+		);
 	}
 
 	public function register_frontend_handlers() {

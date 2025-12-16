@@ -1,72 +1,58 @@
-const config = window.ElementorInteractionsConfig?.constants;
+import { config, getKeyframes, parseAnimationName } from './interactions-utils.js';
 
-function getKeyframes( effect, type, direction ) {
-	const isIn = 'in' === type;
-	const keyframes = {};
+function scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
+	const viewOptions = { amount: 0.85, root: null };
+	const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction, element );
 
-	keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
+	animateFunc( element, resetKeyframes, { duration: 0 } );
 
-	if ( 'scale' === effect ) {
-		keyframes.scale = isIn ? [ config.scaleStart, 1 ] : [ 1, config.scaleStart ];
-	}
-
-	if ( direction ) {
-		const distance = config.slideDistance;
-		const movement = {
-			left: { x: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
-			right: { x: isIn ? [ distance, 0 ] : [ 0, distance ] },
-			top: { y: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
-			bottom: { y: isIn ? [ distance, 0 ] : [ 0, distance ] },
+	const stop = inViewFunc( element, () => {
+		return () => {
+			animateFunc( element, keyframes, options ).then( () => {
+				element.style.transition = transition;
+			} );
+			if ( false === animConfig.replay ) {
+				stop();
+			}
 		};
-
-		Object.assign( keyframes, movement[ direction ] );
-	}
-
-	return keyframes;
+	}, viewOptions );
 }
 
-function parseAnimationName( name ) {
-	const [ trigger, effect, type, direction, duration, delay ] = name.split( '-' );
-	return {
-		trigger,
-		effect,
-		type,
-		direction: direction || null,
-		duration: duration ? parseInt( duration, 10 ) : config.defaultDuration,
-		delay: delay ? parseInt( delay, 10 ) : config.defaultDelay,
-	};
+function scrollInAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
+	const viewOptions = { amount: 0, root: null };
+	const stop = inViewFunc( element, () => {
+		animateFunc( element, keyframes, options ).then( () => {
+			element.style.transition = transition;
+		} );
+		if ( false === animConfig.replay ) {
+			stop();
+		}
+	}, viewOptions );
+}
+
+function defaultAnimation( element, transition, keyframes, options, animateFunc ) {
+	animateFunc( element, keyframes, options ).then( () => {
+		element.style.transition = transition;
+	} );
 }
 
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
-	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction, element );
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
 		easing: config.easing,
 	};
 
-	const viewOptions = { amount: 0.1, root: null };
-
+	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
+	const transition = element.style.transition;
+	element.style.transition = 'none';
 	if ( 'scrollOut' === animConfig.trigger ) {
-		inViewFunc( element, () => {
-			const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
-			animateFunc( element, resetKeyframes, { duration: 0 } );
-
-			return () => {
-				animateFunc( element, keyframes, options );
-			};
-		}, viewOptions );
+		scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
-		inViewFunc( element, () => {
-			animateFunc( element, keyframes, options );
-
-			return () => {
-				const resetKeyframes = getKeyframes( animConfig.effect, 'out', animConfig.direction );
-				animateFunc( element, resetKeyframes, { duration: 0 } );
-			};
-		}, viewOptions );
+		scrollInAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else {
-		animateFunc( element, keyframes, options );
+		defaultAnimation( element, transition, keyframes, options, animateFunc );
 	}
 }
 

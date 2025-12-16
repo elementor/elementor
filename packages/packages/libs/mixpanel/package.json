@@ -1,7 +1,7 @@
 {
   "name": "@elementor/mixpanel",
   "description": "Elementor Mixpanel package",
-  "version": "3.33.0",
+  "version": "3.35.0",
   "private": false,
   "author": "Elementor Team",
   "homepage": "https://elementor.com/",
@@ -38,6 +38,9 @@
   "scripts": {
     "build": "tsup --config=../../tsup.build.ts",
     "dev": "tsup --config=../../tsup.dev.ts"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
   },
   "devDependencies": {
     "tsup": "^8.3.5"

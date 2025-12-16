@@ -12,16 +12,16 @@ use Spatie\Snapshots\MatchesSnapshots;
 class Test_Atomic_Tabs extends Elementor_Test_Base {
 	use MatchesSnapshots;
 
-	const TAB_ID_1 = 'tab-1';
-	const TAB_ID_2 = 'tab-2';
-	const TAB_CONTENT_ID_1 = 'content-1';
-	const TAB_CONTENT_ID_2 = 'content-2';
-	const TABS_CONTAINER_ID = 'tabs-container';
-	const NESTED_TABS_CONTAINER_ID = 'nested-tabs-container';
-	const NESTED_TAB_ID_1 = 'nested-tab-1';
-	const NESTED_TAB_ID_2 = 'nested-tab-2';
-	const NESTED_TAB_CONTENT_ID_1 = 'nested-content-1';
-	const NESTED_TAB_CONTENT_ID_2 = 'nested-content-2';
+	const TAB_ID_1 = 'tab1';
+	const TAB_ID_2 = 'tab2';
+	const TAB_CONTENT_ID_1 = 'content1';
+	const TAB_CONTENT_ID_2 = 'content2';
+	const TABS_CONTAINER_ID = 'tabscontainer';
+	const NESTED_TABS_CONTAINER_ID = 'nestedtabscontainer';
+	const NESTED_TAB_ID_1 = 'nestedtab1';
+	const NESTED_TAB_ID_2 = 'nestedtab2';
+	const NESTED_TAB_CONTENT_ID_1 = 'nestedcontent1';
+	const NESTED_TAB_CONTENT_ID_2 = 'nestedcontent2';
 
 	protected $instance;
 
@@ -60,9 +60,14 @@ class Test_Atomic_Tabs extends Elementor_Test_Base {
 	public function test__render_atomic_tabs_with_interactions(): void {
 		// Arrange.
 		$this->instance = $this->create_tabs_instance( [], [
-			'click' => [
-				'id' => 'e8e55a1',
-				'type' => 'click',
+			'version' => 1,
+			'items' => [
+				[
+					'animation' => [
+						'animation_type' => 'full-preset',
+						'animation_id' => 'load-fade-in--300-0',
+					],
+				],
 			],
 		] );
 

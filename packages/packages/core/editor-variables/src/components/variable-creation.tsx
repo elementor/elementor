@@ -35,6 +35,7 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 	const [ label, setLabel ] = useState( '' );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const [ valueFieldError, setValueFieldError ] = useState( '' );
+	const [ propTypeKey, setPropTypeKey ] = useState( propTypeUtil.key );
 
 	const { labelFieldError, setLabelFieldError } = useLabelError();
 
@@ -54,7 +55,7 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 		createVariable( {
 			value,
 			label,
-			type: propTypeUtil.key,
+			type: propTypeKey,
 		} )
 			.then( ( key ) => {
 				setVariable( key );
@@ -141,20 +142,23 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 						} }
 					/>
 				</FormField>
-				<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
-					<Typography variant="h5" id="variable-value-wrapper">
-						<ValueField
-							value={ value }
-							onChange={ ( newValue ) => {
-								setValue( newValue );
-								setErrorMessage( '' );
-								setValueFieldError( '' );
-							} }
-							onValidationChange={ setValueFieldError }
-							propType={ propType }
-						/>
-					</Typography>
-				</FormField>
+				{ ValueField && (
+					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+						<Typography variant="h5" id="variable-value-wrapper">
+							<ValueField
+								value={ value }
+								onPropTypeKeyChange={ ( key: string ) => setPropTypeKey( key ) }
+								onChange={ ( newValue ) => {
+									setValue( newValue );
+									setErrorMessage( '' );
+									setValueFieldError( '' );
+								} }
+								onValidationChange={ setValueFieldError }
+								propType={ propType }
+							/>
+						</Typography>
+					</FormField>
+				) }
 
 				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 			</PopoverContent>

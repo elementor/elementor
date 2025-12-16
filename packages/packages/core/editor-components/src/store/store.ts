@@ -1,3 +1,4 @@
+import { type V1Document } from '@elementor/editor-documents';
 import {
 	__createSelector as createSelector,
 	__createSlice as createSlice,
@@ -8,6 +9,7 @@ import {
 import {
 	type Component,
 	type ComponentId,
+	type OverridableProps,
 	type PublishedComponent,
 	type StylesDefinition,
 	type UnpublishedComponent,
@@ -24,9 +26,17 @@ type ComponentsState = {
 	loadStatus: Status;
 	styles: StylesDefinition;
 	createdThisSession: Component[ 'uid' ][];
+	archivedData: PublishedComponent[];
+	path: ComponentsPathItem[];
+	currentComponentId: V1Document[ 'id' ] | null;
 };
 
-type ComponentsSlice = SliceState< typeof slice >;
+export type ComponentsSlice = SliceState< typeof slice >;
+
+export type ComponentsPathItem = {
+	instanceId?: string;
+	componentId: V1Document[ 'id' ];
+};
 
 export const initialState: ComponentsState = {
 	data: [],
@@ -34,9 +44,13 @@ export const initialState: ComponentsState = {
 	loadStatus: 'idle',
 	styles: {},
 	createdThisSession: [],
+	archivedData: [],
+	path: [],
+	currentComponentId: null,
 };
 
 export const SLICE_NAME = 'components';
+
 export const slice = createSlice( {
 	name: SLICE_NAME,
 	initialState,
@@ -68,6 +82,34 @@ export const slice = createSlice( {
 		addCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
 			state.createdThisSession.push( payload );
 		},
+		archive: ( state, { payload }: PayloadAction< number > ) => {
+			state.data = state.data.filter( ( component ) => {
+				const isArchived = component.id === payload;
+				if ( isArchived ) {
+					state.archivedData.push( component );
+				}
+
+				return ! isArchived;
+			} );
+		},
+		setCurrentComponentId: ( state, { payload }: PayloadAction< V1Document[ 'id' ] | null > ) => {
+			state.currentComponentId = payload;
+		},
+		setPath: ( state, { payload }: PayloadAction< ComponentsPathItem[] > ) => {
+			state.path = payload;
+		},
+		setOverridableProps: (
+			state,
+			{ payload }: PayloadAction< { componentId: ComponentId; overridableProps: OverridableProps } >
+		) => {
+			const component = state.data.find( ( comp ) => comp.id === payload.componentId );
+
+			if ( ! component ) {
+				return;
+			}
+
+			component.overridableProps = payload.overridableProps;
+		},
 	},
 	extraReducers: ( builder ) => {
 		builder.addCase( loadComponents.fulfilled, ( state, { payload }: PayloadAction< GetComponentResponse > ) => {
@@ -84,10 +126,15 @@ export const slice = createSlice( {
 } );
 
 const selectData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].data;
+const selectArchivedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].archivedData;
 const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadStatus;
 const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
 const selectUnpublishedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].unpublishedData;
 const getCreatedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].createdThisSession;
+const getPath = ( state: ComponentsSlice ) => state[ SLICE_NAME ].path;
+const getCurrentComponentId = ( state: ComponentsSlice ) => state[ SLICE_NAME ].currentComponentId;
+export const selectComponent = ( state: ComponentsSlice, componentId: ComponentId ) =>
+	state[ SLICE_NAME ].data.find( ( component ) => component.id === componentId );
 
 export const selectComponents = createSelector(
 	selectData,
@@ -108,4 +155,39 @@ export const selectFlatStyles = createSelector( selectStylesDefinitions, ( data 
 export const selectCreatedThisSession = createSelector(
 	getCreatedThisSession,
 	( createdThisSession ) => createdThisSession
+);
+
+const DEFAULT_OVERRIDABLE_PROPS: OverridableProps = {
+	props: {},
+	groups: {
+		items: {},
+		order: [],
+	},
+};
+
+export const selectOverridableProps = createSelector(
+	selectComponent,
+	( component: PublishedComponent | undefined ) => {
+		if ( ! component ) {
+			return undefined;
+		}
+
+		return component.overridableProps ?? DEFAULT_OVERRIDABLE_PROPS;
+	}
+);
+export const selectIsOverridablePropsLoaded = createSelector(
+	selectComponent,
+	( component: PublishedComponent | undefined ) => {
+		return !! component?.overridableProps;
+	}
+);
+export const selectPath = createSelector( getPath, ( path ) => path );
+export const selectCurrentComponentId = createSelector(
+	getCurrentComponentId,
+	( currentComponentId ) => currentComponentId
+);
+
+export const selectArchivedComponents = createSelector(
+	selectArchivedData,
+	( archivedData: PublishedComponent[] ) => archivedData
 );

@@ -2,6 +2,8 @@
 namespace Elementor\Modules\Components\Documents;
 
 use Elementor\Core\Base\Document;
+use Elementor\Core\Utils\Api\Parse_Result;
+use Elementor\Modules\Components\OverridableProps\Component_Overridable_Props_Parser;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -9,7 +11,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Component extends Document {
 	const TYPE = 'elementor_component';
-	const COMPONENT_UID_META_KEY = 'elementor_component_uid';
+	const COMPONENT_UID_META_KEY = '_elementor_component_uid';
+	const OVERRIDABLE_PROPS_META_KEY = '_elementor_component_overridable_props';
+	const ARCHIVED_META_KEY = '_elementor_component_is_archived';
+	const ARCHIVED_AT_META_KEY = '_elementor_component_archived_at';
 
 	public static function get_properties() {
 		$properties = parent::get_properties();
@@ -18,7 +23,6 @@ class Component extends Document {
 
 		return $properties;
 	}
-
 
 	public static function get_type() {
 		return self::TYPE;
@@ -57,5 +61,46 @@ class Component extends Document {
 
 	public function get_component_uid() {
 		return $this->get_meta( self::COMPONENT_UID_META_KEY );
+	}
+
+	public function get_overridable_props(): Component_Overridable_Props {
+		$meta = $this->get_meta( self::OVERRIDABLE_PROPS_META_KEY );
+
+		return new Component_Overridable_Props( $meta );
+	}
+
+	public function archive() {
+		try {
+			$this->update_main_meta( self::ARCHIVED_META_KEY, json_encode( [
+				'is_archived' => true,
+				'archived_at' => time(),
+			] ) );
+		} catch ( \Exception $e ) {
+			throw new \Exception( 'Failed to archive component: ' . esc_html( $e->getMessage() ) );
+		}
+	}
+
+	public function get_is_archived() {
+		$archived_meta = $this->get_main_meta( self::ARCHIVED_META_KEY );
+		if ( ! $archived_meta ) {
+			return false;
+		}
+		return json_decode( $archived_meta, true );
+	}
+
+	public function update_overridable_props( $data ): Parse_Result {
+		$parser = Component_Overridable_Props_Parser::make();
+
+		$result = $parser->parse( $data );
+
+		if ( ! $result->is_valid() ) {
+			return $result;
+		}
+
+		$sanitized_data = $result->unwrap();
+
+		$this->update_json_meta( self::OVERRIDABLE_PROPS_META_KEY, $sanitized_data );
+
+		return $result;
 	}
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type RefObject, useEffect, useState } from 'react';
+import { type RefObject, useEffect, useMemo } from 'react';
 import { type PropType, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { usePopupState } from '@elementor/ui';
@@ -97,7 +97,6 @@ export const SizeControl = createControl(
 		enablePropTypeUnits = false,
 		id,
 		ariaLabel,
-		isRepeaterControl = false,
 	}: Omit< SizeControlProps, 'variant' > & { variant?: SizeVariant } ) => {
 		const {
 			value: sizeValue,
@@ -107,16 +106,21 @@ export const SizeControl = createControl(
 			placeholder: externalPlaceholder,
 			propType,
 		} = useBoundProp( sizePropTypeUtil );
-		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[ variant ];
-		const [ internalState, setInternalState ] = useState( createStateFromSizeProp( sizeValue, actualDefaultUnit ) );
-		const activeBreakpoint = useActiveBreakpoint();
-		const actualUnits = resolveUnits( propType, enablePropTypeUnits, variant, units );
 
+		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[ variant ];
+		const activeBreakpoint = useActiveBreakpoint();
 		const actualExtendedOptions = useSizeExtendedOptions( extendedOptions || [], disableCustom ?? false );
+		const actualUnits = resolveUnits( propType, enablePropTypeUnits, variant, units, actualExtendedOptions );
+
 		const popupState = usePopupState( { variant: 'popover' } );
 
+		const memorizedExternalState = useMemo(
+			() => createStateFromSizeProp( sizeValue, actualDefaultUnit ),
+			[ sizeValue, actualDefaultUnit ]
+		);
+
 		const [ state, setState ] = useSyncExternalState( {
-			external: internalState,
+			external: memorizedExternalState,
 			setExternal: ( newState: State | null, options, meta ) =>
 				setSizeValue( extractValueFromState( newState ), options, meta ),
 			persistWhen: ( newState ) => !! extractValueFromState( newState ),
@@ -165,46 +169,14 @@ export const SizeControl = createControl(
 			}
 		};
 
-		const handleLinkedSizeControlChanges = () => {
-			const newState = createStateFromSizeProp(
-				sizeValue,
-				state.unit === 'custom' ? state.unit : actualDefaultUnit,
-				'',
-				state.custom
-			);
-			const currentUnitType = isUnitExtendedOption( state.unit ) ? 'custom' : 'numeric';
-			const mergedStates = {
-				...state,
-				unit: newState.unit ?? state.unit,
-				[ currentUnitType ]: newState[ currentUnitType ],
-			};
-
-			if ( mergedStates.unit !== 'auto' && areStatesEqual( state, mergedStates ) ) {
-				return;
+		const maybeClosePopup = React.useCallback( () => {
+			if ( popupState && popupState.isOpen ) {
+				popupState.close();
 			}
-
-			if ( state.unit === newState.unit ) {
-				setInternalState( mergedStates );
-
-				return;
-			}
-
-			setState( newState );
-		};
+		}, [ popupState ] );
 
 		useEffect( () => {
-			if ( ! isRepeaterControl ) {
-				handleLinkedSizeControlChanges();
-			}
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [ sizeValue ] );
-
-		useEffect( () => {
-			const newState = createStateFromSizeProp( sizeValue, actualDefaultUnit, '', state.custom );
-
-			if ( activeBreakpoint && ! areStatesEqual( newState, state ) ) {
-				setState( newState );
-			}
+			maybeClosePopup();
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [ activeBreakpoint ] );
 
@@ -214,7 +186,7 @@ export const SizeControl = createControl(
 					disabled={ disabled }
 					size={ controlSize }
 					unit={ controlUnit }
-					units={ [ ...actualUnits, ...( actualExtendedOptions || [] ) ] }
+					units={ [ ...actualUnits ] }
 					placeholder={ placeholder }
 					startIcon={ startIcon }
 					handleSizeChange={ handleSizeChange }
@@ -244,12 +216,13 @@ function resolveUnits(
 	propType: PropType,
 	enablePropTypeUnits: boolean,
 	variant: SizeVariant,
-	externalUnits?: Unit[]
+	externalUnits?: Unit[],
+	actualExtendedOptions?: ExtendedOption[]
 ) {
 	const fallback = [ ...defaultUnits[ variant ] ];
 
 	if ( ! enablePropTypeUnits ) {
-		return externalUnits ?? fallback;
+		return [ ...( externalUnits ?? fallback ), ...( actualExtendedOptions || [] ) ];
 	}
 
 	return ( propType.settings?.available_units as Unit[] ) ?? fallback;
@@ -297,27 +270,18 @@ function extractValueFromState( state: State | null, allowEmpty: boolean = false
 		return { size: '', unit };
 	}
 
-	if (
-		! allowEmpty &&
-		( ( unit === 'custom' && ! state.custom ) || ( unit !== 'custom' && ! state.numeric && state.numeric !== 0 ) )
-	) {
+	if ( unit === 'custom' ) {
+		return { size: state.custom ?? '', unit: 'custom' };
+	}
+
+	const numeric = state.numeric;
+
+	if ( ! allowEmpty && ( numeric === undefined || numeric === null || Number.isNaN( numeric ) ) ) {
 		return null;
 	}
 
 	return {
-		size: state[ unit === 'custom' ? 'custom' : 'numeric' ],
+		size: numeric,
 		unit,
-	} as SizeValue;
-}
-
-function areStatesEqual( state1: State, state2: State ): boolean {
-	if ( state1.unit !== state2.unit || state1.custom !== state2.custom ) {
-		return false;
-	}
-
-	if ( isUnitExtendedOption( state1.unit ) ) {
-		return state1.custom === state2.custom;
-	}
-
-	return state1.numeric === state2.numeric || ( isNaN( state1.numeric ) && isNaN( state2.numeric ) );
+	};
 }

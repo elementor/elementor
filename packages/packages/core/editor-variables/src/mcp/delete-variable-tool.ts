@@ -4,7 +4,7 @@ import { z } from '@elementor/schema';
 import { service } from '../service';
 
 export const initDeleteVariableTool = () => {
-	getMCPByDomain( 'variables' ).addTool( {
+	getMCPByDomain( 'canvas' ).addTool( {
 		name: 'delete-global-variable',
 		schema: {
 			id: z.string().describe( 'The unique identifier of the variable to be deleted.' ),

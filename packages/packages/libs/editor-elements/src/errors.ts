@@ -19,3 +19,13 @@ export const ElementLabelNotExistsError = createError< { elementType: string } >
 	code: 'element_label_not_exists',
 	message: 'Element label does not exist.',
 } );
+
+export const ElementParentNotFoundError = createError< { elementId: string } >( {
+	code: 'element_parent_not_found',
+	message: 'Element parent not found.',
+} );
+
+export const ElementIndexNotFoundError = createError< { elementId: string } >( {
+	code: 'element_index_not_found',
+	message: 'Element index not found.',
+} );

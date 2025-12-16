@@ -3,7 +3,7 @@
 namespace Elementor\Testing\Modules\GlobalClasses;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Atomic_Global_Styles;
@@ -92,7 +92,7 @@ class Test_Atomic_Global_Styles extends Elementor_Test_Base {
 			->expects( $this->once() )
 			->method( 'register' )
 			->with(
-				Atomic_Global_Styles::STYLES_KEY . '-' . $context,
+				[ Atomic_Global_Styles::STYLES_KEY, $context ],
 				$this->callback( function ( $callback ) use ( $expected ) {
 					$styles = $callback( [ 1, 2 ] );
 					$this->assertEquals( $expected, $styles );

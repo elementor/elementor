@@ -3,13 +3,19 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypes\Primitives;
 
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Plain_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Migratable_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class String_Prop_Type extends Plain_Prop_Type {
+class String_Prop_Type extends Plain_Prop_Type implements Migratable_Prop_Type {
+	// Backward compatibility, do not change to "const". Keep name in uppercase.
+	// phpcs:ignore
+	static $KIND = 'string';
+
 	public static function get_key(): string {
 		return 'string';
 	}
@@ -70,5 +76,9 @@ class String_Prop_Type extends Plain_Prop_Type {
 
 			return $leading . sanitize_text_field( $value ) . $trailing;
 		}, $value );
+	}
+
+	public function get_compatible_type_keys(): array {
+		return [ Html_Prop_Type::get_key() ];
 	}
 }

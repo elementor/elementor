@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypes;
 
-use Elementor\Modules\AtomicWidgets\Image\Image_Sizes;
+use Elementor\Modules\AtomicWidgets\Utils\Image\Image_Sizes;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 
@@ -19,9 +19,10 @@ class Image_Prop_Type extends Object_Prop_Type {
 		return [
 			'src' => Image_Src_Prop_Type::make()->required(),
 			'size' => String_Prop_Type::make()
-				->enum( Image_Sizes::get_keys() )
 				->initial_value( Image_Sizes::DEFAULT_SIZE )
-				->required(),
+				->enum( Image_Sizes::get_keys() )
+				->required()
+				->description( 'The image file size to use, affecting quality only!. This DOES NOT affect dimensions on the page. For affecting dimensions, use the element\'s style schema instead' ),
 		];
 	}
 

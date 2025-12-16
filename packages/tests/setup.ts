@@ -9,10 +9,13 @@ import {
 import { __resetEnv } from '@elementor/env';
 import { __flushAllInjections } from '@elementor/locations';
 import { __deleteStore } from '@elementor/store';
+import { TextEncoder, TextDecoder } from 'util';
 
 jest.mock( '@elementor/http-client' );
 jest.mock( '@elementor/editor-mcp', () => ( {} ) );
 globalThis.structuredClone = ( value ) => JSON.parse( JSON.stringify( value ) );
+globalThis.TextEncoder = TextEncoder as typeof globalThis.TextEncoder;
+globalThis.TextDecoder = TextDecoder as typeof globalThis.TextDecoder;
 
 globalThis.ResizeObserver = class ResizeObserver {
 	observe() {}
@@ -68,6 +71,9 @@ globalThis.DOMRect = class DOMRect {
 
 
 let globalOriginalProps: PropertyKey[];
+
+// disable MCP initialization during tests
+(globalThis as Record<string, unknown>).__ELEMENTOR_MCP_DISABLED__ = true;
 
 beforeEach( () => {
 	/* eslint-disable no-console */

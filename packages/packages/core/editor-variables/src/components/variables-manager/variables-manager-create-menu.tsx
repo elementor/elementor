@@ -5,6 +5,7 @@ import { bindMenu, bindTrigger, IconButton, Menu, MenuItem, type PopupState, Typ
 import { __ } from '@wordpress/i18n';
 
 import { type TVariablesList } from '../../storage';
+import { trackVariablesManagerEvent } from '../../utils/tracking';
 import { getVariableTypes } from '../../variables-registry/variable-type-registry';
 
 export const SIZE = 'tiny';
@@ -26,19 +27,22 @@ export const VariableManagerCreateMenu = ( {
 
 	const variableTypes = getVariableTypes();
 
-	const menuOptions = Object.entries( variableTypes ).map( ( [ key, variable ] ) => {
-		const displayName = variable.variableType.charAt( 0 ).toUpperCase() + variable.variableType.slice( 1 );
+	const menuOptions = Object.entries( variableTypes )
+		.filter( ( [ , variable ] ) => !! variable.defaultValue )
+		.map( ( [ key, variable ] ) => {
+			const displayName = variable.variableType.charAt( 0 ).toUpperCase() + variable.variableType.slice( 1 );
 
-		return {
-			key,
-			name: displayName,
-			icon: variable.icon,
-			onClick: () => {
-				const defaultName = getDefaultName( variables, key, variable.variableType );
-				onCreate( key, defaultName, variable.defaultValue || '' );
-			},
-		};
-	} );
+			return {
+				key,
+				name: displayName,
+				icon: variable.icon,
+				onClick: () => {
+					const defaultName = getDefaultName( variables, key, variable.variableType );
+					onCreate( key, defaultName, variable.defaultValue || '' );
+					trackVariablesManagerEvent( { action: 'add', varType: variable.variableType } );
+				},
+			};
+		} );
 
 	return (
 		<>

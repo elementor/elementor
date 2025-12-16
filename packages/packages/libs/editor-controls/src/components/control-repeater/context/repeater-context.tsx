@@ -28,6 +28,7 @@ type RepeaterContextType< T extends RepeatablePropValue > = {
 	removeItem: ( index: number ) => void;
 	rowRef: HTMLElement | null;
 	setRowRef: ( ref: HTMLElement | null | SetterFn< HTMLElement | null > ) => void;
+	isItemDisabled: ( index: number ) => boolean;
 };
 
 const RepeaterContext = createContext< RepeaterContextType< RepeatablePropValue > | null >( null );
@@ -49,10 +50,12 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	children,
 	initial,
 	propTypeUtil,
+	isItemDisabled = () => false,
 }: React.PropsWithChildren< {
 	initial: T;
 	propTypeUtil: PropTypeUtil< string, T[] >;
 	isSortable?: boolean;
+	isItemDisabled?: ( item: Item< T > ) => boolean;
 } > ) => {
 	const { value: repeaterValues, setValue: setRepeaterValues } = useBoundProp( propTypeUtil );
 
@@ -138,6 +141,7 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 				removeItem,
 				rowRef,
 				setRowRef,
+				isItemDisabled: ( index: number ) => isItemDisabled( itemsWithKeys[ index ].item ),
 			} }
 		>
 			{ children }

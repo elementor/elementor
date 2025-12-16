@@ -1,0 +1,176 @@
+import { getWidgetsCache } from '@elementor/editor-elements';
+import { type MCPRegistryEntry, ResourceTemplate } from '@elementor/editor-mcp';
+import {
+	type ArrayPropType,
+	type ObjectPropType,
+	type PropType,
+	Schema,
+	type TransformablePropType,
+	type UnionPropType,
+} from '@elementor/editor-props';
+import { getStylesSchema } from '@elementor/editor-styles';
+
+export const WIDGET_SCHEMA_URI = 'elementor://widgets/schema/{widgetType}';
+export const STYLE_SCHEMA_URI = 'elementor://styles/schema/{category}';
+export const BEST_PRACTICES_URI = 'elementor://styles/best-practices';
+
+export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
+	const { mcpServer } = reg;
+
+	mcpServer.resource( 'styles-best-practices', BEST_PRACTICES_URI, async () => {
+		return {
+			contents: [
+				{
+					uri: BEST_PRACTICES_URI,
+					text: `# Styling best practices
+Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
+This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema, or in custom_css, depends on your needs.
+
+When applicable for styles, apply style PropValues using the ${ STYLE_SCHEMA_URI }. Custom css is for Elementor PRO users and intended to support only new CSS features not yet available in the UI.
+The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.`,
+				},
+			],
+		};
+	} );
+
+	mcpServer.resource(
+		'styles-schema',
+		new ResourceTemplate( STYLE_SCHEMA_URI, {
+			list: () => {
+				const categories = [ ...Object.keys( getStylesSchema() ), 'custom_css' ];
+				return {
+					resources: categories.map( ( category ) => ( {
+						uri: `elementor://styles/schema/${ category }`,
+						name: 'Style schema for ' + category,
+					} ) ),
+				};
+			},
+		} ),
+		{
+			description: 'Common styles schema for the specified category',
+		},
+		async ( uri, variables ) => {
+			const category = typeof variables.category === 'string' ? variables.category : variables.category?.[ 0 ];
+			if ( category === 'custom_css' ) {
+				return {
+					contents: [
+						{
+							uri: uri.toString(),
+							text: 'Free style inline CSS string of properties and their values. Applicable for a single element, only the properties and values are accepted. Use this as a last resort for properties that are not covered with the schema. Do not use selectors, only the CSS content',
+						},
+					],
+				};
+			}
+			const stylesSchema = getStylesSchema()[ category ];
+			if ( ! stylesSchema ) {
+				throw new Error( `No styles schema found for category: ${ category }` );
+			}
+			const asJson = Schema.propTypeToJsonSchema( stylesSchema as PropType );
+			return {
+				contents: [
+					{
+						uri: uri.toString(),
+						mimeType: 'application/json',
+						text: JSON.stringify( asJson ),
+					},
+				],
+			};
+		}
+	);
+
+	mcpServer.resource(
+		'widget-schema-by-type',
+		new ResourceTemplate( WIDGET_SCHEMA_URI, {
+			list: () => {
+				const cache = getWidgetsCache() || {};
+				const availableWidgets = Object.keys( cache || {} ).filter(
+					( widgetType ) => cache[ widgetType ]?.atomic_props_schema
+				);
+				return {
+					resources: availableWidgets.map( ( widgetType ) => ( {
+						uri: `elementor://widgets/schema/${ widgetType }`,
+						name: 'Widget schema for ' + widgetType,
+					} ) ),
+				};
+			},
+		} ),
+		{
+			description: 'PropType schema for the specified widget type',
+		},
+		async ( uri, variables ) => {
+			const widgetType =
+				typeof variables.widgetType === 'string' ? variables.widgetType : variables.widgetType?.[ 0 ];
+			const propSchema = getWidgetsCache()?.[ widgetType ]?.atomic_props_schema;
+			if ( ! propSchema ) {
+				throw new Error( `No prop schema found for element type: ${ widgetType }` );
+			}
+			const asJson = Object.fromEntries(
+				Object.entries( propSchema ).map( ( [ key, propType ] ) => [
+					key,
+					Schema.propTypeToJsonSchema( propType ),
+				] )
+			);
+			Schema.nonConfigurablePropKeys.forEach( ( key ) => {
+				// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+				delete asJson[ key ];
+			} );
+
+			return {
+				contents: [
+					{
+						uri: uri.toString(),
+						mimeType: 'application/json',
+						text: JSON.stringify( {
+							type: 'object',
+							properties: asJson,
+						} ),
+					},
+				],
+			};
+		}
+	);
+};
+
+function cleanupPropSchema( propSchema: Record< string, PropType > ): Record< string, PropType > {
+	const result: Record< string, Partial< PropType > > = {};
+	Object.keys( propSchema ).forEach( ( propName ) => {
+		result[ propName ] = cleanupPropType( propSchema[ propName ] );
+	} );
+	return result as Record< string, PropType >;
+}
+function cleanupPropType( propType: PropType & { key?: string } ): Partial< PropType > {
+	const result: Partial< PropType > = {};
+	Object.keys( propType ).forEach( ( property ) => {
+		switch ( property ) {
+			case 'key':
+			case 'kind':
+				( result as Record< string, unknown > )[ property ] = propType[ property ];
+				break;
+			case 'meta':
+			case 'settings':
+				{
+					if ( Object.keys( propType[ property ] || {} ).length > 0 ) {
+						( result as Record< string, unknown > )[ property ] = propType[ property ];
+					}
+				}
+				break;
+		}
+	} );
+	if ( result.kind === 'plain' ) {
+		Object.defineProperty( result, 'kind', { value: 'string' } );
+	} else if ( result.kind === 'array' ) {
+		result.item_prop_type = cleanupPropType( ( propType as ArrayPropType ).item_prop_type ) as PropType;
+	} else if ( result.kind === 'object' ) {
+		const shape = ( propType as ObjectPropType ).shape as Record< string, PropType >;
+		const cleanedShape = cleanupPropSchema( shape );
+		result.shape = cleanedShape;
+	} else if ( result.kind === 'union' ) {
+		const propTypes = ( propType as UnionPropType ).prop_types;
+		const cleanedPropTypes: Record< string, Partial< PropType > > = {};
+		Object.keys( propTypes ).forEach( ( key ) => {
+			cleanedPropTypes[ key ] = cleanupPropType( propTypes[ key ] );
+		} );
+		result.prop_types = cleanedPropTypes as Record< string, TransformablePropType >;
+	}
+	return result;
+}

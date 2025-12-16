@@ -1,10 +1,24 @@
 import * as React from 'react';
 import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
 import { dropElement, type DropElementParams, type V1ElementData } from '@elementor/editor-elements';
-import { ComponentsIcon } from '@elementor/icons';
-import { Box, ListItemButton, ListItemIcon, ListItemText, Typography } from '@elementor/ui';
+import { EllipsisWithTooltip, MenuListItem } from '@elementor/editor-ui';
+import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
+import {
+	bindMenu,
+	bindTrigger,
+	Box,
+	IconButton,
+	ListItemButton,
+	ListItemIcon,
+	Menu,
+	Stack,
+	Typography,
+	usePopupState,
+} from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
-import { loadComponentsStyles } from '../../store/load-components-styles';
+import { archiveComponent } from '../../store/actions/archive-component';
+import { loadComponentsAssets } from '../../store/actions/load-components-assets';
 import { type Component } from '../../types';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
 import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
@@ -15,38 +29,91 @@ type ComponentItemProps = {
 
 export const ComponentItem = ( { component }: ComponentItemProps ) => {
 	const componentModel = createComponentModel( component );
+	const popupState = usePopupState( {
+		variant: 'popover',
+		disableAutoFocus: true,
+	} );
 
 	const handleClick = () => {
 		addComponentToPage( componentModel );
 	};
 
 	const handleDragEnd = () => {
-		loadComponentsStyles( [ componentModel as V1ElementData ] );
+		loadComponentsAssets( [ componentModel as V1ElementData ] );
 
 		endDragElementFromPanel();
 	};
 
+	const handleArchiveClick = () => {
+		popupState.close();
+
+		if ( ! component.id ) {
+			throw new Error( 'Component ID is required' );
+		}
+
+		archiveComponent( component.id );
+	};
+
 	return (
-		<ListItemButton
-			draggable
-			onDragStart={ () => startDragElementFromPanel( componentModel ) }
-			onDragEnd={ handleDragEnd }
-			shape="rounded"
-			sx={ { border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 } }
-		>
-			<Box sx={ { display: 'flex', width: '100%', alignItems: 'center', gap: 1 } } onClick={ handleClick }>
-				<ListItemIcon size="tiny">
-					<ComponentsIcon fontSize="tiny" />
-				</ListItemIcon>
-				<ListItemText
-					primary={
-						<Typography variant="caption" sx={ { color: 'text.primary' } }>
-							{ component.name }
-						</Typography>
-					}
-				/>
-			</Box>
-		</ListItemButton>
+		<Stack>
+			<ListItemButton
+				draggable
+				onDragStart={ () => startDragElementFromPanel( componentModel ) }
+				onDragEnd={ handleDragEnd }
+				shape="rounded"
+				sx={ {
+					border: 'solid 1px',
+					borderColor: 'divider',
+					py: 0.5,
+					px: 1,
+					display: 'flex',
+					width: '100%',
+					alignItems: 'center',
+					gap: 1,
+				} }
+			>
+				<Box
+					onClick={ handleClick }
+					sx={ {
+						display: 'flex',
+						alignItems: 'center',
+						gap: 1,
+						minWidth: 0,
+						flexGrow: 1,
+					} }
+				>
+					<ListItemIcon size="tiny">
+						<ComponentsIcon fontSize="tiny" />
+					</ListItemIcon>
+					<Box display="flex" flex={ 1 } minWidth={ 0 } flexGrow={ 1 }>
+						<EllipsisWithTooltip
+							title={ component.name }
+							as={ Typography }
+							variant="caption"
+							color="text.primary"
+						/>
+					</Box>
+				</Box>
+				<IconButton size="tiny" { ...bindTrigger( popupState ) } aria-label="More actions">
+					<DotsVerticalIcon fontSize="tiny" />
+				</IconButton>
+			</ListItemButton>
+			<Menu
+				{ ...bindMenu( popupState ) }
+				anchorOrigin={ {
+					vertical: 'bottom',
+					horizontal: 'right',
+				} }
+				transformOrigin={ {
+					vertical: 'top',
+					horizontal: 'right',
+				} }
+			>
+				<MenuListItem sx={ { minWidth: '160px' } } onClick={ handleArchiveClick }>
+					{ __( 'Archive', 'elementor' ) }
+				</MenuListItem>
+			</Menu>
+		</Stack>
 	);
 };
 
@@ -57,7 +124,7 @@ const addComponentToPage = ( model: DropElementParams[ 'model' ] ) => {
 		throw new Error( `Can't find container to drop new component instance at` );
 	}
 
-	loadComponentsStyles( [ model as V1ElementData ] );
+	loadComponentsAssets( [ model as V1ElementData ] );
 
 	dropElement( {
 		containerId: container.id,

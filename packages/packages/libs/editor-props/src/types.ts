@@ -17,6 +17,7 @@ export type DependencyOperator =
 export type DependencyTerm = {
 	operator: DependencyOperator;
 	path: string[];
+	nestedPath?: string[];
 	value: PropValue;
 	newValue?: TransformablePropValue< string >;
 };
@@ -24,18 +25,24 @@ export type DependencyTerm = {
 export type Dependency = {
 	relation: 'or' | 'and';
 	terms: ( DependencyTerm | Dependency )[];
+	newValue?: TransformablePropValue< string >;
+};
+
+type BasePropTypeMeta = {
+	description?: string;
+	[ key: string ]: unknown;
 };
 
 type BasePropType< TValue > = {
 	default?: TValue | null;
 	initial_value?: TValue | null;
 	settings: Record< string, unknown >;
-	meta: Record< string, unknown >;
+	meta: BasePropTypeMeta;
 	dependencies?: Dependency;
 };
 
 export type PlainPropType = BasePropType< PlainPropValue > & {
-	kind: 'plain';
+	kind: 'plain' | 'string' | 'number' | 'boolean';
 	key: PropTypeKey;
 };
 
@@ -73,9 +80,9 @@ export type UnionPropType = BasePropType< PropValue > & {
 	prop_types: Record< string, TransformablePropType >;
 };
 
-export type PropType = TransformablePropType | UnionPropType;
+export type PropType< T = object > = ( TransformablePropType | UnionPropType ) & T;
 
-export type PropsSchema = Record< string, PropType >;
+export type PropsSchema = Record< string, PropType< { key?: string } > >;
 
 type MaybeArray< T > = T | T[];
 

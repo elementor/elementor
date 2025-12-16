@@ -44,7 +44,21 @@ export type V1Element = {
 	parent?: V1Element;
 };
 
+export type ElementInteractions = {
+	version: number;
+	items: InteractionItem[];
+};
+
+export type InteractionItem = {
+	interaction_id?: string;
+	animation: {
+		animation_type: string;
+		animation_id: string;
+	};
+};
+
 export type V1ElementModelProps = {
+	isLocked?: boolean;
 	widgetType?: string;
 	elType: string;
 	id: string;
@@ -52,7 +66,7 @@ export type V1ElementModelProps = {
 	elements?: V1Model< V1ElementModelProps >[];
 	settings?: V1ElementSettingsProps;
 	editor_settings?: V1ElementEditorSettingsProps;
-	interactions?: string | Record< string, unknown >;
+	interactions?: string | ElementInteractions;
 };
 
 export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {
@@ -61,13 +75,16 @@ export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {
 
 export type V1ElementEditorSettingsProps = {
 	title?: string;
+	initial_position?: number;
 	component_uid?: string;
 };
 
 export type V1ElementSettingsProps = Record< string, PropValue >;
 
-export type V1ElementConfig = {
+export type V1ElementConfig< T = object > = {
 	title: string;
+	widgetType?: string;
+	elType?: string;
 	controls: object;
 	atomic?: boolean;
 	atomic_controls?: ControlItem[];
@@ -78,7 +95,7 @@ export type V1ElementConfig = {
 	base_styles?: Record< string, StyleDefinition >;
 	base_styles_dictionary?: Record< string, string >;
 	atomic_style_states?: ClassState[];
-};
+} & T;
 
 type V1Model< T > = {
 	get: < K extends keyof T >( key: K ) => T[ K ];

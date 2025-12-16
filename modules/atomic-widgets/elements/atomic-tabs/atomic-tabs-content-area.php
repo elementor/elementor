@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -60,7 +60,9 @@ class Atomic_Tabs_Content_Area extends Atomic_Element_Base {
 				->set_items( [
 					Text_Control::bind_to( '_cssid' )
 						->set_label( __( 'ID', 'elementor' ) )
-						->set_meta( $this->get_css_id_control_meta() ),
+						->set_meta( [
+							'layout' => 'two-columns',
+						] ),
 				] ),
 		];
 	}
@@ -92,8 +94,6 @@ class Atomic_Tabs_Content_Area extends Atomic_Element_Base {
 				$base_style_class,
 				...( $settings['classes'] ?? [] ),
 			],
-			'data-id' => $this->get_id(),
-			'data-interactions' => json_encode( $this->interactions ),
 		];
 
 		if ( ! empty( $settings['_cssid'] ) ) {
