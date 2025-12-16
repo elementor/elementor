@@ -37,7 +37,11 @@ The css string must follow standard CSS syntax, with properties and values separ
 		'styles-schema',
 		new ResourceTemplate( STYLE_SCHEMA_URI, {
 			list: () => {
-				const categories = [ ...Object.keys( getStylesSchema() ), 'custom_css' ];
+				const hasPro = !!( window as unknown as { elementorPro?: object } ).elementorPro;
+				const categories = [ ...Object.keys( getStylesSchema() ) ];
+				if ( hasPro ) {
+					categories.push( 'custom_css' );
+				}
 				return {
 					resources: categories.map( ( category ) => ( {
 						uri: `elementor://styles/schema/${ category }`,
@@ -52,6 +56,10 @@ The css string must follow standard CSS syntax, with properties and values separ
 		async ( uri, variables ) => {
 			const category = typeof variables.category === 'string' ? variables.category : variables.category?.[ 0 ];
 			if ( category === 'custom_css' ) {
+				const hasPro = !!( window as unknown as { elementorPro?: object } ).elementorPro;
+				if ( ! hasPro ) {
+					throw new Error( 'custom_css is only available for Elementor PRO users.' );
+				}
 				return {
 					contents: [
 						{
