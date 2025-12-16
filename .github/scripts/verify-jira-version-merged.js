@@ -24,6 +24,58 @@ const setErrorOutputs = (error) => {
 	setOutput('total_found', '0');
 };
 
+const sanitizeBranchName = (branch) => {
+	if (!/^[\w.\-/]+$/.test(branch)) {
+		throw new Error(`Invalid branch name: "${branch}"`);
+	}
+	return branch;
+};
+
+const parseTickets = (ticketsStr) => {
+	return ticketsStr
+		.split(',')
+		.map(t => t.trim().toUpperCase())
+		.map(t => t.replace(/ED-?(\d+)/, 'ED-$1'))
+		.filter(t => t.match(/^ED-\d+$/));
+};
+
+const branchExists = (branch) => {
+	try {
+		execSync(`git rev-parse --verify remotes/origin/${branch}`, { encoding: 'utf-8', stdio: 'pipe' });
+		return true;
+	} catch {
+		return false;
+	}
+};
+
+const findTicketsInBranch = (branch, tickets) => {
+	if (tickets.length === 0) return new Set();
+
+	const grepPatterns = tickets
+		.map(t => {
+			const num = t.replace('ED-', '');
+			return `ED-${num}\\|ED${num}`;
+		})
+		.join('\\|');
+
+	try {
+		const cmd = `git log remotes/origin/${branch} --oneline --grep="${grepPatterns}"`;
+		const result = execSync(cmd, { encoding: 'utf-8', stdio: 'pipe', maxBuffer: 10 * 1024 * 1024 });
+
+		const foundTickets = new Set();
+		const matches = result.match(/ED-?\d+/gi) || [];
+		matches.forEach(match => {
+			const normalized = match.toUpperCase().replace(/ED(\d+)/, 'ED-$1');
+			if (tickets.includes(normalized)) {
+				foundTickets.add(normalized);
+			}
+		});
+		return foundTickets;
+	} catch {
+		return new Set();
+	}
+};
+
 console.log('Configuration:');
 console.log(`   Tickets: ${TICKETS_LIST || 'NOT SET'}`);
 console.log(`   Target Branch: ${TARGET_BRANCH || 'NOT SET'}`);
@@ -36,36 +88,9 @@ if (!TICKETS_LIST || !TARGET_BRANCH) {
 	process.exit(1);
 }
 
-const parseTickets = (ticketsStr) => {
-	return ticketsStr
-		.split(',')
-		.map(t => t.trim().toUpperCase())
-		.map(t => t.replace(/ED-?(\d+)/, 'ED-$1'))
-		.filter(t => t.match(/^ED-\d+$/));
-};
-
-const branchExists = () => {
-	try {
-		execSync(`git rev-parse --verify remotes/origin/${TARGET_BRANCH}`, { encoding: 'utf-8', stdio: 'pipe' });
-		return true;
-	} catch {
-		return false;
-	}
-};
-
-const ticketExistsInBranch = (ticket) => {
-	try {
-		const ticketNumber = ticket.replace('ED-', '');
-		const cmd = `git log remotes/origin/${TARGET_BRANCH} --grep="ED-${ticketNumber}" --grep="ED${ticketNumber}" --oneline -1`;
-		const result = execSync(cmd, { encoding: 'utf-8', stdio: 'pipe' });
-		return result.trim().length > 0;
-	} catch {
-		return false;
-	}
-};
-
 const main = () => {
 	try {
+		const branch = sanitizeBranchName(TARGET_BRANCH);
 		const requiredTickets = parseTickets(TICKETS_LIST);
 
 		if (requiredTickets.length === 0) {
@@ -75,28 +100,23 @@ const main = () => {
 			process.exit(1);
 		}
 
-		if (!branchExists()) {
-			const error = `Branch "${TARGET_BRANCH}" not found. Make sure branch exists and is fetched.`;
+		if (!branchExists(branch)) {
+			const error = `Branch "${branch}" not found. Make sure branch exists and is fetched.`;
 			console.error(`Error: ${error}`);
 			setErrorOutputs(error);
 			process.exit(1);
 		}
 
-		console.log(`Checking ${requiredTickets.length} tickets in branch ${TARGET_BRANCH}...\n`);
+		console.log(`Checking ${requiredTickets.length} tickets in branch ${branch}...\n`);
 
-		const foundTickets = [];
-		const missing = [];
+		const foundSet = findTicketsInBranch(branch, requiredTickets);
+		const foundTickets = requiredTickets.filter(t => foundSet.has(t));
+		const missing = requiredTickets.filter(t => !foundSet.has(t));
 
-		for (const ticket of requiredTickets) {
-			const found = ticketExistsInBranch(ticket);
-			if (found) {
-				foundTickets.push(ticket);
-				console.log(`   ✓ ${ticket}`);
-			} else {
-				missing.push(ticket);
-				console.log(`   ✗ ${ticket}`);
-			}
-		}
+		requiredTickets.forEach(ticket => {
+			const icon = foundSet.has(ticket) ? '✓' : '✗';
+			console.log(`   ${icon} ${ticket}`);
+		});
 
 		console.log(`\nResults:`);
 		console.log(`   Total required: ${requiredTickets.length}`);
@@ -111,7 +131,7 @@ const main = () => {
 		setOutput('result', missing.length === 0 ? 'success' : 'failure');
 
 		if (missing.length === 0) {
-			console.log(`SUCCESS! All tickets are merged to ${TARGET_BRANCH}`);
+			console.log(`SUCCESS! All tickets are merged to ${branch}`);
 			process.exit(0);
 		} else {
 			console.log(`Missing tickets:`);

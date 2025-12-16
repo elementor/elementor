@@ -24,7 +24,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
           fetch-depth: 0
 
       - name: Fetch all branches
@@ -50,7 +49,6 @@ jobs:
           echo "## Configuration" >> $GITHUB_STEP_SUMMARY
           echo "- **Branch:** ${{ github.event.inputs.target_branch }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Tickets input:** ${{ github.event.inputs.tickets_list }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Workflow ref:** ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           RESULT="${{ steps.verify.outputs.result }}"
