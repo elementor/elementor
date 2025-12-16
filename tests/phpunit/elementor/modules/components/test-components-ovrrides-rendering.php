@@ -87,7 +87,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
         // Assert
         $a_elements = $dom->getElementsByTagName('a');
     
-        $this->assertEquals(1, $a_elements->length, 'No <a> tag found');
+        $this->assertEquals(1, $a_elements->length, 'Should have 1 <a> tag');
         
         $button = $a_elements->item(0);
         
@@ -165,7 +165,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
         // Assert
         $a_elements = $dom->getElementsByTagName('a');
     
-        $this->assertEquals(1, $a_elements->length, 'No <a> tag found');
+        $this->assertEquals(1, $a_elements->length, 'Should have 1 <a> tag');
         
         $button = $a_elements->item(0);
         

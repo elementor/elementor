@@ -6,7 +6,6 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
 use Elementor\Modules\Components\Documents\Component;
 use Elementor\Plugin;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
 use Elementor\Core\Base\Document as Component_Document;
 
 
@@ -17,29 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Component_Instance_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ) {
 		$component_id = $value['component_id'];
-		$overrides = $this->get_merged_overrides( $value );
 
-		Render_Context::push( Overridable_Transformer::class, [ 'overrides' => $overrides ] );
-
-		$content = $this->render_content( $component_id );
-
-		Render_Context::pop( Overridable_Transformer::class );
+		$content = $this->get_rendered_content( $component_id );
 
 		return $content;
 	}
 
-	private function get_merged_overrides( $value ): array {
-		$overrides_array = $value['overrides'] ?? [];
-		$overrides = [];
-
-		foreach ( $overrides_array as $override ) {
-			$overrides[ $override['override_key'] ] = $override['override_value'];
-		}
-
-		return $overrides;
-	}
-
-	private function render_content( int $component_id ): string {
+	private function get_rendered_content( int $component_id ): string {
 		$document = Plugin::$instance->documents->get_doc_for_frontend( $component_id );
 
 		if ( ! $this->should_render_content( $document ) ) {
