@@ -16,16 +16,17 @@ function calculateSlideDistance( element, direction ) {
 	const rect = element.getBoundingClientRect();
 	const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
 	const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+	const isLtr = 'ltr' === document.documentElement.dir || 'ltr' === document.body.dir;
 
 	switch ( direction ) {
 		case 'left':
-			return viewportWidth + rect.width;
+			return Math.min( ( isLtr ? rect.left : rect.right ) + rect.width, viewportWidth + rect.width );
 		case 'right':
-			return viewportWidth + rect.width;
+			return Math.min( viewportWidth - ( isLtr ? rect.right : rect.left ) + rect.width, viewportWidth + rect.width );
 		case 'top':
-			return viewportHeight + rect.height;
+			return Math.min( rect.top + rect.height, viewportHeight + rect.height );
 		case 'bottom':
-			return viewportHeight + rect.height;
+			return Math.min( viewportHeight - rect.bottom + rect.height, viewportHeight + rect.height );
 		default:
 			return config.slideDistance;
 	}
