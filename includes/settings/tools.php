@@ -5,6 +5,8 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Kits\Manager;
 use Elementor\Includes\Settings\AdminMenuItems\Tools_Menu_Item;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Tools_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -208,8 +210,14 @@ class Tools extends Settings_Page {
 		parent::__construct();
 
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
+			if ( ! $this->is_editor_one_active() ) {
+				$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
+			}
 		}, Settings::ADMIN_MENU_PRIORITY + 20 );
+
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu( $menu_data_provider );
+		} );
 
 		add_action( 'wp_ajax_elementor_clear_cache', [ $this, 'ajax_elementor_clear_cache' ] );
 		add_action( 'admin_post_elementor_site_clear_cache', [ $this, 'admin_post_elementor_site_clear_cache' ] );
@@ -217,6 +225,14 @@ class Tools extends Settings_Page {
 		add_action( 'wp_ajax_elementor_recreate_kit', [ $this, 'ajax_elementor_recreate_kit' ] );
 
 		add_action( 'admin_post_elementor_rollback', [ $this, 'post_elementor_rollback' ] );
+	}
+
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
+		$menu_data_provider->register_menu( new Editor_One_Tools_Menu() );
+	}
+
+	private function is_editor_one_active(): bool {
+		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	private function get_rollback_versions() {
@@ -276,7 +292,7 @@ class Tools extends Settings_Page {
 					continue;
 				}
 
-				$current_index++;
+				++$current_index;
 				$rollback_versions[] = $version;
 			}
 
@@ -314,7 +330,7 @@ class Tools extends Settings_Page {
 								'label' => esc_html__( 'Elementor Cache', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-clear-cache-button">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), esc_html__( 'Clear Files & Data', 'elementor' ) ),
+									'html' => sprintf( '<button data-nonce="%s" data-id="elementor-tools-general-button-clear-files-data" class="button elementor-button-spinner" id="elementor-clear-cache-button">%s</button>', wp_create_nonce( 'elementor_clear_cache' ), esc_html__( 'Clear Files & Data', 'elementor' ) ),
 									'desc' => esc_html__( "Clear outdated CSS files and cached data in the database (rendered HTML, JS/CSS assets, etc.). We'll regenerate those files the next time someone visits any page on your website.", 'elementor' ),
 								],
 							],
@@ -322,7 +338,7 @@ class Tools extends Settings_Page {
 								'label' => esc_html__( 'Sync Library', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf( '<button data-nonce="%s" class="button elementor-button-spinner" id="elementor-library-sync-button">%s</button>', wp_create_nonce( 'elementor_reset_library' ), esc_html__( 'Sync Library', 'elementor' ) ),
+									'html' => sprintf( '<button data-nonce="%s" data-id="elementor-tools-general-button-sync-library" class="button elementor-button-spinner" id="elementor-library-sync-button">%s</button>', wp_create_nonce( 'elementor_reset_library' ), esc_html__( 'Sync Library', 'elementor' ) ),
 									'desc' => esc_html__( 'Elementor Library automatically updates on a daily basis. You can also manually update it by clicking on the sync button.', 'elementor' ),
 								],
 							],
@@ -352,7 +368,7 @@ class Tools extends Settings_Page {
 								'label' => esc_html__( 'Update Site Address (URL)', 'elementor' ),
 								'field_args' => [
 									'type' => 'raw_html',
-									'html' => sprintf( '<input type="text" name="from" placeholder="https://old.example.com" class="large-text"><input type="text" name="to" placeholder="https://new.example.com" class="large-text"><button data-nonce="%s" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), esc_html__( 'Replace URL', 'elementor' ) ),
+									'html' => sprintf( '<input type="text" name="from" placeholder="https://old.example.com" class="large-text"><input type="text" name="to" placeholder="https://new.example.com" class="large-text"><button data-nonce="%s" data-id="elementor-tools-replace_url-button-replace-url" class="button elementor-button-spinner" id="elementor-replace-url-button">%s</button>', wp_create_nonce( 'elementor_replace_url' ), esc_html__( 'Replace URL', 'elementor' ) ),
 									'desc' => esc_html__( 'Enter your old and new URLs for your WordPress installation, to update all Elementor data (Relevant for domain transfers or move to \'HTTPS\').', 'elementor' ),
 								],
 							],

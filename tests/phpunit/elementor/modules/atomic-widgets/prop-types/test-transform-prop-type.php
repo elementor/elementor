@@ -41,7 +41,7 @@ class Test_Transform_Prop_Type extends TestCase {
 
 		// Assert.
 		$this->assertArrayHasKey( 'available_units', $settings );
-		$this->assertEquals( [ 'px', 'em', 'rem', 'vw', 'vh' ], $settings['available_units'] );
+		$this->assertEquals( [ 'px', 'em', 'rem', 'vw', 'vh', 'ch' ], $settings['available_units'] );
 	}
 
 	public function test_validate__transform_value() {

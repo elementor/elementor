@@ -11,39 +11,43 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	template: '#tmpl-elementor-template-library-save-template',
 
-	ui: {
-		form: '#elementor-template-library-save-template-form',
-		submitButton: '#elementor-template-library-save-template-submit',
-		ellipsisIcon: '.cloud-library-form-inputs .ellipsis-container',
-		foldersList: '.cloud-folder-selection-dropdown ul',
-		foldersDropdown: '.cloud-folder-selection-dropdown',
-		foldersListContainer: '.cloud-folder-selection-dropdown-list',
-		removeFolderSelection: '.source-selections .selected-folder i',
-		selectedFolder: '.selected-folder',
-		selectedFolderText: '.selected-folder-text',
-		hiddenInputSelectedFolder: '#parentId',
-		templateNameInput: '#elementor-template-library-save-template-name',
-		localInput: '.source-selections-input.local',
-		cloudInput: '.source-selections-input.cloud',
-		sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
-		infoIcon: '.source-selections-input.cloud .eicon-info',
-		connect: '#elementor-template-library-connect__badge',
-		connectBadge: '.source-selections-input.cloud .connect-badge',
-		cloudFormInputs: '.cloud-library-form-inputs',
-		upgradeBadge: '.source-selections-input.cloud upgrade-badge',
+	ui() {
+		return {
+			form: '#elementor-template-library-save-template-form',
+			submitButton: '#elementor-template-library-save-template-submit',
+			ellipsisIcon: '.cloud-library-form-inputs .ellipsis-container',
+			foldersList: '.cloud-folder-selection-dropdown ul',
+			foldersDropdown: '.cloud-folder-selection-dropdown',
+			foldersListContainer: '.cloud-folder-selection-dropdown-list',
+			removeFolderSelection: '.source-selections .selected-folder i',
+			selectedFolder: '.selected-folder',
+			selectedFolderText: '.selected-folder-text',
+			hiddenInputSelectedFolder: '#parentId',
+			templateNameInput: '#elementor-template-library-save-template-name',
+			localInput: '.source-selections-input.local',
+			cloudInput: '.source-selections-input.cloud',
+			sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
+			infoIcon: '.source-selections-input.cloud .eicon-info',
+			connect: '#elementor-template-library-connect__badge',
+			connectBadge: '.source-selections-input.cloud .connect-badge',
+			cloudFormInputs: '.cloud-library-form-inputs',
+			upgradeBadge: '.source-selections-input.cloud .upgrade-badge',
+		};
 	},
 
-	events: {
-		'submit @ui.form': 'onFormSubmit',
-		'click @ui.ellipsisIcon': 'onEllipsisIconClick',
-		'click @ui.foldersList': 'onFoldersListClick',
-		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
-		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
-		'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
-		'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
-		'mouseenter @ui.infoIcon': 'showInfoTip',
-		'mouseenter @ui.connect': 'showConnectInfoTip',
-		'input @ui.templateNameInput': 'onTemplateNameInputChange',
+	events() {
+		return {
+			'submit @ui.form': 'onFormSubmit',
+			'click @ui.ellipsisIcon': 'onEllipsisIconClick',
+			'click @ui.foldersList': 'onFoldersListClick',
+			'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
+			'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
+			'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
+			'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
+			'mouseenter @ui.infoIcon': 'showInfoTip',
+			'mouseenter @ui.connectBadge': 'showConnectInfoTip',
+			'input @ui.templateNameInput': 'onTemplateNameInputChange',
+		};
 	},
 
 	onRender() {
@@ -73,11 +77,19 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 	handleOnRender() {
 		setTimeout( () => this.ui.templateNameInput.trigger( 'focus' ) );
 
+		const context = this.getOption( 'context' );
+
 		elementor.templates.eventManager.sendPageViewEvent( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary[ `${ context }Modal` ],
 		} );
 
-		const context = this.getOption( 'context' );
+		const shouldStartSessionRecording = elementorCommon.config.editor_events.session_replays?.cloudTemplates &&
+		! elementor.templates.eventManager.isSessionRecordingInProgress();
+
+		if ( shouldStartSessionRecording ) {
+			elementor.templates.eventManager.startSessionRecording();
+			elementor.templates.eventManager.sendCloudTemplatesSessionRecordingStartEvent();
+		}
 
 		if ( SAVE_CONTEXTS.SAVE === context ) {
 			this.handleSaveAction();
@@ -200,8 +212,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	onFormSubmit( event ) {
 		event.preventDefault();
-
-		elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
 
 		var formData = this.ui.form.elementorSerializeObject(),
 			JSONParams = { remove: [ 'default' ] };
@@ -710,7 +720,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			return;
 		}
 
-		this.$el.off( 'click', this.documentClickHandler );
+		elementor.templates.layout.modalContent.$el.off( 'click', this.documentClickHandler );
 		this.documentClickHandler = null;
 	},
 

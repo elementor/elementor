@@ -6,8 +6,8 @@ use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Inline_Editing_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -58,9 +58,11 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 			'tag' => String_Prop_Type::make()
 				->enum( [ 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ] )
-				->default( 'h2' ),
+				->default( 'h2' )
+				->description( 'The HTML tag for the heading element. Could be h1, h2, up to h6' ),
 
-			'title' => $title_prop,
+			'title' => $title_prop
+				->description( 'The text content of the heading.' ),
 
 			'link' => Link_Prop_Type::make(),
 

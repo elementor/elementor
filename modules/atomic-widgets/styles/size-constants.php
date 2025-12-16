@@ -13,11 +13,14 @@ class Size_Constants {
 	const UNIT_REM = 'rem';
 	const UNIT_VW = 'vw';
 	const UNIT_VH = 'vh';
+	const UNIT_CH = 'ch';
 	const UNIT_AUTO = 'auto';
 	const UNIT_CUSTOM = 'custom';
 	const UNIT_SECOND = 's';
 	const UNIT_MILLI_SECOND = 'ms';
 	const UNIT_ANGLE_DEG = 'deg';
+
+	const DEFAULT_UNIT = self::UNIT_PX;
 
 	const LENGTH_UNITS = [
 		self::UNIT_PX,
@@ -25,6 +28,7 @@ class Size_Constants {
 		self::UNIT_REM,
 		self::UNIT_VW,
 		self::UNIT_VH,
+		self::UNIT_CH,
 	];
 
 	const TIME_UNITS = [ self::UNIT_SECOND, self::UNIT_MILLI_SECOND ];
@@ -47,15 +51,20 @@ class Size_Constants {
 			...self::LENGTH_UNITS,
 			self::UNIT_PERCENT,
 			self::UNIT_AUTO,
+			self::UNIT_CUSTOM,
 		];
 	}
 
 	private static function units_without_auto(): array {
-		return [ ...self::LENGTH_UNITS, self::UNIT_PERCENT ];
+		return [ ...self::LENGTH_UNITS, self::UNIT_PERCENT, self::UNIT_CUSTOM ];
 	}
 
 	public static function layout(): array {
 		return self::units_without_auto();
+	}
+
+	public static function spacing_margin() {
+		return self::all();
 	}
 
 	public static function spacing(): array {
@@ -67,7 +76,7 @@ class Size_Constants {
 	}
 
 	public static function anchor_offset(): array {
-		return self::LENGTH_UNITS;
+		return [ ...self::LENGTH_UNITS, self::UNIT_CUSTOM ];
 	}
 
 	public static function typography(): array {
@@ -79,11 +88,12 @@ class Size_Constants {
 			self::UNIT_PX,
 			self::UNIT_EM,
 			self::UNIT_REM,
+			self::UNIT_CUSTOM,
 		];
 	}
 
 	public static function transition(): array {
-		return self::TIME_UNITS;
+		return [ ...self::TIME_UNITS, self::UNIT_CUSTOM ];
 	}
 
 	public static function border(): array {
@@ -92,7 +102,7 @@ class Size_Constants {
 
 
 	public static function opacity(): array {
-		return [ self::UNIT_PERCENT ];
+		return [ self::UNIT_PERCENT, self::UNIT_CUSTOM ];
 	}
 
 	public static function box_shadow(): array {
@@ -100,7 +110,7 @@ class Size_Constants {
 	}
 
 	public static function rotate(): array {
-		return self::ANGLE_UNITS;
+		return [ ...self::ANGLE_UNITS, self::UNIT_CUSTOM ];
 	}
 
 	public static function transform(): array {
@@ -108,22 +118,22 @@ class Size_Constants {
 	}
 
 	public static function drop_shadow(): array {
-		return self::LENGTH_UNITS;
+		return [ ...self::LENGTH_UNITS, self::UNIT_CUSTOM ];
 	}
 
 	public static function blur_filter(): array {
-		return self::LENGTH_UNITS;
+		return [ ...self::LENGTH_UNITS, self::UNIT_CUSTOM ];
 	}
 
 	public static function intensity_filter(): array {
-		return [ self::UNIT_PERCENT ];
+		return [ self::UNIT_PERCENT, self::UNIT_CUSTOM ];
 	}
 
 	public static function color_tone_filter(): array {
-		return [ self::UNIT_PERCENT ];
+		return [ self::UNIT_PERCENT, self::UNIT_CUSTOM ];
 	}
 
 	public static function hue_rotate_filter(): array {
-		return self::ANGLE_UNITS;
+		return [ ...self::ANGLE_UNITS, self::UNIT_CUSTOM ];
 	}
 }

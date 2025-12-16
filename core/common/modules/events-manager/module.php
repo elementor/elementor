@@ -17,6 +17,8 @@ class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'editor_events';
 
+	const REMOTE_MIXPANEL_CONFIG_URL = 'https://assets.elementor.com/mixpanel/v1/mixpanel.json';
+
 	public function get_name() {
 		return 'events-manager';
 	}
@@ -26,6 +28,10 @@ class Module extends BaseModule {
 			Tracker::is_allow_track() &&
 			! Tracker::has_terms_changed( '2025-07-07' ) &&
 			Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME );
+
+		$mixpanel_config = self::get_remote_mixpanel_config();
+		$session_replays = $mixpanel_config[0]['sessionReplays'] ?? [];
+		$is_flags_enabled = $mixpanel_config[0]['flags'] ?? false;
 
 		$settings = [
 			'can_send_events' => $can_send_events,
@@ -38,6 +44,8 @@ class Module extends BaseModule {
 			'subscription_id' => self::get_subscription_id(),
 			'subscription' => self::get_subscription(),
 			'token' => ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN,
+			'session_replays' => $session_replays,
+			'flags_enabled' => $is_flags_enabled,
 		];
 
 		return $settings;
@@ -75,5 +83,21 @@ class Module extends BaseModule {
 		}
 
 		return json_decode( $license_data['value'], true );
+	}
+
+	private static function get_remote_mixpanel_config() {
+		$data = wp_remote_get( static::REMOTE_MIXPANEL_CONFIG_URL );
+
+		if ( is_wp_error( $data ) ) {
+			return [];
+		}
+
+		$data = json_decode( wp_remote_retrieve_body( $data ), true );
+
+		if ( empty( $data['mixpanel'] ) || ! is_array( $data['mixpanel'] ) ) {
+			return [];
+		}
+
+		return $data['mixpanel'];
 	}
 }

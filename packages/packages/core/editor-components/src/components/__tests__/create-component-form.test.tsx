@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createMockElement, renderWithStore } from 'test-utils';
-import { getElementLabel, replaceElement, type V1Element, type V1ElementData } from '@elementor/editor-elements';
+import { getElementLabel, replaceElement, type V1ElementModelProps } from '@elementor/editor-elements';
 import { __createStore, __dispatch, __registerSlice, type SliceState, type Store } from '@elementor/store';
 import { __getState as getState } from '@elementor/store';
 import { generateUniqueId } from '@elementor/utils';
@@ -14,13 +14,16 @@ import { CreateComponentForm } from '../create-component-form/create-component-f
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../api' );
 jest.mock( '@elementor/utils' );
+jest.mock( '@elementor/editor-v1-adapters' );
 
 const mockGetElementLabel = jest.mocked( getElementLabel );
 const mockGetComponents = jest.mocked( apiClient.get );
 const mockReplaceElement = jest.mocked( replaceElement );
 const mockGenerateUniqueId = jest.mocked( generateUniqueId );
 
-const mockElement: V1Element = createMockElement( { model: { id: 'test-element' } } );
+const mockElement: V1ElementModelProps = createMockElement( { model: { id: 'test-element' } } ).model.toJSON( {
+	remove: [ 'default' ],
+} );
 
 const GENERATED_UID = 'component-1763024534191-ojwasax';
 const EXISTING_COMPONENT_UID = 'component-1763024534191-v9kz881z';
@@ -228,7 +231,7 @@ describe( 'CreateComponentForm', () => {
 				expect.objectContaining( {
 					uid: GENERATED_UID,
 					name: 'My Test Component',
-					elements: [ mockElement.model.toJSON( { remove: [ 'default' ] } ) as V1ElementData ],
+					elements: [ mockElement ],
 				} )
 			);
 
@@ -254,9 +257,14 @@ describe( 'CreateComponentForm', () => {
 					elType: 'widget',
 					widgetType: 'e-component',
 					settings: {
-						component: {
-							$$type: 'component-id',
-							value: GENERATED_UID,
+						component_instance: {
+							$$type: 'component-instance',
+							value: {
+								component_id: {
+									$$type: 'number',
+									value: GENERATED_UID,
+								},
+							},
 						},
 					},
 					editor_settings: {

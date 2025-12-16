@@ -4,7 +4,7 @@ namespace Elementor\Testing\Modules\AtomicWidgets;
 
 use Elementor\Core\DynamicTags\Tag;
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
@@ -16,6 +16,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -76,6 +77,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						'link' => [
 							'href' => 'https://elementor.com',
 							'target' => '_blank',
+							'tag' => 'a',
 						],
 					],
 				]
@@ -336,7 +338,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$this->assertEqualSets( $keys, array_keys( $json ) );
 
 		foreach ( $keys as $key ) {
-			$this->assertEquals( $json[$key]['kind'], $schema[$key]::KIND );
+			// phpcs:ignore
+			$this->assertEquals( $json[$key]['kind'], $schema[$key]::$KIND );
 			$this->assertEquals( $json[$key]['key'], $schema[$key]::get_key() );
 			$this->assertEquals( $json[$key]['default'], $schema[$key]->get_default() );
 			$this->assertEquals( $json[$key]['settings'], $schema[$key]->get_settings() );
@@ -348,7 +351,8 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 		$schema = [
 			'string_prop' => String_Prop_Type::make()
 				->enum( [ 'value-a', 'value-b' ] )
-				->default( 'value-a' ),
+				->default( 'value-a' )
+				->meta( Overridable_Prop_Type::ignore() ),
 		];
 
 		$widget = $this->make_mock_widget( [ 'props_schema' => $schema ] );

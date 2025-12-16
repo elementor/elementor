@@ -18,6 +18,7 @@ class Document_Lock_Manager {
 	private $lock_duration;
 	private const LOCK_USER_META = '_lock_user';
 	private const LOCK_TIME_META = '_lock_time';
+	private const LOCK_EDIT_LOCK_META = '_edit_lock';
 
 	/**
 	 * Initialize the lock manager.
@@ -31,16 +32,12 @@ class Document_Lock_Manager {
 	/**
 	 * Lock a document for the current user.
 	 *
-	 * Sets both WordPress post lock and custom document lock metadata.
-	 * Respects existing locks - will not override locks held by other users.
-	 *
 	 * @param int $document_id The document ID to lock
 	 * @return bool True if lock was successful, false otherwise
 	 */
 	public function lock( $document_id ) {
 		try {
 			$user_id = get_current_user_id();
-
 			if ( ! $user_id ) {
 				return false;
 			}
@@ -50,24 +47,23 @@ class Document_Lock_Manager {
 				return false;
 			}
 
-			$existing_lock = $this->is_locked( $document_id );
-			if ( $existing_lock['is_locked'] && (int) $existing_lock['lock_user'] !== (int) $user_id ) {
+			if ( $this->is_lock_expired( $document_id ) ) {
+				$this->unlock( $document_id );
+			}
+
+			$existing_lock = $this->get_lock_data( $document_id );
+			if ( $existing_lock['locked_by'] ) {
 				return false;
 			}
+
+			update_post_meta( $document_id, self::LOCK_USER_META, $user_id );
+			update_post_meta( $document_id, self::LOCK_TIME_META, time() );
 
 			if ( ! function_exists( 'wp_set_post_lock' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/post.php';
 			}
 
-			if ( ! function_exists( 'wp_set_post_lock' ) ) {
-				require_once ABSPATH . 'wp-admin/includes/admin.php';
-			}
-
 			wp_set_post_lock( $document_id );
-
-			// Set custom document lock metadata
-			update_post_meta( $document_id, self::LOCK_USER_META, $user_id );
-			update_post_meta( $document_id, self::LOCK_TIME_META, time() );
 
 			return true;
 		} catch ( \Exception $e ) {
@@ -76,77 +72,104 @@ class Document_Lock_Manager {
 		}
 	}
 
-
 	/**
 	 * Unlock a document.
 	 *
-	 * Removes both WordPress post lock and custom document lock metadata.
-	 *
 	 * @param int $document_id The document ID to unlock
-	 * @return bool Always returns true
+	 * @return bool True if unlock was successful, false otherwise
 	 */
 	public function unlock( $document_id ) {
-		// Remove WordPress post lock
-		delete_post_meta( $document_id, '_edit_lock' );
+		try {
 
-		// Remove custom document lock metadata
-		delete_post_meta( $document_id, self::LOCK_USER_META );
-		delete_post_meta( $document_id, self::LOCK_TIME_META );
+			delete_post_meta( $document_id, self::LOCK_USER_META );
+			delete_post_meta( $document_id, self::LOCK_TIME_META );
+			delete_post_meta( $document_id, self::LOCK_EDIT_LOCK_META );
 
-		return true;
+			return true;
+		} catch ( \Exception $e ) {
+			error_log( 'Document unlock error: ' . $e->getMessage() );
+			return false;
+		}
 	}
 
 	/**
 	 * Check if a document is currently locked.
 	 *
-	 * Also handles automatic lock expiration based on lock duration.
-	 *
 	 * @param int $document_id The document ID to check
-	 * @return array|false Lock data array if locked, false if not locked
+	 * @return array Lock data with 'locked_by' (int|null), 'locked_at' (int|null)
 	 */
-	public function is_locked( $document_id ) {
-		$lock_user = get_post_meta( $document_id, self::LOCK_USER_META, true );
-		$lock_time = get_post_meta( $document_id, self::LOCK_TIME_META, true );
-		$is_locked = false;
-
-		if ( $lock_user && $lock_time ) {
-			if ( time() - $lock_time > $this->lock_duration ) {
-				$this->unlock( $document_id );
-			} else {
-				$is_locked = true;
-			}
-		}
+	public function get_lock_data( $document_id ) {
+		$locked_by = $this->get_document_lock_user( $document_id );
+		$locked_at = $this->get_document_lock_time( $document_id );
 
 		return [
-			'is_locked'  => $is_locked,
-			'lock_user'  => $lock_user ? $lock_user : null,
-			'lock_time'  => $lock_time ? $lock_time : null,
+			'locked_by' => $locked_by,
+			'locked_at' => $locked_at,
 		];
 	}
 
 	/**
-	 * Extend the lock duration for a document.
+	 * Check if a document lock has expired.
 	 *
-	 * Only works if the current user owns the lock.
+	 * @param int $document_id The document ID to check
+	 * @return bool True if lock exists and is expired, false if not locked or not expired
+	 */
+	public function is_lock_expired( $document_id ) {
+		$lock_data = $this->get_lock_data( $document_id );
+		if ( ! $lock_data['locked_by'] ) {
+			return false;
+		}
+
+		return $lock_data['locked_at'] && (int) $lock_data['locked_at'] + $this->lock_duration <= time();
+	}
+
+	/**
+	 * Extend the lock for a document.
 	 *
-	 * @param int $document_id The document ID to extend lock for
-	 * @return bool True if lock was extended, false otherwise
+	 * @param int $document_id The document ID
+	 * @return bool True if extended successfully, false if not locked or locked by another user
 	 */
 	public function extend_lock( $document_id ) {
-		$user_id = get_current_user_id();
-		$lock_data = $this->is_locked( $document_id );
-
-		if ( ! $lock_data['is_locked'] ) {
+		$lock_data = $this->get_lock_data( $document_id );
+		if ( ! $lock_data['locked_by'] ) {
 			return false;
 		}
 
-		if ( (int) $lock_data['lock_user'] !== (int) $user_id ) {
+		$current_user_id = get_current_user_id();
+		if ( (int) $lock_data['locked_by'] !== (int) $current_user_id ) {
 			return false;
 		}
 
-		// Update lock time to extend duration
 		update_post_meta( $document_id, self::LOCK_TIME_META, time() );
-
 		return true;
+	}
+
+	public function get_document_lock_user( $document_id ) {
+		$lock_user_meta = get_post_meta( $document_id, self::LOCK_USER_META, true );
+		if ( $lock_user_meta ) {
+			return (int) $lock_user_meta;
+		}
+
+		if ( ! function_exists( 'wp_check_post_lock' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/post.php';
+		}
+
+		$wp_lock_user = wp_check_post_lock( $document_id );
+		return $wp_lock_user ? (int) $wp_lock_user : null;
+	}
+
+	/**
+	 * Get the lock time of a document.
+	 *
+	 * @param int $document_id The document ID to check
+	 * @return int|null Lock time, or null if not locked
+	 */
+	public function get_document_lock_time( $document_id ) {
+		$lock_time = get_post_meta( $document_id, self::LOCK_TIME_META, true );
+		if ( $lock_time ) {
+			return (int) $lock_time;
+		}
+
+		return null;
 	}
 }

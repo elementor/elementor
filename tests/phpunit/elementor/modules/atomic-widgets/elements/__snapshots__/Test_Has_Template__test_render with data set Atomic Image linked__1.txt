@@ -1,5 +1,11 @@
 					
-			<a href="https://example.com" class="e-image-link-base" target="_blank" data-id="e8e55a1" data-interactions="&#x5B;&#x5D;">
+			<a
+						href="https://example.com"
+			class="e-image-link-base"
+			target="_blank"
+			data-interaction-id="e8e55a1"
+			data-interactions="&#x5B;&#x5D;"
+		>
 		<img class="e-image-base " 
 		 
 		 

@@ -3,10 +3,10 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Button;
 
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Background_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
@@ -47,7 +47,8 @@ class Atomic_Button extends Atomic_Widget_Base {
 				->default( [] ),
 
 			'text' => String_Prop_Type::make()
-				->default( __( 'Click here', 'elementor' ) ),
+				->default( __( 'Click here', 'elementor' ) )
+				->description( 'The text displayed on the button.' ),
 
 			'link' => Link_Prop_Type::make(),
 

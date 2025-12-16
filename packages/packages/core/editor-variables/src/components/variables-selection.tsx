@@ -10,7 +10,7 @@ import { useVariableType } from '../context/variable-type-context';
 import { useFilteredVariables } from '../hooks/use-prop-variables';
 import { useVariableBoundProp } from '../hooks/use-variable-bound-prop';
 import { type ExtendedVirtualizedItem } from '../types';
-import { trackVariableEvent } from '../utils/tracking';
+import { trackVariableEvent, trackVariablesManagerEvent } from '../utils/tracking';
 import { EmptyState } from './ui/empty-state';
 import { MenuItemContent } from './ui/menu-item-content';
 import { NoSearchResults } from './ui/no-search-results';
@@ -25,10 +25,11 @@ type Props = {
 	onAdd?: () => void;
 	onEdit?: ( key: string ) => void;
 	onSettings?: () => void;
+	disabled?: boolean;
 };
 
-export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }: Props ) => {
-	const { icon: VariableIcon, startIcon, variableType, propTypeUtil } = useVariableType();
+export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, disabled = false }: Props ) => {
+	const { icon: VariableIcon, startIcon, variableType, propTypeUtil, emptyState } = useVariableType();
 
 	const { value: variable, setValue: setVariable, path } = useVariableBoundProp();
 	const [ searchValue, setSearchValue ] = useState( '' );
@@ -64,25 +65,37 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 	if ( onAdd ) {
 		actions.push(
 			<Tooltip key="add" placement="top" title={ CREATE_LABEL }>
-				<IconButton
-					id="add-variable-button"
-					size={ SIZE }
-					onClick={ onAddAndTrack }
-					aria-label={ CREATE_LABEL }
-				>
-					<PlusIcon fontSize={ SIZE } />
-				</IconButton>
+				<span>
+					<IconButton
+						id="add-variable-button"
+						size={ SIZE }
+						onClick={ onAddAndTrack }
+						aria-label={ CREATE_LABEL }
+						disabled={ disabled }
+					>
+						<PlusIcon fontSize={ SIZE } />
+					</IconButton>
+				</span>
 			</Tooltip>
 		);
 	}
 
 	if ( onSettings ) {
+		const handleOpenManager = () => {
+			onSettings();
+			trackVariablesManagerEvent( {
+				action: 'openManager',
+				varType: variableType,
+				controlPath: path.join( '.' ),
+			} );
+		};
+
 		actions.push(
 			<Tooltip key="settings" placement="top" title={ MANAGER_LABEL }>
 				<IconButton
 					id="variables-manager-button"
 					size={ SIZE }
-					onClick={ onSettings }
+					onClick={ handleOpenManager }
 					aria-label={ MANAGER_LABEL }
 				>
 					<SettingsIcon fontSize={ SIZE } />
@@ -110,11 +123,28 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 		setSearchValue( '' );
 	};
 
-	const noVariableTitle = sprintf(
-		/* translators: %s: Variable Type. */
-		__( 'Create your first %s variable', 'elementor' ),
-		variableType
-	);
+	const noVariableTitle = disabled
+		? sprintf(
+				/* translators: %s: Variable Type. */
+				__( 'No %s variables yet', 'elementor' ),
+				variableType
+		  )
+		: sprintf(
+				/* translators: %s: Variable Type. */
+				__( 'Create your first %s variable', 'elementor' ),
+				variableType
+		  );
+
+	const noVariableMessage = disabled
+		? sprintf(
+				/* translators: %s: Variable Type. */
+				__(
+					'Start by creating your first %s variable to apply consistent sizing across elements.',
+					'elementor'
+				),
+				variableType
+		  )
+		: __( 'Variables are saved attributes that you can apply anywhere on your site.', 'elementor' );
 
 	return (
 		<PopoverBody>
@@ -160,13 +190,12 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 			{ ! hasVariables && ! hasNoCompatibleVariables && (
 				<EmptyState
 					title={ noVariableTitle }
-					message={ __(
-						'Variables are saved attributes that you can apply anywhere on your site.',
-						'elementor'
-					) }
+					message={ noVariableMessage }
 					icon={ <VariableIcon fontSize="large" /> }
-					onAdd={ onAdd }
-				/>
+					onAdd={ disabled ? undefined : onAdd }
+				>
+					{ emptyState }
+				</EmptyState>
 			) }
 
 			{ hasNoCompatibleVariables && (
@@ -177,8 +206,10 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 						'elementor'
 					) }
 					icon={ <VariableIcon fontSize="large" /> }
-					onAdd={ onAdd }
-				/>
+					onAdd={ disabled ? undefined : onAdd }
+				>
+					{ emptyState }
+				</EmptyState>
 			) }
 		</PopoverBody>
 	);

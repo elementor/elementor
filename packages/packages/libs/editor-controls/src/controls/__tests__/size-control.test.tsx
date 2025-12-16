@@ -443,7 +443,7 @@ describe( 'SizeControl', () => {
 
 			fireEvent.click( select );
 
-			const expected = [ 'px', '%', 'em', 'rem', 'vw', 'vh' ];
+			const expected = [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'ch' ];
 
 			// Assert.
 			screen.getAllByRole( 'menuitem' ).forEach( ( option, index ) => {
@@ -620,7 +620,13 @@ describe( 'SizeControl', () => {
 			fireEvent.keyUp( sizeInput, { key: 't' } );
 
 			// Assert.
-			expect( setValue ).toHaveBeenLastCalledWith( null );
+			expect( setValue ).toHaveBeenLastCalledWith( {
+				$$type: 'size',
+				value: {
+					size: '',
+					unit: 'custom',
+				},
+			} );
 		} );
 		it( 'should handle default unit when defaultUnit is provided', () => {
 			// Arrange.

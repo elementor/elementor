@@ -8,7 +8,9 @@ register( {
 	elementType: 'e-tabs',
 	id: 'e-tabs-handler',
 	callback: ( { element, settings } ) => {
-		Alpine.data( 'atomicTabs', () => ( {
+		const tabsId = element.dataset.id;
+
+		Alpine.data( `eTabs${ tabsId }`, () => ( {
 			activeTab: settings[ 'default-active-tab' ],
 
 			navigateTabs( { key, target: tab } ) {
@@ -20,7 +22,7 @@ register( {
 				':id'() {
 					const index = getIndex( this.$el, TAB_ELEMENT_TYPE );
 
-					return getTabId( element.dataset.id, index );
+					return getTabId( tabsId, index );
 				},
 				'@click'() {
 					const id = this.$el.id;
@@ -31,12 +33,6 @@ register( {
 					this.navigateTabs( event );
 				},
 				'@keydown.arrow-left.prevent'( event ) {
-					this.navigateTabs( event );
-				},
-				'@keydown.arrow-down.prevent'( event ) {
-					this.navigateTabs( event );
-				},
-				'@keydown.arrow-up.prevent'( event ) {
 					this.navigateTabs( event );
 				},
 				':class'() {
@@ -57,7 +53,7 @@ register( {
 				':aria-controls'() {
 					const index = getIndex( this.$el, TAB_ELEMENT_TYPE );
 
-					return getTabContentId( element.dataset.id, index );
+					return getTabContentId( tabsId, index );
 				},
 			},
 
@@ -65,11 +61,11 @@ register( {
 				':aria-labelledby'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
 
-					return getTabId( element.dataset.id, index );
+					return getTabId( tabsId, index );
 				},
 				'x-show'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
-					const tabId = getTabId( element.dataset.id, index );
+					const tabId = getTabId( tabsId, index );
 
 					const isActive = this.activeTab === tabId;
 
@@ -82,7 +78,7 @@ register( {
 				':id'() {
 					const index = getIndex( this.$el, TAB_CONTENT_ELEMENT_TYPE );
 
-					return getTabContentId( element.dataset.id, index );
+					return getTabContentId( tabsId, index );
 				},
 			},
 		} ) );

@@ -4,8 +4,8 @@ namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
 use Elementor\Core\Files\CSS\Post;
 use Elementor\Elements_Manager;
-use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
@@ -86,7 +86,7 @@ class Test_Atomic_Widgets_Base_Styles extends Elementor_Test_Base {
 			->expects( $this->once() )
 			->method( 'register' )
 			->with(
-				Atomic_Widget_Base_Styles::STYLES_KEY,
+				[ Atomic_Widget_Base_Styles::STYLES_KEY ],
 				$this->callback(function( $callback ) use ( $widget, $element ) {
 					$styles = $callback( [ 1 ] );
 

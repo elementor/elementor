@@ -1,42 +1,8 @@
 import { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from '@elementor/editor-editing-panel';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { stylesRepository } from '@elementor/editor-styles-repository';
 import { z } from '@elementor/schema';
 
 export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEntry ) {
-	server.addTool( {
-		name: 'list-all-global-classes',
-		description: `List all classes applied to a specific element
-
-## When to use this tool:
-- When a user requests to see which classes or global classes exists.
-- When you need the list of global classes to allow the user to select from.
-
-## Prerequisites:
-- Ensure you have the correct element ID for which you want to list the applied classes.
-`,
-		outputSchema: {
-			appliedClasses: z.array(
-				z.object( {
-					id: z.string().describe( 'The ID of the class' ),
-					label: z.string().describe( 'The label of the class' ),
-				} )
-			),
-		},
-		handler: async () => {
-			const globalClassesProvider = stylesRepository.getProviderByKey( 'global-classes' );
-			if ( ! globalClassesProvider ) {
-				throw new Error( 'Global classes provider not found' );
-			}
-			const result: { id: string; label: string }[] = [];
-			globalClassesProvider.actions.all().forEach( ( style ) => {
-				const { id, label } = style;
-				result.push( { id, label } );
-			} );
-			return { appliedClasses: result };
-		},
-	} );
-
 	server.addTool( {
 		schema: {
 			classId: z.string().describe( 'The ID of the class to apply' ),
@@ -50,7 +16,8 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 - When you need to add a specific class to an element's applied classes.
 
 ## Prerequisites:
-- Ensure you have the most up-to-date list of classes applied to the element to avoid duplicates. You can use the "list-applied-classes" tool to fetch the current classes.
+- Ensure you have the most up-to-date list of classes applied to the element to avoid duplicates.
+  List available at always up-to-date resource 'elementor://global-classes'.
 - Make sure you have the correct class ID that you want to apply.`,
 		handler: async ( params ) => {
 			const { classId, elementId } = params;
@@ -73,11 +40,12 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 - When you need to remove a specific class from an element's applied classes.
 
 ## Prerequisites:
-- Ensure you have the most up-to-date list of classes applied to the element to avoid errors. You can use the "list-global-classes" tool to fetch the all classes applied to all elements.
+- Ensure you have the most up-to-date list of classes applied to the element to avoid errors.
+  The list is available at always up-to-date resource 'elementor://global-classes'.
 - Make sure you have the correct class ID that you want to unapply.
 
 <note>
-If the user want to unapply a class by it's name and not ID, please use the "list-global-classes" tool to get the class ID from the name first.
+If the user want to unapply a class by it's name and not ID, retreive the id from the list, available at uri elementor://global-classes
 </note>
 `,
 		handler: async ( params ) => {

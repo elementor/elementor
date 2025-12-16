@@ -2,11 +2,12 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph;
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
+use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -56,7 +57,12 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'paragraph' => $paragraph_prop,
+			'paragraph' => $paragraph_prop
+				->description( 'The text content of the paragraph.' ),
+
+			'tag' => String_Prop_Type::make()
+				->enum( [ 'p', 'span' ] )
+				->default( 'p' ),
 
 			'link' => Link_Prop_Type::make(),
 
@@ -90,9 +96,24 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 	protected function get_settings_controls(): array {
 		return [
+			Select_Control::bind_to( 'tag' )
+				->set_options([
+					[
+						'value' => 'p',
+						'label' => 'p',
+					],
+					[
+						'value' => 'span',
+						'label' => 'span',
+					],
+				])
+				->set_label( __( 'Tag', 'elementor' ) ),
 			Link_Control::bind_to( 'link' )
 				->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
-				->set_label( __( 'Link', 'elementor' ) ),
+				->set_label( __( 'Link', 'elementor' ) )
+				->set_meta( [
+					'topDivider' => true,
+				] ),
 			Text_Control::bind_to( '_cssid' )
 				->set_label( __( 'ID', 'elementor' ) )
 				->set_meta( $this->get_css_id_control_meta() ),

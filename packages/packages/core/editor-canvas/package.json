@@ -1,61 +1,63 @@
 {
-	"name": "@elementor/editor-canvas",
-	"description": "Elementor Editor Canvas",
-	"version": "3.33.0",
-	"private": false,
-	"author": "Elementor Team",
-	"homepage": "https://elementor.com/",
-	"license": "GPL-3.0-or-later",
-	"main": "dist/index.js",
-	"module": "dist/index.mjs",
-	"types": "dist/index.d.ts",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"import": "./dist/index.mjs",
-			"require": "./dist/index.js"
-		},
-		"./package.json": "./package.json"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/elementor/elementor.git",
-		"directory": "packages/core/editor-canvas"
-	},
-	"bugs": {
-		"url": "https://github.com/elementor/elementor/issues"
-	},
-	"publishConfig": {
-		"access": "public"
-	},
-	"scripts": {
-		"build": "tsup --config=../../tsup.build.ts",
-		"dev": "tsup --config=../../tsup.dev.ts"
-	},
-	"peerDependencies": {
-		"react": "^18.3.1",
-		"react-dom": "^18.3.1"
-	},
-	"dependencies": {
-		"@elementor/editor": "3.33.0",
-		"@elementor/editor-controls": "3.33.0",
-		"@elementor/editor-documents": "3.33.0",
-		"@elementor/editor-elements": "3.33.0",
-		"@elementor/editor-interactions": "3.33.0",
-		"@elementor/editor-notifications": "3.33.0",
-		"@elementor/editor-props": "3.33.0",
-		"@elementor/editor-responsive": "3.33.0",
-		"@elementor/editor-styles": "3.33.0",
-		"@elementor/editor-styles-repository": "3.33.0",
-		"@elementor/editor-v1-adapters": "3.33.0",
-		"@elementor/twing": "3.33.0",
-		"@elementor/ui": "1.36.17",
-		"@elementor/utils": "3.33.0",
-		"@elementor/wp-media": "3.33.0",
-		"@floating-ui/react": "^0.27.5",
-		"@wordpress/i18n": "^5.13.0"
-	},
-	"devDependencies": {
-		"tsup": "^8.3.5"
-	}
+  "name": "@elementor/editor-canvas",
+  "description": "Elementor Editor Canvas",
+  "version": "3.35.0",
+  "private": false,
+  "author": "Elementor Team",
+  "homepage": "https://elementor.com/",
+  "license": "GPL-3.0-or-later",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elementor/elementor.git",
+    "directory": "packages/core/editor-canvas"
+  },
+  "bugs": {
+    "url": "https://github.com/elementor/elementor/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup --config=../../tsup.build.ts",
+    "dev": "tsup --config=../../tsup.dev.ts"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "dependencies": {
+    "@elementor/editor": "3.35.0",
+    "@elementor/editor-controls": "3.35.0",
+    "@elementor/editor-documents": "3.35.0",
+    "@elementor/editor-elements": "3.35.0",
+    "@elementor/editor-interactions": "3.35.0",
+    "@elementor/editor-notifications": "3.35.0",
+    "@elementor/editor-props": "3.35.0",
+    "@elementor/editor-responsive": "3.35.0",
+    "@elementor/editor-styles": "3.35.0",
+    "@elementor/editor-styles-repository": "3.35.0",
+    "@elementor/editor-v1-adapters": "3.35.0",
+    "@elementor/editor-mcp": "3.35.0",
+    "@elementor/schema": "3.35.0",
+    "@elementor/twing": "3.35.0",
+    "@elementor/ui": "1.36.17",
+    "@elementor/utils": "3.35.0",
+    "@elementor/wp-media": "3.35.0",
+    "@floating-ui/react": "^0.27.5",
+    "@wordpress/i18n": "^5.13.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5"
+  }
 }

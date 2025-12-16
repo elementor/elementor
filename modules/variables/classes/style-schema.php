@@ -18,6 +18,12 @@ class Style_Schema {
 	public function augment( array $schema ): array {
 		foreach ( $schema as $key => $prop_type ) {
 			$schema[ $key ] = $this->update( $prop_type );
+			if ( method_exists( $prop_type, 'get_meta' ) && method_exists( $schema[ $key ], 'meta' ) ) {
+				$meta = $schema[ $key ]->get_meta() ?? [];
+				foreach ( $meta as $meta_key => $meta_value ) {
+					$schema[ $key ]->meta( $meta_key, $meta_value );
+				}
+			}
 		}
 
 		if ( isset( $schema['font-family'] ) ) {
@@ -49,12 +55,12 @@ class Style_Schema {
 
 	private function update_font_family( String_Prop_Type $prop_type ): Union_Prop_Type {
 		return Union_Prop_Type::create_from( $prop_type )
-			->add_prop_type( Font_Variable_Prop_Type::make() );
+					->add_prop_type( Font_Variable_Prop_Type::make() );
 	}
 
 	private function update_color( Color_Prop_Type $color_prop_type ): Union_Prop_Type {
 		return Union_Prop_Type::create_from( $color_prop_type )
-			->add_prop_type( Color_Variable_Prop_Type::make() );
+					->add_prop_type( Color_Variable_Prop_Type::make() );
 	}
 
 	private function update_array( Array_Prop_Type $array_prop_type ): Array_Prop_Type {

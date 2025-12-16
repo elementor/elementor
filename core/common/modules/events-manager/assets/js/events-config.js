@@ -1,6 +1,8 @@
 const eventsConfig = {
 	triggers: {
 		click: 'Click',
+		rightClick: 'Right Click',
+		doubleClick: 'Double Click',
 		accordionClick: 'Accordion Click',
 		toggleClick: 'Toggle Click',
 		dropdownClick: 'Click Dropdown',
@@ -23,7 +25,10 @@ const eventsConfig = {
 			cloudKitLibrary: 'Cloud Kit Library',
 		},
 		variables: 'Variables Panel',
+		variablesManager: 'Variables Manager',
 		admin: 'WP admin',
+		structurePanel: 'Structure Panel',
+		canvas: 'Canvas',
 	},
 
 	secondaryLocations: {
@@ -98,6 +103,8 @@ const eventsConfig = {
 			pluginToolsTab: 'plugin_tools_tab',
 			pluginWebsiteTemplatesTab: 'plugin_website_templates_tab',
 		},
+		componentsTab: 'Components Tab',
+		canvasElement: 'Canvas Element',
 	},
 
 	elements: {
@@ -164,6 +171,36 @@ const eventsConfig = {
 			add: 'add_new_variable',
 			connect: 'connect_variable',
 			save: 'save_new_variable',
+			openManager: 'open_variables_manager',
+			saveChanges: 'save_variables_changes',
+			delete: 'delete_variable',
+		},
+		components: {
+			createClicked: 'component_create_clicked',
+			createCancelled: 'component_creation_cancelled',
+			created: 'component_created',
+			instanceAdded: 'component_instance_added',
+			edited: 'component_edited',
+		},
+		global_classes: {
+			classApplied: 'class_applied',
+			classRemoved: 'class_removed',
+			classManagerFilterCleared: 'class_manager_filter_cleared',
+			classDeleted: 'class_deleted',
+			classPublishConflict: 'class_publish_conflict',
+			classRenamed: 'class_renamed',
+			classCreated: 'class_created',
+			classManagerSearched: 'class_manager_searched',
+			classManagerFiltersOpened: 'class_manager_filters_opened',
+			classManagerOpened: 'class_manager_opened',
+			classManagerReorder: 'class_manager_reorder',
+			classManagerFilterUsed: 'class_manager_filter_used',
+			classUsageLocate: 'class_usage_locate',
+			classUsageHovered: 'class_usage_hovered',
+			classStyled: 'class_styled',
+			classStateClicked: 'class_state_clicked',
+			classUsageClicked: 'class_usage_clicked',
+			classDuplicate: 'class_duplicate',
 		},
 	},
 };

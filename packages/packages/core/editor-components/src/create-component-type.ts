@@ -7,13 +7,57 @@ import {
 	type ElementView,
 	type LegacyWindow,
 } from '@elementor/editor-canvas';
-import { type NumberPropValue } from '@elementor/editor-props';
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
+import { getCurrentDocument } from '@elementor/editor-documents';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
+import { type ComponentInstancePropValue, type ExtendedWindow } from './types';
+import { switchToComponent } from './utils/switch-to-component';
+import { trackComponentEvent } from './utils/tracking';
+
+type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
+
+export type ContextMenuAction = {
+	name: string;
+	icon: string;
+	title: string | ( () => string );
+	isEnabled: () => boolean;
+	callback: ( _: unknown, eventData: ContextMenuEventData ) => void;
+};
+
+type ContextMenuGroupConfig = {
+	disable: Record< string, string[] >;
+	add: Record< string, { index: number; action: ContextMenuAction } >;
+};
+
+type ContextMenuGroup = {
+	name: string;
+	actions: ContextMenuAction[];
+};
 
 export const TYPE = 'e-component';
+
+const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfig ): ContextMenuGroup[] => {
+	const disableMap = new Map( Object.entries( config.disable ?? {} ) );
+	const addMap = new Map( Object.entries( config.add ?? {} ) );
+
+	return groups.map( ( group ) => {
+		const disabledActions = disableMap.get( group.name ) ?? [];
+		const addConfig = addMap.get( group.name );
+
+		// Update disabled actions
+		const updatedActions = group.actions.map( ( action ) =>
+			disabledActions.includes( action.name ) ? { ...action, isEnabled: () => false } : action
+		);
+
+		// Insert additional action if needed
+		if ( addConfig ) {
+			updatedActions.splice( addConfig.index, 0, addConfig.action );
+		}
+
+		return { ...group, actions: updatedActions };
+	} );
+};
 
 export function createComponentType(
 	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
@@ -26,24 +70,35 @@ export function createComponentType(
 		}
 
 		getView() {
-			return createComponentView( options );
+			return createComponentView( { ...options } );
 		}
 	};
 }
 
 function createComponentView(
-	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
+	options: CreateTemplatedElementTypeOptions & {
+		showLockedByModal?: ( lockedBy: string ) => void;
+	}
 ): typeof ElementView {
 	return class extends createTemplatedElementView( options ) {
-		legacyWindow = window as unknown as LegacyWindow;
+		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
+		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
+
+		isComponentCurrentlyEdited() {
+			const currentDocument = getCurrentDocument();
+
+			return currentDocument?.id === this.getComponentId();
+		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
-			if ( settings.component ) {
-				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection( settings.component );
+			if ( settings.component_instance ) {
+				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection(
+					settings.component_instance
+				);
 
 				this.collection.models.forEach( setInactiveRecursively );
 
-				settings.component = '<template data-children-placeholder></template>';
+				settings.component_instance = '<template data-children-placeholder></template>';
 			}
 
 			return settings;
@@ -67,54 +122,96 @@ function createComponentView(
 		}
 
 		getComponentId() {
-			return this.options?.model?.get( 'settings' )?.get( 'component' ) as NumberPropValue;
+			const componentInstance = (
+				this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstancePropValue
+			 )?.value;
+
+			return componentInstance.component_id.value;
 		}
 
 		getContextMenuGroups() {
 			const filteredGroups = super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
-			const componentId = this.getComponentId()?.value as number;
+			const componentId = this.getComponentId();
 			if ( ! componentId ) {
 				return filteredGroups;
 			}
 
-			const newGroup = [
-				{
-					name: 'edit component',
-					actions: [
-						{
-							name: 'edit component',
-							icon: 'eicon-edit',
-							title: () => __( 'Edit Component', 'elementor' ),
-							isEnabled: () => true,
-							callback: () => this.switchDocument(),
-						},
-					],
+			const newGroups = updateGroups(
+				filteredGroups as ContextMenuGroup[],
+				this._getContextMenuConfig() as unknown as ContextMenuGroupConfig
+			);
+			return newGroups;
+		}
+
+		_getContextMenuConfig() {
+			const legacyWindow = this.legacyWindow || ( window as unknown as LegacyWindow & ExtendedWindow );
+			const elementorWithConfig = legacyWindow.elementor as typeof legacyWindow.elementor & {
+				config?: { user?: { is_administrator?: boolean } };
+			};
+			const isAdministrator = elementorWithConfig.config?.user?.is_administrator ?? false;
+
+			const addedGroup = {
+				general: {
+					index: 1,
+					action: {
+						name: 'edit component',
+						icon: 'eicon-edit',
+						title: () => __( 'Edit Component', 'elementor' ),
+						isEnabled: () => true,
+						callback: ( _: unknown, eventData: ContextMenuEventData ) => this.editComponent( eventData ),
+					},
 				},
-			];
-			return [ ...filteredGroups, ...newGroup ];
+			};
+
+			const disabledGroup = {
+				clipboard: [ 'pasteStyle', 'resetStyle' ],
+			};
+
+			return { add: isAdministrator ? addedGroup : {}, disable: disabledGroup };
 		}
 
 		async switchDocument() {
+			//todo: handle unpublished
 			const { isAllowedToSwitchDocument, lockedBy } = await apiClient.getComponentLockStatus(
-				this.getComponentId()?.value as number
+				this.getComponentId() as number
 			);
 
 			if ( ! isAllowedToSwitchDocument ) {
 				options.showLockedByModal?.( lockedBy || '' );
 			} else {
-				runCommand( 'editor/documents/switch', {
-					id: this.getComponentId()?.value as number,
-					mode: 'autosave',
-					selector: `[data-id="${ this.model.get( 'id' ) }"]`,
-					shouldScroll: false,
-				} );
+				switchToComponent( this.getComponentId(), this.model.get( 'id' ) );
 			}
+		}
+
+		editComponent( { trigger, location, secondaryLocation }: ContextMenuEventData ) {
+			if ( this.isComponentCurrentlyEdited() ) {
+				return;
+			}
+
+			this.switchDocument();
+
+			const editorSettings = this.model.get( 'editor_settings' );
+
+			trackComponentEvent( {
+				action: 'edited',
+				component_uid: editorSettings?.component_uid,
+				component_name: editorSettings?.title,
+				location,
+				secondary_location: secondaryLocation,
+				trigger,
+			} );
 		}
 
 		handleDblClick( e: MouseEvent ) {
 			e.stopPropagation();
 
-			this.switchDocument();
+			const { triggers, locations, secondaryLocations } = this.eventsManagerConfig;
+
+			this.editComponent( {
+				trigger: triggers.doubleClick,
+				location: locations.canvas,
+				secondaryLocation: secondaryLocations.canvasElement,
+			} );
 		}
 
 		events() {
@@ -127,7 +224,7 @@ function createComponentView(
 		attributes() {
 			return {
 				...super.attributes(),
-				'data-elementor-id': this.getComponentId().value,
+				'data-elementor-id': this.getComponentId(),
 			};
 		}
 	};

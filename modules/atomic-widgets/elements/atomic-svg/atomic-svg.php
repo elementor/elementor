@@ -4,7 +4,7 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Svg;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Core\Utils\Svg\Svg_Sanitizer;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Svg_Control;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
@@ -113,6 +113,13 @@ class Atomic_Svg extends Atomic_Widget_Base {
 		}
 
 		$svg->set_attribute( 'fill', 'currentColor' );
+		$svg->set_attribute( 'data-interaction-id', $this->get_id() );
+
+		$interaction_ids = $this->get_interactions_ids();
+		if ( ! empty( $interaction_ids ) ) {
+			$svg->set_attribute( 'data-interactions', wp_json_encode( $interaction_ids ) );
+		}
+
 		$this->add_svg_style( $svg, 'width: 100%; height: 100%; overflow: unset;' );
 
 		$svg_html = ( new Svg_Sanitizer() )->sanitize( $svg->get_updated_html() );
@@ -128,22 +135,34 @@ class Atomic_Svg extends Atomic_Widget_Base {
 
 		$all_attributes = trim( $cssid_attribute . ' ' . $settings['attributes'] );
 
-		$data_attributes = [
-			'data-id' => $this->get_id(),
-			'data-interactions' => json_encode( $this->interactions ),
-		];
+		$data_attributes_string = '';
+
+		if ( ! empty( $interaction_ids ) ) {
+			$data_attributes_string = sprintf(
+				'data-interaction-id="%s" data-interactions="%s"',
+				esc_attr( $this->get_id() ),
+				esc_attr( wp_json_encode( $interaction_ids ) )
+			);
+		}
+
+		$attributes_string = trim( $data_attributes_string . ' ' . $all_attributes );
 
 		if ( isset( $settings['link'] ) && ! empty( $settings['link']['href'] ) ) {
+			$html_tag = Utils::validate_html_tag( $settings['link']['tag'] ?? 'a' );
+			$link_attr = 'button' === $html_tag ? 'data-action-link' : 'href';
 			$svg_html = sprintf(
-				'<a href="%s" target="%s" class="%s" %s>%s</a>',
+				'<%s %s="%s" target="%s" class="%s" %s>%s</%s>',
+				$html_tag,
+				$link_attr,
 				$settings['link']['href'],
 				esc_attr( $settings['link']['target'] ),
 				esc_attr( $classes_string ),
-				implode( ' ', $data_attributes ) . ' ' . $all_attributes,
-				$svg_html
+				$attributes_string,
+				$svg_html,
+				$html_tag
 			);
 		} else {
-			$svg_html = sprintf( '<div class="%s" %s>%s</div>', esc_attr( $classes_string ), implode( ' ', $data_attributes ) . ' ' . $all_attributes, $svg_html );
+			$svg_html = sprintf( '<div class="%s" %s>%s</div>', esc_attr( $classes_string ), $attributes_string, $svg_html );
 		}
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

@@ -1,4 +1,4 @@
-import { replaceElement, type V1Element, type V1ElementModelProps } from '@elementor/editor-elements';
+import { replaceElement, type V1ElementData, type V1ElementModelProps } from '@elementor/editor-elements';
 
 type ComponentInstanceParams = {
 	id?: number;
@@ -6,7 +6,7 @@ type ComponentInstanceParams = {
 	uid: string;
 };
 
-export const replaceElementWithComponent = ( element: V1Element, component: ComponentInstanceParams ) => {
+export const replaceElementWithComponent = ( element: V1ElementData, component: ComponentInstanceParams ) => {
 	replaceElement( {
 		currentElement: element,
 		newElement: createComponentModel( component ),
@@ -19,9 +19,14 @@ export const createComponentModel = ( component: ComponentInstanceParams ): Omit
 		elType: 'widget',
 		widgetType: 'e-component',
 		settings: {
-			component: {
-				$$type: 'component-id',
-				value: component.id ?? component.uid,
+			component_instance: {
+				$$type: 'component-instance',
+				value: {
+					component_id: {
+						$$type: 'number',
+						value: component.id ?? component.uid,
+					},
+				},
 			},
 		},
 		editor_settings: {

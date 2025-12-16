@@ -25,38 +25,22 @@ export const documentElementsInteractionsProvider = createInteractionsProvider( 
 		all: () => {
 			const elements = getElements();
 
-			return elements
-				.filter( ( element ) => {
-					const interactions = element.model.get( 'interactions' );
-					if ( ! interactions ) {
-						return false;
-					}
-					// Check if interactions array has items or string is not empty
-					if ( Array.isArray( interactions ) ) {
-						return interactions.length > 0;
-					}
-					if ( typeof interactions === 'string' ) {
-						try {
-							const parsed = JSON.parse( interactions );
-							return Array.isArray( parsed ) ? parsed.length > 0 : !! parsed;
-						} catch {
-							return !! interactions.trim();
-						}
-					}
+			const filtered = elements.filter( ( element ) => {
+				const interactions = getElementInteractions( element.id );
+				if ( ! interactions ) {
 					return false;
-				} )
-				.map( ( element ) => {
-					const interactions = getElementInteractions( element.id );
-					// data-id in template is always set to element.id (from $this->get_id())
-					// So we use element.id, not _cssid (which is used for id attribute, not data-id)
-					const dataId = String( element.id );
+				}
+				return interactions?.items?.length > 0;
+			} );
 
-					return {
-						elementId: element.id,
-						dataId,
-						interactions: interactions || '[]',
-					};
-				} );
+			return filtered.map( ( element ) => {
+				const interactions = getElementInteractions( element.id );
+				return {
+					elementId: element.id,
+					dataId: element.id,
+					interactions: interactions || { version: 1, items: [] },
+				};
+			} );
 		},
 	},
 } );

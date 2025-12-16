@@ -1,8 +1,8 @@
 === Elementor Website Builder - More Than Just a Page Builder ===
 Contributors: elemntor
 Tags: page builder, editor, landing page, drag-and-drop, elementor,
-Requires at least: 6.6
-Tested up to: 6.8
+Requires at least: 6.7
+Tested up to: 6.9
 Requires PHP: 7.4
 Stable tag: 3.12.1
 License: GPLv3
@@ -347,6 +347,25 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 3.33.4 - 2025-12-08 =
+
+* Security Fix: Improved code security enforcement in Text Path widget
+
+= 3.33.3 - 2025-12-04 =
+
+* Fix: Improved compatibility with WordPress 6.9
+* Fix: Keyboard navigation does not work as expected when setting a CSS ID in Tabs widget
+
+= 3.33.2 - 2025-11-23 =
+
+* Security Fix: Improved code security enforcement in repeater widgets
+* Security Fix: Improved code security enforcement in Star Rating widget
+* Fix: Editor not loading with errors in the console in certain scenarios – Editor V4
+
+= 3.33.1 - 2025-11-17 =
+
+* Security Fix: Improved code security enforcement in Floating Elements
 
 = 3.33.0 - 2025-11-10 =
 

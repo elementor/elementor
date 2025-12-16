@@ -1,34 +1,28 @@
+import { isDocumentDirty } from '@elementor/editor-documents';
+import { type V1ElementData } from '@elementor/editor-elements';
+
 import { apiClient } from '../api';
-import { type Container, type DocumentSaveStatus } from '../types';
+import { type DocumentSaveStatus } from '../types';
 import { getComponentDocumentData, invalidateComponentDocumentData } from '../utils/component-document-data';
 import { getComponentIds } from '../utils/get-component-ids';
 
 type Options = {
 	status: DocumentSaveStatus;
-	container: Container;
+	elements: V1ElementData[];
 };
 
-export async function updateComponentsBeforeSave( { status, container }: Options ) {
+export async function updateComponentsBeforeSave( { status, elements }: Options ) {
 	if ( status !== 'publish' ) {
 		return;
 	}
 
-	const elements = container.model.get( 'elements' ).toJSON();
+	const componentIds = await getComponentIds( elements );
 
-	const componentDocumentData = await Promise.all(
-		getComponentIds( elements ).map( ( id ) => getComponentDocumentData( id ) )
-	);
+	const componentDocumentData = await Promise.all( componentIds.map( getComponentDocumentData ) );
 
 	const draftIds = componentDocumentData
 		.filter( ( document ) => !! document )
-		.filter( ( document ) => {
-			const isDraft = document.status.value === 'draft';
-
-			// When the component is published, but have draft version.
-			const hasAutosave = document.revisions.current_id !== document.id;
-
-			return isDraft || hasAutosave;
-		} )
+		.filter( isDocumentDirty )
 		.map( ( document ) => document.id );
 
 	if ( draftIds.length === 0 ) {
