@@ -38,11 +38,9 @@ export function getKeyframes( effect, type, direction, element = null ) {
 
 	if ( 'fade' === effect ) {
 		if ( hasDirection && isIn ) {
-			keyframes.opacity = [ 0, 0, 1 ];
-			keyframes.opacityOffset = [ 0, 0.6, 1 ];
+			keyframes.opacity = [ 0, 0, 0.2, 0.6, 1 ];
 		} else if ( hasDirection && ! isIn ) {
-			keyframes.opacity = [ 1, 0, 0 ];
-			keyframes.opacityOffset = [ 0, 0.4, 1 ];
+			keyframes.opacity = [ 1, 0.8, 0.4, 0, 0 ];
 		} else {
 			keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
 		}
