@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Active_Menu_Resolver {
 
-	private const HOME_SLUG = 'elementor-home';
+	private const HOME_SLUG = 'elementor';
 
 	private Url_Matcher $url_matcher;
 
@@ -17,7 +17,7 @@ class Active_Menu_Resolver {
 	}
 
 	public function resolve( array $menu_items, array $level4_groups, string $current_page, string $current_uri ): array {
-		if ( Menu_Config::EDITOR_MENU_SLUG === $current_page ) {
+		if ( 'elementor-editor' === $current_page || Menu_Config::EDITOR_MENU_SLUG === $current_page ) {
 			return $this->create_active_state( self::HOME_SLUG );
 		}
 
