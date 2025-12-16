@@ -44,7 +44,6 @@ class Elementor_One_Menu_Manager {
 
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 999 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 1001 );
-		add_action( 'admin_menu', [ $this, 'reorder_elementor_submenu' ], 1002 );
 		add_filter( 'add_menu_classes', [ $this, 'fix_theme_builder_submenu_url' ] );
 		add_action( 'admin_head', [ $this, 'hide_flyout_items_from_wp_menu' ] );
 		add_action( 'admin_head', [ $this, 'hide_legacy_templates_menu' ] );
@@ -90,7 +89,7 @@ class Elementor_One_Menu_Manager {
 			''
 		);
 
-		do_action( 'elementor/editor-one/menu/register_submenus', Menu_Config::ELEMENTOR_MENU_SLUG );
+		do_action( 'elementor/editor-one/menu/register_submenus' );
 	}
 
 	public function render_editor_page(): void {
@@ -108,11 +107,7 @@ class Elementor_One_Menu_Manager {
 	public function fix_theme_builder_submenu_url( $menu ) {
 		global $submenu;
 
-		$menu_slugs = [ Menu_Config::ELEMENTOR_MENU_SLUG ];
-
-		if ( Menu_Config::is_elementor_home_menu_available() ) {
-			$menu_slugs[] = Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
-		}
+		$menu_slugs = [ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ];
 
 		foreach ( $menu_slugs as $menu_slug ) {
 			if ( empty( $submenu[ $menu_slug ] ) ) {
