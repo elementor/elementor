@@ -112,7 +112,9 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 							<ComponentsIcon fontSize="tiny" />
 						</ListItemIcon>
 						<Indicator isActive={ isEditing } isError={ !! error }>
-							{ isEditing ? (
+											<Box display="flex" flex={ 1 } minWidth={ 0 } flexGrow={ 1 }>
+
+						{isEditing ? (
 								<EditableField
 									ref={ editableRef }
 									as={ Typography }
@@ -127,6 +129,7 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 									color="text.primary"
 								/>
 							) }
+							</Box>
 						</Indicator>
 					</Box>
 					<IconButton size="tiny" { ...bindTrigger( popupState ) } aria-label="More actions">
@@ -190,16 +193,14 @@ const validateComponentTitle = ( newTitle: string ) => {
 	return result.errorMessage;
 };
 
-const Indicator = styled( Box, {
-	shouldForwardProp: ( prop: string ) => ! [ 'isActive', 'isError' ].includes( prop ),
-} )< { isActive: boolean; isError: boolean } >( ( { theme, isActive, isError } ) => ( {
+const Indicator = styled( Box )( ( { theme, isActive, isError } ) => ( {
 	display: 'flex',
 	width: '100%',
 	flexGrow: 1,
 	borderRadius: theme.spacing( 0.5 ),
 	border: getIndicatorBorder( { isActive, isError, theme } ),
 	padding: `0 ${ theme.spacing( 1 ) }`,
-	marginLeft: isActive ? theme.spacing( 1 ) : 0,
+	marginLeft: isActive ? theme.spacing( 1 ) : 0, 
 	minWidth: 0,
 } ) );
 
