@@ -6,6 +6,7 @@ import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
 	bindTrigger,
+	Box,
 	IconButton,
 	ListItemButton,
 	ListItemIcon,
@@ -54,24 +55,45 @@ export const ComponentItem = ( { component }: ComponentItemProps ) => {
 	};
 
 	return (
-		<Stack >
+		<Stack>
 			<ListItemButton
 				draggable
 				onDragStart={ () => startDragElementFromPanel( componentModel ) }
 				onDragEnd={ handleDragEnd }
 				shape="rounded"
-				sx={ { border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 } }
-				onClick={ handleClick }
+				sx={ {
+					border: 'solid 1px',
+					borderColor: 'divider',
+					py: 0.5,
+					px: 1,
+					display: 'flex',
+					width: '100%',
+					alignItems: 'center',
+					gap: 1,
+				} }
 			>
-				<ListItemIcon size="tiny">
-					<ComponentsIcon fontSize="tiny" />
-				</ListItemIcon>
-				<EllipsisWithTooltip
-					title={ component.name }
-					as={ Typography }
-					variant="caption"
-					color="text.primary"
-				/>
+				<Box
+					onClick={ handleClick }
+					sx={ {
+						display: 'flex',
+						alignItems: 'center',
+						gap: 1,
+						minWidth: 0,
+						flexGrow: 1,
+					} }
+				>
+					<ListItemIcon size="tiny">
+						<ComponentsIcon fontSize="tiny" />
+					</ListItemIcon>
+					<Box display="flex" flex={ 1 } minWidth={ 0 } flexGrow={ 1 }>
+						<EllipsisWithTooltip
+							title={ component.name }
+							as={ Typography }
+							variant="caption"
+							color="text.primary"
+						/>
+					</Box>
+				</Box>
 				<IconButton size="tiny" { ...bindTrigger( popupState ) } aria-label="More actions">
 					<DotsVerticalIcon fontSize="tiny" />
 				</IconButton>

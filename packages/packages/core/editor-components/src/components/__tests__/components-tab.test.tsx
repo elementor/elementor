@@ -19,7 +19,6 @@ import { SearchProvider } from '../components-tab/search-provider';
 
 jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
-	isDocumentDirty: jest.fn( () => false ),
 } ) );
 
 jest.mock( '@elementor/editor-canvas', () => ( {
