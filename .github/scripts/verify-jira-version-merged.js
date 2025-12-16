@@ -69,45 +69,51 @@ const extractTickets = (commitMessages) => {
 };
 
 const main = () => {
-	const requiredTickets = parseTickets(TICKETS_LIST);
+	try {
+		const requiredTickets = parseTickets(TICKETS_LIST);
 
-	if (requiredTickets.length === 0) {
-		const error = 'No valid tickets found. Expected format: ED-12345 or ED12345 (comma-separated)';
-		console.error(`Error: ${error}`);
-		setErrorOutputs(error);
-		process.exit(1);
-	}
+		if (requiredTickets.length === 0) {
+			const error = 'No valid tickets found. Expected format: ED-12345 or ED12345 (comma-separated)';
+			console.error(`Error: ${error}`);
+			setErrorOutputs(error);
+			process.exit(1);
+		}
 
-	if (!branchExists()) {
-		const error = `Branch "${TARGET_BRANCH}" not found. Make sure branch exists and is fetched.`;
-		console.error(`Error: ${error}`);
-		setErrorOutputs(error);
-		process.exit(1);
-	}
+		if (!branchExists()) {
+			const error = `Branch "${TARGET_BRANCH}" not found. Make sure branch exists and is fetched.`;
+			console.error(`Error: ${error}`);
+			setErrorOutputs(error);
+			process.exit(1);
+		}
 
-	const commits = getBranchCommits();
-	const mergedTickets = extractTickets(commits);
-	const foundTickets = requiredTickets.filter(t => mergedTickets.includes(t));
-	const missing = requiredTickets.filter(t => !mergedTickets.includes(t));
+		const commits = getBranchCommits();
+		const mergedTickets = extractTickets(commits);
+		const foundTickets = requiredTickets.filter(t => mergedTickets.includes(t));
+		const missing = requiredTickets.filter(t => !mergedTickets.includes(t));
 
-	console.log(`Results:`);
-	console.log(`   Total required: ${requiredTickets.length}`);
-	console.log(`   Found: ${foundTickets.length}`);
-	console.log(`   Missing: ${missing.length}\n`);
+		console.log(`Results:`);
+		console.log(`   Total required: ${requiredTickets.length}`);
+		console.log(`   Found: ${foundTickets.length}`);
+		console.log(`   Missing: ${missing.length}\n`);
 
-	setOutput('searched_tickets', requiredTickets.join(', '));
-	setOutput('found_tickets', foundTickets.join(', ') || 'None');
-	setOutput('missing_tickets', missing.length > 0 ? missing.join(', ') : 'None');
-	setOutput('total_required', String(requiredTickets.length));
-	setOutput('total_found', String(foundTickets.length));
-	setOutput('result', missing.length === 0 ? 'success' : 'failure');
+		setOutput('searched_tickets', requiredTickets.join(', '));
+		setOutput('found_tickets', foundTickets.join(', ') || 'None');
+		setOutput('missing_tickets', missing.length > 0 ? missing.join(', ') : 'None');
+		setOutput('total_required', String(requiredTickets.length));
+		setOutput('total_found', String(foundTickets.length));
+		setOutput('result', missing.length === 0 ? 'success' : 'failure');
 
-	if (missing.length === 0) {
-		console.log(`SUCCESS! All tickets are merged to ${TARGET_BRANCH}`);
-		process.exit(0);
-	} else {
-		console.log(`Missing tickets:`);
-		missing.forEach(t => console.log(`   - ${t}`));
+		if (missing.length === 0) {
+			console.log(`SUCCESS! All tickets are merged to ${TARGET_BRANCH}`);
+			process.exit(0);
+		} else {
+			console.log(`Missing tickets:`);
+			missing.forEach(t => console.log(`   - ${t}`));
+			process.exit(1);
+		}
+	} catch (error) {
+		console.error(`Unexpected error: ${error.message}`);
+		setErrorOutputs(`Unexpected error: ${error.message}`);
 		process.exit(1);
 	}
 };

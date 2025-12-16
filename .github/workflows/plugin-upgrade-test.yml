@@ -24,6 +24,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.ref }}
           fetch-depth: 0
 
       - name: Fetch all branches
@@ -49,9 +50,16 @@ jobs:
           echo "## Configuration" >> $GITHUB_STEP_SUMMARY
           echo "- **Branch:** ${{ github.event.inputs.target_branch }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Tickets input:** ${{ github.event.inputs.tickets_list }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Workflow ref:** ${{ github.ref }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [ "${{ steps.verify.outputs.result }}" = "error" ]; then
+          RESULT="${{ steps.verify.outputs.result }}"
+
+          if [ -z "$RESULT" ]; then
+            echo "## ❌ Script Error" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Script failed without setting outputs. Check the job logs for details." >> $GITHUB_STEP_SUMMARY
+          elif [ "$RESULT" = "error" ]; then
             echo "## ❌ Error" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "${{ steps.verify.outputs.error_message }}" >> $GITHUB_STEP_SUMMARY
@@ -71,7 +79,7 @@ jobs:
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "### Missing Tickets" >> $GITHUB_STEP_SUMMARY
-            if [ "${{ steps.verify.outputs.result }}" = "success" ]; then
+            if [ "$RESULT" = "success" ]; then
               echo "✅ None - All tickets are merged!" >> $GITHUB_STEP_SUMMARY
             else
               echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
