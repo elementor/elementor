@@ -11,11 +11,6 @@ on:
         description: 'Target branch to check (e.g., 3.33)'
         required: true
         type: string
-      base_branch:
-        description: 'Base branch for comparison (e.g., main)'
-        required: false
-        default: 'main'
-        type: string
 
 permissions:
   contents: read
@@ -44,7 +39,6 @@ jobs:
         env:
           TICKETS_LIST: ${{ github.event.inputs.tickets_list }}
           TARGET_BRANCH: ${{ github.event.inputs.target_branch }}
-          BASE_BRANCH: ${{ github.event.inputs.base_branch }}
         run: node .github/scripts/verify-jira-version-merged.js
 
       - name: Create Summary
@@ -53,8 +47,7 @@ jobs:
           echo "# Verification Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Configuration" >> $GITHUB_STEP_SUMMARY
-          echo "- **Branch to check:** ${{ github.event.inputs.target_branch }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Base branch:** ${{ github.event.inputs.base_branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch checked:** ${{ github.event.inputs.target_branch }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Tickets Searched For" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

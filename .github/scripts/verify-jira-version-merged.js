@@ -6,13 +6,11 @@ const { execSync } = require('child_process');
 const {
 	TICKETS_LIST,
 	TARGET_BRANCH,
-	BASE_BRANCH = 'main',
 } = process.env;
 
 console.log('Configuration:');
 console.log(`   Tickets: ${TICKETS_LIST || 'NOT SET'}`);
 console.log(`   Target Branch: ${TARGET_BRANCH || 'NOT SET'}`);
-console.log(`   Base Branch: ${BASE_BRANCH || 'NOT SET'}`);
 console.log('');
 
 if (!TICKETS_LIST || !TARGET_BRANCH) {
@@ -30,10 +28,7 @@ const parseTickets = (ticketsStr) => {
 
 const getBranchCommits = () => {
 	try {
-		const baseRef = `remotes/origin/${BASE_BRANCH}`;
-		const targetRef = `remotes/origin/${TARGET_BRANCH}`;
-		
-		const cmd = `git log ${baseRef}..${targetRef} --pretty=format:"%B"`;
+		const cmd = `git log remotes/origin/${TARGET_BRANCH} --pretty=format:"%B"`;
 		const commits = execSync(cmd, { encoding: 'utf-8' });
 		return commits;
 	} catch (error) {
@@ -78,7 +73,6 @@ const main = () => {
 		console.log(`   Found: ${requiredTickets.length - missing.length}`);
 		console.log(`   Missing: ${missing.length}\n`);
 
-		// Write outputs for GitHub summary
 		setOutput('searched_tickets', requiredTickets.join(', '));
 		setOutput('found_tickets', (requiredTickets.filter(t => mergedTickets.includes(t))).join(', ') || 'None');
 		setOutput('missing_tickets', missing.length > 0 ? missing.join(', ') : 'None');
