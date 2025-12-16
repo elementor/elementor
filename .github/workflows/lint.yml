@@ -76,6 +76,8 @@ jobs:
         with:
           php-version: '7.4'
       - name: Install Dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.TEMP_DEVOPS_TOKEN }}"}}'
         run: |
           composer install
           composer require php-parallel-lint/php-parallel-lint

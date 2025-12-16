@@ -51,6 +51,7 @@ jobs:
       job_name: PHPUnit (PR/Merge)
       wordpress_versions: '["latest", "6.8", "6.7"]'
       php_versions: '["7.4", "8.0", "8.1", "8.2", "8.3"]'
+    secrets: inherit
 
   test_schedule:
     uses: ./.github/workflows/phpunit-runner.yml
@@ -59,6 +60,7 @@ jobs:
       job_name: PHPUnit (Nightly)
       wordpress_versions: '["latest", "6.8", "6.7", "nightly"]'
       php_versions: '["7.4", "8.0", "8.1", "8.2", "8.3", "8.4"]'
+    secrets: inherit
 
   test-result:
     needs: [test_pr_group, test_schedule]
