@@ -76,7 +76,7 @@ export const WidgetsTable = ( {
 			<Table size="small">
 				<TableHead>
 					<TableRow>
-						<TableCell sx={ { width: ( theme ) => theme.spacing( 25 ) } }>
+						<TableCell sx={ ( theme ) => ( { width: theme.spacing( 25 ) } ) }>
 							<TableSortLabel
 								active={ isWidgetSorted }
 								direction={ isWidgetSorted ? widgetSortDirection : 'asc' }
@@ -86,7 +86,7 @@ export const WidgetsTable = ( {
 								{ __( 'Element', 'elementor' ) }
 							</TableSortLabel>
 						</TableCell>
-						<TableCell sx={ { width: ( theme ) => theme.spacing( 10 ) } }>
+						<TableCell sx={ ( theme ) => ( { width: theme.spacing( 10 ) } ) }>
 							{ __( 'Status', 'elementor' ) }
 						</TableCell>
 						<TableCell>
