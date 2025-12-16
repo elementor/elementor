@@ -6,6 +6,7 @@ use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
+use Elementor\Modules\Variables\Storage\Exceptions\Type_Mismatch;
 use PHPUnit\Framework\TestCase;
 use InvalidArgumentException;
 
@@ -263,7 +264,7 @@ class Test_Variable extends TestCase {
 		$this->assertEquals( 'global-custom-size-variable', $variable->type() );
 	}
 
-	public function test_apply_changes__does_not_switch_type_for_non_size_types() {
+	public function test_apply_changes__throws_error_for_trying_to_change_type_for_non_size_types() {
 		// Arrange
 		$variable = Variable::from_array( [
 			'id' => 'id-789',
@@ -273,13 +274,13 @@ class Test_Variable extends TestCase {
 			'order' => 3,
 		] );
 
+		// Assert.
+		$this->expectException( Type_Mismatch::class );
+
 		// Act.
 		$variable->apply_changes( [
 			'type' => 'global-font-variable',
 		] );
-
-		// Assert.
-		$this->assertEquals( 'global-color-variable', $variable->type() );
 	}
 }
 
