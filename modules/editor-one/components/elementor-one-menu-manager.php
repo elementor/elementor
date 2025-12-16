@@ -185,9 +185,7 @@ class Elementor_One_Menu_Manager {
 	}
 
 	private function resolve_hidden_submenu_parent( ?string $parent_slug ): string {
-		$default_parent = Menu_Config::is_elementor_home_menu_available()
-			? Menu_Config::ELEMENTOR_HOME_MENU_SLUG
-			: Menu_Config::ELEMENTOR_MENU_SLUG;
+		$default_parent = Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
 
 		if ( empty( $parent_slug ) ) {
 			return $default_parent;
