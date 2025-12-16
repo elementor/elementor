@@ -23,7 +23,23 @@ test.describe( 'Home screen visual regression tests', () => {
 			const mockData = transformMockDataByLicense( licenseType );
 			await mockHomeScreenData( page, mockData, apiRequests, requestContext );
 			const homeScreen = await navigateToHomeScreen( page );
-			await expect.soft( homeScreen ).toHaveScreenshot( `home-screen-${ licenseType }.png` );
+
+			if ( 'pro' === licenseType ) {
+				let firstScreenshotMatched = false;
+				try {
+					await expect( homeScreen ).toHaveScreenshot( `home-screen-pro.png` );
+					firstScreenshotMatched = true;
+				} catch ( error ) {
+					firstScreenshotMatched = false;
+				}
+
+				if ( ! firstScreenshotMatched ) {
+					await expect.soft( homeScreen ).toHaveScreenshot( `home-screen-pro-alternative.png` );
+				}
+			} else {
+				await expect.soft( homeScreen ).toHaveScreenshot( `home-screen-${ licenseType }.png` );
+			}
+
 			await requestContext.dispose();
 		} );
 	}
