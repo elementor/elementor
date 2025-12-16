@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type PropsWithChildren } from 'react';
 import { renderWithTheme } from 'test-utils';
-import { PopoverMenuList, UpgradeButton } from '@elementor/editor-ui';
+import { PopoverMenuList } from '@elementor/editor-ui';
 import { fireEvent, screen } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
 
