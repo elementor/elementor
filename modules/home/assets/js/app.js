@@ -4,7 +4,7 @@ import HomeScreen from './components/home-screen/home-screen';
 import EditorScreen from './components/editor-screen/home-screen';
 
 const App = ( props ) => {
-	const ScreenComponent = props.isEditorOneActive ? EditorScreen : HomeScreen;
+	const ScreenComponent = !! props.homeScreenData?.isEditorOneActive ? EditorScreen : HomeScreen;
 
 	return (
 		<DirectionProvider rtl={ props.isRTL }>
@@ -28,7 +28,6 @@ App.propTypes = {
 	isRTL: PropTypes.bool,
 	adminUrl: PropTypes.string,
 	homeScreenData: PropTypes.object,
-	isEditorOneActive: PropTypes.bool,
 };
 
 ReactUtils.render( (
@@ -36,6 +35,5 @@ ReactUtils.render( (
 		isRTL={ isRTL }
 		homeScreenData={ elementorHomeScreenData }
 		adminUrl={ adminUrl }
-		isEditorOneActive={ elementorHomeScreenData.isEditorOneActive }
 	/>
 ), rootElement );

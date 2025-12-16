@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { PropKeyProvider, PropProvider } from '@elementor/editor-controls';
+import { PropKeyProvider, PropProvider, type SetValueMeta } from '@elementor/editor-controls';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	type ElementID,
@@ -9,7 +9,16 @@ import {
 	updateElementSettings,
 	useElementSettings,
 } from '@elementor/editor-elements';
-import { isDependencyMet, type PropKey, type Props, type PropType, type PropValue } from '@elementor/editor-props';
+import {
+	type CreateOptions,
+	isDependencyMet,
+	migratePropValue,
+	type PropKey,
+	type Props,
+	type PropsSchema,
+	type PropType,
+	type PropValue,
+} from '@elementor/editor-props';
 import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
@@ -33,7 +42,11 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 
 	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) ) as Values;
 
-	const value = { [ bind ]: elementSettingValues?.[ bind ] ?? null };
+	const migratedValues = useMemo( () => {
+		return migratePropValues( elementSettingValues, propsSchema );
+	}, [ elementSettingValues, propsSchema ] );
+
+	const value = { [ bind ]: migratedValues?.[ bind ] ?? null };
 
 	const propType = createTopLevelObjectType( { schema: propsSchema } );
 
@@ -42,15 +55,20 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		propDisplayName,
 	} );
 
-	const setValue = ( newValue: Values ) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const setValue = ( newValue: Values, _: CreateOptions = {}, meta?: SetValueMeta ) => {
+		const { withHistory = true } = meta ?? {};
 		const dependents = extractOrderedDependencies( dependenciesPerTargetMapping );
 
-		const settings = getUpdatedValues( newValue, dependents, propsSchema, elementSettingValues, elementId );
-
-		undoableUpdateElementProp( settings );
+		const settings = getUpdatedValues( newValue, dependents, propsSchema, migratedValues, elementId );
+		if ( withHistory ) {
+			undoableUpdateElementProp( settings );
+		} else {
+			updateElementSettings( { id: elementId, props: settings, withHistory: false } );
+		}
 	};
 
-	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues ).isMet;
+	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, migratedValues ).isMet;
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
@@ -90,4 +108,30 @@ function useUndoableUpdateElementProp( {
 			}
 		);
 	}, [ elementId, propDisplayName ] );
+}
+
+function migratePropValues( values: Values, schema: PropsSchema ): Values {
+	if ( ! values ) {
+		return values;
+	}
+
+	const migrated: Values = {};
+
+	for ( const [ key, value ] of Object.entries( values ) ) {
+		if ( value === null || value === undefined ) {
+			migrated[ key ] = value;
+			continue;
+		}
+
+		const propType = schema[ key ];
+
+		if ( ! propType ) {
+			migrated[ key ] = value;
+			continue;
+		}
+
+		migrated[ key ] = migratePropValue( value, propType ) as Values[ string ];
+	}
+
+	return migrated;
 }

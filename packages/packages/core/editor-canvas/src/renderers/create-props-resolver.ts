@@ -1,10 +1,12 @@
 import {
 	isTransformable,
+	migratePropValue,
 	type PropKey,
 	type Props,
 	type PropsSchema,
 	type PropType,
 	type PropValue,
+	type TransformablePropType,
 } from '@elementor/editor-props';
 
 import { type TransformersRegistry } from '../transformers/create-transformers-registry';
@@ -44,7 +46,7 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 			Object.entries( schema ).map( async ( [ key, type ] ) => {
 				const value = props[ key ] ?? type.default;
 
-				const transformed = await transform( { value, key, type, signal } );
+				const transformed = ( await transform( { value, key, type, signal } ) ) as PropValue;
 
 				onPropResolve?.( { key, value: transformed } );
 
@@ -76,33 +78,43 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 			return null;
 		}
 
-		if ( type.kind === 'union' ) {
-			type = type.prop_types[ value.$$type ];
+		value = migratePropValue( value, type );
 
-			if ( ! type ) {
+		if ( ! isTransformable( value ) ) {
+			return value;
+		}
+
+		let transformablePropType = type;
+
+		if ( type.kind === 'union' ) {
+			transformablePropType = type.prop_types[ value.$$type ];
+
+			if ( ! transformablePropType ) {
 				return null;
 			}
 		}
 
-		if ( value.$$type !== type.key ) {
+		transformablePropType = transformablePropType as TransformablePropType;
+
+		if ( value.$$type !== transformablePropType.key ) {
 			return null;
 		}
 
 		// Warning: This variable is loosely-typed - use with caution.
 		let resolvedValue = value.value;
 
-		if ( type.kind === 'object' ) {
+		if ( transformablePropType.kind === 'object' ) {
 			resolvedValue = await resolve( {
 				props: resolvedValue,
-				schema: type.shape,
+				schema: transformablePropType.shape,
 				signal,
 			} );
 		}
 
-		if ( type.kind === 'array' ) {
+		if ( transformablePropType.kind === 'array' ) {
 			resolvedValue = await Promise.all(
 				resolvedValue.map( ( item: PropValue ) =>
-					transform( { value: item, key, type: type.item_prop_type, depth, signal } )
+					transform( { value: item, key, type: transformablePropType.item_prop_type, depth, signal } )
 				)
 			);
 		}

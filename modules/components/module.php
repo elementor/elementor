@@ -12,6 +12,8 @@ use Elementor\Modules\Components\Transformers\Component_Instance_Transformer;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\Components\Transformers\Overridable_Transformer;
 use Elementor\Core\Base\Document;
+use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
+use Elementor\Modules\Components\Transformers\Override_Transformer;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -104,5 +106,6 @@ class Module extends BaseModule {
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
 		$transformers->register( Component_Instance_Prop_Type::get_key(), new Component_Instance_Transformer() );
 		$transformers->register( Overridable_Prop_Type::get_key(), new Overridable_Transformer() );
+		$transformers->register( Override_Prop_Type::get_key(), new Override_Transformer() );
 	}
 }

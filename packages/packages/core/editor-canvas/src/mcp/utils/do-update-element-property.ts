@@ -5,13 +5,7 @@ import {
 	updateElementSettings,
 	updateElementStyle,
 } from '@elementor/editor-elements';
-import {
-	getPropSchemaFromCache,
-	type PropValue,
-	Schema,
-	stringPropTypeUtil,
-	type TransformablePropValue,
-} from '@elementor/editor-props';
+import { getPropSchemaFromCache, type PropValue, Schema, type TransformablePropValue } from '@elementor/editor-props';
 import { type CustomCss, getStylesSchema } from '@elementor/editor-styles';
 
 type OwnParams = {
@@ -22,9 +16,13 @@ type OwnParams = {
 };
 
 function resolvePropValue( value: unknown, forceKey?: string ): PropValue {
-	return Schema.adjustLlmPropValueSchema( value as PropValue, forceKey );
+	return Schema.adjustLlmPropValueSchema( value as PropValue, { forceKey } );
 }
 
+/*
+ * This function expects a PropValue bag for updaing an element.
+ * Also, it supports updating styles "on-the-way" by checking for "_styles" property with PropValue bag that fits the common style schema.
+ */
 export const doUpdateElementProperty = ( params: OwnParams ) => {
 	const { elementId, propertyName, propertyValue, elementType } = params;
 
@@ -48,12 +46,12 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 		Object.keys( propertyMapValue as Record< string, unknown > ).forEach( ( stylePropName ) => {
 			const propertyRawSchema = styleSchema[ stylePropName ];
 			if ( stylePropName === 'custom_css' ) {
-				let customCssValue = propertyMapValue[ stylePropName ] as object | string;
-				if ( typeof customCssValue === 'object' ) {
-					customCssValue =
-						stringPropTypeUtil.extract( customCssValue ) ||
-						( customCssValue as { value: unknown } )?.value ||
-						'';
+				let customCssValue = propertyMapValue[ stylePropName ] as Record< string, unknown > | string;
+				if ( typeof customCssValue === 'object' && customCssValue && customCssValue.value ) {
+					customCssValue = String( customCssValue.value );
+				}
+				if ( ! customCssValue ) {
+					customCssValue = '';
 				}
 				customCss = {
 					raw: btoa( customCssValue as string ),
@@ -62,7 +60,7 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 			}
 			const isSupported = !! propertyRawSchema;
 			if ( ! isSupported ) {
-				throw new Error( `_styles property ${ stylePropName } is not supported.` );
+				throw new Error( `Style property ${ stylePropName } is not supported.` );
 			}
 			if ( propertyRawSchema.kind === 'plain' ) {
 				if ( typeof ( propertyMapValue as Record< string, unknown > )[ stylePropName ] !== 'object' ) {
@@ -74,6 +72,7 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 				}
 			}
 		} );
+		delete transformedStyleValues.custom_css;
 		const localStyle = Object.values( elementStyles ).find( ( style ) => style.label === 'local' );
 		if ( ! localStyle ) {
 			createElementStyle( {
@@ -118,7 +117,8 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 			) }`
 		);
 	}
-	const value = resolvePropValue( propertyValue );
+	const propKey = elementPropSchema[ propertyName ].key;
+	const value = resolvePropValue( propertyValue, propKey );
 	updateElementSettings( {
 		id: elementId,
 		props: {
