@@ -4,6 +4,7 @@ namespace Elementor\Modules\Components\Transformers;
 
 use Elementor\Modules\AtomicWidgets\PropsResolver\Props_Resolver_Context;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\No_Op_Transformer;
 use Exception;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +17,7 @@ class Overridable_Transformer extends Transformer_Base {
 		return $this->transform_origin_value( $value, $context );
 	}
 
-	private function transform_origin_value( array $value, Props_Resolver_Context $context ): mixed {
+	private function transform_origin_value( array $value, Props_Resolver_Context $context ) {
 		if ( ! isset( $value['origin_value'] ) || ! is_array( $value['origin_value'] ) ) {
 			return null;
 		}
@@ -33,10 +34,15 @@ class Overridable_Transformer extends Transformer_Base {
 			return null;
 		}
 
+		if ( $transformer instanceof No_Op_Transformer ) {
+			return $origin_value;
+		}
+
 		try {
-			return $transformer->transform( $origin_value['value'], $context );
+			$result = $transformer->transform( $origin_value['value'], $context );
+			return $result;
 		} catch ( Exception $e ) {
-			return null;
+			return $origin_value;
 		}
 	}
 }

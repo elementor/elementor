@@ -40,9 +40,9 @@ Prefer this tool over any other tool for building HTML structure, unless you are
    Layout properties, such as margin, padding, align, etc. must be applied using the [${ STYLE_SCHEMA_URI }] PropValues.
 7. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-tabs", "e-div-block", and "e-flexbox".
 8. Make sure that non-container elements do NOT have any nested elements.
-9. **CRITICAL - CUSTOM CSS PRIORITY**: Prefer using style schema. Custom CSS is ONLY FOR UNSUPPRTED schema styles.
+9. **CRITICAL - CUSTOM CSS USAGE**: ALWAYS Prefer using style schema. Custom CSS is ONLY FOR UNSUPPRTED schema styles.
    ALWAYS PRIORITIZE using the style schema PropValues for styling elements as they provide better user experience in the editor, and UI features for the end-users.
-   - Use custom_css only for style attributes that ARE NOT SUPPORTED via the style schema.
+   Use custom_css only for style attributes that ARE NOT SUPPORTED via the style schema AFTER YOU CHECK THE [${ STYLE_SCHEMA_URI }].
 
 # DESIGN VECTORS - Concrete Implementation Guidance
 
@@ -261,11 +261,8 @@ If unsure about the configuration of a specific property, read the schema resour
 
 # About our widgets
 Most widgets are self-explanatory by their name. Here is some additional information.
+Check for available llm_guidance property in the widget's schema.
 SVG elements are bound to internal content upload. Avoid usage, unless you have tools to upload SVG content.
-e-div-block - By default is ceneterd aligned and vertically stacked. To modify this, apply style configuration.
-e-flexbox - By default is a flex container with row direction. To modify this, apply style configuration.
-e-tabs - Auto generates it's own menu. Every child element is represented in a tab. Prefer Use containers as first-level children.
-
 When working with containers, do not forget to apply style schema for controlling the layout.
 
 
