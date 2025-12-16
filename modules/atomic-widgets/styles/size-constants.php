@@ -63,6 +63,10 @@ class Size_Constants {
 		return self::units_without_auto();
 	}
 
+	public static function spacing_margin() {
+		return self::all();
+	}
+
 	public static function spacing(): array {
 		return self::units_without_auto();
 	}
