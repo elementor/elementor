@@ -56,10 +56,10 @@ export const PromotionWidgetsTable = ( { widgets, promotionData } ) => {
 				<Table size="small">
 					<TableHead>
 						<TableRow>
-							<TableCell sx={ { width: ( theme ) => theme.spacing( 25 ) } }>
+							<TableCell sx={ ( theme ) => ( { width: theme.spacing( 25 ) } ) }>
 								{ __( 'Element', 'elementor' ) }
 							</TableCell>
-							<TableCell sx={ { width: ( theme ) => theme.spacing( 10 ) } }>
+							<TableCell sx={ ( theme ) => ( { width: theme.spacing( 10 ) } ) }>
 								{ __( 'Status', 'elementor' ) }
 							</TableCell>
 							<TableCell>
