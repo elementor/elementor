@@ -168,7 +168,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 				<EmptyState
 					title={ sprintf(
 						/* translators: %s: Variable Type. */
-						__( 'No %s variable yet', 'elementor' ),
+						__( 'No %s variables yet', 'elementor' ),
 						variableType
 					) }
 					message={ sprintf(

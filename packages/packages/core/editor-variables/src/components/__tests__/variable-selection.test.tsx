@@ -357,7 +357,7 @@ describe( 'VariablesSelection', () => {
 			);
 
 			// Assert.
-			expect( screen.getByText( /No .* variable yet/i ) ).toBeInTheDocument();
+			expect( screen.getByText( /No .* variables yet/i ) ).toBeInTheDocument();
 			expect(
 				screen.getByText( /Upgrade to create .* variables and maintain consistent element sizing/i )
 			).toBeInTheDocument();
