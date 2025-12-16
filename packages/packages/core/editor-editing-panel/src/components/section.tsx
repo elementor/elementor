@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { type PropsWithChildren, type ReactNode, useId, useRef } from 'react';
+import { CollapseIcon } from '@elementor/editor-ui';
 import { Collapse, Divider, ListItemButton, ListItemText, Stack } from '@elementor/ui';
 
 import { SectionRefContext } from '../contexts/section-context';
 import { useStateByElement } from '../hooks/use-state-by-element';
-import { CollapseIcon } from './collapse-icon';
 import { type CollapsibleValue, getCollapsibleValue } from './collapsible-content';
 
 type Props = PropsWithChildren< {
