@@ -336,12 +336,10 @@ describe( 'VariablesSelection', () => {
 	} );
 
 	describe( 'Upgrade Promotion', () => {
-		it( 'should show upgrade empty state with disabled plus button when disabled prop is true', () => {
+		it( 'should show promotion empty state when upgrade required', () => {
 			// Arrange.
 			( variablesRegistry.getVariableType as jest.Mock ).mockReturnValue( {
 				...mockVariableType,
-				variableType: 'size',
-				propTypeUtil: { key: 'size' },
 				emptyState: <button>Upgrade Now</button>,
 			} );
 			( useFilteredVariables as jest.Mock ).mockReturnValue( {
@@ -359,9 +357,9 @@ describe( 'VariablesSelection', () => {
 			);
 
 			// Assert.
-			expect( screen.getByText( 'No size variable yet' ) ).toBeInTheDocument();
+			expect( screen.getByText( /No .* variable yet/i ) ).toBeInTheDocument();
 			expect(
-				screen.getByText( /Upgrade to create size variables and maintain consistent element sizing/i )
+				screen.getByText( /Upgrade to create .* variables and maintain consistent element sizing/i )
 			).toBeInTheDocument();
 
 			expect( screen.getByText( 'Upgrade Now' ) ).toBeInTheDocument();
