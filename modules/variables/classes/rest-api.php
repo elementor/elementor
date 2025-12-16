@@ -373,7 +373,7 @@ class Rest_Api {
 
 		$type = $request->get_param( 'type' );
 
-		if ( $value ) {
+		if ( $type ) {
 			$overrides['type'] = $type;
 		}
 

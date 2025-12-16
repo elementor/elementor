@@ -20,6 +20,10 @@ class Batch_Processor {
 	public function apply_operation( Variables_Collection $collection, array $operation ): array {
 		$type = $operation['type'];
 
+		// TODO: We need a task to change the key from "type" to "operation_type" so that it does not conflict with variable type key
+		// TODO: Temporally I am unsetting this so that our rule wont throw error by trying to validate
+		unset( $operation['type'] );
+
 		if ( ! isset( self::OPERATION_MAP[ $type ] ) ) {
 			throw new BatchOperationFailed( 'Invalid operation type: ' . esc_html( $type ), [] );
 		}
