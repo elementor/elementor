@@ -210,41 +210,91 @@ class Menu_Data_Provider {
 
 		foreach ( $this->level3_items as $group_items ) {
 			foreach ( $group_items as $item_slug => $item ) {
-				if ( ! $this->is_item_accessible( $item ) ) {
+				if ( ! $this->should_include_flyout_item( $item, $item_slug, $existing_slugs, $excluded_slugs ) ) {
 					continue;
 				}
 
-				if ( in_array( $item_slug, $existing_slugs, true ) ) {
-					continue;
-				}
-
-				if ( in_array( $item_slug, $excluded_slugs, true ) ) {
-					continue;
-				}
-
-				$label = $item->get_label();
-
-				if ( empty( trim( wp_strip_all_tags( $label ) ) ) ) {
-					continue;
-				}
-
-				$has_children = $item->has_children();
-				$group_id = $has_children ? $item->get_group_id() : '';
-
-				$items[] = [
-					'slug' => $item_slug,
-					'label' => $label,
-					'url' => $this->get_item_url( $item_slug, $item->get_parent_slug() ),
-					'icon' => $item->get_icon(),
-					'group_id' => $group_id,
-					'priority' => $item->get_position() ?? 100,
-				];
-
+				$items[] = $this->create_flyout_item_data( $item, $item_slug );
 				$existing_slugs[] = $item_slug;
 			}
 		}
 
 		return $items;
+	}
+
+	private function should_include_flyout_item( Menu_Item_Interface $item, string $item_slug, array $existing_slugs, array $excluded_slugs ): bool {
+		if ( ! $this->is_item_accessible( $item ) ) {
+			return false;
+		}
+
+		if ( in_array( $item_slug, $existing_slugs, true ) ) {
+			return false;
+		}
+
+		if ( in_array( $item_slug, $excluded_slugs, true ) ) {
+			return false;
+		}
+
+		if ( empty( trim( wp_strip_all_tags( $item->get_label() ) ) ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	private function create_flyout_item_data( Menu_Item_Interface $item, string $item_slug ): array {
+		$has_children = $item->has_children();
+		$group_id = $has_children ? $item->get_group_id() : '';
+
+		return [
+			'slug' => $item_slug,
+			'label' => $item->get_label(),
+			'url' => $this->resolve_flyout_item_url( $item, $item_slug ),
+			'icon' => $item->get_icon(),
+			'group_id' => $group_id,
+			'priority' => $item->get_position() ?? 100,
+		];
+	}
+
+	private function resolve_flyout_item_url( Menu_Item_Interface $item, string $item_slug ): string {
+		$url = $this->get_item_url( $item_slug, $item->get_parent_slug() );
+
+		if ( ! $item->has_children() ) {
+			return $url;
+		}
+
+		$children = $this->get_level4_items()[ $item->get_group_id() ] ?? [];
+
+		if ( empty( $children ) ) {
+			return $url;
+		}
+
+		$first_child_url = $this->get_first_accessible_child_url( $children );
+
+		return $first_child_url ?? $url;
+	}
+
+	private function get_first_accessible_child_url( array $children ): ?string {
+		$children_data = [];
+
+		foreach ( $children as $child_slug => $child_item ) {
+			if ( ! $this->is_item_accessible( $child_item ) ) {
+				continue;
+			}
+
+			$children_data[] = [
+				'url' => $this->get_item_url( $child_slug, $child_item->get_parent_slug() ),
+				'priority' => $child_item->get_position() ?? 100,
+			];
+		}
+
+		if ( empty( $children_data ) ) {
+			return null;
+		}
+
+		$this->sort_items_by_priority( $children_data );
+
+		return $children_data[0]['url'];
 	}
 
 	private function build_level4_flyout_groups(): array {

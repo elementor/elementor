@@ -4,7 +4,6 @@ namespace Elementor\Modules\EditorOne\Components;
 
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Modules\EditorOne\Classes\Active_Menu_Resolver;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Url_Matcher;
 use Elementor\Utils;
@@ -15,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Sidebar_Navigation_Handler {
 
-	private const PROMOTION_URL = 'https://go.elementor.com/wp-dash-sidebar-upgrade/';
+	private const PROMOTION_URL = 'https://go.elementor.com/go-pro-upgrade-wp-editor-inner-menu/';
 
 	private Menu_Data_Provider $menu_data_provider;
 
