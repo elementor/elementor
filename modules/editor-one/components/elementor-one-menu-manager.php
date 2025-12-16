@@ -266,8 +266,6 @@ class Elementor_One_Menu_Manager {
 
 		$config = [
 			'editorFlyout' => $this->get_editor_flyout_data(),
-			'useElementorHomeMenu' => Menu_Config::is_elementor_home_menu_available(),
-			'elementorHomeMenuSlug' => Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 		];
 
 		wp_enqueue_script(

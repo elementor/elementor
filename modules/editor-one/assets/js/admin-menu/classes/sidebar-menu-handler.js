@@ -1,10 +1,9 @@
 export class SidebarMenuHandler {
 	constructor() {
-		console.log( 'SidebarMenuHandler' );
 		const elementorHomeMenu = this.findElementorHomeMenu();
-		console.log( 'elementorHomeMenu', elementorHomeMenu );
+
 		if ( elementorHomeMenu ) {
-			this.activeMenu = elementorHomeMenu;
+			this.elementorHomeMenu = elementorHomeMenu;
 			this.deactivateOtherMenus();
 			this.activateElementorMenu();
 			this.highlightSubmenu();
@@ -17,7 +16,7 @@ export class SidebarMenuHandler {
 
 	deactivateOtherMenus() {
 		document.querySelectorAll( '#adminmenu li.wp-has-current-submenu' ).forEach( ( item ) => {
-			if ( item !== this.activeMenu ) {
+			if ( item !== this.elementorHomeMenu ) {
 				item.classList.remove( 'wp-has-current-submenu', 'wp-menu-open', 'selected' );
 				item.classList.add( 'wp-not-current-submenu' );
 
@@ -30,10 +29,10 @@ export class SidebarMenuHandler {
 	}
 
 	activateElementorMenu() {
-		this.activeMenu.classList.remove( 'wp-not-current-submenu' );
-		this.activeMenu.classList.add( 'wp-has-current-submenu', 'wp-menu-open', 'selected' );
+		this.elementorHomeMenu.classList.remove( 'wp-not-current-submenu' );
+		this.elementorHomeMenu.classList.add( 'wp-has-current-submenu', 'wp-menu-open', 'selected' );
 
-		const elementorLink = this.activeMenu.querySelector( ':scope > a.menu-top' );
+		const elementorLink = this.elementorHomeMenu.querySelector( ':scope > a.menu-top' );
 		if ( elementorLink ) {
 			elementorLink.classList.add( 'wp-has-current-submenu', 'wp-menu-open' );
 		}
@@ -54,7 +53,7 @@ export class SidebarMenuHandler {
 			targetSlug = 'elementor-theme-builder';
 		}
 
-		const submenuItems = this.activeMenu.querySelectorAll( '.wp-submenu li' );
+		const submenuItems = this.elementorHomeMenu.querySelectorAll( '.wp-submenu li' );
 
 		submenuItems.forEach( ( item ) => {
 			const link = item.querySelector( 'a' );
