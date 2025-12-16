@@ -220,10 +220,12 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		$default_active_tab = $this->get_atomic_setting( 'default-active-tab' );
 
 		return [
-			'default-active-tab' => $default_active_tab,
-			'get-tab-index' => fn( $tab_id ) => $this->get_tab_index( $tab_id ),
-			'get-tab-content-index' => fn( $tab_content_id ) => $this->get_tab_content_index( $tab_content_id ),
-			'tabs-id' => $this->get_id(),
+			'context' => [
+				'default-active-tab' => $default_active_tab,
+				'get-tab-index' => fn( $tab_id ) => $this->get_tab_index( $tab_id ),
+				'get-tab-content-index' => fn( $tab_content_id ) => $this->get_tab_content_index( $tab_content_id ),
+				'tabs-id' => $this->get_id(),
+			],
 		];
 	}
 
