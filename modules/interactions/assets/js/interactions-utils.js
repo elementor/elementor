@@ -34,9 +34,18 @@ function calculateSlideDistance( element, direction ) {
 export function getKeyframes( effect, type, direction, element = null ) {
 	const isIn = 'in' === type;
 	const keyframes = {};
+	const hasDirection = !! direction;
 
 	if ( 'fade' === effect ) {
-		keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
+		if ( hasDirection && isIn ) {
+			keyframes.opacity = [ 0, 0, 1 ];
+			keyframes.opacityOffset = [ 0, 0.6, 1 ];
+		} else if ( hasDirection && ! isIn ) {
+			keyframes.opacity = [ 1, 0, 0 ];
+			keyframes.opacityOffset = [ 0, 0.4, 1 ];
+		} else {
+			keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
+		}
 	}
 
 	if ( 'scale' === effect ) {
@@ -53,10 +62,6 @@ export function getKeyframes( effect, type, direction, element = null ) {
 		};
 
 		Object.assign( keyframes, movement[ direction ] );
-
-		if ( 'fade' !== effect ) {
-			keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
-		}
 	}
 
 	return keyframes;
