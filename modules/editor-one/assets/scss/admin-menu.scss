@@ -1,5 +1,5 @@
 #adminmenu {
-	--editor-one-flyout-menu-bg: #1d2327;
+	--editor-one-flyout-menu-bg: #2c3338;
 	--editor-one-flyout-menu-bg-level-4: #23282d;
 	--editor-one-flyout-menu-bg-hover: #2c3338;
 	--editor-one-flyout-menu-bg-hover-alt: #32373c;
@@ -20,6 +20,7 @@
 	--editor-one-flyout-menu-padding-x: 12px;
 	--editor-one-flyout-menu-padding-x-large: 28px;
 	--editor-one-flyout-menu-padding-mobile: 15px;
+	--editor-one-flyout-menu-parent-padding: 2px;
 	--editor-one-flyout-menu-border-radius: 4px;
 	--editor-one-flyout-menu-border-radius-sm: 3px;
 	--editor-one-flyout-menu-border-width: 1px;
@@ -40,24 +41,28 @@
 			display: block;
 		}
 
-		> a::after {
-			content: '';
-			display: inline-block;
-			width: 0;
-			height: 0;
-			margin-left: var(--editor-one-flyout-menu-spacing-sm);
-			border-top: var(--editor-one-flyout-menu-arrow-size) solid transparent;
-			border-bottom: var(--editor-one-flyout-menu-arrow-size) solid transparent;
-			border-left: var(--editor-one-flyout-menu-arrow-size) solid currentColor;
-			vertical-align: middle;
-			opacity: var(--editor-one-flyout-menu-arrow-opacity);
+		& > a {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+
+			&::after {
+				content: '';
+				display: inline-block;
+				width: 0;
+				height: 0;
+				margin-inline-start: var(--editor-one-flyout-menu-spacing-sm);
+				border-top: var(--editor-one-flyout-menu-arrow-size) solid transparent;
+				border-bottom: var(--editor-one-flyout-menu-arrow-size) solid transparent;
+				border-inline-start: var(--editor-one-flyout-menu-arrow-size) solid currentColor;
+			}
 		}
 	}
 
 	.elementor-submenu-flyout {
 		position: absolute;
-		left: 100%;
-		top: 0;
+		inset-inline-start: 100%;
+		top: calc(var(--editor-one-flyout-menu-padding-y) * -1 - var(--editor-one-flyout-menu-parent-padding));
 		display: none;
 		min-width: var(--editor-one-flyout-menu-min-width);
 		margin: 0;
@@ -68,21 +73,14 @@
 		z-index: var(--editor-one-flyout-menu-z-index);
 		border-radius: 0 var(--editor-one-flyout-menu-border-radius) var(--editor-one-flyout-menu-border-radius) 0;
 
+		.rtl & {
+			border-radius: var(--editor-one-flyout-menu-border-radius) 0 0 var(--editor-one-flyout-menu-border-radius);
+		}
+
 		&.elementor-level-3 {
 			min-width: var(--editor-one-flyout-menu-min-width);
 			max-height: var(--editor-one-flyout-menu-max-height);
 			overflow: visible;
-		}
-
-		&.elementor-level-4 {
-			min-width: var(--editor-one-flyout-menu-min-width);
-			left: 100%;
-			top: 0;
-			background: var(--editor-one-flyout-menu-bg-level-4);
-
-			li a:hover {
-				background: var(--editor-one-flyout-menu-bg-hover-alt);
-			}
 		}
 
 		&.elementor-submenu-flyout-visible {
@@ -120,20 +118,20 @@
 		}
 
 		.elementor-has-flyout > a {
-			padding-right: var(--editor-one-flyout-menu-padding-x-large);
+			padding-inline-end: var(--editor-one-flyout-menu-padding-x-large);
 
 			&::after {
 				position: absolute;
-				right: var(--editor-one-flyout-menu-arrow-right);
+				inset-inline-end: var(--editor-one-flyout-menu-arrow-right);
 				top: 50%;
 				transform: translateY(-50%);
-				margin-left: 0;
+				margin-inline-start: 0;
 			}
 		}
 
 		.elementor-submenu-flyout {
-			left: 100%;
-			top: 0;
+			inset-inline-start: 100%;
+			top: calc(var(--editor-one-flyout-menu-padding-y) * -1);
 		}
 
 		&::-webkit-scrollbar {
@@ -157,10 +155,11 @@
 
 .folded #adminmenu {
 	.elementor-submenu-flyout {
-		left: var(--editor-one-flyout-menu-folded-left);
+		inset-inline-start: var(--editor-one-flyout-menu-folded-left);
 
 		.elementor-submenu-flyout {
-			left: 100%;
+			inset-inline-start: 100%;
+			top: calc(var(--editor-one-flyout-menu-padding-y) * -1);
 		}
 	}
 }
@@ -169,7 +168,8 @@ body:not(.folded) #adminmenu {
 	.wp-has-current-submenu,
 	.wp-menu-open {
 		.elementor-submenu-flyout {
-			left: 100%;
+			inset-inline-start: 100%;
+			top: calc(var(--editor-one-flyout-menu-padding-y) * -1);
 		}
 	}
 }
@@ -182,11 +182,11 @@ body:not(.folded) #adminmenu {
 			box-shadow: none;
 			background: var(--editor-one-flyout-menu-bg-hover);
 			border-radius: 0;
-			padding-left: var(--editor-one-flyout-menu-padding-mobile);
+			padding-inline-start: var(--editor-one-flyout-menu-padding-mobile);
 
 			.elementor-submenu-flyout {
 				position: static;
-				padding-left: var(--editor-one-flyout-menu-padding-mobile);
+				padding-inline-start: var(--editor-one-flyout-menu-padding-mobile);
 			}
 		}
 
@@ -199,7 +199,7 @@ body:not(.folded) #adminmenu {
 				border-left: var(--editor-one-flyout-menu-arrow-size) solid transparent;
 				border-right: var(--editor-one-flyout-menu-arrow-size) solid transparent;
 				border-top: var(--editor-one-flyout-menu-arrow-size) solid currentColor;
-				margin-left: var(--editor-one-flyout-menu-spacing-sm);
+				margin-inline-start: var(--editor-one-flyout-menu-spacing-sm);
 				position: static;
 				transform: none;
 			}
