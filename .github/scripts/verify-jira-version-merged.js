@@ -53,19 +53,15 @@ const branchExists = () => {
 	}
 };
 
-const getBranchCommits = () => {
-	const cmd = `git log remotes/origin/${TARGET_BRANCH} --pretty=format:"%B"`;
-	return execSync(cmd, { encoding: 'utf-8' });
-};
-
-const extractTickets = (commitMessages) => {
-	const tickets = new Set();
-	const matches = commitMessages.match(/ED-?\d+/g) || [];
-	matches.forEach(t => {
-		const normalized = t.replace(/ED-?(\d+)/, 'ED-$1');
-		tickets.add(normalized);
-	});
-	return Array.from(tickets).sort();
+const ticketExistsInBranch = (ticket) => {
+	try {
+		const ticketNumber = ticket.replace('ED-', '');
+		const cmd = `git log remotes/origin/${TARGET_BRANCH} --grep="ED-${ticketNumber}" --grep="ED${ticketNumber}" --oneline -1`;
+		const result = execSync(cmd, { encoding: 'utf-8', stdio: 'pipe' });
+		return result.trim().length > 0;
+	} catch {
+		return false;
+	}
 };
 
 const main = () => {
@@ -86,12 +82,23 @@ const main = () => {
 			process.exit(1);
 		}
 
-		const commits = getBranchCommits();
-		const mergedTickets = extractTickets(commits);
-		const foundTickets = requiredTickets.filter(t => mergedTickets.includes(t));
-		const missing = requiredTickets.filter(t => !mergedTickets.includes(t));
+		console.log(`Checking ${requiredTickets.length} tickets in branch ${TARGET_BRANCH}...\n`);
 
-		console.log(`Results:`);
+		const foundTickets = [];
+		const missing = [];
+
+		for (const ticket of requiredTickets) {
+			const found = ticketExistsInBranch(ticket);
+			if (found) {
+				foundTickets.push(ticket);
+				console.log(`   ✓ ${ticket}`);
+			} else {
+				missing.push(ticket);
+				console.log(`   ✗ ${ticket}`);
+			}
+		}
+
+		console.log(`\nResults:`);
 		console.log(`   Total required: ${requiredTickets.length}`);
 		console.log(`   Found: ${foundTickets.length}`);
 		console.log(`   Missing: ${missing.length}\n`);
