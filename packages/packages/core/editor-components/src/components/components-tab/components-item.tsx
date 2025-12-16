@@ -54,7 +54,7 @@ export const ComponentItem = ( { component }: ComponentItemProps ) => {
 	};
 
 	return (
-		<Stack p={ 0 }>
+		<Stack >
 			<ListItemButton
 				draggable
 				onDragStart={ () => startDragElementFromPanel( componentModel ) }
