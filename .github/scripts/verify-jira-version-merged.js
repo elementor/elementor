@@ -6,7 +6,7 @@ const { execSync } = require('child_process');
 const {
 	TICKETS_LIST,
 	TARGET_BRANCH,
-	BASE_BRANCH,
+	BASE_BRANCH = 'main',
 } = process.env;
 
 console.log('Configuration:');
@@ -24,7 +24,7 @@ const parseTickets = (ticketsStr) => {
 	return ticketsStr
 		.split(',')
 		.map(t => t.trim().toUpperCase())
-		.map(t => t.replace(/ED(\d+)/, 'ED-$1'))
+		.map(t => t.replace(/ED-?(\d+)/, 'ED-$1'))
 		.filter(t => t.match(/^ED-\d+$/));
 };
 
@@ -47,7 +47,7 @@ const extractTickets = (commitMessages) => {
 	const tickets = new Set();
 	const matches = commitMessages.match(/ED-?\d+/g) || [];
 	matches.forEach(t => {
-		const normalized = t.replace(/ED(\d+)/, 'ED-$1');
+		const normalized = t.replace(/ED-?(\d+)/, 'ED-$1');
 		tickets.add(normalized);
 	});
 	return Array.from(tickets).sort();
@@ -62,6 +62,13 @@ const setOutput = (name, value) => {
 const main = () => {
 	try {
 		const requiredTickets = parseTickets(TICKETS_LIST);
+
+		if (requiredTickets.length === 0) {
+			console.error('Error: No valid tickets found in TICKETS_LIST');
+			console.error('Expected format: ED-12345 or ED12345 (comma-separated)');
+			process.exit(1);
+		}
+
 		const commits = getBranchCommits();
 		const mergedTickets = extractTickets(commits);
 		const missing = requiredTickets.filter(t => !mergedTickets.includes(t));
