@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRef } from 'react';
 import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
 import { dropElement, type DropElementParams, type V1ElementData } from '@elementor/editor-elements';
-import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
+import { EllipsisWithTooltip, EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
 import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -11,10 +11,10 @@ import {
 	IconButton,
 	ListItemButton,
 	ListItemIcon,
-	ListItemText,
 	Menu,
+	Stack,
 	styled,
-	type Theme,
+	Theme,
 	Typography,
 	usePopupState,
 } from '@elementor/ui';
@@ -73,7 +73,7 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 	};
 
 	return (
-		<>
+		<Stack>
 			<WarningInfotip
 				open={ Boolean( error ) }
 				text={ error ?? '' }
@@ -87,37 +87,47 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 					onDragStart={ () => startDragElementFromPanel( componentModel ) }
 					onDragEnd={ handleDragEnd }
 					shape="rounded"
-					sx={ { border: 'solid 1px', borderColor: 'divider', py: 0.5, px: 1 } }
+					sx={ {
+						border: 'solid 1px',
+						borderColor: 'divider',
+						py: 0.5,
+						px: 1,
+						display: 'flex',
+						width: '100%',
+						alignItems: 'center',
+						gap: 1,
+					} }
 				>
 					<Box
-						sx={ { display: 'flex', width: '100%', alignItems: 'center', gap: 1 } }
 						onClick={ handleClick }
+						sx={ {
+							display: 'flex',
+							alignItems: 'center',
+							gap: 1,
+							minWidth: 0,
+							flexGrow: 1,
+						} }
 					>
 						<ListItemIcon size="tiny">
 							<ComponentsIcon fontSize="tiny" />
 						</ListItemIcon>
-						<ListItemText
-							primary={
-								<Box>
-									<Indicator isActive={ isEditing } isError={ !! error }>
-										{ isEditing ? (
-											<EditableField
-												ref={ editableRef }
-												as={ Typography }
-												variant="caption"
-												{ ...getEditableProps() }
-											/>
-										) : (
-											<EllipsisWithTooltip
-												title={ component.name }
-												as={ Typography }
-												variant="caption"
-											/>
-										) }
-									</Indicator>
-								</Box>
-							}
-						/>
+						<Indicator isActive={ isEditing } isError={ !! error }>
+							{ isEditing ? (
+								<EditableField
+									ref={ editableRef }
+									as={ Typography }
+									variant="caption"
+									{ ...getEditableProps() }
+								/>
+							) : (
+								<EllipsisWithTooltip
+									title={ component.name }
+									as={ Typography }
+									variant="caption"
+									color="text.primary"
+								/>
+							) }
+						</Indicator>
 					</Box>
 					<IconButton size="tiny" { ...bindTrigger( popupState ) } aria-label="More actions">
 						<DotsVerticalIcon fontSize="tiny" />
@@ -150,7 +160,7 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 					</Typography>
 				</MenuListItem>
 			</Menu>
-		</>
+		</Stack>
 	);
 };
 
