@@ -9,6 +9,7 @@ import {
 	componentOverridablePropTypeUtil,
 	type ComponentOverridablePropValue,
 } from '../../prop-types/component-overridable-prop-type';
+import { OverridablePropProvider } from '../../provider/overridable-prop-context';
 import { updateOverridablePropOriginValue } from '../../store/actions/update-overridable-prop-origin-value';
 import { selectCurrentComponentId } from '../../store/store';
 
@@ -50,18 +51,20 @@ export function OverridablePropControl< T extends object >( {
 		: undefined;
 
 	return (
-		<PropProvider
-			{ ...propContext }
-			propType={ propType }
-			setValue={ setOverridableValue }
-			value={ { [ bind ]: value.origin_value } }
-			placeholder={ objectPlaceholder }
-		>
-			<PropKeyProvider bind={ bind }>
-				<ControlReplacementsProvider replacements={ [] }>
-					<OriginalControl { ...( props as T ) } />
-				</ControlReplacementsProvider>
-			</PropKeyProvider>
-		</PropProvider>
+		<OverridablePropProvider value={ value }>
+			<PropProvider
+				{ ...propContext }
+				propType={ propType }
+				setValue={ setOverridableValue }
+				value={ { [ bind ]: value.origin_value } }
+				placeholder={ objectPlaceholder }
+			>
+				<PropKeyProvider bind={ bind }>
+					<ControlReplacementsProvider replacements={ [] }>
+						<OriginalControl { ...( props as T ) } />
+					</ControlReplacementsProvider>
+				</PropKeyProvider>
+			</PropProvider>
+		</OverridablePropProvider>
 	);
 }

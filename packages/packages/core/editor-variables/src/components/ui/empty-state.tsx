@@ -9,11 +9,36 @@ type Props = {
 	title: string;
 	message: string;
 	onAdd?: () => void;
+	children?: React.ReactNode;
 };
 
-export const EmptyState = ( { icon, title, message, onAdd }: Props ) => {
+export const EmptyState = ( { icon, title, message, onAdd, children }: Props ) => {
 	const canAdd = usePermissions().canAdd();
+	const displayTitle = canAdd ? title : __( 'There are no variables', 'elementor' );
+	const displayMessage = canAdd
+		? message
+		: __( 'With your current role, you can only connect and detach variables.', 'elementor' );
 
+	return (
+		<Content title={ displayTitle } message={ displayMessage } icon={ icon }>
+			{ children ||
+				( onAdd && (
+					<Button variant="outlined" color="secondary" size="small" onClick={ onAdd }>
+						{ __( 'Create a variable', 'elementor' ) }
+					</Button>
+				) ) }
+		</Content>
+	);
+};
+
+type NoVariablesContentProps = {
+	title: string;
+	message: string;
+	icon?: React.ReactNode;
+	children?: React.ReactNode;
+};
+
+function Content( { title, message, icon, children }: NoVariablesContentProps ) {
 	return (
 		<Stack
 			gap={ 1 }
@@ -25,33 +50,6 @@ export const EmptyState = ( { icon, title, message, onAdd }: Props ) => {
 		>
 			{ icon }
 
-			{ canAdd ? (
-				<>
-					<Content title={ title } message={ message } />
-					{ onAdd && (
-						<Button variant="outlined" color="secondary" size="small" onClick={ onAdd }>
-							{ __( 'Create a variable', 'elementor' ) }
-						</Button>
-					) }
-				</>
-			) : (
-				<Content
-					title={ __( 'There are no variables', 'elementor' ) }
-					message={ __( 'With your current role, you can only connect and detach variables.', 'elementor' ) }
-				/>
-			) }
-		</Stack>
-	);
-};
-
-type NoVariablesContentProps = {
-	title: string;
-	message: string;
-};
-
-function Content( { title, message }: NoVariablesContentProps ) {
-	return (
-		<>
 			<Typography align="center" variant="subtitle2">
 				{ title }
 			</Typography>
@@ -59,6 +57,8 @@ function Content( { title, message }: NoVariablesContentProps ) {
 			<Typography align="center" variant="caption" maxWidth="180px">
 				{ message }
 			</Typography>
-		</>
+
+			{ children }
+		</Stack>
 	);
 }
