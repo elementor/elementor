@@ -185,9 +185,9 @@ class Elementor_One_Menu_Manager {
 	}
 
 	private function resolve_hidden_submenu_parent( ?string $parent_slug ): string {
-		$default_parent = Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
+		$default_parent_slug = Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
 		if ( empty( $parent_slug ) ) {
-			return $default_parent;
+			return $default_parent_slug;
 		}
 
 		$elementor_parent_slugs = [
@@ -201,7 +201,7 @@ class Elementor_One_Menu_Manager {
 		];
 
 		if ( isset( $elementor_parent_slugs[ $parent_slug ] ) ) {
-			return $default_parent;
+			return $default_parent_slug;
 		}
 
 		return $parent_slug;
