@@ -64,5 +64,3 @@ export { updateElementStyle, type UpdateElementStyleArgs } from './styles/update
 export { useElementInteractions } from './hooks/use-element-interactions';
 export { getElementInteractions } from './sync/get-element-interactions';
 export { playElementInteractions, updateElementInteractions } from './sync/update-element-interactions';
-
-export { initMcp as initElementsMcp } from './mcp';

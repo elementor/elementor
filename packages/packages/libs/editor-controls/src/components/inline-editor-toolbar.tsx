@@ -1,17 +1,20 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import {
 	BoldIcon,
 	ItalicIcon,
+	LinkIcon,
 	MinusIcon,
 	StrikethroughIcon,
 	SubscriptIcon,
 	SuperscriptIcon,
 	UnderlineIcon,
 } from '@elementor/icons';
-import { Box, IconButton, ToggleButton, ToggleButtonGroup, Tooltip } from '@elementor/ui';
+import { Box, IconButton, ToggleButton, ToggleButtonGroup, Tooltip, usePopupState } from '@elementor/ui';
 import { type Editor, useEditorState } from '@tiptap/react';
 import { __ } from '@wordpress/i18n';
+
+import { UrlPopover } from './url-popover';
 
 type InlineEditorToolbarProps = {
 	editor: Editor;
@@ -74,6 +77,12 @@ const toolbarButtons = {
 			editor.chain().focus().toggleSubscript().run();
 		},
 	},
+	link: {
+		label: __( 'Link', 'elementor' ),
+		icon: <LinkIcon fontSize="tiny" />,
+		action: 'link',
+		method: null,
+	},
 } as const;
 
 type ToolbarButtonKeys = keyof typeof toolbarButtons;
@@ -85,6 +94,11 @@ const { clear: clearButton, ...formatButtons } = toolbarButtons;
 const possibleFormats: FormatAction[] = Object.keys( formatButtons ) as FormatAction[];
 
 export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
+	const [ urlValue, setUrlValue ] = useState( '' );
+	const [ openInNewTab, setOpenInNewTab ] = useState( false );
+	const toolbarRef = useRef< HTMLDivElement >( null );
+	const popupState = usePopupState( { variant: 'popover' } );
+
 	const editorState = useEditorState( {
 		editor,
 		selector: ( ctx ) => possibleFormats.filter( ( format ) => ctx.editor.isActive( format ) ),
@@ -92,8 +106,40 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 
 	const formatButtonsList = useMemo( () => Object.values( formatButtons ), [] );
 
+	const handleLinkClick = () => {
+		const linkAttrs = editor.getAttributes( 'link' );
+		setUrlValue( linkAttrs.href || '' );
+		setOpenInNewTab( linkAttrs.target === '_blank' );
+		popupState.open( toolbarRef.current );
+	};
+
+	const handleUrlChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
+		setUrlValue( event.target.value );
+	};
+
+	const handleToggleNewTab = () => {
+		setOpenInNewTab( ! openInNewTab );
+	};
+
+	const handleUrlSubmit = () => {
+		if ( urlValue ) {
+			editor
+				.chain()
+				.focus()
+				.setLink( {
+					href: urlValue,
+					target: openInNewTab ? '_blank' : '_self',
+				} )
+				.run();
+		} else {
+			editor.chain().focus().unsetLink().run();
+		}
+		popupState.close();
+	};
+
 	return (
 		<Box
+			ref={ toolbarRef }
 			sx={ {
 				position: 'absolute',
 				top: -40,
@@ -104,6 +150,7 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 				backgroundColor: 'background.paper',
 				boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
 				alignItems: 'center',
+				visibility: popupState.isOpen ? 'hidden' : 'visible',
 			} }
 		>
 			<Tooltip title={ clearButton.label } placement="top">
@@ -125,13 +172,24 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 							value={ button.action }
 							aria-label={ button.label }
 							size="tiny"
-							onClick={ () => button.method( editor ) }
+							onClick={ () =>
+								button.action === 'link' ? handleLinkClick() : button.method?.( editor )
+							}
 						>
 							{ button.icon }
 						</ToggleButton>
 					</Tooltip>
 				) ) }
 			</ToggleButtonGroup>
+			<UrlPopover
+				popupState={ popupState }
+				anchorRef={ toolbarRef }
+				restoreValue={ handleUrlSubmit }
+				value={ urlValue }
+				onChange={ handleUrlChange }
+				openInNewTab={ openInNewTab }
+				onToggleNewTab={ handleToggleNewTab }
+			/>
 		</Box>
 	);
 };
