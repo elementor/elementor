@@ -73,7 +73,7 @@ class Component_Instance extends Atomic_Widget_Base {
 
 	private function get_resolved_overrides(): array {
 		$props = $this->get_settings();
-		$overrides = $props[ 'component_instance' ]['value']['overrides'] ?? null;
+		$overrides = $props['component_instance']['value']['overrides'] ?? null;
 
 		if ( ! $overrides ) {
 			return [];
@@ -82,7 +82,7 @@ class Component_Instance extends Atomic_Widget_Base {
 		$component_schema = $this->get_props_schema();
 		$overrides_schema = $component_schema['component_instance']->get_shape_field( 'overrides' );
 
-		return Render_Props_Resolver::for_settings()->resolve( [ 'overrides' => $overrides_schema ], ['overrides' => $overrides ] );
+		return Render_Props_Resolver::for_settings()->resolve( [ 'overrides' => $overrides_schema ], [ 'overrides' => $overrides ] );
 	}
 
 	private function get_merged_overrides( $value ): array {
