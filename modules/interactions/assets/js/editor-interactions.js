@@ -4,27 +4,11 @@ import { config, getKeyframes, parseAnimationName } from './interactions-utils.j
 
 function applyAnimation( element, animConfig, animateFunc ) {
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction, element );
-	const hasDirection = !! animConfig.direction;
-	const hasFade = 'fade' === animConfig.effect;
-
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
 		easing: config.easing,
 	};
-
-	if ( hasDirection && hasFade ) {
-		const isIn = 'in' === animConfig.type;
-		if ( isIn ) {
-			options.opacity = {
-				easing: 'easeOut',
-			};
-		} else {
-			options.opacity = {
-				easing: 'easeIn',
-			};
-		}
-	}
 
 	const initialKeyframes = {};
 	Object.keys( keyframes ).forEach( ( key ) => {
