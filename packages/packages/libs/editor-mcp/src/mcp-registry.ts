@@ -1,4 +1,4 @@
-import { type z, type z3 } from '@elementor/schema';
+import { z, type z3 } from '@elementor/schema';
 import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
