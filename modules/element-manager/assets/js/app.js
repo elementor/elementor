@@ -4,7 +4,7 @@ import {
 	useEffect,
 	useState,
 	useMemo,
-} from '@wordpress/element';
+} from 'react';
 import {
 	Button,
 	ButtonGroup,
@@ -37,7 +37,7 @@ import {
 	EditButtonDisabled,
 } from './role-permissions';
 
-export const App = () => {
+export const AppLegacy = () => {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ searchKeyword, setSearchKeyword ] = useState( '' );
 	const [ widgets, setWidgets ] = useState( [] );

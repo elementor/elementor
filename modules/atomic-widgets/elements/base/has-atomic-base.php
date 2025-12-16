@@ -456,4 +456,35 @@ trait Has_Atomic_Base {
 
 		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay ] );
 	}
+
+	public function print_content() {
+		$defined_context = $this->define_render_context();
+
+		$context_key = $defined_context['context_key'] ?? static::class;
+		$element_context = $defined_context['context'] ?? [];
+
+		$has_context = ! empty( $element_context );
+
+		if ( ! $has_context ) {
+			return parent::print_content();
+		}
+
+		Render_Context::push( $context_key, $element_context );
+
+		parent::print_content();
+
+		Render_Context::pop( $context_key );
+	}
+
+	/**
+	 * Define the context for element's Render_Context.
+	 *
+	 * @return array{context_key: ?string, context: array}
+	 */
+	protected function define_render_context(): array {
+		return [
+			'context_key' => null,
+			'context' => [],
+		];
+	}
 }
