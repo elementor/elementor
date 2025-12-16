@@ -36,7 +36,7 @@ export const SearchFilters = ( {
 			justifyContent="space-between"
 			sx={ {
 				position: 'sticky',
-				top: 4,
+				top: ( theme ) => theme.spacing( 4 ),
 				backgroundColor: 'var(--e-one-palette-background-default)',
 				zIndex: 10,
 				paddingBlock: 2.5,

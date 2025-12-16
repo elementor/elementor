@@ -95,15 +95,17 @@ $top-bar-height: 50px;
 	&.e-admin-top-bar--active {
 		display: block;
 
-		&~ #wpbody {
-			#wpbody-content {
-				margin-block-start: $top-bar-height;
-			}
+		&::not(.e-admin-top-bar--editor-one) {
+			&~ #wpbody {
+				#wpbody-content {
+					margin-block-start: $top-bar-height;
+				}
 
-			.wrap {
-				// Since there is no h1 tag (in the normal place of the admin page) we need to break the page content under screen options button.
-				clear: both;
-				padding-block-start: 10px;
+				.wrap {
+					// Since there is no h1 tag (in the normal place of the admin page) we need to break the page content under screen options button.
+					clear: both;
+					padding-block-start: 10px;
+				}
 			}
 		}
 
