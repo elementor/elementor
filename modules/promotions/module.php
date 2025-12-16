@@ -92,7 +92,7 @@ class Module extends Base_Module {
 	 * @return string
 	 */
 	public static function get_ally_external_scanner_url(): string {
-		return apply_filters( 'elementor/ally_external_scanner_url', 'https://apps-a11y-web-render-worker-stg.elementor-account.workers.dev/scanner' );
+		return apply_filters( 'elementor/ally_external_scanner_url', 'https://elementor.com/tools/ally-accessibility-checker/scanner' );
 	}
 
 	private function handle_external_redirects() {
