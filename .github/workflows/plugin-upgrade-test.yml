@@ -47,27 +47,35 @@ jobs:
           echo "# Verification Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Configuration" >> $GITHUB_STEP_SUMMARY
-          echo "- **Branch checked:** ${{ github.event.inputs.target_branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${{ github.event.inputs.target_branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tickets input:** ${{ github.event.inputs.tickets_list }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## Tickets Searched For" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.verify.outputs.searched_tickets }}" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## Results" >> $GITHUB_STEP_SUMMARY
-          echo "- **Total required:** ${{ steps.verify.outputs.total_required }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Found merged:** ${{ steps.verify.outputs.total_found }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Tickets Found in Branch" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.verify.outputs.found_tickets }}" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Missing Tickets" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.verify.outputs.result }}" = "success" ]; then
-            echo "✅ None - All tickets are merged!" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.verify.outputs.result }}" = "error" ]; then
+            echo "## ❌ Error" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "${{ steps.verify.outputs.error_message }}" >> $GITHUB_STEP_SUMMARY
           else
+            echo "## Tickets Searched For" >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-            echo "${{ steps.verify.outputs.missing_tickets }}" >> $GITHUB_STEP_SUMMARY
+            echo "${{ steps.verify.outputs.searched_tickets }}" >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "## Results" >> $GITHUB_STEP_SUMMARY
+            echo "- **Total required:** ${{ steps.verify.outputs.total_required }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Found merged:** ${{ steps.verify.outputs.total_found }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Tickets Found in Branch" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "${{ steps.verify.outputs.found_tickets }}" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Missing Tickets" >> $GITHUB_STEP_SUMMARY
+            if [ "${{ steps.verify.outputs.result }}" = "success" ]; then
+              echo "✅ None - All tickets are merged!" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+              echo "${{ steps.verify.outputs.missing_tickets }}" >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            fi
           fi
