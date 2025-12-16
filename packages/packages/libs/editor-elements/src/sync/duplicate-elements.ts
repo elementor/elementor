@@ -11,7 +11,8 @@ type DuplicateElementsParams = {
 	elementIds: string[];
 	title: string;
 	subtitle?: string;
-	onCreate?: ( duplicatedElements: DuplicatedElement[] ) => void;
+	onDuplicateElements?: () => void;
+	onRestoreElements?: () => void;
 };
 
 type DuplicatedElement = {
@@ -33,17 +34,21 @@ export const duplicateElements = ( {
 	elementIds,
 	title,
 	subtitle = __( 'Item duplicated', 'elementor' ),
+	onDuplicateElements,
+	onRestoreElements,
 }: DuplicateElementsParams ): DuplicatedElementsResult => {
 	const undoableDuplicate = undoable(
 		{
 			do: ( { elementIds: elementIdsToDuplicate }: { elementIds: string[] } ): DuplicatedElementsResult => {
+				// Call onCreate before duplicating elements to avoid conflicts between commands
+				onDuplicateElements?.();
 				const duplicatedElements: DuplicatedElement[] = elementIdsToDuplicate.reduce( ( acc, elementId ) => {
 					const originalContainer = getContainer( elementId );
 
 					if ( originalContainer?.parent ) {
 						const duplicatedElement = duplicateElement( {
 							elementId,
-							options: { useHistory: false, clone: true },
+							options: { useHistory: false },
 						} );
 
 						acc.push( {
@@ -62,6 +67,7 @@ export const duplicateElements = ( {
 				return { duplicatedElements };
 			},
 			undo: ( _: { elementIds: string[] }, { duplicatedElements }: DuplicatedElementsResult ) => {
+				onRestoreElements?.();
 				// Delete duplicated elements in reverse order to avoid dependency issues
 				[ ...duplicatedElements ].reverse().forEach( ( { id } ) => {
 					deleteElement( {
@@ -74,6 +80,7 @@ export const duplicateElements = ( {
 				_: { elementIds: string[] },
 				{ duplicatedElements: previousElements }: DuplicatedElementsResult
 			): DuplicatedElementsResult => {
+				onDuplicateElements?.();
 				const duplicatedElements: DuplicatedElement[] = previousElements.reduce( ( acc, previousElement ) => {
 					if ( previousElement.modelToRestore && previousElement.parentContainerId ) {
 						const createdElement = createElement( {
