@@ -1,0 +1,87 @@
+name: Verify Tickets Merged to Branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      tickets_list:
+        description: 'Comma-separated tickets (e.g., ED-20358, ED-21219, ED-21422)'
+        required: true
+        type: string
+      target_branch:
+        description: 'Target branch to check (e.g., 3.33)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  verify-tickets:
+    name: Verify Tickets Merged
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch all branches
+        run: git fetch --all
+
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Verify Tickets
+        id: verify
+        env:
+          TICKETS_LIST: ${{ github.event.inputs.tickets_list }}
+          TARGET_BRANCH: ${{ github.event.inputs.target_branch }}
+        run: node .github/scripts/verify-jira-version-merged.js
+
+      - name: Create Summary
+        if: always()
+        run: |
+          echo "# Verification Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Configuration" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch:** ${{ github.event.inputs.target_branch }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tickets input:** ${{ github.event.inputs.tickets_list }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          RESULT="${{ steps.verify.outputs.result }}"
+
+          if [ -z "$RESULT" ]; then
+            echo "## Script Error" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Script failed without setting outputs. Check the job logs for details." >> $GITHUB_STEP_SUMMARY
+          elif [ "$RESULT" = "error" ]; then
+            echo "## Error" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "${{ steps.verify.outputs.error_message }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## Tickets Searched For" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "${{ steps.verify.outputs.searched_tickets }}" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "## Results" >> $GITHUB_STEP_SUMMARY
+            echo "- **Total required:** ${{ steps.verify.outputs.total_required }}" >> $GITHUB_STEP_SUMMARY
+            echo "- **Found merged:** ${{ steps.verify.outputs.total_found }}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Tickets Found in Branch" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "${{ steps.verify.outputs.found_tickets }}" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Missing Tickets" >> $GITHUB_STEP_SUMMARY
+            if [ "$RESULT" = "success" ]; then
+              echo "None - All tickets are merged!" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+              echo "${{ steps.verify.outputs.missing_tickets }}" >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
