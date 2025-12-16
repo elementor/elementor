@@ -98,7 +98,7 @@ class Variable {
 	}
 
 	/**
-	 * @throws Type_Mismatch
+	 * @throws Type_Mismatch If a type that is not allowed to be changed is passed.
 	 */
 	private function maybe_apply_type( array $data ) {
 		if ( ! array_key_exists( 'type', $data ) ) {
@@ -121,15 +121,10 @@ class Variable {
 			in_array( $current_type, $allowed_types, true ) &&
 			in_array( $target_type, $allowed_types, true );
 
-
 		if ( ! $is_valid_transition ) {
 			throw new Type_Mismatch(
-				sprintf(
-					'Type transition from "%s" to "%s" is not allowed. Only "%s" and "%s" can be switched.',
-					$current_type,
-					$target_type,
-					$custom_size_prop_type,
-					$size_prop_type
+				esc_html(
+					"Type transition from '$current_type' to '$target_type' is not allowed. Only '$custom_size_prop_type' and '$size_prop_type' can be switched.",
 				)
 			);
 		}

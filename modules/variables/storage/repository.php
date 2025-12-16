@@ -343,7 +343,7 @@ class Repository {
 		$variable_data = $operation['variable'];
 
 		if ( ! isset( $db_record['data'][ $id ] ) ) {
-			throw new \Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound( 'Variable not found' );
+			throw new RecordNotFound( 'Variable not found' );
 		}
 
 		$updated_fields = $this->extract_from( $variable_data, [ 'label', 'value', 'order' ] );
