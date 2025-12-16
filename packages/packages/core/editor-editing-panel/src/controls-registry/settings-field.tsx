@@ -55,20 +55,15 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		propDisplayName,
 	} );
 
-<<<<<<< HEAD
-	const setValue = ( newValue: Values ) => {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	const setValue = ( newValue: Values, _: CreateOptions = {}, meta?: SetValueMeta ) => {
+		const { withHistory = true } = meta ?? {};
 		const dependents = extractOrderedDependencies(
 			bind,
 			propsSchema,
 			migratedValues,
 			dependenciesPerTargetMapping
 		);
-=======
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const setValue = ( newValue: Values, _: CreateOptions = {}, meta?: SetValueMeta ) => {
-		const { withHistory = true } = meta ?? {};
-		const dependents = extractOrderedDependencies( dependenciesPerTargetMapping );
->>>>>>> 1c98a39423 (Fix: Atomic tabs duplicate dont change default active tab [ED-22030] (#33820))
 
 		const settings = getUpdatedValues( newValue, dependents, propsSchema, migratedValues, elementId );
 		if ( withHistory ) {
