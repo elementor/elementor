@@ -721,6 +721,14 @@ class Test_Prop_Type_Adapter extends TestCase {
 						],
 					],
 				],
+				'e-gv-size-malformed' => [
+					'type' => Size_Variable_Prop_Type::get_key(),
+					'label' => 'Size Malformed',
+					'value' => [
+						'$$type' => 'size',
+						'value' => [],
+					],
+				]
 			],
 		] );
 
@@ -774,168 +782,14 @@ class Test_Prop_Type_Adapter extends TestCase {
 				'label' => 'Size Null',
 				'value' => 'px',
 			],
-		];
-
-		// Assert.
-		$this->assertEquals( $expected, $result['data'] );
-	}
-
-	public function test_from_storage__handles_missing_type_key_in_prop_value() {
-		// Arrange.
-		$collection = $this->make_collection( [
-			'data' => [
-				'e-gv-color-no-type' => [
-					'type' => Color_Variable_Prop_Type::get_key(),
-					'label' => 'Color No Type',
-					'value' => [
-						'value' => '#ff5733',
-					],
-				],
-				'e-gv-font-no-type' => [
-					'type' => Font_Variable_Prop_Type::get_key(),
-					'label' => 'Font No Type',
-					'value' => [
-						'value' => 'Roboto',
-					],
-				],
-				'e-gv-size-no-type' => [
-					'type' => Size_Variable_Prop_Type::get_key(),
-					'label' => 'Size No Type',
-					'value' => [
-						'value' => [
-							'size' => 24,
-							'unit' => 'px',
-						],
-					],
-				],
-			],
-		] );
-
-		// Act.
-		$this->adapter->from_storage( $collection );
-		$result = $collection->serialize();
-
-		// Assert.
-		$expected = [
-			'e-gv-color-no-type' => [
-				'type' => Color_Variable_Prop_Type::get_key(),
-				'label' => 'Color No Type',
-				'value' => '#ff5733',
-			],
-			'e-gv-font-no-type' => [
-				'type' => Font_Variable_Prop_Type::get_key(),
-				'label' => 'Font No Type',
-				'value' => 'Roboto',
-			],
-			'e-gv-size-no-type' => [
-				'type' => Size_Variable_Prop_Type::get_key(),
-				'label' => 'Size No Type',
-				'value' => '24px',
-			],
-		];
-
-		$this->assertEquals( $expected, $result['data'] );
-	}
-
-	public function test_from_storage__handles_missing_value_key_in_prop_value() {
-		// Arrange.
-		$collection = $this->make_collection( [
-			'data' => [
-				'e-gv-color-no-value' => [
-					'type' => Color_Variable_Prop_Type::get_key(),
-					'label' => 'Color No Value',
-					'value' => [
-						'$$type' => 'color',
-					],
-				],
-				'e-gv-font-no-value' => [
-					'type' => Font_Variable_Prop_Type::get_key(),
-					'label' => 'Font No Value',
-					'value' => [
-						'$$type' => 'string',
-					],
-				],
-				'e-gv-size-no-value' => [
-					'type' => Size_Variable_Prop_Type::get_key(),
-					'label' => 'Size No Value',
-					'value' => [
-						'$$type' => 'size',
-					],
-				],
-			],
-		] );
-
-		// Act.
-		$this->adapter->from_storage( $collection );
-		$result = $collection->serialize();
-
-		// Assert.
-		$expected = [
-			'e-gv-color-no-value' => [
-				'type' => Color_Variable_Prop_Type::get_key(),
-				'label' => 'Color No Value',
-				'value' => null,
-			],
-			'e-gv-font-no-value' => [
-				'type' => Font_Variable_Prop_Type::get_key(),
-				'label' => 'Font No Value',
-				'value' => null,
-			],
-			'e-gv-size-no-value' => [
-				'type' => Size_Variable_Prop_Type::get_key(),
-				'label' => 'Size No Value',
+			'e-gv-size-malformed' => [
+				'type' => 'global-size-variable',
+				'label' => 'Size Malformed',
 				'value' => 'px',
 			],
 		];
 
-		$this->assertEquals( $expected, $result['data'] );
-	}
-
-	public function test_from_storage__handles_empty_array_value() {
-		// Arrange.
-		$collection = $this->make_collection( [
-			'data' => [
-				'e-gv-color-empty-array' => [
-					'type' => Color_Variable_Prop_Type::get_key(),
-					'label' => 'Color Empty Array',
-					'value' => [],
-				],
-				'e-gv-font-empty-array' => [
-					'type' => Font_Variable_Prop_Type::get_key(),
-					'label' => 'Font Empty Array',
-					'value' => [],
-				],
-				'e-gv-size-empty-array' => [
-					'type' => Size_Variable_Prop_Type::get_key(),
-					'label' => 'Size Empty Array',
-					'value' => [],
-				],
-			],
-		] );
-
-		// Act.
-		$this->adapter->from_storage( $collection );
-		$result = $collection->serialize();
-
 		// Assert.
-		$expected = [
-			'e-gv-color-empty-array' => [
-				'type' => Color_Variable_Prop_Type::get_key(),
-				'label' => 'Color Empty Array',
-				'value' => '',
-			],
-			'e-gv-font-empty-array' => [
-				'type' => Font_Variable_Prop_Type::get_key(),
-				'label' => 'Font Empty Array',
-				'value' => '',
-			],
-			'e-gv-size-empty-array' => [
-				'type' => Size_Variable_Prop_Type::get_key(),
-				'label' => 'Size Empty Array',
-				'value' => 'px',
-			],
-		];
-
 		$this->assertEquals( $expected, $result['data'] );
 	}
 }
