@@ -20,6 +20,7 @@ export const CollapsedIconButton = styled( IconButton, {
 	height: 40,
 	borderRadius: theme.shape.borderRadius,
 	backgroundColor: isHighlighted ? theme.palette.action.selected : 'transparent',
+	color: theme.palette.text.primary,
 	'&:hover': {
 		backgroundColor: theme.palette.action.hover,
 	},
@@ -29,11 +30,6 @@ export const CollapsedIconButton = styled( IconButton, {
 } ) );
 
 export const PopoverTitle = styled( Typography )( ( { theme } ) => ( {
-	paddingLeft: theme.spacing( 2 ),
-	paddingRight: theme.spacing( 2 ),
-	paddingTop: theme.spacing( 1 ),
-	paddingBottom: theme.spacing( 1 ),
-	fontWeight: 600,
 	color: theme.palette.text.tertiary,
 } ) );
 

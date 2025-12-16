@@ -5,7 +5,7 @@ export const NavContainer = styled( Box )( ( { theme } ) => ( {
 	flexDirection: 'column',
 	height: '100%',
 	backgroundColor: theme.palette.background.paper,
-	borderRight: `1px solid ${ theme.palette.divider }`,
+	borderInlineEnd: `1px solid ${ theme.palette.divider }`,
 } ) );
 
 export const SiteIconBox = styled( Box )( ( { theme } ) => ( {
@@ -17,6 +17,7 @@ export const SiteIconBox = styled( Box )( ( { theme } ) => ( {
 	alignItems: 'center',
 	justifyContent: 'center',
 	backgroundColor: theme.palette.background.paper,
+	color: theme.palette.action.active,
 	'& svg': {
 		fontSize: 24,
 	},
@@ -24,16 +25,16 @@ export const SiteIconBox = styled( Box )( ( { theme } ) => ( {
 
 export const CollapseButton = styled( IconButton )( ( { theme } ) => ( {
 	position: 'absolute',
-	right: -12,
+	insetInlineEnd: -12,
 	bottom: -12,
 	width: 24,
 	height: 24,
 	backgroundColor: theme.palette.background.paper,
 	border: `1px solid ${ theme.palette.divider }`,
-	color: theme.palette.text.secondary,
+	color: theme.palette.action.active,
 	zIndex: 1,
 	'&:hover': {
-		backgroundColor: theme.palette.action.hover,
+		backgroundColor: theme.palette.background.paper,
 	},
 	'& svg': {
 		fontSize: 16,
@@ -45,4 +46,3 @@ export const ScrollableContent = styled( Box )( {
 	overflowY: 'auto',
 	overflowX: 'hidden',
 } );
-
