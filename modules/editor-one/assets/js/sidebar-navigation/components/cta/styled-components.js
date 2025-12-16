@@ -6,6 +6,7 @@ export const CtaContainer = styled( Box )( ( { theme } ) => ( {
 
 export const CtaButton = styled( Button )( {
 	justifyContent: 'center',
+	whiteSpace: 'nowrap',
 } );
 
 export const CollapsedCtaContainer = styled( Box )( ( { theme } ) => ( {
@@ -28,6 +29,7 @@ export const CollapsedCtaButton = styled( 'button' )( ( { theme } ) => ( {
 	cursor: 'pointer',
 	color: theme.palette.promotion.main,
 	transition: 'all 0.2s ease-in-out',
+	whiteSpace: 'nowrap',
 	'&:hover': {
 		background: theme.palette.promotion.hover,
 	},

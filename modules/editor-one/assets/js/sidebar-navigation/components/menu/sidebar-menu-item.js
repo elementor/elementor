@@ -21,11 +21,14 @@ const getInitialExpandedState = ( slug, hasChildren, children, activeChildSlug )
 		return false;
 	}
 
-	const stored = localStorage.getItem( getStorageKey( slug ) );
+	const isExpandedByDefault = shouldExpandByDefault( children, activeChildSlug );
 
-	if ( null === stored ) {
-		return shouldExpandByDefault( children, activeChildSlug );
+	if ( isExpandedByDefault ) {
+		localStorage.setItem( getStorageKey( slug ), String( true ) );
+		return true;
 	}
+
+	const stored = localStorage.getItem( getStorageKey( slug ) );
 
 	return 'true' === stored;
 };

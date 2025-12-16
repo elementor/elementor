@@ -14,29 +14,34 @@
 #editor-one-sidebar-navigation {
 	position: fixed;
 	top: calc(var(--editor-one-sidebar-admin-top-bar-height) + var(--editor-one-wordpress-admin-bar-height));
-	inset-inline-start: var(--editor-one-sidebar-left-offset);
+	inset-inline-start: 0;
 	bottom: 0;
 	z-index: var(--editor-one-sidebar-z-index);
 	background-color: var(--editor-one-sidebar-bg);
 	overflow: visible;
-
-	.folded & {
-		inset-inline-start: var(--editor-one-sidebar-left-offset-collapsed);
-	}
+	width: var(--editor-one-sidebar-navigation-width);
 
 	nav {
 		width: var(--editor-one-sidebar-navigation-width);
-	}
-
-	@media screen and (max-width: 960px) {
-		inset-inline-start: var(--editor-one-sidebar-left-offset-collapsed);
+		max-width: var(--editor-one-sidebar-navigation-width);
 	}
 
 	&.e-sidebar-collapsed {
-
 		nav {
 			width: var(--editor-one-sidebar-navigation-width-collapsed);
 		}
+	}
+
+	@media screen and (min-width: 782px) {
+		inset-inline-start: var(--editor-one-sidebar-left-offset-collapsed);
+	}
+
+	@media screen and (min-width: 961px) {
+		.folded & {
+			inset-inline-start: var(--editor-one-sidebar-left-offset-collapsed);
+		}
+
+		inset-inline-start: var(--editor-one-sidebar-left-offset);
 	}
 }
 
@@ -58,16 +63,22 @@
 		padding-inline-start: var(--editor-one-sidebar-navigation-width);
 	}
 
-	&.folded #wpcontent {
-		padding-inline-start: var(--editor-one-sidebar-navigation-width);
+	#wpbody-content {
+		padding-inline-start: var(--editor-one-sidebar-content-padding);
+	}
+
+	#wpfooter {
+		margin-inline-start: var(--editor-one-sidebar-navigation-width);
+
+		#footer-left {
+			float: none;
+			text-align: center;
+			margin: 0 auto;
+		}
 	}
 
 	&.e-sidebar-is-collapsed {
 		#wpcontent {
-			padding-inline-start: var(--editor-one-sidebar-navigation-width-collapsed);
-		}
-
-		&.folded #wpcontent {
 			padding-inline-start: var(--editor-one-sidebar-navigation-width-collapsed);
 		}
 
@@ -80,27 +91,9 @@
 		}
 	}
 
-	@media screen and (max-width: 782px) {
-		#wpcontent {
-			padding-inline-start: 0;
-		}
-
-		#wpfooter {
-			margin-inline-start: 0;
-		}
-	}
-
-	#wpbody-content {
-		padding-inline-start: var(--editor-one-sidebar-content-padding);
-	}
-
-	#wpfooter {
-		margin-inline-start: var(--editor-one-sidebar-navigation-width);
-
-		#footer-left {
-			float: none;
-			text-align: center;
-			margin: 0 auto;
+	@media screen and (min-width: 783px) {
+		&.folded #wpcontent {
+			padding-inline-start: var(--editor-one-sidebar-navigation-width);
 		}
 	}
 
