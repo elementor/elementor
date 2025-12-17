@@ -460,12 +460,13 @@ class Rest_Api {
 
 		foreach ( $operations as $index => $operation ) {
 			if ( ! is_array( $operation ) || ! isset( $operation['type'] ) ) {
+				$sanitized_index = absint( $index );
 				return new WP_Error(
 					'invalid_operation_structure',
 					sprintf(
 						/* translators: %d: operation index */
 						__( 'Invalid operation structure at index %d', 'elementor' ),
-						$index
+						$sanitized_index
 					)
 				);
 			}
@@ -473,12 +474,13 @@ class Rest_Api {
 			$allowed_types = [ 'create', 'update', 'delete', 'restore', 'reorder' ];
 
 			if ( ! in_array( $operation['type'], $allowed_types, true ) ) {
+				$sanitized_index = absint( $index );
 				return new WP_Error(
 					'invalid_operation_type',
 					sprintf(
 						/* translators: %d: operation index */
 						__( 'Invalid operation type at index %d', 'elementor' ),
-						$index
+						$sanitized_index
 					)
 				);
 			}
