@@ -103,7 +103,7 @@ export declare class ElementView {
 	events(): Record< string, unknown >;
 }
 
-type JQueryElement = {
+export type JQueryElement = {
 	find: ( selector: string ) => JQueryElement;
 	html: ( html: string ) => void;
 	get: ( index: number ) => HTMLElement;

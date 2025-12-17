@@ -12,6 +12,7 @@ import { initLegacyViews } from './legacy/init-legacy-views';
 import { initCanvasMcp } from './mcp/canvas-mcp';
 import { mcpDescription } from './mcp/mcp-description';
 import { initLinkInLinkPrevention } from './prevent-link-in-link-commands';
+import { ReplacementManager } from './replacements/replacement-manager';
 import { initStyleCommands } from './style-commands/init-style-commands';
 
 export function init() {
@@ -39,6 +40,11 @@ export function init() {
 	injectIntoTop( {
 		id: 'canvas-interactions-render',
 		component: InteractionsRenderer,
+	} );
+
+	injectIntoTop( {
+		id: 'replacement-manager',
+		component: ReplacementManager,
 	} );
 
 	injectIntoLogic( {
