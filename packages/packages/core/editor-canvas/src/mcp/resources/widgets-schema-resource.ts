@@ -3,6 +3,7 @@ import { type MCPRegistryEntry, ResourceTemplate } from '@elementor/editor-mcp';
 import {
 	type ArrayPropType,
 	type ObjectPropType,
+	type Props,
 	type PropType,
 	Schema,
 	type TransformablePropType,
@@ -13,6 +14,21 @@ import { getStylesSchema } from '@elementor/editor-styles';
 export const WIDGET_SCHEMA_URI = 'elementor://widgets/schema/{widgetType}';
 export const STYLE_SCHEMA_URI = 'elementor://styles/schema/{category}';
 export const BEST_PRACTICES_URI = 'elementor://styles/best-practices';
+
+const checkIfUserHasPro = () => {
+	const extendedWindow = window as Window & {
+		elementor?: {
+			helpers?: {
+				hasPro?: () => boolean;
+			};
+		};
+	};
+	const hasPro = extendedWindow.elementor?.helpers?.hasPro;
+	if ( typeof hasPro === 'function' ) {
+		return hasPro();
+	}
+	return false;
+};
 
 export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 	const { mcpServer } = reg;
@@ -37,7 +53,11 @@ The css string must follow standard CSS syntax, with properties and values separ
 		'styles-schema',
 		new ResourceTemplate( STYLE_SCHEMA_URI, {
 			list: () => {
-				const categories = [ ...Object.keys( getStylesSchema() ), 'custom_css' ];
+				const isPro = checkIfUserHasPro();
+				const categories = [ ...Object.keys( getStylesSchema() ) ];
+				if ( ! isPro ) {
+					categories.push( 'custom_css' );
+				}
 				return {
 					resources: categories.map( ( category ) => ( {
 						uri: `elementor://styles/schema/${ category }`,
@@ -51,7 +71,7 @@ The css string must follow standard CSS syntax, with properties and values separ
 		},
 		async ( uri, variables ) => {
 			const category = typeof variables.category === 'string' ? variables.category : variables.category?.[ 0 ];
-			if ( category === 'custom_css' ) {
+			if ( category === 'custom_css' && checkIfUserHasPro() ) {
 				return {
 					contents: [
 						{
@@ -84,7 +104,8 @@ The css string must follow standard CSS syntax, with properties and values separ
 			list: () => {
 				const cache = getWidgetsCache() || {};
 				const availableWidgets = Object.keys( cache || {} ).filter(
-					( widgetType ) => cache[ widgetType ]?.atomic_props_schema
+					( widgetType ) =>
+						cache[ widgetType ]?.atomic_props_schema && cache[ widgetType ].meta?.llm_support !== false
 				);
 				return {
 					resources: availableWidgets.map( ( widgetType ) => ( {
@@ -100,8 +121,9 @@ The css string must follow standard CSS syntax, with properties and values separ
 		async ( uri, variables ) => {
 			const widgetType =
 				typeof variables.widgetType === 'string' ? variables.widgetType : variables.widgetType?.[ 0 ];
-			const propSchema = getWidgetsCache()?.[ widgetType ]?.atomic_props_schema;
-			if ( ! propSchema ) {
+			const widgetData = getWidgetsCache()?.[ widgetType ];
+			const propSchema = widgetData?.atomic_props_schema;
+			if ( ! propSchema || ! widgetData ) {
 				throw new Error( `No prop schema found for element type: ${ widgetType }` );
 			}
 			const asJson = Object.fromEntries(
@@ -115,6 +137,31 @@ The css string must follow standard CSS syntax, with properties and values separ
 				delete asJson[ key ];
 			} );
 
+			const description =
+				typeof widgetData?.meta?.description === 'string' ? widgetData.meta.description : undefined;
+
+			const defaultStyles: Record< string, Props > = {};
+			const baseStyleSchema = widgetData?.base_styles;
+			if ( baseStyleSchema ) {
+				Object.values( baseStyleSchema ).forEach( ( stylePropType ) => {
+					stylePropType.variants.forEach( ( variant ) => {
+						Object.assign( defaultStyles, variant.props );
+					} );
+				} );
+			}
+
+			// build llm instructions
+			const hasDefaultStyles = Object.keys( defaultStyles ).length > 0;
+			const llmGuidance: Record< string, unknown > = {
+				can_have_children: !! widgetData?.meta?.is_container,
+			};
+
+			if ( hasDefaultStyles ) {
+				llmGuidance.instructions =
+					'These are the default styles applied to the widget. Override only when necessary.';
+				llmGuidance.default_styles = defaultStyles;
+			}
+
 			return {
 				contents: [
 					{
@@ -123,6 +170,8 @@ The css string must follow standard CSS syntax, with properties and values separ
 						text: JSON.stringify( {
 							type: 'object',
 							properties: asJson,
+							description,
+							llm_guidance: llmGuidance,
 						} ),
 					},
 				],
