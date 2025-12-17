@@ -53,7 +53,7 @@ class Parser {
 			if ( ! isset( $interaction['$$type'] ) || 'interaction-item' !== $interaction['$$type'] ) {
 				continue;
 			}
-	
+			
 			if ( isset( $interaction['value']['interaction_id']['value'] ) ) {
 				$this->ids_lookup[] = $interaction['value']['interaction_id']['value'];
 			} else {
@@ -63,7 +63,7 @@ class Parser {
 				];
 			}
 		}
-		
+
 		return wp_json_encode( $interactions );
 	}
 

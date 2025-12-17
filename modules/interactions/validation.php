@@ -135,7 +135,7 @@ class Validation {
 		}
 
 		if ( ! $this->is_valid_animation_prop( $value ) ) {
-			return false; 
+			return false;
 		}
 
 		return true;
