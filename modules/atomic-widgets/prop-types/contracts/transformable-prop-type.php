@@ -6,7 +6,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-interface Transformable_Prop_Type extends Prop_Type {
-	public static function get_key(): string;
-	public static function generate( $value, $disable = false ): array;
+abstract class Transformable_Prop_Type extends Prop_Type {
+	protected $version = '1';
+
+	abstract public static function get_key(): string;
+	abstract public static function generate( $value, $disable = false ): array;
+
+	public function jsonSerialize(): array {
+		return [
+			'version' => $this->version,
+		];
+	}
 }
