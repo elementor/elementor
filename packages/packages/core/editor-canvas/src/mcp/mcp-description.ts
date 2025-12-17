@@ -40,8 +40,7 @@ The tool accepts both the structure, the styling and the configuration of each e
   Retrieve the used elements configuration schema from the resource [${ ELEMENT_SCHEMA_URI }]
 - Third step: define the styles for each element, using the common styles schema from the resource [${ STYLE_SCHEMA_URI }]. List the resource to see all available style properties.
   For background and complicated layered styles, you can use "custom_css" property, which is supported only for ELEMENTOR PRO users ONLY.
-  The custom css is intended to deal with yet unsupported CSS features that ARE NOT PART OF THE STYLE SCHEMA, to enable PRO users to support new CSS features.
-</note>
+  The custom css is intented to deal with yet unsupported CSS features that ARE NOT PART OF THE STYLE SCHEMA, to enable PRO users to support new CSS features.
 
 ## Workflow for build-compositions tool
 1. **Parse user requirements** - Undestand what needs to be built (structure, content, styling).
@@ -118,17 +117,11 @@ Widgets' sizes MUST be defined using the style schema. Images, for example, have
 You are encouraged to run multiple times multiple tools to achieve the desired result.
 
 An Example scenario of creating fully styled composition:
-1. Parse user requirements to understand what needs to be built
-2. **Check global resources FIRST**: List \`elementor://global-classes\` and \`elementor://global-variables\` to see what's available
-3. Get the list of available widgets using dynamic resource [${ WIDGET_SCHEMA_URI }]
-4. For each element to create, retrieve its configuration schema from [${ WIDGET_SCHEMA_URI }/element-name]
-5. Retrieve the common styles schema from [${ STYLE_SCHEMA_URI }] to understand available style properties
-6. Build a composition using the "build-composition" tool:
-   - Create XML structure with configuration-ids
-   - Create elementConfig with PropValues (use global variables where applicable)
-   - Create stylesConfig with PropValues (use global variables where applicable, prefer style schema over custom_css)
-   - **Note**: custom_css is only available for Elementor PRO users. If not PRO, it will not appear in the style schema and will be rejected during validation. Use style schema PropValues for all styling.
-7. **Apply global classes** using the "apply-global-class" tool for elements that should use global classes
-8. Check your work: retrieve each element configuration using the "get-element-configuration-values" tool
-9. If needed, update styles using the "configure-element" tool, providing only the styles or widget's properties to update
+1. Get the list of availble widgets using dynamic resource [${ WIDGET_SCHEMA_URI }]
+2. For each element to create, retreive its configuration schema from [${ WIDGET_SCHEMA_URI }/element-name]
+3. Get the list of available global classes using the always up-to-date resource 
+4. Get the list of available global variables using the dynamic resource
+5. Build a composition using the "build-composition" tool, providing the structure, configuration and styles for each element. You may want to style the elements later.
+6. Check you work: as you have the created IDs from the build-composition response, you can retreive each element configuration using the "get-element-configuration-values" tool.
+7. If needed, update styles using the "configure-element" tool, providing only the styles or widget's properties to update.
 `;

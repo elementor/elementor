@@ -66,15 +66,6 @@ export const validateInput = {
 	validateStyles( values: Record< string, unknown > ): ValidationResult {
 		const styleSchema = getStylesSchema();
 		const customCssValue = values.custom_css;
-		const hasPro = !!( window as unknown as { elementorPro?: object } ).elementorPro;
-		
-		if ( customCssValue && ! hasPro ) {
-			return {
-				valid: false,
-				errors: [ 'custom_css is only available for Elementor PRO users. Use style schema PropValues instead.' ],
-			};
-		}
-		
 		const result = this.validateProps( styleSchema, values, [ 'custom_css' ] );
 		const appendInvalidCustomCssErr = () => {
 			result.valid = false;
