@@ -1,6 +1,6 @@
 import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from './resources/widgets-schema-resource';
 
-const { ELEMENT_SCHEMA_URI } = WIDGET_SCHEMA_URI.replace( '{widgetType}', 'element-schema' );
+const ELEMENT_SCHEMA_URI = WIDGET_SCHEMA_URI.replace( '{widgetType}', 'element-schema' );
 
 export const mcpDescription = `Canvas MCP
 This MCP enables everything related to creation, configuration, and styling of elements on the Elementor canvas.
