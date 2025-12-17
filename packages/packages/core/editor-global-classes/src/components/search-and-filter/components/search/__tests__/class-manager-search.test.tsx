@@ -30,8 +30,7 @@ describe( 'ClassManagerSearch', () => {
 	it( 'should track classManagerSearched event when search field is focused', () => {
 		renderWithTheme( <ClassManagerSearch /> );
 
-		const searchField = screen.getByRole( 'search' );
-		const input = searchField.querySelector( 'input' ) || searchField;
+		const input = screen.getByRole( 'textbox' );
 		fireEvent.focus( input );
 
 		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
