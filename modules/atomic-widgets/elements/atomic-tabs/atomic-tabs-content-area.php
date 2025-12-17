@@ -20,8 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Tabs_Content_Area extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
-	public function __construct( $data = [], $args = null )
-	{
+	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
 		$this->meta( 'llm_support', false );
 	}

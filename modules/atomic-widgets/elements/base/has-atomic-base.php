@@ -88,7 +88,7 @@ trait Has_Atomic_Base {
 			$result = $style_parser->parse( $style );
 
 			if ( ! $result->is_valid() ) {
-				$widget_id = $data[ 'id' ] ?? 'unknown';
+				$widget_id = $data['id'] ?? 'unknown';
 				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. Widget ID: `$widget_id`" . $result->errors()->to_string() ) );
 			}
 

@@ -22,9 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Flexbox extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
-	public function __construct($data = [], $args = null)
-	{
-		parent::__construct($data, $args);
+	public function __construct( $data = [], $args = null ) {
+		parent::__construct( $data, $args );
 		$this->meta( 'is_container', true );
 	}
 
