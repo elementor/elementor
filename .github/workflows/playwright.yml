@@ -216,8 +216,8 @@ jobs:
           service_account: 'github-actions-sa@${{ vars.ALLURE_REPORTS_GCP_PROJECT_ID }}.iam.gserviceaccount.com'
       - name: Display GCP bucket information
         run: |
-          echo "📦 GCP Bucket Name: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}"
-          echo "📁 Destination path: gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.run_id }}"
+          echo "GCP Bucket Name: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}"
+          echo "Destination path: gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.run_id }}"
       - uses: actions/upload-artifact@v4
         name: Upload generated Allure report
         with:
@@ -271,11 +271,11 @@ jobs:
 
       - name: Display GCP bucket information
         run: |
-          echo "📦 GCP Bucket Name: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}"
+          echo "GCP Bucket Name: ${{ vars.ALLURE_REPORTS_GCP_BUCKET }}"
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            echo "📁 Destination path: gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/main"
+            echo "Destination path: gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/main"
           else
-            echo "📁 Destination path: gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.run_id }}"
+            echo "Destination path: gs://${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.run_id }}"
           fi
 
       - name: Install gcloud CLI
@@ -303,7 +303,7 @@ jobs:
             npm install -g allure-commandline
             allure generate --clean allure-results -o allure-report || mkdir -p allure-report
           else
-            echo "⚠️  No allure-results found. Creating empty report directory."
+            echo "No allure-results found. Creating empty report directory."
             mkdir -p allure-report
           fi
 
