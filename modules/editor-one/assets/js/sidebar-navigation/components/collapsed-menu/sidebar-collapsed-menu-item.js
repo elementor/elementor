@@ -1,4 +1,4 @@
-import { useRef } from '@wordpress/element';
+import { useState } from '@wordpress/element';
 import PropTypes from 'prop-types';
 import { DEFAULT_ICON, ICON_MAP } from '../shared';
 import CollapsedMenuItemPopover from './collapsed-menu-item-popover';
@@ -13,8 +13,8 @@ const SidebarCollapsedMenuItem = ( {
 	onOpenPopover,
 	onClosePopover,
 } ) => {
-	const anchorRef = useRef( null );
-	const hasChildren = children && children.length > 0;
+	const [ anchorEl, setAnchorEl ] = useState( null );
+	const hasChildren = !! children?.length;
 	const IconComponent = ICON_MAP[ item.icon ] || DEFAULT_ICON;
 
 	const handleMouseEnter = () => {
@@ -39,12 +39,12 @@ const SidebarCollapsedMenuItem = ( {
 					children={ children }
 					activeChildSlug={ activeChildSlug }
 					isPopoverOpen={ isPopoverOpen }
-					anchorEl={ anchorRef.current }
+					anchorEl={ anchorEl }
 					onClose={ onClosePopover }
 					IconComponent={ IconComponent }
 					isActive={ isActive }
-					ref={ anchorRef }
 					onMouseEnter={ handleMouseEnter }
+					anchorRef={ setAnchorEl }
 				/>
 			) : (
 				<CollapsedMenuItemTooltip
@@ -52,7 +52,6 @@ const SidebarCollapsedMenuItem = ( {
 					isActive={ isActive }
 					onClick={ handleClick }
 					IconComponent={ IconComponent }
-					ref={ anchorRef }
 					onMouseEnter={ handleMouseEnter }
 				/>
 			) }

@@ -1,18 +1,18 @@
 import { Tooltip, ListItem } from '@elementor/ui';
 import PropTypes from 'prop-types';
-import { MenuItemButton, MenuIcon } from '../menu/styled-components';
+import { MenuItemButton, MenuIcon } from '../shared';
 
-const CollapsedMenuItemTooltip = ( { item, isActive, onClick, IconComponent } ) => {
+const CollapsedMenuItemTooltip = ( { item, isActive, onClick, IconComponent, onMouseEnter } ) => {
 	return (
-		<Tooltip title={ item.label } placement="right">
-			<ListItem disablePadding dense disableGutters>
+		<ListItem disablePadding dense disableGutters onMouseEnter={ onMouseEnter }>
+			<Tooltip title={ item.label } placement="right">
 				<MenuItemButton onClick={ onClick } selected={ isActive } sx={ { height: 36 } }>
 					<MenuIcon>
 						<IconComponent />
 					</MenuIcon>
 				</MenuItemButton>
-			</ListItem>
-		</Tooltip>
+			</Tooltip>
+		</ListItem>
 	);
 };
 
@@ -21,7 +21,7 @@ CollapsedMenuItemTooltip.propTypes = {
 	isActive: PropTypes.bool.isRequired,
 	onClick: PropTypes.func.isRequired,
 	IconComponent: PropTypes.elementType.isRequired,
+	onMouseEnter: PropTypes.func.isRequired,
 };
 
 export default CollapsedMenuItemTooltip;
-

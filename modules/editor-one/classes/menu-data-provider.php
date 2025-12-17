@@ -13,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Menu_Data_Provider {
 
 	private static ?Menu_Data_Provider $instance = null;
-
 	private array $level3_items = [];
 	private array $level4_items = [];
 	private ?string $theme_builder_url = null;
@@ -249,7 +248,7 @@ class Menu_Data_Provider {
 
 		return [
 			'slug' => $item_slug,
-			'label' => $item->get_label(),
+			'label' => ucfirst( strtolower( $item->get_label() ) ),
 			'url' => $this->resolve_flyout_item_url( $item, $item_slug ),
 			'icon' => $item->get_icon(),
 			'group_id' => $group_id,
@@ -324,7 +323,7 @@ class Menu_Data_Provider {
 
 				$groups[ $group_id ]['items'][] = [
 					'slug' => $item_slug,
-					'label' => $label,
+					'label' => ucfirst( strtolower( $item->get_label() ) ),
 					'url' => $this->get_item_url( $item_slug, $item->get_parent_slug() ),
 					'priority' => $item->get_position() ?? 100,
 				];

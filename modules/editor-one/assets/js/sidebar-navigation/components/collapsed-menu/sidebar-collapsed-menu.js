@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from '@wordpress/element';
 import PropTypes from 'prop-types';
 import MenuActiveStateResolver from '../../classes/menu-active-state-resolver';
 import SidebarCollapsedMenuItem from './sidebar-collapsed-menu-item';
-import { MenuList } from '../menu/styled-components';
+import { MenuList } from '../shared';
 
 const SidebarCollapsedMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug } ) => {
 	const [ openPopoverSlug, setOpenPopoverSlug ] = useState( null );
