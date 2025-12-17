@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Repeater } from '@elementor/editor-controls';
 import { type ElementInteractions } from '@elementor/editor-elements';
 import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
-import { Alert, AlertTitle, Box, IconButton } from '@elementor/ui';
+import { Alert, AlertTitle, Box, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsConfig } from '../utils/get-interactions-config';
@@ -117,7 +117,7 @@ export function InteractionsList( props: InteractionListProps ) {
 					/>
 				),
 				actions: ( value ) => (
-					<>
+					<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
 						<IconButton
 							aria-label={ __( 'Play interaction', 'elementor' ) }
 							size="tiny"
@@ -125,7 +125,7 @@ export function InteractionsList( props: InteractionListProps ) {
 						>
 							<PlayerPlayIcon fontSize="tiny" />
 						</IconButton>
-					</>
+					</Tooltip>
 				),
 			} }
 		/>
