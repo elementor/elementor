@@ -41,13 +41,11 @@ class Add_New_Post extends Endpoint {
 		$post_type = $request->get_param( 'post_type' );
 
 		if ( ! $this->validate_post_type( $post_type ) ) {
-			$sanitized_post_type = esc_html( str_replace( '%', '%%', $post_type ) );
-			return new \WP_Error( 400, sprintf( 'Post type %s does not exist.', $sanitized_post_type ), [ 'status' => 400 ] );
+			return new \WP_Error( 400, sprintf( 'Post type %s does not exist.', $post_type ), [ 'status' => 400 ] );
 		}
 
 		if ( ! User::is_current_user_can_edit_post_type( $post_type ) ) {
-			$sanitized_post_type = esc_html( str_replace( '%', '%%', $post_type ) );
-			return new \WP_Error( 401, sprintf( 'User dont have capability to create page of type - %s.', $sanitized_post_type ), [ 'status' => 401 ] );
+			return new \WP_Error( 401, sprintf( 'User dont have capability to create page of type - %s.', $post_type ), [ 'status' => 401 ] );
 		}
 
 		// Temporary solution for the fact that documents creation not using the actual registered post types.
@@ -56,8 +54,7 @@ class Add_New_Post extends Endpoint {
 		$document = Plugin::$instance->documents->create( $post_type );
 
 		if ( is_wp_error( $document ) ) {
-			$sanitized_post_type = esc_html( str_replace( '%', '%%', $post_type ) );
-			return new \WP_Error( 500, sprintf( 'Error while creating %s.', $sanitized_post_type ) );
+			return new \WP_Error( 500, sprintf( 'Error while creating %s.', $post_type ) );
 		}
 
 		return [
