@@ -601,8 +601,7 @@ class Widget_Text_Editor extends Widget_Base {
 		<?php if ( $should_render_inline_editing ) { ?>
 			<div <?php $this->print_render_attribute_string( 'editor' ); ?>>
 		<?php } ?>
-		<?php // PHPCS - the main text of a widget should not be escaped.
-				echo $editor_content; // phpcs:ignore WordPress.Security.EscapeOutput ?>
+		<?php echo wp_kses_post( $editor_content ); ?>
 		<?php if ( $should_render_inline_editing ) { ?>
 			</div>
 		<?php } ?>
