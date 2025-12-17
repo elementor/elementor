@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-abstract class Transformable_Prop_Type extends Prop_Type {
+abstract class Transformable_Prop_Type implements Prop_Type {
 	protected $version = '1';
 
 	abstract public static function get_key(): string;
