@@ -30,7 +30,7 @@ function extractAnimationId( interaction ) {
 }
 
 function applyAnimation( element, animConfig, animateFunc ) {
-	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction, element );
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
