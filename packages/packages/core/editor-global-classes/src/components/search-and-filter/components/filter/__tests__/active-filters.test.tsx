@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { mockTrackingModule } from '../../../../../__tests__/mocks';
+import { mockTrackGlobalClasses, mockTrackingModule } from '../../../../../__tests__/mocks';
 import { useFilters } from '../../../../../hooks/use-filters';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../../context';
 import { ActiveFilters } from '../active-filters';
@@ -14,6 +14,7 @@ jest.mock( '../../../../../utils/tracking', () => mockTrackingModule );
 
 describe( 'ActiveFilters', () => {
 	beforeEach( () => {
+		jest.clearAllMocks();
 		setupMocks();
 	} );
 
@@ -60,6 +61,12 @@ describe( 'ActiveFilters', () => {
 		fireEvent.click( deleteIcon );
 
 		expect( mockSetFilters ).toHaveBeenCalled();
+		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			event: 'classManagerFilterUsed',
+			action: 'remove',
+			type: 'unused',
+			trigger: 'header',
+		} );
 	} );
 
 	it( 'should show clear all button when filters are active', () => {
@@ -80,6 +87,32 @@ describe( 'ActiveFilters', () => {
 		render( <ActiveFilters /> );
 
 		expect( screen.getByRole( 'button', { name: /clear filters/i } ) ).toBeInTheDocument();
+	} );
+
+	it( 'should track filter cleared when clicking clear all button', () => {
+		jest.mocked( useFilters ).mockReturnValue( [ 'empty' ] );
+		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+			search: {} as SearchAndFilterContextType[ 'search' ],
+			filters: {
+				filters: {
+					unused: true,
+					empty: true,
+					onThisPage: false,
+				},
+				setFilters: mockSetFilters,
+				onClearFilter: mockOnClearFilter,
+			},
+		} );
+
+		render( <ActiveFilters /> );
+
+		const clearButton = screen.getByRole( 'button', { name: /clear filters/i } );
+		fireEvent.click( clearButton );
+
+		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			event: 'classManagerFilterCleared',
+			trigger: 'header',
+		} );
 	} );
 
 	it( 'should not show clear all button when no filters are active', () => {

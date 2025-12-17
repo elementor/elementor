@@ -4,7 +4,7 @@ import { PopoverMenuList } from '@elementor/editor-ui';
 import { MenuList } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { mockTrackingModule } from '../../../__tests__/mocks';
+import { mockTrackGlobalClasses, mockTrackingModule } from '../../../__tests__/mocks';
 import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
 import { CssClassUsagePopover } from '../components';
 import { type EnhancedCssClassUsageContent } from '../types';
@@ -36,6 +36,10 @@ jest.mocked( PopoverMenuList ).mockImplementation( ( { items, menuItemContentTem
 } );
 
 describe( 'CssClassUsagePopover', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
 	it( 'should display correct header with title and total count', () => {
 		// Arrange.
 		jest.mocked( useCssClassUsageByID ).mockReturnValue( {
@@ -154,5 +158,9 @@ describe( 'CssClassUsagePopover', () => {
 		// Assert.
 		fireEvent.click( screen.getByRole( 'option' ) );
 		expect( mockNavigate ).toHaveBeenCalledWith( 1 );
+		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			event: 'classUsageLocate',
+			classId: 'test-class',
+		} );
 	} );
 } );

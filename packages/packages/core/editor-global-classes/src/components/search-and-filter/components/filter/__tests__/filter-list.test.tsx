@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { mockTrackingModule } from '../../../../../__tests__/mocks';
+import { mockTrackGlobalClasses, mockTrackingModule } from '../../../../../__tests__/mocks';
 import { useFilteredCssClassUsage } from '../../../../../hooks/use-filtered-css-class-usage';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../../context';
 import { FilterList } from '../filter-list';
@@ -14,6 +14,7 @@ jest.mock( '../../../../../utils/tracking', () => mockTrackingModule );
 
 describe( 'FilterList', () => {
 	beforeEach( () => {
+		jest.clearAllMocks();
 		setupMocks();
 		jest.mocked( useSearchAndFilters ).mockReturnValue( {
 			search: {} as SearchAndFilterContextType[ 'search' ],
@@ -52,5 +53,38 @@ describe( 'FilterList', () => {
 		fireEvent.click( screen.getByText( 'Unused' ) );
 
 		expect( mockSetFilters ).toHaveBeenCalledWith( expect.any( Function ) );
+		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			event: 'classManagerFilterUsed',
+			action: 'apply',
+			type: 'unused',
+			trigger: 'menu',
+		} );
+	} );
+
+	it( 'should track filter removal when clicking active filter', () => {
+		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+			search: {} as SearchAndFilterContextType[ 'search' ],
+			filters: {
+				filters: {
+					unused: true,
+					empty: false,
+					onThisPage: false,
+				},
+				setFilters: mockSetFilters,
+				onClearFilter: jest.fn(),
+			},
+		} );
+
+		render( <FilterList /> );
+
+		fireEvent.click( screen.getByText( 'Unused' ) );
+
+		expect( mockSetFilters ).toHaveBeenCalledWith( expect.any( Function ) );
+		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			event: 'classManagerFilterUsed',
+			action: 'remove',
+			type: 'unused',
+			trigger: 'menu',
+		} );
 	} );
 } );

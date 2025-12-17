@@ -7,7 +7,7 @@ import {
 import { useUserStylesCapability } from '@elementor/editor-styles-repository';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
-import { mockTrackingModule } from '../../../__tests__/mocks';
+import { mockTrackGlobalClasses, mockTrackingModule } from '../../../__tests__/mocks';
 
 jest.mock( '@elementor/editor-documents' );
 jest.mock( '@elementor/editor-styles-repository', () => ( {
@@ -28,6 +28,10 @@ import { usePanelActions } from '../class-manager-panel';
 
 describe( 'ClassManagerButton', () => {
 	const unsavedChangesMessage = 'You have unsaved changes';
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
 
 	it( 'should navigate to the panel on click when the document is pristine', () => {
 		// Arrange.
@@ -50,6 +54,10 @@ describe( 'ClassManagerButton', () => {
 
 		// Assert.
 		expect( openPanel ).toHaveBeenCalled();
+		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			event: 'classManagerOpened',
+			source: 'style-panel',
+		} );
 	} );
 
 	it( 'should open the dialog if the document is dirty, and allow to cancel the action', () => {
@@ -82,6 +90,7 @@ describe( 'ClassManagerButton', () => {
 		expect( screen.queryByText( unsavedChangesMessage ) ).not.toBeInTheDocument();
 		expect( save ).not.toHaveBeenCalled();
 		expect( openPanel ).not.toHaveBeenCalled();
+		expect( mockTrackGlobalClasses ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should open the dialog if the document is dirty, and allow to save and continue', async () => {
@@ -117,6 +126,10 @@ describe( 'ClassManagerButton', () => {
 
 		expect( save ).toHaveBeenCalled();
 		expect( openPanel ).toHaveBeenCalled();
+		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			event: 'classManagerOpened',
+			source: 'style-panel',
+		} );
 	} );
 
 	it( 'should not render the button if the user does not have permission to update classes', () => {

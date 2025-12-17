@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore as createStore, __registerSlice as registerSlice } from '@elementor/store';
 import { fireEvent, screen } from '@testing-library/react';
 
-import { mockTrackingModule } from '../../../../../__tests__/mocks';
+import { mockTrackGlobalClasses, mockTrackingModule } from '../../../../../__tests__/mocks';
 import { useFilteredCssClassUsage } from '../../../../../hooks/use-filtered-css-class-usage';
 import { slice } from '../../../../../store';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../../context';
@@ -23,6 +23,7 @@ describe( 'CssClassFilter', () => {
 	let queryClient: QueryClient;
 
 	beforeEach( () => {
+		jest.clearAllMocks();
 		jest.mocked( getCurrentDocument ).mockReturnValue( createMockDocument( { id: 1 } ) );
 		registerSlice( slice );
 
@@ -86,6 +87,9 @@ describe( 'CssClassFilter', () => {
 
 		expect( screen.getByRole( 'presentation' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Filters' ) ).toBeInTheDocument();
+		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			event: 'classManagerFiltersOpened',
+		} );
 	} );
 
 	it( 'should close popover when clicking close button', async () => {

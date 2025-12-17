@@ -54,6 +54,12 @@ jest.mock( '../use-can-convert-local-class-to-global', () => ( {
 	} ) ),
 } ) );
 
+const mockTrackGlobalClasses = jest.fn( async ( payload: { event: string; [ key: string ]: unknown } ) => {
+	if ( 'runAction' in payload && typeof payload.runAction === 'function' ) {
+		payload.runAction();
+	}
+} );
+
 // MUI use the useId hook behind the scenes, and it breaks the tests.
 let mockId = 0;
 jest.mock( 'react', () => ( {
@@ -121,10 +127,27 @@ const provider2 = createMockStylesProvider(
 	[ provider2MockStyleA ]
 );
 
+const globalClassesMockStyleA = createMockStyleDefinition( { id: 'global-class-1', label: 'Global-Class-1' } );
+const globalClassesMockStyleB = createMockStyleDefinition( { id: 'global-class-2', label: 'Global-Class-2' } );
+
+const globalClassesProvider = createMockStylesProvider(
+	{
+		key: 'global-classes',
+		labels: { plural: 'Global Classes', singular: 'Global Class' },
+		actions: {
+			tracking: jest.fn( ( data: { event: string; [ key: string ]: unknown } ) => {
+				mockTrackGlobalClasses( data );
+			} ),
+		},
+	},
+	[ globalClassesMockStyleA, globalClassesMockStyleB ]
+);
+
 describe( '<CssClassSelector />', () => {
 	const historyMock = mockHistoryManager();
 
 	beforeEach( () => {
+		jest.clearAllMocks();
 		historyMock.beforeEach();
 
 		jest.mocked( stylesRepository.all ).mockReturnValue( [
@@ -132,6 +155,8 @@ describe( '<CssClassSelector />', () => {
 			provider1MockStyleA,
 			provider1MockStyleB,
 			provider2MockStyleA,
+			globalClassesMockStyleA,
+			globalClassesMockStyleB,
 		] );
 
 		jest.mocked( useUserStylesCapability ).mockReturnValue( {
@@ -143,11 +168,16 @@ describe( '<CssClassSelector />', () => {
 			} ),
 		} );
 
-		jest.mocked( stylesRepository.getProviders ).mockReturnValue( [ localProvider, provider1, provider2 ] );
+		jest.mocked( stylesRepository.getProviders ).mockReturnValue( [
+			localProvider,
+			provider1,
+			provider2,
+			globalClassesProvider,
+		] );
 
 		jest.mocked( validateStyleLabel ).mockReturnValue( { isValid: true, errorMessage: null } );
 
-		jest.mocked( useProviders ).mockReturnValue( [ localProvider, provider1, provider2 ] );
+		jest.mocked( useProviders ).mockReturnValue( [ localProvider, provider1, provider2, globalClassesProvider ] );
 
 		jest.mocked( useGetStylesRepositoryCreateAction ).mockReturnValue( [ provider1, jest.fn() ] );
 
@@ -261,6 +291,28 @@ describe( '<CssClassSelector />', () => {
 		} );
 	} );
 
+	it( 'should track classApplied event when applying a global class', () => {
+		// Arrange.
+		const setActive = jest.fn();
+		const appliedClasses = [ 'local', 'provider-1-b' ];
+		jest.mocked( useElementSetting ).mockReturnValue( { value: appliedClasses } );
+		jest.mocked( getElementSetting ).mockReturnValue( { value: appliedClasses } );
+		jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( globalClassesProvider );
+
+		renderComponent( { setActive, active: 'provider-1-b' } );
+
+		// Act.
+		fireEvent.change( screen.getByRole( 'combobox', { hidden: true } ), { target: { value: 'Global' } } );
+		fireEvent.click( screen.getByRole( 'option', { name: 'Global-Class-1' } ) );
+
+		// Assert.
+		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			event: 'classApplied',
+			classId: 'global-class-1',
+			source: 'style-tab',
+		} );
+	} );
+
 	it( 'should not apply the empty option', () => {
 		// Arrange.
 		jest.mocked( useProviders ).mockReturnValue( [
@@ -314,6 +366,27 @@ describe( '<CssClassSelector />', () => {
 		} );
 
 		expect( setActive ).toHaveBeenCalledWith( 'local' );
+	} );
+
+	it( 'should track classRemoved event when removing a global class via Backspace', () => {
+		// Arrange.
+		const appliedClasses = [ 'local', 'global-class-1', 'provider-1-a' ];
+		jest.mocked( useElementSetting ).mockReturnValue( { value: appliedClasses } );
+		jest.mocked( getElementSetting ).mockReturnValue( { value: appliedClasses } );
+		jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( globalClassesProvider );
+
+		const setActive = jest.fn();
+		renderComponent( { active: 'global-class-1', setActive } );
+
+		// Act.
+		fireEvent.keyDown( screen.getByRole( 'combobox', { hidden: true } ), { key: 'Backspace', keyCode: 8 } );
+
+		// Assert.
+		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			event: 'classRemoved',
+			classId: 'global-class-1',
+			source: 'style-tab',
+		} );
 	} );
 
 	it( 'should disallow deleting the elements provider classes', () => {
@@ -613,6 +686,35 @@ describe( '<CssClassSelector />', () => {
 		expect( setActiveMetaState ).toHaveBeenCalledWith( 'hover' );
 	} );
 
+	it( 'should track classStateClicked event when clicking a state for a global class', () => {
+		// Arrange.
+		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'global-class-1' ] } );
+		jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( globalClassesProvider );
+
+		const setActive = jest.fn();
+		const setActiveMetaState = jest.fn();
+
+		renderComponent( { active: 'global-class-1', setActive, setActiveMetaState } );
+
+		const chipGroups = screen.getAllByRole( 'group' );
+		const chipMenus = chipGroups.map( ( chipGroup ) =>
+			within( chipGroup ).getByLabelText( __( 'Open CSS Class Menu', 'elementor' ) )
+		);
+
+		// Act.
+		fireEvent.click( chipMenus[ 1 ] );
+		const menu = screen.getByRole( 'menu' );
+		fireEvent.click( within( menu ).getByText( 'hover' ) );
+
+		// Assert.
+		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			event: 'classStateClicked',
+			classId: 'global-class-1',
+			type: 'hover',
+			source: 'global',
+		} );
+	} );
+
 	it( 'should activate the right style definition if a Pseudo classes item of an inactive style css-class-menu is clicked', () => {
 		// Arrange.
 		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
@@ -888,6 +990,35 @@ describe( '<CssClassSelector />', () => {
 					'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-a' ] },
 				},
 				withHistory: false,
+			} );
+		} );
+
+		it( 'should track classRemoved event when removing a global class via menu', () => {
+			// Arrange.
+			const appliedClasses = [ 'local', 'global-class-1', 'provider-1-a' ];
+			jest.mocked( useElementSetting ).mockReturnValue( { value: appliedClasses } );
+			jest.mocked( getElementSetting ).mockReturnValue( { value: appliedClasses } );
+			jest.mocked( stylesRepository.getProviderByKey ).mockReturnValue( globalClassesProvider );
+
+			renderComponent( { active: 'global-class-1' } );
+
+			// Act.
+			const classToRemove = screen.getByRole( 'group', { name: __( 'Edit Global-Class-1', 'elementor' ) } );
+			const classToRemoveMenuTrigger = within( classToRemove ).getByLabelText(
+				__( 'Open CSS Class Menu', 'elementor' )
+			);
+
+			fireEvent.click( classToRemoveMenuTrigger );
+			const menu = screen.getByRole( 'menu' );
+			const removeButton = within( menu ).getByText( 'Remove' );
+			fireEvent.click( removeButton );
+
+			// Assert.
+			expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+				event: 'classRemoved',
+				classId: 'global-class-1',
+				classTitle: 'Global-Class-1',
+				source: 'style-tab',
 			} );
 		} );
 
@@ -1328,7 +1459,7 @@ describe( '<CssClassSelector />', () => {
 } );
 
 type Options = {
-	active: 'local' | 'provider-1-a' | 'provider-1-b' | 'provider-2-a' | null;
+	active: 'local' | 'provider-1-a' | 'provider-1-b' | 'provider-2-a' | 'global-class-1' | 'global-class-2' | null;
 	setActive?: () => void;
 	state?: StyleDefinitionState;
 	setActiveMetaState?: () => void;
