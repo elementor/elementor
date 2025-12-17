@@ -34,15 +34,15 @@ export const SearchFilters = ( {
 			direction="row"
 			alignItems="center"
 			justifyContent="space-between"
-			sx={ {
+			sx={ ( theme ) => ( {
 				position: 'sticky',
-				top: 4,
+				top: theme.spacing( 4 ),
 				backgroundColor: 'var(--e-one-palette-background-default)',
 				zIndex: 10,
 				paddingBlock: 2.5,
 				paddingInline: 2,
 				boxShadow: 'rgba(0, 0, 0, 0.15) 0 5px 10px 0',
-			} }
+			} ) }
 		>
 			<Box>
 				<Stack direction="row" alignItems="center" gap={ 2 }>
@@ -52,12 +52,12 @@ export const SearchFilters = ( {
 						size="small"
 						placeholder={ __( 'Search', 'elementor' ) }
 						onChange={ ( e ) => onSearchChange( e.target.value ) }
-						sx={ { minWidth: ( theme ) => theme.spacing( 14 ) } }
+						sx={ ( theme ) => ( { minWidth: theme.spacing( 14 ) } ) }
 					/>
 					<FormControl
 						fullWidth
 						size="small"
-						sx={ { width: ( theme ) => theme.spacing( 16 ) } }
+						sx={ ( theme ) => ( { width: theme.spacing( 16 ) } ) }
 						color="secondary"
 					>
 						<Select
@@ -76,7 +76,7 @@ export const SearchFilters = ( {
 					<FormControl
 						fullWidth
 						size="small"
-						sx={ { width: ( theme ) => theme.spacing( 16 ) } }
+						sx={ ( theme ) => ( { width: theme.spacing( 16 ) } ) }
 						color="secondary"
 					>
 						<Select
