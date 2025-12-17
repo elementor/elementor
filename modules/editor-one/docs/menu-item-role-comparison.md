@@ -1,23 +1,3 @@
-Test users:
-
-role administrator: 
-username: admin
-password: password
-
-role editor: 
-username: editor
-password: editor
-
-role contributor: 
-username: contributor
-password: contributor
-
-role subscriber: 
-username: subscriber
-password: subscriber
-
----
-
 ## Menu Structure Comparison: e_editor_one Experiment
 
 **Starting point**: `/wp-admin/`
