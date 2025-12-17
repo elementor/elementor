@@ -22,7 +22,7 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 			return true;
 		}
 
-		return localStorage.getItem( storageKey ) === 'true';
+		return 'true' === localStorage.getItem( storageKey );
 	} );
 
 	const handleClick = useCallback( () => {
@@ -50,7 +50,7 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 			</ListItem>
 			{ hasChildren && (
 				<Collapse in={ isExpanded } timeout="auto" unmountOnExit>
-					<List disablePadding disableGutters>
+					<List disablePadding>
 						{ children.map( ( childItem ) => (
 							<ChildListItem key={ childItem.slug } disablePadding dense disableGutters>
 								<ChildMenuItemButton
