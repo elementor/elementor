@@ -1,9 +1,8 @@
 export class SidebarMenuHandler {
 	constructor() {
-		const elementorHomeMenu = this.findElementorHomeMenu();
+		this.elementorHomeMenu = this.findElementorHomeMenu();
 
-		if ( elementorHomeMenu ) {
-			this.elementorHomeMenu = elementorHomeMenu;
+		if ( this.elementorHomeMenu ) {
 			this.deactivateOtherMenus();
 			this.activateElementorMenu();
 			this.highlightSubmenu();
