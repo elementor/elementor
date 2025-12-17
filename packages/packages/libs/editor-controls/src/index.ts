@@ -35,8 +35,6 @@ export { enqueueFont } from './controls/font-family-control/enqueue-font';
 export { transitionProperties, transitionsItemsList } from './controls/transition-control/data';
 export { DateTimeControl } from './controls/date-time-control';
 export { InlineEditingControl } from './controls/inline-editing-control';
-export { InlineEditor } from './components/inline-editor';
-export { InlineEditorToolbar } from './components/inline-editor-toolbar';
 
 // components
 export { ControlFormLabel } from './components/control-form-label';
@@ -51,6 +49,8 @@ export {
 } from './components/repeater/repeater';
 export { FloatingActionsBar } from './components/floating-bar';
 export { PopoverGridContainer } from './components/popover-grid-container';
+export { InlineEditor } from './components/inline-editor';
+export { InlineEditorToolbar } from './components/inline-editor-toolbar';
 
 // types
 export type { ControlComponent } from './create-control';
