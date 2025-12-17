@@ -2,8 +2,19 @@ import * as React from 'react';
 import { createPortal } from 'react-dom';
 import { InlineEditingReplacement } from '@elementor/editor-controls';
 
-import { type ReplacementRegistration, useRegistrations } from './registry';
+import { inlineEditingReplacement } from './components/inline-editing';
+import { registerViewReplacement, type ReplacementRegistration, useRegistrations } from './registry';
 import { type ReplacementType } from './types';
+
+const replacements = [
+	inlineEditingReplacement,
+];
+
+export const initReplacements = () => {
+	replacements.forEach( ( replacement ) => {
+		registerViewReplacement( replacement.widgetTypes, replacement.config );
+	} );
+};
 
 const ReplacementComponent = ( {
 	elementId,
@@ -27,11 +38,13 @@ const ReplacementPortal = ( { registration }: { registration: ReplacementRegistr
 		return null;
 	}
 
+	const props = registration.getProps?.() ?? {};
+
 	return createPortal(
 		<ReplacementComponent
 			elementId={ registration.elementId }
 			type={ registration.type }
-			props={ registration.props }
+			props={ props }
 		/>,
 		registration.targetElement
 	);

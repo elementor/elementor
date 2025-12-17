@@ -1,5 +1,6 @@
 import { type V1ElementConfig } from '@elementor/editor-elements';
 
+import { createReplacementView, shouldReplaceView } from '../replacements/registry';
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { createPropsResolver } from '../renderers/create-props-resolver';
 import { settingsTransformersRegistry } from '../settings-transformers-registry';
@@ -30,11 +31,13 @@ export function createTemplatedElementType( {
 		}
 
 		getView() {
-			return createTemplatedElementView( {
-				type,
-				renderer,
-				element,
-			} );
+			const options = { type, renderer, element };
+
+			if ( shouldReplaceView( type, options ) ) {
+				return createReplacementView< CreateTemplatedElementTypeOptions, typeof ElementView >( type, options )!;
+			}
+
+			return createTemplatedElementView( options );
 		}
 	};
 }

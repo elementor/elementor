@@ -100,6 +100,25 @@ describe( 'registry', () => {
 			expect( onActivate ).toHaveBeenCalledTimes( 1 );
 		} );
 
+		it( 'should support dynamic getProps function', () => {
+			const mockProps = { classes: 'test-class', expectedTag: 'h1' };
+			const getProps = jest.fn().mockReturnValue( mockProps );
+			
+			register( {
+				elementId: 'test-1',
+				targetElement: createMockElement(),
+				type: 'inline-editing',
+				shouldActivate: () => true,
+				getProps,
+			} );
+
+			activate( 'test-1' );
+			const registrations = getRegistrations();
+			const props = registrations[ 0 ].getProps?.();
+
+			expect( props ).toEqual( mockProps );
+		} );
+
 		it( 'should handle non-existent element', () => {
 			expect( () => activate( 'non-existent' ) ).not.toThrow();
 		} );

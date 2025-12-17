@@ -1,20 +1,12 @@
 import { type ExtendedWindow, type V1Element } from '@elementor/editor-elements';
 import { getElementType } from '@elementor/editor-elements';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
 import {
 	getBlockedValue,
-	getHtmlPropertyName,
-	getHtmlPropType,
-	shouldRenderInlineEditingView,
+	getHtmlPropertyName
 } from '../inline-editing-utils';
 
 type MockContainer = Pick< V1Element, 'id' | 'model' >;
-
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
-	isExperimentActive: jest.fn(),
-} ) );
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
@@ -24,31 +16,6 @@ jest.mock( '@elementor/editor-elements', () => ( {
 const TEST_ELEMENT_ID = '1-heading';
 
 describe( 'inline-editing-utils', () => {
-	describe( 'shouldRenderInlineEditingView', () => {
-		it( 'should return true if the element type is in the widget property map and the experiment is active', () => {
-			// Arrange.
-			jest.mocked( isExperimentActive ).mockReturnValue( true );
-
-			// Act & Assert.
-			expect( shouldRenderInlineEditingView( 'e-heading' ) ).toBe( true );
-		} );
-
-		it( 'should return false if the element type is not in the widget property map', () => {
-			// Arrange.
-			jest.mocked( isExperimentActive ).mockReturnValue( true );
-
-			// Act & Assert.
-			expect( shouldRenderInlineEditingView( 'e-not-supported' ) ).toBe( false );
-		} );
-
-		it( 'should return false if the experiment is not active', () => {
-			// Arrange.
-			jest.mocked( isExperimentActive ).mockReturnValue( false );
-
-			// Act & Assert.
-			expect( shouldRenderInlineEditingView( 'e-heading' ) ).toBe( false );
-		} );
-	} );
 
 	describe( 'getHtmlPropertyName', () => {
 		let elementContainer: MockContainer | null = null;
@@ -213,99 +180,6 @@ describe( 'inline-editing-utils', () => {
 
 			// Assert.
 			expect( htmlPropertyName ).toBe( 'editMe' );
-		} );
-	} );
-
-	describe( 'getHtmlPropType', () => {
-		let elementContainer: MockContainer | null = null;
-		const mockGetContainer = jest.fn().mockImplementation( () => {
-			return elementContainer;
-		} );
-
-		beforeEach( () => {
-			const extendedWindow = window as unknown as ExtendedWindow;
-
-			extendedWindow.elementor = {
-				getContainer: mockGetContainer,
-			};
-		} );
-
-		it( 'should return the html propType if the element type is in the widget property map', () => {
-			// Arrange.
-			elementContainer = createMockContainer( 'widget', {
-				widgetType: 'e-paragraph',
-			} );
-			jest.mocked( getElementType ).mockReturnValue( {
-				key: 'e-paragraph',
-				controls: [],
-				propsSchema: {
-					paragraph: {
-						kind: 'plain',
-						key: 'html',
-						settings: {},
-						meta: {},
-					},
-				},
-				title: 'Not Supported',
-			} );
-
-			// Act.
-			const htmlPropType = getHtmlPropType( elementContainer as V1Element );
-
-			// Assert.
-			expect( htmlPropType ).toBeTruthy();
-		} );
-
-		it( 'should return the html propType if the element type is not in the widget property map', () => {
-			// Arrange.
-			elementContainer = createMockContainer( 'widget', {
-				widgetType: 'e-not-supported',
-			} );
-			jest.mocked( getElementType ).mockReturnValue( {
-				key: 'e-not-supported',
-				controls: [],
-				propsSchema: {
-					editMe: {
-						kind: 'plain',
-						key: 'html',
-						settings: {},
-						meta: {},
-					},
-				},
-				title: 'Not Supported',
-			} );
-
-			// Act.
-			const htmlPropType = getHtmlPropType( elementContainer as V1Element );
-
-			// Assert.
-			expect( htmlPropType ).toBeTruthy();
-		} );
-
-		it( 'should return null if the element type is not in the widget property map', () => {
-			// Arrange.
-			elementContainer = createMockContainer( 'widget', {
-				widgetType: 'e-not-supported',
-			} );
-			jest.mocked( getElementType ).mockReturnValue( {
-				key: 'e-not-supported',
-				controls: [],
-				propsSchema: {
-					editMe: {
-						kind: 'plain',
-						key: 'notHtml',
-						settings: {},
-						meta: {},
-					},
-				},
-				title: 'Not Supported',
-			} );
-
-			// Act.
-			const htmlPropType = getHtmlPropType( elementContainer as V1Element );
-
-			// Assert.
-			expect( htmlPropType ).toBeNull();
 		} );
 	} );
 

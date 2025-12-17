@@ -9,11 +9,17 @@ export type ReplacementRegistration = {
 	isActive: boolean;
 	shouldActivate: () => boolean;
 	onActivate?: () => void;
-	props?: Record< string, unknown >;
+	getProps?: () => Record< string, unknown >;
+};
+
+export type ViewReplacementConfig< TOptions = any, TView = any > = {
+	shouldReplace: ( options: TOptions ) => boolean;
+	createView: ( options: TOptions ) => TView;
 };
 
 const registrations = new Map<string, ReplacementRegistration>();
 const listeners = new Set<() => void>();
+const viewReplacements = new Map< string, ViewReplacementConfig >();
 
 const notifyListeners = () => {
 	listeners.forEach( ( fn ) => fn() );
@@ -78,5 +84,31 @@ export const useRegistrations = (): ReplacementRegistration[] => {
 	}, [] );
 
 	return getRegistrations();
+};
+
+export const registerViewReplacement = < TOptions, TView >(
+	widgetTypes: string | string[],
+	config: ViewReplacementConfig< TOptions, TView >
+) => {
+	const types = Array.isArray( widgetTypes ) ? widgetTypes : [ widgetTypes ];
+	types.forEach( ( widgetType ) => {
+		viewReplacements.set( widgetType, config );
+	} );
+};
+
+export const shouldReplaceView = < TOptions >(
+	widgetType: string,
+	options: TOptions
+): boolean => {
+	const replacement = viewReplacements.get( widgetType );
+	return !! replacement?.shouldReplace( options );
+};
+
+export const createReplacementView = < TOptions, TView >(
+	widgetType: string,
+	options: TOptions
+): TView | undefined => {
+	const replacement = viewReplacements.get( widgetType ) as ViewReplacementConfig< TOptions, TView > | undefined;
+	return replacement?.createView( options );
 };
 
