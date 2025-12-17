@@ -8,6 +8,9 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 			classId: z.string().describe( 'The ID of the class to apply' ),
 			elementId: z.string().describe( 'The ID of the element to which the class will be applied' ),
 		},
+		outputSchema: {
+			result: z.string().describe( 'Result message indicating the success of the apply operation' ),
+		},
 		name: 'apply-global-class',
 		description: `Apply a global class to the current element
 
@@ -23,7 +26,11 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 			const { classId, elementId } = params;
 			const appliedClasses = doGetAppliedClasses( elementId );
 			doApplyClasses( elementId, [ ...appliedClasses, classId ] );
-			return `Class ${ classId } applied to element ${ elementId } successfully.`;
+			return {
+				llm_instructions:
+					'Please check the element-configuration, find DUPLICATES in the style schema that are in the class, and remove them',
+				result: `Class ${ classId } applied to element ${ elementId } successfully.`,
+			};
 		},
 	} );
 
@@ -32,6 +39,9 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 		schema: {
 			classId: z.string().describe( 'The ID of the class to unapply' ),
 			elementId: z.string().describe( 'The ID of the element from which the class will be unapplied' ),
+		},
+		outputSchema: {
+			result: z.string().describe( 'Result message indicating the success of the unapply operation' ),
 		},
 		description: `Unapply a (global) class from the current element
 
@@ -54,7 +64,9 @@ If the user want to unapply a class by it's name and not ID, retreive the id fro
 			if ( ! ok ) {
 				throw new Error( `Class ${ classId } is not applied to element ${ elementId }, cannot unapply it.` );
 			}
-			return `Class ${ classId } unapplied from element ${ elementId } successfully.`;
+			return {
+				result: `Class ${ classId } unapplied from element ${ elementId } successfully.`,
+			};
 		},
 	} );
 }
