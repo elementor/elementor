@@ -5,7 +5,7 @@ import { componentInstanceOverridePropTypeUtil } from './component-instance-over
 
 export const componentInstanceOverridesPropTypeUtil = createPropUtils(
 	'overrides',
-	z.array( componentInstanceOverridePropTypeUtil.schema )
+	z.array( componentInstanceOverridePropTypeUtil.schema ).optional().default( [] )
 );
 
 export type ComponentInstanceOverridesPropValue = z.infer<
