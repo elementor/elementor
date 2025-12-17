@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace Elementor\Modules\Ai\Connect;
 
 use Elementor\Core\Common\Modules\Connect\Apps\Library;
