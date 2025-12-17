@@ -50,7 +50,8 @@ class Duplicate_Post extends Endpoint {
 		$post = get_post( $post_id );
 
 		if ( ! User::is_current_user_can_edit_post_type( $post->post_type ) ) {
-			return new \WP_Error( 401, sprintf( 'User dont have capability to create page of type - %s.', $post->post_type ), [ 'status' => 401 ] );
+			$sanitized_post_type = esc_html( str_replace( '%', '%%', $post->post_type ) );
+			return new \WP_Error( 401, sprintf( 'User dont have capability to create page of type - %s.', $sanitized_post_type ), [ 'status' => 401 ] );
 		}
 
 		if ( ! $post ) {
