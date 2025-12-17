@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Menu_Data_Provider {
-
 	private static ?Menu_Data_Provider $instance = null;
 	private array $level3_items = [];
 	private array $level4_items = [];

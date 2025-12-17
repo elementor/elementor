@@ -25,6 +25,10 @@ class Elementor_One_Menu_Manager {
 	private Legacy_Submenu_Interceptor $legacy_submenu_interceptor;
 
 	public function __construct() {
+		if ( ! Menu_Config::is_elementor_home_menu_available() ) {
+			return;
+		}
+
 		$this->menu_data_provider = Menu_Data_Provider::instance();
 		$this->legacy_submenu_interceptor = new Legacy_Submenu_Interceptor(
 			$this->menu_data_provider,
@@ -140,9 +144,6 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function hide_old_elementor_menu(): void {
-		if ( ! Menu_Config::is_elementor_home_menu_available() ) {
-			return;
-		}
 		?>
 		<style type="text/css">
 			#toplevel_page_elementor {
