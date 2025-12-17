@@ -24,17 +24,8 @@ class Boolean_Prop_Type extends Plain_Prop_Type {
 	protected function sanitize_value( $value ) {
 		return (bool) $value;
 	}
-
-	public function sanitize( $value ) {
-		$value = parent::sanitize( $value );
-		$value['version'] = 1;
-
-		return $value;
-	}
-
-	public function jsonSerialize(): array {
-		return array_merge( parent::jsonSerialize(), [
-			'version' => 1,
-		] );
+	//exapmle only, how to change a version
+	protected function getPropVersion(): int {
+		return 2; 
 	}
 }
