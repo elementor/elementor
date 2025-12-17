@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ControlActionsProvider, ControlReplacementsProvider } from '@elementor/editor-controls';
-import { useSelectedElement } from '@elementor/editor-elements';
+import { type Element, type ElementType, useSelectedElement } from '@elementor/editor-elements';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { AtomIcon } from '@elementor/icons';
@@ -12,7 +13,10 @@ import { __ } from '@wordpress/i18n';
 import { ElementProvider } from '../contexts/element-context';
 import { getControlReplacements } from '../control-replacement';
 import { controlActionsMenu } from '../controls-actions';
-import { getEditingPanelReplacement } from '../editing-panel-replacement-registry';
+import {
+	getEditingPanelReplacement,
+	subscribeToEditingPanelReplacementRegistry,
+} from '../editing-panel-replacement-registry';
 import { EditorPanelErrorFallback } from './editing-panel-error-fallback';
 import { EditingPanelTabs } from './editing-panel-tabs';
 
@@ -20,10 +24,29 @@ export const { Slot: PanelHeaderTopSlot, inject: injectIntoPanelHeaderTop } = cr
 
 const { useMenuItems } = controlActionsMenu;
 
+const useEditingPanelReplacement = ( element: Element | null, elementType: ElementType | null ) => {
+	const [ replacement, setReplacement ] = useState( getEditingPanelReplacement( element, elementType ) );
+
+	const recalculateReplacement = useCallback( () => {
+		setReplacement( getEditingPanelReplacement( element, elementType ) );
+	}, [ element, elementType ] );
+
+	useEffect( () => {
+		const unsubscribe = subscribeToEditingPanelReplacementRegistry( recalculateReplacement );
+
+		return () => {
+			unsubscribe();
+		};
+	}, [ recalculateReplacement ] );
+
+	return replacement;
+};
+
 export const EditingPanel = () => {
 	const { element, elementType } = useSelectedElement();
 	const controlReplacements = getControlReplacements();
 	const menuItems = useMenuItems().default;
+	const replacement = useEditingPanelReplacement( element, elementType );
 
 	if ( ! element || ! elementType ) {
 		return null;
@@ -31,8 +54,6 @@ export const EditingPanel = () => {
 
 	/* translators: %s: Element type title. */
 	const panelTitle = __( 'Edit %s', 'elementor' ).replace( '%s', elementType.title );
-
-	const { component: ReplacementComponent } = getEditingPanelReplacement( element, elementType ) ?? {};
 
 	let panelContent = (
 		<>
@@ -46,8 +67,8 @@ export const EditingPanel = () => {
 		</>
 	);
 
-	if ( ReplacementComponent ) {
-		panelContent = <ReplacementComponent />;
+	if ( replacement ) {
+		panelContent = <replacement.component />;
 	}
 
 	return (
