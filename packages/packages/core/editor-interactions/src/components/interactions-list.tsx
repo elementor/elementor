@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { Repeater } from '@elementor/editor-controls';
 import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
-import { Alert, AlertTitle, Box, IconButton } from '@elementor/ui';
+import { Alert, AlertTitle, Box, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { InteractionDetails } from './interaction-details';
@@ -93,7 +93,8 @@ export function InteractionsList( props: InteractionListProps ) {
 					/>
 				),
 				actions: ( value: InteractionItemPropValue ) => (
-					<>
+					<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
+
 						<IconButton
 							aria-label={ __( 'Play interaction', 'elementor' ) }
 							size="tiny"
@@ -101,7 +102,7 @@ export function InteractionsList( props: InteractionListProps ) {
 						>
 							<PlayerPlayIcon fontSize="tiny" />
 						</IconButton>
-					</>
+					</Tooltip>
 				),
 			} }
 		/>
