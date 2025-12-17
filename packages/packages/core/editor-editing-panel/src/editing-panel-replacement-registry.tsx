@@ -2,16 +2,31 @@ import { type ComponentType } from 'react';
 import { type Element, type ElementType } from '@elementor/editor-elements';
 
 type EditingPanelReplacement = {
-	condition: ( element: Element, elementType: ElementType ) => boolean;
+	condition: ( element: Element | null, elementType: ElementType | null ) => boolean;
 	component: ComponentType;
 
 	// ordered from lowest to highest
 	priority: number;
 };
 
+type RegistryListener = () => void;
+
 const registry = new Map< string, EditingPanelReplacement >();
+const listeners = new Set< RegistryListener >();
 
 const DEFAULT_PRIORITY = 10;
+
+export const subscribeToEditingPanelReplacementRegistry = ( listener: RegistryListener ) => {
+	listeners.add( listener );
+
+	return () => {
+		listeners.delete( listener );
+	};
+};
+
+export const notifyEditingPanelReplacementRegistryChanged = () => {
+	listeners.forEach( ( listener ) => listener() );
+};
 
 export const registerEditingPanelReplacement = ( {
 	id,
@@ -19,11 +34,12 @@ export const registerEditingPanelReplacement = ( {
 	...props
 }: Omit< EditingPanelReplacement, 'priority' > & { id: string; priority?: number } ) => {
 	registry.set( id, { ...props, priority } );
+	notifyEditingPanelReplacementRegistryChanged();
 };
 
 export const getEditingPanelReplacement = (
-	element: Element,
-	elementType: ElementType
+	element: Element | null,
+	elementType: ElementType | null
 ): EditingPanelReplacement | null =>
 	Array.from( registry.values() )
 		.filter( ( { condition } ) => condition( element, elementType ) )
