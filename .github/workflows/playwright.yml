@@ -324,6 +324,17 @@ jobs:
           parent: false
           glob: '**'
 
+      - name: Add Allure report link to summary
+        if: hashFiles('allure-report/**') != ''
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "[View Allure Report](https://storage.googleapis.com/${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/main/)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "[View Allure Report](https://storage.googleapis.com/${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.run_id }}/)" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+
   test-result:
     needs: [ Playwright, PlaywrightWithTag ]
     if: always() && (needs.Playwright.result != 'skipped')
