@@ -587,11 +587,13 @@ describe( 'GlobalClassesList', () => {
 	} );
 
 	it( 'should track classRenamed event with correct payload when renaming a class', async () => {
+		jest.mocked( useFilters ).mockReturnValue( null );
 		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
 
 		renderWithStore( <GlobalClassesList />, store );
 
-		fireEvent.doubleClick( screen.getByRole( 'button', { name: 'Class 1' } ) );
+		const classButton = await screen.findByRole( 'button', { name: 'Class 1' } );
+		fireEvent.doubleClick( classButton );
 
 		const editableField = screen.getByRole( 'textbox' );
 
@@ -608,11 +610,14 @@ describe( 'GlobalClassesList', () => {
 	} );
 
 	it( 'should track classRenamed event with correct payload when renaming from menu', async () => {
+		jest.mocked( useFilters ).mockReturnValue( null );
 		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
 
 		renderWithStore( <GlobalClassesList />, store );
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'More actions' } ) );
+		const [ firstClass ] = await screen.findAllByRole( 'listitem' );
+		const moreActionsButton = within( firstClass ).getByRole( 'button', { name: 'More actions' } );
+		fireEvent.click( moreActionsButton );
 
 		const renameButton = screen.getByRole( 'menuitem', { name: 'Rename' } );
 
@@ -637,6 +642,7 @@ describe( 'GlobalClassesList', () => {
 	} );
 
 	it( 'should track classDeleted event with correct payload when deleting a class', async () => {
+		jest.mocked( useFilters ).mockReturnValue( null );
 		mockClasses( [
 			{ id: 'class-1', label: 'Class 1' },
 			{ id: 'class-2', label: 'Class 2' },
@@ -644,7 +650,7 @@ describe( 'GlobalClassesList', () => {
 
 		renderWithStore( <GlobalClassesList />, store );
 
-		const [ firstClass ] = screen.getAllByRole( 'listitem' );
+		const [ firstClass ] = await screen.findAllByRole( 'listitem' );
 
 		fireEvent.click( within( firstClass ).getByRole( 'button', { name: 'More actions' } ) );
 
