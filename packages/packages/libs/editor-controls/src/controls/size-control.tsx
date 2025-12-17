@@ -97,7 +97,6 @@ export const SizeControl = createControl(
 		enablePropTypeUnits = false,
 		id,
 		ariaLabel,
-		isRepeaterControl = false,
 	}: Omit< SizeControlProps, 'variant' > & { variant?: SizeVariant } ) => {
 		const {
 			value: sizeValue,
@@ -107,6 +106,7 @@ export const SizeControl = createControl(
 			placeholder: externalPlaceholder,
 			propType,
 		} = useBoundProp( sizePropTypeUtil );
+
 		const actualDefaultUnit = defaultUnit ?? externalPlaceholder?.unit ?? defaultSelectedUnit[ variant ];
 		const activeBreakpoint = useActiveBreakpoint();
 		const actualExtendedOptions = useSizeExtendedOptions( extendedOptions || [], disableCustom ?? false );
@@ -169,46 +169,14 @@ export const SizeControl = createControl(
 			}
 		};
 
-		const handleLinkedSizeControlChanges = () => {
-			const newState = createStateFromSizeProp(
-				sizeValue,
-				state.unit === 'custom' ? state.unit : actualDefaultUnit,
-				'',
-				state.custom
-			);
-			const currentUnitType = isUnitExtendedOption( state.unit ) ? 'custom' : 'numeric';
-			const mergedStates = {
-				...state,
-				unit: newState.unit ?? state.unit,
-				[ currentUnitType ]: newState[ currentUnitType ],
-			};
-
-			if ( mergedStates.unit !== 'auto' && areStatesEqual( state, mergedStates ) ) {
-				return;
+		const maybeClosePopup = React.useCallback( () => {
+			if ( popupState && popupState.isOpen ) {
+				popupState.close();
 			}
-
-			if ( state.unit === newState.unit ) {
-				setState( mergedStates );
-
-				return;
-			}
-
-			setState( newState );
-		};
+		}, [ popupState ] );
 
 		useEffect( () => {
-			if ( ! isRepeaterControl ) {
-				handleLinkedSizeControlChanges();
-			}
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [ sizeValue ] );
-
-		useEffect( () => {
-			const newState = createStateFromSizeProp( sizeValue, actualDefaultUnit, '', state.custom );
-
-			if ( activeBreakpoint && ! areStatesEqual( newState, state ) ) {
-				setState( newState );
-			}
+			maybeClosePopup();
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [ activeBreakpoint ] );
 
@@ -316,16 +284,4 @@ function extractValueFromState( state: State | null, allowEmpty: boolean = false
 		size: numeric,
 		unit,
 	};
-}
-
-function areStatesEqual( state1: State, state2: State ): boolean {
-	if ( state1.unit !== state2.unit || state1.custom !== state2.custom ) {
-		return false;
-	}
-
-	if ( isUnitExtendedOption( state1.unit ) ) {
-		return state1.custom === state2.custom;
-	}
-
-	return state1.numeric === state2.numeric || ( isNaN( state1.numeric ) && isNaN( state2.numeric ) );
 }
