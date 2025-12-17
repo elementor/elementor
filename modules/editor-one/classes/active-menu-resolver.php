@@ -22,8 +22,6 @@ class Active_Menu_Resolver {
 		}
 
 		$pro_post_type_match = $this->get_pro_post_type_active_state();
-		error_log( print_r( $pro_post_type_match, true ) );
-		error_log( print_r( $current_page, true ) );
 
 		if ( $pro_post_type_match ) {
 			return $pro_post_type_match;
