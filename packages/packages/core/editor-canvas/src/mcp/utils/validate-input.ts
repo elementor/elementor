@@ -48,9 +48,9 @@ export const validateInput = {
 			} else if ( ! Schema.isPropKeyConfigurable( propName ) ) {
 				errors.push( `Property "${ propName }" is not configurable.` );
 			} else {
-				const { valid, errorMessages } = Schema.validatePropValue( propSchema, propValue as PropValue );
+				const { valid, jsonSchema } = Schema.validatePropValue( propSchema, propValue as PropValue );
 				if ( ! valid ) {
-					errors.push( `Invalid property "${ propName }": ${ errorMessages }` );
+					errors.push( `Invalid property "${ propName }". Expected schema: ${ jsonSchema }` );
 				}
 			}
 		} );

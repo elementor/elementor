@@ -18,8 +18,43 @@ export const generatePrompt = () => {
 Always prefer this tool when the user requires to build a composition of elements, such as cards, heros, or inspired from other pages or HTML compositions.
 Prefer this tool over any other tool for building HTML structure, unless you are specified to use a different tool.
 
-# MANDATORY WORKFLOW
-Follow these steps in order:
+# **CRITICAL - REQUIRED RESOURCES (Must read before using this tool)**
+1. [${ WIDGET_SCHEMA_URI }]
+   Required to understand which widgets are available, and what are their configuration schemas.
+   Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply property values correctly.
+2. [${ STYLE_SCHEMA_URI }]
+   Required to understand the styles schema for the widgets. All widgets share the same styles schema.
+3. List of allowed custom tags for building the structure is derived from the list of widgets schema resources.
+
+# DESIGN QUALITY IMPERATIVE
+You are generating designs for real users who expect distinctive, intentional aesthetics - NOT generic AI output.
+**The Core Challenge**: Large language models naturally converge toward statistically common design patterns during generation. This creates predictable, uninspired results that users describe as "AI slop": safe color schemes, default typography hierarchies, minimal contrast, and timid spacing.
+**Your Mission**: Actively resist distributional convergence by making intentional, distinctive design choices across all aesthetic dimensions. Every design decision should have a clear purpose tied to visual hierarchy, brand personality, or user experience goals.
+When in doubt between "safe" and "distinctive," choose distinctive - users can always request refinements, but they cannot salvage generic foundations.
+
+# When to use this tool
+Always prefer this tool when the user requires to build a composition of elements, such as cards, heros, or inspired from other pages or HTML compositions.
+Prefer this tool over any other tool for building HTML structure, unless you are specified to use a different tool.
+
+# Instructions
+1. Understand the user requirements carefully.
+2. Build a valid XML structure using only the allowed custom tags provided. For example, if you
+   use the "e-button" element, it would be represented as <e-button></e-button> in the XML structure.
+3. Plan the configuration for each element according to the user requirements, using the configuration schema provided for each custom tag.
+   Every widget type has it's own configuration schema, retreivable from the resource [${ WIDGET_SCHEMA_URI }].
+   PropValues must follow the exact PropType schema provided in the resource.
+4. For every element, provide a "configuration-id" attribute. For example:
+   \`<e-flexbox configuration-id="flex1"><e-heading configuration-id="heading2"></e-heading></e-flexbox>\`
+   In the elementConfig property, provide the actual configuration object for each configuration-id used in the XML structure.
+   In the stylesConfig property, provide the actual styles configuration object for each configuration-id used in the XML structure.
+5. Ensure the XML structure is valid and parsable.
+6. Do not add any attribute nodes, classes, id's, and no text nodes allowed.
+   Layout properties, such as margin, padding, align, etc. must be applied using the [${ STYLE_SCHEMA_URI }] PropValues.
+7. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-tabs", "e-div-block", and "e-flexbox".
+8. Make sure that non-container elements do NOT have any nested elements.
+9. **CRITICAL - CUSTOM CSS USAGE**: ALWAYS Prefer using style schema. Custom CSS is ONLY FOR UNSUPPRTED schema styles.
+   ALWAYS PRIORITIZE using the style schema PropValues for styling elements as they provide better user experience in the editor, and UI features for the end-users.
+   Use custom_css only for style attributes that ARE NOT SUPPORTED via the style schema AFTER YOU CHECK THE [${ STYLE_SCHEMA_URI }].
 
 1. **Parse user requirements** - Understand what the user wants to build, including structure, content, and styling preferences.
 
@@ -183,10 +218,8 @@ If unsure about the configuration of a specific property, read the schema resour
 
 # About our widgets
 Most widgets are self-explanatory by their name. Here is some additional information.
+Check for available llm_guidance property in the widget's schema.
 SVG elements are bound to internal content upload. Avoid usage, unless you have tools to upload SVG content.
-e-div-block - By default is ceneterd aligned and vertically stacked. To modify this, apply style configuration.
-e-flexbox - By default is a flex container with row direction. To modify this, apply style configuration.
-
 When working with containers, do not forget to apply style schema for controlling the layout.
 
 

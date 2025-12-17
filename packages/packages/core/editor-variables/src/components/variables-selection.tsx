@@ -123,29 +123,6 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 		setSearchValue( '' );
 	};
 
-	const noVariableTitle = disabled
-		? sprintf(
-				/* translators: %s: Variable Type. */
-				__( 'No %s variables yet', 'elementor' ),
-				variableType
-		  )
-		: sprintf(
-				/* translators: %s: Variable Type. */
-				__( 'Create your first %s variable', 'elementor' ),
-				variableType
-		  );
-
-	const noVariableMessage = disabled
-		? sprintf(
-				/* translators: %s: Variable Type. */
-				__(
-					'Start by creating your first %s variable to apply consistent sizing across elements.',
-					'elementor'
-				),
-				variableType
-		  )
-		: __( 'Variables are saved attributes that you can apply anywhere on your site.', 'elementor' );
-
 	return (
 		<PopoverBody>
 			<PopoverHeader
@@ -187,18 +164,41 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 				/>
 			) }
 
-			{ ! hasVariables && ! hasNoCompatibleVariables && (
+			{ disabled && (
 				<EmptyState
-					title={ noVariableTitle }
-					message={ noVariableMessage }
+					title={ sprintf(
+						/* translators: %s: Variable Type. */
+						__( 'No %s variables yet', 'elementor' ),
+						variableType
+					) }
+					message={ sprintf(
+						/* translators: %s: Variable Type. */
+						__( 'Upgrade to create %s variables and maintain consistent element sizing.', 'elementor' ),
+						variableType
+					) }
 					icon={ <VariableIcon fontSize="large" /> }
-					onAdd={ disabled ? undefined : onAdd }
 				>
 					{ emptyState }
 				</EmptyState>
 			) }
 
-			{ hasNoCompatibleVariables && (
+			{ ! hasVariables && ! hasNoCompatibleVariables && ! disabled && (
+				<EmptyState
+					title={ sprintf(
+						/* translators: %s: Variable Type. */
+						__( 'Create your first %s variable', 'elementor' ),
+						variableType
+					) }
+					message={ __(
+						'Variables are saved attributes that you can apply anywhere on your site.',
+						'elementor'
+					) }
+					icon={ <VariableIcon fontSize="large" /> }
+					onAdd={ onAdd }
+				/>
+			) }
+
+			{ hasNoCompatibleVariables && ! disabled && (
 				<EmptyState
 					title={ __( 'No compatible variables', 'elementor' ) }
 					message={ __(
@@ -206,10 +206,8 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 						'elementor'
 					) }
 					icon={ <VariableIcon fontSize="large" /> }
-					onAdd={ disabled ? undefined : onAdd }
-				>
-					{ emptyState }
-				</EmptyState>
+					onAdd={ onAdd }
+				/>
 			) }
 		</PopoverBody>
 	);
