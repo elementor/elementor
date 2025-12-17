@@ -24,6 +24,7 @@ class Validation {
 			if ( $number_of_interactions > $this->max_number_of_interactions ) {
 				throw new \Exception(
 					sprintf(
+						// translators: %1$s: element ID, %2$d: maximum number of interactions allowed.
 						esc_html__( 'Element %1$s has more than %2$d interactions', 'elementor' ),
 						esc_html( $element_id ),
 						esc_html( $this->max_number_of_interactions )
@@ -125,7 +126,7 @@ class Validation {
 		$value = $item['value'];
 
 		// Validate required fields exist
-		if (  isset( $value['interaction_id'] ) && ! $this->is_valid_string_prop( $value, 'interaction_id' ) ) {
+		if ( isset( $value['interaction_id'] ) && ! $this->is_valid_string_prop( $value, 'interaction_id' ) ) {
 			return false;
 		}
 

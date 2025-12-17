@@ -7,21 +7,20 @@ function extractAnimationId( interaction ) {
 		return interaction;
 	}
 
-	if ( interaction?.$$type === 'interaction-item' && interaction?.value ) {
+	if ( 'interaction-item' === interaction?.$$type && interaction?.value ) {
 		const { trigger, animation } = interaction.value;
-		if ( animation?.$$type === 'animation-preset-props' && animation?.value ) {
-			const { effect, type, direction, timing_config } = animation.value;
+		if ( 'animation-preset-props' === animation?.$$type && animation?.value ) {
+			const { effect, type, direction, timing_config: timingConfig } = animation.value;
 			const triggerVal = trigger?.value || 'load';
 			const effectVal = effect?.value || 'fade';
 			const typeVal = type?.value || 'in';
 			const directionVal = direction?.value || '';
-			const duration = timing_config?.value?.duration?.value ?? 300;
-			const delay = timing_config?.value?.delay?.value ?? 0;
+			const duration = timingConfig?.value?.duration?.value ?? 300;
+			const delay = timingConfig?.value?.delay?.value ?? 0;
 			return `${ triggerVal }-${ effectVal }-${ typeVal }-${ directionVal }-${ duration }-${ delay }`;
 		}
 	}
 
-	// Legacy format: { animation: { animation_id: '...' } }
 	if ( interaction?.animation?.animation_id ) {
 		return interaction.animation.animation_id;
 	}
