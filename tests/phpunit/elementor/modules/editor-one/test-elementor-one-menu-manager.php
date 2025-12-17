@@ -33,12 +33,14 @@ class Test_Elementor_One_Menu_Manager extends TestCase {
 	public function tearDown(): void {
 		parent::tearDown();
 
-		global $menu, $submenu;
+		global $menu, $submenu, $current_user;
 
 		$menu = $this->original_menu;
 		$submenu = $this->original_submenu;
+		$current_user = null;
 
 		remove_filter( 'user_has_cap', [ $this->menu_manager, 'grant_elementor_menu_capability' ], 10 );
+		remove_filter( 'user_has_cap', [ $this, 'mock_user_capabilities' ], 999 );
 	}
 
 	public function test_grant_elementor_menu_capability__grants_manage_options_to_user_with_edit_posts() {
@@ -93,6 +95,10 @@ class Test_Elementor_One_Menu_Manager extends TestCase {
 	}
 
 	public function test_adjust_elementor_menu_capability__changes_menu_capability_to_edit_posts() {
+		if ( ! function_exists( 'wp_set_current_user' ) ) {
+			$this->markTestSkipped( 'WordPress functions not available' );
+		}
+
 		global $menu;
 
 		$menu = [
@@ -100,64 +106,100 @@ class Test_Elementor_One_Menu_Manager extends TestCase {
 			20 => [ 'Other Menu', 'manage_options', 'other-menu', 'Other Menu' ],
 		];
 
-		$this->mock_current_user_can( true, false );
+		$user_id = $this->create_test_user( true, false );
+		wp_set_current_user( $user_id );
 
 		$this->menu_manager->adjust_elementor_menu_capability();
 
 		$this->assertEquals( 'edit_posts', $menu[10][1] );
 		$this->assertEquals( 'manage_options', $menu[20][1] );
+
+		wp_delete_user( $user_id );
 	}
 
 	public function test_adjust_elementor_menu_capability__does_not_change_if_user_has_manage_options() {
+		if ( ! function_exists( 'wp_set_current_user' ) ) {
+			$this->markTestSkipped( 'WordPress functions not available' );
+		}
+
 		global $menu;
 
 		$menu = [
 			10 => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_MENU_SLUG, 'Elementor' ],
 		];
 
-		$this->mock_current_user_can( true, true );
+		$user_id = $this->create_test_user( true, true );
+		wp_set_current_user( $user_id );
 
 		$this->menu_manager->adjust_elementor_menu_capability();
 
 		$this->assertEquals( 'manage_options', $menu[10][1] );
+
+		wp_delete_user( $user_id );
 	}
 
 	public function test_adjust_elementor_menu_capability__does_not_change_if_user_does_not_have_edit_posts() {
+		if ( ! function_exists( 'wp_set_current_user' ) ) {
+			$this->markTestSkipped( 'WordPress functions not available' );
+		}
+
 		global $menu;
 
 		$menu = [
 			10 => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_MENU_SLUG, 'Elementor' ],
 		];
 
-		$this->mock_current_user_can( false, false );
+		$user_id = $this->create_test_user( false, false );
+		wp_set_current_user( $user_id );
 
 		$this->menu_manager->adjust_elementor_menu_capability();
 
 		$this->assertEquals( 'manage_options', $menu[10][1] );
+
+		wp_delete_user( $user_id );
 	}
 
 	public function test_adjust_elementor_menu_capability__handles_menu_not_found() {
+		if ( ! function_exists( 'wp_set_current_user' ) ) {
+			$this->markTestSkipped( 'WordPress functions not available' );
+		}
+
 		global $menu;
 
 		$menu = [
 			20 => [ 'Other Menu', 'manage_options', 'other-menu', 'Other Menu' ],
 		];
 
-		$this->mock_current_user_can( true, false );
+		$user_id = $this->create_test_user( true, false );
+		wp_set_current_user( $user_id );
 
 		$this->menu_manager->adjust_elementor_menu_capability();
 
 		$this->assertEquals( 'manage_options', $menu[20][1] );
+
+		wp_delete_user( $user_id );
 	}
 
-	private function mock_current_user_can( bool $has_edit_posts, bool $has_manage_options ): void {
-		global $mock_current_user_can_edit_posts, $mock_current_user_can_manage_options;
-		$mock_current_user_can_edit_posts = $has_edit_posts;
-		$mock_current_user_can_manage_options = $has_manage_options;
-
-		if ( ! function_exists( '\\current_user_can' ) ) {
-			require_once __DIR__ . '/mocks/wordpress-functions.php';
+	private function create_test_user( bool $has_edit_posts, bool $has_manage_options ): int {
+		$role = 'subscriber';
+		if ( $has_manage_options ) {
+			$role = 'administrator';
+		} elseif ( $has_edit_posts ) {
+			$role = 'editor';
 		}
+
+		$user_id = wp_insert_user( [
+			'user_login' => 'test_user_' . uniqid(),
+			'user_pass' => 'password',
+			'user_email' => 'test_' . uniqid() . '@example.com',
+			'role' => $role,
+		] );
+
+		if ( is_wp_error( $user_id ) ) {
+			$this->fail( 'Failed to create test user: ' . $user_id->get_error_message() );
+		}
+
+		return $user_id;
 	}
 }
 
