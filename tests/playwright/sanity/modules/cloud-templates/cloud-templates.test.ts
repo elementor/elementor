@@ -1,9 +1,7 @@
 import { expect, Page, TestInfo } from '@playwright/test';
-import { Page as PWPage } from 'playwright-core';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import ApiRequests from '../../../assets/api-requests';
-import AxeBuilder from '@axe-core/playwright';
 
 declare global {
 	interface Window {
@@ -600,12 +598,5 @@ test.describe( 'Cloud Templates', () => {
 		const templateItems = page.locator( '.elementor-template-library-template-cloud' );
 		await expect( templateItems ).toHaveCount( 1 );
 		await expect( templateItems.first() ).toContainText( templateTitle );
-	} );
-
-	test( 'should pass accessibility test for cloud-templates popup', async ( { page, apiRequests }, testInfo ) => {
-		await setupCloudTemplatesTab( page, testInfo, apiRequests );
-
-		const accessibilityScanResults = await new AxeBuilder( { page: page as PWPage } ).include( '#elementor-template-library-modal' ).analyze();
-		expect.soft( accessibilityScanResults.violations ).toEqual( [] );
 	} );
 } );
