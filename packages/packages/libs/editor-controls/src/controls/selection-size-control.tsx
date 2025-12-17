@@ -23,12 +23,7 @@ type SelectionSizeControlProps = {
 };
 
 export const SelectionSizeControl = createControl(
-	( {
-		selectionLabel,
-		sizeLabel,
-		selectionConfig,
-		sizeConfigMap,
-	}: SelectionSizeControlProps ) => {
+	( { selectionLabel, sizeLabel, selectionConfig, sizeConfigMap }: SelectionSizeControlProps ) => {
 		const { value, setValue, propType } = useBoundProp( selectionSizePropTypeUtil );
 		const rowRef = useRef< HTMLDivElement >( null );
 
