@@ -1,6 +1,7 @@
 import { getElementType } from '@elementor/editor-elements';
 import { htmlPropTypeUtil, stringPropTypeUtil, type TransformablePropValue } from '@elementor/editor-props';
 
+import { deactivate } from '../replacements/registry';
 import { getBlockedValue, getInlineEditablePropertyName } from '../utils/inline-editing-utils';
 import { type ElementView, type LegacyWindow } from './types';
 
@@ -103,7 +104,13 @@ export const inlineEditingBridgeConfig = {
 		classes: getClasses( view ),
 		expectedTag: getExpectedTag( view ),
 		toolbarOffset: getToolbarOffset(),
-		onComplete: () => view.render(),
+		onComplete: () => {
+			const elementId = view.container?.id ?? view.model?.get?.( 'id' );
+			if ( elementId ) {
+				deactivate( elementId );
+			}
+			view.render();
+		},
 	} ),
 };
 

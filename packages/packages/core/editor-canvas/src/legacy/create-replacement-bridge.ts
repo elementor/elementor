@@ -24,46 +24,44 @@ export function createReplacementBridge(
 		#handlerAttached = false;
 
 		render() {
-			if ( ! this.container?.id ) {
+			const elementId = this.container?.id ?? this.model?.get?.( 'id' );
+
+			if ( elementId ) {
+				const isCurrentlyActive = isActive( elementId );
+
+				if ( isCurrentlyActive ) {
+					return;
+				}
+
+				if ( ! this.#isInitialized ) {
+					register( {
+						elementId,
+						targetElement: this.el,
+						type: config.type,
+						shouldActivate: () => config.shouldActivate( this ),
+						onActivate: () => {
+							this.$el.off( config.activationTrigger ?? 'dblclick', '*' );
+							this.#handlerAttached = false;
+							config.onActivate?.( this );
+							this.$el.html( '' );
+						},
+						props: config.getProps?.( this ),
+					} );
+
+					this.#isInitialized = true;
+				}
+
+				if ( config.shouldActivate( this ) && ! this.#handlerAttached ) {
+					const trigger = config.activationTrigger ?? 'dblclick';
+					this.$el.on( trigger, '*', ( event: Event ) => {
+						event.stopPropagation();
+						activate( elementId );
+					} );
+					this.#handlerAttached = true;
+				}
+
 				TemplatedView.prototype.render.apply( this );
-				return;
-			}
-
-			const elementId = this.container.id;
-			const isCurrentlyActive = isActive( elementId );
-
-			if ( isCurrentlyActive ) {
-				deactivate( elementId );
-			}
-
-			if ( ! this.#isInitialized ) {
-				register( {
-					elementId,
-					targetElement: this.el,
-					type: config.type,
-					shouldActivate: () => config.shouldActivate( this ),
-					onActivate: () => {
-						this.$el.off( 'dblclick', '*' );
-						this.#handlerAttached = false;
-						config.onActivate?.( this );
-						this.$el.html( '' );
-					},
-					props: config.getProps?.( this ),
-				} );
-
-				this.#isInitialized = true;
-			}
-
-			if ( ! isCurrentlyActive && config.shouldActivate( this ) && ! this.#handlerAttached ) {
-				const trigger = config.activationTrigger ?? 'dblclick';
-				this.$el.on( trigger, '*', ( event: Event ) => {
-					event.stopPropagation();
-					activate( elementId );
-				} );
-				this.#handlerAttached = true;
-			}
-
-			if ( ! isCurrentlyActive ) {
+			} else {
 				TemplatedView.prototype.render.apply( this );
 			}
 		}

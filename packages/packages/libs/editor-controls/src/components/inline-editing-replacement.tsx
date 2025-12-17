@@ -105,10 +105,13 @@ export const InlineEditingReplacement = ( {
 	toolbarOffset = { left: 0, top: 0 },
 	onComplete,
 }: InlineEditingReplacementProps ) => {
-	const container = getContainer( elementId );
+	const container = useMemo( () => getContainer( elementId ), [ elementId ] );
 	const propName = useMemo( () => getInlineEditablePropertyName( container ), [ container ] );
-	const value = useElementSetting< TransformablePropValue< string > >( elementId, propName );
-	const extractedValue = htmlPropTypeUtil.extract( value ) ?? '';
+	const initialValue = useMemo( () => {
+		const value = container?.settings?.get?.( propName );
+		return htmlPropTypeUtil.extract( value ) ?? '';
+	}, [ container, propName ] );
+	const extractedValue = initialValue;
 
 	const ensureProperValue = useCallback( () => {
 		const wrappedValue = wrapValueWithTag( extractedValue, expectedTag );
