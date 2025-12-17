@@ -13,8 +13,7 @@ export function init() {
 export function startMCPServer() {
 	if ( isExperimentActive( 'editor_mcp' ) ) {
 		const sdk = getSDK();
-		sdk.waitForReady()
-			.then( () => activateMcpRegistration( sdk ) );
+		sdk.waitForReady().then( () => activateMcpRegistration( sdk ) );
 	}
 	return Promise.resolve();
 }
