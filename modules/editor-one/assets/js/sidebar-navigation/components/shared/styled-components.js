@@ -26,8 +26,8 @@ export const SiteIconBox = styled( Box )( ( { theme } ) => ( {
 
 export const CollapseButton = styled( IconButton )( ( { theme } ) => ( {
 	position: 'absolute',
-	insetInlineEnd: -12,
-	bottom: -12,
+	insetInlineEnd: -28,
+	bottom: -16,
 	width: 24,
 	height: 24,
 	backgroundColor: theme.palette.background.paper,
@@ -127,6 +127,8 @@ export const CollapsedHeaderContainer = styled( Box )( ( { theme } ) => ( {
 	justifyContent: 'center',
 	alignItems: 'center',
 	height: 80,
+	marginLeft: theme.spacing( 2 ),
+	marginRight: theme.spacing( 2 ),
 	borderBottom: `1px solid ${ theme.palette.divider }`,
 } ) );
 

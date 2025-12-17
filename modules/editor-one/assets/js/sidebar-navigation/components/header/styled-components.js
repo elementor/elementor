@@ -2,8 +2,8 @@ import { Box, IconButton, Typography, styled } from '@elementor/ui';
 
 export const HeaderContainer = styled( Box )( ( { theme } ) => ( {
 	position: 'relative',
-	paddingLeft: theme.spacing( 2 ),
-	paddingRight: theme.spacing( 2 ),
+	marginLeft: theme.spacing( 2 ),
+	marginRight: theme.spacing( 2 ),
 	height: 80,
 	borderBottom: `1px solid ${ theme.palette.divider }`,
 	display: 'flex',

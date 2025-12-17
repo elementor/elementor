@@ -23,7 +23,7 @@ const CollapsedMenuItemPopover = ( {
 } ) => {
 	return (
 		<ListItem disablePadding dense disableGutters onMouseEnter={ onMouseEnter } ref={ anchorRef }>
-			<MenuItemButton selected={ isActive || isPopoverOpen } >
+			<MenuItemButton selected={ isActive || isPopoverOpen } sx={ { height: 36 } }>
 				<MenuIcon>
 					<IconComponent />
 				</MenuIcon>
@@ -46,7 +46,7 @@ const CollapsedMenuItemPopover = ( {
 					<List disablePadding disableGutters dense>
 						<PopoverTitle>{ item.label }</PopoverTitle>
 						{ children.map( ( childItem ) => (
-							<ListItem key={ childItem.slug } disablePadding disableGutters dense sx={ { height: 32 } }>
+							<ListItem key={ childItem.slug } disablePadding disableGutters dense sx={ { height: 28 } }>
 								<PopoverListItemButton
 									component="a"
 									href={ childItem.url }
