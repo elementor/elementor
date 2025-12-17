@@ -8,6 +8,10 @@ jest.mock( '@elementor/editor-elements' );
 
 const createMockView = ( overrides?: Partial<ElementView> ): ElementView => {
 	const mockSettings = new Map();
+	const settingsObject = {
+		get: ( settingKey: string ) => mockSettings.get( settingKey ),
+		set: ( settingKey: string, value: unknown ) => mockSettings.set( settingKey, value ),
+	};
 
 	return {
 		container: {
@@ -27,10 +31,7 @@ const createMockView = ( overrides?: Partial<ElementView> ): ElementView => {
 		model: {
 			get: jest.fn( ( key: string ) => {
 				if ( key === 'settings' ) {
-					return {
-						get: ( settingKey: string ) => mockSettings.get( settingKey ),
-						set: ( settingKey: string, value: unknown ) => mockSettings.set( settingKey, value ),
-					};
+					return settingsObject;
 				}
 				return undefined;
 			} ),
