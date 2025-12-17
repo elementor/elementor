@@ -33,22 +33,12 @@ class Image_Transformer extends Transformer_Base {
 			];
 		}
 
-		// Support for external urls
-		$url = $value['src']['url'] ?? null;
-		if (empty($url) || !is_string($url)) {
-			$url = $value['src']['value']['url'];
-		}
-
-		if ( is_array($url)) {
-			$url = $url['value'];
-		}
-
-		if ( empty( $url ) || ! is_string( $url ) ) {
+		if ( empty( $value['src']['url'] ) ) {
 			throw new \Exception( 'Invalid image URL.' );
 		}
 
 		return [
-			'src' => $url,
+			'src' => $value['src']['url'],
 		];
 	}
 }

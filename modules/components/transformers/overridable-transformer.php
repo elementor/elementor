@@ -44,25 +44,5 @@ class Overridable_Transformer extends Transformer_Base {
 			'override_key' => $transformed_inner_override['override_key'],
 			'override_value' => $outer_override_value,
 		];
-		if ( ! isset( $origin_value['$$type'] ) || ! isset( $origin_value['value'] ) ) {
-			return null;
-		}
-
-		$transformer = $context->get_transformer( $origin_value['$$type'] );
-
-		if ( ! ( $transformer instanceof Transformer_Base ) ) {
-			return null;
-		}
-
-		if ( $transformer instanceof No_Op_Transformer ) {
-			return $origin_value;
-		}
-
-		try {
-			$result = $transformer->transform( $origin_value['value'], $context );
-			return $result;
-		} catch ( Exception $e ) {
-			return $origin_value;
-		}
 	}
 }
