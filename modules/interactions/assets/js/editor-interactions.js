@@ -96,7 +96,7 @@ function applyInteractionsToElement( element, interactionsData ) {
 	const interactions = Object.values( parsedData?.items );
 
 	interactions.forEach( ( interaction ) => {
-		const animationName = extractAnimationId( interaction ); 
+		const animationName = extractAnimationId( interaction );
 
 		const animConfig = animationName && parseAnimationName( animationName );
 
