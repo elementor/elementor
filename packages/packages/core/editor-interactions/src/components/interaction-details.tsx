@@ -40,69 +40,54 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 
 	const effectiveDirection = effect === 'slide' && ! direction ? 'top' : direction;
 
-	const updateInteraction = (
-		newTrigger: string,
-		newEffect: string,
-		newType: string,
-		newDirection: string,
-		newDuration: number,
-		newDelay: number
-	): void => {
+	const updateInteraction = ( updates: Partial<{
+		trigger: string;
+		effect: string;
+		type: string;
+		direction: string;
+		duration: number;
+		delay: number;
+	}> ): void => {
+		const newEffect = updates.effect ?? effect;
+		const newDirection = updates.direction ?? direction;
+		
+		const resolvedDirection = newEffect === 'slide' && ! newDirection ? 'top' : newDirection;
+
 		onChange( {
 			...interaction,
-			trigger: createString( newTrigger ),
-			animation: createAnimationPreset( newEffect, newType, newDirection, newDuration, newDelay ),
+			trigger: createString( updates.trigger ?? trigger ),
+			animation: createAnimationPreset(
+				newEffect,
+				updates.type ?? type,
+				resolvedDirection,
+				updates.duration ?? duration,
+				updates.delay ?? delay
+			),
 		} );
-	};
-
-	const handleTriggerChange = ( newTrigger: string ) => {
-		updateInteraction( newTrigger, effect, type, direction, duration, delay );
-	};
-
-	const handleEffectChange = ( newEffect: string ) => {
-		const newDirection = newEffect === 'slide' && ! direction ? 'top' : direction;
-		updateInteraction( trigger, newEffect, type, newDirection, duration, delay );
-	};
-
-	const handleTypeChange = ( newType: string ) => {
-		updateInteraction( trigger, effect, newType, direction, duration, delay );
-	};
-
-	const handleDirectionChange = ( newDirection: string ) => {
-		const directionValue = effect === 'slide' && ( ! newDirection || newDirection === '' ) ? 'top' : newDirection;
-		updateInteraction( trigger, effect, type, directionValue, duration, delay );
-	};
-
-	const handleDurationChange = ( newDuration: string ) => {
-		updateInteraction( trigger, effect, type, direction, parseInt( newDuration, 10 ), delay );
-	};
-
-	const handleDelayChange = ( newDelay: string ) => {
-		updateInteraction( trigger, effect, type, direction, duration, parseInt( newDelay, 10 ) );
 	};
 
 	return (
 		<PopoverContent p={ 1.5 }>
 			<Grid container spacing={ 1.5 }>
-				<Trigger value={ trigger } onChange={ handleTriggerChange } />
+				<Trigger value={ trigger } onChange={ ( v ) => updateInteraction( { trigger: v } ) } />
 			</Grid>
 			<Divider sx={ { mx: 1.5 } } />
 			<Grid container spacing={ 1.5 }>
-				<Effect value={ effect } onChange={ handleEffectChange } />
-				<EffectType value={ type } onChange={ handleTypeChange } />
+				<Effect value={ effect } onChange={ ( v ) => updateInteraction( { effect: v } ) } />
+				<EffectType value={ type } onChange={ ( v ) => updateInteraction( { type: v } ) } />
 				<Direction
 					value={ effectiveDirection }
-					onChange={ handleDirectionChange }
+					onChange={ ( v ) => updateInteraction( { direction: v } ) }
 					interactionType={ type }
 				/>
 				<TimeFrameIndicator
 					value={ String( duration ) }
-					onChange={ handleDurationChange }
+					onChange={ ( v ) => updateInteraction( { duration: parseInt( v, 10 ) } ) }
 					label={ __( 'Duration', 'elementor' ) }
 				/>
 				<TimeFrameIndicator
 					value={ String( delay ) }
-					onChange={ handleDelayChange }
+					onChange={ ( v ) => updateInteraction( { delay: parseInt( v, 10 ) } ) }
 					label={ __( 'Delay', 'elementor' ) }
 				/>
 			</Grid>

@@ -255,24 +255,6 @@ trait Has_Atomic_Base {
 			return [];
 		}
 		return $decoded;
-		// $transformed_items = [];
-
-		// foreach ( $decoded['items'] as $item ) {
-		// 	if ( isset( $item['$$type'] ) && 'interaction-item' === $item['$$type'] ) {
-		// 		$transformed_items[] = $item;
-		// 		continue;
-		// 	}
-
-		// 	$transformed_item = $this->convert_legacy_to_prop_type( $item );
-		// 	if ( $transformed_item ) {
-		// 		$transformed_items[] = $transformed_item;
-		// 	}
-		// }
-
-		// return [
-		// 	'version' => 1,
-		// 	'items' => $transformed_items,
-		// ];
 	}
 
 	private function decode_interactions_data( $interactions ) {
@@ -290,57 +272,6 @@ trait Has_Atomic_Base {
 		return [
 			'items' => [],
 			'version' => 1,
-		];
-	}
-
-	// private function convert_legacy_to_prop_type( $item ) {
-	// 	if ( ! isset( $item['animation']['animation_id'] ) || ! isset( $item['interaction_id'] ) ) {
-	// 		return null;
-	// 	}
-
-	// 	$animation_id = $item['animation']['animation_id'];
-	// 	$parsed = $this->parse_animation_id_string( $animation_id );
-
-	// 	if ( ! $parsed ) {
-	// 		return null;
-	// 	}
-
-	// 	return $this->create_prop_value( 'interaction-item', [
-	// 		'interaction_id' => $this->create_prop_value( 'string', $item['interaction_id'] ),
-	// 		'trigger' => $this->create_prop_value( 'string', $parsed['trigger'] ),
-	// 		'animation' => $this->create_prop_value( 'animation-preset-props', [
-	// 			'effect' => $this->create_prop_value( 'string', $parsed['effect'] ),
-	// 			'type' => $this->create_prop_value( 'string', $parsed['type'] ),
-	// 			'direction' => $this->create_prop_value( 'string', $parsed['direction'] ),
-	// 			'timing_config' => $this->create_prop_value( 'timing-config', [
-	// 				'duration' => $this->create_prop_value( 'number', (int) $parsed['duration'] ),
-	// 				'delay' => $this->create_prop_value( 'number', (int) $parsed['delay'] ),
-	// 			] ),
-	// 		] ),
-	// 	] );
-	// }
-
-	private function parse_animation_id_string( $animation_id ) {
-		$pattern = '/^([^-]+)-([^-]+)-([^-]+)-([^-]*)-(\d+)-(\d+)$/';
-
-		if ( preg_match( $pattern, $animation_id, $matches ) ) {
-			return [
-				'trigger' => $matches[1],
-				'effect' => $matches[2],
-				'type' => $matches[3],
-				'direction' => $matches[4],
-				'duration' => (int) $matches[5],
-				'delay' => (int) $matches[6],
-			];
-		}
-
-		return null;
-	}
-
-	private function create_prop_value( $type, $value ) {
-		return [
-			'$$type' => $type,
-			'value' => $value,
 		];
 	}
 
