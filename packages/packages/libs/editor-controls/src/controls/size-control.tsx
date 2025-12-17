@@ -43,7 +43,6 @@ type BaseSizeControlProps = {
 	enablePropTypeUnits?: boolean;
 	id?: string;
 	ariaLabel?: string;
-	isRepeaterControl?: boolean;
 };
 
 type LengthSizeControlProps = BaseSizeControlProps &
