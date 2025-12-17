@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { createPortal } from 'react-dom';
-import { InlineEditingReplacement } from '@elementor/editor-controls';
 
 import { inlineEditingReplacements } from './components/inline-editng/config';
 import { registerViewReplacement, type ReplacementRegistration, useRegistrations } from './registry';
 import { type ReplacementType } from './types';
+import { InlineEditingReplacement } from './components/inline-editng/replacement';
 
 export const initReplacements = () => {
 	inlineEditingReplacements.forEach( ( { widgetType, config } ) => {
