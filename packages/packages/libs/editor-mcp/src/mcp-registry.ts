@@ -4,6 +4,7 @@ import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/m
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
+import { getSDK } from './init';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
 
 type ZodRawShape = z3.ZodRawShape;
@@ -69,6 +70,18 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 	const mcpServer = mcpRegistry[ namespace ];
 	const { addTool } = createToolRegistrator( mcpServer );
 	return {
+		waitForReady: () => getSDK().waitForReady(),
+		// @ts-expect-error: TS is unable to infer the type here
+		resource: async ( ...args: Parameters< McpServer[ 'resource' ] > ) => {
+			await getSDK().waitForReady();
+			return mcpServer.resource( ...args );
+		},
+		sendResourceUpdated: ( ...args: Parameters< McpServer[ 'server' ][ 'sendResourceUpdated' ] > ) => {
+			return new Promise( async () => {
+				await getSDK().waitForReady();
+				mcpServer.server.sendResourceUpdated( ...args );
+			} );
+		},
 		mcpServer,
 		addTool,
 		setMCPDescription: ( description: string ) => {
@@ -97,7 +110,10 @@ export interface MCPRegistryEntry {
 	) => void;
 	setMCPDescription: ( description: string ) => void;
 	getActiveChatInfo: () => { sessionId: string; expiresAt: number };
+	sendResourceUpdated: McpServer[ 'server' ][ 'sendResourceUpdated' ];
+	resource: McpServer[ 'resource' ];
 	mcpServer: McpServer;
+	waitForReady: () => Promise< void >;
 }
 
 type ResourceList = {
