@@ -43,8 +43,8 @@ const CollapsedMenuItemPopover = ( {
 				hideBackdrop
 			>
 				<PopoverContent>
-					<List disablePadding>
-						<ListSubheader sx={ { height: 28 } }><PopoverTitle elementType="div" variant="caption">{ item.label }</PopoverTitle></ListSubheader>
+					<List disablePadding disableGutters dense>
+						<PopoverTitle>{ item.label }</PopoverTitle>
 						{ children.map( ( childItem ) => (
 							<ListItem key={ childItem.slug } disablePadding disableGutters dense sx={ { height: 32 } }>
 								<PopoverListItemButton

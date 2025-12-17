@@ -1,4 +1,4 @@
-import { Box, IconButton, List, ListItem, ListItemButton, ListItemIcon, Popover, Typography, styled } from '@elementor/ui';
+import { Box, IconButton, List, ListItem, ListItemButton, ListItemIcon, Popover, ListSubheader, styled } from '@elementor/ui';
 import ChevronDownSmallIcon from '@elementor/icons/ChevronDownSmallIcon';
 
 export const NavContainer = styled( Box )( ( { theme } ) => ( {
@@ -109,8 +109,11 @@ export const CollapsedIconButton = styled( IconButton, {
 	},
 } ) );
 
-export const PopoverTitle = styled( Typography )( ( { theme } ) => ( {
+export const PopoverTitle = styled( ListSubheader )( ( { theme } ) => ( {
 	color: theme.palette.text.tertiary,
+	fontSize: 12,
+	fontWeight: 400,
+	height: 28,
 } ) );
 
 export const PopoverContent = styled( Box )( ( { theme } ) => ( {
