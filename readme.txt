@@ -348,6 +348,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= v3.33.5 - 2025-12-17 =
+
+* Security Fix: Improved code security enforcement in site navigation module
+* Security Fix: Improved code security enforcement in text editor
+
 = 3.33.4 - 2025-12-08 =
 
 * Security Fix: Improved code security enforcement in Text Path widget
