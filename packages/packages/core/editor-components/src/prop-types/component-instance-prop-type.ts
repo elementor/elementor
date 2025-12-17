@@ -7,7 +7,7 @@ export const componentInstancePropTypeUtil = createPropUtils(
 	'component-instance',
 	z.object( {
 		component_id: numberPropTypeUtil.schema,
-		overrides: componentInstanceOverridesPropTypeUtil.schema,
+		overrides: z.optional( componentInstanceOverridesPropTypeUtil.schema ),
 	} )
 );
 

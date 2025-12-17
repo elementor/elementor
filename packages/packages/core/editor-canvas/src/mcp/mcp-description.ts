@@ -1,5 +1,7 @@
 import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from './resources/widgets-schema-resource';
 
+const ELEMENT_SCHEMA_URI = WIDGET_SCHEMA_URI.replace( '{widgetType}', 'element-schema' );
+
 export const mcpDescription = `Canvas MCP
 This MCP enables everything related to creation, configuration, and styling of elements on the Elementor canvas.
 
@@ -35,10 +37,52 @@ The tool accepts both the structure, the styling and the configuration of each e
 
 - First step: Retreive the available widgets by listing the [${ WIDGET_SCHEMA_URI }] dynamic resource.
 - Second step: decide which elements to create, and their configuration and styles.
-  Retrieve the used elements configuration schema from the resource [${ WIDGET_SCHEMA_URI }/element-name]
+  Retrieve the used elements configuration schema from the resource [${ ELEMENT_SCHEMA_URI }]
 - Third step: define the styles for each element, using the common styles schema from the resource [${ STYLE_SCHEMA_URI }]. List the resource to see all available style properties.
   For background and complicated layered styles, you can use "custom_css" property, which is supported only for ELEMENTOR PRO users ONLY.
   The custom css is intented to deal with yet unsupported CSS features that ARE NOT PART OF THE STYLE SCHEMA, to enable PRO users to support new CSS features.
+
+## Workflow for build-compositions tool
+1. **Parse user requirements** - Undestand what needs to be built (structure, content, styling).
+2. ** Check global resources FIRST** - Always check before building:
+   - List \`elementor://global-classes\` to see if the needed global classes already exist.
+   - List \`elementor://global-variables\` to see if the needed global variables already exist.
+   - **Preference**: Use existing global classes and variables over creating new inline styles.
+3. **Retreive widget schemas** - For each widget you will use:
+   - List [${ WIDGET_SCHEMA_URI }] to see available widgets.
+   - Retrieve configuration schema from [${ ELEMENT_SCHEMA_URI }] for each widget to understand required properties.
+   - Understand if a widget is a container (can have children) by checking the "llm_guidance" property in the widget's schema.
+4. **Build XML structure** - Create valid XML width configuration-ids:
+   - Every element has unique configuration-id attribute
+   - No text nodes, classes, IDs in XML.
+   
+5. **Create elementConfig** - For each configuration-id:
+   - Use PropValues with corrent \`$$type\` matching the schema.
+   - **Use global variables** in PropValues where applicable
+
+6. **Create stylesConfig** - For each configuration-id:
+   - Use style schema PropValues from [${ STYLE_SCHEMA_URI }]
+   - **Priority**: Use style schema PropValues over custom_css
+   - **Use global variables** for colors, sizes, fonts where applicable
+   - **custom_css (PRO Users Only)**: The property appears only for PRO user. The purpose of custom_css is to support new CSS features not yet available in the style schema.
+     The schema supports multiple layers of background, gradients, filters. Prefer NOT USING custom_css.
+   - **Important**: Global classes are applied AFTER building the composition. Once built, apply classes using the "apply-global-class" tool - after completion of building the composition.
+
+7. **Validate** - Ensure:
+   - XML structure is valid
+   - All PropValues have corrent \`$$type\`
+   - After building a composition, you can retreive each element configuration using the "get-element-configuration-values" tool to verify correctness, using the IDs returned from the build-composition tool.
+
+## Key relationships:
+- **XML structure**: Defines the hierarchy of elements/widgets
+- **elementConfig**: Maps configuration-id to widget PropValues
+- **stylesConfig**: Maps configuration-id to style PropValues
+
+## Using global variables example:
+Existing global variables can be used during composition
+\`\`\`json
+{ "color": { "$$type": "global-color-variable", "value": "global-variable-id" } }
+\`\`\`
 
 # Configuring Elements / Adding Style to Elements
 An element configuration can be retrieved using the "get-element-configuration-values" tool.
