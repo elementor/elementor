@@ -161,7 +161,15 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function adjust_elementor_menu_capability(): void {
-		if ( ! current_user_can( 'edit_posts' ) || current_user_can( 'manage_options' ) ) {
+		$user = wp_get_current_user();
+		if ( ! $user || ! $user->exists() ) {
+			return;
+		}
+
+		$has_edit_posts = isset( $user->allcaps['edit_posts'] ) && $user->allcaps['edit_posts'];
+		$has_manage_options = isset( $user->allcaps['manage_options'] ) && $user->allcaps['manage_options'];
+
+		if ( ! $has_edit_posts || $has_manage_options ) {
 			return;
 		}
 
