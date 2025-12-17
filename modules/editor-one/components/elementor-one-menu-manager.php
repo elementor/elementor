@@ -42,10 +42,12 @@ class Elementor_One_Menu_Manager {
 			do_action( 'elementor/editor-one/menu/register', $this->menu_data_provider );
 		}, 4 );
 
+		add_filter( 'user_has_cap', [ $this, 'grant_elementor_menu_capability' ], 10, 3 );
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 999 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 1001 );
 		add_action( 'admin_menu', [ $this, 'reorder_elementor_submenu' ], 1002 );
 		add_action( 'admin_menu', [ $this, 'reposition_elementor_menu' ], 1003 );
+		add_action( 'admin_menu', [ $this, 'adjust_elementor_menu_capability' ], 1004 );
 		add_filter( 'add_menu_classes', [ $this, 'fix_theme_builder_submenu_url' ] );
 		add_action( 'admin_head', [ $this, 'hide_flyout_items_from_wp_menu' ] );
 		add_action( 'admin_head', [ $this, 'hide_legacy_templates_menu' ] );
@@ -138,6 +140,43 @@ class Elementor_One_Menu_Manager {
 		$menu['3'] = $elementor_menu_item;  // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
 		ksort( $menu );
+	}
+
+	public function grant_elementor_menu_capability( array $allcaps, array $caps, array $args ): array {
+		if ( empty( $args[0] ) || 'manage_options' !== $args[0] ) {
+			return $allcaps;
+		}
+
+		if ( isset( $allcaps['manage_options'] ) && $allcaps['manage_options'] ) {
+			return $allcaps;
+		}
+
+		if ( ! isset( $allcaps['edit_posts'] ) || ! $allcaps['edit_posts'] ) {
+			return $allcaps;
+		}
+
+		$allcaps['manage_options'] = true;
+
+		return $allcaps;
+	}
+
+	public function adjust_elementor_menu_capability(): void {
+		if ( ! current_user_can( 'edit_posts' ) || current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		global $menu;
+
+		foreach ( $menu as $key => $item ) {
+			if ( ! isset( $item[2] ) ) {
+				continue;
+			}
+
+			if ( Menu_Config::ELEMENTOR_MENU_SLUG === $item[2] ) {
+				$menu[ $key ][1] = 'edit_posts'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				break;
+			}
+		}
 	}
 
 	public function render_editor_page(): void {
