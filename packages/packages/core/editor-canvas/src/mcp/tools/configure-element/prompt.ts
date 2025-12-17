@@ -26,7 +26,7 @@ When a user requires to change anything in an element, such as updating text, co
 This tool handles elements of type "widget".
 This tool handles styling elements, using the "stylePropertiesToChange" parameter.
 
-To CLEAR a a property (i.e. set it to default or none), provude null as value.
+To CLEAR a property (i.e., set it to default or none), provide null as a value.
 
 The element's schema must be known before using this tool.
 The style schema must be known before using this tool.
