@@ -22,15 +22,10 @@ describe( 'CssClassUsageTrigger', () => {
 		} );
 
 		// Act.
-		const { container } = render( <CssClassUsageTrigger id="css-id" onClick={ jest.fn() } /> );
+		render( <CssClassUsageTrigger id="css-id" onClick={ jest.fn() } /> );
 
 		const button = screen.getByRole( 'button' );
-		const boxWrapper = container.querySelector( '.MuiBox-root' );
-		if ( boxWrapper ) {
-			fireEvent.mouseEnter( boxWrapper );
-		} else {
-			fireEvent.mouseEnter( button );
-		}
+		fireEvent.mouseEnter( button );
 
 		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
 			event: 'classUsageHovered',
