@@ -22,6 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Image extends Atomic_Widget_Base {
 	use Has_Template;
 
+	public static $widget_description = 'Display an image with customizable styles and link options.';
+
 	const LINK_BASE_STYLE_KEY = 'link-base';
 	const BASE_STYLE_KEY = 'base';
 
