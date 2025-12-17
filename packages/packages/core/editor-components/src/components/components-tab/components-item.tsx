@@ -193,7 +193,9 @@ const validateComponentTitle = ( newTitle: string ) => {
 	return result.errorMessage;
 };
 
-const Indicator = styled( Box )( ( { theme, isActive, isError } ) => ( {
+const Indicator = styled( Box, {
+	shouldForwardProp: ( prop ) => prop !== 'isActive' && prop !== 'isError',
+} )( ( { theme, isActive, isError } ) => ( {
 	display: 'flex',
 	width: '100%',
 	flexGrow: 1,
