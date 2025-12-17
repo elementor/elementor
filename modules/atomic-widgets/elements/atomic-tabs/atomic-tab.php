@@ -22,6 +22,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Tab extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
+	public function __construct( $data = [], $args = null ) {
+		parent::__construct( $data, $args );
+		$this->meta( 'llm_support', false );
+	}
+
 	public static function get_type() {
 		return 'e-tab';
 	}
