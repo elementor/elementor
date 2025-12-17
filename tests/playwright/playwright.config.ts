@@ -34,7 +34,7 @@ export default defineConfig( {
 	fullyParallel: false,
 	reporter: process.env.CI
 		? [ [ 'github' ], [ 'list' ], [ 'allure-playwright' ] ]
-		: [ [ 'list' ], [ 'allure-playwright' ] ],
+		: [ [ 'list' ] ],
 	use: {
 		launchOptions: {
 			args: [ `--remote-debugging-port=${ process.env.DEBUG_PORT }` ],
