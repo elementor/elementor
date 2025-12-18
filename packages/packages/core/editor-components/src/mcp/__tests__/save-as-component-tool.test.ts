@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios';
 import {
 	getContainer,
 	getElementType,
@@ -6,6 +5,7 @@ import {
 	type V1Element,
 	type V1ElementData,
 } from '@elementor/editor-elements';
+import { AxiosError } from '@elementor/http-client';
 
 import { apiClient } from '../../api';
 import { createUnpublishedComponent } from '../../store/actions/create-unpublished-component';
@@ -222,11 +222,11 @@ describe( 'save-as-component-tool handler', () => {
 		it( 'should throw error when validation fails with duplicate title', async () => {
 			// Arrange
 			mockGetContainer.mockReturnValue( createMockContainer( 'e-flexbox' ) as V1Element );
-			mockApiClient.validate = jest.fn().mockRejectedValue(
-				new AxiosError( 'Request failed', undefined, undefined, undefined, {
-					data: { messge: "Validation failed: Component title 'My Test Component' is duplicated." },
-				} as never )
-			);
+			const duplicateTitleError = new AxiosError( 'Request failed' );
+			( duplicateTitleError as never as { response: { data: { messge: string } } } ).response = {
+				data: { messge: "Validation failed: Component title 'My Test Component' is duplicated." },
+			};
+			mockApiClient.validate = jest.fn().mockRejectedValue( duplicateTitleError );
 
 			// Act & Assert
 			await expect(
@@ -253,11 +253,11 @@ describe( 'save-as-component-tool handler', () => {
 				] ) as V1Element
 			);
 			mockGetElementType.mockReturnValue( mockElementType as unknown as ReturnType< typeof getElementType > );
-			mockApiClient.validate = jest.fn().mockRejectedValue(
-				new AxiosError( 'Request failed', undefined, undefined, undefined, {
-					data: { messge: 'Validation failed for overridable_props: Invalid prop structure' },
-				} as never )
-			);
+			const invalidOverridablePropsError = new AxiosError( 'Request failed' );
+			( invalidOverridablePropsError as never as { response: { data: { messge: string } } } ).response = {
+				data: { messge: 'Validation failed for overridable_props: Invalid prop structure' },
+			};
+			mockApiClient.validate = jest.fn().mockRejectedValue( invalidOverridablePropsError );
 
 			// Act & Assert
 			await expect(
