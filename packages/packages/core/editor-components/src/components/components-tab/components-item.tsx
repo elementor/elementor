@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useRef } from 'react';
 import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
 import { dropElement, type DropElementParams, type V1ElementData } from '@elementor/editor-elements';
-import { EllipsisWithTooltip, EditableField, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
+import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
 import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -14,7 +14,7 @@ import {
 	Menu,
 	Stack,
 	styled,
-	Theme,
+	type Theme,
 	Typography,
 	usePopupState,
 } from '@elementor/ui';
@@ -88,7 +88,7 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 					onDragEnd={ handleDragEnd }
 					shape="rounded"
 				>
-					<Box 
+					<Box
 						display="flex"
 						alignItems="center"
 						gap={ 1 }
@@ -100,23 +100,22 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 							<ComponentsIcon fontSize="tiny" />
 						</ListItemIcon>
 						<Indicator isActive={ isEditing } isError={ !! error }>
-											<Box display="flex" flex={ 1 } minWidth={ 0 } flexGrow={ 1 }>
-
-						{isEditing ? (
-								<EditableField
-									ref={ editableRef }
-									as={ Typography }
-									variant="caption"
-									{ ...getEditableProps() }
-								/>
-							) : (
-								<EllipsisWithTooltip
-									title={ component.name }
-									as={ Typography }
-									variant="caption"
-									color="text.primary"
-								/>
-							) }
+							<Box display="flex" flex={ 1 } minWidth={ 0 } flexGrow={ 1 }>
+								{ isEditing ? (
+									<EditableField
+										ref={ editableRef }
+										as={ Typography }
+										variant="caption"
+										{ ...getEditableProps() }
+									/>
+								) : (
+									<EllipsisWithTooltip
+										title={ component.name }
+										as={ Typography }
+										variant="caption"
+										color="text.primary"
+									/>
+								) }
 							</Box>
 						</Indicator>
 					</Box>
@@ -201,7 +200,7 @@ const Indicator = styled( Box, {
 	borderRadius: theme.spacing( 0.5 ),
 	border: getIndicatorBorder( { isActive, isError, theme } ),
 	padding: `0 ${ theme.spacing( 1 ) }`,
-	marginLeft: isActive ? theme.spacing( 1 ) : 0, 
+	marginLeft: isActive ? theme.spacing( 1 ) : 0,
 	minWidth: 0,
 } ) );
 
