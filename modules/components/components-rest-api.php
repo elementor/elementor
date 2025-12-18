@@ -102,10 +102,10 @@ class Components_REST_API {
 			],
 		] );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/validate', [
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/create-validate', [
 			[
 				'methods' => 'POST',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->validate_components( $request ) ),
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->create_validate_components( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 				'args' => [
 					'items' => [
@@ -346,7 +346,7 @@ class Components_REST_API {
 				->build();
 		}
 
-		return Response_Builder::make( (object) $created )
+		return Response_Builder::make( $created->all() )
 			->set_status( 201 )
 			->build();
 	}
@@ -497,7 +497,7 @@ class Components_REST_API {
 		return Response_Builder::make( $result )->build();
 	}
 
-	private function validate_components( \WP_REST_Request $request ) {
+	private function create_validate_components( \WP_REST_Request $request ) {
 		$items = Collection::make( $request->get_param( 'items' ) );
 		$components = $this->get_repository()->all();
 
@@ -510,20 +510,23 @@ class Components_REST_API {
 				->build();
 		}
 
-		$items->map_with_keys( function ( $item ) {
+		$validation_errors = $items->map_with_keys( function ( $item ) {
 			try {
-				$this->parse_settings( $item['settings'] );
+				if ( isset( $item['settings'] ) ) {
+					$this->parse_settings( $item['settings'] );
+				}
 			} catch ( \Exception $e ) {
 				return [ $item['uid'] => $e->getMessage() ];
 			}
 
 			return [ $item['uid'] => null ];
-		} )->filter( fn( $value ) => $value !== null );
+		} )
+		->filter( fn( $value ) => null !== $value );
 
-		if ( ! empty( $items->values() ) ) {
+		if ( ! $validation_errors->is_empty() ) {
 			return Error_Builder::make( 'settings_validation_failed' )
 				->set_status( 422 )
-				->set_message( 'Settings validation failed: ' . json_encode( $validation_errors ) )
+				->set_message( 'Settings validation failed: ' . json_encode( $validation_errors->all() ) )
 				->build();
 		}
 

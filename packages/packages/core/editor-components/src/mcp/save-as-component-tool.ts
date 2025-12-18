@@ -2,10 +2,11 @@ import { DOCUMENT_STRUCTURE_URI, WIDGET_SCHEMA_URI } from '@elementor/editor-can
 import { getContainer, getElementType, getWidgetsCache, type V1ElementData } from '@elementor/editor-elements';
 import { getMCPByDomain, toolPrompts } from '@elementor/editor-mcp';
 import { type PropValue } from '@elementor/editor-props';
+import { AxiosError } from '@elementor/http-client';
 import { z } from '@elementor/schema';
 import { generateUniqueId } from '@elementor/utils';
 
-import { apiClient, type ValidateComponentsResponse } from '../api';
+import { apiClient } from '../api';
 import { createUnpublishedComponent } from '../store/actions/create-unpublished-component';
 import { type OverridableProps } from '../types';
 
@@ -94,7 +95,10 @@ export const handleSaveAsComponent = async ( params: z.infer< z.ZodObject< typeo
 			],
 		} );
 	} catch ( error: unknown ) {
-		throw new Error( ( error as ValidateComponentsResponse ).message );
+		if ( error instanceof AxiosError ) {
+			throw new Error( error.response?.data.messge );
+		}
+		throw new Error( 'Unknown error' );
 	}
 
 	createUnpublishedComponent( componentName, element, null, overridableProps, uid );

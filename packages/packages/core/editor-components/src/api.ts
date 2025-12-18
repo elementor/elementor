@@ -106,6 +106,6 @@ export const apiClient = {
 			.then( ( res ) => res.data.data ),
 	validate: async ( payload: ValidateComponentsPayload ) =>
 		await httpService()
-			.post< HttpResponse< ValidateComponentsResponse > >( `${ BASE_URL }/validate`, payload )
+			.post< HttpResponse< ValidateComponentsResponse > >( `${ BASE_URL }/create-validate`, payload )
 			.then( ( res ) => res.data ),
 };

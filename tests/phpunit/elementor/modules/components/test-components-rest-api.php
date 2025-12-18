@@ -543,7 +543,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 422, $response->get_status() );
 		$this->assertEquals( 'components_validation_failed', $response->get_data()['code'] );
 		$this->assertEquals( 'Validation failed: Component title &#039;Test Component&#039; is duplicated.', $response->get_data()['message'] );
 	}
@@ -574,7 +574,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 422, $response->get_status() );
 		$this->assertEquals( 'components_validation_failed', $response->get_data()['code'] );
 		$this->assertEquals( 'Validation failed: Component uid &#039;1&#039; is duplicated.', $response->get_data()['message'] );
 	}
@@ -825,7 +825,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		];
 
 		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/validate' );
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
 		$request->set_body_params( [
 			'items' => [
 				[
@@ -888,7 +888,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 400, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+		$this->assertEquals( 422, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
 		$this->assertStringContainsString( 'validation', strtolower( $response->get_data()['code'] ) );
 	}
 
@@ -942,7 +942,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 400, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+		$this->assertEquals( 422, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
 		$this->assertStringContainsString( 'validation', strtolower( $response->get_data()['code'] ) );
 		$this->assertStringContainsString( 'originvalue', strtolower( $response->get_data()['message'] ) );
 	}
@@ -959,7 +959,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayHasKey( '/elementor/v1/components/lock', $routes );
 		$this->assertArrayHasKey( '/elementor/v1/components/unlock', $routes );
 		$this->assertArrayHasKey( '/elementor/v1/components/overridable-props', $routes );
-		$this->assertArrayHasKey( '/elementor/v1/components/validate', $routes );
+		$this->assertArrayHasKey( '/elementor/v1/components/create-validate', $routes );
 
 		// Check GET method for components
 		$components_route = $routes['/elementor/v1/components'];
@@ -996,7 +996,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertNotEmpty( $get_overridable_methods );
 
 		// Check POST method for validate
-		$validate_route = $routes['/elementor/v1/components/validate'];
+		$validate_route = $routes['/elementor/v1/components/create-validate'];
 		$validate_post_methods = array_filter( $validate_route, fn( $route ) => in_array( 'POST', $route['methods'] ) );
 		$this->assertNotEmpty( $validate_post_methods );
 	}
@@ -1033,7 +1033,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 			],
 			'POST validate' => [
 				'method' => 'POST',
-				'endpoint' => '/elementor/v1/components/validate',
+				'endpoint' => '/elementor/v1/components/create-validate',
 				'params' => [
 					'items' => [
 						[
@@ -1393,7 +1393,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/validate' );
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
 		$request->set_body_params( [
 			'items' => [
 				[
@@ -1424,7 +1424,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		];
 
 		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/validate' );
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
 		$request->set_body_params( [
 			'items' => [
 				[
@@ -1449,7 +1449,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_editor();
 
 		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/validate' );
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
 		$request->set_body_params( [
 			'items' => [
 				[
@@ -1472,7 +1472,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/validate' );
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
 		$request->set_body_params( [
 			'items' => [
 				[
@@ -1486,7 +1486,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 422, $response->get_status() );
 		$this->assertEquals( 'components_validation_failed', $response->get_data()['code'] );
 		$this->assertStringContainsString( 'Duplicate Title', $response->get_data()['message'] );
 		$this->assertStringContainsString( 'is duplicated', $response->get_data()['message'] );
@@ -1497,7 +1497,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/validate' );
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
 		$request->set_body_params( [
 			'items' => [
 				[
@@ -1516,7 +1516,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 422, $response->get_status() );
 		$this->assertEquals( 'components_validation_failed', $response->get_data()['code'] );
 		$this->assertStringContainsString( 'duplicate-uid', $response->get_data()['message'] );
 		$this->assertStringContainsString( 'is duplicated', $response->get_data()['message'] );
@@ -1614,7 +1614,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 
 		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/validate' );
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
 		$request->set_body_params( $input );
 
 		$response = rest_do_request( $request );
@@ -1649,7 +1649,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		];
 
 		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/validate' );
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
 		$request->set_body_params( [
 			'items' => [
 				[
@@ -1666,7 +1666,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 400, $response->get_status(), 'Response body: ' . json_encode( $response->get_data() ) );
+		$this->assertEquals( 422, $response->get_status(), 'Response body: ' . json_encode( $response->get_data() ) );
 		$this->assertStringContainsString( 'validation', strtolower( $response->get_data()['code'] ) );
 	}
 
@@ -1697,7 +1697,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		];
 
 		// Act - Validate endpoint
-		$validate_request = new \WP_REST_Request( 'POST', '/elementor/v1/components/validate' );
+		$validate_request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
 		$validate_request->set_body_params( $valid_data );
 		$validate_response = rest_do_request( $validate_request );
 
