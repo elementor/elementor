@@ -134,7 +134,7 @@ class Components_Repository {
 				$success_ids[] = $component['componentId'];
 			} catch ( \Exception $e ) {
 				$failed_ids[] = $component['componentId'];
-				throw new \Exception( 'Failed to update component title: ' . $e->getMessage() );
+				throw new \Exception( 'Failed to update component title: ' . esc_html( $e->getMessage() ) );
 			}
 		}
 		return [
