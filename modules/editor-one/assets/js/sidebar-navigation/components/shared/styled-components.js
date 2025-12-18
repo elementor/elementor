@@ -27,7 +27,7 @@ export const SiteIconBox = styled( Box )( ( { theme } ) => ( {
 export const CollapseButton = styled( IconButton )( ( { theme } ) => ( {
 	position: 'absolute',
 	insetInlineEnd: -28,
-	bottom: -16,
+	bottom: -12,
 	width: 24,
 	height: 24,
 	backgroundColor: theme.palette.background.paper,
