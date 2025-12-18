@@ -15,14 +15,14 @@ test.describe( 'Editor One Menu Visibility', () => {
 		editorUser = await apiRequests.createNewUser( page.context().request, {
 			username: 'editorUser',
 			password: 'password',
-			email: 'editor@test.com',
+			email: 'editor@test1.com',
 			roles: [ 'editor' ],
 		} );
 
 		contributorUser = await apiRequests.createNewUser( page.context().request, {
 			username: 'contributorUser',
 			password: 'password',
-			email: 'contributor@test.com',
+			email: 'contributor@test1.com',
 			roles: [ 'contributor' ],
 		} );
 
@@ -91,10 +91,12 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await expect( sidebar.getByRole( 'button', { name: 'Home' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).toBeVisible();
+		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Role Manager' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Submissions' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Templates' } ).first() ).toBeVisible();
+
+		await sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first().waitFor( { state: 'visible', timeout: 5000 } );
 		await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
 		await expect( sidebar.getByRole( 'link', { name: /Theme Builder/i } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'link', { name: /Floating Elements/i } ).first() ).not.toBeVisible();
@@ -127,10 +129,12 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await expect( sidebar.getByRole( 'button', { name: 'Home' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).not.toBeVisible();
-		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).toBeVisible();
+		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Role Manager' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Submissions' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Templates' } ).first() ).toBeVisible();
+
+		await sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first().waitFor( { state: 'visible', timeout: 5000 } );
 		await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
 		await expect( sidebar.getByRole( 'link', { name: /Theme Builder/i } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'link', { name: /Floating Elements/i } ).first() ).not.toBeVisible();
