@@ -510,7 +510,7 @@ class Components_REST_API {
 				->build();
 		}
 
-		$items->map_with_keys( function ( $item ) use ( &$validation_errors ) {
+		$items->map_with_keys( function ( $item ) {
 			try {
 				$this->parse_settings( $item['settings'] );
 			} catch ( \Exception $e ) {
