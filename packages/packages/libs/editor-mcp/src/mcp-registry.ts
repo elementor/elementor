@@ -174,7 +174,6 @@ function createToolRegistrator( server: McpServer ) {
 					],
 				};
 			} catch ( error ) {
-				console.log( error.message );
 				return {
 					isError: true,
 					content: [
