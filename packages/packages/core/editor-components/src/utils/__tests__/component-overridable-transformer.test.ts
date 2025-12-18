@@ -3,18 +3,8 @@ import { type TransformablePropValue } from '@elementor/editor-props';
 
 import { componentInstanceContext } from '../../component-instance-transformer';
 import { componentOverridableTransformer } from '../../component-overridable-transformer';
+import { componentOverrideTransformer } from '../../component-override-transformer';
 import { type ComponentOverridable } from '../../types';
-
-jest.mock( '@elementor/editor-canvas', () => ( {
-	...jest.requireActual( '@elementor/editor-canvas' ),
-	settingsTransformersRegistry: {
-		get: jest.fn(),
-	},
-} ) );
-
-const mockSettingsTransformersRegistry = settingsTransformersRegistry as jest.Mocked<
-	typeof settingsTransformersRegistry
->;
 
 describe( 'componentOverridableTransformer', () => {
 	const TEST_OPTIONS = { key: 'test-key' };
@@ -23,7 +13,12 @@ describe( 'componentOverridableTransformer', () => {
 		$$type: 'string',
 		value: 'origin-value',
 	};
-	const TEST_OVERRIDE_VALUE = 'override-value';
+	const TEST_OVERRIDE_VALUE = {
+		$$type: 'string',
+		value: 'Override String',
+	};
+
+	settingsTransformersRegistry.register( 'override', componentOverrideTransformer );
 
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -82,21 +77,20 @@ describe( 'componentOverridableTransformer', () => {
 	it( 'should transform override when origin value is an override type', () => {
 		// Arrange
 		const TRANSFORMED_KEY = 'transformed-key';
-		const INNER_VALUE = 'inner-value';
 
 		const value: ComponentOverridable = {
 			override_key: TEST_OVERRIDE_KEY,
 			origin_value: {
 				$$type: 'override',
-				value: INNER_VALUE,
+				value: {
+					override_key: TRANSFORMED_KEY,
+					override_value: {
+						$$type: 'string',
+						value: 'inner-value',
+					},
+				},
 			},
 		};
-
-		const mockTransformer = jest.fn().mockReturnValue( {
-			[ TRANSFORMED_KEY ]: 'original-transformed-value',
-		} ) as unknown as AnyTransformer;
-
-		mockSettingsTransformersRegistry.get.mockReturnValue( mockTransformer );
 
 		componentInstanceContext.set( {
 			overrides: { [ TEST_OVERRIDE_KEY ]: TEST_OVERRIDE_VALUE },
@@ -106,58 +100,9 @@ describe( 'componentOverridableTransformer', () => {
 		const result = componentOverridableTransformer( value, TEST_OPTIONS );
 
 		// Assert
-		expect( mockSettingsTransformersRegistry.get ).toHaveBeenCalledWith( 'override' );
-		expect( mockTransformer ).toHaveBeenCalledWith( INNER_VALUE, TEST_OPTIONS );
 		expect( result ).toEqual( {
 			[ TRANSFORMED_KEY ]: TEST_OVERRIDE_VALUE,
 		} );
-	} );
-
-	it( 'should return null when transformer is not found in registry', () => {
-		// Arrange
-		const value: ComponentOverridable = {
-			override_key: TEST_OVERRIDE_KEY,
-			origin_value: {
-				$$type: 'override',
-				value: 'some-value',
-			},
-		};
-
-		mockSettingsTransformersRegistry.get.mockReturnValue( null );
-
-		componentInstanceContext.set( {
-			overrides: { [ TEST_OVERRIDE_KEY ]: TEST_OVERRIDE_VALUE },
-		} );
-
-		// Act
-		const result = componentOverridableTransformer( value, TEST_OPTIONS );
-
-		// Assert
-		expect( result ).toBeNull();
-	} );
-
-	it( 'should return null when transformer returns null', () => {
-		// Arrange
-		const value: ComponentOverridable = {
-			override_key: TEST_OVERRIDE_KEY,
-			origin_value: {
-				$$type: 'override',
-				value: 'some-value',
-			},
-		};
-
-		const mockTransformer = jest.fn().mockReturnValue( null ) as unknown as AnyTransformer;
-		mockSettingsTransformersRegistry.get.mockReturnValue( mockTransformer );
-
-		componentInstanceContext.set( {
-			overrides: { [ TEST_OVERRIDE_KEY ]: TEST_OVERRIDE_VALUE },
-		} );
-
-		// Act
-		const result = componentOverridableTransformer( value, TEST_OPTIONS );
-
-		// Assert
-		expect( result ).toBeNull();
 	} );
 
 	it( 'should handle multiple overrides in context and select correct one', () => {
