@@ -58,8 +58,8 @@ function OverrideControl( { overridableProp, controls, overrides }: Props ) {
 	};
 
 	const setValue = ( newValue: Record< string, PropValue > ) => {
-		console.log( 'newValue', newValue );
 		const newOverrideValue = newValue[ overridableProp.overrideKey ];
+
 		const matchingItem = overrides?.find(
 			( override ) => override.value.override_key === overridableProp.overrideKey
 		);

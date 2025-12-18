@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { ControlAdornmentsProvider } from '@elementor/editor-controls';
+import { getFieldIndicators } from '@elementor/editor-editing-panel';
 import { useSelectedElement } from '@elementor/editor-elements';
 import { PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ComponentsIcon, PencilIcon } from '@elementor/icons';
@@ -61,21 +63,23 @@ export function InstanceEditingPanel() {
 				</Stack>
 			</PanelHeader>
 			<PanelBody>
-				{ isEmpty ? (
-					<EmptyState onEditComponent={ handleEditComponent } />
-				) : (
-					<Stack direction="column" alignItems="stretch">
-						{ groups.map( ( group ) => (
-							<OverridePropsGroup
-								key={ group.id }
-								group={ group }
-								props={ overridableProps.props }
-								controls={ controlsByType }
-								overrides={ overrides ?? null }
-							/>
-						) ) }
-					</Stack>
-				) }
+				<ControlAdornmentsProvider items={ getFieldIndicators( 'settings' ) }>
+					{ isEmpty ? (
+						<EmptyState onEditComponent={ handleEditComponent } />
+					) : (
+						<Stack direction="column" alignItems="stretch">
+							{ groups.map( ( group ) => (
+								<OverridePropsGroup
+									key={ group.id }
+									group={ group }
+									props={ overridableProps.props }
+									controls={ controlsByType }
+									overrides={ overrides ?? null }
+								/>
+							) ) }
+						</Stack>
+					) }
+				</ControlAdornmentsProvider>
 			</PanelBody>
 		</>
 	);
