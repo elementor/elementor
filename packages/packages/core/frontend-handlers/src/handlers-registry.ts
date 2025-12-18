@@ -15,9 +15,7 @@ type SharedHandlerParams< TSettings extends Settings = Settings > = {
 };
 
 export type Handler = < TSettings extends Settings = Settings >(
-	params: SharedHandlerParams< TSettings > & {
-		listenToChildren: ListenToChildrenFunction;
-	}
+	params: SharedHandlerParams< TSettings >
 ) => ( () => void ) | undefined;
 
 export type SelectorHandler = < TSettings extends Settings = Settings >(

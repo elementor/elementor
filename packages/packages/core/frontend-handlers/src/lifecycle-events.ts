@@ -4,6 +4,25 @@ const unmountElementTypeCallbacks: Map< string, Map< string, () => void > > = ne
 const unmountElementSelectorCallbacks: Map< string, Map< string, () => void > > = new Map();
 
 const ELEMENT_RENDERED_EVENT_NAME = 'elementor/element/rendered';
+export const listenToChildren = ( elementTypes: string[], signal: AbortSignal ) => ( {
+	render: ( callback: () => void ) => {
+		window.addEventListener(
+			ELEMENT_RENDERED_EVENT_NAME,
+			( event ) => {
+				const { elementType: childType } = ( event as CustomEvent ).detail;
+
+				if ( ! elementTypes.includes( childType ) ) {
+					return;
+				}
+
+				callback();
+
+				event.stopPropagation();
+			},
+			{ signal }
+		);
+	},
+} );
 
 export const onElementRender = ( {
 	element,
@@ -46,29 +65,10 @@ export const onElementRender = ( {
 	Array.from( elementTypeHandlers.get( elementType )?.values() ?? [] ).forEach( ( handler ) => {
 		const settings = element.getAttribute( 'data-e-settings' );
 
-		const listenToChildren = ( elementTypes: string[] ) => ( {
-			render: ( callback: () => void ) => {
-				element.addEventListener(
-					ELEMENT_RENDERED_EVENT_NAME,
-					( event ) => {
-						const { elementType: childType } = ( event as CustomEvent ).detail;
-
-						if ( ! elementTypes.includes( childType ) ) {
-							return;
-						}
-
-						callback();
-					},
-					{ signal: controller.signal }
-				);
-			},
-		} );
-
 		const unmount = handler( {
 			element,
 			signal: controller.signal,
 			settings: settings ? JSON.parse( settings ) : {},
-			listenToChildren,
 		} );
 
 		if ( typeof unmount === 'function' ) {
