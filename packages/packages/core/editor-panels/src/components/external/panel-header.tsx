@@ -7,7 +7,6 @@ const Header = styled( Box )( ( { theme } ) => ( {
 	alignItems: 'center',
 	justifyContent: 'center',
 	gap: theme?.spacing( 0.5 ) || '4px',
-	paddingInline: theme?.spacing( 2 ) || '16px',
 } ) );
 
 export default function PanelHeader( { children, ...props }: BoxProps ) {
