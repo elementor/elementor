@@ -151,6 +151,10 @@ class Menu_Data_Provider {
 	}
 
 	public function is_elementor_editor_page(): bool {
+		if ( ! get_current_screen() ) {
+			return false;
+		}
+
 		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
 
 		if ( in_array( $page, $this->get_all_sidebar_page_slugs(), true ) ) {
@@ -158,10 +162,6 @@ class Menu_Data_Provider {
 		}
 
 		$post_type = filter_input( INPUT_GET, 'post_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
-
-		if ( 'elementor_library' === $post_type ) {
-			return true;
-		}
 
 		return $this->is_elementor_post_type( $post_type );
 	}
