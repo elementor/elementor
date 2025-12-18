@@ -604,7 +604,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<# } else { #>
 					<span class="connect-badge">
 						<a id="elementor-template-library-connect__badge-variant-b" href="{{{ elementorAppConfig?.[ 'cloud-library' ]?.library_connect_url }}}">
-							<?php echo esc_html__( 'Connect', 'elementor' ); ?>
+							<?php echo esc_html__( 'Connect account', 'elementor' ); ?>
 						</a>
 					</span>
 					<# } #>

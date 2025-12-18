@@ -26,6 +26,14 @@ const TemplateLibrarySaveTemplateVariantBView = TemplateLibrarySaveTemplateView.
 		} );
 	},
 
+	getConnectInfoTipPosition() {
+		return 'top-50';
+	},
+
+	addVariantClass( $widget ) {
+		return $widget.addClass( 'variant-b' );
+	},
+
 	showInfoTip() {
 		if ( this.infoTipDialog ) {
 			this.infoTipDialog.hide();
@@ -74,7 +82,7 @@ const TemplateLibrarySaveTemplateVariantBView = TemplateLibrarySaveTemplateView.
 			},
 			position: {
 				of: this.ui.cloudAccountBadge,
-				at: 'top-50',
+				at: 'top-55',
 			},
 		} )
 			.setMessage( message );
@@ -106,7 +114,7 @@ const TemplateLibrarySaveTemplateVariantBView = TemplateLibrarySaveTemplateView.
 			},
 			position: {
 				of: this.ui.siteAccountBadge,
-				at: 'top-50',
+				at: 'top-35',
 			},
 		} )
 			.setMessage( message );
