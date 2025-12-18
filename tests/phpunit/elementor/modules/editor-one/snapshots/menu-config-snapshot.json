@@ -52,7 +52,7 @@
             },
             {
                 "slug": "elementor-custom-elements",
-                "label": "Custom Elements",
+                "label": "Custom elements",
                 "url": "/wp-admin/admin.php?page=elementor_custom_fonts",
                 "icon": "adjustments",
                 "group_id": "elementor-editor-custom-elements",
