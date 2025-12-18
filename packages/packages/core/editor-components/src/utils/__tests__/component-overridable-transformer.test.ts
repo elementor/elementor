@@ -1,4 +1,4 @@
-import { type AnyTransformer, settingsTransformersRegistry } from '@elementor/editor-canvas';
+import { settingsTransformersRegistry } from '@elementor/editor-canvas';
 import { type TransformablePropValue } from '@elementor/editor-props';
 
 import { componentInstanceContext } from '../../component-instance-transformer';
