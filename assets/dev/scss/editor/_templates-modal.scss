@@ -1553,6 +1553,10 @@ label.elementor-template-library-order-label {
 					line-height: normal;
 					gap: 8px;
 
+					&:has(input[type="checkbox"]:checked) {
+						border-color: var(--e-a-color-txt);
+					}
+
 					&.cloud,
 					&.local {
 						display: flex;
@@ -1562,6 +1566,10 @@ label.elementor-template-library-order-label {
 						margin-inline-end: 0;
 						flex-shrink: 0;
 						position: relative;
+
+						&:checked {
+							inset-block-start: 0;
+						}
 
 						&::after {
 							content: '';
