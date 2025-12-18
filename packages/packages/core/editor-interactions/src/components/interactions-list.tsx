@@ -6,11 +6,7 @@ import { Alert, AlertTitle, Box, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
-import {
-	buildAnimationIdString,
-	buildDisplayLabel,
-	createDefaultInteractionItem,
-} from '../utils/prop-value-utils';
+import { buildAnimationIdString, buildDisplayLabel, createDefaultInteractionItem } from '../utils/prop-value-utils';
 import { InteractionDetails } from './interaction-details';
 
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
