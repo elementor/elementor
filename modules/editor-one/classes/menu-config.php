@@ -15,6 +15,8 @@ class Menu_Config {
 	const CUSTOM_ELEMENTS_GROUP_ID = 'elementor-editor-custom-elements';
 	const SYSTEM_GROUP_ID = 'elementor-editor-system';
 	const LEGACY_TEMPLATES_SLUG = 'edit.php?post_type=elementor_library';
+	const CAPABILITY_EDIT_POSTS = 'edit_posts';
+	const CAPABILITY_MANAGE_OPTIONS = 'manage_options';
 	public static function get_excluded_level4_slugs(): array {
 		// add new which is automatically added to templates and categories
 		$default_slugs = [

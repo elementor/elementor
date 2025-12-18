@@ -69,7 +69,7 @@ class Elementor_One_Menu_Manager {
 			Menu_Config::ELEMENTOR_MENU_SLUG,
 			esc_html__( 'Editor', 'elementor' ),
 			esc_html__( 'Editor', 'elementor' ),
-			'edit_posts',
+			Menu_Config::CAPABILITY_EDIT_POSTS,
 			Menu_Config::EDITOR_MENU_SLUG,
 			[ $this, 'render_editor_page' ]
 		);
@@ -78,7 +78,7 @@ class Elementor_One_Menu_Manager {
 			Menu_Config::ELEMENTOR_MENU_SLUG,
 			esc_html__( 'Theme Builder', 'elementor' ),
 			esc_html__( 'Theme Builder', 'elementor' ),
-			'edit_posts',
+			Menu_Config::CAPABILITY_EDIT_POSTS,
 			'elementor-theme-builder',
 			''
 		);
@@ -144,15 +144,9 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function reregister_elementor_menu_for_edit_posts_users(): void {
-		$user = wp_get_current_user();
-		if ( ! $user || ! $user->exists() ) {
-			return;
-		}
+		$user_capabilities = Menu_Data_Provider::get_current_user_capabilities();
 
-		$has_edit_posts = isset( $user->allcaps['edit_posts'] ) && $user->allcaps['edit_posts'];
-		$has_manage_options = isset( $user->allcaps['manage_options'] ) && $user->allcaps['manage_options'];
-
-		if ( ! $has_edit_posts || $has_manage_options ) {
+		if ( ! $user_capabilities['is_edit_posts_user'] ) {
 			return;
 		}
 
@@ -161,7 +155,7 @@ class Elementor_One_Menu_Manager {
 		add_menu_page(
 			esc_html__( 'Elementor', 'elementor' ),
 			esc_html__( 'Elementor', 'elementor' ),
-			'edit_posts',
+			Menu_Config::CAPABILITY_EDIT_POSTS,
 			Menu_Config::ELEMENTOR_MENU_SLUG,
 			[ Plugin::instance()->settings, 'display_home_screen' ],
 			'',
@@ -169,26 +163,10 @@ class Elementor_One_Menu_Manager {
 		);
 	}
 
-
-	public function set_menu_building_flag(): void {
-		self::$is_building_menu = true;
-	}
-
-	public function clear_menu_building_flag(): void {
-		self::$is_building_menu = false;
-	}
-
-
 	public function remove_all_submenus_for_edit_posts_users(): void {
-		$user = wp_get_current_user();
-		if ( ! $user || ! $user->exists() ) {
-			return;
-		}
+		$user_capabilities = Menu_Data_Provider::get_current_user_capabilities();
 
-		$has_edit_posts = isset( $user->allcaps['edit_posts'] ) && $user->allcaps['edit_posts'];
-		$has_manage_options = isset( $user->allcaps['manage_options'] ) && $user->allcaps['manage_options'];
-
-		if ( $has_manage_options || ! $has_edit_posts ) {
+		if ( ! $user_capabilities['is_edit_posts_user'] ) {
 			return;
 		}
 
@@ -217,15 +195,9 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function override_elementor_page_for_edit_posts_users(): void {
-		$user = wp_get_current_user();
-		if ( ! $user || ! $user->exists() ) {
-			return;
-		}
+		$user_capabilities = Menu_Data_Provider::get_current_user_capabilities();
 
-		$has_edit_posts = isset( $user->allcaps['edit_posts'] ) && $user->allcaps['edit_posts'];
-		$has_manage_options = isset( $user->allcaps['manage_options'] ) && $user->allcaps['manage_options'];
-
-		if ( $has_manage_options || ! $has_edit_posts ) {
+		if ( ! $user_capabilities['is_edit_posts_user'] ) {
 			return;
 		}
 
@@ -234,12 +206,6 @@ class Elementor_One_Menu_Manager {
 			return;
 		}
 
-		$templates_url = admin_url( 'edit.php?post_type=elementor_library&tabs_group=library' );
-		wp_safe_redirect( $templates_url );
-		exit;
-	}
-
-	private function render_templates_library_content(): void {
 		$templates_url = admin_url( 'edit.php?post_type=elementor_library&tabs_group=library' );
 		wp_safe_redirect( $templates_url );
 		exit;
