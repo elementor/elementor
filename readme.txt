@@ -348,6 +348,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.33.6 - 2025-12-18 =
+
+* Fix: Issues with rendering in Text Editor widget
+* Fix: Context menu fails to open after using 'Copy' action on a widget – Editor V4
+
 = v3.33.5 - 2025-12-17 =
 
 * Security Fix: Improved code security enforcement in site navigation module
