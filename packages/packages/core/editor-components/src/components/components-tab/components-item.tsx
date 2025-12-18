@@ -81,32 +81,20 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 				width={ itemRef.current?.getBoundingClientRect().width }
 				offset={ [ 0, -15 ] }
 			>
-				<ListItemButton
+				<StyledListItemButton
 					ref={ itemRef }
 					draggable
 					onDragStart={ () => startDragElementFromPanel( componentModel ) }
 					onDragEnd={ handleDragEnd }
 					shape="rounded"
-					sx={ {
-						border: 'solid 1px',
-						borderColor: 'divider',
-						py: 0.5,
-						px: 1,
-						display: 'flex',
-						width: '100%',
-						alignItems: 'center',
-						gap: 1,
-					} }
 				>
-					<Box
+					<Box 
+						display="flex"
+						alignItems="center"
+						gap={ 1 }
+						minWidth={ 0 }
+						flexGrow={ 1 }
 						onClick={ handleClick }
-						sx={ {
-							display: 'flex',
-							alignItems: 'center',
-							gap: 1,
-							minWidth: 0,
-							flexGrow: 1,
-						} }
 					>
 						<ListItemIcon size="tiny">
 							<ComponentsIcon fontSize="tiny" />
@@ -135,7 +123,7 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 					<IconButton size="tiny" { ...bindTrigger( popupState ) } aria-label="More actions">
 						<DotsVerticalIcon fontSize="tiny" />
 					</IconButton>
-				</ListItemButton>
+				</StyledListItemButton>
 			</WarningInfotip>
 			<Menu
 				{ ...bindMenu( popupState ) }
@@ -192,6 +180,17 @@ const validateComponentTitle = ( newTitle: string ) => {
 
 	return result.errorMessage;
 };
+
+const StyledListItemButton = styled( ListItemButton )( ( { theme } ) => ( {
+	border: 'solid 1px',
+	borderColor: theme.palette.divider,
+	padding: `${ theme.spacing( 0.5 ) } ${ theme.spacing( 1 ) }`,
+	paddingRight: `${ theme.spacing( 1 ) }`,
+	display: 'flex',
+	width: '100%',
+	alignItems: 'center',
+	gap: `${ theme.spacing( 1 ) }`,
+} ) );
 
 const Indicator = styled( Box, {
 	shouldForwardProp: ( prop ) => prop !== 'isActive' && prop !== 'isError',
