@@ -20,6 +20,9 @@ const TemplateLibrarySaveTemplateVariantBView = TemplateLibrarySaveTemplateView.
 			'mouseenter @ui.upgradeBadge': 'showInfoTip',
 			'mouseenter @ui.cloudAccountBadge': 'showCloudAccountBadgeTooltip',
 			'mouseenter @ui.siteAccountBadge': 'showSiteAccountBadgeTooltip',
+			'mouseleave @ui.cloudAccountBadge': 'hideCloudAccountBadgeTooltip',
+			'mouseleave @ui.siteAccountBadge': 'hideSiteAccountBadgeTooltip',
+			'mouseleave @ui.upgradeBadge': 'hideInfoTip',
 		} );
 	},
 
@@ -82,6 +85,12 @@ const TemplateLibrarySaveTemplateVariantBView = TemplateLibrarySaveTemplateView.
 		this.cloudAccountBadgeDialog.show();
 	},
 
+	hideCloudAccountBadgeTooltip() {
+		if ( this.cloudAccountBadgeDialog ) {
+			this.cloudAccountBadgeDialog.hide();
+		}
+	},
+
 	showSiteAccountBadgeTooltip() {
 		if ( this.siteAccountBadgeDialog ) {
 			this.siteAccountBadgeDialog.hide();
@@ -109,6 +118,12 @@ const TemplateLibrarySaveTemplateVariantBView = TemplateLibrarySaveTemplateView.
 		this.siteAccountBadgeDialog.show();
 
 		this.sendCTBadgeEvent( 'site' );
+	},
+
+	hideSiteAccountBadgeTooltip() {
+		if ( this.siteAccountBadgeDialog ) {
+			this.siteAccountBadgeDialog.hide();
+		}
 	},
 
 	sendCTBadgeEvent( badgeType ) {

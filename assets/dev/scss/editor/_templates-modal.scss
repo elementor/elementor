@@ -19,7 +19,8 @@ $remote-templates-items-space: 30px;
 		overflow-y: scroll;
 	}
 
-	&:has(#elementor-template-library-save-template) {
+	&:has(#elementor-template-library-save-template),
+	&:has(#elementor-template-library-save-template-variant-b) {
 
 		.dialog-message {
 			overflow-y: hidden;
@@ -1571,9 +1572,16 @@ label.elementor-template-library-order-label {
 					}
 
 					> i:first-of-type {
+						margin-inline-start: 12px;
+						margin-inline-end: 4px;
+						font-size: 24px;
+						color: var(--e-a-color-txt);
+					}
+
+					> svg:first-of-type {
 						margin-inline-start: 8px;
 						margin-inline-end: 0;
-						font-size: 18px;
+						font-size: 24px;
 						color: var(--e-a-color-txt);
 					}
 
