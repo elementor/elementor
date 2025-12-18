@@ -7,10 +7,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 abstract class Transformable_Prop_Type implements Prop_Type {
-	protected $version = '1';
+	protected $version = 1;
 
 	abstract public static function get_key(): string;
 	abstract public static function generate( $value, $disable = false ): array;
+
+	public function get_version(): int {
+		return $this->version;
+	}
 
 	public function jsonSerialize(): array {
 		return [

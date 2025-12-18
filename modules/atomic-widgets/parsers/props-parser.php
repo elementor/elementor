@@ -78,6 +78,28 @@ class Props_Parser {
 		return Parse_Result::make()->wrap( $sanitized );
 	}
 
+	private function add_version( array $props ): array {
+		$versioned = [];
+
+		foreach ( $this->schema as $key => $prop_type ) {
+			if ( ! isset( $props[ $key ] ) ) {
+				continue;
+			}
+
+			$versioned[ $key ] = $props[ $key ];
+
+			if ( is_array( $versioned[ $key ] ) ) {
+				$version = method_exists( $prop_type, 'get_version' )
+					? $prop_type->get_version()
+					: ( $prop_type->jsonSerialize()['version'] ?? 1 );
+
+				$versioned[ $key ]['version'] = $version;
+			}
+		}
+
+		return $versioned;
+	}
+
 	/**
 	 * @param array $props
 	 * The key of each item represents the prop name (should match the schema),
@@ -90,6 +112,12 @@ class Props_Parser {
 
 		$sanitize_result->errors()->merge( $validate_result->errors() );
 
-		return $sanitize_result;
+		$versioned_props = $this->add_version( $sanitize_result->unwrap() );
+
+		$parse_result = Parse_Result::make()->wrap( $versioned_props );
+
+		$parse_result->errors()->merge( $sanitize_result->errors() );
+
+		return $parse_result;
 	}
 }
