@@ -233,17 +233,19 @@ class Components_REST_API {
 		$components = $request->get_param( 'components' );
 		$failed_components = [];
 		$success_components = [];
-		foreach ( $components as $component ) {		
+		foreach ( $components as $component ) {
 			try {
 				$result = $this->get_repository()->update_title( $component['componentId'], $component['title'] );
 				$success_components[] = $component['componentId'];
-			}
-			catch ( \Exception $e ) {
+			} catch ( \Exception $e ) {
 				error_log( 'Components REST API update_component_titles error: ' . $e->getMessage() );
 				$failed_components[] = $component['componentId'];
 			}
 		}
-		return Response_Builder::make( [ 'failedIds' => $failed_components, 'successIds' => $success_components ] )->build();
+		return Response_Builder::make( [
+			'failedIds' => $failed_components,
+			'successIds' => $success_components,
+		] )->build();
 	}
 
 	private function get_components() {
@@ -486,7 +488,7 @@ class Components_REST_API {
 	}
 
 
-	private function route_wrapper( callable $cb ) {	
+	private function route_wrapper( callable $cb ) {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
