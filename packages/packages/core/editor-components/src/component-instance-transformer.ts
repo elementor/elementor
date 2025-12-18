@@ -40,8 +40,6 @@ export const componentInstanceTransformer = createTransformer(
 
 		const data = await getComponentDocumentData( id );
 
-		componentInstanceContext.update( { overrides } );
-
 		return {
 			elements: data?.elements ?? [],
 			overrides,
