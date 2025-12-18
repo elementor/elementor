@@ -5,14 +5,13 @@ import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { InteractionDetails } from './interaction-details';
-import type { InteractionItemPropValue, InteractionItemValue, ElementInteractions } from '../types';
+import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
 import {
 	buildAnimationIdString,
 	buildDisplayLabel,
 	createDefaultInteractionItem,
-	extractString,
 } from '../utils/prop-value-utils';
+import { InteractionDetails } from './interaction-details';
 
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
@@ -94,7 +93,6 @@ export function InteractionsList( props: InteractionListProps ) {
 				),
 				actions: ( value: InteractionItemPropValue ) => (
 					<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
-
 						<IconButton
 							aria-label={ __( 'Play interaction', 'elementor' ) }
 							size="tiny"

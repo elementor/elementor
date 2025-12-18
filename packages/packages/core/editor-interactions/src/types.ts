@@ -1,10 +1,10 @@
 import type {
-	StringPropValue,
-	NumberPropValue,
-	TimingConfigPropValue,
 	AnimationPresetPropValue,
-	InteractionItemPropValue,
 	ElementInteractions,
+	InteractionItemPropValue,
+	NumberPropValue,
+	StringPropValue,
+	TimingConfigPropValue,
 } from '@elementor/editor-elements';
 
 export type {

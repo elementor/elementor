@@ -3,18 +3,13 @@ import { PopoverContent } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import type { InteractionItemValue } from '../types';
+import { createAnimationPreset, createString, extractNumber, extractString } from '../utils/prop-value-utils';
 import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
 import { Trigger } from './controls/trigger';
-import type { InteractionItemValue } from '../types';
-import {
-	createAnimationPreset,
-	createString,
-	extractNumber,
-	extractString,
-} from '../utils/prop-value-utils';
 
 type InteractionDetailsProps = {
 	interaction: InteractionItemValue;
@@ -40,17 +35,19 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 
 	const effectiveDirection = effect === 'slide' && ! direction ? 'top' : direction;
 
-	const updateInteraction = ( updates: Partial<{
-		trigger: string;
-		effect: string;
-		type: string;
-		direction: string;
-		duration: number;
-		delay: number;
-	}> ): void => {
+	const updateInteraction = (
+		updates: Partial< {
+			trigger: string;
+			effect: string;
+			type: string;
+			direction: string;
+			duration: number;
+			delay: number;
+		} >
+	): void => {
 		const newEffect = updates.effect ?? effect;
 		const newDirection = updates.direction ?? direction;
-		
+
 		const resolvedDirection = newEffect === 'slide' && ! newDirection ? 'top' : newDirection;
 
 		onChange( {

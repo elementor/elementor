@@ -7,8 +7,6 @@ import {
 	useElementInteractions,
 } from '@elementor/editor-elements';
 
-// import type { InteractionsPropType } from '../types';
-
 type InteractionsContextValue = {
 	interactions: ElementInteractions;
 	setInteractions: ( value: ElementInteractions | undefined ) => void;
@@ -29,7 +27,8 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 		window.dispatchEvent( new CustomEvent( 'elementor/element/update_interactions' ) );
 	}, [] );
 
-	const interactions: ElementInteractions = ( rawInteractions as unknown as ElementInteractions ) ?? DEFAULT_INTERACTIONS;
+	const interactions: ElementInteractions =
+		( rawInteractions as unknown as ElementInteractions ) ?? DEFAULT_INTERACTIONS;
 
 	const setInteractions = ( value: ElementInteractions | undefined ) => {
 		updateElementInteractions( {
@@ -39,7 +38,6 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 	};
 
 	const playInteractions = ( animationId: string ) => {
-		console.log('playing interactions', animationId);
 		playElementInteractions( elementId, animationId );
 	};
 

@@ -1,8 +1,8 @@
 import type {
 	AnimationPresetPropValue,
+	ElementInteractions,
 	InteractionItemPropValue,
 	InteractionItemValue,
-	ElementInteractions,
 	NumberPropValue,
 	StringPropValue,
 	TimingConfigPropValue,
@@ -49,7 +49,7 @@ export const createInteractionItem = (
 	direction: string,
 	duration: number,
 	delay: number,
-    interactionId?: string
+	interactionId?: string
 ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
@@ -60,14 +60,7 @@ export const createInteractionItem = (
 } );
 
 export const createDefaultInteractionItem = (): InteractionItemPropValue => {
-	return createInteractionItem(
-		'load',
-		'fade',
-		'in',
-		'',
-		300,
-		0
-	);
+	return createInteractionItem( 'load', 'fade', 'in', '', 300, 0 );
 };
 
 export const createDefaultInteractions = (): ElementInteractions => ( {
@@ -84,7 +77,6 @@ export const extractNumber = ( prop: NumberPropValue | undefined, fallback = 0 )
 };
 
 export const buildAnimationIdString = ( item: InteractionItemValue ): string => {
-    console.log('item', item);
 	const trigger = extractString( item.trigger );
 	const effect = extractString( item.animation.value.effect );
 	const type = extractString( item.animation.value.type );
