@@ -1,4 +1,4 @@
-<?php
+<?php 
 namespace Elementor;
 
 if ( ! defined( 'ABSPATH' ) ) {
