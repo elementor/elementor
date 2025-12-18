@@ -42,16 +42,13 @@ class Elementor_One_Menu_Manager {
 			do_action( 'elementor/editor-one/menu/register', $this->menu_data_provider );
 		}, 4 );
 
-		add_action( 'admin_menu', [ $this, 'reregister_elementor_menu_for_limited_users' ], 9 );
-		add_action( 'admin_menu', [ $this, 'adjust_elementor_menu_capability' ], 15 );
-		add_filter( 'user_has_cap', [ $this, 'grant_elementor_menu_capability' ], 10, 3 );
-		add_filter( 'user_has_cap', [ $this, 'grant_pro_menu_items_capability' ], 10, 3 );
+		add_action( 'admin_menu', [ $this, 'reregister_elementor_menu_for_edit_posts_users' ], 9 );
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 999 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 1001 );
 		add_action( 'admin_menu', [ $this, 'reorder_elementor_submenu' ], 1002 );
 		add_action( 'admin_menu', [ $this, 'reposition_elementor_menu' ], 1003 );
-		add_action( 'admin_menu', [ $this, 'remove_all_submenus_for_limited_users' ], 1005 );
-		add_action( 'admin_menu', [ $this, 'override_elementor_page_for_limited_users' ], 1006 );
+		add_action( 'admin_menu', [ $this, 'remove_all_submenus_for_edit_posts_users' ], 1005 );
+		add_action( 'admin_menu', [ $this, 'override_elementor_page_for_edit_posts_users' ], 1006 );
 		add_filter( 'add_menu_classes', [ $this, 'fix_theme_builder_submenu_url' ] );
 		add_action( 'admin_head', [ $this, 'hide_flyout_items_from_wp_menu' ] );
 		add_action( 'admin_head', [ $this, 'hide_legacy_templates_menu' ] );
@@ -146,14 +143,7 @@ class Elementor_One_Menu_Manager {
 		ksort( $menu );
 	}
 
-	public function reregister_elementor_menu_for_limited_users(): void {
-		$experiments_manager = Plugin::instance()->experiments;
-		$is_experiment_on = $experiments_manager && $experiments_manager->is_feature_active( 'e_editor_one' );
-
-		if ( ! $is_experiment_on ) {
-			return;
-		}
-
+	public function reregister_elementor_menu_for_edit_posts_users(): void {
 		$user = wp_get_current_user();
 		if ( ! $user || ! $user->exists() ) {
 			return;
@@ -173,67 +163,12 @@ class Elementor_One_Menu_Manager {
 			esc_html__( 'Elementor', 'elementor' ),
 			'edit_posts',
 			Menu_Config::ELEMENTOR_MENU_SLUG,
-			[ Plugin::instance()->settings, 'display_settings_page' ],
+			[ Plugin::instance()->settings, 'display_home_screen' ],
 			'',
 			58.5
 		);
 	}
 
-	public function grant_elementor_menu_capability( array $allcaps, array $caps, array $args ): array {
-		if ( empty( $args[0] ) || 'manage_options' !== $args[0] ) {
-			return $allcaps;
-		}
-
-		if ( isset( $allcaps['manage_options'] ) && $allcaps['manage_options'] ) {
-			return $allcaps;
-		}
-
-		if ( ! isset( $allcaps['edit_posts'] ) || ! $allcaps['edit_posts'] ) {
-			return $allcaps;
-		}
-
-		$experiments_manager = Plugin::instance()->experiments;
-		$is_experiment_on = $experiments_manager && $experiments_manager->is_feature_active( 'e_editor_one' );
-
-		if ( $is_experiment_on ) {
-			return $allcaps;
-		}
-
-		if ( ! Utils::has_pro() ) {
-			return $allcaps;
-		}
-
-		$allcaps['manage_options'] = true;
-
-		return $allcaps;
-	}
-
-	public function grant_pro_menu_items_capability( array $allcaps, array $caps, array $args ): array {
-		if ( empty( $args[0] ) || 'publish_posts' !== $args[0] ) {
-			return $allcaps;
-		}
-
-		if ( isset( $allcaps['publish_posts'] ) && $allcaps['publish_posts'] ) {
-			return $allcaps;
-		}
-
-		if ( ! isset( $allcaps['edit_posts'] ) || ! $allcaps['edit_posts'] ) {
-			return $allcaps;
-		}
-
-		if ( ! Utils::has_pro() ) {
-			return $allcaps;
-		}
-
-		$experiments_manager = Plugin::instance()->experiments;
-		if ( $experiments_manager && $experiments_manager->is_feature_active( 'e_editor_one' ) ) {
-			return $allcaps;
-		}
-
-		$allcaps['publish_posts'] = true;
-
-		return $allcaps;
-	}
 
 	public function set_menu_building_flag(): void {
 		self::$is_building_menu = true;
@@ -243,79 +178,8 @@ class Elementor_One_Menu_Manager {
 		self::$is_building_menu = false;
 	}
 
-	public function adjust_elementor_menu_capability_before_filter(): void {
-		$experiments_manager = Plugin::instance()->experiments;
-		$is_experiment_on = $experiments_manager && $experiments_manager->is_feature_active( 'e_editor_one' );
 
-		if ( ! $is_experiment_on ) {
-			return;
-		}
-
-		$user = wp_get_current_user();
-		if ( ! $user || ! $user->exists() ) {
-			return;
-		}
-
-		$has_edit_posts = isset( $user->allcaps['edit_posts'] ) && $user->allcaps['edit_posts'];
-		$has_manage_options = isset( $user->allcaps['manage_options'] ) && $user->allcaps['manage_options'];
-
-		if ( ! $has_edit_posts || $has_manage_options ) {
-			return;
-		}
-
-		global $menu;
-
-		if ( empty( $menu ) ) {
-			return;
-		}
-
-		foreach ( $menu as $key => $item ) {
-			if ( ! isset( $item[2] ) || Menu_Config::ELEMENTOR_MENU_SLUG !== $item[2] ) {
-				continue;
-			}
-
-			if ( isset( $item[1] ) && 'manage_options' === $item[1] ) {
-				$menu[ $key ][1] = 'edit_posts'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-				break;
-			}
-		}
-	}
-
-	public function adjust_elementor_menu_capability(): void {
-		$experiments_manager = Plugin::instance()->experiments;
-		$is_experiment_on = $experiments_manager && $experiments_manager->is_feature_active( 'e_editor_one' );
-
-		if ( ! $is_experiment_on ) {
-			return;
-		}
-
-		$user = wp_get_current_user();
-		if ( ! $user || ! $user->exists() ) {
-			return;
-		}
-
-		$has_edit_posts = isset( $user->allcaps['edit_posts'] ) && $user->allcaps['edit_posts'];
-		$has_manage_options = isset( $user->allcaps['manage_options'] ) && $user->allcaps['manage_options'];
-
-		if ( ! $has_edit_posts || $has_manage_options ) {
-			return;
-		}
-
-		global $menu;
-
-		foreach ( $menu as $key => $item ) {
-			if ( ! isset( $item[2] ) ) {
-				continue;
-			}
-
-			if ( Menu_Config::ELEMENTOR_MENU_SLUG === $item[2] ) {
-				$menu[ $key ][1] = 'edit_posts'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-				break;
-			}
-		}
-	}
-
-	public function remove_all_submenus_for_limited_users(): void {
+	public function remove_all_submenus_for_edit_posts_users(): void {
 		$user = wp_get_current_user();
 		if ( ! $user || ! $user->exists() ) {
 			return;
@@ -352,7 +216,7 @@ class Elementor_One_Menu_Manager {
 		Plugin::instance()->settings->display_home_screen();
 	}
 
-	public function override_elementor_page_for_limited_users(): void {
+	public function override_elementor_page_for_edit_posts_users(): void {
 		$user = wp_get_current_user();
 		if ( ! $user || ! $user->exists() ) {
 			return;

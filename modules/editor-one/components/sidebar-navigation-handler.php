@@ -162,14 +162,14 @@ class Sidebar_Navigation_Handler {
 			}
 
 			if ( $original_item ) {
-				$is_accessible = $this->menu_data_provider->is_item_accessible_by_user( $original_item, $user );
+				$is_accessible = $this->menu_data_provider->is_item_accessible( $original_item );
 				
 				if ( ! $is_accessible && $original_item->has_children() ) {
 					$child_items = $level4_items[ $item_group_id ] ?? [];
 					$has_accessible_child = false;
 					
 					foreach ( $child_items as $child_slug => $child_item ) {
-						if ( $this->menu_data_provider->is_item_accessible_by_user( $child_item, $user ) ) {
+						if ( $this->menu_data_provider->is_item_accessible( $child_item ) ) {
 							$has_accessible_child = true;
 							break;
 						}
@@ -214,7 +214,7 @@ class Sidebar_Navigation_Handler {
 				$item_slug = $item_data['slug'] ?? '';
 				$original_item = $templates_items[ $item_slug ] ?? null;
 
-				if ( $original_item && $this->menu_data_provider->is_item_accessible_by_user( $original_item, $user ) ) {
+				if ( $original_item && $this->menu_data_provider->is_item_accessible( $original_item ) ) {
 					$filtered_items[] = $item_data;
 				}
 			}

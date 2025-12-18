@@ -25,108 +25,86 @@ class Test_Menu_Data_Provider_Accessibility extends Elementor_Test_Base {
 		$this->reset_menu_data_provider();
 	}
 
-	public function test_is_item_accessible_by_user__returns_false_if_item_not_visible() {
-		$user = $this->create_user_with_role( 'editor' );
-
+	public function test_is_item_accessible__returns_false_if_item_not_visible() {
 		$item = $this->create_mock_menu_item( 'test-item', 'edit_posts', false );
 
-		$result = $this->provider->is_item_accessible_by_user( $item, $user );
+		$result = $this->provider->is_item_accessible( $item );
 
 		$this->assertFalse( $result );
-
-		wp_delete_user( $user );
 	}
 
-	public function test_is_item_accessible_by_user__returns_true_if_user_has_capability() {
+	public function test_is_item_accessible__returns_true_if_user_has_capability() {
 		$editor_user = $this->create_user_with_role( 'editor' );
+		wp_set_current_user( $editor_user->ID );
 
 		$item = $this->create_mock_menu_item( 'test-item', 'edit_posts', true );
 
-		$result = $this->provider->is_item_accessible_by_user( $item, $editor_user );
+		$result = $this->provider->is_item_accessible( $item );
 
 		$this->assertTrue( $result );
 
-		wp_delete_user( $editor_user );
+		wp_set_current_user( 0 );
+		wp_delete_user( $editor_user->ID );
 	}
 
-	public function test_is_item_accessible_by_user__returns_false_if_user_lacks_capability() {
+	public function test_is_item_accessible__returns_false_if_user_lacks_capability() {
 		$subscriber_user = $this->create_user_with_role( 'subscriber' );
+		wp_set_current_user( $subscriber_user->ID );
 
 		$item = $this->create_mock_menu_item( 'test-item', 'manage_options', true );
 
-		$result = $this->provider->is_item_accessible_by_user( $item, $subscriber_user );
+		$result = $this->provider->is_item_accessible( $item );
 
 		$this->assertFalse( $result );
 
-		wp_delete_user( $subscriber_user );
+		wp_set_current_user( 0 );
+		wp_delete_user( $subscriber_user->ID );
 	}
 
-	public function test_is_item_accessible_by_user__applies_filter() {
+	public function test_is_item_accessible__checks_edit_posts_capability() {
 		$editor_user = $this->create_user_with_role( 'editor' );
-
-		$item = $this->create_mock_menu_item( 'test-item', 'manage_options', true );
-
-		add_filter( 'elementor/editor-one/menu/is_item_accessible', function ( $has_capability, $menu_item, $user ) {
-			return true;
-		}, 10, 3 );
-
-		$result = $this->provider->is_item_accessible_by_user( $item, $editor_user );
-
-		$this->assertTrue( $result );
-
-		remove_all_filters( 'elementor/editor-one/menu/is_item_accessible' );
-
-		wp_delete_user( $editor_user );
-	}
-
-	public function test_is_item_accessible_by_user__returns_false_when_filter_returns_false() {
-		$admin_user = $this->create_user_with_role( 'administrator' );
-
-		$item = $this->create_mock_menu_item( 'test-item', 'manage_options', true );
-
-		add_filter( 'elementor/editor-one/menu/is_item_accessible', function ( $has_capability, $menu_item, $user ) {
-			return false;
-		}, 10, 3 );
-
-		$result = $this->provider->is_item_accessible_by_user( $item, $admin_user );
-
-		$this->assertFalse( $result );
-
-		remove_all_filters( 'elementor/editor-one/menu/is_item_accessible' );
-
-		wp_delete_user( $admin_user );
-	}
-
-	public function test_is_item_accessible_by_user__checks_edit_posts_capability() {
-		$editor_user = $this->create_user_with_role( 'editor' );
-		$contributor_user = $this->create_user_with_role( 'contributor' );
+		wp_set_current_user( $editor_user->ID );
 
 		$item = $this->create_mock_menu_item( 'test-item', 'edit_posts', true );
 
-		$editor_result = $this->provider->is_item_accessible_by_user( $item, $editor_user );
-		$contributor_result = $this->provider->is_item_accessible_by_user( $item, $contributor_user );
+		$editor_result = $this->provider->is_item_accessible( $item );
+
+		wp_set_current_user( 0 );
+		wp_delete_user( $editor_user->ID );
+
+		$contributor_user = $this->create_user_with_role( 'contributor' );
+		wp_set_current_user( $contributor_user->ID );
+
+		$contributor_result = $this->provider->is_item_accessible( $item );
 
 		$this->assertTrue( $editor_result );
 		$this->assertTrue( $contributor_result );
 
-		wp_delete_user( $editor_user );
-		wp_delete_user( $contributor_user );
+		wp_set_current_user( 0 );
+		wp_delete_user( $contributor_user->ID );
 	}
 
-	public function test_is_item_accessible_by_user__checks_manage_options_capability() {
+	public function test_is_item_accessible__checks_manage_options_capability() {
 		$admin_user = $this->create_user_with_role( 'administrator' );
-		$editor_user = $this->create_user_with_role( 'editor' );
+		wp_set_current_user( $admin_user->ID );
 
 		$item = $this->create_mock_menu_item( 'test-item', 'manage_options', true );
 
-		$admin_result = $this->provider->is_item_accessible_by_user( $item, $admin_user );
-		$editor_result = $this->provider->is_item_accessible_by_user( $item, $editor_user );
+		$admin_result = $this->provider->is_item_accessible( $item );
+
+		wp_set_current_user( 0 );
+		wp_delete_user( $admin_user->ID );
+
+		$editor_user = $this->create_user_with_role( 'editor' );
+		wp_set_current_user( $editor_user->ID );
+
+		$editor_result = $this->provider->is_item_accessible( $item );
 
 		$this->assertTrue( $admin_result );
 		$this->assertFalse( $editor_result );
 
-		wp_delete_user( $admin_user );
-		wp_delete_user( $editor_user );
+		wp_set_current_user( 0 );
+		wp_delete_user( $editor_user->ID );
 	}
 
 	private function create_user_with_role( string $role ): \WP_User {

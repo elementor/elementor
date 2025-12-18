@@ -332,22 +332,11 @@ class Menu_Data_Provider {
 			}
 		}
 
-		return apply_filters( 'elementor/editor-one/menu/filter_level4_items', $groups, wp_get_current_user() );
+		return $groups;
 	}
 
-	private function is_item_accessible( Menu_Item_Interface $item ): bool {
+	public function is_item_accessible( Menu_Item_Interface $item ): bool {
 		return $item->is_visible() && current_user_can( $item->get_capability() );
-	}
-
-	public function is_item_accessible_by_user( Menu_Item_Interface $item, \WP_User $user ): bool {
-		if ( ! $item->is_visible() ) {
-			return false;
-		}
-
-		$capability = $item->get_capability();
-		$has_capability = user_can( $user, $capability );
-
-		return apply_filters( 'elementor/editor-one/menu/is_item_accessible', $has_capability, $item, $user );
 	}
 
 	private function get_item_url( string $item_slug, ?string $parent_slug = null ): string {

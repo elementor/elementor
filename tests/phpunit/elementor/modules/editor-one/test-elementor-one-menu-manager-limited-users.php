@@ -181,7 +181,7 @@ class Test_Elementor_One_Menu_Manager_Limited_Users extends Elementor_Test_Base 
 			3 => [ 'Tools', 'manage_options', 'elementor-tools' ],
 		];
 
-		$this->menu_manager->remove_all_submenus_for_limited_users();
+		$this->menu_manager->remove_all_submenus_for_edit_posts_users();
 
 		$this->assertCount( 1, $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] );
 		$this->assertEquals( Menu_Config::EDITOR_MENU_SLUG, $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ][0][2] );
@@ -201,7 +201,7 @@ class Test_Elementor_One_Menu_Manager_Limited_Users extends Elementor_Test_Base 
 			2 => [ 'Settings', 'manage_options', 'elementor-settings' ],
 		];
 
-		$this->menu_manager->remove_all_submenus_for_limited_users();
+		$this->menu_manager->remove_all_submenus_for_edit_posts_users();
 
 		$this->assertCount( 1, $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] );
 		$this->assertEquals( 'Editor', $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ][0][0] );
@@ -222,7 +222,7 @@ class Test_Elementor_One_Menu_Manager_Limited_Users extends Elementor_Test_Base 
 			2 => [ 'Settings', 'manage_options', 'elementor-settings' ],
 		];
 
-		$this->menu_manager->remove_all_submenus_for_limited_users();
+		$this->menu_manager->remove_all_submenus_for_edit_posts_users();
 
 		$this->assertCount( 3, $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] );
 
@@ -240,7 +240,7 @@ class Test_Elementor_One_Menu_Manager_Limited_Users extends Elementor_Test_Base 
 			1 => [ 'Templates', 'edit_posts', 'elementor-templates' ],
 		];
 
-		$this->menu_manager->remove_all_submenus_for_limited_users();
+		$this->menu_manager->remove_all_submenus_for_edit_posts_users();
 
 		$this->assertCount( 2, $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] );
 
@@ -255,7 +255,7 @@ class Test_Elementor_One_Menu_Manager_Limited_Users extends Elementor_Test_Base 
 
 		$submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] = [];
 
-		$this->menu_manager->remove_all_submenus_for_limited_users();
+		$this->menu_manager->remove_all_submenus_for_edit_posts_users();
 
 		$this->assertEmpty( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] );
 
@@ -270,7 +270,7 @@ class Test_Elementor_One_Menu_Manager_Limited_Users extends Elementor_Test_Base 
 
 		$submenu = [];
 
-		$this->menu_manager->remove_all_submenus_for_limited_users();
+		$this->menu_manager->remove_all_submenus_for_edit_posts_users();
 
 		$this->assertArrayNotHasKey( Menu_Config::ELEMENTOR_MENU_SLUG, $submenu );
 
