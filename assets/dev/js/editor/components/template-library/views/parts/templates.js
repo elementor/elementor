@@ -735,7 +735,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			},
 			position: {
 				of: this.ui.siteBadge,
-				at: 'top-50',
+				at: 'top-35',
 			},
 		} )
 			.setMessage( message );
