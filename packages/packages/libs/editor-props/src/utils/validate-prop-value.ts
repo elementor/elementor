@@ -113,6 +113,14 @@ function formatDetailedErrors( errors: DetailedValidationError[], indent = '' ):
 
 export const validatePropValue = ( schema: PropType, value: unknown ) => {
 	const jsonSchema = propTypeToJsonSchema( schema );
+	if ( value === null ) {
+		return {
+			valid: true,
+			errors: [],
+			errorMessages: [],
+			jsonSchema: JSON.stringify( propTypeToJsonSchema( schema ) ),
+		};
+	}
 	const result = validate( value, jsonSchema );
 	const detailedErrors = result.errors.map( processValidationError );
 	return {
