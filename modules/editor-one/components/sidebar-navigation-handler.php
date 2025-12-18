@@ -89,7 +89,6 @@ class Sidebar_Navigation_Handler {
 		$flyout_data = $this->menu_data_provider->get_editor_flyout_data();
 		$level4_groups = $this->menu_data_provider->get_level4_flyout_data();
 		$promotion = $this->get_promotion_data();
-
 		$active_state = $this->get_active_menu_state( $flyout_data['items'], $level4_groups );
 
 		return [
@@ -122,5 +121,4 @@ class Sidebar_Navigation_Handler {
 
 		return $this->active_menu_resolver->resolve( $menu_items, $level4_groups, $current_page, $current_uri );
 	}
-
 }
