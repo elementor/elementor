@@ -83,9 +83,9 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 
 		const sizeValue =
 			dimensionsValue?.[ 'block-start' ] ??
-			dimensionsValue?.[ 'inline-start' ] ??
-			dimensionsValue?.[ 'block-end' ] ??
 			dimensionsValue?.[ 'inline-end' ] ??
+			dimensionsValue?.[ 'block-end' ] ??
+			dimensionsValue?.[ 'inline-start' ] ??
 			null;
 
 		if ( ! sizeValue ) {
