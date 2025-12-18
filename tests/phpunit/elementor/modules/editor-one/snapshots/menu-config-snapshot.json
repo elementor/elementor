@@ -45,7 +45,7 @@
             {
                 "slug": "elementor-templates",
                 "label": "Templates",
-                "url": "/wp-admin/admin.php?page=elementor-templates",
+                "url": "/wp-admin/edit.php?post_type=elementor_library",
                 "icon": "folder",
                 "group_id": "elementor-editor-templates",
                 "priority": 60
@@ -53,7 +53,7 @@
             {
                 "slug": "elementor-custom-elements",
                 "label": "Custom Elements",
-                "url": "/wp-admin/admin.php?page=elementor-custom-elements",
+                "url": "/wp-admin/admin.php?page=elementor_custom_fonts",
                 "icon": "adjustments",
                 "group_id": "elementor-editor-custom-elements",
                 "priority": 70
@@ -61,7 +61,7 @@
             {
                 "slug": "elementor-system",
                 "label": "System",
-                "url": "/wp-admin/admin.php?page=elementor-system",
+                "url": "/wp-admin/admin.php?page=elementor-system-info",
                 "icon": "info-circle",
                 "group_id": "elementor-editor-system",
                 "priority": 80

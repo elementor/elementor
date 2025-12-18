@@ -49,7 +49,7 @@ export function InstanceEditingPanel() {
 
 	return (
 		<>
-			<PanelHeader sx={ { justifyContent: 'start' } }>
+			<PanelHeader sx={ { justifyContent: 'start', px: 2 } }>
 				<Stack direction="row" alignContent="space-between" flexGrow={ 1 }>
 					<Stack direction="row" alignItems="center" justifyContent="start" gap={ 1 } flexGrow={ 1 }>
 						<ComponentsIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
