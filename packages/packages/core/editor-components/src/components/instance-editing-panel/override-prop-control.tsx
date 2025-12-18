@@ -94,10 +94,17 @@ function OverrideControl( { overridableProp, controls, overrides }: Props ) {
 		relevantControls[ overridableProp.propKey ].value.type as ControlType
 	);
 
-	const controlProps = relevantControls[ overridableProp.propKey ].value;
+	const controlProps = relevantControls[ overridableProp.propKey ].value.props;
 
 	return (
-		<PropProvider propType={ propTypeSchema } value={ value } setValue={ setValue }>
+		<PropProvider
+			propType={ propTypeSchema }
+			value={ value }
+			setValue={ setValue }
+			isDisabled={ () => {
+				return false;
+			} }
+		>
 			<PropKeyProvider bind={ overridableProp.overrideKey }>
 				<Stack direction="column" gap={ 1 }>
 					<ControlLabel>{ overridableProp.label }</ControlLabel>
