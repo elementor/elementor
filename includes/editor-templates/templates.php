@@ -743,6 +743,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 			</div>
 		</div>
+		<div class="elementor-template-library-connect-states-badge">
+			<span class="source-option-badge cloud-badge">
+				<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true">
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M7.83317 2.33331C7.25853 2.33331 6.70743 2.56159 6.30111 2.96791C5.89478 3.37424 5.6665 3.92534 5.6665 4.49998V6.66665H9.99984V4.49998C9.99984 3.92534 9.77156 3.37424 9.36524 2.96791C8.95891 2.56159 8.40781 2.33331 7.83317 2.33331ZM10.9998 6.66665V4.49998C10.9998 3.66013 10.6662 2.85467 10.0723 2.26081C9.47848 1.66694 8.67302 1.33331 7.83317 1.33331C6.99332 1.33331 6.18786 1.66694 5.594 2.26081C5.00013 2.85467 4.6665 3.66013 4.6665 4.49998V6.66665H4.49984C4.01361 6.66665 3.54729 6.8598 3.20347 7.20362C2.85966 7.54743 2.6665 8.01375 2.6665 8.49998V12.5C2.6665 12.9862 2.85966 13.4525 3.20347 13.7963C3.54729 14.1402 4.01361 14.3333 4.49984 14.3333H11.1665C11.6527 14.3333 12.119 14.1402 12.4629 13.7963C12.8067 13.4525 12.9998 12.9862 12.9998 12.5V8.49998C12.9998 8.01375 12.8067 7.54743 12.4629 7.20362C12.119 6.8598 11.6527 6.66665 11.1665 6.66665H10.9998Z" fill="#1945A4" />
+				</svg>
+				<?php echo esc_html__( 'My Elementor account', 'elementor' ); ?>
+			</span>
+		</div>
 	</div>
 	<div class="elementor-template-library-blank-icon"></div>
 	<div class="elementor-template-library-blank-title"></div>

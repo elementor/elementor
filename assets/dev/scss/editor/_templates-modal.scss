@@ -625,7 +625,17 @@ $remote-templates-items-space: 30px;
 	}
 }
 
-#elementor-template-library-toolbar {
+#elementor-template-library-connect-states {
+	.elementor-template-library-filter-toolbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+}
+
+
+#elementor-template-library-toolbar,
+.elementor-template-library-connect-states-badge {
 
 	.source-option-badge {
 		display: flex;
