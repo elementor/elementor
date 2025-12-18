@@ -755,10 +755,7 @@ module.exports = {
 	},
 
 	getWidgetCache( model ) {
-		const isModel = model && 'function' === typeof model.get;
-		const elType = isModel ? model.get( 'elType' ) : model?.elType;
-		const widgetType = isModel ? model.get( 'widgetType' ) : model?.widgetType;
-		const elementType = 'widget' === elType ? widgetType : elType;
+		const elementType = 'widget' === model.get( 'elType' ) ? model.get( 'widgetType' ) : model.get( 'elType' );
 
 		return elementor.widgetsCache[ elementType ];
 	},
