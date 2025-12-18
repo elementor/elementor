@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useNavigateBack } from '../../hooks/use-navigate-back';
 import { selectCurrentComponentId } from '../../store/store';
+import { usePanelActions } from '../component-properties-panel/component-properties-panel-panel';
 import { ComponentsBadge } from './component-badge';
 import { useOverridableProps } from './use-overridable-props';
 
@@ -16,11 +17,17 @@ export const ComponentPanelHeader = () => {
 	const onBack = useNavigateBack();
 	const componentName = getComponentName();
 
+	const { open: openPropertiesPanel } = usePanelActions();
+
 	const overridesCount = overridableProps ? Object.keys( overridableProps.props ).length : 0;
 
 	if ( ! currentComponentId ) {
 		return null;
 	}
+
+	const handleClick = () => {
+		openPropertiesPanel();
+	};
 
 	return (
 		<Box>
@@ -43,7 +50,7 @@ export const ComponentPanelHeader = () => {
 						</Typography>
 					</Stack>
 				</Stack>
-				<ComponentsBadge overridesCount={ overridesCount } />
+				<ComponentsBadge overridesCount={ overridesCount } onClick={ handleClick } />
 			</Stack>
 			<Divider />
 		</Box>

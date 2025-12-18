@@ -4,7 +4,7 @@ import { ComponentPropListIcon } from '@elementor/icons';
 import { Badge, Box, keyframes, styled, ToggleButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-export const ComponentsBadge = ( { overridesCount }: { overridesCount: number } ) => {
+export const ComponentsBadge = ( { overridesCount, onClick }: { overridesCount: number; onClick: () => void } ) => {
 	const prevCount = usePrevious( overridesCount );
 
 	const isFirstOverride = prevCount === 0 && overridesCount === 1;
@@ -22,7 +22,12 @@ export const ComponentsBadge = ( { overridesCount }: { overridesCount: number } 
 				</Box>
 			}
 		>
-			<ToggleButton value="overrides" size="tiny" aria-label={ __( 'View overrides', 'elementor' ) }>
+			<ToggleButton
+				value="overrides"
+				size="tiny"
+				onClick={ onClick }
+				aria-label={ __( 'View overrides', 'elementor' ) }
+			>
 				<ComponentPropListIcon fontSize="tiny" />
 			</ToggleButton>
 		</StyledBadge>

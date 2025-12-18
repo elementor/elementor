@@ -30,9 +30,6 @@ export type { PopoverActionProps } from './popover-action';
 export { registerStyleProviderToColors } from './provider-colors-registry';
 export { stylesInheritanceTransformersRegistry } from './styles-inheritance/styles-inheritance-transformers-registry';
 export { registerFieldIndicator, FIELD_TYPE } from './field-indicators-registry';
-export {
-	registerEditingPanelReplacement,
-	notifyEditingPanelReplacementRegistryChanged,
-} from './editing-panel-replacement-registry';
+export { registerEditingPanelReplacement } from './editing-panel-replacement-registry';
 
 export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-unapply-actions';

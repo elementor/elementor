@@ -14,6 +14,8 @@ import { fireEvent, screen } from '@testing-library/react';
 import { slice } from '../../../store/store';
 import { ComponentPanelHeader } from '../component-panel-header';
 
+const mockOpenPropertiesPanel = jest.fn();
+
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
 	__privateRunCommand: jest.fn(),
@@ -22,6 +24,12 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 jest.mock( '@elementor/editor-documents', () => ( {
 	...jest.requireActual( '@elementor/editor-documents' ),
 	getV1DocumentsManager: jest.fn(),
+} ) );
+
+jest.mock( '../../component-properties-panel/component-properties-panel-panel', () => ( {
+	usePanelActions: () => ( {
+		open: mockOpenPropertiesPanel,
+	} ),
 } ) );
 
 const MOCK_INITIAL_DOCUMENT_ID = 1;
@@ -133,6 +141,19 @@ describe( '<ComponentPanelHeader />', () => {
 
 		// Assert
 		expect( screen.queryByText( '0' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should open properties panel when badge is clicked', () => {
+		// Arrange
+		setupComponentEditing( { withOverridableProps: true } );
+		renderWithStore( <ComponentPanelHeader />, store );
+
+		// Act
+		const badgeButton = screen.getByLabelText( 'View overrides' );
+		fireEvent.click( badgeButton );
+
+		// Assert
+		expect( mockOpenPropertiesPanel ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'should navigate back to initial document when back button is clicked', () => {

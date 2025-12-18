@@ -18,7 +18,7 @@ import { OverridePropsGroup } from './override-props-group';
 export function InstanceEditingPanel() {
 	const { element } = useElement();
 	const settings = useElementSetting( element.id, 'component_instance' );
-	const componentId = ( componentInstancePropTypeUtil.extract( settings )?.component_id as NumberPropValue ).value;
+	const componentId = ( componentInstancePropTypeUtil.extract( settings )?.component_id as NumberPropValue )?.value;
 
 	const component = componentId ? selectComponent( getState(), componentId ) : null;
 	const overridableProps = componentId ? selectOverridableProps( getState(), componentId ) : null;
