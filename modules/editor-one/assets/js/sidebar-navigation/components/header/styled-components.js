@@ -8,6 +8,7 @@ export const HeaderContainer = styled( Box )( ( { theme } ) => ( {
 	borderBottom: `1px solid ${ theme.palette.divider }`,
 	display: 'flex',
 	alignItems: 'center',
+	marginBottom: theme.spacing( 1 ),
 } ) );
 
 export const HeaderContent = styled( Box )( ( { theme } ) => ( {
@@ -24,6 +25,6 @@ export const SiteTitle = styled( Typography )( {
 
 export const SearchButton = styled( IconButton )( ( { theme } ) => ( {
 	fontSize: 20,
-	color: theme.palette.text.secondary,
+	color: theme.palette.action.active,
 } ) );
 

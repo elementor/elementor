@@ -46,15 +46,31 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				}
 
 				const children = Array.from( xml.children );
-				const iterate = ( node: Element, containerElement: V1Element = documentContainer ) => {
+				const iterate = async (
+					node: Element,
+					containerElement: V1Element = documentContainer,
+					childIndex: number
+				) => {
 					const elementTag = node.tagName;
 					if ( ! widgetsCache[ elementTag ] ) {
 						errors.push( new Error( `Unknown widget type: ${ elementTag }` ) );
 					}
-					const isContainer = elementTag === 'e-flexbox' || elementTag === 'e-div-block';
+					const CONTAINER_ELEMENTS = Object.values( widgetsCache )
+						.filter( ( widget ) => widget.meta?.is_container )
+						.map( ( widget ) => widget.elType );
+					const isContainer = CONTAINER_ELEMENTS.includes( elementTag );
+					const parentElType = containerElement.model.get( 'elType' );
+					let targetContainerId =
+						parentElType === 'e-tabs'
+							? containerElement.children?.[ 1 ].children?.[ childIndex ]?.id ||
+							  containerElement.children?.[ 1 ].id
+							: containerElement.id;
+					if ( ! targetContainerId ) {
+						targetContainerId = containerElement.id;
+					}
 					const newElement = isContainer
 						? createElement( {
-								containerId: containerElement.id,
+								containerId: targetContainerId,
 								model: {
 									elType: elementTag,
 									id: generateElementId(),
@@ -62,7 +78,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 								options: { useHistory: false },
 						  } )
 						: createElement( {
-								containerId: containerElement.id,
+								containerId: targetContainerId,
 								model: {
 									elType: 'widget',
 									widgetType: elementTag,
@@ -103,8 +119,10 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 							}
 						}
 						if ( isContainer ) {
+							let currentChild = 0;
 							for ( const child of node.children ) {
-								iterate( child, newElement );
+								iterate( child, newElement, currentChild );
+								currentChild++;
 							}
 						} else {
 							node.innerHTML = '';
@@ -114,8 +132,10 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 					}
 				};
 
-				for ( const childNode of children ) {
-					iterate( childNode, documentContainer );
+				let currentChild = 0;
+				for await ( const childNode of children ) {
+					await iterate( childNode, documentContainer, currentChild );
+					currentChild++;
 					try {
 					} catch ( error ) {
 						errors.push( error as Error );
