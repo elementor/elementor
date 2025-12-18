@@ -46,7 +46,9 @@
 
 ## Editor Role
 
-### Elementor Submenu Items (Main WordPress Admin Sidebar)
+### Elementor Core (Without Pro Plugin)
+
+#### Elementor Submenu Items (Main WordPress Admin Sidebar)
 
 | Order | Menu Item | Experiment OFF | Experiment ON |
 |-------|-----------|----------------|---------------|
@@ -63,24 +65,64 @@
 | 11 | Custom Code | ❌ Not visible | ❌ Not visible |
 | 14 | Upgrade | ❌ Not visible | ❌ Not visible |
 
-**Note**: Editor role does not have access to the Elementor menu in the main WordPress admin sidebar (starting from `/wp-admin/`). When experiment is ON, the Editor One sidebar navigation exists but is empty - no menu items are visible.
+**Note**: Editor role does not have access to the Elementor menu in the main WordPress admin sidebar (starting from `/wp-admin/`).
 
-### Templates Menu
+#### Templates Menu
 
 | Order | Menu Item | Experiment OFF | Experiment ON |
 |-------|-----------|----------------|---------------|
-| - | **Templates Menu** | ✅ Visible | ❌ Not visible |
-| 1 | Saved Templates | ✅ Visible | ❌ Not visible |
-| 2 | Theme Builder | ✅ Visible | ❌ Not visible |
-| 3 | Popups | ✅ Visible | ❌ Not visible |
+| - | **Templates Menu** | ✅ Visible | ✅ Visible |
+| 1 | Saved Templates | ✅ Visible | ✅ Visible |
+| 2 | Theme Builder | ❌ Not visible (Pro plugin required) | ❌ Not visible (Pro plugin required) |
+| 3 | Website Templates | ❌ Not visible (Pro plugin required) | ❌ Not visible (Pro plugin required) |
+| 4 | Floating Elements | ❌ Not visible (Pro plugin required) | ❌ Not visible (Pro plugin required) |
+| 5 | Popups | ❌ Not visible (Pro plugin required) | ❌ Not visible (Pro plugin required) |
 
-**Note**: When experiment is OFF, Templates menu is visible for Editor role with submenu items: Saved Templates, Theme Builder, and Popups. When experiment is ON, Templates menu is hidden by CSS (`display: none !important;`) and the Editor One sidebar navigation exists but is empty - no menu items are visible.
+**Note**: When experiment is OFF, Templates menu is visible in WordPress admin sidebar. When experiment is ON, Templates menu is visible in Editor One sidebar navigation. With Pro plugin inactive, only Saved Templates is visible in Editor One sidebar navigation for Editor role.
+
+---
+
+### Elementor Pro (With Pro Plugin Active)
+
+#### Elementor Submenu Items (Main WordPress Admin Sidebar)
+
+| Order | Menu Item | Experiment OFF | Experiment ON |
+|-------|-----------|----------------|---------------|
+| 1 | Home | ❌ Not visible | ❌ Not visible |
+| 1 | Editor | ❌ Not present | ❌ Not visible |
+| 2 | Settings | ❌ Not visible | ❌ Not visible |
+| 3 | Role Manager | ❌ Not visible | ❌ Not visible |
+| 3 | Submissions | ❌ Not visible | ❌ Not visible |
+| 4 | Element Manager | ❌ Not visible | ❌ Not visible |
+| 5 | Tools | ❌ Not visible | ❌ Not visible |
+| 6 | System Info | ❌ Not visible | ❌ Not visible |
+| 9 | Custom Fonts | ❌ Not visible | ❌ Not visible |
+| 10 | Custom Icons | ❌ Not visible | ❌ Not visible |
+| 11 | Custom Code | ❌ Not visible | ❌ Not visible |
+| 14 | Upgrade | ❌ Not visible | ❌ Not visible |
+
+**Note**: Editor role does not have access to the Elementor menu in the main WordPress admin sidebar (starting from `/wp-admin/`).
+
+#### Templates Menu
+
+| Order | Menu Item | Experiment OFF | Experiment ON |
+|-------|-----------|----------------|---------------|
+| - | **Templates Menu** | ✅ Visible | ✅ Visible |
+| 1 | Saved Templates | ✅ Visible | ✅ Visible |
+| 2 | Theme Builder | ✅ Visible | ✅ Visible |
+| 3 | Website Templates | ❌ Not visible | ✅ Visible |
+| 4 | Floating Elements | ❌ Not visible | ❌ Not visible |
+| 5 | Popups | ✅ Visible | ✅ Visible |
+
+**Note**: When experiment is OFF, Templates menu is visible in WordPress admin sidebar. When experiment is ON, Templates menu is visible in Editor One sidebar navigation. Website Templates and Floating Elements are NOT visible in the Templates submenu for Editor role when experiment is OFF, even with Pro plugin active.
 
 ---
 
 ## Contributor Role
 
-### Elementor Submenu Items (Main WordPress Admin Sidebar)
+### Elementor Core (Without Pro Plugin)
+
+#### Elementor Submenu Items (Main WordPress Admin Sidebar)
 
 | Order | Menu Item | Experiment OFF | Experiment ON |
 |-------|-----------|----------------|---------------|
@@ -99,12 +141,54 @@
 
 **Note**: Contributor role does not have access to the Elementor menu in the main WordPress admin sidebar (starting from `/wp-admin/`).
 
-### Templates Menu
+#### Templates Menu
 
 | Order | Menu Item | Experiment OFF | Experiment ON |
 |-------|-----------|----------------|---------------|
-| - | **Templates Menu** | ✅ Visible | ❌ Not visible |
-| 1 | Saved Templates | ✅ Visible | ❌ Not visible |
+| - | **Templates Menu** | ✅ Visible | ✅ Visible |
+| 1 | Saved Templates | ✅ Visible | ✅ Visible |
+| 2 | Theme Builder | ❌ Not visible (Pro plugin required) | ❌ Not visible (Pro plugin required) |
+| 3 | Website Templates | ❌ Not visible (Pro plugin required) | ❌ Not visible (Pro plugin required) |
+| 4 | Floating Elements | ❌ Not visible (Pro plugin required) | ❌ Not visible (Pro plugin required) |
+| 5 | Popups | ❌ Not visible (Pro plugin required) | ❌ Not visible (Pro plugin required) |
+
+**Note**: When experiment is OFF, Templates menu is visible in WordPress admin sidebar. When experiment is ON, Templates menu is visible in Editor One sidebar navigation. With Pro plugin inactive, only Saved Templates is visible in Editor One sidebar navigation for Contributor role.
+
+---
+
+### Elementor Pro (With Pro Plugin Active)
+
+#### Elementor Submenu Items (Main WordPress Admin Sidebar)
+
+| Order | Menu Item | Experiment OFF | Experiment ON |
+|-------|-----------|----------------|---------------|
+| 1 | Home | ❌ Not visible | ❌ Not visible |
+| 1 | Editor | ❌ Not present | ❌ Not visible |
+| 2 | Settings | ❌ Not visible | ❌ Not visible |
+| 3 | Role Manager | ❌ Not visible | ❌ Not visible |
+| 3 | Submissions | ❌ Not visible | ❌ Not visible |
+| 4 | Element Manager | ❌ Not visible | ❌ Not visible |
+| 5 | Tools | ❌ Not visible | ❌ Not visible |
+| 6 | System Info | ❌ Not visible | ❌ Not visible |
+| 9 | Custom Fonts | ❌ Not visible | ❌ Not visible |
+| 10 | Custom Icons | ❌ Not visible | ❌ Not visible |
+| 11 | Custom Code | ❌ Not visible | ❌ Not visible |
+| 14 | Upgrade | ❌ Not visible | ❌ Not visible |
+
+**Note**: Contributor role does not have access to the Elementor menu in the main WordPress admin sidebar (starting from `/wp-admin/`).
+
+#### Templates Menu
+
+| Order | Menu Item | Experiment OFF | Experiment ON |
+|-------|-----------|----------------|---------------|
+| - | **Templates Menu** | ✅ Visible | ✅ Visible |
+| 1 | Saved Templates | ✅ Visible | ✅ Visible |
+| 2 | Theme Builder | ❌ Not visible (requires `publish_posts` capability) | ✅ Visible |
+| 3 | Website Templates | ❌ Not visible (requires `publish_posts` capability) | ✅ Visible |
+| 4 | Floating Elements | ❌ Not visible (requires `publish_posts` capability) | ✅ Visible |
+| 5 | Popups | ❌ Not visible (requires `publish_posts` capability) | ❌ Not visible |
+
+**Note**: When experiment is OFF, Templates menu is visible in WordPress admin sidebar. When experiment is ON, Templates menu is visible in Editor One sidebar navigation. With Pro plugin inactive, all template menu items are visible in Editor One sidebar navigation for Contributor role.
 
 ---
 

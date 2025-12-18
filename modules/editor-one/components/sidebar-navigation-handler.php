@@ -130,22 +130,61 @@ class Sidebar_Navigation_Handler {
 	private function filter_menu_items_for_limited_users( array $menu_items ): array {
 		$user = wp_get_current_user();
 		if ( ! $user || ! $user->exists() ) {
-			return $menu_items;
+			return apply_filters( 'elementor/editor-one/menu/filter_level3_items', $menu_items, $user );
 		}
 
 		$has_edit_posts = isset( $user->allcaps['edit_posts'] ) && $user->allcaps['edit_posts'];
 		$has_manage_options = isset( $user->allcaps['manage_options'] ) && $user->allcaps['manage_options'];
 
 		if ( $has_manage_options || ! $has_edit_posts ) {
-			return $menu_items;
+			return apply_filters( 'elementor/editor-one/menu/filter_level3_items', $menu_items, $user );
 		}
 
 		$templates_group_id = Menu_Config::TEMPLATES_GROUP_ID;
-		$filtered = array_filter( $menu_items, function( $item ) use ( $templates_group_id ) {
-			return isset( $item['group_id'] ) && $item['group_id'] === $templates_group_id;
-		} );
+		$level3_items = $this->menu_data_provider->get_level3_items();
+		$level4_items = $this->menu_data_provider->get_level4_items();
+		$filtered = [];
 
-		return array_values( $filtered );
+		foreach ( $menu_items as $item_data ) {
+			$item_slug = $item_data['slug'] ?? '';
+			$item_group_id = $item_data['group_id'] ?? '';
+
+			if ( $item_group_id !== $templates_group_id ) {
+				continue;
+			}
+
+			$original_item = null;
+			foreach ( $level3_items as $group_items ) {
+				if ( isset( $group_items[ $item_slug ] ) ) {
+					$original_item = $group_items[ $item_slug ];
+					break;
+				}
+			}
+
+			if ( $original_item ) {
+				$is_accessible = $this->menu_data_provider->is_item_accessible_by_user( $original_item, $user );
+				
+				if ( ! $is_accessible && $original_item->has_children() ) {
+					$child_items = $level4_items[ $item_group_id ] ?? [];
+					$has_accessible_child = false;
+					
+					foreach ( $child_items as $child_slug => $child_item ) {
+						if ( $this->menu_data_provider->is_item_accessible_by_user( $child_item, $user ) ) {
+							$has_accessible_child = true;
+							break;
+						}
+					}
+					
+					$is_accessible = $has_accessible_child;
+				}
+				
+				if ( $is_accessible ) {
+					$filtered[] = $item_data;
+				}
+			}
+		}
+
+		return apply_filters( 'elementor/editor-one/menu/filter_limited_user_items', $filtered, $menu_items, $user, 'level3' );
 	}
 
 	private function filter_level4_groups_for_limited_users( array $level4_groups ): array {
@@ -161,13 +200,32 @@ class Sidebar_Navigation_Handler {
 			return $level4_groups;
 		}
 
-		$templates_group_id = 'elementor-editor-templates';
+		$templates_group_id = Menu_Config::TEMPLATES_GROUP_ID;
 		$filtered_groups = [];
 
 		if ( isset( $level4_groups[ $templates_group_id ] ) ) {
-			$filtered_groups[ $templates_group_id ] = $level4_groups[ $templates_group_id ];
+			$group_items = $level4_groups[ $templates_group_id ]['items'] ?? [];
+			$filtered_items = [];
+
+			$level4_items = $this->menu_data_provider->get_level4_items();
+			$templates_items = $level4_items[ $templates_group_id ] ?? [];
+
+			foreach ( $group_items as $item_data ) {
+				$item_slug = $item_data['slug'] ?? '';
+				$original_item = $templates_items[ $item_slug ] ?? null;
+
+				if ( $original_item && $this->menu_data_provider->is_item_accessible_by_user( $original_item, $user ) ) {
+					$filtered_items[] = $item_data;
+				}
+			}
+
+			if ( ! empty( $filtered_items ) ) {
+				$filtered_groups[ $templates_group_id ] = [
+					'items' => $filtered_items,
+				];
+			}
 		}
 
-		return $filtered_groups;
+		return apply_filters( 'elementor/editor-one/menu/filter_limited_user_items', $filtered_groups, $level4_groups, $user, 'level4' );
 	}
 }

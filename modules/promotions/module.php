@@ -120,7 +120,10 @@ class Module extends Base_Module {
 		$menu_data_provider->register_menu( new Editor_One_Fonts_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Icons_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Custom_Code_Menu() );
-		$menu_data_provider->register_menu( new Editor_One_Popups_Menu() );
+
+		if ( Utils::has_pro() ) {
+			$menu_data_provider->register_menu( new Editor_One_Popups_Menu() );
+		}
 	}
 
 	private function register_promotion_menu_item( Admin_Menu_Manager $admin_menu ) {
