@@ -140,8 +140,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		}
 	},
 
-	onMoveClick( e ) {
-		e.stopPropagation();
+	onMoveClick() {
 		if ( this.model.isLocked() ) {
 			return;
 		}
@@ -153,7 +152,6 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 	},
 
 	onCopyClick() {
-		e.stopPropagation();
 		if ( this.model.isLocked() ) {
 			return;
 		}
