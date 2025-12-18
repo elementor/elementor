@@ -6,7 +6,7 @@ import { Stack } from '@elementor/ui';
 
 import { InteractionsProvider, useInteractionsContext } from '../contexts/interactions-context';
 import { PopupStateProvider } from '../contexts/popup-state-context';
-import type { InteractionsPropType } from '../types';
+import type { ElementInteractions } from '../types';
 import { EmptyState } from './empty-state';
 import { InteractionsList } from './interactions-list';
 
@@ -19,7 +19,7 @@ export const InteractionsTab = ( { elementId }: { elementId: string } ) => {
 };
 
 function InteractionsTabContent( { elementId }: { elementId: string } ) {
-	const existingInteractions = useElementInteractions( elementId ) as unknown as InteractionsPropType | undefined;
+	const existingInteractions = useElementInteractions( elementId ) as unknown as ElementInteractions | undefined;
 	const firstInteractionState = useState< boolean >( false );
 	const hasInteractions = existingInteractions?.items?.length || firstInteractionState[ 0 ];
 
@@ -48,7 +48,7 @@ function InteractionsContent( {
 	const { interactions, setInteractions, playInteractions } = useInteractionsContext();
 
 	const applyInteraction = useCallback(
-		( newInteractions: InteractionsPropType ) => {
+		( newInteractions: ElementInteractions ) => {
 			firstInteractionState[ 1 ]( false );
 			if ( ! newInteractions ) {
 				setInteractions( undefined );
