@@ -1,4 +1,4 @@
-import { List, ListItem, ListItemText, ListSubheader } from '@elementor/ui';
+import { List, ListItem, ListItemText } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import {
 	MenuItemButton,
