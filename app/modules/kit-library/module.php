@@ -51,10 +51,6 @@ class Module extends BaseModule {
 	}
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
-		if ( ! ElementorUtils::has_pro() ) {
-			return;
-		}
-
 		$menu_data_provider->register_menu( new Editor_One_Website_Templates_Menu() );
 	}
 
