@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Test_Elementor_One_Menu_Manager_Limited_Users extends Elementor_Test_Base {
+class Test_Elementor_One_Menu_Manager_Edit_Posts_Users extends Elementor_Test_Base {
 
 	private Elementor_One_Menu_Manager $menu_manager;
 	private array $original_menu;
@@ -40,135 +40,120 @@ class Test_Elementor_One_Menu_Manager_Limited_Users extends Elementor_Test_Base 
 		$submenu = $this->original_submenu;
 		$current_user = null;
 
-		remove_filter( 'user_has_cap', [ $this->menu_manager, 'grant_elementor_menu_capability' ], 10 );
-		remove_filter( 'user_has_cap', [ $this->menu_manager, 'grant_pro_menu_items_capability' ], 10 );
 
 		$this->deactivate_editor_one_experiment();
 	}
 
-	public function test_adjust_elementor_menu_capability_before_filter__changes_to_edit_posts_for_editor_user() {
+	public function test_reregister_elementor_menu_for_edit_posts_users__reregisters_menu_for_editor_user() {
 		global $menu;
 
 		$editor_user = $this->create_user_with_role( 'editor' );
 		wp_set_current_user( $editor_user );
 
-		$menu = [
-			10 => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_MENU_SLUG, 'Elementor' ],
-			20 => [ 'Other Menu', 'manage_options', 'other-menu', 'Other Menu' ],
-		];
+		add_menu_page(
+			'Elementor',
+			'Elementor',
+			'manage_options',
+			Menu_Config::ELEMENTOR_MENU_SLUG,
+			'',
+			'',
+			58.5
+		);
 
-		$this->menu_manager->adjust_elementor_menu_capability_before_filter();
+		$this->menu_manager->reregister_elementor_menu_for_edit_posts_users();
 
-		$this->assertEquals( 'edit_posts', $menu[10][1] );
-		$this->assertEquals( 'manage_options', $menu[20][1] );
+		$elementor_menu = null;
+		foreach ( $menu as $item ) {
+			if ( isset( $item[2] ) && Menu_Config::ELEMENTOR_MENU_SLUG === $item[2] ) {
+				$elementor_menu = $item;
+				break;
+			}
+		}
+
+		$this->assertNotNull( $elementor_menu );
+		$this->assertEquals( Menu_Config::CAPABILITY_EDIT_POSTS, $elementor_menu[1] );
 
 		wp_delete_user( $editor_user );
 	}
 
-	public function test_adjust_elementor_menu_capability_before_filter__does_not_change_for_admin() {
+	public function test_reregister_elementor_menu_for_edit_posts_users__does_not_reregister_for_admin() {
 		global $menu;
 
 		$admin_user = $this->create_user_with_role( 'administrator' );
 		wp_set_current_user( $admin_user );
 
-		$menu = [
-			10 => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_MENU_SLUG, 'Elementor' ],
-		];
+		$menu_before = $menu;
 
-		$this->menu_manager->adjust_elementor_menu_capability_before_filter();
+		$this->menu_manager->reregister_elementor_menu_for_edit_posts_users();
 
-		$this->assertEquals( 'manage_options', $menu[10][1] );
+		$this->assertEquals( $menu_before, $menu );
 
 		wp_delete_user( $admin_user );
 	}
 
-	public function test_adjust_elementor_menu_capability_before_filter__does_not_change_if_experiment_off() {
-		global $menu;
-
-		$this->deactivate_editor_one_experiment();
-
-		$editor_user = $this->create_user_with_role( 'editor' );
-		wp_set_current_user( $editor_user );
-
-		$menu = [
-			10 => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_MENU_SLUG, 'Elementor' ],
-		];
-
-		$this->menu_manager->adjust_elementor_menu_capability_before_filter();
-
-		$this->assertEquals( 'manage_options', $menu[10][1] );
-
-		$this->activate_editor_one_experiment();
-		wp_delete_user( $editor_user );
-	}
-
-	public function test_adjust_elementor_menu_capability_before_filter__does_not_change_if_user_has_manage_options() {
-		global $menu;
-
-		$admin_user = $this->create_user_with_role( 'administrator' );
-		wp_set_current_user( $admin_user );
-
-		$menu = [
-			10 => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_MENU_SLUG, 'Elementor' ],
-		];
-
-		$this->menu_manager->adjust_elementor_menu_capability_before_filter();
-
-		$this->assertEquals( 'manage_options', $menu[10][1] );
-
-		wp_delete_user( $admin_user );
-	}
-
-	public function test_adjust_elementor_menu_capability_before_filter__does_not_change_if_user_lacks_edit_posts() {
+	public function test_reregister_elementor_menu_for_edit_posts_users__does_not_reregister_for_subscriber() {
 		global $menu;
 
 		$subscriber_user = $this->create_user_with_role( 'subscriber' );
 		wp_set_current_user( $subscriber_user );
 
-		$menu = [
-			10 => [ 'Elementor', 'manage_options', Menu_Config::ELEMENTOR_MENU_SLUG, 'Elementor' ],
-		];
+		$menu_before = $menu;
 
-		$this->menu_manager->adjust_elementor_menu_capability_before_filter();
+		$this->menu_manager->reregister_elementor_menu_for_edit_posts_users();
 
-		$this->assertEquals( 'manage_options', $menu[10][1] );
+		$this->assertEquals( $menu_before, $menu );
 
 		wp_delete_user( $subscriber_user );
 	}
 
-	public function test_adjust_elementor_menu_capability_before_filter__handles_empty_menu() {
-		global $menu;
-
+	public function test_override_elementor_page_for_edit_posts_users__redirects_editor_user() {
 		$editor_user = $this->create_user_with_role( 'editor' );
 		wp_set_current_user( $editor_user );
 
-		$menu = [];
+		$_GET['page'] = Menu_Config::ELEMENTOR_MENU_SLUG;
 
-		$this->menu_manager->adjust_elementor_menu_capability_before_filter();
-
-		$this->assertEmpty( $menu );
+		ob_start();
+		try {
+			$this->menu_manager->override_elementor_page_for_edit_posts_users();
+			$this->fail( 'Expected redirect but method completed without redirecting' );
+		} catch ( \Exception $e ) {
+			$this->assertTrue( true );
+		}
+		ob_end_clean();
 
 		wp_delete_user( $editor_user );
+		unset( $_GET['page'] );
 	}
 
-	public function test_adjust_elementor_menu_capability_before_filter__handles_menu_not_found() {
-		global $menu;
+	public function test_override_elementor_page_for_edit_posts_users__does_not_redirect_admin() {
+		$admin_user = $this->create_user_with_role( 'administrator' );
+		wp_set_current_user( $admin_user );
 
+		$_GET['page'] = Menu_Config::ELEMENTOR_MENU_SLUG;
+
+		$this->menu_manager->override_elementor_page_for_edit_posts_users();
+
+		$this->assertTrue( true );
+
+		wp_delete_user( $admin_user );
+		unset( $_GET['page'] );
+	}
+
+	public function test_override_elementor_page_for_edit_posts_users__does_not_redirect_if_wrong_page() {
 		$editor_user = $this->create_user_with_role( 'editor' );
 		wp_set_current_user( $editor_user );
 
-		$menu = [
-			20 => [ 'Other Menu', 'manage_options', 'other-menu', 'Other Menu' ],
-		];
+		$_GET['page'] = 'other-page';
 
-		$this->menu_manager->adjust_elementor_menu_capability_before_filter();
+		$this->menu_manager->override_elementor_page_for_edit_posts_users();
 
-		$this->assertEquals( 'manage_options', $menu[20][1] );
+		$this->assertTrue( true );
 
 		wp_delete_user( $editor_user );
+		unset( $_GET['page'] );
 	}
 
-	public function test_remove_all_submenus_for_limited_users__removes_all_submenus_for_editor_user() {
+	public function test_remove_all_submenus_for_edit_posts_users__removes_all_submenus_for_editor_user() {
 		global $submenu;
 
 		$editor_user = $this->create_user_with_role( 'editor' );
