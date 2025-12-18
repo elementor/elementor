@@ -329,9 +329,9 @@ jobs:
         run: |
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
-            echo "[View Allure Report](https://storage.googleapis.com/${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/main/)" >> $GITHUB_STEP_SUMMARY
+            echo "[View Allure Report](https://elementor-allure-tests.prod.builder.elementor.red/main/)" >> $GITHUB_STEP_SUMMARY
           else
-            echo "[View Allure Report](https://storage.googleapis.com/${{ vars.ALLURE_REPORTS_GCP_BUCKET }}/${{ github.run_id }}/)" >> $GITHUB_STEP_SUMMARY
+            echo "[View Allure Report](https://elementor-allure-tests.prod.builder.elementor.red/${{ github.run_id }}/)" >> $GITHUB_STEP_SUMMARY
           fi
           echo "" >> $GITHUB_STEP_SUMMARY
 
