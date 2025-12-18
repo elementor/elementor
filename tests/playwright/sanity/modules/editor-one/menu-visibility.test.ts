@@ -1,13 +1,14 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Editor One Menu Visibility', () => {
 	let editorUser: { id: string; username: string; password: string };
 	let contributorUser: { id: string; username: string; password: string };
 
 	test.beforeAll( async ( { browser, apiRequests } ) => {
-		// Await wpCli( 'wp elementor experiments activate e_editor_one' );
+		await wpCli( 'wp elementor experiments activate e_editor_one' );
 
 		const context = await browser.newContext();
 		const page = await context.newPage();
@@ -42,7 +43,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await context.close();
 
-		// Await wpCli( 'wp elementor experiments deactivate e_editor_one' );
+		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 	} );
 
 	test( 'Admin user: Elementor menu is visible with correct submenu items', async ( { page, apiRequests }, testInfo ) => {
