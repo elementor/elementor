@@ -47,7 +47,7 @@ class Editor_One_Elements_Manager_Menu implements Menu_Item_Interface, Admin_Men
 
 	public function render() {
 		echo '<div class="wrap">';
-		echo '<h3 class="wp-heading-inline">' . esc_html__( 'Element Manager', 'elementor' ) . '</h3>';
+		echo '<h1 class="wp-heading-inline">' . esc_html__( 'Element Manager', 'elementor' ) . '</h1>';
 		echo '<div id="elementor-element-manager-wrap"></div>';
 		echo '</div>';
 	}
