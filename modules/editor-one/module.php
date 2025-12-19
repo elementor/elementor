@@ -7,6 +7,7 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\EditorOne\Components\Elementor_One_Menu_Manager;
 use Elementor\Modules\EditorOne\Components\Sidebar_Navigation_Handler;
+use Elementor\Modules\EditorOne\Components\Top_Bar_Handler;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -42,6 +43,7 @@ class Module extends BaseModule {
 		if ( is_admin() ) {
 			$this->add_component( 'editor-one-menu-manager', new Elementor_One_Menu_Manager() );
 			$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
+			$this->add_component( 'top-bar-handler', new Top_Bar_Handler() );
 		}
 
 		add_action( 'current_screen', function () {
@@ -53,6 +55,10 @@ class Module extends BaseModule {
 				$this->enqueue_styles();
 			} );
 		} );
+
+		add_filter( 'elementor/admin-top-bar/is-active', function ( $is_active, $current_screen ) {
+			return $this->is_feature_enabled() ? false : $is_active;
+		}, 10, 2 );
 	}
 
 	/**

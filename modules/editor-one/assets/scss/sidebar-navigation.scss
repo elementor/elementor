@@ -1,15 +1,4 @@
-.e-has-sidebar-navigation {
-	--editor-one-sidebar-admin-top-bar-height: 50px;
-	--editor-one-wordpress-admin-bar-height: 32px;
-	--editor-one-sidebar-navigation-width: 240px;
-	--editor-one-sidebar-navigation-width-collapsed: 72px;
-	--editor-one-sidebar-left-offset: 160px;
-	--editor-one-sidebar-left-offset-collapsed: 36px;
-	--editor-one-sidebar-z-index: 99;
-	--editor-one-sidebar-bg: #fff;
-	--editor-one-sidebar-content-padding: 20px;
-	--editor-one-sidebar-transition: width 0.3s ease-in-out, padding-inline-start 0.3s ease-in-out, margin-inline-start 0.3s ease-in-out;
-}
+@import "sidebar-variables";
 
 #editor-one-sidebar-navigation {
 	position: fixed;
