@@ -102,6 +102,13 @@ class Elementor_One_Menu_Manager {
 			return;
 		}
 
+		global $submenu;
+
+		$captured_submenus = [];
+		if ( ! empty( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] ) ) {
+			$captured_submenus = $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ];
+		}
+
 		remove_menu_page( Menu_Config::ELEMENTOR_MENU_SLUG );
 
 		add_menu_page(
@@ -113,6 +120,35 @@ class Elementor_One_Menu_Manager {
 			'',
 			Menu_Config::MENU_POSITION
 		);
+
+		$this->restore_captured_submenus( $captured_submenus );
+	}
+
+	private function restore_captured_submenus( array $captured_submenus ): void {
+		if ( empty( $captured_submenus ) ) {
+			return;
+		}
+
+		foreach ( $captured_submenus as $submenu_item ) {
+			$menu_title = $submenu_item[0] ?? '';
+			$capability = $submenu_item[1] ?? Menu_Config::CAPABILITY_EDIT_POSTS;
+			$menu_slug = $submenu_item[2] ?? '';
+			$page_title = $submenu_item[3] ?? $menu_title;
+			$callback = $submenu_item[4] ?? '';
+
+			if ( empty( $menu_slug ) || Menu_Config::ELEMENTOR_MENU_SLUG === $menu_slug ) {
+				continue;
+			}
+
+			add_submenu_page(
+				Menu_Config::ELEMENTOR_MENU_SLUG,
+				$page_title,
+				$menu_title,
+				$capability,
+				$menu_slug,
+				$callback
+			);
+		}
 	}
 
 	public function remove_all_submenus_for_edit_posts_users(): void {

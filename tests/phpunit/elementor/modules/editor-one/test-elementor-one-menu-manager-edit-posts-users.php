@@ -77,6 +77,67 @@ class Test_Elementor_One_Menu_Manager_Edit_Posts_Users extends Elementor_Test_Ba
 		wp_delete_user( $editor_user );
 	}
 
+	public function test_reregister_elementor_menu_for_edit_posts_users__captures_and_restores_submenu_items() {
+		global $submenu;
+
+		$editor_user = $this->create_user_with_role( 'editor' );
+		wp_set_current_user( $editor_user );
+
+		add_menu_page(
+			'Elementor',
+			'Elementor',
+			'manage_options',
+			Menu_Config::ELEMENTOR_MENU_SLUG,
+			'',
+			'',
+			58.5
+		);
+
+		add_submenu_page(
+			Menu_Config::ELEMENTOR_MENU_SLUG,
+			'Templates',
+			'Templates',
+			'edit_posts',
+			'elementor-templates',
+			''
+		);
+
+		add_submenu_page(
+			Menu_Config::ELEMENTOR_MENU_SLUG,
+			'Help',
+			'Help',
+			'edit_posts',
+			'go_knowledge_base_site',
+			''
+		);
+
+		$submenu_slugs_before = [];
+		if ( ! empty( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] ) ) {
+			foreach ( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] as $submenu_item ) {
+				if ( isset( $submenu_item[2] ) && Menu_Config::ELEMENTOR_MENU_SLUG !== $submenu_item[2] ) {
+					$submenu_slugs_before[] = $submenu_item[2];
+				}
+			}
+		}
+
+		$this->menu_manager->reregister_elementor_menu_for_edit_posts_users();
+
+		$this->assertArrayHasKey( Menu_Config::ELEMENTOR_MENU_SLUG, $submenu );
+
+		$submenu_slugs_after = [];
+		foreach ( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] as $submenu_item ) {
+			if ( isset( $submenu_item[2] ) && Menu_Config::ELEMENTOR_MENU_SLUG !== $submenu_item[2] ) {
+				$submenu_slugs_after[] = $submenu_item[2];
+			}
+		}
+
+		foreach ( $submenu_slugs_before as $slug ) {
+			$this->assertContains( $slug, $submenu_slugs_after, "Submenu item '{$slug}' should be restored after menu re-registration" );
+		}
+
+		wp_delete_user( $editor_user );
+	}
+
 	public function test_reregister_elementor_menu_for_edit_posts_users__does_not_reregister_for_admin() {
 		global $menu;
 
