@@ -36,19 +36,35 @@ class Elementor_One_Menu_Manager {
 
 	private function register_actions(): void {
 		add_action( 'init', [ $this, 'check_if_pro_module_is_enabled' ] );
+<<<<<<< HEAD
+		add_action( 'admin_menu', [ $this, 'register_elementor_home_submenus' ], 21 );
+=======
 		add_action( 'admin_menu', [ $this, 'register_unified_submenus' ], 21 );
+>>>>>>> origin/internal/ED-21915-handle-user-permissions
 
 		add_action( 'admin_menu', function () {
 			do_action( 'elementor/editor-one/menu/register', $this->menu_data_provider );
 		}, 4 );
 
+<<<<<<< HEAD
+		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 999 );
+		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 1001 );
+		add_filter( 'add_menu_classes', [ $this, 'fix_theme_builder_submenu_url' ] );
+		add_action( 'admin_head', [ $this, 'hide_flyout_items_from_wp_menu' ] );
+		add_action( 'admin_head', [ $this, 'hide_legacy_templates_menu' ] );
+		add_action( 'admin_head', [ $this, 'hide_old_elementor_menu' ] );
+=======
+		add_action( 'admin_menu', [ $this, 'reregister_elementor_menu_for_edit_posts_users' ], 9 );
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 999 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 1001 );
 		add_action( 'admin_menu', [ $this, 'reorder_elementor_submenu' ], 1002 );
 		add_action( 'admin_menu', [ $this, 'reposition_elementor_menu' ], 1003 );
+		add_action( 'admin_menu', [ $this, 'remove_all_submenus_for_edit_posts_users' ], 1005 );
+		add_action( 'admin_menu', [ $this, 'override_elementor_page_for_edit_posts_users' ], 1006 );
 		add_filter( 'add_menu_classes', [ $this, 'fix_theme_builder_submenu_url' ] );
 		add_action( 'admin_head', [ $this, 'hide_flyout_items_from_wp_menu' ] );
 		add_action( 'admin_head', [ $this, 'hide_legacy_templates_menu' ] );
+>>>>>>> origin/internal/ED-21915-handle-user-permissions
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_menu_assets' ] );
 		add_action( 'admin_print_scripts-elementor_page_elementor-editor', [ $this, 'enqueue_home_screen_on_editor_page' ] );
 	}
@@ -61,25 +77,54 @@ class Elementor_One_Menu_Manager {
 		}
 	}
 
+<<<<<<< HEAD
+	public function register_elementor_home_submenus(): void {
+
+		add_submenu_page(
+			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
+			esc_html__( 'Editor', 'elementor' ),
+			esc_html__( 'Editor', 'elementor' ),
+			'edit_posts',
+=======
 	public function register_unified_submenus(): void {
 		add_submenu_page(
 			Menu_Config::ELEMENTOR_MENU_SLUG,
 			esc_html__( 'Editor', 'elementor' ),
 			esc_html__( 'Editor', 'elementor' ),
-			'edit_posts',
+			Menu_Config::CAPABILITY_EDIT_POSTS,
+>>>>>>> origin/internal/ED-21915-handle-user-permissions
 			Menu_Config::EDITOR_MENU_SLUG,
 			[ $this, 'render_editor_page' ]
 		);
 
 		add_submenu_page(
-			Menu_Config::ELEMENTOR_MENU_SLUG,
+<<<<<<< HEAD
+			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 			esc_html__( 'Theme Builder', 'elementor' ),
 			esc_html__( 'Theme Builder', 'elementor' ),
 			'edit_posts',
+=======
+			Menu_Config::ELEMENTOR_MENU_SLUG,
+			esc_html__( 'Theme Builder', 'elementor' ),
+			esc_html__( 'Theme Builder', 'elementor' ),
+			Menu_Config::CAPABILITY_EDIT_POSTS,
+>>>>>>> origin/internal/ED-21915-handle-user-permissions
 			'elementor-theme-builder',
 			''
 		);
 
+<<<<<<< HEAD
+		add_submenu_page(
+			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
+			esc_html__( 'Submissions', 'elementor' ),
+			esc_html__( 'Submissions', 'elementor' ),
+			'edit_posts',
+			'e-form-submissions',
+			''
+		);
+
+		do_action( 'elementor/editor-one/menu/register_submenus' );
+=======
 		do_action( 'elementor/editor-one/menu/register_submenus', Menu_Config::ELEMENTOR_MENU_SLUG );
 	}
 
@@ -140,10 +185,78 @@ class Elementor_One_Menu_Manager {
 		ksort( $menu );
 	}
 
+	public function reregister_elementor_menu_for_edit_posts_users(): void {
+		$user_capabilities = Menu_Data_Provider::get_current_user_capabilities();
+
+		if ( ! $user_capabilities['is_edit_posts_user'] ) {
+			return;
+		}
+
+		remove_menu_page( Menu_Config::ELEMENTOR_MENU_SLUG );
+
+		add_menu_page(
+			esc_html__( 'Elementor', 'elementor' ),
+			esc_html__( 'Elementor', 'elementor' ),
+			Menu_Config::CAPABILITY_EDIT_POSTS,
+			Menu_Config::ELEMENTOR_MENU_SLUG,
+			[ Plugin::instance()->settings, 'display_home_screen' ],
+			'',
+			58.5
+		);
+	}
+
+	public function remove_all_submenus_for_edit_posts_users(): void {
+		$user_capabilities = Menu_Data_Provider::get_current_user_capabilities();
+
+		if ( ! $user_capabilities['is_edit_posts_user'] ) {
+			return;
+		}
+
+		global $submenu;
+
+		if ( empty( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] ) ) {
+			return;
+		}
+
+		$submenu_items = $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ];
+
+		foreach ( $submenu_items as $index => $submenu_item ) {
+			if ( 0 === $index ) {
+				continue;
+			}
+
+			$submenu_slug = $submenu_item[2] ?? '';
+			if ( ! empty( $submenu_slug ) ) {
+				remove_submenu_page( Menu_Config::ELEMENTOR_MENU_SLUG, $submenu_slug );
+			}
+		}
+>>>>>>> origin/internal/ED-21915-handle-user-permissions
+	}
+
 	public function render_editor_page(): void {
 		Plugin::instance()->settings->display_home_screen();
 	}
 
+<<<<<<< HEAD
+=======
+	public function override_elementor_page_for_edit_posts_users(): void {
+		$user_capabilities = Menu_Data_Provider::get_current_user_capabilities();
+
+		if ( ! $user_capabilities['is_edit_posts_user'] ) {
+			return;
+		}
+
+		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
+		if ( Menu_Config::ELEMENTOR_MENU_SLUG !== $page ) {
+			return;
+		}
+
+		$templates_url = admin_url( 'edit.php?post_type=elementor_library&tabs_group=library' );
+		wp_safe_redirect( $templates_url );
+		exit;
+	}
+
+>>>>>>> origin/internal/ED-21915-handle-user-permissions
 	public function enqueue_home_screen_on_editor_page(): void {
 		$home_module = Plugin::instance()->modules_manager->get_modules( 'home' );
 
@@ -155,6 +268,20 @@ class Elementor_One_Menu_Manager {
 	public function fix_theme_builder_submenu_url( $menu ) {
 		global $submenu;
 
+<<<<<<< HEAD
+		$menu_slugs = [ Menu_Config::ELEMENTOR_HOME_MENU_SLUG ];
+
+		foreach ( $menu_slugs as $menu_slug ) {
+			if ( empty( $submenu[ $menu_slug ] ) ) {
+				continue;
+			}
+
+			foreach ( $submenu[ $menu_slug ] as &$item ) {
+				if ( 'elementor-theme-builder' === $item[2] ) {
+					$item[2] = $this->get_theme_builder_url(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+					break;
+				}
+=======
 		if ( empty( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] ) ) {
 			return $menu;
 		}
@@ -163,6 +290,7 @@ class Elementor_One_Menu_Manager {
 			if ( 'elementor-theme-builder' === $item[2] ) {
 				$item[2] = $this->get_theme_builder_url(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 				break;
+>>>>>>> origin/internal/ED-21915-handle-user-permissions
 			}
 		}
 
@@ -183,6 +311,22 @@ class Elementor_One_Menu_Manager {
 		<?php
 	}
 
+<<<<<<< HEAD
+	public function hide_old_elementor_menu(): void {
+		if ( ! Menu_Config::is_elementor_home_menu_available() ) {
+			return;
+		}
+		?>
+		<style type="text/css">
+			#toplevel_page_elementor {
+				display: none !important;
+			}
+		</style>
+		<?php
+	}
+
+=======
+>>>>>>> origin/internal/ED-21915-handle-user-permissions
 	public function register_flyout_items_as_hidden_submenus(): void {
 		$hooks = [];
 
@@ -216,8 +360,14 @@ class Elementor_One_Menu_Manager {
 	}
 
 	private function resolve_hidden_submenu_parent( ?string $parent_slug ): string {
+<<<<<<< HEAD
+		$default_parent_slug = Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
+		if ( empty( $parent_slug ) ) {
+			return $default_parent_slug;
+=======
 		if ( empty( $parent_slug ) ) {
 			return Menu_Config::ELEMENTOR_MENU_SLUG;
+>>>>>>> origin/internal/ED-21915-handle-user-permissions
 		}
 
 		$elementor_parent_slugs = [
@@ -231,7 +381,11 @@ class Elementor_One_Menu_Manager {
 		];
 
 		if ( isset( $elementor_parent_slugs[ $parent_slug ] ) ) {
+<<<<<<< HEAD
+			return $default_parent_slug;
+=======
 			return Menu_Config::ELEMENTOR_MENU_SLUG;
+>>>>>>> origin/internal/ED-21915-handle-user-permissions
 		}
 
 		return $parent_slug;
@@ -290,8 +444,11 @@ class Elementor_One_Menu_Manager {
 			'editorFlyout' => $this->get_editor_flyout_data(),
 		];
 
+<<<<<<< HEAD
+=======
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
+>>>>>>> origin/internal/ED-21915-handle-user-permissions
 		wp_enqueue_script(
 			'editor-one-menu',
 			ELEMENTOR_ASSETS_URL . 'js/editor-one-menu' . $min_suffix . '.js',

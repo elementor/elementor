@@ -12,7 +12,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Editor_One_Custom_Elements_Menu implements Menu_Item_Third_Level_Interface {
 
 	public function get_capability() {
+<<<<<<< HEAD
 		return 'manage_options';
+=======
+		return Menu_Config::CAPABILITY_MANAGE_OPTIONS;
+>>>>>>> origin/internal/ED-21915-handle-user-permissions
 	}
 
 	public function get_parent_slug() {
