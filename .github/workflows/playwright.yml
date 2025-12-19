@@ -301,6 +301,12 @@ jobs:
             cp -r previous-report/history/* allure-results/history/
           fi
 
+      - name: Copy Allure categories config
+        run: |
+          if [ -d "./allure-results" ]; then
+            cp tests/playwright/allure-categories.json allure-results/categories.json
+          fi
+
       - name: Build test report
         run: |
           if [ -d "./allure-results" ] && [ -n "$(find ./allure-results -type f 2>/dev/null | head -1)" ]; then
