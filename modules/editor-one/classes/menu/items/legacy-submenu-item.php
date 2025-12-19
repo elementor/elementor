@@ -28,7 +28,7 @@ class Legacy_Submenu_Item implements Menu_Item_Interface {
 	}
 
 	public function get_capability(): string {
-		return $this->submenu_data[1] ?? 'manage_options';
+		return $this->submenu_data[1] ?? Menu_Config::CAPABILITY_MANAGE_OPTIONS;
 	}
 
 	public function get_slug(): string {
