@@ -139,6 +139,7 @@ class Menu_Data_Provider {
 	public function get_all_sidebar_page_slugs(): array {
 		$base_slugs = [
 			Menu_Config::ELEMENTOR_MENU_SLUG,
+			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 			Menu_Config::EDITOR_MENU_SLUG,
 		];
 
