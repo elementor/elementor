@@ -8,10 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Menu_Config {
 	const ELEMENTOR_MENU_SLUG = 'elementor';
-<<<<<<< HEAD
 	const ELEMENTOR_HOME_MENU_SLUG = 'elementor-home';
-=======
->>>>>>> origin/internal/ED-21915-handle-user-permissions
 	const EDITOR_MENU_SLUG = 'elementor-editor';
 	const TEMPLATES_GROUP_ID = 'elementor-editor-templates';
 	const SETTINGS_GROUP_ID = 'elementor-editor-settings';
@@ -19,11 +16,8 @@ class Menu_Config {
 	const CUSTOM_ELEMENTS_GROUP_ID = 'elementor-editor-custom-elements';
 	const SYSTEM_GROUP_ID = 'elementor-editor-system';
 	const LEGACY_TEMPLATES_SLUG = 'edit.php?post_type=elementor_library';
-<<<<<<< HEAD
-=======
 	const CAPABILITY_EDIT_POSTS = 'edit_posts';
 	const CAPABILITY_MANAGE_OPTIONS = 'manage_options';
->>>>>>> origin/internal/ED-21915-handle-user-permissions
 	public static function get_excluded_level4_slugs(): array {
 		// add new which is automatically added to templates and categories
 		$default_slugs = [
@@ -47,22 +41,16 @@ class Menu_Config {
 		$default_mapping = [
 			self::LEGACY_TEMPLATES_SLUG => self::TEMPLATES_GROUP_ID,
 			self::ELEMENTOR_MENU_SLUG => self::EDITOR_GROUP_ID,
-<<<<<<< HEAD
 			self::ELEMENTOR_HOME_MENU_SLUG => self::EDITOR_GROUP_ID,
-=======
->>>>>>> origin/internal/ED-21915-handle-user-permissions
 		];
 
 		return apply_filters( 'elementor/editor-one/menu/legacy_slug_mapping', $default_mapping );
 	}
-<<<<<<< HEAD
 
 	public static function is_elementor_home_menu_available(): bool {
 		return class_exists( '\ElementorOne\Loader' );
 	}
 
-=======
->>>>>>> origin/internal/ED-21915-handle-user-permissions
 	public static function get_legacy_pro_mapping(): array {
 		$default_mapping = [
 			'elementor-license' => [ 'group' => self::SYSTEM_GROUP_ID ],

@@ -28,11 +28,7 @@ class Legacy_Submenu_Item implements Menu_Item_Interface {
 	}
 
 	public function get_capability(): string {
-<<<<<<< HEAD
-		return $this->submenu_data[1] ?? 'manage_options';
-=======
 		return $this->submenu_data[1] ?? Menu_Config::CAPABILITY_MANAGE_OPTIONS;
->>>>>>> origin/internal/ED-21915-handle-user-permissions
 	}
 
 	public function get_slug(): string {

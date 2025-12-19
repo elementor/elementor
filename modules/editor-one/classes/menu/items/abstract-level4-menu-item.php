@@ -12,11 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Abstract_Level4_Menu_Item implements Menu_Item_Interface {
 
 	public function get_capability() {
-<<<<<<< HEAD
-		return 'manage_options';
-=======
 		return Menu_Config::CAPABILITY_MANAGE_OPTIONS;
->>>>>>> origin/internal/ED-21915-handle-user-permissions
 	}
 
 	public function get_parent_slug() {
