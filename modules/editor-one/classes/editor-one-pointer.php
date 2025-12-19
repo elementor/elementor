@@ -11,13 +11,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Editor_One_Pointer {
 
 	const CURRENT_POINTER_SLUG = 'e-editor-one-notice-pointer';
+	const MINIMUM_VERSION = '3.34.0';
 
 	public function __construct() {
 		add_action( 'admin_print_footer_scripts-index.php', [ $this, 'admin_print_script' ] );
 	}
 
 	public function admin_print_script() {
-		if ( ! $this->is_admin_user() || $this->is_new_installation() || $this->is_dismissed() ) {
+		if ( ! $this->is_admin_user() || $this->is_new_installation() || $this->is_dismissed() || ! $this->is_version_3_34_or_larger() ) {
 			return;
 		}
 
@@ -74,5 +75,9 @@ class Editor_One_Pointer {
 
 	private function is_admin_user() {
 		return current_user_can( 'manage_options' );
+	}
+
+	private function is_version_3_34_or_larger() {
+		return version_compare( ELEMENTOR_VERSION, self::MINIMUM_VERSION, '>=' );
 	}
 }
