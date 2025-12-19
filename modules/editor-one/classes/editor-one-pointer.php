@@ -17,9 +17,9 @@ class Editor_One_Pointer {
 	}
 
 	public function admin_print_script() {
-		if ( ! $this->is_admin_user() || $this->is_new_installation() || $this->is_dismissed() ) {
-			return;
-		}
+		// if ( ! $this->is_admin_user() || $this->is_new_installation() || $this->is_dismissed() ) {
+		// 	return;
+		// }
 
 		wp_enqueue_script( 'wp-pointer' );
 		wp_enqueue_style( 'wp-pointer' );
@@ -35,9 +35,8 @@ class Editor_One_Pointer {
 
 		$got_it_url = admin_url( 'admin.php?page=elementor' );
 		$pointer_content .= sprintf(
-			'<p><a class="button button-primary" href="%s" onclick="jQuery(this).closest(\'.wp-pointer\').pointer(\'close\'); setTimeout(function(){window.location.href=\'%s\';}, 100); return false;">%s</a></p>',
+			'<p><a class="button button-primary" href="%s">%s</a></p>',
 			esc_url( $got_it_url ),
-			esc_js( $got_it_url ),
 			esc_html__( 'Got it', 'elementor' )
 		);
 
