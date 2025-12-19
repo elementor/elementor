@@ -17,9 +17,9 @@ class Editor_One_Pointer {
 	}
 
 	public function admin_print_script() {
-		// if ( ! $this->is_admin_user() || $this->is_new_installation() || $this->is_dismissed() ) {
-		// 	return;
-		// }
+		if ( ! $this->is_admin_user() || $this->is_new_installation() || $this->is_dismissed() ) {
+			return;
+		}
 
 		wp_enqueue_script( 'wp-pointer' );
 		wp_enqueue_style( 'wp-pointer' );
