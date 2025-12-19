@@ -45,8 +45,6 @@ class Elementor_One_Menu_Manager {
 		add_action( 'admin_menu', [ $this, 'reregister_elementor_menu_for_edit_posts_users' ], 9 );
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 999 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 1001 );
-		add_action( 'admin_menu', [ $this, 'reorder_elementor_submenu' ], 1002 );
-		add_action( 'admin_menu', [ $this, 'reposition_elementor_menu' ], 1003 );
 		add_action( 'admin_menu', [ $this, 'remove_all_submenus_for_edit_posts_users' ], 1005 );
 		add_action( 'admin_menu', [ $this, 'override_elementor_page_for_edit_posts_users' ], 1006 );
 		add_filter( 'add_menu_classes', [ $this, 'fix_theme_builder_submenu_url' ] );
