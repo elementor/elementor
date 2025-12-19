@@ -111,7 +111,7 @@ class Elementor_One_Menu_Manager {
 			Menu_Config::ELEMENTOR_MENU_SLUG,
 			[ Plugin::instance()->settings, 'display_home_screen' ],
 			'',
-			58.5
+			Menu_Config::MENU_POSITION
 		);
 	}
 

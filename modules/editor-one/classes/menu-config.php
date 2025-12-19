@@ -18,6 +18,7 @@ class Menu_Config {
 	const LEGACY_TEMPLATES_SLUG = 'edit.php?post_type=elementor_library';
 	const CAPABILITY_EDIT_POSTS = 'edit_posts';
 	const CAPABILITY_MANAGE_OPTIONS = 'manage_options';
+	const MENU_POSITION = 58.5;
 	public static function get_excluded_level4_slugs(): array {
 		// add new which is automatically added to templates and categories
 		$default_slugs = [
