@@ -1,7 +1,6 @@
 <?php
-namespace Elementor\Modules\EditorOne;
+namespace Elementor\Modules\EditorOne\Classes;
 
-use Elementor\Core\Admin\Admin;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\User;
 
@@ -11,16 +10,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor_One_Pointer {
 
-	const RELEASE_VERSION = '3.26.0';
-
 	const CURRENT_POINTER_SLUG = 'e-editor-one-new-home';
 
-	public static function add_hooks() {
-		add_action( 'admin_print_footer_scripts', [ __CLASS__, 'admin_print_script' ] );
+	public function __construct() {
+		add_action( 'admin_print_footer_scripts-index.php', [ $this, 'admin_print_script' ] );
 	}
 
-	public static function admin_print_script() {
-		if ( static::is_dismissed() || static::is_new_installation() || ! static::should_show() ) {
+	public function admin_print_script() {
+		if ( ! $this->is_admin_user() || $this->is_dismissed() || $this->is_new_installation() ) {
 			return;
 		}
 
@@ -53,7 +50,7 @@ class Editor_One_Pointer {
 						close: function () {
 							elementorCommon.ajax.addRequest( 'introduction_viewed', {
 								data: {
-									introductionKey: '<?php echo esc_attr( static::CURRENT_POINTER_SLUG ); ?>',
+									introductionKey: '<?php echo esc_attr( self::CURRENT_POINTER_SLUG ); ?>',
 								},
 							} );
 						}
@@ -64,23 +61,15 @@ class Editor_One_Pointer {
 		<?php
 	}
 
-	private static function is_dismissed() {
-		return User::get_introduction_meta( static::CURRENT_POINTER_SLUG );
+	private function is_dismissed() {
+		return User::get_introduction_meta( self::CURRENT_POINTER_SLUG );
 	}
 
-	private static function is_new_installation() {
-		return Upgrade_Manager::install_compare( static::RELEASE_VERSION, '>=' );
+	private function is_new_installation() {
+		return Upgrade_Manager::is_new_installation();
 	}
 
-	private static function should_show() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return false;
-		}
-
-		if ( ! Admin::is_elementor_admin_page() ) {
-			return false;
-		}
-
-		return true;
+	private function is_admin_user() {
+		return current_user_can( 'manage_options' );
 	}
 }
