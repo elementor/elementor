@@ -288,7 +288,7 @@ class Menu_Data_Provider {
 	private function create_flyout_item_data( Menu_Item_Interface $item, string $item_slug ): array {
 		$has_children = $item->has_children();
 		$group_id = $has_children ? $item->get_group_id() : '';
-		$is_third_party = $item instanceof Legacy_Submenu_Item_Not_Mapped 
+		$is_third_party = $item instanceof Legacy_Submenu_Item_Not_Mapped
 			|| $item instanceof Third_Party_Menu_Item_Adapter;
 
 		return [

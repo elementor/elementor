@@ -103,7 +103,7 @@ class Third_Party_Menu_Manager {
 		}
 
 		if ( isset( $this->items[ $id ] ) ) {
-			throw new \InvalidArgumentException( sprintf( 'Item ID "%s" is already registered', $id ) );
+			throw new \InvalidArgumentException( sprintf( 'Item ID "%s" is already registered', esc_html( $id ) ) );
 		}
 
 		if ( ! preg_match( '/^[a-z0-9_-]+$/', $id ) ) {
@@ -112,7 +112,7 @@ class Third_Party_Menu_Manager {
 
 		if ( strlen( $id ) > self::MAX_LENGTH ) {
 			throw new \InvalidArgumentException(
-				sprintf( 'Item ID must not exceed %d characters', self::MAX_LENGTH )
+				sprintf( 'Item ID must not exceed %d characters', (int) self::MAX_LENGTH )
 			);
 		}
 	}
@@ -126,7 +126,7 @@ class Third_Party_Menu_Manager {
 
 		if ( mb_strlen( $trimmed_label ) > self::MAX_LENGTH ) {
 			throw new \InvalidArgumentException(
-				sprintf( 'Label exceeds maximum length of %d characters', self::MAX_LENGTH )
+				sprintf( 'Label exceeds maximum length of %d characters', (int) self::MAX_LENGTH )
 			);
 		}
 
@@ -135,7 +135,7 @@ class Third_Party_Menu_Manager {
 		foreach ( self::RESERVED_LABELS as $reserved ) {
 			if ( strtolower( $reserved ) === $label_lower ) {
 				throw new \InvalidArgumentException(
-					sprintf( 'Label "%s" is reserved by Elementor', $label )
+					sprintf( 'Label "%s" is reserved by Elementor', esc_html( $label ) )
 				);
 			}
 		}
