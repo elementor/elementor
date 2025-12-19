@@ -50,7 +50,6 @@ class Editor_One_Pointer {
 							edge: <?php echo is_rtl() ? "'right'" : "'left'"; ?>,
 							align: 'center'
 						},
-						pointerWidth: 360,
 						close: function () {
 							elementorCommon.ajax.addRequest( 'introduction_viewed', {
 								data: {
