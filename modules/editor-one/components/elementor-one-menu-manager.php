@@ -2,9 +2,11 @@
 
 namespace Elementor\Modules\EditorOne\Components;
 
+use Elementor\Core\Admin\EditorOneMenu\Third_Party_Menu_Manager;
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
 use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Interceptor;
 use Elementor\Modules\EditorOne\Classes\Menu\Items\Editor_One_Custom_Elements_Menu;
+use Elementor\Modules\EditorOne\Classes\Menu\Items\Third_Party_Menu_Item_Adapter;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
@@ -42,6 +44,7 @@ class Elementor_One_Menu_Manager {
 			do_action( 'elementor/editor-one/menu/register', $this->menu_data_provider );
 		}, 4 );
 
+		add_action( 'admin_menu', [ $this, 'register_third_party_api_items' ], 998 );
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 999 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 1001 );
 		add_filter( 'add_menu_classes', [ $this, 'fix_theme_builder_submenu_url' ] );
@@ -81,7 +84,7 @@ class Elementor_One_Menu_Manager {
 		);
 
 		add_submenu_page(
-			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
+			null,
 			esc_html__( 'Submissions', 'elementor' ),
 			esc_html__( 'Submissions', 'elementor' ),
 			'edit_posts',
@@ -240,6 +243,18 @@ class Elementor_One_Menu_Manager {
 			$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
 			remove_submenu_page( $parent_slug, $item_slug );
 		} );
+	}
+
+	public function register_third_party_api_items(): void {
+		$third_party_manager = Third_Party_Menu_Manager::instance();
+
+		foreach ( $third_party_manager->get_all_sorted() as $item_data ) {
+			$item = $item_data['item'];
+
+			$adapted_item = new Third_Party_Menu_Item_Adapter( $item );
+
+			$this->menu_data_provider->register_menu( $adapted_item );
+		}
 	}
 
 	public function intercept_legacy_submenus(): void {

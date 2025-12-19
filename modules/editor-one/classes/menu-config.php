@@ -16,6 +16,7 @@ class Menu_Config {
 	const CUSTOM_ELEMENTS_GROUP_ID = 'elementor-editor-custom-elements';
 	const SYSTEM_GROUP_ID = 'elementor-editor-system';
 	const LEGACY_TEMPLATES_SLUG = 'edit.php?post_type=elementor_library';
+
 	public static function get_excluded_level4_slugs(): array {
 		// add new which is automatically added to templates and categories
 		$default_slugs = [
@@ -24,6 +25,7 @@ class Menu_Config {
 
 		return apply_filters( 'elementor/editor-one/menu/excluded_level4_slugs', $default_slugs );
 	}
+
 	public static function get_excluded_level3_slugs(): array {
 		// elementor pro slugs
 		$default_slugs = [
@@ -52,6 +54,7 @@ class Menu_Config {
 	public static function get_legacy_pro_mapping(): array {
 		$default_mapping = [
 			'elementor-license' => [ 'group' => self::SYSTEM_GROUP_ID ],
+			'e-form-submissions' => [ 'group' => self::EDITOR_GROUP_ID ],
 			'edit.php?post_type=elementor_font' => [
 				'group' => self::CUSTOM_ELEMENTS_GROUP_ID,
 				'label' => __( 'Fonts', 'elementor' ),
@@ -80,6 +83,7 @@ class Menu_Config {
 
 		return apply_filters( 'elementor/editor-one/menu/legacy_pro_mapping', $default_mapping );
 	}
+
 	public static function get_attribute_mapping(): array {
 		$default_mapping = [
 			'e-form-submissions' => [
@@ -90,6 +94,7 @@ class Menu_Config {
 
 		return apply_filters( 'elementor/editor-one/menu/position_mapping', $default_mapping );
 	}
+
 	public static function get_custom_code_url(): string {
 		$pro_custom_code_cpt = 'elementor_snippet';
 

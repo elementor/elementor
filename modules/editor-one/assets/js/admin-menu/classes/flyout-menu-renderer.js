@@ -21,9 +21,23 @@ export class FlyoutMenuRenderer {
 		const editorFlyoutUl = document.createElement( 'ul' );
 		editorFlyoutUl.className = 'elementor-submenu-flyout elementor-level-3';
 
+		let dividerAdded = false;
+
 		editorFlyout.items.forEach( ( item ) => {
+			if ( editorFlyout.has_third_party_items && item.is_third_party && ! dividerAdded ) {
+				const dividerLi = document.createElement( 'li' );
+				dividerLi.className = 'elementor-flyout-divider';
+				dividerLi.setAttribute( 'role', 'separator' );
+				editorFlyoutUl.appendChild( dividerLi );
+				dividerAdded = true;
+			}
+
 			const li = document.createElement( 'li' );
 			li.setAttribute( 'data-group-id', item.group_id || '' );
+
+			if ( item.is_third_party ) {
+				li.classList.add( 'elementor-third-party-item' );
+			}
 
 			const a = document.createElement( 'a' );
 			a.href = item.url;

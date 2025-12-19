@@ -110,7 +110,8 @@
 				}
 			}
 
-			&.elementor-menu-separator {
+			&.elementor-menu-separator,
+			&.elementor-flyout-divider {
 				border-top: var(--editor-one-flyout-menu-border-width) solid var(--editor-one-flyout-menu-border);
 				margin: var(--editor-one-flyout-menu-spacing-xs) 0;
 				padding: 0;

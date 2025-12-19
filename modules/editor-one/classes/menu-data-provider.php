@@ -5,6 +5,8 @@ namespace Elementor\Modules\EditorOne\Classes;
 use Elementor\Plugin;
 use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Third_Level_Interface;
+use Elementor\Modules\EditorOne\Classes\Menu\Items\Legacy_Submenu_Item_Not_Mapped;
+use Elementor\Modules\EditorOne\Classes\Menu\Items\Third_Party_Menu_Item_Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -38,10 +40,22 @@ class Menu_Data_Provider {
 	}
 
 	public function register_menu( Menu_Item_Interface $item ): void {
-		if ( $item instanceof Menu_Item_Third_Level_Interface ) {
-			$this->register_level3_item( $item );
-		} else {
+		if ( ! ( $item instanceof Menu_Item_Third_Level_Interface ) ) {
 			$this->register_level4_item( $item );
+			return;
+		}
+
+		$group_id = $item->get_group_id();
+		$collapsible_groups = [
+			Menu_Config::TEMPLATES_GROUP_ID,
+			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID,
+			Menu_Config::SYSTEM_GROUP_ID,
+		];
+
+		if ( in_array( $group_id, $collapsible_groups, true ) && ! $item->has_children() ) {
+			$this->register_level4_item( $item );
+		} else {
+			$this->register_level3_item( $item );
 		}
 	}
 
@@ -99,12 +113,40 @@ class Menu_Data_Provider {
 
 		$this->sort_items_by_priority( $items );
 
+		$this->sort_third_party_items_last( $items );
+
+		$has_third_party_items = $this->has_third_party_items( $items );
+
 		$this->cached_editor_flyout_data = [
 			'parent_slug' => Menu_Config::EDITOR_MENU_SLUG,
 			'items' => $items,
+			'has_third_party_items' => $has_third_party_items,
 		];
 
 		return $this->cached_editor_flyout_data;
+	}
+
+	private function has_third_party_items( array $items ): bool {
+		foreach ( $items as $item ) {
+			if ( ! empty( $item['is_third_party'] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private function sort_third_party_items_last( array &$items ): void {
+		usort( $items, function ( array $a, array $b ): int {
+			$a_is_third_party = ! empty( $a['is_third_party'] ) ? 1 : 0;
+			$b_is_third_party = ! empty( $b['is_third_party'] ) ? 1 : 0;
+
+			if ( $a_is_third_party !== $b_is_third_party ) {
+				return $a_is_third_party - $b_is_third_party;
+			}
+
+			return ( $a['priority'] ?? 100 ) <=> ( $b['priority'] ?? 100 );
+		} );
 	}
 
 	public function get_level4_flyout_data(): array {
@@ -246,6 +288,8 @@ class Menu_Data_Provider {
 	private function create_flyout_item_data( Menu_Item_Interface $item, string $item_slug ): array {
 		$has_children = $item->has_children();
 		$group_id = $has_children ? $item->get_group_id() : '';
+		$is_third_party = $item instanceof Legacy_Submenu_Item_Not_Mapped 
+			|| $item instanceof Third_Party_Menu_Item_Adapter;
 
 		return [
 			'slug' => $item_slug,
@@ -254,10 +298,15 @@ class Menu_Data_Provider {
 			'icon' => $item->get_icon(),
 			'group_id' => $group_id,
 			'priority' => $item->get_position() ?? 100,
+			'is_third_party' => $is_third_party,
 		];
 	}
 
 	private function resolve_flyout_item_url( Menu_Item_Interface $item, string $item_slug ): string {
+		if ( $item instanceof Third_Party_Menu_Item_Adapter ) {
+			return $item->get_target_url();
+		}
+
 		$url = $this->get_item_url( $item_slug, $item->get_parent_slug() );
 
 		if ( ! $item->has_children() ) {

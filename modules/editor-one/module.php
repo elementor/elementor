@@ -3,6 +3,8 @@
 namespace Elementor\Modules\EditorOne;
 
 use Elementor\Core\Admin\Admin;
+use Elementor\Core\Admin\EditorOneMenu\Base_Third_Party_Menu_Item;
+use Elementor\Core\Admin\EditorOneMenu\Third_Party_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\EditorOne\Components\Elementor_One_Menu_Manager;

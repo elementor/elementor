@@ -30,6 +30,7 @@ const SidebarNavigation = ( { config } ) => {
 						level4Groups={ config.level4Groups }
 						activeMenuSlug={ config.activeMenuSlug }
 						activeChildSlug={ config.activeChildSlug }
+						hasThirdPartyItems={ config.hasThirdPartyItems }
 					/>
 				</ScrollableContent>
 				<Divider />
@@ -52,6 +53,7 @@ const SidebarNavigation = ( { config } ) => {
 					level4Groups={ config.level4Groups }
 					activeMenuSlug={ config.activeMenuSlug }
 					activeChildSlug={ config.activeChildSlug }
+					hasThirdPartyItems={ config.hasThirdPartyItems }
 				/>
 			</ScrollableContent>
 			<Divider />
