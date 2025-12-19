@@ -5,12 +5,14 @@
 		inset-block-start: var(--editor-one-wordpress-admin-bar-height, 32px);
 		inset-inline-start: var(--editor-one-sidebar-left-offset, 160px);
 		inset-inline-end: 0;
+		width: calc(100% - var(--editor-one-sidebar-left-offset, 160px));
 		position: fixed;
 	}
 
 	@media screen and (max-width: 960px) {
 		> * {
-			inset-inline-start: var(--editor-one-wordpress-admin-bar-height, 32px);;
+			inset-inline-start: var(--editor-one-wordpress-admin-bar-height, 32px);
+			width: calc(100% - var(--editor-one-wordpress-admin-bar-height, 32px));
 		}
 	}
 
@@ -20,6 +22,7 @@
 		> * {
 			inset-inline-start: 0;
 			inset-block-start: var(--editor-one-sidebar-admin-top-bar-height, 46px);
+			width: 100%;
 		}
 	}
 }
