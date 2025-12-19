@@ -18,7 +18,7 @@ class Editor_One_Pointer {
 	}
 
 	public function admin_print_script() {
-		if ( ! $this->is_admin_user() || $this->is_new_installation() || $this->is_dismissed() || ! $this->is_version_3_34_or_larger() ) {
+		if ( ! $this->is_admin_user() || $this->is_new_installation() || $this->is_dismissed() || ! $this->is_minimum_required_version() ) {
 			return;
 		}
 
@@ -77,7 +77,7 @@ class Editor_One_Pointer {
 		return current_user_can( 'manage_options' );
 	}
 
-	private function is_version_3_34_or_larger() {
+	private function is_minimum_required_version() {
 		return version_compare( ELEMENTOR_VERSION, self::MINIMUM_VERSION, '>=' );
 	}
 }
