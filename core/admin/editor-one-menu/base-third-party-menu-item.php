@@ -15,7 +15,7 @@ abstract class Base_Third_Party_Menu_Item implements Third_Party_Menu_Item {
 	}
 
 	public function get_icon(): string {
-		return 'admin-plugins';
+		return 'settings';
 	}
 
 	abstract public function get_id(): string;

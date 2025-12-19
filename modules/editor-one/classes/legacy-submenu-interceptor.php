@@ -148,7 +148,7 @@ class Legacy_Submenu_Interceptor {
 	private function register_unmapped_item( array $submenu_item ): void {
 		$item_slug = $submenu_item[2];
 		$position = Menu_Config::get_attribute_mapping()[ $item_slug ]['position'] ?? 100;
-		$submenu_item[4] = Menu_Config::get_attribute_mapping()[ $item_slug ]['icon'] ?? 'tool';
+		$submenu_item[4] = Menu_Config::get_attribute_mapping()[ $item_slug ]['icon'] ?? 'settings';
 
 		$legacy_item = new Legacy_Submenu_Item_Not_Mapped( $submenu_item, Menu_Config::ELEMENTOR_MENU_SLUG, $position );
 

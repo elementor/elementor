@@ -56,7 +56,7 @@ class Legacy_Submenu_Item_Not_Mapped implements Menu_Item_Third_Level_Interface 
 	}
 
 	public function get_icon(): string {
-		return $this->submenu_data[4] ?? 'tool';
+		return $this->submenu_data[4] ?? 'settings';
 	}
 
 	public function has_children(): bool {
