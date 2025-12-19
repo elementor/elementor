@@ -53,7 +53,6 @@ class Elementor_One_Menu_Manager {
 		add_filter( 'add_menu_classes', [ $this, 'fix_theme_builder_submenu_url' ] );
 		add_action( 'admin_head', [ $this, 'hide_flyout_items_from_wp_menu' ] );
 		add_action( 'admin_head', [ $this, 'hide_legacy_templates_menu' ] );
-		add_action( 'admin_head', [ $this, 'hide_old_elementor_menu' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_menu_assets' ] );
 		add_action( 'admin_print_scripts-elementor_page_elementor-editor', [ $this, 'enqueue_home_screen_on_editor_page' ] );
 	}
@@ -256,18 +255,14 @@ class Elementor_One_Menu_Manager {
 	public function fix_theme_builder_submenu_url( $menu ) {
 		global $submenu;
 
-		$menu_slugs = [ Menu_Config::ELEMENTOR_HOME_MENU_SLUG, Menu_Config::ELEMENTOR_MENU_SLUG ];
+		if ( empty( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] ) ) {
+			return $menu;
+		}
 
-		foreach ( $menu_slugs as $menu_slug ) {
-			if ( empty( $submenu[ $menu_slug ] ) ) {
-				continue;
-			}
-
-			foreach ( $submenu[ $menu_slug ] as &$item ) {
-				if ( 'elementor-theme-builder' === $item[2] ) {
-					$item[2] = $this->get_theme_builder_url(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-					break;
-				}
+		foreach ( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] as &$item ) {
+			if ( 'elementor-theme-builder' === $item[2] ) {
+				$item[2] = $this->get_theme_builder_url(); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+				break;
 			}
 		}
 
@@ -282,19 +277,6 @@ class Elementor_One_Menu_Manager {
 		?>
 		<style type="text/css">
 			#menu-posts-elementor_library {
-				display: none !important;
-			}
-		</style>
-		<?php
-	}
-
-	public function hide_old_elementor_menu(): void {
-		if ( ! Menu_Config::is_elementor_home_menu_available() ) {
-			return;
-		}
-		?>
-		<style type="text/css">
-			#toplevel_page_elementor {
 				display: none !important;
 			}
 		</style>
@@ -334,11 +316,7 @@ class Elementor_One_Menu_Manager {
 	}
 
 	private function resolve_hidden_submenu_parent( ?string $parent_slug ): string {
-		$default_parent_slug = Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
 		if ( empty( $parent_slug ) ) {
-			if ( Menu_Config::is_elementor_home_menu_available() ) {
-				return $default_parent_slug;
-			}
 			return Menu_Config::ELEMENTOR_MENU_SLUG;
 		}
 
@@ -353,9 +331,6 @@ class Elementor_One_Menu_Manager {
 		];
 
 		if ( isset( $elementor_parent_slugs[ $parent_slug ] ) ) {
-			if ( Menu_Config::is_elementor_home_menu_available() ) {
-				return $default_parent_slug;
-			}
 			return Menu_Config::ELEMENTOR_MENU_SLUG;
 		}
 
@@ -414,6 +389,8 @@ class Elementor_One_Menu_Manager {
 		$config = [
 			'editorFlyout' => $this->get_editor_flyout_data(),
 		];
+
+		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_script(
 			'editor-one-menu',
