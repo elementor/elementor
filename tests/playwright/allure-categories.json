@@ -6,45 +6,32 @@
 		"flaky": true
 	},
 	{
-		"name": "Assertion failures",
-		"description": "Test logic failures - likely product defects",
-		"matchedStatuses": ["failed"],
-		"messageRegex": ".*(expect|assert|toEqual|toContain|toHaveText|toBeVisible|toHaveScreenshot).*"
-	},
-	{
-		"name": "Timeout errors",
-		"description": "Tests that exceeded time limits - possible performance issues or flakiness",
-		"matchedStatuses": ["failed", "broken"],
-		"messageRegex": ".*(timeout|Timeout|timed out|exceeded).*"
-	},
-	{
-		"name": "Element not found",
-		"description": "Locator or selector issues",
-		"matchedStatuses": ["failed", "broken"],
-		"messageRegex": ".*(locator|selector|element|getBy|not found|No element).*"
-	},
-	{
-		"name": "Network errors",
-		"description": "API or network related failures",
-		"matchedStatuses": ["failed", "broken"],
-		"messageRegex": ".*(network|Network|fetch|API|request|response|ERR_|ECONNREFUSED|502|503|504).*"
-	},
-	{
 		"name": "Infrastructure issues",
 		"description": "Browser or environment failures",
 		"matchedStatuses": ["broken"],
-		"messageRegex": ".*(browser|Browser|crashed|Target closed|Protocol error|context|page closed).*"
+		"messageRegex": ".*(browser.*crash|Target closed|Protocol error|context.*closed|page.*closed|crashed).*"
 	},
 	{
 		"name": "Setup/Teardown failures",
 		"description": "Test fixture or hook failures",
 		"matchedStatuses": ["broken"],
-		"messageRegex": ".*(beforeAll|afterAll|beforeEach|afterEach|fixture|setup|teardown).*"
+		"messageRegex": ".*(beforeAll|afterAll|beforeEach|afterEach|fixture|hook).*"
 	},
 	{
-		"name": "Uncategorized failures",
-		"description": "Other test failures requiring investigation",
-		"matchedStatuses": ["failed", "broken"]
+		"name": "Network errors",
+		"description": "API or network related failures",
+		"matchedStatuses": ["failed", "broken"],
+		"messageRegex": ".*(ECONNREFUSED|ERR_CONNECTION|ERR_NAME|net::|502 Bad Gateway|503 Service|504 Gateway|fetch failed|network error).*"
+	},
+	{
+		"name": "Timeout errors",
+		"description": "Tests that exceeded time limits",
+		"matchedStatuses": ["failed", "broken"],
+		"messageRegex": ".*([Tt]imeout|[Tt]imed out|exceeded.*time).*"
+	},
+	{
+		"name": "Product defects",
+		"description": "Assertion failures - likely product issues",
+		"matchedStatuses": ["failed"]
 	}
 ]
-
