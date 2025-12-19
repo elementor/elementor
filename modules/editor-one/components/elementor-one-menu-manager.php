@@ -36,7 +36,6 @@ class Elementor_One_Menu_Manager {
 
 	private function register_actions(): void {
 		add_action( 'init', [ $this, 'check_if_pro_module_is_enabled' ] );
-		add_action( 'admin_menu', [ $this, 'register_elementor_home_submenus' ], 21 );
 		add_action( 'admin_menu', [ $this, 'register_unified_submenus' ], 21 );
 
 		add_action( 'admin_menu', function () {
@@ -63,38 +62,6 @@ class Elementor_One_Menu_Manager {
 		if ( ! $this->is_pro_module_enabled && Utils::has_pro() ) {
 			$this->menu_data_provider->register_menu( new Editor_One_Custom_Elements_Menu() );
 		}
-	}
-
-	public function register_elementor_home_submenus(): void {
-
-		add_submenu_page(
-			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-			esc_html__( 'Editor', 'elementor' ),
-			esc_html__( 'Editor', 'elementor' ),
-			'edit_posts',
-			Menu_Config::EDITOR_MENU_SLUG,
-			[ $this, 'render_editor_page' ]
-		);
-
-		add_submenu_page(
-			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-			esc_html__( 'Theme Builder', 'elementor' ),
-			esc_html__( 'Theme Builder', 'elementor' ),
-			'edit_posts',
-			'elementor-theme-builder',
-			''
-		);
-
-		add_submenu_page(
-			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-			esc_html__( 'Submissions', 'elementor' ),
-			esc_html__( 'Submissions', 'elementor' ),
-			'edit_posts',
-			'e-form-submissions',
-			''
-		);
-
-		do_action( 'elementor/editor-one/menu/register_submenus' );
 	}
 
 	public function register_unified_submenus(): void {
