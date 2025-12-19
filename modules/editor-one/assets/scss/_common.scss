@@ -191,7 +191,7 @@ hr {
 		border: 1px solid var(--e-one-palette-divider);
 		border-block-end: none;
 		border-width: 1px 1px 0;
-		color: var(--e-one-palette-text-primary);
+		color: var(--e-one-palette-text-tab);
 		font-family: var(--e-one-typography-fontFamily);
 		font-weight: 500;
 		font-size: 14px;
@@ -212,13 +212,13 @@ hr {
 		z-index: 1;
 
 		&:hover {
-			color: var(--e-one-palette-text-primary);
+			color: var(--e-one-palette-text-tab);
 			background-color: var(--e-one-palette-action-hover);
 		}
 
 		&.nav-tab-active {
 			background-color: var(--e-one-palette-background-default);
-			color: var(--e-one-palette-text-primary);
+			color: var(--e-one-palette-text-tab);
 			max-height: 36px;
 			border-block-end: none;
 			z-index: 2;

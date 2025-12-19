@@ -235,6 +235,12 @@ class Tools extends Settings_Page {
 		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
+	public function get_warning_span( string $text ): string {
+		$is_editor_one_enabled = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
+		$color = $is_editor_one_enabled ? 'var(--e-one-palette-error-main)' : 'red';
+		return sprintf( '<span style="color: %s;">%s</span>', esc_attr( $color ), esc_html( $text ) );
+	}
+
 	private function get_rollback_versions() {
 		$rollback_versions = get_transient( 'elementor_rollback_versions_' . ELEMENTOR_VERSION );
 
@@ -402,7 +408,7 @@ class Tools extends Settings_Page {
 										esc_html__( 'Reinstall', 'elementor' ),
 										wp_nonce_url( admin_url( 'admin-post.php?action=elementor_rollback&version=VERSION' ), 'elementor_rollback' )
 									),
-									'desc' => '<span style="color: red;">' . esc_html__( 'Warning: Please backup your database before making the rollback.', 'elementor' ) . '</span>',
+									'desc' => $this->get_warning_span( esc_html__( 'Warning: Please backup your database before making the rollback.', 'elementor' ) ),
 								],
 							],
 						],
@@ -433,7 +439,7 @@ class Tools extends Settings_Page {
 										'no' => esc_html__( 'Disable', 'elementor' ),
 										'yes' => esc_html__( 'Enable', 'elementor' ),
 									],
-									'desc' => '<span style="color: red;">' . esc_html__( 'Please Note: We do not recommend updating to a beta version on production sites.', 'elementor' ) . '</span>',
+									'desc' => $this->get_warning_span( esc_html__( 'Please Note: We do not recommend updating to a beta version on production sites.', 'elementor' ) ),
 								],
 							],
 						],
