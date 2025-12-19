@@ -14,7 +14,7 @@ class Editor_One_Pointer {
 	const MINIMUM_VERSION = '3.34.0';
 
 	public function __construct() {
-		add_action( 'admin_print_footer_scripts-index.php', [ $this, 'admin_print_script' ] );
+		add_action( 'admin_print_footer_scripts', [ $this, 'admin_print_script' ] );
 	}
 
 	public function admin_print_script() {
