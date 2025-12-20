@@ -33,7 +33,6 @@ Create a dedicated **CSS-to-V4 Converter Tool** that transforms CSS properties d
 - ✅ 80%+ reduction in token costs per CSS styling interaction
 - ✅ 50%+ reduction in tool call latency
 - ✅ 100% conversion accuracy for supported CSS properties
-- ✅ Support for all CSS input formats (property objects, CSS strings, full CSS)
 - ✅ Zero schema resource fetches required for CSS conversion
 
 ---
@@ -58,7 +57,7 @@ Create a dedicated **CSS-to-V4 Converter Tool** that transforms CSS properties d
 - ❌ Replacing schema resources entirely (still needed for discovery and validation)
 - ❌ Building a full CSS parser from scratch (leverage existing PHP infrastructure)
 - ❌ Supporting legacy Elementor formats (v4 atomic widgets only)
-- ❌ Handling CSS selectors and specificity (out of scope for MVP)
+- ❌ Handling CSS selectors, media queries, or advanced features (can expand later)
 
 ---
 
@@ -173,17 +172,13 @@ export const initConvertCssToV4Tool = ( reg: MCPRegistryEntry ) => {
         schema: inputSchema,
         outputSchema: outputSchema,
         handler: async ( params ) => {
-            const { css, cssString, cssWithSelectors, elementId } = params;
+            const { cssString } = params;
             
-            // Call PHP backend via REST API
             const result = await apiFetch( {
                 path: '/elementor/v1/css-to-v4',
                 method: 'POST',
                 data: {
-                    css,
                     cssString,
-                    cssWithSelectors,
-                    elementId,
                 },
             } );
 
@@ -199,21 +194,8 @@ export const initConvertCssToV4Tool = ( reg: MCPRegistryEntry ) => {
 import { z } from '@elementor/schema';
 
 export const inputSchema = {
-    css: z.record( z.string(), z.string() )
-        .optional()
-        .describe( 'CSS properties as key-value object (e.g., { "color": "red", "font-size": "16px" })' ),
-    
     cssString: z.string()
-        .optional()
         .describe( 'CSS string to parse (e.g., "color: red; font-size: 16px;")' ),
-    
-    cssWithSelectors: z.string()
-        .optional()
-        .describe( 'Full CSS with selectors (e.g., ".button { color: red; }")' ),
-    
-    elementId: z.string()
-        .optional()
-        .describe( 'Element ID for selector matching (required if cssWithSelectors is provided)' ),
 };
 
 export const outputSchema = {
@@ -235,16 +217,14 @@ export const outputSchema = {
 // prompt.ts
 export const generatePrompt = () => {
     return `
-Convert CSS properties to Elementor v4 atomic widget styling format (PropValue).
+Convert CSS string to Elementor v4 atomic widget styling format (PropValue).
 
 # When to use this tool
 Use this tool when you need to convert CSS properties to Elementor v4 format for styling elements.
 This tool eliminates the need to fetch and interpret style schema resources.
 
-# Input Formats
-1. Property Object: { "css": { "color": "red", "font-size": "16px" } }
-2. CSS String: { "cssString": "color: red; font-size: 16px;" }
-3. Full CSS: { "cssWithSelectors": ".button { color: red; }", "elementId": "element-123" }
+# Input Format
+CSS string: { "cssString": "color: red; font-size: 16px;" }
 
 # Output Format
 Returns PropValue objects ready to use in _styles configuration:
@@ -259,7 +239,6 @@ Returns PropValue objects ready to use in _styles configuration:
 - No schema fetching required
 - Faster conversion
 - Deterministic results
-- Supports all Elementor v4 atomic properties
 `;
 };
 ```
@@ -290,24 +269,29 @@ class Css_To_V4_Service {
     }
 
     public function convert( array $params ): array {
-        $css = $params['css'] ?? null;
-        $css_string = $params['cssString'] ?? null;
-        $css_with_selectors = $params['cssWithSelectors'] ?? null;
-        $element_id = $params['elementId'] ?? null;
+        $css_string = $params['cssString'] ?? '';
 
-        $properties = $this->extract_properties( $css, $css_string, $css_with_selectors, $element_id );
+        $properties = $this->parse_css_string( $css_string );
         
-        return $this->convert_properties_to_v4( $properties, $element_id );
+        return $this->convert_properties_to_v4( $properties );
     }
 
-    private function extract_properties( ... ): array {
-        // Extract CSS properties from various input formats
-        // 1. Handle property object (direct)
-        // 2. Parse CSS string
-        // 3. Parse CSS with selectors and match to element
+    private function parse_css_string( string $css_string ): array {
+        $properties = [];
+        $pattern = '/([a-zA-Z0-9-]+)\s*:\s*([^;]+);?/';
+        
+        if ( preg_match_all( $pattern, $css_string, $matches, PREG_SET_ORDER ) ) {
+            foreach ( $matches as $match ) {
+                $property = trim( $match[1] );
+                $value = trim( $match[2] );
+                $properties[ $property ] = $value;
+            }
+        }
+        
+        return $properties;
     }
 
-    private function convert_properties_to_v4( array $properties, ?string $element_id ): array {
+    private function convert_properties_to_v4( array $properties ): array {
         $props = [];
         $unsupported = [];
         $custom_css = [];
@@ -318,8 +302,7 @@ class Css_To_V4_Service {
             foreach ( $expanded as $exp_prop => $exp_value ) {
                 $converted = $this->conversion_service->convert_property_to_v4_atomic(
                     $exp_prop,
-                    $exp_value,
-                    $element_id
+                    $exp_value
                 );
 
                 if ( $converted ) {
@@ -354,134 +337,13 @@ add_action( 'rest_api_init', function() {
             return current_user_can( 'edit_posts' );
         },
         'args' => [
-            'css' => [
-                'type' => 'object',
-                'required' => false,
-            ],
             'cssString' => [
                 'type' => 'string',
-                'required' => false,
-            ],
-            'cssWithSelectors' => [
-                'type' => 'string',
-                'required' => false,
-            ],
-            'elementId' => [
-                'type' => 'string',
-                'required' => false,
+                'required' => true,
             ],
         ],
     ] );
 } );
-```
-
----
-
-## 📊 **Implementation Plan**
-
-### **Phase 1: MVP (Minimum Viable Product)**
-
-**Scope**: Support property objects and CSS strings only
-
-**Tasks**:
-1. ✅ Create PHP backend service (`Css_To_V4_Service`)
-2. ✅ Create REST API endpoint
-3. ✅ Create TypeScript MCP tool
-4. ✅ Add tool registration to MCP registry
-5. ✅ Write unit tests for PHP service
-6. ✅ Write integration tests for REST API
-7. ✅ Write TypeScript tests for tool
-
-**Deliverables**:
-- Working converter tool for `css` and `cssString` inputs
-- Complete test coverage
-- Documentation
-
-**Timeline**: 2-3 weeks
-
-### **Phase 2: Enhanced Support**
-
-**Scope**: Add CSS with selectors support
-
-**Tasks**:
-1. Add CSS selector parsing
-2. Add element matching logic
-3. Add specificity handling
-4. Update tool prompt with selector examples
-
-**Deliverables**:
-- Full CSS support with selector matching
-- Enhanced documentation
-
-**Timeline**: 1-2 weeks
-
-### **Phase 3: Advanced Features**
-
-**Scope**: Media queries, CSS variables, batch conversion
-
-**Tasks**:
-1. Add media query support
-2. Add CSS variable resolution
-3. Add batch conversion endpoint
-4. Performance optimization
-
-**Deliverables**:
-- Advanced CSS features support
-- Performance benchmarks
-
-**Timeline**: 2-3 weeks
-
----
-
-## 🧪 **Testing Strategy**
-
-### **Unit Tests**
-
-**PHP Service Tests**:
-- File: `plugins/elementor/tests/phpunit/modules/css-converter/services/mcp/css-to-v4-service-test.php`
-- Coverage: All conversion methods, error handling, edge cases
-
-**TypeScript Tool Tests**:
-- File: `plugins/elementor/packages/packages/core/editor-canvas/src/mcp/tools/convert-css-to-v4/__tests__/tool.test.ts`
-- Coverage: Tool registration, input validation, error handling
-
-### **Integration Tests**
-
-**REST API Tests**:
-- File: `plugins/elementor/tests/phpunit/modules/css-converter/api/rest-api-test.php`
-- Coverage: Endpoint registration, request handling, response format
-
-**End-to-End Tests**:
-- File: `plugins/elementor/tests/playwright/sanity/modules/ai/css-to-v4-converter.test.ts`
-- Coverage: Full tool workflow from Angie SDK to conversion result
-
-### **Test Cases**
-
-**Property Object Conversion**:
-```typescript
-Input: { css: { "color": "red", "font-size": "16px" } }
-Expected: {
-    props: {
-        color: { $$type: "color", value: "#ff0000" },
-        "font-size": { $$type: "size", value: { size: 16, unit: "px" } }
-    }
-}
-```
-
-**CSS String Conversion**:
-```typescript
-Input: { cssString: "color: red; font-size: 16px;" }
-Expected: Same as above
-```
-
-**Unsupported Properties**:
-```typescript
-Input: { css: { "unknown-property": "value" } }
-Expected: {
-    props: {},
-    unsupported: ["unknown-property"],
-    customCss: "unknown-property: value;"
-}
 ```
 
 ---
@@ -514,11 +376,6 @@ Expected: {
 **Target**:
 - Conversion accuracy: 100% (deterministic conversion logic)
 
-### **Adoption**
-
-**Target**:
-- 80%+ of CSS styling interactions use converter tool
-- Zero schema resource fetches for CSS conversion
 
 ---
 
@@ -529,85 +386,3 @@ Expected: {
 3. **Permission Checks**: Ensure user has `edit_posts` capability
 4. **Sanitization**: Sanitize all CSS properties and values
 5. **Error Handling**: Don't expose internal errors to clients
-
----
-
-## 📚 **Documentation Requirements**
-
-1. **Tool Documentation**: Complete tool description in prompt.ts
-2. **API Documentation**: REST API endpoint documentation
-3. **Usage Examples**: Examples for each input format
-4. **Integration Guide**: How to use tool in Angie SDK
-5. **Troubleshooting**: Common issues and solutions
-
----
-
-## 🚀 **Rollout Plan**
-
-### **Phase 1: Internal Testing**
-- Deploy to staging environment
-- Test with internal team
-- Gather feedback
-
-### **Phase 2: Beta Release**
-- Deploy to beta users
-- Monitor token usage and performance
-- Collect metrics
-
-### **Phase 3: General Availability**
-- Deploy to production
-- Update Angie SDK documentation
-- Monitor adoption and performance
-
----
-
-## 🔗 **Related Documents**
-
-- [Angie SDK Documentation](https://github.com/elementor/angie-sdk)
-- [Elementor v4 Atomic Widgets Architecture](plugins/elementor/modules/atomic-widgets/)
-- [CSS Converter Module](plugins/elementor-css/modules/css-converter/)
-- [MCP Tools Documentation](plugins/elementor/packages/packages/core/editor-canvas/src/mcp/)
-
----
-
-## 📝 **Appendices**
-
-### **Appendix A: Supported CSS Properties**
-
-**Phase 1 MVP**:
-- Typography: `color`, `font-size`, `font-weight`, `font-family`, `line-height`, `text-align`
-- Spacing: `margin`, `padding`
-- Border: `border-width`, `border-color`, `border-style`, `border-radius`
-- Background: `background-color`
-- Layout: `display`, `width`, `height`
-
-**Future Phases**:
-- All properties supported by Elementor v4 atomic widgets
-- CSS variables
-- Media queries
-- Pseudo-selectors
-
-### **Appendix B: PropValue Format Reference**
-
-```typescript
-// Color
-{ $$type: "color", value: "#ff0000" }
-
-// Size
-{ $$type: "size", value: { size: 16, unit: "px" } }
-
-// Dimensions (margin, padding)
-{ $$type: "dimensions", value: {
-    "block-start": { $$type: "size", value: { size: 20, unit: "px" } },
-    "inline-end": { $$type: "size", value: { size: 20, unit: "px" } },
-    "block-end": { $$type: "size", value: { size: 20, unit: "px" } },
-    "inline-start": { $$type: "size", value: { size: 20, unit: "px" } }
-} }
-```
-
----
-
-**Document Status**: 📋 **DRAFT**  
-**Last Updated**: January 2025  
-**Next Review**: After Phase 1 MVP completion
-
