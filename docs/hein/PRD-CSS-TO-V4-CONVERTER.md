@@ -3,16 +3,16 @@
 **Document Type**: Product Requirements Document  
 **Version**: 0.1  
 **Date**: January 2025  
-**Status**: 📋 **DRAFT**  
+**Status**: **DRAFT**  
 **Related**: Angie SDK MCP Tools, Elementor Editor v4 Atomic Widgets
 
 ---
 
-## 📋 **Executive Summary**
+## **Executive Summary**
 
 ### **Problem Statement**
 
-Angie SDK (Elementor's AI agent) currently relies heavily on schema resources to understand Elementor's v4 styling format. Every tool interaction requires fetching style schema resources (`elementor://styles/schema/{category}`) and widget schema resources (`elementor://widgets/schema/{widgetType}`), resulting in:
+Angie SDK currently relies heavily on schema resources to understand Elementor's v4 styling format. Every tool interaction requires fetching style schema resources (`elementor://styles/schema/{category}`) and widget schema resources (`elementor://widgets/schema/{widgetType}`), resulting in:
 
 - **High token costs**: ~5,000-9,000 tokens per interaction just for schema fetching
 - **Slow performance**: Multiple resource fetches add latency to each tool call
@@ -30,14 +30,14 @@ Create a dedicated **CSS-to-V4 Converter Tool** that transforms CSS properties d
 
 ### **Success Metrics**
 
-- ✅ 80%+ reduction in token costs per CSS styling interaction
-- ✅ 50%+ reduction in tool call latency
-- ✅ 100% conversion accuracy for supported CSS properties
-- ✅ Zero schema resource fetches required for CSS conversion
+- 80%+ reduction in token costs per CSS styling interaction
+- 50%+ reduction in tool call latency
+- 100% conversion accuracy for supported CSS properties
+- Zero schema resource fetches required for CSS conversion
 
 ---
 
-## 🎯 **Goals and Objectives**
+## **Goals and Objectives**
 
 ### **Primary Goals**
 
@@ -54,14 +54,14 @@ Create a dedicated **CSS-to-V4 Converter Tool** that transforms CSS properties d
 
 ### **Non-Goals**
 
-- ❌ Replacing schema resources entirely (still needed for discovery and validation)
-- ❌ Building a full CSS parser from scratch (leverage existing PHP infrastructure)
-- ❌ Supporting legacy Elementor formats (v4 atomic widgets only)
-- ❌ Handling CSS selectors, media queries, or advanced features (can expand later)
+- Replacing schema resources entirely (still needed for discovery and validation)
+- Building a full CSS parser from scratch (leverage existing PHP infrastructure)
+- Supporting legacy Elementor formats (v4 atomic widgets only)
+- Handling CSS selectors, media queries, or advanced features (can expand later)
 
 ---
 
-## 🔍 **Current Implementation Analysis**
+## **Current Implementation Analysis**
 
 ### **Current Flow (Schema-Based)**
 
@@ -103,7 +103,7 @@ Result
 
 ---
 
-## 💡 **Proposed Solution**
+## **Proposed Solution**
 
 ### **Architecture: Hybrid Approach (TypeScript Tool + PHP Backend)**
 
@@ -141,7 +141,7 @@ Tool Result
 
 ---
 
-## 🏗️ **Technical Design**
+## **Technical Design**
 
 ### **1. TypeScript MCP Tool**
 
@@ -348,7 +348,7 @@ add_action( 'rest_api_init', function() {
 
 ---
 
-## 📈 **Success Metrics**
+## **Success Metrics**
 
 ### **Token Cost Reduction**
 
@@ -375,14 +375,3 @@ add_action( 'rest_api_init', function() {
 
 **Target**:
 - Conversion accuracy: 100% (deterministic conversion logic)
-
-
----
-
-## 🔒 **Security Considerations**
-
-1. **Input Validation**: Validate all CSS input to prevent injection attacks
-2. **Rate Limiting**: Implement rate limiting on REST API endpoint
-3. **Permission Checks**: Ensure user has `edit_posts` capability
-4. **Sanitization**: Sanitize all CSS properties and values
-5. **Error Handling**: Don't expose internal errors to clients
