@@ -10,7 +10,7 @@ export class FlyoutMenuRenderer {
 			return false;
 		}
 
-		const editorLi = this.findEditorMenuItem();
+		const editorLi = this.findEditorInMenu( `#toplevel_page_elementor-home` );
 
 		if ( ! editorLi ) {
 			return false;
@@ -39,18 +39,8 @@ export class FlyoutMenuRenderer {
 		return true;
 	}
 
-	findEditorMenuItem() {
-		let elementorMenu = document.querySelector( '#adminmenu a[href="admin.php?page=elementor"]' );
-
-		if ( ! elementorMenu ) {
-			elementorMenu = document.querySelector( '#adminmenu .toplevel_page_elementor' );
-		}
-
-		if ( ! elementorMenu ) {
-			return null;
-		}
-
-		const menuItem = elementorMenu.closest( 'li.menu-top' );
+	findEditorInMenu( menuSelector ) {
+		const menuItem = document.querySelector( menuSelector );
 
 		if ( ! menuItem ) {
 			return null;
