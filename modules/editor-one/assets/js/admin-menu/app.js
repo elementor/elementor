@@ -4,13 +4,12 @@ import { FlyoutInteractionHandler } from './classes/flyout-interaction-handler';
 
 class EditorOneMenu {
 	constructor() {
-		// eslint-disable-next-line no-undef
-		this.config = editorOneMenuConfig || {};
+		this.config = window?.editorOneMenuConfig || {};
 	}
 
 	init() {
 		if ( this.isSidebarNavigationActive() ) {
-			new SidebarMenuHandler().handle();
+			new SidebarMenuHandler();
 			return;
 		}
 

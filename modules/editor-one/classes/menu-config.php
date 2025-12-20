@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Menu_Config {
 	const ELEMENTOR_MENU_SLUG = 'elementor';
+	const ELEMENTOR_HOME_MENU_SLUG = 'elementor-home';
 	const EDITOR_MENU_SLUG = 'elementor-editor';
 	const TEMPLATES_GROUP_ID = 'elementor-editor-templates';
 	const SETTINGS_GROUP_ID = 'elementor-editor-settings';
@@ -38,10 +39,16 @@ class Menu_Config {
 		$default_mapping = [
 			self::LEGACY_TEMPLATES_SLUG => self::TEMPLATES_GROUP_ID,
 			self::ELEMENTOR_MENU_SLUG => self::EDITOR_GROUP_ID,
+			self::ELEMENTOR_HOME_MENU_SLUG => self::EDITOR_GROUP_ID,
 		];
 
 		return apply_filters( 'elementor/editor-one/menu/legacy_slug_mapping', $default_mapping );
 	}
+
+	public static function is_elementor_home_menu_available(): bool {
+		return class_exists( '\ElementorOne\Loader' );
+	}
+
 	public static function get_legacy_pro_mapping(): array {
 		$default_mapping = [
 			'elementor-license' => [ 'group' => self::SYSTEM_GROUP_ID ],
