@@ -105,15 +105,9 @@ Result
 
 ## **Proposed Solution**
 
-### **Architecture: Hybrid Approach (TypeScript Tool + PHP Backend)**
+### **Architecture**
 
-**Recommended Implementation**: TypeScript MCP tool that calls PHP backend service via REST API.
-
-**Why Hybrid**:
-1. **Leverages existing PHP infrastructure**: Reuses `Css_Property_Conversion_Service` from elementor-css
-2. **Type-safe frontend**: TypeScript tool with Zod validation for Angie integration
-3. **Proven backend**: PHP conversion logic already tested and production-ready
-4. **Consistent patterns**: Matches Elementor's existing `apiFetch` patterns
+TypeScript MCP tool that calls PHP backend service via REST API.
 
 ### **New Flow (Converter Tool)**
 
@@ -245,12 +239,12 @@ Returns PropValue objects ready to use in _styles configuration:
 
 ### **2. PHP Backend Service**
 
-**Location**: `plugins/elementor/modules/css-converter/services/mcp/css-to-v4-service.php`
+**Location**: `plugins/elementor/modules/atomic-converters/css/css-to-v4-service.php`
 
 **Service Class**:
 ```php
 <?php
-namespace Elementor\Modules\CssConverter\Services\MCP;
+namespace Elementor\Modules\AtomicConverters\Css;
 
 use Elementor\Modules\CssConverter\Services\Css\Processing\Css_Property_Conversion_Service;
 use Elementor\Modules\CssConverter\Services\Css\Processing\CSS_Shorthand_Expander;
@@ -325,7 +319,7 @@ class Css_To_V4_Service {
 
 ### **3. REST API Endpoint**
 
-**Location**: `plugins/elementor/modules/css-converter/api/rest-api.php`
+**Location**: `plugins/elementor/modules/atomic-converters/css/rest-api.php`
 
 **Endpoint Registration**:
 ```php
