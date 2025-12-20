@@ -1,10 +1,9 @@
 # PRD: CSS-to-V4 Converter Tool for Angie SDK
 
 **Document Type**: Product Requirements Document  
-**Version**: 1.0  
+**Version**: 0.1  
 **Date**: January 2025  
 **Status**: 📋 **DRAFT**  
-**Priority**: 🔴 **HIGH**  
 **Related**: Angie SDK MCP Tools, Elementor Editor v4 Atomic Widgets
 
 ---
