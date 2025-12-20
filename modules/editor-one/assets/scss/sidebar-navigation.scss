@@ -3,8 +3,6 @@
 	--editor-one-wordpress-admin-bar-height: 32px;
 	--editor-one-sidebar-navigation-width: 240px;
 	--editor-one-sidebar-navigation-width-collapsed: 72px;
-	--editor-one-sidebar-left-offset: 160px;
-	--editor-one-sidebar-left-offset-collapsed: 36px;
 	--editor-one-sidebar-z-index: 99;
 	--editor-one-sidebar-bg: #fff;
 	--editor-one-sidebar-content-padding: 20px;
@@ -14,7 +12,6 @@
 #editor-one-sidebar-navigation {
 	position: fixed;
 	top: calc(var(--editor-one-sidebar-admin-top-bar-height) + var(--editor-one-wordpress-admin-bar-height));
-	inset-inline-start: 0;
 	bottom: 0;
 	z-index: var(--editor-one-sidebar-z-index);
 	background-color: var(--editor-one-sidebar-bg);
@@ -29,14 +26,6 @@
 		nav {
 			width: var(--editor-one-sidebar-navigation-width-collapsed);
 		}
-	}
-
-	@media screen and (min-width: 782px) {
-		inset-inline-start: var(--editor-one-sidebar-left-offset-collapsed);
-	}
-
-	@media screen and (min-width: 961px) {
-		inset-inline-start: var(--editor-one-sidebar-left-offset);
 	}
 }
 
