@@ -6,11 +6,15 @@ export type ClassState = {
 	value: 'e--selected';
 };
 
-export type StyleDefinitionPseudoState = 'hover' | 'focus' | 'active';
+export type StyleDefinitionAdditionalPseudoState = 'focus-visible';
+
+export type StyleDefinitionPseudoState = 'hover' | 'focus' | 'active' | StyleDefinitionAdditionalPseudoState;
 
 export type StyleDefinitionClassState = ClassState[ 'value' ];
 
-export type StyleDefinitionState = null | StyleDefinitionPseudoState | StyleDefinitionClassState;
+export type StyleDefinitionStateType = StyleDefinitionPseudoState | StyleDefinitionClassState;
+
+export type StyleDefinitionState = null | Exclude< StyleDefinitionStateType, StyleDefinitionAdditionalPseudoState >;
 
 export type CustomCss = {
 	raw: string;
