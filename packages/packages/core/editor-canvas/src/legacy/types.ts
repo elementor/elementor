@@ -80,6 +80,10 @@ export declare class ElementView {
 
 	_renderChildren(): void;
 
+	_beforeRender(): void;
+
+	_afterRender(): void;
+
 	attachBuffer( collectionView: this, buffer: DocumentFragment ): void;
 
 	triggerMethod( method: string, ...args: unknown[] ): void;
