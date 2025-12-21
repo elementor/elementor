@@ -7,6 +7,7 @@ use Elementor\Core\Admin\EditorOneMenu\Base_Third_Party_Menu_Item;
 use Elementor\Core\Admin\EditorOneMenu\Third_Party_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\EditorOne\Classes\Editor_One_Pointer;
 use Elementor\Modules\EditorOne\Components\Elementor_One_Menu_Manager;
 use Elementor\Modules\EditorOne\Components\Sidebar_Navigation_Handler;
 use Elementor\Plugin;
@@ -44,6 +45,7 @@ class Module extends BaseModule {
 		if ( is_admin() ) {
 			$this->add_component( 'editor-one-menu-manager', new Elementor_One_Menu_Manager() );
 			$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
+			$this->add_component( 'editor-one-pointer', new Editor_One_Pointer() );
 		}
 
 		add_action( 'current_screen', function () {

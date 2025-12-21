@@ -9,9 +9,11 @@ import { SidebarHeader } from './header';
 import { SidebarMenu } from './menu';
 import { CollapseButton, NavContainer, ScrollableContent, SiteIconBox } from './shared';
 import { useSidebarCollapse } from './hooks/use-sidebar-collapse';
+import { useSidebarPosition } from './hooks/use-sidebar-position';
 
 const SidebarNavigation = ( { config } ) => {
 	const { isCollapsed, toggleCollapse } = useSidebarCollapse();
+	useSidebarPosition();
 
 	if ( isCollapsed ) {
 		return (
