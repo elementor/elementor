@@ -21,3 +21,4 @@ export * from './legacy/types';
 export { createTransformer } from './transformers/create-transformer';
 export { createTransformersRegistry } from './transformers/create-transformers-registry';
 export { type AnyTransformer } from './transformers/types';
+export { UnknownStyleTypeError, UnknownStyleStateError } from './renderers/errors';
