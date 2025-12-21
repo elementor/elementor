@@ -66,6 +66,31 @@ export type ExtendedWindow = Window & {
 	};
 };
 
+<<<<<<< HEAD
+=======
+export type ComponentInstancePropValue< TComponentId extends number | string = number | string > =
+	TransformablePropValue<
+		'component-instance',
+		{
+			component_id: TransformablePropValue< 'number', TComponentId >;
+			overrides?: TransformablePropValue< 'overrides', ComponentOverrides >;
+		}
+	>;
+
+type ComponentOverrides = TransformablePropValue< 'overrides', ComponentOverride[] >;
+
+type ComponentOverride = TransformablePropValue< 'override', ComponentOverridePropValue >;
+
+export type ComponentOverridePropValue = {
+	override_key: string;
+	override_value: TransformablePropValue< string >;
+	schema_source: {
+		type: string;
+		id: number;
+	};
+};
+
+>>>>>>> b4a39616ac7b5fa024e3283025500c562547b042
 export type ComponentOverridable = {
 	override_key: string;
 	origin_value: TransformablePropValue< string >;
