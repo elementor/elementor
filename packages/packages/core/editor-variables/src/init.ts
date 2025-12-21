@@ -21,7 +21,17 @@ export function init() {
 
 	registerControlReplacement( {
 		component: VariableControl,
-		condition: ( { value, placeholder } ) => hasVariable( value ) || hasVariable( placeholder ),
+		condition: ( { value, placeholder } ) => {
+			if ( hasVariableAssigned( value ) ) {
+				return true;
+			}
+
+			if ( value ) {
+				return false;
+			}
+
+			return hasVariableAssigned( placeholder );
+		},
 	} );
 
 	registerPopoverAction( {
@@ -41,7 +51,7 @@ export function init() {
 	registerPanel( panel );
 }
 
-function hasVariable( value: PropValue ) {
+function hasVariableAssigned( value: PropValue ) {
 	if ( isTransformable( value ) ) {
 		return hasVariableType( value.$$type );
 	}
