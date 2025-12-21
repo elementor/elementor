@@ -20,6 +20,7 @@ export const CustomCssSection = () => {
 							'elementor'
 						) }
 						assetUrl="https://assets.elementor.com/packages/v1/images/custom-css-promotion.png"
+						ctaUrl="https://go.elementor.com/go-pro-style-custom-css/"
 					>
 						<Chip size="tiny" color="promotion" variant="standard" icon={ <CrownFilledIcon /> } />
 					</PromotionInfotip>

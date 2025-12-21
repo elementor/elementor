@@ -7,13 +7,22 @@ type PromotionInfotipProps = React.PropsWithChildren< {
 	title: string;
 	content: string;
 	assetUrl: string;
+	ctaUrl: string;
 } >;
+
 export const PromotionInfotip = ( { children, ...props }: PromotionInfotipProps ) => {
 	return (
 		<Infotip
 			placement="right"
 			{ ...props }
-			content={ <InfotipCard title={ props.title } content={ props.content } assetUrl={ props.assetUrl } /> }
+			content={
+				<InfotipCard
+					title={ props.title }
+					content={ props.content }
+					assetUrl={ props.assetUrl }
+					ctaUrl={ props.ctaUrl }
+				/>
+			}
 		>
 			{ children }
 		</Infotip>
@@ -21,7 +30,7 @@ export const PromotionInfotip = ( { children, ...props }: PromotionInfotipProps 
 };
 
 function InfotipCard( { ...props }: PromotionInfotipProps ) {
-	const { title, content, assetUrl } = props;
+	const { title, content, assetUrl, ctaUrl } = props;
 
 	return (
 		<Card elevation={ 0 } sx={ { maxWidth: '296px' } }>
@@ -33,7 +42,7 @@ function InfotipCard( { ...props }: PromotionInfotipProps ) {
 				</Typography>
 			</CardContent>
 			<CardActions sx={ { justifyContent: 'flex-start' } }>
-				<CtaButton href="https://go.elementor.com/go-pro-style-custom-css/" />
+				<CtaButton href={ ctaUrl } />
 			</CardActions>
 		</Card>
 	);
