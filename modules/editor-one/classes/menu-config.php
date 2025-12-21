@@ -109,15 +109,15 @@ class Menu_Config {
 		$default_values = [
 			'elementor_icons' => [
 				'menu_slug' => 'elementor-custom-elements',
-				'child_slug' => 'custom-icons',
+				'child_slug' => 'edit.php?post_type=elementor_icons',
 			],
 			'elementor_font' => [
 				'menu_slug' => 'elementor-custom-elements',
-				'child_slug' => 'custom-fonts',
+				'child_slug' => 'edit.php?post_type=elementor_font',
 			],
 			'elementor_snippet' => [
 				'menu_slug' => 'elementor-custom-elements',
-				'child_slug' => 'custom-code',
+				'child_slug' => 'edit.php?post_type=elementor_snippet',
 			],
 		];
 
