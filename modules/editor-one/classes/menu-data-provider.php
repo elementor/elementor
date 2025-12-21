@@ -155,9 +155,9 @@ class Menu_Data_Provider {
 
 		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
 
-        if ( Menu_Config::ELEMENTOR_HOME_MENU_SLUG === $page ) {
-            return false;
-        }
+		if ( Menu_Config::ELEMENTOR_HOME_MENU_SLUG === $page ) {
+			return false;
+		}
 
 		if ( in_array( $page, $this->get_all_sidebar_page_slugs(), true ) ) {
 			return true;
