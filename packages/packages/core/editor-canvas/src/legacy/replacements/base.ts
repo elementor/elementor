@@ -32,6 +32,8 @@ export default class ReplacementBase {
 
 	render(): void {}
 
+	onDestroy(): void {}
+
 	_beforeRender(): void {}
 
 	_afterRender(): void {}

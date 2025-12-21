@@ -38,7 +38,6 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 	handleRenderInlineEditor = ( event: Event ) => {
 		event.stopPropagation();
-		this.resetInlineEditorRoot();
 
 		if ( ! this.isValueDynamic() ) {
 			this.renderInlineEditor();
@@ -49,6 +48,14 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		event.stopPropagation();
 		this.unmountInlineEditor();
 	};
+
+	onDestroy() {
+		this.resetInlineEditorRoot();
+	}
+
+	_beforeRender(): void {
+		this.resetInlineEditorRoot();
+	}
 
 	_afterRender() {
 		if ( ! this.isValueDynamic() && ! this.handlerAttached ) {

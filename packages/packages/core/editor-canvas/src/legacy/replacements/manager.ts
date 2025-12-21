@@ -68,13 +68,20 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 			}
 
 			this.#replacement.render();
-			this.#replacement._beforeRender();
+		}
+
+		onDestroy() {
+			if ( this.#replacement ) {
+				this.#replacement.onDestroy();
+				this.#replacement = null;
+			}
+
+			TemplatedView.prototype.onDestroy.apply( this );
 		}
 
 		_afterRender() {
 			if ( this.#replacement ) {
 				this.#replacement._afterRender();
-				this.#replacement = null;
 			}
 
 			TemplatedView.prototype._afterRender.apply( this );
