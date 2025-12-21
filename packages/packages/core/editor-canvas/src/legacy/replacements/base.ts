@@ -1,13 +1,4 @@
-import { type PropValue } from '@elementor/editor-props';
-
-export type ReplacementSettings = {
-	getSetting: ( key: string ) => unknown;
-	setSetting: ( key: string, value: PropValue ) => void;
-	type: string;
-	id: string;
-	element: HTMLElement;
-	refreshView: () => void;
-};
+import { type ReplacementSettings } from '../types';
 
 export default class ReplacementBase {
 	protected getSetting: ReplacementSettings[ 'getSetting' ];
