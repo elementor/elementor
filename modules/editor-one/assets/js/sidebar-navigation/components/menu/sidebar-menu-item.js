@@ -22,7 +22,13 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 			return true;
 		}
 
-		return 'true' === localStorage.getItem( storageKey );
+		const stored = localStorage.getItem( storageKey );
+
+		if ( null === stored ) {
+			return true;
+		}
+
+		return 'true' === stored;
 	} );
 
 	const handleClick = useCallback( () => {
