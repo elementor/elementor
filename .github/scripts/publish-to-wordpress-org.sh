@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 set -eo pipefail
 
 if [[ -z "$SVN_USERNAME" ]]; then
