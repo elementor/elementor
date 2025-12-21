@@ -186,7 +186,7 @@ class Test_Style_Renderer extends TestCase {
 		$css = $renderer->render( $styles );
 
 		// Assert.
-		$this->assertStringContainsString( '.state-test:hover{color:#111;}', $css );
+		$this->assertStringContainsString( '.state-test:hover,.state-test:focus-visible{color:#111;}', $css );
 		$this->assertStringContainsString( '.state-test.e--selected{color:#222;}', $css );
 	}
 
