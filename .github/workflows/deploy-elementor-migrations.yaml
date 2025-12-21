@@ -2,7 +2,7 @@ name: Deploy Elementor Migrations
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - 'migrations/**'
 
