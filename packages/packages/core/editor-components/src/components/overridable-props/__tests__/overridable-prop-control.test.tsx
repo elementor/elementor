@@ -11,7 +11,7 @@ import { fireEvent, screen } from '@testing-library/react';
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
 import { useOverridablePropValue } from '../../../provider/overridable-prop-context';
 import { updateOverridablePropOriginValue } from '../../../store/actions/update-overridable-prop-origin-value';
-import { selectCurrentComponentId, slice } from '../../../store/store';
+import { slice, useCurrentComponentId } from '../../../store/store';
 import { OverridablePropControl } from '../overridable-prop-control';
 
 jest.mock( '../../../store/actions/update-overridable-prop-origin-value', () => {
@@ -27,7 +27,7 @@ jest.mock( '@elementor/editor-editing-panel', () => ( {
 } ) );
 jest.mock( '../../../store/store', () => ( {
 	...jest.requireActual( '../../../store/store' ),
-	selectCurrentComponentId: jest.fn(),
+	useCurrentComponentId: jest.fn(),
 } ) );
 
 const MOCK_DOCUMENT_ID = 42;
@@ -104,7 +104,7 @@ describe( '<OverridablePropControl />', () => {
 			elementType: mockElementType,
 		} );
 
-		jest.mocked( selectCurrentComponentId ).mockReturnValue( MOCK_DOCUMENT_ID );
+		jest.mocked( useCurrentComponentId ).mockReturnValue( MOCK_DOCUMENT_ID );
 	} );
 
 	afterEach( () => {

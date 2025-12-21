@@ -50,7 +50,7 @@ const MOCK_POST_DATA = {
 describe( '<EditComponent />', () => {
 	let store: Store< SliceState< typeof slice > >;
 	let editedDocument: V1Document;
-	let attachPreviewCallback: () => void;
+	let openCallback: () => void;
 	const switchDocumentCallback = jest.fn();
 
 	beforeEach( () => {
@@ -78,16 +78,16 @@ describe( '<EditComponent />', () => {
 
 		jest.mocked( __privateListenTo ).mockImplementation( ( event, callback ) => {
 			event = Array.isArray( event ) ? event[ 0 ] : event;
-			if ( event.type === 'command' && event.name === 'editor/documents/attach-preview' ) {
-				attachPreviewCallback = callback as () => void;
+			if ( event.type === 'command' && event.name === 'editor/documents/open' ) {
+				openCallback = callback as () => void;
 			}
 
 			return () => {};
 		} );
 
 		jest.mocked( __privateRunCommand ).mockImplementation( async ( command, args ) => {
-			if ( command === 'editor/documents/attach-preview' ) {
-				attachPreviewCallback?.();
+			if ( command === 'editor/documents/open' ) {
+				openCallback?.();
 
 				return;
 			}
@@ -231,6 +231,6 @@ function mockDocument( id: number, isComponent: boolean = false ) {
 
 function updateCurrentDocument() {
 	act( () => {
-		__privateRunCommand( 'editor/documents/attach-preview' );
+		__privateRunCommand( 'editor/documents/open' );
 	} );
 }

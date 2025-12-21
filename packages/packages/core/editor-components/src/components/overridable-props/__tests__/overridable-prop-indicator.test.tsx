@@ -9,7 +9,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
 import { setOverridableProp } from '../../../store/actions/set-overridable-prop';
-import { selectCurrentComponentId, selectOverridableProps, slice } from '../../../store/store';
+import { selectOverridableProps, slice, useCurrentComponentId } from '../../../store/store';
 import { OverridablePropIndicator } from '../overridable-prop-indicator';
 
 jest.mock( '@elementor/editor-controls', () => ( {
@@ -23,7 +23,7 @@ jest.mock( '@elementor/editor-editing-panel', () => ( {
 jest.mock( '../../../store/store', () => ( {
 	...jest.requireActual( '../../../store/store' ),
 	selectOverridableProps: jest.fn(),
-	selectCurrentComponentId: jest.fn(),
+	useCurrentComponentId: jest.fn(),
 } ) );
 jest.mock( '../../../store/actions/set-overridable-prop', () => ( {
 	...jest.requireActual( '../../../store/actions/set-overridable-prop' ),
@@ -130,7 +130,7 @@ describe( 'OverridablePropIndicator', () => {
 			} );
 
 			const isOverridable = componentOverridablePropTypeUtil.isValid( boundProp.value );
-			jest.mocked( selectCurrentComponentId ).mockReturnValue( isComponent ? MOCK_COMPONENT_ID : null );
+			jest.mocked( useCurrentComponentId ).mockReturnValue( isComponent ? MOCK_COMPONENT_ID : null );
 
 			jest.mocked( useBoundProp ).mockImplementation( ( propUtil ) => {
 				if ( propUtil ) {
