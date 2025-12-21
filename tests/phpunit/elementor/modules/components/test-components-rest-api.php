@@ -643,7 +643,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'elementId' => 'element-123',
 					'elType' => 'widget',
 					'widgetType' => 'e-heading',
-					'propKey' => 'title',
+					'path' => [ ['key' => 'title', '$$type' => 'string'] ],
 					'originValue' => null,
 					'groupId' => 'group-1',
 				],
@@ -702,7 +702,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'elementId' => 'component-1-button-id',
 					'elType' => 'widget',
 					'widgetType' => 'e-button',
-					'propKey' => 'text',
+					'path' => [ ['key' => 'text', '$$type' => 'string'] ],
 					'originValue' => [
 						'$$type' => 'string',
 						'value' => 'Component 2 Button',
@@ -715,7 +715,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'elementId' => 'component-1-button-id',
 					'elType' => 'widget',
 					'widgetType' => 'e-button',
-					'propKey' => 'link',
+					'path' => [ ['key' => 'link', '$$type' => 'link'] ],
 					'originValue' => [
 						'$$type' => 'link',
 						'value' => [
@@ -804,7 +804,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'elementId' => 'component-1-button-id',
 					'elType' => 'widget',
 					'widgetType' => 'e-button',
-					'propKey' => 'text',
+					'path' => [ ['key' => 'text', '$$type' => 'string'] ],
 					'originValue' => [
 						'$$type' => 'string',
 						'value' => 'Test Button Text',
@@ -858,7 +858,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'elementId' => 'element-123',
 					'elType' => 'widget',
 					'widgetType' => 'e-heading',
-					'propKey' => 'title',
+					'path' => [ ['key' => 'title', '$$type' => 'string'] ],
 					'originValue' => [
 						'$$type' => 'string',
 						'value' => 'test',
@@ -905,7 +905,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					'elementId' => 'element-123',
 					'elType' => 'widget',
 					'widgetType' => 'e-heading',
-					'propKey' => 'title',
+					'path' => [ ['key' => 'title', '$$type' => 'string'] ],
 					// Wrong type structure - should be a proper PropValue with $$type
 					'originValue' => 'plain string instead of PropValue structure',
 					'groupId' => 'group-1',
