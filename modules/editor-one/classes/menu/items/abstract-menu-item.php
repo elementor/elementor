@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Abstract_Menu_Item implements Menu_Item_Third_Level_Interface {
 
 	public function get_capability() {
-		return 'manage_options';
+		return Menu_Config::CAPABILITY_MANAGE_OPTIONS;
 	}
 
 	public function get_parent_slug() {
