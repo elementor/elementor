@@ -18,7 +18,6 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	__privateUseIsRouteActive: jest.fn(),
 	isExperimentActive: jest.fn(),
 } ) );
-jest.mock( '../../utils/inline-editing-utils' );
 
 describe( '<ElementsOverlays />', () => {
 	beforeEach( () => {

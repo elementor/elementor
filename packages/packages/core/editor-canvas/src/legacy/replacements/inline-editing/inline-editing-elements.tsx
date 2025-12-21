@@ -12,7 +12,7 @@ import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { ThemeProvider } from '@elementor/ui';
 
 import ReplacementBase from '../base';
-import { getBlockedValue, getInitialPopoverPosition, INLINE_EDITING_PROPERTY_PER_TYPE } from './inline-editing-utils';
+import { getInitialPopoverPosition, INLINE_EDITING_PROPERTY_PER_TYPE } from './inline-editing-utils';
 
 const EXPERIMENT_KEY = 'v4-inline-text-editing';
 
@@ -130,19 +130,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		);
 	}
 
-	ensureProperValue() {
-		const actualValue = this.getContentValue();
-		const tagSettings = this.getExpectedTag();
-		const wrappedValue = getBlockedValue( actualValue, tagSettings );
-
-		if ( actualValue !== wrappedValue ) {
-			this.setContentValue( wrappedValue );
-		}
-	}
-
 	renderInlineEditor() {
-		this.ensureProperValue();
-
 		const propValue = this.getContentValue();
 		const classes = ( this.element.children?.[ 0 ]?.classList.toString() ?? '' ) + ' strip-styles';
 		const expectedTag = this.getExpectedTag();
