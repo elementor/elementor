@@ -1,10 +1,8 @@
-/* eslint-disable simple-import-sort/imports */
 import type { Props } from '@elementor/editor-props';
 import { type Breakpoint, type BreakpointsMap } from '@elementor/editor-responsive';
 import {
 	type CustomCss,
-	getStateSelector,
-	getAlternativeStates,
+	getSelectorWithState,
 	type StyleDefinition,
 	type StyleDefinitionState,
 	type StyleDefinitionType,
@@ -93,14 +91,7 @@ function createStyleWrapper( value: string = '', wrapper?: ( css: string ) => st
 			createStyleWrapper( [ prefix, value ].filter( Boolean ).join( ' ' ), wrapper ),
 
 		withState: ( state: StyleDefinitionState ) => {
-			if ( ! state ) {
-				return createStyleWrapper( value, wrapper );
-			}
-
-			const alternativeStates = getAlternativeStates( state );
-			const selector = [ state, ...alternativeStates ]
-				.map( ( currentState ) => `${ value }${ getStateSelector( currentState ) }` )
-				.join( ', ' );
+			const selector = getSelectorWithState( value, state );
 
 			return createStyleWrapper( selector, wrapper );
 		},

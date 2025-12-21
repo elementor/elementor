@@ -122,7 +122,7 @@ class Styles_Renderer {
 		}
 
 		if ( isset( $variant['meta']['state'] ) ) {
-			$selector = $this->get_selector_with_state( $base_selector, $variant['meta']['state'] );
+			$selector = Style_States::get_selector_with_state( $base_selector, $variant['meta']['state'] );
 		} else {
 			$selector = $base_selector;
 		}
@@ -134,17 +134,6 @@ class Styles_Renderer {
 		}
 
 		return $style_declaration;
-	}
-
-	private function get_selector_with_state( string $base_selector, string $state ): string {
-		$alternative_states = Style_States::get_alternative_states( $state );
-		$all_states = [ $state, ...$alternative_states ];
-
-		foreach ( $all_states as $current_state ) {
-			$selector_strings[] = $base_selector . Style_States::get_state_selector( $current_state );
-		}
-
-		return implode( ',', $selector_strings );
 	}
 
 

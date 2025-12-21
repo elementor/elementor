@@ -1,5 +1,5 @@
 import {
-	type StyleDefinitionAlternativePseudoState,
+	type StyleDefinitionAdditionalPseudoState,
 	type StyleDefinitionClassState,
 	type StyleDefinitionPseudoState,
 	type StyleDefinitionState,
@@ -10,15 +10,7 @@ const PSEUDO_STATES: StyleDefinitionPseudoState[] = [ 'hover', 'focus', 'active'
 
 const CLASS_STATES: StyleDefinitionClassState[] = [ 'e--selected' ];
 
-export function isClassState( state: StyleDefinitionStateType ): state is StyleDefinitionClassState {
-	return CLASS_STATES.includes( state as StyleDefinitionClassState );
-}
-
-export function isPseudoState( state: StyleDefinitionStateType ): state is StyleDefinitionPseudoState {
-	return PSEUDO_STATES.includes( state as StyleDefinitionPseudoState );
-}
-
-export function getAlternativeStates( state: StyleDefinitionState ): StyleDefinitionAlternativePseudoState[] {
+function getAdditionalStates( state: StyleDefinitionState ): StyleDefinitionAdditionalPseudoState[] {
 	if ( state === 'hover' ) {
 		return [ 'focus-visible' ];
 	}
@@ -26,7 +18,7 @@ export function getAlternativeStates( state: StyleDefinitionState ): StyleDefini
 	return [];
 }
 
-export function getStateSelector( state: StyleDefinitionPseudoState | StyleDefinitionClassState ) {
+function getStateSelector( state: StyleDefinitionPseudoState | StyleDefinitionClassState ) {
 	if ( isClassState( state ) ) {
 		return `.${ state }`;
 	}
@@ -36,4 +28,22 @@ export function getStateSelector( state: StyleDefinitionPseudoState | StyleDefin
 	}
 
 	return state;
+}
+
+export function isClassState( state: StyleDefinitionStateType ): state is StyleDefinitionClassState {
+	return CLASS_STATES.includes( state as StyleDefinitionClassState );
+}
+
+export function isPseudoState( state: StyleDefinitionStateType ): state is StyleDefinitionPseudoState {
+	return PSEUDO_STATES.includes( state as StyleDefinitionPseudoState );
+}
+
+export function getSelectorWithState( baseSelector: string, state: StyleDefinitionState ): string {
+	if ( ! state ) {
+		return baseSelector;
+	}
+
+	return [ state, ...getAdditionalStates( state ) ]
+		.map( ( currentState ) => `${ baseSelector }${ getStateSelector( currentState ) }` )
+		.join( ',' );
 }
