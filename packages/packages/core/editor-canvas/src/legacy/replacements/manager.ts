@@ -63,12 +63,12 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 				this.#replacement = new ReplacementClass( config );
 			}
 
-			if ( this.#replacement?.shouldRenderReplacement() ) {
-				this.#replacement.render();
-				this.#replacement._beforeRender();
-			} else {
-				TemplatedView.prototype.render.apply( this );
+			if ( ! this.#replacement?.shouldRenderReplacement() ) {
+				return TemplatedView.prototype.render.apply( this );
 			}
+
+			this.#replacement.render();
+			this.#replacement._beforeRender();
 		}
 
 		_afterRender() {
