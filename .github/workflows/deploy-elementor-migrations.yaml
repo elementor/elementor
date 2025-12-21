@@ -1,0 +1,27 @@
+name: Deploy Elementor Migrations
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'migrations/**'
+
+jobs:
+  release-dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send dispatch
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: ${{ secrets.CLOUD_DEVOPS_TOKEN }}
+          repository: ${{ secrets.dispatch_migrations_repo }}
+          event-type: release
+          client-payload: |
+            {
+              "level": "patch",
+              "source": "${{ github.event_name }}",
+              "ref": "${{ github.ref }}",
+              "sha": "${{ github.sha }}",
+              "actor": "${{ github.actor }}",
+              "feature": "migrations"
+            }
