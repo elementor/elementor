@@ -6,7 +6,7 @@ exports[`renderStyles should render styles 1`] = `
     "breakpoint": "desktop",
     "id": "test",
     "state": null,
-    "value": ".test{font-size:10px;}.test:hover, .test:focus-visible{font-size:20px;}@media(max-width:992px){.test{font-size:30px;}}@media(max-width:768px){.test:focus{font-size:40px;}}",
+    "value": ".test{font-size:10px;}.test:hover,.test:focus-visible{font-size:20px;}@media(max-width:992px){.test{font-size:30px;}}@media(max-width:768px){.test:focus{font-size:40px;}}",
   },
   {
     "breakpoint": "desktop",
