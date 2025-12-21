@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useNavigateBack } from '../../hooks/use-navigate-back';
 import { selectCurrentComponentId } from '../../store/store';
+import { ComponentIntroduction } from '../components-tab/component-introdaction';
 import { ComponentsBadge } from './component-badge';
 import { useOverridableProps } from './use-overridable-props';
 
@@ -46,6 +47,7 @@ export const ComponentPanelHeader = () => {
 				<ComponentsBadge overridesCount={ overridesCount } />
 			</Stack>
 			<Divider />
+			<ComponentIntroduction />
 		</Box>
 	);
 };
