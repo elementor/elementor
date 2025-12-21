@@ -1,8 +1,8 @@
-import CrownIcon from '@elementor/icons/CrownIcon';
+import { CrownFilledIcon } from '@elementor/icons';
 import PropTypes from 'prop-types';
-import { CtaButton, CtaContainer } from './styled-components';
+import { CtaButton, CtaContainer, CollapsedCtaButton, CollapsedCtaContainer } from './styled-components';
 
-const SidebarUpgradeCta = ( { upgradeUrl, upgradeText, hasPro } ) => {
+const SidebarUpgradeCta = ( { upgradeUrl, upgradeText, hasPro, collapsed } ) => {
 	const isPro = true === hasPro || '1' === hasPro || 'true' === hasPro;
 
 	if ( isPro ) {
@@ -13,10 +13,20 @@ const SidebarUpgradeCta = ( { upgradeUrl, upgradeText, hasPro } ) => {
 		window.open( upgradeUrl, '_blank' );
 	};
 
+	if ( collapsed ) {
+		return (
+			<CollapsedCtaContainer>
+				<CollapsedCtaButton onClick={ handleUpgradeClick }>
+					<CrownFilledIcon />
+				</CollapsedCtaButton>
+			</CollapsedCtaContainer>
+		);
+	}
+
 	return (
 		<CtaContainer>
 			<CtaButton
-				startIcon={ <CrownIcon /> }
+				startIcon={ <CrownFilledIcon /> }
 				onClick={ handleUpgradeClick }
 				variant="outlined"
 				color="promotion"
@@ -32,6 +42,7 @@ SidebarUpgradeCta.propTypes = {
 	upgradeUrl: PropTypes.string.isRequired,
 	upgradeText: PropTypes.string.isRequired,
 	hasPro: PropTypes.oneOfType( [ PropTypes.bool, PropTypes.string ] ).isRequired,
+	collapsed: PropTypes.bool,
 };
 
 export default SidebarUpgradeCta;

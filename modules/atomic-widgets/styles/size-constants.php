@@ -20,6 +20,8 @@ class Size_Constants {
 	const UNIT_MILLI_SECOND = 'ms';
 	const UNIT_ANGLE_DEG = 'deg';
 
+	const DEFAULT_UNIT = self::UNIT_PX;
+
 	const LENGTH_UNITS = [
 		self::UNIT_PX,
 		self::UNIT_EM,
@@ -59,6 +61,10 @@ class Size_Constants {
 
 	public static function layout(): array {
 		return self::units_without_auto();
+	}
+
+	public static function spacing_margin() {
+		return self::all();
 	}
 
 	public static function spacing(): array {

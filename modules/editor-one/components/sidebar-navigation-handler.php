@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Sidebar_Navigation_Handler {
 
-	private const PROMOTION_URL = 'https://go.elementor.com/wp-dash-sidebar-upgrade/';
+	private const PROMOTION_URL = 'https://go.elementor.com/go-pro-upgrade-wp-editor-inner-menu/';
 
 	private Menu_Data_Provider $menu_data_provider;
 
@@ -38,7 +38,13 @@ class Sidebar_Navigation_Handler {
 			return $classes;
 		}
 
-		return $classes . ' e-has-sidebar-navigation';
+		$classes .= ' e-has-sidebar-navigation';
+
+		if ( Menu_Config::is_elementor_home_menu_available() ) {
+			$classes .= ' e-has-elementor-home-menu';
+		}
+
+		return $classes;
 	}
 
 	public function enqueue_sidebar_assets(): void {

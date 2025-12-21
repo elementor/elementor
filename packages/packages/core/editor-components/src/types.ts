@@ -79,7 +79,7 @@ type ComponentOverrides = TransformablePropValue< 'overrides', ComponentOverride
 
 type ComponentOverride = TransformablePropValue< 'override', ComponentOverridePropValue >;
 
-type ComponentOverridePropValue = {
+export type ComponentOverridePropValue = {
 	override_key: string;
 	override_value: TransformablePropValue< string >;
 	schema_source: {

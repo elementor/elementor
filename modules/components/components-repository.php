@@ -56,7 +56,7 @@ class Components_Repository {
 		return $doc;
 	}
 
-	public function create( string $title, array $content, string $status, string $uid ) {
+	public function create( string $title, array $content, string $status, string $uid, array $settings = [] ) {
 		$document = Plugin::$instance->documents->create(
 			Component_Document::get_type(),
 			[
@@ -70,6 +70,7 @@ class Components_Repository {
 
 		$saved = $document->save( [
 			'elements' => $content,
+			'settings' => $settings,
 		] );
 
 		if ( ! $saved ) {

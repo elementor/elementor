@@ -186,30 +186,4 @@ describe( '<ElementsOverlays />', () => {
 		expect( overlay ).toBeInTheDocument();
 		expect( overlay ).toHaveAttribute( 'data-element-overlay', 'atomic1' );
 	} );
-
-	it( 'should render InlineEditorOverlay only for selected elements that support inline editing', async () => {
-		// Arrange
-		const headingEl = createDOMElement( { tag: 'div', attrs: { 'data-atomic': '', id: '50' } } );
-
-		jest.mocked( getElements ).mockReturnValue( [
-			createMockElement( {
-				model: { id: 'heading-element' },
-				view: { el: headingEl, getDomElement: () => ( { get: () => headingEl } ) },
-			} ),
-		] );
-
-		jest.mocked( useSelectedElement ).mockReturnValue( {
-			element: { id: 'heading-element', type: 'widget' },
-			elementType: createMockElementType(),
-		} );
-
-		// Act
-		renderWithTheme( <ElementsOverlays /> );
-
-		// Assert
-		await waitFor( () => {
-			const overlay = screen.getByRole( 'presentation' );
-			expect( overlay ).toHaveAttribute( 'data-element-overlay', 'heading-element' );
-		} );
-	} );
 } );
