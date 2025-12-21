@@ -1,8 +1,7 @@
 import type { CreateTemplatedElementTypeOptions } from '../create-templated-element-type';
 import { createTemplatedElementView } from '../create-templated-element-type';
-import type { ElementType, ElementView, LegacyWindow } from '../types';
+import type { ElementType, ElementView, LegacyWindow, ReplacementSettings } from '../types';
 import type ReplacementBase from './base';
-import type { ReplacementSettings } from './base';
 import InlineEditingReplacement from './inline-editing/inline-editing-elements';
 
 type ReplacementConstructor = new ( settings: ReplacementSettings ) => ReplacementBase;
