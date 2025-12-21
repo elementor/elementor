@@ -1,6 +1,8 @@
+import { type PropValue } from '@elementor/editor-props';
+
 export type ReplacementSettings = {
 	getSetting: ( key: string ) => unknown;
-	setSetting: ( key: string, value: unknown ) => void;
+	setSetting: ( key: string, value: PropValue ) => void;
 	type: string;
 	id: string;
 	element: HTMLElement;

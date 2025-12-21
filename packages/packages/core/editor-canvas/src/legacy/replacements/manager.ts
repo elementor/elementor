@@ -38,14 +38,15 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 
 		constructor( ...args: unknown[] ) {
 			super( ...args );
+			const settings = this.model.get( 'settings' );
 
 			this.#config = {
-				getSetting: this.model.get.bind( this.model ) as ReplacementSettings[ 'getSetting' ],
-				setSetting: this.model.set.bind( this.model ) as ReplacementSettings[ 'setSetting' ],
+				getSetting: settings.get.bind( settings ),
+				setSetting: settings.set.bind( settings ),
 				element: this.el,
 				type: this?.model?.get( 'widgetType' ) ?? this.container?.model?.get( 'elType' ) ?? null,
 				id: this?.model?.get( 'id' ) ?? null,
-				refreshView: this.refreshView.bind( this ),
+				refreshView: this.render.bind( this ),
 			};
 		}
 

@@ -137,15 +137,8 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		this.ensureProperValue();
 
 		const propValue = this.getContentValue();
-		const settingKey = this.getInlineEditablePropertyName();
 		const classes = ( this.element.children?.[ 0 ]?.classList.toString() ?? '' ) + ' strip-styles';
 		const expectedTag = this.getExpectedTag();
-
-		const setValue = ( value: string | null ) => {
-			const valueToSave = value ? htmlPropTypeUtil.create( value ) : null;
-
-			this.setSetting( settingKey, valueToSave );
-		};
 
 		this.element.innerHTML = '';
 
@@ -160,7 +153,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 				<InlineEditor
 					attributes={ { class: classes } }
 					value={ propValue }
-					setValue={ setValue }
+					setValue={ this.setContentValue.bind( this ) }
 					onBlur={ this.handleUnmountInlineEditor.bind( this ) }
 					autofocus
 					showToolbar
