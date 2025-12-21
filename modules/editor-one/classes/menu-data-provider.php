@@ -338,7 +338,7 @@ class Menu_Data_Provider {
 		return $groups;
 	}
 
-	private function is_item_accessible( Menu_Item_Interface $item ): bool {
+	public function is_item_accessible( Menu_Item_Interface $item ): bool {
 		return $item->is_visible() && current_user_can( $item->get_capability() );
 	}
 
@@ -371,5 +371,29 @@ class Menu_Data_Provider {
 	private function invalidate_cache(): void {
 		$this->cached_editor_flyout_data = null;
 		$this->cached_level4_flyout_data = null;
+	}
+
+	public static function get_current_user_capabilities(): array {
+		$user = wp_get_current_user();
+
+		if ( ! $user || ! $user->exists() ) {
+			return [
+				'user' => null,
+				'has_edit_posts' => false,
+				'has_manage_options' => false,
+				'is_edit_posts_user' => false,
+			];
+		}
+
+		$has_edit_posts = isset( $user->allcaps[ Menu_Config::CAPABILITY_EDIT_POSTS ] ) && $user->allcaps[ Menu_Config::CAPABILITY_EDIT_POSTS ];
+		$has_manage_options = isset( $user->allcaps[ Menu_Config::CAPABILITY_MANAGE_OPTIONS ] ) && $user->allcaps[ Menu_Config::CAPABILITY_MANAGE_OPTIONS ];
+		$is_edit_posts_user = $has_edit_posts && ! $has_manage_options;
+
+		return [
+			'user' => $user,
+			'has_edit_posts' => $has_edit_posts,
+			'has_manage_options' => $has_manage_options,
+			'is_edit_posts_user' => $is_edit_posts_user,
+		];
 	}
 }

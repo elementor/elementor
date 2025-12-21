@@ -48,6 +48,8 @@ class Elementor_One_Menu_Manager {
 
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 999 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 1001 );
+		add_action( 'admin_menu', [ $this, 'remove_all_submenus_for_edit_posts_users' ], 1005 );
+		add_action( 'admin_menu', [ $this, 'override_elementor_page_for_edit_posts_users' ], 1006 );
 		add_filter( 'add_menu_classes', [ $this, 'fix_theme_builder_submenu_url' ] );
 		add_action( 'admin_head', [ $this, 'hide_flyout_items_from_wp_menu' ] );
 		add_action( 'admin_head', [ $this, 'hide_legacy_templates_menu' ] );
@@ -70,7 +72,7 @@ class Elementor_One_Menu_Manager {
 			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 			esc_html__( 'Editor', 'elementor' ),
 			esc_html__( 'Editor', 'elementor' ),
-			'edit_posts',
+			Menu_Config::CAPABILITY_EDIT_POSTS,
 			Menu_Config::EDITOR_MENU_SLUG,
 			[ $this, 'render_editor_page' ]
 		);
@@ -79,7 +81,7 @@ class Elementor_One_Menu_Manager {
 			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 			esc_html__( 'Theme Builder', 'elementor' ),
 			esc_html__( 'Theme Builder', 'elementor' ),
-			'edit_posts',
+			Menu_Config::CAPABILITY_EDIT_POSTS,
 			'elementor-theme-builder',
 			''
 		);
@@ -96,8 +98,52 @@ class Elementor_One_Menu_Manager {
 		do_action( 'elementor/editor-one/menu/register_submenus' );
 	}
 
+	public function remove_all_submenus_for_edit_posts_users(): void {
+		$user_capabilities = Menu_Data_Provider::get_current_user_capabilities();
+
+		if ( ! $user_capabilities['is_edit_posts_user'] ) {
+			return;
+		}
+
+		global $submenu;
+
+		if ( empty( $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] ) ) {
+			return;
+		}
+
+		$submenu_items = $submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ];
+
+		foreach ( $submenu_items as $index => $submenu_item ) {
+			if ( 0 === $index ) {
+				continue;
+			}
+
+			$submenu_slug = $submenu_item[2] ?? '';
+			if ( ! empty( $submenu_slug ) ) {
+				remove_submenu_page( Menu_Config::ELEMENTOR_MENU_SLUG, $submenu_slug );
+			}
+		}
+	}
+
 	public function render_editor_page(): void {
 		Plugin::instance()->settings->display_home_screen();
+	}
+
+	public function override_elementor_page_for_edit_posts_users(): void {
+		$user_capabilities = Menu_Data_Provider::get_current_user_capabilities();
+
+		if ( ! $user_capabilities['is_edit_posts_user'] ) {
+			return;
+		}
+
+		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
+		if ( Menu_Config::ELEMENTOR_MENU_SLUG !== $page ) {
+			return;
+		}
+
+		$templates_url = admin_url( 'edit.php?post_type=elementor_library&tabs_group=library' );
+		wp_safe_redirect( $templates_url );
+		exit;
 	}
 
 	public function enqueue_home_screen_on_editor_page(): void {
