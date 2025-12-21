@@ -137,7 +137,6 @@ class Menu_Data_Provider {
 	public function get_all_sidebar_page_slugs(): array {
 		$base_slugs = [
 			Menu_Config::ELEMENTOR_MENU_SLUG,
-			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 			Menu_Config::EDITOR_MENU_SLUG,
 		];
 
@@ -155,6 +154,10 @@ class Menu_Data_Provider {
 		}
 
 		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
+
+        if ( Menu_Config::ELEMENTOR_HOME_MENU_SLUG === $page ) {
+            return false;
+        }
 
 		if ( in_array( $page, $this->get_all_sidebar_page_slugs(), true ) ) {
 			return true;
@@ -198,6 +201,7 @@ class Menu_Data_Provider {
 					return true;
 				}
 			}
+
 			return false;
 		} ) );
 	}
