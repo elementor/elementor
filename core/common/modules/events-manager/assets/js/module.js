@@ -121,7 +121,7 @@ export default class extends elementorModules.Module {
 	async getExperimentVariant( experimentName, defaultValue = 'control' ) {
 		try {
 			if ( ! elementorCommon.config.editor_events?.can_send_events ) {
-				return;
+				return defaultValue;
 			}
 
 			const isAbTestingEnabled = elementorCommon.config.editor_events?.flags_enabled ?? false;
