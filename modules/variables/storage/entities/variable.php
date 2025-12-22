@@ -122,7 +122,7 @@ class Variable {
 			in_array( $target_type, $allowed_types, true );
 
 		if ( ! $is_valid_transition ) {
-			throw new Type_Mismatch( "Type change is forbidden" );
+			throw new Type_Mismatch( 'Type change is forbidden' );
 		}
 
 		$this->set_type( $data['type'] );
