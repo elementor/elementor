@@ -100,6 +100,13 @@ export const initModifyGlobalClass = ( reg: MCPRegistryEntry ) => {
 				uri: GLOBAL_CLASSES_URI,
 			},
 		],
+		modelPreferences: {
+			hints: [
+				{ name: 'claude-sonnet' },
+			],
+			intelligencePriority: 0.85,
+			speedPriority: 0.6,
+		},
 		description: `Modify an existing global class within the Elementor editor, allowing users to update styles and properties for consistent design across their website.
 # CRITICAL Prequisites:
 - Read the style schema at [elementor://styles/schema/{category}] to understand the valid properties and values that can be assigned to the global class.

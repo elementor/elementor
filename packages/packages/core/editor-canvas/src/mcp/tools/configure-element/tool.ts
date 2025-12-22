@@ -18,6 +18,13 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
 			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
 		],
+		modelPreferences: {
+			hints: [
+				{ name: 'claude-sonnet' },
+			],
+			intelligencePriority: 0.8,
+			speedPriority: 0.7,
+		},
 		handler: ( { elementId, propertiesToChange, elementType, stylePropertiesToChange } ) => {
 			const toUpdate = Object.entries( propertiesToChange );
 			const { valid, errors } = validateInput.validatePropSchema( elementType, propertiesToChange );

@@ -6,6 +6,7 @@ import { type ServerNotification, type ServerRequest } from '@modelcontextprotoc
 
 import { getSDK } from './get-sdk';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
+import { ANGIE_MODEL_PREFERENCES, type AngieModelPreferences } from './angie-annotations';
 
 type ZodRawShape = z3.ZodRawShape;
 
@@ -143,6 +144,7 @@ type ToolRegistrationOptions<
 		  ) => ExpectedOutput | Promise< ExpectedOutput >;
 	isDestrcutive?: boolean;
 	requiredResources?: ResourceList;
+	modelPreferences?: AngieModelPreferences;
 };
 
 function createToolRegistrator( server: McpServer ) {
@@ -192,6 +194,9 @@ function createToolRegistrator( server: McpServer ) {
 		};
 		if ( opts.requiredResources ) {
 			annotations[ 'angie/requiredResources' ] = opts.requiredResources;
+		}
+		if ( opts.modelPreferences ) {
+			annotations[ ANGIE_MODEL_PREFERENCES ] = opts.modelPreferences;
 		}
 		server.registerTool(
 			opts.name,
