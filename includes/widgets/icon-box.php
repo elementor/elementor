@@ -596,7 +596,7 @@ class Widget_Icon_Box extends Widget_Base {
 				],
 				'device_args' => $rotate_device_args,
 				'selectors' => [
-					'{{WRAPPER}} .elementor-icon i' => 'transform: rotate({{SIZE}}{{UNIT}});',
+					'{{WRAPPER}} .elementor-icon i, {{WRAPPER}} .elementor-icon svg' => 'transform: rotate({{SIZE}}{{UNIT}});',
 				],
 			]
 		);
