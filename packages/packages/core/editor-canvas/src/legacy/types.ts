@@ -1,5 +1,5 @@
 import { type V1Element } from '@elementor/editor-elements';
-import { type Props } from '@elementor/editor-props';
+import { type Props, type PropValue } from '@elementor/editor-props';
 
 export type LegacyWindow = Window & {
 	elementor: {
@@ -80,6 +80,10 @@ export declare class ElementView {
 
 	_renderChildren(): void;
 
+	_beforeRender(): void;
+
+	_afterRender(): void;
+
 	attachBuffer( collectionView: this, buffer: DocumentFragment ): void;
 
 	triggerMethod( method: string, ...args: unknown[] ): void;
@@ -139,4 +143,13 @@ type ToJSON< T > = {
 type ContextMenuGroup = {
 	name: string;
 	actions: unknown[];
+};
+
+export type ReplacementSettings = {
+	getSetting: ( key: string ) => unknown;
+	setSetting: ( key: string, value: PropValue ) => void;
+	type: string;
+	id: string;
+	element: HTMLElement;
+	refreshView: () => void;
 };

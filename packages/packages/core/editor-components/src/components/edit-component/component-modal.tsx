@@ -10,6 +10,7 @@ type ModalProps = {
 	element: HTMLElement;
 	onClose: () => void;
 };
+
 export function ComponentModal( { element, onClose }: ModalProps ) {
 	const canvasDocument = useCanvasDocument();
 
