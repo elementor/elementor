@@ -2,6 +2,7 @@ export * from './components/empty-state';
 export * from './components/interactions-tab';
 export * from './types';
 export * from './utils/get-interactions-config';
+export { registerInteractionsExtensions } from './contexts/interactions-extensions-context';
 
 export { interactionsRepository } from './interactions-repository';
 export {
