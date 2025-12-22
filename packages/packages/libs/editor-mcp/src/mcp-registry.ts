@@ -195,9 +195,10 @@ function createToolRegistrator( server: McpServer ) {
 		if ( opts.requiredResources ) {
 			annotations[ 'angie/requiredResources' ] = opts.requiredResources;
 		}
-		if ( opts.modelPreferences ) {
-			annotations[ ANGIE_MODEL_PREFERENCES ] = opts.modelPreferences;
-		}
+		// TODO : Revert back once the feature is ready 
+		// if ( opts.modelPreferences ) {
+		// 	annotations[ ANGIE_MODEL_PREFERENCES ] = opts.modelPreferences;
+		// }
 		server.registerTool(
 			opts.name,
 			{
