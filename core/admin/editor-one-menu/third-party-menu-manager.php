@@ -18,17 +18,7 @@ class Third_Party_Menu_Manager {
 
 	const MAX_LENGTH = 50;
 
-	const RESERVED_LABELS = [
-		'Settings',
-		'Templates',
-		'System',
-		'Custom Elements',
-		'Tools',
-		'Home',
-		'Editor',
-		'Theme Builder',
-		'Submissions',
-	];
+	private static array $reserved_labels = [];
 
 	public static function instance(): self {
 		if ( null === self::$instance ) {
@@ -132,7 +122,7 @@ class Third_Party_Menu_Manager {
 
 		$label_lower = strtolower( $trimmed_label );
 
-		foreach ( self::RESERVED_LABELS as $reserved ) {
+		foreach ( self::$reserved_labels as $reserved ) {
 			if ( strtolower( $reserved ) === $label_lower ) {
 				throw new \InvalidArgumentException(
 					sprintf( 'Label "%s" is reserved by Elementor', esc_html( $label ) )
@@ -151,6 +141,9 @@ class Third_Party_Menu_Manager {
 		if ( empty( $url ) ) {
 			throw new \InvalidArgumentException( 'Target URL cannot be empty' );
 		}
+		if ( ! filter_var( $url, FILTER_VALIDATE_URL ) ) {
+			throw new \InvalidArgumentException( 'Target URL is not a valid URL' );
+		}
 	}
 
 	private function validate_owner( string $owner ): void {
@@ -161,5 +154,19 @@ class Third_Party_Menu_Manager {
 		if ( strlen( $owner ) > 100 ) {
 			throw new \InvalidArgumentException( 'Owner must not exceed 100 characters' );
 		}
+	}
+
+	private function __construct() {
+		$this->reserved_labels = [
+			_x( 'Settings', 'Menu item label', 'elementor' ),
+			_x( 'Templates', 'Menu item label', 'elementor' ),
+			_x( 'System', 'Menu item label', 'elementor' ),
+			_x( 'Custom Elements', 'Menu item label', 'elementor' ),
+			_x( 'Tools', 'Menu item label', 'elementor' ),
+			_x( 'Home', 'Menu item label', 'elementor' ),
+			_x( 'Editor', 'Menu item label', 'elementor' ),
+			_x( 'Theme Builder', 'Menu item label', 'elementor' ),
+			_x( 'Submissions', 'Menu item label', 'elementor' ),
+		];
 	}
 }
