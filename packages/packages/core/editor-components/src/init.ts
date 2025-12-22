@@ -24,7 +24,7 @@ import { componentInstanceTransformer } from './component-instance-transformer';
 import { componentOverridableTransformer } from './component-overridable-transformer';
 import { componentOverrideTransformer } from './component-override-transformer';
 import { ComponentPanelHeader } from './components/component-panel-header/component-panel-header';
-import { panel as componentPropertiesPanel } from './components/component-properties-panel/component-properties-panel-panel';
+import { panel as componentPropertiesPanel } from './components/component-properties-panel/component-properties-panel';
 import { Components } from './components/components-tab/components';
 import { COMPONENT_DOCUMENT_TYPE } from './components/consts';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';

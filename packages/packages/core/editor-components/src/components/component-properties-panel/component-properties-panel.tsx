@@ -1,137 +1,51 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { setDocumentModifiedStatus } from '@elementor/editor-documents';
-import { PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
-import { ComponentPropListIcon, FolderIcon, XIcon } from '@elementor/icons';
-import { Divider, IconButton, List, Stack, Tooltip } from '@elementor/ui';
+import { ElementProvider, usePanelActions as useEditingPanelActions } from '@elementor/editor-editing-panel';
+import { useSelectedElement } from '@elementor/editor-elements';
+import { __createPanel as createPanel, Panel } from '@elementor/editor-panels';
+import { ThemeProvider } from '@elementor/editor-ui';
+import { Alert, Box, ErrorBoundary } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useOverridableProps } from '../../components/component-panel-header/use-overridable-props';
-import { addOverridableGroup } from '../../store/actions/add-overridable-group';
-import { deleteOverridableProp } from '../../store/actions/delete-overridable-prop';
-import { reorderGroupProps } from '../../store/actions/reorder-group-props';
-import { reorderOverridableGroups } from '../../store/actions/reorder-overridable-groups';
-import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
-import { useCurrentComponentId } from '../../store/store';
-import { NewGroupInput } from './new-group-input';
-import { PropertiesGroup } from './properties-group';
-import { SortableItem, SortableProvider } from './sortable';
+import { ComponentPropertiesPanelContent } from './component-properties-panel-content';
 
-type Props = {
-	onClose: () => void;
-};
+const id = 'component-properties-panel';
 
-export function ComponentPropertiesPanel( { onClose }: Props ) {
-	const currentComponentId = useCurrentComponentId();
-	const overridableProps = useOverridableProps( currentComponentId );
-	const [ isAddingGroup, setIsAddingGroup ] = useState( false );
+export const { panel, usePanelActions } = createPanel( {
+	id,
+	component: ComponentPropertiesPanel,
+} );
 
-	if ( ! currentComponentId || ! overridableProps ) {
+function ComponentPropertiesPanel() {
+	const { element, elementType } = useSelectedElement();
+	const { close: closePanel } = usePanelActions();
+	const { open: openEditingPanel } = useEditingPanelActions();
+
+	if ( ! element || ! elementType ) {
 		return null;
 	}
 
-	const groupIds = overridableProps.groups.order;
-	const groups = groupIds
-		.map( ( groupId ) => overridableProps.groups.items[ groupId ] ?? null )
-		.filter( ( group ): group is NonNullable< typeof group > => group !== null );
-
-	const handleAddGroupClick = () => {
-		setIsAddingGroup( true );
-	};
-
-	const handleCancelAddGroup = () => {
-		setIsAddingGroup( false );
-	};
-
-	const handleSaveGroup = ( label: string ) => {
-		const newGroupId = `group-${ Date.now() }`;
-		addOverridableGroup( { componentId: currentComponentId, groupId: newGroupId, label } );
-		setDocumentModifiedStatus( true );
-		setIsAddingGroup( false );
-	};
-
-	const handleGroupsReorder = ( newOrder: string[] ) => {
-		reorderOverridableGroups( { componentId: currentComponentId, newOrder } );
-		setDocumentModifiedStatus( true );
-	};
-
-	const handlePropsReorder = ( groupId: string, newPropsOrder: string[] ) => {
-		reorderGroupProps( { componentId: currentComponentId, groupId, newPropsOrder } );
-		setDocumentModifiedStatus( true );
-	};
-
-	const handlePropertyDelete = ( propKey: string ) => {
-		deleteOverridableProp( { componentId: currentComponentId, propKey } );
-		setDocumentModifiedStatus( true );
-	};
-
-	const handlePropertyUpdate = ( propKey: string, data: { label: string; group: string | null } ) => {
-		updateOverridableProp( {
-			componentId: currentComponentId,
-			propKey,
-			label: data.label,
-			groupId: data.group,
-		} );
-		setDocumentModifiedStatus( true );
-	};
-
-	const allGroupsForSelect = groups.map( ( group ) => ( {
-		value: group.id,
-		label: group.label,
-	} ) );
-
 	return (
-		<>
-			<PanelHeader>
-				<Stack direction="row" alignItems="center" gap={ 1 } flexGrow={ 1 }>
-					<ComponentPropListIcon fontSize="tiny" />
-					<PanelHeaderTitle>{ __( 'Component properties', 'elementor' ) }</PanelHeaderTitle>
-				</Stack>
-				<Tooltip title={ __( 'Add new group', 'elementor' ) }>
-					<IconButton
-						size="tiny"
-						aria-label={ __( 'Add new group', 'elementor' ) }
-						onClick={ handleAddGroupClick }
-					>
-						<FolderIcon fontSize="tiny" />
-					</IconButton>
-				</Tooltip>
-				<Tooltip title={ __( 'Close panel', 'elementor' ) }>
-					<IconButton size="tiny" aria-label={ __( 'Close panel', 'elementor' ) } onClick={ onClose }>
-						<XIcon fontSize="tiny" />
-					</IconButton>
-				</Tooltip>
-			</PanelHeader>
-			<Divider />
-			<PanelBody>
-				<List sx={ { p: 2, display: 'flex', flexDirection: 'column', gap: 2 } }>
-					{ isAddingGroup && (
-						<NewGroupInput
-							existingGroups={ overridableProps.groups.items }
-							onSave={ handleSaveGroup }
-							onCancel={ handleCancelAddGroup }
+		<ThemeProvider>
+			<ErrorBoundary fallback={ <ErrorBoundaryFallback /> }>
+				<ElementProvider element={ element } elementType={ elementType }>
+					<Panel>
+						<ComponentPropertiesPanelContent
+							onClose={ () => {
+								closePanel();
+								openEditingPanel();
+							} }
 						/>
-					) }
-					<SortableProvider value={ groupIds } onChange={ handleGroupsReorder }>
-						{ groups.map( ( group ) => (
-							<SortableItem key={ group.id } id={ group.id }>
-								{ ( { triggerProps, triggerStyle, isDragPlaceholder } ) => (
-									<PropertiesGroup
-										group={ group }
-										props={ overridableProps.props }
-										allGroups={ allGroupsForSelect }
-										sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
-										isDragPlaceholder={ isDragPlaceholder }
-										onPropsReorder={ ( newOrder ) => handlePropsReorder( group.id, newOrder ) }
-										onPropertyDelete={ handlePropertyDelete }
-										onPropertyUpdate={ handlePropertyUpdate }
-									/>
-								) }
-							</SortableItem>
-						) ) }
-					</SortableProvider>
-				</List>
-			</PanelBody>
-		</>
+					</Panel>
+				</ElementProvider>
+			</ErrorBoundary>
+		</ThemeProvider>
 	);
 }
+
+const ErrorBoundaryFallback = () => (
+	<Box role="alert" sx={ { minHeight: '100%', p: 2 } }>
+		<Alert severity="error" sx={ { mb: 2, maxWidth: 400, textAlign: 'center' } }>
+			<strong>{ __( 'Something went wrong', 'elementor' ) }</strong>
+		</Alert>
+	</Box>
+);

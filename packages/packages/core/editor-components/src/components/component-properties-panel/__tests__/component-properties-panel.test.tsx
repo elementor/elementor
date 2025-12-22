@@ -15,7 +15,7 @@ jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
 } ) );
 import { type OverridableProps, type PublishedComponent } from '../../../types';
-import { ComponentPropertiesPanel } from '../component-properties-panel';
+import { ComponentPropertiesPanel } from '../component-properties-panel-content';
 
 const MOCK_COMPONENT_ID = 123;
 const MOCK_GROUP_ID = 'group-1';
