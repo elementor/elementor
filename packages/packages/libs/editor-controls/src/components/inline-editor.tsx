@@ -44,25 +44,22 @@ const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void
 	}, dependencies );
 };
 
-const calculateSelectionCenter = (
-	startCoords: { left: number; top: number },
-	endCoords: { left: number; top: number }
-) => {
-	return {
-		centerX: ( startCoords.left + endCoords.left ) / 2,
-		topY: Math.min( startCoords.top, endCoords.top ),
-	};
-};
+const calcSelectionCenterRect = (
+	view: EditorView,
+	container: DOMRect | undefined
+): DOMRect | null => {
+	if ( ! container ) {
+		return null;
+	}
 
-const calculateRelativePosition = (
-	absoluteX: number,
-	absoluteY: number,
-	containerRect: DOMRect
-) => {
-	return {
-		relativeLeft: absoluteX - containerRect.left,
-		relativeTop: absoluteY - containerRect.top,
-	};
+	const { from, to } = view.state.selection;
+	const start = view.coordsAtPos( from );
+	const end = view.coordsAtPos( to );
+
+	const centerX = ( start.left + end.left ) / 2 - container.left;
+	const topY = Math.min( start.top, end.top ) - container.top;
+
+	return new DOMRect( centerX, topY, 0, 0 );
 };
 
 export const InlineEditor = React.forwardRef(
@@ -91,17 +88,8 @@ export const InlineEditor = React.forwardRef(
 		setHasSelectedContent( hasSelection );
 
 		if ( hasSelection ) {
-			const { from, to } = view.state.selection;
-			const start = view.coordsAtPos( from );
-			const end = view.coordsAtPos( to );
-
 			const container = containerRef.current?.getBoundingClientRect();
-			if ( container ) {
-				const { centerX, topY } = calculateSelectionCenter( start, end );
-				const { relativeLeft, relativeTop } = calculateRelativePosition( centerX, topY, container );
-
-				setSelectionRect( new DOMRect( relativeLeft, relativeTop, 0, 0 ) );
-			}
+			setSelectionRect( calcSelectionCenterRect( view, container ) );
 		} else {
 			setSelectionRect( null );
 		}
