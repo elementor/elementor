@@ -3,7 +3,7 @@ import { renderWithTheme } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
 import { __ } from '@wordpress/i18n';
 
-import { ComponentIntroduction } from '../../components-tab/component-introdaction';
+import { ComponentIntroduction } from '../../components-tab/component-introduction';
 
 jest.mock( '@wordpress/i18n' );
 

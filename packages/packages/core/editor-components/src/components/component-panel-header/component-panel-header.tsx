@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useNavigateBack } from '../../hooks/use-navigate-back';
 import { useCurrentComponentId } from '../../store/store';
-import { ComponentIntroduction } from '../components-tab/component-introdaction';
+import { ComponentIntroduction } from '../components-tab/component-introduction';
 import { ComponentsBadge } from './component-badge';
 import { useOverridableProps } from './use-overridable-props';
 
