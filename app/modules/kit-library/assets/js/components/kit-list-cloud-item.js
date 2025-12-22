@@ -16,8 +16,12 @@ import {
 	Popover,
 } from '@elementor/app-ui';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
-import { KIT_SOURCE_MAP } from '../../../../import-export/assets/js/hooks/use-kit';
 import Tooltip from 'elementor-app/molecules/tooltip';
+
+const KIT_SOURCE_MAP = {
+	CLOUD: 'cloud',
+	FILE: 'file',
+};
 
 import './kit-list-item.scss';
 
@@ -178,9 +182,7 @@ const KitListCloudItem = ( props ) => {
 									onClick={ () => {
 										AppsEventTracking.sendKitCloudLibraryApply( props.model.id );
 
-										const url = elementorCommon?.config?.experimentalFeatures[ 'import-export-customization' ]
-											? `import-customization?referrer=${ KIT_SOURCE_MAP.CLOUD }&id=${ props.model.id }`
-											: `import?referrer=kit-library&source=${ KIT_SOURCE_MAP.CLOUD }&kit_id=${ props.model.id }`;
+										const url = `import?referrer=${ KIT_SOURCE_MAP.CLOUD }&id=${ props.model.id }`;
 
 										navigate( url, { replace: true } );
 									} }
