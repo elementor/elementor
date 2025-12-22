@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Menu_Config {
 	const ELEMENTOR_MENU_SLUG = 'elementor';
+	const ELEMENTOR_HOME_MENU_SLUG = 'elementor-home';
 	const EDITOR_MENU_SLUG = 'elementor-editor';
 	const TEMPLATES_GROUP_ID = 'elementor-editor-templates';
 	const SETTINGS_GROUP_ID = 'elementor-editor-settings';
@@ -15,6 +16,9 @@ class Menu_Config {
 	const CUSTOM_ELEMENTS_GROUP_ID = 'elementor-editor-custom-elements';
 	const SYSTEM_GROUP_ID = 'elementor-editor-system';
 	const LEGACY_TEMPLATES_SLUG = 'edit.php?post_type=elementor_library';
+	const CAPABILITY_EDIT_POSTS = 'edit_posts';
+	const CAPABILITY_MANAGE_OPTIONS = 'manage_options';
+	const MENU_POSITION = 58.5;
 	public static function get_excluded_level4_slugs(): array {
 		// add new which is automatically added to templates and categories
 		$default_slugs = [
@@ -38,10 +42,16 @@ class Menu_Config {
 		$default_mapping = [
 			self::LEGACY_TEMPLATES_SLUG => self::TEMPLATES_GROUP_ID,
 			self::ELEMENTOR_MENU_SLUG => self::EDITOR_GROUP_ID,
+			self::ELEMENTOR_HOME_MENU_SLUG => self::EDITOR_GROUP_ID,
 		];
 
 		return apply_filters( 'elementor/editor-one/menu/legacy_slug_mapping', $default_mapping );
 	}
+
+	public static function is_elementor_home_menu_available(): bool {
+		return class_exists( '\ElementorOne\Loader' );
+	}
+
 	public static function get_legacy_pro_mapping(): array {
 		$default_mapping = [
 			'elementor-license' => [ 'group' => self::SYSTEM_GROUP_ID ],
