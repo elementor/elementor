@@ -2,6 +2,7 @@ import { type V1Document } from '@elementor/editor-documents';
 import {
 	__createSelector as createSelector,
 	__createSlice as createSlice,
+	__useSelector as useSelector,
 	type PayloadAction,
 	type SliceState,
 } from '@elementor/store';
@@ -186,10 +187,15 @@ export const selectIsOverridablePropsLoaded = createSelector(
 	}
 );
 export const selectPath = createSelector( getPath, ( path ) => path );
+
 export const selectCurrentComponentId = createSelector(
 	getCurrentComponentId,
 	( currentComponentId ) => currentComponentId
 );
+
+export const useCurrentComponentId = () => {
+	return useSelector( selectCurrentComponentId );
+};
 
 export const selectArchivedComponents = createSelector(
 	selectArchivedData,
