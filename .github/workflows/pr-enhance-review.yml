@@ -1,0 +1,13 @@
+name: PR Enhanced Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  review:
+    uses: elementor/elementor-cloud-github-actions/.github/workflows/pr-enhance-review.yml@master
+    secrets: inherit
+    # with:
+    #   overwrite_mode: true
+

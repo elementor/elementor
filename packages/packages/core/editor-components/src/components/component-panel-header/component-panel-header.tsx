@@ -1,17 +1,16 @@
 import * as React from 'react';
 import { getV1DocumentsManager } from '@elementor/editor-documents';
-import { ArrowLeftIcon, ComponentsIcon } from '@elementor/icons';
-import { __useSelector as useSelector } from '@elementor/store';
+import { ArrowLeftIcon, ComponentsFilledIcon } from '@elementor/icons';
 import { Box, Divider, IconButton, Stack, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useNavigateBack } from '../../hooks/use-navigate-back';
-import { selectCurrentComponentId } from '../../store/store';
+import { useCurrentComponentId } from '../../store/store';
 import { ComponentsBadge } from './component-badge';
 import { useOverridableProps } from './use-overridable-props';
 
 export const ComponentPanelHeader = () => {
-	const currentComponentId = useSelector( selectCurrentComponentId );
+	const currentComponentId = useCurrentComponentId();
 	const overridableProps = useOverridableProps( currentComponentId );
 	const onBack = useNavigateBack();
 	const componentName = getComponentName();
@@ -30,14 +29,14 @@ export const ComponentPanelHeader = () => {
 				justifyContent="space-between"
 				sx={ { height: 48, pl: 1.5, pr: 2, py: 1 } }
 			>
-				<Stack direction="row" alignItems="center" gap={ 0.5 }>
+				<Stack direction="row" alignItems="center">
 					<Tooltip title={ __( 'Back', 'elementor' ) }>
 						<IconButton size="tiny" onClick={ onBack } aria-label={ __( 'Back', 'elementor' ) }>
-							<ArrowLeftIcon />
+							<ArrowLeftIcon fontSize="tiny" />
 						</IconButton>
 					</Tooltip>
 					<Stack direction="row" alignItems="center" gap={ 0.5 }>
-						<ComponentsIcon color="secondary" fontSize="tiny" />
+						<ComponentsFilledIcon fontSize="tiny" stroke="currentColor" />
 						<Typography variant="caption" sx={ { fontWeight: 500 } }>
 							{ componentName }
 						</Typography>

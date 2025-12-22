@@ -101,6 +101,8 @@ use Elementor\Widgets_Manager;
 use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Query_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Styles\Perspective_Origin_Transformer;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
@@ -158,6 +160,7 @@ class Module extends BaseModule {
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
 			add_action( 'elementor/frontend/before_register_scripts', fn () => $this->register_frontend_scripts() );
+			add_action( 'elementor/frontend/after_enqueue_styles', fn () => $this->add_inline_styles() );
 
 			add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 			add_action( 'elementor/atomic-widgets/styles/transformers/register', fn ( $transformers ) => $this->register_styles_transformers( $transformers ) );
@@ -258,7 +261,6 @@ class Module extends BaseModule {
 
 	private function register_settings_transformers( Transformers_Registry $transformers ) {
 		$transformers->register_fallback( new Plain_Transformer() );
-
 		$transformers->register( Classes_Prop_Type::get_key(), new Classes_Transformer() );
 		$transformers->register( Image_Prop_Type::get_key(), new Image_Transformer() );
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Transformer() );
@@ -377,5 +379,10 @@ class Module extends BaseModule {
 	private function register_frontend_scripts() {
 		$loader = new Frontend_Assets_Loader();
 		$loader->register_scripts();
+	}
+
+	private function add_inline_styles() {
+		$inline_css = '.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }';
+		wp_add_inline_style( 'elementor-frontend', $inline_css );
 	}
 }

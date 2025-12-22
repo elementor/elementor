@@ -1,11 +1,13 @@
 import { getMCPByDomain } from '@elementor/editor-mcp';
 
-export const GLOBAL_CLASSES_URI = 'elementor://classes';
+import { globalClassesStylesProvider } from '../global-classes-styles-provider';
+
+export const GLOBAL_CLASSES_URI = 'elementor://global-classes';
 
 export const initClassesResource = () => {
-	const { mcpServer } = getMCPByDomain( 'classes' );
+	const { mcpServer, resource, waitForReady } = getMCPByDomain( 'canvas' );
 
-	mcpServer.resource(
+	resource(
 		'global-classes',
 		GLOBAL_CLASSES_URI,
 		{
@@ -17,4 +19,10 @@ export const initClassesResource = () => {
 			};
 		}
 	);
+
+	waitForReady().then( () => {
+		globalClassesStylesProvider.subscribe( () => {
+			mcpServer.sendResourceListChanged();
+		} );
+	} );
 };

@@ -1,8 +1,10 @@
 <?php
+
 namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Meta;
 use Elementor\Widget_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,6 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Atomic_Widget_Base extends Widget_Base {
 	use Has_Atomic_Base;
+	use Has_Meta;
+
+	public static $widget_description = null;
 
 	protected $version = '0.0';
 	protected $styles = [];
@@ -24,6 +29,9 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$this->styles = $data['styles'] ?? [];
 		$this->interactions = $this->parse_atomic_interactions( $data['interactions'] ?? [] );
 		$this->editor_settings = $data['editor_settings'] ?? [];
+		if ( static::$widget_description ) {
+			$this->description( static::$widget_description );
+		}
 	}
 
 	private function parse_atomic_interactions( $interactions ) {
@@ -86,6 +94,7 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 		$config['atomic_props_schema'] = $props_schema;
 		$config['dependencies_per_target_mapping'] = Dependency_Manager::get_source_to_dependents( $props_schema );
 		$config['version'] = $this->version;
+		$config['meta'] = $this->get_meta();
 
 		return $config;
 	}
@@ -95,11 +104,16 @@ abstract class Atomic_Widget_Base extends Widget_Base {
 	}
 
 	public function before_render() {}
+
 	public function after_render() {}
 
 	abstract protected static function define_props_schema(): array;
 
 	public static function generate() {
 		return Widget_Builder::make( static::get_element_type() );
+	}
+
+	public function get_script_depends() {
+		return [ Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER ];
 	}
 }

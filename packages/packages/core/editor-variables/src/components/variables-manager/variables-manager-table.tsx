@@ -33,6 +33,13 @@ type Props = {
 	onFieldError?: ( hasError: boolean ) => void;
 };
 
+type Row = ReturnType< typeof getVariableType > & {
+	id: string;
+	type: string;
+	name: string;
+	value: string;
+};
+
 export const VariablesManagerTable = ( {
 	menuActions,
 	variables,
@@ -74,6 +81,10 @@ export const VariablesManagerTable = ( {
 			const variable = variables[ id ];
 			const variableType = getVariableType( variable.type );
 
+			if ( ! variableType ) {
+				return null;
+			}
+
 			return {
 				id,
 				type: variable.type,
@@ -81,7 +92,8 @@ export const VariablesManagerTable = ( {
 				value: variable.value,
 				...variableType,
 			};
-		} );
+		} )
+		.filter( Boolean ) as Row[];
 
 	const tableSX: SxProps = {
 		minWidth: 250,
@@ -252,7 +264,7 @@ export const VariablesManagerTable = ( {
 														onValidationChange,
 														error,
 													} ) =>
-														row.valueField( {
+														row.valueField?.( {
 															ref: {
 																current: variableRowRefs.current.get(
 																	'table-ref-' + row.id
@@ -272,7 +284,7 @@ export const VariablesManagerTable = ( {
 																onFieldError?.( !! errorMsg );
 															},
 															error,
-														} )
+														} ) ?? <></>
 													}
 													onRowRef={ handleRowRef( row.id ) }
 													gap={ 0.25 }

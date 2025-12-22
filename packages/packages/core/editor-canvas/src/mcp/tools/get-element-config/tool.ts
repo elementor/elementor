@@ -1,4 +1,4 @@
-import { getContainer, getElementStyles, getWidgetsCache } from '@elementor/editor-elements';
+import { getContainer, getElementStyles, getWidgetsCache, type V1Element } from '@elementor/editor-elements';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { type PropValue, Schema } from '@elementor/editor-props';
 import { z } from '@elementor/schema';
@@ -8,11 +8,38 @@ const schema = {
 };
 
 const outputSchema = {
-	propValues: z
+	properties: z
 		.record( z.string(), z.any() )
-		.describe(
-			'A record mapping PropTypes to their corresponding PropValues, with _styles record for style-related PropValues'
-		),
+		.describe( 'A record mapping PropTypes to their corresponding PropValues' ),
+	style: z
+		.record( z.string(), z.any() )
+		.describe( 'A record mapping StyleSchema properties to their corresponding PropValues' ),
+	childElements: z
+		.array(
+			z.object( {
+				id: z.string(),
+				elementType: z.string(),
+				childElements: z
+					.array( z.any() )
+					.describe( 'An array of child element IDs, when applicable, same structure recursively' ),
+			} )
+		)
+		.describe( 'An array of child element IDs, when applicable, with recursive structure' ),
+};
+type ElementStructure = {
+	id: string;
+	elementType: string;
+	childElements: ElementStructure[];
+};
+const structuredElements = ( element: V1Element ): ElementStructure[] => {
+	const children = element.children || [];
+	return children.map( ( child ) => {
+		return {
+			id: child.id,
+			elementType: child.model.get( 'elType' ) || child.model.get( 'widgetType' ) || 'unknown',
+			childElements: structuredElements( child ),
+		};
+	} );
 };
 
 export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
@@ -29,7 +56,9 @@ export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
 				throw new Error( `Element with ID ${ elementId } not found.` );
 			}
 			const elementRawSettings = element.settings;
-			const propSchema = getWidgetsCache()?.[ element.model.get( 'widgetType' ) || '' ]?.atomic_props_schema;
+			const propSchema =
+				getWidgetsCache()?.[ element.model.get( 'widgetType' ) || element.model.get( 'elType' ) || '' ]
+					?.atomic_props_schema;
 
 			if ( ! elementRawSettings || ! propSchema ) {
 				throw new Error( `No settings or prop schema found for element ID: ${ elementId }` );
@@ -55,14 +84,20 @@ export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
 							stylePropValues[ stylePropName ] = structuredClone( styleProps[ stylePropName ] );
 						}
 					} );
+					if ( defaultVariant.custom_css ) {
+						stylePropValues.custom_css = atob( defaultVariant.custom_css.raw );
+					}
 				}
 			}
 
 			return {
-				propValues: {
+				properties: {
 					...propValues,
-					_styles: stylePropValues,
 				},
+				style: {
+					...stylePropValues,
+				},
+				childElements: structuredElements( element ),
 			};
 		},
 	} );

@@ -30,6 +30,13 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	const ELEMENT_TYPE_TAB = 'e-tab';
 	const ELEMENT_TYPE_TAB_CONTENT = 'e-tab-content';
 
+	public static $widget_description = 'Create a tabbed interface with customizable tabs and content areas. LLM support: Each child element will be represented as a tab, the menu auto-generates based on the children';
+
+	public function __construct( $data = [], $args = null ) {
+		parent::__construct( $data, $args );
+		$this->meta( 'is_container', true );
+	}
+
 	public static function get_type() {
 		return 'e-tabs';
 	}
@@ -156,11 +163,13 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	}
 
 	public function get_script_depends() {
+		$global_depends = parent::get_script_depends();
+
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
-			return [ 'elementor-tabs-handler', 'elementor-tabs-preview-handler' ];
+			return array_merge( $global_depends, [ 'elementor-tabs-handler', 'elementor-tabs-preview-handler' ] );
 		}
 
-		return [ 'elementor-tabs-handler' ];
+		return array_merge( $global_depends, [ 'elementor-tabs-handler' ] );
 	}
 
 	public function register_frontend_handlers() {
@@ -218,10 +227,12 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		$default_active_tab = $this->get_atomic_setting( 'default-active-tab' );
 
 		return [
-			'default-active-tab' => $default_active_tab,
-			'get-tab-index' => fn( $tab_id ) => $this->get_tab_index( $tab_id ),
-			'get-tab-content-index' => fn( $tab_content_id ) => $this->get_tab_content_index( $tab_content_id ),
-			'tabs-id' => $this->get_id(),
+			'context' => [
+				'default-active-tab' => $default_active_tab,
+				'get-tab-index' => fn( $tab_id ) => $this->get_tab_index( $tab_id ),
+				'get-tab-content-index' => fn( $tab_content_id ) => $this->get_tab_content_index( $tab_content_id ),
+				'tabs-id' => $this->get_id(),
+			],
 		];
 	}
 

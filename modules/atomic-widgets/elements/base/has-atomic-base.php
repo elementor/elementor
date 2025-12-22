@@ -13,7 +13,7 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Utils;
-use Elementor\Modules\Components\PropTypes\Component_Overridable_Prop_Type;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -80,14 +80,16 @@ trait Has_Atomic_Base {
 		}
 	}
 
-	private function parse_atomic_styles( array $styles ): array {
+	private function parse_atomic_styles( array $data ): array {
+		$styles = $data['styles'] ?? [];
 		$style_parser = Style_Parser::make( Style_Schema::get() );
 
 		foreach ( $styles as $style_id => $style ) {
 			$result = $style_parser->parse( $style );
 
 			if ( ! $result->is_valid() ) {
-				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. " . $result->errors()->to_string() ) );
+				$widget_id = $data['id'] ?? 'unknown';
+				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. Widget ID: `$widget_id`. " . $result->errors()->to_string() ) );
 			}
 
 			$styles[ $style_id ] = $result->unwrap();
@@ -237,7 +239,7 @@ trait Has_Atomic_Base {
 
 		$data['version'] = $this->version;
 		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
-		$data['styles'] = $this->parse_atomic_styles( $data['styles'] );
+		$data['styles'] = $this->parse_atomic_styles( $data );
 		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
 
 		if ( isset( $data['interactions'] ) && ! empty( $data['interactions'] ) ) {
@@ -398,7 +400,7 @@ trait Has_Atomic_Base {
 
 	public static function get_props_schema(): array {
 		$schema = static::define_props_schema();
-		$schema['_cssid'] = String_Prop_Type::make()->meta( Component_Overridable_Prop_Type::ignore() );
+		$schema['_cssid'] = String_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() );
 
 		return apply_filters(
 			'elementor/atomic-widgets/props-schema',
@@ -455,5 +457,36 @@ trait Has_Atomic_Base {
 		}
 
 		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay ] );
+	}
+
+	public function print_content() {
+		$defined_context = $this->define_render_context();
+
+		$context_key = $defined_context['context_key'] ?? static::class;
+		$element_context = $defined_context['context'] ?? [];
+
+		$has_context = ! empty( $element_context );
+
+		if ( ! $has_context ) {
+			return parent::print_content();
+		}
+
+		Render_Context::push( $context_key, $element_context );
+
+		parent::print_content();
+
+		Render_Context::pop( $context_key );
+	}
+
+	/**
+	 * Define the context for element's Render_Context.
+	 *
+	 * @return array{context_key: ?string, context: array}
+	 */
+	protected function define_render_context(): array {
+		return [
+			'context_key' => null,
+			'context' => [],
+		];
 	}
 }

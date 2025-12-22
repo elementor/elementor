@@ -3,9 +3,12 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
 use Elementor\Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
+use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Meta;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -15,11 +18,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Atomic_Element_Base extends Element_Base {
 	use Has_Atomic_Base;
+	use Has_Meta;
 
 	protected $version = '0.0';
 	protected $styles = [];
 	protected $interactions = [];
 	protected $editor_settings = [];
+
+	public static $widget_description = null;
 
 
 	public function __construct( $data = [], $args = null ) {
@@ -29,6 +35,10 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$this->styles = $data['styles'] ?? [];
 		$this->interactions = $this->parse_atomic_interactions( $data['interactions'] ?? [] );
 		$this->editor_settings = $data['editor_settings'] ?? [];
+		$this->add_script_depends( Frontend_Assets_Loader::ATOMIC_WIDGETS_HANDLER );
+		if ( static::$widget_description ) {
+			$this->description( static::$widget_description );
+		}
 	}
 
 	private function parse_atomic_interactions( $interactions ) {
@@ -103,6 +113,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$config['initial_attributes'] = $this->define_initial_attributes();
 		$config['include_in_widgets_config'] = true;
 		$config['default_html_tag'] = $this->define_default_html_tag();
+		$config['meta'] = $this->get_meta();
 
 		return $config;
 	}
@@ -134,10 +145,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 		}
 	}
 
-	protected function define_render_context(): array {
-		return [];
-	}
-
 	/**
 	 * Get Element keywords.
 	 *
@@ -166,7 +173,7 @@ abstract class Atomic_Element_Base extends Element_Base {
 		$settings = $this->get_atomic_settings();
 		$default_html_tag = $this->define_default_html_tag();
 
-		return ! empty( $settings['link']['href'] ) ? 'a' : ( $settings['tag'] ?? $default_html_tag );
+		return ! empty( $settings['link']['href'] ) ? $settings['link']['tag'] : ( $settings['tag'] ?? $default_html_tag );
 	}
 
 	/**
@@ -213,22 +220,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 		return Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
 	}
 
-	public function print_content() {
-		$element_context = $this->define_render_context();
-
-		$has_context = ! empty( $element_context );
-
-		if ( ! $has_context ) {
-			return parent::print_content();
-		}
-
-		Render_Context::push( static::class, $element_context );
-
-		parent::print_content();
-
-		Render_Context::pop( static::class );
-	}
-
 	/**
 	 * Default before render for container elements.
 	 *
@@ -264,5 +255,19 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	public static function generate() {
 		return Element_Builder::make( static::get_type() );
+	}
+
+	protected function get_link_attributes( $link_settings ) {
+		$tag = $link_settings['tag'] ?? Link_Prop_Type::DEFAULT_TAG;
+		$href = $link_settings['href'];
+		$target = $link_settings['target'] ?? '_self';
+
+		$is_button = 'button' === $tag;
+		$href_attribute_key = $is_button ? 'data-action-link' : 'href';
+
+		return [
+			$href_attribute_key => $href,
+			'target' => $target,
+		];
 	}
 }

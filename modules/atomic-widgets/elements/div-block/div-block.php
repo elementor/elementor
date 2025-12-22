@@ -22,6 +22,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Div_Block extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
+	public function __construct( $data = [], $args = null ) {
+		parent::__construct( $data, $args );
+		$this->meta( 'is_container', true );
+	}
+
 	public static function get_type() {
 		return 'e-div-block';
 	}
@@ -43,22 +48,30 @@ class Div_Block extends Atomic_Element_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$tag_dependencies = Dependency_Manager::make()
+		$tag_dependencies = Dependency_Manager::make( Dependency_Manager::RELATION_AND )
 			->where( [
+				'operator' => 'ne',
+				'path' => [ 'link', 'destination' ],
+				'nestedPath' => [ 'group' ],
+				'value' => 'action',
+				'newValue' => [
+					'$$type' => 'string',
+					'value' => 'button',
+				],
+			] )->where( [
 				'operator' => 'not_exist',
 				'path' => [ 'link', 'destination' ],
 				'newValue' => [
 					'$$type' => 'string',
 					'value' => 'a',
 				],
-			] )
-			->get();
+			] )->get();
 
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tag' => String_Prop_Type::make()
-				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a' ] )
+				->enum( [ 'div', 'header', 'section', 'article', 'aside', 'footer', 'a', 'button' ] )
 				->default( 'div' )
 				->set_dependencies( $tag_dependencies ),
 			'link' => Link_Prop_Type::make(),
@@ -164,7 +177,8 @@ class Div_Block extends Atomic_Element_Base {
 		}
 
 		if ( ! empty( $settings['link']['href'] ) ) {
-			$attributes = array_merge( $attributes, $settings['link'] );
+			$link_attributes = $this->get_link_attributes( $settings['link'] );
+			$attributes = array_merge( $attributes, $link_attributes );
 		}
 
 		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
