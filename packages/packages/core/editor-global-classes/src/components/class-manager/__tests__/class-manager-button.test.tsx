@@ -29,10 +29,6 @@ import { usePanelActions } from '../class-manager-panel';
 describe( 'ClassManagerButton', () => {
 	const unsavedChangesMessage = 'You have unsaved changes';
 
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'should navigate to the panel on click when the document is pristine', () => {
 		// Arrange.
 		const openPanel = jest.fn();
