@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { createDOMElement, createMockDocument, renderWithStore } from 'test-utils';
+import { createDOMElement, createMockDocument, dispatchCommandAfter, renderWithStore } from 'test-utils';
 import { getV1DocumentsManager, type V1Document, type V1DocumentsManager } from '@elementor/editor-documents';
-import { __privateListenTo, __privateRunCommand } from '@elementor/editor-v1-adapters';
+import { __privateRunCommand } from '@elementor/editor-v1-adapters';
 import { __createStore, __registerSlice as registerSlice, type SliceState, type Store } from '@elementor/store';
 import { act, fireEvent, screen } from '@testing-library/react';
 
 import { apiClient } from '../../../api';
-import { selectLoadIsPending, slice } from '../../../store/store';
+import { slice } from '../../../store/store';
 import { COMPONENT_DOCUMENT_TYPE } from '../../consts';
 import { EditComponent } from '../edit-component';
 
@@ -21,18 +21,11 @@ jest.mock( '../component-modal', () => ( {
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
 	__privateRunCommand: jest.fn(),
-	__privateListenTo: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/editor-documents', () => ( {
 	...jest.requireActual( '@elementor/editor-documents' ),
 	getV1DocumentsManager: jest.fn(),
-} ) );
-
-jest.mock( '../../../store/store', () => ( {
-	...jest.requireActual( '../../../store/store' ),
-	selectComponentsObject: jest.fn(),
-	selectLoadIsPending: jest.fn(),
 } ) );
 
 jest.mock( '../../../api' );
@@ -50,7 +43,6 @@ const MOCK_POST_DATA = {
 describe( '<EditComponent />', () => {
 	let store: Store< SliceState< typeof slice > >;
 	let editedDocument: V1Document;
-	let openCallback: () => void;
 	const switchDocumentCallback = jest.fn();
 
 	beforeEach( () => {
@@ -76,28 +68,11 @@ describe( '<EditComponent />', () => {
 			updateCurrentDocument();
 		} );
 
-		jest.mocked( __privateListenTo ).mockImplementation( ( event, callback ) => {
-			event = Array.isArray( event ) ? event[ 0 ] : event;
-			if ( event.type === 'command' && event.name === 'editor/documents/open' ) {
-				openCallback = callback as () => void;
-			}
-
-			return () => {};
-		} );
-
 		jest.mocked( __privateRunCommand ).mockImplementation( async ( command, args ) => {
-			if ( command === 'editor/documents/open' ) {
-				openCallback?.();
-
-				return;
-			}
-
 			if ( command === 'editor/documents/switch' ) {
 				switchDocumentCallback( args );
 			}
 		} );
-
-		jest.mocked( selectLoadIsPending ).mockReturnValue( false );
 	} );
 
 	it( 'should show the modal when a component is edited', () => {
@@ -231,6 +206,6 @@ function mockDocument( id: number, isComponent: boolean = false ) {
 
 function updateCurrentDocument() {
 	act( () => {
-		__privateRunCommand( 'editor/documents/open' );
+		dispatchCommandAfter( 'editor/documents/open' );
 	} );
 }
