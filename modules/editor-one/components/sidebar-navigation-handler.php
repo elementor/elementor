@@ -108,7 +108,6 @@ class Sidebar_Navigation_Handler {
 			'hasPro' => Utils::has_pro(),
 			'upgradeUrl' => $promotion['url'],
 			'upgradeText' => $promotion['text'],
-			'hasThirdPartyItems' => $flyout_data['has_third_party_items'] ?? false,
 		];
 	}
 

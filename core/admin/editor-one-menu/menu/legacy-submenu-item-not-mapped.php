@@ -2,14 +2,14 @@
 
 namespace Elementor\Core\Admin\EditorOneMenu\Menu;
 
-use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Legacy_Submenu_Item_Not_Mapped implements Menu_Item_Third_Level_Interface {
+class Legacy_Submenu_Item_Not_Mapped implements Menu_Item_Interface {
 
 	private $submenu_data;
 
@@ -52,15 +52,6 @@ class Legacy_Submenu_Item_Not_Mapped implements Menu_Item_Third_Level_Interface 
 	}
 
 	public function get_group_id(): string {
-		return '';
-	}
-
-	public function get_icon(): string {
-		return $this->submenu_data[4] ?? 'settings';
-	}
-
-	public function has_children(): bool {
-		return false;
+		return Menu_Config::THIRD_PARTY_GROUP_ID;
 	}
 }
-

@@ -2,11 +2,10 @@
 
 namespace Elementor\Modules\EditorOne\Classes;
 
-use Elementor\Plugin;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
-use Elementor\Core\Admin\EditorOneMenu\Menu\Legacy_Submenu_Item_Not_Mapped;
 use Elementor\Core\Admin\EditorOneMenu\Third_Party_Menu_Item_Adapter;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -111,40 +110,12 @@ class Menu_Data_Provider {
 
 		$this->sort_items_by_priority( $items );
 
-		$this->sort_third_party_items_last( $items );
-
-		$has_third_party_items = $this->has_third_party_items( $items );
-
 		$this->cached_editor_flyout_data = [
 			'parent_slug' => Menu_Config::EDITOR_MENU_SLUG,
 			'items' => $items,
-			'has_third_party_items' => $has_third_party_items,
 		];
 
 		return $this->cached_editor_flyout_data;
-	}
-
-	private function has_third_party_items( array $items ): bool {
-		foreach ( $items as $item ) {
-			if ( ! empty( $item['is_third_party'] ) ) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	private function sort_third_party_items_last( array &$items ): void {
-		usort( $items, function ( array $a, array $b ): int {
-			$a_is_third_party = ! empty( $a['is_third_party'] ) ? 1 : 0;
-			$b_is_third_party = ! empty( $b['is_third_party'] ) ? 1 : 0;
-
-			if ( $a_is_third_party !== $b_is_third_party ) {
-				return $a_is_third_party - $b_is_third_party;
-			}
-
-			return ( $a['priority'] ?? 100 ) <=> ( $b['priority'] ?? 100 );
-		} );
 	}
 
 	public function get_level4_flyout_data(): array {
@@ -290,8 +261,7 @@ class Menu_Data_Provider {
 	private function create_flyout_item_data( Menu_Item_Interface $item, string $item_slug ): array {
 		$has_children = $item->has_children();
 		$group_id = $has_children ? $item->get_group_id() : '';
-		$is_third_party = $item instanceof Legacy_Submenu_Item_Not_Mapped
-			|| $item instanceof Third_Party_Menu_Item_Adapter;
+		$is_third_party_parent = Menu_Config::THIRD_PARTY_GROUP_ID === $item->get_group_id();
 
 		return [
 			'slug' => $item_slug,
@@ -300,7 +270,7 @@ class Menu_Data_Provider {
 			'icon' => $item->get_icon(),
 			'group_id' => $group_id,
 			'priority' => $item->get_position() ?? 100,
-			'is_third_party' => $is_third_party,
+			'has_divider_before' => $is_third_party_parent,
 		];
 	}
 

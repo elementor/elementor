@@ -2,9 +2,10 @@
 
 namespace Elementor\Core\Admin\EditorOneMenu;
 
-use Elementor\Core\Admin\EditorOneMenu\Third_Party_Menu_Manager;
 use Elementor\Core\Admin\EditorOneMenu\Menu\Editor_One_Custom_Elements_Menu;
+use Elementor\Core\Admin\EditorOneMenu\Menu\Third_Party_Pages_Menu;
 use Elementor\Core\Admin\EditorOneMenu\Third_Party_Menu_Item_Adapter;
+use Elementor\Core\Admin\EditorOneMenu\Third_Party_Menu_Manager;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Interceptor;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
@@ -293,6 +294,12 @@ class Elementor_One_Menu_Manager {
 
 	public function register_third_party_api_items(): void {
 		$third_party_manager = Third_Party_Menu_Manager::instance();
+
+		if ( ! $third_party_manager->has_items() ) {
+			return;
+		}
+
+		$this->menu_data_provider->register_menu( new Third_Party_Pages_Menu() );
 
 		foreach ( $third_party_manager->get_all_sorted() as $item_data ) {
 			$item = $item_data['item'];

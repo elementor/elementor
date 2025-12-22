@@ -2,14 +2,15 @@
 
 namespace Elementor\Core\Admin\EditorOneMenu;
 
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Third_Party_Menu_Item;
-use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Third_Party_Menu_Item_Adapter implements Menu_Item_Third_Level_Interface {
+class Third_Party_Menu_Item_Adapter implements Menu_Item_Interface {
 
 	private Third_Party_Menu_Item $third_party_item;
 
@@ -42,15 +43,7 @@ class Third_Party_Menu_Item_Adapter implements Menu_Item_Third_Level_Interface {
 	}
 
 	public function get_group_id(): string {
-		return '';
-	}
-
-	public function get_icon(): string {
-		return 'settings';
-	}
-
-	public function has_children(): bool {
-		return false;
+		return Menu_Config::THIRD_PARTY_GROUP_ID;
 	}
 
 	public function get_page_title(): string {
@@ -65,4 +58,3 @@ class Third_Party_Menu_Item_Adapter implements Menu_Item_Third_Level_Interface {
 		return $this->third_party_item->get_owner();
 	}
 }
-
