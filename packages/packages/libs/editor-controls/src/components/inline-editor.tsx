@@ -44,10 +44,10 @@ const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void
 	}, dependencies );
 };
 
-const calcSelectionCenterRect = (
+const calcSelectionCenter = (
 	view: EditorView,
-	container: DOMRect | undefined
-): DOMRect | null => {
+	container: { left: number; top: number } | undefined
+): { left: number; top: number } | null => {
 	if ( ! container ) {
 		return null;
 	}
@@ -56,10 +56,10 @@ const calcSelectionCenterRect = (
 	const start = view.coordsAtPos( from );
 	const end = view.coordsAtPos( to );
 
-	const centerX = ( start.left + end.left ) / 2 - container.left;
-	const topY = Math.min( start.top, end.top ) - container.top;
+	const left = ( start.left + end.left ) / 2 - container.left;
+	const top = Math.min( start.top, end.top ) - container.top;
 
-	return new DOMRect( centerX, topY, 0, 0 );
+	return { left, top };
 };
 
 export const InlineEditor = React.forwardRef(
@@ -77,11 +77,11 @@ export const InlineEditor = React.forwardRef(
 		}: InlineEditorProps,
 		ref
 	) => {
-		const containerRef = React.useRef< HTMLDivElement >( null );
-		const popupState = usePopupState( { variant: 'popover', disableAutoFocus: true } );
-		const [ hasSelectedContent, setHasSelectedContent ] = React.useState( false );
-		const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
-		const [ selectionRect, setSelectionRect ] = React.useState< DOMRect | null >( null );
+	const containerRef = React.useRef< HTMLDivElement >( null );
+	const popupState = usePopupState( { variant: 'popover', disableAutoFocus: true } );
+	const [ hasSelectedContent, setHasSelectedContent ] = React.useState( false );
+	const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
+	const [ selectionRect, setSelectionRect ] = React.useState< { left: number; top: number } | null >( null );
 
 	const onSelectionEnd = ( view: EditorView ) => {
 		const hasSelection = ! view.state.selection.empty;
@@ -89,7 +89,7 @@ export const InlineEditor = React.forwardRef(
 
 		if ( hasSelection ) {
 			const container = containerRef.current?.getBoundingClientRect();
-			setSelectionRect( calcSelectionCenterRect( view, container ) );
+			setSelectionRect( calcSelectionCenter( view, container ) );
 		} else {
 			setSelectionRect( null );
 		}
