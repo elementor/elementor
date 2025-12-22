@@ -158,8 +158,8 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		return (
 			<ThemeProvider>
 				<Box ref={ wrapperRef }>
-					{ isWrapperRendered && !! wrapperRef.current && (
-						<OutlineOverlay element={ wrapperRef.current } id={ this.id } isSelected />
+					{ isWrapperRendered && (
+						<OutlineOverlay element={ wrapperRef.current as HTMLDivElement } id={ this.id } isSelected />
 					) }
 					<InlineEditor
 						attributes={ {
