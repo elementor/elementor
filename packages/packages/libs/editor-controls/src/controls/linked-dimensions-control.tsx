@@ -42,7 +42,7 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 			return false;
 		}
 
-		if ( dimensionsPropTypeUtil.isValid( masterPlaceholder ) ) {
+		if ( ! masterValue && dimensionsPropTypeUtil.isValid( masterPlaceholder ) ) {
 			return false;
 		}
 
