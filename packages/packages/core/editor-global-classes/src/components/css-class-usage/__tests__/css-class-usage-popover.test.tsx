@@ -36,10 +36,6 @@ jest.mocked( PopoverMenuList ).mockImplementation( ( { items, menuItemContentTem
 } );
 
 describe( 'CssClassUsagePopover', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'should display correct header with title and total count', () => {
 		// Arrange.
 		jest.mocked( useCssClassUsageByID ).mockReturnValue( {
