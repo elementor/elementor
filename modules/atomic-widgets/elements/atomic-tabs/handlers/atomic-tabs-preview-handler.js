@@ -2,13 +2,6 @@ import { register } from '@elementor/frontend-handlers';
 import { Alpine, refreshTree } from '@elementor/alpinejs';
 import { TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE, getTabId, getIndex } from './utils';
 
-listenToChildren( [ TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE ] )
-	.render( () => {
-		console.log( 'render' );
-		console.log( element );
-		refreshTree( element );
-	} );
-
 register( {
 	elementType: 'e-tabs',
 	id: 'e-tabs-preview-handler',
@@ -30,6 +23,8 @@ register( {
 			Alpine.$data( element ).activeTab = getTabId( element.dataset.id, targetIndex );
 		}, { signal } );
 
-		refreshTree( element );
+		// Re-initialize Alpine to sync with editor DOM manipulations that bypass Alpine's reactivity.
+		listenToChildren( [ TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE ] )
+			.render( () => refreshTree( element ) );
 	},
 } );
