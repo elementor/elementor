@@ -28,6 +28,10 @@ export default function initMcpApplyGetGlobalClassUsages( reg: MCPRegistryEntry 
 
 	addTool( {
 		name: 'get-global-class-usages',
+		modelPreferences: {
+			intelligencePriority: 0.6,
+			speedPriority: 0.8,
+		},
 		description: `Retreive the usages of global-classes ACCROSS PAGES designed by Elementor editor.
 
 ## Prequisites: CRITICAL
