@@ -30,9 +30,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 		],
 		outputSchema,
 		modelPreferences: {
-			hints: [
-				{ name: 'claude-sonnet' },
-			],
+			hints: [ { name: 'claude-sonnet' } ],
 			intelligencePriority: 0.95,
 			speedPriority: 0.5,
 		},

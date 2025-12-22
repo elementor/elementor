@@ -101,9 +101,7 @@ export const initModifyGlobalClass = ( reg: MCPRegistryEntry ) => {
 			},
 		],
 		modelPreferences: {
-			hints: [
-				{ name: 'claude-sonnet' },
-			],
+			hints: [ { name: 'claude-sonnet' } ],
 			intelligencePriority: 0.85,
 			speedPriority: 0.6,
 		},
