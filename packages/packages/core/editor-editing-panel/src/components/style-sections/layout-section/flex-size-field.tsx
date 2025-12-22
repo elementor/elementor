@@ -197,8 +197,7 @@ const getActiveGroup = ( {
 		return null;
 	}
 
-	const isAutoBasis =
-		basis === null || ( typeof basis === 'object' && basis.unit === 'auto' )
+	const isAutoBasis = basis === null || ( typeof basis === 'object' && basis.unit === 'auto' );
 
 	if ( basis && ! isAutoBasis ) {
 		return 'custom';
