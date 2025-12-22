@@ -14,11 +14,11 @@ jest.mock( '../../../../../utils/tracking', () => mockTrackingModule );
 
 describe( 'ActiveFilters', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
 		setupMocks();
 	} );
 
 	it( 'should render active filters as chips', () => {
+		// Arrange
 		jest.mocked( useSearchAndFilters ).mockReturnValue( {
 			search: {} as SearchAndFilterContextType[ 'search' ],
 			filters: {
@@ -32,14 +32,17 @@ describe( 'ActiveFilters', () => {
 			},
 		} );
 
+		// Act
 		render( <ActiveFilters /> );
 
+		// Assert
 		expect( screen.getByText( 'Unused' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Empty' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'On this page' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should remove filter when clicking chip delete button', async () => {
+		// Arrange
 		jest.mocked( useSearchAndFilters ).mockReturnValue( {
 			search: {} as SearchAndFilterContextType[ 'search' ],
 			filters: {
@@ -58,8 +61,10 @@ describe( 'ActiveFilters', () => {
 		// eslint-disable-next-line testing-library/no-test-id-queries
 		const deleteIcon = screen.getByTestId( 'CancelIcon' );
 
+		// Act
 		fireEvent.click( deleteIcon );
 
+		// Assert
 		expect( mockSetFilters ).toHaveBeenCalled();
 		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
 			event: 'classManagerFilterUsed',
@@ -70,6 +75,7 @@ describe( 'ActiveFilters', () => {
 	} );
 
 	it( 'should show clear all button when filters are active', () => {
+		// Arrange
 		jest.mocked( useFilters ).mockReturnValue( [ 'empty' ] );
 		jest.mocked( useSearchAndFilters ).mockReturnValue( {
 			search: {} as SearchAndFilterContextType[ 'search' ],
@@ -84,12 +90,15 @@ describe( 'ActiveFilters', () => {
 			},
 		} );
 
+		// Act
 		render( <ActiveFilters /> );
 
+		// Assert
 		expect( screen.getByRole( 'button', { name: /clear filters/i } ) ).toBeInTheDocument();
 	} );
 
 	it( 'should track filter cleared when clicking clear all button', () => {
+		// Arrange
 		jest.mocked( useFilters ).mockReturnValue( [ 'empty' ] );
 		jest.mocked( useSearchAndFilters ).mockReturnValue( {
 			search: {} as SearchAndFilterContextType[ 'search' ],
@@ -107,8 +116,11 @@ describe( 'ActiveFilters', () => {
 		render( <ActiveFilters /> );
 
 		const clearButton = screen.getByRole( 'button', { name: /clear filters/i } );
+
+		// Act
 		fireEvent.click( clearButton );
 
+		// Assert
 		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
 			event: 'classManagerFilterCleared',
 			trigger: 'header',
@@ -116,6 +128,7 @@ describe( 'ActiveFilters', () => {
 	} );
 
 	it( 'should not show clear all button when no filters are active', () => {
+		// Arrange
 		jest.mocked( useSearchAndFilters ).mockReturnValue( {
 			search: {} as SearchAndFilterContextType[ 'search' ],
 			filters: {
@@ -129,8 +142,10 @@ describe( 'ActiveFilters', () => {
 			},
 		} );
 
+		// Act
 		render( <ActiveFilters /> );
 
+		// Assert
 		expect( screen.queryByRole( 'button', { name: /clear filters/i } ) ).not.toBeInTheDocument();
 	} );
 } );
