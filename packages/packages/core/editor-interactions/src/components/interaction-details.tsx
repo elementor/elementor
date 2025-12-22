@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { type ExtendedWindow } from '@elementor/editor-app-bar';
 import { PopoverContent } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -16,6 +15,11 @@ import { Trigger } from './controls/trigger';
 type InteractionDetailsProps = {
 	interaction: InteractionItemValue;
 	onChange: ( interaction: InteractionItemValue ) => void;
+};
+
+// Temporary until pro control implemented
+type WindowWithElementorPro = Window & {
+	elementorPro?: unknown;
 };
 
 const DEFAULT_VALUES = {
@@ -39,8 +43,8 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 
 	const ReplayControl = getInteractionsControl( 'replay' )?.component ?? null;
 	const effectiveDirection = effect === 'slide' && ! direction ? 'top' : direction;
-	// Until pro control implemented
-	const hasPro = !! ( window as unknown as ExtendedWindow ).elementorPro;
+	// Temporary until pro control implemented
+	const hasPro = !! ( window as WindowWithElementorPro ).elementorPro;
 	const shouldShowReplay = ReplayControl && ! hasPro;
 
 	const updateInteraction = (
