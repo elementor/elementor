@@ -33,7 +33,7 @@ function InfotipCard( { ...props }: PromotionInfotipProps ) {
 	const { title, content, assetUrl, ctaUrl } = props;
 
 	return (
-		<Card elevation={ 0 } sx={ { maxWidth: '296px' } }>
+		<Card elevation={ 0 } sx={ { maxWidth: 296 } }>
 			<CardHeader title={ title } />
 			<CardMedia component="img" image={ assetUrl } alt="" sx={ { width: '100%', aspectRatio: '16 / 9' } } />
 			<CardContent>
