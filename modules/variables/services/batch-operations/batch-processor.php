@@ -11,7 +11,7 @@ class Batch_Processor {
 		'create'  => 'op_create',
 		'update'  => 'op_update',
 		'delete'  => 'op_delete',
-		'restore' => 'op_restore', // We don't have restore in the manager in the mean time
+		'restore' => 'op_restore',
 	];
 
 	/**

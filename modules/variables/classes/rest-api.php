@@ -153,6 +153,12 @@ class Rest_Api {
 					'validate_callback' => [ $this, 'is_valid_variable_value' ],
 					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
+				'type' => [
+					'required' => false,
+					'type' => 'string',
+					'validate_callback' => [ $this, 'is_valid_variable_type' ],
+					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
+				],
 			],
 		] );
 
@@ -176,6 +182,7 @@ class Rest_Api {
 	}
 
 	public function trim_and_sanitize_text_field( $value ) {
+
 		return trim( sanitize_text_field( $value ) );
 	}
 

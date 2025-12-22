@@ -277,10 +277,10 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'get_json_meta' )->
-			willReturn( [
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
 				'data' => [
 					'color-1' => [
 						'type' => Color_Variable_Prop_Type::get_key(),
@@ -324,10 +324,10 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'get_json_meta' )->
-			willReturn( null );
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( null );
 
 		// Act
 		$request = new WP_REST_Request( 'DELETE', '/elementor/v1/variables/delete' );
@@ -349,10 +349,10 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'get_json_meta' )->
-			willReturn( [
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
 				'data' => [
 					'color-1' => [
 						'type' => Color_Variable_Prop_Type::get_key(),
@@ -374,6 +374,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/restore' );
 		$request->set_body_params( [
 			'id' => 'color-1',
+			'label' => 'Primary Color',
 		] );
 
 		$response = $this->rest_api->restore_variable( $request );
@@ -533,6 +534,42 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( '#202020', $response_data['data']['variable']['value'] );
 		$this->assertArrayNotHasKey( 'deleted', $response_data['data']['variable'] );
 		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
+	}
+
+	public function test_restore_variable__switches_non_size_to_custom_size_throws_exception() {
+		// Arrange
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
+				'data' => [
+					'size-2' => [
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'Normal',
+						'value' => '#ffffff',
+						'deleted_at' => '2021-01-01 00:00:00',
+					],
+				],
+				'watermark' => 15,
+			] );
+
+		// Act
+		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/restore' );
+		$request->set_body_params( [
+			'id' => 'size-2',
+			'type' => Size_Variable_Prop_Type::get_key(),
+			'value' => '20px',
+		] );
+
+		$response = $this->rest_api->restore_variable( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+
+		$response_data = $response->get_data();
+
+		$this->assertEquals( 'type_mismatch', $response_data['code'] );
+		$this->assertEquals( 'Type transition from &#039;global-color-variable&#039; to &#039;global-size-variable&#039; is not allowed. Only &#039;global-custom-size-variable&#039; and &#039;global-size-variable&#039; can be switched.', $response_data['message'] );
 	}
 
 	public function test_restore_variable__with_overrides_and_duplicated_label__results_in_bad_request() {
