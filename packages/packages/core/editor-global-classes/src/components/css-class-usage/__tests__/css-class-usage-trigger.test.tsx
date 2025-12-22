@@ -20,6 +20,9 @@ describe( 'CssClassUsageTrigger', () => {
 		// Act.
 		render( <CssClassUsageTrigger id="css-id" onClick={ jest.fn() } /> );
 
+		fireEvent.mouseOver( screen.getByRole( 'button' ) );
+		expect( await screen.findByText( 'This class isn’t being used yet.' ) ).toBeInTheDocument();
+
 		const button = screen.getByRole( 'button' );
 		fireEvent.mouseEnter( button );
 
