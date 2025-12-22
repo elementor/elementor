@@ -67,7 +67,9 @@ export function OverridablePropForm( { onSubmit, groups, currentValue }: Props )
 							size={ SIZE }
 							fullWidth
 							value={ group ?? null }
-							onChange={ setGroup }
+							onChange={ ( e: React.ChangeEvent< HTMLSelectElement > ) =>
+								setGroup( e.target.value as string | null )
+							}
 							displayEmpty
 							renderValue={ ( selectedValue: string | null ) => {
 								if ( ! selectedValue || selectedValue === '' ) {

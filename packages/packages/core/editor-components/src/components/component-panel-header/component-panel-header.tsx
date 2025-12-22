@@ -5,7 +5,7 @@ import { Box, Divider, IconButton, Stack, Tooltip, Typography } from '@elementor
 import { __ } from '@wordpress/i18n';
 
 import { useNavigateBack } from '../../hooks/use-navigate-back';
-import { selectCurrentComponentId } from '../../store/store';
+import { useCurrentComponentId } from '../../store/store';
 import { usePanelActions } from '../component-properties-panel/component-properties-panel-panel';
 import { ComponentsBadge } from './component-badge';
 import { useOverridableProps } from './use-overridable-props';

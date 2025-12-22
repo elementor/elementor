@@ -1,129 +1,84 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
-import { ComponentPropListIcon, PlusIcon, XIcon } from '@elementor/icons';
-import { __getState as getState, __useDispatch as useDispatch, __useSelector as useSelector } from '@elementor/store';
-import {
-	Divider,
-	IconButton,
-	Stack,
-	Tooltip,
-	UnstableSortableItem,
-	type UnstableSortableItemRenderProps,
-	UnstableSortableProvider,
-} from '@elementor/ui';
-import { generateUniqueId } from '@elementor/utils';
+import { ComponentPropListIcon, FolderIcon, XIcon } from '@elementor/icons';
+import { Divider, IconButton, List, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { selectCurrentComponentId, selectOverridableProps, slice } from '../../store/store';
-import { type OverridablePropsGroup } from '../../types';
+import { useOverridableProps } from '../../components/component-panel-header/use-overridable-props';
+import { addOverridableGroup } from '../../store/actions/add-overridable-group';
+import { deleteOverridableProp } from '../../store/actions/delete-overridable-prop';
+import { reorderGroupProps } from '../../store/actions/reorder-group-props';
+import { reorderOverridableGroups } from '../../store/actions/reorder-overridable-groups';
+import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
+import { useCurrentComponentId } from '../../store/store';
+import { NewGroupInput } from './new-group-input';
 import { PropertiesGroup } from './properties-group';
+import { SortableItem, SortableProvider } from './sortable';
 
-export function ComponentPropertiesPanel( { onClose }: { onClose: () => void } ) {
-	const dispatch = useDispatch();
-	const currentComponentId = useSelector( selectCurrentComponentId );
+type Props = {
+	onClose: () => void;
+};
 
-	const overridableProps = currentComponentId ? selectOverridableProps( getState(), currentComponentId ) : null;
-
-	const [ groupsOrder, setGroupsOrder ] = useState< string[] >( [] );
-	const [ editingGroupId, setEditingGroupId ] = useState< string | null >( null );
-	const [ draftGroups, setDraftGroups ] = useState< Record< string, OverridablePropsGroup > >( {} );
-
-	const handleClose = () => {
-		onClose();
-	};
+export function ComponentPropertiesPanel( { onClose }: Props ) {
+	const currentComponentId = useCurrentComponentId();
+	const overridableProps = useOverridableProps( currentComponentId );
+	const [ isAddingGroup, setIsAddingGroup ] = useState( false );
 
 	if ( ! currentComponentId || ! overridableProps ) {
 		return null;
 	}
 
-	const orderedGroupIds = groupsOrder.length > 0 ? groupsOrder : overridableProps.groups.order;
-
-	const groupsItems = {
-		...overridableProps.groups.items,
-		...draftGroups,
-	};
-
-	const groups = orderedGroupIds
-		.map( ( groupId ) => groupsItems[ groupId ] ?? null )
+	const groupIds = overridableProps.groups.order;
+	const groups = groupIds
+		.map( ( groupId ) => overridableProps.groups.items[ groupId ] ?? null )
 		.filter( ( group ): group is NonNullable< typeof group > => group !== null );
 
-	const handleReorder = ( newOrder: string[] ) => {
-		setGroupsOrder( newOrder );
+	const handleAddGroupClick = () => {
+		setIsAddingGroup( true );
 	};
 
-	const validateGroupLabel = ( groupId: string, label: string ): string | null => {
-		const trimmedLabel = label.trim();
-
-		if ( trimmedLabel.length === 0 ) {
-			return __( 'Group name is required', 'elementor' );
-		}
-
-		const otherLabels = Object.entries( groupsItems )
-			.filter( ( [ id ] ) => id !== groupId )
-			.map( ( [ , group ] ) => group.label );
-
-		if ( otherLabels.includes( trimmedLabel ) ) {
-			return __( 'Group name must be unique', 'elementor' );
-		}
-
-		return null;
+	const handleCancelAddGroup = () => {
+		setIsAddingGroup( false );
 	};
 
-	const handleCreateGroup = () => {
-		const groupId = generateUniqueId( 'group' );
+	const handleSaveGroup = ( label: string ) => {
+		const newGroupId = `group-${ Date.now() }`;
+		addOverridableGroup( { componentId: currentComponentId, groupId: newGroupId, label } );
+		setDocumentModifiedStatus( true );
+		setIsAddingGroup( false );
+	};
 
-		setDraftGroups( ( prev ) => ( {
-			...prev,
-			[ groupId ]: {
-				id: groupId,
-				label: '',
-				props: [],
-			},
-		} ) );
+	const handleGroupsReorder = ( newOrder: string[] ) => {
+		reorderOverridableGroups( { componentId: currentComponentId, newOrder } );
+		setDocumentModifiedStatus( true );
+	};
 
-		setGroupsOrder( ( prev ) => {
-			const base = prev.length > 0 ? prev : orderedGroupIds;
+	const handlePropsReorder = ( groupId: string, newPropsOrder: string[] ) => {
+		reorderGroupProps( { componentId: currentComponentId, groupId, newPropsOrder } );
+		setDocumentModifiedStatus( true );
+	};
 
-			return base.includes( groupId ) ? base : [ groupId, ...base ];
+	const handlePropertyDelete = ( propKey: string ) => {
+		deleteOverridableProp( { componentId: currentComponentId, propKey } );
+		setDocumentModifiedStatus( true );
+	};
+
+	const handlePropertyUpdate = ( propKey: string, data: { label: string; group: string | null } ) => {
+		updateOverridableProp( {
+			componentId: currentComponentId,
+			propKey,
+			label: data.label,
+			groupId: data.group,
 		} );
-
-		setEditingGroupId( groupId );
+		setDocumentModifiedStatus( true );
 	};
 
-	const handleRenameDraftGroup = ( groupId: string, label: string ) => {
-		const trimmedLabel = label.trim();
-		const baseOrder = groupsOrder.length > 0 ? groupsOrder : overridableProps.groups.order;
-		const order = baseOrder.includes( groupId ) ? baseOrder : [ ...baseOrder, groupId ];
-
-		dispatch(
-			slice.actions.setOverridableProps( {
-				componentId: currentComponentId,
-				overridableProps: {
-					...overridableProps,
-					groups: {
-						items: {
-							...overridableProps.groups.items,
-							[ groupId ]: {
-								id: groupId,
-								label: trimmedLabel,
-								props: [],
-							},
-						},
-						order,
-					},
-				},
-			} )
-		);
-
-		setDraftGroups( ( prev ) => {
-			const { [ groupId ]: _removed, ...rest } = prev;
-
-			return rest;
-		} );
-
-		setEditingGroupId( null );
-	};
+	const allGroupsForSelect = groups.map( ( group ) => ( {
+		value: group.id,
+		label: group.label,
+	} ) );
 
 	return (
 		<>
@@ -132,58 +87,50 @@ export function ComponentPropertiesPanel( { onClose }: { onClose: () => void } )
 					<ComponentPropListIcon fontSize="tiny" />
 					<PanelHeaderTitle>{ __( 'Component properties', 'elementor' ) }</PanelHeaderTitle>
 				</Stack>
-				<Stack direction="row" alignItems="center" gap={ 0.5 }>
-					<Tooltip title={ __( 'Add group', 'elementor' ) }>
-						<IconButton
-							size="tiny"
-							aria-label={ __( 'Add group', 'elementor' ) }
-							onClick={ handleCreateGroup }
-						>
-							<PlusIcon fontSize="tiny" />
-						</IconButton>
-					</Tooltip>
-					<Tooltip title={ __( 'Close panel', 'elementor' ) }>
-						<IconButton size="tiny" aria-label={ __( 'Close panel', 'elementor' ) } onClick={ handleClose }>
-							<XIcon fontSize="tiny" />
-						</IconButton>
-					</Tooltip>
-				</Stack>
+				<Tooltip title={ __( 'Add new group', 'elementor' ) }>
+					<IconButton
+						size="tiny"
+						aria-label={ __( 'Add new group', 'elementor' ) }
+						onClick={ handleAddGroupClick }
+					>
+						<FolderIcon fontSize="tiny" />
+					</IconButton>
+				</Tooltip>
+				<Tooltip title={ __( 'Close panel', 'elementor' ) }>
+					<IconButton size="tiny" aria-label={ __( 'Close panel', 'elementor' ) } onClick={ onClose }>
+						<XIcon fontSize="tiny" />
+					</IconButton>
+				</Tooltip>
 			</PanelHeader>
 			<Divider />
 			<PanelBody>
-				<UnstableSortableProvider
-					value={ orderedGroupIds }
-					onChange={ handleReorder }
-					variant="static"
-					restrictAxis
-				>
-					{ groups.map( ( group ) => (
-						<UnstableSortableItem
-							key={ group.id }
-							id={ group.id }
-							render={ ( { itemProps, itemStyle, triggerStyle }: UnstableSortableItemRenderProps ) => (
-								<div { ...itemProps } style={ { ...itemStyle, ...triggerStyle } }>
+				<List sx={ { p: 2, display: 'flex', flexDirection: 'column', gap: 2 } }>
+					{ isAddingGroup && (
+						<NewGroupInput
+							existingGroups={ overridableProps.groups.items }
+							onSave={ handleSaveGroup }
+							onCancel={ handleCancelAddGroup }
+						/>
+					) }
+					<SortableProvider value={ groupIds } onChange={ handleGroupsReorder }>
+						{ groups.map( ( group ) => (
+							<SortableItem key={ group.id } id={ group.id }>
+								{ ( { triggerProps, triggerStyle, isDragPlaceholder } ) => (
 									<PropertiesGroup
 										group={ group }
 										props={ overridableProps.props }
-										allowEmpty={ group.id in draftGroups }
-										isEditing={ editingGroupId === group.id }
-										onRename={
-											group.id in draftGroups
-												? ( label: string ) => handleRenameDraftGroup( group.id, label )
-												: undefined
-										}
-										validateLabel={
-											group.id in draftGroups
-												? ( label: string ) => validateGroupLabel( group.id, label )
-												: undefined
-										}
+										allGroups={ allGroupsForSelect }
+										sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
+										isDragPlaceholder={ isDragPlaceholder }
+										onPropsReorder={ ( newOrder ) => handlePropsReorder( group.id, newOrder ) }
+										onPropertyDelete={ handlePropertyDelete }
+										onPropertyUpdate={ handlePropertyUpdate }
 									/>
-								</div>
-							) }
-						/>
-					) ) }
-				</UnstableSortableProvider>
+								) }
+							</SortableItem>
+						) ) }
+					</SortableProvider>
+				</List>
 			</PanelBody>
 		</>
 	);

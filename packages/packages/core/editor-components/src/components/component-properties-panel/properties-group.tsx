@@ -1,255 +1,84 @@
 import * as React from 'react';
-import { useEffect, useId, useRef } from 'react';
-import { useStateByElement } from '@elementor/editor-editing-panel';
-import { getWidgetsCache } from '@elementor/editor-elements';
-import { CollapseIcon, EditableField, useEditable, WarningInfotip } from '@elementor/editor-ui';
 import { DotsVerticalIcon } from '@elementor/icons';
-import {
-	Box,
-	Collapse,
-	Divider,
-	IconButton,
-	ListItemButton,
-	ListItemText,
-	Stack,
-	type Theme,
-	Typography,
-} from '@elementor/ui';
+import { Box, IconButton, List, Stack, Typography } from '@elementor/ui';
 
 import { type OverridableProp, type OverridablePropsGroup } from '../../types';
+import { PropertyItem } from './property-item';
+import { SortableItem, SortableProvider, SortableTrigger, type SortableTriggerProps } from './sortable';
 
 type Props = {
 	group: OverridablePropsGroup;
 	props: Record< string, OverridableProp >;
-	allowEmpty?: boolean;
-	isEditing?: boolean;
-	onRename?: ( label: string ) => void;
-	validateLabel?: ( label: string ) => string | null;
+	allGroups: { value: string; label: string }[];
+	sortableTriggerProps: SortableTriggerProps;
+	isDragPlaceholder?: boolean;
+	onPropsReorder: ( newOrder: string[] ) => void;
+	onPropertyDelete: ( propKey: string ) => void;
+	onPropertyUpdate: ( propKey: string, data: { label: string; group: string | null } ) => void;
 };
 
 export function PropertiesGroup( {
 	group,
 	props,
-	allowEmpty = false,
-	isEditing = false,
-	onRename,
-	validateLabel,
+	allGroups,
+	sortableTriggerProps,
+	isDragPlaceholder,
+	onPropsReorder,
+	onPropertyDelete,
+	onPropertyUpdate,
 }: Props ) {
-	const [ isOpen, setIsOpen ] = useStateByElement( group.id, false );
-
-	const handleClick = () => {
-		setIsOpen( ! isOpen );
-	};
-
-	const id = useId();
-	const labelId = `label-${ id }`;
-	const contentId = `content-${ id }`;
-
-	const title = group.label;
-	const ariaTitle = title || group.id;
-
-	const groupProps = group.props.map( ( propId ) => props[ propId ] ).filter( Boolean );
-
-	if ( groupProps.length === 0 && ! allowEmpty ) {
-		return null;
-	}
-
-	return (
-		<>
-			<ListItemButton
-				id={ labelId }
-				aria-controls={ contentId }
-				aria-label={ `${ ariaTitle } section` }
-				onClick={ isEditing ? undefined : handleClick }
-				sx={ {
-					px: 1.5,
-					py: 0.75,
-					minHeight: 27,
-					'&:hover': { backgroundColor: 'transparent' },
-				} }
-			>
-				<Stack direction="row" alignItems="center" justifyContent="space-between" flexGrow={ 1 }>
-					{ onRename && validateLabel ? (
-						<EditableGroupTitle
-							label={ title }
-							isEditing={ isEditing }
-							onRename={ onRename }
-							validateLabel={ validateLabel }
-						/>
-					) : (
-						<ListItemText
-							primary={ title }
-							primaryTypographyProps={ {
-								variant: 'body2',
-								fontWeight: 500,
-								color: 'text.primary',
-							} }
-						/>
-					) }
-					<Stack direction="row" alignItems="center" gap={ 0.5 }>
-						<IconButton
-							size="tiny"
-							onClick={ ( e: React.MouseEvent ) => {
-								e.stopPropagation();
-							} }
-							aria-label="More options"
-						>
-							<DotsVerticalIcon fontSize="tiny" />
-						</IconButton>
-						<CollapseIcon open={ isOpen } color="secondary" fontSize="tiny" />
-					</Stack>
-				</Stack>
-			</ListItemButton>
-			<Collapse id={ contentId } aria-labelledby={ labelId } in={ isOpen } timeout="auto">
-				<Stack direction="column" gap={ 0.5 } px={ 1.5 } pb={ 1 }>
-					{ groupProps.map( ( prop ) => (
-						<PropertyItem key={ prop.overrideKey } prop={ prop } />
-					) ) }
-				</Stack>
-			</Collapse>
-			<Divider />
-		</>
-	);
-}
-
-type EditableGroupTitleProps = {
-	label: string;
-	isEditing: boolean;
-	onRename: ( label: string ) => void;
-	validateLabel: ( label: string ) => string | null;
-};
-
-function EditableGroupTitle( { label, isEditing, onRename, validateLabel }: EditableGroupTitleProps ) {
-	const itemRef = useRef< HTMLElement >( null );
-	const {
-		ref: editableRef,
-		openEditMode,
-		isEditing: isEditingInternal,
-		error,
-		getProps: getEditableProps,
-	} = useEditable( {
-		value: label,
-		onSubmit: ( newLabel: string ) => onRename( newLabel ),
-		validation: validateLabel,
-	} );
-
-	useEffect( () => {
-		if ( isEditing ) {
-			openEditMode();
-		}
-	}, [ isEditing, openEditMode ] );
-
-	const showEditor = isEditing || isEditingInternal;
-
-	return (
-		<WarningInfotip
-			open={ Boolean( error ) }
-			text={ error ?? '' }
-			placement="bottom"
-			width={ itemRef.current?.getBoundingClientRect().width }
-			offset={ [ 0, -15 ] }
-		>
-			<TitleIndicator ref={ itemRef } isActive={ showEditor } isError={ Boolean( error ) }>
-				{ showEditor ? (
-					<EditableField
-						ref={ editableRef }
-						as={ Typography }
-						variant="body2"
-						{ ...getEditableProps() }
-						onClick={ ( e: React.MouseEvent ) => e.stopPropagation() }
-					/>
-				) : (
-					<Typography
-						variant="body2"
-						sx={ { color: 'text.primary', fontWeight: 500, flexGrow: 1, minWidth: 0 } }
-						noWrap
-						onDoubleClick={ ( e: React.MouseEvent ) => {
-							e.stopPropagation();
-							openEditMode();
-						} }
-					>
-						{ label }
-					</Typography>
-				) }
-			</TitleIndicator>
-		</WarningInfotip>
-	);
-}
-
-const TitleIndicator = React.forwardRef<
-	HTMLElement,
-	React.PropsWithChildren< { isActive: boolean; isError: boolean } >
->( function TitleIndicator( { children, isActive, isError }, ref ) {
-	return (
-		<Box
-			ref={ ref }
-			sx={ ( theme: Theme ) => ( {
-				display: 'flex',
-				width: '100%',
-				flexGrow: 1,
-				minWidth: 0,
-				borderRadius: theme.spacing( 0.5 ),
-				border: getTitleBorder( { isActive, isError, theme } ),
-				padding: `0 ${ theme.spacing( 1 ) }`,
-			} ) }
-		>
-			{ children }
-		</Box>
-	);
-} );
-
-const getTitleBorder = ( { isActive, isError, theme }: { isActive: boolean; isError: boolean; theme: Theme } ) => {
-	if ( isError ) {
-		return `2px solid ${ theme.palette.error.main }`;
-	}
-
-	if ( isActive ) {
-		return `2px solid ${ theme.palette.secondary.main }`;
-	}
-
-	return 'none';
-};
-
-function PropertyItem( { prop }: { prop: OverridableProp } ) {
-	const elementType = prop.elType === 'widget' ? prop.widgetType : prop.elType;
-	const icon = getElementIcon( elementType );
+	const groupProps = group.props
+		.map( ( propId ) => props[ propId ] )
+		.filter( ( prop ): prop is OverridableProp => Boolean( prop ) );
 
 	return (
 		<Box
 			sx={ {
-				px: 1.25,
-				py: 0.75,
-				minHeight: 27,
-				borderRadius: 1,
-				backgroundColor: 'background.paper',
-				border: '1px solid',
-				borderColor: 'divider',
-				display: 'flex',
-				alignItems: 'center',
-				gap: 1,
-				'&:hover': {
-					backgroundColor: 'action.hover',
+				position: 'relative',
+				opacity: isDragPlaceholder ? 0.5 : 1,
+				'&:hover .sortable-trigger': {
+					visibility: 'visible',
+				},
+				'& .sortable-trigger': {
+					visibility: 'hidden',
+				},
+				'&:hover .group-menu': {
+					visibility: 'visible',
+				},
+				'& .group-menu': {
+					visibility: 'hidden',
 				},
 			} }
 		>
-			<Box sx={ { display: 'flex', alignItems: 'center', color: 'text.secondary', fontSize: '14px' } }>
-				<i className={ icon } />
-			</Box>
-			<Typography variant="body2" sx={ { color: 'text.primary', flexGrow: 1, fontSize: 12 } }>
-				{ prop.label }
-			</Typography>
+			<SortableTrigger { ...sortableTriggerProps } />
+			<Stack gap={ 1 }>
+				<Stack direction="row" alignItems="center" justifyContent="space-between">
+					<Typography variant="caption" sx={ { color: 'text.primary', fontWeight: 400, lineHeight: 1.66 } }>
+						{ group.label }
+					</Typography>
+					<IconButton className="group-menu" size="tiny" sx={ { p: 0.25 } }>
+						<DotsVerticalIcon fontSize="tiny" />
+					</IconButton>
+				</Stack>
+				<List sx={ { p: 0, display: 'flex', flexDirection: 'column', gap: 1 } }>
+					<SortableProvider value={ group.props } onChange={ onPropsReorder }>
+						{ groupProps.map( ( prop ) => (
+							<SortableItem key={ prop.overrideKey } id={ prop.overrideKey }>
+								{ ( { triggerProps, triggerStyle, isDragPlaceholder: isItemDragPlaceholder } ) => (
+									<PropertyItem
+										prop={ prop }
+										sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
+										isDragPlaceholder={ isItemDragPlaceholder }
+										groups={ allGroups }
+										onDelete={ onPropertyDelete }
+										onUpdate={ ( data ) => onPropertyUpdate( prop.overrideKey, data ) }
+									/>
+								) }
+							</SortableItem>
+						) ) }
+					</SortableProvider>
+				</List>
+			</Stack>
 		</Box>
 	);
-}
-
-function getElementIcon( elType: string ): string {
-	const widgetsCache = getWidgetsCache();
-
-	if ( ! widgetsCache ) {
-		return 'eicon-apps';
-	}
-
-	const widgetConfig = widgetsCache[ elType ];
-
-	return widgetConfig?.icon || 'eicon-apps';
 }
