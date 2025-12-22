@@ -318,7 +318,7 @@ describe( 'ClassManagerPanel', () => {
 			store
 		);
 
-		const [ firstClass ] = await screen.findAllByRole( 'listitem' );
+		const [ firstClass ] = screen.getAllByRole( 'listitem' );
 
 		fireEvent.click( within( firstClass ).getByRole( 'button', { name: 'More actions' } ) );
 
@@ -345,19 +345,16 @@ describe( 'ClassManagerPanel', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Save changes' } ) );
 
 		// Assert.
-		await waitFor(
-			() => {
-				expect( invalidateCache ).toHaveBeenCalled();
-			},
-			{ timeout: 10000 }
-		);
+		await waitFor( () => {
+			expect( invalidateCache ).toHaveBeenCalled();
+		} );
 
 		expect( __privateRunCommand ).toHaveBeenCalledWith( 'editor/documents/switch', {
 			id: 1,
 			shouldScroll: false,
 			shouldNavigateToDefaultRoute: false,
 		} );
-	}, 15000 );
+	} );
 
 	it( 'should not reload the current if the changes did not contain any deletions', async () => {
 		// Act.
@@ -370,7 +367,7 @@ describe( 'ClassManagerPanel', () => {
 			store
 		);
 
-		const [ firstClass ] = await screen.findAllByRole( 'listitem' );
+		const [ firstClass ] = screen.getAllByRole( 'listitem' );
 
 		fireEvent.click( within( firstClass ).getByRole( 'button', { name: 'More actions' } ) );
 
@@ -407,13 +404,10 @@ describe( 'ClassManagerPanel', () => {
 		fireEvent.click( screen.getByRole( 'button', { name: 'Save changes' } ) );
 
 		// Assert.
-		await waitFor(
-			() => {
-				expect( __privateRunCommand ).not.toHaveBeenCalled();
-			},
-			{ timeout: 10000 }
-		);
-	}, 15000 );
+		await waitFor( () => {
+			expect( __privateRunCommand ).not.toHaveBeenCalled();
+		} );
+	} );
 
 	it( 'should restore to initial state on clicking "discard"', () => {
 		// Arrange.
