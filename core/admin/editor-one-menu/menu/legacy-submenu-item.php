@@ -66,4 +66,3 @@ class Legacy_Submenu_Item implements Menu_Item_Third_Level_Interface {
 		return false;
 	}
 }
-

@@ -22,4 +22,3 @@ interface Menu_Item_Interface {
 
 	public function get_group_id();
 }
-

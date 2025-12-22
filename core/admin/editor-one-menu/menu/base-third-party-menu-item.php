@@ -23,4 +23,3 @@ abstract class Base_Third_Party_Menu_Item implements Third_Party_Menu_Item {
 
 	abstract public function get_owner(): string;
 }
-

@@ -31,4 +31,3 @@ abstract class Abstract_Level4_Menu_Item implements Menu_Item_Interface {
 
 	abstract public function get_group_id();
 }
-

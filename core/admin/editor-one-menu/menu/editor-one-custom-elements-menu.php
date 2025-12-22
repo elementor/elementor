@@ -47,4 +47,3 @@ class Editor_One_Custom_Elements_Menu implements Menu_Item_Third_Level_Interface
 		return true;
 	}
 }
-
