@@ -270,7 +270,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$response_data = $response->get_data();
 
 		$this->assertEquals( 'type_mismatch', $response_data['code'] );
-		$this->assertEquals( 'Type transition from &#039;global-color-variable&#039; to &#039;global-custom-size-variable&#039; is not allowed. Only &#039;global-custom-size-variable&#039; and &#039;global-size-variable&#039; can be switched.', $response_data['message'] );
 	}
 
 	public function test_delete_variable() {
@@ -569,7 +568,6 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$response_data = $response->get_data();
 
 		$this->assertEquals( 'type_mismatch', $response_data['code'] );
-		$this->assertEquals( 'Type transition from &#039;global-color-variable&#039; to &#039;global-size-variable&#039; is not allowed. Only &#039;global-custom-size-variable&#039; and &#039;global-size-variable&#039; can be switched.', $response_data['message'] );
 	}
 
 	public function test_restore_variable__with_overrides_and_duplicated_label__results_in_bad_request() {

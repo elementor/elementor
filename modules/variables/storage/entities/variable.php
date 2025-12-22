@@ -122,11 +122,7 @@ class Variable {
 			in_array( $target_type, $allowed_types, true );
 
 		if ( ! $is_valid_transition ) {
-			throw new Type_Mismatch(
-				esc_html(
-					"Type transition from '$current_type' to '$target_type' is not allowed. Only '$custom_size_prop_type' and '$size_prop_type' can be switched.",
-				)
-			);
+			throw new Type_Mismatch( "Type change is forbidden" );
 		}
 
 		$this->set_type( $data['type'] );
