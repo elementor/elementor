@@ -1,11 +1,5 @@
-import { jest } from '@jest/globals';
+import { createMockTrackingModule, mockTracking } from 'test-utils';
 
-export const mockTrackGlobalClasses = jest.fn( async ( payload: unknown & { runAction: () => void } ) => {
-	if ( payload?.runAction ) {
-		payload.runAction();
-	}
-} );
+export const mockTrackGlobalClasses = mockTracking;
 
-export const mockTrackingModule = {
-	trackGlobalClasses: mockTrackGlobalClasses,
-};
+export const mockTrackingModule = createMockTrackingModule( 'trackGlobalClasses' );
