@@ -33,7 +33,7 @@ export default defineConfig( {
 	workers: process.env.CI ? 2 : 1,
 	fullyParallel: false,
 	reporter: process.env.CI
-		? [ [ 'github' ], [ 'list' ] ]
+		? [ [ 'github' ], [ 'list' ], [ 'allure-playwright', { suiteTitle: false } ] ]
 		: [ [ 'list' ] ],
 	use: {
 		launchOptions: {

@@ -22,6 +22,7 @@ import { __ } from '@wordpress/i18n';
 
 import { componentInstanceTransformer } from './component-instance-transformer';
 import { componentOverridableTransformer } from './component-overridable-transformer';
+import { componentOverrideTransformer } from './component-override-transformer';
 import { ComponentPanelHeader } from './components/component-panel-header/component-panel-header';
 import { panel as componentPropertiesPanel } from './components/component-properties-panel/component-properties-panel-panel';
 import { Components } from './components/components-tab/components';
@@ -122,6 +123,7 @@ export function init() {
 
 	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );
 	settingsTransformersRegistry.register( 'overridable', componentOverridableTransformer );
+	settingsTransformersRegistry.register( 'override', componentOverrideTransformer );
 
 	initMcp();
 }
