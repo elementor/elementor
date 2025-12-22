@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { getV1DocumentsManager } from '@elementor/editor-documents';
 import { ArrowLeftIcon, ComponentsFilledIcon } from '@elementor/icons';
-import { __useSelector as useSelector } from '@elementor/store';
 import { Box, Divider, IconButton, Stack, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useNavigateBack } from '../../hooks/use-navigate-back';
 import { selectCurrentComponentId } from '../../store/store';
 import { ComponentIntroduction } from '../components-tab/component-introdaction';
+import { useCurrentComponentId } from '../../store/store';
 import { ComponentsBadge } from './component-badge';
 import { useOverridableProps } from './use-overridable-props';
 
