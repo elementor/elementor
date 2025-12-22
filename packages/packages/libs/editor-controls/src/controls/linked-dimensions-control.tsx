@@ -23,7 +23,7 @@ type Props = {
 export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOptions, min }: Props ) => {
 	const gridRowRefs: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ) ];
 
-	const { disabled: sizeDisabled, placeholder: sizePlaceholder } = useBoundProp( sizePropTypeUtil );
+	const { disabled: sizeDisabled } = useBoundProp( sizePropTypeUtil );
 
 	const {
 		value: dimensionsValue,
