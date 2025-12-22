@@ -4,6 +4,7 @@ import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/m
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
+import { type AngieModelPreferences } from './angie-annotations';
 import { getSDK } from './get-sdk';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
 
@@ -143,6 +144,7 @@ type ToolRegistrationOptions<
 		  ) => ExpectedOutput | Promise< ExpectedOutput >;
 	isDestrcutive?: boolean;
 	requiredResources?: ResourceList;
+	modelPreferences?: AngieModelPreferences;
 };
 
 function createToolRegistrator( server: McpServer ) {
@@ -193,6 +195,10 @@ function createToolRegistrator( server: McpServer ) {
 		if ( opts.requiredResources ) {
 			annotations[ 'angie/requiredResources' ] = opts.requiredResources;
 		}
+		// TODO : Revert back once the feature is ready
+		// if ( opts.modelPreferences ) {
+		// 	annotations[ ANGIE_MODEL_PREFERENCES ] = opts.modelPreferences;
+		// }
 		server.registerTool(
 			opts.name,
 			{
