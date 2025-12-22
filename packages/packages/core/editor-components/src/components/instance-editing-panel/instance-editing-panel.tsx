@@ -4,13 +4,12 @@ import { getFieldIndicators } from '@elementor/editor-editing-panel';
 import { useSelectedElement } from '@elementor/editor-elements';
 import { PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ComponentsIcon, PencilIcon } from '@elementor/icons';
-import { __getState as getState } from '@elementor/store';
 import { IconButton, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponentInstanceSettings } from '../../hooks/use-component-instance-settings';
 import { useControlsByWidgetType } from '../../hooks/use-controls-by-widget-type';
-import { selectComponent, selectOverridableProps } from '../../store/store';
+import { useComponent, useOverridableProps } from '../../store/store';
 import { type OverridableProps, type OverridablePropsGroup } from '../../types';
 import { switchToComponent } from '../../utils/switch-to-component';
 import { EmptyState } from './empty-state';
@@ -22,8 +21,8 @@ export function InstanceEditingPanel() {
 
 	const overrides = settings?.overrides?.value;
 
-	const component = componentId ? selectComponent( getState(), componentId ) : null;
-	const overridableProps = componentId ? selectOverridableProps( getState(), componentId ) : null;
+	const component = useComponent( componentId ?? null );
+	const overridableProps = useOverridableProps( componentId ?? null );
 
 	const allTypes = useAllTypes( overridableProps ?? null );
 	const controlsByType = useControlsByWidgetType( allTypes );

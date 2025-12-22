@@ -12,3 +12,4 @@ export const componentInstancePropTypeUtil = createPropUtils(
 );
 
 export type ComponentInstancePropValue = z.infer< typeof componentInstancePropTypeUtil.schema >[ 'value' ];
+export type ComponentInstanceProp = z.infer< typeof componentInstancePropTypeUtil.schema >;

@@ -7,7 +7,12 @@ import {
 	SettingsField,
 } from '@elementor/editor-editing-panel';
 import { type Control, getWidgetsCache } from '@elementor/editor-elements';
-import { type NumberPropValue, type PropsSchema, type PropValue } from '@elementor/editor-props';
+import {
+	type NumberPropValue,
+	type PropType,
+	type PropValue,
+	type TransformablePropValue,
+} from '@elementor/editor-props';
 import { Stack } from '@elementor/ui';
 
 import { componentInstanceOverridePropTypeUtil } from '../../prop-types/component-instance-override-prop-type';
@@ -16,6 +21,7 @@ import {
 	type ComponentInstanceOverridesPropValue,
 } from '../../prop-types/component-instance-overrides-prop-type';
 import { componentInstancePropTypeUtil } from '../../prop-types/component-instance-prop-type';
+import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import { type OverridableProp } from '../../types';
 import { ControlLabel } from '../control-label';
 
@@ -37,12 +43,12 @@ function OverrideControl( { overridableProp, controls, overrides }: Props ) {
 	const { value: instanceValue, setValue: setInstanceValue } = useBoundProp( componentInstancePropTypeUtil );
 
 	const widgetPropsSchema = getWidgetsCache()?.[ overridableProp.widgetType ]?.atomic_props_schema;
-	const propType = widgetPropsSchema?.[ overridableProp.propKey ];
+	const propType = widgetPropsSchema?.[ overridableProp.propKey ] as PropType;
 
 	const propTypeSchema = createTopLevelObjectType( {
 		schema: {
 			[ overridableProp.overrideKey ]: propType,
-		} as PropsSchema,
+		},
 	} );
 
 	const componentId = ( instanceValue.component_id as NumberPropValue )?.value;
@@ -51,35 +57,55 @@ function OverrideControl( { overridableProp, controls, overrides }: Props ) {
 		throw new Error( 'Component ID is required' );
 	}
 
-	const value = {
-		[ overridableProp.overrideKey ]: overrides?.find(
-			( override ) => override.value.override_key === overridableProp.overrideKey
-		)?.value.override_value as PropValue,
-	};
+	const matchingOverride = overrides?.find(
+		( override ) => override.value.override_key === overridableProp.overrideKey
+	);
 
-	const setValue = ( newValue: Record< string, PropValue > ) => {
+	const propValue = matchingOverride ? getPropValue( matchingOverride ) : null;
+
+	const value = {
+		[ overridableProp.overrideKey ]: propValue,
+	} as Record< string, TransformablePropValue< string, unknown > >;
+
+	const setValue = ( newValue: Record< string, TransformablePropValue< string, unknown > > ) => {
 		const newOverrideValue = newValue[ overridableProp.overrideKey ];
 
 		const matchingItem = overrides?.find(
 			( override ) => override.value.override_key === overridableProp.overrideKey
 		);
 
-		const newOverride = componentInstanceOverridePropTypeUtil.create( {
-			override_key: overridableProp.overrideKey,
-			override_value: newOverrideValue,
-			schema_source: {
-				type: 'component',
-				id: componentId,
-			},
-		} );
+		const newOverridableValue = getOverrideValue( overridableProp.overrideKey, newOverrideValue, componentId );
+
+		// console.log( 'newOverridableValue', newOverridableValue );
+
+		// const newOverridableValue = componentInstanceOverridePropTypeUtil.create( {
+		// 	override_key: overridableProp.overrideKey,
+		// 	override_value: newOverrideValue,
+		// 	schema_source: {
+		// 		type: 'component',
+		// 		id: componentId,
+		// 	},
+		// } );
+
+		// const newOverridableValue = componentOverridablePropTypeUtil.create( {
+		// 	override_key: overridableProp.overrideKey,
+		// 	origin_value: componentInstanceOverridePropTypeUtil.create( {
+		// 		override_key: overridableProp.overrideKey,
+		// 		override_value: newOverrideValue,
+		// 		schema_source: {
+		// 			type: 'component',
+		// 			id: componentId,
+		// 		},
+		// 	} ),
+		// } );
 
 		let newOverrides =
 			overrides?.map( ( override ) =>
-				override.value.override_key === overridableProp.overrideKey ? newOverride : override
+				override.value.override_key === overridableProp.overrideKey ? newOverridableValue : override
 			) ?? [];
 
 		if ( ! matchingItem ) {
-			newOverrides = [ ...newOverrides, newOverride ];
+			newOverrides = [ ...newOverrides, newOverridableValue ];
 		}
 
 		setInstanceValue( {
@@ -113,4 +139,45 @@ function OverrideControl( { overridableProp, controls, overrides }: Props ) {
 			</PropKeyProvider>
 		</PropProvider>
 	);
+}
+
+function getPropValue( value: PropValue ): TransformablePropValue< string, unknown > | null {
+	if ( componentOverridablePropTypeUtil.isValid( value ) ) {
+		return value.value.origin_value as TransformablePropValue< string, unknown >;
+	}
+
+	if ( componentInstanceOverridePropTypeUtil.isValid( value ) ) {
+		return value.value.override_value as TransformablePropValue< string, unknown >;
+	}
+
+	return null;
+}
+
+function getOverrideValue(
+	overrideKey: string,
+	overrideValue: PropValue,
+	componentId: number
+): NonNullable< ComponentInstanceOverridesPropValue >[ number ] {
+	if ( componentOverridablePropTypeUtil.isValid( overrideValue ) ) {
+		return componentOverridablePropTypeUtil.create( {
+			override_key: overrideKey,
+			origin_value: componentInstanceOverridePropTypeUtil.create( {
+				override_key: overrideKey,
+				override_value: overrideValue.value.origin_value,
+				schema_source: {
+					type: 'component',
+					id: componentId,
+				},
+			} ),
+		} );
+	}
+
+	return componentInstanceOverridePropTypeUtil.create( {
+		override_key: overrideKey,
+		override_value: overrideValue,
+		schema_source: {
+			type: 'component',
+			id: componentId,
+		},
+	} );
 }
