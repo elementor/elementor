@@ -14,6 +14,7 @@ import { apiClient } from './api';
 import { type ComponentInstancePropValue, type ExtendedWindow } from './types';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
+import { getComponentDocumentData } from './utils/component-document-data';
 
 type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
 
@@ -63,8 +64,9 @@ export function createComponentType(
 	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
 ): typeof ElementType {
 	const legacyWindow = window as unknown as LegacyWindow;
+	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
 
-	return class extends legacyWindow.elementor.modules.elements.types.Widget {
+	return class extends WidgetType {
 		getType() {
 			return options.type;
 		}
@@ -72,6 +74,11 @@ export function createComponentType(
 		getView() {
 			return createComponentView( { ...options } );
 		}
+
+		getModel() {
+			return createComponentModel();
+		}
+
 	};
 }
 
@@ -83,6 +90,201 @@ function createComponentView(
 	return class extends createTemplatedElementView( options ) {
 		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
 		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
+		#loadingComponentTitle = false;
+		#componentDocumentSettings: any = null;
+		#isTitleListenerSetup = false;
+
+		onRender() {
+			super.onRender?.();
+			if ( ! this.#isTitleListenerSetup ) {
+				this.setupComponentTitleListener();
+				this.#isTitleListenerSetup = true;
+			}
+		}
+
+		setupComponentTitleListener() {
+			const settings = this.model.get( 'settings' ) as any;
+			if ( ! settings ) {
+				return;
+			}
+
+			settings.on( 'change:component_instance', this.getComponentTitle, this );
+			( this.model as any ).on( 'change:componentName', this.onComponentNameChange, this );
+			this.getComponentTitle();
+		}
+
+		getComponentTitle() {
+			const model = this.model as any;
+			if ( model.get( 'elType' ) !== 'widget' || model.get( 'widgetType' ) !== 'e-component' ) {
+				return;
+			}
+
+			const settings = model.get( 'settings' ) as any;
+			if ( ! settings ) {
+				return;
+			}
+
+			const componentInstance = settings.get( 'component_instance' );
+			if ( ! componentInstance?.value ) {
+				return;
+			}
+
+			const componentId = componentInstance.value.component_id?.value;
+			if ( ! componentId ) {
+				return;
+			}
+
+			if ( this.#loadingComponentTitle ) {
+				return;
+			}
+
+			this.#loadingComponentTitle = true;
+
+			getComponentDocumentData( componentId )
+				.then( ( config ) => {
+					if ( ! config ) {
+						this.#loadingComponentTitle = false;
+						return;
+					}
+
+					const title = this.extractTitleFromConfig( config );
+					if ( title ) {
+						( this.model as any ).set( 'componentName', title );
+					}
+
+					this.setupDocumentSettingsListener( config );
+					this.#loadingComponentTitle = false;
+				} )
+				.catch( () => {
+					this.#loadingComponentTitle = false;
+				} );
+		}
+
+		extractTitleFromConfig( config: any ) {
+			if ( config.settings?.settings?.post_title ) {
+				return config.settings.settings.post_title;
+			}
+			if ( config.panel?.title ) {
+				return config.panel.title;
+			}
+			if ( config.container?.settings ) {
+				const containerSettings = config.container.settings;
+				if ( containerSettings.get ) {
+					return containerSettings.get( 'post_title' );
+				}
+				if ( containerSettings.post_title ) {
+					return containerSettings.post_title;
+				}
+			}
+			return null;
+		}
+
+		setupDocumentSettingsListener( config: any ) {
+			if ( ! config.container?.settings ) {
+				return;
+			}
+
+			const documentSettings = config.container.settings;
+
+			if ( this.#componentDocumentSettings ) {
+				this.#componentDocumentSettings.off( 'change:post_title', this.onComponentDocumentTitleChange, this );
+			}
+
+			this.#componentDocumentSettings = documentSettings;
+			documentSettings.on( 'change:post_title', this.onComponentDocumentTitleChange, this );
+		}
+
+		onComponentDocumentTitleChange( settings: any ) {
+			const postTitle = settings.get( 'post_title' );
+			if ( ! postTitle ) {
+				return;
+			}
+
+			const componentId = this.getComponentId();
+			if ( ! componentId ) {
+				return;
+			}
+
+			const componentIdNumber = typeof componentId === 'string' ? Number( componentId ) : componentId;
+			if ( ! componentIdNumber || isNaN( componentIdNumber ) ) {
+				return;
+			}
+
+			this.updateAllComponentInstances( componentIdNumber, postTitle );
+		}
+
+		updateAllComponentInstances( componentId: number, title: string ) {
+			const legacyWindow = this.legacyWindow || ( window as unknown as LegacyWindow & ExtendedWindow );
+			const elementor = legacyWindow.elementor as any;
+			const previewView = elementor?.getPreviewView?.();
+
+			if ( ! previewView?.children ) {
+				return;
+			}
+
+			this.findAndUpdateComponentInstances( previewView.children, componentId, title );
+		}
+
+		findAndUpdateComponentInstances( children: any, componentId: number, title: string ) {
+			if ( ! children || ! children._views ) {
+				return;
+			}
+
+			for ( const key in children._views ) {
+				const view = children._views[ key ];
+
+				if ( ! view || ! view.model ) {
+					continue;
+				}
+
+				const viewComponentId = this.getComponentIdFromView( view );
+				if ( viewComponentId === componentId ) {
+					( view.model as any ).set( 'componentName', title );
+				}
+
+				if ( view.children ) {
+					this.findAndUpdateComponentInstances( view.children, componentId, title );
+				}
+			}
+		}
+
+		getComponentIdFromView( view: any ): number | null {
+			try {
+				const settings = view.model?.get( 'settings' );
+				if ( ! settings ) {
+					return null;
+				}
+
+				const componentInstance = settings.get( 'component_instance' );
+				if ( ! componentInstance?.value ) {
+					return null;
+				}
+
+				return componentInstance.value.component_id?.value || null;
+			} catch {
+				return null;
+			}
+		}
+
+		onComponentNameChange() {
+			( this.model as any ).trigger( 'change:title' );
+		}
+
+		onDestroy() {
+			const settings = this.model.get( 'settings' ) as any;
+			if ( settings ) {
+				settings.off( 'change:component_instance', this.getComponentTitle, this );
+			}
+
+			( this.model as any ).off( 'change:componentName', this.onComponentNameChange, this );
+
+			if ( this.#componentDocumentSettings ) {
+				this.#componentDocumentSettings.off( 'change:post_title', this.onComponentDocumentTitleChange, this );
+				this.#componentDocumentSettings = null;
+			}
+
+			super.onDestroy?.();
+		}
 
 		isComponentCurrentlyEdited() {
 			const currentDocument = getCurrentDocument();
@@ -245,3 +447,86 @@ function setInactiveRecursively( model: BackboneModel< ElementModel > ) {
 		} );
 	}
 }
+
+
+function createComponentModel() {
+	const legacyWindow = window as unknown as LegacyWindow;
+	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
+	const widgetTypeInstance = new WidgetType() as any;
+	const BaseWidgetModel = widgetTypeInstance.getModel();
+
+	return BaseWidgetModel.extend( {
+		initialize( attributes: any, options: any ) {
+			BaseWidgetModel.prototype.initialize.call( this, attributes, options );
+
+			const componentInstance = this.get( 'settings' )?.get( 'component_instance' );
+			if ( componentInstance?.value ) {
+				const componentId = componentInstance.value.component_id?.value;
+				if ( componentId ) {
+					this.set( 'componentId', componentId );
+					this.fetchComponentTitle( componentId );
+				}
+			}
+		},
+
+		fetchComponentTitle( componentId: number ) {
+			getComponentDocumentData( componentId )
+				.then( ( config ) => {
+					if ( ! config ) {
+						return;
+					}
+
+					const title = this.extractTitleFromConfig( config );
+					if ( title ) {
+						this.set( 'componentTitle', title );
+						this.trigger( 'change:title' );
+					}
+				} )
+				.catch( () => {
+					// Silently fail, will use fallback title
+				} );
+		},
+
+		extractTitleFromConfig( config: any ) {
+			if ( config.settings?.settings?.post_title ) {
+				return config.settings.settings.post_title;
+			}
+			if ( config.panel?.title ) {
+				return config.panel.title;
+			}
+			if ( config.container?.settings ) {
+				const containerSettings = config.container.settings;
+				if ( containerSettings.get ) {
+					return containerSettings.get( 'post_title' );
+				}
+				if ( containerSettings.post_title ) {
+					return containerSettings.post_title;
+				}
+			}
+			return null;
+		},
+
+		getTitle() {
+			const cachedTitle = this.get( 'componentTitle' );
+			if ( cachedTitle ) {
+				return cachedTitle;
+			}
+
+			return 'LOL';
+		},
+
+		getComponentId() {
+			return this.get( 'componentId' ) || null;
+		},
+
+		getComponentName() {
+			return this.getTitle();
+		},
+
+		getComponentUid() {
+			const editorSettings = this.get( 'editor_settings' );
+			return editorSettings?.component_uid || null;
+		},
+	} );
+}
+
