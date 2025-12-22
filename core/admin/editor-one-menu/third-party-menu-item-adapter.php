@@ -1,9 +1,9 @@
 <?php
 
-namespace Elementor\Modules\EditorOne\Classes\Menu\Items;
+namespace Elementor\Core\Admin\EditorOneMenu;
 
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Third_Party_Menu_Item;
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Third_Level_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -46,7 +46,7 @@ class Third_Party_Menu_Item_Adapter implements Menu_Item_Third_Level_Interface {
 	}
 
 	public function get_icon(): string {
-		return $this->third_party_item->get_icon();
+		return 'settings';
 	}
 
 	public function has_children(): bool {
@@ -65,3 +65,4 @@ class Third_Party_Menu_Item_Adapter implements Menu_Item_Third_Level_Interface {
 		return $this->third_party_item->get_owner();
 	}
 }
+

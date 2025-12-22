@@ -2,7 +2,7 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Core\Admin\EditorOneMenu\Mock;
 
-use Elementor\Core\Admin\EditorOneMenu\Base_Third_Party_Menu_Item;
+use Elementor\Core\Admin\EditorOneMenu\Menu\Base_Third_Party_Menu_Item;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

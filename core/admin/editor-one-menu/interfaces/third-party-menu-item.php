@@ -68,17 +68,6 @@ interface Third_Party_Menu_Item {
 	public function get_owner(): string;
 
 	/**
-	 * Get the icon of the menu item.
-	 * The icon is the icon that will be displayed in the menu.
-	 * It must be a valid icon.
-	 *
-	 * Example: 'dashicons-admin-plugins'
-	 *
-	 * @return string The icon of the menu item.
-	 */
-	public function get_icon(): string;
-
-	/**
 	 * Get the visibility of the menu item.
 	 * The visibility is the visibility of the menu item.
 	 * It must be a boolean.

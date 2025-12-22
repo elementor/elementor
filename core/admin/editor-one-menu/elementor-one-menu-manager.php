@@ -1,14 +1,14 @@
 <?php
 
-namespace Elementor\Modules\EditorOne\Components;
+namespace Elementor\Core\Admin\EditorOneMenu;
 
 use Elementor\Core\Admin\EditorOneMenu\Third_Party_Menu_Manager;
+use Elementor\Core\Admin\EditorOneMenu\Menu\Editor_One_Custom_Elements_Menu;
+use Elementor\Core\Admin\EditorOneMenu\Third_Party_Menu_Item_Adapter;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Interceptor;
-use Elementor\Modules\EditorOne\Classes\Menu\Items\Editor_One_Custom_Elements_Menu;
-use Elementor\Modules\EditorOne\Classes\Menu\Items\Third_Party_Menu_Item_Adapter;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Slug_Normalizer;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -340,3 +340,4 @@ class Elementor_One_Menu_Manager {
 		return $this->menu_data_provider->get_editor_flyout_data();
 	}
 }
+

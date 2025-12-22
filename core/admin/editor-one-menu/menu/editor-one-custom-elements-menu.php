@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Modules\EditorOne\Classes\Menu\Items;
+namespace Elementor\Core\Admin\EditorOneMenu\Menu;
 
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Third_Level_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -47,3 +47,4 @@ class Editor_One_Custom_Elements_Menu implements Menu_Item_Third_Level_Interface
 		return true;
 	}
 }
+

@@ -3,10 +3,10 @@
 namespace Elementor\Modules\EditorOne\Classes;
 
 use Elementor\Plugin;
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Third_Level_Interface;
-use Elementor\Modules\EditorOne\Classes\Menu\Items\Legacy_Submenu_Item_Not_Mapped;
-use Elementor\Modules\EditorOne\Classes\Menu\Items\Third_Party_Menu_Item_Adapter;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Menu\Legacy_Submenu_Item_Not_Mapped;
+use Elementor\Core\Admin\EditorOneMenu\Third_Party_Menu_Item_Adapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

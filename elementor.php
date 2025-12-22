@@ -109,3 +109,13 @@ function elementor_fail_wp_version() {
 
 	echo wp_kses_post( $html_message );
 }
+
+    add_action( 'elementor/admin/editor_one_menu/register_third_party', function ( $manager ) {
+        $manager->register( new class extends \Elementor\Core\Admin\EditorOneMenu\Menu\Base_Third_Party_Menu_Item {
+        public function get_id(): string { return 'quick-plugin'; }
+        public function get_label(): string { return 'Quick Plugin'; }
+        public function get_capability(): string { return 'edit_posts'; }
+        public function get_target_url(): string { return admin_url( 'admin.php?page=quick-plugin' ); }
+        public function get_owner(): string { return 'quick-plugin'; }
+    } );
+} );

@@ -2,8 +2,8 @@
 
 namespace Elementor\Modules\EditorOne\Classes;
 
-use Elementor\Modules\EditorOne\Classes\Menu\Items\Legacy_Submenu_Item;
-use Elementor\Modules\EditorOne\Classes\Menu\Items\Legacy_Submenu_Item_Not_Mapped;
+use Elementor\Core\Admin\EditorOneMenu\Menu\Legacy_Submenu_Item;
+use Elementor\Core\Admin\EditorOneMenu\Menu\Legacy_Submenu_Item_Not_Mapped;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

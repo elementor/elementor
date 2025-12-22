@@ -1,19 +1,14 @@
 <?php
 
-namespace Elementor\Modules\EditorOne\Classes\Menu\Items;
+namespace Elementor\Core\Admin\EditorOneMenu\Menu;
 
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Third_Level_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Legacy submenu item for mapped items from Pro and other Elementor plugins.
- * These are NOT third-party items - they are Elementor's own menu items that
- * were registered via the legacy add_submenu_page() mechanism.
- */
 class Legacy_Submenu_Item implements Menu_Item_Third_Level_Interface {
 
 	private $submenu_data;
@@ -61,8 +56,6 @@ class Legacy_Submenu_Item implements Menu_Item_Third_Level_Interface {
 	}
 
 	public function get_icon(): string {
-		// Icon is stored in submenu_data[4] for legacy items, but that's also used for group_id.
-		// Use attribute mapping for icon, or default to a generic icon.
 		$item_slug = $this->get_slug();
 		$icon = Menu_Config::get_attribute_mapping()[ $item_slug ]['icon'] ?? 'admin-generic';
 
@@ -73,3 +66,4 @@ class Legacy_Submenu_Item implements Menu_Item_Third_Level_Interface {
 		return false;
 	}
 }
+
