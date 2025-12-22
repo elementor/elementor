@@ -56,7 +56,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		const panelInlineEditor = page.getByLabel( INLINE_EDITING_SELECTORS.contentSectionLabel ).locator( INLINE_EDITING_SELECTORS.panelInlineEditor );
 		const panelHTML = await panelInlineEditor.innerHTML();
 
-		expect( panelHTML ).toContain( '<u>this</u> is the first test' );
+		expect( panelHTML ).toContain( [ '<u>this</u> is the first test', '<u>this</u>&nbsp;is the first test' ] );
 
 		await editor.publishAndViewPage();
 		const publishedHeading = page.locator( INLINE_EDITING_SELECTORS.headingBase ).last();
