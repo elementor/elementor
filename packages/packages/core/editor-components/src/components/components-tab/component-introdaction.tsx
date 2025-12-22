@@ -22,6 +22,7 @@ export const ComponentIntroduction = ( {
 				horizontal: 'right',
 			} }
 			transformOrigin={ {
+				vertical: 'top',
 				horizontal: -30,
 			} }
 			onClose={ onClose }
