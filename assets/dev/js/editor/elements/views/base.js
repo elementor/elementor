@@ -564,22 +564,42 @@ BaseElementView = BaseContainer.extend( {
 		const settings = self.getEditModel().get( 'settings' ),
 			classControls = settings.getClassControls();
 
+		// Remove all previous classes - Handle both raw and dynamic values to avoid leftovers 
+		const previousSettings = {
+			...settings.attributes,
+			...settings.previousAttributes(),
+		};
+		// Parse dynamic values for classes being removed to catch any leftover dynamic tokens
+		const parsedPreviousSettings = settings.parseDynamicSettings( previousSettings, this.getDynamicParsingSettings(), classControls );
+		
 		// Remove all previous classes
 		_.each( classControls, ( control ) => {
-			let previousClassValue = settings.previous( control.name );
+			// Remove both raw and parsed values to be extra safe
+			let previousRawValue = settings.previous( control.name );
+			let previousParsedValue = parsedPreviousSettings[ control.name ];
 
-			if ( control.classes_dictionary ) {
-				if ( undefined !== control.classes_dictionary[ previousClassValue ] ) {
-					previousClassValue = control.classes_dictionary[ previousClassValue ];
+			[ previousRawValue, previousParsedValue ].forEach( value => {
+				if ( value && control.classes_dictionary ) {
+					if ( undefined !== control.classes_dictionary[ value ] ) {
+						value = control.classes_dictionary[ value ];
+					}
 				}
-			}
 
-			self.$el.removeClass( control.prefix_class + previousClassValue );
+				if ( value ) {
+					self.$el.removeClass( control.prefix_class + value );
+				}
+			} );
 		} );
+
+		// Parse dynamic class controls so dynamic tags are evaluated when possible
+		// parseDynamicSettings will return parsed values when cache is available or
+		// request the server and trigger onServerRequestEnd to re-render when ready.
+		let parsedSettings = settings.parseDynamicSettings( settings.attributes, this.getDynamicParsingSettings(), classControls );
 
 		// Add new classes
 		_.each( classControls, ( control ) => {
-			const value = settings.attributes[ control.name ];
+			// Prefer parsed value (dynamic resolved) over raw attribute
+			const value = parsedSettings[ control.name ] ?? settings.attributes[ control.name ];
 			let classValue = value;
 
 			if ( control.classes_dictionary ) {
@@ -588,7 +608,7 @@ BaseElementView = BaseContainer.extend( {
 				}
 			}
 
-			const isVisible = elementor.helpers.isActiveControl( control, settings.attributes, settings.controls );
+			const isVisible = elementor.helpers.isActiveControl( control, parsedSettings, settings.controls );
 
 			if ( isVisible && ( classValue || 0 === classValue ) ) {
 				self.$el.addClass( control.prefix_class + classValue );
