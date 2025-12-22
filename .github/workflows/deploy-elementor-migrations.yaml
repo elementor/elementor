@@ -11,17 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Send dispatch
-        uses: peter-evans/repository-dispatch@v4
+        uses: benc-uk/workflow-dispatch@v1
         with:
-          token: ${{ secrets.CLOUD_DEVOPS_TOKEN }}
-          repository: ${{ secrets.dispatch_migrations_repo }}
-          event-type: release
-          client-payload: |
+          workflow: release.yaml
+          repo: ${{ secrets.DISPATCH_MIGRATIONS_REPO }}
+          ref: master
+          token: ${{ secrets.DATA_DEVOPS_PUBLIC_TOKEN }}
+          inputs: |
             {
-              "level": "patch",
-              "source": "${{ github.event_name }}",
-              "ref": "${{ github.ref }}",
-              "sha": "${{ github.sha }}",
-              "actor": "${{ github.actor }}",
+              "bump_level": "patch",
               "feature": "migrations"
             }
