@@ -154,6 +154,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 					showToolbar
 					getInitialPopoverPosition={ getInitialPopoverPosition }
 					expectedTag={ expectedTag }
+					listenToExternalChanges={ false }
 				/>
 			</ThemeProvider>
 		);
