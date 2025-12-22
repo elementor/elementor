@@ -157,7 +157,7 @@ class Third_Party_Menu_Manager {
 	}
 
 	private function __construct() {
-		$this->reserved_labels = [
+		self::$reserved_labels = [
 			_x( 'Settings', 'Menu item label', 'elementor' ),
 			_x( 'Templates', 'Menu item label', 'elementor' ),
 			_x( 'System', 'Menu item label', 'elementor' ),
