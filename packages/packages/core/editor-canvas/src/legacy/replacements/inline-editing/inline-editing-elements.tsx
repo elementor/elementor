@@ -133,6 +133,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 	renderInlineEditor() {
 		const InlineEditorApp = this.InlineEditorApp;
+		const classes = ( this.element.children?.[ 0 ]?.classList.toString() ?? '' ) + ' strip-styles';
 
 		this.element.innerHTML = '';
 
@@ -141,12 +142,11 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		}
 
 		this.inlineEditorRoot = createRoot( this.element );
-		this.inlineEditorRoot.render( <InlineEditorApp /> );
+		this.inlineEditorRoot.render( <InlineEditorApp classes={ classes } /> );
 	}
 
-	InlineEditorApp = () => {
+	InlineEditorApp = ( { classes }: { classes: string } ) => {
 		const propValue = this.getContentValue();
-		const classes = ( this.element.children?.[ 0 ]?.classList.toString() ?? '' ) + ' strip-styles';
 		const expectedTag = this.getExpectedTag();
 		const wrapperRef = React.useRef< HTMLDivElement | null >( null );
 		const [ isWrapperRendered, setIsWrapperRendered ] = React.useState( false );
