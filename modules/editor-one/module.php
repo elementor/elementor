@@ -3,6 +3,7 @@
 namespace Elementor\Modules\EditorOne;
 
 use Elementor\Core\Admin\Admin;
+use Elementor\Core\Admin\EditorOneMenu\Third_Party_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\EditorOne\Classes\Editor_One_Pointer;
@@ -41,6 +42,8 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		if ( is_admin() ) {
+
+			Third_Party_Menu_Manager::instance()->register_actions();
 			$this->add_component( 'editor-one-menu-manager', new Elementor_One_Menu_Manager() );
 			$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
 			$this->add_component( 'editor-one-pointer', new Editor_One_Pointer() );

@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Core\Admin\EditorOneMenu\Third_Party_Menu_Manager;
 use Elementor\Core\Wp_Api;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Breakpoints\Manager as Breakpoints_Manager;
@@ -713,8 +712,6 @@ class Plugin {
 
 		$this->admin_menu_manager = new Admin_Menu_Manager();
 		$this->admin_menu_manager->register_actions();
-
-		Third_Party_Menu_Manager::instance()->register_actions();
 
 		User::init();
 		User_Data::init();

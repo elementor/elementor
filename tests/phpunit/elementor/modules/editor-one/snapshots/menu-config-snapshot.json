@@ -9,7 +9,7 @@
                 "icon": "home",
                 "group_id": "",
                 "priority": 10,
-                "is_third_party": false
+                "has_divider_before": false
             },
             {
                 "slug": "elementor-settings",
@@ -18,7 +18,7 @@
                 "icon": "settings",
                 "group_id": "",
                 "priority": 20,
-                "is_third_party": false
+                "has_divider_before": false
             },
             {
                 "slug": "elementor-tools",
@@ -27,7 +27,7 @@
                 "icon": "tool",
                 "group_id": "",
                 "priority": 30,
-                "is_third_party": false
+                "has_divider_before": false
             },
             {
                 "slug": "elementor-role-manager",
@@ -36,7 +36,7 @@
                 "icon": "users",
                 "group_id": "",
                 "priority": 40,
-                "is_third_party": false
+                "has_divider_before": false
             },
             {
                 "slug": "e-form-submissions",
@@ -45,7 +45,7 @@
                 "icon": "send",
                 "group_id": "",
                 "priority": 50,
-                "is_third_party": false
+                "has_divider_before": false
             },
             {
                 "slug": "elementor-templates",
@@ -54,7 +54,7 @@
                 "icon": "folder",
                 "group_id": "elementor-editor-templates",
                 "priority": 60,
-                "is_third_party": false
+                "has_divider_before": false
             },
             {
                 "slug": "elementor-custom-elements",
@@ -63,7 +63,7 @@
                 "icon": "adjustments",
                 "group_id": "elementor-editor-custom-elements",
                 "priority": 70,
-                "is_third_party": false
+                "has_divider_before": false
             },
             {
                 "slug": "elementor-system",
@@ -72,10 +72,9 @@
                 "icon": "info-circle",
                 "group_id": "elementor-editor-system",
                 "priority": 80,
-                "is_third_party": false
+                "has_divider_before": false
             }
-        ],
-        "has_third_party_items": false
+        ]
     },
     "level4Flyouts": {
         "elementor-editor-system": {
