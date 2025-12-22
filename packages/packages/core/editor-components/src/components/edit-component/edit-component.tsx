@@ -4,20 +4,23 @@ import { getV1DocumentsManager, type V1Document } from '@elementor/editor-docume
 import { type V1Element } from '@elementor/editor-elements';
 import { __privateListenTo as listenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 import { __useSelector as useSelector } from '@elementor/store';
+import { throttle } from '@elementor/utils';
 
 import { apiClient } from '../../api';
 import { useNavigateBack } from '../../hooks/use-navigate-back';
 import { updateCurrentComponent } from '../../store/actions/update-current-component';
-import { type ComponentsPathItem, selectCurrentComponentId, selectPath } from '../../store/store';
+import { type ComponentsPathItem, selectPath, useCurrentComponentId } from '../../store/store';
 import { COMPONENT_DOCUMENT_TYPE } from '../consts';
 import { ComponentModal } from './component-modal';
 
 export function EditComponent() {
-	const currentComponentId = useSelector( selectCurrentComponentId );
+	const currentComponentId = useCurrentComponentId();
 
 	useHandleDocumentSwitches();
 
-	const onBack = useNavigateBack();
+	const navigateBack = useNavigateBack();
+
+	const onClose = throttle( navigateBack, 100 );
 
 	const elementDom = getComponentDOMElement( currentComponentId ?? undefined );
 
@@ -25,16 +28,16 @@ export function EditComponent() {
 		return null;
 	}
 
-	return <ComponentModal element={ elementDom } onClose={ onBack } />;
+	return <ComponentModal element={ elementDom } onClose={ onClose } />;
 }
 
 function useHandleDocumentSwitches() {
 	const documentsManager = getV1DocumentsManager();
-	const currentComponentId = useSelector( selectCurrentComponentId );
+	const currentComponentId = useCurrentComponentId();
 	const path = useSelector( selectPath );
 
 	useEffect( () => {
-		return listenTo( commandEndEvent( 'editor/documents/attach-preview' ), () => {
+		return listenTo( commandEndEvent( 'editor/documents/open' ), () => {
 			const nextDocument = documentsManager.getCurrent();
 
 			if ( nextDocument.id === currentComponentId ) {
