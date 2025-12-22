@@ -77,25 +77,25 @@ export const InlineEditor = React.forwardRef(
 		}: InlineEditorProps,
 		ref
 	) => {
-	const containerRef = React.useRef< HTMLDivElement >( null );
-	const popupState = usePopupState( { variant: 'popover', disableAutoFocus: true } );
-	const [ hasSelectedContent, setHasSelectedContent ] = React.useState( false );
-	const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
-	const [ selectionRect, setSelectionRect ] = React.useState< { left: number; top: number } | null >( null );
+		const containerRef = React.useRef< HTMLDivElement >( null );
+		const popupState = usePopupState( { variant: 'popover', disableAutoFocus: true } );
+		const [ hasSelectedContent, setHasSelectedContent ] = React.useState( false );
+		const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
+		const [ selectionRect, setSelectionRect ] = React.useState< { left: number; top: number } | null >( null );
 
-	const onSelectionEnd = ( view: EditorView ) => {
-		const hasSelection = ! view.state.selection.empty;
-		setHasSelectedContent( hasSelection );
+		const onSelectionEnd = ( view: EditorView ) => {
+			const hasSelection = ! view.state.selection.empty;
+			setHasSelectedContent( hasSelection );
 
-		if ( hasSelection ) {
-			const container = containerRef.current?.getBoundingClientRect();
-			setSelectionRect( calcSelectionCenter( view, container ) );
-		} else {
-			setSelectionRect( null );
-		}
+			if ( hasSelection ) {
+				const container = containerRef.current?.getBoundingClientRect();
+				setSelectionRect( calcSelectionCenter( view, container ) );
+			} else {
+				setSelectionRect( null );
+			}
 
-		queueMicrotask( () => view.focus() );
-	};
+			queueMicrotask( () => view.focus() );
+		};
 
 		const onKeyDown = ( _: EditorView, event: KeyboardEvent ) => {
 			if ( event.key === 'Escape' ) {
@@ -184,23 +184,23 @@ export const InlineEditor = React.forwardRef(
 			}
 		}, [ editor, value ] );
 
-	const computePopupPosition = () => {
-		if ( ! selectionRect ) {
-			return { left: 0, top: 0 };
-		}
+		const computePopupPosition = () => {
+			if ( ! selectionRect ) {
+				return { left: 0, top: 0 };
+			}
 
-		const container = containerRef.current?.getBoundingClientRect();
-		if ( ! container ) {
-			return { left: 0, top: 0 };
-		}
+			const container = containerRef.current?.getBoundingClientRect();
+			if ( ! container ) {
+				return { left: 0, top: 0 };
+			}
 
-		const initial = getInitialPopoverPosition?.() ?? { left: 0, top: 0 };
+			const initial = getInitialPopoverPosition?.() ?? { left: 0, top: 0 };
 
-		return {
-			left: container.left + selectionRect.left + initial.left,
-			top: container.top + selectionRect.top + initial.top,
+			return {
+				left: container.left + selectionRect.left + initial.left,
+				top: container.top + selectionRect.top + initial.top,
+			};
 		};
-	};
 
 		const Wrapper = ( { children }: React.PropsWithChildren ) => {
 			const wrappedChildren = (
