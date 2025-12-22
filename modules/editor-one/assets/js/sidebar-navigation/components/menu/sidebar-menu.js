@@ -3,7 +3,7 @@ import { Divider } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import MenuActiveStateResolver from '../../classes/menu-active-state-resolver';
 import SidebarMenuItem from './sidebar-menu-item';
-import { MenuList } from './styled-components';
+import { MenuList } from '../shared';
 
 const SidebarMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug, hasThirdPartyItems } ) => {
 	const activeStateResolver = useMemo(

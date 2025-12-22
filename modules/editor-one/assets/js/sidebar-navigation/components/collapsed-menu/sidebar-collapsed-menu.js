@@ -3,7 +3,7 @@ import { Divider } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import MenuActiveStateResolver from '../../classes/menu-active-state-resolver';
 import SidebarCollapsedMenuItem from './sidebar-collapsed-menu-item';
-import { CollapsedMenuContainer } from './styled-components';
+import { MenuList } from '../shared';
 
 const SidebarCollapsedMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug, hasThirdPartyItems } ) => {
 	const [ openPopoverSlug, setOpenPopoverSlug ] = useState( null );
@@ -38,7 +38,7 @@ const SidebarCollapsedMenu = ( { menuItems, level4Groups, activeMenuSlug, active
 	let dividerRendered = false;
 
 	return (
-		<CollapsedMenuContainer onMouseLeave={ handleClosePopover }>
+		<MenuList isCollapsed onMouseLeave={ handleClosePopover }>
 			{ menuItems.map( ( item ) => {
 				const showDivider = hasThirdPartyItems && item.is_third_party && ! dividerRendered;
 
@@ -62,7 +62,7 @@ const SidebarCollapsedMenu = ( { menuItems, level4Groups, activeMenuSlug, active
 					</>
 				);
 			} ) }
-		</CollapsedMenuContainer>
+		</MenuList>
 	);
 };
 
