@@ -714,7 +714,6 @@ class Plugin {
 		$this->admin_menu_manager = new Admin_Menu_Manager();
 		$this->admin_menu_manager->register_actions();
 
-    
 		Third_Party_Menu_Manager::instance()->register_actions();
 
 		User::init();
