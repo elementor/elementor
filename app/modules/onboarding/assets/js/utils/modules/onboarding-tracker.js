@@ -370,6 +370,10 @@ class OnboardingTracker {
 	extractFromObjectFormat( selectedFeatures ) {
 		const allFeatures = [];
 
+		if ( Array.isArray( selectedFeatures.one ) ) {
+			allFeatures.push( ...selectedFeatures.one );
+		}
+
 		if ( Array.isArray( selectedFeatures.essential ) ) {
 			allFeatures.push( ...selectedFeatures.essential );
 		}

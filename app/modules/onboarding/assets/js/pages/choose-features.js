@@ -1,23 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import Message from '../components/message';
-import { options, setSelectedFeatureList, addExperimentTrackingToUrl } from '../utils/utils';
+import { getOptions, setSelectedFeatureList, addExperimentTrackingToUrl } from '../utils/utils';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 import useButtonAction from '../utils/use-button-action';
 import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function ChooseFeatures() {
+	const isEditorOneActive = elementorAppConfig?.onboarding?.isEditorOneActive ?? false;
+	const options = useMemo( () => getOptions( isEditorOneActive ), [ isEditorOneActive ] );
 	const { setAjax } = useAjax(),
-		tiers = { advanced: __( 'Advanced', 'elementor' ), essential: __( 'Essential', 'elementor' ) },
-		[ selectedFeatures, setSelectedFeatures ] = useState( { essential: [], advanced: [] } ),
+		tiers = {
+			one: __( 'ONE', 'elementor' ),
+			advanced: __( 'Advanced', 'elementor' ),
+			essential: __( 'Essential', 'elementor' ),
+		},
+		[ selectedFeatures, setSelectedFeatures ] = useState( { one: [], essential: [], advanced: [] } ),
 		[ tierName, setTierName ] = useState( tiers.essential ),
 		pageId = 'chooseFeatures',
 		nextStep = 'goodToGo',
 		{ state, handleAction } = useButtonAction( pageId, nextStep ),
+		upgradeUrl = tierName === tiers.one && elementorAppConfig.onboarding.urls.upgradeOne
+			? elementorAppConfig.onboarding.urls.upgradeOne
+			: elementorAppConfig.onboarding.urls.upgrade,
 		actionButton = {
 			text: __( 'Upgrade Now', 'elementor' ),
-			href: addExperimentTrackingToUrl( elementorAppConfig.onboarding.urls.upgrade, 'upgrade-step3' ),
+			href: addExperimentTrackingToUrl( upgradeUrl, 'upgrade-step3' ),
 			target: '_blank',
 			onClick: () => {
 				OnboardingEventTracking.trackStepAction( 3, 'upgrade_now', {
@@ -76,12 +85,14 @@ export default function ChooseFeatures() {
 	}
 
 	useEffect( () => {
-		if ( selectedFeatures.advanced.length > 0 ) {
+		if ( isEditorOneActive && selectedFeatures.one && selectedFeatures.one.length > 0 ) {
+			setTierName( tiers.one );
+		} else if ( selectedFeatures.advanced && selectedFeatures.advanced.length > 0 ) {
 			setTierName( tiers.advanced );
-		} else {
+		} else if ( selectedFeatures.essential && selectedFeatures.essential.length > 0 ) {
 			setTierName( tiers.essential );
 		}
-	}, [ selectedFeatures, tiers.advanced, tiers.essential ] );
+	}, [ selectedFeatures, isEditorOneActive, tiers.one, tiers.advanced, tiers.essential ] );
 
 	useEffect( () => {
 		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
@@ -89,7 +100,7 @@ export default function ChooseFeatures() {
 	}, [ state.currentStep ] );
 
 	function isFeatureSelected( features ) {
-		return !! features.advanced.length || !! features.essential.length;
+		return !! features.one.length || !! features.advanced.length || !! features.essential.length;
 	}
 
 	return (

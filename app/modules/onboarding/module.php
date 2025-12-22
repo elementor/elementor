@@ -126,6 +126,7 @@ class Module extends BaseModule {
 			'helloOptOut' => count( $pages_and_posts->posts ) < 5,
 			'siteName' => esc_html( $site_name ),
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
+			'isEditorOneActive' => Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ),
 			'urls' => [
 				'kitLibrary' => Plugin::$instance->app->get_base_url() . '&source=onboarding#/kit-library?order[direction]=desc&order[by]=featuredIndex',
 				'sitePlanner' => add_query_arg( [
@@ -144,6 +145,7 @@ class Module extends BaseModule {
 					'source' => 'generic',
 				] ),
 				'upgrade' => 'https://go.elementor.com/go-pro-onboarding-wizard-upgrade/',
+				'upgradeOne' => 'https://go.elementor.com/go-one-onboarding-wizard-upgrade/',
 				'signUp' => $library->get_admin_url( 'authorize', [
 					'utm_source' => 'onboarding-wizard',
 					'utm_campaign' => 'connect-account',
