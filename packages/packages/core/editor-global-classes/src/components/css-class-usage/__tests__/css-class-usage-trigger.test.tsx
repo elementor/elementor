@@ -10,10 +10,6 @@ jest.mock( '../../../hooks/use-css-class-usage-by-id' );
 jest.mock( '../../../utils/tracking', () => mockTrackingModule );
 
 describe( 'CssClassUsageTrigger', () => {
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	it( 'renders locator icon and does not open on click when total is 0', async () => {
 		// Arrange.
 		jest.mocked( useCssClassUsageByID ).mockReturnValue( {
