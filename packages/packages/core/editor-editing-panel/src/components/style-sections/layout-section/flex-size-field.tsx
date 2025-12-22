@@ -9,7 +9,7 @@ import {
 	type ToggleButtonGroupItem,
 	useBoundProp,
 } from '@elementor/editor-controls';
-import { flexPropTypeUtil, type FlexPropValue, numberPropTypeUtil } from '@elementor/editor-props';
+import { flexPropTypeUtil, type FlexPropValue, numberPropTypeUtil, sizePropTypeUtil } from '@elementor/editor-props';
 import { ExpandIcon, PencilIcon, ShrinkIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
@@ -130,16 +130,16 @@ const createFlexValueForGroup = ( group: GroupItem | null, flexValue: FlexPropVa
 	if ( group === 'flex-grow' ) {
 		return flexPropTypeUtil.create( {
 			flexGrow: numberPropTypeUtil.create( DEFAULT ),
-			flexShrink: null,
-			flexBasis: null,
+			flexShrink: numberPropTypeUtil.create( 0 ),
+			flexBasis: sizePropTypeUtil.create( { unit: 'auto', size: '' } ),
 		} );
 	}
 
 	if ( group === 'flex-shrink' ) {
 		return flexPropTypeUtil.create( {
-			flexGrow: null,
+			flexGrow: numberPropTypeUtil.create( 0 ),
 			flexShrink: numberPropTypeUtil.create( DEFAULT ),
-			flexBasis: null,
+			flexBasis: sizePropTypeUtil.create( { unit: 'auto', size: '' } ),
 		} );
 	}
 
@@ -197,15 +197,18 @@ const getActiveGroup = ( {
 		return null;
 	}
 
-	if ( ( shrink && grow ) || basis ) {
+	const isAutoBasis =
+		basis === null || ( typeof basis === 'object' && basis.unit === 'auto' )
+
+	if ( basis && ! isAutoBasis ) {
 		return 'custom';
 	}
 
-	if ( grow === DEFAULT ) {
+	if ( grow === DEFAULT && ( shrink === null || shrink === 0 ) && isAutoBasis ) {
 		return 'flex-grow';
 	}
 
-	if ( shrink === DEFAULT ) {
+	if ( shrink === DEFAULT && ( grow === null || grow === 0 ) && isAutoBasis ) {
 		return 'flex-shrink';
 	}
 
