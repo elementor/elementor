@@ -103,4 +103,38 @@ describe( 'CssClassFilter', () => {
 
 		expect( screen.queryByRole( 'presentation' ) ).not.toBeInTheDocument();
 	} );
+
+	it( 'should track filter cleared when clicking clear all button in popover', async () => {
+		// Arrange
+		const mockOnClearFilter = jest.fn();
+		jest.mocked( useSearchAndFilters ).mockReturnValue( {
+			search: {} as SearchAndFilterContextType[ 'search' ],
+			filters: {
+				filters: {
+					unused: true,
+					empty: true,
+					onThisPage: false,
+				},
+				setFilters: jest.fn(),
+				onClearFilter: mockOnClearFilter,
+			},
+		} );
+
+		renderComponent();
+
+		const button = screen.getByRole( 'button', { name: /filters/i } );
+		fireEvent.click( button );
+
+		const clearButton = screen.getByRole( 'button', { name: /clear all/i } );
+
+		// Act
+		fireEvent.click( clearButton );
+
+		// Assert
+		expect( mockOnClearFilter ).toHaveBeenCalledWith( 'menu' );
+		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			event: 'classManagerFilterCleared',
+			trigger: 'menu',
+		} );
+	} );
 } );

@@ -74,30 +74,7 @@ describe( 'ActiveFilters', () => {
 		} );
 	} );
 
-	it( 'should show clear all button when filters are active', () => {
-		// Arrange
-		jest.mocked( useFilters ).mockReturnValue( [ 'empty' ] );
-		jest.mocked( useSearchAndFilters ).mockReturnValue( {
-			search: {} as SearchAndFilterContextType[ 'search' ],
-			filters: {
-				filters: {
-					unused: true,
-					empty: false,
-					onThisPage: false,
-				},
-				setFilters: mockSetFilters,
-				onClearFilter: mockOnClearFilter,
-			},
-		} );
-
-		// Act
-		render( <ActiveFilters /> );
-
-		// Assert
-		expect( screen.getByRole( 'button', { name: /clear filters/i } ) ).toBeInTheDocument();
-	} );
-
-	it( 'should track filter cleared when clicking clear all button', () => {
+	it( 'should show clear all button when filters are active and track when clicked', () => {
 		// Arrange
 		jest.mocked( useFilters ).mockReturnValue( [ 'empty' ] );
 		jest.mocked( useSearchAndFilters ).mockReturnValue( {
