@@ -1,6 +1,7 @@
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import widgets from '../../../enums/widgets';
+import { wpCli } from '../../../assets/wp-cli';
 import { getElementSelector } from '../../../assets/elements-utils';
 import { expect } from '@playwright/test';
 import { wpCli } from '../../../assets/wp-cli';
@@ -10,12 +11,8 @@ test.describe( 'Div Block tests @div-block', () => {
 		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		const context = await browser.newContext();
-		const page = await context.newPage();
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.resetExperiments();
-		await page.close();
+	test.afterAll( async () => {
+		await wpCli( 'wp elementor experiments reset' );
 	} );
 
 	test( 'Sort items in a Div Block using DnD', async ( { page, apiRequests }, testInfo ) => {
