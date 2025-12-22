@@ -7,7 +7,7 @@ import { __createStore, __dispatch, __registerSlice, type SliceState, type Store
 import { ThemeProvider } from '@elementor/ui';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 
-import { mockTrackingModule } from '../../../__tests__/mocks';
+import { mockTrackGlobalClasses, mockTrackingModule } from '../../../__tests__/mocks';
 import { apiClient } from '../../../api';
 import { slice } from '../../../store';
 import { ClassManagerPanel, usePanelActions } from '../class-manager-panel';
@@ -431,5 +431,25 @@ describe( 'ClassManagerPanel', () => {
 		fireEvent.click( discardButton );
 		expect( slice.actions.resetToInitialState ).toHaveBeenCalledWith( { context: 'frontend' } );
 		expect( store.getState().globalClasses.data.order ).toEqual( [ 'class-2', 'class-1' ] );
+	} );
+
+	it( 'should track classManagerSearched event when search field is focused', () => {
+		// Act
+		renderWithStore(
+			<QueryClientProvider client={ queryClient }>
+				<ClassManagerPanel />
+			</QueryClientProvider>,
+			store
+		);
+
+		const input = screen.getByRole( 'textbox' );
+
+		// Act
+		fireEvent.focus( input );
+
+		// Assert
+		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			event: 'classManagerSearched',
+		} );
 	} );
 } );
