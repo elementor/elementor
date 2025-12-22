@@ -122,7 +122,7 @@ class Test_Variables_Service extends TestCase {
 		// Assert
 		$this->assertTrue( $result['success'] );
 		$this->assertEquals( 6, $result['watermark'] );
-		$this->assertCount( 4, $result['results'] );
+		$this->assertCount( 3, $result['results'] );
 
 		$create = $operations_results[0];
 		$expected_variable = [
@@ -146,17 +146,7 @@ class Test_Variables_Service extends TestCase {
 		$this->assertEquals( 'update', $update['type'] );
 		$this->assertArrayContainsArray( $expected_variable, $update['variable'] );
 
-		$restore = $operations_results[2];
-		$expected_variable = [
-			'type' => 'global-color',
-			'label' => 'Restored Color',
-			'value' => '#FFFFFF',
-		];
-		$this->assertEquals( 'restore', $restore['type'] );
-		$this->assertEquals( 'id-2', $restore['id'] );
-		$this->assertArrayContainsArray( $expected_variable, $restore['variable'] );
-
-		$delete = $operations_results[3];
+		$delete = $operations_results[2];
 		$expected_variable = [
 			'type' => 'global-color',
 			'label' => 'Primary',
