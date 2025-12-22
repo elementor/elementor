@@ -44,6 +44,27 @@ const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void
 	}, dependencies );
 };
 
+const calculateSelectionCenter = (
+	startCoords: { left: number; top: number },
+	endCoords: { left: number; top: number }
+) => {
+	return {
+		centerX: ( startCoords.left + endCoords.left ) / 2,
+		topY: Math.min( startCoords.top, endCoords.top ),
+	};
+};
+
+const calculateRelativePosition = (
+	absoluteX: number,
+	absoluteY: number,
+	containerRect: DOMRect
+) => {
+	return {
+		relativeLeft: absoluteX - containerRect.left,
+		relativeTop: absoluteY - containerRect.top,
+	};
+};
+
 export const InlineEditor = React.forwardRef(
 	(
 		{
@@ -63,11 +84,30 @@ export const InlineEditor = React.forwardRef(
 		const popupState = usePopupState( { variant: 'popover', disableAutoFocus: true } );
 		const [ hasSelectedContent, setHasSelectedContent ] = React.useState( false );
 		const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
+		const [ selectionRect, setSelectionRect ] = React.useState< DOMRect | null >( null );
 
-		const onSelectionEnd = ( view: EditorView ) => {
-			setHasSelectedContent( () => ! view.state.selection.empty );
-			queueMicrotask( () => view.focus() );
-		};
+	const onSelectionEnd = ( view: EditorView ) => {
+		const hasSelection = ! view.state.selection.empty;
+		setHasSelectedContent( hasSelection );
+
+		if ( hasSelection ) {
+			const { from, to } = view.state.selection;
+			const start = view.coordsAtPos( from );
+			const end = view.coordsAtPos( to );
+
+			const container = containerRef.current?.getBoundingClientRect();
+			if ( container ) {
+				const { centerX, topY } = calculateSelectionCenter( start, end );
+				const { relativeLeft, relativeTop } = calculateRelativePosition( centerX, topY, container );
+
+				setSelectionRect( new DOMRect( relativeLeft, relativeTop, 0, 0 ) );
+			}
+		} else {
+			setSelectionRect( null );
+		}
+
+		queueMicrotask( () => view.focus() );
+	};
 
 		const onKeyDown = ( _: EditorView, event: KeyboardEvent ) => {
 			if ( event.key === 'Escape' ) {
@@ -156,16 +196,23 @@ export const InlineEditor = React.forwardRef(
 			}
 		}, [ editor, value ] );
 
-		const computePopupPosition = () => {
-			const positionFallback = { left: 0, top: 0 };
-			const { left, top } = containerRef.current?.getBoundingClientRect() ?? positionFallback;
-			const initial = getInitialPopoverPosition?.() ?? positionFallback;
+	const computePopupPosition = () => {
+		if ( ! selectionRect ) {
+			return { left: 0, top: 0 };
+		}
 
-			return {
-				left: left + initial.left,
-				top: top + initial.top,
-			};
+		const container = containerRef.current?.getBoundingClientRect();
+		if ( ! container ) {
+			return { left: 0, top: 0 };
+		}
+
+		const initial = getInitialPopoverPosition?.() ?? { left: 0, top: 0 };
+
+		return {
+			left: container.left + selectionRect.left + initial.left,
+			top: container.top + selectionRect.top + initial.top,
 		};
+	};
 
 		const Wrapper = ( { children }: React.PropsWithChildren ) => {
 			const wrappedChildren = (
@@ -209,11 +256,11 @@ export const InlineEditor = React.forwardRef(
 							},
 						} }
 						{ ...bindPopover( popupState ) }
-						open={ hasSelectedContent }
+						open={ hasSelectedContent && selectionRect !== null }
 						anchorReference="anchorPosition"
 						anchorPosition={ computePopupPosition() }
-						anchorOrigin={ { vertical: 'top', horizontal: 'left' } }
-						transformOrigin={ { vertical: 'bottom', horizontal: 'left' } }
+						anchorOrigin={ { vertical: 'top', horizontal: 'center' } }
+						transformOrigin={ { vertical: 'bottom', horizontal: 'center' } }
 					>
 						<InlineEditorToolbar editor={ editor } />
 					</Popover>
