@@ -94,7 +94,8 @@ body.wp-admin {
 .button-primary,
 .wrap .page-title-action,
 input[type="submit"].button-primary,
-.wp-core-ui .button.button-primary {
+.wp-core-ui .button.button-primary,
+.wp-core-ui .button-primary {
 	background-color: var(--e-one-palette-primary-main);
 	border-color: var(--e-one-palette-primary-main);
 	color: var(--e-one-palette-primary-contrastText);
