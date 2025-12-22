@@ -109,6 +109,13 @@ describe( 'GlobalClassesList', () => {
 		expect( editableField ).not.toBeInTheDocument();
 
 		expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
+		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			event: 'classRenamed',
+			classId: 'class-1',
+			oldValue: 'Class 1',
+			newValue: 'New-Class-Name',
+			source: 'class-manager',
+		} );
 	} );
 
 	it( 'should not allow rename if the name is invalid', () => {
@@ -177,6 +184,13 @@ describe( 'GlobalClassesList', () => {
 		expect( editableField ).not.toBeInTheDocument();
 
 		expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
+		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			event: 'classRenamed',
+			classId: 'class-1',
+			oldValue: 'Class 1',
+			newValue: 'New-Class-Name',
+			source: 'class-manager',
+		} );
 	} );
 
 	it( 'should show empty state when there are no classes', () => {
@@ -221,6 +235,13 @@ describe( 'GlobalClassesList', () => {
 			expect( screen.queryByText( 'Class 1' ) ).not.toBeInTheDocument();
 		} );
 		expect( screen.getByText( 'Class 2' ) ).toBeInTheDocument();
+		await waitFor( () => {
+			expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+				event: 'classDeleted',
+				classId: 'class-1',
+				runAction: expect.any( Function ),
+			} );
+		} );
 	} );
 
 	it( 'should close the delete dialog when clicking cancel, without deleting', async () => {
@@ -581,96 +602,7 @@ describe( 'GlobalClassesList', () => {
 		const triggers = screen.queryAllByRole( 'button', { name: 'sort' } );
 
 		expect( triggers ).toHaveLength( 0 );
-		expect( mockTrackGlobalClasses ).not.toHaveBeenCalledWith(
-			expect.objectContaining( { event: 'classManagerReorder' } )
-		);
-	} );
-
-	it( 'should track classRenamed event with correct payload when renaming a class', async () => {
-		jest.mocked( useFilters ).mockReturnValue( null );
-		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
-
-		renderWithStore( <GlobalClassesList />, store );
-
-		const classButton = await screen.findByRole( 'button', { name: 'Class 1' } );
-		fireEvent.doubleClick( classButton );
-
-		const editableField = screen.getByRole( 'textbox' );
-
-		fireEvent.input( editableField, { target: { innerText: 'New-Class-Name' } } );
-		fireEvent.blur( editableField );
-
-		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
-			event: 'classRenamed',
-			classId: 'class-1',
-			oldValue: 'Class 1',
-			newValue: 'New-Class-Name',
-			source: 'class-manager',
-		} );
-	} );
-
-	it( 'should track classRenamed event with correct payload when renaming from menu', async () => {
-		jest.mocked( useFilters ).mockReturnValue( null );
-		mockClasses( [ { id: 'class-1', label: 'Class 1' } ] );
-
-		renderWithStore( <GlobalClassesList />, store );
-
-		const [ firstClass ] = await screen.findAllByRole( 'listitem' );
-		const moreActionsButton = within( firstClass ).getByRole( 'button', { name: 'More actions' } );
-		fireEvent.click( moreActionsButton );
-
-		const renameButton = screen.getByRole( 'menuitem', { name: 'Rename' } );
-
-		fireEvent.click( renameButton );
-
-		await waitFor( () => {
-			expect( renameButton ).not.toBeInTheDocument();
-		} );
-
-		const editableField = screen.getByRole( 'textbox' );
-
-		fireEvent.input( editableField, { target: { innerText: 'Renamed-Class' } } );
-		fireEvent.blur( editableField );
-
-		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
-			event: 'classRenamed',
-			classId: 'class-1',
-			oldValue: 'Class 1',
-			newValue: 'Renamed-Class',
-			source: 'class-manager',
-		} );
-	} );
-
-	it( 'should track classDeleted event with correct payload when deleting a class', async () => {
-		jest.mocked( useFilters ).mockReturnValue( null );
-		mockClasses( [
-			{ id: 'class-1', label: 'Class 1' },
-			{ id: 'class-2', label: 'Class 2' },
-		] );
-
-		renderWithStore( <GlobalClassesList />, store );
-
-		const [ firstClass ] = await screen.findAllByRole( 'listitem' );
-
-		fireEvent.click( within( firstClass ).getByRole( 'button', { name: 'More actions' } ) );
-
-		const deleteButton = screen.getByRole( 'menuitem', { name: 'Delete' } );
-
-		fireEvent.click( deleteButton );
-
-		await waitFor( () => {
-			expect( screen.getByRole( 'dialog', { name: 'Delete this class?' } ) ).toBeInTheDocument();
-		} );
-
-		fireEvent.click( screen.getByRole( 'button', { name: 'Delete' } ) );
-
-		await waitFor( () => {
-			expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
-				event: 'classDeleted',
-				classId: 'class-1',
-				runAction: expect.any( Function ),
-			} );
-		} );
+		expect( mockTrackGlobalClasses ).not.toHaveBeenCalled();
 	} );
 } );
 
