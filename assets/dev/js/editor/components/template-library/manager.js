@@ -210,7 +210,7 @@ const TemplateLibraryManager = function() {
 
 			return {
 				saveDialog: {
-					description: variantsConfig[ experimentVariant ]?.saveDialog || '',
+					description: variantsConfig[ experimentVariant ]?.saveDialogDescription || '',
 					/* Translators: %s: Template type. */
 					title: sprintf( __( 'Save this %s to your library', 'elementor' ), title ),
 					nameLabel,

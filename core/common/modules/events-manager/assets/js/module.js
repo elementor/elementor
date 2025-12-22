@@ -120,6 +120,10 @@ export default class extends elementorModules.Module {
 
 	async getExperimentVariant( experimentName, defaultValue = 'control' ) {
 		try {
+			if ( ! elementorCommon.config.editor_events?.can_send_events ) {
+				return;
+			}
+
 			const isAbTestingEnabled = elementorCommon.config.editor_events?.flags_enabled ?? false;
 
 			if ( ! isAbTestingEnabled ) {
@@ -131,7 +135,7 @@ export default class extends elementorModules.Module {
 			}
 
 			if ( ! this.trackingEnabled ) {
-				return defaultValue;
+				this.enableTracking();
 			}
 
 			if ( ! mixpanel.flags ) {
