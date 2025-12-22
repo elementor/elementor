@@ -1,8 +1,10 @@
 import * as React from 'react';
+import { type ExtendedWindow } from '@elementor/editor-app-bar';
 import { PopoverContent } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { getInteractionsControl } from '../interactions-controls-registry';
 import type { InteractionItemValue } from '../types';
 import { createAnimationPreset, createString, extractNumber, extractString } from '../utils/prop-value-utils';
 import { Direction } from './controls/direction';
@@ -23,6 +25,7 @@ const DEFAULT_VALUES = {
 	direction: '',
 	duration: 300,
 	delay: 0,
+	replay: false,
 };
 
 export const InteractionDetails = ( { interaction, onChange }: InteractionDetailsProps ) => {
@@ -32,8 +35,13 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 	const direction = extractString( interaction.animation.value.direction, DEFAULT_VALUES.direction );
 	const duration = extractNumber( interaction.animation.value.timing_config.value.duration, DEFAULT_VALUES.duration );
 	const delay = extractNumber( interaction.animation.value.timing_config.value.delay, DEFAULT_VALUES.delay );
+	const replay = DEFAULT_VALUES.replay;
 
+	const ReplayControl = getInteractionsControl( 'replay' )?.component ?? null;
 	const effectiveDirection = effect === 'slide' && ! direction ? 'top' : direction;
+	// Until pro control implemented
+	const hasPro = !! ( window as unknown as ExtendedWindow ).elementorPro;
+	const shouldShowReplay = ReplayControl && ! hasPro;
 
 	const updateInteraction = (
 		updates: Partial< {
@@ -88,6 +96,14 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 					label={ __( 'Delay', 'elementor' ) }
 				/>
 			</Grid>
+			{ shouldShowReplay && (
+				<>
+					<Divider />
+					<Grid container spacing={ 1.5 }>
+						<ReplayControl value={ replay } onChange={ () => {} } disabled={ true } />
+					</Grid>
+				</>
+			) }
 		</PopoverContent>
 	);
 };

@@ -40,6 +40,11 @@ export type FieldProps = {
 	label?: string;
 };
 
+export type ReplayFieldProps = {
+	value: boolean;
+	onChange: ( value: boolean ) => void;
+	disabled?: boolean;
+};
 export type DirectionFieldProps = FieldProps & {
 	interactionType: string;
 };
