@@ -40,7 +40,7 @@ alwaysApply: false
 NEVER manually create WpAdminPage or manage experiments. Use existing DriverFactory:
 
 ```typescript
-// ✅ CORRECT - Use DriverFactory
+// CORRECT - Use DriverFactory
 import { DriverFactory } from '../../../drivers/driver-factory';
 import type { EditorDriver } from '../../../drivers/editor-driver';
 
@@ -66,7 +66,7 @@ test.describe('My Tests @v4-tests', () => {
 ```
 
 ```typescript
-// ❌ WRONG - Manual page/experiment management
+// WRONG - Manual page/experiment management
 test.beforeAll(async ({ browser, apiRequests }, testInfo) => {
   const context = await browser.newContext();
   const page = await context.newPage();
@@ -80,7 +80,7 @@ test.beforeAll(async ({ browser, apiRequests }, testInfo) => {
 NEVER define selectors inline in test files. Create selector files:
 
 ```typescript
-// ✅ CORRECT - tests/playwright/selectors/my-widget-selectors.ts
+// CORRECT - tests/playwright/selectors/my-widget-selectors.ts
 export const MyWidgetSelectors = {
   container: '[data-e-type="my-widget"]',
   button: '[role="button"]',
@@ -92,7 +92,7 @@ export const MyWidgetSelectors = {
 ```
 
 ```typescript
-// ❌ WRONG - Inline selectors in test file
+// WRONG - Inline selectors in test file
 const SELECTORS = {
   container: '[data-e-type="my-widget"]',
   // ...
@@ -152,7 +152,7 @@ export class MyWidgetHelper {
 
 ## Test File Structure
 ```typescript
-// ✅ CORRECT structure
+// CORRECT structure
 import { parallelTest as test } from '../../../parallelTest';
 import { expect } from '@playwright/test';
 import { DriverFactory } from '../../../drivers/driver-factory';

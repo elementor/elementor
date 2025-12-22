@@ -68,7 +68,7 @@ test.describe('Widget Tests @v4-tests', () => {
 ### WRONG Patterns (NEVER Use)
 
 ```typescript
-// ❌ NEVER - Manual WpAdminPage creation
+// NEVER - Manual WpAdminPage creation
 test.beforeAll(async ({ browser, apiRequests }, testInfo) => {
   const context = await browser.newContext();
   const page = await context.newPage();
@@ -76,10 +76,10 @@ test.beforeAll(async ({ browser, apiRequests }, testInfo) => {
   await wpAdmin.setExperiments({ ... });
 });
 
-// ❌ NEVER - Inline selectors
+// NEVER - Inline selectors
 const SELECTORS = { container: '[data-type="widget"]' };
 
-// ❌ NEVER - Raw locators instead of page object methods
+// NEVER - Raw locators instead of page object methods
 const tab2 = tabsElement.locator('[role="tab"]').nth(1);
 await tab2.click();
 await expect(tab2).toHaveAttribute('aria-selected', 'true');

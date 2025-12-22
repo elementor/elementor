@@ -35,7 +35,7 @@ export class AtomicTabsWidget {
 	}
 
 	async clickTab( index: number ): Promise<void> {
-		await this.getTab( index ).click();
+		await this.getTab( index ).click( { force: true } );
 	}
 
 	async expectTabActive( index: number ): Promise<void> {

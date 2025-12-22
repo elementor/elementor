@@ -172,4 +172,145 @@ test.describe( 'E-Tabs Integration Tests @v4-tests', () => {
 		await expect( frontendHeading ).toBeVisible();
 		await expect( frontendParagraph ).toBeVisible();
 	} );
+
+	test( 'TC-011: Edit text content inside tab panels', async () => {
+		// Arrange
+		const tab1HeadingText = 'Welcome to Tab 1';
+		await driver.createNewPage( true );
+		const tabsId = await AtomicTabsHelper.addTabsWidget( driver.editor );
+		const tabs = AtomicTabsHelper.createEditorWidget( driver.editor.getPreviewFrame(), tabsId );
+
+		// Act - Add e-heading to Tab 1
+		const tab1ContentId = await tabs.getTabContentId( 0 );
+		const headingId = await driver.editor.addWidget( { widgetType: 'e-heading', container: tab1ContentId } );
+		const headingElement = driver.editor.getPreviewFrame().locator( `.elementor-element-${ headingId } ${ AtomicWidgetsSelectors.heading.base }` );
+		await expect( headingElement ).toBeVisible();
+
+		// Act - Edit heading text via v4Panel
+		await headingElement.click();
+		await driver.editor.v4Panel.openTab( 'general' );
+		await driver.editor.v4Panel.fillTextarea( 0, tab1HeadingText );
+
+		// Assert - Heading text is set in Tab 1
+		await expect( headingElement ).toContainText( tab1HeadingText );
+
+		// Act - Publish and view frontend
+		await driver.editor.publishAndViewPage();
+		const frontendTabs = AtomicTabsHelper.createFrontendWidget( driver.page );
+
+		// Assert - Tab 1 shows heading with custom text
+		await frontendTabs.expectTabActive( 0 );
+		const frontendHeading = driver.page.locator( AtomicWidgetsSelectors.heading.base ).first();
+		await expect( frontendHeading ).toContainText( tab1HeadingText );
+
+		// Act - Switch to Tab 2 and back to Tab 1
+		await frontendTabs.clickTab( 1 );
+		await frontendTabs.expectTabActive( 1 );
+		await frontendTabs.clickTab( 0 );
+
+		// Assert - Tab 1 content still visible after tab switching
+		await expect( frontendHeading ).toContainText( tab1HeadingText );
+	} );
+
+	test( 'TC-012: Add image widget inside tab panel', async () => {
+		// Arrange
+		await driver.createNewPage( true );
+		const tabsId = await AtomicTabsHelper.addTabsWidget( driver.editor );
+		const tabs = AtomicTabsHelper.createEditorWidget( driver.editor.getPreviewFrame(), tabsId );
+
+		// Act - Add e-image widget to Tab 1 content
+		const tab1ContentId = await tabs.getTabContentId( 0 );
+		const imageId = await driver.editor.addWidget( { widgetType: 'e-image', container: tab1ContentId } );
+		const imageWidget = driver.editor.getPreviewFrame().locator( driver.editor.getWidgetSelector( imageId ) );
+
+		// Assert - Image widget is visible in Tab 1
+		await expect( imageWidget ).toBeVisible();
+		await expect( imageWidget.locator( AtomicWidgetsSelectors.image.base ) ).toBeVisible();
+
+		// Act - Switch to Tab 2 and back to Tab 1
+		await tabs.clickTab( 1 );
+		await tabs.clickTab( 0 );
+
+		// Assert - Image widget still visible after tab switching
+		await expect( imageWidget ).toBeVisible();
+
+		// Act - Publish and view frontend
+		await driver.editor.publishAndViewPage();
+		const frontendTabs = AtomicTabsHelper.createFrontendWidget( driver.page );
+
+		// Assert - Image widget visible in Tab 1 on frontend
+		await frontendTabs.expectTabActive( 0 );
+		const frontendImageWidget = driver.page.locator( AtomicWidgetsSelectors.image.base ).first();
+		await expect( frontendImageWidget ).toBeVisible();
+
+		// Act - Switch tabs and return
+		await frontendTabs.clickTab( 1 );
+		await frontendTabs.clickTab( 0 );
+
+		// Assert - Image widget still visible after tab switching
+		await expect( frontendImageWidget ).toBeVisible();
+	} );
+
+	test( 'TC-013: Content persists after tab switching and page reload', async () => {
+		// Arrange
+		const tab1HeadingText = 'Tab 1 Title';
+		const tab1ButtonText = 'Action Button';
+		await driver.createNewPage( true );
+		const tabsId = await AtomicTabsHelper.addTabsWidget( driver.editor );
+		const tabs = AtomicTabsHelper.createEditorWidget( driver.editor.getPreviewFrame(), tabsId );
+
+		// Act - Add e-heading to Tab 1 and set text via v4Panel
+		const tab1ContentId = await tabs.getTabContentId( 0 );
+		const headingId = await driver.editor.addWidget( { widgetType: 'e-heading', container: tab1ContentId } );
+		const headingElement = driver.editor.getPreviewFrame().locator( `.elementor-element-${ headingId } ${ AtomicWidgetsSelectors.heading.base }` );
+		await expect( headingElement ).toBeVisible();
+		await headingElement.click();
+		await driver.editor.v4Panel.openTab( 'general' );
+		await driver.editor.v4Panel.fillTextarea( 0, tab1HeadingText );
+
+		// Act - Add e-button to Tab 1 and set text via v4Panel
+		const buttonId = await driver.editor.addWidget( { widgetType: 'e-button', container: tab1ContentId } );
+		const buttonElement = driver.editor.getPreviewFrame().locator( `.elementor-element-${ buttonId } ${ AtomicWidgetsSelectors.button.base }` );
+		await expect( buttonElement ).toBeVisible();
+		await buttonElement.click();
+		await driver.editor.v4Panel.openTab( 'general' );
+		await driver.editor.v4Panel.fillField( 0, tab1ButtonText );
+
+		// Act - Publish the page
+		await driver.editor.publishPage();
+
+		// Act - Reload editor page
+		await driver.page.reload();
+		await driver.page.waitForLoadState( 'networkidle' );
+
+		// Assert - Tab structure preserved after reload
+		const tabsAfterReload = AtomicTabsHelper.createEditorWidget( driver.editor.getPreviewFrame(), tabsId );
+		await tabsAfterReload.expectVisible();
+
+		// Assert - Tab 1 content preserved (heading + button)
+		const headingAfterReload = driver.editor.getPreviewFrame().locator( `.elementor-element-${ headingId } ${ AtomicWidgetsSelectors.heading.base }` );
+		await expect( headingAfterReload ).toContainText( tab1HeadingText );
+		const buttonAfterReload = driver.editor.getPreviewFrame().locator( `.elementor-element-${ buttonId } ${ AtomicWidgetsSelectors.button.base }` );
+		await expect( buttonAfterReload ).toContainText( tab1ButtonText );
+
+		// Act - View frontend
+		await driver.editor.viewPage();
+		const frontendTabs = AtomicTabsHelper.createFrontendWidget( driver.page );
+
+		// Assert - Tab 1 shows correct content on frontend
+		await frontendTabs.expectTabActive( 0 );
+		const frontendHeading = driver.page.locator( AtomicWidgetsSelectors.heading.base ).first();
+		const frontendButton = driver.page.locator( AtomicWidgetsSelectors.button.base ).first();
+		await expect( frontendHeading ).toContainText( tab1HeadingText );
+		await expect( frontendButton ).toContainText( tab1ButtonText );
+
+		// Act - Switch tabs and back to verify content persists
+		await frontendTabs.clickTab( 1 );
+		await frontendTabs.expectTabActive( 1 );
+		await frontendTabs.clickTab( 0 );
+
+		// Assert - Tab 1 content still visible after switching
+		await expect( frontendHeading ).toContainText( tab1HeadingText );
+		await expect( frontendButton ).toContainText( tab1ButtonText );
+	} );
 } );
