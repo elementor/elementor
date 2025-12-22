@@ -1,3 +1,5 @@
+import { AtomicWidgetsSelectors } from '../../../../../selectors/atomic-widgets-selectors';
+
 export const INLINE_EDITING_SELECTORS = {
 	e_paragraph: 'e-paragraph',
 	paragraphPrefix: 'This is a paragraph with ',
@@ -10,5 +12,5 @@ export const INLINE_EDITING_SELECTORS = {
 	canvasInlineEditor: '[contenteditable="true"][class*="ProseMirror"]',
 	panelInlineEditor: '.tiptap',
 	contentSectionLabel: 'Content',
-	headingBase: '.e-heading-base',
+	headingBase: AtomicWidgetsSelectors.heading.base,
 };

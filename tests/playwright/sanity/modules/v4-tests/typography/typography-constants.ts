@@ -1,32 +1,34 @@
+import { AtomicWidgetsSelectors } from '../../../../selectors/atomic-widgets-selectors';
+
 export const WIDGET_CONFIGS = {
 	HEADING: {
 		type: 'e-heading',
-		selector: '.e-heading-base',
+		selector: AtomicWidgetsSelectors.heading.base,
 		defaultSize: '32px',
 	},
 	PARAGRAPH: {
 		type: 'e-paragraph',
-		selector: '.e-paragraph-base',
+		selector: AtomicWidgetsSelectors.paragraph.base,
 		defaultSize: '16px',
 	},
 	BUTTON: {
 		type: 'e-button',
-		selector: '.e-button-base',
+		selector: AtomicWidgetsSelectors.button.base,
 		defaultSize: '15px',
 	},
 	E_HEADING: {
 		type: 'e-heading',
-		selector: '.e-heading-base',
+		selector: AtomicWidgetsSelectors.heading.base,
 		defaultSize: '32px',
 	},
 	E_PARAGRAPH: {
 		type: 'e-paragraph',
-		selector: '.e-paragraph-base',
+		selector: AtomicWidgetsSelectors.paragraph.base,
 		defaultSize: '16px',
 	},
 	E_BUTTON: {
 		type: 'e-button',
-		selector: '.e-button-base',
+		selector: AtomicWidgetsSelectors.button.base,
 		defaultSize: '15px',
 	},
 };

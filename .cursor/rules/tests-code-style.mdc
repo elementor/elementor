@@ -31,3 +31,173 @@ alwaysApply: false
 - Prefer optional parameters over modifying existing helper behavior
 - Always read existing helpers before adding new code
 - If a change risks breaking existing helpers, request approval first
+
+---
+
+# Playwright E2E Test Patterns (MANDATORY)
+
+## ALWAYS Use DriverFactory Pattern
+NEVER manually create WpAdminPage or manage experiments. Use existing DriverFactory:
+
+```typescript
+// CORRECT - Use DriverFactory
+import { DriverFactory } from '../../../drivers/driver-factory';
+import type { EditorDriver } from '../../../drivers/editor-driver';
+
+test.describe('My Tests @v4-tests', () => {
+  let driver: EditorDriver;
+
+  test.beforeAll(async ({ browser, apiRequests }, testInfo) => {
+    driver = await DriverFactory.createEditorDriver(browser, testInfo, apiRequests, {
+      experiments: ['e_atomic_elements'],
+    });
+  });
+
+  test.afterAll(async ({ browser, apiRequests }, testInfo) => {
+    await DriverFactory.resetExperiments(browser, testInfo, apiRequests);
+    await driver.close();
+  });
+
+  test('My test', async () => {
+    await driver.createNewPage(true); // true = close navigator
+    // Use driver.editor, driver.page, driver.wpAdmin
+  });
+});
+```
+
+```typescript
+// WRONG - Manual page/experiment management
+test.beforeAll(async ({ browser, apiRequests }, testInfo) => {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  wpAdmin = new WpAdminPage(page, testInfo, apiRequests);
+  await wpAdmin.setExperiments({ ... });
+  await page.close();
+});
+```
+
+## ALWAYS Create Centralized Selectors
+NEVER define selectors inline in test files. Create selector files:
+
+```typescript
+// CORRECT - tests/playwright/selectors/my-widget-selectors.ts
+export const MyWidgetSelectors = {
+  container: '[data-e-type="my-widget"]',
+  button: '[role="button"]',
+  activeClass: 'is-active',
+  frontend: {
+    base: '.my-widget-base',
+  },
+} as const;
+```
+
+```typescript
+// WRONG - Inline selectors in test file
+const SELECTORS = {
+  container: '[data-e-type="my-widget"]',
+  // ...
+};
+```
+
+## ALWAYS Create Page Objects for Widgets
+For any new widget tests, create a page object in `tests/playwright/pages/widgets/`:
+
+```typescript
+// tests/playwright/pages/widgets/my-widget.ts
+import { expect, Frame, Locator, Page } from '@playwright/test';
+import { MyWidgetSelectors } from '../../selectors/my-widget-selectors';
+
+export class MyWidgetEditor {
+  constructor(private readonly frame: Frame, private readonly widgetId: string) {}
+
+  get container(): Locator {
+    return this.frame.locator(`[data-id="${this.widgetId}"]`);
+  }
+
+  async clickButton(): Promise<void> {
+    await this.container.locator(MyWidgetSelectors.button).click();
+  }
+
+  async expectActive(): Promise<void> {
+    await expect(this.container).toHaveClass(new RegExp(MyWidgetSelectors.activeClass));
+  }
+}
+
+export class MyWidgetFrontend {
+  constructor(private readonly page: Page) {}
+
+  get container(): Locator {
+    return this.page.locator(MyWidgetSelectors.frontend.base).first();
+  }
+
+  async expectVisible(): Promise<void> {
+    await expect(this.container).toBeVisible();
+  }
+}
+
+export class MyWidgetHelper {
+  static async addWidget(editor: { addElement: Function }, containerId = 'document'): Promise<string> {
+    return await editor.addElement({ elType: 'my-widget' }, containerId);
+  }
+
+  static createEditorWidget(frame: Frame, widgetId: string): MyWidgetEditor {
+    return new MyWidgetEditor(frame, widgetId);
+  }
+
+  static createFrontendWidget(page: Page): MyWidgetFrontend {
+    return new MyWidgetFrontend(page);
+  }
+}
+```
+
+## Test File Structure
+```typescript
+// CORRECT structure
+import { parallelTest as test } from '../../../parallelTest';
+import { expect } from '@playwright/test';
+import { DriverFactory } from '../../../drivers/driver-factory';
+import type { EditorDriver } from '../../../drivers/editor-driver';
+import { MyWidgetHelper } from '../../../pages/widgets/my-widget';
+import { MyWidgetSelectors } from '../../../selectors/my-widget-selectors';
+
+test.describe('My Widget Tests @v4-tests', () => {
+  let driver: EditorDriver;
+
+  test.beforeAll(async ({ browser, apiRequests }, testInfo) => {
+    driver = await DriverFactory.createEditorDriver(browser, testInfo, apiRequests, {
+      experiments: ['e_atomic_elements'],
+    });
+  });
+
+  test.afterAll(async ({ browser, apiRequests }, testInfo) => {
+    await DriverFactory.resetExperiments(browser, testInfo, apiRequests);
+    await driver.close();
+  });
+
+  test('TC-001: Widget can be added', async () => {
+    // Arrange
+    await driver.createNewPage(true);
+    const widgetId = await MyWidgetHelper.addWidget(driver.editor);
+    const widget = MyWidgetHelper.createEditorWidget(driver.editor.getPreviewFrame(), widgetId);
+
+    // Act & Assert
+    await widget.expectVisible();
+  });
+});
+```
+
+## Existing Patterns to Reuse
+Before writing new tests, check these existing patterns:
+- `tests/playwright/drivers/driver-factory.ts` - Driver creation
+- `tests/playwright/drivers/editor-driver.ts` - EditorDriver class
+- `tests/playwright/selectors/` - Existing selector files
+- `tests/playwright/pages/widgets/` - Existing widget page objects
+- `tests/playwright/sanity/modules/v4-tests/typography/` - Example of well-structured tests
+
+## Checklist Before Writing Tests
+1. [ ] Check if DriverFactory supports your use case
+2. [ ] Check if selectors already exist in `selectors/` folder
+3. [ ] Check if page object exists in `pages/widgets/`
+4. [ ] Use existing helper methods from EditorPage/WpAdminPage
+5. [ ] Follow AAA pattern with comments
+6. [ ] Use page object methods instead of raw locators
