@@ -35,8 +35,6 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 
 	const { value: masterValue, placeholder: masterPlaceholder, setValue: setMasterValue } = useBoundProp();
 
-	const hasPlaceholders = !! ( sizePlaceholder || dimensionsPlaceholder );
-
 	const inferIsLinked = () => {
 		if ( dimensionsPropTypeUtil.isValid( masterValue ) ) {
 			return false;
@@ -113,6 +111,8 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 		setValue: setDimensionsValue,
 		isDisabled: () => dimensionsDisabled,
 	};
+
+	const hasPlaceholders = ! masterValue && ( dimensionsPlaceholder || masterPlaceholder );
 
 	return (
 		<PropProvider { ...propProviderProps }>
