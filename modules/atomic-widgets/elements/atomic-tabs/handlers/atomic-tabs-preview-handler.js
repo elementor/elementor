@@ -5,7 +5,7 @@ import { TAB_ELEMENT_TYPE, TAB_CONTENT_ELEMENT_TYPE, getTabId, getIndex } from '
 register( {
 	elementType: 'e-tabs',
 	id: 'e-tabs-preview-handler',
-	callback: ( { element, signal } ) => {
+	callback: ( { element, signal, listenToChildren } ) => {
 		window?.parent.addEventListener( 'elementor/navigator/item/click', ( event ) => {
 			const { id, type } = event.detail;
 
