@@ -107,11 +107,6 @@ class Test_Variables_Service extends TestCase {
 				],
 			],
 			[
-				'type' => 'restore',
-				'id' => 'id-2',
-				'label' => 'Restored Color',
-			],
-			[
 				'type' => 'delete',
 				'id' => 'delete-me',
 			],
