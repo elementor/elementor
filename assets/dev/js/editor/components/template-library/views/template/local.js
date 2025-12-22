@@ -38,6 +38,38 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		'change:title': 'onTitleChange',
 	},
 
+	onRender() {
+		if ( this.ui.toggleMore.length ) {
+			this.ui.toggleMore.attr( {
+				'aria-haspopup': 'menu',
+				'aria-expanded': 'false',
+			} );
+		}
+
+		if ( this.ui.bulkSelectionItemCheckbox.length ) {
+			this.updateRowSelectionAttributes();
+		}
+	},
+
+	updateRowSelectionAttributes() {
+		const isChecked = this.ui.bulkSelectionItemCheckbox.prop( 'checked' );
+		const isSelected = this.$el.hasClass( 'bulk-selected-item' );
+
+		this.ui.bulkSelectionItemCheckbox.attr( 'aria-checked', isChecked );
+
+		if ( isSelected ) {
+			this.$el.attr( {
+				'aria-selected': 'true',
+				tabindex: '0',
+			} );
+		} else {
+			this.$el.attr( {
+				'aria-selected': 'false',
+				tabindex: '-1',
+			} );
+		}
+	},
+
 	handleLockedTemplate() {
 		const isLocked = this.model.isLocked();
 
@@ -51,6 +83,11 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 		const title = _.escape( this.model.get( 'title' ) );
 
 		this.ui.titleCell.text( title );
+
+		if ( this.ui.bulkSelectionItemCheckbox.length ) {
+			const ariaLabel = __( 'Select template', 'elementor' ) + ' ' + title;
+			this.ui.bulkSelectionItemCheckbox.attr( 'aria-label', ariaLabel );
+		}
 	},
 
 	handleItemClicked( event ) {
@@ -111,7 +148,14 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 
 		this.handleLockedTemplate();
 
-		this.ui.morePopup.show();
+		const isExpanded = 'true' === this.ui.toggleMore.attr( 'aria-expanded' );
+		this.ui.toggleMore.attr( 'aria-expanded', ! isExpanded );
+
+		if ( isExpanded ) {
+			this.ui.morePopup.hide();
+		} else {
+			this.ui.morePopup.show();
+		}
 
 		elementor.templates.eventManager.sendPageViewEvent( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.morePopup,
@@ -189,6 +233,7 @@ const TemplateLibraryTemplateLocalView = TemplateLibraryTemplateView.extend( {
 			this.$el.removeClass( 'bulk-selected-item' );
 		}
 
+		this.updateRowSelectionAttributes();
 		elementor.templates.layout.handleBulkActionBarUi();
 	},
 } );
