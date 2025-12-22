@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import { useOverridablePropValue } from '../../provider/overridable-prop-context';
 import { setOverridableProp } from '../../store/actions/set-overridable-prop';
-import { selectCurrentComponentId, selectOverridableProps } from '../../store/store';
+import { selectOverridableProps, useCurrentComponentId } from '../../store/store';
 import { type OverridableProps } from '../../types';
 import { Indicator } from './indicator';
 import { OverridablePropForm } from './overridable-prop-form';
@@ -20,7 +20,7 @@ const FORBIDDEN_KEYS = [ '_cssid', 'attributes' ];
 
 export function OverridablePropIndicator() {
 	const { bind } = useBoundProp();
-	const componentId = selectCurrentComponentId( getState() );
+	const componentId = useCurrentComponentId();
 
 	if ( ! isPropAllowed( bind ) || ! componentId ) {
 		return null;
