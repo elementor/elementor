@@ -12,7 +12,7 @@ const SidebarDefault = ( { header, cta, repeater } ) => {
 	};
 
 	return (
-		<Paper elevation={ 0 } sx={ { p: 3 } }>
+		<Paper elevation={ 0 } sx={ { p: 3, borderRadius: 2 } }>
 			<Stack gap={ 1.5 } alignItems="center" textAlign="center" sx={ { pb: 4 } }>
 				<Box component="img" src={ header.image }></Box>
 				<Box>
