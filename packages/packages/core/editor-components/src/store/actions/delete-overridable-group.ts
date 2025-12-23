@@ -36,4 +36,3 @@ export function deleteOverridableGroup( { componentId, groupId }: DeleteGroupPar
 
 	return true;
 }
-
