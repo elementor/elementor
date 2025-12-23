@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { createMockTrackingModule, mockTracking } from 'test-utils';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { mockTrackGlobalClasses, mockTrackingModule } from '../../../../../__tests__/mocks';
 import { useFilters } from '../../../../../hooks/use-filters';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../../context';
 import { ActiveFilters } from '../active-filters';
@@ -10,7 +10,7 @@ import { mockOnClearFilter, mockSetFilters, setupMocks } from './test-utils';
 jest.mock( '../../../context' );
 jest.mock( '../../../../../hooks/use-filters' );
 
-jest.mock( '../../../../../utils/tracking', () => mockTrackingModule );
+jest.mock( '../../../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
 
 describe( 'ActiveFilters', () => {
 	beforeEach( () => {
@@ -66,7 +66,7 @@ describe( 'ActiveFilters', () => {
 
 		// Assert
 		expect( mockSetFilters ).toHaveBeenCalled();
-		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classManagerFilterUsed',
 			action: 'remove',
 			type: 'unused',
@@ -98,7 +98,7 @@ describe( 'ActiveFilters', () => {
 		fireEvent.click( clearButton );
 
 		// Assert
-		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classManagerFilterCleared',
 			trigger: 'header',
 		} );

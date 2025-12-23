@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { createMockDocument, createMockStyleDefinition, renderWithStore } from 'test-utils';
+import {
+	createMockDocument,
+	createMockStyleDefinition,
+	createMockTrackingModule,
+	mockTracking,
+	renderWithStore,
+} from 'test-utils';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { validateStyleLabel } from '@elementor/editor-styles-repository';
@@ -10,7 +16,6 @@ import {
 } from '@elementor/store';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 
-import { mockTrackGlobalClasses, mockTrackingModule } from '../../../__tests__/mocks';
 import { useFilters } from '../../../hooks/use-filters';
 import { slice } from '../../../store';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../search-and-filter/context';
@@ -38,7 +43,7 @@ jest.mock( '../../../hooks/use-css-class-usage', () => ( {
 	} ),
 } ) );
 
-jest.mock( '../../../utils/tracking', () => mockTrackingModule );
+jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
 
 const mockUseSearchAndFiltersProps: SearchAndFilterContextType = {
 	search: {
@@ -109,7 +114,7 @@ describe( 'GlobalClassesList', () => {
 		expect( editableField ).not.toBeInTheDocument();
 
 		expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
-		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classRenamed',
 			classId: 'class-1',
 			oldValue: 'Class 1',
@@ -184,7 +189,7 @@ describe( 'GlobalClassesList', () => {
 		expect( editableField ).not.toBeInTheDocument();
 
 		expect( screen.getByText( 'New-Class-Name' ) ).toBeInTheDocument();
-		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classRenamed',
 			classId: 'class-1',
 			oldValue: 'Class 1',
@@ -236,7 +241,7 @@ describe( 'GlobalClassesList', () => {
 		} );
 		expect( screen.getByText( 'Class 2' ) ).toBeInTheDocument();
 		await waitFor( () => {
-			expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+			expect( mockTracking ).toHaveBeenCalledWith( {
 				event: 'classDeleted',
 				classId: 'class-1',
 				runAction: expect.any( Function ),
@@ -602,7 +607,7 @@ describe( 'GlobalClassesList', () => {
 		const triggers = screen.queryAllByRole( 'button', { name: 'sort' } );
 
 		expect( triggers ).toHaveLength( 0 );
-		expect( mockTrackGlobalClasses ).not.toHaveBeenCalled();
+		expect( mockTracking ).not.toHaveBeenCalled();
 	} );
 } );
 

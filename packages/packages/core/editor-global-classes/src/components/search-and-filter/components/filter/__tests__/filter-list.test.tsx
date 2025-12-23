@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { createMockTrackingModule, mockTracking } from 'test-utils';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { mockTrackGlobalClasses, mockTrackingModule } from '../../../../../__tests__/mocks';
 import { useFilteredCssClassUsage } from '../../../../../hooks/use-filtered-css-class-usage';
 import { type SearchAndFilterContextType, useSearchAndFilters } from '../../../context';
 import { FilterList } from '../filter-list';
@@ -10,7 +10,7 @@ import { mockSetFilters, setupMocks } from './test-utils';
 jest.mock( '../../../context' );
 jest.mock( '../../../../../hooks/use-filtered-css-class-usage' );
 
-jest.mock( '../../../../../utils/tracking', () => mockTrackingModule );
+jest.mock( '../../../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
 
 describe( 'FilterList', () => {
 	beforeEach( () => {
@@ -53,7 +53,7 @@ describe( 'FilterList', () => {
 		fireEvent.click( screen.getByText( 'Unused' ) );
 
 		expect( mockSetFilters ).toHaveBeenCalledWith( expect.any( Function ) );
-		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classManagerFilterUsed',
 			action: 'apply',
 			type: 'unused',
@@ -80,7 +80,7 @@ describe( 'FilterList', () => {
 		fireEvent.click( screen.getByText( 'Unused' ) );
 
 		expect( mockSetFilters ).toHaveBeenCalledWith( expect.any( Function ) );
-		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classManagerFilterUsed',
 			action: 'remove',
 			type: 'unused',

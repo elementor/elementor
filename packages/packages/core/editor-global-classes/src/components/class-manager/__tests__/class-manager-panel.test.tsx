@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { createMockDocument, createMockStyleDefinition, dispatchDependencyCommand, renderWithStore } from 'test-utils';
+import {
+	createMockDocument,
+	createMockStyleDefinition,
+	createMockTrackingModule,
+	dispatchDependencyCommand,
+	mockTracking,
+	renderWithStore,
+} from 'test-utils';
 import { getCurrentDocument, getV1DocumentsManager } from '@elementor/editor-documents';
 import { __privateRunCommand } from '@elementor/editor-v1-adapters';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
@@ -7,7 +14,6 @@ import { __createStore, __dispatch, __registerSlice, type SliceState, type Store
 import { ThemeProvider } from '@elementor/ui';
 import { act, fireEvent, screen, waitFor, within } from '@testing-library/react';
 
-import { mockTrackGlobalClasses, mockTrackingModule } from '../../../__tests__/mocks';
 import { apiClient } from '../../../api';
 import { slice } from '../../../store';
 import { ClassManagerPanel, usePanelActions } from '../class-manager-panel';
@@ -29,7 +35,7 @@ jest.mock( '@elementor/editor-panels', () => ( {
 	} ),
 } ) );
 
-jest.mock( '../../../utils/tracking', () => mockTrackingModule );
+jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
 
 describe( 'ClassManagerPanel', () => {
 	let store: Store< SliceState< typeof slice > >;
@@ -448,7 +454,7 @@ describe( 'ClassManagerPanel', () => {
 		fireEvent.focus( input );
 
 		// Assert
-		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classManagerSearched',
 		} );
 	} );

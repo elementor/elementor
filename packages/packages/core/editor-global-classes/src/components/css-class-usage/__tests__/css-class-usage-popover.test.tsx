@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { createMockTrackingModule, mockTracking } from 'test-utils';
 import { __useOpenDocumentInNewTab as useOpenDocumentInNewTab } from '@elementor/editor-documents';
 import { PopoverMenuList } from '@elementor/editor-ui';
 import { MenuList } from '@elementor/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-import { mockTrackGlobalClasses, mockTrackingModule } from '../../../__tests__/mocks';
 import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
 import { CssClassUsagePopover } from '../components';
 import { type EnhancedCssClassUsageContent } from '../types';
@@ -20,7 +20,7 @@ jest.mock( '@elementor/editor-ui', () => ( {
 	PopoverMenuList: jest.fn(),
 } ) );
 
-jest.mock( '../../../utils/tracking', () => mockTrackingModule );
+jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
 
 jest.mocked( PopoverMenuList ).mockImplementation( ( { items, menuItemContentTemplate, onSelect } ) => {
 	return (
@@ -154,7 +154,7 @@ describe( 'CssClassUsagePopover', () => {
 		// Assert.
 		fireEvent.click( screen.getByRole( 'option' ) );
 		expect( mockNavigate ).toHaveBeenCalledWith( 1 );
-		expect( mockTrackGlobalClasses ).toHaveBeenCalledWith( {
+		expect( mockTracking ).toHaveBeenCalledWith( {
 			event: 'classUsageLocate',
 			classId: 'test-class',
 		} );
