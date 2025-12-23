@@ -122,15 +122,9 @@
                     "priority": 20
                 },
                 {
-<<<<<<< HEAD
                     "slug": "http://example.org/wp-admin/admin.php?page=elementor-app&ver=3.35.0&source=wp_db_templates_menu#/kit-library",
                     "label": "Website Templates",
                     "url": "/wp-admin/admin.php?page=elementor-app&ver=3.35.0&source=wp_db_templates_menu#/kit-library",
-=======
-                    "slug": "http://example.org/wp-admin/admin.php?page=elementor-app&ver=3.34.0&source=wp_db_templates_menu#/kit-library",
-                    "label": "Website templates",
-                    "url": "/wp-admin/admin.php?page=elementor-app&ver=3.34.0&source=wp_db_templates_menu#/kit-library",
->>>>>>> 31d745c4bd (Internal: Further VQA tweaks [ED-22077] (#33892))
                     "priority": 30
                 },
                 {
