@@ -322,9 +322,17 @@ class Path_Resolver {
 		}
 
 		if ( empty( $segments ) ) {
-			$value = $data[ $key ];
-			unset( $data[ $key ] );
-			$data[ $new_key ] = $value;
+			$new_data = [];
+
+			foreach ( $data as $k => $v ) {
+				if ( $k === $key ) {
+					$new_data[ $new_key ] = $v;
+				} else {
+					$new_data[ $k ] = $v;
+				}
+			}
+
+			$data = $new_data;
 
 			return;
 		}
