@@ -145,7 +145,6 @@ class Module extends BaseModule {
 					'source' => 'generic',
 				] ),
 				'upgrade' => 'https://go.elementor.com/go-pro-onboarding-wizard-upgrade/',
-				'upgradeOne' => 'https://go.elementor.com/go-one-onboarding-wizard-upgrade/',
 				'signUp' => $library->get_admin_url( 'authorize', [
 					'utm_source' => 'onboarding-wizard',
 					'utm_campaign' => 'connect-account',

@@ -21,9 +21,7 @@ export default function ChooseFeatures() {
 		pageId = 'chooseFeatures',
 		nextStep = 'goodToGo',
 		{ state, handleAction } = useButtonAction( pageId, nextStep ),
-		upgradeUrl = tierName === tiers.one && elementorAppConfig.onboarding.urls.upgradeOne
-			? elementorAppConfig.onboarding.urls.upgradeOne
-			: elementorAppConfig.onboarding.urls.upgrade,
+		upgradeUrl = elementorAppConfig.onboarding.urls.upgrade,
 		actionButton = {
 			text: __( 'Upgrade Now', 'elementor' ),
 			href: addExperimentTrackingToUrl( upgradeUrl, 'upgrade-step3' ),
@@ -89,7 +87,7 @@ export default function ChooseFeatures() {
 			setTierName( tiers.one );
 		} else if ( selectedFeatures.advanced && selectedFeatures.advanced.length > 0 ) {
 			setTierName( tiers.advanced );
-		} else if ( selectedFeatures.essential && selectedFeatures.essential.length > 0 ) {
+		} else {
 			setTierName( tiers.essential );
 		}
 	}, [ selectedFeatures, isEditorOneActive, tiers.one, tiers.advanced, tiers.essential ] );
