@@ -21,10 +21,10 @@ class Path_Resolver {
 		return $this->data;
 	}
 
-	public function resolve( string $pattern ): array {
+	public function resolve( string $pattern, bool $allow_missing_leaf = true ): array {
 		$segments = $this->parse_path( $pattern );
 
-		return $this->resolve_segments( $segments, $this->data, [] );
+		return $this->resolve_segments( $segments, $this->data, [], '', $allow_missing_leaf );
 	}
 
 	public function resolve_with_wildcard_binding( string $pattern, array $wildcard_values ): ?string {
@@ -158,11 +158,11 @@ class Path_Resolver {
 		];
 	}
 
-	private function resolve_segments( array $segments, $data, array $wildcard_values ): array {
+	private function resolve_segments( array $segments, $data, array $wildcard_values, string $current_path = '', bool $allow_missing_leaf = true ): array {
 		if ( empty( $segments ) ) {
 			return [
 				[
-					'path' => $this->build_path_string( $wildcard_values ),
+					'path' => $current_path,
 					'wildcard_values' => $wildcard_values,
 				],
 			];
@@ -173,6 +173,7 @@ class Path_Resolver {
 		}
 
 		$segment = array_shift( $segments );
+		$is_last_segment = empty( $segments );
 		$results = [];
 
 		if ( $segment['is_wildcard'] ) {
@@ -183,25 +184,33 @@ class Path_Resolver {
 					'type' => $segment['type'],
 				];
 
+				$new_path = $this->append_to_path( $current_path, $key, $segment['type'] );
+
 				$results = array_merge(
 					$results,
-					$this->resolve_segments( $segments, $data[ $key ], $new_wildcard_values )
+					$this->resolve_segments( $segments, $data[ $key ], $new_wildcard_values, $new_path, $allow_missing_leaf )
 				);
 			}
 		} else {
 			$key = $segment['value'];
+			$key_exists = array_key_exists( $key, $data );
 
-			if ( ! array_key_exists( $key, $data ) ) {
+			if ( ! $key_exists && ! ( $allow_missing_leaf && $is_last_segment ) ) {
 				return [];
 			}
 
-			$new_wildcard_values = $wildcard_values;
-			$new_wildcard_values[] = [
-				'key' => $key,
-				'type' => $segment['type'],
-			];
+			$new_path = $this->append_to_path( $current_path, $key, $segment['type'] );
 
-			$results = $this->resolve_segments( $segments, $data[ $key ], $new_wildcard_values );
+			if ( $is_last_segment ) {
+				$results = [
+					[
+						'path' => $new_path,
+						'wildcard_values' => $wildcard_values,
+					],
+				];
+			} else {
+				$results = $this->resolve_segments( $segments, $data[ $key ], $wildcard_values, $new_path, $allow_missing_leaf );
+			}
 		}
 
 		return $results;
