@@ -199,7 +199,12 @@ describe( 'service', () => {
 				},
 			} );
 
-			expect( apiClient.update ).toHaveBeenCalledWith( 'variable-3', 'updated-primary-font', 'Arial' );
+			expect( apiClient.update ).toHaveBeenCalledWith(
+				'variable-3',
+				'updated-primary-font',
+				'Arial',
+				'global-font-variable'
+			);
 
 			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith(
 				'elementor-global-variables',
@@ -213,6 +218,31 @@ describe( 'service', () => {
 			);
 
 			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith( 'elementor-global-variables-watermark', '11' );
+		} );
+
+		it( 'should pass type in payload when type is changed', async () => {
+			// Arrange.
+			jest.mocked( apiClient.update ).mockResolvedValue(
+				createMockHttpResponse( {
+					success: true,
+					data: { watermark: 11, variable: {} },
+				} )
+			);
+
+			// Act.
+			await service.update( 'size-variable', {
+				type: 'global-custom-size-variable',
+				label: 'updated-custom-size',
+				value: 'clamp(9rem, 4rem, 5px)',
+			} );
+
+			// Assert.
+			expect( apiClient.update ).toHaveBeenCalledWith(
+				'size-variable',
+				'updated-custom-size',
+				'clamp(9rem, 4rem, 5px)',
+				'global-custom-size-variable'
+			);
 		} );
 	} );
 
@@ -330,7 +360,7 @@ describe( 'service', () => {
 			const result = await service.restore( 'variable-3' );
 
 			// Assert.
-			expect( apiClient.restore ).toHaveBeenCalledWith( 'variable-3', undefined, undefined );
+			expect( apiClient.restore ).toHaveBeenCalledWith( 'variable-3', undefined, undefined, undefined );
 
 			expect( mockLocalStorage.setItem ).toHaveBeenCalledWith(
 				'elementor-global-variables',
@@ -353,6 +383,22 @@ describe( 'service', () => {
 					type: 'global-font-variable',
 				},
 			} );
+		} );
+
+		it( 'should pass type in payload when restoring with a changed type', async () => {
+			// Arrange.
+			jest.mocked( apiClient.restore ).mockResolvedValue(
+				createMockHttpResponse( {
+					success: true,
+					data: { watermark: 31, variable: {} },
+				} )
+			);
+
+			// Act.
+			await service.restore( 'variable-3', 'size', '12px', 'global-size-variable' );
+
+			// Assert.
+			expect( apiClient.restore ).toHaveBeenCalledWith( 'variable-3', 'size', '12px', 'global-size-variable' );
 		} );
 	} );
 } );
