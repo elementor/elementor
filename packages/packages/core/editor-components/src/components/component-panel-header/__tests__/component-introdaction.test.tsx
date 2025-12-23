@@ -18,7 +18,7 @@ describe( 'ComponentIntroduction', () => {
 		// Create a mock anchor element
 		const anchorElement = document.createElement( 'div' );
 		document.body.appendChild( anchorElement );
-		anchorRef.current = anchorElement;
+		( anchorRef as React.MutableRefObject< HTMLDivElement > ).current = anchorElement;
 	} );
 
 	afterEach( () => {
