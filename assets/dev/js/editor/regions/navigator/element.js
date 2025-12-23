@@ -303,7 +303,7 @@ export default class extends Marionette.CompositeView {
 
 		this.ui.indicators.empty();
 
-		jQuery.each( elementor.navigator.indicators, ( __indicatorName, indicatorSettings ) => {
+		jQuery.each( elementor.navigator.indicators, ( _indicatorName, indicatorSettings ) => {
 			const isShouldBeIndicated = indicatorSettings.settingKeys.some( ( key ) => settings[ key ] );
 
 			if ( ! isShouldBeIndicated ) {
@@ -374,14 +374,6 @@ export default class extends Marionette.CompositeView {
 		) {
 			this.toggleHiddenClass();
 		}
-
-		if ( undefined !== this.model.changed.componentName ) {
-			this.ui.title.text( this.model.getTitle() );
-		}
-	}
-
-	onComponentNameChange() {
-		this.ui.title.text( this.model.getTitle() );
 	}
 
 	onModelSettingsChange( settingsModel ) {
