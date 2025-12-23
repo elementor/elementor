@@ -25,7 +25,7 @@ const CLOUD_TEMPLATES_EXPERIMENTS = {
 };
 
 export class EventManager {
-	getExperimentVariant( experimentName ) {
+	async getExperimentVariant( experimentName ) {
 		if ( ! elementorCommon?.eventsManager ) {
 			return 'control';
 		}
