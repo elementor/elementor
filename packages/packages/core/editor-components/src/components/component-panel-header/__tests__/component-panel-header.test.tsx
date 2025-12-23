@@ -26,7 +26,7 @@ jest.mock( '@elementor/editor-documents', () => ( {
 	getV1DocumentsManager: jest.fn(),
 } ) );
 
-jest.mock( '../../component-properties-panel/component-properties-panel-panel', () => ( {
+jest.mock( '../../component-properties-panel/component-properties-panel', () => ( {
 	usePanelActions: () => ( {
 		open: mockOpenPropertiesPanel,
 	} ),
