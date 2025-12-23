@@ -79,7 +79,7 @@ export function CssClassItem( props: CssClassItemProps ) {
 	const isShowingState = isActive && meta.state;
 
 	const stateLabel = useMemo( () => {
-		if ( isClassState( meta.state ) ) {
+		if ( meta.state && isClassState( meta.state ) ) {
 			return elementStates.find( ( state ) => state.value === meta.state )?.label;
 		}
 
