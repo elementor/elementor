@@ -313,7 +313,7 @@ describe( 'ComponentPropertiesPanel', () => {
 
 			// Assert
 			await waitFor( () => {
-				const deleteMenuItem = screen.getByText( 'Delete' ).closest( 'li' );
+				const deleteMenuItem = screen.getByRole( 'menuitem', { name: 'Delete' } );
 				expect( deleteMenuItem ).toHaveAttribute( 'aria-disabled', 'true' );
 			} );
 		} );
