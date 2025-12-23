@@ -155,3 +155,31 @@ export function ensureGroupInOrder( groups: Groups, groupId: string ): Groups {
 		order: [ ...groups.order, groupId ],
 	};
 }
+
+export function deleteGroup( groups: Groups, groupId: string ): Groups {
+	const { [ groupId ]: removed, ...remainingItems } = groups.items;
+
+	return {
+		items: remainingItems,
+		order: groups.order.filter( ( id ) => id !== groupId ),
+	};
+}
+
+export function renameGroup( groups: Groups, groupId: string, newLabel: string ): Groups {
+	const group = groups.items[ groupId ];
+
+	if ( ! group ) {
+		return groups;
+	}
+
+	return {
+		...groups,
+		items: {
+			...groups.items,
+			[ groupId ]: {
+				...group,
+				label: newLabel,
+			},
+		},
+	};
+}

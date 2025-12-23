@@ -15,7 +15,7 @@ jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
 } ) );
 import { type OverridableProps, type PublishedComponent } from '../../../types';
-import { ComponentPropertiesPanel } from '../component-properties-panel-content';
+import { ComponentPropertiesPanelContent as ComponentPropertiesPanel } from '../component-properties-panel-content';
 
 const MOCK_COMPONENT_ID = 123;
 const MOCK_GROUP_ID = 'group-1';
@@ -265,6 +265,170 @@ describe( 'ComponentPropertiesPanel', () => {
 
 			// Assert
 			expect( mockOnClose ).toHaveBeenCalledTimes( 1 );
+		} );
+	} );
+
+	describe( 'group menu', () => {
+		it( 'should render menu button for each group', () => {
+			// Arrange
+			const overridableProps = createMockOverridableProps();
+			dispatch( slice.actions.load( [ createMockComponent( overridableProps ) ] ) );
+			dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+
+			// Act
+			renderWithStore( <ComponentPropertiesPanel onClose={ mockOnClose } />, store );
+
+			// Assert
+			expect( screen.getByLabelText( 'Group actions' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should open menu with Rename and Delete options when menu button is clicked', async () => {
+			// Arrange
+			const overridableProps = createMockOverridableProps();
+			dispatch( slice.actions.load( [ createMockComponent( overridableProps ) ] ) );
+			dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+			renderWithStore( <ComponentPropertiesPanel onClose={ mockOnClose } />, store );
+
+			// Act
+			fireEvent.click( screen.getByLabelText( 'Group actions' ) );
+
+			// Assert
+			await waitFor( () => {
+				expect( screen.getByText( 'Rename' ) ).toBeInTheDocument();
+				expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
+			} );
+		} );
+	} );
+
+	describe( 'delete group', () => {
+		it( 'should disable delete when group has properties', async () => {
+			// Arrange
+			const overridableProps = createMockOverridableProps();
+			dispatch( slice.actions.load( [ createMockComponent( overridableProps ) ] ) );
+			dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+			renderWithStore( <ComponentPropertiesPanel onClose={ mockOnClose } />, store );
+
+			// Act
+			fireEvent.click( screen.getByLabelText( 'Group actions' ) );
+
+			// Assert
+			await waitFor( () => {
+				const deleteMenuItem = screen.getByText( 'Delete' ).closest( 'li' );
+				expect( deleteMenuItem ).toHaveAttribute( 'aria-disabled', 'true' );
+			} );
+		} );
+
+		it( 'should delete empty group immediately', async () => {
+			// Arrange
+			const EMPTY_GROUP_ID = 'empty-group';
+			const EMPTY_GROUP_LABEL = 'Empty Group';
+			const overridableProps: OverridableProps = {
+				...createMockOverridableProps(),
+				groups: {
+					items: {
+						...createMockOverridableProps().groups.items,
+						[ EMPTY_GROUP_ID ]: {
+							id: EMPTY_GROUP_ID,
+							label: EMPTY_GROUP_LABEL,
+							props: [],
+						},
+					},
+					order: [ MOCK_GROUP_ID, EMPTY_GROUP_ID ],
+				},
+			};
+			dispatch( slice.actions.load( [ createMockComponent( overridableProps ) ] ) );
+			dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+			renderWithStore( <ComponentPropertiesPanel onClose={ mockOnClose } />, store );
+
+			// Act
+			const menuButtons = screen.getAllByLabelText( 'Group actions' );
+			fireEvent.click( menuButtons[ 1 ] );
+			await waitFor( () => {
+				expect( screen.getByText( 'Delete' ) ).toBeInTheDocument();
+			} );
+			fireEvent.click( screen.getByText( 'Delete' ) );
+
+			// Assert
+			await waitFor( () => {
+				const state = getState();
+				const updatedProps = selectOverridableProps( state, MOCK_COMPONENT_ID );
+				expect( updatedProps?.groups.items[ EMPTY_GROUP_ID ] ).toBeUndefined();
+				expect( updatedProps?.groups.order ).not.toContain( EMPTY_GROUP_ID );
+			} );
+		} );
+	} );
+
+	describe( 'rename group', () => {
+		it( 'should make group label editable when Rename is clicked', async () => {
+			// Arrange
+			const overridableProps = createMockOverridableProps();
+			dispatch( slice.actions.load( [ createMockComponent( overridableProps ) ] ) );
+			dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+			renderWithStore( <ComponentPropertiesPanel onClose={ mockOnClose } />, store );
+
+			// Act
+			fireEvent.click( screen.getByLabelText( 'Group actions' ) );
+			await waitFor( () => {
+				expect( screen.getByText( 'Rename' ) ).toBeInTheDocument();
+			} );
+			fireEvent.click( screen.getByText( 'Rename' ) );
+
+			// Assert
+			const editableField = await screen.findByRole( 'textbox' );
+			expect( editableField ).toBeInTheDocument();
+			expect( editableField ).toHaveAttribute( 'contenteditable', 'true' );
+		} );
+
+		it( 'should update group label on blur', async () => {
+			// Arrange
+			const overridableProps = createMockOverridableProps();
+			dispatch( slice.actions.load( [ createMockComponent( overridableProps ) ] ) );
+			dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+			renderWithStore( <ComponentPropertiesPanel onClose={ mockOnClose } />, store );
+
+			// Act
+			fireEvent.click( screen.getByLabelText( 'Group actions' ) );
+			await waitFor( () => {
+				expect( screen.getByText( 'Rename' ) ).toBeInTheDocument();
+			} );
+			fireEvent.click( screen.getByText( 'Rename' ) );
+
+			const input = await screen.findByRole( 'textbox' );
+			fireEvent.input( input, { target: { innerText: 'Renamed Group' } } );
+			fireEvent.blur( input );
+
+			// Assert
+			await waitFor( () => {
+				const state = getState();
+				const updatedProps = selectOverridableProps( state, MOCK_COMPONENT_ID );
+				expect( updatedProps?.groups.items[ MOCK_GROUP_ID ]?.label ).toBe( 'Renamed Group' );
+			} );
+		} );
+
+		it( 'should not allow renaming to empty string', async () => {
+			// Arrange
+			const overridableProps = createMockOverridableProps();
+			dispatch( slice.actions.load( [ createMockComponent( overridableProps ) ] ) );
+			dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+			renderWithStore( <ComponentPropertiesPanel onClose={ mockOnClose } />, store );
+
+			// Act
+			fireEvent.click( screen.getByLabelText( 'Group actions' ) );
+			await waitFor( () => {
+				expect( screen.getByText( 'Rename' ) ).toBeInTheDocument();
+			} );
+			fireEvent.click( screen.getByText( 'Rename' ) );
+
+			const input = await screen.findByRole( 'textbox' );
+			fireEvent.input( input, { target: { innerText: '' } } );
+			fireEvent.blur( input );
+
+			// Assert
+			await waitFor( () => {
+				const state = getState();
+				const updatedProps = selectOverridableProps( state, MOCK_COMPONENT_ID );
+				expect( updatedProps?.groups.items[ MOCK_GROUP_ID ]?.label ).toBe( MOCK_GROUP_LABEL );
+			} );
 		} );
 	} );
 } );

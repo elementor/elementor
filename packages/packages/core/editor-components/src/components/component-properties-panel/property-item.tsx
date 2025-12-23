@@ -26,11 +26,14 @@ export function PropertyItem( {
 	onUpdate,
 }: PropertyItemProps ) {
 	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
+	const [ popoverWidth, setPopoverWidth ] = useState< number | undefined >();
 	const elementType = prop.elType === 'widget' ? prop.widgetType : prop.elType;
 	const icon = getElementIcon( elementType );
 
 	const handleClick = ( event: React.MouseEvent< HTMLElement > ) => {
-		setAnchorEl( event.currentTarget );
+		const target = event.currentTarget;
+		setAnchorEl( target );
+		setPopoverWidth( target.offsetWidth );
 	};
 
 	const handleClose = () => {
@@ -101,8 +104,14 @@ export function PropertyItem( {
 				onClose={ handleClose }
 				anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
 				transformOrigin={ { vertical: 'top', horizontal: 'left' } }
+				PaperProps={ { sx: { width: popoverWidth } } }
 			>
-				<OverridablePropForm onSubmit={ handleSubmit } currentValue={ prop } groups={ groups } />
+				<OverridablePropForm
+					onSubmit={ handleSubmit }
+					currentValue={ prop }
+					groups={ groups }
+					sx={ { width: '100%' } }
+				/>
 			</Popover>
 		</>
 	);

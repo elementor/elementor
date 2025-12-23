@@ -2,7 +2,7 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 
 import { type ComponentId, type OverridableProp } from '../../types';
 import { selectOverridableProps, slice } from '../store';
-import { movePropBetweenGroups } from '../utils/overridable-props-transforms';
+import { movePropBetweenGroups } from '../utils/groups-transformers';
 
 type UpdatePropParams = {
 	componentId: ComponentId;

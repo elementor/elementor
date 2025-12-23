@@ -7,13 +7,15 @@ import { Divider, IconButton, List, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { addOverridableGroup } from '../../store/actions/add-overridable-group';
+import { deleteOverridableGroup } from '../../store/actions/delete-overridable-group';
 import { deleteOverridableProp } from '../../store/actions/delete-overridable-prop';
+import { renameOverridableGroup } from '../../store/actions/rename-overridable-group';
 import { reorderGroupProps } from '../../store/actions/reorder-group-props';
 import { reorderOverridableGroups } from '../../store/actions/reorder-overridable-groups';
 import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
 import { useCurrentComponentId } from '../../store/store';
 import { useOverridableProps } from '../component-panel-header/use-overridable-props';
-import { NewGroupInput } from './new-group-input';
+import { NewPropertiesGroup } from './new-properties-group';
 import { PropertiesGroup } from './properties-group';
 import { SortableItem, SortableProvider } from './sortable';
 
@@ -75,6 +77,16 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 		setDocumentModifiedStatus( true );
 	};
 
+	const handleGroupRename = ( groupId: string, label: string ) => {
+		renameOverridableGroup( { componentId: currentComponentId, groupId, label } );
+		setDocumentModifiedStatus( true );
+	};
+
+	const handleGroupDelete = ( groupId: string ) => {
+		deleteOverridableGroup( { componentId: currentComponentId, groupId } );
+		setDocumentModifiedStatus( true );
+	};
+
 	const allGroupsForSelect = groups.map( ( group ) => ( {
 		value: group.id,
 		label: group.label,
@@ -82,10 +94,12 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 
 	return (
 		<>
-			<PanelHeader>
-				<Stack direction="row" alignItems="center" gap={ 1 } flexGrow={ 1 }>
+			<PanelHeader sx={ { justifyContent: 'start', pl: 1.5, pr: 1, py: 1 } }>
+				<Stack direction="row" alignItems="center" gap={ 0.5 } flexGrow={ 1 }>
 					<ComponentPropListIcon fontSize="tiny" />
-					<PanelHeaderTitle>{ __( 'Component properties', 'elementor' ) }</PanelHeaderTitle>
+					<PanelHeaderTitle variant="subtitle2">
+						{ __( 'Component properties', 'elementor' ) }
+					</PanelHeaderTitle>
 				</Stack>
 				<Tooltip title={ __( 'Add new group', 'elementor' ) }>
 					<IconButton
@@ -106,7 +120,7 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 			<PanelBody>
 				<List sx={ { p: 2, display: 'flex', flexDirection: 'column', gap: 2 } }>
 					{ isAddingGroup && (
-						<NewGroupInput
+						<NewPropertiesGroup
 							existingGroups={ overridableProps.groups.items }
 							onSave={ handleSaveGroup }
 							onCancel={ handleCancelAddGroup }
@@ -120,11 +134,14 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 										group={ group }
 										props={ overridableProps.props }
 										allGroups={ allGroupsForSelect }
+										allGroupsRecord={ overridableProps.groups.items }
 										sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
 										isDragPlaceholder={ isDragPlaceholder }
 										onPropsReorder={ ( newOrder ) => handlePropsReorder( group.id, newOrder ) }
 										onPropertyDelete={ handlePropertyDelete }
 										onPropertyUpdate={ handlePropertyUpdate }
+										onGroupRename={ handleGroupRename }
+										onGroupDelete={ handleGroupDelete }
 									/>
 								) }
 							</SortableItem>

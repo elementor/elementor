@@ -10,7 +10,7 @@ import {
 	removePropFromGroup,
 	removePropsFromState,
 	resolveOrCreateGroup,
-} from '../utils/overridable-props-transforms';
+} from '../utils/groups-transformers';
 
 type Props = {
 	componentId: number;

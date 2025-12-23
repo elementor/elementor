@@ -2,38 +2,38 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 
 import { type ComponentId } from '../../types';
 import { selectOverridableProps, slice } from '../store';
-import { removePropFromAllGroups } from '../utils/groups-transformers';
+import { deleteGroup } from '../utils/groups-transformers';
 
-type DeletePropParams = {
+type DeleteGroupParams = {
 	componentId: ComponentId;
-	propKey: string;
+	groupId: string;
 };
 
-export function deleteOverridableProp( { componentId, propKey }: DeletePropParams ): void {
+export function deleteOverridableGroup( { componentId, groupId }: DeleteGroupParams ): boolean {
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
 	if ( ! overridableProps ) {
-		return;
+		return false;
 	}
 
-	const prop = overridableProps.props[ propKey ];
+	const group = overridableProps.groups.items[ groupId ];
 
-	if ( ! prop ) {
-		return;
+	if ( ! group || group.props.length > 0 ) {
+		return false;
 	}
 
-	const { [ propKey ]: removedProp, ...remainingProps } = overridableProps.props;
-
-	const updatedGroups = removePropFromAllGroups( overridableProps.groups, propKey );
+	const updatedGroups = deleteGroup( overridableProps.groups, groupId );
 
 	dispatch(
 		slice.actions.setOverridableProps( {
 			componentId,
 			overridableProps: {
 				...overridableProps,
-				props: remainingProps,
 				groups: updatedGroups,
 			},
 		} )
 	);
+
+	return true;
 }
+
