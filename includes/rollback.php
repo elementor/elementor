@@ -170,6 +170,7 @@ class Rollback {
 		add_filter( 'gettext', [ $this, 'update_installing_string' ], 10, 3 );
 
 		$upgrader = new \Plugin_Upgrader( new \Plugin_Upgrader_Skin( $upgrader_args ) );
+		$upgrader->strings['installing_package'] = esc_html__( 'Installing your selected version&#8230;', 'elementor' );
 		$upgrader->upgrade( $this->plugin_name );
 
 		remove_filter( 'gettext', [ $this, 'update_installing_string' ], 10 );
