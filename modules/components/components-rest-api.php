@@ -7,6 +7,7 @@ use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Components\Documents\Component;
+use Elementor\Modules\Components\OverridableProps\Component_Overridable_Props_Parser;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -89,6 +90,50 @@ class Components_REST_API {
 									'items' => [
 										'type' => 'object',
 									],
+								],
+								'settings' => [
+									'type' => 'object',
+									'required' => false,
+								],
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/create-validate', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->create_validate_components( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'items' => [
+						'type' => 'array',
+						'required' => true,
+						'items' => [
+							'type' => 'object',
+							'properties' => [
+								'uid' => [
+									'type' => 'string',
+									'required' => true,
+								],
+								'title' => [
+									'type' => 'string',
+									'required' => true,
+									'minLength' => 2,
+									'maxLength' => 200,
+								],
+								'elements' => [
+									'type' => 'array',
+									'required' => true,
+									'items' => [
+										'type' => 'object',
+									],
+								],
+								'settings' => [
+									'type' => 'object',
+									'required' => false,
 								],
 							],
 						],
@@ -314,26 +359,42 @@ class Components_REST_API {
 
 		if ( ! $result['success'] ) {
 			return Error_Builder::make( 'components_validation_failed' )
-				->set_status( 400 )
+				->set_status( 422 )
 				->set_message( 'Validation failed: ' . implode( ', ', $result['messages'] ) )
 				->build();
 		}
 
-		$created = $items->map_with_keys( function ( $item ) use ( $save_status ) {
+		$validation_errors = [];
+
+		$created = $items->map_with_keys( function ( $item ) use ( $save_status, &$validation_errors ) {
 			$title = sanitize_text_field( $item['title'] );
 			$content = $item['elements'];
 			$uid = $item['uid'];
+
+			try {
+				$settings = isset( $item['settings'] ) ? $this->parse_settings( $item['settings'] ) : [];
+			} catch ( \Exception $e ) {
+				$validation_errors[ $uid ] = $e->getMessage();
+				return [ $uid => null ];
+			}
 
 			$status = Document::STATUS_AUTOSAVE === $save_status
 				? Document::STATUS_DRAFT
 				: $save_status;
 
-			$component_id = $this->get_repository()->create( $title, $content, $status, $uid );
+			$component_id = $this->get_repository()->create( $title, $content, $status, $uid, $settings );
 
 			return [ $uid => $component_id ];
 		} );
 
-		return Response_Builder::make( (object) $created->all() )
+		if ( ! empty( $validation_errors ) ) {
+			return Error_Builder::make( 'settings_validation_failed' )
+				->set_status( 422 )
+				->set_message( 'Settings validation failed: ' . json_encode( $validation_errors ) )
+				->build();
+		}
+
+		return Response_Builder::make( $created->all() )
 			->set_status( 201 )
 			->build();
 	}
@@ -488,13 +549,75 @@ class Components_REST_API {
 	}
 
 
+
+	private function create_validate_components( \WP_REST_Request $request ) {
+		$items = Collection::make( $request->get_param( 'items' ) );
+		$components = $this->get_repository()->all();
+
+		$result = Save_Components_Validator::make( $components )->validate( $items );
+
+		if ( ! $result['success'] ) {
+			return Error_Builder::make( 'components_validation_failed' )
+				->set_status( 422 )
+				->set_message( 'Validation failed: ' . implode( ', ', $result['messages'] ) )
+				->build();
+		}
+
+		$validation_errors = $items->map_with_keys( function ( $item ) {
+			try {
+				if ( isset( $item['settings'] ) ) {
+					$this->parse_settings( $item['settings'] );
+				}
+			} catch ( \Exception $e ) {
+				return [ $item['uid'] => $e->getMessage() ];
+			}
+
+			return [ $item['uid'] => null ];
+		} )
+		->filter( fn( $value ) => null !== $value );
+
+		if ( ! $validation_errors->is_empty() ) {
+			return Error_Builder::make( 'settings_validation_failed' )
+				->set_status( 422 )
+				->set_message( 'Settings validation failed: ' . json_encode( $validation_errors->all() ) )
+				->build();
+		}
+
+		return Response_Builder::make()
+			->set_status( 200 )
+			->build();
+	}
+
+	private function parse_settings( array $settings ): array {
+		$result = [];
+
+		if ( empty( $settings ) ) {
+			return $result;
+		}
+
+		if ( isset( $settings['overridable_props'] ) ) {
+			$parser = Component_Overridable_Props_Parser::make();
+			$overridable_props_result = $parser->parse( $settings['overridable_props'] );
+
+			if ( ! $overridable_props_result->is_valid() ) {
+				throw new \Exception(
+					esc_html( 'Validation failed for overridable_props: ' . $overridable_props_result->errors()->to_string() )
+				);
+			}
+
+			$result['overridable_props'] = $overridable_props_result->unwrap();
+		}
+
+		return $result;
+	}
+
 	private function route_wrapper( callable $cb ) {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
 			return Error_Builder::make( 'unexpected_error' )
-				->set_message( __( 'Something went wrong', 'elementor' ) )
-				->build();
+			->set_message( __( 'Something went wrong', 'elementor' ) )
+			->build();
 		}
 
 		return $response;

@@ -11,13 +11,18 @@ import {
 
 const BASE_URL = 'elementor/v1/components';
 
+export type ComponentItems = Array< {
+	uid: string;
+	title: string;
+	elements: V1ElementData[];
+	settings?: {
+		overridable_props?: OverridableProps;
+	};
+} >;
+
 export type CreateComponentPayload = {
 	status: DocumentSaveStatus;
-	items: Array< {
-		uid: string;
-		title: string;
-		elements: V1ElementData[];
-	} >;
+	items: ComponentItems;
 };
 
 type ComponentLockStatusResponse = {
@@ -28,6 +33,19 @@ type ComponentLockStatusResponse = {
 type GetComponentResponse = Array< PublishedComponent >;
 
 export type CreateComponentResponse = Record< string, number >;
+
+export type ValidateComponentsPayload = {
+	items: ComponentItems;
+};
+
+export type ValidateComponentsResponse = {
+	code: string;
+	message: string;
+	data: {
+		status: number;
+		meta: Record< string, unknown >;
+	};
+};
 
 export const getParams = ( id: number ) => ( {
 	action: 'get_document_config',
@@ -100,4 +118,8 @@ export const apiClient = {
 				}
 			)
 			.then( ( res ) => res.data.data ),
+	validate: async ( payload: ValidateComponentsPayload ) =>
+		await httpService()
+			.post< HttpResponse< ValidateComponentsResponse > >( `${ BASE_URL }/create-validate`, payload )
+			.then( ( res ) => res.data ),
 };
