@@ -63,6 +63,8 @@ export function NewPropertiesGroup( { existingGroups, onSave, onCancel }: Props 
 		};
 	};
 
+	// Start in edit mode immediately when the component mounts,
+	// so the user can type the new group name right away.
 	useEffect( () => {
 		openEditMode();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
