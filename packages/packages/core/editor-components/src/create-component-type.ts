@@ -12,9 +12,9 @@ import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
 import { type ComponentInstancePropValue, type ExtendedWindow } from './types';
+import { getComponentDocumentData } from './utils/component-document-data';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
-import { getComponentDocumentData } from './utils/component-document-data';
 
 type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
 
@@ -78,7 +78,6 @@ export function createComponentType(
 		getModel() {
 			return createComponentModel();
 		}
-
 	};
 }
 
@@ -455,7 +454,6 @@ function setInactiveRecursively( model: BackboneModel< ElementModel > ) {
 	}
 }
 
-
 function createComponentModel() {
 	const legacyWindow = window as unknown as LegacyWindow;
 	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
@@ -536,4 +534,3 @@ function createComponentModel() {
 		},
 	} );
 }
-

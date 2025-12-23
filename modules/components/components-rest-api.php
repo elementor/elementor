@@ -247,7 +247,7 @@ class Components_REST_API {
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/update-titles', [
 			[
 				'methods' => 'POST',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->update_component_title( $request ) ),
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->update_components_title( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 				'args' => [
 					'components' => [
@@ -272,25 +272,6 @@ class Components_REST_API {
 				],
 			],
 		] );
-	}
-
-	private function update_component_titles( \WP_REST_Request $request ) {
-		$components = $request->get_param( 'components' );
-		$failed_components = [];
-		$success_components = [];
-		foreach ( $components as $component ) {
-			try {
-				$result = $this->get_repository()->update_title( $component['componentId'], $component['title'] );
-				$success_components[] = $component['componentId'];
-			} catch ( \Exception $e ) {
-				error_log( 'Components REST API update_component_titles error: ' . $e->getMessage() );
-				$failed_components[] = $component['componentId'];
-			}
-		}
-		return Response_Builder::make( [
-			'failedIds' => $failed_components,
-			'successIds' => $success_components,
-		] )->build();
 	}
 
 	private function get_components() {
@@ -533,22 +514,20 @@ class Components_REST_API {
 		return Response_Builder::make( $result )->build();
 	}
 
-	private function update_component_title( \WP_REST_Request $request ) {
+	private function update_components_title( \WP_REST_Request $request ) {
 		$components = $request->get_param( 'components' );
-		try {
-			$result = $this->get_repository()->update_titles( $components );
-		} catch ( \Exception $e ) {
-			error_log( 'Components REST API update_component_title error: ' . $e->getMessage() );
-			return Error_Builder::make( 'update_component_title_failed' )
-				->set_meta( [ 'error' => $e->getMessage() ] )
-				->set_status( 500 )
-				->set_message( __( 'Failed to update component title', 'elementor' ) )
-				->build();
+		foreach ( $components as $component ) {
+			$is_success = $this->get_repository()->update_titles( $component['componentId'], $component['title'] );
+			if ( ! $is_success ) {
+				$failed_ids[] = $component['componentId'];
+			}
+			$success_ids[] = $component['componentId'];
 		}
-		return Response_Builder::make( $result )->build();
+		return Response_Builder::make( [
+			'failedIds' => $failed_ids,
+			'successIds' => $success_ids,
+		] )->build();
 	}
-
-
 
 	private function create_validate_components( \WP_REST_Request $request ) {
 		$items = Collection::make( $request->get_param( 'items' ) );

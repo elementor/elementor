@@ -123,20 +123,13 @@ class Components_Repository {
 		$failed_ids = [];
 		$success_ids = [];
 		foreach ( $components as $component ) {
-			try {
-				$doc = Plugin::$instance->documents->get( $component['componentId'] );
-				if ( ! $doc instanceof Component_Document ) {
+				$doc = $this->get( $component['componentId'] );
+				if ( ! $doc ) {
 					$failed_ids[] = $component['componentId'];
 					continue;
 				}
-				$doc->save( [
-					'post_title' => $component['title'],
-				] );
+				$doc->save( ['post_title' => $component['title']] );
 				$success_ids[] = $component['componentId'];
-			} catch ( \Exception $e ) {
-				$failed_ids[] = $component['componentId'];
-				throw new \Exception( 'Failed to update component title: ' . esc_html( $e->getMessage() ) );
-			}
 		}
 		return [
 			'failedIds' => $failed_ids,
