@@ -10,6 +10,7 @@ module.exports = Marionette.ItemView.extend( {
 		message: '.elementor-template-library-blank-message',
 		icon: '.elementor-template-library-blank-icon',
 		button: '.elementor-template-library-cloud-empty__button',
+		cloudBadge: '.elementor-template-library-connect-states-badge .source-option-badge.cloud-badge',
 	},
 
 	events: {
@@ -63,11 +64,23 @@ module.exports = Marionette.ItemView.extend( {
 
 		this.handleElementorConnect();
 
+		this.handleCloudBadge();
+
 		elementor.templates.layout.getHeaderView()?.tools?.$el[ 0 ]?.classList?.add( 'e-hidden-disabled' );
 
 		elementor.templates.eventManager.sendPageViewEvent( {
 			location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.cloudTabUpgrade,
 		} );
+	},
+
+	async handleCloudBadge() {
+		if ( ! this.ui.cloudBadge?.length ) {
+			return;
+		}
+
+		const experimentVariant = await elementor.templates.eventManager.getSaveTemplateExperimentVariant();
+
+		this.ui.cloudBadge.toggle( 'B' === experimentVariant );
 	},
 
 	updateTemplateMarkup() {
