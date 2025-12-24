@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { type DependencyList, useEffect, useRef } from 'react';
 import { bindPopover, Box, ClickAwayListener, Popover, type SxProps, type Theme, usePopupState } from '@elementor/ui';
-import { generateUniqueId } from '@elementor/utils';
 import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
 import HardBreak from '@tiptap/extension-hard-break';
@@ -20,13 +19,6 @@ import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 import { isEmpty } from '../utils/inline-editing';
 import { InlineEditorToolbar } from './inline-editor-toolbar';
 
-const EXTERNAL_CHANGE_EVENT_NAME = 'elementor/editor/external-inline-editor-change';
-
-type ExternalEventDetails = {
-	newValue: string;
-	uniqueId: string;
-};
-
 type InlineEditorProps = {
 	value: string | null;
 	setValue: ( value: string | null ) => void;
@@ -37,7 +29,6 @@ type InlineEditorProps = {
 	autofocus?: boolean;
 	getInitialPopoverPosition?: () => { left: number; top: number };
 	expectedTag?: string | null;
-	listenToExternalChanges?: boolean;
 };
 
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
@@ -83,7 +74,6 @@ export const InlineEditor = React.forwardRef(
 			onBlur = undefined,
 			getInitialPopoverPosition = undefined,
 			expectedTag = null,
-			listenToExternalChanges = true,
 		}: InlineEditorProps,
 		ref
 	) => {
@@ -92,7 +82,6 @@ export const InlineEditor = React.forwardRef(
 		const [ hasSelectedContent, setHasSelectedContent ] = React.useState( false );
 		const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
 		const [ selectionRect, setSelectionRect ] = React.useState< { left: number; top: number } | null >( null );
-		const uniqueId = React.useRef( generateUniqueId() );
 
 		const onSelectionEnd = ( view: EditorView ) => {
 			const hasSelection = ! view.state.selection.empty;
@@ -126,7 +115,6 @@ export const InlineEditor = React.forwardRef(
 			const newValue: string | null = updatedEditor.getHTML();
 
 			setValue( isEmpty( newValue ) ? null : newValue );
-			dispatchUpdateEvent( newValue ?? '' );
 		};
 
 		const editor = useEditor( {
@@ -197,40 +185,6 @@ export const InlineEditor = React.forwardRef(
 				editor.commands.setContent( value, { emitUpdate: false } );
 			}
 		}, [ editor, value ] );
-
-		useEffect( () => {
-			if ( ! listenToExternalChanges ) {
-				return;
-			}
-
-			window?.addEventListener( EXTERNAL_CHANGE_EVENT_NAME, updateEditorValue );
-
-			return () => {
-				window?.removeEventListener( EXTERNAL_CHANGE_EVENT_NAME, updateEditorValue as EventListener );
-			};
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [] );
-
-		const updateEditorValue = ( ( ev: CustomEvent< ExternalEventDetails > ) => {
-			const { newValue, uniqueId: triggeringUniqueId } = ev.detail;
-
-			if ( triggeringUniqueId === uniqueId.current ) {
-				return;
-			}
-
-			editor?.commands.setContent( newValue, { emitUpdate: false } );
-		} ) as EventListener;
-
-		const dispatchUpdateEvent = ( newValue: string ) => {
-			const event = new CustomEvent< ExternalEventDetails >( EXTERNAL_CHANGE_EVENT_NAME, {
-				detail: {
-					newValue,
-					uniqueId: uniqueId.current,
-				},
-			} );
-
-			window.dispatchEvent( event );
-		};
 
 		const computePopupPosition = () => {
 			if ( ! selectionRect ) {

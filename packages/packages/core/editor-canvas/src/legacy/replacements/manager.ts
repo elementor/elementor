@@ -1,3 +1,5 @@
+import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
+
 import type { CreateTemplatedElementTypeOptions } from '../create-templated-element-type';
 import { createTemplatedElementView } from '../create-templated-element-type';
 import type { ElementType, ElementView, LegacyWindow, ReplacementSettings } from '../types';
@@ -41,7 +43,16 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 
 			this.#config = {
 				getSetting: settings.get.bind( settings ),
-				setSetting: settings.set.bind( settings ),
+				// setSetting: settings.set.bind( settings ),
+
+				setSetting: ( key: string, value: unknown ) => {
+					runCommandSync( 'document/elements/settings', {
+						container: this.container,
+						settings: {
+							[ key ]: value,
+						},
+					} );
+				},
 				element: this.el,
 				type: this?.model?.get( 'widgetType' ) ?? this.container?.model?.get( 'elType' ) ?? null,
 				id: this?.model?.get( 'id' ) ?? null,
