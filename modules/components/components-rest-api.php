@@ -515,13 +515,17 @@ class Components_REST_API {
 	}
 
 	private function update_components_title( \WP_REST_Request $request ) {
+		$failed_ids = [];
+		$success_ids = [];
 		$components = $request->get_param( 'components' );
 		foreach ( $components as $component ) {
-			$is_success = $this->get_repository()->update_titles( $component['componentId'], $component['title'] );
-			if ( ! $is_success ) {
+			$is_success = $this->get_repository()->update_title( $component['componentId'], $component['title'] );
+			if ( !$is_success ) {
 				$failed_ids[] = $component['componentId'];
-			}
+				continue;
+			} 
 			$success_ids[] = $component['componentId'];
+			
 		}
 		return Response_Builder::make( [
 			'failedIds' => $failed_ids,
