@@ -4,6 +4,7 @@ import { InlineEditor } from '@elementor/editor-controls';
 import { getElementType } from '@elementor/editor-elements';
 import {
 	htmlPropTypeUtil,
+	type PropType,
 	stringPropTypeUtil,
 	type StringPropValue,
 	type TransformablePropValue,
@@ -12,10 +13,19 @@ import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Box, ThemeProvider } from '@elementor/ui';
 
 import { OutlineOverlay } from '../../../components/outline-overlay';
+import { type LegacyWindow } from '../../types';
 import ReplacementBase from '../base';
 import { getInitialPopoverPosition, INLINE_EDITING_PROPERTY_PER_TYPE } from './inline-editing-utils';
 
 const EXPERIMENT_KEY = 'v4-inline-text-editing';
+
+const WINDOW = window as unknown as LegacyWindow;
+
+type TagPropType = PropType< 'tag' > & {
+	settings?: {
+		enum?: string[];
+	};
+};
 
 export default class InlineEditingReplacement extends ReplacementBase {
 	private inlineEditorRoot: Root | null = null;
@@ -43,11 +53,6 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		if ( ! this.isValueDynamic() ) {
 			this.renderInlineEditor();
 		}
-	};
-
-	handleUnmountInlineEditor = ( event: Event ) => {
-		event.stopPropagation();
-		this.unmountInlineEditor();
 	};
 
 	onDestroy() {
@@ -116,18 +121,43 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	getExpectedTag() {
+		const tagPropType = this.getTagPropType();
+		const tagSettingKey = 'tag';
+
+		return (
+			stringPropTypeUtil.extract( this.getSetting( tagSettingKey ) ?? null ) ??
+			stringPropTypeUtil.extract( tagPropType?.default ?? null ) ??
+			null
+		);
+	}
+
+	getTagList(): string[] {
+		return this.getTagPropType()?.settings?.enum ?? [];
+	}
+
+	getTagPropType() {
 		const propsSchema = getElementType( this.type )?.propsSchema;
 
 		if ( ! propsSchema?.tag ) {
 			return null;
 		}
 
-		const tagSettingKey = 'tag';
+		const tagPropType = ( propsSchema.tag as TagPropType ) ?? null;
 
-		return (
-			stringPropTypeUtil.extract( this.getSetting( tagSettingKey ) ?? null ) ??
-			stringPropTypeUtil.extract( propsSchema.tag.default ?? null ) ??
-			null
+		if ( tagPropType.kind === 'union' ) {
+			return ( tagPropType.prop_types.string as TagPropType ) ?? null;
+		}
+
+		return tagPropType;
+	}
+
+	getUnsetNativeStyling( extraSelectors: string = '' ) {
+		return this.getTagList().reduce(
+			( styles, tag ) => ( {
+				...styles,
+				[ `& ${ tag }${ extraSelectors }` ]: { backgroundColor: 'red !important' },
+			} ),
+			{} as { [ key: string ]: Record< string, unknown > }
 		);
 	}
 
@@ -145,6 +175,42 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		this.inlineEditorRoot.render( <InlineEditorApp classes={ classes } /> );
 	}
 
+	getElementStyle() {
+		const styleElements = Array.from(
+			WINDOW.elementor?.previewView?.$el?.get( 0 )?.closest( 'html' )?.querySelectorAll( 'style' ) ?? []
+		);
+		const uniqueSelectorRegex = new RegExp( `\\.e-${ this.id }-[A-Za-z0-9]{7}`, 'g' );
+
+		return styleElements
+			.filter( ( styleElement ) => styleElement.textContent?.includes( `.e-${ this.id }` ) )
+			.map( ( styleElement ) => {
+				const cloned = styleElement.cloneNode( true ) as HTMLStyleElement;
+				const textContent = cloned.textContent ?? '';
+
+				cloned.textContent = textContent.replace(
+					uniqueSelectorRegex,
+					this.extendSelectorToCoverTags.bind( this )
+				);
+
+				return cloned;
+			} );
+	}
+
+	extendSelectorToCoverTags( selector: string ) {
+		return this.getTagList()
+			.map( ( tag ) => `${ selector } ${ tag }` )
+			.join( ', ' );
+	}
+
+	injectStyles = ( wrapper: HTMLElement | null ) => {
+		if ( ! wrapper ) {
+			return;
+		}
+
+		Array.from( wrapper.querySelectorAll( 'style' ) ).forEach( ( style ) => wrapper.removeChild( style ) );
+		wrapper.prepend( ...this.getElementStyle() );
+	};
+
 	InlineEditorApp = ( { classes }: { classes: string } ) => {
 		const propValue = this.getContentValue();
 		const expectedTag = this.getExpectedTag();
@@ -152,8 +218,17 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		const [ isWrapperRendered, setIsWrapperRendered ] = React.useState( false );
 
 		React.useEffect( () => {
+			const panel = document?.querySelector( 'main.MuiBox-root' );
+
 			setIsWrapperRendered( !! wrapperRef.current );
+			this.injectStyles.apply( this, [ wrapperRef.current || null ] );
+			panel?.addEventListener( 'click', unmountEditor );
+
+			return () => panel?.removeEventListener( 'click', unmountEditor );
+			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [] );
+
+		const unmountEditor = React.useCallback( () => queueMicrotask( this.unmountInlineEditor.bind( this ) ), [] );
 
 		return (
 			<ThemeProvider>
@@ -164,11 +239,11 @@ export default class InlineEditingReplacement extends ReplacementBase {
 					<InlineEditor
 						attributes={ {
 							class: classes,
-							style: 'outline: none;',
+							style: `outline: none;`,
 						} }
 						value={ propValue }
 						setValue={ this.setContentValue.bind( this ) }
-						onBlur={ this.handleUnmountInlineEditor.bind( this ) }
+						onBlur={ this.unmountInlineEditor.bind( this ) }
 						autofocus
 						showToolbar
 						getInitialPopoverPosition={ getInitialPopoverPosition }
