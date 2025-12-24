@@ -57,7 +57,7 @@ class Editor_One_Pointer {
 						} );
 					}
 
-					$( '<?php echo $pointer_element_selector; ?>' ).pointer( {
+					$( '<?php echo esc_js( $pointer_element_selector ); ?>' ).pointer( {
 						content: <?php echo wp_json_encode( $pointer_content ); ?>,
 						position: {
 							edge: 'top',
