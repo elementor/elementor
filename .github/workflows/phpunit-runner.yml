@@ -1,63 +1,63 @@
 on:
-    workflow_call:
-        inputs:
-            wordpress_versions:
-                required: true
-                type: string
-            php_versions:
-                required: true
-                type: string
-            job_name:
-                required: true
-                type: string
+  workflow_call:
+    inputs:
+      wordpress_versions:
+        required: true
+        type: string
+      php_versions:
+        required: true
+        type: string
+      job_name:
+        required: true
+        type: string
 
 jobs:
-    run-tests:
-        runs-on: ubuntu-22.04
-        name: ${{ inputs.job_name }} - WP ${{ matrix.wordpress_versions }} - PHP ${{ matrix.php_versions }}
+  run-tests:
+    runs-on: ubuntu-22.04
+    name: ${{ inputs.job_name }} - WP ${{ matrix.wordpress_versions }} - PHP ${{ matrix.php_versions }}
 
-        strategy:
-            fail-fast: false
-            matrix:
-                wordpress_versions: ${{ fromJson(inputs.wordpress_versions) }}
-                php_versions: ${{ fromJson(inputs.php_versions) }}
+    strategy:
+      fail-fast: false
+      matrix:
+        wordpress_versions: ${{ fromJson(inputs.wordpress_versions) }}
+        php_versions: ${{ fromJson(inputs.php_versions) }}
 
+    env:
+      WP_TESTS_DIR: /tmp/wordpress-tests-lib
+      COVERAGE: ${{ matrix.php_versions >= 8.3 && matrix.wordpress_versions == 'latest' }}
+    services:
+      mysql:
+        image: mysql:5.7
         env:
-            WP_TESTS_DIR: /tmp/wordpress-tests-lib
-            COVERAGE: ${{ matrix.php_versions >= 8.3 && matrix.wordpress_versions == 'latest' }}
-        services:
-            mysql:
-                image: mysql:5.7
-                env:
-                    MYSQL_ROOT_PASSWORD: root
-                ports:
-                    - 3306
-                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
-        steps:
-            - name: Checkout source code
-              uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: ${{ matrix.php_versions }}
-                  coverage: none
-            - name: Install Dependencies
-              run: |
-                  bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:${{ job.services.mysql.ports['3306'] }} ${{ matrix.wordpress_versions }} true
-                  composer update --no-interaction
-            - name: Run Tests with Coverage (latest PHP & WP)
-              if: ${{ env.COVERAGE != 'false' }}
-              run: |
-                  composer run coverage
-            - name: Run Tests without Coverage
-              if: ${{ env.COVERAGE == 'false' }}
-              run: |
-                  composer run test
-            - name: Run Test - Multisite
-              run: |
-                  WP_MULTISITE=1
-                  composer update --no-interaction
-                  composer run test
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php_versions }}
+          coverage: none
+      - name: Install Dependencies
+        run: |
+          bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:${{ job.services.mysql.ports['3306'] }} ${{ matrix.wordpress_versions }} true
+          composer update --no-interaction
+      - name: Run Tests with Coverage (latest PHP & WP)
+        if: ${{ env.COVERAGE != 'false' }}
+        run: |
+          composer run coverage
+      - name: Run Tests without Coverage
+        if: ${{ env.COVERAGE == 'false' }}
+        run: |
+          composer run test
+      - name: Run Test - Multisite
+        run: |
+          WP_MULTISITE=1
+          composer update --no-interaction
+          composer run test

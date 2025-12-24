@@ -1,111 +1,111 @@
 name: Lint
 
 on:
-    pull_request:
-        paths-ignore:
-            - "**.md"
-            - "**.txt"
-            - ".github/config.json"
-            - "bin/**"
-            - ".gitignore"
-            - "docs/**"
-    merge_group:
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - '**.txt'
+      - '.github/config.json'
+      - 'bin/**'
+      - '.gitignore'
+      - 'docs/**'
+  merge_group:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
-    group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
-    cancel-in-progress: true
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
 
 jobs:
-    file-diff:
-        runs-on: ubuntu-22.04
-        name: Lint - File Diff
-        if: startsWith( github.repository, 'elementor/' )
-        outputs:
-            js_diff: ${{ steps.js_diff_files.outputs.diff }}
-            php_diff: ${{ steps.php_diff_files.outputs.diff }}
-        steps:
-            - name: Checkout source code
-              uses: actions/checkout@v4
-            - name: Check JS files diff
-              id: js_diff_files
-              uses: technote-space/get-diff-action@v6
-              with:
-                  PATTERNS: |
-                      **/*.+(js|ts|json|jsx|tsx)
-                      package*.json
-                      .github/**/*.yml
-            - name: Check PHP files diff
-              id: php_diff_files
-              uses: technote-space/get-diff-action@v6
-              with:
-                  PATTERNS: |
-                      **/*.php
-                      ruleset.xml
-                      .github/**/*.yml
-                      composer.+(json|lock)
+  file-diff:
+    runs-on: ubuntu-22.04
+    name: Lint - File Diff
+    if: startsWith( github.repository, 'elementor/' )
+    outputs:
+      js_diff: ${{ steps.js_diff_files.outputs.diff }}
+      php_diff: ${{ steps.php_diff_files.outputs.diff }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Check JS files diff
+        id: js_diff_files
+        uses: technote-space/get-diff-action@v6
+        with:
+          PATTERNS: |
+            **/*.+(js|ts|json|jsx|tsx)
+            package*.json
+            .github/**/*.yml
+      - name: Check PHP files diff
+        id: php_diff_files
+        uses: technote-space/get-diff-action@v6
+        with:
+          PATTERNS: |
+            **/*.php
+            ruleset.xml
+            .github/**/*.yml
+            composer.+(json|lock)
 
-    JS-Lint:
-        runs-on: ubuntu-22.04
-        needs: ["file-diff"]
-        if: ${{ needs.file-diff.outputs.js_diff || github.event.pull_request.title == null }}
-        steps:
-            - name: Checkout source code
-              uses: actions/checkout@v4
-            - name: Install Node.js 20.x
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 20.x
-                  cache: npm
-            - name: Install Dependencies
-              run: npm run prepare-environment:ci
-            - name: Build tools
-              run: npm run build:tools
-            - name: Run Lint
-              run: npm run lint
+  JS-Lint:
+    runs-on: ubuntu-22.04
+    needs: ['file-diff']
+    if: ${{ needs.file-diff.outputs.js_diff || github.event.pull_request.title == null }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Install Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+      - name: Install Dependencies
+        run: npm run prepare-environment:ci
+      - name: Build tools
+        run: npm run build:tools
+      - name: Run Lint
+        run: npm run lint
 
-    PHP-Lint:
-        runs-on: ubuntu-22.04
-        needs: ["file-diff"]
-        if: ${{ needs.file-diff.outputs.php_diff || github.event.pull_request.title == null }}
-        steps:
-            - name: Checkout source code
-              uses: actions/checkout@v4
-            - name: Setup PHP 7.4
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: "7.4"
-            - name: Install Dependencies
-              run: |
-                  composer install
-                  composer require php-parallel-lint/php-parallel-lint
-            - name: Run Lint
-              run: |
-                  vendor/bin/phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
-            - name: Setup PHP 7.4 # not included in ubuntu 22.04
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: "7.4"
-            - name: Run PHP Syntax Lint 7.4
-              run: |
-                  export PATH=$HOME/.composer/vendor/bin:$PATH
-                  php -v
-                  php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor --exclude vendor_prefixed .
-            - name: Setup PHP 8.0 # not included in ubuntu 22.04
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: "8.0"
-            - name: Run PHP Syntax Lint 8.0
-              run: |
-                  export PATH=$HOME/.composer/vendor/bin:$PATH
-                  php -v
-                  php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor --exclude vendor_prefixed .
-            - name: Setup PHP 8.1 # not included in ubuntu 22.04
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: "8.1"
-            - name: Run PHP Syntax Lint 8.1
-              run: |
-                  export PATH=$HOME/.composer/vendor/bin:$PATH
-                  php -v
-                  php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor --exclude vendor_prefixed .
+  PHP-Lint:
+    runs-on: ubuntu-22.04
+    needs: ['file-diff']
+    if: ${{ needs.file-diff.outputs.php_diff || github.event.pull_request.title == null }}
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+      - name: Setup PHP 7.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - name: Install Dependencies
+        run: |
+          composer install
+          composer require php-parallel-lint/php-parallel-lint
+      - name: Run Lint
+        run: |
+          vendor/bin/phpcs -p -s -n . --standard=./ruleset.xml --extensions=php
+      - name: Setup PHP 7.4 # not included in ubuntu 22.04
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+      - name: Run PHP Syntax Lint 7.4
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor --exclude vendor_prefixed .
+      - name: Setup PHP 8.0 # not included in ubuntu 22.04
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+      - name: Run PHP Syntax Lint 8.0
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor --exclude vendor_prefixed .
+      - name: Setup PHP 8.1 # not included in ubuntu 22.04
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - name: Run PHP Syntax Lint 8.1
+        run: |
+          export PATH=$HOME/.composer/vendor/bin:$PATH
+          php -v
+          php vendor/bin/parallel-lint --blame --exclude node_modules --exclude vendor --exclude vendor_prefixed .
