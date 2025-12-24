@@ -520,6 +520,7 @@ class Components_REST_API {
 		$components = $request->get_param( 'components' );
 		foreach ( $components as $component ) {
 			$is_success = $this->get_repository()->update_title( $component['componentId'], $component['title'] );
+		
 			if ( !$is_success ) {
 				$failed_ids[] = $component['componentId'];
 				continue;
