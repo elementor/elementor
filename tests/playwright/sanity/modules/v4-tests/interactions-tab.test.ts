@@ -1,11 +1,17 @@
 import { parallelTest as test } from '../../../parallelTest';
-import { expect } from '@playwright/test';
-import { DriverFactory } from '../../../drivers/driver-factory';
 import WpAdminPage from '../../../pages/wp-admin-page';
+import { expect } from '@playwright/test';
 
 test.describe( 'Interactions Tab @v4-tests', () => {
-	test.beforeAll( async () => {
-		await DriverFactory.activateExperimentsCli( [ 'e_atomic_elements', 'e_interactions' ] );
+	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		const context = await browser.newContext();
+		const page = await context.newPage();
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( {
+			e_interactions: 'active',
+			e_atomic_elements: 'active',
+		} );
+		await page.close();
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
