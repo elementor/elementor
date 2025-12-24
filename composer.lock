@@ -4,21 +4,55 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b35881813ef7cad7fc31c86dee6bf50a",
+    "content-hash": "553a1b91da56a36484f76b1e3d5a83eb",
     "packages": [
         {
-            "name": "elementor/wp-one-package",
-            "version": "1.0.17",
+            "name": "elementor/wp-notifications-package",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
-                "url": "git@github.com:elementor/wp-one-package.git",
-                "reference": "b967f849016f0f5a236c95836e4a3d6972ca2291"
+                "url": "https://github.com/elementor/wp-notifications-package.git",
+                "reference": "dd25ca9dd79402c3bb51fab112aa079702eb165e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/elementor/wp-one-package/zipball/b967f849016f0f5a236c95836e4a3d6972ca2291",
-                "reference": "b967f849016f0f5a236c95836e4a3d6972ca2291",
+                "url": "https://api.github.com/repos/elementor/wp-notifications-package/zipball/dd25ca9dd79402c3bb51fab112aa079702eb165e",
+                "reference": "dd25ca9dd79402c3bb51fab112aa079702eb165e",
                 "shasum": ""
+            },
+            "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "^v1.0.0",
+                "squizlabs/php_codesniffer": "^3.10.2",
+                "wp-coding-standards/wpcs": "^3.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Elementor\\WPNotificationsPackage\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "support": {
+                "source": "https://github.com/elementor/wp-notifications-package/tree/1.2.0"
+            },
+            "time": "2025-04-28T12:27:21+00:00"
+        },
+        {
+            "name": "elementor/wp-one-package",
+            "version": "1.0.21",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:elementor/wp-one-package.git",
+                "reference": "ccdf11ea53a96512c7795aa10ae7f8b759af5024"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.21",
+                "reference": "ccdf11ea53a96512c7795aa10ae7f8b759af5024",
+                "shasum": ""
+            },
+            "require": {
+                "elementor/wp-notifications-package": "^1.2"
             },
             "require-dev": {
                 "dealerdirect/phpcodesniffer-composer-installer": "^v1.0.0",
@@ -31,7 +65,7 @@
                     "ElementorOne\\": "src/"
                 },
                 "files": [
-                    "runner.php"
+                    "./runner.php"
                 ]
             },
             "scripts": {
@@ -43,9 +77,9 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/elementor/wp-one-package/tree/1.0.17"
+                "source": "https://github.com/elementor/wp-one-package/tree/1.0.21"
             },
-            "time": "2025-12-11T19:16:04+00:00"
+            "time": "2025-12-23T18:53:50+00:00"
         }
     ],
     "packages-dev": [
@@ -4514,12 +4548,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.4"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
