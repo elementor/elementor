@@ -1,10 +1,10 @@
-name: "Install npm and Composer Dependencies"
-description: "A composite action to install npm packages and Composer dependencies."
+name: 'Install npm and Composer Dependencies'
+description: 'A composite action to install npm packages and Composer dependencies.'
 
 runs:
-    using: "composite"
-    steps:
-        - shell: bash
-          run: |
-              npm run prepare-environment:ci
-              npm run composer:no-dev
+  using: 'composite'
+  steps:
+    - shell: bash
+      run: |
+        npm run prepare-environment:ci
+        npm run composer:no-dev
