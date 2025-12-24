@@ -63,10 +63,6 @@ export const handler = async ( input: InputSchema ): Promise< OutputSchema > => 
 		);
 	}
 
-	if ( warnings.length > 0 && input.justification ) {
-		console.info( `Variable reuse bypassed: ${ input.justification }` );
-	}
-
 	const errors: string[] = [];
 	const stylesSchema = getStylesSchema();
 	const validProps = Object.keys( stylesSchema );

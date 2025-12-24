@@ -158,32 +158,42 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 					} );
 				} );
 
-				const errorMessages = errors.map( ( e ) => {
-					if ( typeof e === 'string' ) {
-						return e;
-					}
-					if ( e instanceof Error ) {
-						return e.message || String( e );
-					}
+				const errorMessages = errors
+					.map( ( e ) => {
+						if ( typeof e === 'string' ) {
+							return e;
+						}
+						if ( e instanceof Error ) {
+							return e.message || String( e );
+						}
 
-					if ( typeof e === 'object' && e !== null ) {
-						return JSON.stringify( e );
-					}
-					return String( e );
-				} ).filter( msg => msg && msg.trim() !== '' && msg !== '{}' && msg !== 'null' && msg !== 'undefined' );
+						if ( typeof e === 'object' && e !== null ) {
+							return JSON.stringify( e );
+						}
+						return String( e );
+					} )
+					.filter(
+						( msg ) => msg && msg.trim() !== '' && msg !== '{}' && msg !== 'null' && msg !== 'undefined'
+					);
 
 				if ( errorMessages.length === 0 ) {
-					throw new Error( 'Failed to build composition: Unknown error occurred. No error details available.' );
+					throw new Error(
+						'Failed to build composition: Unknown error occurred. No error details available.'
+					);
 				}
 
-				const errorText = `Failed to build composition with the following errors:\n\n${ errorMessages.join( '\n\n' ) }\n\n"Missing $$type" errors indicate that the configuration objects are invalid. Try again and apply **ALL** object entries with correct $$type.\nNow that you have these errors, fix them and try again. Errors regarding configuration objects, please check against the PropType schemas`;
+				const errorText = `Failed to build composition with the following errors:\n\n${ errorMessages.join(
+					'\n\n'
+				) }\n\n"Missing $$type" errors indicate that the configuration objects are invalid. Try again and apply **ALL** object entries with correct $$type.\nNow that you have these errors, fix them and try again. Errors regarding configuration objects, please check against the PropType schemas`;
 				throw new Error( errorText );
 			}
 			if ( ! xml ) {
 				throw new Error( 'XML structure is null after parsing.' );
 			}
 			return {
-				errors: errors?.length ? errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n\n' ) : undefined,
+				errors: errors?.length
+					? errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n\n' )
+					: undefined,
 				llmInstructions:
 					( softErrors.length
 						? `The composition was built successfully, but there were some issues with the provided configurations:

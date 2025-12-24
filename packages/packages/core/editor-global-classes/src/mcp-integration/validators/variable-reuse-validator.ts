@@ -3,7 +3,7 @@ import { service } from '@elementor/editor-variables';
 type ValidationWarning = {
 	property: string;
 	hardcodedValue: string;
-	matchingVariables: Array<{ id: string; label: string; value: string }>;
+	matchingVariables: Array< { id: string; label: string; value: string } >;
 	type: 'color' | 'font';
 };
 
@@ -17,12 +17,12 @@ const normalizeColor = ( color: string ): string => {
 };
 
 const scanPropsForHardcodedValues = (
-	props: Record< string, any >,
+	props: Record< string, unknown >,
 	path = ''
 ): Array< { property: string; value: string; type: 'color' | 'font' } > => {
 	const hardcodedValues: Array< { property: string; value: string; type: 'color' | 'font' } > = [];
 
-	const scan = ( obj: any, currentPath: string ) => {
+	const scan = ( obj: Record< string, unknown >, currentPath: string ) => {
 		if ( ! obj || typeof obj !== 'object' ) {
 			return;
 		}
@@ -76,8 +76,7 @@ const findMatchingVariables = (
 		}
 
 		const variableValue = type === 'color' ? normalizeColor( variable.value ) : variable.value;
-		const hardcodedValueNormalized =
-			type === 'color' ? normalizeColor( hardcodedValue ) : hardcodedValue;
+		const hardcodedValueNormalized = type === 'color' ? normalizeColor( hardcodedValue ) : hardcodedValue;
 
 		if ( variableValue === hardcodedValueNormalized ) {
 			matches.push( {
@@ -106,10 +105,7 @@ export const formatWarnings = ( warnings: ValidationWarning[] ): string => {
 	return lines.join( '\n' );
 };
 
-export const validateVariableReuse = (
-	props: Record< string, any >,
-	justification?: string
-): ValidationResult => {
+export const validateVariableReuse = ( props: Record< string, unknown >, justification?: string ): ValidationResult => {
 	const hardcodedValues = scanPropsForHardcodedValues( props );
 	const warnings: ValidationWarning[] = [];
 
