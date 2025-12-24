@@ -113,9 +113,8 @@ class Module extends BaseModule {
 
 		/** @var Library $library */
 		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
-        $is_editor_one_active = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
+		$is_editor_one_active = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
 
-        
 		Plugin::$instance->app->set_settings( 'onboarding', [
 			'eventPlacement' => 'Onboarding wizard',
 			'onboardingAlreadyRan' => get_option( self::ONBOARDING_OPTION ),
@@ -181,8 +180,8 @@ class Module extends BaseModule {
 				'401' => self::EXPERIMENT_UPDATE_COPY_VISUALS,
 				'402' => self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION,
 			],
-            'pageSubheading' => $is_editor_one_active ? __( 'Choose the capabilities you need to bring your vision to life', 'elementor' ) : __( 'Which Elementor Pro features do you need to bring your creative vision to life?', 'elementor' ),
-            'pageHeading' => $is_editor_one_active ? __( ' Elevate your website with additional features.', 'elementor' ) : __( 'Elevate your website with additional Pro features.', 'elementor' ),
+			'pageSubheading' => $is_editor_one_active ? __( 'Choose the capabilities you need to bring your vision to life', 'elementor' ) : __( 'Which Elementor Pro features do you need to bring your creative vision to life?', 'elementor' ),
+			'pageHeading' => $is_editor_one_active ? __( ' Elevate your website with additional features.', 'elementor' ) : __( 'Elevate your website with additional Pro features.', 'elementor' ),
 		] );
 	}
 
