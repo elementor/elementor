@@ -272,6 +272,7 @@ abstract class Editor_Base_Loader implements Editor_Loader_Interface {
 			'global',
 			'panel',
 			'panel-elements',
+			'sidebar',
 			'repeater',
 			'templates',
 			'navigator',
