@@ -1,3 +1,4 @@
+import { type PropValue } from '@elementor/editor-props';
 import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
 
 import type { CreateTemplatedElementTypeOptions } from '../create-templated-element-type';
@@ -43,9 +44,10 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 
 			this.#config = {
 				getSetting: settings.get.bind( settings ),
-				// setSetting: settings.set.bind( settings ),
 
-				setSetting: ( key: string, value: unknown ) => {
+				setSetting: ( key: string, value: PropValue ) => {
+					settings.set.apply( settings, [ key, value ] );
+
 					runCommandSync( 'document/elements/settings', {
 						container: this.container,
 						settings: {
