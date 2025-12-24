@@ -111,21 +111,23 @@ class Role_Manager extends Settings_Page {
 		<div class="wrap">
 			<h1 class="wp-heading-inline"><?php echo esc_html( $this->get_page_title() ); ?></h1>
 
-			<div id="elementor-role-manager">
-				<h3><?php echo esc_html__( 'Manage What Your Users Can Edit In Elementor', 'elementor' ); ?></h3>
-				<form id="elementor-settings-form" method="post" action="options.php">
-					<?php
-					settings_fields( static::PAGE_ID );
-					echo '<div class="elementor-settings-form-page elementor-active">';
-					foreach ( get_editable_roles() as $role_slug => $role_data ) {
-						if ( 'administrator' === $role_slug ) {
-							continue;
+			<div>
+				<div id="elementor-role-manager">
+					<h3><?php echo esc_html__( 'Manage What Your Users Can Edit In Elementor', 'elementor' ); ?></h3>
+					<form id="elementor-settings-form" method="post" action="options.php">
+						<?php
+						settings_fields( static::PAGE_ID );
+						echo '<div class="elementor-settings-form-page elementor-active">';
+						foreach ( get_editable_roles() as $role_slug => $role_data ) {
+							if ( 'administrator' === $role_slug ) {
+								continue;
+							}
+							$this->display_role_controls( $role_slug, $role_data );
 						}
-						$this->display_role_controls( $role_slug, $role_data );
-					}
-					submit_button( __( 'Save Changes', 'elementor' ), 'primary', 'submit', true, [ 'data-id' => 'elementor-role-manager-button-save-changes' ] );
-					?>
-				</form>
+						submit_button( __( 'Save Changes', 'elementor' ), 'primary', 'submit', true, [ 'data-id' => 'elementor-role-manager-button-save-changes' ] );
+						?>
+					</form>
+				</div>
 			</div>
 		</div><!-- /.wrap -->
 		<?php
@@ -144,8 +146,14 @@ class Role_Manager extends Settings_Page {
 			$excluded_options = $this->get_role_manager_options();
 		}
 
+		$is_editor_one_enabled = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
+		$row_classes = 'elementor-role-row ' . esc_attr( $role_slug );
+		if ( $is_editor_one_enabled ) {
+			$row_classes .= ' e-editor-one';
+		}
+
 		?>
-		<div class="elementor-role-row <?php echo esc_attr( $role_slug ); ?>">
+		<div class="<?php echo esc_attr( $row_classes ); ?>">
 			<div class="elementor-role-label">
 				<span class="elementor-role-name"><?php echo esc_html( translate_user_role( $role_data['name'] ) ); ?></span>
 				<span data-excluded-label="<?php esc_attr_e( 'Role Excluded', 'elementor' ); ?>" class="elementor-role-excluded-indicator"></span>

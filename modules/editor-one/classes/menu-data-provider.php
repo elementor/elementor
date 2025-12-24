@@ -11,9 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Menu_Data_Provider {
-
 	private static ?Menu_Data_Provider $instance = null;
-
 	private array $level3_items = [];
 	private array $level4_items = [];
 	private ?string $theme_builder_url = null;
@@ -157,6 +155,10 @@ class Menu_Data_Provider {
 
 		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
 
+		if ( Menu_Config::ELEMENTOR_HOME_MENU_SLUG === $page ) {
+			return false;
+		}
+
 		if ( in_array( $page, $this->get_all_sidebar_page_slugs(), true ) ) {
 			return true;
 		}
@@ -199,6 +201,7 @@ class Menu_Data_Provider {
 					return true;
 				}
 			}
+
 			return false;
 		} ) );
 	}
@@ -248,7 +251,7 @@ class Menu_Data_Provider {
 
 		return [
 			'slug' => $item_slug,
-			'label' => $item->get_label(),
+			'label' => ucfirst( strtolower( $item->get_label() ) ),
 			'url' => $this->resolve_flyout_item_url( $item, $item_slug ),
 			'icon' => $item->get_icon(),
 			'group_id' => $group_id,
@@ -323,7 +326,7 @@ class Menu_Data_Provider {
 
 				$groups[ $group_id ]['items'][] = [
 					'slug' => $item_slug,
-					'label' => $label,
+					'label' => ucfirst( strtolower( $item->get_label() ) ),
 					'url' => $this->get_item_url( $item_slug, $item->get_parent_slug() ),
 					'priority' => $item->get_position() ?? 100,
 				];
@@ -335,7 +338,7 @@ class Menu_Data_Provider {
 		return $groups;
 	}
 
-	private function is_item_accessible( Menu_Item_Interface $item ): bool {
+	public function is_item_accessible( Menu_Item_Interface $item ): bool {
 		return $item->is_visible() && current_user_can( $item->get_capability() );
 	}
 
@@ -368,5 +371,29 @@ class Menu_Data_Provider {
 	private function invalidate_cache(): void {
 		$this->cached_editor_flyout_data = null;
 		$this->cached_level4_flyout_data = null;
+	}
+
+	public static function get_current_user_capabilities(): array {
+		$user = wp_get_current_user();
+
+		if ( ! $user || ! $user->exists() ) {
+			return [
+				'user' => null,
+				'has_edit_posts' => false,
+				'has_manage_options' => false,
+				'is_edit_posts_user' => false,
+			];
+		}
+
+		$has_edit_posts = isset( $user->allcaps[ Menu_Config::CAPABILITY_EDIT_POSTS ] ) && $user->allcaps[ Menu_Config::CAPABILITY_EDIT_POSTS ];
+		$has_manage_options = isset( $user->allcaps[ Menu_Config::CAPABILITY_MANAGE_OPTIONS ] ) && $user->allcaps[ Menu_Config::CAPABILITY_MANAGE_OPTIONS ];
+		$is_edit_posts_user = $has_edit_posts && ! $has_manage_options;
+
+		return [
+			'user' => $user,
+			'has_edit_posts' => $has_edit_posts,
+			'has_manage_options' => $has_manage_options,
+			'is_edit_posts_user' => $is_edit_posts_user,
+		];
 	}
 }

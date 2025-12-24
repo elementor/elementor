@@ -27,6 +27,8 @@ class Atomic_Svg extends Atomic_Widget_Base {
 	const DEFAULT_SVG_PATH = ELEMENTOR_ASSETS_PATH . self::DEFAULT_SVG;
 	const DEFAULT_SVG_URL = ELEMENTOR_ASSETS_URL . self::DEFAULT_SVG;
 
+	public static $widget_description = 'Display an SVG image with customizable styles and link options.';
+
 	public static function get_element_type(): string {
 		return 'e-svg';
 	}

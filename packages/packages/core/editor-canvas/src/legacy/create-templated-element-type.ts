@@ -1,4 +1,4 @@
-import type { V1ElementConfig } from '@elementor/editor-elements';
+import { type V1ElementConfig } from '@elementor/editor-elements';
 
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { createPropsResolver } from '../renderers/create-props-resolver';
@@ -13,7 +13,7 @@ export type CreateTemplatedElementTypeOptions = {
 	element: TemplatedElementConfig;
 };
 
-type TemplatedElementConfig = Required<
+export type TemplatedElementConfig = Required<
 	Pick< V1ElementConfig, 'twig_templates' | 'twig_main_template' | 'atomic_props_schema' | 'base_styles_dictionary' >
 >;
 
@@ -86,11 +86,11 @@ export function createTemplatedElementView( {
 			this.#abortController = new AbortController();
 
 			const process = signalizedProcess( this.#abortController.signal )
-				.then( () => this.#beforeRender() )
+				.then( () => this._beforeRender() )
 				.then( () => this._renderTemplate() )
 				.then( () => {
 					this._renderChildren();
-					this.#afterRender();
+					this._afterRender();
 				} );
 
 			return process.execute();
@@ -136,7 +136,7 @@ export function createTemplatedElementView( {
 			return settings;
 		}
 
-		#beforeRender() {
+		_beforeRender() {
 			this._ensureViewIsIntact();
 
 			this._isRendering = true;
@@ -146,7 +146,7 @@ export function createTemplatedElementView( {
 			this.triggerMethod( 'before:render', this );
 		}
 
-		#afterRender() {
+		_afterRender() {
 			this._isRendering = false;
 			this.isRendered = true;
 

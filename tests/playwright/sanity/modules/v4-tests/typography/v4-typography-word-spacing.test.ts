@@ -8,6 +8,7 @@ import { WIDGET_CONFIGS, SPACING_VALUES, UNITS } from './typography-constants';
 import { DriverFactory } from '../../../../drivers/driver-factory';
 import type { EditorDriver } from '../../../../drivers/editor-driver';
 import { timeouts } from '../../../../config/timeouts';
+import { wpCli } from '../../../../assets/wp-cli';
 
 const WORD_SPACING_VALUES = {
 	POSITIVE: SPACING_VALUES.POSITIVE,
@@ -19,9 +20,8 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 	let driver: EditorDriver;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests, {
-			experiments: [ 'e_atomic_elements' ],
-		} );
+		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
+		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests );
 	} );
 
 	test.afterAll( async () => {

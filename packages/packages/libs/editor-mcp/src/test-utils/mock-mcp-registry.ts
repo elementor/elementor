@@ -15,6 +15,10 @@ const mock = new Proxy(
 
 export const mockMcpRegistry = (): MCPRegistryEntry => {
 	return {
+		// @ts-ignore
+		resource: async () => {},
+		// @ts-ignore
+		sendResourceUpdated: () => {},
 		addTool: () => {},
 		setMCPDescription: () => {},
 		getActiveChatInfo() {

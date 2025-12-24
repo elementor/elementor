@@ -7,7 +7,7 @@ export const INLINE_EDITING_SELECTORS = {
 	paragraphSuffix: ' text.',
 	secondLine: 'Second line here.',
 	contentSection: 'Content section content',
-	canvasInlineEditor: '#elementor-preview-responsive-wrapper [contenteditable="true"][class*="ProseMirror"]',
+	canvasInlineEditor: '[contenteditable="true"][class*="ProseMirror"]',
 	panelInlineEditor: '.tiptap',
 	contentSectionLabel: 'Content',
 	headingBase: '.e-heading-base',
