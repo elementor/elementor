@@ -26,12 +26,61 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'overrideKey' => 'prop-uuid-1',
 				'label' => 'User Name',
 				'elementId' => 'element-123',
-				'propKey' => 'title',
+				'path' => [ [ 'key' => 'title', '$$type' => 'string' ] ],
 				'widgetType' => 'e-heading',
 				'elType' => 'widget',
 				'originValue' => [ '$$type' => 'html', 'value' => 'Original text' ],
 				'groupId' => 'group-uuid-1',
 			]
+		];
+
+		// Act.
+		$result = $this->parser->parse( $valid_data );
+
+		// Assert.
+		$this->assertTrue( $result->is_valid() );
+	}
+
+	public function test_parse__with_nested_path__succeeds() {
+		// Arrange.
+		$valid_data = [
+			'prop-uuid-1' => [
+				'overrideKey' => 'prop-uuid-1',
+				'label' => 'Image Attachment ID',
+				'elementId' => 'element-123',
+				'path' => [ ['key' => 'image', '$$type' => 'image'], ['key' => 'src', '$$type' => 'image-src'], ['key' => 'id', '$$type' => 'image-attachment-id'] ],
+				'widgetType' => 'e-image',
+				'elType' => 'widget',
+				'originValue' => [ '$$type' => 'image-attachment-id', 'value' => 1234 ],
+				'groupId' => 'group-uuid-1',
+			],
+			'prop-uuid-2' => [
+				'overrideKey' => 'prop-uuid-2',
+				'label' => 'Button text override',
+				'elementId' => 'element-123',
+				'path' => [
+					['key' => 'component_instance', '$$type' => 'component-instance'],
+					['key' => 'overrides', '$$type' => 'overrides'],
+					['key' => '0', '$$type' => 'override'],
+				],
+				'widgetType' => 'e-component',
+				'elType' => 'widget',
+				'originValue' => [
+					'$$type' => 'override',
+					'value' => [
+						'override_key' => '0',
+						'override_value' => [
+							'$$type' => 'string',
+							'value' => 'Click here'
+						],
+						'schema_source' => [
+							'type' => 'component',
+							'id' => 123,
+						],
+					]
+				],
+				'groupId' => 'group-uuid-1',
+			],
 		];
 
 		// Act.
@@ -48,7 +97,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 				'overrideKey' => 'prop-uuid-1',
 				'label' => '<script>alert("xss")</script>User Name',
 				'elementId' => 'element-123',
-				'propKey' => 'title',
+				'path' => [ ['key' => 'title', '$$type' => 'string'] ],
 				'widgetType' => 'e-heading',
 				'elType' => 'widget',
 				'originValue' => [
@@ -117,20 +166,22 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 
 	public function invalid_props_data_provider() {
 		return [
-			'duplicate prop keys for same element' => [ 
+			'duplicate prop path for same element' => [ 
 				'data' => [
 					'prop-uuid-1' => $this->get_mock_prop_with_changed_fields( [ 
 						'overrideKey' => 'prop-uuid-1',
 						'elementId' => 'element-123',
-						'propKey' => 'title',
+						'path' => [ ['key' => 'link', '$$type' => 'link'], ['key' => 'isTargetBlank', '$$type' => 'boolean'] ],
+						'originValue' => [ '$$type' => 'boolean', 'value' => true ],
 					] ),
 					'prop-uuid-2' => $this->get_mock_prop_with_changed_fields( [ 
 						'overrideKey' => 'prop-uuid-2',
 						'elementId' => 'element-123',
-						'propKey' => 'title',
+						'path' => [ ['key' => 'link', '$$type' => 'link'], ['key' => 'isTargetBlank', '$$type' => 'boolean'] ],
+						'originValue' => [ '$$type' => 'boolean', 'value' => false ],
 					] ),
 				],
-				'expected_error' => 'props: duplicate_prop_keys_for_same_element: element-123.title',
+				'expected_error' => 'props: duplicate_path_for_same_element: element-123.link.isTargetBlank',
 			],
 		];
 	}
@@ -140,7 +191,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 			'overrideKey' => 'prop-uuid-1',
 			'label' => 'User Name',
 			'elementId' => 'element-123',
-			'propKey' => 'title',
+			'path' => [ ['key' => 'title', '$$type' => 'string'] ],
 			'widgetType' => 'e-heading',
 			'elType' => 'widget',
 			'originValue' => [ '$$type' => 'html', 'value' => 'Original text' ],

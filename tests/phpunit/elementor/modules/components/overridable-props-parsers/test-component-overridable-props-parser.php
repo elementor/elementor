@@ -54,7 +54,7 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 					'overrideKey' => 'prop-uuid-1',
 					'label' => '<script>alert("xss")</script>User Name',
 					'elementId' => 'element-123',
-					'propKey' => 'title',
+					'path' => [ ['key' => 'title', '$$type' => 'string'] ],
 					'widgetType' => 'e-heading',
 					'elType' => 'widget',
 					'originValue' => [
@@ -207,7 +207,7 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 			'overrideKey' => 'prop-uuid-1',
 			'label' => 'User Name',
 			'elementId' => 'element-123',
-			'propKey' => 'title',
+			'path' => [ ['key' => 'title', '$$type' => 'string'] ],
 			'widgetType' => 'e-heading',
 			'elType' => 'widget',
 			'originValue' => [ '$$type' => 'html', 'value' => 'Original text' ],

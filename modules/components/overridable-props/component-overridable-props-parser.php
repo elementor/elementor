@@ -18,14 +18,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  *     'props' => [
  *         'prop1_UUID' => [
  *             'overrideKey' => 'prop1_UUID',
- *             'label' => 'User Name',
+ *             'label' => 'Profile Picture',
  *             'elementId' => '90d25e3',
- *             'propKey' => 'title',
+ *             'path' => [ [ 'key' => 'image', '$$type' => 'image'], [ 'key' => 'src', '$$type' => 'image-src'] ],
  *             'elType' => 'widget',
- *             'widgetType' => 'e-heading',
+ *             'widgetType' => 'e-image',
  *             'originValue' => [
- *                 '$$type' => 'html',
- *                 'value' => 'Jane Smith',
+ *                 '$$type' => 'image-src',
+ *                 'value' => [
+ *                     'id' => [
+ *                         '$$type' => 'image-attachment-id',
+ *                         'value' => 1234,
+ *                     ],
+ *                     'url' => null,
+ *                 ],
  *             ],
  *             'groupId' => 'group1_UUID',
  *         ],

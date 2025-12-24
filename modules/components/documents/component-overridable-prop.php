@@ -18,8 +18,8 @@ class Component_Overridable_Prop {
 	/** @var string */
 	public $widget_type;
 
-	/** @var string */
-	public $prop_key;
+	/** @var array */
+	public $path;
 
 	/** @var string */
 	public $label;
@@ -35,7 +35,7 @@ class Component_Overridable_Prop {
 		$this->element_id = $overridable_prop['elementId'];
 		$this->el_type = $overridable_prop['elType'];
 		$this->widget_type = $overridable_prop['widgetType'];
-		$this->prop_key = $overridable_prop['propKey'];
+		$this->path = $overridable_prop['path'];
 		$this->label = $overridable_prop['label'];
 		$this->origin_value = $overridable_prop['originValue'];
 		$this->group_id = $overridable_prop['groupId'] ?? null;

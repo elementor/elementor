@@ -30,26 +30,26 @@ class Overridable_Prop_Parser {
 		$result = Parse_Result::make();
 
 		$required_fields = [
-			'overrideKey',
-			'label',
-			'elementId',
-			'elType',
-			'widgetType',
-			'propKey',
-			'groupId',
+			'overrideKey' => 'is_string',
+			'label' => 'is_string',
+			'elementId' => 'is_string',
+			'elType' => 'is_string',
+			'widgetType' => 'is_string',
+			'path' => fn( $path ) => $this->validate_path( $path ),
+			'groupId' => 'is_string',
 		];
 
-		foreach ( $required_fields as $field ) {
-			if ( ! isset( $prop[ $field ] ) ) {
+		foreach ( $required_fields as $field => $validator ) {
+			if ( ! array_key_exists( $field, $prop ) ) {
 				$result->errors()->add( $field, 'missing_field' );
+				continue;
+			}
+			if ( ! call_user_func( $validator, $prop[ $field ] ) ) {
+				$result->errors()->add( $field, 'invalid_value' );
 			}
 		}
 
-		if ( ! $result->is_valid() ) {
-			return $result;
-		}
-
-		$this->origin_value_prop_type = Parsing_Utils::get_prop_type( $prop['elType'], $prop['widgetType'], $prop['propKey'] );
+		$this->origin_value_prop_type = Parsing_Utils::get_prop_type( $prop['elType'], $prop['widgetType'], $prop['path'] );
 
 		if ( ! empty( $prop['originValue'] ) && ! $this->origin_value_prop_type->validate( $prop['originValue'] ) ) {
 			$result->errors()->add( 'originValue', 'invalid' );
@@ -67,7 +67,10 @@ class Overridable_Prop_Parser {
 			'overrideKey' => sanitize_key( $prop['overrideKey'] ),
 			'label' => sanitize_text_field( $prop['label'] ),
 			'elementId' => sanitize_key( $prop['elementId'] ),
-			'propKey' => sanitize_text_field( $prop['propKey'] ),
+			'path' => array_map( fn ( $item ) => [
+				'key' => sanitize_text_field( $item['key'] ),
+				'$$type' => sanitize_text_field( $item['$$type'] ),
+			], $prop['path'] ),
 			'widgetType' => sanitize_text_field( $prop['widgetType'] ),
 			'elType' => sanitize_text_field( $prop['elType'] ),
 			'originValue' => $this->origin_value_prop_type->sanitize( $prop['originValue'] ),
@@ -75,5 +78,21 @@ class Overridable_Prop_Parser {
 		];
 
 		return $result->wrap( $sanitized_prop );
+	}
+
+	private function validate_path( array $path ): bool {
+		if ( ! is_array( $path ) ) {
+			return false;
+		}
+
+		$is_valid = true;
+		foreach ( $path as $item ) {
+			if ( ! isset( $item['key'] ) || ! isset( $item['$$type'] ) || ! is_string( $item['key'] ) || ! is_string( $item['$$type'] ) ) {
+				$is_valid = false;
+				break;
+			}
+		}
+
+		return $is_valid;
 	}
 }

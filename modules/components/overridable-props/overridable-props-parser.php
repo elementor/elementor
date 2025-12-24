@@ -32,6 +32,7 @@ class Overridable_Props_Parser {
 		$validation_result = $this->validate( $parsed_props );
 
 		if ( ! $validation_result->is_valid() ) {
+			error_log( 'Validation result: ' . json_encode( $validation_result->errors() ) );
 			return $validation_result;
 		}
 
@@ -75,10 +76,16 @@ class Overridable_Props_Parser {
 	private function validate( array $props ): Parse_Result {
 		$result = Parse_Result::make();
 
-		$duplicate_prop_keys_for_same_element = Parsing_Utils::get_duplicates( array_map( fn( $prop ) => $prop['elementId'] . '.' . $prop['propKey'], $props ) );
+		$prop_paths = array_map( function ( $prop ) {
+			$path_keys = array_map( fn( $item ) => $item['key'], $prop['path'] );
+			$path = implode( '.', $path_keys );
+
+			return $prop['elementId'] . '.' . $path;
+		}, $props );
+		$duplicate_prop_keys_for_same_element = Parsing_Utils::get_duplicates( $prop_paths );
 
 		if ( ! empty( $duplicate_prop_keys_for_same_element ) ) {
-			$result->errors()->add( 'props', 'duplicate_prop_keys_for_same_element: ' . implode( ', ', $duplicate_prop_keys_for_same_element ) );
+			$result->errors()->add( 'props', 'duplicate_path_for_same_element: ' . implode( ', ', $duplicate_prop_keys_for_same_element ) );
 
 			return $result;
 		}
