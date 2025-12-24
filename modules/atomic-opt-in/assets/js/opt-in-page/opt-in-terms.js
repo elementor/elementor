@@ -17,18 +17,17 @@ import DialogHeader from '@elementor/ui/DialogHeader';
 
 const i18n = {
 	header: __( 'Editor V4', 'elementor' ),
-	chip: __( 'Alpha', 'elementor' ),
+	chip: __( 'Beta', 'elementor' ),
 	checkboxText: __( 'I’ve read and understood.', 'elementor' ),
 
 	optIn: {
 		titleText: __( 'You are about to enable Editor V4 features!', 'elementor' ),
 		introText: __( 'By activating, you’ll get early access to the next generation of Elementor’s Editor. This is your chance to explore new capabilities and help shape the future of Elementor! ', 'elementor' ),
-		notesHeader: __( ' Important notes:', 'elementor' ),
+		notesHeader: __( ' Important note:', 'elementor' ),
 		notes: {
 			alphaPrefix: __( 'Editor V4 is currently in alpha, ', 'elementor' ),
 			details: [
-				__( 'and development is still in progress. Do not use it on live sites - use a staging or development environment instead.', 'elementor' ),
-				__( 'When you activate Editor V4, you’ll also be activating Containers, the Top Bar, and Nested Elements. You can turn them back off by going to WP Admin > Elementor > Settings > Features.', 'elementor' ),
+				__( 'When you activate Editor V4, you’ll also be activating Containers and Nested Elements. You can turn them back off by going to WP Admin > Elementor > Settings > Features.', 'elementor' ),
 			],
 		},
 		activateButton: __( 'Activate', 'elementor' ),
@@ -88,11 +87,6 @@ export const Terms = ( { onClose, onSubmit, isEnrolled, ...props } ) => {
 						<TextNode variant="body2">{ i18n[ currentState ].notesHeader }</TextNode>
 						<ContentList>
 							<ContentListItem variant="body2">
-								{ ! isEnrolled && (
-									<TextNode variant="subtitle2" component="span">
-										{ i18n.optIn.notes.alphaPrefix }
-									</TextNode>
-								) }
 								{ i18n[ currentState ].notes.details[ 0 ] }
 							</ContentListItem>
 

@@ -29,11 +29,11 @@ const OPT_OUT_MSG = 'e-editor-v4-opt-out-message';
 
 const i18n = {
 	title: __( 'The road to Editor V4', 'elementor' ),
-	chip: __( 'Alpha', 'elementor' ),
+	chip: __( 'Beta', 'elementor' ),
 
 	welcomeText: __( 'Welcome to a new era of web creation with Editor V4. It’s faster, more flexible, and built with a fresh approach to structure & styling.', 'elementor' ),
 
-	advantagesHeader: __( 'Here’s what’s inside the alpha version:', 'elementor' ),
+	advantagesHeader: __( 'Here’s what’s inside the beta version:', 'elementor' ),
 	advantages: [
 		__( 'Unparalleled performance - Cleaner code & a lighter CSS footprint.', 'elementor' ),
 		__( 'Professional tools at your fingertips - classes and states.', 'elementor' ),
@@ -177,13 +177,6 @@ export const OptIn = ( { state } ) => {
 								{ i18n.andMore } <Link color="text.primary" href={ optInLinks.readMoreUrl } target="_blank">{ i18n.readMore }</Link>
 							</AdvantagesListItem>
 						</AdvantagesList>
-					</Box>
-				</Stack>
-
-				<Stack direction="row" alignItems="self-start" gap={ 0.5 } sx={ { mb: 2.5 } }>
-					<AlertTriangleIcon color="action" />
-					<Box>
-						<TextNode>{ i18n.warning }</TextNode>
 					</Box>
 				</Stack>
 
