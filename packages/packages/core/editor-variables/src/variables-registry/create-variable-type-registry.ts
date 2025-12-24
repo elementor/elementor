@@ -1,5 +1,5 @@
 import { type ForwardRefExoticComponent, type JSX, type RefAttributes, type RefObject } from 'react';
-import { styleTransformersRegistry } from '@elementor/editor-canvas';
+import { type AnyTransformer, styleTransformersRegistry } from '@elementor/editor-canvas';
 import { stylesInheritanceTransformersRegistry } from '@elementor/editor-editing-panel';
 import {
 	type createPropUtils,
@@ -34,6 +34,7 @@ type VariableTypeOptions = {
 	variableType: string;
 	key?: string;
 	defaultValue?: string;
+	styleTransformer?: AnyTransformer;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
 	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
@@ -57,6 +58,7 @@ export function createVariableTypeRegistry() {
 		defaultValue,
 		selectionFilter,
 		valueTransformer,
+		styleTransformer,
 		fallbackPropTypeUtil,
 		isCompatible,
 		emptyState,
@@ -88,12 +90,12 @@ export function createVariableTypeRegistry() {
 			emptyState,
 		};
 
-		registerTransformer( propTypeUtil.key );
+		registerTransformer( propTypeUtil.key, styleTransformer );
 		registerInheritanceTransformer( propTypeUtil.key );
 	};
 
-	const registerTransformer = ( key: PropTypeKey ) => {
-		styleTransformersRegistry.register( key, variableTransformer );
+	const registerTransformer = ( key: PropTypeKey, transformer?: AnyTransformer ) => {
+		styleTransformersRegistry.register( key, transformer ?? variableTransformer );
 	};
 
 	const registerInheritanceTransformer = ( key: PropTypeKey ) => {
