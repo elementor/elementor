@@ -22,6 +22,8 @@ export default function ChooseFeatures() {
 		nextStep = 'goodToGo',
 		{ state, handleAction } = useButtonAction( pageId, nextStep ),
 		upgradeUrl = elementorAppConfig.onboarding.urls.upgrade,
+		pageHeading = elementorAppConfig.onboarding.pageHeading,
+		pageSubheading = elementorAppConfig.onboarding.pageSubheading,
 		actionButton = {
 			text: __( 'Upgrade Now', 'elementor' ),
 			href: addExperimentTrackingToUrl( upgradeUrl, 'upgrade-step3' ),
@@ -105,12 +107,12 @@ export default function ChooseFeatures() {
 		<Layout pageId={ pageId } nextStep={ nextStep }>
 			<PageContentLayout
 				image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Setup.svg' }
-				title={ __( 'Elevate your website with additional Pro features.', 'elementor' ) }
+				title={ pageHeading }
 				actionButton={ actionButton }
 				skipButton={ skipButton }
 			>
 				<p>
-					{ __( 'Which Elementor Pro features do you need to bring your creative vision to life?', 'elementor' ) }
+					{ pageSubheading }
 				</p>
 
 				<form className="e-onboarding__choose-features-section">

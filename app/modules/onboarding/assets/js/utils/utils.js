@@ -42,8 +42,8 @@ const optionsWithoutOne = [
  * Updated checkboxes data with ONE features (when editor_one is active).
  * Order matches Figma design: 2 columns, 4 rows
  * Row 1: Theme Builder | AI for code, images, & layouts
- * Row 2: Lead Collection | Optimized images
- * Row 3: Custom Code & CSS | AI or guided accessibility fixes
+ * Row 2: Lead Collection | Image optimization
+ * Row 3: Custom Code & CSS | Accessibility scans and fixes
  * Row 4: Email deliverability | WooCommerce Builder
  */
 const optionsWithOne = [
@@ -61,7 +61,7 @@ const optionsWithOne = [
 	},
 	{
 		plan: 'one',
-		text: __( 'Optimized images', 'elementor' ),
+		text: __( 'Image optimization', 'elementor' ),
 	},
 	{
 		plan: 'advanced',
@@ -69,7 +69,7 @@ const optionsWithOne = [
 	},
 	{
 		plan: 'one',
-		text: __( 'AI or guided accessibility fixes', 'elementor' ),
+		text: __( 'Accessibility scans and fixes', 'elementor' ),
 	},
 	{
 		plan: 'one',
