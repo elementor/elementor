@@ -25,7 +25,6 @@ const i18n = {
 		introText: __( 'By activating, you’ll get early access to the next generation of Elementor’s Editor. This is your chance to explore new capabilities and help shape the future of Elementor! ', 'elementor' ),
 		notesHeader: __( ' Important note:', 'elementor' ),
 		notes: {
-			alphaPrefix: __( 'Editor V4 is currently in alpha, ', 'elementor' ),
 			details: [
 				__( 'When you activate Editor V4, you’ll also be activating Containers and Nested Elements. You can turn them back off by going to WP Admin > Elementor > Settings > Features.', 'elementor' ),
 			],
