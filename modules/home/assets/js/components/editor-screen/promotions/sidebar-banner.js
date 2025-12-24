@@ -8,7 +8,7 @@ const SidebarBanner = ( { image, link } ) => {
 	};
 
 	return (
-		<Paper elevation={ 0 } sx={ { overflow: 'hidden' } }>
+		<Paper elevation={ 0 } sx={ { overflow: 'hidden', borderRadius: 2 } }>
 			<Link
 				target="_blank"
 				href={ link }
