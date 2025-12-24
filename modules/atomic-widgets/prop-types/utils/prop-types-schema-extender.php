@@ -31,20 +31,16 @@ abstract class Prop_Types_Schema_Extender {
 	}
 
 	public function get_extended_style_schema( array $schema ): array {
-		// right now, only colors support dynamic tags in styles, this list is root level keys that contain color props
-		// ED-21082
-		$allowed_keys = [
-			'backdrop-filter',
-			'background',
-			'border-color',
-			'box-shadow',
-			'color',
-			'filter',
-			'stroke',
-		];
+		$result = [];
 
 		foreach ( $schema as $key => $prop_type ) {
-			if ( ! in_array( $key, $allowed_keys ) ) {
+			if ( ! ( $prop_type instanceof Prop_Type ) ) {
+				$result[ $key ] = $prop_type;
+
+				continue;
+			}
+
+			if ( ! $this->contains_prop_type_instance( $prop_type, Color_Prop_Type::class ) ) {
 				$result[ $key ] = $prop_type;
 
 				continue;
@@ -54,6 +50,38 @@ abstract class Prop_Types_Schema_Extender {
 		}
 
 		return $result;
+	}
+
+	private function contains_prop_type_instance( Prop_Type $prop_type, string $prop_type_class ): bool {
+		if ( $prop_type instanceof $prop_type_class ) {
+			return true;
+		}
+
+		if ( $prop_type instanceof Union_Prop_Type ) {
+			foreach ( $prop_type->get_prop_types() as $inner_prop_type ) {
+				if ( $this->contains_prop_type_instance( $inner_prop_type, $prop_type_class ) ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		if ( $prop_type instanceof Object_Prop_Type ) {
+			foreach ( $prop_type->get_shape() as $shape_prop_type ) {
+				if ( $shape_prop_type instanceof Prop_Type && $this->contains_prop_type_instance( $shape_prop_type, $prop_type_class ) ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		if ( $prop_type instanceof Array_Prop_Type ) {
+			return $this->contains_prop_type_instance( $prop_type->get_item_type(), $prop_type_class );
+		}
+
+		return false;
 	}
 
 	protected function get_extended_prop_type( Prop_Type $prop_type ): Prop_Type {
