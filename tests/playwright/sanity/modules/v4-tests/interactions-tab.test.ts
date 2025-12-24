@@ -200,7 +200,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	test.skip( 'Replay control is visible and disabled in interactions popover', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Replay control is visible and disabled in interactions popover', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
@@ -224,14 +224,13 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		await test.step( 'Verify Replay control is visible and disabled', async () => {
 			// Arrange
 			const replayLabel = page.getByText( 'Replay', { exact: true } );
-			const replayToggleGroup = page.locator( '.MuiPopover-root' ).getByRole( 'group' ).filter( { has: page.getByLabel( 'Yes' ) } );
 
 			// Assert - label is visible
 			await expect( replayLabel ).toBeVisible();
 
 			// Assert - toggle buttons exist
-			const yesButton = replayToggleGroup.getByLabel( 'Yes' );
-			const noButton = replayToggleGroup.getByLabel( 'No' );
+			const yesButton = page.getByLabel( 'Yes', { exact: true } );
+			const noButton = page.getByLabel( 'No', { exact: true } );
 
 			await expect( yesButton ).toBeVisible();
 			await expect( noButton ).toBeVisible();
