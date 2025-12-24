@@ -1,7 +1,22 @@
 import PropTypes from 'prop-types';
 
-export default function AnnouncementFooter( props ) {
-	const { buttons, onClose } = props;
+const decodeHtmlEntities = ( url ) => {
+	if ( ! url ) {
+		return url;
+	}
+
+	const textarea = document.createElement( 'textarea' );
+	textarea.innerHTML = url;
+	const decodedValue = textarea.value;
+	textarea.remove();
+
+	return decodedValue;
+};
+
+export default function AnnouncementFooter( { buttons, onClose } ) {
+	if ( ! buttons ) {
+		return null;
+	}
 
 	return (
 		<div className="announcement-footer-container">
@@ -10,7 +25,7 @@ export default function AnnouncementFooter( props ) {
 					<a
 						key={ `button${ index }` }
 						className={ `button-item ${ button.variant }` }
-						href={ button.url }
+						href={ decodeHtmlEntities( button.url ) }
 						target={ button.target }
 						onClick={ () => onClose( 'cta' ) } >
 						{ button.label }

@@ -58,7 +58,7 @@ export default function Announcements( props ) {
 
 	return (
 		<div className="announcements-container">
-			<AnnouncementsHeader onClose={ onCloseHandle } />
+			<AnnouncementsHeader announcement={ announcements[ 0 ] } onClose={ onCloseHandle } />
 			<Announcement key={ `announcement-${ currentAnnouncement }` } announcement={ announcements[ 0 ] } onClose={ onCloseHandle } />
 		</div>
 	);
