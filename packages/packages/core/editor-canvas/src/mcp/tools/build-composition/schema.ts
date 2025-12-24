@@ -17,7 +17,7 @@ export const inputSchema = {
 		.record(
 			z.string().describe( 'The configuration id' ),
 			z.record(
-				z.string().describe( 'StyleSchema property name' ),
+				z.string().describe( 'StyleSchema property name. Last priority is custom_css!' ),
 				z.any().describe( `The PropValue for the style property. MANDATORY, refer to [${ STYLE_SCHEMA_URI }]` )
 			)
 		)
@@ -29,6 +29,5 @@ export const inputSchema = {
 
 export const outputSchema = {
 	errors: z.string().describe( 'Error message if the composition building failed' ).optional(),
-	xmlStructure: z.string().describe( 'The built XML structure as a string' ).optional(),
-	llmInstructions: z.string().describe( 'Instructions used to further actions for you' ).optional(),
+	llmInstructions: z.string().describe( 'Instructions for what to do next, Important to follow these instructions!' ),
 };

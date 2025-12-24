@@ -8,6 +8,7 @@ import { z } from '@elementor/schema';
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 import { saveGlobalClasses } from '../save-global-classes';
 import { GLOBAL_CLASSES_URI } from './classes-resource';
+import { formatWarnings, validateVariableReuse } from './validators/variable-reuse-validator';
 
 export const inputSchema = {
 	globalClassName: z.string().describe( 'The name of the global class to be created' ),
@@ -31,6 +32,12 @@ export const inputSchema = {
 		)
 		.default( null )
 		.describe( 'The responsive breakpoint name for which the global class styles should be applied' ),
+	justification: z
+		.string()
+		.optional()
+		.describe(
+			'Required when hardcoding color/font values instead of using existing global variables. Explain why existing variables cannot be reused.'
+		),
 };
 
 const outputSchema = {
@@ -46,6 +53,20 @@ export const handler = async ( input: InputSchema ): Promise< OutputSchema > => 
 	if ( ! create || ! deleteClass ) {
 		throw new Error( 'Create action is not available' );
 	}
+
+	const { warnings, shouldBlock } = validateVariableReuse( input.props, input.justification );
+	if ( shouldBlock ) {
+		throw new Error(
+			`Variable Reuse Required:\n${ formatWarnings( warnings ) }\n\n` +
+				`Either:\n1. Use existing variables, OR\n2. Provide "justification" parameter\n\n` +
+				`IMPORTANT: User will be notified of hardcoded values.`
+		);
+	}
+
+	if ( warnings.length > 0 && input.justification ) {
+		console.info( `Variable reuse bypassed: ${ input.justification }` );
+	}
+
 	const errors: string[] = [];
 	const stylesSchema = getStylesSchema();
 	const validProps = Object.keys( stylesSchema );
