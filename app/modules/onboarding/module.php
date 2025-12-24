@@ -182,7 +182,7 @@ class Module extends BaseModule {
 				'402' => self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION,
 			],
             'pageSubheading' => $is_editor_one_active ? __( 'Choose the capabilities you need to bring your vision to life', 'elementor' ) : __( 'Which Elementor Pro features do you need to bring your creative vision to life?', 'elementor' ),
-            'pageHeading' => $is_editor_one_active ? __( ' Elevate your website with additional features', 'elementor' ) : __( 'Elevate your website with additional Pro features.', 'elementor' ),
+            'pageHeading' => $is_editor_one_active ? __( ' Elevate your website with additional features.', 'elementor' ) : __( 'Elevate your website with additional Pro features.', 'elementor' ),
 		] );
 	}
 
