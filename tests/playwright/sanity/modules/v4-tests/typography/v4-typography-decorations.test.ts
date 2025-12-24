@@ -6,14 +6,14 @@ import { WIDGET_CONFIGS, TYPOGRAPHY_DECORATIONS } from './typography-constants';
 import { EditorAssertions } from '../../../../pages/editor-assertions';
 import { DriverFactory } from '../../../../drivers/driver-factory';
 import type { EditorDriver } from '../../../../drivers/editor-driver';
+import { wpCli } from '../../../../assets/wp-cli';
 
 test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 	let driver: EditorDriver;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests, {
-			experiments: [ 'e_atomic_elements' ],
-		} );
+		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
+		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests );
 	} );
 
 	test.afterAll( async () => {
@@ -29,8 +29,7 @@ test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 		const decoration = TYPOGRAPHY_DECORATIONS.UNDERLINE;
 		await addWidgetWithOpenTypographySection( driver, widget.type );
 
-		const stylePanel = driver.page.getByRole( 'tabpanel', { name: 'Style' } );
-		await stylePanel.getByRole( 'button', { name: decoration.buttonName } ).click();
+		await driver.editor.clickButton( decoration.buttonName );
 
 		await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
 			{ property: decoration.cssProperty, value: decoration.activeValue },
@@ -42,8 +41,7 @@ test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 		const decoration = TYPOGRAPHY_DECORATIONS.UPPERCASE;
 		await addWidgetWithOpenTypographySection( driver, widget.type );
 
-		const stylePanel = driver.page.getByRole( 'tabpanel', { name: 'Style' } );
-		await stylePanel.getByRole( 'button', { name: decoration.buttonName } ).click();
+		await driver.editor.clickButton( decoration.buttonName );
 
 		await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
 			{ property: decoration.cssProperty, value: decoration.activeValue },
@@ -55,8 +53,7 @@ test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 		const decoration = TYPOGRAPHY_DECORATIONS.RTL;
 		await addWidgetWithOpenTypographySection( driver, widget.type );
 
-		const stylePanel = driver.page.getByRole( 'tabpanel', { name: 'Style' } );
-		await stylePanel.getByRole( 'button', { name: decoration.buttonName } ).click();
+		await driver.editor.clickButton( decoration.buttonName );
 
 		await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
 			{ property: decoration.cssProperty, value: decoration.activeValue },
@@ -68,8 +65,7 @@ test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 		const decoration = TYPOGRAPHY_DECORATIONS.ITALIC;
 		await addWidgetWithOpenTypographySection( driver, widget.type );
 
-		const stylePanel = driver.page.getByRole( 'tabpanel', { name: 'Style' } );
-		await stylePanel.getByRole( 'button', { name: decoration.buttonName } ).click();
+		await driver.editor.clickButton( decoration.buttonName );
 
 		await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
 			{ property: decoration.cssProperty, value: decoration.activeValue },
@@ -81,8 +77,7 @@ test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 		const decoration = TYPOGRAPHY_DECORATIONS.TEXT_STROKE;
 		await addWidgetWithOpenTypographySection( driver, widget.type );
 
-		const stylePanel = driver.page.getByRole( 'tabpanel', { name: 'Style' } );
-		await stylePanel.getByRole( 'button', { name: decoration.addButtonName, exact: true } ).click();
+		await driver.editor.clickButton( decoration.addButtonName, true );
 
 		await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
 			{ property: decoration.cssProperty, value: decoration.defaultValue },
@@ -96,12 +91,11 @@ test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 		await test.step( 'Apply multiple typography features', async () => {
 			await addWidgetWithOpenTypographySection( driver, widget.type );
 
-			const stylePanel = driver.page.getByRole( 'tabpanel', { name: 'Style' } );
-			await stylePanel.getByRole( 'button', { name: UNDERLINE.buttonName } ).click();
-			await stylePanel.getByRole( 'button', { name: ITALIC.buttonName } ).click();
-			await stylePanel.getByRole( 'button', { name: UPPERCASE.buttonName } ).click();
-			await stylePanel.getByRole( 'button', { name: RTL.buttonName } ).click();
-			await stylePanel.getByRole( 'button', { name: TEXT_STROKE.addButtonName, exact: true } ).click();
+			await driver.editor.clickButton( UNDERLINE.buttonName );
+			await driver.editor.clickButton( ITALIC.buttonName );
+			await driver.editor.clickButton( UPPERCASE.buttonName );
+			await driver.editor.clickButton( RTL.buttonName );
+			await driver.editor.clickButton( TEXT_STROKE.addButtonName, true );
 		} );
 
 		await test.step( 'Verify all features applied correctly', async () => {
@@ -125,8 +119,7 @@ test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 		} );
 
 		await test.step( 'Toggle features off', async () => {
-			const stylePanel = driver.page.getByRole( 'tabpanel', { name: 'Style' } );
-			await stylePanel.getByRole( 'button', { name: UNDERLINE.buttonName } ).click();
+			await driver.editor.clickButton( UNDERLINE.buttonName );
 			await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
 				{ property: UNDERLINE.cssProperty, value: UNDERLINE.inactiveValue },
 			] );
@@ -134,7 +127,7 @@ test.describe( 'Atomic Widgets - Text Decoration @v4-tests', () => {
 				{ buttonName: UNDERLINE.buttonName, isPressed: false },
 			] );
 
-			await stylePanel.getByRole( 'button', { name: TEXT_STROKE.removeButtonName } ).click();
+			await driver.editor.clickButton( TEXT_STROKE.removeButtonName );
 			await EditorAssertions.verifyCSSProperties( driver, widget.selector, [
 				{ property: TEXT_STROKE.cssProperty, value: TEXT_STROKE.removedValue },
 			] );
