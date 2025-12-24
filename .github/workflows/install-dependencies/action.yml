@@ -1,24 +1,17 @@
-name: 'Install npm and Composer Dependencies'
-description: 'A composite action to install npm packages and Composer dependencies.'
-
-inputs:
-  composer_auth_token:
-    description: 'GitHub token for Composer authentication to private repos'
-    required: true
+name: "Install npm and Composer Dependencies"
+description: "A composite action to install npm packages and Composer dependencies."
 
 runs:
-    using: 'composite'
+    using: "composite"
     steps:
-      # Using PHP 7.4 to make sure it'll bundle the polyfills for PHP >= 8.0
-      - name: Setup PHP 7.4
-        id: setup-php
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '7.4'
+        # Using PHP 7.4 to make sure it'll bundle the polyfills for PHP >= 8.0
+        - name: Setup PHP 7.4
+          id: setup-php
+          uses: shivammathur/setup-php@v2
+          with:
+              php-version: "7.4"
 
-      - shell: bash
-        env:
-          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ inputs.composer_auth_token }}"}}'
-        run: |
-            npm run prepare-environment:ci
-            npm run composer:no-dev
+        - shell: bash
+          run: |
+              npm run prepare-environment:ci
+              npm run composer:no-dev

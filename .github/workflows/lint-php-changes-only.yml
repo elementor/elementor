@@ -39,8 +39,6 @@ jobs:
               with:
                   php-version: "8.1"
             - name: Install Dependencies
-              env:
-                  COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.TEMP_DEVOPS_TOKEN }}"}}'
               run: |
                   composer install
             - name: Run PHP Linter

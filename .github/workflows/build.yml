@@ -1,146 +1,144 @@
 name: Build
 
 on:
-  pull_request:
-    branches:
-      - 'main'
-      - '3.[0-9][0-9]'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - '.gitignore'
-      - 'docs/**'
-  workflow_dispatch:
-  workflow_call:
-    outputs:
-      artifact_name:
-        value: ${{ jobs.build-plugin.outputs.artifact_name }}
-      changelog_diff:
-        value: ${{ jobs.build-plugin.outputs.changelog_diff }}
-  push:
-    branches:
-      - 'main'
-      - '3.[0-9][0-9]'
-    paths-ignore:
-      - '**.md'
-      - '**.txt'
-      - '.github/config.json'
-      - 'bin/**'
-      - '.gitignore'
-      - 'docs/**'
+    pull_request:
+        branches:
+            - "main"
+            - "3.[0-9][0-9]"
+        paths-ignore:
+            - "**.md"
+            - "**.txt"
+            - ".github/config.json"
+            - ".gitignore"
+            - "docs/**"
+    workflow_dispatch:
+    workflow_call:
+        outputs:
+            artifact_name:
+                value: ${{ jobs.build-plugin.outputs.artifact_name }}
+            changelog_diff:
+                value: ${{ jobs.build-plugin.outputs.changelog_diff }}
+    push:
+        branches:
+            - "main"
+            - "3.[0-9][0-9]"
+        paths-ignore:
+            - "**.md"
+            - "**.txt"
+            - ".github/config.json"
+            - "bin/**"
+            - ".gitignore"
+            - "docs/**"
 
 permissions:
-      pull-requests: write
+    pull-requests: write
 
 jobs:
-  build-plugin:
-    name: Build plugin
-    runs-on: ubuntu-22.04
-    if: startsWith( github.repository, 'elementor/' )
-    outputs:
-      artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME}}
-      changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v4
+    build-plugin:
+        name: Build plugin
+        runs-on: ubuntu-22.04
+        if: startsWith( github.repository, 'elementor/' )
+        outputs:
+            artifact_name: ${{ env.PLUGIN_FOLDER_FILENAME}}
+            changelog_diff: ${{ steps.changelog_diff_files.outputs.diff }}
+        steps:
+            - name: Checkout source code
+              uses: actions/checkout@v4
 
-      - name: Cache turbo build setup
-        uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-turbo-
+            - name: Cache turbo build setup
+              uses: actions/cache@v4
+              with:
+                  path: .turbo
+                  key: ${{ runner.os }}-turbo-${{ github.sha }}
+                  restore-keys: |
+                      ${{ runner.os }}-turbo-
 
-      - name: Check if this is only a changelog PR
-        id: changelog_diff_files
-        uses: technote-space/get-diff-action@v6
-        with:
-          PATTERNS: |
-            **/*
-            .*/**/*
-            !readme.txt
-            !changelog.txt
+            - name: Check if this is only a changelog PR
+              id: changelog_diff_files
+              uses: technote-space/get-diff-action@v6
+              with:
+                  PATTERNS: |
+                      **/*
+                      .*/**/*
+                      !readme.txt
+                      !changelog.txt
 
-      - name: Install Node.js 20.x
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-          cache: 'npm'
+            - name: Install Node.js 20.x
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20.x
+                  cache: "npm"
 
-      - name: Set ENV variables
-        run: |
-          DATE_VERSION=$(date '+%Y%m%d.%H%M')
-          VERSION=$(node -p "require('./package.json').version")
+            - name: Set ENV variables
+              run: |
+                  DATE_VERSION=$(date '+%Y%m%d.%H%M')
+                  VERSION=$(node -p "require('./package.json').version")
 
-          PACKAGE_VERSION=${VERSION}-${DATE_VERSION}
-          PLUGIN_FOLDER_FILENAME="elementor-${PACKAGE_VERSION}"
+                  PACKAGE_VERSION=${VERSION}-${DATE_VERSION}
+                  PLUGIN_FOLDER_FILENAME="elementor-${PACKAGE_VERSION}"
 
-          echo "DATE_VERSION=$DATE_VERSION" >> $GITHUB_ENV
-          echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
-          echo "PLUGIN_FOLDER_FILENAME=$PLUGIN_FOLDER_FILENAME" >> $GITHUB_ENV
+                  echo "DATE_VERSION=$DATE_VERSION" >> $GITHUB_ENV
+                  echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> $GITHUB_ENV
+                  echo "PLUGIN_FOLDER_FILENAME=$PLUGIN_FOLDER_FILENAME" >> $GITHUB_ENV
 
-      - name: Install dependencies
-        uses: ./.github/workflows/install-dependencies
-        with:
-          composer_auth_token: ${{ secrets.TEMP_DEVOPS_TOKEN }}
+            - name: Install dependencies
+              uses: ./.github/workflows/install-dependencies
 
-      - name: Build plugin
-        uses: ./.github/workflows/build-plugin
-        with:
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
-          BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
-        env:
-          MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
+            - name: Build plugin
+              uses: ./.github/workflows/build-plugin
+              with:
+                  PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+                  BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
+              env:
+                  MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
 
-      - uses: actions/upload-artifact@v4
-        id: upload-artifact
-        with:
-          name: ${{ env.PLUGIN_FOLDER_FILENAME }}
-          path: elementor
-          if-no-files-found: error
-          compression-level: 9
-          retention-days: 3
+            - uses: actions/upload-artifact@v4
+              id: upload-artifact
+              with:
+                  name: ${{ env.PLUGIN_FOLDER_FILENAME }}
+                  path: elementor
+                  if-no-files-found: error
+                  compression-level: 9
+                  retention-days: 3
 
-      - name: Find existing comment on PR (Elementor repo)
-        if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
-        uses: peter-evans/find-comment@v3
-        id: find
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: 'Elementor Build'
-      
-      - name: Comment build info on PR (Elementor repo)
-        if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
-        uses: peter-evans/create-or-update-comment@v4
-        with:
-          comment-id: ${{ steps.find.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            ## Elementor Build
-            Last updated at: ${{ env.DATE_VERSION }}
-            Version: ${{ env.PACKAGE_VERSION }}
+            - name: Find existing comment on PR (Elementor repo)
+              if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+              uses: peter-evans/find-comment@v3
+              id: find
+              with:
+                  issue-number: ${{ github.event.pull_request.number }}
+                  comment-author: "github-actions[bot]"
+                  body-includes: "Elementor Build"
 
-            ✅ Elementor build is ready for download.
+            - name: Comment build info on PR (Elementor repo)
+              if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+              uses: peter-evans/create-or-update-comment@v4
+              with:
+                  comment-id: ${{ steps.find.outputs.comment-id }}
+                  issue-number: ${{ github.event.pull_request.number }}
+                  body: |
+                      ## Elementor Build
+                      Last updated at: ${{ env.DATE_VERSION }}
+                      Version: ${{ env.PACKAGE_VERSION }}
 
-            You can download the latest build from the link below:
+                      ✅ Elementor build is ready for download.
 
-            🔗 [${{ env.PLUGIN_ZIP_FILENAME }}](https://github.com/elementor/elementor/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-artifact.outputs.artifact-id }})
+                      You can download the latest build from the link below:
 
-            The build is available for 3 days.
+                      🔗 [${{ env.PLUGIN_ZIP_FILENAME }}](https://github.com/elementor/elementor/actions/runs/${{ github.run_id }}/artifacts/${{ steps.upload-artifact.outputs.artifact-id }})
 
-          edit-mode: replace
+                      The build is available for 3 days.
 
-      - name: Print artifact info once PR is non Elementor repo
-        if: github.event_name == 'pull_request' && !startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
-        run: |
-          echo "Artifact info:"
-          echo "  Name: ${{ env.PLUGIN_FOLDER_FILENAME }}"
-          echo "  Path: elementor"
-          echo "  Size: $(du -sh elementor | cut -f1)"
-          echo "  URL: https://github.com/elementor/elementor/actions/runs/${{ env.RUN_ID }}/artifacts/${{ env.ARTIFACT_ID }}"
-        env:
-          RUN_ID: ${{ github.run_id }}
-          ARTIFACT_ID: ${{ steps.upload-artifact.outputs.artifact-id }}
+                  edit-mode: replace
+
+            - name: Print artifact info once PR is non Elementor repo
+              if: github.event_name == 'pull_request' && !startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
+              run: |
+                  echo "Artifact info:"
+                  echo "  Name: ${{ env.PLUGIN_FOLDER_FILENAME }}"
+                  echo "  Path: elementor"
+                  echo "  Size: $(du -sh elementor | cut -f1)"
+                  echo "  URL: https://github.com/elementor/elementor/actions/runs/${{ env.RUN_ID }}/artifacts/${{ env.ARTIFACT_ID }}"
+              env:
+                  RUN_ID: ${{ github.run_id }}
+                  ARTIFACT_ID: ${{ steps.upload-artifact.outputs.artifact-id }}
