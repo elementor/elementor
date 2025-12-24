@@ -16,6 +16,7 @@ import { updateOverridableProp } from '../../store/actions/update-overridable-pr
 import { useCurrentComponentId } from '../../store/store';
 import { useOverridableProps } from '../component-panel-header/use-overridable-props';
 import { NewPropertiesGroup } from './new-properties-group';
+import { PropertiesEmptyState } from './properties-empty-state';
 import { PropertiesGroup } from './properties-group';
 import { SortableItem, SortableProvider } from './sortable';
 
@@ -92,6 +93,9 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 		label: group.label,
 	} ) );
 
+	const hasProperties = Object.keys( overridableProps.props ).length > 0;
+	const showEmptyState = ! hasProperties && ! isAddingGroup;
+
 	return (
 		<>
 			<PanelHeader sx={ { justifyContent: 'start', pl: 1.5, pr: 1, py: 1 } }>
@@ -101,15 +105,17 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 						{ __( 'Component properties', 'elementor' ) }
 					</PanelHeaderTitle>
 				</Stack>
-				<Tooltip title={ __( 'Add new group', 'elementor' ) }>
-					<IconButton
-						size="tiny"
-						aria-label={ __( 'Add new group', 'elementor' ) }
-						onClick={ handleAddGroupClick }
-					>
-						<FolderIcon fontSize="tiny" />
-					</IconButton>
-				</Tooltip>
+				{ ! showEmptyState && (
+					<Tooltip title={ __( 'Add new group', 'elementor' ) }>
+						<IconButton
+							size="tiny"
+							aria-label={ __( 'Add new group', 'elementor' ) }
+							onClick={ handleAddGroupClick }
+						>
+							<FolderIcon fontSize="tiny" />
+						</IconButton>
+					</Tooltip>
+				) }
 				<Tooltip title={ __( 'Close panel', 'elementor' ) }>
 					<IconButton size="tiny" aria-label={ __( 'Close panel', 'elementor' ) } onClick={ onClose }>
 						<XIcon fontSize="tiny" />
@@ -118,36 +124,40 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 			</PanelHeader>
 			<Divider />
 			<PanelBody>
-				<List sx={ { p: 2, display: 'flex', flexDirection: 'column', gap: 2 } }>
-					{ isAddingGroup && (
-						<NewPropertiesGroup
-							existingGroups={ overridableProps.groups.items }
-							onSave={ handleSaveGroup }
-							onCancel={ handleCancelAddGroup }
-						/>
-					) }
-					<SortableProvider value={ groupIds } onChange={ handleGroupsReorder }>
-						{ groups.map( ( group ) => (
-							<SortableItem key={ group.id } id={ group.id }>
-								{ ( { triggerProps, triggerStyle, isDragPlaceholder } ) => (
-									<PropertiesGroup
-										group={ group }
-										props={ overridableProps.props }
-										allGroups={ allGroupsForSelect }
-										allGroupsRecord={ overridableProps.groups.items }
-										sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
-										isDragPlaceholder={ isDragPlaceholder }
-										onPropsReorder={ ( newOrder ) => handlePropsReorder( group.id, newOrder ) }
-										onPropertyDelete={ handlePropertyDelete }
-										onPropertyUpdate={ handlePropertyUpdate }
-										onGroupRename={ handleGroupRename }
-										onGroupDelete={ handleGroupDelete }
-									/>
-								) }
-							</SortableItem>
-						) ) }
-					</SortableProvider>
-				</List>
+				{ showEmptyState ? (
+					<PropertiesEmptyState />
+				) : (
+					<List sx={ { p: 2, display: 'flex', flexDirection: 'column', gap: 2 } }>
+						{ isAddingGroup && (
+							<NewPropertiesGroup
+								existingGroups={ overridableProps.groups.items }
+								onSave={ handleSaveGroup }
+								onCancel={ handleCancelAddGroup }
+							/>
+						) }
+						<SortableProvider value={ groupIds } onChange={ handleGroupsReorder }>
+							{ groups.map( ( group ) => (
+								<SortableItem key={ group.id } id={ group.id }>
+									{ ( { triggerProps, triggerStyle, isDragPlaceholder } ) => (
+										<PropertiesGroup
+											group={ group }
+											props={ overridableProps.props }
+											allGroups={ allGroupsForSelect }
+											allGroupsRecord={ overridableProps.groups.items }
+											sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
+											isDragPlaceholder={ isDragPlaceholder }
+											onPropsReorder={ ( newOrder ) => handlePropsReorder( group.id, newOrder ) }
+											onPropertyDelete={ handlePropertyDelete }
+											onPropertyUpdate={ handlePropertyUpdate }
+											onGroupRename={ handleGroupRename }
+											onGroupDelete={ handleGroupDelete }
+										/>
+									) }
+								</SortableItem>
+							) ) }
+						</SortableProvider>
+					</List>
+				) }
 			</PanelBody>
 		</>
 	);

@@ -110,6 +110,48 @@ describe( 'ComponentPropertiesPanel', () => {
 		} );
 	} );
 
+	describe( 'empty state', () => {
+		it( 'should render empty state when no properties exist', () => {
+			// Arrange
+			const emptyOverridableProps: OverridableProps = {
+				props: {},
+				groups: {
+					items: {},
+					order: [],
+				},
+			};
+			dispatch( slice.actions.load( [ createMockComponent( emptyOverridableProps ) ] ) );
+			dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+
+			// Act
+			renderWithStore( <ComponentPropertiesPanel onClose={ mockOnClose } />, store );
+
+			// Assert
+			expect( screen.getByText( 'Add your first property' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Make instances flexible while keeping design synced.' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Learn more' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should hide add group button when empty state is shown', () => {
+			// Arrange
+			const emptyOverridableProps: OverridableProps = {
+				props: {},
+				groups: {
+					items: {},
+					order: [],
+				},
+			};
+			dispatch( slice.actions.load( [ createMockComponent( emptyOverridableProps ) ] ) );
+			dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+
+			// Act
+			renderWithStore( <ComponentPropertiesPanel onClose={ mockOnClose } />, store );
+
+			// Assert
+			expect( screen.queryByLabelText( 'Add new group' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'add group', () => {
 		it( 'should show editable input when add group button is clicked', async () => {
 			// Arrange
