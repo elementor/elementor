@@ -1,23 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import useAjax from 'elementor-app/hooks/use-ajax';
 import Message from '../components/message';
-import { options, setSelectedFeatureList, addExperimentTrackingToUrl } from '../utils/utils';
+import { getOptions, setSelectedFeatureList, addExperimentTrackingToUrl } from '../utils/utils';
 import Layout from '../components/layout/layout';
 import PageContentLayout from '../components/layout/page-content-layout';
 import useButtonAction from '../utils/use-button-action';
 import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function ChooseFeatures() {
+	const isEditorOneActive = elementorAppConfig?.onboarding?.isEditorOneActive ?? false;
+	const options = useMemo( () => getOptions( isEditorOneActive ), [ isEditorOneActive ] );
 	const { setAjax } = useAjax(),
-		tiers = { advanced: __( 'Advanced', 'elementor' ), essential: __( 'Essential', 'elementor' ) },
-		[ selectedFeatures, setSelectedFeatures ] = useState( { essential: [], advanced: [] } ),
+		tiers = {
+			one: __( 'ONE', 'elementor' ),
+			advanced: __( 'Advanced', 'elementor' ),
+			essential: __( 'Essential', 'elementor' ),
+		},
+		[ selectedFeatures, setSelectedFeatures ] = useState( { one: [], essential: [], advanced: [] } ),
 		[ tierName, setTierName ] = useState( tiers.essential ),
 		pageId = 'chooseFeatures',
 		nextStep = 'goodToGo',
 		{ state, handleAction } = useButtonAction( pageId, nextStep ),
+		upgradeUrl = elementorAppConfig.onboarding.urls.upgrade,
+		pageHeading = elementorAppConfig.onboarding.pageHeading,
+		pageSubheading = elementorAppConfig.onboarding.pageSubheading,
 		actionButton = {
 			text: __( 'Upgrade Now', 'elementor' ),
-			href: addExperimentTrackingToUrl( elementorAppConfig.onboarding.urls.upgrade, 'upgrade-step3' ),
+			href: addExperimentTrackingToUrl( upgradeUrl, 'upgrade-step3' ),
 			target: '_blank',
 			onClick: () => {
 				OnboardingEventTracking.trackStepAction( 3, 'upgrade_now', {
@@ -76,12 +85,14 @@ export default function ChooseFeatures() {
 	}
 
 	useEffect( () => {
-		if ( selectedFeatures.advanced.length > 0 ) {
+		if ( isEditorOneActive && selectedFeatures.one && selectedFeatures.one.length > 0 ) {
+			setTierName( tiers.one );
+		} else if ( selectedFeatures.advanced && selectedFeatures.advanced.length > 0 ) {
 			setTierName( tiers.advanced );
 		} else {
 			setTierName( tiers.essential );
 		}
-	}, [ selectedFeatures, tiers.advanced, tiers.essential ] );
+	}, [ selectedFeatures, isEditorOneActive, tiers.one, tiers.advanced, tiers.essential ] );
 
 	useEffect( () => {
 		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
@@ -89,19 +100,19 @@ export default function ChooseFeatures() {
 	}, [ state.currentStep ] );
 
 	function isFeatureSelected( features ) {
-		return !! features.advanced.length || !! features.essential.length;
+		return !! features.one.length || !! features.advanced.length || !! features.essential.length;
 	}
 
 	return (
 		<Layout pageId={ pageId } nextStep={ nextStep }>
 			<PageContentLayout
 				image={ elementorCommon.config.urls.assets + 'images/app/onboarding/Illustration_Setup.svg' }
-				title={ __( 'Elevate your website with additional Pro features.', 'elementor' ) }
+				title={ pageHeading }
 				actionButton={ actionButton }
 				skipButton={ skipButton }
 			>
 				<p>
-					{ __( 'Which Elementor Pro features do you need to bring your creative vision to life?', 'elementor' ) }
+					{ pageSubheading }
 				</p>
 
 				<form className="e-onboarding__choose-features-section">
