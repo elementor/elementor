@@ -44,6 +44,24 @@ const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void
 	}, dependencies );
 };
 
+const calcSelectionCenter = (
+	view: EditorView,
+	container: { left: number; top: number } | undefined
+): { left: number; top: number } | null => {
+	if ( ! container ) {
+		return null;
+	}
+
+	const { from, to } = view.state.selection;
+	const start = view.coordsAtPos( from );
+	const end = view.coordsAtPos( to );
+
+	const left = ( start.left + end.left ) / 2 - container.left;
+	const top = Math.min( start.top, end.top ) - container.top;
+
+	return { left, top };
+};
+
 export const InlineEditor = React.forwardRef(
 	(
 		{
@@ -63,9 +81,19 @@ export const InlineEditor = React.forwardRef(
 		const popupState = usePopupState( { variant: 'popover', disableAutoFocus: true } );
 		const [ hasSelectedContent, setHasSelectedContent ] = React.useState( false );
 		const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
+		const [ selectionRect, setSelectionRect ] = React.useState< { left: number; top: number } | null >( null );
 
 		const onSelectionEnd = ( view: EditorView ) => {
-			setHasSelectedContent( () => ! view.state.selection.empty );
+			const hasSelection = ! view.state.selection.empty;
+			setHasSelectedContent( hasSelection );
+
+			if ( hasSelection ) {
+				const container = containerRef.current?.getBoundingClientRect();
+				setSelectionRect( calcSelectionCenter( view, container ) );
+			} else {
+				setSelectionRect( null );
+			}
+
 			queueMicrotask( () => view.focus() );
 		};
 
@@ -157,13 +185,20 @@ export const InlineEditor = React.forwardRef(
 		}, [ editor, value ] );
 
 		const computePopupPosition = () => {
-			const positionFallback = { left: 0, top: 0 };
-			const { left, top } = containerRef.current?.getBoundingClientRect() ?? positionFallback;
-			const initial = getInitialPopoverPosition?.() ?? positionFallback;
+			if ( ! selectionRect ) {
+				return { left: 0, top: 0 };
+			}
+
+			const container = containerRef.current?.getBoundingClientRect();
+			if ( ! container ) {
+				return { left: 0, top: 0 };
+			}
+
+			const initial = getInitialPopoverPosition?.() ?? { left: 0, top: 0 };
 
 			return {
-				left: left + initial.left,
-				top: top + initial.top,
+				left: container.left + selectionRect.left + initial.left,
+				top: container.top + selectionRect.top + initial.top,
 			};
 		};
 
@@ -209,11 +244,11 @@ export const InlineEditor = React.forwardRef(
 							},
 						} }
 						{ ...bindPopover( popupState ) }
-						open={ hasSelectedContent }
+						open={ hasSelectedContent && selectionRect !== null }
 						anchorReference="anchorPosition"
 						anchorPosition={ computePopupPosition() }
-						anchorOrigin={ { vertical: 'top', horizontal: 'left' } }
-						transformOrigin={ { vertical: 'bottom', horizontal: 'left' } }
+						anchorOrigin={ { vertical: 'top', horizontal: 'center' } }
+						transformOrigin={ { vertical: 'bottom', horizontal: 'center' } }
 					>
 						<InlineEditorToolbar editor={ editor } />
 					</Popover>
