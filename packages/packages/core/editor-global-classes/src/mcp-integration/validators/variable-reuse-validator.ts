@@ -43,7 +43,7 @@ const scanPropsForHardcodedValues = (
 		for ( const key in obj ) {
 			if ( obj.hasOwnProperty( key ) ) {
 				const newPath = currentPath ? `${ currentPath }.${ key }` : key;
-				scan( obj[ key ], newPath );
+				scan( obj[ key ] as Record< string, unknown >, newPath );
 			}
 		}
 	};
