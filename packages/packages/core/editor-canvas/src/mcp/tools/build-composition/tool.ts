@@ -29,6 +29,11 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			{ description: 'Styles best practices', uri: BEST_PRACTICES_URI },
 		],
 		outputSchema,
+		modelPreferences: {
+			hints: [ { name: 'claude-sonnet' } ],
+			intelligencePriority: 0.95,
+			speedPriority: 0.5,
+		},
 		handler: async ( params ) => {
 			let xml: Document | null = null;
 			const { xmlStructure, elementConfig, stylesConfig } = params;
