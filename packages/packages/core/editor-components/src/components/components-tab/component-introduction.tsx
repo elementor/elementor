@@ -21,9 +21,9 @@ export const ComponentIntroduction = ( {
 		<Popover
 			anchorEl={ anchorRef.current }
 			open={ shouldShowIntroduction }
-			anchorOrigin={ {
+			anchorOrigin={ { 
 				vertical: 'top',
-				horizontal: 'right',
+				horizontal: 'right', 
 			} }
 			transformOrigin={ {
 				vertical: 'top',
