@@ -12,6 +12,10 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 			result: z.string().describe( 'Result message indicating the success of the apply operation' ),
 		},
 		name: 'apply-global-class',
+		modelPreferences: {
+			intelligencePriority: 0.7,
+			speedPriority: 0.8,
+		},
 		description: `Apply a global class to the current element
 
 ## When to use this tool:
@@ -42,6 +46,10 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 		},
 		outputSchema: {
 			result: z.string().describe( 'Result message indicating the success of the unapply operation' ),
+		},
+		modelPreferences: {
+			intelligencePriority: 0.7,
+			speedPriority: 0.8,
 		},
 		description: `Unapply a (global) class from the current element
 

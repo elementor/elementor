@@ -348,47 +348,26 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
-= 3.33.6 - 2025-12-18 =
+= 3.34.0 - 2025-12-22 =
 
-* Fix: Issues with rendering in Text Editor widget
-* Fix: Context menu fails to open after using 'Copy' action on a widget – Editor V4
-
-= v3.33.5 - 2025-12-17 =
-
-* Security Fix: Improved code security enforcement in site navigation module
-* Security Fix: Improved code security enforcement in text editor
-
-= 3.33.4 - 2025-12-08 =
-
-* Security Fix: Improved code security enforcement in Text Path widget
-
-= 3.33.3 - 2025-12-04 =
-
-* Fix: Improved compatibility with WordPress 6.9
-* Fix: Keyboard navigation does not work as expected when setting a CSS ID in Tabs widget
-
-= 3.33.2 - 2025-11-23 =
-
-* Security Fix: Improved code security enforcement in repeater widgets
-* Security Fix: Improved code security enforcement in Star Rating widget
-* Fix: Editor not loading with errors in the console in certain scenarios – Editor V4
-
-= 3.33.1 - 2025-11-17 =
-
-* Security Fix: Improved code security enforcement in Floating Elements
-
-= 3.33.0 - 2025-11-10 =
-
-* New: Introducing Variables Manager to manage design variables like colors, fonts, and sizes from a centralized panel - Editor V4
-* New: Introducing Blend Mode control to create layered visual effects by defining how elements blend with backgrounds - Editor V4
-* New: Introducing Background Clipping control to define where an element's background is rendered across the element's layout - Editor V4
-* Tweak: Updated Editor Top Bar layout and button placement for improved navigation
-* Tweak: Adjusted default cache behavior to inactive and updated FAQ Schema notice in Accordion widget
-* Tweak: Improved error handling in Import and Export customization flow
-* Tweak: Applied CSS logical properties support in Star Rating widget
-* Tweak: Enhanced accessibility in Star Rating widget
-* Tweak: Updated minimum supported versions for Chrome, Firefox, and Safari
-* Fix: Child pages and menu items not importing correctly in Website Templates
-* Fix: Deprecated `utf8_encode()` and `utf8_decode()` functions replaced for PHP 8.2 compatibility ([#27499](https://github.com/elementor/elementor/issues/27499))
+* New: Introducing Atomic Tabs - enabling flexible and fully customizable tab layouts with nested Atomic Elements - Editor V4
+* New: Introducing Entrance Interactions to add lightweight motion and bring elements to life as they appear - Editor V4
+* Tweak: Replaced the legacy V3 container wrapper with the optimized V4 wrapper for improved markup - Editor V4
+* Tweak: Improved frontend link control output to ensure consistent rendering - Editor V4 ([#32233](https://github.com/elementor/elementor/issues/32233))
+* Tweak: Added reset option inside popovers - Editor V4
+* Tweak: Updated Border control layout for a clearer and more consistent editing workflow - Editor V4
+* Tweak: Added `span` option inside the Paragraph atom - Editor V4
+* Tweak: Improved transitions to better support logical properties - Editor V4
+* Tweak: Improved dropdown folder behavior and resolved related UI issues in Template Library
+* Tweak: Merged "Import/Export Customization" feature into the version
+* Tweak: Added `builder_content_data` filter for extending Template Library and Global Widget content (props [@dgwatkins](https://github.com/dgwatkins))
+* Tweak: Applied CSS logical properties in Icon Box widget
+* Tweak: Applied CSS logical properties in Icon List widget
+* Tweak: Applied CSS logical properties in text alignment controls and fixed RTL rendering in the Editor
+* Fix: Local Transform values overridden Class-level Transform defaults even when unchanged - Editor V4
+* Fix: Fatal error when opening pages containing atomic elements while the V4 experiment is deactivated - Editor V4
+* Fix: Hover Scale transform set through Class did not save correctly - Editor V4
+* Fix: PHP 8.4 deprecation notices related to deprecated `E_STRICT` constant
+* Fix: Missing CSS regeneration after clearing cached files on pages containing dynamic tags
 
 [See changelog for all versions.](https://go.elementor.com/full-changelog/)
