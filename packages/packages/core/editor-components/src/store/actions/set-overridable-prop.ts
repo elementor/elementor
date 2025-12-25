@@ -1,4 +1,4 @@
-import { type PropValue } from '@elementor/editor-props';
+import { type PropType, type PropValue } from '@elementor/editor-props';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 import { generateUniqueId } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
@@ -16,6 +16,7 @@ type Props = {
 	elType: string;
 	widgetType: string;
 	originValue: PropValue;
+	propType: PropType;
 };
 export function setOverridableProp( {
 	componentId,
@@ -27,6 +28,7 @@ export function setOverridableProp( {
 	elType,
 	widgetType,
 	originValue,
+	propType,
 }: Props ): OverridableProp | undefined {
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
@@ -55,6 +57,7 @@ export function setOverridableProp( {
 		elType,
 		originValue,
 		groupId: currentGroupId,
+		propType,
 	};
 
 	const { props: propsWithoutDuplicates, groups: groupsWithoutDuplicates } = removeProps( {

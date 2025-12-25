@@ -64,9 +64,9 @@ class Component extends Document {
 	}
 
 	public function get_overridable_props(): Component_Overridable_Props {
-		$meta = $this->get_meta( self::OVERRIDABLE_PROPS_META_KEY );
+		$meta = $this->get_json_meta( self::OVERRIDABLE_PROPS_META_KEY );
 
-		return new Component_Overridable_Props( $meta );
+		return Component_Overridable_Props::make( $meta ?? [] );
 	}
 
 	public function archive() {

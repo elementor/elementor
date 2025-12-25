@@ -31,6 +31,7 @@ const MOCK_COMPONENT_ID = 456;
 const MOCK_WIDGET_TYPE = 'e-heading';
 const MOCK_EL_TYPE = 'widget';
 const MOCK_OVERRIDABLE_KEY = 'mock-overridable-key';
+const MOCK_PROP_TYPE = createMockPropType();
 
 describe( 'OverridablePropIndicator', () => {
 	let store: Store< ComponentsSlice >;
@@ -140,6 +141,7 @@ describe( 'OverridablePropIndicator', () => {
 									overrideKey: MOCK_OVERRIDABLE_KEY,
 									elementId: MOCK_ELEMENT_ID,
 									propKey: bind,
+									propType: MOCK_PROP_TYPE,
 									widgetType: MOCK_WIDGET_TYPE,
 									elType: MOCK_EL_TYPE,
 									originValue: currentValue,

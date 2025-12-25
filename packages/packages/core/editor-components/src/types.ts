@@ -1,5 +1,5 @@
 import { type V1ElementData } from '@elementor/editor-elements';
-import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
+import { type PropType, type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 import type { StyleDefinition } from '@elementor/editor-styles';
 
 export type ComponentFormValues = {
@@ -29,6 +29,8 @@ export type OverridableProp = {
 	widgetType: string;
 	originValue: PropValue;
 	groupId: string;
+	propType: PropType;
+	overridableProp?: OverridableProp;
 };
 
 export type OverridablePropsGroup = {
@@ -63,28 +65,6 @@ export type ExtendedWindow = Window & {
 				triggers: Record< string, string >;
 			};
 		};
-	};
-};
-
-export type ComponentInstancePropValue< TComponentId extends number | string = number | string > =
-	TransformablePropValue<
-		'component-instance',
-		{
-			component_id: TransformablePropValue< 'number', TComponentId >;
-			overrides?: TransformablePropValue< 'overrides', ComponentOverrides >;
-		}
-	>;
-
-type ComponentOverrides = TransformablePropValue< 'overrides', ComponentOverride[] >;
-
-type ComponentOverride = TransformablePropValue< 'override', ComponentOverridePropValue >;
-
-export type ComponentOverridePropValue = {
-	override_key: string;
-	override_value: TransformablePropValue< string >;
-	schema_source: {
-		type: string;
-		id: number;
 	};
 };
 
