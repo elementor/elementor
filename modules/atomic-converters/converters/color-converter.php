@@ -2,18 +2,18 @@
 
 namespace Elementor\Modules\AtomicConverters\Converters;
 
-use Elementor\Modules\AtomicConverters\Property_Converter_Interface;
+use Elementor\Modules\AtomicConverters\Property_Converter_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Color_Converter implements Property_Converter_Interface {
+class Color_Converter extends Property_Converter_Base {
 	private const SUPPORTED_PROPERTIES = [ 'color' ];
 
-	public function supports( string $property, $value = null ): bool {
-		return in_array( $property, self::SUPPORTED_PROPERTIES, true );
+	protected function get_supported_properties_list(): array {
+		return self::SUPPORTED_PROPERTIES;
 	}
 
 	public function convert( string $property, $value ): ?array {
@@ -31,10 +31,6 @@ class Color_Converter implements Property_Converter_Interface {
 		}
 
 		return Color_Prop_Type::generate( $normalized );
-	}
-
-	public function get_supported_properties(): array {
-		return self::SUPPORTED_PROPERTIES;
 	}
 
 	private function normalize_color_value( string $value ): ?string {
