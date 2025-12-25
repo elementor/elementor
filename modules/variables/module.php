@@ -54,6 +54,10 @@ class Module extends BaseModule {
 
 		add_action( 'init', [ $this, 'init_variable_types_registry' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
+		
+		if ( is_admin() ) {
+			require_once __DIR__ . '/sync-to-v3.php';
+		}
 	}
 
 	private function register_features() {

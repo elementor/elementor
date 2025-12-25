@@ -290,6 +290,8 @@ class Rest_Api {
 		] );
 
 		$this->clear_cache();
+		
+		do_action( 'elementor/variables/after_save', $result['variable'], 'create' );
 
 		return $this->success_response( [
 			'variable' => $result['variable'],
@@ -328,6 +330,8 @@ class Rest_Api {
 		$result = $this->service->update( $id, $update_data );
 
 		$this->clear_cache();
+		
+		do_action( 'elementor/variables/after_save', $result['variable'], 'update' );
 
 		return $this->success_response( [
 			'variable' => $result['variable'],
@@ -349,6 +353,8 @@ class Rest_Api {
 		$result = $this->service->delete( $id );
 
 		$this->clear_cache();
+		
+		do_action( 'elementor/variables/after_save', $result['variable'], 'delete' );
 
 		return $this->success_response( [
 			'variable' => $result['variable'],

@@ -18,6 +18,7 @@ class Colors extends Base {
 
 		$system_items = $kit->get_settings_for_display( 'system_colors' );
 		$custom_items = $kit->get_settings_for_display( 'custom_colors' );
+		$variable_items = $kit->get_settings_for_display( 'variable_colors' );
 
 		if ( ! $system_items ) {
 			$system_items = [];
@@ -27,7 +28,11 @@ class Colors extends Base {
 			$custom_items = [];
 		}
 
-		$items = array_merge( $system_items, $custom_items );
+		if ( ! $variable_items ) {
+			$variable_items = [];
+		}
+
+		$items = array_merge( $system_items, $custom_items, $variable_items );
 
 		foreach ( $items as $index => $item ) {
 			$id = $item['_id'];
