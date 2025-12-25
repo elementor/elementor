@@ -846,6 +846,7 @@ class Admin_Notices extends Module {
 				<?php if ( ! empty( $options['button']['text'] ) || ! empty( $options['button_secondary']['text'] ) ) { ?>
 					<div class="e-notice__actions">
 						<?php
+						$is_editor_one_enabled = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
 						foreach ( [ $options['button'], $options['button_secondary'] ] as $index => $button_settings ) {
 							if ( empty( $button_settings['variant'] ) && $index ) {
 								$button_settings['variant'] = 'outline';
@@ -853,6 +854,18 @@ class Admin_Notices extends Module {
 
 							if ( empty( $button_settings['text'] ) ) {
 								continue;
+							}
+
+							if ( $is_editor_one_enabled ) {
+								if ( ! isset( $button_settings['classes'] ) ) {
+									$button_settings['classes'] = [];
+								}
+								if ( ! is_array( $button_settings['classes'] ) ) {
+									$button_settings['classes'] = [ $button_settings['classes'] ];
+								}
+								// index 0 = button, index 1 = button_secondary
+								$button_class = ( 0 === $index ) ? 'button-primary' : 'button-secondary';
+								$button_settings['classes'][] = $button_class;
 							}
 
 							$button = new Button( $button_settings );

@@ -9,8 +9,9 @@ import {
 	type TransformablePropValue,
 } from '@elementor/editor-props';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
-import { ThemeProvider } from '@elementor/ui';
+import { Box, ThemeProvider } from '@elementor/ui';
 
+import { OutlineOverlay } from '../../../components/outline-overlay';
 import ReplacementBase from '../base';
 import { getInitialPopoverPosition, INLINE_EDITING_PROPERTY_PER_TYPE } from './inline-editing-utils';
 
@@ -59,7 +60,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 	_afterRender() {
 		if ( ! this.isValueDynamic() && ! this.handlerAttached ) {
-			this.element.addEventListener( 'dblclick', this.handleRenderInlineEditor );
+			this.element.addEventListener( 'dblclick', this.handleRenderInlineEditor, { once: true } );
 			this.handlerAttached = true;
 		}
 	}
@@ -131,9 +132,8 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	renderInlineEditor() {
-		const propValue = this.getContentValue();
+		const InlineEditorApp = this.InlineEditorApp;
 		const classes = ( this.element.children?.[ 0 ]?.classList.toString() ?? '' ) + ' strip-styles';
-		const expectedTag = this.getExpectedTag();
 
 		this.element.innerHTML = '';
 
@@ -142,20 +142,40 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		}
 
 		this.inlineEditorRoot = createRoot( this.element );
+		this.inlineEditorRoot.render( <InlineEditorApp classes={ classes } /> );
+	}
 
-		this.inlineEditorRoot.render(
+	InlineEditorApp = ( { classes }: { classes: string } ) => {
+		const propValue = this.getContentValue();
+		const expectedTag = this.getExpectedTag();
+		const wrapperRef = React.useRef< HTMLDivElement | null >( null );
+		const [ isWrapperRendered, setIsWrapperRendered ] = React.useState( false );
+
+		React.useEffect( () => {
+			setIsWrapperRendered( !! wrapperRef.current );
+		}, [] );
+
+		return (
 			<ThemeProvider>
-				<InlineEditor
-					attributes={ { class: classes } }
-					value={ propValue }
-					setValue={ this.setContentValue.bind( this ) }
-					onBlur={ this.handleUnmountInlineEditor.bind( this ) }
-					autofocus
-					showToolbar
-					getInitialPopoverPosition={ getInitialPopoverPosition }
-					expectedTag={ expectedTag }
-				/>
+				<Box ref={ wrapperRef }>
+					{ isWrapperRendered && (
+						<OutlineOverlay element={ wrapperRef.current as HTMLDivElement } id={ this.id } isSelected />
+					) }
+					<InlineEditor
+						attributes={ {
+							class: classes,
+							style: 'outline: none;',
+						} }
+						value={ propValue }
+						setValue={ this.setContentValue.bind( this ) }
+						onBlur={ this.handleUnmountInlineEditor.bind( this ) }
+						autofocus
+						showToolbar
+						getInitialPopoverPosition={ getInitialPopoverPosition }
+						expectedTag={ expectedTag }
+					/>
+				</Box>
 			</ThemeProvider>
 		);
-	}
+	};
 }
