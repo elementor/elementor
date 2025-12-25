@@ -11,6 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Css_Converter {
 	private const PATTERN_CSS_DECLARATION = '/([a-zA-Z0-9-]+)\s*:\s*([^;]+);?/';
+	private const CONVERSION_MARKER = '_convertedBy';
+	private const CONVERSION_MARKER_VALUE = 'convert-css-to-atomic';
 
 	private Converter_Registry $registry;
 
@@ -51,6 +53,9 @@ class Css_Converter {
 			if ( null !== $converter ) {
 				$converted = $converter->convert( $property, $value );
 				if ( null !== $converted ) {
+					if ( isset( $converted['$$type'] ) ) {
+						$converted[ self::CONVERSION_MARKER ] = self::CONVERSION_MARKER_VALUE;
+					}
 					$props[ $property ] = $converted;
 				} else {
 					$unsupported[ $property ] = $value;
@@ -61,7 +66,7 @@ class Css_Converter {
 		}
 
 		$result = [
-			'props' => (object) $props,
+			'props' => $props,
 		];
 
 		if ( ! empty( $unsupported ) ) {

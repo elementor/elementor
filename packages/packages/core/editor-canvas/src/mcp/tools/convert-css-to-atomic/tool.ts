@@ -4,41 +4,9 @@ import apiFetch from '@wordpress/api-fetch';
 import { generatePrompt } from './prompt';
 import { inputSchema, outputSchema } from './schema';
 
-const CONVERSION_MARKER = '_convertedBy';
-const CONVERSION_MARKER_VALUE = 'convert-css-to-atomic';
-
 interface ConversionResult {
 	props: Record< string, unknown >;
 	customCss?: string;
-}
-
-function addConversionMarker( result: {
-	props?: Record< string, unknown >;
-	customCss?: string;
-} ): ConversionResult {
-	const props = result.props || {};
-	const markedProps: Record< string, unknown > = {};
-
-	for ( const [ key, value ] of Object.entries( props ) ) {
-		if (
-			value &&
-			typeof value === 'object' &&
-			value !== null &&
-			'$$type' in value
-		) {
-			markedProps[ key ] = {
-				...value,
-				[ CONVERSION_MARKER ]: CONVERSION_MARKER_VALUE,
-			};
-		} else {
-			markedProps[ key ] = value;
-		}
-	}
-
-	return {
-		props: markedProps,
-		...( result.customCss ? { customCss: result.customCss } : {} ),
-	};
 }
 
 export const initConvertCssToAtomicTool = ( reg: MCPRegistryEntry ) => {
@@ -61,9 +29,7 @@ export const initConvertCssToAtomicTool = ( reg: MCPRegistryEntry ) => {
 					},
 				} ) ) as ConversionResult;
 
-				const markedResult = addConversionMarker( result );
-
-				return markedResult;
+				return result;
 			} catch ( error ) {
 				throw error;
 			}
