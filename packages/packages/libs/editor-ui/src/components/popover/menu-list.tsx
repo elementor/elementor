@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Box, ListItem, MenuList, MenuSubheader, styled } from '@elementor/ui';
 import { useVirtualizer } from '@tanstack/react-virtual';
 
@@ -22,7 +22,7 @@ export type PopoverMenuListProps< T, V extends string > = {
 	selectedValue?: V;
 	itemStyle?: ( item: VirtualizedItem< T, V > ) => React.CSSProperties;
 	'data-testid'?: string;
-	onChange?: ( params: { getVirtualIndexes: () => number[] } ) => void;
+	onChange?: ( params: { getVirtualIndexes: () => number[] }, items: VirtualizedItem< T, V >[] ) => void;
 	menuListTemplate?: React.ComponentType< React.ComponentProps< typeof MenuList > >;
 	menuItemContentTemplate?: ( item: VirtualizedItem< T, V > ) => React.ReactNode;
 	noResultsComponent?: React.ReactNode;
@@ -65,7 +65,7 @@ export const PopoverMenuList = < T, V extends string >( {
 	const containerRef = useRef< HTMLDivElement >( null );
 	const scrollTop = useScrollTop( { containerRef } );
 
-	const MenuListComponent = CustomMenuList || StyledMenuList;
+	const MenuListComponent = CustomMenuList || MenuList;
 
 	const stickyIndices = useMemo(
 		() =>
@@ -102,11 +102,20 @@ export const PopoverMenuList = < T, V extends string >( {
 		estimateSize: () => ITEM_HEIGHT,
 		overscan: LIST_ITEMS_BUFFER,
 		rangeExtractor: getActiveItemIndices,
-		onChange,
+		onChange: onChange ? ( virtualizerInstance ) => onChange( virtualizerInstance, items ) : undefined,
 	} );
 
 	useScrollToSelected( { selectedValue, items, virtualizer } );
 	const virtualItems = virtualizer.getVirtualItems();
+
+	useEffect( () => {
+		if ( ! onChange || items.length === 0 ) {
+			return;
+		}
+
+		onChange( virtualizer, items );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ items ] );
 
 	return (
 		<Box ref={ containerRef } sx={ { height: '100%', overflowY: 'auto' } }>
@@ -120,11 +129,6 @@ export const PopoverMenuList = < T, V extends string >( {
 				>
 					{ virtualItems.map( ( virtualRow ) => {
 						const item = items[ virtualRow.index ];
-						const isLast = virtualRow.index === items.length - 1;
-						const isFirst =
-							items[ 0 ]?.type === 'category' ? virtualRow.index === 1 : virtualRow.index === 0;
-						const isSelected = selectedValue === item.value;
-						const tabIndexFallback = ! selectedValue ? 0 : -1;
 
 						if ( ! item ) {
 							return null;
@@ -132,7 +136,6 @@ export const PopoverMenuList = < T, V extends string >( {
 
 						if ( item.type === 'category' ) {
 							const shouldStick = virtualRow.start + MENU_LIST_PADDING_TOP <= scrollTop;
-
 							return (
 								<MenuSubheader
 									key={ virtualRow.key }
@@ -143,9 +146,16 @@ export const PopoverMenuList = < T, V extends string >( {
 								</MenuSubheader>
 							);
 						}
+
+						const isLast = virtualRow.index === items.length - 1;
+						const isFirst =
+							items[ 0 ]?.type === 'category' ? virtualRow.index === 1 : virtualRow.index === 0;
+						const isSelected = selectedValue === item.value;
+						const tabIndexFallback = ! selectedValue ? 0 : -1;
 						const isDisabled = item.disabled;
+
 						return (
-							<ListItem
+							<StyledMenuItem
 								key={ virtualRow.key }
 								role="option"
 								aria-selected={ isSelected }
@@ -184,7 +194,7 @@ export const PopoverMenuList = < T, V extends string >( {
 								} }
 							>
 								{ menuItemContentTemplate ? menuItemContentTemplate( item ) : item.label || item.value }
-							</ListItem>
+							</StyledMenuItem>
 						);
 					} ) }
 				</MenuListComponent>
@@ -193,32 +203,26 @@ export const PopoverMenuList = < T, V extends string >( {
 	);
 };
 
-export const StyledMenuList = styled( MenuList )( ( { theme } ) => ( {
-	'& > li': {
-		height: ITEM_HEIGHT,
-		width: '100%',
-		display: 'flex',
-		alignItems: 'center',
-	},
-	'& > [role="option"]': {
-		...theme.typography.caption,
-		lineHeight: 'inherit',
-		padding: theme.spacing( 0.75, 2, 0.75, 4 ),
-		'&:hover, &:focus': {
-			backgroundColor: theme.palette.action.hover,
-		},
-		'&[aria-selected="true"]': {
-			backgroundColor: theme.palette.action.selected,
-		},
-		'&[aria-disabled="true"]': {
-			color: theme.palette.text.disabled,
-		},
-		cursor: 'pointer',
-		textOverflow: 'ellipsis',
-		position: 'absolute',
-		top: 0,
-		left: 0,
-	},
+const StyledMenuItem = styled( ListItem )( ( { theme } ) => ( {
+	height: ITEM_HEIGHT,
 	width: '100%',
-	position: 'relative',
+	display: 'flex',
+	alignItems: 'center',
+	...theme.typography.caption,
+	lineHeight: 'inherit',
+	padding: theme.spacing( 0.75, 2, 0.75, 4 ),
+	'&:hover, &:focus': {
+		backgroundColor: theme.palette.action.hover,
+	},
+	'&[aria-selected="true"]': {
+		backgroundColor: theme.palette.action.selected,
+	},
+	'&[aria-disabled="true"]': {
+		color: theme.palette.text.disabled,
+	},
+	cursor: 'pointer',
+	textOverflow: 'ellipsis',
+	position: 'absolute',
+	top: 0,
+	left: 0,
 } ) );
