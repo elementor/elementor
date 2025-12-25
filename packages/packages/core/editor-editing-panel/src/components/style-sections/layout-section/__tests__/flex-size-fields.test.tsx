@@ -19,6 +19,7 @@ jest.mock( '../../../../contexts/styles-inheritance-context', () => ( {
 	useStylesInheritanceChain: () => [],
 } ) );
 
+
 jest.mock( '../../../../contexts/element-context', () => ( {
 	useElement: () => ( {
 		id: 'test-element-id',
