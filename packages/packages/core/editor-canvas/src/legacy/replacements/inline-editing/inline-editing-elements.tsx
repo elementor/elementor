@@ -65,7 +65,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 	_afterRender() {
 		if ( ! this.isValueDynamic() && ! this.handlerAttached ) {
-			this.element.addEventListener( 'dblclick', this.handleRenderInlineEditor );
+			this.element.addEventListener( 'dblclick', this.handleRenderInlineEditor, { once: true } );
 			this.handlerAttached = true;
 		}
 	}

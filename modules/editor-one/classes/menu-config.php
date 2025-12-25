@@ -105,6 +105,10 @@ class Menu_Config {
 		return apply_filters( 'elementor/editor-one/menu/custom_code_url', $default_url );
 	}
 
+	public static function get_elementor_home_url(): string {
+		return admin_url( 'admin.php?page=' . self::ELEMENTOR_MENU_SLUG );
+	}
+
 	public static function get_elementor_post_types(): array {
 		$default_values = [
 			'elementor_icons' => [

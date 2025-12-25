@@ -60,6 +60,10 @@ class Dynamic_Prop_Types_Mapping extends Prop_Types_Schema_Extender {
 			return [ V1_Dynamic_Tags_Module::NUMBER_CATEGORY ];
 		}
 
+		if ( $prop_type->get_meta_item( 'is_svg', false ) ) {
+			return [ V1_Dynamic_Tags_Module::SVG_CATEGORY ];
+		}
+
 		if ( $prop_type instanceof Image_Src_Prop_Type ) {
 			return [ V1_Dynamic_Tags_Module::IMAGE_CATEGORY ];
 		}
