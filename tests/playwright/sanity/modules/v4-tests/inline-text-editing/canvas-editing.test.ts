@@ -140,6 +140,28 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await expect.soft( headingElement ).toHaveCSS( 'font-weight', '100' );
 	} );
 
+	test( 'Global classes styles should render while editing', async () => {
+		// Arrange
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const paragraphId = await editor.addWidget( { widgetType: 'e-paragraph', container: containerId } );
+		let paragraphElement = editor.previewFrame.locator( `.elementor-element-${ paragraphId }` );
+
+		// Act
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Typography' );
+		await editor.v4Panel.style.setFontSize( 100, 'px' );
+		await paragraphElement.dblclick();
+
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+
+		await inlineEditor.waitFor( { state: 'visible' } );
+
+		paragraphElement = inlineEditor.locator( `p` );
+
+		// Assert
+		await expect.soft( paragraphElement ).toHaveCSS( 'font-size', '100px' );
+	} );
+
 	test( 'Allow select text by double clicking when editor is rendered', async () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
