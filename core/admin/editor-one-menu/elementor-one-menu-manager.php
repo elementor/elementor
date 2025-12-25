@@ -3,9 +3,6 @@
 namespace Elementor\Core\Admin\EditorOneMenu;
 
 use Elementor\Core\Admin\EditorOneMenu\Menu\Editor_One_Custom_Elements_Menu;
-use Elementor\Core\Admin\EditorOneMenu\Menu\Third_Party_Pages_Menu;
-use Elementor\Core\Admin\EditorOneMenu\Third_Party_Menu_Item_Adapter;
-use Elementor\Core\Admin\EditorOneMenu\Third_Party_Menu_Manager;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Interceptor;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;

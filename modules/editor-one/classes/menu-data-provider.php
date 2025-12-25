@@ -4,7 +4,6 @@ namespace Elementor\Modules\EditorOne\Classes;
 
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
-use Elementor\Core\Admin\EditorOneMenu\Third_Party_Menu_Item_Adapter;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -275,10 +274,6 @@ class Menu_Data_Provider {
 	}
 
 	private function resolve_flyout_item_url( Menu_Item_Interface $item, string $item_slug ): string {
-		if ( $item instanceof Third_Party_Menu_Item_Adapter ) {
-			return $item->get_target_url();
-		}
-
 		$url = $this->get_item_url( $item_slug, $item->get_parent_slug() );
 
 		if ( ! $item->has_children() ) {
