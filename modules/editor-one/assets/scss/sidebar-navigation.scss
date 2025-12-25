@@ -3,8 +3,6 @@
 	--editor-one-wordpress-admin-bar-height: 32px;
 	--editor-one-sidebar-navigation-width: 240px;
 	--editor-one-sidebar-navigation-width-collapsed: 72px;
-	--editor-one-sidebar-left-offset: 160px;
-	--editor-one-sidebar-left-offset-collapsed: 36px;
 	--editor-one-sidebar-z-index: 99;
 	--editor-one-sidebar-bg: #fff;
 	--editor-one-sidebar-content-padding: 20px;
@@ -14,7 +12,6 @@
 #editor-one-sidebar-navigation {
 	position: fixed;
 	top: calc(var(--editor-one-sidebar-admin-top-bar-height) + var(--editor-one-wordpress-admin-bar-height));
-	inset-inline-start: 0;
 	bottom: 0;
 	z-index: var(--editor-one-sidebar-z-index);
 	background-color: var(--editor-one-sidebar-bg);
@@ -29,14 +26,6 @@
 		nav {
 			width: var(--editor-one-sidebar-navigation-width-collapsed);
 		}
-	}
-
-	@media screen and (min-width: 782px) {
-		inset-inline-start: var(--editor-one-sidebar-left-offset-collapsed);
-	}
-
-	@media screen and (min-width: 961px) {
-		inset-inline-start: var(--editor-one-sidebar-left-offset);
 	}
 }
 
@@ -56,12 +45,6 @@
 .e-has-sidebar-navigation {
 	#wpcontent {
 		padding-inline-start: var(--editor-one-sidebar-navigation-width);
-		overflow-x: hidden;
-		margin-inline-end: 40px;
-	}
-
-	#wpbody-content {
-		padding-inline-start: var(--editor-one-sidebar-content-padding);
 	}
 
 	#wpfooter {
@@ -79,18 +62,8 @@
 			padding-inline-start: var(--editor-one-sidebar-navigation-width-collapsed);
 		}
 
-		#wpbody-content {
-			padding-inline-start: var(--editor-one-sidebar-content-padding);
-		}
-
 		#wpfooter {
 			margin-inline-start: var(--editor-one-sidebar-navigation-width-collapsed);
-		}
-	}
-
-	@media screen and (min-width: 783px) {
-		&.folded #wpcontent {
-			padding-inline-start: var(--editor-one-sidebar-navigation-width);
 		}
 	}
 
@@ -98,7 +71,7 @@
 		li {
 			&.wp-has-current-submenu a.wp-has-current-submenu::after,
 			&.wp-has-submenu.wp-not-current-submenu:hover > a::after {
-				display: none !important;
+				display: none;
 			}
 
 			&.wp-has-current-submenu,
@@ -113,12 +86,12 @@
 			}
 
 			&.elementor-has-flyout .elementor-submenu-flyout {
-				display: none !important;
+				display: none;
 			}
 		}
 
 		.wp-submenu-head {
-			display: none !important;
+			display: none;
 		}
 	}
 }
