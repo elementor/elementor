@@ -1,15 +1,15 @@
 <?php
 
-namespace Elementor\Modules\EditorOne\Classes\Menu\Items;
+namespace Elementor\Core\Admin\EditorOneMenu\Menu;
 
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Legacy_Submenu_Item implements Menu_Item_Interface {
+class Legacy_Submenu_Item_Not_Mapped implements Menu_Item_Interface {
 
 	private $submenu_data;
 
@@ -52,6 +52,6 @@ class Legacy_Submenu_Item implements Menu_Item_Interface {
 	}
 
 	public function get_group_id(): string {
-		return $this->submenu_data[4] ?? Menu_Config::EDITOR_GROUP_ID;
+		return Menu_Config::THIRD_PARTY_GROUP_ID;
 	}
 }
