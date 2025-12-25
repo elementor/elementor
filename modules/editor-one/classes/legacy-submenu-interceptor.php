@@ -16,7 +16,7 @@ class Legacy_Submenu_Interceptor {
 
 	private Slug_Normalizer $slug_normalizer;
 
-	private bool $third_party_parent_registered = false;
+	private bool $third_party_parent_menu_registered = false;
 
 	public function __construct( Menu_Data_Provider $menu_data_provider, Slug_Normalizer $slug_normalizer ) {
 		$this->menu_data_provider = $menu_data_provider;
@@ -158,18 +158,11 @@ class Legacy_Submenu_Interceptor {
 	}
 
 	private function ensure_third_party_parent_registered(): void {
-		if ( $this->third_party_parent_registered ) {
-			return;
-		}
-
-		$third_party_pages_slug = 'elementor-third-party-pages';
-
-		if ( $this->menu_data_provider->is_item_already_registered( $third_party_pages_slug ) ) {
-			$this->third_party_parent_registered = true;
+		if ( $this->third_party_parent_menu_registered ) {
 			return;
 		}
 
 		$this->menu_data_provider->register_menu( new Third_Party_Pages_Menu() );
-		$this->third_party_parent_registered = true;
+		$this->third_party_parent_menu_registered = true;
 	}
 }
