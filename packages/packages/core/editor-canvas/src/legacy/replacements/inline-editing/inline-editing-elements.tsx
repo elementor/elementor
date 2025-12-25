@@ -192,7 +192,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 					<InlineEditor
 						attributes={ {
 							class: wrapperClasses,
-							style: `outline: none;`,
+							style: 'outline: none;',
 						} }
 						elementClasses={ elementClasses }
 						value={ propValue }
