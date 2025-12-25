@@ -54,6 +54,12 @@ jest.mock( '../use-can-convert-local-class-to-global', () => ( {
 	} ) ),
 } ) );
 
+const mockTracking = jest.fn( async ( payload: { event: string; [ key: string ]: unknown } ) => {
+	if ( 'runAction' in payload && typeof payload.runAction === 'function' ) {
+		payload.runAction();
+	}
+} );
+
 // MUI use the useId hook behind the scenes, and it breaks the tests.
 let mockId = 0;
 jest.mock( 'react', () => ( {
@@ -107,6 +113,9 @@ const provider1 = createMockStylesProvider(
 	{
 		key: 'provider-1',
 		labels: { plural: 'Provider 1', singular: 'Provider 1 Class' },
+		actions: {
+			tracking: mockTracking,
+		},
 	},
 	[ provider1MockStyleA, provider1MockStyleB ]
 );
@@ -125,6 +134,7 @@ describe( '<CssClassSelector />', () => {
 	const historyMock = mockHistoryManager();
 
 	beforeEach( () => {
+		jest.clearAllMocks();
 		historyMock.beforeEach();
 
 		jest.mocked( stylesRepository.all ).mockReturnValue( [
@@ -296,6 +306,12 @@ describe( '<CssClassSelector />', () => {
 
 		jest.mocked( useElementSetting ).mockReturnValue( { value: appliedClasses } );
 		jest.mocked( getElementSetting ).mockReturnValue( { value: appliedClasses } );
+		jest.mocked( stylesRepository.getProviderByKey ).mockImplementation( ( key ) => {
+			if ( key === 'provider-1' ) {
+				return provider1;
+			}
+			return undefined;
+		} );
 
 		const setActive = jest.fn();
 
@@ -314,6 +330,11 @@ describe( '<CssClassSelector />', () => {
 		} );
 
 		expect( setActive ).toHaveBeenCalledWith( 'local' );
+		expect( mockTracking ).toHaveBeenCalledWith( {
+			event: 'classRemoved',
+			classId: 'provider-1-b',
+			source: 'style-tab',
+		} );
 	} );
 
 	it( 'should disallow deleting the elements provider classes', () => {
@@ -616,6 +637,12 @@ describe( '<CssClassSelector />', () => {
 	it( 'should activate the right style definition if a Pseudo classes item of an inactive style css-class-menu is clicked', () => {
 		// Arrange.
 		jest.mocked( useElementSetting ).mockReturnValue( { value: [ 'local', 'provider-1-b', 'provider-1-a' ] } );
+		jest.mocked( stylesRepository.getProviderByKey ).mockImplementation( ( key ) => {
+			if ( key === 'provider-1' ) {
+				return provider1;
+			}
+			return undefined;
+		} );
 
 		const setActive = jest.fn();
 		const setActiveMetaState = jest.fn();
@@ -638,6 +665,12 @@ describe( '<CssClassSelector />', () => {
 		// Assert.
 		expect( setActive ).toHaveBeenCalledWith( 'provider-1-a' );
 		expect( setActiveMetaState ).toHaveBeenCalledWith( 'hover' );
+		expect( mockTracking ).toHaveBeenCalledWith( {
+			event: 'classStateClicked',
+			classId: 'provider-1-a',
+			type: 'hover',
+			source: 'global',
+		} );
 	} );
 
 	it( 'should rename the active class on click', async () => {
@@ -888,6 +921,12 @@ describe( '<CssClassSelector />', () => {
 					'my-classes': { $$type: 'classes', value: [ 'local', 'provider-1-a' ] },
 				},
 				withHistory: false,
+			} );
+			expect( mockTracking ).toHaveBeenCalledWith( {
+				event: 'classRemoved',
+				classId: 'provider-1-b',
+				classTitle: 'Provider-1-b',
+				source: 'style-tab',
 			} );
 		} );
 
@@ -1159,6 +1198,12 @@ describe( '<CssClassSelector />', () => {
 			setupElementSettings( [ 'local', 'provider-1-b' ] );
 
 			jest.mocked( useProviders ).mockReturnValue( [ localProvider, provider1, provider2 ] );
+			jest.mocked( stylesRepository.getProviderByKey ).mockImplementation( ( key ) => {
+				if ( key === 'provider-1' ) {
+					return provider1;
+				}
+				return undefined;
+			} );
 
 			const setActive = jest.fn();
 
