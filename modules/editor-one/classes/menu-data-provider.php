@@ -2,9 +2,9 @@
 
 namespace Elementor\Modules\EditorOne\Classes;
 
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Plugin;
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Third_Level_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -36,10 +36,22 @@ class Menu_Data_Provider {
 	}
 
 	public function register_menu( Menu_Item_Interface $item ): void {
-		if ( $item instanceof Menu_Item_Third_Level_Interface ) {
-			$this->register_level3_item( $item );
-		} else {
+		if ( ! ( $item instanceof Menu_Item_Third_Level_Interface ) ) {
 			$this->register_level4_item( $item );
+			return;
+		}
+
+		$group_id = $item->get_group_id();
+		$collapsible_groups = [
+			Menu_Config::TEMPLATES_GROUP_ID,
+			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID,
+			Menu_Config::SYSTEM_GROUP_ID,
+		];
+
+		if ( in_array( $group_id, $collapsible_groups, true ) && ! $item->has_children() ) {
+			$this->register_level4_item( $item );
+		} else {
+			$this->register_level3_item( $item );
 		}
 	}
 
@@ -248,6 +260,7 @@ class Menu_Data_Provider {
 	private function create_flyout_item_data( Menu_Item_Interface $item, string $item_slug ): array {
 		$has_children = $item->has_children();
 		$group_id = $has_children ? $item->get_group_id() : '';
+		$is_third_party_parent = Menu_Config::THIRD_PARTY_GROUP_ID === $item->get_group_id();
 
 		return [
 			'slug' => $item_slug,
@@ -256,6 +269,7 @@ class Menu_Data_Provider {
 			'icon' => $item->get_icon(),
 			'group_id' => $group_id,
 			'priority' => $item->get_position() ?? 100,
+			'has_divider_before' => $is_third_party_parent,
 		];
 	}
 

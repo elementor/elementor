@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from '@wordpress/element';
+import { Divider } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import MenuActiveStateResolver from '../../classes/menu-active-state-resolver';
 import SidebarCollapsedMenuItem from './sidebar-collapsed-menu-item';
@@ -37,16 +38,19 @@ const SidebarCollapsedMenu = ( { menuItems, level4Groups, activeMenuSlug, active
 	return (
 		<MenuList isCollapsed onMouseLeave={ handleClosePopover }>
 			{ menuItems.map( ( item ) => (
-				<SidebarCollapsedMenuItem
-					key={ item.slug }
-					item={ item }
-					isActive={ activeStateResolver.isMenuActive( item ) }
-					children={ getChildren( item ) }
-					activeChildSlug={ activeChildSlug }
-					isPopoverOpen={ openPopoverSlug === item.slug }
-					onOpenPopover={ handleOpenPopover }
-					onClosePopover={ handleClosePopover }
-				/>
+				<>
+					{ item.has_divider_before && <Divider key={ `divider-${ item.slug }` } sx={ { my: 1 } } /> }
+					<SidebarCollapsedMenuItem
+						key={ item.slug }
+						item={ item }
+						isActive={ activeStateResolver.isMenuActive( item ) }
+						children={ getChildren( item ) }
+						activeChildSlug={ activeChildSlug }
+						isPopoverOpen={ openPopoverSlug === item.slug }
+						onOpenPopover={ handleOpenPopover }
+						onClosePopover={ handleClosePopover }
+					/>
+				</>
 			) ) }
 		</MenuList>
 	);
@@ -60,4 +64,3 @@ SidebarCollapsedMenu.propTypes = {
 };
 
 export default SidebarCollapsedMenu;
-
