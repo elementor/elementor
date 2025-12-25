@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { PopoverBody, PopoverHeader, PopoverMenuList, SearchField } from '@elementor/editor-ui';
 import { Box, Divider, Link, Stack, Typography } from '@elementor/ui';
-import { debounce } from '@elementor/utils';
+import { useDebouncedCallback } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { type SelectableItem, useFilteredItemsList } from '../hooks/use-filtered-items-list';
@@ -146,9 +146,8 @@ const ItemList = ( {
 }: ItemListProps ) => {
 	const selectedItemFound = itemListItems.find( ( item ) => item.value === selectedItem );
 
-	const debouncedVirtualizeChange = useDebounce( ( { getVirtualIndexes }: { getVirtualIndexes: () => number[] } ) => {
-		getVirtualIndexes().forEach( ( index ) => {
-			const item = itemListItems[ index ];
+	const debouncedVirtualizeChange = useDebouncedCallback( ( _, items: SelectableItem[] ) => {
+		items.forEach( ( item ) => {
 			if ( item && item.type === 'item' ) {
 				onDebounce( item.value );
 			}
@@ -168,10 +167,4 @@ const ItemList = ( {
 			data-testid="item-list"
 		/>
 	);
-};
-
-const useDebounce = < TArgs extends unknown[] >( fn: ( ...args: TArgs ) => void, delay: number ) => {
-	const [ debouncedFn ] = useState( () => debounce( fn, delay ) );
-	useEffect( () => () => debouncedFn.cancel(), [ debouncedFn ] );
-	return debouncedFn;
 };
