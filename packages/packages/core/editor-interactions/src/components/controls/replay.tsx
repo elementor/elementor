@@ -11,7 +11,10 @@ import { __ } from '@wordpress/i18n';
 
 import { type ReplayFieldProps } from '../../types';
 
-export function Replay( { value = false, onChange = () => {}, disabled = true }: ReplayFieldProps ) {
+export function Replay( { value, onChange = () => {}, disabled = true }: ReplayFieldProps ) {
+	console.log( 'value', value );
+	console.log( 'onChange', onChange );
+	console.log( 'disabled', disabled );
 	const options: ToggleButtonGroupItem< boolean >[] = [
 		{
 			value: true,
@@ -36,8 +39,8 @@ export function Replay( { value = false, onChange = () => {}, disabled = true }:
 						<ToggleButtonGroupUi
 							items={ options }
 							exclusive
-							onChange={ onChange }
-							value={ value }
+							onChange={ () => {} }
+							value={ false }
 							disabled={ disabled }
 						/>
 					</Grid>

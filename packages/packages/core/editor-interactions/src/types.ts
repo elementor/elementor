@@ -1,5 +1,7 @@
 import type {
 	AnimationPresetPropValue,
+	BooleanPropValue,
+	ConfigPropValue,
 	ElementInteractions,
 	InteractionItemPropValue,
 	NumberPropValue,
@@ -8,6 +10,8 @@ import type {
 } from '@elementor/editor-elements';
 
 export type {
+	BooleanPropValue,
+	ConfigPropValue,
 	StringPropValue,
 	NumberPropValue,
 	TimingConfigPropValue,
