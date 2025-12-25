@@ -5,8 +5,8 @@ import {
 	__createStore,
 	__dispatch as dispatch,
 	__registerSlice as registerSlice,
-	SliceState,
-	Store,
+	type SliceState,
+	type Store,
 } from '@elementor/store';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 

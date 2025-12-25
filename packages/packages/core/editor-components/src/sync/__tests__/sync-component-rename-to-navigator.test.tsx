@@ -124,7 +124,6 @@ describe( 'syncComponentRenameToNavigator', () => {
 		expect( mockUpdateElementSettings ).not.toHaveBeenCalled();
 	} );
 
-
 	it( 'should filter elements by component uid correctly', async () => {
 		// Arrange
 		const componentUid = 'uid-1';
@@ -171,7 +170,6 @@ describe( 'syncComponentRenameToNavigator', () => {
 		} );
 	} );
 
-
 	it( 'should not update when component_src_name already matches new name', async () => {
 		// Arrange
 		const componentUid = 'uid-1';
@@ -182,7 +180,7 @@ describe( 'syncComponentRenameToNavigator', () => {
 		const element = createMockElement( {
 			model: {
 				id: elementId,
-				editor_settings: { 
+				editor_settings: {
 					component_uid: componentUid,
 					component_src_name: newName,
 				},

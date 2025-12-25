@@ -17,17 +17,17 @@ function findElementsByComponentUid( componentUid: string ) {
 
 function syncComponentRenameToNavigator( componentUid: string, newName: string ) {
 	const elements = findElementsByComponentUid( componentUid );
-	elements.forEach(async (element) => {
+	elements.forEach( async ( element ) => {
 		await Promise.resolve();
-		if (element.model.get('editor_settings')?.component_src_name !== newName) {
+		if ( element.model.get( 'editor_settings' )?.component_src_name !== newName ) {
 			updateElementEditorSettings( {
 				elementId: element.model.get( 'id' ),
 				settings: { component_src_name: newName },
-			});
-			updateElementSettings({
-				id: element.model.get('id'),
+			} );
+			updateElementSettings( {
+				id: element.model.get( 'id' ),
 				props: { title: newName, _title: newName },
-			});
+			} );
 		}
 	} );
 }
@@ -44,7 +44,7 @@ export function syncComponentRenameToNavigatorStore() {
 		const previousComponent = previousComponentsData.find( ( prev ) => prev.uid === uid );
 
 		if ( previousComponent && previousComponent.name !== name ) {
-			syncComponentRenameToNavigator(uid, name);
+			syncComponentRenameToNavigator( uid, name );
 		}
 	} );
 
@@ -55,14 +55,13 @@ export function initSyncComponentRenameToNavigator() {
 	unsubscribe = subscribeWithSelector(
 		( state: ComponentsSlice ) => state[ SLICE_NAME ]?.data.map( ( { name, uid } ) => ( { uid, name } ) ),
 		() => {
-				syncComponentRenameToNavigatorStore();
+			syncComponentRenameToNavigatorStore();
 		}
 	);
 }
 
 export function SyncComponentRenameToNavigator() {
-	useEffect(() => {
-		
+	useEffect( () => {
 		if ( ! unsubscribe ) {
 			try {
 				initSyncComponentRenameToNavigator();
