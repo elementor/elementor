@@ -1,19 +1,7 @@
 import * as React from 'react';
-import {
-	Button,
-	Card,
-	CardActions,
-	CardContent,
-	CardHeader,
-	CardMedia,
-	CloseButton,
-	IconButton,
-	Infotip,
-	Typography,
-} from '@elementor/ui';
+import { Card, CardActions, CardContent, CardHeader, CardMedia, CloseButton, Infotip, Typography } from '@elementor/ui';
 
 import { CtaButton } from './cta-button';
-import { CloseIcon } from 'lighthouse/flow-report/src/icons';
 
 type PromotionInfotipProps = React.PropsWithChildren< {
 	title: string;
