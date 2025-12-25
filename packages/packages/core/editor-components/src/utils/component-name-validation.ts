@@ -33,4 +33,3 @@ export function validateComponentName( label: string ): ValidationResult {
 		errorMessage: result.error.format()._errors[ 0 ],
 	};
 }
-// TODO: validate component name with createSubmitComponentSchema in the future
