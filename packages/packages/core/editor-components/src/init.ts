@@ -117,7 +117,7 @@ export function init() {
 
 	registerEditingPanelReplacement( {
 		id: 'component-instance-edit-panel',
-		condition: ( _, elementType ) => elementType?.key === 'e-component',
+		condition: ( _, elementType ) => elementType.key === 'e-component',
 		component: InstanceEditingPanel,
 	} );
 
