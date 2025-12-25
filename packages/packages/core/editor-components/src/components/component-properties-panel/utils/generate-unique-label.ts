@@ -10,13 +10,12 @@ export function generateUniqueLabel( groups: OverridablePropsGroup[] ): string {
 	}
 
 	let index = 1;
-	let candidateLabel = `${ DEFAULT_NEW_GROUP_LABEL } ${ index }`;
+	let newLabel = `${ DEFAULT_NEW_GROUP_LABEL }-${ index }`;
 
-	while ( existingLabels.has( candidateLabel ) ) {
+	while ( existingLabels.has( newLabel ) ) {
 		index++;
-		candidateLabel = `${ DEFAULT_NEW_GROUP_LABEL } ${ index }`;
+		newLabel = `${ DEFAULT_NEW_GROUP_LABEL }-${ index }`;
 	}
 
-	return candidateLabel;
+	return newLabel;
 }
-
