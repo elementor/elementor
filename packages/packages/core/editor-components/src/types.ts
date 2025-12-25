@@ -1,5 +1,5 @@
 import { type V1ElementData } from '@elementor/editor-elements';
-import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
+import { type PropType, type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 import type { StyleDefinition } from '@elementor/editor-styles';
 
 export type ComponentFormValues = {
@@ -29,6 +29,8 @@ export type OverridableProp = {
 	widgetType: string;
 	originValue: PropValue;
 	groupId: string;
+	propType: PropType;
+	overridableProp?: OverridableProp;
 };
 
 export type OverridablePropsGroup = {

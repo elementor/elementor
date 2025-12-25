@@ -75,6 +75,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 			elType: elType ?? 'widget',
 			widgetType: elementType.key,
 			originValue,
+			propType,
 		} );
 
 		if ( ! overridableValue && overridablePropConfig ) {

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useId } from 'react';
 import { useStateByElement } from '@elementor/editor-editing-panel';
-import { type Control } from '@elementor/editor-elements';
 import { CollapseIcon } from '@elementor/editor-ui';
 import { Collapse, ListItemButton, ListItemText, Stack } from '@elementor/ui';
 
@@ -12,11 +11,10 @@ import { OverridePropControl } from './override-prop-control';
 type Props = {
 	group: OverridablePropsGroup;
 	props: Record< string, OverridableProp >;
-	controls: Record< string, Record< string, Control > >;
-	overrides: ComponentInstanceOverridesPropValue | null;
+	overrides: ComponentInstanceOverridesPropValue;
 };
 
-export function OverridePropsGroup( { group, props, controls, overrides }: Props ) {
+export function OverridePropsGroup( { group, props, overrides }: Props ) {
 	const [ isOpen, setIsOpen ] = useStateByElement( group.id, true );
 
 	const handleClick = () => {
@@ -54,7 +52,6 @@ export function OverridePropsGroup( { group, props, controls, overrides }: Props
 						<OverridePropControl
 							key={ overrideKey }
 							overridableProp={ props[ overrideKey ] }
-							controls={ controls }
 							overrides={ overrides }
 						/>
 					) ) }

@@ -11,7 +11,9 @@ import { getCurrentDocument } from '@elementor/editor-documents';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
-import { type ComponentInstancePropValue, type ExtendedWindow } from './types';
+import { componentInstanceContext } from './component-instance-transformer';
+import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
+import { type ExtendedWindow } from './types';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
@@ -99,6 +101,10 @@ function createComponentView(
 				| undefined;
 
 			if ( componentInstance ) {
+				componentInstanceContext.update( {
+					overrides: componentInstance.overrides,
+				} );
+
 				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection(
 					componentInstance.elements
 				);
@@ -130,7 +136,7 @@ function createComponentView(
 
 		getComponentId() {
 			const componentInstance = (
-				this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstancePropValue
+				this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstanceProp
 			 )?.value;
 
 			return componentInstance.component_id.value;
@@ -186,7 +192,13 @@ function createComponentView(
 			if ( ! isAllowedToSwitchDocument ) {
 				options.showLockedByModal?.( lockedBy || '' );
 			} else {
-				switchToComponent( this.getComponentId(), this.model.get( 'id' ) );
+				const componentId = this.getComponentId();
+
+				if ( ! componentId ) {
+					return;
+				}
+
+				switchToComponent( componentId, this.model.get( 'id' ) );
 			}
 		}
 

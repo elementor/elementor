@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { renderWithStore } from 'test-utils';
+import { createMockPropType, renderWithStore } from 'test-utils';
 import { ElementProvider } from '@elementor/editor-editing-panel';
 import { useElementSetting, useSelectedElement } from '@elementor/editor-elements';
 import {
@@ -39,6 +39,7 @@ const MOCK_ELEMENT_ID = 'element-123';
 const MOCK_COMPONENT_ID = 456;
 const MOCK_COMPONENT_NAME = 'Test Component';
 const MOCK_INSTANCE_ID = 'instance-789';
+const MOCK_PROP_TYPE = createMockPropType();
 
 const MOCK_ELEMENT = {
 	id: MOCK_ELEMENT_ID,
@@ -62,6 +63,7 @@ const MOCK_OVERRIDABLE_PROPS = {
 			elementId: 'element-1',
 			propKey: 'title',
 			widgetType: 'e-heading',
+			propType: MOCK_PROP_TYPE,
 			elType: 'widget',
 			groupId: 'content',
 			originValue: { $$type: 'string', value: 'Hello' },
@@ -72,6 +74,7 @@ const MOCK_OVERRIDABLE_PROPS = {
 			elementId: 'element-2',
 			propKey: 'subtitle',
 			widgetType: 'e-heading',
+			propType: MOCK_PROP_TYPE,
 			elType: 'widget',
 			groupId: 'content',
 			originValue: { $$type: 'string', value: 'World' },
@@ -82,6 +85,7 @@ const MOCK_OVERRIDABLE_PROPS = {
 			elementId: 'element-3',
 			propKey: 'link',
 			widgetType: 'e-button',
+			propType: MOCK_PROP_TYPE,
 			elType: 'widget',
 			groupId: 'settings',
 			originValue: { $$type: 'string', value: 'https://example.com' },

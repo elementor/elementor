@@ -8,9 +8,8 @@ import { IconButton, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponentInstanceSettings } from '../../hooks/use-component-instance-settings';
-import { useControlsByWidgetType } from '../../hooks/use-controls-by-widget-type';
 import { useComponent, useOverridableProps } from '../../store/store';
-import { type OverridableProps, type OverridablePropsGroup } from '../../types';
+import { type OverridablePropsGroup } from '../../types';
 import { switchToComponent } from '../../utils/switch-to-component';
 import { EmptyState } from './empty-state';
 import { OverridePropsGroup } from './override-props-group';
@@ -23,9 +22,6 @@ export function InstanceEditingPanel() {
 
 	const component = useComponent( componentId ?? null );
 	const overridableProps = useOverridableProps( componentId ?? null );
-
-	const allTypes = useAllTypes( overridableProps ?? null );
-	const controlsByType = useControlsByWidgetType( allTypes );
 
 	const componentInstanceId = useSelectedElement()?.element?.id ?? null;
 
@@ -72,8 +68,7 @@ export function InstanceEditingPanel() {
 									key={ group.id }
 									group={ group }
 									props={ overridableProps.props }
-									controls={ controlsByType }
-									overrides={ overrides ?? null }
+									overrides={ overrides }
 								/>
 							) ) }
 						</Stack>
@@ -82,14 +77,4 @@ export function InstanceEditingPanel() {
 			</PanelBody>
 		</>
 	);
-}
-
-function useAllTypes( overridableProps: OverridableProps | null ): string[] {
-	const usedTypes = new Set< string >();
-
-	Object.values( overridableProps?.props ?? {} ).forEach( ( { widgetType } ) => {
-		usedTypes.add( widgetType );
-	} );
-
-	return [ ...usedTypes ];
 }

@@ -1,32 +1,15 @@
-import { useMemo } from 'react';
 import { type Control, type ControlItem, getElementType } from '@elementor/editor-elements';
 
-export function useControlsByWidgetType( types: string[] ): Record< string, Record< string, Control > > {
-	return useMemo( () => {
-		const controlsByType = Object.fromEntries(
-			types
-				.map( ( type ) => {
-					const elementType = getElementType( type );
+export function useControlsByWidgetType( type: string ): Record< string, Control > {
+	const elementType = getElementType( type );
 
-					if ( ! elementType ) {
-						return false;
-					}
+	if ( ! elementType ) {
+		return {};
+	}
 
-					const controls = iterateControls( elementType.controls );
+	const controls = iterateControls( elementType.controls );
 
-					return [ elementType.key, controls ];
-				} )
-				.filter( Boolean ) as [ string, Control[] ][]
-		);
-
-		return Object.entries( controlsByType ).reduce(
-			( typeToBindToControl, [ widgetType, controls ] ) => ( {
-				...typeToBindToControl,
-				[ widgetType ]: getControlsByBind( controls ),
-			} ),
-			{}
-		);
-	}, [ types ] );
+	return getControlsByBind( controls );
 }
 
 function iterateControls( controls: ControlItem[] ): Control[] {

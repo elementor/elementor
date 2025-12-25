@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { renderWithStore } from 'test-utils';
+import { createMockPropType, renderWithStore } from 'test-utils';
 import { getV1DocumentsManager, type V1DocumentsManager } from '@elementor/editor-documents';
 import { __privateRunCommand } from '@elementor/editor-v1-adapters';
 import {
@@ -28,6 +28,7 @@ const MOCK_INITIAL_DOCUMENT_ID = 1;
 const MOCK_COMPONENT_ID = 123;
 const MOCK_COMPONENT_NAME = 'Test Component';
 const MOCK_INSTANCE_ID = 'instance-456';
+const MOCK_PROP_TYPE = createMockPropType();
 
 const MOCK_OVERRIDABLE_PROPS = {
 	props: {
@@ -37,6 +38,7 @@ const MOCK_OVERRIDABLE_PROPS = {
 			elementId: 'element-1',
 			propKey: 'title',
 			widgetType: 'e-heading',
+			propType: MOCK_PROP_TYPE,
 			elType: 'widget',
 			groupId: 'default',
 			originValue: { $$type: 'string', value: 'Hello' },
@@ -47,6 +49,7 @@ const MOCK_OVERRIDABLE_PROPS = {
 			elementId: 'element-2',
 			propKey: 'subtitle',
 			widgetType: 'e-heading',
+			propType: MOCK_PROP_TYPE,
 			elType: 'widget',
 			groupId: 'default',
 			originValue: { $$type: 'string', value: 'World' },
