@@ -70,7 +70,7 @@ class Elementor_One_Menu_Manager {
 			Menu_Config::CAPABILITY_EDIT_POSTS,
 			Menu_Config::EDITOR_MENU_SLUG,
 			[ $this, 'render_editor_page' ],
-            20
+			20
 		);
 
 		add_submenu_page(
@@ -80,7 +80,7 @@ class Elementor_One_Menu_Manager {
 			Menu_Config::CAPABILITY_EDIT_POSTS,
 			'elementor-theme-builder',
 			'',
-            70
+			70
 		);
 
 		add_submenu_page(
@@ -90,7 +90,7 @@ class Elementor_One_Menu_Manager {
 			'edit_posts',
 			'e-form-submissions',
 			'',
-            80
+			80
 		);
 
 		do_action( 'elementor/editor-one/menu/register_submenus' );
