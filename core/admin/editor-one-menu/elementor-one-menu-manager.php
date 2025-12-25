@@ -77,7 +77,8 @@ class Elementor_One_Menu_Manager {
 			esc_html__( 'Editor', 'elementor' ),
 			Menu_Config::CAPABILITY_EDIT_POSTS,
 			Menu_Config::EDITOR_MENU_SLUG,
-			[ $this, 'render_editor_page' ]
+			[ $this, 'render_editor_page' ],
+            20
 		);
 
 		add_submenu_page(
@@ -86,7 +87,8 @@ class Elementor_One_Menu_Manager {
 			esc_html__( 'Theme Builder', 'elementor' ),
 			Menu_Config::CAPABILITY_EDIT_POSTS,
 			'elementor-theme-builder',
-			''
+			'',
+            70
 		);
 
 		add_submenu_page(
@@ -95,7 +97,8 @@ class Elementor_One_Menu_Manager {
 			esc_html__( 'Submissions', 'elementor' ),
 			'edit_posts',
 			'e-form-submissions',
-			''
+			'',
+            80
 		);
 
 		do_action( 'elementor/editor-one/menu/register_submenus' );
