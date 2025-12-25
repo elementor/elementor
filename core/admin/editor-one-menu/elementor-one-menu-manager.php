@@ -48,7 +48,6 @@ class Elementor_One_Menu_Manager {
 			do_action( 'elementor/editor-one/menu/register', $this->menu_data_provider );
 		}, 4 );
 
-		add_action( 'admin_menu', [ $this, 'register_third_party_api_items' ], 10002 );
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 10003 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 10004 );
 		add_action( 'admin_menu', [ $this, 'remove_all_submenus_for_edit_posts_users' ], 10005 );
@@ -293,24 +292,6 @@ class Elementor_One_Menu_Manager {
 			$parent_slug = $this->resolve_hidden_submenu_parent( $original_parent );
 			remove_submenu_page( $parent_slug, $item_slug );
 		} );
-	}
-
-	public function register_third_party_api_items(): void {
-		$third_party_manager = Third_Party_Menu_Manager::instance();
-
-		if ( ! $third_party_manager->has_items() ) {
-			return;
-		}
-
-		$this->menu_data_provider->register_menu( new Third_Party_Pages_Menu() );
-
-		foreach ( $third_party_manager->get_all_sorted() as $item_data ) {
-			$item = $item_data['item'];
-
-			$adapted_item = new Third_Party_Menu_Item_Adapter( $item );
-
-			$this->menu_data_provider->register_menu( $adapted_item );
-		}
 	}
 
 	public function intercept_legacy_submenus(): void {

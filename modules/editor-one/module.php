@@ -43,7 +43,6 @@ class Module extends BaseModule {
 
 		if ( is_admin() ) {
 
-			Third_Party_Menu_Manager::instance()->register_actions();
 			$this->add_component( 'editor-one-menu-manager', new Elementor_One_Menu_Manager() );
 			$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
 			$this->add_component( 'editor-one-pointer', new Editor_One_Pointer() );
