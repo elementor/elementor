@@ -23,7 +23,7 @@ type Props = {
 export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOptions, min }: Props ) => {
 	const gridRowRefs: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ) ];
 
-	const { disabled: sizeDisabled, placeholder: sizePlaceholder } = useBoundProp( sizePropTypeUtil );
+	const { disabled: sizeDisabled } = useBoundProp( sizePropTypeUtil );
 
 	const {
 		value: dimensionsValue,
@@ -35,14 +35,12 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 
 	const { value: masterValue, placeholder: masterPlaceholder, setValue: setMasterValue } = useBoundProp();
 
-	const hasPlaceholders = !! ( sizePlaceholder || dimensionsPlaceholder );
-
 	const inferIsLinked = () => {
 		if ( dimensionsPropTypeUtil.isValid( masterValue ) ) {
 			return false;
 		}
 
-		if ( dimensionsPropTypeUtil.isValid( masterPlaceholder ) ) {
+		if ( ! masterValue && dimensionsPropTypeUtil.isValid( masterPlaceholder ) ) {
 			return false;
 		}
 
@@ -113,6 +111,8 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 		setValue: setDimensionsValue,
 		isDisabled: () => dimensionsDisabled,
 	};
+
+	const hasPlaceholders = ! masterValue && ( dimensionsPlaceholder || masterPlaceholder );
 
 	return (
 		<PropProvider { ...propProviderProps }>

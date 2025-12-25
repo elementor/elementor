@@ -832,25 +832,11 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Close any visible MUI dialog that might be blocking interactions.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async closeMuiDialogIfVisible(): Promise<void> {
-		const dialogCloseButton = this.page.locator( '.MuiDialog-container button[aria-label="close"]' );
-		if ( await dialogCloseButton.isVisible( { timeout: 500 } ).catch( () => false ) ) {
-			await dialogCloseButton.click();
-			await this.page.locator( '.MuiDialog-root' ).waitFor( { state: 'hidden', timeout: 2000 } ).catch( () => {} );
-		}
-	}
-
-	/**
 	 * Open the elements/widgets panel.
 	 *
 	 * @return {Promise<void>}
 	 */
 	async openElementsPanel(): Promise<void> {
-		await this.closeMuiDialogIfVisible();
 		await this.clickTopBarItem( TopBarSelectors.elementsPanel );
 		await this.page.locator( EditorSelectors.panels.elements.wrapper ).waitFor();
 	}

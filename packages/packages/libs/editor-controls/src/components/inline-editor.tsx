@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { type DependencyList, useEffect, useRef } from 'react';
+import {
+	type DependencyList,
+	forwardRef,
+	type PropsWithChildren,
+	type RefObject,
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
 import { bindPopover, Box, ClickAwayListener, Popover, type SxProps, type Theme, usePopupState } from '@elementor/ui';
 import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
@@ -14,7 +22,7 @@ import Superscript from '@tiptap/extension-superscript';
 import Text from '@tiptap/extension-text';
 import Underline from '@tiptap/extension-underline';
 import { type EditorView } from '@tiptap/pm/view';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 
 import { isEmpty } from '../utils/inline-editing';
 import { InlineEditorToolbar } from './inline-editor-toolbar';
@@ -44,7 +52,59 @@ const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void
 	}, dependencies );
 };
 
-export const InlineEditor = React.forwardRef(
+const calcSelectionCenter = (
+	view: EditorView,
+	container: { left: number; top: number } | undefined
+): { left: number; top: number } | null => {
+	if ( ! container ) {
+		return null;
+	}
+
+	const { from, to } = view.state.selection;
+	const start = view.coordsAtPos( from );
+	const end = view.coordsAtPos( to );
+
+	const left = ( start.left + end.left ) / 2 - container.left;
+	const top = Math.min( start.top, end.top ) - container.top;
+
+	return { left, top };
+};
+
+type WrapperProps = PropsWithChildren< {
+	containerRef: RefObject< HTMLDivElement >;
+	editor: ReturnType< typeof useEditor >;
+	sx: SxProps< Theme >;
+	onBlur?: ( event: Event ) => void;
+} >;
+
+const Wrapper = ( { children, containerRef, editor, sx, onBlur }: WrapperProps ) => {
+	const wrappedChildren = (
+		<Box ref={ containerRef } { ...sx }>
+			{ children }
+		</Box>
+	);
+
+	return onBlur ? (
+		<ClickAwayListener
+			onClickAway={ ( event: PointerEvent ) => {
+				if (
+					containerRef.current?.contains( event.target as Node ) ||
+					editor.view.dom.contains( event.target as Node )
+				) {
+					return;
+				}
+
+				onBlur?.( event );
+			} }
+		>
+			{ wrappedChildren }
+		</ClickAwayListener>
+	) : (
+		<>{ wrappedChildren }</>
+	);
+};
+
+export const InlineEditor = forwardRef(
 	(
 		{
 			value,
@@ -59,13 +119,23 @@ export const InlineEditor = React.forwardRef(
 		}: InlineEditorProps,
 		ref
 	) => {
-		const containerRef = React.useRef< HTMLDivElement >( null );
+		const containerRef = useRef< HTMLDivElement >( null );
 		const popupState = usePopupState( { variant: 'popover', disableAutoFocus: true } );
-		const [ hasSelectedContent, setHasSelectedContent ] = React.useState( false );
+		const [ hasSelectedContent, setHasSelectedContent ] = useState( false );
 		const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
+		const [ selectionRect, setSelectionRect ] = useState< { left: number; top: number } | null >( null );
 
 		const onSelectionEnd = ( view: EditorView ) => {
-			setHasSelectedContent( () => ! view.state.selection.empty );
+			const hasSelection = ! view.state.selection.empty;
+			setHasSelectedContent( hasSelection );
+
+			if ( hasSelection ) {
+				const container = containerRef.current?.getBoundingClientRect();
+				setSelectionRect( calcSelectionCenter( view, container ) );
+			} else {
+				setSelectionRect( null );
+			}
+
 			queueMicrotask( () => view.focus() );
 		};
 
@@ -82,6 +152,12 @@ export const InlineEditor = React.forwardRef(
 					keydown: onKeyDown,
 			  }
 			: undefined;
+
+		const onUpdate = ( { editor: updatedEditor }: { editor: Editor } ) => {
+			const newValue: string | null = updatedEditor.getHTML();
+
+			setValue( isEmpty( newValue ) ? null : newValue );
+		};
 
 		const editor = useEditor( {
 			extensions: [
@@ -128,11 +204,7 @@ export const InlineEditor = React.forwardRef(
 				} ),
 			],
 			content: value,
-			onUpdate: ( { editor: updatedEditor } ) => {
-				const newValue: string | null = updatedEditor.getHTML();
-
-				setValue( isEmpty( newValue ) ? null : newValue );
-			},
+			onUpdate,
 			autofocus,
 			editorProps: {
 				attributes: {
@@ -157,46 +229,26 @@ export const InlineEditor = React.forwardRef(
 		}, [ editor, value ] );
 
 		const computePopupPosition = () => {
-			const positionFallback = { left: 0, top: 0 };
-			const { left, top } = containerRef.current?.getBoundingClientRect() ?? positionFallback;
-			const initial = getInitialPopoverPosition?.() ?? positionFallback;
+			if ( ! selectionRect ) {
+				return { left: 0, top: 0 };
+			}
+
+			const container = containerRef.current?.getBoundingClientRect();
+			if ( ! container ) {
+				return { left: 0, top: 0 };
+			}
+
+			const initial = getInitialPopoverPosition?.() ?? { left: 0, top: 0 };
 
 			return {
-				left: left + initial.left,
-				top: top + initial.top,
+				left: container.left + selectionRect.left + initial.left,
+				top: container.top + selectionRect.top + initial.top,
 			};
-		};
-
-		const Wrapper = ( { children }: React.PropsWithChildren ) => {
-			const wrappedChildren = (
-				<Box ref={ containerRef } { ...sx }>
-					{ children }
-				</Box>
-			);
-
-			return onBlur ? (
-				<ClickAwayListener
-					onClickAway={ ( event: PointerEvent ) => {
-						if (
-							containerRef.current?.contains( event.target as Node ) ||
-							editor.view.dom.contains( event.target as Node )
-						) {
-							return;
-						}
-
-						onBlur?.( event );
-					} }
-				>
-					{ wrappedChildren }
-				</ClickAwayListener>
-			) : (
-				<>{ wrappedChildren }</>
-			);
 		};
 
 		return (
 			<>
-				<Wrapper>
+				<Wrapper containerRef={ containerRef } editor={ editor } sx={ sx } onBlur={ onBlur }>
 					<EditorContent ref={ ref } editor={ editor } />
 				</Wrapper>
 				{ showToolbar && containerRef.current && (
@@ -209,11 +261,11 @@ export const InlineEditor = React.forwardRef(
 							},
 						} }
 						{ ...bindPopover( popupState ) }
-						open={ hasSelectedContent }
+						open={ hasSelectedContent && selectionRect !== null }
 						anchorReference="anchorPosition"
 						anchorPosition={ computePopupPosition() }
-						anchorOrigin={ { vertical: 'top', horizontal: 'left' } }
-						transformOrigin={ { vertical: 'bottom', horizontal: 'left' } }
+						anchorOrigin={ { vertical: 'top', horizontal: 'center' } }
+						transformOrigin={ { vertical: 'bottom', horizontal: 'center' } }
 					>
 						<InlineEditorToolbar editor={ editor } />
 					</Popover>

@@ -86,11 +86,11 @@ export function createTemplatedElementView( {
 			this.#abortController = new AbortController();
 
 			const process = signalizedProcess( this.#abortController.signal )
-				.then( () => this.#beforeRender() )
+				.then( () => this._beforeRender() )
 				.then( () => this._renderTemplate() )
 				.then( () => {
 					this._renderChildren();
-					this.#afterRender();
+					this._afterRender();
 				} );
 
 			return process.execute();
@@ -136,7 +136,7 @@ export function createTemplatedElementView( {
 			return settings;
 		}
 
-		#beforeRender() {
+		_beforeRender() {
 			this._ensureViewIsIntact();
 
 			this._isRendering = true;
@@ -146,7 +146,7 @@ export function createTemplatedElementView( {
 			this.triggerMethod( 'before:render', this );
 		}
 
-		#afterRender() {
+		_afterRender() {
 			this._isRendering = false;
 			this.isRendered = true;
 

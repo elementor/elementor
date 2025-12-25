@@ -64,7 +64,7 @@ class Module extends BaseModule {
 			 * @throws \Exception
 			 */
 			function( $data, $document ) {
-				$validation = new Validation( $this->get_presets() );
+				$validation = new Validation();
 				$document_after_sanitization = $validation->sanitize( $data );
 				$validation->validate();
 

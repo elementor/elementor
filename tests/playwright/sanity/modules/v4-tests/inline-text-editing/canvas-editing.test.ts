@@ -3,7 +3,6 @@ import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
-import { DriverFactory } from '../../../../drivers/driver-factory';
 
 test.describe( 'Inline Editing Canvas @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
@@ -16,10 +15,9 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
-		await DriverFactory.activateExperimentsCli( [ 'e_atomic_elements', 'v4-inline-text-editing' ] );
-	} );
+		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
+		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active' } );
 
-	test.beforeEach( async () => {
 		editor = await wpAdminPage.openNewPage();
 	} );
 
@@ -53,12 +51,10 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Assert
 		await expect( headingElement ).toContainText( NEW_TITLE );
 
-		await editor.selectElement( containerId );
-		await editor.selectElement( headingId );
 		const panelInlineEditor = page.getByLabel( INLINE_EDITING_SELECTORS.contentSectionLabel ).locator( INLINE_EDITING_SELECTORS.panelInlineEditor );
 		const panelHTML = await panelInlineEditor.innerHTML();
 
-		expect( panelHTML ).toContain( '<u>this</u>' );
+		expect( panelHTML ).toContain( '<u>this</u>&nbsp;is the first test' );
 
 		await editor.publishAndViewPage();
 		const publishedHeading = page.locator( INLINE_EDITING_SELECTORS.headingBase ).last();
