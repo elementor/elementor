@@ -28,6 +28,8 @@ export const NAV_AREAS = {
 	SUBMENU: 'submenu',
 	HOVER_MENU: 'hover_menu',
 	TOP_BAR: 'top_bar',
+	SIDEBAR_MENU: 'sidebar',
+	FLYOUT_MENU: 'flyout_menu',
 };
 
 export const SCREEN_TYPES = {

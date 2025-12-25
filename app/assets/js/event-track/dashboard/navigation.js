@@ -9,12 +9,17 @@ const ELEMENTOR_MENU_SELECTORS = {
 	SUBMENU_CONTAINER: '.wp-submenu',
 	SUBMENU_ITEM: '.wp-submenu li a',
 	SUBMENU_ITEM_TOP_LEVEL: '.wp-has-submenu',
+	SIDEBAR_NAVIGATION: '#editor-one-sidebar-navigation',
+	FLYOUT_MENU: '.elementor-submenu-flyout',
+	FLYOUT_PARENT: '.elementor-has-flyout',
 };
 
 class NavigationTracking extends BaseTracking {
 	static init() {
 		this.attachElementorMenuTracking();
 		this.attachTemplatesMenuTracking();
+		this.attachSidebarNavigationTracking();
+		this.attachFlyoutMenuTracking();
 	}
 
 	static attachElementorMenuTracking() {
@@ -35,6 +40,46 @@ class NavigationTracking extends BaseTracking {
 		}
 
 		this.attachMenuTracking( templatesMenu, 'Templates' );
+	}
+
+	static attachSidebarNavigationTracking() {
+		const sidebar = document.querySelector( ELEMENTOR_MENU_SELECTORS.SIDEBAR_NAVIGATION );
+
+		if ( ! sidebar ) {
+			return;
+		}
+
+		this.addEventListenerTracked(
+			sidebar,
+			'click',
+			( event ) => {
+				this.handleSidebarClick( event );
+			},
+		);
+	}
+
+	static attachFlyoutMenuTracking() {
+		const flyoutParents = document.querySelectorAll( ELEMENTOR_MENU_SELECTORS.FLYOUT_PARENT );
+
+		if ( ! flyoutParents.length ) {
+			return;
+		}
+
+		flyoutParents.forEach( ( flyoutParent ) => {
+			const flyoutMenu = flyoutParent.querySelector( ELEMENTOR_MENU_SELECTORS.FLYOUT_MENU );
+
+			if ( ! flyoutMenu ) {
+				return;
+			}
+
+			this.addEventListenerTracked(
+				flyoutMenu,
+				'click',
+				( event ) => {
+					this.handleFlyoutClick( event );
+				},
+			);
+		} );
 	}
 
 	static attachMenuTracking( menuElement, menuName ) {
@@ -61,6 +106,115 @@ class NavigationTracking extends BaseTracking {
 		WpDashboardTracking.trackNavClicked( itemId, isTopLevel ? null : menuName, area );
 	}
 
+	static handleSidebarClick( event ) {
+		const clickedElement = event.target.closest( 'a, button' );
+
+		if ( ! clickedElement ) {
+			return;
+		}
+
+		const itemId = this.extractSidebarItemId( clickedElement );
+		const rootItem = this.extractSidebarRootItem( clickedElement );
+
+		WpDashboardTracking.trackNavClicked( itemId, rootItem, NAV_AREAS.SIDEBAR_MENU );
+	}
+
+	static handleFlyoutClick( event ) {
+		const link = event.target.closest( 'a' );
+
+		if ( ! link ) {
+			return;
+		}
+
+		const itemId = this.extractItemId( link );
+		const rootItem = this.extractFlyoutRootItem( link );
+
+		WpDashboardTracking.trackNavClicked( itemId, rootItem, NAV_AREAS.FLYOUT_MENU );
+	}
+
+	static extractSidebarItemId( element ) {
+		const paragraph = element.querySelector( 'p' );
+		if ( paragraph ) {
+			return paragraph.textContent.trim();
+		}
+
+		const textContent = element.textContent.trim();
+		if ( textContent ) {
+			return textContent;
+		}
+
+		if ( 'A' === element.tagName ) {
+			const href = element.getAttribute( 'href' );
+			if ( href ) {
+				return this.extractPageFromUrl( href );
+			}
+		}
+
+		return 'unknown';
+	}
+
+	static extractSidebarRootItem( element ) {
+		const listItem = element.closest( 'li' );
+
+		if ( ! listItem ) {
+			return null;
+		}
+
+		const parentList = listItem.parentElement;
+
+		if ( ! parentList || parentList.tagName !== 'UL' ) {
+			return null;
+		}
+
+		const parentListItem = parentList.closest( 'li' );
+
+		if ( ! parentListItem ) {
+			return null;
+		}
+
+		const parentButton = parentListItem.querySelector( ':scope > button' );
+
+		if ( parentButton ) {
+			const paragraph = parentButton.querySelector( 'p' );
+			return paragraph ? paragraph.textContent.trim() : parentButton.textContent.trim();
+		}
+
+		return null;
+	}
+
+	static extractFlyoutRootItem( link ) {
+		const listItem = link.closest( 'li' );
+
+		if ( ! listItem ) {
+			return null;
+		}
+
+		const groupId = listItem.getAttribute( 'data-group-id' );
+
+		if ( groupId ) {
+			return groupId;
+		}
+
+		return null;
+	}
+
+	static extractPageFromUrl( href ) {
+		const urlParams = new URLSearchParams( href.split( '?' )[ 1 ] || '' );
+		const page = urlParams.get( 'page' );
+
+		if ( page ) {
+			return page;
+		}
+
+		const postType = urlParams.get( 'post_type' );
+
+		if ( postType ) {
+			return postType;
+		}
+
+		return 'unknown';
+	}
+
 	static extractItemId( link ) {
 		const textContent = link.textContent.trim();
 
@@ -70,22 +224,12 @@ class NavigationTracking extends BaseTracking {
 
 		const href = link.getAttribute( 'href' );
 		if ( href ) {
-			const urlParams = new URLSearchParams( href.split( '?' )[ 1 ] || '' );
-			const page = urlParams.get( 'page' );
-			const postType = urlParams.get( 'post_type' );
-
-			if ( page ) {
-				return page;
-			}
-
-			if ( postType ) {
-				return postType;
-			}
+			return this.extractPageFromUrl( href );
 		}
 
-		const id = link.getAttribute( 'id' );
-		if ( id ) {
-			return id;
+		const linkId = link.getAttribute( 'id' );
+		if ( linkId ) {
+			return linkId;
 		}
 
 		return 'unknown';

@@ -10,6 +10,8 @@ const EXCLUDED_SELECTORS = {
 	PROMO_PAGE: '.e-feature-promotion',
 	PROMO_BLANK_STATE: '.elementor-blank_state',
 	APP: '.e-app',
+	SIDEBAR_NAVIGATION: '#editor-one-sidebar-navigation',
+	FLYOUT_MENU: '.elementor-submenu-flyout',
 };
 
 class ActionControlTracking extends BaseTracking {
