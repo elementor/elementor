@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicConverters\Css;
+namespace Elementor\Modules\AtomicConverters;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

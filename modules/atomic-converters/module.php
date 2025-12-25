@@ -3,8 +3,8 @@
 namespace Elementor\Modules\AtomicConverters;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Modules\AtomicConverters\Css\Converter_Registry;
-use Elementor\Modules\AtomicConverters\Css\Converters\Color_Converter;
+use Elementor\Modules\AtomicConverters\Converter_Registry;
+use Elementor\Modules\AtomicConverters\Converters\Color_Converter;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Module extends BaseModule {
 	private Converter_Registry $registry;
+	private Rest_Api $rest_api;
 
 	public function get_name() {
 		return 'atomic-converters';
@@ -23,9 +24,8 @@ class Module extends BaseModule {
 		$this->registry = new Converter_Registry();
 		$this->register_converters();
 
-		add_action( 'rest_api_init', function() {
-			( new Rest_Api( $this->registry ) )->register_routes();
-		} );
+		$this->rest_api = new Rest_Api( $this->registry );
+		$this->rest_api->register_hooks();
 	}
 
 	private function register_converters(): void {

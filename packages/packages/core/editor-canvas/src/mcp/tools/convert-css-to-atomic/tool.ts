@@ -9,10 +9,12 @@ const CONVERSION_MARKER_VALUE = 'convert-css-to-atomic';
 
 interface ConversionResult {
 	props: Record< string, unknown >;
+	customCss?: string;
 }
 
 function addConversionMarker( result: {
 	props?: Record< string, unknown >;
+	customCss?: string;
 } ): ConversionResult {
 	const props = result.props || {};
 	const markedProps: Record< string, unknown > = {};
@@ -35,6 +37,7 @@ function addConversionMarker( result: {
 
 	return {
 		props: markedProps,
+		...( result.customCss ? { customCss: result.customCss } : {} ),
 	};
 }
 

@@ -11,7 +11,7 @@ Convert CSS string to Elementor atomic widget styling format (PropValue).
 
 # When to use this tool
 **ALWAYS** use this tool when you need to convert CSS color properties to Elementor atomic format for use with "configure-element" tool.
-This tool only processes whitelisted properties. Unsupported properties are ignored.
+This tool processes whitelisted properties and converts them to PropValues. Unsupported properties are returned in the customCss field.
 This tool eliminates the need to fetch and interpret style schema resources.
 
 # Input Format
@@ -22,10 +22,19 @@ Returns PropValue objects ready to use in _styles configuration:
 {
     "props": {
         "color": { "$$type": "color", "value": "#ff0000", "_convertedBy": "convert-css-to-atomic" }
-    }
+    },
+    "customCss": "font-size: 16px; margin: 10px;"  // Optional: CSS string for unsupported properties
 }
 
 **IMPORTANT**: The returned PropValue includes a special "_convertedBy" marker. You MUST use the EXACT object returned by this tool - do not modify it or recreate it manually.
+
+If unsupported properties are present, use the customCss string with the custom_css property:
+{
+    "_styles": {
+        "color": { "$$type": "color", "value": "#ff0000" },
+        "custom_css": "font-size: 16px; margin: 10px;"
+    }
+}
 
 # Supported Properties
 Currently supports: color property only
@@ -33,7 +42,6 @@ Currently supports: color property only
 - Hex colors: #ff0000, #f00
 - RGB/RGBA: rgb(255,0,0), rgba(255,0,0,0.5)
 - HSL/HSLA: hsl(0,100%,50%)
-- CSS variables: var(--primary-color)
 
 # Usage Workflow
 1. Call this tool with: { "cssString": "color: YOUR_COLOR;" }
@@ -42,15 +50,16 @@ Currently supports: color property only
 4. Do NOT modify the object or recreate it manually
 
 # Important
-- Only whitelisted properties are processed
-- Unsupported properties (e.g., font-size, margin) are silently ignored
-- Do NOT use this tool for properties other than color
+- Only whitelisted properties are processed and converted to PropValues
+- Unsupported properties (e.g., font-size, margin) are returned in the customCss field as a CSS string
+- Use customCss with the custom_css property in _styles configuration when present
+- Do NOT use this tool for properties other than color (unless you need customCss fallback)
 - The "_convertedBy" marker is REQUIRED - configure-element will reject PropValues without it
 	` );
 
 	prompt.parameter(
 		'cssString',
-		'CSS string containing only supported properties (currently: color). Unsupported properties will be ignored.'
+		'CSS string to convert. Supported properties (currently: color) are converted to PropValues. Unsupported properties are returned in customCss field.'
 	);
 
 	return prompt.prompt();

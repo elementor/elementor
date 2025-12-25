@@ -2,7 +2,7 @@
 
 namespace Elementor\Modules\AtomicConverters;
 
-use Elementor\Modules\AtomicConverters\Css\Converter_Registry;
+use Elementor\Modules\AtomicConverters\Converter_Registry;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,7 +15,11 @@ class Rest_Api {
 		$this->registry = $registry;
 	}
 
-	public function register_routes() {
+	public function register_hooks() {
+		add_action( 'rest_api_init', fn() => $this->register_routes() );
+	}
+
+	private function register_routes() {
 		register_rest_route( 'elementor/v1', '/css-to-atomic', [
 			'methods' => 'POST',
 			'callback' => [ $this, 'handle_css_to_atomic_request' ],
@@ -40,4 +44,3 @@ class Rest_Api {
 		return rest_ensure_response( $result );
 	}
 }
-

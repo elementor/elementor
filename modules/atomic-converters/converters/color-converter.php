@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Modules\AtomicConverters\Css\Converters;
+namespace Elementor\Modules\AtomicConverters\Converters;
 
-use Elementor\Modules\AtomicConverters\Css\Property_Converter_Interface;
+use Elementor\Modules\AtomicConverters\Property_Converter_Interface;
 use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -60,8 +60,8 @@ class Color_Converter implements Property_Converter_Interface {
 	}
 
 	private function is_valid_color_format( string $value ): bool {
-		if ( str_starts_with( $value, 'var(' ) ) {
-			return true;
+		if ( $this->is_css_variable( $value ) ) {
+			return false;
 		}
 
 		if ( str_starts_with( $value, '#' ) && ( strlen( $value ) === 4 || strlen( $value ) === 7 ) ) {
@@ -73,6 +73,10 @@ class Color_Converter implements Property_Converter_Interface {
 		}
 
 		return in_array( strtolower( $value ), $this->get_named_colors(), true );
+	}
+
+	private function is_css_variable( string $value ): bool {
+		return str_starts_with( $value, 'var(' );
 	}
 
 	private function get_named_colors(): array {
@@ -233,3 +237,4 @@ class Color_Converter implements Property_Converter_Interface {
 		];
 	}
 }
+

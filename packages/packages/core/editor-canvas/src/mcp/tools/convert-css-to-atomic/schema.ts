@@ -14,4 +14,10 @@ export const outputSchema = {
 		.describe(
 			'Converted CSS properties in PropValue format. Only whitelisted properties are included.'
 		),
+	customCss: z
+		.string()
+		.optional()
+		.describe(
+			'CSS string containing unsupported properties that could not be converted to atomic PropValues. Use this with custom_css property in _styles configuration.'
+		),
 };

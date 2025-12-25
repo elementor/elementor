@@ -2,8 +2,8 @@
 
 namespace Elementor\Modules\AtomicConverters;
 
-use Elementor\Modules\AtomicConverters\Css\Converter_Registry;
-use Elementor\Modules\AtomicConverters\Css\Property_Converter_Interface;
+use Elementor\Modules\AtomicConverters\Converter_Registry;
+use Elementor\Modules\AtomicConverters\Property_Converter_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -44,6 +44,7 @@ class Css_Converter {
 
 	private function convert_properties_to_atomic( array $properties ): array {
 		$props = [];
+		$unsupported = [];
 
 		foreach ( $properties as $property => $value ) {
 			$converter = $this->get_converter_for_property( $property );
@@ -51,13 +52,31 @@ class Css_Converter {
 				$converted = $converter->convert( $property, $value );
 				if ( null !== $converted ) {
 					$props[ $property ] = $converted;
+				} else {
+					$unsupported[ $property ] = $value;
 				}
+			} else {
+				$unsupported[ $property ] = $value;
 			}
 		}
 
-		return [
+		$result = [
 			'props' => (object) $props,
 		];
+
+		if ( ! empty( $unsupported ) ) {
+			$result['customCss'] = $this->format_custom_css( $unsupported );
+		}
+
+		return $result;
+	}
+
+	private function format_custom_css( array $properties ): string {
+		$css_parts = [];
+		foreach ( $properties as $property => $value ) {
+			$css_parts[] = sprintf( '%s: %s;', $property, $value );
+		}
+		return implode( ' ', $css_parts );
 	}
 
 	private function get_converter_for_property( string $property ): ?Property_Converter_Interface {
