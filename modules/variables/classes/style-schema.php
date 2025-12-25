@@ -54,18 +54,17 @@ class Style_Schema {
 	}
 
 	private function update_font_family( $prop_type ): Union_Prop_Type {
-		$result = null;
 
 		if ( $prop_type instanceof String_Prop_Type ) {
-			$result = Union_Prop_Type::create_from( $prop_type )
+			return Union_Prop_Type::create_from( $prop_type )
 				->add_prop_type( Font_Variable_Prop_Type::make() );
 		}
 
 		if ( $prop_type instanceof Union_Prop_Type ) {
-			$result = $prop_type->add_prop_type( Font_Variable_Prop_Type::make() );
+			$prop_type->add_prop_type( Font_Variable_Prop_Type::make() );
 		}
 
-		return $result;
+		return $prop_type;
 	}
 
 	private function update_color( Color_Prop_Type $color_prop_type ): Union_Prop_Type {
