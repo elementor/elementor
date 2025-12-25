@@ -21,6 +21,7 @@ declare global {
 			};
 			getContainer?: (id: string) => V1Element | undefined;
 		};
+		elementorPro?: object;
 		ElementorInteractionsConfig?: InteractionsConfig;
 	}
 }
