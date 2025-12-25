@@ -162,7 +162,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await expect.soft( paragraphElement ).toHaveCSS( 'font-size', '100px' );
 	} );
 
-	test( 'Allow select text by double clicking when editor is rendered', async () => {
+	test( 'Allow select all text by triple clicking when editor is rendered', async () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
@@ -179,7 +179,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		headingElement = inlineEditor.locator( `h2` );
 
-		await headingElement.dblclick();
+		await headingElement.click( { clickCount: 3 } );
 		await page.keyboard.type( 'Hello' );
 
 		// Assert
