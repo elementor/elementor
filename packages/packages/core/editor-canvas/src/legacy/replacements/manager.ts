@@ -1,6 +1,3 @@
-import { type PropValue } from '@elementor/editor-props';
-import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
-
 import type { CreateTemplatedElementTypeOptions } from '../create-templated-element-type';
 import { createTemplatedElementView } from '../create-templated-element-type';
 import type { ElementType, ElementView, LegacyWindow, ReplacementSettings } from '../types';
@@ -44,17 +41,7 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 
 			this.#config = {
 				getSetting: settings.get.bind( settings ),
-
-				setSetting: ( key: string, value: PropValue ) => {
-					settings.set.apply( settings, [ key, value ] );
-
-					runCommandSync( 'document/elements/settings', {
-						container: this.container,
-						settings: {
-							[ key ]: value,
-						},
-					} );
-				},
+				setSetting: settings.set.bind( settings ),
 				element: this.el,
 				type: this?.model?.get( 'widgetType' ) ?? this.container?.model?.get( 'elType' ) ?? null,
 				id: this?.model?.get( 'id' ) ?? null,
