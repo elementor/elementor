@@ -48,7 +48,7 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		if ( is_admin() ) {
-            Connect::instance();
+			Connect::instance();
 			$this->add_component( 'editor-one-menu-manager', new Elementor_One_Menu_Manager() );
 			$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
 			$this->add_component( 'top-bar-handler', new Top_Bar_Handler() );
@@ -65,9 +65,9 @@ class Module extends BaseModule {
 			} );
 		} );
 
-		add_filter( 'elementor/admin-top-bar/is-active', function ( $is_active, $current_screen ) {
+		add_filter( 'elementor/admin-top-bar/is-active', function ( $is_active ) {
 			return static::is_active() ? false : $is_active;
-		}, 10, 2 );
+		} );
 	}
 
 	/**
