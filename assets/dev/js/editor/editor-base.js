@@ -1055,9 +1055,19 @@ export default class EditorBase extends Marionette.Application {
 			.removeClass( 'elementor-editor-preview' )
 			.addClass( 'elementor-editor-active' );
 
-		if ( elementor.config.document.panel.has_elements ) {
-			this.documents.getCurrent().$element.addClass( 'elementor-edit-area-active' );
+		const panelHasElements = elementor.config.document.panel.has_elements;
+
+		if ( ! panelHasElements ) {
+			return;
 		}
+
+		const currentDocument = this.documents.getCurrent();
+
+		if ( ! currentDocument ) {
+			return;
+		}
+
+		currentDocument.$element?.addClass( 'elementor-edit-area-active' );
 	}
 
 	changeEditMode( newMode ) {
