@@ -7,7 +7,7 @@ import {
 	type ElementView,
 	type LegacyWindow,
 } from '@elementor/editor-canvas';
-import { getCurrentDocument } from '@elementor/editor-documents';
+import { type Document, getCurrentDocument } from '@elementor/editor-documents';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
@@ -34,6 +34,45 @@ type ContextMenuGroupConfig = {
 type ContextMenuGroup = {
 	name: string;
 	actions: ContextMenuAction[];
+};
+
+type ComponentModel = ElementModel & {
+	componentId?: number | string;
+	componentTitle?: string;
+};
+
+type ComponentModelInstance = BackboneModel< ComponentModel > & {
+	trigger: ( event: string, ...args: unknown[] ) => void;
+	fetchComponentTitle: ( componentId: number ) => void;
+	extractTitleFromConfig: ( config: Document | null ) => string | null;
+	getTitle: () => string;
+	getComponentId: () => number | null;
+	getComponentName: () => string;
+	getComponentUid: () => string | null;
+};
+
+type BackboneModelConstructor< Model extends object > = {
+	new ( ...args: unknown[] ): BackboneModel< Model >;
+	extend: < ExtendedModel extends object >(
+		properties: Record< string, unknown >
+	) => BackboneModelConstructor< ExtendedModel >;
+	prototype: {
+		initialize: ( attributes: unknown, options: unknown ) => void;
+	};
+};
+
+type LegacyWindowWithModels = LegacyWindow & {
+	elementor: LegacyWindow[ 'elementor' ] & {
+		modules: LegacyWindow[ 'elementor' ][ 'modules' ] & {
+			elements: LegacyWindow[ 'elementor' ][ 'modules' ][ 'elements' ] & {
+				models: {
+					Widget: new () => {
+						getModel: () => BackboneModelConstructor< ElementModel >;
+					};
+				};
+			};
+		};
+	};
 };
 
 export const TYPE = 'e-component';
@@ -75,7 +114,7 @@ export function createComponentType(
 			return createComponentView( { ...options } );
 		}
 
-		getModel() {
+		getModel(): BackboneModelConstructor< ComponentModel > {
 			return createComponentModel();
 		}
 	};
@@ -259,27 +298,29 @@ function setInactiveRecursively( model: BackboneModel< ElementModel > ) {
 	}
 }
 
-function createComponentModel() {
-	const legacyWindow = window as unknown as LegacyWindow;
-	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
-	const widgetTypeInstance = new WidgetType() as any;
+function createComponentModel(): BackboneModelConstructor< ComponentModel > {
+	const legacyWindow = window as unknown as LegacyWindowWithModels;
+	const WidgetType = legacyWindow.elementor.modules.elements.models.Widget;
+	const widgetTypeInstance = new WidgetType();
 	const BaseWidgetModel = widgetTypeInstance.getModel();
 
 	return BaseWidgetModel.extend( {
-		initialize( attributes: any, options: any ) {
+		initialize( this: ComponentModelInstance, attributes: unknown, options: unknown ): void {
 			BaseWidgetModel.prototype.initialize.call( this, attributes, options );
 
-			const componentInstance = this.get( 'settings' )?.get( 'component_instance' );
+			const componentInstance = this.get( 'settings' )?.get( 'component_instance' ) as
+				| ComponentInstancePropValue
+				| undefined;
 			if ( componentInstance?.value ) {
 				const componentId = componentInstance.value.component_id?.value;
-				if ( componentId ) {
+				if ( componentId && typeof componentId === 'number' ) {
 					this.set( 'componentId', componentId );
 					this.fetchComponentTitle( componentId );
 				}
 			}
 		},
 
-		fetchComponentTitle( componentId: number ) {
+		fetchComponentTitle( this: ComponentModelInstance, componentId: number ): void {
 			getComponentDocumentData( componentId )
 				.then( ( config ) => {
 					if ( ! config ) {
@@ -297,27 +338,25 @@ function createComponentModel() {
 				} );
 		},
 
-		extractTitleFromConfig( config: any ) {
-			if ( config.settings?.settings?.post_title ) {
-				return config.settings.settings.post_title;
+		extractTitleFromConfig( this: ComponentModelInstance, config: Document | null ): string | null {
+			if ( ! config ) {
+				return null;
 			}
-			if ( config.panel?.title ) {
-				return config.panel.title;
-			}
-			if ( config.container?.settings ) {
-				const containerSettings = config.container.settings;
-				if ( containerSettings.get ) {
-					return containerSettings.get( 'post_title' );
-				}
-				if ( containerSettings.post_title ) {
-					return containerSettings.post_title;
-				}
+			// Document type has a title property directly
+			if ( config.title ) {
+				return config.title;
 			}
 			return null;
 		},
 
-		getTitle() {
-			const editorSettings = this.get( 'editor_settings' );
+		getTitle( this: ComponentModelInstance ): string {
+			const editorSettings = this.get( 'editor_settings' ) as
+				| {
+						title?: string;
+						component_src_name?: string;
+						component_uid?: string;
+				  }
+				| undefined;
 			let title = editorSettings?.title;
 			if ( ! title || title === '$$UNSET$$' ) {
 				title = editorSettings?.component_src_name;
@@ -329,16 +368,20 @@ function createComponentModel() {
 			return title;
 		},
 
-		getComponentId() {
-			return this.get( 'componentId' ) || null;
+		getComponentId( this: ComponentModelInstance ): number | null {
+			return ( this.get( 'componentId' ) as number | undefined ) || null;
 		},
 
-		getComponentName() {
+		getComponentName( this: ComponentModelInstance ): string {
 			return this.getTitle();
 		},
 
-		getComponentUid() {
-			const editorSettings = this.get( 'editor_settings' );
+		getComponentUid( this: ComponentModelInstance ): string | null {
+			const editorSettings = this.get( 'editor_settings' ) as
+				| {
+						component_uid?: string;
+				  }
+				| undefined;
 			return editorSettings?.component_uid || null;
 		},
 	} );
