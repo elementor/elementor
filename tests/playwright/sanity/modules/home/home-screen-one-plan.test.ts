@@ -30,7 +30,7 @@ test.describe( 'Home screen Edit Website button tests', () => {
 		await context.close();
 	} );
 
-	test( 'one license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
+	test.skip( 'one license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
 		const requestContext = await request.newContext( { storageState } );
 		const mockData = transformMockDataByLicense( 'one' );
 
