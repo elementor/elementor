@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { getElements, updateElementEditorSettings } from '@elementor/editor-elements';
+import { getElements, updateElementEditorSettings, updateElementSettings } from '@elementor/editor-elements';
 import { __getState as getState, __subscribeWithSelector as subscribeWithSelector } from '@elementor/store';
 
 import { type ComponentsSlice, SLICE_NAME } from '../store/store';
@@ -17,11 +17,18 @@ function findElementsByComponentUid( componentUid: string ) {
 
 function syncComponentRenameToNavigator( componentUid: string, newName: string ) {
 	const elements = findElementsByComponentUid( componentUid );
-	elements.forEach( ( element ) => {
-		updateElementEditorSettings( {
-			elementId: element.model.get( 'id' ),
-			settings: { title: newName },
-		} );
+	elements.forEach(async (element) => {
+		await Promise.resolve();
+		if (element.model.get('editor_settings')?.component_src_name !== newName) {
+			updateElementEditorSettings( {
+				elementId: element.model.get( 'id' ),
+				settings: { component_src_name: newName },
+			});
+			updateElementSettings({
+				id: element.model.get('id'),
+				props: { title: newName, _title: newName },
+			});
+		}
 	} );
 }
 
@@ -31,14 +38,13 @@ export function syncComponentRenameToNavigatorStore() {
 
 	if ( previousComponentsData.length === 0 ) {
 		previousComponentsData = currentComponentsData.map( ( { name, uid } ) => ( { uid, name } ) );
-		return;
 	}
 
 	currentComponentsData.forEach( ( { name, uid } ) => {
 		const previousComponent = previousComponentsData.find( ( prev ) => prev.uid === uid );
 
 		if ( previousComponent && previousComponent.name !== name ) {
-			syncComponentRenameToNavigator( uid, name );
+			syncComponentRenameToNavigator(uid, name);
 		}
 	} );
 
@@ -49,13 +55,14 @@ export function initSyncComponentRenameToNavigator() {
 	unsubscribe = subscribeWithSelector(
 		( state: ComponentsSlice ) => state[ SLICE_NAME ]?.data.map( ( { name, uid } ) => ( { uid, name } ) ),
 		() => {
-			syncComponentRenameToNavigatorStore();
+				syncComponentRenameToNavigatorStore();
 		}
 	);
 }
 
 export function SyncComponentRenameToNavigator() {
-	useEffect( () => {
+	useEffect(() => {
+		
 		if ( ! unsubscribe ) {
 			try {
 				initSyncComponentRenameToNavigator();

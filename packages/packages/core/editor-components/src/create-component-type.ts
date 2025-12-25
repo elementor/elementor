@@ -512,12 +512,16 @@ function createComponentModel() {
 		},
 
 		getTitle() {
-			const cachedTitle = this.get( 'componentTitle' );
-			if ( cachedTitle ) {
-				return cachedTitle;
+			const editorSettings = this.get( 'editor_settings' );
+			let title = editorSettings?.title;
+			if (!title || title === '$$UNSET$$') {
+				title = editorSettings?.component_src_name;
 			}
-
-			return 'LOL';
+			if (!title) {
+				console.error('Component title is not set');
+				title = 'Unnamed';
+			}
+			return title;
 		},
 
 		getComponentId() {
