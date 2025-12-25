@@ -22,9 +22,9 @@ class Component_Instance extends Atomic_Widget_Base {
 			$component_id = $data['settings']['component_instance']['value']['component_id']['value'];
 			$doc = Components_Repository::make()->get( $component_id );
 			if ( $doc ) {
-			$src_id = $doc->get_post()->post_title;
-			$this->editor_settings['component_src_name'] = $src_id;
-		}
+				$src_id = $doc->get_post()->post_title;
+				$this->editor_settings['component_src_name'] = $src_id;
+			}
 		}
 	}
 
