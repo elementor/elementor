@@ -50,8 +50,8 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 		return null;
 	}
 
-	const hasProperties = Object.keys( overridableProps.props ).length > 0;
-	const showEmptyState = ! hasProperties && ! isAddingGroup;
+	const hasGroups = groups.length > 0;
+	const showEmptyState = ! hasGroups && ! isAddingGroup;
 	const groupIds = overridableProps.groups.order;
 
 	const handleAddGroupClick = () => {

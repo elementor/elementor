@@ -85,23 +85,28 @@ export function PropertiesGroup( {
 		<Box
 			sx={ {
 				opacity: isDragPlaceholder ? 0.5 : 1,
-				'&:hover .sortable-trigger': {
-					visibility: 'visible',
-				},
-				'& .sortable-trigger': {
-					visibility: 'hidden',
-				},
-				'&:hover .group-menu': {
-					visibility: 'visible',
-				},
-				'& .group-menu': {
-					visibility: 'hidden',
-				},
 			} }
 		>
 			<Stack gap={ 1 }>
-				<Box sx={ { position: 'relative', pl: 1 } }>
-					<SortableTrigger { ...sortableTriggerProps } />
+				<Box
+					className="group-header"
+					sx={ {
+						position: 'relative',
+						'&:hover .group-sortable-trigger': {
+							visibility: 'visible',
+						},
+						'& .group-sortable-trigger': {
+							visibility: 'hidden',
+						},
+						'&:hover .group-menu': {
+							visibility: 'visible',
+						},
+						'& .group-menu': {
+							visibility: 'hidden',
+						},
+					} }
+				>
+					<SortableTrigger triggerClassName="group-sortable-trigger" { ...sortableTriggerProps } />
 					<Stack direction="row" alignItems="center" justifyContent="space-between" gap={ 2 }>
 						{ isThisGroupEditing ? (
 							<Box

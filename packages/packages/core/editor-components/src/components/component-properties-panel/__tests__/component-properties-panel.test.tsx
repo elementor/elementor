@@ -120,7 +120,7 @@ describe( 'ComponentPropertiesPanel', () => {
 	} );
 
 	describe( 'empty state', () => {
-		it( 'should render empty state when no properties exist', () => {
+		it( 'should render empty state when no groups exist', () => {
 			// Arrange
 			const emptyOverridableProps: OverridableProps = {
 				props: {},

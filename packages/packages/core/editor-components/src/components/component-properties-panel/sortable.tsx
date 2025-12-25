@@ -14,10 +14,17 @@ export const SortableProvider = < T extends string >( props: UnstableSortablePro
 	<UnstableSortableProvider restrictAxis variant="static" dragPlaceholderStyle={ { opacity: '1' } } { ...props } />
 );
 
-export type SortableTriggerProps = React.HTMLAttributes< HTMLDivElement >;
+export type SortableTriggerProps = React.HTMLAttributes< HTMLDivElement > & {
+	triggerClassName?: string;
+};
 
-export const SortableTrigger = ( props: SortableTriggerProps ) => (
-	<StyledSortableTrigger { ...props } role="button" className="sortable-trigger" aria-label="sort">
+export const SortableTrigger = ( { triggerClassName, ...props }: SortableTriggerProps ) => (
+	<StyledSortableTrigger
+		{ ...props }
+		role="button"
+		className={ `sortable-trigger ${ triggerClassName ?? '' }`.trim() }
+		aria-label="sort"
+	>
 		<GripVerticalIcon fontSize="tiny" />
 	</StyledSortableTrigger>
 );
