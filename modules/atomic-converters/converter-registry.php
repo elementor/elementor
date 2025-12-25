@@ -19,4 +19,3 @@ class Converter_Registry {
 		return $this->converters[ $property ] ?? null;
 	}
 }
-
