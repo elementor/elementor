@@ -58,7 +58,7 @@ test.describe( 'CSS-to-Atomic Converter @atomic-converters', () => {
 				cssString: 'color: transparent;',
 				expected: {
 					hasColorProp: true,
-					colorValue: 'transparent',
+					colorValue: 'rgba(0,0,0,0)',
 					unsupportedCount: 0,
 				},
 			},
@@ -131,7 +131,7 @@ test.describe( 'CSS-to-Atomic Converter @atomic-converters', () => {
 		expect( Object.keys( data.props ).length ).toBe( 1 );
 	} );
 
-	test( 'should handle CSS variables', async ( { request } ) => {
+	test( 'should add CSS variables to customCss', async ( { request } ) => {
 		const cssString = 'color: var(--primary-color);';
 
 		const response = await request.post( '/wp-json/elementor/v1/css-to-atomic', {
@@ -155,7 +155,7 @@ test.describe( 'CSS-to-Atomic Converter @atomic-converters', () => {
 		expect( data ).not.toHaveProperty( 'unsupported' );
 		expect( data ).toHaveProperty( 'customCss' );
 		expect( typeof data.customCss ).toBe( 'string' );
-		expect( data.customCss ).toContain( 'color: var(--primary-color)' );
+		expect( data.customCss ).toBe( 'color: var(--primary-color);' );
 	} );
 
 	test( 'should ignore invalid color values silently', async ( { request } ) => {
