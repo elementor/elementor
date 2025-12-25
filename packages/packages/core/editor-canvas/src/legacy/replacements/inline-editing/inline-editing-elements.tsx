@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { InlineEditor } from '@elementor/editor-controls';
 import { getContainer, getElementType } from '@elementor/editor-elements';
@@ -134,10 +134,6 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		);
 	}
 
-	getTagList(): string[] {
-		return this.getTagPropType()?.settings?.enum ?? [];
-	}
-
 	getTagPropType() {
 		const propsSchema = getElementType( this.type )?.propsSchema;
 
@@ -181,13 +177,16 @@ export default class InlineEditingReplacement extends ReplacementBase {
 			const panel = document?.querySelector( 'main.MuiBox-root' );
 
 			setIsWrapperRendered( !! wrapperRef.current );
-			panel?.addEventListener( 'click', unmountEditor );
+			panel?.addEventListener( 'click', asyncUnmountInlineEditor );
 
-			return () => panel?.removeEventListener( 'click', unmountEditor );
+			return () => panel?.removeEventListener( 'click', asyncUnmountInlineEditor );
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [] );
 
-		const unmountEditor = React.useCallback( () => queueMicrotask( this.unmountInlineEditor.bind( this ) ), [] );
+		const asyncUnmountInlineEditor = useCallback(
+			() => queueMicrotask( this.unmountInlineEditor.bind( this ) ),
+			[]
+		);
 
 		return (
 			<ThemeProvider>

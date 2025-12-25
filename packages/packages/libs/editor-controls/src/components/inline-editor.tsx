@@ -186,7 +186,11 @@ export const InlineEditor = forwardRef(
 							? node.attrs.level
 							: this.options.levels[ 0 ];
 
-						return [ `h${ level }`, { ...HTMLAttributes, style: 'margin:0;padding:0;' }, 0 ];
+						return [
+							`h${ level }`,
+							{ ...HTMLAttributes, style: 'margin:0;padding:0;', class: elementClasses },
+							0,
+						];
 					},
 				} ).configure( {
 					levels: [ 1, 2, 3, 4, 5, 6 ],

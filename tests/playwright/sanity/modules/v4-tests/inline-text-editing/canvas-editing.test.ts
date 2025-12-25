@@ -116,7 +116,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		expect( panelHTML ).toContain( NEW_CONTENT );
 	} );
 
-	test( "Style edited element differently than hello theme's default styles to make sure they take effect while editing", async () => {
+	test( "Style edited element differently than hello theme's default styles", async () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
@@ -146,6 +146,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		// Act
 		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.addGlobalClass( 'hello' );
 		await editor.v4Panel.style.openSection( 'Typography' );
 		await editor.v4Panel.style.setFontSize( 100, 'px' );
 		await paragraphElement.dblclick();
@@ -158,6 +159,8 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		// Assert
 		await expect.soft( paragraphElement ).toHaveCSS( 'font-size', '100px' );
+		await expect.soft( paragraphElement ).toHaveClass( /hello.*/ );
+		await editor.v4Panel.style.removeGlobalClass( 'hello' );
 	} );
 
 	test( 'Allow select all text by triple clicking when editor is rendered', async () => {
