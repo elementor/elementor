@@ -47,7 +47,7 @@ jobs:
 
   JS-Lint:
     runs-on: ubuntu-22.04
-    needs: [ 'file-diff' ]
+    needs: ['file-diff']
     if: ${{ needs.file-diff.outputs.js_diff || github.event.pull_request.title == null }}
     steps:
       - name: Checkout source code
@@ -66,7 +66,7 @@ jobs:
 
   PHP-Lint:
     runs-on: ubuntu-22.04
-    needs: [ 'file-diff' ]
+    needs: ['file-diff']
     if: ${{ needs.file-diff.outputs.php_diff || github.event.pull_request.title == null }}
     steps:
       - name: Checkout source code
@@ -76,8 +76,6 @@ jobs:
         with:
           php-version: '7.4'
       - name: Install Dependencies
-        env:
-          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ secrets.TEMP_DEVOPS_TOKEN }}"}}'
         run: |
           composer install
           composer require php-parallel-lint/php-parallel-lint

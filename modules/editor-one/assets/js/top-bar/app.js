@@ -4,7 +4,11 @@ import { ElementorOneHeader, ElementorOneAssetsProvider } from '@elementor/eleme
 const App = () => {
 	return (
 		<ElementorOneAssetsProvider env="production" language="en">
-			<ElementorOneHeader appType="PLUGIN" />
+			<ElementorOneHeader
+				appSettings={ { slug: 'elementor', version: '3.34' } }
+				isWithinWpAdmin
+				title={ __( 'Elementor', 'elementor' ) }
+			/>
 		</ElementorOneAssetsProvider>
 	);
 };

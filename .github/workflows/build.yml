@@ -31,7 +31,7 @@ on:
       - 'docs/**'
 
 permissions:
-      pull-requests: write
+  pull-requests: write
 
 jobs:
   build-plugin:
@@ -83,14 +83,12 @@ jobs:
 
       - name: Install dependencies
         uses: ./.github/workflows/install-dependencies
-        with:
-          composer_auth_token: ${{ secrets.TEMP_DEVOPS_TOKEN }}
 
       - name: Build plugin
         uses: ./.github/workflows/build-plugin
         with:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
-          BUILD_SCRIPT_PATH: "./.github/scripts/build-zip.sh"
+          BUILD_SCRIPT_PATH: './.github/scripts/build-zip.sh'
         env:
           MIXPANEL_TOKEN: ${{ secrets.MIXPANEL_TOKEN }}
 
@@ -111,7 +109,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
           body-includes: 'Elementor Build'
-      
+
       - name: Comment build info on PR (Elementor repo)
         if: github.event_name == 'pull_request' && startsWith( github.event.pull_request.head.repo.full_name, 'elementor/' )
         uses: peter-evans/create-or-update-comment@v4
