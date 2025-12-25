@@ -4,30 +4,34 @@ import { ComponentPropListIcon } from '@elementor/icons';
 import { Badge, Box, keyframes, styled, ToggleButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-export const ComponentsBadge = ( { overridesCount }: { overridesCount: number } ) => {
-	const prevCount = usePrevious( overridesCount );
+export const ComponentsBadge = React.forwardRef< HTMLDivElement, { overridesCount: number } >(
+	( { overridesCount }, ref ) => {
+		const prevCount = usePrevious( overridesCount );
 
-	const isFirstOverride = prevCount === 0 && overridesCount === 1;
+		const isFirstOverride = prevCount === 0 && overridesCount === 1;
 
-	return (
-		<StyledBadge
-			color="primary"
-			key={ overridesCount }
-			invisible={ overridesCount === 0 }
-			animate={ isFirstOverride }
-			anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
-			badgeContent={
-				<Box sx={ { animation: ! isFirstOverride ? `${ slideUp } 300ms ease-out` : 'none' } }>
-					{ overridesCount }
-				</Box>
-			}
-		>
-			<ToggleButton value="overrides" size="tiny" aria-label={ __( 'View overrides', 'elementor' ) }>
-				<ComponentPropListIcon fontSize="tiny" />
-			</ToggleButton>
-		</StyledBadge>
-	);
-};
+		return (
+				<StyledBadge
+					ref={ ref }
+					color="primary"
+					key={ overridesCount }
+					invisible={ overridesCount === 0 }
+					animate={ isFirstOverride }
+					anchorOrigin={ { vertical: 'top', horizontal: 'right' } }
+					badgeContent={
+						<Box sx={ { animation: ! isFirstOverride ? `${ slideUp } 300ms ease-out` : 'none' } }>
+							{ overridesCount }
+						</Box>
+					}
+				>
+					<ToggleButton value="overrides" size="tiny" aria-label={ __( 'View overrides', 'elementor' ) }>
+						<ComponentPropListIcon fontSize="tiny" />
+					</ToggleButton>
+				</StyledBadge>
+		);
+	}
+);
+
 
 const StyledBadge = styled( Badge, { shouldForwardProp: ( prop ) => prop !== 'animate' } )(
 	( { theme, animate } ) => ( {

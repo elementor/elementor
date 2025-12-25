@@ -53,9 +53,7 @@ export const ComponentPanelHeader = () => {
 						</Typography>
 					</Stack>
 				</Stack>
-				<Box ref={ anchorRef }>
-					<ComponentsBadge overridesCount={ overridesCount } />
-				</Box>
+					<ComponentsBadge overridesCount={ overridesCount } ref={ anchorRef } />
 			</Stack>
 			<Divider />
 			<ComponentIntroduction
