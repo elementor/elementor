@@ -31,6 +31,7 @@ type InlineEditorProps = {
 	value: string | null;
 	setValue: ( value: string | null ) => void;
 	attributes?: Record< string, string >;
+	elementClasses?: string;
 	sx?: SxProps< Theme >;
 	onBlur?: ( event: Event ) => void;
 	showToolbar?: boolean;
@@ -110,6 +111,7 @@ export const InlineEditor = forwardRef(
 			value,
 			setValue,
 			attributes = {},
+			elementClasses = '',
 			showToolbar = false,
 			autofocus = false,
 			sx = {},
@@ -167,20 +169,28 @@ export const InlineEditor = forwardRef(
 				Paragraph.extend( {
 					renderHTML( { HTMLAttributes } ) {
 						const tag = expectedTag ?? 'p';
-						return [ tag, { ...HTMLAttributes, style: 'margin:0;padding:0;' }, 0 ];
+						return [ tag, { ...HTMLAttributes, style: 'margin:0;padding:0;', class: elementClasses }, 0 ];
 					},
 				} ),
 				Heading.extend( {
 					renderHTML( { node, HTMLAttributes } ) {
 						if ( expectedTag ) {
-							return [ expectedTag, { ...HTMLAttributes, style: 'margin:0;padding:0;' }, 0 ];
+							return [
+								expectedTag,
+								{ ...HTMLAttributes, style: 'margin:0;padding:0;', class: elementClasses },
+								0,
+							];
 						}
 
 						const level = this.options.levels.includes( node.attrs.level )
 							? node.attrs.level
 							: this.options.levels[ 0 ];
 
-						return [ `h${ level }`, { ...HTMLAttributes, style: 'margin:0;padding:0;' }, 0 ];
+						return [
+							`h${ level }`,
+							{ ...HTMLAttributes, style: 'margin:0;padding:0;', class: elementClasses },
+							0,
+						];
 					},
 				} ).configure( {
 					levels: [ 1, 2, 3, 4, 5, 6 ],
