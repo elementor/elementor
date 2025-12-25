@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { type DependencyList, useEffect, useRef } from 'react';
+import {
+	type DependencyList,
+	forwardRef,
+	type PropsWithChildren,
+	type RefObject,
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
 import { bindPopover, Box, ClickAwayListener, Popover, type SxProps, type Theme, usePopupState } from '@elementor/ui';
 import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
@@ -62,8 +70,8 @@ const calcSelectionCenter = (
 	return { left, top };
 };
 
-type WrapperProps = React.PropsWithChildren< {
-	containerRef: React.RefObject< HTMLDivElement >;
+type WrapperProps = PropsWithChildren< {
+	containerRef: RefObject< HTMLDivElement >;
 	editor: ReturnType< typeof useEditor >;
 	sx: SxProps< Theme >;
 	onBlur?: ( event: Event ) => void;
@@ -96,7 +104,7 @@ const Wrapper = ( { children, containerRef, editor, sx, onBlur }: WrapperProps )
 	);
 };
 
-export const InlineEditor = React.forwardRef(
+export const InlineEditor = forwardRef(
 	(
 		{
 			value,
@@ -111,11 +119,11 @@ export const InlineEditor = React.forwardRef(
 		}: InlineEditorProps,
 		ref
 	) => {
-		const containerRef = React.useRef< HTMLDivElement >( null );
+		const containerRef = useRef< HTMLDivElement >( null );
 		const popupState = usePopupState( { variant: 'popover', disableAutoFocus: true } );
-		const [ hasSelectedContent, setHasSelectedContent ] = React.useState( false );
+		const [ hasSelectedContent, setHasSelectedContent ] = useState( false );
 		const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
-		const [ selectionRect, setSelectionRect ] = React.useState< { left: number; top: number } | null >( null );
+		const [ selectionRect, setSelectionRect ] = useState< { left: number; top: number } | null >( null );
 
 		const onSelectionEnd = ( view: EditorView ) => {
 			const hasSelection = ! view.state.selection.empty;

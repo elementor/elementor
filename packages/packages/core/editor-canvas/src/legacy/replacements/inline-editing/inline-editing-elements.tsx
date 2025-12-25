@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { InlineEditor } from '@elementor/editor-controls';
 import { getContainer, getElementType } from '@elementor/editor-elements';
@@ -153,10 +154,10 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	InlineEditorApp = ( { classes }: { classes: string } ) => {
 		const propValue = this.getContentValue();
 		const expectedTag = this.getExpectedTag();
-		const wrapperRef = React.useRef< HTMLDivElement | null >( null );
-		const [ isWrapperRendered, setIsWrapperRendered ] = React.useState( false );
+		const wrapperRef = useRef< HTMLDivElement | null >( null );
+		const [ isWrapperRendered, setIsWrapperRendered ] = useState( false );
 
-		React.useEffect( () => {
+		useEffect( () => {
 			setIsWrapperRendered( !! wrapperRef.current );
 		}, [] );
 

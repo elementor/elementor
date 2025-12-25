@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { type ComponentProps, useEffect, useState } from 'react';
 import { htmlPropTypeUtil, type HtmlPropValue } from '@elementor/editor-props';
 import {
 	__privateListenTo as listenTo,
@@ -21,13 +22,13 @@ export const InlineEditingControl = createControl(
 	}: {
 		sx?: SxProps< Theme >;
 		attributes?: Record< string, string >;
-		props?: React.ComponentProps< 'div' >;
+		props?: ComponentProps< 'div' >;
 	} ) => {
 		const { value, setValue, bind } = useBoundProp( htmlPropTypeUtil );
-		const [ actualValue, setActualValue ] = React.useState< HtmlPropValue[ 'value' ] >( value );
+		const [ actualValue, setActualValue ] = useState< HtmlPropValue[ 'value' ] >( value );
 		const handleChange = ( newValue: unknown ) => setValue( newValue as string );
 
-		React.useEffect( () => {
+		useEffect( () => {
 			return listenTo( commandEndEvent( 'document/elements/settings' ), ( e: ListenerEvent ) => {
 				const { args, type } = e as CommandEvent< { settings: Record< string, HtmlPropValue > } >;
 				const settingValue = args?.settings?.[ bind ]?.value ?? null;
