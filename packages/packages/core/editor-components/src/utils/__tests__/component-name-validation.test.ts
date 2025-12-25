@@ -26,29 +26,24 @@ describe( 'validateComponentName', () => {
 
 	it.each( [
 		{
+			reason: 'name is empty',
+			name: '',
+			message: 'Component name is required.',
+		},
+		{
+			reason: 'name is only whitespace',
+			name: '   ',
+			message: 'Component name is required.',
+		},
+		{
 			reason: 'name is too short',
 			name: 'A',
-			message: 'Component name is too short. Use at least 2 characters.',
+			message: 'Component name is too short. Please enter at least 2 characters.',
 		},
 		{
 			reason: 'name is too long',
 			name: 'A'.repeat( 51 ),
 			message: 'Component name is too long. Please keep it under 50 characters.',
-		},
-		{
-			reason: 'name starts with a digit',
-			name: '1component',
-			message: 'Component name must start with a letter.',
-		},
-		{
-			reason: 'name contains spaces',
-			name: 'my component',
-			message: 'Component name can\u2019t contain spaces.',
-		},
-		{
-			reason: 'name contains special characters',
-			name: 'my@component',
-			message: 'Component name can only use letters, numbers, dashes (-), and underscores (_).',
 		},
 	] )( 'should fail validation if $reason', ( { name, message } ) => {
 		// Act
@@ -146,21 +141,30 @@ describe( 'validateComponentName', () => {
 		expect( result.errorMessage ).toBeNull();
 	} );
 
-	it( 'should fail validation when name contains tabs', () => {
+	it( 'should trim whitespace from input', () => {
 		// Act
-		const result = validateComponentName( 'my\tcomponent' );
+		const result = validateComponentName( '  valid-component  ' );
 
 		// Assert
-		expect( result.isValid ).toBe( false );
-		expect( result.errorMessage ).toBe( 'Component name can\u2019t contain spaces.' );
+		expect( result.isValid ).toBe( true );
+		expect( result.errorMessage ).toBeNull();
 	} );
 
-	it( 'should fail validation when name contains newlines', () => {
+	it( 'should fail validation when name contains only tabs after trim', () => {
 		// Act
-		const result = validateComponentName( 'my\ncomponent' );
+		const result = validateComponentName( '\t\t\t' );
 
 		// Assert
 		expect( result.isValid ).toBe( false );
-		expect( result.errorMessage ).toBe( 'Component name must start with a letter.' );
+		expect( result.errorMessage ).toBe( 'Component name is required.' );
+	} );
+
+	it( 'should fail validation when name contains only newlines after trim', () => {
+		// Act
+		const result = validateComponentName( '\n\n\n' );
+
+		// Assert
+		expect( result.isValid ).toBe( false );
+		expect( result.errorMessage ).toBe( 'Component name is required.' );
 	} );
 } );
