@@ -75,7 +75,7 @@ class Test_Legacy_Submenu_Interceptor extends PHPUnit_TestCase {
 		$this->assertEmpty( $result );
 	}
 
-	public function test_intercept_elementor_menu_items__registers_unmapped_items_as_level3() {
+	public function test_intercept_elementor_menu_items__registers_unmapped_items_under_third_party_parent() {
 		$submenu_items = [
 			0 => [ 'Custom Plugin', 'manage_options', 'custom-plugin-slug', 'Custom Plugin' ],
 		];
@@ -85,7 +85,7 @@ class Test_Legacy_Submenu_Interceptor extends PHPUnit_TestCase {
 			->willReturn( false );
 
 		$this->menu_data_provider_mock
-			->expects( $this->once() )
+			->expects( $this->exactly( 2 ) )
 			->method( 'register_menu' );
 
 		$result = $this->interceptor->intercept_elementor_menu_items( $submenu_items );
