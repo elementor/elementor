@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { renderWithStore } from 'test-utils';
+import { getContainer, updateElementSettings } from '@elementor/editor-elements';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -10,12 +11,18 @@ import {
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { type ComponentsSlice, selectOverridableProps, slice } from '../../../store/store';
+import { type OverridableProps, type PublishedComponent } from '../../../types';
+import { ComponentPropertiesPanelContent as ComponentPropertiesPanel } from '../component-properties-panel-content';
 
 jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
 } ) );
-import { type OverridableProps, type PublishedComponent } from '../../../types';
-import { ComponentPropertiesPanelContent as ComponentPropertiesPanel } from '../component-properties-panel-content';
+
+jest.mock( '@elementor/editor-elements', () => ( {
+	...jest.requireActual( '@elementor/editor-elements' ),
+	getContainer: jest.fn(),
+	updateElementSettings: jest.fn(),
+} ) );
 
 const MOCK_COMPONENT_ID = 123;
 const MOCK_GROUP_ID = 'group-1';
@@ -63,6 +70,8 @@ describe( 'ComponentPropertiesPanel', () => {
 		__registerSlice( slice );
 		store = __createStore();
 		jest.clearAllMocks();
+
+		jest.mocked( getContainer ).mockReturnValue( { id: 'element-1' } as never );
 	} );
 
 	afterEach( () => {
@@ -254,6 +263,67 @@ describe( 'ComponentPropertiesPanel', () => {
 				const group = updatedProps?.groups.items[ MOCK_GROUP_ID ];
 				expect( group?.props ).not.toContain( MOCK_PROP_KEY );
 			} );
+		} );
+
+		it( 'should revert element setting to originValue when deleting property', async () => {
+			// Arrange
+			const overridableProps = createMockOverridableProps();
+			dispatch( slice.actions.load( [ createMockComponent( overridableProps ) ] ) );
+			dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+			renderWithStore( <ComponentPropertiesPanel onClose={ mockOnClose } />, store );
+
+			// Act
+			fireEvent.click( screen.getByLabelText( 'Delete property' ) );
+
+			// Assert
+			await waitFor( () => {
+				expect( updateElementSettings ).toHaveBeenCalledWith( {
+					id: 'element-1',
+					props: { text: { $$type: 'string', value: 'Hello' } },
+					withHistory: false,
+				} );
+			} );
+		} );
+
+		it( 'should set element setting to null when originValue is null', async () => {
+			// Arrange
+			const overridableProps = createMockOverridableProps();
+			overridableProps.props[ MOCK_PROP_KEY ].originValue = null;
+			dispatch( slice.actions.load( [ createMockComponent( overridableProps ) ] ) );
+			dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+			renderWithStore( <ComponentPropertiesPanel onClose={ mockOnClose } />, store );
+
+			// Act
+			fireEvent.click( screen.getByLabelText( 'Delete property' ) );
+
+			// Assert
+			await waitFor( () => {
+				expect( updateElementSettings ).toHaveBeenCalledWith( {
+					id: 'element-1',
+					props: { text: null },
+					withHistory: false,
+				} );
+			} );
+		} );
+
+		it( 'should skip element cleanup when container not found', async () => {
+			// Arrange
+			jest.mocked( getContainer ).mockReturnValue( null );
+			const overridableProps = createMockOverridableProps();
+			dispatch( slice.actions.load( [ createMockComponent( overridableProps ) ] ) );
+			dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+			renderWithStore( <ComponentPropertiesPanel onClose={ mockOnClose } />, store );
+
+			// Act
+			fireEvent.click( screen.getByLabelText( 'Delete property' ) );
+
+			// Assert
+			await waitFor( () => {
+				const state = getState();
+				const updatedProps = selectOverridableProps( state, MOCK_COMPONENT_ID );
+				expect( updatedProps?.props[ MOCK_PROP_KEY ] ).toBeUndefined();
+			} );
+			expect( updateElementSettings ).not.toHaveBeenCalled();
 		} );
 	} );
 
