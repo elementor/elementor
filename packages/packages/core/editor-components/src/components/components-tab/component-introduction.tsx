@@ -12,7 +12,7 @@ export const ComponentIntroduction = ( {
 	anchorRef: React.RefObject< HTMLDivElement >;
 	shouldShowIntroduction: boolean;
 	onClose: () => void;
-	}) => {
+} ) => {
 	if ( ! anchorRef.current || ! shouldShowIntroduction ) {
 		return null;
 	}
@@ -21,9 +21,9 @@ export const ComponentIntroduction = ( {
 		<Popover
 			anchorEl={ anchorRef.current }
 			open={ shouldShowIntroduction }
-			anchorOrigin={ { 
+			anchorOrigin={ {
 				vertical: 'top',
-				horizontal: 'right', 
+				horizontal: 'right',
 			} }
 			transformOrigin={ {
 				vertical: 'top',
