@@ -8,7 +8,6 @@ import {
 	Chip,
 	Link,
 } from '@elementor/ui';
-import { AlertTriangleIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
 import { TextNode, AdvantagesList, AdvantagesListItem } from './opt-in-content';
