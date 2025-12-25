@@ -100,4 +100,9 @@ export default class StyleTab extends BasePage {
 		await fontSizeInput.fill( size.toString() );
 		await fontSizeInput.blur();
 	}
+
+	async setFontWeight( weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 ): Promise<void> {
+		await this.page.locator( '[aria-label="Font weight control"] .MuiSelect-select[role="combobox"]' ).click();
+		await this.page.locator( `li[data-value="${ weight }"]` ).click();
+	}
 }

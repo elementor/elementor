@@ -117,4 +117,50 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		expect( panelHTML ).toContain( NEW_CONTENT );
 	} );
+
+	test( "Style edited element differently than hello theme's default styles to make sure they take effect while editing", async () => {
+		// Arrange
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
+		let headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId }` );
+
+		// Act
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Typography' );
+		await editor.v4Panel.style.setFontWeight( 100 );
+		await headingElement.dblclick();
+
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+
+		await inlineEditor.waitFor( { state: 'visible' } );
+
+		headingElement = inlineEditor.locator( `h2` );
+
+		// Assert
+		await expect.soft( headingElement ).toHaveCSS( 'font-weight', '100' );
+	} );
+
+	test( 'Allow select text by double clicking when editor is rendered', async () => {
+		// Arrange
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
+		const previewFrame = editor.getPreviewFrame();
+		let headingElement = previewFrame.locator( `.elementor-element-${ headingId }` );
+
+		// Act.
+		await headingElement.dblclick();
+
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+
+		await inlineEditor.waitFor( { state: 'visible' } );
+		await page.waitForTimeout( 1000 );
+
+		headingElement = inlineEditor.locator( `h2` );
+
+		await headingElement.dblclick();
+		await page.keyboard.type( 'Hello' );
+
+		// Assert
+		await expect( headingElement ).toHaveText( 'Hello' );
+	} );
 } );
