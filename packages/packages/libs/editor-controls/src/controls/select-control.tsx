@@ -13,7 +13,7 @@ export type SelectOption = {
 	disabled?: boolean;
 };
 
-export type SelectControlProps = {
+type SelectControlProps = {
 	options: SelectOption[];
 	onChange?: ( newValue: string | null, previousValue: string | null | undefined ) => void;
 	MenuProps?: SelectProps[ 'MenuProps' ];
