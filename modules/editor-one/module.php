@@ -6,6 +6,7 @@ use Elementor\Core\Admin\Admin;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\EditorOne\Classes\Editor_One_Pointer;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Components\Elementor_One_Menu_Manager;
 use Elementor\Modules\EditorOne\Components\Sidebar_Navigation_Handler;
 use Elementor\Plugin;
@@ -24,6 +25,10 @@ class Module extends BaseModule {
 
 	public function get_name(): string {
 		return 'editor-one';
+	}
+
+	public static function is_active(): bool {
+		return Menu_Config::is_elementor_home_menu_available();
 	}
 
 	public static function get_experimental_data(): array {
@@ -47,7 +52,7 @@ class Module extends BaseModule {
 		}
 
 		add_action( 'current_screen', function () {
-			if ( ! $this->is_feature_enabled() || ! Admin::is_elementor_admin_page() ) {
+			if ( ! static::is_active() || ! Admin::is_elementor_admin_page() ) {
 				return;
 			}
 
@@ -55,15 +60,6 @@ class Module extends BaseModule {
 				$this->enqueue_styles();
 			} );
 		} );
-	}
-
-	/**
-	 * Check if Editor One feature is enabled
-	 *
-	 * @return bool
-	 */
-	private function is_feature_enabled() {
-		return Plugin::$instance->experiments->is_feature_active( static::EXPERIMENT_NAME );
 	}
 
 	/**
