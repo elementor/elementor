@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { type DependencyList, useEffect, useRef } from 'react';
+import {
+	type DependencyList,
+	forwardRef,
+	type PropsWithChildren,
+	type RefObject,
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
 import { bindPopover, Box, ClickAwayListener, Popover, type SxProps, type Theme, usePopupState } from '@elementor/ui';
 import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
@@ -14,7 +22,7 @@ import Superscript from '@tiptap/extension-superscript';
 import Text from '@tiptap/extension-text';
 import Underline from '@tiptap/extension-underline';
 import { type EditorView } from '@tiptap/pm/view';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 
 import { isEmpty } from '../utils/inline-editing';
 import { InlineEditorToolbar } from './inline-editor-toolbar';
@@ -63,8 +71,8 @@ const calcSelectionCenter = (
 	return { left, top };
 };
 
-type WrapperProps = React.PropsWithChildren< {
-	containerRef: React.RefObject< HTMLDivElement >;
+type WrapperProps = PropsWithChildren< {
+	containerRef: RefObject< HTMLDivElement >;
 	editor: ReturnType< typeof useEditor >;
 	sx: SxProps< Theme >;
 	onBlur?: ( event: Event ) => void;
@@ -97,7 +105,7 @@ const Wrapper = ( { children, containerRef, editor, sx, onBlur }: WrapperProps )
 	);
 };
 
-export const InlineEditor = React.forwardRef(
+export const InlineEditor = forwardRef(
 	(
 		{
 			value,
@@ -113,11 +121,11 @@ export const InlineEditor = React.forwardRef(
 		}: InlineEditorProps,
 		ref
 	) => {
-		const containerRef = React.useRef< HTMLDivElement >( null );
+		const containerRef = useRef< HTMLDivElement >( null );
 		const popupState = usePopupState( { variant: 'popover', disableAutoFocus: true } );
-		const [ hasSelectedContent, setHasSelectedContent ] = React.useState( false );
+		const [ hasSelectedContent, setHasSelectedContent ] = useState( false );
 		const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
-		const [ selectionRect, setSelectionRect ] = React.useState< { left: number; top: number } | null >( null );
+		const [ selectionRect, setSelectionRect ] = useState< { left: number; top: number } | null >( null );
 
 		const onSelectionEnd = ( view: EditorView ) => {
 			const hasSelection = ! view.state.selection.empty;
@@ -146,6 +154,12 @@ export const InlineEditor = React.forwardRef(
 					keydown: onKeyDown,
 			  }
 			: undefined;
+
+		const onUpdate = ( { editor: updatedEditor }: { editor: Editor } ) => {
+			const newValue: string | null = updatedEditor.getHTML();
+
+			setValue( isEmpty( newValue ) ? null : newValue );
+		};
 
 		const editor = useEditor( {
 			extensions: [
@@ -196,11 +210,7 @@ export const InlineEditor = React.forwardRef(
 				} ),
 			],
 			content: value,
-			onUpdate: ( { editor: updatedEditor } ) => {
-				const newValue: string | null = updatedEditor.getHTML();
-
-				setValue( isEmpty( newValue ) ? null : newValue );
-			},
+			onUpdate,
 			autofocus,
 			editorProps: {
 				attributes: {
