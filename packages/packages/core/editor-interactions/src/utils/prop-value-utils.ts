@@ -1,5 +1,7 @@
 import type {
 	AnimationPresetPropValue,
+	BooleanPropValue,
+	ConfigPropValue,
 	ElementInteractions,
 	InteractionItemPropValue,
 	InteractionItemValue,
@@ -26,12 +28,29 @@ export const createTimingConfig = ( duration: number, delay: number ): TimingCon
 	},
 } );
 
+export const createBoolean = ( value: boolean ): BooleanPropValue => ( {
+	$$type: 'boolean',
+	value,
+} );
+
+export const createConfig = ( replay: boolean ): ConfigPropValue => ( {
+	$$type: 'config',
+	value: {
+		replay: createBoolean( replay ),
+	},
+} );
+
+export const extractBoolean = ( prop: BooleanPropValue | undefined, fallback = false ): boolean => {
+	return prop?.value ?? fallback;
+};
+
 export const createAnimationPreset = (
 	effect: string,
 	type: string,
 	direction: string,
 	duration: number,
-	delay: number
+	delay: number,
+	replay: boolean = false
 ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
@@ -39,6 +58,7 @@ export const createAnimationPreset = (
 		type: createString( type ),
 		direction: createString( direction ),
 		timing_config: createTimingConfig( duration, delay ),
+		config: createConfig( replay ),
 	},
 } );
 
@@ -49,18 +69,19 @@ export const createInteractionItem = (
 	direction: string,
 	duration: number,
 	delay: number,
-	interactionId?: string
+	interactionId?: string,
+	replay: boolean = false
 ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
 		...( interactionId && { interaction_id: createString( interactionId ) } ),
 		trigger: createString( trigger ),
-		animation: createAnimationPreset( effect, type, direction, duration, delay ),
+		animation: createAnimationPreset( effect, type, direction, duration, delay, replay ),
 	},
 } );
 
 export const createDefaultInteractionItem = (): InteractionItemPropValue => {
-	return createInteractionItem( 'load', 'fade', 'in', '', 300, 0 );
+	return createInteractionItem( 'load', 'fade', 'in', '', 300, 0, undefined, false );
 };
 
 export const createDefaultInteractions = (): ElementInteractions => ( {

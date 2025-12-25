@@ -163,6 +163,24 @@ class Validation {
 		return true;
 	}
 
+	private function is_valid_boolean_prop( $data, $key ) {
+		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
+			return false;
+		}
+	
+		$prop = $data[ $key ];
+	
+		if ( ! isset( $prop['$$type'] ) || 'boolean' !== $prop['$$type'] ) {
+			return false;
+		}
+	
+		if ( ! isset( $prop['value'] ) || ! is_bool( $prop['value'] ) ) {
+			return false;
+		}
+	
+		return true;
+	}
+
 	private function is_valid_number_prop( $data, $key ) {
 		if ( ! isset( $data[ $key ] ) || ! is_array( $data[ $key ] ) ) {
 			return false;
@@ -178,6 +196,30 @@ class Validation {
 			return false;
 		}
 
+		return true;
+	}
+
+	private function is_valid_config_prop( $data ) {
+		if ( ! isset( $data['config'] ) || ! is_array( $data['config'] ) ) {
+			return false;
+		}
+	
+		$config = $data['config'];
+	
+		if ( ! isset( $config['$$type'] ) || 'config' !== $config['$$type'] ) {
+			return false;
+		}
+	
+		if ( ! isset( $config['value'] ) || ! is_array( $config['value'] ) ) {
+			return false;
+		}
+	
+		$config_value = $config['value'];
+	
+		if ( isset( $config_value['replay'] ) && ! $this->is_valid_boolean_prop( $config_value, 'replay' ) ) {
+			return false;
+		}
+	
 		return true;
 	}
 
@@ -215,6 +257,10 @@ class Validation {
 
 		// Validate timing_config
 		if ( ! $this->is_valid_timing_config( $animation_value ) ) {
+			return false;
+		}
+
+		if ( isset( $animation_value['config'] ) && ! $this->is_valid_config_prop( $animation_value ) ) {
 			return false;
 		}
 

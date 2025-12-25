@@ -3,8 +3,9 @@ import { PopoverContent } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { getInteractionsControl } from '../interactions-controls-registry';
 import type { InteractionItemValue } from '../types';
-import { createAnimationPreset, createString, extractNumber, extractString } from '../utils/prop-value-utils';
+import { createAnimationPreset, createString, extractNumber, extractString, extractBoolean } from '../utils/prop-value-utils';
 import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
@@ -16,6 +17,11 @@ type InteractionDetailsProps = {
 	onChange: ( interaction: InteractionItemValue ) => void;
 };
 
+// // Temporary until pro control implemented
+// type WindowWithElementorPro = Window & {
+// 	elementorPro?: unknown;
+// };
+
 const DEFAULT_VALUES = {
 	trigger: 'load',
 	effect: 'fade',
@@ -23,6 +29,7 @@ const DEFAULT_VALUES = {
 	direction: '',
 	duration: 300,
 	delay: 0,
+	replay: false,
 };
 
 export const InteractionDetails = ( { interaction, onChange }: InteractionDetailsProps ) => {
@@ -32,8 +39,14 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 	const direction = extractString( interaction.animation.value.direction, DEFAULT_VALUES.direction );
 	const duration = extractNumber( interaction.animation.value.timing_config.value.duration, DEFAULT_VALUES.duration );
 	const delay = extractNumber( interaction.animation.value.timing_config.value.delay, DEFAULT_VALUES.delay );
+	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay ); // Extract from nested structure
 
+
+	const ReplayControl = getInteractionsControl( 'replay' )?.component ?? null;
 	const effectiveDirection = effect === 'slide' && ! direction ? 'top' : direction;
+	// Temporary until pro control implemented
+	// const hasPro = !! ( window as WindowWithElementorPro ).elementorPro;
+	// const shouldShowReplay = ReplayControl && ! hasPro;
 
 	const updateInteraction = (
 		updates: Partial< {
@@ -43,12 +56,15 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 			direction: string;
 			duration: number;
 			delay: number;
+			replay: boolean;
 		} >
 	): void => {
 		const newEffect = updates.effect ?? effect;
 		const newDirection = updates.direction ?? direction;
 
 		const resolvedDirection = newEffect === 'slide' && ! newDirection ? 'top' : newDirection;
+		const newReplay = updates.replay !== undefined ? updates.replay : replay; 
+
 
 		onChange( {
 			...interaction,
@@ -58,7 +74,8 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 				updates.type ?? type,
 				resolvedDirection,
 				updates.duration ?? duration,
-				updates.delay ?? delay
+				updates.delay ?? delay,
+				newReplay
 			),
 		} );
 	};
@@ -88,6 +105,14 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 					label={ __( 'Delay', 'elementor' ) }
 				/>
 			</Grid>
+			{ ReplayControl && (
+				<>
+					<Divider />
+					<Grid container spacing={ 1.5 }>
+						<ReplayControl value={ replay } onChange={ ( v ) => updateInteraction( { replay: v } ) } disabled={ true } />
+					</Grid>
+				</>
+			) }
 		</PopoverContent>
 	);
 };

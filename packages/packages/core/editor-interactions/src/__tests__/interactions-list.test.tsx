@@ -35,6 +35,12 @@ const createInteraction = (
 								delay: { $$type: 'number', value: delay },
 							},
 						},
+						config: {
+							$$type: 'config',
+							value: {
+								replay: { $$type: 'boolean', value: false },
+							},
+						},
 					},
 				},
 			},
