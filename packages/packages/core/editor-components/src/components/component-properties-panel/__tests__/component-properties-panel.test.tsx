@@ -181,7 +181,7 @@ describe( 'ComponentPropertiesPanel', () => {
 			fireEvent.click( screen.getByLabelText( 'Add new group' ) );
 			const input = await screen.findByRole( 'textbox' );
 
-			fireEvent.input( input, { target: { innerText: 'New Section' } } );
+			fireEvent.change( input, { target: { value: 'New Section' } } );
 			fireEvent.blur( input );
 
 			// Assert
@@ -204,7 +204,7 @@ describe( 'ComponentPropertiesPanel', () => {
 			fireEvent.click( screen.getByLabelText( 'Add new group' ) );
 			const input = await screen.findByRole( 'textbox' );
 
-			fireEvent.input( input, { target: { innerText: 'First Group' } } );
+			fireEvent.change( input, { target: { value: 'First Group' } } );
 			fireEvent.blur( input );
 
 			// Assert

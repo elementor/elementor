@@ -24,10 +24,6 @@ export const ComponentPanelHeader = () => {
 		return null;
 	}
 
-	const handleClick = () => {
-		openPropertiesPanel();
-	};
-
 	return (
 		<Box>
 			<Stack
@@ -49,7 +45,7 @@ export const ComponentPanelHeader = () => {
 						</Typography>
 					</Stack>
 				</Stack>
-				<ComponentsBadge overridesCount={ overridesCount } onClick={ handleClick } />
+				<ComponentsBadge overridesCount={ overridesCount } onClick={ openPropertiesPanel } />
 			</Stack>
 			<Divider />
 		</Box>

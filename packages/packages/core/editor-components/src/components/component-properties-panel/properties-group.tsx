@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { EditableField, MenuListItem, useEditable } from '@elementor/editor-ui';
+import { EditableField, MenuListItem } from '@elementor/editor-ui';
 import { DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -18,7 +18,6 @@ import { __ } from '@wordpress/i18n';
 import { type OverridableProp, type OverridablePropsGroup } from '../../types';
 import { PropertyItem } from './property-item';
 import { SortableItem, SortableProvider, SortableTrigger, type SortableTriggerProps } from './sortable';
-import { validateGroupLabel } from './utils/validate-group-label';
 
 type Props = {
 	group: OverridablePropsGroup;
@@ -27,25 +26,35 @@ type Props = {
 	allGroupsRecord: Record< string, OverridablePropsGroup >;
 	sortableTriggerProps: SortableTriggerProps;
 	isDragPlaceholder?: boolean;
+	setIsAddingGroup: ( isAddingGroup: boolean ) => void;
 	onPropsReorder: ( newOrder: string[] ) => void;
 	onPropertyDelete: ( propKey: string ) => void;
 	onPropertyUpdate: ( propKey: string, data: { label: string; group: string | null } ) => void;
-	onGroupRename: ( groupId: string, label: string ) => void;
 	onGroupDelete: ( groupId: string ) => void;
+	groupLabelEditable: {
+		editableRef: React.RefObject< HTMLElement | null >;
+		openEditMode: () => void;
+		isEditing: boolean;
+		error: string | null;
+		getEditableProps: () => {
+			value: string;
+		};
+		setEditingGroupId: ( groupId: string ) => void;
+		editingGroupId: string | null;
+	};
 };
 
 export function PropertiesGroup( {
 	group,
 	props,
 	allGroups,
-	allGroupsRecord,
 	sortableTriggerProps,
 	isDragPlaceholder,
 	onPropsReorder,
 	onPropertyDelete,
 	onPropertyUpdate,
-	onGroupRename,
 	onGroupDelete,
+	groupLabelEditable,
 }: Props ) {
 	const groupProps = group.props
 		.map( ( propId ) => props[ propId ] )
@@ -56,31 +65,15 @@ export function PropertiesGroup( {
 		disableAutoFocus: true,
 	} );
 
-	const validateLabel = ( newLabel: string ) => {
-		const otherGroups = Object.fromEntries(
-			Object.entries( allGroupsRecord ).filter( ( [ id ] ) => id !== group.id )
-		);
-		const error = validateGroupLabel( newLabel, otherGroups );
-		return error || null;
-	};
-
-	const {
-		ref: editableRef,
-		openEditMode,
-		isEditing,
-		error,
-		getProps: getEditableProps,
-	} = useEditable( {
-		value: group.label,
-		onSubmit: ( newLabel ) => onGroupRename( group.id, newLabel ),
-		validation: validateLabel,
-	} );
+	const { editableRef, isEditing, error, getEditableProps, setEditingGroupId, editingGroupId } = groupLabelEditable;
 
 	const hasProperties = group.props.length > 0;
+	const isThisGroupEditing = isEditing && editingGroupId === group.id;
 
 	const handleRenameClick = () => {
 		popupState.close();
-		openEditMode();
+		setEditingGroupId( group.id );
+		groupLabelEditable.openEditMode();
 	};
 
 	const handleDeleteClick = () => {
@@ -110,7 +103,7 @@ export function PropertiesGroup( {
 				<Box sx={ { position: 'relative', pl: 1 } }>
 					<SortableTrigger { ...sortableTriggerProps } />
 					<Stack direction="row" alignItems="center" justifyContent="space-between" gap={ 2 }>
-						{ isEditing ? (
+						{ isThisGroupEditing ? (
 							<Box
 								sx={ {
 									flex: 1,
@@ -119,7 +112,7 @@ export function PropertiesGroup( {
 									alignItems: 'center',
 									border: 2,
 									borderColor: 'text.secondary',
-									borderRadius: 2,
+									borderRadius: 1,
 									pl: 0.5,
 								} }
 							>
@@ -143,7 +136,7 @@ export function PropertiesGroup( {
 						<IconButton
 							className="group-menu"
 							size="tiny"
-							sx={ { p: 0.25, visibility: isEditing ? 'visible' : undefined } }
+							sx={ { p: 0.25, visibility: isThisGroupEditing ? 'visible' : undefined } }
 							aria-label={ __( 'Group actions', 'elementor' ) }
 							{ ...bindTrigger( popupState ) }
 						>

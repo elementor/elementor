@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { useState } from 'react';
 import { getWidgetsCache } from '@elementor/editor-elements';
 import { XIcon } from '@elementor/icons';
-import { Box, IconButton, Popover, Typography } from '@elementor/ui';
+import { bindPopover, bindTrigger, Box, IconButton, Popover, Typography, usePopupState } from '@elementor/ui';
 
 import { type OverridableProp } from '../../types';
 import { OverridablePropForm } from '../overridable-props/overridable-prop-form';
@@ -25,24 +24,15 @@ export function PropertyItem( {
 	onDelete,
 	onUpdate,
 }: PropertyItemProps ) {
-	const [ anchorEl, setAnchorEl ] = useState< HTMLElement | null >( null );
-	const [ popoverWidth, setPopoverWidth ] = useState< number | undefined >();
-	const elementType = prop.elType === 'widget' ? prop.widgetType : prop.elType;
-	const icon = getElementIcon( elementType );
-
-	const handleClick = ( event: React.MouseEvent< HTMLElement > ) => {
-		const target = event.currentTarget;
-		setAnchorEl( target );
-		setPopoverWidth( target.offsetWidth );
-	};
-
-	const handleClose = () => {
-		setAnchorEl( null );
-	};
+	const popoverState = usePopupState( {
+		variant: 'popover',
+	} );
+	const icon = getElementIcon( prop );
+	const popoverProps = bindPopover( popoverState );
 
 	const handleSubmit = ( data: { label: string; group: string | null } ) => {
 		onUpdate( data );
-		handleClose();
+		popoverState.close();
 	};
 
 	const handleDelete = ( event: React.MouseEvent ) => {
@@ -50,19 +40,17 @@ export function PropertyItem( {
 		onDelete( prop.overrideKey );
 	};
 
-	const isOpen = Boolean( anchorEl );
-
 	return (
 		<>
 			<Box
-				onClick={ handleClick }
+				{ ...bindTrigger( popoverState ) }
 				sx={ {
 					position: 'relative',
 					pl: 0.5,
 					pr: 1,
 					py: 0.25,
 					minHeight: 28,
-					borderRadius: 2,
+					borderRadius: 1,
 					border: '1px solid',
 					borderColor: 'divider',
 					display: 'flex',
@@ -88,7 +76,9 @@ export function PropertyItem( {
 				} }
 			>
 				<SortableTrigger { ...sortableTriggerProps } />
-				<Box sx={ { display: 'flex', alignItems: 'center', color: 'text.primary', fontSize: 16 } }>
+				<Box
+					sx={ { display: 'flex', alignItems: 'center', color: 'text.primary', fontSize: 12, padding: 0.25 } }
+				>
 					<i className={ icon } />
 				</Box>
 				<Typography variant="caption" sx={ { color: 'text.primary', flexGrow: 1, fontSize: 10 } }>
@@ -98,13 +88,12 @@ export function PropertyItem( {
 					<XIcon fontSize="tiny" />
 				</IconButton>
 			</Box>
+
 			<Popover
-				open={ isOpen }
-				anchorEl={ anchorEl }
-				onClose={ handleClose }
+				{ ...popoverProps }
 				anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
 				transformOrigin={ { vertical: 'top', horizontal: 'left' } }
-				PaperProps={ { sx: { width: popoverWidth } } }
+				PaperProps={ { sx: { width: popoverState.anchorEl?.getBoundingClientRect().width } } }
 			>
 				<OverridablePropForm
 					onSubmit={ handleSubmit }
@@ -117,7 +106,9 @@ export function PropertyItem( {
 	);
 }
 
-function getElementIcon( elType: string ): string {
+function getElementIcon( prop: OverridableProp ): string {
+	const elType = prop.elType === 'widget' ? prop.widgetType : prop.elType;
+
 	const widgetsCache = getWidgetsCache();
 
 	if ( ! widgetsCache ) {
