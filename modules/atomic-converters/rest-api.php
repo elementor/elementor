@@ -21,7 +21,7 @@ class Rest_Api {
 
 	private function register_routes() {
 		register_rest_route( 'elementor/v1', '/css-to-atomic', [
-			'methods' => 'POST',
+			'methods' => \WP_REST_Server::CREATABLE,
 			'callback' => [ $this, 'handle_css_to_atomic_request' ],
 			'permission_callback' => function() {
 				return current_user_can( 'edit_posts' );

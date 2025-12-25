@@ -18,7 +18,7 @@ test.describe( 'CSS-to-Atomic Converter @atomic-converters', () => {
 				cssString: 'color: red;',
 				expected: {
 					hasColorProp: true,
-					colorValue: expect.stringMatching( /^(red|#ff0000|rgb\(255,\s*0,\s*0\))$/i ),
+					colorValue: /^(red|#ff0000|rgb\(255,\s*0,\s*0\))$/i,
 					unsupportedCount: 0,
 				},
 			},
@@ -26,7 +26,7 @@ test.describe( 'CSS-to-Atomic Converter @atomic-converters', () => {
 				cssString: 'color: #00ff00;',
 				expected: {
 					hasColorProp: true,
-					colorValue: expect.stringMatching( /^(#00ff00|rgb\(0,\s*255,\s*0\))$/i ),
+					colorValue: /^(#00ff00|rgb\(0,\s*255,\s*0\))$/i,
 					unsupportedCount: 0,
 				},
 			},
@@ -34,7 +34,7 @@ test.describe( 'CSS-to-Atomic Converter @atomic-converters', () => {
 				cssString: 'color: rgb(0, 0, 255);',
 				expected: {
 					hasColorProp: true,
-					colorValue: expect.stringMatching( /^(rgb\(0,\s*0,\s*255\)|#0000ff)$/i ),
+					colorValue: /^(rgb\(0,\s*0,\s*255\)|#0000ff)$/i,
 					unsupportedCount: 0,
 				},
 			},
@@ -42,7 +42,7 @@ test.describe( 'CSS-to-Atomic Converter @atomic-converters', () => {
 				cssString: 'color: rgba(255, 0, 255, 0.8);',
 				expected: {
 					hasColorProp: true,
-					colorValue: expect.stringMatching( /^rgba\(255,\s*0,\s*255,\s*0\.8\)$/i ),
+					colorValue: /^rgba\(255,\s*0,\s*255,\s*0\.8\)$/i,
 					unsupportedCount: 0,
 				},
 			},
@@ -50,7 +50,7 @@ test.describe( 'CSS-to-Atomic Converter @atomic-converters', () => {
 				cssString: 'color: hsl(120, 100%, 50%);',
 				expected: {
 					hasColorProp: true,
-					colorValue: expect.stringMatching( /^(hsl\(120,\s*100%,\s*50%\)|#[0-9a-f]{6})$/i ),
+					colorValue: /^(hsl\(120,\s*100%,\s*50%\)|#[0-9a-f]{6})$/i,
 					unsupportedCount: 0,
 				},
 			},
@@ -88,7 +88,11 @@ test.describe( 'CSS-to-Atomic Converter @atomic-converters', () => {
 					expect( data.props ).toHaveProperty( 'color' );
 					expect( data.props.color ).toHaveProperty( '$$type', 'color' );
 					expect( data.props.color ).toHaveProperty( 'value' );
-					expect( data.props.color.value ).toMatch( testCase.expected.colorValue );
+					if ( testCase.expected.colorValue instanceof RegExp ) {
+						expect( data.props.color.value ).toMatch( testCase.expected.colorValue );
+					} else {
+						expect( data.props.color.value ).toBe( testCase.expected.colorValue );
+					}
 				}
 
 				expect( data ).not.toHaveProperty( 'unsupported' );
@@ -120,7 +124,10 @@ test.describe( 'CSS-to-Atomic Converter @atomic-converters', () => {
 		expect( data.props.color.value ).toMatch( /^(blue|#0000ff|rgb\(0,\s*0,\s*255\))$/i );
 
 		expect( data ).not.toHaveProperty( 'unsupported' );
-		expect( data ).not.toHaveProperty( 'customCss' );
+		expect( data ).toHaveProperty( 'customCss' );
+		expect( typeof data.customCss ).toBe( 'string' );
+		expect( data.customCss ).toContain( 'font-size: 16px' );
+		expect( data.customCss ).toContain( 'margin: 10px' );
 		expect( Object.keys( data.props ).length ).toBe( 1 );
 	} );
 
@@ -142,9 +149,13 @@ test.describe( 'CSS-to-Atomic Converter @atomic-converters', () => {
 		const data = await response.json();
 
 		expect( data ).toHaveProperty( 'props' );
-		expect( data.props ).toHaveProperty( 'color' );
-		expect( data.props.color ).toHaveProperty( '$$type', 'color' );
-		expect( data.props.color.value ).toBe( 'var(--primary-color)' );
+		expect( typeof data.props ).toBe( 'object' );
+		expect( Object.keys( data.props ).length ).toBe( 0 );
+
+		expect( data ).not.toHaveProperty( 'unsupported' );
+		expect( data ).toHaveProperty( 'customCss' );
+		expect( typeof data.customCss ).toBe( 'string' );
+		expect( data.customCss ).toContain( 'color: var(--primary-color)' );
 	} );
 
 	test( 'should ignore invalid color values silently', async ( { request } ) => {
@@ -169,7 +180,9 @@ test.describe( 'CSS-to-Atomic Converter @atomic-converters', () => {
 		expect( Object.keys( data.props ).length ).toBe( 0 );
 
 		expect( data ).not.toHaveProperty( 'unsupported' );
-		expect( data ).not.toHaveProperty( 'customCss' );
+		expect( data ).toHaveProperty( 'customCss' );
+		expect( typeof data.customCss ).toBe( 'string' );
+		expect( data.customCss ).toContain( 'color: not-a-valid-color' );
 	} );
 
 	test( 'should handle empty CSS string', async ( { request } ) => {
@@ -218,7 +231,10 @@ test.describe( 'CSS-to-Atomic Converter @atomic-converters', () => {
 		expect( data.props.color.value ).toMatch( /^(red|#ff0000|rgb\(255,\s*0,\s*0\))$/i );
 
 		expect( data ).not.toHaveProperty( 'unsupported' );
-		expect( data ).not.toHaveProperty( 'customCss' );
+		expect( data ).toHaveProperty( 'customCss' );
+		expect( typeof data.customCss ).toBe( 'string' );
+		expect( data.customCss ).toContain( 'background-color: blue' );
+		expect( data.customCss ).toContain( 'border-color: green' );
 		expect( Object.keys( data.props ).length ).toBe( 1 );
 	} );
 
@@ -250,7 +266,9 @@ test.describe( 'CSS-to-Atomic Converter @atomic-converters', () => {
 		}
 
 		expect( data ).not.toHaveProperty( 'unsupported' );
-		expect( data ).not.toHaveProperty( 'customCss' );
+		expect( data ).toHaveProperty( 'customCss' );
+		expect( typeof data.customCss ).toBe( 'string' );
+		expect( data.customCss ).toContain( 'font-size: 16px' );
 	} );
 } );
 

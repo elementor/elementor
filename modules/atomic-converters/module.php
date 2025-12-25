@@ -31,8 +31,4 @@ class Module extends BaseModule {
 	private function register_converters(): void {
 		$this->registry->register( new Color_Converter() );
 	}
-
-	public function get_registry(): Converter_Registry {
-		return $this->registry;
-	}
 }

@@ -1,4 +1,8 @@
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
+import {
+	type PropValue,
+	type TransformablePropValue,
+} from '@elementor/editor-props';
 
 import {
 	STYLE_SCHEMA_URI,
@@ -21,87 +25,137 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 			{ description: 'Widgets schema', uri: WIDGET_SCHEMA_URI },
 			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
 		],
-		handler: ( {
-			elementId,
-			propertiesToChange,
-			elementType,
-			stylePropertiesToChange,
-		} ) => {
-			if (
-				stylePropertiesToChange &&
-				'color' in stylePropertiesToChange
-			) {
-				validateColorPropertyRequiresConversion(
-					stylePropertiesToChange.color
-				);
-			}
-			const toUpdate = Object.entries( propertiesToChange );
-
-			const processedStyleProperties = stylePropertiesToChange
-				? { ...stylePropertiesToChange }
-				: {};
-
-			const { valid, errors } = validateInput.validatePropSchema(
-				elementType,
-				propertiesToChange
-			);
-			const { valid: stylesValid, errors: stylesErrors } =
-				validateInput.validateStyles( processedStyleProperties || {} );
-			throwErrorIfPropertiesAreInvalid( valid, errors, elementId );
-			throwErrorIfStylePropertiesAreInvalid(
-				stylesValid,
-				stylesErrors,
-				elementId
-			);
-			for ( const [ propertyName, propertyValue ] of toUpdate ) {
-				try {
-					doUpdateElementProperty( {
-						elementId,
-						elementType,
-						propertyName,
-						propertyValue,
-					} );
-				} catch ( error ) {
-					const errorMessage = createUpdateErrorMessage( {
-						propertyName,
-						elementId,
-						elementType,
-						error: error as Error,
-						propertyType: 'prop',
-					} );
-					throw new Error( errorMessage );
-				}
-			}
-			for ( const [
-				stylePropertyName,
-				stylePropertyValue,
-			] of Object.entries( processedStyleProperties || {} ) ) {
-				try {
-					doUpdateElementProperty( {
-						elementId,
-						elementType,
-						propertyName: '_styles',
-						propertyValue: {
-							[ stylePropertyName ]: stylePropertyValue,
-						},
-					} );
-				} catch ( error ) {
-					const errorMessage = createUpdateErrorMessage( {
-						propertyName: `(style) ${ stylePropertyName }`,
-						elementId,
-						elementType,
-						propertyType: 'style',
-						error: error as Error,
-					} );
-					throw new Error( errorMessage );
-				}
-			}
-			return {
-				success: true,
-			};
-		},
+		handler: handleConfigureElement,
 	} );
 };
+
+function handleConfigureElement( {
+	elementId,
+	propertiesToChange,
+	elementType,
+	stylePropertiesToChange,
+}: {
+	elementId: string;
+	propertiesToChange: Record< string, unknown >;
+	elementType: string;
+	stylePropertiesToChange?: Record< string, unknown >;
+} ) {
+	validateColorIfPresent( stylePropertiesToChange );
+	const processedStyleProperties = processStyleProperties(
+		stylePropertiesToChange
+	);
+	validatePropertiesAndStyles(
+		elementType,
+		propertiesToChange,
+		processedStyleProperties,
+		elementId
+	);
+	updateElementProperties( elementId, elementType, propertiesToChange );
+	updateElementStyleProperties(
+		elementId,
+		elementType,
+		processedStyleProperties
+	);
+	return {
+		success: true,
+	};
+}
+
+function validateColorIfPresent(
+	stylePropertiesToChange?: Record< string, unknown >
+) {
+	if ( stylePropertiesToChange && 'color' in stylePropertiesToChange ) {
+		validateColorPropertyRequiresConversion(
+			stylePropertiesToChange.color
+		);
+	}
+}
+
+function processStyleProperties(
+	stylePropertiesToChange?: Record< string, unknown >
+): Record< string, unknown > {
+	return stylePropertiesToChange ? { ...stylePropertiesToChange } : {};
+}
+
+function validatePropertiesAndStyles(
+	elementType: string,
+	propertiesToChange: Record< string, unknown >,
+	processedStyleProperties: Record< string, unknown >,
+	elementId: string
+) {
+	const { valid, errors } = validateInput.validatePropSchema(
+		elementType,
+		propertiesToChange
+	);
+	const { valid: stylesValid, errors: stylesErrors } =
+		validateInput.validateStyles( processedStyleProperties );
+	throwErrorIfPropertiesAreInvalid( valid, errors, elementId );
+	throwErrorIfStylePropertiesAreInvalid(
+		stylesValid,
+		stylesErrors,
+		elementId
+	);
+}
+
+function updateElementProperties(
+	elementId: string,
+	elementType: string,
+	propertiesToChange: Record< string, unknown >
+) {
+	const toUpdate = Object.entries( propertiesToChange );
+	for ( const [ propertyName, propertyValue ] of toUpdate ) {
+		try {
+			doUpdateElementProperty( {
+				elementId,
+				elementType,
+				propertyName,
+				propertyValue: propertyValue as
+					| string
+					| PropValue
+					| TransformablePropValue< string, unknown >,
+			} );
+		} catch ( error ) {
+			const errorMessage = createUpdateErrorMessage( {
+				propertyName,
+				elementId,
+				elementType,
+				error: error as Error,
+				propertyType: 'prop',
+			} );
+			throw new Error( errorMessage );
+		}
+	}
+}
+
+function updateElementStyleProperties(
+	elementId: string,
+	elementType: string,
+	processedStyleProperties: Record< string, unknown >
+) {
+	for ( const [ stylePropertyName, stylePropertyValue ] of Object.entries(
+		processedStyleProperties
+	) ) {
+		try {
+			doUpdateElementProperty( {
+				elementId,
+				elementType,
+				propertyName: '_styles',
+				propertyValue: {
+					[ stylePropertyName ]: stylePropertyValue,
+				} as Record< string, PropValue >,
+			} );
+		} catch ( error ) {
+			const errorMessage = createUpdateErrorMessage( {
+				propertyName: `(style) ${ stylePropertyName }`,
+				elementId,
+				elementType,
+				propertyType: 'style',
+				error: error as Error,
+			} );
+			throw new Error( errorMessage );
+		}
+	}
+}
 
 function validateColorPropertyRequiresConversion( colorValue: unknown ) {
 	const isPropValue =
