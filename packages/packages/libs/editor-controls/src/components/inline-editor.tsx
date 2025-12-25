@@ -62,6 +62,40 @@ const calcSelectionCenter = (
 	return { left, top };
 };
 
+type WrapperProps = React.PropsWithChildren< {
+	containerRef: React.RefObject< HTMLDivElement >;
+	editor: ReturnType< typeof useEditor >;
+	sx: SxProps< Theme >;
+	onBlur?: ( event: Event ) => void;
+} >;
+
+const Wrapper = ( { children, containerRef, editor, sx, onBlur }: WrapperProps ) => {
+	const wrappedChildren = (
+		<Box ref={ containerRef } { ...sx }>
+			{ children }
+		</Box>
+	);
+
+	return onBlur ? (
+		<ClickAwayListener
+			onClickAway={ ( event: PointerEvent ) => {
+				if (
+					containerRef.current?.contains( event.target as Node ) ||
+					editor.view.dom.contains( event.target as Node )
+				) {
+					return;
+				}
+
+				onBlur?.( event );
+			} }
+		>
+			{ wrappedChildren }
+		</ClickAwayListener>
+	) : (
+		<>{ wrappedChildren }</>
+	);
+};
+
 export const InlineEditor = React.forwardRef(
 	(
 		{
@@ -204,36 +238,9 @@ export const InlineEditor = React.forwardRef(
 			};
 		};
 
-		const Wrapper = ( { children }: React.PropsWithChildren ) => {
-			const wrappedChildren = (
-				<Box ref={ containerRef } { ...sx }>
-					{ children }
-				</Box>
-			);
-
-			return onBlur ? (
-				<ClickAwayListener
-					onClickAway={ ( event: PointerEvent ) => {
-						if (
-							containerRef.current?.contains( event.target as Node ) ||
-							editor.view.dom.contains( event.target as Node )
-						) {
-							return;
-						}
-
-						onBlur?.( event );
-					} }
-				>
-					{ wrappedChildren }
-				</ClickAwayListener>
-			) : (
-				<>{ wrappedChildren }</>
-			);
-		};
-
 		return (
 			<>
-				<Wrapper>
+				<Wrapper containerRef={ containerRef } editor={ editor } sx={ sx } onBlur={ onBlur }>
 					<EditorContent ref={ ref } editor={ editor } />
 				</Wrapper>
 				{ showToolbar && containerRef.current && (
