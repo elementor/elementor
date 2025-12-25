@@ -72,7 +72,7 @@ class Hooks {
 	private function filter_for_style_schema() {
 		add_filter( 'elementor/atomic-widgets/styles/schema', function ( array $schema ) {
 			return ( new Style_Schema() )->augment( $schema );
-		} );
+		}, 11, 2 );
 
 		add_filter( 'elementor/atomic-widgets/styles/schema', function ( array $schema ) {
 			return ( new Size_Style_Schema() )->augment( $schema );

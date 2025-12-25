@@ -96,7 +96,7 @@ export const SvgMediaControl = createControl( () => {
 	};
 
 	return (
-		<Stack gap={ 1 }>
+		<Stack gap={ 1 } aria-label="SVG Control">
 			<EnableUnfilteredModal open={ unfilteredModalOpenState } onClose={ onCloseUnfilteredModal } />
 			<ControlActions>
 				<StyledCard variant="outlined">
@@ -125,6 +125,7 @@ export const SvgMediaControl = createControl( () => {
 								color="inherit"
 								variant="outlined"
 								onClick={ () => handleClick( MODE_BROWSE ) }
+								aria-label="Select SVG"
 							>
 								{ __( 'Select SVG', 'elementor' ) }
 							</Button>
@@ -138,6 +139,7 @@ export const SvgMediaControl = createControl( () => {
 											startIcon={ <UploadIcon /> }
 											disabled={ canManageOptions ? false : true }
 											onClick={ () => canManageOptions && handleClick( MODE_UPLOAD ) }
+											aria-label="Upload SVG"
 										>
 											{ __( 'Upload', 'elementor' ) }
 										</Button>
