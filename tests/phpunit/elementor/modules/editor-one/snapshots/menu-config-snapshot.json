@@ -28,7 +28,7 @@
             },
             {
                 "slug": "elementor-role-manager",
-                "label": "Role manager",
+                "label": "Role Manager",
                 "url": "/wp-admin/admin.php?page=elementor-role-manager",
                 "icon": "users",
                 "group_id": "",
@@ -52,7 +52,7 @@
             },
             {
                 "slug": "elementor-custom-elements",
-                "label": "Custom elements",
+                "label": "Custom Elements",
                 "url": "/wp-admin/admin.php?page=elementor_custom_fonts",
                 "icon": "adjustments",
                 "group_id": "elementor-editor-custom-elements",
@@ -73,13 +73,13 @@
             "items": [
                 {
                     "slug": "elementor-system-info",
-                    "label": "System info",
+                    "label": "System Info",
                     "url": "/wp-admin/admin.php?page=elementor-system-info",
                     "priority": 10
                 },
                 {
                     "slug": "elementor-element-manager",
-                    "label": "Elements manager",
+                    "label": "Elements Manager",
                     "url": "/wp-admin/admin.php?page=elementor-element-manager",
                     "priority": 20
                 }
@@ -111,7 +111,7 @@
             "items": [
                 {
                     "slug": "edit.php?post_type=elementor_library",
-                    "label": "Saved templates",
+                    "label": "Saved Templates",
                     "url": "/wp-admin/edit.php?post_type=elementor_library",
                     "priority": 10
                 },
@@ -123,13 +123,13 @@
                 },
                 {
                     "slug": "http://example.org/wp-admin/admin.php?page=elementor-app&ver=3.35.0&source=wp_db_templates_menu#/kit-library",
-                    "label": "Website templates",
+                    "label": "Website Templates",
                     "url": "/wp-admin/admin.php?page=elementor-app&ver=3.35.0&source=wp_db_templates_menu#/kit-library",
                     "priority": 30
                 },
                 {
                     "slug": "edit.php?post_type=e-floating-buttons",
-                    "label": "Floating elements",
+                    "label": "Floating Elements",
                     "url": "/wp-admin/edit.php?post_type=e-floating-buttons",
                     "priority": 40
                 },

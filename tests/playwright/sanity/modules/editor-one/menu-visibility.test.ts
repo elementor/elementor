@@ -46,7 +46,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 	} );
 
-	test.skip( 'Admin user: Elementor menu is visible with correct submenu items', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Admin user: Elementor menu is visible with correct submenu items', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.openWordPressDashboard();
@@ -67,7 +67,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await expect( sidebar.getByRole( 'button', { name: 'Templates' } ).first() ).toBeVisible();
 	} );
 
-	test.skip( 'Editor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
+	test( 'Editor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
 		const editorContext = await browser.newContext( { storageState: undefined } );
 		const editorPage = await editorContext.newPage();
 		const wpAdmin = new WpAdminPage( editorPage, testInfo, apiRequests );
@@ -105,7 +105,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await editorContext.close();
 	} );
 
-	test.skip( 'Contributor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
+	test( 'Contributor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
 		const contributorContext = await browser.newContext( { storageState: undefined } );
 		const contributorPage = await contributorContext.newPage();
 		const wpAdmin = new WpAdminPage( contributorPage, testInfo, apiRequests );

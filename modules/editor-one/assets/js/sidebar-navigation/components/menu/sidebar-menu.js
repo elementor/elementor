@@ -2,7 +2,7 @@ import { useMemo } from '@wordpress/element';
 import PropTypes from 'prop-types';
 import MenuActiveStateResolver from '../../classes/menu-active-state-resolver';
 import SidebarMenuItem from './sidebar-menu-item';
-import { MenuList } from '../shared';
+import { MenuList } from './styled-components';
 
 const SidebarMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug } ) => {
 	const activeStateResolver = useMemo(

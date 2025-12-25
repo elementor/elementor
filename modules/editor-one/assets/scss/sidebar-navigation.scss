@@ -45,6 +45,12 @@
 .e-has-sidebar-navigation {
 	#wpcontent {
 		padding-inline-start: var(--editor-one-sidebar-navigation-width);
+		overflow-x: hidden;
+		margin-inline-end: 40px;
+	}
+
+	#wpbody-content {
+		padding-inline-start: var(--editor-one-sidebar-content-padding);
 	}
 
 	#wpfooter {
@@ -62,8 +68,18 @@
 			padding-inline-start: var(--editor-one-sidebar-navigation-width-collapsed);
 		}
 
+		#wpbody-content {
+			padding-inline-start: var(--editor-one-sidebar-content-padding);
+		}
+
 		#wpfooter {
 			margin-inline-start: var(--editor-one-sidebar-navigation-width-collapsed);
+		}
+	}
+
+	@media screen and (min-width: 783px) {
+		&.folded #wpcontent {
+			padding-inline-start: var(--editor-one-sidebar-navigation-width);
 		}
 	}
 
@@ -71,7 +87,7 @@
 		li {
 			&.wp-has-current-submenu a.wp-has-current-submenu::after,
 			&.wp-has-submenu.wp-not-current-submenu:hover > a::after {
-				display: none;
+				display: none !important;
 			}
 
 			&.wp-has-current-submenu,
@@ -86,12 +102,12 @@
 			}
 
 			&.elementor-has-flyout .elementor-submenu-flyout {
-				display: none;
+				display: none !important;
 			}
 		}
 
 		.wp-submenu-head {
-			display: none;
+			display: none !important;
 		}
 	}
 }

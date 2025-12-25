@@ -11,7 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Menu_Data_Provider {
+
 	private static ?Menu_Data_Provider $instance = null;
+
 	private array $level3_items = [];
 	private array $level4_items = [];
 	private ?string $theme_builder_url = null;
@@ -137,6 +139,7 @@ class Menu_Data_Provider {
 	public function get_all_sidebar_page_slugs(): array {
 		$base_slugs = [
 			Menu_Config::ELEMENTOR_MENU_SLUG,
+			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 			Menu_Config::EDITOR_MENU_SLUG,
 		];
 
@@ -154,10 +157,6 @@ class Menu_Data_Provider {
 		}
 
 		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
-
-		if ( Menu_Config::ELEMENTOR_HOME_MENU_SLUG === $page ) {
-			return false;
-		}
 
 		if ( in_array( $page, $this->get_all_sidebar_page_slugs(), true ) ) {
 			return true;
@@ -201,7 +200,6 @@ class Menu_Data_Provider {
 					return true;
 				}
 			}
-
 			return false;
 		} ) );
 	}
@@ -251,7 +249,7 @@ class Menu_Data_Provider {
 
 		return [
 			'slug' => $item_slug,
-			'label' => ucfirst( strtolower( $item->get_label() ) ),
+			'label' => $item->get_label(),
 			'url' => $this->resolve_flyout_item_url( $item, $item_slug ),
 			'icon' => $item->get_icon(),
 			'group_id' => $group_id,
@@ -326,7 +324,7 @@ class Menu_Data_Provider {
 
 				$groups[ $group_id ]['items'][] = [
 					'slug' => $item_slug,
-					'label' => ucfirst( strtolower( $item->get_label() ) ),
+					'label' => $label,
 					'url' => $this->get_item_url( $item_slug, $item->get_parent_slug() ),
 					'priority' => $item->get_position() ?? 100,
 				];
