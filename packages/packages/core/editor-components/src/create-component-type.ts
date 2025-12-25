@@ -362,7 +362,7 @@ function createComponentModel(): BackboneModelConstructor< ComponentModel > {
 				title = editorSettings?.component_src_name;
 			}
 			if ( ! title ) {
-				title = 'Unnamed'; 
+				title = 'Unnamed';
 			}
 			return title;
 		},
