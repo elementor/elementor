@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\EditorOne\Classes\Menu;
+namespace Elementor\Core\Admin\EditorOneMenu\Interfaces;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
