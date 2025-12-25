@@ -5,8 +5,8 @@ import {
 	__createStore,
 	__dispatch as dispatch,
 	__registerSlice as registerSlice,
-	type SliceState,
-	type Store,
+	SliceState,
+	Store,
 } from '@elementor/store';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
@@ -411,13 +411,13 @@ describe( 'ComponentsTab', () => {
 			// Assert
 			await waitFor( () => {
 				expect(
-					screen.getByText( 'Component name is too short. Use at least 2 characters.' )
+					screen.getByText( 'Component name is too short. Please enter at least 2 characters.' )
 				).toBeInTheDocument();
 			} );
 			expect( editableField ).toHaveAttribute( 'contentEditable', 'true' );
 		} );
 
-		it( 'should show validation error for component name that contains spaces', async () => {
+		it( 'should show validation error for component name that is too long', async () => {
 			// Arrange
 			act( () => {
 				dispatch( slice.actions.load( mockComponents ) );
@@ -439,81 +439,13 @@ describe( 'ComponentsTab', () => {
 			fireEvent.click( renameButton );
 
 			const editableField = screen.getByRole( 'textbox' );
-			editableField.textContent = 'New Component Name';
-			editableField.innerText = 'New Component Name';
-			fireEvent.input( editableField, { target: editableField } );
-
-			// Assert
-			await waitFor(
-				() => {
-					expect(
-						screen.getByText( 'Component name can’t contain spaces.', { exact: false } )
-					).toBeInTheDocument();
-				},
-				{ timeout: 3000 }
-			);
-			expect( editableField ).toHaveAttribute( 'contentEditable', 'true' );
-		} );
-
-		it( 'should show validation error for component name that starts with a digit', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
-			// Act
-			renderWithStore(
-				<SearchProvider localStorageKey="test-search">
-					<ComponentsList />
-				</SearchProvider>,
-				store
-			);
-
-			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
-			fireEvent.click( buttonComponentMoreActions );
-
-			const renameButton = await screen.findByText( 'Rename' );
-			fireEvent.click( renameButton );
-
-			const editableField = screen.getByRole( 'textbox' );
-			fireEvent.input( editableField, { target: { innerText: '1NewComponent' } } );
-
-			// Assert
-			await waitFor( () => {
-				expect( screen.getByText( 'Component name must start with a letter.' ) ).toBeInTheDocument();
-			} );
-			expect( editableField ).toHaveAttribute( 'contentEditable', 'true' );
-		} );
-
-		it( 'should show validation error for component name that contains special characters', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
-			// Act
-			renderWithStore(
-				<SearchProvider localStorageKey="test-search">
-					<ComponentsList />
-				</SearchProvider>,
-				store
-			);
-
-			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
-			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
-			fireEvent.click( buttonComponentMoreActions );
-
-			const renameButton = await screen.findByText( 'Rename' );
-			fireEvent.click( renameButton );
-
-			const editableField = screen.getByRole( 'textbox' );
-			fireEvent.input( editableField, { target: { innerText: 'New@Component' } } );
+			const longName = 'A'.repeat( 51 );
+			fireEvent.input( editableField, { target: { innerText: longName } } );
 
 			// Assert
 			await waitFor( () => {
 				expect(
-					screen.getByText( 'Component name can only use letters, numbers, dashes (-), and underscores (_).' )
+					screen.getByText( 'Component name is too long. Please keep it under 50 characters.' )
 				).toBeInTheDocument();
 			} );
 			expect( editableField ).toHaveAttribute( 'contentEditable', 'true' );
@@ -596,7 +528,7 @@ describe( 'ComponentsTab', () => {
 
 			await waitFor( () => {
 				expect(
-					screen.getByText( 'Component name is too short. Use at least 2 characters.' )
+					screen.getByText( 'Component name is too short. Please enter at least 2 characters.' )
 				).toBeInTheDocument();
 			} );
 
@@ -629,16 +561,13 @@ describe( 'ComponentsTab', () => {
 			fireEvent.click( renameButton );
 
 			const editableField = screen.getByRole( 'textbox' );
-			editableField.textContent = 'Invalid Name';
-			editableField.innerText = 'Invalid Name';
-			fireEvent.input( editableField, { target: editableField } );
+			fireEvent.input( editableField, { target: { innerText: 'A' } } );
 
-			await waitFor(
-				() => {
-					expect( screen.getByText( /Component name can.*t contain spaces/i ) ).toBeInTheDocument();
-				},
-				{ timeout: 3000 }
-			);
+			await waitFor( () => {
+				expect(
+					screen.getByText( 'Component name is too short. Please enter at least 2 characters.' )
+				).toBeInTheDocument();
+			} );
 
 			fireEvent.blur( editableField );
 
