@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { colorPropTypeUtil, sizePropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
-import { UpgradeButton } from '@elementor/editor-ui';
+import { CtaButton } from '@elementor/editor-ui';
 import { BrushIcon, ExpandDiagonalIcon, TextIcon } from '@elementor/icons';
 
 import { ColorField } from './components/fields/color-field';
@@ -41,7 +41,7 @@ export function registerVariableTypes() {
 		styleTransformer: EmptyTransformer,
 		variableType: 'size',
 		selectionFilter: () => [],
-		emptyState: <UpgradeButton size="small" href={ 'https://go.elementor.com/go-pro-panel-size-variable/' } />,
+		emptyState: <CtaButton size="small" href={ 'https://go.elementor.com/go-pro-panel-size-variable/' } />,
 	};
 
 	registerVariableType( {
