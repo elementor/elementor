@@ -27,7 +27,6 @@ export type LegacyWindow = Window & {
 				},
 			];
 		$previewWrapper: JQueryElement;
-		previewView: ElementView;
 	};
 };
 
