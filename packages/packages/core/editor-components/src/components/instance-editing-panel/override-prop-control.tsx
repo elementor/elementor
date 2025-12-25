@@ -147,7 +147,7 @@ function getMatchingOverride(
 	return (
 		overrides?.find( ( override ) =>
 			componentOverridablePropTypeUtil.isValid( override )
-				? ( override.value.origin_value as ComponentInstanceOverrideProp ).value.override_key === overrideKey
+				? ( override.value.origin_value as ComponentInstanceOverrideProp ).value?.override_key === overrideKey
 				: override.value.override_key === overrideKey
 		) ?? null
 	);
