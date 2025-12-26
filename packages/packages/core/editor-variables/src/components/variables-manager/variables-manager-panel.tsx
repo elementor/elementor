@@ -10,7 +10,7 @@ import {
 } from '@elementor/editor-panels';
 import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
+import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon, RefreshIcon } from '@elementor/icons';
 import {
 	Alert,
 	AlertAction,
@@ -139,7 +139,37 @@ export function VariablesManagerPanel() {
 		[ handleDeleteVariable ]
 	);
 
+	const handleSyncToV3 = useCallback(
+		async ( itemId: string ) => {
+			try {
+				const response = await fetch( '/wp-json/elementor/v1/variables/sync-to-v3', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-WP-Nonce': ( window as any ).wpApiSettings?.nonce || '',
+					},
+				} );
+
+				if ( response.ok ) {
+					console.log( 'Variables synced to V3 successfully' );
+				}
+			} catch ( error ) {
+				console.error( 'Failed to sync variables to V3:', error );
+			}
+		},
+		[]
+	);
+
 	const menuActions = [
+		{
+			name: __( 'Sync to V3', 'elementor' ),
+			icon: RefreshIcon,
+			color: 'primary.main',
+			onClick: ( itemId: string ) => {
+				handleSyncToV3( itemId );
+				trackVariablesManagerEvent( { action: 'sync_to_v3' } );
+			},
+		},
 		{
 			name: __( 'Delete', 'elementor' ),
 			icon: TrashIcon,
