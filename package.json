@@ -144,6 +144,7 @@
     "write": "^2.0.0"
   },
   "dependencies": {
+    "@elementor/elementor-one-assets": "^0.4.4",
     "@elementor/icons": "1.61.1",
     "@elementor/ui": "1.36.17",
     "@reach/router": "1.3.4",
@@ -166,13 +167,15 @@
     "react-draggable": "^4.4.5",
     "react-infinite-scroller": "^1.2.6",
     "react-markdown": "^8.0.5",
-    "react-redux": "^7.2.6",
+    "react-redux": "^8.1.3",
     "react-sketch-canvas": "^6.2.0",
     "validator": "^13.11.0"
   },
   "overrides": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-redux": "^8.1.3",
+    "@types/react": "^18.2.0",
     "date-fns": "^3.6.0",
     "scheduler": "^0.20.0",
     "form-data": "4.0.4"

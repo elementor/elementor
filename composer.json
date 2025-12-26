@@ -6,7 +6,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.4",
-        "elementor/wp-one-package": "^1.0"
+        "elementor/wp-one-package": "1.0.22"
     },
     "repositories": [
         {
@@ -58,6 +58,9 @@
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "platform": {
+            "php": "7.4"
         }
     },
     "authors": [
