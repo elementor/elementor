@@ -2,8 +2,9 @@
 
 namespace Elementor\Modules\EditorOne\Classes;
 
-use Elementor\Modules\EditorOne\Classes\Menu\Items\Legacy_Submenu_Item;
-use Elementor\Modules\EditorOne\Classes\Menu\Items\Legacy_Submenu_Item_Not_Mapped;
+use Elementor\Core\Admin\EditorOneMenu\Menu\Legacy_Submenu_Item;
+use Elementor\Core\Admin\EditorOneMenu\Menu\Legacy_Submenu_Item_Not_Mapped;
+use Elementor\Core\Admin\EditorOneMenu\Menu\Third_Party_Pages_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -15,6 +16,8 @@ class Legacy_Submenu_Interceptor {
 
 	private Slug_Normalizer $slug_normalizer;
 
+	private bool $third_party_parent_menu_registered = false;
+
 	public function __construct( Menu_Data_Provider $menu_data_provider, Slug_Normalizer $slug_normalizer ) {
 		$this->menu_data_provider = $menu_data_provider;
 		$this->slug_normalizer = $slug_normalizer;
@@ -23,13 +26,11 @@ class Legacy_Submenu_Interceptor {
 	public function intercept_all(): void {
 		global $submenu;
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] = $this->intercept_elementor_menu_items(
+		$this->intercept_elementor_menu_items(
 			$submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] ?? []
 		);
 
-		// phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		$submenu[ Menu_Config::LEGACY_TEMPLATES_SLUG ] = $this->intercept_templates_menu_items(
+		$this->intercept_templates_menu_items(
 			$submenu[ Menu_Config::LEGACY_TEMPLATES_SLUG ] ?? []
 		);
 	}
@@ -146,12 +147,22 @@ class Legacy_Submenu_Interceptor {
 	}
 
 	private function register_unmapped_item( array $submenu_item ): void {
+		$this->ensure_third_party_parent_registered();
+
 		$item_slug = $submenu_item[2];
 		$position = Menu_Config::get_attribute_mapping()[ $item_slug ]['position'] ?? 100;
-		$submenu_item[4] = Menu_Config::get_attribute_mapping()[ $item_slug ]['icon'] ?? 'tool';
 
 		$legacy_item = new Legacy_Submenu_Item_Not_Mapped( $submenu_item, Menu_Config::ELEMENTOR_MENU_SLUG, $position );
 
 		$this->menu_data_provider->register_menu( $legacy_item );
+	}
+
+	private function ensure_third_party_parent_registered(): void {
+		if ( $this->third_party_parent_menu_registered ) {
+			return;
+		}
+
+		$this->menu_data_provider->register_menu( new Third_Party_Pages_Menu() );
+		$this->third_party_parent_menu_registered = true;
 	}
 }

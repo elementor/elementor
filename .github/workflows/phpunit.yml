@@ -45,7 +45,7 @@ jobs:
 
   test_pr_group:
     uses: ./.github/workflows/phpunit-runner.yml
-    needs: [ 'file-diff' ]
+    needs: ['file-diff']
     if: ${{ (github.event_name == 'pull_request' || github.event_name == 'merge_group') && (github.event.pull_request.title == null || needs.file-diff.outputs.php_diff) }}
     with:
       job_name: PHPUnit (PR/Merge)

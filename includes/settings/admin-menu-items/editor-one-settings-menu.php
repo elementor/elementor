@@ -3,7 +3,7 @@
 namespace Elementor\Includes\Settings\AdminMenuItems;
 
 use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Third_Level_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Plugin;
 

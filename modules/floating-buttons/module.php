@@ -115,8 +115,8 @@ class Module extends BaseModule {
 
 		add_filter( 'elementor/editor-one/menu/elementor_post_types', function ( array $elementor_post_types ): array {
 			$elementor_post_types[ static::CPT_FLOATING_BUTTONS ] = [
-				'menu_slug' => 'elementor-templates',
-				'child_slug' => 'floating-elements',
+				'menu_slug' => 'elementor-editor-templates',
+				'child_slug' => 'edit.php?post_type=e-floating-buttons',
 			];
 			return $elementor_post_types;
 		} );

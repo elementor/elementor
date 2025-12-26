@@ -2,7 +2,7 @@
 
 namespace Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems;
 
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Third_Level_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Editor_One_Templates_Menu implements Menu_Item_Third_Level_Interface {
 
 	public function get_capability() {
-		return 'manage_options';
+		return 'edit_posts';
 	}
 
 	public function get_parent_slug() {

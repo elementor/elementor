@@ -1,8 +1,8 @@
 <?php
 
-namespace Elementor\Modules\EditorOne\Classes\Menu\Items;
+namespace Elementor\Core\Admin\EditorOneMenu\Menu;
 
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 abstract class Abstract_Level4_Menu_Item implements Menu_Item_Interface {
 
 	public function get_capability() {
-		return 'manage_options';
+		return Menu_Config::CAPABILITY_MANAGE_OPTIONS;
 	}
 
 	public function get_parent_slug() {
