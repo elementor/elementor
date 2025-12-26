@@ -120,7 +120,6 @@ const entry = {
 	'atomic-widgets-editor': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/editor/module.js' ),
 	'notes': path.resolve( __dirname, '../modules/notes/assets/js/notes.js' ),
 	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
-	'import-export-admin': path.resolve( __dirname, '../app/modules/import-export/assets/js/admin.js' ),
 	'import-export-customization-admin': path.resolve( __dirname, '../app/modules/import-export-customization/assets/js/admin.js' ),
 	'editor-one-admin': path.resolve( __dirname, '../modules/editor-one/assets/js/admin.js' ),
 	'interactions': path.resolve( __dirname, '../modules/interactions/assets/js/interactions.js' ),

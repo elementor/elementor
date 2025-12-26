@@ -11,7 +11,7 @@ export default function ApplyKitDialog( props ) {
 		let url = '';
 
 		if ( elementorCommon?.config?.experimentalFeatures[ 'import-export-customization' ] ) {
-			url = `import-customization?referrer=kit-library&id=${ props.id }&file_url=${ encodeURIComponent( props.downloadLink ) }`;
+			url = `import?referrer=kit-library&id=${ props.id }&file_url=${ encodeURIComponent( props.downloadLink ) }`;
 			if ( applyAll ) {
 				url += '&action_type=apply-all';
 			}

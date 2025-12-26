@@ -179,7 +179,7 @@ const KitListCloudItem = ( props ) => {
 										AppsEventTracking.sendKitCloudLibraryApply( props.model.id );
 
 										const url = elementorCommon?.config?.experimentalFeatures[ 'import-export-customization' ]
-											? `import-customization?referrer=${ KIT_SOURCE_MAP.CLOUD }&id=${ props.model.id }`
+											? `import?referrer=${ KIT_SOURCE_MAP.CLOUD }&id=${ props.model.id }`
 											: `import?referrer=kit-library&source=${ KIT_SOURCE_MAP.CLOUD }&kit_id=${ props.model.id }`;
 
 										navigate( url, { replace: true } );

@@ -62,7 +62,7 @@ export default function ExportKitFooter() {
 
 	useEffect( () => {
 		if ( isExporting ) {
-			navigate( '/export-customization/process' );
+			navigate( '/export/process' );
 		}
 	}, [ isExporting, navigate ] );
 
