@@ -51,15 +51,15 @@ class Top_Bar_Handler {
 			true
 		);
 
-        wp_localize_script(
-            'editor-one-top-bar',
-            'elementorOneTopBarConfig',
-            [
-                'version' => ELEMENTOR_VERSION,
-                'title' => __( 'Elementor', 'elementor' ),
-                'environment' => apply_filters( 'elementor/environment', 'production' ),
-            ]
-        );
+		wp_localize_script(
+			'editor-one-top-bar',
+			'elementorOneTopBarConfig',
+			[
+				'version' => ELEMENTOR_VERSION,
+				'title' => __( 'Elementor', 'elementor' ),
+				'environment' => apply_filters( 'elementor/environment', 'production' ),
+			]
+		);
 	}
 
 	public function render_top_bar_container(): void {
