@@ -151,10 +151,37 @@ export function VariablesManagerPanel() {
 				} );
 
 				if ( response.ok ) {
-					console.log( 'Variables synced to V3 successfully' );
+					const result = await response.json();
+					console.log( 'Variables synced to V3 successfully:', result );
+					
+					// Show success notification
+					if ( ( window as any ).elementor?.notifications ) {
+						( window as any ).elementor.notifications.showToast( {
+							message: __( 'Variables synced to V3 successfully', 'elementor' ),
+							type: 'success',
+						} );
+					}
+				} else {
+					console.error( 'Sync failed with status:', response.status );
+					
+					// Show error notification
+					if ( ( window as any ).elementor?.notifications ) {
+						( window as any ).elementor.notifications.showToast( {
+							message: __( 'Failed to sync variables to V3', 'elementor' ),
+							type: 'error',
+						} );
+					}
 				}
 			} catch ( error ) {
 				console.error( 'Failed to sync variables to V3:', error );
+				
+				// Show error notification
+				if ( ( window as any ).elementor?.notifications ) {
+					( window as any ).elementor.notifications.showToast( {
+						message: __( 'Error syncing variables to V3', 'elementor' ),
+						type: 'error',
+					} );
+				}
 			}
 		},
 		[]
