@@ -560,6 +560,8 @@ class Rest_Api {
 		$result = $this->service->process_batch( $operations );
 
 		$this->clear_cache();
+		
+		do_action( 'elementor/variables/after_save', $result, 'batch' );
 
 		return $this->success_response( $result );
 	}
