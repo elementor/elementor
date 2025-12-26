@@ -154,10 +154,18 @@ export function VariablesManagerPanel() {
 					const result = await response.json();
 					console.log( 'Variables synced to V3 successfully:', result );
 					
+					// Clear Elementor cache to refresh global colors
+					if ( ( window as any ).elementor?.documents ) {
+						const kit = ( window as any ).elementor.documents.getCurrent();
+						if ( kit ) {
+							( window as any ).elementor.documents.invalidateCache( kit.id );
+						}
+					}
+					
 					// Show success notification
 					if ( ( window as any ).elementor?.notifications ) {
 						( window as any ).elementor.notifications.showToast( {
-							message: __( 'Variables synced to V3 successfully', 'elementor' ),
+							message: __( 'Variables synced to V3. Refresh Site Settings to see changes.', 'elementor' ),
 							type: 'success',
 						} );
 					}

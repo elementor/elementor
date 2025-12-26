@@ -164,7 +164,10 @@ class Sync_To_V3 {
 	}
 	
 	public function auto_sync_on_save() {
-		$this->sync_colors();
+		error_log( 'V4 to V3 Sync: auto_sync_on_save triggered' );
+		$result = $this->sync_colors();
+		error_log( 'V4 to V3 Sync result: ' . print_r( $result, true ) );
+		return $result;
 	}
 	
 	private function get_v4_color_variables() {
