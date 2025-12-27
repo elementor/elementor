@@ -260,33 +260,11 @@ class ActionControlTracking extends BaseTracking {
 			}
 		}
 
-		console.log( element, controlType );
 		if ( CONTROL_TYPES.BUTTON === controlType || CONTROL_TYPES.TOGGLE === controlType || CONTROL_TYPES.FILTER === controlType ) {
 			const dataId = element.getAttribute( 'data-id' );
-			console.log( dataId );
+
 			if ( dataId ) {
 				return dataId;
-			}
-
-			const classIdMatch = this.extractClassId( element );
-			if ( classIdMatch ) {
-				return classIdMatch;
-			}
-		}
-
-		return '';
-	}
-
-	static extractClassId( element ) {
-		const classes = element.className;
-		if ( ! classes || 'string' !== typeof classes ) {
-			return '';
-		}
-
-		const classList = classes.split( ' ' );
-		for ( const cls of classList ) {
-			if ( cls.startsWith( 'e-id-' ) ) {
-				return cls.substring( 5 );
 			}
 		}
 
