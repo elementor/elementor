@@ -4,10 +4,6 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-<<<<<<< HEAD
-    "content-hash": "436bafdc6f8e14a5746e69a01025f6d9",
-    "packages": [],
-=======
     "content-hash": "9a233a96e5bf3e4f3f212f91c8ceaceb",
     "packages": [
         {
@@ -86,7 +82,6 @@
             "time": "2025-12-25T11:09:16+00:00"
         }
     ],
->>>>>>> bf8e22e214 (Internal: Implement top-bar SDK [ED-22028] (#33916))
     "packages-dev": [
         {
             "name": "composer/package-versions-deprecated",
