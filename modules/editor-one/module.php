@@ -2,21 +2,18 @@
 
 namespace Elementor\Modules\EditorOne;
 
-use Elementor\Core\Admin\Admin;
 use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\EditorOne\Classes\Editor_One_Pointer;
-use Elementor\Modules\EditorOne\Components\Connect;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Components\Sidebar_Navigation_Handler;
 use Elementor\Modules\EditorOne\Components\Top_Bar_Handler;
-use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'e_editor_one';
@@ -55,7 +52,8 @@ class Module extends BaseModule {
 		}
 
 		add_action( 'current_screen', function () {
-			if ( ! static::is_active() || ! Admin::is_elementor_admin_page() ) {
+			$menu_data_provider = Menu_Data_Provider::instance();
+			if ( ! $menu_data_provider->is_elementor_editor_page() || ! static::is_active() ) {
 				return;
 			}
 
@@ -94,6 +92,7 @@ class Module extends BaseModule {
 	 * Enqueue admin styles
 	 */
 	private function enqueue_styles() {
+
 		wp_enqueue_style( 'elementor-admin' );
 
 		wp_enqueue_style(

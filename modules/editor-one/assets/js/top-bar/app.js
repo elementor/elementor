@@ -2,12 +2,14 @@ import ReactUtils from 'elementor-utils/react';
 import { ElementorOneHeader, ElementorOneAssetsProvider } from '@elementor/elementor-one-assets';
 
 const App = () => {
+	const { elementorOneTopBarConfig: { version, title, environment } } = window;
+
 	return (
-		<ElementorOneAssetsProvider env="production" language="en">
+		<ElementorOneAssetsProvider env={ environment }>
 			<ElementorOneHeader
-				appSettings={ { slug: 'elementor', version: '3.34' } }
+				appSettings={ { slug: 'elementor', version } }
 				isWithinWpAdmin
-				title={ __( 'Elementor', 'elementor' ) }
+				title={ title }
 			/>
 		</ElementorOneAssetsProvider>
 	);
