@@ -97,22 +97,8 @@ class NavigationTracking extends BaseTracking {
 		}
 
 		const itemId = this.extractSidebarItemId( clickedElement );
-		const rootItem = this.extractSidebarRootItem( clickedElement );
 
-		WpDashboardTracking.trackNavClicked( itemId, rootItem, NAV_AREAS.SIDEBAR_MENU );
-	}
-
-	static handleFlyoutClick( event ) {
-		const link = event.target.closest( 'a' );
-
-		if ( ! link ) {
-			return;
-		}
-
-		const itemId = this.extractItemId( link );
-		const rootItem = this.extractFlyoutRootItem( link );
-
-		WpDashboardTracking.trackNavClicked( itemId, rootItem, NAV_AREAS.FLYOUT_MENU );
+		WpDashboardTracking.trackNavClicked( itemId, null, NAV_AREAS.SIDEBAR_MENU );
 	}
 
 	static extractSidebarItemId( element ) {
@@ -126,59 +112,7 @@ class NavigationTracking extends BaseTracking {
 			return textContent;
 		}
 
-		if ( 'A' === element.tagName ) {
-			const href = element.getAttribute( 'href' );
-			if ( href ) {
-				return this.extractPageFromUrl( href );
-			}
-		}
-
 		return 'unknown';
-	}
-
-	static extractSidebarRootItem( element ) {
-		const listItem = element.closest( 'li' );
-
-		if ( ! listItem ) {
-			return null;
-		}
-
-		const parentList = listItem.parentElement;
-
-		if ( ! parentList || parentList.tagName !== 'UL' ) {
-			return null;
-		}
-
-		const parentListItem = parentList.closest( 'li' );
-
-		if ( ! parentListItem ) {
-			return null;
-		}
-
-		const parentButton = parentListItem.querySelector( ':scope > button' );
-
-		if ( parentButton ) {
-			const paragraph = parentButton.querySelector( 'p' );
-			return paragraph ? paragraph.textContent.trim() : parentButton.textContent.trim();
-		}
-
-		return null;
-	}
-
-	static extractFlyoutRootItem( link ) {
-		const listItem = link.closest( 'li' );
-
-		if ( ! listItem ) {
-			return null;
-		}
-
-		const groupId = listItem.getAttribute( 'data-group-id' );
-
-		if ( groupId ) {
-			return groupId;
-		}
-
-		return null;
 	}
 
 	static extractPageFromUrl( href ) {
