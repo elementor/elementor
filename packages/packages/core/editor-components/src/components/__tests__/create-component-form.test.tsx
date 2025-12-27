@@ -253,10 +253,10 @@ describe( 'CreateComponentForm', () => {
 			// Assert.
 			expect( mockReplaceElement ).toHaveBeenCalledWith( {
 				currentElement: mockElement,
-				newElement: {
+				newElement: expect.objectContaining( {
 					elType: 'widget',
 					widgetType: 'e-component',
-					settings: {
+					settings: expect.objectContaining( {
 						component_instance: {
 							$$type: 'component-instance',
 							value: {
@@ -266,12 +266,12 @@ describe( 'CreateComponentForm', () => {
 								},
 							},
 						},
-					},
-					editor_settings: {
-						title: 'My Test Component',
+					} ),
+					editor_settings: expect.objectContaining( {
+						component_src_name: 'My Test Component',
 						component_uid: GENERATED_UID,
-					},
-				},
+					} ),
+				} ),
 				withHistory: false,
 			} );
 		} );

@@ -14,6 +14,7 @@ import {
 	type PublishedComponent,
 	type StylesDefinition,
 	type UnpublishedComponent,
+	type UpdatedComponentNames,
 } from '../types';
 import { loadComponents } from './thunks';
 
@@ -30,6 +31,7 @@ type ComponentsState = {
 	archivedData: PublishedComponent[];
 	path: ComponentsPathItem[];
 	currentComponentId: V1Document[ 'id' ] | null;
+	updatedComponentNames: UpdatedComponentNames;
 };
 
 export type ComponentsSlice = SliceState< typeof slice >;
@@ -48,6 +50,7 @@ export const initialState: ComponentsState = {
 	archivedData: [],
 	path: [],
 	currentComponentId: null,
+	updatedComponentNames: {},
 };
 
 export const SLICE_NAME = 'components';
@@ -110,6 +113,20 @@ export const slice = createSlice( {
 			}
 
 			component.overridableProps = payload.overridableProps;
+		},
+		rename: ( state, { payload }: PayloadAction< { componentUid: string; name: string } > ) => {
+			const component = state.data.find( ( comp ) => comp.uid === payload.componentUid );
+
+			if ( ! component ) {
+				return;
+			}
+			if ( component.id ) {
+				state.updatedComponentNames[ component.id ] = payload.name;
+			}
+			component.name = payload.name;
+		},
+		cleanUpdatedComponentNames: ( state ) => {
+			state.updatedComponentNames = {};
 		},
 	},
 	extraReducers: ( builder ) => {
@@ -200,4 +217,12 @@ export const useCurrentComponentId = () => {
 export const selectArchivedComponents = createSelector(
 	selectArchivedData,
 	( archivedData: PublishedComponent[] ) => archivedData
+);
+export const selectUpdatedComponentNames = createSelector(
+	( state: ComponentsSlice ) => state[ SLICE_NAME ].updatedComponentNames,
+	( updatedComponentNames ) =>
+		Object.entries( updatedComponentNames ).map( ( [ componentId, title ] ) => ( {
+			componentId: Number( componentId ),
+			title,
+		} ) )
 );

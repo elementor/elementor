@@ -7,11 +7,12 @@ import {
 	type ElementView,
 	type LegacyWindow,
 } from '@elementor/editor-canvas';
-import { getCurrentDocument } from '@elementor/editor-documents';
+import { type Document, getCurrentDocument } from '@elementor/editor-documents';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
 import { type ComponentInstancePropValue, type ExtendedWindow } from './types';
+import { getComponentDocumentData } from './utils/component-document-data';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
@@ -33,6 +34,45 @@ type ContextMenuGroupConfig = {
 type ContextMenuGroup = {
 	name: string;
 	actions: ContextMenuAction[];
+};
+
+type ComponentModel = ElementModel & {
+	componentId?: number | string;
+	componentTitle?: string;
+};
+
+type ComponentModelInstance = BackboneModel< ComponentModel > & {
+	trigger: ( event: string, ...args: unknown[] ) => void;
+	fetchComponentTitle: ( componentId: number ) => void;
+	extractTitleFromConfig: ( config: Document | null ) => string | null;
+	getTitle: () => string;
+	getComponentId: () => number | null;
+	getComponentName: () => string;
+	getComponentUid: () => string | null;
+};
+
+type BackboneModelConstructor< Model extends object > = {
+	new ( ...args: unknown[] ): BackboneModel< Model >;
+	extend: < ExtendedModel extends object >(
+		properties: Record< string, unknown >
+	) => BackboneModelConstructor< ExtendedModel >;
+	prototype: {
+		initialize: ( attributes: unknown, options: unknown ) => void;
+	};
+};
+
+type LegacyWindowWithModels = LegacyWindow & {
+	elementor: LegacyWindow[ 'elementor' ] & {
+		modules: LegacyWindow[ 'elementor' ][ 'modules' ] & {
+			elements: LegacyWindow[ 'elementor' ][ 'modules' ][ 'elements' ] & {
+				models: {
+					Widget: new () => {
+						getModel: () => BackboneModelConstructor< ElementModel >;
+					};
+				};
+			};
+		};
+	};
 };
 
 export const TYPE = 'e-component';
@@ -63,14 +103,19 @@ export function createComponentType(
 	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
 ): typeof ElementType {
 	const legacyWindow = window as unknown as LegacyWindow;
+	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
 
-	return class extends legacyWindow.elementor.modules.elements.types.Widget {
+	return class extends WidgetType {
 		getType() {
 			return options.type;
 		}
 
 		getView() {
 			return createComponentView( { ...options } );
+		}
+
+		getModel(): BackboneModelConstructor< ComponentModel > {
+			return createComponentModel();
 		}
 	};
 }
@@ -251,4 +296,92 @@ function setInactiveRecursively( model: BackboneModel< ElementModel > ) {
 			setInactiveRecursively( childModel );
 		} );
 	}
+}
+
+function createComponentModel(): BackboneModelConstructor< ComponentModel > {
+	const legacyWindow = window as unknown as LegacyWindowWithModels;
+	const WidgetType = legacyWindow.elementor.modules.elements.models.Widget;
+	const widgetTypeInstance = new WidgetType();
+	const BaseWidgetModel = widgetTypeInstance.getModel();
+
+	return BaseWidgetModel.extend( {
+		initialize( this: ComponentModelInstance, attributes: unknown, options: unknown ): void {
+			BaseWidgetModel.prototype.initialize.call( this, attributes, options );
+
+			const componentInstance = this.get( 'settings' )?.get( 'component_instance' ) as
+				| ComponentInstancePropValue
+				| undefined;
+			if ( componentInstance?.value ) {
+				const componentId = componentInstance.value.component_id?.value;
+				if ( componentId && typeof componentId === 'number' ) {
+					this.set( 'componentId', componentId );
+					this.fetchComponentTitle( componentId );
+				}
+			}
+		},
+
+		fetchComponentTitle( this: ComponentModelInstance, componentId: number ): void {
+			getComponentDocumentData( componentId )
+				.then( ( config ) => {
+					if ( ! config ) {
+						return;
+					}
+
+					const title = this.extractTitleFromConfig( config );
+					if ( title ) {
+						this.set( 'componentTitle', title );
+						this.trigger( 'change:title' );
+					}
+				} )
+				.catch( () => {
+					// Silently fail, will use fallback title
+				} );
+		},
+
+		extractTitleFromConfig( this: ComponentModelInstance, config: Document | null ): string | null {
+			if ( ! config ) {
+				return null;
+			}
+			// Document type has a title property directly
+			if ( config.title ) {
+				return config.title;
+			}
+			return null;
+		},
+
+		getTitle( this: ComponentModelInstance ): string {
+			const editorSettings = this.get( 'editor_settings' ) as
+				| {
+						title?: string;
+						component_src_name?: string;
+						component_uid?: string;
+				  }
+				| undefined;
+			let title = editorSettings?.title;
+			if ( ! title || title === '$$UNSET$$' ) {
+				title = editorSettings?.component_src_name;
+			}
+			if ( ! title ) {
+				title = 'Unnamed';
+			}
+			return title;
+		},
+
+		getComponentId( this: ComponentModelInstance ): number | null {
+			return ( this.get( 'componentId' ) as number | undefined ) || null;
+		},
+
+		getComponentName( this: ComponentModelInstance ): string {
+			return this.getTitle();
+		},
+
+		getComponentUid( this: ComponentModelInstance ): string | null {
+			const editorSettings = this.get( 'editor_settings' ) as
+				| {
+						component_uid?: string;
+				  }
+				| undefined;
+			return editorSettings?.component_uid || null;
+		},
+	} );
 }

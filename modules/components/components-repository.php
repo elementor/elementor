@@ -118,4 +118,13 @@ class Components_Repository {
 			'successIds' => $success_ids,
 		];
 	}
+
+	public function update_title( $component_id, $title ) {
+		$doc = $this->get( $component_id );
+		if ( ! $doc ) {
+			return false;
+		}
+		$doc->save( [ 'post_title' => $title ] );
+		return true;
+	}
 }

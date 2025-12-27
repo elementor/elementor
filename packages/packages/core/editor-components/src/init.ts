@@ -40,6 +40,7 @@ import { removeComponentStyles } from './store/actions/remove-component-styles';
 import { componentsStylesProvider } from './store/components-styles-provider';
 import { slice } from './store/store';
 import { beforeSave } from './sync/before-save';
+import { SyncComponentRenameToNavigator } from './sync/sync-component-rename-to-navigator';
 import { type ExtendedWindow } from './types';
 import { onElementDrop } from './utils/tracking';
 
@@ -78,6 +79,11 @@ export function init() {
 	injectIntoLogic( {
 		id: 'components-populate-store',
 		component: PopulateStore,
+	} );
+
+	injectIntoLogic( {
+		id: 'components-sync-rename-to-navigator',
+		component: SyncComponentRenameToNavigator,
 	} );
 
 	injectIntoTop( {
