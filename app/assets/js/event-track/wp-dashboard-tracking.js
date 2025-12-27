@@ -2,7 +2,6 @@ import NavigationTracking from './dashboard/navigation';
 import PluginActions from './dashboard/plugin-actions';
 import PromotionTracking from './dashboard/promotion';
 import ScreenViewTracking from './dashboard/screen-view';
-import TopBarTracking from './dashboard/top-bar';
 import MenuPromotionTracking from './dashboard/menu-promotion';
 import ActionControlTracking from './dashboard/action-controls';
 
@@ -28,6 +27,8 @@ export const NAV_AREAS = {
 	SUBMENU: 'submenu',
 	HOVER_MENU: 'hover_menu',
 	TOP_BAR: 'top_bar',
+	SIDEBAR_MENU: 'sidebar',
+	FLYOUT_MENU: 'flyout_menu',
 };
 
 export const SCREEN_TYPES = {
@@ -228,6 +229,11 @@ export default class WpDashboardTracking {
 					this.isNavigatingToElementor = true;
 				}
 			}
+
+			const isSidebar = event.target.closest( '#editor-one-sidebar-navigation' );
+			if ( isSidebar ) {
+				this.isNavigatingToElementor = true;
+			}
 		};
 
 		const handleFormSubmit = ( event ) => {
@@ -367,7 +373,6 @@ export default class WpDashboardTracking {
 
 		this.navigationListeners = [];
 
-		TopBarTracking.destroy();
 		ScreenViewTracking.destroy();
 		PromotionTracking.destroy();
 		MenuPromotionTracking.destroy();
@@ -390,7 +395,6 @@ window.addEventListener( 'elementor/admin/init', () => {
 
 	if ( isElementorPage ) {
 		WpDashboardTracking.init();
-		TopBarTracking.init();
 		ScreenViewTracking.init();
 		PromotionTracking.init();
 		MenuPromotionTracking.init();
