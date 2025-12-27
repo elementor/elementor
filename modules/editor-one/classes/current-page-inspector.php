@@ -7,13 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Current_Page_Inspector {
-	/**
-	 * @var callable
-	 */
-	private $slugs_provider;
+	private Menu_Data_Provider $menu_data_provider;
 
-	public function __construct( callable $slugs_provider ) {
-		$this->slugs_provider = $slugs_provider;
+	public function __construct( Menu_Data_Provider $menu_data_provider ) {
+		$this->menu_data_provider = $menu_data_provider;
 	}
 
 	public function is_elementor_editor_page(): bool {
@@ -27,7 +24,7 @@ class Current_Page_Inspector {
 			return false;
 		}
 
-		if ( in_array( $page, ( $this->slugs_provider )(), true ) ) {
+		if ( in_array( $page, $this->menu_data_provider->get_all_sidebar_page_slugs(), true ) ) {
 			return true;
 		}
 

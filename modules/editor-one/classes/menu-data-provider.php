@@ -18,7 +18,6 @@ class Menu_Data_Provider {
 	private ?array $cached_editor_flyout_data = null;
 	private ?array $cached_level4_flyout_data = null;
 	private Slug_Normalizer $slug_normalizer;
-	private Current_Page_Inspector $current_page_inspector;
 
 	public static function instance(): self {
 		if ( null === self::$instance ) {
@@ -30,7 +29,6 @@ class Menu_Data_Provider {
 
 	private function __construct() {
 		$this->slug_normalizer = new Slug_Normalizer();
-		$this->current_page_inspector = new Current_Page_Inspector( [ $this, 'get_all_sidebar_page_slugs' ] );
 	}
 
 	public function get_slug_normalizer(): Slug_Normalizer {
@@ -160,10 +158,6 @@ class Menu_Data_Provider {
 		);
 
 		return array_values( array_unique( $slugs ) );
-	}
-
-	public function is_elementor_editor_page(): bool {
-		return $this->current_page_inspector->is_elementor_editor_page();
 	}
 
 	public static function get_elementor_post_types(): array {
