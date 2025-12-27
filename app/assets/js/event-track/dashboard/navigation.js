@@ -2,8 +2,7 @@ import WpDashboardTracking, { NAV_AREAS } from '../wp-dashboard-tracking';
 import BaseTracking from './base-tracking';
 
 const ELEMENTOR_MENU_SELECTORS = {
-	ELEMENTOR_TOP_LEVEL: 'li#toplevel_page_elementor',
-	TEMPLATES_TOP_LEVEL: 'li#menu-posts-elementor_library',
+	ELEMENTOR_TOP_LEVEL: 'li#toplevel_page_elementor-home',
 	ADMIN_MENU: '#adminmenu',
 	TOP_LEVEL_LINK: '.wp-menu-name',
 	SUBMENU_CONTAINER: '.wp-submenu',
@@ -17,9 +16,7 @@ const ELEMENTOR_MENU_SELECTORS = {
 class NavigationTracking extends BaseTracking {
 	static init() {
 		this.attachElementorMenuTracking();
-		this.attachTemplatesMenuTracking();
 		this.attachSidebarNavigationTracking();
-		this.attachFlyoutMenuTracking();
 	}
 
 	static attachElementorMenuTracking() {
@@ -32,54 +29,40 @@ class NavigationTracking extends BaseTracking {
 		this.attachMenuTracking( elementorMenu, 'Elementor' );
 	}
 
-	static attachTemplatesMenuTracking() {
-		const templatesMenu = document.querySelector( ELEMENTOR_MENU_SELECTORS.TEMPLATES_TOP_LEVEL );
-
-		if ( ! templatesMenu ) {
-			return;
-		}
-
-		this.attachMenuTracking( templatesMenu, 'Templates' );
-	}
-
 	static attachSidebarNavigationTracking() {
 		const sidebar = document.querySelector( ELEMENTOR_MENU_SELECTORS.SIDEBAR_NAVIGATION );
 
-		if ( ! sidebar ) {
+		if ( sidebar ) {
+			this.attachSidebarClickListener( sidebar );
 			return;
 		}
 
+		this.waitForSidebar();
+	}
+
+	static waitForSidebar() {
+		this.addObserver(
+			document.body,
+			{ childList: true, subtree: true },
+			( mutations, observer ) => {
+				const sidebar = document.querySelector( ELEMENTOR_MENU_SELECTORS.SIDEBAR_NAVIGATION );
+				if ( sidebar ) {
+					observer.disconnect();
+					this.attachSidebarClickListener( sidebar );
+				}
+			},
+		);
+	}
+
+	static attachSidebarClickListener( sidebar ) {
 		this.addEventListenerTracked(
 			sidebar,
 			'click',
 			( event ) => {
 				this.handleSidebarClick( event );
 			},
+			{ capture: true },
 		);
-	}
-
-	static attachFlyoutMenuTracking() {
-		const flyoutParents = document.querySelectorAll( ELEMENTOR_MENU_SELECTORS.FLYOUT_PARENT );
-
-		if ( ! flyoutParents.length ) {
-			return;
-		}
-
-		flyoutParents.forEach( ( flyoutParent ) => {
-			const flyoutMenu = flyoutParent.querySelector( ELEMENTOR_MENU_SELECTORS.FLYOUT_MENU );
-
-			if ( ! flyoutMenu ) {
-				return;
-			}
-
-			this.addEventListenerTracked(
-				flyoutMenu,
-				'click',
-				( event ) => {
-					this.handleFlyoutClick( event );
-				},
-			);
-		} );
 	}
 
 	static attachMenuTracking( menuElement, menuName ) {
@@ -107,7 +90,7 @@ class NavigationTracking extends BaseTracking {
 	}
 
 	static handleSidebarClick( event ) {
-		const clickedElement = event.target.closest( 'a, button' );
+		const clickedElement = event.target.closest( 'a, button, [role="button"]' );
 
 		if ( ! clickedElement ) {
 			return;

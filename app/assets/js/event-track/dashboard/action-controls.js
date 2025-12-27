@@ -4,7 +4,7 @@ import BaseTracking from './base-tracking';
 
 const EXCLUDED_SELECTORS = {
 	ADMIN_MENU: '#adminmenu',
-	TOP_BAR: '.e-admin-top-bar',
+	TOP_BAR: '#editor-one-top-bar',
 	WP_ADMIN_BAR: '#wpadminbar',
 	SUBMENU: '.wp-submenu',
 	PROMO_PAGE: '.e-feature-promotion',
@@ -123,6 +123,13 @@ class ActionControlTracking extends BaseTracking {
 					return;
 				}
 
+				const toggle = base.closest( '.elementor-role-toggle' );
+
+				if ( toggle && ! this.isExcludedElement( toggle ) ) {
+					this.trackControl( toggle, CONTROL_TYPES.TOGGLE );
+					return;
+				}
+
 				const button = base.closest( 'button, input[type="submit"], input[type="button"], .button, .e-btn' );
 				if ( button && ! this.isExcludedElement( button ) ) {
 					if ( FILTER_BUTTON_IDS.includes( button.id ) ) {
@@ -151,7 +158,7 @@ class ActionControlTracking extends BaseTracking {
 					return;
 				}
 
-				const toggle = base.closest( '.components-toggle-control' );
+				const toggle = base.closest( '.MuiSwitch-switchBase' );
 
 				if ( toggle && ! this.isExcludedElement( toggle ) ) {
 					this.trackControl( toggle, CONTROL_TYPES.TOGGLE );
@@ -253,8 +260,10 @@ class ActionControlTracking extends BaseTracking {
 			}
 		}
 
+		console.log( element, controlType );
 		if ( CONTROL_TYPES.BUTTON === controlType || CONTROL_TYPES.TOGGLE === controlType || CONTROL_TYPES.FILTER === controlType ) {
 			const dataId = element.getAttribute( 'data-id' );
+			console.log( dataId );
 			if ( dataId ) {
 				return dataId;
 			}
