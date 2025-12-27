@@ -7,10 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Current_Page_Inspector {
-	private Menu_Data_Provider $menu_data_provider;
+	/**
+	 * @var callable
+	 */
+	private $slugs_provider;
 
-	public function __construct( Menu_Data_Provider $menu_data_provider ) {
-		$this->menu_data_provider = $menu_data_provider;
+	public function __construct( callable $slugs_provider ) {
+		$this->slugs_provider = $slugs_provider;
 	}
 
 	public function is_elementor_editor_page(): bool {
@@ -24,7 +27,7 @@ class Current_Page_Inspector {
 			return false;
 		}
 
-		if ( in_array( $page, $this->menu_data_provider->get_all_sidebar_page_slugs(), true ) ) {
+		if ( in_array( $page, ( $this->slugs_provider )(), true ) ) {
 			return true;
 		}
 
@@ -41,4 +44,3 @@ class Current_Page_Inspector {
 		return isset( Menu_Config::get_elementor_post_types()[ $post_type ] );
 	}
 }
-

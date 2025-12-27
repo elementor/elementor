@@ -41,17 +41,22 @@ class NavigationTracking extends BaseTracking {
 	}
 
 	static waitForSidebar() {
-		this.addObserver(
+		const observer = this.addObserver(
 			document.body,
 			{ childList: true, subtree: true },
-			( mutations, observer ) => {
+			( mutations, obs ) => {
 				const sidebar = document.querySelector( ELEMENTOR_MENU_SELECTORS.SIDEBAR_NAVIGATION );
 				if ( sidebar ) {
-					observer.disconnect();
+					obs.disconnect();
 					this.attachSidebarClickListener( sidebar );
+					clearTimeout( timeoutId );
 				}
 			},
 		);
+
+		const timeoutId = setTimeout( () => {
+			observer.disconnect();
+		}, 10000 );
 	}
 
 	static attachSidebarClickListener( sidebar ) {

@@ -30,7 +30,7 @@ class Menu_Data_Provider {
 
 	private function __construct() {
 		$this->slug_normalizer = new Slug_Normalizer();
-		$this->current_page_inspector = new Current_Page_Inspector( $this );
+		$this->current_page_inspector = new Current_Page_Inspector( [ $this, 'get_all_sidebar_page_slugs' ] );
 	}
 
 	public function get_slug_normalizer(): Slug_Normalizer {
