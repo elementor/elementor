@@ -49,7 +49,12 @@ class Overridable_Prop_Parser {
 			return $result;
 		}
 
-		$this->origin_value_prop_type = Parsing_Utils::get_prop_type( $prop['elType'], $prop['widgetType'], $prop['propKey'] );
+		if ( isset( $prop['originPropFields'] ) ) {
+			['elType' => $el_type, 'widgetType' => $widget_type, 'propKey' => $prop_key] = $prop['originPropFields'];
+		} else {
+			['elType' => $el_type, 'widgetType' => $widget_type, 'propKey' => $prop_key] = $prop;
+		}		
+		$this->origin_value_prop_type = Parsing_Utils::get_prop_type( $el_type, $widget_type, $prop_key );
 
 		if ( ! empty( $prop['originValue'] ) && ! $this->origin_value_prop_type->validate( $prop['originValue'] ) ) {
 			$result->errors()->add( 'originValue', 'invalid' );
