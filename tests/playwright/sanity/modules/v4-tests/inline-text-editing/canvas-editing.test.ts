@@ -15,16 +15,28 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		context = await browser.newContext();
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-		testUser = await apiRequests.createNewUser( page.context().request, {
-			username: 'globalClassMaker',
-			password: 'password',
-			email: 'globalClassMaker@test.com',
-			roles: [ 'administrator' ],
-		} );
+
+		if ( ! testUser?.id ) {
+			try {
+				testUser = await apiRequests.createNewUser( page.context().request, {
+					username: 'globalClassMaker',
+					password: 'password',
+					email: 'globalClassMaker@test.com',
+				roles: [ 'administrator' ],
+			} );
+
+			await context.close();
+				context = await browser.newContext();
+				page = await context.newPage();
+				wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
+			} catch ( error ) {
+				// Silently handle creation errors.
+			}
+		}
 
 		await wpAdminPage.customLogin( testUser.username, testUser.password );
 		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
-		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active' } );
+		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active', e_classes: 'active' } );
 
 		editor = await wpAdminPage.openNewPage();
 	} );
@@ -42,8 +54,6 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 			} catch ( error ) {
 				// Silently handle cleanup errors - test cleanup should not fail the test
 			}
-
-			await context.close();
 		}
 
 		await wpAdminPage?.resetExperiments();
