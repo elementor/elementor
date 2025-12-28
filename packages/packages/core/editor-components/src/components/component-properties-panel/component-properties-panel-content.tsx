@@ -15,10 +15,10 @@ import { reorderOverridableGroups } from '../../store/actions/reorder-overridabl
 import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
 import { useCurrentComponentId } from '../../store/store';
 import { useOverridableProps } from '../component-panel-header/use-overridable-props';
-import { useCurrentEditableItem } from './hooks/use-current-editable-item';
 import { PropertiesEmptyState } from './properties-empty-state';
 import { PropertiesGroup } from './properties-group';
 import { SortableItem, SortableProvider } from './sortable';
+import { useCurrentEditableItem } from './use-current-editable-item';
 import { generateUniqueLabel } from './utils/generate-unique-label';
 
 type Props = {

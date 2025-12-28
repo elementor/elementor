@@ -16,9 +16,9 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { type OverridableProp, type OverridablePropsGroup } from '../../types';
-import { type GroupLabelEditableState } from './hooks/use-current-editable-item';
 import { PropertyItem } from './property-item';
 import { SortableItem, SortableProvider, SortableTrigger, type SortableTriggerProps } from './sortable';
+import { type GroupLabelEditableState } from './use-current-editable-item';
 
 type Props = {
 	group: OverridablePropsGroup;

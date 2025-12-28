@@ -4,10 +4,10 @@ import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { useEditable } from '@elementor/editor-ui';
 import { __ } from '@wordpress/i18n';
 
-import { renameOverridableGroup } from '../../../store/actions/rename-overridable-group';
-import { useCurrentComponentId } from '../../../store/store';
-import { useOverridableProps } from '../../component-panel-header/use-overridable-props';
-import { validateGroupLabel } from '../utils/validate-group-label';
+import { renameOverridableGroup } from '../../store/actions/rename-overridable-group';
+import { useCurrentComponentId } from '../../store/store';
+import { useOverridableProps } from '../component-panel-header/use-overridable-props';
+import { validateGroupLabel } from './utils/validate-group-label';
 
 export type GroupLabelEditableState = {
 	editableRef: React.RefObject< HTMLElement | null >;
