@@ -20,8 +20,12 @@ export const getDynamicPropType = ( propType: PropType ): DynamicPropType | null
 	return dynamicPropType && isDynamicPropType( dynamicPropType ) ? dynamicPropType : null;
 };
 
+export const isDynamicButProNotAvailable = ( prop: PropValue ): boolean => {
+	return isTransformable( prop ) && prop.$$type === DYNAMIC_PROP_TYPE_KEY && ! window.elementorPro;
+};
+
 export const isDynamicPropValue = ( prop: PropValue ): prop is DynamicPropValue => {
-	return isTransformable( prop ) && prop.$$type === DYNAMIC_PROP_TYPE_KEY;
+	return !! window.elementorPro && isTransformable( prop ) && prop.$$type === DYNAMIC_PROP_TYPE_KEY;
 };
 
 export const supportsDynamic = ( propType: PropType ): boolean => {

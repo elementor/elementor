@@ -10,7 +10,7 @@ import { supportsDynamic } from '../utils';
 export const usePropDynamicAction = (): PopoverActionProps => {
 	const { propType } = useBoundProp();
 
-	const visible = !! propType && supportsDynamic( propType );
+	const visible = !! window.elementorPro && !! propType && supportsDynamic( propType );
 
 	return {
 		visible,
