@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
+import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { httpService } from '@elementor/http-client';
 import { AlertCircleIcon, CheckIcon } from '@elementor/icons';
 import { useMixpanel } from '@elementor/mixpanel';
@@ -36,6 +37,7 @@ type FeedbackResult = {
 };
 
 export default function SendFeedbackPopupLocation() {
+	const isActive = isExperimentActive( 'in_editor_feedback' );
 	const extendedWindow = window as unknown as ExtendedWindow;
 	const [ isUserConnected, setIsUserConnected ] = useState< boolean >( checkIfUserIsConnected() );
 	const connectUrl = extendedWindow?.elementor?.config.user.top_bar.connect_url;
@@ -105,6 +107,10 @@ export default function SendFeedbackPopupLocation() {
 			} )
 			.finally( () => setIsFetching( false ) );
 	};
+
+	if ( ! isActive ) {
+		return null;
+	}
 
 	return (
 		<ThemeProvider>

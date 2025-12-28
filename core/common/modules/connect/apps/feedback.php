@@ -2,13 +2,34 @@
 
 namespace Elementor\Core\Common\Modules\Connect\Apps;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Feedback extends Common_App {
 
+	static $EXPERIMENT_NAME = 'in_editor_feedback';
+
 	const FEEDBACK_ENDPOINT = 'https://my.elementor.com/feedback/api/v1';
+
+	public function __construct()
+	{
+		parent::__construct();
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::$EXPERIMENT_NAME,
+			'title' => esc_html__( 'In-Editor Feedback', 'elementor' ),
+			'description' => esc_html__( 'Enable in-editor feedback submission.', 'elementor' ),
+			'hidden' => false,
+			'release_status' => Plugin::$instance->experiments::RELEASE_STATUS_BETA,
+			'default' => Plugin::$instance->experiments::STATE_INACTIVE,
+			'new_site' => [
+				'default_active' => false,
+				'minimum_installation_version' => '3.35.0',
+			],
+		]);
+	}
 
 	public function get_title() {
 		return esc_html__( 'Product Feedback', 'elementor' );
@@ -43,6 +64,15 @@ class Feedback extends Common_App {
 	}
 
 	public function submit( $body ) {
+		$is_active = Plugin::instance()->experiments->is_feature_active( self::$EXPERIMENT_NAME );
+		if ( ! $is_active ) {
+			return [
+				'success' => false,
+				'data' => [
+					'message' => 'In-Editor Feedback is not active.',
+				],
+			];
+		}
 		$connect_info = $this->get_base_connect_info();
 		$merged_body = array_merge( $connect_info, $body );
 		$signature = $this->generate_signature( $merged_body );
