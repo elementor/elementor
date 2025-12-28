@@ -2,6 +2,7 @@ import type { CreateTemplatedElementTypeOptions } from '../create-templated-elem
 import { createTemplatedElementView } from '../create-templated-element-type';
 import type { ElementType, ElementView, LegacyWindow, ReplacementSettings } from '../types';
 import type ReplacementBase from './base';
+import { type ReplacementBaseInterface } from './base';
 import InlineEditingReplacement from './inline-editing/inline-editing-elements';
 
 type ReplacementConstructor = new ( settings: ReplacementSettings ) => ReplacementBase;
@@ -32,7 +33,7 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 	const TemplatedView = createTemplatedElementView( options );
 
 	return class extends TemplatedView {
-		#replacement: ReplacementBase | null = null;
+		#replacement: ReplacementBaseInterface | null = null;
 		#config: ReplacementSettings;
 
 		constructor( ...args: unknown[] ) {
@@ -53,6 +54,14 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 			this.render();
 		}
 
+		renderOnChange(): void {
+			if ( this.#replacement?.shouldRenderReplacement() && this.#replacement?.renderOnChange ) {
+				this.#replacement.renderOnChange();
+			} else {
+				TemplatedView.prototype.renderOnChange.apply( this );
+			}
+		}
+
 		render() {
 			const config = this.#config;
 			const widgetType = config.type;
@@ -62,15 +71,15 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 				this.#replacement = new ReplacementClass( config );
 			}
 
-			if ( ! this.#replacement?.shouldRenderReplacement() ) {
-				return TemplatedView.prototype.render.apply( this );
+			if ( this.#replacement?.shouldRenderReplacement() && this.#replacement.render ) {
+				return this.#replacement.render();
 			}
 
-			this.#replacement.render();
+			return TemplatedView.prototype.render.apply( this );
 		}
 
 		onDestroy() {
-			if ( this.#replacement ) {
+			if ( this.#replacement?.shouldRenderReplacement() && this.#replacement?.onDestroy ) {
 				this.#replacement.onDestroy();
 				this.#replacement = null;
 			}
@@ -79,19 +88,19 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 		}
 
 		_afterRender() {
-			if ( this.#replacement ) {
+			if ( this.#replacement?.shouldRenderReplacement() && this.#replacement?._afterRender ) {
 				this.#replacement._afterRender();
+			} else {
+				TemplatedView.prototype._afterRender.apply( this );
 			}
-
-			TemplatedView.prototype._afterRender.apply( this );
 		}
 
 		_beforeRender(): void {
-			if ( this.#replacement ) {
+			if ( this.#replacement?.shouldRenderReplacement() && this.#replacement?._beforeRender ) {
 				this.#replacement._beforeRender();
+			} else {
+				TemplatedView.prototype._beforeRender.apply( this );
 			}
-
-			TemplatedView.prototype._beforeRender.apply( this );
 		}
 	};
 };

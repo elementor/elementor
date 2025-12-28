@@ -42,7 +42,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	shouldRenderReplacement() {
-		return isExperimentActive( EXPERIMENT_KEY ) && this.isEditingModeActive() && ! this.isValueDynamic();
+		return isExperimentActive( EXPERIMENT_KEY ) && ! this.isValueDynamic();
 	}
 
 	handleRenderInlineEditor = ( event: Event ) => {
@@ -52,6 +52,14 @@ export default class InlineEditingReplacement extends ReplacementBase {
 			this.renderInlineEditor();
 		}
 	};
+
+	renderOnChange() {
+		if ( this.isEditingModeActive() ) {
+			return;
+		}
+
+		this.refreshView();
+	}
 
 	onDestroy() {
 		this.resetInlineEditorRoot();
@@ -105,6 +113,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 		return (
 			htmlPropTypeUtil.extract( this.getSetting( settingKey ) ?? null ) ??
+			stringPropTypeUtil.extract( this.getSetting( settingKey ) ?? null ) ??
 			htmlPropTypeUtil.extract( prop?.default ?? null ) ??
 			defaultValue ??
 			''
@@ -115,12 +124,16 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		const settingKey = this.getInlineEditablePropertyName();
 		const valueToSave = value ? htmlPropTypeUtil.create( value ) : null;
 
-		runCommandSync( 'document/elements/settings', {
-			container: getContainer( this.id ),
-			settings: {
-				[ settingKey ]: valueToSave,
+		runCommandSync(
+			'document/elements/set-settings',
+			{
+				container: getContainer( this.id ),
+				settings: {
+					[ settingKey ]: valueToSave,
+				},
 			},
-		} );
+			{ internal: true }
+		);
 	}
 
 	getExpectedTag() {

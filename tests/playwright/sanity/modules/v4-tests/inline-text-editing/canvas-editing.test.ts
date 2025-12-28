@@ -122,6 +122,8 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
 		let headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId }` );
 
+		await headingElement.waitFor();
+
 		// Act
 		await editor.v4Panel.openTab( 'style' );
 		await editor.v4Panel.style.openSection( 'Typography' );
@@ -130,7 +132,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
 
-		await inlineEditor.waitFor( { state: 'visible' } );
+		await inlineEditor.waitFor();
 
 		headingElement = inlineEditor.locator( `h2` );
 
@@ -153,7 +155,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
 
-		await inlineEditor.waitFor( { state: 'visible' } );
+		await inlineEditor.waitFor();
 
 		paragraphElement = inlineEditor.locator( `p` );
 
@@ -175,7 +177,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
 
-		await inlineEditor.waitFor( { state: 'visible' } );
+		await inlineEditor.waitFor();
 		await page.waitForTimeout( 1000 );
 
 		headingElement = inlineEditor.locator( `h2` );
