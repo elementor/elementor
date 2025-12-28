@@ -20,15 +20,15 @@ class Circular_Dependency_Validator {
 		return new self();
 	}
 
-	public function validate( int $component_id, array $elements ): array {
-		$referenced_ids = $this->extract_component_ids( $elements );
+	public function validate( string|int $component_id, array $elements, array $known_components = [] ): array {
+		$referenced_ids = $this->extract_component_references( $elements );
 
-		if ( in_array( $component_id, $referenced_ids, true ) ) {
+		if ( in_array( $component_id, $referenced_ids, false ) ) {
 			return $this->build_error_response( $component_id );
 		}
 
 		foreach ( $referenced_ids as $ref_id ) {
-			if ( $this->component_contains_reference( $ref_id, $component_id, [] ) ) {
+			if ( $this->component_eventually_contains( $ref_id, $component_id, $known_components, [] ) ) {
 				return $this->build_error_response( $component_id, $ref_id );
 			}
 		}
@@ -40,39 +40,17 @@ class Circular_Dependency_Validator {
 	}
 
 	public function validate_new_components( Collection $items ): array {
-		$uid_to_elements = [];
+		$known_components = [];
 
 		foreach ( $items->all() as $item ) {
-			$uid_to_elements[ $item['uid'] ] = $item['elements'] ?? [];
+			$known_components[ $item['uid'] ] = $item['elements'] ?? [];
 		}
 
-		foreach ( $uid_to_elements as $uid => $elements ) {
-			$referenced_uids = $this->extract_component_uids( $elements );
+		foreach ( $known_components as $uid => $elements ) {
+			$result = $this->validate( $uid, $elements, $known_components );
 
-			foreach ( $referenced_uids as $ref_uid ) {
-				if ( $ref_uid === $uid ) {
-					return [
-						'success' => false,
-						'messages' => [
-							sprintf(
-								esc_html__( 'Circular dependency detected: Component with UID "%s" references itself.', 'elementor' ),
-								$uid
-							),
-						],
-					];
-				}
-
-				if ( $this->has_circular_reference_in_new_components( $ref_uid, $uid, $uid_to_elements, [] ) ) {
-					return [
-						'success' => false,
-						'messages' => [
-							sprintf(
-								esc_html__( 'Circular dependency detected: Component with UID "%s" would create a cycle.', 'elementor' ),
-								$uid
-							),
-						],
-					];
-				}
+			if ( ! $result['success'] ) {
+				return $result;
 			}
 		}
 
@@ -82,31 +60,31 @@ class Circular_Dependency_Validator {
 		];
 	}
 
-	private function component_contains_reference( int $check_id, int $target_id, array $visited ): bool {
-		if ( in_array( $check_id, $visited, true ) ) {
+	private function component_eventually_contains( string|int $component_id, string|int $forbidden_id, array $known_components, array $visited_path ): bool {
+		if ( in_array( $component_id, $visited_path, false ) ) {
 			return false;
 		}
 
-		if ( count( $visited ) >= self::MAX_RECURSION_DEPTH ) {
+		if ( count( $visited_path ) >= self::MAX_RECURSION_DEPTH ) {
 			return false;
 		}
 
-		$elements = $this->get_component_elements( $check_id );
+		$elements = $this->get_elements_for_component( $component_id, $known_components );
 
 		if ( empty( $elements ) ) {
 			return false;
 		}
 
-		$nested_ids = $this->extract_component_ids( $elements );
+		$nested_ids = $this->extract_component_references( $elements );
 
-		if ( in_array( $target_id, $nested_ids, true ) ) {
+		if ( in_array( $forbidden_id, $nested_ids, false ) ) {
 			return true;
 		}
 
-		$visited[] = $check_id;
+		$visited_path[] = $component_id;
 
 		foreach ( $nested_ids as $nested_id ) {
-			if ( $this->component_contains_reference( $nested_id, $target_id, $visited ) ) {
+			if ( $this->component_eventually_contains( $nested_id, $forbidden_id, $known_components, $visited_path ) ) {
 				return true;
 			}
 		}
@@ -114,38 +92,19 @@ class Circular_Dependency_Validator {
 		return false;
 	}
 
-	private function has_circular_reference_in_new_components( string $check_uid, string $target_uid, array $uid_to_elements, array $visited ): bool {
-		if ( in_array( $check_uid, $visited, true ) ) {
-			return false;
+	private function get_elements_for_component( string|int $component_id, array $known_components ): array {
+		if ( isset( $known_components[ $component_id ] ) ) {
+			return $known_components[ $component_id ];
 		}
 
-		if ( count( $visited ) >= self::MAX_RECURSION_DEPTH ) {
-			return false;
-		}
-
-		if ( ! isset( $uid_to_elements[ $check_uid ] ) ) {
-			return false;
-		}
-
-		$elements = $uid_to_elements[ $check_uid ];
-		$nested_uids = $this->extract_component_uids( $elements );
-
-		if ( in_array( $target_uid, $nested_uids, true ) ) {
-			return true;
-		}
-
-		$visited[] = $check_uid;
-
-		foreach ( $nested_uids as $nested_uid ) {
-			if ( $this->has_circular_reference_in_new_components( $nested_uid, $target_uid, $uid_to_elements, $visited ) ) {
-				return true;
-			}
-		}
-
-		return false;
+		return $this->load_component_elements_from_database( $component_id );
 	}
 
-	private function get_component_elements( int $component_id ): array {
+	private function load_component_elements_from_database( string|int $component_id ): array {
+		if ( ! is_int( $component_id ) ) {
+			return [];
+		}
+
 		if ( isset( $this->components_cache[ $component_id ] ) ) {
 			return $this->components_cache[ $component_id ];
 		}
@@ -163,14 +122,14 @@ class Circular_Dependency_Validator {
 		return $elements;
 	}
 
-	private function extract_component_ids( array $elements ): array {
+	private function extract_component_references( array $elements ): array {
 		$ids = [];
 
 		foreach ( $elements as $element ) {
 			$widget_type = $element['widgetType'] ?? null;
 
 			if ( self::COMPONENT_WIDGET_TYPE === $widget_type ) {
-				$component_id = $this->get_component_id_from_settings( $element['settings'] ?? [] );
+				$component_id = $this->extract_component_id_from_settings( $element['settings'] ?? [] );
 
 				if ( null !== $component_id ) {
 					$ids[] = $component_id;
@@ -178,100 +137,26 @@ class Circular_Dependency_Validator {
 			}
 
 			if ( ! empty( $element['elements'] ) ) {
-				$ids = array_merge( $ids, $this->extract_component_ids( $element['elements'] ) );
+				$ids = array_merge( $ids, $this->extract_component_references( $element['elements'] ) );
 			}
 		}
 
-		return array_unique( $ids );
+		return array_unique( $ids, SORT_REGULAR );
 	}
 
-	private function extract_component_uids( array $elements ): array {
-		$uids = [];
-
-		foreach ( $elements as $element ) {
-			$widget_type = $element['widgetType'] ?? null;
-
-			if ( self::COMPONENT_WIDGET_TYPE === $widget_type ) {
-				$component_uid = $this->get_component_uid_from_settings( $element['settings'] ?? [] );
-
-				if ( null !== $component_uid ) {
-					$uids[] = $component_uid;
-				}
-			}
-
-			if ( ! empty( $element['elements'] ) ) {
-				$uids = array_merge( $uids, $this->extract_component_uids( $element['elements'] ) );
-			}
-		}
-
-		return array_unique( $uids );
+	private function extract_component_id_from_settings( array $settings ): string|int|null {
+		return $settings['component_instance']['value']['component_id']['value'] ?? null;
 	}
 
-	private function get_component_id_from_settings( array $settings ): ?int {
-		$component_instance = $settings['component_instance'] ?? null;
-
-		if ( ! is_array( $component_instance ) ) {
-			return null;
-		}
-
-		$value = $component_instance['value'] ?? null;
-
-		if ( ! is_array( $value ) ) {
-			return null;
-		}
-
-		$component_id_wrapper = $value['component_id'] ?? null;
-
-		if ( ! is_array( $component_id_wrapper ) ) {
-			return null;
-		}
-
-		$component_id = $component_id_wrapper['value'] ?? null;
-
-		if ( ! is_int( $component_id ) ) {
-			return null;
-		}
-
-		return $component_id;
-	}
-
-	private function get_component_uid_from_settings( array $settings ): ?string {
-		$component_instance = $settings['component_instance'] ?? null;
-
-		if ( ! is_array( $component_instance ) ) {
-			return null;
-		}
-
-		$value = $component_instance['value'] ?? null;
-
-		if ( ! is_array( $value ) ) {
-			return null;
-		}
-
-		$component_id_wrapper = $value['component_id'] ?? null;
-
-		if ( ! is_array( $component_id_wrapper ) ) {
-			return null;
-		}
-
-		$component_uid = $component_id_wrapper['value'] ?? null;
-
-		if ( ! is_string( $component_uid ) ) {
-			return null;
-		}
-
-		return $component_uid;
-	}
-
-	private function build_error_response( int $component_id, ?int $via_component_id = null ): array {
+	private function build_error_response( string|int $component_id, string|int|null $via_component_id = null ): array {
 		if ( null === $via_component_id ) {
 			$message = sprintf(
-				esc_html__( 'Circular dependency detected: Component %d references itself.', 'elementor' ),
+				esc_html__( 'Circular dependency detected: Component "%s" references itself.', 'elementor' ),
 				$component_id
 			);
 		} else {
 			$message = sprintf(
-				esc_html__( 'Circular dependency detected: Component %d would create a cycle via component %d.', 'elementor' ),
+				esc_html__( 'Circular dependency detected: Component "%s" would create a cycle via component "%s".', 'elementor' ),
 				$component_id,
 				$via_component_id
 			);
@@ -283,4 +168,3 @@ class Circular_Dependency_Validator {
 		];
 	}
 }
-
