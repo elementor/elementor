@@ -8,6 +8,7 @@ use Elementor\Core\Documents_Manager;
 use PHPUnit\Framework\MockObject\MockObject;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
 use Elementor\Testing\Modules\Components\Mocks\Component_Overrides_Mocks;
 use Elementor\Modules\Components\Documents\Component;
 use Elementor\Modules\Components\Documents\Component_Overridable_Props;
@@ -58,6 +59,8 @@ abstract class Component_Prop_Type_Test_Base extends Elementor_Test_Base {
                         return new Atomic_Heading();
 					case 'e-image':
 						return new Atomic_Image();
+					case 'e-button':
+						return new Atomic_Button();
                     default:
                         return null;
                 }
