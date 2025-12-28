@@ -20,7 +20,7 @@ class Component_Instance_Transformer extends Transformer_Base {
 		$component_id = $value['component_id'];
 
 		if ( $this->is_circular_reference( $component_id ) ) {
-			return '<!-- Circular component reference detected -->';
+			return '';
 		}
 
 		self::$rendering_stack[] = $component_id;
