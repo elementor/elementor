@@ -30,7 +30,7 @@ export function OverridablePropForm( { onSubmit, groups, currentValue, sx }: Pro
 	const ctaLabel = isCreate ? __( 'Create', 'elementor' ) : __( 'Update', 'elementor' );
 
 	return (
-		<Form onSubmit={ () => propLabel && onSubmit( { label: propLabel, group } ) }>
+		<Form onSubmit={ () => onSubmit( { label: propLabel ?? '', group } ) }>
 			<Stack alignItems="start" sx={ { width: '268px', ...sx } }>
 				<Stack
 					direction="row"
