@@ -112,6 +112,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 
 	public function sanitize( $value ) {
 		$value['value'] = $this->sanitize_value( $value['value'] );
+		$value['version'] = 1;
 
 		return $value;
 	}
@@ -143,6 +144,7 @@ abstract class Object_Prop_Type implements Transformable_Prop_Type {
 			'shape' => (object) $this->get_shape(),
 			'dependencies' => $this->get_dependencies(),
 			'initial_value' => $this->get_initial_value(),
+			'version' => 1,
 		];
 	}
 
