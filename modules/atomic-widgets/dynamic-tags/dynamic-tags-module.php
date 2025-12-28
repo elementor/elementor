@@ -49,7 +49,7 @@ class Dynamic_Tags_Module {
 		add_filter(
 			'elementor/atomic-widgets/styles/schema',
 			fn( array $schema ) => Dynamic_Prop_Types_Mapping::make()->get_extended_style_schema( $schema ),
-			10,
+			8,
 			2
 		);
 

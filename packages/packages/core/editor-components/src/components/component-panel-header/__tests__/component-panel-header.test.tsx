@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { renderWithStore } from 'test-utils';
+import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { getV1DocumentsManager, type V1DocumentsManager } from '@elementor/editor-documents';
 import { __privateRunCommand } from '@elementor/editor-v1-adapters';
 import {
@@ -9,10 +10,14 @@ import {
 	type SliceState,
 	type Store,
 } from '@elementor/store';
+import { describe } from '@jest/globals';
 import { fireEvent, screen } from '@testing-library/react';
+import { __ } from '@wordpress/i18n';
 
 import { slice } from '../../../store/store';
 import { ComponentPanelHeader } from '../component-panel-header';
+
+const mockOpenPropertiesPanel = jest.fn();
 
 jest.mock( '@elementor/editor-v1-adapters', () => ( {
 	...jest.requireActual( '@elementor/editor-v1-adapters' ),
@@ -23,6 +28,15 @@ jest.mock( '@elementor/editor-documents', () => ( {
 	...jest.requireActual( '@elementor/editor-documents' ),
 	getV1DocumentsManager: jest.fn(),
 } ) );
+
+jest.mock( '../../component-properties-panel/component-properties-panel', () => ( {
+	usePanelActions: () => ( {
+		open: mockOpenPropertiesPanel,
+	} ),
+} ) );
+
+jest.mock( '@elementor/editor-current-user' );
+jest.mock( '@wordpress/i18n' );
 
 const MOCK_INITIAL_DOCUMENT_ID = 1;
 const MOCK_COMPONENT_ID = 123;
@@ -79,6 +93,9 @@ describe( '<ComponentPanelHeader />', () => {
 			} ),
 			getInitialId: () => MOCK_INITIAL_DOCUMENT_ID,
 		} as unknown as V1DocumentsManager );
+
+		jest.mocked( useSuppressedMessage ).mockReturnValue( [ true, jest.fn() ] );
+		( __ as jest.Mock ).mockImplementation( ( str ) => str );
 	} );
 
 	it( 'should not render when not editing a component', () => {
@@ -135,6 +152,19 @@ describe( '<ComponentPanelHeader />', () => {
 		expect( screen.queryByText( '0' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'should open properties panel when badge is clicked', () => {
+		// Arrange
+		setupComponentEditing( { withOverridableProps: true } );
+		renderWithStore( <ComponentPanelHeader />, store );
+
+		// Act
+		const badgeButton = screen.getByLabelText( 'View overrides' );
+		fireEvent.click( badgeButton );
+
+		// Assert
+		expect( mockOpenPropertiesPanel ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'should navigate back to initial document when back button is clicked', () => {
 		// Arrange
 		setupComponentEditing();
@@ -176,6 +206,18 @@ describe( '<ComponentPanelHeader />', () => {
 			setAsInitial: false,
 			shouldScroll: false,
 		} );
+	} );
+
+	it( 'should hide introduction when message is suppressed', () => {
+		// Arrange
+		setupComponentEditing();
+		jest.mocked( useSuppressedMessage ).mockReturnValue( [ true, jest.fn() ] );
+
+		// Act
+		renderWithStore( <ComponentPanelHeader />, store );
+
+		// Assert
+		expect( screen.queryByText( 'Add your first property' ) ).not.toBeInTheDocument();
 	} );
 
 	function setupComponentEditing(
