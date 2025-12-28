@@ -116,12 +116,6 @@ class Rest_Api {
 			],
 		] );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/sync-to-v3', [
-			'methods' => WP_REST_Server::CREATABLE,
-			'callback' => [ $this, 'sync_to_v3' ],
-			'permission_callback' => [ $this, 'enough_permissions_to_perform_rw_action' ],
-		] );
-
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/delete', [
 			'methods' => WP_REST_Server::EDITABLE,
 			'callback' => [ $this, 'delete_variable' ],
@@ -407,18 +401,6 @@ class Rest_Api {
 			'variable' => $result['variable'],
 			'watermark' => $result['watermark'],
 		] );
-	}
-
-	public function sync_to_v3( WP_REST_Request $request ) {
-		try {
-			do_action( 'elementor/variables/after_save', null, 'manual_sync' );
-			
-			return $this->success_response( [
-				'message' => __( 'Variables synced to V3 successfully', 'elementor' ),
-			] );
-		} catch ( Exception $e ) {
-			return $this->error_response( $e );
-		}
 	}
 
 	public function get_variables() {
