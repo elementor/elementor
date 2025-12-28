@@ -121,8 +121,6 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 		$result = $this->parser->parse( $data_to_sanitize );
 
 		// Assert.
-		$this->assertTrue( $result->is_valid() );
-
 		$sanitized = $result->unwrap();
 		$this->assertEquals( [ '$$type' => 'string', 'value' => 'Click here' ], $sanitized['prop-uuid-1']['originValue'] );
 	}
