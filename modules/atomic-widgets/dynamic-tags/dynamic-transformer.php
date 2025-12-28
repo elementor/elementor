@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 use Elementor\Core\DynamicTags\Manager as Dynamic_Tags_Manager;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformer_Base;
+use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -26,6 +27,11 @@ class Dynamic_Transformer extends Transformer_Base {
 	}
 
 	public function transform( $value, $key ) {
+
+		if ( ! Utils::has_pro() ) {
+			return null;
+		}
+
 		if ( ! isset( $value['name'] ) || ! is_string( $value['name'] ) ) {
 			throw new \Exception( 'Dynamic tag name must be a string' );
 		}

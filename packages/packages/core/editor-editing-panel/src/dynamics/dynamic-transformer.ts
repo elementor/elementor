@@ -10,7 +10,7 @@ type Dynamic = {
 };
 
 export const dynamicTransformer = createTransformer( ( value: Dynamic ) => {
-	if ( ! value.name ) {
+	if ( ! window.elementorPro || ! value.name ) {
 		return null;
 	}
 
