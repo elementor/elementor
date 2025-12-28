@@ -4,13 +4,12 @@ import { ComponentPropListIcon } from '@elementor/icons';
 import { Badge, Box, keyframes, styled, ToggleButton } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-export const ComponentsBadge = React.forwardRef< HTMLDivElement, { overridesCount: number } >(
+export const ComponentsBadge = React.forwardRef< HTMLDivElement, { overridesCount: number; onClick: () => void } >(
 	( { overridesCount, onClick }, ref ) => {
 		const prevCount = usePrevious( overridesCount );
 
 		const isFirstOverride = prevCount === 0 && overridesCount === 1;
 
-				onClick={ onClick }
 		return (
 			<StyledBadge
 				ref={ ref }
@@ -25,7 +24,12 @@ export const ComponentsBadge = React.forwardRef< HTMLDivElement, { overridesCoun
 					</Box>
 				}
 			>
-				<ToggleButton value="overrides" size="tiny" onClick={ onClick } aria-label={ __( 'View overrides', 'elementor' ) }>
+				<ToggleButton
+					value="overrides"
+					size="tiny"
+					onClick={ onClick }
+					aria-label={ __( 'View overrides', 'elementor' ) }
+				>
 					<ComponentPropListIcon fontSize="tiny" />
 				</ToggleButton>
 			</StyledBadge>
