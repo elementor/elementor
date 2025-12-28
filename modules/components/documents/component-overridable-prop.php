@@ -47,7 +47,7 @@ class Component_Overridable_Prop {
 			$this->origin_prop_fields = [
 				'el_type' => $overridable_prop['originPropFields']['elType'],
 				'widget_type' => $overridable_prop['originPropFields']['widgetType'],
-				'prop_key' => $overridable_prop['originPropFields']['propKey']
+				'prop_key' => $overridable_prop['originPropFields']['propKey'],
 			];
 		}
 	}
