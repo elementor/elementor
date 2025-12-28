@@ -168,7 +168,7 @@ class Path_Resolver {
 			}
 
 			$key = $wildcard_values[ $wildcard_index ]['key'];
-			$wildcard_index++;
+			++$wildcard_index;
 
 			if ( ! array_key_exists( $key, $data ) ) {
 				return null;
