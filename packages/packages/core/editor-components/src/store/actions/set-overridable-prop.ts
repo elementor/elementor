@@ -17,6 +17,7 @@ type Props = {
 	widgetType: string;
 	originValue: PropValue;
 	propType: PropType;
+	originOverridableProp?: OverridableProp;
 };
 export function setOverridableProp( {
 	componentId,
@@ -29,6 +30,7 @@ export function setOverridableProp( {
 	widgetType,
 	originValue,
 	propType,
+	originOverridableProp,
 }: Props ): OverridableProp | undefined {
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
@@ -58,6 +60,7 @@ export function setOverridableProp( {
 		originValue,
 		groupId: currentGroupId,
 		propType,
+		originOverridableProp,
 	};
 
 	const { props: propsWithoutDuplicates, groups: groupsWithoutDuplicates } = removeProps( {

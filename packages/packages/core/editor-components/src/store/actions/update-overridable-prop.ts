@@ -4,7 +4,7 @@ import { type ComponentOverridablePropValue } from '../../prop-types/component-o
 import { type OverridableProp, type OverridableProps } from '../../types';
 import { selectOverridableProps, slice } from '../store';
 
-export function updateOverridablePropOriginValue(
+export function updateOverridableProp(
 	componentId: number,
 	propValue: ComponentOverridablePropValue,
 	overridableProp?: OverridableProp

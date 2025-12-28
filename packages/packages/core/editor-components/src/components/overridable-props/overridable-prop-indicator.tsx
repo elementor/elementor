@@ -63,7 +63,8 @@ export function Content( { componentId, overridableProps }: Props ) {
 	const { elType } = getWidgetsCache()?.[ elementType.key ] ?? { elType: 'widget' };
 
 	const handleSubmit = ( { label, group }: { label: string; group: string | null } ) => {
-		const originValue = ! overridableValue ? value ?? propType.default : overridableValue?.origin_value ?? {};
+		const propTypeDefault = propType.default ?? {};
+		const originValue = ( ! overridableValue ? value : overridableValue?.origin_value ) ?? propTypeDefault;
 
 		const overridablePropConfig = setOverridableProp( {
 			componentId,

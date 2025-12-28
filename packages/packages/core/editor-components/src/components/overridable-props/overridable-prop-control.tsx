@@ -10,7 +10,7 @@ import {
 	type ComponentOverridablePropValue,
 } from '../../prop-types/component-overridable-prop-type';
 import { OverridablePropProvider } from '../../provider/overridable-prop-context';
-import { updateOverridablePropOriginValue } from '../../store/actions/update-overridable-prop-origin-value';
+import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
 import { useCurrentComponentId, useOverridableProps } from '../../store/store';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
 
@@ -41,7 +41,7 @@ export function OverridablePropControl< T extends object >( {
 		} as ComponentOverridablePropValue;
 
 		setValue( propValue );
-		updateOverridablePropOriginValue( componentId, propValue );
+		updateOverridableProp( componentId, propValue );
 	};
 
 	const immediatePropType = elementType.propsSchema[ bind ];

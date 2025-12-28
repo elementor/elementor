@@ -30,7 +30,7 @@ export type OverridableProp = {
 	originValue: PropValue;
 	groupId: string;
 	propType: PropType;
-	overridableProp?: OverridableProp;
+	originOverridableProp?: OverridableProp;
 };
 
 export type OverridablePropsGroup = {

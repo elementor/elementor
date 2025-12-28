@@ -192,13 +192,7 @@ function createComponentView(
 			if ( ! isAllowedToSwitchDocument ) {
 				options.showLockedByModal?.( lockedBy || '' );
 			} else {
-				const componentId = this.getComponentId();
-
-				if ( ! componentId ) {
-					return;
-				}
-
-				switchToComponent( componentId, this.model.get( 'id' ) );
+				switchToComponent( this.getComponentId() as number, this.model.get( 'id' ) );
 			}
 		}
 

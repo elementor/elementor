@@ -24,7 +24,7 @@ import {
 	componentOverridablePropTypeUtil,
 	type ComponentOverridablePropValue,
 } from '../../prop-types/component-overridable-prop-type';
-import { updateOverridablePropOriginValue } from '../../store/actions/update-overridable-prop-origin-value';
+import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
 import { useCurrentComponentId } from '../../store/store';
 import { type OverridableProp } from '../../types';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
@@ -49,7 +49,7 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 	const componentId = useCurrentComponentId();
 	const { value: instanceValue, setValue: setInstanceValue } = useBoundProp( componentInstancePropTypeUtil );
 	const controls = useControlsByWidgetType(
-		overridableProp?.overridableProp?.widgetType ?? overridableProp.widgetType
+		overridableProp?.originOverridableProp?.widgetType ?? overridableProp.widgetType
 	);
 
 	const propType = getPropTypeForComponentOverride( overridableProp );
@@ -99,10 +99,10 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 		} );
 
 		if ( overridableValue && componentId ) {
-			updateOverridablePropOriginValue(
+			updateOverridableProp(
 				componentId,
 				overridableValue,
-				overridableProp.overridableProp ?? overridableProp
+				overridableProp.originOverridableProp ?? overridableProp
 			);
 		}
 	};
@@ -119,7 +119,7 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 			<PropKeyProvider bind={ overridableProp.overrideKey }>
 				<Stack direction="column" gap={ 1 } mb={ 1.5 }>
 					<ControlLabel>{ overridableProp.label }</ControlLabel>
-					{ getControl( controls, overridableProp?.overridableProp ?? overridableProp ) }
+					{ getControl( controls, overridableProp?.originOverridableProp ?? overridableProp ) }
 				</Stack>
 			</PropKeyProvider>
 		</PropProvider>

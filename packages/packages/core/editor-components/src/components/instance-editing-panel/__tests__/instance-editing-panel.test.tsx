@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createMockPropType, renderWithStore } from 'test-utils';
 import { ElementProvider } from '@elementor/editor-editing-panel';
-import { useElementSetting, useSelectedElement } from '@elementor/editor-elements';
+import { getElementLabel, useElementSetting, useSelectedElement } from '@elementor/editor-elements';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -20,6 +20,7 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
 	useElementSetting: jest.fn(),
 	useSelectedElement: jest.fn(),
+	getElementLabel: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/session', () => ( {
@@ -40,6 +41,7 @@ const MOCK_COMPONENT_ID = 456;
 const MOCK_COMPONENT_NAME = 'Test Component';
 const MOCK_INSTANCE_ID = 'instance-789';
 const MOCK_PROP_TYPE = createMockPropType();
+const MOCK_ELEMENT_LABEL = 'Heading Block';
 
 const MOCK_ELEMENT = {
 	id: MOCK_ELEMENT_ID,
@@ -117,6 +119,7 @@ describe( '<InstanceEditingPanel />', () => {
 			component_id: { $$type: 'number', value: MOCK_COMPONENT_ID },
 			overrides: { $$type: 'overrides', value: [] },
 		} );
+		jest.mocked( getElementLabel ).mockReturnValue( MOCK_ELEMENT_LABEL );
 	} );
 
 	it( 'should render the component name in the header', () => {
