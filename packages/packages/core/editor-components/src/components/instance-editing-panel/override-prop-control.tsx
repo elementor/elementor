@@ -7,7 +7,7 @@ import {
 	SettingsField,
 } from '@elementor/editor-editing-panel';
 import { type Control } from '@elementor/editor-elements';
-import { type NumberPropValue, type PropValue, type TransformablePropValue } from '@elementor/editor-props';
+import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 import { Stack } from '@elementor/ui';
 
 import { useControlsByWidgetType } from '../../hooks/use-controls-by-widget-type';
@@ -26,7 +26,7 @@ import {
 } from '../../prop-types/component-overridable-prop-type';
 import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
 import { useCurrentComponentId } from '../../store/store';
-import { type OverridableProp } from '../../types';
+import { type OriginPropFields, type OverridableProp } from '../../types';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
 import { ControlLabel } from '../control-label';
 
@@ -49,7 +49,7 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 	const componentId = useCurrentComponentId();
 	const { value: instanceValue, setValue: setInstanceValue } = useBoundProp( componentInstancePropTypeUtil );
 	const controls = useControlsByWidgetType(
-		overridableProp?.originOverridableProp?.widgetType ?? overridableProp.widgetType
+		overridableProp?.originPropFields?.widgetType ?? overridableProp.widgetType
 	);
 
 	const propType = getPropTypeForComponentOverride( overridableProp );
@@ -64,7 +64,7 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 		},
 	} );
 
-	const componentInstanceId = ( instanceValue.component_id as NumberPropValue )?.value;
+	const componentInstanceId = instanceValue.component_id?.value;
 
 	if ( ! componentInstanceId ) {
 		throw new Error( 'Component ID is required' );
@@ -99,11 +99,14 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 		} );
 
 		if ( overridableValue && componentId ) {
-			updateOverridableProp(
-				componentId,
-				overridableValue,
-				overridableProp.originOverridableProp ?? overridableProp
-			);
+			if ( overridableProp.originPropFields ) {
+				updateOverridableProp( componentId, overridableValue, overridableProp.originPropFields );
+
+				return;
+			}
+
+			const { elType, widgetType, propKey } = overridableProp;
+			updateOverridableProp( componentId, overridableValue, { elType, widgetType, propKey } );
 		}
 	};
 
@@ -119,7 +122,7 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 			<PropKeyProvider bind={ overridableProp.overrideKey }>
 				<Stack direction="column" gap={ 1 } mb={ 1.5 }>
 					<ControlLabel>{ overridableProp.label }</ControlLabel>
-					{ getControl( controls, overridableProp?.originOverridableProp ?? overridableProp ) }
+					{ getControl( controls, overridableProp?.originPropFields ?? overridableProp ) }
 				</Stack>
 			</PropKeyProvider>
 		</PropProvider>
@@ -184,10 +187,10 @@ function getOverrideValue(
 	} );
 }
 
-function getControl( controls: Record< string, Control >, overridableProp: OverridableProp ) {
-	const ControlComponent = controlsRegistry.get( controls[ overridableProp.propKey ].value.type as ControlType );
+function getControl( controls: Record< string, Control >, originPropFields: OriginPropFields ) {
+	const ControlComponent = controlsRegistry.get( controls[ originPropFields.propKey ].value.type as ControlType );
 
-	const controlProps = controls[ overridableProp.propKey ].value.props;
+	const controlProps = controls[ originPropFields.propKey ].value.props;
 
 	return <ControlComponent { ...controlProps } />;
 }

@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\Components\OverridableProps;
 
+use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Core\Utils\Api\Parse_Result;
 
@@ -49,9 +50,17 @@ class Overridable_Prop_Parser {
 			return $result;
 		}
 
-		$this->origin_value_prop_type = Parsing_Utils::get_prop_type( $prop['elType'], $prop['widgetType'], $prop['propKey'] );
+		$origin_value_prop_type = $this->get_origin_prop_type( $prop );
 
-		if ( ! empty( $prop['originValue'] ) && ! $this->origin_value_prop_type->validate( $prop['originValue'] ) ) {
+		if ( empty( $prop['originValue'] ) ) {
+			$result->errors()->add( 'originValue', 'empty origin value' );
+
+			return $result;
+		}
+
+		$origin_value = $this->get_origin_value( $prop );
+
+		if ( ! $origin_value_prop_type->validate( $origin_value ) ) {
 			$result->errors()->add( 'originValue', 'invalid' );
 
 			return $result;
@@ -63,6 +72,20 @@ class Overridable_Prop_Parser {
 	private function sanitize( array $prop ): Parse_Result {
 		$result = Parse_Result::make();
 
+		$origin_prop_type = $this->get_origin_prop_type( $prop );
+		$origin_value = $this->get_origin_value( $prop );
+		$sanitized_value = $origin_prop_type->sanitize( $origin_value );
+
+		$sanitized_origin_value = $origin_value['$$type'] === Override_Prop_Type::get_key()
+			? [
+				...$prop['originValue'],
+				'value' => [
+					...$prop['originValue']['value'],
+					'override_value' => $sanitized_value,
+				]
+			]
+			: $sanitized_value;
+
 		$sanitized_prop = [
 			'overrideKey' => sanitize_key( $prop['overrideKey'] ),
 			'label' => sanitize_text_field( $prop['label'] ),
@@ -70,10 +93,38 @@ class Overridable_Prop_Parser {
 			'propKey' => sanitize_text_field( $prop['propKey'] ),
 			'widgetType' => sanitize_text_field( $prop['widgetType'] ),
 			'elType' => sanitize_text_field( $prop['elType'] ),
-			'originValue' => $this->origin_value_prop_type->sanitize( $prop['originValue'] ),
+			'originValue' => $sanitized_origin_value,
 			'groupId' => sanitize_key( $prop['groupId'] ),
 		];
 
+		if ( $this->is_with_origin_prop_fields( $prop ) ) {
+			$sanitized_prop['originPropFields'] = $prop['originPropFields'];
+		}
+
 		return $result->wrap( $sanitized_prop );
+	}
+
+	private function is_with_origin_prop_fields( array $prop ): bool {
+		return ! empty( $prop['originPropFields'] );
+	}
+
+	private function get_origin_prop_type( array $prop ) {
+		if ( $this->is_with_origin_prop_fields( $prop ) ) {
+			return $this->get_origin_prop_type( $prop['originPropFields'] );
+		}
+
+		return Parsing_Utils::get_prop_type(
+			$prop['elType'],
+			$prop['widgetType'],
+			$prop['propKey'],
+		);
+	}
+
+	private function get_origin_value( array $prop ) {
+		if ( $prop['originValue']['$$type'] === Override_Prop_Type::get_key() ) {
+			return $prop['originValue']['value']['override_value'];
+		}
+
+		return $prop['originValue'];
 	}
 }

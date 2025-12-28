@@ -28,7 +28,7 @@ export function OverridePropsGroup( { group, props, overrides }: Props ) {
 	const title = group.label;
 
 	return (
-		<>
+		<span aria-label={ `${ title } section` }>
 			<ListItemButton
 				id={ labelId }
 				aria-controls={ contentId }
@@ -57,6 +57,6 @@ export function OverridePropsGroup( { group, props, overrides }: Props ) {
 					) ) }
 				</Stack>
 			</Collapse>
-		</>
+		</span>
 	);
 }

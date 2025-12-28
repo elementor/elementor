@@ -1,13 +1,13 @@
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { type ComponentOverridablePropValue } from '../../prop-types/component-overridable-prop-type';
-import { type OverridableProp, type OverridableProps } from '../../types';
+import { type OriginPropFields, type OverridableProps } from '../../types';
 import { selectOverridableProps, slice } from '../store';
 
 export function updateOverridableProp(
 	componentId: number,
 	propValue: ComponentOverridablePropValue,
-	overridableProp?: OverridableProp
+	originPropFields?: OriginPropFields
 ) {
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
@@ -21,10 +21,10 @@ export function updateOverridableProp(
 		return;
 	}
 
-	const newOverridableProp = overridableProp
+	const newOverridableProp = originPropFields
 		? {
 				originValue: propValue.origin_value,
-				overridableProp,
+				originPropFields,
 		  }
 		: {
 				originValue: propValue.origin_value,

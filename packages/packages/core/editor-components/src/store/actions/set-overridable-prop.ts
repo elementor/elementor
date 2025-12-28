@@ -3,7 +3,12 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 import { generateUniqueId } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
-import { type OverridableProp, type OverridableProps, type OverridablePropsGroup } from '../../types';
+import {
+	type OriginPropFields,
+	type OverridableProp,
+	type OverridableProps,
+	type OverridablePropsGroup,
+} from '../../types';
 import { selectOverridableProps, slice } from '../store';
 
 type Props = {
@@ -17,7 +22,7 @@ type Props = {
 	widgetType: string;
 	originValue: PropValue;
 	propType: PropType;
-	originOverridableProp?: OverridableProp;
+	originPropFields?: OriginPropFields;
 };
 export function setOverridableProp( {
 	componentId,
@@ -30,7 +35,7 @@ export function setOverridableProp( {
 	widgetType,
 	originValue,
 	propType,
-	originOverridableProp,
+	originPropFields,
 }: Props ): OverridableProp | undefined {
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
@@ -60,7 +65,7 @@ export function setOverridableProp( {
 		originValue,
 		groupId: currentGroupId,
 		propType,
-		originOverridableProp,
+		originPropFields,
 	};
 
 	const { props: propsWithoutDuplicates, groups: groupsWithoutDuplicates } = removeProps( {

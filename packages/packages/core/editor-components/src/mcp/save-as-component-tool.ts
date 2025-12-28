@@ -146,7 +146,6 @@ function enrichOverridableProps(
 			);
 		}
 
-		const propType = elementType.propsSchema[ propKey ];
 		const overrideKey = generateUniqueId( 'prop' );
 		const originValue = element.settings?.[ propKey ]
 			? ( element.settings[ propKey ] as PropValue )
@@ -159,7 +158,6 @@ function enrichOverridableProps(
 			label,
 			elementId,
 			propKey,
-			propType,
 			elType,
 			widgetType,
 			originValue,

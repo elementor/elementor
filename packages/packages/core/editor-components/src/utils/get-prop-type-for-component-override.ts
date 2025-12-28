@@ -1,18 +1,24 @@
 import { getWidgetsCache } from '@elementor/editor-elements';
 import { type PropType } from '@elementor/editor-props';
 
-import { type OverridableProp } from '../types';
+import { type OriginPropFields, type OverridableProp } from '../types';
 
 export const getPropTypeForComponentOverride = ( overridableProp: OverridableProp ): PropType | undefined => {
-	const originalOverridableProp = overridableProp.originOverridableProp ?? overridableProp;
-
-	const widgetPropsSchema = getWidgetsCache()?.[ originalOverridableProp.widgetType ]?.atomic_props_schema;
-
-	const propType = widgetPropsSchema?.[ originalOverridableProp.propKey ] as PropType;
-
-	if ( propType ) {
-		return propType;
+	if ( overridableProp.originPropFields ) {
+		return getPropType( overridableProp.originPropFields );
 	}
 
-	return overridableProp.propType;
+	const { elType, widgetType, propKey } = overridableProp;
+
+	return getPropType( {
+		elType,
+		widgetType,
+		propKey,
+	} );
 };
+
+function getPropType( { widgetType, propKey }: OriginPropFields ): PropType | undefined {
+	const widgetPropsSchema = getWidgetsCache()?.[ widgetType ]?.atomic_props_schema;
+
+	return widgetPropsSchema?.[ propKey ] as PropType;
+}
