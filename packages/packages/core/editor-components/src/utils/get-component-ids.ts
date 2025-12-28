@@ -1,6 +1,6 @@
 import { type V1ElementData } from '@elementor/editor-elements';
 
-import { TYPE } from '../create-component-type';
+import { COMPONENT_WIDGET_TYPE } from '../create-component-type';
 import { type ComponentInstancePropValue } from '../types';
 import { getComponentDocumentData } from './component-document-data';
 
@@ -8,7 +8,7 @@ export const getComponentIds = async ( elements: V1ElementData[] ) => {
 	const components = elements.map( async ( { widgetType, elType, elements: childElements, settings } ) => {
 		const ids: number[] = [];
 
-		const isComponent = [ widgetType, elType ].includes( TYPE );
+		const isComponent = [ widgetType, elType ].includes( COMPONENT_WIDGET_TYPE );
 
 		if ( isComponent ) {
 			const componentId = ( settings?.component_instance as ComponentInstancePropValue< number > )?.value
