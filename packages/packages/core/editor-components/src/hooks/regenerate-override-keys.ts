@@ -3,6 +3,7 @@ import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { generateUniqueId } from '@elementor/utils';
 
 import { COMPONENT_WIDGET_TYPE } from '../create-component-type';
+import { componentInstanceOverridePropTypeUtil } from '../prop-types/component-instance-override-prop-type';
 import { componentInstanceOverridesPropTypeUtil } from '../prop-types/component-instance-overrides-prop-type';
 import {
 	componentInstancePropTypeUtil,
@@ -39,13 +40,12 @@ function regenerateOverrideKeysRecursive( elementId: string ) {
 		return;
 	}
 
-	getAllElements( container ).forEach( ( element: V1Element ) => {
-		regenerateOverrideKeys( element );
-	} );
+	getAllElements( container ).forEach( regenerateOverrideKeys );
 }
 
 function getAllElements( container: V1Element ): V1Element[] {
-	const children = ( container.children ?? [] ).flatMap( ( child ) => getAllElements( child as V1Element ) ) ?? [];
+	const children = ( container.children ?? [] ).flatMap( getAllElements ) ?? [];
+
 	return [ container, ...children ];
 }
 
@@ -68,7 +68,7 @@ function regenerateOverrideKeys( element: V1Element ) {
 	const overrides = componentInstance.value.overrides;
 
 	const newOverrides = overrides.value.map( ( override: ComponentOverride ) => {
-		if ( override.$$type !== 'override' ) {
+		if ( ! componentInstanceOverridePropTypeUtil.isValid( override ) ) {
 			return override;
 		}
 
@@ -116,7 +116,7 @@ function hasOverrides( settings: Record< string, unknown > ): settings is {
 		return false;
 	}
 
-	const overridesValue = ( overrides as { value?: unknown[] } ).value;
+	const overridesValue = overrides?.value;
 
-	return Array.isArray( overridesValue ) && overridesValue.length > 0;
+	return !! overridesValue?.length;
 }
