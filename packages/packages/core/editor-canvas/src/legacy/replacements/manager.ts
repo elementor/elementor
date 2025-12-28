@@ -95,7 +95,9 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 		}
 
 		#triggerMethod( methodKey: keyof ReplacementBaseInterface ) {
-			const method = this.#replacement?.shouldRenderReplacement() && this.#replacement[ methodKey ];
+			const method =
+				this.#replacement?.shouldRenderReplacement() &&
+				this.#replacement[ methodKey ]?.bind( this.#replacement );
 
 			if ( ! method || typeof method !== 'function' ) {
 				return false;
