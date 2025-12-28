@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useNavigateBack } from '../../hooks/use-navigate-back';
 import { useCurrentComponentId } from '../../store/store';
+import { usePanelActions } from '../component-properties-panel/component-properties-panel';
 import { ComponentIntroduction } from '../components-tab/component-introduction';
 import { ComponentsBadge } from './component-badge';
 import { useOverridableProps } from './use-overridable-props';
@@ -20,6 +21,9 @@ export const ComponentPanelHeader = () => {
 	const componentName = getComponentName();
 	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( MESSAGE_KEY );
 	const [ shouldShowIntroduction, setShouldShowIntroduction ] = React.useState( ! isMessageSuppressed );
+
+	const { open: openPropertiesPanel } = usePanelActions();
+
 	const overridesCount = overridableProps ? Object.keys( overridableProps.props ).length : 0;
 	const anchorRef = React.useRef< HTMLDivElement >( null );
 
@@ -53,7 +57,7 @@ export const ComponentPanelHeader = () => {
 						</Typography>
 					</Stack>
 				</Stack>
-				<ComponentsBadge overridesCount={ overridesCount } ref={ anchorRef } />
+				<ComponentsBadge overridesCount={ overridesCount } ref={ anchorRef } onClick={ openPropertiesPanel } />
 			</Stack>
 			<Divider />
 			<ComponentIntroduction
