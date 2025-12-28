@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type * as React from 'react';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { useEditable } from '@elementor/editor-ui';
+import { __ } from '@wordpress/i18n';
 
 import { renameOverridableGroup } from '../../../store/actions/rename-overridable-group';
 import { useCurrentComponentId } from '../../../store/store';
@@ -35,7 +36,7 @@ export function useCurrentEditableItem(): GroupLabelEditableState {
 
 	const handleSubmit = ( newLabel: string ) => {
 		if ( ! editingGroupId || ! currentComponentId ) {
-			return;
+			throw new Error( __( 'Group ID or component ID is missing', 'elementor' ) );
 		}
 
 		renameOverridableGroup( {
