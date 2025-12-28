@@ -31,7 +31,7 @@ export function OverridablePropForm( { onSubmit, groups, currentValue, sx }: Pro
 
 	return (
 		<Form onSubmit={ () => propLabel && onSubmit( { label: propLabel, group } ) }>
-			<Stack alignItems="start" sx={ { width: '268px', ...( sx as object ) } }>
+			<Stack alignItems="start" sx={ { width: '268px', ...sx } }>
 				<Stack
 					direction="row"
 					alignItems="center"

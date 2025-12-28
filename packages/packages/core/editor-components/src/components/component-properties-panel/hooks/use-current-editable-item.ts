@@ -10,7 +10,6 @@ import { validateGroupLabel } from '../utils/validate-group-label';
 
 export type GroupLabelEditableState = {
 	editableRef: React.RefObject< HTMLElement | null >;
-	openEditMode: () => void;
 	isEditing: boolean;
 	error: string | null;
 	getEditableProps: () => { value: string };
@@ -18,7 +17,7 @@ export type GroupLabelEditableState = {
 	editingGroupId: string | null;
 };
 
-export function useGroupLabelEditable(): GroupLabelEditableState {
+export function useCurrentEditableItem(): GroupLabelEditableState {
 	const [ editingGroupId, setEditingGroupId ] = useState< string | null >( null );
 	const currentComponentId = useCurrentComponentId();
 	const overridableProps = useOverridableProps( currentComponentId );
@@ -62,11 +61,13 @@ export function useGroupLabelEditable(): GroupLabelEditableState {
 
 	return {
 		editableRef,
-		openEditMode,
 		isEditing,
 		error,
 		getEditableProps,
-		setEditingGroupId,
+		setEditingGroupId: ( groupId ) => {
+			setEditingGroupId( groupId );
+			openEditMode();
+		},
 		editingGroupId,
 	};
 }

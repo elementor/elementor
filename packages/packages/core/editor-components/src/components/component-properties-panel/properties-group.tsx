@@ -16,6 +16,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { type OverridableProp, type OverridablePropsGroup } from '../../types';
+import { type GroupLabelEditableState } from './hooks/use-current-editable-item';
 import { PropertyItem } from './property-item';
 import { SortableItem, SortableProvider, SortableTrigger, type SortableTriggerProps } from './sortable';
 
@@ -31,17 +32,7 @@ type Props = {
 	onPropertyDelete: ( propKey: string ) => void;
 	onPropertyUpdate: ( propKey: string, data: { label: string; group: string | null } ) => void;
 	onGroupDelete: ( groupId: string ) => void;
-	groupLabelEditable: {
-		editableRef: React.RefObject< HTMLElement | null >;
-		openEditMode: () => void;
-		isEditing: boolean;
-		error: string | null;
-		getEditableProps: () => {
-			value: string;
-		};
-		setEditingGroupId: ( groupId: string ) => void;
-		editingGroupId: string | null;
-	};
+	editableLabelProps: GroupLabelEditableState;
 };
 
 export function PropertiesGroup( {
@@ -54,7 +45,7 @@ export function PropertiesGroup( {
 	onPropertyDelete,
 	onPropertyUpdate,
 	onGroupDelete,
-	groupLabelEditable,
+	editableLabelProps,
 }: Props ) {
 	const groupProps = group.props
 		.map( ( propId ) => props[ propId ] )
@@ -65,7 +56,7 @@ export function PropertiesGroup( {
 		disableAutoFocus: true,
 	} );
 
-	const { editableRef, isEditing, error, getEditableProps, setEditingGroupId, editingGroupId } = groupLabelEditable;
+	const { editableRef, isEditing, error, getEditableProps, setEditingGroupId, editingGroupId } = editableLabelProps;
 
 	const hasProperties = group.props.length > 0;
 	const isThisGroupEditing = isEditing && editingGroupId === group.id;
@@ -73,7 +64,6 @@ export function PropertiesGroup( {
 	const handleRenameClick = () => {
 		popupState.close();
 		setEditingGroupId( group.id );
-		groupLabelEditable.openEditMode();
 	};
 
 	const handleDeleteClick = () => {

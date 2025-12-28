@@ -15,7 +15,7 @@ import { reorderOverridableGroups } from '../../store/actions/reorder-overridabl
 import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
 import { useCurrentComponentId } from '../../store/store';
 import { useOverridableProps } from '../component-panel-header/use-overridable-props';
-import { useGroupLabelEditable } from './hooks/use-current-editable-item';
+import { useCurrentEditableItem } from './hooks/use-current-editable-item';
 import { PropertiesEmptyState } from './properties-empty-state';
 import { PropertiesGroup } from './properties-group';
 import { SortableItem, SortableProvider } from './sortable';
@@ -29,7 +29,7 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 	const currentComponentId = useCurrentComponentId();
 	const overridableProps = useOverridableProps( currentComponentId );
 	const [ isAddingGroup, setIsAddingGroup ] = useState( false );
-	const groupLabelEditable = useGroupLabelEditable();
+	const groupLabelEditable = useCurrentEditableItem();
 
 	const groups = useMemo( () => {
 		if ( ! overridableProps ) {
@@ -65,8 +65,8 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 		addOverridableGroup( { componentId: currentComponentId, groupId: newGroupId, label: newLabel } );
 		setDocumentModifiedStatus( true );
 		setIsAddingGroup( false );
+
 		groupLabelEditable.setEditingGroupId( newGroupId );
-		groupLabelEditable.openEditMode();
 	};
 
 	const handleGroupsReorder = ( newOrder: string[] ) => {
@@ -150,7 +150,7 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 											onPropsReorder={ ( newOrder ) => handlePropsReorder( group.id, newOrder ) }
 											onPropertyDelete={ handlePropertyDelete }
 											onPropertyUpdate={ handlePropertyUpdate }
-											groupLabelEditable={ groupLabelEditable }
+											editableLabelProps={ groupLabelEditable }
 											onGroupDelete={ handleGroupDelete }
 										/>
 									) }
