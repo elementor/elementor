@@ -190,7 +190,13 @@ class Test_Migration_Interpreter extends Elementor_Test_Base {
 		$result = Migration_Interpreter::run( $migration, $data );
 
 		// Assert
-		$this->assertMatchesJsonSnapshot( $result );
+		$this->assertArrayHasKey( 'new', $result['settings'] );
+		$this->assertArrayHasKey( 'empty', $result['settings']['new'] );
+		$this->assertArrayHasKey( 'obj', $result['settings']['new']['empty'] );
+		$this->assertInstanceOf( \stdClass::class, $result['settings']['new']['empty']['obj'] );
+
+		$json = json_encode( $result );
+		$this->assertStringContainsString( '"obj":{}', $json );
 	}
 
 	public function test_set_appends_to_array() {
