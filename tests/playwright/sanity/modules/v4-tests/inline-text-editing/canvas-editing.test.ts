@@ -146,6 +146,8 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		const paragraphId = await editor.addWidget( { widgetType: 'e-paragraph', container: containerId } );
 		let paragraphElement = editor.previewFrame.locator( `.elementor-element-${ paragraphId }` );
 
+		await paragraphElement.waitFor();
+
 		// Act
 		await editor.v4Panel.openTab( 'style' );
 		await editor.v4Panel.style.addGlobalClass( 'hello' );

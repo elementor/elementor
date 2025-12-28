@@ -55,9 +55,7 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 		}
 
 		renderOnChange(): void {
-			if ( this.#replacement?.shouldRenderReplacement() && this.#replacement?.renderOnChange ) {
-				this.#replacement.renderOnChange();
-			} else {
+			if ( ! this.#triggerMethod( 'renderOnChange' ) ) {
 				TemplatedView.prototype.renderOnChange.apply( this );
 			}
 		}
@@ -71,16 +69,13 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 				this.#replacement = new ReplacementClass( config );
 			}
 
-			if ( this.#replacement?.shouldRenderReplacement() && this.#replacement.render ) {
-				return this.#replacement.render();
+			if ( ! this.#triggerMethod( 'render' ) ) {
+				TemplatedView.prototype.render.apply( this );
 			}
-
-			return TemplatedView.prototype.render.apply( this );
 		}
 
 		onDestroy() {
-			if ( this.#replacement?.shouldRenderReplacement() && this.#replacement?.onDestroy ) {
-				this.#replacement.onDestroy();
+			if ( this.#triggerMethod( 'onDestroy' ) ) {
 				this.#replacement = null;
 			}
 
@@ -88,19 +83,27 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 		}
 
 		_afterRender() {
-			if ( this.#replacement?.shouldRenderReplacement() && this.#replacement?._afterRender ) {
-				this.#replacement._afterRender();
-			} else {
+			if ( ! this.#triggerMethod( '_afterRender' ) ) {
 				TemplatedView.prototype._afterRender.apply( this );
 			}
 		}
 
 		_beforeRender(): void {
-			if ( this.#replacement?.shouldRenderReplacement() && this.#replacement?._beforeRender ) {
-				this.#replacement._beforeRender();
-			} else {
+			if ( ! this.#triggerMethod( '_beforeRender' ) ) {
 				TemplatedView.prototype._beforeRender.apply( this );
 			}
+		}
+
+		#triggerMethod( methodKey: keyof ReplacementBaseInterface ) {
+			const method = this.#replacement?.shouldRenderReplacement() && this.#replacement[ methodKey ];
+
+			if ( ! method || typeof method !== 'function' ) {
+				return false;
+			}
+
+			method();
+
+			return true;
 		}
 	};
 };
