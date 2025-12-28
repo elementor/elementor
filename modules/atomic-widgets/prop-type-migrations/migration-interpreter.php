@@ -491,7 +491,7 @@ class Migration_Interpreter {
 		}
 
 		$keys = array_keys( $array );
-		return $keys === range( 0, count( $array ) - 1 );
+		return range( 0, count( $array ) - 1 ) === $keys;
 	}
 
 	private static function rename_key_recursive( array &$data, array $segments, string $new_key ): void {
