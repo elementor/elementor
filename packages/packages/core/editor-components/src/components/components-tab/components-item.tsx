@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
 import { dropElement, type DropElementParams, type V1ElementData } from '@elementor/editor-elements';
+import { notify } from '@elementor/editor-notifications';
 import { EllipsisWithTooltip, MenuListItem } from '@elementor/editor-ui';
 import { ComponentsIcon, DotsVerticalIcon } from '@elementor/icons';
 import {
@@ -17,6 +18,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { wouldCreateCircularNesting } from '../../prevent-circular-nesting';
 import { archiveComponent } from '../../store/actions/archive-component';
 import { loadComponentsAssets } from '../../store/actions/load-components-assets';
 import { type Component } from '../../types';
@@ -35,6 +37,15 @@ export const ComponentItem = ( { component }: ComponentItemProps ) => {
 	} );
 
 	const handleClick = () => {
+		if ( wouldCreateCircularNesting( component.id ) ) {
+			notify( {
+				type: 'default',
+				message: __( 'Cannot add this component here - it would create a circular reference.', 'elementor' ),
+				id: 'circular-component-nesting-blocked',
+			} );
+			return;
+		}
+
 		addComponentToPage( componentModel );
 	};
 

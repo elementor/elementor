@@ -34,6 +34,7 @@ import { OverridablePropIndicator } from './components/overridable-props/overrid
 import { createComponentType, TYPE } from './create-component-type';
 import { initMcp } from './mcp';
 import { PopulateStore } from './populate-store';
+import { initCircularNestingPrevention } from './prevent-circular-nesting';
 import { componentOverridablePropTypeUtil } from './prop-types/component-overridable-prop-type';
 import { loadComponentsAssets } from './store/actions/load-components-assets';
 import { removeComponentStyles } from './store/actions/remove-component-styles';
@@ -123,4 +124,6 @@ export function init() {
 	settingsTransformersRegistry.register( 'override', componentOverrideTransformer );
 
 	initMcp();
+
+	initCircularNestingPrevention();
 }
