@@ -1,15 +1,15 @@
 <?php
 
-namespace Elementor\Modules\EditorOne\Classes\Menu\Items;
+namespace Elementor\Core\Admin\EditorOneMenu\Menu;
 
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Third_Level_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-abstract class Abstract_Menu_Item implements Menu_Item_Third_Level_Interface {
+abstract class Abstract_Level4_Menu_Item implements Menu_Item_Interface {
 
 	public function get_capability() {
 		return Menu_Config::CAPABILITY_MANAGE_OPTIONS;
@@ -23,19 +23,11 @@ abstract class Abstract_Menu_Item implements Menu_Item_Third_Level_Interface {
 		return true;
 	}
 
-	public function get_group_id() {
-		return Menu_Config::EDITOR_GROUP_ID;
-	}
-
-	public function has_children(): bool {
-		return false;
-	}
-
 	abstract public function get_label();
 
 	abstract public function get_position();
 
 	abstract public function get_slug();
 
-	abstract public function get_icon(): string;
+	abstract public function get_group_id();
 }
