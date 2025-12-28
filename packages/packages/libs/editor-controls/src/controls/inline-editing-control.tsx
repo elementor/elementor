@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { htmlPropTypeUtil } from '@elementor/editor-props';
+import { type ComponentProps, useEffect, useState } from 'react';
+import { htmlPropTypeUtil, type HtmlPropValue } from '@elementor/editor-props';
+import {
+	__privateListenTo as listenTo,
+	commandEndEvent,
+	type CommandEvent,
+	type ListenerEvent,
+} from '@elementor/editor-v1-adapters';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
 
 import { useBoundProp } from '../bound-prop-context';
@@ -15,10 +22,23 @@ export const InlineEditingControl = createControl(
 	}: {
 		sx?: SxProps< Theme >;
 		attributes?: Record< string, string >;
-		props?: React.ComponentProps< 'div' >;
+		props?: ComponentProps< 'div' >;
 	} ) => {
-		const { value, setValue } = useBoundProp( htmlPropTypeUtil );
+		const { value, setValue, bind } = useBoundProp( htmlPropTypeUtil );
+		const [ actualValue, setActualValue ] = useState< HtmlPropValue[ 'value' ] >( value );
 		const handleChange = ( newValue: unknown ) => setValue( newValue as string );
+
+		useEffect( () => {
+			return listenTo( commandEndEvent( 'document/elements/settings' ), ( e: ListenerEvent ) => {
+				const { args, type } = e as CommandEvent< { settings: Record< string, HtmlPropValue > } >;
+				const settingValue = args?.settings?.[ bind ]?.value ?? null;
+
+				if ( type !== 'command' || settingValue !== actualValue ) {
+					setActualValue( settingValue );
+				}
+			} );
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, [] );
 
 		return (
 			<ControlActions>
@@ -54,7 +74,7 @@ export const InlineEditingControl = createControl(
 					{ ...attributes }
 					{ ...props }
 				>
-					<InlineEditor value={ value || '' } setValue={ handleChange } />
+					<InlineEditor value={ actualValue || '' } setValue={ handleChange } />
 				</Box>
 			</ControlActions>
 		);

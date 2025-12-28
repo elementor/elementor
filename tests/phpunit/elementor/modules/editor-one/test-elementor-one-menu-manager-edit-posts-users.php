@@ -3,7 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\EditorOne\Components\Elementor_One_Menu_Manager;
+use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Module as EditorOneModule;
 use Elementor\Plugin;

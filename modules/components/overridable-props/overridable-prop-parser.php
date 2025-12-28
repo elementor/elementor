@@ -11,8 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Overridable_Prop_Parser {
-	private $origin_value_prop_type;
-
 	public static function make(): self {
 		return new static();
 	}

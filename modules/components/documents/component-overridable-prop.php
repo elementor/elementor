@@ -30,7 +30,8 @@ class Component_Overridable_Prop {
 	/** @var string */
 	public $group_id;
 
-	public $origin_prop_fields;
+	/** @var ?array{ $el_type: string, $widget_type: string, $prop_key: string } */
+	public $origin_prop_fields = null;
 
 	public function __construct( array $overridable_prop ) {
 		$this->override_key = $overridable_prop['overrideKey'];
