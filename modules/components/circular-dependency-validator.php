@@ -156,7 +156,7 @@ class Circular_Dependency_Validator {
 			);
 		} else {
 			$message = sprintf(
-				esc_html__( 'Circular dependency detected: Component "%s" would create a cycle via component "%s".', 'elementor' ),
+				esc_html__( 'Circular dependency detected: Component "%1$s" would create a cycle via component "%2$s".', 'elementor' ),
 				$component_id,
 				$via_component_id
 			);
