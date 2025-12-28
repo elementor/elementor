@@ -221,8 +221,26 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await page.waitForSelector( '.MuiPopover-root' );
 		} );
 
+		await test.step( 'Replay control is not visible on page load trigger', async () => {
+			const replayLabel = page.getByText( 'Replay', { exact: true } );
+
+			// Assert - label is not visible
+			await expect( replayLabel ).not.toBeVisible();
+		} );
+
 		await test.step( 'Verify Replay control is visible and disabled', async () => {
 			// Arrange
+			const selectOption = async ( openSelector, optionName ) => {
+				await expect( openSelector ).toBeVisible();
+				await openSelector.click();
+
+				const option = page.getByRole( 'option', { name: optionName } );
+				await expect( option ).toBeVisible();
+				await option.click();
+			};
+
+			await selectOption( page.getByText( 'Page load', { exact: true } ), 'Scroll into view' );
+
 			const replayLabel = page.getByText( 'Replay', { exact: true } );
 
 			// Assert - label is visible
