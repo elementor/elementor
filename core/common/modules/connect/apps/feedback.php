@@ -10,12 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Feedback extends Common_App {
 
-	static $EXPERIMENT_NAME = 'in_editor_feedback';
+	const EXPERIMENT_NAME = 'in_editor_feedback';
 
 	const FEEDBACK_ENDPOINT = 'https://my.elementor.com/feedback/api/v1';
 
-	public function __construct()
-	{
+	public function __construct() {
 		parent::__construct();
 		Plugin::$instance->experiments->add_feature([
 			'name' => self::$EXPERIMENT_NAME,
