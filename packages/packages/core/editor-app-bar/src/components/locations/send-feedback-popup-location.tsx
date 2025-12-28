@@ -36,8 +36,10 @@ type FeedbackResult = {
 	message: string;
 };
 
+export const EXPERIMENT_NAME = 'in_editor_feedback';
+
 export default function SendFeedbackPopupLocation() {
-	const isActive = isExperimentActive( 'in_editor_feedback' );
+	const isActive = isExperimentActive( EXPERIMENT_NAME );
 	const extendedWindow = window as unknown as ExtendedWindow;
 	const [ isUserConnected, setIsUserConnected ] = useState< boolean >( checkIfUserIsConnected() );
 	const connectUrl = extendedWindow?.elementor?.config.user.top_bar.connect_url;
