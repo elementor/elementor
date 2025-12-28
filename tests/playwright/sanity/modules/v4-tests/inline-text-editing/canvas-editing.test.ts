@@ -9,53 +9,19 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 	let context: BrowserContext;
 	let page: Page;
 	let editor: EditorPage;
-	let testUser: { id: string; username: string; password: string };
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
-		if ( ! testUser?.id ) {
-			try {
-				testUser = await apiRequests.createNewUser( page.context().request, {
-					username: 'globalClassMaker',
-					password: 'password',
-					email: 'globalClassMaker@test.com',
-				roles: [ 'administrator' ],
-			} );
-
-			await context.close();
-				context = await browser.newContext();
-				page = await context.newPage();
-				wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-			} catch ( error ) {
-				// Silently handle creation errors.
-			}
-		}
-
-		await wpAdminPage.customLogin( testUser.username, testUser.password );
 		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
 		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active', e_classes: 'active' } );
 
 		editor = await wpAdminPage.openNewPage();
 	} );
 
-	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
-		context = await browser.newContext();
-		page = await context.newPage();
-		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdminPage.customLogin( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password' );
-
-		if ( testUser?.id ) {
-			try {
-				await apiRequests.deleteUser( page.context().request, testUser.id );
-			} catch ( error ) {
-				// Silently handle cleanup errors - test cleanup should not fail the test
-			}
-		}
-
+	test.afterAll( async () => {
 		await wpAdminPage?.resetExperiments();
 		await context.close();
 	} );
@@ -174,13 +140,16 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await expect.soft( headingElement ).toHaveCSS( 'font-weight', '100' );
 	} );
 
-	test( 'Global classes styles should render while editing', async () => {
+	test.only( 'Global classes styles should render while editing', async ( {}, testInfo ) => {
+		await page.pause();
+		await page.goto( 'http://wordpress-dev.local/wp-admin/post.php?post=1683&action=elementor' );
+		editor = new EditorPage( page, testInfo );
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const paragraphId = await editor.addWidget( { widgetType: 'e-paragraph', container: containerId } );
 		let paragraphElement = editor.previewFrame.locator( `.elementor-element-${ paragraphId }` );
 
-		await paragraphElement.waitFor();
+		await page.waitForTimeout( 1000 );
 
 		// Act
 		await editor.v4Panel.openTab( 'style' );
