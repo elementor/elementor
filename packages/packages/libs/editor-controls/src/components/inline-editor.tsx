@@ -40,6 +40,8 @@ type InlineEditorProps = {
 	expectedTag?: string | null;
 };
 
+const INITIAL_STYLE = 'margin:0;padding:0;';
+
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
 	const hasMounted = useRef( false );
 
@@ -169,7 +171,7 @@ export const InlineEditor = forwardRef(
 				Paragraph.extend( {
 					renderHTML( { HTMLAttributes } ) {
 						const tag = expectedTag ?? 'p';
-						return [ tag, { ...HTMLAttributes, style: 'margin:0;padding:0;', class: elementClasses }, 0 ];
+						return [ tag, { ...HTMLAttributes, style: INITIAL_STYLE, class: elementClasses }, 0 ];
 					},
 				} ),
 				Heading.extend( {
@@ -177,7 +179,7 @@ export const InlineEditor = forwardRef(
 						if ( expectedTag ) {
 							return [
 								expectedTag,
-								{ ...HTMLAttributes, style: 'margin:0;padding:0;', class: elementClasses },
+								{ ...HTMLAttributes, style: INITIAL_STYLE, class: elementClasses },
 								0,
 							];
 						}
@@ -186,11 +188,7 @@ export const InlineEditor = forwardRef(
 							? node.attrs.level
 							: this.options.levels[ 0 ];
 
-						return [
-							`h${ level }`,
-							{ ...HTMLAttributes, style: 'margin:0;padding:0;', class: elementClasses },
-							0,
-						];
+						return [ `h${ level }`, { ...HTMLAttributes, style: INITIAL_STYLE, class: elementClasses }, 0 ];
 					},
 				} ).configure( {
 					levels: [ 1, 2, 3, 4, 5, 6 ],
