@@ -2,7 +2,7 @@
 
 namespace Elementor\App\AdminMenuItems;
 
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\App\App;
 

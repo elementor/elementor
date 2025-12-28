@@ -1,13 +1,12 @@
 <?php
 
-namespace Elementor\Modules\EditorOne\Components;
+namespace Elementor\Core\Admin\EditorOneMenu;
 
-use Elementor\Core\Admin\Menu\Interfaces\Admin_Menu_Item_With_Page;
+use Elementor\Core\Admin\EditorOneMenu\Menu\Editor_One_Custom_Elements_Menu;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Legacy_Submenu_Interceptor;
-use Elementor\Modules\EditorOne\Classes\Menu\Items\Editor_One_Custom_Elements_Menu;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
 use Elementor\Modules\EditorOne\Classes\Slug_Normalizer;
 use Elementor\Plugin;
 use Elementor\Utils;
@@ -25,10 +24,6 @@ class Elementor_One_Menu_Manager {
 	private Legacy_Submenu_Interceptor $legacy_submenu_interceptor;
 
 	public function __construct() {
-		if ( ! Menu_Config::is_elementor_home_menu_available() ) {
-			return;
-		}
-
 		$this->menu_data_provider = Menu_Data_Provider::instance();
 		$this->legacy_submenu_interceptor = new Legacy_Submenu_Interceptor(
 			$this->menu_data_provider,
@@ -46,9 +41,9 @@ class Elementor_One_Menu_Manager {
 			do_action( 'elementor/editor-one/menu/register', $this->menu_data_provider );
 		}, 4 );
 
-		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 999 );
-		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 1001 );
-		add_action( 'admin_menu', [ $this, 'remove_all_submenus_for_edit_posts_users' ], 1005 );
+		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 10003 );
+		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 10004 );
+		add_action( 'admin_menu', [ $this, 'remove_all_submenus_for_edit_posts_users' ], 10005 );
 		add_action( 'admin_menu', [ $this, 'override_elementor_page_for_edit_posts_users' ], 1006 );
 		add_filter( 'add_menu_classes', [ $this, 'fix_theme_builder_submenu_url' ] );
 		add_action( 'admin_head', [ $this, 'hide_flyout_items_from_wp_menu' ] );
@@ -74,7 +69,8 @@ class Elementor_One_Menu_Manager {
 			esc_html__( 'Editor', 'elementor' ),
 			Menu_Config::CAPABILITY_EDIT_POSTS,
 			Menu_Config::EDITOR_MENU_SLUG,
-			[ $this, 'render_editor_page' ]
+			[ $this, 'render_editor_page' ],
+			20
 		);
 
 		add_submenu_page(
@@ -83,7 +79,8 @@ class Elementor_One_Menu_Manager {
 			esc_html__( 'Theme Builder', 'elementor' ),
 			Menu_Config::CAPABILITY_EDIT_POSTS,
 			'elementor-theme-builder',
-			''
+			'',
+			70
 		);
 
 		add_submenu_page(
@@ -92,7 +89,8 @@ class Elementor_One_Menu_Manager {
 			esc_html__( 'Submissions', 'elementor' ),
 			'edit_posts',
 			'e-form-submissions',
-			''
+			'',
+			80
 		);
 
 		do_action( 'elementor/editor-one/menu/register_submenus' );
@@ -326,3 +324,4 @@ class Elementor_One_Menu_Manager {
 		return $this->menu_data_provider->get_editor_flyout_data();
 	}
 }
+
