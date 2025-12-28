@@ -140,10 +140,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await expect.soft( headingElement ).toHaveCSS( 'font-weight', '100' );
 	} );
 
-	test.only( 'Global classes styles should render while editing', async ( {}, testInfo ) => {
-		await page.pause();
-		await page.goto( 'http://wordpress-dev.local/wp-admin/post.php?post=1683&action=elementor' );
-		editor = new EditorPage( page, testInfo );
+	test( 'Global classes styles should render while editing', async () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const paragraphId = await editor.addWidget( { widgetType: 'e-paragraph', container: containerId } );
