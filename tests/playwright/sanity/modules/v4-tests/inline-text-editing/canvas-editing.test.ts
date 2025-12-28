@@ -9,19 +9,43 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 	let context: BrowserContext;
 	let page: Page;
 	let editor: EditorPage;
+	let testUser: { id: string; username: string; password: string };
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
+		testUser = await apiRequests.createNewUser( page.context().request, {
+			username: 'globalClassMaker',
+			password: 'password',
+			email: 'globalClassMaker@test.com',
+			roles: [ 'administrator' ],
+		} );
 
+		await wpAdminPage.customLogin( testUser.username, testUser.password );
 		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
 		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active' } );
 
 		editor = await wpAdminPage.openNewPage();
 	} );
 
-	test.afterAll( async () => {
+	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
+		context = await browser.newContext();
+		page = await context.newPage();
+		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
+
+		await wpAdminPage.customLogin( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password' );
+
+		if ( testUser?.id ) {
+			try {
+				await apiRequests.deleteUser( page.context().request, testUser.id );
+			} catch ( error ) {
+				// Silently handle cleanup errors - test cleanup should not fail the test
+			}
+
+			await context.close();
+		}
+
 		await wpAdminPage?.resetExperiments();
 		await context.close();
 	} );

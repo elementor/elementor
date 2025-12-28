@@ -66,9 +66,8 @@ export default class v4Panel extends BasePage {
 			return;
 		}
 
-		while ( ! await this.page.locator( sectionContentSelector ).isVisible() ) {
-			await this.page.locator( sectionButtonSelector ).click();
-		}
+		await this.page.locator( sectionButtonSelector ).click();
+		await this.page.locator( sectionContentSelector ).waitFor();
 	}
 
 	async addAtomicWidget( widgetTitle: string, widgetName: string ) {
