@@ -38,7 +38,7 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 
 		return overridableProps.groups.order
 			.map( ( groupId ) => overridableProps.groups.items[ groupId ] ?? null )
-			.filter( ( group ): group is NonNullable< typeof group > => group !== null );
+			.filter( Boolean );
 	}, [ overridableProps ] );
 
 	const allGroupsForSelect = useMemo(
