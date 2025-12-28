@@ -391,7 +391,7 @@ trait Has_Atomic_Base {
 
 		if ( is_array( $config ) ) {
 			$replay = $this->extract_prop_value_simple( $config, 'replay', 0 );
-			if ( empty( $replay ) && $replay !== 0 && $replay !== '0' ) {
+			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
 				$replay = 0;
 			}
 		} else {
