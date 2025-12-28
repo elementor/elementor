@@ -1,11 +1,17 @@
 import * as React from 'react';
-import { PopoverContent } from '@elementor/editor-controls';
+import { ControlFormLabel, PopoverContent, PopoverGridContainer } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsControl } from '../interactions-controls-registry';
 import type { InteractionItemValue } from '../types';
-import { createAnimationPreset, createString, extractNumber, extractString, extractBoolean } from '../utils/prop-value-utils';
+import {
+	createAnimationPreset,
+	createString,
+	extractBoolean,
+	extractNumber,
+	extractString,
+} from '../utils/prop-value-utils';
 import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
@@ -17,11 +23,6 @@ type InteractionDetailsProps = {
 	onChange: ( interaction: InteractionItemValue ) => void;
 };
 
-// // Temporary until pro control implemented
-// type WindowWithElementorPro = Window & {
-// 	elementorPro?: unknown;
-// };
-
 const DEFAULT_VALUES = {
 	trigger: 'load',
 	effect: 'fade',
@@ -32,6 +33,8 @@ const DEFAULT_VALUES = {
 	replay: false,
 };
 
+const TRIGGERS_WITH_REPLAY = [ 'scrollIn', 'scrollOut' ];
+
 export const InteractionDetails = ( { interaction, onChange }: InteractionDetailsProps ) => {
 	const trigger = extractString( interaction.trigger, DEFAULT_VALUES.trigger );
 	const effect = extractString( interaction.animation.value.effect, DEFAULT_VALUES.effect );
@@ -41,12 +44,15 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 	const delay = extractNumber( interaction.animation.value.timing_config.value.delay, DEFAULT_VALUES.delay );
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay ); // Extract from nested structure
 
+	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
+	const ReplayControl = React.useMemo( () => {
+		if ( ! shouldShowReplay ) {
+			return null;
+		}
+		return getInteractionsControl( 'replay' )?.component ?? null;
+	}, [ shouldShowReplay ] );
 
-	const ReplayControl = getInteractionsControl( 'replay' )?.component ?? null;
 	const effectiveDirection = effect === 'slide' && ! direction ? 'top' : direction;
-	// Temporary until pro control implemented
-	// const hasPro = !! ( window as WindowWithElementorPro ).elementorPro;
-	// const shouldShowReplay = ReplayControl && ! hasPro;
 
 	const updateInteraction = (
 		updates: Partial< {
@@ -63,8 +69,7 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 		const newDirection = updates.direction ?? direction;
 
 		const resolvedDirection = newEffect === 'slide' && ! newDirection ? 'top' : newDirection;
-		const newReplay = updates.replay !== undefined ? updates.replay : replay; 
-
+		const newReplay = updates.replay !== undefined ? updates.replay : replay;
 
 		onChange( {
 			...interaction,
@@ -84,6 +89,24 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 		<PopoverContent p={ 1.5 }>
 			<Grid container spacing={ 1.5 }>
 				<Trigger value={ trigger } onChange={ ( v ) => updateInteraction( { trigger: v } ) } />
+				{ ReplayControl && (
+					<>
+						<Grid item xs={ 12 }>
+							<PopoverGridContainer>
+								<Grid item xs={ 6 }>
+									<ControlFormLabel>{ __( 'Replay', 'elementor' ) }</ControlFormLabel>
+								</Grid>
+								<Grid item xs={ 6 }>
+									<ReplayControl
+										value={ replay }
+										onChange={ ( v ) => updateInteraction( { replay: v } ) }
+										disabled={ true }
+									/>
+								</Grid>
+							</PopoverGridContainer>
+						</Grid>
+					</>
+				) }
 			</Grid>
 			<Divider sx={ { mx: 1.5 } } />
 			<Grid container spacing={ 1.5 }>
@@ -105,14 +128,6 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 					label={ __( 'Delay', 'elementor' ) }
 				/>
 			</Grid>
-			{ ReplayControl && (
-				<>
-					<Divider />
-					<Grid container spacing={ 1.5 }>
-						<ReplayControl value={ replay } onChange={ ( v ) => updateInteraction( { replay: v } ) } disabled={ true } />
-					</Grid>
-				</>
-			) }
 		</PopoverContent>
 	);
 };

@@ -4,16 +4,27 @@ import { registerInteractionsControl } from './interactions-controls-registry';
 import { interactionsRepository } from './interactions-repository';
 import { documentElementsInteractionsProvider } from './providers/document-elements-interactions-provider';
 
+type WindowWithElementorPro = Window & {
+	elementorPro?: unknown;
+};
+
+const hasPro = !! ( window as WindowWithElementorPro ).elementorPro;
+
 export function init() {
-	registerInteractionsControl( {
-		type: 'replay',
-		component: Replay,
-		options: [ 'yes', 'no' ],
-	} );
 	try {
 		interactionsRepository.register( documentElementsInteractionsProvider );
 		initCleanInteractionIdsOnDuplicate();
 	} catch ( error ) {
 		throw error;
 	}
+
+	if ( hasPro ) {
+		return;
+	}
+
+	registerInteractionsControl( {
+		type: 'replay',
+		component: Replay,
+		options: [ 'yes', 'no' ],
+	} );
 }

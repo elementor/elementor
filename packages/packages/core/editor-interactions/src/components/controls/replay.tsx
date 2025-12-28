@@ -1,20 +1,11 @@
 import * as React from 'react';
-import {
-	ControlFormLabel,
-	PopoverGridContainer,
-	type ToggleButtonGroupItem,
-	ToggleButtonGroupUi,
-} from '@elementor/editor-controls';
+import { type ToggleButtonGroupItem, ToggleButtonGroupUi } from '@elementor/editor-controls';
 import { CheckIcon, MinusIcon } from '@elementor/icons';
-import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type ReplayFieldProps } from '../../types';
 
-export function Replay( { value, onChange = () => {}, disabled = true }: ReplayFieldProps ) {
-	console.log( 'value', value );
-	console.log( 'onChange', onChange );
-	console.log( 'disabled', disabled );
+export function Replay( { disabled = true }: ReplayFieldProps ) {
 	const options: ToggleButtonGroupItem< boolean >[] = [
 		{
 			value: true,
@@ -29,23 +20,6 @@ export function Replay( { value, onChange = () => {}, disabled = true }: ReplayF
 	];
 
 	return (
-		<>
-			<Grid item xs={ 12 }>
-				<PopoverGridContainer>
-					<Grid item xs={ 6 }>
-						<ControlFormLabel>{ __( 'Replay', 'elementor' ) }</ControlFormLabel>
-					</Grid>
-					<Grid item xs={ 6 }>
-						<ToggleButtonGroupUi
-							items={ options }
-							exclusive
-							onChange={ () => {} }
-							value={ false }
-							disabled={ disabled }
-						/>
-					</Grid>
-				</PopoverGridContainer>
-			</Grid>
-		</>
+		<ToggleButtonGroupUi items={ options } exclusive onChange={ () => {} } value={ false } disabled={ disabled } />
 	);
 }
