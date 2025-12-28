@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\EditorOne\Classes;
 
-use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\User;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -11,14 +10,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Editor_One_Pointer {
 
 	const CURRENT_POINTER_SLUG = 'e-editor-one-notice-pointer';
-	const MINIMUM_VERSION = '3.34.0';
 
 	public function __construct() {
 		add_action( 'admin_print_footer_scripts', [ $this, 'admin_print_script' ] );
 	}
 
 	public function admin_print_script() {
-		if ( ! $this->is_admin_user() || $this->is_new_installation() || $this->is_dismissed() || ! $this->is_minimum_required_version() ) {
+		if ( ! $this->is_admin_user() || $this->is_dismissed() ) {
 			return;
 		}
 
@@ -34,31 +32,46 @@ class Editor_One_Pointer {
 			esc_html__( 'Learn more', 'elementor' )
 		);
 
-		$got_it_url = admin_url( 'admin.php?page=elementor' );
+		$got_it_url = Menu_Config::get_elementor_home_url();
 		$pointer_content .= sprintf(
-			'<p><a class="button button-primary" href="%s">%s</a></p>',
-			esc_url( $got_it_url ),
+			'<p><button class="button button-primary elementor-editor-one-pointer-got-it">%s</button></p>',
 			esc_html__( 'Got it', 'elementor' )
 		);
+
+		$pointer_element_selector = '#toplevel_page_' . Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
 
 		?>
 		<script>
 			jQuery( document ).ready( function( $ ) {
 				setTimeout( function () {
-					$( '#toplevel_page_elementor' ).pointer( {
+					function markIntroductionAsViewed( redirectUrl ) {
+						elementorCommon.ajax.addRequest( 'introduction_viewed', {
+							data: {
+								introductionKey: '<?php echo esc_attr( self::CURRENT_POINTER_SLUG ); ?>',
+							},
+							success: function() {
+								if ( redirectUrl ) {
+									window.location.href = redirectUrl;
+								}
+							}
+						} );
+					}
+
+					$( '<?php echo esc_js( $pointer_element_selector ); ?>' ).pointer( {
 						content: <?php echo wp_json_encode( $pointer_content ); ?>,
 						position: {
-							edge: <?php echo is_rtl() ? "'right'" : "'left'"; ?>,
-							align: 'center'
+							edge: 'top',
+							align: 'left'
 						},
-						close: function () {
-							elementorCommon.ajax.addRequest( 'introduction_viewed', {
-								data: {
-									introductionKey: '<?php echo esc_attr( self::CURRENT_POINTER_SLUG ); ?>',
-								},
-							} );
+						close: function() {
+							markIntroductionAsViewed();
 						}
 					} ).pointer( 'open' );
+
+					$( document ).on( 'click', '.elementor-editor-one-pointer-got-it', function( e ) {
+						e.preventDefault();
+						markIntroductionAsViewed( '<?php echo esc_url( $got_it_url ); ?>' );
+					} );
 				}, 10 );
 			} );
 		</script>
@@ -69,15 +82,7 @@ class Editor_One_Pointer {
 		return User::get_introduction_meta( self::CURRENT_POINTER_SLUG );
 	}
 
-	private function is_new_installation() {
-		return Upgrade_Manager::is_new_installation();
-	}
-
 	private function is_admin_user() {
 		return current_user_can( 'manage_options' );
-	}
-
-	private function is_minimum_required_version() {
-		return version_compare( ELEMENTOR_VERSION, self::MINIMUM_VERSION, '>=' );
 	}
 }

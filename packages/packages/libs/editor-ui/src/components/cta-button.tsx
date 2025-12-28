@@ -3,11 +3,11 @@ import { CrownFilledIcon } from '@elementor/icons';
 import { Button, type ButtonProps } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-type UpgradeButtonProps = {
+type CtaButtonProps = {
 	href: string;
 } & Omit< ButtonProps, 'href' | 'target' | 'startIcon' | 'color' | 'variant' >;
 
-export const UpgradeButton = ( { href, children, ...props }: UpgradeButtonProps ) => (
+export const CtaButton = ( { href, children, ...props }: CtaButtonProps ) => (
 	<Button
 		variant="contained"
 		color="promotion"
