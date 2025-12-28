@@ -84,6 +84,24 @@ class Component_Overrides_Mocks {
 					],
 					'groupId' => 'group-2',
 				],
+				'prop-uuid-5' => [
+					'overrideKey' => 'prop-uuid-5',
+					'label' => 'Exposed further button text',
+					'elementId' => 'button-123',
+					'elType' => 'widget',
+					'widgetType' => 'e-component',
+					'propKey' => 'override',
+					'originValue' => [
+						'$$type' => 'string',
+						'value' => 'Click here',
+					],
+					'originPropFields' => [
+						'elType' => 'widget',
+						'widgetType' => 'e-button',
+						'propKey' => 'text',
+					],
+					'groupId' => 'group-2',
+				],
 			],
 			'groups' => [
 				'items' => [
@@ -95,7 +113,7 @@ class Component_Overrides_Mocks {
 					'group-2' => [
 						'id' => 'group-2-uuid',
 						'label' => 'Image',
-						'props' => [ 'prop-uuid-3', 'prop-uuid-4' ],
+						'props' => [ 'prop-uuid-3', 'prop-uuid-4', 'prop-uuid-5' ],
 					],
 				],
 				'order' => [ 'group-1-uuid', 'group-2-uuid' ],
