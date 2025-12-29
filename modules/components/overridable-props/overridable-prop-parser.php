@@ -5,6 +5,7 @@ namespace Elementor\Modules\Components\OverridableProps;
 use Elementor\Modules\Components\PropTypes\Override_Prop_Type;
 use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Core\Utils\Api\Parse_Result;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -124,7 +125,7 @@ class Overridable_Prop_Parser {
 		if ( ! empty( $origin_value ) ) {
 			$sanitized_value = $origin_prop_type->sanitize( $origin_value );
 
-			if ( Override_Prop_Type::get_key() === $origin_value['$$type'] ) {
+			if ( Overridable_Prop_Type::get_key() === $prop['$$type'] ) {
 				$raw_origin_value = $prop['originValue'];
 
 				return [
