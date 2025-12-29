@@ -1,58 +1,50 @@
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
-import { type ComponentId, type OverridableProp } from '../../types';
+import { type ComponentOverridablePropValue } from '../../prop-types/component-overridable-prop-type';
+import { type OriginPropFields, type OverridableProps } from '../../types';
 import { selectOverridableProps, slice } from '../store';
-import { movePropBetweenGroups } from '../utils/groups-transformers';
 
-type UpdatePropParams = {
-	componentId: ComponentId;
-	propKey: string;
-	label: string;
-	groupId: string | null;
-};
-
-export function updateOverridableProp( {
-	componentId,
-	propKey,
-	label,
-	groupId,
-}: UpdatePropParams ): OverridableProp | undefined {
+export function updateOverridableProp(
+	componentId: number,
+	propValue: ComponentOverridablePropValue,
+	originPropFields?: OriginPropFields
+) {
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
 	if ( ! overridableProps ) {
 		return;
 	}
 
-	const prop = overridableProps.props[ propKey ];
+	const existingOverridableProp = overridableProps.props[ propValue.override_key ];
 
-	if ( ! prop ) {
+	if ( ! existingOverridableProp ) {
 		return;
 	}
 
-	const oldGroupId = prop.groupId;
-	const newGroupId = groupId ?? oldGroupId;
+	const newOverridableProp = originPropFields
+		? {
+				originValue: propValue.origin_value,
+				originPropFields,
+		  }
+		: {
+				originValue: propValue.origin_value,
+		  };
 
-	const updatedProp: OverridableProp = {
-		...prop,
-		label,
-		groupId: newGroupId,
-	};
-
-	const updatedGroups = movePropBetweenGroups( overridableProps.groups, propKey, oldGroupId, newGroupId );
+	const newOverridableProps = {
+		...overridableProps,
+		props: {
+			...overridableProps.props,
+			[ existingOverridableProp.overrideKey ]: {
+				...existingOverridableProp,
+				...newOverridableProp,
+			},
+		},
+	} satisfies OverridableProps;
 
 	dispatch(
 		slice.actions.setOverridableProps( {
 			componentId,
-			overridableProps: {
-				...overridableProps,
-				props: {
-					...overridableProps.props,
-					[ propKey ]: updatedProp,
-				},
-				groups: updatedGroups,
-			},
+			overridableProps: newOverridableProps,
 		} )
 	);
-
-	return updatedProp;
 }
