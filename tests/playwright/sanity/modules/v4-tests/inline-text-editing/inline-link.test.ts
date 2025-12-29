@@ -43,7 +43,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 
 		// Act - Open inline editor and type text.
 		await headingElement.dblclick();
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
@@ -93,7 +93,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		await expect( headingElement ).toBeVisible();
 		await headingElement.dblclick();
 
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
 		await page.keyboard.type( TEST_TEXT );
@@ -134,7 +134,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		await expect( headingElement ).toBeVisible();
 		await headingElement.dblclick();
 
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
 		await page.keyboard.type( TEST_TEXT );
@@ -176,7 +176,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		await expect( headingElement ).toBeVisible();
 		await headingElement.dblclick();
 
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
