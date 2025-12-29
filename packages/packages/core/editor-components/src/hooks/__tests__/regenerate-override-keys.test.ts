@@ -19,29 +19,17 @@ jest.mock( '@elementor/utils', () => ( {
 
 const mockGetContainer = jest.mocked( getContainer );
 const mockUpdateElementSettings = jest.mocked( updateElementSettings );
-const mockGenerateUniqueId = jest.mocked( generateUniqueId );
 
 describe( 'regenerateOverrideKeysForContainers', () => {
 	const MOCK_COMPONENT_ID = 123;
-	const ORIGINAL_OVERRIDE_KEY_1 = 'prop-original-1';
-	const ORIGINAL_OVERRIDE_KEY_2 = 'prop-original-2';
-	const NEW_OVERRIDE_KEY_1 = 'prop-new-1';
-	const NEW_OVERRIDE_KEY_2 = 'prop-new-2';
-
-	beforeEach( () => {
-		let idCounter = 0;
-
-		mockGenerateUniqueId.mockImplementation( () => {
-			idCounter++;
-			return idCounter === 1 ? NEW_OVERRIDE_KEY_1 : NEW_OVERRIDE_KEY_2;
-		} );
-	} );
 
 	it( 'should regenerate override keys for component instances', () => {
 		// Arrange
+		const ids = createMockGenerateUniqueId();
+
 		const componentInstance = createMockComponentInstance( MOCK_COMPONENT_ID, [
-			{ override_key: ORIGINAL_OVERRIDE_KEY_1, override_value: { $$type: 'html', value: 'Title 1' } },
-			{ override_key: ORIGINAL_OVERRIDE_KEY_2, override_value: { $$type: 'string', value: 'Value 2' } },
+			{ override_key: 'prop-original-1', override_value: { $$type: 'html', value: 'Title 1' } },
+			{ override_key: 'prop-original-2', override_value: { $$type: 'string', value: 'Value 2' } },
 		] );
 
 		mockGetContainer.mockReturnValue( componentInstance );
@@ -52,7 +40,8 @@ describe( 'regenerateOverrideKeysForContainers', () => {
 		// Assert
 		expect( mockUpdateElementSettings ).toHaveBeenCalledTimes( 1 );
 
-		const { id, withHistory, props } = mockUpdateElementSettings.mock.calls[ 0 ][ 0 ];
+		const [ newOverride1, newOverride2 ] = ids;
+		const [ [ { id, withHistory, props } ] ] = mockUpdateElementSettings.mock.calls;
 
 		expect( withHistory ).toBe( false );
 
@@ -64,8 +53,8 @@ describe( 'regenerateOverrideKeysForContainers', () => {
 
 		const [ { value: override1 }, { value: override2 } ] = componentInstanceProp.value.overrides.value;
 
-		expect( override1.override_key ).toBe( NEW_OVERRIDE_KEY_1 );
-		expect( override2.override_key ).toBe( NEW_OVERRIDE_KEY_2 );
+		expect( override1.override_key ).toBe( newOverride1 );
+		expect( override2.override_key ).toBe( newOverride2 );
 	} );
 
 	it( 'should not update settings for non-component widgets', () => {
@@ -121,13 +110,13 @@ describe( 'regenerateOverrideKeysForContainers', () => {
 		// Arrange
 		const componentInstance1 = createMockComponentInstance(
 			MOCK_COMPONENT_ID,
-			[ { override_key: ORIGINAL_OVERRIDE_KEY_1, override_value: { $$type: 'html', value: 'Title 1' } } ],
+			[ { override_key: 'prop-original-1', override_value: { $$type: 'html', value: 'Title 1' } } ],
 			'component-1'
 		);
 
 		const componentInstance2 = createMockComponentInstance(
 			MOCK_COMPONENT_ID,
-			[ { override_key: ORIGINAL_OVERRIDE_KEY_2, override_value: { $$type: 'html', value: 'Title 2' } } ],
+			[ { override_key: 'prop-original-2', override_value: { $$type: 'html', value: 'Title 2' } } ],
 			'component-2'
 		);
 
@@ -219,4 +208,16 @@ function createMockComponentInstance(
 			},
 		},
 	} );
+}
+
+function createMockGenerateUniqueId() {
+	const ids: string[] = [];
+
+	jest.mocked( generateUniqueId ).mockImplementation( () => {
+		const id = `prop-new-${ ids.length + 1 }`;
+		ids.push( id );
+		return id;
+	} );
+
+	return ids;
 }
