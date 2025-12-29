@@ -1,16 +1,13 @@
 import * as React from 'react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { ComponentPropListIcon } from '@elementor/icons';
 import { Link, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ComponentIntroduction } from '../components-tab/component-introduction';
 
-const LEARN_MORE_URL = 'https://go.elementor.com/tbd/';
-
-export function PropertiesEmptyState() {
+export function PropertiesEmptyState( { introductionRef }: { introductionRef: React.RefObject< HTMLButtonElement > } ) {
 	const [ isOpen, setIsOpen ] = useState( false );
-	const anchorRef = useRef< HTMLDivElement >( null );
 	return (
 		<>
 			<Stack
@@ -20,7 +17,6 @@ export function PropertiesEmptyState() {
 				color="text.secondary"
 				sx={ { px: 2.5, pt: 10, pb: 5.5 } }
 				gap={ 1 }
-				ref={ anchorRef }
 			>
 				<ComponentPropListIcon fontSize="large" />
 
@@ -46,7 +42,7 @@ export function PropertiesEmptyState() {
 				</Link>
 			</Stack>
 			<ComponentIntroduction
-				anchorRef={ anchorRef }
+				anchorRef={ introductionRef }
 				shouldShowIntroduction={ isOpen }
 				onClose={ () => setIsOpen( false ) }
 			/>
