@@ -22,6 +22,13 @@ export class FlyoutMenuRenderer {
 		editorFlyoutUl.className = 'elementor-submenu-flyout elementor-level-3';
 
 		editorFlyout.items.forEach( ( item ) => {
+			if ( item.has_divider_before ) {
+				const dividerLi = document.createElement( 'li' );
+				dividerLi.className = 'elementor-flyout-divider';
+				dividerLi.setAttribute( 'role', 'separator' );
+				editorFlyoutUl.appendChild( dividerLi );
+			}
+
 			const li = document.createElement( 'li' );
 			li.setAttribute( 'data-group-id', item.group_id || '' );
 
@@ -61,4 +68,3 @@ export class FlyoutMenuRenderer {
 		return editorItem.closest( 'li' );
 	}
 }
-

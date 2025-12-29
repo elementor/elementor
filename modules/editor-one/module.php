@@ -3,12 +3,13 @@
 namespace Elementor\Modules\EditorOne;
 
 use Elementor\Core\Admin\Admin;
+use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\EditorOne\Classes\Editor_One_Pointer;
-use Elementor\Modules\EditorOne\Components\Elementor_One_Menu_Manager;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Components\Sidebar_Navigation_Handler;
-use Elementor\Plugin;
+
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -26,6 +27,10 @@ class Module extends BaseModule {
 		return 'editor-one';
 	}
 
+	public static function is_active(): bool {
+		return Menu_Config::is_elementor_home_menu_available();
+	}
+
 	public static function get_experimental_data(): array {
 		return [
 			'name'           => static::EXPERIMENT_NAME,
@@ -41,13 +46,14 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		if ( is_admin() ) {
+
 			$this->add_component( 'editor-one-menu-manager', new Elementor_One_Menu_Manager() );
 			$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
 			$this->add_component( 'editor-one-pointer', new Editor_One_Pointer() );
 		}
 
 		add_action( 'current_screen', function () {
-			if ( ! $this->is_feature_enabled() || ! Admin::is_elementor_admin_page() ) {
+			if ( ! static::is_active() || ! Admin::is_elementor_admin_page() ) {
 				return;
 			}
 
@@ -55,15 +61,6 @@ class Module extends BaseModule {
 				$this->enqueue_styles();
 			} );
 		} );
-	}
-
-	/**
-	 * Check if Editor One feature is enabled
-	 *
-	 * @return bool
-	 */
-	private function is_feature_enabled() {
-		return Plugin::$instance->experiments->is_feature_active( static::EXPERIMENT_NAME );
 	}
 
 	/**

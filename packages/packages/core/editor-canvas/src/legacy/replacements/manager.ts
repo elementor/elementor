@@ -2,6 +2,7 @@ import type { CreateTemplatedElementTypeOptions } from '../create-templated-elem
 import { createTemplatedElementView } from '../create-templated-element-type';
 import type { ElementType, ElementView, LegacyWindow, ReplacementSettings } from '../types';
 import type ReplacementBase from './base';
+import { type ReplacementBaseInterface } from './base';
 import InlineEditingReplacement from './inline-editing/inline-editing-elements';
 
 type ReplacementConstructor = new ( settings: ReplacementSettings ) => ReplacementBase;
@@ -32,7 +33,7 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 	const TemplatedView = createTemplatedElementView( options );
 
 	return class extends TemplatedView {
-		#replacement: ReplacementBase | null = null;
+		#replacement: ReplacementBaseInterface | null = null;
 		#config: ReplacementSettings;
 
 		constructor( ...args: unknown[] ) {
@@ -53,6 +54,12 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 			this.render();
 		}
 
+		renderOnChange(): void {
+			if ( ! this.#triggerMethod( 'renderOnChange' ) ) {
+				TemplatedView.prototype.renderOnChange.apply( this );
+			}
+		}
+
 		render() {
 			const config = this.#config;
 			const widgetType = config.type;
@@ -62,16 +69,13 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 				this.#replacement = new ReplacementClass( config );
 			}
 
-			if ( ! this.#replacement?.shouldRenderReplacement() ) {
-				return TemplatedView.prototype.render.apply( this );
+			if ( ! this.#triggerMethod( 'render' ) ) {
+				TemplatedView.prototype.render.apply( this );
 			}
-
-			this.#replacement.render();
 		}
 
 		onDestroy() {
-			if ( this.#replacement ) {
-				this.#replacement.onDestroy();
+			if ( this.#triggerMethod( 'onDestroy' ) ) {
 				this.#replacement = null;
 			}
 
@@ -79,19 +83,29 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 		}
 
 		_afterRender() {
-			if ( this.#replacement ) {
-				this.#replacement._afterRender();
+			if ( ! this.#triggerMethod( '_afterRender' ) ) {
+				TemplatedView.prototype._afterRender.apply( this );
 			}
-
-			TemplatedView.prototype._afterRender.apply( this );
 		}
 
 		_beforeRender(): void {
-			if ( this.#replacement ) {
-				this.#replacement._beforeRender();
+			if ( ! this.#triggerMethod( '_beforeRender' ) ) {
+				TemplatedView.prototype._beforeRender.apply( this );
+			}
+		}
+
+		#triggerMethod( methodKey: keyof ReplacementBaseInterface ) {
+			const method =
+				this.#replacement?.shouldRenderReplacement() &&
+				this.#replacement[ methodKey ]?.bind( this.#replacement );
+
+			if ( ! method || typeof method !== 'function' ) {
+				return false;
 			}
 
-			TemplatedView.prototype._beforeRender.apply( this );
+			method();
+
+			return true;
 		}
 	};
 };
