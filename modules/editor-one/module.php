@@ -45,7 +45,6 @@ class Module extends BaseModule {
 		parent::__construct();
 
 		if ( is_admin() ) {
-
 			$this->add_component( 'editor-one-menu-manager', new Elementor_One_Menu_Manager() );
 			$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
 			$this->add_component( 'top-bar-handler', new Top_Bar_Handler() );
@@ -54,6 +53,7 @@ class Module extends BaseModule {
 
 		add_action( 'current_screen', function () {
 			$menu_data_provider = Menu_Data_Provider::instance();
+
 			if ( ! $menu_data_provider->is_elementor_editor_page() || ! static::is_active() ) {
 				return;
 			}
