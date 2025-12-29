@@ -11,8 +11,6 @@ const ELEMENTOR_MENU_SELECTORS = {
 	SUBMENU_ITEM: '.wp-submenu li a',
 	SUBMENU_ITEM_TOP_LEVEL: '.wp-has-submenu',
 	SIDEBAR_NAVIGATION: '#editor-one-sidebar-navigation',
-	FLYOUT_MENU: '.elementor-submenu-flyout',
-	FLYOUT_PARENT: '.elementor-has-flyout',
 };
 
 class NavigationTracking extends BaseTracking {
