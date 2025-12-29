@@ -41,29 +41,6 @@ export const initDesignSystemTool = ( reg: MCPRegistryEntry ) => {
 - Must get the existing global classes from always up-to-date resource ${ GLOBAL_CLASSES_URI } to avoid duplication when creating new global classes.
 - Must get the existing global variables from always up-to-date resource 'elementor://global-variables' to avoid duplication when creating new global variables.
 
-# SEMANTIC NAMING BEST PRACTICES:
-✅ GOOD: "primary-button", "team-member-card", "section-header", "feature-highlight"
-❌ BAD: "red-border", "shadow-sm", "padding-20", "flex-center"
-
-## When utilities ARE acceptable:
-- User explicitly requests them
-- Very specific, reusable micro-interactions (e.g., "screen-reader-only")
-- One-off quick UI adjustments that don't fit semantic patterns
-
-## Prefer component names over visual properties:
-- Instead of "blue-box-large" → "featured-product-card"
-- Instead of "text-bold-red" → "error-message-text"
-
-# VARIABLE REUSE REQUIREMENT:
-- MUST check existing variables before hardcoding
-- MUST reuse existing variables when semantically appropriate
-- ONLY hardcode when no existing variable fits AND you provide justification
-
-# WORKFLOW:
-1. Read existing classes and variables from resources
-2. Create semantic, purpose-based class names
-3. Reference existing variables in props whenever possible
-
 # IMPORTANT
 - DO NOT create variables if already existing variables can be re-used.
 - DO NOT create global classes if already existing global classes can be re-used.
