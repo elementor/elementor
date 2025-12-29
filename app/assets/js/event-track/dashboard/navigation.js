@@ -2,7 +2,9 @@ import WpDashboardTracking, { NAV_AREAS } from '../wp-dashboard-tracking';
 import BaseTracking from './base-tracking';
 
 const ELEMENTOR_MENU_SELECTORS = {
-	ELEMENTOR_TOP_LEVEL: 'li#toplevel_page_elementor-home',
+	ELEMENTOR_TOP_LEVEL: 'li#toplevel_page_elementor',
+	TEMPLATES_TOP_LEVEL: 'li#menu-posts-elementor_library',
+	ELEMENTOR_HOME_TOP_LEVEL: 'li#toplevel_page_elementor-home',
 	ADMIN_MENU: '#adminmenu',
 	TOP_LEVEL_LINK: '.wp-menu-name',
 	SUBMENU_CONTAINER: '.wp-submenu',
@@ -15,8 +17,33 @@ const ELEMENTOR_MENU_SELECTORS = {
 
 class NavigationTracking extends BaseTracking {
 	static init() {
-		this.attachElementorMenuTracking();
-		this.attachSidebarNavigationTracking();
+		if ( WpDashboardTracking.isEditorOneActive() ) {
+			this.attachSidebarNavigationTracking();
+			this.attachElementorHomeMenuTracking();
+		} else {
+			this.attachElementorMenuTracking();
+			this.attachTemplatesMenuTracking();
+		}
+	}
+
+	static attachTemplatesMenuTracking() {
+		const templatesMenu = document.querySelector( ELEMENTOR_MENU_SELECTORS.TEMPLATES_TOP_LEVEL );
+
+		if ( ! templatesMenu ) {
+			return;
+		}
+
+		this.attachMenuTracking( templatesMenu, 'Templates' );
+	}
+
+	static attachElementorHomeMenuTracking() {
+		const elementorHomeMenu = document.querySelector( ELEMENTOR_MENU_SELECTORS.ELEMENTOR_HOME_TOP_LEVEL );
+
+		if ( ! elementorHomeMenu ) {
+			return;
+		}
+
+		this.attachMenuTracking( elementorHomeMenu, 'Elementor' );
 	}
 
 	static attachElementorMenuTracking() {

@@ -4,7 +4,8 @@ import BaseTracking from './base-tracking';
 
 const EXCLUDED_SELECTORS = {
 	ADMIN_MENU: '#adminmenu',
-	TOP_BAR: '#editor-one-top-bar',
+	TOP_BAR: '.e-admin-top-bar',
+	TOP_BAR_EDITOR_ONE: '#editor-one-top-bar',
 	WP_ADMIN_BAR: '#wpadminbar',
 	SUBMENU: '.wp-submenu',
 	PROMO_PAGE: '.e-feature-promotion',
@@ -158,7 +159,12 @@ class ActionControlTracking extends BaseTracking {
 					return;
 				}
 
-				const toggle = base.closest( '.MuiSwitch-switchBase' );
+				let toggle = null;
+				if ( WpDashboardTracking.isEditorOneActive() ) {
+					toggle = base.closest( '.MuiSwitch-switchBase' );
+				} else {
+					toggle = base.closest( '.components-toggle-control' );
+				}
 
 				if ( toggle && ! this.isExcludedElement( toggle ) ) {
 					this.trackControl( toggle, CONTROL_TYPES.TOGGLE );
@@ -265,6 +271,27 @@ class ActionControlTracking extends BaseTracking {
 
 			if ( dataId ) {
 				return dataId;
+			}
+
+			const classIdMatch = this.extractClassId( element );
+			if ( classIdMatch ) {
+				return classIdMatch;
+			}
+		}
+
+		return '';
+	}
+
+	static extractClassId( element ) {
+		const classes = element.className;
+		if ( ! classes || 'string' !== typeof classes ) {
+			return '';
+		}
+
+		const classList = classes.split( ' ' );
+		for ( const cls of classList ) {
+			if ( cls.startsWith( 'e-id-' ) ) {
+				return cls.substring( 5 );
 			}
 		}
 
