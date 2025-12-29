@@ -32,7 +32,7 @@ class Component_Instance_Prop_Type extends Object_Prop_Type {
 		$overrides = $sanitized['overrides']['value'] ?? [];
 
 		foreach ( $overrides as $override ) {
-			$schema_source = 'overridable' === $override['$$type']
+			$schema_source = Overridable_Prop_Type::get_key() === $override['$$type']
 				? $override['value']['origin_value']['value']['schema_source']
 				: $override['value']['schema_source'];
 
