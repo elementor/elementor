@@ -30,7 +30,7 @@ type Props = {
 };
 
 export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) => {
-	const { icon: VariableIcon, valueField: ValueField, variableType } = useVariableType();
+	const { icon: VariableIcon, valueField: ValueField, variableType, propTypeUtil } = useVariableType();
 
 	const { setVariableValue: notifyBoundPropChange, variableId } = useVariableBoundProp();
 	const { propType } = useBoundProp();
@@ -42,6 +42,8 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 
 	const { labelFieldError, setLabelFieldError } = useLabelError();
 	const variable = useVariable( editId );
+
+	const [ propTypeKey, setPropTypeKey ] = useState( variable?.type ?? propTypeUtil.key );
 
 	if ( ! variable ) {
 		throw new Error( `Global ${ variableType } variable not found` );
@@ -76,10 +78,10 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 	};
 
 	const handleSaveVariable = () => {
-		updateVariable( editId, {
-			value,
-			label,
-		} )
+		const typeChanged = propTypeKey !== variable.type;
+		const updatePayload = typeChanged ? { value, label, type: propTypeKey } : { value, label };
+
+		updateVariable( editId, updatePayload )
 			.then( () => {
 				maybeTriggerBoundPropChange();
 				onSubmit?.();
@@ -206,21 +208,24 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 							} }
 						/>
 					</FormField>
-					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
-						<Typography variant="h5">
-							<ValueField
-								propTypeKey={ variable.type }
-								value={ value }
-								onChange={ ( newValue ) => {
-									setValue( newValue );
-									setErrorMessage( '' );
-									setValueFieldError( '' );
-								} }
-								onValidationChange={ setValueFieldError }
-								propType={ propType }
-							/>
-						</Typography>
-					</FormField>
+					{ ValueField && (
+						<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+							<Typography variant="h5">
+								<ValueField
+									propTypeKey={ variable.type }
+									onPropTypeKeyChange={ ( key: string ) => setPropTypeKey( key ) }
+									value={ value }
+									onChange={ ( newValue ) => {
+										setValue( newValue );
+										setErrorMessage( '' );
+										setValueFieldError( '' );
+									} }
+									onValidationChange={ setValueFieldError }
+									propType={ propType }
+								/>
+							</Typography>
+						</FormField>
+					) }
 
 					{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 				</PopoverContent>

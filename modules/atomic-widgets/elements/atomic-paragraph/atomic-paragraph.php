@@ -2,12 +2,12 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph;
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
@@ -29,6 +29,8 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	use Has_Template;
 
 	const LINK_BASE_STYLE_KEY = 'link-base';
+
+	public static $widget_description = 'Display a paragraph with customizable tag, styles, and link options.';
 
 	public static function get_element_type(): string {
 		return 'e-paragraph';

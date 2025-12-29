@@ -70,6 +70,8 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		'click @ui.quotaUpgrade': 'onQuotaUpgradeClicked',
 		'mouseenter @ui.cloudBadge': 'showCloudBadgeTooltip',
 		'mouseenter @ui.siteBadge': 'showSiteBadgeTooltip',
+		'mouseleave @ui.cloudBadge': 'hideCloudBadgeTooltip',
+		'mouseleave @ui.siteBadge': 'hideSiteBadgeTooltip',
 	},
 
 	className: 'no-bulk-selections',
@@ -712,6 +714,12 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.cloudBadgeDialog.show();
 	},
 
+	hideCloudBadgeTooltip() {
+		if ( this.cloudBadgeDialog ) {
+			this.cloudBadgeDialog.hide();
+		}
+	},
+
 	showSiteBadgeTooltip() {
 		if ( this.siteBadgeDialog ) {
 			this.siteBadgeDialog.hide();
@@ -727,7 +735,7 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 			},
 			position: {
 				of: this.ui.siteBadge,
-				at: 'top-50',
+				at: 'top-35',
 			},
 		} )
 			.setMessage( message );
@@ -736,6 +744,12 @@ const TemplateLibraryCollectionView = Marionette.CompositeView.extend( {
 		this.siteBadgeDialog.getElements( 'header' ).remove();
 		this.siteBadgeDialog.getElements( 'buttonsWrapper' ).remove();
 		this.siteBadgeDialog.show();
+	},
+
+	hideSiteBadgeTooltip() {
+		if ( this.siteBadgeDialog ) {
+			this.siteBadgeDialog.hide();
+		}
 	},
 } );
 

@@ -29,6 +29,7 @@ export async function createComponentsBeforeSave( {
 					id: uidToComponentId.get( component.uid ) as number,
 					name: component.name,
 					uid: component.uid,
+					overridableProps: component.overridableProps ? component.overridableProps : undefined,
 				} ) )
 			)
 		);
@@ -48,6 +49,7 @@ async function createComponents(
 			uid: component.uid,
 			title: component.name,
 			elements: component.elements,
+			settings: component.overridableProps ? { overridable_props: component.overridableProps } : undefined,
 		} ) ),
 	} );
 
@@ -79,7 +81,7 @@ function shouldUpdateElement(
 ): { shouldUpdate: true; newComponentId: number } | { shouldUpdate: false; newComponentId: null } {
 	if ( element.widgetType === 'e-component' ) {
 		const currentComponentId = ( element.settings?.component_instance as ComponentInstancePropValue< string > )
-			?.value?.component_id;
+			?.value?.component_id.value;
 
 		if ( currentComponentId && uidToComponentId.has( currentComponentId ) ) {
 			return { shouldUpdate: true, newComponentId: uidToComponentId.get( currentComponentId ) as number };
@@ -94,7 +96,9 @@ function updateElementComponentId( elementId: string, componentId: number ): voi
 		props: {
 			component_instance: {
 				$$type: 'component-instance',
-				value: { component_id: componentId },
+				value: {
+					component_id: { $$type: 'number', value: componentId },
+				},
 			},
 		},
 		withHistory: false,

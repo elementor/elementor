@@ -3,14 +3,14 @@ import { type ComponentType } from 'react';
 import { ControlReplacementsProvider, PropKeyProvider, PropProvider, useBoundProp } from '@elementor/editor-controls';
 import { createTopLevelObjectType, useElement } from '@elementor/editor-editing-panel';
 import { type PropValue } from '@elementor/editor-props';
-import { __getState as getState } from '@elementor/store';
 
 import {
 	componentOverridablePropTypeUtil,
 	type ComponentOverridablePropValue,
 } from '../../prop-types/component-overridable-prop-type';
+import { OverridablePropProvider } from '../../provider/overridable-prop-context';
 import { updateOverridablePropOriginValue } from '../../store/actions/update-overridable-prop-origin-value';
-import { selectCurrentComponentId } from '../../store/store';
+import { useCurrentComponentId } from '../../store/store';
 
 export function OverridablePropControl< T extends object >( {
 	OriginalControl,
@@ -19,10 +19,10 @@ export function OverridablePropControl< T extends object >( {
 	const { elementType } = useElement();
 
 	const { value, bind, setValue, placeholder, ...propContext } = useBoundProp( componentOverridablePropTypeUtil );
-	const componentId = selectCurrentComponentId( getState() );
+	const componentId = useCurrentComponentId();
 
 	if ( ! componentId ) {
-		throw new Error( 'Component ID is required' );
+		return null;
 	}
 
 	if ( ! value?.override_key ) {
@@ -50,18 +50,20 @@ export function OverridablePropControl< T extends object >( {
 		: undefined;
 
 	return (
-		<PropProvider
-			{ ...propContext }
-			propType={ propType }
-			setValue={ setOverridableValue }
-			value={ { [ bind ]: value.origin_value } }
-			placeholder={ objectPlaceholder }
-		>
-			<PropKeyProvider bind={ bind }>
-				<ControlReplacementsProvider replacements={ [] }>
-					<OriginalControl { ...( props as T ) } />
-				</ControlReplacementsProvider>
-			</PropKeyProvider>
-		</PropProvider>
+		<OverridablePropProvider value={ value }>
+			<PropProvider
+				{ ...propContext }
+				propType={ propType }
+				setValue={ setOverridableValue }
+				value={ { [ bind ]: value.origin_value } }
+				placeholder={ objectPlaceholder }
+			>
+				<PropKeyProvider bind={ bind }>
+					<ControlReplacementsProvider replacements={ [] }>
+						<OriginalControl { ...( props as T ) } />
+					</ControlReplacementsProvider>
+				</PropKeyProvider>
+			</PropProvider>
+		</OverridablePropProvider>
 	);
 }

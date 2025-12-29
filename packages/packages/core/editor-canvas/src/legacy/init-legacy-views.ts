@@ -3,11 +3,8 @@ import { __privateListenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { createDomRenderer } from '../renderers/create-dom-renderer';
 import { createElementType } from './create-element-type';
-import {
-	canBeTemplated,
-	createTemplatedElementType,
-	type CreateTemplatedElementTypeOptions,
-} from './create-templated-element-type';
+import { canBeTemplated, type CreateTemplatedElementTypeOptions } from './create-templated-element-type';
+import { createTemplatedElementTypeWithReplacements } from './replacements/manager';
 import type { ElementType, LegacyWindow } from './types';
 
 type ElementLegacyType = {
@@ -39,7 +36,7 @@ export function initLegacyViews() {
 			if ( !! elementsLegacyTypes[ type ] && canBeTemplated( element ) ) {
 				ElementType = elementsLegacyTypes[ type ]( { type, renderer, element } );
 			} else if ( canBeTemplated( element ) ) {
-				ElementType = createTemplatedElementType( { type, renderer, element } );
+				ElementType = createTemplatedElementTypeWithReplacements( { type, renderer, element } );
 			} else {
 				ElementType = createElementType( type );
 			}

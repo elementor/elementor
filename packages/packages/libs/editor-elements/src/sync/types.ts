@@ -44,17 +44,46 @@ export type V1Element = {
 	parent?: V1Element;
 };
 
-export type ElementInteractions = {
-	version: number;
-	items: InteractionItem[];
+export type StringPropValue = {
+	$$type: 'string';
+	value: string;
 };
 
-export type InteractionItem = {
-	interaction_id?: string;
-	animation: {
-		animation_type: string;
-		animation_id: string;
+export type NumberPropValue = {
+	$$type: 'number';
+	value: number;
+};
+
+export type TimingConfigPropValue = {
+	$$type: 'timing-config';
+	value: {
+		duration: NumberPropValue;
+		delay: NumberPropValue;
 	};
+};
+
+export type AnimationPresetPropValue = {
+	$$type: 'animation-preset-props';
+	value: {
+		effect: StringPropValue;
+		type: StringPropValue;
+		direction: StringPropValue;
+		timing_config: TimingConfigPropValue;
+	};
+};
+
+export type InteractionItemPropValue = {
+	$$type: 'interaction-item';
+	value: {
+		interaction_id?: StringPropValue;
+		trigger: StringPropValue;
+		animation: AnimationPresetPropValue;
+	};
+};
+
+export type ElementInteractions = {
+	version: number;
+	items: InteractionItemPropValue[];
 };
 
 export type V1ElementModelProps = {
@@ -82,6 +111,7 @@ export type V1ElementEditorSettingsProps = {
 export type V1ElementSettingsProps = Record< string, PropValue >;
 
 export type V1ElementConfig< T = object > = {
+	icon?: string;
 	title: string;
 	widgetType?: string;
 	elType?: string;
@@ -95,6 +125,8 @@ export type V1ElementConfig< T = object > = {
 	base_styles?: Record< string, StyleDefinition >;
 	base_styles_dictionary?: Record< string, string >;
 	atomic_style_states?: ClassState[];
+	show_in_panel?: boolean;
+	meta?: { [ key: string ]: string | number | boolean | null | NonNullable< V1ElementConfig[ 'meta' ] > };
 } & T;
 
 type V1Model< T > = {

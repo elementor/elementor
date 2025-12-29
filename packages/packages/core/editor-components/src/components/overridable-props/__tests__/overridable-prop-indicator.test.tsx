@@ -1,35 +1,29 @@
 import * as React from 'react';
-import { createMockDocumentData, createMockPropType } from 'test-utils';
+import { createMockPropType, renderWithStore } from 'test-utils';
 import { useBoundProp } from '@elementor/editor-controls';
-import { getV1CurrentDocument } from '@elementor/editor-documents';
 import { useElement } from '@elementor/editor-editing-panel';
 import { stringPropTypeUtil, type TransformablePropValue } from '@elementor/editor-props';
-import { __createStore, __registerSlice } from '@elementor/store';
-import { ThemeProvider } from '@elementor/ui';
-import { fireEvent, render, screen } from '@testing-library/react';
+import {
+	__createStore,
+	__dispatch as dispatch,
+	__getState as getState,
+	__registerSlice,
+	type Store,
+} from '@elementor/store';
+import { fireEvent, screen } from '@testing-library/react';
 
 import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
-import { setOverridableProp } from '../../../store/actions/set-overridable-prop';
-import { selectOverridableProps, slice } from '../../../store/store';
-import { COMPONENT_DOCUMENT_TYPE } from '../../consts';
+import { type ComponentsSlice, selectOverridableProps, slice } from '../../../store/store';
+import { type PublishedComponent } from '../../../types';
 import { OverridablePropIndicator } from '../overridable-prop-indicator';
 
 jest.mock( '@elementor/editor-controls', () => ( {
 	...jest.requireActual( '@elementor/editor-controls' ),
 	useBoundProp: jest.fn(),
 } ) );
-jest.mock( '@elementor/editor-documents' );
 jest.mock( '@elementor/editor-editing-panel', () => ( {
 	...jest.requireActual( '@elementor/editor-editing-panel' ),
 	useElement: jest.fn(),
-} ) );
-jest.mock( '../../../store/store', () => ( {
-	...jest.requireActual( '../../../store/store' ),
-	selectOverridableProps: jest.fn(),
-} ) );
-jest.mock( '../../../store/actions/set-overridable-prop', () => ( {
-	...jest.requireActual( '../../../store/actions/set-overridable-prop' ),
-	setOverridableProp: jest.fn(),
 } ) );
 
 const MOCK_ELEMENT_ID = 'test-element-123';
@@ -39,9 +33,11 @@ const MOCK_EL_TYPE = 'widget';
 const MOCK_OVERRIDABLE_KEY = 'mock-overridable-key';
 
 describe( 'OverridablePropIndicator', () => {
+	let store: Store< ComponentsSlice >;
+
 	beforeEach( () => {
 		__registerSlice( slice );
-		__createStore();
+		store = __createStore();
 
 		jest.mocked( useElement ).mockReturnValue( {
 			element: { id: MOCK_ELEMENT_ID, type: MOCK_WIDGET_TYPE },
@@ -126,11 +122,6 @@ describe( 'OverridablePropIndicator', () => {
 			expect: { isShowingIndicator, isChecked, label: expectedLabel, groupId: expectedGroupId },
 		} ) => {
 			// Arrange
-			const mockDocument = createMockDocumentData( {
-				id: MOCK_COMPONENT_ID,
-				type: isComponent ? COMPONENT_DOCUMENT_TYPE : 'wp-page',
-			} );
-
 			const boundProp = mockBoundProp( {
 				bind,
 				value: currentValue,
@@ -138,18 +129,11 @@ describe( 'OverridablePropIndicator', () => {
 
 			const isOverridable = componentOverridablePropTypeUtil.isValid( boundProp.value );
 
-			jest.mocked( getV1CurrentDocument ).mockReturnValue( mockDocument );
-			jest.mocked( useBoundProp ).mockImplementation( ( propUtil ) => {
-				if ( propUtil ) {
-					return isOverridable
-						? { ...boundProp, value: currentValue?.value }
-						: mockBoundProp( { ...boundProp, value: null } );
-				}
-
-				return boundProp;
-			} );
-			jest.mocked( selectOverridableProps ).mockReturnValue(
-				overridableData
+			const componentData: PublishedComponent = {
+				id: MOCK_COMPONENT_ID,
+				uid: `component-${ MOCK_COMPONENT_ID }`,
+				name: 'Test Component',
+				overridableProps: overridableData
 					? {
 							props: {
 								[ MOCK_OVERRIDABLE_KEY ]: {
@@ -179,15 +163,24 @@ describe( 'OverridablePropIndicator', () => {
 								items: {},
 								order: [],
 							},
-					  }
-			);
+					  },
+			};
+
+			dispatch( slice.actions.load( [ componentData ] ) );
+			dispatch( slice.actions.setCurrentComponentId( isComponent ? MOCK_COMPONENT_ID : null ) );
+
+			jest.mocked( useBoundProp ).mockImplementation( ( propUtil ) => {
+				if ( propUtil ) {
+					return isOverridable
+						? { ...boundProp, value: currentValue?.value }
+						: mockBoundProp( { ...boundProp, value: null } );
+				}
+
+				return boundProp;
+			} );
 
 			// Act
-			render(
-				<ThemeProvider>
-					<OverridablePropIndicator />
-				</ThemeProvider>
-			);
+			renderWithStore( <OverridablePropIndicator />, store );
 
 			// Assert
 			if ( ! isShowingIndicator ) {
@@ -218,17 +211,27 @@ describe( 'OverridablePropIndicator', () => {
 			fireEvent.click( button );
 
 			// Assert
-			expect( setOverridableProp ).toHaveBeenCalledWith( {
-				componentId: MOCK_COMPONENT_ID,
-				overrideKey: ! isChecked ? null : MOCK_OVERRIDABLE_KEY,
+			const updatedState = getState();
+			const updatedOverridableProps = selectOverridableProps( updatedState, MOCK_COMPONENT_ID );
+
+			expect( updatedOverridableProps ).toBeDefined();
+
+			const updatedProp = Object.values( updatedOverridableProps?.props ?? {} ).find(
+				( prop ) => prop.elementId === MOCK_ELEMENT_ID && prop.propKey === bind
+			);
+
+			expect( updatedProp ).toMatchObject( {
 				elementId: MOCK_ELEMENT_ID,
 				label: newLabel,
-				groupId: expectedGroupId,
 				propKey: bind,
 				widgetType: MOCK_WIDGET_TYPE,
 				elType: MOCK_EL_TYPE,
 				originValue: { $$type: 'string', value: 'Test' },
 			} );
+
+			if ( expectedGroupId ) {
+				expect( updatedProp?.groupId ).toBe( expectedGroupId );
+			}
 		}
 	);
 } );

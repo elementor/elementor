@@ -135,6 +135,7 @@ class Modules_Manager {
 			'a11y-announcements',
 			'components',
 			'interactions',
+			'feedback',
 			'editor-one',
 		];
 	}

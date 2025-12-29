@@ -1,5 +1,5 @@
 import { type ForwardRefExoticComponent, type JSX, type RefAttributes, type RefObject } from 'react';
-import { styleTransformersRegistry } from '@elementor/editor-canvas';
+import { type AnyTransformer, styleTransformersRegistry } from '@elementor/editor-canvas';
 import { stylesInheritanceTransformersRegistry } from '@elementor/editor-editing-panel';
 import {
 	type createPropUtils,
@@ -30,15 +30,17 @@ type FallbackPropTypeUtil = ReturnType< typeof createPropUtils >;
 type VariableTypeOptions = {
 	icon: ForwardRefExoticComponent< Omit< SvgIconProps, 'ref' > & RefAttributes< SVGSVGElement > >;
 	startIcon?: ( { value }: { value: string } ) => JSX.Element;
-	valueField: ( props: ValueFieldProps ) => JSX.Element;
+	valueField?: ( props: ValueFieldProps ) => JSX.Element;
 	variableType: string;
-	key: string;
+	key?: string;
 	defaultValue?: string;
+	styleTransformer?: AnyTransformer;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
 	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
-	valueTransformer?: ( variable: Variable ) => PropValue;
+	valueTransformer?: ( value: string, type?: string ) => PropValue;
 	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
+	emptyState?: JSX.Element;
 };
 
 export type VariableTypesMap = Record< string, Omit< VariableTypeOptions, 'key' > >;
@@ -56,12 +58,12 @@ export function createVariableTypeRegistry() {
 		defaultValue,
 		selectionFilter,
 		valueTransformer,
+		styleTransformer,
 		fallbackPropTypeUtil,
 		isCompatible,
+		emptyState,
 	}: VariableTypeOptions ) => {
-		if ( variableTypes[ key ] ) {
-			throw new Error( `Variable with key "${ propTypeUtil.key }" is already registered.` );
-		}
+		const variableTypeKey = key ?? propTypeUtil.key;
 
 		if ( ! isCompatible ) {
 			isCompatible = ( propType, variable: Variable ) => {
@@ -74,7 +76,7 @@ export function createVariableTypeRegistry() {
 			};
 		}
 
-		variableTypes[ key ] = {
+		variableTypes[ variableTypeKey ] = {
 			icon,
 			startIcon,
 			valueField,
@@ -85,14 +87,15 @@ export function createVariableTypeRegistry() {
 			valueTransformer,
 			fallbackPropTypeUtil,
 			isCompatible,
+			emptyState,
 		};
 
-		registerTransformer( propTypeUtil.key );
+		registerTransformer( propTypeUtil.key, styleTransformer );
 		registerInheritanceTransformer( propTypeUtil.key );
 	};
 
-	const registerTransformer = ( key: PropTypeKey ) => {
-		styleTransformersRegistry.register( key, variableTransformer );
+	const registerTransformer = ( key: PropTypeKey, transformer?: AnyTransformer ) => {
+		styleTransformersRegistry.register( key, transformer ?? variableTransformer );
 	};
 
 	const registerInheritanceTransformer = ( key: PropTypeKey ) => {

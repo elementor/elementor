@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { type RefObject, useRef } from 'react';
+import { type RefObject, useLayoutEffect, useRef, useState } from 'react';
 import { dimensionsPropTypeUtil, type PropKey, sizePropTypeUtil } from '@elementor/editor-props';
+import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { DetachIcon, LinkIcon, SideBottomIcon, SideLeftIcon, SideRightIcon, SideTopIcon } from '@elementor/icons';
 import { Grid, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -12,24 +13,17 @@ import { StyledToggleButton } from '../components/control-toggle-button-group';
 import { type ExtendedOption } from '../utils/size-control';
 import { SizeControl } from './size-control';
 
-export const LinkedDimensionsControl = ( {
-	label,
-	isSiteRtl = false,
-	extendedOptions,
-	min,
-}: {
+type Props = {
 	label: string;
 	isSiteRtl?: boolean;
 	extendedOptions?: ExtendedOption[];
 	min?: number;
-} ) => {
-	const {
-		value: sizeValue,
-		setValue: setSizeValue,
-		disabled: sizeDisabled,
-		placeholder: sizePlaceholder,
-	} = useBoundProp( sizePropTypeUtil );
+};
+
+export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOptions, min }: Props ) => {
 	const gridRowRefs: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ) ];
+
+	const { disabled: sizeDisabled } = useBoundProp( sizePropTypeUtil );
 
 	const {
 		value: dimensionsValue,
@@ -39,25 +33,65 @@ export const LinkedDimensionsControl = ( {
 		disabled: dimensionsDisabled,
 	} = useBoundProp( dimensionsPropTypeUtil );
 
-	const hasUserValues = !! ( dimensionsValue || sizeValue );
-	const hasPlaceholders = !! ( sizePlaceholder || dimensionsPlaceholder );
+	const { value: masterValue, placeholder: masterPlaceholder, setValue: setMasterValue } = useBoundProp();
 
-	const isLinked =
-		( ! hasUserValues && ! hasPlaceholders ) || ( hasPlaceholders ? !! sizePlaceholder : !! sizeValue );
+	const inferIsLinked = () => {
+		if ( dimensionsPropTypeUtil.isValid( masterValue ) ) {
+			return false;
+		}
+
+		if ( ! masterValue && dimensionsPropTypeUtil.isValid( masterPlaceholder ) ) {
+			return false;
+		}
+
+		return true;
+	};
+
+	const [ isLinked, setIsLinked ] = useState( () => inferIsLinked() );
+
+	const activeBreakpoint = useActiveBreakpoint();
+
+	useLayoutEffect( () => {
+		setIsLinked( inferIsLinked );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ activeBreakpoint ] );
+
 	const onLinkToggle = () => {
-		if ( ! isLinked ) {
-			setSizeValue( dimensionsValue[ 'block-start' ]?.value ?? null );
+		setIsLinked( ( prev ) => ! prev );
+
+		if ( ! dimensionsPropTypeUtil.isValid( masterValue ) ) {
+			const value = masterValue ? masterValue : null;
+
+			if ( ! value ) {
+				setMasterValue( null );
+				return;
+			}
+
+			setMasterValue(
+				dimensionsPropTypeUtil.create( {
+					'block-start': value,
+					'block-end': value,
+					'inline-start': value,
+					'inline-end': value,
+				} )
+			);
+
 			return;
 		}
 
-		const value = sizeValue ? sizePropTypeUtil.create( sizeValue ) : null;
+		const sizeValue =
+			dimensionsValue?.[ 'block-start' ] ??
+			dimensionsValue?.[ 'inline-end' ] ??
+			dimensionsValue?.[ 'block-end' ] ??
+			dimensionsValue?.[ 'inline-start' ] ??
+			null;
 
-		setDimensionsValue( {
-			'block-start': value,
-			'block-end': value,
-			'inline-start': value,
-			'inline-end': value,
-		} );
+		if ( ! sizeValue ) {
+			setMasterValue( null );
+			return;
+		}
+
+		setMasterValue( sizeValue );
 	};
 
 	const tooltipLabel = label.toLowerCase();
@@ -70,14 +104,18 @@ export const LinkedDimensionsControl = ( {
 
 	const disabled = sizeDisabled || dimensionsDisabled;
 
+	const propProviderProps = {
+		propType,
+		value: dimensionsValue,
+		placeholder: dimensionsPlaceholder,
+		setValue: setDimensionsValue,
+		isDisabled: () => dimensionsDisabled,
+	};
+
+	const hasPlaceholders = ! masterValue && ( dimensionsPlaceholder || masterPlaceholder );
+
 	return (
-		<PropProvider
-			propType={ propType }
-			value={ dimensionsValue }
-			setValue={ setDimensionsValue }
-			placeholder={ dimensionsPlaceholder }
-			isDisabled={ () => disabled }
-		>
+		<PropProvider { ...propProviderProps }>
 			<Stack direction="row" gap={ 2 } flexWrap="nowrap">
 				<ControlFormLabel>{ label }</ControlFormLabel>
 				<Tooltip title={ isLinked ? unlinkedLabel : linkedLabel } placement="top">

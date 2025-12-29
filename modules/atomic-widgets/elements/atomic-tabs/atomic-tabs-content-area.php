@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Boolean_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -19,6 +19,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Tabs_Content_Area extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
+
+	public function __construct( $data = [], $args = null ) {
+		parent::__construct( $data, $args );
+		$this->meta( 'llm_support', false );
+	}
 
 	public static function get_type() {
 		return 'e-tabs-content-area';

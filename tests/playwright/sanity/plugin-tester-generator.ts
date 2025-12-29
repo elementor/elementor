@@ -5,7 +5,7 @@ import WpAdminPage from '../pages/wp-admin-page';
 import { wpCli } from '../assets/wp-cli';
 import ImportTemplatesModal from '../pages/plugins/the-plus-addons/import-templates-modal';
 
-const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean }[] = [
+const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', hasInstallationPage?: boolean, dependency?: string }[] = [
 	{ pluginName: 'essential-addons-for-elementor-lite', installSource: 'api' },
 	{ pluginName: 'jetsticky-for-elementor', installSource: 'api' },
 	{ pluginName: 'jetgridbuilder', installSource: 'api' },
@@ -15,7 +15,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'addon-elements-for-elementor-page-builder', installSource: 'api' },
 	{ pluginName: 'anywhere-elementor', installSource: 'api' },
 	{ pluginName: 'astra-sites', installSource: 'api', hasInstallationPage: true },
-	{ pluginName: 'connect-polylang-elementor', installSource: 'api' },
+	{ pluginName: 'connect-polylang-elementor', installSource: 'api', dependency: 'polylang' },
 	{ pluginName: 'dynamic-visibility-for-elementor', installSource: 'api' },
 	{ pluginName: 'elementskit-lite', installSource: 'api' },
 	{ pluginName: 'exclusive-addons-for-elementor', installSource: 'api', hasInstallationPage: true },
@@ -27,7 +27,7 @@ const pluginList: { pluginName: string, installSource: 'api' | 'cli' | 'zip', ha
 	{ pluginName: 'ooohboi-steroids-for-elementor', installSource: 'api' },
 	{ pluginName: 'post-grid-elementor-addon', installSource: 'api' },
 	{ pluginName: 'powerpack-lite-for-elementor', installSource: 'api', hasInstallationPage: true },
-	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli' },
+	{ pluginName: 'premium-addons-for-elementor', installSource: 'cli', hasInstallationPage: true },
 	{ pluginName: 'rife-elementor-extensions', installSource: 'api' },
 	{ pluginName: 'royal-elementor-addons', installSource: 'cli' },
 	{ pluginName: 'sb-elementor-contact-form-db', installSource: 'api' },
@@ -53,6 +53,9 @@ export const generatePluginTests = ( testType: string ) => {
 	for ( const plugin of pluginList ) {
 		test( `"${ plugin.pluginName }" plugin: @pluginTester1_${ testType }`, async ( { page, apiRequests }, testInfo ) => {
 			let pluginTechnicalName: string;
+			if ( plugin.dependency ) {
+				await wpCli( `wp plugin install ${ plugin.dependency } --activate` );
+			}
 			switch ( plugin.installSource ) {
 				case 'api':
 					pluginTechnicalName = await apiRequests.installPlugin( page.context().request, plugin.pluginName, true );

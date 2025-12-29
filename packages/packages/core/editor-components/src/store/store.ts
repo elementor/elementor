@@ -2,6 +2,7 @@ import { type V1Document } from '@elementor/editor-documents';
 import {
 	__createSelector as createSelector,
 	__createSlice as createSlice,
+	__useSelector as useSelector,
 	type PayloadAction,
 	type SliceState,
 } from '@elementor/store';
@@ -133,14 +134,18 @@ const selectUnpublishedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].
 const getCreatedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].createdThisSession;
 const getPath = ( state: ComponentsSlice ) => state[ SLICE_NAME ].path;
 const getCurrentComponentId = ( state: ComponentsSlice ) => state[ SLICE_NAME ].currentComponentId;
-const selectComponent = ( state: ComponentsSlice, componentId: ComponentId ) =>
+export const selectComponent = ( state: ComponentsSlice, componentId: ComponentId ) =>
 	state[ SLICE_NAME ].data.find( ( component ) => component.id === componentId );
 
 export const selectComponents = createSelector(
 	selectData,
 	selectUnpublishedData,
 	( data: PublishedComponent[], unpublishedData: UnpublishedComponent[] ) => [
-		...unpublishedData.map( ( item ) => ( { uid: item.uid, name: item.name } ) ),
+		...unpublishedData.map( ( item ) => ( {
+			uid: item.uid,
+			name: item.name,
+			overridableProps: item.overridableProps,
+		} ) ),
 		...data,
 	]
 );
@@ -182,10 +187,15 @@ export const selectIsOverridablePropsLoaded = createSelector(
 	}
 );
 export const selectPath = createSelector( getPath, ( path ) => path );
+
 export const selectCurrentComponentId = createSelector(
 	getCurrentComponentId,
 	( currentComponentId ) => currentComponentId
 );
+
+export const useCurrentComponentId = () => {
+	return useSelector( selectCurrentComponentId );
+};
 
 export const selectArchivedComponents = createSelector(
 	selectArchivedData,

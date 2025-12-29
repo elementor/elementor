@@ -16,7 +16,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
-		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active' } );
+		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active', e_classes: 'active' } );
 
 		editor = await wpAdminPage.openNewPage();
 	} );
@@ -38,8 +38,8 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await expect( headingElement ).toBeVisible();
 
 		// Act
-		await headingElement.click();
-		const inlineEditor = page.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		await headingElement.dblclick();
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
 
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
@@ -54,7 +54,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		const panelInlineEditor = page.getByLabel( INLINE_EDITING_SELECTORS.contentSectionLabel ).locator( INLINE_EDITING_SELECTORS.panelInlineEditor );
 		const panelHTML = await panelInlineEditor.innerHTML();
 
-		expect( panelHTML ).toContain( '<u>this</u>' );
+		expect( panelHTML ).toContain( '<u>this</u>&nbsp;is the first test' );
 
 		await editor.publishAndViewPage();
 		const publishedHeading = page.locator( INLINE_EDITING_SELECTORS.headingBase ).last();
@@ -80,14 +80,17 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		await expect( headingElement ).toBeVisible();
 
-		await headingElement.click();
-		const inlineEditor = page.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		await headingElement.dblclick();
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
 
 		await expect( inlineEditor ).toBeVisible();
 
 		// Act
 		await page.keyboard.press( 'ControlOrMeta+A' );
-		await page.keyboard.type( INITIAL_CONTENT );
+
+		for ( let i = 0; i < INITIAL_CONTENT.length; i++ ) {
+			await page.keyboard.type( INITIAL_CONTENT.charAt( i ) );
+		}
 
 		// Assert
 		await expect( headingElement ).toContainText( INITIAL_CONTENT );
@@ -96,15 +99,95 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Act
 		await page.keyboard.press( 'ControlOrMeta+A' );
 		await page.keyboard.press( 'Delete' );
-		await page.keyboard.type( NEW_CONTENT );
+
+		for ( let i = 0; i < NEW_CONTENT.length; i++ ) {
+			await page.keyboard.type( NEW_CONTENT.charAt( i ) );
+		}
 
 		// Assert
 		await expect( headingElement ).toContainText( NEW_CONTENT );
 		await expect( headingElement ).toBeVisible();
 
+		await editor.selectElement( containerId );
+		await editor.selectElement( headingId );
 		const panelInlineEditor = page.getByLabel( INLINE_EDITING_SELECTORS.contentSectionLabel ).locator( INLINE_EDITING_SELECTORS.panelInlineEditor );
 		const panelHTML = await panelInlineEditor.innerHTML();
 
 		expect( panelHTML ).toContain( NEW_CONTENT );
+	} );
+
+	test( "Style edited element differently than hello theme's default styles", async () => {
+		// Arrange
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
+		let headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId }` );
+
+		await headingElement.waitFor();
+
+		// Act
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.openSection( 'Typography' );
+		await editor.v4Panel.style.setFontWeight( 100 );
+		await headingElement.dblclick();
+
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+
+		await inlineEditor.waitFor();
+
+		headingElement = inlineEditor.locator( `h2` );
+
+		// Assert
+		await expect.soft( headingElement ).toHaveCSS( 'font-weight', '100' );
+	} );
+
+	test( 'Global classes styles should render while editing', async () => {
+		// Arrange
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const paragraphId = await editor.addWidget( { widgetType: 'e-paragraph', container: containerId } );
+		let paragraphElement = editor.previewFrame.locator( `.elementor-element-${ paragraphId }` );
+
+		await page.waitForTimeout( 1000 );
+
+		// Act
+		await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.style.addGlobalClass( 'hello' );
+		await editor.v4Panel.style.openSection( 'Typography' );
+		await editor.v4Panel.style.setFontSize( 100, 'px' );
+		await paragraphElement.dblclick();
+
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+
+		await inlineEditor.waitFor();
+
+		paragraphElement = inlineEditor.locator( `p` );
+
+		// Assert
+		await expect.soft( paragraphElement ).toHaveCSS( 'font-size', '100px' );
+		await expect.soft( paragraphElement ).toHaveClass( /hello.*/ );
+		await editor.v4Panel.style.removeGlobalClass( 'hello' );
+	} );
+
+	test( 'Allow select all text by triple clicking when editor is rendered', async () => {
+		// Arrange
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
+		const previewFrame = editor.getPreviewFrame();
+		let headingElement = previewFrame.locator( `.elementor-element-${ headingId }` );
+
+		// Act.
+		await headingElement.dblclick();
+
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+
+		await inlineEditor.waitFor();
+		await page.waitForTimeout( 1000 );
+
+		headingElement = inlineEditor.locator( `h2` );
+
+		await headingElement.click( { clickCount: 3 } );
+		await page.keyboard.type( 'Hello' );
+
+		// Assert
+		await expect( headingElement ).toHaveText( 'Hello' );
 	} );
 } );

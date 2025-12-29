@@ -122,6 +122,7 @@ const entry = {
 	'web-cli': path.resolve( __dirname, '../modules/web-cli/assets/js/index.js' ),
 	'import-export-admin': path.resolve( __dirname, '../app/modules/import-export/assets/js/admin.js' ),
 	'import-export-customization-admin': path.resolve( __dirname, '../app/modules/import-export-customization/assets/js/admin.js' ),
+	'editor-one-admin': path.resolve( __dirname, '../modules/editor-one/assets/js/admin.js' ),
 	'interactions': path.resolve( __dirname, '../modules/interactions/assets/js/interactions.js' ),
 	'editor-interactions': path.resolve( __dirname, '../modules/interactions/assets/js/editor-interactions.js' ),
 	'kit-elements-defaults-editor': path.resolve( __dirname, '../modules/kit-elements-defaults/assets/js/editor/index.js' ),
@@ -143,6 +144,8 @@ const entry = {
 	'styleguide': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide.js' ),
 	'styleguide-app-initiator': path.resolve( __dirname, '../modules/styleguide/assets/js/styleguide-app-initiator.js' ),
 	'e-home-screen': path.resolve( __dirname, '../modules/home/assets/js/app.js' ),
+	'editor-one-sidebar-navigation': path.resolve( __dirname, '../modules/editor-one/assets/js/sidebar-navigation/app.js' ),
+	'editor-one-menu': path.resolve( __dirname, '../modules/editor-one/assets/js/admin-menu/app.js' ),
 	'editor-v4-opt-in': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/opt-in-page/app.js'),
 	'editor-v4-welcome-opt-in': path.resolve( __dirname, '../modules/atomic-opt-in/assets/js/welcome-screen/app.js'),
 	'pro-free-trial-popup': path.resolve( __dirname, '../modules/pro-free-trial-popup/assets/js/pro-free-trial-popup.js'),
@@ -161,6 +164,7 @@ const frontendEntries = {
 	'youtube-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-youtube/youtube-handler.js' ),
 	'tabs-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-handler.js' ),
 	'tabs-preview-handler': path.resolve( __dirname, '../modules/atomic-widgets/elements/atomic-tabs/handlers/atomic-tabs-preview-handler.js' ),
+	'atomic-widgets-frontend-handler': path.resolve( __dirname, '../modules/atomic-widgets/assets/js/frontend/handlers.js' ),
 };
 
 const externals = [
