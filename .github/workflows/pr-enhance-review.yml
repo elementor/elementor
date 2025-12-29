@@ -6,8 +6,7 @@ on:
 
 jobs:
   review:
+    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false && startsWith( github.repository, 'elementor/' )
     uses: elementor/elementor-cloud-github-actions/.github/workflows/pr-enhance-review.yml@master
     secrets: inherit
-    # with:
-    #   overwrite_mode: true
 
