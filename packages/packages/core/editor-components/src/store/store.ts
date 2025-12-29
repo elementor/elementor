@@ -154,6 +154,10 @@ const getCurrentComponentId = ( state: ComponentsSlice ) => state[ SLICE_NAME ].
 export const selectComponent = ( state: ComponentsSlice, componentId: ComponentId ) =>
 	state[ SLICE_NAME ].data.find( ( component ) => component.id === componentId );
 
+export const selectComponentByUid = ( state: ComponentsSlice, componentUid: string ) =>
+	state[ SLICE_NAME ].data.find( ( component ) => component.uid === componentUid ) ??
+	state[ SLICE_NAME ].unpublishedData.find( ( component ) => component.uid === componentUid );
+
 export const selectComponents = createSelector(
 	selectData,
 	selectUnpublishedData,

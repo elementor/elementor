@@ -5,7 +5,6 @@ use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\Components\PropTypes\Component_Instance_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
-use Elementor\Modules\Components\Components_Repository;
 use Elementor\Modules\Components\Transformers\Overridable_Transformer;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
@@ -18,14 +17,6 @@ class Component_Instance extends Atomic_Widget_Base {
 
 	public function __construct( $data = [], $args = null ) {
 		parent::__construct( $data, $args );
-		if ( isset( $data['settings']['component_instance']['value']['component_id']['value'] ) ) {
-			$component_id = $data['settings']['component_instance']['value']['component_id']['value'];
-			$doc = Components_Repository::make()->get( $component_id );
-			if ( $doc ) {
-				$src_id = $doc->get_post()->post_title;
-				$this->editor_settings['component_src_name'] = $src_id;
-			}
-		}
 	}
 
 	public static function get_element_type(): string {

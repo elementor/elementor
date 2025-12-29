@@ -81,7 +81,7 @@ describe( 'validateComponentName', () => {
 
 		// Assert
 		expect( result.isValid ).toBe( false );
-		expect( result.errorMessage ).toBe( 'This component name already exists. Please choose a unique name.' );
+		expect( result.errorMessage ).toBe( 'Component name already exists' );
 	} );
 
 	it( 'should check for duplicate names case-insensitively', () => {
@@ -94,7 +94,7 @@ describe( 'validateComponentName', () => {
 
 		// Assert
 		expect( result.isValid ).toBe( false );
-		expect( result.errorMessage ).toBe( 'This component name already exists. Please choose a unique name.' );
+		expect( result.errorMessage ).toBe( 'Component name already exists' );
 	} );
 
 	it( 'should convert input to lowercase for validation', () => {
@@ -121,7 +121,7 @@ describe( 'validateComponentName', () => {
 
 		// Assert
 		expect( result.isValid ).toBe( false );
-		expect( result.errorMessage ).toBe( 'This component name already exists. Please choose a unique name.' );
+		expect( result.errorMessage ).toBe( 'Component name already exists' );
 	} );
 
 	it( 'should pass validation when name is unique among existing components', () => {

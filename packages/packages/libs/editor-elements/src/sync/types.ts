@@ -107,7 +107,6 @@ export type V1ElementEditorSettingsProps = {
 	title?: string;
 	initial_position?: number;
 	component_uid?: string;
-	component_src_name?: string;
 };
 
 export type V1ElementSettingsProps = Record< string, PropValue >;

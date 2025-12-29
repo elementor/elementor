@@ -7,12 +7,13 @@ import {
 	type ElementView,
 	type LegacyWindow,
 } from '@elementor/editor-canvas';
-import { type Document, getCurrentDocument } from '@elementor/editor-documents';
+import { getCurrentDocument } from '@elementor/editor-documents';
+import { __getState as getState } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
+import { type ComponentsSlice, selectComponentByUid } from './store/store';
 import { type ComponentInstancePropValue, type ExtendedWindow } from './types';
-import { getComponentDocumentData } from './utils/component-document-data';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
@@ -38,13 +39,10 @@ type ContextMenuGroup = {
 
 type ComponentModel = ElementModel & {
 	componentId?: number | string;
-	componentTitle?: string;
 };
 
 type ComponentModelInstance = BackboneModel< ComponentModel > & {
 	trigger: ( event: string, ...args: unknown[] ) => void;
-	fetchComponentTitle: ( componentId: number ) => void;
-	extractTitleFromConfig: ( config: Document | null ) => string | null;
 	getTitle: () => string;
 	getComponentId: () => number | null;
 	getComponentName: () => string;
@@ -61,17 +59,13 @@ type BackboneModelConstructor< Model extends object > = {
 	};
 };
 
-type LegacyWindowWithModels = LegacyWindow & {
+type WidgetTypeWithModel = {
+	getModel: () => BackboneModelConstructor< ElementModel >;
+};
+
+type LegacyWindowWithElementor = LegacyWindow & {
 	elementor: LegacyWindow[ 'elementor' ] & {
-		modules: LegacyWindow[ 'elementor' ][ 'modules' ] & {
-			elements: LegacyWindow[ 'elementor' ][ 'modules' ][ 'elements' ] & {
-				models: {
-					Widget: new () => {
-						getModel: () => BackboneModelConstructor< ElementModel >;
-					};
-				};
-			};
-		};
+		getElementData: ( model: unknown ) => { title: string };
 	};
 };
 
@@ -299,9 +293,9 @@ function setInactiveRecursively( model: BackboneModel< ElementModel > ) {
 }
 
 function createComponentModel(): BackboneModelConstructor< ComponentModel > {
-	const legacyWindow = window as unknown as LegacyWindowWithModels;
-	const WidgetType = legacyWindow.elementor.modules.elements.models.Widget;
-	const widgetTypeInstance = new WidgetType();
+	const legacyWindow = window as unknown as LegacyWindow;
+	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
+	const widgetTypeInstance = new WidgetType() as unknown as WidgetTypeWithModel;
 	const BaseWidgetModel = widgetTypeInstance.getModel();
 
 	return BaseWidgetModel.extend( {
@@ -315,56 +309,32 @@ function createComponentModel(): BackboneModelConstructor< ComponentModel > {
 				const componentId = componentInstance.value.component_id?.value;
 				if ( componentId && typeof componentId === 'number' ) {
 					this.set( 'componentId', componentId );
-					this.fetchComponentTitle( componentId );
 				}
 			}
-		},
-
-		fetchComponentTitle( this: ComponentModelInstance, componentId: number ): void {
-			getComponentDocumentData( componentId )
-				.then( ( config ) => {
-					if ( ! config ) {
-						return;
-					}
-
-					const title = this.extractTitleFromConfig( config );
-					if ( title ) {
-						this.set( 'componentTitle', title );
-						this.trigger( 'change:title' );
-					}
-				} )
-				.catch( () => {
-					// Silently fail, will use fallback title
-				} );
-		},
-
-		extractTitleFromConfig( this: ComponentModelInstance, config: Document | null ): string | null {
-			if ( ! config ) {
-				return null;
-			}
-			// Document type has a title property directly
-			if ( config.title ) {
-				return config.title;
-			}
-			return null;
 		},
 
 		getTitle( this: ComponentModelInstance ): string {
 			const editorSettings = this.get( 'editor_settings' ) as
 				| {
 						title?: string;
-						component_src_name?: string;
 						component_uid?: string;
 				  }
 				| undefined;
-			let title = editorSettings?.title;
-			if ( ! title || title === '$$UNSET$$' ) {
-				title = editorSettings?.component_src_name;
+
+			const instanceTitle = editorSettings?.title;
+			if ( instanceTitle ) {
+				return instanceTitle;
 			}
-			if ( ! title ) {
-				title = 'Unnamed';
+
+			const componentUid = editorSettings?.component_uid;
+			if ( componentUid ) {
+				const component = selectComponentByUid( getState() as ComponentsSlice, componentUid );
+				if ( component?.name ) {
+					return component.name;
+				}
 			}
-			return title;
+
+			return ( window as unknown as LegacyWindowWithElementor ).elementor.getElementData( this ).title;
 		},
 
 		getComponentId( this: ComponentModelInstance ): number | null {

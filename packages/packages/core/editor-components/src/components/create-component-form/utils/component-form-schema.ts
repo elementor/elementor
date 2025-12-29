@@ -4,7 +4,7 @@ import { __ } from '@wordpress/i18n';
 export const MIN_NAME_LENGTH = 2;
 const MAX_NAME_LENGTH = 50;
 
-export const baseComponentSchema = z
+const baseComponentSchema = z
 	.string()
 	.trim()
 	.max( MAX_NAME_LENGTH, __( 'Component name is too long. Please keep it under 50 characters.', 'elementor' ) );

@@ -1,0 +1,21 @@
+---
+alwaysApply: true
+---
+The development approach for this project is "human first" :
+- if you need to take a desicion: ask the developer to make it
+- never assume anything challenge your and the developer assumptions
+- ask questionsif you have missing info or need clarifications
+
+You have to follow the next steps when starting a develpoment of a feature or a bug:
+- try to find any missing information 
+- ask the developer questions if you are not sure about something
+- create a plan explaining the steps you want to take, the plan should be like you write it for a developer: epics(only for big tasks)/stories/tasks
+- wait for the developer approval and feedback
+- create a progress bar or a todo list and update it
+- for big tasks create progress.md file to explain what you already did and what you plan to do (giving the developer calrity)
+- WRITE TESTS FIRST - create test files that explaining the result you seek (TDD)
+- write the code based on the plan
+- check if tests pass
+- repeat until all tests pass
+- if you failed to do that add debug logs to understand the problem
+- explain the changes youv'e made
