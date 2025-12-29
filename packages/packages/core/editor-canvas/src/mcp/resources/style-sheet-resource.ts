@@ -4,7 +4,7 @@ export const STYLE_SHEET_RAW_CSS_URI = 'elementor://style-sheet-raw-css';
 
 export const initStyleSheetResource = ( reg: MCPRegistryEntry ) => {
 	const { mcpServer } = reg;
-	const variables = window.elementorVariablesRawCSS;
+	const variables = window.elementor?.config?.variable_raw_css || '';
 
 	mcpServer.resource(
 		'style-sheet-raw-css',

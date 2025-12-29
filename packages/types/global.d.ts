@@ -1,5 +1,5 @@
-import { type V1Element } from "@elementor/editor-elements";
 import type { InteractionsConfig } from '@elementor/editor-editing-panel';
+import { type V1Element } from "@elementor/editor-elements";
 
 declare global {
 	interface Window {
@@ -20,11 +20,14 @@ declare global {
 				getElements: () => V1Element[];
 			};
 			getContainer?: (id: string) => V1Element | undefined;
+			config?: {
+				variable_raw_css?: string;
+			};
 		};
 		elementorPro?: object;
 		ElementorInteractionsConfig?: InteractionsConfig;
-		elementorVariablesRawCSS?: string;
 	}
 }
 
-export {};
+export { };
+

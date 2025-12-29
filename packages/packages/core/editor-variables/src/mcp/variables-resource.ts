@@ -9,6 +9,8 @@ export const GLOBAL_VARIABLES_RAW_CSS_URI = 'elementor://global-variables-raw-cs
 export const initVariablesResource = () => {
 	const { mcpServer } = getMCPByDomain( 'canvas' );
 
+	const variablesCssRaw = window.elementor?.config?.variable_raw_css || '';
+
 	mcpServer.resource(
 		'global-variables',
 		GLOBAL_VARIABLES_URI,
@@ -39,7 +41,7 @@ export const initVariablesResource = () => {
 		},
 		async () => {
 			return {
-				contents: [ { uri: GLOBAL_VARIABLES_RAW_CSS_URI, text: window.elementorVariablesRawCSS ?? '' } ],
+				contents: [ { uri: GLOBAL_VARIABLES_RAW_CSS_URI, text: variablesCssRaw ?? '' } ],
 			};
 		}
 	);
@@ -51,7 +53,7 @@ export const initVariablesResource = () => {
 		} );
 		mcpServer.server.sendResourceUpdated( {
 			uri: GLOBAL_VARIABLES_RAW_CSS_URI,
-			contents: [ { uri: GLOBAL_VARIABLES_RAW_CSS_URI, text: window.elementorVariablesRawCSS ?? '' } ],
+			contents: [ { uri: GLOBAL_VARIABLES_RAW_CSS_URI, text: variablesCssRaw ?? '' } ],
 		} );
 	} );
 };
