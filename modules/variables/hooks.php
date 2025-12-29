@@ -86,7 +86,9 @@ class Hooks {
 	}
 
 	private function register_css_renderer() {
-		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->parse_css_variable_names_and_values( $settings ) );
+		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => array_merge( $settings, [
+			'variable_raw_css' => $this->css_renderer()->raw_css( false ),
+		] ) );
 		add_action( 'elementor/css-file/post/parse', function ( Post_CSS $post_css ) {
 			if ( ! Plugin::$instance->kits_manager->is_kit( $post_css->get_post_id() ) ) {
 				return;
@@ -96,14 +98,8 @@ class Hooks {
 				$this->css_renderer()->raw_css()
 			);
 		} );
-		return $this;
-	}
 
-	private function parse_css_variable_names_and_values( $settings ) {
-		if ( ! isset( $settings['variables_raw'])) {
-			$settings['variables_raw'] = json_encode( $this->css_renderer()->raw_css() );
-		}
-		return $settings;
+		return $this;
 	}
 
 	private function fonts() {

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 import { Portal } from '@elementor/ui';
 
@@ -11,6 +12,10 @@ export function StyleRenderer() {
 
 	const styleItems = useStyleItems();
 	const linksAttrs = useDocumentsCssLinks();
+
+	useEffect(() => {
+		window.dispatchEvent(new CustomEvent('elementor:style-items-changed'))
+	}, [styleItems])
 
 	if ( ! container ) {
 		return null;
