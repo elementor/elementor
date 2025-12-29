@@ -2,6 +2,11 @@ import { type V1ElementData } from '@elementor/editor-elements';
 import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 import type { StyleDefinition } from '@elementor/editor-styles';
 
+import {
+	type ComponentInstanceOverrideProp,
+	type ComponentInstanceOverridePropValue,
+} from './prop-types/component-instance-override-prop-type';
+
 export type ComponentFormValues = {
 	componentName: string;
 };
@@ -77,16 +82,9 @@ export type ComponentInstancePropValue< TComponentId extends number | string = n
 
 type ComponentOverrides = TransformablePropValue< 'overrides', ComponentOverride[] >;
 
-type ComponentOverride = TransformablePropValue< 'override', ComponentOverridePropValue >;
+export type ComponentOverride = ComponentInstanceOverrideProp;
 
-export type ComponentOverridePropValue = {
-	override_key: string;
-	override_value: TransformablePropValue< string >;
-	schema_source: {
-		type: string;
-		id: number;
-	};
-};
+export type ComponentOverridePropValue = ComponentInstanceOverridePropValue;
 
 export type ComponentOverridable = {
 	override_key: string;
