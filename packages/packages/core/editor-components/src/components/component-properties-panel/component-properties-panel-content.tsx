@@ -29,7 +29,7 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 	const currentComponentId = useCurrentComponentId();
 	const overridableProps = useOverridableProps( currentComponentId );
 	const [ isAddingGroup, setIsAddingGroup ] = useState( false );
-	const introductionRef = useRef< HTMLDivElement >( null );
+	const introductionRef = useRef< HTMLButtonElement >( null );
 	const groupLabelEditable = useCurrentEditableItem();
 
 	const groups = useMemo( () => {
