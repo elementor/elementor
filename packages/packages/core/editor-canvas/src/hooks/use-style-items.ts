@@ -119,7 +119,7 @@ function createProviderSubscriber( { provider, renderStyles, setStyleItems }: Cr
 					};
 				} );
 
-				return renderStyles( { styles: breakToBreakpoints( styles ), signal } );
+				return renderStyles( { styles: breakToBreakpoints( styles ), signal, providerKey: provider.getKey() } );
 			} )
 			.then( ( items ) => {
 				setStyleItems( ( prev ) => ( {

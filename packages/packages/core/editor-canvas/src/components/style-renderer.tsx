@@ -19,7 +19,7 @@ export function StyleRenderer() {
 	return (
 		<Portal container={ container }>
 			{ styleItems.map( ( item, i ) => (
-				<style key={ `${ item.id }-${ i }-${ item.breakpoint }` }>{ item.value }</style>
+				<style data-provider-key={ item.providerKey } key={ `${ item.id }-${ i }-${ item.breakpoint }` }>{ item.value }</style>
 			) ) }
 			{ linksAttrs.map( ( attrs ) => (
 				<link { ...attrs } key={ attrs.id } />

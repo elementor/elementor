@@ -43,6 +43,7 @@ const InputSchema = {
 };
 
 const OutputSchema = {
+	status: z.enum( [ 'ok', 'error' ] ).describe( 'The status of the operation' ),
 	message: z.string().optional().describe( 'Additional information about the operation result' ),
 	component_uid: z
 		.string()

@@ -14,6 +14,7 @@ import { initCanvasMcp } from './mcp/canvas-mcp';
 import { mcpDescription } from './mcp/mcp-description';
 import { initLinkInLinkPrevention } from './prevent-link-in-link-commands';
 import { initStyleCommands } from './style-commands/init-style-commands';
+import { initStyleSheetResource } from './mcp/resources/style-sheet-resource';
 
 export function init() {
 	initStyleTransformers();
@@ -53,5 +54,9 @@ export function init() {
 		getMCPByDomain( 'canvas', {
 			instructions: mcpDescription,
 		} )
+	);
+
+	initStyleSheetResource(
+		getMCPByDomain( 'canvas' ),
 	);
 }
