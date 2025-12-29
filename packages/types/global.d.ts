@@ -23,6 +23,7 @@ declare global {
 		};
 		elementorPro?: object;
 		ElementorInteractionsConfig?: InteractionsConfig;
+		elementorVariablesRawCSS?: string;
 	}
 }
 

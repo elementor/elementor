@@ -31,6 +31,24 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 		$this->assertTrue( $result );
 	}
 
+	public function test_validate__passes_with_valid_second_level_override() {
+		// Arrange
+		$component_override = Override_Prop_Type::make();
+
+		// Act
+		$result = $component_override->validate( [
+			'$$type' => 'override',
+			'value' => [
+				'override_key' => 'prop-uuid-5',
+				'override_value' => [ '$$type' => 'string', 'value' => 'New button text' ],
+				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
+			]
+		] );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
 	public function test_validate__passes_when_override_key_not_in_component_props() {
 		// Arrange
 		$component_override = Override_Prop_Type::make();
@@ -175,6 +193,31 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 		$this->assertEquals( [
 			'$$type' => 'override',
 			'value' => $expected_after_sanitization,
+		], $result );
+	}
+
+	public function test_sanitize__sanitizes_valid_second_level_override() {
+		// Arrange
+		$component_override = Override_Prop_Type::make();
+
+		// Act
+		$result = $component_override->sanitize( [
+			'$$type' => 'override',
+			'value' => [
+				'override_key' => 'prop-uuid-5',
+				'override_value' => [ '$$type' => 'string', 'value' => 'New button text <script>alert(1)</script>' ],
+				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
+			],
+		] );
+
+		// Assert
+		$this->assertEquals( [
+			'$$type' => 'override',
+			'value' => [
+				'override_key' => 'prop-uuid-5',
+				'override_value' => [ '$$type' => 'string', 'value' => 'New button text' ],
+				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
+			],
 		], $result );
 	}
 

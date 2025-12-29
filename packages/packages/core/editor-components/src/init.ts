@@ -14,6 +14,7 @@ import {
 } from '@elementor/editor-editing-panel';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
+import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { stylesRepository } from '@elementor/editor-styles-repository';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
@@ -23,6 +24,7 @@ import { componentInstanceTransformer } from './component-instance-transformer';
 import { componentOverridableTransformer } from './component-overridable-transformer';
 import { componentOverrideTransformer } from './component-override-transformer';
 import { ComponentPanelHeader } from './components/component-panel-header/component-panel-header';
+import { panel as componentPropertiesPanel } from './components/component-properties-panel/component-properties-panel';
 import { Components } from './components/components-tab/components';
 import { COMPONENT_DOCUMENT_TYPE } from './components/consts';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
@@ -31,7 +33,8 @@ import { openEditModeDialog } from './components/in-edit-mode';
 import { InstanceEditingPanel } from './components/instance-editing-panel/instance-editing-panel';
 import { OverridablePropControl } from './components/overridable-props/overridable-prop-control';
 import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
-import { createComponentType, TYPE } from './create-component-type';
+import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-type';
+import { initRegenerateOverrideKeys } from './hooks/regenerate-override-keys';
 import { initMcp } from './mcp';
 import { PopulateStore } from './populate-store';
 import { componentOverridablePropTypeUtil } from './prop-types/component-overridable-prop-type';
@@ -47,8 +50,9 @@ export function init() {
 	stylesRepository.register( componentsStylesProvider );
 
 	registerSlice( slice );
+	registerPanel( componentPropertiesPanel );
 
-	registerElementType( TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
+	registerElementType( COMPONENT_WIDGET_TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
 		createComponentType( { ...options, showLockedByModal: openEditModeDialog } )
 	);
 
@@ -121,6 +125,8 @@ export function init() {
 	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );
 	settingsTransformersRegistry.register( 'overridable', componentOverridableTransformer );
 	settingsTransformersRegistry.register( 'override', componentOverrideTransformer );
+
+	initRegenerateOverrideKeys();
 
 	initMcp();
 }
