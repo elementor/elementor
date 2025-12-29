@@ -106,7 +106,6 @@ module.exports = elementorModules.ViewModule.extend( {
 	initModel() {
 		this.model = new elementorModules.editor.elements.models.BaseSettings( this.getSettings( 'settings' ), {
 			controls: this.getSettings( 'controls' ),
-			editor_settings: this.getSettings( 'editor_settings' ),
 		} );
 	},
 
