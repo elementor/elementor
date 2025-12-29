@@ -7,7 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Nested_Components_Mocks {
-
 	static array $button_component_data;
 
 	static array $card_component_data;
