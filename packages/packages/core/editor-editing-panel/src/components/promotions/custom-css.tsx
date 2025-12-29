@@ -6,9 +6,17 @@ import { Chip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { StyleTabSection } from '../style-tab-section';
+import { type CanvasExtendedWindow } from './types';
+
+function getCustomCssPromotion() {
+	const extendedWindow = window as unknown as CanvasExtendedWindow;
+
+	return extendedWindow.elementor?.config?.v4Promotions?.customCss;
+}
 
 export const CustomCssSection = () => {
-	const [ showInfoTip, sethSowInfoTip ] = useState( false );
+	const [ showInfoTip, setShowInfoTip ] = useState( false );
+	const promotion = getCustomCssPromotion();
 
 	return (
 		<StyleTabSection
@@ -17,15 +25,12 @@ export const CustomCssSection = () => {
 				title: __( 'Custom CSS', 'elementor' ),
 				action: (
 					<PromotionInfotip
-						title={ __( 'Custom CSS', 'elementor' ) }
-						content={ __(
-							'Add custom CSS to refine and enrich the appearance of any element on your site.',
-							'elementor'
-						) }
-						assetUrl="https://assets.elementor.com/packages/v1/images/custom-css-promotion.png"
-						ctaUrl="https://go.elementor.com/go-pro-style-custom-css/"
+						title={ promotion?.title ?? '' }
+						content={ promotion?.content ?? '' }
+						assetUrl={ promotion?.image ?? '' }
+						ctaUrl={ promotion?.ctaUrl ?? '' }
 						open={ showInfoTip }
-						setOpen={ sethSowInfoTip }
+						setOpen={ setShowInfoTip }
 					>
 						<Chip
 							size="tiny"
@@ -38,7 +43,7 @@ export const CustomCssSection = () => {
 									display: 'none',
 								},
 							} }
-							onClick={ () => sethSowInfoTip( true ) }
+							onClick={ () => setShowInfoTip( true ) }
 						/>
 					</PromotionInfotip>
 				),

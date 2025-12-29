@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ComponentPropListIcon, FolderPlusIcon, XIcon } from '@elementor/icons';
@@ -29,6 +29,7 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 	const currentComponentId = useCurrentComponentId();
 	const overridableProps = useOverridableProps( currentComponentId );
 	const [ isAddingGroup, setIsAddingGroup ] = useState( false );
+	const introductionRef = useRef< HTMLButtonElement >( null );
 	const groupLabelEditable = useCurrentEditableItem();
 
 	const groups = useMemo( () => {
@@ -122,7 +123,12 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 				) }
 
 				<Tooltip title={ __( 'Close panel', 'elementor' ) }>
-					<IconButton size="tiny" aria-label={ __( 'Close panel', 'elementor' ) } onClick={ onClose }>
+					<IconButton
+						ref={ introductionRef }
+						size="tiny"
+						aria-label={ __( 'Close panel', 'elementor' ) }
+						onClick={ onClose }
+					>
 						<XIcon fontSize="tiny" />
 					</IconButton>
 				</Tooltip>
@@ -132,7 +138,7 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 
 			<PanelBody>
 				{ showEmptyState ? (
-					<PropertiesEmptyState />
+					<PropertiesEmptyState introductionRef={ introductionRef } />
 				) : (
 					<List sx={ { p: 2, display: 'flex', flexDirection: 'column', gap: 2 } }>
 						<SortableProvider value={ groupIds } onChange={ handleGroupsReorder }>
