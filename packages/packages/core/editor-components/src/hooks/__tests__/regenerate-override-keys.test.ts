@@ -4,6 +4,8 @@ import { numberPropTypeUtil } from '@elementor/editor-props';
 import { generateUniqueId } from '@elementor/utils';
 
 import { componentInstanceOverridePropTypeUtil } from '../../prop-types/component-instance-override-prop-type';
+import { componentInstanceOverridesPropTypeUtil } from '../../prop-types/component-instance-overrides-prop-type';
+import { componentInstancePropTypeUtil } from '../../prop-types/component-instance-prop-type';
 import { regenerateOverrideKeysForContainers } from '../regenerate-override-keys';
 
 jest.mock( '@elementor/editor-elements', () => ( {
@@ -25,7 +27,12 @@ describe( 'regenerateOverrideKeysForContainers', () => {
 
 	it( 'should regenerate override keys for component instances', () => {
 		// Arrange
-		const ids = createMockGenerateUniqueId();
+		const NEW_OVERRIDE_KEY_1 = 'prop-new-1';
+		const NEW_OVERRIDE_KEY_2 = 'prop-new-2';
+
+		jest.mocked( generateUniqueId )
+			.mockReturnValueOnce( NEW_OVERRIDE_KEY_1 )
+			.mockReturnValueOnce( NEW_OVERRIDE_KEY_2 );
 
 		const componentInstance = createMockComponentInstance( MOCK_COMPONENT_ID, [
 			{ override_key: 'prop-original-1', override_value: { $$type: 'html', value: 'Title 1' } },
@@ -39,22 +46,33 @@ describe( 'regenerateOverrideKeysForContainers', () => {
 
 		// Assert
 		expect( mockUpdateElementSettings ).toHaveBeenCalledTimes( 1 );
-
-		const [ newOverride1, newOverride2 ] = ids;
-		const [ [ { id, withHistory, props } ] ] = mockUpdateElementSettings.mock.calls;
-
-		expect( withHistory ).toBe( false );
-
-		expect( id ).toBe( componentInstance.id );
-
-		const componentInstanceProp = props.component_instance as {
-			value: { overrides: { value: Array< { value: { override_key: string } } > } };
-		};
-
-		const [ { value: override1 }, { value: override2 } ] = componentInstanceProp.value.overrides.value;
-
-		expect( override1.override_key ).toBe( newOverride1 );
-		expect( override2.override_key ).toBe( newOverride2 );
+		expect( mockUpdateElementSettings ).toHaveBeenCalledWith( {
+			id: 'component-1',
+			withHistory: false,
+			props: {
+				component_instance: {
+					$$type: 'component-instance',
+					value: {
+						component_id: {
+							$$type: 'number',
+							value: MOCK_COMPONENT_ID,
+						},
+						overrides: componentInstanceOverridesPropTypeUtil.create( [
+							componentInstanceOverridePropTypeUtil.create( {
+								override_key: NEW_OVERRIDE_KEY_1,
+								override_value: { $$type: 'html', value: 'Title 1' },
+								schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
+							} ),
+							componentInstanceOverridePropTypeUtil.create( {
+								override_key: NEW_OVERRIDE_KEY_2,
+								override_value: { $$type: 'string', value: 'Value 2' },
+								schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
+							} ),
+						] ),
+					},
+				},
+			},
+		} );
 	} );
 
 	it( 'should not update settings for non-component widgets', () => {
@@ -190,34 +208,18 @@ function createMockComponentInstance(
 			elType: 'widget',
 		},
 		settings: {
-			component_instance: {
-				$$type: 'component-instance',
-				value: {
-					component_id: numberPropTypeUtil.create( componentId ),
-					overrides: {
-						$$type: 'overrides',
-						value: overrides.map( ( override ) =>
-							componentInstanceOverridePropTypeUtil.create( {
-								override_key: override.override_key,
-								override_value: override.override_value,
-								schema_source: { type: 'component', id: componentId },
-							} )
-						),
-					},
-				},
-			},
+			component_instance: componentInstancePropTypeUtil.create( {
+				component_id: numberPropTypeUtil.create( componentId ),
+				overrides: componentInstanceOverridesPropTypeUtil.create(
+					overrides.map( ( override ) =>
+						componentInstanceOverridePropTypeUtil.create( {
+							override_key: override.override_key,
+							override_value: override.override_value,
+							schema_source: { type: 'component', id: componentId },
+						} )
+					)
+				),
+			} ),
 		},
 	} );
-}
-
-function createMockGenerateUniqueId() {
-	const ids: string[] = [];
-
-	jest.mocked( generateUniqueId ).mockImplementation( () => {
-		const id = `prop-new-${ ids.length + 1 }`;
-		ids.push( id );
-		return id;
-	} );
-
-	return ids;
 }
