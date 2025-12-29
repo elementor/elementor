@@ -1,4 +1,4 @@
-name: Enhanced PR Review (Shared)
+name: Enhanced PR Review
 
 on:
   pull_request:
