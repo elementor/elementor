@@ -2,7 +2,6 @@
 
 namespace Elementor\Modules\EditorOne\Components;
 
-use Elementor\Modules\EditorOne\Classes\Current_Page_Inspector;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Utils;
 
@@ -14,11 +13,8 @@ class Top_Bar_Handler {
 
 	private Menu_Data_Provider $menu_data_provider;
 
-	private Current_Page_Inspector $current_page_inspector;
-
 	public function __construct() {
 		$this->menu_data_provider = Menu_Data_Provider::instance();
-		$this->current_page_inspector = new Current_Page_Inspector( $this->menu_data_provider );
 		$this->register_actions();
 	}
 
@@ -28,7 +24,7 @@ class Top_Bar_Handler {
 	}
 
 	public function enqueue_assets(): void {
-		if ( ! $this->current_page_inspector->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
 			return;
 		}
 

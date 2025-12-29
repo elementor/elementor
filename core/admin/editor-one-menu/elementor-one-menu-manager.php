@@ -29,7 +29,6 @@ class Elementor_One_Menu_Manager {
 			$this->menu_data_provider,
 			new Slug_Normalizer()
 		);
-
 		$this->register_actions();
 	}
 
@@ -292,10 +291,6 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function enqueue_admin_menu_assets(): void {
-		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
-			return;
-		}
-
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 
 		wp_enqueue_style(

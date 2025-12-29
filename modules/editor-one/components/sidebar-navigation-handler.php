@@ -4,7 +4,6 @@ namespace Elementor\Modules\EditorOne\Components;
 
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Modules\EditorOne\Classes\Active_Menu_Resolver;
-use Elementor\Modules\EditorOne\Classes\Current_Page_Inspector;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Url_Matcher;
@@ -22,12 +21,9 @@ class Sidebar_Navigation_Handler {
 
 	private Active_Menu_Resolver $active_menu_resolver;
 
-	private Current_Page_Inspector $current_page_inspector;
-
 	public function __construct() {
 		$this->menu_data_provider = Menu_Data_Provider::instance();
 		$this->active_menu_resolver = new Active_Menu_Resolver( new Url_Matcher() );
-		$this->current_page_inspector = new Current_Page_Inspector( $this->menu_data_provider );
 		$this->register_actions();
 	}
 
@@ -38,7 +34,7 @@ class Sidebar_Navigation_Handler {
 	}
 
 	public function add_body_class( string $classes ): string {
-		if ( ! $this->current_page_inspector->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
 			return $classes;
 		}
 
@@ -52,7 +48,7 @@ class Sidebar_Navigation_Handler {
 	}
 
 	public function enqueue_sidebar_assets(): void {
-		if ( ! $this->current_page_inspector->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
 			return;
 		}
 
@@ -89,7 +85,7 @@ class Sidebar_Navigation_Handler {
 	}
 
 	public function render_sidebar_container(): void {
-		if ( ! $this->current_page_inspector->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
 			return;
 		}
 
