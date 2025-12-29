@@ -1,0 +1,17 @@
+{
+  "migrations": [
+    {
+      "id": "string-to-string_v2",
+      "fromType": "string",
+      "toType": "string_v2"
+    },
+    {
+      "id": "string_v2-to-html",
+      "widgetType": ["e-heading", "e-paragraph"],
+      "prop": "title",
+      "fromType": "string_v2",
+      "toType": "html"
+    }
+  ]
+}
+

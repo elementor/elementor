@@ -1,0 +1,30 @@
+{
+  "migrations": [
+    {
+      "id": "a-to-b",
+      "fromType": "type_a",
+      "toType": "type_b"
+    },
+    {
+      "id": "b-to-d",
+      "fromType": "type_b",
+      "toType": "type_d"
+    },
+    {
+      "id": "a-to-c",
+      "fromType": "type_a",
+      "toType": "type_c"
+    },
+    {
+      "id": "c-to-e",
+      "fromType": "type_c",
+      "toType": "type_e"
+    },
+    {
+      "id": "e-to-d",
+      "fromType": "type_e",
+      "toType": "type_d"
+    }
+  ]
+}
+
