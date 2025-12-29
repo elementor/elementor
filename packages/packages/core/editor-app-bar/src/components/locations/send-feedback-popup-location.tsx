@@ -1,5 +1,3 @@
-import * as React from 'react';
-import { useEffect, useState } from 'react';
 import { ThemeProvider } from '@elementor/editor-ui';
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 import { httpService } from '@elementor/http-client';
@@ -19,8 +17,10 @@ import {
 	usePopupState,
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
+import * as React from 'react';
+import { useEffect, useState } from 'react';
 
-import { FEEDBACK_TOGGLE_EVENT } from '../../extensions/feedback';
+import { EXPERIMENT_NAME, FEEDBACK_TOGGLE_EVENT } from '../../extensions/feedback/feedback-consts';
 import { type ExtendedWindow } from '../../types';
 
 const checkIfUserIsConnected = () => {
@@ -36,7 +36,7 @@ type FeedbackResult = {
 	message: string;
 };
 
-export const EXPERIMENT_NAME = 'in_editor_feedback';
+
 
 export default function SendFeedbackPopupLocation() {
 	const isActive = isExperimentActive( EXPERIMENT_NAME );
