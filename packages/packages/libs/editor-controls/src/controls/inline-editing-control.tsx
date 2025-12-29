@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { type ComponentProps } from 'react';
 import { htmlPropTypeUtil } from '@elementor/editor-props';
 import { Box, type SxProps, type Theme } from '@elementor/ui';
 
@@ -15,7 +16,7 @@ export const InlineEditingControl = createControl(
 	}: {
 		sx?: SxProps< Theme >;
 		attributes?: Record< string, string >;
-		props?: React.ComponentProps< 'div' >;
+		props?: ComponentProps< 'div' >;
 	} ) => {
 		const { value, setValue } = useBoundProp( htmlPropTypeUtil );
 		const handleChange = ( newValue: unknown ) => setValue( newValue as string );

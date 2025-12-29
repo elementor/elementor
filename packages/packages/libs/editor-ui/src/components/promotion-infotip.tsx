@@ -3,39 +3,29 @@ import { Card, CardActions, CardContent, CardHeader, CardMedia, CloseButton, Inf
 
 import { CtaButton } from './cta-button';
 
-type PromotionInfotipProps = React.PropsWithChildren< {
+type InfotipCardProps = {
 	title: string;
 	content: string;
 	assetUrl: string;
 	ctaUrl: string;
-	open?: boolean;
 	setOpen: ( open: boolean ) => void;
-} >;
+};
 
-export const PromotionInfotip = ( { children, ...props }: PromotionInfotipProps ) => {
+type PromotionInfotipProps = React.PropsWithChildren<
+	InfotipCardProps & {
+		open?: boolean;
+	}
+>;
+
+export const PromotionInfotip = ( { children, open, ...cardProps }: PromotionInfotipProps ) => {
 	return (
-		<Infotip
-			placement="right"
-			{ ...props }
-			content={
-				<InfotipCard
-					title={ props.title }
-					content={ props.content }
-					assetUrl={ props.assetUrl }
-					ctaUrl={ props.ctaUrl }
-					setOpen={ props.setOpen }
-				/>
-			}
-			open={ props.open }
-		>
+		<Infotip placement="right" content={ <InfotipCard { ...cardProps } /> } open={ open }>
 			{ children }
 		</Infotip>
 	);
 };
 
-function InfotipCard( { ...props }: PromotionInfotipProps ) {
-	const { title, content, assetUrl, ctaUrl, setOpen } = props;
-
+function InfotipCard( { title, content, assetUrl, ctaUrl, setOpen }: InfotipCardProps ) {
 	return (
 		<Card elevation={ 0 } sx={ { maxWidth: 296 } }>
 			<CardHeader

@@ -119,6 +119,7 @@
                     }
                 }
 
+                &.elementor-flyout-divider, 
                 &.elementor-menu-separator {
                     border-top: var(--editor-one-flyout-menu-border-width) solid var(--editor-one-flyout-menu-border);
                     margin: var(--editor-one-flyout-menu-spacing-xs) 0;

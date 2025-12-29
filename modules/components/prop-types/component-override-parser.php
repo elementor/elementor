@@ -93,11 +93,12 @@ class Component_Override_Parser extends Override_Parser {
 	}
 
 	private function get_overridable_prop_type( Component_Overridable_Prop $overridable ): ?Prop_Type {
-		$el_type = $overridable->el_type;
-		$widget_type = $overridable->widget_type;
-		$prop_key = $overridable->prop_key;
+		if ( $overridable->origin_prop_fields ) {
+			['el_type' => $el_type, 'widget_type' => $widget_type, 'prop_key' => $prop_key] = $overridable->origin_prop_fields;
+			return Parsing_Utils::get_prop_type( $el_type, $widget_type, $prop_key );
+		}
 
-		return Parsing_Utils::get_prop_type( $el_type, $widget_type, $prop_key );
+		return Parsing_Utils::get_prop_type( $overridable->el_type, $overridable->widget_type, $overridable->prop_key );
 	}
 
 	private function get_component_overridable_props( int $component_id ) {
