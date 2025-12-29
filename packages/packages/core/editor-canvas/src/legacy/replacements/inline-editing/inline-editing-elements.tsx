@@ -1,14 +1,15 @@
 import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { InlineEditor } from '@elementor/editor-controls';
-import { getElementType } from '@elementor/editor-elements';
+import { getContainer, getElementType } from '@elementor/editor-elements';
 import {
 	htmlPropTypeUtil,
 	stringPropTypeUtil,
 	type StringPropValue,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import { __privateRunCommandSync as runCommandSync, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Box, ThemeProvider } from '@elementor/ui';
 
 import { OutlineOverlay } from '../../../components/outline-overlay';
@@ -60,7 +61,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 	_afterRender() {
 		if ( ! this.isValueDynamic() && ! this.handlerAttached ) {
-			this.element.addEventListener( 'dblclick', this.handleRenderInlineEditor );
+			this.element.addEventListener( 'dblclick', this.handleRenderInlineEditor, { once: true } );
 			this.handlerAttached = true;
 		}
 	}
@@ -112,7 +113,12 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		const settingKey = this.getInlineEditablePropertyName();
 		const valueToSave = value ? htmlPropTypeUtil.create( value ) : null;
 
-		this.setSetting( settingKey, valueToSave );
+		runCommandSync( 'document/elements/settings', {
+			container: getContainer( this.id ),
+			settings: {
+				[ settingKey ]: valueToSave,
+			},
+		} );
 	}
 
 	getExpectedTag() {
@@ -148,10 +154,10 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	InlineEditorApp = ( { classes }: { classes: string } ) => {
 		const propValue = this.getContentValue();
 		const expectedTag = this.getExpectedTag();
-		const wrapperRef = React.useRef< HTMLDivElement | null >( null );
-		const [ isWrapperRendered, setIsWrapperRendered ] = React.useState( false );
+		const wrapperRef = useRef< HTMLDivElement | null >( null );
+		const [ isWrapperRendered, setIsWrapperRendered ] = useState( false );
 
-		React.useEffect( () => {
+		useEffect( () => {
 			setIsWrapperRendered( !! wrapperRef.current );
 		}, [] );
 
