@@ -157,7 +157,7 @@ class Role_Manager extends Settings_Page {
 			<div class="elementor-role-label">
 				<span class="elementor-role-name"><?php echo esc_html( translate_user_role( $role_data['name'] ) ); ?></span>
 				<span data-excluded-label="<?php esc_attr_e( 'Role Excluded', 'elementor' ); ?>" class="elementor-role-excluded-indicator"></span>
-				<span class="elementor-role-toggle"><span class="dashicons dashicons-arrow-down"></span></span>
+				<span class="elementor-role-toggle" data-id="<?php echo esc_attr( $role_slug ); ?>-toggle"><span class="dashicons dashicons-arrow-down"></span></span>
 			</div>
 			<div class="elementor-role-controls hidden">
 				<div class="elementor-role-control">
