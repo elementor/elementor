@@ -34,7 +34,8 @@ export const initVariablesResource = () => {
 		'global-variables-raw-css',
 		GLOBAL_VARIABLES_RAW_CSS_URI,
 		{
-			description: 'Raw CSS of Global variables. The variable names are the same as the ones in the global-variables resource.',
+			description:
+				'Raw CSS of Global variables. The variable names are the same as the ones in the global-variables resource.',
 		},
 		async () => {
 			return {

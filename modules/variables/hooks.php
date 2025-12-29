@@ -99,7 +99,7 @@ class Hooks {
 		add_action( 'elementor/editor/after_enqueue_scripts', function () {
 			wp_add_inline_script(
 				'elementor-common',
-				'window.elementorVariablesRawCSS = ' . json_encode($this->css_renderer()->raw_css()) . ';',
+				'window.elementorVariablesRawCSS = ' . json_encode( $this->css_renderer()->raw_css() ) . ';',
 				'before'
 			);
 		} );
