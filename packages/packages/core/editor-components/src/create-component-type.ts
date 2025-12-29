@@ -35,7 +35,7 @@ type ContextMenuGroup = {
 	actions: ContextMenuAction[];
 };
 
-export const TYPE = 'e-component';
+export const COMPONENT_WIDGET_TYPE = 'e-component';
 
 const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfig ): ContextMenuGroup[] => {
 	const disableMap = new Map( Object.entries( config.disable ?? {} ) );
