@@ -24,7 +24,7 @@ class PromotionData {
 		];
 	}
 
-	public function get_v4_promotions_data( $force_request = false ): array{
+	public function get_v4_promotions_data( $force_request = false ): array {
 		$assets_data = $this->editor_assets_api->get_assets_data( $force_request );
 
 		if ( empty( $assets_data ) ) {
