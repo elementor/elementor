@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useId } from 'react';
 import { useStateByElement } from '@elementor/editor-editing-panel';
 import { CollapseIcon } from '@elementor/editor-ui';
-import { Collapse, ListItemButton, ListItemText, Stack } from '@elementor/ui';
+import { Box, Collapse, ListItemButton, ListItemText, Stack } from '@elementor/ui';
 
 import { type ComponentInstanceOverridesPropValue } from '../../prop-types/component-instance-overrides-prop-type';
 import { type OverridableProp, type OverridablePropsGroup } from '../../types';
@@ -28,7 +28,7 @@ export function OverridePropsGroup( { group, props, overrides }: Props ) {
 	const title = group.label;
 
 	return (
-		<span aria-label={ `${ title } section` }>
+		<Box aria-label={ `${ title } section` }>
 			<ListItemButton
 				id={ labelId }
 				aria-controls={ contentId }
@@ -57,6 +57,6 @@ export function OverridePropsGroup( { group, props, overrides }: Props ) {
 					) ) }
 				</Stack>
 			</Collapse>
-		</span>
+		</Box>
 	);
 }

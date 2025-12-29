@@ -48,7 +48,7 @@ class Overridable_Prop_Parser {
 			return $result;
 		}
 
-		$origin_value = $this->get_origin_value( $prop );
+		$origin_value = $this->get_final_origin_value( $prop );
 
 		if ( ! empty( $origin_value ) ) {
 			$origin_value_prop_type = $this->get_origin_prop_type( $prop );
@@ -102,12 +102,15 @@ class Overridable_Prop_Parser {
 		);
 	}
 
-	private function get_origin_value( array $prop ) {
+	private function get_final_origin_value( array $prop ) {
 		if ( empty( $prop ) || empty( $prop['originValue'] ) ) {
 			return null;
 		}
 
-		if ( isset( $prop['originValue']['$$type'] ) && Override_Prop_Type::get_key() === $prop['originValue']['$$type'] ) {
+		if (
+			isset( $prop['originValue']['$$type'] ) &&
+			Override_Prop_Type::get_key() === $prop['originValue']['$$type']
+		) {
 			return $prop['originValue']['value']['override_value'];
 		}
 
@@ -115,7 +118,7 @@ class Overridable_Prop_Parser {
 	}
 
 	private function get_sanitized_origin_value( array $prop ) {
-		$origin_value = $this->get_origin_value( $prop );
+		$origin_value = $this->get_final_origin_value( $prop );
 		$origin_prop_type = $this->get_origin_prop_type( $prop );
 
 		if ( ! empty( $origin_value ) ) {

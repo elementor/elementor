@@ -83,8 +83,7 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 			| ComponentInstanceOverrideProp
 			| ComponentOverridablePropValue;
 
-		const newOverrideValue = getOverrideValue( overridableProp.overrideKey, newPropValue, componentInstanceId );
-		const overridableValue = componentOverridablePropTypeUtil.extract( newOverrideValue );
+		const newOverrideValue = createOverrideValue( overridableProp.overrideKey, newPropValue, componentInstanceId );
 
 		let newOverrides =
 			overrides?.map( ( override ) => ( override === matchingOverride ? newOverrideValue : override ) ) ?? [];
@@ -98,6 +97,7 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 			overrides: componentInstanceOverridesPropTypeUtil.create( newOverrides ),
 		} );
 
+		const overridableValue = componentOverridablePropTypeUtil.extract( newOverrideValue );
 		if ( overridableValue && componentId ) {
 			if ( overridableProp.originPropFields ) {
 				updateOverridableProp( componentId, overridableValue, overridableProp.originPropFields );
@@ -149,15 +149,23 @@ function getMatchingOverride(
 	overrideKey: string
 ): NonNullable< ComponentInstanceOverridesPropValue >[ number ] | null {
 	return (
-		overrides?.find( ( override ) =>
-			componentOverridablePropTypeUtil.isValid( override )
-				? ( override.value.origin_value as ComponentInstanceOverrideProp ).value?.override_key === overrideKey
-				: override.value.override_key === overrideKey
-		) ?? null
+		overrides?.find( ( override ) => {
+			const overridableValue = componentOverridablePropTypeUtil.extract( override );
+			let comparedOverrideKey = null;
+
+			if ( overridableValue ) {
+				comparedOverrideKey = ( overridableValue.origin_value as ComponentInstanceOverrideProp )?.value
+					?.override_key;
+			} else {
+				comparedOverrideKey = override.value.override_key;
+			}
+
+			return comparedOverrideKey === overrideKey;
+		} ) ?? null
 	);
 }
 
-function getOverrideValue(
+function createOverrideValue(
 	overrideKey: string,
 	overrideValue: ComponentInstanceOverrideProp | ComponentOverridablePropValue,
 	componentId: number
@@ -165,16 +173,18 @@ function getOverrideValue(
 	const overridableValue = componentOverridablePropTypeUtil.extract( overrideValue );
 
 	if ( overridableValue ) {
+		const innerOverride = componentInstanceOverridePropTypeUtil.create( {
+			override_key: overrideKey,
+			override_value: overridableValue.origin_value,
+			schema_source: {
+				type: 'component',
+				id: componentId,
+			},
+		} );
+
 		return componentOverridablePropTypeUtil.create( {
 			override_key: overridableValue.override_key,
-			origin_value: componentInstanceOverridePropTypeUtil.create( {
-				override_key: overrideKey,
-				override_value: overridableValue.origin_value,
-				schema_source: {
-					type: 'component',
-					id: componentId,
-				},
-			} ),
+			origin_value: innerOverride,
 		} );
 	}
 

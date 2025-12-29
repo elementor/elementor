@@ -29,7 +29,7 @@ export const getComponentIds = async ( elements: V1ElementData[] ): Promise< num
 		if ( !! childElements?.length ) {
 			const newIds = await getComponentIds( childElements );
 
-			ids.push( ...( newIds.filter( Boolean ) as number[] ) );
+			ids.push( ...Array.from( new Set( newIds ) ) );
 		}
 
 		return ids;
@@ -37,5 +37,5 @@ export const getComponentIds = async ( elements: V1ElementData[] ): Promise< num
 
 	const result = ( await Promise.all( components ) ).flat();
 
-	return Array.from( new Set( result ) ).filter( Boolean ) as number[];
+	return Array.from( new Set( result ) ).filter( ( value ) => value !== undefined );
 };

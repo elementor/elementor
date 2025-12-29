@@ -317,7 +317,7 @@ describe( '<InstanceEditingPanel />', () => {
 
 	it( 'should not render any sections when no overridable props', () => {
 		// Arrange.
-		setupComponent( false );
+		setupComponent( { isWithOverridableProps: false } );
 
 		// Act.
 		renderEditInstancePanel( store );
@@ -330,7 +330,7 @@ describe( '<InstanceEditingPanel />', () => {
 
 	it( 'should render overridable props from nested components', () => {
 		// Arrange.
-		setupComponent( true, true );
+		setupComponent( { isWithOverridableProps: true, isWithNestedOverridableProps: true } );
 
 		// Act.
 		renderEditInstancePanel( store );
@@ -342,7 +342,7 @@ describe( '<InstanceEditingPanel />', () => {
 
 	it( 'should render nested component prop labels', () => {
 		// Arrange.
-		setupComponent( true, true );
+		setupComponent( { isWithOverridableProps: true, isWithNestedOverridableProps: true } );
 
 		// Act.
 		renderEditInstancePanel( store );
@@ -353,7 +353,9 @@ describe( '<InstanceEditingPanel />', () => {
 	} );
 } );
 
-function setupComponent( isWithOverridableProps: boolean = true, isWithNestedOverridableProps: boolean = false ) {
+function setupComponent( options: { isWithOverridableProps?: boolean; isWithNestedOverridableProps?: boolean } = {} ) {
+	const { isWithOverridableProps = true, isWithNestedOverridableProps = false } = options;
+
 	const overridableProps = isWithNestedOverridableProps ? MOCK_OVERRIDABLE_PROPS_WITH_NESTED : MOCK_OVERRIDABLE_PROPS;
 
 	const componentData = {
