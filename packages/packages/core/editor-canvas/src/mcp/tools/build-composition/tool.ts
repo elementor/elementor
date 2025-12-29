@@ -30,7 +30,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 		],
 		outputSchema,
 		modelPreferences: {
-			hints: [ { name: 'claude-sonnet' } ],
+			hints: [ { name: 'claude-sonnet-4-5' } ],
 			intelligencePriority: 0.95,
 			speedPriority: 0.5,
 		},
@@ -157,10 +157,34 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 						options: { useHistory: false },
 					} );
 				} );
-				const errorText = `Failed to build composition with the following errors:\n\n
-${ errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n\n' ) }
-"Missing $$type" errors indicate that the configuration objects are invalid. Try again and apply **ALL** object entries with correct $$type.
-Now that you have these errors, fix them and try again. Errors regarding configuration objects, please check against the PropType schemas`;
+
+				const errorMessages = errors
+					.map( ( e ) => {
+						if ( typeof e === 'string' ) {
+							return e;
+						}
+						if ( e instanceof Error ) {
+							return e.message || String( e );
+						}
+
+						if ( typeof e === 'object' && e !== null ) {
+							return JSON.stringify( e );
+						}
+						return String( e );
+					} )
+					.filter(
+						( msg ) => msg && msg.trim() !== '' && msg !== '{}' && msg !== 'null' && msg !== 'undefined'
+					);
+
+				if ( errorMessages.length === 0 ) {
+					throw new Error(
+						'Failed to build composition: Unknown error occurred. No error details available.'
+					);
+				}
+
+				const errorText = `Failed to build composition with the following errors:\n\n${ errorMessages.join(
+					'\n\n'
+				) }\n\n"Missing $$type" errors indicate that the configuration objects are invalid. Try again and apply **ALL** object entries with correct $$type.\nNow that you have these errors, fix them and try again. Errors regarding configuration objects, please check against the PropType schemas`;
 				throw new Error( errorText );
 			}
 			if ( ! xml ) {
@@ -168,13 +192,16 @@ Now that you have these errors, fix them and try again. Errors regarding configu
 			}
 			return {
 				xmlStructure: new XMLSerializer().serializeToString( xml ),
+				errors: errors?.length
+					? errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n\n' )
+					: undefined,
 				llmInstructions:
 					( softErrors.length
 						? `The composition was built successfully, but there were some issues with the provided configurations:
 
 ${ softErrors.map( ( e ) => `- ${ e.message }` ).join( '\n' ) }
 
-Please use confiugure-element tool to fix these issues. Now that you have information about these issues, use the configure-element tool to fix them!`
+Please use configure-element tool to fix these issues. Now that you have information about these issues, use the configure-element tool to fix them!`
 						: '' ) +
 					`
 Next Steps:
