@@ -200,7 +200,8 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	test( 'Replay control is visible and disabled in interactions popover', async ( { page, apiRequests }, testInfo ) => {
+	// Skipped until promotion control is added
+	test.skip( 'Replay control is visible and disabled in interactions popover', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 

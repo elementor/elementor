@@ -22,9 +22,5 @@ export function init() {
 		return;
 	}
 
-	registerInteractionsControl( {
-		type: 'replay',
-		component: Replay,
-		options: [ 'yes', 'no' ],
-	} );
+	// Add registerInteractionsControl for promotion replay control
 }
