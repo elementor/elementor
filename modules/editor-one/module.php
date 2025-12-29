@@ -2,19 +2,18 @@
 
 namespace Elementor\Modules\EditorOne;
 
-use Elementor\Core\Admin\Admin;
 use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\EditorOne\Classes\Editor_One_Pointer;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Components\Sidebar_Navigation_Handler;
-
+use Elementor\Modules\EditorOne\Components\Top_Bar_Handler;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-
 class Module extends BaseModule {
 
 	const EXPERIMENT_NAME = 'e_editor_one';
@@ -49,17 +48,23 @@ class Module extends BaseModule {
 
 			$this->add_component( 'editor-one-menu-manager', new Elementor_One_Menu_Manager() );
 			$this->add_component( 'sidebar-navigation-handler', new Sidebar_Navigation_Handler() );
+			$this->add_component( 'top-bar-handler', new Top_Bar_Handler() );
 			$this->add_component( 'editor-one-pointer', new Editor_One_Pointer() );
 		}
 
 		add_action( 'current_screen', function () {
-			if ( ! static::is_active() || ! Admin::is_elementor_admin_page() ) {
+			$menu_data_provider = Menu_Data_Provider::instance();
+			if ( ! $menu_data_provider->is_elementor_editor_page() || ! static::is_active() ) {
 				return;
 			}
 
 			add_action( 'admin_enqueue_scripts', function () {
 				$this->enqueue_styles();
 			} );
+		} );
+
+		add_filter( 'elementor/admin-top-bar/is-active', function ( $is_active ) {
+			return static::is_active() ? false : $is_active;
 		} );
 	}
 
@@ -88,6 +93,7 @@ class Module extends BaseModule {
 	 * Enqueue admin styles
 	 */
 	private function enqueue_styles() {
+
 		wp_enqueue_style( 'elementor-admin' );
 
 		wp_enqueue_style(
