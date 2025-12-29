@@ -1,6 +1,12 @@
 import * as React from 'react';
-import { type ToggleButtonGroupItem, ToggleButtonGroupUi } from '@elementor/editor-controls';
+import {
+	ControlFormLabel,
+	PopoverGridContainer,
+	type ToggleButtonGroupItem,
+	ToggleButtonGroupUi,
+} from '@elementor/editor-controls';
 import { CheckIcon, MinusIcon } from '@elementor/icons';
+import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type ReplayFieldProps } from '../../types';
@@ -20,6 +26,21 @@ export function Replay( { disabled = true }: ReplayFieldProps ) {
 	];
 
 	return (
-		<ToggleButtonGroupUi items={ options } exclusive onChange={ () => {} } value={ false } disabled={ disabled } />
+		<Grid item xs={ 12 }>
+			<PopoverGridContainer>
+				<Grid item xs={ 6 }>
+					<ControlFormLabel>{ __( 'Replay', 'elementor' ) }</ControlFormLabel>
+				</Grid>
+				<Grid item xs={ 6 }>
+					<ToggleButtonGroupUi
+						items={ options }
+						exclusive
+						onChange={ () => {} }
+						value={ false }
+						disabled={ disabled }
+					/>
+				</Grid>
+			</PopoverGridContainer>
+		</Grid>
 	);
 }

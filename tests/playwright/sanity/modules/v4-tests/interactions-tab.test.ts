@@ -200,13 +200,13 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		} );
 	} );
 
-	// Skipped until promotion control is added
+	// Skipped until promotion control is added ED-21615
 	test.skip( 'Replay control is visible and disabled in interactions popover', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
 
 		await test.step( 'Add heading widget and navigate to interactions tab', async () => {
-			const container = await editor.addElement( { elType: 'container' }, 'document' );
+			const container = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 			await editor.addWidget( { widgetType: 'e-heading', container } );
 
 			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
@@ -216,10 +216,11 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 		await test.step( 'Create interaction and open popover', async () => {
 			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
-			await expect( addInteractionButton ).toBeVisible();
 			await addInteractionButton.click();
 
 			await page.waitForSelector( '.MuiPopover-root' );
+
+			await expect( page.locator('.MuiPopover-root') ).toBeVisible();
 		} );
 
 		await test.step( 'Replay control is not visible on page load trigger', async () => {
@@ -232,11 +233,9 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		await test.step( 'Verify Replay control is visible and disabled', async () => {
 			// Arrange
 			const selectOption = async ( openSelector, optionName ) => {
-				await expect( openSelector ).toBeVisible();
 				await openSelector.click();
 
 				const option = page.getByRole( 'option', { name: optionName } );
-				await expect( option ).toBeVisible();
 				await option.click();
 			};
 
