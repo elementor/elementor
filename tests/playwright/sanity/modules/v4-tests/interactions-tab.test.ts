@@ -220,7 +220,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			await page.waitForSelector( '.MuiPopover-root' );
 
-			await expect( page.locator('.MuiPopover-root') ).toBeVisible();
+			await expect( page.locator( '.MuiPopover-root' ) ).toBeVisible();
 		} );
 
 		await test.step( 'Replay control is not visible on page load trigger', async () => {
