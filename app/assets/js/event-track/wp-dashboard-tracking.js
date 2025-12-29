@@ -4,6 +4,7 @@ import PromotionTracking from './dashboard/promotion';
 import ScreenViewTracking from './dashboard/screen-view';
 import MenuPromotionTracking from './dashboard/menu-promotion';
 import ActionControlTracking from './dashboard/action-controls';
+import TopBarTracking from './dashboard/top-bar';
 
 const SESSION_TIMEOUT_MINUTES = 30;
 const MINUTE_MS = 60 * 1000;
