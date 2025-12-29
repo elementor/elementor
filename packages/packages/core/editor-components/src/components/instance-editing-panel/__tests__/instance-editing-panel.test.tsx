@@ -93,7 +93,6 @@ const MOCK_OVERRIDABLE_PROPS = {
 			elementId: 'element-1',
 			propKey: 'title',
 			widgetType: 'e-heading',
-			propType: MOCK_PROP_TYPE,
 			elType: 'widget',
 			groupId: 'content',
 			originValue: { $$type: 'string', value: 'Hello' },
@@ -104,7 +103,6 @@ const MOCK_OVERRIDABLE_PROPS = {
 			elementId: 'element-2',
 			propKey: 'subtitle',
 			widgetType: 'e-heading',
-			propType: MOCK_PROP_TYPE,
 			elType: 'widget',
 			groupId: 'content',
 			originValue: { $$type: 'string', value: 'World' },
@@ -115,7 +113,6 @@ const MOCK_OVERRIDABLE_PROPS = {
 			elementId: 'element-3',
 			propKey: 'link',
 			widgetType: 'e-button',
-			propType: MOCK_PROP_TYPE,
 			elType: 'widget',
 			groupId: 'settings',
 			originValue: { $$type: 'string', value: 'https://example.com' },
@@ -138,7 +135,6 @@ const MOCK_OVERRIDABLE_PROPS_WITH_NESTED = {
 			elementId: 'element-1',
 			propKey: 'title',
 			widgetType: 'e-heading',
-			propType: MOCK_PROP_TYPE,
 			elType: 'widget',
 			groupId: 'content',
 			originValue: { $$type: 'string', value: 'Hello' },
@@ -149,7 +145,6 @@ const MOCK_OVERRIDABLE_PROPS_WITH_NESTED = {
 			elementId: 'nested-instance-1',
 			propKey: 'title',
 			widgetType: 'e-component',
-			propType: MOCK_PROP_TYPE,
 			elType: 'widget',
 			groupId: 'nested',
 			originValue: { $$type: 'string', value: 'Nested Title Value' },
@@ -205,17 +200,6 @@ function createMockWidgetsCache() {
 				},
 			],
 		},
-		'e-component': {
-			atomic_props_schema: {
-				title: MOCK_PROP_TYPE,
-			},
-			atomic_controls: [
-				{
-					type: 'control' as const,
-					value: { bind: 'title', label: 'Title', type: MOCK_CONTROL_TYPE, props: {} },
-				},
-			],
-		},
 	};
 }
 
@@ -242,10 +226,6 @@ describe( '<InstanceEditingPanel />', () => {
 
 	beforeAll( () => {
 		controlsRegistry.register( MOCK_CONTROL_TYPE, TextControl, 'full' );
-	} );
-
-	afterAll( () => {
-		controlsRegistry.unregister( MOCK_CONTROL_TYPE );
 	} );
 
 	beforeEach( () => {
