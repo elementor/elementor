@@ -7,7 +7,7 @@ import type {
 } from '@elementor/editor-canvas';
 import { jest } from '@jest/globals';
 
-import { type ContextMenuAction, createComponentType, TYPE } from '../create-component-type';
+import { COMPONENT_WIDGET_TYPE, type ContextMenuAction, createComponentType } from '../create-component-type';
 import type { ExtendedWindow } from '../types';
 
 const MOCK_COMPONENT_ID = 123;
@@ -125,7 +125,7 @@ describe( 'createComponentType', () => {
 		};
 
 		const ComponentType = createComponentType( {
-			type: TYPE,
+			type: COMPONENT_WIDGET_TYPE,
 			renderer: {
 				register: jest.fn(),
 				render: jest.fn( () => Promise.resolve( '<div>Component</div>' ) ),
@@ -248,7 +248,7 @@ describe( 'createComponentType', () => {
 		};
 
 		const ComponentType = createComponentType( {
-			type: TYPE,
+			type: COMPONENT_WIDGET_TYPE,
 			renderer: {
 				register: jest.fn(),
 				render: jest.fn( () => Promise.resolve( '<div>Component</div>' ) ),
