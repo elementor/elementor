@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { type ReactNode, type RefObject, useId, useRef, useEffect } from 'react';
-import { type PropKey, type PropTypeUtil, type PropValue, sizePropTypeUtil, type SizePropValue, type TransformablePropValue } from '@elementor/editor-props';
-import { bindPopover, bindToggle, Box, Grid, Popover, Stack, ToggleButton, Tooltip, usePopupState } from '@elementor/ui';
+import { type ReactNode, type RefObject, useId, useRef } from 'react';
+import { type PropKey, type PropTypeUtil, type PropValue } from '@elementor/editor-props';
+import { bindPopover, bindToggle, Box, Grid, Popover, Stack, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
@@ -30,23 +30,6 @@ type Props< TMultiPropType extends string, TPropValue extends MultiSizePropValue
 	multiSizePropTypeUtil: PropTypeUtil< TMultiPropType, TPropValue >;
 };
 
-function isEqualValues ( items, values ) {
-
-	if ( ! values ) {
-		return true;
-	}
-
-	const propValue = {};
-
-	items.forEach( ( item ) => {
-		propValue[ item.bind ] = values?.value?.[ item.bind ] ?? null;
-	} );
-
-	const allValues = Object.values( propValue ).map( ( value ) => JSON.stringify( value ) );
-
-	return allValues.every( ( value ) => value === allValues[ 0 ] );
-}
-
 export function EqualUnequalSizesControl< TMultiPropType extends string, TPropValue extends MultiSizePropValue >( {
 	label,
 	icon,
@@ -59,51 +42,51 @@ export function EqualUnequalSizesControl< TMultiPropType extends string, TPropVa
 
 	const rowRefs: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ) ];
 
-	const {
-		propType: multiSizePropType,
-		value: multiSizeValue,
-		setValue: setMultiSizeValue,
-		disabled: multiSizeDisabled,
-	} = useBoundProp( multiSizePropTypeUtil );
-
-	const { value: sizeValue, setValue: setSizeValue } = useBoundProp( sizePropTypeUtil );
-
+	const { propType: multiSizePropType, disabled: multiSizeDisabled } = useBoundProp( multiSizePropTypeUtil );
 	const { value: masterValue, setValue: setMasterValue, placeholder: masterPlaceholder } = useBoundProp();
 
-	const getMultiSizeValues = ( sourceValue ) => {
-
+	const getMultiSizeValues = ( sourceValue: PropValue ) => {
 		if ( multiSizePropTypeUtil.isValid( sourceValue ) ) {
 			return sourceValue.value;
 		}
 
-		if ( ! sourceValue ) {
-			return null;
-		}
-
-		const propValue = {};
+		const propValue: MultiSizePropValue = {};
 
 		items.forEach( ( item ) => {
 			propValue[ item.bind ] = sourceValue;
 		} );
 
-		const derived = multiSizePropTypeUtil.create( propValue );
-
+		const derived = multiSizePropTypeUtil.create( propValue as unknown as TPropValue );
 		return derived?.value;
 	};
 
 	const isShowingGeneralIndicator = ! popupState.isOpen;
 
-	const derivedValue = getMultiSizeValues( masterValue );
-	const derivedPlaceholder = getMultiSizeValues( masterPlaceholder );
+	const derivedValue = getMultiSizeValues( masterValue ) as unknown as TPropValue;
+	const derivedPlaceholder = getMultiSizeValues( masterPlaceholder ) as unknown as TPropValue;
 
-	const isMixedPlaceholder = ! masterValue && ( ! isEqualValues( items, multiSizePropTypeUtil.create( derivedPlaceholder ) ) );
-	const isMixed = isMixedPlaceholder || ! isEqualValues( items, multiSizePropTypeUtil.create( derivedValue ) );
+	const isEqualValues = ( values: ReturnType< typeof multiSizePropTypeUtil.create > ) => {
+		if ( ! values ) {
+			return true;
+		}
 
-	const applyMultiSizeValue = ( newValue ) => {
+		const propValue: MultiSizePropValue = {};
 
+		items.forEach( ( item ) => {
+			propValue[ item.bind ] = values?.value?.[ item.bind ] ?? null;
+		} );
+
+		const allValues = Object.values( propValue ).map( ( value ) => JSON.stringify( value ) );
+		return allValues.every( ( value ) => value === allValues[ 0 ] );
+	};
+
+	const isMixedPlaceholder = ! masterValue && ! isEqualValues( multiSizePropTypeUtil.create( derivedPlaceholder ) );
+	const isMixed = isMixedPlaceholder || ! isEqualValues( multiSizePropTypeUtil.create( derivedValue ) );
+
+	const applyMultiSizeValue = ( newValue: TPropValue ) => {
 		const newPropValue = multiSizePropTypeUtil.create( newValue );
 
-		if ( isEqualValues( items, newPropValue ) ) {
+		if ( isEqualValues( newPropValue ) ) {
 			setMasterValue( Object.values( newValue )?.pop() ?? null );
 			return;
 		}
