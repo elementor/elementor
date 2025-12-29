@@ -15,10 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Component_Instance extends Atomic_Widget_Base {
 	use Has_Template;
 
-	public function __construct( $data = [], $args = null ) {
-		parent::__construct( $data, $args );
-	}
-
 	public static function get_element_type(): string {
 		return 'e-component';
 	}
