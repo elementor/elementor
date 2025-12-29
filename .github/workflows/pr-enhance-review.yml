@@ -1,12 +1,160 @@
-name: PR Enhanced Review
+name: Enhanced PR Review (Shared)
 
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  review:
-    if: github.event_name == 'pull_request' && github.event.pull_request.draft == false && startsWith( github.repository, 'elementor/' )
-    uses: elementor/elementor-cloud-github-actions/.github/workflows/pr-enhance-review.yml@master
-    secrets: inherit
+  check-label:
+    name: Check Auto-Reviewed Label
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' && !github.event.pull_request.draft && startsWith(github.repository, 'elementor/')
+    outputs:
+      should_skip: ${{ steps.check.outputs.should_skip || 'true' }}
+    permissions:
+      pull-requests: read
+    
+    steps:
+      - name: Check for auto-reviewed label
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          echo "Checking if PR #$PR_NUMBER has 'auto-reviewed' label..."
+          
+          LABELS=$(gh pr view "$PR_NUMBER" --repo ${{ github.repository }} --json labels --jq '.labels[].name')
+          
+          if echo "$LABELS" | grep -q "^auto-reviewed$"; then
+            echo "✅ PR already has 'auto-reviewed' label, skipping review"
+            echo "should_skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "No 'auto-reviewed' label found, proceeding with review"
+            echo "should_skip=false" >> $GITHUB_OUTPUT
+          fi
 
+  enhanced-review:
+    name: Enhanced Code Review
+    runs-on: ubuntu-latest
+    needs: [check-label]
+    if: needs.check-label.outputs.should_skip != 'true'
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Extract PR Information
+        id: pr-info
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Checkout the PR head SHA for automatic trigger
+          git checkout "${{ github.event.pull_request.head.sha }}"
+          
+          # Set outputs for automatic trigger
+          echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          echo "pr_head_sha=${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          echo "pr_base_sha=${{ github.event.pull_request.base.sha }}" >> $GITHUB_OUTPUT
+          echo "is_manual=false" >> $GITHUB_OUTPUT        
+
+      - name: Install Cursor CLI
+        run: |
+          curl https://cursor.com/install -fsS | bash
+          echo "$HOME/.cursor/bin" >> $GITHUB_PATH        
+
+      - name: Load PR Review Configuration
+        id: config
+        run: |
+          if [ -f ".github/pr-instructions/pr-review-config.json" ]; then
+            echo "Using custom PR review configuration"
+            CONFIG=$(cat .github/pr-instructions/pr-review-config.json | jq -c .)
+          else
+            echo "Using default PR review configuration"
+            CONFIG='{"testCoverageReview":{"enabled":true},"rules":{"enforceAAPattern":true,"requireDescriptiveNames":true}}'
+          fi
+          echo "config=$CONFIG" >> $GITHUB_OUTPUT
+
+      - name: Perform enhanced code review
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_APIKEY }}
+          GH_TOKEN: ${{ github.token }}
+          CONFIG: ${{ steps.config.outputs.config }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.pr-info.outputs.pr_number }}
+          PR_HEAD_SHA: ${{ steps.pr-info.outputs.pr_head_sha }}
+          PR_BASE_SHA: ${{ steps.pr-info.outputs.pr_base_sha }}
+        run: |
+          echo "Starting PR review with 3-minute timeout..."
+          
+          cd $GITHUB_WORKSPACE
+          echo "Current directory: $(pwd)"
+          echo "Checking for PR review prompt file..."
+          if [ ! -f ".github/pr-instructions/pr-review-prompt.md" ]; then
+            echo "❌ Error: .github/pr-instructions/pr-review-prompt.md not found in $(pwd)"            
+            exit 1
+          fi
+          
+          PROMPT=$(cat .github/pr-instructions/pr-review-prompt.md)
+          
+          # Create dynamic context using heredoc for better readability
+          DYNAMIC_CONTEXT=$(cat << EOF
+          ## Context
+          - Repository: ${{ github.repository }}
+          - PR Number: ${{ steps.pr-info.outputs.pr_number }}
+          - PR Head SHA: ${{ steps.pr-info.outputs.pr_head_sha }}
+          - PR Base SHA: ${{ steps.pr-info.outputs.pr_base_sha }}
+          - Configuration: ${{ steps.config.outputs.config }}
+          EOF
+          )
+          
+          # Run cursor-agent with the processed prompt
+          timeout 180 cursor-agent --force --model "sonnet-4.5-thinking" --output-format=text --print "$PROMPT" "$DYNAMIC_CONTEXT" || {
+            exit_code=$?
+            if [ $exit_code -eq 124 ]; then
+              echo "❌ Review timed out after 3 minutes"
+              exit 1
+            else
+              echo "❌ Review failed with exit code: $exit_code"
+              exit $exit_code
+            fi
+          }          
+          echo "✅ PR review completed successfully"
+
+  add-label:
+    name: Add Auto-Reviewed Label
+    runs-on: ubuntu-latest
+    needs: [enhanced-review]
+    if: success() && github.event_name == 'pull_request'
+    permissions:
+      pull-requests: write
+      issues: write
+    
+    steps:
+      - name: Add auto-reviewed label
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          
+          # Create label if it doesn't exist
+          echo "Ensuring 'auto-reviewed' label exists..."
+          gh label create "auto-reviewed" \
+            --repo ${{ github.repository }} \
+            --description "PR has been automatically reviewed by CI" \
+            --color "0e8a16" \
+            --force 2>/dev/null || true
+          
+          echo "Adding 'auto-reviewed' label to PR #$PR_NUMBER..."
+          gh pr edit "$PR_NUMBER" --repo ${{ github.repository }} --add-label "auto-reviewed"
+          echo "✅ Label added successfully"
