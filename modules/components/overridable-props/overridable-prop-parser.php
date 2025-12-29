@@ -66,25 +66,7 @@ class Overridable_Prop_Parser {
 	private function sanitize( array $prop ): Parse_Result {
 		$result = Parse_Result::make();
 
-		$origin_prop_type = $this->get_origin_prop_type( $prop );
-
-		$sanitized_origin_value = null;
-
-		$origin_value = $this->get_origin_value( $prop );
-
-		if ( ! empty( $origin_value ) ) {
-			$sanitized_value = $origin_prop_type->sanitize( $origin_value );
-
-			$sanitized_origin_value = Override_Prop_Type::get_key() === $origin_value['$$type']
-				? [
-					...$prop['originValue'],
-					'value' => [
-						...$prop['originValue']['value'],
-						'override_value' => $sanitized_value,
-					],
-				]
-				: $sanitized_value;
-		}
+		$sanitized_origin_value = $this->get_sanitized_origin_value( $prop );
 
 		$sanitized_prop = [
 			'overrideKey' => sanitize_key( $prop['overrideKey'] ),
@@ -130,5 +112,30 @@ class Overridable_Prop_Parser {
 		}
 
 		return $prop['originValue'];
+	}
+
+	private function get_sanitized_origin_value( array $prop ) {
+		$origin_value = $this->get_origin_value( $prop );
+		$origin_prop_type = $this->get_origin_prop_type( $prop );
+
+		if ( ! empty( $origin_value ) ) {
+			$sanitized_value = $origin_prop_type->sanitize( $origin_value );
+
+			if ( Override_Prop_Type::get_key() === $origin_value['$$type'] ) {
+				$raw_origin_value = $prop['originValue'];
+
+				return [
+					...$raw_origin_value,
+					'value' => [
+						...$raw_origin_value['value'],
+						'override_value' => $sanitized_value,
+					],
+				];
+			}
+
+			return $sanitized_value;
+		}
+
+		return null;
 	}
 }
