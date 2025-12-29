@@ -74,27 +74,27 @@ class Elementor_One_Menu_Manager {
 			20
 		);
 
-        if ( ! $this->is_pro_module_enabled && Utils::has_pro() && API::is_license_active() ) {
-            add_submenu_page(
-                Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-                esc_html__( 'Theme Builder', 'elementor' ),
-                esc_html__( 'Theme Builder', 'elementor' ),
-                Menu_Config::CAPABILITY_EDIT_POSTS,
-                'elementor-theme-builder',
-                '',
-                70
-            );
+		if ( ! $this->is_pro_module_enabled && Utils::has_pro() && API::is_license_active() ) {
+			add_submenu_page(
+				Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
+				esc_html__( 'Theme Builder', 'elementor' ),
+				esc_html__( 'Theme Builder', 'elementor' ),
+				Menu_Config::CAPABILITY_EDIT_POSTS,
+				'elementor-theme-builder',
+				'',
+				70
+			);
 
-            add_submenu_page(
-                Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
-                esc_html__( 'Submissions', 'elementor' ),
-                esc_html__( 'Submissions', 'elementor' ),
-                'edit_posts',
-                'e-form-submissions',
-                '',
-                80
-            );
-        }
+			add_submenu_page(
+				Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
+				esc_html__( 'Submissions', 'elementor' ),
+				esc_html__( 'Submissions', 'elementor' ),
+				'edit_posts',
+				'e-form-submissions',
+				'',
+				80
+			);
+		}
 
 		do_action( 'elementor/editor-one/menu/register_submenus' );
 	}
