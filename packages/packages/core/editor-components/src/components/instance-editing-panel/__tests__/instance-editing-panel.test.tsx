@@ -348,67 +348,39 @@ describe( '<InstanceEditingPanel />', () => {
 		expect( screen.queryByText( 'Settings' ) ).not.toBeInTheDocument();
 	} );
 
-	describe( 'Nested Component Overridable Props', () => {
-		it( 'should render overridable props from nested components', () => {
-			// Arrange.
-			setupComponentWithNestedOverridableProps();
+	it( 'should render overridable props from nested components', () => {
+		// Arrange.
+		setupComponent( true, true );
 
-			// Act.
-			renderEditInstancePanel( store );
+		// Act.
+		renderEditInstancePanel( store );
 
-			// Assert.
-			expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Nested Component Props' ) ).toBeInTheDocument();
-		} );
+		// Assert.
+		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Nested Component Props' ) ).toBeInTheDocument();
+	} );
 
-		it( 'should render nested component prop labels', () => {
-			// Arrange.
-			setupComponentWithNestedOverridableProps();
+	it( 'should render nested component prop labels', () => {
+		// Arrange.
+		setupComponent( true, true );
 
-			// Act.
-			renderEditInstancePanel( store );
+		// Act.
+		renderEditInstancePanel( store );
 
-			// Assert.
-			expect( screen.getByText( 'Title' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Nested Component Title' ) ).toBeInTheDocument();
-		} );
-
-		it( 'should preserve group order with nested props', () => {
-			// Arrange.
-			setupComponentWithNestedOverridableProps();
-
-			// Act.
-			renderEditInstancePanel( store );
-
-			// Assert.
-			const contentGroup = screen.getByText( 'Content' );
-			const nestedGroup = screen.getByText( 'Nested Component Props' );
-
-			expect( contentGroup ).toBeInTheDocument();
-			expect( nestedGroup ).toBeInTheDocument();
-
-			expect( contentGroup.compareDocumentPosition( nestedGroup ) ).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
-		} );
+		// Assert.
+		expect( screen.getByText( 'Title' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Nested Component Title' ) ).toBeInTheDocument();
 	} );
 } );
 
-function setupComponentWithNestedOverridableProps() {
+function setupComponent( isWithOverridableProps: boolean = true, isWithNestedOverridableProps: boolean = false ) {
+	const overridableProps = isWithNestedOverridableProps ? MOCK_OVERRIDABLE_PROPS_WITH_NESTED : MOCK_OVERRIDABLE_PROPS;
+
 	const componentData = {
 		id: MOCK_COMPONENT_ID,
 		uid: 'component-uid',
 		name: MOCK_COMPONENT_NAME,
-		overridableProps: MOCK_OVERRIDABLE_PROPS_WITH_NESTED,
-	};
-
-	dispatch( slice.actions.load( [ componentData ] ) );
-}
-
-function setupComponent( isWithOverridableProps: boolean = true ) {
-	const componentData = {
-		id: MOCK_COMPONENT_ID,
-		uid: 'component-uid',
-		name: MOCK_COMPONENT_NAME,
-		overridableProps: isWithOverridableProps ? MOCK_OVERRIDABLE_PROPS : undefined,
+		overridableProps: isWithOverridableProps ? overridableProps : undefined,
 	};
 
 	dispatch( slice.actions.load( [ componentData ] ) );

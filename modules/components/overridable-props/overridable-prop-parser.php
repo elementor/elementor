@@ -48,20 +48,15 @@ class Overridable_Prop_Parser {
 			return $result;
 		}
 
-		$origin_value_prop_type = $this->get_origin_prop_type( $prop );
+		if ( ! empty( $prop['originValue'] ) ) {
+			$origin_value_prop_type = $this->get_origin_prop_type( $prop );
+			$origin_value = $this->get_origin_value( $prop );
 
-		if ( empty( $prop['originValue'] ) ) {
-			$result->errors()->add( 'originValue', 'empty origin value' );
+			if ( ! $origin_value_prop_type->validate( $origin_value ) ) {
+				$result->errors()->add( 'originValue', 'invalid' );
 
-			return $result;
-		}
-
-		$origin_value = $this->get_origin_value( $prop );
-
-		if ( ! $origin_value_prop_type->validate( $origin_value ) ) {
-			$result->errors()->add( 'originValue', 'invalid' );
-
-			return $result;
+				return $result;
+			}
 		}
 
 		return $result;
@@ -71,18 +66,23 @@ class Overridable_Prop_Parser {
 		$result = Parse_Result::make();
 
 		$origin_prop_type = $this->get_origin_prop_type( $prop );
-		$origin_value = $this->get_origin_value( $prop );
-		$sanitized_value = $origin_prop_type->sanitize( $origin_value );
 
-		$sanitized_origin_value = $origin_value['$$type'] === Override_Prop_Type::get_key()
-			? [
-				...$prop['originValue'],
-				'value' => [
-					...$prop['originValue']['value'],
-					'override_value' => $sanitized_value,
+		$sanitized_origin_value = null;
+
+		if ( ! empty( $prop['originValue'] ) ) {
+			$origin_value = $this->get_origin_value( $prop );
+			$sanitized_value = $origin_prop_type->sanitize( $origin_value );
+
+			$sanitized_origin_value = Override_Prop_Type::get_key() === $origin_value['$$type']
+				? [
+					...$prop['originValue'],
+					'value' => [
+						...$prop['originValue']['value'],
+						'override_value' => $sanitized_value,
+					],
 				]
-			]
-			: $sanitized_value;
+				: $sanitized_value;
+		}
 
 		$sanitized_prop = [
 			'overrideKey' => sanitize_key( $prop['overrideKey'] ),
@@ -119,7 +119,11 @@ class Overridable_Prop_Parser {
 	}
 
 	private function get_origin_value( array $prop ) {
-		if ( $prop['originValue']['$$type'] === Override_Prop_Type::get_key() ) {
+		if ( empty( $prop['originValue'] ) ) {
+			return null;
+		}
+
+		if ( Override_Prop_Type::get_key() === $prop['originValue']['$$type'] ) {
 			return $prop['originValue']['value']['override_value'];
 		}
 
