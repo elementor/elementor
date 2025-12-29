@@ -291,7 +291,7 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function enqueue_admin_menu_assets(): void {
-        if ( $this->menu_data_provider->is_elementor_editor_page() ) {
+		if ( $this->menu_data_provider->is_elementor_editor_page() ) {
 			return;
 		}
 
