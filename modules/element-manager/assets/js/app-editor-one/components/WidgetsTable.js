@@ -81,7 +81,7 @@ export const WidgetsTable = ( {
 								active={ isWidgetSorted }
 								direction={ isWidgetSorted ? widgetSortDirection : 'asc' }
 								onClick={ () => onSortingClicked( 'widget' ) }
-								className="e-id-elementor-element-manager-button-sort-by-element"
+								data-id="e-id-elementor-element-manager-button-sort-by-element"
 							>
 								{ __( 'Element', 'elementor' ) }
 							</TableSortLabel>
@@ -94,7 +94,7 @@ export const WidgetsTable = ( {
 								active={ isUsageSorted }
 								direction={ isUsageSorted ? usageSortDirection : 'asc' }
 								onClick={ () => onSortingClicked( 'usage' ) }
-								className="e-id-elementor-element-manager-button-sort-by-usage"
+								data-id="e-id-elementor-element-manager-button-sort-by-usage"
 							>
 								{ __( 'Usage', 'elementor' ) }
 							</TableSortLabel>
@@ -136,7 +136,8 @@ export const WidgetsTable = ( {
 													? managerPermissions.pro.text
 													: managerPermissions.advanced.text
 											}
-											className={ [ 'e-id-elementor-element-manager-button-upgrade-permissions', 'go-pro' ].join( ' ' ) }
+											className="go-pro"
+											data-id="e-id-elementor-element-manager-button-upgrade-permissions"
 										/>
 									</Box>
 								) }
@@ -166,7 +167,7 @@ export const WidgetsTable = ( {
 									checked={ ! widgetsDisabled.includes( widget.name ) }
 									onChange={ ( event, checked ) => onToggleWidget( widget.name, checked ) }
 									size="small"
-									className={ `e-id-elementor-element-manager-toggle-${ widget.name }` }
+									data-id={ `e-id-elementor-element-manager-toggle-${ widget.name }` }
 								/>
 							</TableCell>
 							<TableCell>
