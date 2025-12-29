@@ -1,10 +1,18 @@
 import * as React from 'react';
-import { PopoverContent } from '@elementor/editor-controls';
+import { useMemo } from 'react';
+import { ControlFormLabel, PopoverContent, PopoverGridContainer } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { getInteractionsControl } from '../interactions-controls-registry';
 import type { InteractionItemValue } from '../types';
-import { createAnimationPreset, createString, extractNumber, extractString } from '../utils/prop-value-utils';
+import {
+	createAnimationPreset,
+	createString,
+	extractBoolean,
+	extractNumber,
+	extractString,
+} from '../utils/prop-value-utils';
 import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
@@ -23,7 +31,10 @@ const DEFAULT_VALUES = {
 	direction: '',
 	duration: 300,
 	delay: 0,
+	replay: false,
 };
+
+const TRIGGERS_WITH_REPLAY = [ 'scrollIn', 'scrollOut' ];
 
 export const InteractionDetails = ( { interaction, onChange }: InteractionDetailsProps ) => {
 	const trigger = extractString( interaction.trigger, DEFAULT_VALUES.trigger );
@@ -32,6 +43,14 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 	const direction = extractString( interaction.animation.value.direction, DEFAULT_VALUES.direction );
 	const duration = extractNumber( interaction.animation.value.timing_config.value.duration, DEFAULT_VALUES.duration );
 	const delay = extractNumber( interaction.animation.value.timing_config.value.delay, DEFAULT_VALUES.delay );
+	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
+	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
+	const ReplayControl = useMemo( () => {
+		if ( ! shouldShowReplay ) {
+			return null;
+		}
+		return getInteractionsControl( 'replay' )?.component ?? null;
+	}, [ shouldShowReplay ] );
 
 	const effectiveDirection = effect === 'slide' && ! direction ? 'top' : direction;
 
@@ -43,12 +62,14 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 			direction: string;
 			duration: number;
 			delay: number;
+			replay: boolean;
 		} >
 	): void => {
 		const newEffect = updates.effect ?? effect;
 		const newDirection = updates.direction ?? direction;
 
 		const resolvedDirection = newEffect === 'slide' && ! newDirection ? 'top' : newDirection;
+		const newReplay = updates.replay !== undefined ? updates.replay : replay;
 
 		onChange( {
 			...interaction,
@@ -58,7 +79,8 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 				updates.type ?? type,
 				resolvedDirection,
 				updates.duration ?? duration,
-				updates.delay ?? delay
+				updates.delay ?? delay,
+				newReplay
 			),
 		} );
 	};
@@ -67,6 +89,24 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 		<PopoverContent p={ 1.5 }>
 			<Grid container spacing={ 1.5 }>
 				<Trigger value={ trigger } onChange={ ( v ) => updateInteraction( { trigger: v } ) } />
+				{ ReplayControl && (
+					<>
+						<Grid item xs={ 12 }>
+							<PopoverGridContainer>
+								<Grid item xs={ 6 }>
+									<ControlFormLabel>{ __( 'Replay', 'elementor' ) }</ControlFormLabel>
+								</Grid>
+								<Grid item xs={ 6 }>
+									<ReplayControl
+										value={ replay }
+										onChange={ ( v ) => updateInteraction( { replay: v } ) }
+										disabled={ true }
+									/>
+								</Grid>
+							</PopoverGridContainer>
+						</Grid>
+					</>
+				) }
 			</Grid>
 			<Divider sx={ { mx: 1.5 } } />
 			<Grid container spacing={ 1.5 }>

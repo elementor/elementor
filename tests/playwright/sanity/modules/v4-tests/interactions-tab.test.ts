@@ -199,5 +199,64 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			expect( parseFloat( opacity ) ).toBeGreaterThan( 0.9 );
 		} );
 	} );
+
+	// Skipped until promotion control is added ED-21615
+	test.skip( 'Replay control is visible and disabled in interactions popover', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+
+		await test.step( 'Add heading widget and navigate to interactions tab', async () => {
+			const container = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+			await editor.addWidget( { widgetType: 'e-heading', container } );
+
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+			await expect( interactionsTab ).toHaveAttribute( 'aria-selected', 'true' );
+		} );
+
+		await test.step( 'Create interaction and open popover', async () => {
+			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
+			await addInteractionButton.click();
+
+			await page.waitForSelector( '.MuiPopover-root' );
+
+			await expect( page.locator( '.MuiPopover-root' ) ).toBeVisible();
+		} );
+
+		await test.step( 'Replay control is not visible on page load trigger', async () => {
+			const replayLabel = page.getByText( 'Replay', { exact: true } );
+
+			// Assert - label is not visible
+			await expect( replayLabel ).not.toBeVisible();
+		} );
+
+		await test.step( 'Verify Replay control is visible and disabled', async () => {
+			// Arrange
+			const selectOption = async ( openSelector, optionName ) => {
+				await openSelector.click();
+
+				const option = page.getByRole( 'option', { name: optionName } );
+				await option.click();
+			};
+
+			await selectOption( page.getByText( 'Page load', { exact: true } ), 'Scroll into view' );
+
+			const replayLabel = page.getByText( 'Replay', { exact: true } );
+
+			// Assert - label is visible
+			await expect( replayLabel ).toBeVisible();
+
+			// Assert - toggle buttons exist
+			const yesButton = page.getByLabel( 'Yes', { exact: true } );
+			const noButton = page.getByLabel( 'No', { exact: true } );
+
+			await expect( yesButton ).toBeVisible();
+			await expect( noButton ).toBeVisible();
+
+			// Assert - buttons are disabled
+			await expect( yesButton ).toBeDisabled();
+			await expect( noButton ).toBeDisabled();
+		} );
+	} );
 } );
 
