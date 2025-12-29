@@ -125,7 +125,7 @@ class Overridable_Prop_Parser {
 		if ( ! empty( $origin_value ) ) {
 			$sanitized_value = $origin_prop_type->sanitize( $origin_value );
 
-			if ( Overridable_Prop_Type::get_key() === $prop['$$type'] ) {
+			if ( Override_Prop_Type::get_key() === $prop['originValue']['$$type'] ) {
 				$raw_origin_value = $prop['originValue'];
 
 				return [
