@@ -233,6 +233,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 			for ( const attribute of testedAttributes ) {
 				await editor.selectInlineEditedText( atomIds[ atom ], attribute );
 				await editor.toggleInlineEditingAttribute( attribute );
+				await page.keyboard.press( 'Escape' );
 			}
 		}
 
