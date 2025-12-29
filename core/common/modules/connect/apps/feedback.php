@@ -17,7 +17,7 @@ class Feedback extends Common_App {
 	public function __construct() {
 		parent::__construct();
 		Plugin::$instance->experiments->add_feature([
-			'name' => self::$EXPERIMENT_NAME,
+			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'In-Editor Feedback', 'elementor' ),
 			'description' => esc_html__( 'Enable in-editor feedback submission.', 'elementor' ),
 			'hidden' => false,
@@ -63,7 +63,7 @@ class Feedback extends Common_App {
 	}
 
 	public function submit( $body ) {
-		$is_active = Plugin::instance()->experiments->is_feature_active( self::$EXPERIMENT_NAME );
+		$is_active = Plugin::instance()->experiments->is_feature_active( self::EXPERIMENT_NAME );
 		if ( ! $is_active ) {
 			return [
 				'success' => false,
