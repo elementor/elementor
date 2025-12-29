@@ -9,7 +9,7 @@ export const ComponentIntroduction = ( {
 	shouldShowIntroduction,
 	onClose,
 }: {
-	anchorRef: React.RefObject< HTMLDivElement >;
+	anchorRef: React.RefObject< HTMLElement >;
 	shouldShowIntroduction: boolean;
 	onClose: () => void;
 } ) => {
