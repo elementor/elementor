@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { PopoverContent } from '@elementor/editor-controls';
+import { ControlFormLabel, PopoverContent, PopoverGridContainer } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -44,7 +44,6 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 	const duration = extractNumber( interaction.animation.value.timing_config.value.duration, DEFAULT_VALUES.duration );
 	const delay = extractNumber( interaction.animation.value.timing_config.value.delay, DEFAULT_VALUES.delay );
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
-
 	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
 	const ReplayControl = useMemo( () => {
 		if ( ! shouldShowReplay ) {
@@ -91,11 +90,22 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 			<Grid container spacing={ 1.5 }>
 				<Trigger value={ trigger } onChange={ ( v ) => updateInteraction( { trigger: v } ) } />
 				{ ReplayControl && (
-					<ReplayControl
-						value={ replay }
-						onChange={ ( v ) => updateInteraction( { replay: v } ) }
-						disabled={ true }
-					/>
+					<>
+						<Grid item xs={ 12 }>
+							<PopoverGridContainer>
+								<Grid item xs={ 6 }>
+									<ControlFormLabel>{ __( 'Replay', 'elementor' ) }</ControlFormLabel>
+								</Grid>
+								<Grid item xs={ 6 }>
+									<ReplayControl
+										value={ replay }
+										onChange={ ( v ) => updateInteraction( { replay: v } ) }
+										disabled={ true }
+									/>
+								</Grid>
+							</PopoverGridContainer>
+						</Grid>
+					</>
 				) }
 			</Grid>
 			<Divider sx={ { mx: 1.5 } } />
