@@ -11,7 +11,6 @@ import { getCurrentDocument } from '@elementor/editor-documents';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
-import { componentInstanceContext } from './component-instance-transformer';
 import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
 import { type ExtendedWindow } from './types';
 import { switchToComponent } from './utils/switch-to-component';
@@ -101,10 +100,6 @@ function createComponentView(
 				| undefined;
 
 			if ( componentInstance ) {
-				componentInstanceContext.update( {
-					overrides: componentInstance.overrides,
-				} );
-
 				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection(
 					componentInstance.elements
 				);

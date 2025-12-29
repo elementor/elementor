@@ -12,7 +12,7 @@ import { deleteOverridableGroup } from '../../store/actions/delete-overridable-g
 import { deleteOverridableProp } from '../../store/actions/delete-overridable-prop';
 import { reorderGroupProps } from '../../store/actions/reorder-group-props';
 import { reorderOverridableGroups } from '../../store/actions/reorder-overridable-groups';
-import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
+import { updateOverridablePropParams } from '../../store/actions/update-overridable-prop-params';
 import { useCurrentComponentId } from '../../store/store';
 import { useOverridableProps } from '../component-panel-header/use-overridable-props';
 import { PropertiesEmptyState } from './properties-empty-state';
@@ -84,10 +84,10 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 		setDocumentModifiedStatus( true );
 	};
 
-	const handlePropertyUpdate = ( propKey: string, data: { label: string; group: string | null } ) => {
-		updateOverridableProp( {
+	const handlePropertyUpdate = ( overrideKey: string, data: { label: string; group: string | null } ) => {
+		updateOverridablePropParams( {
 			componentId: currentComponentId,
-			propKey,
+			overrideKey,
 			label: data.label,
 			groupId: data.group,
 		} );

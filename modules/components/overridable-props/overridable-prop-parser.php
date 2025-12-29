@@ -48,9 +48,10 @@ class Overridable_Prop_Parser {
 			return $result;
 		}
 
-		if ( ! empty( $prop['originValue'] ) ) {
+		$origin_value = $this->get_origin_value( $prop );
+
+		if ( ! empty( $origin_value ) ) {
 			$origin_value_prop_type = $this->get_origin_prop_type( $prop );
-			$origin_value = $this->get_origin_value( $prop );
 
 			if ( ! $origin_value_prop_type->validate( $origin_value ) ) {
 				$result->errors()->add( 'originValue', 'invalid' );
@@ -69,8 +70,9 @@ class Overridable_Prop_Parser {
 
 		$sanitized_origin_value = null;
 
-		if ( ! empty( $prop['originValue'] ) ) {
-			$origin_value = $this->get_origin_value( $prop );
+		$origin_value = $this->get_origin_value( $prop );
+
+		if ( ! empty( $origin_value ) ) {
 			$sanitized_value = $origin_prop_type->sanitize( $origin_value );
 
 			$sanitized_origin_value = Override_Prop_Type::get_key() === $origin_value['$$type']
@@ -119,7 +121,7 @@ class Overridable_Prop_Parser {
 	}
 
 	private function get_origin_value( array $prop ) {
-		if ( empty( $prop['originValue'] ) ) {
+		if ( empty( $prop ) || empty( $prop['originValue'] ) ) {
 			return null;
 		}
 
