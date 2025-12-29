@@ -133,6 +133,7 @@ function getPropValue( value: PropValue ): TransformablePropValue< string, unkno
 	const overridableValue = componentOverridablePropTypeUtil.extract( value );
 
 	if ( overridableValue ) {
+		// if overridable - return as is and let the control replacement handle the overridable value
 		return value as TransformablePropValue< string, unknown >;
 	}
 
