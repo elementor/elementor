@@ -1,61 +1,58 @@
 {
-    "name": "elementor/elementor",
-    "description": "WordPress website builder, with no limits of design. A website builder that delivers high-end page designs and advanced capabilities, never before seen on WordPress.",
-    "type": "project",
-    "license": "GNU General Public License v3.0",
-    "minimum-stability": "stable",
-    "require": {
-        "php": ">=7.4"
-    },
-    "autoload": {
-        "classmap": [
-            "vendor_prefixed/"
-        ]
-    },
-    "require-dev": {
-        "squizlabs/php_codesniffer": "^3.10.2",
-        "dealerdirect/phpcodesniffer-composer-installer": "^v1.0.0",
-        "wp-coding-standards/wpcs": "^3.1.0",
-        "elementor/elementor-editor-testing": "0.0.3",
-        "justinrainbow/json-schema": "^5.2",
-        "phpunit/phpunit": "^9",
-        "yoast/phpunit-polyfills": "^1.0",
-        "thor-juhasz/phpunit-coverage-check": "^0.3.0",
-        "spatie/phpunit-snapshot-assertions": "^4.2",
-        "humbug/php-scoper": "0.17.5",
-        "twig/twig": "3.11.3"
-    },
-    "scripts": {
-        "lint": "vendor/bin/phpcs --extensions=php --standard=./ruleset.xml",
-        "format": "vendor/bin/phpcbf --extensions=php --standard=./ruleset.xml",
-        "test": "phpunit",
-        "test:install": "bash ./bin/install-wp-tests-local.sh",
-        "coverage": "composer run coverage:test && composer run coverage:check",
-        "coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
-        "coverage:check": "phpunit-coverage-check -t 64 coverage-report/clover.xml",
-        "php-scoper": [
-            "php-scoper add-prefix --output-dir=./vendor_prefixed/twig --config=php-scoper/twig-inc.php --force"
-        ],
-        "post-install-cmd": [
-            "@php composer run php-scoper",
-            "@php composer dump-autoload"
-        ],
-        "post-update-cmd": [
-            "@php composer run php-scoper",
-            "@php composer dump-autoload"
-        ]
-    },
-    "config": {
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        },
-        "platform": {
-            "php": "7.4"
-        }
-    },
-    "authors": [
-        {
-            "name": "Elementor team"
-        }
-    ]
+	"name": "elementor/elementor",
+	"description": "WordPress website builder, with no limits of design. A website builder that delivers high-end page designs and advanced capabilities, never before seen on WordPress.",
+	"type": "project",
+	"license": "GNU General Public License v3.0",
+	"minimum-stability": "stable",
+	"require": {
+		"php": ">=7.4"
+	},
+	"autoload": {
+		"classmap": [
+			"vendor_prefixed/"
+		]
+	},
+	"require-dev": {
+		"squizlabs/php_codesniffer": "^3.10.2",
+		"dealerdirect/phpcodesniffer-composer-installer": "^v1.0.0",
+		"wp-coding-standards/wpcs": "^3.1.0",
+		"elementor/elementor-editor-testing": "0.0.3",
+		"justinrainbow/json-schema": "^5.2",
+		"phpunit/phpunit": "^9",
+		"yoast/phpunit-polyfills": "^1.0",
+		"thor-juhasz/phpunit-coverage-check": "^0.3.0",
+		"spatie/phpunit-snapshot-assertions": "^4.2",
+		"humbug/php-scoper": "0.17.5",
+		"twig/twig": "3.11.3"
+	},
+	"scripts": {
+		"lint": "vendor/bin/phpcs --extensions=php --standard=./ruleset.xml",
+		"format": "vendor/bin/phpcbf --extensions=php --standard=./ruleset.xml",
+		"test": "phpunit",
+		"test:install": "bash ./bin/install-wp-tests-local.sh",
+		"coverage": "composer run coverage:test && composer run coverage:check",
+		"coverage:test": "phpdbg -qrr vendor/phpunit/phpunit/phpunit --coverage-clover coverage-report/clover.xml",
+		"coverage:check": "phpunit-coverage-check -t 64 coverage-report/clover.xml",
+		"php-scoper": [
+			"php-scoper add-prefix --output-dir=./vendor_prefixed/twig --config=php-scoper/twig-inc.php --force"
+		],
+		"post-install-cmd": [
+			"@php composer run php-scoper",
+			"@php composer dump-autoload"
+		],
+		"post-update-cmd": [
+			"@php composer run php-scoper",
+			"@php composer dump-autoload"
+		]
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"authors": [
+		{
+			"name": "Elementor team"
+		}
+	]
 }
