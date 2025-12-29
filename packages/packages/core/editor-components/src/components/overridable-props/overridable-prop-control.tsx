@@ -2,7 +2,7 @@ import * as React from 'react';
 import { type ComponentType } from 'react';
 import { ControlReplacementsProvider, PropKeyProvider, PropProvider, useBoundProp } from '@elementor/editor-controls';
 import { createTopLevelObjectType, useElement } from '@elementor/editor-editing-panel';
-import { type ObjectPropValue, type PropValue } from '@elementor/editor-props';
+import { type PropValue } from '@elementor/editor-props';
 
 import { type ComponentInstanceOverridePropValue } from '../../prop-types/component-instance-override-prop-type';
 import {
@@ -44,17 +44,22 @@ export function OverridablePropControl< T extends object >( {
 		updateOverridableProp( componentId, propValue );
 	};
 
-	const immediatePropType = elementType.propsSchema[ bind ];
+	const defaultPropType = elementType.propsSchema[ bind ];
 
 	const propType = createTopLevelObjectType( {
 		schema: {
 			[ bind ]:
 				isComponentInstance && overridableProps
-					? getPropTypeForComponentOverride( overridableProps.props[ value.override_key ] ) ??
-					  immediatePropType
-					: immediatePropType,
+					? getPropTypeForComponentOverride( overridableProps.props[ value.override_key ] ) ?? defaultPropType
+					: defaultPropType,
 		},
 	} );
+
+	const propValue = (
+		isComponentInstance
+			? ( value.origin_value?.value as ComponentInstanceOverridePropValue ).override_value
+			: value.origin_value
+	) as PropValue;
 
 	const objectPlaceholder: Record< string, PropValue > | undefined = placeholder
 		? { [ bind ]: placeholder }
@@ -66,13 +71,9 @@ export function OverridablePropControl< T extends object >( {
 				{ ...propContext }
 				propType={ propType }
 				setValue={ setOverridableValue }
-				value={
-					{
-						[ bind ]: isComponentInstance
-							? ( value.origin_value?.value as ComponentInstanceOverridePropValue ).override_value
-							: value.origin_value,
-					} as ObjectPropValue
-				}
+				value={ {
+					[ bind ]: propValue,
+				} }
 				placeholder={ objectPlaceholder }
 			>
 				<PropKeyProvider bind={ bind }>
