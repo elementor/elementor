@@ -1,6 +1,15 @@
 import { type ReplacementSettings } from '../types';
 
-export default class ReplacementBase {
+export interface ReplacementBaseInterface {
+	renderOnChange?: () => void;
+	onDestroy?: () => void;
+	_beforeRender?: () => void;
+	_afterRender?: () => void;
+	shouldRenderReplacement: () => boolean;
+	render?: () => void;
+}
+
+export default class ReplacementBase implements ReplacementBaseInterface {
 	protected getSetting: ReplacementSettings[ 'getSetting' ];
 	protected setSetting: ReplacementSettings[ 'setSetting' ];
 	protected element: ReplacementSettings[ 'element' ];
@@ -20,14 +29,6 @@ export default class ReplacementBase {
 	static getTypes(): string[] | null {
 		return null;
 	}
-
-	render(): void {}
-
-	onDestroy(): void {}
-
-	_beforeRender(): void {}
-
-	_afterRender(): void {}
 
 	shouldRenderReplacement(): boolean {
 		return true;

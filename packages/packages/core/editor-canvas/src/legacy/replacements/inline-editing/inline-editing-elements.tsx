@@ -1,14 +1,16 @@
 import * as React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { InlineEditor } from '@elementor/editor-controls';
-import { getElementType } from '@elementor/editor-elements';
+import { getContainer, getElementType } from '@elementor/editor-elements';
 import {
 	htmlPropTypeUtil,
+	type PropType,
 	stringPropTypeUtil,
 	type StringPropValue,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
-import { isExperimentActive } from '@elementor/editor-v1-adapters';
+import { __privateRunCommandSync as runCommandSync, isExperimentActive } from '@elementor/editor-v1-adapters';
 import { Box, ThemeProvider } from '@elementor/ui';
 
 import { OutlineOverlay } from '../../../components/outline-overlay';
@@ -16,6 +18,12 @@ import ReplacementBase from '../base';
 import { getInitialPopoverPosition, INLINE_EDITING_PROPERTY_PER_TYPE } from './inline-editing-utils';
 
 const EXPERIMENT_KEY = 'v4-inline-text-editing';
+
+type TagPropType = PropType< 'tag' > & {
+	settings?: {
+		enum?: string[];
+	};
+};
 
 export default class InlineEditingReplacement extends ReplacementBase {
 	private inlineEditorRoot: Root | null = null;
@@ -34,7 +42,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	shouldRenderReplacement() {
-		return isExperimentActive( EXPERIMENT_KEY ) && this.isEditingModeActive() && ! this.isValueDynamic();
+		return isExperimentActive( EXPERIMENT_KEY ) && ! this.isValueDynamic();
 	}
 
 	handleRenderInlineEditor = ( event: Event ) => {
@@ -45,10 +53,13 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		}
 	};
 
-	handleUnmountInlineEditor = ( event: Event ) => {
-		event.stopPropagation();
-		this.unmountInlineEditor();
-	};
+	renderOnChange() {
+		if ( this.isEditingModeActive() ) {
+			return;
+		}
+
+		this.refreshView();
+	}
 
 	onDestroy() {
 		this.resetInlineEditorRoot();
@@ -102,6 +113,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 		return (
 			htmlPropTypeUtil.extract( this.getSetting( settingKey ) ?? null ) ??
+			stringPropTypeUtil.extract( this.getSetting( settingKey ) ?? null ) ??
 			htmlPropTypeUtil.extract( prop?.default ?? null ) ??
 			defaultValue ??
 			''
@@ -112,28 +124,49 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		const settingKey = this.getInlineEditablePropertyName();
 		const valueToSave = value ? htmlPropTypeUtil.create( value ) : null;
 
-		this.setSetting( settingKey, valueToSave );
+		runCommandSync(
+			'document/elements/set-settings',
+			{
+				container: getContainer( this.id ),
+				settings: {
+					[ settingKey ]: valueToSave,
+				},
+			},
+			{ internal: true }
+		);
 	}
 
 	getExpectedTag() {
+		const tagPropType = this.getTagPropType();
+		const tagSettingKey = 'tag';
+
+		return (
+			stringPropTypeUtil.extract( this.getSetting( tagSettingKey ) ?? null ) ??
+			stringPropTypeUtil.extract( tagPropType?.default ?? null ) ??
+			null
+		);
+	}
+
+	getTagPropType() {
 		const propsSchema = getElementType( this.type )?.propsSchema;
 
 		if ( ! propsSchema?.tag ) {
 			return null;
 		}
 
-		const tagSettingKey = 'tag';
+		const tagPropType = ( propsSchema.tag as TagPropType ) ?? null;
 
-		return (
-			stringPropTypeUtil.extract( this.getSetting( tagSettingKey ) ?? null ) ??
-			stringPropTypeUtil.extract( propsSchema.tag.default ?? null ) ??
-			null
-		);
+		if ( tagPropType.kind === 'union' ) {
+			return ( tagPropType.prop_types.string as TagPropType ) ?? null;
+		}
+
+		return tagPropType;
 	}
 
 	renderInlineEditor() {
 		const InlineEditorApp = this.InlineEditorApp;
-		const classes = ( this.element.children?.[ 0 ]?.classList.toString() ?? '' ) + ' strip-styles';
+		const wrapperClasses = 'elementor';
+		const elementClasses = this.element.children?.[ 0 ]?.classList.toString() ?? '';
 
 		this.element.innerHTML = '';
 
@@ -142,18 +175,31 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		}
 
 		this.inlineEditorRoot = createRoot( this.element );
-		this.inlineEditorRoot.render( <InlineEditorApp classes={ classes } /> );
+		this.inlineEditorRoot.render(
+			<InlineEditorApp wrapperClasses={ wrapperClasses } elementClasses={ elementClasses } />
+		);
 	}
 
-	InlineEditorApp = ( { classes }: { classes: string } ) => {
+	InlineEditorApp = ( { wrapperClasses, elementClasses }: { wrapperClasses: string; elementClasses: string } ) => {
 		const propValue = this.getContentValue();
 		const expectedTag = this.getExpectedTag();
-		const wrapperRef = React.useRef< HTMLDivElement | null >( null );
-		const [ isWrapperRendered, setIsWrapperRendered ] = React.useState( false );
+		const wrapperRef = useRef< HTMLDivElement | null >( null );
+		const [ isWrapperRendered, setIsWrapperRendered ] = useState( false );
 
-		React.useEffect( () => {
+		useEffect( () => {
+			const panel = document?.querySelector( 'main.MuiBox-root' );
+
 			setIsWrapperRendered( !! wrapperRef.current );
+			panel?.addEventListener( 'click', asyncUnmountInlineEditor );
+
+			return () => panel?.removeEventListener( 'click', asyncUnmountInlineEditor );
+			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [] );
+
+		const asyncUnmountInlineEditor = useCallback(
+			() => queueMicrotask( this.unmountInlineEditor.bind( this ) ),
+			[]
+		);
 
 		return (
 			<ThemeProvider>
@@ -163,12 +209,13 @@ export default class InlineEditingReplacement extends ReplacementBase {
 					) }
 					<InlineEditor
 						attributes={ {
-							class: classes,
+							class: wrapperClasses,
 							style: 'outline: none;',
 						} }
+						elementClasses={ elementClasses }
 						value={ propValue }
 						setValue={ this.setContentValue.bind( this ) }
-						onBlur={ this.handleUnmountInlineEditor.bind( this ) }
+						onBlur={ this.unmountInlineEditor.bind( this ) }
 						autofocus
 						showToolbar
 						getInitialPopoverPosition={ getInitialPopoverPosition }
