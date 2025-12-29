@@ -5,18 +5,8 @@
     "license": "GNU General Public License v3.0",
     "minimum-stability": "stable",
     "require": {
-        "php": ">=7.4",
-        "elementor/wp-one-package": "1.0.22"
+        "php": ">=7.4"
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://composer.elementor.com",
-            "only": [
-                "elementor/wp-one-package"
-            ]
-        }
-    ],
     "autoload": {
         "classmap": [
             "vendor_prefixed/"
