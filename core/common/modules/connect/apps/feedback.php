@@ -20,7 +20,7 @@ class Feedback extends Common_App {
 			'name' => self::EXPERIMENT_NAME,
 			'title' => esc_html__( 'In-Editor Feedback', 'elementor' ),
 			'description' => esc_html__( 'Enable in-editor feedback submission.', 'elementor' ),
-			'hidden' => false,
+			'hidden' => true,
 			'release_status' => Plugin::$instance->experiments::RELEASE_STATUS_BETA,
 			'default' => Plugin::$instance->experiments::STATE_INACTIVE,
 			'new_site' => [
