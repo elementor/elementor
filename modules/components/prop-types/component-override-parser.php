@@ -40,10 +40,6 @@ class Component_Override_Parser extends Override_Parser {
 				return true;
 			}
 
-			if ( 'e-component' === $matching_overridable_prop->widget_type ) {
-				return true;
-			}
-
 			$prop_type = $this->get_overridable_prop_type( $matching_overridable_prop );
 
 			if ( null === $override_value ) {
