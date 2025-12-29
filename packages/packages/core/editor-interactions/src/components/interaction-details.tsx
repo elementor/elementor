@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { PopoverContent } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -45,7 +46,7 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
 
 	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
-	const ReplayControl = React.useMemo( () => {
+	const ReplayControl = useMemo( () => {
 		if ( ! shouldShowReplay ) {
 			return null;
 		}
