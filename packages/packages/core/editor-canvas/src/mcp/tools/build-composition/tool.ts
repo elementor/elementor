@@ -191,6 +191,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				throw new Error( 'XML structure is null after parsing.' );
 			}
 			return {
+				xmlStructure: new XMLSerializer().serializeToString( xml ),
 				errors: errors?.length
 					? errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n\n' )
 					: undefined,
