@@ -14,5 +14,4 @@ export const componentInstanceOverridePropTypeUtil = createPropUtils(
 );
 
 export type ComponentInstanceOverrideProp = z.infer< typeof componentInstanceOverridePropTypeUtil.schema >;
-
 export type ComponentInstanceOverridePropValue = ComponentInstanceOverrideProp[ 'value' ];

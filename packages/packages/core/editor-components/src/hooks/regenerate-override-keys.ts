@@ -3,12 +3,14 @@ import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { generateUniqueId } from '@elementor/utils';
 
 import { componentInstanceOverridePropTypeUtil } from '../prop-types/component-instance-override-prop-type';
-import { componentInstanceOverridesPropTypeUtil } from '../prop-types/component-instance-overrides-prop-type';
+import {
+	componentInstanceOverridesPropTypeUtil,
+	type ComponentInstanceOverridesPropValue,
+} from '../prop-types/component-instance-overrides-prop-type';
 import {
 	componentInstancePropTypeUtil,
 	type ComponentInstancePropValue,
 } from '../prop-types/component-instance-prop-type';
-import { type ComponentOverride } from '../types';
 import { isComponentInstance } from '../utils/is-component-instance';
 
 export function initRegenerateOverrideKeys() {
@@ -63,7 +65,7 @@ function regenerateOverrideKeys( element: V1Element ) {
 	const componentInstance = settings.component_instance;
 	const overrides = componentInstance.value.overrides;
 
-	const newOverrides = overrides.value.map( ( override: ComponentOverride ) => {
+	const newOverrides = overrides.value.map( ( override ) => {
 		if ( ! componentInstanceOverridePropTypeUtil.isValid( override ) ) {
 			return override;
 		}
@@ -97,7 +99,7 @@ function regenerateOverrideKeys( element: V1Element ) {
 
 function hasOverrides( settings: Record< string, unknown > ): settings is {
 	component_instance: NonNullable< ComponentInstancePropValue > & {
-		value: { overrides: { $$type: string; value: ComponentOverride[] } };
+		value: { overrides: { $$type: string; value: NonNullable< ComponentInstanceOverridesPropValue >[] } };
 	};
 } {
 	if ( ! componentInstancePropTypeUtil.isValid( settings?.component_instance ) ) {
