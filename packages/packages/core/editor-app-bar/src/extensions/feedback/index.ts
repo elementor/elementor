@@ -5,8 +5,6 @@ import { __ } from '@wordpress/i18n';
 import { mainMenu } from '../../locations';
 import { EXPERIMENT_NAME, FEEDBACK_TOGGLE_EVENT } from './feedback-consts';
 
-
-
 export function init() {
 	const isActive = isExperimentActive( EXPERIMENT_NAME );
 	if ( ! isActive ) {
