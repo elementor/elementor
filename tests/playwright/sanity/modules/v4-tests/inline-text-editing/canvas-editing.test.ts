@@ -10,7 +10,7 @@ const testedAttributes = Object.keys( INLINE_EDITING_SELECTORS.attributes ).filt
 const attributesString = testedAttributes.join( ', ' );
 
 test.describe( 'Inline Editing Canvas @v4-tests', () => {
-	const supportedAtoms = [ 'e-heading' ]; // Object.values( INLINE_EDITING_SELECTORS.supportedAtoms );
+	const supportedAtoms = Object.values( INLINE_EDITING_SELECTORS.supportedAtoms );
 
 	const atomTexts = {
 		'e-heading': 'Title with: ' + attributesString,
