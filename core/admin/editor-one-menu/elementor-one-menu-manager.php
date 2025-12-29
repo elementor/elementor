@@ -10,7 +10,6 @@ use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Slug_Normalizer;
 use Elementor\Plugin;
 use Elementor\Utils;
-use ElementorPro\License\API;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -74,7 +73,11 @@ class Elementor_One_Menu_Manager {
 			20
 		);
 
-		if ( ! $this->is_pro_module_enabled && Utils::has_pro() && API::is_license_active() ) {
+		if ( ! $this->is_pro_module_enabled &&
+			Utils::has_pro() &&
+			class_exists( '\ElementorPro\License\API' ) &&
+			\ElementorPro\License\API::is_license_active()
+		) {
 			add_submenu_page(
 				Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 				esc_html__( 'Theme Builder', 'elementor' ),
