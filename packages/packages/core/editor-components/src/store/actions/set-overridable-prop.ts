@@ -1,4 +1,4 @@
-import { type PropType, type PropValue } from '@elementor/editor-props';
+import { type PropValue } from '@elementor/editor-props';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 import { generateUniqueId } from '@elementor/utils';
 
@@ -22,7 +22,6 @@ type Props = {
 	elType: string;
 	widgetType: string;
 	originValue: PropValue;
-	propType: PropType;
 	originPropFields?: OriginPropFields;
 };
 

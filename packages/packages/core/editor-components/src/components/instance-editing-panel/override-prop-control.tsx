@@ -72,7 +72,7 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 
 	const matchingOverride = getMatchingOverride( overrides, overridableProp.overrideKey );
 
-	const propValue = matchingOverride ? getPropValue( matchingOverride ) : null;
+	const propValue = matchingOverride ? getPropValue( matchingOverride ) : overridableProp.originValue;
 
 	const value = {
 		[ overridableProp.overrideKey ]: propValue,

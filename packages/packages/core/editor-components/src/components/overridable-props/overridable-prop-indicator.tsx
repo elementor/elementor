@@ -3,14 +3,13 @@ import { useBoundProp } from '@elementor/editor-controls';
 import { useElement } from '@elementor/editor-editing-panel';
 import { getWidgetsCache } from '@elementor/editor-elements';
 import { type TransformablePropValue } from '@elementor/editor-props';
-import { __getState as getState } from '@elementor/store';
 import { bindPopover, bindTrigger, Popover, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import { useOverridablePropValue } from '../../provider/overridable-prop-context';
 import { setOverridableProp } from '../../store/actions/set-overridable-prop';
-import { selectOverridableProps, useCurrentComponentId } from '../../store/store';
+import { useCurrentComponentId, useOverridableProps } from '../../store/store';
 import { type OverridableProps } from '../../types';
 import { Indicator } from './indicator';
 import { OverridablePropForm } from './overridable-prop-form';
@@ -21,12 +20,11 @@ const FORBIDDEN_KEYS = [ '_cssid', 'attributes' ];
 export function OverridablePropIndicator() {
 	const { bind } = useBoundProp();
 	const componentId = useCurrentComponentId();
+	const overridableProps = useOverridableProps( componentId );
 
-	if ( ! isPropAllowed( bind ) || ! componentId ) {
+	if ( ! isPropAllowed( bind ) || ! componentId || ! overridableProps ) {
 		return null;
 	}
-
-	const overridableProps = selectOverridableProps( getState(), componentId );
 
 	return <Content componentId={ componentId } overridableProps={ overridableProps } />;
 }
@@ -66,6 +64,10 @@ export function Content( { componentId, overridableProps }: Props ) {
 		const propTypeDefault = propType.default ?? {};
 		const originValue = ( ! overridableValue ? value : overridableValue?.origin_value ) ?? propTypeDefault;
 
+		const matchingOverridableProp = overridableValue
+			? overridableProps?.props?.[ overridableValue.override_key ]
+			: undefined;
+
 		const overridablePropConfig = setOverridableProp( {
 			componentId,
 			overrideKey: overridableValue?.override_key ?? null,
@@ -76,7 +78,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 			elType: elType ?? 'widget',
 			widgetType: elementType.key,
 			originValue,
-			propType,
+			originPropFields: matchingOverridableProp?.originPropFields,
 		} );
 
 		if ( ! overridableValue && overridablePropConfig ) {
