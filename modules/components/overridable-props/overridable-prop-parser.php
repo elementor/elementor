@@ -125,7 +125,7 @@ class Overridable_Prop_Parser {
 			return null;
 		}
 
-		if ( Override_Prop_Type::get_key() === $prop['originValue']['$$type'] ) {
+		if ( isset( $prop['originValue']['$$type'] ) && Override_Prop_Type::get_key() === $prop['originValue']['$$type'] ) {
 			return $prop['originValue']['value']['override_value'];
 		}
 
