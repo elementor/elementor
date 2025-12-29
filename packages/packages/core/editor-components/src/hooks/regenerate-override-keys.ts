@@ -2,7 +2,6 @@ import { getContainer, updateElementSettings, type V1Element } from '@elementor/
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { generateUniqueId } from '@elementor/utils';
 
-import { COMPONENT_WIDGET_TYPE } from '../create-component-type';
 import { componentInstanceOverridePropTypeUtil } from '../prop-types/component-instance-override-prop-type';
 import { componentInstanceOverridesPropTypeUtil } from '../prop-types/component-instance-overrides-prop-type';
 import {
@@ -10,6 +9,7 @@ import {
 	type ComponentInstancePropValue,
 } from '../prop-types/component-instance-prop-type';
 import { type ComponentOverride } from '../types';
+import { isComponentInstance } from '../utils/is-component-instance';
 
 export function initRegenerateOverrideKeys() {
 	registerDataHook( 'after', 'document/elements/duplicate', ( _args, result: V1Element | V1Element[] ) => {
@@ -49,12 +49,8 @@ function getAllElements( container: V1Element ): V1Element[] {
 	return [ container, ...children ];
 }
 
-function isComponentInstance( model: V1Element[ 'model' ] ): boolean {
-	return model.get( 'widgetType' ) === COMPONENT_WIDGET_TYPE;
-}
-
 function regenerateOverrideKeys( element: V1Element ) {
-	if ( ! isComponentInstance( element.model ) ) {
+	if ( ! isComponentInstance( element.model.toJSON() ) ) {
 		return;
 	}
 
