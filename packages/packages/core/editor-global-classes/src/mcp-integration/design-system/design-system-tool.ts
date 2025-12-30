@@ -4,7 +4,7 @@ import { GLOBAL_VARIABLES_URI, service } from '@elementor/editor-variables';
 import { z } from '@elementor/schema';
 
 import { GLOBAL_CLASSES_URI } from '../classes-resource';
-import { inputSchema as globalClassInputSchema, handler } from '../mcp-create-global-class';
+import { handler, inputSchema as globalClassInputSchema } from '../mcp-create-global-class';
 
 export const initDesignSystemTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool } = reg;
