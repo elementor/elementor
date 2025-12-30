@@ -117,9 +117,6 @@ jobs:
           - Configuration: ${{ steps.config.outputs.config }}
           EOF
           )
-
-          # Check if cursor-agent is running and OK
-          cursor-agent status
           
           # Run cursor-agent with the processed prompt
           timeout 180 cursor-agent --force --model "sonnet-4.5-thinking" --output-format=text --print "$PROMPT" "$DYNAMIC_CONTEXT" || {
