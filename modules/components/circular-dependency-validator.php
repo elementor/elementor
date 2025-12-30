@@ -151,11 +151,13 @@ class Circular_Dependency_Validator {
 	private function build_error_response( string|int $component_id, string|int|null $via_component_id = null ): array {
 		if ( null === $via_component_id ) {
 			$message = sprintf(
+				// translators: %s: Component ID that references itself.
 				esc_html__( 'Circular dependency detected: Component "%s" references itself.', 'elementor' ),
 				$component_id
 			);
 		} else {
 			$message = sprintf(
+				// translators: %1$s: Component ID, %2$s: Component ID that creates the cycle.
 				esc_html__( 'Circular dependency detected: Component "%1$s" would create a cycle via component "%2$s".', 'elementor' ),
 				$component_id,
 				$via_component_id
