@@ -63,6 +63,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await editor.selectInlineEditedText( headingId, 'this' );
 		await editor.toggleInlineEditingAttribute( 'underline' );
 		await page.keyboard.press( 'Escape' );
+		await editor.selectElement( headingId );
 
 		// Assert
 		await expect( headingElement ).toContainText( NEW_TITLE );

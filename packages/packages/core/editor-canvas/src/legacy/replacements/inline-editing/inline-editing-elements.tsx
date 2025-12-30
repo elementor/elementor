@@ -32,7 +32,7 @@ const HISTORY_DEBOUNCE_WAIT = 800;
 const BLUR_TRIGGERING_SELECTORS = [
 	'#elementor-editor-wrapper-v2',
 	'#elementor-navigator',
-	'.elementor-panel-content-wrapper:has(main.MuiBox-root)',
+	'main.MuiBox-root',
 	'#elementor-panel-content-wrapper',
 ];
 
@@ -88,10 +88,6 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	resetInlineEditorRoot() {
-		if ( ! this.isEditingModeActive() ) {
-			return;
-		}
-
 		this.element.removeEventListener( 'click', this.handleRenderInlineEditor );
 		this.handlerAttached = false;
 		this.inlineEditorRoot?.unmount?.();
@@ -207,7 +203,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 	renderInlineEditor() {
 		if ( this.isEditingModeActive() ) {
-			return;
+			this.resetInlineEditorRoot();
 		}
 
 		const InlineEditorApp = this.InlineEditorApp;
