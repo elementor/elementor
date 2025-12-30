@@ -91,7 +91,6 @@ export function EqualUnequalSizesControl< TMultiPropType extends string, TPropVa
 			return;
 		}
 
-		// convert to "single-value"
 		setMasterValue( Object.values( newValue )?.pop() ?? null );
 	};
 
