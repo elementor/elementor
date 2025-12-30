@@ -42,6 +42,7 @@ const MOCK_INITIAL_DOCUMENT_ID = 1;
 const MOCK_COMPONENT_ID = 123;
 const MOCK_COMPONENT_NAME = 'Test Component';
 const MOCK_INSTANCE_ID = 'instance-456';
+const MOCK_CUSTOM_INSTANCE_TITLE = 'My Custom Component Title';
 
 const MOCK_OVERRIDABLE_PROPS = {
 	props: {
@@ -118,9 +119,36 @@ describe( '<ComponentPanelHeader />', () => {
 		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
 	} );
 
-	it( 'should display the component name', () => {
+	it( 'should display the component name from post_title when no custom instance title is set', () => {
 		// Arrange
 		setupComponentEditing();
+
+		// Act
+		renderWithStore( <ComponentPanelHeader />, store );
+
+		// Assert
+		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
+	} );
+
+	it( 'should display custom instance title when instanceTitle is set in path', () => {
+		// Arrange
+		setupComponentEditing( {
+			path: [ { componentId: MOCK_COMPONENT_ID, instanceId: 'instance-123', instanceTitle: MOCK_CUSTOM_INSTANCE_TITLE } ],
+		} );
+
+		// Act
+		renderWithStore( <ComponentPanelHeader />, store );
+
+		// Assert
+		expect( screen.getByText( MOCK_CUSTOM_INSTANCE_TITLE ) ).toBeInTheDocument();
+		expect( screen.queryByText( MOCK_COMPONENT_NAME ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should fallback to post_title when instanceTitle is undefined', () => {
+		// Arrange
+		setupComponentEditing( {
+			path: [ { componentId: MOCK_COMPONENT_ID, instanceId: 'instance-123', instanceTitle: undefined } ],
+		} );
 
 		// Act
 		renderWithStore( <ComponentPanelHeader />, store );
@@ -223,7 +251,7 @@ describe( '<ComponentPanelHeader />', () => {
 	function setupComponentEditing(
 		options: {
 			withOverridableProps?: boolean;
-			path?: Array< { componentId: number; instanceId: string } >;
+			path?: Array< { componentId: number; instanceId: string; instanceTitle?: string } >;
 		} = {}
 	) {
 		const { withOverridableProps = false, path } = options;
