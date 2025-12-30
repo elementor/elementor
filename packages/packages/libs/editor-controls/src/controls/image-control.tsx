@@ -13,39 +13,25 @@ import { SelectControl } from './select-control';
 
 type ImageControlProps = {
 	sizes: { label: string; value: string }[];
-	showMode?: 'all' | 'media' | 'sizes';
 };
 
-export const ImageControl = createControl( ( { sizes, showMode = 'all' }: ImageControlProps ) => {
+export const ImageControl = createControl( ( { sizes }: ImageControlProps ) => {
 	const propContext = useBoundProp( imagePropTypeUtil );
 
-	let componentToRender;
-	switch ( showMode ) {
-		case 'media':
-			componentToRender = <ImageSrcControl />;
-			break;
-		case 'sizes':
-			componentToRender = <ImageSizeControl sizes={ sizes } />;
-			break;
-		case 'all':
-		default:
-			componentToRender = (
-				<Stack gap={ 1.5 }>
-					<ControlFormLabel>{ __( 'Image', 'elementor' ) }</ControlFormLabel>
-					<ImageSrcControl />
-					<Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
-						<Grid item xs={ 6 }>
-							<ControlFormLabel>{ __( 'Resolution', 'elementor' ) }</ControlFormLabel>
-						</Grid>
-						<Grid item xs={ 6 } sx={ { overflow: 'hidden' } }>
-							<ImageSizeControl sizes={ sizes } />
-						</Grid>
-					</Grid>
-				</Stack>
-			);
-	}
-
-	return <PropProvider { ...propContext }>{ componentToRender }</PropProvider>;
+	return <PropProvider { ...propContext }>
+		<Stack gap={ 1.5 }>
+			<ControlFormLabel>{ __( 'Image', 'elementor' ) }</ControlFormLabel>
+			<ImageSrcControl />
+			<Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
+				<Grid item xs={ 6 }>
+					<ControlFormLabel>{ __( 'Resolution', 'elementor' ) }</ControlFormLabel>
+				</Grid>
+				<Grid item xs={ 6 } sx={ { overflow: 'hidden' } }>
+					<ImageSizeControl sizes={ sizes } />
+				</Grid>
+			</Grid>
+		</Stack>
+	</PropProvider>;
 } );
 
 const ImageSrcControl = () => {
