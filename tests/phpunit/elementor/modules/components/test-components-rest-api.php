@@ -895,7 +895,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 	public function test_post_create_component__fails_with_invalid_origin_value_type() {
 		// Arrange
 		$this->act_as_admin();
-		
+
 		// originValue with wrong type structure will cause prop type validation to fail
 		$invalid_overridable_props = [
 			'props' => [
