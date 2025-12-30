@@ -5,6 +5,18 @@ import { type DynamicTagsManager, type ExtendedWindow, type TagInstance } from '
 jest.mock( '@elementor/editor-v1-adapters' );
 
 describe( 'dynamicTransformer', () => {
+	beforeAll( () => {
+		const extendedWindow = window as unknown as ExtendedWindow;
+
+		extendedWindow.elementorPro = {};
+	} );
+
+	afterAll( () => {
+		const extendedWindow = window as unknown as ExtendedWindow;
+
+		extendedWindow.elementorPro = undefined;
+	} );
+
 	it( 'should return null when there is no name', () => {
 		// Act.
 		const result = dynamicTransformer( {}, { key: 'test' } );
