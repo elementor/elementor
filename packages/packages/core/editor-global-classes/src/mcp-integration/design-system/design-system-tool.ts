@@ -4,7 +4,7 @@ import { GLOBAL_VARIABLES_URI, service } from '@elementor/editor-variables';
 import { z } from '@elementor/schema';
 
 import { GLOBAL_CLASSES_URI } from '../classes-resource';
-import { handler, inputSchema as globalClassInputSchema } from '../mcp-create-global-class';
+import { inputSchema as globalClassInputSchema, handler } from '../mcp-create-global-class';
 
 export const initDesignSystemTool = ( reg: MCPRegistryEntry ) => {
 	const { addTool } = reg;
@@ -70,7 +70,7 @@ Most sites would need classes for:
 - Hero sections (main site intro, etc).
 
 Global Classes SHOULD HAVE meaningful names that reflect their purpose and usage.
-Global Classes SHOULD HAVE PROPERTIES / custom CSS that support their intended design and functionality.
+Global Classes SHOULD HAVE PROPERTIES.
 
 DO NOT PROVIDE EMPTY OBJECTS
 
