@@ -65,33 +65,34 @@ export function EqualUnequalSizesControl< TMultiPropType extends string, TPropVa
 	const derivedValue = getMultiSizeValues( masterValue ) as unknown as TPropValue;
 	const derivedPlaceholder = getMultiSizeValues( masterPlaceholder ) as unknown as TPropValue;
 
-	const isEqualValues = ( values: ReturnType< typeof multiSizePropTypeUtil.create > ) => {
+	const isEqualValues = ( values: TPropValue | null ) => {
 		if ( ! values ) {
 			return true;
 		}
 
+		const multiSizeValue = multiSizePropTypeUtil.create( values );
+
 		const propValue: MultiSizePropValue = {};
 
 		items.forEach( ( item ) => {
-			propValue[ item.bind ] = values?.value?.[ item.bind ] ?? null;
+			propValue[ item.bind ] = multiSizeValue?.value?.[ item.bind ] ?? null;
 		} );
 
 		const allValues = Object.values( propValue ).map( ( value ) => JSON.stringify( value ) );
 		return allValues.every( ( value ) => value === allValues[ 0 ] );
 	};
 
-	const isMixedPlaceholder = ! masterValue && ! isEqualValues( multiSizePropTypeUtil.create( derivedPlaceholder ) );
-	const isMixed = isMixedPlaceholder || ! isEqualValues( multiSizePropTypeUtil.create( derivedValue ) );
+	const isMixedPlaceholder = ! masterValue && ! isEqualValues( derivedPlaceholder );
+	const isMixed = isMixedPlaceholder || ! isEqualValues( derivedValue );
 
 	const applyMultiSizeValue = ( newValue: TPropValue ) => {
-		const newPropValue = multiSizePropTypeUtil.create( newValue );
-
-		if ( isEqualValues( newPropValue ) ) {
-			setMasterValue( Object.values( newValue )?.pop() ?? null );
+		if ( ! isEqualValues( newValue ) ) {
+			setMasterValue( multiSizePropTypeUtil.create( newValue ) );
 			return;
 		}
 
-		setMasterValue( newPropValue );
+		// convert to "single-value"
+		setMasterValue( Object.values( newValue )?.pop() ?? null );
 	};
 
 	return (
