@@ -25,7 +25,7 @@ class Component_Instance_Transformer extends Transformer_Base {
 	private function get_rendered_content( int $component_id ): string {
 		$document = Plugin::$instance->documents->get_doc_for_frontend( $component_id );
 
-		if ( ! $this->should_render_content( $document ) ) {
+		if ( ! $document || ! $this->should_render_content( $document ) ) {
 			return '';
 		}
 
@@ -53,8 +53,7 @@ class Component_Instance_Transformer extends Transformer_Base {
 	}
 
 	private function should_render_content( Component_Document $document ): bool {
-		return $document &&
-			! $this->is_password_protected( $document ) &&
+		return ! $this->is_password_protected( $document ) &&
 			$this->is_component( $document ) &&
 			$document->is_built_with_elementor();
 	}
