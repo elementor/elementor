@@ -8,6 +8,7 @@ import {
 	type PropValue,
 	type TransformablePropType,
 } from '@elementor/editor-props';
+import { isDynamicValueButUnsupportedTag } from '@elementor/editor-props';
 
 import { type RenderContext } from '../legacy/types';
 import { type TransformersRegistry } from '../transformers/create-transformers-registry';
@@ -45,7 +46,7 @@ const shouldRevertToDefault = ( value: null | undefined | PropValue ): boolean =
 	return (
 		value === null ||
 		value === undefined ||
-		( ! window.elementorPro && isTransformable( value ) && value.$$type === 'dynamic' )
+		( isTransformable( value ) && isDynamicValueButUnsupportedTag( value ) )
 	);
 };
 

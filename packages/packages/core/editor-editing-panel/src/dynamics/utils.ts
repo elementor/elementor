@@ -1,5 +1,6 @@
 import {
 	createPropUtils,
+	isDynamicValueButUnsupportedTag,
 	isTransformable,
 	type PropType,
 	type PropValue,
@@ -20,12 +21,12 @@ export const getDynamicPropType = ( propType: PropType ): DynamicPropType | null
 	return dynamicPropType && isDynamicPropType( dynamicPropType ) ? dynamicPropType : null;
 };
 
-export const isDynamicButProNotAvailable = ( prop: PropValue ): boolean => {
-	return isTransformable( prop ) && prop.$$type === DYNAMIC_PROP_TYPE_KEY && ! window.elementorPro;
+export const isDynamicValueButUnsupported = ( prop: PropValue ): boolean => {
+	return isTransformable( prop ) && isDynamicValueButUnsupportedTag( prop );
 };
 
 export const isDynamicPropValue = ( prop: PropValue ): prop is DynamicPropValue => {
-	return !! window.elementorPro && isTransformable( prop ) && prop.$$type === DYNAMIC_PROP_TYPE_KEY;
+	return isTransformable( prop ) && prop.$$type === DYNAMIC_PROP_TYPE_KEY;
 };
 
 export const supportsDynamic = ( propType: PropType ): boolean => {
