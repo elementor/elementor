@@ -2,7 +2,7 @@ import type { CreateTemplatedElementTypeOptions } from '../create-templated-elem
 import { createTemplatedElementView } from '../create-templated-element-type';
 import type { ElementType, ElementView, LegacyWindow, ReplacementSettings } from '../types';
 import type ReplacementBase from './base';
-import { type ReplacementBaseInterface } from './base';
+import { type ReplacementBaseInterface, type TriggerMethod } from './base';
 import InlineEditingReplacement from './inline-editing/inline-editing-elements';
 
 type ReplacementConstructor = new ( settings: ReplacementSettings ) => ReplacementBase;
@@ -55,9 +55,7 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 		}
 
 		renderOnChange(): void {
-			if ( ! this.#triggerMethod( 'renderOnChange' ) ) {
-				TemplatedView.prototype.renderOnChange.apply( this );
-			}
+			this.#triggerAltMethod( 'renderOnChange' );
 		}
 
 		render() {
@@ -69,43 +67,38 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 				this.#replacement = new ReplacementClass( config );
 			}
 
-			if ( ! this.#triggerMethod( 'render' ) ) {
-				TemplatedView.prototype.render.apply( this );
-			}
+			this.#triggerAltMethod( 'render' );
 		}
 
 		onDestroy() {
-			if ( this.#triggerMethod( 'onDestroy' ) ) {
-				this.#replacement = null;
-			}
-
-			TemplatedView.prototype.onDestroy.apply( this );
+			this.#triggerAltMethod( 'onDestroy' );
 		}
 
 		_afterRender() {
-			if ( ! this.#triggerMethod( '_afterRender' ) ) {
-				TemplatedView.prototype._afterRender.apply( this );
-			}
+			this.#triggerAltMethod( '_afterRender' );
 		}
 
 		_beforeRender(): void {
-			if ( ! this.#triggerMethod( '_beforeRender' ) ) {
-				TemplatedView.prototype._beforeRender.apply( this );
-			}
+			this.#triggerAltMethod( '_beforeRender' );
 		}
 
-		#triggerMethod( methodKey: keyof ReplacementBaseInterface ) {
+		#triggerAltMethod( methodKey: keyof ReplacementBaseInterface ) {
+			const renderTiming = this.#replacement?.originalMethodsToTrigger()[ methodKey as TriggerMethod ] ?? 'never';
 			const method =
 				this.#replacement?.shouldRenderReplacement() &&
 				this.#replacement[ methodKey ]?.bind( this.#replacement );
 
-			if ( ! method || typeof method !== 'function' ) {
-				return false;
+			if ( renderTiming === 'before' ) {
+				TemplatedView.prototype[ methodKey as TriggerMethod ].apply( this );
 			}
 
-			method();
+			if ( typeof method === 'function' ) {
+				method();
+			}
 
-			return true;
+			if ( renderTiming === 'after' ) {
+				TemplatedView.prototype[ methodKey as TriggerMethod ].apply( this );
+			}
 		}
 	};
 };

@@ -16,7 +16,7 @@ import { Box, ThemeProvider } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { OutlineOverlay } from '../../../components/outline-overlay';
-import ReplacementBase from '../base';
+import ReplacementBase, { type TriggerTiming } from '../base';
 import { getInitialPopoverPosition, INLINE_EDITING_PROPERTY_PER_TYPE } from './inline-editing-utils';
 
 const EXPERIMENT_KEY = 'v4-inline-text-editing';
@@ -76,21 +76,29 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		this.resetInlineEditorRoot();
 	}
 
-	_beforeRender(): void {
+	_beforeRender() {
 		this.resetInlineEditorRoot();
+
+		return false;
 	}
 
 	_afterRender() {
-		this.enforceDraggable();
-
 		if ( ! this.isValueDynamic() && ! this.handlerAttached ) {
 			this.element.addEventListener( 'click', this.handleRenderInlineEditor );
 			this.handlerAttached = true;
 		}
+
+		return false;
 	}
 
-	enforceDraggable() {
-		this.element?.children?.[ 0 ]?.setAttribute( 'draggable', 'true' );
+	originalMethodsToTrigger() {
+		return {
+			_beforeRender: ( this.isEditingModeActive() ? 'never' : 'before' ) as TriggerTiming,
+			_afterRender: ( this.isEditingModeActive() ? 'never' : 'after' ) as TriggerTiming,
+			renderOnChange: ( this.isEditingModeActive() ? 'never' : 'after' ) as TriggerTiming,
+			onDestroy: 'after' as TriggerTiming,
+			render: ( this.isEditingModeActive() ? 'never' : 'before' ) as TriggerTiming,
+		};
 	}
 
 	resetInlineEditorRoot() {
