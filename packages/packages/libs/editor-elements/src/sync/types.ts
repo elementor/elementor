@@ -27,7 +27,7 @@ export type ExtendedWindow = Window & {
 };
 
 export type V1Element = {
-	document?: { $element: HTMLElement[]};
+	document?: { $element: HTMLElement[] };
 	id: string;
 	model: V1Model< V1ElementModelProps >;
 	settings: V1Model< V1ElementSettingsProps >;
