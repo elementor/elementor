@@ -1,0 +1,250 @@
+{
+    "props": {
+        "prop-6": {
+            "overrideKey": "prop-6",
+            "label": "Card Accordion Title",
+            "elementId": "26bf8a5",
+            "propKey": "title",
+            "elType": "widget",
+            "widgetType": "e-heading",
+            "originValue": {
+                "$$type": "html",
+                "value": "This is a title"
+            },
+            "groupId": "group-1"
+        },
+        "prop-7": {
+            "overrideKey": "prop-7",
+            "label": "Card Accordion Subtitle",
+            "elementId": "7006e19",
+            "propKey": "title",
+            "elType": "widget",
+            "widgetType": "e-heading",
+            "originValue": {
+                "$$type": "html",
+                "value": "This is a subtitle"
+            },
+            "groupId": "group-1"
+        },
+        "prop-8": {
+            "overrideKey": "prop-8",
+            "label": "First Card Background Image",
+            "elementId": "9e67369",
+            "propKey": "image",
+            "elType": "widget",
+            "widgetType": "e-component",
+            "originValue": {
+                "$$type": "override",
+                "value": {
+                    "override_key": "prop-2",
+                    "override_value": null,
+                    "schema_source": {
+                        "type": "component",
+                        "id": 2222
+                    }
+                }
+            },
+            "originPropFields": {
+                "elType": "widget",
+                "widgetType": "e-image",
+                "propKey": "image"
+            },
+            "groupId": "group-2"
+        },
+        "prop-9": {
+            "overrideKey": "prop-9",
+            "label": "First Card Title",
+            "elementId": "9e67369",
+            "propKey": "title",
+            "elType": "widget",
+            "widgetType": "e-component",
+            "originValue": {
+                "$$type": "override",
+                "value": {
+                    "override_key": "prop-3",
+                    "override_value": null,
+                    "schema_source": {
+                        "type": "component",
+                        "id": 2222
+                    }
+                }
+            },
+            "originPropFields": {
+                "elType": "widget",
+                "widgetType": "e-heading",
+                "propKey": "title"
+            },
+            "groupId": "group-2"
+        },
+        "prop-10": {
+            "overrideKey": "prop-10",
+            "label": "First Card Button Text",
+            "elementId": "9e67369",
+            "propKey": "text",
+            "elType": "widget",
+            "widgetType": "e-component",
+            "originValue": {
+                "$$type": "override",
+                "value": {
+                    "override_key": "prop-4",
+                    "override_value": null,
+                    "schema_source": {
+                        "type": "component",
+                        "id": 2222
+                    }
+                }
+            },
+            "originPropFields": {
+                "elType": "widget",
+                "widgetType": "e-button",
+                "propKey": "text"
+            },
+            "groupId": "group-2"
+        },
+        "prop-11": {
+            "overrideKey": "prop-11",
+            "label": "First Card Button Link",
+            "elementId": "9e67369",
+            "propKey": "link",
+            "elType": "widget",
+            "widgetType": "e-component",
+            "originValue": {
+                "$$type": "override",
+                "value": {
+                    "override_key": "prop-5",
+                    "override_value": null,
+                    "schema_source": {
+                        "type": "component",
+                        "id": 2222
+                    }
+                }
+            },
+            "originPropFields": {
+                "elType": "widget",
+                "widgetType": "e-button",
+                "propKey": "link"
+            },
+            "groupId": "group-2"
+        },
+        "prop-12": {
+            "overrideKey": "prop-12",
+            "label": "Second Card Background Image",
+            "elementId": "6ab307c",
+            "propKey": "image",
+            "elType": "widget",
+            "widgetType": "e-component",
+            "originValue": {
+                "$$type": "override",
+                "value": {
+                    "override_key": "prop-2",
+                    "override_value": null,
+                    "schema_source": {
+                        "type": "component",
+                        "id": 2222
+                    }
+                }
+            },
+            "originPropFields": {
+                "elType": "widget",
+                "widgetType": "e-image",
+                "propKey": "image"
+            },
+            "groupId": "group-3"
+        },
+        "prop-13": {
+            "overrideKey": "prop-13",
+            "label": "Second Card Title",
+            "elementId": "6ab307c",
+            "propKey": "title",
+            "elType": "widget",
+            "widgetType": "e-component",
+            "originValue": {
+                "$$type": "override",
+                "value": {
+                    "override_key": "prop-3",
+                    "override_value": null,
+                    "schema_source": {
+                        "type": "component",
+                        "id": 2222
+                    }
+                }
+            },
+            "originPropFields": {
+                "elType": "widget",
+                "widgetType": "e-heading",
+                "propKey": "title"
+            },
+            "groupId": "group-3"
+        },
+        "prop-14": {
+            "overrideKey": "prop-14",
+            "label": "Second Card Button Text",
+            "elementId": "6ab307c",
+            "propKey": "text",
+            "elType": "widget",
+            "widgetType": "e-component",
+            "originValue": {
+                "$$type": "override",
+                "value": {
+                    "override_key": "prop-4",
+                    "override_value": null,
+                    "schema_source": {
+                        "type": "component",
+                        "id": 2222
+                    }
+                }
+            },
+            "originPropFields": {
+                "elType": "widget",
+                "widgetType": "e-button",
+                "propKey": "text"
+            },
+            "groupId": "group-3"
+        },
+        "prop-15": {
+            "overrideKey": "prop-15",
+            "label": "Second Card Button Link",
+            "elementId": "6ab307c",
+            "propKey": "link",
+            "elType": "widget",
+            "widgetType": "e-component",
+            "originValue": {
+                "$$type": "override",
+                "value": {
+                    "override_key": "prop-5",
+                    "override_value": null,
+                    "schema_source": {
+                        "type": "component",
+                        "id": 2222
+                    }
+                }
+            },
+            "originPropFields": {
+                "elType": "widget",
+                "widgetType": "e-button",
+                "propKey": "link"
+            },
+            "groupId": "group-3"
+        }
+    },
+    "groups": {
+        "items": {
+            "group-1": {
+                "id": "group-1",
+                "label": "General Card Settings",
+                "props": [ "prop-6", "prop-7" ]
+            },
+            "group-2": {
+                "id": "group-2",
+                "label": "First Card Settings",
+                "props": [ "prop-8", "prop-9", "prop-10", "prop-11" ]
+            },
+            "group-3": {
+                "id": "group-3",
+                "label": "Second Card Settings",
+                "props": [ "prop-12", "prop-13", "prop-14", "prop-15" ]
+            }
+        },
+        "order": [ "group-1", "group-2", "group-3" ]
+    }
+}
