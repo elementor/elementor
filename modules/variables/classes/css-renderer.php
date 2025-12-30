@@ -19,7 +19,7 @@ class CSS_Renderer {
 		return $this->service->get_variables_list();
 	}
 
-	public function raw_css($include_deleted = true): string {
+	public function raw_css( $include_deleted = true ): string {
 		$list_of_variables = $this->global_variables();
 		if ( ! $include_deleted ) {
 			$list_of_variables = array_filter( $list_of_variables, function ( $variable ) {

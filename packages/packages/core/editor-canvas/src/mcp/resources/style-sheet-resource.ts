@@ -20,8 +20,8 @@ export const initStyleSheetResource = ( reg: MCPRegistryEntry ) => {
 				};
 			}
 		);
-		window.addEventListener('elementor:style-items-changed', () => {
-			sendResourceUpdated({
+		window.addEventListener( 'elementor:style-items-changed', () => {
+			sendResourceUpdated( {
 				uri: STYLE_SHEET_RAW_CSS_URI,
 				contents: [
 					{
@@ -45,7 +45,7 @@ export const generateStyleSheetRawCSS = () => {
 	const variables = window.elementor?.config?.variable_raw_css ?? '';
 	const classes = getRawGlobalClassesCSS();
 
-return `# Style sheet raw CSS
+	return `# Style sheet raw CSS
 ${
 	variables &&
 	`# Variables are prefixed with '--' and then the variable name
@@ -60,4 +60,5 @@ ${
 # Classes are prefixed with '.' and then the class name
 ${ classes }
 `
-}`};
+}`;
+};

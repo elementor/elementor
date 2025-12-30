@@ -12,9 +12,9 @@ import { initLegacyViews } from './legacy/init-legacy-views';
 import { initViewReplacements } from './legacy/replacements/manager';
 import { initCanvasMcp } from './mcp/canvas-mcp';
 import { mcpDescription } from './mcp/mcp-description';
+import { initStyleSheetResource } from './mcp/resources/style-sheet-resource';
 import { initLinkInLinkPrevention } from './prevent-link-in-link-commands';
 import { initStyleCommands } from './style-commands/init-style-commands';
-import { initStyleSheetResource } from './mcp/resources/style-sheet-resource';
 
 export function init() {
 	initStyleTransformers();
@@ -56,7 +56,5 @@ export function init() {
 		} )
 	);
 
-	initStyleSheetResource(
-		getMCPByDomain( 'canvas' ),
-	);
+	initStyleSheetResource( getMCPByDomain( 'canvas' ) );
 }
