@@ -3,8 +3,25 @@ import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
+import { getElementSelector } from '../../../../assets/elements-utils';
+
+const testedAttributes = Object.keys( INLINE_EDITING_SELECTORS.attributes ).filter( ( attribute ) => attribute !== 'link' );
+
+const attributesString = testedAttributes.join( ', ' );
 
 test.describe( 'Inline Editing Canvas @v4-tests', () => {
+	const supportedAtoms = Object.values( INLINE_EDITING_SELECTORS.supportedAtoms );
+
+	const atomTexts = {
+		'e-heading': 'Title with: ' + attributesString,
+		'e-paragraph': 'Paragraph with: ' + attributesString,
+	};
+
+	const defaultAtomTags:Record< typeof supportedAtoms[number], string > = {
+		'e-heading': 'h2',
+		'e-paragraph': 'p',
+	};
+
 	let wpAdminPage: WpAdminPage;
 	let context: BrowserContext;
 	let page: Page;
@@ -39,7 +56,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		// Act
 		await headingElement.dblclick();
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
 
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
@@ -51,7 +68,9 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Assert
 		await expect( headingElement ).toContainText( NEW_TITLE );
 
-		const panelInlineEditor = page.getByLabel( INLINE_EDITING_SELECTORS.contentSectionLabel ).locator( INLINE_EDITING_SELECTORS.panelInlineEditor );
+		const panelInlineEditor = page
+			.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSectionLabel )
+			.locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
 		const panelHTML = await panelInlineEditor.innerHTML();
 
 		expect( panelHTML ).toContain( '<u>this</u>&nbsp;is the first test' );
@@ -81,7 +100,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await expect( headingElement ).toBeVisible();
 
 		await headingElement.dblclick();
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 
 		await expect( inlineEditor ).toBeVisible();
 
@@ -110,7 +129,9 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		await editor.selectElement( containerId );
 		await editor.selectElement( headingId );
-		const panelInlineEditor = page.getByLabel( INLINE_EDITING_SELECTORS.contentSectionLabel ).locator( INLINE_EDITING_SELECTORS.panelInlineEditor );
+		const panelInlineEditor = page
+			.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSectionLabel )
+			.locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
 		const panelHTML = await panelInlineEditor.innerHTML();
 
 		expect( panelHTML ).toContain( NEW_CONTENT );
@@ -130,11 +151,11 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await editor.v4Panel.style.setFontWeight( 100 );
 		await headingElement.dblclick();
 
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 
 		await inlineEditor.waitFor();
 
-		headingElement = inlineEditor.locator( `h2` );
+		headingElement = inlineEditor.locator( defaultAtomTags[ 'e-heading' ] );
 
 		// Assert
 		await expect.soft( headingElement ).toHaveCSS( 'font-weight', '100' );
@@ -155,11 +176,11 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await editor.v4Panel.style.setFontSize( 100, 'px' );
 		await paragraphElement.dblclick();
 
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 
 		await inlineEditor.waitFor();
 
-		paragraphElement = inlineEditor.locator( `p` );
+		paragraphElement = inlineEditor.locator( defaultAtomTags[ 'e-paragraph' ] );
 
 		// Assert
 		await expect.soft( paragraphElement ).toHaveCSS( 'font-size', '100px' );
@@ -177,17 +198,66 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Act.
 		await headingElement.dblclick();
 
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 
 		await inlineEditor.waitFor();
 		await page.waitForTimeout( 1000 );
 
-		headingElement = inlineEditor.locator( `h2` );
+		headingElement = inlineEditor.locator( defaultAtomTags[ 'e-heading' ] );
 
 		await headingElement.click( { clickCount: 3 } );
 		await page.keyboard.type( 'Hello' );
 
 		// Assert
 		await expect( headingElement ).toHaveText( 'Hello' );
+	} );
+
+	test( "ensure html tags for styling aren't stripped by twig", async ( ) => {
+		// Arrange
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const atomIds: Partial< Record< typeof supportedAtoms[number], string > > = {};
+		const encodedExpectedOutput = '<strong>bold</strong>, <u>underline</u>, <s>strikethrough</s>, <sup>superscript</sup>, <sub>subscript</sub>';
+
+		for ( const atom of supportedAtoms ) {
+			atomIds[ atom ] = await editor.addWidget( { widgetType: atom, container: containerId } );
+
+			await editor.previewFrame.locator( getElementSelector( atomIds[ atom ] ) ).waitFor();
+			await editor.v4Panel.fillInlineEditing( atomTexts[ atom ] );
+		}
+
+		// Unfocus.
+		await page.keyboard.press( 'Escape' );
+
+		// Act.
+		for ( const atom of supportedAtoms ) {
+			for ( const attribute of testedAttributes ) {
+				await editor.selectInlineEditedText( atomIds[ atom ], attribute );
+				await editor.toggleInlineEditingAttribute( attribute );
+				await page.keyboard.press( 'Escape' );
+			}
+		}
+
+		// Unfocus.
+		await page.keyboard.press( 'Escape' );
+
+		// Assert.
+		for ( const atom of supportedAtoms ) {
+			const queryString = getElementSelector( atomIds[ atom ] ) + ' ' + defaultAtomTags[ atom ];
+
+			expect( await editor.previewFrame.locator( queryString ).innerHTML() )
+				.toContain( encodedExpectedOutput );
+		}
+
+		// Unfocus.
+		await page.keyboard.press( 'Escape' );
+
+		await editor.publishAndViewPage();
+
+		for ( const atom of supportedAtoms ) {
+			const queryString = `${ defaultAtomTags[ atom ] }[data-interaction-id="${ atomIds[ atom ] }"]`;
+
+			expect( ( await page.locator( queryString ).innerHTML() ) )
+				.toContain( encodedExpectedOutput );
+		}
 	} );
 } );
