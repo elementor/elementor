@@ -14,7 +14,7 @@
                     "text": {
                         "$$type": "overridable",
                         "value": {
-                            "override_key": "0",
+                            "override_key": "prop-0",
                             "origin_value": {
                                 "$$type": "string",
                                 "value": "Click here"
@@ -24,7 +24,7 @@
                     "link": {
                         "$$type": "overridable",
                         "value": {
-                            "override_key": "1",
+                            "override_key": "prop-1",
                             "origin_value": {
                                 "$$type": "link",
                                 "value": {
