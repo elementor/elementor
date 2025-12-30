@@ -55,15 +55,14 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await expect( headingElement ).toBeVisible();
 
 		// Act
-		await headingElement.dblclick();
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
+		const inlineEditor = await editor.triggerEditingElement( headingId );
 
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
-		await page.keyboard.press( 'ControlOrMeta+U' );
-		await page.keyboard.type( 'this' );
-		await page.keyboard.press( 'ControlOrMeta+U' );
-		await page.keyboard.type( ' is the first test' );
+		await page.keyboard.type( 'this is the first test' );
+		await editor.selectInlineEditedText( headingId, 'this' );
+		await editor.toggleInlineEditingAttribute( 'underline' );
+		await page.keyboard.press( 'Escape' );
 
 		// Assert
 		await expect( headingElement ).toContainText( NEW_TITLE );
@@ -76,15 +75,11 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		expect( panelHTML ).toContain( '<u>this</u>&nbsp;is the first test' );
 
 		await editor.publishAndViewPage();
+
 		const publishedHeading = page.locator( INLINE_EDITING_SELECTORS.headingBase ).last();
 
 		await expect( publishedHeading ).toContainText( NEW_TITLE );
-
-		const underlinedText = publishedHeading.locator( 'u' );
-
-		await expect( underlinedText ).toBeVisible();
-
-		await expect( underlinedText ).toContainText( 'this' );
+		await expect( publishedHeading.locator( 'u' ) ).toContainText( 'this' );
 	} );
 
 	test( 'Delete entire content and enter new text without errors', async () => {
@@ -99,36 +94,26 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 
 		await expect( headingElement ).toBeVisible();
 
-		await headingElement.dblclick();
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
+		const inlineEditor = await editor.triggerEditingElement( headingId );
 
 		await expect( inlineEditor ).toBeVisible();
 
 		// Act
-		await page.keyboard.press( 'ControlOrMeta+A' );
-
-		for ( let i = 0; i < INITIAL_CONTENT.length; i++ ) {
-			await page.keyboard.type( INITIAL_CONTENT.charAt( i ) );
-		}
+		await inlineEditor.clear();
+		await page.keyboard.type( INITIAL_CONTENT );
 
 		// Assert
 		await expect( headingElement ).toContainText( INITIAL_CONTENT );
 		await expect( headingElement ).toBeVisible();
 
 		// Act
-		await page.keyboard.press( 'ControlOrMeta+A' );
-		await page.keyboard.press( 'Delete' );
-
-		for ( let i = 0; i < NEW_CONTENT.length; i++ ) {
-			await page.keyboard.type( NEW_CONTENT.charAt( i ) );
-		}
+		await inlineEditor.clear();
+		await page.keyboard.type( NEW_CONTENT );
 
 		// Assert
 		await expect( headingElement ).toContainText( NEW_CONTENT );
 		await expect( headingElement ).toBeVisible();
 
-		await editor.selectElement( containerId );
-		await editor.selectElement( headingId );
 		const panelInlineEditor = page
 			.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSectionLabel )
 			.locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
@@ -149,9 +134,8 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await editor.v4Panel.openTab( 'style' );
 		await editor.v4Panel.style.openSection( 'Typography' );
 		await editor.v4Panel.style.setFontWeight( 100 );
-		await headingElement.dblclick();
 
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
+		const inlineEditor = await editor.triggerEditingElement( headingId );
 
 		await inlineEditor.waitFor();
 
@@ -174,9 +158,8 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await editor.v4Panel.style.addGlobalClass( 'hello' );
 		await editor.v4Panel.style.openSection( 'Typography' );
 		await editor.v4Panel.style.setFontSize( 100, 'px' );
-		await paragraphElement.dblclick();
 
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
+		const inlineEditor = await editor.triggerEditingElement( paragraphId );
 
 		await inlineEditor.waitFor();
 
@@ -196,9 +179,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		let headingElement = previewFrame.locator( `.elementor-element-${ headingId }` );
 
 		// Act.
-		await headingElement.dblclick();
-
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
+		const inlineEditor = await editor.triggerEditingElement( headingId );
 
 		await inlineEditor.waitFor();
 		await page.waitForTimeout( 1000 );

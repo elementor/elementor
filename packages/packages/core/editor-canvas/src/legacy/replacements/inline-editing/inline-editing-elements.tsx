@@ -1,17 +1,19 @@
 import * as React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { InlineEditor } from '@elementor/editor-controls';
-import { getContainer, getElementType } from '@elementor/editor-elements';
+import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
 import {
 	htmlPropTypeUtil,
+	type HtmlPropValue,
 	type PropType,
 	stringPropTypeUtil,
 	type StringPropValue,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
-import { __privateRunCommandSync as runCommandSync, isExperimentActive } from '@elementor/editor-v1-adapters';
+import { __privateRunCommandSync as runCommandSync, isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
 import { Box, ThemeProvider } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { OutlineOverlay } from '../../../components/outline-overlay';
 import ReplacementBase from '../base';
@@ -24,6 +26,15 @@ type TagPropType = PropType< 'tag' > & {
 		enum?: string[];
 	};
 };
+
+const HISTORY_DEBOUNCE_WAIT = 800;
+
+const BLUR_TRIGGERING_SELECTORS = [
+	'#elementor-editor-wrapper-v2',
+	'#elementor-navigator',
+	'.elementor-panel-content-wrapper:has(main.MuiBox-root)',
+	'#elementor-panel-content-wrapper',
+];
 
 export default class InlineEditingReplacement extends ReplacementBase {
 	private inlineEditorRoot: Root | null = null;
@@ -45,12 +56,12 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		return isExperimentActive( EXPERIMENT_KEY ) && ! this.isValueDynamic();
 	}
 
-	handleRenderInlineEditor = ( event: Event ) => {
-		event.stopPropagation();
-
-		if ( ! this.isValueDynamic() ) {
-			this.renderInlineEditor();
+	handleRenderInlineEditor = () => {
+		if ( this.isEditingModeActive() || this.isValueDynamic() ) {
+			return;
 		}
+
+		this.renderInlineEditor();
 	};
 
 	renderOnChange() {
@@ -71,13 +82,17 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 	_afterRender() {
 		if ( ! this.isValueDynamic() && ! this.handlerAttached ) {
-			this.element.addEventListener( 'dblclick', this.handleRenderInlineEditor, { once: true } );
+			this.element.addEventListener( 'click', this.handleRenderInlineEditor );
 			this.handlerAttached = true;
 		}
 	}
 
 	resetInlineEditorRoot() {
-		this.element.removeEventListener( 'dblclick', this.handleRenderInlineEditor );
+		if ( ! this.isEditingModeActive() ) {
+			return;
+		}
+
+		this.element.removeEventListener( 'click', this.handleRenderInlineEditor );
 		this.handlerAttached = false;
 		this.inlineEditorRoot?.unmount?.();
 		this.inlineEditorRoot = null;
@@ -124,12 +139,38 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		const settingKey = this.getInlineEditablePropertyName();
 		const valueToSave = value ? htmlPropTypeUtil.create( value ) : null;
 
+		undoable(
+			{
+				do: () => {
+					const prevValue = this.getContentValue();
+
+					this.runCommand( settingKey, valueToSave );
+
+					return prevValue;
+				},
+				undo: ( prevValue ) => {
+					this.runCommand( settingKey, prevValue ?? null );
+				},
+			},
+			{
+				title: getElementLabel( this.id ),
+				// translators: %s is the name of the property that was edited.
+				subtitle: __( '%s edited', 'elementor' ).replace(
+					'%s',
+					this.getHtmlPropType()?.key ?? 'Inline editing'
+				),
+				debounce: { wait: HISTORY_DEBOUNCE_WAIT },
+			}
+		)();
+	}
+
+	runCommand( key: string, value: HtmlPropValue | null ) {
 		runCommandSync(
 			'document/elements/set-settings',
 			{
 				container: getContainer( this.id ),
 				settings: {
-					[ settingKey ]: valueToSave,
+					[ key ]: value,
 				},
 			},
 			{ internal: true }
@@ -165,15 +206,15 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	renderInlineEditor() {
+		if ( this.isEditingModeActive() ) {
+			return;
+		}
+
 		const InlineEditorApp = this.InlineEditorApp;
 		const wrapperClasses = 'elementor';
 		const elementClasses = this.element.children?.[ 0 ]?.classList.toString() ?? '';
 
 		this.element.innerHTML = '';
-
-		if ( this.inlineEditorRoot ) {
-			this.resetInlineEditorRoot();
-		}
 
 		this.inlineEditorRoot = createRoot( this.element );
 		this.inlineEditorRoot.render(
@@ -188,19 +229,22 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		const [ isWrapperRendered, setIsWrapperRendered ] = useState( false );
 
 		useEffect( () => {
-			const panel = document?.querySelector( 'main.MuiBox-root' );
-
 			setIsWrapperRendered( !! wrapperRef.current );
-			panel?.addEventListener( 'click', asyncUnmountInlineEditor );
+			BLUR_TRIGGERING_SELECTORS.forEach(
+				( selector ) =>
+					document?.querySelector( selector )?.addEventListener( 'mousedown', asyncUnmountInlineEditor )
+			);
 
-			return () => panel?.removeEventListener( 'click', asyncUnmountInlineEditor );
-			// eslint-disable-next-line react-hooks/exhaustive-deps
+			return () =>
+				BLUR_TRIGGERING_SELECTORS.forEach(
+					( selector ) =>
+						document
+							?.querySelector( selector )
+							?.removeEventListener( 'mousedown', asyncUnmountInlineEditor )
+				);
 		}, [] );
 
-		const asyncUnmountInlineEditor = useCallback(
-			() => queueMicrotask( this.unmountInlineEditor.bind( this ) ),
-			[]
-		);
+		const asyncUnmountInlineEditor = () => queueMicrotask( this.unmountInlineEditor.bind( this ) );
 
 		return (
 			<ThemeProvider>
