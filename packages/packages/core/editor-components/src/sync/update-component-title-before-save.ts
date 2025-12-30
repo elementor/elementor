@@ -10,7 +10,9 @@ export const updateComponentTitleBeforeSave = async () => {
 		return;
 	}
 
-	await apiClient.updateComponentTitle( updatedComponentNames );
+	const result = await apiClient.updateComponentTitle( updatedComponentNames );
 
-	dispatch( slice.actions.cleanUpdatedComponentNames() );
+	if ( result.failedIds.length === 0 ) {
+		dispatch( slice.actions.cleanUpdatedComponentNames() );
+	}
 };
