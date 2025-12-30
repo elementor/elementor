@@ -20,15 +20,15 @@ class Circular_Dependency_Validator {
 		return new self();
 	}
 
-	public function validate( string|int $component_id, array $elements, array $known_components = [] ): array {
-		$referenced_ids = $this->extract_component_references( $elements );
+	public function validate( string|int $component_id, array $elements, array $unsaved_components = [] ): array {
+		$inner_components_ids = $this->get_inner_component_ids( $elements );
 
-		if ( in_array( $component_id, $referenced_ids, false ) ) {
+		if ( in_array( $component_id, $inner_components_ids, false ) ) {
 			return $this->build_error_response( $component_id );
 		}
 
-		foreach ( $referenced_ids as $ref_id ) {
-			if ( $this->component_eventually_contains( $ref_id, $component_id, $known_components, [] ) ) {
+		foreach ( $inner_components_ids as $ref_id ) {
+			if ( $this->is_component_eventually_contains( $ref_id, $component_id, $unsaved_components, [] ) ) {
 				return $this->build_error_response( $component_id, $ref_id );
 			}
 		}
@@ -40,14 +40,14 @@ class Circular_Dependency_Validator {
 	}
 
 	public function validate_new_components( Collection $items ): array {
-		$known_components = [];
+		$unsaved_components = [];
 
 		foreach ( $items->all() as $item ) {
-			$known_components[ $item['uid'] ] = $item['elements'] ?? [];
+			$unsaved_components[ $item['uid'] ] = $item['elements'] ?? [];
 		}
 
-		foreach ( $known_components as $uid => $elements ) {
-			$result = $this->validate( $uid, $elements, $known_components );
+		foreach ( $unsaved_components as $uid => $elements ) {
+			$result = $this->validate( $uid, $elements, $unsaved_components );
 
 			if ( ! $result['success'] ) {
 				return $result;
@@ -60,7 +60,7 @@ class Circular_Dependency_Validator {
 		];
 	}
 
-	private function component_eventually_contains( string|int $component_id, string|int $forbidden_id, array $known_components, array $visited_path ): bool {
+	private function is_component_eventually_contains( string|int $component_id, string|int $forbidden_id, array $unsaved_components, array $visited_path ): bool {
 		if ( in_array( $component_id, $visited_path, false ) ) {
 			return false;
 		}
@@ -69,13 +69,13 @@ class Circular_Dependency_Validator {
 			return false;
 		}
 
-		$elements = $this->get_elements_for_component( $component_id, $known_components );
+		$elements = $this->get_elements_for_component( $component_id, $unsaved_components );
 
 		if ( empty( $elements ) ) {
 			return false;
 		}
 
-		$nested_ids = $this->extract_component_references( $elements );
+		$nested_ids = $this->get_inner_component_ids( $elements );
 
 		if ( in_array( $forbidden_id, $nested_ids, false ) ) {
 			return true;
@@ -84,7 +84,7 @@ class Circular_Dependency_Validator {
 		$visited_path[] = $component_id;
 
 		foreach ( $nested_ids as $nested_id ) {
-			if ( $this->component_eventually_contains( $nested_id, $forbidden_id, $known_components, $visited_path ) ) {
+			if ( $this->is_component_eventually_contains( $nested_id, $forbidden_id, $unsaved_components, $visited_path ) ) {
 				return true;
 			}
 		}
@@ -92,15 +92,15 @@ class Circular_Dependency_Validator {
 		return false;
 	}
 
-	private function get_elements_for_component( string|int $component_id, array $known_components ): array {
-		if ( isset( $known_components[ $component_id ] ) ) {
-			return $known_components[ $component_id ];
+	private function get_elements_for_component( string|int $component_id, array $unsaved_components ): array {
+		if ( isset( $unsaved_components[ $component_id ] ) ) {
+			return $unsaved_components[ $component_id ];
 		}
 
-		return $this->load_component_elements_from_database( $component_id );
+		return $this->get_component_elements( $component_id );
 	}
 
-	private function load_component_elements_from_database( string|int $component_id ): array {
+	private function get_component_elements( string|int $component_id ): array {
 		if ( ! is_int( $component_id ) ) {
 			return [];
 		}
@@ -122,7 +122,7 @@ class Circular_Dependency_Validator {
 		return $elements;
 	}
 
-	private function extract_component_references( array $elements ): array {
+	private function get_inner_component_ids( array $elements ): array {
 		$ids = [];
 
 		foreach ( $elements as $element ) {
@@ -137,7 +137,7 @@ class Circular_Dependency_Validator {
 			}
 
 			if ( ! empty( $element['elements'] ) ) {
-				$ids = array_merge( $ids, $this->extract_component_references( $element['elements'] ) );
+				$ids = array_merge( $ids, $this->get_inner_component_ids( $element['elements'] ) );
 			}
 		}
 

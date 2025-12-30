@@ -16,6 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Component_Instance_Transformer extends Transformer_Base {
 	private static array $rendering_stack = [];
 
+	public static function reset_rendering_stack(): void {
+		self::$rendering_stack = [];
+	}
+
 	public function transform( $value, Props_Resolver_Context $context ) {
 		$component_id = $value['component_id'];
 

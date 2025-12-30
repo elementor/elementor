@@ -1,11 +1,12 @@
-import { type V1Element } from '@elementor/editor-elements';
+import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
 import { type NotificationData, notify } from '@elementor/editor-notifications';
 import { blockCommand } from '@elementor/editor-v1-adapters';
 import { __getState as getState } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
+import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
 import { type ComponentsSlice, selectCurrentComponentId, selectPath } from './store/store';
-import { type ComponentInstancePropValue, type ExtendedWindow } from './types';
+import { type ExtendedWindow } from './types';
 
 const COMPONENT_TYPE = 'e-component';
 
@@ -15,7 +16,7 @@ type CreateArgs = {
 		elType?: string;
 		widgetType?: string;
 		settings?: {
-			component_instance?: ComponentInstancePropValue;
+			component_instance?: ComponentInstanceProp;
 		};
 	};
 };
@@ -32,18 +33,21 @@ type PasteArgs = {
 	storageType?: string;
 };
 
+export type ClipboardElement = {
+	widgetType?: string;
+	settings?: {
+		component_instance?: ComponentInstanceProp;
+	};
+	elements?: ClipboardElement[];
+};
+
 type StorageContent = {
 	clipboard?: {
-		elements?: Array< {
-			widgetType?: string;
-			settings?: {
-				component_instance?: ComponentInstancePropValue;
-			};
-		} >;
+		elements?: ClipboardElement[];
 	};
 };
 
-const NOTIFICATION: NotificationData = {
+const COMPONENT_CIRCULAR_NESTING_ALERT: NotificationData = {
 	type: 'default',
 	message: __( 'Cannot add this component here - it would create a circular reference.', 'elementor' ),
 	id: 'circular-component-nesting-blocked',
@@ -66,6 +70,7 @@ export function initCircularNestingPrevention() {
 	} );
 }
 
+// Note that this function only checks for direct circular nesting, not indirect nesting
 export function wouldCreateCircularNesting( componentIdToAdd: number | string | undefined ): boolean {
 	if ( componentIdToAdd === undefined ) {
 		return false;
@@ -86,42 +91,70 @@ export function wouldCreateCircularNesting( componentIdToAdd: number | string | 
 	return path.some( ( item ) => item.componentId === componentIdToAdd );
 }
 
-function extractComponentIdFromModel( model: CreateArgs[ 'model' ] ): number | string | undefined {
+function extractComponentIdFromModel( model: CreateArgs[ 'model' ] ): number | string | null {
 	if ( ! model ) {
-		return undefined;
+		return null;
 	}
 
-	const isComponent = model.widgetType === COMPONENT_TYPE || model.elType === COMPONENT_TYPE;
+	const isComponent = model.widgetType === COMPONENT_TYPE;
 
 	if ( ! isComponent ) {
-		return undefined;
+		return null;
 	}
 
-	return model.settings?.component_instance?.value?.component_id?.value;
+	return model.settings?.component_instance?.value?.component_id?.value ?? null;
 }
 
-function extractComponentIdFromElement( element: {
-	widgetType?: string;
-	settings?: { component_instance?: ComponentInstancePropValue };
-} ): number | string | undefined {
+function extractComponentIdFromElement( element: ClipboardElement ): number | string | null {
 	if ( element.widgetType !== COMPONENT_TYPE ) {
-		return undefined;
+		return null;
 	}
 
-	return element.settings?.component_instance?.value?.component_id?.value;
+	return element.settings?.component_instance?.value?.component_id?.value ?? null;
+}
+
+export function extractComponentIdsFromElements( elements: ClipboardElement[] ): Array< number | string > {
+	const ids: Array< number | string > = [];
+
+	for ( const element of elements ) {
+		const componentId = extractComponentIdFromElement( element );
+
+		if ( componentId !== null ) {
+			ids.push( componentId );
+		}
+
+		if ( element.elements?.length ) {
+			ids.push( ...extractComponentIdsFromElements( element.elements ) );
+		}
+	}
+
+	return ids;
+}
+
+function extractComponentIdFromContainer( container: V1Element ): number | string | null {
+	const widgetType = container.model?.get?.( 'widgetType' );
+
+	if ( widgetType !== COMPONENT_TYPE ) {
+		return null;
+	}
+
+	const settings = container.model?.get?.( 'settings' ) as { get?: ( key: string ) => unknown } | undefined;
+	const componentInstance = settings?.get?.( 'component_instance' ) as ComponentInstanceProp | undefined;
+
+	return componentInstance?.value?.component_id?.value ?? null;
 }
 
 function blockCircularCreate( args: CreateArgs ): boolean {
 	const componentId = extractComponentIdFromModel( args.model );
 
-	if ( componentId === undefined ) {
+	if ( componentId === null ) {
 		return false;
 	}
 
 	const isBlocked = wouldCreateCircularNesting( componentId );
 
 	if ( isBlocked ) {
-		notify( NOTIFICATION );
+		notify( COMPONENT_CIRCULAR_NESTING_ALERT );
 	}
 
 	return isBlocked;
@@ -135,21 +168,21 @@ function blockCircularMove( args: MoveArgs ): boolean {
 			return false;
 		}
 
-		const widgetType = container.model?.get?.( 'widgetType' );
+		const allElements = getAllDescendants( container );
 
-		if ( widgetType !== COMPONENT_TYPE ) {
-			return false;
-		}
+		return allElements.some( ( element ) => {
+			const componentId = extractComponentIdFromContainer( element );
 
-		const settings = container.model?.get?.( 'settings' ) as { get?: ( key: string ) => unknown } | undefined;
-		const componentInstance = settings?.get?.( 'component_instance' ) as ComponentInstancePropValue | undefined;
-		const componentId = componentInstance?.value?.component_id?.value;
+			if ( componentId === null ) {
+				return false;
+			}
 
-		return wouldCreateCircularNesting( componentId );
+			return wouldCreateCircularNesting( componentId );
+		} );
 	} );
 
 	if ( hasCircularComponent ) {
-		notify( NOTIFICATION );
+		notify( COMPONENT_CIRCULAR_NESTING_ALERT );
 	}
 
 	return hasCircularComponent;
@@ -170,13 +203,11 @@ function blockCircularPaste( args: PasteArgs ): boolean {
 		return false;
 	}
 
-	const hasCircularComponent = data.clipboard.elements.some( ( element ) => {
-		const componentId = extractComponentIdFromElement( element );
-		return wouldCreateCircularNesting( componentId );
-	} );
+	const allComponentIds = extractComponentIdsFromElements( data.clipboard.elements );
+	const hasCircularComponent = allComponentIds.some( wouldCreateCircularNesting );
 
 	if ( hasCircularComponent ) {
-		notify( NOTIFICATION );
+		notify( COMPONENT_CIRCULAR_NESTING_ALERT );
 	}
 
 	return hasCircularComponent;

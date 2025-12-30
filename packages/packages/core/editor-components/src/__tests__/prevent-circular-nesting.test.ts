@@ -1,186 +1,207 @@
+import { __getState as getState } from '@elementor/store';
+
+import {
+	type ClipboardElement,
+	extractComponentIdsFromElements,
+	wouldCreateCircularNesting,
+} from '../prevent-circular-nesting';
+import { type ComponentsPathItem, SLICE_NAME } from '../store/store';
+
+jest.mock( '@elementor/store', () => ( {
+	...jest.requireActual( '@elementor/store' ),
+	__getState: jest.fn(),
+} ) );
+
 const MOCK_CURRENT_COMPONENT_ID = 100;
 const MOCK_PARENT_COMPONENT_ID = 200;
 const MOCK_GRANDPARENT_COMPONENT_ID = 300;
 const MOCK_UNRELATED_COMPONENT_ID = 999;
 
-describe( 'prevent-circular-nesting logic', () => {
-	describe( 'wouldCreateCircularNesting core logic', () => {
-		type PathItem = { componentId: number; instanceId?: string };
+const mockGetState = getState as jest.Mock;
 
-		function checkCircularNesting(
-			componentIdToAdd: number | string | undefined,
-			currentComponentId: number | null,
-			path: PathItem[]
-		): boolean {
-			if ( componentIdToAdd === undefined ) {
-				return false;
-			}
+function setupStore( currentComponentId: number | null, path: ComponentsPathItem[] ) {
+	mockGetState.mockReturnValue( {
+		[ SLICE_NAME ]: {
+			currentComponentId,
+			path,
+		},
+	} );
+}
 
-			if ( currentComponentId === null ) {
-				return false;
-			}
-
-			if ( componentIdToAdd === currentComponentId ) {
-				return true;
-			}
-
-			return path.some( ( item ) => item.componentId === componentIdToAdd );
-		}
-
-		it( 'should return false when componentIdToAdd is undefined', () => {
-			// Arrange
-			const currentComponentId = MOCK_CURRENT_COMPONENT_ID;
-			const path: PathItem[] = [];
-
-			// Act
-			const result = checkCircularNesting( undefined, currentComponentId, path );
-
-			// Assert
-			expect( result ).toBe( false );
-		} );
-
-		it( 'should return false when not editing any component', () => {
-			// Arrange
-			const currentComponentId = null;
-			const path: PathItem[] = [];
-
-			// Act
-			const result = checkCircularNesting( MOCK_UNRELATED_COMPONENT_ID, currentComponentId, path );
-
-			// Assert
-			expect( result ).toBe( false );
-		} );
-
-		it( 'should return true when trying to add the same component being edited', () => {
-			// Arrange
-			const currentComponentId = MOCK_CURRENT_COMPONENT_ID;
-			const path: PathItem[] = [ { componentId: MOCK_CURRENT_COMPONENT_ID, instanceId: 'instance-1' } ];
-
-			// Act
-			const result = checkCircularNesting( MOCK_CURRENT_COMPONENT_ID, currentComponentId, path );
-
-			// Assert
-			expect( result ).toBe( true );
-		} );
-
-		it( 'should return true when trying to add a component from the editing path', () => {
-			// Arrange
-			const currentComponentId = MOCK_CURRENT_COMPONENT_ID;
-			const path: PathItem[] = [
-				{ componentId: MOCK_GRANDPARENT_COMPONENT_ID, instanceId: 'instance-1' },
-				{ componentId: MOCK_PARENT_COMPONENT_ID, instanceId: 'instance-2' },
-				{ componentId: MOCK_CURRENT_COMPONENT_ID, instanceId: 'instance-3' },
-			];
-
-			// Act
-			const resultParent = checkCircularNesting( MOCK_PARENT_COMPONENT_ID, currentComponentId, path );
-			const resultGrandparent = checkCircularNesting( MOCK_GRANDPARENT_COMPONENT_ID, currentComponentId, path );
-
-			// Assert
-			expect( resultParent ).toBe( true );
-			expect( resultGrandparent ).toBe( true );
-		} );
-
-		it( 'should return false when adding an unrelated component', () => {
-			// Arrange
-			const currentComponentId = MOCK_CURRENT_COMPONENT_ID;
-			const path: PathItem[] = [
-				{ componentId: MOCK_PARENT_COMPONENT_ID, instanceId: 'instance-1' },
-				{ componentId: MOCK_CURRENT_COMPONENT_ID, instanceId: 'instance-2' },
-			];
-
-			// Act
-			const result = checkCircularNesting( MOCK_UNRELATED_COMPONENT_ID, currentComponentId, path );
-
-			// Assert
-			expect( result ).toBe( false );
-		} );
-
-		it( 'should handle string component IDs', () => {
-			// Arrange
-			const currentComponentId = 100;
-			const path: PathItem[] = [ { componentId: 100, instanceId: 'instance-1' } ];
-
-			// Act - component IDs might be strings from the DOM
-			const result = checkCircularNesting( '100', currentComponentId, path );
-
-			// Assert - string '100' !== number 100 (strict comparison)
-			expect( result ).toBe( false );
-		} );
+describe( 'wouldCreateCircularNesting', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
 	} );
 
-	describe( 'component element extraction', () => {
-		const COMPONENT_TYPE = 'e-component';
+	it( 'should return false when componentIdToAdd is undefined', () => {
+		// Arrange
+		setupStore( MOCK_CURRENT_COMPONENT_ID, [] );
 
-		function extractComponentIdFromModel( model: {
-			widgetType?: string;
-			elType?: string;
-			settings?: {
-				component_instance?: {
-					value?: {
-						component_id?: { value?: number | string };
-					};
-				};
-			};
-		} ): number | string | undefined {
-			if ( ! model ) {
-				return undefined;
-			}
+		// Act
+		const result = wouldCreateCircularNesting( undefined );
 
-			const isComponent = model.widgetType === COMPONENT_TYPE || model.elType === COMPONENT_TYPE;
+		// Assert
+		expect( result ).toBe( false );
+	} );
 
-			if ( ! isComponent ) {
-				return undefined;
-			}
+	it( 'should return false when not editing any component', () => {
+		// Arrange
+		setupStore( null, [] );
 
-			return model.settings?.component_instance?.value?.component_id?.value;
-		}
+		// Act
+		const result = wouldCreateCircularNesting( MOCK_UNRELATED_COMPONENT_ID );
 
-		it( 'should return undefined for non-component widgets', () => {
-			// Arrange
-			const model = {
-				widgetType: 'e-button',
-				settings: {},
-			};
+		// Assert
+		expect( result ).toBe( false );
+	} );
 
-			// Act
-			const result = extractComponentIdFromModel( model );
+	it( 'should return true when trying to add the same component being edited', () => {
+		// Arrange
+		setupStore( MOCK_CURRENT_COMPONENT_ID, [
+			{ componentId: MOCK_CURRENT_COMPONENT_ID, instanceId: 'instance-1' },
+		] );
 
-			// Assert
-			expect( result ).toBeUndefined();
-		} );
+		// Act
+		const result = wouldCreateCircularNesting( MOCK_CURRENT_COMPONENT_ID );
 
-		it( 'should extract component ID from component widget', () => {
-			// Arrange
-			const model = {
-				widgetType: COMPONENT_TYPE,
-				settings: {
-					component_instance: {
-						value: {
-							component_id: { value: 123 },
+		// Assert
+		expect( result ).toBe( true );
+	} );
+
+	it( 'should return true when trying to add a parent component from the editing path', () => {
+		// Arrange
+		setupStore( MOCK_CURRENT_COMPONENT_ID, [
+			{ componentId: MOCK_GRANDPARENT_COMPONENT_ID, instanceId: 'instance-1' },
+			{ componentId: MOCK_PARENT_COMPONENT_ID, instanceId: 'instance-2' },
+			{ componentId: MOCK_CURRENT_COMPONENT_ID, instanceId: 'instance-3' },
+		] );
+
+		// Act
+		const resultParent = wouldCreateCircularNesting( MOCK_PARENT_COMPONENT_ID );
+		const resultGrandparent = wouldCreateCircularNesting( MOCK_GRANDPARENT_COMPONENT_ID );
+
+		// Assert
+		expect( resultParent ).toBe( true );
+		expect( resultGrandparent ).toBe( true );
+	} );
+
+	it( 'should return false when adding an unrelated component', () => {
+		// Arrange
+		setupStore( MOCK_CURRENT_COMPONENT_ID, [
+			{ componentId: MOCK_PARENT_COMPONENT_ID, instanceId: 'instance-1' },
+			{ componentId: MOCK_CURRENT_COMPONENT_ID, instanceId: 'instance-2' },
+		] );
+
+		// Act
+		const result = wouldCreateCircularNesting( MOCK_UNRELATED_COMPONENT_ID );
+
+		// Assert
+		expect( result ).toBe( false );
+	} );
+} );
+
+describe( 'extractComponentIdsFromElements', () => {
+	const COMPONENT_TYPE = 'e-component';
+
+	function createComponentElement( componentId: number ): ClipboardElement {
+		return {
+			widgetType: COMPONENT_TYPE,
+			settings: {
+				component_instance: {
+					$$type: 'component-instance',
+					value: {
+						component_id: {
+							$$type: 'number',
+							value: componentId,
 						},
 					},
 				},
-			};
+			},
+		};
+	}
 
-			// Act
-			const result = extractComponentIdFromModel( model );
+	function createContainerElement( children: ClipboardElement[] ): ClipboardElement {
+		return {
+			widgetType: 'container',
+			elements: children,
+		};
+	}
 
-			// Assert
-			expect( result ).toBe( 123 );
-		} );
+	it( 'should return empty array when no components exist', () => {
+		// Arrange
+		const elements: ClipboardElement[] = [ { widgetType: 'button' }, { widgetType: 'heading' } ];
 
-		it( 'should handle missing settings gracefully', () => {
-			// Arrange
-			const model = {
-				widgetType: COMPONENT_TYPE,
-			};
+		// Act
+		const result = extractComponentIdsFromElements( elements );
 
-			// Act
-			const result = extractComponentIdFromModel( model );
+		// Assert
+		expect( result ).toEqual( [] );
+	} );
 
-			// Assert
-			expect( result ).toBeUndefined();
-		} );
+	it( 'should extract component IDs from top-level elements', () => {
+		// Arrange
+		const elements: ClipboardElement[] = [ createComponentElement( 100 ), createComponentElement( 200 ) ];
+
+		// Act
+		const result = extractComponentIdsFromElements( elements );
+
+		// Assert
+		expect( result ).toEqual( [ 100, 200 ] );
+	} );
+
+	it( 'should extract component IDs from nested elements', () => {
+		// Arrange
+		const elements: ClipboardElement[] = [ createContainerElement( [ createComponentElement( 100 ) ] ) ];
+
+		// Act
+		const result = extractComponentIdsFromElements( elements );
+
+		// Assert
+		expect( result ).toEqual( [ 100 ] );
+	} );
+
+	it( 'should extract component IDs from deeply nested elements', () => {
+		// Arrange
+		const elements: ClipboardElement[] = [
+			createContainerElement( [
+				createContainerElement( [ createContainerElement( [ createComponentElement( 100 ) ] ) ] ),
+			] ),
+		];
+
+		// Act
+		const result = extractComponentIdsFromElements( elements );
+
+		// Assert
+		expect( result ).toEqual( [ 100 ] );
+	} );
+
+	it( 'should extract all component IDs from mixed nested structure', () => {
+		// Arrange
+		const elements: ClipboardElement[] = [
+			createComponentElement( 100 ),
+			createContainerElement( [
+				{ widgetType: 'button' },
+				createComponentElement( 200 ),
+				createContainerElement( [ createComponentElement( 300 ) ] ),
+			] ),
+			createComponentElement( 400 ),
+		];
+
+		// Act
+		const result = extractComponentIdsFromElements( elements );
+
+		// Assert
+		expect( result ).toEqual( [ 100, 200, 300, 400 ] );
+	} );
+
+	it( 'should handle elements without nested elements property', () => {
+		// Arrange
+		const elements: ClipboardElement[] = [ { widgetType: 'button' }, createComponentElement( 100 ) ];
+
+		// Act
+		const result = extractComponentIdsFromElements( elements );
+
+		// Assert
+		expect( result ).toEqual( [ 100 ] );
 	} );
 } );
