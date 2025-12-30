@@ -12,8 +12,9 @@ import { __getState as getState } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
+import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
 import { type ComponentsSlice, selectComponentByUid } from './store/store';
-import { type ComponentInstancePropValue, type ExtendedWindow } from './types';
+import { type ExtendedWindow } from './types';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
@@ -69,7 +70,7 @@ type LegacyWindowWithElementor = LegacyWindow & {
 	};
 };
 
-export const TYPE = 'e-component';
+export const COMPONENT_WIDGET_TYPE = 'e-component';
 
 const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfig ): ContextMenuGroup[] => {
 	const disableMap = new Map( Object.entries( config.disable ?? {} ) );
@@ -169,7 +170,7 @@ function createComponentView(
 
 		getComponentId() {
 			const componentInstance = (
-				this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstancePropValue
+				this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstanceProp
 			 )?.value;
 
 			return componentInstance.component_id.value;
@@ -225,7 +226,7 @@ function createComponentView(
 			if ( ! isAllowedToSwitchDocument ) {
 				options.showLockedByModal?.( lockedBy || '' );
 			} else {
-				switchToComponent( this.getComponentId(), this.model.get( 'id' ) );
+				switchToComponent( this.getComponentId() as number, this.model.get( 'id' ) );
 			}
 		}
 
@@ -303,7 +304,7 @@ function createComponentModel(): BackboneModelConstructor< ComponentModel > {
 			BaseWidgetModel.prototype.initialize.call( this, attributes, options );
 
 			const componentInstance = this.get( 'settings' )?.get( 'component_instance' ) as
-				| ComponentInstancePropValue
+				| ComponentInstanceProp
 				| undefined;
 			if ( componentInstance?.value ) {
 				const componentId = componentInstance.value.component_id?.value;

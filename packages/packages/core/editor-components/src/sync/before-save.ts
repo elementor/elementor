@@ -21,7 +21,7 @@ type Options = {
 };
 
 export const beforeSave = ( { container, status }: Options ) => {
-	const elements = container.model.get( 'elements' )?.toJSON() ?? [];
+	const elements = container?.model.get( 'elements' ).toJSON?.() ?? [];
 
 	return Promise.all( [
 		updateArchivedComponentBeforeSave(),
