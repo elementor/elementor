@@ -1,4 +1,4 @@
-import { getContainer, updateElementSettings, type V1Element } from '@elementor/editor-elements';
+import { getAllDescendants, getContainer, updateElementSettings, type V1Element } from '@elementor/editor-elements';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { generateUniqueId } from '@elementor/utils';
 
@@ -42,13 +42,7 @@ function regenerateOverrideKeysRecursive( elementId: string ) {
 		return;
 	}
 
-	getAllElements( container ).forEach( regenerateOverrideKeys );
-}
-
-function getAllElements( container: V1Element ): V1Element[] {
-	const children = ( container.children ?? [] ).flatMap( getAllElements ) ?? [];
-
-	return [ container, ...children ];
+	getAllDescendants( container ).forEach( regenerateOverrideKeys );
 }
 
 function regenerateOverrideKeys( element: V1Element ) {
