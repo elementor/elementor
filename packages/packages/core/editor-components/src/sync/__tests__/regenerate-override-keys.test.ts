@@ -6,7 +6,7 @@ import { generateUniqueId } from '@elementor/utils';
 import { componentInstanceOverridePropTypeUtil } from '../../prop-types/component-instance-override-prop-type';
 import { componentInstanceOverridesPropTypeUtil } from '../../prop-types/component-instance-overrides-prop-type';
 import { componentInstancePropTypeUtil } from '../../prop-types/component-instance-prop-type';
-import { regenerateOverrideKeysForContainers } from '../regenerate-override-keys';
+import { regenerateOverrideKeysForContainers } from '../../sync/commands/regenerate-override-keys';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),

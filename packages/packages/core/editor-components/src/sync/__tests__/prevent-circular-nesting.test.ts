@@ -1,11 +1,11 @@
 import { __getState as getState } from '@elementor/store';
 
+import { type ComponentsPathItem, SLICE_NAME } from '../../store/store';
 import {
 	type ClipboardElement,
 	extractComponentIdsFromElements,
 	wouldCreateCircularNesting,
-} from '../prevent-circular-nesting';
-import { type ComponentsPathItem, SLICE_NAME } from '../store/store';
+} from '../commands/prevent-circular-nesting';
 
 jest.mock( '@elementor/store', () => ( {
 	...jest.requireActual( '@elementor/store' ),

@@ -2,16 +2,16 @@ import { getAllDescendants, getContainer, updateElementSettings, type V1Element 
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { generateUniqueId } from '@elementor/utils';
 
-import { componentInstanceOverridePropTypeUtil } from '../prop-types/component-instance-override-prop-type';
+import { componentInstanceOverridePropTypeUtil } from '../../prop-types/component-instance-override-prop-type';
 import {
 	componentInstanceOverridesPropTypeUtil,
 	type ComponentInstanceOverridesPropValue,
-} from '../prop-types/component-instance-overrides-prop-type';
+} from '../../prop-types/component-instance-overrides-prop-type';
 import {
 	componentInstancePropTypeUtil,
 	type ComponentInstancePropValue,
-} from '../prop-types/component-instance-prop-type';
-import { isComponentInstance } from '../utils/is-component-instance';
+} from '../../prop-types/component-instance-prop-type';
+import { isComponentInstance } from '../../utils/is-component-instance';
 
 export function initRegenerateOverrideKeys() {
 	registerDataHook( 'after', 'document/elements/duplicate', ( _args, result: V1Element | V1Element[] ) => {

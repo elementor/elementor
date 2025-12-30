@@ -1,37 +1,14 @@
 import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
 import { type NotificationData, notify } from '@elementor/editor-notifications';
-import { blockCommand } from '@elementor/editor-v1-adapters';
 import { __getState as getState } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
-import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
-import { type ComponentsSlice, selectCurrentComponentId, selectPath } from './store/store';
-import { type ExtendedWindow } from './types';
+import { type ComponentInstanceProp } from '../../prop-types/component-instance-prop-type';
+import { type ComponentsSlice, selectCurrentComponentId, selectPath } from '../../store/store';
+import { type ExtendedWindow } from '../../types';
+import { type CreateArgs, type MoveArgs, type PasteArgs } from './types';
 
 const COMPONENT_TYPE = 'e-component';
-
-type CreateArgs = {
-	container?: V1Element;
-	model?: {
-		elType?: string;
-		widgetType?: string;
-		settings?: {
-			component_instance?: ComponentInstanceProp;
-		};
-	};
-};
-
-type MoveArgs = {
-	containers?: V1Element[];
-	container?: V1Element;
-	target?: V1Element;
-};
-
-type PasteArgs = {
-	containers?: V1Element[];
-	container?: V1Element;
-	storageType?: string;
-};
 
 export type ClipboardElement = {
 	widgetType?: string;
@@ -52,23 +29,6 @@ const COMPONENT_CIRCULAR_NESTING_ALERT: NotificationData = {
 	message: __( 'Cannot add this component here - it would create a circular reference.', 'elementor' ),
 	id: 'circular-component-nesting-blocked',
 };
-
-export function initCircularNestingPrevention() {
-	blockCommand( {
-		command: 'document/elements/create',
-		condition: blockCircularCreate,
-	} );
-
-	blockCommand( {
-		command: 'document/elements/move',
-		condition: blockCircularMove,
-	} );
-
-	blockCommand( {
-		command: 'document/elements/paste',
-		condition: blockCircularPaste,
-	} );
-}
 
 // Note that this function only checks for direct circular nesting, not indirect nesting
 export function wouldCreateCircularNesting( componentIdToAdd: number | string | undefined ): boolean {
@@ -144,7 +104,7 @@ function extractComponentIdFromContainer( container: V1Element ): number | strin
 	return componentInstance?.value?.component_id?.value ?? null;
 }
 
-function blockCircularCreate( args: CreateArgs ): boolean {
+export function blockCircularCreate( args: CreateArgs ): boolean {
 	const componentId = extractComponentIdFromModel( args.model );
 
 	if ( componentId === null ) {
@@ -160,7 +120,7 @@ function blockCircularCreate( args: CreateArgs ): boolean {
 	return isBlocked;
 }
 
-function blockCircularMove( args: MoveArgs ): boolean {
+export function blockCircularMove( args: MoveArgs ): boolean {
 	const { containers = [ args.container ] } = args;
 
 	const hasCircularComponent = containers.some( ( container ) => {
@@ -188,7 +148,7 @@ function blockCircularMove( args: MoveArgs ): boolean {
 	return hasCircularComponent;
 }
 
-function blockCircularPaste( args: PasteArgs ): boolean {
+export function blockCircularPaste( args: PasteArgs ): boolean {
 	const { storageType } = args;
 
 	if ( storageType !== 'localstorage' ) {
