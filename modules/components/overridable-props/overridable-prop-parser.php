@@ -78,11 +78,12 @@ class Overridable_Prop_Parser {
 			'elType' => sanitize_text_field( $prop['elType'] ),
 			'originValue' => $sanitized_origin_value,
 			'groupId' => sanitize_key( $prop['groupId'] ),
+			'originPropFields' => isset( $prop['originPropFields'] ) ? [
+				'elType' => sanitize_text_field( $prop['originPropFields']['elType'] ),
+				'widgetType' => sanitize_text_field( $prop['originPropFields']['widgetType'] ),
+				'propKey' => sanitize_text_field( $prop['originPropFields']['propKey'] ),
+			] : null,
 		];
-
-		if ( $this->is_with_origin_prop_fields( $prop ) ) {
-			$sanitized_prop['originPropFields'] = $prop['originPropFields'];
-		}
 
 		return $result->wrap( $sanitized_prop );
 	}
