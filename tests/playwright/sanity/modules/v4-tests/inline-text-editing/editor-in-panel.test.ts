@@ -35,8 +35,8 @@ test.describe( 'Inline Editing Control in Editor Panel @v4-tests', () => {
 
 		await editor.selectElement( headingId );
 
-		const contentSection = page.getByLabel( INLINE_EDITING_SELECTORS.contentSection );
-		const panelInlineEditor = contentSection.locator( INLINE_EDITING_SELECTORS.panelInlineEditor );
+		const contentSection = page.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSection );
+		const panelInlineEditor = contentSection.locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
 
 		await expect( panelInlineEditor ).toBeVisible();
 		await panelInlineEditor.clear();

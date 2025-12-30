@@ -31,7 +31,7 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.addWidget( { widgetType: INLINE_EDITING_SELECTORS.e_paragraph, container: containerId } );
 
-			await expect.soft( page.getByLabel( INLINE_EDITING_SELECTORS.contentSection ) ).toHaveScreenshot( 'paragraph-control-panel.png' );
+			await expect.soft( page.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSection ) ).toHaveScreenshot( 'paragraph-control-panel.png' );
 		} );
 	} );
 
@@ -43,34 +43,34 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 		await test.step( 'Edit paragraph text with inline editing', async () => {
 			const paragraphElement = editor.previewFrame.locator( `.elementor-element-${ paragraphId } .e-paragraph-base` );
 			await paragraphElement.dblclick();
-			const textarea = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+			const textarea = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
 
 			await expect( textarea ).toBeVisible();
 			await textarea.fill( 'a' );
 			await page.keyboard.press( 'ControlOrMeta+A' );
 			await page.keyboard.press( 'Backspace' );
 
-			await page.keyboard.type( INLINE_EDITING_SELECTORS.paragraphPrefix );
+			await page.keyboard.type( INLINE_EDITING_SELECTORS.preMadeContent.paragraph.paragraphPrefix );
 
 			await page.keyboard.press( 'ControlOrMeta+B' );
-			await page.keyboard.type( INLINE_EDITING_SELECTORS.boldText );
+			await page.keyboard.type( INLINE_EDITING_SELECTORS.attributes.bold );
 			await page.keyboard.press( 'ControlOrMeta+B' );
 
-			await page.keyboard.type( INLINE_EDITING_SELECTORS.textBetween );
+			await page.keyboard.type( INLINE_EDITING_SELECTORS.preMadeContent.paragraph.textBetween );
 
 			await page.keyboard.press( 'ControlOrMeta+U' );
-			await page.keyboard.type( INLINE_EDITING_SELECTORS.underlineText );
+			await page.keyboard.type( INLINE_EDITING_SELECTORS.attributes.underline );
 			await page.keyboard.press( 'ControlOrMeta+U' );
 
-			await page.keyboard.type( INLINE_EDITING_SELECTORS.paragraphSuffix );
+			await page.keyboard.type( INLINE_EDITING_SELECTORS.preMadeContent.paragraph.paragraphSuffix );
 			await page.keyboard.press( 'Enter' );
-			await page.keyboard.type( INLINE_EDITING_SELECTORS.secondLine );
+			await page.keyboard.type( INLINE_EDITING_SELECTORS.preMadeContent.paragraph.secondLine );
 
 			await expect.soft( paragraphElement ).toHaveScreenshot( 'inline-edited-paragraph-editor.png' );
 		} );
 
 		await test.step( 'Edited control panel display', async () => {
-			const contentSection = page.getByLabel( INLINE_EDITING_SELECTORS.contentSection );
+			const contentSection = page.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSection );
 
 			await editor.selectElement( containerId );
 			await editor.selectElement( paragraphId );
