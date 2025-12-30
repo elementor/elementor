@@ -16,6 +16,8 @@ require_once __DIR__ . '/mocks/nested-components/nested-components-mocks.php';
 class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
 
 	private $button_component_id = 1111;
+    private $card_component_id = 2222;
+    private $card_accordion_component_id = 3333;
 
 	public function setUp(): void {
 		parent::setUp();
@@ -35,7 +37,12 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
 		] );
 
 		$button_component_data = Nested_Components_Mocks::get_button_component_data();
+		$card_component_data = Nested_Components_Mocks::get_card_component_data();
+		$card_accordion_component_data = Nested_Components_Mocks::get_card_accordion_component_data();
+
 		$this->create_test_component( 'Button Component', $button_component_data, $this->button_component_id );
+		$this->create_test_component( 'Card Component', $card_component_data, $this->card_component_id );
+		$this->create_test_component( 'Card Accordion Component', $card_accordion_component_data, $this->card_accordion_component_id );
 	}
 
 	public function tearDown(): void {
@@ -87,7 +94,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
         // Assert
         $a_elements = $dom->getElementsByTagName('a');
     
-        $this->assertEquals(1, $a_elements->length, 'Should have 1 <a> tag');
+        $this->assertEquals(1, $a_elements->length, 'No <a> tag found');
         
         $button = $a_elements->item(0);
         
@@ -118,7 +125,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                 [
                                     '$$type' => 'override',
                                     'value' => [
-                                        'override_key' => '0',
+                                        'override_key' => 'prop-0',
                                         'override_value' => [
                                             '$$type' => 'string',
                                             'value' => 'New button text',
@@ -132,7 +139,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                 [
                                     '$$type' => 'override',
                                     'value' => [
-                                        'override_key' => '1',
+                                        'override_key' => 'prop-1',
                                         'override_value' => [
                                             '$$type' => 'link',
                                             'value' => [
@@ -165,7 +172,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
         // Assert
         $a_elements = $dom->getElementsByTagName('a');
     
-        $this->assertEquals(1, $a_elements->length, 'Should have 1 <a> tag');
+        $this->assertEquals(1, $a_elements->length, 'No <a> tag found');
         
         $button = $a_elements->item(0);
         
@@ -174,7 +181,257 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
         $this->assertEquals('New button text', trim($button->textContent));
     }
 
-    private function create_test_component( string $name, array $content, int $id ): int {
+    public function test_render_nested_components_with_overridable_overrides() {
+        // Arrange.
+        $accordion_title = 'Card accordion title';
+        $accordion_subtitle = 'Card accordion subtitle';
+
+        $first_card_background_image_url = 'https://example.com/first-card-background-image.jpg';
+        $first_card_title = 'First card title';
+        $first_card_button_text = 'First card button text';
+        $first_card_button_link = 'https://first-card-button-link.com';
+
+        $second_card_background_image_url = 'https://example.com/second-card-background-image.jpg';
+        $second_card_title = 'Second card title';
+        $second_card_button_link = 'https://second-card-button-link.com';
+
+        $card_default_button_text = 'Learn more';
+
+        $instance_data = [
+            'id' => '0bf5f7e',
+            'elType' => 'widget',
+            'widgetType' => 'e-component',
+            'elements' => [],
+            'styles' => [],
+            'settings' => [
+                'component_instance' => [
+                    '$$type' => 'component-instance',
+                    'value' => [
+                        'component_id' => [
+                            '$$type' => 'number',
+                            'value' => $this->card_accordion_component_id,
+                        ],
+                        'overrides' => [
+                            '$$type' => 'overrides',
+                            'value' => [
+                                [
+                                    '$$type' => 'override',
+                                    'value' => [
+                                        'override_key' => 'prop-6',
+                                        'override_value' => [
+                                            '$$type' => 'string',
+                                            'value' => $accordion_title,
+                                        ],
+                                        'schema_source' => [
+                                            'type' => 'component',
+                                            'id' => $this->card_accordion_component_id,
+                                        ],
+                                    ],
+                                ],
+                                [
+                                    '$$type' => 'override',
+                                    'value' => [
+                                        'override_key' => 'prop-7',
+                                        'override_value' => [
+                                            '$$type' => 'string',
+                                            'value' => $accordion_subtitle,
+                                        ],
+                                        'schema_source' => [
+                                            'type' => 'component',
+                                            'id' => $this->card_accordion_component_id,
+                                        ],
+                                    ],
+                                ],
+                                [
+                                    '$$type' => 'override',
+                                    'value' => [
+                                        'override_key' => 'prop-8',
+                                        'override_value' => [
+                                            '$$type' => 'image',
+                                            'value' => [
+                                                'src' => [
+                                                    '$$type' => 'image-src',
+                                                    'value' => [
+                                                        'id' => null,
+                                                        'url' => [
+                                                            '$$type' => 'url',
+                                                            'value' => $first_card_background_image_url,
+                                                        ],
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                    'schema_source' => [
+                                        'type' => 'component',
+                                        'id' => $this->card_accordion_component_id,
+                                    ],
+                                ],
+                                [
+                                    '$$type' => 'override',
+                                    'value' => [
+                                        'override_key' => 'prop-9',
+                                        'override_value' => [
+                                            '$$type' => 'string',
+                                            'value' => $first_card_title,
+                                        ],
+                                    ],
+                                    'schema_source' => [
+                                        'type' => 'component',
+                                        'id' => $this->card_accordion_component_id,
+                                    ],
+                                ],
+                                [
+                                    '$$type' => 'override',
+                                    'value' => [
+                                        'override_key' => 'prop-10',
+                                        'override_value' => [
+                                            '$$type' => 'string',
+                                            'value' => $first_card_button_text,
+                                        ],
+                                        'schema_source' => [
+                                            'type' => 'component',
+                                            'id' => $this->card_accordion_component_id,
+                                        ],
+                                    ],
+                                ],
+                                [
+                                    '$$type' => 'override',
+                                    'value' => [
+                                        'override_key' => 'prop-11',
+                                        'override_value' => [
+                                            '$$type' => 'link',
+                                            'value' => [
+                                                'destination' => [
+                                                    '$$type' => 'url',
+                                                    'value' => $first_card_button_link,
+                                                ],
+                                                'isTargetBlank' => [
+                                                    '$$type' => 'boolean',
+                                                    'value' => true,
+                                                ],
+                                            ],
+                                        ],
+                                        'schema_source' => [
+                                            'type' => 'component',
+                                            'id' => $this->card_accordion_component_id,
+                                        ],
+                                    ],
+                                ],
+                                [
+                                    '$$type' => 'override', 
+                                    'value' => [
+                                        'override_key' => 'prop-12',
+                                        'override_value' => [
+                                            '$$type' => 'image',
+                                            'value' => [
+                                                'src' => [
+                                                    '$$type' => 'image-src',
+                                                    'value' => [
+                                                        'id' => null,
+                                                        'url' => [
+                                                            '$$type' => 'url',
+                                                            'value' => $second_card_background_image_url,
+                                                        ],
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                        'schema_source' => [
+                                            'type' => 'component',
+                                            'id' => $this->card_accordion_component_id,
+                                        ],
+                                    ],
+                                ],
+                                [
+                                    '$$type' => 'override',
+                                    'value' => [
+                                        'override_key' => 'prop-13',
+                                        'override_value' => [
+                                            '$$type' => 'string',
+                                            'value' => $second_card_title,
+                                        ],
+                                        'schema_source' => [
+                                            'type' => 'component',
+                                            'id' => $this->card_accordion_component_id,
+                                        ],
+                                    ],
+                                ],
+                                [
+                                    '$$type' => 'override',
+                                    'value' => [
+                                        'override_key' => 'prop-15',
+                                        'override_value' => [
+                                            '$$type' => 'link',
+                                            'value' => [
+                                                'destination' => [
+                                                    '$$type' => 'url',
+                                                    'value' => $second_card_button_link,
+                                                ],
+                                                'isTargetBlank' => [
+                                                    '$$type' => 'boolean',
+                                                    'value' => true,
+                                                ],
+                                            ],
+                                        ],
+                                        'schema_source' => [
+                                            'type' => 'component',
+                                            'id' => $this->card_accordion_component_id,
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]
+        ];
+
+        // Act
+        $dom = $this->get_rendered_component( $instance_data );
+
+        // Assert
+        // Accordion title & subtitle
+        $title_elements = $dom->getElementsByTagName('h2');
+        $accordion_title_element = $title_elements->item(0);
+        $this->assertEquals($accordion_title, trim($accordion_title_element->textContent));
+
+        $accordion_subtitle_elements = $dom->getElementsByTagName('h4');
+        $accordion_subtitle_element  = $accordion_subtitle_elements->item(0);
+        $this->assertEquals($accordion_subtitle, trim($accordion_subtitle_element->textContent));
+
+        // Cards
+        $image_elements = $dom->getElementsByTagName('img');
+        $button_elements = $dom->getElementsByTagName('a');
+
+        // First card
+        $first_card_background_image_element = $image_elements->item(0);
+        $this->assertEquals($first_card_background_image_url, $first_card_background_image_element->getAttribute('src'));
+
+        $first_card_title_element = $title_elements->item(1);
+        $this->assertEquals($first_card_title, trim($first_card_title_element->textContent));
+
+        $first_card_button_text_element = $button_elements->item(0);
+        $this->assertEquals($first_card_button_text, trim($first_card_button_text_element->textContent));
+
+        $first_card_button_link_element = $button_elements->item(0);
+        $this->assertEquals($first_card_button_link, $first_card_button_link_element->getAttribute('href'));
+        
+        // Second card
+        $second_card_background_image_element = $image_elements->item(1);
+        $this->assertEquals($second_card_background_image_url, $second_card_background_image_element->getAttribute('src'));
+
+        $second_card_title_element = $title_elements->item(2);
+        $this->assertEquals($second_card_title, trim($second_card_title_element->textContent));
+
+        $second_card_button_text_element = $button_elements->item(1);
+        $this->assertEquals($card_default_button_text, trim($second_card_button_text_element->textContent));
+
+        $second_card_button_link_element = $button_elements->item(1);
+        $this->assertEquals($second_card_button_link, $second_card_button_link_element->getAttribute('href'));
+    }
+
+    private function create_test_component( string $name, array $data, int $id ): int {
 		$this->act_as_admin();
 		$document = Plugin::$instance->documents->create(
 			Component_Document::get_type(),
@@ -186,7 +443,10 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
 		);
 
 		$document->save( [
-			'elements' => $content,
+			'elements' => $data['elements'],
+            'settings' => [
+                'overridable_props' => $data['overridable_props'],
+            ]
 		] );
 
 		return $document->get_main_id();
