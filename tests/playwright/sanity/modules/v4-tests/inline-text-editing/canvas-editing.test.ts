@@ -62,7 +62,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await page.keyboard.type( 'this is the first test' );
 		await editor.selectInlineEditedText( headingId, 'this' );
 		await editor.toggleInlineEditingAttribute( 'underline' );
-		await page.keyboard.press( 'Escape' );
+		await page.keyboard.press( 'Escape', { delay: 100 } );
 		await editor.selectElement( headingId );
 
 		// Assert
@@ -73,7 +73,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 			.locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
 		const panelHTML = await panelInlineEditor.innerHTML();
 
-		expect( panelHTML ).toContain( '<u>this</u>&nbsp;is the first test' );
+		expect( panelHTML ).toContain( '<u>this</u> is the first test' );
 
 		await editor.publishAndViewPage();
 

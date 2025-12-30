@@ -58,7 +58,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 
 		const newTabButton = page.locator( '[aria-label="Open in a new tab"]' );
 		await newTabButton.click();
-		await page.keyboard.press( 'Enter' );
+		await page.keyboard.press( 'Escape' );
 		await inlineEditor.press( 'Escape' );
 
 		// Assert - Verify link with target="_blank" in editor.
@@ -102,7 +102,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 
 		const urlInput = page.locator( 'input[placeholder="Type a URL"]' );
 		await urlInput.fill( TEST_URL );
-		await page.keyboard.press( 'Enter' );
+		await page.keyboard.press( 'Escape' );
 		await inlineEditor.press( 'Escape' );
 
 		// Assert - Verify link exists.
@@ -113,7 +113,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		await editor.selectInlineEditedText( headingId, true );
 		await editor.toggleInlineEditingAttribute( 'link' );
 		await urlInput.clear();
-		await page.keyboard.press( 'Enter' );
+		await page.keyboard.press( 'Escape' );
 		await inlineEditor.press( 'Escape' );
 
 		// Assert - Verify link is removed.
@@ -142,7 +142,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 
 		const urlInput = page.locator( 'input[placeholder="Type a URL"]' );
 		await urlInput.fill( TEST_URL );
-		await page.keyboard.press( 'Enter' );
+		await page.keyboard.press( 'Escape' );
 		await inlineEditor.press( 'Escape' );
 
 		// Assert - Verify initial link.
@@ -153,7 +153,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		await editor.toggleInlineEditingAttribute( 'link' );
 		await urlInput.clear();
 		await urlInput.fill( UPDATED_URL );
-		await page.keyboard.press( 'Enter' );
+		await page.keyboard.press( 'Escape' );
 		await inlineEditor.press( 'Escape' );
 
 		// Assert - Verify updated link.
@@ -182,7 +182,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 
 		const urlInput = page.locator( 'input[placeholder="Type a URL"]' );
 		await urlInput.fill( TEST_URL );
-		await page.keyboard.press( 'Enter' );
+		await page.keyboard.press( 'Escape' );
 		await inlineEditor.press( 'Escape' );
 
 		// Assert - Verify only "World" is linked.

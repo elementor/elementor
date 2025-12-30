@@ -81,10 +81,16 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	_afterRender() {
+		this.enforceDraggable();
+
 		if ( ! this.isValueDynamic() && ! this.handlerAttached ) {
 			this.element.addEventListener( 'click', this.handleRenderInlineEditor );
 			this.handlerAttached = true;
 		}
+	}
+
+	enforceDraggable() {
+		this.element?.children?.[ 0 ]?.setAttribute( 'draggable', 'true' );
 	}
 
 	resetInlineEditorRoot() {
