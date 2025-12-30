@@ -8,14 +8,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Migration_Interpreter {
 	public static function run( array $migration_schema, array $element_data, string $direction = 'up' ): array {
-		$operations = $migration_schema[ $direction ] ?? [];
+		try {
+			if ( ! in_array( $direction, [ 'up', 'down' ], true ) ) {
+				throw new \InvalidArgumentException( sprintf( 'Invalid direction "%s". Must be "up" or "down".', esc_html( $direction ) ) );
+			}
 
-		if ( empty( $operations ) ) {
+			$operations = $migration_schema[ $direction ] ?? [];
+
+			if ( empty( $operations ) ) {
+				return $element_data;
+			}
+
+			foreach ( $operations as $operation_def ) {
+				$element_data = self::apply_operation( $operation_def, $element_data );
+			}
+		} catch ( \Exception $e ) {
 			return $element_data;
-		}
-
-		foreach ( $operations as $operation_def ) {
-			$element_data = self::apply_operation( $operation_def, $element_data );
 		}
 
 		return $element_data;
@@ -78,7 +86,7 @@ class Migration_Interpreter {
 
 			case 'delete':
 				$clean = $op['clean'] ?? true;
-				self::delete_at_path( $data, $path, $clean );
+				self::execute_delete( $data, $path, $clean );
 				break;
 
 			case 'move':
@@ -130,7 +138,7 @@ class Migration_Interpreter {
 		self::set_at_path( $data, $dest, $value );
 
 		if ( $clean ) {
-			self::delete_at_path( $data, $src, true );
+			self::execute_delete( $data, $src, true );
 		}
 	}
 
@@ -173,8 +181,8 @@ class Migration_Interpreter {
 	private static function check_and_condition( array $condition, array $wildcard_values, array $data ): bool {
 		$conditions = $condition['conditions'] ?? [];
 
-		foreach ( $conditions as $cond ) {
-			if ( ! self::check_condition( $cond, $wildcard_values, $data ) ) {
+		foreach ( $conditions as $condition ) {
+			if ( ! self::check_condition( $condition, $wildcard_values, $data ) ) {
 				return false;
 			}
 		}
@@ -185,8 +193,8 @@ class Migration_Interpreter {
 	private static function check_or_condition( array $condition, array $wildcard_values, array $data ): bool {
 		$conditions = $condition['conditions'] ?? [];
 
-		foreach ( $conditions as $cond ) {
-			if ( self::check_condition( $cond, $wildcard_values, $data ) ) {
+		foreach ( $conditions as $condition ) {
+			if ( self::check_condition( $condition, $wildcard_values, $data ) ) {
 				return true;
 			}
 		}
@@ -327,6 +335,11 @@ class Migration_Interpreter {
 
 		if ( $last_separator === $last_bracket ) {
 			$close_bracket = strpos( $path, ']', $last_bracket );
+
+			if ( false === $close_bracket ) {
+				throw new \Exception( sprintf( 'Malformed path: missing closing bracket in "%s"', esc_html( $path ) ) );
+			}
+
 			return substr( $path, 0, $last_bracket + 1 ) . $new_key . substr( $path, $close_bracket );
 		}
 
@@ -343,7 +356,7 @@ class Migration_Interpreter {
 		self::set_recursive( $data, $segments, $value );
 	}
 
-	private static function delete_at_path( array &$data, string $path, bool $clean = true ): void {
+	private static function execute_delete( array &$data, string $path, bool $clean = true ): void {
 		$segments = self::parse_path_segments( $path );
 
 		if ( empty( $segments ) ) {
@@ -372,41 +385,43 @@ class Migration_Interpreter {
 			$char = $path[ $i ];
 
 			if ( '.' === $char ) {
-				if ( '' !== $current ) {
-					$segments[] = $current;
-					$current = '';
-				}
+				self::flush_segment( $segments, $current );
 			} elseif ( '[' === $char ) {
-				if ( '' !== $current ) {
-					$segments[] = $current;
-					$current = '';
-				}
-
-				$end = strpos( $path, ']', $i );
-
-				if ( false === $end ) {
-					break;
-				}
-
-				$index = substr( $path, $i + 1, $end - $i - 1 );
-
-				if ( '' === $index ) {
-					$segments[] = '[]';
-				} else {
-					$segments[] = $index;
-				}
-
-				$i = $end;
+				self::flush_segment( $segments, $current );
+				$i = self::parse_bracket_segment( $path, $i, $segments );
 			} else {
 				$current .= $char;
 			}
 		}
 
-		if ( '' !== $current ) {
-			$segments[] = $current;
-		}
+		self::flush_segment( $segments, $current );
 
 		return $segments;
+	}
+
+	private static function flush_segment( array &$segments, string &$current ): void {
+		if ( '' !== $current ) {
+			$segments[] = $current;
+			$current = '';
+		}
+	}
+
+	private static function parse_bracket_segment( string $path, int $start_pos, array &$segments ): int {
+		$end = strpos( $path, ']', $start_pos );
+
+		if ( false === $end ) {
+			throw new \Exception( sprintf( 'Malformed path: unmatched opening bracket in "%s"', esc_html( $path ) ) );
+		}
+
+		$index = substr( $path, $start_pos + 1, $end - $start_pos - 1 );
+
+		if ( '' === $index ) {
+			$segments[] = '[]';
+		} else {
+			$segments[] = $index;
+		}
+
+		return $end;
 	}
 
 	private static function set_recursive( array &$data, array $segments, $value ): void {

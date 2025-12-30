@@ -50,21 +50,15 @@ class Path_Resolver {
 			$char = $path[ $i ];
 
 			if ( '.' === $char ) {
-				if ( '' !== $current ) {
-					$segments[] = self::create_segment( $current, 'key' );
-					$current = '';
-				}
+				self::flush_current_segment( $segments, $current );
 			} elseif ( '[' === $char ) {
-				if ( '' !== $current ) {
-					$segments[] = self::create_segment( $current, 'key' );
-					$current = '';
-				}
+				self::flush_current_segment( $segments, $current );
 
-				$end = strpos( $path, ']', $i );
+			$end = strpos( $path, ']', $i );
 
-				if ( false === $end ) {
-					break;
-				}
+			if ( false === $end ) {
+				throw new \Exception( sprintf( 'Malformed path: unmatched opening bracket in "%s"', esc_html( $path ) ) );
+			}
 
 				$index = substr( $path, $i + 1, $end - $i - 1 );
 				$segments[] = self::create_segment( $index, 'index' );
@@ -74,11 +68,16 @@ class Path_Resolver {
 			}
 		}
 
-		if ( '' !== $current ) {
-			$segments[] = self::create_segment( $current, 'key' );
-		}
+		self::flush_current_segment( $segments, $current );
 
 		return $segments;
+	}
+
+	private static function flush_current_segment( array &$segments, string &$current ): void {
+		if ( '' !== $current ) {
+			$segments[] = self::create_segment( $current, 'key' );
+			$current = '';
+		}
 	}
 
 	private static function parse_concrete_path( string $path ): array {
@@ -109,46 +108,55 @@ class Path_Resolver {
 
 		$segment = array_shift( $segments );
 		$is_last_segment = empty( $segments );
-		$results = [];
 
 		if ( $segment['is_wildcard'] ) {
-			foreach ( array_keys( $data ) as $key ) {
-				$new_wildcard_values = $wildcard_values;
-				$new_wildcard_values[] = [
-					'key' => $key,
-					'type' => $segment['type'],
-				];
+			return self::resolve_wildcard_segment( $segment, $segments, $data, $wildcard_values, $current_path, $allow_missing_leaf );
+		}
 
-				$new_path = self::append_to_path( $current_path, $key, $segment['type'] );
+		return self::resolve_concrete_segment( $segment, $segments, $data, $wildcard_values, $current_path, $is_last_segment, $allow_missing_leaf );
+	}
 
-				$results = array_merge(
-					$results,
-					self::resolve_segments( $segments, $data[ $key ], $new_wildcard_values, $new_path, $allow_missing_leaf )
-				);
-			}
-		} else {
-			$key = $segment['value'];
-			$key_exists = array_key_exists( $key, $data );
+	private static function resolve_wildcard_segment( array $segment, array $segments, array $data, array $wildcard_values, string $current_path, bool $allow_missing_leaf ): array {
+		$results = [];
 
-			if ( ! $key_exists && ! ( $allow_missing_leaf && $is_last_segment ) ) {
-				return [];
-			}
+		foreach ( array_keys( $data ) as $key ) {
+			$new_wildcard_values = $wildcard_values;
+			$new_wildcard_values[] = [
+				'key' => $key,
+				'type' => $segment['type'],
+			];
 
 			$new_path = self::append_to_path( $current_path, $key, $segment['type'] );
 
-			if ( $is_last_segment ) {
-				$results = [
-					[
-						'path' => $new_path,
-						'wildcard_values' => $wildcard_values,
-					],
-				];
-			} else {
-				$results = self::resolve_segments( $segments, $data[ $key ], $wildcard_values, $new_path, $allow_missing_leaf );
-			}
+			$results = array_merge(
+				$results,
+				self::resolve_segments( $segments, $data[ $key ], $new_wildcard_values, $new_path, $allow_missing_leaf )
+			);
 		}
 
 		return $results;
+	}
+
+	private static function resolve_concrete_segment( array $segment, array $segments, array $data, array $wildcard_values, string $current_path, bool $is_last_segment, bool $allow_missing_leaf ): array {
+		$key = $segment['value'];
+		$key_exists = array_key_exists( $key, $data );
+
+		if ( ! $key_exists && ! ( $allow_missing_leaf && $is_last_segment ) ) {
+			return [];
+		}
+
+		$new_path = self::append_to_path( $current_path, $key, $segment['type'] );
+
+		if ( $is_last_segment ) {
+			return [
+				[
+					'path' => $new_path,
+					'wildcard_values' => $wildcard_values,
+				],
+			];
+		}
+
+		return self::resolve_segments( $segments, $data[ $key ], $wildcard_values, $new_path, $allow_missing_leaf );
 	}
 
 	private static function resolve_with_binding( array $segments, $data, string $prefix, array $wildcard_values, int &$wildcard_index ): ?string {
