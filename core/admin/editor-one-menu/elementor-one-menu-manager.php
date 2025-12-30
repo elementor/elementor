@@ -293,13 +293,10 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function intercept_legacy_submenus(): void {
-		$this->legacy_submenu_interceptor->intercept_all();
+		$this->legacy_submenu_interceptor->intercept_all( $this->is_pro_module_enabled );
 	}
 
 	public function enqueue_admin_menu_assets(): void {
-		if ( $this->menu_data_provider->is_elementor_editor_page() ) {
-			return;
-		}
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 

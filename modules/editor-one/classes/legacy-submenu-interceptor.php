@@ -23,19 +23,24 @@ class Legacy_Submenu_Interceptor {
 		$this->slug_normalizer = $slug_normalizer;
 	}
 
-	public function intercept_all(): void {
+	public function intercept_all( bool $is_pro_module_enabled ): void {
 		global $submenu;
 
 		$this->intercept_elementor_menu_items(
-			$submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] ?? []
+			$submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] ?? [],
+            $is_pro_module_enabled
 		);
+
+        if ( $is_pro_module_enabled ) {
+            return;
+        }
 
 		$this->intercept_templates_menu_items(
 			$submenu[ Menu_Config::LEGACY_TEMPLATES_SLUG ] ?? []
 		);
 	}
 
-	public function intercept_elementor_menu_items( array $submenu_items ): array {
+	public function intercept_elementor_menu_items( array $submenu_items, bool $is_pro_module_enabled ): array {
 		if ( empty( $submenu_items ) ) {
 			return $submenu_items;
 		}
@@ -57,7 +62,9 @@ class Legacy_Submenu_Interceptor {
 			$mapping_key = $this->find_mapping_key( $item_slug, $legacy_pro_mapping );
 
 			if ( null !== $mapping_key ) {
-				$this->register_mapped_item( $submenu_item, $mapping_key, $legacy_pro_mapping );
+				if ( ! $is_pro_module_enabled ) {
+					$this->register_mapped_item( $submenu_item, $mapping_key, $legacy_pro_mapping );
+				}
 			} else {
 				$this->register_unmapped_item( $submenu_item );
 			}
