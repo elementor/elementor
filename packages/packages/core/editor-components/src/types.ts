@@ -93,4 +93,7 @@ export type ComponentOverridable = {
 	origin_value: TransformablePropValue< string >;
 };
 
-export type UpdatedComponentNames = Record< string, string >;
+export type UpdatedComponentName = {
+	componentId: number;
+	title: string;
+};

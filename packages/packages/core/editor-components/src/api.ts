@@ -6,7 +6,7 @@ import {
 	type DocumentSaveStatus,
 	type OverridableProps,
 	type PublishedComponent,
-	type UpdatedComponentNames,
+	type UpdatedComponentName,
 } from './types';
 
 const BASE_URL = 'elementor/v1/components';
@@ -109,7 +109,7 @@ export const apiClient = {
 				}
 			)
 			.then( ( res ) => res.data.data ),
-	updateComponentTitle: ( updatedComponentNames: Array< UpdatedComponentNames > ) =>
+	updateComponentTitle: ( updatedComponentNames: UpdatedComponentName[] ) =>
 		httpService()
 			.post< { data: { failedIds: number[]; successIds: number[]; success: boolean } } >(
 				`${ BASE_URL }/update-titles`,

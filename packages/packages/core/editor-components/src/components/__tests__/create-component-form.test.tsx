@@ -267,9 +267,9 @@ describe( 'CreateComponentForm', () => {
 							},
 						},
 					} ),
-				editor_settings: expect.objectContaining( {
-					component_uid: GENERATED_UID,
-				} ),
+					editor_settings: expect.objectContaining( {
+						component_uid: GENERATED_UID,
+					} ),
 				} ),
 				withHistory: false,
 			} );

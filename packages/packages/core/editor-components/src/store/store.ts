@@ -14,7 +14,6 @@ import {
 	type PublishedComponent,
 	type StylesDefinition,
 	type UnpublishedComponent,
-	type UpdatedComponentNames,
 } from '../types';
 import { loadComponents } from './thunks';
 
@@ -31,7 +30,7 @@ type ComponentsState = {
 	archivedData: PublishedComponent[];
 	path: ComponentsPathItem[];
 	currentComponentId: V1Document[ 'id' ] | null;
-	updatedComponentNames: UpdatedComponentNames;
+	updatedComponentNames: Record< number, string >;
 };
 
 export type ComponentsSlice = SliceState< typeof slice >;
