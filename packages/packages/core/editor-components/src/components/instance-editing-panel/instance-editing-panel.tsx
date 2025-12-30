@@ -34,8 +34,7 @@ export function InstanceEditingPanel() {
 
 	const handleEditComponent = () => switchToComponent( componentId, componentInstanceId );
 
-	const isNonEmptyGroup = ( group: OverridablePropsGroup | null ): group is OverridablePropsGroup =>
-		group !== null && group.props.length > 0;
+	const isNonEmptyGroup = ( group: OverridablePropsGroup | null ) => group !== null && group.props.length > 0;
 
 	const groups = overridableProps.groups.order
 		.map( ( groupId ) => overridableProps.groups.items[ groupId ] ?? null )
