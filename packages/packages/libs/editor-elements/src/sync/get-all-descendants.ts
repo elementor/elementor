@@ -5,4 +5,3 @@ export function getAllDescendants( container: V1Element ): V1Element[] {
 
 	return [ container, ...children ];
 }
-
