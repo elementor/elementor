@@ -34,11 +34,12 @@ export function InstanceEditingPanel() {
 
 	const handleEditComponent = () => switchToComponent( componentId, componentInstanceId );
 
+	const isNonEmptyGroup = ( group: OverridablePropsGroup | null ): group is OverridablePropsGroup =>
+		group !== null && group.props.length > 0;
+
 	const groups = overridableProps.groups.order
-		.map( ( groupId ) =>
-			overridableProps.groups.items[ groupId ] ? overridableProps.groups.items[ groupId ] : null
-		)
-		.filter( Boolean ) as OverridablePropsGroup[];
+		.map( ( groupId ) => overridableProps.groups.items[ groupId ] ?? null )
+		.filter( isNonEmptyGroup );
 
 	const isEmpty = groups.length === 0 || Object.keys( overridableProps.props ).length === 0;
 
