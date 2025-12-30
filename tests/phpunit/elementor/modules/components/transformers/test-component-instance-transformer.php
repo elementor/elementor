@@ -134,7 +134,7 @@ class Mock_Simple_Component extends Component {
 		return true;
 	}
 
-	public function get_elements_data(): array {
+	public function get_elements_data( $status = self::STATUS_PUBLISH ): array {
 		return [ 'mock' => 'data' ];
 	}
 
@@ -158,7 +158,7 @@ class Mock_Self_Nesting_Component extends Component {
 		return true;
 	}
 
-	public function get_elements_data(): array {
+	public function get_elements_data( $status = self::STATUS_PUBLISH ): array {
 		return [ 'mock' => 'data' ];
 	}
 
@@ -189,7 +189,7 @@ class Mock_Nesting_Component extends Component {
 		return true;
 	}
 
-	public function get_elements_data(): array {
+	public function get_elements_data( $status = self::STATUS_PUBLISH ): array {
 		return [ 'mock' => 'data' ];
 	}
 
