@@ -57,7 +57,7 @@ class Path_Resolver {
 			$end = strpos( $path, ']', $i );
 
 			if ( false === $end ) {
-				throw new \Exception( sprintf( 'Malformed path: unmatched opening bracket in "%s"', $path ) );
+				throw new \Exception( sprintf( 'Malformed path: unmatched opening bracket in "%s"', esc_html( $path ) ) );
 			}
 
 				$index = substr( $path, $i + 1, $end - $i - 1 );

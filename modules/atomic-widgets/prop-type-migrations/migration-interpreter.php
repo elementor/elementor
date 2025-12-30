@@ -10,7 +10,7 @@ class Migration_Interpreter {
 	public static function run( array $migration_schema, array $element_data, string $direction = 'up' ): array {
 		try {
 			if ( ! in_array( $direction, [ 'up', 'down' ], true ) ) {
-				throw new \InvalidArgumentException( sprintf( 'Invalid direction "%s". Must be "up" or "down".', $direction ) );
+				throw new \InvalidArgumentException( sprintf( 'Invalid direction "%s". Must be "up" or "down".', esc_html( $direction ) ) );
 			}
 
 			$operations = $migration_schema[ $direction ] ?? [];
@@ -333,15 +333,15 @@ class Migration_Interpreter {
 			false === $last_bracket ? -1 : $last_bracket
 		);
 
-	if ( $last_separator === $last_bracket ) {
-		$close_bracket = strpos( $path, ']', $last_bracket );
+		if ( $last_separator === $last_bracket ) {
+			$close_bracket = strpos( $path, ']', $last_bracket );
 
-		if ( false === $close_bracket ) {
-			throw new \Exception( sprintf( 'Malformed path: missing closing bracket in "%s"', $path ) );
+			if ( false === $close_bracket ) {
+				throw new \Exception( sprintf( 'Malformed path: missing closing bracket in "%s"', esc_html( $path ) ) );
+			}
+
+			return substr( $path, 0, $last_bracket + 1 ) . $new_key . substr( $path, $close_bracket );
 		}
-
-		return substr( $path, 0, $last_bracket + 1 ) . $new_key . substr( $path, $close_bracket );
-	}
 
 		return substr( $path, 0, $last_dot + 1 ) . $new_key;
 	}
@@ -410,7 +410,7 @@ class Migration_Interpreter {
 		$end = strpos( $path, ']', $start_pos );
 
 		if ( false === $end ) {
-			throw new \Exception( sprintf( 'Malformed path: unmatched opening bracket in "%s"', $path ) );
+			throw new \Exception( sprintf( 'Malformed path: unmatched opening bracket in "%s"', esc_html( $path ) ) );
 		}
 
 		$index = substr( $path, $start_pos + 1, $end - $start_pos - 1 );
