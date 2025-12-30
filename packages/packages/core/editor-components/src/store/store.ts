@@ -136,6 +136,9 @@ const getPath = ( state: ComponentsSlice ) => state[ SLICE_NAME ].path;
 const getCurrentComponentId = ( state: ComponentsSlice ) => state[ SLICE_NAME ].currentComponentId;
 export const selectComponent = ( state: ComponentsSlice, componentId: ComponentId ) =>
 	state[ SLICE_NAME ].data.find( ( component ) => component.id === componentId );
+export const useComponent = ( componentId: ComponentId | null ) => {
+	return useSelector( ( state: ComponentsSlice ) => ( componentId ? selectComponent( state, componentId ) : null ) );
+};
 
 export const selectComponents = createSelector(
 	selectData,
@@ -180,6 +183,11 @@ export const selectOverridableProps = createSelector(
 		return component.overridableProps ?? DEFAULT_OVERRIDABLE_PROPS;
 	}
 );
+export const useOverridableProps = ( componentId: ComponentId | null ) => {
+	return useSelector( ( state: ComponentsSlice ) =>
+		componentId ? selectOverridableProps( state, componentId ) : null
+	);
+};
 export const selectIsOverridablePropsLoaded = createSelector(
 	selectComponent,
 	( component: PublishedComponent | undefined ) => {
