@@ -70,7 +70,7 @@ Most sites would need classes for:
 - Hero sections (main site intro, etc).
 
 Global Classes SHOULD HAVE meaningful names that reflect their purpose and usage.
-Global Classes SHOULD HAVE PROPERTIES / custom CSS that support their intended design and functionality.
+Global Classes SHOULD HAVE PROPERTIES.
 
 DO NOT PROVIDE EMPTY OBJECTS
 
