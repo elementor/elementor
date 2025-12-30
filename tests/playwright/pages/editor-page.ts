@@ -11,6 +11,7 @@ import TopBarSelectors, { TopBarSelector } from '../selectors/top-bar-selectors'
 import Breakpoints from '../assets/breakpoints';
 import { timeouts } from '../config/timeouts';
 import v4Panel from './atomic-elements-panel/v4-elements-panel';
+import { INLINE_EDITING_SELECTORS } from '../sanity/modules/v4-tests/inline-text-editing/selectors/selectors';
 
 let $e: $eType;
 let elementor: ElementorType;
@@ -1369,5 +1370,47 @@ export default class EditorPage extends BasePage {
 		const elementWidthInPxUnit = await element.boundingBox().then( ( box ) => box?.width ?? 0 );
 		const vwAndPxValuesAreEqual = Math.abs( vwConvertedToPxUnit - elementWidthInPxUnit ) <= 1;
 		expect( vwAndPxValuesAreEqual ).toBeTruthy();
+	}
+
+	async triggerEditingElement( elementId: string ): Promise<Locator> {
+		await this.selectElement( elementId );
+
+		const element = this.previewFrame.locator( `.elementor-element-${ elementId }` );
+		await element.dblclick();
+		const inlineEditor = this.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
+		await inlineEditor.waitFor();
+
+		return inlineEditor;
+	}
+
+	async selectInlineEditedText( elementId: string, substring: string ): Promise<void> {
+		const inlineEditor = await this.triggerEditingElement( elementId );
+		const entireText = await inlineEditor.textContent();
+
+		if ( ! entireText?.includes( substring ) ) {
+			return;
+		}
+
+		const startIndex = entireText.indexOf( substring );
+
+		await this.page.keyboard.press( 'ControlOrMeta+ArrowLeft', { delay: 100 } );
+
+		for ( let i = 0; i < startIndex; i++ ) {
+			await this.page.keyboard.press( 'ArrowRight', { delay: 100 } );
+		}
+
+		for ( let i = 0; i < substring.length; i++ ) {
+			await this.page.keyboard.press( 'Shift+ArrowRight', { delay: 100 } );
+		}
+	}
+
+	async toggleInlineEditingAttribute( attribute: string ): Promise<void> {
+		if ( ! Object.keys( INLINE_EDITING_SELECTORS.attributes ).includes( attribute ) ) {
+			return;
+		}
+
+		const button = this.page.locator( `[role="presentation"] button[value="${ INLINE_EDITING_SELECTORS.attributes[ attribute ] }"]` );
+
+		await button.click();
 	}
 }

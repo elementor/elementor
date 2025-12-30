@@ -2,7 +2,7 @@ import { type PropValue } from '@elementor/editor-props';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 import { generateUniqueId } from '@elementor/utils';
 
-import { type OverridableProp } from '../../types';
+import { type OriginPropFields, type OverridableProp } from '../../types';
 import { selectOverridableProps, slice } from '../store';
 import {
 	addPropToGroup,
@@ -22,6 +22,7 @@ type Props = {
 	elType: string;
 	widgetType: string;
 	originValue: PropValue;
+	originPropFields?: OriginPropFields;
 };
 
 export function setOverridableProp( {
@@ -34,6 +35,7 @@ export function setOverridableProp( {
 	elType,
 	widgetType,
 	originValue,
+	originPropFields,
 }: Props ): OverridableProp | undefined {
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
@@ -60,6 +62,7 @@ export function setOverridableProp( {
 		elType,
 		originValue,
 		groupId: currentGroupId,
+		originPropFields,
 	};
 
 	const stateAfterRemovingDuplicates = removePropsFromState(
