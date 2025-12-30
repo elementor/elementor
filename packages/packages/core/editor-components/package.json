@@ -62,6 +62,7 @@
     "@elementor/ui": "1.36.17",
     "@elementor/utils": "3.35.0",
     "@wordpress/i18n": "^5.13.0",
+    "@elementor/editor-notifications": "3.35.0",
     "@elementor/editor-current-user": "3.35.0"
   },
   "peerDependencies": {
