@@ -4,7 +4,7 @@
       "op": {
         "fn": "set",
         "path": "$$type",
-        "value": "html"
+        "value": "group2_y"
       }
     }
   ],
@@ -13,7 +13,7 @@
       "op": {
         "fn": "set",
         "path": "$$type",
-        "value": "string_v2"
+        "value": "group2_x"
       }
     }
   ]

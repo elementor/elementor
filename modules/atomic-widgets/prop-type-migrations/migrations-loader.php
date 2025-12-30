@@ -11,22 +11,29 @@ class Migrations_Loader {
 
 	private ?array $manifest = null;
 
-	private string $migrations_path;
+	private string $base_path;
 
-	private function __construct() {
-		$this->migrations_path = ELEMENTOR_PATH . 'migrations/';
+	private string $manifest_file;
+
+	private function __construct( string $base_path, string $manifest_file = 'manifest.json' ) {
+		$this->base_path = rtrim( $base_path, '/' ) . '/';
+		$this->manifest_file = $manifest_file;
 	}
 
-	public static function instance(): self {
+	public static function make( string $base_path, string $manifest_file = 'manifest.json' ): self {
 		if ( null === self::$instance ) {
-			self::$instance = new self();
+			self::$instance = new self( $base_path, $manifest_file );
 		}
 
 		return self::$instance;
 	}
 
-	public function find_migration_path( string $source_type, string $target_type, ?string $widget_type = null, ?string $prop = null, ?string $manifest_path = null ): ?array {
-		$graph = $this->build_migration_graph( $widget_type, $prop, $manifest_path );
+	public static function destroy(): void {
+		self::$instance = null;
+	}
+
+	public function find_migration_path( string $source_type, string $target_type, ?string $widget_type = null, ?string $prop = null ): ?array {
+		$graph = $this->build_migration_graph( $widget_type, $prop );
 
 		$path = $this->find_shortest_path( $graph, $source_type, $target_type );
 
@@ -49,11 +56,11 @@ class Migrations_Loader {
 		return null;
 	}
 
-	private function build_migration_graph( ?string $widget_type, ?string $prop, ?string $manifest_path ): array {
-		$manifest = $this->get_manifest( $manifest_path );
+	private function build_migration_graph( ?string $widget_type, ?string $prop ): array {
+		$manifest = $this->get_manifest();
 		$graph = [];
 
-		foreach ( $manifest['migrations'] as $migration ) {
+		foreach ( $manifest['migrations'] as $id => $migration ) {
 			if ( $widget_type && isset( $migration['widgetType'] ) && ! in_array( $widget_type, $migration['widgetType'], true ) ) {
 				continue;
 			}
@@ -68,6 +75,7 @@ class Migrations_Loader {
 				$graph[ $from ] = [];
 			}
 
+			$migration['id'] = $id;
 			$graph[ $from ][] = $migration;
 		}
 
@@ -110,15 +118,22 @@ class Migrations_Loader {
 		return null;
 	}
 
-	public function load_operations( string $migration_id, ?string $migrations_dir = null ): ?array {
-		$dir = $migrations_dir ?? $this->migrations_path;
-		$file_path = $dir . $migration_id . '.json';
+	public function load_operations( string $migration_id ): ?array {
+		$manifest = $this->get_manifest();
 
-		if ( ! file_exists( $file_path ) ) {
+		if ( ! isset( $manifest['migrations'][ $migration_id ] ) ) {
 			return null;
 		}
 
-		$contents = file_get_contents( $file_path );
+		$migration = $manifest['migrations'][ $migration_id ];
+
+		if ( ! isset( $migration['url'] ) ) {
+			return null;
+		}
+
+		$file_path = $this->base_path . $migration['url'];
+
+		$contents = $this->read_source( $file_path );
 
 		if ( false === $contents ) {
 			return null;
@@ -134,19 +149,14 @@ class Migrations_Loader {
 	}
 
 
-	private function get_manifest( ?string $manifest_path = null ): array {
-		if ( null === $manifest_path && null !== $this->manifest ) {
+	private function get_manifest(): array {
+		if ( null !== $this->manifest ) {
 			return $this->manifest;
 		}
 
-		$path = $manifest_path ?? ( $this->migrations_path . 'manifest.json' );
+		$manifest_path = $this->base_path . $this->manifest_file;
 
-		if ( ! file_exists( $path ) ) {
-			$this->manifest = [ 'migrations' => [] ];
-			return $this->manifest;
-		}
-
-		$contents = file_get_contents( $path );
+		$contents = $this->read_source( $manifest_path );
 
 		if ( false === $contents ) {
 			$this->manifest = [ 'migrations' => [] ];
@@ -163,5 +173,27 @@ class Migrations_Loader {
 		$this->manifest = $manifest;
 
 		return $this->manifest;
+	}
+
+	private function read_source( string $path ): string|false {
+		if ( $this->is_url( $path ) ) {
+			$response = wp_remote_get( $path, [ 'timeout' => 10 ] );
+
+			if ( is_wp_error( $response ) ) {
+				return false;
+			}
+
+			return wp_remote_retrieve_body( $response );
+		}
+
+		if ( ! file_exists( $path ) ) {
+			return false;
+		}
+
+		return file_get_contents( $path );
+	}
+
+	private function is_url( string $path ): bool {
+		return str_starts_with( $path, 'http://' ) || str_starts_with( $path, 'https://' );
 	}
 }

@@ -13,20 +13,19 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @group prop-type-migrations
  */
 class Test_Migrations_Loader extends Elementor_Test_Base {
-	private string $fixtures_path;
+	private string $fixtures_path = __DIR__ . '/fixtures/migrations/';
 
-	public function setUp(): void {
-		parent::setUp();
-		$this->fixtures_path = __DIR__ . '/fixtures/migrations/';
+
+	public function tearDown(): void {
+		Migrations_Loader::destroy();
+		parent::tearDown();
 	}
 
 	public function test_find_direct_migration_path() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest.json';
-
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 		// Act
-		$result = $loader->find_migration_path( 'string', 'string_v2', null, null, $manifest_path );
+		$result = $loader->find_migration_path( 'string', 'string_v2' );
 
 		// Assert
 		$this->assertNotNull( $result );
@@ -37,11 +36,9 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_find_chained_migration_path() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest.json';
-
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 		// Act
-		$result = $loader->find_migration_path( 'string', 'html', null, null, $manifest_path );
+		$result = $loader->find_migration_path( 'string', 'html' );
 
 		// Assert
 		$this->assertNotNull( $result );
@@ -53,11 +50,9 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_find_reverse_migration_path() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest.json';
-
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 		// Act
-		$result = $loader->find_migration_path( 'html', 'string', null, null, $manifest_path );
+		$result = $loader->find_migration_path( 'html', 'string' );
 
 		// Assert
 		$this->assertNotNull( $result );
@@ -69,11 +64,9 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_find_migration_path_with_widget_filter() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest.json';
-
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 		// Act
-		$result = $loader->find_migration_path( 'string_v2', 'html', 'e-heading', null, $manifest_path );
+		$result = $loader->find_migration_path( 'string_v2', 'html', 'e-heading' );
 
 		// Assert
 		$this->assertNotNull( $result );
@@ -83,11 +76,9 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_find_migration_path_with_prop_filter() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest.json';
-
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 		// Act
-		$result = $loader->find_migration_path( 'string_v2', 'html', null, 'title', $manifest_path );
+		$result = $loader->find_migration_path( 'string_v2', 'html', null, 'title' );
 
 		// Assert
 		$this->assertNotNull( $result );
@@ -97,11 +88,10 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_find_migration_path_no_path_exists() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest.json';
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 
 		// Act
-		$result = $loader->find_migration_path( 'string', 'nonexistent', null, null, $manifest_path );
+		$result = $loader->find_migration_path( 'string', 'nonexistent' );
 
 		// Assert
 		$this->assertNull( $result );
@@ -109,10 +99,10 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_load_operations() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 
 		// Act
-		$operations = $loader->load_operations( 'string-to-string_v2', $this->fixtures_path );
+		$operations = $loader->load_operations( 'string-to-string_v2' );
 
 		// Assert
 		$this->assertNotNull( $operations );
@@ -124,10 +114,10 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_load_operations_file_not_found() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 
 		// Act
-		$operations = $loader->load_operations( 'nonexistent', $this->fixtures_path );
+		$operations = $loader->load_operations( 'nonexistent' );
 
 		// Assert
 		$this->assertNull( $operations );
@@ -135,11 +125,10 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_same_source_and_target_returns_empty_path() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest.json';
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 
 		// Act
-		$result = $loader->find_migration_path( 'string', 'string', null, null, $manifest_path );
+		$result = $loader->find_migration_path( 'string', 'string' );
 
 		// Assert
 		$this->assertNull( $result );
@@ -147,11 +136,10 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_widget_filter_excludes_migration() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest.json';
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 
-		// Act - e-button not in widgetType filter
-		$result = $loader->find_migration_path( 'string_v2', 'html', 'e-button', null, $manifest_path );
+		// Act
+		$result = $loader->find_migration_path( 'string_v2', 'html', 'e-button' );
 
 		// Assert
 		$this->assertNull( $result );
@@ -159,11 +147,10 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_prop_filter_excludes_migration() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest.json';
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 
-		// Act - description not in prop filter
-		$result = $loader->find_migration_path( 'string_v2', 'html', null, 'description', $manifest_path );
+		// Act
+		$result = $loader->find_migration_path( 'string_v2', 'html', null, 'description' );
 
 		// Assert
 		$this->assertNull( $result );
@@ -171,11 +158,10 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_complex_chain_with_multiple_hops() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest-complex.json';
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 
-		// Act - a->b->c->d
-		$result = $loader->find_migration_path( 'type_a', 'type_d', null, null, $manifest_path );
+		// Act
+		$result = $loader->find_migration_path( 'type_a', 'type_d' );
 
 		// Assert
 		$this->assertNotNull( $result );
@@ -188,11 +174,11 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_finds_shortest_path_when_multiple_routes_exist() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest-multiple-paths.json';
+		Migrations_Loader::destroy();
+		$loader = Migrations_Loader::make( $this->fixtures_path, 'manifest-multiple-paths.json' );
 
-		// Act - a->b->d vs a->c->e->d (shorter path should win)
-		$result = $loader->find_migration_path( 'type_a', 'type_d', null, null, $manifest_path );
+		// Act
+		$result = $loader->find_migration_path( 'type_a', 'type_d' );
 
 		// Assert
 		$this->assertNotNull( $result );
@@ -203,11 +189,11 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_handles_empty_manifest() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest-empty.json';
+		Migrations_Loader::destroy();
+		$loader = Migrations_Loader::make( $this->fixtures_path, 'manifest-empty.json' );
 
 		// Act
-		$result = $loader->find_migration_path( 'string', 'string_v2', null, null, $manifest_path );
+		$result = $loader->find_migration_path( 'string', 'string_v2' );
 
 		// Assert
 		$this->assertNull( $result );
@@ -215,11 +201,11 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_handles_missing_manifest_file() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'nonexistent.json';
+		Migrations_Loader::destroy();
+		$loader = Migrations_Loader::make( $this->fixtures_path, 'nonexistent.json' );
 
 		// Act
-		$result = $loader->find_migration_path( 'string', 'string_v2', null, null, $manifest_path );
+		$result = $loader->find_migration_path( 'string', 'string_v2' );
 
 		// Assert
 		$this->assertNull( $result );
@@ -227,11 +213,10 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_reverse_complex_chain() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest-complex.json';
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 
-		// Act - d->c->b->a (reverse)
-		$result = $loader->find_migration_path( 'type_d', 'type_a', null, null, $manifest_path );
+		// Act
+		$result = $loader->find_migration_path( 'type_d', 'type_a' );
 
 		// Assert
 		$this->assertNotNull( $result );
@@ -244,11 +229,10 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_partial_chain_with_widget_filter() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest-complex.json';
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 
-		// Act - type_a->type_c, but b-to-c has widget filter
-		$result = $loader->find_migration_path( 'type_a', 'type_c', 'e-test', null, $manifest_path );
+		// Act
+		$result = $loader->find_migration_path( 'type_a', 'type_c', 'e-test' );
 
 		// Assert
 		$this->assertNotNull( $result );
@@ -257,11 +241,10 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_no_path_with_incompatible_filters() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest-complex.json';
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 
-		// Act - type_a->type_c, but b-to-c requires e-test widget
-		$result = $loader->find_migration_path( 'type_a', 'type_c', 'e-other', null, $manifest_path );
+		// Act
+		$result = $loader->find_migration_path( 'type_a', 'type_c', 'e-other' );
 
 		// Assert
 		$this->assertNull( $result );
@@ -269,11 +252,10 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 	public function test_disconnected_graph_no_path() {
 		// Arrange
-		$loader = Migrations_Loader::instance();
-		$manifest_path = $this->fixtures_path . 'manifest-disconnected.json';
+		$loader = Migrations_Loader::make( $this->fixtures_path );
 
-		// Act - group1 and group2 are not connected
-		$result = $loader->find_migration_path( 'group1_a', 'group2_x', null, null, $manifest_path );
+		// Act
+		$result = $loader->find_migration_path( 'group1_a', 'group2_x' );
 
 		// Assert
 		$this->assertNull( $result );

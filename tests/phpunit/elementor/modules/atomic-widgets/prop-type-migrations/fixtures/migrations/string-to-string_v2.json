@@ -3,7 +3,7 @@
     {
       "op": {
         "fn": "set",
-        "path": "$.$$type",
+        "path": "$$type",
         "value": "string_v2"
       }
     }
@@ -12,10 +12,9 @@
     {
       "op": {
         "fn": "set",
-        "path": "$.$$type",
+        "path": "$$type",
         "value": "string"
       }
     }
   ]
 }
-

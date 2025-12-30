@@ -4,7 +4,7 @@
       "op": {
         "fn": "set",
         "path": "$$type",
-        "value": "html"
+        "value": "type_b"
       }
     }
   ],
@@ -13,7 +13,7 @@
       "op": {
         "fn": "set",
         "path": "$$type",
-        "value": "string_v2"
+        "value": "type_a"
       }
     }
   ]

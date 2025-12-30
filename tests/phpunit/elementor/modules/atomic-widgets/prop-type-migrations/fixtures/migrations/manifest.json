@@ -1,17 +1,42 @@
 {
-  "migrations": [
-    {
-      "id": "string-to-string_v2",
+  "migrations": {
+    "string-to-string_v2": {
       "fromType": "string",
-      "toType": "string_v2"
+      "toType": "string_v2",
+      "url": "string-to-string_v2.json"
     },
-    {
-      "id": "string_v2-to-html",
+    "string_v2-to-html": {
       "widgetType": ["e-heading", "e-paragraph"],
       "prop": "title",
       "fromType": "string_v2",
-      "toType": "html"
+      "toType": "html",
+      "url": "string_v2-to-html.json"
+    },
+    "a-to-b": {
+      "fromType": "type_a",
+      "toType": "type_b",
+      "url": "a-to-b.json"
+    },
+    "b-to-c": {
+      "widgetType": ["e-test"],
+      "fromType": "type_b",
+      "toType": "type_c",
+      "url": "b-to-c.json"
+    },
+    "c-to-d": {
+      "fromType": "type_c",
+      "toType": "type_d",
+      "url": "c-to-d.json"
+    },
+    "group1-a-to-b": {
+      "fromType": "group1_a",
+      "toType": "group1_b",
+      "url": "group1-a-to-b.json"
+    },
+    "group2-x-to-y": {
+      "fromType": "group2_x",
+      "toType": "group2_y",
+      "url": "group2-x-to-y.json"
     }
-  ]
+  }
 }
-

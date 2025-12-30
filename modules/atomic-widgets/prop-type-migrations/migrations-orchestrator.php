@@ -13,33 +13,40 @@ class Migrations_Orchestrator {
 
 	private Migrations_Loader $loader;
 
-	private function __construct() {
-		$this->loader = Migrations_Loader::instance();
+	private string $migrations_base_path;
+
+	private function __construct( string $migrations_base_path ) {
+		$this->migrations_base_path = $migrations_base_path;
+		$this->loader = Migrations_Loader::make( $migrations_base_path );
 	}
 
-	public static function instance(): self {
+	public static function make( string $migrations_base_path ): self {
 		if ( null === self::$instance ) {
-			self::$instance = new self();
+			self::$instance = new self( $migrations_base_path );
 		}
 
 		return self::$instance;
 	}
 
-	public function migrate( array $settings, array $schema, ?int $post_id, string $widget_type ): array {
-		$mismatches = $this->detect_type_mismatches( $settings, $schema );
+	public static function destroy(): void {
+		self::$instance = null;
+	}
 
-		if ( empty( $mismatches ) ) {
+	public function migrate( array $settings, array $schema, string $widget_type ): array {
+		$migration_triggers = $this->detect_type_mismatches( $settings, $schema );
+
+		if ( empty( $migration_triggers ) ) {
 			return $settings;
 		}
 
 		$migrated_settings = $settings;
 
-		foreach ( $mismatches as $mismatch ) {
+		foreach ( $migration_triggers as $trigger ) {
 			$path_result = $this->loader->find_migration_path(
-				$mismatch['found_type'],
-				$mismatch['expected_type'],
+				$trigger['found_type'],
+				$trigger['expected_type'],
 				$widget_type,
-				$mismatch['prop_name']
+				$trigger['prop_name']
 			);
 
 			if ( ! $path_result ) {
@@ -49,7 +56,8 @@ class Migrations_Orchestrator {
 			$migrated_settings = $this->execute_migrations(
 				$migrated_settings,
 				$path_result['migrations'],
-				$path_result['direction']
+				$path_result['direction'],
+				$trigger['prop_name']
 			);
 		}
 
@@ -57,7 +65,7 @@ class Migrations_Orchestrator {
 	}
 
 	private function detect_type_mismatches( array $settings, array $schema ): array {
-		$mismatches = [];
+		$migration_triggers = [];
 
 		foreach ( $schema as $prop_name => $prop_type ) {
 			if ( ! ( $prop_type instanceof Prop_Type ) ) {
@@ -68,26 +76,35 @@ class Migrations_Orchestrator {
 				continue;
 			}
 
-			$mismatch = $this->check_prop_mismatch(
+			$trigger = $this->check_prop(
 				$settings[ $prop_name ],
 				$prop_type,
 				$prop_name,
 				[ $prop_name ]
 			);
 
-			if ( $mismatch ) {
-				$mismatches[] = $mismatch;
+			if ( $trigger ) {
+				$migration_triggers[] = $trigger;
 			}
 		}
 
-		return $mismatches;
+		return $migration_triggers;
 	}
 
-	private function check_prop_mismatch( $value, Prop_Type $prop_type, string $prop_name, array $path ): ?array {
+	private function check_prop( $value, Prop_Type $prop_type, string $prop_name, array $path ): ?array {
 		if ( $prop_type->validate( $value ) ) {
 			return null;
 		}
 
+		$trigger = $this->type_mismatch( $value, $prop_type, $prop_name );
+		if ( $trigger ) {
+			return $trigger;
+		}
+
+		return null;
+	}
+
+	private function type_mismatch( $value, Prop_Type $prop_type, string $prop_name ): ?array {
 		if ( ! is_array( $value ) || ! isset( $value['$$type'] ) ) {
 			return null;
 		}
@@ -103,10 +120,13 @@ class Migrations_Orchestrator {
 			'prop_name' => $prop_name,
 			'found_type' => $found_type,
 			'expected_type' => $expected_type,
+			'reason' => 'type_mismatch',
 		];
 	}
 
-	private function execute_migrations( array $settings, array $migrations, string $direction ): array {
+	private function execute_migrations( array $settings, array $migrations, string $direction, string $prop_name ): array {
+		$prop_value = $settings[ $prop_name ] ?? null;
+
 		foreach ( $migrations as $migration ) {
 			$operations = $this->loader->load_operations( $migration['id'] );
 
@@ -114,11 +134,13 @@ class Migrations_Orchestrator {
 				continue;
 			}
 
-			$settings = Migration_Interpreter::run(
+			$prop_value = Migration_Interpreter::run(
 				[ $direction => $operations[ $direction ] ],
-				$settings
+				$prop_value
 			);
 		}
+
+		$settings[ $prop_name ] = $prop_value;
 
 		return $settings;
 	}

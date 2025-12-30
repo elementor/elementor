@@ -1,30 +1,29 @@
 {
-  "migrations": [
-    {
-      "id": "a-to-b",
+  "migrations": {
+    "a-to-b": {
       "fromType": "type_a",
-      "toType": "type_b"
+      "toType": "type_b",
+      "url": "a-to-b.json"
     },
-    {
-      "id": "b-to-d",
+    "b-to-d": {
       "fromType": "type_b",
-      "toType": "type_d"
+      "toType": "type_d",
+      "url": "b-to-d.json"
     },
-    {
-      "id": "a-to-c",
+    "a-to-c": {
       "fromType": "type_a",
-      "toType": "type_c"
+      "toType": "type_c",
+      "url": "a-to-c.json"
     },
-    {
-      "id": "c-to-e",
+    "c-to-e": {
       "fromType": "type_c",
-      "toType": "type_e"
+      "toType": "type_e",
+      "url": "c-to-e.json"
     },
-    {
-      "id": "e-to-d",
+    "e-to-d": {
       "fromType": "type_e",
-      "toType": "type_d"
+      "toType": "type_d",
+      "url": "e-to-d.json"
     }
-  ]
+  }
 }
-
