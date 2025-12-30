@@ -1,14 +1,24 @@
 import * as React from 'react';
-import { createElement, useRef } from 'react';
+import { createElement, useMemo, useRef } from 'react';
+import { PromotionChip } from '@elementor/editor-ui';
 import { PlusIcon } from '@elementor/icons';
-import { bindMenu, bindTrigger, IconButton, Menu, MenuItem, type PopupState, Typography } from '@elementor/ui';
+import { bindMenu, bindTrigger, Box, IconButton, Menu, MenuItem, type PopupState, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useQuotaPermissions } from '../../hooks/use-quota-permissions';
 import { type TVariablesList } from '../../storage';
 import { trackVariablesManagerEvent } from '../../utils/tracking';
 import { getVariableTypes } from '../../variables-registry/variable-type-registry';
 
 export const SIZE = 'tiny';
+
+type MenuOptionConfig = {
+	key: string;
+	propTypeKey: string;
+	variableType: string;
+	defaultValue: string;
+	icon: React.ElementType;
+};
 
 type VariableManagerCreateMenuProps = {
 	variables: TVariablesList;
@@ -27,22 +37,19 @@ export const VariableManagerCreateMenu = ( {
 
 	const variableTypes = getVariableTypes();
 
-	const menuOptions = Object.entries( variableTypes )
-		.filter( ( [ , variable ] ) => !! variable.defaultValue )
-		.map( ( [ key, variable ] ) => {
-			const displayName = variable.variableType.charAt( 0 ).toUpperCase() + variable.variableType.slice( 1 );
-
-			return {
-				key,
-				name: displayName,
-				icon: variable.icon,
-				onClick: () => {
-					const defaultName = getDefaultName( variables, key, variable.variableType );
-					onCreate( key, defaultName, variable.defaultValue || '' );
-					trackVariablesManagerEvent( { action: 'add', varType: variable.variableType } );
-				},
-			};
-		} );
+	const menuOptionConfigs = useMemo(
+		() =>
+			Object.entries( variableTypes )
+				.filter( ( [ , variable ] ) => !! variable.defaultValue )
+				.map( ( [ key, variable ] ) => ( {
+					key,
+					propTypeKey: variable.propTypeUtil.key,
+					variableType: variable.variableType,
+					defaultValue: variable.defaultValue || '',
+					icon: variable.icon,
+				} ) ),
+		[ variableTypes ]
+	);
 
 	return (
 		<>
@@ -76,28 +83,63 @@ export const VariableManagerCreateMenu = ( {
 				} }
 				data-testid="variable-manager-create-menu"
 			>
-				{ menuOptions.map( ( option ) => (
-					<MenuItem
-						key={ option.key }
-						onClick={ () => {
-							option.onClick?.();
-							menuState.close();
-						} }
-						sx={ {
-							gap: 1.5,
-						} }
-					>
-						{ createElement( option.icon, {
-							fontSize: SIZE,
-							color: 'action',
-						} ) }
-						<Typography variant="caption" color="text.primary">
-							{ option.name }
-						</Typography>
-					</MenuItem>
+				{ menuOptionConfigs.map( ( config ) => (
+					<MenuOption
+						key={ config.key }
+						config={ config }
+						variables={ variables }
+						onCreate={ onCreate }
+						onClose={ menuState.close }
+					/>
 				) ) }
 			</Menu>
 		</>
+	);
+};
+
+const MenuOption = ( {
+	config,
+	variables,
+	onCreate,
+	onClose,
+}: {
+	config: MenuOptionConfig;
+	variables: TVariablesList;
+	onCreate: VariableManagerCreateMenuProps[ 'onCreate' ];
+	onClose: () => void;
+} ) => {
+	const displayName = config.variableType.charAt( 0 ).toUpperCase() + config.variableType.slice( 1 );
+	const userQuotaPermissions = useQuotaPermissions( config.propTypeKey );
+	const isDisabled = ! userQuotaPermissions.canAdd();
+
+	const handleClick = () => {
+		if ( isDisabled ) {
+			return;
+		}
+
+		const defaultName = getDefaultName( variables, config.key, config.variableType );
+
+		onCreate( config.key, defaultName, config.defaultValue );
+		trackVariablesManagerEvent( { action: 'add', varType: config.variableType } );
+		onClose();
+	};
+
+	return (
+		<MenuItem onClick={ handleClick } sx={ { gap: 1.5, cursor: isDisabled ? 'default' : 'pointer' } }>
+			{ createElement( config.icon, { fontSize: SIZE, color: isDisabled ? 'disabled' : 'action' } ) }
+			<Typography variant="caption" color={ isDisabled ? 'text.disabled' : 'text.primary' }>
+				{ displayName }
+			</Typography>
+			{ isDisabled && (
+				<Box
+					onClick={ () => {
+						event?.stopPropagation();
+					} }
+				>
+					<PromotionChip onClick={ () => {} } />
+				</Box>
+			) }
+		</MenuItem>
 	);
 };
 
