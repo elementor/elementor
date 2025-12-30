@@ -345,6 +345,15 @@ class Components_REST_API {
 				->build();
 		}
 
+		$circular_result = Circular_Dependency_Validator::make()->validate_new_components( $items );
+
+		if ( ! $circular_result['success'] ) {
+			return Error_Builder::make( 'circular_dependency_detected' )
+				->set_status( 422 )
+				->set_message( implode( ', ', $circular_result['messages'] ) )
+				->build();
+		}
+
 		$validation_errors = [];
 
 		$created = $items->map_with_keys( function ( $item ) use ( $save_status, &$validation_errors ) {
@@ -544,6 +553,15 @@ class Components_REST_API {
 			return Error_Builder::make( 'components_validation_failed' )
 				->set_status( 422 )
 				->set_message( 'Validation failed: ' . implode( ', ', $result['messages'] ) )
+				->build();
+		}
+
+		$circular_result = Circular_Dependency_Validator::make()->validate_new_components( $items );
+
+		if ( ! $circular_result['success'] ) {
+			return Error_Builder::make( 'circular_dependency_detected' )
+				->set_status( 422 )
+				->set_message( implode( ', ', $circular_result['messages'] ) )
 				->build();
 		}
 
