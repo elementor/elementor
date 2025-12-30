@@ -20,7 +20,7 @@ class Circular_Dependency_Validator {
 		return new self();
 	}
 
-	public function validate( string|int $component_id, array $elements, array $unsaved_components = [] ): array {
+	public function validate( $component_id, array $elements, array $unsaved_components = [] ): array {
 		$inner_components_ids = $this->get_inner_component_ids( $elements );
 
 		if ( in_array( $component_id, $inner_components_ids, false ) ) {
@@ -60,7 +60,7 @@ class Circular_Dependency_Validator {
 		];
 	}
 
-	private function is_component_eventually_contains( string|int $component_id, string|int $forbidden_id, array $unsaved_components, array $visited_path ): bool {
+	private function is_component_eventually_contains( $component_id, $forbidden_id, array $unsaved_components, array $visited_path ): bool {
 		if ( in_array( $component_id, $visited_path, false ) ) {
 			return false;
 		}
@@ -92,7 +92,7 @@ class Circular_Dependency_Validator {
 		return false;
 	}
 
-	private function get_elements_for_component( string|int $component_id, array $unsaved_components ): array {
+	private function get_elements_for_component( $component_id, array $unsaved_components ): array {
 		if ( isset( $unsaved_components[ $component_id ] ) ) {
 			return $unsaved_components[ $component_id ];
 		}
@@ -100,7 +100,7 @@ class Circular_Dependency_Validator {
 		return $this->get_component_elements( $component_id );
 	}
 
-	private function get_component_elements( string|int $component_id ): array {
+	private function get_component_elements( $component_id ): array {
 		if ( ! is_int( $component_id ) ) {
 			return [];
 		}
@@ -144,11 +144,11 @@ class Circular_Dependency_Validator {
 		return array_unique( $ids, SORT_REGULAR );
 	}
 
-	private function extract_component_id_from_settings( array $settings ): string|int|null {
+	private function extract_component_id_from_settings( array $settings ) {
 		return $settings['component_instance']['value']['component_id']['value'] ?? null;
 	}
 
-	private function build_error_response( string|int $component_id, string|int|null $via_component_id = null ): array {
+	private function build_error_response( $component_id, $via_component_id = null ): array {
 		if ( null === $via_component_id ) {
 			$message = sprintf(
 				// translators: %s: Component ID that references itself.
