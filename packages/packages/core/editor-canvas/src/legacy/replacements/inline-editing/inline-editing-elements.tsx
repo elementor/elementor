@@ -134,6 +134,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 			},
 			{ internal: true }
 		);
+		runCommandSync( 'document/save/set-is-modified', { status: true }, { internal: true } );
 	}
 
 	getExpectedTag() {
