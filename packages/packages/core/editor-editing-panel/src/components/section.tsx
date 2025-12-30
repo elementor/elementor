@@ -43,7 +43,18 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 					/>
 					{ getCollapsibleValue( titleEnd, isOpen ) }
 				</Stack>
+<<<<<<< HEAD
 				<CollapseIcon open={ isOpen } color="secondary" fontSize="tiny" />
+=======
+				{ action }
+				<CollapseIcon
+					open={ isOpen }
+					color="secondary"
+					fontSize="tiny"
+					disabled={ isDisabled }
+					sx={ { ml: 1 } }
+				/>
+>>>>>>> a9f120717e (Internal: Add Size variable to Variables Manager create menu [ED-21168] (#34022))
 			</ListItemButton>
 			<Collapse
 				id={ contentId }

@@ -28,4 +28,28 @@ export function registerVariableTypes() {
 		variableType: 'font',
 		defaultValue: 'Roboto',
 	} );
+<<<<<<< HEAD
+=======
+
+	const sizePromotions = {
+		icon: ExpandDiagonalIcon,
+		propTypeUtil: sizeVariablePropTypeUtil,
+		fallbackPropTypeUtil: sizePropTypeUtil,
+		styleTransformer: EmptyTransformer,
+		variableType: 'size',
+		selectionFilter: () => [],
+		emptyState: <CtaButton size="small" href={ 'https://go.elementor.com/go-pro-panel-size-variable/' } />,
+	};
+
+	registerVariableType( {
+		...sizePromotions,
+		key: sizeVariablePropTypeUtil.key,
+		defaultValue: '0px',
+	} );
+
+	registerVariableType( {
+		...sizePromotions,
+		key: 'global-custom-size-variable',
+	} );
+>>>>>>> a9f120717e (Internal: Add Size variable to Variables Manager create menu [ED-21168] (#34022))
 }

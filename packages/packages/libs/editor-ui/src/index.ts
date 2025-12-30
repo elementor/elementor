@@ -10,6 +10,12 @@ export { WarningInfotip } from './components/warning-infotip';
 export { GlobalDialog, openDialog, closeDialog } from './components/global-dialog';
 export { SearchField } from './components/search-field';
 export { Form } from './components/form';
+<<<<<<< HEAD
+=======
+export { CtaButton } from './components/cta-button';
+export { PromotionInfotip } from './components/promotion-infotip';
+export { PromotionChip } from './components/promotion-chip';
+>>>>>>> a9f120717e (Internal: Add Size variable to Variables Manager create menu [ED-21168] (#34022))
 
 export * from './components/popover';
 export * from './components/save-changes-dialog';
