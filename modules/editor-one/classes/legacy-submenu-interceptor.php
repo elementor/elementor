@@ -28,12 +28,12 @@ class Legacy_Submenu_Interceptor {
 
 		$this->intercept_elementor_menu_items(
 			$submenu[ Menu_Config::ELEMENTOR_MENU_SLUG ] ?? [],
-            $is_pro_module_enabled
+			$is_pro_module_enabled
 		);
 
-        if ( $is_pro_module_enabled ) {
-            return;
-        }
+		if ( $is_pro_module_enabled ) {
+			return;
+		}
 
 		$this->intercept_templates_menu_items(
 			$submenu[ Menu_Config::LEGACY_TEMPLATES_SLUG ] ?? []
