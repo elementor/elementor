@@ -131,6 +131,7 @@ describe( 'save-as-component-tool handler', () => {
 						heading_text: {
 							elementId: TEST_CHILD_ELEMENT_ID,
 							propKey: 'text',
+							label: 'Heading Text',
 						},
 					},
 				},
@@ -269,6 +270,7 @@ describe( 'save-as-component-tool handler', () => {
 							heading_text: {
 								elementId: TEST_CHILD_ELEMENT_ID,
 								propKey: 'text',
+								label: 'Heading Text',
 							},
 						},
 					},
@@ -292,6 +294,7 @@ describe( 'save-as-component-tool handler', () => {
 							heading_text: {
 								elementId: 'non-existent-child-id',
 								propKey: 'text',
+								label: 'Heading Text',
 							},
 						},
 					},
@@ -326,6 +329,7 @@ describe( 'save-as-component-tool handler', () => {
 							heading_invalid: {
 								elementId: TEST_CHILD_ELEMENT_ID,
 								propKey: 'nonExistentProp',
+								label: 'Invalid Prop',
 							},
 						},
 					},
@@ -356,6 +360,7 @@ describe( 'save-as-component-tool handler', () => {
 							heading_text: {
 								elementId: TEST_CHILD_ELEMENT_ID,
 								propKey: 'text',
+								label: 'Heading Text',
 							},
 						},
 					},
