@@ -212,9 +212,18 @@ class Test_Admin extends Elementor_Test_Base {
 		Plugin::$instance->experiments = $original_experiments;
 	}
 
-	public function test_get_site_settings_url_config__returns_valid_url() {
+	public function test_get_site_settings_url_config__returns_valid_url_without_existing_page() {
 		// Arrange
 		$this->act_as_admin();
+		
+		$existing_pages = get_pages( [
+			'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
+			'number' => -1,
+		] );
+		
+		foreach ( $existing_pages as $page ) {
+			wp_delete_post( $page->ID, true );
+		}
 
 		// Act
 		$config = Page::get_site_settings_url_config();
@@ -225,8 +234,34 @@ class Test_Admin extends Elementor_Test_Base {
 		$this->assertArrayHasKey( 'new_page', $config );
 		$this->assertArrayHasKey( 'type', $config );
 		$this->assertNotEmpty( $config['url'] );
+		$this->assertTrue( $config['new_page'] );
+		$this->assertStringContainsString( 'edit.php', $config['url'] );
+		$this->assertStringContainsString( 'action=elementor_new_post', $config['url'] );
+		$this->assertEquals( 'site_settings', $config['type'] );
+	}
+
+	public function test_get_site_settings_url_config__returns_valid_url_with_existing_page() {
+		// Arrange
+		$this->act_as_admin();
+		
+		$document = $this->factory()->documents->create_and_get( [
+			'post_type' => 'page',
+			'post_status' => 'publish',
+		] );
+
+		// Act
+		$config = Page::get_site_settings_url_config();
+
+		// Assert
+		$this->assertIsArray( $config );
+		$this->assertArrayHasKey( 'url', $config );
+		$this->assertArrayHasKey( 'new_page', $config );
+		$this->assertArrayHasKey( 'type', $config );
+		$this->assertNotEmpty( $config['url'] );
+		$this->assertFalse( $config['new_page'] );
 		$this->assertStringContainsString( 'post.php', $config['url'] );
 		$this->assertStringContainsString( 'action=elementor', $config['url'] );
+		$this->assertStringContainsString( 'post=' . $document->get_main_id(), $config['url'] );
 		$this->assertEquals( 'site_settings', $config['type'] );
 	}
 
