@@ -52,7 +52,15 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 		return getInteractionsControl( 'replay' )?.component ?? null;
 	}, [ shouldShowReplay ] );
 
-	const effectiveDirection = effect === 'slide' && ! direction ? 'top' : direction;
+	const resolveDirection = ( hasDirection: boolean, newEffect?: string, newDirection?: string ) => {
+		if ( newEffect === 'slide' && ! newDirection ) {
+			return 'top';
+		}
+		if ( hasDirection ) {
+			return newDirection;
+		}
+		return direction;
+	};
 
 	const updateInteraction = (
 		updates: Partial< {
@@ -65,23 +73,20 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 			replay: boolean;
 		} >
 	): void => {
-		const newEffect = updates.effect ?? effect;
-		const newDirection = updates.direction ?? direction;
-
-		const resolvedDirection = newEffect === 'slide' && ! newDirection ? 'top' : newDirection;
+		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction );
 		const newReplay = updates.replay !== undefined ? updates.replay : replay;
 
 		onChange( {
 			...interaction,
 			trigger: createString( updates.trigger ?? trigger ),
-			animation: createAnimationPreset(
-				newEffect,
-				updates.type ?? type,
-				resolvedDirection,
-				updates.duration ?? duration,
-				updates.delay ?? delay,
-				newReplay
-			),
+			animation: createAnimationPreset( {
+				effect: updates.effect ?? effect,
+				type: updates.type ?? type,
+				direction: resolvedDirectionValue,
+				duration: updates.duration ?? duration,
+				delay: updates.delay ?? delay,
+				replay: newReplay,
+			} ),
 		} );
 	};
 
@@ -108,12 +113,12 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 					</>
 				) }
 			</Grid>
-			<Divider sx={ { mx: 1.5 } } />
+			<Divider />
 			<Grid container spacing={ 1.5 }>
 				<Effect value={ effect } onChange={ ( v ) => updateInteraction( { effect: v } ) } />
 				<EffectType value={ type } onChange={ ( v ) => updateInteraction( { type: v } ) } />
 				<Direction
-					value={ effectiveDirection }
+					value={ direction }
 					onChange={ ( v ) => updateInteraction( { direction: v } ) }
 					interactionType={ type }
 				/>
