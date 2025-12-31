@@ -42,7 +42,7 @@ type StorageContent = {
 
 const NON_ATOMIC_ELEMENT_ALERT: NotificationData = {
 	type: 'default',
-	message: __( 'Cannot add this element here - only atomic elements are allowed inside components.', 'elementor' ),
+	message: __( "This Widget isn't compatible with components. Use Atomic elements instead.", 'elementor' ),
 	id: 'non-atomic-element-blocked',
 };
 
