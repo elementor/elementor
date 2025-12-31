@@ -38,6 +38,7 @@ import { initRegenerateOverrideKeys } from './hooks/regenerate-override-keys';
 import { initMcp } from './mcp';
 import { PopulateStore } from './populate-store';
 import { initCircularNestingPrevention } from './prevent-circular-nesting';
+import { initNonAtomicNestingPrevention } from './prevent-non-atomic-nesting';
 import { componentOverridablePropTypeUtil } from './prop-types/component-overridable-prop-type';
 import { loadComponentsAssets } from './store/actions/load-components-assets';
 import { removeComponentStyles } from './store/actions/remove-component-styles';
@@ -132,4 +133,6 @@ export function init() {
 	initMcp();
 
 	initCircularNestingPrevention();
+
+	initNonAtomicNestingPrevention();
 }

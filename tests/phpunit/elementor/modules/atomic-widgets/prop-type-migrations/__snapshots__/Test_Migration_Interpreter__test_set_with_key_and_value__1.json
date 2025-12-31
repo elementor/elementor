@@ -1,0 +1,10 @@
+{
+    "settings": {
+        "dimension": {
+            "value": {
+                "size": 200,
+                "unit": "px"
+            }
+        }
+    }
+}
