@@ -1,4 +1,7 @@
+import { Page } from '@playwright/test';
+
 export const INLINE_EDITING_SELECTORS = {
+	triggerEvent: 'click' as keyof Page,
 	e_paragraph: 'e-paragraph',
 	headingBase: '.e-heading-base',
 	supportedAtoms: {

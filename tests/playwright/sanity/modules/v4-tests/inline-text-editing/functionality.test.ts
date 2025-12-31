@@ -46,22 +46,28 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 
 			await expect( textarea ).toBeVisible();
 			await textarea.fill( 'a' );
-			await page.keyboard.press( 'ControlOrMeta+A' );
-			await page.keyboard.press( 'Backspace' );
+			await textarea.clear();
 
+			// Fill first part.
 			await page.keyboard.type( INLINE_EDITING_SELECTORS.preMadeContent.paragraph.paragraphPrefix );
 
+			// Fill second part - as bold
 			await page.keyboard.press( 'ControlOrMeta+B' );
 			await page.keyboard.type( INLINE_EDITING_SELECTORS.attributes.bold );
-			await page.keyboard.press( 'ControlOrMeta+B' );
 
+			// Fill third part - not bold
+			await page.keyboard.press( 'ControlOrMeta+B' );
 			await page.keyboard.type( INLINE_EDITING_SELECTORS.preMadeContent.paragraph.textBetween );
 
+			// Fill fourth part - as underline
 			await page.keyboard.press( 'ControlOrMeta+U' );
 			await page.keyboard.type( INLINE_EDITING_SELECTORS.attributes.underline );
-			await page.keyboard.press( 'ControlOrMeta+U' );
 
+			// Fill fifth part - not underlined
+			await page.keyboard.press( 'ControlOrMeta+U' );
 			await page.keyboard.type( INLINE_EDITING_SELECTORS.preMadeContent.paragraph.paragraphSuffix );
+
+			// Fill sixth part - in next line
 			await page.keyboard.press( 'Enter' );
 			await page.keyboard.type( INLINE_EDITING_SELECTORS.preMadeContent.paragraph.secondLine );
 
