@@ -33,7 +33,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
-		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active', e_classes: 'active' } );
+		await wpAdminPage.setExperiments( { e_classes: 'active' } );
 
 		editor = await wpAdminPage.openNewPage();
 	} );

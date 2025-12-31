@@ -48,11 +48,7 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
-
-		$title_prop = $is_feature_active
-			? Html_Prop_Type::make()->default( __( 'This is a title', 'elementor' ) )
-			: String_Prop_Type::make()->default( __( 'This is a title', 'elementor' ) );
+		$title_prop = Html_Prop_Type::make()->default( __( 'This is a title', 'elementor' ) );
 
 		$props = [
 			'classes' => Classes_Prop_Type::make()
@@ -75,15 +71,9 @@ class Atomic_Heading extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
-
-		$control = $is_feature_active
-			? Inline_Editing_Control::bind_to( 'title' )
-				->set_placeholder( __( 'Type your title here', 'elementor' ) )
-				->set_label( __( 'Title', 'elementor' ) )
-			: Textarea_Control::bind_to( 'title' )
-				->set_placeholder( __( 'Type your title here', 'elementor' ) )
-				->set_label( __( 'Title', 'elementor' ) );
+		$control = Inline_Editing_Control::bind_to( 'title' )
+			->set_placeholder( __( 'Type your title here', 'elementor' ) )
+			->set_label( __( 'Title', 'elementor' ) );
 
 		$content_section = Section::make()
 			->set_label( __( 'Content', 'elementor' ) )

@@ -49,11 +49,7 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
-
-		$paragraph_prop = $is_feature_active
-			? Html_Prop_Type::make()->default( __( 'Type your paragraph here', 'elementor' ) )
-			: String_Prop_Type::make()->default( __( 'Type your paragraph here', 'elementor' ) );
+		$paragraph_prop = Html_Prop_Type::make()->default( __( 'Type your paragraph here', 'elementor' ) );
 
 		$props = [
 			'classes' => Classes_Prop_Type::make()
@@ -75,15 +71,9 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	}
 
 	protected function define_atomic_controls(): array {
-		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
-
-		$control = $is_feature_active
-			? Inline_Editing_Control::bind_to( 'paragraph' )
-				->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
-				->set_label( __( 'Paragraph', 'elementor' ) )
-			: Textarea_Control::bind_to( 'paragraph' )
-				->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
-				->set_label( __( 'Paragraph', 'elementor' ) );
+		$control = Inline_Editing_Control::bind_to( 'paragraph' )
+			->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
+			->set_label( __( 'Paragraph', 'elementor' ) );
 
 		return [
 			Section::make()
