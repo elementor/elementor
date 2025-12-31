@@ -1,13 +1,16 @@
 {
-  "migrations": {
+  "widgetKeys": {
+    "e-logo": [
+      { "from": "svg", "to": "icon" }
+    ]
+  },
+  "propTypes": {
     "string-to-string_v2": {
       "fromType": "string",
       "toType": "string_v2",
       "url": "string-to-string_v2.json"
     },
     "string_v2-to-html": {
-      "widgetType": ["e-heading", "e-paragraph"],
-      "prop": "title",
       "fromType": "string_v2",
       "toType": "html",
       "url": "string_v2-to-html.json"
@@ -18,7 +21,6 @@
       "url": "a-to-b.json"
     },
     "b-to-c": {
-      "widgetType": ["e-test"],
       "fromType": "type_b",
       "toType": "type_c",
       "url": "b-to-c.json"

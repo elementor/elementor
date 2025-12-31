@@ -1,5 +1,28 @@
 {
-  "migrations": {
+  "widgetKeys": {
+    "test-widget-key-upgrade": [
+      { "from": "text", "to": "content" }
+    ],
+    "test-widget-key-downgrade": [
+      { "from": "svg", "to": "icon" }
+    ],
+    "test-widget-key-and-type": [
+      { "from": "text", "to": "content" }
+    ],
+    "test-multiple-to-one": [
+      { "from": "text", "to": "content" },
+      { "from": "oldSize", "to": "content" }
+    ],
+    "test-one-to-multiple": [
+      { "from": "text", "to": "content" },
+      { "from": "text", "to": "size" }
+    ],
+    "test-unambiguous-multiple": [
+      { "from": "text", "to": "content" },
+      { "from": "oldSize", "to": "size" }
+    ]
+  },
+  "propTypes": {
     "string-to-string_v2": {
       "fromType": "string",
       "toType": "string_v2",
@@ -11,8 +34,6 @@
       "url": "string_v2-to-html.json"
     },
     "string-to-html": {
-      "widgetType": ["e-heading"],
-      "prop": "title",
       "fromType": "string",
       "toType": "html",
       "url": "string-to-html.json"

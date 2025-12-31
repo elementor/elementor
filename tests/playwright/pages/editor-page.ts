@@ -1373,18 +1373,29 @@ export default class EditorPage extends BasePage {
 	}
 
 	async triggerEditingElement( elementId: string ): Promise<Locator> {
-		await this.selectElement( elementId );
-
 		const element = this.previewFrame.locator( `.elementor-element-${ elementId }` );
-		await element.dblclick();
+
+		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();
+
 		const inlineEditor = this.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
+
 		await inlineEditor.waitFor();
 
 		return inlineEditor;
 	}
 
-	async selectInlineEditedText( elementId: string, substring: string ): Promise<void> {
+	async selectInlineEditedText( elementId: string, substringOrSelectAll: string | true ): Promise<void> {
 		const inlineEditor = await this.triggerEditingElement( elementId );
+
+		if ( true === substringOrSelectAll ) {
+			return await this.page.keyboard.press( 'ControlOrMeta+A' );
+		}
+
+		if ( 'string' !== typeof substringOrSelectAll ) {
+			return;
+		}
+
+		const substring = substringOrSelectAll;
 		const entireText = await inlineEditor.textContent();
 
 		if ( ! entireText?.includes( substring ) ) {
@@ -1393,7 +1404,7 @@ export default class EditorPage extends BasePage {
 
 		const startIndex = entireText.indexOf( substring );
 
-		await this.page.keyboard.press( 'ControlOrMeta+ArrowLeft', { delay: 100 } );
+		await this.page.keyboard.press( 'Home', { delay: 100 } );
 
 		for ( let i = 0; i < startIndex; i++ ) {
 			await this.page.keyboard.press( 'ArrowRight', { delay: 100 } );

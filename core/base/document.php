@@ -21,6 +21,7 @@ use Elementor\Core\Settings\Page\Manager as PageManager;
 use ElementorPro\Modules\Library\Widgets\Template;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -1062,6 +1063,11 @@ abstract class Document extends Controls_Stack {
 			$data = $this->get_elements_data();
 		}
 
+		// Migrate atomic widgets prop types
+		if ( ! $this->is_saving ) {
+			$this->migrate_atomic_widgets_data( $data );
+		}
+
 		// Change the current documents, so widgets can use `documents->get_current` and other post data
 		Plugin::$instance->documents->switch_to_document( $this );
 
@@ -2090,5 +2096,27 @@ abstract class Document extends Controls_Stack {
 		}
 
 		return $this->elements_iteration_actions;
+	}
+
+	private function migrate_atomic_widgets_data( array &$data ): void {
+		// TODO: Replace with CDN URL when available
+		$migrations_base_path = ELEMENTOR_PATH . 'migrations/';
+
+		if ( ! file_exists( $migrations_base_path ) ) {
+			return;
+		}
+
+		$orchestrator = Migrations_Orchestrator::make( $migrations_base_path );
+
+		$orchestrator->migrate_document(
+			$data,
+			$this->post->ID,
+			function( $migrated_data ) {
+				$this->update_json_meta(
+					self::ELEMENTOR_DATA_META_KEY,
+					$migrated_data
+				);
+			}
+		);
 	}
 }

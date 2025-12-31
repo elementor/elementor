@@ -32,8 +32,8 @@ class Migrations_Loader {
 		self::$instance = null;
 	}
 
-	public function find_migration_path( string $source_type, string $target_type, ?string $widget_type = null, ?string $prop = null ): ?array {
-		$graph = $this->build_migration_graph( $widget_type, $prop );
+	public function find_migration_path( string $source_type, string $target_type ): ?array {
+		$graph = $this->build_migration_graph();
 
 		$path = $this->find_shortest_path( $graph, $source_type, $target_type );
 
@@ -56,19 +56,31 @@ class Migrations_Loader {
 		return null;
 	}
 
-	private function build_migration_graph( ?string $widget_type, ?string $prop ): array {
+	public function find_widget_key_migration( string $orphaned_key, array $missing_keys, string $widget_type ): ?string {
+		$graph = $this->build_widget_key_graph( $widget_type );
+		$valid_targets = [];
+
+		foreach ( $missing_keys as $missing_key ) {
+			if ( $this->key_path_exists( $graph, $orphaned_key, $missing_key ) ||
+			     $this->key_path_exists( $graph, $missing_key, $orphaned_key ) ) {
+				$valid_targets[] = $missing_key;
+			}
+		}
+
+		if ( count( $valid_targets ) === 1 ) {
+			return $valid_targets[0];
+		}
+
+		return null;
+	}
+
+	private function build_migration_graph(): array {
 		$manifest = $this->get_manifest();
 		$graph = [];
 
-		foreach ( $manifest['migrations'] as $id => $migration ) {
-			if ( $widget_type && isset( $migration['widgetType'] ) && ! in_array( $widget_type, $migration['widgetType'], true ) ) {
-				continue;
-			}
+		$prop_types = $manifest['propTypes'] ?? [];
 
-			if ( $prop && isset( $migration['prop'] ) && $migration['prop'] !== $prop ) {
-				continue;
-			}
-
+		foreach ( $prop_types as $id => $migration ) {
 			$from = $migration['fromType'];
 
 			if ( ! isset( $graph[ $from ] ) ) {
@@ -80,6 +92,70 @@ class Migrations_Loader {
 		}
 
 		return $graph;
+	}
+
+	private function build_widget_key_graph( string $widget_type ): array {
+		$manifest = $this->get_manifest();
+		$graph = [];
+
+		$widget_keys = $manifest['widgetKeys'] ?? [];
+
+		if ( ! isset( $widget_keys[ $widget_type ] ) ) {
+			return $graph;
+		}
+
+		foreach ( $widget_keys[ $widget_type ] as $mapping ) {
+			$from = $mapping['from'];
+			$to = $mapping['to'];
+
+			if ( ! isset( $graph[ $from ] ) ) {
+				$graph[ $from ] = [];
+			}
+
+			$graph[ $from ][] = $to;
+		}
+
+		return $graph;
+	}
+
+	private function key_path_exists( array $graph, string $start, string $end ): bool {
+		if ( $start === $end ) {
+			return false;
+		}
+
+		if ( ! isset( $graph[ $start ] ) ) {
+			return false;
+		}
+
+		if ( in_array( $end, $graph[ $start ], true ) ) {
+			return true;
+		}
+
+		$visited = [ $start => true ];
+		$queue = [ $start ];
+
+		while ( ! empty( $queue ) ) {
+			$current = array_shift( $queue );
+
+			if ( ! isset( $graph[ $current ] ) ) {
+				continue;
+			}
+
+			foreach ( $graph[ $current ] as $next ) {
+				if ( isset( $visited[ $next ] ) ) {
+					continue;
+				}
+
+				if ( $next === $end ) {
+					return true;
+				}
+
+				$visited[ $next ] = true;
+				$queue[] = $next;
+			}
+		}
+
+		return false;
 	}
 
 	private function find_shortest_path( array $graph, string $start, string $end ): ?array {
@@ -121,11 +197,13 @@ class Migrations_Loader {
 	public function load_operations( string $migration_id ): ?array {
 		$manifest = $this->get_manifest();
 
-		if ( ! isset( $manifest['migrations'][ $migration_id ] ) ) {
+		$prop_types = $manifest['propTypes'] ?? [];
+
+		if ( ! isset( $prop_types[ $migration_id ] ) ) {
 			return null;
 		}
 
-		$migration = $manifest['migrations'][ $migration_id ];
+		$migration = $prop_types[ $migration_id ];
 
 		if ( ! isset( $migration['url'] ) ) {
 			return null;
@@ -159,14 +237,20 @@ class Migrations_Loader {
 		$contents = $this->read_source( $manifest_path );
 
 		if ( false === $contents ) {
-			$this->manifest = [ 'migrations' => [] ];
+			$this->manifest = [
+				'widgetKeys' => [],
+				'propTypes' => [],
+			];
 			return $this->manifest;
 		}
 
 		$manifest = json_decode( $contents, true );
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
-			$this->manifest = [ 'migrations' => [] ];
+			$this->manifest = [
+				'widgetKeys' => [],
+				'propTypes' => [],
+			];
 			return $this->manifest;
 		}
 

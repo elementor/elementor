@@ -1,0 +1,10 @@
+{
+    "content": {
+        "$$type": "string",
+        "value": "Hello"
+    },
+    "size": {
+        "$$type": "string",
+        "value": "large"
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "text": {
+        "$$type": "string",
+        "value": "Hello"
+    },
+    "oldSize": {
+        "$$type": "string",
+        "value": "large"
+    }
+}

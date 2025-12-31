@@ -1,5 +1,6 @@
 {
-  "migrations": {
+  "widgetKeys": {},
+  "propTypes": {
     "a-to-b": {
       "fromType": "type_a",
       "toType": "type_b",

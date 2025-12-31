@@ -62,30 +62,6 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 		$this->assertEquals( 'string-to-string_v2', $result['migrations'][1]['id'] );
 	}
 
-	public function test_find_migration_path_with_widget_filter() {
-		// Arrange
-		$loader = Migrations_Loader::make( $this->fixtures_path );
-		// Act
-		$result = $loader->find_migration_path( 'string_v2', 'html', 'e-heading' );
-
-		// Assert
-		$this->assertNotNull( $result );
-		$this->assertEquals( 'up', $result['direction'] );
-		$this->assertCount( 1, $result['migrations'] );
-	}
-
-	public function test_find_migration_path_with_prop_filter() {
-		// Arrange
-		$loader = Migrations_Loader::make( $this->fixtures_path );
-		// Act
-		$result = $loader->find_migration_path( 'string_v2', 'html', null, 'title' );
-
-		// Assert
-		$this->assertNotNull( $result );
-		$this->assertEquals( 'up', $result['direction'] );
-		$this->assertCount( 1, $result['migrations'] );
-	}
-
 	public function test_find_migration_path_no_path_exists() {
 		// Arrange
 		$loader = Migrations_Loader::make( $this->fixtures_path );
@@ -129,28 +105,6 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 		// Act
 		$result = $loader->find_migration_path( 'string', 'string' );
-
-		// Assert
-		$this->assertNull( $result );
-	}
-
-	public function test_widget_filter_excludes_migration() {
-		// Arrange
-		$loader = Migrations_Loader::make( $this->fixtures_path );
-
-		// Act
-		$result = $loader->find_migration_path( 'string_v2', 'html', 'e-button' );
-
-		// Assert
-		$this->assertNull( $result );
-	}
-
-	public function test_prop_filter_excludes_migration() {
-		// Arrange
-		$loader = Migrations_Loader::make( $this->fixtures_path );
-
-		// Act
-		$result = $loader->find_migration_path( 'string_v2', 'html', null, 'description' );
 
 		// Assert
 		$this->assertNull( $result );
@@ -227,29 +181,6 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 		$this->assertEquals( 'a-to-b', $result['migrations'][2]['id'] );
 	}
 
-	public function test_partial_chain_with_widget_filter() {
-		// Arrange
-		$loader = Migrations_Loader::make( $this->fixtures_path );
-
-		// Act
-		$result = $loader->find_migration_path( 'type_a', 'type_c', 'e-test' );
-
-		// Assert
-		$this->assertNotNull( $result );
-		$this->assertCount( 2, $result['migrations'] );
-	}
-
-	public function test_no_path_with_incompatible_filters() {
-		// Arrange
-		$loader = Migrations_Loader::make( $this->fixtures_path );
-
-		// Act
-		$result = $loader->find_migration_path( 'type_a', 'type_c', 'e-other' );
-
-		// Assert
-		$this->assertNull( $result );
-	}
-
 	public function test_disconnected_graph_no_path() {
 		// Arrange
 		$loader = Migrations_Loader::make( $this->fixtures_path );
@@ -259,6 +190,61 @@ class Test_Migrations_Loader extends Elementor_Test_Base {
 
 		// Assert
 		$this->assertNull( $result );
+	}
+
+	public function test_find_widget_key_migration_single_target() {
+		// Arrange
+		$loader = Migrations_Loader::make( $this->fixtures_path );
+
+		// Act
+		$result = $loader->find_widget_key_migration( 'svg', [ 'icon' ], 'e-logo' );
+
+		// Assert
+		$this->assertEquals( 'icon', $result );
+	}
+
+	public function test_find_widget_key_migration_multiple_targets_returns_null() {
+		// Arrange
+		$loader = Migrations_Loader::make( $this->fixtures_path );
+
+		// Act
+		$result = $loader->find_widget_key_migration( 'text', [ 'content', 'size' ], 'e-heading' );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+	public function test_find_widget_key_migration_no_path_exists() {
+		// Arrange
+		$loader = Migrations_Loader::make( $this->fixtures_path );
+
+		// Act
+		$result = $loader->find_widget_key_migration( 'unknown', [ 'content' ], 'e-heading' );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+	public function test_find_widget_key_migration_different_widget_type() {
+		// Arrange
+		$loader = Migrations_Loader::make( $this->fixtures_path );
+
+		// Act
+		$result = $loader->find_widget_key_migration( 'text', [ 'content' ], 'e-button' );
+
+		// Assert
+		$this->assertNull( $result );
+	}
+
+	public function test_find_widget_key_migration_bidirectional_path() {
+		// Arrange
+		$loader = Migrations_Loader::make( $this->fixtures_path );
+
+		// Act
+		$result = $loader->find_widget_key_migration( 'icon', [ 'svg' ], 'e-logo' );
+
+		// Assert
+		$this->assertEquals( 'svg', $result );
 	}
 }
 
