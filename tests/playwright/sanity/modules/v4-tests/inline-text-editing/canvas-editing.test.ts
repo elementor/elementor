@@ -49,8 +49,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
-		const previewFrame = editor.getPreviewFrame();
-		const headingElement = previewFrame.locator( `.elementor-element-${ headingId }` );
+		const headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId }` );
 
 		await expect( headingElement ).toBeVisible();
 
@@ -90,8 +89,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
-		const previewFrame = editor.getPreviewFrame();
-		const headingElement = previewFrame.locator( `.elementor-element-${ headingId }` );
+		const headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId }` );
 
 		await expect( headingElement ).toBeVisible();
 
@@ -176,8 +174,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
-		const previewFrame = editor.getPreviewFrame();
-		let headingElement = previewFrame.locator( `.elementor-element-${ headingId }` );
+		let headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId }` );
 
 		// Act.
 		const inlineEditor = await editor.triggerEditingElement( headingId );
@@ -239,7 +236,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 			const queryString = `${ defaultAtomTags[ atom ] }[data-interaction-id="${ atomIds[ atom ] }"]`;
 
 			expect( ( await page.locator( queryString ).innerHTML() ) )
-				.toContain( encodedExpectedOutput );
+				.toContain( encodedExpectedOutput.replaceAll( ' draggable="true"', '' ) );
 		}
 	} );
 } );

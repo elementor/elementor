@@ -16,7 +16,7 @@ import { Box, ThemeProvider } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { OutlineOverlay } from '../../../components/outline-overlay';
-import ReplacementBase, { type TriggerTiming } from '../base';
+import { ReplacementBase, TRIGGER_TIMING } from '../base';
 import { getInitialPopoverPosition, INLINE_EDITING_PROPERTY_PER_TYPE } from './inline-editing-utils';
 
 const EXPERIMENT_KEY = 'v4-inline-text-editing';
@@ -29,12 +29,12 @@ type TagPropType = PropType< 'tag' > & {
 
 const HISTORY_DEBOUNCE_WAIT = 800;
 
-const BLUR_TRIGGERING_SELECTORS = [
-	'#elementor-editor-wrapper-v2',
-	'#elementor-navigator',
-	'main.MuiBox-root',
-	'#elementor-panel-content-wrapper',
-];
+const TOP_BAR_SELECTOR = '#elementor-editor-wrapper-v2';
+const NAVIGATOR_SELECTOR = '#elementor-navigator';
+const V4_EDITING_PANEL = 'main.MuiBox-root';
+const V3_EDITING_PANEL = '#elementor-panel-content-wrapper';
+
+const BLUR_TRIGGERING_SELECTORS = [ TOP_BAR_SELECTOR, NAVIGATOR_SELECTOR, V4_EDITING_PANEL, V3_EDITING_PANEL ];
 
 export default class InlineEditingReplacement extends ReplacementBase {
 	private inlineEditorRoot: Root | null = null;
@@ -88,12 +88,15 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	originalMethodsToTrigger() {
+		const before = this.isEditingModeActive() ? TRIGGER_TIMING.never : TRIGGER_TIMING.before;
+		const after = this.isEditingModeActive() ? TRIGGER_TIMING.never : TRIGGER_TIMING.after;
+
 		return {
-			_beforeRender: ( this.isEditingModeActive() ? 'never' : 'before' ) as TriggerTiming,
-			_afterRender: ( this.isEditingModeActive() ? 'never' : 'after' ) as TriggerTiming,
-			renderOnChange: ( this.isEditingModeActive() ? 'never' : 'after' ) as TriggerTiming,
-			onDestroy: 'after' as TriggerTiming,
-			render: ( this.isEditingModeActive() ? 'never' : 'before' ) as TriggerTiming,
+			_beforeRender: before,
+			_afterRender: after,
+			renderOnChange: after,
+			onDestroy: TRIGGER_TIMING.after,
+			render: before,
 		};
 	}
 
@@ -248,9 +251,13 @@ export default class InlineEditingReplacement extends ReplacementBase {
 							?.querySelector( selector )
 							?.removeEventListener( 'mousedown', asyncUnmountInlineEditor )
 				);
+			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [] );
 
-		const asyncUnmountInlineEditor = () => queueMicrotask( this.unmountInlineEditor.bind( this ) );
+		const asyncUnmountInlineEditor = React.useCallback(
+			() => queueMicrotask( this.unmountInlineEditor.bind( this ) ),
+			[]
+		);
 
 		return (
 			<ThemeProvider>

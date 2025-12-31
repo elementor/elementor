@@ -1373,11 +1373,12 @@ export default class EditorPage extends BasePage {
 	}
 
 	async triggerEditingElement( elementId: string ): Promise<Locator> {
-		await this.selectElement( elementId );
-
 		const element = this.previewFrame.locator( `.elementor-element-${ elementId }` );
+
 		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();
+
 		const inlineEditor = this.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
+
 		await inlineEditor.waitFor();
 
 		return inlineEditor;
@@ -1387,8 +1388,7 @@ export default class EditorPage extends BasePage {
 		const inlineEditor = await this.triggerEditingElement( elementId );
 
 		if ( true === substringOrSelectAll ) {
-			await this.page.keyboard.press( 'ControlOrMeta+A' );
-			return;
+			return await this.page.keyboard.press( 'ControlOrMeta+A' );
 		}
 
 		if ( 'string' !== typeof substringOrSelectAll ) {

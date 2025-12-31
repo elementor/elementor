@@ -3,6 +3,12 @@ import { type ReplacementSettings } from '../types';
 export type TriggerMethod = 'render' | 'renderOnChange' | 'onDestroy' | '_beforeRender' | '_afterRender';
 export type TriggerTiming = 'before' | 'after' | 'never';
 
+export const TRIGGER_TIMING: Record< string, TriggerTiming > = {
+	before: 'before',
+	after: 'after',
+	never: 'never',
+};
+
 export interface ReplacementBaseInterface {
 	renderOnChange?: () => void;
 	onDestroy?: () => void;
@@ -13,7 +19,7 @@ export interface ReplacementBaseInterface {
 	originalMethodsToTrigger: () => Partial< Record< TriggerMethod, TriggerTiming > >;
 }
 
-export default class ReplacementBase implements ReplacementBaseInterface {
+export class ReplacementBase implements ReplacementBaseInterface {
 	protected getSetting: ReplacementSettings[ 'getSetting' ];
 	protected setSetting: ReplacementSettings[ 'setSetting' ];
 	protected element: ReplacementSettings[ 'element' ];
@@ -40,11 +46,11 @@ export default class ReplacementBase implements ReplacementBaseInterface {
 
 	originalMethodsToTrigger() {
 		return {
-			_beforeRender: 'before' as TriggerTiming,
-			_afterRender: 'after' as TriggerTiming,
-			renderOnChange: 'never' as TriggerTiming,
-			onDestroy: 'never' as TriggerTiming,
-			render: 'never' as TriggerTiming,
+			_beforeRender: TRIGGER_TIMING.before,
+			_afterRender: TRIGGER_TIMING.after,
+			renderOnChange: TRIGGER_TIMING.never,
+			onDestroy: TRIGGER_TIMING.never,
+			render: TRIGGER_TIMING.never,
 		};
 	}
 }
