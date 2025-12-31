@@ -11,27 +11,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor_One_Custom_Elements_Menu implements Menu_Item_Third_Level_Interface {
 
-	public function get_capability() : string {
+	public function get_capability(): string {
 		return Menu_Config::CAPABILITY_MANAGE_OPTIONS;
 	}
 
-	public function get_parent_slug() : string {
+	public function get_parent_slug(): string {
 		return Menu_Config::ELEMENTOR_MENU_SLUG;
 	}
 
-	public function is_visible() : bool {
+	public function is_visible(): bool {
 		return true;
 	}
 
-	public function get_label() : string {
+	public function get_label(): string {
 		return esc_html__( 'Custom Elements', 'elementor' );
 	}
 
-	public function get_position() : int {
+	public function get_position(): int {
 		return 70;
 	}
 
-	public function get_slug() : string {
+	public function get_slug(): string {
 		return 'elementor-custom-elements';
 	}
 
@@ -39,7 +39,7 @@ class Editor_One_Custom_Elements_Menu implements Menu_Item_Third_Level_Interface
 		return 'adjustments';
 	}
 
-	public function get_group_id() : string {
+	public function get_group_id(): string {
 		return Menu_Config::CUSTOM_ELEMENTS_GROUP_ID;
 	}
 
