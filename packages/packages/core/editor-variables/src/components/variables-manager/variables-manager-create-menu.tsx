@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createElement, useMemo, useRef, useState } from 'react';
+import { createElement, type MouseEvent, useMemo, useRef, useState } from 'react';
 import { PromotionChip, PromotionPopover } from '@elementor/editor-ui';
 import { PlusIcon } from '@elementor/icons';
 import { bindMenu, bindTrigger, Box, IconButton, Menu, MenuItem, type PopupState, Typography } from '@elementor/ui';
