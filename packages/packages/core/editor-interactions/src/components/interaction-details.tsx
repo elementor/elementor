@@ -56,6 +56,7 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 		if ( newEffect === 'slide' && ! newDirection ) {
 			return 'top';
 		}
+		// Why? - New direction can be undefined when the effect is not slide, so if the updates object includes direction, we take it always!
 		if ( hasDirection ) {
 			return newDirection;
 		}

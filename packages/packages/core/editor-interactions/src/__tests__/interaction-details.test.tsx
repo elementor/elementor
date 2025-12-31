@@ -302,6 +302,14 @@ describe( 'InteractionDetails', () => {
 		} );
 	} );
 
+	/** 
+	 * Why? - This is a test for the direction logic in the InteractionDetails component.
+	 * The use cases are:
+	 * 1. Changes: Effect to slide, Direction not present => we default to top.
+	 * 2. Changes: Effect to slide, Direction present => we use the new direction.
+	 * 3. Changes: Effect to non-slide, Direction not present => we use the existing direction.
+	 * 4. Changes: Effect to non-slide, Direction present => we use the new direction (even if it is empty).
+	*/
 	describe( 'Direction logic', () => {
 		it( 'should default direction to top when effect is slide and direction is empty', () => {
 			const interaction = createInteractionItemValue( {
