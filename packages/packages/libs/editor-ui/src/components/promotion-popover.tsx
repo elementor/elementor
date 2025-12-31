@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { KeyboardEvent } from 'react';
 import { CrownFilledIcon } from '@elementor/icons';
 import {
 	Alert,
@@ -73,6 +74,9 @@ function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPo
 				color="promotion"
 				icon={ <CrownFilledIcon fontSize="tiny" /> }
 				onClose={ onClose }
+				role="dialog"
+				aria-label="promotion-popover-title"
+				onKeyDown={ ( e: KeyboardEvent ) => e.key === 'Escape' && onClose() }
 				action={
 					<AlertAction
 						variant="contained"

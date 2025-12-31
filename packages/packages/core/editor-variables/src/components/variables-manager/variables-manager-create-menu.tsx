@@ -2,6 +2,7 @@ import * as React from 'react';
 import { createElement, type MouseEvent, useMemo, useRef, useState } from 'react';
 import { PromotionChip, PromotionPopover } from '@elementor/editor-ui';
 import { PlusIcon } from '@elementor/icons';
+import { capitalize } from '@elementor/menus';
 import { bindMenu, bindTrigger, Box, IconButton, Menu, MenuItem, type PopupState, Typography } from '@elementor/ui';
 import { __, sprintf } from '@wordpress/i18n';
 
@@ -111,8 +112,7 @@ const MenuOption = ( {
 	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
 	const userQuotaPermissions = useQuotaPermissions( config.propTypeKey );
 
-	const ucFirst = ( string: string ) => string.charAt( 0 ).toUpperCase() + string.slice( 1 );
-	const displayName = ucFirst( config.variableType );
+	const displayName = capitalize( config.variableType );
 	const isDisabled = ! userQuotaPermissions.canAdd();
 
 	const handleClick = () => {
@@ -130,7 +130,7 @@ const MenuOption = ( {
 	const title = sprintf(
 		/* translators: %s: Variable Type. */
 		__( '%s variables', 'elementor' ),
-		ucFirst( config.variableType )
+		capitalize( config.variableType )
 	);
 
 	const content = sprintf(
