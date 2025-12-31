@@ -18,20 +18,22 @@ type ImageControlProps = {
 export const ImageControl = createControl( ( { sizes }: ImageControlProps ) => {
 	const propContext = useBoundProp( imagePropTypeUtil );
 
-	return <PropProvider { ...propContext }>
-		<Stack gap={ 1.5 }>
-			<ControlFormLabel>{ __( 'Image', 'elementor' ) }</ControlFormLabel>
-			<ImageSrcControl />
-			<Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
-				<Grid item xs={ 6 }>
-					<ControlFormLabel>{ __( 'Resolution', 'elementor' ) }</ControlFormLabel>
+	return (
+		<PropProvider { ...propContext }>
+			<Stack gap={ 1.5 }>
+				<ControlFormLabel>{ __( 'Image', 'elementor' ) }</ControlFormLabel>
+				<ImageSrcControl />
+				<Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
+					<Grid item xs={ 6 }>
+						<ControlFormLabel>{ __( 'Resolution', 'elementor' ) }</ControlFormLabel>
+					</Grid>
+					<Grid item xs={ 6 } sx={ { overflow: 'hidden' } }>
+						<ImageSizeControl sizes={ sizes } />
+					</Grid>
 				</Grid>
-				<Grid item xs={ 6 } sx={ { overflow: 'hidden' } }>
-					<ImageSizeControl sizes={ sizes } />
-				</Grid>
-			</Grid>
-		</Stack>
-	</PropProvider>;
+			</Stack>
+		</PropProvider>
+	);
 } );
 
 const ImageSrcControl = () => {
