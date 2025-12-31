@@ -74,7 +74,13 @@ function PopoverAlert( { title, content, ctaUrl, ctaText, onClose }: PromotionPo
 				icon={ <CrownFilledIcon fontSize="tiny" /> }
 				onClose={ onClose }
 				action={
-					<AlertAction variant="contained" color="promotion" href={ ctaUrl } target="_blank">
+					<AlertAction
+						variant="contained"
+						color="promotion"
+						href={ ctaUrl }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
 						{ ctaText }
 					</AlertAction>
 				}
