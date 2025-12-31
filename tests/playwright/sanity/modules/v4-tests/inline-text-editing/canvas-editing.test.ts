@@ -198,7 +198,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Arrange
 		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 		const atomIds: Partial< Record< typeof supportedAtoms[number], string > > = {};
-		const encodedExpectedOutput = '<strong>bold</strong>, <u>underline</u>, <s>strikethrough</s>, <sup>superscript</sup>, <sub>subscript</sub>';
+		const encodedExpectedOutput = '<strong draggable=\"true\">bold</strong>, <u>underline</u>, <s>strikethrough</s>, <sup>superscript</sup>, <sub>subscript</sub>';
 
 		for ( const atom of supportedAtoms ) {
 			atomIds[ atom ] = await editor.addWidget( { widgetType: atom, container: containerId } );
