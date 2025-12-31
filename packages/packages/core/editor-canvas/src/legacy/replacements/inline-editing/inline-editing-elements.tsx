@@ -78,8 +78,6 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 	_beforeRender() {
 		this.resetInlineEditorRoot();
-
-		return false;
 	}
 
 	_afterRender() {
@@ -87,8 +85,6 @@ export default class InlineEditingReplacement extends ReplacementBase {
 			this.element.addEventListener( 'click', this.handleRenderInlineEditor );
 			this.handlerAttached = true;
 		}
-
-		return false;
 	}
 
 	originalMethodsToTrigger() {

@@ -83,10 +83,12 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 		}
 
 		#triggerAltMethod( methodKey: keyof ReplacementBaseInterface ) {
+			if ( ! this.#replacement?.shouldRenderReplacement() ) {
+				return TemplatedView.prototype[ methodKey as TriggerMethod ].apply( this );
+			}
+
 			const renderTiming = this.#replacement?.originalMethodsToTrigger()[ methodKey as TriggerMethod ] ?? 'never';
-			const method =
-				this.#replacement?.shouldRenderReplacement() &&
-				this.#replacement[ methodKey ]?.bind( this.#replacement );
+			const method = this.#replacement[ methodKey ]?.bind( this.#replacement );
 
 			if ( renderTiming === 'before' ) {
 				TemplatedView.prototype[ methodKey as TriggerMethod ].apply( this );
