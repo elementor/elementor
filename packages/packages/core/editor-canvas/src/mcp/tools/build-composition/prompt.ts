@@ -58,9 +58,6 @@ Prefer this tool over any other tool for building HTML structure, unless you are
    Layout properties, such as margin, padding, align, etc. must be applied using the [${ STYLE_SCHEMA_URI }] PropValues.
 7. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-tabs", "e-div-block", and "e-flexbox".
 8. Make sure that non-container elements do NOT have any nested elements.
-9. **CRITICAL - CUSTOM CSS USAGE**: ALWAYS Prefer using style schema. Custom CSS is ONLY FOR UNSUPPRTED schema styles.
-   ALWAYS PRIORITIZE using the style schema PropValues for styling elements as they provide better user experience in the editor, and UI features for the end-users.
-   Use custom_css only for style attributes that ARE NOT SUPPORTED via the style schema AFTER YOU CHECK THE [${ STYLE_SCHEMA_URI }].
 
 # DESIGN VECTORS - Concrete Implementation Guidance
 
@@ -195,9 +192,6 @@ background:
           "unit": { "$$type": "string", "value": "px" }
         }
       },
-    },
-    "button1": {
-      "custom_css": "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 12px 24px;"
     }
   }
 }
@@ -217,16 +211,23 @@ background:
   },
   "stylesConfig": {
     "hero-section": {
-      "custom_css": "display: flex; flex-direction: column; align-items: flex-start; gap: 3rem; background: radial-gradient(circle at 30% 20%, rgba(216, 67, 21, 0.1) 0%, transparent 60%), linear-gradient(135deg, #faf8f6 0%, #f0ebe6 100%); padding: 10rem 3rem;"
+      "display": { "$$type": "string", "value": "flex" },
+      "flex-direction": { "$$type": "string", "value": "column" },
+      "align-items": { "$$type": "string", "value": "flex-start" },
+      "background": {
+        "$$type": "color",
+        "value": "#f0ebe6",
+        "$intention": "background: #f0ebe6",
+      }
     },
     "hero-title": {
-      "custom_css": "font-size: 4.5rem; font-weight: 900; line-height: 1.05; letter-spacing: -0.04em; color: #2d2622; max-width: 700px;"
-    },
-    "hero-subtitle": {
-      "custom_css": "font-size: 1.25rem; font-weight: 200; line-height: 1.7; letter-spacing: 0.01em; color: #5a534d; max-width: 600px;"
-    },
-    "hero-cta": {
-      "custom_css": "background: #d84315; color: #ffffff; padding: 1.25rem 3rem; font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 2px; box-shadow: 0 4px 16px rgba(216, 67, 21, 0.25); transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;"
+      "font-size": {
+          "$$type": "size",
+          "value": {
+            "size": { "$$type": "number", "value": 72 },
+            "unit": { "$$type": "string", "value": "px" }
+          }
+        },
     }
   }
 }
@@ -298,9 +299,6 @@ A Heading and a button inside a flexbox
       },
   },
   stylesConfig: {
-    "flex1": {
-      "custom_css": "background: radial-gradient(circle at 20% 30%, rgba(216, 67, 21, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(0, 191, 165, 0.06) 0%, transparent 50%), linear-gradient(135deg, #faf8f6 0%, #f0ebe6 100%); display: flex; flex-direction: column; align-items: center; padding: 80px 32px; gap: 48px;"
-    },
     "heading1": {
       "font-size": {
         "$$type": "size",
