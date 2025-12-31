@@ -17,7 +17,7 @@ export const inputSchema = {
 		.record(
 			z.string().describe( 'The configuration id' ),
 			z.record(
-				z.string().describe( 'StyleSchema property name. Last priority is custom_css!' ),
+				z.string().describe( 'StyleSchema property name' ),
 				z.any().describe( `The PropValue for the style property. MANDATORY, refer to [${ STYLE_SCHEMA_URI }]` )
 			)
 		)
