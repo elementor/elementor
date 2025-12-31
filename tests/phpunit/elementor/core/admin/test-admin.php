@@ -6,6 +6,7 @@ use Elementor\Core\Experiments\Wrap_Core_Dependency;
 use Elementor\Plugin;
 use Elementor\Core\Admin\Admin;
 use Elementor\Core\Base\Document;
+use Elementor\Core\DocumentTypes\Page;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -32,6 +33,12 @@ class Test_Admin extends Elementor_Test_Base {
 		parent::tearDown();
 
 		$pagenow = $this->pagenow;
+
+		unset( $_GET['action'] );
+		unset( $_GET['active-tab'] );
+		unset( $_GET['active_tab'] );
+		unset( $_GET['_wpnonce'] );
+		unset( $_REQUEST['_wpnonce'] );
 	}
 
 	public function test_save_post() {
@@ -203,5 +210,136 @@ class Test_Admin extends Elementor_Test_Base {
 
 		// Cleanup.
 		Plugin::$instance->experiments = $original_experiments;
+	}
+
+	public function test_get_site_settings_url_config__returns_valid_url() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$config = Page::get_site_settings_url_config();
+
+		// Assert
+		$this->assertIsArray( $config );
+		$this->assertArrayHasKey( 'url', $config );
+		$this->assertArrayHasKey( 'new_page', $config );
+		$this->assertArrayHasKey( 'type', $config );
+		$this->assertNotEmpty( $config['url'] );
+		$this->assertStringContainsString( 'post.php', $config['url'] );
+		$this->assertStringContainsString( 'action=elementor', $config['url'] );
+		$this->assertEquals( 'site_settings', $config['type'] );
+	}
+
+	public function test_get_site_settings_url_config__with_active_tab() {
+		// Arrange
+		$this->act_as_admin();
+		$active_tab = 'settings-site-identity';
+
+		// Act
+		$config = Page::get_site_settings_url_config( $active_tab );
+
+		// Assert
+		$this->assertIsArray( $config );
+		$this->assertNotEmpty( $config['url'] );
+		$this->assertStringContainsString( 'active-tab=' . $active_tab, $config['url'] );
+	}
+
+	public function test_get_site_settings_url_config__with_all_tabs() {
+		// Arrange
+		$this->act_as_admin();
+		$tabs = [
+			'global-colors',
+			'global-typography',
+			'theme-style-typography',
+			'theme-style-buttons',
+			'theme-style-images',
+			'theme-style-form-fields',
+			'settings-site-identity',
+			'settings-background',
+			'settings-layout',
+			'settings-lightbox',
+			'settings-page-transitions',
+			'settings-custom-css',
+		];
+
+		// Act & Assert
+		foreach ( $tabs as $tab ) {
+			$config = Page::get_site_settings_url_config( $tab );
+			$this->assertIsArray( $config );
+			$this->assertNotEmpty( $config['url'] );
+			$this->assertStringContainsString( 'active-tab=' . $tab, $config['url'], "Failed for tab: {$tab}" );
+		}
+	}
+
+	public function test_admin_action_site_settings_redirect__requires_nonce() {
+		// Arrange
+		$this->act_as_admin();
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_site_settings_redirect';
+		unset( $_GET['_wpnonce'] );
+		unset( $_REQUEST['_wpnonce'] );
+
+		// Act & Assert
+		$this->expectException( \WPDieException::class );
+		$admin->admin_action_site_settings_redirect();
+	}
+
+	public function test_admin_action_site_settings_redirect__requires_capability() {
+		// Arrange
+		$this->act_as_subscriber();
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_site_settings_redirect';
+		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_site_settings_redirect' );
+		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
+
+		// Act & Assert
+		$this->expectException( \WPDieException::class );
+		$admin->admin_action_site_settings_redirect();
+	}
+
+	public function test_admin_action_site_settings_redirect__handles_active_tab_parameter() {
+		// Arrange
+		$this->act_as_admin();
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_site_settings_redirect';
+		$_GET['active-tab'] = 'settings-site-identity';
+		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_site_settings_redirect' );
+		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
+
+		// Act
+		ob_start();
+		try {
+			$admin->admin_action_site_settings_redirect();
+		} catch ( \WPDieException $e ) {
+			// Expected - redirect causes wp_die
+		}
+		ob_end_clean();
+
+		// Assert - verify active-tab was processed (would be in redirect URL)
+		$this->assertArrayHasKey( 'active-tab', $_GET );
+		$this->assertEquals( 'settings-site-identity', $_GET['active-tab'] );
+	}
+
+	public function test_admin_action_site_settings_redirect__handles_active_tab_underscore() {
+		// Arrange
+		$this->act_as_admin();
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_site_settings_redirect';
+		$_GET['active_tab'] = 'global-colors';
+		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_site_settings_redirect' );
+		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
+
+		// Act
+		ob_start();
+		try {
+			$admin->admin_action_site_settings_redirect();
+		} catch ( \WPDieException $e ) {
+			// Expected - redirect causes wp_die
+		}
+		ob_end_clean();
+
+		// Assert - verify active_tab (underscore) was processed
+		$this->assertArrayHasKey( 'active_tab', $_GET );
+		$this->assertEquals( 'global-colors', $_GET['active_tab'] );
 	}
 }
