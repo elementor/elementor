@@ -52,9 +52,9 @@
     "@elementor/http-client": "3.35.0",
     "@elementor/icons": "^1.63.0",
     "@elementor/mixpanel": "3.35.0",
-    "@elementor/menus": "3.35.0",
     "@elementor/schema": "3.35.0",
     "@elementor/ui": "1.36.17",
+    "@elementor/utils": "3.35.0",
     "@wordpress/i18n": "^5.13.0"
   },
   "peerDependencies": {
