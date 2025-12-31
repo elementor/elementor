@@ -11,27 +11,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Editor_One_Templates_Menu implements Menu_Item_Third_Level_Interface {
 
-	public function get_capability() {
+	public function get_capability(): string {
 		return 'edit_posts';
 	}
 
-	public function get_parent_slug() {
+	public function get_parent_slug(): string {
 		return Menu_Config::ELEMENTOR_MENU_SLUG;
 	}
 
-	public function is_visible() {
+	public function is_visible(): bool {
 		return true;
 	}
 
-	public function get_label() {
+	public function get_label(): string {
 		return esc_html__( 'Templates', 'elementor' );
 	}
 
-	public function get_position() {
+	public function get_position(): int {
 		return 60;
 	}
 
-	public function get_slug() {
+	public function get_slug(): string {
 		return 'elementor-templates';
 	}
 
@@ -39,7 +39,7 @@ class Editor_One_Templates_Menu implements Menu_Item_Third_Level_Interface {
 		return 'folder';
 	}
 
-	public function get_group_id() {
+	public function get_group_id(): string {
 		return Menu_Config::TEMPLATES_GROUP_ID;
 	}
 
