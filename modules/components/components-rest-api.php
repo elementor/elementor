@@ -354,6 +354,15 @@ class Components_REST_API {
 				->build();
 		}
 
+		$non_atomic_result = Non_Atomic_Widget_Validator::make()->validate_items( $items );
+
+		if ( ! $non_atomic_result['success'] ) {
+			return Error_Builder::make( Non_Atomic_Widget_Validator::ERROR_CODE )
+				->set_status( 422 )
+				->set_message( implode( ', ', $non_atomic_result['messages'] ) )
+				->build();
+		}
+
 		$validation_errors = [];
 
 		$created = $items->map_with_keys( function ( $item ) use ( $save_status, &$validation_errors ) {
@@ -562,6 +571,15 @@ class Components_REST_API {
 			return Error_Builder::make( 'circular_dependency_detected' )
 				->set_status( 422 )
 				->set_message( implode( ', ', $circular_result['messages'] ) )
+				->build();
+		}
+
+		$non_atomic_result = Non_Atomic_Widget_Validator::make()->validate_items( $items );
+
+		if ( ! $non_atomic_result['success'] ) {
+			return Error_Builder::make( Non_Atomic_Widget_Validator::ERROR_CODE )
+				->set_status( 422 )
+				->set_message( implode( ', ', $non_atomic_result['messages'] ) )
 				->build();
 		}
 
