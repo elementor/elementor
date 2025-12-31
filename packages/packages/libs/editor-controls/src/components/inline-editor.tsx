@@ -27,6 +27,10 @@ import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 import { isEmpty } from '../utils/inline-editing';
 import { InlineEditorToolbar } from './inline-editor-toolbar';
 
+const ITALIC_KEYBOARD_SHORTCUT = 'i';
+const BOLD_KEYBOARD_SHORTCUT = 'b';
+const UNDERLINE_KEYBOARD_SHORTCUT = 'u';
+
 type InlineEditorProps = {
 	value: string | null;
 	setValue: ( value: string | null ) => void;
@@ -146,6 +150,16 @@ export const InlineEditor = forwardRef(
 		const onKeyDown = ( _: EditorView, event: KeyboardEvent ) => {
 			if ( event.key === 'Escape' ) {
 				onBlur?.( event );
+			}
+
+			if ( ( ! event.metaKey && ! event.ctrlKey ) || event.altKey ) {
+				return;
+			}
+
+			if (
+				[ ITALIC_KEYBOARD_SHORTCUT, BOLD_KEYBOARD_SHORTCUT, UNDERLINE_KEYBOARD_SHORTCUT ].includes( event.key )
+			) {
+				event.stopPropagation();
 			}
 		};
 
