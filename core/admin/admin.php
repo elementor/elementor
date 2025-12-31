@@ -751,33 +751,6 @@ class Admin extends App {
 		die;
 	}
 
-	/**
-	 * Admin action site settings redirect.
-	 *
-	 * Redirects to the Elementor editor with Site Settings panel open.
-	 * Creates a new page if no Elementor page exists.
-	 *
-	 * Fired by `admin_action_elementor_site_settings_redirect` action.
-	 *
-	 * @since 3.x.x
-	 * @access public
-	 *
-	 * @param string $_GET['active-tab'] Optional. The Site Settings tab to open. Accepts:
-	 *                                    - 'global-colors' - Global Colors tab
-	 *                                    - 'global-typography' - Global Typography tab
-	 *                                    - 'theme-style-typography' - Theme Style Typography tab
-	 *                                    - 'theme-style-buttons' - Theme Style Buttons tab
-	 *                                    - 'theme-style-images' - Theme Style Images tab
-	 *                                    - 'theme-style-form-fields' - Theme Style Form Fields tab
-	 *                                    - 'settings-site-identity' - Site Identity tab
-	 *                                    - 'settings-background' - Background tab
-	 *                                    - 'settings-layout' - Layout tab
-	 *                                    - 'settings-lightbox' - Lightbox tab
-	 *                                    - 'settings-page-transitions' - Page Transitions tab
-	 *                                    - 'settings-custom-css' - Custom CSS tab
-	 *                                    If not provided, opens Site Settings menu without specific tab.
-	 *
-	 */
 	public function admin_action_site_settings_redirect() {
 		check_admin_referer( 'elementor_action_site_settings_redirect' );
 
@@ -785,11 +758,7 @@ class Admin extends App {
 			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'elementor' ) );
 		}
 
-		$active_tab = Utils::get_super_global_value( $_GET, 'active-tab' ) ?? Utils::get_super_global_value( $_GET, 'active_tab' ) ?? null;
-
-		if ( $active_tab ) {
-			$active_tab = sanitize_text_field( wp_unslash( $active_tab ) );
-		}
+		$active_tab = filter_input( INPUT_GET, 'active-tab', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? null;
 
 		$site_settings_url_config = Page::get_site_settings_url_config( $active_tab );
 
