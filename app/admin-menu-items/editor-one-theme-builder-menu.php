@@ -33,8 +33,15 @@ class Editor_One_Theme_Builder_Menu implements Menu_Item_Interface {
 	}
 
 	public function get_slug(): string {
-		return App::PAGE_ID;
-	}
+        $return_to = $_SERVER['REQUEST_URI'];
+        
+        return add_query_arg( 
+            [
+                'return_to' => urlencode( $return_to ),
+            ],
+            \Elementor\Plugin::instance()->app->get_base_url()
+        ) . '#/site-editor/promotion';
+    }
 
 	public function get_group_id(): string {
 		return Menu_Config::TEMPLATES_GROUP_ID;

@@ -34,9 +34,18 @@ class Editor_One_Website_Templates_Menu implements Menu_Item_Interface {
 
 	public function get_slug(): string {
 		$app = Plugin::$instance->app;
+
 		if ( $app ) {
-			return $app->get_base_url() . '&source=wp_db_templates_menu#/kit-library';
+            $return_to = $_SERVER['REQUEST_URI'];
+            return  add_query_arg( 
+                [
+                    'return_to' => $return_to,
+                    'source' => 'wp_db_templates_menu',
+                ],
+                $app->get_base_url()
+            ) . '#/kit-library';
 		}
+
 		return 'elementor-app#/kit-library';
 	}
 
