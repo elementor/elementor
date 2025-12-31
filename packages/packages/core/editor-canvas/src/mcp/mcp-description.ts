@@ -39,8 +39,6 @@ The tool accepts both the structure, the styling and the configuration of each e
 - Second step: decide which elements to create, and their configuration and styles.
   Retrieve the used elements configuration schema from the resource [${ ELEMENT_SCHEMA_URI }]
 - Third step: define the styles for each element, using the common styles schema from the resource [${ STYLE_SCHEMA_URI }]. List the resource to see all available style properties.
-  For background and complicated layered styles, you can use "custom_css" property, which is supported only for ELEMENTOR PRO users ONLY.
-  The custom css is intented to deal with yet unsupported CSS features that ARE NOT PART OF THE STYLE SCHEMA, to enable PRO users to support new CSS features.
 
 ## Workflow for build-compositions tool
 1. **Parse user requirements** - Undestand what needs to be built (structure, content, styling).
@@ -62,10 +60,7 @@ The tool accepts both the structure, the styling and the configuration of each e
 
 6. **Create stylesConfig** - For each configuration-id:
    - Use style schema PropValues from [${ STYLE_SCHEMA_URI }]
-   - **Priority**: Use style schema PropValues over custom_css
    - **Use global variables** for colors, sizes, fonts where applicable
-   - **custom_css (PRO Users Only)**: The property appears only for PRO user. The purpose of custom_css is to support new CSS features not yet available in the style schema.
-     The schema supports multiple layers of background, gradients, filters. Prefer NOT USING custom_css.
    - **Important**: Global classes are applied AFTER building the composition. Once built, apply classes using the "apply-global-class" tool - after completion of building the composition.
 
 7. **Validate** - Ensure:
