@@ -54,7 +54,7 @@ export function CreateComponentForm() {
 				notify( {
 					type: 'default',
 					message: __(
-						'Components require Atomic elements only. Remove Widgets to create this component.',
+						'Components require atomic elements only. Remove widgets to create this component.',
 						'elementor'
 					),
 					id: 'non-atomic-element-save-blocked',

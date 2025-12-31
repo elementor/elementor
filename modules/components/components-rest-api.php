@@ -321,7 +321,8 @@ class Components_REST_API {
 		if ( ! $circular_result['success'] ) {
 			return Error_Builder::make( 'circular_dependency_detected' )
 				->set_status( 422 )
-				->set_message( implode( ', ', $circular_result['messages'] ) )
+				->set_message( __( "Can't add this component - components that contain each other can't be nested.", 'elementor' ) )
+				->set_meta( [ 'caused_by' => $circular_result['messages'] ] )
 				->build();
 		}
 
@@ -330,7 +331,8 @@ class Components_REST_API {
 		if ( ! $non_atomic_result['success'] ) {
 			return Error_Builder::make( Non_Atomic_Widget_Validator::ERROR_CODE )
 				->set_status( 422 )
-				->set_message( implode( ', ', $non_atomic_result['messages'] ) )
+				->set_message( __( 'Components require atomic elements only. Remove widgets to create this component.', 'elementor' ) )
+				->set_meta( [ 'non_atomic_elements' => $non_atomic_result['non_atomic_elements'] ] )
 				->build();
 		}
 
@@ -543,7 +545,7 @@ class Components_REST_API {
 		if ( ! $non_atomic_result['success'] ) {
 			return Error_Builder::make( Non_Atomic_Widget_Validator::ERROR_CODE )
 				->set_status( 422 )
-				->set_message( __( 'Components require Atomic elements only. Remove Widgets to create this component.', 'elementor' ) )
+				->set_message( __( 'Components require atomic elements only. Remove widgets to create this component.', 'elementor' ) )
 				->set_meta( [ 'non_atomic_elements' => $non_atomic_result['non_atomic_elements'] ] )
 				->build();
 		}
