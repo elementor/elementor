@@ -11,7 +11,7 @@ import {
 	type StringPropValue,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
-import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
+import { __privateRunCommandSync as runCommandSync, undoable } from '@elementor/editor-v1-adapters';
 import { Box, ThemeProvider } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -145,18 +145,17 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	setContentValue( value: string | null ) {
 		const settingKey = this.getInlineEditablePropertyName();
 		const valueToSave = value ? htmlPropTypeUtil.create( value ) : null;
-
-		undoable(
+		const run = undoable(
 			{
 				do: () => {
-					const prevValue = this.getContentValue();
+					const prevValue = this.getSetting( settingKey ) as HtmlPropValue | null;
 
 					this.runCommand( settingKey, valueToSave );
 
 					return prevValue;
 				},
-				undo: ( prevValue ) => {
-					this.runCommand( settingKey, prevValue ?? null );
+				undo: ( _, prevValue ) => {
+					this.runCommand( settingKey, prevValue as HtmlPropValue | null );
 				},
 			},
 			{
@@ -168,7 +167,9 @@ export default class InlineEditingReplacement extends ReplacementBase {
 				),
 				debounce: { wait: HISTORY_DEBOUNCE_WAIT },
 			}
-		)();
+		);
+
+		run();
 	}
 
 	runCommand( key: string, value: HtmlPropValue | null ) {
