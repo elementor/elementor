@@ -1,0 +1,27 @@
+{
+  "migrations": {
+    "string-to-string_v2": {
+      "fromType": "string",
+      "toType": "string_v2",
+      "url": "string-to-string_v2.json"
+    },
+    "string_v2-to-html": {
+      "fromType": "string_v2",
+      "toType": "html",
+      "url": "string_v2-to-html.json"
+    },
+    "string-to-html": {
+      "widgetType": ["e-heading"],
+      "prop": "title",
+      "fromType": "string",
+      "toType": "html",
+      "url": "string-to-html.json"
+    },
+    "number-to-string": {
+      "fromType": "number",
+      "toType": "string",
+      "url": "number-to-string.json"
+    }
+  }
+}
+

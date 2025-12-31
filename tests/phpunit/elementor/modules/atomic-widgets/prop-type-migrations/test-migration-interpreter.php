@@ -803,5 +803,3 @@ class Test_Migration_Interpreter extends Elementor_Test_Base {
 		$this->assertEquals( [ 'keep' => 1 ], $result['settings']['obj'] );
 	}
 }
-
-

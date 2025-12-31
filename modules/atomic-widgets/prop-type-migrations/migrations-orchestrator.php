@@ -13,10 +13,7 @@ class Migrations_Orchestrator {
 
 	private Migrations_Loader $loader;
 
-	private string $migrations_base_path;
-
 	private function __construct( string $migrations_base_path ) {
-		$this->migrations_base_path = $migrations_base_path;
 		$this->loader = Migrations_Loader::make( $migrations_base_path );
 	}
 
@@ -136,7 +133,8 @@ class Migrations_Orchestrator {
 
 			$prop_value = Migration_Interpreter::run(
 				[ $direction => $operations[ $direction ] ],
-				$prop_value
+				$prop_value,
+				$direction
 			);
 		}
 
