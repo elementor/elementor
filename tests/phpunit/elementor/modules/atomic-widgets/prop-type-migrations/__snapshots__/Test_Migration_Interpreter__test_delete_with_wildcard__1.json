@@ -1,0 +1,10 @@
+{
+    "settings": {
+        "link1": {
+            "url": "test.com"
+        },
+        "link2": {
+            "url": "test2.com"
+        }
+    }
+}
