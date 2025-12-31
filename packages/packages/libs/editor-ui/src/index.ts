@@ -10,6 +10,13 @@ export { WarningInfotip } from './components/warning-infotip';
 export { GlobalDialog, openDialog, closeDialog } from './components/global-dialog';
 export { SearchField } from './components/search-field';
 export { Form } from './components/form';
+<<<<<<< HEAD
+=======
+export { CtaButton } from './components/cta-button';
+export { PromotionInfotip } from './components/promotion-infotip';
+export { PromotionPopover } from './components/promotion-popover';
+export { PromotionChip } from './components/promotion-chip';
+>>>>>>> e6922524cf (Internal: Add promotions popover to Pro Size Variables Manager [ED-21168] (#34041))
 
 export * from './components/popover';
 export * from './components/save-changes-dialog';
