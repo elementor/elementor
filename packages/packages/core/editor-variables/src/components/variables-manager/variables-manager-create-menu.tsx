@@ -2,8 +2,8 @@ import * as React from 'react';
 import { createElement, type MouseEvent, useMemo, useRef, useState } from 'react';
 import { PromotionChip, PromotionPopover } from '@elementor/editor-ui';
 import { PlusIcon } from '@elementor/icons';
-import { capitalize } from '@elementor/menus';
 import { bindMenu, bindTrigger, Box, IconButton, Menu, MenuItem, type PopupState, Typography } from '@elementor/ui';
+import { capitalize } from '@elementor/utils';
 import { __, sprintf } from '@wordpress/i18n';
 
 import { useQuotaPermissions } from '../../hooks/use-quota-permissions';
