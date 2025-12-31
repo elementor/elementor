@@ -99,8 +99,12 @@ describe( 'buildUniqueSelector', () => {
 		const selectorForInstance2 = buildUniqueSelector( componentBInInstance2 );
 
 		// Assert
-		expect( selectorForInstance1 ).toBe( `[data-id="${ COMPONENT_A_INSTANCE_1_ID }"] [data-id="${ COMPONENT_B_INSTANCE_ID }"]` );
-		expect( selectorForInstance2 ).toBe( `[data-id="${ COMPONENT_A_INSTANCE_2_ID }"] [data-id="${ COMPONENT_B_INSTANCE_ID }"]` );
+		expect( selectorForInstance1 ).toBe(
+			`[data-id="${ COMPONENT_A_INSTANCE_1_ID }"] [data-id="${ COMPONENT_B_INSTANCE_ID }"]`
+		);
+		expect( selectorForInstance2 ).toBe(
+			`[data-id="${ COMPONENT_A_INSTANCE_2_ID }"] [data-id="${ COMPONENT_B_INSTANCE_ID }"]`
+		);
 		expect( selectorForInstance1 ).not.toBe( selectorForInstance2 );
 	} );
 
@@ -158,4 +162,3 @@ describe( 'buildUniqueSelector', () => {
 		expect( result ).not.toContain( 'container-3' );
 	} );
 } );
-
