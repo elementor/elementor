@@ -8,7 +8,7 @@ type CtaButtonProps = {
 	showIcon?: boolean;
 } & Omit< ButtonProps, 'href' | 'target' | 'startIcon' | 'color' | 'variant' >;
 
-export const CtaButton = ( { href, showIcon = true, children, ...props }: CtaButtonProps ) => (
+export const CtaButton = ( { href, children, showIcon = true, ...props }: CtaButtonProps ) => (
 	<Button
 		variant="contained"
 		color="promotion"

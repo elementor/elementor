@@ -147,7 +147,7 @@ const MenuOption = ( {
 			</Typography>
 			{ isDisabled && (
 				<Box
-					onClick={ ( event: React.MouseEvent ) => {
+					onClick={ ( event: MouseEvent ) => {
 						event.stopPropagation();
 					} }
 				>
