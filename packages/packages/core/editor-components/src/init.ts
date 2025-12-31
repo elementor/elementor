@@ -33,9 +33,11 @@ import { openEditModeDialog } from './components/in-edit-mode';
 import { InstanceEditingPanel } from './components/instance-editing-panel/instance-editing-panel';
 import { OverridablePropControl } from './components/overridable-props/overridable-prop-control';
 import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
-import { createComponentType, TYPE } from './create-component-type';
+import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-type';
+import { initRegenerateOverrideKeys } from './hooks/regenerate-override-keys';
 import { initMcp } from './mcp';
 import { PopulateStore } from './populate-store';
+import { initCircularNestingPrevention } from './prevent-circular-nesting';
 import { componentOverridablePropTypeUtil } from './prop-types/component-overridable-prop-type';
 import { loadComponentsAssets } from './store/actions/load-components-assets';
 import { removeComponentStyles } from './store/actions/remove-component-styles';
@@ -51,7 +53,7 @@ export function init() {
 	registerSlice( slice );
 	registerPanel( componentPropertiesPanel );
 
-	registerElementType( TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
+	registerElementType( COMPONENT_WIDGET_TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
 		createComponentType( { ...options, showLockedByModal: openEditModeDialog } )
 	);
 
@@ -125,5 +127,9 @@ export function init() {
 	settingsTransformersRegistry.register( 'overridable', componentOverridableTransformer );
 	settingsTransformersRegistry.register( 'override', componentOverrideTransformer );
 
+	initRegenerateOverrideKeys();
+
 	initMcp();
+
+	initCircularNestingPrevention();
 }

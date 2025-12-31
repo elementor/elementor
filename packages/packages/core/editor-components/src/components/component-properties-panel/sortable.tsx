@@ -78,7 +78,7 @@ export const SortableItem = ( { children, id }: SortableItemProps ) => (
 
 const StyledSortableTrigger = styled( 'div' )( ( { theme } ) => ( {
 	position: 'absolute',
-	left: 0,
+	left: '-2px',
 	top: '50%',
 	transform: `translate( -${ theme.spacing( 1.5 ) }, -50% )`,
 	color: theme.palette.action.active,

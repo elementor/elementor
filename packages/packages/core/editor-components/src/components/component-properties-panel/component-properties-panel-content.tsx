@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ComponentPropListIcon, FolderPlusIcon, XIcon } from '@elementor/icons';
@@ -12,7 +12,7 @@ import { deleteOverridableGroup } from '../../store/actions/delete-overridable-g
 import { deleteOverridableProp } from '../../store/actions/delete-overridable-prop';
 import { reorderGroupProps } from '../../store/actions/reorder-group-props';
 import { reorderOverridableGroups } from '../../store/actions/reorder-overridable-groups';
-import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
+import { updateOverridablePropParams } from '../../store/actions/update-overridable-prop-params';
 import { useCurrentComponentId } from '../../store/store';
 import { useOverridableProps } from '../component-panel-header/use-overridable-props';
 import { PropertiesEmptyState } from './properties-empty-state';
@@ -29,6 +29,7 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 	const currentComponentId = useCurrentComponentId();
 	const overridableProps = useOverridableProps( currentComponentId );
 	const [ isAddingGroup, setIsAddingGroup ] = useState( false );
+	const introductionRef = useRef< HTMLButtonElement >( null );
 	const groupLabelEditable = useCurrentEditableItem();
 
 	const groups = useMemo( () => {
@@ -84,10 +85,10 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 		setDocumentModifiedStatus( true );
 	};
 
-	const handlePropertyUpdate = ( propKey: string, data: { label: string; group: string | null } ) => {
-		updateOverridableProp( {
+	const handlePropertyUpdate = ( overrideKey: string, data: { label: string; group: string | null } ) => {
+		updateOverridablePropParams( {
 			componentId: currentComponentId,
-			propKey,
+			overrideKey,
 			label: data.label,
 			groupId: data.group,
 		} );
@@ -122,7 +123,12 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 				) }
 
 				<Tooltip title={ __( 'Close panel', 'elementor' ) }>
-					<IconButton size="tiny" aria-label={ __( 'Close panel', 'elementor' ) } onClick={ onClose }>
+					<IconButton
+						ref={ introductionRef }
+						size="tiny"
+						aria-label={ __( 'Close panel', 'elementor' ) }
+						onClick={ onClose }
+					>
 						<XIcon fontSize="tiny" />
 					</IconButton>
 				</Tooltip>
@@ -132,7 +138,7 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 
 			<PanelBody>
 				{ showEmptyState ? (
-					<PropertiesEmptyState />
+					<PropertiesEmptyState introductionRef={ introductionRef } />
 				) : (
 					<List sx={ { p: 2, display: 'flex', flexDirection: 'column', gap: 2 } }>
 						<SortableProvider value={ groupIds } onChange={ handleGroupsReorder }>
