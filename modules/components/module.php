@@ -101,7 +101,7 @@ class Module extends BaseModule {
 		$result = Circular_Dependency_Validator::make()->validate( $component_id, $elements );
 
 		if ( ! $result['success'] ) {
-			throw new \Exception( __( "Can't add this component - components that contain each other can't be nested.", 'elementor' ) );
+			throw new \Exception( esc_html__( "Can't add this component - components that contain each other can't be nested.", 'elementor' ) );
 		}
 	}
 
