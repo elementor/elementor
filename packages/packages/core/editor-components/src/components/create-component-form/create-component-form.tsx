@@ -54,7 +54,7 @@ export function CreateComponentForm() {
 				notify( {
 					type: 'default',
 					message: __(
-						'Cannot save as component - contains non-supported elements. Only atomic elements are allowed inside components.',
+						'Components require atomic elements only. Remove widgets to create this component.',
 						'elementor'
 					),
 					id: 'non-atomic-element-save-blocked',
