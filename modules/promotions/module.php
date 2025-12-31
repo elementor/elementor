@@ -90,6 +90,7 @@ class Module extends Base_Module {
 
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 	}
 
 	private function handle_external_redirects() {
@@ -192,6 +193,27 @@ class Module extends Base_Module {
 			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/free-to-pro-upsell/v1/free-to-pro-upsell.json',
 			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_free_to_pro_upsell',
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'free-to-pro-upsell',
+		];
+	}
+
+	public function add_v4_promotions_data( array $settings ): array {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return $settings;
+		}
+
+		$editor_assets_api = new EditorAssetsAPI( $this->get_v4_promotions_api_config() );
+		$promotion_data = new PromotionData( $editor_assets_api );
+
+		$settings['v4Promotions'] = $promotion_data->get_v4_promotions_data();
+
+		return $settings;
+	}
+
+	private function get_v4_promotions_api_config(): array {
+		return [
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/packages/v1/promotions.json',
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_v4_promotions',
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'promotions',
 		];
 	}
 

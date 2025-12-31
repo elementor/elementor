@@ -11,7 +11,8 @@ import { getCurrentDocument } from '@elementor/editor-documents';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
-import { type ComponentInstancePropValue, type ExtendedWindow } from './types';
+import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
+import { type ExtendedWindow } from './types';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
@@ -35,7 +36,7 @@ type ContextMenuGroup = {
 	actions: ContextMenuAction[];
 };
 
-export const TYPE = 'e-component';
+export const COMPONENT_WIDGET_TYPE = 'e-component';
 
 const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfig ): ContextMenuGroup[] => {
 	const disableMap = new Map( Object.entries( config.disable ?? {} ) );
@@ -130,7 +131,7 @@ function createComponentView(
 
 		getComponentId() {
 			const componentInstance = (
-				this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstancePropValue
+				this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstanceProp
 			 )?.value;
 
 			return componentInstance.component_id.value;
@@ -186,7 +187,7 @@ function createComponentView(
 			if ( ! isAllowedToSwitchDocument ) {
 				options.showLockedByModal?.( lockedBy || '' );
 			} else {
-				switchToComponent( this.getComponentId(), this.model.get( 'id' ) );
+				switchToComponent( this.getComponentId() as number, this.model.get( 'id' ) );
 			}
 		}
 

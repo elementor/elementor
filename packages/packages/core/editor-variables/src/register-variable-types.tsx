@@ -47,6 +47,7 @@ export function registerVariableTypes() {
 	registerVariableType( {
 		...sizePromotions,
 		key: sizeVariablePropTypeUtil.key,
+		defaultValue: '0px',
 	} );
 
 	registerVariableType( {
