@@ -48,7 +48,13 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 					{ getCollapsibleValue( titleEnd, isOpen ) }
 				</Stack>
 				{ action }
-				<CollapseIcon open={ isOpen } color="secondary" fontSize="tiny" disabled={ isDisabled } />
+				<CollapseIcon
+					open={ isOpen }
+					color="secondary"
+					fontSize="tiny"
+					disabled={ isDisabled }
+					sx={ { ml: 1 } }
+				/>
 			</ListItemButton>
 			<Collapse
 				id={ contentId }
