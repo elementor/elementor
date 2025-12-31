@@ -27,7 +27,7 @@ jest.mock( '@elementor/editor-v1-adapters', () => ( {
 
 const mockGetElementType = getElementType as jest.Mock;
 
-function setupElementsCache( atomicElements: string[], nonAtomicElements: string[] ) {
+function setupElementsCache( atomicElements: string[] ) {
 	mockGetElementType.mockImplementation( ( type: string ) => {
 		if ( atomicElements.includes( type ) ) {
 			return { key: type, controls: [], propsSchema: {} };
@@ -44,7 +44,7 @@ describe( 'isElementAtomic', () => {
 
 	it( 'should return true for atomic widget', () => {
 		// Arrange
-		setupElementsCache( [ 'e-heading' ], [] );
+		setupElementsCache( [ 'e-heading' ] );
 
 		// Act
 		const result = isElementAtomic( 'e-heading' );
@@ -55,7 +55,7 @@ describe( 'isElementAtomic', () => {
 
 	it( 'should return true for atomic container', () => {
 		// Arrange
-		setupElementsCache( [ 'e-div-block', 'e-flexbox' ], [] );
+		setupElementsCache( [ 'e-div-block', 'e-flexbox' ] );
 
 		// Act
 		const result = isElementAtomic( 'e-div-block' );
@@ -66,7 +66,7 @@ describe( 'isElementAtomic', () => {
 
 	it( 'should return false for non-atomic widget', () => {
 		// Arrange
-		setupElementsCache( [], [ 'heading' ] );
+		setupElementsCache( [] );
 
 		// Act
 		const result = isElementAtomic( 'heading' );
@@ -77,7 +77,7 @@ describe( 'isElementAtomic', () => {
 
 	it( 'should return false for non-atomic container', () => {
 		// Arrange
-		setupElementsCache( [], [ 'container' ] );
+		setupElementsCache( [] );
 
 		// Act
 		const result = isElementAtomic( 'container' );
@@ -88,7 +88,7 @@ describe( 'isElementAtomic', () => {
 
 	it( 'should return false for unknown element', () => {
 		// Arrange
-		setupElementsCache( [], [] );
+		setupElementsCache( [] );
 
 		// Act
 		const result = isElementAtomic( 'unknown-element' );
@@ -112,7 +112,7 @@ describe( 'isElementAtomic', () => {
 describe( 'hasNonAtomicElementsInTree', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		setupElementsCache( [ 'e-heading', 'e-button', 'e-div-block' ], [ 'heading', 'button', 'image', 'container' ] );
+		setupElementsCache( [ 'e-heading', 'e-button', 'e-div-block' ] );
 	} );
 
 	it( 'should return false for empty array', () => {
@@ -235,7 +235,7 @@ describe( 'hasNonAtomicElementsInTree', () => {
 describe( 'findNonAtomicElements', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		setupElementsCache( [ 'e-heading', 'e-button', 'e-div-block' ], [ 'heading', 'button', 'image', 'container' ] );
+		setupElementsCache( [ 'e-heading', 'e-button', 'e-div-block' ] );
 	} );
 
 	it( 'should return empty array for no non-atomic elements', () => {
@@ -309,7 +309,7 @@ describe( 'findNonAtomicElements', () => {
 describe( 'findNonAtomicElementsInElement', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
-		setupElementsCache( [ 'e-heading', 'e-button', 'e-div-block' ], [ 'heading', 'button', 'image', 'container' ] );
+		setupElementsCache( [ 'e-heading', 'e-button', 'e-div-block' ] );
 	} );
 
 	it( 'should return non-atomic element type for single non-atomic widget', () => {
