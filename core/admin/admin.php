@@ -758,7 +758,7 @@ class Admin extends App {
 			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'elementor' ) );
 		}
 
-		$active_tab = filter_input( INPUT_GET, 'active-tab', FILTER_SANITIZE_ENCODED ) ?? null;
+		$active_tab = filter_input( INPUT_GET, 'active-tab', FILTER_SANITIZE_ENCODED );
 
 		$site_settings_url_config = Page::get_site_settings_url_config( $active_tab );
 
