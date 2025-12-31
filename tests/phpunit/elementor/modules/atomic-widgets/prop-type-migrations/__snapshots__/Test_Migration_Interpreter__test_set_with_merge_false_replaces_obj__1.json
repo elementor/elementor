@@ -1,0 +1,10 @@
+{
+    "settings": {
+        "link": {
+            "value": {
+                "tag": "a",
+                "new": "field"
+            }
+        }
+    }
+}
