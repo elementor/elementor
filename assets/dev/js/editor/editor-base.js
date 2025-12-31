@@ -411,7 +411,7 @@ export default class EditorBase extends Marionette.Application {
 	 * @return {Container} container
 	 */
 	getPreviewContainer() {
-		return this.getPreviewView().getContainer();
+		return this.getPreviewView()?.getContainer();
 	}
 
 	getContainer( id ) {

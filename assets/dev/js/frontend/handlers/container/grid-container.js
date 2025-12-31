@@ -177,13 +177,14 @@ export default class GridContainer extends elementorModules.frontend.handlers.Ba
 		const { gridOutline } = this.elements,
 			{ classes: { outlineItem } } = this.getDefaultSettings(),
 			numberOfItems = this.getMaxOutlineElementsNumber();
+		const gridOutlineItems = [];
 
 		for ( let i = 0; i < numberOfItems; i++ ) {
 			const gridOutlineItem = document.createElement( 'div' );
-
 			gridOutlineItem.classList.add( outlineItem );
-			gridOutline.appendChild( gridOutlineItem );
+			gridOutlineItems.push( gridOutlineItem );
 		}
+		gridOutline.append( ...gridOutlineItems );
 	}
 
 	/**
