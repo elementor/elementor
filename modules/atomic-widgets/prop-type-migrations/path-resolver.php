@@ -54,11 +54,11 @@ class Path_Resolver {
 			} elseif ( '[' === $char ) {
 				self::flush_current_segment( $segments, $current );
 
-			$end = strpos( $path, ']', $i );
+				$end = strpos( $path, ']', $i );
 
-			if ( false === $end ) {
-				throw new \Exception( sprintf( 'Malformed path: unmatched opening bracket in "%s"', esc_html( $path ) ) );
-			}
+				if ( false === $end ) {
+					throw new \Exception( sprintf( 'Malformed path: unmatched opening bracket in "%s"', esc_html( $path ) ) );
+				}
 
 				$index = substr( $path, $i + 1, $end - $i - 1 );
 				$segments[] = self::create_segment( $index, 'index' );
