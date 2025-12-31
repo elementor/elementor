@@ -11,23 +11,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 abstract class Abstract_Level4_Menu_Item implements Menu_Item_Interface {
 
-	public function get_capability() {
+	public function get_capability(): string {
 		return Menu_Config::CAPABILITY_MANAGE_OPTIONS;
 	}
 
-	public function get_parent_slug() {
+	public function get_parent_slug(): string {
 		return Menu_Config::ELEMENTOR_MENU_SLUG;
 	}
 
-	public function is_visible() {
+	public function is_visible(): bool {
 		return true;
 	}
 
-	abstract public function get_label();
+	abstract public function get_label(): string;
 
-	abstract public function get_position();
+	abstract public function get_position(): int;
 
-	abstract public function get_slug();
+	abstract public function get_slug(): string;
 
-	abstract public function get_group_id();
+	abstract public function get_group_id(): string;
 }
