@@ -103,7 +103,11 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 						);
 						errors.push( ...( propsValidationErrors || [] ).map( ( msg ) => new Error( msg ) ) );
 						const { errors: stylesValidationErrors } = validateInput.validateStyles( styleObject );
-						errors.push( ...( stylesValidationErrors || [] ).map( ( msg ) => new Error( msg + `config id: ${configId}` ) ) );
+						errors.push(
+							...( stylesValidationErrors || [] ).map(
+								( msg ) => new Error( msg + `config id: ${ configId }` )
+							)
+						);
 
 						if ( propsValidationErrors?.length || stylesValidationErrors?.length ) {
 							return;
