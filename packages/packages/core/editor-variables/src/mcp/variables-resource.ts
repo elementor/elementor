@@ -6,9 +6,10 @@ import { type TVariable } from '../storage';
 export const GLOBAL_VARIABLES_URI = 'elementor://global-variables';
 
 export const initVariablesResource = () => {
-	const { mcpServer } = getMCPByDomain( 'canvas' );
+	const { resource, waitForReady, sendResourceUpdated } = getMCPByDomain( 'canvas' );
+	const { resource: variablesResource, waitForReady: variablesWaitForReady, sendResourceUpdated: variablesSendResourceUpdated } = getMCPByDomain( 'variables' );
 
-	mcpServer.resource(
+	resource(
 		'global-variables',
 		GLOBAL_VARIABLES_URI,
 		{
@@ -29,10 +30,30 @@ export const initVariablesResource = () => {
 		}
 	);
 
-	window.addEventListener( 'variables:updated', () => {
-		mcpServer.server.sendResourceUpdated( {
+	variablesResource(
+		'global-variables',
+		GLOBAL_VARIABLES_URI,
+		{
+			description: 'List of Global variables. Defined as a key-value store (ID as key, global-variable object as value)',
+		},
+		async () => {
+			return {
+				contents: [ { uri: GLOBAL_VARIABLES_URI, text: JSON.stringify( service.variables() ) } ],
+			};
+		}
+	);
+
+	waitForReady().then( () => {
+		sendResourceUpdated( {
 			uri: GLOBAL_VARIABLES_URI,
-			contents: [ { uri: GLOBAL_VARIABLES_URI, text: localStorage[ 'elementor-global-variables' ] } ],
+			contents: [ { uri: GLOBAL_VARIABLES_URI, text: JSON.stringify( service.variables() ) } ],
+		} );
+	} );
+
+	variablesWaitForReady().then( () => {
+		variablesSendResourceUpdated( {
+			uri: GLOBAL_VARIABLES_URI,
+			contents: [ { uri: GLOBAL_VARIABLES_URI, text: JSON.stringify( service.variables() ) } ],
 		} );
 	} );
 };

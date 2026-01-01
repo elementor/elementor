@@ -19,7 +19,7 @@ const VariableListSchema = {
 };
 
 export const initListVariablesTool = () => {
-	getMCPByDomain( 'canvas' ).addTool( {
+	getMCPByDomain( 'variables' ).addTool( {
 		name: 'list-global-variables',
 		description: `List the global variables
 

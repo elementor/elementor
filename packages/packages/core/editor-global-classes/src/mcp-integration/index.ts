@@ -7,7 +7,7 @@ import initMcpApplyGetGlobalClassUsages from './mcp-get-global-class-usages';
 import { initModifyGlobalClass } from './mcp-modify-global-class';
 
 export const initMcpIntegration = () => {
-	const reg = getMCPByDomain( 'canvas' );
+	const reg = getMCPByDomain( 'classes', { instructions: 'You are a global classes MCP server, you are responsible for managing global classes.' } );
 	initMcpApplyUnapplyGlobalClasses( reg );
 	initMcpApplyGetGlobalClassUsages( reg );
 	initCreateGlobalClass( reg );
