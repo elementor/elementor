@@ -108,7 +108,7 @@ class Component_Override_Parser extends Override_Parser {
 
 		$current_document = Plugin::$instance->documents->get_current();
 		$should_get_autosave = $current_document && (
-			$current_document->is_autosave() || 
+			$current_document->is_autosave() ||
 			$current_document->is_revision()
 		);
 
