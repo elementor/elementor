@@ -29,15 +29,15 @@ class Popups_Promotion_Item extends Base_Promotion_Item {
 		$this->promotion_data = Filtered_Promotions_Manager::get_filtered_promotion_data( $this->promotion_data, 'elementor/templates/popup', 'action_button', 'url' );
 	}
 
-	public function get_parent_slug() {
+	public function get_parent_slug(): string {
 		return Source_Local::ADMIN_MENU_SLUG;
 	}
 
-	public function get_name() {
+	public function get_name(): string {
 		return 'popups';
 	}
 
-	public function get_label() {
+	public function get_label(): string {
 		return esc_html__( 'Popups', 'elementor' );
 	}
 

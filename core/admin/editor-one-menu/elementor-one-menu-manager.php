@@ -34,11 +34,11 @@ class Elementor_One_Menu_Manager {
 
 	private function register_actions(): void {
 		add_action( 'init', [ $this, 'check_if_pro_module_is_enabled' ] );
-		add_action( 'admin_menu', [ $this, 'register_elementor_home_submenus' ], 21 );
+		add_action( 'admin_menu', [ $this, 'register_elementor_home_submenus' ], 9 );
 
 		add_action( 'admin_menu', function () {
 			do_action( 'elementor/editor-one/menu/register', $this->menu_data_provider );
-		}, 4 );
+		} );
 
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 10003 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 10004 );
@@ -223,6 +223,7 @@ class Elementor_One_Menu_Manager {
 		$page_title = $has_page ? $item->get_page_title() : '';
 		$callback = $has_page ? [ $item, 'render' ] : '';
 		$capability = $item->get_capability();
+		$position = $item->get_position();
 
 		return add_submenu_page(
 			$parent_slug,
@@ -230,7 +231,8 @@ class Elementor_One_Menu_Manager {
 			$item->get_label(),
 			$capability,
 			$item_slug,
-			$callback
+			$callback,
+			$position
 		);
 	}
 
@@ -293,13 +295,10 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function intercept_legacy_submenus(): void {
-		$this->legacy_submenu_interceptor->intercept_all();
+		$this->legacy_submenu_interceptor->intercept_all( $this->is_pro_module_enabled );
 	}
 
 	public function enqueue_admin_menu_assets(): void {
-		if ( $this->menu_data_provider->is_elementor_editor_page() ) {
-			return;
-		}
 
 		$min_suffix = Utils::is_script_debug() ? '' : '.min';
 

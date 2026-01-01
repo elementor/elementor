@@ -43,8 +43,6 @@ class Menu_Config {
 	public static function get_legacy_slug_mapping(): array {
 		$default_mapping = [
 			self::LEGACY_TEMPLATES_SLUG => self::TEMPLATES_GROUP_ID,
-			self::ELEMENTOR_MENU_SLUG => self::EDITOR_GROUP_ID,
-			self::ELEMENTOR_HOME_MENU_SLUG => self::EDITOR_GROUP_ID,
 		];
 
 		return apply_filters( 'elementor/editor-one/menu/legacy_slug_mapping', $default_mapping );
