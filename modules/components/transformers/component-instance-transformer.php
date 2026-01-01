@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Component_Instance_Transformer extends Transformer_Base {
 	private static array $rendering_stack = [];
-	private static Components_Repository $repository;
+	private static $repository;
 
 	public static function reset_rendering_stack(): void {
 		self::$rendering_stack = [];
@@ -77,7 +77,7 @@ class Component_Instance_Transformer extends Transformer_Base {
 		return post_password_required( $document->get_post()->ID );
 	}
 
-	private function get_repository() {
+	private function get_repository(): Components_Repository {
 		if ( ! self::$repository ) {
 			self::$repository = new Components_Repository();
 		}
