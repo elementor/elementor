@@ -1,7 +1,8 @@
 import * as React from 'react';
-import * as editorMcp from '@elementor/editor-mcp';
 import { AIIcon, ComponentsIcon } from '@elementor/icons';
 import { Box, Button, Divider, Link, List, Stack, Typography } from '@elementor/ui';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
@@ -11,6 +12,15 @@ import { useSearch } from './search-provider';
 
 const LEARN_MORE_URL = 'http://go.elementor.com/components-guide-article';
 const ANGIE_INSTALL_URL = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=angie';
+
+let angieSdk: AngieMcpSdk | null = null;
+
+const getAngieSdk = () => {
+	if ( ! angieSdk ) {
+		angieSdk = new AngieMcpSdk();
+	}
+	return angieSdk;
+};
 
 export function ComponentsList() {
 	const { components, isLoading, searchValue } = useFilteredComponents();
@@ -37,10 +47,10 @@ export function ComponentsList() {
 
 const EmptyState = () => {
 	const handleCreateWithAI = () => {
-		const angieSdk = editorMcp?.getAngieSdk?.();
+		const sdk = getAngieSdk();
 
-		if ( angieSdk?.isAngieReady?.() ) {
-			angieSdk.triggerAngie( {
+		if ( sdk.isAngieReady() ) {
+			sdk.triggerAngie( {
 				context: { source: 'components-panel-empty-state' },
 			} );
 		} else {

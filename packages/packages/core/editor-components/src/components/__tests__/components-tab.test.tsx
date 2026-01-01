@@ -21,6 +21,13 @@ jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
 } ) );
 
+jest.mock( '@elementor-external/angie-sdk', () => ( {
+	AngieMcpSdk: jest.fn().mockImplementation( () => ( {
+		isAngieReady: jest.fn( () => false ),
+		triggerAngie: jest.fn(),
+	} ) ),
+} ) );
+
 const mockStartDragElementFromPanel = jest.fn();
 
 jest.mock( '@elementor/editor-canvas', () => ( {
