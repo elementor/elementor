@@ -76,15 +76,17 @@ abstract class Component_Prop_Type_Test_Base extends Elementor_Test_Base {
 	public function mock_documents_manager() {
 		$this->original_documents_manager = Plugin::$instance->documents;
 		$this->documents_manager_mock = $this->getMockBuilder( Documents_Manager::class )
-			->disableOriginalConstructor()->onlyMethods( [ 'get' ] )->getMock();
+			->disableOriginalConstructor()->onlyMethods( [ 'get', 'get_doc_or_auto_save' ] )->getMock();
 
-		$this->documents_manager_mock->method( 'get' )
-			->willReturnCallback( function ( $post_id ) {
-				if ($post_id === self::VALID_COMPONENT_ID) {
-					return new Mock_Component_Document( $this->mocks->get_mock_component_overridable_props() );
-				}
-				return null;
-			} );
+		$get_mock_component = function ( $post_id ) {
+			if ($post_id === self::VALID_COMPONENT_ID) {
+				return new Mock_Component_Document( $this->mocks->get_mock_component_overridable_props() );
+			}
+			return null;
+		};
+
+		$this->documents_manager_mock->method( 'get' )->willReturnCallback( $get_mock_component );
+		$this->documents_manager_mock->method( 'get_doc_or_auto_save' )->willReturnCallback( $get_mock_component );
 
 		Plugin::$instance->documents = $this->documents_manager_mock;
 	}
