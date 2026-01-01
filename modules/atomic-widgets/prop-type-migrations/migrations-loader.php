@@ -62,7 +62,7 @@ class Migrations_Loader {
 
 		foreach ( $missing_keys as $missing_key ) {
 			if ( $this->key_path_exists( $graph, $orphaned_key, $missing_key ) ||
-			     $this->key_path_exists( $graph, $missing_key, $orphaned_key ) ) {
+				$this->key_path_exists( $graph, $missing_key, $orphaned_key ) ) {
 				$valid_targets[] = $missing_key;
 			}
 		}
@@ -259,7 +259,7 @@ class Migrations_Loader {
 		return $this->manifest;
 	}
 
-	private function read_source( string $path ): string|false {
+	private function read_source( string $path ) {
 		if ( $this->is_url( $path ) ) {
 			$response = wp_remote_get( $path, [ 'timeout' => 10 ] );
 
