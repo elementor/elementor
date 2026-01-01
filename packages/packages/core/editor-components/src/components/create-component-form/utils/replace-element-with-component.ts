@@ -34,7 +34,6 @@ export const createComponentModel = ( component: ComponentInstanceParams ): Omit
 			overridable_props: component.overridableProps,
 		},
 		editor_settings: {
-			title: component.name,
 			component_uid: component.uid,
 		},
 	};
