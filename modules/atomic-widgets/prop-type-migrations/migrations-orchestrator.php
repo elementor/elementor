@@ -10,6 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Migrations_Orchestrator {
+	private const MIGRATED_VERSION_META_KEY = '_elementor_data_version';
+
 	private static ?self $instance = null;
 
 	private Migrations_Loader $loader;
@@ -80,12 +82,11 @@ class Migrations_Orchestrator {
 	}
 
 	private function is_already_migrated( int $post_id ): bool {
-		$cached_version = get_post_meta( $post_id, '_elementor_data_version', true );
-		return $cached_version === ELEMENTOR_VERSION;
+		return ELEMENTOR_VERSION === get_post_meta( $post_id, self::MIGRATED_VERSION_META_KEY, true );
 	}
 
 	private function mark_as_migrated( int $post_id ): void {
-		update_post_meta( $post_id, '_elementor_data_version', ELEMENTOR_VERSION );
+		update_post_meta( $post_id, self::MIGRATED_VERSION_META_KEY, ELEMENTOR_VERSION );
 	}
 
 	private function get_widget_schema( string $widget_type ): array {
@@ -163,14 +164,17 @@ class Migrations_Orchestrator {
 			if ( $result['has_changes'] ) {
 				$has_changes = true;
 			}
+
 			return;
 		}
 
 		$target_key = $this->loader->find_widget_key_migration( $key, $missing_keys, $widget_type );
 
 		if ( $target_key ) {
-			$pending_migrations[ $target_key ][] = [ 'from' => $key, 'value' => $value ];
-			$has_changes = true;
+			$pending_migrations[ $target_key ][] = [
+				'from' => $key,
+				'value' => $value,
+			];
 		} else {
 			$migrated_settings[ $key ] = $value;
 		}
@@ -186,9 +190,7 @@ class Migrations_Orchestrator {
 				);
 				$migrated_settings[ $target_key ] = $result['value'];
 
-				if ( $result['has_changes'] ) {
-					$has_changes = true;
-				}
+				$has_changes = true;
 			} else {
 				foreach ( $sources as $source ) {
 					$migrated_settings[ $source['from'] ] = $source['value'];
@@ -283,4 +285,3 @@ class Migrations_Orchestrator {
 		];
 	}
 }
-
