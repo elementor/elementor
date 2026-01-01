@@ -281,7 +281,7 @@ class Components_REST_API {
 				->build();
 		}
 
-		$document = $this->get_repository()->get( $component_id );
+		$document = $this->get_repository()->get( $component_id, true );
 
 		if ( ! $document ) {
 			return Error_Builder::make( 'component_not_found' )
@@ -290,11 +290,9 @@ class Components_REST_API {
 				->build();
 		}
 
-		$overridable = $document->get_meta( Component::OVERRIDABLE_PROPS_META_KEY ) ?? null;
+		$overridable = $document->get_json_meta( Component::OVERRIDABLE_PROPS_META_KEY ) ?? null;
 
-		if ( ! empty( $overridable ) ) {
-			$overridable = json_decode( $overridable, true );
-		} else {
+		if ( empty( $overridable ) ) {
 			$overridable = null;
 		}
 

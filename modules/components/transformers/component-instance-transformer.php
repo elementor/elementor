@@ -39,7 +39,9 @@ class Component_Instance_Transformer extends Transformer_Base {
 	}
 
 	private function get_rendered_content( int $component_id ): string {
-		$document = Plugin::$instance->documents->get_doc_for_frontend( $component_id );
+		$document = is_preview()
+			? Plugin::$instance->documents->get_doc_or_auto_save( $component_id, get_current_user_id() )
+			: Plugin::$instance->documents->get( $component_id );
 
 		if ( ! $document || ! $this->should_render_content( $document ) ) {
 			return '';

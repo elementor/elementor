@@ -106,9 +106,17 @@ class Component_Override_Parser extends Override_Parser {
 			return $this->component_overridable_props;
 		}
 
-		$component = Plugin::$instance->documents->get( $component_id );
+		$current_document = Plugin::$instance->documents->get_current();
+		$should_get_autosave = $current_document && (
+			$current_document->is_autosave() || 
+			$current_document->is_revision()
+		);
 
 		/** @var Component $component */
+		$component = $should_get_autosave
+			? Plugin::$instance->documents->get_doc_or_auto_save( $component_id, get_current_user_id() )
+			: Plugin::$instance->documents->get( $component_id );
+
 		if ( ! $component || $component->get_type() !== Component::TYPE ) {
 			return null;
 		}
