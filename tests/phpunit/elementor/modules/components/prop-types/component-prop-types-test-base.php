@@ -94,17 +94,14 @@ abstract class Component_Prop_Type_Test_Base extends Elementor_Test_Base {
 	}
 }
 
-class Mock_Component_Document {
-	private ?array $overridable_props = null;
+class Mock_Component_Document extends Component {
+	private ?array $mock_overridable_props = null;
+
 	public function __construct( ?array $overridable_props = null ) {
-		$this->overridable_props = $overridable_props;
+		$this->mock_overridable_props = $overridable_props;
 	}
 
-	public static function get_type() {
-		return Component::TYPE;
+	public function get_overridable_props(): Component_Overridable_Props {
+		return Component_Overridable_Props::make( $this->mock_overridable_props );
 	}
-
-    public function get_overridable_props(): Component_Overridable_Props {
-        return Component_Overridable_Props::make( $this->overridable_props );
-    }
 }
