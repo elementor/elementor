@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { getAngieSdk } from '@elementor/editor-mcp';
-import { ComponentsIcon, StarIcon } from '@elementor/icons';
+import { AIIcon, ComponentsIcon } from '@elementor/icons';
 import { Box, Button, Divider, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -78,6 +78,7 @@ const EmptyState = () => {
 						target="_blank"
 						rel="noopener noreferrer"
 						variant="body1"
+						color="info.main"
 						underline="hover"
 					>
 						{ __( 'Learn more about components', 'elementor' ) }
@@ -114,7 +115,7 @@ const EmptyState = () => {
 						size="small"
 						fullWidth
 						onClick={ handleCreateWithAI }
-						endIcon={ <StarIcon /> }
+						endIcon={ <AIIcon /> }
 					>
 						{ __( 'Create with AI (beta)', 'elementor' ) }
 					</Button>
