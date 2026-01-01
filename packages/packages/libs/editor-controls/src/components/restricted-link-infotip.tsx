@@ -12,10 +12,13 @@ const learnMoreButton = {
 
 const INFOTIP_CONTENT = {
 	descendant: __(
-		'To add a link or action to this element, first remove the link or action from its parent container.',
+		'To add a link or action to this element, first remove the link or action from the elements inside of it.',
 		'elementor'
 	),
-	ancestor: __( 'To add a link or action to this container, first remove the link or action from the elements inside of it.', 'elementor' ),
+	ancestor: __(
+		'To add a link or action to this container, first remove the link or action from its parent container.',
+		'elementor'
+	),
 };
 
 type RestrictedLinkInfotipProps = PropsWithChildren< {
@@ -66,7 +69,7 @@ export const RestrictedLinkInfotip: React.FC< RestrictedLinkInfotipProps > = ( {
 			placement="right"
 			content={ content }
 			color="secondary"
-			slotProps={ { popper: { sx: { width: 300 } } } }
+			slotProps={ { popper: { sx: { width: 370 } } } }
 		>
 			<Box>{ children }</Box>
 		</Infotip>
