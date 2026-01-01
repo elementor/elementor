@@ -380,7 +380,7 @@ class Components_REST_API {
 					$post = $component->get_post();
 					$autosave = $component->get_newer_autosave();
 
-					$latest_post = $autosave ?: $component;
+					$latest_post = $autosave ?? $component;
 
 					$elements = $latest_post->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
 
