@@ -2,11 +2,12 @@ import * as React from 'react';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { getV1DocumentsManager } from '@elementor/editor-documents';
 import { ArrowLeftIcon, ComponentsFilledIcon } from '@elementor/icons';
+import { __getState as getState } from '@elementor/store';
 import { Box, Divider, IconButton, Stack, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useNavigateBack } from '../../hooks/use-navigate-back';
-import { useCurrentComponentId } from '../../store/store';
+import { type ComponentsSlice, SLICE_NAME, useCurrentComponentId } from '../../store/store';
 import { usePanelActions } from '../component-properties-panel/component-properties-panel';
 import { ComponentIntroduction } from '../components-tab/component-introduction';
 import { ComponentsBadge } from './component-badge';
@@ -69,7 +70,15 @@ export const ComponentPanelHeader = () => {
 	);
 };
 
-function getComponentName() {
+function getComponentName(): string {
+	const state = getState() as ComponentsSlice;
+	const path = state[ SLICE_NAME ].path;
+	const { instanceTitle } = path.at( -1 ) ?? {};
+
+	if ( instanceTitle ) {
+		return instanceTitle;
+	}
+
 	const documentsManager = getV1DocumentsManager();
 	const currentDocument = documentsManager.getCurrent();
 
