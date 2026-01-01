@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getAngieSdk } from '@elementor/editor-mcp';
+import * as editorMcp from '@elementor/editor-mcp';
 import { AIIcon, ComponentsIcon } from '@elementor/icons';
 import { Box, Button, Divider, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -37,9 +37,9 @@ export function ComponentsList() {
 
 const EmptyState = () => {
 	const handleCreateWithAI = () => {
-		const angieSdk = getAngieSdk();
+		const angieSdk = editorMcp?.getAngieSdk?.();
 
-		if ( angieSdk.isAngieReady() ) {
+		if ( angieSdk?.isAngieReady?.() ) {
 			angieSdk.triggerAngie( {
 				context: { source: 'components-panel-empty-state' },
 			} );
