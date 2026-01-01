@@ -80,7 +80,7 @@ describe( 'ItemSelector', () => {
 		// Act.
 		render( React.createElement( ItemSelector, propsWithDebounce ) );
 
-		mockOnChange( [ { type: 'item', value: 'Font1' } ]  );
+		mockOnChange( [ { type: 'item', value: 'Font1' } ] );
 
 		jest.advanceTimersByTime( 100 );
 

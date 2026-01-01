@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef } from 'react';
 import { Box, ListItem, MenuList, MenuSubheader, styled, useTheme } from '@elementor/ui';
-import { useVirtualizer, type Virtualizer, type VirtualizerOptions } from '@tanstack/react-virtual';
+import { useVirtualizer, type Virtualizer } from '@tanstack/react-virtual';
 
 import { useScrollTop, useScrollToSelected } from '../../hooks';
 
