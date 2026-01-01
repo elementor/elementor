@@ -124,7 +124,8 @@ class Components_Repository {
 		if ( ! $doc ) {
 			return false;
 		}
-		$doc->save( [ 'post_title' => $title ] );
+		$sanitized_title = sanitize_text_field( $title );
+		$doc->save( [ 'post_title' => $sanitized_title ] );
 		return true;
 	}
 }

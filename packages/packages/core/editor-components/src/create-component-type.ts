@@ -1,5 +1,6 @@
 import {
 	type BackboneModel,
+	type BackboneModelConstructor,
 	type CreateTemplatedElementTypeOptions,
 	createTemplatedElementView,
 	type ElementModel,
@@ -48,26 +49,6 @@ type ComponentModelInstance = BackboneModel< ComponentModel > & {
 	getComponentId: () => number | null;
 	getComponentName: () => string;
 	getComponentUid: () => string | null;
-};
-
-type BackboneModelConstructor< Model extends object > = {
-	new ( ...args: unknown[] ): BackboneModel< Model >;
-	extend: < ExtendedModel extends object >(
-		properties: Record< string, unknown >
-	) => BackboneModelConstructor< ExtendedModel >;
-	prototype: {
-		initialize: ( attributes: unknown, options: unknown ) => void;
-	};
-};
-
-type WidgetTypeWithModel = {
-	getModel: () => BackboneModelConstructor< ElementModel >;
-};
-
-type LegacyWindowWithElementor = LegacyWindow & {
-	elementor: LegacyWindow[ 'elementor' ] & {
-		getElementData: ( model: unknown ) => { title: string };
-	};
 };
 
 export const COMPONENT_WIDGET_TYPE = 'e-component';
@@ -296,7 +277,7 @@ function setInactiveRecursively( model: BackboneModel< ElementModel > ) {
 function createComponentModel(): BackboneModelConstructor< ComponentModel > {
 	const legacyWindow = window as unknown as LegacyWindow;
 	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
-	const widgetTypeInstance = new WidgetType() as unknown as WidgetTypeWithModel;
+	const widgetTypeInstance = new WidgetType() as unknown as BackboneModelConstructor< ElementModel >;
 	const BaseWidgetModel = widgetTypeInstance.getModel();
 
 	return BaseWidgetModel.extend( {
@@ -335,7 +316,7 @@ function createComponentModel(): BackboneModelConstructor< ComponentModel > {
 				}
 			}
 
-			return ( window as unknown as LegacyWindowWithElementor ).elementor.getElementData( this ).title;
+			return ( window as unknown as LegacyWindow ).elementor.getElementData( this ).title;
 		},
 
 		getComponentId( this: ComponentModelInstance ): number | null {

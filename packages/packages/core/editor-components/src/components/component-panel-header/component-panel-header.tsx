@@ -73,7 +73,7 @@ export const ComponentPanelHeader = () => {
 function getComponentName(): string {
 	const state = getState() as ComponentsSlice;
 	const path = state[ SLICE_NAME ].path;
-	const instanceTitle = path.at( -1 )?.instanceTitle;
+	const { instanceTitle } = path.at( -1 ) ?? {};
 
 	if ( instanceTitle ) {
 		return instanceTitle;
