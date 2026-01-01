@@ -4,6 +4,7 @@ import { Box, Divider, Icon, Link, List, Stack, Typography } from '@elementor/ui
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
+import { renameComponent } from '../../store/actions/rename-component';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
@@ -25,7 +26,13 @@ export function ComponentsList() {
 	return (
 		<List sx={ { display: 'flex', flexDirection: 'column', gap: 1, px: 2 } }>
 			{ components.map( ( component ) => (
-				<ComponentItem key={ component.uid } component={ component } />
+				<ComponentItem
+					key={ component.uid }
+					component={ component }
+					renameComponent={ ( newName ) => {
+						renameComponent( component.uid, newName );
+					} }
+				/>
 			) ) }
 		</List>
 	);

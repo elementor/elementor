@@ -73,3 +73,8 @@ export type ComponentOverridable = {
 	override_key: string;
 	origin_value: TransformablePropValue< string >;
 };
+
+export type UpdatedComponentName = {
+	componentId: number;
+	title: string;
+};
