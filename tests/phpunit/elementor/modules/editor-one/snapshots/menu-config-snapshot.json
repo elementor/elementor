@@ -130,9 +130,9 @@
                     "priority": 20
                 },
                 {
-                    "slug": "http://example.org/wp-admin/admin.php?page=elementor-app&ver=3.34.0&source=wp_db_templates_menu#/kit-library",
+                    "slug": "http://example.org/wp-admin/admin.php?page=elementor-app&ver=3.34.0&return_to=/wp-admin/post.php?post=1454&action=elementor&source=wp_db_templates_menu#/kit-library",
                     "label": "Website templates",
-                    "url": "/wp-admin/admin.php?page=elementor-app&ver=3.34.0&source=wp_db_templates_menu#/kit-library",
+                    "url": "/wp-admin/admin.php?page=elementor-app&ver=3.34.0&return_to=%2Fwp-admin%2Fpost.php%3Fpost%3D1454&action=elementor&source=wp_db_templates_menu#/kit-library",
                     "priority": 30
                 },
                 {
