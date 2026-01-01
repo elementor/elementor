@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { PanelBody } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 
 import { useComponents } from '../../hooks/use-components';
@@ -11,10 +12,10 @@ const ComponentsContent = () => {
 	const hasComponents = ! isLoading && components.length > 0;
 
 	return (
-		<>
+		<PanelBody>
 			{ hasComponents && <ComponentSearch /> }
 			<ComponentsList />
-		</>
+		</PanelBody>
 	);
 };
 

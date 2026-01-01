@@ -67,8 +67,8 @@ const EmptyState = () => {
 						align="center"
 						variant="h6"
 						color="text.primary"
-						// 
-						sx={ { fontSize: '1.25rem', fontWeight: 500 } }
+						// Override the reset css default font size and weight
+						sx={ { fontSize: '1.25rem !important', fontWeight: '500 !important' } }
 					>
 						{ __( 'No components yet', 'elementor' ) }
 					</Typography>
@@ -85,7 +85,6 @@ const EmptyState = () => {
 						rel="noopener noreferrer"
 						variant="body1"
 						color="info.main"
-						underline="hover"
 					>
 						{ __( 'Learn more about components', 'elementor' ) }
 					</Link>
