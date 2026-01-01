@@ -2,6 +2,7 @@ export { BREAKPOINTS_SCHEMA_URI } from './mcp/resources/breakpoints-resource';
 export { STYLE_SCHEMA_URI } from './mcp/resources/widgets-schema-resource';
 
 export { init } from './init';
+export { isAtomicWidget } from './style-commands/utils';
 
 export {
 	createTemplatedElementView,
