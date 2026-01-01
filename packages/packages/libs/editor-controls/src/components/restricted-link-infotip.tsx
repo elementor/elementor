@@ -69,7 +69,7 @@ export const RestrictedLinkInfotip: React.FC< RestrictedLinkInfotipProps > = ( {
 			placement="right"
 			content={ content }
 			color="secondary"
-			slotProps={ { popper: { sx: { width: 370 } } } }
+			slotProps={ { popper: { sx: { width: 300 } } } }
 		>
 			<Box>{ children }</Box>
 		</Infotip>
