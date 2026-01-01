@@ -41,7 +41,7 @@ export default class HandlesPosition extends elementorModules.frontend.handlers.
 
 		const { top } = this.$element[ 0 ].getBoundingClientRect();
 
-		if ( top < handlesHeight ) {
+		if ( top < handlesHeight || this.isOverflowHidden() ) {
 			this.$element.addClass( handlesInsideClass );
 		} else {
 			this.$element.removeClass( handlesInsideClass );
