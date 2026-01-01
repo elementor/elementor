@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Component_Override_Parser extends Override_Parser {
-	private static Components_Repository $repository;
+	private static $repository;
 
 	public static function get_override_type(): string {
 		return 'component';
