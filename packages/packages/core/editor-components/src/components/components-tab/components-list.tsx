@@ -1,12 +1,16 @@
 import * as React from 'react';
-import { ComponentsIcon, EyeIcon } from '@elementor/icons';
-import { Box, Divider, Icon, Link, List, Stack, Typography } from '@elementor/ui';
+import { getAngieSdk } from '@elementor/editor-mcp';
+import { ComponentsIcon, StarIcon } from '@elementor/icons';
+import { Box, Button, Divider, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
+
+const LEARN_MORE_URL = 'http://go.elementor.com/components-guide-article';
+const ANGIE_INSTALL_URL = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=angie';
 
 export function ComponentsList() {
 	const { components, isLoading, searchValue } = useFilteredComponents();
@@ -32,41 +36,90 @@ export function ComponentsList() {
 }
 
 const EmptyState = () => {
+	const handleCreateWithAI = () => {
+		const angieSdk = getAngieSdk();
+
+		if ( angieSdk.isAngieReady() ) {
+			angieSdk.triggerAngie( {
+				context: { source: 'components-panel-empty-state' },
+			} );
+		} else {
+			window.open( ANGIE_INSTALL_URL, '_blank' );
+		}
+	};
+
 	return (
 		<Stack
 			alignItems="center"
-			justifyContent="center"
+			justifyContent="start"
 			height="100%"
-			sx={ { px: 2.5, pt: 10 } }
-			gap={ 1.75 }
+			sx={ { px: 2, py: 2 } }
+			gap={ 2 }
 			overflow="hidden"
 		>
-			<Icon fontSize="large">
-				<EyeIcon fontSize="large" />
-			</Icon>
-			<Typography align="center" variant="subtitle2" color="text.secondary" fontWeight="bold">
-				{ __( 'Text that explains that there are no Components yet.', 'elementor' ) }
-			</Typography>
-			<Typography variant="caption" align="center" color="text.secondary">
-				{ __(
-					'Once you have Components, this is where you can manage them—rearrange, duplicate, rename and delete irrelevant classes.',
-					'elementor'
-				) }
-			</Typography>
-			<Divider sx={ { width: '100%' } } color="text.secondary" />
-			<Typography align="left" variant="caption" color="text.secondary">
-				{ __( 'To create a component, first design it, then choose one of three options:', 'elementor' ) }
-			</Typography>
-			<Typography
-				align="left"
-				variant="caption"
-				color="text.secondary"
-				sx={ { display: 'flex', flexDirection: 'column' } }
-			>
-				<span>{ __( '1. Right-click and select Create Component', 'elementor' ) }</span>
-				<span>{ __( '2. Use the component icon in the Structure panel', 'elementor' ) }</span>
-				<span>{ __( '3. Use the component icon in the Edit panel header', 'elementor' ) }</span>
-			</Typography>
+			<Box sx={ { p: 1.25 } }>
+				<ComponentsIcon sx={ { fontSize: 35, color: 'text.secondary' } } />
+			</Box>
+
+			<Stack alignItems="center" gap={ 2.5 } width="100%">
+				<Stack alignItems="center" gap={ 1 } width="100%">
+					<Typography align="center" variant="h6" color="text.primary">
+						{ __( 'No components yet', 'elementor' ) }
+					</Typography>
+
+					<Typography align="center" variant="body2" color="text.secondary">
+						{ __( 'Components are reusable blocks that sync across your site.', 'elementor' ) }
+						<br />
+						{ __( 'Create once, use everywhere.', 'elementor' ) }
+					</Typography>
+
+					<Link
+						href={ LEARN_MORE_URL }
+						target="_blank"
+						rel="noopener noreferrer"
+						variant="body1"
+						underline="hover"
+					>
+						{ __( 'Learn more about components', 'elementor' ) }
+					</Link>
+				</Stack>
+
+				<Divider sx={ { width: '100%' } } />
+
+				<Stack alignItems="center" gap={ 1 } width="100%">
+					<Typography align="center" variant="subtitle1" color="text.primary">
+						{ __( 'Create your first one:', 'elementor' ) }
+					</Typography>
+
+					<Typography align="center" variant="body2" color="text.secondary">
+						{ __( 'Right-click any element on your canvas and select "', 'elementor' ) }
+						<Typography
+							component="span"
+							variant="body2"
+							color="text.secondary"
+							sx={ { textDecoration: 'underline' } }
+						>
+							{ __( 'Create component', 'elementor' ) }
+						</Typography>
+						{ __( '"', 'elementor' ) }
+					</Typography>
+
+					<Typography align="center" variant="caption" color="text.secondary">
+						{ __( 'Or', 'elementor' ) }
+					</Typography>
+
+					<Button
+						variant="outlined"
+						color="secondary"
+						size="small"
+						fullWidth
+						onClick={ handleCreateWithAI }
+						endIcon={ <StarIcon /> }
+					>
+						{ __( 'Create with AI (beta)', 'elementor' ) }
+					</Button>
+				</Stack>
+			</Stack>
 		</Stack>
 	);
 };
