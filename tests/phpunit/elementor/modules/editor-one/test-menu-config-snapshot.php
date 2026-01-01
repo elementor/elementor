@@ -33,7 +33,6 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 
 		$this->reset_menu_data_provider();
 		$this->restore_screen_context();
-		$this->restore_request_uri();
 		$this->deactivate_editor_one_experiment();
 	}
 
@@ -187,9 +186,5 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
 			$_SERVER['REQUEST_URI'] = '';
 		}
-	}
-
-	private function restore_request_uri(): void {
-		unset( $_SERVER['REQUEST_URI'] );
 	}
 }
