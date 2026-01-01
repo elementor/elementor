@@ -49,6 +49,6 @@ When a variable is deleted, all references to it in all pages accross the websit
 				};
 			}
 		},
-		isDestrcutive: true,
+		isDestructive: true,
 	} );
 };
