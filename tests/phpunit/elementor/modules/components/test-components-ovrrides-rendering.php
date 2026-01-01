@@ -1,10 +1,4 @@
 <?php
-namespace Elementor\Modules\AtomicWidgets\PropTypes;
-
-function wp_http_validate_url( $url ) {
-	return true;
-}
-
 namespace Elementor\Testing\Modules\Components;
 
 use Elementor\Modules\Components\Documents\Component as Component_Document;

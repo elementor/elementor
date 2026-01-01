@@ -24,7 +24,7 @@
                                             "id": null,
                                             "url": {
                                                 "$$type": "url",
-                                                "value": "https://example.com/image.jpg"
+                                                "value": "http://example.org/image.jpg"
                                             }
                                         }
                                     },
