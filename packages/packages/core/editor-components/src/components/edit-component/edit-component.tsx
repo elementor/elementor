@@ -73,13 +73,43 @@ function getUpdatedComponentPath( path: ComponentsPathItem[], nextDocument: V1Do
 		return path.slice( 0, componentIndex + 1 );
 	}
 
+	const instanceId = nextDocument?.container.view?.el?.dataset.id;
+	const instanceTitle = getInstanceTitle( instanceId, path );
+
 	return [
 		...path,
 		{
-			instanceId: nextDocument?.container.view?.el?.dataset.id,
+			instanceId,
+			instanceTitle,
 			componentId: nextDocument.id,
 		},
 	];
+}
+
+function getInstanceTitle( instanceId: string | undefined, path: ComponentsPathItem[] ): string | undefined {
+	if ( ! instanceId ) {
+		return undefined;
+	}
+
+	const documentsManager = getV1DocumentsManager();
+	const parentDocId = path.at( -1 )?.componentId ?? documentsManager.getInitialId();
+	const parentDoc = documentsManager.get( parentDocId );
+
+	type EditorSettings = { title?: string };
+	type ContainerWithChildren = V1Element & {
+		children?: {
+			findRecursive?: ( predicate: ( child: V1Element ) => boolean ) => V1Element | undefined;
+		};
+	};
+
+	const parentContainer = parentDoc?.container as unknown as ContainerWithChildren | undefined;
+	const widget = parentContainer?.children?.findRecursive?.(
+		( container: V1Element ) => container.id === instanceId
+	);
+
+	const editorSettings = widget?.model?.get?.( 'editor_settings' ) as EditorSettings | undefined;
+
+	return editorSettings?.title;
 }
 
 function getComponentDOMElement( id: V1Document[ 'id' ] | undefined ) {
