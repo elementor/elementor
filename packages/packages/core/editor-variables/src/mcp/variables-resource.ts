@@ -7,7 +7,11 @@ export const GLOBAL_VARIABLES_URI = 'elementor://global-variables';
 
 export const initVariablesResource = () => {
 	const { resource, waitForReady, sendResourceUpdated } = getMCPByDomain( 'canvas' );
-	const { resource: variablesResource, waitForReady: variablesWaitForReady, sendResourceUpdated: variablesSendResourceUpdated } = getMCPByDomain( 'variables' );
+	const {
+		resource: variablesResource,
+		waitForReady: variablesWaitForReady,
+		sendResourceUpdated: variablesSendResourceUpdated,
+	} = getMCPByDomain( 'variables' );
 
 	resource(
 		'global-variables',
@@ -34,7 +38,8 @@ export const initVariablesResource = () => {
 		'global-variables',
 		GLOBAL_VARIABLES_URI,
 		{
-			description: 'List of Global variables. Defined as a key-value store (ID as key, global-variable object as value)',
+			description:
+				'List of Global variables. Defined as a key-value store (ID as key, global-variable object as value)',
 		},
 		async () => {
 			return {

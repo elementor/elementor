@@ -6,7 +6,11 @@ export const GLOBAL_CLASSES_URI = 'elementor://global-classes';
 
 export const initClassesResource = () => {
 	const { resource, waitForReady, sendResourceUpdated } = getMCPByDomain( 'canvas' );
-	const { resource: classesResource, waitForReady: classesWaitForReady, sendResourceUpdated: classesSendResourceUpdated } = getMCPByDomain( 'classes' );
+	const {
+		resource: classesResource,
+		waitForReady: classesWaitForReady,
+		sendResourceUpdated: classesSendResourceUpdated,
+	} = getMCPByDomain( 'classes' );
 
 	resource(
 		'global-classes',
