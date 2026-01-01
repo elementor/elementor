@@ -1,17 +1,17 @@
 import * as React from 'react';
+import { useRef, useState } from 'react';
 import { AIIcon, ComponentsIcon } from '@elementor/icons';
 import { Box, Button, Divider, Link, List, Stack, Typography } from '@elementor/ui';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
+import { AngiePromotionModal } from './angie-promotion-modal';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
 
 const LEARN_MORE_URL = 'http://go.elementor.com/components-guide-article';
-const ANGIE_INSTALL_URL = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=angie';
 
 let angieSdk: AngieMcpSdk | null = null;
 
@@ -46,6 +46,9 @@ export function ComponentsList() {
 }
 
 const EmptyState = () => {
+	const [ isAngieModalOpen, setIsAngieModalOpen ] = useState( false );
+	const buttonRef = useRef< HTMLButtonElement >( null );
+
 	const handleCreateWithAI = () => {
 		const sdk = getAngieSdk();
 
@@ -54,89 +57,97 @@ const EmptyState = () => {
 				context: { source: 'components-panel-empty-state' },
 			} );
 		} else {
-			window.open( ANGIE_INSTALL_URL, '_blank' );
+			setIsAngieModalOpen( true );
 		}
 	};
 
 	return (
-		<Stack
-			alignItems="center"
-			justifyContent="start"
-			height="100%"
-			sx={ { px: 2, py: 2 } }
-			gap={ 2 }
-			overflow="hidden"
-		>
-			<Box sx={ { p: 1.25 } }>
-				<ComponentsIcon sx={ { fontSize: 35, color: 'text.secondary' } } />
-			</Box>
+		<>
+			<Stack
+				alignItems="center"
+				justifyContent="start"
+				height="100%"
+				sx={ { px: 2, py: 2 } }
+				gap={ 2 }
+				overflow="hidden"
+			>
+				<Box sx={ { p: 1.25 } }>
+					<ComponentsIcon sx={ { fontSize: 35, color: 'text.secondary' } } />
+				</Box>
 
-			<Stack alignItems="center" gap={ 2.5 } width="100%">
-				<Stack alignItems="center" gap={ 1 } width="100%">
-					<Typography
-						align="center"
-						variant="h6"
-						color="text.primary"
-						// Override the reset css default font size and weight
-						sx={ { fontSize: '1.25rem !important', fontWeight: '500 !important' } }
-					>
-						{ __( 'No components yet', 'elementor' ) }
-					</Typography>
-
-					<Typography align="center" variant="body2" color="text.secondary">
-						{ __( 'Components are reusable blocks that sync across your site.', 'elementor' ) }
-						<br />
-						{ __( 'Create once, use everywhere.', 'elementor' ) }
-					</Typography>
-
-					<Link
-						href={ LEARN_MORE_URL }
-						target="_blank"
-						rel="noopener noreferrer"
-						variant="body1"
-						color="info.main"
-					>
-						{ __( 'Learn more about components', 'elementor' ) }
-					</Link>
-				</Stack>
-
-				<Divider sx={ { width: '100%' } } />
-
-				<Stack alignItems="center" gap={ 1 } width="100%">
-					<Typography align="center" variant="subtitle1" color="text.primary">
-						{ __( 'Create your first one:', 'elementor' ) }
-					</Typography>
-
-					<Typography align="center" variant="body2" color="text.secondary">
-						{ __( 'Right-click any element on your canvas and select "', 'elementor' ) }
+				<Stack alignItems="center" gap={ 2.5 } width="100%">
+					<Stack alignItems="center" gap={ 1 } width="100%">
 						<Typography
-							component="span"
-							variant="body2"
-							color="text.secondary"
-							sx={ { textDecoration: 'underline' } }
+							align="center"
+							variant="h6"
+							color="text.primary"
+							sx={ { fontSize: '1.25rem !important', fontWeight: '500 !important' } }
 						>
-							{ __( 'Create component', 'elementor' ) }
+							{ __( 'No components yet', 'elementor' ) }
 						</Typography>
-						{ __( '"', 'elementor' ) }
-					</Typography>
 
-					<Typography align="center" variant="caption" color="text.secondary">
-						{ __( 'Or', 'elementor' ) }
-					</Typography>
+						<Typography align="center" variant="body2" color="text.secondary">
+							{ __( 'Components are reusable blocks that sync across your site.', 'elementor' ) }
+							<br />
+							{ __( 'Create once, use everywhere.', 'elementor' ) }
+						</Typography>
 
-					<Button
-						variant="outlined"
-						color="secondary"
-						size="small"
-						fullWidth
-						onClick={ handleCreateWithAI }
-						endIcon={ <AIIcon /> }
-					>
-						{ __( 'Create with AI (beta)', 'elementor' ) }
-					</Button>
+						<Link
+							href={ LEARN_MORE_URL }
+							target="_blank"
+							rel="noopener noreferrer"
+							variant="body1"
+							color="info.main"
+						>
+							{ __( 'Learn more about components', 'elementor' ) }
+						</Link>
+					</Stack>
+
+					<Divider sx={ { width: '100%' } } />
+
+					<Stack alignItems="center" gap={ 1 } width="100%">
+						<Typography align="center" variant="subtitle1" color="text.primary">
+							{ __( 'Create your first one:', 'elementor' ) }
+						</Typography>
+
+						<Typography align="center" variant="body2" color="text.secondary">
+							{ __( 'Right-click any element on your canvas and select "', 'elementor' ) }
+							<Typography
+								component="span"
+								variant="body2"
+								color="text.secondary"
+								sx={ { textDecoration: 'underline' } }
+							>
+								{ __( 'Create component', 'elementor' ) }
+							</Typography>
+							{ __( '"', 'elementor' ) }
+						</Typography>
+
+						<Typography align="center" variant="caption" color="text.secondary">
+							{ __( 'Or', 'elementor' ) }
+						</Typography>
+
+						<Button
+							ref={ buttonRef }
+							variant="outlined"
+							color="secondary"
+							size="small"
+							fullWidth
+							onClick={ handleCreateWithAI }
+							endIcon={ <AIIcon /> }
+						>
+							{ __( 'Create with AI (beta)', 'elementor' ) }
+						</Button>
+					</Stack>
 				</Stack>
 			</Stack>
-		</Stack>
+
+			<AngiePromotionModal
+				open={ isAngieModalOpen }
+				onClose={ () => setIsAngieModalOpen( false ) }
+				anchorEl={ buttonRef.current }
+			/>
+		</>
 	);
 };
 

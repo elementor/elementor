@@ -15,6 +15,7 @@ export { CtaButton } from './components/cta-button';
 export { PromotionInfotip } from './components/promotion-infotip';
 export { PromotionPopover } from './components/promotion-popover';
 export { PromotionChip } from './components/promotion-chip';
+export { PromotionalModal } from './components/promotional-modal';
 
 export * from './components/popover';
 export * from './components/save-changes-dialog';
