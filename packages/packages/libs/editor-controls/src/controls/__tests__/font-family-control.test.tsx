@@ -1,36 +1,56 @@
 import * as React from 'react';
 import { createMockPropType, renderControl } from 'test-utils';
+import { ITEM_HEIGHT } from '@elementor/editor-ui';
 import { fireEvent, screen } from '@testing-library/react';
 
 import { FontFamilyControl } from '../font-family-control/font-family-control';
 
+const mockFontFamilies = [
+	{
+		label: 'Google',
+		fonts: [ 'Roboto', 'Open Sans', 'Lato', 'Montserrat' ],
+	},
+	{
+		label: 'System',
+		fonts: [ 'Arial', 'Helvetica', 'Tahoma', 'Verdana' ],
+	},
+];
+
 const propType = createMockPropType( { kind: 'plain' } );
 
+const defaultProps = {
+	setValue: jest.fn(),
+	value: { $$type: 'string', value: 'Arial' },
+	bind: 'fontFamily',
+	propType,
+};
+
+jest.mock( '@tanstack/react-virtual', () => ( {
+	useVirtualizer: jest.fn().mockImplementation( ( config ) => {
+		const { count } = config;
+		const indices = Array.from( { length: count }, ( _, i ) => i );
+
+		const virtualItems = indices.map( ( index ) => ( {
+			key: `item-${ index }`,
+			index,
+			start: index * ITEM_HEIGHT,
+			size: ITEM_HEIGHT,
+		} ) );
+
+		return {
+			getVirtualItems: jest.fn().mockReturnValue( virtualItems ),
+			getTotalSize: jest.fn().mockReturnValue( count * 32 ),
+			scrollToIndex: jest.fn(),
+		};
+	} ),
+} ) );
+
 describe( 'FontFamilyControl', () => {
-	const mockFontFamilies = [
-		{
-			label: 'Google',
-			fonts: [ 'Roboto', 'Open Sans', 'Lato', 'Montserrat' ],
-		},
-		{
-			label: 'System',
-			fonts: [ 'Arial', 'Helvetica', 'Tahoma', 'Verdana' ],
-		},
-	];
-
-	const defaultProps = {
-		setValue: jest.fn(),
-		value: { $$type: 'string', value: 'Arial' },
-		bind: 'fontFamily',
-		propType,
-	};
-
 	beforeEach( () => {
 		globalThis.Element.prototype.getBoundingClientRect = jest.fn().mockReturnValue( { height: 1000, width: 1000 } );
 	} );
 
-	it.skip( 'should show all options when no search is performed', () => {
-		// TODO: Fix me!
+	it( 'should render fonts in dropdown with correct font-family style', async () => {
 		// Arrange.
 		renderControl( <FontFamilyControl fontFamilies={ mockFontFamilies } sectionWidth={ 320 } />, defaultProps );
 
@@ -39,22 +59,19 @@ describe( 'FontFamilyControl', () => {
 		fireEvent.click( fontFamilyButton );
 
 		// Assert.
-		mockFontFamilies.forEach( ( { label, fonts } ) => {
-			expect( screen.getByText( label ) ).toBeInTheDocument();
+		const options = screen.queryAllByRole( 'option', { hidden: true } );
+		const allFonts = mockFontFamilies.flatMap( ( { fonts } ) => fonts );
 
-			fonts.forEach( ( font ) => {
-				if ( font === defaultProps.value.value ) {
-					expect( screen.getAllByText( font ).length ).toBe( 2 );
-					return;
-				}
+		expect( options ).toHaveLength( allFonts.length );
 
-				expect( screen.getByText( font ) ).toBeInTheDocument();
-			} );
+		allFonts.forEach( ( font ) => {
+			const option = options.find( ( opt ) => opt.textContent === font );
+			expect( option ).toBeInTheDocument();
+			expect( option ).toHaveStyle( { fontFamily: font } );
 		} );
 	} );
 
-	it.skip( 'should show relevant options on search', () => {
-		// TODO: Fix me!
+	it( 'should show relevant options on search', () => {
 		// Arrange.
 		renderControl( <FontFamilyControl fontFamilies={ mockFontFamilies } sectionWidth={ 320 } />, defaultProps );
 
@@ -77,8 +94,7 @@ describe( 'FontFamilyControl', () => {
 		expect( screen.queryByText( 'Montserrat' ) ).not.toBeInTheDocument();
 	} );
 
-	it.skip( 'should show placeholder when there is no search results', () => {
-		// TODO: Fix me!
+	it( 'should show placeholder when there is no search results', () => {
 		// Arrange.
 		renderControl( <FontFamilyControl fontFamilies={ mockFontFamilies } sectionWidth={ 320 } />, defaultProps );
 
@@ -101,8 +117,7 @@ describe( 'FontFamilyControl', () => {
 		expect( screen.getByText( 'Tahoma' ) ).toBeInTheDocument();
 	} );
 
-	it.skip( 'should select an option when a user clicks on it', () => {
-		// TODO: Fix me!
+	it( 'should select an option when a user clicks on it', () => {
 		// Arrange.
 		renderControl( <FontFamilyControl fontFamilies={ mockFontFamilies } sectionWidth={ 320 } />, defaultProps );
 
@@ -179,8 +194,7 @@ describe( 'FontFamilyControl', () => {
 		expect( hasEmptyElement ).toBe( true );
 	} );
 
-	it.skip( 'should update from placeholder to value when font is selected', () => {
-		// TODO: Fix me!
+	it( 'should update from placeholder to value when font is selected', () => {
 		// Arrange.
 		const setValue = jest.fn();
 		const propsWithPlaceholder = {
