@@ -10,4 +10,3 @@ interface Menu_Item_With_Custom_Url_Interface {
 
 	public function get_menu_url(): string;
 }
-
