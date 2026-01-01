@@ -4,6 +4,7 @@ namespace Elementor\Modules\EditorOne\Classes;
 
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
 use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Custom_Url_Interface;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -274,6 +275,10 @@ class Menu_Data_Provider {
 	}
 
 	private function resolve_flyout_item_url( Menu_Item_Interface $item, string $item_slug ): string {
+		if ( $item instanceof Menu_Item_With_Custom_Url_Interface ) {
+			return $item->get_menu_url();
+		}
+
 		$url = $this->get_item_url( $item_slug, $item->get_parent_slug() );
 
 		if ( ! $item->has_children() ) {
@@ -338,10 +343,14 @@ class Menu_Data_Provider {
 					continue;
 				}
 
+				$url = $item instanceof Menu_Item_With_Custom_Url_Interface
+					? $item->get_menu_url()
+					: $this->get_item_url( $item_slug, $item->get_parent_slug() );
+
 				$groups[ $group_id ]['items'][] = [
 					'slug' => $item_slug,
 					'label' => ucfirst( strtolower( $item->get_label() ) ),
-					'url' => $this->get_item_url( $item_slug, $item->get_parent_slug() ),
+					'url' => $url,
 					'priority' => $item->get_position() ?? 100,
 				];
 
