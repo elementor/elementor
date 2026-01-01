@@ -18,7 +18,7 @@ export default function ApplyKitDialog( props ) {
 				url += '&action_type=apply-all';
 			}
 			if ( returnTo ) {
-				url += `&return_to=${ encodeURIComponent( returnTo ) }`;
+				url += `&return_to=${ encodeURIComponent( returnTo ) }&no_automatic_redirect=true`;
 			}
 		} else {
 			url = '/import/process' +
@@ -30,7 +30,7 @@ export default function ApplyKitDialog( props ) {
 				url += '&action_type=apply-all';
 			}
 			if ( returnTo ) {
-				url += `&return_to=${ encodeURIComponent( returnTo ) }`;
+				url += `&return_to=${ encodeURIComponent( returnTo ) }&no_automatic_redirect=true`;
 			}
 		}
 

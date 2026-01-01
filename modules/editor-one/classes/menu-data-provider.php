@@ -139,12 +139,29 @@ class Menu_Data_Provider {
 	public function get_theme_builder_url(): string {
 		if ( null === $this->theme_builder_url ) {
 			$pro_url = Plugin::$instance->app ? Plugin::$instance->app->get_settings( 'menu_url' ) : null;
-			$default_url = $pro_url ? $pro_url : admin_url( 'admin.php?page=elementor-app#site-editor/promotion' );
+			$return_to = $_SERVER['REQUEST_URI'] ?? '';
 
-			$this->theme_builder_url = apply_filters( 'elementor/editor-one/menu/theme_builder_url', $default_url );
+			$url = $pro_url
+				? $this->add_return_to_url( $pro_url, $return_to )
+				: add_query_arg( [ 'return_to' => $return_to ], admin_url( 'admin.php?page=elementor-app' ) ) . '#/site-editor/promotion';
+
+			$this->theme_builder_url = apply_filters( 'elementor/editor-one/menu/theme_builder_url', $url );
 		}
 
 		return $this->theme_builder_url;
+	}
+
+	private function add_return_to_url( string $url, string $return_to ): string {
+		$hash_position = strpos( $url, '#' );
+
+		if ( false === $hash_position ) {
+			return add_query_arg( [ 'return_to' => $return_to ], $url );
+		}
+
+		$base_url = substr( $url, 0, $hash_position );
+		$hash_fragment = substr( $url, $hash_position );
+
+		return add_query_arg( [ 'return_to' => $return_to ], $base_url ) . $hash_fragment;
 	}
 
 	public function get_all_sidebar_page_slugs(): array {

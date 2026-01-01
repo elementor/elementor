@@ -6,10 +6,10 @@ export function useReturnTo() {
 	return useContext( ReturnToContext );
 }
 
-export function ReturnToProvider( props ) {
+export function ReturnToProvider( { value, children } ) {
 	return (
-		<ReturnToContext.Provider value={ props.value }>
-			{ props.children }
+		<ReturnToContext.Provider value={ value }>
+			{ children }
 		</ReturnToContext.Provider>
 	);
 }

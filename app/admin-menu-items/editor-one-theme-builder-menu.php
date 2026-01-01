@@ -44,7 +44,7 @@ class Editor_One_Theme_Builder_Menu implements Menu_Item_Interface, Admin_Menu_I
 
 		return add_query_arg(
 			[
-				'return_to' => urlencode( $return_to ),
+				'return_to' => $return_to,
 			],
 			Plugin::instance()->app->get_base_url()
 		) . '#/site-editor/promotion';
