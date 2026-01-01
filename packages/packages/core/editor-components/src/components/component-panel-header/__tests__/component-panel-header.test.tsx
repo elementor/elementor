@@ -133,7 +133,13 @@ describe( '<ComponentPanelHeader />', () => {
 	it( 'should display custom instance title when instanceTitle is set in path', () => {
 		// Arrange
 		setupComponentEditing( {
-			path: [ { componentId: MOCK_COMPONENT_ID, instanceId: 'instance-123', instanceTitle: MOCK_CUSTOM_INSTANCE_TITLE } ],
+			path: [
+				{
+					componentId: MOCK_COMPONENT_ID,
+					instanceId: 'instance-123',
+					instanceTitle: MOCK_CUSTOM_INSTANCE_TITLE,
+				},
+			],
 		} );
 
 		// Act
