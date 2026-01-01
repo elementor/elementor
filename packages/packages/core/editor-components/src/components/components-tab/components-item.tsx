@@ -29,6 +29,7 @@ type ComponentItemProps = {
 
 export const ComponentItem = ( { component }: ComponentItemProps ) => {
 	const componentModel = createComponentModel( component );
+
 	const popupState = usePopupState( {
 		variant: 'popover',
 		disableAutoFocus: true,
@@ -58,7 +59,7 @@ export const ComponentItem = ( { component }: ComponentItemProps ) => {
 		<Stack>
 			<ListItemButton
 				draggable
-				onDragStart={ () => startDragElementFromPanel( componentModel ) }
+				onDragStart={ ( event: React.DragEvent ) => startDragElementFromPanel( componentModel, event ) }
 				onDragEnd={ handleDragEnd }
 				shape="rounded"
 				sx={ {

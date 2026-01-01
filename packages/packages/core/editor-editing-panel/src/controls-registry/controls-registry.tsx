@@ -43,7 +43,7 @@ export type ControlRegistry = Record<
 >;
 
 const controlTypes = {
-	image: { component: ImageControl, layout: 'full', propTypeUtil: imagePropTypeUtil },
+	image: { component: ImageControl, layout: 'custom', propTypeUtil: imagePropTypeUtil },
 	'svg-media': { component: SvgMediaControl, layout: 'full', propTypeUtil: imageSrcPropTypeUtil },
 	text: { component: TextControl, layout: 'full', propTypeUtil: stringPropTypeUtil },
 	textarea: { component: TextAreaControl, layout: 'full', propTypeUtil: stringPropTypeUtil },

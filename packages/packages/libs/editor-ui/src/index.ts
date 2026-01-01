@@ -13,6 +13,8 @@ export { SearchField } from './components/search-field';
 export { Form } from './components/form';
 export { CtaButton } from './components/cta-button';
 export { PromotionInfotip } from './components/promotion-infotip';
+export { PromotionPopover } from './components/promotion-popover';
+export { PromotionChip } from './components/promotion-chip';
 
 export * from './components/popover';
 export * from './components/save-changes-dialog';

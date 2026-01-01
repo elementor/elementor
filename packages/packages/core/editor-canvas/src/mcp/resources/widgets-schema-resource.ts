@@ -15,21 +15,6 @@ export const WIDGET_SCHEMA_URI = 'elementor://widgets/schema/{widgetType}';
 export const STYLE_SCHEMA_URI = 'elementor://styles/schema/{category}';
 export const BEST_PRACTICES_URI = 'elementor://styles/best-practices';
 
-const checkIfUserHasPro = () => {
-	const extendedWindow = window as Window & {
-		elementor?: {
-			helpers?: {
-				hasPro?: () => boolean;
-			};
-		};
-	};
-	const hasPro = extendedWindow.elementor?.helpers?.hasPro;
-	if ( typeof hasPro === 'function' ) {
-		return hasPro();
-	}
-	return false;
-};
-
 export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 	const { mcpServer } = reg;
 
@@ -40,9 +25,9 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 					uri: BEST_PRACTICES_URI,
 					text: `# Styling best practices
 Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
-This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema, or in custom_css, depends on your needs.
+This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema.
 
-When applicable for styles, apply style PropValues using the ${ STYLE_SCHEMA_URI }. Custom css is for Elementor PRO users and intended to support only new CSS features not yet available in the UI.
+When applicable for styles, apply style PropValues using the ${ STYLE_SCHEMA_URI }.
 The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.`,
 				},
 			],
@@ -53,11 +38,7 @@ The css string must follow standard CSS syntax, with properties and values separ
 		'styles-schema',
 		new ResourceTemplate( STYLE_SCHEMA_URI, {
 			list: () => {
-				const isPro = checkIfUserHasPro();
 				const categories = [ ...Object.keys( getStylesSchema() ) ];
-				if ( ! isPro ) {
-					categories.push( 'custom_css' );
-				}
 				return {
 					resources: categories.map( ( category ) => ( {
 						uri: `elementor://styles/schema/${ category }`,
@@ -71,16 +52,6 @@ The css string must follow standard CSS syntax, with properties and values separ
 		},
 		async ( uri, variables ) => {
 			const category = typeof variables.category === 'string' ? variables.category : variables.category?.[ 0 ];
-			if ( category === 'custom_css' && checkIfUserHasPro() ) {
-				return {
-					contents: [
-						{
-							uri: uri.toString(),
-							text: 'Free style inline CSS string of properties and their values. Applicable for a single element, only the properties and values are accepted. Use this as a last resort for properties that are not covered with the schema. Do not use selectors, only the CSS content',
-						},
-					],
-				};
-			}
 			const stylesSchema = getStylesSchema()[ category ];
 			if ( ! stylesSchema ) {
 				throw new Error( `No styles schema found for category: ${ category }` );
@@ -91,7 +62,9 @@ The css string must follow standard CSS syntax, with properties and values separ
 					{
 						uri: uri.toString(),
 						mimeType: 'application/json',
-						text: JSON.stringify( asJson ),
+						text: JSON.stringify(
+							Schema.enrichWithIntention( asJson, 'Desired CSS in format "property: value;"' )
+						),
 					},
 				],
 			};

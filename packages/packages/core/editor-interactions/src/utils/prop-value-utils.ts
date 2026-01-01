@@ -44,44 +44,67 @@ export const extractBoolean = ( prop: BooleanPropValue | undefined, fallback = f
 	return prop?.value ?? fallback;
 };
 
-export const createAnimationPreset = (
-	effect: string,
-	type: string,
-	direction: string,
-	duration: number,
-	delay: number,
-	replay: boolean = false
-): AnimationPresetPropValue => ( {
+export const createAnimationPreset = ( {
+	effect,
+	type,
+	direction,
+	duration,
+	delay,
+	replay = false,
+}: {
+	effect: string;
+	type: string;
+	direction?: string;
+	duration: number;
+	delay: number;
+	replay: boolean;
+} ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
 		effect: createString( effect ),
 		type: createString( type ),
-		direction: createString( direction ),
+		direction: createString( direction ?? '' ),
 		timing_config: createTimingConfig( duration, delay ),
 		config: createConfig( replay ),
 	},
 } );
 
-export const createInteractionItem = (
-	trigger: string,
-	effect: string,
-	type: string,
-	direction: string,
-	duration: number,
-	delay: number,
-	interactionId?: string,
-	replay: boolean = false
-): InteractionItemPropValue => ( {
+export const createInteractionItem = ( {
+	trigger,
+	effect,
+	type,
+	direction,
+	duration,
+	delay,
+	interactionId,
+	replay = false,
+}: {
+	trigger: string;
+	effect: string;
+	type: string;
+	direction?: string;
+	duration: number;
+	delay: number;
+	interactionId?: string;
+	replay: boolean;
+} ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
 		...( interactionId && { interaction_id: createString( interactionId ) } ),
 		trigger: createString( trigger ),
-		animation: createAnimationPreset( effect, type, direction, duration, delay, replay ),
+		animation: createAnimationPreset( { effect, type, direction, duration, delay, replay } ),
 	},
 } );
 
 export const createDefaultInteractionItem = (): InteractionItemPropValue => {
-	return createInteractionItem( 'load', 'fade', 'in', '', 300, 0, undefined, false );
+	return createInteractionItem( {
+		trigger: 'load',
+		effect: 'fade',
+		type: 'in',
+		duration: 300,
+		delay: 0,
+		replay: false,
+	} );
 };
 
 export const createDefaultInteractions = (): ElementInteractions => ( {

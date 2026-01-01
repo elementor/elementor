@@ -21,9 +21,10 @@ jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
 } ) );
 
+const mockStartDragElementFromPanel = jest.fn();
+
 jest.mock( '@elementor/editor-canvas', () => ( {
-	startDragElementFromPanel: jest.fn(),
-	endDragElementFromPanel: jest.fn(),
+	startDragElementFromPanel: ( ...args: unknown[] ) => mockStartDragElementFromPanel( ...args ),
 } ) );
 
 jest.mock( '@elementor/editor-elements', () => ( {
@@ -54,7 +55,6 @@ describe( 'ComponentsTab', () => {
 	let store: Store< SliceState< typeof slice > >;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
 		jest.useFakeTimers();
 		registerSlice( slice );
 		store = __createStore();
@@ -140,6 +140,24 @@ describe( 'ComponentsTab', () => {
 			const componentItem = screen.getByRole( 'button', { name: /Button Component/ } );
 			expect( componentItem ).toBeInTheDocument();
 			expect( componentItem ).toHaveAttribute( 'draggable', 'true' );
+		} );
+
+		it( 'should call startDragElementFromPanel with component model and event on drag start', () => {
+			// Arrange
+			const [ buttonComponent ] = mockComponents;
+
+			// Act
+			renderWithStore( <ComponentItem component={ buttonComponent } />, store );
+
+			const componentItem = screen.getByRole( 'button', { name: /Button Component/ } );
+			fireEvent.dragStart( componentItem );
+
+			// Assert
+			expect( mockStartDragElementFromPanel ).toHaveBeenCalledTimes( 1 );
+			expect( mockStartDragElementFromPanel ).toHaveBeenCalledWith(
+				expect.objectContaining( { id: buttonComponent.id, name: buttonComponent.name } ),
+				expect.any( Object )
+			);
 		} );
 
 		it( 'should render search input with correct attributes and placeholder', () => {

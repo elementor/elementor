@@ -1,0 +1,128 @@
+[
+    {
+        "id": "1fa09bf",
+        "elType": "e-flexbox",
+        "settings": {},
+        "isInner": false,
+        "elements": [
+            {
+                "id": "4aefcf4",
+                "elType": "widget",
+                "widgetType": "e-image",
+                "elements": [],
+                "settings": {
+                    "image": {
+                        "$$type": "overridable",
+                        "value": {
+                            "override_key": "prop-2",
+                            "origin_value": {
+                                "$$type": "image",
+                                "value": {
+                                    "src": {
+                                        "$$type": "image-src",
+                                        "value": {
+                                            "id": null,
+                                            "url": {
+                                                "$$type": "url",
+                                                "value": "https://example.com/image.jpg"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "id": "ce4a067",
+                "elType": "e-flexbox",
+                "settings": {},
+                "isInner": false,
+                "elements": [
+                    {
+                        "id": "aac40b3",
+                        "elType": "widget",
+                        "widgetType": "e-heading",
+                        "elements": [],
+                        "settings": {
+                            "title": {
+                                "$$type": "overridable",
+                                "value": {
+                                    "override_key": "prop-3",
+                                    "origin_value": {
+                                        "$$type": "html",
+                                        "value": "This is a title"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "id": "61b83e7",
+                        "elType": "widget",
+                        "widgetType": "e-component",
+                        "elements": [],
+                        "settings": {
+                            "component_instance": {
+                                "$$type": "component-instance",
+                                "value": {
+                                    "component_id": {
+                                        "$$type": "number",
+                                        "value": 1111
+                                    },
+                                    "overrides": {
+                                        "$$type": "overrides",
+                                        "value": [
+                                            {
+                                                "$$type": "overridable",
+                                                "value": {
+                                                    "override_key": "prop-4",
+                                                    "origin_value": {
+                                                        "$$type": "override",
+                                                        "value": {
+                                                            "override_key": "prop-0",
+                                                            "override_value": {
+                                                                "$$type": "string",
+                                                                "value": "Learn more"
+                                                            },
+                                                            "schema_source": {
+                                                                "type": "component",
+                                                                "id": 1111
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "$$type": "overridable",
+                                                "value": {
+                                                    "override_key": "prop-5",
+                                                    "origin_value": {
+                                                        "$$type": "override",
+                                                        "value": {
+                                                            "override_key": "prop-1",
+                                                            "override_value": null,
+                                                            "schema_source": {
+                                                                "type": "component",
+                                                                "id": 1111
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "editor_settings": {
+                            "title": "Styled Button",
+                            "component_uid": "component-1765381706656-ekjeale"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]

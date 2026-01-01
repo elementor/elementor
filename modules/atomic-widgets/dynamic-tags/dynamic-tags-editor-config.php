@@ -364,7 +364,6 @@ class Dynamic_Tags_Editor_Config {
 
 	private function convert_media_control_to_atomic( $control ) {
 		return Image_Control::bind_to( $control['name'] )
-			->set_show_mode( 'media' )
 			->set_label( $control['label'] );
 	}
 

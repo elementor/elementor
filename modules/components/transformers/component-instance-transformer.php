@@ -14,18 +14,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Component_Instance_Transformer extends Transformer_Base {
+	private static array $rendering_stack = [];
+
+	public static function reset_rendering_stack(): void {
+		self::$rendering_stack = [];
+	}
+
 	public function transform( $value, Props_Resolver_Context $context ) {
 		$component_id = $value['component_id'];
 
+		if ( $this->is_circular_reference( $component_id ) ) {
+			return '';
+		}
+
+		self::$rendering_stack[] = $component_id;
 		$content = $this->get_rendered_content( $component_id );
+		array_pop( self::$rendering_stack );
 
 		return $content;
+	}
+
+	private function is_circular_reference( int $component_id ): bool {
+		return in_array( $component_id, self::$rendering_stack, true );
 	}
 
 	private function get_rendered_content( int $component_id ): string {
 		$document = Plugin::$instance->documents->get_doc_for_frontend( $component_id );
 
-		if ( ! $this->should_render_content( $document ) ) {
+		if ( ! $document || ! $this->should_render_content( $document ) ) {
 			return '';
 		}
 
@@ -53,8 +69,7 @@ class Component_Instance_Transformer extends Transformer_Base {
 	}
 
 	private function should_render_content( Component_Document $document ): bool {
-		return $document &&
-			! $this->is_password_protected( $document ) &&
+		return ! $this->is_password_protected( $document ) &&
 			$this->is_component( $document ) &&
 			$document->is_built_with_elementor();
 	}

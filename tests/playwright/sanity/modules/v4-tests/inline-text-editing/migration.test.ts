@@ -68,6 +68,7 @@ test.describe( 'Inline Text Editing Migration @v4-tests', () => {
 
 			const updatedTitle = `${ customTitle } (Updated)`;
 			await textarea.fill( updatedTitle );
+			await textarea.click();
 
 			await expect( headingElement ).toContainText( updatedTitle );
 

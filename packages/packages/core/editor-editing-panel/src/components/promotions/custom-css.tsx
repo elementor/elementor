@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { PromotionInfotip } from '@elementor/editor-ui';
-import { CrownFilledIcon } from '@elementor/icons';
-import { Chip } from '@elementor/ui';
+import { PromotionChip, PromotionInfotip } from '@elementor/editor-ui';
 import { __ } from '@wordpress/i18n';
 
 import { StyleTabSection } from '../style-tab-section';
@@ -32,19 +30,7 @@ export const CustomCssSection = () => {
 						open={ showInfoTip }
 						setOpen={ setShowInfoTip }
 					>
-						<Chip
-							size="tiny"
-							color="promotion"
-							variant="standard"
-							icon={ <CrownFilledIcon /> }
-							sx={ {
-								mr: 1,
-								'& .MuiChip-label': {
-									display: 'none',
-								},
-							} }
-							onClick={ () => setShowInfoTip( true ) }
-						/>
+						<PromotionChip onClick={ () => setShowInfoTip( true ) } />
 					</PromotionInfotip>
 				),
 			} }

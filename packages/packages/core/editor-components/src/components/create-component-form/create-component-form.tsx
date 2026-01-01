@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getElementLabel, type V1ElementData } from '@elementor/editor-elements';
+import { notify } from '@elementor/editor-notifications';
 import { Form as FormElement, ThemeProvider } from '@elementor/editor-ui';
 import { StarIcon } from '@elementor/icons';
 import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
+import { findNonAtomicElementsInElement } from '../../prevent-non-atomic-nesting';
 import { createUnpublishedComponent } from '../../store/actions/create-unpublished-component';
 import { type ComponentFormValues } from '../../types';
 import { trackComponentEvent } from '../../utils/tracking';
@@ -46,6 +48,20 @@ export function CreateComponentForm() {
 		const OPEN_SAVE_AS_COMPONENT_FORM_EVENT = 'elementor/editor/open-save-as-component-form';
 
 		const openPopup = ( event: CustomEvent< SaveAsComponentEventData > ) => {
+			const nonAtomicElements = findNonAtomicElementsInElement( event.detail.element );
+
+			if ( nonAtomicElements.length > 0 ) {
+				notify( {
+					type: 'default',
+					message: __(
+						'Components require atomic elements only. Remove widgets to create this component.',
+						'elementor'
+					),
+					id: 'non-atomic-element-save-blocked',
+				} );
+				return;
+			}
+
 			setElement( { element: event.detail.element, elementLabel: getElementLabel( event.detail.element.id ) } );
 			setAnchorPosition( event.detail.anchorPosition );
 

@@ -7,3 +7,4 @@ export { encodeString, decodeString } from './encoding';
 export { hash } from './hash';
 export { useSearchState, type UseSearchStateResult } from './use-search-state';
 export { generateUniqueId } from './generate-unique-id';
+export { capitalize } from './string-helpers';

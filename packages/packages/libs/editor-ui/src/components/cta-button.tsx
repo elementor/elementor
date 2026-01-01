@@ -5,15 +5,16 @@ import { __ } from '@wordpress/i18n';
 
 type CtaButtonProps = {
 	href: string;
+	showIcon?: boolean;
 } & Omit< ButtonProps, 'href' | 'target' | 'startIcon' | 'color' | 'variant' >;
 
-export const CtaButton = ( { href, children, ...props }: CtaButtonProps ) => (
+export const CtaButton = ( { href, children, showIcon = true, ...props }: CtaButtonProps ) => (
 	<Button
 		variant="contained"
 		color="promotion"
 		href={ href }
 		target="_blank"
-		startIcon={ <CrownFilledIcon /> }
+		startIcon={ showIcon ? <CrownFilledIcon /> : undefined }
 		{ ...props }
 	>
 		{ children ?? __( 'Upgrade Now', 'elementor' ) }

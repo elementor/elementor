@@ -187,7 +187,7 @@ function createComponentView(
 			if ( ! isAllowedToSwitchDocument ) {
 				options.showLockedByModal?.( lockedBy || '' );
 			} else {
-				switchToComponent( this.getComponentId() as number, this.model.get( 'id' ) );
+				switchToComponent( this.getComponentId() as number, this.model.get( 'id' ), this.el );
 			}
 		}
 

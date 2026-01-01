@@ -78,11 +78,12 @@ class Overridable_Prop_Parser {
 			'elType' => sanitize_text_field( $prop['elType'] ),
 			'originValue' => $sanitized_origin_value,
 			'groupId' => sanitize_key( $prop['groupId'] ),
+			'originPropFields' => isset( $prop['originPropFields'] ) ? [
+				'elType' => sanitize_text_field( $prop['originPropFields']['elType'] ),
+				'widgetType' => sanitize_text_field( $prop['originPropFields']['widgetType'] ),
+				'propKey' => sanitize_text_field( $prop['originPropFields']['propKey'] ),
+			] : null,
 		];
-
-		if ( $this->is_with_origin_prop_fields( $prop ) ) {
-			$sanitized_prop['originPropFields'] = $prop['originPropFields'];
-		}
 
 		return $result->wrap( $sanitized_prop );
 	}
@@ -127,14 +128,8 @@ class Overridable_Prop_Parser {
 
 			if ( Override_Prop_Type::get_key() === $prop['originValue']['$$type'] ) {
 				$raw_origin_value = $prop['originValue'];
-
-				return [
-					...$raw_origin_value,
-					'value' => [
-						...$raw_origin_value['value'],
-						'override_value' => $sanitized_value,
-					],
-				];
+				$raw_origin_value['value']['override_value'] = $sanitized_value;
+				return $raw_origin_value;
 			}
 
 			return $sanitized_value;
