@@ -17,6 +17,7 @@ export type StyleItem = {
 	value: string;
 	breakpoint: string;
 	state: StyleDefinitionState | null;
+	providerKey?: string;
 };
 
 export type StyleRenderer = ReturnType< typeof createStylesRenderer >;
@@ -34,6 +35,7 @@ export type RendererStyleDefinition = StyleDefinition & {
 type StyleRendererArgs = {
 	styles: RendererStyleDefinition[];
 	signal?: AbortSignal;
+	providerKey?: string;
 };
 
 type PropsToCssArgs = {
@@ -47,7 +49,7 @@ const SELECTORS_MAP: Record< StyleDefinitionType, string > = {
 };
 
 export function createStylesRenderer( { resolve, breakpoints, selectorPrefix = '' }: CreateStyleRendererArgs ) {
-	return async ( { styles, signal }: StyleRendererArgs ): Promise< StyleItem[] > => {
+	return async ( { styles, signal, providerKey }: StyleRendererArgs ): Promise< StyleItem[] > => {
 		const stylesCssPromises = styles.map( async ( style ) => {
 			const variantCssPromises = Object.values( style.variants ).map( async ( variant ) => {
 				const css = await propsToCss( { props: variant.props, resolve, signal } );
@@ -68,6 +70,7 @@ export function createStylesRenderer( { resolve, breakpoints, selectorPrefix = '
 				breakpoint: style?.variants[ 0 ]?.meta?.breakpoint || 'desktop',
 				value: variantsCss.join( '' ),
 				state: style?.variants[ 0 ]?.meta?.state || null,
+				providerKey,
 			};
 		} );
 

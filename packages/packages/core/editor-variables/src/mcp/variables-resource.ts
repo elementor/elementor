@@ -4,9 +4,12 @@ import { service } from '../service';
 import { type TVariable } from '../storage';
 
 export const GLOBAL_VARIABLES_URI = 'elementor://global-variables';
+export const GLOBAL_VARIABLES_RAW_CSS_URI = 'elementor://global-variables-raw-css';
 
 export const initVariablesResource = () => {
 	const { mcpServer } = getMCPByDomain( 'canvas' );
+
+	const variablesCssRaw = window.elementor?.config?.variable_raw_css || '';
 
 	mcpServer.resource(
 		'global-variables',
@@ -29,10 +32,28 @@ export const initVariablesResource = () => {
 		}
 	);
 
+	mcpServer.resource(
+		'global-variables-raw-css',
+		GLOBAL_VARIABLES_RAW_CSS_URI,
+		{
+			description:
+				'Raw CSS of Global variables. The variable names are the same as the ones in the global-variables resource.',
+		},
+		async () => {
+			return {
+				contents: [ { uri: GLOBAL_VARIABLES_RAW_CSS_URI, text: variablesCssRaw ?? '' } ],
+			};
+		}
+	);
+
 	window.addEventListener( 'variables:updated', () => {
 		mcpServer.server.sendResourceUpdated( {
 			uri: GLOBAL_VARIABLES_URI,
 			contents: [ { uri: GLOBAL_VARIABLES_URI, text: localStorage[ 'elementor-global-variables' ] } ],
+		} );
+		mcpServer.server.sendResourceUpdated( {
+			uri: GLOBAL_VARIABLES_RAW_CSS_URI,
+			contents: [ { uri: GLOBAL_VARIABLES_RAW_CSS_URI, text: variablesCssRaw ?? '' } ],
 		} );
 	} );
 };

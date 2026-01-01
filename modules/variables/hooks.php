@@ -86,6 +86,9 @@ class Hooks {
 	}
 
 	private function register_css_renderer() {
+		add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => array_merge( $settings, [
+			'variable_raw_css' => $this->css_renderer()->raw_css( false ),
+		] ) );
 		add_action( 'elementor/css-file/post/parse', function ( Post_CSS $post_css ) {
 			if ( ! Plugin::$instance->kits_manager->is_kit( $post_css->get_post_id() ) ) {
 				return;

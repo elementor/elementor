@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 import { __privateUseListenTo as useListenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
 import { Portal } from '@elementor/ui';
 
@@ -12,6 +13,10 @@ export function StyleRenderer() {
 	const styleItems = useStyleItems();
 	const linksAttrs = useDocumentsCssLinks();
 
+	useEffect( () => {
+		window.dispatchEvent( new CustomEvent( 'elementor:style-items-changed' ) );
+	}, [ styleItems ] );
+
 	if ( ! container ) {
 		return null;
 	}
@@ -19,7 +24,9 @@ export function StyleRenderer() {
 	return (
 		<Portal container={ container }>
 			{ styleItems.map( ( item, i ) => (
-				<style key={ `${ item.id }-${ i }-${ item.breakpoint }` }>{ item.value }</style>
+				<style data-provider-key={ item.providerKey } key={ `${ item.id }-${ i }-${ item.breakpoint }` }>
+					{ item.value }
+				</style>
 			) ) }
 			{ linksAttrs.map( ( attrs ) => (
 				<link { ...attrs } key={ attrs.id } />
