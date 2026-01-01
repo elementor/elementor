@@ -63,7 +63,13 @@ const EmptyState = () => {
 
 			<Stack alignItems="center" gap={ 2.5 } width="100%">
 				<Stack alignItems="center" gap={ 1 } width="100%">
-					<Typography align="center" variant="h6" color="text.primary">
+					<Typography
+						align="center"
+						variant="h6"
+						color="text.primary"
+						// 
+						sx={ { fontSize: '1.25rem', fontWeight: 500 } }
+					>
 						{ __( 'No components yet', 'elementor' ) }
 					</Typography>
 
