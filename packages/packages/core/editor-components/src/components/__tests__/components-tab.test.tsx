@@ -148,7 +148,7 @@ describe( 'ComponentsTab', () => {
 			const [ buttonComponent ] = mockComponents;
 
 			// Act
-			renderWithStore( <ComponentItem component={ buttonComponent } />, store );
+			renderWithStore( <ComponentItem component={ buttonComponent } renameComponent={ jest.fn() } />, store );
 
 			const componentItem = screen.getByRole( 'button', { name: /Button Component/ } );
 			fireEvent.dragStart( componentItem );
