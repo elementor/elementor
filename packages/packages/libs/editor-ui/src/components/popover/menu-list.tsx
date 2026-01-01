@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useMemo, useRef } from 'react';
 import { Box, ListItem, MenuList, MenuSubheader, styled, useTheme } from '@elementor/ui';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useVirtualizer, type Virtualizer, type VirtualizerOptions } from '@tanstack/react-virtual';
 
 import { useScrollTop, useScrollToSelected } from '../../hooks';
 
@@ -97,7 +97,7 @@ export const PopoverMenuList = < T, V extends string >( {
 		return visibleAndStickyIndexes.sort( ( a, b ) => a - b );
 	};
 
-	const onChangeCallback = ( { getVirtualIndexes }: { getVirtualIndexes: () => number[] } ) => {
+	const onChangeCallback = ( { getVirtualIndexes }: Virtualizer< HTMLDivElement, Element > ) => {
 		const visibleItems = getVirtualIndexes().map( ( index ) => items[ index ] );
 		onChange?.( visibleItems );
 	};
@@ -112,11 +112,7 @@ export const PopoverMenuList = < T, V extends string >( {
 	} );
 
 	useEffect( () => {
-		if ( ! onChange || items.length === 0 ) {
-			return;
-		}
-
-		onChange( items );
+		onChangeCallback( virtualizer );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ items ] );
 

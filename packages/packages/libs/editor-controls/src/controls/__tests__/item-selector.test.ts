@@ -80,8 +80,7 @@ describe( 'ItemSelector', () => {
 		// Act.
 		render( React.createElement( ItemSelector, propsWithDebounce ) );
 
-		const mockGetVirtualIndexes = () => [ 1 ];
-		mockOnChange( { getVirtualIndexes: mockGetVirtualIndexes } );
+		mockOnChange( [ { type: 'item', value: 'Font1' } ]  );
 
 		jest.advanceTimersByTime( 100 );
 
