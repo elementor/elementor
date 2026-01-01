@@ -139,7 +139,7 @@ class Menu_Data_Provider {
 	public function get_theme_builder_url(): string {
 		if ( null === $this->theme_builder_url ) {
 			$pro_url = Plugin::$instance->app ? Plugin::$instance->app->get_settings( 'menu_url' ) : null;
-			$return_to = $_SERVER['REQUEST_URI'] ?? '';
+			$return_to = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
 
 			$url = $pro_url
 				? $this->add_return_to_url( $pro_url, $return_to )

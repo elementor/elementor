@@ -40,7 +40,7 @@ class Editor_One_Theme_Builder_Menu implements Menu_Item_Interface, Admin_Menu_I
 	}
 
 	public function get_menu_url(): string {
-		$return_to = $_SERVER['REQUEST_URI'] ?? '';
+		$return_to = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
 
 		return add_query_arg(
 			[
