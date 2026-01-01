@@ -11,27 +11,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Third_Party_Pages_Menu implements Menu_Item_Third_Level_Interface {
 
-	public function get_capability() {
+	public function get_capability(): string {
 		return Menu_Config::CAPABILITY_EDIT_POSTS;
 	}
 
-	public function get_parent_slug() {
+	public function get_parent_slug(): string {
 		return Menu_Config::ELEMENTOR_HOME_MENU_SLUG;
 	}
 
-	public function is_visible() {
+	public function is_visible(): bool {
 		return true;
 	}
 
-	public function get_label() {
+	public function get_label(): string {
 		return esc_html__( 'Third Party Pages', 'elementor' );
 	}
 
-	public function get_position() {
+	public function get_position(): int {
 		return 200;
 	}
 
-	public function get_slug() {
+	public function get_slug(): string {
 		return 'elementor-third-party-pages';
 	}
 
@@ -39,7 +39,7 @@ class Third_Party_Pages_Menu implements Menu_Item_Third_Level_Interface {
 		return 'extension';
 	}
 
-	public function get_group_id() {
+	public function get_group_id(): string {
 		return Menu_Config::THIRD_PARTY_GROUP_ID;
 	}
 
