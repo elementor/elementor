@@ -1,11 +1,11 @@
 <?php
 namespace Elementor\Modules\Components\PropTypes;
 
-use Elementor\Modules\Components\Documents\Component_Overridable_Props;
-use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
-use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Plugin;
-use Elementor\Modules\Components\Documents\Component;
+use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
+use Elementor\Modules\Components\Documents\Component_Overridable_Props;
+use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Component_Override_Parser extends Override_Parser {
+	private static Components_Repository $repository;
+
 	public static function get_override_type(): string {
 		return 'component';
 	}
@@ -112,17 +114,22 @@ class Component_Override_Parser extends Override_Parser {
 			$current_document->is_revision()
 		);
 
-		/** @var Component $component */
-		$component = $should_get_autosave
-			? Plugin::$instance->documents->get_doc_or_auto_save( $component_id, get_current_user_id() )
-			: Plugin::$instance->documents->get( $component_id );
+		$component = $this->get_repository()->get( $component_id, $should_get_autosave );
 
-		if ( ! $component || $component->get_type() !== Component::TYPE ) {
+		if ( ! $component ) {
 			return null;
 		}
 
 		$this->component_overridable_props = $component->get_overridable_props();
 
 		return $this->component_overridable_props;
+	}
+
+	private function get_repository() {
+		if ( ! self::$repository ) {
+			self::$repository = new Components_Repository();
+		}
+
+		return self::$repository;
 	}
 }
