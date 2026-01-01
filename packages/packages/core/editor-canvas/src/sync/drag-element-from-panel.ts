@@ -2,7 +2,15 @@ import { type V1ElementModelProps } from '@elementor/editor-elements';
 
 import { type CanvasExtendedWindow } from './types';
 
-export const startDragElementFromPanel = ( props: Omit< V1ElementModelProps, 'id' > ) => {
+const DRAG_GROUPS = [ 'elementor-element' ];
+
+export const endDragElementFromPanel = () => {
+	getElementorChannels()?.panelElements?.trigger( 'element:drag:end' );
+};
+
+export const startDragElementFromPanel = ( props: Omit< V1ElementModelProps, 'id' >, event: React.DragEvent ) => {
+	setDragGroups( event );
+
 	const channels = getElementorChannels();
 
 	channels?.editor.reply( 'element:dragged', null );
@@ -12,8 +20,15 @@ export const startDragElementFromPanel = ( props: Omit< V1ElementModelProps, 'id
 		.trigger( 'element:drag:start' );
 };
 
-export const endDragElementFromPanel = () => {
-	getElementorChannels()?.panelElements?.trigger( 'element:drag:end' );
+const setDragGroups = ( event: React.DragEvent ) => {
+	const dataContainer = { groups: getDragGroups( event ) };
+	event.dataTransfer?.setData( JSON.stringify( dataContainer ), 'true' );
+};
+
+const getDragGroups = ( event: React.DragEvent ) => {
+	const dataContainer = event.dataTransfer?.getData( 'text/plain' );
+
+	return dataContainer ? JSON.parse( dataContainer ).groups : DRAG_GROUPS;
 };
 
 const getElementorChannels = () => {
