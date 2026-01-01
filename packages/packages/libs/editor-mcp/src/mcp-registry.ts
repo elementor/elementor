@@ -155,7 +155,7 @@ function createToolRegistrator( server: McpServer ) {
 		const outputSchema = opts.outputSchema as ZodRawShape | undefined;
 		if ( outputSchema && ! ( 'llm_instructions' in outputSchema ) ) {
 			Object.assign( outputSchema, {
-				llm_instruction: z.string().optional().describe( 'Instructions for what to do next' ),
+				llm_instructions: z.string().optional().describe( 'Instructions for what to do next, Important to follow these instructions!' ),
 			} );
 		}
 		// @ts-ignore: TS is unable to infer the type here

@@ -31,8 +31,6 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 		outputSchema,
 		modelPreferences: {
 			hints: [ { name: 'claude-sonnet-4-5' } ],
-			intelligencePriority: 0.95,
-			speedPriority: 0.5,
 		},
 		handler: async ( params ) => {
 			let xml: Document | null = null;
@@ -105,7 +103,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 						);
 						errors.push( ...( propsValidationErrors || [] ).map( ( msg ) => new Error( msg ) ) );
 						const { errors: stylesValidationErrors } = validateInput.validateStyles( styleObject );
-						errors.push( ...( stylesValidationErrors || [] ).map( ( msg ) => new Error( msg ) ) );
+						errors.push( ...( stylesValidationErrors || [] ).map( ( msg ) => new Error( msg + `config id: ${configId}` ) ) );
 
 						if ( propsValidationErrors?.length || stylesValidationErrors?.length ) {
 							return;
@@ -195,7 +193,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				errors: errors?.length
 					? errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n\n' )
 					: undefined,
-				llmInstructions:
+				llm_instructions:
 					( softErrors.length
 						? `The composition was built successfully, but there were some issues with the provided configurations:
 

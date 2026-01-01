@@ -38,7 +38,7 @@ The css string must follow standard CSS syntax, with properties and values separ
 		'styles-schema',
 		new ResourceTemplate( STYLE_SCHEMA_URI, {
 			list: () => {
-				const categories = [ ...Object.keys( getStylesSchema() ) ];
+				const categories = [ ...Object.keys( getStylesSchema() ).filter((category) => category !== 'all' ) ];
 				return {
 					resources: categories.map( ( category ) => ( {
 						uri: `elementor://styles/schema/${ category }`,
