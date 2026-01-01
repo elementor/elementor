@@ -26,8 +26,6 @@ const queryClient = new QueryClient( {
 function AppContent() {
 	const { return_to: returnTo } = useQueryParams().getAll();
 
-	console.log( returnTo );
-
 	return (
 		<SettingsProvider value={ elementorAppConfig[ 'kit-library' ] }>
 			<ReturnToProvider value={ returnTo }>

@@ -7,7 +7,6 @@ import { useCallback } from 'react';
 export default function Header( props ) {
 	const returnTo = useReturnTo();
 
-	console.log( returnTo );
 	const onClose = useCallback( () => {
 		if ( returnTo && safeRedirect( returnTo ) ) {
 			return;
