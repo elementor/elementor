@@ -1,0 +1,9 @@
+{
+    "settings": {
+        "oldField": "value",
+        "other": "data",
+        "nested": {
+            "newField": "value"
+        }
+    }
+}
