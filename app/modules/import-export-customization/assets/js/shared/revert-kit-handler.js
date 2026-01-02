@@ -4,6 +4,8 @@ export class RevertKitHandler {
 	static API_PATH = 'revert';
 	static DIALOG_ID = 'e-revert-kit-deleted-dialog';
 	static URL_PARAM_REFERRER_KIT = 'referrer_kit';
+	static URL_PARAM_RETURN_TO = 'return_to';
+	static URL_PARAM_NO_AUTOMATIC_REDIRECT = 'no_automatic_redirect';
 	static KIT_DATA_KEY = 'elementor-kit-data';
 	static NAME_SEPARATOR_PATTERN = /[-_]+/;
 
@@ -22,7 +24,9 @@ export class RevertKitHandler {
 
 		try {
 			const referrerKitId = this.getReferrerKitId();
-			this.saveToCache( referrerKitId, activeKitName );
+			const returnTo = this.getReturnTo();
+			const noAutomaticRedirect = this.getNoAutomaticRedirect();
+			this.saveToCache( referrerKitId, activeKitName, returnTo, noAutomaticRedirect );
 
 			const { data } = await this.callRevertAPI();
 			this.handleRevertResponse( data );
@@ -126,6 +130,8 @@ export class RevertKitHandler {
 	}
 
 	showReferrerKitDialog( referrerKitId ) {
+		const { returnTo, noAutomaticRedirect } = this.getDataFromCache();
+
 		elementorCommon.dialogsManager
 			.createWidget( 'confirm', {
 				id: RevertKitHandler.DIALOG_ID,
@@ -136,8 +142,7 @@ export class RevertKitHandler {
 					cancel: __( 'Close', 'elementor' ),
 				},
 				onConfirm: () => {
-					location.href =
-						elementorImportExport.appUrl + '/preview/' + referrerKitId;
+					location.href = this.buildPreviewUrl( referrerKitId, returnTo, noAutomaticRedirect );
 				},
 				onCancel: () => {
 					location.reload();
@@ -146,6 +151,20 @@ export class RevertKitHandler {
 			.show();
 
 		this.clearCache();
+	}
+
+	buildPreviewUrl( referrerKitId, returnTo, noAutomaticRedirect ) {
+		const baseUrl = elementorImportExport.appUrl + '/preview/' + referrerKitId;
+		const url = new URL( baseUrl );
+
+		if ( returnTo ) {
+			url.searchParams.append( RevertKitHandler.URL_PARAM_RETURN_TO, returnTo );
+		}
+		if ( noAutomaticRedirect ) {
+			url.searchParams.append( RevertKitHandler.URL_PARAM_NO_AUTOMATIC_REDIRECT, noAutomaticRedirect );
+		}
+
+		return url.toString();
 	}
 
 	maybeShowReferrerKitDialog() {
@@ -209,12 +228,24 @@ export class RevertKitHandler {
 		);
 	}
 
-	saveToCache( referrerKitId, activeKitName ) {
+	getReturnTo() {
+		const urlParams = new URLSearchParams( window.location.search );
+		return urlParams.get( RevertKitHandler.URL_PARAM_RETURN_TO ) || '';
+	}
+
+	getNoAutomaticRedirect() {
+		const urlParams = new URLSearchParams( window.location.search );
+		return urlParams.get( RevertKitHandler.URL_PARAM_NO_AUTOMATIC_REDIRECT ) || '';
+	}
+
+	saveToCache( referrerKitId, activeKitName, returnTo, noAutomaticRedirect ) {
 		sessionStorage.setItem(
 			RevertKitHandler.KIT_DATA_KEY,
 			JSON.stringify( {
 				referrerKitId: referrerKitId || '',
 				activeKitName: activeKitName || '',
+				returnTo: returnTo || '',
+				noAutomaticRedirect: noAutomaticRedirect || '',
 			} ),
 		);
 	}

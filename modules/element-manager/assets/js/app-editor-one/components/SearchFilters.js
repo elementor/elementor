@@ -36,12 +36,13 @@ export const SearchFilters = ( {
 			justifyContent="space-between"
 			sx={ ( theme ) => ( {
 				position: 'sticky',
-				top: theme.spacing( 4 ),
+				top: theme.spacing( 10 ),
 				backgroundColor: 'var(--e-one-palette-background-default)',
 				zIndex: 10,
 				paddingBlock: 2.5,
 				paddingInline: 2,
 				boxShadow: 'rgba(0, 0, 0, 0.15) 0 5px 10px 0',
+				marginBottom: theme.spacing( 1 ),
 			} ) }
 		>
 			<Box>
@@ -64,7 +65,7 @@ export const SearchFilters = ( {
 							placeholder={ __( 'Plugin', 'elementor' ) }
 							value={ filterByPlugin }
 							onChange={ ( event ) => onPluginFilterChange( event.target.value ) }
-							name="elementor-element-manager-select-filter-by-plugin"
+							data-id="elementor-element-manager-select-filter-by-plugin"
 						>
 							{ plugins.map( ( plugin ) => (
 								<MenuItem key={ plugin.value } value={ plugin.value }>
@@ -82,7 +83,7 @@ export const SearchFilters = ( {
 						<Select
 							value={ filterByStatus }
 							onChange={ ( event ) => onStatusFilterChange( event.target.value ) }
-							name="elementor-element-manager-select-filter-by-status"
+							data-id="elementor-element-manager-select-filter-by-status"
 							placeholder={ __( 'Status', 'elementor' ) }
 						>
 							<MenuItem value="all">{ __( 'All Statuses', 'elementor' ) }</MenuItem>
@@ -101,7 +102,7 @@ export const SearchFilters = ( {
 							color="secondary"
 							disabled={ usageIsLoading }
 							onClick={ onScanUsage }
-							className="e-id-elementor-element-manager-button-scan-element-usage"
+							data-id="e-id-elementor-element-manager-button-scan-element-usage"
 							loading={ usageIsLoading }
 						>
 							{ __( 'Scan Element Usage', 'elementor' ) }
@@ -111,7 +112,7 @@ export const SearchFilters = ( {
 							color="secondary"
 							onClick={ onDeactivateUnused }
 							disabled={ null === usageData }
-							className="e-id-elementor-element-manager-button-deactivate-unused-elements"
+							data-id="e-id-elementor-element-manager-button-deactivate-unused-elements"
 						>
 							{ __( 'Deactivate Unused Elements', 'elementor' ) }
 						</Button>
@@ -120,7 +121,7 @@ export const SearchFilters = ( {
 							color="secondary"
 							disabled={ ! widgetsDisabledCount }
 							onClick={ onEnableAll }
-							className="e-id-elementor-element-manager-button-enable-all"
+							data-id="e-id-elementor-element-manager-button-enable-all"
 						>
 							{ __( 'Enable All', 'elementor' ) }
 						</Button>
@@ -132,7 +133,7 @@ export const SearchFilters = ( {
 					variant="contained"
 					disabled={ isSaving || ! hasUnsavedChanges }
 					onClick={ onSaveChanges }
-					className="e-id-elementor-element-manager-button-save-changes"
+					data-id="e-id-elementor-element-manager-button-save-changes"
 					loading={ isSaving }
 				>
 					{ __( 'Save Changes', 'elementor' ) }

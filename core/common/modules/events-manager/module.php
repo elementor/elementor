@@ -46,6 +46,7 @@ class Module extends BaseModule {
 			'token' => ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN,
 			'session_replays' => $session_replays,
 			'flags_enabled' => $is_flags_enabled,
+			'isEditorOneActive' => Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ),
 		];
 
 		return $settings;

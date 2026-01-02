@@ -5,11 +5,14 @@ import BaseTracking from './base-tracking';
 const EXCLUDED_SELECTORS = {
 	ADMIN_MENU: '#adminmenu',
 	TOP_BAR: '.e-admin-top-bar',
+	TOP_BAR_EDITOR_ONE: '#editor-one-top-bar',
 	WP_ADMIN_BAR: '#wpadminbar',
 	SUBMENU: '.wp-submenu',
 	PROMO_PAGE: '.e-feature-promotion',
 	PROMO_BLANK_STATE: '.elementor-blank_state',
 	APP: '.e-app',
+	SIDEBAR_NAVIGATION: '#editor-one-sidebar-navigation',
+	FLYOUT_MENU: '.elementor-submenu-flyout',
 };
 
 class ActionControlTracking extends BaseTracking {
@@ -121,6 +124,13 @@ class ActionControlTracking extends BaseTracking {
 					return;
 				}
 
+				const toggle = base.closest( '.elementor-role-toggle' );
+
+				if ( toggle && ! this.isExcludedElement( toggle ) ) {
+					this.trackControl( toggle, CONTROL_TYPES.TOGGLE );
+					return;
+				}
+
 				const button = base.closest( 'button, input[type="submit"], input[type="button"], .button, .e-btn' );
 				if ( button && ! this.isExcludedElement( button ) ) {
 					if ( FILTER_BUTTON_IDS.includes( button.id ) ) {
@@ -149,7 +159,12 @@ class ActionControlTracking extends BaseTracking {
 					return;
 				}
 
-				const toggle = base.closest( '.components-toggle-control' );
+				let toggle = null;
+				if ( WpDashboardTracking.isEditorOneActive() ) {
+					toggle = base.closest( '.MuiSwitch-switchBase' );
+				} else {
+					toggle = base.closest( '.components-toggle-control' );
+				}
 
 				if ( toggle && ! this.isExcludedElement( toggle ) ) {
 					this.trackControl( toggle, CONTROL_TYPES.TOGGLE );
@@ -253,6 +268,7 @@ class ActionControlTracking extends BaseTracking {
 
 		if ( CONTROL_TYPES.BUTTON === controlType || CONTROL_TYPES.TOGGLE === controlType || CONTROL_TYPES.FILTER === controlType ) {
 			const dataId = element.getAttribute( 'data-id' );
+
 			if ( dataId ) {
 				return dataId;
 			}

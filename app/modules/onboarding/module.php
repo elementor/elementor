@@ -113,6 +113,7 @@ class Module extends BaseModule {
 
 		/** @var Library $library */
 		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+		$is_editor_one_active = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
 
 		Plugin::$instance->app->set_settings( 'onboarding', [
 			'eventPlacement' => 'Onboarding wizard',
@@ -126,6 +127,7 @@ class Module extends BaseModule {
 			'helloOptOut' => count( $pages_and_posts->posts ) < 5,
 			'siteName' => esc_html( $site_name ),
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
+			'isEditorOneActive' => $is_editor_one_active,
 			'urls' => [
 				'kitLibrary' => Plugin::$instance->app->get_base_url() . '&source=onboarding#/kit-library?order[direction]=desc&order[by]=featuredIndex',
 				'sitePlanner' => add_query_arg( [
@@ -178,6 +180,8 @@ class Module extends BaseModule {
 				'401' => self::EXPERIMENT_UPDATE_COPY_VISUALS,
 				'402' => self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION,
 			],
+			'pageSubheading' => $is_editor_one_active ? __( 'Choose the capabilities you need to bring your vision to life', 'elementor' ) : __( 'Which Elementor Pro features do you need to bring your creative vision to life?', 'elementor' ),
+			'pageHeading' => $is_editor_one_active ? __( ' Elevate your website with additional features.', 'elementor' ) : __( 'Elevate your website with additional Pro features.', 'elementor' ),
 		] );
 	}
 
