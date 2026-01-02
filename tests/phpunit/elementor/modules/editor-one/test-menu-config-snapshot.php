@@ -4,7 +4,6 @@ namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
 use Elementor\App\Modules\KitLibrary\Module as KitLibraryModule;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Module as EditorOneModule;
 use Elementor\Plugin;

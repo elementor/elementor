@@ -39,9 +39,6 @@ class Editor_One_Theme_Builder_Menu implements Menu_Item_Interface, Admin_Menu_I
 		return App::PAGE_ID;
 	}
 
-<<<<<<< HEAD
-	public function get_group_id() {
-=======
 	public function get_menu_url(): string {
 		$return_to = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
 
@@ -54,7 +51,6 @@ class Editor_One_Theme_Builder_Menu implements Menu_Item_Interface, Admin_Menu_I
 	}
 
 	public function get_group_id(): string {
->>>>>>> b422f3ccba (Internal: Add redirect logic for full page apps [ED-21956] (#34064))
 		return Menu_Config::TEMPLATES_GROUP_ID;
 	}
 
