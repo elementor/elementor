@@ -25,6 +25,7 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 		$this->activate_editor_one_experiment();
 		$this->reset_menu_data_provider();
 		$this->simulate_admin_context();
+		$this->set_request_uri();
 	}
 
 	public function tearDown(): void {
@@ -148,7 +149,13 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 		$path = $parsed['path'] ?? '';
 
 		if ( isset( $parsed['query'] ) ) {
-			$path .= '?' . $parsed['query'];
+			parse_str( $parsed['query'], $query_params );
+			if ( isset( $query_params['return_to'] ) && '' === $query_params['return_to'] ) {
+				unset( $query_params['return_to'] );
+			}
+			if ( ! empty( $query_params ) ) {
+				$path .= '?' . http_build_query( $query_params );
+			}
 		}
 
 		if ( isset( $parsed['fragment'] ) ) {
@@ -173,5 +180,11 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 		$instance_property = $reflection->getProperty( 'instance' );
 		$instance_property->setAccessible( true );
 		$instance_property->setValue( null, null );
+	}
+
+	private function set_request_uri(): void {
+		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+			$_SERVER['REQUEST_URI'] = '';
+		}
 	}
 }

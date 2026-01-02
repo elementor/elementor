@@ -1,10 +1,18 @@
 import { Grid } from '@elementor/app-ui';
 import HeaderButtons from '../../../../../../assets/js/layout/header-buttons';
+import { useReturnTo } from '../../context/return-to-context';
+import safeRedirect from '../../../../../import-export/assets/js/shared/utils/redirect';
+import { useCallback } from 'react';
 
 export default function Header( props ) {
-	const onClose = () => {
+	const returnTo = useReturnTo();
+
+	const onClose = useCallback( () => {
+		if ( returnTo && safeRedirect( returnTo ) ) {
+			return;
+		}
 		window.top.location = elementorAppConfig.admin_url;
-	};
+	}, [ returnTo ] );
 
 	return (
 		<Grid container alignItems="center" justify="space-between" className="eps-app__header">
