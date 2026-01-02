@@ -162,7 +162,7 @@ export default function ImportKit() {
 							className="e-app-import__drop-zone"
 							heading={ __( 'Choose a file to import', 'elementor' ) }
 							text={ __( 'Drag & drop the .zip file with your website template', 'elementor' ) }
-							secondaryText={ 'Or', 'elementor' }
+							secondaryText={ __( 'Or', 'elementor' ) }
 							filetypes={ [ 'zip' ] }
 							onFileChoose={ () => eventTracking( 'kit-library/choose-file' ) }
 							onFileSelect={ uploadFile }
