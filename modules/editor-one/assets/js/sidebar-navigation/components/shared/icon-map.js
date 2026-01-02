@@ -5,6 +5,7 @@ import InfoCircleIcon from '@elementor/icons/InfoCircleIcon';
 import SendIcon from '@elementor/icons/SendIcon';
 import SettingsIcon from '@elementor/icons/SettingsIcon';
 import UsersIcon from '@elementor/icons/UsersIcon';
+import PlugIcon from '@elementor/icons/PlugIcon';
 import ToolIcon from '../icons/tool';
 
 export const ICON_MAP = {
@@ -16,6 +17,7 @@ export const ICON_MAP = {
 	settings: SettingsIcon,
 	tool: ToolIcon,
 	users: UsersIcon,
+	extension: PlugIcon,
 };
 
 export const DEFAULT_ICON = HomeIcon;
