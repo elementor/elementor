@@ -162,13 +162,13 @@ export default function ImportKit() {
 							className="e-app-import__drop-zone"
 							heading={ __( 'Choose a file to import', 'elementor' ) }
 							text={ __( 'Drag & drop the .zip file with your website template', 'elementor' ) }
-							secondaryText={ 'Or' }
+							secondaryText={ 'Or', 'elementor' }
 							filetypes={ [ 'zip' ] }
 							onFileChoose={ () => eventTracking( 'kit-library/choose-file' ) }
 							onFileSelect={ uploadFile }
 							onError={ () => setErrorType( 'general' ) }
 							isLoading={ isLoading }
-							buttonText={ __( 'Import from files' ) }
+							buttonText={ __( 'Import from files', 'elementor' ) }
 						/>
 
 						{ dialog.isOpen &&
