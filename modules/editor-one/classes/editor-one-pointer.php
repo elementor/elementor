@@ -61,7 +61,9 @@ class Editor_One_Pointer {
 						content: <?php echo wp_json_encode( $pointer_content ); ?>,
 						position: {
 							edge: 'top',
-							align: 'left'
+							align: 'left',
+							at: 'left+20 bottom',
+							my: 'left top'
 						},
 						close: function() {
 							markIntroductionAsViewed();
