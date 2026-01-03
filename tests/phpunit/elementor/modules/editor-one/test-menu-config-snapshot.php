@@ -153,6 +153,8 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 				unset( $query_params['return_to'] );
 			}
 
+			unset( $query_params['ver'] );
+			unset( $query_params['return_to'] );
 			
 			if ( ! empty( $query_params ) ) {
 				$path .= '?' . http_build_query( $query_params );
