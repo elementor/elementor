@@ -8,7 +8,6 @@ import {
 	type HtmlPropValue,
 	type PropType,
 	stringPropTypeUtil,
-	type StringPropValue,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
 import { __privateRunCommandSync as runCommandSync, isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
