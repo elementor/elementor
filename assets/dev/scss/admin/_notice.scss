@@ -5,6 +5,8 @@
 	--e-notice-border-color: #ccd0d4;
 	--e-notice-context-color: #{$editor-accent};
 	--e-notice-context-tint: var(--e-context-cta-tint-1);
+	--e-notice-aside-color: #FAE4FA80;
+	--e-notice-accent-color: var(--e-a-color-primary-bold);
 	--e-notice-box-shadow: 0 1px 4px rgba(0,0,0,.15);
 	--e-notice-dismiss-color: #{$editor-dark};
 }
@@ -34,7 +36,7 @@
 		inset-block-start: -1px;
 		inset-block-end: -1px;
 		width: 4px;
-		background-color: var(--e-notice-context-color);
+		background-color: var(--e-notice-accent-color);
 	}
 
 
@@ -60,7 +62,7 @@
 	// Layout
 	&__aside {
 		overflow: hidden;
-		background-color: var(--e-notice-context-tint);
+		background-color: var(--e-notice-aside-color);
 		width: calc(var(--e-notice-is-extended, 0) * 50px);
 		text-align: center;
 		padding-block-start: 15px;
@@ -75,9 +77,8 @@
 		width: pxToRem(24px);
 		line-height: pxToRem(24px);
 		border-radius: 100px;
-		background: var(--e-notice-context-color);
+		background-color: var(--e-notice-accent-color);
 		color: #fff;
-		text-shadow: 0 0 3px var(--e-notice-context-color-dark), 0 0 1px var(--e-notice-context-color-dark), 0 0 1px var(--e-notice-context-color-dark);
 	}
 
 	&__content {
@@ -86,6 +87,12 @@
 
 	&__actions {
 		display: flex;
+
+		.e-button--cta {
+			--e-button-context-color: var(--e-notice-accent-color);
+			--e-button-context-color-dark: var(--e-notice-accent-color);
+		}
+
 		> * + * {
 			margin-inline-start: 8px;
 		}
@@ -116,7 +123,6 @@
 			color: var(--e-notice-dismiss-color);
 			width: 20px;
 			border-radius: 20px;
-			speak: none;
 			text-align: center;
 		}
 
