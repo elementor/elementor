@@ -12,6 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class AllyStarted extends Trigger_Base {
 	private const PLUGIN_SLUG = 'pojo-accessibility';
+	private const AI_ANNOUNCEMENT_KEY = 'ai-get-started-announcement';
 
 	protected $name = 'ally-announcement';
 
@@ -44,7 +45,7 @@ class AllyStarted extends Trigger_Base {
 	}
 
 	private function has_ai_announcement_been_displayed(): bool {
-		return User::get_introduction_meta( 'ai-get-started-announcement' );
+		return User::get_introduction_meta( self::AI_ANNOUNCEMENT_KEY );
 	}
 
 	private function has_ally_announcement_been_displayed(): bool {
