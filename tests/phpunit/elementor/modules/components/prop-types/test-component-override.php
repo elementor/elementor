@@ -238,4 +238,49 @@ class Test_Component_Override extends Component_Prop_Type_Test_Base {
 		// Assert
 		$this->assertEquals( [ '$$type' => 'override', 'value' => null ], $result );
 	}
+
+	public function test_validate__uses_autosave_version_for_newly_exposed_props() {
+		// Arrange
+		$this->set_autosave_props();
+		$component_override = Override_Prop_Type::make();
+
+		// Act
+		$result = $component_override->validate( [
+			'$$type' => 'override',
+			'value' => [
+				'override_key' => 'prop-uuid-autosave-only',
+				'override_value' => [ '$$type' => 'html', 'value' => 'Override Value' ],
+				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
+			]
+		] );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_sanitize__uses_autosave_version_for_newly_exposed_props() {
+		// Arrange
+		$this->set_autosave_props();
+		$component_override = Override_Prop_Type::make();
+
+		// Act
+		$result = $component_override->sanitize( [
+			'$$type' => 'override',
+			'value' => [
+				'override_key' => 'prop-uuid-autosave-only',
+				'override_value' => [ '$$type' => 'html', 'value' => 'Override Value' ],
+				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
+			],
+		] );
+
+		// Assert
+		$this->assertEquals( [
+			'$$type' => 'override',
+			'value' => [
+				'override_key' => 'prop-uuid-autosave-only',
+				'override_value' => [ '$$type' => 'html', 'value' => 'Override Value' ],
+				'schema_source' => ['type' => 'component', 'id' => $this::VALID_COMPONENT_ID ],
+			],
+		], $result );
+	}
 }

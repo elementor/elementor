@@ -46,8 +46,12 @@ class Components_Repository {
 		return Collection::make( $components );
 	}
 
-	public function get( $id ) {
-		$doc = Plugin::$instance->documents->get( $id );
+	public function get( $id, bool $include_autosave = false ) {
+		$should_get_autosave = $include_autosave || is_preview();
+
+		$doc = $should_get_autosave
+			? Plugin::$instance->documents->get_doc_or_auto_save( $id, get_current_user_id() )
+			: Plugin::$instance->documents->get( $id );
 
 		if ( ! $doc instanceof Component ) {
 			return null;

@@ -58,7 +58,7 @@ class Test_Component_Instance_Transformer extends Elementor_Test_Base {
 		$self_nesting_component = new Mock_Self_Nesting_Component( self::COMPONENT_ID_A );
 
 		$this->documents_manager_mock
-			->method( 'get_doc_for_frontend' )
+			->method( 'get' )
 			->willReturn( $self_nesting_component );
 
 		// Act
@@ -111,7 +111,7 @@ class Test_Component_Instance_Transformer extends Elementor_Test_Base {
 		$component = new Mock_Simple_Component( $component_id, $content );
 
 		$this->documents_manager_mock
-			->method( 'get_doc_for_frontend' )
+			->method( 'get' )
 			->with( $component_id )
 			->willReturn( $component );
 	}
