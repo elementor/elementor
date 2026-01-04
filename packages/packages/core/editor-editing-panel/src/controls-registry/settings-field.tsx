@@ -12,7 +12,6 @@ import {
 import {
 	type CreateOptions,
 	isDependencyMet,
-	migratePropValue,
 	type PropKey,
 	type Props,
 	type PropsSchema,
@@ -42,11 +41,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 
 	const elementSettingValues = useElementSettings< PropValue >( elementId, Object.keys( propsSchema ) ) as Values;
 
-	const migratedValues = useMemo( () => {
-		return migratePropValues( elementSettingValues, propsSchema );
-	}, [ elementSettingValues, propsSchema ] );
-
-	const value = { [ bind ]: migratedValues?.[ bind ] ?? null };
+	const value = { [ bind ]: elementSettingValues?.[ bind ] ?? null };
 
 	const propType = createTopLevelObjectType( { schema: propsSchema } );
 
@@ -60,7 +55,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		const { withHistory = true } = meta ?? {};
 		const dependents = extractOrderedDependencies( dependenciesPerTargetMapping );
 
-		const settings = getUpdatedValues( newValue, dependents, propsSchema, migratedValues, elementId );
+		const settings = getUpdatedValues( newValue, dependents, propsSchema, elementSettingValues, elementId );
 		if ( withHistory ) {
 			undoableUpdateElementProp( settings );
 		} else {
@@ -68,7 +63,7 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		}
 	};
 
-	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, migratedValues ).isMet;
+	const isDisabled = ( prop: PropType ) => ! isDependencyMet( prop?.dependencies, elementSettingValues ).isMet;
 
 	return (
 		<PropProvider propType={ propType } value={ value } setValue={ setValue } isDisabled={ isDisabled }>
@@ -108,30 +103,4 @@ function useUndoableUpdateElementProp( {
 			}
 		);
 	}, [ elementId, propDisplayName ] );
-}
-
-function migratePropValues( values: Values, schema: PropsSchema ): Values {
-	if ( ! values ) {
-		return values;
-	}
-
-	const migrated: Values = {};
-
-	for ( const [ key, value ] of Object.entries( values ) ) {
-		if ( value === null || value === undefined ) {
-			migrated[ key ] = value;
-			continue;
-		}
-
-		const propType = schema[ key ];
-
-		if ( ! propType ) {
-			migrated[ key ] = value;
-			continue;
-		}
-
-		migrated[ key ] = migratePropValue( value, propType ) as Values[ string ];
-	}
-
-	return migrated;
 }

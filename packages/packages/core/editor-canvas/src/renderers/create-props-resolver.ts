@@ -1,6 +1,5 @@
 import {
 	isTransformable,
-	migratePropValue,
 	type PropKey,
 	type Props,
 	type PropsSchema,
@@ -76,12 +75,6 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 
 		if ( value.disabled === true ) {
 			return null;
-		}
-
-		value = migratePropValue( value, type );
-
-		if ( ! isTransformable( value ) ) {
-			return value;
 		}
 
 		let transformablePropType = type;

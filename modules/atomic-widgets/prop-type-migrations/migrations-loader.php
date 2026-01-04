@@ -11,6 +11,8 @@ class Migrations_Loader {
 
 	private ?array $manifest = null;
 
+	private ?string $manifest_hash = null;
+
 	private string $base_path;
 
 	private string $manifest_file;
@@ -226,6 +228,22 @@ class Migrations_Loader {
 		return $operations;
 	}
 
+	public function get_manifest_hash(): string {
+		if ( null !== $this->manifest_hash ) {
+			return $this->manifest_hash;
+		}
+
+		$manifest = $this->get_manifest();
+
+		if ( empty( $manifest ) ) {
+			$this->manifest_hash = '';
+			return $this->manifest_hash;
+		}
+
+		$this->manifest_hash = md5( wp_json_encode( $manifest ) );
+
+		return $this->manifest_hash;
+	}
 
 	private function get_manifest(): array {
 		if ( null !== $this->manifest ) {
