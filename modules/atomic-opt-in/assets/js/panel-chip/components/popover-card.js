@@ -14,7 +14,7 @@ import { __ } from '@wordpress/i18n';
 const popoverData = {
 	image: 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip.png',
 	image_alt: __( 'Atomic Elements', 'elementor' ),
-	title: __( 'Atomic elements', 'elementor' ),
+	title: __( 'Atomic Elements', 'elementor' ),
 	description: [
 		__( 'The new Atomic Elements are part of version 4, which is now in beta and ready for you to use in production.', 'elementor' ),
 	],
