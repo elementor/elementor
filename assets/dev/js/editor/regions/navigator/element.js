@@ -115,6 +115,11 @@ export default class extends Marionette.CompositeView {
 		this.listenTo( this.model, 'change', this.onModelChange )
 			.listenTo( this.model.get( 'settings' ), 'change', this.onModelSettingsChange );
 		this.listenTo( this.model, 'change:editor_settings', this.onModelEditorSettingsChange );
+		this.listenTo( this.model, 'recalculate_title', this.onRecalculateTitle );
+	}
+
+	onRecalculateTitle() {
+		this.ui.title.text( this.model.getTitle() );
 	}
 
 	onModelEditorSettingsChange( elementModel, editorSettings ) {
