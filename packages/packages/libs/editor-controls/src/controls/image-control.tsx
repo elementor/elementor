@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
+import { ControlLabel } from '../components/control-label';
 import { createControl } from '../create-control';
 import { useUnfilteredFilesUpload } from '../hooks/use-unfiltered-files-upload';
 import { ImageMediaControl } from './image-media-control';
@@ -21,7 +22,7 @@ export const ImageControl = createControl( ( { sizes }: ImageControlProps ) => {
 	return (
 		<PropProvider { ...propContext }>
 			<Stack gap={ 1.5 }>
-				<ControlFormLabel>{ __( 'Image', 'elementor' ) }</ControlFormLabel>
+				<ControlLabel>{ __( 'Image', 'elementor' ) }</ControlLabel>
 				<ImageSrcControl />
 				<Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
 					<Grid item xs={ 6 }>
