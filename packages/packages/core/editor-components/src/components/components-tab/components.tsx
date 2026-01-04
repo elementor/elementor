@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { PanelBody } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
 
 import { useComponents } from '../../hooks/use-components';
