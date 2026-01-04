@@ -87,7 +87,7 @@ class OptInPage {
 
 	private function add_new_tab_to( Settings $settings ) {
 		$settings->add_tab( Module::MODULE_NAME, [
-			'label' => esc_html__( 'Editor V4', 'elementor' ),
+			'label' => esc_html__( 'Version 4', 'elementor' ),
 			'sections' => [
 				'opt-in' => [
 					'callback' => function() {
