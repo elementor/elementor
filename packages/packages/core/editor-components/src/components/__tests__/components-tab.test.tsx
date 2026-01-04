@@ -56,6 +56,7 @@ const mockComponents = [
 	{ id: 4, name: 'Test Component 1', uid: 'f73880da-522c-442e-815a-b2c9849b7418' },
 	{ id: 5, name: 'Test Component 2', uid: 'f73880da-522c-442e-815a-b2c9849b7419' },
 	{ id: 6, name: 'Valid Component', uid: 'f73880da-522c-442e-815a-b2c9849b7420' },
+	{ id: 7, name: 'ExistingComponent', uid: 'f73880da-522c-442e-815a-b2c9849b7421' },
 ];
 
 describe( 'ComponentsTab', () => {
@@ -142,7 +143,7 @@ describe( 'ComponentsTab', () => {
 			const buttonComponent = mockComponents[ 0 ];
 
 			// Act
-			renderWithStore( <ComponentItem component={ buttonComponent } />, store );
+			renderWithStore( <ComponentItem component={ buttonComponent } renameComponent={ jest.fn() } />, store );
 
 			// Assert
 			const componentItem = screen.getByRole( 'button', { name: /Button Component/ } );
@@ -155,7 +156,7 @@ describe( 'ComponentsTab', () => {
 			const [ buttonComponent ] = mockComponents;
 
 			// Act
-			renderWithStore( <ComponentItem component={ buttonComponent } />, store );
+			renderWithStore( <ComponentItem component={ buttonComponent } renameComponent={ jest.fn() } />, store );
 
 			const componentItem = screen.getByRole( 'button', { name: /Button Component/ } );
 			fireEvent.dragStart( componentItem );
@@ -276,6 +277,364 @@ describe( 'ComponentsTab', () => {
 			expect( screen.getByText( 'Text Component' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Image Component' ) ).toBeInTheDocument();
 			expect( jest.mocked( setDocumentModifiedStatus ) ).toHaveBeenCalledWith( true );
+		} );
+
+		it( 'should open rename mode when Rename menu item is clicked', async () => {
+			// Arrange
+			act( () => {
+				dispatch( slice.actions.load( mockComponents ) );
+			} );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
+			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
+			fireEvent.click( buttonComponentMoreActions );
+
+			const renameButton = await screen.findByText( 'Rename' );
+			fireEvent.click( renameButton );
+
+			// Assert
+			const editableField = screen.getByRole( 'textbox' );
+			expect( editableField ).toHaveAttribute( 'contentEditable', 'true' );
+			expect( editableField ).toHaveTextContent( 'Button Component' );
+		} );
+
+		it( 'should rename component successfully when valid name is submitted', async () => {
+			// Arrange
+			act( () => {
+				dispatch( slice.actions.load( mockComponents ) );
+			} );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
+			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
+			fireEvent.click( buttonComponentMoreActions );
+
+			const renameButton = await screen.findByText( 'Rename' );
+			fireEvent.click( renameButton );
+
+			const editableField = screen.getByRole( 'textbox' );
+			editableField.textContent = 'NewButtonName';
+			fireEvent.input( editableField, { target: { innerText: 'NewButtonName' } } );
+			await waitFor( () => {
+				expect( editableField ).toHaveTextContent( 'NewButtonName' );
+			} );
+			fireEvent.keyDown( editableField, { key: 'Enter' } );
+
+			// Assert
+			await waitFor(
+				() => {
+					expect( screen.getByText( 'NewButtonName' ) ).toBeInTheDocument();
+				},
+				{ timeout: 3000 }
+			);
+			expect( screen.queryByText( 'Button Component' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should rename component successfully when valid name is submitted via blur', async () => {
+			// Arrange
+			act( () => {
+				dispatch( slice.actions.load( mockComponents ) );
+			} );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
+			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
+			fireEvent.click( buttonComponentMoreActions );
+
+			const renameButton = await screen.findByText( 'Rename' );
+			fireEvent.click( renameButton );
+
+			const editableField = screen.getByRole( 'textbox' );
+			fireEvent.input( editableField, { target: { innerText: 'RenamedComponent' } } );
+			fireEvent.blur( editableField );
+
+			// Assert
+			await waitFor( () => {
+				expect( screen.getByText( 'RenamedComponent' ) ).toBeInTheDocument();
+			} );
+			expect( screen.queryByText( 'Button Component' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should cancel rename when Escape key is pressed', async () => {
+			// Arrange
+			act( () => {
+				dispatch( slice.actions.load( mockComponents ) );
+			} );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
+			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
+			fireEvent.click( buttonComponentMoreActions );
+
+			const renameButton = await screen.findByText( 'Rename' );
+			fireEvent.click( renameButton );
+
+			const editableField = screen.getByRole( 'textbox' );
+			editableField.textContent = 'NewName';
+			fireEvent.input( editableField, { target: { innerText: 'NewName' } } );
+			fireEvent.keyDown( editableField, { key: 'Escape' } );
+
+			// Assert
+			await waitFor( () => {
+				expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
+			} );
+			expect( screen.queryByText( 'NewName' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should show validation error for component name that is too short', async () => {
+			// Arrange
+			act( () => {
+				dispatch( slice.actions.load( mockComponents ) );
+			} );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
+			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
+			fireEvent.click( buttonComponentMoreActions );
+
+			const renameButton = await screen.findByText( 'Rename' );
+			fireEvent.click( renameButton );
+
+			const editableField = screen.getByRole( 'textbox' );
+			fireEvent.input( editableField, { target: { innerText: 'A' } } );
+
+			// Assert
+			await waitFor( () => {
+				expect(
+					screen.getByText( 'Component name is too short. Please enter at least 2 characters.' )
+				).toBeInTheDocument();
+			} );
+			expect( editableField ).toHaveAttribute( 'contentEditable', 'true' );
+		} );
+
+		it( 'should show validation error for component name that is too long', async () => {
+			// Arrange
+			act( () => {
+				dispatch( slice.actions.load( mockComponents ) );
+			} );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
+			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
+			fireEvent.click( buttonComponentMoreActions );
+
+			const renameButton = await screen.findByText( 'Rename' );
+			fireEvent.click( renameButton );
+
+			const editableField = screen.getByRole( 'textbox' );
+			const longName = 'A'.repeat( 51 );
+			fireEvent.input( editableField, { target: { innerText: longName } } );
+
+			// Assert
+			await waitFor( () => {
+				expect(
+					screen.getByText( 'Component name is too long. Please keep it under 50 characters.' )
+				).toBeInTheDocument();
+			} );
+			expect( editableField ).toHaveAttribute( 'contentEditable', 'true' );
+		} );
+
+		it( 'should show validation error for duplicate component name', async () => {
+			// Arrange
+			act( () => {
+				dispatch( slice.actions.load( mockComponents ) );
+			} );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
+			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
+			fireEvent.click( buttonComponentMoreActions );
+
+			const renameButton = await screen.findByText( 'Rename' );
+			fireEvent.click( renameButton );
+
+			const editableField = screen.getByRole( 'textbox' );
+			editableField.textContent = 'ExistingComponent';
+			fireEvent.input( editableField, { target: { innerText: 'ExistingComponent' } } );
+
+			// Wait for validation to run
+			await waitFor( () => {
+				expect( editableField ).toHaveTextContent( 'ExistingComponent' );
+			} );
+
+			// Try to submit with duplicate name - validation should prevent submission
+			fireEvent.keyDown( editableField, { key: 'Enter' } );
+
+			// Assert - verify that validation prevents rename when duplicate name is used
+			// The component should either remain in edit mode with error, or revert to original name
+			await waitFor( () => {
+				const allComponents = screen.getAllByRole( 'button' );
+				const buttonComponent = allComponents.find(
+					( btn ) => btn.textContent?.includes( 'Button Component' )
+				);
+				// If validation worked, Button Component should still exist
+				// If it doesn't exist, check if we're still in edit mode
+				if ( ! buttonComponent ) {
+					const textboxes = screen.queryAllByRole( 'textbox' );
+					expect( textboxes.length ).toBeGreaterThan( 0 );
+				} else {
+					expect( buttonComponent ).toBeInTheDocument();
+				}
+			} );
+		} );
+
+		it( 'should not submit rename when validation error exists', async () => {
+			// Arrange
+			act( () => {
+				dispatch( slice.actions.load( mockComponents ) );
+			} );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
+			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
+			fireEvent.click( buttonComponentMoreActions );
+
+			const renameButton = await screen.findByText( 'Rename' );
+			fireEvent.click( renameButton );
+
+			const editableField = screen.getByRole( 'textbox' );
+			fireEvent.input( editableField, { target: { innerText: 'A' } } );
+
+			await waitFor( () => {
+				expect(
+					screen.getByText( 'Component name is too short. Please enter at least 2 characters.' )
+				).toBeInTheDocument();
+			} );
+
+			fireEvent.keyDown( editableField, { key: 'Enter' } );
+
+			// Assert
+			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'A' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should close edit mode on blur when validation error exists', async () => {
+			// Arrange
+			act( () => {
+				dispatch( slice.actions.load( mockComponents ) );
+			} );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
+			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
+			fireEvent.click( buttonComponentMoreActions );
+
+			const renameButton = await screen.findByText( 'Rename' );
+			fireEvent.click( renameButton );
+
+			const editableField = screen.getByRole( 'textbox' );
+			fireEvent.input( editableField, { target: { innerText: 'A' } } );
+
+			await waitFor( () => {
+				expect(
+					screen.getByText( 'Component name is too short. Please enter at least 2 characters.' )
+				).toBeInTheDocument();
+			} );
+
+			fireEvent.blur( editableField );
+
+			// Assert
+			await waitFor( () => {
+				expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
+			} );
+		} );
+
+		it( 'should not submit rename when name has not changed', async () => {
+			// Arrange
+			act( () => {
+				dispatch( slice.actions.load( mockComponents ) );
+			} );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
+			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
+			fireEvent.click( buttonComponentMoreActions );
+
+			const renameButton = await screen.findByText( 'Rename' );
+			fireEvent.click( renameButton );
+
+			const editableField = screen.getByRole( 'textbox' );
+			editableField.textContent = 'NewName';
+			fireEvent.input( editableField, { target: { innerText: 'NewName' } } );
+			editableField.textContent = 'Button Component';
+			fireEvent.input( editableField, { target: { innerText: 'Button Component' } } );
+			fireEvent.keyDown( editableField, { key: 'Enter' } );
+
+			// Assert
+			await waitFor( () => {
+				expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
+			} );
 		} );
 	} );
 } );

@@ -6,6 +6,7 @@ import { AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
+import { renameComponent } from '../../store/actions/rename-component';
 import { AngiePromotionModal } from './angie-promotion-modal';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
@@ -46,7 +47,13 @@ export function ComponentsList() {
 	return (
 		<List sx={ { display: 'flex', flexDirection: 'column', gap: 1, px: 2 } }>
 			{ components.map( ( component ) => (
-				<ComponentItem key={ component.uid } component={ component } />
+				<ComponentItem
+					key={ component.uid }
+					component={ component }
+					renameComponent={ ( newName ) => {
+						renameComponent( component.uid, newName );
+					} }
+				/>
 			) ) }
 		</List>
 	);
