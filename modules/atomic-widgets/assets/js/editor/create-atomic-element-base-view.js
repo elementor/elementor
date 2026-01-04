@@ -9,6 +9,8 @@ export default function createAtomicElementBaseView( type ) {
 
 		emptyView: AtomicElementEmptyView,
 
+		_childrenRenderPromises: [],
+
 		tagName() {
 			const tagControl = this.model.getSetting( 'tag' );
 			const tagControlValue = tagControl?.value || tagControl;
@@ -33,6 +35,10 @@ export default function createAtomicElementBaseView( type ) {
 				'container',
 				...atomicElements,
 			];
+		},
+
+		getRenderContext() {
+			return this._parent?.getRenderContext?.();
 		},
 
 		className() {
@@ -175,6 +181,40 @@ export default function createAtomicElementBaseView( type ) {
 			this._parent.removeChildView( this );
 
 			parent.addChild( this.model, AtomicElementView, this._index );
+		},
+
+		render() {
+			const renderPromise = new Promise( ( resolve ) => {
+				BaseElementView.prototype.render.apply( this, arguments );
+
+				this._waitForChildrenToComplete().then( () => {
+					resolve();
+				} );
+			} );
+
+			this._currentRenderPromise = renderPromise;
+
+			return this;
+		},
+
+		async _waitForChildrenToComplete() {
+			if ( this._childrenRenderPromises.length > 0 ) {
+				await Promise.all( this._childrenRenderPromises );
+			}
+		},
+
+		_renderChildren() {
+			BaseElementView.prototype._renderChildren.apply( this, arguments );
+
+			this._childrenRenderPromises = [];
+
+			if ( this.children && this.children.length > 0 ) {
+				this.children.each( ( childView ) => {
+					if ( childView._currentRenderPromise ) {
+						this._childrenRenderPromises.push( childView._currentRenderPromise );
+					}
+				} );
+			}
 		},
 
 		onRender() {

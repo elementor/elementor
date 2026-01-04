@@ -290,4 +290,153 @@ describe( 'createPropsResolver', () => {
 		expect( onResolve ).toHaveBeenNthCalledWith( 1, { key: 'int', value: 2 } );
 		expect( onResolve ).toHaveBeenNthCalledWith( 2, { key: 'int2', value: 4 } );
 	} );
+
+	it( 'should pass renderContext to transformers', async () => {
+		// Arrange.
+		const OVERRIDE_KEY = 'test-key';
+		const OVERRIDE_VALUE = 'from-context';
+
+		const transformers = createTransformersRegistry().register(
+			'context-aware',
+			createTransformer< { key: string } >( ( value, options ) => {
+				return options.renderContext?.overrides?.[ value.key ] ?? 'fallback';
+			} )
+		);
+
+		const resolve = createPropsResolver( {
+			transformers,
+			schema: {
+				text: createMockPropType( { kind: 'plain', key: 'context-aware' } ),
+			},
+		} );
+
+		// Act.
+		const result = await resolve( {
+			props: {
+				text: { $$type: 'context-aware', value: { key: OVERRIDE_KEY } },
+			},
+			renderContext: { overrides: { [ OVERRIDE_KEY ]: OVERRIDE_VALUE } },
+		} );
+
+		// Assert.
+		expect( result ).toEqual( { text: OVERRIDE_VALUE } );
+	} );
+
+	it( 'should use fallback when renderContext is not provided', async () => {
+		// Arrange.
+		const transformers = createTransformersRegistry().register(
+			'context-aware',
+			createTransformer< { key: string } >( ( value, options ) => {
+				return options.renderContext?.overrides?.[ value.key ] ?? 'fallback';
+			} )
+		);
+
+		const resolve = createPropsResolver( {
+			transformers,
+			schema: {
+				text: createMockPropType( { kind: 'plain', key: 'context-aware' } ),
+			},
+		} );
+
+		// Act.
+		const result = await resolve( {
+			props: {
+				text: { $$type: 'context-aware', value: { key: 'any-key' } },
+			},
+		} );
+
+		// Assert.
+		expect( result ).toEqual( { text: 'fallback' } );
+	} );
+
+	it( 'should propagate renderContext through nested object props', async () => {
+		// Arrange.
+		const OVERRIDE_KEY = 'nested-key';
+		const OVERRIDE_VALUE = 'nested-context';
+
+		const transformers = createTransformersRegistry()
+			.register(
+				'object',
+				createTransformer< unknown >( ( value ) => value )
+			)
+			.register(
+				'context-aware',
+				createTransformer< { key: string } >( ( value, options ) => {
+					return options.renderContext?.overrides?.[ value.key ] ?? 'fallback';
+				} )
+			);
+
+		const nestedSchema = {
+			inner: createMockPropType( { kind: 'plain', key: 'context-aware' } ),
+		};
+
+		const resolve = createPropsResolver( {
+			transformers,
+			schema: {
+				outer: createMockPropType( { kind: 'object', key: 'object', shape: nestedSchema } ),
+			},
+		} );
+
+		// Act.
+		const result = await resolve( {
+			props: {
+				outer: {
+					$$type: 'object',
+					value: {
+						inner: { $$type: 'context-aware', value: { key: OVERRIDE_KEY } },
+					},
+				},
+			},
+			renderContext: { overrides: { [ OVERRIDE_KEY ]: OVERRIDE_VALUE } },
+		} );
+
+		// Assert.
+		expect( result ).toEqual( { outer: { inner: OVERRIDE_VALUE } } );
+	} );
+
+	it( 'should propagate renderContext through array props', async () => {
+		// Arrange.
+		const OVERRIDE_KEY = 'array-key';
+		const OVERRIDE_VALUE = 'array-context';
+
+		const transformers = createTransformersRegistry()
+			.register(
+				'array',
+				createTransformer< unknown >( ( value ) => value )
+			)
+			.register(
+				'context-aware',
+				createTransformer< { key: string } >( ( value, options ) => {
+					return options.renderContext?.overrides?.[ value.key ] ?? 'fallback';
+				} )
+			);
+
+		const resolve = createPropsResolver( {
+			transformers,
+			schema: {
+				items: createMockPropType( {
+					kind: 'array',
+					key: 'array',
+					item_prop_type: createMockPropType( { kind: 'plain', key: 'context-aware' } ),
+				} ),
+			},
+		} );
+
+		// Act.
+		const result = await resolve( {
+			props: {
+				items: {
+					$$type: 'array',
+					value: [
+						{ $$type: 'context-aware', value: { key: OVERRIDE_KEY } },
+						{ $$type: 'context-aware', value: { key: OVERRIDE_KEY } },
+					],
+				},
+			},
+			renderContext: { overrides: { [ OVERRIDE_KEY ]: OVERRIDE_VALUE } },
+		} );
+
+		// Assert.
+		expect( result ).toEqual( { items: [ OVERRIDE_VALUE, OVERRIDE_VALUE ] } );
+	} );
 } );

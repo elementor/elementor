@@ -10,7 +10,6 @@ export {
 } from './legacy/create-templated-element-type';
 export { registerElementType } from './legacy/init-legacy-views';
 export * from './legacy/types';
-export { RenderContext } from './renderers/render-context';
 export { createPropsResolver, type PropsResolver } from './renderers/create-props-resolver';
 export { settingsTransformersRegistry } from './settings-transformers-registry';
 export { styleTransformersRegistry } from './style-transformers-registry';
@@ -21,5 +20,5 @@ export { WIDGET_SCHEMA_URI } from './mcp/resources/widgets-schema-resource';
 export * from './legacy/types';
 export { createTransformer } from './transformers/create-transformer';
 export { createTransformersRegistry } from './transformers/create-transformers-registry';
-export { type AnyTransformer } from './transformers/types';
+export { type AnyTransformer, type TransformerRenderContext, type TransformerOptions } from './transformers/types';
 export { UnknownStyleTypeError, UnknownStyleStateError } from './renderers/errors';

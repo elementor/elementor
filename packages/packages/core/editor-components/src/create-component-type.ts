@@ -6,6 +6,7 @@ import {
 	type ElementType,
 	type ElementView,
 	type LegacyWindow,
+	type TransformerRenderContext,
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { __ } from '@wordpress/i18n';
@@ -76,6 +77,11 @@ export function createComponentType(
 	};
 }
 
+type ViewWithParent = {
+	_parent?: ViewWithParent;
+	getRenderContext?: () => TransformerRenderContext | undefined;
+};
+
 function createComponentView(
 	options: CreateTemplatedElementTypeOptions & {
 		showLockedByModal?: ( lockedBy: string ) => void;
@@ -84,11 +90,31 @@ function createComponentView(
 	return class extends createTemplatedElementView( options ) {
 		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
 		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
+		#componentRenderContext: TransformerRenderContext | undefined;
 
 		isComponentCurrentlyEdited() {
 			const currentDocument = getCurrentDocument();
 
 			return currentDocument?.id === this.getComponentId();
+		}
+
+		getRenderContext(): TransformerRenderContext | undefined {
+			const parent = ( this as unknown as ViewWithParent )._parent;
+			const parentContext = parent?.getRenderContext?.();
+
+			if ( ! this.#componentRenderContext ) {
+				return parentContext;
+			}
+
+			const ownOverrides = this.#componentRenderContext.overrides ?? {};
+			const parentOverrides = parentContext?.overrides ?? {};
+
+			return {
+				overrides: {
+					...parentOverrides,
+					...ownOverrides,
+				},
+			};
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
@@ -100,6 +126,10 @@ function createComponentView(
 				| undefined;
 
 			if ( componentInstance ) {
+				this.#componentRenderContext = {
+					overrides: componentInstance.overrides ?? {},
+				};
+
 				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection(
 					componentInstance.elements
 				);
