@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { AIIcon, ComponentsIcon } from '@elementor/icons';
 import { Box, Button, Divider, Link, List, Stack, Typography } from '@elementor/ui';
 import { AngieMcpSdk } from '@elementor-external/angie-sdk';
@@ -12,6 +12,13 @@ import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
 
 const LEARN_MORE_URL = 'http://go.elementor.com/components-guide-article';
+
+// Override legacy panel CSS reset that sets h1-h6 to font-size:100% and font-weight:normal.
+// See: assets/dev/scss/editor/panel/_reset.scss (applied via :where() selector in panel.scss).
+const SUBTITLE_OVERRIDE_SX = {
+	fontSize: '0.875rem !important',
+	fontWeight: '500 !important',
+};
 
 let angieSdk: AngieMcpSdk | null = null;
 
@@ -47,7 +54,6 @@ export function ComponentsList() {
 
 const EmptyState = () => {
 	const [ isAngieModalOpen, setIsAngieModalOpen ] = useState( false );
-	const buttonRef = useRef< HTMLButtonElement >( null );
 
 	const handleCreateWithAI = () => {
 		const sdk = getAngieSdk();
@@ -62,92 +68,60 @@ const EmptyState = () => {
 	};
 
 	return (
-		<>
-			<Stack
-				alignItems="center"
-				justifyContent="start"
-				height="100%"
-				sx={ { px: 2, py: 2 } }
-				gap={ 2 }
-				overflow="hidden"
-			>
-				<Box sx={ { p: 1.25 } }>
-					<ComponentsIcon sx={ { fontSize: 35, color: 'text.secondary' } } />
-				</Box>
+		<Stack
+			alignItems="center"
+			justifyContent="start"
+			height="100%"
+			sx={ { px: 2, py: 4 } }
+			gap={ 2 }
+			overflow="hidden"
+		>
+			<Stack alignItems="center" gap={ 1 }>
+				<ComponentsIcon fontSize="large" sx={ { color: 'text.secondary' } } />
 
-				<Stack alignItems="center" gap={ 2.5 } width="100%">
-					<Stack alignItems="center" gap={ 1 } width="100%">
-						<Typography
-							align="center"
-							variant="h6"
-							color="text.primary"
-							sx={ { fontSize: '1.25rem !important', fontWeight: '500 !important' } }
-						>
-							{ __( 'No components yet', 'elementor' ) }
-						</Typography>
+				<Typography align="center" variant="subtitle2" color="text.secondary" sx={ SUBTITLE_OVERRIDE_SX }>
+					{ __( 'No components yet', 'elementor' ) }
+				</Typography>
 
-						<Typography align="center" variant="body2" color="text.secondary">
-							{ __( 'Components are reusable blocks that sync across your site.', 'elementor' ) }
-							<br />
-							{ __( 'Create once, use everywhere.', 'elementor' ) }
-						</Typography>
+				<Typography align="center" variant="caption" color="secondary" sx={ { maxWidth: 200 } }>
+					{ __( 'Components are reusable blocks that sync across your site.', 'elementor' ) }
+					<br />
+					{ __( 'Create once, use everywhere.', 'elementor' ) }
+				</Typography>
 
-						<Link
-							href={ LEARN_MORE_URL }
-							target="_blank"
-							rel="noopener noreferrer"
-							variant="body1"
-							color="info.main"
-						>
-							{ __( 'Learn more about components', 'elementor' ) }
-						</Link>
-					</Stack>
-
-					<Divider sx={ { width: '100%' } } />
-
-					<Stack alignItems="center" gap={ 1 } width="100%">
-						<Typography align="center" variant="subtitle1" color="text.primary">
-							{ __( 'Create your first one:', 'elementor' ) }
-						</Typography>
-
-						<Typography align="center" variant="body2" color="text.secondary">
-							{ __( 'Right-click any element on your canvas and select "', 'elementor' ) }
-							<Typography
-								component="span"
-								variant="body2"
-								color="text.secondary"
-								sx={ { textDecoration: 'underline' } }
-							>
-								{ __( 'Create component', 'elementor' ) }
-							</Typography>
-							{ __( '"', 'elementor' ) }
-						</Typography>
-
-						<Typography align="center" variant="caption" color="text.secondary">
-							{ __( 'Or', 'elementor' ) }
-						</Typography>
-
-						<Button
-							ref={ buttonRef }
-							variant="outlined"
-							color="secondary"
-							size="small"
-							fullWidth
-							onClick={ handleCreateWithAI }
-							endIcon={ <AIIcon /> }
-						>
-							{ __( 'Create with AI (beta)', 'elementor' ) }
-						</Button>
-					</Stack>
-				</Stack>
+				<Link
+					href={ LEARN_MORE_URL }
+					target="_blank"
+					rel="noopener noreferrer"
+					variant="caption"
+					color="info.main"
+				>
+					{ __( 'Learn more about components', 'elementor' ) }
+				</Link>
 			</Stack>
 
-			<AngiePromotionModal
-				open={ isAngieModalOpen }
-				onClose={ () => setIsAngieModalOpen( false ) }
-				anchorEl={ buttonRef.current }
-			/>
-		</>
+			<Divider sx={ { width: '100%' } } />
+
+			<Stack alignItems="center" gap={ 1 } width="100%">
+				<Typography align="center" variant="subtitle2" color="text.secondary" sx={ SUBTITLE_OVERRIDE_SX }>
+					{ __( 'Create your first one:', 'elementor' ) }
+				</Typography>
+
+				<Typography align="center" variant="caption" color="secondary" sx={ { maxWidth: 228 } }>
+					{ __( 'Right-click any element on your canvas and select "Create component"', 'elementor' ) }
+				</Typography>
+
+				<Typography align="center" variant="caption" color="secondary">
+					{ __( 'Or', 'elementor' ) }
+				</Typography>
+
+				<AngiePromotionModal open={ isAngieModalOpen } onClose={ () => setIsAngieModalOpen( false ) }>
+					<Button variant="outlined" size="small" onClick={ handleCreateWithAI } endIcon={ <AIIcon /> }>
+						{ __( 'Create component with AI', 'elementor' ) }
+					</Button>
+				</AngiePromotionModal>
+			</Stack>
+		</Stack>
 	);
 };
 
@@ -168,7 +142,7 @@ const EmptySearchResult = () => {
 					width: '100%',
 				} }
 			>
-				<Typography align="center" variant="subtitle2" color="inherit">
+				<Typography align="center" variant="subtitle2" color="inherit" sx={ SUBTITLE_OVERRIDE_SX }>
 					{ __( 'Sorry, nothing matched', 'elementor' ) }
 				</Typography>
 				{ searchValue && (
@@ -176,6 +150,7 @@ const EmptySearchResult = () => {
 						variant="subtitle2"
 						color="inherit"
 						sx={ {
+							...SUBTITLE_OVERRIDE_SX,
 							display: 'flex',
 							width: '100%',
 							justifyContent: 'center',
