@@ -35,5 +35,4 @@ export const outputSchema = {
 			'The built XML structure as a string. Must use this XML after completion of building the composition, it contains real IDs.'
 		)
 		.optional(),
-	llmInstructions: z.string().describe( 'Instructions for what to do next, Important to follow these instructions!' ),
 };
