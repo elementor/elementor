@@ -2,6 +2,7 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypeMigrations;
 
+use Elementor\Modules\AtomicWidgets\Logger\Logger;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 
@@ -37,48 +38,63 @@ class Migrations_Orchestrator {
 		int $post_id,
 		callable $save_callback
 	): void {
-		if ( $this->is_already_migrated( $post_id ) ) {
-			return;
+		try {
+			if ( $this->is_already_migrated( $post_id ) ) {
+				return;
+			}
+
+			$has_changes = false;
+
+			foreach ( $elements_data as &$element ) {
+				if ( ! $this->is_atomic_widget( $element ) ) {
+					continue;
+				}
+
+				$widget_type = $element['widgetType'] ?? '';
+
+				if ( empty( $widget_type ) ) {
+					continue;
+				}
+
+				$schema = $this->get_widget_schema( $widget_type );
+
+				if ( empty( $schema ) ) {
+					continue;
+				}
+
+				$original_settings = $element['settings'] ?? [];
+
+				if ( empty( $original_settings ) ) {
+					continue;
+				}
+
+				try {
+					$result = $this->migrate_element( $original_settings, $schema, $widget_type );
+
+					if ( $result['has_changes'] ) {
+						$element['settings'] = $result['settings'];
+						$has_changes = true;
+					}
+				} catch ( \Exception $e ) {
+					Logger::warning( 'Element migration failed', [
+						'post_id' => $post_id,
+						'widget_type' => $widget_type,
+						'error' => $e->getMessage(),
+					] );
+				}
+			}
+
+			if ( $has_changes ) {
+				$save_callback( $elements_data );
+			}
+
+			$this->mark_as_migrated( $post_id );
+		} catch ( \Exception $e ) {
+			Logger::warning( 'Document migration failed', [
+				'post_id' => $post_id,
+				'error' => $e->getMessage(),
+			] );
 		}
-
-		$has_changes = false;
-
-		foreach ( $elements_data as &$element ) {
-			if ( ! $this->is_atomic_widget( $element ) ) {
-				continue;
-			}
-
-			$widget_type = $element['widgetType'] ?? '';
-
-			if ( empty( $widget_type ) ) {
-				continue;
-			}
-
-			$schema = $this->get_widget_schema( $widget_type );
-
-			if ( empty( $schema ) ) {
-				continue;
-			}
-
-			$original_settings = $element['settings'] ?? [];
-
-			if ( empty( $original_settings ) ) {
-				continue;
-			}
-
-			$result = $this->migrate_element( $original_settings, $schema, $widget_type );
-
-			if ( $result['has_changes'] ) {
-				$element['settings'] = $result['settings'];
-				$has_changes = true;
-			}
-		}
-
-		if ( $has_changes ) {
-			$save_callback( $elements_data );
-		}
-
-		$this->mark_as_migrated( $post_id );
 	}
 
 	private function is_already_migrated( int $post_id ): bool {
@@ -249,17 +265,27 @@ class Migrations_Orchestrator {
 
 	private function execute_prop_migration( $prop_value, array $migrations, string $direction ) {
 		foreach ( $migrations as $migration ) {
-			$operations = $this->loader->load_operations( $migration['id'] );
+			try {
+				$operations = $this->loader->load_operations( $migration['id'] );
 
-			if ( ! $operations || ! isset( $operations[ $direction ] ) ) {
-				continue;
+				if ( ! $operations || ! isset( $operations[ $direction ] ) ) {
+					continue;
+				}
+
+				$prop_value = Migration_Interpreter::run(
+					[ $direction => $operations[ $direction ] ],
+					$prop_value,
+					$direction
+				);
+			} catch ( \Exception $e ) {
+				Logger::warning( 'Migration operation failed', [
+					'migration_id' => $migration['id'],
+					'direction' => $direction,
+					'error' => $e->getMessage(),
+				] );
+
+				return $prop_value;
 			}
-
-			$prop_value = Migration_Interpreter::run(
-				[ $direction => $operations[ $direction ] ],
-				$prop_value,
-				$direction
-			);
 		}
 
 		return $prop_value;
