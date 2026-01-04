@@ -10,7 +10,7 @@ import {
 } from '@elementor/editor-panels';
 import { SaveChangesDialog, SearchField, ThemeProvider, useDialog } from '@elementor/editor-ui';
 import { changeEditMode } from '@elementor/editor-v1-adapters';
-import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon } from '@elementor/icons';
+import { AlertTriangleFilledIcon, ColorFilterIcon, TrashIcon, RefreshIcon } from '@elementor/icons';
 import {
 	Alert,
 	AlertAction,
@@ -139,7 +139,72 @@ export function VariablesManagerPanel() {
 		[ handleDeleteVariable ]
 	);
 
+	const handleSyncToV3 = useCallback(
+		async ( itemId: string ) => {
+			try {
+				const response = await fetch( '/wp-json/elementor/v1/variables/sync-to-v3', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-WP-Nonce': ( window as any ).wpApiSettings?.nonce || '',
+					},
+				} );
+
+				if ( response.ok ) {
+					const result = await response.json();
+					console.log( 'Variables synced to V3 successfully:', result );
+					
+					// Clear Elementor cache to refresh global colors
+					if ( ( window as any ).elementor?.documents ) {
+						const kit = ( window as any ).elementor.documents.getCurrent();
+						if ( kit ) {
+							( window as any ).elementor.documents.invalidateCache( kit.id );
+						}
+					}
+					
+					// Show success notification
+					if ( ( window as any ).elementor?.notifications ) {
+						( window as any ).elementor.notifications.showToast( {
+							message: __( 'Variables synced to V3. Refresh Site Settings to see changes.', 'elementor' ),
+							type: 'success',
+						} );
+					}
+				} else {
+					console.error( 'Sync failed with status:', response.status );
+					
+					// Show error notification
+					if ( ( window as any ).elementor?.notifications ) {
+						( window as any ).elementor.notifications.showToast( {
+							message: __( 'Failed to sync variables to V3', 'elementor' ),
+							type: 'error',
+						} );
+					}
+				}
+			} catch ( error ) {
+				console.error( 'Failed to sync variables to V3:', error );
+				
+				// Show error notification
+				if ( ( window as any ).elementor?.notifications ) {
+					( window as any ).elementor.notifications.showToast( {
+						message: __( 'Error syncing variables to V3', 'elementor' ),
+						type: 'error',
+					} );
+				}
+			}
+		},
+		[]
+	);
+
 	const menuActions = [
+		{
+			name: __( 'Sync to V3', 'elementor' ),
+			icon: RefreshIcon,
+			color: 'primary.main',
+			onClick: ( itemId: string ) => {
+				handleSyncToV3( itemId );
+				trackVariablesManagerEvent( { action: 'sync_to_v3' } );
+			},
+		},
 		{
 			name: __( 'Delete', 'elementor' ),
 			icon: TrashIcon,
