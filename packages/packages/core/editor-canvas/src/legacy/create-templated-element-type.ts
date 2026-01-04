@@ -3,6 +3,7 @@ import { type V1ElementConfig } from '@elementor/editor-elements';
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { createPropsResolver } from '../renderers/create-props-resolver';
 import { settingsTransformersRegistry } from '../settings-transformers-registry';
+import { type TransformerRenderContext } from '../transformers/types';
 import { signalizedProcess } from '../utils/signalized-process';
 import { createElementViewClassDeclaration } from './create-element-type';
 import { type ElementType, type ElementView, type LegacyWindow } from './types';
@@ -70,6 +71,7 @@ export function createTemplatedElementView( {
 
 	return class extends BaseView {
 		#abortController: AbortController | null = null;
+		#childrenRenderPromises: Promise< void >[] = [];
 
 		getTemplateType() {
 			return 'twig';
@@ -77,6 +79,10 @@ export function createTemplatedElementView( {
 
 		renderOnChange() {
 			this.render();
+		}
+
+		getRenderContext(): TransformerRenderContext | undefined {
+			return this._parent?.getRenderContext?.();
 		}
 
 		// Override `render` function to support async `_renderTemplate`
@@ -88,12 +94,32 @@ export function createTemplatedElementView( {
 			const process = signalizedProcess( this.#abortController.signal )
 				.then( () => this._beforeRender() )
 				.then( () => this._renderTemplate() )
-				.then( () => {
-					this._renderChildren();
-					this._afterRender();
-				} );
+				.then( () => this._renderChildren() )
+				.then( () => this._afterRender() );
 
-			return process.execute();
+			this._currentRenderPromise = process.execute();
+
+			return this._currentRenderPromise;
+		}
+
+		async _renderChildren() {
+			super._renderChildren();
+
+			this.#childrenRenderPromises = [];
+
+			this.children?.each( ( childView: ElementView ) => {
+				if ( childView._currentRenderPromise ) {
+					this.#childrenRenderPromises.push( childView._currentRenderPromise );
+				}
+			} );
+
+			await this._waitForChildrenToComplete();
+		}
+
+		async _waitForChildrenToComplete() {
+			if ( this.#childrenRenderPromises.length > 0 ) {
+				await Promise.all( this.#childrenRenderPromises );
+			}
 		}
 
 		// Overriding Marionette original `_renderTemplate` method to inject our renderer.
@@ -107,6 +133,7 @@ export function createTemplatedElementView( {
 					return resolveProps( {
 						props: settings,
 						signal,
+						renderContext: this.getRenderContext(),
 					} );
 				} )
 				.then( ( settings ) => {
@@ -151,6 +178,9 @@ export function createTemplatedElementView( {
 			this.isRendered = true;
 
 			this.triggerMethod( 'render', this );
+			this.afterRenderResolve();
 		}
+
+		afterRenderResolve() {}
 	};
 }

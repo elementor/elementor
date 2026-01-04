@@ -1,13 +1,12 @@
-import { settingsTransformersRegistry } from '@elementor/editor-canvas';
+import { settingsTransformersRegistry, type TransformerOptions } from '@elementor/editor-canvas';
 import { type TransformablePropValue } from '@elementor/editor-props';
 
-import { componentInstanceContext } from '../../component-instance-transformer';
 import { componentOverridableTransformer } from '../../component-overridable-transformer';
 import { componentOverrideTransformer } from '../../component-override-transformer';
 import { type ComponentOverridable } from '../../types';
 
 describe( 'componentOverridableTransformer', () => {
-	const TEST_OPTIONS = { key: 'test-key' };
+	const TEST_OPTIONS: TransformerOptions = { key: 'test-key' };
 	const TEST_OVERRIDE_KEY = 'test-override-key';
 	const TEST_ORIGIN_VALUE: TransformablePropValue< string > = {
 		$$type: 'string',
@@ -22,7 +21,6 @@ describe( 'componentOverridableTransformer', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		componentInstanceContext.set( { overrides: {} } );
 	} );
 
 	it( 'should return origin value when no overrides exist in context', () => {
@@ -31,10 +29,10 @@ describe( 'componentOverridableTransformer', () => {
 			override_key: TEST_OVERRIDE_KEY,
 			origin_value: TEST_ORIGIN_VALUE,
 		};
-		componentInstanceContext.set( { overrides: {} } );
+		const options: TransformerOptions = { ...TEST_OPTIONS, renderContext: { overrides: {} } };
 
 		// Act
-		const result = componentOverridableTransformer( value, TEST_OPTIONS );
+		const result = componentOverridableTransformer( value, options );
 
 		// Assert
 		expect( result ).toBe( TEST_ORIGIN_VALUE );
@@ -46,12 +44,13 @@ describe( 'componentOverridableTransformer', () => {
 			override_key: TEST_OVERRIDE_KEY,
 			origin_value: TEST_ORIGIN_VALUE,
 		};
-		componentInstanceContext.set( {
-			overrides: { 'different-key': TEST_OVERRIDE_VALUE },
-		} );
+		const options: TransformerOptions = {
+			...TEST_OPTIONS,
+			renderContext: { overrides: { 'different-key': TEST_OVERRIDE_VALUE } },
+		};
 
 		// Act
-		const result = componentOverridableTransformer( value, TEST_OPTIONS );
+		const result = componentOverridableTransformer( value, options );
 
 		// Assert
 		expect( result ).toBe( TEST_ORIGIN_VALUE );
@@ -63,12 +62,13 @@ describe( 'componentOverridableTransformer', () => {
 			override_key: TEST_OVERRIDE_KEY,
 			origin_value: TEST_ORIGIN_VALUE,
 		};
-		componentInstanceContext.set( {
-			overrides: { [ TEST_OVERRIDE_KEY ]: TEST_OVERRIDE_VALUE },
-		} );
+		const options: TransformerOptions = {
+			...TEST_OPTIONS,
+			renderContext: { overrides: { [ TEST_OVERRIDE_KEY ]: TEST_OVERRIDE_VALUE } },
+		};
 
 		// Act
-		const result = componentOverridableTransformer( value, TEST_OPTIONS );
+		const result = componentOverridableTransformer( value, options );
 
 		// Assert
 		expect( result ).toEqual( TEST_OVERRIDE_VALUE );
@@ -92,12 +92,13 @@ describe( 'componentOverridableTransformer', () => {
 			},
 		};
 
-		componentInstanceContext.set( {
-			overrides: { [ TEST_OVERRIDE_KEY ]: TEST_OVERRIDE_VALUE },
-		} );
+		const options: TransformerOptions = {
+			...TEST_OPTIONS,
+			renderContext: { overrides: { [ TEST_OVERRIDE_KEY ]: TEST_OVERRIDE_VALUE } },
+		};
 
 		// Act
-		const result = componentOverridableTransformer( value, TEST_OPTIONS );
+		const result = componentOverridableTransformer( value, options );
 
 		// Assert
 		expect( result ).toEqual( {
@@ -122,15 +123,18 @@ describe( 'componentOverridableTransformer', () => {
 			origin_value: originValue,
 		};
 
-		componentInstanceContext.set( {
-			overrides: {
-				[ FIRST_OVERRIDE_KEY ]: FIRST_VALUE,
-				[ SECOND_OVERRIDE_KEY ]: SECOND_VALUE,
+		const options: TransformerOptions = {
+			...TEST_OPTIONS,
+			renderContext: {
+				overrides: {
+					[ FIRST_OVERRIDE_KEY ]: FIRST_VALUE,
+					[ SECOND_OVERRIDE_KEY ]: SECOND_VALUE,
+				},
 			},
-		} );
+		};
 
 		// Act
-		const result = componentOverridableTransformer( value, TEST_OPTIONS );
+		const result = componentOverridableTransformer( value, options );
 
 		// Assert
 		expect( result ).toEqual( SECOND_VALUE );

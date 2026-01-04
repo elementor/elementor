@@ -1,6 +1,8 @@
 import { type V1Element } from '@elementor/editor-elements';
 import { type Props, type PropValue } from '@elementor/editor-props';
 
+import { type TransformerRenderContext } from '../transformers/types';
+
 export type LegacyWindow = Window & {
 	elementor: {
 		createBackboneElementsCollection: ( children: unknown ) => BackboneCollection< ElementModel >;
@@ -50,6 +52,7 @@ export declare class ElementView {
 	children: {
 		length: number;
 		findByIndex: ( index: number ) => ElementView;
+		each: ( callback: ( view: ElementView ) => void ) => void;
 	};
 
 	constructor( ...args: unknown[] );
@@ -99,6 +102,8 @@ export declare class ElementView {
 
 	isRendered: boolean;
 
+	_currentRenderPromise?: Promise< void >;
+
 	options?: {
 		model: BackboneModel< ElementModel >;
 	};
@@ -106,6 +111,10 @@ export declare class ElementView {
 	ui(): Record< string, unknown >;
 
 	events(): Record< string, unknown >;
+
+	_parent?: ElementView;
+
+	getRenderContext(): TransformerRenderContext | undefined;
 }
 
 type JQueryElement = {

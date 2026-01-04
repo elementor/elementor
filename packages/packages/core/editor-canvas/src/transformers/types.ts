@@ -1,10 +1,14 @@
-export type UnbrandedTransformer< TValue > = (
-	value: TValue,
-	options: {
-		key: string;
-		signal?: AbortSignal;
-	}
-) => unknown;
+export type TransformerRenderContext = {
+	overrides?: Record< string, unknown >;
+};
+
+export type TransformerOptions = {
+	key: string;
+	signal?: AbortSignal;
+	renderContext?: TransformerRenderContext;
+};
+
+export type UnbrandedTransformer< TValue > = ( value: TValue, options: TransformerOptions ) => unknown;
 
 export type Transformer< TValue > = UnbrandedTransformer< TValue > & {
 	__transformer: true;

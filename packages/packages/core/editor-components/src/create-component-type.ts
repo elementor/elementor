@@ -7,6 +7,7 @@ import {
 	type ElementType,
 	type ElementView,
 	type LegacyWindow,
+	type TransformerRenderContext,
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { __getState as getState } from '@elementor/store';
@@ -104,11 +105,31 @@ function createComponentView(
 	return class extends createTemplatedElementView( options ) {
 		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
 		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
+		#componentRenderContext: TransformerRenderContext | undefined;
 
 		isComponentCurrentlyEdited() {
 			const currentDocument = getCurrentDocument();
 
 			return currentDocument?.id === this.getComponentId();
+		}
+
+		getRenderContext(): TransformerRenderContext | undefined {
+			const parent = this._parent;
+			const parentContext = parent?.getRenderContext?.();
+
+			if ( ! this.#componentRenderContext ) {
+				return parentContext;
+			}
+
+			const ownOverrides = this.#componentRenderContext.overrides ?? {};
+			const parentOverrides = parentContext?.overrides ?? {};
+
+			return {
+				overrides: {
+					...parentOverrides,
+					...ownOverrides,
+				},
+			};
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
@@ -120,6 +141,10 @@ function createComponentView(
 				| undefined;
 
 			if ( componentInstance ) {
+				this.#componentRenderContext = {
+					overrides: componentInstance.overrides ?? {},
+				};
+
 				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection(
 					componentInstance.elements
 				);
