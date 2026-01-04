@@ -293,13 +293,13 @@ describe( 'createPropsResolver', () => {
 
 	it( 'should pass renderContext to transformers', async () => {
 		// Arrange.
-		const OVERRIDE_KEY = 'test-key';
-		const OVERRIDE_VALUE = 'from-context';
+		const CONTEXT_KEY = 'test-key';
+		const CONTEXT_VALUE = 'from-context';
 
 		const transformers = createTransformersRegistry().register(
 			'context-aware',
 			createTransformer< { key: string } >( ( value, options ) => {
-				return options.renderContext?.overrides?.[ value.key ] ?? 'fallback';
+				return options.renderContext?.[ value.key ] ?? 'fallback';
 			} )
 		);
 
@@ -313,13 +313,13 @@ describe( 'createPropsResolver', () => {
 		// Act.
 		const result = await resolve( {
 			props: {
-				text: { $$type: 'context-aware', value: { key: OVERRIDE_KEY } },
+				text: { $$type: 'context-aware', value: { key: CONTEXT_KEY } },
 			},
-			renderContext: { overrides: { [ OVERRIDE_KEY ]: OVERRIDE_VALUE } },
+			renderContext: { [ CONTEXT_KEY ]: CONTEXT_VALUE },
 		} );
 
 		// Assert.
-		expect( result ).toEqual( { text: OVERRIDE_VALUE } );
+		expect( result ).toEqual( { text: CONTEXT_VALUE } );
 	} );
 
 	it( 'should use fallback when renderContext is not provided', async () => {
@@ -327,7 +327,7 @@ describe( 'createPropsResolver', () => {
 		const transformers = createTransformersRegistry().register(
 			'context-aware',
 			createTransformer< { key: string } >( ( value, options ) => {
-				return options.renderContext?.overrides?.[ value.key ] ?? 'fallback';
+				return options.renderContext?.[ value.key ] ?? 'fallback';
 			} )
 		);
 
@@ -351,8 +351,8 @@ describe( 'createPropsResolver', () => {
 
 	it( 'should propagate renderContext through nested object props', async () => {
 		// Arrange.
-		const OVERRIDE_KEY = 'nested-key';
-		const OVERRIDE_VALUE = 'nested-context';
+		const CONTEXT_KEY = 'nested-key';
+		const CONTEXT_VALUE = 'nested-context';
 
 		const transformers = createTransformersRegistry()
 			.register(
@@ -362,7 +362,7 @@ describe( 'createPropsResolver', () => {
 			.register(
 				'context-aware',
 				createTransformer< { key: string } >( ( value, options ) => {
-					return options.renderContext?.overrides?.[ value.key ] ?? 'fallback';
+					return options.renderContext?.[ value.key ] ?? 'fallback';
 				} )
 			);
 
@@ -383,21 +383,21 @@ describe( 'createPropsResolver', () => {
 				outer: {
 					$$type: 'object',
 					value: {
-						inner: { $$type: 'context-aware', value: { key: OVERRIDE_KEY } },
+						inner: { $$type: 'context-aware', value: { key: CONTEXT_KEY } },
 					},
 				},
 			},
-			renderContext: { overrides: { [ OVERRIDE_KEY ]: OVERRIDE_VALUE } },
+			renderContext: { [ CONTEXT_KEY ]: CONTEXT_VALUE },
 		} );
 
 		// Assert.
-		expect( result ).toEqual( { outer: { inner: OVERRIDE_VALUE } } );
+		expect( result ).toEqual( { outer: { inner: CONTEXT_VALUE } } );
 	} );
 
 	it( 'should propagate renderContext through array props', async () => {
 		// Arrange.
-		const OVERRIDE_KEY = 'array-key';
-		const OVERRIDE_VALUE = 'array-context';
+		const CONTEXT_KEY = 'array-key';
+		const CONTEXT_VALUE = 'array-context';
 
 		const transformers = createTransformersRegistry()
 			.register(
@@ -407,7 +407,7 @@ describe( 'createPropsResolver', () => {
 			.register(
 				'context-aware',
 				createTransformer< { key: string } >( ( value, options ) => {
-					return options.renderContext?.overrides?.[ value.key ] ?? 'fallback';
+					return options.renderContext?.[ value.key ] ?? 'fallback';
 				} )
 			);
 
@@ -428,15 +428,15 @@ describe( 'createPropsResolver', () => {
 				items: {
 					$$type: 'array',
 					value: [
-						{ $$type: 'context-aware', value: { key: OVERRIDE_KEY } },
-						{ $$type: 'context-aware', value: { key: OVERRIDE_KEY } },
+						{ $$type: 'context-aware', value: { key: CONTEXT_KEY } },
+						{ $$type: 'context-aware', value: { key: CONTEXT_KEY } },
 					],
 				},
 			},
-			renderContext: { overrides: { [ OVERRIDE_KEY ]: OVERRIDE_VALUE } },
+			renderContext: { [ CONTEXT_KEY ]: CONTEXT_VALUE },
 		} );
 
 		// Assert.
-		expect( result ).toEqual( { items: [ OVERRIDE_VALUE, OVERRIDE_VALUE ] } );
+		expect( result ).toEqual( { items: [ CONTEXT_VALUE, CONTEXT_VALUE ] } );
 	} );
 } );

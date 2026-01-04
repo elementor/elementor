@@ -1,10 +1,10 @@
 import { createTransformer, settingsTransformersRegistry, type TransformerOptions } from '@elementor/editor-canvas';
 import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 
-import { type ComponentOverridable } from './types';
+import { type ComponentOverridable, type ComponentRenderContext } from './types';
 
 export const componentOverridableTransformer = createTransformer(
-	( value: ComponentOverridable, options: TransformerOptions ) => {
+	( value: ComponentOverridable, options: TransformerOptions< ComponentRenderContext > ) => {
 		const { overrides } = options.renderContext ?? {};
 
 		const overrideValue = overrides?.[ value.override_key ];

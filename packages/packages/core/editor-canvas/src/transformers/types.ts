@@ -1,11 +1,9 @@
-export type TransformerRenderContext = {
-	overrides?: Record< string, unknown >;
-};
+export type TransformerRenderContext = Record< string, unknown >;
 
-export type TransformerOptions = {
+export type TransformerOptions< TContext extends TransformerRenderContext = TransformerRenderContext > = {
 	key: string;
 	signal?: AbortSignal;
-	renderContext?: TransformerRenderContext;
+	renderContext?: TContext;
 };
 
 export type UnbrandedTransformer< TValue > = ( value: TValue, options: TransformerOptions ) => unknown;

@@ -16,7 +16,7 @@ import { __ } from '@wordpress/i18n';
 import { apiClient } from './api';
 import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
 import { type ComponentsSlice, selectComponentByUid } from './store/store';
-import { type ExtendedWindow } from './types';
+import { type ComponentRenderContext, type ExtendedWindow } from './types';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
@@ -105,7 +105,7 @@ function createComponentView(
 	return class extends createTemplatedElementView( options ) {
 		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
 		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
-		#componentRenderContext: TransformerRenderContext | undefined;
+		#componentRenderContext: ComponentRenderContext | undefined;
 
 		isComponentCurrentlyEdited() {
 			const currentDocument = getCurrentDocument();
@@ -115,7 +115,7 @@ function createComponentView(
 
 		getRenderContext(): TransformerRenderContext | undefined {
 			const parent = this._parent;
-			const parentContext = parent?.getRenderContext?.();
+			const parentContext = parent?.getRenderContext?.() as ComponentRenderContext | undefined;
 
 			if ( ! this.#componentRenderContext ) {
 				return parentContext;

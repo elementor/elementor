@@ -74,6 +74,10 @@ export type ComponentOverridable = {
 	origin_value: TransformablePropValue< string >;
 };
 
+export type ComponentRenderContext = {
+	overrides?: Record< string, unknown >;
+};
+
 export type UpdatedComponentName = {
 	componentId: number;
 	title: string;
