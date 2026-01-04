@@ -33,7 +33,6 @@ class Admin_Notices extends Module {
 		'rate_us_feedback',
 		'role_manager_promote',
 		'experiment_promotion',
-		'send_app_promotion',
 		'site_mailer_promotion',
 		'plugin_image_optimization',
 		'ally_pages_promotion',
@@ -468,56 +467,6 @@ class Admin_Notices extends Module {
 
 		$detected_form_plugin = false;
 		return $detected_form_plugin;
-	}
-
-	private function notice_send_app_promotion() {
-		return self::EXIT_EARLY_FOR_BACKWARD_COMPATIBILITY;
-
-		$notice_id = 'send_app_promotion';
-
-		if ( ! $this->is_elementor_page() && ! $this->is_elementor_admin_screen() ) {
-			return false;
-		}
-
-		if ( time() < $this->get_install_time() + ( 60 * DAY_IN_SECONDS ) ) {
-			return false;
-		}
-
-		if ( ! current_user_can( 'install_plugins' ) || User::is_user_notice_viewed( $notice_id ) ) {
-			return false;
-		}
-
-		$plugin_file_path = 'send/send-app.php';
-		$plugin_slug = 'send-app';
-
-		$cta_data = $this->get_plugin_cta_data( $plugin_slug, $plugin_file_path );
-		if ( empty( $cta_data ) ) {
-			return false;
-		}
-
-		$title = sprintf( esc_html__( 'Turn leads into loyal shoppers', 'elementor' ) );
-
-		$options = [
-			'title' => $title,
-			'description' => esc_html__( 'Collecting leads is just the beginning. With Send by Elementor, you can manage contacts, launch automations, and turn form submissions into sales.', 'elementor' ),
-			'id' => $notice_id,
-			'type' => 'cta',
-			'button' => [
-				'text' => $cta_data['text'],
-				'url' => $cta_data['url'],
-				'type' => 'cta',
-			],
-			'button_secondary' => [
-				'text' => esc_html__( 'Learn more', 'elementor' ),
-				'url' => 'https://go.elementor.com/Formslearnmore',
-				'new_tab' => true,
-				'type' => 'cta',
-			],
-		];
-
-		$this->print_admin_notice( $options );
-
-		return true;
 	}
 
 	private function notice_local_google_fonts_disabled() {
