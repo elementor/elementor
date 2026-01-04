@@ -10,6 +10,7 @@ import { createControl } from '../create-control';
 import { useUnfilteredFilesUpload } from '../hooks/use-unfiltered-files-upload';
 import { ImageMediaControl } from './image-media-control';
 import { SelectControl } from './select-control';
+import { ControlLabel } from '../components/control-label';
 
 type ImageControlProps = {
 	sizes: { label: string; value: string }[];
@@ -21,7 +22,7 @@ export const ImageControl = createControl( ( { sizes }: ImageControlProps ) => {
 	return (
 		<PropProvider { ...propContext }>
 			<Stack gap={ 1.5 }>
-				<ControlFormLabel>{ __( 'Image', 'elementor' ) }</ControlFormLabel>
+				<ControlLabel>{ __( 'Image', 'elementor' ) }</ControlLabel>
 				<ImageSrcControl />
 				<Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
 					<Grid item xs={ 6 }>
