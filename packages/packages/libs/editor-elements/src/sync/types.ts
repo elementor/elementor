@@ -54,11 +54,23 @@ export type NumberPropValue = {
 	value: number;
 };
 
+export type BooleanPropValue = {
+	$$type: 'boolean';
+	value: boolean;
+};
+
 export type TimingConfigPropValue = {
 	$$type: 'timing-config';
 	value: {
 		duration: NumberPropValue;
 		delay: NumberPropValue;
+	};
+};
+
+export type ConfigPropValue = {
+	$$type: 'config';
+	value: {
+		replay: BooleanPropValue;
 	};
 };
 
@@ -69,6 +81,7 @@ export type AnimationPresetPropValue = {
 		type: StringPropValue;
 		direction: StringPropValue;
 		timing_config: TimingConfigPropValue;
+		config: ConfigPropValue;
 	};
 };
 
@@ -87,6 +100,7 @@ export type ElementInteractions = {
 };
 
 export type V1ElementModelProps = {
+	title?: string;
 	isLocked?: boolean;
 	widgetType?: string;
 	elType: string;
@@ -111,6 +125,7 @@ export type V1ElementEditorSettingsProps = {
 export type V1ElementSettingsProps = Record< string, PropValue >;
 
 export type V1ElementConfig< T = object > = {
+	icon?: string;
 	title: string;
 	widgetType?: string;
 	elType?: string;

@@ -243,6 +243,35 @@ class Components_REST_API {
 				],
 			],
 		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/update-titles', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->update_components_title( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'components' => [
+						'type' => 'array',
+						'required' => true,
+						'items' => [
+							'type' => 'object',
+							'properties' => [
+								'componentId' => [
+									'type' => 'number',
+									'required' => true,
+									'description' => 'The component ID to update title',
+								],
+								'title' => [
+									'type' => 'string',
+									'required' => true,
+									'description' => 'The new title for the component',
+								],
+							],
+						],
+					],
+				],
+			],
+		] );
 	}
 
 	private function get_components() {
@@ -281,7 +310,7 @@ class Components_REST_API {
 				->build();
 		}
 
-		$document = $this->get_repository()->get( $component_id );
+		$document = $this->get_repository()->get( $component_id, true );
 
 		if ( ! $document ) {
 			return Error_Builder::make( 'component_not_found' )
@@ -290,11 +319,9 @@ class Components_REST_API {
 				->build();
 		}
 
-		$overridable = $document->get_meta( Component::OVERRIDABLE_PROPS_META_KEY ) ?? null;
+		$overridable = $document->get_json_meta( Component::OVERRIDABLE_PROPS_META_KEY ) ?? null;
 
-		if ( ! empty( $overridable ) ) {
-			$overridable = json_decode( $overridable, true );
-		} else {
+		if ( empty( $overridable ) ) {
 			$overridable = null;
 		}
 
@@ -313,6 +340,26 @@ class Components_REST_API {
 			return Error_Builder::make( 'components_validation_failed' )
 				->set_status( 422 )
 				->set_message( 'Validation failed: ' . implode( ', ', $result['messages'] ) )
+				->build();
+		}
+
+		$circular_result = Circular_Dependency_Validator::make()->validate_new_components( $items );
+
+		if ( ! $circular_result['success'] ) {
+			return Error_Builder::make( 'circular_dependency_detected' )
+				->set_status( 422 )
+				->set_message( __( "Can't add this component - components that contain each other can't be nested.", 'elementor' ) )
+				->set_meta( [ 'caused_by' => $circular_result['messages'] ] )
+				->build();
+		}
+
+		$non_atomic_result = Non_Atomic_Widget_Validator::make()->validate_items( $items );
+
+		if ( ! $non_atomic_result['success'] ) {
+			return Error_Builder::make( Non_Atomic_Widget_Validator::ERROR_CODE )
+				->set_status( 422 )
+				->set_message( __( 'Components require atomic elements only. Remove widgets to create this component.', 'elementor' ) )
+				->set_meta( [ 'non_atomic_elements' => $non_atomic_result['non_atomic_elements'] ] )
 				->build();
 		}
 
@@ -362,9 +409,9 @@ class Components_REST_API {
 					$post = $component->get_post();
 					$autosave = $component->get_newer_autosave();
 
-					$elements = $autosave
-						? $autosave->get_json_meta( Document::ELEMENTOR_DATA_META_KEY )
-						: $component->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
+					$latest_post = $autosave ? $autosave : $component;
+
+					$elements = $latest_post->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
 
 					$is_updated = $component->save( [
 						'settings' => [ 'post_status' => $status ],
@@ -470,18 +517,6 @@ class Components_REST_API {
 		}
 	}
 
-	private function is_current_user_allow_to_edit( $component_id ) {
-		$current_user_id = get_current_user_id();
-		try {
-			$lock_data = $this->get_component_lock_manager()->get_updated_status( $component_id );
-		} catch ( \Exception $e ) {
-			error_log( 'Components REST API is_current_user_allow_to_edit error: ' . $e->getMessage() );
-			return false;
-		}
-
-		return ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] === (int) $current_user_id;
-	}
-
 	private function archive_components( \WP_REST_Request $request ) {
 		$component_ids = $request->get_param( 'componentIds' );
 		try {
@@ -497,6 +532,26 @@ class Components_REST_API {
 		return Response_Builder::make( $result )->build();
 	}
 
+	private function update_components_title( \WP_REST_Request $request ) {
+		$failed_ids = [];
+		$success_ids = [];
+		$components = $request->get_param( 'components' );
+		foreach ( $components as $component ) {
+			$is_success = $this->get_repository()->update_title( $component['componentId'], $component['title'] );
+
+			if ( ! $is_success ) {
+				$failed_ids[] = $component['componentId'];
+				continue;
+			}
+			$success_ids[] = $component['componentId'];
+
+		}
+		return Response_Builder::make( [
+			'failedIds' => $failed_ids,
+			'successIds' => $success_ids,
+		] )->build();
+	}
+
 	private function create_validate_components( \WP_REST_Request $request ) {
 		$items = Collection::make( $request->get_param( 'items' ) );
 		$components = $this->get_repository()->all();
@@ -507,6 +562,26 @@ class Components_REST_API {
 			return Error_Builder::make( 'components_validation_failed' )
 				->set_status( 422 )
 				->set_message( 'Validation failed: ' . implode( ', ', $result['messages'] ) )
+				->build();
+		}
+
+		$circular_result = Circular_Dependency_Validator::make()->validate_new_components( $items );
+
+		if ( ! $circular_result['success'] ) {
+			return Error_Builder::make( 'circular_dependency_detected' )
+				->set_status( 422 )
+				->set_message( __( "Can't add this component - components that contain each other can't be nested.", 'elementor' ) )
+				->set_meta( [ 'caused_by' => $circular_result['messages'] ] )
+				->build();
+		}
+
+		$non_atomic_result = Non_Atomic_Widget_Validator::make()->validate_items( $items );
+
+		if ( ! $non_atomic_result['success'] ) {
+			return Error_Builder::make( Non_Atomic_Widget_Validator::ERROR_CODE )
+				->set_status( 422 )
+				->set_message( __( 'Components require atomic elements only. Remove widgets to create this component.', 'elementor' ) )
+				->set_meta( [ 'non_atomic_elements' => $non_atomic_result['non_atomic_elements'] ] )
 				->build();
 		}
 

@@ -42,17 +42,15 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		await expect( headingElement ).toBeVisible();
 
 		// Act - Open inline editor and type text.
-		await headingElement.dblclick();
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = await editor.triggerEditingElement( headingId );
 
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
 		await page.keyboard.type( TEST_TEXT );
 
 		// Act - Select text and add link with target="_blank".
-		await page.keyboard.press( 'ControlOrMeta+A' );
-		const linkButton = page.locator( '[role="presentation"] [aria-label="Link"]' );
-		await linkButton.click();
+		await editor.selectInlineEditedText( headingId, true );
+		await editor.toggleInlineEditingAttribute( 'link' );
 
 		const urlInput = page.locator( 'input[placeholder="Type a URL"]' );
 		await expect( urlInput ).toBeVisible();
@@ -93,15 +91,14 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		await expect( headingElement ).toBeVisible();
 		await headingElement.dblclick();
 
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
 		await page.keyboard.type( TEST_TEXT );
 
 		// Act - Add link first.
-		await page.keyboard.press( 'ControlOrMeta+A' );
-		const linkButton = page.locator( '[aria-label="Link"]' );
-		await linkButton.click();
+		await editor.selectInlineEditedText( headingId, true );
+		await editor.toggleInlineEditingAttribute( 'link' );
 
 		const urlInput = page.locator( 'input[placeholder="Type a URL"]' );
 		await urlInput.fill( TEST_URL );
@@ -112,9 +109,9 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		await expect( headingElement.locator( 'a' ) ).toHaveAttribute( 'href', TEST_URL );
 
 		// Act - Remove link by clearing URL.
-		await headingElement.dblclick();
-		await page.keyboard.press( 'ControlOrMeta+A' );
-		await linkButton.click();
+		await editor.triggerEditingElement( headingId );
+		await editor.selectInlineEditedText( headingId, true );
+		await editor.toggleInlineEditingAttribute( 'link' );
 		await urlInput.clear();
 		await page.keyboard.press( 'Escape' );
 		await inlineEditor.press( 'Escape' );
@@ -132,17 +129,16 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		const headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId }` );
 
 		await expect( headingElement ).toBeVisible();
-		await headingElement.dblclick();
+		await editor.triggerEditingElement( headingId );
 
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
 		await page.keyboard.type( TEST_TEXT );
 
 		// Act - Add initial link.
-		await page.keyboard.press( 'ControlOrMeta+A' );
-		const linkButton = page.locator( '[aria-label="Link"]' );
-		await linkButton.click();
+		await editor.selectInlineEditedText( headingId, true );
+		await editor.toggleInlineEditingAttribute( 'link' );
 
 		const urlInput = page.locator( 'input[placeholder="Type a URL"]' );
 		await urlInput.fill( TEST_URL );
@@ -153,9 +149,8 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		await expect( headingElement.locator( 'a' ) ).toHaveAttribute( 'href', TEST_URL );
 
 		// Act - Edit link URL.
-		await headingElement.dblclick();
-		await page.keyboard.press( 'ControlOrMeta+A' );
-		await linkButton.click();
+		await editor.selectInlineEditedText( headingId, true );
+		await editor.toggleInlineEditingAttribute( 'link' );
 		await urlInput.clear();
 		await urlInput.fill( UPDATED_URL );
 		await page.keyboard.press( 'Escape' );
@@ -174,25 +169,16 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 		const headingElement = editor.previewFrame.locator( `.elementor-element-${ headingId }` );
 
 		await expect( headingElement ).toBeVisible();
-		await headingElement.dblclick();
+		await editor.triggerEditingElement( headingId );
 
-		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvasInlineEditor );
+		const inlineEditor = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 
 		await expect( inlineEditor ).toBeVisible();
 		await inlineEditor.clear();
 		await page.keyboard.type( MULTI_WORD_TEXT );
 
-		// Act - Select only "World" (double-click to select word).
-		for ( let i = 0; i < 6; i++ ) {
-			await page.keyboard.press( 'ArrowLeft', { delay: 100 } );
-		}
-
-		for ( let i = 0; i < 5; i++ ) {
-			await page.keyboard.press( 'Shift+ArrowLeft', { delay: 100 } );
-		}
-
-		const linkButton = page.locator( '[role="presentation"] [aria-label="Link"]' );
-		await linkButton.click();
+		await editor.selectInlineEditedText( headingId, 'World' );
+		await editor.toggleInlineEditingAttribute( 'link' );
 
 		const urlInput = page.locator( 'input[placeholder="Type a URL"]' );
 		await urlInput.fill( TEST_URL );

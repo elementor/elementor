@@ -2,21 +2,39 @@ import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { InlineEditor } from '@elementor/editor-controls';
-import { getContainer, getElementType } from '@elementor/editor-elements';
+import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
 import {
 	htmlPropTypeUtil,
+	type HtmlPropValue,
+	type PropType,
 	stringPropTypeUtil,
 	type StringPropValue,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
-import { __privateRunCommandSync as runCommandSync, isExperimentActive } from '@elementor/editor-v1-adapters';
+import { __privateRunCommandSync as runCommandSync, isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
 import { Box, ThemeProvider } from '@elementor/ui';
+import { __ } from '@wordpress/i18n';
 
 import { OutlineOverlay } from '../../../components/outline-overlay';
-import ReplacementBase from '../base';
+import { ReplacementBase, TRIGGER_TIMING } from '../base';
 import { getInitialPopoverPosition, INLINE_EDITING_PROPERTY_PER_TYPE } from './inline-editing-utils';
 
 const EXPERIMENT_KEY = 'v4-inline-text-editing';
+
+type TagPropType = PropType< 'tag' > & {
+	settings?: {
+		enum?: string[];
+	};
+};
+
+const HISTORY_DEBOUNCE_WAIT = 800;
+
+const TOP_BAR_SELECTOR = '#elementor-editor-wrapper-v2';
+const NAVIGATOR_SELECTOR = '#elementor-navigator';
+const V4_EDITING_PANEL = 'main.MuiBox-root';
+const V3_EDITING_PANEL = '#elementor-panel-content-wrapper';
+
+const BLUR_TRIGGERING_SELECTORS = [ TOP_BAR_SELECTOR, NAVIGATOR_SELECTOR, V4_EDITING_PANEL, V3_EDITING_PANEL ];
 
 export default class InlineEditingReplacement extends ReplacementBase {
 	private inlineEditorRoot: Root | null = null;
@@ -35,39 +53,55 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	shouldRenderReplacement() {
-		return isExperimentActive( EXPERIMENT_KEY ) && this.isEditingModeActive() && ! this.isValueDynamic();
+		return isExperimentActive( EXPERIMENT_KEY ) && ! this.isValueDynamic();
 	}
 
-	handleRenderInlineEditor = ( event: Event ) => {
-		event.stopPropagation();
-
-		if ( ! this.isValueDynamic() ) {
-			this.renderInlineEditor();
+	handleRenderInlineEditor = () => {
+		if ( this.isEditingModeActive() || this.isValueDynamic() ) {
+			return;
 		}
+
+		this.renderInlineEditor();
 	};
 
-	handleUnmountInlineEditor = ( event: Event ) => {
-		event.stopPropagation();
-		this.unmountInlineEditor();
-	};
+	renderOnChange() {
+		if ( this.isEditingModeActive() ) {
+			return;
+		}
+
+		this.refreshView();
+	}
 
 	onDestroy() {
 		this.resetInlineEditorRoot();
 	}
 
-	_beforeRender(): void {
+	_beforeRender() {
 		this.resetInlineEditorRoot();
 	}
 
 	_afterRender() {
 		if ( ! this.isValueDynamic() && ! this.handlerAttached ) {
-			this.element.addEventListener( 'dblclick', this.handleRenderInlineEditor, { once: true } );
+			this.element.addEventListener( 'click', this.handleRenderInlineEditor );
 			this.handlerAttached = true;
 		}
 	}
 
+	originalMethodsToTrigger() {
+		const before = this.isEditingModeActive() ? TRIGGER_TIMING.never : TRIGGER_TIMING.before;
+		const after = this.isEditingModeActive() ? TRIGGER_TIMING.never : TRIGGER_TIMING.after;
+
+		return {
+			_beforeRender: before,
+			_afterRender: after,
+			renderOnChange: after,
+			onDestroy: TRIGGER_TIMING.after,
+			render: before,
+		};
+	}
+
 	resetInlineEditorRoot() {
-		this.element.removeEventListener( 'dblclick', this.handleRenderInlineEditor );
+		this.element.removeEventListener( 'click', this.handleRenderInlineEditor );
 		this.handlerAttached = false;
 		this.inlineEditorRoot?.unmount?.();
 		this.inlineEditorRoot = null;
@@ -103,6 +137,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 		return (
 			htmlPropTypeUtil.extract( this.getSetting( settingKey ) ?? null ) ??
+			stringPropTypeUtil.extract( this.getSetting( settingKey ) ?? null ) ??
 			htmlPropTypeUtil.extract( prop?.default ?? null ) ??
 			defaultValue ??
 			''
@@ -113,45 +148,90 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		const settingKey = this.getInlineEditablePropertyName();
 		const valueToSave = value ? htmlPropTypeUtil.create( value ) : null;
 
-		runCommandSync( 'document/elements/settings', {
-			container: getContainer( this.id ),
-			settings: {
-				[ settingKey ]: valueToSave,
+		undoable(
+			{
+				do: () => {
+					const prevValue = this.getContentValue();
+
+					this.runCommand( settingKey, valueToSave );
+
+					return prevValue;
+				},
+				undo: ( prevValue ) => {
+					this.runCommand( settingKey, prevValue ?? null );
+				},
 			},
-		} );
+			{
+				title: getElementLabel( this.id ),
+				// translators: %s is the name of the property that was edited.
+				subtitle: __( '%s edited', 'elementor' ).replace(
+					'%s',
+					this.getHtmlPropType()?.key ?? 'Inline editing'
+				),
+				debounce: { wait: HISTORY_DEBOUNCE_WAIT },
+			}
+		)();
+	}
+
+	runCommand( key: string, value: HtmlPropValue | null ) {
+		runCommandSync(
+			'document/elements/set-settings',
+			{
+				container: getContainer( this.id ),
+				settings: {
+					[ key ]: value,
+				},
+			},
+			{ internal: true }
+		);
+		runCommandSync( 'document/save/set-is-modified', { status: true }, { internal: true } );
 	}
 
 	getExpectedTag() {
+		const tagPropType = this.getTagPropType();
+		const tagSettingKey = 'tag';
+
+		return (
+			stringPropTypeUtil.extract( this.getSetting( tagSettingKey ) ?? null ) ??
+			stringPropTypeUtil.extract( tagPropType?.default ?? null ) ??
+			null
+		);
+	}
+
+	getTagPropType() {
 		const propsSchema = getElementType( this.type )?.propsSchema;
 
 		if ( ! propsSchema?.tag ) {
 			return null;
 		}
 
-		const tagSettingKey = 'tag';
+		const tagPropType = ( propsSchema.tag as TagPropType ) ?? null;
 
-		return (
-			stringPropTypeUtil.extract( this.getSetting( tagSettingKey ) ?? null ) ??
-			stringPropTypeUtil.extract( propsSchema.tag.default ?? null ) ??
-			null
-		);
+		if ( tagPropType.kind === 'union' ) {
+			return ( tagPropType.prop_types.string as TagPropType ) ?? null;
+		}
+
+		return tagPropType;
 	}
 
 	renderInlineEditor() {
-		const InlineEditorApp = this.InlineEditorApp;
-		const classes = ( this.element.children?.[ 0 ]?.classList.toString() ?? '' ) + ' strip-styles';
-
-		this.element.innerHTML = '';
-
-		if ( this.inlineEditorRoot ) {
+		if ( this.isEditingModeActive() ) {
 			this.resetInlineEditorRoot();
 		}
 
+		const InlineEditorApp = this.InlineEditorApp;
+		const wrapperClasses = 'elementor';
+		const elementClasses = this.element.children?.[ 0 ]?.classList.toString() ?? '';
+
+		this.element.innerHTML = '';
+
 		this.inlineEditorRoot = createRoot( this.element );
-		this.inlineEditorRoot.render( <InlineEditorApp classes={ classes } /> );
+		this.inlineEditorRoot.render(
+			<InlineEditorApp wrapperClasses={ wrapperClasses } elementClasses={ elementClasses } />
+		);
 	}
 
-	InlineEditorApp = ( { classes }: { classes: string } ) => {
+	InlineEditorApp = ( { wrapperClasses, elementClasses }: { wrapperClasses: string; elementClasses: string } ) => {
 		const propValue = this.getContentValue();
 		const expectedTag = this.getExpectedTag();
 		const wrapperRef = useRef< HTMLDivElement | null >( null );
@@ -159,7 +239,25 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 		useEffect( () => {
 			setIsWrapperRendered( !! wrapperRef.current );
+			BLUR_TRIGGERING_SELECTORS.forEach(
+				( selector ) =>
+					document?.querySelector( selector )?.addEventListener( 'mousedown', asyncUnmountInlineEditor )
+			);
+
+			return () =>
+				BLUR_TRIGGERING_SELECTORS.forEach(
+					( selector ) =>
+						document
+							?.querySelector( selector )
+							?.removeEventListener( 'mousedown', asyncUnmountInlineEditor )
+				);
+			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [] );
+
+		const asyncUnmountInlineEditor = React.useCallback(
+			() => queueMicrotask( this.unmountInlineEditor.bind( this ) ),
+			[]
+		);
 
 		return (
 			<ThemeProvider>
@@ -169,12 +267,13 @@ export default class InlineEditingReplacement extends ReplacementBase {
 					) }
 					<InlineEditor
 						attributes={ {
-							class: classes,
+							class: wrapperClasses,
 							style: 'outline: none;',
 						} }
+						elementClasses={ elementClasses }
 						value={ propValue }
 						setValue={ this.setContentValue.bind( this ) }
-						onBlur={ this.handleUnmountInlineEditor.bind( this ) }
+						onBlur={ this.unmountInlineEditor.bind( this ) }
 						autofocus
 						showToolbar
 						getInitialPopoverPosition={ getInitialPopoverPosition }

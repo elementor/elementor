@@ -1,7 +1,7 @@
 import type { CreateTemplatedElementTypeOptions } from '../create-templated-element-type';
 import { createTemplatedElementView } from '../create-templated-element-type';
 import type { ElementType, ElementView, LegacyWindow, ReplacementSettings } from '../types';
-import type ReplacementBase from './base';
+import { type ReplacementBase, type ReplacementBaseInterface, type TriggerMethod } from './base';
 import InlineEditingReplacement from './inline-editing/inline-editing-elements';
 
 type ReplacementConstructor = new ( settings: ReplacementSettings ) => ReplacementBase;
@@ -32,7 +32,7 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 	const TemplatedView = createTemplatedElementView( options );
 
 	return class extends TemplatedView {
-		#replacement: ReplacementBase | null = null;
+		#replacement: ReplacementBaseInterface | null = null;
 		#config: ReplacementSettings;
 
 		constructor( ...args: unknown[] ) {
@@ -53,6 +53,10 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 			this.render();
 		}
 
+		renderOnChange(): void {
+			this.#triggerAltMethod( 'renderOnChange' );
+		}
+
 		render() {
 			const config = this.#config;
 			const widgetType = config.type;
@@ -62,36 +66,41 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 				this.#replacement = new ReplacementClass( config );
 			}
 
-			if ( ! this.#replacement?.shouldRenderReplacement() ) {
-				return TemplatedView.prototype.render.apply( this );
-			}
-
-			this.#replacement.render();
+			this.#triggerAltMethod( 'render' );
 		}
 
 		onDestroy() {
-			if ( this.#replacement ) {
-				this.#replacement.onDestroy();
-				this.#replacement = null;
-			}
-
-			TemplatedView.prototype.onDestroy.apply( this );
+			this.#triggerAltMethod( 'onDestroy' );
 		}
 
 		_afterRender() {
-			if ( this.#replacement ) {
-				this.#replacement._afterRender();
-			}
-
-			TemplatedView.prototype._afterRender.apply( this );
+			this.#triggerAltMethod( '_afterRender' );
 		}
 
 		_beforeRender(): void {
-			if ( this.#replacement ) {
-				this.#replacement._beforeRender();
+			this.#triggerAltMethod( '_beforeRender' );
+		}
+
+		#triggerAltMethod( methodKey: keyof ReplacementBaseInterface ) {
+			const baseMethod = TemplatedView.prototype[ methodKey as TriggerMethod ].bind( this );
+			const shouldReplace = this.#replacement?.shouldRenderReplacement();
+			const altMethod = shouldReplace && this.#replacement?.[ methodKey ]?.bind( this.#replacement );
+
+			if ( ! altMethod || ! shouldReplace ) {
+				return baseMethod();
 			}
 
-			TemplatedView.prototype._beforeRender.apply( this );
+			const renderTiming = this.#replacement?.originalMethodsToTrigger()[ methodKey as TriggerMethod ] ?? 'never';
+
+			if ( renderTiming === 'before' ) {
+				baseMethod();
+			}
+
+			altMethod();
+
+			if ( renderTiming === 'after' ) {
+				baseMethod();
+			}
 		}
 	};
 };

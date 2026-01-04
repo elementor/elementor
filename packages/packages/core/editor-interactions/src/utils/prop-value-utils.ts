@@ -1,5 +1,7 @@
 import type {
 	AnimationPresetPropValue,
+	BooleanPropValue,
+	ConfigPropValue,
 	ElementInteractions,
 	InteractionItemPropValue,
 	InteractionItemValue,
@@ -26,41 +28,83 @@ export const createTimingConfig = ( duration: number, delay: number ): TimingCon
 	},
 } );
 
-export const createAnimationPreset = (
-	effect: string,
-	type: string,
-	direction: string,
-	duration: number,
-	delay: number
-): AnimationPresetPropValue => ( {
+export const createBoolean = ( value: boolean ): BooleanPropValue => ( {
+	$$type: 'boolean',
+	value,
+} );
+
+export const createConfig = ( replay: boolean ): ConfigPropValue => ( {
+	$$type: 'config',
+	value: {
+		replay: createBoolean( replay ),
+	},
+} );
+
+export const extractBoolean = ( prop: BooleanPropValue | undefined, fallback = false ): boolean => {
+	return prop?.value ?? fallback;
+};
+
+export const createAnimationPreset = ( {
+	effect,
+	type,
+	direction,
+	duration,
+	delay,
+	replay = false,
+}: {
+	effect: string;
+	type: string;
+	direction?: string;
+	duration: number;
+	delay: number;
+	replay: boolean;
+} ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
 		effect: createString( effect ),
 		type: createString( type ),
-		direction: createString( direction ),
+		direction: createString( direction ?? '' ),
 		timing_config: createTimingConfig( duration, delay ),
+		config: createConfig( replay ),
 	},
 } );
 
-export const createInteractionItem = (
-	trigger: string,
-	effect: string,
-	type: string,
-	direction: string,
-	duration: number,
-	delay: number,
-	interactionId?: string
-): InteractionItemPropValue => ( {
+export const createInteractionItem = ( {
+	trigger,
+	effect,
+	type,
+	direction,
+	duration,
+	delay,
+	interactionId,
+	replay = false,
+}: {
+	trigger: string;
+	effect: string;
+	type: string;
+	direction?: string;
+	duration: number;
+	delay: number;
+	interactionId?: string;
+	replay: boolean;
+} ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
 		...( interactionId && { interaction_id: createString( interactionId ) } ),
 		trigger: createString( trigger ),
-		animation: createAnimationPreset( effect, type, direction, duration, delay ),
+		animation: createAnimationPreset( { effect, type, direction, duration, delay, replay } ),
 	},
 } );
 
 export const createDefaultInteractionItem = (): InteractionItemPropValue => {
-	return createInteractionItem( 'load', 'fade', 'in', '', 300, 0 );
+	return createInteractionItem( {
+		trigger: 'load',
+		effect: 'fade',
+		type: 'in',
+		duration: 300,
+		delay: 0,
+		replay: false,
+	} );
 };
 
 export const createDefaultInteractions = (): ElementInteractions => ( {

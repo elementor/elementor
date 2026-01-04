@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { Form, MenuListItem } from '@elementor/editor-ui';
-import { Button, FormLabel, Grid, Select, Stack, TextField, Typography } from '@elementor/ui';
+import { Button, FormLabel, Grid, Select, Stack, type SxProps, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type OverridableProp } from '../../types';
@@ -14,9 +14,10 @@ type Props = {
 	onSubmit: ( data: { label: string; group: string | null } ) => void;
 	currentValue?: OverridableProp;
 	groups?: { value: string; label: string }[];
+	sx?: SxProps;
 };
 
-export function OverridablePropForm( { onSubmit, groups, currentValue }: Props ) {
+export function OverridablePropForm( { onSubmit, groups, currentValue, sx }: Props ) {
 	const [ propLabel, setPropLabel ] = useState< string | null >( currentValue?.label ?? null );
 	const [ group, setGroup ] = useState< string | null >( currentValue?.groupId ?? groups?.[ 0 ]?.value ?? null );
 
@@ -30,7 +31,7 @@ export function OverridablePropForm( { onSubmit, groups, currentValue }: Props )
 
 	return (
 		<Form onSubmit={ () => onSubmit( { label: propLabel ?? '', group } ) }>
-			<Stack alignItems="start" width="268px">
+			<Stack alignItems="start" sx={ { width: '268px', ...sx } }>
 				<Stack
 					direction="row"
 					alignItems="center"
@@ -67,7 +68,9 @@ export function OverridablePropForm( { onSubmit, groups, currentValue }: Props )
 							size={ SIZE }
 							fullWidth
 							value={ group ?? null }
-							onChange={ setGroup }
+							onChange={ ( e: React.ChangeEvent< HTMLSelectElement > ) =>
+								setGroup( e.target.value as string | null )
+							}
 							displayEmpty
 							renderValue={ ( selectedValue: string | null ) => {
 								if ( ! selectedValue || selectedValue === '' ) {
