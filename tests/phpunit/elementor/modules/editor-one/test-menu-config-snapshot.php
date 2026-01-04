@@ -128,6 +128,9 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 				if ( isset( $item['url'] ) ) {
 					$item['url'] = $this->normalize_url( $item['url'] );
 				}
+				if ( isset( $item['slug'] ) ) {
+					$item['slug'] = $this->normalize_url( $item['slug'] );
+				}
 			}
 		}
 
@@ -137,6 +140,9 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 					foreach ( $group['items'] as &$item ) {
 						if ( isset( $item['url'] ) ) {
 							$item['url'] = $this->normalize_url( $item['url'] );
+						}
+						if ( isset( $item['slug'] ) ) {
+							$item['slug'] = $this->normalize_url( $item['slug'] );
 						}
 					}
 				}
