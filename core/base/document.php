@@ -2099,10 +2099,14 @@ abstract class Document extends Controls_Stack {
 	}
 
 	private function migrate_atomic_widgets_data( array &$data ): void {
+		if ( ! Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_BC_MIGRATIONS ) ) {
+			return;
+		}
+
 		// TODO: Replace with CDN URL when available
 		$migrations_base_path = ELEMENTOR_PATH . 'migrations/';
 
-		if ( ! file_exists( $migrations_base_path ) ) {
+		if ( ! is_dir( $migrations_base_path ) ) {
 			return;
 		}
 
