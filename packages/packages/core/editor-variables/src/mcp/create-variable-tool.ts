@@ -17,7 +17,7 @@ const OutputSchema = {
 };
 
 export const initCreateVariableTool = () => {
-	getMCPByDomain( 'canvas' ).addTool( {
+	getMCPByDomain( 'variables' ).addTool( {
 		name: 'create-global-variable',
 		schema: InputSchema,
 		outputSchema: OutputSchema,

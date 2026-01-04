@@ -4,7 +4,7 @@ import { z } from '@elementor/schema';
 import { service } from '../service';
 
 export const initUpdateVariableTool = () => {
-	getMCPByDomain( 'canvas' ).addTool( {
+	getMCPByDomain( 'variables' ).addTool( {
 		schema: {
 			id: z.string().describe( 'The unique identifier of the variable to be updated or renamed.' ),
 			label: z
