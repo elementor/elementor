@@ -157,7 +157,7 @@ class Module extends BaseApp {
 					'url' => 'https://go.elementor.com/acc-editor-announcement-learn-more',
 				],
 				[
-					'label' => Hints::get_plugin_action_text( $plugin_slug ),
+					'label' => Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate Plugin', 'elementor' ) : __( 'Install Plugin', 'elementor' ),
 					'variant' => 'primary',
 					'target' => '_blank',
 					'url' => Hints::get_plugin_action_url( $plugin_slug ),
