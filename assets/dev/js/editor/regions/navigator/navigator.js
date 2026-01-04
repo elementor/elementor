@@ -96,7 +96,7 @@ export default class extends BaseRegion {
 		this.$el.resizable( this.getResizableOptions() );
 	}
 
-	open( model, options = { expandAllElements: false } ) {
+	open( model, options ) {
 		this.$el.show();
 
 		this.setSize();
@@ -109,7 +109,7 @@ export default class extends BaseRegion {
 			model.trigger( 'request:edit' );
 		}
 
-		if ( options.expandAllElements ) {
+		if ( options?.expandAllElements ) {
 			this.currentView.elements.currentView.recursiveChildInvoke( 'toggleList', true );
 		}
 
