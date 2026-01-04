@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { PropKeyProvider, PropProvider, useBoundProp } from '@elementor/editor-controls';
+import { ControlReplacementsProvider, PropKeyProvider, PropProvider, useBoundProp } from '@elementor/editor-controls';
 import {
+	BaseControl,
 	controlsRegistry,
 	type ControlType,
 	createTopLevelObjectType,
+	ElementProvider,
 	SettingsField,
 } from '@elementor/editor-editing-panel';
-import { type Control } from '@elementor/editor-elements';
+import { type Control, getElementType } from '@elementor/editor-elements';
 import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 import { Stack } from '@elementor/ui';
 
@@ -105,27 +107,48 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 				return;
 			}
 
-			const { elType, widgetType, propKey } = overridableProp;
-			updateOverridableProp( componentId, overridableValue, { elType, widgetType, propKey } );
+			const { elType, widgetType, propKey, elementId } = overridableProp;
+			updateOverridableProp( componentId, overridableValue, { elType, widgetType, propKey, elementId } );
 		}
 	};
 
+	const { control, controlProps, layout } = getControlParams(
+		controls,
+		overridableProp?.originPropFields ?? overridableProp,
+		overridableProp.label
+	);
+
+	const { elementId, widgetType, elType, propKey } = overridableProp.originPropFields ?? overridableProp;
+
+	const type = elType === 'widget' ? widgetType : elType;
+	const elementType = getElementType( type );
+
+	if ( ! elementType ) {
+		return null;
+	}
+
 	return (
-		<PropProvider
-			propType={ propTypeSchema }
-			value={ value }
-			setValue={ setValue }
-			isDisabled={ () => {
-				return false;
-			} }
-		>
-			<PropKeyProvider bind={ overridableProp.overrideKey }>
-				<Stack direction="column" gap={ 1 } mb={ 1.5 }>
-					<ControlLabel>{ overridableProp.label }</ControlLabel>
-					{ getControl( controls, overridableProp?.originPropFields ?? overridableProp ) }
-				</Stack>
-			</PropKeyProvider>
-		</PropProvider>
+		<ElementProvider element={ { id: elementId, type } } elementType={ elementType }>
+			<SettingsField bind={ propKey } propDisplayName={ overridableProp.label }>
+				<PropProvider
+					propType={ propTypeSchema }
+					value={ value }
+					setValue={ setValue }
+					isDisabled={ () => {
+						return false;
+					} }
+				>
+					<PropKeyProvider bind={ overridableProp.overrideKey }>
+						<ControlReplacementsProvider replacements={ [] }>
+							<Stack direction="column" gap={ 1 } mb={ 1.5 }>
+								{ layout !== 'custom' && <ControlLabel>{ overridableProp.label }</ControlLabel> }
+								<OriginalControl control={ control } controlProps={ controlProps } />
+							</Stack>
+						</ControlReplacementsProvider>
+					</PropKeyProvider>
+				</PropProvider>
+			</SettingsField>
+		</ElementProvider>
 	);
 }
 
@@ -198,10 +221,48 @@ function createOverrideValue(
 	} );
 }
 
-function getControl( controls: Record< string, Control >, originPropFields: OriginPropFields ) {
-	const ControlComponent = controlsRegistry.get( controls[ originPropFields.propKey ].value.type as ControlType );
+function getControlParams( controls: Record< string, Control >, originPropFields: OriginPropFields, label?: string ) {
+	const control = controls[ originPropFields.propKey ];
+	const { value } = control;
 
-	const controlProps = controls[ originPropFields.propKey ].value.props;
+	const layout = getControlLayout( control );
 
-	return <ControlComponent { ...controlProps } />;
+	const controlProps = populateChildControlProps( value.props );
+
+	if ( layout === 'custom' ) {
+		controlProps.label = label ?? value.label;
+	}
+
+	return {
+		control,
+		controlProps,
+		layout,
+	};
+}
+
+function OriginalControl( { control, controlProps }: { control: Control; controlProps: Record< string, unknown > } ) {
+	const { value } = control;
+
+	return <BaseControl type={ value.type as ControlType } props={ controlProps } />;
+}
+
+function getControlLayout( control: Control ) {
+	return control.value.meta?.layout || controlsRegistry.getLayout( control.value.type as ControlType );
+}
+
+function populateChildControlProps( props: Record< string, unknown > ) {
+	if ( props.childControlType ) {
+		const childComponent = controlsRegistry.get( props.childControlType as ControlType );
+		const childPropType = controlsRegistry.getPropTypeUtil( props.childControlType as ControlType );
+		props = {
+			...props,
+			childControlConfig: {
+				component: childComponent,
+				props: props.childControlProps || {},
+				propTypeUtil: childPropType,
+			},
+		};
+	}
+
+	return props;
 }

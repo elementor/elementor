@@ -18,6 +18,7 @@ export { useSectionWidth } from './contexts/section-context';
 export { useStyle } from './contexts/style-context';
 export { registerControlReplacement, getControlReplacements } from './control-replacement';
 export { controlActionsMenu } from './controls-actions';
+export { Control as BaseControl } from './controls-registry/control';
 export { controlsRegistry, type ControlType } from './controls-registry/controls-registry';
 export { StylesProviderCannotUpdatePropsError } from './errors';
 export { createTopLevelObjectType } from './controls-registry/create-top-level-object-type';

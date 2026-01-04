@@ -46,12 +46,20 @@ export function OverridablePropControl< T extends object >( {
 
 	const defaultPropType = elementType.propsSchema[ bind ];
 
+	const overridePropType =
+		isComponentInstance && overridableProps
+			? getPropTypeForComponentOverride( overridableProps.props[ value.override_key ] )
+			: undefined;
+
+	const resolvedPropType = overridePropType ?? defaultPropType;
+
+	if ( ! resolvedPropType ) {
+		return null;
+	}
+
 	const propType = createTopLevelObjectType( {
 		schema: {
-			[ bind ]:
-				isComponentInstance && overridableProps
-					? getPropTypeForComponentOverride( overridableProps.props[ value.override_key ] ) ?? defaultPropType
-					: defaultPropType,
+			[ bind ]: resolvedPropType,
 		},
 	} );
 

@@ -7,12 +7,13 @@ export const getPropTypeForComponentOverride = ( overridableProp: OverridablePro
 		return getPropType( overridableProp.originPropFields );
 	}
 
-	const { elType, widgetType, propKey } = overridableProp;
+	const { elType, widgetType, propKey, elementId } = overridableProp;
 
 	return getPropType( {
 		elType,
 		widgetType,
 		propKey,
+		elementId,
 	} );
 };
 

@@ -20,7 +20,7 @@ export type UnpublishedComponent = BaseComponent & {
 	elements: V1ElementData[];
 };
 
-export type OriginPropFields = Pick< OverridableProp, 'propKey' | 'widgetType' | 'elType' >;
+export type OriginPropFields = Pick< OverridableProp, 'propKey' | 'widgetType' | 'elType' | 'elementId' >;
 
 export type OverridableProp = {
 	overrideKey: string;
