@@ -27,6 +27,10 @@
                                                 "value": "https://example.com/image.jpg"
                                             }
                                         }
+                                    },
+                                    "size": {
+                                        "$$type": "string",
+                                        "value": "full"
                                     }
                                 }
                             }
