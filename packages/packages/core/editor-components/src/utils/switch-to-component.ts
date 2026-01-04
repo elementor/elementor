@@ -22,8 +22,8 @@ export async function switchToComponent(
 	const topLevelElement = currentDocumentContainer?.children?.[ 0 ];
 
 	if ( topLevelElement ) {
-		await selectElement( topLevelElement.id );
-		await expandNavigator();
+		selectElement( topLevelElement.id );
+		expandNavigator();
 	}
 }
 
