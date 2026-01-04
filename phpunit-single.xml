@@ -1,0 +1,39 @@
+<phpunit
+		bootstrap="tests/bootstrap.php"
+		backupGlobals="false"
+		colors="true"
+		convertErrorsToExceptions="true"
+		convertNoticesToExceptions="true"
+		convertWarningsToExceptions="true"
+		failOnIncomplete="true"
+>
+	<php>
+		<env name="PLUGIN_FILE" value="elementor.php"/>
+		<env name="WP_TESTS_DIR" value="./tmp/wordpress-tests-lib"/>
+	</php>
+
+	<testsuites>
+		<testsuite name="elementor">
+			<file>tests/phpunit/elementor/modules/editor-one/test-menu-config-snapshot.php</file>
+		</testsuite>
+	</testsuites>
+
+	<filter>
+		<whitelist>
+			<directory suffix=".php">./</directory>
+			<exclude>
+				<directory>.github</directory>
+				<directory>assets</directory>
+				<directory>bin</directory>
+				<directory>build</directory>
+				<directory>docs</directory>
+				<directory>node_modules</directory>
+				<directory>tests</directory>
+				<directory>includes/libraries</directory>
+				<directory>vendor</directory>
+				<directory>vendor_prefixed</directory>
+			</exclude>
+		</whitelist>
+	</filter>
+
+</phpunit>

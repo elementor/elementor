@@ -18,6 +18,8 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 
 	private const SNAPSHOT_FILE = __DIR__ . '/snapshots/menu-config-snapshot.json';
 
+	private $original_server_request_uri;
+
 	public function setUp(): void {
 		parent::setUp();
 
@@ -32,6 +34,7 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 
 		$this->reset_menu_data_provider();
 		$this->restore_screen_context();
+		$this->restore_request_uri();
 		$this->deactivate_editor_one_experiment();
 	}
 
@@ -149,12 +152,8 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 
 		if ( isset( $parsed['query'] ) ) {
 			parse_str( $parsed['query'], $query_params );
-			if ( isset( $query_params['return_to'] ) && '' === $query_params['return_to'] ) {
-				unset( $query_params['return_to'] );
-			}
 
 			unset( $query_params['ver'] );
-			unset( $query_params['return_to'] );
 			
 			if ( ! empty( $query_params ) ) {
 				$path .= '?' . http_build_query( $query_params );
@@ -186,8 +185,18 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 	}
 
 	private function set_request_uri(): void {
-		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
-			$_SERVER['REQUEST_URI'] = '';
+		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
+			$this->original_server_request_uri = $_SERVER['REQUEST_URI'];
+		}
+
+		$_SERVER['REQUEST_URI'] = '/wp-admin/admin.php?page=elementor';
+	}
+
+	private function restore_request_uri(): void {
+		if ( isset( $this->original_server_request_uri ) ) {
+			$_SERVER['REQUEST_URI'] = $this->original_server_request_uri;
+		} else {
+			unset( $_SERVER['REQUEST_URI'] );
 		}
 	}
 }
