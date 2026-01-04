@@ -28,12 +28,14 @@ abstract class Component_Prop_Type_Test_Base extends Elementor_Test_Base {
 
 	protected Component_Overrides_Mocks $mocks;
 
+	protected ?bool $is_with_autosave = false;
 
 	const VALID_COMPONENT_ID = 123;
 	const NON_EXISTENT_COMPONENT_ID = 999;
 	public function setUp(): void {
 		parent::setUp();
-		
+
+		$this->is_with_autosave = false;
 		$this->mocks = new Component_Overrides_Mocks();
 
 		$this->mock_elements_manager();
@@ -78,21 +80,34 @@ abstract class Component_Prop_Type_Test_Base extends Elementor_Test_Base {
 		$this->documents_manager_mock = $this->getMockBuilder( Documents_Manager::class )
 			->disableOriginalConstructor()->onlyMethods( [ 'get', 'get_doc_or_auto_save' ] )->getMock();
 
-		$get_mock_component = function ( $post_id ) {
-			if ($post_id === self::VALID_COMPONENT_ID) {
-				return new Mock_Component_Document( $this->mocks->get_mock_component_overridable_props() );
+		$this->documents_manager_mock->method( 'get' )->willReturnCallback( function ( $post_id ) {
+			if ( $post_id === self::VALID_COMPONENT_ID ) {
+				$props = $this->mocks->get_mock_component_overridable_props();
+				return new Mock_Component_Document( $props );
 			}
 			return null;
-		};
+		} );
 
-		$this->documents_manager_mock->method( 'get' )->willReturnCallback( $get_mock_component );
-		$this->documents_manager_mock->method( 'get_doc_or_auto_save' )->willReturnCallback( $get_mock_component );
+		$this->documents_manager_mock->method( 'get_doc_or_auto_save' )->willReturnCallback( function ( $post_id ) {
+			if ( $post_id === self::VALID_COMPONENT_ID ) {
+				$props = $this->is_with_autosave
+					? $this->mocks->get_mock_component_overridable_props_with_autosave_only_prop()
+					: $this->mocks->get_mock_component_overridable_props();
+
+				return new Mock_Component_Document( $props );
+			}
+			return null;
+		} );
 
 		Plugin::$instance->documents = $this->documents_manager_mock;
 	}
 
 	public function reset_documents_manager() {
 		Plugin::$instance->documents = $this->original_documents_manager;
+	}
+
+	protected function set_autosave_props(): void {
+		$this->is_with_autosave = true;
 	}
 }
 
