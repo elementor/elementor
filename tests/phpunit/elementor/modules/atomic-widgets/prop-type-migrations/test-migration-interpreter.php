@@ -802,4 +802,68 @@ class Test_Migration_Interpreter extends Elementor_Test_Base {
 		$this->assertIsArray( $result['settings']['obj'] );
 		$this->assertEquals( [ 'keep' => 1 ], $result['settings']['obj'] );
 	}
+
+	public function test_invalid_direction_throws_exception() {
+		// Arrange
+		$data = [ 'settings' => [ 'tag' => 'h3' ] ];
+		$migration = [ 'up' => [] ];
+
+		// Assert
+		$this->expectException( \InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Invalid direction "sideways". Must be "up" or "down".' );
+
+		// Act
+		Migration_Interpreter::run( $migration, $data, 'sideways' );
+	}
+
+	public function test_move_without_src_throws_exception() {
+		// Arrange
+		$data = [ 'settings' => [ 'tag' => 'h3' ] ];
+		$migration = [
+			'up' => [
+				[ 'op' => [ 'fn' => 'move', 'dest' => 'newPath' ] ],
+			],
+		];
+
+		// Assert
+		$this->expectException( \InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Move operation requires both "src" and "dest" parameters' );
+
+		// Act
+		Migration_Interpreter::run( $migration, $data );
+	}
+
+	public function test_move_without_dest_throws_exception() {
+		// Arrange
+		$data = [ 'settings' => [ 'tag' => 'h3' ] ];
+		$migration = [
+			'up' => [
+				[ 'op' => [ 'fn' => 'move', 'src' => 'settings.tag' ] ],
+			],
+		];
+
+		// Assert
+		$this->expectException( \InvalidArgumentException::class );
+		$this->expectExceptionMessage( 'Move operation requires both "src" and "dest" parameters' );
+
+		// Act
+		Migration_Interpreter::run( $migration, $data );
+	}
+
+	public function test_malformed_path_in_operation_throws_exception() {
+		// Arrange
+		$data = [ 'settings' => [ 'tag' => 'h3' ] ];
+		$migration = [
+			'up' => [
+				[ 'op' => [ 'fn' => 'set', 'path' => 'settings[0', 'value' => 'test' ] ],
+			],
+		];
+
+		// Assert
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( 'Malformed path: unmatched opening bracket in "settings[0"' );
+
+		// Act
+		Migration_Interpreter::run( $migration, $data );
+	}
 }

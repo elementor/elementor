@@ -164,4 +164,36 @@ class Test_Path_Resolver extends Elementor_Test_Base {
 			],
 		];
 	}
+
+	/**
+	 * @dataProvider malformed_path_data_provider
+	 */
+	public function test_malformed_paths_throw_exceptions( string $path, string $expected_message ) {
+		// Arrange
+		$data = [ 'settings' => [ 'tag' => 'h3' ] ];
+
+		// Assert
+		$this->expectException( \Exception::class );
+		$this->expectExceptionMessage( $expected_message );
+
+		// Act
+		Path_Resolver::resolve( $path, $data );
+	}
+
+	public function malformed_path_data_provider(): array {
+		return [
+			'unmatched opening bracket' => [
+				'path' => 'settings[0',
+				'expected_message' => 'Malformed path: unmatched opening bracket in "settings[0"',
+			],
+			'unmatched closing bracket' => [
+				'path' => 'settings]',
+				'expected_message' => 'Malformed path: unmatched closing bracket in "settings]"',
+			],
+			'unmatched closing bracket in middle' => [
+				'path' => 'settings].tag',
+				'expected_message' => 'Malformed path: unmatched closing bracket in "settings].tag"',
+			],
+		];
+	}
 }
