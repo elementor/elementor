@@ -63,6 +63,7 @@ class Logger {
 					break;
 			}
 		} catch ( \Exception $e ) {
+			// Our logger can't throw exceptions
 		}
 	}
 
@@ -88,4 +89,3 @@ class Logger {
 		return $formatted;
 	}
 }
-
