@@ -62,8 +62,7 @@ class Logger {
 					$logger->info( $message, $context );
 					break;
 			}
-		} catch ( \Exception $e ) {
-			// Our logger can't throw exceptions
+		} catch ( \Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch -- Logger must not throw exceptions
 		}
 	}
 
