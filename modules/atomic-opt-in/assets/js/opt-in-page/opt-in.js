@@ -27,22 +27,20 @@ const OPT_IN_MSG = 'e-editor-v4-opt-in-message';
 const OPT_OUT_MSG = 'e-editor-v4-opt-out-message';
 
 const i18n = {
-	title: __( 'The road to Editor V4', 'elementor' ),
+	title: __( 'The next generation of web creation', 'elementor' ),
 	chip: __( 'Beta', 'elementor' ),
 
-	welcomeText: __( 'Welcome to a new era of web creation with Editor V4. It’s faster, more flexible, and built with a fresh approach to structure & styling.', 'elementor' ),
+	welcomeText: __( 'Welcome to version 4 of Elementor\'s Editor. It’s faster, more flexible, and built on a fully atomic approach to structure & styling.', 'elementor' ),
 
 	advantagesHeader: __( 'Here’s what’s inside the beta version:', 'elementor' ),
 	advantages: [
-		__( 'Unparalleled performance - Cleaner code & a lighter CSS footprint.', 'elementor' ),
-		__( 'Professional tools at your fingertips - classes and states.', 'elementor' ),
-		__( 'Consistent styling experience - A unified Style tab for all elements.', 'elementor' ),
+		__( 'Unparalleled performance - Cleaner code & a lighter CSS footprint with single-div wrappers.', 'elementor' ),
+		__( 'Professional tools at your fingertips - Variables, Classes and States.', 'elementor' ),
+		__( 'Consistent styling experience - A unified Style tab for all atomic elements.', 'elementor' ),
 		__( 'Fully responsive design - Customize any style property per screen.', 'elementor' ),
 	],
 	andMore: __( 'And much more!', 'elementor' ),
 	readMore: __( 'Learn more', 'elementor' ),
-
-	warning: __( 'Editor V4 is still in alpha and should not be used on live sites yet.', 'elementor' ),
 
 	feedback: __( 'We’d love your feedback!', 'elementor' ),
 	overToGithub: __( 'Head over to Github', 'elementor' ),
