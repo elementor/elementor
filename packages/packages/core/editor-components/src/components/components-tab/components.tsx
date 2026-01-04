@@ -12,10 +12,10 @@ const ComponentsContent = () => {
 	const hasComponents = ! isLoading && components.length > 0;
 
 	return (
-		<PanelBody>
+		<>
 			{ hasComponents && <ComponentSearch /> }
 			<ComponentsList />
-		</PanelBody>
+		</>
 	);
 };
 
