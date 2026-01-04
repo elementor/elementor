@@ -2,6 +2,7 @@
 namespace Elementor\Testing\Modules\Components;
 
 use Elementor\Modules\Components\Documents\Component as Component_Document;
+use Elementor\Modules\Components\Overridable_Schema_Extender;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Testing\Modules\Components\Mocks\Nested_Components_Mocks;
@@ -12,7 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 require_once __DIR__ . '/mocks/nested-components/nested-components-mocks.php';
 
-// This is an integration test as multiple classes are involved in the component rendering process.
 class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
 
 	private $button_component_id = 1111;
@@ -22,13 +22,16 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		// Register the component document type
+		add_filter(
+			'elementor/atomic-widgets/props-schema',
+			fn ( $schema ) => Overridable_Schema_Extender::make()->get_extended_schema( $schema )
+		);
+
 		Plugin::$instance->documents->register_document_type(
 			Component_Document::TYPE,
 			Component_Document::get_class_full_name()
 		);
 
-		// Register post type for components
 		register_post_type( Component_Document::TYPE, [
 			'label' => Component_Document::get_title(),
 			'labels' => Component_Document::get_labels(),
@@ -48,6 +51,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
 	public function tearDown(): void {
 		parent::tearDown();
 		$this->clean_up_components();
+		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
 	}
 
     private function get_rendered_component( array $instance_data ) {
