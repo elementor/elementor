@@ -1,0 +1,10 @@
+{
+    "title": {
+        "$$type": "html",
+        "value": "Hello"
+    },
+    "subtitle": {
+        "$$type": "string",
+        "value": "World"
+    }
+}

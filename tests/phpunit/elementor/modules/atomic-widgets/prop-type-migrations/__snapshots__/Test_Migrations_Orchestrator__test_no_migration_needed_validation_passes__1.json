@@ -1,0 +1,10 @@
+{
+    "title": {
+        "$$type": "string",
+        "value": "Hello World"
+    },
+    "count": {
+        "$$type": "number",
+        "value": 42
+    }
+}

@@ -1,0 +1,20 @@
+{
+  "up": [
+    {
+      "op": {
+        "fn": "set",
+        "path": "$$type",
+        "value": "group2_y"
+      }
+    }
+  ],
+  "down": [
+    {
+      "op": {
+        "fn": "set",
+        "path": "$$type",
+        "value": "group2_x"
+      }
+    }
+  ]
+}
