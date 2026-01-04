@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { createElement, useMemo, useRef } from 'react';
-import { PromotionChip } from '@elementor/editor-ui';
+import { createElement, type MouseEvent, useMemo, useRef, useState } from 'react';
+import { PromotionChip, PromotionPopover } from '@elementor/editor-ui';
 import { PlusIcon } from '@elementor/icons';
 import { bindMenu, bindTrigger, Box, IconButton, Menu, MenuItem, type PopupState, Typography } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { capitalize } from '@elementor/utils';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { useQuotaPermissions } from '../../hooks/use-quota-permissions';
 import { type TVariablesList } from '../../storage';
@@ -108,8 +109,10 @@ const MenuOption = ( {
 	onCreate: VariableManagerCreateMenuProps[ 'onCreate' ];
 	onClose: () => void;
 } ) => {
-	const displayName = config.variableType.charAt( 0 ).toUpperCase() + config.variableType.slice( 1 );
+	const [ isPopoverOpen, setIsPopoverOpen ] = useState( false );
 	const userQuotaPermissions = useQuotaPermissions( config.propTypeKey );
+
+	const displayName = capitalize( config.variableType );
 	const isDisabled = ! userQuotaPermissions.canAdd();
 
 	const handleClick = () => {
@@ -124,6 +127,18 @@ const MenuOption = ( {
 		onClose();
 	};
 
+	const title = sprintf(
+		/* translators: %s: Variable Type. */
+		__( '%s variables', 'elementor' ),
+		capitalize( config.variableType )
+	);
+
+	const content = sprintf(
+		/* translators: %s: Variable Type. */
+		__( 'Upgrade to continue creating and editing %s variables.', 'elementor' ),
+		config.variableType
+	);
+
 	return (
 		<MenuItem onClick={ handleClick } sx={ { gap: 1.5, cursor: isDisabled ? 'default' : 'pointer' } }>
 			{ createElement( config.icon, { fontSize: SIZE, color: isDisabled ? 'disabled' : 'action' } ) }
@@ -132,11 +147,26 @@ const MenuOption = ( {
 			</Typography>
 			{ isDisabled && (
 				<Box
-					onClick={ () => {
-						event?.stopPropagation();
+					onClick={ ( event: MouseEvent ) => {
+						event.stopPropagation();
 					} }
 				>
-					<PromotionChip onClick={ () => {} } />
+					<PromotionPopover
+						open={ isPopoverOpen }
+						title={ title }
+						content={ content }
+						ctaText={ __( 'Upgrade now', 'elementor' ) }
+						ctaUrl={ `https://go.elementor.com/go-pro-manager-${ config.variableType }-variable/` }
+						onClose={ () => {
+							setIsPopoverOpen( false );
+						} }
+					>
+						<PromotionChip
+							onClick={ () => {
+								setIsPopoverOpen( true );
+							} }
+						/>
+					</PromotionPopover>
 				</Box>
 			) }
 		</MenuItem>

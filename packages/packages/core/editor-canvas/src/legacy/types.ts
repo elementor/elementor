@@ -6,6 +6,7 @@ import { type TransformerRenderContext } from '../transformers/types';
 export type LegacyWindow = Window & {
 	elementor: {
 		createBackboneElementsCollection: ( children: unknown ) => BackboneCollection< ElementModel >;
+		getElementData: ( model: unknown ) => { title: string };
 
 		modules: {
 			elements: {
@@ -129,6 +130,17 @@ export type BackboneModel< Model extends object > = {
 	get: < T extends keyof Model >( key: T ) => Model[ T ];
 	set: < T extends keyof Model >( key: T, value: Model[ T ] ) => void;
 	toJSON: () => ToJSON< Model >;
+};
+
+export type BackboneModelConstructor< Model extends object > = {
+	new ( ...args: unknown[] ): BackboneModel< Model >;
+	extend: < ExtendedModel extends object >(
+		properties: Record< string, unknown >
+	) => BackboneModelConstructor< ExtendedModel >;
+	prototype: {
+		initialize: ( attributes: unknown, options: unknown ) => void;
+	};
+	getModel: () => BackboneModelConstructor< Model >;
 };
 
 type BackboneCollection< Model extends object > = {
