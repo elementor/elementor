@@ -7,6 +7,8 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Exception;
+use Elementor\Utils;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -31,6 +33,12 @@ class Render_Props_Resolver extends Props_Resolver {
 		return static::instance( self::CONTEXT_SETTINGS );
 	}
 
+	private function should_revert_to_default( $prop_value ): bool {
+		return( null === $prop_value
+			|| ( ! Utils::has_pro() && Dynamic_Prop_Type::is_dynamic_prop_value( $prop_value ) )
+		);
+	}
+
 	public function resolve( array $schema, array $props ): array {
 		$resolved = [];
 
@@ -39,8 +47,10 @@ class Render_Props_Resolver extends Props_Resolver {
 				continue;
 			}
 
+			$prop_value = $props[ $key ] ?? null;
+
 			$transformed = $this->resolve_item(
-				$props[ $key ] ?? $prop_type->get_default(),
+				$this->should_revert_to_default( $prop_value ) ? $prop_type->get_default() : $prop_value,
 				$key,
 				$prop_type
 			);

@@ -194,7 +194,7 @@ class Test_Atomic_Widget_Base extends Elementor_Test_Base {
 						],
 					],
 					'result' => [
-						'text' => 'Before text - Dynamic tag content',
+						'text' => 'Cool cool cool',
 						'text_2' => null,
 						'invalid_name' => null,
 						'invalid_settings' => null,
