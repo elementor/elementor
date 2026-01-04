@@ -6,11 +6,11 @@ import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
+import { ControlLabel } from '../components/control-label';
 import { createControl } from '../create-control';
 import { useUnfilteredFilesUpload } from '../hooks/use-unfiltered-files-upload';
 import { ImageMediaControl } from './image-media-control';
 import { SelectControl } from './select-control';
-import { ControlLabel } from '../components/control-label';
 
 type ImageControlProps = {
 	sizes: { label: string; value: string }[];
