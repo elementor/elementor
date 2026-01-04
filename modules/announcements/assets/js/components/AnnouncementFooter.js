@@ -1,18 +1,5 @@
 import PropTypes from 'prop-types';
 
-const decodeHtmlEntities = ( url ) => {
-	if ( ! url ) {
-		return url;
-	}
-
-	const textarea = document.createElement( 'textarea' );
-	textarea.innerHTML = url;
-	const decodedValue = textarea.value;
-	textarea.remove();
-
-	return decodedValue;
-};
-
 export default function AnnouncementFooter( { buttons, onClose } ) {
 	if ( ! buttons ) {
 		return null;
@@ -24,11 +11,11 @@ export default function AnnouncementFooter( { buttons, onClose } ) {
 				return (
 					<a
 						key={ `button${ index }` }
-						className={ `button-item ${ button.variant }` }
-						href={ decodeHtmlEntities( button.url ) }
-						target={ button.target }
+						className={ `button-item ${ button?.variant }` }
+						href={ button?.url?.replaceAll( '&amp;', '&' ) }
+						target={ button?.target }
 						onClick={ () => onClose( 'cta' ) } >
-						{ button.label }
+						{ button?.label }
 					</a>
 				);
 			} ) }
