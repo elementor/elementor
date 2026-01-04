@@ -1,4 +1,5 @@
 import { createLocation } from '@elementor/locations';
+import { capitalize } from '@elementor/utils';
 
 import { createRegisterItem, type RegisterItem } from './create-register-item';
 import { createUseMenuItems, type UseMenuItems } from './create-use-menu-items';
@@ -53,8 +54,4 @@ function createRegisterFns< TGroups extends string, TComponents extends Componen
 		},
 		{} as RegisterFns< TGroups, TComponents >
 	);
-}
-
-export function capitalize( str: string ) {
-	return str.charAt( 0 ).toUpperCase() + str.slice( 1 );
 }

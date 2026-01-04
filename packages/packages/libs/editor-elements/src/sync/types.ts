@@ -100,6 +100,7 @@ export type ElementInteractions = {
 };
 
 export type V1ElementModelProps = {
+	title?: string;
 	isLocked?: boolean;
 	widgetType?: string;
 	elType: string;
