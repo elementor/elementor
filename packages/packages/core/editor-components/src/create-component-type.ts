@@ -97,11 +97,6 @@ export function createComponentType(
 	};
 }
 
-type ViewWithParent = {
-	_parent?: ViewWithParent;
-	getRenderContext?: () => TransformerRenderContext | undefined;
-};
-
 function createComponentView(
 	options: CreateTemplatedElementTypeOptions & {
 		showLockedByModal?: ( lockedBy: string ) => void;
@@ -119,7 +114,7 @@ function createComponentView(
 		}
 
 		getRenderContext(): TransformerRenderContext | undefined {
-			const parent = ( this as unknown as ViewWithParent )._parent;
+			const parent = this._parent;
 			const parentContext = parent?.getRenderContext?.();
 
 			if ( ! this.#componentRenderContext ) {

@@ -82,9 +82,7 @@ export function createTemplatedElementView( {
 		}
 
 		getRenderContext(): TransformerRenderContext | undefined {
-			const parent = this._parent;
-
-			return parent?.getRenderContext?.();
+			return this._parent?.getRenderContext?.();
 		}
 
 		// Override `render` function to support async `_renderTemplate`
@@ -109,14 +107,16 @@ export function createTemplatedElementView( {
 
 			this.#childrenRenderPromises = [];
 
-			if ( this.children && this.children.length > 0 ) {
-				this.children.each( ( childView: ElementView ) => {
-					if ( childView._currentRenderPromise ) {
-						this.#childrenRenderPromises.push( childView._currentRenderPromise );
-					}
-				} );
-			}
+			this.children?.each( ( childView: ElementView ) => {
+				if ( childView._currentRenderPromise ) {
+					this.#childrenRenderPromises.push( childView._currentRenderPromise );
+				}
+			} );
 
+			await this._waitForChildrenToComplete();
+		}
+
+		async _waitForChildrenToComplete() {
 			if ( this.#childrenRenderPromises.length > 0 ) {
 				await Promise.all( this.#childrenRenderPromises );
 			}

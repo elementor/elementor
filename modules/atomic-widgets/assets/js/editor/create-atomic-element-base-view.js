@@ -208,13 +208,11 @@ export default function createAtomicElementBaseView( type ) {
 
 			this._childrenRenderPromises = [];
 
-			if ( this.children && this.children.length > 0 ) {
-				this.children.each( ( childView ) => {
-					if ( childView._currentRenderPromise ) {
-						this._childrenRenderPromises.push( childView._currentRenderPromise );
-					}
-				} );
-			}
+			this.children?.each( ( childView ) => {
+				if ( childView._currentRenderPromise ) {
+					this._childrenRenderPromises.push( childView._currentRenderPromise );
+				}
+			} );
 		},
 
 		onRender() {
