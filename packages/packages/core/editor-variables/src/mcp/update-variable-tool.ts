@@ -4,7 +4,7 @@ import { z } from '@elementor/schema';
 import { service } from '../service';
 
 export const initUpdateVariableTool = () => {
-	getMCPByDomain( 'variables' ).addTool( {
+	getMCPByDomain( 'canvas' ).addTool( {
 		schema: {
 			id: z.string().describe( 'The unique identifier of the variable to be updated or renamed.' ),
 			label: z
@@ -26,6 +26,10 @@ export const initUpdateVariableTool = () => {
 				.describe( 'Optional message providing additional information about the operation' ),
 		},
 		name: 'update-global-variable',
+		modelPreferences: {
+			intelligencePriority: 0.75,
+			speedPriority: 0.7,
+		},
 		description: `Update an existing global variable
 
 ## When to use this tool:

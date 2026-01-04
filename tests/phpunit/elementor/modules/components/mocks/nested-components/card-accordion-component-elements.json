@@ -1,0 +1,270 @@
+[
+    {
+        "id": "fbdf748",
+        "elType": "e-div-block",
+        "settings": {},
+        "isInner": false,
+        "elements": [
+            {
+                "id": "26bf8a5",
+                "elType": "widget",
+                "widgetType": "e-heading",
+                "elements": [],
+                "settings": {
+                    "title": {
+                        "$$type": "overridable",
+                        "value": {
+                            "override_key": "prop-6",
+                            "origin_value": {
+                                "$$type": "html",
+                                "value": "This is a title"
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "id": "7006e19",
+                "elType": "widget",
+                "widgetType": "e-heading",
+                "elements": [],
+                "settings": {
+                    "title": {
+                        "$$type": "overridable",
+                        "value": {
+                            "override_key": "prop-7",
+                            "origin_value": {
+                                "$$type": "html",
+                                "value": "This is a subtitle"
+                            }
+                        }
+                    },
+                    "tag": {
+                        "$$type": "string",
+                        "value": "h4"
+                    }
+                }
+            },
+            {
+                "id": "312086c",
+                "elType": "e-flexbox",
+                "settings": {},
+                "isInner": false,
+                "elements": [
+                    {
+                        "id": "9e67369",
+                        "elType": "widget",
+                        "widgetType": "e-component",
+                        "elements": [],
+                        "settings": {
+                            "component_instance": {
+                                "$$type": "component-instance",
+                                "value": {
+                                    "component_id": {
+                                        "$$type": "number",
+                                        "value": 2222
+                                    },
+                                    "overrides": {
+                                        "$$type": "overrides",
+                                        "value": [
+                                            {
+                                                "$$type": "overridable",
+                                                "value": {
+                                                    "override_key": "prop-8",
+                                                    "origin_value": {
+                                                        "$$type": "override",
+                                                        "value": {
+                                                            "override_key": "prop-2",
+                                                            "override_value": null,
+                                                            "schema_source": {
+                                                                "type": "component",
+                                                                "id": 2222
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "$$type": "overridable",
+                                                "value": {
+                                                    "override_key": "prop-9",
+                                                    "origin_value": {
+                                                        "$$type": "override",
+                                                        "value": {
+                                                            "override_key": "prop-3",
+                                                            "override_value": null,
+                                                            "schema_source": {
+                                                                "type": "component",
+                                                                "id": 2222
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "$$type": "overridable",
+                                                "value": {
+                                                    "override_key": "prop-10",
+                                                    "origin_value": {
+                                                        "$$type": "override",
+                                                        "value": {
+                                                            "override_key": "prop-4",
+                                                            "override_value": null,
+                                                            "schema_source": {
+                                                                "type": "component",
+                                                                "id": 2222
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "$$type": "overridable",
+                                                "value": {
+                                                    "override_key": "prop-11",
+                                                    "origin_value": {
+                                                        "$$type": "override",
+                                                        "value": {
+                                                            "override_key": "prop-5",
+                                                            "override_value": {
+                                                                "$$type": "link",
+                                                                "value": {
+                                                                    "destination": {
+                                                                        "$$type": "url",
+                                                                        "value": "https://accordion-link.com"
+                                                                    },
+                                                                    "isTargetBlank": {
+                                                                        "$$type": "boolean",
+                                                                        "value": true
+                                                                    }
+                                                                }
+                                                            },
+                                                            "schema_source": {
+                                                                "type": "component",
+                                                                "id": 2222
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "editor_settings": {
+                            "title": "Card Component",
+                            "component_uid": "component-1765383194008-i54tzbi"
+                        }
+                    },
+                    {
+                        "id": "6ab307c",
+                        "elType": "widget",
+                        "widgetType": "e-component",
+                        "elements": [],
+                        "settings": {
+                            "component_instance": {
+                                "$$type": "component-instance",
+                                "value": {
+                                    "component_id": {
+                                        "$$type": "number",
+                                        "value": 2222
+                                    },
+                                    "overrides": {
+                                        "$$type": "overrides",
+                                        "value": [
+                                            {
+                                                "$$type": "overridable",
+                                                "value": {
+                                                    "override_key": "prop-12",
+                                                    "origin_value": {
+                                                        "$$type": "override",
+                                                        "value": {
+                                                            "override_key": "prop-2",
+                                                            "override_value": null,
+                                                            "schema_source": {
+                                                                "type": "component",
+                                                                "id": 2222
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "$$type": "overridable",
+                                                "value": {
+                                                    "override_key": "prop-13",
+                                                    "origin_value": {
+                                                        "$$type": "override",
+                                                        "value": {
+                                                            "override_key": "prop-3",
+                                                            "override_value": null,
+                                                            "schema_source": {
+                                                                "type": "component",
+                                                                "id": 2222
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "$$type": "overridable",
+                                                "value": {
+                                                    "override_key": "prop-14",
+                                                    "origin_value": {
+                                                        "$$type": "override",
+                                                        "value": {
+                                                            "override_key": "prop-4",
+                                                            "override_value": null,
+                                                            "schema_source": {
+                                                                "type": "component",
+                                                                "id": 2222
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "$$type": "overridable",
+                                                "value": {
+                                                    "override_key": "prop-15",
+                                                    "origin_value": {
+                                                        "$$type": "override",
+                                                        "value": {
+                                                            "override_key": "prop-5",
+                                                            "override_value": {
+                                                                "$$type": "link",
+                                                                "value": {
+                                                                    "destination": {
+                                                                        "$$type": "url",
+                                                                        "value": "https://accordion-link.com"
+                                                                    },
+                                                                    "isTargetBlank": {
+                                                                        "$$type": "boolean",
+                                                                        "value": true
+                                                                    }
+                                                                }
+                                                            },
+                                                            "schema_source": {
+                                                                "type": "component",
+                                                                "id": 2222
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        },
+                        "editor_settings": {
+                            "title": "Card Component",
+                            "component_uid": "component-1765383194008-i54tzbi"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -1,9 +1,11 @@
-import { type z, type z3 } from '@elementor/schema';
+import { z, type z3 } from '@elementor/schema';
 import { type AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { McpServer, type ToolCallback } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/protocol.js';
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
+import { ANGIE_MODEL_PREFERENCES, type AngieModelPreferences } from './angie-annotations';
+import { getSDK } from './get-sdk';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
 
 type ZodRawShape = z3.ZodRawShape;
@@ -14,9 +16,6 @@ const mcpDescriptions: { [ namespace: string ]: string } = {};
 let isMcpRegistrationActivated = false || typeof globalThis.jest !== 'undefined';
 
 export const registerMcp = ( mcp: McpServer, name: string ) => {
-	if ( isMcpRegistrationActivated ) {
-		throw new Error( 'MCP Registration is already activated. Cannot register new MCP servers.' );
-	}
 	const mcpName = isAlphabet( name );
 	mcpRegistry[ mcpName ] = mcp;
 };
@@ -29,7 +28,7 @@ export async function activateMcpRegistration( sdk: AngieMcpSdk ) {
 	const mcpServerList = Object.entries( mcpRegistry );
 	for await ( const entry of mcpServerList ) {
 		const [ key, mcpServer ] = entry;
-		await sdk.registerServer( {
+		await sdk.registerLocalServer( {
 			name: `editor-${ key }`,
 			server: mcpServer,
 			version: '1.0.0',
@@ -72,6 +71,18 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 	const mcpServer = mcpRegistry[ namespace ];
 	const { addTool } = createToolRegistrator( mcpServer );
 	return {
+		waitForReady: () => getSDK().waitForReady(),
+		// @ts-expect-error: TS is unable to infer the type here
+		resource: async ( ...args: Parameters< McpServer[ 'resource' ] > ) => {
+			await getSDK().waitForReady();
+			return mcpServer.resource( ...args );
+		},
+		sendResourceUpdated: ( ...args: Parameters< McpServer[ 'server' ][ 'sendResourceUpdated' ] > ) => {
+			return new Promise( async () => {
+				await getSDK().waitForReady();
+				mcpServer.server.sendResourceUpdated( ...args );
+			} );
+		},
 		mcpServer,
 		addTool,
 		setMCPDescription: ( description: string ) => {
@@ -100,23 +111,23 @@ export interface MCPRegistryEntry {
 	) => void;
 	setMCPDescription: ( description: string ) => void;
 	getActiveChatInfo: () => { sessionId: string; expiresAt: number };
+	sendResourceUpdated: McpServer[ 'server' ][ 'sendResourceUpdated' ];
+	resource: McpServer[ 'resource' ];
 	mcpServer: McpServer;
+	waitForReady: () => Promise< void >;
 }
 
 type ResourceList = {
-	type: 'resource_link';
 	uri: string;
-	name: string;
 	description: string;
-	_meta: Record< string, string >;
-	mimeType?: string;
-	annotations?: Record< string, unknown >;
 }[];
 
 type ToolRegistrationOptions<
 	InputArgs extends undefined | z.ZodRawShape = undefined,
 	OutputSchema extends undefined | z.ZodRawShape = undefined,
-	ExpectedOutput = OutputSchema extends z.ZodRawShape ? z.objectOutputType< OutputSchema, z.ZodTypeAny > : string,
+	ExpectedOutput = OutputSchema extends z.ZodRawShape
+		? z.objectOutputType< OutputSchema & { llm_instructions?: string }, z.ZodTypeAny >
+		: string,
 > = {
 	name: string;
 	description: string;
@@ -132,7 +143,8 @@ type ToolRegistrationOptions<
 				extra: RequestHandlerExtra< ServerRequest, ServerNotification >
 		  ) => ExpectedOutput | Promise< ExpectedOutput >;
 	isDestrcutive?: boolean;
-	resourceList?: ResourceList;
+	requiredResources?: ResourceList;
+	modelPreferences?: AngieModelPreferences;
 };
 
 function createToolRegistrator( server: McpServer ) {
@@ -141,11 +153,13 @@ function createToolRegistrator( server: McpServer ) {
 		O extends undefined | z.ZodRawShape = undefined,
 	>( opts: ToolRegistrationOptions< T, O > ) {
 		const outputSchema = opts.outputSchema as ZodRawShape | undefined;
+		if ( outputSchema && ! ( 'llm_instructions' in outputSchema ) ) {
+			Object.assign( outputSchema, {
+				llm_instruction: z.string().optional().describe( 'Instructions for what to do next' ),
+			} );
+		}
 		// @ts-ignore: TS is unable to infer the type here
 		const inputSchema: ZodRawShape = opts.schema ? opts.schema : {};
-		if ( isMcpRegistrationActivated ) {
-			throw new Error( 'MCP Registration is already activated. Cannot add new tools.' );
-		}
 		const toolCallback: ToolCallback< ZodRawShape > = async function ( args, extra ) {
 			try {
 				const invocationResult = await opts.handler( opts.schema ? args : {}, extra );
@@ -159,7 +173,6 @@ function createToolRegistrator( server: McpServer ) {
 									? invocationResult
 									: JSON.stringify( invocationResult ),
 						},
-						...( opts.resourceList || [] ),
 					],
 				};
 			} catch ( error ) {
@@ -174,6 +187,17 @@ function createToolRegistrator( server: McpServer ) {
 				};
 			}
 		};
+		const annotations: Record< string, unknown > = {
+			destructiveHint: opts.isDestrcutive,
+			readOnlyHint: opts.isDestrcutive ? false : undefined,
+			title: opts.name,
+		};
+		if ( opts.requiredResources ) {
+			annotations[ 'angie/requiredResources' ] = opts.requiredResources;
+		}
+		if ( opts.modelPreferences ) {
+			annotations[ ANGIE_MODEL_PREFERENCES ] = opts.modelPreferences;
+		}
 		server.registerTool(
 			opts.name,
 			{
@@ -181,14 +205,13 @@ function createToolRegistrator( server: McpServer ) {
 				inputSchema,
 				outputSchema,
 				title: opts.name,
-				annotations: {
-					destructiveHint: opts.isDestrcutive,
-					readOnlyHint: opts.isDestrcutive ? false : undefined,
-					title: opts.name,
-				},
+				annotations,
 			},
 			toolCallback
 		);
+		if ( isMcpRegistrationActivated ) {
+			server.sendToolListChanged();
+		}
 	}
 	return {
 		addTool,

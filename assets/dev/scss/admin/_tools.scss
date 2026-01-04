@@ -22,6 +22,7 @@
 #elementor_rollback_pro {
 	> div {
 		display: flex;
+		align-items: center;
 
 		input,
 		select {
@@ -45,6 +46,15 @@
 
 		&:not(:first-child) {
 			margin-block-start: 5px;
+		}
+
+		&.e-editor-one {
+			border: 1px solid rgba(0, 0, 0, 0.12);
+			border-radius: 8px;
+
+			&:not(:first-child) {
+				margin-block-start: 20px;
+			}
 		}
 
 		p {

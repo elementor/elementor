@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
 import { buildOperationsArray, type OperationResult } from './batch-operations';
-import { OP_RW, Storage, type TVariablesList } from './storage';
+import { OP_RW, Storage, type TVariable, type TVariablesList } from './storage';
 import { styleVariablesRepository } from './style-variables-repository';
 import { type Variable } from './types';
 
@@ -11,6 +11,18 @@ const storage = new Storage();
 export const service = {
 	variables: (): TVariablesList => {
 		return storage.load();
+	},
+
+	findIdByLabel( needle: string ): string {
+		const variableId = Object.entries( this.variables() ).find( ( [ , variable ] ) => variable.label === needle );
+		if ( ! variableId ) {
+			throw new Error( `Variable with label ${ needle } not found` );
+		}
+		return variableId[ 0 ];
+	},
+
+	findVariableByLabel( needle: string ): TVariable | null {
+		return Object.values( this.variables() ).find( ( variable ) => variable.label === needle ) || null;
 	},
 
 	getWatermark: (): number => {
@@ -77,9 +89,9 @@ export const service = {
 			} );
 	},
 
-	update: ( id: string, { label, value }: Omit< Variable, 'type' > ) => {
+	update: ( id: string, { label, value, type }: Omit< Variable, 'type' > & { type?: Variable[ 'type' ] } ) => {
 		return apiClient
-			.update( id, label, value )
+			.update( id, label, value, type )
 			.then( ( response ) => {
 				const { success, data: payload } = response.data;
 
@@ -142,9 +154,9 @@ export const service = {
 			} );
 	},
 
-	restore: ( id: string, label?: string, value?: string ) => {
+	restore: ( id: string, label?: string, value?: string, type?: string ) => {
 		return apiClient
-			.restore( id, label, value )
+			.restore( id, label, value, type )
 			.then( ( response ) => {
 				const { success, data: payload } = response.data;
 

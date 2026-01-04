@@ -9,7 +9,7 @@
     data-interactions="{{ interactions | json_encode | e('html_attr') }}"
 {% endif %}
 	>
-	{% set allowed_tags = '<b><strong><em><i><u><a><del><span><br>' %}
+	{% set allowed_tags = '<b><strong><sup><sub><s><em><i><u><a><del><span><br>' %}
 
 	{% if settings.link.href %}
 		<{{ settings.link.tag | e('html_tag') }} 

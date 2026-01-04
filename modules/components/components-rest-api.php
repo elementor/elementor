@@ -7,6 +7,7 @@ use Elementor\Core\Utils\Api\Error_Builder;
 use Elementor\Core\Utils\Api\Response_Builder;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Components\Documents\Component;
+use Elementor\Modules\Components\OverridableProps\Component_Overridable_Props_Parser;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -89,6 +90,50 @@ class Components_REST_API {
 									'items' => [
 										'type' => 'object',
 									],
+								],
+								'settings' => [
+									'type' => 'object',
+									'required' => false,
+								],
+							],
+						],
+					],
+				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/create-validate', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->create_validate_components( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'items' => [
+						'type' => 'array',
+						'required' => true,
+						'items' => [
+							'type' => 'object',
+							'properties' => [
+								'uid' => [
+									'type' => 'string',
+									'required' => true,
+								],
+								'title' => [
+									'type' => 'string',
+									'required' => true,
+									'minLength' => 2,
+									'maxLength' => 200,
+								],
+								'elements' => [
+									'type' => 'array',
+									'required' => true,
+									'items' => [
+										'type' => 'object',
+									],
+								],
+								'settings' => [
+									'type' => 'object',
+									'required' => false,
 								],
 							],
 						],
@@ -198,6 +243,35 @@ class Components_REST_API {
 				],
 			],
 		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/update-titles', [
+			[
+				'methods' => 'POST',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->update_components_title( $request ) ),
+				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'args' => [
+					'components' => [
+						'type' => 'array',
+						'required' => true,
+						'items' => [
+							'type' => 'object',
+							'properties' => [
+								'componentId' => [
+									'type' => 'number',
+									'required' => true,
+									'description' => 'The component ID to update title',
+								],
+								'title' => [
+									'type' => 'string',
+									'required' => true,
+									'description' => 'The new title for the component',
+								],
+							],
+						],
+					],
+				],
+			],
+		] );
 	}
 
 	private function get_components() {
@@ -266,26 +340,62 @@ class Components_REST_API {
 
 		if ( ! $result['success'] ) {
 			return Error_Builder::make( 'components_validation_failed' )
-				->set_status( 400 )
+				->set_status( 422 )
 				->set_message( 'Validation failed: ' . implode( ', ', $result['messages'] ) )
 				->build();
 		}
 
-		$created = $items->map_with_keys( function ( $item ) use ( $save_status ) {
+		$circular_result = Circular_Dependency_Validator::make()->validate_new_components( $items );
+
+		if ( ! $circular_result['success'] ) {
+			return Error_Builder::make( 'circular_dependency_detected' )
+				->set_status( 422 )
+				->set_message( __( "Can't add this component - components that contain each other can't be nested.", 'elementor' ) )
+				->set_meta( [ 'caused_by' => $circular_result['messages'] ] )
+				->build();
+		}
+
+		$non_atomic_result = Non_Atomic_Widget_Validator::make()->validate_items( $items );
+
+		if ( ! $non_atomic_result['success'] ) {
+			return Error_Builder::make( Non_Atomic_Widget_Validator::ERROR_CODE )
+				->set_status( 422 )
+				->set_message( __( 'Components require atomic elements only. Remove widgets to create this component.', 'elementor' ) )
+				->set_meta( [ 'non_atomic_elements' => $non_atomic_result['non_atomic_elements'] ] )
+				->build();
+		}
+
+		$validation_errors = [];
+
+		$created = $items->map_with_keys( function ( $item ) use ( $save_status, &$validation_errors ) {
 			$title = sanitize_text_field( $item['title'] );
 			$content = $item['elements'];
 			$uid = $item['uid'];
+
+			try {
+				$settings = isset( $item['settings'] ) ? $this->parse_settings( $item['settings'] ) : [];
+			} catch ( \Exception $e ) {
+				$validation_errors[ $uid ] = $e->getMessage();
+				return [ $uid => null ];
+			}
 
 			$status = Document::STATUS_AUTOSAVE === $save_status
 				? Document::STATUS_DRAFT
 				: $save_status;
 
-			$component_id = $this->get_repository()->create( $title, $content, $status, $uid );
+			$component_id = $this->get_repository()->create( $title, $content, $status, $uid, $settings );
 
 			return [ $uid => $component_id ];
 		} );
 
-		return Response_Builder::make( (object) $created->all() )
+		if ( ! empty( $validation_errors ) ) {
+			return Error_Builder::make( 'settings_validation_failed' )
+				->set_status( 422 )
+				->set_message( 'Settings validation failed: ' . json_encode( $validation_errors ) )
+				->build();
+		}
+
+		return Response_Builder::make( $created->all() )
 			->set_status( 201 )
 			->build();
 	}
@@ -409,18 +519,6 @@ class Components_REST_API {
 		}
 	}
 
-	private function is_current_user_allow_to_edit( $component_id ) {
-		$current_user_id = get_current_user_id();
-		try {
-			$lock_data = $this->get_component_lock_manager()->get_updated_status( $component_id );
-		} catch ( \Exception $e ) {
-			error_log( 'Components REST API is_current_user_allow_to_edit error: ' . $e->getMessage() );
-			return false;
-		}
-
-		return ! $lock_data['is_locked'] || (int) $lock_data['lock_user'] === (int) $current_user_id;
-	}
-
 	private function archive_components( \WP_REST_Request $request ) {
 		$component_ids = $request->get_param( 'componentIds' );
 		try {
@@ -435,13 +533,115 @@ class Components_REST_API {
 		}
 		return Response_Builder::make( $result )->build();
 	}
+
+	private function update_components_title( \WP_REST_Request $request ) {
+		$failed_ids = [];
+		$success_ids = [];
+		$components = $request->get_param( 'components' );
+		foreach ( $components as $component ) {
+			$is_success = $this->get_repository()->update_title( $component['componentId'], $component['title'] );
+
+			if ( ! $is_success ) {
+				$failed_ids[] = $component['componentId'];
+				continue;
+			}
+			$success_ids[] = $component['componentId'];
+
+		}
+		return Response_Builder::make( [
+			'failedIds' => $failed_ids,
+			'successIds' => $success_ids,
+		] )->build();
+	}
+
+	private function create_validate_components( \WP_REST_Request $request ) {
+		$items = Collection::make( $request->get_param( 'items' ) );
+		$components = $this->get_repository()->all();
+
+		$result = Save_Components_Validator::make( $components )->validate( $items );
+
+		if ( ! $result['success'] ) {
+			return Error_Builder::make( 'components_validation_failed' )
+				->set_status( 422 )
+				->set_message( 'Validation failed: ' . implode( ', ', $result['messages'] ) )
+				->build();
+		}
+
+		$circular_result = Circular_Dependency_Validator::make()->validate_new_components( $items );
+
+		if ( ! $circular_result['success'] ) {
+			return Error_Builder::make( 'circular_dependency_detected' )
+				->set_status( 422 )
+				->set_message( __( "Can't add this component - components that contain each other can't be nested.", 'elementor' ) )
+				->set_meta( [ 'caused_by' => $circular_result['messages'] ] )
+				->build();
+		}
+
+		$non_atomic_result = Non_Atomic_Widget_Validator::make()->validate_items( $items );
+
+		if ( ! $non_atomic_result['success'] ) {
+			return Error_Builder::make( Non_Atomic_Widget_Validator::ERROR_CODE )
+				->set_status( 422 )
+				->set_message( __( 'Components require atomic elements only. Remove widgets to create this component.', 'elementor' ) )
+				->set_meta( [ 'non_atomic_elements' => $non_atomic_result['non_atomic_elements'] ] )
+				->build();
+		}
+
+		$validation_errors = $items->map_with_keys( function ( $item ) {
+			try {
+				if ( isset( $item['settings'] ) ) {
+					$this->parse_settings( $item['settings'] );
+				}
+			} catch ( \Exception $e ) {
+				return [ $item['uid'] => $e->getMessage() ];
+			}
+
+			return [ $item['uid'] => null ];
+		} )
+		->filter( fn( $value ) => null !== $value );
+
+		if ( ! $validation_errors->is_empty() ) {
+			return Error_Builder::make( 'settings_validation_failed' )
+				->set_status( 422 )
+				->set_message( 'Settings validation failed: ' . json_encode( $validation_errors->all() ) )
+				->build();
+		}
+
+		return Response_Builder::make()
+			->set_status( 200 )
+			->build();
+	}
+
+	private function parse_settings( array $settings ): array {
+		$result = [];
+
+		if ( empty( $settings ) ) {
+			return $result;
+		}
+
+		if ( isset( $settings['overridable_props'] ) ) {
+			$parser = Component_Overridable_Props_Parser::make();
+			$overridable_props_result = $parser->parse( $settings['overridable_props'] );
+
+			if ( ! $overridable_props_result->is_valid() ) {
+				throw new \Exception(
+					esc_html( 'Validation failed for overridable_props: ' . $overridable_props_result->errors()->to_string() )
+				);
+			}
+
+			$result['overridable_props'] = $overridable_props_result->unwrap();
+		}
+
+		return $result;
+	}
+
 	private function route_wrapper( callable $cb ) {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
 			return Error_Builder::make( 'unexpected_error' )
-				->set_message( __( 'Something went wrong', 'elementor' ) )
-				->build();
+			->set_message( __( 'Something went wrong', 'elementor' ) )
+			->build();
 		}
 
 		return $response;

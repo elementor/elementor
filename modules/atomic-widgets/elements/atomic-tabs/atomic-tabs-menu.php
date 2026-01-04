@@ -17,6 +17,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Tabs_Menu extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
 
+	public function __construct( $data = [], $args = null ) {
+		parent::__construct( $data, $args );
+		$this->meta( 'llm_support', false );
+	}
+
 	public static function get_type() {
 		return 'e-tabs-menu';
 	}
@@ -39,6 +44,12 @@ class Atomic_Tabs_Menu extends Atomic_Element_Base {
 
 	public function should_show_in_panel() {
 		return false;
+	}
+
+	public function define_initial_attributes(): array {
+		return [
+			'role' => 'tablist',
+		];
 	}
 
 	protected static function define_props_schema(): array {

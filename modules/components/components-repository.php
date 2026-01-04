@@ -56,7 +56,7 @@ class Components_Repository {
 		return $doc;
 	}
 
-	public function create( string $title, array $content, string $status, string $uid ) {
+	public function create( string $title, array $content, string $status, string $uid, array $settings = [] ) {
 		$document = Plugin::$instance->documents->create(
 			Component_Document::get_type(),
 			[
@@ -70,6 +70,7 @@ class Components_Repository {
 
 		$saved = $document->save( [
 			'elements' => $content,
+			'settings' => $settings,
 		] );
 
 		if ( ! $saved ) {
@@ -116,5 +117,15 @@ class Components_Repository {
 			'failedIds' => $failed_ids,
 			'successIds' => $success_ids,
 		];
+	}
+
+	public function update_title( $component_id, $title ) {
+		$doc = $this->get( $component_id );
+		if ( ! $doc ) {
+			return false;
+		}
+		$sanitized_title = sanitize_text_field( $title );
+		$doc->save( [ 'post_title' => $sanitized_title ] );
+		return true;
 	}
 }

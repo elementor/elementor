@@ -1,26 +1,41 @@
 import * as React from 'react';
+import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { getV1DocumentsManager } from '@elementor/editor-documents';
 import { ArrowLeftIcon, ComponentsFilledIcon } from '@elementor/icons';
-import { __useSelector as useSelector } from '@elementor/store';
+import { __getState as getState } from '@elementor/store';
 import { Box, Divider, IconButton, Stack, Tooltip, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useNavigateBack } from '../../hooks/use-navigate-back';
-import { selectCurrentComponentId } from '../../store/store';
+import { type ComponentsSlice, SLICE_NAME, useCurrentComponentId } from '../../store/store';
+import { usePanelActions } from '../component-properties-panel/component-properties-panel';
+import { ComponentIntroduction } from '../components-tab/component-introduction';
 import { ComponentsBadge } from './component-badge';
 import { useOverridableProps } from './use-overridable-props';
 
+const MESSAGE_KEY = 'components-properties-introduction';
+
 export const ComponentPanelHeader = () => {
-	const currentComponentId = useSelector( selectCurrentComponentId );
+	const currentComponentId = useCurrentComponentId();
 	const overridableProps = useOverridableProps( currentComponentId );
 	const onBack = useNavigateBack();
 	const componentName = getComponentName();
+	const [ isMessageSuppressed, suppressMessage ] = useSuppressedMessage( MESSAGE_KEY );
+	const [ shouldShowIntroduction, setShouldShowIntroduction ] = React.useState( ! isMessageSuppressed );
+
+	const { open: openPropertiesPanel } = usePanelActions();
 
 	const overridesCount = overridableProps ? Object.keys( overridableProps.props ).length : 0;
+	const anchorRef = React.useRef< HTMLDivElement >( null );
 
 	if ( ! currentComponentId ) {
 		return null;
 	}
+
+	const handleCloseIntroduction = () => {
+		suppressMessage();
+		setShouldShowIntroduction( false );
+	};
 
 	return (
 		<Box>
@@ -43,14 +58,27 @@ export const ComponentPanelHeader = () => {
 						</Typography>
 					</Stack>
 				</Stack>
-				<ComponentsBadge overridesCount={ overridesCount } />
+				<ComponentsBadge overridesCount={ overridesCount } ref={ anchorRef } onClick={ openPropertiesPanel } />
 			</Stack>
 			<Divider />
+			<ComponentIntroduction
+				anchorRef={ anchorRef }
+				shouldShowIntroduction={ shouldShowIntroduction }
+				onClose={ handleCloseIntroduction }
+			/>
 		</Box>
 	);
 };
 
-function getComponentName() {
+function getComponentName(): string {
+	const state = getState() as ComponentsSlice;
+	const path = state[ SLICE_NAME ].path;
+	const { instanceTitle } = path.at( -1 ) ?? {};
+
+	if ( instanceTitle ) {
+		return instanceTitle;
+	}
+
 	const documentsManager = getV1DocumentsManager();
 	const currentDocument = documentsManager.getCurrent();
 

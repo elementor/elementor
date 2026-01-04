@@ -13,6 +13,8 @@ use Elementor\App\Modules\KitLibrary\Data\Kits\Controller as Kits_Controller;
 use Elementor\App\Modules\KitLibrary\Data\Taxonomies\Controller as Taxonomies_Controller;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Utils as ElementorUtils;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\App\Modules\KitLibrary\AdminMenuItems\Editor_One_Website_Templates_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -39,14 +41,21 @@ class Module extends BaseModule {
 		] );
 	}
 
-	/**
-	 * Register the admin menu the old way.
-	 */
 	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register(
-			Plugin::$instance->app->get_base_url() . '&source=wp_db_templates_menu#/kit-library',
-			new Kit_Library_Menu_Item()
-		);
+		if ( ! $this->is_editor_one_active() ) {
+			$admin_menu->register(
+				Plugin::$instance->app->get_base_url() . '&source=wp_db_templates_menu#/kit-library',
+				new Kit_Library_Menu_Item()
+			);
+		}
+	}
+
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
+		$menu_data_provider->register_menu( new Editor_One_Website_Templates_Menu() );
+	}
+
+	private function is_editor_one_active(): bool {
+		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	private function set_kit_library_settings() {
@@ -113,6 +122,15 @@ class Module extends BaseModule {
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
 			$this->register_admin_menu_legacy( $admin_menu );
 		}, Source_Local::ADMIN_MENU_PRIORITY + 30 );
+
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu( $menu_data_provider );
+		} );
+
+		add_filter( 'elementor/editor-one/menu/protected_templates_submenu_slugs', function ( array $protected_slugs ): array {
+			$protected_slugs[] = 'edit-tags.php?taxonomy=elementor_library_category&amp;post_type=elementor_library';
+			return $protected_slugs;
+		} );
 
 		add_action( 'elementor/connect/apps/register', function ( ConnectModule $connect_module ) {
 			$connect_module->register_app( 'kit-library', Kit_Library::get_class_name() );

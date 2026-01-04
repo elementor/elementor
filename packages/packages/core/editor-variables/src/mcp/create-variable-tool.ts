@@ -17,10 +17,14 @@ const OutputSchema = {
 };
 
 export const initCreateVariableTool = () => {
-	getMCPByDomain( 'variables' ).addTool( {
+	getMCPByDomain( 'canvas' ).addTool( {
 		name: 'create-global-variable',
 		schema: InputSchema,
 		outputSchema: OutputSchema,
+		modelPreferences: {
+			intelligencePriority: 0.7,
+			speedPriority: 0.7,
+		},
 		description: `Create a new global variable
 ## When to use this tool:
 - When a user requests to create a new global variable in the Elementor editor.

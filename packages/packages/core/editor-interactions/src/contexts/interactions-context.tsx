@@ -15,17 +15,25 @@ type InteractionsContextValue = {
 
 const InteractionsContext = createContext< InteractionsContextValue | null >( null );
 
+const DEFAULT_INTERACTIONS: ElementInteractions = {
+	version: 1,
+	items: [],
+};
+
 export const InteractionsProvider = ( { children, elementId }: { children: ReactNode; elementId: string } ) => {
-	const interactions = useElementInteractions( elementId );
+	const rawInteractions = useElementInteractions( elementId );
 
 	useEffect( () => {
 		window.dispatchEvent( new CustomEvent( 'elementor/element/update_interactions' ) );
 	}, [] );
 
+	const interactions: ElementInteractions =
+		( rawInteractions as unknown as ElementInteractions ) ?? DEFAULT_INTERACTIONS;
+
 	const setInteractions = ( value: ElementInteractions | undefined ) => {
 		updateElementInteractions( {
 			elementId,
-			interactions: value,
+			interactions: value as unknown as ElementInteractions,
 		} );
 	};
 

@@ -1,4 +1,24 @@
-import { type ElementInteractions } from '@elementor/editor-elements';
+import type {
+	AnimationPresetPropValue,
+	BooleanPropValue,
+	ConfigPropValue,
+	ElementInteractions,
+	InteractionItemPropValue,
+	NumberPropValue,
+	StringPropValue,
+	TimingConfigPropValue,
+} from '@elementor/editor-elements';
+
+export type {
+	BooleanPropValue,
+	ConfigPropValue,
+	StringPropValue,
+	NumberPropValue,
+	TimingConfigPropValue,
+	AnimationPresetPropValue,
+	InteractionItemPropValue,
+	ElementInteractions,
+};
 
 export type AnimationOption = {
 	value: string;
@@ -24,23 +44,30 @@ export type FieldProps = {
 	label?: string;
 };
 
+export type ReplayFieldProps = {
+	value: boolean;
+	onChange: ( value: boolean ) => void;
+	disabled?: boolean;
+};
 export type DirectionFieldProps = FieldProps & {
 	interactionType: string;
 };
 
-export type InteractionItem = {
+export type ElementInteractionData = {
 	elementId: string;
 	dataId: string; // The data-id attribute for DOM selection
 	interactions: ElementInteractions;
 };
 
-export type InteractionsCollection = InteractionItem[];
+export type InteractionsCollection = ElementInteractionData[];
 
 export type InteractionsProvider = {
 	getKey: () => string;
 	priority: number;
 	subscribe: ( callback: () => void ) => () => void;
 	actions: {
-		all: () => InteractionItem[];
+		all: () => ElementInteractionData[];
 	};
 };
+
+export type InteractionItemValue = InteractionItemPropValue[ 'value' ];

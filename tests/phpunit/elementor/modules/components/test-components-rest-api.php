@@ -543,7 +543,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 422, $response->get_status() );
 		$this->assertEquals( 'components_validation_failed', $response->get_data()['code'] );
 		$this->assertEquals( 'Validation failed: Component title &#039;Test Component&#039; is duplicated.', $response->get_data()['message'] );
 	}
@@ -574,9 +574,377 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 422, $response->get_status() );
 		$this->assertEquals( 'components_validation_failed', $response->get_data()['code'] );
 		$this->assertEquals( 'Validation failed: Component uid &#039;1&#039; is duplicated.', $response->get_data()['message'] );
+	}
+
+	public function test_post_create_component__successfully_creates_with_valid_overridable_props() {
+		// Arrange
+		$this->act_as_admin();
+		$this->clean_up_components();
+		
+		// Use simplified valid overridable props structure
+		$overridable_props = [
+			'props' => [],
+			'groups' => [
+				'items' => [],
+				'order' => [],
+			],
+		];
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'items' => [
+				[
+					'uid' => 'test-uid-with-overrides',
+					'title' => 'Component With Overridable Props',
+					'elements' => $this->mock_component_1_content,
+					'settings' => [
+						'overridable_props' => $overridable_props,
+					],
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 201, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+		$data = (array) $response->get_data()['data'];
+		$this->assertCount( 1, $data );
+
+		$component_id = $data['test-uid-with-overrides'];
+		$document = Plugin::$instance->documents->get( $component_id );
+
+		$this->assertEquals( Component_Document::TYPE, $document->get_type() );
+		$this->assertEquals( 'Component With Overridable Props', $document->get_post()->post_title );
+
+		$saved_overridable_props = $document->get_meta( Component_Document::OVERRIDABLE_PROPS_META_KEY );
+		
+		// Empty overridable_props (empty arrays) should be saved
+		$this->assertNotEmpty( $saved_overridable_props );
+		$decoded_props = json_decode( $saved_overridable_props, true );
+		$this->assertEquals( $overridable_props, $decoded_props );
+	}
+
+	public function test_post_create_component__successfully_creates_with_null_origin_value() {
+		// Arrange
+		$this->act_as_admin();
+		
+		// originValue can be null (valid case - means use the default from schema)
+		$overridable_props = [
+			'props' => [
+				'prop-1' => [
+					'overrideKey' => 'prop-1',
+					'label' => 'Test Prop',
+					'elementId' => 'element-123',
+					'elType' => 'widget',
+					'widgetType' => 'e-heading',
+					'propKey' => 'title',
+					'originValue' => null,
+					'groupId' => 'group-1',
+				],
+			],
+			'groups' => [
+				'items' => [
+					'group-1' => [
+						'id' => 'group-1',
+						'label' => 'Group 1',
+						'props' => [ 'prop-1' ],
+					],
+				],
+				'order' => [ 'group-1' ],
+			],
+		];
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'items' => [
+				[
+					'uid' => 'test-uid-null-origin',
+					'title' => 'Component With Null Origin Value',
+					'elements' => $this->mock_component_1_content,
+					'settings' => [
+						'overridable_props' => $overridable_props,
+					],
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 201, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+		$data = (array) $response->get_data()['data'];
+		
+		$component_id = $data['test-uid-null-origin'];
+		$document = Plugin::$instance->documents->get( $component_id );
+		
+		$this->assertEquals( Component_Document::TYPE, $document->get_type() );
+	}
+
+	public function test_post_create_component__successfully_creates_with_valid_prop_values() {
+		// Arrange
+		$this->act_as_admin();
+		$this->clean_up_components();
+		
+		// Use actual valid PropValue structures from the mock component
+		$overridable_props = [
+			'props' => [
+				'prop-button-text' => [
+					'overrideKey' => 'prop-button-text',
+					'label' => 'Button Text',
+					'elementId' => 'component-1-button-id',
+					'elType' => 'widget',
+					'widgetType' => 'e-button',
+					'propKey' => 'text',
+					'originValue' => [
+						'$$type' => 'string',
+						'value' => 'Component 2 Button',
+					],
+					'groupId' => 'group-1',
+				],
+				'prop-button-link' => [
+					'overrideKey' => 'prop-button-link',
+					'label' => 'Button Link',
+					'elementId' => 'component-1-button-id',
+					'elType' => 'widget',
+					'widgetType' => 'e-button',
+					'propKey' => 'link',
+					'originValue' => [
+						'$$type' => 'link',
+						'value' => [
+							'destination' => [
+								'$$type' => 'url',
+								'value' => '#inner-link',
+							],
+							'label' => [
+								'$$type' => 'string',
+								'value' => '',
+							],
+						],
+					],
+					'groupId' => 'group-1',
+				],
+			],
+			'groups' => [
+				'items' => [
+					'group-1' => [
+						'id' => 'group-1',
+						'label' => 'Button Props',
+						'props' => [ 'prop-button-text', 'prop-button-link' ],
+					],
+				],
+				'order' => [ 'group-1' ],
+			],
+		];
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'items' => [
+				[
+					'uid' => 'test-uid-valid-props',
+					'title' => 'Component With Valid PropValues',
+					'elements' => $this->mock_component_1_content,
+					'settings' => [
+						'overridable_props' => $overridable_props,
+					],
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 201, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+		$data = (array) $response->get_data()['data'];
+		$this->assertCount( 1, $data );
+
+		$component_id = $data['test-uid-valid-props'];
+		$document = Plugin::$instance->documents->get( $component_id );
+
+		$this->assertEquals( Component_Document::TYPE, $document->get_type() );
+		$this->assertEquals( 'Component With Valid PropValues', $document->get_post()->post_title );
+
+		$saved_overridable_props = $document->get_meta( Component_Document::OVERRIDABLE_PROPS_META_KEY );
+		$this->assertNotEmpty( $saved_overridable_props );
+		
+		$decoded_props = json_decode( $saved_overridable_props, true );
+		
+		// Verify the prop values were saved correctly
+		$this->assertArrayHasKey( 'props', $decoded_props );
+		$this->assertArrayHasKey( 'prop-button-text', $decoded_props['props'] );
+		$this->assertArrayHasKey( 'prop-button-link', $decoded_props['props'] );
+		
+		// Verify the originValue structures are intact
+		$this->assertEquals( 'string', $decoded_props['props']['prop-button-text']['originValue']['$$type'] );
+		$this->assertEquals( 'Component 2 Button', $decoded_props['props']['prop-button-text']['originValue']['value'] );
+		
+		$this->assertEquals( 'link', $decoded_props['props']['prop-button-link']['originValue']['$$type'] );
+		$this->assertEquals( '#inner-link', $decoded_props['props']['prop-button-link']['originValue']['value']['destination']['value'] );
+	}
+
+	public function test_post_validate_components__successfully_validates_with_valid_prop_values() {
+		// Arrange
+		$this->act_as_admin();
+		
+		// Use actual valid PropValue structures
+		$overridable_props = [
+			'props' => [
+				'prop-button-text' => [
+					'overrideKey' => 'prop-button-text',
+					'label' => 'Button Text',
+					'elementId' => 'component-1-button-id',
+					'elType' => 'widget',
+					'widgetType' => 'e-button',
+					'propKey' => 'text',
+					'originValue' => [
+						'$$type' => 'string',
+						'value' => 'Test Button Text',
+					],
+					'groupId' => 'group-1',
+				],
+			],
+			'groups' => [
+				'items' => [
+					'group-1' => [
+						'id' => 'group-1',
+						'label' => 'Button Props',
+						'props' => [ 'prop-button-text' ],
+					],
+				],
+				'order' => [ 'group-1' ],
+			],
+		];
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
+		$request->set_body_params( [
+			'items' => [
+				[
+					'uid' => 'test-uid-validate',
+					'title' => 'Validate Component With Valid Props',
+					'elements' => $this->mock_component_1_content,
+					'settings' => [
+						'overridable_props' => $overridable_props,
+					],
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert - validate endpoint returns 200 on success
+		$this->assertEquals( 200, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+	}
+
+	public function test_post_create_component__fails_with_invalid_overridable_props() {
+		// Arrange
+		$this->act_as_admin();
+		
+		// Missing required 'groups' field will cause validation to fail
+		$invalid_overridable_props = [
+			'props' => [
+				'prop-1' => [
+					'overrideKey' => 'prop-1',
+					'label' => 'Invalid Prop',
+					'elementId' => 'element-123',
+					'elType' => 'widget',
+					'widgetType' => 'e-heading',
+					'propKey' => 'title',
+					'originValue' => [
+						'$$type' => 'string',
+						'value' => 'test',
+					],
+					'groupId' => 'group-1',
+				],
+			],
+			// Missing 'groups' field - will cause validation error
+		];
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'items' => [
+				[
+					'uid' => 'test-uid-invalid-overrides',
+					'title' => 'Component With Invalid Overrides',
+					'elements' => $this->mock_component_1_content,
+					'settings' => [
+						'overridable_props' => $invalid_overridable_props,
+					],
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 422, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+		$this->assertStringContainsString( 'validation', strtolower( $response->get_data()['code'] ) );
+	}
+
+	public function test_post_create_component__fails_with_invalid_origin_value_type() {
+		// Arrange
+		$this->act_as_admin();
+
+		// originValue with wrong type structure will cause prop type validation to fail
+		$invalid_overridable_props = [
+			'props' => [
+				'prop-1' => [
+					'overrideKey' => 'prop-1',
+					'label' => 'Test Prop',
+					'elementId' => 'element-123',
+					'elType' => 'widget',
+					'widgetType' => 'e-heading',
+					'propKey' => 'title',
+					// Wrong type structure - should be a proper PropValue with $$type
+					'originValue' => 'plain string instead of PropValue structure',
+					'groupId' => 'group-1',
+				],
+			],
+			'groups' => [
+				'items' => [
+					'group-1' => [
+						'id' => 'group-1',
+						'label' => 'Group 1',
+						'props' => [ 'prop-1' ],
+					],
+				],
+				'order' => [ 'group-1' ],
+			],
+		];
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'items' => [
+				[
+					'uid' => 'test-uid-invalid-origin-value',
+					'title' => 'Component With Invalid Origin Value Type',
+					'elements' => $this->mock_component_1_content,
+					'settings' => [
+						'overridable_props' => $invalid_overridable_props,
+					],
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 422, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+		$this->assertStringContainsString( 'validation', strtolower( $response->get_data()['code'] ) );
+		$this->assertStringContainsString( 'originvalue', strtolower( $response->get_data()['message'] ) );
 	}
 
 	public function test_register_routes__endpoints_exist() {
@@ -591,6 +959,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertArrayHasKey( '/elementor/v1/components/lock', $routes );
 		$this->assertArrayHasKey( '/elementor/v1/components/unlock', $routes );
 		$this->assertArrayHasKey( '/elementor/v1/components/overridable-props', $routes );
+		$this->assertArrayHasKey( '/elementor/v1/components/create-validate', $routes );
 
 		// Check GET method for components
 		$components_route = $routes['/elementor/v1/components'];
@@ -625,6 +994,11 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$get_overridable_route = $routes['/elementor/v1/components/overridable-props'];
 		$get_overridable_methods = array_filter( $get_overridable_route, fn( $route ) => in_array( 'GET', $route['methods'] ) );
 		$this->assertNotEmpty( $get_overridable_methods );
+
+		// Check POST method for validate
+		$validate_route = $routes['/elementor/v1/components/create-validate'];
+		$validate_post_methods = array_filter( $validate_route, fn( $route ) => in_array( 'POST', $route['methods'] ) );
+		$this->assertNotEmpty( $validate_post_methods );
 	}
 
 	public function authentication_test_data_provider() {
@@ -656,6 +1030,19 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 				'method' => 'GET',
 				'endpoint' => '/elementor/v1/components/overridable-props',
 				'params' => [ 'componentId' => 123 ],
+			],
+			'POST validate' => [
+				'method' => 'POST',
+				'endpoint' => '/elementor/v1/components/create-validate',
+				'params' => [
+					'items' => [
+						[
+							'uid' => 'test-uid',
+							'title' => 'Test',
+							'elements' => [],
+						],
+					],
+				],
 			],
 		];
 	}
@@ -999,6 +1386,329 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( 404, $response->get_status() );
 		$this->assertEquals( 'component_not_found', $response->get_data()['code'] );
+	}
+
+	public function test_post_validate_components__passes_with_valid_data() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
+		$request->set_body_params( [
+			'items' => [
+				[
+					'uid' => 'test-uid-1',
+					'title' => 'Valid Test Component',
+					'elements' => $this->mock_component_1_content,
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status(), 'Response body: ' . json_encode( $response->get_data() ) );
+	}
+
+	public function test_post_validate_components__passes_with_valid_overridable_props() {
+		// Arrange
+		$this->act_as_admin();
+		
+		// Use simplified valid overridable props structure
+		$overridable_props = [
+			'props' => [],
+			'groups' => [
+				'items' => [],
+				'order' => [],
+			],
+		];
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
+		$request->set_body_params( [
+			'items' => [
+				[
+					'uid' => 'test-uid-1',
+					'title' => 'Component With Overrides',
+					'elements' => $this->mock_component_1_content,
+					'settings' => [
+						'overridable_props' => $overridable_props,
+					],
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+	}
+
+	public function test_post_validate_components__fails_when_unauthorized() {
+		// Arrange
+		$this->act_as_editor();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
+		$request->set_body_params( [
+			'items' => [
+				[
+					'uid' => 'test-uid-1',
+					'title' => 'Test Component',
+					'elements' => $this->mock_component_1_content,
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 403, $response->get_status() );
+	}
+
+	public function test_post_validate_components__fails_when_title_is_duplicated() {
+		// Arrange
+		$this->create_test_component( 'Duplicate Title', $this->mock_component_1_content );
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
+		$request->set_body_params( [
+			'items' => [
+				[
+					'uid' => 'test-uid-1',
+					'title' => 'Duplicate Title',
+					'elements' => $this->mock_component_1_content,
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 422, $response->get_status() );
+		$this->assertEquals( 'components_validation_failed', $response->get_data()['code'] );
+		$this->assertStringContainsString( 'Duplicate Title', $response->get_data()['message'] );
+		$this->assertStringContainsString( 'is duplicated', $response->get_data()['message'] );
+	}
+
+	public function test_post_validate_components__fails_when_uid_is_duplicated() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
+		$request->set_body_params( [
+			'items' => [
+				[
+					'uid' => 'duplicate-uid',
+					'title' => 'First Component',
+					'elements' => $this->mock_component_1_content,
+				],
+				[
+					'uid' => 'duplicate-uid',
+					'title' => 'Second Component',
+					'elements' => $this->mock_component_2_content,
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 422, $response->get_status() );
+		$this->assertEquals( 'components_validation_failed', $response->get_data()['code'] );
+		$this->assertStringContainsString( 'duplicate-uid', $response->get_data()['message'] );
+		$this->assertStringContainsString( 'is duplicated', $response->get_data()['message'] );
+	}
+
+	public function post_validate_components_fails_data_provider() {
+		return [
+			'Missing title' => [
+				'input' => [
+					'items' => [
+						[
+							'uid' => 'test-uid',
+							'elements' => Component_Mocks::get_component_1_data(),
+						],
+					],
+				],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_invalid_param',
+				],
+			],
+			'Title too short' => [
+				'input' => [
+					'items' => [
+						[
+							'uid' => 'test-uid',
+							'title' => 'A',
+							'elements' => Component_Mocks::get_component_1_data(),
+						],
+					],
+				],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_invalid_param',
+				],
+			],
+			'Title too long' => [
+				'input' => [
+					'items' => [
+						[
+							'uid' => 'test-uid',
+							'title' => str_repeat( 'A', 201 ),
+							'elements' => Component_Mocks::get_component_1_data(),
+						],
+					],
+				],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_invalid_param',
+				],
+			],
+			'Missing elements' => [
+				'input' => [
+					'items' => [
+						[
+							'uid' => 'test-uid',
+							'title' => 'Test Component',
+						],
+					],
+				],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_invalid_param',
+				],
+			],
+			'Missing UID' => [
+				'input' => [
+					'items' => [
+						[
+							'title' => 'Test Component',
+							'elements' => Component_Mocks::get_component_1_data(),
+						],
+					],
+				],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_invalid_param',
+				],
+			],
+			'Missing items' => [
+				'input' => [],
+				'expected' => [
+					'status_code' => 400,
+					'code' => 'rest_missing_callback_param',
+				],
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider post_validate_components_fails_data_provider
+	 */
+	public function test_post_validate_components__fails_with_invalid_data( $input, $expected ) {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
+		$request->set_body_params( $input );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( $expected['status_code'], $response->get_status() );
+		$this->assertEquals( $expected['code'], $response->get_data()['code'] );
+	}
+
+	public function test_post_validate_components__fails_with_invalid_overridable_props() {
+		// Arrange
+		$this->act_as_admin();
+		
+		// Missing required 'groups' field will cause validation to fail
+		$invalid_overridable_props = [
+			'props' => [
+				'prop-1' => [
+					'overrideKey' => 'prop-1',
+					'label' => 'Invalid Prop',
+					'elementId' => 'element-123',
+					'elType' => 'widget',
+					'widgetType' => 'e-heading',
+					'propKey' => 'title',
+					'originValue' => [
+						'$$type' => 'string',
+						'value' => 'test',
+					],
+					'groupId' => 'group-1',
+				],
+			],
+			// Missing 'groups' field - will cause validation error
+		];
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
+		$request->set_body_params( [
+			'items' => [
+				[
+					'uid' => 'test-uid-1',
+					'title' => 'Component With Invalid Overrides',
+					'elements' => $this->mock_component_1_content,
+					'settings' => [
+						'overridable_props' => $invalid_overridable_props,
+					],
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 422, $response->get_status(), 'Response body: ' . json_encode( $response->get_data() ) );
+		$this->assertStringContainsString( 'validation', strtolower( $response->get_data()['code'] ) );
+	}
+
+	public function test_post_validate_components__validates_same_as_create() {
+		// Arrange
+		$this->act_as_admin();
+		
+		// Use simplified valid overridable props structure
+		$overridable_props = [
+			'props' => [],
+			'groups' => [
+				'items' => [],
+				'order' => [],
+			],
+		];
+
+		$valid_data = [
+			'items' => [
+				[
+					'uid' => 'test-uid-1',
+					'title' => 'Test Component For Validation',
+					'elements' => $this->mock_component_1_content,
+					'settings' => [
+						'overridable_props' => $overridable_props,
+					],
+				],
+			],
+		];
+
+		// Act - Validate endpoint
+		$validate_request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
+		$validate_request->set_body_params( $valid_data );
+		$validate_response = rest_do_request( $validate_request );
+
+		// Act - Create endpoint
+		$create_request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$create_request->set_body_params( array_merge( $valid_data, [ 'status' => 'draft' ] ) );
+		$create_response = rest_do_request( $create_request );
+
+		// Assert - Both should succeed
+		$this->assertEquals( 200, $validate_response->get_status(), 'Validate endpoint should return 200. Response: ' . json_encode( $validate_response->get_data() ) );
+		$this->assertEquals( 201, $create_response->get_status(), 'Create endpoint should return 201. Response: ' . json_encode( $create_response->get_data() ) );
 	}
 
 	// Helpers

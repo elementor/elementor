@@ -10,7 +10,15 @@ import {
 	SuperscriptIcon,
 	UnderlineIcon,
 } from '@elementor/icons';
-import { Box, IconButton, ToggleButton, ToggleButtonGroup, Tooltip, usePopupState } from '@elementor/ui';
+import {
+	Box,
+	IconButton,
+	ToggleButton,
+	ToggleButtonGroup,
+	toggleButtonGroupClasses,
+	Tooltip,
+	usePopupState,
+} from '@elementor/ui';
 import { type Editor, useEditorState } from '@tiptap/react';
 import { __ } from '@wordpress/i18n';
 
@@ -97,7 +105,7 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ openInNewTab, setOpenInNewTab ] = useState( false );
 	const toolbarRef = useRef< HTMLDivElement >( null );
-	const popupState = usePopupState( { variant: 'popover' } );
+	const linkPopupState = usePopupState( { variant: 'popover' } );
 
 	const editorState = useEditorState( {
 		editor,
@@ -110,7 +118,7 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 		const linkAttrs = editor.getAttributes( 'link' );
 		setUrlValue( linkAttrs.href || '' );
 		setOpenInNewTab( linkAttrs.target === '_blank' );
-		popupState.open( toolbarRef.current );
+		linkPopupState.open( toolbarRef.current );
 	};
 
 	const handleUrlChange = ( event: React.ChangeEvent< HTMLInputElement > ) => {
@@ -134,26 +142,29 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 		} else {
 			editor.chain().focus().unsetLink().run();
 		}
-		popupState.close();
+		linkPopupState.close();
 	};
+
+	React.useEffect( () => {
+		editor?.commands?.focus();
+	}, [ editor ] );
 
 	return (
 		<Box
 			ref={ toolbarRef }
 			sx={ {
-				position: 'absolute',
-				top: -40,
 				display: 'inline-flex',
 				gap: 0.5,
 				padding: 0.5,
-				borderRadius: 1,
+				borderRadius: '8px',
 				backgroundColor: 'background.paper',
 				boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
 				alignItems: 'center',
-				visibility: popupState.isOpen ? 'hidden' : 'visible',
+				visibility: linkPopupState.isOpen ? 'hidden' : 'visible',
+				pointerEvents: linkPopupState.isOpen ? 'none' : 'all',
 			} }
 		>
-			<Tooltip title={ clearButton.label } placement="top">
+			<Tooltip title={ clearButton.label } placement="top" sx={ { borderRadius: '8px' } }>
 				<IconButton aria-label={ clearButton.label } onClick={ () => clearButton.method( editor ) } size="tiny">
 					{ clearButton.icon }
 				</IconButton>
@@ -164,6 +175,19 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 				sx={ {
 					display: 'flex',
 					gap: 0.5,
+					border: 'none',
+					[ `& .${ toggleButtonGroupClasses.firstButton }, & .${ toggleButtonGroupClasses.middleButton }, & .${ toggleButtonGroupClasses.lastButton }` ]:
+						{
+							borderRadius: '8px',
+							border: 'none',
+							marginLeft: 0,
+							'&.Mui-selected': {
+								marginLeft: 0,
+							},
+							'& + &.Mui-selected': {
+								marginLeft: 0,
+							},
+						},
 				} }
 			>
 				{ formatButtonsList.map( ( button ) => (
@@ -172,9 +196,15 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 							value={ button.action }
 							aria-label={ button.label }
 							size="tiny"
-							onClick={ () =>
-								button.action === 'link' ? handleLinkClick() : button.method?.( editor )
-							}
+							onClick={ () => {
+								if ( button.action === 'link' ) {
+									handleLinkClick();
+								} else {
+									button.method?.( editor );
+								}
+
+								editor?.commands?.focus();
+							} }
 						>
 							{ button.icon }
 						</ToggleButton>
@@ -182,7 +212,7 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 				) ) }
 			</ToggleButtonGroup>
 			<UrlPopover
-				popupState={ popupState }
+				popupState={ linkPopupState }
 				anchorRef={ toolbarRef }
 				restoreValue={ handleUrlSubmit }
 				value={ urlValue }

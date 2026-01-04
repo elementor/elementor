@@ -2,8 +2,9 @@ import { updateElementSettings, type V1ElementData } from '@elementor/editor-ele
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { apiClient } from '../api';
+import { type ComponentInstanceProp } from '../prop-types/component-instance-prop-type';
 import { selectUnpublishedComponents, slice } from '../store/store';
-import { type ComponentInstancePropValue, type DocumentSaveStatus, type UnpublishedComponent } from '../types';
+import { type DocumentSaveStatus, type UnpublishedComponent } from '../types';
 
 export async function createComponentsBeforeSave( {
 	elements,
@@ -29,6 +30,7 @@ export async function createComponentsBeforeSave( {
 					id: uidToComponentId.get( component.uid ) as number,
 					name: component.name,
 					uid: component.uid,
+					overridableProps: component.overridableProps ? component.overridableProps : undefined,
 				} ) )
 			)
 		);
@@ -48,6 +50,7 @@ async function createComponents(
 			uid: component.uid,
 			title: component.name,
 			elements: component.elements,
+			settings: component.overridableProps ? { overridable_props: component.overridableProps } : undefined,
 		} ) ),
 	} );
 
@@ -78,11 +81,14 @@ function shouldUpdateElement(
 	uidToComponentId: Map< string, number >
 ): { shouldUpdate: true; newComponentId: number } | { shouldUpdate: false; newComponentId: null } {
 	if ( element.widgetType === 'e-component' ) {
-		const currentComponentId = ( element.settings?.component_instance as ComponentInstancePropValue< string > )
-			?.value?.component_id.value;
+		const currentComponentId = ( element.settings?.component_instance as ComponentInstanceProp )?.value
+			?.component_id.value;
 
-		if ( currentComponentId && uidToComponentId.has( currentComponentId ) ) {
-			return { shouldUpdate: true, newComponentId: uidToComponentId.get( currentComponentId ) as number };
+		if ( currentComponentId && uidToComponentId.has( currentComponentId.toString() ) ) {
+			return {
+				shouldUpdate: true,
+				newComponentId: uidToComponentId.get( currentComponentId.toString() ) as number,
+			};
 		}
 	}
 	return { shouldUpdate: false, newComponentId: null };

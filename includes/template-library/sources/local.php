@@ -7,7 +7,6 @@ use Elementor\Core\Editor\Editor;
 use Elementor\Core\Utils\Collection;
 use Elementor\DB;
 use Elementor\Core\Settings\Manager as SettingsManager;
-use Elementor\Core\Settings\Page\Model;
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Add_New_Template_Menu_Item;
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Saved_Templates_Menu_Item;
 use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Templates_Categories_Menu_Item;
@@ -19,6 +18,9 @@ use Elementor\Core\Isolation\Wordpress_Adapter;
 use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 use Elementor\Core\Isolation\Elementor_Adapter;
 use Elementor\Core\Isolation\Elementor_Adapter_Interface;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Editor_One_Saved_Templates_Menu;
+use Elementor\Includes\TemplateLibrary\Sources\AdminMenuItems\Editor_One_Templates_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -420,7 +422,18 @@ class Source_Local extends Source_Base {
 	}
 
 	private function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( static::get_admin_url( true ), new Saved_Templates_Menu_Item() );
+		if ( ! $this->is_editor_one_active() ) {
+			$admin_menu->register( static::get_admin_url( true ), new Saved_Templates_Menu_Item() );
+		}
+	}
+
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
+		$menu_data_provider->register_menu( new Editor_One_Templates_Menu() );
+		$menu_data_provider->register_menu( new Editor_One_Saved_Templates_Menu() );
+	}
+
+	private function is_editor_one_active(): bool {
+		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	public function admin_title( $admin_title, $title ) {
@@ -1044,7 +1057,7 @@ class Source_Local extends Source_Base {
 		$ajax = Plugin::$instance->common->get_component( 'ajax' );
 		?>
 		<div id="elementor-hidden-area">
-			<a id="elementor-import-template-trigger" class="page-title-action"><?php echo esc_html__( 'Import Templates', 'elementor' ); ?></a>
+			<a id="elementor-import-template-trigger" class="page-title-action button button-secondary"><?php echo esc_html__( 'Import Templates', 'elementor' ); ?></a>
 			<div id="elementor-import-template-area">
 				<div id="elementor-import-template-title"><?php echo esc_html__( 'Choose an Elementor template JSON file or a .zip archive of Elementor templates, and add them to the list of templates available in your library.', 'elementor' ); ?></div>
 				<form id="elementor-import-template-form" method="post" action="<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>" enctype="multipart/form-data">
@@ -1650,6 +1663,22 @@ class Source_Local extends Source_Base {
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->register_admin_menu( $admin_menu );
 			}, static::ADMIN_MENU_PRIORITY );
+
+			add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+				$this->register_editor_one_menu( $menu_data_provider );
+			} );
+
+			add_action( 'elementor/editor-one/menu/excluded_level4_slugs', function ( array $excluded_slugs ): array {
+				$excluded_slugs[] = 'edit.php?post_type=elementor_library#add_new';
+				$excluded_slugs[] = 'edit-tags.php?taxonomy=elementor_library_category&amp;post_type=elementor_library';
+				return $excluded_slugs;
+			} );
+
+			add_filter( 'elementor/editor-one/menu/elementor_post_types', function ( array $elementor_post_types ): array {
+				$elementor_post_types[ self::CPT ] = [];
+
+				return $elementor_post_types;
+			} );
 
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
 				$this->admin_menu_reorder( $admin_menu );
