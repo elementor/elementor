@@ -83,6 +83,7 @@ const MOCK_ORIGIN_OVERRIDABLE_PROP = {
 	propKey: 'title',
 	widgetType: 'e-text',
 	elType: 'widget',
+	elementId: 'test-123',
 };
 
 const MOCK_OVERRIDABLE_PROPS = {
