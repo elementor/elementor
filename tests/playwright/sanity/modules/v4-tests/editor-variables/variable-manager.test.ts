@@ -108,5 +108,5 @@ test.describe( 'Variable Manager @v4-tests', () => {
 		await test.step( 'Re-activate Pro for cleanup', async () => {
 			await apiRequestsInstance.activatePlugin( page.context().request, proPluginSlug );
 		} );
-	} )
+	} );
 } );
