@@ -248,6 +248,16 @@ describe( 'OverridablePropIndicator with componentInstanceElement context', () =
 	const ORIGINAL_ELEMENT_ID = 'original-element-456';
 	const ORIGINAL_WIDGET_TYPE = 'e-heading';
 
+	const MOCK_COMPONENT_INSTANCE_ELEMENT = {
+		element: { id: COMPONENT_INSTANCE_ELEMENT_ID, type: COMPONENT_INSTANCE_WIDGET_TYPE },
+		elementType: {
+			key: COMPONENT_INSTANCE_WIDGET_TYPE,
+			propsSchema: {},
+			controls: [],
+			title: 'Component Instance',
+		},
+	};
+
 	let store: Store< ComponentsSlice >;
 
 	beforeEach( () => {
@@ -296,19 +306,9 @@ describe( 'OverridablePropIndicator with componentInstanceElement context', () =
 			return boundProp;
 		} );
 
-		const componentInstanceElement = {
-			element: { id: COMPONENT_INSTANCE_ELEMENT_ID, type: COMPONENT_INSTANCE_WIDGET_TYPE },
-			elementType: {
-				key: COMPONENT_INSTANCE_WIDGET_TYPE,
-				propsSchema: {},
-				controls: [],
-				title: 'Component Instance',
-			},
-		};
-
 		// Act
 		renderWithStore(
-			<OverridablePropProvider componentInstanceElement={ componentInstanceElement }>
+			<OverridablePropProvider componentInstanceElement={ MOCK_COMPONENT_INSTANCE_ELEMENT }>
 				<OverridablePropIndicator />
 			</OverridablePropProvider>,
 			store
@@ -391,19 +391,12 @@ describe( 'OverridablePropIndicator with componentInstanceElement context', () =
 			return boundProp;
 		} );
 
-		const componentInstanceElement = {
-			element: { id: COMPONENT_INSTANCE_ELEMENT_ID, type: COMPONENT_INSTANCE_WIDGET_TYPE },
-			elementType: {
-				key: COMPONENT_INSTANCE_WIDGET_TYPE,
-				propsSchema: {},
-				controls: [],
-				title: 'Component Instance',
-			},
-		};
-
 		// Act
 		renderWithStore(
-			<OverridablePropProvider value={ currentValue.value } componentInstanceElement={ componentInstanceElement }>
+			<OverridablePropProvider
+				value={ currentValue.value }
+				componentInstanceElement={ MOCK_COMPONENT_INSTANCE_ELEMENT }
+			>
 				<OverridablePropIndicator />
 			</OverridablePropProvider>,
 			store

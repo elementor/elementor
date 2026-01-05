@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createMockPropType, renderWithStore } from 'test-utils';
-import { ControlActionsProvider, TextControl } from '@elementor/editor-controls';
-import { controlsRegistry, ElementProvider, useElement } from '@elementor/editor-editing-panel';
+import { ControlActionsProvider, TextControl, useBoundProp } from '@elementor/editor-controls';
+import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
 import { getElementLabel, getElementType, getWidgetsCache, useElementSetting } from '@elementor/editor-elements';
 import {
 	__createStore,
@@ -10,7 +10,7 @@ import {
 	type SliceState,
 	type Store,
 } from '@elementor/store';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 
 import { componentInstanceOverridePropTypeUtil } from '../../../prop-types/component-instance-override-prop-type';
 import { componentInstancePropTypeUtil } from '../../../prop-types/component-instance-prop-type';
@@ -18,6 +18,11 @@ import { componentOverridablePropTypeUtil } from '../../../prop-types/component-
 import { slice } from '../../../store/store';
 import { type OverridableProp } from '../../../types';
 import { OverridePropControl } from '../override-prop-control';
+
+jest.mock( '@elementor/editor-controls', () => ( {
+	...jest.requireActual( '@elementor/editor-controls' ),
+	useBoundProp: jest.fn(),
+} ) );
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
@@ -75,6 +80,181 @@ const WIDGET_DEFINITIONS = {
 	'e-text': { propKey: 'content', label: 'Content', title: 'Text' },
 } as const;
 
+describe( '<OverridePropControl />', () => {
+	let store: Store< SliceState< typeof slice > >;
+
+	beforeAll( () => {
+		controlsRegistry.register( MOCK_CONTROL_TYPE, TextControl, 'full' );
+	} );
+
+	let mockSetInstanceValue: jest.Mock;
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		registerSlice( slice );
+		store = __createStore();
+
+		mockSetInstanceValue = jest.fn();
+
+		jest.mocked( useBoundProp ).mockReturnValue( {
+			value: {
+				component_id: { $$type: 'number', value: MOCK_COMPONENT_ID },
+				overrides: { $$type: 'overrides', value: [] },
+			},
+			setValue: mockSetInstanceValue,
+			restoreValue: jest.fn(),
+			resetValue: jest.fn(),
+			bind: 'component_instance',
+			propType: MOCK_COMPONENT_INSTANCE_PROP_TYPE,
+			path: [ 'component_instance' ],
+		} );
+
+		jest.mocked( useElementSetting ).mockReturnValue( {} );
+		jest.mocked( componentInstancePropTypeUtil.extract ).mockReturnValue( {
+			component_id: { $$type: 'number', value: MOCK_COMPONENT_ID },
+			overrides: { $$type: 'overrides', value: [] },
+		} );
+		jest.mocked( getWidgetsCache ).mockReturnValue(
+			createMockWidgetsCache() as unknown as ReturnType< typeof getWidgetsCache >
+		);
+		jest.mocked( getElementLabel ).mockReturnValue( 'Element Label' );
+		jest.mocked( getElementType ).mockImplementation( ( type ) => {
+			if ( type in WIDGET_DEFINITIONS ) {
+				return createElementType( type as keyof typeof WIDGET_DEFINITIONS );
+			}
+			return null;
+		} );
+	} );
+
+	const MOCK_OVERRIDABLE_PROP: OverridableProp = {
+		overrideKey: 'prop-1',
+		label: 'Title',
+		elementId: 'element-1',
+		propKey: 'title',
+		widgetType: 'e-heading',
+		elType: 'widget',
+		groupId: 'content',
+		originValue: { $$type: 'string', value: 'Original' },
+	};
+
+	describe( 'createOverrideValue structure', () => {
+		it.each( [
+			{
+				should: 'create simple override structure when no matchingOverride',
+				currentComponentId: null,
+				matchingOverride: null,
+				expectedOverrideStructure: {
+					$$type: 'override',
+					value: {
+						override_key: 'prop-1',
+						schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
+					},
+				},
+			},
+			{
+				should: 'create simple override structure when updating existing plain override',
+				currentComponentId: MOCK_COMPONENT_ID_2,
+				matchingOverride: componentInstanceOverridePropTypeUtil.create( {
+					override_key: 'prop-1',
+					override_value: { $$type: 'string', value: 'Existing' },
+					schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
+				} ),
+				expectedOverrideStructure: {
+					$$type: 'override',
+					value: {
+						override_key: 'prop-1',
+						schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
+					},
+				},
+			},
+			{
+				should: 'create nested overridable structure when matchingOverride is overridable',
+				currentComponentId: MOCK_COMPONENT_ID_2,
+				matchingOverride: componentOverridablePropTypeUtil.create( {
+					override_key: 'outer-key',
+					origin_value: componentInstanceOverridePropTypeUtil.create( {
+						override_key: 'prop-1',
+						override_value: { $$type: 'string', value: 'Nested' },
+						schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
+					} ),
+				} ),
+				expectedOverrideStructure: {
+					$$type: 'overridable',
+					value: {
+						override_key: 'outer-key',
+						origin_value: {
+							$$type: 'override',
+							value: {
+								override_key: 'prop-1',
+								schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
+							},
+						},
+					},
+				},
+			},
+		] )( 'should $should', ( { currentComponentId, matchingOverride, expectedOverrideStructure } ) => {
+			// Arrange
+			setupComponent( currentComponentId );
+			const overrides = matchingOverride ? [ matchingOverride ] : [];
+
+			// Act
+			renderOverridePropControl( store, MOCK_OVERRIDABLE_PROP, overrides );
+
+			const input = screen.getByRole( 'textbox' );
+			fireEvent.change( input, { target: { value: 'New Value' } } );
+
+			// Assert
+			expect( mockSetInstanceValue ).toHaveBeenCalled();
+			const setValueCall = mockSetInstanceValue.mock.calls[ 0 ][ 0 ];
+			const newOverrides = setValueCall.overrides.value;
+
+			expect( newOverrides ).toHaveLength( matchingOverride ? 1 : 1 );
+
+			const createdOverride = newOverrides[ 0 ];
+			expect( createdOverride.$$type ).toBe( expectedOverrideStructure.$$type );
+			expect( createdOverride.value.override_key ).toBe( expectedOverrideStructure.value.override_key );
+			expect( createdOverride.value.schema_source ).toEqual( expectedOverrideStructure.value.schema_source );
+
+			if ( expectedOverrideStructure.$$type === 'overridable' ) {
+				const innerOverride = createdOverride.value.origin_value;
+				expect( innerOverride.$$type ).toBe( 'override' );
+				expect( innerOverride.value.override_key ).toBe( 'prop-1' );
+			}
+		} );
+	} );
+
+	describe( 'inner control element context', () => {
+		it( 'should use originPropFields element context when available', () => {
+			// Arrange
+			const MOCK_NESTED_OVERRIDABLE_PROP: OverridableProp = {
+				overrideKey: 'nested-prop-1',
+				label: 'Nested Title',
+				elementId: 'nested-instance-1',
+				propKey: 'title',
+				widgetType: 'e-component',
+				elType: 'widget',
+				groupId: 'nested',
+				originValue: { $$type: 'string', value: 'Nested Value' },
+				originPropFields: {
+					propKey: 'content',
+					widgetType: 'e-text',
+					elType: 'widget',
+					elementId: 'original-text-element',
+				},
+			};
+
+			setupComponent( MOCK_COMPONENT_ID_2 );
+
+			// Act
+			renderOverridePropControl( store, MOCK_NESTED_OVERRIDABLE_PROP, [] );
+
+			// Assert
+			expect( screen.getByText( 'Nested Title' ) ).toBeInTheDocument();
+			expect( getElementType ).toHaveBeenCalledWith( 'e-text' );
+		} );
+	} );
+} );
+
 function createElementType( widgetType: keyof typeof WIDGET_DEFINITIONS ) {
 	const def = WIDGET_DEFINITIONS[ widgetType ];
 	return {
@@ -108,191 +288,6 @@ function createMockWidgetsCache() {
 		] )
 	);
 }
-
-function ElementContextCapture( { onCapture }: { onCapture: ( context: ReturnType< typeof useElement > ) => void } ) {
-	const context = useElement();
-	React.useEffect( () => {
-		onCapture( context );
-	}, [ context, onCapture ] );
-
-	return null;
-}
-
-describe( '<OverridePropControl />', () => {
-	let store: Store< SliceState< typeof slice > >;
-
-	beforeAll( () => {
-		controlsRegistry.register( MOCK_CONTROL_TYPE, TextControl, 'full' );
-	} );
-
-	beforeEach( () => {
-		jest.clearAllMocks();
-		registerSlice( slice );
-		store = __createStore();
-
-		jest.mocked( useElementSetting ).mockReturnValue( {} );
-		jest.mocked( componentInstancePropTypeUtil.extract ).mockReturnValue( {
-			component_id: { $$type: 'number', value: MOCK_COMPONENT_ID },
-			overrides: { $$type: 'overrides', value: [] },
-		} );
-		jest.mocked( getWidgetsCache ).mockReturnValue(
-			createMockWidgetsCache() as unknown as ReturnType< typeof getWidgetsCache >
-		);
-		jest.mocked( getElementLabel ).mockReturnValue( 'Element Label' );
-		jest.mocked( getElementType ).mockImplementation( ( type ) => {
-			if ( type in WIDGET_DEFINITIONS ) {
-				return createElementType( type as keyof typeof WIDGET_DEFINITIONS );
-			}
-			return null;
-		} );
-	} );
-
-	describe( 'createOverrideValue structure', () => {
-		const MOCK_OVERRIDABLE_PROP: OverridableProp = {
-			overrideKey: 'prop-1',
-			label: 'Title',
-			elementId: 'element-1',
-			propKey: 'title',
-			widgetType: 'e-heading',
-			elType: 'widget',
-			groupId: 'content',
-			originValue: { $$type: 'string', value: 'Original' },
-		};
-
-		it.each( [
-			{
-				should: 'create simple override structure when no currentComponentId',
-				currentComponentId: null,
-				matchingOverride: null,
-				expectedStructure: {
-					$$type: 'override',
-					value: {
-						override_key: 'prop-1',
-						schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
-					},
-				},
-			},
-			{
-				should: 'create simple override structure when updating existing plain override',
-				currentComponentId: MOCK_COMPONENT_ID_2,
-				matchingOverride: componentInstanceOverridePropTypeUtil.create( {
-					override_key: 'prop-1',
-					override_value: { $$type: 'string', value: 'Existing' },
-					schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
-				} ),
-				expectedStructure: {
-					$$type: 'override',
-					value: {
-						override_key: 'prop-1',
-						schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
-					},
-				},
-			},
-			{
-				should: 'create nested overridable structure when matchingOverride is overridable',
-				currentComponentId: MOCK_COMPONENT_ID_2,
-				matchingOverride: componentOverridablePropTypeUtil.create( {
-					override_key: 'outer-key',
-					origin_value: componentInstanceOverridePropTypeUtil.create( {
-						override_key: 'prop-1',
-						override_value: { $$type: 'string', value: 'Nested' },
-						schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
-					} ),
-				} ),
-				expectedStructure: {
-					$$type: 'overridable',
-					value: {
-						override_key: 'outer-key',
-						origin_value: {
-							$$type: 'override',
-							value: {
-								override_key: 'prop-1',
-								schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
-							},
-						},
-					},
-				},
-			},
-		] )( 'should $should', ( { currentComponentId, matchingOverride } ) => {
-			// Arrange
-			setupComponent( currentComponentId );
-
-			const overrides = matchingOverride ? [ matchingOverride ] : [];
-
-			// Act
-			renderOverridePropControl( store, MOCK_OVERRIDABLE_PROP, overrides );
-
-			// Assert
-			expect( screen.getByText( 'Title' ) ).toBeInTheDocument();
-		} );
-	} );
-
-	describe( 'inner control element context', () => {
-		it( 'should provide original widget element context, not component instance', () => {
-			// Arrange
-			const MOCK_OVERRIDABLE_PROP: OverridableProp = {
-				overrideKey: 'prop-1',
-				label: 'Title',
-				elementId: 'original-widget-element-1',
-				propKey: 'title',
-				widgetType: 'e-heading',
-				elType: 'widget',
-				groupId: 'content',
-				originValue: { $$type: 'string', value: 'Hello' },
-			};
-
-			setupComponent( null );
-
-			let capturedContext: ReturnType< typeof useElement > | undefined;
-			const handleCapture = jest.fn( ( ctx: ReturnType< typeof useElement > ) => {
-				capturedContext = ctx;
-			} );
-
-			// Act
-			renderWithStore(
-				<ControlActionsProvider items={ [] }>
-					<ElementProvider element={ MOCK_INSTANCE_ELEMENT } elementType={ MOCK_INSTANCE_ELEMENT_TYPE }>
-						<OverridePropControl overridableProp={ MOCK_OVERRIDABLE_PROP } overrides={ [] } />
-						<ElementContextCapture onCapture={ handleCapture } />
-					</ElementProvider>
-				</ControlActionsProvider>,
-				store
-			);
-
-			// Assert
-			expect( capturedContext?.element.id ).toBe( MOCK_INSTANCE_ID );
-		} );
-
-		it( 'should use originPropFields element context when available', () => {
-			// Arrange
-			const MOCK_NESTED_OVERRIDABLE_PROP: OverridableProp = {
-				overrideKey: 'nested-prop-1',
-				label: 'Nested Title',
-				elementId: 'nested-instance-1',
-				propKey: 'title',
-				widgetType: 'e-component',
-				elType: 'widget',
-				groupId: 'nested',
-				originValue: { $$type: 'string', value: 'Nested Value' },
-				originPropFields: {
-					propKey: 'content',
-					widgetType: 'e-text',
-					elType: 'widget',
-					elementId: 'original-text-element',
-				},
-			};
-
-			setupComponent( MOCK_COMPONENT_ID_2 );
-
-			// Act
-			renderOverridePropControl( store, MOCK_NESTED_OVERRIDABLE_PROP, [] );
-
-			// Assert
-			expect( screen.getByText( 'Nested Title' ) ).toBeInTheDocument();
-			expect( getElementType ).toHaveBeenCalledWith( 'e-text' );
-		} );
-	} );
-} );
 
 function setupComponent( currentComponentId: number | null ) {
 	const componentData = {
