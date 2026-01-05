@@ -9,8 +9,8 @@ type ComponentInstanceParams = {
 	overridableProps?: OverridableProps;
 };
 
-export const replaceElementWithComponent = ( element: V1ElementData, component: ComponentInstanceParams ) => {
-	replaceElement( {
+export const replaceElementWithComponent = async ( element: V1ElementData, component: ComponentInstanceParams ) => {
+	return await replaceElement( {
 		currentElement: element,
 		newElement: createComponentModel( component ),
 		withHistory: false,
