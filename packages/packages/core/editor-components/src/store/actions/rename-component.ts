@@ -5,6 +5,8 @@ import { __dispatch as dispatch } from '@elementor/store';
 import { COMPONENT_WIDGET_TYPE } from '../../create-component-type';
 import { slice } from '../store';
 
+const TITLE_EXTERNAL_CHANGE_COMMAND = 'title_external_change';
+
 export const renameComponent = ( componentUid: string, newName: string ) => {
 	dispatch( slice.actions.rename( { componentUid, name: newName } ) );
 
@@ -23,7 +25,7 @@ function refreshComponentInstanceTitles( componentUid: string ) {
 	const componentInstances = findComponentInstancesByUid( documentContainer, componentUid );
 
 	componentInstances.forEach( ( element ) => {
-		element.model.trigger?.( 'recalculate_title' );
+		element.model.trigger?.( TITLE_EXTERNAL_CHANGE_COMMAND );
 	} );
 }
 
