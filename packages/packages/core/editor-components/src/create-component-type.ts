@@ -117,7 +117,7 @@ function createComponentView(
 		getRenderContext(): NamespacedRenderContext | undefined {
 			const namespaceKey = this.getNamespaceKey();
 			const parentContext = this._parent?.getRenderContext?.();
-			const parentComponentContext = parentContext?.[ namespaceKey ];
+			const parentComponentContext = parentContext?.[ namespaceKey ] as ComponentRenderContext | undefined;
 
 			if ( ! this.#componentRenderContext ) {
 				return parentContext;
@@ -126,6 +126,16 @@ function createComponentView(
 			const ownOverrides = this.#componentRenderContext.overrides ?? {};
 			const parentOverrides = parentComponentContext?.overrides ?? {};
 
+			// Build ancestry chain - parent ancestors + current component
+			const componentId = this.getComponentId();
+			const parentAncestors = parentComponentContext?.ancestors as Set< number | string > | undefined;
+			const ancestors: Set< number | string > = parentAncestors
+				? new Set( parentAncestors )
+				: new Set< number | string >();
+			if ( componentId ) {
+				ancestors.add( componentId );
+			}
+
 			return {
 				...parentContext,
 				[ namespaceKey ]: {
@@ -133,6 +143,7 @@ function createComponentView(
 						...parentOverrides,
 						...ownOverrides,
 					},
+					ancestors,
 				},
 			};
 		}
@@ -153,6 +164,18 @@ function createComponentView(
 				| undefined;
 
 			if ( componentInstance ) {
+				const componentId = this.getComponentId();
+				const parentContext = this._parent?.getRenderContext?.();
+				const namespaceKey = this.getNamespaceKey();
+				const parentComponentContext = parentContext?.[ namespaceKey ] as ComponentRenderContext | undefined;
+				const ancestors = parentComponentContext?.ancestors as Set< number | string > | undefined;
+
+				// Circular reference detected
+				if ( componentId && ancestors?.has( componentId ) ) {
+					settings.component_instance = '';
+					return settings;
+				}
+
 				this.#componentRenderContext = {
 					overrides: componentInstance.overrides ?? {},
 				};

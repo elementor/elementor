@@ -77,6 +77,7 @@ export type ComponentOverridable = {
 
 export type ComponentRenderContext = RenderContext< {
 	overrides?: Record< string, unknown >;
+	ancestors?: Set< number | string >;
 } >;
 
 export type UpdatedComponentName = {
