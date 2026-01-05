@@ -201,7 +201,7 @@ function createOverrideValue( {
 	overrideValue: ComponentInstanceOverrideProp | ComponentOverridableProp;
 	componentId: number;
 } ): ComponentInstanceOverride {
-	// this is for a value is already set as overridable
+	// this is for an override that's already set as overridable
 	const overridableValue = componentOverridablePropTypeUtil.extract( matchingOverride );
 
 	// this is for changes via the overridable-prop-indicator
