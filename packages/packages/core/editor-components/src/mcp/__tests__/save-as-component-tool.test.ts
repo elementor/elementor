@@ -69,7 +69,7 @@ describe( 'save-as-component-tool handler', () => {
 			async ( elType ) => {
 				// Arrange
 				mockGetContainer.mockReturnValue( createMockContainer( elType ) as V1Element );
-				mockCreateUnpublishedComponent.mockReturnValue( TEST_COMPONENT_UID );
+				mockCreateUnpublishedComponent.mockReturnValue( Promise.resolve( TEST_COMPONENT_UID ) );
 
 				// Act
 				const result = await handleSaveAsComponent( {
@@ -120,7 +120,7 @@ describe( 'save-as-component-tool handler', () => {
 				] ) as V1Element
 			);
 			mockGetElementType.mockReturnValue( mockElementType as unknown as ReturnType< typeof getElementType > );
-			mockCreateUnpublishedComponent.mockReturnValue( TEST_COMPONENT_UID );
+			mockCreateUnpublishedComponent.mockReturnValue( Promise.resolve( TEST_COMPONENT_UID ) );
 
 			// Act
 			const result = await handleSaveAsComponent( {

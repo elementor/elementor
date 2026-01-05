@@ -1,15 +1,16 @@
 import { type V1ElementData } from '@elementor/editor-elements';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
-import { __dispatch as dispatch } from '@elementor/store';
+import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 import { generateUniqueId } from '@elementor/utils';
 
 import { type ComponentEventData } from '../../components/create-component-form/utils/get-component-event-data';
 import { replaceElementWithComponent } from '../../components/create-component-form/utils/replace-element-with-component';
-import { type OverridableProps } from '../../types';
+import { type OverridableProps, type PublishedComponent } from '../../types';
+import { switchToComponent } from '../../utils/switch-to-component';
 import { trackComponentEvent } from '../../utils/tracking';
-import { slice } from '../store';
+import { selectComponentByUid, slice } from '../store';
 
-export function createUnpublishedComponent(
+export async function createUnpublishedComponent(
 	name: string,
 	element: V1ElementData,
 	eventData: ComponentEventData | null,
@@ -28,7 +29,7 @@ export function createUnpublishedComponent(
 
 	dispatch( slice.actions.addCreatedThisSession( generatedUid ) );
 
-	replaceElementWithComponent( element, componentBase );
+	const componentInstance = await replaceElementWithComponent( element, componentBase );
 
 	trackComponentEvent( {
 		action: 'created',
@@ -37,7 +38,14 @@ export function createUnpublishedComponent(
 		...eventData,
 	} );
 
-	runCommand( 'document/save/auto' );
+	await runCommand( 'document/save/auto' );
 
+	const publishedComponentId = ( selectComponentByUid( getState(), generatedUid ) as PublishedComponent )?.id;
+
+	if ( publishedComponentId ) {
+		switchToComponent( publishedComponentId, componentInstance.id );
+	} else {
+		throw new Error( 'Failed to find published component' );
+	}
 	return generatedUid;
 }

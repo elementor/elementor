@@ -79,13 +79,13 @@ export function CreateComponentForm() {
 		};
 	}, [] );
 
-	const handleSave = ( values: ComponentFormValues ) => {
+	const handleSave = async ( values: ComponentFormValues ) => {
 		try {
 			if ( ! element ) {
 				throw new Error( `Can't save element as component: element not found` );
 			}
 
-			const uid = createUnpublishedComponent( values.componentName, element.element, eventData.current );
+			const uid = await createUnpublishedComponent( values.componentName, element.element, eventData.current );
 
 			setResultNotification( {
 				show: true,
