@@ -26,7 +26,7 @@ import { componentOverrideTransformer } from './component-override-transformer';
 import { ComponentPanelHeader } from './components/component-panel-header/component-panel-header';
 import { panel as componentPropertiesPanel } from './components/component-properties-panel/component-properties-panel';
 import { Components } from './components/components-tab/components';
-import { COMPONENT_DOCUMENT_TYPE } from './components/consts';
+import { COMPONENT_DOCUMENT_TYPE, OVERRIDABLE_PROP_REPLACEMENT_ID } from './components/consts';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
 import { openEditModeDialog } from './components/in-edit-mode';
@@ -114,6 +114,7 @@ export function init() {
 	} );
 
 	registerControlReplacement( {
+		id: OVERRIDABLE_PROP_REPLACEMENT_ID,
 		component: OverridablePropControl,
 		condition: ( { value } ) => componentOverridablePropTypeUtil.isValid( value ),
 	} );

@@ -5,7 +5,8 @@ import { type PropValue } from '@elementor/editor-props';
 import { useBoundProp } from './bound-prop-context';
 
 type ControlComponent = ComponentType< object & { OriginalControl: ComponentType } >;
-type ControlReplacement = {
+export type ControlReplacement = {
+	id?: string;
 	component: ControlComponent;
 	condition: ( { value }: ConditionArgs ) => boolean;
 };
@@ -51,5 +52,9 @@ export const createControlReplacementsRegistry = () => {
 		return controlReplacements;
 	}
 
-	return { registerControlReplacement, getControlReplacements };
+	function getControlReplacementsExcluding( excludeIds: string[] ) {
+		return controlReplacements.filter( ( r ) => ! r.id || ! excludeIds.includes( r.id ) );
+	}
+
+	return { registerControlReplacement, getControlReplacements, getControlReplacementsExcluding };
 };

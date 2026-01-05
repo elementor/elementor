@@ -2,6 +2,7 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 
 import { type ComponentOverridablePropValue } from '../../prop-types/component-overridable-prop-type';
 import { type OriginPropFields, type OverridableProps } from '../../types';
+import { getFinalWidgetPropValue } from '../../utils/get-final-widget-prop-value';
 import { selectOverridableProps, slice } from '../store';
 
 export function updateOverridableProp(
@@ -21,13 +22,15 @@ export function updateOverridableProp(
 		return;
 	}
 
+	const originValue = getFinalWidgetPropValue( propValue.origin_value );
+
 	const newOverridableProp = originPropFields
 		? {
-				originValue: propValue.origin_value,
+				originValue,
 				originPropFields,
 		  }
 		: {
-				originValue: propValue.origin_value,
+				originValue,
 		  };
 
 	const newOverridableProps = {

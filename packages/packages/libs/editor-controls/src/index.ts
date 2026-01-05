@@ -65,7 +65,11 @@ export type { ToggleControlProps } from './controls/toggle-control';
 export type { FontCategory } from './controls/font-family-control/font-family-control';
 
 // providers
-export { createControlReplacementsRegistry, ControlReplacementsProvider } from './control-replacements';
+export {
+	createControlReplacementsRegistry,
+	ControlReplacementsProvider,
+	type ControlReplacement,
+} from './control-replacements';
 export { ControlActionsProvider, useControlActions } from './control-actions/control-actions-context';
 export { useFloatingActionsBar } from './components/floating-bar';
 export { useBoundProp, PropProvider, PropKeyProvider } from './bound-prop-context';

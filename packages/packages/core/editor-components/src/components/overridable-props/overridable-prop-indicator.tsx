@@ -7,10 +7,11 @@ import { bindPopover, bindTrigger, Popover, Tooltip, usePopupState } from '@elem
 import { __ } from '@wordpress/i18n';
 
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
-import { useOverridablePropValue } from '../../provider/overridable-prop-context';
+import { useComponentInstanceElement, useOverridablePropValue } from '../../provider/overridable-prop-context';
 import { setOverridableProp } from '../../store/actions/set-overridable-prop';
 import { useCurrentComponentId, useOverridableProps } from '../../store/store';
 import { type OverridableProps } from '../../types';
+import { getFinalWidgetPropValue } from '../../utils/get-final-widget-prop-value';
 import { Indicator } from './indicator';
 import { OverridablePropForm } from './overridable-prop-form';
 import { getOverridableProp } from './utils/get-overridable-prop';
@@ -41,6 +42,8 @@ export function Content( { componentId, overridableProps }: Props ) {
 	const { value, bind, propType } = useBoundProp();
 
 	const contextOverridableValue = useOverridablePropValue();
+	const componentInstanceElement = useComponentInstanceElement();
+
 	const { value: boundPropOverridableValue, setValue: setOverridableValue } = useBoundProp(
 		componentOverridablePropTypeUtil
 	);
@@ -62,7 +65,8 @@ export function Content( { componentId, overridableProps }: Props ) {
 
 	const handleSubmit = ( { label, group }: { label: string; group: string | null } ) => {
 		const propTypeDefault = propType.default ?? {};
-		const originValue = ( ! overridableValue ? value : overridableValue?.origin_value ) ?? propTypeDefault;
+
+		const originValue = getFinalWidgetPropValue( overridableValue.origin_value ) ?? value ?? propTypeDefault;
 
 		const matchingOverridableProp = overridableValue
 			? overridableProps?.props?.[ overridableValue.override_key ]
@@ -71,12 +75,12 @@ export function Content( { componentId, overridableProps }: Props ) {
 		const overridablePropConfig = setOverridableProp( {
 			componentId,
 			overrideKey: overridableValue?.override_key ?? null,
-			elementId,
+			elementId: componentInstanceElement?.element.id ?? elementId,
 			label,
 			groupId: group,
 			propKey: bind,
 			elType: elType ?? 'widget',
-			widgetType: elementType.key,
+			widgetType: componentInstanceElement?.elementType.key ?? elementType.key,
 			originValue,
 			originPropFields: matchingOverridableProp?.originPropFields,
 		} );

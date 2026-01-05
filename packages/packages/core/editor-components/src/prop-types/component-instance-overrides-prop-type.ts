@@ -15,3 +15,5 @@ export const componentInstanceOverridesPropTypeUtil = createPropUtils(
 export type ComponentInstanceOverridesPropValue = z.infer<
 	typeof componentInstanceOverridesPropTypeUtil.schema
 >[ 'value' ];
+
+export type ComponentInstanceOverride = NonNullable< ComponentInstanceOverridesPropValue >[ number ];

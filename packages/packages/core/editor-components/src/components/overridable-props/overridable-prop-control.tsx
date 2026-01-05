@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { type ComponentType } from 'react';
+import { type ComponentType, useMemo } from 'react';
 import { ControlReplacementsProvider, PropKeyProvider, PropProvider, useBoundProp } from '@elementor/editor-controls';
-import { createTopLevelObjectType, useElement } from '@elementor/editor-editing-panel';
+import { createTopLevelObjectType, getControlReplacementsExcluding, useElement } from '@elementor/editor-editing-panel';
 import { type PropValue } from '@elementor/editor-props';
 
 import { type ComponentInstanceOverridePropValue } from '../../prop-types/component-instance-override-prop-type';
@@ -13,6 +13,7 @@ import { OverridablePropProvider } from '../../provider/overridable-prop-context
 import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
 import { useCurrentComponentId, useOverridableProps } from '../../store/store';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
+import { OVERRIDABLE_PROP_REPLACEMENT_ID } from '../consts';
 
 export function OverridablePropControl< T extends object >( {
 	OriginalControl,
@@ -23,6 +24,10 @@ export function OverridablePropControl< T extends object >( {
 	const { value, bind, setValue, placeholder, ...propContext } = useBoundProp( componentOverridablePropTypeUtil );
 	const componentId = useCurrentComponentId();
 	const overridableProps = useOverridableProps( componentId );
+	const filteredReplacements = useMemo(
+		() => getControlReplacementsExcluding( [ OVERRIDABLE_PROP_REPLACEMENT_ID ] ),
+		[]
+	);
 
 	if ( ! componentId ) {
 		return null;
@@ -33,6 +38,7 @@ export function OverridablePropControl< T extends object >( {
 	}
 
 	const isComponentInstance = elementType.key === 'e-component';
+	const overridablePropData = overridableProps?.props?.[ value.override_key ];
 
 	const setOverridableValue = ( newValue: Record< typeof bind, PropValue | null > ) => {
 		const propValue = {
@@ -43,17 +49,12 @@ export function OverridablePropControl< T extends object >( {
 		setValue( propValue );
 
 		if ( ! isComponentInstance ) {
-			const existingProp = overridableProps?.props?.[ propValue.override_key ];
-			updateOverridableProp( componentId, propValue, existingProp?.originPropFields );
+			updateOverridableProp( componentId, propValue, overridablePropData?.originPropFields );
 		}
 	};
 
 	const defaultPropType = elementType.propsSchema[ bind ];
-
-	const overridePropType =
-		isComponentInstance && overridableProps
-			? getPropTypeForComponentOverride( overridableProps.props[ value.override_key ] )
-			: undefined;
+	const overridePropType = overridablePropData ? getPropTypeForComponentOverride( overridablePropData ) : undefined;
 
 	const resolvedPropType = overridePropType ?? defaultPropType;
 
@@ -89,7 +90,7 @@ export function OverridablePropControl< T extends object >( {
 				placeholder={ objectPlaceholder }
 			>
 				<PropKeyProvider bind={ bind }>
-					<ControlReplacementsProvider replacements={ [] }>
+					<ControlReplacementsProvider replacements={ filteredReplacements }>
 						<OriginalControl { ...( props as T ) } />
 					</ControlReplacementsProvider>
 				</PropKeyProvider>

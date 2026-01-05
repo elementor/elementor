@@ -16,7 +16,11 @@ export { useClassesProp } from './contexts/classes-prop-context';
 export { ElementProvider, useElement } from './contexts/element-context';
 export { useSectionWidth } from './contexts/section-context';
 export { useStyle } from './contexts/style-context';
-export { registerControlReplacement, getControlReplacements } from './control-replacement';
+export {
+	registerControlReplacement,
+	getControlReplacements,
+	getControlReplacementsExcluding,
+} from './control-replacement';
 export { controlActionsMenu } from './controls-actions';
 export { Control as BaseControl } from './controls-registry/control';
 export { controlsRegistry, type ControlType } from './controls-registry/controls-registry';
