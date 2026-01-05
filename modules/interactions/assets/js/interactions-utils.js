@@ -79,3 +79,65 @@ export function parseAnimationName( name ) {
 	};
 }
 
+export function extractAnimationId( interaction ) {
+	if ( 'string' === typeof interaction ) {
+		return interaction;
+	}
+
+	if ( 'interaction-item' === interaction?.$$type && interaction?.value ) {
+		const { trigger, animation } = interaction.value;
+		if ( 'animation-preset-props' === animation?.$$type && animation?.value ) {
+			const { effect, type, direction, timing_config: timingConfig } = animation.value;
+			const triggerVal = trigger?.value || 'load';
+			const effectVal = effect?.value || 'fade';
+			const typeVal = type?.value || 'in';
+			const directionVal = direction?.value || '';
+			const duration = timingConfig?.value?.duration?.value ?? 300;
+			const delay = timingConfig?.value?.delay?.value ?? 0;
+			return `${ triggerVal }-${ effectVal }-${ typeVal }-${ directionVal }-${ duration }-${ delay }`;
+		}
+	}
+
+	if ( interaction?.animation?.animation_id ) {
+		return interaction.animation.animation_id;
+	}
+
+	return null;
+}
+
+export function extractInteractionId( interaction ) {
+	if ( 'interaction-item' === interaction?.$$type && interaction?.value ) {
+		return interaction.value.interaction_id?.value || null;
+	}
+	return null;
+}
+
+export function getAnimateFunction() {
+	return 'undefined' !== typeof animate ? animate : window.Motion?.animate;
+}
+
+export function getInViewFunction() {
+	return 'undefined' !== typeof inView ? inView : window.Motion?.inView;
+}
+
+export function waitForAnimateFunction( callback, maxAttempts = 50 ) {
+	if ( getAnimateFunction() ) {
+		callback();
+		return;
+	}
+
+	if ( maxAttempts > 0 ) {
+		setTimeout( () => waitForAnimateFunction( callback, maxAttempts - 1 ), 100 );
+	}
+}
+
+export function parseInteractionsData( data ) {
+	if ( 'string' === typeof data ) {
+		try {
+			return JSON.parse( data );
+		} catch {
+			return null;
+		}
+	}
+	return data;
+}

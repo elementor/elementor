@@ -1,4 +1,13 @@
-import { config, getKeyframes, parseAnimationName } from './interactions-utils.js';
+import {
+	config,
+	getKeyframes,
+	parseAnimationName,
+	extractAnimationId,
+	getAnimateFunction,
+	getInViewFunction,
+	waitForAnimateFunction,
+	parseInteractionsData,
+} from './interactions-utils.js';
 
 function scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.85, root: null };
@@ -57,40 +66,32 @@ function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 }
 
 function initInteractions() {
-	if ( 'undefined' === typeof animate && ! window.Motion?.animate ) {
-		setTimeout( initInteractions, 100 );
-		return;
-	}
+	waitForAnimateFunction( () => {
+		const animateFunc = getAnimateFunction();
+		const inViewFunc = getInViewFunction();
 
-	const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
-	const inViewFunc = 'undefined' !== typeof inView ? inView : window.Motion?.inView;
-
-	if ( ! inViewFunc || ! animateFunc ) {
-		return;
-	}
-
-	const elements = document.querySelectorAll( '[data-interactions]' );
-
-	elements.forEach( ( element ) => {
-		const interactionsData = element.getAttribute( 'data-interactions' );
-		let interactions = [];
-
-		try {
-			interactions = JSON.parse( interactionsData );
-		} catch ( error ) {
+		if ( ! inViewFunc || ! animateFunc ) {
 			return;
 		}
 
-		interactions.forEach( ( interaction ) => {
-			const animationName = 'string' === typeof interaction
-				? interaction
-				: interaction?.animation?.animation_id;
+		const elements = document.querySelectorAll( '[data-interactions]' );
 
-			const animConfig = animationName && parseAnimationName( animationName );
+		elements.forEach( ( element ) => {
+			const interactionsData = element.getAttribute( 'data-interactions' );
+			const parsedData = parseInteractionsData( interactionsData );
 
-			if ( animConfig ) {
-				applyAnimation( element, animConfig, animateFunc, inViewFunc );
+			if ( ! parsedData || ! Array.isArray( parsedData ) ) {
+				return;
 			}
+
+			parsedData.forEach( ( interaction ) => {
+				const animationName = extractAnimationId( interaction );
+				const animConfig = animationName && parseAnimationName( animationName );
+
+				if ( animConfig ) {
+					applyAnimation( element, animConfig, animateFunc, inViewFunc );
+				}
+			} );
 		} );
 	} );
 }

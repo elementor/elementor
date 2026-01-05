@@ -1,32 +1,15 @@
 'use strict';
 
-import { config, getKeyframes, parseAnimationName } from './interactions-utils.js';
-
-function extractAnimationId( interaction ) {
-	if ( 'string' === typeof interaction ) {
-		return interaction;
-	}
-
-	if ( 'interaction-item' === interaction?.$$type && interaction?.value ) {
-		const { trigger, animation } = interaction.value;
-		if ( 'animation-preset-props' === animation?.$$type && animation?.value ) {
-			const { effect, type, direction, timing_config: timingConfig } = animation.value;
-			const triggerVal = trigger?.value || 'load';
-			const effectVal = effect?.value || 'fade';
-			const typeVal = type?.value || 'in';
-			const directionVal = direction?.value || '';
-			const duration = timingConfig?.value?.duration?.value ?? 300;
-			const delay = timingConfig?.value?.delay?.value ?? 0;
-			return `${ triggerVal }-${ effectVal }-${ typeVal }-${ directionVal }-${ duration }-${ delay }`;
-		}
-	}
-
-	if ( interaction?.animation?.animation_id ) {
-		return interaction.animation.animation_id;
-	}
-
-	return null;
-}
+import {
+	config,
+	getKeyframes,
+	parseAnimationName,
+	extractAnimationId,
+	extractInteractionId,
+	getAnimateFunction,
+	waitForAnimateFunction,
+	parseInteractionsData,
+} from './interactions-utils.js';
 
 function applyAnimation( element, animConfig, animateFunc ) {
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction, element );
@@ -76,21 +59,15 @@ function findElementByInteractionId( interactionId ) {
 }
 
 function applyInteractionsToElement( element, interactionsData ) {
-	const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
+	const animateFunc = getAnimateFunction();
 
 	if ( ! animateFunc ) {
 		return;
 	}
 
-	let parsedData;
-	if ( 'string' === typeof interactionsData ) {
-		try {
-			parsedData = JSON.parse( interactionsData );
-		} catch ( error ) {
-			return;
-		}
-	} else {
-		parsedData = interactionsData;
+	const parsedData = parseInteractionsData( interactionsData );
+	if ( ! parsedData ) {
+		return;
 	}
 
 	const interactions = Object.values( parsedData?.items || [] );
@@ -115,22 +92,43 @@ function handleInteractionsUpdate() {
 			( prev ) => prev.dataId === currentItem.dataId,
 		);
 
-		return ! previousItem || previousItem.interactions !== currentItem.interactions;
+		if ( ! previousItem ) {
+			return true;
+		}
+
+		const currentIds = ( currentItem.interactions?.items || [] )
+			.map( extractInteractionId )
+			.filter( Boolean )
+			.sort()
+			.join( ',' );
+		const prevIds = ( previousItem.interactions?.items || [] )
+			.map( extractInteractionId )
+			.filter( Boolean )
+			.sort()
+			.join( ',' );
+
+		return currentIds !== prevIds;
 	} );
 
 	changedItems.forEach( ( item ) => {
 		const element = findElementByInteractionId( item.dataId );
 		const prevInteractions = previousInteractionsData.find( ( prev ) => prev.dataId === item.dataId )?.interactions;
-		if ( element && item.interactions?.items?.length > 0 && item.interactions?.items?.length === prevInteractions?.items?.length ) {
-			const interactionsToApply = {
+
+		if ( ! element || ! item.interactions?.items?.length ) {
+			return;
+		}
+
+		const prevIds = new Set( ( prevInteractions?.items || [] ).map( extractInteractionId ).filter( Boolean ) );
+		const changedInteractions = item.interactions.items.filter( ( interaction ) => {
+			const id = extractInteractionId( interaction );
+			return ! id || ! prevIds.has( id );
+		} );
+
+		if ( changedInteractions.length > 0 ) {
+			applyInteractionsToElement( element, {
 				...item.interactions,
-				items: [ ...item.interactions.items ].filter( ( interaction, index ) => {
-					const currentAnimId = extractAnimationId( interaction );
-					const prevAnimId = extractAnimationId( prevInteractions?.items[ index ] );
-					return currentAnimId !== prevAnimId;
-				} ),
-			};
-			applyInteractionsToElement( element, interactionsToApply );
+				items: changedInteractions,
+			} );
 		}
 	} );
 
@@ -138,53 +136,50 @@ function handleInteractionsUpdate() {
 }
 
 function initEditorInteractionsHandler() {
-	if ( 'undefined' === typeof animate && ! window.Motion?.animate ) {
-		setTimeout( initEditorInteractionsHandler, 100 );
-		return;
-	}
+	waitForAnimateFunction( () => {
+		const head = document.head;
+		let scriptTag = null;
+		let observer = null;
 
-	const head = document.head;
-	let scriptTag = null;
-	let observer = null;
+		function setupObserver( tag ) {
+			if ( observer ) {
+				observer.disconnect();
+			}
 
-	function setupObserver( tag ) {
-		if ( observer ) {
-			observer.disconnect();
+			observer = new MutationObserver( () => {
+				handleInteractionsUpdate();
+			} );
+
+			observer.observe( tag, {
+				childList: true,
+				characterData: true,
+				subtree: true,
+			} );
+
+			handleInteractionsUpdate();
+			registerWindowEvents();
 		}
 
-		observer = new MutationObserver( () => {
-			handleInteractionsUpdate();
+		const headObserver = new MutationObserver( () => {
+			const foundScriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+			if ( foundScriptTag && foundScriptTag !== scriptTag ) {
+				scriptTag = foundScriptTag;
+				setupObserver( scriptTag );
+				headObserver.disconnect();
+			}
 		} );
 
-		observer.observe( tag, {
+		headObserver.observe( head, {
 			childList: true,
-			characterData: true,
 			subtree: true,
 		} );
 
-		handleInteractionsUpdate();
-		registerWindowEvents();
-	}
-
-	const headObserver = new MutationObserver( () => {
-		const foundScriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
-		if ( foundScriptTag && foundScriptTag !== scriptTag ) {
-			scriptTag = foundScriptTag;
+		scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
+		if ( scriptTag ) {
 			setupObserver( scriptTag );
 			headObserver.disconnect();
 		}
 	} );
-
-	headObserver.observe( head, {
-		childList: true,
-		subtree: true,
-	} );
-
-	scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
-	if ( scriptTag ) {
-		setupObserver( scriptTag );
-		headObserver.disconnect();
-	}
 }
 
 function registerWindowEvents() {
@@ -212,13 +207,6 @@ function handlePlayInteractions( event ) {
 	};
 	applyInteractionsToElement( element, interactionsCopy );
 
-}
-
-function extractInteractionId( interaction ) {
-	if ( 'interaction-item' === interaction?.$$type && interaction?.value ) {
-		return interaction.value.interaction_id?.value || null;
-	}
-	return null;
 }
 
 if ( 'loading' === document.readyState ) {
