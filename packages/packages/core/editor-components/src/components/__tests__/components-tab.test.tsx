@@ -22,6 +22,13 @@ jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
 } ) );
 
+jest.mock( '@elementor/editor-mcp', () => ( {
+	getAngieSdk: jest.fn().mockImplementation( () => ( {
+		isAngieReady: jest.fn( () => false ),
+		triggerAngie: jest.fn(),
+	} ) ),
+} ) );
+
 const mockStartDragElementFromPanel = jest.fn();
 
 jest.mock( '@elementor/editor-canvas', () => ( {
@@ -104,7 +111,10 @@ describe( 'ComponentsTab', () => {
 			);
 
 			// Assert
-			expect( screen.getByText( 'Text that explains that there are no Components yet.' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'No components yet' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Create your first one:' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: /Create component with AI/i } ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render components list when components exist', () => {
@@ -126,9 +136,7 @@ describe( 'ComponentsTab', () => {
 			expect( screen.getByText( 'Text Component' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Test Component 1' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Test Component 2' ) ).toBeInTheDocument();
-			expect(
-				screen.queryByText( 'Text that explains that there are no Components yet.' )
-			).not.toBeInTheDocument();
+			expect( screen.queryByText( 'No components yet' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'should render component item with draggable attributes and actions', () => {
