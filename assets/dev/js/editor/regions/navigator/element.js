@@ -118,7 +118,7 @@ export default class extends Marionette.CompositeView {
 		this.listenTo( this.model, 'title_external_change', this.onTitleExternalChange );
 	}
 
-	onRecalculateTitle() {
+	onTitleExternalChange() {
 		this.ui.title.text( this.model.getTitle() );
 	}
 
