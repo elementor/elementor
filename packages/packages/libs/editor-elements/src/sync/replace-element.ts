@@ -15,16 +15,18 @@ type ReplaceElementArgs = {
 	withHistory?: boolean;
 };
 
-export const replaceElement = ( { currentElement, newElement, withHistory = true }: ReplaceElementArgs ) => {
+export const replaceElement = async ( { currentElement, newElement, withHistory = true }: ReplaceElementArgs ) => {
 	const { containerId, index } = getNewElementContainer( currentElement, newElement );
 
-	createElement( {
+	const newElementInstance = createElement( {
 		containerId,
 		model: newElement,
 		options: { at: index, useHistory: withHistory },
 	} );
 
-	deleteElement( { elementId: currentElement.id, options: { useHistory: withHistory } } );
+	await deleteElement( { elementId: currentElement.id, options: { useHistory: withHistory } } );
+
+	return newElementInstance;
 };
 
 function getNewElementContainer(
