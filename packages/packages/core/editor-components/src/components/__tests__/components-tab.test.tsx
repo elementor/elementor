@@ -18,6 +18,7 @@ import { ComponentsList } from '../components-tab/components-list';
 import { SearchProvider } from '../components-tab/search-provider';
 
 jest.mock( '@elementor/editor-documents', () => ( {
+	getV1DocumentsManager: jest.fn(),
 	setDocumentModifiedStatus: jest.fn(),
 } ) );
 
