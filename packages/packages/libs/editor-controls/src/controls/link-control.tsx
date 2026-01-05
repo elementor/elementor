@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getLinkInLinkRestriction } from '@elementor/editor-elements';
 import { linkPropTypeUtil, type LinkPropValue } from '@elementor/editor-props';
 import { MinusIcon, PlusIcon } from '@elementor/icons';
@@ -56,6 +56,16 @@ export const LinkControl = createControl( ( props: Props ) => {
 
 	const [ linkInLinkRestriction, setLinkInLinkRestriction ] = useState( getLinkInLinkRestriction( elementId ) );
 	const shouldDisableAddingLink = ! isActive && linkInLinkRestriction.shouldRestrict;
+
+	useEffect( () => {
+		const checkRestriction = () => {
+			setLinkInLinkRestriction( getLinkInLinkRestriction( elementId ) );
+		};
+
+		const intervalId = setInterval( checkRestriction, 500 );
+
+		return () => clearInterval( intervalId );
+	}, [ elementId ] );
 
 	const onEnabledChange = () => {
 		setLinkInLinkRestriction( getLinkInLinkRestriction( elementId ) );

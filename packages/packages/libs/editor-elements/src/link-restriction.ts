@@ -1,4 +1,5 @@
 import { getContainer } from './sync/get-container';
+import { getElementSetting } from './sync/get-element-setting';
 
 const ANCHOR_SELECTOR = 'a, [data-action-link]';
 
@@ -22,6 +23,16 @@ export function getLinkInLinkRestriction( elementId: string ): LinkInLinkRestric
 			shouldRestrict: true,
 			reason: 'descendant',
 			elementId: anchoredDescendantId,
+		};
+	}
+
+	const hasInlineLink = checkForInlineLink( elementId );
+
+	if ( hasInlineLink ) {
+		return {
+			shouldRestrict: true,
+			reason: 'descendant',
+			elementId,
 		};
 	}
 
@@ -105,6 +116,26 @@ function doesElementContainAnchor( element: Element ): boolean {
 
 function findElementIdOf( element: Element ): string | null {
 	return element.closest< HTMLElement >( '[data-id]' )?.dataset.id || null;
+}
+
+function checkForInlineLink( elementId: string ): boolean {
+	const element = getElementDOM( elementId );
+
+	if ( ! element ) {
+		return false;
+	}
+
+	if ( element.matches( ANCHOR_SELECTOR ) ) {
+		return false;
+	}
+
+	const linkSetting = getElementSetting< { value?: { destination?: unknown } } >( elementId, 'link' );
+	
+	if ( linkSetting?.value?.destination ) {
+		return false;
+	}
+
+	return element.querySelector( ANCHOR_SELECTOR ) !== null;
 }
 
 function getElementDOM( id: string ) {
