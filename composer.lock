@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9a233a96e5bf3e4f3f212f91c8ceaceb",
+    "content-hash": "6c1d84d02c7c7bd0bf83a5334a426fa8",
     "packages": [
         {
             "name": "elementor/wp-notifications-package",
@@ -39,16 +39,16 @@
         },
         {
             "name": "elementor/wp-one-package",
-            "version": "1.0.22",
+            "version": "1.0.30",
             "source": {
                 "type": "git",
                 "url": "git@github.com:elementor/wp-one-package.git",
-                "reference": "d6186000bc3d072b952d71b32bbca0ca25920199"
+                "reference": "afd1d1c19998f0c6f9d95dbad89a87b7cb2642c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.22",
-                "reference": "d6186000bc3d072b952d71b32bbca0ca25920199",
+                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.30",
+                "reference": "afd1d1c19998f0c6f9d95dbad89a87b7cb2642c4",
                 "shasum": ""
             },
             "require": {
@@ -56,8 +56,11 @@
             },
             "require-dev": {
                 "dealerdirect/phpcodesniffer-composer-installer": "^v1.0.0",
+                "johnpbloch/wordpress-core": "^6.0",
+                "phpunit/phpunit": "^9.0",
                 "squizlabs/php_codesniffer": "^3.10.2",
-                "wp-coding-standards/wpcs": "^3.1.0"
+                "wp-coding-standards/wpcs": "^3.1.0",
+                "yoast/phpunit-polyfills": "^2.0"
             },
             "type": "library",
             "autoload": {
@@ -77,9 +80,9 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/elementor/wp-one-package/tree/1.0.22"
+                "source": "https://github.com/elementor/wp-one-package/tree/1.0.30"
             },
-            "time": "2025-12-25T11:09:16+00:00"
+            "time": "2026-01-05T09:25:53+00:00"
         }
     ],
     "packages-dev": [

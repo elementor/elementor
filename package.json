@@ -144,7 +144,7 @@
     "write": "^2.0.0"
   },
   "dependencies": {
-    "@elementor/elementor-one-assets": "^0.4.4",
+    "@elementor/elementor-one-assets": "0.4.11",
     "@elementor/icons": "1.61.1",
     "@elementor/ui": "1.36.17",
     "@reach/router": "1.3.4",
