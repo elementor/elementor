@@ -41,6 +41,10 @@ export default function createAtomicElementBaseView( type ) {
 			return this._parent?.getRenderContext?.();
 		},
 
+		getResolverRenderContext() {
+			return this._parent?.getResolverRenderContext?.();
+		},
+
 		className() {
 			return `${ BaseElementView.prototype.className.apply( this ) } e-con e-atomic-element ${ this.getClassString() }`;
 		},

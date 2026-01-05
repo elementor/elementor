@@ -20,5 +20,5 @@ export { WIDGET_SCHEMA_URI } from './mcp/resources/widgets-schema-resource';
 export * from './legacy/types';
 export { createTransformer } from './transformers/create-transformer';
 export { createTransformersRegistry } from './transformers/create-transformers-registry';
-export { type AnyTransformer, type TransformerRenderContext, type TransformerOptions } from './transformers/types';
+export { type AnyTransformer, type TransformerOptions } from './transformers/types';
 export { UnknownStyleTypeError, UnknownStyleStateError } from './renderers/errors';

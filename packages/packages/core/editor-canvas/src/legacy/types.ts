@@ -1,7 +1,9 @@
 import { type V1Element } from '@elementor/editor-elements';
 import { type Props, type PropValue } from '@elementor/editor-props';
 
-import { type TransformerRenderContext } from '../transformers/types';
+export type RenderContext< T = unknown > = Record< string, T >;
+
+export type NamespacedRenderContext< T = RenderContext > = Record< string, T | undefined >;
 
 export type LegacyWindow = Window & {
 	elementor: {
@@ -114,7 +116,11 @@ export declare class ElementView {
 
 	_parent?: ElementView;
 
-	getRenderContext(): TransformerRenderContext | undefined;
+	getRenderContext(): NamespacedRenderContext | undefined;
+
+	getResolverRenderContext(): RenderContext | undefined;
+
+	getNamespaceKey(): string;
 }
 
 type JQueryElement = {

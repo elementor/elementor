@@ -3,10 +3,15 @@ import { type V1ElementConfig } from '@elementor/editor-elements';
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { createPropsResolver } from '../renderers/create-props-resolver';
 import { settingsTransformersRegistry } from '../settings-transformers-registry';
-import { type TransformerRenderContext } from '../transformers/types';
 import { signalizedProcess } from '../utils/signalized-process';
 import { createElementViewClassDeclaration } from './create-element-type';
-import { type ElementType, type ElementView, type LegacyWindow } from './types';
+import {
+	type ElementType,
+	type ElementView,
+	type LegacyWindow,
+	type NamespacedRenderContext,
+	type RenderContext,
+} from './types';
 
 export type CreateTemplatedElementTypeOptions = {
 	type: string;
@@ -77,12 +82,20 @@ export function createTemplatedElementView( {
 			return 'twig';
 		}
 
+		getNamespaceKey() {
+			return type;
+		}
+
 		renderOnChange() {
 			this.render();
 		}
 
-		getRenderContext(): TransformerRenderContext | undefined {
+		getRenderContext(): NamespacedRenderContext | undefined {
 			return this._parent?.getRenderContext?.();
+		}
+
+		getResolverRenderContext(): RenderContext | undefined {
+			return this._parent?.getResolverRenderContext?.();
 		}
 
 		// Override `render` function to support async `_renderTemplate`
@@ -133,7 +146,7 @@ export function createTemplatedElementView( {
 					return resolveProps( {
 						props: settings,
 						signal,
-						renderContext: this.getRenderContext(),
+						renderContext: this.getResolverRenderContext(),
 					} );
 				} )
 				.then( ( settings ) => {

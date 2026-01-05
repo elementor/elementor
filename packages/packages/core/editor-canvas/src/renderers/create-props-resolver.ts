@@ -9,8 +9,8 @@ import {
 	type TransformablePropType,
 } from '@elementor/editor-props';
 
+import { type RenderContext } from '../legacy/types';
 import { type TransformersRegistry } from '../transformers/create-transformers-registry';
-import { type TransformerRenderContext } from '../transformers/types';
 import { getMultiPropsValue, isMultiProps } from './multi-props';
 
 type CreatePropResolverArgs = {
@@ -23,7 +23,7 @@ type ResolveArgs = {
 	props: Props;
 	schema?: PropsSchema;
 	signal?: AbortSignal;
-	renderContext?: TransformerRenderContext;
+	renderContext?: RenderContext;
 };
 
 type TransformArgs = {
@@ -32,7 +32,7 @@ type TransformArgs = {
 	type: PropType;
 	signal?: AbortSignal;
 	depth?: number;
-	renderContext?: TransformerRenderContext;
+	renderContext?: RenderContext;
 };
 
 type ResolvedProps = Record< string, unknown >;

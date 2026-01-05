@@ -1,6 +1,6 @@
-export type TransformerRenderContext = Record< string, unknown >;
+import { type RenderContext } from '../legacy/types';
 
-export type TransformerOptions< TContext extends TransformerRenderContext = TransformerRenderContext > = {
+export type TransformerOptions< TContext extends RenderContext = RenderContext > = {
 	key: string;
 	signal?: AbortSignal;
 	renderContext?: TContext;

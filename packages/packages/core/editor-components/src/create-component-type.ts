@@ -7,7 +7,8 @@ import {
 	type ElementType,
 	type ElementView,
 	type LegacyWindow,
-	type TransformerRenderContext,
+	type NamespacedRenderContext,
+	type RenderContext,
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { __getState as getState } from '@elementor/store';
@@ -113,23 +114,34 @@ function createComponentView(
 			return currentDocument?.id === this.getComponentId();
 		}
 
-		getRenderContext(): TransformerRenderContext | undefined {
-			const parent = this._parent;
-			const parentContext = parent?.getRenderContext?.() as ComponentRenderContext | undefined;
+		getRenderContext(): NamespacedRenderContext | undefined {
+			const namespaceKey = this.getNamespaceKey();
+			const parentContext = this._parent?.getRenderContext?.();
+			const parentComponentContext = parentContext?.[ namespaceKey ];
 
 			if ( ! this.#componentRenderContext ) {
 				return parentContext;
 			}
 
 			const ownOverrides = this.#componentRenderContext.overrides ?? {};
-			const parentOverrides = parentContext?.overrides ?? {};
+			const parentOverrides = parentComponentContext?.overrides ?? {};
 
 			return {
-				overrides: {
-					...parentOverrides,
-					...ownOverrides,
+				...parentContext,
+				[ namespaceKey ]: {
+					overrides: {
+						...parentOverrides,
+						...ownOverrides,
+					},
 				},
 			};
+		}
+
+		getResolverRenderContext(): RenderContext | undefined {
+			const namespaceKey = this.getNamespaceKey();
+			const context = this.getRenderContext();
+
+			return context?.[ namespaceKey ];
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
