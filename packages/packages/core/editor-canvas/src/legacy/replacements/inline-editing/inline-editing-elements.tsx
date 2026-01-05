@@ -263,20 +263,21 @@ export default class InlineEditingReplacement extends ReplacementBase {
 					{ isWrapperRendered && (
 						<OutlineOverlay element={ wrapperRef.current as HTMLDivElement } id={ this.id } isSelected />
 					) }
-					<InlineEditor
-						attributes={ {
-							class: wrapperClasses,
-							style: 'outline: none;',
-						} }
-						elementClasses={ elementClasses }
-						value={ propValue }
-						setValue={ this.setContentValue.bind( this ) }
-						onBlur={ this.unmountInlineEditor.bind( this ) }
-						autofocus
-						showToolbar
-						getInitialPopoverPosition={ getInitialPopoverPosition }
-						expectedTag={ expectedTag }
-					/>
+				<InlineEditor
+					attributes={ {
+						class: wrapperClasses,
+						style: 'outline: none;',
+					} }
+					elementClasses={ elementClasses }
+					value={ propValue }
+					setValue={ this.setContentValue.bind( this ) }
+					onBlur={ this.unmountInlineEditor.bind( this ) }
+					autofocus
+					showToolbar
+					getInitialPopoverPosition={ getInitialPopoverPosition }
+					expectedTag={ expectedTag }
+					elementId={ this.id }
+				/>
 				</Box>
 			</ThemeProvider>
 		);

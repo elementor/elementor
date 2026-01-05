@@ -31,6 +31,8 @@ const ITALIC_KEYBOARD_SHORTCUT = 'i';
 const BOLD_KEYBOARD_SHORTCUT = 'b';
 const UNDERLINE_KEYBOARD_SHORTCUT = 'u';
 
+import type { ElementID } from '@elementor/editor-elements';
+
 type InlineEditorProps = {
 	value: string | null;
 	setValue: ( value: string | null ) => void;
@@ -42,6 +44,7 @@ type InlineEditorProps = {
 	autofocus?: boolean;
 	getInitialPopoverPosition?: () => { left: number; top: number };
 	expectedTag?: string | null;
+	elementId?: ElementID;
 };
 
 const INITIAL_STYLE = 'margin:0;padding:0;';
@@ -124,6 +127,7 @@ export const InlineEditor = forwardRef(
 			onBlur = undefined,
 			getInitialPopoverPosition = undefined,
 			expectedTag = null,
+			elementId = undefined,
 		}: InlineEditorProps,
 		ref
 	) => {
@@ -289,7 +293,7 @@ export const InlineEditor = forwardRef(
 						anchorOrigin={ { vertical: 'top', horizontal: 'center' } }
 						transformOrigin={ { vertical: 'bottom', horizontal: 'center' } }
 					>
-						<InlineEditorToolbar editor={ editor } />
+						<InlineEditorToolbar editor={ editor } elementId={ elementId } />
 					</Popover>
 				) }
 			</>
