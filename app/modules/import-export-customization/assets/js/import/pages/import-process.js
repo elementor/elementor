@@ -32,7 +32,7 @@ export default function ImportProcess() {
 		if ( ! error ) {
 			if ( IMPORT_PROCESSING_STATUS.DONE === status ) {
 				AppsEventTracking.sendKitImportStatus( null );
-				if ( attemptRedirect() ) {
+				if ( ! data.noAutomaticRedirect && attemptRedirect() ) {
 					return;
 				}
 
@@ -43,7 +43,7 @@ export default function ImportProcess() {
 		} else {
 			AppsEventTracking.sendKitImportStatus( error );
 		}
-	}, [ status, error, navigate, isProcessing, attemptRedirect ] );
+	}, [ status, error, navigate, isProcessing, attemptRedirect, data.noAutomaticRedirect ] );
 
 	const handleTryAgain = () => {
 		importKit();
