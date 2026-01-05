@@ -3,6 +3,7 @@ namespace Elementor;
 
 use Elementor\Core\Base\Document;
 use Elementor\Core\DynamicTags\Manager;
+use Elementor\Modules\Components\Documents\Component;
 use Elementor\TemplateLibrary\Source_Local;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -283,7 +284,7 @@ class DB {
 
 		while ( true ) {
 			$args = wp_parse_args( [
-				'post_type' => [ Source_Local::CPT, 'post', 'page' ],
+				'post_type' => [ Source_Local::CPT, 'post', 'page', Component::TYPE ],
 				'post_status' => [ 'publish' ],
 				'posts_per_page' => $batch_size,
 				'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
