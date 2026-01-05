@@ -164,6 +164,25 @@ export default class ApiRequests {
 		}
 	}
 
+	public async activatePlugin( request: APIRequestContext, slug: string ) {
+		const response = await request.post( `${ this.baseUrl }/index.php`, {
+			params: {
+				rest_route: `/wp/v2/plugins/${ slug }`,
+				status: 'active',
+			},
+			headers: {
+				'X-WP-Nonce': this.nonce,
+			},
+		} );
+		if ( ! response.ok() ) {
+			throw new Error( `
+				Failed to activate a plugin: ${ response ? response.status() : '<no status>' }.
+				${ response ? await response.text() : '<no response>' }
+				slug: ${ slug }
+			` );
+		}
+	}
+
 	public async deletePlugin( request: APIRequestContext, slug: string ) {
 		const response = await this._delete( request, 'plugins', slug );
 

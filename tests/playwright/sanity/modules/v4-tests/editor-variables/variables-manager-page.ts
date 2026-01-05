@@ -47,7 +47,7 @@ export default class VariablesManagerPage {
 		await this.page.click( EditorSelectors.variables.manager.managerButton );
 	}
 
-	async createVariableFromManager( { name, value, type }: { name: string, value: string, type: 'font' | 'color' } ) {
+	async createVariableFromManager( { name, value, type }: { name: string, value: string, type: 'font' | 'color' | 'size' } ) {
 		await this.openVariableManager( 'Typography', 'text-color' );
 
 		await this.page.getByRole( 'button', { name: 'Add variable' } ).click();
@@ -68,6 +68,9 @@ export default class VariablesManagerPage {
 			await this.page.locator( `#font-family-variables-selector-search` ).fill( value );
 			await this.page.locator( `#font-family-variables-selector` ).getByText( value ).click();
 		}
+		if ( 'size' === type ) {
+			await latestRow.getByRole( 'spinbutton' ).fill( value );
+		}
 		await this.page.keyboard.press( 'Enter' );
 
 		await this.saveVariablesManager( true );
@@ -82,6 +85,14 @@ export default class VariablesManagerPage {
 		await variableLocator.getByRole( 'toolbar' ).click();
 		await this.page.getByRole( 'menuitem', { name: 'Delete', includeHidden: true } ).click();
 		await this.page.getByRole( 'button', { name: 'Delete' } ).click();
+	}
+
+	getVariableRowByName( variableName: string ) {
+		return this.page.locator( 'tr', { hasText: variableName } );
+	}
+
+	getVariablesList() {
+		return this.page.locator( 'tbody tr' );
 	}
 
 	async saveAndExitVariableManager( shouldSave: boolean ) {

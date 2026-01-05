@@ -37,7 +37,7 @@ type VariableTypeOptions = {
 	styleTransformer?: AnyTransformer;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
-	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
+	selectionFilter?: ( variables: NormalizedVariable[], propType?: PropType ) => NormalizedVariable[];
 	valueTransformer?: ( value: string, type?: string ) => PropValue;
 	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
 	emptyState?: JSX.Element;
@@ -114,10 +114,19 @@ export function createVariableTypeRegistry() {
 		return key in variableTypes;
 	};
 
+	const applySelectionFilter = <T extends { type: string }>( variables: T[] ): T[] => {
+		return variables.filter( ( { type } ) => {
+			const options = variableTypes[ type ];
+
+			return ! options?.selectionFilter || options.selectionFilter( [] ).length > 0;
+		} );
+	};
+
 	return {
 		registerVariableType,
 		getVariableType,
 		getVariableTypes,
 		hasVariableType,
+		applySelectionFilter,
 	};
 }

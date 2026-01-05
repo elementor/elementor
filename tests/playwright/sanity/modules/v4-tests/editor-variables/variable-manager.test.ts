@@ -1,21 +1,28 @@
 import { BrowserContext, Page, expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 
-import { initTemplate } from './utils';
+import { getTemplatePath, initTemplate } from './utils';
 import VariablesManagerPage from './variables-manager-page';
 import WpAdminPage from '../../../../pages/wp-admin-page';
+import EditorPage from '../../../../pages/editor-page';
+import ApiRequests from '../../../../assets/api-requests';
 
 test.describe( 'Variable Manager @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
+	let editorPage: EditorPage;
 	let context: BrowserContext;
 	let page: Page;
 	let variablesManagerPage: VariablesManagerPage;
+	let apiRequestsInstance: ApiRequests;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		page = await context.newPage();
-		wpAdminPage = await initTemplate( page, testInfo, apiRequests );
+		const result = await initTemplate( page, testInfo, apiRequests );
+		wpAdminPage = result.wpAdminPage;
+		editorPage = result.editorPage;
 		variablesManagerPage = new VariablesManagerPage( page );
+		apiRequestsInstance = apiRequests;
 	} );
 
 	test.beforeEach( async () => {
@@ -71,4 +78,35 @@ test.describe( 'Variable Manager @v4-tests', () => {
 			await expect( page.getByText( 'Give your variable a name.' ) ).not.toBeVisible();
 		} );
 	} );
+
+	test( 'should filter out size variables from the list when it is core only', async () => {
+		const sizeVariable = { name: 'test-size-variable', value: '20', type: 'size' as const };
+		const proPluginSlug = 'elementor-pro/elementor-pro';
+		const currentUrl = page.url();
+
+		await test.step( 'Activate Pro and create a size variable', async () => {
+			await apiRequestsInstance.activatePlugin( page.context().request, proPluginSlug );
+			await page.goto( currentUrl );
+			await page.waitForLoadState( 'load' );
+			await wpAdminPage.waitForPanel();
+			await editorPage.loadTemplate( getTemplatePath() );
+			await variablesManagerPage.createVariableFromManager( sizeVariable );
+		} );
+
+		await test.step( 'Deactivate Pro and verify size variable is filtered out', async () => {
+			await apiRequestsInstance.deactivatePlugin( page.context().request, proPluginSlug );
+			await page.goto( currentUrl );
+			await page.waitForLoadState( 'load' );
+			await wpAdminPage.waitForPanel();
+			await editorPage.loadTemplate( getTemplatePath() );
+			await wpAdminPage.closeAnnouncementsIfVisible();
+			await variablesManagerPage.openVariableManager( 'Typography', 'text-color' );
+			const sizeVariableRow = variablesManagerPage.getVariableRowByName( sizeVariable.name );
+			await expect( sizeVariableRow ).toBeHidden();
+		} );
+
+		await test.step( 'Re-activate Pro for cleanup', async () => {
+			await apiRequestsInstance.activatePlugin( page.context().request, proPluginSlug );
+		} );
+	} )
 } );

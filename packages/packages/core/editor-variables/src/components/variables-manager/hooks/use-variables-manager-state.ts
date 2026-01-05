@@ -5,6 +5,7 @@ import { getVariables } from '../../../hooks/use-prop-variables';
 import { service } from '../../../service';
 import { type TVariablesList } from '../../../storage';
 import { filterBySearch } from '../../../utils/filter-by-search';
+import { applySelectionFilter } from '../../../variables-registry/variable-type-registry';
 
 export const useVariablesManagerState = () => {
 	const [ variables, setVariables ] = useState( () => getVariables( false ) );
@@ -66,9 +67,10 @@ export const useVariablesManagerState = () => {
 
 	const filteredVariables = () => {
 		const list = Object.entries( variables ).map( ( [ id, value ] ) => ( { ...value, id } ) );
-		const filtered = filterBySearch( list, searchValue );
+		const selectionFiltered = applySelectionFilter( list );
+		const searchFiltered = filterBySearch( selectionFiltered, searchValue );
 
-		return Object.fromEntries( filtered.map( ( { id, ...rest } ) => [ id, rest ] ) );
+		return Object.fromEntries( searchFiltered.map( ( { id, ...rest } ) => [ id, rest ] ) );
 	};
 
 	return {
