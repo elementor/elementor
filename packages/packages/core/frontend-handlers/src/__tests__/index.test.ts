@@ -1,18 +1,33 @@
-import { elementTypeHandlers } from '../handlers-registry';
-import { init, register, unregister } from '../index';
+import { init, register, registerBySelector, unregister, unregisterBySelector } from '../index';
 
 describe( 'Frontend Handlers', () => {
 	const PARENT_ELEMENT_TYPE = 'e-parent-element';
 	const CHILD_ELEMENT_TYPE = 'e-child-element';
 	const WIDGET_ELEMENT_TYPE = 'e-widget';
+	const ELEMENT_CLASS = 'selector-target';
+	const SELECTOR_TARGET = `.${ ELEMENT_CLASS }`;
+	const HANDLER_IDS = {
+		handler_1: 'handler-1',
+		handler_2: 'handler-2',
+		parent_handler: 'parent-handler',
+	};
 
 	beforeAll( () => {
 		init();
 	} );
 
 	beforeEach( () => {
-		elementTypeHandlers.clear();
 		document.body.innerHTML = '';
+	} );
+
+	afterEach( () => {
+		[ WIDGET_ELEMENT_TYPE, PARENT_ELEMENT_TYPE, CHILD_ELEMENT_TYPE ].forEach( ( elementType ) => {
+			unregister( { elementType } );
+		} );
+
+		Object.values( HANDLER_IDS ).forEach( ( handler ) => {
+			unregisterBySelector( { selector: SELECTOR_TARGET, id: handler } );
+		} );
 	} );
 
 	describe( 'Handler Registration', () => {
@@ -57,13 +72,13 @@ describe( 'Frontend Handlers', () => {
 
 			register( {
 				elementType: WIDGET_ELEMENT_TYPE,
-				id: 'handler-1',
+				id: HANDLER_IDS.handler_1,
 				callback: handler1,
 			} );
 
 			register( {
 				elementType: WIDGET_ELEMENT_TYPE,
-				id: 'handler-2',
+				id: HANDLER_IDS.handler_2,
 				callback: handler2,
 			} );
 
@@ -91,11 +106,11 @@ describe( 'Frontend Handlers', () => {
 
 			register( {
 				elementType: WIDGET_ELEMENT_TYPE,
-				id: 'widget-handler',
+				id: HANDLER_IDS.handler_1,
 				callback: handlerCallback,
 			} );
 
-			unregister( { elementType: WIDGET_ELEMENT_TYPE, id: 'widget-handler' } );
+			unregister( { elementType: WIDGET_ELEMENT_TYPE, id: HANDLER_IDS.handler_1 } );
 
 			const element = document.createElement( 'div' );
 			element.setAttribute( 'data-e-type', WIDGET_ELEMENT_TYPE );
@@ -123,7 +138,7 @@ describe( 'Frontend Handlers', () => {
 
 			register( {
 				elementType: WIDGET_ELEMENT_TYPE,
-				id: 'widget-handler',
+				id: HANDLER_IDS.handler_1,
 				callback: handlerCallback,
 			} );
 
@@ -157,7 +172,7 @@ describe( 'Frontend Handlers', () => {
 
 			register( {
 				elementType: WIDGET_ELEMENT_TYPE,
-				id: 'widget-handler',
+				id: HANDLER_IDS.handler_1,
 				callback: ( { settings } ) => {
 					settingsHistory.push( { ...settings } );
 					return undefined;
@@ -193,6 +208,37 @@ describe( 'Frontend Handlers', () => {
 	} );
 
 	describe( 'Cleanup and Unmount', () => {
+		it( 'should call selector unmount callback when element is destroyed', () => {
+			const ELEMENT_ID = 'selector-1';
+			const unmountSelector = jest.fn();
+
+			registerBySelector( {
+				selector: SELECTOR_TARGET,
+				id: HANDLER_IDS.handler_1,
+				callback: () => unmountSelector,
+			} );
+
+			const element = document.createElement( 'div' );
+			element.classList.add( ELEMENT_CLASS );
+			element.setAttribute( 'data-e-type', WIDGET_ELEMENT_TYPE );
+			element.setAttribute( 'data-id', ELEMENT_ID );
+			document.body.appendChild( element );
+
+			window.dispatchEvent(
+				new CustomEvent( 'elementor/element/render', {
+					detail: { id: ELEMENT_ID, type: WIDGET_ELEMENT_TYPE, element },
+				} )
+			);
+
+			window.dispatchEvent(
+				new CustomEvent( 'elementor/element/destroy', {
+					detail: { id: ELEMENT_ID, type: WIDGET_ELEMENT_TYPE },
+				} )
+			);
+
+			expect( unmountSelector ).toHaveBeenCalledTimes( 1 );
+		} );
+
 		it( 'should call unmount callback when element is destroyed', () => {
 			// Arrange
 			const ELEMENT_ID = 'element-1';
@@ -200,7 +246,7 @@ describe( 'Frontend Handlers', () => {
 
 			register( {
 				elementType: WIDGET_ELEMENT_TYPE,
-				id: 'widget-handler',
+				id: HANDLER_IDS.handler_1,
 				callback: () => unmountCallback,
 			} );
 
@@ -233,7 +279,7 @@ describe( 'Frontend Handlers', () => {
 
 			register( {
 				elementType: WIDGET_ELEMENT_TYPE,
-				id: 'widget-handler',
+				id: HANDLER_IDS.handler_1,
 				callback: () => {
 					lifecycleEvents.push( 'init' );
 					return () => {
@@ -279,7 +325,7 @@ describe( 'Frontend Handlers', () => {
 
 			register( {
 				elementType: WIDGET_ELEMENT_TYPE,
-				id: 'widget-handler',
+				id: HANDLER_IDS.handler_1,
 				callback: ( { signal } ) => {
 					receivedSignal = signal;
 					return undefined;
@@ -310,7 +356,7 @@ describe( 'Frontend Handlers', () => {
 
 			register( {
 				elementType: WIDGET_ELEMENT_TYPE,
-				id: 'widget-handler',
+				id: HANDLER_IDS.handler_1,
 				callback: ( { signal } ) => {
 					signal.addEventListener( 'abort', () => {
 						signalAborted = true;
@@ -351,7 +397,7 @@ describe( 'Frontend Handlers', () => {
 
 			register( {
 				elementType: PARENT_ELEMENT_TYPE,
-				id: 'parent-handler',
+				id: HANDLER_IDS.handler_1,
 				callback: ( { listenToChildren } ) => {
 					listenToChildren( [ CHILD_ELEMENT_TYPE ] ).render( childRenderCallback );
 					return undefined;
@@ -394,7 +440,7 @@ describe( 'Frontend Handlers', () => {
 
 			register( {
 				elementType: PARENT_ELEMENT_TYPE,
-				id: 'parent-handler',
+				id: HANDLER_IDS.parent_handler,
 				callback: ( { listenToChildren } ) => {
 					listenToChildren( [ CHILD_ELEMENT_TYPE ] ).render( childRenderCallback );
 					return undefined;
@@ -436,7 +482,7 @@ describe( 'Frontend Handlers', () => {
 
 			register( {
 				elementType: PARENT_ELEMENT_TYPE,
-				id: 'parent-handler',
+				id: HANDLER_IDS.parent_handler,
 				callback: ( { listenToChildren } ) => {
 					listenToChildren( [ CHILD_ELEMENT_TYPE ] ).render( childRenderCallback );
 					return undefined;
@@ -490,7 +536,7 @@ describe( 'Frontend Handlers', () => {
 
 			register( {
 				elementType: PARENT_ELEMENT_TYPE,
-				id: 'parent-handler',
+				id: HANDLER_IDS.parent_handler,
 				callback: ( { element, listenToChildren } ) => {
 					const parentId = element.getAttribute( 'data-id' ) || 'unknown';
 					callbackCounts.set( parentId, 0 );
@@ -543,16 +589,70 @@ describe( 'Frontend Handlers', () => {
 	} );
 
 	describe( 'DOMContentLoaded Initialization', () => {
+		it( 'should skip selector initialization on page load when in editor', () => {
+			// Arrange
+			const ELEMENT_ID = 'element-1';
+			const selectorHandler = jest.fn();
+
+			registerBySelector( {
+				selector: SELECTOR_TARGET,
+				id: HANDLER_IDS.handler_1,
+				callback: selectorHandler,
+			} );
+
+			const element = document.createElement( 'div' );
+			element.classList.add( ELEMENT_CLASS );
+			element.setAttribute( 'data-id', ELEMENT_ID );
+			element.setAttribute( 'data-e-type', WIDGET_ELEMENT_TYPE );
+			document.body.appendChild( element );
+
+			const editorWindow = window as Window & { elementor?: unknown };
+
+			editorWindow.elementor = {};
+
+			document.dispatchEvent( new Event( 'DOMContentLoaded' ) );
+
+			expect( selectorHandler ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'should initialize selector handlers on page load', () => {
+			// Arrange
+			const ELEMENT_ID = 'element-1';
+			const selectorHandler = jest.fn();
+
+			registerBySelector( {
+				selector: SELECTOR_TARGET,
+				id: HANDLER_IDS.handler_1,
+				callback: selectorHandler,
+			} );
+
+			const element = document.createElement( 'div' );
+			element.classList.add( ELEMENT_CLASS );
+			element.setAttribute( 'data-id', ELEMENT_ID );
+			element.setAttribute( 'data-e-type', WIDGET_ELEMENT_TYPE );
+			document.body.appendChild( element );
+
+			document.dispatchEvent( new Event( 'DOMContentLoaded' ) );
+
+			expect( selectorHandler ).toHaveBeenCalledTimes( 1 );
+			expect( selectorHandler ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					element,
+					settings: {},
+					signal: expect.any( AbortSignal ),
+				} )
+			);
+		} );
+
 		it( 'should initialize all existing elements on page load', () => {
 			// Arrange
-			elementTypeHandlers.clear();
-			document.body.innerHTML = '';
-
+			const PARENT_ID = 'parent-1';
+			const WIDGET_ID = 'widget-1';
 			const initializedElements: string[] = [];
 
 			register( {
 				elementType: PARENT_ELEMENT_TYPE,
-				id: 'parent-handler',
+				id: HANDLER_IDS.parent_handler,
 				callback: ( { element } ) => {
 					const id = element.getAttribute( 'data-id' ) || 'unknown';
 					initializedElements.push( id );
@@ -562,7 +662,7 @@ describe( 'Frontend Handlers', () => {
 
 			register( {
 				elementType: WIDGET_ELEMENT_TYPE,
-				id: 'widget-handler',
+				id: HANDLER_IDS.handler_1,
 				callback: ( { element } ) => {
 					const id = element.getAttribute( 'data-id' ) || 'unknown';
 					initializedElements.push( id );
@@ -572,12 +672,12 @@ describe( 'Frontend Handlers', () => {
 
 			const parent = document.createElement( 'div' );
 			parent.setAttribute( 'data-e-type', PARENT_ELEMENT_TYPE );
-			parent.setAttribute( 'data-id', 'parent-1' );
+			parent.setAttribute( 'data-id', PARENT_ID );
 			document.body.appendChild( parent );
 
 			const widget = document.createElement( 'div' );
 			widget.setAttribute( 'data-e-type', WIDGET_ELEMENT_TYPE );
-			widget.setAttribute( 'data-id', 'widget-1' );
+			widget.setAttribute( 'data-id', WIDGET_ID );
 			document.body.appendChild( widget );
 
 			init();
@@ -586,8 +686,8 @@ describe( 'Frontend Handlers', () => {
 			document.dispatchEvent( new Event( 'DOMContentLoaded' ) );
 
 			// Assert
-			expect( initializedElements ).toContain( 'parent-1' );
-			expect( initializedElements ).toContain( 'widget-1' );
+			expect( initializedElements ).toContain( PARENT_ID );
+			expect( initializedElements ).toContain( WIDGET_ID );
 		} );
 	} );
 } );

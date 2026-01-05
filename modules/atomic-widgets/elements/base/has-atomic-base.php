@@ -4,13 +4,14 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Base;
 
 use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
-use Elementor\Modules\AtomicWidgets\Controls\Base\Element_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
+use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -297,8 +298,28 @@ trait Has_Atomic_Base {
 	public function get_atomic_settings(): array {
 		$schema = static::get_props_schema();
 		$props = $this->get_settings();
+		$initial_attributes = $this->get_initial_attributes();
+		
+
+		$props['attributes'] = Attributes_Prop_Type::generate( array_merge(
+			$initial_attributes['value'] ?? [],
+			$props['attributes']['value'] ?? []
+			) );
 
 		return Render_Props_Resolver::for_settings()->resolve( $schema, $props );
+	}
+
+	protected function get_initial_attributes() {
+		return Attributes_Prop_Type::generate( [
+			Key_Value_Prop_Type::generate( [
+				'key' => String_Prop_Type::generate('data-e-type'),
+				'value' => $this->get_type(),
+				] ),
+			Key_Value_Prop_Type::generate( [
+				'key' => String_Prop_Type::generate('data-id'),
+				'value' => $this->get_id(),
+				] )
+			] );
 	}
 
 	public function get_atomic_setting( string $key ) {
