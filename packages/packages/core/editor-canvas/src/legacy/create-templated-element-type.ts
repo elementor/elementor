@@ -191,9 +191,6 @@ export function createTemplatedElementView( {
 			this.isRendered = true;
 
 			this.triggerMethod( 'render', this );
-			this.afterRenderResolve();
 		}
-
-		afterRenderResolve() {}
 	};
 }
