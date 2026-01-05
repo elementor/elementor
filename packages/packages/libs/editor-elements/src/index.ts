@@ -30,6 +30,7 @@ export { getElementLabel } from './sync/get-element-label';
 export { getElementSetting, getElementSettings } from './sync/get-element-setting';
 export { getElementStyles } from './sync/get-element-styles';
 export { getElementType } from './sync/get-element-type';
+export { getAllDescendants } from './sync/get-all-descendants';
 export { getElements } from './sync/get-elements';
 export { getSelectedElements } from './sync/get-selected-elements';
 export { getWidgetsCache } from './sync/get-widgets-cache';

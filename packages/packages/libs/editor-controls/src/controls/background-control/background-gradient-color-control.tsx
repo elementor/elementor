@@ -63,7 +63,7 @@ export const BackgroundGradientColorControl = createControl( () => {
 
 		return {
 			type: type.value,
-			angle: angle.value,
+			angle: angle?.value || 0,
 			stops: stops.value.map( ( { value: { color, offset } }: ColorStop ) => ( {
 				color: color.value,
 				offset: offset.value,

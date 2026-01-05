@@ -895,7 +895,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 	public function test_post_create_component__fails_with_invalid_origin_value_type() {
 		// Arrange
 		$this->act_as_admin();
-		
+
 		// originValue with wrong type structure will cause prop type validation to fail
 		$invalid_overridable_props = [
 			'props' => [
@@ -1709,6 +1709,33 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Assert - Both should succeed
 		$this->assertEquals( 200, $validate_response->get_status(), 'Validate endpoint should return 200. Response: ' . json_encode( $validate_response->get_data() ) );
 		$this->assertEquals( 201, $create_response->get_status(), 'Create endpoint should return 201. Response: ' . json_encode( $create_response->get_data() ) );
+	}
+
+	public function test_get_overridable_props__returns_autosave_version_when_exists() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Component With Autosave', $this->mock_component_1_content );
+
+		$mocks = new Component_Overrides_Mocks();
+		$published_props = [ 'props' => [], 'groups' => [ 'items' => [], 'order' => [] ] ];
+		$autosave_props = $mocks->get_mock_component_overridable_props();
+
+		update_post_meta( $component_id, Component_Document::OVERRIDABLE_PROPS_META_KEY, json_encode( $published_props ) );
+
+		$document = Plugin::$instance->documents->get( $component_id );
+		$autosave = $document->get_autosave( get_current_user_id(), true );
+		update_post_meta( $autosave->get_post()->ID, Component_Document::OVERRIDABLE_PROPS_META_KEY, json_encode( $autosave_props ) );
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/overridable-props' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+
+		$data = $response->get_data()['data'];
+		$this->assertEquals( $autosave_props, $data );
 	}
 
 	// Helpers
