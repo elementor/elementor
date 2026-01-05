@@ -113,7 +113,7 @@ describe( 'ComponentsTab', () => {
 			expect( screen.getByText( 'No components yet' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Create your first one:' ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: /Create with AI/i } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: /Create component with AI/i } ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render components list when components exist', () => {
