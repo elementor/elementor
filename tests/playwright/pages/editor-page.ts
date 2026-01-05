@@ -200,9 +200,14 @@ export default class EditorPage extends BasePage {
 
 		for ( const selector of announcementSelectors ) {
 			if ( await this.page.locator( `#${ selector }` ).count() > 0 ) {
+				await this.page.keyboard.press( 'Escape' );
 				await this.page.evaluate( ( id ) => document.getElementById( id )?.remove(), selector );
 			}
 		}
+
+		await this.page.evaluate( () => {
+			document.querySelectorAll( '.MuiDialog-root, .MuiModal-root' ).forEach( ( el ) => el.remove() );
+		} );
 	}
 
 	/**
