@@ -66,7 +66,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 	const handleSubmit = ( { label, group }: { label: string; group: string | null } ) => {
 		const propTypeDefault = propType.default ?? {};
 
-		const originValue = getFinalWidgetPropValue( overridableValue.origin_value ) ?? value ?? propTypeDefault;
+		const originValue = getFinalWidgetPropValue( overridableValue?.origin_value ) ?? value ?? propTypeDefault;
 
 		const matchingOverridableProp = overridableValue
 			? overridableProps?.props?.[ overridableValue.override_key ]
