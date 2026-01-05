@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useMemo, useRef } from 'react';
-import { Box, ListItem, MenuList, MenuSubheader, styled } from '@elementor/ui';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { useEffect, useMemo, useRef } from 'react';
+import { Box, ListItem, MenuList, MenuSubheader, styled, useTheme } from '@elementor/ui';
+import { useVirtualizer, type Virtualizer } from '@tanstack/react-virtual';
 
 import { useScrollTop, useScrollToSelected } from '../../hooks';
 
@@ -22,7 +22,7 @@ export type PopoverMenuListProps< T, V extends string > = {
 	selectedValue?: V;
 	itemStyle?: ( item: VirtualizedItem< T, V > ) => React.CSSProperties;
 	'data-testid'?: string;
-	onChange?: ( params: { getVirtualIndexes: () => number[] } ) => void;
+	onChange?: ( visibleItems: VirtualizedItem< T, V >[] ) => void;
 	menuListTemplate?: React.ComponentType< React.ComponentProps< typeof MenuList > >;
 	menuItemContentTemplate?: ( item: VirtualizedItem< T, V > ) => React.ReactNode;
 	noResultsComponent?: React.ReactNode;
@@ -64,6 +64,7 @@ export const PopoverMenuList = < T, V extends string >( {
 }: PopoverMenuListProps< T, V > ) => {
 	const containerRef = useRef< HTMLDivElement >( null );
 	const scrollTop = useScrollTop( { containerRef } );
+	const theme = useTheme();
 
 	const MenuListComponent = CustomMenuList || StyledMenuList;
 
@@ -96,14 +97,24 @@ export const PopoverMenuList = < T, V extends string >( {
 		return visibleAndStickyIndexes.sort( ( a, b ) => a - b );
 	};
 
+	const onChangeCallback = ( { getVirtualIndexes }: Virtualizer< HTMLDivElement, Element > ) => {
+		const visibleItems = getVirtualIndexes().map( ( index ) => items[ index ] );
+		onChange?.( visibleItems );
+	};
+
 	const virtualizer = useVirtualizer( {
 		count: items.length,
 		getScrollElement: () => containerRef.current,
 		estimateSize: () => ITEM_HEIGHT,
 		overscan: LIST_ITEMS_BUFFER,
 		rangeExtractor: getActiveItemIndices,
-		onChange,
+		onChange: onChangeCallback,
 	} );
+
+	useEffect( () => {
+		onChangeCallback( virtualizer );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ items ] );
 
 	useScrollToSelected( { selectedValue, items, virtualizer } );
 	const virtualItems = virtualizer.getVirtualItems();
@@ -180,6 +191,7 @@ export const PopoverMenuList = < T, V extends string >( {
 								tabIndex={ isSelected ? 0 : tabIndexFallback }
 								sx={ {
 									transform: `translateY(${ virtualRow.start + MENU_LIST_PADDING_TOP }px)`,
+									...theme.typography.caption,
 									...( itemStyle ? itemStyle( item ) : {} ),
 								} }
 							>
@@ -201,7 +213,6 @@ export const StyledMenuList = styled( MenuList )( ( { theme } ) => ( {
 		alignItems: 'center',
 	},
 	'& > [role="option"]': {
-		...theme.typography.caption,
 		lineHeight: 'inherit',
 		padding: theme.spacing( 0.75, 2, 0.75, 4 ),
 		'&:hover, &:focus': {
