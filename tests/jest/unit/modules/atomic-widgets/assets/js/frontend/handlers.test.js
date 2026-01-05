@@ -3,9 +3,13 @@ jest.mock( '@elementor/frontend-handlers', () => ( {
 } ), { virtual: true } );
 
 const HANDLER_ID = 'atomic-link-action-handler';
-const SELECTOR = '[data-action-link]';
-const ALLOWED_ACTION_URL = 'https://example.com/?action=popup';
-const BLOCKED_ACTION_URL = 'https://example.com/?action=disallowed';
+const SELECTOR = '[data-action-link], :has(> [data-action-link])';
+
+const ALLOWED_ACTION = 'off_canvas';
+const BLOCKED_ACTION = 'popup';
+
+const ALLOWED_ACTION_URL = `https://example.com/?action=${ ALLOWED_ACTION }`;
+const BLOCKED_ACTION_URL = `https://example.com/?action=${ BLOCKED_ACTION }`;
 const ANY_CONTEXT_URL = 'https://example.com/?action=anything';
 
 describe( 'Atomic Widgets frontend handlers', () => {
@@ -122,6 +126,52 @@ describe( 'Atomic Widgets frontend handlers', () => {
 		expect( runAction ).toHaveBeenCalledTimes( 1 );
 		expect( runAction ).toHaveBeenCalledWith( ANY_CONTEXT_URL, event );
 		expect( event.defaultPrevented ).toBe( true );
+	} );
+
+	it( 'runs nested link actions only when clicking inside the nested element', async () => {
+		// Arrange
+		const { registration } = await importHandlers();
+		const element = document.createElement( 'h2' );
+		const nestedLink = document.createElement( 'a' );
+
+		nestedLink.dataset.actionLink = ANY_CONTEXT_URL;
+		element.appendChild( nestedLink );
+		registration.callback( { element } );
+
+		const linkEvent = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
+		const elementEvent = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
+
+		// Act
+		nestedLink.dispatchEvent( linkEvent );
+		element.dispatchEvent( elementEvent );
+
+		// Assert
+		expect( runAction ).toHaveBeenCalledTimes( 1 );
+		expect( runAction ).toHaveBeenCalledWith( ANY_CONTEXT_URL, linkEvent );
+		expect( linkEvent.defaultPrevented ).toBe( true );
+		expect( elementEvent.defaultPrevented ).toBe( false );
+	} );
+
+	it( 'adds non-whitelisted editor link actions', async () => {
+		// Arrange
+		global.elementor = {};
+		global.elementorFrontend = { ...global.elementorFrontend, hooks: { applyFilters: () => [ BLOCKED_ACTION ] } };
+		const { registration } = await importHandlers();
+
+		const element = document.createElement( 'button' );
+
+		element.dataset.actionLink = BLOCKED_ACTION_URL;
+		registration.callback( { element } );
+
+		const event = new MouseEvent( 'click', { bubbles: true, cancelable: true } );
+
+		// Act
+		element.dispatchEvent( event );
+
+		// Assert
+		expect( event.defaultPrevented ).toBe( true );
+		expect( runAction ).toHaveBeenCalledTimes( 1 );
+		expect( runAction ).toHaveBeenCalledWith( BLOCKED_ACTION_URL, event );
 	} );
 } );
 
