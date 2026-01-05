@@ -1,0 +1,26 @@
+{
+  "widgetKeys": {},
+  "propTypes": {
+    "a-string-to-html": {
+      "fromType": "a-string",
+      "toType": "html",
+      "url": "a-string-to-html.json"
+    },
+    "html-to-html-v2": {
+      "fromType": "html",
+      "toType": "html-v2",
+      "url": "html-to-html-v2.json"
+    },
+    "old-image-to-image": {
+      "fromType": "old-image",
+      "toType": "image",
+      "url": "old-image-to-image.json"
+    },
+    "old-shadow-to-shadow": {
+      "fromType": "old-shadow",
+      "toType": "shadow",
+      "url": "old-shadow-to-shadow.json"
+    }
+  }
+}
+

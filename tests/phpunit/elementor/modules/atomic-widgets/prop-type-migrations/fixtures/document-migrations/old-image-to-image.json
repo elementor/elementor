@@ -1,0 +1,74 @@
+{
+  "up": [
+    {
+      "op": {
+        "fn": "set",
+        "path": "$$type",
+        "value": "image"
+      }
+    },
+    {
+      "op": {
+        "fn": "move",
+        "src": "value.source",
+        "dest": "value.src"
+      },
+      "condition": {
+        "fn": "exists",
+        "path": "value.source"
+      }
+    },
+    {
+      "op": {
+        "fn": "delete",
+        "path": "value.alt"
+      },
+      "condition": {
+        "fn": "exists",
+        "path": "value.alt"
+      }
+    },
+    {
+      "op": {
+        "fn": "set",
+        "path": "value.size",
+        "value": "full"
+      },
+      "condition": {
+        "fn": "not_exists",
+        "path": "value.size"
+      }
+    }
+  ],
+  "down": [
+    {
+      "op": {
+        "fn": "set",
+        "path": "$$type",
+        "value": "old-image"
+      }
+    },
+    {
+      "op": {
+        "fn": "move",
+        "src": "value.src",
+        "dest": "value.source"
+      },
+      "condition": {
+        "fn": "exists",
+        "path": "value.src"
+      }
+    },
+    {
+      "op": {
+        "fn": "delete",
+        "path": "value.size"
+      },
+      "condition": {
+        "fn": "exists",
+        "path": "value.size"
+      }
+    }
+  ]
+}
+

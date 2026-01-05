@@ -1,0 +1,21 @@
+{
+  "up": [
+    {
+      "op": {
+        "fn": "set",
+        "path": "value[*].$$type",
+        "value": "shadow"
+      }
+    }
+  ],
+  "down": [
+    {
+      "op": {
+        "fn": "set",
+        "path": "value[*].$$type",
+        "value": "old-shadow"
+      }
+    }
+  ]
+}
+
