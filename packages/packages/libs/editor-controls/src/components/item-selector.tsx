@@ -146,9 +146,8 @@ const ItemList = ( {
 }: ItemListProps ) => {
 	const selectedItemFound = itemListItems.find( ( item ) => item.value === selectedItem );
 
-	const debouncedVirtualizeChange = useDebounce( ( { getVirtualIndexes }: { getVirtualIndexes: () => number[] } ) => {
-		getVirtualIndexes().forEach( ( index ) => {
-			const item = itemListItems[ index ];
+	const debouncedVirtualizeChange = useDebounce( ( visibleItems: SelectableItem[] ) => {
+		visibleItems.forEach( ( item ) => {
 			if ( item && item.type === 'item' ) {
 				onDebounce( item.value );
 			}
