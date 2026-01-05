@@ -23,14 +23,9 @@ class Third_Party_Pages_Menu implements Menu_Item_Third_Level_Interface {
 		return true;
 	}
 
-<<<<<<< HEAD
-	public function get_label() {
-		return esc_html__( 'Third Party Pages', 'elementor' );
-=======
-	public function get_label(): string {
-		return esc_html__( 'Addons', 'elementor' );
->>>>>>> 40cd34dd81 (Internal: VQA fixes [ED-22181] (#34069))
-	}
+    public function get_label(): string {
+      return esc_html__( 'Addons', 'elementor' );
+    }
 
 	public function get_position() {
 		return 200;
