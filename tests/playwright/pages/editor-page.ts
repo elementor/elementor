@@ -187,6 +187,22 @@ export default class EditorPage extends BasePage {
 	async waitForPanelToLoad(): Promise<void> {
 		await this.page.waitForSelector( '.elementor-panel-loading', { state: 'detached' } );
 		await this.page.waitForSelector( '#elementor-loading', { state: 'hidden' } );
+		await this.closeAnnouncementsIfVisible();
+	}
+
+	/**
+	 * Close announcement modals if visible.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async closeAnnouncementsIfVisible(): Promise<void> {
+		const announcementSelectors = [ 'e-announcements-root', 'e-a11y-announcement' ];
+
+		for ( const selector of announcementSelectors ) {
+			if ( await this.page.locator( `#${ selector }` ).count() > 0 ) {
+				await this.page.evaluate( ( id ) => document.getElementById( id )?.remove(), selector );
+			}
+		}
 	}
 
 	/**
