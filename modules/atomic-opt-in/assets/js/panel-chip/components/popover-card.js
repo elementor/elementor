@@ -12,7 +12,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 const popoverData = {
-	image: 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip.png',
+	image: 'https://assets.elementor.com/v4-promotion/v1/images/v4_chip_new.png',
 	image_alt: __( 'Atomic Elements', 'elementor' ),
 	title: __( 'Atomic Elements', 'elementor' ),
 	description: [
