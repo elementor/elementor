@@ -397,9 +397,14 @@ export default class WpAdminPage extends BasePage {
 	 * @return {Promise<void>}
 	 */
 	async closeAnnouncementsIfVisible(): Promise<void> {
-		if ( await this.page.locator( '#e-announcements-root' ).count() > 0 ) {
-			await this.page.evaluate( ( selector ) => document.getElementById( selector ).remove(), 'e-announcements-root' );
+		const announcementSelectors = [ 'e-announcements-root', 'e-a11y-announcement' ];
+
+		for ( const selector of announcementSelectors ) {
+			if ( await this.page.locator( `#${ selector }` ).count() > 0 ) {
+				await this.page.evaluate( ( id ) => document.getElementById( id )?.remove(), selector );
+			}
 		}
+
 		let window: WindowType;
 		await this.page.evaluate( () => {
 			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
