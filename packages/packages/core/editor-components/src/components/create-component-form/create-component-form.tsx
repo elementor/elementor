@@ -4,13 +4,16 @@ import { getElementLabel, type V1ElementData } from '@elementor/editor-elements'
 import { notify } from '@elementor/editor-notifications';
 import { Form as FormElement, ThemeProvider } from '@elementor/editor-ui';
 import { StarIcon } from '@elementor/icons';
+import { __getState as getState } from '@elementor/store';
 import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
 import { findNonAtomicElementsInElement } from '../../prevent-non-atomic-nesting';
 import { createUnpublishedComponent } from '../../store/actions/create-unpublished-component';
-import { type ComponentFormValues } from '../../types';
+import { selectComponentByUid } from '../../store/store';
+import { type ComponentFormValues, type PublishedComponent } from '../../types';
+import { switchToComponent } from '../../utils/switch-to-component';
 import { trackComponentEvent } from '../../utils/tracking';
 import { useForm } from './hooks/use-form';
 import { createBaseComponentSchema, createSubmitComponentSchema } from './utils/component-form-schema';
@@ -85,7 +88,19 @@ export function CreateComponentForm() {
 				throw new Error( `Can't save element as component: element not found` );
 			}
 
-			const uid = await createUnpublishedComponent( values.componentName, element.element, eventData.current );
+			const { uid, instanceId } = await createUnpublishedComponent(
+				values.componentName,
+				element.element,
+				eventData.current
+			);
+
+			const publishedComponentId = ( selectComponentByUid( getState(), uid ) as PublishedComponent )?.id;
+
+			if ( publishedComponentId ) {
+				switchToComponent( publishedComponentId, instanceId );
+			} else {
+				throw new Error( 'Failed to find published component' );
+			}
 
 			setResultNotification( {
 				show: true,
