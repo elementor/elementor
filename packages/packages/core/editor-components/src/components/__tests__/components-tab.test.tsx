@@ -21,8 +21,8 @@ jest.mock( '@elementor/editor-documents', () => ( {
 	setDocumentModifiedStatus: jest.fn(),
 } ) );
 
-jest.mock( '@elementor-external/angie-sdk', () => ( {
-	AngieMcpSdk: jest.fn().mockImplementation( () => ( {
+jest.mock( '@elementor/editor-mcp', () => ( {
+	getAngieSdk: jest.fn().mockImplementation( () => ( {
 		isAngieReady: jest.fn( () => false ),
 		triggerAngie: jest.fn(),
 	} ) ),
