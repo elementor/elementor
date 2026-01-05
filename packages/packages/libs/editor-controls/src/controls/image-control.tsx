@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
+import { ControlLabel } from '../components/control-label';
 import { createControl } from '../create-control';
 import { useUnfilteredFilesUpload } from '../hooks/use-unfiltered-files-upload';
 import { ImageMediaControl } from './image-media-control';
@@ -13,39 +14,27 @@ import { SelectControl } from './select-control';
 
 type ImageControlProps = {
 	sizes: { label: string; value: string }[];
-	showMode?: 'all' | 'media' | 'sizes';
 };
 
-export const ImageControl = createControl( ( { sizes, showMode = 'all' }: ImageControlProps ) => {
+export const ImageControl = createControl( ( { sizes }: ImageControlProps ) => {
 	const propContext = useBoundProp( imagePropTypeUtil );
 
-	let componentToRender;
-	switch ( showMode ) {
-		case 'media':
-			componentToRender = <ImageSrcControl />;
-			break;
-		case 'sizes':
-			componentToRender = <ImageSizeControl sizes={ sizes } />;
-			break;
-		case 'all':
-		default:
-			componentToRender = (
-				<Stack gap={ 1.5 }>
-					<ControlFormLabel>{ __( 'Image', 'elementor' ) }</ControlFormLabel>
-					<ImageSrcControl />
-					<Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
-						<Grid item xs={ 6 }>
-							<ControlFormLabel>{ __( 'Resolution', 'elementor' ) }</ControlFormLabel>
-						</Grid>
-						<Grid item xs={ 6 } sx={ { overflow: 'hidden' } }>
-							<ImageSizeControl sizes={ sizes } />
-						</Grid>
+	return (
+		<PropProvider { ...propContext }>
+			<Stack gap={ 1.5 }>
+				<ControlLabel>{ __( 'Image', 'elementor' ) }</ControlLabel>
+				<ImageSrcControl />
+				<Grid container gap={ 1.5 } alignItems="center" flexWrap="nowrap">
+					<Grid item xs={ 6 }>
+						<ControlFormLabel>{ __( 'Resolution', 'elementor' ) }</ControlFormLabel>
 					</Grid>
-				</Stack>
-			);
-	}
-
-	return <PropProvider { ...propContext }>{ componentToRender }</PropProvider>;
+					<Grid item xs={ 6 } sx={ { overflow: 'hidden' } }>
+						<ImageSizeControl sizes={ sizes } />
+					</Grid>
+				</Grid>
+			</Stack>
+		</PropProvider>
+	);
 } );
 
 const ImageSrcControl = () => {
