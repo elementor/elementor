@@ -114,7 +114,7 @@ export function createVariableTypeRegistry() {
 		return key in variableTypes;
 	};
 
-	const applySelectionFilter = <T extends { type: string }>( variables: T[] ): T[] => {
+	const applySelectionFilter = < T extends { type: string } >( variables: T[] ): T[] => {
 		return variables.filter( ( { type } ) => {
 			const options = variableTypes[ type ];
 

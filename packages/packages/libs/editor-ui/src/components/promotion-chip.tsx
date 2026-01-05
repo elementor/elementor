@@ -6,6 +6,7 @@ export const PromotionChip = React.forwardRef< HTMLDivElement, { onClick: () => 
 	( { onClick, ...props }, ref ) => {
 		return (
 			<Chip
+				aria-label="Promotion chip"
 				ref={ ref }
 				size="tiny"
 				color="promotion"
