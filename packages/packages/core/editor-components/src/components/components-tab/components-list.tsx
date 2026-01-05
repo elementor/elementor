@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { getAngieSdk } from '@elementor/editor-mcp';
 import { AIIcon, ComponentsIcon } from '@elementor/icons';
 import { Box, Button, Divider, Link, List, Stack, Typography } from '@elementor/ui';
-import { AngieMcpSdk } from '@elementor-external/angie-sdk';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
@@ -19,15 +19,6 @@ const LEARN_MORE_URL = 'http://go.elementor.com/components-guide-article';
 const SUBTITLE_OVERRIDE_SX = {
 	fontSize: '0.875rem !important',
 	fontWeight: '500 !important',
-};
-
-let angieSdk: AngieMcpSdk | null = null;
-
-const getAngieSdk = () => {
-	if ( ! angieSdk ) {
-		angieSdk = new AngieMcpSdk();
-	}
-	return angieSdk;
 };
 
 export function ComponentsList() {
