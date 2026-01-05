@@ -67,6 +67,10 @@ const EmptyState = () => {
 
 		if ( sdk.isAngieReady() ) {
 			sdk.triggerAngie( {
+				prompt: __(
+					'Create a [hero/testimonial/product card/CTA/feature] component for my [business type]. Include [describe what you want]',
+					'elementor'
+				),
 				context: { source: 'components-panel-empty-state' },
 			} );
 		} else {
@@ -126,7 +130,13 @@ const EmptyState = () => {
 				</Typography>
 
 				<AngiePromotionModal open={ isAngieModalOpen } onClose={ () => setIsAngieModalOpen( false ) }>
-					<Button variant="outlined" size="small" onClick={ handleCreateWithAI } endIcon={ <AIIcon /> }>
+					<Button
+						color="secondary"
+						variant="outlined"
+						size="small"
+						onClick={ handleCreateWithAI }
+						endIcon={ <AIIcon /> }
+					>
 						{ __( 'Create component with AI', 'elementor' ) }
 					</Button>
 				</AngiePromotionModal>
