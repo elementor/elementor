@@ -69,6 +69,7 @@ jobs:
           - shardIndex: "elements-regression"
           - shardIndex: "plugin_tester_section"
           - shardIndex: "plugin_tester_container"
+          - shardIndex: "import_export_customization"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -124,10 +125,11 @@ jobs:
           matrix.shardIndex != 'elements-regression' &&
           matrix.shardIndex != 'plugin_tester_container' &&
           matrix.shardIndex != 'plugin_tester_section' &&
-          matrix.shardIndex != 'v4-tests'
+          matrix.shardIndex != 'v4-tests' &&
+          matrix.shardIndex != 'import_export_customization'
           }}
         run: |
-          npm run test:playwright -- --grep-invert="@v4-tests|@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          npm run test:playwright -- --grep-invert="@v4-tests|@plugin_tester_container|@plugin_tester_section|@import_export_customization" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run v4 tests
         if: ${{ matrix.shardIndex == 'v4-tests' }}
         run: npm run test:playwright -- --grep="@v4-tests"
@@ -137,6 +139,9 @@ jobs:
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
         run: npm run test:playwright -- --grep="@plugin_tester_section"
+      - name: Run import export customization tests
+        if: ${{ matrix.shardIndex == 'import_export_customization' }}
+        run: npm run test:playwright -- --grep="@import_export_customization"
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
         run: npm run test:playwright:elements-regression
