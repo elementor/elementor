@@ -115,7 +115,10 @@ const EmptyState = () => {
 				</Typography>
 
 				<Typography align="center" variant="caption" color="secondary" sx={ { maxWidth: 228 } }>
-					{ __( 'Right-click any element on your canvas and select "Create component"', 'elementor' ) }
+					{ __(
+						'Right-click any div-block or flexbox on your canvas or structure and select "Create component"',
+						'elementor'
+					) }
 				</Typography>
 
 				<Typography align="center" variant="caption" color="secondary">
