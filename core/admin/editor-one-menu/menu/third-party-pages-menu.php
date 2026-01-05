@@ -24,7 +24,7 @@ class Third_Party_Pages_Menu implements Menu_Item_Third_Level_Interface {
 	}
 
 	public function get_label(): string {
-		return esc_html__( 'Third Party Pages', 'elementor' );
+		return esc_html__( 'Addons', 'elementor' );
 	}
 
 	public function get_position(): int {
