@@ -480,6 +480,18 @@ html.elementor-html {
 	.elementor-widget-empty {
 		display: none;
 	}
+
+	// Show elements overlays when an embedded document is being edited
+	// For example, when a component is being edited.
+	:where(.elementor-edit-area-active) {
+		.elementor-element-overlay,
+		.elementor-empty,
+		.elementor-empty-view,
+		.elementor-widget-empty 
+		{
+			display: revert;
+		}
+	}
 }
 
 // Muted elements in the editor
