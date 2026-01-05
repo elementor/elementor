@@ -49,10 +49,10 @@ function shouldFireLinkActionHandler( url ) {
 		return false;
 	}
 
-	const whitelist = elementorFrontend?.hooks.applyFilters( WHITELIST_FILTER, LINK_ACTIONS_EDITOR_WHITELIST );
+	const whitelist = elementorFrontend?.hooks?.applyFilters( WHITELIST_FILTER, LINK_ACTIONS_EDITOR_WHITELIST ) ??
+		LINK_ACTIONS_EDITOR_WHITELIST;
 
 	return !! whitelist.find( ( allowedAction ) => action.includes( allowedAction ) );
-
 }
 
 function isEditorContext() {
