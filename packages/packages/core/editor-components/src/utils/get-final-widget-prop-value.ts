@@ -4,9 +4,9 @@ import { componentInstanceOverridePropTypeUtil } from '../prop-types/component-i
 import { type ComponentInstanceOverride } from '../prop-types/component-instance-overrides-prop-type';
 import { componentOverridablePropTypeUtil } from '../prop-types/component-overridable-prop-type';
 
-export const getFinalWidgetPropValue = ( override: ComponentInstanceOverride | PropValue ): PropValue => {
-	const overridableValue = componentOverridablePropTypeUtil.extract( override );
-	const overrideValue = componentInstanceOverridePropTypeUtil.extract( override );
+export const getFinalWidgetPropValue = ( originalPropValue: ComponentInstanceOverride | PropValue ): PropValue => {
+	const overridableValue = componentOverridablePropTypeUtil.extract( originalPropValue );
+	const overrideValue = componentInstanceOverridePropTypeUtil.extract( originalPropValue );
 
 	if ( overridableValue ) {
 		const overridableOverrideValue = componentInstanceOverridePropTypeUtil.extract( overridableValue.origin_value );
@@ -22,5 +22,5 @@ export const getFinalWidgetPropValue = ( override: ComponentInstanceOverride | P
 		return overrideValue.override_value as TransformablePropValue< string, unknown >;
 	}
 
-	return override;
+	return originalPropValue;
 };
