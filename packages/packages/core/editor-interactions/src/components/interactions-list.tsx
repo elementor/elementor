@@ -6,9 +6,9 @@ import { Alert, AlertTitle, Box, IconButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
-import { buildAnimationIdString, buildDisplayLabel, createDefaultInteractionItem } from '../utils/prop-value-utils';
+import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
 import { InteractionDetails } from './interaction-details';
-
+import { generateTempInteractionId } from '../utils/temp-id-utils';
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
 export type InteractionListProps = {
@@ -92,7 +92,11 @@ export function InteractionsList( props: InteractionListProps ) {
 						<IconButton
 							aria-label={ __( 'Play interaction', 'elementor' ) }
 							size="tiny"
-							onClick={ () => onPlayInteraction( buildAnimationIdString( value.value ) ) }
+							onClick={ () => {
+								const interactionId = extractString( value.value.interaction_id ) || 
+									generateTempInteractionId();
+									onPlayInteraction( interactionId );
+							} }
 						>
 							<PlayerPlayIcon fontSize="tiny" />
 						</IconButton>

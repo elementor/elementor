@@ -93,11 +93,10 @@ function applyInteractionsToElement( element, interactionsData ) {
 		parsedData = interactionsData;
 	}
 
-	const interactions = Object.values( parsedData?.items );
+	const interactions = Object.values( parsedData?.items || [] );
 
 	interactions.forEach( ( interaction ) => {
 		const animationName = extractAnimationId( interaction );
-
 		const animConfig = animationName && parseAnimationName( animationName );
 
 		if ( animConfig ) {
@@ -193,21 +192,33 @@ function registerWindowEvents() {
 }
 
 function handlePlayInteractions( event ) {
-	const { elementId, animationId } = event.detail;
+	const { elementId, interactionId } = event.detail;
 	const interactionsData = getInteractionsData();
 	const item = interactionsData.find( ( elementItemData ) => elementItemData.dataId === elementId );
 	if ( ! item ) {
 		return;
 	}
+
 	const element = findElementByInteractionId( elementId );
-	if ( element ) {
-		const interactionsCopy = {
-			...item.interactions,
-			items: [ ...item.interactions.items ],
-		};
-		interactionsCopy.items = interactionsCopy.items.filter( ( interactionItem ) => extractAnimationId( interactionItem ) === animationId );
-		applyInteractionsToElement( element, JSON.stringify( interactionsCopy ) );
+	if ( ! element ) {
+		return;
 	}
+	const interactionsCopy = {
+		...item.interactions,
+		items: item.interactions.items.filter( ( interactionItem ) => {
+			const itemId = extractInteractionId( interactionItem );
+			return itemId === interactionId;
+		} ),
+	};
+	applyInteractionsToElement( element, interactionsCopy );
+
+}
+
+function extractInteractionId( interaction ) {
+	if ( 'interaction-item' === interaction?.$$type && interaction?.value ) {
+		return interaction.value.interaction_id?.value || null;
+	}
+	return null;
 }
 
 if ( 'loading' === document.readyState ) {
