@@ -275,7 +275,7 @@ class Documents_Manager {
 	 */
 	public function get_doc_for_frontend( $post_id ) {
 		$preview_id = (int) Utils::get_super_global_value( $_GET, 'preview_id' );
-		$is_preview = is_preview() && $post_id === $preview_id;
+		$is_preview = is_preview();
 		$is_nonce_verify = wp_verify_nonce( Utils::get_super_global_value( $_GET, 'preview_nonce' ), 'post_preview_' . $preview_id );
 
 		if ( ( $is_preview && $is_nonce_verify ) || Plugin::$instance->preview->is_preview_mode() ) {
