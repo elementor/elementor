@@ -8,22 +8,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Migration_Interpreter {
 	public static function run( array $migration_schema, array $element_data, string $direction = 'up' ): array {
-		try {
-			if ( ! in_array( $direction, [ 'up', 'down' ], true ) ) {
-				throw new \InvalidArgumentException( sprintf( 'Invalid direction "%s". Must be "up" or "down".', esc_html( $direction ) ) );
-			}
+		if ( ! in_array( $direction, [ 'up', 'down' ], true ) ) {
+			throw new \InvalidArgumentException( sprintf( 'Invalid direction "%s". Must be "up" or "down".', esc_html( $direction ) ) );
+		}
 
-			$operations = $migration_schema[ $direction ] ?? [];
+		$operations = $migration_schema[ $direction ] ?? [];
 
-			if ( empty( $operations ) ) {
-				return $element_data;
-			}
-
-			foreach ( $operations as $operation_def ) {
-				$element_data = self::apply_operation( $operation_def, $element_data );
-			}
-		} catch ( \Exception $e ) {
+		if ( empty( $operations ) ) {
 			return $element_data;
+		}
+
+		foreach ( $operations as $operation_def ) {
+			$element_data = self::apply_operation( $operation_def, $element_data );
 		}
 
 		return $element_data;
@@ -126,7 +122,7 @@ class Migration_Interpreter {
 		$clean = $op['clean'] ?? true;
 
 		if ( null === $src || null === $dest ) {
-			return;
+			throw new \InvalidArgumentException( 'Move operation requires both "src" and "dest" parameters' );
 		}
 
 		$value = Path_Resolver::get( $src, $data );
