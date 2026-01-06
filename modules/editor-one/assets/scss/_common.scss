@@ -5,6 +5,10 @@
 
 @import "theme-light";
 
+#wpwrap {
+	background-color: var(--e-one-palette-background-default);
+}
+
 #wpcontent {
 	background-color: var(--e-one-palette-background-default);
 

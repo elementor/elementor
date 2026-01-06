@@ -100,6 +100,7 @@ export type ElementInteractions = {
 };
 
 export type V1ElementModelProps = {
+	title?: string;
 	isLocked?: boolean;
 	widgetType?: string;
 	elType: string;
@@ -146,4 +147,5 @@ type V1Model< T > = {
 	get: < K extends keyof T >( key: K ) => T[ K ];
 	set: < K extends keyof T >( key: K, value: T[ K ] ) => void;
 	toJSON: ( options?: { remove?: string[] } ) => T;
+	trigger?: ( event: string, ...args: unknown[] ) => void;
 };

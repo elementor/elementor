@@ -9,7 +9,7 @@ import { type OverridableProps } from '../../types';
 import { trackComponentEvent } from '../../utils/tracking';
 import { slice } from '../store';
 
-export function createUnpublishedComponent(
+export async function createUnpublishedComponent(
 	name: string,
 	element: V1ElementData,
 	eventData: ComponentEventData | null,
@@ -28,7 +28,7 @@ export function createUnpublishedComponent(
 
 	dispatch( slice.actions.addCreatedThisSession( generatedUid ) );
 
-	replaceElementWithComponent( element, componentBase );
+	const componentInstance = await replaceElementWithComponent( element, componentBase );
 
 	trackComponentEvent( {
 		action: 'created',
@@ -37,7 +37,7 @@ export function createUnpublishedComponent(
 		...eventData,
 	} );
 
-	runCommand( 'document/save/auto' );
+	await runCommand( 'document/save/auto' );
 
-	return generatedUid;
+	return { uid: generatedUid, instanceId: componentInstance.id };
 }

@@ -1,3 +1,4 @@
+import { type RenderContext } from '@elementor/editor-canvas';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 import type { StyleDefinition } from '@elementor/editor-styles';
@@ -72,4 +73,13 @@ export type ExtendedWindow = Window & {
 export type ComponentOverridable = {
 	override_key: string;
 	origin_value: TransformablePropValue< string >;
+};
+
+export type ComponentRenderContext = RenderContext< {
+	overrides?: Record< string, unknown >;
+} >;
+
+export type UpdatedComponentName = {
+	componentId: number;
+	title: string;
 };
