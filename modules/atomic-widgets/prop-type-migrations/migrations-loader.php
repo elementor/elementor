@@ -207,11 +207,11 @@ class Migrations_Loader {
 
 		$migration = $prop_types[ $migration_id ];
 
-		if ( ! isset( $migration['url'] ) ) {
+		if ( ! isset( $migration['path'] ) ) {
 			return null;
 		}
 
-		$file_path = $this->base_path . $migration['url'];
+		$file_path = $this->base_path . $migration['path'];
 
 		$contents = $this->read_source( $file_path );
 

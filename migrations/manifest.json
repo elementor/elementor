@@ -4,7 +4,7 @@
     "string-to-html": {
       "fromType": "string",
       "toType": "html",
-      "url": "string-to-html.json"
+      "path": "operations/string-to-html.json"
     }
   }
 }
