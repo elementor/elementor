@@ -1,14 +1,12 @@
 import { BrowserContext, Page, expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 
-import { getTemplatePath, initTemplate } from './utils';
+import { initTemplate } from './utils';
 import VariablesManagerPage from './variables-manager-page';
 import WpAdminPage from '../../../../pages/wp-admin-page';
-import EditorPage from '../../../../pages/editor-page';
 
 test.describe( 'Variable Manager @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
-	let editorPage: EditorPage;
 	let context: BrowserContext;
 	let page: Page;
 	let variablesManagerPage: VariablesManagerPage;
@@ -16,9 +14,7 @@ test.describe( 'Variable Manager @v4-tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		page = await context.newPage();
-		const result = await initTemplate( page, testInfo, apiRequests );
-		wpAdminPage = result.wpAdminPage;
-		editorPage = result.editorPage;
+		wpAdminPage = await initTemplate( page, testInfo, apiRequests );
 		variablesManagerPage = new VariablesManagerPage( page );
 	} );
 
