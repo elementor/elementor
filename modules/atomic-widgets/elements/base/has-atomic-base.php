@@ -12,6 +12,7 @@ use Elementor\Modules\AtomicWidgets\Parsers\Props_Parser;
 use Elementor\Modules\AtomicWidgets\Parsers\Style_Parser;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
@@ -450,5 +451,25 @@ trait Has_Atomic_Base {
 			'context_key' => null,
 			'context' => [],
 		];
+	}
+
+	protected function get_link_attributes( $link_settings, $add_key_to_result = false ) {
+		$tag = $link_settings['tag'] ?? Link_Prop_Type::DEFAULT_TAG;
+		$href = $link_settings['href'];
+		$target = $link_settings['target'] ?? '_self';
+
+		$is_button = 'button' === $tag;
+		$href_attribute_key = $is_button ? 'data-action-link' : 'href';
+
+		$result = [
+			$href_attribute_key => $href,
+			'target' => $target,
+		];
+
+		if ( $add_key_to_result ) {
+			$result['key'] = $href_attribute_key;
+		}
+
+		return $result;
 	}
 }

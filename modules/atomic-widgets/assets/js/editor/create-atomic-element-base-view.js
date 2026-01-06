@@ -259,6 +259,15 @@ export default function createAtomicElementBaseView( type ) {
 			}
 
 			const { $$type, value } = this.model.getSetting( 'link' ).value.destination;
+
+			if ( ! value ) {
+				return '#';
+			}
+
+			if ( 'dynamic' === $$type ) {
+				return this.handleDynamicLink( value );
+			}
+
 			const isPostId = 'number' === $$type;
 			const hrefPrefix = isPostId ? elementor.config.home_url + '/?p=' : '';
 
@@ -640,6 +649,58 @@ export default function createAtomicElementBaseView( type ) {
 				return true;
 			}
 			return 0 === this.model.collection.indexOf( this.model );
+		},
+
+		getDynamicValue( name, settings ) {
+			const { dynamicTags } = elementor ?? {};
+		
+			if ( ! dynamicTags ) {
+				return;
+			}
+		
+			const getTagValue = () => {
+				const tag = dynamicTags.createTag( 'v4-dynamic-tag', name, settings );
+		
+				if ( ! tag ) {
+					return null;
+				}
+		
+				return dynamicTags.loadTagDataFromCache( tag ) ?? null;
+			};
+		
+			const tagValue = getTagValue();
+		
+			if ( tagValue !== null ) {
+				tagValue;
+			}
+		
+			return new Promise( ( resolve ) => {
+				dynamicTags.refreshCacheFromServer( () => {
+					resolve( getTagValue() );
+				} );
+			} );
+		},
+
+		handleDynamicLink( linkValue ) {
+			const result = this.getDynamicValue( linkValue.name, linkValue.settings );
+
+			if ( ! result ) {
+				return '#';
+			}
+
+			if ( 'string' === typeof result ) {
+				return result;
+			}
+
+			result.then( ( href ) => {
+				this.el.removeAttribute( 'href' );
+
+				const attribute = 'action' === linkValue.settings.group ? 'data-action-link' : 'href';
+
+				this.el.setAttribute( attribute, href );
+			} );
+
+			return '#';
 		},
 	} );
 
