@@ -1,24 +1,11 @@
 name: Deploy Elementor Migrations
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'migrations/**'
+  workflow_dispatch:
 
 jobs:
-  release-dispatch:
+  dummy-job:
     runs-on: ubuntu-latest
     steps:
-      - name: Send dispatch
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: release.yaml
-          repo: ${{ secrets.DISPATCH_MIGRATIONS_REPO }}
-          ref: master
-          token: ${{ secrets.DATA_DEVOPS_PUBLIC_TOKEN }}
-          inputs: |
-            {
-              "bump_level": "patch",
-              "feature": "migrations"
-            }
+      - name: Dummy step
+        run: |
+          echo "Hello World"
