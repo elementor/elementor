@@ -1,10 +1,11 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getLinkInLinkRestriction } from '@elementor/editor-elements';
 import { linkPropTypeUtil, type LinkPropValue } from '@elementor/editor-props';
 import { MinusIcon, PlusIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
 import { Collapse, Grid, IconButton, Stack } from '@elementor/ui';
+import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
@@ -57,21 +58,36 @@ export const LinkControl = createControl( ( props: Props ) => {
 	const [ linkInLinkRestriction, setLinkInLinkRestriction ] = useState( getLinkInLinkRestriction( elementId ) );
 	const shouldDisableAddingLink = ! isActive && linkInLinkRestriction.shouldRestrict;
 
+	const debouncedCheckRestriction = useMemo(
+		() =>
+			debounce( () => {
+				const newRestriction = getLinkInLinkRestriction( elementId );
+
+				if ( newRestriction.shouldRestrict && isActive ) {
+					setIsActive( false );
+				}
+
+				setLinkInLinkRestriction( newRestriction );
+			}, 300 ),
+		[ elementId, isActive ]
+	);
+
 	useEffect( () => {
-		const checkRestriction = () => {
-			const newRestriction = getLinkInLinkRestriction( elementId );
+		const handleInlineLinkChanged = ( event: Event ) => {
+			const customEvent = event as CustomEvent< { elementId: string } >;
 
-			if ( newRestriction.shouldRestrict && ! linkInLinkRestriction.shouldRestrict && isActive ) {
-				setIsActive( false );
+			if ( customEvent.detail.elementId === elementId ) {
+				debouncedCheckRestriction();
 			}
-
-			setLinkInLinkRestriction( newRestriction );
 		};
 
-		const intervalId = setInterval( checkRestriction, 1000 );
+		window.addEventListener( 'elementor:inline-link-changed', handleInlineLinkChanged );
 
-		return () => clearInterval( intervalId );
-	}, [ elementId, linkInLinkRestriction.shouldRestrict, isActive ] );
+		return () => {
+			window.removeEventListener( 'elementor:inline-link-changed', handleInlineLinkChanged );
+			debouncedCheckRestriction.cancel();
+		};
+	}, [ elementId, debouncedCheckRestriction ] );
 
 	const onEnabledChange = () => {
 		setLinkInLinkRestriction( getLinkInLinkRestriction( elementId ) );

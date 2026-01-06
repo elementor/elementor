@@ -157,6 +157,15 @@ export const InlineEditorToolbar = ( { editor, elementId }: InlineEditorToolbarP
 		} else {
 			editor.chain().focus().unsetLink().run();
 		}
+
+		if ( elementId ) {
+			window.dispatchEvent(
+				new CustomEvent( 'elementor:inline-link-changed', {
+					detail: { elementId },
+				} )
+			);
+		}
+
 		linkPopupState.close();
 	};
 
