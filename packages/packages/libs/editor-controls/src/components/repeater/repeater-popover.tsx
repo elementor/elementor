@@ -5,6 +5,7 @@ export const RepeaterPopover = ( { children, width, ...props }: PopoverProps & {
 	return (
 		<Popover
 			disablePortal
+			disableEnforceFocus
 			anchorOrigin={ { vertical: 'bottom', horizontal: 'left' } }
 			slotProps={ {
 				paper: {
