@@ -268,7 +268,7 @@ describe( 'ComponentsTab', () => {
 			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
 			fireEvent.click( buttonComponentMoreActions );
 
-			const archiveButton = await screen.findByText( 'Archive' );
+			const archiveButton = await screen.findByText( 'Delete' );
 			fireEvent.click( archiveButton );
 
 			// Assert
