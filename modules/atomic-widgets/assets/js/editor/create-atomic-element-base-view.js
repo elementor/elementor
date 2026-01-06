@@ -662,27 +662,27 @@ export default function createAtomicElementBaseView( type ) {
 
 		getDynamicLinkValue( name, settings ) {
 			const { dynamicTags } = elementor ?? {};
-		
+
 			if ( ! dynamicTags ) {
 				return;
 			}
-		
+
 			const getTagValue = () => {
 				const tag = dynamicTags.createTag( 'v4-dynamic-tag', name, settings );
-		
+
 				if ( ! tag ) {
 					return null;
 				}
-		
+
 				return dynamicTags.loadTagDataFromCache( tag ) ?? null;
 			};
-		
+
 			const tagValue = getTagValue();
-		
+
 			if ( tagValue !== null ) {
 				tagValue;
 			}
-		
+
 			return new Promise( ( resolve ) => {
 				dynamicTags.refreshCacheFromServer( () => {
 					resolve( getTagValue() );
