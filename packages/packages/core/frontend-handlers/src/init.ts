@@ -13,10 +13,10 @@ export function init() {
 	} );
 
 	window.addEventListener( 'elementor/element/destroy', ( _event ) => {
-		const event = _event as CustomEvent< { id: string; type: string } >;
-		const { id, type } = event.detail;
+		const event = _event as CustomEvent< { id: string; type: string; element: Element } >;
+		const { id, type, element } = event.detail;
 
-		onElementDestroy( { elementType: type, elementId: id } );
+		onElementDestroy( { elementType: type, elementId: id, element } );
 	} );
 
 	document.addEventListener( 'DOMContentLoaded', () => {

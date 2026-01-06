@@ -4,6 +4,31 @@ const unmountElementTypeCallbacks: Map< string, Map< string, () => void > > = ne
 const unmountElementSelectorCallbacks: Map< string, Map< string, () => void > > = new Map();
 
 const ELEMENT_RENDERED_EVENT_NAME = 'elementor/element/rendered';
+const ELEMENT_DESTROYED_EVENT_NAME = 'elementor/element/destroyed';
+
+type LifecycleEventParams = {
+	element: Element;
+	elementType: string;
+	elementId: string;
+};
+
+const dispatchRenderedEvent = ( params: LifecycleEventParams ) => {
+	params.element.dispatchEvent(
+		new CustomEvent( ELEMENT_RENDERED_EVENT_NAME, {
+			bubbles: true,
+			detail: params,
+		} )
+	);
+};
+
+const dispatchDestroyedEvent = ( params: LifecycleEventParams ) => {
+	params.element.dispatchEvent(
+		new CustomEvent( ELEMENT_DESTROYED_EVENT_NAME, {
+			bubbles: true,
+			detail: params,
+		} )
+	);
+};
 
 export const onElementRender = ( {
 	element,
@@ -17,26 +42,13 @@ export const onElementRender = ( {
 	const controller = new AbortController();
 	const manualUnmount: ( () => void )[] = [];
 
-	const dispatchRenderedEvent = () => {
-		element.dispatchEvent(
-			new CustomEvent( ELEMENT_RENDERED_EVENT_NAME, {
-				bubbles: true,
-				detail: {
-					element,
-					elementType,
-					elementId,
-				},
-			} )
-		);
-	};
-
 	// When the rendered event is dispatched, the element is not yet connected to the DOM (marrionet view case)
 	if ( ! element.isConnected ) {
 		requestAnimationFrame( () => {
-			dispatchRenderedEvent();
+			dispatchRenderedEvent( { element, elementType, elementId } );
 		} );
 	} else {
-		dispatchRenderedEvent();
+		dispatchRenderedEvent( { element, elementType, elementId } );
 	}
 
 	if ( ! elementTypeHandlers.has( elementType ) ) {
@@ -48,19 +60,18 @@ export const onElementRender = ( {
 
 		const listenToChildren = ( elementTypes: string[] ) => ( {
 			render: ( callback: () => void ) => {
-				element.addEventListener(
-					ELEMENT_RENDERED_EVENT_NAME,
-					( event ) => {
-						const { elementType: childType } = ( event as CustomEvent ).detail;
+				const listener = ( event: Event ) => {
+					const { elementType: childType } = ( event as CustomEvent ).detail;
 
-						if ( ! elementTypes.includes( childType ) ) {
-							return;
-						}
+					if ( ! elementTypes.includes( childType ) ) {
+						return;
+					}
 
-						callback();
-					},
-					{ signal: controller.signal }
-				);
+					callback();
+				};
+
+				element.addEventListener( ELEMENT_RENDERED_EVENT_NAME, listener, { signal: controller.signal } );
+				element.addEventListener( ELEMENT_DESTROYED_EVENT_NAME, listener, { signal: controller.signal } );
 			},
 		} );
 
@@ -129,8 +140,20 @@ export const onElementSelectorRender = ( {
 	} );
 };
 
-export const onElementDestroy = ( { elementType, elementId }: { elementType: string; elementId: string } ) => {
+export const onElementDestroy = ( {
+	elementType,
+	elementId,
+	element,
+}: {
+	elementType: string;
+	elementId: string;
+	element?: Element;
+} ) => {
 	const unmount = unmountElementTypeCallbacks.get( elementType )?.get( elementId );
+
+	if ( element ) {
+		dispatchDestroyedEvent( { element, elementType, elementId } );
+	}
 
 	if ( ! unmount ) {
 		return;

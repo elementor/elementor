@@ -218,12 +218,57 @@ describe( 'Frontend Handlers', () => {
 			// Act
 			window.dispatchEvent(
 				new CustomEvent( 'elementor/element/destroy', {
-					detail: { id: ELEMENT_ID, type: WIDGET_ELEMENT_TYPE },
+					detail: { id: ELEMENT_ID, type: WIDGET_ELEMENT_TYPE, element },
 				} )
 			);
 
 			// Assert
 			expect( unmountCallback ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'should dispatch destroyed event when element is destroyed', () => {
+			// Arrange
+			const ELEMENT_ID = 'element-1';
+			const destroyedEventCallback = jest.fn();
+
+			register( {
+				elementType: WIDGET_ELEMENT_TYPE,
+				id: 'widget-handler',
+				callback: () => undefined,
+			} );
+
+			const element = document.createElement( 'div' );
+			element.setAttribute( 'data-e-type', WIDGET_ELEMENT_TYPE );
+			element.setAttribute( 'data-id', ELEMENT_ID );
+			document.body.appendChild( element );
+
+			window.dispatchEvent(
+				new CustomEvent( 'elementor/element/render', {
+					detail: { id: ELEMENT_ID, type: WIDGET_ELEMENT_TYPE, element },
+				} )
+			);
+
+			// Add listener after render to only catch actual destroy events
+			element.addEventListener( 'elementor/element/destroyed', destroyedEventCallback );
+
+			// Act
+			window.dispatchEvent(
+				new CustomEvent( 'elementor/element/destroy', {
+					detail: { id: ELEMENT_ID, type: WIDGET_ELEMENT_TYPE, element },
+				} )
+			);
+
+			// Assert
+			expect( destroyedEventCallback ).toHaveBeenCalledTimes( 1 );
+			expect( destroyedEventCallback ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					detail: expect.objectContaining( {
+						element,
+						elementType: WIDGET_ELEMENT_TYPE,
+						elementId: ELEMENT_ID,
+					} ),
+				} )
+			);
 		} );
 
 		it( 'should cleanup on re-render before new initialization', () => {
@@ -333,7 +378,7 @@ describe( 'Frontend Handlers', () => {
 			// Act
 			window.dispatchEvent(
 				new CustomEvent( 'elementor/element/destroy', {
-					detail: { id: ELEMENT_ID, type: WIDGET_ELEMENT_TYPE },
+					detail: { id: ELEMENT_ID, type: WIDGET_ELEMENT_TYPE, element },
 				} )
 			);
 
@@ -384,6 +429,65 @@ describe( 'Frontend Handlers', () => {
 
 			// Assert
 			expect( childRenderCallback ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'should trigger destroy callback when child of specified type is destroyed', () => {
+			// Arrange
+			const PARENT_ID = 'parent-1';
+			const CHILD_ID = 'child-1';
+			const childDestroyCallback = jest.fn();
+
+			register( {
+				elementType: PARENT_ELEMENT_TYPE,
+				id: 'parent-handler',
+				callback: ( { listenToChildren } ) => {
+					listenToChildren( [ CHILD_ELEMENT_TYPE ] ).render( childDestroyCallback );
+					return undefined;
+				},
+			} );
+
+			register( {
+				elementType: CHILD_ELEMENT_TYPE,
+				id: 'child-handler',
+				callback: () => undefined,
+			} );
+
+			const parent = document.createElement( 'div' );
+			parent.setAttribute( 'data-e-type', PARENT_ELEMENT_TYPE );
+			parent.setAttribute( 'data-id', PARENT_ID );
+			document.body.appendChild( parent );
+
+			const child = document.createElement( 'div' );
+			child.setAttribute( 'data-e-type', CHILD_ELEMENT_TYPE );
+			child.setAttribute( 'data-id', CHILD_ID );
+			parent.appendChild( child );
+
+			// Render parent first (this sets up the destroy listener)
+			window.dispatchEvent(
+				new CustomEvent( 'elementor/element/render', {
+					detail: { id: PARENT_ID, type: PARENT_ELEMENT_TYPE, element: parent },
+				} )
+			);
+
+			// Render child
+			window.dispatchEvent(
+				new CustomEvent( 'elementor/element/render', {
+					detail: { id: CHILD_ID, type: CHILD_ELEMENT_TYPE, element: child },
+				} )
+			);
+
+			// Reset callback count after renders (to ignore destroy events from render cleanup)
+			childDestroyCallback.mockClear();
+
+			// Act - destroy child
+			window.dispatchEvent(
+				new CustomEvent( 'elementor/element/destroy', {
+					detail: { id: CHILD_ID, type: CHILD_ELEMENT_TYPE, element: child },
+				} )
+			);
+
+			// Assert
+			expect( childDestroyCallback ).toHaveBeenCalledTimes( 1 );
 		} );
 
 		it( 'should not trigger callback for non-descendant elements', () => {
@@ -463,7 +567,7 @@ describe( 'Frontend Handlers', () => {
 			// Destroy Parent (should remove listener)
 			window.dispatchEvent(
 				new CustomEvent( 'elementor/element/destroy', {
-					detail: { id: PARENT_ID, type: PARENT_ELEMENT_TYPE },
+					detail: { id: PARENT_ID, type: PARENT_ELEMENT_TYPE, element: parent },
 				} )
 			);
 
