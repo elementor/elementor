@@ -41,7 +41,11 @@ export function OverridablePropControl< T extends object >( {
 		} as ComponentOverridablePropValue;
 
 		setValue( propValue );
-		updateOverridableProp( componentId, propValue );
+
+		if ( ! isComponentInstance ) {
+			const existingProp = overridableProps?.props?.[ propValue.override_key ];
+			updateOverridableProp( componentId, propValue, existingProp?.originPropFields );
+		}
 	};
 
 	const defaultPropType = elementType.propsSchema[ bind ];

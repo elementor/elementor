@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import { setupCompleteTestData, cleanupCreatedItems, CreatedItems } from './utils/test-seeders';
 import { ImportExportHelpers } from './helpers/import-export-helpers';
 
-test.describe( 'Import Export Customization - Basic Export', () => {
+test.describe( 'Import Export Customization - Basic Export @import_export_customization', () => {
 	let createdItems: CreatedItems;
 
 	test.beforeEach( async ( { page, apiRequests } ) => {

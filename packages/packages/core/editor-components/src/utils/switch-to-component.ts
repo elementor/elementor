@@ -1,19 +1,30 @@
+import { getCurrentDocumentContainer, selectElement } from '@elementor/editor-elements';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
-export function switchToComponent(
+import { expandNavigator } from './expand-navigator';
+
+export async function switchToComponent(
 	componentId: number | string,
 	componentInstanceId?: string | null,
 	element?: HTMLElement | null
 ) {
 	const selector = getSelector( element, componentInstanceId );
 
-	runCommand( 'editor/documents/switch', {
+	await runCommand( 'editor/documents/switch', {
 		id: componentId,
 		selector,
 		mode: 'autosave',
 		setAsInitial: false,
 		shouldScroll: false,
 	} );
+
+	const currentDocumentContainer = getCurrentDocumentContainer();
+	const topLevelElement = currentDocumentContainer?.children?.[ 0 ];
+
+	if ( topLevelElement ) {
+		selectElement( topLevelElement.id );
+		expandNavigator();
+	}
 }
 
 function getSelector( element?: HTMLElement | null, componentInstanceId?: string | null ): string | undefined {

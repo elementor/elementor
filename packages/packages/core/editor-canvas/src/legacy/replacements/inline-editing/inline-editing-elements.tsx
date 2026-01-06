@@ -8,7 +8,6 @@ import {
 	type HtmlPropValue,
 	type PropType,
 	stringPropTypeUtil,
-	type StringPropValue,
 	type TransformablePropValue,
 } from '@elementor/editor-props';
 import { __privateRunCommandSync as runCommandSync, isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
@@ -130,18 +129,17 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		return propSchema?.[ propertyName ] ?? null;
 	}
 
-	getContentValue() {
+	getHtmlPropValue(): HtmlPropValue | null {
 		const prop = this.getHtmlPropType();
-		const defaultValue = ( prop?.default as StringPropValue | null )?.value ?? '';
 		const settingKey = this.getInlineEditablePropertyName();
 
-		return (
-			htmlPropTypeUtil.extract( this.getSetting( settingKey ) ?? null ) ??
-			stringPropTypeUtil.extract( this.getSetting( settingKey ) ?? null ) ??
-			htmlPropTypeUtil.extract( prop?.default ?? null ) ??
-			defaultValue ??
-			''
-		);
+		return ( this.getSetting( settingKey ) ?? prop?.default ?? null ) as HtmlPropValue | null;
+	}
+
+	getExtractedContentValue() {
+		const propValue = this.getHtmlPropValue();
+
+		return htmlPropTypeUtil.extract( propValue ) ?? stringPropTypeUtil.extract( propValue ) ?? '';
 	}
 
 	setContentValue( value: string | null ) {
@@ -151,13 +149,13 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		undoable(
 			{
 				do: () => {
-					const prevValue = this.getContentValue();
+					const prevValue = this.getHtmlPropValue();
 
 					this.runCommand( settingKey, valueToSave );
 
 					return prevValue;
 				},
-				undo: ( prevValue ) => {
+				undo: ( _, prevValue ) => {
 					this.runCommand( settingKey, prevValue ?? null );
 				},
 			},
@@ -232,7 +230,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	InlineEditorApp = ( { wrapperClasses, elementClasses }: { wrapperClasses: string; elementClasses: string } ) => {
-		const propValue = this.getContentValue();
+		const propValue = this.getExtractedContentValue();
 		const expectedTag = this.getExpectedTag();
 		const wrapperRef = useRef< HTMLDivElement | null >( null );
 		const [ isWrapperRendered, setIsWrapperRendered ] = useState( false );
