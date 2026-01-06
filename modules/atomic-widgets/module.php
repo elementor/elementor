@@ -404,9 +404,7 @@ class Module extends BaseModule {
 			return $data;
 		}
 
-		$migrations_base_path = $this->get_migrations_base_path();
-
-		$orchestrator = Migrations_Orchestrator::make( $migrations_base_path );
+		$orchestrator = Migrations_Orchestrator::make( $this->get_migrations_base_path() );
 
 		$orchestrator->migrate_document(
 			$data,
