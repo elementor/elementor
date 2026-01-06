@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypeMigrations;
 
+use Elementor\Modules\AtomicWidgets\Logger\Logger;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -216,12 +218,23 @@ class Migrations_Loader {
 		$contents = $this->read_source( $file_path );
 
 		if ( false === $contents ) {
+			Logger::warning( 'Migration operation file not found', [
+				'migration_id' => $migration_id,
+				'path' => $file_path,
+			] );
+
 			return null;
 		}
 
 		$operations = json_decode( $contents, true );
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			Logger::warning( 'Invalid migration operation JSON', [
+				'migration_id' => $migration_id,
+				'path' => $file_path,
+				'error' => json_last_error_msg(),
+			] );
+
 			return null;
 		}
 
@@ -255,6 +268,10 @@ class Migrations_Loader {
 		$contents = $this->read_source( $manifest_path );
 
 		if ( false === $contents ) {
+			Logger::warning( 'Migrations manifest not found', [
+				'path' => $manifest_path,
+			] );
+
 			$this->manifest = [
 				'widgetKeys' => [],
 				'propTypes' => [],
@@ -265,6 +282,11 @@ class Migrations_Loader {
 		$manifest = json_decode( $contents, true );
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			Logger::warning( 'Invalid migrations manifest JSON', [
+				'path' => $manifest_path,
+				'error' => json_last_error_msg(),
+			] );
+
 			$this->manifest = [
 				'widgetKeys' => [],
 				'propTypes' => [],

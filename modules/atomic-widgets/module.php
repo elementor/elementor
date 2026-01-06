@@ -404,11 +404,7 @@ class Module extends BaseModule {
 			return $data;
 		}
 
-		$migrations_base_path = ELEMENTOR_PATH . 'migrations/';
-
-		if ( ! is_dir( $migrations_base_path ) ) {
-			return $data;
-		}
+		$migrations_base_path = $this->get_migrations_base_path();
 
 		$orchestrator = Migrations_Orchestrator::make( $migrations_base_path );
 
@@ -424,5 +420,14 @@ class Module extends BaseModule {
 		);
 
 		return $data;
+	}
+
+	private function get_migrations_base_path(): string {
+		// define this in wp-config.php to use local migrations ( ELEMENTOR_BASE_PATH . 'migrations/' )
+		if ( defined( 'ELEMENTOR_MIGRATIONS_PATH' ) ) {
+			return ELEMENTOR_MIGRATIONS_PATH;
+		}
+
+		return 'https://migrations.elementor.com/';
 	}
 }
