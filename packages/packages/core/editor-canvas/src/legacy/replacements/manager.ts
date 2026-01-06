@@ -112,17 +112,19 @@ export const createTemplatedElementTypeWithReplacements = ( {
 }: CreateTemplatedElementTypeOptions ): typeof ElementType => {
 	const legacyWindow = window as unknown as LegacyWindow;
 
+	const view = createViewWithReplacements( {
+		type,
+		renderer,
+		element,
+	} );
+
 	return class extends legacyWindow.elementor.modules.elements.types.Widget {
 		getType() {
 			return type;
 		}
 
 		getView() {
-			return createViewWithReplacements( {
-				type,
-				renderer,
-				element,
-			} );
+			return view;
 		}
 	};
 };

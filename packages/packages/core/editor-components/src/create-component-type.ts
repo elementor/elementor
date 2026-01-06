@@ -83,13 +83,15 @@ export function createComponentType(
 	const legacyWindow = window as unknown as LegacyWindow;
 	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
 
+	const view = createComponentView( { ...options } );
+
 	return class extends WidgetType {
 		getType() {
 			return options.type;
 		}
 
 		getView() {
-			return createComponentView( { ...options } );
+			return view;
 		}
 
 		getModel(): BackboneModelConstructor< ComponentModel > {
