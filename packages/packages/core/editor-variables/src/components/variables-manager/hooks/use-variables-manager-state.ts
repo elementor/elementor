@@ -5,7 +5,7 @@ import { getVariables } from '../../../hooks/use-prop-variables';
 import { service } from '../../../service';
 import { type TVariablesList } from '../../../storage';
 import { filterBySearch } from '../../../utils/filter-by-search';
-import { applySelectionFilter } from '../../../variables-registry/variable-type-registry';
+import { getVariableTypes } from '../../../variables-registry/variable-type-registry';
 
 export const useVariablesManagerState = () => {
 	const [ variables, setVariables ] = useState( () => getVariables( false ) );
@@ -66,11 +66,25 @@ export const useVariablesManagerState = () => {
 	}, [ variables ] );
 
 	const filteredVariables = () => {
-		const list = Object.entries( variables ).map( ( [ id, value ] ) => ( { ...value, id } ) );
-		const selectionFiltered = applySelectionFilter( list );
-		const searchFiltered = filterBySearch( selectionFiltered, searchValue );
+		const variableTypes = getVariableTypes();
 
-		return Object.fromEntries( searchFiltered.map( ( { id, ...rest } ) => [ id, rest ] ) );
+		const list = Object.entries( variables )
+			.filter( ( [ , v ] ) => ! v.deleted )
+			.map( ( [ key, v ] ) => ( { key, ...v } ) );
+
+		const grouped: Record< string, typeof list > = {};
+		list.forEach( ( item ) => ( grouped[ item.type ] ??= [] ).push( item ) );
+
+		const typeFiltered = Object.entries( grouped ).flatMap( ( [ type, vars ] ) => {
+			const filter = variableTypes[ type ]?.selectionFilter;
+			const normalized = vars.map( ( { type: _, ...rest } ) => rest );
+
+			return ( filter?.( normalized ) ?? normalized ).map( ( v ) => ( { ...v, type } ) );
+		} );
+
+		const searchFiltered = filterBySearch( typeFiltered, searchValue );
+
+		return Object.fromEntries( searchFiltered.map( ( { key, ...rest } ) => [ key, rest ] ) );
 	};
 
 	return {
