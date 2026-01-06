@@ -6,7 +6,9 @@ import { service } from '../service';
 const InputSchema = {
 	type: z
 		.string()
-		.describe( 'The type of the variable. Example values: "global-color-variable" or "global-font-variable".' ),
+		.describe(
+			'The type of the variable. Example values: "global-color-variable", "global-size-variable", or "global-font-variable".'
+		),
 	label: z.string().describe( 'The label of the variable, displayed to the user' ),
 	value: z.string().describe( 'The value of the variable, should correspond to the type' ),
 };

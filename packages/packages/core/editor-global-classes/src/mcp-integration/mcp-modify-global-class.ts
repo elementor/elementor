@@ -21,12 +21,12 @@ const schema = {
 		.nullable( z.string() )
 		.default( null )
 		.describe( 'The responsive breakpoint name for which the global class styles should be applied' ),
-	customCss: z.string().optional().describe( 'The CSS styles associated with the global class.' ),
+	// customCss: z.string().optional().describe( 'The CSS styles associated with the global class.' ),
 };
 
 const handler = async ( params: z.infer< ReturnType< typeof z.object< typeof schema > > > ) => {
 	const { classId, props } = params;
-	const customCss = params.customCss ? { raw: btoa( params.customCss ) } : null;
+	const customCss = null; //params.customCss ? { raw: btoa( params.customCss ) } : null;
 	const { update, delete: deleteClass } = globalClassesStylesProvider.actions;
 	if ( ! update || ! deleteClass ) {
 		throw new Error( 'Update action is not available' );
@@ -114,7 +114,6 @@ export const initModifyGlobalClass = ( reg: MCPRegistryEntry ) => {
 ## Parameters:
 - \`classId\` (string, required): The ID of the global class to be modified.
 - \`props\` (object, required): A key-value map of style-schema PropValues that define the new styles for the global class.
-- \`customCss\` (string, optional): The CSS styles associated with the global class.
 
 ## Example usage:
 \`\`\`json

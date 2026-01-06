@@ -17,12 +17,12 @@ export const inputSchema = {
 			'key-value of style-schema PropValues applied to the global class. Available properties at dynamic resource "elementor://styles/schema/{property-name}"'
 		)
 		.default( {} ),
-	customCss: z
-		.string()
-		.optional()
-		.describe(
-			'Additional CSS styles associated with the global class. Use only if you fail to use the schema, specifically backgrounds'
-		),
+	// customCss: z
+	// 	.string()
+	// 	.optional()
+	// 	.describe(
+	// 		'Additional CSS styles associated with the global class. Use only if you fail to use the schema, specifically backgrounds'
+	// 	),
 	breakpoint: z
 		.nullable(
 			z
@@ -41,7 +41,7 @@ type InputSchema = z.infer< ReturnType< typeof z.object< typeof inputSchema > > 
 type OutputSchema = z.infer< ReturnType< typeof z.object< typeof outputSchema > > >;
 
 export const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
-	const customCss = input.customCss ? { raw: btoa( input.customCss ) } : null;
+	const customCss = null; // input.customCss ? { raw: btoa( input.customCss ) } : null;
 	const { delete: deleteClass, create } = globalClassesStylesProvider.actions;
 	if ( ! create || ! deleteClass ) {
 		throw new Error( 'Create action is not available' );
@@ -111,13 +111,41 @@ export const initCreateGlobalClass = ( reg: MCPRegistryEntry ) => {
 			speedPriority: 0.6,
 		},
 		description: `Create a new global class within the Elementor editor, allowing users to define reusable styles and properties for consistent design across their website.
-      
+
+# When to use this tool
+**ALWAYS use this tool BEFORE creating compositions** when you identify reusable style patterns:
+- Typography styles (headings, body text, captions, labels)
+- Color/theme patterns (brand colors, backgrounds, borders)
+- Spacing patterns (section padding, card spacing, element gaps)
+- Component styles (buttons, cards, badges, etc.)
+
+**DO NOT create global classes** for:
+- One-off unique styles specific to a single element
+- Layout-specific properties (flex-direction, grid-template, etc.)
+
 # Prequisites: CRITICAL
+- **FIRST**: Check [elementor://global-classes] to see if a similar class already exists - REUSE instead of duplicating!
 - Read the style schema at [elementor://styles/schema/{category}] to understand the valid properties and values that can be assigned to the global class.
 - Available style properties can be found in the styles schema dynamic resources available from 'canvas' mcp. List the resources to see all available properties.
 - YOU MUST USE THE STYLE SCHEMA TO BUILD THE "props" PARAMETER CORRECTLY, OTHERWISE THE GLOBAL CLASS CREATION WILL FAIL.
 - Ensure that the global class name provided does not already exist to avoid duplication.
-- Read the styles schema resource available from 'canvas' mcp to understand the valid properties and values that can be assigned to the global class.
+
+# Naming Conventions (FOLLOW STRICTLY)
+Use semantic, purpose-driven names that describe the INTENT, not the implementation:
+
+**Good Examples:**
+- "heading-primary" (not "big-red-text")
+- "button-cta" (not "orange-button")
+- "section-hero-bg" (not "gradient-background")
+- "text-muted" (not "gray-small-text")
+- "spacing-section-large" (not "padding-96px")
+
+**Pattern**: [element-type]-[purpose/variant]-[modifier]
+- heading-primary, heading-secondary, heading-accent
+- button-primary, button-secondary, button-ghost
+- text-body, text-caption, text-emphasis
+- bg-brand, bg-accent, bg-neutral-light
+- spacing-xs, spacing-md, spacing-xl
 
 ## Parameters:
 - \`globalClassName\` (string, required): The name of the global class to be created.

@@ -12,7 +12,48 @@ export const generatePrompt = () => {
    Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply property values correctly.
 2. [${ STYLE_SCHEMA_URI }]
    Required to understand the styles schema for the widgets. All widgets share the same styles schema.
-3. List of allowed custom tags for building the structure is derived from the list of widgets schema resources.
+3. [elementor://global-classes]
+   **CRITICAL** - Check existing global classes to reuse instead of creating duplicate styles.
+4. List of allowed custom tags for building the structure is derived from the list of widgets schema resources.
+
+# **REUSABILITY-FIRST WORKFLOW (MANDATORY)**
+Before building ANY composition, you MUST follow this workflow:
+
+## Phase 1: Identify Reusable Style Patterns (BEFORE build-compositions)
+1. **Analyze the user's requirements** and identify repeated visual patterns:
+   - Common text styles (headings, body text, captions)
+   - Repeated color schemes or spacing patterns
+   - Button styles, card styles, section backgrounds
+
+2. **Check existing global classes** at [elementor://global-classes]:
+   - If suitable classes exist, plan to use them
+   - If NOT, identify what NEW global classes should be created
+
+3. **CREATE global classes FIRST** using "create-global-class" tool for:
+   - Typography styles (heading-primary, heading-secondary, body-text, etc.)
+   - Color themes (brand-primary-bg, accent-text, etc.)
+   - Spacing patterns (section-padding, card-spacing, etc.)
+
+## Phase 2: Build Composition (using this tool)
+4. Build composition with MINIMAL inline styles in stylesConfig
+5. Use simple, element-specific styles only (layout properties, unique tweaks)
+6. **DO NOT duplicate styles** that should be global classes
+
+## Phase 3: Apply Global Classes (AFTER build-compositions)
+7. Use "apply-global-class" tool to apply the global classes created in Phase 1
+8. This ensures consistency, reusability, and easier future maintenance
+
+**Example Workflow:**
+User: "Create a hero section with heading, subheading, and CTA button"
+
+Step 1: Create global classes:
+  - "hero-heading" (72px, weight 900, brand color)
+  - "hero-subheading" (24px, weight 300, muted color)
+  - "primary-cta" (button styles)
+
+Step 2: Build composition with minimal inline styles (just layout)
+
+Step 3: Apply "hero-heading" class to heading element, etc.
 
 # DESIGN QUALITY IMPERATIVE
 You are generating designs for real users who expect distinctive, intentional aesthetics - NOT generic AI output.
@@ -44,20 +85,22 @@ Prefer this tool over any other tool for building HTML structure, unless you are
 
 # Instructions
 1. Understand the user requirements carefully.
-2. Build a valid XML structure using only the allowed custom tags provided. For example, if you
+2. **BEFORE BUILDING**: Identify reusable style patterns and create global classes (see REUSABILITY-FIRST WORKFLOW above)
+3. Build a valid XML structure using only the allowed custom tags provided. For example, if you
    use the "e-button" element, it would be represented as <e-button></e-button> in the XML structure.
-3. Plan the configuration for each element according to the user requirements, using the configuration schema provided for each custom tag.
+4. Plan the configuration for each element according to the user requirements, using the configuration schema provided for each custom tag.
    Every widget type has it's own configuration schema, retreivable from the resource [${ WIDGET_SCHEMA_URI }].
    PropValues must follow the exact PropType schema provided in the resource.
-4. For every element, provide a "configuration-id" attribute. For example:
+5. For every element, provide a "configuration-id" attribute. For example:
    \`<e-flexbox configuration-id="flex1"><e-heading configuration-id="heading2"></e-heading></e-flexbox>\`
    In the elementConfig property, provide the actual configuration object for each configuration-id used in the XML structure.
    In the stylesConfig property, provide the actual styles configuration object for each configuration-id used in the XML structure.
-5. Ensure the XML structure is valid and parsable.
-6. Do not add any attribute nodes, classes, id's, and no text nodes allowed.
+   **IMPORTANT**: Keep stylesConfig MINIMAL - only layout and element-specific styles. Reusable styles should be global classes.
+6. Ensure the XML structure is valid and parsable.
+7. Do not add any attribute nodes, classes, id's, and no text nodes allowed.
    Layout properties, such as margin, padding, align, etc. must be applied using the [${ STYLE_SCHEMA_URI }] PropValues.
-7. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-tabs", "e-div-block", and "e-flexbox".
-8. Make sure that non-container elements do NOT have any nested elements.
+8. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-tabs", "e-div-block", and "e-flexbox".
+9. Make sure that non-container elements do NOT have any nested elements.
 
 # DESIGN VECTORS - Concrete Implementation Guidance
 
@@ -337,7 +380,12 @@ You should use these IDs as reference for further configuration, styling or chan
 	);
 
 	buildCompositionsToolPrompt.instruction(
-		`You must use styles/variables/classes that are available in the project resources, you should prefer using them over inline styles, and you are welcome to execute relevant tools AFTER this tool execution, to apply global classes to the created elements.`
+		`**CRITICAL WORKFLOW REMINDER**:
+1. FIRST: Create reusable global classes for typography, colors, spacing patterns using "create-global-class" tool
+2. SECOND: Use THIS tool with minimal inline styles (only layout & unique properties)
+3. THIRD: Apply global classes to elements using "apply-global-class" tool
+
+This ensures maximum reusability and consistency across your design system. ALWAYS check [elementor://global-classes] for existing classes before creating new ones.`
 	);
 
 	return buildCompositionsToolPrompt.prompt();
