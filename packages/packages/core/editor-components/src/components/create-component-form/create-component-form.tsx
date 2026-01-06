@@ -5,7 +5,7 @@ import { notify } from '@elementor/editor-notifications';
 import { Form as FormElement, ThemeProvider } from '@elementor/editor-ui';
 import { ComponentsIcon } from '@elementor/icons';
 import { __getState as getState } from '@elementor/store';
-import { Alert, Button, FormLabel, Grid, Popover, Stack, TextField, Typography } from '@elementor/ui';
+import { Button, FormLabel, Grid, Popover, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';

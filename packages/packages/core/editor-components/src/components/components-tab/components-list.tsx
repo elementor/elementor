@@ -24,9 +24,6 @@ const SUBTITLE_OVERRIDE_SX = {
 export function ComponentsList() {
 	const { components, isLoading, searchValue } = useFilteredComponents();
 
-	console.log( 'COMPONENTS: ComponentsList', components );
-	console.log( components );
-
 	if ( isLoading ) {
 		return <LoadingComponents />;
 	}

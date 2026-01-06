@@ -1,12 +1,14 @@
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
+import { type NotificationData, notify } from '@elementor/editor-notifications';
 import { __getStore as getStore } from '@elementor/store';
+import { __ } from '@wordpress/i18n';
 
 import { slice } from '../store';
-import { NotificationData, notify } from '@elementor/editor-notifications';
 
 const successNotification = ( componentId: number, componentName: string ): NotificationData => ( {
 	type: 'success',
-	message: `Successfully deleted component ${ componentName }`,
+	/* translators: %s: component name */
+	message: __( 'Successfully deleted component %s', 'elementor' ).replace( '%s', componentName ),
 	id: `success-archived-components-notification-${ componentId }`,
 } );
 
@@ -20,5 +22,5 @@ export const archiveComponent = ( componentId: number, componentName: string ) =
 
 	dispatch( slice.actions.archive( componentId ) );
 	setDocumentModifiedStatus( true );
-	notify( successNotification( componentId, componentName ) );	
+	notify( successNotification( componentId, componentName ) );
 };
