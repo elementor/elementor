@@ -39,7 +39,6 @@ class Migrations_Orchestrator {
 
 	public static function register_feature_flag_hooks(): void {
 		static $registered = false;
-
 		if ( $registered ) {
 			return;
 		}
