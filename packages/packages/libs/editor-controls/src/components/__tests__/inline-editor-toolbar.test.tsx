@@ -2,8 +2,13 @@ import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
 import { fireEvent, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/react';
+import { getElementSetting } from '@elementor/editor-elements';
 
 import { InlineEditorToolbar } from '../inline-editor-toolbar';
+
+jest.mock( '@elementor/editor-elements', () => ( {
+	getElementSetting: jest.fn(),
+} ) );
 
 type MockEditorOptions = {
 	activeFormats?: string[];
@@ -187,6 +192,44 @@ describe( 'InlineEditorToolbar', () => {
 
 			// Assert.
 			expect( newTabButton ).toHaveAttribute( 'aria-pressed', 'true' );
+		} );
+	} );
+
+	describe( 'Link button visibility based on LinkControl', () => {
+		const ELEMENT_ID = 'test-element-123';
+
+		beforeEach( () => {
+			jest.clearAllMocks();
+		} );
+
+		it( 'should hide link button when element has LinkControl link', () => {
+			// Arrange
+			const mockEditor = createMockEditor();
+			
+			jest.mocked( getElementSetting ).mockReturnValue( {
+				value: {
+					destination: 'https://example.com',
+				},
+			} );
+
+			// Act
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } elementId={ ELEMENT_ID } /> );
+
+			// Assert
+			expect( screen.queryByLabelText( 'Link' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should show link button when element has no LinkControl link', () => {
+			// Arrange
+			const mockEditor = createMockEditor();
+			
+			jest.mocked( getElementSetting ).mockReturnValue( null );
+
+			// Act
+			renderWithTheme( <InlineEditorToolbar editor={ mockEditor } elementId={ ELEMENT_ID } /> );
+
+			// Assert
+			expect( screen.getByLabelText( 'Link' ) ).toBeInTheDocument();
 		} );
 	} );
 } );
