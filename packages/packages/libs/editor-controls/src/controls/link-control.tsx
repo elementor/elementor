@@ -77,16 +77,12 @@ export const LinkControl = createControl( ( props: Props ) => {
 		const newState = ! isActive;
 		setIsActive( newState );
 
-		if ( ! newState && value !== null ) {
-			setValue( null );
-		}
-
 		if ( newState && linkSessionValue?.value ) {
 			setValue( linkSessionValue.value );
 		}
 
 		setLinkSessionValue( {
-			value: linkSessionValue?.value,
+			value: value || linkSessionValue?.value,
 			meta: { isEnabled: newState },
 		} );
 	};
