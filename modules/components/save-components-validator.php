@@ -60,9 +60,9 @@ class Save_Components_Validator {
 				$uid = $component['uid'];
 
 				$is_title_exists = $this->components->some(
-					fn ( $component ) => $component['title'] === $title
+					fn ( $component ) => ! $component['is_archived'] && $component['title'] === $title
 				) || $data->filter(
-					fn ( $component ) => $component['title'] === $title
+					fn ( $component ) => ! $component['is_archived'] && $component['title'] === $title
 				)->count() > 1;
 
 				if ( $is_title_exists ) {

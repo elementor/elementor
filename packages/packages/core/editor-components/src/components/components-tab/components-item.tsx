@@ -70,7 +70,7 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 			throw new Error( 'Component ID is required' );
 		}
 
-		archiveComponent( component.id );
+		archiveComponent( component.id, component.name );
 	};
 
 	return (
@@ -157,7 +157,7 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 				</MenuListItem>
 				<MenuListItem sx={ { minWidth: '160px' } } onClick={ handleArchiveClick }>
 					<Typography variant="caption" sx={ { color: 'error.light' } }>
-						{ __( 'Archive', 'elementor' ) }
+						{ __( 'Delete', 'elementor' ) }
 					</Typography>
 				</MenuListItem>
 			</Menu>

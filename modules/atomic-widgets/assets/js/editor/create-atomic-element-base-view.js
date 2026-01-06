@@ -279,7 +279,6 @@ export default function createAtomicElementBaseView( type ) {
 				{
 					name: 'save',
 					title: __( 'Save as a template', 'elementor' ),
-					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
 					callback: this.saveAsTemplate.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
@@ -288,7 +287,7 @@ export default function createAtomicElementBaseView( type ) {
 			if ( elementorCommon.config.experimentalFeatures?.e_components ) {
 				saveActions.unshift(			{
 					name: 'save-component',
-					title: __( 'Save as a component', 'elementor' ),
+					title: __( 'Create component', 'elementor' ),
 					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
 					callback: this.saveAsComponent.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),

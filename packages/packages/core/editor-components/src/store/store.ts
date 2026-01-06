@@ -61,7 +61,7 @@ export const slice = createSlice( {
 	reducers: {
 		add: ( state, { payload }: PayloadAction< PublishedComponent | PublishedComponent[] > ) => {
 			if ( Array.isArray( payload ) ) {
-				state.data = [ ...state.data, ...payload ];
+				state.data = [ ...payload, ...state.data ];
 			} else {
 				state.data.unshift( payload );
 			}
