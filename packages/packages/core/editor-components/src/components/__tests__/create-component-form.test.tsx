@@ -1,6 +1,8 @@
 import * as React from 'react';
+import { SnackbarProvider } from 'notistack';
 import { createMockElement, renderWithStore } from 'test-utils';
 import { getElementLabel, replaceElement, type V1ElementModelProps } from '@elementor/editor-elements';
+import { notify } from '@elementor/editor-notifications';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __createStore, __dispatch, __registerSlice, type SliceState, type Store } from '@elementor/store';
 import { __getState as getState } from '@elementor/store';
@@ -18,6 +20,7 @@ jest.mock( '../../api' );
 jest.mock( '@elementor/utils' );
 jest.mock( '@elementor/editor-v1-adapters' );
 jest.mock( '../../utils/switch-to-component' );
+jest.mock( '@elementor/editor-notifications' );
 
 const mockGetElementLabel = jest.mocked( getElementLabel );
 const mockGetComponents = jest.mocked( apiClient.get );
@@ -25,6 +28,7 @@ const mockReplaceElement = jest.mocked( replaceElement );
 const mockGenerateUniqueId = jest.mocked( generateUniqueId );
 const mockRunCommand = jest.mocked( runCommand );
 const mockSwitchToComponent = jest.mocked( switchToComponent );
+const mockNotify = jest.mocked( notify );
 
 const mockElement: V1ElementModelProps = createMockElement( { model: { id: 'test-element' } } ).model.toJSON( {
 	remove: [ 'default' ],
@@ -91,7 +95,9 @@ describe( 'CreateComponentForm', () => {
 	const setupForm = () => {
 		renderWithStore(
 			<QueryClientProvider client={ queryClient }>
-				<CreateComponentForm />
+				<SnackbarProvider>
+					<CreateComponentForm />
+				</SnackbarProvider>
 			</QueryClientProvider>,
 			store
 		);
@@ -113,7 +119,7 @@ describe( 'CreateComponentForm', () => {
 			setupForm();
 
 			// Assert.
-			expect( screen.queryByText( 'Save as a component' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Create component' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'should open form when open-save-as-component-form event is dispatched', () => {
@@ -124,7 +130,7 @@ describe( 'CreateComponentForm', () => {
 			triggerOpenFormEvent();
 
 			// Assert.
-			expect( screen.getByText( 'Save as a component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Create component' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should set component name from element label when form opens', () => {
@@ -337,7 +343,11 @@ describe( 'CreateComponentForm', () => {
 
 			// Assert.
 			await waitFor( () => {
-				expect( screen.getByText( /Component saved successfully/ ) ).toBeInTheDocument();
+				expect( mockNotify ).toHaveBeenCalledWith( {
+					type: 'success',
+					message: 'Component created successfully.',
+					id: `component-saved-successfully-${ GENERATED_UID }`,
+				} );
 			} );
 		} );
 
@@ -352,7 +362,7 @@ describe( 'CreateComponentForm', () => {
 
 			// Assert.
 			await waitFor( () => {
-				expect( screen.queryByText( 'Save as a component' ) ).not.toBeInTheDocument();
+				expect( screen.queryByText( 'Create component' ) ).not.toBeInTheDocument();
 			} );
 		} );
 	} );
@@ -373,7 +383,11 @@ describe( 'CreateComponentForm', () => {
 
 			// Assert.
 			await waitFor( () => {
-				expect( screen.getByText( 'Failed to save component. Please try again.' ) ).toBeInTheDocument();
+				expect( mockNotify ).toHaveBeenCalledWith( {
+					type: 'error',
+					message: 'Failed to create component. Please try again.',
+					id: 'component-save-failed',
+				} );
 			} );
 		} );
 	} );
@@ -389,7 +403,7 @@ describe( 'CreateComponentForm', () => {
 
 			// Assert.
 			await waitFor( () => {
-				expect( screen.queryByText( 'Save as a component' ) ).not.toBeInTheDocument();
+				expect( screen.queryByText( 'Create component' ) ).not.toBeInTheDocument();
 			} );
 		} );
 
