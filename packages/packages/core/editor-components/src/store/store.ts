@@ -30,12 +30,14 @@ type ComponentsState = {
 	archivedData: PublishedComponent[];
 	path: ComponentsPathItem[];
 	currentComponentId: V1Document[ 'id' ] | null;
+	updatedComponentNames: Record< number, string >;
 };
 
 export type ComponentsSlice = SliceState< typeof slice >;
 
 export type ComponentsPathItem = {
 	instanceId?: string;
+	instanceTitle?: string;
 	componentId: V1Document[ 'id' ];
 };
 
@@ -48,6 +50,7 @@ export const initialState: ComponentsState = {
 	archivedData: [],
 	path: [],
 	currentComponentId: null,
+	updatedComponentNames: {},
 };
 
 export const SLICE_NAME = 'components';
@@ -111,6 +114,20 @@ export const slice = createSlice( {
 
 			component.overridableProps = payload.overridableProps;
 		},
+		rename: ( state, { payload }: PayloadAction< { componentUid: string; name: string } > ) => {
+			const component = state.data.find( ( comp ) => comp.uid === payload.componentUid );
+
+			if ( ! component ) {
+				return;
+			}
+			if ( component.id ) {
+				state.updatedComponentNames[ component.id ] = payload.name;
+			}
+			component.name = payload.name;
+		},
+		cleanUpdatedComponentNames: ( state ) => {
+			state.updatedComponentNames = {};
+		},
 	},
 	extraReducers: ( builder ) => {
 		builder.addCase( loadComponents.fulfilled, ( state, { payload }: PayloadAction< GetComponentResponse > ) => {
@@ -136,6 +153,13 @@ const getPath = ( state: ComponentsSlice ) => state[ SLICE_NAME ].path;
 const getCurrentComponentId = ( state: ComponentsSlice ) => state[ SLICE_NAME ].currentComponentId;
 export const selectComponent = ( state: ComponentsSlice, componentId: ComponentId ) =>
 	state[ SLICE_NAME ].data.find( ( component ) => component.id === componentId );
+export const useComponent = ( componentId: ComponentId | null ) => {
+	return useSelector( ( state: ComponentsSlice ) => ( componentId ? selectComponent( state, componentId ) : null ) );
+};
+
+export const selectComponentByUid = ( state: ComponentsSlice, componentUid: string ) =>
+	state[ SLICE_NAME ].data.find( ( component ) => component.uid === componentUid ) ??
+	state[ SLICE_NAME ].unpublishedData.find( ( component ) => component.uid === componentUid );
 
 export const selectComponents = createSelector(
 	selectData,
@@ -180,6 +204,11 @@ export const selectOverridableProps = createSelector(
 		return component.overridableProps ?? DEFAULT_OVERRIDABLE_PROPS;
 	}
 );
+export const useOverridableProps = ( componentId: ComponentId | null ) => {
+	return useSelector( ( state: ComponentsSlice ) =>
+		componentId ? selectOverridableProps( state, componentId ) : null
+	);
+};
 export const selectIsOverridablePropsLoaded = createSelector(
 	selectComponent,
 	( component: PublishedComponent | undefined ) => {
@@ -200,4 +229,12 @@ export const useCurrentComponentId = () => {
 export const selectArchivedComponents = createSelector(
 	selectArchivedData,
 	( archivedData: PublishedComponent[] ) => archivedData
+);
+export const selectUpdatedComponentNames = createSelector(
+	( state: ComponentsSlice ) => state[ SLICE_NAME ].updatedComponentNames,
+	( updatedComponentNames ) =>
+		Object.entries( updatedComponentNames ).map( ( [ componentId, title ] ) => ( {
+			componentId: Number( componentId ),
+			title,
+		} ) )
 );

@@ -8,7 +8,6 @@ import {
 	Chip,
 	Link,
 } from '@elementor/ui';
-import { AlertTriangleIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 
 import { TextNode, AdvantagesList, AdvantagesListItem } from './opt-in-content';
@@ -28,22 +27,20 @@ const OPT_IN_MSG = 'e-editor-v4-opt-in-message';
 const OPT_OUT_MSG = 'e-editor-v4-opt-out-message';
 
 const i18n = {
-	title: __( 'The road to Editor V4', 'elementor' ),
-	chip: __( 'Alpha', 'elementor' ),
+	title: __( 'The next generation of web creation', 'elementor' ),
+	chip: __( 'Beta', 'elementor' ),
 
-	welcomeText: __( 'Welcome to a new era of web creation with Editor V4. It’s faster, more flexible, and built with a fresh approach to structure & styling.', 'elementor' ),
+	welcomeText: __( 'Welcome to version 4 of Elementor\'s Editor. It’s faster, more flexible, and built on a fully atomic approach to structure & styling.', 'elementor' ),
 
-	advantagesHeader: __( 'Here’s what’s inside the alpha version:', 'elementor' ),
+	advantagesHeader: __( 'Here’s what’s inside the beta version:', 'elementor' ),
 	advantages: [
-		__( 'Unparalleled performance - Cleaner code & a lighter CSS footprint.', 'elementor' ),
-		__( 'Professional tools at your fingertips - classes and states.', 'elementor' ),
-		__( 'Consistent styling experience - A unified Style tab for all elements.', 'elementor' ),
+		__( 'Unparalleled performance - Cleaner code & a lighter CSS footprint with single-div wrappers.', 'elementor' ),
+		__( 'Professional tools at your fingertips - Variables, Classes and States.', 'elementor' ),
+		__( 'Consistent styling experience - A unified Style tab for all atomic elements.', 'elementor' ),
 		__( 'Fully responsive design - Customize any style property per screen.', 'elementor' ),
 	],
 	andMore: __( 'And much more!', 'elementor' ),
 	readMore: __( 'Learn more', 'elementor' ),
-
-	warning: __( 'Editor V4 is still in alpha and should not be used on live sites yet.', 'elementor' ),
 
 	feedback: __( 'We’d love your feedback!', 'elementor' ),
 	overToGithub: __( 'Head over to Github', 'elementor' ),
@@ -156,7 +153,7 @@ export const OptIn = ( { state } ) => {
 			gap: 3,
 			flexDirection: { xs: 'column-reverse', md: 'row' },
 		} }>
-			<Stack sx={ { flex: 1, maxWidth: { md: '507px', sm: '600px' }, gap: 2.5, mx: 'auto' } }>
+			<Stack sx={ { flex: 1, maxWidth: { md: '580px', sm: '600px' }, gap: 2.5, mx: 'auto' } }>
 				<Stack direction="row" alignItems="center" gap={ 1 }>
 					<TextNode variant="h4" width="fit-content">{ i18n.title }</TextNode>
 					<Chip size="small" color="secondary" variant="filled" label={ i18n.chip } />
@@ -177,13 +174,6 @@ export const OptIn = ( { state } ) => {
 								{ i18n.andMore } <Link color="text.primary" href={ optInLinks.readMoreUrl } target="_blank">{ i18n.readMore }</Link>
 							</AdvantagesListItem>
 						</AdvantagesList>
-					</Box>
-				</Stack>
-
-				<Stack direction="row" alignItems="self-start" gap={ 0.5 } sx={ { mb: 2.5 } }>
-					<AlertTriangleIcon color="action" />
-					<Box>
-						<TextNode>{ i18n.warning }</TextNode>
 					</Box>
 				</Stack>
 

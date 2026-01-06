@@ -82,20 +82,18 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		} );
 	} );
 
-	test( 'should hide tabs header when scrolling down in the panel', async () => {
+	test( 'should show/hide tabs header when scrolling up/down in the panel', async () => {
 		await openScrollableStylePanel();
 
-		const lastSection = editor.page.locator( '.MuiButtonBase-root', { hasText: /effects/i } );
-		await lastSection.scrollIntoViewIfNeeded();
+		// Scroll down
+		await editor.page.mouse.wheel( 0, 100 );
+		await editor.page.waitForTimeout( 1000 );
 
 		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-scrolling-down.png' );
-	} );
 
-	test( 'should display tabs header when scrolling back up', async () => {
-		await openScrollableStylePanel();
-
-		const firstSection = editor.page.locator( '.MuiButtonBase-root', { hasText: /layout/i } );
-		await firstSection.scrollIntoViewIfNeeded();
+		// Scroll up
+		await editor.page.mouse.wheel( 0, -100 );
+		await editor.page.waitForTimeout( 1000 );
 
 		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-scrolling-up.png' );
 	} );

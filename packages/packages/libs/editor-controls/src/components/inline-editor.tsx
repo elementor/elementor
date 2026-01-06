@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { type DependencyList, useEffect, useRef } from 'react';
+import {
+	type DependencyList,
+	forwardRef,
+	type PropsWithChildren,
+	type RefObject,
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
 import { bindPopover, Box, ClickAwayListener, Popover, type SxProps, type Theme, usePopupState } from '@elementor/ui';
 import Bold from '@tiptap/extension-bold';
 import Document from '@tiptap/extension-document';
@@ -14,15 +22,20 @@ import Superscript from '@tiptap/extension-superscript';
 import Text from '@tiptap/extension-text';
 import Underline from '@tiptap/extension-underline';
 import { type EditorView } from '@tiptap/pm/view';
-import { EditorContent, useEditor } from '@tiptap/react';
+import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 
 import { isEmpty } from '../utils/inline-editing';
 import { InlineEditorToolbar } from './inline-editor-toolbar';
+
+const ITALIC_KEYBOARD_SHORTCUT = 'i';
+const BOLD_KEYBOARD_SHORTCUT = 'b';
+const UNDERLINE_KEYBOARD_SHORTCUT = 'u';
 
 type InlineEditorProps = {
 	value: string | null;
 	setValue: ( value: string | null ) => void;
 	attributes?: Record< string, string >;
+	elementClasses?: string;
 	sx?: SxProps< Theme >;
 	onBlur?: ( event: Event ) => void;
 	showToolbar?: boolean;
@@ -30,6 +43,8 @@ type InlineEditorProps = {
 	getInitialPopoverPosition?: () => { left: number; top: number };
 	expectedTag?: string | null;
 };
+
+const INITIAL_STYLE = 'margin:0;padding:0;';
 
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
 	const hasMounted = useRef( false );
@@ -62,12 +77,47 @@ const calcSelectionCenter = (
 	return { left, top };
 };
 
-export const InlineEditor = React.forwardRef(
+type WrapperProps = PropsWithChildren< {
+	containerRef: RefObject< HTMLDivElement >;
+	editor: ReturnType< typeof useEditor >;
+	sx: SxProps< Theme >;
+	onBlur?: ( event: Event ) => void;
+} >;
+
+const Wrapper = ( { children, containerRef, editor, sx, onBlur }: WrapperProps ) => {
+	const wrappedChildren = (
+		<Box ref={ containerRef } { ...sx }>
+			{ children }
+		</Box>
+	);
+
+	return onBlur ? (
+		<ClickAwayListener
+			onClickAway={ ( event: PointerEvent ) => {
+				if (
+					containerRef.current?.contains( event.target as Node ) ||
+					editor.view.dom.contains( event.target as Node )
+				) {
+					return;
+				}
+
+				onBlur?.( event );
+			} }
+		>
+			{ wrappedChildren }
+		</ClickAwayListener>
+	) : (
+		<>{ wrappedChildren }</>
+	);
+};
+
+export const InlineEditor = forwardRef(
 	(
 		{
 			value,
 			setValue,
 			attributes = {},
+			elementClasses = '',
 			showToolbar = false,
 			autofocus = false,
 			sx = {},
@@ -77,11 +127,11 @@ export const InlineEditor = React.forwardRef(
 		}: InlineEditorProps,
 		ref
 	) => {
-		const containerRef = React.useRef< HTMLDivElement >( null );
+		const containerRef = useRef< HTMLDivElement >( null );
 		const popupState = usePopupState( { variant: 'popover', disableAutoFocus: true } );
-		const [ hasSelectedContent, setHasSelectedContent ] = React.useState( false );
+		const [ hasSelectedContent, setHasSelectedContent ] = useState( false );
 		const documentContentSettings = !! expectedTag ? 'block+' : 'inline*';
-		const [ selectionRect, setSelectionRect ] = React.useState< { left: number; top: number } | null >( null );
+		const [ selectionRect, setSelectionRect ] = useState< { left: number; top: number } | null >( null );
 
 		const onSelectionEnd = ( view: EditorView ) => {
 			const hasSelection = ! view.state.selection.empty;
@@ -101,6 +151,16 @@ export const InlineEditor = React.forwardRef(
 			if ( event.key === 'Escape' ) {
 				onBlur?.( event );
 			}
+
+			if ( ( ! event.metaKey && ! event.ctrlKey ) || event.altKey ) {
+				return;
+			}
+
+			if (
+				[ ITALIC_KEYBOARD_SHORTCUT, BOLD_KEYBOARD_SHORTCUT, UNDERLINE_KEYBOARD_SHORTCUT ].includes( event.key )
+			) {
+				event.stopPropagation();
+			}
 		};
 
 		const toolbarRelatedListeners = showToolbar
@@ -111,6 +171,12 @@ export const InlineEditor = React.forwardRef(
 			  }
 			: undefined;
 
+		const onUpdate = ( { editor: updatedEditor }: { editor: Editor } ) => {
+			const newValue: string | null = updatedEditor.getHTML();
+
+			setValue( isEmpty( newValue ) ? null : newValue );
+		};
+
 		const editor = useEditor( {
 			extensions: [
 				Document.extend( {
@@ -119,20 +185,24 @@ export const InlineEditor = React.forwardRef(
 				Paragraph.extend( {
 					renderHTML( { HTMLAttributes } ) {
 						const tag = expectedTag ?? 'p';
-						return [ tag, { ...HTMLAttributes, style: 'margin:0;padding:0;' }, 0 ];
+						return [ tag, { ...HTMLAttributes, style: INITIAL_STYLE, class: elementClasses }, 0 ];
 					},
 				} ),
 				Heading.extend( {
 					renderHTML( { node, HTMLAttributes } ) {
 						if ( expectedTag ) {
-							return [ expectedTag, { ...HTMLAttributes, style: 'margin:0;padding:0;' }, 0 ];
+							return [
+								expectedTag,
+								{ ...HTMLAttributes, style: INITIAL_STYLE, class: elementClasses },
+								0,
+							];
 						}
 
 						const level = this.options.levels.includes( node.attrs.level )
 							? node.attrs.level
 							: this.options.levels[ 0 ];
 
-						return [ `h${ level }`, { ...HTMLAttributes, style: 'margin:0;padding:0;' }, 0 ];
+						return [ `h${ level }`, { ...HTMLAttributes, style: INITIAL_STYLE, class: elementClasses }, 0 ];
 					},
 				} ).configure( {
 					levels: [ 1, 2, 3, 4, 5, 6 ],
@@ -156,11 +226,7 @@ export const InlineEditor = React.forwardRef(
 				} ),
 			],
 			content: value,
-			onUpdate: ( { editor: updatedEditor } ) => {
-				const newValue: string | null = updatedEditor.getHTML();
-
-				setValue( isEmpty( newValue ) ? null : newValue );
-			},
+			onUpdate,
 			autofocus,
 			editorProps: {
 				attributes: {
@@ -202,36 +268,9 @@ export const InlineEditor = React.forwardRef(
 			};
 		};
 
-		const Wrapper = ( { children }: React.PropsWithChildren ) => {
-			const wrappedChildren = (
-				<Box ref={ containerRef } { ...sx }>
-					{ children }
-				</Box>
-			);
-
-			return onBlur ? (
-				<ClickAwayListener
-					onClickAway={ ( event: PointerEvent ) => {
-						if (
-							containerRef.current?.contains( event.target as Node ) ||
-							editor.view.dom.contains( event.target as Node )
-						) {
-							return;
-						}
-
-						onBlur?.( event );
-					} }
-				>
-					{ wrappedChildren }
-				</ClickAwayListener>
-			) : (
-				<>{ wrappedChildren }</>
-			);
-		};
-
 		return (
 			<>
-				<Wrapper>
+				<Wrapper containerRef={ containerRef } editor={ editor } sx={ sx } onBlur={ onBlur }>
 					<EditorContent ref={ ref } editor={ editor } />
 				</Wrapper>
 				{ showToolbar && containerRef.current && (

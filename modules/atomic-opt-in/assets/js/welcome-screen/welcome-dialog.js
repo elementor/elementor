@@ -11,10 +11,10 @@ import { useEffect, useRef, useState } from 'react';
 
 const i18n = {
 	heading: __( 'Say hello to a new experience!', 'elementor' ),
-	introduction: __( 'You\'re now using Editor V4, a new generation of web creation.', 'elementor' ),
+	introduction: __( 'You now have access to the beta of version 4, ready to use on production.', 'elementor' ),
 	listItems: [
-		__( 'Try out Editor V4 elements such as Div, SVG and Paragraph.', 'elementor' ),
-		__( 'Set up a new Class and apply it site-wide for perfect consistency.', 'elementor' ),
+		__( 'Try out Atomic Elements such as: Flexbox, Heading, Button & Paragraph.', 'elementor' ),
+		__( 'Apply Variables and Classes site-wide for perfect consistency.', 'elementor' ),
 		__( 'Customize any style element per screen size by switching between responsive views.', 'elementor' ),
 	],
 	footerText: __( 'Need help getting started?', 'elementor' ),
@@ -47,7 +47,7 @@ export const WelcomeDialog = ( { doClose } ) => {
 		>
 			<Box sx={ {
 				aspectRatio: '2',
-				backgroundImage: 'url(https://assets.elementor.com/v4-promotion/v1/images/v4_opt_in.png)',
+				backgroundImage: 'url(https://assets.elementor.com/v4-promotion/v1/images/v4_welcome.png)',
 				backgroundSize: 'cover',
 				backgroundPosition: 'center',
 			} } />
