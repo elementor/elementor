@@ -704,11 +704,10 @@ export default function createAtomicElementBaseView( type ) {
 			result.then( ( href ) => {
 				this.el.removeAttribute( 'href' );
 
-				const attribute = 'action' === linkValue.settings.group ? 'data-action-link' : 'href';
+				const attribute = 'action' === linkValue.group ? 'data-action-link' : 'href';
 
 				this.el.setAttribute( attribute, href );
-				this.onRender();
-			} );
+			} ).then( () => this.dispatchPreviewEvent( 'elementor/element/render' ) );
 
 			return '#';
 		},
