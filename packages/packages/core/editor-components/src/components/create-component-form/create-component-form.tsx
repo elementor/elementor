@@ -97,7 +97,7 @@ export function CreateComponentForm() {
 			notify( {
 				type: 'success',
 				message: __( 'Component created successfully.', 'elementor' ),
-				id: 'component-saved-successfully',
+				id: `component-saved-successfully-${ uid }`,
 			} );
 
 			resetAndClosePopup();

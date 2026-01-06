@@ -4,10 +4,10 @@ import { __getStore as getStore } from '@elementor/store';
 import { slice } from '../store';
 import { NotificationData, notify } from '@elementor/editor-notifications';
 
-const successNotification = ( componentName: string ): NotificationData => ( {
+const successNotification = ( componentId: number, componentName: string ): NotificationData => ( {
 	type: 'success',
 	message: `Successfully deleted component ${ componentName }`,
-	id: 'success-archived-components-notification',
+	id: `success-archived-components-notification-${ componentId }`,
 } );
 
 export const archiveComponent = ( componentId: number, componentName: string ) => {
@@ -20,5 +20,5 @@ export const archiveComponent = ( componentId: number, componentName: string ) =
 
 	dispatch( slice.actions.archive( componentId ) );
 	setDocumentModifiedStatus( true );
-	notify( successNotification( componentName ) );	
+	notify( successNotification( componentId, componentName ) );	
 };
