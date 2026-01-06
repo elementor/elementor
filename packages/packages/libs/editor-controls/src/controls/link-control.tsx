@@ -68,7 +68,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 			setLinkInLinkRestriction( newRestriction );
 		};
 
-		const intervalId = setInterval( checkRestriction, 500 );
+		const intervalId = setInterval( checkRestriction, 1000 );
 
 		return () => clearInterval( intervalId );
 	}, [ elementId, linkInLinkRestriction.shouldRestrict, isActive ] );

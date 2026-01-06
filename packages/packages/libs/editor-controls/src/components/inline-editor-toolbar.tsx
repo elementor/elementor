@@ -26,11 +26,8 @@ import { __ } from '@wordpress/i18n';
 
 import { UrlPopover } from './url-popover';
 
-const checkIfElementHasLink = ( elementId: ElementID ): boolean => {
-	const linkValue = getElementSetting< LinkPropValue >( elementId, 'link' );
-
-	return linkValue !== null && linkValue?.value?.destination !== null;
-};
+const checkIfElementHasLink = ( elementId: ElementID ): boolean =>
+	!! getElementSetting< LinkPropValue >( elementId, 'link' )?.value?.destination;
 
 type InlineEditorToolbarProps = {
 	editor: Editor;
@@ -115,7 +112,6 @@ export const InlineEditorToolbar = ( { editor, elementId }: InlineEditorToolbarP
 	const [ openInNewTab, setOpenInNewTab ] = useState( false );
 	const toolbarRef = useRef< HTMLDivElement >( null );
 	const linkPopupState = usePopupState( { variant: 'popover' } );
-
 	const hasLinkOnElement = elementId ? checkIfElementHasLink( elementId ) : false;
 
 	const editorState = useEditorState( {
