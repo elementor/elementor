@@ -1,58 +1,65 @@
 import * as React from 'react';
-import { Card, CardActions, CardContent, CardHeader, CardMedia, CloseButton, Infotip, Typography } from '@elementor/ui';
+import {
+	Card,
+	CardActions,
+	CardContent,
+	CardHeader,
+	CardMedia,
+	ClickAwayListener,
+	CloseButton,
+	Infotip,
+	Typography,
+} from '@elementor/ui';
 
 import { CtaButton } from './cta-button';
 
-type PromotionInfotipProps = React.PropsWithChildren< {
+type InfotipCardProps = {
 	title: string;
 	content: string;
 	assetUrl: string;
 	ctaUrl: string;
-	open?: boolean;
 	setOpen: ( open: boolean ) => void;
-} >;
+};
 
-export const PromotionInfotip = ( { children, ...props }: PromotionInfotipProps ) => {
+type PromotionInfotipProps = React.PropsWithChildren<
+	InfotipCardProps & {
+		open?: boolean;
+	}
+>;
+
+export const PromotionInfotip = ( { children, open, ...cardProps }: PromotionInfotipProps ) => {
 	return (
-		<Infotip
-			placement="right"
-			{ ...props }
-			content={
-				<InfotipCard
-					title={ props.title }
-					content={ props.content }
-					assetUrl={ props.assetUrl }
-					ctaUrl={ props.ctaUrl }
-					setOpen={ props.setOpen }
-				/>
-			}
-			open={ props.open }
-		>
+		<Infotip placement="right" content={ <InfotipCard { ...cardProps } /> } open={ open }>
 			{ children }
 		</Infotip>
 	);
 };
 
-function InfotipCard( { ...props }: PromotionInfotipProps ) {
-	const { title, content, assetUrl, ctaUrl, setOpen } = props;
-
+function InfotipCard( { title, content, assetUrl, ctaUrl, setOpen }: InfotipCardProps ) {
 	return (
-		<Card elevation={ 0 } sx={ { maxWidth: 296 } }>
-			<CardHeader
-				title={ title }
-				action={
-					<CloseButton slotProps={ { icon: { fontSize: 'tiny' } } } onClick={ () => setOpen( false ) } />
-				}
-			/>
-			<CardMedia component="img" image={ assetUrl } alt="" sx={ { width: '100%', aspectRatio: '16 / 9' } } />
-			<CardContent>
-				<Typography variant="body2" color="text.secondary">
-					{ content }
-				</Typography>
-			</CardContent>
-			<CardActions sx={ { justifyContent: 'flex-start' } }>
-				<CtaButton href={ ctaUrl } />
-			</CardActions>
-		</Card>
+		<ClickAwayListener
+			disableReactTree={ true }
+			mouseEvent="onMouseDown"
+			touchEvent="onTouchStart"
+			onClickAway={ () => setOpen( false ) }
+		>
+			<Card elevation={ 0 } sx={ { maxWidth: 296 } }>
+				<CardHeader
+					title={ title }
+					action={
+						<CloseButton slotProps={ { icon: { fontSize: 'tiny' } } } onClick={ () => setOpen( false ) } />
+					}
+				/>
+				<CardMedia component="img" image={ assetUrl } alt="" sx={ { width: '100%', aspectRatio: '16 / 9' } } />
+				<CardContent>
+					<Typography variant="body2" color="text.secondary">
+						{ content }
+					</Typography>
+				</CardContent>
+				<CardActions sx={ { justifyContent: 'flex-start' } }>
+					<CtaButton href={ ctaUrl } />
+				</CardActions>
+			</Card>
+		</ClickAwayListener>
 	);
 }
