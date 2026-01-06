@@ -6,9 +6,13 @@ import { __ } from '@wordpress/i18n';
 import { CUSTOM_SIZE_LABEL } from '../size-control';
 import { defaultValues, TransformFunctionKeys } from './initial-values';
 
+const orderedAxis = [ 'x', 'y', 'z' ];
+
 const formatLabel = ( value: TransformFunctionsItemPropValue[ 'value' ], functionType: keyof typeof defaultValues ) => {
-	return Object.values( value )
-		.map( ( axis ) => {
+	return orderedAxis
+		.map( ( axisKey ) => {
+			const axis = value[ axisKey as keyof typeof value ];
+
 			if ( functionType === 'scale' ) {
 				return axis?.value || defaultValues[ functionType ];
 			}
