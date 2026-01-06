@@ -159,6 +159,7 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
 			add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 			add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
+			add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->backward_compatibility_migrations( $data, $document ), 10, 2 );
 
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
@@ -396,5 +397,32 @@ class Module extends BaseModule {
 	private function add_inline_styles() {
 		$inline_css = '.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }';
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
+	}
+
+	private function backward_compatibility_migrations( array $data, $document ): array {
+		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_BC_MIGRATIONS ) ) {
+			return $data;
+		}
+
+		$migrations_base_path = ELEMENTOR_PATH . 'migrations/';
+
+		if ( ! is_dir( $migrations_base_path ) ) {
+			return $data;
+		}
+
+		$orchestrator = Migrations_Orchestrator::make( $migrations_base_path );
+
+		$orchestrator->migrate_document(
+			$data,
+			$document->get_post()->ID,
+			function( $migrated_data ) use ( $document ) {
+				$document->update_json_meta(
+					\Elementor\Core\Base\Document::ELEMENTOR_DATA_META_KEY,
+					$migrated_data
+				);
+			}
+		);
+
+		return $data;
 	}
 }

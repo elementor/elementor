@@ -20,6 +20,11 @@
       "fromType": "old-shadow",
       "toType": "shadow",
       "url": "old-shadow-to-shadow.json"
+    },
+    "old-string-to-string": {
+      "fromType": "old-string",
+      "toType": "string",
+      "url": "old-string-to-string.json"
     }
   }
 }

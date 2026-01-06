@@ -184,5 +184,22 @@
       }
     },
     "version": "0.0"
+  },
+  {
+    "id": "div-block-settings",
+    "settings": {
+      "classes": {
+        "$$type": "classes",
+        "value": []
+      },
+      "tag": {
+        "$$type": "old-string",
+        "value": "section"
+      }
+    },
+    "elements": [],
+    "isInner": false,
+    "elType": "e-div-block",
+    "version": "0.0"
   }
 ]

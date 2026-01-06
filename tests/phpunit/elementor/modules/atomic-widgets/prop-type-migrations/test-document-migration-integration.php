@@ -27,6 +27,8 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 
 		Plugin::$instance->widgets_manager->register( new Atomic_Heading( [], [] ) );
 		Plugin::$instance->widgets_manager->register( new \Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image( [], [] ) );
+		Plugin::$instance->elements_manager->register_element_type( new \Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox( [], [] ) );
+		Plugin::$instance->elements_manager->register_element_type( new \Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block( [], [] ) );
 
 		Migrations_Orchestrator::clear_all_migration_caches();
 	}
@@ -37,6 +39,8 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 
 		Plugin::$instance->widgets_manager->unregister( 'e-heading' );
 		Plugin::$instance->widgets_manager->unregister( 'e-image' );
+		Plugin::$instance->elements_manager->unregister_element_type( 'e-flexbox' );
+		Plugin::$instance->elements_manager->unregister_element_type( 'e-div-block' );
 
 		parent::tearDown();
 	}

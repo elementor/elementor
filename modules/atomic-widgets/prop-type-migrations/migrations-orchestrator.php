@@ -78,7 +78,7 @@ class Migrations_Orchestrator {
 		callable $save_callback
 	): void {
 		try {
-			if ( $this->is_already_migrated( $post_id ) ) {
+			if ( $this->is_migrated( $post_id ) ) {
 				return;
 			}
 
@@ -101,35 +101,21 @@ class Migrations_Orchestrator {
 		$has_changes = false;
 
 		foreach ( $elements_data as &$element ) {
-			if ( $this->is_atomic_widget( $element ) ) {
-				$widget_type = $element['widgetType'] ?? '';
+			$schema = $this->get_schema( $element );
+			$settings = $element['settings'] ?? [];
+			$element_type = $element['widgetType'] ?? $element['elType'] ?? '';
 
-				if ( empty( $widget_type ) ) {
-					continue;
-				}
-
-				$schema = $this->get_widget_schema( $widget_type );
-
-				if ( empty( $schema ) ) {
-					continue;
-				}
-
-				$original_settings = $element['settings'] ?? [];
-
-				if ( empty( $original_settings ) ) {
-					continue;
-				}
-
+			if ( ! empty( $schema ) && ! empty( $settings ) ) {
 				try {
-					$result = $this->migrate_element( $original_settings, $schema, $widget_type );
+					$element_has_changes = $this->migrate_element( $settings, $schema, $element_type );
 
-					if ( $result['has_changes'] ) {
-						$element['settings'] = $result['settings'];
+					if ( $element_has_changes ) {
+						$element['settings'] = $settings;
 						$has_changes = true;
 					}
 				} catch ( \Exception $e ) {
 					Logger::warning( 'Element migration failed', [
-						'widget_type' => $widget_type,
+						'element_type' => $element_type,
 						'error' => $e->getMessage(),
 					] );
 				}
@@ -147,7 +133,7 @@ class Migrations_Orchestrator {
 		return $has_changes;
 	}
 
-	private function is_already_migrated( int $post_id ): bool {
+	private function is_migrated( int $post_id ): bool {
 		$current_state = $this->get_migration_state();
 
 		if ( empty( $current_state ) ) {
@@ -171,6 +157,18 @@ class Migrations_Orchestrator {
 		}
 
 		return ELEMENTOR_VERSION . ':' . $hash;
+	}
+
+	private function get_schema( array $element ): array {
+		if ( $this->is_atomic_widget( $element ) ) {
+			return $this->get_widget_schema( $element['widgetType'] );
+		}
+
+		if ( $this->is_atomic_element( $element ) ) {
+			return $this->get_element_schema( $element['elType'] );
+		}
+
+		return [];
 	}
 
 	private function get_widget_schema( string $widget_type ): array {
@@ -203,55 +201,75 @@ class Migrations_Orchestrator {
 		return Atomic_Elements_Utils::is_atomic_element( $widget );
 	}
 
-	public function migrate_element( array $settings, array $schema, string $widget_type ): array {
-		$migrated_settings = [];
+	private function is_atomic_element( array $element ): bool {
+		$el_type = $element['elType'] ?? '';
+
+		if ( empty( $el_type ) || 'widget' === $el_type ) {
+			return false;
+		}
+
+		$element_instance = \Elementor\Plugin::$instance->elements_manager->get_element_types( $el_type );
+
+		return Atomic_Elements_Utils::is_atomic_element( $element_instance );
+	}
+
+	private function get_element_schema( string $element_type ): array {
+		$element = \Elementor\Plugin::$instance->elements_manager->get_element_types( $element_type );
+
+		if ( ! $element ) {
+			return [];
+		}
+
+		if ( ! method_exists( $element, 'get_props_schema' ) ) {
+			return [];
+		}
+
+		$schema = call_user_func( [ $element, 'get_props_schema' ] );
+
+		return is_array( $schema ) ? $schema : [];
+	}
+
+	public function migrate_element( array &$settings, array $schema, string $widget_type ): bool {
 		$missing_keys = array_keys( $schema );
 		$pending_migrations = [];
 		$has_changes = false;
 
 		foreach ( $settings as $key => $value ) {
-			$this->process_setting_key(
-				$key,
-				$value,
-				$schema,
-				$widget_type,
-				$migrated_settings,
-				$missing_keys,
-				$pending_migrations,
-				$has_changes
-			);
+			if ( ! isset( $schema[ $key ] ) ) {
+				$this->process_missing_key( $key, $value, $widget_type, $missing_keys, $pending_migrations );
+			} else {
+				$missing_keys = array_diff( $missing_keys, [ $key ] );
+
+				if ( $this->process_setting_key( $key, $value, $schema, $settings ) ) {
+					$has_changes = true;
+				}
+			}
 		}
 
-		$this->apply_pending_key_migrations( $pending_migrations, $schema, $migrated_settings, $has_changes );
+		$this->apply_pending_key_migrations( $pending_migrations, $schema, $settings, $has_changes );
 
-		return [
-			'settings' => $migrated_settings,
-			'has_changes' => $has_changes,
-		];
+		return $has_changes;
 	}
 
 	private function process_setting_key(
 		string $key,
 		$value,
 		array $schema,
+		array &$settings
+	): bool {
+		$result = $this->migrate_prop_if_needed( $value, $schema[ $key ], $key );
+		$settings[ $key ] = $result['value'];
+
+		return $result['has_changes'];
+	}
+
+	private function process_missing_key(
+		string $key,
+		$value,
 		string $widget_type,
-		array &$migrated_settings,
-		array &$missing_keys,
-		array &$pending_migrations,
-		bool &$has_changes
+		array $missing_keys,
+		array &$pending_migrations
 	): void {
-		if ( isset( $schema[ $key ] ) ) {
-			$missing_keys = array_diff( $missing_keys, [ $key ] );
-			$result = $this->migrate_prop_if_needed( $value, $schema[ $key ], $key );
-			$migrated_settings[ $key ] = $result['value'];
-
-			if ( $result['has_changes'] ) {
-				$has_changes = true;
-			}
-
-			return;
-		}
-
 		$target_key = $this->loader->find_widget_key_migration( $key, $missing_keys, $widget_type );
 
 		if ( $target_key ) {
@@ -259,26 +277,20 @@ class Migrations_Orchestrator {
 				'from' => $key,
 				'value' => $value,
 			];
-		} else {
-			$migrated_settings[ $key ] = $value;
 		}
 	}
-
-	private function apply_pending_key_migrations( array $pending_migrations, array $schema, array &$migrated_settings, bool &$has_changes ): void {
+	private function apply_pending_key_migrations( array $pending_migrations, array $schema, array &$settings, bool &$has_changes ): void {
 		foreach ( $pending_migrations as $target_key => $sources ) {
-			if ( count( $sources ) === 1 ) {
+			if ( count( $sources ) === 1 ) { // sanity check for only one key source, otherwise no-op
 				$result = $this->migrate_prop_if_needed(
 					$sources[0]['value'],
 					$schema[ $target_key ],
 					$target_key
 				);
-				$migrated_settings[ $target_key ] = $result['value'];
 
+				$settings[ $target_key ] = $result['value'];
+				unset( $settings[ $sources[0]['from'] ] );
 				$has_changes = true;
-			} else {
-				foreach ( $sources as $source ) {
-					$migrated_settings[ $source['from'] ] = $source['value'];
-				}
 			}
 		}
 	}
