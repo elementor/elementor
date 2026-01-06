@@ -261,17 +261,18 @@ export default function createAtomicElementBaseView( type ) {
 			const { $$type, value } = this.model.getSetting( 'link' ).value.destination;
 
 			if ( ! value ) {
-				return {
-					attr: 'href',
-					value: '#',
-				};
+				return null;
 			}
 
 			if ( 'dynamic' === $$type ) {
-				return {
-					attr: 'action' === value.settings.group ? 'data-action-link' : 'href',
-					value: this.handleDynamicLink( value ),
-				};
+				const resolvedValue = this.handleDynamicLink( value );
+
+				return resolvedValue
+					? {
+						attr: 'action' === value.settings.group ? 'data-action-link' : 'href',
+						value: resolvedValue,
+					}
+					: null;
 			}
 
 			const isPostId = 'number' === $$type;
@@ -679,7 +680,7 @@ export default function createAtomicElementBaseView( type ) {
 			const tagValue = getTagValue();
 
 			if ( tagValue !== null ) {
-				tagValue;
+				return tagValue;
 			}
 
 			return new Promise( ( resolve ) => {
@@ -693,7 +694,7 @@ export default function createAtomicElementBaseView( type ) {
 			const result = this.getDynamicLinkValue( linkValue.name, linkValue.settings );
 
 			if ( ! result ) {
-				return '#';
+				return null;
 			}
 
 			if ( 'string' === typeof result ) {
@@ -708,7 +709,7 @@ export default function createAtomicElementBaseView( type ) {
 				this.el.setAttribute( attribute, href );
 			} ).then( () => this.dispatchPreviewEvent( 'elementor/element/render' ) );
 
-			return '#';
+			return null;
 		},
 	} );
 
