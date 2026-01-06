@@ -81,32 +81,41 @@ test.describe( 'Variable Manager @v4-tests', () => {
 
 	test( 'should filter out size variables from the list when it is core only', async () => {
 		const sizeVariable = { name: 'test-size-variable', value: '20', type: 'size' as const };
+		const colorVariable = { name: 'test-color-variable', value: '#FF0000', type: 'color' as const };
 		const proPluginSlug = 'elementor-pro/elementor-pro';
 		const currentUrl = page.url();
 
-		await test.step( 'Activate Pro and create a size variable', async () => {
-			await apiRequestsInstance.activatePlugin( page.context().request, proPluginSlug );
-			await page.goto( currentUrl );
-			await page.waitForLoadState( 'load' );
-			await wpAdminPage.waitForPanel();
-			await editorPage.loadTemplate( getTemplatePath() );
-			await variablesManagerPage.createVariableFromManager( sizeVariable );
-		} );
+		try {
+			await test.step( 'Activate Pro and create size and color variables', async () => {
+				await apiRequestsInstance.activatePlugin( page.context().request, proPluginSlug );
+				await page.goto( currentUrl );
+				await page.waitForLoadState( 'load' );
+				await wpAdminPage.waitForPanel();
+				await editorPage.loadTemplate( getTemplatePath() );
+				await variablesManagerPage.createVariableFromManager( colorVariable );
+				await variablesManagerPage.createVariableFromManager( sizeVariable );
+			} );
 
-		await test.step( 'Deactivate Pro and verify size variable is filtered out', async () => {
-			await apiRequestsInstance.deactivatePlugin( page.context().request, proPluginSlug );
-			await page.goto( currentUrl );
-			await page.waitForLoadState( 'load' );
-			await wpAdminPage.waitForPanel();
-			await editorPage.loadTemplate( getTemplatePath() );
-			await wpAdminPage.closeAnnouncementsIfVisible();
-			await variablesManagerPage.openVariableManager( 'Typography', 'text-color' );
-			const sizeVariableRow = variablesManagerPage.getVariableRowByName( sizeVariable.name );
-			await expect( sizeVariableRow ).toBeHidden();
-		} );
+			await test.step( 'Deactivate Pro and verify size variable is filtered out while color remains', async () => {
+				await apiRequestsInstance.deactivatePlugin( page.context().request, proPluginSlug );
+				await page.goto( currentUrl );
+				await page.waitForLoadState( 'load' );
+				await wpAdminPage.waitForPanel();
+				await editorPage.loadTemplate( getTemplatePath() );
+				await wpAdminPage.closeAnnouncementsIfVisible();
+				await variablesManagerPage.openVariableManager( 'Typography', 'text-color' );
 
-		await test.step( 'Re-activate Pro for cleanup', async () => {
-			await apiRequestsInstance.activatePlugin( page.context().request, proPluginSlug );
-		} );
+				const sizeVariableRow = variablesManagerPage.getVariableRowByName( sizeVariable.name );
+				const colorVariableRow = variablesManagerPage.getVariableRowByName( colorVariable.name );
+				
+				await expect( sizeVariableRow ).toBeHidden();
+				await expect( colorVariableRow ).toBeVisible();
+			} );
+		} finally {
+			await test.step( 'Re-activate Pro for cleanup', async () => {
+				await apiRequestsInstance.activatePlugin( page.context().request, proPluginSlug );
+			} );
+		}
 	} );
+
 } );

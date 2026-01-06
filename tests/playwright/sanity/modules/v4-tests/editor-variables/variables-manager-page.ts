@@ -51,7 +51,8 @@ export default class VariablesManagerPage {
 		await this.openVariableManager( 'Typography', 'text-color' );
 
 		await this.page.getByRole( 'button', { name: 'Add variable' } ).click();
-		await this.page.locator( 'li' ).filter( { hasText: type } ).click();
+		const capitalizedType = type.charAt( 0 ).toUpperCase() + type.slice( 1 );
+		await this.page.locator( 'li' ).filter( { hasText: capitalizedType } ).click();
 
 		const rows = this.page.locator( 'tbody tr' );
 		const rowCount = await rows.count();

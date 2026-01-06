@@ -65,7 +65,7 @@ export const useVariablesManagerState = () => {
 		return { success: result.success };
 	}, [ variables ] );
 
-	const filteredVariables = () => {
+	const filteredVariables = useCallback( () => {
 		const variableTypes = getVariableTypes();
 
 		const list = Object.entries( variables )
@@ -85,7 +85,7 @@ export const useVariablesManagerState = () => {
 		const searchFiltered = filterBySearch( typeFiltered, searchValue );
 
 		return Object.fromEntries( searchFiltered.map( ( { key, ...rest } ) => [ key, rest ] ) );
-	};
+	}, [ variables, searchValue ] );
 
 	return {
 		variables: filteredVariables(),
