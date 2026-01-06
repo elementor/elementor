@@ -1,0 +1,6 @@
+{
+    "unknown": {
+        "$$type": "string",
+        "value": "value"
+    }
+}
