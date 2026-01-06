@@ -248,7 +248,6 @@ describe( 'Frontend Handlers', () => {
 				} )
 			);
 
-			// Add listener after render to only catch actual destroy events
 			element.addEventListener( 'elementor/element/destroyed', destroyedEventCallback );
 
 			// Act
@@ -462,24 +461,21 @@ describe( 'Frontend Handlers', () => {
 			child.setAttribute( 'data-id', CHILD_ID );
 			parent.appendChild( child );
 
-			// Render parent first (this sets up the destroy listener)
 			window.dispatchEvent(
 				new CustomEvent( 'elementor/element/render', {
 					detail: { id: PARENT_ID, type: PARENT_ELEMENT_TYPE, element: parent },
 				} )
 			);
 
-			// Render child
 			window.dispatchEvent(
 				new CustomEvent( 'elementor/element/render', {
 					detail: { id: CHILD_ID, type: CHILD_ELEMENT_TYPE, element: child },
 				} )
 			);
 
-			// Reset callback count after renders (to ignore destroy events from render cleanup)
 			childDestroyCallback.mockClear();
 
-			// Act - destroy child
+			// Act
 			window.dispatchEvent(
 				new CustomEvent( 'elementor/element/destroy', {
 					detail: { id: CHILD_ID, type: CHILD_ELEMENT_TYPE, element: child },
