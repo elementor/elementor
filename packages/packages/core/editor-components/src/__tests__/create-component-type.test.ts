@@ -11,10 +11,11 @@ import type { ExtendedWindow } from '../types';
 
 const MOCK_COMPONENT_ID = 123;
 
-const createMockRenderer = () => ( {
-	register: jest.fn(),
-	render: jest.fn( () => Promise.resolve( '<div>Component</div>' ) ),
-} as CreateTemplatedElementTypeOptions[ 'renderer' ] );
+const createMockRenderer = () =>
+	( {
+		register: jest.fn(),
+		render: jest.fn( () => Promise.resolve( '<div>Component</div>' ) ),
+	} ) as CreateTemplatedElementTypeOptions[ 'renderer' ];
 
 const createMockElementConfig = () => ( {
 	twig_templates: {},
