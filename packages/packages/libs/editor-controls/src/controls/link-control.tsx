@@ -59,13 +59,19 @@ export const LinkControl = createControl( ( props: Props ) => {
 
 	useEffect( () => {
 		const checkRestriction = () => {
-			setLinkInLinkRestriction( getLinkInLinkRestriction( elementId ) );
+			const newRestriction = getLinkInLinkRestriction( elementId );
+
+			if ( newRestriction.shouldRestrict && ! linkInLinkRestriction.shouldRestrict && isActive ) {
+				setIsActive( false );
+			}
+
+			setLinkInLinkRestriction( newRestriction );
 		};
 
 		const intervalId = setInterval( checkRestriction, 500 );
 
 		return () => clearInterval( intervalId );
-	}, [ elementId ] );
+	}, [ elementId, linkInLinkRestriction.shouldRestrict, isActive ] );
 
 	const onEnabledChange = () => {
 		setLinkInLinkRestriction( getLinkInLinkRestriction( elementId ) );
