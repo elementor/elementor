@@ -1,6 +1,5 @@
 name: Deploy Elementor Migrations
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
