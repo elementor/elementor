@@ -1,6 +1,6 @@
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { type NotificationData, notify } from '@elementor/editor-notifications';
-import { __getStore as getStore } from '@elementor/store';
+import { __dispatch as dispatch } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
 import { slice } from '../store';
@@ -13,13 +13,6 @@ const successNotification = ( componentId: number, componentName: string ): Noti
 } );
 
 export const archiveComponent = ( componentId: number, componentName: string ) => {
-	const store = getStore();
-	const dispatch = store?.dispatch;
-
-	if ( ! dispatch ) {
-		return;
-	}
-
 	dispatch( slice.actions.archive( componentId ) );
 	setDocumentModifiedStatus( true );
 	notify( successNotification( componentId, componentName ) );
