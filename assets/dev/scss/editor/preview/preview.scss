@@ -552,6 +552,21 @@ html.elementor-html {
 	pointer-events: none;
 }
 
+
+.elementor-widget-e-component[data-atomic] {
+	&.elementor-edit-area-active {
+		& > * > * {
+			pointer-events: revert;
+		}
+	}
+
+	&:not(.elementor-edit-area-active) {
+		& > * > * {
+			pointer-events: none;
+		}
+	}
+}
+
 @import "section";
 @import "column";
 @import "widget";
