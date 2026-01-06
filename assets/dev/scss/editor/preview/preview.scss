@@ -556,7 +556,7 @@ html.elementor-html {
 .elementor-widget-e-component[data-atomic] {
 	&.elementor-edit-area-active {
 		& > * > * {
-			pointer-events: revert;
+			pointer-events: initial;
 		}
 	}
 
