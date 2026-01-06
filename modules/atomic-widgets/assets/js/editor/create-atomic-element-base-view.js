@@ -188,15 +188,17 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		render() {
-			const renderPromise = new Promise( ( resolve ) => {
-				BaseElementView.prototype.render.apply( this, arguments );
+			const shouldSkipFullRender = this.isRendered && this.children?.length > 0;
 
-				this._waitForChildrenToComplete().then( () => {
-					resolve();
-				} );
+			this._currentRenderPromise = new Promise( ( resolve ) => {
+				if ( shouldSkipFullRender ) {
+					this._renderChildren();
+				} else {
+					BaseElementView.prototype.render.apply( this, arguments );
+				}
+
+				this._waitForChildrenToComplete().then( resolve );
 			} );
-
-			this._currentRenderPromise = renderPromise;
 
 			return this;
 		},
@@ -208,7 +210,13 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		_renderChildren() {
-			BaseElementView.prototype._renderChildren.apply( this, arguments );
+			const shouldSkipFullRender = this.isRendered && this.children?.length > 0;
+
+			if ( shouldSkipFullRender ) {
+				this.children?.each( ( childView ) => childView.render() );
+			} else {
+				BaseElementView.prototype._renderChildren.apply( this, arguments );
+			}
 
 			this._childrenRenderPromises = [];
 

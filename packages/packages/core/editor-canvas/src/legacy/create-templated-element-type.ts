@@ -79,6 +79,8 @@ export function createTemplatedElementView( {
 	return class extends BaseView {
 		#abortController: AbortController | null = null;
 		#childrenRenderPromises: Promise< void >[] = [];
+		#lastResolvedSettingsHash: string | null = null;
+		#renderWasSkipped = false;
 
 		getTemplateType() {
 			return 'twig';
@@ -100,8 +102,6 @@ export function createTemplatedElementView( {
 			return this._parent?.getResolverRenderContext?.();
 		}
 
-		// Override `render` function to support async `_renderTemplate`
-		// Note that `_renderChildren` asynchronity is still NOT supported, so only the parent element rendering can be async
 		render() {
 			this.#abortController?.abort();
 			this.#abortController = new AbortController();
@@ -118,6 +118,20 @@ export function createTemplatedElementView( {
 		}
 
 		async _renderChildren() {
+			if ( this.#renderWasSkipped && this.children?.length > 0 ) {
+				this.#childrenRenderPromises = [];
+
+				this.children?.each( ( childView: ElementView ) => {
+					childView.render();
+					if ( childView._currentRenderPromise ) {
+						this.#childrenRenderPromises.push( childView._currentRenderPromise );
+					}
+				} );
+
+				await this._waitForChildrenToComplete();
+				return;
+			}
+
 			super._renderChildren();
 
 			this.#childrenRenderPromises = [];
@@ -137,14 +151,12 @@ export function createTemplatedElementView( {
 			}
 		}
 
-		// Overriding Marionette original `_renderTemplate` method to inject our renderer.
 		async _renderTemplate() {
 			this.triggerMethod( 'before:render:template' );
 
 			const process = signalizedProcess( this.#abortController?.signal as AbortSignal )
 				.then( ( _, signal ) => {
 					const settings = this.model.get( 'settings' ).toJSON();
-
 					return resolveProps( {
 						props: settings,
 						signal,
@@ -155,7 +167,17 @@ export function createTemplatedElementView( {
 					return this.afterSettingsResolve( settings );
 				} )
 				.then( async ( settings ) => {
-					// Same as the Backend.
+					const settingsHash = JSON.stringify( settings );
+					const settingsChanged = settingsHash !== this.#lastResolvedSettingsHash;
+
+					if ( ! settingsChanged && this.isRendered ) {
+						this.#renderWasSkipped = true;
+						return null;
+					}
+					this.#renderWasSkipped = false;
+
+					this.#lastResolvedSettingsHash = settingsHash;
+
 					const context = {
 						id: this.model.get( 'id' ),
 						type,
@@ -165,7 +187,13 @@ export function createTemplatedElementView( {
 
 					return renderer.render( templateKey, context );
 				} )
-				.then( ( html ) => this.$el.html( html ) );
+				.then( ( html ) => {
+					if ( html === null ) {
+						return;
+					}
+
+					this.$el.html( html );
+				} );
 
 			await process.execute();
 
