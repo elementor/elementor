@@ -69,10 +69,10 @@ export default function createAtomicElementBaseView( type ) {
 				local.id = cssId.value;
 			}
 
-			const href = this.getHref();
+			const link = this.getLink();
 
-			if ( href ) {
-				local.href = href;
+			if ( link ) {
+				local[ link.attr ] = link.value;
 			}
 
 			local[ 'data-interaction-id' ] = this.model.get( 'id' );
@@ -253,25 +253,34 @@ export default function createAtomicElementBaseView( type ) {
 			return !! this.model.getSetting( 'link' )?.value?.destination?.value;
 		},
 
-		getHref() {
+		getLink() {
 			if ( ! this.haveLink() ) {
-				return;
+				return null;
 			}
 
 			const { $$type, value } = this.model.getSetting( 'link' ).value.destination;
 
 			if ( ! value ) {
-				return '#';
+				return {
+					attr: 'href',
+					value: '#',
+				};
 			}
 
 			if ( 'dynamic' === $$type ) {
-				return this.handleDynamicLink( value );
+				return {
+					attr: 'action' === value.settings.group ? 'data-action-link' : 'href',
+					value: this.handleDynamicLink( value ),
+				};
 			}
 
 			const isPostId = 'number' === $$type;
 			const hrefPrefix = isPostId ? elementor.config.home_url + '/?p=' : '';
 
-			return hrefPrefix + value;
+			return {
+				attr: 'href',
+				value: hrefPrefix + value,
+			};
 		},
 
 		droppableInitialize() {
@@ -651,7 +660,7 @@ export default function createAtomicElementBaseView( type ) {
 			return 0 === this.model.collection.indexOf( this.model );
 		},
 
-		getDynamicValue( name, settings ) {
+		getDynamicLinkValue( name, settings ) {
 			const { dynamicTags } = elementor ?? {};
 		
 			if ( ! dynamicTags ) {
@@ -682,7 +691,7 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		handleDynamicLink( linkValue ) {
-			const result = this.getDynamicValue( linkValue.name, linkValue.settings );
+			const result = this.getDynamicLinkValue( linkValue.name, linkValue.settings );
 
 			if ( ! result ) {
 				return '#';
@@ -698,6 +707,7 @@ export default function createAtomicElementBaseView( type ) {
 				const attribute = 'action' === linkValue.settings.group ? 'data-action-link' : 'href';
 
 				this.el.setAttribute( attribute, href );
+				this.onRender();
 			} );
 
 			return '#';
