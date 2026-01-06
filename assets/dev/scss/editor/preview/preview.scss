@@ -486,10 +486,9 @@ html.elementor-html {
 	:where(.elementor-edit-area-active) {
 		.elementor-element-overlay,
 		.elementor-empty,
-		.elementor-add-section,
-		.elementor-add-section-inline,
 		.elementor-empty-view,
-		.elementor-widget-empty {
+		.elementor-widget-empty 
+		{
 			display: revert;
 		}
 	}
