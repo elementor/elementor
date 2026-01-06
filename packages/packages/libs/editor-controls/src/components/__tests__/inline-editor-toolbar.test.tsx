@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { renderWithTheme } from 'test-utils';
+import { getElementSetting } from '@elementor/editor-elements';
 import { fireEvent, screen } from '@testing-library/react';
 import { type Editor } from '@tiptap/react';
-import { getElementSetting } from '@elementor/editor-elements';
 
 import { InlineEditorToolbar } from '../inline-editor-toolbar';
 
@@ -205,7 +205,7 @@ describe( 'InlineEditorToolbar', () => {
 		it( 'should hide link button when element has LinkControl link', () => {
 			// Arrange
 			const mockEditor = createMockEditor();
-			
+
 			jest.mocked( getElementSetting ).mockReturnValue( {
 				value: {
 					destination: 'https://example.com',
@@ -222,7 +222,7 @@ describe( 'InlineEditorToolbar', () => {
 		it( 'should show link button when element has no LinkControl link', () => {
 			// Arrange
 			const mockEditor = createMockEditor();
-			
+
 			jest.mocked( getElementSetting ).mockReturnValue( null );
 
 			// Act
