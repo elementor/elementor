@@ -130,7 +130,7 @@ function checkForInlineLink( elementId: string ): boolean {
 	}
 
 	const linkSetting = getElementSetting< { value?: { destination?: unknown } } >( elementId, 'link' );
-	
+
 	if ( linkSetting?.value?.destination ) {
 		return false;
 	}

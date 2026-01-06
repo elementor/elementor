@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { useMemo, useRef, useState } from 'react';
+import { type ElementID, getElementSetting } from '@elementor/editor-elements';
+import { type LinkPropValue } from '@elementor/editor-props';
 import {
 	BoldIcon,
 	ItalicIcon,
@@ -24,12 +26,9 @@ import { __ } from '@wordpress/i18n';
 
 import { UrlPopover } from './url-popover';
 
-import { getElementSetting, type ElementID } from '@elementor/editor-elements';
-import { type LinkPropValue } from '@elementor/editor-props';
-
 const checkIfElementHasLink = ( elementId: ElementID ): boolean => {
 	const linkValue = getElementSetting< LinkPropValue >( elementId, 'link' );
-	
+
 	return linkValue !== null && linkValue?.value?.destination !== null;
 };
 
@@ -126,11 +125,11 @@ export const InlineEditorToolbar = ( { editor, elementId }: InlineEditorToolbarP
 
 	const formatButtonsList = useMemo( () => {
 		const buttons = Object.values( formatButtons );
-		
+
 		if ( hasLinkOnElement ) {
 			return buttons.filter( ( button ) => button.action !== 'link' );
 		}
-		
+
 		return buttons;
 	}, [ hasLinkOnElement ] );
 
