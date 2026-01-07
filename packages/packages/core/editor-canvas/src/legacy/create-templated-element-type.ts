@@ -30,17 +30,19 @@ export function createTemplatedElementType( {
 }: CreateTemplatedElementTypeOptions ): typeof ElementType {
 	const legacyWindow = window as unknown as LegacyWindow;
 
+	const view = createTemplatedElementView( {
+		type,
+		renderer,
+		element,
+	} );
+
 	return class extends legacyWindow.elementor.modules.elements.types.Widget {
 		getType() {
 			return type;
 		}
 
 		getView() {
-			return createTemplatedElementView( {
-				type,
-				renderer,
-				element,
-			} );
+			return view;
 		}
 	};
 }
