@@ -18,7 +18,7 @@ type InfotipCardProps = {
 	content: string;
 	assetUrl: string;
 	ctaUrl: string;
-	setOpen: ( open: boolean ) => void;
+	onClose: () => void;
 };
 
 type PromotionInfotipProps = React.PropsWithChildren<
@@ -35,20 +35,18 @@ export const PromotionInfotip = ( { children, open, ...cardProps }: PromotionInf
 	);
 };
 
-function InfotipCard( { title, content, assetUrl, ctaUrl, setOpen }: InfotipCardProps ) {
+function InfotipCard( { title, content, assetUrl, ctaUrl, onClose }: InfotipCardProps ) {
 	return (
 		<ClickAwayListener
 			disableReactTree={ true }
 			mouseEvent="onMouseDown"
 			touchEvent="onTouchStart"
-			onClickAway={ () => setOpen( false ) }
+			onClickAway={ onClose }
 		>
 			<Card elevation={ 0 } sx={ { maxWidth: 296 } }>
 				<CardHeader
 					title={ title }
-					action={
-						<CloseButton slotProps={ { icon: { fontSize: 'tiny' } } } onClick={ () => setOpen( false ) } />
-					}
+					action={ <CloseButton slotProps={ { icon: { fontSize: 'tiny' } } } onClick={ onClose } /> }
 				/>
 				<CardMedia component="img" image={ assetUrl } alt="" sx={ { width: '100%', aspectRatio: '16 / 9' } } />
 				<CardContent>
