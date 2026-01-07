@@ -102,6 +102,10 @@ export function createTemplatedElementView( {
 			return this._parent?.getResolverRenderContext?.();
 		}
 
+		invalidateRenderCache() {
+			this.#lastResolvedSettingsHash = null;
+		}
+
 		render() {
 			this.#abortController?.abort();
 			this.#abortController = new AbortController();
