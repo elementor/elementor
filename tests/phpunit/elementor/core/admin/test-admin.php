@@ -367,9 +367,19 @@ class Test_Admin extends Elementor_Test_Base {
 		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_edit_website' );
 		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
 
-		// Act & Assert
-		$this->expectException( \WPDieException::class );
+		$redirect_url = null;
+		add_filter( 'wp_redirect', function( $location ) use ( &$redirect_url ) {
+			$redirect_url = $location;
+			return false;
+		}, 10, 1 );
+
+		// Act
 		$admin->admin_action_edit_website_redirect();
+
+		// Assert
+		$this->assertNotNull( $redirect_url );
+		$this->assertStringContainsString( 'edit.php?post_type=page', $redirect_url );
+		$this->assertStringContainsString( 'action=elementor_new_post', $redirect_url );
 	}
 
 	public function test_admin_action_edit_website_redirect__redirects_to_create_new_page_when_homepage_not_built_with_elementor() {
@@ -386,9 +396,19 @@ class Test_Admin extends Elementor_Test_Base {
 		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_edit_website' );
 		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
 
-		// Act & Assert
-		$this->expectException( \WPDieException::class );
+		$redirect_url = null;
+		add_filter( 'wp_redirect', function( $location ) use ( &$redirect_url ) {
+			$redirect_url = $location;
+			return false;
+		}, 10, 1 );
+
+		// Act
 		$admin->admin_action_edit_website_redirect();
+
+		// Assert
+		$this->assertNotNull( $redirect_url );
+		$this->assertStringContainsString( 'edit.php?post_type=page', $redirect_url );
+		$this->assertStringContainsString( 'action=elementor_new_post', $redirect_url );
 	}
 
 	public function test_admin_action_edit_website_redirect__redirects_to_homepage_edit_url_when_built_with_elementor() {
@@ -405,8 +425,19 @@ class Test_Admin extends Elementor_Test_Base {
 		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_edit_website' );
 		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
 
-		// Act & Assert
-		$this->expectException( \WPDieException::class );
+		$redirect_url = null;
+		add_filter( 'wp_redirect', function( $location ) use ( &$redirect_url ) {
+			$redirect_url = $location;
+			return false;
+		}, 10, 1 );
+
+		// Act
 		$admin->admin_action_edit_website_redirect();
+
+		// Assert
+		$this->assertNotNull( $redirect_url );
+		$this->assertStringContainsString( 'post.php', $redirect_url );
+		$this->assertStringContainsString( 'post=' . $document->get_main_id(), $redirect_url );
+		$this->assertStringContainsString( 'action=elementor', $redirect_url );
 	}
 }
