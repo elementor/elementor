@@ -101,7 +101,15 @@ export const onElementRender = ( {
 	} );
 };
 
-export const onElementDestroy = ( { elementType, elementId, element }: { elementType: string; elementId: string; element?: Element } ) => {
+export const onElementDestroy = ( {
+	elementType,
+	elementId,
+	element,
+}: {
+	elementType: string;
+	elementId: string;
+	element?: Element;
+} ) => {
 	const unmount = unmountCallbacks.get( elementType )?.get( elementId );
 
 	if ( element ) {
