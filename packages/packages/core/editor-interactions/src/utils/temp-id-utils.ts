@@ -1,5 +1,7 @@
 import { InteractionItemValue } from "../types";
-import { createString } from "./prop-value-utils";
+import type { ElementInteractions } from '../types';
+
+import { createString, extractString } from "./prop-value-utils";
 const TEMP_ID_PREFIX = 'temp-';
 const TEMP_ID_REGEX = /^temp-[a-z0-9]+$/i;
 
@@ -22,3 +24,24 @@ export function ensureInteractionId(
 	}
 	return interaction;
 }
+
+// export function stripTempIds(
+// 	interactions: ElementInteractions
+// ): ElementInteractions {
+// 	return {
+// 		...interactions,
+// 		items: interactions.items?.map( ( item ) => {
+// 			if ( item.$$type === 'interaction-item' && item.value ) {
+// 				const interactionId = extractString( item.value.interaction_id );
+// 				if ( interactionId && isTempId( interactionId ) ) {
+// 					const { interaction_id, ...rest } = item.value;
+// 					return {
+// 						...item,
+// 						value: rest,
+// 					};
+// 				}
+// 			}
+// 			return item;
+// 		} ) || [],
+// 	};
+// }

@@ -64,6 +64,8 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 		// 		} ),
 		// 	};
 		// }
+
+		
 		updateElementInteractions( {
 			elementId,
 			interactions: value as unknown as ElementInteractions,
