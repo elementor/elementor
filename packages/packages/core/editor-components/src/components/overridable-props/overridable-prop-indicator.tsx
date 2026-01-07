@@ -121,6 +121,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 						value: groupId,
 						label: overridableProps.groups.items[ groupId ].label,
 					} ) ) }
+					existingLabels={ Object.values( overridableProps?.props ?? {} ).map( ( prop ) => prop.label ) }
 					currentValue={ overridableConfig }
 				/>
 			</Popover>
