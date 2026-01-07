@@ -45,11 +45,12 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 				element: this.el,
 				type: this?.model?.get( 'widgetType' ) ?? this.container?.model?.get( 'elType' ) ?? null,
 				id: this?.model?.get( 'id' ) ?? null,
-				refreshView: this.render.bind( this ),
+				refreshView: this.refreshView.bind( this ),
 			};
 		}
 
 		refreshView() {
+			this.invalidateRenderCache?.();
 			this.render();
 		}
 
