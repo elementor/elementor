@@ -121,6 +121,8 @@ export declare class ElementView {
 	getResolverRenderContext(): RenderContext | undefined;
 
 	getNamespaceKey(): string;
+
+	invalidateRenderCache(): void;
 }
 
 type JQueryElement = {
