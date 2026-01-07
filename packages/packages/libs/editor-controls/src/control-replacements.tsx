@@ -6,6 +6,7 @@ import { useBoundProp } from './bound-prop-context';
 
 type ControlComponent = ComponentType< object & { OriginalControl: ComponentType } >;
 type ControlReplacement = {
+	id?: string;
 	component: ControlComponent;
 	condition: ( { value }: ConditionArgs ) => boolean;
 };
