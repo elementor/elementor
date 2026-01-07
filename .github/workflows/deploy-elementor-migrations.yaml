@@ -1,0 +1,11 @@
+name: Deploy Elementor Migrations
+on:
+  workflow_dispatch:
+
+jobs:
+  dummy-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dummy step
+        run: |
+          echo "Hello World"

@@ -63,6 +63,8 @@ class Path_Resolver {
 				$index = substr( $path, $i + 1, $end - $i - 1 );
 				$segments[] = self::create_segment( $index, 'index' );
 				$i = $end;
+			} elseif ( ']' === $char ) {
+				throw new \Exception( sprintf( 'Malformed path: unmatched closing bracket in "%s"', esc_html( $path ) ) );
 			} else {
 				$current .= $char;
 			}

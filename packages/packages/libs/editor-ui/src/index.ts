@@ -18,6 +18,7 @@ export { PromotionChip } from './components/promotion-chip';
 
 export * from './components/popover';
 export * from './components/save-changes-dialog';
+export { ConfirmationDialog } from './components/confirmation-dialog';
 
 // hooks
 export { useEditable } from './hooks/use-editable';
