@@ -8,7 +8,7 @@ export default class extends elementorModules.Module {
 
 	onInit() {
 		this.config = eventsConfig;
-		
+
 		if ( ! this.canSendEvents() ) {
 			return;
 		}
