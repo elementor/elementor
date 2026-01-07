@@ -295,3 +295,21 @@
 	}
 }
 
+body.post-type-elementor_library {
+	.wp-list-table {
+		thead th {
+			&#title,
+			&.column-title {
+				width: 20%;
+			}
+		}
+
+		tbody td {
+			&#title,
+			&.column-title {
+				width: 20%;
+			}
+		}
+	}
+}
+
