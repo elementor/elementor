@@ -509,7 +509,7 @@ class Admin extends App {
 		<div class="e-overview__header">
 			<?php if ( $show_versions ) { ?>
 				<div class="e-overview__logo">
-					<div class="e-logo-wrapper"><i class="eicon-elementor"></i></div>
+					<div class="e-logo-wrapper"><i class="eicon-elementor-circle"></i></div>
 				</div>
 				<div class="e-overview__versions">
 					<span class="e-overview__version"><?php echo esc_html__( 'Elementor', 'elementor' ); ?> v<?php echo ELEMENTOR_VERSION; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
