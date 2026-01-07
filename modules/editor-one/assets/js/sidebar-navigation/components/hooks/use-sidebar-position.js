@@ -2,6 +2,7 @@ import { useEffect } from '@wordpress/element';
 
 const ADMIN_MENU_WRAP_ID = 'adminmenuwrap';
 const SIDEBAR_CONTAINER_ID = 'editor-one-sidebar-navigation';
+const TRANSITION_DELAY = 350;
 
 const getIsRTL = () => {
 	return 'rtl' === document.dir || document.body.classList.contains( 'rtl' );
@@ -29,12 +30,28 @@ export const useSidebarPosition = () => {
 		updateSidebarPosition();
 
 		const resizeObserver = new ResizeObserver( updateSidebarPosition );
-
 		resizeObserver.observe( adminMenuWrap );
+
+		const mutationObserver = new MutationObserver( () => {
+			updateSidebarPosition();
+			setTimeout( updateSidebarPosition, TRANSITION_DELAY );
+		} );
+
+		mutationObserver.observe( document.body, {
+			attributes: true,
+			attributeFilter: [ 'class' ],
+		} );
+
+		mutationObserver.observe( document.documentElement, {
+			attributes: true,
+			attributeFilter: [ 'class' ],
+		} );
+
 		window.addEventListener( 'resize', updateSidebarPosition );
 
 		return () => {
 			resizeObserver.disconnect();
+			mutationObserver.disconnect();
 			window.removeEventListener( 'resize', updateSidebarPosition );
 		};
 	}, [] );
