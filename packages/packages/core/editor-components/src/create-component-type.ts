@@ -43,6 +43,7 @@ type ContextMenuGroup = {
 
 type ComponentModel = ElementModel & {
 	componentId?: number | string;
+	isGlobal: boolean;
 };
 
 type ComponentModelInstance = BackboneModel< ComponentModel > & {
@@ -332,6 +333,8 @@ function createComponentModel(): BackboneModelConstructor< ComponentModel > {
 					this.set( 'componentId', componentId );
 				}
 			}
+
+			this.set( 'isGlobal', true );
 		},
 
 		getTitle( this: ComponentModelInstance ): string {
