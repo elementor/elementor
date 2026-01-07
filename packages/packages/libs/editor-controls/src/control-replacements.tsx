@@ -5,7 +5,7 @@ import { type PropValue } from '@elementor/editor-props';
 import { useBoundProp } from './bound-prop-context';
 
 type ControlComponent = ComponentType< object & { OriginalControl: ComponentType } >;
-export type ControlReplacement = {
+type ControlReplacement = {
 	id?: string;
 	component: ControlComponent;
 	condition: ( { value }: ConditionArgs ) => boolean;
