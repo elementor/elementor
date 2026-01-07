@@ -33,7 +33,6 @@ export const onElementRender = ( {
 	const controller = new AbortController();
 	const manualUnmount: ( () => void )[] = [];
 
-	// When the rendered event is dispatched, the element is not yet connected to the DOM (marrionet view case)
 	const dispatchRenderedEvent = () => {
 		onElementSelectorRender( { element, elementId, controller } );
 
@@ -167,8 +166,8 @@ export const onElementDestroy = ( {
 		dispatchDestroyedEvent( { element, elementType, elementId } );
 	}
 
-	if ( ! unmount ) {
-		return;
+	if ( unmount ) {
+		unmount();
 	}
 
 	if ( unmountSelector?.size ) {
