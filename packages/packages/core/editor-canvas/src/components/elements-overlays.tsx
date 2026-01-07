@@ -11,7 +11,6 @@ import type { ElementOverlayConfig } from '../types/element-overlay';
 import { OutlineOverlay } from './outline-overlay';
 
 const ELEMENTS_DATA_ATTR = 'atomic';
-const GLOBAL_ELEMENTS = [ 'e-component' ];
 
 const overlayRegistry: ElementOverlayConfig[] = [
 	{
@@ -33,9 +32,8 @@ export function ElementsOverlays() {
 		return null;
 	}
 
-	return elements.map( ( { id, domElement, widgetType, elementType } ) => {
+	return elements.map( ( { id, domElement, isGlobal } ) => {
 		const isSelected = selected.element?.id === id;
-		const isGlobal = GLOBAL_ELEMENTS.includes( widgetType ) || GLOBAL_ELEMENTS.includes( elementType );
 
 		return overlayRegistry.map(
 			( { shouldRender, component: Overlay }, index ) =>
@@ -55,8 +53,7 @@ export function ElementsOverlays() {
 type ElementData = {
 	id: string;
 	domElement: HTMLElement;
-	widgetType: string;
-	elementType: string;
+	isGlobal: boolean;
 };
 
 function useElementsDom() {
@@ -68,8 +65,7 @@ function useElementsDom() {
 				.map( ( element ) => ( {
 					id: element.id,
 					domElement: element.view?.getDomElement?.()?.get?.( 0 ),
-					widgetType: element.model.get( 'widgetType' ) ?? '',
-					elementType: element.model.get( 'elType' ),
+					isGlobal: element.model.get( 'isGlobal' ) ?? false,
 				} ) )
 				.filter( ( item ): item is ElementData => !! item.domElement );
 		}
