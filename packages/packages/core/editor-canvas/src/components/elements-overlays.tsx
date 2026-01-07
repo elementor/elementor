@@ -11,6 +11,7 @@ import type { ElementOverlayConfig } from '../types/element-overlay';
 import { OutlineOverlay } from './outline-overlay';
 
 const ELEMENTS_DATA_ATTR = 'atomic';
+const GLOBAL_ELEMENTS = [ 'e-component' ];
 
 const overlayRegistry: ElementOverlayConfig[] = [
 	{
@@ -32,19 +33,31 @@ export function ElementsOverlays() {
 		return null;
 	}
 
-	return elements.map( ( [ id, element ] ) => {
+	return elements.map( ( { id, domElement, widgetType, elementType } ) => {
 		const isSelected = selected.element?.id === id;
+		const isGlobal = GLOBAL_ELEMENTS.includes( widgetType ) || GLOBAL_ELEMENTS.includes( elementType );
 
 		return overlayRegistry.map(
 			( { shouldRender, component: Overlay }, index ) =>
-				shouldRender( { id, element, isSelected } ) && (
-					<Overlay key={ `${ id }-${ index }` } id={ id } element={ element } isSelected={ isSelected } />
+				shouldRender( { id, element: domElement, isSelected } ) && (
+					<Overlay
+						key={ `${ id }-${ index }` }
+						id={ id }
+						element={ domElement }
+						isSelected={ isSelected }
+						isGlobal={ isGlobal }
+					/>
 				)
 		);
 	} );
 }
 
-type IdElementTuple = [ string, HTMLElement ];
+type ElementData = {
+	id: string;
+	domElement: HTMLElement;
+	widgetType: string;
+	elementType: string;
+};
 
 function useElementsDom() {
 	return useListenTo(
@@ -52,8 +65,13 @@ function useElementsDom() {
 		() => {
 			return getElements()
 				.filter( ( el ) => ELEMENTS_DATA_ATTR in ( el.view?.el?.dataset ?? {} ) )
-				.map( ( element ) => [ element.id, element.view?.getDomElement?.()?.get?.( 0 ) ] )
-				.filter( ( item ): item is IdElementTuple => !! item[ 1 ] );
+				.map( ( element ) => ( {
+					id: element.id,
+					domElement: element.view?.getDomElement?.()?.get?.( 0 ),
+					widgetType: element.model.get( 'widgetType' ) ?? '',
+					elementType: element.model.get( 'elType' ),
+				} ) )
+				.filter( ( item ): item is ElementData => !! item.domElement );
 		}
 	);
 }
