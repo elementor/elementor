@@ -28,7 +28,7 @@ class Editor_One_Home_Menu implements Menu_Item_Third_Level_Interface {
 	}
 
 	public function get_label(): string {
-		return esc_html__( 'Home', 'elementor' );
+		return esc_html__( 'Setup', 'elementor' );
 	}
 
 	public function get_position(): int {
