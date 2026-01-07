@@ -7,11 +7,11 @@ export default class extends elementorModules.Module {
 	#sessionRecordingInProgress = false;
 
 	onInit() {
+		this.config = eventsConfig;
+		
 		if ( ! this.canSendEvents() ) {
 			return;
 		}
-
-		this.config = eventsConfig;
 
 		mixpanel.init(
 			elementorCommon.config.editor_events?.token,
