@@ -126,6 +126,9 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 				if ( isset( $item['url'] ) ) {
 					$item['url'] = $this->normalize_url( $item['url'] );
 				}
+				if ( isset( $item['slug'] ) ) {
+					$item['slug'] = $this->normalize_url( $item['slug'] );
+				}
 			}
 		}
 
@@ -136,6 +139,9 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 						if ( isset( $item['url'] ) ) {
 							$item['url'] = $this->normalize_url( $item['url'] );
 						}
+						if ( isset( $item['slug'] ) ) {
+							$item['slug'] = $this->normalize_url( $item['slug'] );
+						}
 					}
 				}
 			}
@@ -145,6 +151,7 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 	}
 
 	private function normalize_url( string $url ): string {
+		$url = preg_replace( '/post=\d+/', 'post=XXX', $url );
 		$parsed = wp_parse_url( $url );
 		$path = $parsed['path'] ?? '';
 
@@ -152,6 +159,9 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 			parse_str( $parsed['query'], $query_params );
 			if ( isset( $query_params['return_to'] ) && '' === $query_params['return_to'] ) {
 				unset( $query_params['return_to'] );
+			}
+			if ( isset( $query_params['return_to'] ) ) {
+				$query_params['return_to'] = preg_replace( '/post=\d+/', 'post=XXX', $query_params['return_to'] );
 			}
 			if ( ! empty( $query_params ) ) {
 				$path .= '?' . http_build_query( $query_params );
