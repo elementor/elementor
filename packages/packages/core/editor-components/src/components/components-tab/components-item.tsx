@@ -75,7 +75,7 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 			throw new Error( 'Component ID is required' );
 		}
 
-        setIsDeleteDialogOpen( false );
+		setIsDeleteDialogOpen( false );
 		archiveComponent( component.id, component.name );
 	};
 

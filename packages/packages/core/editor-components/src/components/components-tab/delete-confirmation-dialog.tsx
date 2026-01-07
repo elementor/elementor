@@ -11,9 +11,7 @@ type DeleteConfirmationDialogProps = {
 export function DeleteConfirmationDialog( { open, onClose, onConfirm }: DeleteConfirmationDialogProps ) {
 	return (
 		<ConfirmationDialog open={ open } onClose={ onClose }>
-			<ConfirmationDialog.Title>
-				{ __( 'Delete this component?', 'elementor' ) }
-			</ConfirmationDialog.Title>
+			<ConfirmationDialog.Title>{ __( 'Delete this component?', 'elementor' ) }</ConfirmationDialog.Title>
 			<ConfirmationDialog.Content>
 				<ConfirmationDialog.ContentText>
 					{ __(
@@ -26,4 +24,3 @@ export function DeleteConfirmationDialog( { open, onClose, onConfirm }: DeleteCo
 		</ConfirmationDialog>
 	);
 }
-
