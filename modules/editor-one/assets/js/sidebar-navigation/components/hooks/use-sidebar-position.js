@@ -31,8 +31,8 @@ export const useSidebarPosition = () => {
 
 		const wpcontent = document.getElementById( WPCONTENT_ID );
 		const resizeObserver = new ResizeObserver( updateSidebarPosition );
-		resizeObserver.observe( wpcontent );
 
+		resizeObserver.observe( wpcontent );
 		window.addEventListener( 'resize', updateSidebarPosition );
 
 		return () => {
