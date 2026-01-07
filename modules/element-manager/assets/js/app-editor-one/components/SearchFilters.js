@@ -1,7 +1,6 @@
 import {
 	Button,
 	Stack,
-	Box,
 	TextField,
 	Select,
 	MenuItem,
@@ -68,7 +67,7 @@ export const SearchFilters = ( {
 						data-id="elementor-element-manager-select-filter-by-plugin"
 						displayEmpty
 						renderValue={ ( value ) => {
-							if ( value === '' ) {
+							if ( '' === value ) {
 								return __( 'All Plugins', 'elementor' );
 							}
 							const selectedPlugin = plugins.find( ( p ) => p.value === value );

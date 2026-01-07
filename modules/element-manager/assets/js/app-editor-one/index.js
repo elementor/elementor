@@ -1,4 +1,4 @@
-import { DirectionProvider, ThemeProvider, Box } from '@elementor/ui';
+import { DirectionProvider, ThemeProvider } from '@elementor/ui';
 import { App } from './App';
 
 export const AppModern = () => {
