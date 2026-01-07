@@ -1,8 +1,8 @@
 import { componentInstanceOverridePropTypeUtil } from '../../prop-types/component-instance-override-prop-type';
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
-import { getFinalWidgetPropValue } from '../get-final-widget-prop-value';
+import { resolveOverridePropValue } from '../resolve-override-prop-value';
 
-describe( 'getFinalWidgetPropValue', () => {
+describe( 'resolveOverridePropValue', () => {
 	const PLAIN_STRING_VALUE = { $$type: 'string', value: 'Plain Text' };
 	const OVERRIDE_STRING_VALUE = { $$type: 'string', value: 'Override Text' };
 	const NESTED_STRING_VALUE = { $$type: 'string', value: 'Nested Override Text' };
@@ -44,7 +44,7 @@ describe( 'getFinalWidgetPropValue', () => {
 		},
 	] )( 'should $should', ( { input, expected } ) => {
 		// Act
-		const result = getFinalWidgetPropValue( input );
+		const result = resolveOverridePropValue( input );
 
 		// Assert
 		expect( result ).toEqual( expected );
