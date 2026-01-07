@@ -224,6 +224,7 @@ export default function createAtomicElementBaseView( type ) {
 
 		_afterRender() {
 			this._isRendering = false;
+			this.isRendered = true;
 			this.triggerMethod( 'render', this );
 		},
 
