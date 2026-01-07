@@ -122,31 +122,34 @@ export function createTemplatedElementView( {
 		}
 
 		async _renderChildren() {
-			if ( this.#domUpdateWasSkipped && this.children?.length > 0 ) {
-				this.#childrenRenderPromises = [];
-
-				this.children?.each( ( childView: ElementView ) => {
-					childView.render();
-					if ( childView._currentRenderPromise ) {
-						this.#childrenRenderPromises.push( childView._currentRenderPromise );
-					}
-				} );
-
-				await this._waitForChildrenToComplete();
-				return;
-			}
-
-			super._renderChildren();
-
 			this.#childrenRenderPromises = [];
 
+			if ( this.#shouldReuseChildren() ) {
+				this.#rerenderExistingChildren();
+			} else {
+				super._renderChildren();
+			}
+
+			this.#collectChildrenRenderPromises();
+			await this._waitForChildrenToComplete();
+		}
+
+		#shouldReuseChildren() {
+			return this.#domUpdateWasSkipped && this.children?.length > 0;
+		}
+
+		#rerenderExistingChildren() {
+			this.children?.each( ( childView: ElementView ) => {
+				childView.render();
+			} );
+		}
+
+		#collectChildrenRenderPromises() {
 			this.children?.each( ( childView: ElementView ) => {
 				if ( childView._currentRenderPromise ) {
 					this.#childrenRenderPromises.push( childView._currentRenderPromise );
 				}
 			} );
-
-			await this._waitForChildrenToComplete();
 		}
 
 		async _waitForChildrenToComplete() {
