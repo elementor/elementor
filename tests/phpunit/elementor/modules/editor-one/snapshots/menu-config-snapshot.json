@@ -4,7 +4,7 @@
         "items": [
             {
                 "slug": "elementor",
-                "label": "Quick start",
+                "label": "Quick Start",
                 "url": "/wp-admin/admin.php?page=elementor",
                 "icon": "home",
                 "group_id": "",
