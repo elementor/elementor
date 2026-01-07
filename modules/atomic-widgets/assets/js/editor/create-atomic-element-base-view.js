@@ -661,20 +661,24 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		getDynamicLinkValue( name, settings ) {
-			const { dynamicTags } = elementor ?? {};
-
-			if ( ! dynamicTags ) {
-				return;
+			const simpleTransform = ( props ) => {
+				const transformed = Object.entries( props ).map( ( [ settingKey, settingValue ] ) => {
+					const value = 'object' === typeof settingValue && 'value' in settingValue ? settingValue.value : settingValue;
+			
+					return [ settingKey, value ];
+				} );
+			
+				return Object.fromEntries( transformed );
 			}
 
 			const getTagValue = () => {
-				const tag = dynamicTags.createTag( 'v4-dynamic-tag', name, settings );
-
+				const tag = elementor.dynamicTags.createTag( 'v4-dynamic-tag', name, simpleTransform( settings ) );
+				
 				if ( ! tag ) {
 					return null;
 				}
 
-				return dynamicTags.loadTagDataFromCache( tag ) ?? null;
+				return elementor.dynamicTags.loadTagDataFromCache( tag ) ?? null;
 			};
 
 			const tagValue = getTagValue();
@@ -684,7 +688,7 @@ export default function createAtomicElementBaseView( type ) {
 			}
 
 			return new Promise( ( resolve ) => {
-				dynamicTags.refreshCacheFromServer( () => {
+				elementor.dynamicTags.refreshCacheFromServer( () => {
 					resolve( getTagValue() );
 				} );
 			} );
