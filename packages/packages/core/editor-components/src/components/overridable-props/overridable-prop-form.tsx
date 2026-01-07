@@ -22,7 +22,7 @@ type Props = {
 export function OverridablePropForm( { onSubmit, groups, currentValue, existingLabels = [], sx }: Props ) {
 	const [ propLabel, setPropLabel ] = useState< string | null >( currentValue?.label ?? null );
 	const [ group, setGroup ] = useState< string | null >( currentValue?.groupId ?? groups?.[ 0 ]?.value ?? null );
-	const [ error, setError ] = useState< string >( '' );
+	const [ error, setError ] = useState< string | null >( null );
 
 	const name = __( 'Name', 'elementor' );
 	const groupName = __( 'Group Name', 'elementor' );
@@ -33,10 +33,10 @@ export function OverridablePropForm( { onSubmit, groups, currentValue, existingL
 	const ctaLabel = isCreate ? __( 'Create', 'elementor' ) : __( 'Update', 'elementor' );
 
 	const handleSubmit = () => {
-		const validationError = validatePropLabel( propLabel ?? '', existingLabels, currentValue?.label );
+		const validationResult = validatePropLabel( propLabel ?? '', existingLabels, currentValue?.label );
 
-		if ( validationError ) {
-			setError( validationError );
+		if ( ! validationResult.isValid ) {
+			setError( validationResult.errorMessage );
 			return;
 		}
 
@@ -71,7 +71,12 @@ export function OverridablePropForm( { onSubmit, groups, currentValue, existingL
 							onChange={ ( e: React.ChangeEvent< HTMLInputElement > ) => {
 								const newValue = e.target.value;
 								setPropLabel( newValue );
-								setError( validatePropLabel( newValue, existingLabels, currentValue?.label ) );
+								const validationResult = validatePropLabel(
+									newValue,
+									existingLabels,
+									currentValue?.label
+								);
+								setError( validationResult.errorMessage );
 							} }
 							error={ Boolean( error ) }
 							helperText={ error }

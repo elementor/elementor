@@ -5,11 +5,20 @@ export const ERROR_MESSAGES = {
 	DUPLICATE_NAME: __( 'Property name already exists', 'elementor' ),
 } as const;
 
-export function validatePropLabel( label: string, existingLabels: string[], currentLabel?: string ): string {
+type ValidationResult = {
+	isValid: boolean;
+	errorMessage: string | null;
+};
+
+export function validatePropLabel(
+	label: string,
+	existingLabels: string[],
+	currentLabel?: string
+): ValidationResult {
 	const trimmedLabel = label.trim();
 
 	if ( ! trimmedLabel ) {
-		return ERROR_MESSAGES.EMPTY_NAME;
+		return { isValid: false, errorMessage: ERROR_MESSAGES.EMPTY_NAME };
 	}
 
 	const normalizedLabel = trimmedLabel.toLowerCase();
@@ -26,9 +35,8 @@ export function validatePropLabel( label: string, existingLabels: string[], curr
 	} );
 
 	if ( isDuplicate ) {
-		return ERROR_MESSAGES.DUPLICATE_NAME;
+		return { isValid: false, errorMessage: ERROR_MESSAGES.DUPLICATE_NAME };
 	}
 
-	return '';
+	return { isValid: true, errorMessage: null };
 }
-
