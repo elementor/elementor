@@ -368,10 +368,13 @@ class Test_Admin extends Elementor_Test_Base {
 		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
 
 		// Act
+		ob_start();
 		try {
 			$admin->admin_action_edit_website_redirect();
 		} catch ( \WPDieException $e ) {
 			// Expected to die, but we can check the redirect location
+		} finally {
+			ob_end_clean();
 		}
 
 		// Assert
@@ -393,10 +396,13 @@ class Test_Admin extends Elementor_Test_Base {
 		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
 
 		// Act
+		ob_start();
 		try {
 			$admin->admin_action_edit_website_redirect();
 		} catch ( \WPDieException $e ) {
 			// Expected to die, but we can check the redirect location
+		} finally {
+			ob_end_clean();
 		}
 
 		// Assert
@@ -418,10 +424,13 @@ class Test_Admin extends Elementor_Test_Base {
 		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
 
 		// Act
+		ob_start();
 		try {
 			$admin->admin_action_edit_website_redirect();
 		} catch ( \WPDieException $e ) {
 			// Expected to die, but we can check the redirect location
+		} finally {
+			ob_end_clean();
 		}
 
 		// Assert
