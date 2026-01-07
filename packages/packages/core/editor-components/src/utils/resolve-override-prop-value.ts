@@ -11,7 +11,7 @@ import {
 } from '../prop-types/component-overridable-prop-type';
 
 export const resolveOverridePropValue = ( originalPropValue: ComponentInstanceOverride | PropValue ): PropValue => {
-	const isOverridable = componentOverridablePropTypeUtil.extract( originalPropValue );
+	const isOverridable = componentOverridablePropTypeUtil.isValid( originalPropValue );
 	if ( isOverridable ) {
 		return getOverridableValue( originalPropValue as ComponentOverridableProp );
 	}
