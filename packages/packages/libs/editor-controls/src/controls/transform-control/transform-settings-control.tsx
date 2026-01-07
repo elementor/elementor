@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useSelectedElement } from '@elementor/editor-elements';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { AdjustmentsIcon } from '@elementor/icons';
 import { bindPopover, Box, Divider, Popover, type PopupState } from '@elementor/ui';
@@ -17,7 +18,10 @@ export const TransformSettingsControl = ( {
 }: {
 	popupState: PopupState;
 	anchorRef: React.RefObject< HTMLDivElement | null >;
-} ) => {
+} ): React.ReactElement => {
+	const { element } = useSelectedElement();
+	const showChildrenPerspective = element?.type === 'e-div-block' || element?.type === 'e-flexbox';
+
 	const popupProps = bindPopover( {
 		...popupState,
 		anchorEl: anchorRef.current ?? undefined,
@@ -47,10 +51,14 @@ export const TransformSettingsControl = ( {
 				<PropKeyProvider bind={ 'transform-origin' }>
 					<TransformOriginControl />
 				</PropKeyProvider>
-				<Box sx={ { my: 0.5 } }>
-					<Divider />
-				</Box>
-				<ChildrenPerspectiveControl />
+				{ showChildrenPerspective && (
+					<>
+						<Box sx={ { my: 0.5 } }>
+							<Divider />
+						</Box>
+						<ChildrenPerspectiveControl />
+					</>
+				) }
 			</PopoverContent>
 		</Popover>
 	);
