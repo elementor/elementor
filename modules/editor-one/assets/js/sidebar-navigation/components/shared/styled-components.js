@@ -26,26 +26,37 @@ export const SiteIconBox = styled( Box )( ( { theme } ) => ( {
 
 export const CollapseButton = styled( IconButton, {
 	shouldForwardProp: ( prop ) => prop !== 'expanded',
-} )( ( { theme, expanded } ) => ( {
-	position: 'absolute',
-	insetInlineEnd: -28,
-	bottom: -12,
-	width: 24,
-	height: 24,
-	backgroundColor: theme.palette.background.paper,
-	border: `1px solid ${ theme.palette.divider }`,
-	color: theme.palette.action.active,
-	zIndex: 1,
-	'&:hover': {
+} )( ( { theme, expanded } ) => {
+	const isRtl = 'rtl' === theme.direction;
+	let transform = 'none';
+
+	if ( expanded && isRtl ) {
+		transform = 'rotate(180deg) scaleX(-1)';
+	} else if ( expanded ) {
+		transform = 'rotate(180deg)';
+	} else if ( isRtl ) {
+		transform = 'scaleX(-1)';
+	}
+
+	return {
+		position: 'absolute',
+		insetInlineEnd: -28,
+		bottom: -12,
+		width: 24,
+		height: 24,
 		backgroundColor: theme.palette.background.paper,
-	},
-	'& svg': {
-		fontSize: 16,
-		transform: expanded 
-			? ( theme.direction === 'rtl' ? 'rotate(180deg) scaleX(-1)' : 'rotate(180deg)' )
-			: ( theme.direction === 'rtl' ? 'scaleX(-1)' : 'none' ),
-	},
-} ) );
+		border: `1px solid ${ theme.palette.divider }`,
+		color: theme.palette.action.active,
+		zIndex: 1,
+		'&:hover': {
+			backgroundColor: theme.palette.background.paper,
+		},
+		'& svg': {
+			fontSize: 16,
+			transform,
+		},
+	};
+} );
 
 export const ScrollableContent = styled( Box )( {
 	flex: 1,

@@ -20,11 +20,11 @@ const SidebarHeader = ( { siteTitle, onCollapse } ) => {
 				<SearchButton onClick={ finderAction }>
 					<SearchIcon />
 				</SearchButton>
-		</HeaderContent>
-		<CollapseButton onClick={ onCollapse } size="small" expanded>
-			<ChevronRightIcon />
-		</CollapseButton>
-	</HeaderContainer>
+			</HeaderContent>
+			<CollapseButton onClick={ onCollapse } size="small" expanded>
+				<ChevronRightIcon />
+			</CollapseButton>
+		</HeaderContainer>
 	);
 };
 
