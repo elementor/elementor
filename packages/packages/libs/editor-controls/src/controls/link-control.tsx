@@ -73,6 +73,8 @@ export const LinkControl = createControl( ( props: Props ) => {
 	);
 
 	useEffect( () => {
+		debouncedCheckRestriction();
+
 		const handleInlineLinkChanged = ( event: Event ) => {
 			const customEvent = event as CustomEvent< { elementId: string } >;
 
