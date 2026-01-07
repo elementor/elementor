@@ -1,6 +1,7 @@
 import AdjustmentsIcon from '@elementor/icons/AdjustmentsIcon';
 import FolderIcon from '@elementor/icons/FolderIcon';
 import RocketIcon from '@elementor/icons/RocketIcon';
+import HomeIcon from '@elementor/icons/HomeIcon';
 import InfoCircleIcon from '@elementor/icons/InfoCircleIcon';
 import SendIcon from '@elementor/icons/SendIcon';
 import SettingsIcon from '@elementor/icons/SettingsIcon';
