@@ -120,7 +120,7 @@
                 {
                     "slug": "edit.php?post_type=elementor_library",
                     "label": "Saved Templates",
-                    "url": "/wp-admin/edit.php?post_type=elementor_library",
+                    "url": "/wp-admin/edit.php?post_type=elementor_library&tabs_group=library",
                     "priority": 10
                 },
                 {
