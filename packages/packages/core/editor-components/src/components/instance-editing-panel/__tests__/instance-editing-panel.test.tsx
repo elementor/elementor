@@ -386,16 +386,47 @@ describe( '<InstanceEditingPanel />', () => {
 		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Empty Group' ) ).not.toBeInTheDocument();
 	} );
+
+	it( 'should render panel for archived component instance', () => {
+		// Arrange.
+		setupComponent( { isArchived: true } );
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render panel for component archived during session', () => {
+		// Arrange.
+		setupComponent();
+		dispatch( slice.actions.archive( MOCK_COMPONENT_ID ) );
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
+	} );
 } );
 
 type SetupComponentOptions = {
 	isWithOverridableProps?: boolean;
 	isWithNestedOverridableProps?: boolean;
 	isWithEmptyGroup?: boolean;
+	isArchived?: boolean;
 };
 
 function setupComponent( options: SetupComponentOptions = {} ) {
-	const { isWithOverridableProps = true, isWithNestedOverridableProps = false, isWithEmptyGroup = false } = options;
+	const {
+		isWithOverridableProps = true,
+		isWithNestedOverridableProps = false,
+		isWithEmptyGroup = false,
+		isArchived = false,
+	} = options;
 
 	const getOverridableProps = () => {
 		if ( isWithNestedOverridableProps ) {
@@ -414,6 +445,7 @@ function setupComponent( options: SetupComponentOptions = {} ) {
 		uid: 'component-uid',
 		name: MOCK_COMPONENT_NAME,
 		overridableProps: isWithOverridableProps ? overridableProps : undefined,
+		isArchived,
 	};
 
 	dispatch( slice.actions.load( [ componentData ] ) );
