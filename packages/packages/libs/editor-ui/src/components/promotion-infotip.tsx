@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useEffect } from 'react';
+import { getCanvasIframeDocument } from '@elementor/editor-v1-adapters';
 import {
 	Card,
 	CardActions,
@@ -27,9 +29,21 @@ type PromotionInfotipProps = React.PropsWithChildren<
 	}
 >;
 
-export const PromotionInfotip = ( { children, open, ...cardProps }: PromotionInfotipProps ) => {
+export const PromotionInfotip = ( { children, open, onClose, ...cardProps }: PromotionInfotipProps ) => {
+	useEffect( () => {
+		const canvasDocument = open ? getCanvasIframeDocument() : null;
+
+		if ( ! canvasDocument ) {
+			return;
+		}
+
+		canvasDocument.addEventListener( 'mousedown', onClose );
+
+		return () => canvasDocument.removeEventListener( 'mousedown', onClose );
+	}, [ open, onClose ] );
+
 	return (
-		<Infotip placement="right" content={ <InfotipCard { ...cardProps } /> } open={ open }>
+		<Infotip placement="right" content={ <InfotipCard onClose={ onClose } { ...cardProps } /> } open={ open }>
 			{ children }
 		</Infotip>
 	);

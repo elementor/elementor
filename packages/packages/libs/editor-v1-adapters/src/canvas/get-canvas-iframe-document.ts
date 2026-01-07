@@ -1,4 +1,8 @@
-import type { CanvasExtendedWindow } from './types';
+type CanvasExtendedWindow = Window & {
+	elementor?: {
+		$preview?: [ HTMLIFrameElement ];
+	};
+};
 
 export function getCanvasIframeDocument() {
 	const extendedWindow = window as unknown as CanvasExtendedWindow;
