@@ -367,18 +367,9 @@ class Test_Admin extends Elementor_Test_Base {
 		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_edit_website' );
 		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
 
-		// Act
-		ob_start();
-		try {
-			$admin->admin_action_edit_website_redirect();
-		} catch ( \WPDieException $e ) {
-			// Expected to die, but we can check the redirect location
-		} finally {
-			ob_end_clean();
-		}
-
-		// Assert
-		$this->assertTrue( true );
+		// Act & Assert
+		$this->expectException( \WPDieException::class );
+		$admin->admin_action_edit_website_redirect();
 	}
 
 	public function test_admin_action_edit_website_redirect__redirects_to_create_new_page_when_homepage_not_built_with_elementor() {
@@ -395,18 +386,9 @@ class Test_Admin extends Elementor_Test_Base {
 		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_edit_website' );
 		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
 
-		// Act
-		ob_start();
-		try {
-			$admin->admin_action_edit_website_redirect();
-		} catch ( \WPDieException $e ) {
-			// Expected to die, but we can check the redirect location
-		} finally {
-			ob_end_clean();
-		}
-
-		// Assert
-		$this->assertTrue( true );
+		// Act & Assert
+		$this->expectException( \WPDieException::class );
+		$admin->admin_action_edit_website_redirect();
 	}
 
 	public function test_admin_action_edit_website_redirect__redirects_to_homepage_edit_url_when_built_with_elementor() {
@@ -423,17 +405,8 @@ class Test_Admin extends Elementor_Test_Base {
 		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_edit_website' );
 		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
 
-		// Act
-		ob_start();
-		try {
-			$admin->admin_action_edit_website_redirect();
-		} catch ( \WPDieException $e ) {
-			// Expected to die, but we can check the redirect location
-		} finally {
-			ob_end_clean();
-		}
-
-		// Assert
-		$this->assertTrue( true );
+		// Act & Assert
+		$this->expectException( \WPDieException::class );
+		$admin->admin_action_edit_website_redirect();
 	}
 }
