@@ -5,6 +5,7 @@ namespace Elementor\Modules\AtomicWidgets\OptIn;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\GlobalClasses\Module as GlobalClassesModule;
+use Elementor\Modules\NestedElements\Module as NestedElementsModule;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\Variables\Module as VariablesModule;
 use Elementor\Plugin;
@@ -22,6 +23,7 @@ class Opt_In {
 	const OPT_IN_FEATURES = [
 		self::EXPERIMENT_NAME,
 		'container',
+		NestedElementsModule::EXPERIMENT_NAME,
 		AtomicWidgetsModule::EXPERIMENT_NAME,
 		GlobalClassesModule::NAME,
 		VariablesModule::EXPERIMENT_NAME,
