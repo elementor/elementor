@@ -110,6 +110,7 @@ export type V1ElementModelProps = {
 	settings?: V1ElementSettingsProps;
 	editor_settings?: V1ElementEditorSettingsProps;
 	interactions?: string | ElementInteractions;
+	isGlobal?: boolean;
 };
 
 export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {
