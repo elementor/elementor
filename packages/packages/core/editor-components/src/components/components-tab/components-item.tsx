@@ -75,8 +75,8 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 			throw new Error( 'Component ID is required' );
 		}
 
-		setIsDeleteDialogOpen( false );
-		archiveComponent( component.id );
+        setIsDeleteDialogOpen( false );
+		archiveComponent( component.id, component.name );
 	};
 
 	const handleDeleteDialogClose = () => {
