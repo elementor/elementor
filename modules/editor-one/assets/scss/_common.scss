@@ -233,9 +233,9 @@
 			position: relative;
 			z-index: 1;
 
-			&:hover {
+			&:hover:not(.nav-tab-active) {
 				color: var(--e-one-palette-text-tab);
-				background-color: var(--e-one-palette-action-hover);
+				background-color: var(--e-one-palette-action-selected);
 			}
 
 			&.nav-tab-active {
