@@ -112,8 +112,61 @@ export const onElementDestroy = ( {
 } ) => {
 	const unmount = unmountCallbacks.get( elementType )?.get( elementId );
 
+<<<<<<< HEAD
 	if ( element ) {
 		dispatchDestroyedEvent( { element, elementType, elementId } );
+=======
+		const manualUnmount: ( () => void )[] = [];
+
+		Array.from( handlers.values() ?? [] ).forEach( ( handler ) => {
+			const settings = element.getAttribute( 'data-e-settings' );
+
+			const unmount = handler( {
+				element,
+				signal: controller.signal,
+				settings: settings ? JSON.parse( settings ) : {},
+			} );
+
+			if ( typeof unmount === 'function' ) {
+				manualUnmount.push( unmount );
+			}
+		} );
+
+		if ( ! manualUnmount.length ) {
+			return;
+		}
+
+		if ( ! unmountElementSelectorCallbacks.get( elementId ) ) {
+			unmountElementSelectorCallbacks.set( elementId, new Map() );
+		}
+
+		unmountElementSelectorCallbacks.get( elementId )?.set( selector, () => {
+			controller.abort();
+
+			manualUnmount.forEach( ( callback ) => callback() );
+		} );
+	} );
+};
+
+export const onElementDestroy = ( {
+	elementType,
+	elementId,
+	element,
+}: {
+	elementType: string;
+	elementId: string;
+	element?: Element;
+} ) => {
+	const unmount = unmountElementTypeCallbacks.get( elementType )?.get( elementId );
+	const unmountSelector = unmountElementSelectorCallbacks.get( elementId );
+
+	if ( element ) {
+		dispatchDestroyedEvent( { element, elementType, elementId } );
+	}
+
+	if ( unmount ) {
+		unmount();
+>>>>>>> 4b7d96ff5f (Internal: Update handlers lifecycle events [ED-22280] (#34110))
 	}
 
 	if ( ! unmount ) {
