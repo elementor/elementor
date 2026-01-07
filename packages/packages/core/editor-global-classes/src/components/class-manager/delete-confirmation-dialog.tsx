@@ -1,35 +1,27 @@
 import * as React from 'react';
 import { createContext, useContext, useState } from 'react';
 import { type StyleDefinition } from '@elementor/editor-styles';
-import { AlertOctagonFilledIcon } from '@elementor/icons';
-import {
-	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
-	Typography,
-} from '@elementor/ui';
+import { ConfirmationDialog } from '@elementor/editor-ui';
+import { Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useCssClassUsageByID } from '../../hooks/use-css-class-usage-by-id';
 import { deleteClass } from './delete-class';
 
-type DeleteConfirmationDialogProps = Pick< StyleDefinition, 'id' | 'label' >;
+type DeleteClassDialogProps = Pick< StyleDefinition, 'id' | 'label' >;
 
 type DeleteConfirmationContext = {
-	openDialog: ( props: DeleteConfirmationDialogProps ) => void;
+	openDialog: ( props: DeleteClassDialogProps ) => void;
 	closeDialog: () => void;
-	dialogProps: DeleteConfirmationDialogProps | null;
+	dialogProps: DeleteClassDialogProps | null;
 };
 
 const context = createContext< DeleteConfirmationContext | null >( null );
 
 export const DeleteConfirmationProvider = ( { children }: React.PropsWithChildren ) => {
-	const [ dialogProps, setDialogProps ] = useState< DeleteConfirmationDialogProps | null >( null );
+	const [ dialogProps, setDialogProps ] = useState< DeleteClassDialogProps | null >( null );
 
-	const openDialog = ( props: DeleteConfirmationDialogProps ) => {
+	const openDialog = ( props: DeleteClassDialogProps ) => {
 		setDialogProps( props );
 	};
 
@@ -40,23 +32,22 @@ export const DeleteConfirmationProvider = ( { children }: React.PropsWithChildre
 	return (
 		<context.Provider value={ { openDialog, closeDialog, dialogProps } }>
 			{ children }
-			{ !! dialogProps && <DeleteConfirmationDialog { ...dialogProps } /> }
+			{ !! dialogProps && <DeleteClassDialog { ...dialogProps } /> }
 		</context.Provider>
 	);
 };
 
-const TITLE_ID = 'delete-class-dialog';
-
-const DeleteConfirmationDialog = ( { label, id }: DeleteConfirmationDialogProps ) => {
+const DeleteClassDialog = ( { label, id }: DeleteClassDialogProps ) => {
 	const { closeDialog } = useDeleteConfirmation();
 	const {
 		data: { total, content },
 	} = useCssClassUsageByID( id );
-	const onConfirm = () => {
-		//
+
+	const handleConfirm = () => {
 		closeDialog();
 		deleteClass( id );
 	};
+
 	// translators: %1: total usage count, %2: number of pages
 	const text =
 		total && content.length
@@ -72,36 +63,19 @@ const DeleteConfirmationDialog = ( { label, id }: DeleteConfirmationDialogProps 
 			  );
 
 	return (
-		<Dialog open onClose={ closeDialog } aria-labelledby={ TITLE_ID } maxWidth="xs">
-			<DialogTitle id={ TITLE_ID } display="flex" alignItems="center" gap={ 1 } sx={ { lineHeight: 1 } }>
-				<AlertOctagonFilledIcon color="error" />
-				{ __( 'Delete this class?', 'elementor' ) }
-			</DialogTitle>
-			<DialogContent>
-				<DialogContentText variant="body2" color="textPrimary">
+		<ConfirmationDialog open onClose={ closeDialog }>
+			<ConfirmationDialog.Title>{ __( 'Delete this class?', 'elementor' ) }</ConfirmationDialog.Title>
+			<ConfirmationDialog.Content>
+				<ConfirmationDialog.ContentText>
 					{ __( 'Deleting', 'elementor' ) }
 					<Typography variant="subtitle2" component="span">
 						&nbsp;{ label }&nbsp;
 					</Typography>
 					{ text }
-				</DialogContentText>
-			</DialogContent>
-			<DialogActions>
-				<Button color="secondary" onClick={ closeDialog }>
-					{ __( 'Not now', 'elementor' ) }
-				</Button>
-
-				<Button
-					// eslint-disable-next-line jsx-a11y/no-autofocus
-					autoFocus
-					variant="contained"
-					color="error"
-					onClick={ onConfirm }
-				>
-					{ __( 'Delete', 'elementor' ) }
-				</Button>
-			</DialogActions>
-		</Dialog>
+				</ConfirmationDialog.ContentText>
+			</ConfirmationDialog.Content>
+			<ConfirmationDialog.Actions onClose={ closeDialog } onConfirm={ handleConfirm } />
+		</ConfirmationDialog>
 	);
 };
 

@@ -74,6 +74,7 @@ export function init() {
 		id: 'components',
 		label: __( 'Components', 'elementor' ),
 		component: Components,
+		position: 1,
 	} );
 
 	injectIntoTop( {

@@ -276,6 +276,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 						showToolbar
 						getInitialPopoverPosition={ getInitialPopoverPosition }
 						expectedTag={ expectedTag }
+						elementId={ this.id }
 					/>
 				</Box>
 			</ThemeProvider>

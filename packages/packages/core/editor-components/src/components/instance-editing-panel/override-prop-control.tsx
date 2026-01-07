@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useMemo } from 'react';
 import { ControlReplacementsProvider, PropKeyProvider, PropProvider, useBoundProp } from '@elementor/editor-controls';
 import {
 	BaseControl,
@@ -33,8 +32,8 @@ import { OverridablePropProvider } from '../../provider/overridable-prop-context
 import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
 import { useCurrentComponentId } from '../../store/store';
 import { type OriginPropFields, type OverridableProp } from '../../types';
-import { getFinalWidgetPropValue } from '../../utils/get-final-widget-prop-value';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
+import { resolveOverridePropValue } from '../../utils/resolve-override-prop-value';
 import { ControlLabel } from '../control-label';
 
 type Props = {
@@ -59,7 +58,7 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 	const controls = useControlsByWidgetType(
 		overridableProp?.originPropFields?.widgetType ?? overridableProp.widgetType
 	);
-	const controlReplacements = useMemo( () => getControlReplacements(), [] );
+	const controlReplacements = getControlReplacements();
 
 	const propType = getPropTypeForComponentOverride( overridableProp );
 
@@ -81,7 +80,7 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 
 	const matchingOverride = getMatchingOverride( overrides, overridableProp.overrideKey );
 
-	const propValue = matchingOverride ? getFinalWidgetPropValue( matchingOverride ) : overridableProp.originValue;
+	const propValue = matchingOverride ? resolveOverridePropValue( matchingOverride ) : overridableProp.originValue;
 
 	const value = {
 		[ overridableProp.overrideKey ]: propValue,
@@ -201,7 +200,7 @@ function createOverrideValue( {
 	overrideValue: ComponentInstanceOverrideProp | ComponentOverridableProp;
 	componentId: number;
 } ): ComponentInstanceOverride {
-	// this is for a value is already set as overridable
+	// this is for an override that's already set as overridable
 	const overridableValue = componentOverridablePropTypeUtil.extract( matchingOverride );
 
 	// this is for changes via the overridable-prop-indicator
@@ -212,7 +211,7 @@ function createOverrideValue( {
 	if ( anyOverridable ) {
 		const innerOverride = componentInstanceOverridePropTypeUtil.create( {
 			override_key: overrideKey,
-			override_value: getFinalWidgetPropValue( overrideValue ),
+			override_value: resolveOverridePropValue( overrideValue ),
 			schema_source: {
 				type: 'component',
 				id: componentId,
