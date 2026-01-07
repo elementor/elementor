@@ -8,9 +8,10 @@ import { removePropFromAllGroups } from '../utils/groups-transformers';
 type DeletePropParams = {
 	componentId: ComponentId;
 	propKey: string;
+	skipRevert?: boolean;
 };
 
-export function deleteOverridableProp( { componentId, propKey }: DeletePropParams ): void {
+export function deleteOverridableProp( { componentId, propKey, skipRevert = false }: DeletePropParams ): void {
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
 	if ( ! overridableProps ) {
@@ -23,7 +24,9 @@ export function deleteOverridableProp( { componentId, propKey }: DeletePropParam
 		return;
 	}
 
-	revertElementSetting( prop.elementId, prop.propKey, prop.originValue );
+	if ( ! skipRevert ) {
+		revertElementSetting( prop.elementId, prop.propKey, prop.originValue );
+	}
 
 	const { [ propKey ]: removedProp, ...remainingProps } = overridableProps.props;
 
