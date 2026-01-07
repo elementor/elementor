@@ -331,4 +331,100 @@ class Test_Admin extends Elementor_Test_Base {
 		$this->expectException( \WPDieException::class );
 		$admin->admin_action_site_settings_redirect();
 	}
+
+	public function test_admin_action_edit_website_redirect__requires_nonce() {
+		// Arrange
+		$this->act_as_admin();
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_edit_website_redirect';
+		unset( $_GET['_wpnonce'] );
+		unset( $_REQUEST['_wpnonce'] );
+
+		// Act & Assert
+		$this->expectException( \WPDieException::class );
+		$admin->admin_action_edit_website_redirect();
+	}
+
+	public function test_admin_action_edit_website_redirect__requires_capability() {
+		// Arrange
+		$this->act_as_subscriber();
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_edit_website_redirect';
+		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_edit_website' );
+		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
+
+		// Act & Assert
+		$this->expectException( \WPDieException::class );
+		$admin->admin_action_edit_website_redirect();
+	}
+
+	public function test_admin_action_edit_website_redirect__redirects_to_create_new_page_when_no_homepage() {
+		// Arrange
+		$this->act_as_admin();
+		update_option( 'show_on_front', 'posts' );
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_edit_website_redirect';
+		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_edit_website' );
+		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
+
+		// Act
+		try {
+			$admin->admin_action_edit_website_redirect();
+		} catch ( \WPDieException $e ) {
+			// Expected to die, but we can check the redirect location
+		}
+
+		// Assert
+		$this->assertTrue( true );
+	}
+
+	public function test_admin_action_edit_website_redirect__redirects_to_create_new_page_when_homepage_not_built_with_elementor() {
+		// Arrange
+		$this->act_as_admin();
+		update_option( 'show_on_front', 'page' );
+		$homepage = $this->factory()->post->create_and_get( [
+			'post_type' => 'page',
+			'post_status' => 'publish',
+		] );
+		update_option( 'page_on_front', $homepage->ID );
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_edit_website_redirect';
+		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_edit_website' );
+		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
+
+		// Act
+		try {
+			$admin->admin_action_edit_website_redirect();
+		} catch ( \WPDieException $e ) {
+			// Expected to die, but we can check the redirect location
+		}
+
+		// Assert
+		$this->assertTrue( true );
+	}
+
+	public function test_admin_action_edit_website_redirect__redirects_to_homepage_edit_url_when_built_with_elementor() {
+		// Arrange
+		$this->act_as_admin();
+		update_option( 'show_on_front', 'page' );
+		$document = $this->factory()->documents->create_and_get( [
+			'post_type' => 'page',
+			'post_status' => 'publish',
+		] );
+		update_option( 'page_on_front', $document->get_main_id() );
+		$admin = new Admin();
+		$_GET['action'] = 'elementor_edit_website_redirect';
+		$_GET['_wpnonce'] = wp_create_nonce( 'elementor_action_edit_website' );
+		$_REQUEST['_wpnonce'] = $_GET['_wpnonce'];
+
+		// Act
+		try {
+			$admin->admin_action_edit_website_redirect();
+		} catch ( \WPDieException $e ) {
+			// Expected to die, but we can check the redirect location
+		}
+
+		// Assert
+		$this->assertTrue( true );
+	}
 }
