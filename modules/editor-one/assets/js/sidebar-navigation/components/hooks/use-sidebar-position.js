@@ -30,22 +30,13 @@ export const useSidebarPosition = () => {
 		updateSidebarPosition();
 
 		const wpcontent = document.getElementById( WPCONTENT_ID );
-
-		if ( wpcontent ) {
-			const resizeObserver = new ResizeObserver( updateSidebarPosition );
-			resizeObserver.observe( wpcontent );
-
-			window.addEventListener( 'resize', updateSidebarPosition );
-
-			return () => {
-				resizeObserver.disconnect();
-				window.removeEventListener( 'resize', updateSidebarPosition );
-			};
-		}
+		const resizeObserver = new ResizeObserver( updateSidebarPosition );
+		resizeObserver.observe( wpcontent );
 
 		window.addEventListener( 'resize', updateSidebarPosition );
 
 		return () => {
+			resizeObserver.disconnect();
 			window.removeEventListener( 'resize', updateSidebarPosition );
 		};
 	}, [] );
