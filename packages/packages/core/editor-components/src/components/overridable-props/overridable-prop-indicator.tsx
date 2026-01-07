@@ -11,7 +11,7 @@ import { useComponentInstanceElement, useOverridablePropValue } from '../../prov
 import { setOverridableProp } from '../../store/actions/set-overridable-prop';
 import { useCurrentComponentId, useOverridableProps } from '../../store/store';
 import { type OverridableProps } from '../../types';
-import { getFinalWidgetPropValue } from '../../utils/get-final-widget-prop-value';
+import { resolveOverridePropValue } from '../../utils/resolve-override-prop-value';
 import { Indicator } from './indicator';
 import { OverridablePropForm } from './overridable-prop-form';
 import { getOverridableProp } from './utils/get-overridable-prop';
@@ -66,7 +66,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 	const handleSubmit = ( { label, group }: { label: string; group: string | null } ) => {
 		const propTypeDefault = propType.default ?? {};
 
-		const originValue = getFinalWidgetPropValue( overridableValue?.origin_value ) ?? value ?? propTypeDefault;
+		const originValue = resolveOverridePropValue( overridableValue?.origin_value ) ?? value ?? propTypeDefault;
 
 		const matchingOverridableProp = overridableValue
 			? overridableProps?.props?.[ overridableValue.override_key ]

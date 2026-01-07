@@ -52,9 +52,5 @@ export const createControlReplacementsRegistry = () => {
 		return controlReplacements;
 	}
 
-	function getControlReplacementsExcluding( excludeIds: string[] ) {
-		return controlReplacements.filter( ( r ) => ! r.id || ! excludeIds.includes( r.id ) );
-	}
-
-	return { registerControlReplacement, getControlReplacements, getControlReplacementsExcluding };
+	return { registerControlReplacement, getControlReplacements };
 };

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { type ComponentType, useMemo } from 'react';
+import { type ComponentType } from 'react';
 import { ControlReplacementsProvider, PropKeyProvider, PropProvider, useBoundProp } from '@elementor/editor-controls';
-import { createTopLevelObjectType, getControlReplacementsExcluding, useElement } from '@elementor/editor-editing-panel';
+import { createTopLevelObjectType, getControlReplacements, useElement } from '@elementor/editor-editing-panel';
 import { type PropValue } from '@elementor/editor-props';
 
 import { type ComponentInstanceOverridePropValue } from '../../prop-types/component-instance-override-prop-type';
@@ -24,9 +24,8 @@ export function OverridablePropControl< T extends object >( {
 	const { value, bind, setValue, placeholder, ...propContext } = useBoundProp( componentOverridablePropTypeUtil );
 	const componentId = useCurrentComponentId();
 	const overridableProps = useOverridableProps( componentId );
-	const filteredReplacements = useMemo(
-		() => getControlReplacementsExcluding( [ OVERRIDABLE_PROP_REPLACEMENT_ID ] ),
-		[]
+	const filteredReplacements = getControlReplacements().filter(
+		( r ) => ! r.id || r.id !== OVERRIDABLE_PROP_REPLACEMENT_ID
 	);
 
 	if ( ! componentId ) {
