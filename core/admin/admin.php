@@ -804,11 +804,7 @@ class Admin extends App {
 
 		$homepage_id = get_option( 'page_on_front' );
 
-		if ( false === $homepage_id || '' === $homepage_id || '0' === $homepage_id || 0 === $homepage_id ) {
-			return null;
-		}
-
-		return (int) $homepage_id;
+		return $homepage_id ? (int) $homepage_id : null;
 	}
 
 	private function get_edit_website_url( ?int $homepage_id ): string {
