@@ -4,10 +4,11 @@ namespace Elementor\Modules\AtomicWidgets\PropTypeMigrations;
 
 use Elementor\Modules\AtomicWidgets\Logger\Logger;
 use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
-use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -114,6 +115,24 @@ class Migrations_Orchestrator {
 					}
 				} catch ( \Exception $e ) {
 					Logger::warning( 'Element migration failed', [
+						'element_type' => $element_type,
+						'error' => $e->getMessage(),
+					] );
+				}
+			}
+
+			$styles = $element['styles'] ?? [];
+
+			if ( ! empty( $styles ) ) {
+				try {
+					$styles_has_changes = $this->migrate_styles( $styles );
+
+					if ( $styles_has_changes ) {
+						$element['styles'] = $styles;
+						$has_changes = true;
+					}
+				} catch ( \Exception $e ) {
+					Logger::warning( 'Styles migration failed', [
 						'element_type' => $element_type,
 						'error' => $e->getMessage(),
 					] );
@@ -328,6 +347,23 @@ class Migrations_Orchestrator {
 			}
 		}
 
+		$trigger = $this->type_mismatch( $value, $actual_prop_type, $prop_name );
+
+		if ( $trigger ) {
+			$path_result = $this->loader->find_migration_path(
+				$trigger['found_type'],
+				$trigger['expected_type']
+			);
+
+			if ( $path_result ) {
+				$value = $this->execute_prop_migration( $value, $path_result['migrations'], $path_result['direction'] );
+				return [
+					'value' => $value,
+					'has_changes' => true,
+				];
+			}
+		}
+
 		if ( $actual_prop_type instanceof Object_Prop_Type && is_array( $value['value'] ) ) {
 			$shape = $actual_prop_type->get_shape();
 			$nested_result = $this->migrate_nested_object( $value['value'], $shape );
@@ -342,20 +378,6 @@ class Migrations_Orchestrator {
 
 			if ( $nested_result['has_changes'] ) {
 				$value['value'] = $nested_result['value'];
-				$has_changes = true;
-			}
-		}
-
-		$trigger = $this->type_mismatch( $value, $actual_prop_type, $prop_name );
-
-		if ( $trigger ) {
-			$path_result = $this->loader->find_migration_path(
-				$trigger['found_type'],
-				$trigger['expected_type']
-			);
-
-			if ( $path_result ) {
-				$value = $this->execute_prop_migration( $value, $path_result['migrations'], $path_result['direction'] );
 				$has_changes = true;
 			}
 		}
@@ -481,5 +503,35 @@ class Migrations_Orchestrator {
 			'expected_type' => $expected_type,
 			'reason' => 'type_mismatch',
 		];
+	}
+
+	private function migrate_styles( array &$styles ): bool {
+		$style_schema = Style_Schema::get();
+
+		if ( empty( $style_schema ) ) {
+			return false;
+		}
+
+		$has_changes = false;
+
+		foreach ( $styles as &$style ) {
+			if ( ! isset( $style['variants'] ) || ! is_array( $style['variants'] ) ) {
+				continue;
+			}
+
+			foreach ( $style['variants'] as &$variant ) {
+				if ( ! isset( $variant['props'] ) || ! is_array( $variant['props'] ) ) {
+					continue;
+				}
+
+				$variant_has_changes = $this->migrate_element( $variant['props'], $style_schema, 'styles' );
+
+				if ( $variant_has_changes ) {
+					$has_changes = true;
+				}
+			}
+		}
+
+		return $has_changes;
 	}
 }

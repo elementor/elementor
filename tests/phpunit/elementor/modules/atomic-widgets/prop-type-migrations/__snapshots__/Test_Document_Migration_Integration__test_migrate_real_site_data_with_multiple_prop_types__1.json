@@ -106,35 +106,35 @@
                                         "$$type": "old-shadow",
                                         "value": {
                                             "hOffset": {
-                                                "$$type": "size",
+                                                "$$type": "shadow",
                                                 "value": {
                                                     "unit": "px",
                                                     "size": 0
                                                 }
                                             },
                                             "vOffset": {
-                                                "$$type": "size",
+                                                "$$type": "shadow",
                                                 "value": {
                                                     "unit": "px",
                                                     "size": 4
                                                 }
                                             },
                                             "blur": {
-                                                "$$type": "size",
+                                                "$$type": "shadow",
                                                 "value": {
                                                     "unit": "px",
                                                     "size": 10
                                                 }
                                             },
                                             "spread": {
-                                                "$$type": "size",
+                                                "$$type": "shadow",
                                                 "value": {
                                                     "unit": "px",
                                                     "size": 0
                                                 }
                                             },
                                             "color": {
-                                                "$$type": "color",
+                                                "$$type": "shadow",
                                                 "value": "rgba(0, 0, 0, 0.5)"
                                             }
                                         }
@@ -143,35 +143,35 @@
                                         "$$type": "old-shadow",
                                         "value": {
                                             "hOffset": {
-                                                "$$type": "size",
+                                                "$$type": "shadow",
                                                 "value": {
                                                     "unit": "px",
                                                     "size": 0
                                                 }
                                             },
                                             "vOffset": {
-                                                "$$type": "size",
+                                                "$$type": "shadow",
                                                 "value": {
                                                     "unit": "px",
                                                     "size": 8
                                                 }
                                             },
                                             "blur": {
-                                                "$$type": "size",
+                                                "$$type": "shadow",
                                                 "value": {
                                                     "unit": "px",
                                                     "size": 20
                                                 }
                                             },
                                             "spread": {
-                                                "$$type": "size",
+                                                "$$type": "shadow",
                                                 "value": {
                                                     "unit": "px",
                                                     "size": 5
                                                 }
                                             },
                                             "color": {
-                                                "$$type": "color",
+                                                "$$type": "shadow",
                                                 "value": "rgba(0, 0, 0, 0.3)"
                                             }
                                         }

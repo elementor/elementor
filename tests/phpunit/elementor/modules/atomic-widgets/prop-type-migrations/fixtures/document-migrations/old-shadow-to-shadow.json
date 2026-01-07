@@ -3,7 +3,7 @@
     {
       "op": {
         "fn": "set",
-        "path": "value[*].$$type",
+        "path": "value.*.$$type",
         "value": "shadow"
       }
     }
@@ -12,10 +12,9 @@
     {
       "op": {
         "fn": "set",
-        "path": "value[*].$$type",
+        "path": "value.*.$$type",
         "value": "old-shadow"
       }
     }
   ]
 }
-
