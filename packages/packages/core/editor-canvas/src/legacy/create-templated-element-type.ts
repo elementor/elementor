@@ -124,6 +124,7 @@ export function createTemplatedElementView( {
 		async _renderChildren() {
 			this.#childrenRenderPromises = [];
 
+			// Optimize rendering by reusing existing child views instead of recreating them.
 			if ( this.#shouldReuseChildren() ) {
 				this.#rerenderExistingChildren();
 			} else {

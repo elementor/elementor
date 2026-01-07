@@ -189,6 +189,7 @@ export default function createAtomicElementBaseView( type ) {
 
 		render() {
 			this._currentRenderPromise = new Promise( ( resolve ) => {
+				// Optimize rendering by reusing existing child views instead of recreating them.
 				if ( this._shouldSkipFullRender() ) {
 					this._renderWithoutDomRecreation( resolve );
 				} else {
