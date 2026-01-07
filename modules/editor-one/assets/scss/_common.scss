@@ -300,6 +300,12 @@
 					color: var(--e-one-palette-text-primary);
 				}
 			}
+
+			@media screen and (min-width: 783px) {
+				&+#posts-filter .search-box {
+					margin-block-start: -25px;
+				}
+			}
 		}
 	}
 }
