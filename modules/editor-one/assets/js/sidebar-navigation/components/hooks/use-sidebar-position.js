@@ -1,7 +1,7 @@
 import { useEffect } from '@wordpress/element';
 
 const ADMIN_MENU_WRAP_ID = 'adminmenuwrap';
-const WPADMINBAR_ID = 'wpadminbar';
+const WPCONTENT_ID = 'wpcontent';
 const SIDEBAR_CONTAINER_ID = 'editor-one-sidebar-navigation';
 
 const getIsRTL = () => {
@@ -29,11 +29,11 @@ export const useSidebarPosition = () => {
 
 		updateSidebarPosition();
 
-		const wpadminbar = document.getElementById( WPADMINBAR_ID );
+		const wpcontent = document.getElementById( WPCONTENT_ID );
 
-		if ( wpadminbar ) {
+		if ( wpcontent ) {
 			const resizeObserver = new ResizeObserver( updateSidebarPosition );
-			resizeObserver.observe( wpadminbar );
+			resizeObserver.observe( wpcontent );
 
 			window.addEventListener( 'resize', updateSidebarPosition );
 
