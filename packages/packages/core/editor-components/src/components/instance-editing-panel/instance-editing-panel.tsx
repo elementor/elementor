@@ -64,15 +64,14 @@ export function InstanceEditingPanel() {
 					) : (
 						<Stack direction="column" alignItems="stretch">
 							{ groups.map( ( group ) => (
-								<>
+								<React.Fragment key={ group.id }>
 									<OverridePropsGroup
-										key={ group.id }
 										group={ group }
 										props={ overridableProps.props }
 										overrides={ overrides }
 									/>
 									<Divider />
-								</>
+								</React.Fragment>
 							) ) }
 						</Stack>
 					) }
