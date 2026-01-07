@@ -664,16 +664,16 @@ export default function createAtomicElementBaseView( type ) {
 			const simpleTransform = ( props ) => {
 				const transformed = Object.entries( props ).map( ( [ settingKey, settingValue ] ) => {
 					const value = 'object' === typeof settingValue && 'value' in settingValue ? settingValue.value : settingValue;
-			
+
 					return [ settingKey, value ];
 				} );
-			
+
 				return Object.fromEntries( transformed );
-			}
+			};
 
 			const getTagValue = () => {
 				const tag = elementor.dynamicTags.createTag( 'v4-dynamic-tag', name, simpleTransform( settings ) );
-				
+
 				if ( ! tag ) {
 					return null;
 				}
