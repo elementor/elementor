@@ -4,7 +4,7 @@ import { getFieldIndicators } from '@elementor/editor-editing-panel';
 import { useSelectedElement } from '@elementor/editor-elements';
 import { PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ComponentsIcon, PencilIcon } from '@elementor/icons';
-import { IconButton, Stack, Tooltip } from '@elementor/ui';
+import { Divider, IconButton, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponentInstanceSettings } from '../../hooks/use-component-instance-settings';
@@ -64,12 +64,15 @@ export function InstanceEditingPanel() {
 					) : (
 						<Stack direction="column" alignItems="stretch">
 							{ groups.map( ( group ) => (
-								<OverridePropsGroup
-									key={ group.id }
-									group={ group }
-									props={ overridableProps.props }
-									overrides={ overrides }
-								/>
+								<>
+									<OverridePropsGroup
+										key={ group.id }
+										group={ group }
+										props={ overridableProps.props }
+										overrides={ overrides }
+									/>
+									<Divider />
+								</>
 							) ) }
 						</Stack>
 					) }
