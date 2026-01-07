@@ -78,6 +78,13 @@
 
 	#wpbody-content {
 		margin-block-start: 50px;
+
+		hr {
+			border: none;
+			border-block-start: 1px solid var(--e-one-palette-divider);
+			margin-block: 15px;
+			background: transparent;
+		}
 	}
 
 	.postbox,
@@ -167,13 +174,6 @@
 				inset-block-start: 3px;
 			}
 		}
-	}
-
-	hr {
-		border: none;
-		border-block-start: 1px solid var(--e-one-palette-divider);
-		margin-block: 15px;
-		background: transparent;
 	}
 
 	.nav-tab-wrapper {
