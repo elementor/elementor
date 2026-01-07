@@ -12,7 +12,7 @@ export default class extends elementorModules.Module {
 		if ( ! this.canSendEvents() ) {
 			return;
 		}
-
+in
 		mixpanel.init(
 			elementorCommon.config.editor_events?.token,
 			{
