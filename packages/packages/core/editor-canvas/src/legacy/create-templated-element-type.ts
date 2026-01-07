@@ -80,7 +80,7 @@ export function createTemplatedElementView( {
 		#abortController: AbortController | null = null;
 		#childrenRenderPromises: Promise< void >[] = [];
 		#lastResolvedSettingsHash: string | null = null;
-		#renderWasSkipped = false;
+		#domUpdateWasSkipped = false;
 
 		getTemplateType() {
 			return 'twig';
@@ -122,7 +122,7 @@ export function createTemplatedElementView( {
 		}
 
 		async _renderChildren() {
-			if ( this.#renderWasSkipped && this.children?.length > 0 ) {
+			if ( this.#domUpdateWasSkipped && this.children?.length > 0 ) {
 				this.#childrenRenderPromises = [];
 
 				this.children?.each( ( childView: ElementView ) => {
@@ -175,10 +175,10 @@ export function createTemplatedElementView( {
 					const settingsChanged = settingsHash !== this.#lastResolvedSettingsHash;
 
 					if ( ! settingsChanged && this.isRendered ) {
-						this.#renderWasSkipped = true;
+						this.#domUpdateWasSkipped = true;
 						return null;
 					}
-					this.#renderWasSkipped = false;
+					this.#domUpdateWasSkipped = false;
 
 					this.#lastResolvedSettingsHash = settingsHash;
 
