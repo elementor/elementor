@@ -14,7 +14,7 @@ export const MAX_NUMBER_OF_INTERACTIONS = 5;
 export type InteractionListProps = {
 	onSelectInteractions: ( interactions: ElementInteractions ) => void;
 	interactions: ElementInteractions;
-	onPlayInteraction: ( animationId: string ) => void;
+	onPlayInteraction: ( interactionId: string ) => void;
 	triggerCreateOnShowEmpty?: boolean;
 };
 
@@ -76,10 +76,12 @@ export function InteractionsList( props: InteractionListProps ) {
 			label={ __( 'Interactions', 'elementor' ) }
 			values={ interactionsState.items }
 			setValues={ ( newValue: ElementInteractions[ 'items' ] ) => {
-				setInteractionsState( {
+				const newState = {
 					...interactionsState,
 					items: newValue,
-				} );
+				};
+				setInteractionsState( newState );
+				onSelectInteractions( newState );
 			} }
 			showDuplicate={ false }
 			showToggle={ false }
@@ -100,8 +102,13 @@ export function InteractionsList( props: InteractionListProps ) {
 								$$type: 'interaction-item',
 								value: newInteractionValue,
 							};
-							setInteractionsState( { ...interactionsState, items: newItems } );
+							const newState = { ...interactionsState, items: newItems };
+							setInteractionsState( newState );
+							onSelectInteractions( newState );
+							const interactionId = extractString( newInteractionValue.interaction_id );
 						} }
+						
+						onPlayInteraction={ onPlayInteraction }
 					/>
 				),
 				actions: ( value: InteractionItemPropValue ) => (
@@ -110,8 +117,8 @@ export function InteractionsList( props: InteractionListProps ) {
 							aria-label={ __( 'Play interaction', 'elementor' ) }
 							size="tiny"
 							onClick={ () => {
-								const interactionId = extractString( value.value.interaction_id ) || 
-									generateTempInteractionId();
+								const interactionId = extractString( value.value.interaction_id ) 
+								
 									onPlayInteraction( interactionId );
 							} }
 						>
