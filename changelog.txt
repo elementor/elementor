@@ -1,6 +1,6 @@
 == Changelog ==
 
-= 3.34.1 - 2025-01-07 =
+= 3.34.1 - 2026-01-07 =
 
 * Fix: RTL issues in Icon Box widget ([#33963](https://github.com/elementor/elementor/issues/33963))
 * Fix: Incorrect `space_between_widgets` spacing in columns ([#34033](https://github.com/elementor/elementor/issues/34033))
