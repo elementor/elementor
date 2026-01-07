@@ -10,11 +10,7 @@ type ValidationResult = {
 	errorMessage: string | null;
 };
 
-export function validatePropLabel(
-	label: string,
-	existingLabels: string[],
-	currentLabel?: string
-): ValidationResult {
+export function validatePropLabel( label: string, existingLabels: string[], currentLabel?: string ): ValidationResult {
 	const trimmedLabel = label.trim();
 
 	if ( ! trimmedLabel ) {

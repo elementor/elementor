@@ -498,7 +498,7 @@ describe( 'OverridablePropForm duplicate validation', () => {
 
 		// Assert
 		expect( screen.queryByText( 'Property name already exists' ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Update' } ) ).not.toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Update' } ) ).toBeEnabled();
 	} );
 
 	it( 'should clear error when entering unique name', () => {
@@ -557,7 +557,7 @@ describe( 'OverridablePropForm duplicate validation', () => {
 
 		// Assert - error cleared
 		expect( screen.queryByText( 'Property name already exists' ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: 'Create' } ) ).not.toBeDisabled();
+		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeEnabled();
 	} );
 } );
 
