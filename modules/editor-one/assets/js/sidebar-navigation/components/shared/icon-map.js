@@ -1,6 +1,6 @@
 import AdjustmentsIcon from '@elementor/icons/AdjustmentsIcon';
 import FolderIcon from '@elementor/icons/FolderIcon';
-import HomeIcon from '@elementor/icons/HomeIcon';
+import RocketIcon from '@elementor/icons/RocketIcon';
 import InfoCircleIcon from '@elementor/icons/InfoCircleIcon';
 import SendIcon from '@elementor/icons/SendIcon';
 import SettingsIcon from '@elementor/icons/SettingsIcon';
@@ -11,7 +11,7 @@ import ToolIcon from '../icons/tool';
 export const ICON_MAP = {
 	adjustments: AdjustmentsIcon,
 	folder: FolderIcon,
-	home: HomeIcon,
+	home: RocketIcon,
 	'info-circle': InfoCircleIcon,
 	send: SendIcon,
 	settings: SettingsIcon,
