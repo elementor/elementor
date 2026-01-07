@@ -1,4 +1,5 @@
 import { useEffect } from '@wordpress/element';
+// Testje
 
 const ADMIN_MENU_WRAP_ID = 'adminmenuwrap';
 const SIDEBAR_CONTAINER_ID = 'editor-one-sidebar-navigation';
