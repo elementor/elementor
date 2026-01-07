@@ -119,7 +119,7 @@
 	}
 
 	.button-primary,
-	.wrap .page-title-action,
+	.wrap .page-title-action:not(.button-secondary),
 	input[type="submit"].button-primary,
 	.wp-core-ui .button.button-primary,
 	.wp-core-ui .button-primary {
