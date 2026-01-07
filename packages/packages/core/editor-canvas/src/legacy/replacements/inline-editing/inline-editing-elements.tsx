@@ -3,12 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { InlineEditor } from '@elementor/editor-controls';
 import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
-import {
-	htmlPropTypeUtil,
-	type PropType,
-	type PropValue,
-	stringPropTypeUtil,
-} from '@elementor/editor-props';
+import { htmlPropTypeUtil, type PropType, type PropValue, stringPropTypeUtil } from '@elementor/editor-props';
 import { __privateRunCommandSync as runCommandSync, isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
 import { Box, ThemeProvider } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -133,7 +128,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		const prop = this.getInlineEditablePropType();
 		const settingKey = this.getInlineEditablePropertyName();
 
-		return ( this.getSetting( settingKey ) ?? prop?.default ?? null ) ;
+		return this.getSetting( settingKey ) ?? prop?.default ?? null;
 	}
 
 	getExtractedContentValue() {

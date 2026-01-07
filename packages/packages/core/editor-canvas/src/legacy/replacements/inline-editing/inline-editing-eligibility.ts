@@ -1,4 +1,4 @@
-import { htmlPropTypeUtil, stringPropTypeUtil, type PropType } from '@elementor/editor-props';
+import { htmlPropTypeUtil, type PropType, stringPropTypeUtil } from '@elementor/editor-props';
 
 type InlineEditingEligibilityArgs = {
 	rawValue: unknown;
@@ -26,7 +26,9 @@ const isAllowedBySchema = ( propTypeFromSchema: PropType | null ): boolean => {
 		return false;
 	}
 
-	return Boolean( propTypeFromSchema.prop_types[ htmlPropTypeUtil.key ] || propTypeFromSchema.prop_types[ stringPropTypeUtil.key ] );
+	return Boolean(
+		propTypeFromSchema.prop_types[ htmlPropTypeUtil.key ] || propTypeFromSchema.prop_types[ stringPropTypeUtil.key ]
+	);
 };
 
 export const isInlineEditingAllowed = ( { rawValue, propTypeFromSchema }: InlineEditingEligibilityArgs ): boolean => {
@@ -36,5 +38,3 @@ export const isInlineEditingAllowed = ( { rawValue, propTypeFromSchema }: Inline
 
 	return htmlPropTypeUtil.isValid( rawValue ) || stringPropTypeUtil.isValid( rawValue );
 };
-
-

@@ -2,8 +2,7 @@ import { type PropType } from '@elementor/editor-props';
 
 import { isInlineEditingAllowed } from '../inline-editing-eligibility';
 
-const createPlainPropType = ( key: string ): PropType =>
-	( { kind: 'plain', key, settings: {}, meta: {} } );
+const createPlainPropType = ( key: string ): PropType => ( { kind: 'plain', key, settings: {}, meta: {} } );
 
 const createUnionPropType = ( keys: string[] ): PropType =>
 	( {
@@ -11,7 +10,7 @@ const createUnionPropType = ( keys: string[] ): PropType =>
 		prop_types: Object.fromEntries( keys.map( ( key ) => [ key, createPlainPropType( key ) ] ) ),
 		settings: {},
 		meta: {},
-	} as PropType );
+	} ) as PropType;
 
 describe( 'isInlineEditingAllowed', () => {
 	it( 'should allow inline editing for html prop values', () => {
@@ -86,5 +85,3 @@ describe( 'isInlineEditingAllowed', () => {
 		).toBe( false );
 	} );
 } );
-
-
