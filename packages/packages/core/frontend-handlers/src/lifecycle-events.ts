@@ -12,15 +12,6 @@ type LifecycleEventParams = {
 	elementId: string;
 };
 
-const dispatchRenderedEvent = ( params: LifecycleEventParams ) => {
-	params.element.dispatchEvent(
-		new CustomEvent( ELEMENT_RENDERED_EVENT_NAME, {
-			bubbles: true,
-			detail: params,
-		} )
-	);
-};
-
 const dispatchDestroyedEvent = ( params: LifecycleEventParams ) => {
 	params.element.dispatchEvent(
 		new CustomEvent( ELEMENT_DESTROYED_EVENT_NAME, {
@@ -43,12 +34,28 @@ export const onElementRender = ( {
 	const manualUnmount: ( () => void )[] = [];
 
 	// When the rendered event is dispatched, the element is not yet connected to the DOM (marrionet view case)
+	const dispatchRenderedEvent = () => {
+		onElementSelectorRender( { element, elementId, controller } );
+
+		element.dispatchEvent(
+			new CustomEvent( ELEMENT_RENDERED_EVENT_NAME, {
+				bubbles: true,
+				detail: {
+					element,
+					elementType,
+					elementId,
+				},
+			} )
+		);
+	};
+
+	// When the rendered event is dispatched, the element is not yet connected to the DOM (marionette view case)
 	if ( ! element.isConnected ) {
 		requestAnimationFrame( () => {
-			dispatchRenderedEvent( { element, elementType, elementId } );
+			dispatchRenderedEvent();
 		} );
 	} else {
-		dispatchRenderedEvent( { element, elementType, elementId } );
+		dispatchRenderedEvent();
 	}
 
 	if ( ! elementTypeHandlers.has( elementType ) ) {
@@ -128,8 +135,12 @@ export const onElementSelectorRender = ( {
 			}
 		} );
 
-		if ( ! unmountElementSelectorCallbacks.has( elementId ) ) {
-			unmountElementTypeCallbacks.set( elementId, new Map() );
+		if ( ! manualUnmount.length ) {
+			return;
+		}
+
+		if ( ! unmountElementSelectorCallbacks.get( elementId ) ) {
+			unmountElementSelectorCallbacks.set( elementId, new Map() );
 		}
 
 		unmountElementSelectorCallbacks.get( elementId )?.set( selector, () => {
@@ -150,6 +161,7 @@ export const onElementDestroy = ( {
 	element?: Element;
 } ) => {
 	const unmount = unmountElementTypeCallbacks.get( elementType )?.get( elementId );
+	const unmountSelector = unmountElementSelectorCallbacks.get( elementId );
 
 	if ( element ) {
 		dispatchDestroyedEvent( { element, elementType, elementId } );
@@ -159,11 +171,20 @@ export const onElementDestroy = ( {
 		return;
 	}
 
-	unmount();
+	if ( unmountSelector?.size ) {
+		Array.from( unmountSelector.values() ).forEach( ( selectorUnmount ) => {
+			selectorUnmount();
+		} );
+	}
 
 	unmountElementTypeCallbacks.get( elementType )?.delete( elementId );
+	unmountElementSelectorCallbacks.delete( elementId );
 
 	if ( unmountElementTypeCallbacks.get( elementType )?.size === 0 ) {
 		unmountElementTypeCallbacks.delete( elementType );
+	}
+
+	if ( unmountElementSelectorCallbacks.size === 0 ) {
+		unmountElementSelectorCallbacks.delete( elementId );
 	}
 };
