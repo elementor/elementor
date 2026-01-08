@@ -14,11 +14,6 @@ on:
         type: boolean
         description: 'Was the Custom Core process executed and completed successful?'
         required: true
-      dry_run:
-        type: boolean
-        description: 'Run in dry-run mode (no actual release will be created)'
-        required: false
-        default: true
 
 env:
   CHANNEL: ${{inputs.channel}}
@@ -119,8 +114,6 @@ jobs:
           files: |
             elementor-*.zip
             ${{ env.CHANGELOG_FILE }}
-          prerelease: ${{ github.event.inputs.dry_run }}
-          draft: ${{ github.event.inputs.dry_run }}
           body_path: ${{ env.CHANGELOG_FILE }}
       - name: Validate Build Files
         if: github.repository_owner == 'elementor'
@@ -131,7 +124,7 @@ jobs:
         run: |
             bash "${GITHUB_WORKSPACE}/.github/scripts/validate-build-files.sh"
       - name: Publish to WordPress.org SVN
-        if: github.repository_owner == 'elementor' && github.event.inputs.dry_run == 'false'
+        if: github.repository_owner == 'elementor'
         env:
           PLUGIN_VERSION: ${{ env.RELEASE_NAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
@@ -141,7 +134,7 @@ jobs:
         run: |
           bash "${GITHUB_WORKSPACE}/.github/scripts/publish-to-wordpress-org.sh"
       - name: Release Dev From Beta
-        if: env.CHANNEL == 'beta' && github.event.inputs.dry_run == 'false'
+        if: env.CHANNEL == 'beta'
         uses: ./.github/workflows/release-dev-from-beta
         with:
           BUILD_ZIP_FILE_PATH: ${{ github.event.repository.name }}-${{ env.RELEASE_FILENAME }}.zip
@@ -149,11 +142,10 @@ jobs:
           REPOSITORY_OWNER: ${{ github.repository_owner }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          DRY_RUN: false
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
 
       - name: Post To Slack Created Release
-        if: github.event.inputs.dry_run == 'false'
         uses : ./.github/workflows/post-to-slack
         with:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_TOKEN }}
@@ -199,18 +191,16 @@ jobs:
           if [ "${{ env.CHANNEL }}" == "ga" ]; then
             node scripts/version-manager/index.js set "${{ env.PACKAGE_VERSION }}"
           else
-            if [ ${{ github.event.inputs.dry_run }} == 'false' ]; then
-              LATEST_BETA_NUM=$(git tag -l "v${{ env.PACKAGE_VERSION }}-*" | sed 's/.*-//' | sort -nr | head -n1 || echo "0")
-              NEXT_BETA_NUM=$((LATEST_BETA_NUM + 1))
-              node scripts/version-manager/index.js set "${{ env.PACKAGE_VERSION }}" --tag "${NEXT_BETA_NUM}"
-              git config --global user.email "github-actions@github.com"
-              git config --global user.name "GitHub Actions"
-              git tag -a "v${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}" -m "Release ${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}"
-              git push origin "v${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}"
-            fi
+            LATEST_BETA_NUM=$(git tag -l "v${{ env.PACKAGE_VERSION }}-*" | sed 's/.*-//' | sort -nr | head -n1 || echo "0")
+            NEXT_BETA_NUM=$((LATEST_BETA_NUM + 1))
+            node scripts/version-manager/index.js set "${{ env.PACKAGE_VERSION }}" --tag "${NEXT_BETA_NUM}"
+            git config --global user.email "github-actions@github.com"
+            git config --global user.name "GitHub Actions"
+            git tag -a "v${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}" -m "Release ${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}"
+            git push origin "v${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}"
           fi
-          npm run release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
+          npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
-          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          DRY_RUN: false
