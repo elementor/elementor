@@ -32,6 +32,11 @@ const InputSchema = {
 						.describe(
 							'The property key of the child element that you want to override its settings (e.g., "text", "url", "tag"). To get the available propKeys for an element, use the "get-element-type-config" tool.'
 						),
+					label: z
+						.string()
+						.describe(
+							'A unique, user-friendly display name for this property (e.g., "Hero Headline", "CTA Button Text"). Must be unique within the same component.'
+						),
 				} )
 			),
 		} )
@@ -111,14 +116,14 @@ export const handleSaveAsComponent = async ( params: z.infer< z.ZodObject< typeo
 };
 
 function enrichOverridableProps(
-	input: { props: Record< string, { elementId: string; propKey: string } > },
+	input: { props: Record< string, { elementId: string; propKey: string; label: string } > },
 	rootElement: V1ElementData
 ): OverridableProps {
 	const enrichedProps: OverridableProps[ 'props' ] = {};
 	const defaultGroupId = generateUniqueId( 'group' );
 
 	Object.entries( input.props ).forEach( ( [ , prop ] ) => {
-		const { elementId, propKey } = prop;
+		const { elementId, propKey, label } = prop;
 		const element = findElementById( rootElement, elementId );
 
 		if ( ! element ) {
@@ -150,8 +155,6 @@ function enrichOverridableProps(
 		const originValue = element.settings?.[ propKey ]
 			? ( element.settings[ propKey ] as PropValue )
 			: elementType.propsSchema[ propKey ].default ?? null;
-
-		const label = generateLabel( propKey );
 
 		enrichedProps[ overrideKey ] = {
 			overrideKey,
@@ -213,11 +216,6 @@ function findElementById( root: V1ElementData, targetId: string ): V1ElementData
 	}
 
 	return null;
-}
-
-function generateLabel( propKey: string ): string {
-	const uniqueId = generateUniqueId( 'prop' );
-	return `${ uniqueId } - ${ propKey }`;
 }
 
 function getValidElementTypes(): string[] {
@@ -287,7 +285,8 @@ Skip that step ONLY if the user explicitly requests to not make any properties c
 
 3. **Build the overridable_props Object**
    - For each property you want to make overridable, add an entry:
-     \`{ "elementId": "<child-element-id>", "propKey": "<property-key>" }\`
+     \`{ "elementId": "<child-element-id>", "propKey": "<property-key>", "label": "<user-friendly-name>" }\`
+   - The label must be unique within the component and should be meaningful to the user (e.g., "Hero Headline", "CTA Button Text")
    - Group all entries under the "props" object
 
 ## Step 3: Execute the Tool
@@ -327,7 +326,8 @@ Structure:
   "props": {
     "<unique-key>": {
       "elementId": "<child-element-id>",
-      "propKey": "<property-key>"
+      "propKey": "<property-key>",
+      "label": "<user-friendly-name>"
     }
   }
 }
@@ -337,7 +337,7 @@ To populate this correctly:
 1. Use [${ DOCUMENT_STRUCTURE_URI }] to find child element IDs and their widgetType
 2. Use [${ WIDGET_SCHEMA_URI }] to find the atomic_props_schema for each child element's widgetType
 3. Only include properties you want to be customizable in component instances
-4. Common propKeys: "text", "url", "tag", "size", "align", etc.`
+4. Provide a unique, user-friendly label for each property (e.g., "Hero Headline", "CTA Button Text")`
 	);
 
 	saveAsComponentPrompt.example( `
@@ -358,15 +358,18 @@ Component with overridable properties:
     "props": {
       "heading-text": {
         "elementId": "heading-123",
-        "propKey": "text"
+        "propKey": "text",
+        "label": "Card Title"
       },
       "button-text": {
         "elementId": "button-456",
-        "propKey": "text"
+        "propKey": "text",
+        "label": "Button Text"
       },
       "button-link": {
         "elementId": "button-456",
-        "propKey": "url"
+        "propKey": "url",
+        "label": "Button Link"
       }
     }
   }

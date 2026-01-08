@@ -26,7 +26,7 @@ import { componentOverrideTransformer } from './component-override-transformer';
 import { ComponentPanelHeader } from './components/component-panel-header/component-panel-header';
 import { panel as componentPropertiesPanel } from './components/component-properties-panel/component-properties-panel';
 import { Components } from './components/components-tab/components';
-import { COMPONENT_DOCUMENT_TYPE } from './components/consts';
+import { COMPONENT_DOCUMENT_TYPE, OVERRIDABLE_PROP_REPLACEMENT_ID } from './components/consts';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
 import { openEditModeDialog } from './components/in-edit-mode';
@@ -34,10 +34,12 @@ import { InstanceEditingPanel } from './components/instance-editing-panel/instan
 import { OverridablePropControl } from './components/overridable-props/overridable-prop-control';
 import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
 import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-type';
+import { initCleanupOverridablePropsOnDelete } from './hooks/cleanup-overridable-props-on-delete';
 import { initRegenerateOverrideKeys } from './hooks/regenerate-override-keys';
 import { initMcp } from './mcp';
 import { PopulateStore } from './populate-store';
 import { initCircularNestingPrevention } from './prevent-circular-nesting';
+import { initNonAtomicNestingPrevention } from './prevent-non-atomic-nesting';
 import { componentOverridablePropTypeUtil } from './prop-types/component-overridable-prop-type';
 import { loadComponentsAssets } from './store/actions/load-components-assets';
 import { removeComponentStyles } from './store/actions/remove-component-styles';
@@ -73,6 +75,7 @@ export function init() {
 		id: 'components',
 		label: __( 'Components', 'elementor' ),
 		component: Components,
+		position: 1,
 	} );
 
 	injectIntoTop( {
@@ -113,6 +116,7 @@ export function init() {
 	} );
 
 	registerControlReplacement( {
+		id: OVERRIDABLE_PROP_REPLACEMENT_ID,
 		component: OverridablePropControl,
 		condition: ( { value } ) => componentOverridablePropTypeUtil.isValid( value ),
 	} );
@@ -129,7 +133,11 @@ export function init() {
 
 	initRegenerateOverrideKeys();
 
+	initCleanupOverridablePropsOnDelete();
+
 	initMcp();
 
 	initCircularNestingPrevention();
+
+	initNonAtomicNestingPrevention();
 }

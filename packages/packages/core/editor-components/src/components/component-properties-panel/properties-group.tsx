@@ -149,6 +149,7 @@ export function PropertiesGroup( {
 										sortableTriggerProps={ { ...triggerProps, style: triggerStyle } }
 										isDragPlaceholder={ isItemDragPlaceholder }
 										groups={ allGroups }
+										existingLabels={ Object.values( props ).map( ( p ) => p.label ) }
 										onDelete={ onPropertyDelete }
 										onUpdate={ ( data ) => onPropertyUpdate( prop.overrideKey, data ) }
 									/>
