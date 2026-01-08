@@ -69,7 +69,7 @@
                 "slug": "elementor-system",
                 "label": "System",
                 "url": "/wp-admin/admin.php?page=elementor-system-info",
-                "icon": "info-circle",
+                "icon": "file-settings",
                 "group_id": "elementor-editor-system",
                 "priority": 80,
                 "has_divider_before": false
