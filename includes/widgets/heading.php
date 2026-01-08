@@ -509,7 +509,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 			} elseif ( ! $is_active ) {
 				$button_text = esc_html__( 'Activate now', 'elementor' );
 			} else {
-				$button_text = esc_html__( 'Connect to Ally', 'elementor' );
+				$button_text = esc_html__( 'Connect now', 'elementor' );
 			}
 		}
 
