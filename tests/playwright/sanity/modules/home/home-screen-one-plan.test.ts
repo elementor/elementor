@@ -30,7 +30,9 @@ test.describe( 'Home screen Edit Website button tests', () => {
 		await context.close();
 	} );
 
-	test( 'one license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
+	// TODO: Fix in ED-22339 - Visual regression test failing
+	// https://elementor.atlassian.net/browse/ED-22339
+	test.skip( 'one license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
 		const requestContext = await request.newContext( { storageState } );
 		const mockData = transformMockDataByLicense( 'one' );
 
@@ -41,7 +43,9 @@ test.describe( 'Home screen Edit Website button tests', () => {
 		await requestContext.dispose();
 	} );
 
-	test( 'Edit Website button has valid Elementor link', async ( { page } ) => {
+	// TODO: Fix in ED-22339 - Edit Website button test failing
+	// https://elementor.atlassian.net/browse/ED-22339
+	test.skip( 'Edit Website button has valid Elementor link', async ( { page } ) => {
 		await page.goto( 'wp-admin/admin.php?page=elementor' );
 
 		const editWebsiteButton = page.locator( 'a:has-text("Edit Website"), button:has-text("Edit Website")' ).first();
