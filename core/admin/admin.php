@@ -771,6 +771,56 @@ class Admin extends App {
 		die;
 	}
 
+	/**
+	 * Admin action edit website.
+	 *
+	 * Redirects to the homepage edit URL if it exists and is built with Elementor,
+	 * otherwise redirects to create a new page.
+	 *
+	 * Fired by `admin_action_elementor_edit_website` action.
+	 *
+	 * @since 3.x.x
+	 * @access public
+	 */
+	public function admin_action_edit_website_redirect() {
+		check_admin_referer( 'elementor_action_edit_website' );
+
+		if ( ! User::is_current_user_can_edit_post_type( 'page' ) ) {
+			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'elementor' ) );
+		}
+
+		$homepage_id = $this->get_homepage_id();
+		$edit_url = $this->get_edit_website_url( $homepage_id );
+
+		wp_safe_redirect( $edit_url );
+
+		die;
+	}
+
+	private function get_homepage_id(): ?int {
+		if ( get_option( 'show_on_front' ) !== 'page' ) {
+			return null;
+		}
+
+		$homepage_id = get_option( 'page_on_front' );
+
+		return $homepage_id ? (int) $homepage_id : null;
+	}
+
+	private function get_edit_website_url( ?int $homepage_id ): string {
+		if ( ! $homepage_id ) {
+			return Plugin::$instance->documents->get_create_new_post_url( 'page' );
+		}
+
+		$document = Plugin::$instance->documents->get( $homepage_id );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
+			return Plugin::$instance->documents->get_create_new_post_url( 'page' );
+		}
+
+		return $document->get_edit_url();
+	}
+
 	private function get_allowed_fields_for_role() {
 		$allowed_fields = [
 			'post_title',
@@ -975,6 +1025,7 @@ class Admin extends App {
 		// Admin Actions
 		add_action( 'admin_action_elementor_new_post', [ $this, 'admin_action_new_post' ] );
 		add_action( 'admin_action_elementor_site_settings_redirect', [ $this, 'admin_action_site_settings_redirect' ] );
+		add_action( 'admin_action_elementor_edit_website_redirect', [ $this, 'admin_action_edit_website_redirect' ] );
 
 		add_action( 'current_screen', [ $this, 'init_new_template' ] );
 		add_action( 'current_screen', [ $this, 'init_floating_elements' ] );
