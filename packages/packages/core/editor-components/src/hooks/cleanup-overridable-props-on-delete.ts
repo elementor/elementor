@@ -38,12 +38,12 @@ export function initCleanupOverridablePropsOnDelete() {
 
 		const deletedElementIds = collectDeletedElementIds( containers );
 
-		if ( deletedElementIds.size === 0 ) {
+		if ( deletedElementIds.length === 0 ) {
 			return;
 		}
 
 		const propKeysToDelete = Object.entries( overridableProps.props )
-			.filter( ( [ , prop ] ) => deletedElementIds.has( prop.elementId ) )
+			.filter( ( [ , prop ] ) => deletedElementIds.includes( prop.elementId ) )
 			.map( ( [ propKey ] ) => propKey );
 
 		if ( propKeysToDelete.length === 0 ) {
@@ -72,30 +72,12 @@ export function initCleanupOverridablePropsOnDelete() {
 	} );
 }
 
-function collectDeletedElementIds( containers: V1Element[] ): Set< string > {
-	const elementIds = new Set< string >();
-
-	for ( const container of containers ) {
-		if ( ! container ) {
-			continue;
-		}
-
-		const elementId = container.model?.get?.( 'id' ) ?? container.id;
-
-		if ( elementId ) {
-			elementIds.add( elementId );
-		}
-
-		const descendants = getAllDescendants( container );
-
-		for ( const descendant of descendants ) {
-			const descendantId = descendant.model?.get?.( 'id' ) ?? descendant.id;
-
-			if ( descendantId ) {
-				elementIds.add( descendantId );
-			}
-		}
-	}
+function collectDeletedElementIds( containers: V1Element[] ): string[] {
+	const elementIds = containers
+		.filter( Boolean )
+		.flatMap( ( container ) => [ container, ...getAllDescendants( container ) ] )
+		.map( ( element ) => element.model?.get?.( 'id' ) ?? element.id )
+		.filter( ( id ): id is string => Boolean( id ) );
 
 	return elementIds;
 }
