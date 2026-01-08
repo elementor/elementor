@@ -228,7 +228,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 
 		elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
 			data: {
-				source: source,
+				source,
 			},
 		} );
 

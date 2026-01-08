@@ -125,7 +125,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 
 				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
 					data: {
-						source: source,
+						source,
 					},
 				} );
 			} );
@@ -136,7 +136,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 
 				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
 					data: {
-						source: source,
+						source,
 					},
 				} );
 			} );
@@ -150,7 +150,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 
 				elementorCommon.ajax.addRequest( 'elementor_core_site_mailer_campaign', {
 					data: {
-						source: source,
+						source,
 					},
 				} );
 			} );
