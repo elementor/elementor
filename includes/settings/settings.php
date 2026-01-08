@@ -69,6 +69,10 @@ class Settings extends Settings_Page {
 
 	const ADMIN_MENU_PRIORITY = 10;
 
+	const MENU_CAPABILITY_MANAGE_OPTIONS = 'manage_options';
+
+	const MENU_CAPABILITY_EDIT_POSTS = 'edit_posts';
+
 	public Home_Module $home_module;
 
 	/**
@@ -86,14 +90,16 @@ class Settings extends Settings_Page {
 
 		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
-		if ( ! current_user_can( 'manage_options' ) ) {
+		$required_capability = $this->get_menu_capability();
+
+		if ( ! current_user_can( $required_capability ) ) {
 			return;
 		}
 
 		add_menu_page(
 			esc_html__( 'Elementor', 'elementor' ),
 			esc_html__( 'Elementor', 'elementor' ),
-			'manage_options',
+			$required_capability,
 			self::PAGE_ID,
 			[
 				$this,
@@ -180,6 +186,10 @@ class Settings extends Settings_Page {
 
 	private function is_editor_one_active(): bool {
 		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
+	}
+
+	private function get_menu_capability(): string {
+		return $this->is_editor_one_active() ? self::MENU_CAPABILITY_EDIT_POSTS : self::MENU_CAPABILITY_MANAGE_OPTIONS;
 	}
 
 	/**

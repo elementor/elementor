@@ -13,7 +13,7 @@ const EditorScreen = ( props ) => {
 
 	return (
 		/*  Box wrapper around the Container is needed to neutralize wp-content area left-padding */
-		<Box sx={ { pr: 1 } }>
+		<Box>
 			<Container disableGutters={ true } maxWidth="lg" sx={ { display: 'flex', flexDirection: 'column', gap: 2.5, px: { xs: 1.5, md: 4 } } }>
 				<HeaderSection editWebsiteUrl={ props.homeScreenData.edit_website_url } />
 				{ props.homeScreenData.top_with_licences && <TopSection topData={ props.homeScreenData.top_with_licences } buttonCtaUrl={ props.homeScreenData.button_cta_url } /> }

@@ -2,18 +2,17 @@
 
 namespace Elementor\Modules\EditorOne\Classes;
 
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_With_Custom_Url_Interface;
 use Elementor\Plugin;
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Third_Level_Interface;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 class Menu_Data_Provider {
-
 	private static ?Menu_Data_Provider $instance = null;
-
 	private array $level3_items = [];
 	private array $level4_items = [];
 	private ?string $theme_builder_url = null;
@@ -38,10 +37,22 @@ class Menu_Data_Provider {
 	}
 
 	public function register_menu( Menu_Item_Interface $item ): void {
-		if ( $item instanceof Menu_Item_Third_Level_Interface ) {
-			$this->register_level3_item( $item );
-		} else {
+		if ( ! ( $item instanceof Menu_Item_Third_Level_Interface ) ) {
 			$this->register_level4_item( $item );
+			return;
+		}
+
+		$group_id = $item->get_group_id();
+		$collapsible_groups = [
+			Menu_Config::TEMPLATES_GROUP_ID,
+			Menu_Config::CUSTOM_ELEMENTS_GROUP_ID,
+			Menu_Config::SYSTEM_GROUP_ID,
+		];
+
+		if ( in_array( $group_id, $collapsible_groups, true ) && ! $item->has_children() ) {
+			$this->register_level4_item( $item );
+		} else {
+			$this->register_level3_item( $item );
 		}
 	}
 
@@ -128,12 +139,29 @@ class Menu_Data_Provider {
 	public function get_theme_builder_url(): string {
 		if ( null === $this->theme_builder_url ) {
 			$pro_url = Plugin::$instance->app ? Plugin::$instance->app->get_settings( 'menu_url' ) : null;
-			$default_url = $pro_url ? $pro_url : admin_url( 'admin.php?page=elementor-app#site-editor/promotion' );
+			$return_to = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
 
-			$this->theme_builder_url = apply_filters( 'elementor/editor-one/menu/theme_builder_url', $default_url );
+			$url = $pro_url
+				? $this->add_return_to_url( $pro_url, $return_to )
+				: add_query_arg( [ 'return_to' => $return_to ], admin_url( 'admin.php?page=elementor-app' ) ) . '#/site-editor/promotion';
+
+			$this->theme_builder_url = apply_filters( 'elementor/editor-one/menu/theme_builder_url', $url );
 		}
 
 		return $this->theme_builder_url;
+	}
+
+	private function add_return_to_url( string $url, string $return_to ): string {
+		$hash_position = strpos( $url, '#' );
+
+		if ( false === $hash_position ) {
+			return add_query_arg( [ 'return_to' => $return_to ], $url );
+		}
+
+		$base_url = substr( $url, 0, $hash_position );
+		$hash_fragment = substr( $url, $hash_position );
+
+		return add_query_arg( [ 'return_to' => $return_to ], $base_url ) . $hash_fragment;
 	}
 
 	public function get_all_sidebar_page_slugs(): array {
@@ -156,6 +184,10 @@ class Menu_Data_Provider {
 		}
 
 		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
+
+		if ( Menu_Config::ELEMENTOR_HOME_MENU_SLUG === $page ) {
+			return false;
+		}
 
 		if ( in_array( $page, $this->get_all_sidebar_page_slugs(), true ) ) {
 			return true;
@@ -199,6 +231,7 @@ class Menu_Data_Provider {
 					return true;
 				}
 			}
+
 			return false;
 		} ) );
 	}
@@ -245,18 +278,24 @@ class Menu_Data_Provider {
 	private function create_flyout_item_data( Menu_Item_Interface $item, string $item_slug ): array {
 		$has_children = $item->has_children();
 		$group_id = $has_children ? $item->get_group_id() : '';
+		$is_third_party_parent = Menu_Config::THIRD_PARTY_GROUP_ID === $item->get_group_id();
 
 		return [
 			'slug' => $item_slug,
-			'label' => $item->get_label(),
+			'label' => $this->title_case( $item->get_label() ),
 			'url' => $this->resolve_flyout_item_url( $item, $item_slug ),
 			'icon' => $item->get_icon(),
 			'group_id' => $group_id,
 			'priority' => $item->get_position() ?? 100,
+			'has_divider_before' => $is_third_party_parent,
 		];
 	}
 
 	private function resolve_flyout_item_url( Menu_Item_Interface $item, string $item_slug ): string {
+		if ( $item instanceof Menu_Item_With_Custom_Url_Interface ) {
+			return $item->get_menu_url();
+		}
+
 		$url = $this->get_item_url( $item_slug, $item->get_parent_slug() );
 
 		if ( ! $item->has_children() ) {
@@ -321,10 +360,14 @@ class Menu_Data_Provider {
 					continue;
 				}
 
+				$url = $item instanceof Menu_Item_With_Custom_Url_Interface
+					? $item->get_menu_url()
+					: $this->get_item_url( $item_slug, $item->get_parent_slug() );
+
 				$groups[ $group_id ]['items'][] = [
 					'slug' => $item_slug,
-					'label' => $label,
-					'url' => $this->get_item_url( $item_slug, $item->get_parent_slug() ),
+					'label' => $this->title_case( $item->get_label() ),
+					'url' => $url,
 					'priority' => $item->get_position() ?? 100,
 				];
 
@@ -335,7 +378,7 @@ class Menu_Data_Provider {
 		return $groups;
 	}
 
-	private function is_item_accessible( Menu_Item_Interface $item ): bool {
+	public function is_item_accessible( Menu_Item_Interface $item ): bool {
 		return $item->is_visible() && current_user_can( $item->get_capability() );
 	}
 
@@ -365,8 +408,42 @@ class Menu_Data_Provider {
 		} );
 	}
 
+	/**
+	 * Convert string to Title Case (capitalize first letter of each word).
+	 *
+	 * @param string $text The text to convert.
+	 * @return string The text in Title Case.
+	 */
+	private function title_case( string $text ): string {
+		return mb_convert_case( $text, MB_CASE_TITLE, 'UTF-8' );
+	}
+
 	private function invalidate_cache(): void {
 		$this->cached_editor_flyout_data = null;
 		$this->cached_level4_flyout_data = null;
+	}
+
+	public static function get_current_user_capabilities(): array {
+		$user = wp_get_current_user();
+
+		if ( ! $user || ! $user->exists() ) {
+			return [
+				'user' => null,
+				'has_edit_posts' => false,
+				'has_manage_options' => false,
+				'is_edit_posts_user' => false,
+			];
+		}
+
+		$has_edit_posts = isset( $user->allcaps[ Menu_Config::CAPABILITY_EDIT_POSTS ] ) && $user->allcaps[ Menu_Config::CAPABILITY_EDIT_POSTS ];
+		$has_manage_options = isset( $user->allcaps[ Menu_Config::CAPABILITY_MANAGE_OPTIONS ] ) && $user->allcaps[ Menu_Config::CAPABILITY_MANAGE_OPTIONS ];
+		$is_edit_posts_user = $has_edit_posts && ! $has_manage_options;
+
+		return [
+			'user' => $user,
+			'has_edit_posts' => $has_edit_posts,
+			'has_manage_options' => $has_manage_options,
+			'is_edit_posts_user' => $is_edit_posts_user,
+		];
 	}
 }

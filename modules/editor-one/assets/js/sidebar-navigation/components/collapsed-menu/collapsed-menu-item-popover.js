@@ -1,12 +1,13 @@
-import { List, ListItem, ListItemText, ListSubheader } from '@elementor/ui';
+import { List, ListItem, ListItemText } from '@elementor/ui';
 import PropTypes from 'prop-types';
 import {
-	CollapsedIconButton,
+	MenuItemButton,
+	MenuIcon,
 	PopoverContent,
 	PopoverListItemButton,
 	PopoverTitle,
 	StyledPopover,
-} from './styled-components';
+} from '../shared';
 
 const CollapsedMenuItemPopover = ( {
 	item,
@@ -17,12 +18,16 @@ const CollapsedMenuItemPopover = ( {
 	onClose,
 	IconComponent,
 	isActive,
+	onMouseEnter,
+	anchorRef,
 } ) => {
 	return (
-		<>
-			<CollapsedIconButton isHighlighted={ isActive || isPopoverOpen }>
-				<IconComponent />
-			</CollapsedIconButton>
+		<ListItem disablePadding dense disableGutters onMouseEnter={ onMouseEnter } ref={ anchorRef }>
+			<MenuItemButton selected={ isActive || isPopoverOpen } sx={ { height: 36 } }>
+				<MenuIcon>
+					<IconComponent />
+				</MenuIcon>
+			</MenuItemButton>
 			<StyledPopover
 				open={ isPopoverOpen }
 				anchorEl={ anchorEl }
@@ -38,10 +43,10 @@ const CollapsedMenuItemPopover = ( {
 				hideBackdrop
 			>
 				<PopoverContent>
-					<List disablePadding>
-						<ListSubheader><PopoverTitle elementType="div" variant="caption">{ item.label }</PopoverTitle></ListSubheader>
+					<List disablePadding dense>
+						<PopoverTitle>{ item.label }</PopoverTitle>
 						{ children.map( ( childItem ) => (
-							<ListItem key={ childItem.slug } disablePadding disableGutters dense>
+							<ListItem key={ childItem.slug } disablePadding disableGutters dense sx={ { height: 28 } }>
 								<PopoverListItemButton
 									component="a"
 									href={ childItem.url }
@@ -57,7 +62,7 @@ const CollapsedMenuItemPopover = ( {
 					</List>
 				</PopoverContent>
 			</StyledPopover>
-		</>
+		</ListItem>
 	);
 };
 
@@ -70,7 +75,8 @@ CollapsedMenuItemPopover.propTypes = {
 	onClose: PropTypes.func.isRequired,
 	IconComponent: PropTypes.elementType.isRequired,
 	isActive: PropTypes.bool.isRequired,
+	onMouseEnter: PropTypes.func.isRequired,
+	anchorRef: PropTypes.oneOfType( [ PropTypes.func, PropTypes.object ] ).isRequired,
 };
 
 export default CollapsedMenuItemPopover;
-

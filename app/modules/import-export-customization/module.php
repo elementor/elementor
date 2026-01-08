@@ -158,8 +158,13 @@ class Module extends BaseModule {
 		];
 
 		if ( $is_cloud_kits_available ) {
+			$return_to_url = Tools::get_url() . '#tab-import-export-kit';
+			$kit_library_url = add_query_arg(
+				[ 'return_to' => rawurlencode( $return_to_url ) ],
+				Plugin::$instance->app->get_base_url() . '#/kit-library/cloud'
+			);
 			$content_data['import']['button_secondary'] = [
-				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
+				'url' => $kit_library_url,
 				'text' => esc_html__( 'Import from library', 'elementor' ),
 				'id' => 'elementor-import-export__import_from_library',
 			];
@@ -241,8 +246,13 @@ class Module extends BaseModule {
 	}
 
 	private function print_item_content( $data ) {
+		$is_editor_one_enabled = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
+		$container_classes = 'tab-import-export-kit__container';
+		if ( $is_editor_one_enabled ) {
+			$container_classes .= ' e-editor-one';
+		}
 		?>
-		<div class="tab-import-export-kit__container">
+		<div class="<?php echo esc_attr( $container_classes ); ?>">
 			<div class="tab-import-export-kit__box">
 				<h2><?php ElementorUtils::print_unescaped_internal_string( $data['title'] ); ?></h2>
 			</div>
