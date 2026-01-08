@@ -20,7 +20,7 @@ test.describe( 'Home screen visual regression tests', () => {
 	for ( const licenseType of licenseTypes ) {
 		// TODO: Fix in ED-22339 - Visual regression test failing (pro license variant)
 		// https://elementor.atlassian.net/browse/ED-22339
-		const testFn = licenseType === 'pro' ? test.skip : test;
+		const testFn = 'pro' === licenseType ? test.skip : test;
 		testFn( `${ licenseType } license variant - UI renders correctly with mocked data`, async ( { page, apiRequests, storageState } ) => {
 			const requestContext = await request.newContext( { storageState } );
 			const mockData = transformMockDataByLicense( licenseType );
