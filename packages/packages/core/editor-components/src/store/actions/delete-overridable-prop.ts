@@ -12,6 +12,7 @@ import {
 import {
 	type ComponentInstanceProp,
 	componentInstancePropTypeUtil,
+	type ComponentInstancePropValue,
 } from '../../prop-types/component-instance-prop-type';
 import { type ComponentId } from '../../types';
 import { selectOverridableProps, slice } from '../store';
@@ -87,13 +88,16 @@ function revertComponentInstanceSetting( elementId: string, overrideKey: string 
 		return;
 	}
 
-	const newOverrides = getUpdatedComponentInstanceOverrides( overrides, overrideKey );
-
-	setting.value.overrides.value = newOverrides;
+	const updatedSetting = componentInstancePropTypeUtil.create( {
+		...componentInstance,
+		overrides: componentInstanceOverridesPropTypeUtil.create(
+			getUpdatedComponentInstanceOverrides( overrides, overrideKey )
+		),
+	} as ComponentInstancePropValue );
 
 	updateElementSettings( {
 		id: elementId,
-		props: { component_instance: setting },
+		props: { component_instance: updatedSetting },
 		withHistory: false,
 	} );
 }
@@ -101,7 +105,7 @@ function revertComponentInstanceSetting( elementId: string, overrideKey: string 
 function getUpdatedComponentInstanceOverrides(
 	overrides: NonNullable< ComponentInstanceOverridesPropValue >,
 	overrideKey: string
-) {
+): ComponentInstanceOverridesPropValue {
 	return overrides
 		.map( ( override ) => {
 			const isOverride = componentInstanceOverridePropTypeUtil.isValid( override );
@@ -128,5 +132,5 @@ function getUpdatedComponentInstanceOverrides(
 				override_key: overrideKey,
 			} );
 		} )
-		.filter( Boolean ) as ComponentInstanceOverridesPropValue;
+		.filter( ( item ): item is NonNullable< typeof item > => item !== null );
 }
