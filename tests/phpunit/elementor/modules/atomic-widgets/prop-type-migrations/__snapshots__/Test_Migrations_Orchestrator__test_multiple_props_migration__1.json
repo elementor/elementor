@@ -1,0 +1,14 @@
+{
+    "title": {
+        "$$type": "string_v2",
+        "value": "Hello"
+    },
+    "count": {
+        "$$type": "string",
+        "value": 42
+    },
+    "unchanged": {
+        "$$type": "string",
+        "value": "Static"
+    }
+}

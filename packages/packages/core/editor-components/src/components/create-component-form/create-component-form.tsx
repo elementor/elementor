@@ -3,14 +3,17 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { getElementLabel, type V1ElementData } from '@elementor/editor-elements';
 import { notify } from '@elementor/editor-notifications';
 import { Form as FormElement, ThemeProvider } from '@elementor/editor-ui';
-import { StarIcon } from '@elementor/icons';
-import { Alert, Button, FormLabel, Grid, Popover, Snackbar, Stack, TextField, Typography } from '@elementor/ui';
+import { ComponentsIcon } from '@elementor/icons';
+import { __getState as getState } from '@elementor/store';
+import { Button, FormLabel, Grid, Popover, Stack, TextField, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
 import { findNonAtomicElementsInElement } from '../../prevent-non-atomic-nesting';
 import { createUnpublishedComponent } from '../../store/actions/create-unpublished-component';
-import { type ComponentFormValues } from '../../types';
+import { selectComponentByUid } from '../../store/store';
+import { type ComponentFormValues, type PublishedComponent } from '../../types';
+import { switchToComponent } from '../../utils/switch-to-component';
 import { trackComponentEvent } from '../../utils/tracking';
 import { useForm } from './hooks/use-form';
 import { createBaseComponentSchema, createSubmitComponentSchema } from './utils/component-form-schema';
@@ -26,12 +29,6 @@ type SaveAsComponentEventData = {
 	options?: ContextMenuEventOptions;
 };
 
-type ResultNotification = {
-	show: boolean;
-	message: string;
-	type: 'success' | 'error';
-};
-
 export function CreateComponentForm() {
 	const [ element, setElement ] = useState< {
 		element: V1ElementData;
@@ -39,8 +36,6 @@ export function CreateComponentForm() {
 	} | null >( null );
 
 	const [ anchorPosition, setAnchorPosition ] = useState< { top: number; left: number } >();
-
-	const [ resultNotification, setResultNotification ] = useState< ResultNotification | null >( null );
 
 	const eventData = useRef< ComponentEventData | null >( null );
 
@@ -79,30 +74,39 @@ export function CreateComponentForm() {
 		};
 	}, [] );
 
-	const handleSave = ( values: ComponentFormValues ) => {
+	const handleSave = async ( values: ComponentFormValues ) => {
 		try {
 			if ( ! element ) {
 				throw new Error( `Can't save element as component: element not found` );
 			}
 
-			const uid = createUnpublishedComponent( values.componentName, element.element, eventData.current );
+			const { uid, instanceId } = await createUnpublishedComponent(
+				values.componentName,
+				element.element,
+				eventData.current
+			);
 
-			setResultNotification( {
-				show: true,
-				// Translators: %1$s: Component name, %2$s: Component UID
-				message: __( 'Component saved successfully as: %1$s (UID: %2$s)', 'elementor' )
-					.replace( '%1$s', values.componentName )
-					.replace( '%2$s', uid ),
+			const publishedComponentId = ( selectComponentByUid( getState(), uid ) as PublishedComponent )?.id;
+
+			if ( publishedComponentId ) {
+				switchToComponent( publishedComponentId, instanceId );
+			} else {
+				throw new Error( 'Failed to find published component' );
+			}
+
+			notify( {
 				type: 'success',
+				message: __( 'Component created successfully.', 'elementor' ),
+				id: `component-saved-successfully-${ uid }`,
 			} );
 
 			resetAndClosePopup();
 		} catch {
-			const errorMessage = __( 'Failed to save component. Please try again.', 'elementor' );
-			setResultNotification( {
-				show: true,
-				message: errorMessage,
+			const errorMessage = __( 'Failed to create component. Please try again.', 'elementor' );
+			notify( {
 				type: 'error',
+				message: errorMessage,
+				id: 'component-save-failed',
 			} );
 		}
 	};
@@ -137,15 +141,6 @@ export function CreateComponentForm() {
 					/>
 				) }
 			</Popover>
-			<Snackbar open={ resultNotification?.show } onClose={ () => setResultNotification( null ) }>
-				<Alert
-					onClose={ () => setResultNotification( null ) }
-					severity={ resultNotification?.type }
-					sx={ { width: '100%' } }
-				>
-					{ resultNotification?.message }
-				</Alert>
-			</Snackbar>
 		</ThemeProvider>
 	);
 }
@@ -187,7 +182,7 @@ const Form = ( {
 	};
 
 	const texts = {
-		heading: __( 'Save as a component', 'elementor' ),
+		heading: __( 'Create component', 'elementor' ),
 		name: __( 'Name', 'elementor' ),
 		cancel: __( 'Cancel', 'elementor' ),
 		create: __( 'Create', 'elementor' ),
@@ -205,7 +200,7 @@ const Form = ( {
 					px={ 1.5 }
 					sx={ { columnGap: 0.5, borderBottom: '1px solid', borderColor: 'divider', width: '100%' } }
 				>
-					<StarIcon fontSize={ FONT_SIZE } />
+					<ComponentsIcon fontSize={ FONT_SIZE } />
 					<Typography variant="caption" sx={ { color: 'text.primary', fontWeight: '500', lineHeight: 1 } }>
 						{ texts.heading }
 					</Typography>

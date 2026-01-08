@@ -486,11 +486,26 @@ html.elementor-html {
 	:where(.elementor-edit-area-active) {
 		.elementor-element-overlay,
 		.elementor-empty,
-		.elementor-add-section,
-		.elementor-add-section-inline,
 		.elementor-empty-view,
-		.elementor-widget-empty {
+		.elementor-widget-empty 
+		{
 			display: revert;
+		}
+	}
+
+	// Component editing mode - change top level element overlay outline color to global element color
+	:where(.elementor-edit-area-active.elementor-widget-e-component) {
+		> .elementor-section-wrap > :first-child {
+			> .elementor-element-overlay::after {
+				outline-color: var(--e-p-border-global-element);
+			}
+
+			&.elementor-element-editable {
+				> .elementor-element-overlay::after {
+					// When selected, the outline should be inside the element, to avoid overlapping with component edit mode backdrop
+					outline-offset: -1px;
+				}
+			}
 		}
 	}
 }
@@ -551,6 +566,21 @@ html.elementor-html {
 
 .e-youtube-base iframe {
 	pointer-events: none;
+}
+
+
+.elementor-widget-e-component[data-atomic] {
+	&.elementor-edit-area-active {
+		& > * > * {
+			pointer-events: initial;
+		}
+	}
+
+	&:not(.elementor-edit-area-active) {
+		& > * > * {
+			pointer-events: none;
+		}
+	}
 }
 
 @import "section";

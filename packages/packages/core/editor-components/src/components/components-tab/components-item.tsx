@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { endDragElementFromPanel, startDragElementFromPanel } from '@elementor/editor-canvas';
 import { dropElement, type DropElementParams, type V1ElementData } from '@elementor/editor-elements';
 import { EditableField, EllipsisWithTooltip, MenuListItem, useEditable, WarningInfotip } from '@elementor/editor-ui';
@@ -26,6 +26,7 @@ import { type Component } from '../../types';
 import { validateComponentName } from '../../utils/component-name-validation';
 import { getContainerForNewElement } from '../../utils/get-container-for-new-element';
 import { createComponentModel } from '../create-component-form/utils/replace-element-with-component';
+import { DeleteConfirmationDialog } from './delete-confirmation-dialog';
 
 type ComponentItemProps = {
 	component: Omit< Component, 'id' > & { id?: number };
@@ -34,6 +35,7 @@ type ComponentItemProps = {
 
 export const ComponentItem = ( { component, renameComponent }: ComponentItemProps ) => {
 	const itemRef = useRef< HTMLElement >( null );
+	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
 
 	const {
 		ref: editableRef,
@@ -63,14 +65,22 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 		endDragElementFromPanel();
 	};
 
-	const handleArchiveClick = () => {
+	const handleDeleteClick = () => {
 		popupState.close();
+		setIsDeleteDialogOpen( true );
+	};
 
+	const handleDeleteConfirm = () => {
 		if ( ! component.id ) {
 			throw new Error( 'Component ID is required' );
 		}
 
-		archiveComponent( component.id );
+		setIsDeleteDialogOpen( false );
+		archiveComponent( component.id, component.name );
+	};
+
+	const handleDeleteDialogClose = () => {
+		setIsDeleteDialogOpen( false );
 	};
 
 	return (
@@ -155,12 +165,17 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 				>
 					{ __( 'Rename', 'elementor' ) }
 				</MenuListItem>
-				<MenuListItem sx={ { minWidth: '160px' } } onClick={ handleArchiveClick }>
+				<MenuListItem sx={ { minWidth: '160px' } } onClick={ handleDeleteClick }>
 					<Typography variant="caption" sx={ { color: 'error.light' } }>
-						{ __( 'Archive', 'elementor' ) }
+						{ __( 'Delete', 'elementor' ) }
 					</Typography>
 				</MenuListItem>
 			</Menu>
+			<DeleteConfirmationDialog
+				open={ isDeleteDialogOpen }
+				onClose={ handleDeleteDialogClose }
+				onConfirm={ handleDeleteConfirm }
+			/>
 		</Stack>
 	);
 };

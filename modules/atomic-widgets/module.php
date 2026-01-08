@@ -116,6 +116,7 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 	const EXPERIMENT_INLINE_EDITING = 'v4-inline-text-editing';
+	const EXPERIMENT_BC_MIGRATIONS = 'e_bc_migrations';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -215,6 +216,15 @@ class Module extends BaseModule {
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+		]);
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_BC_MIGRATIONS,
+			'title' => esc_html__( 'Backward compatibility migrations', 'elementor' ),
+			'description' => esc_html__( 'Enable automatic prop type migrations for atomic widgets', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_INACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 	}
 
