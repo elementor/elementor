@@ -254,14 +254,18 @@ ControlMediaItemView = ControlBaseDataView.extend( {
 	},
 
 	onPromotionAction( event ) {
-		const { action_url: actionURL = null } = JSON.parse( event.target.closest( 'button' ).dataset.settings );
+		const {
+			action_url: actionURL = null,
+			source = 'io-editor-gallery-install',
+		} = JSON.parse( event.target.closest( 'button' ).dataset.settings );
+
 		if ( actionURL ) {
 			window.open( actionURL, '_blank' );
 		}
 
 		elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
 			data: {
-				source: 'io-editor-gallery-install',
+				source: source,
 			},
 		} );
 

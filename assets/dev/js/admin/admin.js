@@ -120,26 +120,37 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 			} );
 
 			$( '.e-notice--cta.e-notice--dismissible[data-notice_id="plugin_image_optimization"] a.e-button--cta' ).on( 'click', function() {
+				const $notice = $( this ).closest( '.e-notice' );
+				const source = $notice.data( 'source' ) || 'io-wp-media-library-install';
+
 				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
 					data: {
-						source: 'io-wp-media-library-install',
+						source: source,
 					},
 				} );
 			} );
 
 			$( '.e-a-apps .e-a-item[data-plugin="image-optimization/image-optimization.php"] a.e-btn' ).on( 'click', function() {
+				const $item = $( this ).closest( '.e-a-item' );
+				const source = $item.data( 'source' ) || 'io-esetting-addons-install';
+
 				elementorCommon.ajax.addRequest( 'elementor_image_optimization_campaign', {
 					data: {
-						source: 'io-esetting-addons-install',
+						source: source,
 					},
 				} );
 			} );
 
 			$( '.e-notice--cta.e-notice--dismissible[data-notice_id="site_mailer_promotion"] a.e-button--cta' ).on( 'click', function() {
-				const isWcNotice = $( this ).closest( '.e-notice' ).hasClass( 'sm-notice-wc' );
+				const $button = $( this );
+				const $notice = $button.closest( '.e-notice' );
+				const source = $button.data( 'source' ) || $notice.data( 'source' ) || ( $notice.hasClass( 'sm-notice-wc' )
+					? 'sm-core-woo-install'
+					: 'sm-core-form-install' );
+
 				elementorCommon.ajax.addRequest( 'elementor_core_site_mailer_campaign', {
 					data: {
-						source: isWcNotice ? 'sm-core-woo-install' : 'sm-core-form-install',
+						source: source,
 					},
 				} );
 			} );
