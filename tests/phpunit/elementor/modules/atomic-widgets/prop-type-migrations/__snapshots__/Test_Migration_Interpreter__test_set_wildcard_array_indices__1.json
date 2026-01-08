@@ -1,0 +1,18 @@
+{
+    "settings": {
+        "links": [
+            {
+                "url": "a.com",
+                "visited": true
+            },
+            {
+                "url": "b.com",
+                "visited": true
+            },
+            {
+                "url": "c.com",
+                "visited": true
+            }
+        ]
+    }
+}

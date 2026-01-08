@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { useMemo, useRef, useState } from 'react';
+import { type ElementID, getElementSetting } from '@elementor/editor-elements';
+import { type LinkPropValue } from '@elementor/editor-props';
 import {
 	BoldIcon,
 	ItalicIcon,
@@ -24,8 +26,12 @@ import { __ } from '@wordpress/i18n';
 
 import { UrlPopover } from './url-popover';
 
+const checkIfElementHasLink = ( elementId: ElementID ): boolean =>
+	!! getElementSetting< LinkPropValue >( elementId, 'link' )?.value?.destination;
+
 type InlineEditorToolbarProps = {
 	editor: Editor;
+	elementId?: ElementID;
 };
 
 const toolbarButtons = {
@@ -101,18 +107,27 @@ const { clear: clearButton, ...formatButtons } = toolbarButtons;
 
 const possibleFormats: FormatAction[] = Object.keys( formatButtons ) as FormatAction[];
 
-export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
+export const InlineEditorToolbar = ( { editor, elementId }: InlineEditorToolbarProps ) => {
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ openInNewTab, setOpenInNewTab ] = useState( false );
 	const toolbarRef = useRef< HTMLDivElement >( null );
 	const linkPopupState = usePopupState( { variant: 'popover' } );
+	const hasLinkOnElement = elementId ? checkIfElementHasLink( elementId ) : false;
 
 	const editorState = useEditorState( {
 		editor,
 		selector: ( ctx ) => possibleFormats.filter( ( format ) => ctx.editor.isActive( format ) ),
 	} );
 
-	const formatButtonsList = useMemo( () => Object.values( formatButtons ), [] );
+	const formatButtonsList = useMemo( () => {
+		const buttons = Object.values( formatButtons );
+
+		if ( hasLinkOnElement ) {
+			return buttons.filter( ( button ) => button.action !== 'link' );
+		}
+
+		return buttons;
+	}, [ hasLinkOnElement ] );
 
 	const handleLinkClick = () => {
 		const linkAttrs = editor.getAttributes( 'link' );
@@ -142,6 +157,15 @@ export const InlineEditorToolbar = ( { editor }: InlineEditorToolbarProps ) => {
 		} else {
 			editor.chain().focus().unsetLink().run();
 		}
+
+		if ( elementId ) {
+			window.dispatchEvent(
+				new CustomEvent( 'elementor:inline-link-changed', {
+					detail: { elementId },
+				} )
+			);
+		}
+
 		linkPopupState.close();
 	};
 

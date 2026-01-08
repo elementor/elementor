@@ -49,7 +49,7 @@ type StorageContent = {
 
 const COMPONENT_CIRCULAR_NESTING_ALERT: NotificationData = {
 	type: 'default',
-	message: __( 'Cannot add this component here - it would create a circular reference.', 'elementor' ),
+	message: __( "Can't add this component - components that contain each other can't be nested.", 'elementor' ),
 	id: 'circular-component-nesting-blocked',
 };
 
