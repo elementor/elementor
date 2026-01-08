@@ -2,7 +2,7 @@ name: Playwright
 
 on:
   pull_request:
-    types: [ labeled, synchronize, opened, reopened, ready_for_review ]
+    types: [labeled, synchronize, opened, reopened, ready_for_review]
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -62,8 +62,8 @@ jobs:
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
-        shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
-        shardTotal: [ 10 ]
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        shardTotal: [10]
         include:
           - shardIndex: "v4-tests"
           - shardIndex: "elements-regression"
@@ -163,7 +163,7 @@ jobs:
   PlaywrightWithTag:
     name: Playwright test - tagged tests on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
-    needs: [ build-plugin, get-php-version ]
+    needs: [build-plugin, get-php-version]
     if: ${{ github.event.inputs.tag }}
     steps:
       - name: Checkout source code
@@ -351,7 +351,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
 
   test-result:
-    needs: [ Playwright, PlaywrightWithTag ]
+    needs: [Playwright, PlaywrightWithTag]
     if: always() && (needs.Playwright.result != 'skipped')
     runs-on: ubuntu-22.04
     name: Playwright - Test Results

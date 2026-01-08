@@ -4,8 +4,10 @@ import { ElementorOneHeader, ElementorOneAssetsProvider } from '@elementor/eleme
 const App = () => {
 	const { elementorOneTopBarConfig: { version, title, environment } } = window;
 
+	const isRTL = elementorCommon?.config?.isRTL ?? false;
+
 	return (
-		<ElementorOneAssetsProvider env={ environment }>
+		<ElementorOneAssetsProvider env={ environment } isRTL={ isRTL }>
 			<ElementorOneHeader
 				appSettings={ { slug: 'elementor', version } }
 				isWithinWpAdmin
