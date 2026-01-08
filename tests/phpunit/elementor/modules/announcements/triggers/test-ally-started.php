@@ -112,7 +112,7 @@ class Test_Ally_Started extends Elementor_Test_Base {
 	public function test_is_active__returns_true_when_all_conditions_met() {
 		// Arrange
 		$this->act_as_admin();
-		$this->set_ai_announcement_displayed();
+		$this->set_ai_announcement_displayed_days_ago( 8 );
 		$this->set_ally_announcement_not_displayed();
 
 		// Note: This test assumes the Ally plugin is NOT active in the test environment.
@@ -143,11 +143,79 @@ class Test_Ally_Started extends Elementor_Test_Base {
 		// Assert
 		$introduction_meta = User::get_introduction_meta( $this->trigger->get_name() );
 		$this->assertNotEmpty( $introduction_meta, 'Introduction meta should be set after trigger is activated' );
-		$this->assertTrue( $introduction_meta, 'Introduction meta value should be true' );
+		$this->assertIsNumeric( $introduction_meta, 'Introduction meta value should be a timestamp' );
+	}
+
+	public function test_is_active__returns_false_when_seven_days_not_passed() {
+		// Arrange
+		$this->act_as_admin();
+		$this->set_ai_announcement_displayed_days_ago( 3 );
+		$this->set_ally_announcement_not_displayed();
+
+		// Act
+		$result = $this->trigger->is_active();
+
+		// Assert
+		$this->assertFalse( $result, 'Trigger should be inactive when only 3 days have passed since AI announcement' );
+	}
+
+	public function test_is_active__returns_true_when_seven_days_passed() {
+		// Arrange
+		$this->act_as_admin();
+		$this->set_ai_announcement_displayed_days_ago( 7 );
+		$this->set_ally_announcement_not_displayed();
+
+		// Act
+		$result = $this->trigger->is_active();
+
+		// Assert
+		// Only assert true if plugin is not active (typical test scenario)
+		if ( ! $this->is_ally_plugin_active() ) {
+			$this->assertTrue( $result, 'Trigger should be active when exactly 7 days have passed and plugin is not active' );
+		} else {
+			$this->assertFalse( $result, 'Trigger should be inactive when plugin is active' );
+		}
+	}
+
+	public function test_is_active__handles_legacy_boolean_meta() {
+		// Arrange
+		$this->act_as_admin();
+		$this->set_ai_announcement_displayed_legacy();
+		$this->set_ally_announcement_not_displayed();
+
+		// Act
+		$result = $this->trigger->is_active();
+
+		// Assert
+		// Legacy boolean true should be treated as if 7 days have passed
+		if ( ! $this->is_ally_plugin_active() ) {
+			$this->assertTrue( $result, 'Trigger should be active with legacy boolean meta (backward compatibility)' );
+		} else {
+			$this->assertFalse( $result, 'Trigger should be inactive when plugin is active' );
+		}
 	}
 
 	private function set_ai_announcement_displayed() {
 		User::set_introduction_viewed( [ 'introductionKey' => self::AI_ANNOUNCEMENT_KEY ] );
+	}
+
+	private function set_ai_announcement_displayed_days_ago( int $days ) {
+		$user_id = get_current_user_id();
+		if ( $user_id ) {
+			$meta = User::get_introduction_meta();
+			$timestamp = time() - ( $days * DAY_IN_SECONDS );
+			$meta[ self::AI_ANNOUNCEMENT_KEY ] = $timestamp;
+			update_user_meta( $user_id, User::INTRODUCTION_KEY, $meta );
+		}
+	}
+
+	private function set_ai_announcement_displayed_legacy() {
+		$user_id = get_current_user_id();
+		if ( $user_id ) {
+			$meta = User::get_introduction_meta();
+			$meta[ self::AI_ANNOUNCEMENT_KEY ] = true;
+			update_user_meta( $user_id, User::INTRODUCTION_KEY, $meta );
+		}
 	}
 
 	private function set_ai_announcement_not_displayed() {
