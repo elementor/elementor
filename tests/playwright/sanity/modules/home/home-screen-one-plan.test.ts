@@ -7,7 +7,6 @@ test.describe( 'Home screen Edit Website button tests', () => {
 	let originalHomepageSettings: HomepageSettings | null = null;
 
 	test.beforeAll( async ( { browser, apiRequests } ) => {
-		await wpCli( 'wp elementor experiments activate e_editor_one' );
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const requestContext = page.context().request;
@@ -17,7 +16,6 @@ test.describe( 'Home screen Edit Website button tests', () => {
 	} );
 
 	test.afterAll( async ( { browser, apiRequests } ) => {
-		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 		const context = await browser.newContext();
 		const page = await context.newPage();
 

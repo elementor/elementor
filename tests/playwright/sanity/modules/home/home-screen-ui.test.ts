@@ -6,7 +6,6 @@ import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Home screen visual regression tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );

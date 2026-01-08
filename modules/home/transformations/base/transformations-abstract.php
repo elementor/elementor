@@ -36,7 +36,7 @@ abstract class Transformations_Abstract {
 	protected function get_tier() {
 		$tier = $this->elementor_adapter->get_tier();
 
-		if ( \Elementor\Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
+		if ( \Elementor\Plugin::$instance->modules_manager->get_modules( 'editor-one' ) ) {
 			return self::USER_TIER_ONE;
 		}
 

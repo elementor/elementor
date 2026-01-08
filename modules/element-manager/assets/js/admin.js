@@ -12,7 +12,7 @@ domReady( () => {
 	}
 
 	const isEditorOneEnabled = typeof elementorCommon !== 'undefined' &&
-		true === elementorCommon.config?.experimentalFeatures?.e_editor_one;
+		true === elementorCommon.config?.isEditorOneActive;
 
 	const root = createRoot( htmlOutput );
 

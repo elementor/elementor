@@ -264,6 +264,7 @@ class App extends BaseApp {
 			'activeModules' => array_keys( $this->get_components() ),
 			'experimentalFeatures' => $active_experimental_features,
 			'allExperimentalFeatures' => $all_experimental_features,
+			'isEditorOneActive' => (bool) Plugin::$instance->modules_manager->get_modules( 'editor-one' ),
 			'urls' => [
 				'assets' => ELEMENTOR_ASSETS_URL,
 				'rest' => get_rest_url(),

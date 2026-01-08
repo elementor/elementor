@@ -795,7 +795,7 @@ class Admin_Notices extends Module {
 				<?php if ( ! empty( $options['button']['text'] ) || ! empty( $options['button_secondary']['text'] ) ) { ?>
 					<div class="e-notice__actions">
 						<?php
-						$is_editor_one_enabled = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
+						$is_editor_one_enabled = (bool) Plugin::$instance->modules_manager->get_modules( 'editor-one' );
 						foreach ( [ $options['button'], $options['button_secondary'] ] as $index => $button_settings ) {
 							if ( empty( $button_settings['variant'] ) && $index ) {
 								$button_settings['variant'] = 'outline';

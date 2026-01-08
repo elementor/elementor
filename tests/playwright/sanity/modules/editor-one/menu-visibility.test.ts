@@ -8,8 +8,6 @@ test.describe( 'Editor One Menu Visibility', () => {
 	let contributorUser: { id: string; username: string; password: string };
 
 	test.beforeAll( async ( { browser, apiRequests } ) => {
-		await wpCli( 'wp elementor experiments activate e_editor_one' );
-
 		const context = await browser.newContext();
 		const page = await context.newPage();
 
@@ -42,8 +40,6 @@ test.describe( 'Editor One Menu Visibility', () => {
 		}
 
 		await context.close();
-
-		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 	} );
 
 	// TODO: Fix in ED-22339 - Editor One menu visibility tests failing

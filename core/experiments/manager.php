@@ -639,7 +639,7 @@ class Manager extends Base_Object {
 		ob_start();
 
 		$is_feature_active = $this->is_feature_active( $feature['name'] );
-		$is_editor_one_enabled = $this->is_feature_active( 'e_editor_one' );
+		$is_editor_one_enabled = (bool) Plugin::$instance->modules_manager->get_modules( 'editor-one' );
 
 		$indicator_classes = 'e-experiment__title__indicator';
 
