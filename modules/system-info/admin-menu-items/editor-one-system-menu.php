@@ -36,7 +36,7 @@ class Editor_One_System_Menu implements Menu_Item_Third_Level_Interface {
 	}
 
 	public function get_icon(): string {
-		return 'info-circle';
+		return 'file-settings';
 	}
 
 	public function get_group_id(): string {
