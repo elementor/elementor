@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Plugin;
 use Elementor\User;
 use Elementor\Utils;
 use Elementor\Core\Admin\Admin_Notices;
@@ -449,7 +450,7 @@ class Hints {
 	}
 
 	public static function is_plugin_connected_to_one_subscription(): bool {
-		$has_one_subscription = \Elementor\Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
+		$has_one_subscription = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
 
 		if ( ! $has_one_subscription ) {
 			return false;
