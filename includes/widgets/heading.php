@@ -503,8 +503,8 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 					'medium' => 'editor-one',
 				];
 			}
+		// phpcs:ignore Universal.ControlStructures.DisallowLonelyIf.Found
 		} else {
-			// phpcs:ignore Universal.ControlStructures.DisallowLonelyIf.Found
 			if ( ! $is_installed ) {
 				$button_text = esc_html__( 'Install now', 'elementor' );
 			} elseif ( ! $is_active ) {

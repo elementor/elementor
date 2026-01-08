@@ -644,8 +644,8 @@ class Admin_Notices extends Module {
 					$source = 'sm-core-form-one-activate';
 				}
 			}
+		// phpcs:ignore Universal.ControlStructures.DisallowLonelyIf.Found
 		} else {
-			// phpcs:ignore Universal.ControlStructures.DisallowLonelyIf.Found
 			if ( $is_woocommerce ) {
 				$title = esc_html__( 'Improve Transactional Email Deliverability', 'elementor' );
 				$description = esc_html__( 'Use Elementor\'s Site Mailer to ensure your store emails like purchase confirmations, shipping updates and more are reliably delivered.', 'elementor' );
