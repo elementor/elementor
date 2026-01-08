@@ -191,8 +191,17 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 	}
 
 	private function set_request_uri(): void {
+		$this->original_server_request_uri = $_SERVER['REQUEST_URI'] ?? null;
 		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
 			$_SERVER['REQUEST_URI'] = '';
+		}
+	}
+
+	private function restore_request_uri(): void {
+		if ( null === $this->original_server_request_uri ) {
+			unset( $_SERVER['REQUEST_URI'] );
+		} else {
+			$_SERVER['REQUEST_URI'] = $this->original_server_request_uri;
 		}
 	}
 
