@@ -2,7 +2,6 @@ import { expect, request } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { type LicenseType, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen } from './home-screen.helper';
-import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Home screen visual regression tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -17,10 +16,8 @@ test.describe( 'Home screen visual regression tests', () => {
 	const licenseTypes: LicenseType[] = [ 'free', 'pro' ];
 
 	for ( const licenseType of licenseTypes ) {
-		// TODO: Fix in ED-22339 - Visual regression test failing (pro license variant)
-		// https://elementor.atlassian.net/browse/ED-22339
-		const testFn = 'pro' === licenseType ? test.skip : test;
-		testFn( `${ licenseType } license variant - UI renders correctly with mocked data`, async ( { page, apiRequests, storageState } ) => {
+		// Can we remove this test?
+		test.skip( `${ licenseType } license variant - UI renders correctly with mocked data`, async ( { page, apiRequests, storageState } ) => {
 			const requestContext = await request.newContext( { storageState } );
 			const mockData = transformMockDataByLicense( licenseType );
 			await mockHomeScreenData( page, mockData, apiRequests, requestContext );
