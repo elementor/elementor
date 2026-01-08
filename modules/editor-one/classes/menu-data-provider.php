@@ -282,7 +282,7 @@ class Menu_Data_Provider {
 
 		return [
 			'slug' => $item_slug,
-			'label' => ucfirst( strtolower( $item->get_label() ) ),
+			'label' => $this->title_case( $item->get_label() ),
 			'url' => $this->resolve_flyout_item_url( $item, $item_slug ),
 			'icon' => $item->get_icon(),
 			'group_id' => $group_id,
@@ -366,7 +366,7 @@ class Menu_Data_Provider {
 
 				$groups[ $group_id ]['items'][] = [
 					'slug' => $item_slug,
-					'label' => ucfirst( strtolower( $item->get_label() ) ),
+					'label' => $this->title_case( $item->get_label() ),
 					'url' => $url,
 					'priority' => $item->get_position() ?? 100,
 				];
@@ -406,6 +406,16 @@ class Menu_Data_Provider {
 		usort( $items, function ( array $a, array $b ): int {
 			return ( $a['priority'] ?? 100 ) <=> ( $b['priority'] ?? 100 );
 		} );
+	}
+
+	/**
+	 * Convert string to Title Case (capitalize first letter of each word).
+	 *
+	 * @param string $text The text to convert.
+	 * @return string The text in Title Case.
+	 */
+	private function title_case( string $text ): string {
+		return mb_convert_case( $text, MB_CASE_TITLE, 'UTF-8' );
 	}
 
 	private function invalidate_cache(): void {
