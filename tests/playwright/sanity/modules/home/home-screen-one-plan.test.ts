@@ -1,7 +1,6 @@
 import { expect, request } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import { saveHomepageSettings, restoreHomepageSettings, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, type HomepageSettings } from './home-screen.helper';
-import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Home screen Edit Website button tests', () => {
 	let originalHomepageSettings: HomepageSettings | null = null;

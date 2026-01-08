@@ -1,7 +1,6 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
-import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Editor One Menu Visibility', () => {
 	let editorUser: { id: string; username: string; password: string };

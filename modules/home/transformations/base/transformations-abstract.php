@@ -36,11 +36,16 @@ abstract class Transformations_Abstract {
 	protected function get_tier() {
 		$tier = $this->elementor_adapter->get_tier();
 
+		$filtered_tier = apply_filters( 'elementor/admin/homescreen_promotion_tier', $tier );
+		if ( null !== $filtered_tier ) {
+			return $filtered_tier;
+		}
+
 		if ( (bool) \Elementor\Plugin::$instance->modules_manager->get_modules( 'editor-one' ) ) {
 			return self::USER_TIER_ONE;
 		}
 
-		return apply_filters( 'elementor/admin/homescreen_promotion_tier', $tier ) ?? $tier;
+		return $tier;
 	}
 
 	abstract public function transform( array $home_screen_data ): array;

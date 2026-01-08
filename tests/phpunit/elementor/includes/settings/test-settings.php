@@ -2,11 +2,16 @@
 namespace Elementor\Tests\Phpunit\Includes\Settings;
 
 use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Plugin;
 use Elementor\Utils;
 
 class Test_Settings extends Elementor_Test_Base {
 
 	public function test_register_admin_menu() {
+		if ( Plugin::$instance->modules_manager->get_modules( 'editor-one' ) ) {
+			$this->markTestSkipped( 'Editor-one is always active now. This test expects legacy menu structure when editor-one is inactive.' );
+		}
+
 		// Arrange.
 		$this->act_as_admin();
 
@@ -16,6 +21,7 @@ class Test_Settings extends Elementor_Test_Base {
 		// Assert.
 		global $submenu;
 
+		$this->assertArrayHasKey( 'elementor', $submenu, 'Elementor menu should be registered' );
 		$elementor_menu = $submenu['elementor'];
 
 		$expected_items = [
