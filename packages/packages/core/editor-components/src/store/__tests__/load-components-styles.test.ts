@@ -145,6 +145,36 @@ describe( 'loadComponentsStyles', () => {
 
 		expect( selectStyles( getState() ) ).toEqual( expected );
 	} );
+
+	it( 'should not return until all styles are loaded', async () => {
+		// Arrange
+		let resolveLoad!: ( value: V1ElementData ) => void;
+		jest.mocked( ajax.load ).mockReturnValue(
+			new Promise( ( resolve ) => {
+				resolveLoad = resolve;
+			} )
+		);
+
+		// Act
+		const promise = loadComponentsStyles( [ SIMPLE_COMP_ID ] );
+
+		let isResolved = false;
+		promise.then( () => {
+			isResolved = true;
+		} );
+
+		await Promise.resolve();
+
+		// Assert - promise should still be pending while load hasn't resolved
+		expect( isResolved ).toBe( false );
+
+		// Act - resolve load
+		resolveLoad( SIMPLE_COMP_CONTENT );
+		await promise;
+
+		// Assert - promise should be resolved after load completes
+		expect( isResolved ).toBe( true );
+	} );
 } );
 
 function createMockComponentWidget( componentId: number ): V1ElementData {
