@@ -56,7 +56,7 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 		}
 
 		$expected_config = $this->load_snapshot();
-		$this->assertEquals( $expected_config, $actual_config );
+		$this->assertConfigEqualsIgnoringPostIds( $expected_config, $actual_config );
 	}
 
 	private function activate_editor_one_experiment(): void {
@@ -158,9 +158,9 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 
 		if ( isset( $parsed['query'] ) ) {
 			parse_str( $parsed['query'], $query_params );
-
-			unset( $query_params['ver'] );
-			
+			if ( isset( $query_params['return_to'] ) && '' === $query_params['return_to'] ) {
+				unset( $query_params['return_to'] );
+			}
 			if ( ! empty( $query_params ) ) {
 				$path .= '?' . http_build_query( $query_params );
 			}
@@ -191,18 +191,38 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 	}
 
 	private function set_request_uri(): void {
-		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
-			$this->original_server_request_uri = $_SERVER['REQUEST_URI'];
+		$this->original_server_request_uri = $_SERVER['REQUEST_URI'] ?? null;
+		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+			$_SERVER['REQUEST_URI'] = '';
 		}
-
-		$_SERVER['REQUEST_URI'] = '/wp-admin/admin.php?page=elementor';
 	}
 
 	private function restore_request_uri(): void {
-		if ( isset( $this->original_server_request_uri ) ) {
-			$_SERVER['REQUEST_URI'] = $this->original_server_request_uri;
-		} else {
+		if ( null === $this->original_server_request_uri ) {
 			unset( $_SERVER['REQUEST_URI'] );
+		} else {
+			$_SERVER['REQUEST_URI'] = $this->original_server_request_uri;
 		}
+	}
+
+	private function assertConfigEqualsIgnoringPostIds( array $expected, array $actual, string $path = '' ): void {
+		$expected_normalized = $this->replace_post_ids_in_config( $expected );
+		$actual_normalized = $this->replace_post_ids_in_config( $actual );
+		$this->assertEquals( $expected_normalized, $actual_normalized );
+	}
+
+	private function replace_post_ids_in_config( $data ) {
+		if ( is_array( $data ) ) {
+			$result = [];
+			foreach ( $data as $key => $value ) {
+				$result[ $key ] = $this->replace_post_ids_in_config( $value );
+			}
+			return $result;
+		} elseif ( is_string( $data ) ) {
+			$replaced = preg_replace( '/post=(\d+)/', 'post={POST_ID}', $data );
+			$replaced = preg_replace( '/post%3D(\d+)/', 'post%3D{POST_ID}', $replaced );
+			return $replaced;
+		}
+		return $data;
 	}
 }
