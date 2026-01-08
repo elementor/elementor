@@ -176,7 +176,7 @@ class Connect_Page_Renderer {
 			$classes[] = $additional_classes;
 		}
 
-		if ( Plugin::$instance->modules_manager->get_modules( 'editor-one' ) ) {
+		if ( (bool) Plugin::$instance->modules_manager->get_modules( 'editor-one' ) ) {
 			$classes[] = 'e-one-section-outlined';
 		}
 

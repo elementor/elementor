@@ -64,7 +64,7 @@ class Module extends BaseApp {
 			$this->get_app_js_config()
 		);
 
-		if ( ! Plugin::$instance->modules_manager->get_modules( 'editor-one' ) ) {
+		if ( ! (bool) Plugin::$instance->modules_manager->get_modules( 'editor-one' ) ) {
 			return;
 		}
 
