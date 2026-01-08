@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\ProInstall;
 
+use Elementor\Plugin;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -48,7 +49,7 @@ class Connect_Page_Renderer {
 		] );
 
 		?>
-		<div class="elementor-license-box">
+		<div class="<?php echo esc_attr( $this->get_license_box_classes() ); ?>">
 			<h3><?php echo esc_html__( 'Connect your Elementor Account', 'elementor' ); ?></h3>
 
 			<p>
@@ -71,7 +72,7 @@ class Connect_Page_Renderer {
 		$download_link = $this->connect->get_download_link();
 
 		?>
-		<div class="elementor-license-box">
+		<div class="<?php echo esc_attr( $this->get_license_box_classes() ); ?>">
 			<h3>
 				<?php echo esc_html__( 'Status', 'elementor' ); ?>:
 				<span style="color: #008000; font-style: italic;"><?php echo esc_html__( 'Connected', 'elementor' ); ?></span>
@@ -126,7 +127,7 @@ class Connect_Page_Renderer {
 
 	private function render_promotion_box() {
 		?>
-		<div class="elementor-license-box elementor-pro-connect-promotion">
+		<div class="<?php echo esc_attr( $this->get_license_box_classes( 'elementor-pro-connect-promotion' ) ); ?>">
 			<div>
 				<h2><?php echo esc_html__( 'Upgrade to Pro to unlock powerful design tools and advanced features.', 'elementor' ); ?></h2>
 				<p><?php echo esc_html__( 'Build custom headers, footers, forms, popups, and WooCommerce stores.', 'elementor' ); ?></p>
@@ -148,7 +149,7 @@ class Connect_Page_Renderer {
 		$cta_id = Utils::is_pro_installed_and_not_active() ? 'elementor-connect-activate-pro' : 'elementor-connect-install-pro';
 
 		?>
-		<div class="elementor-license-box">
+		<div class="<?php echo esc_attr( $this->get_license_box_classes() ); ?>">
 			<h3><?php echo esc_html__( 'You\'ve got Elementor Pro', 'elementor' ); ?></h3>
 
 			<p><?php echo esc_html( $cta_data['description'] ); ?></p>
@@ -166,6 +167,20 @@ class Connect_Page_Renderer {
 			'description' => esc_html__( 'Enjoy full access to powerful design tools, advanced widgets, and everything you need to create next-level websites.', 'elementor' ),
 			'button_text' => Utils::is_pro_installed_and_not_active() ? esc_html__( 'Activate Elementor Pro', 'elementor' ) : esc_html__( 'Install & Activate', 'elementor' ),
 		];
+	}
+
+	private function get_license_box_classes( string $additional_classes = '' ): string {
+		$classes = [ 'elementor-license-box' ];
+
+		if ( $additional_classes ) {
+			$classes[] = $additional_classes;
+		}
+
+		if ( Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
+			$classes[] = 'e-one-section-outlined';
+		}
+
+		return implode( ' ', $classes );
 	}
 }
 
