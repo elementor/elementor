@@ -4,7 +4,7 @@ import RocketIcon from '@elementor/icons/RocketIcon';
 import HomeIcon from '@elementor/icons/HomeIcon';
 import InfoCircleIcon from '@elementor/icons/InfoCircleIcon';
 import SendIcon from '@elementor/icons/SendIcon';
-import SettingsIcon from '@elementor/icons/SettingsIcon';
+import FileSettingsIcon from '@elementor/icons/FileSettingsIcon';
 import UsersIcon from '@elementor/icons/UsersIcon';
 import PlugIcon from '@elementor/icons/PlugIcon';
 import ToolIcon from '../icons/tool';
@@ -15,7 +15,7 @@ export const ICON_MAP = {
 	home: RocketIcon,
 	'info-circle': InfoCircleIcon,
 	send: SendIcon,
-	settings: SettingsIcon,
+	settings: FileSettingsIcon,
 	tool: ToolIcon,
 	users: UsersIcon,
 	extension: PlugIcon,
