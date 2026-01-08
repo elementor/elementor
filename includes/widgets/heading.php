@@ -504,6 +504,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 				];
 			}
 		} else {
+			// phpcs:ignore Universal.ControlStructures.DisallowLonelyIf.Found
 			if ( ! $is_installed ) {
 				$button_text = esc_html__( 'Install now', 'elementor' );
 			} elseif ( ! $is_active ) {
