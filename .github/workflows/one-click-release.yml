@@ -142,7 +142,6 @@ jobs:
           REPOSITORY_OWNER: ${{ github.repository_owner }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
-          DRY_RUN: false
           PACKAGE_VERSION : ${{ env.PACKAGE_VERSION }}
 
       - name: Post To Slack Created Release
