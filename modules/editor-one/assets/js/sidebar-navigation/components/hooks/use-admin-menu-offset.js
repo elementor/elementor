@@ -13,18 +13,9 @@ export const useAdminMenuOffset = () => {
 
 	useEffect( () => {
 		const adminMenuWrap = document.getElementById( ADMIN_MENU_WRAP_ID );
-
-		if ( ! adminMenuWrap ) {
-			return;
-		}
-
 		const wpcontent = document.getElementById( WPCONTENT_ID );
 
-		if ( ! wpcontent ) {
-			return;
-		}
-
-		if ( wpcontent.hasAttribute( INITIALIZED_DATA_ATTR ) ) {
+		if ( ! adminMenuWrap || ! wpcontent || wpcontent.hasAttribute( INITIALIZED_DATA_ATTR ) ) {
 			return;
 		}
 
@@ -34,7 +25,7 @@ export const useAdminMenuOffset = () => {
 
 			const offset = isRTL ? window.innerWidth - rect.left : rect.right;
 
-			wpcontent.style.setProperty( '--editor-one-sidebar-left-offset', \`${ offset }px\` );
+			wpcontent.style.setProperty( '--editor-one-sidebar-left-offset', `${ offset }px` );
 		};
 
 		updateOffset();
@@ -59,3 +50,4 @@ export const useAdminMenuOffset = () => {
 			}
 		};
 	}, [] );
+};
