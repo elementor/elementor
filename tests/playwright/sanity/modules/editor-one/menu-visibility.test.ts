@@ -51,7 +51,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await wpAdmin.openWordPressDashboard();
 
-		const elementorMenu = page.locator( '#toplevel_page_elementor' );
+		const elementorMenu = page.locator( '#toplevel_page_elementor-home' );
 		await expect( elementorMenu ).toBeVisible();
 
 		await page.goto( '/wp-admin/admin.php?page=elementor' );
@@ -75,7 +75,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await wpAdmin.customLogin( editorUser.username, editorUser.password );
 		await wpAdmin.openWordPressDashboard();
 
-		const elementorMenu = editorPage.locator( '#toplevel_page_elementor' );
+		const elementorMenu = editorPage.locator( '#toplevel_page_elementor-home' );
 		await expect( elementorMenu ).toBeVisible();
 
 		await elementorMenu.click();
@@ -113,7 +113,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await wpAdmin.customLogin( contributorUser.username, contributorUser.password );
 		await wpAdmin.openWordPressDashboard();
 
-		const elementorMenu = contributorPage.locator( '#toplevel_page_elementor' );
+		const elementorMenu = contributorPage.locator( '#toplevel_page_elementor-home' );
 		await expect( elementorMenu ).toBeVisible();
 
 		await elementorMenu.click();
