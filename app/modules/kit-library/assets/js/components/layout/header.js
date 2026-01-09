@@ -20,7 +20,7 @@ export default function Header( props ) {
 				className="eps-app__logo-title-wrapper"
 				href="#/kit-library"
 			>
-				<i className="eps-app__logo eicon-elementor" />
+				<i className="eps-app__logo eicon-elementor-circle" />
 				<h1 className="eps-app__title">{ __( 'Website Templates', 'elementor' ) }</h1>
 			</a> }
 			{ props.centerColumn || <span /> }
