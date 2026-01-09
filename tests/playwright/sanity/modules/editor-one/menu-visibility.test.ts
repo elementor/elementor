@@ -59,7 +59,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 		const sidebar = page.locator( '#editor-one-sidebar-navigation' );
 		await expect( sidebar ).toBeVisible();
 
-		await expect( sidebar.getByRole( 'button', { name: 'Home' } ).first() ).toBeVisible();
+		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Role Manager' } ).first() ).toBeVisible();
@@ -90,7 +90,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await templatesButton.click();
 
-		await expect( sidebar.getByRole( 'button', { name: 'Home' } ).first() ).not.toBeVisible();
+		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Role Manager' } ).first() ).not.toBeVisible();
@@ -128,7 +128,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await templatesButton.click();
 
-		await expect( sidebar.getByRole( 'button', { name: 'Home' } ).first() ).not.toBeVisible();
+		await expect( sidebar.getByRole( 'button', { name: 'Quick Start' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Settings' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Tools' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Role Manager' } ).first() ).not.toBeVisible();
@@ -143,4 +143,3 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await contributorContext.close();
 	} );
 } );
-
