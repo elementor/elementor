@@ -742,7 +742,7 @@ class Admin_Notices extends Module {
 			'classes' => [ 'notice', 'e-notice' ], // We include WP's default notice class so it will be properly handled by WP's js handler
 			'type' => '',
 			'dismissible' => true,
-			'icon' => 'eicon-elementor',
+			'icon' => 'eicon-elementor-circle',
 			'button' => [],
 			'button_secondary' => [],
 		];
