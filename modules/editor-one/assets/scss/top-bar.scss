@@ -9,6 +9,13 @@
 		position: fixed;
 	}
 
+	body.folded & {
+		> * {
+			inset-inline-start: var(--editor-one-sidebar-left-offset-collapsed, 36px);
+			width: calc(100% - var(--editor-one-sidebar-left-offset-collapsed, 36px));
+		}
+	}
+
 	@media screen and (max-width: 960px) {
 		> * {
 			inset-inline-start: var(--editor-one-wordpress-admin-bar-height, 32px);
