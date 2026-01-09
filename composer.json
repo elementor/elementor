@@ -10,11 +10,8 @@
     },
     "repositories": [
         {
-            "type": "composer",
-            "url": "https://composer.elementor.com",
-            "only": [
-                "elementor/wp-one-package"
-            ]
+            "type": "vcs",
+            "url": "https://github.com/elementor/wp-one-package.git"
         }
     ],
     "autoload": {
