@@ -46,14 +46,12 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 	} );
 
-	// TODO: Fix in ED-22339 - Editor One menu visibility tests failing
-	// https://elementor.atlassian.net/browse/ED-22339
 	test( 'Admin user: Elementor menu is visible with correct submenu items', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.openWordPressDashboard();
 
-		const elementorMenu = page.locator( '#toplevel_page_elementor' );
+		const elementorMenu = page.locator( '#toplevel_page_elementor-home' );
 		await expect( elementorMenu ).toBeVisible();
 
 		await page.goto( '/wp-admin/admin.php?page=elementor' );
@@ -69,8 +67,6 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await expect( sidebar.getByRole( 'button', { name: 'Templates' } ).first() ).toBeVisible();
 	} );
 
-	// TODO: Fix in ED-22339 - Editor One menu visibility tests failing
-	// https://elementor.atlassian.net/browse/ED-22339
 	test( 'Editor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
 		const editorContext = await browser.newContext( { storageState: undefined } );
 		const editorPage = await editorContext.newPage();
@@ -79,7 +75,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await wpAdmin.customLogin( editorUser.username, editorUser.password );
 		await wpAdmin.openWordPressDashboard();
 
-		const elementorMenu = editorPage.locator( '#toplevel_page_elementor' );
+		const elementorMenu = editorPage.locator( '#toplevel_page_elementor-home' );
 		await expect( elementorMenu ).toBeVisible();
 
 		await elementorMenu.click();
@@ -109,8 +105,6 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await editorContext.close();
 	} );
 
-	// TODO: Fix in ED-22339 - Editor One menu visibility tests failing
-	// https://elementor.atlassian.net/browse/ED-22339
 	test( 'Contributor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
 		const contributorContext = await browser.newContext( { storageState: undefined } );
 		const contributorPage = await contributorContext.newPage();
@@ -119,7 +113,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await wpAdmin.customLogin( contributorUser.username, contributorUser.password );
 		await wpAdmin.openWordPressDashboard();
 
-		const elementorMenu = contributorPage.locator( '#toplevel_page_elementor' );
+		const elementorMenu = contributorPage.locator( '#toplevel_page_elementor-home' );
 		await expect( elementorMenu ).toBeVisible();
 
 		await elementorMenu.click();
