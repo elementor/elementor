@@ -482,7 +482,7 @@ class Hints {
 		$steps = [
 			self::INSTALL => esc_html__( 'Install now', 'elementor' ),
 			self::ACTIVATE => esc_html__( 'Activate now', 'elementor' ),
-			self::CONNECT => esc_html__( 'Connect', 'elementor' ),
+			self::CONNECT => esc_html__( 'Connect now', 'elementor' ),
 			self::CUSTOMIZE => esc_html__( 'Customize', 'elementor' ),
 		];
 		return $steps[ $step ];

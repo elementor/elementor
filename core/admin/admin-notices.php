@@ -529,8 +529,8 @@ class Admin_Notices extends Module {
 		$plugin_file_path = 'pojo-accessibility/pojo-accessibility.php';
 		$plugin_slug = 'pojo-accessibility';
 
-		$cta_data = $this->get_plugin_cta_data( $plugin_slug, $plugin_file_path );
-		if ( empty( $cta_data ) ) {
+		$button_url = $this->get_plugin_button_url( $plugin_slug, $plugin_file_path );
+		if ( empty( $button_url ) ) {
 			return false;
 		}
 
@@ -541,6 +541,7 @@ class Admin_Notices extends Module {
 		if ( $one_subscription ) {
 			if ( ! $is_installed ) {
 				$description = esc_html__( 'Make sure your site has an accessibility statement page. Install Ally, included in ONE, to create it in a few clicks.', 'elementor' );
+				$button_text = esc_html__( 'Install now', 'elementor' );
 				$campaign_data = [
 					'name' => 'elementor_ea11y_campaign',
 					'campaign' => 'acc-statement-plg-pages-one-install',
@@ -549,15 +550,32 @@ class Admin_Notices extends Module {
 				];
 			} elseif ( ! $is_active ) {
 				$description = esc_html__( 'Your ONE subscription includes Ally. Activate it to create your accessibility statement page quickly.', 'elementor' );
+				$button_text = esc_html__( 'Activate now', 'elementor' );
 				$campaign_data = [
 					'name' => 'elementor_ea11y_campaign',
 					'campaign' => 'acc-statement-plg-pages-one-activate',
 					'source' => 'wp-pages-one-activate',
 					'medium' => 'wp-dash-one',
 				];
+			} else {
+				$description = esc_html__( 'Your ONE subscription includes Ally. Connect it to create your accessibility statement page quickly.', 'elementor' );
+				$button_text = esc_html__( 'Connect now', 'elementor' );
+				$campaign_data = [
+					'name' => 'elementor_ea11y_campaign',
+					'campaign' => 'acc-statement-plg-pages-one-connect',
+					'source' => 'wp-pages-one-connect',
+					'medium' => 'wp-dash-one',
+				];
 			}
 		} else {
-			$description = esc_html__( 'Create a more inclusive site experience for all your visitors. With Ally, it\'s easy to add your statement page in just a few clicks.', 'elementor' );
+			if ( ! $is_installed ) {
+				$button_text = esc_html__( 'Install now', 'elementor' );
+			} elseif ( ! $is_active ) {
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+			} else {
+				$button_text = esc_html__( 'Connect now', 'elementor' );
+			}
+			$description = esc_html__( "Create a more inclusive site experience for all your visitors. With Ally, it's easy to add your statement page in just a few clicks.", 'elementor' );
 			$campaign_data = [
 				'name' => 'elementor_ea11y_campaign',
 				'campaign' => 'acc-statement-plg-pages',
@@ -566,14 +584,16 @@ class Admin_Notices extends Module {
 			];
 		}
 
+		$button_url = self::add_plg_campaign_data( $button_url, $campaign_data );
+
 		$options = [
 			'title' => esc_html__( 'Make sure your site has an accessibility statement page', 'elementor' ),
 			'description' => $description,
 			'id' => $notice_id,
 			'type' => 'cta',
 			'button' => [
-				'text' => $cta_data['text'],
-				'url' => self::add_plg_campaign_data( $cta_data['url'], $campaign_data ),
+				'text' => $button_text,
+				'url' => $button_url,
 				'type' => 'cta',
 			],
 			'button_secondary' => [
@@ -609,8 +629,8 @@ class Admin_Notices extends Module {
 		$plugin_file_path = 'site-mailer/site-mailer.php';
 		$plugin_slug = 'site-mailer';
 
-		$cta_data = $this->get_plugin_cta_data( $plugin_slug, $plugin_file_path );
-		if ( empty( $cta_data ) ) {
+		$button_url = $this->get_plugin_button_url( $plugin_slug, $plugin_file_path );
+		if ( empty( $button_url ) ) {
 			return false;
 		}
 
@@ -625,22 +645,22 @@ class Admin_Notices extends Module {
 				$title = esc_html__( 'Improve transactional email deliverability', 'elementor' );
 				if ( ! $is_installed ) {
 					$description = esc_html__( 'Use Site Mailer to ensure store emails like purchase confirmations and shipping updates reach the inbox every time. Included in your ONE subscription.', 'elementor' );
-					$cta_data['text'] = esc_html__( 'Install now', 'elementor' );
+					$button_text = esc_html__( 'Install now', 'elementor' );
 					$source = 'sm-core-woo-one-install';
 				} elseif ( ! $is_active ) {
 					$description = esc_html__( 'Site Mailer is installed and included in your ONE subscription. Activate it to ensure store emails like purchase confirmations and shipping updates reach the inbox every time.', 'elementor' );
-					$cta_data['text'] = esc_html__( 'Activate now', 'elementor' );
+					$button_text = esc_html__( 'Activate now', 'elementor' );
 					$source = 'sm-core-woo-one-activate';
 				}
 			} else {
 				$title = esc_html__( 'Keep your form emails out of the spam folder', 'elementor' );
 				if ( ! $is_installed ) {
 					$description = esc_html__( 'Use Site Mailer to ensure emails reach the inbox and track delivery with built-in logs. Included in your ONE subscription.', 'elementor' );
-					$cta_data['text'] = esc_html__( 'Install now', 'elementor' );
+					$button_text = esc_html__( 'Install now', 'elementor' );
 					$source = 'sm-core-form-one-install';
 				} elseif ( ! $is_active ) {
 					$description = esc_html__( 'Use Site Mailer to ensure emails reach the inbox and track delivery with built-in logs. Site Mailer is included in your ONE subscription. Activate it to continue.', 'elementor' );
-					$cta_data['text'] = esc_html__( 'Activate now', 'elementor' );
+					$button_text = esc_html__( 'Activate now', 'elementor' );
 					$source = 'sm-core-form-one-activate';
 				}
 			}
@@ -663,8 +683,8 @@ class Admin_Notices extends Module {
 			'id' => $notice_id,
 			'type' => 'cta',
 			'button' => [
-				'text' => $cta_data['text'],
-				'url' => $cta_data['url'],
+				'text' => $button_text,
+				'url' => $button_url,
 				'type' => 'cta',
 				'data' => [
 					'source' => $source,
@@ -720,24 +740,18 @@ class Admin_Notices extends Module {
 	private function is_elementor_admin_screen_with_system_info(): bool {
 		return in_array( $this->current_screen_id, [ 'toplevel_page_elementor', 'edit-elementor_library', 'elementor_page_elementor-system-info', 'dashboard' ], true );
 	}
-
-	private function get_plugin_cta_data( $plugin_slug, $plugin_file_path ) {
-		if ( Hints::is_plugin_active( $plugin_slug ) ) {
+	private function get_plugin_button_url( $plugin_slug, $plugin_file_path ) {
+		if ( is_plugin_active( $plugin_file_path ) ) {
 			return false;
 		}
 
-		if ( Hints::is_plugin_installed( $plugin_slug ) ) {
+		if ( Hints::is_plugin_installed( $plugin_file_path ) ) {
 			$url = wp_nonce_url( 'plugins.php?action=activate&amp;plugin=' . $plugin_file_path . '&amp;plugin_status=all&amp;paged=1&amp;s', 'activate-plugin_' . $plugin_file_path );
-			$cta_text = esc_html__( 'Activate now', 'elementor' );
 		} else {
 			$url = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $plugin_slug ), 'install-plugin_' . $plugin_slug );
-			$cta_text = esc_html__( 'Install now', 'elementor' );
 		}
 
-		return [
-			'url' => $url,
-			'text' => $cta_text,
-		];
+		return $url;
 	}
 
 	/**
@@ -771,9 +785,8 @@ class Admin_Notices extends Module {
 		$plugin_file_path = 'image-optimization/image-optimization.php';
 		$plugin_slug = 'image-optimization';
 
-		$cta_data = $this->get_plugin_cta_data( $plugin_slug, $plugin_file_path );
-
-		if ( empty( $cta_data ) ) {
+		$button_url = $this->get_plugin_button_url( $plugin_slug, $plugin_file_path );
+		if ( empty( $button_url ) ) {
 			return false;
 		}
 
@@ -785,7 +798,6 @@ class Admin_Notices extends Module {
 			if ( ! $is_installed ) {
 				$description = esc_html__( 'Automatically optimize images to improve site speed and performance. Included with your ONE subscription.', 'elementor' );
 				$button_text = esc_html__( 'Install now', 'elementor' );
-				$button_url = $cta_data['url'];
 				$campaign_data = [
 					'name' => 'elementor_image_optimization_campaign',
 					'campaign' => 'image-optimization-plg-wp-media-library-one-install',
@@ -795,7 +807,6 @@ class Admin_Notices extends Module {
 			} elseif ( ! $is_active ) {
 				$description = esc_html__( 'Your ONE subscription includes Image Optimizer. Activate it to optimize images and improve site performance.', 'elementor' );
 				$button_text = esc_html__( 'Activate now', 'elementor' );
-				$button_url = $cta_data['url'];
 				$campaign_data = [
 					'name' => 'elementor_image_optimization_campaign',
 					'campaign' => 'image-optimization-plg-wp-media-library-one-activate',
@@ -814,9 +825,15 @@ class Admin_Notices extends Module {
 				];
 			}
 		} else {
+			if ( ! $is_installed ) {
+				$button_text = esc_html__( 'Install now', 'elementor' );
+			} elseif ( ! $is_active ) {
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+			} else {
+				$button_text = esc_html__( 'Connect now', 'elementor' );
+			}
+
 			$description = esc_html__( 'Automatically optimize images to improve site speed and performance. Included with your ONE subscription.', 'elementor' );
-			$button_text = $cta_data['text'];
-			$button_url = $cta_data['url'];
 			$campaign_data = [
 				'name' => 'elementor_image_optimization_campaign',
 				'campaign' => 'image-optimization-plg-wp-media-library',
@@ -840,12 +857,6 @@ class Admin_Notices extends Module {
 		$this->print_admin_notice( $options );
 
 		return true;
-	}
-
-	private function is_plugin_installed( $file_path ): bool {
-		$installed_plugins = get_plugins();
-
-		return isset( $installed_plugins[ $file_path ] );
 	}
 
 	public function print_admin_notice( array $options, $exclude_pages = self::DEFAULT_EXCLUDED_PAGES ) {

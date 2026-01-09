@@ -472,17 +472,6 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		$is_installed = Hints::is_plugin_installed( $plugin_slug );
 		$is_active = Hints::is_plugin_active( $plugin_slug );
 
-		// Default content and campaign data
-		$notice_heading = esc_html__( 'Accessible structure matters', 'elementor' );
-		$notice_content = esc_html__( 'Make sure your page is structured with accessibility in mind. Ally helps detect and fix common issues across your site.', 'elementor' );
-		$button_text = esc_html__( 'Install now', 'elementor' );
-		$campaign_data = [
-			'name' => 'elementor_ea11y_campaign',
-			'campaign' => 'acc-scanner-plg-heading',
-			'source' => 'editor-heading-widget',
-			'medium' => 'editor',
-		];
-
 		if ( $one_subscription ) {
 			if ( ! $is_installed ) {
 				$notice_content = esc_html__( 'Want to ensure this heading is accessible? Your ONE subscription includes Ally. Install it and scan your page.', 'elementor' );
@@ -502,6 +491,15 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 					'source' => 'editor-heading-widget-one-non-activate',
 					'medium' => 'editor-one',
 				];
+			} else {
+				$notice_content = esc_html__( 'Keep your content accessible. Connect Ally, included in ONE, to scan this page.', 'elementor' );
+				$button_text = esc_html__( 'Connect now', 'elementor' );
+				$campaign_data = [
+					'name' => 'elementor_ea11y_campaign',
+					'campaign' => 'acc-scanner-plg-heading-one-connect',
+					'source' => 'editor-heading-widget-one-non-connect',
+					'medium' => 'editor-one',
+				];
 			}
 		// phpcs:ignore Universal.ControlStructures.DisallowLonelyIf.Found
 		} else {
@@ -512,8 +510,16 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 			} else {
 				$button_text = esc_html__( 'Connect now', 'elementor' );
 			}
+			$notice_content = esc_html__( 'Make sure your page is structured with accessibility in mind. Ally helps detect and fix common issues across your site.', 'elementor' );
+			$campaign_data = [
+				'name' => 'elementor_ea11y_campaign',
+				'campaign' => 'acc-scanner-plg-heading',
+				'source' => 'editor-heading-widget',
+				'medium' => 'editor',
+			];
 		}
 
+		$notice_heading = esc_html__( 'Accessible structure matters', 'elementor' );
 		$action_url = Admin_Notices::add_plg_campaign_data( Hints::get_plugin_action_url( $plugin_slug ), $campaign_data );
 
 		if ( $is_active && ! $one_subscription ) {
