@@ -1,20 +1,17 @@
-import { useEffect } from '@wordpress/element';
+import { useEffect, useRef } from '@wordpress/element';
 
 const ADMIN_MENU_WRAP_ID = 'adminmenuwrap';
 const WPCONTENT_ID = 'wpcontent';
-
-let isInitialized = false;
+const INITIALIZED_DATA_ATTR = 'data-editor-one-offset-initialized';
 
 const getIsRTL = () => {
 	return 'rtl' === document.dir || document.body.classList.contains( 'rtl' );
 };
 
 export const useAdminMenuOffset = () => {
-	useEffect( () => {
-		if ( isInitialized ) {
-			return;
-		}
+	const cleanupRef = useRef( null );
 
+	useEffect( () => {
 		const adminMenuWrap = document.getElementById( ADMIN_MENU_WRAP_ID );
 
 		if ( ! adminMenuWrap ) {
@@ -24,6 +21,10 @@ export const useAdminMenuOffset = () => {
 		const wpcontent = document.getElementById( WPCONTENT_ID );
 
 		if ( ! wpcontent ) {
+			return;
+		}
+
+		if ( wpcontent.hasAttribute( INITIALIZED_DATA_ATTR ) ) {
 			return;
 		}
 
@@ -43,6 +44,19 @@ export const useAdminMenuOffset = () => {
 		resizeObserver.observe( wpcontent );
 		window.addEventListener( 'resize', updateOffset );
 
-		isInitialized = true;
+		wpcontent.setAttribute( INITIALIZED_DATA_ATTR, 'true' );
+
+		cleanupRef.current = () => {
+			resizeObserver.disconnect();
+			window.removeEventListener( 'resize', updateOffset );
+			wpcontent.removeAttribute( INITIALIZED_DATA_ATTR );
+		};
+
+		return () => {
+			if ( cleanupRef.current ) {
+				cleanupRef.current();
+				cleanupRef.current = null;
+			}
+		};
 	}, [] );
 };
