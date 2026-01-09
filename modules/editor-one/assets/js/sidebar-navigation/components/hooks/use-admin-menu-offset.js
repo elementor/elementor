@@ -34,7 +34,7 @@ export const useAdminMenuOffset = () => {
 
 			const offset = isRTL ? window.innerWidth - rect.left : rect.right;
 
-			wpcontent.style.setProperty( '--editor-one-sidebar-left-offset', `${ offset }px` );
+			wpcontent.style.setProperty( '--editor-one-sidebar-left-offset', \`${ offset }px\` );
 		};
 
 		updateOffset();
@@ -59,4 +59,3 @@ export const useAdminMenuOffset = () => {
 			}
 		};
 	}, [] );
-};
