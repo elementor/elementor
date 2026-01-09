@@ -3,12 +3,12 @@
 	&-logo {
 
 		.eps-app__logo {
-			background-color: $e-gray-900;
-			color: $white;
+			color: $e-gray-900;
 			width: 1.3rem;
 			height: 1.3rem;
-			line-height: 1.3rem;
-			font-size: 0.48rem;
+			line-height: 1.4rem;
+			font-size: 1.3rem;
+			background: unset;
 
 			&:not(:last-child) {
 				margin-inline-end: 7px;
