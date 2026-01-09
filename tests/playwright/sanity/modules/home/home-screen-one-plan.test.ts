@@ -50,8 +50,9 @@ test.describe( 'Home screen Edit site button tests', () => {
 		const href = await editWebsiteButton.getAttribute( 'href' );
 		expect( href ).toBeTruthy();
 
-		const isValidElementorUrl = href!.match( /wp-admin\/(post\.php\?post=\d+&action=elementor|edit\.php\?action=elementor_new_post&post_type=page)(&.*)?/ );
+		const isValidElementorUrl = href!.match( /admin\.php\?action=elementor_edit_website_redirect/ );
 		expect( isValidElementorUrl ).toBeTruthy();
+		expect( href ).toContain( '_wpnonce' );
 	} );
 } );
 
