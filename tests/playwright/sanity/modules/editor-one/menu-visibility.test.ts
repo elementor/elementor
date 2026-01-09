@@ -48,7 +48,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 	// TODO: Fix in ED-22339 - Editor One menu visibility tests failing
 	// https://elementor.atlassian.net/browse/ED-22339
-	test.skip( 'Admin user: Elementor menu is visible with correct submenu items', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Admin user: Elementor menu is visible with correct submenu items', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.openWordPressDashboard();
@@ -71,7 +71,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 	// TODO: Fix in ED-22339 - Editor One menu visibility tests failing
 	// https://elementor.atlassian.net/browse/ED-22339
-	test.skip( 'Editor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
+	test( 'Editor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
 		const editorContext = await browser.newContext( { storageState: undefined } );
 		const editorPage = await editorContext.newPage();
 		const wpAdmin = new WpAdminPage( editorPage, testInfo, apiRequests );
@@ -111,7 +111,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 	// TODO: Fix in ED-22339 - Editor One menu visibility tests failing
 	// https://elementor.atlassian.net/browse/ED-22339
-	test.skip( 'Contributor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
+	test( 'Contributor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
 		const contributorContext = await browser.newContext( { storageState: undefined } );
 		const contributorPage = await contributorContext.newPage();
 		const wpAdmin = new WpAdminPage( contributorPage, testInfo, apiRequests );
