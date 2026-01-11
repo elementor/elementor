@@ -140,18 +140,17 @@ class Control_Gallery extends Base_Data_Control {
 
 	private function maybe_display_io_hints() {
 		$plugin_slug = 'image-optimization';
-		$should_display_io_hint = Hints::should_display_hint( $plugin_slug );
+		$plugin_settings_page = 'admin.php?page=image-optimization-settings';
 
-		if ( ! $should_display_io_hint ) {
+		if ( ! Hints::should_display_hint( $plugin_slug ) ) {
 			return;
 		}
 
 		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
 		$is_installed = Hints::is_plugin_installed( 'image-optimization' );
 		$is_active = Hints::is_plugin_active( 'image-optimization' );
-
 		?>
-		<div class="elementor-control-media__promotions">
+		<div class="elementor-control-media__promotions" role="alert">
 			<?php
 			$action_url = Hints::get_plugin_action_url( $plugin_slug );
 
@@ -167,7 +166,7 @@ class Control_Gallery extends Base_Data_Control {
 				} else {
 					$content = esc_html__( "These images aren't optimized yet. Connect Image Optimizer to your ONE subscription to start optimizing images automatically.", 'elementor' );
 					$button_text = esc_html__( 'Connect now', 'elementor' );
-					$action_url = admin_url( 'admin.php?page=image-optimization-settings' );
+					$action_url = self_admin_url( $plugin_settings_page );
 					$source = 'io-editor-gallery-one-connect';
 				}
 			} else {
@@ -181,7 +180,7 @@ class Control_Gallery extends Base_Data_Control {
 				} else {
 					$content = esc_html__( "These images aren't optimized yet. Connect Image Optimizer to start optimizing images automatically.", 'elementor' );
 					$button_text = esc_html__( 'Connect now', 'elementor' );
-					$action_url = admin_url( 'admin.php?page=image-optimization-settings' );
+					$action_url = self_admin_url( $plugin_settings_page );
 					$source = 'io-editor-gallery-connect';
 				}
 			}
