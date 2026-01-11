@@ -2,7 +2,7 @@ import * as React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { InteractionDetails } from '../components/interaction-details';
-import type { InteractionItemValue } from '../types';
+import { InteractionItemValue } from '../types';
 import { createAnimationPreset, createString } from '../utils/prop-value-utils';
 
 jest.mock( '../interactions-controls-registry', () => ( {
@@ -60,7 +60,7 @@ describe( 'InteractionDetails', () => {
 		it( 'should render with default values', () => {
 			const interaction = createInteractionItemValue();
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			expect( screen.getByText( 'Trigger' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Effect' ) ).toBeInTheDocument();
@@ -81,7 +81,7 @@ describe( 'InteractionDetails', () => {
 				replay: true,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			expect( screen.getByText( 'Trigger' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Effect' ) ).toBeInTheDocument();
@@ -96,7 +96,7 @@ describe( 'InteractionDetails', () => {
 				trigger: 'load',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			expect( screen.queryByText( 'Replay' ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: /toggle replay/i } ) ).not.toBeInTheDocument();
@@ -107,7 +107,7 @@ describe( 'InteractionDetails', () => {
 				trigger: 'scrollIn',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			expect( screen.getByText( 'Replay' ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: /toggle replay/i } ) ).toBeInTheDocument();
@@ -121,7 +121,7 @@ describe( 'InteractionDetails', () => {
 					trigger: 'scrollOut',
 				} );
 
-				render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+				render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 				expect( screen.getByText( 'Replay' ) ).toBeInTheDocument();
 				expect( screen.getByRole( 'button', { name: /toggle replay/i } ) ).toBeInTheDocument();
@@ -136,7 +136,7 @@ describe( 'InteractionDetails', () => {
 				replay: false,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			expect( screen.getByText( 'Disabled: true' ) ).toBeInTheDocument();
 		} );
@@ -152,7 +152,7 @@ describe( 'InteractionDetails', () => {
 				delay: 0,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const triggerSelect = comboboxes[ 0 ];
@@ -176,7 +176,7 @@ describe( 'InteractionDetails', () => {
 				delay: 0,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const effectSelect = comboboxes[ 1 ];
@@ -199,7 +199,7 @@ describe( 'InteractionDetails', () => {
 				delay: 0,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const typeButtons = screen.getAllByRole( 'button' );
 			const outButton = typeButtons.find( ( button ) => button.textContent === 'Out' );
@@ -222,7 +222,7 @@ describe( 'InteractionDetails', () => {
 				delay: 0,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const directionButtons = screen.getAllByRole( 'button' );
 			const bottomButton = directionButtons.find(
@@ -246,7 +246,7 @@ describe( 'InteractionDetails', () => {
 				delay: 0,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const durationSelect = comboboxes[ 2 ];
@@ -272,7 +272,7 @@ describe( 'InteractionDetails', () => {
 				delay: 0,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const delaySelect = comboboxes[ 3 ];
@@ -291,7 +291,7 @@ describe( 'InteractionDetails', () => {
 				replay: false,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const toggleButton = screen.getByRole( 'button', { name: /toggle replay/i } );
 			fireEvent.click( toggleButton );
@@ -319,7 +319,7 @@ describe( 'InteractionDetails', () => {
 				direction: '',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const directionButtons = screen.getAllByRole( 'button' );
 			const topButton = directionButtons.find(
@@ -336,7 +336,7 @@ describe( 'InteractionDetails', () => {
 				direction: 'bottom',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const directionButtons = screen.getAllByRole( 'button' );
 			const bottomButton = directionButtons.find(
@@ -353,7 +353,7 @@ describe( 'InteractionDetails', () => {
 				direction: 'left',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const effectSelect = comboboxes[ 1 ];
@@ -375,7 +375,7 @@ describe( 'InteractionDetails', () => {
 				direction: '',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const effectSelect = comboboxes[ 1 ];
@@ -397,7 +397,7 @@ describe( 'InteractionDetails', () => {
 				direction: 'right',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const effectSelect = comboboxes[ 1 ];
@@ -419,7 +419,7 @@ describe( 'InteractionDetails', () => {
 				direction: 'left',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const effectSelect = comboboxes[ 1 ];
@@ -441,7 +441,7 @@ describe( 'InteractionDetails', () => {
 				direction: 'bottom',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const effectSelect = comboboxes[ 1 ];
@@ -463,7 +463,7 @@ describe( 'InteractionDetails', () => {
 				direction: 'top',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const typeButtons = screen.getAllByRole( 'button' );
 			const outButton = typeButtons.find( ( button ) => button.textContent === 'Out' );
@@ -486,7 +486,7 @@ describe( 'InteractionDetails', () => {
 				duration: 300,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const durationSelect = comboboxes[ 2 ];
@@ -512,7 +512,7 @@ describe( 'InteractionDetails', () => {
 				delay: 0,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const delaySelect = comboboxes[ 3 ];
@@ -538,7 +538,7 @@ describe( 'InteractionDetails', () => {
 				delay: 200,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const triggerSelect = comboboxes[ 0 ];
@@ -564,7 +564,7 @@ describe( 'InteractionDetails', () => {
 				delay: 100,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const effectSelect = comboboxes[ 1 ];
@@ -590,7 +590,7 @@ describe( 'InteractionDetails', () => {
 				replay: true,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } onPlayInteraction={ jest.fn() } /> );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const effectSelect = comboboxes[ 1 ];
@@ -643,6 +643,83 @@ describe( 'InteractionDetails', () => {
 
 			expect( screen.queryByText( 'Replay' ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: /toggle replay/i } ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'InteractionDetails onPlayInteraction', () => {
+		it.skip( 'should call onPlayInteraction after interaction update with setTimeout', async () => {
+			const mockOnPlayInteraction = jest.fn();
+			const interaction = createInteractionItemValue();
+	
+			jest.useFakeTimers();
+	
+			render(
+				<InteractionDetails
+					interaction={ interaction }
+					onChange={ jest.fn() }
+					onPlayInteraction={ mockOnPlayInteraction }
+				/>
+			);
+	
+			const triggerControl = screen.getByLabelText( /trigger/i );
+			fireEvent.change( triggerControl, { target: { value: 'scrollIn' } } );
+	
+			expect( mockOnPlayInteraction ).not.toHaveBeenCalled();
+	
+			jest.advanceTimersByTime( 0 );
+	
+			await waitFor( () => {
+				expect( mockOnPlayInteraction ).toHaveBeenCalledWith( 'test-id' );
+			} );
+	
+			jest.useRealTimers();
+		} );
+	
+		it( 'should call onPlayInteraction with correct interaction ID', () => {
+			const mockOnPlayInteraction = jest.fn();
+			const interaction = createInteractionItemValue();
+	
+			render(
+				<InteractionDetails
+					interaction={ interaction }
+					onChange={ jest.fn() }
+					onPlayInteraction={ mockOnPlayInteraction }
+				/>
+			);
+	
+			const effectControl = screen.getByLabelText( /effect/i );
+			fireEvent.change( effectControl, { target: { value: 'slide' } } );
+	
+			jest.useFakeTimers();
+			jest.advanceTimersByTime( 0 );
+			jest.useRealTimers();
+	
+			expect( mockOnPlayInteraction ).toHaveBeenCalledWith( 'test-id' );
+		} );
+	
+		it( 'should call onPlayInteraction for each control update', () => {
+			const mockOnPlayInteraction = jest.fn();
+			const interaction = createInteractionItemValue();
+	
+			jest.useFakeTimers();
+	
+			render(
+				<InteractionDetails
+					interaction={ interaction }
+					onChange={ jest.fn() }
+					onPlayInteraction={ mockOnPlayInteraction }
+				/>
+			);
+	
+			fireEvent.change( screen.getByLabelText( /trigger/i ), { target: { value: 'scrollIn' } } );
+			jest.advanceTimersByTime( 0 );
+	
+			fireEvent.change( screen.getByLabelText( /effect/i ), { target: { value: 'slide' } } );
+			jest.advanceTimersByTime( 0 );
+	
+			expect( mockOnPlayInteraction ).toHaveBeenCalledTimes( 2 );
+	
+			jest.useRealTimers();
 		} );
 	} );
 } );

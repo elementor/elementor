@@ -258,5 +258,300 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			await expect( noButton ).toBeDisabled();
 		} );
 	} );
+
+	test( 'Duplicate element with interactions generates new temp IDs', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+	
+		let originalElementId: string;
+		let duplicatedElementId: string;
+	
+		await test.step( 'Add widget and create interaction', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+			const widget = await editor.addWidget( { widgetType: 'e-heading', container } );
+			originalElementId = widget.id;
+	
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+	
+			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
+			await addInteractionButton.click();
+			await page.waitForSelector( '.MuiPopover-root' );
+			await page.locator( 'body' ).click();
+		} );
+	
+		await test.step( 'Save to get permanent IDs', async () => {
+			await editor.publish();
+		} );
+	
+		await test.step( 'Get original interaction ID from saved data', async () => {
+			const originalInteractionsData = await page.evaluate( ( elementId ) => {
+				return window.elementor?.getContainer?.( elementId )?.model?.get( 'interactions' );
+			}, originalElementId );
+	
+			expect( originalInteractionsData ).toBeTruthy();
+			expect( originalInteractionsData.items[ 0 ]?.value?.interaction_id?.value ).toBeTruthy();
+			const originalInteractionId = originalInteractionsData.items[ 0 ].value.interaction_id.value;
+			expect( originalInteractionId ).not.toContain( 'temp-' );
+		} );
+	
+		await test.step( 'Duplicate the element', async () => {
+			await editor.selectElement( originalElementId );
+			await editor.page.keyboard.press( 'Control+D' ); // Or use context menu
+			await page.waitForTimeout( 500 );
+	
+			// Get duplicated element ID
+			duplicatedElementId = await page.evaluate( ( originalId ) => {
+				const containers = Array.from( document.querySelectorAll( '[data-id]' ) );
+				const originalIndex = Array.from( containers ).findIndex( 
+					el => el.getAttribute( 'data-id' ) === originalId 
+				);
+				return containers[ originalIndex + 1 ]?.getAttribute( 'data-id' );
+			}, originalElementId );
+	
+			expect( duplicatedElementId ).toBeTruthy();
+			expect( duplicatedElementId ).not.toBe( originalElementId );
+		} );
+	
+		await test.step( 'Verify duplicated element has interactions with cleaned IDs', async () => {
+			await editor.selectElement( duplicatedElementId );
+	
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+	
+			const duplicatedInteractionsData = await page.evaluate( ( elementId ) => {
+				return window.elementor?.getContainer?.( elementId )?.model?.get( 'interactions' );
+			}, duplicatedElementId );
+	
+			expect( duplicatedInteractionsData ).toBeTruthy();
+			expect( duplicatedInteractionsData.items ).toHaveLength( 1 );
+	
+			const duplicatedInteractionId = duplicatedInteractionsData.items[ 0 ].value.interaction_id?.value;
+			
+			// Should have an interaction ID (either temp or permanent)
+			expect( duplicatedInteractionId ).toBeTruthy();
+	
+			const originalInteractionId = await page.evaluate( ( elementId ) => {
+				const interactions = window.elementor?.getContainer?.( elementId )?.model?.get( 'interactions' );
+				return interactions?.items[ 0 ]?.value?.interaction_id?.value;
+			}, originalElementId );
+	
+			// IDs should be different
+			expect( duplicatedInteractionId ).not.toBe( originalInteractionId );
+		} );
+	
+		await test.step( 'Verify both interactions work independently on frontend', async () => {
+			await editor.publishAndViewPage();
+	
+			const headingElements = page.locator( '.e-heading-base' );
+			await expect( headingElements ).toHaveCount( 2 );
+	
+			// Both should have interactions attribute
+			const firstHeading = headingElements.first();
+			const secondHeading = headingElements.nth( 1 );
+	
+			await expect( firstHeading ).toHaveAttribute( 'data-interactions' );
+			await expect( secondHeading ).toHaveAttribute( 'data-interactions' );
+	
+			// Both should have different interaction IDs
+			const firstInteractions = await firstHeading.getAttribute( 'data-interactions' );
+			const secondInteractions = await secondHeading.getAttribute( 'data-interactions' );
+	
+			const firstData = JSON.parse( firstInteractions );
+			const secondData = JSON.parse( secondInteractions );
+	
+			const firstId = firstData.items[ 0 ]?.value?.interaction_id?.value;
+			const secondId = secondData.items[ 0 ]?.value?.interaction_id?.value;
+	
+			expect( firstId ).toBeTruthy();
+			expect( secondId ).toBeTruthy();
+			expect( firstId ).not.toBe( secondId );
+		} );
+	} );
+
+	test( 'Multiple interactions on same element have unique IDs', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+	
+		await test.step( 'Add widget and create multiple interactions', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.addWidget( { widgetType: 'e-heading', container } );
+	
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+	
+			// Create first interaction
+			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
+			await addInteractionButton.click();
+			await page.waitForSelector( '.MuiPopover-root' );
+			await page.locator( 'body' ).click();
+	
+			// Create second interaction
+			await addInteractionButton.click();
+			await page.waitForSelector( '.MuiPopover-root' );
+			await page.locator( 'body' ).click();
+		} );
+	
+		await test.step( 'Verify each interaction has unique ID', async () => {
+			const interactionTags = page.locator( '.MuiTag-root' );
+			await expect( interactionTags ).toHaveCount( 2 );
+	
+			const interactionsData = await page.evaluate( () => {
+				const container = window.elementor?.getPreviewView?.()?.getSelectedElement?.();
+				return container?.model?.get( 'interactions' );
+			} );
+	
+			expect( interactionsData.items ).toHaveLength( 2 );
+	
+			const id1 = interactionsData.items[ 0 ].value.interaction_id?.value;
+			const id2 = interactionsData.items[ 1 ].value.interaction_id?.value;
+	
+			expect( id1 ).toBeTruthy();
+			expect( id2 ).toBeTruthy();
+			expect( id1 ).not.toBe( id2 );
+		} );
+	
+		await test.step( 'Verify play buttons trigger correct interaction IDs', async () => {
+			const interactionTags = page.locator( '.MuiTag-root' );
+			
+			// Set up event listeners
+			const events: any[] = [];
+			await page.evaluate( () => {
+				window.top.addEventListener( 'atomic/play_interactions', ( e: CustomEvent ) => {
+					window.__interactionEvents = window.__interactionEvents || [];
+					window.__interactionEvents.push( e.detail );
+				} );
+			} );
+	
+			// Click first play button
+			const firstTag = interactionTags.first();
+			const firstBox = await firstTag.boundingBox();
+			await page.mouse.move( firstBox.x + firstBox.width / 2, firstBox.y + firstBox.height / 2 );
+			await firstTag.locator( 'button[aria-label*="Play interaction"]' ).click();
+			await page.waitForTimeout( 100 );
+	
+			// Click second play button
+			const secondTag = interactionTags.nth( 1 );
+			const secondBox = await secondTag.boundingBox();
+			await page.mouse.move( secondBox.x + secondBox.width / 2, secondBox.y + secondBox.height / 2 );
+			await secondTag.locator( 'button[aria-label*="Play interaction"]' ).click();
+			await page.waitForTimeout( 100 );
+	
+			const capturedEvents = await page.evaluate( () => ( window as any ).__interactionEvents || [] );
+	
+			expect( capturedEvents ).toHaveLength( 2 );
+			expect( capturedEvents[ 0 ].animationId ).toBeTruthy();
+			expect( capturedEvents[ 1 ].animationId ).toBeTruthy();
+			expect( capturedEvents[ 0 ].animationId ).not.toBe( capturedEvents[ 1 ].animationId );
+		} );
+	} );
+
+	test( 'Interaction temp IDs are converted to permanent IDs after save', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+	
+		let tempInteractionId: string;
+	
+		await test.step( 'Create interaction and capture temp ID', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.addWidget( { widgetType: 'e-heading', container } );
+	
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+	
+			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
+			await addInteractionButton.click();
+			await page.waitForSelector( '.MuiPopover-root' );
+			await page.locator( 'body' ).click();
+	
+			// Get temp ID before save
+			tempInteractionId = await page.evaluate( () => {
+				const container = window.elementor?.getPreviewView?.()?.getSelectedElement?.();
+				const interactions = container?.model?.get( 'interactions' );
+				return interactions?.items[ 0 ]?.value?.interaction_id?.value;
+			} );
+	
+			expect( tempInteractionId ).toBeTruthy();
+			expect( tempInteractionId ).toContain( 'temp-' );
+		} );
+	
+		await test.step( 'Save and verify ID is converted to permanent', async () => {
+			await editor.publish();
+	
+			const permanentInteractionId = await page.evaluate( () => {
+				const container = window.elementor?.getPreviewView?.()?.getSelectedElement?.();
+				const interactions = container?.model?.get( 'interactions' );
+				return interactions?.items[ 0 ]?.value?.interaction_id?.value;
+			} );
+	
+			expect( permanentInteractionId ).toBeTruthy();
+			expect( permanentInteractionId ).not.toContain( 'temp-' );
+			expect( permanentInteractionId ).not.toBe( tempInteractionId );
+		} );
+	
+		await test.step( 'Verify permanent ID persists on frontend', async () => {
+			await editor.publishAndViewPage();
+	
+			const headingElement = page.locator( '.e-heading-base' ).first();
+			const interactionsData = await headingElement.getAttribute( 'data-interactions' );
+			const parsedData = JSON.parse( interactionsData );
+	
+			const frontendId = parsedData.items[ 0 ]?.value?.interaction_id?.value;
+			expect( frontendId ).toBeTruthy();
+			expect( frontendId ).not.toContain( 'temp-' );
+		} );
+	} );
+
+	test( 'onPlayInteraction triggers correctly when updating interaction settings', async ( { page, apiRequests }, testInfo ) => {
+		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		const editor = await wpAdmin.openNewPage();
+	
+		await test.step( 'Create interaction', async () => {
+			const container = await editor.addElement( { elType: 'container' }, 'document' );
+			await editor.addWidget( { widgetType: 'e-heading', container } );
+	
+			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
+			await interactionsTab.click();
+	
+			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
+			await addInteractionButton.click();
+			await page.waitForSelector( '.MuiPopover-root' );
+			await page.locator( 'body' ).click();
+		} );
+	
+		await test.step( 'Track play interaction events', async () => {
+			const events: any[] = [];
+			await page.evaluate( () => {
+				window.__playEvents = [];
+				window.top.addEventListener( 'atomic/play_interactions', ( e: CustomEvent ) => {
+					window.__playEvents.push( e.detail );
+				} );
+			} );
+	
+			// Open interaction details
+			const interactionTag = page.locator( '.MuiTag-root' ).first();
+			await interactionTag.click();
+			await page.waitForSelector( '.MuiPopover-root' );
+	
+			// Change trigger - should trigger onPlayInteraction
+			const triggerSelector = page.getByText( 'Page load', { exact: true } );
+			await triggerSelector.click();
+			await page.getByRole( 'option', { name: 'Scroll into view' } ).click();
+			await page.waitForTimeout( 150 );
+	
+			// Change effect - should trigger onPlayInteraction
+			const effectSelector = page.getByText( 'Fade', { exact: true } );
+			await effectSelector.click();
+			await page.getByRole( 'option', { name: 'Slide' } ).click();
+			await page.waitForTimeout( 150 );
+	
+			const capturedEvents = await page.evaluate( () => ( window as any ).__playEvents || [] );
+	
+			// Should have been called at least once (possibly multiple times due to setTimeout)
+			expect( capturedEvents.length ).toBeGreaterThan( 0 );
+			expect( capturedEvents[ 0 ] ).toHaveProperty( 'animationId' );
+			expect( capturedEvents[ 0 ] ).toHaveProperty( 'elementId' );
+		} );
+	} );
 } );
 

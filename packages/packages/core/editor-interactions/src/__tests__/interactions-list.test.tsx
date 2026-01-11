@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 import { InteractionsList } from '../components/interactions-list';
 import { PopupStateProvider } from '../contexts/popup-state-context';
-import type { ElementInteractions } from '../types';
+import { ElementInteractions } from '../types';
 
 jest.mock( '../utils/get-interactions-config' );
 
@@ -80,4 +80,96 @@ describe( 'InteractionsList', () => {
 			expect( screen.getByText( expectedLabel ) ).toBeInTheDocument();
 		}
 	);
+} );
+
+describe( 'InteractionsList onPlayInteraction', () => {
+    it( 'should call onPlayInteraction when preview button is clicked', () => {
+        const mockOnPlayInteraction = jest.fn();
+        const interactions = createInteraction( 'load', 'fade', 'in', '', 300, 0 );
+
+        render(
+            <PopupStateProvider>
+                <InteractionsList
+                    interactions={ interactions }
+                    onSelectInteractions={ jest.fn() }
+                    onPlayInteraction={ mockOnPlayInteraction }
+                />
+            </PopupStateProvider>
+        );
+
+        const previewButton = screen.getByLabelText( /play interaction/i );
+        fireEvent.click( previewButton );
+
+        expect( mockOnPlayInteraction ).toHaveBeenCalledWith( 'test-id' );
+    } );
+
+    it( 'should call onPlayInteraction with correct interaction ID for each item', () => {
+        const mockOnPlayInteraction = jest.fn();
+        const interactions = {
+            version: 1,
+            items: [
+                {
+                    $$type: 'interaction-item',
+                    value: {
+                        interaction_id: { $$type: 'string', value: 'id-1' },
+                        trigger: { $$type: 'string', value: 'load' },
+                        animation: {
+                            $$type: 'animation-preset-props',
+                            value: {
+                                effect: { $$type: 'string', value: 'fade' },
+                                type: { $$type: 'string', value: 'in' },
+                                direction: { $$type: 'string', value: '' },
+                                timing_config: {
+                                    $$type: 'timing-config',
+                                    value: {
+                                        duration: { $$type: 'number', value: 300 },
+                                        delay: { $$type: 'number', value: 0 },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+                {
+                    $$type: 'interaction-item',
+                    value: {
+                        interaction_id: { $$type: 'string', value: 'id-2' },
+                        trigger: { $$type: 'string', value: 'scrollIn' },
+                        animation: {
+                            $$type: 'animation-preset-props',
+                            value: {
+                                effect: { $$type: 'string', value: 'slide' },
+                                type: { $$type: 'string', value: 'in' },
+                                direction: { $$type: 'string', value: 'top' },
+                                timing_config: {
+                                    $$type: 'timing-config',
+                                    value: {
+                                        duration: { $$type: 'number', value: 500 },
+                                        delay: { $$type: 'number', value: 0 },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            ],
+        };
+
+        render(
+            <PopupStateProvider>
+                <InteractionsList
+                    interactions={ interactions as ElementInteractions }
+                    onSelectInteractions={ jest.fn() }
+                    onPlayInteraction={ mockOnPlayInteraction }
+                />
+            </PopupStateProvider>
+        );
+
+        const previewButtons = screen.getAllByLabelText( /play interaction/i );
+        fireEvent.click( previewButtons[ 0 ] );
+        expect( mockOnPlayInteraction ).toHaveBeenCalledWith( 'id-1' );
+
+        fireEvent.click( previewButtons[ 1 ] );
+        expect( mockOnPlayInteraction ).toHaveBeenCalledWith( 'id-2' );
+    } );
 } );
