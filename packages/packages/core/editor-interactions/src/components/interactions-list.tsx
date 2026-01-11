@@ -7,7 +7,6 @@ import { __ } from '@wordpress/i18n';
 
 import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
 import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
-import { generateTempInteractionId } from '../utils/temp-id-utils';
 import { InteractionDetails } from './interaction-details';
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
@@ -90,7 +89,6 @@ export function InteractionsList( props: InteractionListProps ) {
 							const newState = { ...interactionsState, items: newItems };
 							setInteractionsState( newState );
 							onSelectInteractions( newState );
-							const interactionId = extractString( newInteractionValue.interaction_id );
 						} }
 						onPlayInteraction={ onPlayInteraction }
 					/>

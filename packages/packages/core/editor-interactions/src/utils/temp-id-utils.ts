@@ -1,5 +1,5 @@
 import type { InteractionItemValue } from '../types';
-import { createString } from './prop-value-utils';
+
 const TEMP_ID_PREFIX = 'temp-';
 const TEMP_ID_REGEX = /^temp-[a-z0-9]+$/i;
 
@@ -9,14 +9,4 @@ export function generateTempInteractionId(): string {
 
 export function isTempId( id: string | undefined ): boolean {
 	return !! id && TEMP_ID_REGEX.test( id );
-}
-
-export function ensureInteractionId( interaction: InteractionItemValue ): InteractionItemValue {
-	if ( ! interaction.interaction_id ) {
-		return {
-			...interaction,
-			interaction_id: createString( generateTempInteractionId() ),
-		};
-	}
-	return interaction;
 }

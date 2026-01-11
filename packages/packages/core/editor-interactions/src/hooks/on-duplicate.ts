@@ -2,7 +2,7 @@ import { type ElementID, getAllDescendants, getContainer, type V1Element } from 
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 
 import type { ElementInteractions } from '../types';
-import { createString, extractString } from '../utils/prop-value-utils';
+import { createString } from '../utils/prop-value-utils';
 import { generateTempInteractionId } from '../utils/temp-id-utils';
 
 export function initCleanInteractionIdsOnDuplicate() {

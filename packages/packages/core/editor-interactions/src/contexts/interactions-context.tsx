@@ -7,9 +7,6 @@ import {
 	useElementInteractions,
 } from '@elementor/editor-elements';
 
-import { createString, extractString } from '../utils/prop-value-utils';
-import { ensureInteractionId, generateTempInteractionId } from '../utils/temp-id-utils';
-
 type InteractionsContextValue = {
 	interactions: ElementInteractions;
 	setInteractions: ( value: ElementInteractions | undefined ) => void;

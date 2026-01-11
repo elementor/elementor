@@ -13,7 +13,6 @@ import {
 	extractNumber,
 	extractString,
 } from '../utils/prop-value-utils';
-import { generateTempInteractionId } from '../utils/temp-id-utils';
 import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
