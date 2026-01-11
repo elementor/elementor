@@ -37,6 +37,7 @@ class Module extends BaseModule {
 		add_action( 'elementor/documents/register', fn ( $documents_manager ) => $this->register_document_type( $documents_manager ) );
 		add_action( 'elementor/document/before_save', fn( Document $document, array $data ) => $this->validate_circular_dependencies( $document, $data ), 10, 2 );
 		add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_overridable_props( $document, $data ), 10, 2 );
+		add_filter( 'elementor/global_classes/additional_post_types', fn( $post_types ) => array_merge( $post_types, [ Component_Document::TYPE ] ) );
 
 		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 
