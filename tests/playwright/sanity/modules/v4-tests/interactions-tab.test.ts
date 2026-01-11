@@ -356,7 +356,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 							// eslint-disable-next-line @typescript-eslint/no-explicit-any
 							( item: any ) => ( item.elementId === elementId || item.dataId === elementId ) && item.interactions?.items?.length > 0,
 						);
-						return !!( elementData );
+						return !! ( elementData );
 					} catch {
 						return false;
 					}
