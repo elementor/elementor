@@ -11,35 +11,35 @@ type DeleteCommandArgs = {
 };
 
 export function initCleanupOverridablePropsOnDelete() {
-	registerDataHook( 'after', 'document/elements/delete', ( args: DeleteCommandArgs ) => {
+	registerDataHook( 'dependency', 'document/elements/delete', ( args: DeleteCommandArgs ) => {
 		const state = getState() as ComponentsSlice | undefined;
 
 		if ( ! state ) {
-			return;
+			return true;
 		}
 
 		const currentComponentId = selectCurrentComponentId( state );
 
 		if ( ! currentComponentId ) {
-			return;
+			return true;
 		}
 
 		const overridableProps = selectOverridableProps( state, currentComponentId );
 
 		if ( ! overridableProps || Object.keys( overridableProps.props ).length === 0 ) {
-			return;
+			return true;
 		}
 
 		const containers = args.containers ?? ( args.container ? [ args.container ] : [] );
 
 		if ( containers.length === 0 ) {
-			return;
+			return true;
 		}
 
 		const deletedElementIds = collectDeletedElementIds( containers );
 
 		if ( deletedElementIds.length === 0 ) {
-			return;
+			return true;
 		}
 
 		const propKeysToDelete = Object.entries( overridableProps.props )
@@ -47,7 +47,7 @@ export function initCleanupOverridablePropsOnDelete() {
 			.map( ( [ propKey ] ) => propKey );
 
 		if ( propKeysToDelete.length === 0 ) {
-			return;
+			return true;
 		}
 
 		const remainingProps = Object.fromEntries(
@@ -69,6 +69,8 @@ export function initCleanupOverridablePropsOnDelete() {
 				},
 			} )
 		);
+
+		return true;
 	} );
 }
 
