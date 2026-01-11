@@ -25,7 +25,7 @@ describe( 'interactions-utils', () => {
             const result = getKeyframes( 'fade', 'in', 'top' );
             expect( result ).toEqual( {
                 opacity: [ 0, 1 ],
-                y: [ -100, 0 ]
+                y: [ -100, 0 ],
             } );
         } );
 
@@ -33,7 +33,7 @@ describe( 'interactions-utils', () => {
             const result = getKeyframes( 'fade', 'out', 'bottom' );
             expect( result ).toEqual( {
                 opacity: [ 1, 0 ],
-                y: [ 0, 100 ]
+                y: [ 0, 100 ],
             } );
         } );
 
