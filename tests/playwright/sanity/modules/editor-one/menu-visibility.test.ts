@@ -46,6 +46,8 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 	} );
 
+	// TODO: Fix in ED-22339 - Editor One menu visibility tests failing
+	// https://elementor.atlassian.net/browse/ED-22339
 	test.skip( 'Admin user: Elementor menu is visible with correct submenu items', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
@@ -67,6 +69,8 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await expect( sidebar.getByRole( 'button', { name: 'Templates' } ).first() ).toBeVisible();
 	} );
 
+	// TODO: Fix in ED-22339 - Editor One menu visibility tests failing
+	// https://elementor.atlassian.net/browse/ED-22339
 	test.skip( 'Editor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
 		const editorContext = await browser.newContext( { storageState: undefined } );
 		const editorPage = await editorContext.newPage();
@@ -105,6 +109,8 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await editorContext.close();
 	} );
 
+	// TODO: Fix in ED-22339 - Editor One menu visibility tests failing
+	// https://elementor.atlassian.net/browse/ED-22339
 	test.skip( 'Contributor user: Elementor menu is visible with correct submenu items', async ( { browser, apiRequests }, testInfo ) => {
 		const contributorContext = await browser.newContext( { storageState: undefined } );
 		const contributorPage = await contributorContext.newPage();

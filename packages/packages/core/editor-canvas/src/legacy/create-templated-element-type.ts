@@ -30,17 +30,19 @@ export function createTemplatedElementType( {
 }: CreateTemplatedElementTypeOptions ): typeof ElementType {
 	const legacyWindow = window as unknown as LegacyWindow;
 
+	const view = createTemplatedElementView( {
+		type,
+		renderer,
+		element,
+	} );
+
 	return class extends legacyWindow.elementor.modules.elements.types.Widget {
 		getType() {
 			return type;
 		}
 
 		getView() {
-			return createTemplatedElementView( {
-				type,
-				renderer,
-				element,
-			} );
+			return view;
 		}
 	};
 }
@@ -77,6 +79,8 @@ export function createTemplatedElementView( {
 	return class extends BaseView {
 		#abortController: AbortController | null = null;
 		#childrenRenderPromises: Promise< void >[] = [];
+		#lastResolvedSettingsHash: string | null = null;
+		#domUpdateWasSkipped = false;
 
 		getTemplateType() {
 			return 'twig';
@@ -98,8 +102,10 @@ export function createTemplatedElementView( {
 			return this._parent?.getResolverRenderContext?.();
 		}
 
-		// Override `render` function to support async `_renderTemplate`
-		// Note that `_renderChildren` asynchronity is still NOT supported, so only the parent element rendering can be async
+		invalidateRenderCache() {
+			this.#lastResolvedSettingsHash = null;
+		}
+
 		render() {
 			this.#abortController?.abort();
 			this.#abortController = new AbortController();
@@ -116,17 +122,35 @@ export function createTemplatedElementView( {
 		}
 
 		async _renderChildren() {
-			super._renderChildren();
-
 			this.#childrenRenderPromises = [];
 
+			// Optimize rendering by reusing existing child views instead of recreating them.
+			if ( this.#shouldReuseChildren() ) {
+				this.#rerenderExistingChildren();
+			} else {
+				super._renderChildren();
+			}
+
+			this.#collectChildrenRenderPromises();
+			await this._waitForChildrenToComplete();
+		}
+
+		#shouldReuseChildren() {
+			return this.#domUpdateWasSkipped && this.children?.length > 0;
+		}
+
+		#rerenderExistingChildren() {
+			this.children?.each( ( childView: ElementView ) => {
+				childView.render();
+			} );
+		}
+
+		#collectChildrenRenderPromises() {
 			this.children?.each( ( childView: ElementView ) => {
 				if ( childView._currentRenderPromise ) {
 					this.#childrenRenderPromises.push( childView._currentRenderPromise );
 				}
 			} );
-
-			await this._waitForChildrenToComplete();
 		}
 
 		async _waitForChildrenToComplete() {
@@ -135,14 +159,12 @@ export function createTemplatedElementView( {
 			}
 		}
 
-		// Overriding Marionette original `_renderTemplate` method to inject our renderer.
 		async _renderTemplate() {
 			this.triggerMethod( 'before:render:template' );
 
 			const process = signalizedProcess( this.#abortController?.signal as AbortSignal )
 				.then( ( _, signal ) => {
 					const settings = this.model.get( 'settings' ).toJSON();
-
 					return resolveProps( {
 						props: settings,
 						signal,
@@ -153,7 +175,17 @@ export function createTemplatedElementView( {
 					return this.afterSettingsResolve( settings );
 				} )
 				.then( async ( settings ) => {
-					// Same as the Backend.
+					const settingsHash = JSON.stringify( settings );
+					const settingsChanged = settingsHash !== this.#lastResolvedSettingsHash;
+
+					if ( ! settingsChanged && this.isRendered ) {
+						this.#domUpdateWasSkipped = true;
+						return null;
+					}
+					this.#domUpdateWasSkipped = false;
+
+					this.#lastResolvedSettingsHash = settingsHash;
+
 					const context = {
 						id: this.model.get( 'id' ),
 						type,
@@ -163,7 +195,13 @@ export function createTemplatedElementView( {
 
 					return renderer.render( templateKey, context );
 				} )
-				.then( ( html ) => this.$el.html( html ) );
+				.then( ( html ) => {
+					if ( html === null ) {
+						return;
+					}
+
+					this.$el.html( html );
+				} );
 
 			await process.execute();
 

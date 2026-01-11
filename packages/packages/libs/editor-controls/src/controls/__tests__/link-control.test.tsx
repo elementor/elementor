@@ -492,4 +492,45 @@ describe( '<LinkControl />', () => {
 			expect( selectElement ).toHaveBeenCalledWith( restrictionState.elementId );
 		}
 	);
+
+	it( 'should disable adding link when inline link exists from toolbar', () => {
+		// Arrange
+		const inlineLinkRestriction: LinkInLinkRestriction = {
+			shouldRestrict: true,
+			reason: 'descendant',
+			elementId: '1',
+		};
+
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( inlineLinkRestriction );
+
+		// Act
+		renderControl( <LinkControl { ...globalProps } placeholder="test" />, baseProps );
+
+		const toggleButton = screen.getByRole( 'button', { name: 'Toggle link' } );
+
+		// Assert
+		expect( toggleButton ).toBeDisabled();
+	} );
+
+	it( 'should show tooltip when inline link restriction is active', async () => {
+		// Arrange
+		const inlineLinkRestriction: LinkInLinkRestriction = {
+			shouldRestrict: true,
+			reason: 'descendant',
+			elementId: '1',
+		};
+
+		jest.mocked( getLinkInLinkRestriction ).mockReturnValue( inlineLinkRestriction );
+
+		// Act
+		renderControl( <LinkControl { ...globalProps } placeholder="test" />, baseProps );
+
+		const toggleButton = screen.getByRole( 'button', { name: 'Toggle link' } );
+		fireEvent.mouseOver( toggleButton );
+
+		// Assert
+		await waitFor( () => {
+			expect( screen.getByText( 'from the elements inside of it', { exact: false } ) ).toBeInTheDocument();
+		} );
+	} );
 } );

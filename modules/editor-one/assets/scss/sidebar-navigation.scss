@@ -4,6 +4,8 @@
 	position: fixed;
 	top: calc(var(--editor-one-sidebar-admin-top-bar-height) + var(--editor-one-wordpress-admin-bar-height));
 	bottom: 0;
+	inset-inline-start: var(--editor-one-sidebar-left-offset);
+	inset-inline-end: auto;
 	z-index: var(--editor-one-sidebar-z-index);
 	background-color: var(--editor-one-sidebar-bg);
 	overflow: visible;

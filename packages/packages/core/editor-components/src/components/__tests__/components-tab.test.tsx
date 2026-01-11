@@ -245,7 +245,39 @@ describe( 'ComponentsTab', () => {
 			expect( screen.getByText( 'Try something else.' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should remove component from list when archived', async () => {
+		it( 'should show delete confirmation dialog when Delete is clicked', async () => {
+			// Arrange
+			act( () => {
+				dispatch( slice.actions.load( mockComponents ) );
+			} );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
+			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
+			fireEvent.click( buttonComponentMoreActions );
+
+			const deleteButton = await screen.findByText( 'Delete' );
+			fireEvent.click( deleteButton );
+
+			// Assert
+			await waitFor( () => {
+				expect( screen.getByRole( 'dialog', { name: 'Delete this component?' } ) ).toBeInTheDocument();
+			} );
+			expect(
+				screen.getByText(
+					'Existing instances on your pages will remain functional. You will no longer find this component in your list.'
+				)
+			).toBeInTheDocument();
+		} );
+
+		it( 'should delete component when Delete button in dialog is clicked', async () => {
 			// Arrange
 			act( () => {
 				dispatch( slice.actions.load( mockComponents ) );
@@ -268,8 +300,15 @@ describe( 'ComponentsTab', () => {
 			const buttonComponentMoreActions = moreActionsButtons[ 0 ];
 			fireEvent.click( buttonComponentMoreActions );
 
-			const archiveButton = await screen.findByText( 'Archive' );
-			fireEvent.click( archiveButton );
+			const deleteMenuItem = await screen.findByText( 'Delete' );
+			fireEvent.click( deleteMenuItem );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'dialog', { name: 'Delete this component?' } ) ).toBeInTheDocument();
+			} );
+
+			const confirmDeleteButton = screen.getByRole( 'button', { name: 'Delete' } );
+			fireEvent.click( confirmDeleteButton );
 
 			// Assert
 			await waitFor( () => {
@@ -278,6 +317,75 @@ describe( 'ComponentsTab', () => {
 			expect( screen.getByText( 'Text Component' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Image Component' ) ).toBeInTheDocument();
 			expect( jest.mocked( setDocumentModifiedStatus ) ).toHaveBeenCalledWith( true );
+		} );
+
+		it( 'should close delete dialog without deleting when Not now is clicked', async () => {
+			// Arrange
+			act( () => {
+				dispatch( slice.actions.load( mockComponents ) );
+			} );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
+			fireEvent.click( moreActionsButtons[ 0 ] );
+
+			const deleteMenuItem = await screen.findByText( 'Delete' );
+			fireEvent.click( deleteMenuItem );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'dialog', { name: 'Delete this component?' } ) ).toBeInTheDocument();
+			} );
+
+			// Act
+			const notNowButton = screen.getByRole( 'button', { name: 'Not now' } );
+			fireEvent.click( notNowButton );
+
+			// Assert
+			await waitFor( () => {
+				expect( screen.queryByRole( 'dialog', { name: 'Delete this component?' } ) ).not.toBeInTheDocument();
+			} );
+			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
+		} );
+
+		it( 'should close delete dialog when Escape key is pressed', async () => {
+			// Arrange
+			act( () => {
+				dispatch( slice.actions.load( mockComponents ) );
+			} );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
+			fireEvent.click( moreActionsButtons[ 0 ] );
+
+			const deleteMenuItem = await screen.findByText( 'Delete' );
+			fireEvent.click( deleteMenuItem );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'dialog', { name: 'Delete this component?' } ) ).toBeInTheDocument();
+			} );
+
+			// Act
+			fireEvent.keyDown( screen.getByRole( 'dialog' ), { key: 'Escape' } );
+
+			// Assert
+			await waitFor( () => {
+				expect( screen.queryByRole( 'dialog', { name: 'Delete this component?' } ) ).not.toBeInTheDocument();
+			} );
+			expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should open rename mode when Rename menu item is clicked', async () => {
