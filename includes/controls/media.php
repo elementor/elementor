@@ -334,7 +334,6 @@ class Control_Media extends Control_Base_Multiple {
 
 	private function maybe_display_io_hints() {
 		$plugin_slug = 'image-optimization';
-		$plugin_settings_page = 'admin.php?page=image-optimization-settings';
 
 		if ( ! Hints::should_display_hint( $plugin_slug ) ) {
 			return;
@@ -343,42 +342,38 @@ class Control_Media extends Control_Base_Multiple {
 		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
 		$is_installed = Hints::is_plugin_installed( $plugin_slug );
 		$is_active = Hints::is_plugin_active( $plugin_slug );
+
+		if ( $is_active ) {
+			return;
+		}
+
+		if ( $one_subscription ) {
+			if ( ! $is_installed ) {
+				$content = esc_html__( 'Optimize your images to improve site speed and performance. Image Optimizer is included in your ONE subscription.', 'elementor' );
+				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+				$source = 'io-editor-image-one-install';
+			} elseif ( ! $is_active ) {
+				$content = esc_html__( 'Your ONE subscription includes Image Optimizer. Activate it to optimize images and improve site performance.', 'elementor' );
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+				$source = 'io-editor-image-one-activate';
+			}
+		} else {
+			$content = esc_html__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' );
+			if ( ! $is_installed ) {
+				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+				$source = 'io-editor-image-install';
+			} elseif ( ! $is_active ) {
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+				$source = 'io-editor-image-activate';
+			}
+		}
 		?>
 		<div class="elementor-control-media__promotions" role="alert">	
 			<?php
-			$action_url = Hints::get_plugin_action_url( $plugin_slug );
-
-			if ( $one_subscription ) {
-				if ( ! $is_installed ) {
-					$content = esc_html__( 'Optimize your images to improve site speed and performance. Image Optimizer is included in your ONE subscription.', 'elementor' );
-					$button_text = esc_html__( 'Install now', 'elementor' );
-					$source = 'io-editor-image-one-install';
-				} elseif ( ! $is_active ) {
-					$content = esc_html__( 'Your ONE subscription includes Image Optimizer. Activate it to optimize images and improve site performance.', 'elementor' );
-					$button_text = esc_html__( 'Activate now', 'elementor' );
-					$source = 'io-editor-image-one-activate';
-				} else {
-					$content = esc_html__( "This image isn't optimized yet. Connect Image Optimizer to your ONE subscription to start optimizing images automatically.", 'elementor' );
-					$button_text = esc_html__( 'Connect now', 'elementor' );
-					$action_url = self_admin_url( $plugin_settings_page );
-					$source = 'io-editor-image-one-connect';
-				}
-			} else {
-				$content = esc_html__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' );
-				if ( ! $is_installed ) {
-					$button_text = esc_html__( 'Install now', 'elementor' );
-					$source = 'io-editor-image-install';
-				} elseif ( ! $is_active ) {
-					$button_text = esc_html__( 'Activate now', 'elementor' );
-					$source = 'io-editor-image-activate';
-				} else {
-					$content = esc_html__( "This image isn't optimized yet. Connect Image Optimizer to start optimizing images automatically.", 'elementor' );
-					$button_text = esc_html__( 'Connect now', 'elementor' );
-					$action_url = self_admin_url( $plugin_settings_page );
-					$source = 'io-editor-image-connect';
-				}
-			}
-
 			Hints::get_notice_template( [
 				'display' => ! Hints::is_dismissed( $plugin_slug ),
 				'type' => 'info',
@@ -389,7 +384,7 @@ class Control_Media extends Control_Base_Multiple {
 				'button_text' => $button_text,
 				'button_event' => 'image_optimizer_hint',
 				'button_data' => [
-					'action_url' => $action_url,
+					'action_url' => $button_url,
 					'source' => $source,
 				],
 			] );

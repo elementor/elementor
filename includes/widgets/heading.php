@@ -472,10 +472,15 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		$is_installed = Hints::is_plugin_installed( $plugin_slug );
 		$is_active = Hints::is_plugin_active( $plugin_slug );
 
+		if ( $is_active ) {
+			return;
+		}
+
 		if ( $one_subscription ) {
 			if ( ! $is_installed ) {
 				$notice_content = esc_html__( 'Want to ensure this heading is accessible? Your ONE subscription includes Ally. Install it and scan your page.', 'elementor' );
 				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
 				$campaign_data = [
 					'name' => 'elementor_ea11y_campaign',
 					'campaign' => 'acc-scanner-plg-heading-one-install',
@@ -485,32 +490,23 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 			} elseif ( ! $is_active ) {
 				$notice_content = esc_html__( 'Keep your content accessible. Activate Ally, included in ONE, to scan this page.', 'elementor' );
 				$button_text = esc_html__( 'Activate now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
 				$campaign_data = [
 					'name' => 'elementor_ea11y_campaign',
 					'campaign' => 'acc-scanner-plg-heading-one-activate',
 					'source' => 'editor-heading-widget-one-non-activate',
 					'medium' => 'editor-one',
 				];
-			} else {
-				$notice_content = esc_html__( 'Keep your content accessible. Connect Ally, included in ONE, to scan this page.', 'elementor' );
-				$button_text = esc_html__( 'Connect now', 'elementor' );
-				$campaign_data = [
-					'name' => 'elementor_ea11y_campaign',
-					'campaign' => 'acc-scanner-plg-heading-one-connect',
-					'source' => 'editor-heading-widget-one-non-connect',
-					'medium' => 'editor-one',
-				];
 			}
-		// phpcs:ignore Universal.ControlStructures.DisallowLonelyIf.Found
 		} else {
+			$notice_content = esc_html__( 'Make sure your page is structured with accessibility in mind. Ally helps detect and fix common issues across your site.', 'elementor' );
 			if ( ! $is_installed ) {
 				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
 			} elseif ( ! $is_active ) {
 				$button_text = esc_html__( 'Activate now', 'elementor' );
-			} else {
-				$button_text = esc_html__( 'Connect now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
 			}
-			$notice_content = esc_html__( 'Make sure your page is structured with accessibility in mind. Ally helps detect and fix common issues across your site.', 'elementor' );
 			$campaign_data = [
 				'name' => 'elementor_ea11y_campaign',
 				'campaign' => 'acc-scanner-plg-heading',
@@ -520,11 +516,6 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		}
 
 		$notice_heading = esc_html__( 'Accessible structure matters', 'elementor' );
-		$action_url = Admin_Notices::add_plg_campaign_data( Hints::get_plugin_action_url( $plugin_slug ), $campaign_data );
-
-		if ( $is_active && ! $one_subscription ) {
-			$action_url = admin_url( 'admin.php?page=accessibility-settings' );
-		}
 
 		$this->add_control(
 			$notice_id,
@@ -540,7 +531,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 					'button_text' => $button_text,
 					'button_event' => $notice_id,
 					'button_data' => [
-						'action_url' => $action_url,
+						'action_url' => Admin_Notices::add_plg_campaign_data( $button_url, $campaign_data ),
 					],
 				], true ),
 			]

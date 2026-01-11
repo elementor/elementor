@@ -1107,6 +1107,7 @@ class Admin extends App {
 
 	private function maybe_enqueue_hints() {
 		$plugin_slug = 'image-optimization';
+
 		if ( ! Hints::should_display_hint( $plugin_slug ) ) {
 			return;
 		}
@@ -1121,6 +1122,11 @@ class Admin extends App {
 
 		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
 		$is_installed = Hints::is_plugin_installed( $plugin_slug );
+		$is_active = Hints::is_plugin_active( $plugin_slug );
+
+		if ( $is_active ) {
+			return;
+		}
 
 		$dismissible = 'image_optimizer_hint';
 		$button_label = $is_installed ? esc_html__( 'Activate now', 'elementor' ) : esc_html__( 'Install now', 'elementor' );
