@@ -6,7 +6,7 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 
 import { getParams } from '../../api';
 import { loadComponentsStyles } from '../actions/load-components-styles';
-import { selectStyles, SLICE_NAME } from '../store';
+import { selectStyles, slice, SLICE_NAME } from '../store';
 
 jest.mock( '@elementor/store', () => ( {
 	...jest.requireActual( '@elementor/store' ),
@@ -146,34 +146,15 @@ describe( 'loadComponentsStyles', () => {
 		expect( selectStyles( getState() ) ).toEqual( expected );
 	} );
 
-	it( 'should not return until all styles are loaded', async () => {
+	it( 'should wait for addComponentStyles to complete before returning', async () => {
 		// Arrange
-		let resolveLoad!: ( value: V1ElementData ) => void;
-		jest.mocked( ajax.load ).mockReturnValue(
-			new Promise( ( resolve ) => {
-				resolveLoad = resolve;
-			} )
-		);
+		mockLoad( { [ COMP_WITH_STYLES_ID ]: COMP_WITH_STYLES_CONTENT } );
 
 		// Act
-		const promise = loadComponentsStyles( [ SIMPLE_COMP_ID ] );
+		await loadComponentsStyles( [ COMP_WITH_STYLES_ID ] );
 
-		let isResolved = false;
-		promise.then( () => {
-			isResolved = true;
-		} );
-
-		await Promise.resolve();
-
-		// Assert - promise should still be pending while load hasn't resolved
-		expect( isResolved ).toBe( false );
-
-		// Act - resolve load
-		resolveLoad( SIMPLE_COMP_CONTENT );
-		await promise;
-
-		// Assert - promise should be resolved after load completes
-		expect( isResolved ).toBe( true );
+		// Assert
+		expect( dispatch ).toHaveBeenCalledWith( slice.actions.addStyles( { [ COMP_WITH_STYLES_ID ]: [ STYLE_1 ] } ) );
 	} );
 } );
 
