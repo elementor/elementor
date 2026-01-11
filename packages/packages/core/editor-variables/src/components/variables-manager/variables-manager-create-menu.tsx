@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { createElement, type MouseEvent, useMemo, useRef, useState } from 'react';
+import { createElement, useMemo, useRef, useState } from 'react';
 import { PromotionChip, PromotionPopover } from '@elementor/editor-ui';
 import { PlusIcon } from '@elementor/icons';
-import { bindMenu, bindTrigger, Box, IconButton, Menu, MenuItem, type PopupState, Typography } from '@elementor/ui';
+import { bindMenu, bindTrigger, IconButton, Menu, MenuItem, type PopupState, Typography } from '@elementor/ui';
 import { capitalize } from '@elementor/utils';
 import { __, sprintf } from '@wordpress/i18n';
 
@@ -117,6 +117,9 @@ const MenuOption = ( {
 
 	const handleClick = () => {
 		if ( isDisabled ) {
+			if ( ! isPopoverOpen ) {
+				setIsPopoverOpen( true );
+			}
 			return;
 		}
 
@@ -140,34 +143,24 @@ const MenuOption = ( {
 	);
 
 	return (
-		<MenuItem onClick={ handleClick } sx={ { gap: 1.5, cursor: isDisabled ? 'default' : 'pointer' } }>
+		<MenuItem onClick={ handleClick } sx={ { gap: 1.5, cursor: 'pointer' } }>
 			{ createElement( config.icon, { fontSize: SIZE, color: isDisabled ? 'disabled' : 'action' } ) }
 			<Typography variant="caption" color={ isDisabled ? 'text.disabled' : 'text.primary' }>
 				{ displayName }
 			</Typography>
 			{ isDisabled && (
-				<Box
-					onClick={ ( event: MouseEvent ) => {
-						event.stopPropagation();
+				<PromotionPopover
+					open={ isPopoverOpen }
+					title={ title }
+					content={ content }
+					ctaText={ __( 'Upgrade now', 'elementor' ) }
+					ctaUrl={ `https://go.elementor.com/go-pro-manager-${ config.variableType }-variable/` }
+					onClose={ () => {
+						setIsPopoverOpen( false );
 					} }
 				>
-					<PromotionPopover
-						open={ isPopoverOpen }
-						title={ title }
-						content={ content }
-						ctaText={ __( 'Upgrade now', 'elementor' ) }
-						ctaUrl={ `https://go.elementor.com/go-pro-manager-${ config.variableType }-variable/` }
-						onClose={ () => {
-							setIsPopoverOpen( false );
-						} }
-					>
-						<PromotionChip
-							onClick={ () => {
-								setIsPopoverOpen( true );
-							} }
-						/>
-					</PromotionPopover>
-				</Box>
+					<PromotionChip />
+				</PromotionPopover>
 			) }
 		</MenuItem>
 	);
