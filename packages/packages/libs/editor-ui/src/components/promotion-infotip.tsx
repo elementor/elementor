@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { useEffect } from 'react';
+import { getCanvasIframeDocument } from '@elementor/editor-v1-adapters';
 import {
 	Card,
 	CardActions,
@@ -18,7 +20,7 @@ type InfotipCardProps = {
 	content: string;
 	assetUrl: string;
 	ctaUrl: string;
-	setOpen: ( open: boolean ) => void;
+	onClose: () => void;
 };
 
 type PromotionInfotipProps = React.PropsWithChildren<
@@ -27,28 +29,38 @@ type PromotionInfotipProps = React.PropsWithChildren<
 	}
 >;
 
-export const PromotionInfotip = ( { children, open, ...cardProps }: PromotionInfotipProps ) => {
+export const PromotionInfotip = ( { children, open, onClose, ...cardProps }: PromotionInfotipProps ) => {
+	useEffect( () => {
+		const canvasDocument = open ? getCanvasIframeDocument() : null;
+
+		if ( ! canvasDocument ) {
+			return;
+		}
+
+		canvasDocument.addEventListener( 'mousedown', onClose );
+
+		return () => canvasDocument.removeEventListener( 'mousedown', onClose );
+	}, [ open, onClose ] );
+
 	return (
-		<Infotip placement="right" content={ <InfotipCard { ...cardProps } /> } open={ open }>
+		<Infotip placement="right" content={ <InfotipCard onClose={ onClose } { ...cardProps } /> } open={ open }>
 			{ children }
 		</Infotip>
 	);
 };
 
-function InfotipCard( { title, content, assetUrl, ctaUrl, setOpen }: InfotipCardProps ) {
+function InfotipCard( { title, content, assetUrl, ctaUrl, onClose }: InfotipCardProps ) {
 	return (
 		<ClickAwayListener
 			disableReactTree={ true }
 			mouseEvent="onMouseDown"
 			touchEvent="onTouchStart"
-			onClickAway={ () => setOpen( false ) }
+			onClickAway={ onClose }
 		>
 			<Card elevation={ 0 } sx={ { maxWidth: 296 } }>
 				<CardHeader
 					title={ title }
-					action={
-						<CloseButton slotProps={ { icon: { fontSize: 'tiny' } } } onClick={ () => setOpen( false ) } />
-					}
+					action={ <CloseButton slotProps={ { icon: { fontSize: 'tiny' } } } onClick={ onClose } /> }
 				/>
 				<CardMedia component="img" image={ assetUrl } alt="" sx={ { width: '100%', aspectRatio: '16 / 9' } } />
 				<CardContent>
