@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { KeyboardEvent, useEffect, useState } from 'react';
+import { type KeyboardEvent, useEffect, useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { PopoverBody } from '@elementor/editor-editing-panel';
@@ -240,7 +240,7 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 				</PopoverContent>
 
 				<CardActions sx={ { pt: 0.5, pb: 1 } }>
-					<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleUpdate } onKeyDown={ handleKeyDown }>
+					<Button size="small" variant="contained" disabled={ isSubmitDisabled } onClick={ handleUpdate }>
 						{ __( 'Save', 'elementor' ) }
 					</Button>
 				</CardActions>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRef, useState, KeyboardEvent } from 'react';
+import { type KeyboardEvent, useRef, useState } from 'react';
 import { WarningInfotip } from '@elementor/editor-ui';
 import { TextField, type TextFieldProps } from '@elementor/ui';
 
@@ -48,7 +48,7 @@ export const LabelField = ( {
 	selectOnShow = false,
 	showWarningInfotip = false,
 	variables,
-	onKeyDown
+	onKeyDown,
 }: LabelFieldProps ) => {
 	const [ label, setLabel ] = useState( value );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
