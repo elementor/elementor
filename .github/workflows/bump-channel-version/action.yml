@@ -16,6 +16,7 @@ inputs:
     default: false
     description: 'Should override the PACKAGE_VERSION value with a custom value for the one click release process.'
 
+
 runs:
   using: "composite"
   steps:
