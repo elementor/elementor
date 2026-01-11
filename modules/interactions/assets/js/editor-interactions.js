@@ -206,7 +206,6 @@ function handlePlayInteractions( event ) {
 		} ),
 	};
 	applyInteractionsToElement( element, interactionsCopy );
-
 }
 
 if ( 'loading' === document.readyState ) {

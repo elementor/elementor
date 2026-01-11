@@ -262,86 +262,88 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 	test( 'Duplicate element with interactions generates new temp IDs', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
-	
+
 		let originalElementId: string;
 		let duplicatedElementId: string;
 
 		await test.step( 'Add widget and create interaction', async () => {
 			const container = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 			originalElementId = await editor.addWidget( { widgetType: 'e-heading', container } );
-	
+
 			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
 			await interactionsTab.click();
-	
+
 			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
 			await addInteractionButton.click();
 			await page.waitForSelector( '.MuiPopover-root' );
 			await page.locator( 'body' ).click();
 		} );
-	
+
 		await test.step( 'Save to get permanent IDs', async () => {
 			await editor.publishPage();
 			await page.reload();
 			await editor.waitForPanelToLoad();
 		} );
-	
+
 		await test.step( 'Get original interaction ID from saved data', async () => {
 			const previewFrame = editor.getPreviewFrame();
-			
+
 			const originalInteractionsData = await previewFrame.evaluate( ( elementId ) => {
 				const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
 				if ( ! scriptTag ) {
 					return null;
 				}
-				
+
 				try {
 					const allInteractions = JSON.parse( scriptTag.textContent || '[]' );
-					const elementData = allInteractions.find( 
-						( item: any ) => item.elementId === elementId || item.dataId === elementId 
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					const elementData = allInteractions.find(
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						( item: any ) => item.elementId === elementId || item.dataId === elementId,
 					);
-					
+
 					if ( ! elementData || ! elementData.interactions ) {
 						return null;
 					}
-					
+
 					return elementData.interactions;
 				} catch {
 					return null;
 				}
 			}, originalElementId );
-	
+
 			expect( originalInteractionsData ).toBeTruthy();
 			expect( originalInteractionsData.items[ 0 ]?.value?.interaction_id?.value ).toBeTruthy();
 			const originalInteractionId = originalInteractionsData.items[ 0 ].value.interaction_id.value;
 			expect( originalInteractionId ).not.toContain( 'temp-' );
 		} );
-	
+
 		await test.step( 'Duplicate the element', async () => {
 			const elementInPreview = editor.getPreviewFrame().locator( `[data-id="${ originalElementId }"]` );
 			await elementInPreview.click( { button: 'right' } );
-			
+
 			await page.getByRole( 'menuitem', { name: 'Duplicate' } ).click();
 			await page.waitForTimeout( 500 );
-			
+
 			const originalElement = editor.getPreviewFrame().locator( `[data-id="${ originalElementId }"]` );
 			const duplicatedElement = originalElement.locator( 'xpath=./following-sibling::*[1]' );
 			duplicatedElementId = await duplicatedElement.getAttribute( 'data-id' );
-	
+
 			expect( duplicatedElementId ).toBeTruthy();
 			expect( duplicatedElementId ).not.toBe( originalElementId );
 		} );
-	
+
 		await test.step( 'Verify duplicated element has interactions with cleaned IDs', async () => {
 			await editor.selectElement( duplicatedElementId );
 			await page.waitForTimeout( 500 );
-			
+
 			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
 			await interactionsTab.click();
 			await page.waitForTimeout( 500 );
-			
+
 			const previewFrame = editor.getPreviewFrame();
-	
-			await previewFrame.waitForFunction( 
+
+			await previewFrame.waitForFunction(
 				( elementId ) => {
 					const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
 					if ( ! scriptTag ) {
@@ -349,34 +351,38 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 					}
 					try {
 						const allInteractions = JSON.parse( scriptTag.textContent || '[]' );
-						const elementData = allInteractions.find( 
-							( item: any ) => ( item.elementId === elementId || item.dataId === elementId ) && item.interactions?.items?.length > 0
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						const elementData = allInteractions.find(
+							// eslint-disable-next-line @typescript-eslint/no-explicit-any
+							( item: any ) => ( item.elementId === elementId || item.dataId === elementId ) && item.interactions?.items?.length > 0,
 						);
-						return !!elementData;
+						return !!( elementData );
 					} catch {
 						return false;
 					}
 				},
 				duplicatedElementId,
-				{ timeout: 5000 }
+				{ timeout: 5000 },
 			);
-			
+
 			const duplicatedInteractionsData = await previewFrame.evaluate( ( elementId ) => {
 				const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
 				if ( ! scriptTag ) {
 					return null;
 				}
-				
+
 				try {
 					const allInteractions = JSON.parse( scriptTag.textContent || '[]' );
-					const elementData = allInteractions.find( 
-						( item: any ) => item.elementId === elementId || item.dataId === elementId 
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					const elementData = allInteractions.find(
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						( item: any ) => item.elementId === elementId || item.dataId === elementId,
 					);
-					
+
 					if ( ! elementData || ! elementData.interactions ) {
 						return null;
 					}
-					
+
 					return elementData.interactions;
 				} catch {
 					return null;
@@ -385,9 +391,9 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			expect( duplicatedInteractionsData ).toBeTruthy();
 			expect( duplicatedInteractionsData.items ).toHaveLength( 1 );
-	
+
 			const duplicatedInteractionId = duplicatedInteractionsData.items[ 0 ].value.interaction_id?.value;
-			
+
 			// Should have an interaction ID (either temp or permanent)
 			expect( duplicatedInteractionId ).toBeTruthy();
 
@@ -396,18 +402,20 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 				if ( ! scriptTag ) {
 					return null;
 				}
-				
+
 				try {
 					const allInteractions = JSON.parse( scriptTag.textContent || '[]' );
 					// Find the entry that matches our elementId
-					const elementData = allInteractions.find( 
-						( item: any ) => item.elementId === elementId || item.dataId === elementId 
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					const elementData = allInteractions.find(
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						( item: any ) => item.elementId === elementId || item.dataId === elementId,
 					);
-					
+
 					if ( ! elementData || ! elementData.interactions ) {
 						return null;
 					}
-					
+
 					return elementData.interactions;
 				} catch {
 					return null;
@@ -426,89 +434,94 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		await test.step( 'Add widget and create multiple interactions', async () => {
 			const container = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 			originalElementId = await editor.addWidget( { widgetType: 'e-heading', container } );
-	
+
 			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
 			await interactionsTab.click();
-	
+
 			// Create first interaction
 			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
 			await addInteractionButton.click();
 			await page.waitForSelector( '.MuiPopover-root' );
 			await page.locator( 'body' ).click();
-	
+
 			// Create second interaction
 			const addAdditionalInteractionButton = page.locator( 'button[aria-label*="Add item"]' );
 			await addAdditionalInteractionButton.click();
 			await page.waitForSelector( '.MuiPopover-root' );
 			await page.locator( 'body' ).click();
 		} );
-	
+
 		await test.step( 'Verify each interaction has unique ID', async () => {
 			const interactionTags = page.locator( '.MuiTag-root' );
 			await expect( interactionTags ).toHaveCount( 2 );
 			const previewFrame = editor.getPreviewFrame();
-			
+
 			const interactionsData = await previewFrame.evaluate( ( elementId ) => {
 				const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
 				if ( ! scriptTag ) {
 					return null;
 				}
-				
+
 				try {
 					const allInteractions = JSON.parse( scriptTag.textContent || '[]' );
 					// Find the entry that matches our elementId
-					const elementData = allInteractions.find( 
-						( item: any ) => item.elementId === elementId || item.dataId === elementId 
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					const elementData = allInteractions.find(
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						( item: any ) => item.elementId === elementId || item.dataId === elementId,
 					);
-					
+
 					if ( ! elementData || ! elementData.interactions ) {
 						return null;
 					}
-					
+
 					return elementData.interactions;
 				} catch {
 					return null;
 				}
 			}, originalElementId );
-	
+
 			expect( interactionsData.items ).toHaveLength( 2 );
-	
+
 			const id1 = interactionsData.items[ 0 ].value.interaction_id?.value;
 			const id2 = interactionsData.items[ 1 ].value.interaction_id?.value;
-	
+
 			expect( id1 ).toBeTruthy();
 			expect( id2 ).toBeTruthy();
 			expect( id1 ).not.toBe( id2 );
 		} );
-	
+
 		await test.step( 'Verify play buttons trigger correct interaction IDs', async () => {
 			const interactionTags = page.locator( '.MuiTag-root' );
-			
+
 			// Set up event listeners
-			const events: any[] = [];
 			await page.evaluate( () => {
-				window.top.addEventListener( 'atomic/play_interactions', ( e: CustomEvent ) => {
-					window.__interactionEvents = window.__interactionEvents || [];
-					window.__interactionEvents.push( e.detail );
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				( window.top as any ).addEventListener( 'atomic/play_interactions', ( e: CustomEvent ) => {
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					( window as any ).__interactionEvents = ( window as any ).__interactionEvents || [];
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					( window as any ).__interactionEvents.push( e.detail );
 				} );
 			} );
-	
+
 			// Click first play button
 			const firstTag = interactionTags.first();
 			const firstBox = await firstTag.boundingBox();
-			await page.mouse.move( firstBox.x + firstBox.width / 2, firstBox.y + firstBox.height / 2 );
+			await page.mouse.move( ( firstBox.x + firstBox.width ) / 2, ( firstBox.y + firstBox.height ) / 2 );
 			await firstTag.locator( 'button[aria-label*="Play interaction"]' ).click();
 			await page.waitForTimeout( 100 );
-	
+
 			// Click second play button
 			const secondTag = interactionTags.nth( 1 );
 			const secondBox = await secondTag.boundingBox();
-			await page.mouse.move( secondBox.x + secondBox.width / 2, secondBox.y + secondBox.height / 2 );
+			await page.mouse.move( ( secondBox.x + secondBox.width ) / 2, ( secondBox.y + secondBox.height ) / 2 );
 			await secondTag.locator( 'button[aria-label*="Play interaction"]' ).click();
 			await page.waitForTimeout( 100 );
-	
+
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const capturedEvents = await page.evaluate( () => ( window as any ).__interactionEvents || [] );
-	
+
 			expect( capturedEvents ).toHaveLength( 2 );
 			expect( capturedEvents[ 0 ].interactionId ).toBeTruthy();
 			expect( capturedEvents[ 1 ].interactionId ).toBeTruthy();
@@ -519,42 +532,44 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 	test( 'Interaction temp IDs are converted to permanent IDs after save', async ( { page, apiRequests }, testInfo ) => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		const editor = await wpAdmin.openNewPage();
-	
+
 		let originalElementId: string;
 		let tempInteractionId: string;
-	
+
 		await test.step( 'Create interaction and capture temp ID', async () => {
 			const container = await editor.addElement( { elType: 'e-div-block' }, 'document' );
 			originalElementId = await editor.addWidget( { widgetType: 'e-heading', container } );
-	
+
 			const interactionsTab = page.getByRole( 'tab', { name: 'Interactions' } );
 			await interactionsTab.click();
-	
+
 			const addInteractionButton = page.getByRole( 'button', { name: 'Create an interaction' } );
 			await addInteractionButton.click();
 			await page.waitForSelector( '.MuiPopover-root' );
 			await page.locator( 'body' ).click();
-	
+
 			// Get temp ID before save
 			const previewFrame = editor.getPreviewFrame();
-			
+
 			const originalInteractionsData = await previewFrame.evaluate( ( elementId ) => {
 				const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
 				if ( ! scriptTag ) {
 					return null;
 				}
-				
+
 				try {
 					const allInteractions = JSON.parse( scriptTag.textContent || '[]' );
 					// Find the entry that matches our elementId
-					const elementData = allInteractions.find( 
-						( item: any ) => item.elementId === elementId || item.dataId === elementId 
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					const elementData = allInteractions.find(
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						( item: any ) => item.elementId === elementId || item.dataId === elementId,
 					);
-					
+
 					if ( ! elementData || ! elementData.interactions ) {
 						return null;
 					}
-					
+
 					return elementData.interactions;
 				} catch {
 					return null;
@@ -562,35 +577,37 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			}, originalElementId );
 
 			tempInteractionId = originalInteractionsData.items[ 0 ].value.interaction_id.value;
-	
+
 			expect( tempInteractionId ).toBeTruthy();
 			expect( tempInteractionId ).toContain( 'temp-' );
 		} );
-	
+
 		await test.step( 'Save and verify ID is converted to permanent', async () => {
 			await editor.publishPage();
 			await page.reload();
 			await editor.waitForPanelToLoad();
 
 			const previewFrame = editor.getPreviewFrame();
-	
+
 			const originalInteractionsData = await previewFrame.evaluate( ( elementId ) => {
 				const scriptTag = document.querySelector( 'script[data-e-interactions="true"]' );
 				if ( ! scriptTag ) {
 					return null;
 				}
-				
+
 				try {
 					const allInteractions = JSON.parse( scriptTag.textContent || '[]' );
 					// Find the entry that matches our elementId
-					const elementData = allInteractions.find( 
-						( item: any ) => item.elementId === elementId || item.dataId === elementId 
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					const elementData = allInteractions.find(
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						( item: any ) => item.elementId === elementId || item.dataId === elementId,
 					);
-					
+
 					if ( ! elementData || ! elementData.interactions ) {
 						return null;
 					}
-					
+
 					return elementData.interactions;
 				} catch {
 					return null;
@@ -598,7 +615,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			}, originalElementId );
 
 			const savedInteractionId = originalInteractionsData.items[ 0 ].value.interaction_id.value;
-	
+
 			expect( savedInteractionId ).toBeTruthy();
 			expect( savedInteractionId ).not.toContain( 'temp-' );
 		} );
