@@ -46,6 +46,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 		value = '',
 		startAdornment,
 		disablePortal = true,
+		inputProps,
 		...restProps
 	} = props;
 
@@ -100,7 +101,7 @@ export const Autocomplete = forwardRef( ( props: Props, ref ) => {
 					placeholder={ placeholder }
 					hasSelectedValue={ isValueFromOptions }
 					startAdornment={ startAdornment }
-					extraInputProps={ restProps.inputProps }
+					extraInputProps={ inputProps }
 				/>
 			) }
 		/>
