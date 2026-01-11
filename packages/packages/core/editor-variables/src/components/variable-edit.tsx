@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { type KeyboardEvent, useEffect, useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
 import { PopoverBody } from '@elementor/editor-editing-panel';
@@ -160,6 +160,13 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 
 	const isSubmitDisabled = noValueChanged() || hasEmptyFields() || hasErrors();
 
+	const handleKeyDown = ( event: KeyboardEvent< HTMLElement > ) => {
+		if ( event.key === 'Enter' && ! isSubmitDisabled ) {
+			event.preventDefault();
+			handleUpdate();
+		}
+	};
+
 	return (
 		<>
 			<PopoverBody height="auto">
@@ -206,6 +213,7 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 									message: errorMsg,
 								} );
 							} }
+							onKeyDown={ handleKeyDown }
 						/>
 					</FormField>
 					{ ValueField && (
@@ -220,6 +228,7 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 										setErrorMessage( '' );
 										setValueFieldError( '' );
 									} }
+									onKeyDown={ handleKeyDown }
 									onValidationChange={ setValueFieldError }
 									propType={ propType }
 								/>
