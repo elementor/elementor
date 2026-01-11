@@ -194,10 +194,11 @@ describe( 'createComponentsBeforeSave', () => {
 			await createComponentsBeforeSave( { elements: [], status: 'draft' } );
 
 			// Assert
-			expect( getState().components.data ).toEqual( [
-				{ id: 4444, name: 'Published Component', uid: publishedComponentUid },
-				{ id: 3333, name: 'Test Component 2', uid: COMPONENT_2_UID },
-				{ id: 1111, name: 'Test Component 1', uid: COMPONENT_1_UID },
+			const components = getState().components.data;
+			expect( components ).toEqual( [
+				{ id: 3333, name: 'Test Component 2', uid: COMPONENT_2_UID, overridableProps: undefined },
+				{ id: 1111, name: 'Test Component 1', uid: COMPONENT_1_UID, overridableProps: undefined },
+				{ id: 4444, name: 'Published Component', uid: publishedComponentUid, overridableProps: undefined },
 			] );
 		} );
 

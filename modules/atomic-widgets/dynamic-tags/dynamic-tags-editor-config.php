@@ -84,7 +84,7 @@ class Dynamic_Tags_Editor_Config {
 			'name'            => $tag['name'],
 			'categories'      => $tag['categories'],
 			'label'           => $tag['title'] ?? '',
-			'group'           => $tag['group'] ?? '',
+			'group'           => $tag['atomic_group'] ?? $tag['group'] ?? '',
 			'atomic_controls' => [],
 			'props_schema'    => $this->schemas->get( $tag['name'] ),
 		];

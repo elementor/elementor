@@ -111,6 +111,7 @@ export type V1ElementModelProps = {
 	settings?: V1ElementSettingsProps;
 	editor_settings?: V1ElementEditorSettingsProps;
 	interactions?: string | ElementInteractions;
+	isGlobal?: boolean;
 };
 
 export type V1ElementData = Omit< V1ElementModelProps, 'elements' > & {
@@ -148,4 +149,5 @@ type V1Model< T > = {
 	get: < K extends keyof T >( key: K ) => T[ K ];
 	set: < K extends keyof T >( key: K, value: T[ K ] ) => void;
 	toJSON: ( options?: { remove?: string[] } ) => T;
+	trigger?: ( event: string, ...args: unknown[] ) => void;
 };

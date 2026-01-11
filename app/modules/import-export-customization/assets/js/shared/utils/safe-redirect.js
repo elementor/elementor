@@ -2,7 +2,11 @@ import isValidRedirectUrl from './is-valid-redirect-url';
 
 export default function safeRedirect( url ) {
 	try {
-		const decodedUrl = decodeURIComponent( url );
+		let decodedUrl = decodeURIComponent( url );
+		if ( decodedUrl.startsWith( '/' ) ) {
+			decodedUrl = window.location.origin + decodedUrl;
+		}
+
 		if ( isValidRedirectUrl( decodedUrl ) ) {
 			window.location.href = decodedUrl;
 			return true;

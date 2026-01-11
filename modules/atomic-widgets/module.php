@@ -116,6 +116,7 @@ class Module extends BaseModule {
 	const ENFORCE_CAPABILITIES_EXPERIMENT = 'atomic_widgets_should_enforce_capabilities';
 	const EXPERIMENT_EDITOR_MCP = 'editor_mcp';
 	const EXPERIMENT_INLINE_EDITING = 'v4-inline-text-editing';
+	const EXPERIMENT_BC_MIGRATIONS = 'e_bc_migrations';
 
 	const PACKAGES = [
 		'editor-canvas',
@@ -212,6 +213,15 @@ class Module extends BaseModule {
 			'name' => self::EXPERIMENT_INLINE_EDITING,
 			'title' => esc_html__( 'V4 inline text editing', 'elementor' ),
 			'description' => esc_html__( 'New inline text editor for v4', 'elementor' ),
+			'hidden' => true,
+			'default' => Experiments_Manager::STATE_ACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
+		]);
+
+		Plugin::$instance->experiments->add_feature([
+			'name' => self::EXPERIMENT_BC_MIGRATIONS,
+			'title' => esc_html__( 'Backward compatibility migrations', 'elementor' ),
+			'description' => esc_html__( 'Enable automatic prop type migrations for atomic widgets', 'elementor' ),
 			'hidden' => true,
 			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
@@ -370,7 +380,7 @@ class Module extends BaseModule {
 	private function render_panel_category_chip() {
 		?><# if ( 'v4-elements' === name )  { #>
 		<span class="elementor-panel-heading-category-chip">
-				<?php echo esc_html__( 'Alpha', 'elementor' ); ?><i class="eicon-info"></i>
+				<?php echo esc_html__( 'Beta', 'elementor' ); ?><i class="eicon-info"></i>
 				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
 			</span>
 		<# } #><?php

@@ -9,6 +9,8 @@ export default function createAtomicElementBaseView( type ) {
 
 		emptyView: AtomicElementEmptyView,
 
+		_childrenRenderPromises: [],
+
 		tagName() {
 			const tagControl = this.model.getSetting( 'tag' );
 			const tagControlValue = tagControl?.value || tagControl;
@@ -35,6 +37,14 @@ export default function createAtomicElementBaseView( type ) {
 			];
 		},
 
+		getRenderContext() {
+			return this._parent?.getRenderContext?.();
+		},
+
+		getResolverRenderContext() {
+			return this._parent?.getResolverRenderContext?.();
+		},
+
 		className() {
 			return `${ BaseElementView.prototype.className.apply( this ) } e-con e-atomic-element ${ this.getClassString() }`;
 		},
@@ -59,10 +69,10 @@ export default function createAtomicElementBaseView( type ) {
 				local.id = cssId.value;
 			}
 
-			const href = this.getHref();
+			const link = this.getLink();
 
-			if ( href ) {
-				local.href = href;
+			if ( link ) {
+				local[ link.attr ] = link.value;
 			}
 
 			local[ 'data-interaction-id' ] = this.model.get( 'id' );
@@ -177,6 +187,74 @@ export default function createAtomicElementBaseView( type ) {
 			parent.addChild( this.model, AtomicElementView, this._index );
 		},
 
+		render() {
+			this._currentRenderPromise = new Promise( ( resolve ) => {
+				// Optimize rendering by reusing existing child views instead of recreating them.
+				if ( this._shouldSkipFullRender() ) {
+					this._renderWithoutDomRecreation( resolve );
+				} else {
+					this._renderWithDomRecreation( resolve );
+				}
+			} );
+
+			return this;
+		},
+
+		_shouldSkipFullRender() {
+			return this.isRendered && this.children?.length > 0;
+		},
+
+		_renderWithoutDomRecreation( resolve ) {
+			this._beforeRender();
+			this._renderChildren();
+			this._waitForChildrenToComplete().then( () => {
+				this._afterRender();
+				resolve();
+			} );
+		},
+
+		_renderWithDomRecreation( resolve ) {
+			BaseElementView.prototype.render.apply( this, arguments );
+			this._waitForChildrenToComplete().then( resolve );
+		},
+
+		_beforeRender() {
+			this._isRendering = true;
+			this.triggerMethod( 'before:render', this );
+		},
+
+		_afterRender() {
+			this._isRendering = false;
+			this.isRendered = true;
+			this.triggerMethod( 'render', this );
+		},
+
+		async _waitForChildrenToComplete() {
+			if ( this._childrenRenderPromises.length > 0 ) {
+				await Promise.all( this._childrenRenderPromises );
+			}
+		},
+
+		_renderChildren() {
+			if ( this._shouldSkipFullRender() ) {
+				this.children?.each( ( childView ) => childView.render() );
+			} else {
+				BaseElementView.prototype._renderChildren.apply( this, arguments );
+			}
+
+			this._collectChildrenRenderPromises();
+		},
+
+		_collectChildrenRenderPromises() {
+			this._childrenRenderPromises = [];
+
+			this.children?.each( ( childView ) => {
+				if ( childView._currentRenderPromise ) {
+					this._childrenRenderPromises.push( childView._currentRenderPromise );
+				}
+			} );
+		},
+
 		onRender() {
 			this.dispatchPreviewEvent( 'elementor/element/render' );
 
@@ -211,16 +289,35 @@ export default function createAtomicElementBaseView( type ) {
 			return !! this.model.getSetting( 'link' )?.value?.destination?.value;
 		},
 
-		getHref() {
+		getLink() {
 			if ( ! this.haveLink() ) {
-				return;
+				return null;
 			}
 
 			const { $$type, value } = this.model.getSetting( 'link' ).value.destination;
+
+			if ( ! value ) {
+				return null;
+			}
+
+			if ( 'dynamic' === $$type ) {
+				const resolvedValue = this.handleDynamicLink( value );
+
+				return resolvedValue
+					? {
+						attr: 'action' === value.settings.group ? 'data-action-link' : 'href',
+						value: resolvedValue,
+					}
+					: null;
+			}
+
 			const isPostId = 'number' === $$type;
 			const hrefPrefix = isPostId ? elementor.config.home_url + '/?p=' : '';
 
-			return hrefPrefix + value;
+			return {
+				attr: 'href',
+				value: hrefPrefix + value,
+			};
 		},
 
 		droppableInitialize() {
@@ -237,7 +334,6 @@ export default function createAtomicElementBaseView( type ) {
 				{
 					name: 'save',
 					title: __( 'Save as a template', 'elementor' ),
-					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
 					callback: this.saveAsTemplate.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),
 				},
@@ -246,7 +342,7 @@ export default function createAtomicElementBaseView( type ) {
 			if ( elementorCommon.config.experimentalFeatures?.e_components ) {
 				saveActions.unshift(			{
 					name: 'save-component',
-					title: __( 'Save as a component', 'elementor' ),
+					title: __( 'Create component', 'elementor' ),
 					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,
 					callback: this.saveAsComponent.bind( this ),
 					isEnabled: () => ! this.getContainer().isLocked(),
@@ -598,6 +694,62 @@ export default function createAtomicElementBaseView( type ) {
 				return true;
 			}
 			return 0 === this.model.collection.indexOf( this.model );
+		},
+
+		getDynamicLinkValue( name, settings ) {
+			const simpleTransform = ( props ) => {
+				const transformed = Object.entries( props ).map( ( [ settingKey, settingValue ] ) => {
+					const value = 'object' === typeof settingValue && 'value' in settingValue ? settingValue.value : settingValue;
+
+					return [ settingKey, value ];
+				} );
+
+				return Object.fromEntries( transformed );
+			};
+
+			const getTagValue = () => {
+				const tag = elementor.dynamicTags.createTag( 'v4-dynamic-tag', name, simpleTransform( settings ) );
+
+				if ( ! tag ) {
+					return null;
+				}
+
+				return elementor.dynamicTags.loadTagDataFromCache( tag ) ?? null;
+			};
+
+			const tagValue = getTagValue();
+
+			if ( tagValue !== null ) {
+				return tagValue;
+			}
+
+			return new Promise( ( resolve ) => {
+				elementor.dynamicTags.refreshCacheFromServer( () => {
+					resolve( getTagValue() );
+				} );
+			} );
+		},
+
+		handleDynamicLink( linkValue ) {
+			const result = this.getDynamicLinkValue( linkValue.name, linkValue.settings );
+
+			if ( ! result ) {
+				return null;
+			}
+
+			if ( 'string' === typeof result ) {
+				return result;
+			}
+
+			result.then( ( href ) => {
+				this.el.removeAttribute( 'href' );
+
+				const attribute = 'action' === linkValue.group ? 'data-action-link' : 'href';
+
+				this.el.setAttribute( attribute, href );
+			} ).then( () => this.dispatchPreviewEvent( 'elementor/element/render' ) );
+
+			return null;
 		},
 	} );
 
