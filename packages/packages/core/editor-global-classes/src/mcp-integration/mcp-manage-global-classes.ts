@@ -44,7 +44,6 @@ type OutputSchema = z.infer< ReturnType< typeof z.object< typeof outputSchema > 
 const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 	const { action, classId, globalClassName, props, breakpoint } = input;
 
-	// Validation
 	if ( action === 'create' && ! globalClassName ) {
 		return {
 			status: 'error',
@@ -67,7 +66,6 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 		};
 	}
 
-	// Validate props against schema
 	const errors: string[] = [];
 	const stylesSchema = getStylesSchema();
 	const validProps = Object.keys( stylesSchema );
@@ -93,7 +91,6 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 		};
 	}
 
-	// Transform props
 	Object.keys( props ).forEach( ( key ) => {
 		props[ key ] = Schema.adjustLlmPropValueSchema( props[ key ], {
 			transformers: Utils.globalVariablesLLMResolvers,
@@ -122,8 +119,7 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 			try {
 				await saveGlobalClasses( { context: 'frontend' } );
 				return { status: 'ok', classId: newClassId };
-				// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			} catch ( error ) {
+			} catch {
 				deleteClass( newClassId );
 				await saveGlobalClasses( { context: 'frontend' } );
 				return {
@@ -135,7 +131,6 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 			if ( ! classId ) {
 				throw new Error( 'Class ID is required for modification.' );
 			}
-			// modify
 			const snapshot = structuredClone( globalClassesStylesProvider.actions.all() );
 
 			try {
@@ -155,7 +150,6 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 				await saveGlobalClasses( { context: 'frontend' } );
 				return { status: 'ok', classId };
 			} catch ( modifyError ) {
-				// Rollback
 				snapshot.forEach( ( style ) => {
 					update( {
 						id: style.id,

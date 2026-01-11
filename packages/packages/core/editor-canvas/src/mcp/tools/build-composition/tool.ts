@@ -80,7 +80,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 								custom_css: customCss,
 							},
 						},
-						elementType: 'widget', // irrelevant for style updates
+						elementType: 'widget',
 					} );
 				} );
 			} catch ( error ) {
