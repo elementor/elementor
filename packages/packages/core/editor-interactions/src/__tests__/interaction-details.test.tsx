@@ -70,7 +70,7 @@ describe( 'InteractionDetails', () => {
 		it( 'should render with default values', () => {
 			const interaction = createInteractionItemValue();
 
-			renderInteractionDetails( interaction, jest.fn() );
+			renderInteractionDetails( interaction );
 
 			expect( screen.getByText( 'Trigger' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Effect' ) ).toBeInTheDocument();
@@ -91,7 +91,7 @@ describe( 'InteractionDetails', () => {
 				replay: true,
 			} );
 
-			renderInteractionDetails( interaction, jest.fn() );
+			renderInteractionDetails( interaction );
 
 			expect( screen.getByText( 'Trigger' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Effect' ) ).toBeInTheDocument();
