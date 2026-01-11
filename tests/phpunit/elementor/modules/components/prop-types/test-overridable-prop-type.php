@@ -66,6 +66,48 @@ class Test_Overridable_Prop_Type extends Elementor_Test_Base {
 		$this->assertFalse( $result );
 	}
 
+	public function test_validate__passes_with_null_origin_value() {
+		// Arrange
+		$prop_type = Overridable_Prop_Type::make()
+			->set_origin_prop_type( String_Prop_Type::make() );
+
+		// Act
+		$result = $prop_type->validate( [
+			'$$type' => 'overridable',
+			'value' => [
+				'override_key' => 'my-override-key',
+				'origin_value' => null,
+			],
+		] );
+
+		// Assert
+		$this->assertTrue( $result );
+	}
+
+	public function test_sanitize__handles_null_origin_value() {
+		// Arrange
+		$prop_type = Overridable_Prop_Type::make()
+			->set_origin_prop_type( String_Prop_Type::make() );
+
+		// Act
+		$result = $prop_type->sanitize( [
+			'$$type' => 'overridable',
+			'value' => [
+				'override_key' => 'my-override-key',
+				'origin_value' => null,
+			],
+		] );
+
+		// Assert
+		$this->assertEquals( [
+			'$$type' => 'overridable',
+			'value' => [
+				'override_key' => 'my-override-key',
+				'origin_value' => null,
+			],
+		], $result );
+	}
+
 	public function test_validate__fails_when_origin_value_invalid_against_origin_prop_type() {
 		// Arrange
 		$prop_type = Overridable_Prop_Type::make()
