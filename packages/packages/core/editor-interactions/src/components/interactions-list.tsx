@@ -23,18 +23,10 @@ export function InteractionsList( props: InteractionListProps ) {
 
 	const [ interactionsState, setInteractionsState ] = useState< ElementInteractions >( interactions );
 
-	// useEffect( () => {
-	// 	if ( JSON.stringify( interactions ) !== JSON.stringify( interactionsState ) ) {
-	// 		onSelectInteractions( interactionsState );
-	// 	}
-	// }, [ interactions, interactionsState, onSelectInteractions ] );
-
-	// Sync state with prop when prop changes externally
 	useEffect( () => {
 		setInteractionsState( interactions );
 	}, [ interactions ] );
 
-	// Handle triggerCreateOnShowEmpty
 	useEffect( () => {
 		if ( triggerCreateOnShowEmpty && ( ! interactionsState.items || interactionsState.items?.length === 0 ) ) {
 			const newState = {
@@ -49,13 +41,6 @@ export function InteractionsList( props: InteractionListProps ) {
 	const isMaxNumberOfInteractionsReached = useMemo( () => {
 		return interactionsState.items?.length >= MAX_NUMBER_OF_INTERACTIONS;
 	}, [ interactionsState.items ] );
-
-	// if ( triggerCreateOnShowEmpty && ( ! interactionsState.items || interactionsState.items?.length === 0 ) ) {
-	// 	setInteractionsState( {
-	// 		version: 1,
-	// 		items: [ createDefaultInteractionItem() ],
-	// 	} );
-	// }
 
 	const infotipContent = isMaxNumberOfInteractionsReached ? (
 		<Alert color="secondary" icon={ <InfoCircleFilledIcon /> } size="small">

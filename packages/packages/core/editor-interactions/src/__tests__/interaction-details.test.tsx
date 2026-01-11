@@ -46,13 +46,14 @@ describe( 'InteractionDetails', () => {
 			<button onClick={ () => onChange( ! value ) }>Toggle Replay</button>
 		</div>
 	) );
+	const mockOnPlayInteraction = jest.fn();
 
-	const renderInteractionDetails = ( interaction: InteractionItemValue, onPlayInteraction = jest.fn() ) => {
+	const renderInteractionDetails = ( interaction: InteractionItemValue ) => {
 		return render(
 			<InteractionDetails
 				interaction={ interaction }
 				onChange={ mockOnChange }
-				onPlayInteraction={ onPlayInteraction }
+				onPlayInteraction={ mockOnPlayInteraction }
 			/>
 		);
 	};

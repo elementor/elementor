@@ -41,29 +41,6 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 			} );
 			return;
 		}
-		// const needsTempIds = value.items.some( ( item ) => {
-		// 	if ( item.$$type === 'interaction-item' && item.value ) {
-		// 		const existingId = item.value.interaction_id
-		// 			? extractString( item.value.interaction_id )
-		// 			: null;
-		// 		return ! existingId;
-		// 	}
-		// 	return false;
-		// } );
-		// if ( needsTempIds ) {
-		// 	value = {
-		// 		...value,
-		// 		items: value.items.map( ( item ) => {
-		// 			if ( item.$$type === 'interaction-item' && item.value ) {
-		// 				return {
-		// 					...item,
-		// 					value: ensureInteractionId( item.value ),
-		// 				};
-		// 			}
-		// 			return item;
-		// 		} ),
-		// 	};
-		// }
 
 		updateElementInteractions( {
 			elementId,
