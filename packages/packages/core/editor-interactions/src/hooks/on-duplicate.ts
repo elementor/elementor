@@ -2,8 +2,7 @@ import { type ElementID, getAllDescendants, getContainer, type V1Element } from 
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 
 import type { ElementInteractions } from '../types';
-import { extractString } from '../utils/prop-value-utils';
-import { createString } from '../utils/prop-value-utils';
+import { createString, extractString } from '../utils/prop-value-utils';
 import { generateTempInteractionId } from '../utils/temp-id-utils';
 
 export function initCleanInteractionIdsOnDuplicate() {
@@ -45,8 +44,8 @@ function cleanInteractionIds( elementId: ElementID ) {
 
 	updatedInteractions?.items?.forEach( ( interaction ) => {
 		if ( interaction.$$type === 'interaction-item' && interaction.value ) {
-			// const existingId = interaction.value.interaction_id 
-			// 	? extractString( interaction.value.interaction_id ) 
+			// const existingId = interaction.value.interaction_id
+			// 	? extractString( interaction.value.interaction_id )
 			// 	: null;
 
 			// if ( ! existingId ) {

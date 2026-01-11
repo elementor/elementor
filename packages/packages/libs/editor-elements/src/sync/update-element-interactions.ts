@@ -25,7 +25,9 @@ export const updateElementInteractions = ( {
 
 export const playElementInteractions = ( elementId: string, interactionId: string ) => {
 	console.log( 'playElementInteractions', elementId, interactionId );
-	window.top?.dispatchEvent( new CustomEvent( 'atomic/play_interactions', { detail: { elementId, interactionId } } ) );
+	window.top?.dispatchEvent(
+		new CustomEvent( 'atomic/play_interactions', { detail: { elementId, interactionId } } )
+	);
 };
 
 function setDocumentModifiedStatus( status: boolean ) {

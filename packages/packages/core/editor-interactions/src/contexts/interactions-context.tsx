@@ -7,7 +7,7 @@ import {
 	useElementInteractions,
 } from '@elementor/editor-elements';
 
-import { extractString, createString } from '../utils/prop-value-utils';
+import { createString, extractString } from '../utils/prop-value-utils';
 import { ensureInteractionId, generateTempInteractionId } from '../utils/temp-id-utils';
 
 type InteractionsContextValue = {
@@ -43,8 +43,8 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 		}
 		// const needsTempIds = value.items.some( ( item ) => {
 		// 	if ( item.$$type === 'interaction-item' && item.value ) {
-		// 		const existingId = item.value.interaction_id 
-		// 			? extractString( item.value.interaction_id ) 
+		// 		const existingId = item.value.interaction_id
+		// 			? extractString( item.value.interaction_id )
 		// 			: null;
 		// 		return ! existingId;
 		// 	}
@@ -65,7 +65,6 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 		// 	};
 		// }
 
-		
 		updateElementInteractions( {
 			elementId,
 			interactions: value as unknown as ElementInteractions,

@@ -7,8 +7,8 @@ import { __ } from '@wordpress/i18n';
 
 import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
 import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
-import { InteractionDetails } from './interaction-details';
 import { generateTempInteractionId } from '../utils/temp-id-utils';
+import { InteractionDetails } from './interaction-details';
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
 export type InteractionListProps = {
@@ -45,7 +45,7 @@ export function InteractionsList( props: InteractionListProps ) {
 			onSelectInteractions( newState );
 		}
 	}, [ triggerCreateOnShowEmpty ] );
-	
+
 	const isMaxNumberOfInteractionsReached = useMemo( () => {
 		return interactionsState.items?.length >= MAX_NUMBER_OF_INTERACTIONS;
 	}, [ interactionsState.items ] );
@@ -107,7 +107,6 @@ export function InteractionsList( props: InteractionListProps ) {
 							onSelectInteractions( newState );
 							const interactionId = extractString( newInteractionValue.interaction_id );
 						} }
-						
 						onPlayInteraction={ onPlayInteraction }
 					/>
 				),
@@ -117,9 +116,9 @@ export function InteractionsList( props: InteractionListProps ) {
 							aria-label={ __( 'Play interaction', 'elementor' ) }
 							size="tiny"
 							onClick={ () => {
-								const interactionId = extractString( value.value.interaction_id ) 
-								
-									onPlayInteraction( interactionId );
+								const interactionId = extractString( value.value.interaction_id );
+
+								onPlayInteraction( interactionId );
 							} }
 						>
 							<PlayerPlayIcon fontSize="tiny" />

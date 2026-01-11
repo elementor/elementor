@@ -6,7 +6,6 @@ import { __ } from '@wordpress/i18n';
 
 import { getInteractionsControl } from '../interactions-controls-registry';
 import type { InteractionItemValue } from '../types';
-import { generateTempInteractionId } from '../utils/temp-id-utils';
 import {
 	createAnimationPreset,
 	createString,
@@ -14,6 +13,7 @@ import {
 	extractNumber,
 	extractString,
 } from '../utils/prop-value-utils';
+import { generateTempInteractionId } from '../utils/temp-id-utils';
 import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';

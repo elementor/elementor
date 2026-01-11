@@ -2,9 +2,8 @@ import * as React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
 import { InteractionDetails } from '../components/interaction-details';
-
-import { createAnimationPreset, createString } from '../utils/prop-value-utils';
 import type { InteractionItemValue } from '../types';
+import { createAnimationPreset, createString } from '../utils/prop-value-utils';
 jest.mock( '../interactions-controls-registry', () => ( {
 	getInteractionsControl: jest.fn(),
 } ) );

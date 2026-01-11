@@ -9,7 +9,6 @@ import type {
 	StringPropValue,
 	TimingConfigPropValue,
 } from '../types';
-
 import { generateTempInteractionId } from './temp-id-utils';
 
 export const createString = ( value: string ): StringPropValue => ( {
