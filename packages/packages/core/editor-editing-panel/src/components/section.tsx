@@ -12,7 +12,7 @@ type Props = PropsWithChildren< {
 	defaultExpanded?: boolean;
 	titleEnd?: CollapsibleValue< ReactNode | string >;
 	unmountOnExit?: boolean;
-	action?: ReactNode;
+	action?: { component: ReactNode; onClick: () => void };
 } >;
 
 export function Section( { title, children, defaultExpanded = false, titleEnd, unmountOnExit = true, action }: Props ) {
@@ -21,7 +21,9 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 	const isDisabled = !! action;
 
 	const handleClick = () => {
-		if ( ! isDisabled ) {
+		if ( isDisabled ) {
+			action?.onClick();
+		} else {
 			setIsOpen( ! isOpen );
 		}
 	};
@@ -47,7 +49,7 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 					/>
 					{ getCollapsibleValue( titleEnd, isOpen ) }
 				</Stack>
-				{ action }
+				{ action?.component }
 				<CollapseIcon
 					open={ isOpen }
 					color="secondary"
