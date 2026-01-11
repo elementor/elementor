@@ -1,7 +1,7 @@
 import { isExperimentActive } from '@elementor/editor-v1-adapters';
 
-import { getSDK } from './utils/get-sdk';
 import { activateMcpRegistration } from './mcp-registry';
+import { getSDK } from './utils/get-sdk';
 import { isAngieAvailable } from './utils/is-angie-available';
 
 export function init() {
