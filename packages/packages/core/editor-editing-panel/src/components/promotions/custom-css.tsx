@@ -21,18 +21,27 @@ export const CustomCssSection = () => {
 			section={ {
 				name: 'Custom CSS',
 				title: __( 'Custom CSS', 'elementor' ),
-				action: (
-					<PromotionInfotip
-						title={ promotion?.title ?? '' }
-						content={ promotion?.content ?? '' }
-						assetUrl={ promotion?.image ?? '' }
-						ctaUrl={ promotion?.ctaUrl ?? '' }
-						open={ showInfoTip }
-						setOpen={ setShowInfoTip }
-					>
-						<PromotionChip onClick={ () => setShowInfoTip( true ) } />
-					</PromotionInfotip>
-				),
+				action: {
+					component: (
+						<PromotionInfotip
+							title={ promotion?.title ?? '' }
+							content={ promotion?.content ?? '' }
+							assetUrl={ promotion?.image ?? '' }
+							ctaUrl={ promotion?.ctaUrl ?? '' }
+							open={ showInfoTip }
+							onClose={ () => {
+								setShowInfoTip( false );
+							} }
+						>
+							<PromotionChip />
+						</PromotionInfotip>
+					),
+					onClick: () => {
+						if ( ! showInfoTip ) {
+							setShowInfoTip( true );
+						}
+					},
+				},
 			} }
 		/>
 	);
