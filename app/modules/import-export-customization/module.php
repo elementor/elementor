@@ -158,8 +158,13 @@ class Module extends BaseModule {
 		];
 
 		if ( $is_cloud_kits_available ) {
+			$return_to_url = Tools::get_url() . '#tab-import-export-kit';
+			$kit_library_url = add_query_arg(
+				[ 'return_to' => rawurlencode( $return_to_url ) ],
+				Plugin::$instance->app->get_base_url() . '#/kit-library/cloud'
+			);
 			$content_data['import']['button_secondary'] = [
-				'url' => Plugin::$instance->app->get_base_url() . '#/kit-library/cloud',
+				'url' => $kit_library_url,
 				'text' => esc_html__( 'Import from library', 'elementor' ),
 				'id' => 'elementor-import-export__import_from_library',
 			];

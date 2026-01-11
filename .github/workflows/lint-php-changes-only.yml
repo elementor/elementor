@@ -29,7 +29,7 @@ jobs:
 
   PHP-Linter:
     runs-on: ubuntu-22.04
-    needs: [ 'php-file-diff' ]
+    needs: ['php-file-diff']
     if: ${{ needs.php-file-diff.outputs.any_changed == 'true' || github.event.pull_request.title == null }}
     steps:
       - name: Checkout source code

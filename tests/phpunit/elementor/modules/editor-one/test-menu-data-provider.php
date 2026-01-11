@@ -204,7 +204,7 @@ class Test_Menu_Data_Provider extends Elementor_Test_Base {
 		$item->method( 'get_capability' )->willReturn( 'manage_options' );
 		$item->method( 'get_position' )->willReturn( 100 );
 		$item->method( 'is_visible' )->willReturn( true );
-		$item->method( 'get_parent_slug' )->willReturn( null );
+		$item->method( 'get_parent_slug' )->willReturn( '' );
 
 		return $item;
 	}
