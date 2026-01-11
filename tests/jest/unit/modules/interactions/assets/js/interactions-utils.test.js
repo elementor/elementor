@@ -2,6 +2,7 @@ import {
     getKeyframes,
     parseAnimationName,
     extractAnimationId,
+    extractInteractionId,
     getAnimateFunction,
     getInViewFunction,
     waitForAnimateFunction,
@@ -10,24 +11,6 @@ import {
 
 describe( 'interactions-utils', () => {
     describe( 'getKeyframes', () => {
-        let mockElement;
-
-        beforeEach( () => {
-            mockElement = {
-                getBoundingClientRect: jest.fn( () => ( {
-                    left: 100,
-                    right: 200,
-                    top: 50,
-                    bottom: 150,
-                    width: 100,
-                    height: 100,
-                } ) ),
-            };
-            window.innerWidth = 1920;
-            window.innerHeight = 1080;
-            document.documentElement.dir = 'ltr';
-        } );
-
         it( 'should generate fade in keyframes without direction', () => {
             const result = getKeyframes( 'fade', 'in', '' );
             expect( result ).toEqual( { opacity: [ 0, 1 ] } );
@@ -39,13 +22,19 @@ describe( 'interactions-utils', () => {
         } );
 
         it( 'should generate fade in keyframes with direction', () => {
-            const result = getKeyframes( 'fade', 'in', 'top', mockElement );
-            expect( result.opacity ).toEqual( [ 0, 0, 0.2, 0.6, 1 ] );
+            const result = getKeyframes( 'fade', 'in', 'top' );
+            expect( result ).toEqual( {
+                opacity: [ 0, 1 ],
+                y: [ -100, 0 ]
+            } );
         } );
 
         it( 'should generate fade out keyframes with direction', () => {
-            const result = getKeyframes( 'fade', 'out', 'bottom', mockElement );
-            expect( result.opacity ).toEqual( [ 1, 0.8, 0.4, 0, 0 ] );
+            const result = getKeyframes( 'fade', 'out', 'bottom' );
+            expect( result ).toEqual( {
+                opacity: [ 1, 0 ],
+                y: [ 0, 100 ]
+            } );
         } );
 
         it( 'should generate scale in keyframes', () => {
@@ -59,42 +48,36 @@ describe( 'interactions-utils', () => {
         } );
 
         it( 'should generate slide left keyframes', () => {
-            const result = getKeyframes( 'slide', 'in', 'left', mockElement );
-            expect( result.x ).toBeDefined();
-            expect( result.x[ 0 ] ).toBeLessThan( 0 );
-            expect( result.x[ 1 ] ).toBe( 0 );
+            const result = getKeyframes( 'slide', 'in', 'left' );
+            expect( result ).toEqual( { x: [ -100, 0 ] } );
         } );
 
         it( 'should generate slide right keyframes', () => {
-            const result = getKeyframes( 'slide', 'in', 'right', mockElement );
-            expect( result.x ).toBeDefined();
-            expect( result.x[ 0 ] ).toBeGreaterThan( 0 );
-            expect( result.x[ 1 ] ).toBe( 0 );
+            const result = getKeyframes( 'slide', 'in', 'right' );
+            expect( result ).toEqual( { x: [ 100, 0 ] } );
         } );
 
         it( 'should generate slide top keyframes', () => {
-            const result = getKeyframes( 'slide', 'in', 'top', mockElement );
-            expect( result.y ).toBeDefined();
-            expect( result.y[ 0 ] ).toBeLessThan( 0 );
-            expect( result.y[ 1 ] ).toBe( 0 );
+            const result = getKeyframes( 'slide', 'in', 'top' );
+            expect( result ).toEqual( { y: [ -100, 0 ] } );
         } );
 
         it( 'should generate slide bottom keyframes', () => {
-            const result = getKeyframes( 'slide', 'in', 'bottom', mockElement );
-            expect( result.y ).toBeDefined();
-            expect( result.y[ 0 ] ).toBeGreaterThan( 0 );
-            expect( result.y[ 1 ] ).toBe( 0 );
+            const result = getKeyframes( 'slide', 'in', 'bottom' );
+            expect( result ).toEqual( { y: [ 100, 0 ] } );
         } );
 
-        it( 'should use default slide distance when element is null', () => {
-            const result = getKeyframes( 'slide', 'in', 'left', null );
-            expect( result.x[ 0 ] ).toBeLessThan( 0 );
+        it( 'should generate slide out keyframes', () => {
+            const result = getKeyframes( 'slide', 'out', 'left' );
+            expect( result ).toEqual( { x: [ 0, -100 ] } );
         } );
 
         it( 'should handle RTL direction correctly', () => {
+            const originalDir = document.documentElement.dir;
             document.documentElement.dir = 'rtl';
-            const result = getKeyframes( 'slide', 'in', 'left', mockElement );
-            expect( result.x ).toBeDefined();
+            const result = getKeyframes( 'slide', 'in', 'left' );
+            expect( result ).toEqual( { x: [ -100, 0 ] } );
+            document.documentElement.dir = originalDir;
         } );
     } );
 
@@ -112,7 +95,7 @@ describe( 'interactions-utils', () => {
         } );
 
         it( 'should parse animation name without direction', () => {
-            const result = parseAnimationName( 'scrollIn-fade-out-500-0' );
+            const result = parseAnimationName( 'scrollIn-fade-out--500-0' );
             expect( result ).toEqual( {
                 trigger: 'scrollIn',
                 effect: 'fade',
@@ -129,7 +112,7 @@ describe( 'interactions-utils', () => {
         } );
 
         it( 'should use default delay when missing', () => {
-            const result = parseAnimationName( 'load-fade-in-300' );
+            const result = parseAnimationName( 'load-fade-in--300' );
             expect( result.delay ).toBe( 0 );
         } );
     } );
