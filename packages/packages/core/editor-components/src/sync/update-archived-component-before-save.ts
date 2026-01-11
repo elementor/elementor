@@ -10,12 +10,6 @@ const failedNotification = ( message: string ): NotificationData => ( {
 	id: 'failed-archived-components-notification',
 } );
 
-const successNotification = ( message: string ): NotificationData => ( {
-	type: 'success',
-	message: `Successfully archived components: ${ message }`,
-	id: 'success-archived-components-notification',
-} );
-
 export const updateArchivedComponentBeforeSave = async () => {
 	try {
 		const archivedComponents = selectArchivedComponents( getState() );
@@ -29,14 +23,9 @@ export const updateArchivedComponentBeforeSave = async () => {
 		);
 
 		const failedIds = result.failedIds.join( ', ' );
-		const successIds = result.successIds.join( ', ' );
 
 		if ( failedIds ) {
 			notify( failedNotification( failedIds ) );
-		}
-
-		if ( successIds ) {
-			notify( successNotification( successIds ) );
 		}
 	} catch ( error ) {
 		throw new Error( `Failed to update archived components: ${ error }` );

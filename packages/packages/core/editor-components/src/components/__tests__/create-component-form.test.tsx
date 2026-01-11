@@ -1,6 +1,9 @@
 import * as React from 'react';
+import { SnackbarProvider } from 'notistack';
 import { createMockElement, renderWithStore } from 'test-utils';
 import { getElementLabel, replaceElement, type V1ElementModelProps } from '@elementor/editor-elements';
+import { notify } from '@elementor/editor-notifications';
+import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __createStore, __dispatch, __registerSlice, type SliceState, type Store } from '@elementor/store';
 import { __getState as getState } from '@elementor/store';
 import { generateUniqueId } from '@elementor/utils';
@@ -9,17 +12,23 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { apiClient } from '../../api';
 import { selectComponents, slice } from '../../store/store';
+import { switchToComponent } from '../../utils/switch-to-component';
 import { CreateComponentForm } from '../create-component-form/create-component-form';
 
 jest.mock( '@elementor/editor-elements' );
 jest.mock( '../../api' );
 jest.mock( '@elementor/utils' );
 jest.mock( '@elementor/editor-v1-adapters' );
+jest.mock( '../../utils/switch-to-component' );
+jest.mock( '@elementor/editor-notifications' );
 
 const mockGetElementLabel = jest.mocked( getElementLabel );
 const mockGetComponents = jest.mocked( apiClient.get );
 const mockReplaceElement = jest.mocked( replaceElement );
 const mockGenerateUniqueId = jest.mocked( generateUniqueId );
+const mockRunCommand = jest.mocked( runCommand );
+const mockSwitchToComponent = jest.mocked( switchToComponent );
+const mockNotify = jest.mocked( notify );
 
 const mockElement: V1ElementModelProps = createMockElement( { model: { id: 'test-element' } } ).model.toJSON( {
 	remove: [ 'default' ],
@@ -27,6 +36,11 @@ const mockElement: V1ElementModelProps = createMockElement( { model: { id: 'test
 
 const GENERATED_UID = 'component-1763024534191-ojwasax';
 const EXISTING_COMPONENT_UID = 'component-1763024534191-v9kz881z';
+
+const EXISTING_COMPONENT_ID = 123;
+const PUBLISHED_COMPONENT_ID = 456;
+
+const CREATED_COMPONENT_INSTANCE_ID = 'test-component-instance-id';
 
 describe( 'CreateComponentForm', () => {
 	let store: Store< SliceState< typeof slice > >;
@@ -38,13 +52,26 @@ describe( 'CreateComponentForm', () => {
 
 		mockGetElementLabel.mockReturnValue( 'Div Block' );
 		mockGetComponents.mockReturnValue(
-			Promise.resolve( [ { name: 'Existing Component', id: 123, uid: EXISTING_COMPONENT_UID } ] )
+			Promise.resolve( [
+				{ name: 'Existing Component', id: EXISTING_COMPONENT_ID, uid: EXISTING_COMPONENT_UID },
+			] )
 		);
 		mockGenerateUniqueId.mockReturnValue( GENERATED_UID );
+		mockRunCommand.mockImplementation( ( command: string ) => {
+			if ( command === 'document/save/auto' ) {
+				__dispatch(
+					slice.actions.add( { id: PUBLISHED_COMPONENT_ID, name: 'My Test Component', uid: GENERATED_UID } )
+				);
+				__dispatch( slice.actions.resetUnpublished() );
+			}
+			return Promise.resolve();
+		} );
 
 		act( () => {
 			__dispatch(
-				slice.actions.load( [ { name: 'Existing Component', id: 123, uid: EXISTING_COMPONENT_UID } ] )
+				slice.actions.load( [
+					{ name: 'Existing Component', id: EXISTING_COMPONENT_ID, uid: EXISTING_COMPONENT_UID },
+				] )
 			);
 		} );
 	} );
@@ -68,7 +95,9 @@ describe( 'CreateComponentForm', () => {
 	const setupForm = () => {
 		renderWithStore(
 			<QueryClientProvider client={ queryClient }>
-				<CreateComponentForm />
+				<SnackbarProvider>
+					<CreateComponentForm />
+				</SnackbarProvider>
 			</QueryClientProvider>,
 			store
 		);
@@ -90,7 +119,7 @@ describe( 'CreateComponentForm', () => {
 			setupForm();
 
 			// Assert.
-			expect( screen.queryByText( 'Save as a component' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Create component' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'should open form when open-save-as-component-form event is dispatched', () => {
@@ -101,7 +130,7 @@ describe( 'CreateComponentForm', () => {
 			triggerOpenFormEvent();
 
 			// Assert.
-			expect( screen.getByText( 'Save as a component' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Create component' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should set component name from element label when form opens', () => {
@@ -216,7 +245,13 @@ describe( 'CreateComponentForm', () => {
 	} );
 
 	describe( 'Component Creation - Success Flow', () => {
-		it( 'should add component to local store', () => {
+		beforeEach( () => {
+			mockReplaceElement.mockResolvedValue(
+				createMockElement( { model: { id: CREATED_COMPONENT_INSTANCE_ID } } )
+			);
+		} );
+
+		it( 'should add component to local store', async () => {
 			// Arrange.
 			const { openForm, fillComponentName, getCreateButton } = setupForm();
 			const spyAddUnpublished = jest.spyOn( slice.actions, 'addUnpublished' );
@@ -227,17 +262,19 @@ describe( 'CreateComponentForm', () => {
 			fireEvent.click( getCreateButton() );
 
 			// Assert.
-			expect( spyAddUnpublished ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					uid: GENERATED_UID,
-					name: 'My Test Component',
-					elements: [ mockElement ],
-				} )
-			);
+			await waitFor( () => {
+				expect( spyAddUnpublished ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						uid: GENERATED_UID,
+						name: 'My Test Component',
+						elements: [ mockElement ],
+					} )
+				);
+			} );
 
 			expect( selectComponents( getState() ) ).toEqual( [
-				{ uid: GENERATED_UID, name: 'My Test Component' },
-				{ id: 123, name: 'Existing Component', uid: EXISTING_COMPONENT_UID },
+				{ id: PUBLISHED_COMPONENT_ID, name: 'My Test Component', uid: GENERATED_UID },
+				{ id: EXISTING_COMPONENT_ID, name: 'Existing Component', uid: EXISTING_COMPONENT_UID },
 			] );
 		} );
 
@@ -251,27 +288,47 @@ describe( 'CreateComponentForm', () => {
 			fireEvent.click( getCreateButton() );
 
 			// Assert.
-			expect( mockReplaceElement ).toHaveBeenCalledWith( {
-				currentElement: mockElement,
-				newElement: expect.objectContaining( {
-					elType: 'widget',
-					widgetType: 'e-component',
-					settings: expect.objectContaining( {
-						component_instance: {
-							$$type: 'component-instance',
-							value: {
-								component_id: {
-									$$type: 'number',
-									value: GENERATED_UID,
+			await waitFor( () => {
+				expect( mockReplaceElement ).toHaveBeenCalledWith( {
+					currentElement: mockElement,
+					newElement: expect.objectContaining( {
+						elType: 'widget',
+						widgetType: 'e-component',
+						settings: expect.objectContaining( {
+							component_instance: {
+								$$type: 'component-instance',
+								value: {
+									component_id: {
+										$$type: 'number',
+										value: GENERATED_UID,
+									},
 								},
 							},
-						},
+						} ),
+						editor_settings: expect.objectContaining( {
+							component_uid: GENERATED_UID,
+						} ),
 					} ),
-					editor_settings: expect.objectContaining( {
-						component_uid: GENERATED_UID,
-					} ),
-				} ),
-				withHistory: false,
+					withHistory: false,
+				} );
+			} );
+		} );
+
+		it( 'should enter component edit mode after successful creation', async () => {
+			// Arrange.
+			const { openForm, fillComponentName, getCreateButton } = setupForm();
+			openForm();
+
+			// Act.
+			fillComponentName( 'My Test Component' );
+			fireEvent.click( getCreateButton() );
+
+			// Assert.
+			await waitFor( () => {
+				expect( mockSwitchToComponent ).toHaveBeenCalledWith(
+					PUBLISHED_COMPONENT_ID,
+					CREATED_COMPONENT_INSTANCE_ID
+				);
 			} );
 		} );
 
@@ -286,7 +343,11 @@ describe( 'CreateComponentForm', () => {
 
 			// Assert.
 			await waitFor( () => {
-				expect( screen.getByText( /Component saved successfully/ ) ).toBeInTheDocument();
+				expect( mockNotify ).toHaveBeenCalledWith( {
+					type: 'success',
+					message: 'Component created successfully.',
+					id: `component-saved-successfully-${ GENERATED_UID }`,
+				} );
 			} );
 		} );
 
@@ -301,7 +362,7 @@ describe( 'CreateComponentForm', () => {
 
 			// Assert.
 			await waitFor( () => {
-				expect( screen.queryByText( 'Save as a component' ) ).not.toBeInTheDocument();
+				expect( screen.queryByText( 'Create component' ) ).not.toBeInTheDocument();
 			} );
 		} );
 	} );
@@ -322,7 +383,11 @@ describe( 'CreateComponentForm', () => {
 
 			// Assert.
 			await waitFor( () => {
-				expect( screen.getByText( 'Failed to save component. Please try again.' ) ).toBeInTheDocument();
+				expect( mockNotify ).toHaveBeenCalledWith( {
+					type: 'error',
+					message: 'Failed to create component. Please try again.',
+					id: 'component-save-failed',
+				} );
 			} );
 		} );
 	} );
@@ -338,7 +403,7 @@ describe( 'CreateComponentForm', () => {
 
 			// Assert.
 			await waitFor( () => {
-				expect( screen.queryByText( 'Save as a component' ) ).not.toBeInTheDocument();
+				expect( screen.queryByText( 'Create component' ) ).not.toBeInTheDocument();
 			} );
 		} );
 

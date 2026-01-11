@@ -7,6 +7,8 @@ import {
 	type ElementType,
 	type ElementView,
 	type LegacyWindow,
+	type NamespacedRenderContext,
+	type RenderContext,
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
 import { __getState as getState } from '@elementor/store';
@@ -15,7 +17,7 @@ import { __ } from '@wordpress/i18n';
 import { apiClient } from './api';
 import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
 import { type ComponentsSlice, selectComponentByUid } from './store/store';
-import { type ExtendedWindow } from './types';
+import { type ComponentRenderContext, type ExtendedWindow } from './types';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
@@ -41,6 +43,7 @@ type ContextMenuGroup = {
 
 type ComponentModel = ElementModel & {
 	componentId?: number | string;
+	isGlobal: boolean;
 };
 
 type ComponentModelInstance = BackboneModel< ComponentModel > & {
@@ -81,13 +84,15 @@ export function createComponentType(
 	const legacyWindow = window as unknown as LegacyWindow;
 	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
 
+	const view = createComponentView( { ...options } );
+
 	return class extends WidgetType {
 		getType() {
 			return options.type;
 		}
 
 		getView() {
-			return createComponentView( { ...options } );
+			return view;
 		}
 
 		getModel(): BackboneModelConstructor< ComponentModel > {
@@ -104,11 +109,42 @@ function createComponentView(
 	return class extends createTemplatedElementView( options ) {
 		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
 		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
+		#componentRenderContext: ComponentRenderContext | undefined;
 
 		isComponentCurrentlyEdited() {
 			const currentDocument = getCurrentDocument();
 
 			return currentDocument?.id === this.getComponentId();
+		}
+
+		getRenderContext(): NamespacedRenderContext | undefined {
+			const namespaceKey = this.getNamespaceKey();
+			const parentContext = this._parent?.getRenderContext?.();
+			const parentComponentContext = parentContext?.[ namespaceKey ];
+
+			if ( ! this.#componentRenderContext ) {
+				return parentContext;
+			}
+
+			const ownOverrides = this.#componentRenderContext.overrides ?? {};
+			const parentOverrides = parentComponentContext?.overrides ?? {};
+
+			return {
+				...parentContext,
+				[ namespaceKey ]: {
+					overrides: {
+						...parentOverrides,
+						...ownOverrides,
+					},
+				},
+			};
+		}
+
+		getResolverRenderContext(): RenderContext | undefined {
+			const namespaceKey = this.getNamespaceKey();
+			const context = this.getRenderContext();
+
+			return context?.[ namespaceKey ];
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
@@ -120,6 +156,10 @@ function createComponentView(
 				| undefined;
 
 			if ( componentInstance ) {
+				this.#componentRenderContext = {
+					overrides: componentInstance.overrides ?? {},
+				};
+
 				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection(
 					componentInstance.elements
 				);
@@ -293,6 +333,8 @@ function createComponentModel(): BackboneModelConstructor< ComponentModel > {
 					this.set( 'componentId', componentId );
 				}
 			}
+
+			this.set( 'isGlobal', true );
 		},
 
 		getTitle( this: ComponentModelInstance ): string {

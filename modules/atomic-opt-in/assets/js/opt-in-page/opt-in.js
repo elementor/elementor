@@ -153,7 +153,7 @@ export const OptIn = ( { state } ) => {
 			gap: 3,
 			flexDirection: { xs: 'column-reverse', md: 'row' },
 		} }>
-			<Stack sx={ { flex: 1, maxWidth: { md: '507px', sm: '600px' }, gap: 2.5, mx: 'auto' } }>
+			<Stack sx={ { flex: 1, maxWidth: { md: '580px', sm: '600px' }, gap: 2.5, mx: 'auto' } }>
 				<Stack direction="row" alignItems="center" gap={ 1 }>
 					<TextNode variant="h4" width="fit-content">{ i18n.title }</TextNode>
 					<Chip size="small" color="secondary" variant="filled" label={ i18n.chip } />

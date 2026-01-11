@@ -1,10 +1,12 @@
-export type UnbrandedTransformer< TValue > = (
-	value: TValue,
-	options: {
-		key: string;
-		signal?: AbortSignal;
-	}
-) => unknown;
+import { type RenderContext } from '../legacy/types';
+
+export type TransformerOptions< TContext extends RenderContext = RenderContext > = {
+	key: string;
+	signal?: AbortSignal;
+	renderContext?: TContext;
+};
+
+export type UnbrandedTransformer< TValue > = ( value: TValue, options: TransformerOptions ) => unknown;
 
 export type Transformer< TValue > = UnbrandedTransformer< TValue > & {
 	__transformer: true;

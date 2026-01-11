@@ -1,14 +1,22 @@
 import { Dialog } from '@elementor/app-ui';
 import { useTracking } from '../context/tracking-context';
+import useQueryParams from 'elementor-app/hooks/use-query-params';
 
 export default function KitAlreadyAppliedDialog( props ) {
 	const tracking = useTracking();
+	const { return_to: returnToParam, no_automatic_redirect: noAutomaticRedirectParam } = useQueryParams().getAll();
 
 	const getRemoveKitUrl = () => {
 		const elementorToolsUrl = elementorAppConfig[ 'import-export' ].tools_url;
 		const url = new URL( elementorToolsUrl );
 		url.searchParams.append( 'referrer_kit', props.id );
 		url.searchParams.append( 'scroll_to_revert', '1' );
+		if ( returnToParam ) {
+			url.searchParams.append( 'return_to', returnToParam );
+		}
+		if ( noAutomaticRedirectParam ) {
+			url.searchParams.append( 'no_automatic_redirect', noAutomaticRedirectParam );
+		}
 		url.hash = 'tab-import-export-kit';
 
 		return url.toString();
