@@ -12,6 +12,10 @@ type Props = PropsWithChildren< {
 	defaultExpanded?: boolean;
 	titleEnd?: CollapsibleValue< ReactNode | string >;
 	unmountOnExit?: boolean;
+<<<<<<< HEAD
+=======
+	action?: { component: ReactNode; onClick: () => void };
+>>>>>>> 0a3623cb2b (Fix: Promotions triggers [ED-22272] (#34119))
 } >;
 
 export function Section( { title, children, defaultExpanded = false, titleEnd, unmountOnExit = true }: Props ) {
@@ -19,7 +23,15 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 	const ref = useRef< HTMLElement >( null );
 
 	const handleClick = () => {
+<<<<<<< HEAD
 		setIsOpen( ! isOpen );
+=======
+		if ( isDisabled ) {
+			action?.onClick();
+		} else {
+			setIsOpen( ! isOpen );
+		}
+>>>>>>> 0a3623cb2b (Fix: Promotions triggers [ED-22272] (#34119))
 	};
 
 	const id = useId();
@@ -43,7 +55,18 @@ export function Section( { title, children, defaultExpanded = false, titleEnd, u
 					/>
 					{ getCollapsibleValue( titleEnd, isOpen ) }
 				</Stack>
+<<<<<<< HEAD
 				<CollapseIcon open={ isOpen } color="secondary" fontSize="tiny" />
+=======
+				{ action?.component }
+				<CollapseIcon
+					open={ isOpen }
+					color="secondary"
+					fontSize="tiny"
+					disabled={ isDisabled }
+					sx={ { ml: 1 } }
+				/>
+>>>>>>> 0a3623cb2b (Fix: Promotions triggers [ED-22272] (#34119))
 			</ListItemButton>
 			<Collapse
 				id={ contentId }
