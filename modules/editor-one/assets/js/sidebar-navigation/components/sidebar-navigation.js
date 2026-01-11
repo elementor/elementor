@@ -8,11 +8,11 @@ import { SidebarHeader } from './header';
 import { SidebarMenu } from './menu';
 import { CollapseButton, NavContainer, ScrollableContent, SiteIconBox, CollapsedHeaderContainer } from './shared';
 import { useSidebarCollapse } from './hooks/use-sidebar-collapse';
-import { useSidebarPosition } from './hooks/use-sidebar-position';
+import { useAdminMenuOffset } from './hooks/use-admin-menu-offset';
 
 const SidebarNavigation = ( { config } ) => {
 	const { isCollapsed, toggleCollapse } = useSidebarCollapse();
-	useSidebarPosition();
+	useAdminMenuOffset();
 
 	if ( isCollapsed ) {
 		return (

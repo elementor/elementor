@@ -9,5 +9,9 @@
 	--editor-one-sidebar-bg: #fff;
 	--editor-one-sidebar-content-padding: 20px;
 	--editor-one-sidebar-transition: width 0.3s ease-in-out, padding-inline-start 0.3s ease-in-out, margin-inline-start 0.3s ease-in-out;
+
+	&.folded {
+		--editor-one-sidebar-left-offset: var(--editor-one-sidebar-left-offset-collapsed);
+	}
 }
 
