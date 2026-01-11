@@ -45,13 +45,14 @@ function cleanInteractionIds( elementId: ElementID ) {
 
 	updatedInteractions?.items?.forEach( ( interaction ) => {
 		if ( interaction.$$type === 'interaction-item' && interaction.value ) {
-			const existingId = interaction.value.interaction_id 
-				? extractString( interaction.value.interaction_id ) 
-				: null;
+			// const existingId = interaction.value.interaction_id 
+			// 	? extractString( interaction.value.interaction_id ) 
+			// 	: null;
 
-			if ( ! existingId ) {
-				interaction.value.interaction_id = createString( generateTempInteractionId() );
-			}
+			// if ( ! existingId ) {
+			// 	interaction.value.interaction_id = createString( generateTempInteractionId() );
+			// }
+			interaction.value.interaction_id = createString( generateTempInteractionId() );
 		}
 	} );
 

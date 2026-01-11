@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { renderHook, act } from '@testing-library/react';
 import { InteractionsProvider, useInteractionsContext } from '../contexts/interactions-context';
-import { playElementInteractions, updateElementInteractions, useElementInteractions } from '@elementor/editor-elements';
+import { playElementInteractions, useElementInteractions } from '@elementor/editor-elements';
 
 jest.mock( '@elementor/editor-elements' );
 
