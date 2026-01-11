@@ -12,6 +12,7 @@ type PropertyItemProps = {
 	sortableTriggerProps: SortableTriggerProps;
 	isDragPlaceholder?: boolean;
 	groups: { value: string; label: string }[];
+	existingLabels: string[];
 	onDelete: ( propKey: string ) => void;
 	onUpdate: ( data: { label: string; group: string | null } ) => void;
 };
@@ -21,6 +22,7 @@ export function PropertyItem( {
 	sortableTriggerProps,
 	isDragPlaceholder,
 	groups,
+	existingLabels,
 	onDelete,
 	onUpdate,
 }: PropertyItemProps ) {
@@ -99,6 +101,7 @@ export function PropertyItem( {
 					onSubmit={ handleSubmit }
 					currentValue={ prop }
 					groups={ groups }
+					existingLabels={ existingLabels }
 					sx={ { width: '100%' } }
 				/>
 			</Popover>

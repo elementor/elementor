@@ -47,7 +47,7 @@ class Getting_Started_Menu_Item implements Admin_Menu_Item_With_Page {
 					<div class="e-getting-started__header">
 						<div class="e-getting-started__title">
 							<div class="e-logo-wrapper">
-								<i class="eicon-elementor"></i>
+								<i class="eicon-elementor-circle"></i>
 							</div>
 							<?php echo esc_html__( 'Getting Started', 'elementor' ); ?>
 						</div>
