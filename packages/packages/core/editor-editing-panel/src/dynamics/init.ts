@@ -12,14 +12,18 @@ import {
 import { DynamicSelectionControl } from './components/dynamic-selection-control';
 import { dynamicTransformer } from './dynamic-transformer';
 import { usePropDynamicAction } from './hooks/use-prop-dynamic-action';
-import { isDynamicPropValue } from './utils';
+import { filterUnsupportedDynamicSettings, isDynamicPropValue } from './utils';
 
 const { registerPopoverAction } = controlActionsMenu;
 
 export const init = () => {
+	filterUnsupportedDynamicSettings();
+
 	registerControlReplacement( {
 		component: DynamicSelectionControl,
-		condition: ( { value } ) => isDynamicPropValue( value ),
+		condition: ( { value } ) => {
+			return isDynamicPropValue( value );
+		},
 	} );
 
 	injectIntoRepeaterItemLabel( {

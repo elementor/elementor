@@ -1,15 +1,35 @@
+import { type ExtendedWindow, SETTINGS_FILTER_NAME } from '@elementor/editor-elements';
 import {
+	type ArrayPropValue,
 	createPropUtils,
 	isTransformable,
+	type ObjectPropValue,
+	type PropsSchema,
 	type PropType,
 	type PropValue,
 	type TransformablePropType,
+	type TransformablePropValue,
 } from '@elementor/editor-props';
+import { __privateListenTo as listenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 import { z } from '@elementor/schema';
 
-import { type DynamicPropType } from './types';
+import { getAtomicDynamicTags } from './sync/get-atomic-dynamic-tags';
+import { type DynamicPropType, type DynamicTags } from './types';
 
 const DYNAMIC_PROP_TYPE_KEY = 'dynamic';
+
+export const dynamicPropTypeUtil = createPropUtils(
+	DYNAMIC_PROP_TYPE_KEY,
+	z.strictObject( {
+		name: z.string(),
+		group: z.string(),
+		settings: z.any().optional(),
+	} )
+);
+
+export type DynamicPropValue = z.infer< typeof dynamicPropTypeUtil.schema >;
+
+const extendedWindow = window as unknown as ExtendedWindow;
 
 const isDynamicPropType = ( prop: TransformablePropType ): prop is DynamicPropType =>
 	prop.key === DYNAMIC_PROP_TYPE_KEY;
@@ -28,13 +48,77 @@ export const supportsDynamic = ( propType: PropType ): boolean => {
 	return !! getDynamicPropType( propType );
 };
 
-export const dynamicPropTypeUtil = createPropUtils(
-	DYNAMIC_PROP_TYPE_KEY,
-	z.strictObject( {
-		name: z.string(),
-		group: z.string(),
-		settings: z.any().optional(),
-	} )
-);
+export const filterUnsupportedDynamicSettings = () => {
+	listenTo( v1ReadyEvent(), () => {
+		const tags = getAtomicDynamicTags()?.tags ?? {};
 
-export type DynamicPropValue = z.infer< typeof dynamicPropTypeUtil.schema >;
+		extendedWindow.elementor?.hooks?.addFilter?.(
+			SETTINGS_FILTER_NAME,
+			( setting: PropsSchema[ string ] | null ) => {
+				return getNormalizedDynamicSettings( setting, tags );
+			}
+		);
+	} );
+};
+
+export const scanSettingForDynamics = (
+	value: TransformablePropValue< string > | null,
+	tags: DynamicTags
+): TransformablePropValue< string > | null => {
+	return getNormalizedDynamicSettings( value, tags ) as TransformablePropValue< string > | null;
+};
+
+export const getNormalizedDynamicSettings = < T extends PropsSchema[ string ] | PropValue | null >(
+	value: T,
+	tags: DynamicTags
+): T | null => {
+	if ( ! value ) {
+		return null;
+	}
+
+	if ( isDynamicPropValue( value ) ) {
+		return tags[ value?.value?.name ] ? value : null;
+	}
+
+	if ( isObjectPropValue( value ) ) {
+		return evaluateObjectPropValue( value, tags ) as T;
+	}
+
+	if ( isArrayPropValue( value ) ) {
+		return evaluateArrayPropValue( value, tags ) as T;
+	}
+
+	return value ?? null;
+};
+
+const evaluateObjectPropValue = ( objectValue: ObjectPropValue, tags: DynamicTags ) => {
+	const value = { ...objectValue.value };
+
+	for ( const key in value ) {
+		const innerValue = value[ key ];
+
+		value[ key ] = getNormalizedDynamicSettings( innerValue, tags );
+	}
+
+	return { ...objectValue, value };
+};
+
+const evaluateArrayPropValue = ( arrayValue: ArrayPropValue, tags: DynamicTags ) => {
+	const value = [ ...arrayValue.value ];
+
+	for ( let index = 0; index < value.length; index++ ) {
+		const innerValue = value[ index ];
+
+		value[ index ] = getNormalizedDynamicSettings( innerValue, tags );
+	}
+
+	return { ...arrayValue, value };
+};
+
+const isObjectPropValue = ( value: PropValue ): value is ObjectPropValue => {
+	return isTransformable( value ) && typeof value.value === 'object' && ! Array.isArray( value.value );
+};
+
+const isArrayPropValue = ( value: PropValue ): value is ArrayPropValue => {
+	return isTransformable( value ) && Array.isArray( value.value );
+};

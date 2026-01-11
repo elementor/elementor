@@ -18,6 +18,10 @@ export type ExtendedWindow = Window & {
 			getCurrentId?: () => number;
 		};
 		getContainer?: ( id: string ) => V1Element | undefined;
+		hooks?: {
+			applyFilters?: < T >( filterName: string, data: T, ...args: unknown[] ) => T;
+			addFilter?: < T >( filterName: string, callback: ( data: T, ...args: unknown[] ) => T ) => void;
+		};
 	};
 	elementorCommon?: {
 		helpers?: {
