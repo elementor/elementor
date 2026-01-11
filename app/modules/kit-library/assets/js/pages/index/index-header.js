@@ -3,6 +3,7 @@ import { ModalProvider, Heading, Text, Button } from '@elementor/app-ui';
 import { useMemo, useState, useRef } from 'react';
 import { useNavigate } from '@reach/router';
 import PopoverDialog from 'elementor-app/ui/popover-dialog/popover-dialog';
+import { useReturnTo } from '../../context/return-to-context';
 
 import './index-header.scss';
 
@@ -10,6 +11,7 @@ export default function IndexHeader( props ) {
 	const navigate = useNavigate();
 	const [ isInfoModalOpen, setIsInfoModalOpen ] = useState( false );
 	const importRef = useRef();
+	const returnTo = useReturnTo();
 	const shouldShowImportButton = elementorAppConfig.user.is_administrator || ( elementorAppConfig.user.restrictions?.includes( 'json-upload' ) ?? false );
 	const buttons = useMemo( () => [
 		{
@@ -37,10 +39,14 @@ export default function IndexHeader( props ) {
 			icon: 'eicon-upload-circle-o',
 			elRef: importRef,
 			onClick: () => {
-				navigate( '/import?referrer=kit-library' );
+				let importUrl = '/import?referrer=kit-library';
+				if ( returnTo ) {
+					importUrl += `&return_to=${ encodeURIComponent( returnTo ) }`;
+				}
+				navigate( importUrl );
 			},
 		},
-	], [ props.isFetching, props.refetch, shouldShowImportButton, navigate ] );
+	], [ props.isFetching, props.refetch, shouldShowImportButton, navigate, returnTo ] );
 
 	return (
 		<>
