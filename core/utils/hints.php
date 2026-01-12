@@ -5,6 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+use Elementor\Plugin;
 use Elementor\User;
 use Elementor\Utils;
 use Elementor\Core\Admin\Admin_Notices;
@@ -448,43 +449,72 @@ class Hints {
 		return ! empty( get_option( $option_prefix . '_access_token' ) );
 	}
 
-	private static function get_all_widget_content( $step ) {
-		$steps = [
-			self::INSTALL => esc_html__( 'Install Ally to add an accessibility widget visitors can use to navigate your site.', 'elementor' ),
-			self::ACTIVATE => esc_html__( 'Activate the Ally plugin to turn its accessibility features on across your site.', 'elementor' ),
-			self::CONNECT => esc_html__( "Connect the Ally plugin to your account to access all of it's accessibility features.", 'elementor' ),
-			self::CUSTOMIZE => esc_html__( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' ),
-		];
+	public static function is_plugin_connected_to_one_subscription(): bool {
+		$has_one_subscription = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
+
+		if ( ! $has_one_subscription ) {
+			return false;
+		}
+
+		return self::is_plugin_connected( 'elementor_one' );
+	}
+
+	private static function get_all_widget_content( $step, $one_subscription = false ) {
+		if ( $one_subscription ) {
+			$steps = [
+				self::INSTALL => esc_html__( 'Want to create an inclusive experience? Install Ally, included in ONE, and add an accessibility widget to your site.', 'elementor' ),
+				self::ACTIVATE => esc_html__( 'Your ONE subscription includes Ally. Activate it to place an accessibility widget on your site.', 'elementor' ),
+				self::CONNECT => esc_html__( "Connect the Ally plugin to your account to access all of it's accessibility features.", 'elementor' ),
+				self::CUSTOMIZE => esc_html__( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' ),
+			];
+		} else {
+			$steps = [
+				self::INSTALL => esc_html__( 'Install Ally to add an accessibility widget visitors can use to navigate your site.', 'elementor' ),
+				self::ACTIVATE => esc_html__( 'Activate the Ally plugin to turn its accessibility features on across your site.', 'elementor' ),
+				self::CONNECT => esc_html__( "Connect the Ally plugin to your account to access all of it's accessibility features.", 'elementor' ),
+				self::CUSTOMIZE => esc_html__( "Customize the widget's look, position and the capabilities available for your visitors.", 'elementor' ),
+			];
+		}
 		return $steps[ $step ];
 	}
 
 	private static function get_all_widget_action_button( $step ) {
 		$steps = [
-			self::INSTALL => esc_html__( 'install Now', 'elementor' ),
-			self::ACTIVATE => esc_html__( 'Activate', 'elementor' ),
-			self::CONNECT => esc_html__( 'Connect', 'elementor' ),
+			self::INSTALL => esc_html__( 'Install now', 'elementor' ),
+			self::ACTIVATE => esc_html__( 'Activate now', 'elementor' ),
+			self::CONNECT => esc_html__( 'Connect now', 'elementor' ),
 			self::CUSTOMIZE => esc_html__( 'Customize', 'elementor' ),
 		];
 		return $steps[ $step ];
 	}
 
-	private static function get_all_widget_action_url( $step ) {
+	private static function get_all_widget_action_url( $step, $one_subscription = false ) {
 		if ( in_array( $step, [ self::INSTALL, self::ACTIVATE ], true ) ) {
-			$campaign_data = [
-				'name' => 'elementor_ea11y_campaign',
-				'campaign' => 'acc-usability-widget-plg-ally',
-				'source' => 'editor-ally-widget',
-				'medium' => 'editor',
-			];
+			$action = ( self::INSTALL === $step ? 'install' : 'activate' );
+			if ( $one_subscription ) {
+				$campaign_data = [
+					'name' => 'elementor_ea11y_campaign',
+					'campaign' => 'acc-usability-widget-plg-ally-one-' . $action,
+					'source' => 'editor-ally-widget-one-' . $action,
+					'medium' => 'editor-one',
+				];
+			} else {
+				$campaign_data = [
+					'name' => 'elementor_ea11y_campaign',
+					'campaign' => 'acc-usability-widget-plg-ally',
+					'source' => 'editor-ally-widget',
+					'medium' => 'editor',
+				];
+			}
 			return Admin_Notices::add_plg_campaign_data( self::get_plugin_action_url( 'pojo-accessibility' ), $campaign_data );
 		}
 		return self::CONNECT === $step ? admin_url( 'admin.php?page=accessibility-settings' ) : admin_url( 'admin.php?page=accessibility-settings#design' );
 	}
 
-	private static function get_ally_cta_button( $step ) {
+	private static function get_ally_cta_button( $step, $one_subscription = false ) {
 		return [
 			'text' => self::get_all_widget_action_button( $step ),
-			'url' => self::get_all_widget_action_url( $step ),
+			'url' => self::get_all_widget_action_url( $step, $one_subscription ),
 			'classes' => [ 'elementor-button' ],
 		];
 	}
@@ -494,6 +524,7 @@ class Hints {
 		$is_installed = self::is_plugin_installed( $plugin_slug );
 		$is_active = self::is_plugin_active( $plugin_slug );
 		$is_connected = self::is_plugin_connected( 'ea11y' );
+		$one_subscription = self::is_plugin_connected_to_one_subscription();
 
 		if ( ! $is_installed ) {
 			$step = self::INSTALL;
@@ -507,8 +538,8 @@ class Hints {
 
 		$data = [
 			'title' => __( 'Ally web accessibility', 'elementor' ),
-			'content' => self::get_all_widget_content( $step ),
-			'action_button' => self::get_ally_cta_button( $step ),
+			'content' => self::get_all_widget_content( $step, $one_subscription ),
+			'action_button' => self::get_ally_cta_button( $step, $one_subscription ),
 		];
 
 		return $data;

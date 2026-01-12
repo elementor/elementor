@@ -24,23 +24,39 @@ export const SiteIconBox = styled( Box )( ( { theme } ) => ( {
 	},
 } ) );
 
-export const CollapseButton = styled( IconButton )( ( { theme } ) => ( {
-	position: 'absolute',
-	insetInlineEnd: -28,
-	bottom: -12,
-	width: 24,
-	height: 24,
-	backgroundColor: theme.palette.background.paper,
-	border: `1px solid ${ theme.palette.divider }`,
-	color: theme.palette.action.active,
-	zIndex: 1,
-	'&:hover': {
+export const CollapseButton = styled( IconButton, {
+	shouldForwardProp: ( prop ) => prop !== 'expanded',
+} )( ( { theme, expanded } ) => {
+	const isRtl = 'rtl' === theme.direction;
+	let transform = 'none';
+
+	if ( expanded && isRtl ) {
+		transform = 'rotate(180deg) scaleX(-1)';
+	} else if ( expanded ) {
+		transform = 'rotate(180deg)';
+	} else if ( isRtl ) {
+		transform = 'scaleX(-1)';
+	}
+
+	return {
+		position: 'absolute',
+		insetInlineEnd: -28,
+		bottom: -12,
+		width: 24,
+		height: 24,
 		backgroundColor: theme.palette.background.paper,
-	},
-	'& svg': {
-		fontSize: 16,
-	},
-} ) );
+		border: `1px solid ${ theme.palette.divider }`,
+		color: theme.palette.action.active,
+		zIndex: 1,
+		'&:hover': {
+			backgroundColor: theme.palette.background.paper,
+		},
+		'& svg': {
+			fontSize: 16,
+			transform,
+		},
+	};
+} );
 
 export const ScrollableContent = styled( Box )( {
 	flex: 1,
@@ -58,11 +74,16 @@ export const MenuItemButton = styled( ListItemButton )( ( { theme } ) => ( {
 	marginBottom: 0,
 	paddingBottom: theme.spacing( 0.5 ),
 	whiteSpace: 'nowrap',
+	justifyContent: 'center',
+	borderRadius: 4,
 } ) );
 
 export const MenuIcon = styled( ListItemIcon )( ( { theme } ) => ( {
-	minWidth: 28,
+	minWidth: 'auto',
 	color: theme.palette.text.primary,
+	margin: 0,
+	display: 'flex',
+	justifyContent: 'center',
 	'& svg': {
 		fontSize: 20,
 	},
@@ -73,6 +94,7 @@ export const ChildMenuItemButton = styled( ListItemButton )( ( { theme } ) => ( 
 	paddingRight: theme.spacing( 2 ),
 	minHeight: 32,
 	whiteSpace: 'nowrap',
+	borderRadius: 4,
 } ) );
 
 export const ChildListItem = styled( ListItem )( {
@@ -137,6 +159,7 @@ export const PopoverListItemButton = styled( ListItemButton )( ( { theme } ) => 
 	paddingRight: theme.spacing( 2 ),
 	paddingTop: theme.spacing( 0.5 ),
 	paddingBottom: theme.spacing( 0.5 ),
+	borderRadius: 4,
 } ) );
 
 export const StyledPopover = styled( Popover )( ( { theme } ) => ( {

@@ -83,6 +83,7 @@ const MOCK_ORIGIN_OVERRIDABLE_PROP = {
 	propKey: 'title',
 	widgetType: 'e-text',
 	elType: 'widget',
+	elementId: 'test-123',
 };
 
 const MOCK_OVERRIDABLE_PROPS = {
@@ -124,6 +125,28 @@ const MOCK_OVERRIDABLE_PROPS = {
 			settings: { id: 'settings', label: 'Settings', props: [ 'prop-3' ] },
 		},
 		order: [ 'content', 'settings' ],
+	},
+};
+
+const MOCK_OVERRIDABLE_PROPS_WITH_EMPTY_GROUP = {
+	props: {
+		'prop-1': {
+			overrideKey: 'prop-1',
+			label: 'Title',
+			elementId: 'element-1',
+			propKey: 'title',
+			widgetType: 'e-heading',
+			elType: 'widget',
+			groupId: 'content',
+			originValue: { $$type: 'string', value: 'Hello' },
+		},
+	},
+	groups: {
+		items: {
+			content: { id: 'content', label: 'Content', props: [ 'prop-1' ] },
+			empty: { id: 'empty', label: 'Empty Group', props: [] },
+		},
+		order: [ 'content', 'empty' ],
 	},
 };
 
@@ -351,12 +374,40 @@ describe( '<InstanceEditingPanel />', () => {
 		expect( screen.getByText( 'Title' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Nested Component Title' ) ).toBeInTheDocument();
 	} );
+
+	it( 'should not display groups that have no props', () => {
+		// Arrange.
+		setupComponent( { isWithOverridableProps: true, isWithEmptyGroup: true } );
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'Empty Group' ) ).not.toBeInTheDocument();
+	} );
 } );
 
-function setupComponent( options: { isWithOverridableProps?: boolean; isWithNestedOverridableProps?: boolean } = {} ) {
-	const { isWithOverridableProps = true, isWithNestedOverridableProps = false } = options;
+type SetupComponentOptions = {
+	isWithOverridableProps?: boolean;
+	isWithNestedOverridableProps?: boolean;
+	isWithEmptyGroup?: boolean;
+};
 
-	const overridableProps = isWithNestedOverridableProps ? MOCK_OVERRIDABLE_PROPS_WITH_NESTED : MOCK_OVERRIDABLE_PROPS;
+function setupComponent( options: SetupComponentOptions = {} ) {
+	const { isWithOverridableProps = true, isWithNestedOverridableProps = false, isWithEmptyGroup = false } = options;
+
+	const getOverridableProps = () => {
+		if ( isWithNestedOverridableProps ) {
+			return MOCK_OVERRIDABLE_PROPS_WITH_NESTED;
+		}
+		if ( isWithEmptyGroup ) {
+			return MOCK_OVERRIDABLE_PROPS_WITH_EMPTY_GROUP;
+		}
+		return MOCK_OVERRIDABLE_PROPS;
+	};
+
+	const overridableProps = getOverridableProps();
 
 	const componentData = {
 		id: MOCK_COMPONENT_ID,
