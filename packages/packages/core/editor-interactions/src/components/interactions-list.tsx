@@ -23,14 +23,17 @@ export function InteractionsList( props: InteractionListProps ) {
 	const [ interactionsState, setInteractionsState ] = useState< ElementInteractions >( interactions );
 	const hasInitialized = useRef( false );
 
-
 	useEffect( () => {
 		setInteractionsState( interactions );
 		hasInitialized.current = false;
 	}, [ interactions ] );
 
 	useEffect( () => {
-		if ( triggerCreateOnShowEmpty && ! hasInitialized.current && ( ! interactionsState.items || interactionsState.items?.length === 0 ) ) {
+		if (
+			triggerCreateOnShowEmpty &&
+			! hasInitialized.current &&
+			( ! interactionsState.items || interactionsState.items?.length === 0 )
+		) {
 			hasInitialized.current = true;
 			const newState = {
 				version: 1,
