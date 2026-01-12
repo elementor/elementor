@@ -48,6 +48,7 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 
 	public function test_migrate_real_site_data_with_multiple_prop_types() {
 		$this->markTestSkipped( 'Test disabled: widget registration pollutes global state and breaks other tests. Needs investigation into proper isolation strategy.' );
+		return;
 		// Arrange
 		$data = json_decode(
 			file_get_contents( $this->fixtures_path . 'old-schema-data.json' ),
