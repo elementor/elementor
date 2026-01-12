@@ -41,7 +41,7 @@ class Sidebar_Navigation_Handler {
 		$classes .= ' e-has-sidebar-navigation';
 
 		if ( Menu_Config::is_wp_one_package_available() ) {
-			$classes .= ' e-has-elementor-home-menu';
+			$classes .= ' e-has-wp-one-package';
 		}
 
 		return $classes;
