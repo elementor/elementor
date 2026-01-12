@@ -37,7 +37,6 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 			const { xmlStructure, elementConfig, stylesConfig } = params;
 			let generatedXML: string = '';
 			const errors: Error[] = [];
-			const softErrors: Error[] = [];
 			const rootContainers: V1Element[] = [];
 			const documentContainer = getContainer( 'document' ) as unknown as V1Element;
 			try {
@@ -51,7 +50,6 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				const {
 					configErrors,
 					invalidStyles,
-					styleErrors,
 					rootContainers: generatedRootContainers,
 				} = compositionBuilder.build( documentContainer );
 
@@ -63,10 +61,6 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				}
 
 				rootContainers.push( ...generatedRootContainers );
-
-				if ( styleErrors.length ) {
-					softErrors.push( ...styleErrors.map( ( e ) => new Error( e ) ) );
-				}
 
 				Object.entries( invalidStyles ).forEach( ( [ elementId, rawCssRules ] ) => {
 					const customCss = {

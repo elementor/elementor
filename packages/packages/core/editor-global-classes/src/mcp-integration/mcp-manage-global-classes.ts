@@ -1,8 +1,9 @@
 import { BREAKPOINTS_SCHEMA_URI, STYLE_SCHEMA_URI } from '@elementor/editor-canvas';
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
-import { Schema } from '@elementor/editor-props';
+import { type Props, Schema } from '@elementor/editor-props';
 import { type BreakpointId } from '@elementor/editor-responsive';
 import { getStylesSchema } from '@elementor/editor-styles';
+import { type StylesProvider } from '@elementor/editor-styles-repository';
 import { Utils } from '@elementor/editor-variables';
 import { z } from '@elementor/schema';
 
@@ -93,71 +94,39 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 		} );
 	} );
 
-	const customCss = null;
-	const breakpointValue = breakpoint === null ? 'desktop' : breakpoint;
+	const breakpointValue = breakpoint ?? 'desktop';
 
 	try {
-		if ( action === 'create' ) {
-			if ( ! globalClassName ) {
-				throw new Error( 'Global class name is required for creation.' );
-			}
-			const newClassId = create( globalClassName, [
-				{
-					meta: {
-						breakpoint: breakpointValue as BreakpointId,
-						state: null,
-					},
-					custom_css: customCss,
+		switch ( action ) {
+			case 'create':
+				const newClassId = await attemptCreate( {
 					props,
-				},
-			] );
-
-			try {
-				await saveGlobalClasses( { context: 'frontend' } );
-				return { status: 'ok', classId: newClassId };
-			} catch {
-				deleteClass( newClassId );
-				await saveGlobalClasses( { context: 'frontend' } );
-				return {
-					status: 'error',
-					message: 'Failed to create global class, probably invalid schema values.',
-				};
-			}
-		} else {
-			if ( ! classId ) {
-				throw new Error( 'Class ID is required for modification.' );
-			}
-			const snapshot = structuredClone( globalClassesStylesProvider.actions.all() );
-
-			try {
-				update( {
-					id: classId,
-					variants: [
-						{
-							custom_css: customCss,
-							props,
-							meta: {
-								breakpoint: breakpointValue as BreakpointId,
-								state: null,
-							},
-						},
-					],
+					className: globalClassName,
+					stylesProvider: globalClassesStylesProvider,
+					breakpoint: breakpointValue as BreakpointId,
 				} );
-				await saveGlobalClasses( { context: 'frontend' } );
-				return { status: 'ok', classId };
-			} catch ( modifyError ) {
-				snapshot.forEach( ( style ) => {
-					update( {
-						id: style.id,
-						variants: style.variants,
-					} );
+				return newClassId
+					? {
+							status: 'ok',
+							message: `created global class with ID ${ newClassId }`,
+					  }
+					: {
+							status: 'error',
+							message: 'error creating class',
+					  };
+			case 'modify':
+				const updated = await attemptUpdate( {
+					classId,
+					props,
+					stylesProvider: globalClassesStylesProvider,
+					breakpoint: breakpointValue as BreakpointId,
 				} );
-				await saveGlobalClasses( { context: 'frontend' } );
-				return {
-					status: 'error',
-					message: `Failed to modify global class: ${ ( modifyError as Error ).message }`,
-				};
-			}
+				return updated
+					? { status: 'ok', classId }
+					: {
+							status: 'error',
+							message: 'error modifying class',
+					  };
 		}
 	} catch ( error ) {
 		return {
@@ -195,3 +164,77 @@ Use style schema at [elementor://styles/schema/{category}] for valid props. Erro
 		handler,
 	} );
 };
+
+type Opts = {
+	stylesProvider: StylesProvider;
+	className?: string;
+	classId?: string;
+	breakpoint: BreakpointId;
+	props: Props;
+};
+
+async function attemptCreate( opts: Opts ) {
+	const { props, breakpoint, className, stylesProvider } = opts;
+	const { create, delete: deleteClass } = stylesProvider.actions;
+	if ( ! className ) {
+		throw new Error( 'Global class name is a required for creation' );
+	}
+	if ( ! create || ! deleteClass ) {
+		throw new Error( 'User is unable to create global classes' );
+	}
+	const newClassId = create( className, [
+		{
+			meta: {
+				breakpoint,
+				state: null,
+			},
+			custom_css: null,
+			props,
+		},
+	] );
+	try {
+		await saveGlobalClasses( { context: 'frontend' } );
+		return newClassId;
+	} catch {
+		deleteClass( newClassId );
+		return null;
+	}
+}
+
+async function attemptUpdate( opts: Opts ) {
+	const { props, breakpoint, classId, stylesProvider } = opts;
+	const { update } = stylesProvider.actions;
+	if ( ! classId ) {
+		throw new Error( 'Class ID is required for modification' );
+	}
+	if ( ! update ) {
+		throw new Error( 'User is unable to update global classes' );
+	}
+	const snapshot = structuredClone( stylesProvider.actions.all() );
+	try {
+		update( {
+			id: classId,
+			variants: [
+				{
+					custom_css: null,
+					props,
+					meta: {
+						breakpoint,
+						state: null,
+					},
+				},
+			],
+		} );
+		await saveGlobalClasses( { context: 'frontend' } );
+		return true;
+	} catch {
+		snapshot.forEach( ( style ) => {
+			update( {
+				id: style.id,
+				variants: style.variants,
+			} );
+		} );
+		await saveGlobalClasses( { context: 'frontend' } );
+		return false;
+	}
+}

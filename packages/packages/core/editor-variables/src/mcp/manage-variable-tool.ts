@@ -2,6 +2,7 @@ import { getMCPByDomain } from '@elementor/editor-mcp';
 import { z } from '@elementor/schema';
 
 import { service } from '../service';
+import { GLOBAL_VARIABLES_URI } from './variables-resource';
 
 export const initManageVariableTool = () => {
 	getMCPByDomain( 'canvas' ).addTool( {
@@ -20,62 +21,61 @@ export const initManageVariableTool = () => {
 			value: z.string().optional().describe( 'Variable value (required for create/update)' ),
 		},
 		outputSchema: {
-			status: z.enum( [ 'ok', 'error' ] ).describe( 'Operation status' ),
+			status: z.enum( [ 'ok' ] ).describe( 'Operation status' ),
 			message: z.string().optional().describe( 'Error details if status is error' ),
 		},
 		modelPreferences: {
 			intelligencePriority: 0.75,
 			speedPriority: 0.75,
 		},
-		description: `Manages global variables (create/update/delete). Use list-global-variables first.
+		requiredResources: [
+			{
+				uri: GLOBAL_VARIABLES_URI,
+				description: 'Global variables',
+			},
+		],
+		description: `Manages global variables (create/update/delete). Existing variables available in resources.
 CREATE: requires type, label, value. Ensure label is unique.
 UPDATE: requires id, label, value. When renaming: keep existing value. When updating value: keep exact label.
 DELETE: requires id. DESTRUCTIVE - confirm with user first.`,
 		handler: async ( params ) => {
-			const { action, id, type, label, value } = params;
-
-			try {
-				switch ( action ) {
-					case 'create':
-						if ( ! type || ! label || ! value ) {
-							return {
-								status: 'error',
-								message: 'Create requires type, label, and value',
-							};
-						}
-						await service.create( { type, label, value } );
-						break;
-
-					case 'update':
-						if ( ! id || ! label || ! value ) {
-							return {
-								status: 'error',
-								message: 'Update requires id, label, and value',
-							};
-						}
-						await service.update( id, { label, value } );
-						break;
-
-					case 'delete':
-						if ( ! id ) {
-							return {
-								status: 'error',
-								message: 'Delete requires id',
-							};
-						}
-						await service.delete( id );
-						break;
-				}
-
-				return { status: 'ok' };
-			} catch ( error ) {
-				const message: string = ( error as Error ).message || 'Unknown server error';
+			const operations = getServiceActions( service );
+			const op = operations[ params.action ];
+			if ( op ) {
+				await op( params );
 				return {
-					status: 'error',
-					message: `${ action } failed: ${ message }`,
+					status: 'ok',
 				};
 			}
+			throw new Error( `Unknown action ${ params.action }` );
 		},
 		isDestrcutive: true, // Because delete is destructive
 	} );
 };
+
+type Opts< T extends Record< string, string > > = Partial< T > & {
+	[ k: string ]: unknown;
+};
+
+function getServiceActions( svc: typeof service ) {
+	return {
+		create( { type, label, value }: Opts< { type: string; label: string; value: string } > ) {
+			if ( ! type || ! label || ! value ) {
+				throw new Error( 'Create requires type, label, and value' );
+			}
+			return svc.create( { type, label, value } );
+		},
+		update( { id, label, value }: Opts< { id: string; label: string; value: string } > ) {
+			if ( ! id || ! label || ! value ) {
+				throw new Error( 'Update requires id, label, and value' );
+			}
+			return svc.update( id, { label, value } );
+		},
+		delete( { id }: Opts< { id: string } > ) {
+			if ( ! id ) {
+				throw new Error( 'delete requires id' );
+			}
+			return svc.delete( id );
+		},
+	};
+}
