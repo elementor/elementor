@@ -76,7 +76,6 @@ export const VariablesManagerTable = ( {
 
 	const ids = Object.keys( variables ).sort( sortVariablesOrder( variables ) );
 	const rows = ids
-		.filter( ( id ) => ! variables[ id ].deleted )
 		.map( ( id ) => {
 			const variable = variables[ id ];
 			const variableType = getVariableType( variable.type );
