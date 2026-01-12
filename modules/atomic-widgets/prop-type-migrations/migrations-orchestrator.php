@@ -48,7 +48,7 @@ class Migrations_Orchestrator {
 
 		add_action(
 			'elementor/experiments/feature-state-change/' . Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING,
-			[ __CLASS__, 'clear_all_migration_caches' ],
+			[ __CLASS__, 'clear_migration_cache' ],
 			10,
 			2
 		);
@@ -56,7 +56,7 @@ class Migrations_Orchestrator {
 		$registered = true;
 	}
 
-	public static function clear_all_migration_caches( $old_state = null, $new_state = null ): void {
+	public static function clear_migration_cache( $old_state = null, $new_state = null ): void {
 		global $wpdb;
 
 		$deleted = $wpdb->query(

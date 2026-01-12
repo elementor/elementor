@@ -30,7 +30,7 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 	// 	Plugin::$instance->elements_manager->register_element_type( new \Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox( [], [] ) );
 	// 	Plugin::$instance->elements_manager->register_element_type( new \Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block( [], [] ) );
 
-	// 	Migrations_Orchestrator::clear_all_migration_caches();
+	// 	Migrations_Orchestrator::clear_migration_cache();
 	// }
 
 	// public function tearDown(): void {
