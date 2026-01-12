@@ -2,6 +2,11 @@
 
 namespace Elementor\Testing\Modules\GlobalClasses;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
+use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Cleanup;
 use Elementor\Plugin;
@@ -71,12 +76,34 @@ class Test_Global_Classes_Cleanup extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		Plugin::$instance->widgets_manager->register( new Atomic_Heading() );
+		Plugin::$instance->elements_manager->register_element_type( new Div_Block() );
+
+		Migrations_Orchestrator::clear_all_migration_caches();
+
 		Global_Classes_Repository::make()->put(
 			$this->mock_global_classes['items'],
 			$this->mock_global_classes['order'],
 		);
 
         remove_all_actions( 'elementor/global_classes/update' );
+	}
+
+	public function tearDown(): void {
+		Plugin::$instance->widgets_manager->unregister( 'e-heading' );
+		Plugin::$instance->elements_manager->unregister_element_type( 'e-div-block' );
+
+		parent::tearDown();
 	}
 
 	public function test_no_deleted_global_classes() {

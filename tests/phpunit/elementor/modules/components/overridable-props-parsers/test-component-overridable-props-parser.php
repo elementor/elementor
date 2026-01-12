@@ -1,6 +1,9 @@
 <?php
 namespace Elementor\Testing\Modules\Components;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Components\OverridableProps\Component_Overridable_Props_Parser;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -16,7 +19,25 @@ class Test_Component_Overridable_Props_Parser extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		Plugin::$instance->widgets_manager->register( new Atomic_Heading() );
+
 		$this->parser = Component_Overridable_Props_Parser::make();
+	}
+
+	public function tearDown(): void {
+		Plugin::$instance->widgets_manager->unregister( 'e-heading' );
+
+		parent::tearDown();
 	}
 
 	public function test_parse__with_valid_data__succeeds() {

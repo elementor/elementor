@@ -1,12 +1,36 @@
 <?php
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
 
 class Test_Atomic_Heading extends Elementor_Test_Base {
 	use MatchesSnapshots;
+
+	public function setUp(): void {
+		parent::setUp();
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		Plugin::$instance->widgets_manager->register( new Atomic_Heading() );
+	}
+
+	public function tearDown(): void {
+		Plugin::$instance->widgets_manager->unregister( 'e-heading' );
+
+		parent::tearDown();
+	}
 
 	public function test__render_heading(): void {
 		// Arrange.

@@ -1,7 +1,9 @@
 <?php
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -14,7 +16,20 @@ class Test_Div_Block extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		$mock =[
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		Plugin::$instance->widgets_manager->register( new Atomic_Paragraph() );
+		Plugin::$instance->elements_manager->register_element_type( new Div_Block() );
+
+		$mock = [
 			'id' => 'e8e55a1',
 			'elType' => Div_Block::get_element_type(),
 			'settings' => [],
@@ -22,6 +37,13 @@ class Test_Div_Block extends Elementor_Test_Base {
 		];
 
 		$this->instance = Plugin::$instance->elements_manager->create_element_instance( $mock );
+	}
+
+	public function tearDown(): void {
+		Plugin::$instance->widgets_manager->unregister( 'e-paragraph' );
+		Plugin::$instance->elements_manager->unregister_element_type( 'e-div-block' );
+
+		parent::tearDown();
 	}
 
 	public function test__render_div_block(): void {

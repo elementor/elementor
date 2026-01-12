@@ -1,6 +1,12 @@
 <?php
 namespace Elementor\Testing\Modules\Components;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
+use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -21,6 +27,21 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING,
+			Experiments_Manager::STATE_ACTIVE
+		);
+
+		Plugin::$instance->widgets_manager->register( new Atomic_Heading() );
+		Plugin::$instance->widgets_manager->register( new Atomic_Image() );
+		Plugin::$instance->widgets_manager->register( new Atomic_Button() );
+		Plugin::$instance->elements_manager->register_element_type( new Div_Block() );
 
 		// Load mock component data
 		$this->mock_component_1_content = Component_Mocks::get_component_1_data();
@@ -47,8 +68,14 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
-		parent::tearDown();
+		Plugin::$instance->widgets_manager->unregister( 'e-heading' );
+		Plugin::$instance->widgets_manager->unregister( 'e-image' );
+		Plugin::$instance->widgets_manager->unregister( 'e-button' );
+		Plugin::$instance->elements_manager->unregister_element_type( 'e-div-block' );
+
 		$this->clean_up_components();
+
+		parent::tearDown();
 	}
 
 	private function clean_up_components() {
