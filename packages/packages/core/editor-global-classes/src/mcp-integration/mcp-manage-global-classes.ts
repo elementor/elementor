@@ -23,11 +23,7 @@ const schema = {
 			'key-value of style-schema PropValues. Available properties at dynamic resource "elementor://styles/schema/{property-name}"'
 		),
 	breakpoint: z
-		.nullable(
-			z
-				.enum( [ 'desktop', 'tablet', 'mobile', 'laptop', 'widescreen', 'tablet_extra', 'mobile_extra' ] )
-				.describe( 'Responsive breakpoint name for styles. Defaults to desktop (null).' )
-		)
+		.nullable( z.string().describe( 'Responsive breakpoint name for styles. Defaults to desktop (null).' ) )
 		.default( null )
 		.describe( 'Responsive breakpoint name for styles. Defaults to desktop (null).' ),
 };
