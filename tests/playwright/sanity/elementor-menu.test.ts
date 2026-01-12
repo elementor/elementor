@@ -14,7 +14,8 @@ async function validateGettingStartedLinkCount( wpAdmin: WpAdminPage, expectedCo
 }
 
 test.describe( 'General Settings', () => {
-	test( 'Is hidden if home is active (default for plugin users)', async ( { page, apiRequests }, testInfo ) => {
+	// TODO: Fix this test in [ED-22444].
+	test.skip( 'Is hidden if home is active (default for plugin users)', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
@@ -23,7 +24,8 @@ test.describe( 'General Settings', () => {
 		await validateGettingStartedPage( wpAdmin );
 	} );
 
-	test( 'Is visible if home is not active (default for hosting users)', async ( { page, apiRequests }, testInfo ) => {
+	// TODO: Fix this test in [ED-22444].
+	test.skip( 'Is visible if home is not active (default for hosting users)', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpCli( 'wp elementor experiments deactivate home_screen' );

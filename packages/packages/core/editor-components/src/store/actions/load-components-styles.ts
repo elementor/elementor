@@ -18,7 +18,7 @@ export async function loadComponentsStyles( componentIds: number[] ) {
 		return;
 	}
 
-	addComponentStyles( unknownComponentIds );
+	await addComponentStyles( unknownComponentIds );
 }
 
 async function addComponentStyles( ids: ComponentId[] ) {

@@ -14,7 +14,6 @@ export { createPropsResolver, type PropsResolver } from './renderers/create-prop
 export { settingsTransformersRegistry } from './settings-transformers-registry';
 export { styleTransformersRegistry } from './style-transformers-registry';
 export { endDragElementFromPanel, startDragElementFromPanel } from './sync/drag-element-from-panel';
-export { getCanvasIframeDocument } from './sync/get-canvas-iframe-document';
 export { DOCUMENT_STRUCTURE_URI } from './mcp/resources/document-structure-resource';
 export { WIDGET_SCHEMA_URI } from './mcp/resources/widgets-schema-resource';
 export * from './legacy/types';
