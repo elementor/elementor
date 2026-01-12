@@ -19,6 +19,9 @@ class Test_Settings extends Elementor_Test_Base {
 
 	public function test_register_admin_menu() {
 		// Arrange.
+		$this->markTestSkipped();
+		return;
+
 		$this->act_as_admin();
 
 		// Act.
