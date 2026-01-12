@@ -1,6 +1,4 @@
-import { type ExtendedWindow } from '@elementor/editor-elements';
-
-import { type PropType, type PropValue } from '../types';
+import { type ExtendedWindow, type PropType, type PropValue } from '../types';
 import { isTransformable } from './is-transformable';
 
 const extendedWindow = window as ExtendedWindow;

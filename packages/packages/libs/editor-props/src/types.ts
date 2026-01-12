@@ -106,3 +106,25 @@ export type PropValue = PlainPropValue | TransformablePropValue< string >;
 export type PropKey = string;
 
 export type Props = Record< PropKey, PropValue >;
+
+type DynamicTags = Record< DynamicTag[ 'name' ], DynamicTag >;
+
+type DynamicTag = {
+	name: string;
+	label: string;
+	group: string;
+	categories: string[];
+	atomic_controls: unknown[];
+	props_schema: PropsSchema;
+};
+
+export type ExtendedWindow = Window & {
+	elementor?: {
+		config?: {
+			atomicDynamicTags?: {
+				tags: DynamicTags;
+				groups: Record< DynamicTag[ 'group' ], { title: string } >;
+			};
+		};
+	};
+};

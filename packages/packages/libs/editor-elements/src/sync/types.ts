@@ -3,17 +3,6 @@ import { type ClassState, type StyleDefinition, type StyleDefinitionID } from '@
 
 import { type ControlItem } from '../types';
 
-type DynamicTags = Record< DynamicTag[ 'name' ], DynamicTag >;
-
-type DynamicTag = {
-	name: string;
-	label: string;
-	group: string;
-	categories: string[];
-	atomic_controls: ControlItem[];
-	props_schema: PropsSchema;
-};
-
 export type ExtendedWindow = Window & {
 	elementor?: {
 		selection?: {
@@ -32,12 +21,6 @@ export type ExtendedWindow = Window & {
 		hooks?: {
 			applyFilters?: < T >( filterName: string, data: T, ...args: unknown[] ) => T;
 			addFilter?: < T >( filterName: string, callback: ( data: T, ...args: unknown[] ) => T ) => void;
-		};
-		config?: {
-			atomicDynamicTags?: {
-				tags: DynamicTags;
-				groups: Record< DynamicTag[ 'group' ], { title: string } >;
-			};
 		};
 	};
 	elementorCommon?: {
