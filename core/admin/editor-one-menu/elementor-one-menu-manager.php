@@ -40,6 +40,8 @@ class Elementor_One_Menu_Manager {
 			do_action( 'elementor/editor-one/menu/register', $this->menu_data_provider );
 		} );
 
+		add_action( 'admin_menu', [ $this, 'register_pro_submenus' ], 100 );
+
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 10003 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 10004 );
 		add_action( 'admin_menu', [ $this, 'remove_all_submenus_for_edit_posts_users' ], 10005 );
@@ -61,7 +63,6 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function register_elementor_home_submenus(): void {
-
 		add_submenu_page(
 			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 			esc_html__( 'Editor', 'elementor' ),
@@ -72,6 +73,10 @@ class Elementor_One_Menu_Manager {
 			20
 		);
 
+		do_action( 'elementor/editor-one/menu/register_submenus' );
+	}
+
+	public function register_pro_submenus(): void {
 		if ( ! $this->is_pro_module_enabled &&
 			Utils::has_pro() &&
 			class_exists( '\ElementorPro\License\API' ) &&
@@ -97,8 +102,6 @@ class Elementor_One_Menu_Manager {
 				80
 			);
 		}
-
-		do_action( 'elementor/editor-one/menu/register_submenus' );
 	}
 
 	public function remove_all_submenus_for_edit_posts_users(): void {
