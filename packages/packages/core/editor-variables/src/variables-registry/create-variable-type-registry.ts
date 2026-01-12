@@ -44,7 +44,7 @@ type VariableTypeOptions = {
 	styleTransformer?: AnyTransformer;
 	fallbackPropTypeUtil: FallbackPropTypeUtil;
 	propTypeUtil: PropTypeUtil< string, string >;
-	selectionFilter?: ( variables: NormalizedVariable[], propType: PropType ) => NormalizedVariable[];
+	selectionFilter?: ( variables: NormalizedVariable[], propType?: PropType ) => NormalizedVariable[];
 	valueTransformer?: ( value: string, type?: string ) => PropValue;
 	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
 	emptyState?: JSX.Element;
