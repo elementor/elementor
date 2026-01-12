@@ -97,7 +97,6 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await expect( sidebar.getByRole( 'button', { name: 'Submissions' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Templates' } ).first() ).toBeVisible();
 
-		await sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first().waitFor( { state: 'visible', timeout: 5000 } );
 		await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
 		await expect( sidebar.getByRole( 'link', { name: /Theme Builder/i } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'link', { name: /Floating Elements/i } ).first() ).not.toBeVisible();
@@ -135,7 +134,6 @@ test.describe( 'Editor One Menu Visibility', () => {
 		await expect( sidebar.getByRole( 'button', { name: 'Submissions' } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'button', { name: 'Templates' } ).first() ).toBeVisible();
 
-		await sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first().waitFor( { state: 'visible', timeout: 5000 } );
 		await expect( sidebar.getByRole( 'link', { name: /Saved Templates/i } ).first() ).toBeVisible();
 		await expect( sidebar.getByRole( 'link', { name: /Theme Builder/i } ).first() ).not.toBeVisible();
 		await expect( sidebar.getByRole( 'link', { name: /Floating Elements/i } ).first() ).not.toBeVisible();
