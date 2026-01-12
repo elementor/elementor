@@ -27,7 +27,7 @@ const HeaderSection = ( props ) => {
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{ __( 'Edit Website', 'elementor' ) }
+				{ __( 'Edit site', 'elementor' ) }
 			</Button>
 		</Paper>
 	);
