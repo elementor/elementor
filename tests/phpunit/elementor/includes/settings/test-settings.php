@@ -3,8 +3,21 @@ namespace Elementor\Tests\Phpunit\Includes\Settings;
 
 use ElementorEditorTesting\Elementor_Test_Base;
 use Elementor\Utils;
+use Elementor\Plugin;
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
+use Elementor\Modules\EditorOne\Module as EditorOneModule;
 
 class Test_Settings extends Elementor_Test_Base {
+
+	public function setUp(): void {
+		parent::setUp();
+		$this->activate_editor_one_experiment();
+	}
+
+	public function tearDown(): void {
+		parent::tearDown();
+		$this->deactivate_editor_one_experiment();
+	}
 
 	public function test_register_admin_menu() {
 		// Arrange.
@@ -19,20 +32,8 @@ class Test_Settings extends Elementor_Test_Base {
 		$elementor_menu = $submenu['elementor-home'];
 
 		$expected_items = [
-			'elementor' => 'Quick Start',
-			'elementor-settings' => 'Settings',
-			'elementor-role-manager' => 'Role Manager',
-			'elementor-element-manager' => 'Element Manager',
-			'elementor-tools' => 'Tools',
-			'elementor-system-info' => 'System Info',
-			'elementor-getting-started' => 'Getting Started',
-			'go_knowledge_base_site' => 'Get Help',
-			'e-form-submissions' => 'Submissions',
-			'elementor_custom_fonts' => 'Custom Fonts',
-			'elementor_custom_icons' => 'Custom Icons',
-			'elementor_custom_code' => 'Custom Code',
-			'elementor-apps' => 'Add-ons',
-			'go_elementor_pro' => Utils::is_sale_time() ? 'Upgrade Sale Now' : 'Upgrade',
+			'elementor-home' => 'Home',
+			'elementor-editor' => 'Editor',
 		];
 
 		$index = 0;
@@ -47,4 +48,21 @@ class Test_Settings extends Elementor_Test_Base {
 			$index++;
 		}
 	}
+
+	private function activate_editor_one_experiment(): void {
+		$experiments = Plugin::instance()->experiments;
+		$experiments->set_feature_default_state(
+			EditorOneModule::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_ACTIVE
+		);
+	}
+
+	private function deactivate_editor_one_experiment(): void {
+		$experiments = Plugin::instance()->experiments;
+		$experiments->set_feature_default_state(
+			EditorOneModule::EXPERIMENT_NAME,
+			Experiments_Manager::STATE_INACTIVE
+		);
+	}
 }
+
