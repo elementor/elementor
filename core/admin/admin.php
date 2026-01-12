@@ -509,7 +509,7 @@ class Admin extends App {
 		<div class="e-overview__header">
 			<?php if ( $show_versions ) { ?>
 				<div class="e-overview__logo">
-					<div class="e-logo-wrapper"><i class="eicon-elementor"></i></div>
+					<div class="e-logo-wrapper"><i class="eicon-elementor-circle"></i></div>
 				</div>
 				<div class="e-overview__versions">
 					<span class="e-overview__version"><?php echo esc_html__( 'Elementor', 'elementor' ); ?> v<?php echo ELEMENTOR_VERSION; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
@@ -771,6 +771,56 @@ class Admin extends App {
 		die;
 	}
 
+	/**
+	 * Admin action edit website.
+	 *
+	 * Redirects to the homepage edit URL if it exists and is built with Elementor,
+	 * otherwise redirects to create a new page.
+	 *
+	 * Fired by `admin_action_elementor_edit_website` action.
+	 *
+	 * @since 3.x.x
+	 * @access public
+	 */
+	public function admin_action_edit_website_redirect() {
+		check_admin_referer( 'elementor_action_edit_website' );
+
+		if ( ! User::is_current_user_can_edit_post_type( 'page' ) ) {
+			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'elementor' ) );
+		}
+
+		$homepage_id = $this->get_homepage_id();
+		$edit_url = $this->get_edit_website_url( $homepage_id );
+
+		wp_safe_redirect( $edit_url );
+
+		die;
+	}
+
+	private function get_homepage_id(): ?int {
+		if ( get_option( 'show_on_front' ) !== 'page' ) {
+			return null;
+		}
+
+		$homepage_id = get_option( 'page_on_front' );
+
+		return $homepage_id ? (int) $homepage_id : null;
+	}
+
+	private function get_edit_website_url( ?int $homepage_id ): string {
+		if ( ! $homepage_id ) {
+			return Plugin::$instance->documents->get_create_new_post_url( 'page' );
+		}
+
+		$document = Plugin::$instance->documents->get( $homepage_id );
+
+		if ( ! $document || ! $document->is_built_with_elementor() ) {
+			return Plugin::$instance->documents->get_create_new_post_url( 'page' );
+		}
+
+		return $document->get_edit_url();
+	}
+
 	private function get_allowed_fields_for_role() {
 		$allowed_fields = [
 			'post_title',
@@ -975,6 +1025,7 @@ class Admin extends App {
 		// Admin Actions
 		add_action( 'admin_action_elementor_new_post', [ $this, 'admin_action_new_post' ] );
 		add_action( 'admin_action_elementor_site_settings_redirect', [ $this, 'admin_action_site_settings_redirect' ] );
+		add_action( 'admin_action_elementor_edit_website_redirect', [ $this, 'admin_action_edit_website_redirect' ] );
 
 		add_action( 'current_screen', [ $this, 'init_new_template' ] );
 		add_action( 'current_screen', [ $this, 'init_floating_elements' ] );
@@ -1055,7 +1106,9 @@ class Admin extends App {
 	}
 
 	private function maybe_enqueue_hints() {
-		if ( ! Hints::should_display_hint( 'image-optimization' ) ) {
+		$plugin_slug = 'image-optimization';
+
+		if ( ! Hints::should_display_hint( $plugin_slug ) ) {
 			return;
 		}
 
@@ -1067,13 +1120,39 @@ class Admin extends App {
 			true
 		);
 
-		$content = sprintf("%1\$s <a class='e-btn-1' href='%2\$s' target='_blank'>%3\$s</a>!",
-			__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' ),
-			Hints::get_plugin_action_url( 'image-optimization' ),
-			( Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate', 'elementor' ) : __( 'Install', 'elementor' ) ) . ' ' . __( 'Image Optimizer', 'elementor' )
-		);
+		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
+		$is_installed = Hints::is_plugin_installed( $plugin_slug );
+		$is_active = Hints::is_plugin_active( $plugin_slug );
+
+		if ( $is_active ) {
+			return;
+		}
 
 		$dismissible = 'image_optimizer_hint';
+		$button_label = $is_installed ? esc_html__( 'Activate now', 'elementor' ) : esc_html__( 'Install now', 'elementor' );
+		$action_url = Hints::get_plugin_action_url( $plugin_slug );
+
+		if ( $one_subscription ) {
+			$title = esc_html__( 'Speed up your website with Image Optimizer', 'elementor' );
+			$description = esc_html__( 'Automatically optimize images to improve site speed and performance.', 'elementor' );
+			$subscription_text = esc_html__( 'Included with your ONE subscription.', 'elementor' );
+			$content = sprintf(
+				"<strong>%1\$s</strong><br>%2\$s<br>%3\$s <a class='e-btn-1' href='%4\$s' target='_blank'>%5\$s</a>!",
+				$title,
+				$description,
+				$subscription_text,
+				$action_url,
+				$button_label
+			);
+		} else {
+			$description = esc_html__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' );
+			$content = sprintf(
+				"%1\$s <a class='e-btn-1' href='%2\$s' target='_blank'>%3\$s</a>!",
+				$description,
+				$action_url,
+				$button_label
+			);
+		}
 
 		wp_localize_script( 'media-hints', 'elementorAdminHints', [
 			'mediaHint' => [
@@ -1082,11 +1161,11 @@ class Admin extends App {
 				'content' => $content,
 				'icon' => true,
 				'dismissible' => $dismissible,
-				'dismiss' => __( 'Dismiss this notice.', 'elementor' ),
+				'dismiss' => esc_attr__( 'Dismiss this notice.', 'elementor' ),
 				'button_event' => $dismissible,
 				'button_data' => base64_encode(
 					wp_json_encode( [
-						'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
+						'action_url' => $action_url,
 					] ),
 				),
 			],
@@ -1128,10 +1207,20 @@ class Admin extends App {
 			return;
 		}
 
+		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
+
+		if ( $one_subscription && strpos( $request['source'], 'editor' ) !== false ) {
+			$medium = 'editor-one';
+		} elseif ( $one_subscription ) {
+			$medium = 'wp-dash-one';
+		} else {
+			$medium = 'wp-dash';
+		}
+
 		$campaign_data = [
 			'source' => sanitize_key( $request['source'] ),
-			'campaign' => 'io-plg',
-			'medium' => 'wp-dash',
+			'campaign' => $one_subscription ? 'io-plg-one' : 'io-plg',
+			'medium' => $medium,
 		];
 
 		set_transient( 'elementor_image_optimization_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
