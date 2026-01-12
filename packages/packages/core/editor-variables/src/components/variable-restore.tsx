@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { PopoverBody } from '@elementor/editor-editing-panel';
 import { PopoverHeader } from '@elementor/editor-ui';
@@ -93,6 +93,13 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 
 	const isSubmitDisabled = noValueChanged() || hasEmptyFields() || hasErrors();
 
+	const handleKeyDown = ( event: KeyboardEvent< HTMLElement > ) => {
+		if ( event.key === 'Enter' && ! isSubmitDisabled ) {
+			event.preventDefault();
+			handleRestore();
+		}
+	};
+
 	return (
 		<PopoverContentRefContextProvider>
 			<PopoverBody height="auto">
@@ -125,6 +132,7 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 									message: errorMsg,
 								} );
 							} }
+							onKeyDown={ handleKeyDown }
 						/>
 					</FormField>
 					{ ValueField && (
@@ -141,6 +149,7 @@ export const VariableRestore = ( { variableId, onClose, onSubmit }: Props ) => {
 									} }
 									onValidationChange={ setValueFieldError }
 									propType={ propType }
+									onKeyDown={ handleKeyDown }
 								/>
 							</Typography>
 						</FormField>
