@@ -14,7 +14,6 @@ import {
 	isDependencyMet,
 	type PropKey,
 	type Props,
-	type PropsSchema,
 	type PropType,
 	type PropValue,
 } from '@elementor/editor-props';
