@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { createMockPropType, renderWithStore } from 'test-utils';
+import { createMockContainer, createMockPropType, renderWithStore } from 'test-utils';
 import { ControlActionsProvider, TextControl } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
 import {
+	getContainer,
 	getElementLabel,
 	getElementType,
 	getWidgetsCache,
@@ -30,6 +31,7 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	getElementLabel: jest.fn(),
 	getWidgetsCache: jest.fn(),
 	getElementType: jest.fn(),
+	getContainer: jest.fn(),
 } ) );
 
 jest.mock( '@elementor/session', () => ( {
@@ -270,6 +272,7 @@ describe( '<InstanceEditingPanel />', () => {
 			createMockWidgetsCache() as unknown as ReturnType< typeof getWidgetsCache >
 		);
 		jest.mocked( getElementType ).mockImplementation( createMockElementType );
+		jest.mocked( getContainer ).mockReturnValue( createMockContainer( MOCK_ELEMENT_ID, [] ) );
 	} );
 
 	it( 'should render the component name in the header', () => {

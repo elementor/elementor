@@ -230,5 +230,13 @@ export function createTemplatedElementView( {
 
 			this.triggerMethod( 'render', this );
 		}
+
+		_openEditingPanel( options?: { scrollIntoView: boolean } ) {
+			if ( this.isRendered ) {
+				super._openEditingPanel( options );
+			} else {
+				this.on( 'render', () => super._openEditingPanel( options ) );
+			}
+		}
 	};
 }
