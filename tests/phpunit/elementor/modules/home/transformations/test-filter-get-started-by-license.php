@@ -14,7 +14,7 @@ class Test_Filter_Get_Started_By_License extends PHPUnit_TestCase {
 
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
-		$expected_data = $this->mock_home_screen_data_transformed_core();
+		$expected_data = $this->mock_home_screen_data_transformed_pro();
 
 		// Assert
 		$this->assertEquals( $transformed_data, $expected_data );
@@ -43,6 +43,14 @@ class Test_Filter_Get_Started_By_License extends PHPUnit_TestCase {
 						'key' => 'value',
 					],
 					'license' => [
+						'one'
+					],
+				],
+				[
+					'thing' => [
+						'key' => 'value',
+					],
+					'license' => [
 						'free'
 					],
 				],
@@ -52,14 +60,6 @@ class Test_Filter_Get_Started_By_License extends PHPUnit_TestCase {
 					],
 					'license' => [
 						'pro'
-					],
-				],
-				[
-					'thing' => [
-						'key' => 'value',
-					],
-					'license' => [
-						'one'
 					],
 				],
 			],

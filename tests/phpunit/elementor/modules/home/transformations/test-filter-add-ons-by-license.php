@@ -31,11 +31,11 @@ class Test_Filter_Add_Ons_By_License extends PHPUnit_TestCase {
 			return 'pro';
 		} );
 
-		$original_data = $this->mock_home_screen_data_with_hide_section_free();
+		$original_data = $this->mock_home_screen_data_with_hide_section_pro();
 		$transformation = new Filter_Add_Ons_By_License( [] );
 
 		$transformed_data = $transformation->transform( $original_data );
-		$expected_data = $this->mock_home_screen_data_with_hide_section_free();
+		$expected_data = $this->mock_home_screen_data_with_hide_section_pro();
 
 		$this->assertEquals( $expected_data, $transformed_data );
 		$this->assertArrayHasKey( 'add_ons', $transformed_data );
@@ -60,6 +60,28 @@ class Test_Filter_Add_Ons_By_License extends PHPUnit_TestCase {
 		return [
 			'add_ons' => [
 				'hide_section' => [ 'one' ],
+				'header' => [
+					'title' => 'Test Add-ons Title',
+					'description' => 'Test description',
+				],
+				'repeater' => [
+					[
+						'title' => 'Test Plugin',
+						'url' => 'https://example.com',
+					],
+				],
+			],
+			'misc' => [
+				'Name' => 'Microsoft',
+				'Version' => 'Windows',
+			],
+		];
+	}
+
+	private function mock_home_screen_data_with_hide_section_pro() {
+		return [
+			'add_ons' => [
+				'hide_section' => [ 'pro' ],
 				'header' => [
 					'title' => 'Test Add-ons Title',
 					'description' => 'Test description',
