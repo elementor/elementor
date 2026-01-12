@@ -40,6 +40,10 @@ class Elementor_One_Menu_Manager {
 			do_action( 'elementor/editor-one/menu/register', $this->menu_data_provider );
 		} );
 
+		// Register Theme Builder and Submissions AFTER Apps (priority 99)
+		// to avoid array reindexing issues caused by earlier menu registrations.
+		add_action( 'admin_menu', [ $this, 'register_pro_submenus' ], 100 );
+
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 10003 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 10004 );
 		add_action( 'admin_menu', [ $this, 'remove_all_submenus_for_edit_posts_users' ], 10005 );
@@ -71,13 +75,17 @@ class Elementor_One_Menu_Manager {
 			20
 		);
 
+		do_action( 'elementor/editor-one/menu/register_submenus' );
+	}
+
+	public function register_pro_submenus(): void {
 		if ( ! $this->is_pro_module_enabled &&
 			Utils::has_pro() &&
 			class_exists( '\ElementorPro\License\API' ) &&
 			\ElementorPro\License\API::is_license_active()
 		) {
 			add_submenu_page(
-				Menu_Config::ELEMENTOR_HOME_SLUG,
+				Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 				esc_html__( 'Theme Builder', 'elementor' ),
 				esc_html__( 'Theme Builder', 'elementor' ),
 				Menu_Config::CAPABILITY_EDIT_POSTS,
@@ -96,8 +104,6 @@ class Elementor_One_Menu_Manager {
 				80
 			);
 		}
-
-		do_action( 'elementor/editor-one/menu/register_submenus' );
 	}
 
 	public function remove_all_submenus_for_edit_posts_users(): void {
