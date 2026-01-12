@@ -12,11 +12,6 @@ class Test_Filter_Add_Ons_By_License extends PHPUnit_TestCase {
 	}
 
 	public function test_transform__removes_add_ons_when_free_tier_in_hide_section() {
-<<<<<<< HEAD
-		// TODO: Fix in [ED-22448]
-		$this->markTestSkipped( 'Skipped: Test needs filter precedence fix for e_editor_one experiment' );
-=======
->>>>>>> internal/ED-22448-internal-fix-failing-home-screen-tests-when-editor-one-is-experiment-is-active
 		add_filter( 'elementor/admin/homescreen_promotion_tier', function() {
 			return 'free';
 		} );
@@ -36,19 +31,11 @@ class Test_Filter_Add_Ons_By_License extends PHPUnit_TestCase {
 			return 'pro';
 		} );
 
-<<<<<<< HEAD
-		$original_data = $this->mock_home_screen_data_with_hide_section_free();
-		$transformation = new Filter_Add_Ons_By_License( [] );
-
-		$transformed_data = $transformation->transform( $original_data );
-		$expected_data = $this->mock_home_screen_data_with_hide_section_free();
-=======
 		$original_data = $this->mock_home_screen_data_with_hide_section_pro();
 		$transformation = new Filter_Add_Ons_By_License( [] );
 
 		$transformed_data = $transformation->transform( $original_data );
 		$expected_data = $this->mock_home_screen_data_with_hide_section_pro();
->>>>>>> internal/ED-22448-internal-fix-failing-home-screen-tests-when-editor-one-is-experiment-is-active
 
 		$this->assertEquals( $expected_data, $transformed_data );
 		$this->assertArrayHasKey( 'add_ons', $transformed_data );
@@ -72,9 +59,6 @@ class Test_Filter_Add_Ons_By_License extends PHPUnit_TestCase {
 	private function mock_home_screen_data_with_hide_section_free() {
 		return [
 			'add_ons' => [
-<<<<<<< HEAD
-				'hide_section' => [ 'free' ],
-=======
 				'hide_section' => [ 'one' ],
 				'header' => [
 					'title' => 'Test Add-ons Title',
@@ -98,7 +82,6 @@ class Test_Filter_Add_Ons_By_License extends PHPUnit_TestCase {
 		return [
 			'add_ons' => [
 				'hide_section' => [ 'pro' ],
->>>>>>> internal/ED-22448-internal-fix-failing-home-screen-tests-when-editor-one-is-experiment-is-active
 				'header' => [
 					'title' => 'Test Add-ons Title',
 					'description' => 'Test description',
@@ -148,8 +131,3 @@ class Test_Filter_Add_Ons_By_License extends PHPUnit_TestCase {
 		];
 	}
 }
-
-<<<<<<< HEAD
-
-=======
->>>>>>> internal/ED-22448-internal-fix-failing-home-screen-tests-when-editor-one-is-experiment-is-active
