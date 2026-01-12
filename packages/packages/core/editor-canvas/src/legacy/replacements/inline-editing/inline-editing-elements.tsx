@@ -259,7 +259,15 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 		return (
 			<ThemeProvider>
-				<Box ref={ wrapperRef }>
+				<Box
+					ref={ wrapperRef }
+					sx={ {
+						'& .elementor-inline-editor-reset': {
+							margin: 0,
+							padding: 0,
+						},
+					} }
+				>
 					{ isWrapperRendered && (
 						<OutlineOverlay element={ wrapperRef.current as HTMLDivElement } id={ this.id } isSelected />
 					) }
