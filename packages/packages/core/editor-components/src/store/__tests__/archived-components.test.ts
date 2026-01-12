@@ -7,7 +7,7 @@ import {
 } from '@elementor/store';
 
 import type { PublishedComponent } from '../../types';
-import { selectComponent, selectComponents, selectComponentsArchivedThisSession, slice } from '../store';
+import { selectArchivedThisSession, selectComponent, selectComponents, slice } from '../store';
 
 const MOCK_COMPONENT_ID = 1;
 const MOCK_ARCHIVED_COMPONENT_ID = 2;
@@ -169,11 +169,11 @@ describe( 'Archived Components Store', () => {
 			dispatch( slice.actions.archive( MOCK_COMPONENT_ID ) );
 
 			// Act
-			const archivedComponents = selectComponentsArchivedThisSession( store.getState() );
+			const archivedComponents = selectArchivedThisSession( store.getState() );
 
 			// Assert
 			expect( archivedComponents ).toHaveLength( 1 );
-			expect( archivedComponents[ 0 ].id ).toBe( MOCK_COMPONENT_ID );
+			expect( archivedComponents[ 0 ] ).toBe( MOCK_COMPONENT_ID );
 		} );
 
 		it( 'should not include components that were already archived on load', () => {
@@ -182,7 +182,7 @@ describe( 'Archived Components Store', () => {
 			dispatch( slice.actions.load( [ archivedComponent ] ) );
 
 			// Act
-			const archivedComponents = selectComponentsArchivedThisSession( store.getState() );
+			const archivedComponents = selectArchivedThisSession( store.getState() );
 
 			// Assert
 			expect( archivedComponents ).toHaveLength( 0 );

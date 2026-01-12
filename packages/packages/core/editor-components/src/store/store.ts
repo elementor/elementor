@@ -142,7 +142,7 @@ export const slice = createSlice( {
 } );
 
 const selectData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].data;
-const selectArchivedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].archivedThisSession;
+export const selectArchivedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].archivedThisSession;
 const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadStatus;
 const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
 const selectUnpublishedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].unpublishedData;
@@ -224,12 +224,6 @@ export const useCurrentComponentId = () => {
 	return useSelector( selectCurrentComponentId );
 };
 
-export const selectComponentsArchivedThisSession = createSelector(
-	selectData,
-	selectArchivedThisSession,
-	( data: PublishedComponent[], archivedThisSession: ComponentId[] ) =>
-		data.filter( ( component ) => archivedThisSession.includes( component.id ) )
-);
 export const selectUpdatedComponentNames = createSelector(
 	( state: ComponentsSlice ) => state[ SLICE_NAME ].updatedComponentNames,
 	( updatedComponentNames ) =>
