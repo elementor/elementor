@@ -29,7 +29,7 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
-		$expected_data = $this->mock_top_section_data_transformed_core();
+		$expected_data = $this->mock_top_section_data_transformed_one();
 
 		// Assert
 		$this->assertEquals( $transformed_data, $expected_data );
@@ -78,6 +78,14 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 	private function mock_top_section_data() {
 		return [
 			'top_with_licences' => [
+				[
+					'thing' => [
+						'key' => 'value',
+					],
+					'license' => [
+						'one'
+					],
+				],
 				$this->mock_top_section_data_transformed_core()['top_with_licences'],
 				$this->mock_top_section_data_transformed_pro()['top_with_licences'],
 				$this->mock_top_section_data_transformed_essential()['top_with_licences'],
@@ -113,7 +121,7 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 					'key' => 'value',
 				],
 				'license' => [
-					'pro'
+					'one'
 				],
 			],
 			'misc' => [
@@ -130,7 +138,24 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 					'key' => 'value',
 				],
 				'license' => [
-					'pro'
+					'one'
+				],
+			],
+			'misc' => [
+				'Name' => 'Microsoft',
+				'Version' => 'Windows',
+			],
+		];
+	}
+
+	private function mock_top_section_data_transformed_one() {
+		return [
+			'top_with_licences' => [
+				'thing' => [
+					'key' => 'value',
+				],
+				'license' => [
+					'one'
 				],
 			],
 			'misc' => [
