@@ -422,7 +422,7 @@ class Module extends BaseModule {
 	}
 
 	private function get_migrations_base_path(): string {
-		// define this in wp-config.php to use local migrations ( ELEMENTOR_BASE_PATH . 'migrations/' )
+		// define this in wp-config.php to use local migrations i.e. __DIR__ . '/wp-content/plugins/elementor/migrations/'
 		if ( defined( 'ELEMENTOR_MIGRATIONS_PATH' ) ) {
 			return ELEMENTOR_MIGRATIONS_PATH;
 		}
