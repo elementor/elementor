@@ -6,6 +6,7 @@ import { useVariableType } from '../context/variable-type-context';
 import { service } from '../service';
 import { type NormalizedVariable, type Variable } from '../types';
 import { filterBySearch } from '../utils/filter-by-search';
+import { toNormalizedVariable, variablesToList } from '../utils/variables-to-list';
 import { getVariableType, getVariableTypes } from '../variables-registry/variable-type-registry';
 
 export const getVariables = ( includeDeleted = true ) => {
@@ -75,18 +76,13 @@ const getMatchingTypes = ( propKey: string ): string[] => {
 	return matchingTypes;
 };
 
-const normalizeVariables = ( propKey: string ) => {
+const normalizeVariables = ( propKey: string ): NormalizedVariable[] => {
 	const variables = getVariables( false );
 	const matchingTypes = getMatchingTypes( propKey );
 
-	return Object.entries( variables )
-		.filter( ( [ , variable ] ) => matchingTypes.includes( variable.type ) )
-		.map( ( [ key, { label, value, order } ] ) => ( {
-			key,
-			label,
-			value,
-			order,
-		} ) );
+	return variablesToList( variables )
+		.filter( ( variable ) => matchingTypes.includes( variable.type ) )
+		.map( toNormalizedVariable );
 };
 
 const extractId = ( { id }: { id: string } ): string => id;
