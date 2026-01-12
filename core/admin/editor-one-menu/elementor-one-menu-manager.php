@@ -40,9 +40,7 @@ class Elementor_One_Menu_Manager {
 			do_action( 'elementor/editor-one/menu/register', $this->menu_data_provider );
 		} );
 
-		// Register Theme Builder and Submissions AFTER Apps (priority 99)
-		// to avoid array reindexing issues caused by earlier menu registrations.
-		add_action( 'admin_menu', [ $this, 'register_pro_submenus' ], 100 );
+$this->register_pro_submenus_after_apps();
 
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 10003 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 10004 );
