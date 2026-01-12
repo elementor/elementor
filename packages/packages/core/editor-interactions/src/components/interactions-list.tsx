@@ -42,7 +42,7 @@ export function InteractionsList( props: InteractionListProps ) {
 			};
 			handleUpdateInteractions( newState );
 		}
-	}, [ triggerCreateOnShowEmpty, interactions.items?.length, handleUpdateInteractions ] );
+	}, [ triggerCreateOnShowEmpty, interactions.items, handleUpdateInteractions ] );
 
 	const isMaxNumberOfInteractionsReached = useMemo( () => {
 		return interactions.items?.length >= MAX_NUMBER_OF_INTERACTIONS;
