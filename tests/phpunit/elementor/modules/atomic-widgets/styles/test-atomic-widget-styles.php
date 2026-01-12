@@ -1,14 +1,10 @@
 <?php
 namespace Elementor\Testing\Modules\AtomicWidgets\Styles;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Styles_Manager;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
-use Elementor\Plugin;
 use Elementor\Widget_Base;
 use ElementorEditorTesting\Elementor_Test_Base;
 use Spatie\Snapshots\MatchesSnapshots;
@@ -27,27 +23,9 @@ class Test_Atomic_Widget_Styles extends Elementor_Test_Base {
 	public function set_up() {
 		parent::set_up();
 
-		Plugin::$instance->experiments->set_feature_default_state(
-			Atomic_Widgets_Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING,
-			Experiments_Manager::STATE_ACTIVE
-		);
-
-		Plugin::$instance->widgets_manager->register( new Atomic_Heading() );
-
 		$this->mock_styles_manager = $this->createMock( Atomic_Styles_Manager::class );
 
 		remove_all_actions( 'elementor/atomic-widgets/styles/register' );
-	}
-
-	public function tear_down() {
-		Plugin::$instance->widgets_manager->unregister( 'e-heading' );
-
-		parent::tear_down();
 	}
 
 	public function test_register_styles__registers_styles_for_atomic_widgets() {

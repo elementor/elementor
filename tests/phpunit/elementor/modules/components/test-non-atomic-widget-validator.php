@@ -1,13 +1,8 @@
 <?php
 namespace Elementor\Testing\Modules\Components;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
-use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Components\Non_Atomic_Widget_Validator;
-use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,30 +14,6 @@ class Test_Non_Atomic_Widget_Validator extends Elementor_Test_Base {
 	const NON_ATOMIC_WIDGET_TYPE = 'heading';
 	const ATOMIC_CONTAINER_TYPE = 'e-div-block';
 	const NON_ATOMIC_CONTAINER_TYPE = 'container';
-
-	public function setUp(): void {
-		parent::setUp();
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Atomic_Widgets_Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING,
-			Experiments_Manager::STATE_ACTIVE
-		);
-
-		Plugin::$instance->widgets_manager->register( new Atomic_Heading() );
-		Plugin::$instance->elements_manager->register_element_type( new Div_Block() );
-	}
-
-	public function tearDown(): void {
-		Plugin::$instance->widgets_manager->unregister( 'e-heading' );
-		Plugin::$instance->elements_manager->unregister_element_type( 'e-div-block' );
-
-		parent::tearDown();
-	}
 
 	public function test_validate__returns_success_for_empty_elements() {
 		// Arrange

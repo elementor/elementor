@@ -1,11 +1,6 @@
 <?php
 namespace Elementor\Testing\Modules\Components;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image;
-use Elementor\Modules\AtomicWidgets\Elements\Flexbox\Flexbox;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Modules\Components\Overridable_Schema_Extender;
 use Elementor\Plugin;
@@ -26,20 +21,6 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Atomic_Widgets_Module::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
-
-		Plugin::$instance->experiments->set_feature_default_state(
-			Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING,
-			Experiments_Manager::STATE_ACTIVE
-		);
-
-		Plugin::$instance->widgets_manager->register( new Atomic_Heading() );
-		Plugin::$instance->widgets_manager->register( new Atomic_Image() );
-		Plugin::$instance->elements_manager->register_element_type( new Flexbox() );
 
 		add_filter(
 			'elementor/atomic-widgets/props-schema',
@@ -68,14 +49,9 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
 	}
 
 	public function tearDown(): void {
-		Plugin::$instance->widgets_manager->unregister( 'e-heading' );
-		Plugin::$instance->widgets_manager->unregister( 'e-image' );
-		Plugin::$instance->elements_manager->unregister_element_type( 'e-flexbox' );
-
+		parent::tearDown();
 		$this->clean_up_components();
 		remove_all_filters( 'elementor/atomic-widgets/props-schema' );
-
-		parent::tearDown();
 	}
 
     private function get_rendered_component( array $instance_data ) {
