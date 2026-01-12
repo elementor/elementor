@@ -2,21 +2,8 @@
 namespace Elementor\Tests\Phpunit\Includes\Settings;
 
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Plugin;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\EditorOne\Module as EditorOneModule;
 
 class Test_Settings extends Elementor_Test_Base {
-
-	public function setUp(): void {
-		parent::setUp();
-		$this->activate_editor_one_experiment();
-	}
-
-	public function tearDown(): void {
-		parent::tearDown();
-		$this->deactivate_editor_one_experiment();
-	}
 
 	public function test_register_admin_menu() {
 		// Arrange.
@@ -55,25 +42,5 @@ class Test_Settings extends Elementor_Test_Base {
 		$this->assertEquals( 'elementor-editor', $editor_item['slug'], 'Editor menu item should have correct slug' );
 	}
 
-	private function activate_editor_one_experiment(): void {
-		$experiments = Plugin::instance()->experiments;
-		$experiments->set_feature_default_state(
-			EditorOneModule::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
-		
-		$module = Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-		if ( $module ) {
-			$module->__construct();
-		}
-	}
-
-	private function deactivate_editor_one_experiment(): void {
-		$experiments = Plugin::instance()->experiments;
-		$experiments->set_feature_default_state(
-			EditorOneModule::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_INACTIVE
-		);
-	}
 }
 
