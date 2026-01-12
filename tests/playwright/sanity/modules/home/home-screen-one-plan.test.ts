@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import { saveHomepageSettings, restoreHomepageSettings, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, type HomepageSettings } from './home-screen.helper';
 import { wpCli } from '../../../assets/wp-cli';
 
-test.describe( 'Home screen Edit Website button tests', () => {
+test.describe( 'Home screen Edit site button tests', () => {
 	let originalHomepageSettings: HomepageSettings | null = null;
 
 	test.beforeAll( async ( { browser, apiRequests } ) => {
@@ -30,9 +30,7 @@ test.describe( 'Home screen Edit Website button tests', () => {
 		await context.close();
 	} );
 
-	// TODO: Fix in ED-22339 - Visual regression test failing
-	// https://elementor.atlassian.net/browse/ED-22339
-	test.skip( 'one license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
+	test( 'one license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
 		const requestContext = await request.newContext( { storageState } );
 		const mockData = transformMockDataByLicense( 'one' );
 
@@ -43,19 +41,18 @@ test.describe( 'Home screen Edit Website button tests', () => {
 		await requestContext.dispose();
 	} );
 
-	// TODO: Fix in ED-22339 - Edit Website button test failing
-	// https://elementor.atlassian.net/browse/ED-22339
-	test.skip( 'Edit Website button has valid Elementor link', async ( { page } ) => {
+	test( 'Edit site button has valid Elementor link', async ( { page } ) => {
 		await page.goto( 'wp-admin/admin.php?page=elementor' );
 
-		const editWebsiteButton = page.locator( 'a:has-text("Edit Website"), button:has-text("Edit Website")' ).first();
+		const editWebsiteButton = page.locator( 'a:has-text("Edit site"), button:has-text("Edit site")' ).first();
 		await expect( editWebsiteButton ).toBeVisible();
 
 		const href = await editWebsiteButton.getAttribute( 'href' );
 		expect( href ).toBeTruthy();
 
-		const isValidElementorUrl = href!.match( /wp-admin\/(post\.php\?post=\d+&action=elementor|edit\.php\?action=elementor_new_post&post_type=page)(&.*)?/ );
+		const isValidElementorUrl = href!.match( /admin\.php\?action=elementor_edit_website_redirect/ );
 		expect( isValidElementorUrl ).toBeTruthy();
+		expect( href ).toContain( '_wpnonce' );
 	} );
 } );
 
