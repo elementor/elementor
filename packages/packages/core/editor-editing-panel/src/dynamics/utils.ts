@@ -1,6 +1,7 @@
 import { type ExtendedWindow, TOP_LEVEL_SINGLE_SETTING_FILTER } from '@elementor/editor-elements';
 import {
 	type ArrayPropValue,
+	createPropUtils,
 	getFilteredDynamicSettings,
 	isTransformable,
 	type ObjectPropValue,
@@ -10,6 +11,7 @@ import {
 	type TransformablePropType,
 } from '@elementor/editor-props';
 import { __privateListenTo as listenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
+import { z } from '@elementor/schema';
 
 import { getAtomicDynamicTags } from './sync/get-atomic-dynamic-tags';
 import { type DynamicPropType, type DynamicPropValue, type DynamicTags } from './types';
@@ -17,6 +19,15 @@ import { type DynamicPropType, type DynamicPropValue, type DynamicTags } from '.
 const DYNAMIC_PROP_TYPE_KEY = 'dynamic';
 
 const extendedWindow = window as unknown as ExtendedWindow;
+
+export const dynamicPropTypeUtil = createPropUtils(
+	DYNAMIC_PROP_TYPE_KEY,
+	z.strictObject( {
+		name: z.string(),
+		group: z.string(),
+		settings: z.any().optional(),
+	} )
+);
 
 const isDynamicPropType = ( prop: TransformablePropType ): prop is DynamicPropType =>
 	prop.key === DYNAMIC_PROP_TYPE_KEY;
