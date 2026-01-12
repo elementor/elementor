@@ -61,7 +61,6 @@ class Elementor_One_Menu_Manager {
 	}
 
 	public function register_elementor_home_submenus(): void {
-
 		add_submenu_page(
 			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
 			esc_html__( 'Editor', 'elementor' ),
@@ -78,7 +77,7 @@ class Elementor_One_Menu_Manager {
 			\ElementorPro\License\API::is_license_active()
 		) {
 			add_submenu_page(
-				Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
+				Menu_Config::ELEMENTOR_HOME_SLUG,
 				esc_html__( 'Theme Builder', 'elementor' ),
 				esc_html__( 'Theme Builder', 'elementor' ),
 				Menu_Config::CAPABILITY_EDIT_POSTS,
@@ -264,6 +263,14 @@ class Elementor_One_Menu_Manager {
 		$level4_items = $this->menu_data_provider->get_level4_items();
 
 		$all_items = array_merge_recursive( $level3_items, $level4_items );
+
+		foreach ( $all_items as $group_id => $group_items ) {
+			uasort( $all_items[ $group_id ], function ( $a, $b ) {
+				$pos_a = method_exists( $a, 'get_position' ) ? $a->get_position() : 100;
+				$pos_b = method_exists( $b, 'get_position' ) ? $b->get_position() : 100;
+				return $pos_a <=> $pos_b;
+			} );
+		}
 
 		foreach ( $all_items as $group_items ) {
 			foreach ( $group_items as $item_slug => $item ) {
