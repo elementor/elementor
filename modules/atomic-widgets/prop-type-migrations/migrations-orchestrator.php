@@ -145,6 +145,10 @@ class Migrations_Orchestrator {
 		}
 
 		foreach ( $data as $key => &$value ) {
+			if ( 'elements' === $key ) {
+				continue;
+			}
+
 			if ( ! is_array( $value ) || empty( $value ) ) {
 				continue;
 			}
