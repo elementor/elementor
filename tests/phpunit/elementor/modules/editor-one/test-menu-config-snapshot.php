@@ -3,10 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
 use Elementor\App\Modules\KitLibrary\Module as KitLibraryModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Modules\EditorOne\Module as EditorOneModule;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -19,10 +16,11 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 
 	private const SNAPSHOT_FILE = __DIR__ . '/snapshots/menu-config-snapshot.json';
 
+	private $original_request_uri;
+
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->activate_editor_one_experiment();
 		$this->reset_menu_data_provider();
 		$this->simulate_admin_context();
 		$this->set_request_uri();
@@ -33,7 +31,7 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 
 		$this->reset_menu_data_provider();
 		$this->restore_screen_context();
-		$this->deactivate_editor_one_experiment();
+		$this->restore_request_uri();
 	}
 
 	public function test_menu_config__matches_expected_snapshot_via_action() {
@@ -57,21 +55,6 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 		$this->assertConfigEqualsIgnoringPostIds( $expected_config, $actual_config );
 	}
 
-	private function activate_editor_one_experiment(): void {
-		$experiments = Plugin::instance()->experiments;
-		$experiments->set_feature_default_state(
-			EditorOneModule::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
-	}
-
-	private function deactivate_editor_one_experiment(): void {
-		$experiments = Plugin::instance()->experiments;
-		$experiments->set_feature_default_state(
-			EditorOneModule::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_INACTIVE
-		);
-	}
 
 	private function simulate_admin_context(): void {
 		if ( ! class_exists( 'WP_Screen' ) ) {
@@ -183,8 +166,17 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 	}
 
 	private function set_request_uri(): void {
+		$this->original_request_uri = $_SERVER['REQUEST_URI'] ?? null;
 		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
 			$_SERVER['REQUEST_URI'] = '';
+		}
+	}
+
+	private function restore_request_uri(): void {
+		if ( null === $this->original_request_uri ) {
+			unset( $_SERVER['REQUEST_URI'] );
+		} else {
+			$_SERVER['REQUEST_URI'] = $this->original_request_uri;
 		}
 	}
 
