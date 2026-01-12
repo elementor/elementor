@@ -339,8 +339,11 @@ export default function createAtomicElementBaseView( type ) {
 				},
 			];
 
-			if ( elementorCommon.config.experimentalFeatures?.e_components ) {
-				saveActions.unshift(			{
+			const isAdministrator = elementor.config.user.is_administrator;
+			const isExperimentalFeaturesEnabled = elementorCommon.config.experimentalFeatures?.e_components;
+
+			if ( isExperimentalFeaturesEnabled && isAdministrator ) {
+				saveActions.unshift( {
 					name: 'save-component',
 					title: __( 'Create component', 'elementor' ),
 					shortcut: `<span class="elementor-context-menu-list__item__shortcut__new-badge">${ __( 'New', 'elementor' ) }</span>`,

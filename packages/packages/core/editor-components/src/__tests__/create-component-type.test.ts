@@ -125,15 +125,13 @@ describe( 'createComponentType', () => {
 	} );
 
 	const createMockViewInstance = ( isAdministrator: boolean ) => {
-		( window as unknown as LegacyWindow & ExtendedWindow ).elementor = {
+		( window as unknown as LegacyWindow ).elementor = {
 			...mockElementorWindow,
 			config: {
 				user: {
 					is_administrator: isAdministrator,
 				},
 			},
-		} as LegacyWindow[ 'elementor' ] & {
-			config?: { user?: { is_administrator?: boolean } };
 		};
 
 		const ComponentType = createComponentType( {

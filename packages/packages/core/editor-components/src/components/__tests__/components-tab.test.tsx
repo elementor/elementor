@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { renderWithStore, renderWithTheme } from 'test-utils';
+import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	__createStore,
@@ -28,6 +29,14 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 		triggerAngie: jest.fn(),
 	} ) ),
 } ) );
+
+jest.mock( '@elementor/editor-current-user' );
+
+jest.mocked( useCurrentUserCapabilities ).mockReturnValue( {
+	isAdmin: true,
+	canUser: jest.fn(),
+	capabilities: [],
+} );
 
 const mockStartDragElementFromPanel = jest.fn();
 

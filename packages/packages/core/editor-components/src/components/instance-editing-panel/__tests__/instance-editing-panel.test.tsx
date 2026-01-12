@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { createMockPropType, renderWithStore } from 'test-utils';
 import { ControlActionsProvider, TextControl } from '@elementor/editor-controls';
+import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
 import {
 	getElementLabel,
@@ -23,19 +24,9 @@ import { slice } from '../../../store/store';
 import { switchToComponent } from '../../../utils/switch-to-component';
 import { InstanceEditingPanel } from '../instance-editing-panel';
 
-jest.mock( '@elementor/editor-elements', () => ( {
-	...jest.requireActual( '@elementor/editor-elements' ),
-	useElementSetting: jest.fn(),
-	useSelectedElement: jest.fn(),
-	getElementLabel: jest.fn(),
-	getWidgetsCache: jest.fn(),
-	getElementType: jest.fn(),
-} ) );
+jest.mock( '@elementor/editor-elements' );
 
-jest.mock( '@elementor/session', () => ( {
-	getSessionStorageItem: jest.fn(),
-	setSessionStorageItem: jest.fn(),
-} ) );
+jest.mock( '@elementor/session' );
 
 jest.mock( '../../../utils/switch-to-component' );
 
@@ -45,6 +36,14 @@ jest.mock( '../../../prop-types/component-instance-prop-type', () => ( {
 		key: 'component-instance',
 	},
 } ) );
+
+jest.mock( '@elementor/editor-current-user' );
+
+jest.mocked( useCurrentUserCapabilities ).mockReturnValue( {
+	isAdmin: true,
+	canUser: jest.fn(),
+	capabilities: [],
+} );
 
 const MOCK_ELEMENT_ID = 'element-123';
 const MOCK_COMPONENT_ID = 456;
