@@ -36,6 +36,7 @@ class Migrations_Orchestrator {
 	}
 
 	public static function destroy(): void {
+		Migrations_Loader::destroy();
 		self::$instance = null;
 	}
 
