@@ -53,7 +53,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 					invalidStyles,
 					styleErrors,
 					rootContainers: generatedRootContainers,
-				} = await compositionBuilder.build( documentContainer );
+				} = compositionBuilder.build( documentContainer );
 
 				generatedXML = new XMLSerializer().serializeToString( compositionBuilder.getXML() );
 

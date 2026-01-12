@@ -73,11 +73,11 @@ export class CompositionBuilder {
 		this.elementStylesConfig = config;
 	}
 
-	public getXML() {
+	getXML() {
 		return this.xml;
 	}
 
-	private async iterateBuild( node: Element, containerElement: V1Element, childIndex: number ) {
+	private iterateBuild( node: Element, containerElement: V1Element, childIndex: number ) {
 		const elementTag = node.tagName;
 		const isContainer = this.containerElements.includes( elementTag );
 		const parentElType = containerElement.model.get( 'elType' );
@@ -111,8 +111,8 @@ export class CompositionBuilder {
 		}
 		node.setAttribute( 'id', newElement.id );
 		let currentChild = 0;
-		for await ( const childNode of Array.from( node.children ) ) {
-			await this.iterateBuild( childNode, newElement, currentChild );
+		for ( const childNode of Array.from( node.children ) ) {
+			this.iterateBuild( childNode, newElement, currentChild );
 			currentChild++;
 		}
 	}
@@ -201,7 +201,7 @@ export class CompositionBuilder {
 		return errors;
 	}
 
-	async build( rootContainer: V1Element ) {
+	build( rootContainer: V1Element ) {
 		// lazy load widgets cache
 		if ( Object.entries( this.widgetsCache ).length === 0 ) {
 			this.widgetsCache = this.api.getWidgetsCache() || {};
@@ -225,7 +225,7 @@ export class CompositionBuilder {
 		const children = Array.from( this.xml.children );
 		let currentChild = 0;
 		for ( const childNode of children ) {
-			await this.iterateBuild( childNode, rootContainer, currentChild );
+			this.iterateBuild( childNode, rootContainer, currentChild );
 			currentChild++;
 		}
 
