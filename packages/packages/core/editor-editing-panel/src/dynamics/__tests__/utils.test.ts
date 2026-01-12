@@ -2,9 +2,9 @@ import { type ControlItem } from '@elementor/editor-elements';
 import { type PropsSchema, type TransformablePropValue } from '@elementor/editor-props';
 
 import { type DynamicTags } from '../types';
-import { getNormalizedDynamicSettings } from '../utils';
+import { nestedDynamicSettingsFilter } from '../utils';
 
-describe( 'normalizedDynamicSettings', () => {
+describe( 'nestedDynamicSettingsFilter', () => {
 	const GROUP = 'group';
 	const SUPPORTED_TAG_NAME = 'supported-tag';
 	const UNSUPPORTED_TAG_NAME = 'unsupported-tag';
@@ -50,7 +50,7 @@ describe( 'normalizedDynamicSettings', () => {
 
 	it( 'should keep a supported dynamic value', () => {
 		// Act.
-		const result = getNormalizedDynamicSettings( SUPPORTED_DYNAMIC_VALUE, TAGS );
+		const result = nestedDynamicSettingsFilter( SUPPORTED_DYNAMIC_VALUE, TAGS );
 
 		// Assert.
 		expect( result ).toEqual( SUPPORTED_DYNAMIC_VALUE );
@@ -58,7 +58,7 @@ describe( 'normalizedDynamicSettings', () => {
 
 	it( 'should null an unsupported dynamic value', () => {
 		// Act.
-		const result = getNormalizedDynamicSettings( UNSUPPORTED_DYNAMIC_VALUE, TAGS );
+		const result = nestedDynamicSettingsFilter( UNSUPPORTED_DYNAMIC_VALUE, TAGS );
 
 		// Assert.
 		expect( result ).toBeNull();
@@ -75,7 +75,7 @@ describe( 'normalizedDynamicSettings', () => {
 		};
 
 		// Act.
-		const result = getNormalizedDynamicSettings( SETTING_VALUE, TAGS ) as TransformablePropValue<
+		const result = nestedDynamicSettingsFilter( SETTING_VALUE, TAGS ) as TransformablePropValue<
 			'image',
 			{ alt: string; src: unknown }
 		>;
@@ -94,7 +94,7 @@ describe( 'normalizedDynamicSettings', () => {
 		};
 
 		// Act.
-		const result = getNormalizedDynamicSettings( SETTING_VALUE, TAGS ) as TransformablePropValue<
+		const result = nestedDynamicSettingsFilter( SETTING_VALUE, TAGS ) as TransformablePropValue<
 			'list',
 			unknown[]
 		>;

@@ -30,7 +30,7 @@ export { evaluateTerm, extractValue, isDependency, isDependencyMet } from './uti
 export {
 	getCompatibleTypeKeys,
 	migratePropValue,
-	normalizeDynamicSettings,
+	getFilteredDynamicSettings,
 	PROP_TYPE_COMPATIBILITY_MAP,
 } from './utils/prop-type-compatibility';
 

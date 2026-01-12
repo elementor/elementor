@@ -22,7 +22,7 @@ export function getCompatibleTypeKeys( propType: PropType ): string[] {
 	return PROP_TYPE_COMPATIBILITY_MAP[ propType.key ] ?? [];
 }
 
-export function normalizeDynamicSettings( value: PropValue ) {
+export function getFilteredDynamicSettings( value: PropValue ) {
 	if ( ! value || ! isTransformable( value ) || ! value?.value ) {
 		return value;
 	}

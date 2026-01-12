@@ -8,7 +8,7 @@ import {
 	type PropValue,
 	type TransformablePropType,
 } from '@elementor/editor-props';
-import { normalizeDynamicSettings } from '@elementor/editor-props';
+import { getFilteredDynamicSettings } from '@elementor/editor-props';
 
 import { type RenderContext } from '../legacy/types';
 import { type TransformersRegistry } from '../transformers/create-transformers-registry';
@@ -43,10 +43,10 @@ export type PropsResolver = ReturnType< typeof createPropsResolver >;
 const TRANSFORM_DEPTH_LIMIT = 3;
 
 const isUnsupportedDynamicValue = ( value: null | undefined | PropValue ): boolean =>
-	! normalizeDynamicSettings( value );
+	! getFilteredDynamicSettings( value );
 
 const shouldRevertToDefault = ( value: null | undefined | PropValue ): boolean => {
-	return value === null || value === undefined || ( isTransformable( value ) && isUnsupportedDynamicValue( value ) );
+	return value === null || value === undefined || isUnsupportedDynamicValue( value );
 };
 
 export function createPropsResolver( { transformers, schema: initialSchema, onPropResolve }: CreatePropResolverArgs ) {

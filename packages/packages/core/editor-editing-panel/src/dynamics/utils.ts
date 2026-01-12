@@ -1,9 +1,8 @@
 import { type ExtendedWindow, TOP_LEVEL_SINGLE_SETTING_FILTER } from '@elementor/editor-elements';
 import {
 	type ArrayPropValue,
-	createPropUtils,
+	getFilteredDynamicSettings,
 	isTransformable,
-	normalizeDynamicSettings,
 	type ObjectPropValue,
 	type PropsSchema,
 	type PropType,
@@ -11,23 +10,11 @@ import {
 	type TransformablePropType,
 } from '@elementor/editor-props';
 import { __privateListenTo as listenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
-import { z } from '@elementor/schema';
 
 import { getAtomicDynamicTags } from './sync/get-atomic-dynamic-tags';
-import { type DynamicPropType, type DynamicTags } from './types';
+import { type DynamicPropType, type DynamicPropValue, type DynamicTags } from './types';
 
 const DYNAMIC_PROP_TYPE_KEY = 'dynamic';
-
-export const dynamicPropTypeUtil = createPropUtils(
-	DYNAMIC_PROP_TYPE_KEY,
-	z.strictObject( {
-		name: z.string(),
-		group: z.string(),
-		settings: z.any().optional(),
-	} )
-);
-
-export type DynamicPropValue = z.infer< typeof dynamicPropTypeUtil.schema >;
 
 const extendedWindow = window as unknown as ExtendedWindow;
 
@@ -48,20 +35,20 @@ export const supportsDynamic = ( propType: PropType ): boolean => {
 	return !! getDynamicPropType( propType );
 };
 
-export const filterUnsupportedDynamicSettings = () => {
+export const validateDynamicSettings = () => {
 	listenTo( v1ReadyEvent(), () => {
 		const tags = getAtomicDynamicTags()?.tags ?? {};
 
 		extendedWindow.elementor?.hooks?.addFilter?.(
 			TOP_LEVEL_SINGLE_SETTING_FILTER,
 			( setting: PropsSchema[ string ] | null ) => {
-				return getNormalizedDynamicSettings( setting, tags );
+				return nestedDynamicSettingsFilter( setting, tags );
 			}
 		);
 	} );
 };
 
-export const getNormalizedDynamicSettings = < T extends PropsSchema[ string ] | PropValue | null >(
+export const nestedDynamicSettingsFilter = < T extends PropsSchema[ string ] | PropValue | null >(
 	value: T,
 	tags: DynamicTags
 ): T | null => {
@@ -70,7 +57,7 @@ export const getNormalizedDynamicSettings = < T extends PropsSchema[ string ] | 
 	}
 
 	if ( isDynamicPropValue( value ) ) {
-		return normalizeDynamicSettings( value ) as T;
+		return getFilteredDynamicSettings( value ) as T;
 	}
 
 	if ( isObjectPropValue( value ) ) {
@@ -84,28 +71,28 @@ export const getNormalizedDynamicSettings = < T extends PropsSchema[ string ] | 
 	return value ?? null;
 };
 
-const evaluateObjectPropValue = ( objectValue: ObjectPropValue, tags: DynamicTags ) => {
-	const value = { ...objectValue.value };
+const evaluateObjectPropValue = ( originalValue: ObjectPropValue, tags: DynamicTags ) => {
+	const evaluatedValue = { ...originalValue.value };
 
-	for ( const key in value ) {
-		const innerValue = value[ key ];
+	for ( const key in evaluatedValue ) {
+		const innerValue = evaluatedValue[ key ];
 
-		value[ key ] = getNormalizedDynamicSettings( innerValue, tags );
+		evaluatedValue[ key ] = nestedDynamicSettingsFilter( innerValue, tags );
 	}
 
-	return { ...objectValue, value };
+	return { ...originalValue, value: evaluatedValue };
 };
 
-const evaluateArrayPropValue = ( arrayValue: ArrayPropValue, tags: DynamicTags ) => {
-	const value = [ ...arrayValue.value ];
+const evaluateArrayPropValue = ( originalValue: ArrayPropValue, tags: DynamicTags ) => {
+	const value = [ ...originalValue.value ];
 
 	for ( let index = 0; index < value.length; index++ ) {
 		const innerValue = value[ index ];
 
-		value[ index ] = getNormalizedDynamicSettings( innerValue, tags );
+		value[ index ] = nestedDynamicSettingsFilter( innerValue, tags );
 	}
 
-	return { ...arrayValue, value };
+	return { ...originalValue, value };
 };
 
 const isObjectPropValue = ( value: PropValue ): value is ObjectPropValue => {
