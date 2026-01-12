@@ -1,6 +1,6 @@
 import { createMockElement, createMockElementData } from 'test-utils';
 import { getContainer, getElementSetting, updateElementSettings, type V1ElementData } from '@elementor/editor-elements';
-import { numberPropTypeUtil, type PropValue } from '@elementor/editor-props';
+import { numberPropTypeUtil, type PropValue, type TransformablePropValue } from '@elementor/editor-props';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { componentInstanceOverridePropTypeUtil } from '../../prop-types/component-instance-override-prop-type';
@@ -78,13 +78,13 @@ const createOverride = ( key: string, value: unknown ) =>
 		schema_source: { type: 'component', id: COMPONENT_ID },
 	} );
 
-const createOverridableWrapper = ( key: string, originOverride: ReturnType< typeof createOverride > ) =>
+const createOverridable = ( key: string, originValue: TransformablePropValue< string, unknown > | null ) =>
 	componentOverridablePropTypeUtil.create( {
 		override_key: key,
-		origin_value: originOverride,
+		origin_value: originValue,
 	} );
 
-const createComponentInstanceSetting = ( overrides: ComponentInstanceOverridesPropValue ) =>
+const createComponentInstanceWithOverrides = ( overrides: ComponentInstanceOverridesPropValue ) =>
 	componentInstancePropTypeUtil.create( {
 		component_id: numberPropTypeUtil.create( COMPONENT_ID ),
 		overrides: componentInstanceOverridesPropTypeUtil.create( overrides ),
@@ -144,13 +144,7 @@ describe( 'deleteOverridableProp', () => {
 					id: 'heading-1',
 					widgetType: 'e-heading',
 					settings: {
-						title: {
-							$$type: 'overridable',
-							value: {
-								override_key: 'title-override',
-								origin_value: { $$type: 'html', value: 'Original Title' },
-							},
-						},
+						title: createOverridable( 'title-override', { $$type: 'html', value: 'Original Title' } ),
 					},
 				} ),
 			],
@@ -177,10 +171,7 @@ describe( 'deleteOverridableProp', () => {
 					id: 'heading-1',
 					widgetType: 'e-heading',
 					settings: {
-						title: {
-							$$type: 'overridable',
-							value: { override_key: 'title-override', origin_value: null },
-						},
+						title: createOverridable( 'title-override', null ),
 					},
 				} ),
 			],
@@ -221,27 +212,9 @@ describe( 'deleteOverridableProp', () => {
 					id: 'heading-1',
 					widgetType: 'e-heading',
 					settings: {
-						text: {
-							$$type: 'overridable',
-							value: {
-								override_key: 'text-override',
-								origin_value: { $$type: 'html', value: 'First' },
-							},
-						},
-						subtitle: {
-							$$type: 'overridable',
-							value: {
-								override_key: 'subtitle-override',
-								origin_value: { $$type: 'html', value: 'Middle' },
-							},
-						},
-						hint: {
-							$$type: 'overridable',
-							value: {
-								override_key: 'hint-override',
-								origin_value: { $$type: 'string', value: 'Last' },
-							},
-						},
+						text: createOverridable( 'text-override', { $$type: 'html', value: 'First' } ),
+						subtitle: createOverridable( 'subtitle-override', { $$type: 'html', value: 'Middle' } ),
+						hint: createOverridable( 'hint-override', { $$type: 'string', value: 'Last' } ),
 					},
 				} ),
 			],
@@ -282,8 +255,8 @@ describe( 'deleteOverridableProp', () => {
 					id: 'comp-1',
 					widgetType: 'e-component',
 					settings: {
-						component_instance: createComponentInstanceSetting( [
-							createOverridableWrapper(
+						component_instance: createComponentInstanceWithOverrides( [
+							createOverridable(
 								'key-1',
 								createOverride( 'key-1-override', { $$type: 'string', value: 'value-1' } )
 							),
@@ -296,7 +269,7 @@ describe( 'deleteOverridableProp', () => {
 			expectedElementUpdate: {
 				elementId: 'comp-1',
 				settings: {
-					component_instance: createComponentInstanceSetting( [
+					component_instance: createComponentInstanceWithOverrides( [
 						createOverride( 'key-1-override', { $$type: 'string', value: 'value-1' } ),
 					] ),
 				},
@@ -323,8 +296,8 @@ describe( 'deleteOverridableProp', () => {
 					id: 'comp-1',
 					widgetType: 'e-component',
 					settings: {
-						component_instance: createComponentInstanceSetting( [
-							createOverridableWrapper(
+						component_instance: createComponentInstanceWithOverrides( [
+							createOverridable(
 								'key-1',
 								createOverride( 'key-1-override', { $$type: 'string', value: 'value-1' } )
 							),
@@ -345,8 +318,8 @@ describe( 'deleteOverridableProp', () => {
 			expectedElementUpdate: {
 				elementId: 'comp-1',
 				settings: {
-					component_instance: createComponentInstanceSetting( [
-						createOverridableWrapper(
+					component_instance: createComponentInstanceWithOverrides( [
+						createOverridable(
 							'key-1',
 							createOverride( 'key-1-override', { $$type: 'string', value: 'value-1' } )
 						),
@@ -382,16 +355,16 @@ describe( 'deleteOverridableProp', () => {
 					id: 'comp-1',
 					widgetType: 'e-component',
 					settings: {
-						component_instance: createComponentInstanceSetting( [
-							createOverridableWrapper(
+						component_instance: createComponentInstanceWithOverrides( [
+							createOverridable(
 								'key-1',
 								createOverride( 'key-1-override', { $$type: 'string', value: 'value-1' } )
 							),
-							createOverridableWrapper(
+							createOverridable(
 								'key-2',
 								createOverride( 'key-2-override', { $$type: 'string', value: 'value-2' } )
 							),
-							createOverridableWrapper(
+							createOverridable(
 								'key-3',
 								createOverride( 'key-3-override', { $$type: 'string', value: 'value-3' } )
 							),
@@ -417,13 +390,13 @@ describe( 'deleteOverridableProp', () => {
 			expectedElementUpdate: {
 				elementId: 'comp-1',
 				settings: {
-					component_instance: createComponentInstanceSetting( [
-						createOverridableWrapper(
+					component_instance: createComponentInstanceWithOverrides( [
+						createOverridable(
 							'key-1',
 							createOverride( 'key-1-override', { $$type: 'string', value: 'value-1' } )
 						),
 						createOverride( 'key-2-override', { $$type: 'string', value: 'value-2' } ),
-						createOverridableWrapper(
+						createOverridable(
 							'key-3',
 							createOverride( 'key-3-override', { $$type: 'string', value: 'value-3' } )
 						),
