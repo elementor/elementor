@@ -83,7 +83,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<# } else if ( false === obj.editable ) { #>
 			<i class="eicon-lock"></i>
 		<# } #>
-		<# if ( obj.categories.includes( 'v4-elements' ) ) { #>
+		<# if ( obj.categories.some( category => ['v4-elements', 'atomic-form'].includes( category ) ) ) { #>
 			<i class="eicon-atomic"></i>
 		<# } #>
 		<div class="icon">
