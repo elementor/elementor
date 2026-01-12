@@ -116,11 +116,7 @@ export function InteractionsList( props: InteractionListProps ) {
 						<IconButton
 							aria-label={ __( 'Play interaction', 'elementor' ) }
 							size="tiny"
-							onClick={ () => {
-								const interactionId = extractString( value.value.interaction_id );
-
-								onPlayInteraction( interactionId );
-							} }
+							onClick={ () => onPlayInteraction( extractString( value.value.interaction_id ) ) }
 						>
 							<PlayerPlayIcon fontSize="tiny" />
 						</IconButton>
