@@ -2,8 +2,20 @@
 namespace Elementor\Tests\Phpunit\Includes\Settings;
 
 use ElementorEditorTesting\Elementor_Test_Base;
+use Elementor\Plugin;
+use Elementor\Modules\EditorOne\Module as EditorOneModule;
 
 class Test_Settings extends Elementor_Test_Base {
+
+	public function setUp(): void {
+		parent::setUp();
+		$this->act_as_admin();
+		
+		$module = Plugin::instance()->modules_manager->get_modules( 'editor-one' );
+		if ( $module ) {
+			$module->__construct();
+		}
+	}
 
 	public function test_register_admin_menu() {
 		// Arrange.
