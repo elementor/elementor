@@ -27,6 +27,11 @@ class Test_Migrations_Orchestrator extends Elementor_Test_Base {
 
 	private string $fixtures_path = __DIR__ . '/fixtures/orchestrator/migrations/';
 
+	public static function setUpBeforeClass(): void {
+		parent::setUpBeforeClass();
+		Migrations_Orchestrator::destroy();
+	}
+
 	public function tearDown(): void {
 		Migrations_Orchestrator::destroy();
 		parent::tearDown();

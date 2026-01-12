@@ -107,6 +107,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
+use Elementor\Core\Base\Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -411,7 +412,7 @@ class Module extends BaseModule {
 			$document->get_post()->ID,
 			function( $migrated_data ) use ( $document ) {
 				$document->update_json_meta(
-					\Elementor\Core\Base\Document::ELEMENTOR_DATA_META_KEY,
+					Document::ELEMENTOR_DATA_META_KEY,
 					$migrated_data
 				);
 			}
