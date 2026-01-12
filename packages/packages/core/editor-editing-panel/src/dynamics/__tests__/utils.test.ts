@@ -20,6 +20,24 @@ describe( 'normalizedDynamicSettings', () => {
 		},
 	};
 
+	let originalElementor: unknown;
+
+	beforeEach( () => {
+		originalElementor = ( window as unknown as { elementor?: unknown } ).elementor;
+
+		( window as unknown as { elementor?: unknown } ).elementor = {
+			config: {
+				atomicDynamicTags: {
+					tags: TAGS,
+				},
+			},
+		};
+	} );
+
+	afterEach( () => {
+		( window as unknown as { elementor?: unknown } ).elementor = originalElementor;
+	} );
+
 	const SUPPORTED_DYNAMIC_VALUE: TransformablePropValue< 'dynamic', { name: string } > = {
 		$$type: 'dynamic',
 		value: { name: SUPPORTED_TAG_NAME },

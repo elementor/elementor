@@ -1,14 +1,14 @@
-import { type ExtendedWindow, SETTINGS_FILTER_NAME } from '@elementor/editor-elements';
+import { type ExtendedWindow, TOP_LEVEL_SINGLE_SETTING_FILTER } from '@elementor/editor-elements';
 import {
 	type ArrayPropValue,
 	createPropUtils,
 	isTransformable,
+	normalizeDynamicSettings,
 	type ObjectPropValue,
 	type PropsSchema,
 	type PropType,
 	type PropValue,
 	type TransformablePropType,
-	type TransformablePropValue,
 } from '@elementor/editor-props';
 import { __privateListenTo as listenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 import { z } from '@elementor/schema';
@@ -53,19 +53,12 @@ export const filterUnsupportedDynamicSettings = () => {
 		const tags = getAtomicDynamicTags()?.tags ?? {};
 
 		extendedWindow.elementor?.hooks?.addFilter?.(
-			SETTINGS_FILTER_NAME,
+			TOP_LEVEL_SINGLE_SETTING_FILTER,
 			( setting: PropsSchema[ string ] | null ) => {
 				return getNormalizedDynamicSettings( setting, tags );
 			}
 		);
 	} );
-};
-
-export const scanSettingForDynamics = (
-	value: TransformablePropValue< string > | null,
-	tags: DynamicTags
-): TransformablePropValue< string > | null => {
-	return getNormalizedDynamicSettings( value, tags ) as TransformablePropValue< string > | null;
 };
 
 export const getNormalizedDynamicSettings = < T extends PropsSchema[ string ] | PropValue | null >(
@@ -77,7 +70,7 @@ export const getNormalizedDynamicSettings = < T extends PropsSchema[ string ] | 
 	}
 
 	if ( isDynamicPropValue( value ) ) {
-		return tags[ value?.value?.name ] ? value : null;
+		return normalizeDynamicSettings( value ) as T;
 	}
 
 	if ( isObjectPropValue( value ) ) {
