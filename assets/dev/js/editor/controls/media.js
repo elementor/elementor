@@ -197,10 +197,18 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend( {
 	},
 
 	onPromotionAction( event ) {
+		let settings = {};
+
+		try {
+			settings = JSON.parse( event.target.closest( 'button' ).dataset.settings );
+		} catch ( e ) {
+			// Do nothing.
+		}
+
 		const {
 			action_url: actionURL = null,
 			source = 'io-editor-image-install',
-		} = JSON.parse( event.target.closest( 'button' ).dataset.settings );
+		} = settings;
 
 		if ( actionURL ) {
 			window.open( actionURL, '_blank' );
