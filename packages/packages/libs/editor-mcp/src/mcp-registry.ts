@@ -5,8 +5,8 @@ import { type RequestHandlerExtra } from '@modelcontextprotocol/sdk/shared/proto
 import { type ServerNotification, type ServerRequest } from '@modelcontextprotocol/sdk/types.js';
 
 import { ANGIE_MODEL_PREFERENCES, type AngieModelPreferences } from './angie-annotations';
-import { getSDK } from './get-sdk';
 import { mockMcpRegistry } from './test-utils/mock-mcp-registry';
+import { getSDK } from './utils/get-sdk';
 
 type ZodRawShape = z3.ZodRawShape;
 

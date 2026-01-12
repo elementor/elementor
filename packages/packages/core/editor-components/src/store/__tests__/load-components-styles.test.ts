@@ -6,7 +6,7 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 
 import { getParams } from '../../api';
 import { loadComponentsStyles } from '../actions/load-components-styles';
-import { selectStyles, SLICE_NAME } from '../store';
+import { selectStyles, slice, SLICE_NAME } from '../store';
 
 jest.mock( '@elementor/store', () => ( {
 	...jest.requireActual( '@elementor/store' ),
@@ -144,6 +144,17 @@ describe( 'loadComponentsStyles', () => {
 		} );
 
 		expect( selectStyles( getState() ) ).toEqual( expected );
+	} );
+
+	it( 'should wait for addComponentStyles to complete before returning', async () => {
+		// Arrange
+		mockLoad( { [ COMP_WITH_STYLES_ID ]: COMP_WITH_STYLES_CONTENT } );
+
+		// Act
+		await loadComponentsStyles( [ COMP_WITH_STYLES_ID ] );
+
+		// Assert
+		expect( dispatch ).toHaveBeenCalledWith( slice.actions.addStyles( { [ COMP_WITH_STYLES_ID ]: [ STYLE_1 ] } ) );
 	} );
 } );
 
