@@ -12,6 +12,7 @@ import { doUpdateElementProperty } from '../mcp/utils/do-update-element-property
 import { validateInput } from '../mcp/utils/validate-input';
 
 type AnyValue = z.infer< z.ZodTypeAny >;
+type AnyConfig = Record< string, Record< string, AnyValue > >;
 
 type API = {
 	createElement: typeof createElement;
@@ -19,6 +20,13 @@ type API = {
 	generateElementId: typeof generateElementId;
 	getContainer: typeof getContainer;
 	doUpdateElementProperty: typeof doUpdateElementProperty;
+};
+
+type CtorOptions = {
+	xml: Document;
+	api?: Partial< API >;
+	elementConfig?: AnyConfig;
+	stylesConfig?: AnyConfig;
 };
 
 export class CompositionBuilder {
@@ -34,6 +42,7 @@ export class CompositionBuilder {
 		getContainer,
 		doUpdateElementProperty,
 	};
+	private xml: Document;
 
 	public static fromXMLString( xmlString: string, api: Partial< API > = {} ): CompositionBuilder {
 		const parser = new DOMParser();
@@ -42,14 +51,18 @@ export class CompositionBuilder {
 		if ( errorNode ) {
 			throw new Error( 'Failed to parse XML string: ' + errorNode.textContent );
 		}
-		return new CompositionBuilder( xmlDoc, api );
+		return new CompositionBuilder( {
+			xml: xmlDoc,
+			api,
+		} );
 	}
 
-	constructor(
-		private xml: Document,
-		api: Partial< API > = {}
-	) {
+	constructor( opts: CtorOptions ) {
+		const { api = {}, elementConfig = {}, stylesConfig = {}, xml } = opts;
+		this.xml = xml;
 		Object.assign( this.api, api );
+		this.setElementConfig( elementConfig );
+		this.setStylesConfig( stylesConfig );
 	}
 
 	setElementConfig( config: Record< string, Record< string, AnyValue > > ) {
