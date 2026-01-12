@@ -32,7 +32,7 @@ class Editor_One_Theme_Builder_Menu implements Menu_Item_Interface, Admin_Menu_I
 	}
 
 	public function get_position(): int {
-		return 5;
+		return 15;
 	}
 
 	public function get_slug(): string {

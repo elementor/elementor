@@ -270,14 +270,6 @@ class Elementor_One_Menu_Manager {
 
 		$all_items = array_merge_recursive( $level3_items, $level4_items );
 
-		foreach ( $all_items as $group_id => $group_items ) {
-			uasort( $all_items[ $group_id ], function ( $a, $b ) {
-				$pos_a = method_exists( $a, 'get_position' ) ? $a->get_position() : 100;
-				$pos_b = method_exists( $b, 'get_position' ) ? $b->get_position() : 100;
-				return $pos_a <=> $pos_b;
-			} );
-		}
-
 		foreach ( $all_items as $group_items ) {
 			foreach ( $group_items as $item_slug => $item ) {
 				$callback( $item_slug, $item );
