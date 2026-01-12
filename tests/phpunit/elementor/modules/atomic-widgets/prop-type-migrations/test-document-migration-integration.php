@@ -2,7 +2,9 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\AtomicWidgets\PropTypeMigrations;
 
+use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Heading\Atomic_Heading;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Loader;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
@@ -24,6 +26,11 @@ class Test_Document_Migration_Integration extends Elementor_Test_Base {
 
 	public function setUp(): void {
 		parent::setUp();
+
+		Plugin::$instance->experiments->set_feature_default_state(
+			Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING,
+			Experiments_Manager::STATE_ACTIVE
+		);
 
 		Plugin::$instance->widgets_manager->register( new Atomic_Heading( [], [] ) );
 		Plugin::$instance->widgets_manager->register( new \Elementor\Modules\AtomicWidgets\Elements\Atomic_Image\Atomic_Image( [], [] ) );
