@@ -21,12 +21,6 @@ class Test_Settings extends Elementor_Test_Base {
 		// Arrange.
 		$this->act_as_admin();
 
-		if ( ! class_exists( '\ElementorOne\Loader' ) ) {
-			$this->markTestSkipped( 'wp-one-package is not available. Skipping test.' );
-		}
-
-		fwrite( STDERR, "wp-one-package is available. Running test.\n" );
-
 		// Act.
 		do_action( 'admin_menu' );
 
