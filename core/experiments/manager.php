@@ -253,6 +253,10 @@ class Manager extends Base_Object {
 	 * @return bool
 	 */
 	public function is_feature_active( $feature_name, $check_dependencies = false ) {
+		if ( 'nested-elements' === $feature_name ) {
+			$feature_name = 'container';
+		}
+
 		$feature = $this->get_features( $feature_name );
 
 		if ( ! $feature || self::STATE_ACTIVE !== $this->get_feature_actual_state( $feature ) ) {
