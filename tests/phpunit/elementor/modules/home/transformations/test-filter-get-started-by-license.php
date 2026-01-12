@@ -1,23 +1,10 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\EditorOne\Module as EditorOneModule;
 use Elementor\Modules\Home\Transformations\Filter_Get_Started_By_License;
-use Elementor\Plugin;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Filter_Get_Started_By_License extends PHPUnit_TestCase {
-
-	public function setUp(): void {
-		parent::setUp();
-
-		$experiments = Plugin::$instance->experiments;
-		$experiments->set_feature_default_state(
-			EditorOneModule::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_INACTIVE
-		);
-	}
 
 	public function test_transform__core_plugin() {
 		// Arrange
@@ -67,6 +54,14 @@ class Test_Filter_Get_Started_By_License extends PHPUnit_TestCase {
 						'pro'
 					],
 				],
+				[
+					'thing' => [
+						'key' => 'value',
+					],
+					'license' => [
+						'one'
+					],
+				],
 			],
 			'misc' => [
 				'Name' => 'Microsoft',
@@ -99,7 +94,7 @@ class Test_Filter_Get_Started_By_License extends PHPUnit_TestCase {
 					'key' => 'value',
 				],
 				'license' => [
-					'pro'
+					'one'
 				],
 			],
 			'misc' => [

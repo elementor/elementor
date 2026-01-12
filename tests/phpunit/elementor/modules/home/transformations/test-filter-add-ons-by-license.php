@@ -1,23 +1,10 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\EditorOne\Module as EditorOneModule;
 use Elementor\Modules\Home\Transformations\Filter_Add_Ons_By_License;
-use Elementor\Plugin;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Filter_Add_Ons_By_License extends PHPUnit_TestCase {
-
-	public function setUp(): void {
-		parent::setUp();
-
-		$experiments = Plugin::$instance->experiments;
-		$experiments->set_feature_default_state(
-			EditorOneModule::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_INACTIVE
-		);
-	}
 
 	public function tearDown(): void {
 		remove_all_filters( 'elementor/admin/homescreen_promotion_tier' );
@@ -72,7 +59,7 @@ class Test_Filter_Add_Ons_By_License extends PHPUnit_TestCase {
 	private function mock_home_screen_data_with_hide_section_free() {
 		return [
 			'add_ons' => [
-				'hide_section' => [ 'free' ],
+				'hide_section' => [ 'one' ],
 				'header' => [
 					'title' => 'Test Add-ons Title',
 					'description' => 'Test description',
@@ -122,5 +109,4 @@ class Test_Filter_Add_Ons_By_License extends PHPUnit_TestCase {
 		];
 	}
 }
-
 
