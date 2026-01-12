@@ -23,6 +23,7 @@ import { undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../contexts/element-context';
+import { isDynamicValueButUnsupported } from '../dynamics/utils';
 import { extractOrderedDependencies, getUpdatedValues, type Values } from '../utils/prop-dependency-utils';
 import { createTopLevelObjectType } from './create-top-level-object-type';
 
@@ -46,7 +47,17 @@ export const SettingsField = ( { bind, children, propDisplayName }: SettingsFiel
 		return migratePropValues( elementSettingValues, propsSchema );
 	}, [ elementSettingValues, propsSchema ] );
 
-	const value = { [ bind ]: migratedValues?.[ bind ] ?? null };
+	const normalizedValue = useMemo( () => {
+		const rawValue = migratedValues?.[ bind ] ?? null;
+
+		if ( rawValue && isDynamicValueButUnsupported( rawValue ) ) {
+			return null;
+		}
+
+		return rawValue;
+	}, [ migratedValues, bind ] );
+
+	const value = { [ bind ]: normalizedValue };
 
 	const propType = createTopLevelObjectType( { schema: propsSchema } );
 

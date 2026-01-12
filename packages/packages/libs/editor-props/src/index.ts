@@ -25,6 +25,7 @@ export { filterEmptyValues, isEmpty } from './utils/filter-empty-values';
 export { isTransformable } from './utils/is-transformable';
 export { mergeProps } from './utils/merge-props';
 export { evaluateTerm, extractValue, isDependency, isDependencyMet } from './utils/prop-dependency-utils';
+export { isSupportedDynamicTag, isDynamicValueButUnsupportedTag } from './utils/is-supported-dynamic-tag';
 
 // constants
 export { getCompatibleTypeKeys, migratePropValue, PROP_TYPE_COMPATIBILITY_MAP } from './utils/prop-type-compatibility';

@@ -1,5 +1,6 @@
 import {
 	createPropUtils,
+	isDynamicValueButUnsupportedTag,
 	isTransformable,
 	type PropType,
 	type PropValue,
@@ -18,6 +19,10 @@ export const getDynamicPropType = ( propType: PropType ): DynamicPropType | null
 	const dynamicPropType = propType.kind === 'union' && propType.prop_types[ DYNAMIC_PROP_TYPE_KEY ];
 
 	return dynamicPropType && isDynamicPropType( dynamicPropType ) ? dynamicPropType : null;
+};
+
+export const isDynamicValueButUnsupported = ( prop: PropValue ): boolean => {
+	return isTransformable( prop ) && isDynamicValueButUnsupportedTag( prop );
 };
 
 export const isDynamicPropValue = ( prop: PropValue ): prop is DynamicPropValue => {

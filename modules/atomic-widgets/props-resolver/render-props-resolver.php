@@ -2,11 +2,9 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropsResolver;
 
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
-use Exception;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -31,6 +29,26 @@ class Render_Props_Resolver extends Props_Resolver {
 		return static::instance( self::CONTEXT_SETTINGS );
 	}
 
+	private function should_revert_to_default( $prop_value ): bool {
+		if ( null === $prop_value ) {
+			return true;
+		}
+
+		if ( ! Dynamic_Prop_Type::is_dynamic_prop_value( $prop_value ) ) {
+			return false;
+		}
+
+		$tag_name = $prop_value['value']['name'] ?? null;
+
+		if ( ! $tag_name ) {
+			return true;
+		}
+
+		$tag = Plugin::$instance->dynamic_tags->get_tag_info( $tag_name );
+
+		return null === $tag;
+	}
+
 	public function resolve( array $schema, array $props ): array {
 		$resolved = [];
 
@@ -39,8 +57,11 @@ class Render_Props_Resolver extends Props_Resolver {
 				continue;
 			}
 
+			$prop_value = $props[ $key ] ?? null;
+			$actual_value = $this->should_revert_to_default( $prop_value ) ? $prop_type->get_default() : $prop_value;
+
 			$transformed = $this->resolve_item(
-				$props[ $key ] ?? $prop_type->get_default(),
+				$actual_value,
 				$key,
 				$prop_type
 			);
