@@ -1,103 +1,94 @@
-# <a href="https://elemn.to/gh-to-elementor"><img src="https://i.imgur.com/0Guj2pn.png?1" alt="Elementor Website Builder"></a>
+# Elementor Website Builder - More than Just a Page Builder
 
-Welcome to the Elementor GitHub repository!
+**Contributors:** elemntor
+**Tags:** page builder, editor, landing page, drag-and-drop, elementor, visual editor, wysiwyg, design, maintenance mode, coming soon, website builder, landing page builder, front-end builder
+**Requires at least:** 6.0
+**Tested up to:** 6.4
+**Requires PHP:** 7.4
+**Stable tag:** 3.12.1
+**License:** GPLv3
+**License URI:** [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.html)
 
-**Elementor is the most advanced front-end drag-and-drop website builder. Create high-end, pixel-perfect websites at record speeds. Build any theme, any page, and any design with no code.**
+The Elementor Website Builder offers a comprehensive set of features: a drag-and-drop page builder, pixel-perfect design, mobile-responsive editing, and more. Get started now!
 
-<br>
+## Description
 
-<p><a href="https://elemn.to/gh-to-elementor"><img src="/.github/assets/elementor-github-cover.gif" alt="Elementor Website Builder"></a></p>
+[Watch the Elementor Introduction Video](https://www.youtube.com/watch?v=lBu9TKg7dFM)
 
-<br>
+**THE #1 WEB CREATION PLATFORM, POWERING OVER 15M WEBSITES WORLDWIDE.**
 
-Introducing a WordPress website builder with no limits of design. A website builder that delivers high-end page designs and advanced capabilities never before seen on WordPress.
+Elementor is the leading WordPress website builder, empowering you to build professional, pixel-perfect websites without writing a single line of code. With an intuitive drag-and-drop interface, you have complete control over your website's design.
 
-**It's time for [Elementor Website Builder](https://elemn.to/gh-to-elementor)**.
+Revolutionize your website-building experience with [Elementor AI](https://go.elementor.com/wp-repo-description-tab-elementor-ai/), a native AI integration built specifically for Elementor. It transforms your website-building process by enabling you to create complete sections, original text, code, and images instantly.
 
-### The leading website builder for any purpose
+Unlock all of Elementor’s features and elevate your website’s potential with [Elementor Pro](https://go.elementor.com/wp-repo-description-tab-elementor-pro-pro-features/).
 
-Whether you are a web designer looking for a way to achieve pixel-perfect websites, a marketer looking to get online fast, or a developer who wants to expand their capabilities, Elementor's website builder has what you need - intuitive drag-and-drop Editor, advanced design features and a complete open-source approach.
+### PIXEL-PERFECT WEBSITE DESIGNS
 
-There are many other [features](https://elemn.to/gh-to-features) to help you build better websites. Join the elite web professionals who enjoy [Elementor Pro](https://elemn.to/gh-to-elementor-pro)!
+Gain full control over your website’s design and layout with the Elementor Page Builder, providing an intuitive drag-and-drop interface. Drag elements onto the canvas and position them to achieve your desired page structure and functionality.
 
-## Elementor Roadmap
+Leverage Flexbox and CSS Grid Containers to create highly sophisticated, professional, lightweight, and responsive layouts. Additionally, use Elementor’s Nested Elements to elevate your website’s design and unlock even more creative freedom by nesting elements within other elements.
 
-Discover what's Next in Elementor. Visit the [Elementor Roadmap](https://elemn.to/gh-to-roadmap) and learn about the status of upcoming or newly-released features.
+### ADVANCED DESIGN CAPABILITIES
 
-## Developer API
+With Elementor’s robust features and over 40 free widgets, you can create unique websites that stand out. Enhance your website with advanced design capabilities, such as uploading SVG files, applying masks, box shadows, gradient backgrounds, headline effects, shape dividers, built-in CSS controls, and many more.
 
-Elementor website builder is free and open source. It's the perfect plugin to extend and integrate further. It was envisioned with the developer in mind, and we have already seen some truly remarkable addons created by many skilled developers.
+### FULL WEBSITE KITS AND TEMPLATE LIBRARY
 
-To help you get started and learn just how to integrate with Elementor, we have created the official [Elementor Developers Center](https://elemn.to/gh-to-dev-center).
+Save valuable time, jumpstart your website creation process, or find inspiration with our designer-made website kits and templates. Apply a [Full Website Kit](https://go.elementor.com/wp-repo-description-tab-library-full-website-kit/) to get a website in a snap, including the Homepage, Service Page, and more. Use the library to import Single Pages, Blocks, or Popup templates to your website. You can also create and export your templates and import them to another website to create reusable website blueprints and accelerate your website creation process.
 
-Check the [Developers Blog](https://elemn.to/gh-to-dev-blog) to discover the latest information from our engineers working on the newest Elementor versions, or visit the [Developers Documentation](https://elemn.to/gh-to-dev-docs) to learn how to extend Elementor and create your Addons.
+### FULLY RESPONSIVE
 
-#### Developers Community
+Seamlessly adjust the content and presentation of your website to every device. With [Custom Breakpoints](https://go.elementor.com/wp-repo-description-tab-pro-features-custom-breakpoints/), make adjustments to your website’s design to create an ideal experience for every breakpoint. Additionally, display content based on device type or set the alignment, spacing, layout, order, and more.
 
-[Join our Developers Community](https://elemn.to/dev-community) and share tips, tricks, and knowledge with other developers about extending and developing Addons for Elementor.
+### OVER 40+ FREE WIDGETS AND COUNTING
 
-## Be a Contributor
+Elementor includes a variety of 40+ free widgets for you to build professional and engaging websites:
 
-Community contributions are always welcomed and help us remain the Number 1 WordPress Website Builder. Feel free to answer questions on GitHub and within the various Elementor communities.
+- **Heading**: Add eye-catching headlines.
+- **Image**: Control the size, opacity, and other settings of images.
+- **Text Editor**: A WYSIWYG text editor, just like the WordPress editor.
+- **Video**: Add YouTube, Vimeo, Dailymotion, or self-hosted videos to your page.
+- **Button**: Control every aspect of the button design.
+- **Image Box**: A box that includes an image, headline, and text.
+- **Testimonials**: Customer testimonials that show social proof.
+- **Icon**: Place one or more of 600+ icons available.
+- **Icon Box**: Include an icon, headline, and text with one widget.
+- **Social Icons**: Link to your social pages with the relevant icon like Facebook/X (formerly Twitter).
+- **Image Gallery**: Display your images in an aligned grid.
+- **Image Carousel**: Create a rotating carousel or slider for chosen images.
+- **Icon List**: Use any icon to create a bullet list.
+- **Counter**: Show stats and numbers in an escalating manner.
+- **Progress Bar**: Include an escalating progress bar.
+- **Nested Tabs**: Gain complete design freedom to display content in vertical or horizontal tabs.
+- **Nested Accordion**: Display any type of content in collapsible sections.
+- **Toggle**: Use the Toggle to hide or display content, like FAQs.
+- **Rating**: Display how many stars (or any other icon) other visitors gave your content.
+- **Alert**: Include a colored alert box to draw visitor’s attention.
+- **HTML**: Insert code into the page.
+- **Shortcode**: Easily insert shortcodes from any plugin into the page.
+- **Menu Anchor**: Link any menu to this anchor.
+- **Read More**: Set the `Read More` cut-off for the excerpt in archive pages.
+- **Sidebar**: Add any sidebar into the page.
+- **Google Maps**: Embed maps into the page.
+- **SoundCloud**: Add audio bits from SoundCloud.
+- **Divider**: Separate content with a designed divider.
+- **Spacer**: Add space between elements.
+- **Columns**: Create inner columns within the column.
+- **Text Path**: Attach your text to a path.
+- **And counting...**
 
-There are many ways to contribute to Elementor:
+### ACCELERATE YOUR WEB CREATION PROCESS
 
-### Contribution Guidelines
+To accelerate your workflow, Elementor includes a multitude of workflow-enhancing features and collaborative tools that improve your efficiency, including:
 
-Please read our [Contribution Guidelines](https://elemn.to/gh-contributing) to learn the best practices for contributing to Elementor.
+- **Finder**: Quickly navigate between different pages and components of your website, or create new website parts quickly.
+- **Add to Favorites**: Pin your most frequently used widgets to the top of the widget panel for easy access, so you don’t need to scroll through hundreds of widgets.
+- **Copy & Paste Between One Website’s Editor to Another**: Copy any element or layout from the Editor of one website to another.
+- **Revision History**: Restore and compare previous versions of your website with Elementor’s revision history.
 
-### Bug Report
+### FAST LOADING WEBSITES
 
-If you found a bug in the source code and can reproduce it consistently after troubleshooting it, you can help us by [submitting a Bug Report](https://elemn.to/gh-new-bug-report).
+Your website’s performance impacts your visitor’s experience and search result ranking. Therefore, Elementor continuously invests in improving performance and recently partnered with Google Chrome to identify more ways to optimize performance without impacting design. Performance-improving features include reduced DOM output, improved media file loading, reduced CSS and JS files, lazy loading, faster font loading, optimized front-end asset loading, and more. To learn more, check out our [performance page](https://go.elementor.com/wp-repo-description-tab-performance-performance-page/).
 
-Even better, you can [submit a Pull Request](https://elemn.to/gh-new-pr) with a fix, and we will happily review it.
-
-### Security Report
-
-Join our community-driven [Bug Bounty programs](https://elemn.to/gh-to-bounty-programs).
-
-We leverage the collective expertise of our community, offering round-the-clock crowdsourced vulnerability detection. The programs provide a comprehensive overview of features and endpoints considered 'in scope,' reward specifics where relevant, and our complete terms and conditions.
-
-To learn more about our security efforts, visit our [Trust Center](https://elemn.to/gh-to-trust-center). Security issues can be reported through our dedicated [Bug Bounty Programs page](https://elemn.to/gh-to-bounty-programs).
-
-### Feature Request
-
-Do you have a brilliant idea, enhancement, or feature you would love to see in Elementor? We're all ears!
-
-Suggest new ideas, features, or enhancements by [submitting a Feature Request](https://elemn.to/gh-new-feature-request).
-<br>You can also support existing ideas by [voting for your favorite requests](https://elemn.to/gh-feature-requests).
-
-### Translate
-
-The Elementor User Interface was designed with a global audience in mind. It supports a wide range of languages and is also RTL compatible. Out of the box, we offer support for over 60 languages.
-
-Want to make a difference? <br>We would appreciate your contribution by adding a new language or helping translate existing ones at [translate.wordpress.org](https://elemn.to/translate-repo). To assist you, we've built a short guide explaining [how to translate and localize the plugin](https://elemn.to/gh-to-help-localize-elementor).
-
-## Support
-
-### Need Help, Guidance, Assistance, or Support?
-
-Use one of the support channels below to find solutions to your questions and get assistance.
-
-#### Note that we are unable to offer any support through this repository.
-
-Please **DO NOT** open issues or discussions to request support.
-<br>For those, use the appropriate channels.
-
-#### Find out how to [submit a Support Ticket here](https://elemn.to/support-ticket).
-
-Alternatively, you can visit one of these resources:
-
--   **Help Center** <br>Visit the [Elementor Help Center](https://elemn.to/gh-to-help-center) to find solutions to the most frequent problems, or read the documentation about Elementor's many features.
--   **Academy** <br>Grow your Web Creator skills and learn to make the most of Elementor in the [Elementor Academy](https://elemn.to/gh-to-academy).
--   **Global Community** <br>Join the [Elementor Global Community](https://elemn.to/community-on-fb) on Facebook. Where all kinds of users come together to help each other.
--   **Support Forum** <br>If you have more questions, visit the free [Support Forum](https://elemn.to/wp-support-forum) on our WordPress plugin page.
--   **Elementor Website** <br>For more information about features, FAQs, and documentation, check out our website at [Elementor Website Builder](https://elemn.to/gh-to-elementor).
-
-**If you have an active [Elementor Pro](https://elemn.to/gh-to-elementor-pro) subscription, you are entitled to personal support. Please see your purchase email or visit your [Elementor Account page](https://elemn.to/my-elementor) for details.**
-
-## Liked Elementor?
-
--   Join the [Elementor Global Community](https://elemn.to/community-on-fb) on Facebook.
--   Learn from our tutorials on [Elementor's YouTube Channel](https://elemn.to/yt).
--   Or [rate us on WordPress](https://elemn.to/gh-to-wp-new-review). It would mean the world to us! :)
+***Looking to boost your site's performance?** Meet the [Image Optimizer plugin](https://go.elementor.com/wp-repo-description-tab-elementor-io/)
