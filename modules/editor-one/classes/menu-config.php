@@ -49,6 +49,16 @@ class Menu_Config {
 	}
 
 	public static function is_elementor_home_menu_available(): bool {
+		$wp_one_package_path = ELEMENTOR_PATH . 'vendor/elementor/wp-one-package';
+
+		if ( ! file_exists( $wp_one_package_path . '/src/Loader.php' ) ) {
+			return false;
+		}
+
+		if ( ! class_exists( '\ElementorOne\Loader' ) ) {
+			require_once $wp_one_package_path . '/src/Loader.php';
+		}
+
 		return class_exists( '\ElementorOne\Loader' );
 	}
 

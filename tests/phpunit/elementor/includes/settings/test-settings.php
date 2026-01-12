@@ -52,6 +52,4 @@ class Test_Settings extends Elementor_Test_Base {
 		$this->assertEquals( 'Editor', $editor_item['label'], 'Editor menu item should have correct label' );
 		$this->assertEquals( 'elementor-editor', $editor_item['slug'], 'Editor menu item should have correct slug' );
 	}
-
 }
-
