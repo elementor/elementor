@@ -48,16 +48,24 @@ class Menu_Config {
 		return apply_filters( 'elementor/editor-one/menu/legacy_slug_mapping', $default_mapping );
 	}
 
-	public static function is_elementor_home_menu_available(): bool {
-		$wp_one_package_path = ELEMENTOR_PATH . 'vendor/elementor/wp-one-package';
+	private static function get_wp_one_package_loader_path(): string {
+		return ELEMENTOR_PATH . 'vendor/elementor/wp-one-package/src/Loader.php';
+	}
 
-		if ( ! file_exists( $wp_one_package_path . '/src/Loader.php' ) ) {
-			return false;
+	private static function ensure_wp_one_package_loaded(): void {
+		if ( class_exists( '\ElementorOne\Loader' ) ) {
+			return;
 		}
 
-		if ( ! class_exists( '\ElementorOne\Loader' ) ) {
-			require_once $wp_one_package_path . '/src/Loader.php';
+		$loader_path = self::get_wp_one_package_loader_path();
+
+		if ( file_exists( $loader_path ) ) {
+			require_once $loader_path;
 		}
+	}
+
+	public static function is_wp_one_package_available(): bool {
+		self::ensure_wp_one_package_loaded();
 
 		return class_exists( '\ElementorOne\Loader' );
 	}

@@ -27,7 +27,7 @@ class Module extends BaseModule {
 	}
 
 	public static function is_active(): bool {
-		return Menu_Config::is_elementor_home_menu_available();
+		return Menu_Config::is_wp_one_package_available();
 	}
 
 	public static function get_experimental_data(): array {
