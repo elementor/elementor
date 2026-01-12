@@ -10,6 +10,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\GlobalClasses\Utils\Atomic_Elements_Utils;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -63,6 +64,16 @@ class Migrations_Orchestrator {
 				self::MIGRATIONS_STATE_META_KEY
 			)
 		);
+
+		if ( false === $deleted ) {
+			Logger::error( 'Failed to clear migration caches', [
+				'error' => $wpdb->last_error,
+				'reason' => 'feature_flag_change',
+				'old_state' => $old_state,
+				'new_state' => $new_state,
+			] );
+			return;
+		}
 
 		Logger::info( 'Cleared migration caches', [
 			'deleted_count' => $deleted,
@@ -170,7 +181,7 @@ class Migrations_Orchestrator {
 		}
 
 		if ( isset( $context['key'] ) && 'props' === $context['key'] ) {
-			return $this->get_styles_schema();
+			return Style_Schema::get();
 		}
 
 		return [];
@@ -201,10 +212,6 @@ class Migrations_Orchestrator {
 		}
 
 		return [];
-	}
-
-	private function get_styles_schema(): array {
-		return Style_Schema::get();
 	}
 
 	private function is_migrated( int $post_id ): bool {
@@ -246,7 +253,7 @@ class Migrations_Orchestrator {
 	}
 
 	private function get_widget_schema( string $widget_type ): array {
-		$widget = \Elementor\Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
+		$widget = Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
 
 		if ( ! $widget ) {
 			return [];
@@ -270,7 +277,7 @@ class Migrations_Orchestrator {
 			return false;
 		}
 
-		$widget = \Elementor\Plugin::$instance->widgets_manager->get_widget_types( $element['widgetType'] );
+		$widget = Plugin::$instance->widgets_manager->get_widget_types( $element['widgetType'] );
 
 		return Atomic_Elements_Utils::is_atomic_element( $widget );
 	}
@@ -282,13 +289,13 @@ class Migrations_Orchestrator {
 			return false;
 		}
 
-		$element_instance = \Elementor\Plugin::$instance->elements_manager->get_element_types( $el_type );
+		$element_instance = Plugin::$instance->elements_manager->get_element_types( $el_type );
 
 		return Atomic_Elements_Utils::is_atomic_element( $element_instance );
 	}
 
 	private function get_element_schema( string $element_type ): array {
-		$element = \Elementor\Plugin::$instance->elements_manager->get_element_types( $element_type );
+		$element = Plugin::$instance->elements_manager->get_element_types( $element_type );
 
 		if ( ! $element ) {
 			return [];
