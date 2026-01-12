@@ -142,7 +142,7 @@ type ToolRegistrationOptions<
 				args: unknown,
 				extra: RequestHandlerExtra< ServerRequest, ServerNotification >
 		  ) => ExpectedOutput | Promise< ExpectedOutput >;
-	isDestrcutive?: boolean;
+	isDestructive?: boolean;
 	requiredResources?: ResourceList;
 	modelPreferences?: AngieModelPreferences;
 };
@@ -188,8 +188,8 @@ function createToolRegistrator( server: McpServer ) {
 			}
 		};
 		const annotations: Record< string, unknown > = {
-			destructiveHint: opts.isDestrcutive,
-			readOnlyHint: opts.isDestrcutive ? false : undefined,
+			destructiveHint: opts.isDestructive,
+			readOnlyHint: opts.isDestructive ? false : undefined,
 			title: opts.name,
 		};
 		if ( opts.requiredResources ) {

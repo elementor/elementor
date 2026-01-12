@@ -4,7 +4,6 @@ import {
 	getContainer,
 	getWidgetsCache,
 	type V1Element,
-	type V1ElementConfig,
 } from '@elementor/editor-elements';
 import { type z } from '@elementor/schema';
 
@@ -34,7 +33,6 @@ export class CompositionBuilder {
 	private elementStylesConfig: Record< string, Record< string, AnyValue > > = {};
 	private rootContainers: V1Element[] = [];
 	private containerElements: string[] = [];
-	private widgetsCache: Record< string, V1ElementConfig > = {};
 	private api: API = {
 		createElement,
 		getWidgetsCache,
@@ -118,8 +116,9 @@ export class CompositionBuilder {
 	}
 
 	private findSchemaForNode( node: Element ) {
+		const widgetsCache = this.api.getWidgetsCache() || {};
 		const widgetType = node.tagName;
-		const widgetData = this.widgetsCache[ widgetType ]?.atomic_props_schema;
+		const widgetData = widgetsCache[ widgetType ]?.atomic_props_schema;
 		return widgetData || null;
 	}
 
@@ -202,22 +201,14 @@ export class CompositionBuilder {
 	}
 
 	build( rootContainer: V1Element ) {
-		// lazy load widgets cache
-		if ( Object.entries( this.widgetsCache ).length === 0 ) {
-			this.widgetsCache = this.api.getWidgetsCache() || {};
-			// still empty? Somethin is wrong. Go Fatal.
-			if ( Object.entries( this.widgetsCache ).length === 0 ) {
-				throw new Error( 'Widgets cache is empty. Cannot build composition.' );
-			}
-			const CONTAINER_ELEMENTS = Object.values( this.widgetsCache )
-				.filter( ( widget ) => widget.meta?.is_container )
-				.map( ( widget ) => widget.elType )
-				.filter( ( x ) => typeof x === 'string' );
-			this.containerElements = CONTAINER_ELEMENTS;
-		}
-		// ensure all tags are supported
+		const widgetsCache = this.api.getWidgetsCache() || {};
+		const CONTAINER_ELEMENTS = Object.values( widgetsCache )
+			.filter( ( widget ) => widget.meta?.is_container )
+			.map( ( widget ) => widget.elType )
+			.filter( ( x ) => typeof x === 'string' );
+		this.containerElements = CONTAINER_ELEMENTS;
 		new Set( this.xml.querySelectorAll( '*' ) ).forEach( ( node ) => {
-			if ( ! this.widgetsCache[ node.tagName ] ) {
+			if ( ! widgetsCache[ node.tagName ] ) {
 				throw new Error( `Unknown widget type: ${ node.tagName }` );
 			}
 		} );

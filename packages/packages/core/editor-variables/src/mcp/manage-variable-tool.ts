@@ -49,7 +49,7 @@ DELETE: requires id. DESTRUCTIVE - confirm with user first.`,
 			}
 			throw new Error( `Unknown action ${ params.action }` );
 		},
-		isDestrcutive: true, // Because delete is destructive
+		isDestructive: true, // Because delete is destructive
 	} );
 };
 
