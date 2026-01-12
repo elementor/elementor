@@ -1,4 +1,4 @@
-import { type V1ElementConfig } from '@elementor/editor-elements';
+import { type ExtendedWindow, TOP_LEVEL_SINGLE_SETTING_FILTER, type V1ElementConfig } from '@elementor/editor-elements';
 
 import { type DomRenderer } from '../renderers/create-dom-renderer';
 import { createPropsResolver } from '../renderers/create-props-resolver';
@@ -22,6 +22,8 @@ export type CreateTemplatedElementTypeOptions = {
 export type TemplatedElementConfig = Required<
 	Pick< V1ElementConfig, 'twig_templates' | 'twig_main_template' | 'atomic_props_schema' | 'base_styles_dictionary' >
 >;
+
+const extendedWindow = window as ExtendedWindow;
 
 export function createTemplatedElementType( {
 	type,
@@ -166,7 +168,7 @@ export function createTemplatedElementView( {
 				.then( ( _, signal ) => {
 					const settings = this.model.get( 'settings' ).toJSON();
 					return resolveProps( {
-						props: settings,
+						props: this.filterSettings( settings ),
 						signal,
 						renderContext: this.getResolverRenderContext(),
 					} );
@@ -229,6 +231,16 @@ export function createTemplatedElementView( {
 			this.isRendered = true;
 
 			this.triggerMethod( 'render', this );
+		}
+
+		filterSettings( settings: { [ key: string ]: unknown } ) {
+			return Object.entries( settings ).reduce( ( newSettings, [ settingKey, settingValue ] ) => {
+				const formattedValue = extendedWindow.elementor?.hooks?.applyFilters
+					? extendedWindow.elementor.hooks?.applyFilters( TOP_LEVEL_SINGLE_SETTING_FILTER, settingValue )
+					: settingValue;
+
+				return { ...newSettings, [ settingKey ]: formattedValue };
+			}, {} );
 		}
 	};
 }

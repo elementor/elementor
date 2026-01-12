@@ -2,7 +2,6 @@ import { type ExtendedWindow, TOP_LEVEL_SINGLE_SETTING_FILTER } from '@elementor
 import {
 	type ArrayPropValue,
 	createPropUtils,
-	getFilteredDynamicSettings,
 	isTransformable,
 	type ObjectPropValue,
 	type PropsSchema,
@@ -68,7 +67,7 @@ export const nestedDynamicSettingsFilter = < T extends PropsSchema[ string ] | P
 	}
 
 	if ( isDynamicPropValue( value ) ) {
-		return getFilteredDynamicSettings( value ) as T;
+		return getFilteredDynamicSettings( value, tags ) as T;
 	}
 
 	if ( isObjectPropValue( value ) ) {
@@ -112,4 +111,19 @@ const isObjectPropValue = ( value: PropValue ): value is ObjectPropValue => {
 
 const isArrayPropValue = ( value: PropValue ): value is ArrayPropValue => {
 	return isTransformable( value ) && Array.isArray( value.value );
+};
+
+const getFilteredDynamicSettings = ( value: PropValue, tags: DynamicTags ): PropValue | null => {
+	if ( ! value || ! isTransformable( value ) || ! value?.value ) {
+		return value;
+	}
+
+	if ( value?.$$type !== 'dynamic' ) {
+		return value;
+	}
+
+	const dynamicValue = value.value as typeof value.value & { name: string };
+	const tagName = tags[ dynamicValue.name ] ?? null;
+
+	return tagName ? value : null;
 };

@@ -1,3 +1,6 @@
+// consts
+export { TOP_LEVEL_SINGLE_SETTING_FILTER } from './sync/get-element-setting';
+
 // types
 export * from './types';
 export type * from './sync/types';
@@ -5,7 +8,7 @@ export type * from './sync/types';
 // hooks
 export { useElementChildren, type ElementChildren, type ElementModel } from './hooks/use-element-children';
 export { useElementEditorSettings } from './hooks/use-element-editor-settings';
-export { useElementSetting, useElementSettings, TOP_LEVEL_SINGLE_SETTING_FILTER } from './hooks/use-element-setting';
+export { useElementSetting, useElementSettings } from './hooks/use-element-setting';
 export { useParentElement } from './hooks/use-parent-element';
 export { useSelectedElement } from './hooks/use-selected-element';
 
