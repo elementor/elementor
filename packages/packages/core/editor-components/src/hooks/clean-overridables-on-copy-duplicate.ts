@@ -26,7 +26,7 @@ type ExtendedWindow = Window & {
 	};
 };
 
-export function initCleanOverridablesOnCopy() {
+export function initCleanOverridablesOnCopyDuplicate() {
 	registerDataHook( 'after', 'document/elements/duplicate', ( _args, result: V1Element | V1Element[] ) => {
 		if ( ! isEditingComponent() ) {
 			return;

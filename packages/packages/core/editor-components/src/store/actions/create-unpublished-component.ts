@@ -31,7 +31,7 @@ export async function createUnpublishedComponent(
 
 	dispatch( slice.actions.addCreatedThisSession( generatedUid ) );
 
-	const componentInstance = await replaceElementWithComponent( element, componentBase );
+	const componentInstance = await replaceElementWithComponent( cleanedElement, componentBase );
 
 	trackComponentEvent( {
 		action: 'created',

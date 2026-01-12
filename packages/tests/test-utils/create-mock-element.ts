@@ -68,3 +68,17 @@ export function createMockElementType( {
 		styleStates,
 	} as ElementType;
 }
+
+export function createMockElementWithOverridable(
+	elementId: string,
+	settings: MockElementProps[ 'settings' ]
+): V1Element {
+	return createMockElement( {
+		model: {
+			id: elementId,
+			widgetType: 'e-heading',
+			elType: 'widget',
+		},
+		settings,
+	} );
+}

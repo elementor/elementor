@@ -1,5 +1,5 @@
-import { createMockElement } from 'test-utils';
-import { getContainer, updateElementSettings, type V1Element } from '@elementor/editor-elements';
+import { createMockElement, createMockElementWithOverridable } from 'test-utils';
+import { getContainer, updateElementSettings } from '@elementor/editor-elements';
 
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import {
@@ -319,15 +319,4 @@ describe( 'cleanOverridablePropsForContainers', () => {
 		);
 	} );
 } );
-
-function createMockElementWithOverridable( elementId: string, settings: Record< string, unknown > ): V1Element {
-	return createMockElement( {
-		model: {
-			id: elementId,
-			widgetType: 'e-heading',
-			elType: 'widget',
-		},
-		settings,
-	} );
-}
 
