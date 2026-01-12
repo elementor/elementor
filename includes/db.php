@@ -278,12 +278,12 @@ class DB {
 		return $data_container;
 	}
 
-	public static function iterate_elementor_documents( $callback, $batch_size = 100 ) {
+	public static function iterate_elementor_documents( $callback, $batch_size = 100, $additional_post_types = [] ) {
 		$processed_posts = 0;
 
 		while ( true ) {
 			$args = wp_parse_args( [
-				'post_type' => [ Source_Local::CPT, 'post', 'page' ],
+				'post_type' => array_merge( [ Source_Local::CPT, 'post', 'page' ], $additional_post_types ),
 				'post_status' => [ 'publish' ],
 				'posts_per_page' => $batch_size,
 				'meta_key' => Document::BUILT_WITH_ELEMENTOR_META_KEY,
