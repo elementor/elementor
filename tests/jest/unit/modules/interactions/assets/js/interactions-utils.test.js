@@ -7,7 +7,7 @@ import {
     getInViewFunction,
     waitForAnimateFunction,
     parseInteractionsData,
-} from '../../../../../../../modules/interactions/assets/js/interactions-utils';
+} from 'elementor/modules/interactions/assets/js/interactions-utils';
 
 describe( 'interactions-utils', () => {
     describe( 'getKeyframes', () => {

@@ -89,7 +89,7 @@ export function getInViewFunction() {
 	return 'undefined' !== typeof inView ? inView : window.Motion?.inView;
 }
 
-export function waitForAnimateFunction( callback, maxAttempts = 50 ) {
+export function waitForAnimateFunction( callback, maxAttempts = 10 ) {
 	if ( getAnimateFunction() ) {
 		callback();
 		return;
