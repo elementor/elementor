@@ -4,7 +4,7 @@ import { type Global, type RequestToGlobalMap } from './types';
 import { kebabToCamelCase, transformRequestToGlobal } from './utils';
 
 type Options = {
-	type: string;
+	type: ExternalsPlugin['type'];
 	global?: ( entryName: string ) => Global;
 	map: RequestToGlobalMap;
 };
