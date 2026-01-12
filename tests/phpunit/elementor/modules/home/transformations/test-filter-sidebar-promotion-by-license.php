@@ -1,23 +1,10 @@
 <?php
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\EditorOne\Module as EditorOneModule;
 use Elementor\Modules\Home\Transformations\Filter_Sidebar_Promotion_By_License;
-use Elementor\Plugin;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
-
-	public function setUp(): void {
-		parent::setUp();
-
-		$experiments = Plugin::$instance->experiments;
-		$experiments->set_feature_default_state(
-			EditorOneModule::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_INACTIVE
-		);
-	}
 
 	public function test_transform__core_plugin() {
 		// Arrange
@@ -85,6 +72,15 @@ class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 					],
 					'is_enabled' => 'true',
 				],
+				[
+					'data' => [
+						'key' => 'value',
+					],
+					'license' => [
+						'one'
+					],
+					'is_enabled' => 'true',
+				],
 			],
 			'misc' => [
 				'Name' => 'Microsoft',
@@ -122,7 +118,6 @@ class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 		];
 	}
 
-
 	private function mock_home_screen_data_transformed_core() {
 		return [
 			'sidebar_promotion_variants' => [
@@ -130,7 +125,7 @@ class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 					'key' => 'value',
 				],
 				'license' => [
-					'free'
+					'one'
 				],
 				'is_enabled' => 'true',
 			],
@@ -148,7 +143,7 @@ class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 					'key' => 'value',
 				],
 				'license' => [
-					'pro'
+					'one'
 				],
 				'is_enabled' => 'true',
 			],
@@ -168,4 +163,3 @@ class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 		];
 	}
 }
-
