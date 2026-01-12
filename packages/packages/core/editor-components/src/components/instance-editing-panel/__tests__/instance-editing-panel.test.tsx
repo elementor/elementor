@@ -420,14 +420,12 @@ type SetupComponentOptions = {
 	isArchived?: boolean;
 };
 
-function setupComponent( options: SetupComponentOptions = {} ) {
-	const {
-		isWithOverridableProps = true,
-		isWithNestedOverridableProps = false,
-		isWithEmptyGroup = false,
-		isArchived = false,
-	} = options;
-
+function setupComponent( {
+	isWithOverridableProps = true,
+	isWithNestedOverridableProps = false,
+	isWithEmptyGroup = false,
+	isArchived = false,
+}: SetupComponentOptions = {} ) {
 	const getOverridableProps = () => {
 		if ( isWithNestedOverridableProps ) {
 			return MOCK_OVERRIDABLE_PROPS_WITH_NESTED;
