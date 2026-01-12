@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Repeater } from '@elementor/editor-controls';
 import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, IconButton, Tooltip } from '@elementor/ui';
@@ -21,13 +21,17 @@ export function InteractionsList( props: InteractionListProps ) {
 	const { interactions, onSelectInteractions, onPlayInteraction, triggerCreateOnShowEmpty } = props;
 
 	const [ interactionsState, setInteractionsState ] = useState< ElementInteractions >( interactions );
+	const hasInitialized = useRef( false );
+
 
 	useEffect( () => {
 		setInteractionsState( interactions );
+		hasInitialized.current = false;
 	}, [ interactions ] );
 
 	useEffect( () => {
-		if ( triggerCreateOnShowEmpty && ( ! interactionsState.items || interactionsState.items?.length === 0 ) ) {
+		if ( triggerCreateOnShowEmpty && ! hasInitialized.current && ( ! interactionsState.items || interactionsState.items?.length === 0 ) ) {
+			hasInitialized.current = true;
 			const newState = {
 				version: 1,
 				items: [ createDefaultInteractionItem() ],
@@ -35,7 +39,7 @@ export function InteractionsList( props: InteractionListProps ) {
 			setInteractionsState( newState );
 			onSelectInteractions( newState );
 		}
-	}, [ triggerCreateOnShowEmpty ] );
+	}, [ triggerCreateOnShowEmpty, interactionsState.items, onSelectInteractions ] );
 
 	const isMaxNumberOfInteractionsReached = useMemo( () => {
 		return interactionsState.items?.length >= MAX_NUMBER_OF_INTERACTIONS;

@@ -1,5 +1,3 @@
-import type { InteractionItemValue } from '../types';
-
 const TEMP_ID_PREFIX = 'temp-';
 const TEMP_ID_REGEX = /^temp-[a-z0-9]+$/i;
 
