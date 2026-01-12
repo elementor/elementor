@@ -40,7 +40,7 @@ class Elementor_One_Menu_Manager {
 			do_action( 'elementor/editor-one/menu/register', $this->menu_data_provider );
 		} );
 
-$this->register_pro_submenus_after_apps();
+		add_action( 'admin_menu', [ $this, 'register_pro_submenus' ], 100 );
 
 		add_action( 'admin_menu', [ $this, 'intercept_legacy_submenus' ], 10003 );
 		add_action( 'admin_menu', [ $this, 'register_flyout_items_as_hidden_submenus' ], 10004 );
