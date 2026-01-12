@@ -16,10 +16,10 @@ class Test_Settings extends Elementor_Test_Base {
 		// Assert.
 		global $submenu;
 
-		$elementor_menu = $submenu['elementor'];
+		$elementor_menu = $submenu['elementor-home'];
 
 		$expected_items = [
-			'elementor' => 'Home',
+			'elementor' => 'Quick Start',
 			'elementor-settings' => 'Settings',
 			'elementor-role-manager' => 'Role Manager',
 			'elementor-element-manager' => 'Element Manager',
