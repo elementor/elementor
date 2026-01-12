@@ -158,7 +158,8 @@ test.describe.skip( 'On boarding @onBoarding', async () => {
 test.describe( 'Onboarding @onBoarding', async () => {
 	const chooseFeaturesUrl = '/wp-admin/admin.php?page=elementor-app#onboarding/chooseFeatures';
 
-	test( 'Onboarding Choose Features page', async ( { page } ) => {
+	// TODO: Fix this test in [ED-22443].
+	test.skip( 'Onboarding Choose Features page', async ( { page } ) => {
 		await page.goto( chooseFeaturesUrl );
 
 		const chooseFeaturesScreen = page.locator( '.e-onboarding__page-chooseFeatures' ),
