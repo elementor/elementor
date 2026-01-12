@@ -117,6 +117,7 @@ class Styles_Renderer {
 		$css = $this->props_to_css_string( $variant['props'] ) ?? '';
 		$custom_css = $this->custom_css_to_css_string( $variant['custom_css'] ?? null );
 
+		
 		if ( ! $css && ! $custom_css ) {
 			return '';
 		}
@@ -136,7 +137,6 @@ class Styles_Renderer {
 		return $style_declaration;
 	}
 
-
 	private function props_to_css_string( array $props ): string {
 		$schema = Style_Schema::get();
 
@@ -153,9 +153,11 @@ class Styles_Renderer {
 	}
 
 	private function custom_css_to_css_string( ?array $custom_css ): string {
-		return ! empty( $custom_css['raw'] )
+		$custom_css_string = ! empty( $custom_css['raw'] )
 			? Utils::decode_string( $custom_css['raw'], '' ) . '\n'
 			: '';
+
+		return apply_filters( 'elementor/atomic_widgets/styles/custom_css', $custom_css_string, '' );
 	}
 
 	private function wrap_with_media_query( string $breakpoint_id, string $css ): string {
