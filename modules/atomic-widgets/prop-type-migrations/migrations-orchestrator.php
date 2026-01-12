@@ -101,42 +101,19 @@ class Migrations_Orchestrator {
 		$has_changes = false;
 
 		foreach ( $elements_data as &$element ) {
-			$schema = $this->get_schema( $element );
-			$settings = $element['settings'] ?? [];
 			$element_type = $element['widgetType'] ?? $element['elType'] ?? '';
 
-			if ( ! empty( $schema ) && ! empty( $settings ) ) {
-				try {
-					$element_has_changes = $this->migrate_element( $settings, $schema, $element_type );
+			try {
+				$element_has_changes = $this->walk_and_migrate( $element );
 
-					if ( $element_has_changes ) {
-						$element['settings'] = $settings;
-						$has_changes = true;
-					}
-				} catch ( \Exception $e ) {
-					Logger::warning( 'Element migration failed', [
-						'element_type' => $element_type,
-						'error' => $e->getMessage(),
-					] );
+				if ( $element_has_changes ) {
+					$has_changes = true;
 				}
-			}
-
-			$styles = $element['styles'] ?? [];
-
-			if ( ! empty( $styles ) ) {
-				try {
-					$styles_has_changes = $this->migrate_styles( $styles );
-
-					if ( $styles_has_changes ) {
-						$element['styles'] = $styles;
-						$has_changes = true;
-					}
-				} catch ( \Exception $e ) {
-					Logger::warning( 'Styles migration failed', [
-						'element_type' => $element_type,
-						'error' => $e->getMessage(),
-					] );
-				}
+			} catch ( \Exception $e ) {
+				Logger::warning( 'Element migration failed', [
+					'element_type' => $element_type,
+					'error' => $e->getMessage(),
+				] );
 			}
 
 			if ( isset( $element['elements'] ) && is_array( $element['elements'] ) ) {
@@ -149,6 +126,81 @@ class Migrations_Orchestrator {
 		}
 
 		return $has_changes;
+	}
+
+	private function walk_and_migrate( array &$data, ?array $schema = null, ?array $context = null ): bool {
+		$has_changes = false;
+
+		if ( null === $schema ) {
+			$schema = $this->try_get_schema( $data, $context );
+		}
+
+		if ( ! empty( $schema ) ) {
+			$element_type = $context['element_type'] ?? 'unknown';
+			$migrate_changes = $this->migrate_element( $data, $schema, $element_type );
+
+			if ( $migrate_changes ) {
+				$has_changes = true;
+			}
+		}
+
+		foreach ( $data as $key => &$value ) {
+			if ( ! is_array( $value ) || empty( $value ) ) {
+				continue;
+			}
+
+			$nested_context = $this->build_context( $data, $key, $context );
+			$nested_changes = $this->walk_and_migrate( $value, null, $nested_context );
+
+			if ( $nested_changes ) {
+				$has_changes = true;
+			}
+		}
+
+		return $has_changes;
+	}
+
+	private function try_get_schema( array $data, ?array $context ): array {
+		if ( isset( $context['key'] ) && 'settings' === $context['key'] && isset( $context['parent'] ) ) {
+			return $this->get_settings_schema( $context['parent'] );
+		}
+
+		if ( isset( $context['key'] ) && 'props' === $context['key'] ) {
+			return $this->get_styles_schema();
+		}
+
+		return [];
+	}
+
+	private function build_context( array $parent, $key, ?array $existing_context ): array {
+		$context = [
+			'key' => $key,
+			'parent' => $parent,
+		];
+
+		if ( isset( $existing_context['element_type'] ) ) {
+			$context['element_type'] = $existing_context['element_type'];
+		} elseif ( isset( $parent['widgetType'] ) || isset( $parent['elType'] ) ) {
+			$context['element_type'] = $parent['widgetType'] ?? $parent['elType'] ?? 'unknown';
+		}
+
+		return $context;
+	}
+
+	private function get_settings_schema( array $element ): array {
+		if ( $this->is_atomic_widget( $element ) ) {
+			return $this->get_widget_schema( $element['widgetType'] );
+		}
+
+		if ( $this->is_atomic_element( $element ) ) {
+			return $this->get_element_schema( $element['elType'] );
+		}
+
+		return [];
+	}
+
+	private function get_styles_schema(): array {
+		return Style_Schema::get();
 	}
 
 	private function is_migrated( int $post_id ): bool {
@@ -503,35 +555,5 @@ class Migrations_Orchestrator {
 			'expected_type' => $expected_type,
 			'reason' => 'type_mismatch',
 		];
-	}
-
-	private function migrate_styles( array &$styles ): bool {
-		$style_schema = Style_Schema::get();
-
-		if ( empty( $style_schema ) ) {
-			return false;
-		}
-
-		$has_changes = false;
-
-		foreach ( $styles as &$style ) {
-			if ( ! isset( $style['variants'] ) || ! is_array( $style['variants'] ) ) {
-				continue;
-			}
-
-			foreach ( $style['variants'] as &$variant ) {
-				if ( ! isset( $variant['props'] ) || ! is_array( $variant['props'] ) ) {
-					continue;
-				}
-
-				$variant_has_changes = $this->migrate_element( $variant['props'], $style_schema, 'styles' );
-
-				if ( $variant_has_changes ) {
-					$has_changes = true;
-				}
-			}
-		}
-
-		return $has_changes;
 	}
 }
