@@ -18,7 +18,7 @@ class Components_REST_API {
 	const API_BASE = 'components';
 	const LOCK_DOCUMENT_TYPE_NAME = 'components';
 	const STYLES_ROUTE = 'styles';
-	const MAX_COMPONENTS = 50;
+	const MAX_COMPONENTS = 1000;
 
 	private $repository = null;
 	public function register_hooks() {

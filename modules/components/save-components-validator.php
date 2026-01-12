@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Save_Components_Validator {
-	const MAX_COMPONENTS = 50;
+	const MAX_COMPONENTS = 1000;
 
 	private Collection $components;
 
