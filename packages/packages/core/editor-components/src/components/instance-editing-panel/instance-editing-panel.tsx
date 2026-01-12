@@ -3,8 +3,9 @@ import { ControlAdornmentsProvider } from '@elementor/editor-controls';
 import { getFieldIndicators } from '@elementor/editor-editing-panel';
 import { useSelectedElement } from '@elementor/editor-elements';
 import { PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
+import { EllipsisWithTooltip } from '@elementor/editor-ui';
 import { ComponentsIcon, PencilIcon } from '@elementor/icons';
-import { IconButton, Stack, Tooltip } from '@elementor/ui';
+import { Divider, IconButton, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponentInstanceSettings } from '../../hooks/use-component-instance-settings';
@@ -45,12 +46,10 @@ export function InstanceEditingPanel() {
 	return (
 		<>
 			<PanelHeader sx={ { justifyContent: 'start', px: 2 } }>
-				<Stack direction="row" alignContent="space-between" flexGrow={ 1 }>
-					<Stack direction="row" alignItems="center" justifyContent="start" gap={ 1 } flexGrow={ 1 }>
-						<ComponentsIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
-						<PanelHeaderTitle>{ component.name }</PanelHeaderTitle>
-					</Stack>
-					<Tooltip title={ panelTitle }>
+				<Stack direction="row" alignItems="center" flexGrow={ 1 } gap={ 1 } maxWidth="100%">
+					<ComponentsIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
+					<EllipsisWithTooltip title={ component.name } as={ PanelHeaderTitle } />
+					<Tooltip title={ panelTitle } sx={ { marginLeft: 'auto' } }>
 						<IconButton size="tiny" onClick={ handleEditComponent } aria-label={ panelTitle }>
 							<PencilIcon fontSize="tiny" />
 						</IconButton>
@@ -64,12 +63,14 @@ export function InstanceEditingPanel() {
 					) : (
 						<Stack direction="column" alignItems="stretch">
 							{ groups.map( ( group ) => (
-								<OverridePropsGroup
-									key={ group.id }
-									group={ group }
-									props={ overridableProps.props }
-									overrides={ overrides }
-								/>
+								<React.Fragment key={ group.id }>
+									<OverridePropsGroup
+										group={ group }
+										props={ overridableProps.props }
+										overrides={ overrides }
+									/>
+									<Divider />
+								</React.Fragment>
 							) ) }
 						</Stack>
 					) }

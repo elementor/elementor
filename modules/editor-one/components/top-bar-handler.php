@@ -56,7 +56,7 @@ class Top_Bar_Handler {
 			'elementorOneTopBarConfig',
 			[
 				'version' => ELEMENTOR_VERSION,
-				'title' => __( 'Elementor', 'elementor' ),
+				'title' => __( 'website builder', 'elementor' ),
 				'environment' => apply_filters( 'elementor/environment', 'production' ),
 			]
 		);

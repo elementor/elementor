@@ -8,43 +8,12 @@ export const config = window.ElementorInteractionsConfig?.constants || {
 	easing: 'linear',
 };
 
-function calculateSlideDistance( element, direction ) {
-	if ( ! element ) {
-		return config.slideDistance;
-	}
-
-	const rect = element.getBoundingClientRect();
-	const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-	const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-	const isLtr = 'ltr' === document.documentElement.dir || 'ltr' === document.body.dir;
-
-	switch ( direction ) {
-		case 'left':
-			return Math.min( ( isLtr ? rect.left : rect.right ) + rect.width, viewportWidth + rect.width );
-		case 'right':
-			return Math.min( viewportWidth - ( isLtr ? rect.right : rect.left ) + rect.width, viewportWidth + rect.width );
-		case 'top':
-			return Math.min( rect.top + rect.height, viewportHeight + rect.height );
-		case 'bottom':
-			return Math.min( viewportHeight - rect.bottom + rect.height, viewportHeight + rect.height );
-		default:
-			return config.slideDistance;
-	}
-}
-
-export function getKeyframes( effect, type, direction, element = null ) {
+export function getKeyframes( effect, type, direction ) {
 	const isIn = 'in' === type;
 	const keyframes = {};
-	const hasDirection = !! direction;
 
 	if ( 'fade' === effect ) {
-		if ( hasDirection && isIn ) {
-			keyframes.opacity = [ 0, 0, 0.2, 0.6, 1 ];
-		} else if ( hasDirection && ! isIn ) {
-			keyframes.opacity = [ 1, 0.8, 0.4, 0, 0 ];
-		} else {
-			keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
-		}
+		keyframes.opacity = isIn ? [ 0, 1 ] : [ 1, 0 ];
 	}
 
 	if ( 'scale' === effect ) {
@@ -52,7 +21,7 @@ export function getKeyframes( effect, type, direction, element = null ) {
 	}
 
 	if ( direction ) {
-		const distance = calculateSlideDistance( element, direction );
+		const distance = config.slideDistance;
 		const movement = {
 			left: { x: isIn ? [ -distance, 0 ] : [ 0, -distance ] },
 			right: { x: isIn ? [ distance, 0 ] : [ 0, distance ] },

@@ -45,11 +45,12 @@ export const createViewWithReplacements = ( options: CreateTemplatedElementTypeO
 				element: this.el,
 				type: this?.model?.get( 'widgetType' ) ?? this.container?.model?.get( 'elType' ) ?? null,
 				id: this?.model?.get( 'id' ) ?? null,
-				refreshView: this.render.bind( this ),
+				refreshView: this.refreshView.bind( this ),
 			};
 		}
 
 		refreshView() {
+			this.invalidateRenderCache?.();
 			this.render();
 		}
 
@@ -112,17 +113,19 @@ export const createTemplatedElementTypeWithReplacements = ( {
 }: CreateTemplatedElementTypeOptions ): typeof ElementType => {
 	const legacyWindow = window as unknown as LegacyWindow;
 
+	const view = createViewWithReplacements( {
+		type,
+		renderer,
+		element,
+	} );
+
 	return class extends legacyWindow.elementor.modules.elements.types.Widget {
 		getType() {
 			return type;
 		}
 
 		getView() {
-			return createViewWithReplacements( {
-				type,
-				renderer,
-				element,
-			} );
+			return view;
 		}
 	};
 };
