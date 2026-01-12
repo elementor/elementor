@@ -20,6 +20,7 @@ class Test_Settings extends Elementor_Test_Base {
 	public function test_register_admin_menu() {
 		// Arrange.
 		$this->act_as_admin();
+
 		// Act.
 		do_action( 'admin_menu' );
 
@@ -53,3 +54,4 @@ class Test_Settings extends Elementor_Test_Base {
 		$this->assertEquals( 'elementor-editor', $editor_item['slug'], 'Editor menu item should have correct slug' );
 	}
 }
+
