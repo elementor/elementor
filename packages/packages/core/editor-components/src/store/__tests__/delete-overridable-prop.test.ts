@@ -1,10 +1,13 @@
-import { createMockElement } from 'test-utils';
-import { getContainer, getElementSetting, updateElementSettings } from '@elementor/editor-elements';
-import { numberPropTypeUtil } from '@elementor/editor-props';
+import { createMockElement, createMockElementData } from 'test-utils';
+import { getContainer, getElementSetting, updateElementSettings, type V1ElementData } from '@elementor/editor-elements';
+import { numberPropTypeUtil, type PropValue } from '@elementor/editor-props';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { componentInstanceOverridePropTypeUtil } from '../../prop-types/component-instance-override-prop-type';
-import { componentInstanceOverridesPropTypeUtil } from '../../prop-types/component-instance-overrides-prop-type';
+import {
+	componentInstanceOverridesPropTypeUtil,
+	type ComponentInstanceOverridesPropValue,
+} from '../../prop-types/component-instance-overrides-prop-type';
 import { componentInstancePropTypeUtil } from '../../prop-types/component-instance-prop-type';
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import type { OverridableProp, OverridableProps, PublishedComponent } from '../../types';
@@ -28,10 +31,78 @@ const mockGetContainer = jest.mocked( getContainer );
 const mockGetElementSetting = jest.mocked( getElementSetting );
 const mockUpdateElementSettings = jest.mocked( updateElementSettings );
 
-describe( 'deleteOverridableProp', () => {
-	const COMPONENT_ID = 1;
-	const GROUP_ID = 'group-1';
+const COMPONENT_ID = 1;
+const GROUP_ID = 'group-1';
 
+const createOverridablePropEntry = ( {
+	overrideKey,
+	elementId,
+	propKey,
+	widgetType,
+	originValue,
+}: {
+	overrideKey: string;
+	elementId: string;
+	propKey: string;
+	widgetType: string;
+	originValue?: PropValue;
+} ): OverridableProp => ( {
+	overrideKey,
+	label: `Label for ${ overrideKey }`,
+	propKey,
+	elementId,
+	widgetType,
+	elType: 'widget',
+	originValue,
+	groupId: GROUP_ID,
+} );
+
+const createStoreState = ( props: Record< string, OverridableProp > ): OverridableProps => ( {
+	props,
+	groups: {
+		items: {
+			[ GROUP_ID ]: {
+				id: GROUP_ID,
+				label: 'Content',
+				props: Object.keys( props ),
+			},
+		},
+		order: [ GROUP_ID ],
+	},
+} );
+
+const createOverride = ( key: string, value: unknown ) =>
+	componentInstanceOverridePropTypeUtil.create( {
+		override_key: key,
+		override_value: value,
+		schema_source: { type: 'component', id: COMPONENT_ID },
+	} );
+
+const createOverridableWrapper = ( key: string, originOverride: ReturnType< typeof createOverride > ) =>
+	componentOverridablePropTypeUtil.create( {
+		override_key: key,
+		origin_value: originOverride,
+	} );
+
+const createComponentInstanceSetting = ( overrides: ComponentInstanceOverridesPropValue ) =>
+	componentInstancePropTypeUtil.create( {
+		component_id: numberPropTypeUtil.create( COMPONENT_ID ),
+		overrides: componentInstanceOverridesPropTypeUtil.create( overrides ),
+	} );
+
+type TestCase = {
+	scenario: string;
+	storeOverridables: Record< string, OverridableProp >;
+	elements: V1ElementData[];
+	propKeyToDelete: string;
+	expectedStoreProps: Record< string, OverridableProp >;
+	expectedElementUpdate: {
+		elementId: string;
+		settings: Record< string, unknown >;
+	};
+};
+
+describe( 'deleteOverridableProp', () => {
 	let mockState: { data: PublishedComponent[] };
 
 	beforeEach( () => {
@@ -56,306 +127,379 @@ describe( 'deleteOverridableProp', () => {
 		} ) );
 	} );
 
-	describe( 'regular widget (e-heading)', () => {
-		const ELEMENT_ID = 'heading-1';
-		const PROP_KEY = 'title';
-		const OVERRIDE_KEY_1 = 'override-1';
-		const OVERRIDE_KEY_2 = 'override-2';
-		const OVERRIDE_KEY_3 = 'override-3';
-		const ORIGIN_VALUE = { $$type: 'html', value: 'Original Title' };
-
-		const createProp = ( overrideKey: string, propKey: string, originValue?: OverridableProp[ 'originValue' ] ) =>
-			createOverridableProp( { overrideKey, propKey, originValue, elementId: ELEMENT_ID } );
-
-		mockGetContainer.mockReturnValue(
-			createMockElement( {
-				model: { id: ELEMENT_ID, widgetType: 'e-heading', elType: 'widget' },
-			} )
-		);
-
-		it.each( [
-			{
-				scenario: 'reverts to original value (single prop)',
-				propKeyToDelete: OVERRIDE_KEY_1,
-				overridableProps: {
-					props: {
-						[ OVERRIDE_KEY_1 ]: createProp( OVERRIDE_KEY_1, PROP_KEY, ORIGIN_VALUE ),
-					},
-					groups: {
-						items: { [ GROUP_ID ]: { id: GROUP_ID, label: 'Content', props: [ OVERRIDE_KEY_1 ] } },
-						order: [ GROUP_ID ],
-					},
-				},
-				expectedUpdateCall: {
-					id: ELEMENT_ID,
-					props: { [ PROP_KEY ]: ORIGIN_VALUE },
-				},
-				expectedDispatch: {
-					props: {},
-					groups: {
-						items: { [ GROUP_ID ]: { id: GROUP_ID, label: 'Content', props: [] } },
-						order: [ GROUP_ID ],
-					},
-				},
+	it.each< TestCase >( [
+		{
+			scenario: 'widget: single prop reverts to origin value',
+			storeOverridables: {
+				'title-override': createOverridablePropEntry( {
+					overrideKey: 'title-override',
+					elementId: 'heading-1',
+					propKey: 'title',
+					widgetType: 'e-heading',
+					originValue: { $$type: 'html', value: 'Original Title' },
+				} ),
 			},
-			{
-				scenario: 'reverts to null when origin value is undefined',
-				propKeyToDelete: OVERRIDE_KEY_1,
-				overridableProps: {
-					props: {
-						[ OVERRIDE_KEY_1 ]: createProp( OVERRIDE_KEY_1, PROP_KEY, undefined ),
-					},
-					groups: {
-						items: { [ GROUP_ID ]: { id: GROUP_ID, label: 'Content', props: [ OVERRIDE_KEY_1 ] } },
-						order: [ GROUP_ID ],
-					},
-				},
-				expectedUpdateCall: {
-					id: ELEMENT_ID,
-					props: { [ PROP_KEY ]: null },
-				},
-				expectedDispatch: {
-					props: {},
-					groups: {
-						items: { [ GROUP_ID ]: { id: GROUP_ID, label: 'Content', props: [] } },
-						order: [ GROUP_ID ],
-					},
-				},
-			},
-			{
-				scenario: 'deletes middle prop from multiple props',
-				propKeyToDelete: OVERRIDE_KEY_2,
-				overridableProps: {
-					props: {
-						[ OVERRIDE_KEY_1 ]: createProp( OVERRIDE_KEY_1, 'text', { $$type: 'html', value: 'First' } ),
-						[ OVERRIDE_KEY_2 ]: createProp( OVERRIDE_KEY_2, 'subtitle', ORIGIN_VALUE ),
-						[ OVERRIDE_KEY_3 ]: createProp( OVERRIDE_KEY_3, 'hint', { $$type: 'string', value: 'Last' } ),
-					},
-					groups: {
-						items: {
-							[ GROUP_ID ]: {
-								id: GROUP_ID,
-								label: 'Content',
-								props: [ OVERRIDE_KEY_1, OVERRIDE_KEY_2, OVERRIDE_KEY_3 ],
+			elements: [
+				createMockElementData( {
+					id: 'heading-1',
+					widgetType: 'e-heading',
+					settings: {
+						title: {
+							$$type: 'overridable',
+							value: {
+								override_key: 'title-override',
+								origin_value: { $$type: 'html', value: 'Original Title' },
 							},
 						},
-						order: [ GROUP_ID ],
 					},
-				},
-				expectedUpdateCall: {
-					id: ELEMENT_ID,
-					props: { subtitle: ORIGIN_VALUE },
-				},
-				expectedDispatch: {
-					props: {
-						[ OVERRIDE_KEY_1 ]: createProp( OVERRIDE_KEY_1, 'text', { $$type: 'html', value: 'First' } ),
-						[ OVERRIDE_KEY_3 ]: createProp( OVERRIDE_KEY_3, 'hint', { $$type: 'string', value: 'Last' } ),
+				} ),
+			],
+			propKeyToDelete: 'title-override',
+			expectedStoreProps: {},
+			expectedElementUpdate: {
+				elementId: 'heading-1',
+				settings: { title: { $$type: 'html', value: 'Original Title' } },
+			},
+		},
+		{
+			scenario: 'widget: reverts to null when origin is undefined',
+			storeOverridables: {
+				'title-override': createOverridablePropEntry( {
+					overrideKey: 'title-override',
+					elementId: 'heading-1',
+					propKey: 'title',
+					widgetType: 'e-heading',
+					originValue: undefined,
+				} ),
+			},
+			elements: [
+				createMockElementData( {
+					id: 'heading-1',
+					widgetType: 'e-heading',
+					settings: {
+						title: {
+							$$type: 'overridable',
+							value: { override_key: 'title-override', origin_value: null },
+						},
 					},
-					groups: {
-						items: {
-							[ GROUP_ID ]: {
-								id: GROUP_ID,
-								label: 'Content',
-								props: [ OVERRIDE_KEY_1, OVERRIDE_KEY_3 ],
+				} ),
+			],
+			propKeyToDelete: 'title-override',
+			expectedStoreProps: {},
+			expectedElementUpdate: {
+				elementId: 'heading-1',
+				settings: { title: null },
+			},
+		},
+		{
+			scenario: 'widget: deletes middle prop from multiple, keeps others',
+			storeOverridables: {
+				'text-override': createOverridablePropEntry( {
+					overrideKey: 'text-override',
+					elementId: 'heading-1',
+					propKey: 'text',
+					widgetType: 'e-heading',
+					originValue: { $$type: 'html', value: 'First' },
+				} ),
+				'subtitle-override': createOverridablePropEntry( {
+					overrideKey: 'subtitle-override',
+					elementId: 'heading-1',
+					propKey: 'subtitle',
+					widgetType: 'e-heading',
+					originValue: { $$type: 'html', value: 'Middle' },
+				} ),
+				'hint-override': createOverridablePropEntry( {
+					overrideKey: 'hint-override',
+					elementId: 'heading-1',
+					propKey: 'hint',
+					widgetType: 'e-heading',
+					originValue: { $$type: 'string', value: 'Last' },
+				} ),
+			},
+			elements: [
+				createMockElementData( {
+					id: 'heading-1',
+					widgetType: 'e-heading',
+					settings: {
+						text: {
+							$$type: 'overridable',
+							value: {
+								override_key: 'text-override',
+								origin_value: { $$type: 'html', value: 'First' },
 							},
 						},
-						order: [ GROUP_ID ],
+						subtitle: {
+							$$type: 'overridable',
+							value: {
+								override_key: 'subtitle-override',
+								origin_value: { $$type: 'html', value: 'Middle' },
+							},
+						},
+						hint: {
+							$$type: 'overridable',
+							value: {
+								override_key: 'hint-override',
+								origin_value: { $$type: 'string', value: 'Last' },
+							},
+						},
 					},
+				} ),
+			],
+			propKeyToDelete: 'subtitle-override',
+			expectedStoreProps: {
+				'text-override': createOverridablePropEntry( {
+					overrideKey: 'text-override',
+					elementId: 'heading-1',
+					propKey: 'text',
+					widgetType: 'e-heading',
+					originValue: { $$type: 'html', value: 'First' },
+				} ),
+				'hint-override': createOverridablePropEntry( {
+					overrideKey: 'hint-override',
+					elementId: 'heading-1',
+					propKey: 'hint',
+					widgetType: 'e-heading',
+					originValue: { $$type: 'string', value: 'Last' },
+				} ),
+			},
+			expectedElementUpdate: {
+				elementId: 'heading-1',
+				settings: { subtitle: { $$type: 'html', value: 'Middle' } },
+			},
+		},
+		{
+			scenario: 'component instance: overridable converts to simple override',
+			storeOverridables: {
+				'key-1': createOverridablePropEntry( {
+					overrideKey: 'key-1',
+					elementId: 'comp-1',
+					propKey: 'component_instance',
+					widgetType: 'e-component',
+				} ),
+			},
+			elements: [
+				createMockElementData( {
+					id: 'comp-1',
+					widgetType: 'e-component',
+					settings: {
+						component_instance: createComponentInstanceSetting( [
+							createOverridableWrapper(
+								'key-1',
+								createOverride( 'key-1-override', { $$type: 'string', value: 'value-1' } )
+							),
+						] ),
+					},
+				} ),
+			],
+			propKeyToDelete: 'key-1',
+			expectedStoreProps: {},
+			expectedElementUpdate: {
+				elementId: 'comp-1',
+				settings: {
+					component_instance: createComponentInstanceSetting( [
+						createOverride( 'key-1-override', { $$type: 'string', value: 'value-1' } ),
+					] ),
 				},
 			},
-		] )(
-			'should call updateElementSettings when $scenario',
-			( { propKeyToDelete, overridableProps, expectedUpdateCall, expectedDispatch } ) => {
-				// Arrange
-				mockState.data[ 0 ].overridableProps = overridableProps as OverridableProps;
-
-				// Act
-				deleteOverridableProp( { componentId: COMPONENT_ID, propKey: propKeyToDelete } );
-
-				// Assert
-				expect( mockUpdateElementSettings ).toHaveBeenCalledWith(
-					expect.objectContaining( expectedUpdateCall )
-				);
-				expect( dispatch ).toHaveBeenCalledWith( {
-					type: `${ SLICE_NAME }/setOverridableProps`,
-					payload: {
-						componentId: COMPONENT_ID,
-						overridableProps: expectedDispatch,
+		},
+		{
+			scenario: 'component instance: simple override remains unchanged when deleted from store',
+			storeOverridables: {
+				'key-1': createOverridablePropEntry( {
+					overrideKey: 'key-1',
+					elementId: 'comp-1',
+					propKey: 'component_instance',
+					widgetType: 'e-component',
+				} ),
+				'key-2': createOverridablePropEntry( {
+					overrideKey: 'key-2',
+					elementId: 'comp-1',
+					propKey: 'component_instance',
+					widgetType: 'e-component',
+				} ),
+			},
+			elements: [
+				createMockElementData( {
+					id: 'comp-1',
+					widgetType: 'e-component',
+					settings: {
+						component_instance: createComponentInstanceSetting( [
+							createOverridableWrapper(
+								'key-1',
+								createOverride( 'key-1-override', { $$type: 'string', value: 'value-1' } )
+							),
+							createOverride( 'key-2', { $$type: 'string', value: 'value-2' } ),
+						] ),
 					},
-				} );
-			}
-		);
-
-		it( 'should not call updateElementSettings when prop key does not exist in store', () => {
+				} ),
+			],
+			propKeyToDelete: 'key-2',
+			expectedStoreProps: {
+				'key-1': createOverridablePropEntry( {
+					overrideKey: 'key-1',
+					elementId: 'comp-1',
+					propKey: 'component_instance',
+					widgetType: 'e-component',
+				} ),
+			},
+			expectedElementUpdate: {
+				elementId: 'comp-1',
+				settings: {
+					component_instance: createComponentInstanceSetting( [
+						createOverridableWrapper(
+							'key-1',
+							createOverride( 'key-1-override', { $$type: 'string', value: 'value-1' } )
+						),
+						createOverride( 'key-2', { $$type: 'string', value: 'value-2' } ),
+					] ),
+				},
+			},
+		},
+		{
+			scenario: 'component instance: mixed overrides - deletes overridable, keeps others intact',
+			storeOverridables: {
+				'key-1': createOverridablePropEntry( {
+					overrideKey: 'key-1',
+					elementId: 'comp-1',
+					propKey: 'component_instance',
+					widgetType: 'e-component',
+				} ),
+				'key-2': createOverridablePropEntry( {
+					overrideKey: 'key-2',
+					elementId: 'comp-1',
+					propKey: 'component_instance',
+					widgetType: 'e-component',
+				} ),
+				'key-3': createOverridablePropEntry( {
+					overrideKey: 'key-3',
+					elementId: 'comp-1',
+					propKey: 'component_instance',
+					widgetType: 'e-component',
+				} ),
+			},
+			elements: [
+				createMockElementData( {
+					id: 'comp-1',
+					widgetType: 'e-component',
+					settings: {
+						component_instance: createComponentInstanceSetting( [
+							createOverridableWrapper(
+								'key-1',
+								createOverride( 'key-1-override', { $$type: 'string', value: 'value-1' } )
+							),
+							createOverridableWrapper(
+								'key-2',
+								createOverride( 'key-2-override', { $$type: 'string', value: 'value-2' } )
+							),
+							createOverridableWrapper(
+								'key-3',
+								createOverride( 'key-3-override', { $$type: 'string', value: 'value-3' } )
+							),
+						] ),
+					},
+				} ),
+			],
+			propKeyToDelete: 'key-2',
+			expectedStoreProps: {
+				'key-1': createOverridablePropEntry( {
+					overrideKey: 'key-1',
+					elementId: 'comp-1',
+					propKey: 'component_instance',
+					widgetType: 'e-component',
+				} ),
+				'key-3': createOverridablePropEntry( {
+					overrideKey: 'key-3',
+					elementId: 'comp-1',
+					propKey: 'component_instance',
+					widgetType: 'e-component',
+				} ),
+			},
+			expectedElementUpdate: {
+				elementId: 'comp-1',
+				settings: {
+					component_instance: createComponentInstanceSetting( [
+						createOverridableWrapper(
+							'key-1',
+							createOverride( 'key-1-override', { $$type: 'string', value: 'value-1' } )
+						),
+						createOverride( 'key-2-override', { $$type: 'string', value: 'value-2' } ),
+						createOverridableWrapper(
+							'key-3',
+							createOverride( 'key-3-override', { $$type: 'string', value: 'value-3' } )
+						),
+					] ),
+				},
+			},
+		},
+	] )(
+		'$scenario',
+		( { storeOverridables, elements, propKeyToDelete, expectedStoreProps, expectedElementUpdate } ) => {
 			// Arrange
-			mockState.data[ 0 ].overridableProps = {
-				props: {
-					[ OVERRIDE_KEY_1 ]: createProp( OVERRIDE_KEY_1, PROP_KEY, ORIGIN_VALUE ),
-				},
-				groups: {
-					items: { [ GROUP_ID ]: { id: GROUP_ID, label: 'Content', props: [ OVERRIDE_KEY_1 ] } },
-					order: [ GROUP_ID ],
-				},
-			};
+			mockState.data[ 0 ].overridableProps = createStoreState( storeOverridables );
 
-			// Act
-			deleteOverridableProp( { componentId: COMPONENT_ID, propKey: 'non-existent-key' } );
+			const findElementData = ( id: string ) => elements.find( ( element ) => element.id === id );
 
-			// Assert
-			expect( mockUpdateElementSettings ).not.toHaveBeenCalled();
-			expect( dispatch ).not.toHaveBeenCalled();
-		} );
-	} );
+			mockGetContainer.mockImplementation( ( id ) => {
+				const elementData = findElementData( id );
 
-	describe( 'component widget (e-component)', () => {
-		const ELEMENT_ID = 'component-instance-1';
-		const KEY_1 = 'key-1';
-		const KEY_2 = 'key-2';
-		const KEY_3 = 'key-3';
-
-		const createOverride = ( key: string, valueKey: string = key ) =>
-			componentInstanceOverridePropTypeUtil.create( {
-				override_key: key,
-				override_value: { $$type: 'string', value: `value-${ valueKey }` },
-				schema_source: { type: 'component', id: COMPONENT_ID },
-			} );
-
-		const createOverridable = ( key: string, innerKey: string = `inner-${ key }` ) =>
-			componentOverridablePropTypeUtil.create( {
-				override_key: key,
-				origin_value: createOverride( innerKey ),
-			} );
-
-		const createStoreProp = ( key: string ) =>
-			createOverridableProp( { overrideKey: key, elementId: ELEMENT_ID, isComponent: true } );
-
-		it.each( [
-			{
-				scenario: 'overridable is converted to simple override',
-				propKeyToDelete: KEY_1,
-				initialOverrides: [ createOverridable( KEY_1 ), createOverride( KEY_2 ), createOverridable( KEY_3 ) ],
-				storeProps: [ KEY_1, KEY_2, KEY_3 ],
-				expectedOverrides: [
-					createOverride( KEY_1, `inner-${ KEY_1 }` ),
-					createOverride( KEY_2 ),
-					createOverridable( KEY_3 ),
-				],
-				expectedStoreProps: [ KEY_2, KEY_3 ],
-			},
-			{
-				scenario: 'simple override is left unchanged',
-				propKeyToDelete: KEY_2,
-				initialOverrides: [ createOverridable( KEY_1 ), createOverride( KEY_2 ), createOverridable( KEY_3 ) ],
-				storeProps: [ KEY_1, KEY_2, KEY_3 ],
-				expectedOverrides: [ createOverridable( KEY_1 ), createOverride( KEY_2 ), createOverridable( KEY_3 ) ],
-				expectedStoreProps: [ KEY_1, KEY_3 ],
-			},
-			{
-				scenario: 'prop key does not exist in store - no changes',
-				propKeyToDelete: 'non-existent-key',
-				initialOverrides: [ createOverridable( KEY_1 ), createOverride( KEY_2 ) ],
-				storeProps: [ KEY_1, KEY_2 ],
-				expectedOverrides: null,
-				expectedStoreProps: null,
-			},
-		] )(
-			'should handle $scenario',
-			( { propKeyToDelete, initialOverrides, storeProps, expectedOverrides, expectedStoreProps } ) => {
-				// Arrange
-				const storePropsByKey = Object.fromEntries( storeProps.map( ( k ) => [ k, createStoreProp( k ) ] ) );
-
-				const componentInstanceSetting = componentInstancePropTypeUtil.create( {
-					component_id: numberPropTypeUtil.create( COMPONENT_ID ),
-					overrides: componentInstanceOverridesPropTypeUtil.create( initialOverrides ),
-				} );
-
-				mockState.data[ 0 ].overridableProps = {
-					props: storePropsByKey,
-					groups: {
-						items: {
-							[ GROUP_ID ]: { id: GROUP_ID, label: 'Content', props: storeProps },
-						},
-						order: [ GROUP_ID ],
-					},
-				};
-
-				const mockComponentElement = createMockElement( {
-					model: { id: ELEMENT_ID, widgetType: 'e-component', elType: 'widget' },
-					settings: { component_instance: componentInstanceSetting },
-				} );
-
-				mockGetContainer.mockReturnValue( mockComponentElement );
-				mockGetElementSetting.mockReturnValue( componentInstanceSetting );
-
-				// Act
-				deleteOverridableProp( { componentId: COMPONENT_ID, propKey: propKeyToDelete } );
-
-				// Assert
-				if ( ! expectedStoreProps ) {
-					expect( mockUpdateElementSettings ).not.toHaveBeenCalled();
-					expect( dispatch ).not.toHaveBeenCalled();
-					return;
+				if ( ! elementData ) {
+					return null;
 				}
 
-				expect( mockUpdateElementSettings ).toHaveBeenCalledWith( {
-					id: ELEMENT_ID,
-					props: {
-						component_instance: componentInstancePropTypeUtil.create( {
-							component_id: numberPropTypeUtil.create( COMPONENT_ID ),
-							overrides: componentInstanceOverridesPropTypeUtil.create( expectedOverrides ?? [] ),
-						} ),
+				return createMockElement( {
+					model: {
+						id: elementData.id,
+						widgetType: elementData.widgetType,
+						elType: elementData.elType,
 					},
-					withHistory: false,
+					settings: elementData.settings,
 				} );
+			} );
 
-				const expectedDispatchProps = Object.fromEntries(
-					expectedStoreProps.map( ( k ) => [ k, createStoreProp( k ) ] )
-				);
-				expect( dispatch ).toHaveBeenCalledWith( {
-					type: `${ SLICE_NAME }/setOverridableProps`,
-					payload: {
-						componentId: COMPONENT_ID,
-						overridableProps: {
-							props: expectedDispatchProps,
-							groups: {
-								items: {
-									[ GROUP_ID ]: { id: GROUP_ID, label: 'Content', props: expectedStoreProps },
-								},
-								order: [ GROUP_ID ],
-							},
-						},
-					},
-				} );
-			}
-		);
+			mockGetElementSetting.mockImplementation( ( id, settingKey ) => {
+				const elementData = findElementData( id );
+				return elementData?.settings?.[ settingKey ];
+			} );
+
+			// Act
+			deleteOverridableProp( { componentId: COMPONENT_ID, propKey: propKeyToDelete } );
+
+			// Assert
+			expect( mockUpdateElementSettings ).toHaveBeenCalledWith( {
+				id: expectedElementUpdate.elementId,
+				props: expectedElementUpdate.settings,
+				withHistory: false,
+			} );
+
+			expect( dispatch ).toHaveBeenCalledWith( {
+				type: `${ SLICE_NAME }/setOverridableProps`,
+				payload: {
+					componentId: COMPONENT_ID,
+					overridableProps: createStoreState( expectedStoreProps ),
+				},
+			} );
+		}
+	);
+
+	it( 'should not update when prop key does not exist', () => {
+		// Arrange
+		const storeOverridables = {
+			'title-override': createOverridablePropEntry( {
+				overrideKey: 'title-override',
+				elementId: 'heading-1',
+				propKey: 'title',
+				widgetType: 'e-heading',
+				originValue: { $$type: 'html', value: 'Title' },
+			} ),
+		};
+
+		mockState.data[ 0 ].overridableProps = createStoreState( storeOverridables );
+
+		// Act
+		deleteOverridableProp( { componentId: COMPONENT_ID, propKey: 'non-existent' } );
+
+		// Assert
+		expect( mockUpdateElementSettings ).not.toHaveBeenCalled();
+		expect( dispatch ).not.toHaveBeenCalled();
 	} );
 } );
-
-type CreateOverridablePropArgs = {
-	overrideKey: string;
-	propKey?: string;
-	originValue?: OverridableProp[ 'originValue' ];
-	elementId: string;
-	isComponent?: boolean;
-};
-
-function createOverridableProp( {
-	overrideKey,
-	propKey,
-	originValue,
-	elementId,
-	isComponent = false,
-}: CreateOverridablePropArgs ): OverridableProp {
-	const GROUP_ID = 'group-1';
-
-	return {
-		overrideKey,
-		label: `Label for ${ overrideKey }`,
-		propKey: propKey ?? overrideKey,
-		elementId,
-		widgetType: isComponent ? 'e-component' : 'e-heading',
-		elType: 'widget',
-		originValue: isComponent ? undefined : originValue,
-		groupId: GROUP_ID,
-	};
-}

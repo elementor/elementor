@@ -14,6 +14,7 @@ import {
 	componentInstancePropTypeUtil,
 	type ComponentInstancePropValue,
 } from '../../prop-types/component-instance-prop-type';
+import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import { type ComponentId } from '../../types';
 import { selectOverridableProps, slice } from '../store';
 import { removePropFromAllGroups } from '../utils/groups-transformers';
@@ -36,7 +37,7 @@ export function deleteOverridableProp( { componentId, propKey }: DeletePropParam
 		return;
 	}
 
-	revertElementSetting( prop.elementId, prop.propKey, prop.originValue );
+	revertElementSetting( prop.elementId, prop.propKey, prop.originValue, propKey );
 
 	const { [ propKey ]: removedProp, ...remainingProps } = overridableProps.props;
 
@@ -54,7 +55,12 @@ export function deleteOverridableProp( { componentId, propKey }: DeletePropParam
 	);
 }
 
-function revertElementSetting( elementId: string, settingKey: string, originValue: unknown ): void {
+function revertElementSetting(
+	elementId: string,
+	settingKey: string,
+	originValue: unknown,
+	overrideKey: string
+): void {
 	const container = getContainer( elementId );
 
 	if ( ! container ) {
@@ -62,7 +68,7 @@ function revertElementSetting( elementId: string, settingKey: string, originValu
 	}
 
 	if ( container.model.get( 'widgetType' ) === 'e-component' ) {
-		revertComponentInstanceSetting( elementId, settingKey );
+		revertComponentInstanceSetting( elementId, overrideKey );
 
 		return;
 	}
@@ -88,11 +94,11 @@ function revertComponentInstanceSetting( elementId: string, overrideKey: string 
 		return;
 	}
 
+	const updatedOverrides = getUpdatedComponentInstanceOverrides( overrides, overrideKey );
+
 	const updatedSetting = componentInstancePropTypeUtil.create( {
 		...componentInstance,
-		overrides: componentInstanceOverridesPropTypeUtil.create(
-			getUpdatedComponentInstanceOverrides( overrides, overrideKey )
-		),
+		overrides: componentInstanceOverridesPropTypeUtil.create( updatedOverrides ),
 	} as ComponentInstancePropValue );
 
 	updateElementSettings( {
@@ -107,30 +113,25 @@ function getUpdatedComponentInstanceOverrides(
 	overrideKey: string
 ): ComponentInstanceOverridesPropValue {
 	return overrides
-		.map( ( override ) => {
-			const isOverride = componentInstanceOverridePropTypeUtil.isValid( override );
-			if ( isOverride ) {
+		.map( ( item ) => {
+			const isOverridable = componentOverridablePropTypeUtil.isValid( item );
+			if ( ! isOverridable ) {
 				// we revert only overridable values
-				return override;
+				return item;
 			}
 
-			if ( override.value.override_key !== overrideKey ) {
-				return override;
-			}
-
-			const isOriginValueOverride = componentInstanceOverridePropTypeUtil.isValid( override.value.origin_value );
+			const isOriginValueOverride = componentInstanceOverridePropTypeUtil.isValid( item.value.origin_value );
 
 			if ( ! isOriginValueOverride ) {
 				// component instances cannot have overridables with origin value that is not an override
 				return null;
 			}
 
-			const originalOverride = override.value.origin_value as ComponentInstanceOverrideProp;
+			if ( item.value.override_key !== overrideKey ) {
+				return item;
+			}
 
-			return componentInstanceOverridePropTypeUtil.create( {
-				...originalOverride.value,
-				override_key: overrideKey,
-			} );
+			return item.value.origin_value as ComponentInstanceOverrideProp;
 		} )
 		.filter( ( item ): item is NonNullable< typeof item > => item !== null );
 }
