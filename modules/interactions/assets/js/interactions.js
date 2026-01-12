@@ -2,7 +2,7 @@ import { config, getKeyframes, parseAnimationName } from './interactions-utils.j
 
 function scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
 	const viewOptions = { amount: 0.85, root: null };
-	const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction, element );
+	const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
 
 	animateFunc( element, resetKeyframes, { duration: 0 } );
 
@@ -37,7 +37,7 @@ function defaultAnimation( element, transition, keyframes, options, animateFunc 
 }
 
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
-	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction, element );
+	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
