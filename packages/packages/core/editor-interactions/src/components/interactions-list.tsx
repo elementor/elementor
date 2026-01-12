@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Repeater } from '@elementor/editor-controls';
 import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, IconButton, Tooltip } from '@elementor/ui';
@@ -20,33 +20,33 @@ export type InteractionListProps = {
 export function InteractionsList( props: InteractionListProps ) {
 	const { interactions, onSelectInteractions, onPlayInteraction, triggerCreateOnShowEmpty } = props;
 
-	const [ interactionsState, setInteractionsState ] = useState< ElementInteractions >( interactions );
-	const hasInitialized = useRef( false );
+	const hasInitializedRef = useRef( false );
 
-	useEffect( () => {
-		setInteractionsState( interactions );
-		hasInitialized.current = false;
-	}, [ interactions ] );
+	const handleUpdateInteractions = useCallback(
+		( newInteractions: ElementInteractions ) => {
+			onSelectInteractions( newInteractions );
+		},
+		[ onSelectInteractions ]
+	);
 
 	useEffect( () => {
 		if (
 			triggerCreateOnShowEmpty &&
-			! hasInitialized.current &&
-			( ! interactionsState.items || interactionsState.items?.length === 0 )
+			! hasInitializedRef.current &&
+			( ! interactions.items || interactions.items?.length === 0 )
 		) {
-			hasInitialized.current = true;
-			const newState = {
+			hasInitializedRef.current = true;
+			const newState: ElementInteractions = {
 				version: 1,
 				items: [ createDefaultInteractionItem() ],
 			};
-			setInteractionsState( newState );
-			onSelectInteractions( newState );
+			handleUpdateInteractions( newState );
 		}
-	}, [ triggerCreateOnShowEmpty, interactionsState.items, onSelectInteractions ] );
+	}, [ triggerCreateOnShowEmpty, interactions.items?.length, handleUpdateInteractions ] );
 
 	const isMaxNumberOfInteractionsReached = useMemo( () => {
-		return interactionsState.items?.length >= MAX_NUMBER_OF_INTERACTIONS;
-	}, [ interactionsState.items ] );
+		return interactions.items?.length >= MAX_NUMBER_OF_INTERACTIONS;
+	}, [ interactions.items?.length ] );
 
 	const infotipContent = isMaxNumberOfInteractionsReached ? (
 		<Alert color="secondary" icon={ <InfoCircleFilledIcon /> } size="small">
@@ -60,20 +60,38 @@ export function InteractionsList( props: InteractionListProps ) {
 		</Alert>
 	) : undefined;
 
+	const handleRepeaterChange = useCallback(
+		( newItems: ElementInteractions[ 'items' ] ) => {
+			handleUpdateInteractions( {
+				...interactions,
+				items: newItems,
+			} );
+		},
+		[ interactions, handleUpdateInteractions ]
+	);
+
+	const handleInteractionChange = useCallback(
+		( index: number, newInteractionValue: InteractionItemValue ) => {
+			const newItems = structuredClone( interactions.items );
+			newItems[ index ] = {
+				$$type: 'interaction-item',
+				value: newInteractionValue,
+			};
+			handleUpdateInteractions( {
+				...interactions,
+				items: newItems,
+			} );
+		},
+		[ interactions, handleUpdateInteractions ]
+	);
+
 	return (
 		<Repeater
 			openOnAdd
 			openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
 			label={ __( 'Interactions', 'elementor' ) }
-			values={ interactionsState.items }
-			setValues={ ( newValue: ElementInteractions[ 'items' ] ) => {
-				const newState = {
-					...interactionsState,
-					items: newValue,
-				};
-				setInteractionsState( newState );
-				onSelectInteractions( newState );
-			} }
+			values={ interactions.items }
+			setValues={ handleRepeaterChange }
 			showDuplicate={ false }
 			showToggle={ false }
 			isSortable={ false }
@@ -88,14 +106,7 @@ export function InteractionsList( props: InteractionListProps ) {
 						key={ index }
 						interaction={ value.value }
 						onChange={ ( newInteractionValue: InteractionItemValue ) => {
-							const newItems = structuredClone( interactionsState.items );
-							newItems[ index ] = {
-								$$type: 'interaction-item',
-								value: newInteractionValue,
-							};
-							const newState = { ...interactionsState, items: newItems };
-							setInteractionsState( newState );
-							onSelectInteractions( newState );
+							handleInteractionChange( index, newInteractionValue );
 						} }
 						onPlayInteraction={ onPlayInteraction }
 					/>

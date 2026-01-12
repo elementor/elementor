@@ -31,17 +31,11 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 		( rawInteractions as unknown as ElementInteractions ) ?? DEFAULT_INTERACTIONS;
 
 	const setInteractions = ( value: ElementInteractions | undefined ) => {
-		if ( ! value?.items ) {
-			updateElementInteractions( {
-				elementId,
-				interactions: value as unknown as ElementInteractions,
-			} );
-			return;
-		}
+		const normalizedValue = value && value.items?.length === 0 ? undefined : value;
 
 		updateElementInteractions( {
 			elementId,
-			interactions: value as unknown as ElementInteractions,
+			interactions: normalizedValue,
 		} );
 	};
 
