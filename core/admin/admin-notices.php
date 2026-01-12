@@ -569,17 +569,22 @@ class Admin_Notices extends Module {
 			if ( ! $is_installed ) {
 				$button_text = esc_html__( 'Install now', 'elementor' );
 				$button_url = $this->get_plugin_button_install_url( $plugin_slug );
+				$campaign_data = [
+					'name' => 'elementor_ea11y_campaign',
+					'campaign' => 'acc-statement-plg-pages-install',
+					'source' => 'wp-pages-install',
+					'medium' => 'wp-dash',
+				];
 			} elseif ( ! $is_active ) {
 				$button_text = esc_html__( 'Activate now', 'elementor' );
 				$button_url = $this->get_plugin_button_activate_url( $plugin_file_path );
+				$campaign_data = [
+					'name' => 'elementor_ea11y_campaign',
+					'campaign' => 'acc-statement-plg-pages-activate',
+					'source' => 'wp-pages-activate',
+					'medium' => 'wp-dash',
+				];
 			}
-
-			$campaign_data = [
-				'name' => 'elementor_ea11y_campaign',
-				'campaign' => 'acc-statement-plg-pages',
-				'source' => 'wp-pages',
-				'medium' => 'wp-dash',
-			];
 		}
 
 		$options = [
