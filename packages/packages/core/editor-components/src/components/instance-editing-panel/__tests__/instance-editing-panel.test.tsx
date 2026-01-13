@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { createMockPropType, renderWithStore } from 'test-utils';
+import { createMockPropType, mockCurrentUserCapabilities, renderWithStore } from 'test-utils';
 import { ControlActionsProvider, TextControl } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
 import {
@@ -23,19 +23,9 @@ import { slice } from '../../../store/store';
 import { switchToComponent } from '../../../utils/switch-to-component';
 import { InstanceEditingPanel } from '../instance-editing-panel';
 
-jest.mock( '@elementor/editor-elements', () => ( {
-	...jest.requireActual( '@elementor/editor-elements' ),
-	useElementSetting: jest.fn(),
-	useSelectedElement: jest.fn(),
-	getElementLabel: jest.fn(),
-	getWidgetsCache: jest.fn(),
-	getElementType: jest.fn(),
-} ) );
+jest.mock( '@elementor/editor-elements' );
 
-jest.mock( '@elementor/session', () => ( {
-	getSessionStorageItem: jest.fn(),
-	setSessionStorageItem: jest.fn(),
-} ) );
+jest.mock( '@elementor/session' );
 
 jest.mock( '../../../utils/switch-to-component' );
 
@@ -45,6 +35,10 @@ jest.mock( '../../../prop-types/component-instance-prop-type', () => ( {
 		key: 'component-instance',
 	},
 } ) );
+
+jest.mock( '@elementor/editor-current-user' );
+
+mockCurrentUserCapabilities( true );
 
 const MOCK_ELEMENT_ID = 'element-123';
 const MOCK_COMPONENT_ID = 456;
@@ -321,6 +315,30 @@ describe( '<InstanceEditingPanel />', () => {
 		// Assert.
 		expect( switchToComponent ).toHaveBeenCalledTimes( 1 );
 		expect( switchToComponent ).toHaveBeenCalledWith( MOCK_COMPONENT_ID, MOCK_INSTANCE_ID );
+	} );
+
+	it( 'should show edit button when user is admin', () => {
+		// Arrange.
+		mockCurrentUserCapabilities( true );
+		setupComponent();
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.getByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` ) ).toBeInTheDocument();
+	} );
+
+	it( 'should not show edit button when user is not admin', () => {
+		// Arrange.
+		mockCurrentUserCapabilities( false );
+		setupComponent();
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.queryByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should not render when componentId is missing', () => {
