@@ -5,7 +5,7 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				addButton: 'a.page-title-action[href*="post-new.php?post_type=elementor_library"]:not(#elementor-import-template-trigger), #elementor-template-library-add-new',
+				addButton: 'a.page-title-action[href*="post-new.php?post_type=elementor_library"], #elementor-template-library-add-new',
 			},
 		};
 	},
