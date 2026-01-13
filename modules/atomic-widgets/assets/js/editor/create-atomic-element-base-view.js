@@ -12,11 +12,19 @@ export default function createAtomicElementBaseView( type ) {
 		_childrenRenderPromises: [],
 
 		tagName() {
-			const tagControl = this.model.getSetting( 'tag' );
-			const tagControlValue = tagControl?.value || tagControl;
-			const defaultTag = this.model.config.default_html_tag;
+			const cachedTag = this.model.get( '_resolvedTag' );
 
-			return tagControlValue || defaultTag;
+			if ( cachedTag ) {
+				return cachedTag;
+			}
+
+			const renderContext = this.getResolverRenderContext?.();
+			const tag = this.model.getSetting( 'tag' );
+			const resolved = this._resolvePropValue( tag, renderContext );
+			const tagValue = resolved?.value ?? resolved;
+			const hasLink = this._hasLink( renderContext );
+
+			return hasLink ? 'a' : ( tagValue || this.model.config.default_html_tag || 'div' );
 		},
 
 		getChildViewContainer() {
@@ -69,12 +77,6 @@ export default function createAtomicElementBaseView( type ) {
 				local.id = cssId.value;
 			}
 
-			const link = this.getLink();
-
-			if ( link ) {
-				local[ link.attr ] = link.value;
-			}
-
 			local[ 'data-interaction-id' ] = this.model.get( 'id' );
 
 			customAttributes.forEach( ( attribute ) => {
@@ -85,6 +87,12 @@ export default function createAtomicElementBaseView( type ) {
 					local[ key ] = value;
 				}
 			} );
+
+			const cachedLink = this.model.get( '_resolvedLink' );
+
+			if ( cachedLink ) {
+				local[ cachedLink.attr ] = cachedLink.value;
+			}
 
 			return {
 				...attr,
@@ -171,12 +179,14 @@ export default function createAtomicElementBaseView( type ) {
 
 			this.$el.addClass( this.getClasses() );
 
-			if ( this.isTagChanged( changed ) ) {
+			if ( this.isTagOrLinkChanged( changed ) ) {
+				this.model.unset( '_resolvedTag' );
+				this.model.unset( '_resolvedLink' );
 				this.rerenderEntireView();
 			}
 		},
 
-		isTagChanged( changed ) {
+		isTagOrLinkChanged( changed ) {
 			return ( changed?.tag !== undefined || changed?.link !== undefined ) && this._parent && this.tagName() !== this.el.tagName;
 		},
 
@@ -215,11 +225,16 @@ export default function createAtomicElementBaseView( type ) {
 
 		_renderWithDomRecreation( resolve ) {
 			BaseElementView.prototype.render.apply( this, arguments );
-			this._waitForChildrenToComplete().then( resolve );
+			this._waitForChildrenToComplete().then( () => {
+				this._applyResolvedAttributes();
+				resolve();
+			} );
 		},
 
 		_beforeRender() {
 			this._isRendering = true;
+			this.model.unset( '_resolvedTag' );
+			this.model.unset( '_resolvedLink' );
 			this.triggerMethod( 'before:render', this );
 		},
 
@@ -227,6 +242,51 @@ export default function createAtomicElementBaseView( type ) {
 			this._isRendering = false;
 			this.isRendered = true;
 			this.triggerMethod( 'render', this );
+			this._applyResolvedAttributes();
+		},
+
+		_applyResolvedAttributes() {
+			if ( ! this._parent ) {
+				return;
+			}
+
+			const resolvedTag = this.tagName();
+			const currentTag = this.el.tagName.toLowerCase();
+			const resolvedLink = this.getLink();
+			const cachedLink = this.model.get( '_resolvedLink' );
+
+			const tagChanged = resolvedTag !== currentTag;
+			const linkChanged = this._isLinkChanged( resolvedLink, cachedLink );
+
+			if ( ! tagChanged && ! linkChanged ) {
+				return;
+			}
+
+			if ( tagChanged ) {
+				this.model.set( '_resolvedTag', resolvedTag );
+			}
+
+			if ( linkChanged ) {
+				if ( resolvedLink ) {
+					this.model.set( '_resolvedLink', resolvedLink );
+				} else {
+					this.model.unset( '_resolvedLink' );
+				}
+			}
+
+			this.rerenderEntireView();
+		},
+
+		_isLinkChanged( resolvedLink, cachedLink ) {
+			if ( ! resolvedLink && ! cachedLink ) {
+				return false;
+			}
+
+			if ( ! resolvedLink || ! cachedLink ) {
+				return true;
+			}
+
+			return resolvedLink.attr !== cachedLink.attr || resolvedLink.value !== cachedLink.value;
 		},
 
 		async _waitForChildrenToComplete() {
@@ -285,30 +345,47 @@ export default function createAtomicElementBaseView( type ) {
 			);
 		},
 
-		haveLink() {
-			return !! this.model.getSetting( 'link' )?.value?.destination?.value;
+		_hasLink( renderContext ) {
+			const linkSetting = this.model.getSetting( 'link' );
+			const resolvedLink = this._resolvePropValue( linkSetting, renderContext );
+
+			if ( 'link' !== resolvedLink?.$$type ) {
+				return false;
+			}
+
+			const destination = this._resolvePropValue( resolvedLink.value?.destination, renderContext );
+
+			return !! destination?.value;
 		},
 
 		getLink() {
-			if ( ! this.haveLink() ) {
+			const renderContext = this.getResolverRenderContext?.();
+			const linkSetting = this.model.getSetting( 'link' );
+			const resolvedLink = this._resolvePropValue( linkSetting, renderContext );
+
+			if ( 'link' !== resolvedLink?.$$type ) {
 				return null;
 			}
 
-			const { $$type, value } = this.model.getSetting( 'link' ).value.destination;
+			const destination = this._resolvePropValue( resolvedLink.value?.destination, renderContext );
 
-			if ( ! value ) {
+			if ( ! destination?.value ) {
 				return null;
 			}
+
+			const { $$type, value } = destination;
 
 			if ( 'dynamic' === $$type ) {
 				const resolvedValue = this.handleDynamicLink( value );
 
-				return resolvedValue
-					? {
-						attr: 'action' === value.settings.group ? 'data-action-link' : 'href',
-						value: resolvedValue,
-					}
-					: null;
+				if ( ! resolvedValue ) {
+					return null;
+				}
+
+				return {
+					attr: 'action' === value.settings?.group ? 'data-action-link' : 'href',
+					value: resolvedValue,
+				};
 			}
 
 			const isPostId = 'number' === $$type;
@@ -750,6 +827,27 @@ export default function createAtomicElementBaseView( type ) {
 			} ).then( () => this.dispatchPreviewEvent( 'elementor/element/render' ) );
 
 			return null;
+		},
+
+		_resolvePropValue( prop, renderContext ) {
+			if ( ! prop || typeof prop !== 'object' ) {
+				return prop;
+			}
+
+			if ( 'overridable' !== prop.$$type ) {
+				return prop;
+			}
+
+			const registry = window?.elementorV2?.editorCanvas?.settingsTransformersRegistry;
+			const transformer = registry?.get?.( 'overridable' );
+
+			if ( ! transformer ) {
+				return prop.value?.origin_value;
+			}
+
+			const transformed = transformer( prop.value, { key: 'overridable', renderContext } );
+
+			return this._resolvePropValue( transformed, renderContext );
 		},
 	} );
 
