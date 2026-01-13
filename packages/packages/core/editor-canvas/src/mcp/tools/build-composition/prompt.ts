@@ -3,12 +3,12 @@ import { toolPrompts } from '@elementor/editor-mcp';
 import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 
 export const generatePrompt = () => {
-	const buildCompositionsToolPrompt = toolPrompts('build-compositions');
+	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
 
-	buildCompositionsToolPrompt.description(`
+	buildCompositionsToolPrompt.description( `
 # REQUIRED RESOURCES (Read before use)
-1. [${WIDGET_SCHEMA_URI}] - Widget types, configuration schemas, and PropType definitions
-2. [${STYLE_SCHEMA_URI}] - Common styles schema shared by all widgets
+1. [${ WIDGET_SCHEMA_URI }] - Widget types, configuration schemas, and PropType definitions
+2. [${ STYLE_SCHEMA_URI }] - Common styles schema shared by all widgets
 3. [elementor://global-classes] - Existing global classes (check FIRST to reuse)
 
 # THREE-PHASE WORKFLOW (MANDATORY)
@@ -106,7 +106,7 @@ export const generatePrompt = () => {
 - **stylesConfig**: Record of configuration-id → style PropValues (layout only)
   ` );
 
-	buildCompositionsToolPrompt.example(`
+	buildCompositionsToolPrompt.example( `
 A Heading and a button inside a flexbox
 {
   xmlStructure: "<e-flexbox configuration-id="flex1"><e-heading configuration-id="heading1"></e-heading><e-button configuration-id="button1"></e-button></e-flexbox>"
