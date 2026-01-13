@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { renderWithStore, renderWithTheme } from 'test-utils';
+import { mockCurrentUserCapabilities, renderWithStore, renderWithTheme } from 'test-utils';
 import { setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	__createStore,
@@ -28,6 +28,10 @@ jest.mock( '@elementor/editor-mcp', () => ( {
 		triggerAngie: jest.fn(),
 	} ) ),
 } ) );
+
+jest.mock( '@elementor/editor-current-user' );
+
+mockCurrentUserCapabilities( true );
 
 const mockStartDragElementFromPanel = jest.fn();
 
@@ -67,6 +71,9 @@ describe( 'ComponentsTab', () => {
 		jest.useFakeTimers();
 		registerSlice( slice );
 		store = __createStore();
+		act( () => {
+			dispatch( slice.actions.load( mockComponents ) );
+		} );
 	} );
 
 	afterEach( () => {
@@ -118,11 +125,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should render components list when components exist', () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -184,11 +186,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should handle search functionality and show filtered results', () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -218,11 +215,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should show empty search result when no matches found', () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -246,11 +238,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should show delete confirmation dialog when Delete is clicked', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -278,11 +265,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should delete component when Delete button in dialog is clicked', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -320,11 +302,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should close delete dialog without deleting when Not now is clicked', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -355,11 +332,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should close delete dialog when Escape key is pressed', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -389,11 +361,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should open rename mode when Rename menu item is clicked', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -416,11 +383,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should rename component successfully when valid name is submitted', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -455,11 +417,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should rename component successfully when valid name is submitted via blur', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -487,11 +444,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should cancel rename when Escape key is pressed', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -520,11 +472,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should show validation error for component name that is too short', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -553,11 +500,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should show validation error for component name that is too long', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -587,11 +529,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should show validation error for duplicate component name', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -638,11 +575,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should not submit rename when validation error exists', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -675,11 +607,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should close edit mode on blur when validation error exists', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -713,11 +640,6 @@ describe( 'ComponentsTab', () => {
 		} );
 
 		it( 'should not submit rename when name has not changed', async () => {
-			// Arrange
-			act( () => {
-				dispatch( slice.actions.load( mockComponents ) );
-			} );
-
 			// Act
 			renderWithStore(
 				<SearchProvider localStorageKey="test-search">
@@ -744,6 +666,59 @@ describe( 'ComponentsTab', () => {
 			await waitFor( () => {
 				expect( screen.getByText( 'Button Component' ) ).toBeInTheDocument();
 			} );
+		} );
+
+		it( 'should show more actions button when user is admin', () => {
+			// Arrange
+			mockCurrentUserCapabilities( true );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			// Assert
+			const moreActionsButtons = screen.getAllByLabelText( 'More actions' );
+			expect( moreActionsButtons.length ).toBeGreaterThan( 0 );
+		} );
+
+		it( 'should not show more actions button when user is not admin', () => {
+			// Arrange
+			mockCurrentUserCapabilities( false );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			// Assert
+			expect( screen.queryByLabelText( 'More actions' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should render empty state when no components exist and user is not admin', () => {
+			// Arrange
+			dispatch( slice.actions.load( [] ) );
+			mockCurrentUserCapabilities( false );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			// Assert
+			expect( screen.getByText( 'No components yet' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Create your first one:' ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: /Create component with AI/i } ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );
