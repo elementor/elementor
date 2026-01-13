@@ -13,11 +13,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Filter_Top_Section_By_License extends Transformations_Abstract {
 
 	public bool $has_pro;
+	private array $supported_tiers;
 
 	public function __construct( array $args = [] ) {
 		parent::__construct( $args );
 
 		$this->has_pro = Utils::has_pro();
+		$this->supported_tiers = [
+			ConnectModule::ACCESS_TIER_FREE,
+			ConnectModule::ACCESS_TIER_PRO_LEGACY,
+			self::USER_TIER_ONE,
+		];
 	}
 
 	private function is_valid_item( $item ) {
@@ -38,7 +44,9 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 			return true;
 		}
 
-		return $user_tier === $item_tier;
+		$is_supported_item_tier = in_array( $item_tier, $this->supported_tiers, true );
+
+		return $user_tier === $item_tier && $is_supported_item_tier;
 	}
 
 	public function transform( array $home_screen_data ): array {

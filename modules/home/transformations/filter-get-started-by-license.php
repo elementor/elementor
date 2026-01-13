@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Filter_Get_Started_By_License extends Transformations_Abstract {
+
 	public bool $has_pro;
 
 	public function __construct( $args ) {
