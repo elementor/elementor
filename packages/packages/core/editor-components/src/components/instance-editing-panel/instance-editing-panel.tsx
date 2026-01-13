@@ -9,6 +9,7 @@ import { Divider, IconButton, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponentInstanceSettings } from '../../hooks/use-component-instance-settings';
+import { useComponentsPermissions } from '../../hooks/use-components-permissions';
 import { useComponent, useOverridableProps } from '../../store/store';
 import { type OverridablePropsGroup } from '../../types';
 import { switchToComponent } from '../../utils/switch-to-component';
@@ -16,7 +17,10 @@ import { EmptyState } from './empty-state';
 import { OverridePropsGroup } from './override-props-group';
 
 export function InstanceEditingPanel() {
+	const { canEdit } = useComponentsPermissions();
+
 	const settings = useComponentInstanceSettings();
+
 	const componentId = settings?.component_id?.value;
 
 	const overrides = settings?.overrides?.value;
@@ -49,11 +53,13 @@ export function InstanceEditingPanel() {
 				<Stack direction="row" alignItems="center" flexGrow={ 1 } gap={ 1 } maxWidth="100%">
 					<ComponentsIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
 					<EllipsisWithTooltip title={ component.name } as={ PanelHeaderTitle } />
-					<Tooltip title={ panelTitle } sx={ { marginLeft: 'auto' } }>
-						<IconButton size="tiny" onClick={ handleEditComponent } aria-label={ panelTitle }>
-							<PencilIcon fontSize="tiny" />
-						</IconButton>
-					</Tooltip>
+					{ canEdit && (
+						<Tooltip title={ panelTitle }>
+							<IconButton size="tiny" onClick={ handleEditComponent } aria-label={ panelTitle }>
+								<PencilIcon fontSize="tiny" />
+							</IconButton>
+						</Tooltip>
+					) }
 				</Stack>
 			</PanelHeader>
 			<PanelBody>
