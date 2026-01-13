@@ -22,6 +22,7 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 		$this->supported_tiers = [
 			ConnectModule::ACCESS_TIER_FREE,
 			ConnectModule::ACCESS_TIER_PRO_LEGACY,
+			self::USER_TIER_ONE,
 		];
 	}
 
@@ -37,18 +38,22 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 	}
 
 	private function validate_tier( $item_tier, $user_tier ): bool {
-		if ( self::USER_TIER_ONE === $user_tier ) {
+		if ( $user_tier === $item_tier ) {
 			return true;
 		}
 
-		if ( $user_tier === $item_tier ) {
-			return true;
+		$is_user_tier_supported = in_array( $user_tier, $this->supported_tiers, true );
+
+		if ( $is_user_tier_supported ) {
+			return false;
 		}
 
 		$is_item_tier_free = ConnectModule::ACCESS_TIER_FREE === $item_tier;
 		$is_valid = $this->has_pro !== $is_item_tier_free;
 
-		return $is_valid && in_array( $item_tier, $this->supported_tiers, true );
+		$is_supported_item_tier = in_array( $item_tier, $this->supported_tiers, true );
+
+		return $is_valid && $is_supported_item_tier;
 	}
 
 	public function transform( array $home_screen_data ): array {
