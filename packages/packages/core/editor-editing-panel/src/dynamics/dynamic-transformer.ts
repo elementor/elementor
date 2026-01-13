@@ -13,11 +13,11 @@ type Dynamic = {
 const extendedWindow = window as ExtendedWindow;
 
 export const dynamicTransformer = createTransformer< Dynamic >( ( value, { propType } ) => {
-	if ( ! value.name || ! isDynamicTagSupported( value.name ) ) {
+	if ( ! value?.name || ! isDynamicTagSupported( value.name ) ) {
 		return propType?.default ?? null;
 	}
 
-	return getDynamicValue( value.name, simpleTransform( value.settings ?? {} ) );
+	return getDynamicValue( value.name, simpleTransform( value?.settings ?? {} ) );
 } );
 
 // Temporary naive transformation until we'll have a `backendTransformer` that

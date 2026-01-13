@@ -96,6 +96,17 @@ describe( 'dynamicTransformer', () => {
 		// Assert.
 		expect( value ).toBe( 'default-value' );
 	} );
+
+	it( 'should return default value for null dynamic values', async () => {
+		// Arrange & Act.
+		const value = dynamicTransformer( null as never, {
+			key: 'test',
+			propType: { default: 'default-value' } as PropType,
+		} );
+
+		// Assert.
+		expect( value ).toBe( 'default-value' );
+	} );
 } );
 
 function mockDynamicTagsManager(): DynamicTagsManager {
