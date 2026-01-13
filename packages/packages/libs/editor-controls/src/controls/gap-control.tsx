@@ -150,7 +150,7 @@ const Control = ( {
 	anchorRef,
 }: {
 	bind: PropKey;
-	ariaLabel: string;
+	ariaLabel?: string;
 	isLinked: boolean;
 	anchorRef: RefObject< HTMLDivElement >;
 } ) => {
