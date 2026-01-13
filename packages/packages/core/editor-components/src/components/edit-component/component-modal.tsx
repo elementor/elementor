@@ -7,7 +7,7 @@ import { useCanvasDocument } from '../../hooks/use-canvas-document';
 import { useElementRect } from '../../hooks/use-element-rect';
 
 type ModalProps = {
-	element: HTMLElement;
+	element: HTMLElement | null;
 	onClose: () => void;
 };
 
@@ -41,8 +41,17 @@ export function ComponentModal( { element, onClose }: ModalProps ) {
 	);
 }
 
-function Backdrop( { canvas, element, onClose }: { canvas: HTMLDocument; element: HTMLElement; onClose: () => void } ) {
+function Backdrop( {
+	canvas,
+	element,
+	onClose,
+}: {
+	canvas: HTMLDocument;
+	element: HTMLElement | null;
+	onClose: () => void;
+} ) {
 	const rect = useElementRect( element );
+	const clipPath = element ? getRectPath( rect, canvas.defaultView as Window ) : undefined;
 	const backdropStyle: CSSProperties = {
 		position: 'fixed',
 		top: 0,
@@ -53,7 +62,7 @@ function Backdrop( { canvas, element, onClose }: { canvas: HTMLDocument; element
 		zIndex: 999,
 		pointerEvents: 'painted',
 		cursor: 'pointer',
-		clipPath: getRectPath( rect, canvas.defaultView as Window ),
+		clipPath,
 	};
 
 	const handleKeyDown = ( event: React.KeyboardEvent ) => {

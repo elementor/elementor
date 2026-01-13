@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getV1DocumentsManager, type V1Document } from '@elementor/editor-documents';
 import { type V1Element } from '@elementor/editor-elements';
 import { __privateListenTo as listenTo, commandEndEvent } from '@elementor/editor-v1-adapters';
@@ -22,9 +22,9 @@ export function EditComponent() {
 
 	const onClose = throttle( navigateBack, 100 );
 
-	const elementDom = getComponentDOMElement( currentComponentId ?? undefined );
+	const elementDom = useComponentDOMElement( currentComponentId ?? undefined );
 
-	if ( ! elementDom ) {
+	if ( ! currentComponentId ) {
 		return null;
 	}
 
@@ -112,9 +112,38 @@ function getInstanceTitle( instanceId: string | undefined, path: ComponentsPathI
 	return editorSettings?.title;
 }
 
-function getComponentDOMElement( id: V1Document[ 'id' ] | undefined ) {
+function useComponentDOMElement( id: V1Document[ 'id' ] | undefined ) {
+	const { container, elementDom } = getComponentDOMElements( id );
+
+	const [ currentElementDom, setCurrentElementDom ] = useState< HTMLElement | null >( elementDom );
+
+	useEffect( () => {
+		setCurrentElementDom( elementDom );
+	}, [ elementDom ] );
+
+	useEffect( () => {
+		if ( ! container ) {
+			return;
+		}
+
+		const mutationObserver = new MutationObserver( () => {
+			const newElementDom = container.children[ 0 ] as HTMLElement | null;
+			setCurrentElementDom( newElementDom );
+		} );
+
+		mutationObserver.observe( container, { childList: true } );
+
+		return () => {
+			mutationObserver.disconnect();
+		};
+	}, [ container ] );
+
+	return currentElementDom;
+}
+
+function getComponentDOMElements( id: V1Document[ 'id' ] | undefined ) {
 	if ( ! id ) {
-		return null;
+		return { container: null, elementDom: null };
 	}
 
 	const documentsManager = getV1DocumentsManager();
@@ -123,7 +152,7 @@ function getComponentDOMElement( id: V1Document[ 'id' ] | undefined ) {
 
 	const widget = currentComponent?.container as V1Element;
 	const container = ( widget?.view?.el?.children?.[ 0 ] ?? null ) as HTMLElement | null;
-	const elementDom = container?.children[ 0 ] as HTMLElement | null;
+	const elementDom = ( container?.children[ 0 ] ?? null ) as HTMLElement | null;
 
-	return elementDom ?? null;
+	return { container, elementDom };
 }
