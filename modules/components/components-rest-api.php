@@ -278,11 +278,11 @@ class Components_REST_API {
 		$components = $this->get_repository()->all();
 
 		$components_list = array_values( $components
-			->filter( fn( $component ) => empty( $component['is_archived'] ) )
 			->map( fn( $component ) => [
 				'id' => $component['id'],
 				'name' => $component['title'],
 				'uid' => $component['uid'],
+				'isArchived' => $component['is_archived'] ?? false,
 			] )
 		->all() );
 
