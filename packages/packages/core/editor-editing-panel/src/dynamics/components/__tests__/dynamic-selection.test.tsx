@@ -275,6 +275,26 @@ describe( '<DynamicSelection />', () => {
 		// Assert.
 		expect( updateValue ).not.toHaveBeenCalled();
 	} );
+
+	it( 'should render NoDynamicTags with CTA button when no tags available', () => {
+		// Arrange.
+		jest.mocked( usePropDynamicTags ).mockReturnValue( [] );
+		jest.mocked( getAtomicDynamicTags ).mockReturnValue( { groups: {} } as never );
+
+		const props = {
+			value: {},
+			propType: createMockPropType( { kind: 'object' } ),
+		};
+
+		// Act.
+		renderControl( <DynamicSelection close={ jest.fn() } />, props );
+
+		// Assert.
+		expect( screen.getByText( 'Upgrade now to display your content dynamically.' ) ).toBeInTheDocument();
+
+		const ctaLink = screen.getByRole( 'link' );
+		expect( ctaLink ).toHaveAttribute( 'href', 'https://go.elementor.com/go-pro-dynamic-tags-modal/' );
+	} );
 } );
 
 const mockDynamicTags = ( tags: Partial< DynamicTag >[] ) => {
