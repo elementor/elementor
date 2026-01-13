@@ -1,3 +1,5 @@
+import { type PropType } from '@elementor/editor-props';
+
 import { type ExtendedWindow } from '../../sync/types';
 import { dynamicTransformer } from '../dynamic-transformer';
 import { DynamicTagsManagerNotFoundError } from '../errors';
@@ -82,6 +84,17 @@ describe( 'dynamicTransformer', () => {
 
 		// Assert.
 		expect( value ).toBe( null );
+	} );
+
+	it( "should return default value if it exists when tag doesn't exist", async () => {
+		// Arrange & Act.
+		const value = dynamicTransformer(
+			{ name: 'test-tag', settings: { settingKey: 'setting-value' } },
+			{ key: 'test', propType: { default: 'default-value' } as PropType }
+		);
+
+		// Assert.
+		expect( value ).toBe( 'default-value' );
 	} );
 } );
 
