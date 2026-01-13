@@ -2,10 +2,8 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Core\Admin\EditorOneMenu\Elementor_One_Menu_Manager;
 use Elementor\Modules\EditorOne\Classes\Menu_Config;
-use Elementor\Modules\EditorOne\Module as EditorOneModule;
 use Elementor\Plugin;
 use ElementorEditorTesting\Elementor_Test_Base;
 
@@ -21,8 +19,6 @@ class Test_Elementor_One_Menu_Manager_Edit_Posts_Users extends Elementor_Test_Ba
 
 	public function setUp(): void {
 		parent::setUp();
-
-		$this->activate_editor_one_experiment();
 
 		global $menu, $submenu;
 		$this->original_menu = $menu ?? [];
@@ -41,8 +37,6 @@ class Test_Elementor_One_Menu_Manager_Edit_Posts_Users extends Elementor_Test_Ba
 		$menu = $this->original_menu;
 		$submenu = $this->original_submenu;
 		$current_user = null;
-
-		$this->deactivate_editor_one_experiment();
 	}
 
 	public function test_remove_all_submenus_for_edit_posts_users__removes_all_submenus_for_editor_user() {
@@ -96,20 +90,5 @@ class Test_Elementor_One_Menu_Manager_Edit_Posts_Users extends Elementor_Test_Ba
 		return $user_id;
 	}
 
-	private function activate_editor_one_experiment(): void {
-		$experiments = Plugin::instance()->experiments;
-		$experiments->set_feature_default_state(
-			EditorOneModule::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
-	}
-
-	private function deactivate_editor_one_experiment(): void {
-		$experiments = Plugin::instance()->experiments;
-		$experiments->set_feature_default_state(
-			EditorOneModule::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_INACTIVE
-		);
-	}
 }
 
