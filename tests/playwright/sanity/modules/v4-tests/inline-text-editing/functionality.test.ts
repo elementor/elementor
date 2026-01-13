@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
+import { wpCli } from '../../../../assets/wp-cli';
 
 test.describe( 'Inline Editing Control @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
@@ -11,13 +12,13 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 	let editor: EditorPage;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		await wpCli( 'wp elementor experiments activate e_editor_one' );
 		context = await browser.newContext();
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
 		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active' } );
-		await wpAdminPage.setExperiments( { e_editor_one: 'active' } );
 
 		editor = await wpAdminPage.openNewPage();
 	} );
@@ -25,6 +26,7 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 	test.afterAll( async () => {
 		await wpAdminPage?.resetExperiments();
 		await context.close();
+		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 	} );
 
 	test( 'Paragraph control panel screenshot', async () => {

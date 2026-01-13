@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import { AtomicHelper, ElementType } from '../helper';
+import { wpCli } from '../../../../assets/wp-cli';
 
 test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependencies', () => {
 	const tests: { label: string, elementType: ElementType }[] = [
@@ -10,14 +11,15 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		await wpCli( 'wp elementor experiments activate e_editor_one' );
 		const page = await browser.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.setExperiments( {
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
-			e_editor_one: 'active',
 		} );
+		await page.close();
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {
@@ -26,6 +28,7 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 
 		await wpAdmin.resetExperiments();
 		await page.close();
+		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 	} );
 
 	for ( const { label, elementType } of tests ) {

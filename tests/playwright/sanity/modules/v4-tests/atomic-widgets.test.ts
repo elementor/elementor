@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import { BrowserContext, Page, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import EditorSelectors from '../../../selectors/editor-selectors';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Atomic Widgets @v4-tests', () => {
 	let editor: EditorPage;
@@ -21,18 +22,19 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 	];
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		await wpCli( 'wp elementor experiments activate e_editor_one' );
 		context = await browser.newContext();
 		page = await context.newPage();
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			e_atomic_elements: 'active',
-			e_editor_one: 'active',
 		} );
 	} );
 
 	test.afterAll( async () => {
 		await wpAdmin.resetExperiments();
 		await context.close();
+		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 	} );
 
 	test( 'Atomic elements tab UI', async () => {

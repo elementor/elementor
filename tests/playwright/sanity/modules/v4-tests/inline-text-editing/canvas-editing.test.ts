@@ -4,6 +4,7 @@ import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
 import { getElementSelector } from '../../../../assets/elements-utils';
+import { wpCli } from '../../../../assets/wp-cli';
 
 const testedAttributes = Object.keys( INLINE_EDITING_SELECTORS.attributes ).filter( ( attribute ) => attribute !== 'link' );
 
@@ -28,13 +29,13 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 	let editor: EditorPage;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		await wpCli( 'wp elementor experiments activate e_editor_one' );
 		context = await browser.newContext();
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
 		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active', e_classes: 'active' } );
-		await wpAdminPage.setExperiments( { e_editor_one: 'active' } );
 
 		editor = await wpAdminPage.openNewPage();
 	} );
@@ -42,6 +43,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 	test.afterAll( async () => {
 		await wpAdminPage?.resetExperiments();
 		await context.close();
+		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 	} );
 
 	test( 'Edit the heading-title from the canvas and check the value in the panel and in the front', async () => {

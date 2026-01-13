@@ -2,18 +2,19 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { newUser } from '../checklist/new-user';
 import { expect } from '@playwright/test';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 	let newTestUser: { id: string; username: string; password: string };
 
 	test.beforeAll( async ( { browser, apiRequests, request }, testInfo ) => {
+		await wpCli( 'wp elementor experiments activate e_editor_one' );
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
-			e_editor_one: 'active',
 		} );
 
 		newTestUser = await apiRequests.createNewUser( request, newUser );
@@ -27,6 +28,7 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 		await wpAdmin.resetExperiments();
 		await apiRequests.deleteUser( request, newTestUser.id );
 		await page.close();
+		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 	} );
 
 	test( 'Button can be added to the page', async ( { page, apiRequests }, testInfo ) => {

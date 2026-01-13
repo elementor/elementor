@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
+import { wpCli } from '../../../../assets/wp-cli';
 
 // Extend Window interface to include Elementor globals
 declare global {
@@ -55,6 +56,7 @@ test.describe( 'Global Classes Capability Tests', () => {
 
 	test( 'User without global classes capability can publish content without errors', async ( { browser, apiRequests }, testInfo ) => {
 		await test.step( 'Setup experiments as admin and then test as editor', async () => {
+			await wpCli( 'wp elementor experiments activate e_editor_one' );
 			// First, login as admin to set experiments
 			const adminContext = await browser.newContext( { storageState: undefined } );
 			const adminPage = await adminContext.newPage();
@@ -65,7 +67,6 @@ test.describe( 'Global Classes Capability Tests', () => {
 			await adminWpAdmin.setExperiments( {
 				e_atomic_elements: 'active',
 				e_classes: 'active',
-				e_editor_one: 'active',
 			} );
 
 			await adminContext.close();
@@ -126,11 +127,13 @@ test.describe( 'Global Classes Capability Tests', () => {
 			await cleanupWpAdmin.customLogin( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password' );
 			await cleanupWpAdmin.resetExperiments();
 			await cleanupContext.close();
+			await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 		} );
 	} );
 
 	test( 'Publishing content with global classes changes requires proper capability', async ( { browser, apiRequests }, testInfo ) => {
 		await test.step( 'Test capability enforcement for global classes operations', async () => {
+			await wpCli( 'wp elementor experiments activate e_editor_one' );
 			// First, login as admin to set experiments
 			const adminContext = await browser.newContext( { storageState: undefined } );
 			const adminPage = await adminContext.newPage();
@@ -141,7 +144,6 @@ test.describe( 'Global Classes Capability Tests', () => {
 			await adminWpAdmin.setExperiments( {
 				e_atomic_elements: 'active',
 				e_classes: 'active',
-				e_editor_one: 'active',
 			} );
 
 			await adminContext.close();
@@ -200,6 +202,7 @@ test.describe( 'Global Classes Capability Tests', () => {
 			await cleanupWpAdmin.customLogin( process.env.USERNAME || 'admin', process.env.PASSWORD || 'password' );
 			await cleanupWpAdmin.resetExperiments();
 			await cleanupContext.close();
+			await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 		} );
 	} );
 } );

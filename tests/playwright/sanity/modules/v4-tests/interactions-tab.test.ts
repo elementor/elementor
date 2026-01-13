@@ -1,16 +1,17 @@
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import { expect } from '@playwright/test';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Interactions Tab @v4-tests', () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
+		await wpCli( 'wp elementor experiments activate e_editor_one' );
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			e_interactions: 'active',
 			e_atomic_elements: 'active',
-			e_editor_one: 'active',
 		} );
 		await page.close();
 	} );
@@ -21,6 +22,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
 		await page.close();
+		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 	} );
 
 	test( 'Interactions tab is visible when experiment is active', async ( { page, apiRequests }, testInfo ) => {

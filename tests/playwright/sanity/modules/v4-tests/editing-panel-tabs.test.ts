@@ -3,6 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import { BrowserContext, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import { timeouts } from '../../../config/timeouts';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Editing panel tabs @v4-tests', () => {
 	let editor: EditorPage;
@@ -25,11 +26,12 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	];
 
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
+		await wpCli( 'wp elementor experiments activate e_editor_one' );
 		context = await browser.newContext();
 		const page = await context.newPage();
 
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_atomic_elements: 'active', e_editor_one: 'active' } );
+		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 
 		editor = await wpAdmin.openNewPage();
 	} );
@@ -37,6 +39,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 	test.afterAll( async () => {
 		await wpAdmin.resetExperiments();
 		await context.close();
+		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 	} );
 
 	async function openScrollableStylePanel() {
