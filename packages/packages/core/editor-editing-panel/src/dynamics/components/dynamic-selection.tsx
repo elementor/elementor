@@ -21,6 +21,8 @@ type Option = {
 type OptionEntry = [ string, Option[] ];
 
 const SIZE = 'tiny';
+const PROMO_TEXT_WIDTH = 170;
+const PRO_DYNAMIC_TAGS_URL = 'https://go.elementor.com/go-pro-dynamic-tags-modal/';
 
 type DynamicSelectionProps = {
 	close: () => void;
@@ -154,10 +156,10 @@ const NoDynamicTags = () => (
 			<Typography align="center" variant="subtitle2">
 				{ __( 'Streamline your workflow with dynamic tags', 'elementor' ) }
 			</Typography>
-			<Typography align="center" variant="caption" width={ 170 }>
+			<Typography align="center" variant="caption" width={ PROMO_TEXT_WIDTH }>
 				{ __( 'Upgrade now to display your content dynamically.', 'elementor' ) }
 			</Typography>
-			<CtaButton size="small" href={ 'https://go.elementor.com/go-pro-dynamic-tags-modal/' } />
+			<CtaButton size="small" href={ PRO_DYNAMIC_TAGS_URL } />
 		</Stack>
 	</>
 );
