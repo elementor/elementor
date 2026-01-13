@@ -70,14 +70,12 @@
 
 	&__icon-wrapper {
 		display: inline-block;
-		font-size: pxToRem(10px);
+		font-size: pxToRem(24px);
 		max-height: pxToRem(24px);
 		width: pxToRem(24px);
 		line-height: pxToRem(24px);
+		color: var(--e-notice-context-color);
 		border-radius: 100px;
-		background: var(--e-notice-context-color);
-		color: #fff;
-		text-shadow: 0 0 3px var(--e-notice-context-color-dark), 0 0 1px var(--e-notice-context-color-dark), 0 0 1px var(--e-notice-context-color-dark);
 	}
 
 	&__content {
