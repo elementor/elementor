@@ -181,6 +181,8 @@ export const InlineEditor = forwardRef(
 			setValue( isEmpty( newValue ) ? null : newValue );
 		};
 
+		const classes = `${ INLINE_EDITOR_RESET_CLASS } ${ elementClasses }`;
+
 		const editor = useEditor( {
 			extensions: [
 				Document.extend( {
@@ -189,14 +191,11 @@ export const InlineEditor = forwardRef(
 				Paragraph.extend( {
 					renderHTML( { HTMLAttributes } ) {
 						const tag = expectedTag ?? 'p';
-						const classes = [ INLINE_EDITOR_RESET_CLASS, elementClasses ].filter( Boolean ).join( ' ' );
 						return [ tag, { ...HTMLAttributes, class: classes }, 0 ];
 					},
 				} ),
 				Heading.extend( {
 					renderHTML( { node, HTMLAttributes } ) {
-						const classes = [ INLINE_EDITOR_RESET_CLASS, elementClasses ].filter( Boolean ).join( ' ' );
-
 						if ( expectedTag ) {
 							return [ expectedTag, { ...HTMLAttributes, class: classes }, 0 ];
 						}
