@@ -368,7 +368,7 @@ class Module extends BaseModule {
 	private function render_panel_category_chip() {
 		?><# if ( 'v4-elements' === name )  { #>
 		<span class="elementor-panel-heading-category-chip">
-				<?php echo esc_html__( 'Alpha', 'elementor' ); ?><i class="eicon-info"></i>
+				<?php echo esc_html__( 'Beta', 'elementor' ); ?><i class="eicon-info"></i>
 				<span class="e-promotion-react-wrapper" data-promotion="v4_chip"></span>
 			</span>
 		<# } #><?php
