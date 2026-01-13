@@ -700,5 +700,25 @@ describe( 'ComponentsTab', () => {
 			// Assert
 			expect( screen.queryByLabelText( 'More actions' ) ).not.toBeInTheDocument();
 		} );
+
+		it( 'should render empty state when no components exist and user is not admin', () => {
+			// Arrange
+			dispatch( slice.actions.load( [] ) );
+			mockCurrentUserCapabilities( false );
+
+			// Act
+			renderWithStore(
+				<SearchProvider localStorageKey="test-search">
+					<ComponentsList />
+				</SearchProvider>,
+				store
+			);
+
+			// Assert
+			expect( screen.getByText( 'No components yet' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Create your first one:' ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: /Create component with AI/i } ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );
