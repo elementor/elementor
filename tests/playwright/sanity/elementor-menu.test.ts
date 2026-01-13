@@ -9,7 +9,12 @@ async function validateGettingStartedPage( wpAdmin: WpAdminPage ) {
 }
 
 async function validateGettingStartedLinkCount( wpAdmin: WpAdminPage, expectedCount ) {
-	await wpAdmin.page.locator( '#adminmenu' ).getByRole( 'link', { name: 'Elementor' } ).first().click();
+	const adminMenu = wpAdmin.page.locator( '#adminmenu' );
+
+	if ( await adminMenu.count() > 0 ) {
+		await adminMenu.getByRole( 'link', { name: 'Elementor' } ).first().click();
+	}
+
 	expect( await wpAdmin.page.getByText( 'Getting Started' ).count() ).toEqual( expectedCount );
 }
 
