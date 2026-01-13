@@ -20,6 +20,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
+import { useComponentsPermissions } from '../../hooks/use-components-permissions';
 import { archiveComponent } from '../../store/actions/archive-component';
 import { loadComponentsAssets } from '../../store/actions/load-components-assets';
 import { type Component } from '../../types';
@@ -36,6 +37,9 @@ type ComponentItemProps = {
 export const ComponentItem = ( { component, renameComponent }: ComponentItemProps ) => {
 	const itemRef = useRef< HTMLElement >( null );
 	const [ isDeleteDialogOpen, setIsDeleteDialogOpen ] = useState( false );
+	const { canRename, canDelete } = useComponentsPermissions();
+
+	const shouldShowActions = canRename || canDelete;
 
 	const {
 		ref: editableRef,
@@ -66,8 +70,8 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 	};
 
 	const handleDeleteClick = () => {
-		popupState.close();
 		setIsDeleteDialogOpen( true );
+		popupState.close();
 	};
 
 	const handleDeleteConfirm = () => {
@@ -140,37 +144,48 @@ export const ComponentItem = ( { component, renameComponent }: ComponentItemProp
 							</Box>
 						</Indicator>
 					</Box>
-					<IconButton size="tiny" { ...bindTrigger( popupState ) } aria-label="More actions">
-						<DotsVerticalIcon fontSize="tiny" />
-					</IconButton>
+					{ shouldShowActions && (
+						<IconButton size="tiny" { ...bindTrigger( popupState ) } aria-label="More actions">
+							<DotsVerticalIcon fontSize="tiny" />
+						</IconButton>
+					) }
 				</ListItemButton>
 			</WarningInfotip>
-			<Menu
-				{ ...bindMenu( popupState ) }
-				anchorOrigin={ {
-					vertical: 'bottom',
-					horizontal: 'right',
-				} }
-				transformOrigin={ {
-					vertical: 'top',
-					horizontal: 'right',
-				} }
-			>
-				<MenuListItem
-					sx={ { minWidth: '160px' } }
-					onClick={ () => {
-						popupState.close();
-						openEditMode();
+			{ shouldShowActions && (
+				<Menu
+					{ ...bindMenu( popupState ) }
+					anchorOrigin={ {
+						vertical: 'bottom',
+						horizontal: 'right',
+					} }
+					transformOrigin={ {
+						vertical: 'top',
+						horizontal: 'right',
 					} }
 				>
-					{ __( 'Rename', 'elementor' ) }
-				</MenuListItem>
-				<MenuListItem sx={ { minWidth: '160px' } } onClick={ handleDeleteClick }>
-					<Typography variant="caption" sx={ { color: 'error.light' } }>
-						{ __( 'Delete', 'elementor' ) }
-					</Typography>
-				</MenuListItem>
-			</Menu>
+					{ canRename && (
+						<MenuListItem
+							sx={ { minWidth: '160px' } }
+							primaryTypographyProps={ { variant: 'caption', color: 'text.primary' } }
+							onClick={ () => {
+								popupState.close();
+								openEditMode();
+							} }
+						>
+							{ __( 'Rename', 'elementor' ) }
+						</MenuListItem>
+					) }
+					{ canDelete && (
+						<MenuListItem
+							sx={ { minWidth: '160px' } }
+							primaryTypographyProps={ { variant: 'caption', color: 'error.light' } }
+							onClick={ handleDeleteClick }
+						>
+							{ __( 'Delete', 'elementor' ) }
+						</MenuListItem>
+					) }
+				</Menu>
+			) }
 			<DeleteConfirmationDialog
 				open={ isDeleteDialogOpen }
 				onClose={ handleDeleteDialogClose }
