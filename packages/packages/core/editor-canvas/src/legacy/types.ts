@@ -126,7 +126,7 @@ export declare class ElementView {
 
 	_openEditingPanel( options?: { scrollIntoView: boolean } ): void;
 
-	on: ( event: string, callback: () => void ) => void;
+	once: ( event: string, callback: () => void ) => void;
 }
 
 type JQueryElement = {

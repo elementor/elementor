@@ -231,12 +231,15 @@ export function createTemplatedElementView( {
 			this.triggerMethod( 'render', this );
 		}
 
-		_openEditingPanel( options?: { scrollIntoView: boolean } ) {
+		_doAfterRender( callback: () => void ) {
 			if ( this.isRendered ) {
-				super._openEditingPanel( options );
+				callback();
 			} else {
-				this.on( 'render', () => super._openEditingPanel( options ) );
+				this.once( 'render', callback );
 			}
+		}
+		_openEditingPanel( options?: { scrollIntoView: boolean } ) {
+			this._doAfterRender( () => super._openEditingPanel( options ) );
 		}
 	};
 }
