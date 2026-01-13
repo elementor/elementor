@@ -47,7 +47,7 @@ type InlineEditorProps = {
 	elementId?: ElementID;
 };
 
-const INITIAL_STYLE = 'margin:0;padding:0;';
+const INLINE_EDITOR_RESET_CLASS = 'elementor-inline-editor-reset';
 
 const useOnUpdate = ( callback: () => void, dependencies: DependencyList ): void => {
 	const hasMounted = useRef( false );
@@ -181,6 +181,8 @@ export const InlineEditor = forwardRef(
 			setValue( isEmpty( newValue ) ? null : newValue );
 		};
 
+		const classes = `${ INLINE_EDITOR_RESET_CLASS } ${ elementClasses }`;
+
 		const editor = useEditor( {
 			extensions: [
 				Document.extend( {
@@ -189,24 +191,20 @@ export const InlineEditor = forwardRef(
 				Paragraph.extend( {
 					renderHTML( { HTMLAttributes } ) {
 						const tag = expectedTag ?? 'p';
-						return [ tag, { ...HTMLAttributes, style: INITIAL_STYLE, class: elementClasses }, 0 ];
+						return [ tag, { ...HTMLAttributes, class: classes }, 0 ];
 					},
 				} ),
 				Heading.extend( {
 					renderHTML( { node, HTMLAttributes } ) {
 						if ( expectedTag ) {
-							return [
-								expectedTag,
-								{ ...HTMLAttributes, style: INITIAL_STYLE, class: elementClasses },
-								0,
-							];
+							return [ expectedTag, { ...HTMLAttributes, class: classes }, 0 ];
 						}
 
 						const level = this.options.levels.includes( node.attrs.level )
 							? node.attrs.level
 							: this.options.levels[ 0 ];
 
-						return [ `h${ level }`, { ...HTMLAttributes, style: INITIAL_STYLE, class: elementClasses }, 0 ];
+						return [ `h${ level }`, { ...HTMLAttributes, class: classes }, 0 ];
 					},
 				} ).configure( {
 					levels: [ 1, 2, 3, 4, 5, 6 ],
