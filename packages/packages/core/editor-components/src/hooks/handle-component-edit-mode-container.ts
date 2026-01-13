@@ -13,7 +13,7 @@ type Container = Omit< V1Element, 'children' | 'parent' > & {
 	children: Container[];
 };
 
-export function initHandleComponentPreviewContainer() {
+export function initHandleComponentEditModeContainer() {
 	initRedirectDropIntoComponent();
 	initHandleTopLevelElementDelete();
 }
@@ -40,7 +40,7 @@ function initHandleTopLevelElementDelete() {
 			const isComponentEmpty = component.children.length === 0;
 
 			if ( isComponentEmpty ) {
-				addDefaultEmptyTopLevelContainer( container.parent );
+				createEmptyTopLevelContainer( container.parent );
 			}
 		}
 	} );
@@ -58,6 +58,7 @@ function initRedirectDropIntoComponent() {
 		if ( ! isEditingComponent() ) {
 			return true;
 		}
+
 		const containers = args.containers ?? ( args.container ? [ args.container ] : [] );
 
 		for ( const container of containers ) {
@@ -83,11 +84,10 @@ function initRedirectDropIntoComponent() {
 	} );
 }
 
-function addDefaultEmptyTopLevelContainer( container: Container ) {
+function createEmptyTopLevelContainer( container: Container ) {
 	const newContainer = createElement( {
 		containerId: container.id,
 		model: { elType: V4_DEFAULT_CONTAINER_TYPE },
-		options: { useHistory: false },
 	} );
 
 	selectElement( newContainer.id );

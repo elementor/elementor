@@ -85,12 +85,7 @@ function Backdrop( {
 }
 
 function getRectPath( rect: DOMRect, viewport: Window ) {
-	const { x: originalX, y: originalY, width: originalWidth, height: originalHeight } = rect;
-	const x = originalX;
-	const y = originalY;
-	const width = originalWidth;
-	const height = originalHeight;
-
+	const { x, y, width, height } = rect;
 	const { innerWidth: vw, innerHeight: vh } = viewport;
 
 	const path = `path(evenodd, 'M 0 0 

@@ -141,7 +141,12 @@ function useComponentDOMElement( id: V1Document[ 'id' ] | undefined ) {
 	return currentElementDom;
 }
 
-function getComponentDOMElements( id: V1Document[ 'id' ] | undefined ) {
+type ComponentDOMElements = {
+	componentContainerDomElement: HTMLElement | null;
+	topLevelElementDom: HTMLElement | null;
+};
+
+function getComponentDOMElements( id: V1Document[ 'id' ] | undefined ): ComponentDOMElements {
 	if ( ! id ) {
 		return { componentContainerDomElement: null, topLevelElementDom: null };
 	}
@@ -151,9 +156,8 @@ function getComponentDOMElements( id: V1Document[ 'id' ] | undefined ) {
 	const currentComponent = documentsManager.get( id );
 
 	const componentContainer = currentComponent?.container as V1Element;
-	const componentContainerDomElement = ( componentContainer?.view?.el?.children?.[ 0 ] ??
-		null ) as HTMLElement | null;
-	const topLevelElementDom = ( componentContainerDomElement?.children[ 0 ] ?? null ) as HTMLElement | null;
+	const componentContainerDomElement = ( componentContainer?.view?.el?.children?.[ 0 ] as HTMLElement ) ?? null;
+	const topLevelElementDom = ( componentContainerDomElement?.children[ 0 ] as HTMLElement ) ?? null;
 
 	return { componentContainerDomElement, topLevelElementDom };
 }

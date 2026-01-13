@@ -5,7 +5,7 @@ import { blockCommand } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { type ExtendedWindow } from './types';
-import { isEditingComponent } from '../src/utils/is-editing-component';
+import { isEditingComponent } from './utils/is-editing-component';
 
 type CreateArgs = {
 	container?: V1Element;

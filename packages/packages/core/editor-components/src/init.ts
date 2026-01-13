@@ -35,7 +35,7 @@ import { OverridablePropControl } from './components/overridable-props/overridab
 import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
 import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-type';
 import { initCleanupOverridablePropsOnDelete } from './hooks/cleanup-overridable-props-on-delete';
-import { initHandleComponentPreviewContainer } from './hooks/redirect-drop-into-component';
+import { initHandleComponentEditModeContainer } from './hooks/handle-component-edit-mode-container';
 import { initRegenerateOverrideKeys } from './hooks/regenerate-override-keys';
 import { initMcp } from './mcp';
 import { PopulateStore } from './populate-store';
@@ -142,5 +142,5 @@ export function init() {
 
 	initNonAtomicNestingPrevention();
 
-	initHandleComponentPreviewContainer();
+	initHandleComponentEditModeContainer();
 }
