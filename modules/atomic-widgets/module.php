@@ -96,7 +96,6 @@ use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content;
-use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
 use Elementor\Modules\AtomicWidgets\Library\Atomic_Widgets_Library;
@@ -107,7 +106,6 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Query_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Transform\Perspective_Origin_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
-use Elementor\Core\Base\Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -140,7 +138,6 @@ class Module extends BaseModule {
 
 		if ( self::is_active() ) {
 			$this->register_experimental_features();
-			Migrations_Orchestrator::register_feature_flag_hooks();
 		}
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {
@@ -160,7 +157,6 @@ class Module extends BaseModule {
 			add_filter( 'elementor/editor/localize_settings', fn ( $settings ) => $this->add_supported_units( $settings ) );
 			add_filter( 'elementor/widgets/register', fn ( Widgets_Manager $widgets_manager ) => $this->register_widgets( $widgets_manager ) );
 			add_filter( 'elementor/usage/elements/element_title', fn ( $title, $type ) => $this->get_element_usage_name( $title, $type ), 10, 2 );
-			add_filter( 'elementor/document/load/data', fn ( $data, $document ) => $this->backward_compatibility_migrations( $data, $document ), 10, 2 );
 
 			add_action( 'elementor/elements/elements_registered', fn ( $elements_manager ) => $this->register_elements( $elements_manager ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_scripts() );
@@ -227,7 +223,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Backward compatibility migrations', 'elementor' ),
 			'description' => esc_html__( 'Enable automatic prop type migrations for atomic widgets', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_ACTIVE,
+			'default' => Experiments_Manager::STATE_INACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 	}
@@ -398,35 +394,5 @@ class Module extends BaseModule {
 	private function add_inline_styles() {
 		$inline_css = '.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }';
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
-	}
-
-	private function backward_compatibility_migrations( array $data, $document ): array {
-		if ( ! Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_BC_MIGRATIONS ) ) {
-			return $data;
-		}
-
-		$orchestrator = Migrations_Orchestrator::make( $this->get_migrations_base_path() );
-
-		$orchestrator->migrate_document(
-			$data,
-			$document->get_post()->ID,
-			function( $migrated_data ) use ( $document ) {
-				$document->update_json_meta(
-					Document::ELEMENTOR_DATA_META_KEY,
-					$migrated_data
-				);
-			}
-		);
-
-		return $data;
-	}
-
-	private function get_migrations_base_path(): string {
-		// define this in wp-config.php to use local migrations i.e. __DIR__ . '/wp-content/plugins/elementor/migrations/'
-		if ( defined( 'ELEMENTOR_MIGRATIONS_PATH' ) ) {
-			return ELEMENTOR_MIGRATIONS_PATH;
-		}
-
-		return 'https://migrations.elementor.com/';
 	}
 }
