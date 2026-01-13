@@ -117,7 +117,12 @@ export const GapControl = ( { label }: { label: string } ) => {
 						<ControlFormLabel>{ __( 'Column', 'elementor' ) }</ControlFormLabel>
 					</Grid>
 					<Grid item xs={ 12 }>
-						<Control bind={ 'column' } isLinked={ isLinked } anchorRef={ stackRef } />
+						<Control
+							bind={ 'column' }
+							ariaLabel={ __( 'Column gap', 'elementor' ) }
+							isLinked={ isLinked }
+							anchorRef={ stackRef }
+						/>
 					</Grid>
 				</Grid>
 				<Grid container gap={ 0.75 } alignItems="center">
@@ -125,7 +130,12 @@ export const GapControl = ( { label }: { label: string } ) => {
 						<ControlFormLabel>{ __( 'Row', 'elementor' ) }</ControlFormLabel>
 					</Grid>
 					<Grid item xs={ 12 }>
-						<Control bind={ 'row' } isLinked={ isLinked } anchorRef={ stackRef } />
+						<Control
+							bind={ 'row' }
+							ariaLabel={ __( 'Row gap', 'elementor' ) }
+							isLinked={ isLinked }
+							anchorRef={ stackRef }
+						/>
 					</Grid>
 				</Grid>
 			</Stack>
@@ -135,20 +145,22 @@ export const GapControl = ( { label }: { label: string } ) => {
 
 const Control = ( {
 	bind,
+	ariaLabel,
 	isLinked,
 	anchorRef,
 }: {
 	bind: PropKey;
+	ariaLabel?: string;
 	isLinked: boolean;
 	anchorRef: RefObject< HTMLDivElement >;
 } ) => {
 	if ( isLinked ) {
-		return <SizeControl anchorRef={ anchorRef } />;
+		return <SizeControl anchorRef={ anchorRef } ariaLabel={ ariaLabel } />;
 	}
 
 	return (
 		<PropKeyProvider bind={ bind }>
-			<SizeControl anchorRef={ anchorRef } />
+			<SizeControl anchorRef={ anchorRef } ariaLabel={ ariaLabel } />
 		</PropKeyProvider>
 	);
 };
