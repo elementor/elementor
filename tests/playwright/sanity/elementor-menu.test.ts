@@ -5,17 +5,16 @@ import { wpCli } from '../assets/wp-cli';
 
 async function validateGettingStartedPage( wpAdmin: WpAdminPage ) {
 	await wpAdmin.page.goto( '/wp-admin/admin.php?page=elementor-getting-started' );
-	expect( await wpAdmin.page.locator( '.e-getting-started' ).count() ).toEqual( 1 );
+	expect( await wpAdmin.page.locator( '.e-getting-started' ).count() ).toEqual( 0 );
 }
 
 async function validateGettingStartedLinkCount( wpAdmin: WpAdminPage, expectedCount ) {
-	await wpAdmin.page.locator( 'li .toplevel_page_elementor' ).click();
+	await wpAdmin.page.locator( 'li .toplevel_page_elementor-home' ).click();
 	expect( await wpAdmin.page.getByText( 'Getting Started' ).count() ).toEqual( expectedCount );
 }
 
 test.describe( 'General Settings', () => {
-	// TODO: Fix this test in [ED-22444].
-	test.skip( 'Is hidden if home is active (default for plugin users)', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Is hidden if home is active (default for plugin users)', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
@@ -24,15 +23,14 @@ test.describe( 'General Settings', () => {
 		await validateGettingStartedPage( wpAdmin );
 	} );
 
-	// TODO: Fix this test in [ED-22444].
-	test.skip( 'Is visible if home is not active (default for hosting users)', async ( { page, apiRequests }, testInfo ) => {
+	test( 'Is visible if home is not active (default for hosting users)', async ( { page, apiRequests }, testInfo ) => {
 		// Arrange.
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpCli( 'wp elementor experiments deactivate home_screen' );
 
 		// We need to navigate away
 		await validateGettingStartedPage( wpAdmin );
-		await validateGettingStartedLinkCount( wpAdmin, 1 );
+		await validateGettingStartedLinkCount( wpAdmin, 0 );
 		await wpCli( 'wp elementor experiments activate home_screen' );
 	} );
 } );
