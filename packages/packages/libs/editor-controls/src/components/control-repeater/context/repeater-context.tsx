@@ -70,6 +70,14 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 		return items?.map( ( _, index ) => index ) ?? [];
 	} );
 
+	React.useEffect( () => {
+		const itemsLength = items?.length ?? 0;
+
+		if ( itemsLength > 0 && uniqueKeys.length === 0 ) {
+			setUniqueKeys( items.map( ( _, index ) => generateUniqueKey() ) );
+		}
+	}, [ items, uniqueKeys.length ] );
+
 	const itemsWithKeys = useMemo(
 		() =>
 			uniqueKeys
