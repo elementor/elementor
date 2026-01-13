@@ -59,7 +59,7 @@ class Test_Filter_Add_Ons_By_License extends PHPUnit_TestCase {
 	private function mock_home_screen_data_with_hide_section_free() {
 		return [
 			'add_ons' => [
-				'hide_section' => [ 'one' ],
+				'hide_section' => [ 'free' ],
 				'header' => [
 					'title' => 'Test Add-ons Title',
 					'description' => 'Test description',
@@ -81,7 +81,7 @@ class Test_Filter_Add_Ons_By_License extends PHPUnit_TestCase {
 	private function mock_home_screen_data_with_hide_section_pro() {
 		return [
 			'add_ons' => [
-				'hide_section' => [ 'pro' ],
+				'hide_section' => [ 'one' ],
 				'header' => [
 					'title' => 'Test Add-ons Title',
 					'description' => 'Test description',
