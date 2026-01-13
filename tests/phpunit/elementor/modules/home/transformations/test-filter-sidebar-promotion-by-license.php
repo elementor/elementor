@@ -125,7 +125,7 @@ class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 					'key' => 'value',
 				],
 				'license' => [
-					'one'
+					'free'
 				],
 				'is_enabled' => 'true',
 			],
@@ -143,7 +143,7 @@ class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 					'key' => 'value',
 				],
 				'license' => [
-					'one'
+					'pro'
 				],
 				'is_enabled' => 'true',
 			],
