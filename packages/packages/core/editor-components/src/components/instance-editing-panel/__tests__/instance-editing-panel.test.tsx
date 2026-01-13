@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { createMockPropType, renderWithStore } from 'test-utils';
+import { createMockPropType, mockCurrentUserCapabilities, renderWithStore } from 'test-utils';
 import { ControlActionsProvider, TextControl } from '@elementor/editor-controls';
-import { useCurrentUserCapabilities } from '@elementor/editor-current-user';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
 import {
 	getElementLabel,
@@ -39,11 +38,7 @@ jest.mock( '../../../prop-types/component-instance-prop-type', () => ( {
 
 jest.mock( '@elementor/editor-current-user' );
 
-jest.mocked( useCurrentUserCapabilities ).mockReturnValue( {
-	isAdmin: true,
-	canUser: jest.fn(),
-	capabilities: [],
-} );
+mockCurrentUserCapabilities( true );
 
 const MOCK_ELEMENT_ID = 'element-123';
 const MOCK_COMPONENT_ID = 456;
@@ -320,6 +315,30 @@ describe( '<InstanceEditingPanel />', () => {
 		// Assert.
 		expect( switchToComponent ).toHaveBeenCalledTimes( 1 );
 		expect( switchToComponent ).toHaveBeenCalledWith( MOCK_COMPONENT_ID, MOCK_INSTANCE_ID );
+	} );
+
+	it( 'should show edit button when user is admin', () => {
+		// Arrange.
+		mockCurrentUserCapabilities( true );
+		setupComponent();
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.getByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` ) ).toBeInTheDocument();
+	} );
+
+	it( 'should not show edit button when user is not admin', () => {
+		// Arrange.
+		mockCurrentUserCapabilities( false );
+		setupComponent();
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.queryByLabelText( `Edit ${ MOCK_COMPONENT_NAME }` ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'should not render when componentId is missing', () => {
