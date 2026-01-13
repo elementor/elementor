@@ -7,11 +7,11 @@ import { useCanvasDocument } from '../../hooks/use-canvas-document';
 import { useElementRect } from '../../hooks/use-element-rect';
 
 type ModalProps = {
-	element: HTMLElement | null;
+	topLevelElementDom: HTMLElement | null;
 	onClose: () => void;
 };
 
-export function ComponentModal( { element, onClose }: ModalProps ) {
+export function ComponentModal( { topLevelElementDom, onClose }: ModalProps ) {
 	const canvasDocument = useCanvasDocument();
 
 	useEffect( () => {
@@ -35,7 +35,7 @@ export function ComponentModal( { element, onClose }: ModalProps ) {
 	return createPortal(
 		<>
 			<BlockEditPage />
-			<Backdrop canvas={ canvasDocument } element={ element } onClose={ onClose } />
+			<Backdrop canvas={ canvasDocument } element={ topLevelElementDom } onClose={ onClose } />
 		</>,
 		canvasDocument.body
 	);

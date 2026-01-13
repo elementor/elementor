@@ -22,13 +22,13 @@ export function EditComponent() {
 
 	const onClose = throttle( navigateBack, 100 );
 
-	const elementDom = useComponentDOMElement( currentComponentId ?? undefined );
+	const topLevelElementDom = useComponentDOMElement( currentComponentId ?? undefined );
 
 	if ( ! currentComponentId ) {
 		return null;
 	}
 
-	return <ComponentModal element={ elementDom } onClose={ onClose } />;
+	return <ComponentModal topLevelElementDom={ topLevelElementDom } onClose={ onClose } />;
 }
 
 function useHandleDocumentSwitches() {
@@ -113,46 +113,47 @@ function getInstanceTitle( instanceId: string | undefined, path: ComponentsPathI
 }
 
 function useComponentDOMElement( id: V1Document[ 'id' ] | undefined ) {
-	const { container, elementDom } = getComponentDOMElements( id );
+	const { componentContainerDomElement, topLevelElementDom } = getComponentDOMElements( id );
 
-	const [ currentElementDom, setCurrentElementDom ] = useState< HTMLElement | null >( elementDom );
-
-	useEffect( () => {
-		setCurrentElementDom( elementDom );
-	}, [ elementDom ] );
+	const [ currentElementDom, setCurrentElementDom ] = useState< HTMLElement | null >( topLevelElementDom );
 
 	useEffect( () => {
-		if ( ! container ) {
+		setCurrentElementDom( topLevelElementDom );
+	}, [ topLevelElementDom ] );
+
+	useEffect( () => {
+		if ( ! componentContainerDomElement ) {
 			return;
 		}
 
 		const mutationObserver = new MutationObserver( () => {
-			const newElementDom = container.children[ 0 ] as HTMLElement | null;
+			const newElementDom = componentContainerDomElement.children[ 0 ] as HTMLElement | null;
 			setCurrentElementDom( newElementDom );
 		} );
 
-		mutationObserver.observe( container, { childList: true } );
+		mutationObserver.observe( componentContainerDomElement, { childList: true } );
 
 		return () => {
 			mutationObserver.disconnect();
 		};
-	}, [ container ] );
+	}, [ componentContainerDomElement ] );
 
 	return currentElementDom;
 }
 
 function getComponentDOMElements( id: V1Document[ 'id' ] | undefined ) {
 	if ( ! id ) {
-		return { container: null, elementDom: null };
+		return { componentContainerDomElement: null, topLevelElementDom: null };
 	}
 
 	const documentsManager = getV1DocumentsManager();
 
 	const currentComponent = documentsManager.get( id );
 
-	const widget = currentComponent?.container as V1Element;
-	const container = ( widget?.view?.el?.children?.[ 0 ] ?? null ) as HTMLElement | null;
-	const elementDom = ( container?.children[ 0 ] ?? null ) as HTMLElement | null;
+	const componentContainer = currentComponent?.container as V1Element;
+	const componentContainerDomElement = ( componentContainer?.view?.el?.children?.[ 0 ] ??
+		null ) as HTMLElement | null;
+	const topLevelElementDom = ( componentContainerDomElement?.children[ 0 ] ?? null ) as HTMLElement | null;
 
-	return { container, elementDom };
+	return { componentContainerDomElement, topLevelElementDom };
 }
