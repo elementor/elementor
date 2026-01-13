@@ -4,15 +4,17 @@ import { type Props, Schema } from '@elementor/editor-props';
 import { type BreakpointId } from '@elementor/editor-responsive';
 import { getStylesSchema } from '@elementor/editor-styles';
 import { type StylesProvider } from '@elementor/editor-styles-repository';
-import { Utils } from '@elementor/editor-variables';
+import { type Utils as IUtils } from '@elementor/editor-variables';
 import { z } from '@elementor/schema';
 
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 import { saveGlobalClasses } from '../save-global-classes';
 import { GLOBAL_CLASSES_URI } from './classes-resource';
 
+type XElementor = z.infer< z.ZodAny >;
+
 const schema = {
-	action: z.enum( [ 'create', 'modify' ] ).describe( 'Operation to perform' ),
+	action: z.enum( [ 'create', 'modify', 'delete' ] ).describe( 'Operation to perform' ),
 	classId: z
 		.string()
 		.optional()
@@ -55,6 +57,13 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 		};
 	}
 
+	if ( action === 'delete' && ! classId ) {
+		return {
+			status: 'error',
+			message: 'Delete requires classId',
+		};
+	}
+
 	const { create, update, delete: deleteClass } = globalClassesStylesProvider.actions;
 	if ( ! create || ! update || ! deleteClass ) {
 		return {
@@ -88,6 +97,8 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 		};
 	}
 
+	const Utils = ( ( ( window as XElementor ).elementorV2 as XElementor ).editorVariables as XElementor )
+		.Utils as typeof IUtils;
 	Object.keys( props ).forEach( ( key ) => {
 		props[ key ] = Schema.adjustLlmPropValueSchema( props[ key ], {
 			transformers: Utils.globalVariablesLLMResolvers,
@@ -126,6 +137,17 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 					: {
 							status: 'error',
 							message: 'error modifying class',
+					  };
+			case 'delete':
+				const deleted = await attemptDelete( {
+					classId,
+					stylesProvider: globalClassesStylesProvider,
+				} );
+				return deleted
+					? { status: 'ok', message: `deleted global class with ID ${ classId }` }
+					: {
+							status: 'error',
+							message: 'error deleting class',
 					  };
 		}
 	} catch ( error ) {
@@ -203,27 +225,22 @@ async function attemptCreate( opts: Opts ) {
 
 async function attemptUpdate( opts: Opts ) {
 	const { props, breakpoint, classId, stylesProvider } = opts;
-	const { update } = stylesProvider.actions;
+	const { updateProps, update } = stylesProvider.actions;
 	if ( ! classId ) {
 		throw new Error( 'Class ID is required for modification' );
 	}
-	if ( ! update ) {
+	if ( ! updateProps || ! update ) {
 		throw new Error( 'User is unable to update global classes' );
 	}
 	const snapshot = structuredClone( stylesProvider.actions.all() );
 	try {
-		update( {
+		updateProps( {
 			id: classId,
-			variants: [
-				{
-					custom_css: null,
-					props,
-					meta: {
-						breakpoint,
-						state: null,
-					},
-				},
-			],
+			props,
+			meta: {
+				breakpoint,
+				state: null,
+			},
 		} );
 		await saveGlobalClasses( { context: 'frontend' } );
 		return true;
@@ -235,6 +252,29 @@ async function attemptUpdate( opts: Opts ) {
 			} );
 		} );
 		await saveGlobalClasses( { context: 'frontend' } );
+		return false;
+	}
+}
+
+async function attemptDelete( opts: Pick< Opts, 'classId' | 'stylesProvider' > ) {
+	const { classId, stylesProvider } = opts;
+	const { delete: deleteClass, create } = stylesProvider.actions;
+	if ( ! classId ) {
+		throw new Error( 'Class ID is required for deletion' );
+	}
+	if ( ! deleteClass || ! create ) {
+		throw new Error( 'User is unable to delete global classes' );
+	}
+	const snapshot = structuredClone( stylesProvider.actions.all() );
+	const targetClass = snapshot.find( ( style ) => style.id === classId );
+	if ( ! targetClass ) {
+		throw new Error( `Class with ID "${ classId }" not found` );
+	}
+	try {
+		deleteClass( classId );
+		await saveGlobalClasses( { context: 'frontend' } );
+		return true;
+	} catch {
 		return false;
 	}
 }

@@ -7,7 +7,10 @@ import {
 } from '@elementor/editor-elements';
 import { getPropSchemaFromCache, type PropValue, Schema, type TransformablePropValue } from '@elementor/editor-props';
 import { type CustomCss, getStylesSchema } from '@elementor/editor-styles';
+import { type Utils as IUtils } from '@elementor/editor-variables';
+import { type z } from '@elementor/schema';
 
+type XElementor = z.infer< z.ZodAny >;
 type OwnParams = {
 	elementId: string;
 	elementType: string;
@@ -15,8 +18,13 @@ type OwnParams = {
 	propertyValue: string | PropValue | TransformablePropValue< string, unknown >;
 };
 
-function resolvePropValue( value: unknown, forceKey?: string ): PropValue {
-	return Schema.adjustLlmPropValueSchema( value as PropValue, { forceKey } );
+export function resolvePropValue( value: unknown, forceKey?: string ): PropValue {
+	const Utils = ( ( ( window as XElementor ).elementorV2 as XElementor ).editorVariables as XElementor )
+		.Utils as typeof IUtils;
+	return Schema.adjustLlmPropValueSchema( value as PropValue, {
+		forceKey,
+		transformers: Utils.globalVariablesLLMResolvers,
+	} );
 }
 
 /*
@@ -25,7 +33,6 @@ function resolvePropValue( value: unknown, forceKey?: string ): PropValue {
  */
 export const doUpdateElementProperty = ( params: OwnParams ) => {
 	const { elementId, propertyName, propertyValue, elementType } = params;
-
 	if ( propertyName === '_styles' ) {
 		const elementStyles = getElementStyles( elementId ) || {};
 		const propertyMapValue = propertyValue as Record< string, PropValue >;

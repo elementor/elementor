@@ -37,7 +37,11 @@ export const initManageVariableTool = () => {
 		description: `Manages global variables (create/update/delete). Existing variables available in resources.
 CREATE: requires type, label, value. Ensure label is unique.
 UPDATE: requires id, label, value. When renaming: keep existing value. When updating value: keep exact label.
-DELETE: requires id. DESTRUCTIVE - confirm with user first.`,
+DELETE: requires id. DESTRUCTIVE - confirm with user first.
+
+# NAMING - IMPORTANT
+the variables names should ALWAYS be lowercased and dashed spaced. example: "Headline Primary" should be "headline-primary"
+`,
 		handler: async ( params ) => {
 			const operations = getServiceActions( service );
 			const op = operations[ params.action ];
