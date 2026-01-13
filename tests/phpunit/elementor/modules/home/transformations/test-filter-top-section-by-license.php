@@ -14,10 +14,7 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 		} );
 	}
 	public function tearDown(): void {
-		add_filter( 'elementor/admin/homescreen_promotion_tier', function() {
-			return 'free';
-		} );
-
+		remove_all_filters( 'elementor/admin/homescreen_promotion_tier' );
 		parent::tearDown();
 	}
 

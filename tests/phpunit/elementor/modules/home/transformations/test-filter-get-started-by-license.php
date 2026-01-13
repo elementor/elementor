@@ -6,6 +6,11 @@ use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Filter_Get_Started_By_License extends PHPUnit_TestCase {
 
+	public function tearDown(): void {
+		remove_all_filters( 'elementor/admin/homescreen_promotion_tier' );
+		parent::tearDown();
+	}
+
 	public function test_transform__core_plugin() {
 		// Arrange
 		$original_data = $this->mock_home_screen_data();
