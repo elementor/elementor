@@ -10,7 +10,6 @@ function getElementInteractionsData( elementId: string ) {
 
 	try {
 		const allInteractions = JSON.parse( scriptTag.textContent || '[]' );
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const elementData = allInteractions.find(
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			( item: any ) => item.elementId === elementId || item.dataId === elementId,
@@ -352,7 +351,6 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 					}
 					try {
 						const allInteractions = JSON.parse( scriptTag.textContent || '[]' );
-						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						const elementData = allInteractions.find(
 							// eslint-disable-next-line @typescript-eslint/no-explicit-any
 							( item: any ) => ( item.elementId === elementId || item.dataId === elementId ) && item.interactions?.items?.length > 0,
@@ -419,9 +417,9 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 			const id1 = interactionsData.items[ 0 ].value.interaction_id?.value;
 			const id2 = interactionsData.items[ 1 ].value.interaction_id?.value;
 
-			expect( id1 ).toBeTruthy();
-			expect( id2 ).toBeTruthy();
 			expect( id1 ).not.toBe( id2 );
+			expect( id1 ).toContain( 'temp-' );
+			expect( id2 ).toContain( 'temp-' );
 		} );
 
 		await test.step( 'Verify play buttons trigger correct interaction IDs', async () => {
