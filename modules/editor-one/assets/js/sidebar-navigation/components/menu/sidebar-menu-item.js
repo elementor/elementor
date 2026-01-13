@@ -1,41 +1,47 @@
 import { useCallback, useState } from '@wordpress/element';
 import { Collapse, List, ListItem, ListItemText } from '@elementor/ui';
 import PropTypes from 'prop-types';
-import { DEFAULT_ICON, ICON_MAP } from '../shared';
-import { ChildListItem, ChildMenuItemButton, ExpandIcon, MenuIcon, MenuItemButton } from './styled-components';
+import { ChildListItem, ChildMenuItemButton, DEFAULT_ICON, ExpandIcon, ICON_MAP, MenuIcon, MenuItemButton } from '../shared';
 
-const STORAGE_KEY_PREFIX = 'elementor_sidebar_menu_expanded_';
-
-const getStorageKey = ( slug ) => `${ STORAGE_KEY_PREFIX }${ slug }`;
-
-const getInitialExpandedState = ( slug, hasChildren ) => {
-	if ( ! hasChildren ) {
-		return false;
-	}
-
-	const stored = localStorage.getItem( getStorageKey( slug ) );
-
-	if ( null === stored ) {
-		return true;
-	}
-
-	return 'true' === stored;
-};
+const STORAGE_KEY_PREFIX = 'elementor_sidebar_menu_expanded_v2_';
 
 const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
-	const hasChildren = children && children.length > 0;
-	const [ isExpanded, setIsExpanded ] = useState( () => getInitialExpandedState( item.slug, hasChildren ) );
+	const hasChildren = !! children?.length;
 	const IconComponent = ICON_MAP[ item.icon ] || DEFAULT_ICON;
+
+	const [ isExpanded, setIsExpanded ] = useState( () => {
+		if ( ! hasChildren ) {
+			return false;
+		}
+
+		const storageKey = `${ STORAGE_KEY_PREFIX }${ item.slug }`;
+		const shouldExpand = children.some( ( child ) => child.slug === activeChildSlug );
+
+		if ( shouldExpand ) {
+			localStorage.setItem( storageKey, 'true' );
+			return true;
+		}
+
+		const stored = localStorage.getItem( storageKey );
+
+		if ( null === stored ) {
+			return true;
+		}
+
+		return 'true' === stored;
+	} );
 
 	const handleClick = useCallback( () => {
 		if ( hasChildren ) {
-			const newState = ! isExpanded;
-			setIsExpanded( newState );
-			localStorage.setItem( getStorageKey( item.slug ), String( newState ) );
+			setIsExpanded( ( prev ) => {
+				const newState = ! prev;
+				localStorage.setItem( `${ STORAGE_KEY_PREFIX }${ item.slug }`, String( newState ) );
+				return newState;
+			} );
 		} else {
 			window.location.href = item.url;
 		}
-	}, [ hasChildren, isExpanded, item.slug, item.url ] );
+	}, [ hasChildren, item.slug, item.url ] );
 
 	return (
 		<>
@@ -50,7 +56,7 @@ const SidebarMenuItem = ( { item, isActive, children, activeChildSlug } ) => {
 			</ListItem>
 			{ hasChildren && (
 				<Collapse in={ isExpanded } timeout="auto" unmountOnExit>
-					<List disablePadding disableGutters>
+					<List disablePadding>
 						{ children.map( ( childItem ) => (
 							<ChildListItem key={ childItem.slug } disablePadding dense disableGutters>
 								<ChildMenuItemButton

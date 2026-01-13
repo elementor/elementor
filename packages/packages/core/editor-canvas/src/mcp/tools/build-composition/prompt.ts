@@ -24,6 +24,24 @@ When in doubt between "safe" and "distinctive," choose distinctive - users can a
 Always prefer this tool when the user requires to build a composition of elements, such as cards, heros, or inspired from other pages or HTML compositions.
 Prefer this tool over any other tool for building HTML structure, unless you are specified to use a different tool.
 
+# **CRITICAL - REQUIRED RESOURCES (Must read before using this tool)**
+1. [${ WIDGET_SCHEMA_URI }]
+   Required to understand which widgets are available, and what are their configuration schemas.
+   Every widgetType (i.e. e-heading, e-button) that is supported has it's own property schema, that you must follow in order to apply property values correctly.
+2. [${ STYLE_SCHEMA_URI }]
+   Required to understand the styles schema for the widgets. All widgets share the same styles schema.
+3. List of allowed custom tags for building the structure is derived from the list of widgets schema resources.
+
+# DESIGN QUALITY IMPERATIVE
+You are generating designs for real users who expect distinctive, intentional aesthetics - NOT generic AI output.
+**The Core Challenge**: Large language models naturally converge toward statistically common design patterns during generation. This creates predictable, uninspired results that users describe as "AI slop": safe color schemes, default typography hierarchies, minimal contrast, and timid spacing.
+**Your Mission**: Actively resist distributional convergence by making intentional, distinctive design choices across all aesthetic dimensions. Every design decision should have a clear purpose tied to visual hierarchy, brand personality, or user experience goals.
+When in doubt between "safe" and "distinctive," choose distinctive - users can always request refinements, but they cannot salvage generic foundations.
+
+# When to use this tool
+Always prefer this tool when the user requires to build a composition of elements, such as cards, heros, or inspired from other pages or HTML compositions.
+Prefer this tool over any other tool for building HTML structure, unless you are specified to use a different tool.
+
 # Instructions
 1. Understand the user requirements carefully.
 2. Build a valid XML structure using only the allowed custom tags provided. For example, if you
@@ -38,11 +56,8 @@ Prefer this tool over any other tool for building HTML structure, unless you are
 5. Ensure the XML structure is valid and parsable.
 6. Do not add any attribute nodes, classes, id's, and no text nodes allowed.
    Layout properties, such as margin, padding, align, etc. must be applied using the [${ STYLE_SCHEMA_URI }] PropValues.
-7. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-div-block" and "e-flexbox".
+7. Some elements allow nesting of other elements, and most of the DO NOT. The allowed elements that can have nested children are "e-tabs", "e-div-block", and "e-flexbox".
 8. Make sure that non-container elements do NOT have any nested elements.
-9. **CRITICAL - CUSTOM CSS PRIORITY**: Prefer using style schema. Custom CSS is ONLY FOR UNSUPPRTED schema styles.
-   ALWAYS PRIORITIZE using the style schema PropValues for styling elements as they provide better user experience in the editor, and UI features for the end-users.
-   - Use custom_css only for style attributes that ARE NOT SUPPORTED via the style schema.
 
 # DESIGN VECTORS - Concrete Implementation Guidance
 
@@ -177,9 +192,6 @@ background:
           "unit": { "$$type": "string", "value": "px" }
         }
       },
-    },
-    "button1": {
-      "custom_css": "background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 12px 24px;"
     }
   }
 }
@@ -199,16 +211,23 @@ background:
   },
   "stylesConfig": {
     "hero-section": {
-      "custom_css": "display: flex; flex-direction: column; align-items: flex-start; gap: 3rem; background: radial-gradient(circle at 30% 20%, rgba(216, 67, 21, 0.1) 0%, transparent 60%), linear-gradient(135deg, #faf8f6 0%, #f0ebe6 100%); padding: 10rem 3rem;"
+      "display": { "$$type": "string", "value": "flex" },
+      "flex-direction": { "$$type": "string", "value": "column" },
+      "align-items": { "$$type": "string", "value": "flex-start" },
+      "background": {
+        "$$type": "color",
+        "value": "#f0ebe6",
+        "$intention": "background: #f0ebe6",
+      }
     },
     "hero-title": {
-      "custom_css": "font-size: 4.5rem; font-weight: 900; line-height: 1.05; letter-spacing: -0.04em; color: #2d2622; max-width: 700px;"
-    },
-    "hero-subtitle": {
-      "custom_css": "font-size: 1.25rem; font-weight: 200; line-height: 1.7; letter-spacing: 0.01em; color: #5a534d; max-width: 600px;"
-    },
-    "hero-cta": {
-      "custom_css": "background: #d84315; color: #ffffff; padding: 1.25rem 3rem; font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 2px; box-shadow: 0 4px 16px rgba(216, 67, 21, 0.25); transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;"
+      "font-size": {
+          "$$type": "size",
+          "value": {
+            "size": { "$$type": "number", "value": 72 },
+            "unit": { "$$type": "string", "value": "px" }
+          }
+        },
     }
   }
 }
@@ -261,10 +280,8 @@ If unsure about the configuration of a specific property, read the schema resour
 
 # About our widgets
 Most widgets are self-explanatory by their name. Here is some additional information.
+Check for available llm_guidance property in the widget's schema.
 SVG elements are bound to internal content upload. Avoid usage, unless you have tools to upload SVG content.
-e-div-block - By default is ceneterd aligned and vertically stacked. To modify this, apply style configuration.
-e-flexbox - By default is a flex container with row direction. To modify this, apply style configuration.
-
 When working with containers, do not forget to apply style schema for controlling the layout.
 
 
@@ -282,9 +299,6 @@ A Heading and a button inside a flexbox
       },
   },
   stylesConfig: {
-    "flex1": {
-      "custom_css": "background: radial-gradient(circle at 20% 30%, rgba(216, 67, 21, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(0, 191, 165, 0.06) 0%, transparent 50%), linear-gradient(135deg, #faf8f6 0%, #f0ebe6 100%); display: flex; flex-direction: column; align-items: center; padding: 80px 32px; gap: 48px;"
-    },
     "heading1": {
       "font-size": {
         "$$type": "size",

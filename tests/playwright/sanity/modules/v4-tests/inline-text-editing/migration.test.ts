@@ -59,15 +59,16 @@ test.describe( 'Inline Text Editing Migration @v4-tests', () => {
 			await expect( headingElement ).toContainText( customTitle );
 
 			await headingElement.click();
-			const contentSection = page.getByLabel( INLINE_EDITING_SELECTORS.contentSection );
+			const contentSection = page.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSection );
 			await expect( contentSection ).toBeVisible();
 
-			const textarea = contentSection.locator( INLINE_EDITING_SELECTORS.panelInlineEditor );
+			const textarea = contentSection.locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
 			await expect( textarea ).toBeVisible();
 			await expect( textarea ).toHaveText( customTitle );
 
 			const updatedTitle = `${ customTitle } (Updated)`;
 			await textarea.fill( updatedTitle );
+			await textarea.click();
 
 			await expect( headingElement ).toContainText( updatedTitle );
 

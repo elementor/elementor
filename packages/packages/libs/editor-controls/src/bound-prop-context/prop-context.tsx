@@ -13,6 +13,7 @@ export type SetValueMeta< TAction = Action > = {
 	bind?: PropKey;
 	validation?: ( value: PropValue ) => boolean;
 	action?: TAction;
+	withHistory?: boolean;
 };
 
 export type SetValue< T > = ( value: T, options?: CreateOptions, meta?: SetValueMeta ) => void;

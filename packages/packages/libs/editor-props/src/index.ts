@@ -2,9 +2,11 @@ import { adjustLlmPropValueSchema } from './utils/adjust-llm-prop-value-schema';
 import { jsonSchemaToPropType } from './utils/llm-schema-to-props';
 import {
 	configurableKeys,
+	enrichWithIntention,
 	isPropKeyConfigurable,
 	nonConfigurablePropKeys,
 	propTypeToJsonSchema,
+	removeIntention,
 } from './utils/props-to-llm-schema';
 import { validatePropValue } from './utils/validate-prop-value';
 
@@ -35,4 +37,6 @@ export const Schema = {
 	nonConfigurablePropKeys,
 	configurableKeys,
 	validatePropValue,
+	enrichWithIntention,
+	removeIntention,
 };

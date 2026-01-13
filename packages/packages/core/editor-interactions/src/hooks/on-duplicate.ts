@@ -1,5 +1,7 @@
-import { type ElementID, type ElementInteractions, getContainer, type V1Element } from '@elementor/editor-elements';
+import { type ElementID, getAllDescendants, getContainer, type V1Element } from '@elementor/editor-elements';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
+
+import type { ElementInteractions } from '../types';
 
 export function initCleanInteractionIdsOnDuplicate() {
 	registerDataHook( 'after', 'document/elements/duplicate', ( _args, result: V1Element | V1Element[] ) => {
@@ -18,14 +20,9 @@ function cleanInteractionIdsRecursive( elementId: ElementID ) {
 		return;
 	}
 
-	getAllElements( container ).forEach( ( element: V1Element ) => {
+	getAllDescendants( container ).forEach( ( element: V1Element ) => {
 		cleanInteractionIds( element.id as ElementID );
 	} );
-}
-
-function getAllElements( container: V1Element ): V1Element[] {
-	const children = ( container.children ?? [] ).flatMap( ( child ) => getAllElements( child as V1Element ) ) ?? [];
-	return [ container, ...children ];
 }
 
 function cleanInteractionIds( elementId: ElementID ) {
@@ -44,8 +41,8 @@ function cleanInteractionIds( elementId: ElementID ) {
 	const updatedInteractions = structuredClone( interactions ) as ElementInteractions;
 
 	updatedInteractions?.items?.forEach( ( interaction ) => {
-		if ( interaction.interaction_id ) {
-			delete interaction.interaction_id;
+		if ( interaction.$$type === 'interaction-item' && interaction.value?.interaction_id ) {
+			delete interaction.value.interaction_id;
 		}
 	} );
 

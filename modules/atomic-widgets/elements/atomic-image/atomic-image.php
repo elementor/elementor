@@ -22,6 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Atomic_Image extends Atomic_Widget_Base {
 	use Has_Template;
 
+	public static $widget_description = 'Display an image with customizable styles and link options.';
+
 	const LINK_BASE_STYLE_KEY = 'link-base';
 	const BASE_STYLE_KEY = 'base';
 
@@ -64,7 +66,6 @@ class Atomic_Image extends Atomic_Widget_Base {
 				->set_label( esc_html__( 'Content', 'elementor' ) )
 				->set_items( [
 					Image_Control::bind_to( 'image' )
-						->set_show_mode( 'media' )
 						->set_label( __( 'Image', 'elementor' ) ),
 				] ),
 			Section::make()
@@ -76,16 +77,9 @@ class Atomic_Image extends Atomic_Widget_Base {
 
 	protected function get_settings_controls(): array {
 		return [
-			Image_Control::bind_to( 'image' )
-				->set_show_mode( 'sizes' )
-				->set_label( __( 'Image resolution', 'elementor' ) )
-				->set_meta( [ 'layout' => 'two-columns' ] ),
 			Link_Control::bind_to( 'link' )
 				->set_placeholder( __( 'Type or paste your URL', 'elementor' ) )
-				->set_label( __( 'Link', 'elementor' ) )
-				->set_meta( [
-					'topDivider' => true,
-				] ),
+				->set_label( __( 'Link', 'elementor' ) ),
 			Text_Control::bind_to( '_cssid' )
 				->set_label( __( 'ID', 'elementor' ) )
 				->set_meta( $this->get_css_id_control_meta() ),

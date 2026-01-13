@@ -30,6 +30,8 @@ const importReducer = ( state, { type, payload } ) => {
 			return { ...state, actionType: payload };
 		case 'SET_RETURN_TO':
 			return { ...state, returnTo: payload };
+		case 'SET_NO_AUTOMATIC_REDIRECT':
+			return { ...state, noAutomaticRedirect: payload };
 		case 'SET_RUNNERS_STATE':
 			return {
 				...state,
@@ -86,6 +88,7 @@ const initialState = {
 	kitUploadParams: null,
 	actionType: null,
 	returnTo: null,
+	noAutomaticRedirect: false,
 	plugins: [],
 	includes: [ 'plugins' ],
 	importStatus: IMPORT_STATUS.PENDING,

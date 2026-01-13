@@ -27,6 +27,9 @@ export const adjustLlmPropValueSchema = (
 		return clone.map( ( item ) => adjustLlmPropValueSchema( item, { forceKey, transformers } ) ) as PropValue;
 	}
 	const transformablePropValue = clone as TransformablePropValue< string >;
+	if ( '$intention' in transformablePropValue ) {
+		delete ( transformablePropValue as Record< string, unknown > ).$intention;
+	}
 	if ( forceKey ) {
 		transformablePropValue.$$type = forceKey;
 	}

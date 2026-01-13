@@ -41,6 +41,33 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 		$this->assertTrue( $result->is_valid() );
 	}
 
+	public function test_parse__with_origin_prop_fields__succeeds() {
+		// Arrange.
+		$valid_data = [
+			'prop-uuid-1' => [
+				'overrideKey' => 'prop-uuid-1',
+				'label' => 'User Name',
+				'elementId' => 'element-123',
+				'propKey' => 'override',
+				'widgetType' => 'e-component',
+				'elType' => 'widget',
+				'originValue' => [ '$$type' => 'html', 'value' => 'Original text' ],
+				'groupId' => 'group-uuid-1',
+				'originPropFields' => [
+					'elType' => 'widget',
+					'widgetType' => 'e-heading',
+					'propKey' => 'title',
+				],
+			]
+		];
+
+		// Act.
+		$result = $this->parser->parse( $valid_data );
+
+		// Assert.
+		$this->assertTrue( $result->is_valid() );
+	}
+
 	public function test_parser__sanitizes_strings() {
 		// Arrange.
 		$data_to_sanitize = [
@@ -68,6 +95,34 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 		$sanitized = $result->unwrap();
 		$this->assertEquals( 'User Name', $sanitized['prop-uuid-1']['label'] );
 		$this->assertEquals( '<strong>Original text</strong>alert("xss")', $sanitized['prop-uuid-1']['originValue']['value'] );
+	}
+
+	public function test_parser__sanitizes_origin_value_by_origin_prop_fields() {
+		// Arrange.
+		$data_to_sanitize = [
+			'prop-uuid-1' => [
+				'overrideKey' => 'prop-uuid-1',
+				'label' => 'User Name',
+				'elementId' => 'element-123',
+				'propKey' => 'override',
+				'widgetType' => 'e-component',
+				'elType' => 'widget',
+				'originValue' => [ '$$type' => 'string', 'value' => '<script>alert("xss")</script>Click here' ],
+				'originPropFields' => [
+					'elType' => 'widget',
+					'widgetType' => 'e-button',
+					'propKey' => 'text',
+				],
+				'groupId' => 'group-uuid-1',
+			],
+		];
+
+		// Act.
+		$result = $this->parser->parse( $data_to_sanitize );
+
+		// Assert.
+		$sanitized = $result->unwrap();
+		$this->assertEquals( [ '$$type' => 'string', 'value' => 'Click here' ], $sanitized['prop-uuid-1']['originValue'] );
 	}
 
 	/**

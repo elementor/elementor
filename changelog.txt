@@ -1,5 +1,46 @@
 == Changelog ==
 
+= 3.34.1 - 2026-01-07 =
+
+* Fix: RTL issues in Icon Box widget ([#33963](https://github.com/elementor/elementor/issues/33963))
+* Fix: Incorrect `space_between_widgets` spacing in columns ([#34033](https://github.com/elementor/elementor/issues/34033))
+* Fix: User settings not applied correctly ([#34065](https://github.com/elementor/elementor/issues/34065))
+* Fix: Flex Grow is not applied correctly to child containers in the Flexbox element - Editor V4
+* Fix: Deleting a Tab breaks the content–tab relationship in Tabs element - Editor V4
+* Fix: Appearance badge in Site Templates is misaligned and not centered
+
+= 3.34.0 - 2025-12-22 =
+
+* New: Introducing Atomic Tabs - enabling flexible and fully customizable tab layouts with nested Atomic Elements - Editor V4
+* New: Introducing Entrance Interactions to add lightweight motion and bring elements to life as they appear - Editor V4
+* Tweak: Replaced the legacy V3 container wrapper with the optimized V4 wrapper for improved markup - Editor V4
+* Tweak: Improved frontend link control output to ensure consistent rendering - Editor V4 ([#32233](https://github.com/elementor/elementor/issues/32233))
+* Tweak: Added reset option inside popovers - Editor V4
+* Tweak: Updated Border control layout for a clearer and more consistent editing workflow - Editor V4
+* Tweak: Added `span` option inside the Paragraph atom - Editor V4
+* Tweak: Improved transitions to better support logical properties - Editor V4
+* Tweak: Improved dropdown folder behavior and resolved related UI issues in Template Library
+* Tweak: Merged "Import/Export Customization" feature into the version
+* Tweak: Added `builder_content_data` filter for extending Template Library and Global Widget content (props [@dgwatkins](https://github.com/dgwatkins))
+* Tweak: Applied CSS logical properties in Icon Box widget
+* Tweak: Applied CSS logical properties in Icon List widget
+* Tweak: Applied CSS logical properties in text alignment controls and fixed RTL rendering in the Editor
+* Fix: Local Transform values overridden Class-level Transform defaults even when unchanged - Editor V4
+* Fix: Fatal error when opening pages containing atomic elements while the V4 experiment is deactivated - Editor V4
+* Fix: Hover Scale transform set through Class did not save correctly - Editor V4
+* Fix: PHP 8.4 deprecation notices related to deprecated `E_STRICT` constant
+* Fix: Missing CSS regeneration after clearing cached files on pages containing dynamic tags
+
+= 3.33.6 - 2025-12-18 =
+
+* Fix: Issues with rendering in Text Editor widget
+* Fix: Context menu fails to open after using 'Copy' action on a widget – Editor V4
+
+= v3.33.5 - 2025-12-17 =
+
+* Security Fix: Improved code security enforcement in site navigation module
+* Security Fix: Improved code security enforcement in text editor
+
 = 3.33.4 - 2025-12-08 =
 
 * Security Fix: Improved code security enforcement in Text Path widget

@@ -2,17 +2,27 @@ import { type V1ElementData } from '@elementor/editor-elements';
 import { ajax } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 
-import { type DocumentSaveStatus, type OverridableProps, type PublishedComponent } from './types';
+import {
+	type DocumentSaveStatus,
+	type OverridableProps,
+	type PublishedComponent,
+	type UpdatedComponentName,
+} from './types';
 
 const BASE_URL = 'elementor/v1/components';
 
+export type ComponentItems = Array< {
+	uid: string;
+	title: string;
+	elements: V1ElementData[];
+	settings?: {
+		overridable_props?: OverridableProps;
+	};
+} >;
+
 export type CreateComponentPayload = {
 	status: DocumentSaveStatus;
-	items: Array< {
-		uid: string;
-		title: string;
-		elements: V1ElementData[];
-	} >;
+	items: ComponentItems;
 };
 
 type ComponentLockStatusResponse = {
@@ -23,6 +33,19 @@ type ComponentLockStatusResponse = {
 type GetComponentResponse = Array< PublishedComponent >;
 
 export type CreateComponentResponse = Record< string, number >;
+
+export type ValidateComponentsPayload = {
+	items: ComponentItems;
+};
+
+export type ValidateComponentsResponse = {
+	code: string;
+	message: string;
+	data: {
+		status: number;
+		meta: Record< string, unknown >;
+	};
+};
 
 export const getParams = ( id: number ) => ( {
 	action: 'get_document_config',
@@ -86,4 +109,17 @@ export const apiClient = {
 				}
 			)
 			.then( ( res ) => res.data.data ),
+	updateComponentTitle: ( updatedComponentNames: UpdatedComponentName[] ) =>
+		httpService()
+			.post< { data: { failedIds: number[]; successIds: number[]; success: boolean } } >(
+				`${ BASE_URL }/update-titles`,
+				{
+					components: updatedComponentNames,
+				}
+			)
+			.then( ( res ) => res.data.data ),
+	validate: async ( payload: ValidateComponentsPayload ) =>
+		await httpService()
+			.post< HttpResponse< ValidateComponentsResponse > >( `${ BASE_URL }/create-validate`, payload )
+			.then( ( res ) => res.data ),
 };

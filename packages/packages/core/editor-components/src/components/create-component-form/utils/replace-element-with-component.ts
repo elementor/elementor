@@ -1,13 +1,16 @@
 import { replaceElement, type V1ElementData, type V1ElementModelProps } from '@elementor/editor-elements';
 
+import { type OverridableProps } from '../../../types';
+
 type ComponentInstanceParams = {
 	id?: number;
 	name: string;
 	uid: string;
+	overridableProps?: OverridableProps;
 };
 
-export const replaceElementWithComponent = ( element: V1ElementData, component: ComponentInstanceParams ) => {
-	replaceElement( {
+export const replaceElementWithComponent = async ( element: V1ElementData, component: ComponentInstanceParams ) => {
+	return await replaceElement( {
 		currentElement: element,
 		newElement: createComponentModel( component ),
 		withHistory: false,
@@ -28,9 +31,9 @@ export const createComponentModel = ( component: ComponentInstanceParams ): Omit
 					},
 				},
 			},
+			overridable_props: component.overridableProps,
 		},
 		editor_settings: {
-			title: component.name,
 			component_uid: component.uid,
 		},
 	};

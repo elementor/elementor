@@ -13,6 +13,7 @@ import {
 	TableSortLabel,
 	TableContainer,
 	Paper,
+	styled,
 } from '@elementor/ui';
 import { HelpIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
@@ -21,6 +22,21 @@ import PropTypes from 'prop-types';
 import { UpgradeButton } from '../../upgrade-button';
 import { RolePermissions, EditButtonDisabled } from './RolePermissions';
 import { UsageTimesColumn } from './UsageTimesColumn';
+
+const StyledSwitch = styled( Switch )( {
+	'& .MuiSwitch-track': {
+		backgroundColor: 'rgba(0, 0, 0, 0.12);',
+	},
+	'& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+		backgroundColor: '#000',
+	},
+	'& .MuiSwitch-switchBase:not(.Mui-checked) .MuiSwitch-thumb': {
+		backgroundColor: '#D5D8DC',
+	},
+	'& .MuiSwitch-switchBase.Mui-checked .MuiSwitch-thumb': {
+		backgroundColor: '#fff',
+	},
+} );
 
 export const WidgetsTable = ( {
 	widgets,
@@ -60,17 +76,17 @@ export const WidgetsTable = ( {
 			<Table size="small">
 				<TableHead>
 					<TableRow>
-						<TableCell sx={ { width: ( theme ) => theme.spacing( 25 ) } }>
+						<TableCell sx={ ( theme ) => ( { width: theme.spacing( 25 ) } ) }>
 							<TableSortLabel
 								active={ isWidgetSorted }
 								direction={ isWidgetSorted ? widgetSortDirection : 'asc' }
 								onClick={ () => onSortingClicked( 'widget' ) }
-								className="e-id-elementor-element-manager-button-sort-by-element"
+								data-id="e-id-elementor-element-manager-button-sort-by-element"
 							>
 								{ __( 'Element', 'elementor' ) }
 							</TableSortLabel>
 						</TableCell>
-						<TableCell sx={ { width: ( theme ) => theme.spacing( 10 ) } }>
+						<TableCell sx={ ( theme ) => ( { width: theme.spacing( 10 ) } ) }>
 							{ __( 'Status', 'elementor' ) }
 						</TableCell>
 						<TableCell>
@@ -78,7 +94,7 @@ export const WidgetsTable = ( {
 								active={ isUsageSorted }
 								direction={ isUsageSorted ? usageSortDirection : 'asc' }
 								onClick={ () => onSortingClicked( 'usage' ) }
-								className="e-id-elementor-element-manager-button-sort-by-usage"
+								data-id="e-id-elementor-element-manager-button-sort-by-usage"
 							>
 								{ __( 'Usage', 'elementor' ) }
 							</TableSortLabel>
@@ -120,7 +136,8 @@ export const WidgetsTable = ( {
 													? managerPermissions.pro.text
 													: managerPermissions.advanced.text
 											}
-											className={ [ 'e-id-elementor-element-manager-button-upgrade-permissions', 'go-pro' ].join( ' ' ) }
+											className="go-pro"
+											data-id="e-id-elementor-element-manager-button-upgrade-permissions"
 										/>
 									</Box>
 								) }
@@ -145,12 +162,12 @@ export const WidgetsTable = ( {
 								</Box>
 							</TableCell>
 							<TableCell>
-								<Switch
+								<StyledSwitch
 									color="secondary"
 									checked={ ! widgetsDisabled.includes( widget.name ) }
 									onChange={ ( event, checked ) => onToggleWidget( widget.name, checked ) }
 									size="small"
-									className={ `e-id-elementor-element-manager-toggle-${ widget.name }` }
+									data-id={ `e-id-elementor-element-manager-toggle-${ widget.name }` }
 								/>
 							</TableCell>
 							<TableCell>

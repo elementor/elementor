@@ -106,6 +106,10 @@ export const initCreateGlobalClass = ( reg: MCPRegistryEntry ) => {
 			{ uri: GLOBAL_CLASSES_URI, description: 'Global classes list' },
 			{ uri: STYLE_SCHEMA_URI, description: 'Style schema resources' },
 		],
+		modelPreferences: {
+			intelligencePriority: 0.85,
+			speedPriority: 0.6,
+		},
 		description: `Create a new global class within the Elementor editor, allowing users to define reusable styles and properties for consistent design across their website.
       
 # Prequisites: CRITICAL

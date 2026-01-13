@@ -17,11 +17,13 @@ export function EffectType( { value, onChange }: FieldProps ) {
 			value: 'in',
 			label: __( 'In', 'elementor' ),
 			renderContent: () => __( 'In', 'elementor' ),
+			showTooltip: true,
 		},
 		{
 			value: 'out',
 			label: __( 'Out', 'elementor' ),
 			renderContent: () => __( 'Out', 'elementor' ),
+			showTooltip: true,
 		},
 	];
 

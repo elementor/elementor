@@ -30,6 +30,8 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 	const LINK_BASE_STYLE_KEY = 'link-base';
 
+	public static $widget_description = 'Display a paragraph with customizable tag, styles, and link options.';
+
 	public static function get_element_type(): string {
 		return 'e-paragraph';
 	}

@@ -245,7 +245,7 @@ export class FlyoutInteractionHandler {
 
 			flyoutMenu.style.top = newTop + 'px';
 		} else {
-			flyoutMenu.style.top = '0';
+			delete flyoutMenu.style.top;
 		}
 	}
 

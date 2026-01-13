@@ -195,9 +195,10 @@ class Style_Schema {
 						->description( 'Padding css in Size PropType format' )
 				),
 			'margin' => Union_Prop_Type::make()
-				->add_prop_type( Dimensions_Prop_Type::make() )
+				->add_prop_type( Dimensions_Prop_Type::make_with_units( Size_Constants::spacing_margin() ) )
 				->add_prop_type(
 					Size_Prop_Type::make()
+						->units( Size_Constants::spacing_margin() )
 						->description( 'Margin css in Size PropType format' )
 				),
 		];
@@ -206,11 +207,11 @@ class Style_Schema {
 	private static function get_border_props() {
 		return [
 			'border-radius' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::border() ) )
-				->add_prop_type( Border_Radius_Prop_Type::make() ),
+				->add_prop_type( Border_Radius_Prop_Type::make() )
+				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::border() ) ),
 			'border-width' => Union_Prop_Type::make()
-				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::border() ) )
-				->add_prop_type( Border_Width_Prop_Type::make() ),
+				->add_prop_type( Border_Width_Prop_Type::make() )
+				->add_prop_type( Size_Prop_Type::make()->units( Size_Constants::border() ) ),
 			'border-color' => Color_Prop_Type::make()->description( 'The border color, specified as a hex code, rgb(a), hsl(a), or a standard css color name.' ),
 			'border-style' => String_Prop_Type::make()->enum( [
 				'none',

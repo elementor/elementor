@@ -4,13 +4,13 @@ export class FlyoutMenuRenderer {
 	}
 
 	render() {
-		const { editorFlyout, level4Flyouts } = this.config;
+		const { editorFlyout } = this.config;
 
 		if ( ! editorFlyout || ! editorFlyout.items || ! editorFlyout.items.length ) {
 			return false;
 		}
 
-		const editorLi = this.findEditorMenuItem();
+		const editorLi = this.findEditorInMenu( `#toplevel_page_elementor-home` );
 
 		if ( ! editorLi ) {
 			return false;
@@ -22,6 +22,13 @@ export class FlyoutMenuRenderer {
 		editorFlyoutUl.className = 'elementor-submenu-flyout elementor-level-3';
 
 		editorFlyout.items.forEach( ( item ) => {
+			if ( item.has_divider_before ) {
+				const dividerLi = document.createElement( 'li' );
+				dividerLi.className = 'elementor-flyout-divider';
+				dividerLi.setAttribute( 'role', 'separator' );
+				editorFlyoutUl.appendChild( dividerLi );
+			}
+
 			const li = document.createElement( 'li' );
 			li.setAttribute( 'data-group-id', item.group_id || '' );
 
@@ -29,26 +36,7 @@ export class FlyoutMenuRenderer {
 			a.href = item.url;
 			a.textContent = item.label;
 
-			if ( item.group_id && level4Flyouts && level4Flyouts[ item.group_id ] ) {
-				li.classList.add( 'elementor-has-flyout' );
-
-				const level4Ul = document.createElement( 'ul' );
-				level4Ul.className = 'elementor-submenu-flyout elementor-level-4';
-
-				level4Flyouts[ item.group_id ].items.forEach( ( subItem ) => {
-					const subLi = document.createElement( 'li' );
-					const subA = document.createElement( 'a' );
-					subA.href = subItem.url;
-					subA.textContent = subItem.label;
-					subLi.appendChild( subA );
-					level4Ul.appendChild( subLi );
-				} );
-
-				li.appendChild( a );
-				li.appendChild( level4Ul );
-			} else {
-				li.appendChild( a );
-			}
+			li.appendChild( a );
 
 			editorFlyoutUl.appendChild( li );
 		} );
@@ -58,18 +46,8 @@ export class FlyoutMenuRenderer {
 		return true;
 	}
 
-	findEditorMenuItem() {
-		let elementorMenu = document.querySelector( '#adminmenu a[href="admin.php?page=elementor"]' );
-
-		if ( ! elementorMenu ) {
-			elementorMenu = document.querySelector( '#adminmenu .toplevel_page_elementor' );
-		}
-
-		if ( ! elementorMenu ) {
-			return null;
-		}
-
-		const menuItem = elementorMenu.closest( 'li.menu-top' );
+	findEditorInMenu( menuSelector ) {
+		const menuItem = document.querySelector( menuSelector );
 
 		if ( ! menuItem ) {
 			return null;
@@ -90,4 +68,3 @@ export class FlyoutMenuRenderer {
 		return editorItem.closest( 'li' );
 	}
 }
-

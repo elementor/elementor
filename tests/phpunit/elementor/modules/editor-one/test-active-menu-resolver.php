@@ -56,7 +56,7 @@ class Test_Active_Menu_Resolver extends PHPUnit_TestCase {
 
 		$result = $this->resolver->resolve( $menu_items, $level4_groups, $current_page, $current_uri );
 
-		$this->assertEquals( 'elementor-home', $result['menu_slug'] );
+		$this->assertEquals( 'elementor', $result['menu_slug'] );
 		$this->assertEquals( '', $result['child_slug'] );
 	}
 

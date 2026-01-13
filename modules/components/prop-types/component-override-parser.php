@@ -1,11 +1,11 @@
 <?php
 namespace Elementor\Modules\Components\PropTypes;
 
-use Elementor\Modules\Components\Documents\Component_Overridable_Props;
-use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
-use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Plugin;
-use Elementor\Modules\Components\Documents\Component;
+use Elementor\Modules\Components\Components_Repository;
+use Elementor\Modules\Components\Documents\Component_Overridable_Prop;
+use Elementor\Modules\Components\Documents\Component_Overridable_Props;
+use Elementor\Modules\Components\Utils\Parsing_Utils;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Component_Override_Parser extends Override_Parser {
+	private static $repository;
+
 	public static function get_override_type(): string {
 		return 'component';
 	}
@@ -93,11 +95,12 @@ class Component_Override_Parser extends Override_Parser {
 	}
 
 	private function get_overridable_prop_type( Component_Overridable_Prop $overridable ): ?Prop_Type {
-		$el_type = $overridable->el_type;
-		$widget_type = $overridable->widget_type;
-		$prop_key = $overridable->prop_key;
+		if ( $overridable->origin_prop_fields ) {
+			['el_type' => $el_type, 'widget_type' => $widget_type, 'prop_key' => $prop_key] = $overridable->origin_prop_fields;
+			return Parsing_Utils::get_prop_type( $el_type, $widget_type, $prop_key );
+		}
 
-		return Parsing_Utils::get_prop_type( $el_type, $widget_type, $prop_key );
+		return Parsing_Utils::get_prop_type( $overridable->el_type, $overridable->widget_type, $overridable->prop_key );
 	}
 
 	private function get_component_overridable_props( int $component_id ) {
@@ -105,15 +108,22 @@ class Component_Override_Parser extends Override_Parser {
 			return $this->component_overridable_props;
 		}
 
-		$component = Plugin::$instance->documents->get( $component_id );
+		$component = $this->get_repository()->get( $component_id, true );
 
-		/** @var Component $component */
-		if ( ! $component || $component->get_type() !== Component::TYPE ) {
+		if ( ! $component ) {
 			return null;
 		}
 
 		$this->component_overridable_props = $component->get_overridable_props();
 
 		return $this->component_overridable_props;
+	}
+
+	private function get_repository() {
+		if ( ! self::$repository ) {
+			self::$repository = new Components_Repository();
+		}
+
+		return self::$repository;
 	}
 }

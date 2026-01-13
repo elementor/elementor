@@ -178,15 +178,16 @@ jobs:
                 **Trigger:** Label \`${LABEL_NAME}\` added to closed PR"
               fi
 
-              NEW_PR=$(gh pr create \
+              PR_URL=$(gh pr create \
                 --base "$TARGET" \
                 --head "$BRANCH" \
                 --title "${TYPE} Cherry-pick PR ${PR_NUMBER} to ${TARGET} ${DESCRIPTION}" \
                 --body "Automatic cherry-pick of [#${PR_NUMBER}](${ORIG_URL}) to \`${TARGET}\` branch.
 
                 **Source:** ${{ github.event.pull_request.head.repo.full_name }}
-                **Original Author:** @${PR_USER_LOGIN}${TRIGGER_INFO}" \
-                --json number --jq '.number')
+                **Original Author:** @${PR_USER_LOGIN}${TRIGGER_INFO}")
+              
+              NEW_PR=$(echo "$PR_URL" | grep -oE '/pull/[0-9]+' | grep -oE '[0-9]+' || echo "")
 
               if [ -n "$NEW_PR" ]; then
                 if [ "$USING_PAT" = "true" ]; then

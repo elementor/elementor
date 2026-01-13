@@ -5,12 +5,24 @@ import type {
 	ElementModel,
 	LegacyWindow,
 } from '@elementor/editor-canvas';
-import { jest } from '@jest/globals';
 
-import { type ContextMenuAction, createComponentType, TYPE } from '../create-component-type';
+import { COMPONENT_WIDGET_TYPE, type ContextMenuAction, createComponentType } from '../create-component-type';
 import type { ExtendedWindow } from '../types';
 
 const MOCK_COMPONENT_ID = 123;
+
+const createMockRenderer = () =>
+	( {
+		register: jest.fn(),
+		render: jest.fn( () => Promise.resolve( '<div>Component</div>' ) ),
+	} ) as CreateTemplatedElementTypeOptions[ 'renderer' ];
+
+const createMockElementConfig = () => ( {
+	twig_templates: {},
+	twig_main_template: 'main',
+	atomic_props_schema: {},
+	base_styles_dictionary: {},
+} );
 
 describe( 'createComponentType', () => {
 	let mockElementorWindow: LegacyWindow[ 'elementor' ];
@@ -125,7 +137,7 @@ describe( 'createComponentType', () => {
 		};
 
 		const ComponentType = createComponentType( {
-			type: TYPE,
+			type: COMPONENT_WIDGET_TYPE,
 			renderer: {
 				register: jest.fn(),
 				render: jest.fn( () => Promise.resolve( '<div>Component</div>' ) ),
@@ -248,7 +260,7 @@ describe( 'createComponentType', () => {
 		};
 
 		const ComponentType = createComponentType( {
-			type: TYPE,
+			type: COMPONENT_WIDGET_TYPE,
 			renderer: {
 				register: jest.fn(),
 				render: jest.fn( () => Promise.resolve( '<div>Component</div>' ) ),
@@ -310,5 +322,23 @@ describe( 'createComponentType', () => {
 
 		expect( actions ).toHaveLength( 1 );
 		expect( actions.some( ( action ) => action.name === 'edit component' ) ).toBe( false );
+	} );
+
+	it( 'should return the same view class for multiple type instances', () => {
+		// Arrange
+		const ComponentType = createComponentType( {
+			type: COMPONENT_WIDGET_TYPE,
+			renderer: createMockRenderer(),
+			element: createMockElementConfig(),
+		} );
+
+		// Act
+		const typeInstance1 = new ComponentType();
+		const typeInstance2 = new ComponentType();
+		const viewClass1 = typeInstance1.getView();
+		const viewClass2 = typeInstance2.getView();
+
+		// Assert
+		expect( viewClass1 ).toBe( viewClass2 );
 	} );
 } );

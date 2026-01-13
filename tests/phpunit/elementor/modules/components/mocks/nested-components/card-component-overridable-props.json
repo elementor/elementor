@@ -1,0 +1,104 @@
+{
+    "props": {
+      "prop-2": {
+        "overrideKey": "prop-2",
+        "label": "Card Background Image",
+        "elementId": "4aefcf4",
+        "propKey": "image",
+        "elType": "widget",
+        "widgetType": "e-image",
+        "originValue": {
+          "$$type": "image",
+          "value": {
+              "src": {
+                  "$$type": "image-src",
+                  "value": {
+                      "id": {
+                          "$$type": "image-attachment-id",
+                          "value": 3249
+                      },
+                      "url": null
+                  }
+              }
+          }
+      },
+        "groupId": "group-1"
+      },
+      "prop-3": {
+        "overrideKey": "prop-3",
+        "label": "Card Title",
+        "elementId": "aac40b3",
+        "propKey": "title",
+        "elType": "widget",
+        "widgetType": "e-heading",
+        "originValue": {
+          "$$type": "html",
+          "value": "This is a title"
+        },
+        "groupId": "group-1"
+      },
+      "prop-4": {
+        "overrideKey": "prop-4",
+        "label": "Card Button Text",
+        "elementId": "61b83e7",
+        "propKey": "text",
+        "elType": "widget",
+        "widgetType": "e-component",
+        "originValue": {
+          "$$type": "override",
+          "value": {
+            "override_key": "prop-0",
+            "override_value": {
+              "$$type": "string",
+              "value": "Learn more"
+            },
+            "schema_source": {
+              "type": "component",
+              "id": 2222
+            }
+          }
+        },
+        "originPropFields": {
+          "elType": "widget",
+          "widgetType": "e-button",
+          "propKey": "text"
+        },
+        "groupId": "group-1"
+      },
+      "prop-5": {
+        "overrideKey": "prop-5",
+        "label": "Card Button Link",
+        "elementId": "61b83e7",
+        "propKey": "link",
+        "elType": "widget",
+        "widgetType": "e-component",
+        "originValue": {
+          "$$type": "override",
+          "value": {
+            "override_key": "prop-1",
+            "override_value": null,
+            "schema_source": {
+              "type": "component",
+              "id": 2222
+            }
+          }
+        },
+        "originPropFields": {
+          "elType": "widget",
+          "widgetType": "e-button",
+          "propKey": "link"
+        },
+        "groupId": "group-1"
+      }
+    },
+    "groups": {
+      "items": {
+        "group-1": {
+          "id": "group-1",
+          "label": "Button Content",
+          "props": [ "prop-2", "prop-3", "prop-4", "prop-5" ]
+        }
+      },
+      "order": [ "group-1" ]
+    }
+}

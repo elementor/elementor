@@ -1,17 +1,23 @@
 import {
 	type BackboneModel,
+	type BackboneModelConstructor,
 	type CreateTemplatedElementTypeOptions,
 	createTemplatedElementView,
 	type ElementModel,
 	type ElementType,
 	type ElementView,
 	type LegacyWindow,
+	type NamespacedRenderContext,
+	type RenderContext,
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
+import { __getState as getState } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
-import { type ComponentInstancePropValue, type ExtendedWindow } from './types';
+import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
+import { type ComponentsSlice, selectComponentByUid } from './store/store';
+import { type ComponentRenderContext, type ExtendedWindow } from './types';
 import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
@@ -35,7 +41,20 @@ type ContextMenuGroup = {
 	actions: ContextMenuAction[];
 };
 
-export const TYPE = 'e-component';
+type ComponentModel = ElementModel & {
+	componentId?: number | string;
+	isGlobal: boolean;
+};
+
+type ComponentModelInstance = BackboneModel< ComponentModel > & {
+	trigger: ( event: string, ...args: unknown[] ) => void;
+	getTitle: () => string;
+	getComponentId: () => number | null;
+	getComponentName: () => string;
+	getComponentUid: () => string | null;
+};
+
+export const COMPONENT_WIDGET_TYPE = 'e-component';
 
 const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfig ): ContextMenuGroup[] => {
 	const disableMap = new Map( Object.entries( config.disable ?? {} ) );
@@ -63,14 +82,21 @@ export function createComponentType(
 	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
 ): typeof ElementType {
 	const legacyWindow = window as unknown as LegacyWindow;
+	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
 
-	return class extends legacyWindow.elementor.modules.elements.types.Widget {
+	const view = createComponentView( { ...options } );
+
+	return class extends WidgetType {
 		getType() {
 			return options.type;
 		}
 
 		getView() {
-			return createComponentView( { ...options } );
+			return view;
+		}
+
+		getModel(): BackboneModelConstructor< ComponentModel > {
+			return createComponentModel();
 		}
 	};
 }
@@ -83,6 +109,7 @@ function createComponentView(
 	return class extends createTemplatedElementView( options ) {
 		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
 		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
+		#componentRenderContext: ComponentRenderContext | undefined;
 
 		isComponentCurrentlyEdited() {
 			const currentDocument = getCurrentDocument();
@@ -90,10 +117,51 @@ function createComponentView(
 			return currentDocument?.id === this.getComponentId();
 		}
 
+		getRenderContext(): NamespacedRenderContext | undefined {
+			const namespaceKey = this.getNamespaceKey();
+			const parentContext = this._parent?.getRenderContext?.();
+			const parentComponentContext = parentContext?.[ namespaceKey ];
+
+			if ( ! this.#componentRenderContext ) {
+				return parentContext;
+			}
+
+			const ownOverrides = this.#componentRenderContext.overrides ?? {};
+			const parentOverrides = parentComponentContext?.overrides ?? {};
+
+			return {
+				...parentContext,
+				[ namespaceKey ]: {
+					overrides: {
+						...parentOverrides,
+						...ownOverrides,
+					},
+				},
+			};
+		}
+
+		getResolverRenderContext(): RenderContext | undefined {
+			const namespaceKey = this.getNamespaceKey();
+			const context = this.getRenderContext();
+
+			return context?.[ namespaceKey ];
+		}
+
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
-			if ( settings.component_instance ) {
+			const componentInstance = settings.component_instance as
+				| {
+						overrides?: Record< string, unknown >;
+						elements?: unknown[];
+				  }
+				| undefined;
+
+			if ( componentInstance ) {
+				this.#componentRenderContext = {
+					overrides: componentInstance.overrides ?? {},
+				};
+
 				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection(
-					settings.component_instance
+					componentInstance.elements
 				);
 
 				this.collection.models.forEach( setInactiveRecursively );
@@ -123,7 +191,7 @@ function createComponentView(
 
 		getComponentId() {
 			const componentInstance = (
-				this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstancePropValue
+				this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstanceProp
 			 )?.value;
 
 			return componentInstance.component_id.value;
@@ -179,7 +247,7 @@ function createComponentView(
 			if ( ! isAllowedToSwitchDocument ) {
 				options.showLockedByModal?.( lockedBy || '' );
 			} else {
-				switchToComponent( this.getComponentId(), this.model.get( 'id' ) );
+				switchToComponent( this.getComponentId() as number, this.model.get( 'id' ), this.el );
 			}
 		}
 
@@ -244,4 +312,70 @@ function setInactiveRecursively( model: BackboneModel< ElementModel > ) {
 			setInactiveRecursively( childModel );
 		} );
 	}
+}
+
+function createComponentModel(): BackboneModelConstructor< ComponentModel > {
+	const legacyWindow = window as unknown as LegacyWindow;
+	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
+	const widgetTypeInstance = new WidgetType() as unknown as BackboneModelConstructor< ElementModel >;
+	const BaseWidgetModel = widgetTypeInstance.getModel();
+
+	return BaseWidgetModel.extend( {
+		initialize( this: ComponentModelInstance, attributes: unknown, options: unknown ): void {
+			BaseWidgetModel.prototype.initialize.call( this, attributes, options );
+
+			const componentInstance = this.get( 'settings' )?.get( 'component_instance' ) as
+				| ComponentInstanceProp
+				| undefined;
+			if ( componentInstance?.value ) {
+				const componentId = componentInstance.value.component_id?.value;
+				if ( componentId && typeof componentId === 'number' ) {
+					this.set( 'componentId', componentId );
+				}
+			}
+
+			this.set( 'isGlobal', true );
+		},
+
+		getTitle( this: ComponentModelInstance ): string {
+			const editorSettings = this.get( 'editor_settings' ) as
+				| {
+						title?: string;
+						component_uid?: string;
+				  }
+				| undefined;
+
+			const instanceTitle = editorSettings?.title;
+			if ( instanceTitle ) {
+				return instanceTitle;
+			}
+
+			const componentUid = editorSettings?.component_uid;
+			if ( componentUid ) {
+				const component = selectComponentByUid( getState() as ComponentsSlice, componentUid );
+				if ( component?.name ) {
+					return component.name;
+				}
+			}
+
+			return ( window as unknown as LegacyWindow ).elementor.getElementData( this ).title;
+		},
+
+		getComponentId( this: ComponentModelInstance ): number | null {
+			return ( this.get( 'componentId' ) as number | undefined ) || null;
+		},
+
+		getComponentName( this: ComponentModelInstance ): string {
+			return this.getTitle();
+		},
+
+		getComponentUid( this: ComponentModelInstance ): string | null {
+			const editorSettings = this.get( 'editor_settings' ) as
+				| {
+						component_uid?: string;
+				  }
+				| undefined;
+			return editorSettings?.component_uid || null;
+		},
+	} );
 }

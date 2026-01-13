@@ -12,6 +12,10 @@ export const initDeleteVariableTool = () => {
 		outputSchema: {
 			status: z.enum( [ 'ok', 'error' ] ).describe( 'The status of the operation' ),
 		},
+		modelPreferences: {
+			intelligencePriority: 0.7,
+			speedPriority: 0.8,
+		},
 		description: `Delete an existing global variable
     
 ## When to use this tool:

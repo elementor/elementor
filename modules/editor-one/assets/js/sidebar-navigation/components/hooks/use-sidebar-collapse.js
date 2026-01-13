@@ -1,16 +1,48 @@
 import { useEffect, useState, useCallback } from '@wordpress/element';
 
 const STORAGE_KEY = 'elementor_sidebar_collapsed';
+const AUTO_COLLAPSE_BREAKPOINT = 960;
+const TRANSITION_DURATION = 300;
 
 export const useSidebarCollapse = () => {
 	const [ isCollapsed, setIsCollapsed ] = useState( () => {
-		return 'true' === localStorage.getItem( STORAGE_KEY );
+		const stored = localStorage.getItem( STORAGE_KEY );
+
+		if ( null !== stored ) {
+			return 'true' === stored;
+		}
+
+		return window.innerWidth <= AUTO_COLLAPSE_BREAKPOINT;
 	} );
+
+	useEffect( () => {
+		const mediaQuery = window.matchMedia( `(max-width: ${ AUTO_COLLAPSE_BREAKPOINT }px)` );
+
+		const handleResize = ( e ) => {
+			if ( e.matches ) {
+				setIsCollapsed( true );
+			} else {
+				const stored = localStorage.getItem( STORAGE_KEY );
+				setIsCollapsed( 'true' === stored );
+			}
+		};
+
+		mediaQuery.addEventListener( 'change', handleResize );
+		return () => mediaQuery.removeEventListener( 'change', handleResize );
+	}, [] );
 
 	const toggleCollapse = useCallback( () => {
 		const newState = ! isCollapsed;
+		const body = document.body;
+
+		body.classList.add( 'e-sidebar-transitioning' );
+
 		setIsCollapsed( newState );
 		localStorage.setItem( STORAGE_KEY, String( newState ) );
+
+		setTimeout( () => {
+			body.classList.remove( 'e-sidebar-transitioning' );
+		}, TRANSITION_DURATION );
 	}, [ isCollapsed ] );
 
 	useEffect( () => {
@@ -28,4 +60,3 @@ export const useSidebarCollapse = () => {
 
 	return { isCollapsed, toggleCollapse };
 };
-

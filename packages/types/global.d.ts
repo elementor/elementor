@@ -16,11 +16,13 @@ declare global {
 			};
 		};
 		elementor?: {
+			$preview?: [ HTMLIFrameElement ];
 			selection?: {
 				getElements: () => V1Element[];
 			};
 			getContainer?: (id: string) => V1Element | undefined;
 		};
+		elementorPro?: object;
 		ElementorInteractionsConfig?: InteractionsConfig;
 	}
 }

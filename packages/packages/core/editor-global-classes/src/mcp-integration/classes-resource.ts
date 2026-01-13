@@ -5,9 +5,9 @@ import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 export const GLOBAL_CLASSES_URI = 'elementor://global-classes';
 
 export const initClassesResource = () => {
-	const { mcpServer } = getMCPByDomain( 'canvas' );
+	const { mcpServer, resource, waitForReady } = getMCPByDomain( 'canvas' );
 
-	mcpServer.resource(
+	resource(
 		'global-classes',
 		GLOBAL_CLASSES_URI,
 		{
@@ -20,7 +20,9 @@ export const initClassesResource = () => {
 		}
 	);
 
-	globalClassesStylesProvider.subscribe( () => {
-		mcpServer.sendResourceListChanged();
+	waitForReady().then( () => {
+		globalClassesStylesProvider.subscribe( () => {
+			mcpServer.sendResourceListChanged();
+		} );
 	} );
 };

@@ -11,10 +11,14 @@ export { WarningInfotip } from './components/warning-infotip';
 export { GlobalDialog, openDialog, closeDialog } from './components/global-dialog';
 export { SearchField } from './components/search-field';
 export { Form } from './components/form';
-export { UpgradeButton } from './components/upgrade-button';
+export { CtaButton } from './components/cta-button';
+export { PromotionInfotip } from './components/promotion-infotip';
+export { PromotionPopover } from './components/promotion-popover';
+export { PromotionChip } from './components/promotion-chip';
 
 export * from './components/popover';
 export * from './components/save-changes-dialog';
+export { ConfirmationDialog } from './components/confirmation-dialog';
 
 // hooks
 export { useEditable } from './hooks/use-editable';

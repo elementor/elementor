@@ -10,6 +10,7 @@ type ModalProps = {
 	element: HTMLElement;
 	onClose: () => void;
 };
+
 export function ComponentModal( { element, onClose }: ModalProps ) {
 	const canvasDocument = useCanvasDocument();
 
@@ -52,7 +53,7 @@ function Backdrop( { canvas, element, onClose }: { canvas: HTMLDocument; element
 		zIndex: 999,
 		pointerEvents: 'painted',
 		cursor: 'pointer',
-		clipPath: getRoundedRectPath( rect, canvas.defaultView as Window, 5 ),
+		clipPath: getRectPath( rect, canvas.defaultView as Window ),
 	};
 
 	const handleKeyDown = ( event: React.KeyboardEvent ) => {
@@ -74,14 +75,12 @@ function Backdrop( { canvas, element, onClose }: { canvas: HTMLDocument; element
 	);
 }
 
-function getRoundedRectPath( rect: DOMRect, viewport: Window, borderRadius: number ) {
-	const padding = borderRadius / 2;
+function getRectPath( rect: DOMRect, viewport: Window ) {
 	const { x: originalX, y: originalY, width: originalWidth, height: originalHeight } = rect;
-	const x = originalX - padding;
-	const y = originalY - padding;
-	const width = originalWidth + 2 * padding;
-	const height = originalHeight + 2 * padding;
-	const radius = Math.min( borderRadius, width / 2, height / 2 );
+	const x = originalX;
+	const y = originalY;
+	const width = originalWidth;
+	const height = originalHeight;
 
 	const { innerWidth: vw, innerHeight: vh } = viewport;
 
@@ -90,15 +89,11 @@ function getRoundedRectPath( rect: DOMRect, viewport: Window, borderRadius: numb
 		L ${ vw } ${ vh }
 		L 0 ${ vh }
 		Z
-		M ${ x + radius } ${ y }
-		L ${ x + width - radius } ${ y }
-		A ${ radius } ${ radius } 0 0 1 ${ x + width } ${ y + radius }
-		L ${ x + width } ${ y + height - radius }
-		A ${ radius } ${ radius } 0 0 1 ${ x + width - radius } ${ y + height }
-		L ${ x + radius } ${ y + height }
-		A ${ radius } ${ radius } 0 0 1 ${ x } ${ y + height - radius }
-		L ${ x } ${ y + radius }
-		A ${ radius } ${ radius } 0 0 1 ${ x + radius } ${ y }
+		M ${ x } ${ y }
+		L ${ x + width } ${ y }
+		L ${ x + width } ${ y + height }
+		L ${ x } ${ y + height }
+		L ${ x } ${ y }
     	Z'
 	)`;
 

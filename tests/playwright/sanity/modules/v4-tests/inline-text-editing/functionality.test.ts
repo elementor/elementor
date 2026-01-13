@@ -3,7 +3,6 @@ import { parallelTest as test } from '../../../../parallelTest';
 import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
-import { DriverFactory } from '../../../../drivers/driver-factory';
 
 test.describe( 'Inline Editing Control @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
@@ -16,7 +15,8 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
-		await DriverFactory.activateExperimentsCli( [ 'e_atomic_elements', 'v4-inline-text-editing' ] );
+		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
+		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active' } );
 
 		editor = await wpAdminPage.openNewPage();
 	} );
@@ -31,7 +31,7 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			await editor.addWidget( { widgetType: INLINE_EDITING_SELECTORS.e_paragraph, container: containerId } );
 
-			await expect.soft( page.getByLabel( INLINE_EDITING_SELECTORS.contentSection ) ).toHaveScreenshot( 'paragraph-control-panel.png' );
+			await expect.soft( page.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSection ) ).toHaveScreenshot( 'paragraph-control-panel.png' );
 		} );
 	} );
 
@@ -41,38 +41,45 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 		await editor.closeNavigatorIfOpen();
 
 		await test.step( 'Edit paragraph text with inline editing', async () => {
-			const previewFrame = editor.getPreviewFrame();
-			const paragraphElement = previewFrame.locator( `.elementor-element-${ paragraphId } .e-paragraph-base` );
-			await paragraphElement.click();
-			const textarea = page.getByLabel( INLINE_EDITING_SELECTORS.contentSection ).locator( '.tiptap' );
+			const paragraphElement = editor.previewFrame.locator( `.elementor-element-${ paragraphId } .e-paragraph-base` );
+			await paragraphElement.dblclick();
+			const textarea = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
 
 			await expect( textarea ).toBeVisible();
 			await textarea.fill( 'a' );
-			await page.keyboard.press( 'ControlOrMeta+A' );
-			await page.keyboard.press( 'Backspace' );
+			await textarea.clear();
 
-			await page.keyboard.type( INLINE_EDITING_SELECTORS.paragraphPrefix );
+			// Fill first part.
+			await page.keyboard.type( INLINE_EDITING_SELECTORS.preMadeContent.paragraph.paragraphPrefix );
 
+			// Fill second part - as bold
 			await page.keyboard.press( 'ControlOrMeta+B' );
-			await page.keyboard.type( INLINE_EDITING_SELECTORS.boldText );
+			await page.keyboard.type( INLINE_EDITING_SELECTORS.attributes.bold );
+
+			// Fill third part - not bold
 			await page.keyboard.press( 'ControlOrMeta+B' );
+			await page.keyboard.type( INLINE_EDITING_SELECTORS.preMadeContent.paragraph.textBetween );
 
-			await page.keyboard.type( INLINE_EDITING_SELECTORS.textBetween );
-
+			// Fill fourth part - as underline
 			await page.keyboard.press( 'ControlOrMeta+U' );
-			await page.keyboard.type( INLINE_EDITING_SELECTORS.underlineText );
-			await page.keyboard.press( 'ControlOrMeta+U' );
+			await page.keyboard.type( INLINE_EDITING_SELECTORS.attributes.underline );
 
-			await page.keyboard.type( INLINE_EDITING_SELECTORS.paragraphSuffix );
+			// Fill fifth part - not underlined
+			await page.keyboard.press( 'ControlOrMeta+U' );
+			await page.keyboard.type( INLINE_EDITING_SELECTORS.preMadeContent.paragraph.paragraphSuffix );
+
+			// Fill sixth part - in next line
 			await page.keyboard.press( 'Enter' );
-			await page.keyboard.type( INLINE_EDITING_SELECTORS.secondLine );
+			await page.keyboard.type( INLINE_EDITING_SELECTORS.preMadeContent.paragraph.secondLine );
 
-			await expect.soft( paragraphElement ).toHaveScreenshot( 'inline-edited-paragraph.png' );
+			await expect.soft( paragraphElement ).toHaveScreenshot( 'inline-edited-paragraph-editor.png' );
 		} );
 
 		await test.step( 'Edited control panel display', async () => {
-			const contentSection = page.getByLabel( INLINE_EDITING_SELECTORS.contentSection );
+			const contentSection = page.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSection );
 
+			await editor.selectElement( containerId );
+			await editor.selectElement( paragraphId );
 			await expect.soft( contentSection ).toHaveScreenshot( 'inline-edited-paragraph-control-panel.png' );
 		} );
 
@@ -81,7 +88,7 @@ test.describe( 'Inline Editing Control @v4-tests', () => {
 
 			const publishedParagraph = page.locator( '.e-paragraph-base' ).last();
 
-			await expect.soft( publishedParagraph ).toHaveScreenshot( 'inline-edited-paragraph.png' );
+			await expect.soft( publishedParagraph ).toHaveScreenshot( 'inline-edited-paragraph-frontend.png' );
 		} );
 	} );
 } );

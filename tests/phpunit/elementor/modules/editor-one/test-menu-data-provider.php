@@ -3,8 +3,8 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Interface;
-use Elementor\Modules\EditorOne\Classes\Menu\Menu_Item_Third_Level_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Interface;
+use Elementor\Core\Admin\EditorOneMenu\Interfaces\Menu_Item_Third_Level_Interface;
 use ElementorEditorTesting\Elementor_Test_Base;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -204,7 +204,7 @@ class Test_Menu_Data_Provider extends Elementor_Test_Base {
 		$item->method( 'get_capability' )->willReturn( 'manage_options' );
 		$item->method( 'get_position' )->willReturn( 100 );
 		$item->method( 'is_visible' )->willReturn( true );
-		$item->method( 'get_parent_slug' )->willReturn( null );
+		$item->method( 'get_parent_slug' )->willReturn( '' );
 
 		return $item;
 	}

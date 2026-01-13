@@ -72,6 +72,15 @@ class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 					],
 					'is_enabled' => 'true',
 				],
+				[
+					'data' => [
+						'key' => 'value',
+					],
+					'license' => [
+						'one'
+					],
+					'is_enabled' => 'true',
+				],
 			],
 			'misc' => [
 				'Name' => 'Microsoft',
@@ -109,7 +118,6 @@ class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 		];
 	}
 
-
 	private function mock_home_screen_data_transformed_core() {
 		return [
 			'sidebar_promotion_variants' => [
@@ -117,7 +125,7 @@ class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 					'key' => 'value',
 				],
 				'license' => [
-					'free'
+					'one'
 				],
 				'is_enabled' => 'true',
 			],
@@ -135,7 +143,7 @@ class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 					'key' => 'value',
 				],
 				'license' => [
-					'pro'
+					'one'
 				],
 				'is_enabled' => 'true',
 			],
@@ -155,4 +163,3 @@ class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 		];
 	}
 }
-

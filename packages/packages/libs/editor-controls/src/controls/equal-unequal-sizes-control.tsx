@@ -1,17 +1,18 @@
 import * as React from 'react';
 import { type ReactNode, type RefObject, useId, useRef } from 'react';
-import { type PropKey, type PropTypeUtil, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
-import { bindPopover, bindToggle, Grid, Popover, Stack, ToggleButton, Tooltip, usePopupState } from '@elementor/ui';
+import { type PropKey, type PropTypeUtil, type PropValue } from '@elementor/editor-props';
+import { bindPopover, bindToggle, Box, Grid, Popover, Stack, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
 import { ControlLabel } from '../components/control-label';
+import { StyledToggleButton } from '../components/control-toggle-button-group';
 import { PopoverContent } from '../components/popover-content';
 import { PopoverGridContainer } from '../components/popover-grid-container';
 import { SizeControl } from './size-control';
 
-type MultiSizePropValue = Record< PropKey, SizePropValue >;
+type MultiSizePropValue = Record< PropKey, PropValue >;
 
 type Item = {
 	icon: ReactNode;
@@ -29,20 +30,6 @@ type Props< TMultiPropType extends string, TPropValue extends MultiSizePropValue
 	multiSizePropTypeUtil: PropTypeUtil< TMultiPropType, TPropValue >;
 };
 
-const isEqualSizes = ( propValue: MultiSizePropValue, items: EqualUnequalItems ) => {
-	const values = Object.values( propValue );
-
-	if ( values.length !== items.length ) {
-		return false;
-	}
-
-	const [ firstValue, ...restValues ] = values;
-
-	return restValues.every(
-		( value ) => value?.value?.size === firstValue?.value?.size && value?.value?.unit === firstValue?.value?.unit
-	);
-};
-
 export function EqualUnequalSizesControl< TMultiPropType extends string, TPropValue extends MultiSizePropValue >( {
 	label,
 	icon,
@@ -53,54 +40,59 @@ export function EqualUnequalSizesControl< TMultiPropType extends string, TPropVa
 	const popupId = useId();
 	const popupState = usePopupState( { variant: 'popover', popupId } );
 
-	const {
-		propType: multiSizePropType,
-		value: multiSizeValue,
-		setValue: setMultiSizeValue,
-		disabled: multiSizeDisabled,
-	} = useBoundProp( multiSizePropTypeUtil );
-
-	const { value: sizeValue, setValue: setSizeValue } = useBoundProp( sizePropTypeUtil );
-
 	const rowRefs: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ) ];
 
-	const splitEqualValue = () => {
-		if ( ! sizeValue ) {
-			return null;
+	const { propType: multiSizePropType, disabled: multiSizeDisabled } = useBoundProp( multiSizePropTypeUtil );
+	const { value: masterValue, setValue: setMasterValue, placeholder: masterPlaceholder } = useBoundProp();
+
+	const getMultiSizeValues = ( sourceValue: PropValue ) => {
+		if ( multiSizePropTypeUtil.isValid( sourceValue ) ) {
+			return sourceValue.value;
 		}
 
-		return items.reduce< TPropValue >(
-			( acc, { bind } ) => ( { ...acc, [ bind ]: sizePropTypeUtil.create( sizeValue ) } ),
-			{} as TPropValue
-		);
-	};
+		const propValue: MultiSizePropValue = {};
 
-	const setNestedProp = ( newValue: TPropValue ) => {
-		const newMappedValues = {
-			...( multiSizeValue ?? splitEqualValue() ),
-			...newValue,
-		};
+		items.forEach( ( item ) => {
+			propValue[ item.bind ] = sourceValue;
+		} );
 
-		const isEqual = isEqualSizes( newMappedValues, items );
-
-		if ( isEqual ) {
-			return setSizeValue( Object.values( newMappedValues )[ 0 ]?.value );
-		}
-
-		setMultiSizeValue( newMappedValues );
-	};
-
-	const getMultiSizeValues = () => {
-		if ( multiSizeValue ) {
-			return multiSizeValue;
-		}
-
-		return splitEqualValue() ?? null;
+		const derived = multiSizePropTypeUtil.create( propValue as unknown as TPropValue );
+		return derived?.value;
 	};
 
 	const isShowingGeneralIndicator = ! popupState.isOpen;
 
-	const isMixed = !! multiSizeValue;
+	const derivedValue = getMultiSizeValues( masterValue ) as unknown as TPropValue;
+	const derivedPlaceholder = getMultiSizeValues( masterPlaceholder ) as unknown as TPropValue;
+
+	const isEqualValues = ( values: TPropValue | null ) => {
+		if ( ! values ) {
+			return true;
+		}
+
+		const multiSizeValue = multiSizePropTypeUtil.create( values );
+
+		const propValue: MultiSizePropValue = {};
+
+		items.forEach( ( item ) => {
+			propValue[ item.bind ] = multiSizeValue?.value?.[ item.bind ] ?? null;
+		} );
+
+		const allValues = Object.values( propValue ).map( ( value ) => JSON.stringify( value ) );
+		return allValues.every( ( value ) => value === allValues[ 0 ] );
+	};
+
+	const isMixedPlaceholder = ! masterValue && ! isEqualValues( derivedPlaceholder );
+	const isMixed = isMixedPlaceholder || ! isEqualValues( derivedValue );
+
+	const applyMultiSizeValue = ( newValue: TPropValue ) => {
+		if ( ! isEqualValues( newValue ) ) {
+			setMasterValue( multiSizePropTypeUtil.create( newValue ) );
+			return;
+		}
+
+		setMasterValue( Object.values( newValue )?.pop() ?? null );
+	};
 
 	return (
 		<>
@@ -112,27 +104,33 @@ export function EqualUnequalSizesControl< TMultiPropType extends string, TPropVa
 						<ControlLabel>{ label }</ControlLabel>
 					) }
 				</Grid>
+
 				<Grid item xs={ 6 }>
 					<Stack direction="row" alignItems="center" gap={ 1 }>
-						<SizeControl
-							placeholder={ isMixed ? __( 'Mixed', 'elementor' ) : undefined }
-							anchorRef={ rowRefs[ 0 ] }
-						/>
+						<Box flexGrow={ 1 }>
+							<SizeControl
+								placeholder={ isMixed ? __( 'Mixed', 'elementor' ) : undefined }
+								enablePropTypeUnits={ ! isMixed || ! isMixedPlaceholder }
+								anchorRef={ rowRefs[ 0 ] }
+							/>
+						</Box>
 						<Tooltip title={ tooltipLabel } placement="top">
-							<ToggleButton
+							<StyledToggleButton
 								size={ 'tiny' }
 								value={ 'check' }
 								sx={ { marginLeft: 'auto' } }
 								{ ...bindToggle( popupState ) }
 								selected={ popupState.isOpen }
+								isPlaceholder={ isMixedPlaceholder }
 								aria-label={ tooltipLabel }
 							>
 								{ icon }
-							</ToggleButton>
+							</StyledToggleButton>
 						</Tooltip>
 					</Stack>
 				</Grid>
 			</Grid>
+
 			<Popover
 				disablePortal
 				disableScrollLock
@@ -151,8 +149,9 @@ export function EqualUnequalSizesControl< TMultiPropType extends string, TPropVa
 			>
 				<PropProvider
 					propType={ multiSizePropType }
-					value={ getMultiSizeValues() }
-					setValue={ setNestedProp }
+					value={ derivedValue }
+					placeholder={ derivedPlaceholder }
+					setValue={ applyMultiSizeValue }
 					isDisabled={ () => multiSizeDisabled }
 				>
 					<PopoverContent p={ 1.5 }>

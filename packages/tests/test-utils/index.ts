@@ -23,3 +23,5 @@ export { default as renderHookWithQuery } from './render-hook-with-query';
 export { default as renderHookWithStore } from './render-hook-with-store';
 export { default as renderWithQuery } from './render-with-query';
 export { default as renderWithStore } from './render-with-store';
+export { mockTracking, createMockTrackingModule } from './mock-tracking';
+export { mockLegacyElementor } from './mock-legacy-elementor';

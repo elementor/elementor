@@ -26,6 +26,10 @@ export const initUpdateVariableTool = () => {
 				.describe( 'Optional message providing additional information about the operation' ),
 		},
 		name: 'update-global-variable',
+		modelPreferences: {
+			intelligencePriority: 0.75,
+			speedPriority: 0.7,
+		},
 		description: `Update an existing global variable
 
 ## When to use this tool:

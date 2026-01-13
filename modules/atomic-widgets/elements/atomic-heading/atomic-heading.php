@@ -29,6 +29,8 @@ class Atomic_Heading extends Atomic_Widget_Base {
 
 	const LINK_BASE_STYLE_KEY = 'link-base';
 
+	public static $widget_description = 'Display a heading with customizable tag, styles, and link options.';
+
 	public static function get_element_type(): string {
 		return 'e-heading';
 	}

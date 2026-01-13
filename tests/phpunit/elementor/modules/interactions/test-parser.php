@@ -32,6 +32,57 @@ class Test_Parser extends TestCase {
 		return new Parser_Ex( self::DOCUMENT_ID );
 	}
 
+	private function create_prop_type_interaction( $trigger = 'load', $effect = 'fade', $type = 'in', $direction = '', $duration = 300, $delay = 0, $interaction_id = null ) {
+		$value = [
+			'trigger' => [
+				'$$type' => 'string',
+				'value' => $trigger,
+			],
+			'animation' => [
+				'$$type' => 'animation-preset-props',
+				'value' => [
+					'effect' => [
+						'$$type' => 'string',
+						'value' => $effect,
+					],
+					'type' => [
+						'$$type' => 'string',
+						'value' => $type,
+					],
+					'direction' => [
+						'$$type' => 'string',
+						'value' => $direction,
+					],
+					'timing_config' => [
+						'$$type' => 'timing-config',
+						'value' => [
+							'duration' => [
+								'$$type' => 'number',
+								'value' => $duration,
+							],
+							'delay' => [
+								'$$type' => 'number',
+								'value' => $delay,
+							],
+						],
+					],
+				],
+			],
+		];
+
+		if ( $interaction_id !== null ) {
+			$value['interaction_id'] = [
+				'$$type' => 'string',
+				'value' => $interaction_id,
+			];
+		}
+
+		return [
+			'$$type' => 'interaction-item',
+			'value' => $value,
+		];
+	}
+
 	private function given_document_without_interactions() {
 		return [
 			'elements' => [
@@ -75,6 +126,8 @@ class Test_Parser extends TestCase {
 	}
 
 	public function test_assign_interactions_ids__will_augment_elements_with_interactions() {
+		$interaction_without_id = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0 );
+
 		$given_document = [
 			'elements' => [
 				[
@@ -82,14 +135,7 @@ class Test_Parser extends TestCase {
 					'elType' => 'e-flexbox',
 					'settings' => [],
 					'interactions' => json_encode( [
-						'items' => [
-							[
-								'animation' => [
-									'animation_type' => 'full-preset',
-									'animation_id' => 'load-fade-in--100-0',
-								],
-							],
-						],
+						'items' => [ $interaction_without_id ],
 						'version' => 1,
 					] ),
 				],
@@ -98,6 +144,8 @@ class Test_Parser extends TestCase {
 
 		$result = $this->parser()->assign_interaction_ids( $given_document );
 
+		$expected_interaction = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, '1-1-1' );
+
 		$this->assertEquals( [
 			'elements' => [
 				[
@@ -105,15 +153,7 @@ class Test_Parser extends TestCase {
 					'elType' => 'e-flexbox',
 					'settings' => [],
 					'interactions' => json_encode( [
-						'items' => [
-							[
-								'interaction_id' => '1-1-1',
-								'animation' => [
-									'animation_type' => 'full-preset',
-									'animation_id' => 'load-fade-in--100-0',
-								],
-							],
-						],
+						'items' => [ $expected_interaction ],
 						'version' => 1,
 					] ),
 				],
@@ -122,6 +162,9 @@ class Test_Parser extends TestCase {
 	}
 
 	public function test_assign_interactions_ids__will_not_override_existing_interaction_ids() {
+		$interaction_with_existing_id = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, 'existing-interaction-id' );
+		$interaction_without_id = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 200, 0 );
+
 		$given_document = [
 			'elements' => [
 				[
@@ -130,19 +173,8 @@ class Test_Parser extends TestCase {
 					'settings' => [],
 					'interactions' => json_encode( [
 						'items' => [
-							[
-								'interaction_id' => 'existing-interaction-id',
-								'animation' => [
-									'animation_type' => 'full-preset',
-									'animation_id' => 'load-fade-in--100-0',
-								],
-							],
-							[
-								'animation' => [
-									'animation_type' => 'full-preset',
-									'animation_id' => 'load-fade-in--200-0',
-								],
-							],
+							$interaction_with_existing_id,
+							$interaction_without_id,
 						],
 						'version' => 1,
 					] ),
@@ -152,6 +184,9 @@ class Test_Parser extends TestCase {
 
 		$result = $this->parser()->assign_interaction_ids( $given_document );
 
+		$expected_interaction_1 = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, 'existing-interaction-id' );
+		$expected_interaction_2 = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 200, 0, '1-1-1' );
+
 		$this->assertEquals( [
 			'elements' => [
 				[
@@ -160,20 +195,8 @@ class Test_Parser extends TestCase {
 					'settings' => [],
 					'interactions' => json_encode( [
 						'items' => [
-							[
-								'interaction_id' => 'existing-interaction-id',
-								'animation' => [
-									'animation_type' => 'full-preset',
-									'animation_id' => 'load-fade-in--100-0',
-								],
-							],
-							[
-								'interaction_id' => '1-1-1',
-								'animation' => [
-									'animation_type' => 'full-preset',
-									'animation_id' => 'load-fade-in--200-0',
-								],
-							],
+							$expected_interaction_1,
+							$expected_interaction_2,
 						],
 						'version' => 1,
 					] ),

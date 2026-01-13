@@ -20,7 +20,7 @@ export const trackComponentEvent = ( { action, ...data }: ComponentEventData ) =
 };
 
 export const onElementDrop = ( _args: unknown, element: V1Element ) => {
-	if ( ! ( element.model.get( 'widgetType' ) === 'e-component' ) ) {
+	if ( ! ( element?.model?.get( 'widgetType' ) === 'e-component' ) ) {
 		return;
 	}
 
