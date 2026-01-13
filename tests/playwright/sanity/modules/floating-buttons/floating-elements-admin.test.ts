@@ -137,16 +137,13 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 		const floatingElPage = new FloatingElementPage( page, testInfo, apiRequests );
 		await floatingElPage.goToFloatingButtonsPage();
 
+		const addNewButton = page.locator( 'a.page-title-action[href*="e-floating-buttons"], .e-admin-top-bar__main-area-buttons a.page-title-action' ).first();
+
 		await test.step( 'Check that buttons and top bar exists', async () => {
+			await expect( addNewButton ).toBeVisible();
 			const topBar = page.locator( '#e-admin-top-bar-root' );
 			await expect( topBar ).toBeVisible();
-
-			await page.waitForSelector( 'a.page-title-action[href*="e-floating-buttons"], .e-admin-top-bar__main-area-buttons a.page-title-action', { state: 'visible' } );
-			const addNewButton = page.locator( 'a.page-title-action[href*="e-floating-buttons"], .e-admin-top-bar__main-area-buttons a.page-title-action' ).first();
-			await expect( addNewButton ).toBeVisible();
 		} );
-
-		const addNewButton = page.locator( 'a.page-title-action[href*="e-floating-buttons"], .e-admin-top-bar__main-area-buttons a.page-title-action' ).first();
 
 		await test.step(
 			'Verify that creating a new floating element works as expected. Starting the process opens a Modal',
