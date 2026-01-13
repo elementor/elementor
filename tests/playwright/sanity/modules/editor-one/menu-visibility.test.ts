@@ -80,7 +80,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await elementorMenu.click();
 
-		await editorPage.waitForURL( /admin\.php\?page=elementor-editor/ );
+		await editorPage.waitForURL( /admin\.php\?page=elementor/ );
 
 		const sidebar = editorPage.locator( '#editor-one-sidebar-navigation' );
 		await expect( sidebar ).toBeVisible();
@@ -117,7 +117,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await elementorMenu.click();
 
-		await contributorPage.waitForURL( /admin\.php\?page=elementor-editor/ );
+		await contributorPage.waitForURL( /admin\.php\?page=elementor/ );
 
 		const sidebar = contributorPage.locator( '#editor-one-sidebar-navigation' );
 		await expect( sidebar ).toBeVisible();
