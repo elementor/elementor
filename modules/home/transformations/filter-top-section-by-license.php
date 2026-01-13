@@ -38,15 +38,22 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 	}
 
 	private function validate_tier( $item_tier, $user_tier ): bool {
-		$is_item_tier_free = ConnectModule::ACCESS_TIER_FREE === $item_tier;
-
-		if ( ! $this->has_pro && $is_item_tier_free ) {
+		if ( $user_tier === $item_tier ) {
 			return true;
 		}
 
+		$is_user_tier_supported = in_array( $user_tier, $this->supported_tiers, true );
+
+		if ( $is_user_tier_supported ) {
+			return false;
+		}
+
+		$is_item_tier_free = ConnectModule::ACCESS_TIER_FREE === $item_tier;
+		$is_valid = $this->has_pro !== $is_item_tier_free;
+
 		$is_supported_item_tier = in_array( $item_tier, $this->supported_tiers, true );
 
-		return $user_tier === $item_tier && $is_supported_item_tier;
+		return $is_valid && $is_supported_item_tier;
 	}
 
 	public function transform( array $home_screen_data ): array {
