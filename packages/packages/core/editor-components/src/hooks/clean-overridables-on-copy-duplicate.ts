@@ -1,6 +1,7 @@
 import { type V1Element, type V1ElementData } from '@elementor/editor-elements';
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 
+import { type ExtendedWindow } from '../types';
 import {
 	cleanOverridablePropsForContainers,
 	cleanOverridablePropsFromElementData,
@@ -11,19 +12,10 @@ type CopyArgs = {
 	storageKey?: string;
 };
 
-type StorageData = {
+type ClipboardData = {
 	type: string;
 	siteurl: string;
 	elements: V1ElementData[];
-};
-
-type ExtendedWindow = Window & {
-	elementorCommon?: {
-		storage?: {
-			get: ( key: string ) => StorageData | null;
-			set: ( key: string, data: StorageData ) => void;
-		};
-	};
 };
 
 export function initCleanOverridablesOnCopyDuplicate() {
@@ -45,13 +37,13 @@ export function initCleanOverridablesOnCopyDuplicate() {
 }
 
 function cleanOverridablePropsFromStorage( storageKey: string ) {
-	const storage = ( window as ExtendedWindow ).elementorCommon?.storage;
+	const storage = ( window as unknown as ExtendedWindow ).elementorCommon?.storage;
 
 	if ( ! storage ) {
 		return;
 	}
 
-	const storageData = storage.get( storageKey );
+	const storageData = storage.get< ClipboardData >( storageKey );
 
 	if ( ! storageData?.elements?.length ) {
 		return;

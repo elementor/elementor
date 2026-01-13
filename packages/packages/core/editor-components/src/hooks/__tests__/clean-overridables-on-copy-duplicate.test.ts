@@ -1,7 +1,7 @@
-import { createMockElementWithOverridable } from 'test-utils';
 import { getContainer, updateElementSettings } from '@elementor/editor-elements';
 import { __getStore as getStore } from '@elementor/store';
 
+import { createMockElementWithOverridableProps } from '../../__tests__/test-utils';
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import { SLICE_NAME } from '../../store/store';
 import { initCleanOverridablesOnCopyDuplicate } from '../clean-overridables-on-copy-duplicate';
@@ -118,7 +118,7 @@ describe( 'initCleanOverridablesOnCopyDuplicate', () => {
 			initCleanOverridablesOnCopyDuplicate();
 			const duplicateHook = getHookByCommand( 'document/elements/duplicate' );
 
-			const element = createMockElementWithOverridable( ELEMENT_ID, {
+			const element = createMockElementWithOverridableProps( ELEMENT_ID, {
 				title: componentOverridablePropTypeUtil.create( {
 					override_key: 'prop-123',
 					origin_value: { $$type: 'html', value: 'Hello' },
@@ -151,7 +151,7 @@ describe( 'initCleanOverridablesOnCopyDuplicate', () => {
 			initCleanOverridablesOnCopyDuplicate();
 			const duplicateHook = getHookByCommand( 'document/elements/duplicate' );
 
-			const element = createMockElementWithOverridable( ELEMENT_ID, {
+			const element = createMockElementWithOverridableProps( ELEMENT_ID, {
 				title: componentOverridablePropTypeUtil.create( {
 					override_key: 'prop-123',
 					origin_value: { $$type: 'html', value: 'Hello' },

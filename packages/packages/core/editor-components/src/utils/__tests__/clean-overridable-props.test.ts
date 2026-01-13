@@ -1,6 +1,7 @@
-import { createMockElement, createMockElementWithOverridable } from 'test-utils';
+import { createMockElement } from 'test-utils';
 import { getContainer, updateElementSettings } from '@elementor/editor-elements';
 
+import { createMockElementWithOverridableProps } from '../../__tests__/test-utils';
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
 import {
 	cleanOverridablePropsForContainers,
@@ -198,7 +199,7 @@ describe( 'cleanOverridablePropsForContainers', () => {
 
 	it( 'should clean overridable props from element and update settings', () => {
 		// Arrange
-		const element = createMockElementWithOverridable( 'element-1', {
+		const element = createMockElementWithOverridableProps( 'element-1', {
 			title: componentOverridablePropTypeUtil.create( {
 				override_key: 'prop-123',
 				origin_value: { $$type: 'html', value: 'Hello' },
@@ -245,14 +246,14 @@ describe( 'cleanOverridablePropsForContainers', () => {
 
 	it( 'should handle array of containers', () => {
 		// Arrange
-		const element1 = createMockElementWithOverridable( 'element-1', {
+		const element1 = createMockElementWithOverridableProps( 'element-1', {
 			title: componentOverridablePropTypeUtil.create( {
 				override_key: 'prop-1',
 				origin_value: { $$type: 'html', value: 'Title 1' },
 			} ),
 		} );
 
-		const element2 = createMockElementWithOverridable( 'element-2', {
+		const element2 = createMockElementWithOverridableProps( 'element-2', {
 			title: componentOverridablePropTypeUtil.create( {
 				override_key: 'prop-2',
 				origin_value: { $$type: 'html', value: 'Title 2' },
@@ -278,14 +279,14 @@ describe( 'cleanOverridablePropsForContainers', () => {
 
 	it( 'should process nested elements recursively', () => {
 		// Arrange
-		const childElement = createMockElementWithOverridable( 'child-element', {
+		const childElement = createMockElementWithOverridableProps( 'child-element', {
 			title: componentOverridablePropTypeUtil.create( {
 				override_key: 'child-prop',
 				origin_value: { $$type: 'html', value: 'Child Title' },
 			} ),
 		} );
 
-		const parentElement = createMockElementWithOverridable( 'parent-element', {
+		const parentElement = createMockElementWithOverridableProps( 'parent-element', {
 			containerProp: componentOverridablePropTypeUtil.create( {
 				override_key: 'parent-prop',
 				origin_value: { $$type: 'string', value: 'Parent Value' },

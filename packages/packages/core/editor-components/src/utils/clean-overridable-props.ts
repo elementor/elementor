@@ -52,7 +52,7 @@ export function cleanOverridablePropsFromSettings( settings: ElementSettings ): 
 		if ( componentOverridablePropTypeUtil.isValid( value ) ) {
 			hasOverridableProps = true;
 			const overridableValue = componentOverridablePropTypeUtil.extract( value );
-			cleanedProps[ key ] = overridableValue?.origin_value as PropValue;
+			cleanedProps[ key ] = ( overridableValue?.origin_value ?? null ) as PropValue;
 		}
 	}
 
