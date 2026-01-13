@@ -4,8 +4,7 @@ import { expect } from '@playwright/test';
 import EditorSelectors from '../../../selectors/editor-selectors';
 
 test.describe( 'Verify floating buttons editor, admin page and front page behavior', () => {
-	// TODO: Fix this test in [ED-22440].
-	test.skip( 'Verify editor behavior by creating post through API and also FE behavior', async (
+	test( 'Verify editor behavior by creating post through API and also FE behavior', async (
 		{
 			browser,
 			page,
@@ -131,8 +130,7 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 		} );
 	} );
 
-	// TODO: Fix this test in [ED-22440].
-	test.skip( 'Verify floating elements admin page behavior', async ( {
+	test( 'Verify floating elements admin page behavior', async ( {
 		page,
 		apiRequests,
 	}, testInfo ) => {

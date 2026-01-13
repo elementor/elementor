@@ -5,21 +5,13 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 	getDefaultSettings() {
 		return {
 			selectors: {
-				addButton: '.page-title-action:first, #elementor-template-library-add-new',
+				addButton: 'a.page-title-action[href*="post-new.php?post_type=elementor_library"]:not(#elementor-import-template-trigger), #elementor-template-library-add-new',
 			},
 		};
 	},
 
-	getDefaultElements() {
-		var selectors = this.getSettings( 'selectors' );
-
-		return {
-			$addButton: jQuery( selectors.addButton ),
-		};
-	},
-
 	bindEvents() {
-		this.elements.$addButton.on( 'click', this.onAddButtonClick );
+		jQuery( document ).on( 'click', this.getSettings( 'selectors' ).addButton, this.onAddButtonClick.bind( this ) );
 
 		elementorCommon.elements.$window.on( 'hashchange', this.showModalByHash.bind( this ) );
 	},
