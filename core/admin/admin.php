@@ -1106,7 +1106,9 @@ class Admin extends App {
 	}
 
 	private function maybe_enqueue_hints() {
-		if ( ! Hints::should_display_hint( 'image-optimization' ) ) {
+		$plugin_slug = 'image-optimization';
+
+		if ( ! Hints::should_display_hint( $plugin_slug ) ) {
 			return;
 		}
 
@@ -1118,13 +1120,39 @@ class Admin extends App {
 			true
 		);
 
-		$content = sprintf("%1\$s <a class='e-btn-1' href='%2\$s' target='_blank'>%3\$s</a>!",
-			__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' ),
-			Hints::get_plugin_action_url( 'image-optimization' ),
-			( Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate', 'elementor' ) : __( 'Install', 'elementor' ) ) . ' ' . __( 'Image Optimizer', 'elementor' )
-		);
+		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
+		$is_installed = Hints::is_plugin_installed( $plugin_slug );
+		$is_active = Hints::is_plugin_active( $plugin_slug );
+
+		if ( $is_active ) {
+			return;
+		}
 
 		$dismissible = 'image_optimizer_hint';
+		$button_label = $is_installed ? esc_html__( 'Activate now', 'elementor' ) : esc_html__( 'Install now', 'elementor' );
+		$action_url = Hints::get_plugin_action_url( $plugin_slug );
+
+		if ( $one_subscription ) {
+			$title = esc_html__( 'Speed up your website with Image Optimizer', 'elementor' );
+			$description = esc_html__( 'Automatically optimize images to improve site speed and performance.', 'elementor' );
+			$subscription_text = esc_html__( 'Included with your ONE subscription.', 'elementor' );
+			$content = sprintf(
+				"<strong>%1\$s</strong><br>%2\$s<br>%3\$s <a class='e-btn-1' href='%4\$s' target='_blank'>%5\$s</a>!",
+				$title,
+				$description,
+				$subscription_text,
+				$action_url,
+				$button_label
+			);
+		} else {
+			$description = esc_html__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' );
+			$content = sprintf(
+				"%1\$s <a class='e-btn-1' href='%2\$s' target='_blank'>%3\$s</a>!",
+				$description,
+				$action_url,
+				$button_label
+			);
+		}
 
 		wp_localize_script( 'media-hints', 'elementorAdminHints', [
 			'mediaHint' => [
@@ -1133,11 +1161,11 @@ class Admin extends App {
 				'content' => $content,
 				'icon' => true,
 				'dismissible' => $dismissible,
-				'dismiss' => __( 'Dismiss this notice.', 'elementor' ),
+				'dismiss' => esc_attr__( 'Dismiss this notice.', 'elementor' ),
 				'button_event' => $dismissible,
 				'button_data' => base64_encode(
 					wp_json_encode( [
-						'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
+						'action_url' => $action_url,
 					] ),
 				),
 			],
@@ -1179,10 +1207,20 @@ class Admin extends App {
 			return;
 		}
 
+		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
+
+		if ( $one_subscription && strpos( $request['source'], 'editor' ) !== false ) {
+			$medium = 'editor-one';
+		} elseif ( $one_subscription ) {
+			$medium = 'wp-dash-one';
+		} else {
+			$medium = 'wp-dash';
+		}
+
 		$campaign_data = [
 			'source' => sanitize_key( $request['source'] ),
-			'campaign' => 'io-plg',
-			'medium' => 'wp-dash',
+			'campaign' => $one_subscription ? 'io-plg-one' : 'io-plg',
+			'medium' => $medium,
 		];
 
 		set_transient( 'elementor_image_optimization_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
