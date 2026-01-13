@@ -80,7 +80,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await elementorMenu.click();
 
-		await editorPage.waitForURL( /admin\.php\?page=elementor/ );
+		await editorPage.waitForURL( /edit\.php\?post_type=elementor_library/ );
 
 		const sidebar = editorPage.locator( '#editor-one-sidebar-navigation' );
 		await expect( sidebar ).toBeVisible();
@@ -109,6 +109,8 @@ test.describe( 'Editor One Menu Visibility', () => {
 		const contributorPage = await contributorContext.newPage();
 		const wpAdmin = new WpAdminPage( contributorPage, testInfo, apiRequests );
 
+		await contributorPage.pause();
+
 		await wpAdmin.customLogin( contributorUser.username, contributorUser.password );
 		await wpAdmin.openWordPressDashboard();
 
@@ -117,7 +119,7 @@ test.describe( 'Editor One Menu Visibility', () => {
 
 		await elementorMenu.click();
 
-		await contributorPage.waitForURL( /admin\.php\?page=elementor/ );
+		await contributorPage.waitForURL( /edit\.php\?post_type=elementor_library/ );
 
 		const sidebar = contributorPage.locator( '#editor-one-sidebar-navigation' );
 		await expect( sidebar ).toBeVisible();
