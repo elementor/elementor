@@ -26,3 +26,4 @@ export { default as renderWithStore } from './render-with-store';
 export { mockTracking, createMockTrackingModule } from './mock-tracking';
 export { mockLegacyElementor } from './mock-legacy-elementor';
 export { createHooksRegistry, setupHooksRegistry, type WindowWithHooks } from './create-hooks-registry';
+export { mockCurrentUserCapabilities } from './mock-current-user-capabilities';

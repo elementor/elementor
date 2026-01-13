@@ -46,6 +46,10 @@ export const InlineEditingControl = createControl(
 							'& a': {
 								color: 'inherit',
 							},
+							'& .elementor-inline-editor-reset': {
+								margin: 0,
+								padding: 0,
+							},
 						},
 						'.strip-styles *': {
 							all: 'unset',
