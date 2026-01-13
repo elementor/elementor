@@ -146,7 +146,7 @@ class Components_REST_API {
 			[
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_overridable_props( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 				'args' => [
 					'componentId' => [
 						'type' => 'integer',
