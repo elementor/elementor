@@ -4,7 +4,6 @@ import {
 	createPropUtils,
 	isTransformable,
 	type ObjectPropValue,
-	type PropsSchema,
 	type PropType,
 	type PropValue,
 	type TransformablePropType,
@@ -51,31 +50,28 @@ export const validateDynamicSettings = () => {
 
 		extendedWindow.elementor?.hooks?.addFilter?.(
 			TOP_LEVEL_SINGLE_SETTING_FILTER,
-			( setting: PropsSchema[ string ] | null ) => {
+			( setting: PropValue | null ) => {
 				return nestedDynamicSettingsFilter( setting, tags );
 			}
 		);
 	} );
 };
 
-export const nestedDynamicSettingsFilter = < T extends PropsSchema[ string ] | PropValue | null >(
-	value: T,
-	tags: DynamicTags
-): T | null => {
+export const nestedDynamicSettingsFilter = ( value: PropValue | null, tags: DynamicTags ) => {
 	if ( ! value ) {
 		return null;
 	}
 
 	if ( isDynamicPropValue( value ) ) {
-		return getFilteredDynamicSettings( value, tags ) as T;
+		return getFilteredDynamicSettings( value, tags );
 	}
 
 	if ( isObjectPropValue( value ) ) {
-		return evaluateObjectPropValue( value, tags ) as T;
+		return evaluateObjectPropValue( value, tags );
 	}
 
 	if ( isArrayPropValue( value ) ) {
-		return evaluateArrayPropValue( value, tags ) as T;
+		return evaluateArrayPropValue( value, tags );
 	}
 
 	return value ?? null;
