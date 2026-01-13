@@ -42,7 +42,7 @@ class Render_Props_Resolver extends Props_Resolver {
 			}
 
 			$prop_value = $props[ $key ] ?? null;
-			$actual_value = $this->should_revert_to_default( $prop_value ) ? $prop_type->get_default() : $prop_value;
+			$actual_value = $this->get_validated_value( $prop_type, $prop_value );
 
 			$transformed = $this->resolve_item(
 				$actual_value,
@@ -84,23 +84,20 @@ class Render_Props_Resolver extends Props_Resolver {
 		return $this->resolve_item( $transformed, $key, $prop_type, $depth + 1 );
 	}
 
-	private function should_revert_to_default( $prop_value ): bool {
+	private function get_validated_value( Prop_Type $prop_type, $prop_value ) {
+		$default = $prop_type->get_default() ?? null;
+
 		if ( null === $prop_value ) {
-			return true;
+			return $default;
 		}
 
 		if ( ! Dynamic_Prop_Type::is_dynamic_prop_value( $prop_value ) ) {
-			return false;
+			return $prop_value;
 		}
 
 		$tag_name = $prop_value['value']['name'] ?? null;
-
-		if ( ! $tag_name ) {
-			return true;
-		}
-
 		$tag = Plugin::$instance->dynamic_tags->get_tag_info( $tag_name );
 
-		return null === $tag;
+		return ! $tag ? $default : $prop_value;
 	}
 }

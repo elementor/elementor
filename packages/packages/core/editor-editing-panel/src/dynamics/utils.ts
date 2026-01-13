@@ -21,8 +21,8 @@ export const dynamicPropTypeUtil = createPropUtils(
 	} )
 );
 
-export const isDynamicTagSupported = ( tag: string ) => {
-	return !! getElementorConfig()?.atomicDynamicTags?.tags?.[ tag ];
+export const isDynamicTagSupported = ( tagName: string ) => {
+	return !! getElementorConfig()?.atomicDynamicTags?.tags?.[ tagName ];
 };
 
 const isDynamicPropType = ( prop: TransformablePropType ): prop is DynamicPropType =>

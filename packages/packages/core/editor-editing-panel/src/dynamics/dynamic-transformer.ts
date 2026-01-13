@@ -12,9 +12,9 @@ type Dynamic = {
 
 const extendedWindow = window as ExtendedWindow;
 
-export const dynamicTransformer = createTransformer( ( value: Dynamic ) => {
+export const dynamicTransformer = createTransformer< Dynamic >( ( value, { propType } ) => {
 	if ( ! value.name || ! isDynamicTagSupported( value.name ) ) {
-		return null;
+		return propType?.default ?? null;
 	}
 
 	return getDynamicValue( value.name, simpleTransform( value.settings ?? {} ) );

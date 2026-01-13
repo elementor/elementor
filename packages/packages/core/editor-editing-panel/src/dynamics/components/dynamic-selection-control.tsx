@@ -57,7 +57,7 @@ export const DynamicSelectionControl = ( { OriginalControl, ...props }: { Origin
 	const { name: tagName = '' } = value;
 	const dynamicTag = useDynamicTag( tagName );
 
-	if ( ! isDynamicTagSupported( value.name ) && OriginalControl ) {
+	if ( ! isDynamicTagSupported( tagName ) && OriginalControl ) {
 		return (
 			<PropProvider propType={ originalPropType } value={ { [ bind ]: null } } setValue={ setAnyValue }>
 				<PropKeyProvider bind={ bind }>
