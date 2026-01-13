@@ -1079,6 +1079,11 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 				'endpoint' => '/elementor/v1/components/unlock',
 				'params' => [ 'componentId' => 123 ],
 			],
+			'GET overridable-props' => [
+				'method' => 'GET',
+				'endpoint' => '/elementor/v1/components/overridable-props',
+				'params' => [ 'componentId' => 123 ],
+			],
 		];
 	}
 
@@ -1386,6 +1391,28 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( 404, $response->get_status() );
 		$this->assertEquals( 'component_not_found', $response->get_data()['code'] );
+	}
+
+	public function test_get_overridable_props__succeeds_for_editor() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Component For Editor', $this->mock_component_1_content );
+
+		$mocks = new Component_Overrides_Mocks();
+		$overridable_props = $mocks->get_mock_component_overridable_props();
+		update_post_meta( $component_id, Component_Document::OVERRIDABLE_PROPS_META_KEY, json_encode( $overridable_props ) );
+
+		$this->act_as_editor();
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/overridable-props' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+		$this->assertEquals( $overridable_props, $data );
 	}
 
 	public function test_post_validate_components__passes_with_valid_data() {
