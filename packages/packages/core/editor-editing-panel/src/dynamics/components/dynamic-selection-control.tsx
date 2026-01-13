@@ -42,7 +42,7 @@ const SIZE = 'tiny';
 
 const tagsWithoutTabs = [ 'popup' ];
 
-export const DynamicSelectionControl = ( { OriginalControl, ...props }: { OriginalControl: ControlComponent } ) => {
+export const DynamicSelectionControl = ( { OriginalControl, ...props }: { OriginalControl?: ControlComponent } ) => {
 	const { setValue: setAnyValue, propType } = useBoundProp();
 	const { bind, value } = useBoundProp( dynamicPropTypeUtil );
 	const originalPropType = createTopLevelObjectType( {
@@ -57,7 +57,7 @@ export const DynamicSelectionControl = ( { OriginalControl, ...props }: { Origin
 	const { name: tagName = '' } = value;
 	const dynamicTag = useDynamicTag( tagName );
 
-	if ( ! isDynamicTagSupported( value.name ) ) {
+	if ( ! isDynamicTagSupported( value.name ) && OriginalControl ) {
 		return (
 			<PropProvider propType={ originalPropType } value={ { [ bind ]: null } } setValue={ setAnyValue }>
 				<PropKeyProvider bind={ bind }>
