@@ -12,12 +12,28 @@ const NewFloatingElementsModule = elementorModules.ViewModule.extend( {
 		};
 	},
 
-	bindEvents() {
+	getDefaultElements() {
 		const selectors = this.getSettings( 'selectors' );
 
-		jQuery( document ).on( 'click', selectors.addButtonTopBar, this.onAddButtonClick.bind( this ) );
-		jQuery( document ).on( 'click', selectors.addButtonAdminBar, this.onAddButtonClick.bind( this ) );
-		jQuery( document ).on( 'click', selectors.addButtonEmptyTemplate, this.onAddButtonClick.bind( this ) );
+		return {
+			addButtonTopBar: document.querySelector( selectors.addButtonTopBar ),
+			addButtonAdminBar: document.querySelector( selectors.addButtonAdminBar ),
+			addButtonEmptyTemplate: document.querySelector( selectors.addButtonEmptyTemplate ),
+		};
+	},
+
+	bindEvents() {
+		if ( this.elements.addButtonTopBar !== null ) {
+			this.elements.addButtonTopBar.addEventListener( 'click', this.onAddButtonClick );
+		}
+
+		if ( this.elements.addButtonAdminBar !== null ) {
+			this.elements.addButtonAdminBar.addEventListener( 'click', this.onAddButtonClick );
+		}
+
+		if ( this.elements.addButtonEmptyTemplate !== null ) {
+			this.elements.addButtonEmptyTemplate.addEventListener( 'click', this.onAddButtonClick );
+		}
 	},
 
 	onInit() {
