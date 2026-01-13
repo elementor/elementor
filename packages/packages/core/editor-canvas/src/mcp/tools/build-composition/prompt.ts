@@ -3,12 +3,12 @@ import { toolPrompts } from '@elementor/editor-mcp';
 import { STYLE_SCHEMA_URI, WIDGET_SCHEMA_URI } from '../../resources/widgets-schema-resource';
 
 export const generatePrompt = () => {
-	const buildCompositionsToolPrompt = toolPrompts( 'build-compositions' );
+	const buildCompositionsToolPrompt = toolPrompts('build-compositions');
 
-	buildCompositionsToolPrompt.description( `
+	buildCompositionsToolPrompt.description(`
 # REQUIRED RESOURCES (Read before use)
-1. [${ WIDGET_SCHEMA_URI }] - Widget types, configuration schemas, and PropType definitions
-2. [${ STYLE_SCHEMA_URI }] - Common styles schema shared by all widgets
+1. [${WIDGET_SCHEMA_URI}] - Widget types, configuration schemas, and PropType definitions
+2. [${STYLE_SCHEMA_URI}] - Common styles schema shared by all widgets
 3. [elementor://global-classes] - Existing global classes (check FIRST to reuse)
 
 # THREE-PHASE WORKFLOW (MANDATORY)
@@ -81,15 +81,15 @@ export const generatePrompt = () => {
 - NEVER use font-weight 500-700 for headlines (go lighter or heavier)
 
 **Color:**
-- NEVER use purple gradients or blue-purple schemes
-- NEVER use pure grays - use tinted neutrals (#2d2622, #faf8f6, not #333/#f5f5f5)
+- PREFER not to use pure grays - use tinted neutrals (#2d2622, #faf8f6, not #333/#f5f5f5)
 - NEVER distribute colors evenly - commit to ONE dominant
-- NEVER use more than 3 core colors
+- NEVER use more than 3 core colors - except for info/alert/badges
 
 **Spacing:**
 - NEVER use uniform spacing
 - NEVER use < 4rem (64px) padding for major sections
 - NEVER center everything
+- PRIORITIZE rem based values over pixel based
 
 **Background:**
 - NEVER use solid #ffffff or #f5f5f5 without texture/gradients
@@ -97,7 +97,7 @@ export const generatePrompt = () => {
 
 # WIDGET NOTES
 - Check \`llm_guidance\` property in widget schemas for context
-- Avoid SVG widgets (require content upload tools)
+- Avoid SVG widgets (require content upload tools) - when must, prior to execution ensure assets uploaded
 - Apply style schema to containers for layout control
 
 # PARAMETERS (ALL MANDATORY)
@@ -106,7 +106,7 @@ export const generatePrompt = () => {
 - **stylesConfig**: Record of configuration-id → style PropValues (layout only)
   ` );
 
-	buildCompositionsToolPrompt.example( `
+	buildCompositionsToolPrompt.example(`
 A Heading and a button inside a flexbox
 {
   xmlStructure: "<e-flexbox configuration-id="flex1"><e-heading configuration-id="heading1"></e-heading><e-button configuration-id="button1"></e-button></e-flexbox>"
