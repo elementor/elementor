@@ -10,8 +10,16 @@ var NewTemplateModule = elementorModules.ViewModule.extend( {
 		};
 	},
 
+	getDefaultElements() {
+		var selectors = this.getSettings( 'selectors' );
+
+		return {
+			$addButton: jQuery( selectors.addButton ),
+		};
+	},
+
 	bindEvents() {
-		jQuery( document ).on( 'click', this.getSettings( 'selectors' ).addButton, this.onAddButtonClick.bind( this ) );
+		this.elements.$addButton.on( 'click', this.onAddButtonClick );
 
 		elementorCommon.elements.$window.on( 'hashchange', this.showModalByHash.bind( this ) );
 	},
