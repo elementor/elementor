@@ -78,7 +78,7 @@ class Logger {
 		$formatted = "[Elementor Atomic Widgets] [{$level_prefix}] " . $message;
 
 		if ( ! empty( $context ) ) {
-			$context_json = wp_json_encode( $context );
+			$context_json = wp_json_encode( $context, JSON_UNESCAPED_SLASHES );
 
 			if ( false !== $context_json ) {
 				$formatted .= ' | Context: ' . $context_json;

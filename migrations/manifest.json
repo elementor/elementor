@@ -1,0 +1,10 @@
+{
+  "widgetKeys": {},
+  "propTypes": {
+    "string-to-html": {
+      "fromType": "string",
+      "toType": "html",
+      "path": "operations/string-to-html.json"
+    }
+  }
+}

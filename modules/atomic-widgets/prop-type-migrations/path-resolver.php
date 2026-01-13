@@ -120,8 +120,15 @@ class Path_Resolver {
 
 	private static function resolve_wildcard_segment( array $segment, array $segments, array $data, array $wildcard_values, string $current_path, bool $allow_missing_leaf ): array {
 		$results = [];
+		$keys = array_keys( $data );
 
-		foreach ( array_keys( $data ) as $key ) {
+		if ( 'index' === $segment['type'] ) {
+			$keys = array_filter( $keys, 'is_int' );
+		} else {
+			$keys = array_filter( $keys, 'is_string' );
+		}
+
+		foreach ( $keys as $key ) {
 			$new_wildcard_values = $wildcard_values;
 			$new_wildcard_values[] = [
 				'key' => $key,
