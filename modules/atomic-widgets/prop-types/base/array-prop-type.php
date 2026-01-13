@@ -84,8 +84,13 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 		return true;
 	}
 
+	protected function getPropVersion(): int {
+		return 1;
+	}
+
 	public function sanitize( $value ) {
 		$value['value'] = $this->sanitize_value( $value['value'] );
+		$value['version'] = $this->getPropVersion();
 
 		return $value;
 	}
@@ -109,6 +114,7 @@ abstract class Array_Prop_Type implements Transformable_Prop_Type {
 			'item_prop_type' => $this->get_item_type(),
 			'dependencies' => $this->get_dependencies(),
 			'initial_value' => $this->get_initial_value(),
+			'version' => $this->getPropVersion(),
 		];
 	}
 

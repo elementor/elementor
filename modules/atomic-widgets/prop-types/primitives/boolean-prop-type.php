@@ -24,4 +24,8 @@ class Boolean_Prop_Type extends Plain_Prop_Type {
 	protected function sanitize_value( $value ) {
 		return (bool) $value;
 	}
+	//exapmle only, how to change a version
+	protected function getPropVersion(): int {
+		return 2; 
+	}
 }

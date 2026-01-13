@@ -81,4 +81,17 @@ class String_Prop_Type extends Plain_Prop_Type implements Migratable_Prop_Type {
 	public function get_compatible_type_keys(): array {
 		return [ Html_Prop_Type::get_key() ];
 	}
+
+	public function sanitize( $value ) {
+		$value = parent::sanitize( $value );
+		$value['version'] = 1;
+
+		return $value;
+	}
+
+	public function jsonSerialize(): array {
+		return array_merge( parent::jsonSerialize(), [
+			'version' => 1,
+		] );
+	}
 }
