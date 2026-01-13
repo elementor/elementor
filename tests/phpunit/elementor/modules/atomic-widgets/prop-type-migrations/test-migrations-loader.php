@@ -15,11 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Migrations_Loader extends Elementor_Test_Base {
 	private string $fixtures_path = __DIR__ . '/fixtures/migrations/';
 
-	public static function setUpBeforeClass(): void {
-		parent::setUpBeforeClass();
-		Migrations_Loader::destroy();
-	}
-
 
 	public function tearDown(): void {
 		Migrations_Loader::destroy();
