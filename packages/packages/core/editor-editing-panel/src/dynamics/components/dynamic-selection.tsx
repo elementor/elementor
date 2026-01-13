@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import * as React from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
-import { PopoverHeader, PopoverMenuList, SearchField } from '@elementor/editor-ui';
+import { CtaButton, PopoverHeader, PopoverMenuList, SearchField } from '@elementor/editor-ui';
 import { DatabaseIcon } from '@elementor/icons';
 import { Divider, Link, Stack, Typography, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -154,9 +154,10 @@ const NoDynamicTags = () => (
 			<Typography align="center" variant="subtitle2">
 				{ __( 'Streamline your workflow with dynamic tags', 'elementor' ) }
 			</Typography>
-			<Typography align="center" variant="caption">
-				{ __( "You'll need Elementor Pro to use this feature.", 'elementor' ) }
+			<Typography align="center" variant="caption" width={ 170 }>
+				{ __( 'Upgrade now to display your content dynamically.', 'elementor' ) }
 			</Typography>
+			<CtaButton size="small" href={ 'https://go.elementor.com/go-pro-dynamic-tags-modal/' } />
 		</Stack>
 	</>
 );
