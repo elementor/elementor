@@ -67,16 +67,20 @@ export const RepeaterContextProvider = < T extends RepeatablePropValue = Repeata
 	} );
 
 	const [ uniqueKeys, setUniqueKeys ] = useState( () => {
-		return items?.map( ( _, index ) => index ) ?? [];
+		return items?.map( ( _, index ) => generateUniqueKey() ) ?? [];
 	} );
 
 	React.useEffect( () => {
-		const itemsLength = items?.length ?? 0;
+		const currentLength = items?.length ?? 0;
+		const keysLength = uniqueKeys.length;
 
-		if ( itemsLength > 0 && uniqueKeys.length === 0 ) {
-			setUniqueKeys( items.map( ( _, index ) => generateUniqueKey() ) );
+		if ( currentLength > keysLength ) {
+			const newKeys = Array.from( { length: currentLength - keysLength }, () => generateUniqueKey() );
+			setUniqueKeys( ( prev ) => [ ...prev, ...newKeys ] );
+		} else if ( currentLength < keysLength ) {
+			setUniqueKeys( ( prev ) => prev.slice( 0, currentLength ) );
 		}
-	}, [ items, uniqueKeys.length ] );
+	}, [ items?.length ] );
 
 	const itemsWithKeys = useMemo(
 		() =>
