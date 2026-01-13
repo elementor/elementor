@@ -7,7 +7,7 @@ import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Nested Tabs tests (e_font_icon_svg: active) @nested-tabs', () => {
 	test.beforeAll( async () => {
-		await wpCli( 'wp elementor experiments activate e_font_icon_svg' );
+		await wpCli( 'wp elementor experiments activate e_font_icon_svg,e_editor_one' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {

@@ -17,6 +17,7 @@ test.describe( 'Atomic Widgets Wrapper @v4-tests', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			e_atomic_elements: 'active',
+			e_editor_one: 'active',
 		} );
 		await page.close();
 	} );

@@ -7,7 +7,7 @@ import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Div Block tests @div-block', () => {
 	test.beforeAll( async () => {
-		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
+		await wpCli( 'wp elementor experiments activate e_atomic_elements,e_editor_one' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {

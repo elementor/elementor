@@ -26,6 +26,7 @@ test.describe( 'Atomic Widgets @v4-tests', () => {
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.setExperiments( {
 			e_atomic_elements: 'active',
+			e_editor_one: 'active',
 		} );
 	} );
 

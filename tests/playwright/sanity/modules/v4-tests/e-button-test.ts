@@ -13,6 +13,7 @@ test.describe( 'Atomic button widget sanity tests @v4-tests', () => {
 		await wpAdmin.setExperiments( {
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
+			e_editor_one: 'active',
 		} );
 
 		newTestUser = await apiRequests.createNewUser( request, newUser );

@@ -6,6 +6,7 @@ import { wpCli } from '../../../assets/wp-cli';
 test.describe( 'Column tests @column', () => {
 	test.beforeAll( async () => {
 		await wpCli( 'wp elementor experiments deactivate container' );
+		await wpCli( 'wp elementor experiments activate e_editor_one' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {

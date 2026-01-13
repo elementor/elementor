@@ -10,6 +10,7 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 		await wpAdmin.setExperiments( {
 			e_interactions: 'active',
 			e_atomic_elements: 'active',
+			e_editor_one: 'active',
 		} );
 		await page.close();
 	} );

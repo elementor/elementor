@@ -19,7 +19,7 @@ test.describe( 'V4 Typography Font Family Tests @v4-tests', () => {
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests );
-		await driver.wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
+		await driver.wpAdmin.setExperiments( { e_atomic_elements: 'active', e_editor_one: 'active' } );
 	} );
 
 	test.afterAll( async () => {

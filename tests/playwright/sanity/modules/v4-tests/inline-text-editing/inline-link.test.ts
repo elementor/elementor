@@ -22,6 +22,7 @@ test.describe( 'Inline Editing Link @v4-tests', () => {
 
 		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
 		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active' } );
+		await wpAdminPage.setExperiments( { e_editor_one: 'active' } );
 
 		editor = await wpAdminPage.openNewPage();
 	} );

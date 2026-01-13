@@ -16,6 +16,7 @@ test.describe( 'Atomic link control dependencies @atomic-widgets @link-dependenc
 		await wpAdmin.setExperiments( {
 			e_opt_in_v4_page: 'active',
 			e_atomic_elements: 'active',
+			e_editor_one: 'active',
 		} );
 	} );
 

@@ -9,7 +9,7 @@ test.describe( 'Atomic repeaters display @atomic-widgets', () => {
 	let wpAdmin: WpAdminPage;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
+		await wpCli( 'wp elementor experiments activate e_atomic_elements,e_editor_one' );
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );

@@ -20,7 +20,7 @@ test.describe( 'V4 Typography Word Spacing Tests @v4-tests', () => {
 	let driver: EditorDriver;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
-		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
+		await wpCli( 'wp elementor experiments activate e_atomic_elements,e_editor_one' );
 		driver = await DriverFactory.createEditorDriver( browser, testInfo, apiRequests );
 	} );
 

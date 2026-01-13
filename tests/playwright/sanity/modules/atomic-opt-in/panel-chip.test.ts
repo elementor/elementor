@@ -6,7 +6,7 @@ import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'V4 modal promotion test @promotions', () => {
 	test.beforeAll( async () => {
-		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
+		await wpCli( 'wp elementor experiments activate e_atomic_elements,e_editor_one' );
 	} );
 
 	test.afterAll( async ( { browser, apiRequests }, testInfo ) => {

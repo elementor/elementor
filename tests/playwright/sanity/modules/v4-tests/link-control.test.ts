@@ -9,6 +9,7 @@ test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 	await wpAdmin.setExperiments( {
 		e_opt_in_v4_page: 'active',
 		e_atomic_elements: 'active',
+		e_editor_one: 'active',
 	} );
 
 	await page.close();

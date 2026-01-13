@@ -29,7 +29,7 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		const page = await context.newPage();
 
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
-		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
+		await wpAdmin.setExperiments( { e_atomic_elements: 'active', e_editor_one: 'active' } );
 
 		editor = await wpAdmin.openNewPage();
 	} );
