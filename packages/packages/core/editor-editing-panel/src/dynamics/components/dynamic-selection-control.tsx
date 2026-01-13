@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { ControlFormLabel, useBoundProp } from '@elementor/editor-controls';
+import {
+	type ControlComponent,
+	ControlFormLabel,
+	PropKeyProvider,
+	PropProvider,
+	useBoundProp,
+} from '@elementor/editor-controls';
 import type { Control, ControlLayout, ControlsSection } from '@elementor/editor-elements';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { DatabaseIcon, SettingsIcon, XIcon } from '@elementor/icons';
@@ -24,7 +30,9 @@ import { __ } from '@wordpress/i18n';
 import { PopoverBody } from '../../components/popover-body';
 import { Control as BaseControl } from '../../controls-registry/control';
 import { controlsRegistry, type ControlType } from '../../controls-registry/controls-registry';
+import { createTopLevelObjectType } from '../../controls-registry/create-top-level-object-type';
 import { usePersistDynamicValue } from '../../hooks/use-persist-dynamic-value';
+import { getElementorConfig } from '../../sync/get-elementor-globals';
 import { DynamicControl } from '../dynamic-control';
 import { useDynamicTag } from '../hooks/use-dynamic-tag';
 import { type DynamicTag } from '../types';
@@ -35,16 +43,31 @@ const SIZE = 'tiny';
 
 const tagsWithoutTabs = [ 'popup' ];
 
-export const DynamicSelectionControl = () => {
-	const { setValue: setAnyValue } = useBoundProp();
+export const DynamicSelectionControl = ( { OriginalControl, ...props }: { OriginalControl: ControlComponent } ) => {
+	const { setValue: setAnyValue, propType } = useBoundProp();
 	const { bind, value } = useBoundProp( dynamicPropTypeUtil );
+	const originalPropType = createTopLevelObjectType( {
+		schema: {
+			[ bind ]: propType,
+		},
+	} );
 
 	const [ propValueFromHistory ] = usePersistDynamicValue( bind );
 	const selectionPopoverState = usePopupState( { variant: 'popover' } );
 
 	const { name: tagName = '' } = value;
-
 	const dynamicTag = useDynamicTag( tagName );
+	const isSupported = !! getElementorConfig().atomicDynamicTags?.tags?.[ value.name ];
+
+	if ( ! isSupported ) {
+		return (
+			<PropProvider propType={ originalPropType } value={ { [ bind ]: null } } setValue={ setAnyValue }>
+				<PropKeyProvider bind={ bind }>
+					<OriginalControl { ...props } />
+				</PropKeyProvider>
+			</PropProvider>
+		);
+	}
 
 	const removeDynamicTag = () => {
 		setAnyValue( propValueFromHistory ?? null );

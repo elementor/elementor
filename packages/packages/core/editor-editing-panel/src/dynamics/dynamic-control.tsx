@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { shouldRevertToDefault } from '@elementor/editor-canvas';
 import { PropKeyProvider, PropProvider, type SetValue, useBoundProp } from '@elementor/editor-controls';
 import { type PropKey } from '@elementor/editor-props';
 
@@ -14,9 +13,8 @@ type DynamicControlProps = React.PropsWithChildren< {
 } >;
 
 export const DynamicControl = ( { bind, children }: DynamicControlProps ) => {
-	const { value, setValue, propType: prop } = useBoundProp( dynamicPropTypeUtil );
-	const normalizedValue = shouldRevertToDefault( value ) ? prop.default : value;
-	const { name = '', group = '', settings } = ( normalizedValue ?? {} ) as DynamicPropValue[ 'value' ];
+	const { value, setValue } = useBoundProp( dynamicPropTypeUtil );
+	const { name = '', group = '', settings } = value ?? {};
 
 	const dynamicTag = useDynamicTag( name );
 
