@@ -17,6 +17,7 @@ type MultiSizePropValue = Record< PropKey, PropValue >;
 type Item = {
 	icon: ReactNode;
 	label: string;
+	ariaLabel?: string;
 	bind: PropKey;
 };
 
@@ -179,7 +180,7 @@ const MultiSizeValueControl = ( { item, rowRef }: { item: Item; rowRef: RefObjec
 						<ControlLabel>{ item.label }</ControlLabel>
 					</Grid>
 					<Grid item xs={ 12 }>
-						<SizeControl startIcon={ item.icon } anchorRef={ rowRef } />
+						<SizeControl startIcon={ item.icon } ariaLabel={ item?.ariaLabel } anchorRef={ rowRef } />
 					</Grid>
 				</Grid>
 			</Grid>
