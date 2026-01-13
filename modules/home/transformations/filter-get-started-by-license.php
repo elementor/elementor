@@ -12,10 +12,18 @@ class Filter_Get_Started_By_License extends Transformations_Abstract {
 
 	public bool $has_pro;
 
+	private array $supported_tiers;
+
 	public function __construct( $args ) {
 		parent::__construct( $args );
 
 		$this->has_pro = Utils::has_pro();
+
+		$this->supported_tiers = [
+			self::USER_TIER_FREE,
+			self::USER_TIER_PRO,
+			self::USER_TIER_ONE,
+		];
 	}
 
 	private function is_valid_item( $item ) {
@@ -25,7 +33,17 @@ class Filter_Get_Started_By_License extends Transformations_Abstract {
 			return true;
 		}
 
-		return $user_tier === $item['license'][0];
+		if ( $user_tier === $item['license'][0] ) {
+			return true;
+		}
+
+		return $this->is_fallback_for_unsupported_licenses( $item['license'][0], $user_tier );
+	}
+
+	private function is_fallback_for_unsupported_licenses( $item_tier, $user_tier ): bool {
+		$is_supported_user_tier = in_array( $user_tier, $this->supported_tiers, true );
+
+		return ! $is_supported_user_tier && self::USER_TIER_PRO === $item_tier;
 	}
 
 	public function transform( array $home_screen_data ): array {
