@@ -46,8 +46,6 @@ export class SidebarMenuHandler {
 
 		if ( 'elementor' === page || 'elementor-home' === page ) {
 			targetSlug = 'elementor';
-		} else if ( 'elementor-home' === page ) {
-			targetSlug = 'elementor-home';
 		} else if ( 'e-form-submissions' === page ) {
 			targetSlug = 'e-form-submissions';
 		} else if ( 'elementor-theme-builder' === page ) {
