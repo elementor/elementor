@@ -165,6 +165,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 			upgradeNowBtn = page.locator( EditorSelectors.onboarding.upgradeButton ),
 			tierLocator = page.locator( '.e-onboarding__choose-features-section__message strong' ),
 			tiers = {
+				one: 'ONE',
 				advanced: 'Advanced',
 				essential: 'Essential',
 			};
@@ -173,12 +174,16 @@ test.describe( 'Onboarding @onBoarding', async () => {
 
 		await expect.soft( chooseFeaturesScreen ).toHaveScreenshot( 'chooseFeaturesScreen.png' );
 
+		const getFirstCheckboxByPlan = ( plan: string ) => {
+			return page.locator( `input[id^="${ plan }-"]` ).first();
+		};
+
 		await test.step( 'Check that Upgrade Now button is disabled', async () => {
 			await expect( upgradeNowBtn ).toHaveClass( BUTTON_CLASSES.disabled );
 		} );
 
 		await test.step( 'Check that tier changes to Essential when checking an Essential item', async () => {
-			await page.locator( '#essential-2' ).check();
+			await getFirstCheckboxByPlan( 'essential' ).check();
 			await expect( tierLocator ).toHaveText( tiers.essential );
 		} );
 
@@ -187,23 +192,29 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		} );
 
 		await test.step( 'Check that tier changes to Advanced when checking an Advanced item', async () => {
-			await page.locator( '#advanced-1' ).check();
+			await getFirstCheckboxByPlan( 'advanced' ).check();
 			await expect( tierLocator ).toHaveText( tiers.advanced );
 		} );
 
 		await test.step( 'Check that tier changes to Essential when unchecking all Advanced items but an Essential Item Is checked.', async () => {
-			await page.locator( '#advanced-1' ).uncheck();
+			await getFirstCheckboxByPlan( 'advanced' ).uncheck();
 			await expect( tierLocator ).toHaveText( tiers.essential );
 		} );
 
-		await test.step( 'Check that is not visible when unchecking all items', async () => {
-			await page.locator( '#essential-2' ).uncheck();
+		await test.step( 'Check that tier message is not visible when unchecking all items', async () => {
+			await getFirstCheckboxByPlan( 'essential' ).uncheck();
 			await expect( tierLocator ).not.toBeVisible();
 		} );
 
-		await test.step( 'Check that tier changes to Advanced when checking only and Advanced item', async () => {
-			await page.locator( '#advanced-1' ).check();
+		await test.step( 'Check that tier changes to Advanced when checking only an Advanced item', async () => {
+			await getFirstCheckboxByPlan( 'advanced' ).check();
 			await expect( tierLocator ).toHaveText( tiers.advanced );
+		} );
+
+		await test.step( 'Check that tier changes to ONE when checking a ONE item', async () => {
+			await getFirstCheckboxByPlan( 'advanced' ).uncheck();
+			await getFirstCheckboxByPlan( 'one' ).check();
+			await expect( tierLocator ).toHaveText( tiers.one );
 		} );
 	} );
 
