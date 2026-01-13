@@ -438,15 +438,13 @@ test.describe( 'Interactions Tab @v4-tests', () => {
 
 			// Click first play button
 			const firstTag = interactionTags.first();
-			const firstBox = await firstTag.boundingBox();
-			await page.mouse.move( ( firstBox.x + firstBox.width ) / 2, ( firstBox.y + firstBox.height ) / 2 );
+			await firstTag.hover();
 			await firstTag.locator( 'button[aria-label*="Play interaction"]' ).click();
 			await page.waitForTimeout( 100 );
 
 			// Click second play button
 			const secondTag = interactionTags.nth( 1 );
-			const secondBox = await secondTag.boundingBox();
-			await page.mouse.move( ( secondBox.x + secondBox.width ) / 2, ( secondBox.y + secondBox.height ) / 2 );
+			await secondTag.hover();
 			await secondTag.locator( 'button[aria-label*="Play interaction"]' ).click();
 			await page.waitForTimeout( 100 );
 
