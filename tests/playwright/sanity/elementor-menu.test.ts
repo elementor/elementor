@@ -9,7 +9,7 @@ async function validateGettingStartedPage( wpAdmin: WpAdminPage ) {
 }
 
 async function validateGettingStartedLinkCount( wpAdmin: WpAdminPage, expectedCount ) {
-	await wpAdmin.page.locator( '#adminmenu' ).getByRole('link', { name: 'Elementor' }).first().click();
+	await wpAdmin.page.locator( '#adminmenu' ).getByRole( 'link', { name: 'Elementor' } ).first().click();
 	expect( await wpAdmin.page.getByText( 'Getting Started' ).count() ).toEqual( expectedCount );
 }
 
@@ -19,7 +19,7 @@ test.describe( 'General Settings', () => {
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdmin.openWordPressDashboard();
-		await test(( wpAdmin, 0 );
+		await validateGettingStartedLinkCount( wpAdmin, 0 );
 		await validateGettingStartedPage( wpAdmin );
 	} );
 
