@@ -33,7 +33,7 @@ function applyAnimation( element, animConfig, animateFunc ) {
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
-		easing: config.easing,
+		ease: config.ease,
 	};
 
 	const initialKeyframes = {};
