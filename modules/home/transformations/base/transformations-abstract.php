@@ -14,6 +14,8 @@ use Elementor\Core\Isolation\Wordpress_Adapter_Interface;
 
 abstract class Transformations_Abstract {
 
+	protected const USER_TIER_FREE = 'free';
+	protected const USER_TIER_PRO = 'pro';
 	protected const USER_TIER_ONE = 'one';
 
 	protected Wordpress_Adapter_Interface $wordpress_adapter;
@@ -35,10 +37,6 @@ abstract class Transformations_Abstract {
 
 	protected function get_tier() {
 		$tier = $this->elementor_adapter->get_tier();
-
-		if ( \Elementor\Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
-			return self::USER_TIER_ONE;
-		}
 
 		return apply_filters( 'elementor/admin/homescreen_promotion_tier', $tier ) ?? $tier;
 	}

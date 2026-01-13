@@ -13,16 +13,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Filter_Top_Section_By_License extends Transformations_Abstract {
 
 	public bool $has_pro;
-	private array $supported_tiers;
 
 	public function __construct( array $args = [] ) {
 		parent::__construct( $args );
 
 		$this->has_pro = Utils::has_pro();
-		$this->supported_tiers = [
-			ConnectModule::ACCESS_TIER_FREE,
-			ConnectModule::ACCESS_TIER_PRO_LEGACY,
-		];
 	}
 
 	private function is_valid_item( $item ) {
@@ -37,18 +32,13 @@ class Filter_Top_Section_By_License extends Transformations_Abstract {
 	}
 
 	private function validate_tier( $item_tier, $user_tier ): bool {
-		if ( self::USER_TIER_ONE === $user_tier ) {
-			return true;
-		}
-
-		if ( $user_tier === $item_tier ) {
-			return true;
-		}
-
 		$is_item_tier_free = ConnectModule::ACCESS_TIER_FREE === $item_tier;
-		$is_valid = $this->has_pro !== $is_item_tier_free;
 
-		return $is_valid && in_array( $item_tier, $this->supported_tiers, true );
+		if ( ! $this->has_pro && $is_item_tier_free ) {
+			return true;
+		}
+
+		return $user_tier === $item_tier;
 	}
 
 	public function transform( array $home_screen_data ): array {

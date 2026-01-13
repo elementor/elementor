@@ -9,7 +9,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Filter_Get_Started_By_License extends Transformations_Abstract {
-
 	public bool $has_pro;
 
 	public function __construct( $args ) {
@@ -21,14 +20,11 @@ class Filter_Get_Started_By_License extends Transformations_Abstract {
 	private function is_valid_item( $item ) {
 		$user_tier = $this->get_tier();
 
-		if ( self::USER_TIER_ONE === $user_tier ) {
+		if ( ! $this->has_pro && self::USER_TIER_FREE === $item['license'][0] ) {
 			return true;
 		}
 
-		$has_pro_json_not_free = $this->has_pro && 'pro' === $item['license'][0];
-		$is_not_pro_json_not_pro = ! $this->has_pro && 'free' === $item['license'][0];
-
-		return $has_pro_json_not_free || $is_not_pro_json_not_pro;
+		return $user_tier === $item['license'][0];
 	}
 
 	public function transform( array $home_screen_data ): array {
