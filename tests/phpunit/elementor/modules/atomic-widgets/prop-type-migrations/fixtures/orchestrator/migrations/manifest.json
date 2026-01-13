@@ -26,22 +26,23 @@
     "string-to-string_v2": {
       "fromType": "string",
       "toType": "string_v2",
-      "path": "string-to-string_v2.json"
+      "url": "string-to-string_v2.json"
     },
     "string_v2-to-html": {
       "fromType": "string_v2",
       "toType": "html",
-      "path": "string_v2-to-html.json"
+      "url": "string_v2-to-html.json"
     },
     "string-to-html": {
       "fromType": "string",
       "toType": "html",
-      "path": "string-to-html.json"
+      "url": "string-to-html.json"
     },
     "number-to-string": {
       "fromType": "number",
       "toType": "string",
-      "path": "number-to-string.json"
+      "url": "number-to-string.json"
     }
   }
 }
+
