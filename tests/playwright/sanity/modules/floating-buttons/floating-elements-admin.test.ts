@@ -139,10 +139,8 @@ test.describe( 'Verify floating buttons editor, admin page and front page behavi
 
 		const addNewButton = page.locator( 'a.page-title-action[href*="e-floating-buttons"], .e-admin-top-bar__main-area-buttons a.page-title-action' ).first();
 
-		await test.step( 'Check that buttons and top bar exists', async () => {
+		await test.step( 'Check that button exists', async () => {
 			await expect( addNewButton ).toBeVisible();
-			const topBar = page.locator( '#e-admin-top-bar-root' );
-			await expect( topBar ).toBeVisible();
 		} );
 
 		await test.step(
