@@ -32,11 +32,10 @@ import { Control as BaseControl } from '../../controls-registry/control';
 import { controlsRegistry, type ControlType } from '../../controls-registry/controls-registry';
 import { createTopLevelObjectType } from '../../controls-registry/create-top-level-object-type';
 import { usePersistDynamicValue } from '../../hooks/use-persist-dynamic-value';
-import { getElementorConfig } from '../../sync/get-elementor-globals';
 import { DynamicControl } from '../dynamic-control';
 import { useDynamicTag } from '../hooks/use-dynamic-tag';
 import { type DynamicTag } from '../types';
-import { dynamicPropTypeUtil } from '../utils';
+import { dynamicPropTypeUtil, isDynamicTagSupported } from '../utils';
 import { DynamicSelection } from './dynamic-selection';
 
 const SIZE = 'tiny';
@@ -57,9 +56,8 @@ export const DynamicSelectionControl = ( { OriginalControl, ...props }: { Origin
 
 	const { name: tagName = '' } = value;
 	const dynamicTag = useDynamicTag( tagName );
-	const isSupported = !! getElementorConfig().atomicDynamicTags?.tags?.[ value.name ];
 
-	if ( ! isSupported ) {
+	if ( ! isDynamicTagSupported( value.name ) ) {
 		return (
 			<PropProvider propType={ originalPropType } value={ { [ bind ]: null } } setValue={ setAnyValue }>
 				<PropKeyProvider bind={ bind }>

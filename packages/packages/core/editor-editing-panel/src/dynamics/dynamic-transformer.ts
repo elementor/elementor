@@ -1,9 +1,9 @@
 import { createTransformer } from '@elementor/editor-canvas';
 import { isTransformable, type Props } from '@elementor/editor-props';
 
-import { getElementorConfig } from '../sync/get-elementor-globals';
 import { type ExtendedWindow } from '../sync/types';
 import { DynamicTagsManagerNotFoundError } from './errors';
+import { isDynamicTagSupported } from './utils';
 
 type Dynamic = {
 	name?: string;
@@ -13,9 +13,7 @@ type Dynamic = {
 const extendedWindow = window as ExtendedWindow;
 
 export const dynamicTransformer = createTransformer( ( value: Dynamic ) => {
-	const atomicDynamicTags = getElementorConfig()?.atomicDynamicTags?.tags ?? {};
-
-	if ( ! value.name || ! atomicDynamicTags[ value.name ] ) {
+	if ( ! value.name || ! isDynamicTagSupported( value.name ) ) {
 		return null;
 	}
 
