@@ -1,5 +1,7 @@
 import { useCurrentUser } from './use-current-user';
 
+export const ADMIN_CAPABILITY = 'manage_options';
+
 export const useCurrentUserCapabilities = () => {
 	const { data } = useCurrentUser();
 
@@ -7,5 +9,7 @@ export const useCurrentUserCapabilities = () => {
 		return Boolean( data?.capabilities.includes( capability ) );
 	};
 
-	return { canUser, capabilities: data?.capabilities };
+	const isAdmin = Boolean( data?.capabilities.includes( ADMIN_CAPABILITY ) );
+
+	return { canUser, isAdmin, capabilities: data?.capabilities };
 };
