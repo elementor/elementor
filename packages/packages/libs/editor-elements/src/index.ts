@@ -1,6 +1,3 @@
-// consts
-export { TOP_LEVEL_SINGLE_SETTING_FILTER } from './sync/get-element-setting';
-
 // types
 export * from './types';
 export type * from './sync/types';

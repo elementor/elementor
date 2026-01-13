@@ -39,7 +39,6 @@ type ResolvedProps = Record< string, unknown >;
 export type PropsResolver = ReturnType< typeof createPropsResolver >;
 
 const TRANSFORM_DEPTH_LIMIT = 3;
-
 export function createPropsResolver( { transformers, schema: initialSchema, onPropResolve }: CreatePropResolverArgs ) {
 	async function resolve( { props, schema, signal, renderContext }: ResolveArgs ): Promise< ResolvedProps > {
 		schema = schema ?? initialSchema;

@@ -12,13 +12,11 @@ import {
 import { DynamicSelectionControl } from './components/dynamic-selection-control';
 import { dynamicTransformer } from './dynamic-transformer';
 import { usePropDynamicAction } from './hooks/use-prop-dynamic-action';
-import { isDynamicPropValue, validateDynamicSettings } from './utils';
+import { isDynamicPropValue } from './utils';
 
 const { registerPopoverAction } = controlActionsMenu;
 
 export const init = () => {
-	validateDynamicSettings();
-
 	registerControlReplacement( {
 		component: DynamicSelectionControl,
 		condition: ( { value } ) => isDynamicPropValue( value ),
