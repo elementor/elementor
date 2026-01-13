@@ -6,11 +6,6 @@ use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Filter_Get_Started_By_License extends PHPUnit_TestCase {
 
-	public function tearDown(): void {
-		remove_all_filters( 'elementor/admin/homescreen_promotion_tier' );
-		parent::tearDown();
-	}
-
 	public function test_transform__core_plugin() {
 		// Arrange
 		$original_data = $this->mock_home_screen_data();
@@ -39,6 +34,25 @@ class Test_Filter_Get_Started_By_License extends PHPUnit_TestCase {
 		// Act
 		$transformed_data = $transformation->transform( $original_data );
 		$expected_data = $this->mock_home_screen_data_transformed_pro();
+
+		// Assert
+		$this->assertEquals( $transformed_data, $expected_data );
+	}
+
+	public function test_transform__one_tier() {
+		// Arrange
+		$original_data = $this->mock_home_screen_data();
+
+		add_filter( 'elementor/admin/homescreen_promotion_tier', function() {
+			return 'one';
+		} );
+
+		$transformation = new Filter_Get_Started_By_License( [] );
+		$transformation->has_pro = true;
+
+		// Act
+		$transformed_data = $transformation->transform( $original_data );
+		$expected_data = $this->mock_home_screen_data_transformed_one();
 
 		// Assert
 		$this->assertEquals( $transformed_data, $expected_data );
@@ -104,6 +118,23 @@ class Test_Filter_Get_Started_By_License extends PHPUnit_TestCase {
 				],
 				'license' => [
 					'pro'
+				],
+			],
+			'misc' => [
+				'Name' => 'Microsoft',
+				'Version' => 'Windows',
+			],
+		];
+	}
+
+	private function mock_home_screen_data_transformed_one() {
+		return [
+			'get_started' => [
+				'thing' => [
+					'key' => 'value',
+				],
+				'license' => [
+					'one'
 				],
 			],
 			'misc' => [

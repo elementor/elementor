@@ -31,11 +31,11 @@ class Test_Filter_Add_Ons_By_License extends PHPUnit_TestCase {
 			return 'pro';
 		} );
 
-		$original_data = $this->mock_home_screen_data_with_hide_section_pro();
+		$original_data = $this->mock_home_screen_data_with_hide_section_not_pro();
 		$transformation = new Filter_Add_Ons_By_License( [] );
 
 		$transformed_data = $transformation->transform( $original_data );
-		$expected_data = $this->mock_home_screen_data_with_hide_section_pro();
+		$expected_data = $this->mock_home_screen_data_with_hide_section_not_pro();
 
 		$this->assertEquals( $expected_data, $transformed_data );
 		$this->assertArrayHasKey( 'add_ons', $transformed_data );
@@ -78,7 +78,7 @@ class Test_Filter_Add_Ons_By_License extends PHPUnit_TestCase {
 		];
 	}
 
-	private function mock_home_screen_data_with_hide_section_pro() {
+	private function mock_home_screen_data_with_hide_section_not_pro() {
 		return [
 			'add_ons' => [
 				'hide_section' => [ 'one' ],
