@@ -128,6 +128,10 @@ export declare class ElementView {
 	getNamespaceKey(): string;
 
 	invalidateRenderCache(): void;
+
+	_openEditingPanel( options?: { scrollIntoView: boolean } ): void;
+
+	once: ( event: string, callback: () => void ) => void;
 }
 
 type JQueryElement = {
