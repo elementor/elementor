@@ -1079,6 +1079,11 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 				'endpoint' => '/elementor/v1/components/unlock',
 				'params' => [ 'componentId' => 123 ],
 			],
+			'GET overridable-props' => [
+				'method' => 'GET',
+				'endpoint' => '/elementor/v1/components/overridable-props',
+				'params' => [ 'componentId' => 123 ],
+			],
 		];
 	}
 
@@ -1386,6 +1391,28 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( 404, $response->get_status() );
 		$this->assertEquals( 'component_not_found', $response->get_data()['code'] );
+	}
+
+	public function test_get_overridable_props__succeeds_for_editor() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Component For Editor', $this->mock_component_1_content );
+
+		$mocks = new Component_Overrides_Mocks();
+		$overridable_props = $mocks->get_mock_component_overridable_props();
+		update_post_meta( $component_id, Component_Document::OVERRIDABLE_PROPS_META_KEY, json_encode( $overridable_props ) );
+
+		$this->act_as_editor();
+
+		// Act
+		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/overridable-props' );
+		$request->set_param( 'componentId', $component_id );
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+		$this->assertEquals( $overridable_props, $data );
 	}
 
 	public function test_post_validate_components__passes_with_valid_data() {
@@ -1722,9 +1749,16 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 
 		update_post_meta( $component_id, Component_Document::OVERRIDABLE_PROPS_META_KEY, json_encode( $published_props ) );
 
-		$document = Plugin::$instance->documents->get( $component_id );
+		$document = Plugin::$instance->documents->get( $component_id, false );
 		$autosave = $document->get_autosave( get_current_user_id(), true );
-		update_post_meta( $autosave->get_post()->ID, Component_Document::OVERRIDABLE_PROPS_META_KEY, json_encode( $autosave_props ) );
+		$autosave_id = $autosave->get_post()->ID;
+
+		// Workaround - set autosave timestamp to future so it's detected as newer than published (required for autosave detection).
+		global $wpdb;
+		$future_time = gmdate( 'Y-m-d H:i:s', strtotime( '+1 day' ) );
+		$wpdb->update( $wpdb->posts, [ 'post_modified_gmt' => $future_time ], [ 'ID' => $autosave_id ] );
+
+		update_metadata( 'post', $autosave_id, Component_Document::OVERRIDABLE_PROPS_META_KEY, json_encode( $autosave_props ) );
 
 		// Act
 		$request = new \WP_REST_Request( 'GET', '/elementor/v1/components/overridable-props' );

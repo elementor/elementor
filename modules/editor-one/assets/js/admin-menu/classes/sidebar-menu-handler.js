@@ -42,10 +42,10 @@ export class SidebarMenuHandler {
 		const searchParams = currentUrl.searchParams;
 		const page = searchParams.get( 'page' );
 
-		let targetSlug = 'elementor-editor';
+		let targetSlug = 'elementor';
 
 		if ( 'elementor' === page || 'elementor-home' === page ) {
-			targetSlug = 'elementor-editor';
+			targetSlug = 'elementor';
 		} else if ( 'e-form-submissions' === page ) {
 			targetSlug = 'e-form-submissions';
 		} else if ( 'elementor-theme-builder' === page ) {
