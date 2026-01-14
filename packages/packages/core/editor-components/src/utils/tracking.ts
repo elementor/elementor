@@ -5,18 +5,32 @@ import { __getState as getState } from '@elementor/store';
 import { selectCreatedThisSession } from '../store/store';
 import { type ExtendedWindow } from '../types';
 
+export type Source = 'user' | 'mcp_tool';
+
 type ComponentEventData = Record< string, unknown > & {
-	action: 'createClicked' | 'created' | 'createCancelled' | 'instanceAdded' | 'edited';
+	action:
+		| 'createClicked'
+		| 'created'
+		| 'createCancelled'
+		| 'instanceAdded'
+		| 'edited'
+		| 'propertyExposed'
+		| 'propertyRemoved'
+		| 'propertiesPanelOpened'
+		| 'propertiesGroupCreated';
+	source: Source;
 };
 
-export const trackComponentEvent = ( { action, ...data }: ComponentEventData ) => {
+const FEATURE_NAME = 'Components';
+
+export const trackComponentEvent = ( { action, source, ...data }: ComponentEventData ) => {
 	const { dispatchEvent, config } = getMixpanel();
 	if ( ! config?.names?.components?.[ action ] ) {
 		return;
 	}
 
 	const name = config.names.components[ action ];
-	dispatchEvent?.( name, data );
+	dispatchEvent?.( name, { ...data, source, 'Feature name': FEATURE_NAME } );
 };
 
 export const onElementDrop = ( _args: unknown, element: V1Element ) => {
@@ -37,6 +51,7 @@ export const onElementDrop = ( _args: unknown, element: V1Element ) => {
 
 	trackComponentEvent( {
 		action: 'instanceAdded',
+		source: 'user',
 		instance_id: instanceId,
 		component_uid: componentUID,
 		component_name: componentName,
