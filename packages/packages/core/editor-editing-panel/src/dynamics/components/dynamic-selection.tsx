@@ -1,7 +1,7 @@
 import { Fragment, useState } from 'react';
 import * as React from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
-import { PopoverHeader, PopoverMenuList, SearchField } from '@elementor/editor-ui';
+import { CtaButton, PopoverHeader, PopoverMenuList, SearchField } from '@elementor/editor-ui';
 import { DatabaseIcon } from '@elementor/icons';
 import { Divider, Link, Stack, Typography, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -21,6 +21,8 @@ type Option = {
 type OptionEntry = [ string, Option[] ];
 
 const SIZE = 'tiny';
+const PROMO_TEXT_WIDTH = 170;
+const PRO_DYNAMIC_TAGS_URL = 'https://go.elementor.com/go-pro-dynamic-tags-modal/';
 
 type DynamicSelectionProps = {
 	close: () => void;
@@ -154,9 +156,10 @@ const NoDynamicTags = () => (
 			<Typography align="center" variant="subtitle2">
 				{ __( 'Streamline your workflow with dynamic tags', 'elementor' ) }
 			</Typography>
-			<Typography align="center" variant="caption">
-				{ __( "You'll need Elementor Pro to use this feature.", 'elementor' ) }
+			<Typography align="center" variant="caption" width={ PROMO_TEXT_WIDTH }>
+				{ __( 'Upgrade now to display your content dynamically.', 'elementor' ) }
 			</Typography>
+			<CtaButton size="small" href={ PRO_DYNAMIC_TAGS_URL } />
 		</Stack>
 	</>
 );

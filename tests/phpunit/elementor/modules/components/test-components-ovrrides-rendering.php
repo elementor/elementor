@@ -223,7 +223,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-6',
                                         'override_value' => [
-                                            '$$type' => 'string',
+                                            '$$type' => 'html',
                                             'value' => $accordion_title,
                                         ],
                                         'schema_source' => [
@@ -237,7 +237,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-7',
                                         'override_value' => [
-                                            '$$type' => 'string',
+                                            '$$type' => 'html',
                                             'value' => $accordion_subtitle,
                                         ],
                                         'schema_source' => [
@@ -276,7 +276,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-9',
                                         'override_value' => [
-                                            '$$type' => 'string',
+                                            '$$type' => 'html',
                                             'value' => $first_card_title,
                                         ],
                                     ],
@@ -352,7 +352,7 @@ class Test_Components_Overrides_Rendering extends Elementor_Test_Base {
                                     'value' => [
                                         'override_key' => 'prop-13',
                                         'override_value' => [
-                                            '$$type' => 'string',
+                                            '$$type' => 'html',
                                             'value' => $second_card_title,
                                         ],
                                         'schema_source' => [

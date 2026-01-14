@@ -2,31 +2,19 @@
 
 namespace Elementor\Tests\Phpunit\Elementor\Modules\Home\Transformations;
 
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
-use Elementor\Modules\EditorOne\Module as EditorOneModule;
 use Elementor\Modules\Home\Transformations\Filter_Top_Section_By_License;
-use Elementor\Plugin;
 use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 	public function setUp(): void {
 		parent::setUp();
 
-		$experiments = Plugin::$instance->experiments;
-		$experiments->set_feature_default_state(
-			EditorOneModule::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_INACTIVE
-		);
-
 		add_filter( 'elementor/admin/homescreen_promotion_tier', function() {
 			return 'free';
 		} );
 	}
 	public function tearDown(): void {
-		add_filter( 'elementor/admin/homescreen_promotion_tier', function() {
-			return 'free';
-		} );
-
+		remove_all_filters( 'elementor/admin/homescreen_promotion_tier' );
 		parent::tearDown();
 	}
 
@@ -80,11 +68,30 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 		$this->assertEquals( $expected_data, $transformed_data );
 	}
 
+	public function test__should_transform_data_for_one_tier() {
+		// Arrange
+		$original_data = $this->mock_top_section_data();
+
+		$transformation = new Filter_Top_Section_By_License();
+		$transformation->has_pro = true;
+
+		// Act
+		add_filter( 'elementor/admin/homescreen_promotion_tier', function() {
+			return 'one';
+		} );
+		$transformed_data = $transformation->transform( $original_data );
+		$expected_data = $this->mock_top_section_data_transformed_one();
+
+		// Assert
+		$this->assertEquals( $expected_data, $transformed_data );
+	}
+
 	private function mock_top_section_data() {
 		return [
 			'top_with_licences' => [
 				$this->mock_top_section_data_transformed_core()['top_with_licences'],
 				$this->mock_top_section_data_transformed_pro()['top_with_licences'],
+				$this->mock_top_section_data_transformed_one()['top_with_licences'],
 				$this->mock_top_section_data_transformed_essential()['top_with_licences'],
 			],
 			'misc' => [
@@ -144,4 +151,22 @@ class Test_Filter_Top_Section_By_License extends PHPUnit_TestCase {
 			],
 		];
 	}
+
+	private function mock_top_section_data_transformed_one() {
+		return [
+			'top_with_licences' => [
+				'thing' => [
+					'key' => 'one_value',
+				],
+				'license' => [
+					'one'
+				],
+			],
+			'misc' => [
+				'Name' => 'Microsoft',
+				'Version' => 'Windows',
+			],
+		];
+	}
+
 }
