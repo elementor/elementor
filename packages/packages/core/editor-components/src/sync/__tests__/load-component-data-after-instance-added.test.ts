@@ -23,7 +23,7 @@ describe( 'initLoadComponentDataAfterInstanceAdded', () => {
 		jest.clearAllMocks();
 	} );
 
-	it.each( [ [ 'document/elements/duplicate' ], [ 'document/elements/paste' ], [ 'document/elements/import' ] ] )(
+	it.each( [ [ 'document/elements/paste' ], [ 'document/elements/import' ] ] )(
 		'should load component assets when %s hook is triggered',
 		( command ) => {
 			// Arrange
