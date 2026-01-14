@@ -75,6 +75,46 @@ class Test_Path_Resolver extends Elementor_Test_Base {
 				'pattern' => 'settings.nonexistent.value',
 				'expected' => [],
 			],
+			'array wildcard on object returns empty' => [
+				'data' => [
+					'value' => [
+						'hOffset' => [ '$$type' => 'size' ],
+						'vOffset' => [ '$$type' => 'size' ],
+					],
+				],
+				'pattern' => 'value[*].$$type',
+				'expected' => [],
+			],
+			'object wildcard on array returns empty' => [
+				'data' => [
+					'items' => [
+						[ '$$type' => 'string', 'value' => 'a' ],
+						[ '$$type' => 'string', 'value' => 'b' ],
+					],
+				],
+				'pattern' => 'items.*.$$type',
+				'expected' => [],
+			],
+			'object wildcard on object properties' => [
+				'data' => [
+					'value' => [
+						'hOffset' => [ '$$type' => 'size' ],
+						'vOffset' => [ '$$type' => 'size' ],
+					],
+				],
+				'pattern' => 'value.*.$$type',
+				'expected' => [ 'value.hOffset.$$type', 'value.vOffset.$$type' ],
+			],
+			'array wildcard on array indices' => [
+				'data' => [
+					'items' => [
+						[ '$$type' => 'string', 'value' => 'a' ],
+						[ '$$type' => 'string', 'value' => 'b' ],
+					],
+				],
+				'pattern' => 'items[*].$$type',
+				'expected' => [ 'items[0].$$type', 'items[1].$$type' ],
+			],
 		];
 	}
 
