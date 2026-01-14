@@ -41,5 +41,6 @@ test.describe( 'Atomic Tabs Default Children @atomic-widgets', () => {
 		const tabMenu = tabsElement.locator( '.e-con[data-element_type="e-tabs-menu"]' );
 		await expect( tabMenu ).toBeVisible();
 		await expect( tabMenu ).toHaveClass( /e-atomic-element/ );
+		expect( true ).toBe( false );
 	} );
 } );
