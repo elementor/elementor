@@ -4,6 +4,7 @@ import { ThemeProvider } from '@elementor/editor-ui';
 import { useComponents } from '../../hooks/use-components';
 import { ComponentSearch } from './component-search';
 import { ComponentsList } from './components-list';
+import { ComponentsProNotification } from './components-pro-notification';
 import { SearchProvider } from './search-provider';
 
 const ComponentsContent = () => {
@@ -13,6 +14,7 @@ const ComponentsContent = () => {
 	return (
 		<>
 			{ hasComponents && <ComponentSearch /> }
+			{ hasComponents && <ComponentsProNotification /> }
 			<ComponentsList />
 		</>
 	);
