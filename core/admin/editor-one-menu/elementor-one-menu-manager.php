@@ -68,7 +68,7 @@ class Elementor_One_Menu_Manager {
 			esc_html__( 'Editor', 'elementor' ),
 			esc_html__( 'Editor', 'elementor' ),
 			Menu_Config::CAPABILITY_EDIT_POSTS,
-			Menu_Config::EDITOR_MENU_SLUG,
+			Menu_Config::ELEMENTOR_MENU_SLUG,
 			[ $this, 'render_editor_page' ],
 			20
 		);
