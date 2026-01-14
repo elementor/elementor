@@ -1,7 +1,7 @@
-import { getContainer, updateElementSettings } from '@elementor/editor-elements';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { type ComponentId } from '../../types';
+import { revertElementOverridableSetting } from '../../utils/revert-element-overridable-setting';
 import { type Source, trackComponentEvent } from '../../utils/tracking';
 import { selectCurrentComponent, selectOverridableProps, slice } from '../store';
 import { removePropFromAllGroups } from '../utils/groups-transformers';
@@ -25,7 +25,7 @@ export function deleteOverridableProp( { componentId, propKey, source }: DeleteP
 		return;
 	}
 
-	revertElementSetting( prop.elementId, prop.propKey, prop.originValue );
+	revertElementOverridableSetting( prop.elementId, prop.propKey, prop.originValue, propKey );
 
 	const { [ propKey ]: removedProp, ...remainingProps } = overridableProps.props;
 
@@ -52,19 +52,5 @@ export function deleteOverridableProp( { componentId, propKey, source }: DeleteP
 		property_path: removedProp.propKey,
 		property_name: removedProp.label,
 		element_type: removedProp.widgetType ?? removedProp.elType,
-	} );
-}
-
-function revertElementSetting( elementId: string, settingKey: string, originValue: unknown ): void {
-	const container = getContainer( elementId );
-
-	if ( ! container ) {
-		return;
-	}
-
-	updateElementSettings( {
-		id: elementId,
-		props: { [ settingKey ]: originValue ?? null },
-		withHistory: false,
 	} );
 }
