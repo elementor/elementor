@@ -97,13 +97,14 @@ describe( 'save-as-component-tool handler', () => {
 					} )
 				);
 
-				expect( mockCreateUnpublishedComponent ).toHaveBeenCalledWith(
-					TEST_COMPONENT_NAME,
-					expect.objectContaining( { elType } ),
-					null,
-					undefined,
-					expect.any( String )
-				);
+				expect( mockCreateUnpublishedComponent ).toHaveBeenCalledWith( {
+					name: TEST_COMPONENT_NAME,
+					element: expect.objectContaining( { elType } ),
+					eventData: null,
+					uid: expect.any( String ),
+					overridableProps: undefined,
+					source: 'mcp_tool',
+				} );
 			}
 		);
 
@@ -164,16 +165,17 @@ describe( 'save-as-component-tool handler', () => {
 				} )
 			);
 
-			expect( mockCreateUnpublishedComponent ).toHaveBeenCalledWith(
-				TEST_COMPONENT_NAME,
-				expect.objectContaining( { elType: 'e-flexbox' } ),
-				null,
-				expect.objectContaining( {
+			expect( mockCreateUnpublishedComponent ).toHaveBeenCalledWith( {
+				name: TEST_COMPONENT_NAME,
+				element: expect.objectContaining( { elType: 'e-flexbox' } ),
+				eventData: null,
+				uid: expect.any( String ),
+				overridableProps: expect.objectContaining( {
 					props: expect.any( Object ),
 					groups: expect.any( Object ),
 				} ),
-				expect.any( String )
-			);
+				source: 'mcp_tool',
+			} );
 		} );
 	} );
 
