@@ -8,9 +8,9 @@ import { isEditingComponent } from '../utils/is-editing-component';
 const V4_DEFAULT_CONTAINER_TYPE = 'e-flexbox';
 
 type Container = Omit< V1Element, 'children' | 'parent' > & {
-	document: V1Document;
-	parent: Container;
-	children: Container[];
+	document?: V1Document;
+	parent?: Container;
+	children?: Container[];
 };
 
 export function initHandleComponentEditModeContainer() {
@@ -18,7 +18,7 @@ export function initHandleComponentEditModeContainer() {
 	initHandleTopLevelElementDelete();
 }
 
-type DeleteArgs = {
+export type DeleteArgs = {
 	container?: Container;
 	containers?: Container[];
 };
@@ -37,7 +37,7 @@ function initHandleTopLevelElementDelete() {
 			}
 
 			const component = container.parent;
-			const isComponentEmpty = component.children.length === 0;
+			const isComponentEmpty = component.children?.length === 0;
 
 			if ( isComponentEmpty ) {
 				createEmptyTopLevelContainer( container.parent );
@@ -110,5 +110,5 @@ function isComponent( container: Container ): boolean {
 		return false;
 	}
 
-	return container.document.config.type === COMPONENT_DOCUMENT_TYPE;
+	return container.document?.config.type === COMPONENT_DOCUMENT_TYPE;
 }

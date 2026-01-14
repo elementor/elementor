@@ -1,9 +1,10 @@
 import { createHooksRegistry, setupHooksRegistry } from 'test-utils';
+import { type V1Document } from '@elementor/editor-documents';
 import { createElement, selectElement, type V1Element } from '@elementor/editor-elements';
 
 import { COMPONENT_DOCUMENT_TYPE } from '../../components/consts';
 import { isEditingComponent } from '../../utils/is-editing-component';
-import { initHandleComponentEditModeContainer } from '../handle-component-edit-mode-container';
+import { type DeleteArgs, initHandleComponentEditModeContainer } from '../handle-component-edit-mode-container';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
@@ -26,13 +27,28 @@ describe( 'initHandleComponentEditModeContainer', () => {
 	} );
 
 	describe( 'initHandleTopLevelElementDelete', () => {
+		const deleteContainers = ( args: DeleteArgs ) => {
+			const containersToDelete = args.containers ?? ( args.container ? [ args.container ] : [] );
+			for ( const container of containersToDelete ) {
+				if ( container.parent ) {
+					container.parent.children = container.parent.children?.filter(
+						( child ) => child.id !== container.id
+					);
+				}
+			}
+
+			const deleteHook = hooksRegistry.getByCommand( 'document/elements/delete' );
+			deleteHook?.apply( args );
+		};
+
 		it( 'should register a hook for document/elements/delete command', () => {
 			// Act
 			initHandleComponentEditModeContainer();
 
+			const deleteHook = hooksRegistry.getByCommand( 'document/elements/delete' );
+
 			// Assert
-			const hook = hooksRegistry.getByCommand( 'document/elements/delete' );
-			expect( hook ).toBeDefined();
+			expect( deleteHook ).toBeDefined();
 		} );
 
 		it( 'should create new top level container when top level element is deleted from component', () => {
@@ -40,13 +56,12 @@ describe( 'initHandleComponentEditModeContainer', () => {
 			jest.mocked( createElement ).mockReturnValue( { id: 'new-container-id' } as unknown as V1Element );
 
 			initHandleComponentEditModeContainer();
-			const hook = hooksRegistry.getByCommand( 'document/elements/delete' );
 
 			const deletedElement = createMockContainer( { id: 'deleted-element' } );
 			createMockComponentContainer( [ deletedElement ] );
 
 			// Act
-			hook?.apply( { container: deletedElement }, deletedElement );
+			deleteContainers( { container: deletedElement } );
 
 			// Assert
 			expect( createElement ).toHaveBeenCalledWith( {
@@ -59,14 +74,13 @@ describe( 'initHandleComponentEditModeContainer', () => {
 		it( 'should not create new top level container when component still has children', () => {
 			// Arrange
 			initHandleComponentEditModeContainer();
-			const hook = hooksRegistry.getByCommand( 'document/elements/delete' );
 
 			const deletedElement = createMockContainer( { id: 'deleted-element' } );
 			const remainingElement = createMockContainer( { id: 'remaining-element' } );
 			createMockComponentContainer( [ deletedElement, remainingElement ] );
 
 			// Act
-			hook?.apply( { container: deletedElement }, deletedElement );
+			deleteContainers( { container: deletedElement } );
 
 			// Assert
 			expect( createElement ).not.toHaveBeenCalled();
@@ -76,13 +90,12 @@ describe( 'initHandleComponentEditModeContainer', () => {
 			// Arrange
 			jest.mocked( isEditingComponent ).mockReturnValue( false );
 			initHandleComponentEditModeContainer();
-			const hook = hooksRegistry.getByCommand( 'document/elements/delete' );
 
 			const deletedElement = createMockContainer( { id: 'deleted-element' } );
 			createMockComponentContainer( [ deletedElement ] );
 
 			// Act
-			hook?.apply( { container: deletedElement }, deletedElement );
+			deleteContainers( { container: deletedElement } );
 
 			// Assert
 			expect( createElement ).not.toHaveBeenCalled();
@@ -91,13 +104,12 @@ describe( 'initHandleComponentEditModeContainer', () => {
 		it( 'should not create new top level container when parent is not a component', () => {
 			// Arrange
 			initHandleComponentEditModeContainer();
-			const hook = hooksRegistry.getByCommand( 'document/elements/delete' );
 
 			const parent = createMockContainer( { id: 'regular-container', children: [] } );
 			const deletedElement = createMockContainer( { id: 'deleted-element', parent } );
 
 			// Act
-			hook?.apply( { container: deletedElement }, deletedElement );
+			deleteContainers( { container: deletedElement } );
 
 			// Assert
 			expect( createElement ).not.toHaveBeenCalled();
@@ -106,14 +118,13 @@ describe( 'initHandleComponentEditModeContainer', () => {
 		it( 'should handle containers array', () => {
 			// Arrange
 			initHandleComponentEditModeContainer();
-			const hook = hooksRegistry.getByCommand( 'document/elements/delete' );
 
 			const deletedElement1 = createMockContainer( { id: 'deleted-1' } );
 			const deletedElement2 = createMockContainer( { id: 'deleted-2' } );
 			createMockComponentContainer( [ deletedElement1 ] );
 
 			// Act
-			hook?.apply( { containers: [ deletedElement1, deletedElement2 ] }, [ deletedElement1, deletedElement2 ] );
+			deleteContainers( { containers: [ deletedElement1, deletedElement2 ] } );
 
 			// Assert
 			expect( createElement ).toHaveBeenCalledTimes( 1 );
@@ -225,32 +236,34 @@ describe( 'initHandleComponentEditModeContainer', () => {
 	} );
 } );
 
-type MockContainer = {
-	id: string;
-	document: { config: { type: string } };
-	parent: MockContainer | null;
-	children: MockContainer[];
-};
+type MockContainer = NonNullable< DeleteArgs[ 'container' ] >;
 
 function createMockContainer( elementData: Partial< MockContainer > = {} ): MockContainer {
 	return {
 		id: 'element-id',
-		document: { config: { type: 'page' } },
-		parent: null,
 		children: [],
+		model: {
+			get: jest.fn(),
+			set: jest.fn(),
+			toJSON: jest.fn(),
+		},
+		settings: {
+			get: jest.fn(),
+			set: jest.fn(),
+			toJSON: jest.fn(),
+		},
 		...elementData,
 	};
 }
 
 function createMockComponentContainer( children: MockContainer[] = [] ): MockContainer {
-	const component: MockContainer = {
+	const component = createMockContainer( {
 		id: 'document',
-		document: { config: { type: COMPONENT_DOCUMENT_TYPE } },
-		parent: null,
+		document: { config: { type: COMPONENT_DOCUMENT_TYPE } } as unknown as V1Document,
 		children,
-	};
+	} );
 
-	children.forEach( ( child ) => {
+	children?.forEach( ( child: MockContainer ) => {
 		child.parent = component;
 	} );
 
