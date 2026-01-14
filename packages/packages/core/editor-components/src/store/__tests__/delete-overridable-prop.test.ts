@@ -14,12 +14,7 @@ import type { OverridableProp, OverridableProps, PublishedComponent } from '../.
 import { deleteOverridableProp } from '../actions/delete-overridable-prop';
 import { SLICE_NAME } from '../store';
 
-jest.mock( '@elementor/editor-elements', () => ( {
-	...jest.requireActual( '@elementor/editor-elements' ),
-	getContainer: jest.fn(),
-	getElementSetting: jest.fn(),
-	updateElementSettings: jest.fn(),
-} ) );
+jest.mock( '@elementor/editor-elements' );
 
 jest.mock( '@elementor/store', () => ( {
 	...jest.requireActual( '@elementor/store' ),
