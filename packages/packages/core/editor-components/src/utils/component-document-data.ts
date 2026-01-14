@@ -1,12 +1,18 @@
 import { type Document, getV1DocumentsManager } from '@elementor/editor-documents';
 
-type ComponentDocumentData = Document;
+type ComponentDocumentData = Omit< Document, 'type' > & { type: string };
 
 export const getComponentDocumentData = async ( id: number ) => {
 	const documentManager = getV1DocumentsManager();
 
 	try {
-		return await documentManager.request< ComponentDocumentData >( id );
+		const document = await documentManager.request< ComponentDocumentData >( id );
+
+		if ( ! document || 'elementor_component' !== document.type ) {
+			return null;
+		}
+
+		return document;
 	} catch {
 		return null;
 	}
