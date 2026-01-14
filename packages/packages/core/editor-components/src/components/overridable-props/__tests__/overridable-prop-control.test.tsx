@@ -343,11 +343,6 @@ const DYNAMIC_TYPE = 'dynamic';
 
 const isDynamicValue = ( value: unknown ) => isTransformable( value ) && value.$$type === DYNAMIC_TYPE;
 
-const dynamicReplacement: ControlReplacement = {
-	component: () => <div role="alert">Dynamic Control Replacement</div>,
-	condition: ( { value } ) => isDynamicValue( value ),
-};
-
 describe( 'OverridablePropControl with control replacements', () => {
 	let store: Store< ComponentsSlice >;
 
@@ -370,7 +365,7 @@ describe( 'OverridablePropControl with control replacements', () => {
 			elementType: mockElementType,
 		} );
 
-		mockGetControlReplacements.mockReturnValue( [ dynamicReplacement ] );
+		mockGetControlReplacements.mockReturnValue( [] );
 	} );
 
 	afterEach( () => {
@@ -379,6 +374,13 @@ describe( 'OverridablePropControl with control replacements', () => {
 
 	it( 'should apply control replacement when inner value matches replacement condition', () => {
 		// Arrange
+		const dynamicReplacement: ControlReplacement = {
+			component: () => <div role="alert">Dynamic Control Replacement</div>,
+			condition: ( { value } ) => isDynamicValue( value ),
+		};
+
+		mockGetControlReplacements.mockReturnValue( [ dynamicReplacement ] );
+
 		const dynamicOriginValue = createMockDynamicValue( 'test-tag', 'test-group' );
 
 		const value = componentOverridablePropTypeUtil.create( {
@@ -399,6 +401,13 @@ describe( 'OverridablePropControl with control replacements', () => {
 
 	it( 'should render original control when inner value does not match any replacement condition', () => {
 		// Arrange
+		const dynamicReplacement: ControlReplacement = {
+			component: () => <div role="alert">Dynamic Control Replacement</div>,
+			condition: ( { value } ) => isDynamicValue( value ),
+		};
+
+		mockGetControlReplacements.mockReturnValue( [ dynamicReplacement ] );
+
 		const value = componentOverridablePropTypeUtil.create( {
 			override_key: MOCK_OVERRIDE_KEY,
 			origin_value: stringPropTypeUtil.create( 'Regular Text Value' ),
@@ -423,12 +432,12 @@ describe( 'OverridablePropControl with control replacements', () => {
 			</div>
 		);
 
-		mockGetControlReplacements.mockReturnValue( [
-			{
-				component: ReplacementWithOriginal,
-				condition: ( { value } ) => isDynamicValue( value ),
-			},
-		] );
+		const dynamicReplacement: ControlReplacement = {
+			component: ReplacementWithOriginal,
+			condition: ( { value } ) => isDynamicValue( value ),
+		};
+
+		mockGetControlReplacements.mockReturnValue( [ dynamicReplacement ] );
 
 		const dynamicOriginValue = createMockDynamicValue( 'test-tag', 'test-group' );
 
