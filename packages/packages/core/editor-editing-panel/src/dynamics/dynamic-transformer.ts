@@ -1,20 +1,23 @@
 import { createTransformer } from '@elementor/editor-canvas';
 import { isTransformable, type Props } from '@elementor/editor-props';
 
+import { type ExtendedWindow } from '../sync/types';
 import { DynamicTagsManagerNotFoundError } from './errors';
-import { type ExtendedWindow } from './types';
+import { isDynamicTagSupported } from './utils';
 
 type Dynamic = {
 	name?: string;
 	settings?: Props;
 };
 
-export const dynamicTransformer = createTransformer( ( value: Dynamic ) => {
-	if ( ! value.name ) {
-		return null;
+const extendedWindow = window as ExtendedWindow;
+
+export const dynamicTransformer = createTransformer< Dynamic >( ( value, { propType } ) => {
+	if ( ! value?.name || ! isDynamicTagSupported( value.name ) ) {
+		return propType?.default ?? null;
 	}
 
-	return getDynamicValue( value.name, simpleTransform( value.settings ?? {} ) );
+	return getDynamicValue( value.name, simpleTransform( value?.settings ?? {} ) );
 } );
 
 // Temporary naive transformation until we'll have a `backendTransformer` that
@@ -30,7 +33,6 @@ function simpleTransform( props: Props ) {
 }
 
 function getDynamicValue( name: string, settings: Record< string, unknown > ) {
-	const extendedWindow = window as unknown as ExtendedWindow;
 	const { dynamicTags } = extendedWindow.elementor ?? {};
 
 	if ( ! dynamicTags ) {

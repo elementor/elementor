@@ -1,10 +1,36 @@
+import { type PropType } from '@elementor/editor-props';
+
+import { type ExtendedWindow } from '../../sync/types';
 import { dynamicTransformer } from '../dynamic-transformer';
 import { DynamicTagsManagerNotFoundError } from '../errors';
-import { type DynamicTagsManager, type ExtendedWindow, type TagInstance } from '../types';
+import { type DynamicTagsManager, type TagInstance } from '../types';
 
 jest.mock( '@elementor/editor-v1-adapters' );
 
 describe( 'dynamicTransformer', () => {
+	const extendedWindow = window as ExtendedWindow;
+	const ELEMENTOR_MOCK = {
+		dynamicTags: mockDynamicTagsManager(),
+		config: {
+			atomicDynamicTags: {
+				tags: {
+					'test-tag': {
+						name: 'test-tag',
+						label: 'Test Tag',
+						group: 'Test Group',
+						categories: [ 'Test Category' ],
+						atomic_controls: [],
+						props_schema: {},
+					},
+				},
+				groups: {
+					'Test Group': {
+						title: 'Test Group',
+					},
+				},
+			},
+		},
+	};
 	it( 'should return null when there is no name', () => {
 		// Act.
 		const result = dynamicTransformer( {}, { key: 'test' } );
@@ -15,9 +41,8 @@ describe( 'dynamicTransformer', () => {
 
 	it( 'should throw when the dynamic tags manager cannot be found', () => {
 		// Arrange.
-		const extendedWindow = window as unknown as ExtendedWindow;
-
 		extendedWindow.elementor = {
+			...ELEMENTOR_MOCK,
 			dynamicTags: undefined,
 		};
 
@@ -29,11 +54,7 @@ describe( 'dynamicTransformer', () => {
 
 	it( 'should fetch the tag value from server, and load from cache on next requests', async () => {
 		// Arrange.
-		const extendedWindow = window as unknown as ExtendedWindow;
-
-		extendedWindow.elementor = {
-			dynamicTags: mockDynamicTagsManager(),
-		};
+		extendedWindow.elementor = ELEMENTOR_MOCK;
 
 		// Act.
 		const valueFromServer = dynamicTransformer(
@@ -52,6 +73,39 @@ describe( 'dynamicTransformer', () => {
 
 		// Assert.
 		expect( valueFromCache ).toBe( 'test-tag-{"settingKey":"setting-value"}' );
+	} );
+
+	it( "should return null when tag doesn't exist", async () => {
+		// Arrange & Act.
+		const value = dynamicTransformer(
+			{ name: 'test-tag', settings: { settingKey: 'setting-value' } },
+			{ key: 'test' }
+		);
+
+		// Assert.
+		expect( value ).toBe( null );
+	} );
+
+	it( "should return default value if it exists when tag doesn't exist", async () => {
+		// Arrange & Act.
+		const value = dynamicTransformer(
+			{ name: 'test-tag', settings: { settingKey: 'setting-value' } },
+			{ key: 'test', propType: { default: 'default-value' } as PropType }
+		);
+
+		// Assert.
+		expect( value ).toBe( 'default-value' );
+	} );
+
+	it( 'should return default value for null dynamic values', async () => {
+		// Arrange & Act.
+		const value = dynamicTransformer( null as never, {
+			key: 'test',
+			propType: { default: 'default-value' } as PropType,
+		} );
+
+		// Assert.
+		expect( value ).toBe( 'default-value' );
 	} );
 } );
 
