@@ -40,11 +40,15 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 		
 		// Add Move in hover state
 		await addTransformButton.click();
-		await page.locator( 'li:has-text("Move")' ).first().click( { force: true } );
+		const moveItem = page.locator( 'li:has-text("Move")' ).first();
+		await moveItem.waitFor( { state: 'visible', timeout: 15000 } );
+		await moveItem.click( { force: true } );
 		
 		// Add Scale in hover state
 		await addTransformButton.click();
-		await page.locator( 'li:has-text("Scale")' ).first().click( { force: true } );
+		const scaleItem = page.locator( 'li:has-text("Scale")' ).first();
+		await scaleItem.waitFor( { state: 'visible', timeout: 15000 } );
+		await scaleItem.click( { force: true } );
 
 		// Assert - Before refresh (should have 2 transform items)
 		await page.waitForTimeout( 1000 );
