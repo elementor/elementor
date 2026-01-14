@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createMockPropType, renderWithStore } from 'test-utils';
 import { ControlActionsProvider, TextControl, useBoundProp } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
-import { getElementLabel, getElementType, getWidgetsCache, useElementSetting } from '@elementor/editor-elements';
+import { getElementLabel, getElementType, getWidgetsCache } from '@elementor/editor-elements';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -24,25 +24,9 @@ jest.mock( '@elementor/editor-controls', () => ( {
 	useBoundProp: jest.fn(),
 } ) );
 
-jest.mock( '@elementor/editor-elements', () => ( {
-	...jest.requireActual( '@elementor/editor-elements' ),
-	useElementSetting: jest.fn(),
-	getElementType: jest.fn(),
-	getWidgetsCache: jest.fn(),
-	getElementLabel: jest.fn(),
-} ) );
+jest.mock( '@elementor/editor-elements' );
 
-jest.mock( '@elementor/session', () => ( {
-	getSessionStorageItem: jest.fn(),
-	setSessionStorageItem: jest.fn(),
-} ) );
-
-jest.mock( '../../../prop-types/component-instance-prop-type', () => ( {
-	componentInstancePropTypeUtil: {
-		extract: jest.fn(),
-		key: 'component-instance',
-	},
-} ) );
+jest.mock( '../../../prop-types/component-instance-prop-type' );
 
 const MOCK_COMPONENT_ID = 456;
 const MOCK_COMPONENT_ID_2 = 789;
@@ -75,11 +59,6 @@ const MOCK_INSTANCE_ELEMENT_TYPE = {
 	styleStates: [],
 };
 
-const WIDGET_DEFINITIONS = {
-	'e-heading': { propKey: 'title', label: 'Title', title: 'Heading' },
-	'e-text': { propKey: 'content', label: 'Content', title: 'Text' },
-} as const;
-
 describe( '<OverridePropControl />', () => {
 	let store: Store< SliceState< typeof slice > >;
 
@@ -109,21 +88,12 @@ describe( '<OverridePropControl />', () => {
 			path: [ 'component_instance' ],
 		} );
 
-		jest.mocked( useElementSetting ).mockReturnValue( {} );
 		jest.mocked( componentInstancePropTypeUtil.extract ).mockReturnValue( {
 			component_id: { $$type: 'number', value: MOCK_COMPONENT_ID },
 			overrides: { $$type: 'overrides', value: [] },
 		} );
-		jest.mocked( getWidgetsCache ).mockReturnValue(
-			createMockWidgetsCache() as unknown as ReturnType< typeof getWidgetsCache >
-		);
-		jest.mocked( getElementLabel ).mockReturnValue( 'Element Label' );
-		jest.mocked( getElementType ).mockImplementation( ( type ) => {
-			if ( type in WIDGET_DEFINITIONS ) {
-				return createElementType( type as keyof typeof WIDGET_DEFINITIONS );
-			}
-			return null;
-		} );
+
+		setupElementsMocks();
 	} );
 
 	const MOCK_OVERRIDABLE_PROP: OverridableProp = {
@@ -148,6 +118,7 @@ describe( '<OverridePropControl />', () => {
 					value: {
 						override_key: 'prop-1',
 						schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
+						override_value: { $$type: 'string', value: 'New Value' },
 					},
 				},
 			},
@@ -164,6 +135,7 @@ describe( '<OverridePropControl />', () => {
 					value: {
 						override_key: 'prop-1',
 						schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
+						override_value: { $$type: 'string', value: 'New Value' },
 					},
 				},
 			},
@@ -187,6 +159,7 @@ describe( '<OverridePropControl />', () => {
 							value: {
 								override_key: 'prop-1',
 								schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
+								override_value: { $$type: 'string', value: 'New Value' },
 							},
 						},
 					},
@@ -208,18 +181,9 @@ describe( '<OverridePropControl />', () => {
 			const setValueCall = mockSetInstanceValue.mock.calls[ 0 ][ 0 ];
 			const newOverrides = setValueCall.overrides.value;
 
-			expect( newOverrides ).toHaveLength( matchingOverride ? 1 : 1 );
-
-			const createdOverride = newOverrides[ 0 ];
+			const [ createdOverride ] = newOverrides;
 			expect( createdOverride.$$type ).toBe( expectedOverrideStructure.$$type );
-			expect( createdOverride.value.override_key ).toBe( expectedOverrideStructure.value.override_key );
-			expect( createdOverride.value.schema_source ).toEqual( expectedOverrideStructure.value.schema_source );
-
-			if ( expectedOverrideStructure.$$type === 'overridable' ) {
-				const innerOverride = createdOverride.value.origin_value;
-				expect( innerOverride.$$type ).toBe( 'override' );
-				expect( innerOverride.value.override_key ).toBe( 'prop-1' );
-			}
+			expect( createdOverride.value ).toEqual( expectedOverrideStructure.value );
 		} );
 	} );
 
@@ -255,26 +219,37 @@ describe( '<OverridePropControl />', () => {
 	} );
 } );
 
-function createElementType( widgetType: keyof typeof WIDGET_DEFINITIONS ) {
-	const def = WIDGET_DEFINITIONS[ widgetType ];
-	return {
-		key: widgetType,
-		title: def.title,
-		controls: [
-			{
-				type: 'control' as const,
-				value: { bind: def.propKey, label: def.label, type: MOCK_CONTROL_TYPE, props: {} },
-			},
-		],
-		propsSchema: { [ def.propKey ]: MOCK_PROP_TYPE },
-		dependenciesPerTargetMapping: {},
-		styleStates: [],
+function setupElementsMocks() {
+	const widgetDefinitions: Record< string, { propKey: string; label: string; title: string } > = {
+		'e-heading': { propKey: 'title', label: 'Title', title: 'Heading' },
+		'e-text': { propKey: 'content', label: 'Content', title: 'Text' },
 	};
-}
 
-function createMockWidgetsCache() {
-	return Object.fromEntries(
-		Object.entries( WIDGET_DEFINITIONS ).map( ( [ key, def ] ) => [
+	jest.mocked( getElementType ).mockImplementation( ( type ) => {
+		const def = widgetDefinitions[ type ];
+		if ( ! def ) {
+			return null;
+		}
+
+		return {
+			key: type,
+			title: def.title,
+			controls: [
+				{
+					type: 'control' as const,
+					value: { bind: def.propKey, label: def.label, type: MOCK_CONTROL_TYPE, props: {} },
+				},
+			],
+			propsSchema: { [ def.propKey ]: MOCK_PROP_TYPE },
+			dependenciesPerTargetMapping: {},
+			styleStates: [],
+		};
+	} );
+
+	jest.mocked( getElementLabel ).mockReturnValue( 'Element Label' );
+
+	const widgetsCache = Object.fromEntries(
+		Object.entries( widgetDefinitions ).map( ( [ key, def ] ) => [
 			key,
 			{
 				atomic_props_schema: { [ def.propKey ]: MOCK_PROP_TYPE },
@@ -286,7 +261,9 @@ function createMockWidgetsCache() {
 				],
 			},
 		] )
-	);
+	) as ReturnType< typeof getWidgetsCache >;
+
+	jest.mocked( getWidgetsCache ).mockReturnValue( widgetsCache );
 }
 
 function setupComponent( currentComponentId: number | null ) {
