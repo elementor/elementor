@@ -10,7 +10,7 @@ import {
 	SettingsField,
 	useElement,
 } from '@elementor/editor-editing-panel';
-import { type Control, getElementType } from '@elementor/editor-elements';
+import { type Control, getContainer, getElementType } from '@elementor/editor-elements';
 import { Stack } from '@elementor/ui';
 
 import { useControlsByWidgetType } from '../../hooks/use-controls-by-widget-type';
@@ -35,6 +35,7 @@ import { type OriginPropFields, type OverridableProp } from '../../types';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
 import { resolveOverridePropValue } from '../../utils/resolve-override-prop-value';
 import { ControlLabel } from '../control-label';
+import { OverrideControlInnerElementNotFoundError } from '../errors';
 
 type Props = {
 	overridableProp: OverridableProp;
@@ -130,6 +131,13 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 	);
 
 	const { elementId, widgetType, elType, propKey } = overridableProp.originPropFields ?? overridableProp;
+
+	const elementContainer = getContainer( elementId );
+	if ( ! elementContainer ) {
+		throw new OverrideControlInnerElementNotFoundError( {
+			context: { componentId: componentInstanceId, elementId },
+		} );
+	}
 
 	const type = elType === 'widget' ? widgetType : elType;
 	const elementType = getElementType( type );

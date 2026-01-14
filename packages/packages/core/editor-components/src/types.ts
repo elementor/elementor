@@ -15,6 +15,7 @@ export type Component = PublishedComponent | UnpublishedComponent;
 
 export type PublishedComponent = BaseComponent & {
 	id: number;
+	isArchived?: boolean;
 };
 
 export type UnpublishedComponent = BaseComponent & {
