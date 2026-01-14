@@ -5,17 +5,17 @@ import { __getState as getState } from '@elementor/store';
 import { selectCreatedThisSession } from '../store/store';
 import { type ExtendedWindow } from '../types';
 
-type PerformedBy = 'user' | 'mcp_tool';
+type Source = 'user' | 'mcp_tool';
 
-let currentPerformedBy: PerformedBy = 'user';
+let currentSource: Source = 'user';
 
 export const withMCPContext = async < T >( fn: () => Promise< T > ): Promise< T > => {
-	const previous = currentPerformedBy;
-	currentPerformedBy = 'mcp_tool';
+	const previous = currentSource;
+	currentSource = 'mcp_tool';
 	try {
 		return await fn();
 	} finally {
-		currentPerformedBy = previous;
+		currentSource = previous;
 	}
 };
 
@@ -41,7 +41,7 @@ export const trackComponentEvent = ( { action, ...data }: ComponentEventData ) =
 	}
 
 	const name = config.names.components[ action ];
-	dispatchEvent?.( name, { ...data, performed_by: currentPerformedBy, 'Feature name': FEATURE_NAME } );
+	dispatchEvent?.( name, { ...data, source: currentSource, 'Feature name': FEATURE_NAME } );
 };
 
 export const onElementDrop = ( _args: unknown, element: V1Element ) => {
