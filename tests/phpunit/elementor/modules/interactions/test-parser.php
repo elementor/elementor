@@ -204,4 +204,74 @@ class Test_Parser extends TestCase {
 			],
 		], $result );
 	}
+
+	public function test_assign_interactions_ids__will_replace_temp_ids_with_permanent_ids() {
+		$interaction_with_temp_id = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, 'temp-abc123' );
+		
+		$given_document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [ $interaction_with_temp_id ],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+		
+		$result = $this->parser()->assign_interaction_ids( $given_document );
+		
+		$decoded = json_decode( $result['elements'][0]['interactions'], true );
+		$new_id = $decoded['items'][0]['value']['interaction_id']['value'];
+		
+		$this->assertStringNotContainsString( 'temp-', $new_id );
+		$this->assertStringStartsWith( '1-1-', $new_id );
+	}
+	
+	public function test_assign_interactions_ids__will_not_add_temp_ids_to_lookup() {
+		$interaction_with_temp_id = $this->create_prop_type_interaction( 'load', 'fade', 'in', '', 100, 0, 'temp-abc123' );
+		$interaction_with_permanent_id = $this->create_prop_type_interaction( 'load', 'slide', 'in', '', 200, 0, 'permanent-id-123' );
+		
+		$given_document = [
+			'elements' => [
+				[
+					'id' => '1',
+					'elType' => 'e-flexbox',
+					'settings' => [],
+					'interactions' => json_encode( [
+						'items' => [
+							$interaction_with_temp_id,
+							$interaction_with_permanent_id,
+						],
+						'version' => 1,
+					] ),
+				],
+			],
+		];
+		
+		$result = $this->parser()->assign_interaction_ids( $given_document );
+		
+		$decoded = json_decode( $result['elements'][0]['interactions'], true );
+		
+		$this->assertEquals( 'permanent-id-123', $decoded['items'][1]['value']['interaction_id']['value'] );
+		$new_temp_id_replacement = $decoded['items'][0]['value']['interaction_id']['value'];
+		$this->assertStringNotContainsString( 'temp-', $new_temp_id_replacement );
+	}
+	
+	public function test_is_temp_id__will_identify_temp_ids() {
+		$parser = $this->parser();
+		$reflection = new ReflectionClass( $parser );
+		$method = $reflection->getMethod( 'is_temp_id' );
+		$method->setAccessible( true );
+		
+		$this->assertTrue( $method->invoke( $parser, 'temp-abc123' ) );
+		$this->assertTrue( $method->invoke( $parser, 'temp-xyz789' ) );
+		$this->assertFalse( $method->invoke( $parser, 'permanent-id' ) );
+		$this->assertFalse( $method->invoke( $parser, '1-1-1' ) );
+		$this->assertFalse( $method->invoke( $parser, '' ) );
+		$this->assertFalse( $method->invoke( $parser, null ) );
+	}
 }
