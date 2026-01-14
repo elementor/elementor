@@ -10,8 +10,7 @@ import { z } from '@elementor/schema';
 import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 import { saveGlobalClasses } from '../save-global-classes';
 import { GLOBAL_CLASSES_URI } from './classes-resource';
-
-type XElementor = z.infer< z.ZodAny >;
+import { AppContext } from '@elementor/env';
 
 const schema = {
 	action: z.enum( [ 'create', 'modify', 'delete' ] ).describe( 'Operation to perform' ),
@@ -97,8 +96,7 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 		};
 	}
 
-	const Utils = ( ( ( window as XElementor ).elementorV2 as XElementor ).editorVariables as XElementor )
-		.Utils as typeof IUtils;
+	const Utils = await AppContext.require<typeof IUtils>('Variables::Utils')
 	Object.keys( props ).forEach( ( key ) => {
 		props[ key ] = Schema.adjustLlmPropValueSchema( props[ key ], {
 			transformers: Utils.globalVariablesLLMResolvers,
