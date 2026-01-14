@@ -257,6 +257,7 @@ function createComponentView(
 
 			trackComponentEvent( {
 				action: 'edited',
+				source: 'user',
 				component_uid: editorSettings?.component_uid,
 				component_name: editorSettings?.title,
 				location,
