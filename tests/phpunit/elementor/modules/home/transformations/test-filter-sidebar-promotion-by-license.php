@@ -6,6 +6,11 @@ use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 
 class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 
+	public function tearDown(): void {
+		remove_all_filters( 'elementor/admin/homescreen_promotion_tier' );
+		parent::tearDown();
+	}
+
 	public function test_transform__core_plugin() {
 		// Arrange
 		$original_data = $this->mock_home_screen_data();
@@ -125,7 +130,7 @@ class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 					'key' => 'value',
 				],
 				'license' => [
-					'one'
+					'free'
 				],
 				'is_enabled' => 'true',
 			],
@@ -143,7 +148,7 @@ class Test_Filter_Sidebar_Promotion_By_License extends PHPUnit_TestCase {
 					'key' => 'value',
 				],
 				'license' => [
-					'one'
+					'pro'
 				],
 				'is_enabled' => 'true',
 			],
