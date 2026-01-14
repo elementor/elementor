@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { createMockPropType, renderWithStore } from 'test-utils';
+import { createMockContainer, createMockPropType, renderWithStore } from 'test-utils';
 import { ControlActionsProvider, TextControl, useBoundProp } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
-import { getElementLabel, getElementType, getWidgetsCache } from '@elementor/editor-elements';
+import { getContainer, getElementLabel, getElementType, getWidgetsCache } from '@elementor/editor-elements';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -224,6 +224,8 @@ function setupElementsMocks() {
 		'e-heading': { propKey: 'title', label: 'Title', title: 'Heading' },
 		'e-text': { propKey: 'content', label: 'Content', title: 'Text' },
 	};
+
+	jest.mocked( getContainer ).mockImplementation( ( id ) => createMockContainer( id, [] ) );
 
 	jest.mocked( getElementType ).mockImplementation( ( type ) => {
 		const def = widgetDefinitions[ type ];
