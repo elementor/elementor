@@ -478,12 +478,7 @@ describe( 'createAtomicElementBaseView - tagName with overridable props', () => 
 
 	it( 'should return cached tag when available', () => {
 		// Arrange
-		mockModel.get.mockImplementation( ( key ) => {
-			if ( '_resolvedTag' === key ) {
-				return 'article';
-			}
-			return undefined;
-		} );
+		viewInstance._cacheResolvedTag( 'article' );
 
 		// Act
 		const result = viewInstance.tagName();
@@ -1069,11 +1064,14 @@ describe( 'createAtomicElementBaseView - cache invalidation', () => {
 	} );
 
 	it( 'should clear tag cache in _beforeRender', () => {
-		// Arrange & Act
+		// Arrange
+		viewInstance._cacheResolvedTag( 'cached-tag' );
+
+		// Act
 		viewInstance._beforeRender();
 
-		// Assert
-		expect( mockModel.unset ).toHaveBeenCalledWith( '_resolvedTag' );
+		// Assert - cache should be invalidated, so tagName should resolve fresh
+		expect( viewInstance.tagName() ).toBe( DEFAULT_HTML_TAG );
 	} );
 
 	it( 'should set _isRendering to true in _beforeRender', () => {

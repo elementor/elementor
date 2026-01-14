@@ -4,6 +4,8 @@ import AtomicElementEmptyView from './container/atomic-element-empty-view';
 const BaseElementView = elementor.modules.elements.views.BaseElement;
 
 export default function createAtomicElementBaseView( type ) {
+	const resolvedTagCache = new WeakMap();
+
 	const AtomicElementView = BaseElementView.extend( {
 		template: Marionette.TemplateCache.get( `#tmpl-elementor-${ type }-content` ),
 
@@ -12,7 +14,7 @@ export default function createAtomicElementBaseView( type ) {
 		_childrenRenderPromises: [],
 
 		tagName() {
-			return this.model.get( '_resolvedTag' ) ?? this._resolveTag();
+			return resolvedTagCache.get( this.model ) ?? this._resolveTag();
 		},
 
 		_resolveTag() {
@@ -232,11 +234,11 @@ export default function createAtomicElementBaseView( type ) {
 		},
 
 		_invalidateTagCache() {
-			this.model.unset( '_resolvedTag' );
+			resolvedTagCache.delete( this.model );
 		},
 
 		_cacheResolvedTag( tag ) {
-			this.model.set( '_resolvedTag', tag );
+			resolvedTagCache.set( this.model, tag );
 		},
 
 		_afterRender() {
