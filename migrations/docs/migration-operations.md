@@ -460,10 +460,6 @@ Operations within an array execute sequentially:
 
 Each operation sees the results of previous operations.
 
-## Related Documentation
 
-- [Path Syntax](path-syntax.md) - Complete path syntax reference
-- [Conditions](conditions.md) - Using conditions with operations
-- [Examples](examples.md) - Real-world operation examples
 
 

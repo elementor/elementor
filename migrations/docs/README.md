@@ -66,15 +66,6 @@ A migration consists of two parts:
 3. **Execution**: Applies operations in sequence (up or down direction)
 4. **Caching**: Results are cached per document to avoid redundant work
 
-## Documentation Structure
-
-- **[Manifest Reference](manifest.md)** - Understanding the manifest.json structure
-- **[Migration Operations](migration-operations.md)** - Detailed guide to `set`, `delete`, and `move` operations
-- **[Path Syntax](path-syntax.md)** - Complete reference for path patterns and wildcards
-- **[Conditions System](conditions.md)** - Using conditions to control operation execution
-- **[Architecture](architecture.md)** - System components and data flow
-- **[Examples](examples.md)** - Real-world migration examples and patterns
-
 ## Important Concepts
 
 ### Migration Scope
@@ -99,5 +90,6 @@ A migration consists of two parts:
 ## Getting Help
 
 For detailed information on specific topics, refer to the documentation files listed above. Each document includes comprehensive examples and use cases.
+
 
 

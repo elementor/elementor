@@ -181,10 +181,5 @@ The system generates a hash of the manifest content for cache invalidation. When
 
 This ensures that manifest changes trigger re-migration of all documents.
 
-## Related Documentation
-
-- [Migration Operations](migration-operations.md) - How to write operation files
-- [Architecture](architecture.md) - How the manifest is loaded and used
-- [Examples](examples.md) - Complete manifest examples
 
 
