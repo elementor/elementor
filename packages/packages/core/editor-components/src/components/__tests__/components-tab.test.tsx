@@ -13,9 +13,23 @@ import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import { slice } from '../../store/store';
 import { loadComponents } from '../../store/thunks';
 import { ComponentSearch } from '../components-tab/component-search';
+import { Components } from '../components-tab/components';
 import { ComponentItem } from '../components-tab/components-item';
 import { ComponentsList } from '../components-tab/components-list';
 import { SearchProvider } from '../components-tab/search-provider';
+
+type ExtendedWindow = Window & {
+	elementor?: {
+		helpers?: {
+			hasPro?: () => boolean;
+		};
+	};
+	elementorPro?: {
+		config?: {
+			isActive?: boolean;
+		};
+	};
+};
 
 jest.mock( '@elementor/editor-documents', () => ( {
 	getV1DocumentsManager: jest.fn(),
@@ -719,6 +733,82 @@ describe( 'ComponentsTab', () => {
 			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
 			expect( screen.queryByText( 'Create your first one:' ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: /Create component with AI/i } ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'ComponentsProNotification', () => {
+		const extendedWindow = window as unknown as ExtendedWindow;
+		let originalElementor: ExtendedWindow[ 'elementor' ];
+		let originalElementorPro: ExtendedWindow[ 'elementorPro' ];
+
+		beforeEach( () => {
+			originalElementor = extendedWindow.elementor;
+			originalElementorPro = extendedWindow.elementorPro;
+		} );
+
+		afterEach( () => {
+			extendedWindow.elementor = originalElementor;
+			extendedWindow.elementorPro = originalElementorPro;
+		} );
+
+		it( 'should render notification for Core users without Pro when components exist', () => {
+			// Arrange
+			extendedWindow.elementor = {
+				helpers: {
+					hasPro: () => false,
+				},
+			};
+			extendedWindow.elementorPro = undefined;
+
+			// Act
+			renderWithStore( <Components />, store );
+
+			// Assert
+			expect( screen.getByText( /Try Components for free:/i ) ).toBeInTheDocument();
+			expect(
+				screen.getByText(
+					/Soon Components will be part of the Pro subscription, but what you create now will remain on your site\./i
+				)
+			).toBeInTheDocument();
+		} );
+
+		it( 'should not render notification for users with active Pro', () => {
+			// Arrange
+			extendedWindow.elementor = {
+				helpers: {
+					hasPro: () => true,
+				},
+			};
+			extendedWindow.elementorPro = {
+				config: {
+					isActive: true,
+				},
+			};
+
+			// Act
+			renderWithStore( <Components />, store );
+
+			// Assert
+			expect( screen.queryByText( /Try Components for free:/i ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'should not render notification when no components exist', () => {
+			// Arrange
+			extendedWindow.elementor = {
+				helpers: {
+					hasPro: () => false,
+				},
+			};
+			extendedWindow.elementorPro = undefined;
+			act( () => {
+				dispatch( slice.actions.load( [] ) );
+			} );
+
+			// Act
+			renderWithStore( <Components />, store );
+
+			// Assert
+			expect( screen.queryByText( /Try Components for free:/i ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );
