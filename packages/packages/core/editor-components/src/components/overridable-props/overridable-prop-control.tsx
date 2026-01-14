@@ -1,6 +1,12 @@
 import * as React from 'react';
 import { type ComponentType } from 'react';
-import { ControlReplacementsProvider, PropKeyProvider, PropProvider, useBoundProp } from '@elementor/editor-controls';
+import {
+	ControlReplacementsProvider,
+	createControl,
+	PropKeyProvider,
+	PropProvider,
+	useBoundProp,
+} from '@elementor/editor-controls';
 import { createTopLevelObjectType, getControlReplacements, useElement } from '@elementor/editor-editing-panel';
 import { type PropValue } from '@elementor/editor-props';
 
@@ -20,6 +26,7 @@ export function OverridablePropControl< T extends object >( {
 	...props
 }: T & { OriginalControl: ComponentType< T > } ) {
 	const { elementType } = useElement();
+	const Control = createControl( OriginalControl );
 
 	const { value, bind, setValue, placeholder, ...propContext } = useBoundProp( componentOverridablePropTypeUtil );
 	const componentId = useCurrentComponentId();
@@ -90,7 +97,7 @@ export function OverridablePropControl< T extends object >( {
 			>
 				<PropKeyProvider bind={ bind }>
 					<ControlReplacementsProvider replacements={ filteredReplacements }>
-						<OriginalControl { ...( props as T ) } />
+						<Control { ...( props as T ) } />
 					</ControlReplacementsProvider>
 				</PropKeyProvider>
 			</PropProvider>
