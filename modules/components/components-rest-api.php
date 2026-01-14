@@ -146,7 +146,7 @@ class Components_REST_API {
 			[
 				'methods' => 'GET',
 				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->get_overridable_props( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 				'args' => [
 					'componentId' => [
 						'type' => 'integer',
@@ -278,11 +278,11 @@ class Components_REST_API {
 		$components = $this->get_repository()->all();
 
 		$components_list = array_values( $components
-			->filter( fn( $component ) => empty( $component['is_archived'] ) )
 			->map( fn( $component ) => [
 				'id' => $component['id'],
 				'name' => $component['title'],
 				'uid' => $component['uid'],
+				'isArchived' => $component['is_archived'] ?? false,
 			] )
 		->all() );
 
