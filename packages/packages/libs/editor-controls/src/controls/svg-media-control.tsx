@@ -49,8 +49,7 @@ export const SvgMediaControl = createControl( () => {
 	const src = attachment?.url ?? url?.value ?? null;
 	const { data: allowSvgUpload } = useUnfilteredFilesUpload();
 	const [ unfilteredModalOpenState, setUnfilteredModalOpenState ] = useState( false );
-	const { canUser } = useCurrentUserCapabilities();
-	const canManageOptions = canUser( 'manage_options' );
+	const { isAdmin } = useCurrentUserCapabilities();
 
 	const { open } = useWpMediaFrame( {
 		mediaTypes: [ 'svg' ],
@@ -92,7 +91,7 @@ export const SvgMediaControl = createControl( () => {
 				{ __( 'file uploads.', 'elementor' ) }
 			</>
 		),
-		isEnabled: ! canManageOptions,
+		isEnabled: ! isAdmin,
 	};
 
 	return (
@@ -131,14 +130,14 @@ export const SvgMediaControl = createControl( () => {
 							</Button>
 							<ConditionalControlInfotip { ...infotipProps }>
 								<span>
-									<ThemeProvider colorScheme={ canManageOptions ? 'light' : 'dark' }>
+									<ThemeProvider colorScheme={ isAdmin ? 'light' : 'dark' }>
 										<Button
 											size="tiny"
 											variant="text"
 											color="inherit"
 											startIcon={ <UploadIcon /> }
-											disabled={ canManageOptions ? false : true }
-											onClick={ () => canManageOptions && handleClick( MODE_UPLOAD ) }
+											disabled={ ! isAdmin }
+											onClick={ () => isAdmin && handleClick( MODE_UPLOAD ) }
 											aria-label="Upload SVG"
 										>
 											{ __( 'Upload', 'elementor' ) }
