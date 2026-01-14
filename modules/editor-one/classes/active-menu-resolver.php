@@ -17,7 +17,7 @@ class Active_Menu_Resolver {
 	}
 
 	public function resolve( array $menu_items, array $level4_groups, string $current_page, string $current_uri ): array {
-		if ( 'elementor-editor' === $current_page || Menu_Config::EDITOR_MENU_SLUG === $current_page ) {
+		if ( 'elementor-editor' === $current_page || Menu_Config::EDITOR_MENU_SLUG === $current_page || Menu_Config::ELEMENTOR_MENU_SLUG === $current_page ) {
 			return $this->create_active_state( self::HOME_SLUG );
 		}
 
