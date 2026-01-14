@@ -9,6 +9,7 @@ import type {
 	StringPropValue,
 	TimingConfigPropValue,
 } from '../types';
+import { generateTempInteractionId } from './temp-id-utils';
 
 export const createString = ( value: string ): StringPropValue => ( {
 	$$type: 'string',
@@ -104,6 +105,7 @@ export const createDefaultInteractionItem = (): InteractionItemPropValue => {
 		duration: 300,
 		delay: 0,
 		replay: false,
+		interactionId: generateTempInteractionId(),
 	} );
 };
 
