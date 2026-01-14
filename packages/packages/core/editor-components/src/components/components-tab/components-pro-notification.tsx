@@ -3,13 +3,7 @@ import { InfoAlert } from '@elementor/editor-ui';
 import { Box, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { isProUser } from '../../utils/is-pro-user';
-
 export function ComponentsProNotification() {
-	if ( ! isProUser() ) {
-		return null;
-	}
-
 	return (
 		<Box sx={ { px: 2 } }>
 			<InfoAlert>

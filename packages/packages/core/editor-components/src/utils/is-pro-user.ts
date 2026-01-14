@@ -17,10 +17,10 @@ export function isProUser(): boolean {
 	const hasPro = extendedWindow.elementor?.helpers?.hasPro?.() ?? false;
 
 	if ( ! hasPro ) {
-		return true;
+		return false;
 	}
 
 	const isProActive = extendedWindow.elementorPro?.config?.isActive ?? false;
 
-	return ! isProActive;
+	return isProActive;
 }
