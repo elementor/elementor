@@ -104,6 +104,7 @@ describe( 'OverridablePropIndicator', () => {
 		{
 			should: 'not show indicator on fields bound to forbidden keys',
 			bind: '_cssid',
+			isPrevented: true,
 			currentValue: componentOverridablePropTypeUtil.create( {
 				override_key: MOCK_OVERRIDABLE_KEY,
 				origin_value: { $$type: 'string', value: 'Test' },
@@ -122,6 +123,7 @@ describe( 'OverridablePropIndicator', () => {
 		'should $should',
 		( {
 			bind,
+			isPrevented,
 			overridableData,
 			currentValue,
 			isComponent,
@@ -131,6 +133,7 @@ describe( 'OverridablePropIndicator', () => {
 			const boundProp = mockBoundProp( {
 				bind,
 				value: currentValue,
+				isPrevented,
 			} );
 
 			const isOverridable = componentOverridablePropTypeUtil.isValid( boundProp.value );
@@ -190,7 +193,8 @@ describe( 'OverridablePropIndicator', () => {
 
 			// Assert
 			if ( ! isShowingIndicator ) {
-				expect( screen.queryByRole( 'button' ) ).not.toBeInTheDocument();
+				expect( screen.queryByLabelText( 'Overridable property' ) ).not.toBeInTheDocument();
+				expect( screen.queryByLabelText( 'Make prop overridable' ) ).not.toBeInTheDocument();
 
 				return;
 			}
@@ -752,9 +756,11 @@ describe( 'OverridablePropForm duplicate validation', () => {
 function mockBoundProp( {
 	bind,
 	value,
+	isPrevented = false,
 }: {
 	bind: string;
 	value: TransformablePropValue< string, unknown > | null;
+	isPrevented?: boolean;
 } ): ReturnType< typeof useBoundProp > {
 	const params = {
 		value,
@@ -762,7 +768,7 @@ function mockBoundProp( {
 		restoreValue: jest.fn(),
 		resetValue: jest.fn(),
 		bind,
-		propType: createMockPropType( { kind: 'plain' } ),
+		propType: createMockPropType( { kind: 'plain', meta: isPrevented ? { overridable: false } : {} } ),
 		path: [ bind ],
 	};
 
