@@ -9,20 +9,29 @@ import { type OverridableProps } from '../../types';
 import { trackComponentEvent } from '../../utils/tracking';
 import { slice } from '../store';
 
-export async function createUnpublishedComponent(
-	name: string,
-	element: V1ElementData,
-	eventData: ComponentEventData | null,
-	overridableProps?: OverridableProps,
-	uid?: string | null
-) {
+type CreateUnpublishedComponentParams = {
+	name: string;
+	element: V1ElementData;
+	eventData: ComponentEventData | null;
+	uid?: string | null;
+	overridableProps?: OverridableProps;
+};
+
+export async function createUnpublishedComponent( {
+	name,
+	element,
+	eventData,
+	uid,
+	overridableProps,
+}: CreateUnpublishedComponentParams ): Promise< { uid: string; instanceId: string } > {
 	const generatedUid = uid ?? generateUniqueId( 'component' );
-	const componentBase = { uid: generatedUid, name, overridableProps };
+	const componentBase = { uid: generatedUid, name };
 
 	dispatch(
 		slice.actions.addUnpublished( {
 			...componentBase,
 			elements: [ element ],
+			overridableProps,
 		} )
 	);
 

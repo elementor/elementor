@@ -5,9 +5,34 @@ import { __getState as getState } from '@elementor/store';
 import { selectCreatedThisSession } from '../store/store';
 import { type ExtendedWindow } from '../types';
 
-type ComponentEventData = Record< string, unknown > & {
-	action: 'createClicked' | 'created' | 'createCancelled' | 'instanceAdded' | 'edited';
+type PerformedBy = 'user' | 'mcp_tool';
+
+let currentPerformedBy: PerformedBy = 'user';
+
+export const withMCPContext = async < T >( fn: () => Promise< T > ): Promise< T > => {
+	const previous = currentPerformedBy;
+	currentPerformedBy = 'mcp_tool';
+	try {
+		return await fn();
+	} finally {
+		currentPerformedBy = previous;
+	}
 };
+
+type ComponentEventData = Record< string, unknown > & {
+	action:
+		| 'createClicked'
+		| 'created'
+		| 'createCancelled'
+		| 'instanceAdded'
+		| 'edited'
+		| 'propertyExposed'
+		| 'propertyRemoved'
+		| 'propertiesPanelOpened'
+		| 'propertiesGroupCreated';
+};
+
+const FEATURE_NAME = 'Components';
 
 export const trackComponentEvent = ( { action, ...data }: ComponentEventData ) => {
 	const { dispatchEvent, config } = getMixpanel();
@@ -16,7 +41,7 @@ export const trackComponentEvent = ( { action, ...data }: ComponentEventData ) =
 	}
 
 	const name = config.names.components[ action ];
-	dispatchEvent?.( name, data );
+	dispatchEvent?.( name, { ...data, performed_by: currentPerformedBy, 'Feature name': FEATURE_NAME } );
 };
 
 export const onElementDrop = ( _args: unknown, element: V1Element ) => {

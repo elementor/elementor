@@ -2,7 +2,8 @@ import { getContainer, updateElementSettings } from '@elementor/editor-elements'
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { type ComponentId } from '../../types';
-import { selectOverridableProps, slice } from '../store';
+import { trackComponentEvent } from '../../utils/tracking';
+import { selectCurrentComponent, selectOverridableProps, slice } from '../store';
 import { removePropFromAllGroups } from '../utils/groups-transformers';
 
 type DeletePropParams = {
@@ -39,6 +40,17 @@ export function deleteOverridableProp( { componentId, propKey }: DeletePropParam
 			},
 		} )
 	);
+
+	const currentComponent = selectCurrentComponent( getState() );
+
+	trackComponentEvent( {
+		action: 'propertyRemoved',
+		component_uid: currentComponent?.uid,
+		property_id: removedProp.overrideKey,
+		property_path: removedProp.propKey,
+		property_name: removedProp.label,
+		element_type: removedProp.widgetType ?? removedProp.elType,
+	} );
 }
 
 function revertElementSetting( elementId: string, settingKey: string, originValue: unknown ): void {

@@ -1,7 +1,8 @@
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { type ComponentId, type OverridablePropsGroup } from '../../types';
-import { selectOverridableProps, slice } from '../store';
+import { trackComponentEvent } from '../../utils/tracking';
+import { selectCurrentComponent, selectOverridableProps, slice } from '../store';
 
 type AddGroupParams = {
 	componentId: ComponentId;
@@ -14,6 +15,8 @@ export function addOverridableGroup( {
 	groupId,
 	label,
 }: AddGroupParams ): OverridablePropsGroup | undefined {
+	const currentComponent = selectCurrentComponent( getState() );
+
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
 	if ( ! overridableProps ) {
@@ -42,6 +45,12 @@ export function addOverridableGroup( {
 			},
 		} )
 	);
+
+	trackComponentEvent( {
+		action: 'propertiesGroupCreated',
+		component_uid: currentComponent?.uid,
+		group_name: label,
+	} );
 
 	return newGroup;
 }
