@@ -68,6 +68,7 @@ export type { FontCategory } from './controls/font-family-control/font-family-co
 export {
 	createControlReplacementsRegistry,
 	ControlReplacementsProvider,
+	useControlReplacement,
 	type ControlReplacement,
 } from './control-replacements';
 export { ControlActionsProvider, useControlActions } from './control-actions/control-actions-context';
