@@ -7,7 +7,8 @@ import { Box, Divider, IconButton, Stack, Tooltip, Typography } from '@elementor
 import { __ } from '@wordpress/i18n';
 
 import { useNavigateBack } from '../../hooks/use-navigate-back';
-import { type ComponentsSlice, SLICE_NAME, useCurrentComponentId } from '../../store/store';
+import { type ComponentsSlice, SLICE_NAME, useCurrentComponent } from '../../store/store';
+import { trackComponentEvent } from '../../utils/tracking';
 import { usePanelActions } from '../component-properties-panel/component-properties-panel';
 import { ComponentIntroduction } from '../components-tab/component-introduction';
 import { ComponentsBadge } from './component-badge';
@@ -16,7 +17,7 @@ import { useOverridableProps } from './use-overridable-props';
 const MESSAGE_KEY = 'components-properties-introduction';
 
 export const ComponentPanelHeader = () => {
-	const currentComponentId = useCurrentComponentId();
+	const { id: currentComponentId, uid: componentUid } = useCurrentComponent() ?? { id: null, uid: null };
 	const overridableProps = useOverridableProps( currentComponentId );
 	const onBack = useNavigateBack();
 	const componentName = getComponentName();
@@ -25,7 +26,7 @@ export const ComponentPanelHeader = () => {
 
 	const { open: openPropertiesPanel } = usePanelActions();
 
-	const overridesCount = overridableProps ? Object.keys( overridableProps.props ).length : 0;
+	const overridablePropsCount = overridableProps ? Object.keys( overridableProps.props ).length : 0;
 	const anchorRef = React.useRef< HTMLDivElement >( null );
 
 	if ( ! currentComponentId ) {
@@ -35,6 +36,17 @@ export const ComponentPanelHeader = () => {
 	const handleCloseIntroduction = () => {
 		suppressMessage();
 		setShouldShowIntroduction( false );
+	};
+
+	const handleOpenPropertiesPanel = () => {
+		openPropertiesPanel();
+
+		trackComponentEvent( {
+			action: 'propertiesPanelOpened',
+			source: 'user',
+			component_uid: componentUid,
+			properties_count: overridablePropsCount,
+		} );
 	};
 
 	return (
@@ -58,7 +70,11 @@ export const ComponentPanelHeader = () => {
 						</Typography>
 					</Stack>
 				</Stack>
-				<ComponentsBadge overridesCount={ overridesCount } ref={ anchorRef } onClick={ openPropertiesPanel } />
+				<ComponentsBadge
+					overridablePropsCount={ overridablePropsCount }
+					ref={ anchorRef }
+					onClick={ handleOpenPropertiesPanel }
+				/>
 			</Stack>
 			<Divider />
 			<ComponentIntroduction
