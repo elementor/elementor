@@ -1,18 +1,6 @@
 import { type ControlItem } from '@elementor/editor-elements';
 import { type PropsSchema, type TransformablePropType, type TransformablePropValue } from '@elementor/editor-props';
 
-export type ExtendedWindow = Window & {
-	elementor?: {
-		config?: {
-			atomicDynamicTags?: {
-				tags: DynamicTags;
-				groups: Record< DynamicTag[ 'group' ], { title: string } >;
-			};
-		};
-		dynamicTags?: DynamicTagsManager;
-	};
-};
-
 export type DynamicTags = Record< DynamicTag[ 'name' ], DynamicTag >;
 
 export type DynamicTag = {
