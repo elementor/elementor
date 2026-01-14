@@ -27,7 +27,7 @@ import { ActionIcons, BreakpointIcon, LabelChip, ValueComponent } from './infoti
 const SECTION_PADDING_INLINE = 32;
 const INFOTIP_MAX_WIDTH = 496;
 
-const calculatePopoverOffset = (
+export const calculatePopoverOffset = (
 	triggerRect: DOMRect | undefined,
 	cardWidth: number,
 	isSiteRtl: boolean
