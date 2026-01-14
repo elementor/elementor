@@ -88,12 +88,6 @@ export default function createAtomicElementBaseView( type ) {
 				}
 			} );
 
-			const cachedLink = this.model.get( '_resolvedLink' );
-
-			if ( cachedLink ) {
-				local[ cachedLink.attr ] = cachedLink.value;
-			}
-
 			return {
 				...attr,
 				...initialAttributes,
@@ -179,14 +173,13 @@ export default function createAtomicElementBaseView( type ) {
 
 			this.$el.addClass( this.getClasses() );
 
-			if ( this.isTagOrLinkChanged( changed ) ) {
+			if ( this.isTagChanged( changed ) ) {
 				this.model.unset( '_resolvedTag' );
-				this.model.unset( '_resolvedLink' );
 				this.rerenderEntireView();
 			}
 		},
 
-		isTagOrLinkChanged( changed ) {
+		isTagChanged( changed ) {
 			return ( changed?.tag !== undefined || changed?.link !== undefined ) && this._parent && this.tagName() !== this.el.tagName;
 		},
 
@@ -234,7 +227,6 @@ export default function createAtomicElementBaseView( type ) {
 		_beforeRender() {
 			this._isRendering = true;
 			this.model.unset( '_resolvedTag' );
-			this.model.unset( '_resolvedLink' );
 			this.triggerMethod( 'before:render', this );
 		},
 
@@ -252,41 +244,21 @@ export default function createAtomicElementBaseView( type ) {
 
 			const resolvedTag = this.tagName();
 			const currentTag = this.el.tagName.toLowerCase();
-			const resolvedLink = this.getLink();
-			const cachedLink = this.model.get( '_resolvedLink' );
 
-			const tagChanged = resolvedTag !== currentTag;
-			const linkChanged = this._isLinkChanged( resolvedLink, cachedLink );
-
-			if ( ! tagChanged && ! linkChanged ) {
+			if ( resolvedTag !== currentTag ) {
+				this.model.set( '_resolvedTag', resolvedTag );
+				this.rerenderEntireView();
 				return;
 			}
 
-			if ( tagChanged ) {
-				this.model.set( '_resolvedTag', resolvedTag );
+			const link = this.getLink();
+
+			this.$el.removeAttr( 'href' );
+			this.$el.removeAttr( 'data-action-link' );
+
+			if ( link ) {
+				this.$el.attr( link.attr, link.value );
 			}
-
-			if ( linkChanged ) {
-				if ( resolvedLink ) {
-					this.model.set( '_resolvedLink', resolvedLink );
-				} else {
-					this.model.unset( '_resolvedLink' );
-				}
-			}
-
-			this.rerenderEntireView();
-		},
-
-		_isLinkChanged( resolvedLink, cachedLink ) {
-			if ( ! resolvedLink && ! cachedLink ) {
-				return false;
-			}
-
-			if ( ! resolvedLink || ! cachedLink ) {
-				return true;
-			}
-
-			return resolvedLink.attr !== cachedLink.attr || resolvedLink.value !== cachedLink.value;
 		},
 
 		async _waitForChildrenToComplete() {

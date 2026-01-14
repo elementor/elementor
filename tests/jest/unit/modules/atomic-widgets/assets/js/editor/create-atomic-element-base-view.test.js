@@ -186,9 +186,6 @@ describe( 'createAtomicElementBaseView - renderOnChange', () => {
 				if ( 'id' === key ) {
 					return ELEMENT_ID;
 				}
-				if ( '_resolvedLink' === key ) {
-					return { attr: 'href', value: HREF_VALUE };
-				}
 				return undefined;
 			} ),
 			getSetting: jest.fn( ( key ) => {
@@ -268,7 +265,6 @@ describe( 'createAtomicElementBaseView - renderOnChange', () => {
 		expect( currentAttributes ).toContain( 'data-special-flag' );
 		expect( currentAttributes ).toContain( 'data-interaction-id' );
 		expect( currentAttributes ).toContain( 'id' );
-		expect( currentAttributes ).toContain( 'href' );
 		expect( currentAttributes ).toContain( 'data-custom' );
 	} );
 
@@ -1072,13 +1068,12 @@ describe( 'createAtomicElementBaseView - cache invalidation', () => {
 		delete global.elementor;
 	} );
 
-	it( 'should clear tag and link cache in _beforeRender', () => {
+	it( 'should clear tag cache in _beforeRender', () => {
 		// Arrange & Act
 		viewInstance._beforeRender();
 
 		// Assert
 		expect( mockModel.unset ).toHaveBeenCalledWith( '_resolvedTag' );
-		expect( mockModel.unset ).toHaveBeenCalledWith( '_resolvedLink' );
 	} );
 
 	it( 'should set _isRendering to true in _beforeRender', () => {
@@ -1097,144 +1092,3 @@ describe( 'createAtomicElementBaseView - cache invalidation', () => {
 		expect( viewInstance.triggerMethod ).toHaveBeenCalledWith( 'before:render', viewInstance );
 	} );
 } );
-
-describe( 'createAtomicElementBaseView - attributes with cached link', () => {
-	let AtomicElementView;
-	let viewInstance;
-	let mockModel;
-
-	beforeAll( async () => {
-		global.Marionette = {
-			ItemView: class {},
-			CompositeView: {
-				prototype: {
-					getChildViewContainer: jest.fn(),
-				},
-			},
-			TemplateCache: {
-				get: jest.fn( () => '<div></div>' ),
-			},
-		};
-
-		global.jQuery = jest.fn( () => ( {
-			children: jest.fn( () => ( { append: jest.fn() } ) ),
-		} ) );
-
-		global.elementorCommon = {
-			config: { isRTL: false },
-		};
-
-		const BaseElementView = class {
-			static extend( props ) {
-				const Extended = class extends this {};
-				Object.assign( Extended.prototype, props );
-				return Extended;
-			}
-		};
-
-		BaseElementView.prototype.attributes = jest.fn( () => ( { ...BASE_ATTRIBUTES } ) );
-		BaseElementView.prototype.className = jest.fn( () => '' );
-		BaseElementView.prototype.renderOnChange = jest.fn();
-		BaseElementView.prototype.behaviors = jest.fn( () => ( {} ) );
-		BaseElementView.prototype.ui = jest.fn( () => ( {} ) );
-
-		global.elementor = {
-			modules: {
-				elements: {
-					views: { BaseElement: BaseElementView },
-				},
-			},
-			config: { elements: {} },
-			helpers: { getAtomicWidgetBaseStyles: jest.fn( () => ( {} ) ) },
-		};
-
-		const createAtomicElementBaseView = ( await import( 'elementor/modules/atomic-widgets/assets/js/editor/create-atomic-element-base-view' ) ).default;
-		AtomicElementView = createAtomicElementBaseView( 'e-div-block' );
-	} );
-
-	beforeEach( () => {
-		mockModel = {
-			get: jest.fn( ( key ) => {
-				if ( 'id' === key ) {
-					return ELEMENT_ID;
-				}
-				return undefined;
-			} ),
-			set: jest.fn(),
-			unset: jest.fn(),
-			getSetting: jest.fn( () => undefined ),
-			config: {
-				default_html_tag: DEFAULT_HTML_TAG,
-				initial_attributes: {},
-			},
-		};
-
-		viewInstance = new AtomicElementView();
-		viewInstance.model = mockModel;
-
-		jest.clearAllMocks();
-	} );
-
-	afterAll( () => {
-		delete global.Marionette;
-		delete global.jQuery;
-		delete global.elementorCommon;
-		delete global.elementor;
-	} );
-
-	it( 'should include cached link href in attributes', () => {
-		// Arrange
-		mockModel.get.mockImplementation( ( key ) => {
-			if ( '_resolvedLink' === key ) {
-				return { attr: 'href', value: 'https://cached-link.com' };
-			}
-			if ( 'id' === key ) {
-				return ELEMENT_ID;
-			}
-			return undefined;
-		} );
-
-		// Act
-		const result = viewInstance.attributes();
-
-		// Assert
-		expect( result.href ).toBe( 'https://cached-link.com' );
-	} );
-
-	it( 'should include cached link data-action-link in attributes', () => {
-		// Arrange
-		mockModel.get.mockImplementation( ( key ) => {
-			if ( '_resolvedLink' === key ) {
-				return { attr: 'data-action-link', value: DYNAMIC_LINK_VALUE };
-			}
-			if ( 'id' === key ) {
-				return ELEMENT_ID;
-			}
-			return undefined;
-		} );
-
-		// Act
-		const result = viewInstance.attributes();
-
-		// Assert
-		expect( result[ 'data-action-link' ] ).toBe( DYNAMIC_LINK_VALUE );
-	} );
-
-	it( 'should not include link attribute when no cached link exists', () => {
-		// Arrange
-		mockModel.get.mockImplementation( ( key ) => {
-			if ( 'id' === key ) {
-				return ELEMENT_ID;
-			}
-			return undefined;
-		} );
-
-		// Act
-		const result = viewInstance.attributes();
-
-		// Assert
-		expect( result.href ).toBeUndefined();
-		expect( result[ 'data-action-link' ] ).toBeUndefined();
-	} );
-} );
-
