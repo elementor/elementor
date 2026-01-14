@@ -3,7 +3,7 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 import { generateUniqueId } from '@elementor/utils';
 
 import { type OriginPropFields, type OverridableProp } from '../../types';
-import { trackComponentEvent } from '../../utils/tracking';
+import { type Source, trackComponentEvent } from '../../utils/tracking';
 import { selectCurrentComponent, selectOverridableProps, slice } from '../store';
 import {
 	addPropToGroup,
@@ -24,6 +24,7 @@ type Props = {
 	widgetType: string;
 	originValue: PropValue;
 	originPropFields?: OriginPropFields;
+	source: Source;
 };
 
 export function setOverridableProp( {
@@ -37,6 +38,7 @@ export function setOverridableProp( {
 	widgetType,
 	originValue,
 	originPropFields,
+	source,
 }: Props ): OverridableProp | undefined {
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
@@ -102,6 +104,7 @@ export function setOverridableProp( {
 
 		trackComponentEvent( {
 			action: 'propertyExposed',
+			source,
 			component_uid: currentComponent?.uid,
 			property_id: overridableProp.overrideKey,
 			property_path: propKey,

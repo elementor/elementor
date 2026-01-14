@@ -2,16 +2,17 @@ import { getContainer, updateElementSettings } from '@elementor/editor-elements'
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { type ComponentId } from '../../types';
-import { trackComponentEvent } from '../../utils/tracking';
+import { type Source, trackComponentEvent } from '../../utils/tracking';
 import { selectCurrentComponent, selectOverridableProps, slice } from '../store';
 import { removePropFromAllGroups } from '../utils/groups-transformers';
 
 type DeletePropParams = {
 	componentId: ComponentId;
 	propKey: string;
+	source: Source;
 };
 
-export function deleteOverridableProp( { componentId, propKey }: DeletePropParams ): void {
+export function deleteOverridableProp( { componentId, propKey, source }: DeletePropParams ): void {
 	const overridableProps = selectOverridableProps( getState(), componentId );
 
 	if ( ! overridableProps ) {
@@ -45,6 +46,7 @@ export function deleteOverridableProp( { componentId, propKey }: DeletePropParam
 
 	trackComponentEvent( {
 		action: 'propertyRemoved',
+		source,
 		component_uid: currentComponent?.uid,
 		property_id: removedProp.overrideKey,
 		property_path: removedProp.propKey,

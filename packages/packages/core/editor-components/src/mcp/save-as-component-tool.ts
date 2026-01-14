@@ -9,7 +9,6 @@ import { generateUniqueId } from '@elementor/utils';
 import { apiClient } from '../api';
 import { createUnpublishedComponent } from '../store/actions/create-unpublished-component';
 import { type OverridableProps } from '../types';
-import { withMCPContext } from '../utils/tracking';
 
 const InputSchema = {
 	element_id: z
@@ -113,6 +112,7 @@ export const handleSaveAsComponent = async ( params: z.infer< z.ZodObject< typeo
 		eventData: null,
 		uid,
 		overridableProps,
+		source: 'mcp_tool',
 	} );
 
 	return {
@@ -121,9 +121,6 @@ export const handleSaveAsComponent = async ( params: z.infer< z.ZodObject< typeo
 		component_uid: uid,
 	};
 };
-
-const mcpHandler = ( params: z.infer< z.ZodObject< typeof InputSchema > > ) =>
-	withMCPContext( () => handleSaveAsComponent( params ) );
 
 function enrichOverridableProps(
 	input: { props: Record< string, { elementId: string; propKey: string; label: string } > },
@@ -404,6 +401,6 @@ export const initSaveAsComponentTool = () => {
 		schema: InputSchema,
 		outputSchema: OutputSchema,
 		description: generatePrompt(),
-		handler: mcpHandler,
+		handler: handleSaveAsComponent,
 	} );
 };

@@ -43,6 +43,7 @@ export const ComponentPanelHeader = () => {
 
 		trackComponentEvent( {
 			action: 'propertiesPanelOpened',
+			source: 'user',
 			component_uid: componentUid,
 			properties_count: overridablePropsCount,
 		} );

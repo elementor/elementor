@@ -6,7 +6,7 @@ import { generateUniqueId } from '@elementor/utils';
 import { type ComponentEventData } from '../../components/create-component-form/utils/get-component-event-data';
 import { replaceElementWithComponent } from '../../components/create-component-form/utils/replace-element-with-component';
 import { type OverridableProps } from '../../types';
-import { trackComponentEvent } from '../../utils/tracking';
+import { type Source, trackComponentEvent } from '../../utils/tracking';
 import { slice } from '../store';
 
 type CreateUnpublishedComponentParams = {
@@ -15,6 +15,7 @@ type CreateUnpublishedComponentParams = {
 	eventData: ComponentEventData | null;
 	uid?: string | null;
 	overridableProps?: OverridableProps;
+	source: Source;
 };
 
 export async function createUnpublishedComponent( {
@@ -23,6 +24,7 @@ export async function createUnpublishedComponent( {
 	eventData,
 	uid,
 	overridableProps,
+	source,
 }: CreateUnpublishedComponentParams ): Promise< { uid: string; instanceId: string } > {
 	const generatedUid = uid ?? generateUniqueId( 'component' );
 	const componentBase = { uid: generatedUid, name };
@@ -41,6 +43,7 @@ export async function createUnpublishedComponent( {
 
 	trackComponentEvent( {
 		action: 'created',
+		source,
 		component_uid: generatedUid,
 		component_name: name,
 		...eventData,

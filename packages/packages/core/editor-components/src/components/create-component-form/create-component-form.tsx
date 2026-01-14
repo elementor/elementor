@@ -63,6 +63,7 @@ export function CreateComponentForm() {
 			eventData.current = getComponentEventData( event.detail.element, event.detail.options );
 			trackComponentEvent( {
 				action: 'createClicked',
+				source: 'user',
 				...eventData.current,
 			} );
 		};
@@ -84,6 +85,7 @@ export function CreateComponentForm() {
 				name: values.componentName,
 				element: element.element,
 				eventData: eventData.current,
+				source: 'user',
 			} );
 
 			const publishedComponentId = ( selectComponentByUid( getState(), uid ) as PublishedComponent )?.id;
@@ -121,6 +123,7 @@ export function CreateComponentForm() {
 
 		trackComponentEvent( {
 			action: 'createCancelled',
+			source: 'user',
 			...eventData.current,
 		} );
 	};
