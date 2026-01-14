@@ -59,6 +59,7 @@ export function CreateComponentForm() {
 			eventData.current = getComponentEventData( event.detail.element, event.detail.options );
 			trackComponentEvent( {
 				action: 'createClicked',
+				source: 'user',
 				...eventData.current,
 			} );
 		};
@@ -76,11 +77,12 @@ export function CreateComponentForm() {
 				throw new Error( `Can't save element as component: element not found` );
 			}
 
-			const { uid, instanceId } = await createUnpublishedComponent(
-				values.componentName,
-				element.element,
-				eventData.current
-			);
+			const { uid, instanceId } = await createUnpublishedComponent( {
+				name: values.componentName,
+				element: element.element,
+				eventData: eventData.current,
+				source: 'user',
+			} );
 
 			const publishedComponentId = ( selectComponentByUid( getState(), uid ) as PublishedComponent )?.id;
 
@@ -117,6 +119,7 @@ export function CreateComponentForm() {
 
 		trackComponentEvent( {
 			action: 'createCancelled',
+			source: 'user',
 			...eventData.current,
 		} );
 	};

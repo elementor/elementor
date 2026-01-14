@@ -81,6 +81,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 			widgetType: componentInstanceElement?.elementType.key ?? elementType.key,
 			originValue,
 			originPropFields: matchingOverridableProp?.originPropFields,
+			source: 'user',
 		} );
 
 		if ( ! overridableValue && overridablePropConfig ) {

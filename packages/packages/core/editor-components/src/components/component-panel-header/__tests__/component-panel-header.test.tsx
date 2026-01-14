@@ -192,7 +192,7 @@ describe( '<ComponentPanelHeader />', () => {
 		renderWithStore( <ComponentPanelHeader />, store );
 
 		// Act
-		const badgeButton = screen.getByLabelText( 'View overrides' );
+		const badgeButton = screen.getByLabelText( 'View exposed properties' );
 		fireEvent.click( badgeButton );
 
 		// Assert

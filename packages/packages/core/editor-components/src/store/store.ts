@@ -220,8 +220,15 @@ export const selectCurrentComponentId = createSelector(
 	( currentComponentId ) => currentComponentId
 );
 
+export const selectCurrentComponent = createSelector( selectData, getCurrentComponentId, ( data, currentComponentId ) =>
+	data.find( ( component ) => component.id === currentComponentId )
+);
+
 export const useCurrentComponentId = () => {
 	return useSelector( selectCurrentComponentId );
+};
+export const useCurrentComponent = () => {
+	return useSelector( selectCurrentComponent );
 };
 
 export const selectUpdatedComponentNames = createSelector(
