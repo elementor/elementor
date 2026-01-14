@@ -12,19 +12,20 @@ export default function createAtomicElementBaseView( type ) {
 		_childrenRenderPromises: [],
 
 		tagName() {
-			const cachedTag = this.model.get( '_resolvedTag' );
+			return this.model.get( '_resolvedTag' ) ?? this._resolveTag();
+		},
 
-			if ( cachedTag ) {
-				return cachedTag;
+		_resolveTag() {
+			const renderContext = this.getResolverRenderContext?.();
+			const tagSetting = this.model.getSetting( 'tag' );
+			const resolvedTag = this._resolvePropValue( tagSetting, renderContext );
+			const tagValue = resolvedTag?.value ?? resolvedTag;
+
+			if ( this._hasLink( renderContext ) ) {
+				return 'a';
 			}
 
-			const renderContext = this.getResolverRenderContext?.();
-			const tag = this.model.getSetting( 'tag' );
-			const resolved = this._resolvePropValue( tag, renderContext );
-			const tagValue = resolved?.value ?? resolved;
-			const hasLink = this._hasLink( renderContext );
-
-			return hasLink ? 'a' : ( tagValue || this.model.config.default_html_tag || 'div' );
+			return tagValue || this.model.config.default_html_tag || 'div';
 		},
 
 		getChildViewContainer() {
@@ -226,8 +227,16 @@ export default function createAtomicElementBaseView( type ) {
 
 		_beforeRender() {
 			this._isRendering = true;
-			this.model.unset( '_resolvedTag' );
+			this._invalidateTagCache();
 			this.triggerMethod( 'before:render', this );
+		},
+
+		_invalidateTagCache() {
+			this.model.unset( '_resolvedTag' );
+		},
+
+		_cacheResolvedTag( tag ) {
+			this.model.set( '_resolvedTag', tag );
 		},
 
 		_afterRender() {
@@ -242,19 +251,31 @@ export default function createAtomicElementBaseView( type ) {
 				return;
 			}
 
-			const resolvedTag = this.tagName();
-			const currentTag = this.el.tagName.toLowerCase();
-
-			if ( resolvedTag !== currentTag ) {
-				this.model.set( '_resolvedTag', resolvedTag );
-				this.rerenderEntireView();
+			if ( this._shouldRecreateForTagChange() ) {
 				return;
 			}
 
-			const link = this.getLink();
+			this._applyLinkAttributes();
+		},
 
+		_shouldRecreateForTagChange() {
+			const resolvedTag = this.tagName();
+			const currentTag = this.el.tagName.toLowerCase();
+
+			if ( resolvedTag === currentTag ) {
+				return false;
+			}
+
+			this._cacheResolvedTag( resolvedTag );
+			this.rerenderEntireView();
+			return true;
+		},
+
+		_applyLinkAttributes() {
 			this.$el.removeAttr( 'href' );
 			this.$el.removeAttr( 'data-action-link' );
+
+			const link = this.getLink();
 
 			if ( link ) {
 				this.$el.attr( link.attr, link.value );
@@ -302,6 +323,7 @@ export default function createAtomicElementBaseView( type ) {
 		onDestroy() {
 			BaseElementView.prototype.onDestroy.apply( this, arguments );
 
+			this._invalidateTagCache();
 			this.dispatchPreviewEvent( 'elementor/element/destroy' );
 		},
 
