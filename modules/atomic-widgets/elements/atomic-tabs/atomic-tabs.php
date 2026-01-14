@@ -13,11 +13,11 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Tabs_Control;
-use Elementor\Core\Utils\Collection;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
+use Elementor\Core\Utils\Collection;
 use Elementor\Utils;
 use Elementor\Plugin;
-
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -63,7 +63,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				->default( [] ),
 			'default-active-tab' => Number_Prop_Type::make()
 				->default( 0 ),
-			'attributes' => Attributes_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
 

@@ -2,6 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\PropTypeMigrations;
 
+use Elementor\Modules\AtomicWidgets\Logger\Logger;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -10,6 +12,8 @@ class Migrations_Loader {
 	private static ?self $instance = null;
 
 	private ?array $manifest = null;
+
+	private ?string $manifest_hash = null;
 
 	private string $base_path;
 
@@ -205,27 +209,54 @@ class Migrations_Loader {
 
 		$migration = $prop_types[ $migration_id ];
 
-		if ( ! isset( $migration['url'] ) ) {
+		if ( ! isset( $migration['path'] ) ) {
 			return null;
 		}
 
-		$file_path = $this->base_path . $migration['url'];
+		$file_path = $this->base_path . $migration['path'];
 
 		$contents = $this->read_source( $file_path );
 
 		if ( false === $contents ) {
+			Logger::warning( 'Migration operation file not found', [
+				'migration_id' => $migration_id,
+				'path' => $file_path,
+			] );
+
 			return null;
 		}
 
 		$operations = json_decode( $contents, true );
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			Logger::warning( 'Invalid migration operation JSON', [
+				'migration_id' => $migration_id,
+				'path' => $file_path,
+				'error' => json_last_error_msg(),
+			] );
+
 			return null;
 		}
 
 		return $operations;
 	}
 
+	public function get_manifest_hash(): string {
+		if ( null !== $this->manifest_hash ) {
+			return $this->manifest_hash;
+		}
+
+		$manifest = $this->get_manifest();
+
+		if ( empty( $manifest ) ) {
+			$this->manifest_hash = '';
+			return $this->manifest_hash;
+		}
+
+		$this->manifest_hash = md5( wp_json_encode( $manifest ) );
+
+		return $this->manifest_hash;
+	}
 
 	private function get_manifest(): array {
 		if ( null !== $this->manifest ) {
@@ -237,6 +268,10 @@ class Migrations_Loader {
 		$contents = $this->read_source( $manifest_path );
 
 		if ( false === $contents ) {
+			Logger::warning( 'Migrations manifest not found', [
+				'path' => $manifest_path,
+			] );
+
 			$this->manifest = [
 				'widgetKeys' => [],
 				'propTypes' => [],
@@ -247,6 +282,11 @@ class Migrations_Loader {
 		$manifest = json_decode( $contents, true );
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
+			Logger::warning( 'Invalid migrations manifest JSON', [
+				'path' => $manifest_path,
+				'error' => json_last_error_msg(),
+			] );
+
 			$this->manifest = [
 				'widgetKeys' => [],
 				'propTypes' => [],
