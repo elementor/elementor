@@ -103,6 +103,7 @@ describe( 'save-as-component-tool handler', () => {
 					eventData: null,
 					uid: expect.any( String ),
 					overridableProps: undefined,
+					source: 'mcp_tool',
 				} );
 			}
 		);
@@ -173,6 +174,7 @@ describe( 'save-as-component-tool handler', () => {
 					props: expect.any( Object ),
 					groups: expect.any( Object ),
 				} ),
+				source: 'mcp_tool',
 			} );
 		} );
 	} );
