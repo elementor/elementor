@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { createPropsResolver, type PropsResolver } from '@elementor/editor-canvas';
 import { type PropKey, type PropType } from '@elementor/editor-props';
 import { PopoverHeader } from '@elementor/editor-ui';
@@ -145,17 +145,23 @@ export const StylesInheritanceInfotip = ( {
 		return <Box sx={ { display: 'inline-flex' } }>{ children }</Box>;
 	}
 
+	const triggerRef = useRef< HTMLDivElement >( null );
+
 	return (
-		<TooltipOrInfotip
-			showInfotip={ showInfotip }
-			onClose={ closeInfotip }
-			infotipContent={ infotipContent }
-			isDisabled={ isDisabled }
-		>
-			<IconButton onClick={ toggleInfotip } aria-label={ label } sx={ { my: '-1px' } } disabled={ isDisabled }>
-				{ children }
-			</IconButton>
-		</TooltipOrInfotip>
+		<Box ref={ triggerRef } sx={ { display: 'inline-flex' } }>
+			<TooltipOrInfotip
+				showInfotip={ showInfotip }
+				onClose={ closeInfotip }
+				infotipContent={ infotipContent }
+				isDisabled={ isDisabled }
+				triggerRef={ triggerRef }
+				sectionWidth={ sectionWidth }
+			>
+				<IconButton onClick={ toggleInfotip } aria-label={ label } sx={ { my: '-1px' } } disabled={ isDisabled }>
+					{ children }
+				</IconButton>
+			</TooltipOrInfotip>
+		</Box>
 	);
 };
 
@@ -165,22 +171,34 @@ function TooltipOrInfotip( {
 	onClose,
 	infotipContent,
 	isDisabled,
+	triggerRef,
+	sectionWidth,
 }: {
 	children: React.ReactNode;
 	showInfotip: boolean;
 	onClose: () => void;
 	infotipContent: React.ReactNode;
 	isDisabled?: boolean;
+	triggerRef: React.RefObject< HTMLDivElement >;
+	sectionWidth: number;
 } ) {
 	const direction = useDirection();
 	const isSiteRtl = direction.isSiteRtl;
-	const forceInfotipAlignLeft = isSiteRtl ? 9999999 : -9999999;
 
 	if ( isDisabled ) {
 		return <Box sx={ { display: 'inline-flex' } }>{ children }</Box>;
 	}
 
 	if ( showInfotip ) {
+		const triggerRect = triggerRef.current?.getBoundingClientRect();
+		const cardWidth = Math.min( sectionWidth - SECTION_PADDING_INLINE, 496 );
+		const triggerWidth = triggerRect?.width ?? 0;
+		const offsetX = triggerRect
+			? isSiteRtl
+				? triggerWidth - cardWidth
+				: -( cardWidth / 2 ) + ( triggerWidth / 2 )
+			: 0;
+
 		return (
 			<>
 				<Backdrop
@@ -207,7 +225,7 @@ function TooltipOrInfotip( {
 							modifiers: [
 								{
 									name: 'offset',
-									options: { offset: [ forceInfotipAlignLeft, 0 ] },
+									options: { offset: [ offsetX, 0 ] },
 								},
 							],
 						},
