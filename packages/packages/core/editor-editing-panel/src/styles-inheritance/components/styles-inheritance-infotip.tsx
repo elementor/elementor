@@ -27,6 +27,21 @@ import { ActionIcons, BreakpointIcon, LabelChip, ValueComponent } from './infoti
 const SECTION_PADDING_INLINE = 32;
 const INFOTIP_MAX_WIDTH = 496;
 
+const calculatePopoverOffset = (
+	triggerRect: DOMRect | undefined,
+	cardWidth: number,
+	isSiteRtl: boolean
+): number => {
+	if ( ! triggerRect ) {
+		return 0;
+	}
+
+	const triggerWidth = triggerRect.width;
+	return isSiteRtl
+		? triggerWidth - cardWidth
+		: -( cardWidth / 2 ) + ( triggerWidth / 2 );
+};
+
 type Props = {
 	inheritanceChain: SnapshotPropValue[];
 	propType: PropType;
@@ -193,12 +208,7 @@ function TooltipOrInfotip( {
 	if ( showInfotip ) {
 		const triggerRect = triggerRef.current?.getBoundingClientRect();
 		const cardWidth = Math.min( sectionWidth - SECTION_PADDING_INLINE, INFOTIP_MAX_WIDTH );
-		const triggerWidth = triggerRect?.width ?? 0;
-		const offsetX = triggerRect
-			? isSiteRtl
-				? triggerWidth - cardWidth
-				: -( cardWidth / 2 ) + ( triggerWidth / 2 )
-			: 0;
+		const offsetX = calculatePopoverOffset( triggerRect, cardWidth, isSiteRtl );
 
 		return (
 			<>
