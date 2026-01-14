@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createMockElementType, createMockPropType, renderWithTheme } from 'test-utils';
-import { useBoundProp } from '@elementor/editor-controls';
+import { type ControlComponent, useBoundProp } from '@elementor/editor-controls';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { mockElement } from '../../../__tests__/utils';
@@ -9,6 +9,7 @@ import { usePersistDynamicValue } from '../../../hooks/use-persist-dynamic-value
 import { useDynamicTag } from '../../hooks/use-dynamic-tag';
 import { usePropDynamicTags } from '../../hooks/use-prop-dynamic-tags';
 import { type DynamicTag } from '../../types';
+import { isDynamicTagSupported } from '../../utils';
 import { DynamicSelectionControl } from '../dynamic-selection-control';
 
 jest.mock( '@elementor/editor-controls' );
@@ -16,6 +17,7 @@ jest.mock( '../../hooks/use-dynamic-tag' );
 jest.mock( '../../hooks/use-prop-dynamic-tags' );
 jest.mock( '../../../hooks/use-persist-dynamic-value' );
 jest.mock( '../../../contexts/element-context' );
+jest.mock( '../../utils' );
 
 describe( '<DynamicSelectionControl />', () => {
 	beforeEach( () => {
@@ -43,6 +45,8 @@ describe( '<DynamicSelectionControl />', () => {
 		const element = mockElement();
 		const elementType = createMockElementType();
 		jest.mocked( useElement ).mockReturnValue( { element, elementType } );
+
+		jest.mocked( isDynamicTagSupported ).mockReturnValue( true );
 	} );
 
 	afterEach( () => {
@@ -158,5 +162,17 @@ describe( '<DynamicSelectionControl />', () => {
 
 		// Assert.
 		expect( setValue ).toHaveBeenCalledWith( null );
+	} );
+
+	it( 'should render replacement control when tag is not supported', async () => {
+		// Arrange.
+		jest.mocked( isDynamicTagSupported ).mockReturnValue( false );
+		const Replacement = () => <></>;
+
+		// Act.
+		renderWithTheme( <DynamicSelectionControl OriginalControl={ Replacement as unknown as ControlComponent } /> );
+
+		// Assert.
+		expect( screen.queryByText( 'Author Info' ) ).not.toBeInTheDocument();
 	} );
 } );
