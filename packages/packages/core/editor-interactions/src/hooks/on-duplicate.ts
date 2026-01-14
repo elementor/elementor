@@ -2,6 +2,8 @@ import { type ElementID, getAllDescendants, getContainer, type V1Element } from 
 import { registerDataHook } from '@elementor/editor-v1-adapters';
 
 import type { ElementInteractions } from '../types';
+import { createString } from '../utils/prop-value-utils';
+import { generateTempInteractionId } from '../utils/temp-id-utils';
 
 export function initCleanInteractionIdsOnDuplicate() {
 	registerDataHook( 'after', 'document/elements/duplicate', ( _args, result: V1Element | V1Element[] ) => {
@@ -41,8 +43,8 @@ function cleanInteractionIds( elementId: ElementID ) {
 	const updatedInteractions = structuredClone( interactions ) as ElementInteractions;
 
 	updatedInteractions?.items?.forEach( ( interaction ) => {
-		if ( interaction.$$type === 'interaction-item' && interaction.value?.interaction_id ) {
-			delete interaction.value.interaction_id;
+		if ( interaction.$$type === 'interaction-item' && interaction.value ) {
+			interaction.value.interaction_id = createString( generateTempInteractionId() );
 		}
 	} );
 
