@@ -187,7 +187,7 @@ describe( 'StylesInheritanceInfotip', () => {
 
 			const offsetX = calculatePopoverOffset( triggerRect, cardWidth, isSiteRtl );
 
-			expect( offsetX ).toBe( -( 400 / 2 ) + ( 40 / 2 ) );
+			expect( offsetX ).toBe( -( 400 / 2 ) + 40 / 2 );
 			expect( offsetX ).toBe( -180 );
 		} );
 
@@ -219,7 +219,7 @@ describe( 'StylesInheritanceInfotip', () => {
 
 			const offsetX = calculatePopoverOffset( triggerRect, cardWidth, isSiteRtl );
 
-			expect( offsetX ).toBe( -( 496 / 2 ) + ( 24 / 2 ) );
+			expect( offsetX ).toBe( -( 496 / 2 ) + 24 / 2 );
 			expect( offsetX ).toBe( -236 );
 		} );
 

@@ -37,9 +37,7 @@ export const calculatePopoverOffset = (
 	}
 
 	const triggerWidth = triggerRect.width;
-	return isSiteRtl
-		? triggerWidth - cardWidth
-		: -( cardWidth / 2 ) + ( triggerWidth / 2 );
+	return isSiteRtl ? triggerWidth - cardWidth : -( cardWidth / 2 ) + triggerWidth / 2;
 };
 
 type Props = {
@@ -60,6 +58,7 @@ export const StylesInheritanceInfotip = ( {
 	isDisabled,
 }: Props ) => {
 	const [ showInfotip, setShowInfotip ] = useState< boolean >( false );
+	const triggerRef = useRef< HTMLDivElement >( null );
 
 	const toggleInfotip = () => {
 		if ( isDisabled ) {
@@ -161,8 +160,6 @@ export const StylesInheritanceInfotip = ( {
 		return <Box sx={ { display: 'inline-flex' } }>{ children }</Box>;
 	}
 
-	const triggerRef = useRef< HTMLDivElement >( null );
-
 	return (
 		<Box ref={ triggerRef } sx={ { display: 'inline-flex' } }>
 			<TooltipOrInfotip
@@ -173,7 +170,12 @@ export const StylesInheritanceInfotip = ( {
 				triggerRef={ triggerRef }
 				sectionWidth={ sectionWidth }
 			>
-				<IconButton onClick={ toggleInfotip } aria-label={ label } sx={ { my: '-1px' } } disabled={ isDisabled }>
+				<IconButton
+					onClick={ toggleInfotip }
+					aria-label={ label }
+					sx={ { my: '-1px' } }
+					disabled={ isDisabled }
+				>
 					{ children }
 				</IconButton>
 			</TooltipOrInfotip>
