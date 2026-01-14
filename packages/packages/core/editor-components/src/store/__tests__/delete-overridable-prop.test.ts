@@ -430,7 +430,7 @@ describe( 'deleteOverridableProp', () => {
 			} );
 
 			// Act
-			deleteOverridableProp( { componentId: COMPONENT_ID, propKey: propKeyToDelete } );
+			deleteOverridableProp( { componentId: COMPONENT_ID, propKey: propKeyToDelete, source: 'user' } );
 
 			// Assert
 			expect( mockUpdateElementSettings ).toHaveBeenCalledWith( {
@@ -464,7 +464,7 @@ describe( 'deleteOverridableProp', () => {
 		mockState.data[ 0 ].overridableProps = createStoreState( storeOverridables );
 
 		// Act
-		deleteOverridableProp( { componentId: COMPONENT_ID, propKey: 'non-existent' } );
+		deleteOverridableProp( { componentId: COMPONENT_ID, propKey: 'non-existent', source: 'user' } );
 
 		// Assert
 		expect( mockUpdateElementSettings ).not.toHaveBeenCalled();
