@@ -34,6 +34,7 @@ import { InstanceEditingPanel } from './components/instance-editing-panel/instan
 import { OverridablePropControl } from './components/overridable-props/overridable-prop-control';
 import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
 import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-type';
+import { initCleanOverridablesOnCopyDuplicate } from './hooks/clean-overridables-on-copy-duplicate';
 import { initCleanupOverridablePropsOnDelete } from './hooks/cleanup-overridable-props-on-delete';
 import { initRegenerateOverrideKeys } from './hooks/regenerate-override-keys';
 import { initMcp } from './mcp';
@@ -132,6 +133,8 @@ export function init() {
 	settingsTransformersRegistry.register( 'override', componentOverrideTransformer );
 
 	initRegenerateOverrideKeys();
+
+	initCleanOverridablesOnCopyDuplicate();
 
 	initCleanupOverridablePropsOnDelete();
 
