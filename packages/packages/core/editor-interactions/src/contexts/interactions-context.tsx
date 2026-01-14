@@ -10,7 +10,7 @@ import {
 type InteractionsContextValue = {
 	interactions: ElementInteractions;
 	setInteractions: ( value: ElementInteractions | undefined ) => void;
-	playInteractions: ( animationId: string ) => void;
+	playInteractions: ( interactionId: string ) => void;
 };
 
 const InteractionsContext = createContext< InteractionsContextValue | null >( null );
@@ -31,14 +31,16 @@ export const InteractionsProvider = ( { children, elementId }: { children: React
 		( rawInteractions as unknown as ElementInteractions ) ?? DEFAULT_INTERACTIONS;
 
 	const setInteractions = ( value: ElementInteractions | undefined ) => {
+		const normalizedValue = value && value.items?.length === 0 ? undefined : value;
+
 		updateElementInteractions( {
 			elementId,
-			interactions: value as unknown as ElementInteractions,
+			interactions: normalizedValue,
 		} );
 	};
 
-	const playInteractions = ( animationId: string ) => {
-		playElementInteractions( elementId, animationId );
+	const playInteractions = ( interactionId: string ) => {
+		playElementInteractions( elementId, interactionId );
 	};
 
 	const contextValue: InteractionsContextValue = {
