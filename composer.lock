@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "da06ba385b63cd26fb46fd362e99abd7",
+    "content-hash": "a57d151b5a92c57053c108c7d93876e9",
     "packages": [
         {
             "name": "elementor/wp-notifications-package",
@@ -39,16 +39,16 @@
         },
         {
             "name": "elementor/wp-one-package",
-            "version": "1.0.33",
+            "version": "1.0.45",
             "source": {
                 "type": "git",
                 "url": "git@github.com:elementor/wp-one-package.git",
-                "reference": "79852ab1a725880b3fea2aa76e6946f49285588f"
+                "reference": "6317ddc7e1614e7e24c3d1e454a7139ed51d3b34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.33",
-                "reference": "79852ab1a725880b3fea2aa76e6946f49285588f",
+                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.45",
+                "reference": "6317ddc7e1614e7e24c3d1e454a7139ed51d3b34",
                 "shasum": ""
             },
             "require": {
@@ -64,9 +64,6 @@
             },
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "ElementorOne\\": "src/"
-                },
                 "files": [
                     "./runner.php"
                 ]
@@ -80,9 +77,9 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/elementor/wp-one-package/tree/1.0.33"
+                "source": "https://github.com/elementor/wp-one-package/tree/1.0.45"
             },
-            "time": "2026-01-05T21:27:30+00:00"
+            "time": "2026-01-14T11:38:37+00:00"
         }
     ],
     "packages-dev": [
@@ -4636,13 +4633,13 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.4"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "platform-overrides": {
         "php": "7.4"
     },

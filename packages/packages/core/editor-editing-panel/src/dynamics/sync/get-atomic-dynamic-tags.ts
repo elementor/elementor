@@ -1,4 +1,4 @@
-import { getElementorConfig } from './get-elementor-config';
+import { getElementorConfig } from '../../sync/get-elementor-globals';
 
 export const getAtomicDynamicTags = () => {
 	const { atomicDynamicTags } = getElementorConfig();
