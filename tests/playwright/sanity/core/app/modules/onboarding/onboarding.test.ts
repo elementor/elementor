@@ -158,14 +158,14 @@ test.describe.skip( 'On boarding @onBoarding', async () => {
 test.describe( 'Onboarding @onBoarding', async () => {
 	const chooseFeaturesUrl = '/wp-admin/admin.php?page=elementor-app#onboarding/chooseFeatures';
 
-	// TODO: Fix this test in [ED-22443].
-	test.skip( 'Onboarding Choose Features page', async ( { page } ) => {
+	test( 'Onboarding Choose Features page', async ( { page } ) => {
 		await page.goto( chooseFeaturesUrl );
 
 		const chooseFeaturesScreen = page.locator( '.e-onboarding__page-chooseFeatures' ),
 			upgradeNowBtn = page.locator( EditorSelectors.onboarding.upgradeButton ),
 			tierLocator = page.locator( '.e-onboarding__choose-features-section__message strong' ),
 			tiers = {
+				one: 'ONE',
 				advanced: 'Advanced',
 				essential: 'Essential',
 			};
@@ -188,12 +188,12 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		} );
 
 		await test.step( 'Check that tier changes to Advanced when checking an Advanced item', async () => {
-			await page.locator( '#advanced-1' ).check();
+			await page.locator( '#advanced-4' ).check();
 			await expect( tierLocator ).toHaveText( tiers.advanced );
 		} );
 
 		await test.step( 'Check that tier changes to Essential when unchecking all Advanced items but an Essential Item Is checked.', async () => {
-			await page.locator( '#advanced-1' ).uncheck();
+			await page.locator( '#advanced-4' ).uncheck();
 			await expect( tierLocator ).toHaveText( tiers.essential );
 		} );
 
@@ -203,8 +203,14 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		} );
 
 		await test.step( 'Check that tier changes to Advanced when checking only and Advanced item', async () => {
-			await page.locator( '#advanced-1' ).check();
+			await page.locator( '#advanced-4' ).check();
 			await expect( tierLocator ).toHaveText( tiers.advanced );
+		} );
+
+		await test.step( 'Check that tier changes to ONE when checking a ONE item', async () => {
+			await page.locator( '#advanced-4' ).uncheck();
+			await page.locator( '#one-1' ).check();
+			await expect( tierLocator ).toHaveText( tiers.one );
 		} );
 	} );
 

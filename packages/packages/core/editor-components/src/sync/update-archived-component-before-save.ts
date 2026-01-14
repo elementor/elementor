@@ -2,7 +2,7 @@ import { type NotificationData, notify } from '@elementor/editor-notifications';
 import { __getState as getState } from '@elementor/store';
 
 import { apiClient } from '../api';
-import { selectArchivedComponents } from '../store/store';
+import { selectArchivedThisSession } from '../store/store';
 
 const failedNotification = ( message: string ): NotificationData => ( {
 	type: 'error',
@@ -12,15 +12,13 @@ const failedNotification = ( message: string ): NotificationData => ( {
 
 export const updateArchivedComponentBeforeSave = async () => {
 	try {
-		const archivedComponents = selectArchivedComponents( getState() );
+		const archivedComponents = selectArchivedThisSession( getState() );
 
 		if ( ! archivedComponents.length ) {
 			return;
 		}
 
-		const result = await apiClient.updateArchivedComponents(
-			archivedComponents.map( ( component ) => component.id )
-		);
+		const result = await apiClient.updateArchivedComponents( archivedComponents );
 
 		const failedIds = result.failedIds.join( ', ' );
 
