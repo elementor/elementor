@@ -25,6 +25,7 @@ import { type SnapshotPropValue } from '../types';
 import { ActionIcons, BreakpointIcon, LabelChip, ValueComponent } from './infotip';
 
 const SECTION_PADDING_INLINE = 32;
+const INFOTIP_MAX_WIDTH = 496;
 
 type Props = {
 	inheritanceChain: SnapshotPropValue[];
@@ -78,7 +79,7 @@ export const StylesInheritanceInfotip = ( {
 				elevation={ 0 }
 				sx={ {
 					width: `${ sectionWidth - SECTION_PADDING_INLINE }px`,
-					maxWidth: 496,
+					maxWidth: INFOTIP_MAX_WIDTH,
 					maxHeight: 268,
 					overflowX: 'hidden',
 					display: 'flex',
@@ -191,7 +192,7 @@ function TooltipOrInfotip( {
 
 	if ( showInfotip ) {
 		const triggerRect = triggerRef.current?.getBoundingClientRect();
-		const cardWidth = Math.min( sectionWidth - SECTION_PADDING_INLINE, 496 );
+		const cardWidth = Math.min( sectionWidth - SECTION_PADDING_INLINE, INFOTIP_MAX_WIDTH );
 		const triggerWidth = triggerRect?.width ?? 0;
 		const offsetX = triggerRect
 			? isSiteRtl
