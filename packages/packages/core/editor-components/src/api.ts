@@ -28,22 +28,22 @@ export type SyncPayload = {
 	renamed: UpdatedComponentName[];
 };
 
-type FailedItem = {
+export type FailedItem = {
 	id: number;
 	error: string;
 };
 
-type CreatedFailedItem = {
+export type CreatedFailedItem = {
 	uid: string;
 	error: string;
 };
 
-type OperationResult = {
+export type OperationResult = {
 	successIds: number[];
 	failed: FailedItem[];
 };
 
-type CreatedResult = {
+export type CreatedResult = {
 	success: Record< string, number >;
 	failed: CreatedFailedItem[];
 };

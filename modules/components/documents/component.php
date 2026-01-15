@@ -80,12 +80,10 @@ class Component extends Document {
 		}
 	}
 
-	public function get_is_archived() {
+	public function get_is_archived(): bool {
 		$archived_meta = $this->get_json_meta( self::ARCHIVED_META_KEY );
-		if ( ! $archived_meta ) {
-			return false;
-		}
-		return $archived_meta;
+
+		return ! empty( $archived_meta['is_archived'] );
 	}
 
 	public function update_overridable_props( $data ): Parse_Result {

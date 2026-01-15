@@ -1311,6 +1311,158 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertStringContainsString( 'already exists', strtolower( $data['created']['failed'][0]['error'] ) );
 	}
 
+	public function test_put_sync_components__fails_when_status_is_missing() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'created' => [],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_missing_callback_param', $response->get_data()['code'] );
+	}
+
+	public function test_put_sync_components__fails_when_status_is_invalid() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'invalid-status',
+			'created' => [],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
+		$this->assertStringContainsString( 'status', $response->get_data()['data']['params']['status'] );
+	}
+
+	public function test_put_sync_components__fails_when_title_too_short() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'created' => [
+				[
+					'uid' => 'short-title-uid',
+					'title' => 'A',
+					'elements' => $this->mock_component_1_content,
+				],
+			],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
+		$this->assertStringContainsString( 'at least 2 characters', $response->get_data()['data']['params']['created'] );
+	}
+
+	public function test_put_sync_components__fails_when_title_too_long() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'created' => [
+				[
+					'uid' => 'long-title-uid',
+					'title' => str_repeat( 'A', 201 ),
+					'elements' => $this->mock_component_1_content,
+				],
+			],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
+		$this->assertStringContainsString( 'at most 200 characters', $response->get_data()['data']['params']['created'] );
+	}
+
+	public function test_put_sync_components__fails_when_uid_is_missing() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'created' => [
+				[
+					'title' => 'Test Component',
+					'elements' => $this->mock_component_1_content,
+				],
+			],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
+		$this->assertStringContainsString( 'uid is a required property', $response->get_data()['data']['params']['created'] );
+	}
+
+	public function test_put_sync_components__fails_when_elements_is_missing() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'created' => [
+				[
+					'uid' => 'no-elements-uid',
+					'title' => 'Test Component',
+				],
+			],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+		$this->assertEquals( 'rest_invalid_param', $response->get_data()['code'] );
+		$this->assertStringContainsString( 'elements is a required property', $response->get_data()['data']['params']['created'] );
+	}
+
 	public function test_get_overridable_props__returns_props_for_existing_component() {
 		// Arrange
 		$this->act_as_admin();

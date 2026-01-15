@@ -112,7 +112,7 @@ describe( 'syncComponentsBeforeSave', () => {
 			// Assert
 			expect( mockSync ).toHaveBeenCalledWith(
 				expect.objectContaining( {
-					renamed: [ { componentId: COMPONENT_ID, title: 'New Name' } ],
+					renamed: [ { id: COMPONENT_ID, title: 'New Name' } ],
 				} )
 			);
 		} );

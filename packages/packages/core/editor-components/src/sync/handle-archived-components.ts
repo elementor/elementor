@@ -1,9 +1,6 @@
 import { type NotificationData, notify } from '@elementor/editor-notifications';
 
-type OperationResult = {
-	successIds: number[];
-	failed: Array< { id: number; error: string } >;
-};
+import { type OperationResult } from '../api';
 
 export function handleArchivedComponents( result: OperationResult ): void {
 	if ( result.failed.length > 0 ) {

@@ -234,8 +234,8 @@ export const useCurrentComponent = () => {
 export const selectUpdatedComponentNames = createSelector(
 	( state: ComponentsSlice ) => state[ SLICE_NAME ].updatedComponentNames,
 	( updatedComponentNames ) =>
-		Object.entries( updatedComponentNames ).map( ( [ componentId, title ] ) => ( {
-			componentId: Number( componentId ),
+		Object.entries( updatedComponentNames ).map( ( [ id, title ] ) => ( {
+			id: Number( id ),
 			title,
 		} ) )
 );

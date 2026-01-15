@@ -170,11 +170,11 @@ class Components_Repository {
 				);
 				$result['success'][ $uid ] = $component_id;
 			} catch ( \Exception $e ) {
-					$result['failed'][] = [
-						'uid' => $uid,
-						'error' => $e->getMessage(),
-					];
-					continue;
+				$result['failed'][] = [
+					'uid' => $uid,
+					'error' => $e->getMessage(),
+				];
+				continue;
 			}
 		}
 

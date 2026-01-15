@@ -33,15 +33,19 @@ export async function syncComponentsBeforeSave( { elements, status }: Options ):
 		? await getDocumentNestedComponentsIds( elements )
 		: [];
 
-	const response = await apiClient.sync( {
-		status,
-		created,
-		published,
-		archived,
-		renamed,
-	} );
+	try {
+		const response = await apiClient.sync( {
+			status,
+			created,
+			published,
+			archived,
+			renamed,
+		} );
 
-	handleSyncResponse( response, elements );
+		handleSyncResponse( response, elements );
+	} catch ( error ) {
+		throw new Error( `Failed to sync components: ${ error }` );
+	}
 }
 
 function shouldPublishDocumentNestedComponents( status: DocumentSaveStatus ): boolean {

@@ -70,6 +70,8 @@ class Components_REST_API {
 								'title' => [
 									'type' => 'string',
 									'required' => true,
+									'minLength' => 2,
+									'maxLength' => 200,
 								],
 								'elements' => [
 									'type' => 'array',
@@ -109,6 +111,8 @@ class Components_REST_API {
 								'title' => [
 									'type' => 'string',
 									'required' => true,
+									'minLength' => 2,
+									'maxLength' => 200,
 								],
 							],
 						],
@@ -279,76 +283,6 @@ class Components_REST_API {
 		}
 
 		return Response_Builder::make( $overridable )->build();
-	}
-
-	private function create_components( \WP_REST_Request $request ) {
-		$save_status = $request->get_param( 'status' );
-
-		$items = Collection::make( $request->get_param( 'items' ) );
-		$components = $this->get_repository()->all();
-
-		$result = Save_Components_Validator::make( $components )->validate( $items );
-
-		if ( ! $result['success'] ) {
-			return Error_Builder::make( 'components_validation_failed' )
-				->set_status( 422 )
-				->set_message( 'Validation failed: ' . implode( ', ', $result['messages'] ) )
-				->build();
-		}
-
-		$circular_result = Circular_Dependency_Validator::make()->validate_new_components( $items );
-
-		if ( ! $circular_result['success'] ) {
-			return Error_Builder::make( 'circular_dependency_detected' )
-				->set_status( 422 )
-				->set_message( __( "Can't add this component - components that contain each other can't be nested.", 'elementor' ) )
-				->set_meta( [ 'caused_by' => $circular_result['messages'] ] )
-				->build();
-		}
-
-		$non_atomic_result = Non_Atomic_Widget_Validator::make()->validate_items( $items );
-
-		if ( ! $non_atomic_result['success'] ) {
-			return Error_Builder::make( Non_Atomic_Widget_Validator::ERROR_CODE )
-				->set_status( 422 )
-				->set_message( __( 'Components require atomic elements only. Remove widgets to create this component.', 'elementor' ) )
-				->set_meta( [ 'non_atomic_elements' => $non_atomic_result['non_atomic_elements'] ] )
-				->build();
-		}
-
-		$validation_errors = [];
-
-		$created = $items->map_with_keys( function ( $item ) use ( $save_status, &$validation_errors ) {
-			$title = sanitize_text_field( $item['title'] );
-			$content = $item['elements'];
-			$uid = $item['uid'];
-
-			try {
-				$settings = isset( $item['settings'] ) ? $this->parse_settings( $item['settings'] ) : [];
-			} catch ( \Exception $e ) {
-				$validation_errors[ $uid ] = $e->getMessage();
-				return [ $uid => null ];
-			}
-
-			$status = Document::STATUS_AUTOSAVE === $save_status
-				? Document::STATUS_DRAFT
-				: $save_status;
-
-			$component_id = $this->get_repository()->create( $title, $content, $status, $uid, $settings );
-
-			return [ $uid => $component_id ];
-		} );
-
-		if ( ! empty( $validation_errors ) ) {
-			return Error_Builder::make( 'settings_validation_failed' )
-				->set_status( 422 )
-				->set_message( 'Settings validation failed: ' . json_encode( $validation_errors ) )
-				->build();
-		}
-
-		return Response_Builder::make( $created->all() )
-			->set_status( 201 )
-			->build();
 	}
 
 	private function sync_components( \WP_REST_Request $request ) {

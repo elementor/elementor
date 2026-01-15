@@ -1,13 +1,10 @@
+import { type NotificationData, notify } from '@elementor/editor-notifications';
 import { updateElementSettings, type V1ElementData } from '@elementor/editor-elements';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
+import { type CreatedResult } from '../api';
 import { type ComponentInstanceProp } from '../prop-types/component-instance-prop-type';
 import { selectUnpublishedComponents, slice } from '../store/store';
-
-type CreatedResult = {
-	success: Record< string, number >;
-	failed: Array< { uid: string; error: string } >;
-};
 
 export function handleCreatedComponents( result: CreatedResult, elements: V1ElementData[] ): void {
 	const uidToComponentId = new Map( Object.entries( result.success ).map( ( [ uid, id ] ) => [ uid, id ] ) );
@@ -28,6 +25,16 @@ export function handleCreatedComponents( result: CreatedResult, elements: V1Elem
 		)
 	);
 	dispatch( slice.actions.resetUnpublished() );
+
+	if ( result.failed.length > 0 ) {
+		const failedNames = result.failed.map( ( item ) => item.uid );
+		const failedNotification: NotificationData = {
+			type: 'error',
+			message: `Failed to create components: ${ failedNames.join( ', ' ) }`,
+			id: 'failed-created-components-notification',
+		};
+		notify( failedNotification );
+	}
 }
 
 function updateComponentInstances( elements: V1ElementData[], uidToComponentId: Map< string, number > ): void {

@@ -1,10 +1,14 @@
 import { updateElementSettings, type V1ElementData } from '@elementor/editor-elements';
+import { notify } from '@elementor/editor-notifications';
 import { __createStore, __dispatch, __getState as getState, __registerSlice } from '@elementor/store';
 
 import { selectUnpublishedComponents, slice } from '../../store/store';
 import { handleCreatedComponents } from '../handle-created-components';
 
 jest.mock( '@elementor/editor-elements' );
+jest.mock( '@elementor/editor-notifications' );
+
+const mockNotify = jest.mocked( notify );
 
 const mockUpdateElementSettings = jest.mocked( updateElementSettings );
 
@@ -64,7 +68,18 @@ describe( 'handleCreatedComponents', () => {
 		it( 'should preserve overridableProps when adding components', () => {
 			// Arrange
 			const overridableProps = {
-				props: { prop1: { overrideKey: 'key1', label: 'Prop 1' } },
+				props: {
+					prop1: {
+						overrideKey: 'key1',
+						label: 'Prop 1',
+						elementId: 'element-1',
+						propKey: 'text',
+						elType: 'widget',
+						widgetType: 'e-heading',
+						originValue: { $$type: 'string', value: 'test' },
+						groupId: 'group-1',
+					},
+				},
 				groups: { items: {}, order: [] },
 			};
 
@@ -322,6 +337,56 @@ describe( 'handleCreatedComponents', () => {
 
 			// Assert
 			expect( mockUpdateElementSettings ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'failure notifications', () => {
+		it( 'should notify when some components fail to create', () => {
+			// Arrange
+			__dispatch(
+				slice.actions.addUnpublished( {
+					uid: COMPONENT_1_UID,
+					name: 'Test Component',
+					elements: [],
+				} )
+			);
+
+			const result = {
+				success: {},
+				failed: [
+					{ uid: COMPONENT_1_UID, error: 'Creation failed' },
+					{ uid: COMPONENT_2_UID, error: 'Another error' },
+				],
+			};
+
+			// Act
+			handleCreatedComponents( result, [] );
+
+			// Assert
+			expect( mockNotify ).toHaveBeenCalledWith( {
+				type: 'error',
+				message: `Failed to create components: ${ COMPONENT_1_UID }, ${ COMPONENT_2_UID }`,
+				id: 'failed-created-components-notification',
+			} );
+		} );
+
+		it( 'should not notify when all components succeed', () => {
+			// Arrange
+			__dispatch(
+				slice.actions.addUnpublished( {
+					uid: COMPONENT_1_UID,
+					name: 'Test Component',
+					elements: [],
+				} )
+			);
+
+			const result = { success: { [ COMPONENT_1_UID ]: COMPONENT_1_ID }, failed: [] };
+
+			// Act
+			handleCreatedComponents( result, [] );
+
+			// Assert
+			expect( mockNotify ).not.toHaveBeenCalled();
 		} );
 	} );
 } );
