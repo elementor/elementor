@@ -26,7 +26,7 @@ class Editor_One_Elements_Manager_Menu implements Menu_Item_Interface, Admin_Men
 	}
 
 	public function get_label(): string {
-		return esc_html__( 'Elements Manager', 'elementor' );
+		return esc_html__( 'Element Manager', 'elementor' );
 	}
 
 	public function get_position(): int {
