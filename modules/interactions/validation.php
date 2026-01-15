@@ -10,7 +10,7 @@ class Validation {
 	private $elements_to_interactions_counter = [];
 	private $max_number_of_interactions = 5;
 
-	private const VALID_TRIGGERS = [ 'load', 'scrollIn', 'scrollOut' ];
+	private const VALID_TRIGGERS = [ 'load', 'scrollIn', 'scrollOut', 'scrollOn' ];
 	private const VALID_EFFECTS = [ 'fade', 'slide', 'scale' ];
 	private const VALID_TYPES = [ 'in', 'out' ];
 	private const VALID_DIRECTIONS = [ '', 'left', 'right', 'top', 'bottom' ];
