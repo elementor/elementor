@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { createMockPropType, mockCurrentUserCapabilities, renderWithStore } from 'test-utils';
+import { createMockContainer, createMockPropType, mockCurrentUserCapabilities, renderWithStore } from 'test-utils';
 import { ControlActionsProvider, TextControl } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
 import {
+	getContainer,
 	getElementLabel,
 	getElementType,
 	getWidgetsCache,
@@ -264,6 +265,7 @@ describe( '<InstanceEditingPanel />', () => {
 			createMockWidgetsCache() as unknown as ReturnType< typeof getWidgetsCache >
 		);
 		jest.mocked( getElementType ).mockImplementation( createMockElementType );
+		jest.mocked( getContainer ).mockReturnValue( createMockContainer( MOCK_ELEMENT_ID, [] ) );
 	} );
 
 	it( 'should render the component name in the header', () => {
@@ -404,17 +406,46 @@ describe( '<InstanceEditingPanel />', () => {
 		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
 		expect( screen.queryByText( 'Empty Group' ) ).not.toBeInTheDocument();
 	} );
+
+	it( 'should render panel for archived component instance', () => {
+		// Arrange.
+		setupComponent( { isArchived: true } );
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
+	} );
+
+	it( 'should render panel for component archived during session', () => {
+		// Arrange.
+		setupComponent();
+		dispatch( slice.actions.archive( MOCK_COMPONENT_ID ) );
+
+		// Act.
+		renderEditInstancePanel( store );
+
+		// Assert.
+		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Content' ) ).toBeInTheDocument();
+	} );
 } );
 
 type SetupComponentOptions = {
 	isWithOverridableProps?: boolean;
 	isWithNestedOverridableProps?: boolean;
 	isWithEmptyGroup?: boolean;
+	isArchived?: boolean;
 };
 
-function setupComponent( options: SetupComponentOptions = {} ) {
-	const { isWithOverridableProps = true, isWithNestedOverridableProps = false, isWithEmptyGroup = false } = options;
-
+function setupComponent( {
+	isWithOverridableProps = true,
+	isWithNestedOverridableProps = false,
+	isWithEmptyGroup = false,
+	isArchived = false,
+}: SetupComponentOptions = {} ) {
 	const getOverridableProps = () => {
 		if ( isWithNestedOverridableProps ) {
 			return MOCK_OVERRIDABLE_PROPS_WITH_NESTED;
@@ -432,6 +463,7 @@ function setupComponent( options: SetupComponentOptions = {} ) {
 		uid: 'component-uid',
 		name: MOCK_COMPONENT_NAME,
 		overridableProps: isWithOverridableProps ? overridableProps : undefined,
+		isArchived,
 	};
 
 	dispatch( slice.actions.load( [ componentData ] ) );

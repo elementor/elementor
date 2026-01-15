@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8cc2fd639fe6070d8e2bcffa9870c084",
+    "content-hash": "a57d151b5a92c57053c108c7d93876e9",
     "packages": [
         {
             "name": "elementor/wp-notifications-package",
@@ -39,16 +39,16 @@
         },
         {
             "name": "elementor/wp-one-package",
-            "version": "1.0.41",
+            "version": "1.0.45",
             "source": {
                 "type": "git",
                 "url": "git@github.com:elementor/wp-one-package.git",
-                "reference": "fe8b83e7daf35340bcbb73f72f697550568fcac7"
+                "reference": "6317ddc7e1614e7e24c3d1e454a7139ed51d3b34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.41",
-                "reference": "fe8b83e7daf35340bcbb73f72f697550568fcac7",
+                "url": "https://composer.elementor.com/download/elementor/wp-one-package/1.0.45",
+                "reference": "6317ddc7e1614e7e24c3d1e454a7139ed51d3b34",
                 "shasum": ""
             },
             "require": {
@@ -77,9 +77,9 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/elementor/wp-one-package/tree/1.0.41"
+                "source": "https://github.com/elementor/wp-one-package/tree/1.0.45"
             },
-            "time": "2026-01-12T09:55:41+00:00"
+            "time": "2026-01-14T11:38:37+00:00"
         }
     ],
     "packages-dev": [
@@ -4633,13 +4633,13 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.4"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "platform-overrides": {
         "php": "7.4"
     },
