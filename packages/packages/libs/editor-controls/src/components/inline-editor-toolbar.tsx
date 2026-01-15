@@ -29,7 +29,7 @@ import { UrlPopover } from './url-popover';
 const checkIfElementHasLink = ( elementId: ElementID ): boolean =>
 	!! getElementSetting< LinkPropValue >( elementId, 'link' )?.value?.destination;
 
-type InlineEditorToolbarProps = {
+export type InlineEditorToolbarProps = {
 	editor: Editor;
 	elementId?: ElementID;
 };
