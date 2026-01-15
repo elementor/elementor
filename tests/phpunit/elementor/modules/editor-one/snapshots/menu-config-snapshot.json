@@ -87,7 +87,7 @@
                 },
                 {
                     "slug": "elementor-element-manager",
-                    "label": "Elements Manager",
+                    "label": "Element Manager",
                     "url": "/wp-admin/admin.php?page=elementor-element-manager",
                     "priority": 20
                 }
