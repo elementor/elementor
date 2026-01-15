@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import { saveHomepageSettings, restoreHomepageSettings, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, type HomepageSettings } from './home-screen.helper';
 import { wpCli } from '../../../assets/wp-cli';
 
-test.describe( 'Home screen Edit site button tests', () => {
+test.describe( 'Editor screen UI tests', () => {
 	let originalHomepageSettings: HomepageSettings | null = null;
 
 	test.beforeAll( async ( { browser, apiRequests } ) => {
@@ -28,6 +28,28 @@ test.describe( 'Home screen Edit site button tests', () => {
 
 		await page.close();
 		await context.close();
+	} );
+
+	test( 'free license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
+		const requestContext = await request.newContext( { storageState } );
+		const mockData = transformMockDataByLicense( 'free' );
+
+		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
+
+		const homeScreen = await navigateToHomeScreen( page );
+		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-free.png' );
+		await requestContext.dispose();
+	} );
+
+	test( 'pro license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
+		const requestContext = await request.newContext( { storageState } );
+		const mockData = transformMockDataByLicense( 'pro' );
+
+		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
+
+		const homeScreen = await navigateToHomeScreen( page );
+		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-pro.png' );
+		await requestContext.dispose();
 	} );
 
 	test( 'one license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
