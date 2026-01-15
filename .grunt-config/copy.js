@@ -52,6 +52,11 @@ const getBuildFiles = [
 	'core/files/assets/**',
 	'vendor/autoload.php',
 	'vendor/composer/**',
+<<<<<<< HEAD
+=======
+	'vendor/elementor/wp-one-package/**',
+	'vendor/elementor/wp-notifications-package/**',
+>>>>>>> a3da68c7b1 (Fix: What’s New panel is empty when only Editor Core is installed [ACD-7976] (#34269))
 ];
 /**
  * @type {{main: {src: string[], expand: boolean, dest: string}, secondary: {src: string[], expand: boolean, dest: string}}}
