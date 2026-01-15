@@ -177,7 +177,6 @@ export default function createAtomicElementBaseView( type ) {
 			this.$el.addClass( this.getClasses() );
 
 			if ( this.isTagChanged( changed ) ) {
-				this.model.unset( '_resolvedTag' );
 				this.rerenderEntireView();
 			}
 		},
