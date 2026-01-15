@@ -1,8 +1,8 @@
+import { Trigger } from './components/controls/trigger';
 import { initCleanInteractionIdsOnDuplicate } from './hooks/on-duplicate';
+import { registerInteractionsControl } from './interactions-controls-registry';
 import { interactionsRepository } from './interactions-repository';
 import { documentElementsInteractionsProvider } from './providers/document-elements-interactions-provider';
-import { registerInteractionsControl } from './interactions-controls-registry';
-import { Trigger } from './components/controls/trigger';
 
 export function init() {
 	try {
