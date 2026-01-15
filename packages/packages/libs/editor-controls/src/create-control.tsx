@@ -2,7 +2,7 @@ import * as React from 'react';
 import { type ComponentProps, type ComponentType } from 'react';
 import { ErrorBoundary } from '@elementor/ui';
 
-import { useControlReplacement } from './control-replacements';
+import { ActiveReplacementsProvider, useControlReplacement } from './control-replacements';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyComponentType = ComponentType< any >;
@@ -14,9 +14,19 @@ export type ControlComponent< TComponent extends AnyComponentType = AnyComponent
 };
 
 export function createControl< T extends AnyComponentType >( Control: T ) {
-	return ( ( props: ComponentProps< T > ) => {
-		const { ControlToRender, OriginalControl, isReplaced } = useControlReplacement( Control );
-		const controlProps = isReplaced ? { ...props, OriginalControl } : props;
+	const WrappedControl = ( ( props: ComponentProps< T > ) => {
+		const { ControlToRender, isReplaced, replacementId } = useControlReplacement( Control );
+		const controlProps = isReplaced ? { ...props, OriginalControl: WrappedControl } : props;
+
+		if ( isReplaced && replacementId ) {
+			return (
+				<ErrorBoundary fallback={ null }>
+					<ActiveReplacementsProvider replacementId={ replacementId }>
+						<ControlToRender { ...controlProps } />
+					</ActiveReplacementsProvider>
+				</ErrorBoundary>
+			);
+		}
 
 		return (
 			<ErrorBoundary fallback={ null }>
@@ -24,4 +34,6 @@ export function createControl< T extends AnyComponentType >( Control: T ) {
 			</ErrorBoundary>
 		);
 	} ) as ControlComponent< T >;
+
+	return WrappedControl;
 }

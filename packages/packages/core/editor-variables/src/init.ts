@@ -20,6 +20,7 @@ export function init() {
 	registerRepeaterInjections();
 
 	registerControlReplacement( {
+		id: 'variable-control',
 		component: VariableControl,
 		condition: ( { value, placeholder } ) => {
 			if ( hasVariableAssigned( value ) ) {
