@@ -6,23 +6,34 @@ import { generateUniqueId } from '@elementor/utils';
 import { type ComponentEventData } from '../../components/create-component-form/utils/get-component-event-data';
 import { replaceElementWithComponent } from '../../components/create-component-form/utils/replace-element-with-component';
 import { type OverridableProps } from '../../types';
-import { trackComponentEvent } from '../../utils/tracking';
+import { type Source, trackComponentEvent } from '../../utils/tracking';
 import { slice } from '../store';
 
-export async function createUnpublishedComponent(
-	name: string,
-	element: V1ElementData,
-	eventData: ComponentEventData | null,
-	overridableProps?: OverridableProps,
-	uid?: string | null
-) {
+type CreateUnpublishedComponentParams = {
+	name: string;
+	element: V1ElementData;
+	eventData: ComponentEventData | null;
+	uid?: string | null;
+	overridableProps?: OverridableProps;
+	source: Source;
+};
+
+export async function createUnpublishedComponent( {
+	name,
+	element,
+	eventData,
+	uid,
+	overridableProps,
+	source,
+}: CreateUnpublishedComponentParams ): Promise< { uid: string; instanceId: string } > {
 	const generatedUid = uid ?? generateUniqueId( 'component' );
-	const componentBase = { uid: generatedUid, name, overridableProps };
+	const componentBase = { uid: generatedUid, name };
 
 	dispatch(
 		slice.actions.addUnpublished( {
 			...componentBase,
 			elements: [ element ],
+			overridableProps,
 		} )
 	);
 
@@ -32,6 +43,7 @@ export async function createUnpublishedComponent(
 
 	trackComponentEvent( {
 		action: 'created',
+		source,
 		component_uid: generatedUid,
 		component_name: name,
 		...eventData,
