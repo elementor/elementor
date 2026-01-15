@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 
+import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
 import { createAnimationPreset, createString } from '../utils/prop-value-utils';
@@ -37,6 +38,23 @@ const createInteractionItemValue = ( {
 	} ),
 } );
 
+const getEffectCombobox = (): HTMLElement => {
+	const effectLabel = screen.getByText( 'Effect' );
+	const gridContainer = effectLabel.closest( '[class*="MuiGrid-container"]' );
+	const effectSelect = gridContainer?.querySelector( '[role="combobox"]' ) as HTMLElement;
+	if ( ! effectSelect ) {
+		const allComboboxes = screen.getAllByRole( 'combobox' );
+		const effectSelectByProximity = Array.from( allComboboxes ).find( ( cb ) => {
+			const gridItem = cb.closest( '[class*="MuiGrid-item"]' );
+			const container = gridItem?.parentElement;
+			const label = container?.querySelector( 'label' );
+			return label?.textContent === 'Effect';
+		} );
+		return effectSelectByProximity || allComboboxes[ 1 ];
+	}
+	return effectSelect;
+};
+
 describe( 'InteractionDetails', () => {
 	const mockOnChange = jest.fn();
 	const mockReplayControl = jest.fn( ( { value, onChange, disabled } ) => (
@@ -61,8 +79,18 @@ describe( 'InteractionDetails', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		const { getInteractionsControl } = require( '../interactions-controls-registry' );
-		getInteractionsControl.mockReturnValue( {
-			component: mockReplayControl,
+		getInteractionsControl.mockImplementation( ( type: string ) => {
+			if ( type === 'trigger' ) {
+				return {
+					component: Trigger,
+				};
+			}
+			if ( type === 'replay' ) {
+				return {
+					component: mockReplayControl,
+				};
+			}
+			return null;
 		} );
 	} );
 
@@ -188,8 +216,7 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
 			fireEvent.click( slideOption );
@@ -365,8 +392,7 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const fadeOption = screen.getByRole( 'option', { name: /fade/i } );
 			fireEvent.click( fadeOption );
@@ -387,8 +413,7 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
 			fireEvent.click( slideOption );
@@ -409,8 +434,7 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const fadeOption = screen.getByRole( 'option', { name: /fade/i } );
 			fireEvent.click( fadeOption );
@@ -431,8 +455,7 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
 			fireEvent.click( slideOption );
@@ -453,8 +476,7 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const scaleOption = screen.getByRole( 'option', { name: /scale/i } );
 			fireEvent.click( scaleOption );
@@ -576,8 +598,7 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const scaleOption = screen.getByRole( 'option', { name: /scale/i } );
 			fireEvent.click( scaleOption );
@@ -602,8 +623,7 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
 			fireEvent.click( slideOption );
