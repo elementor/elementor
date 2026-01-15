@@ -30,8 +30,6 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 		outputSchema,
 		modelPreferences: {
 			hints: [ { name: 'claude-sonnet-4-5' } ],
-			intelligencePriority: 0.95,
-			speedPriority: 0.5,
 		},
 		handler: async ( params ) => {
 			const { xmlStructure, elementConfig, stylesConfig } = params;
@@ -123,7 +121,7 @@ export const initBuildCompositionsTool = ( reg: MCPRegistryEntry ) => {
 				errors: errors?.length
 					? errors.map( ( e ) => ( typeof e === 'string' ? e : e.message ) ).join( '\n\n' )
 					: undefined,
-				llmInstructions: `The composition was built successfully with element IDs embedded in the XML.
+				llm_instructions: `The composition was built successfully with element IDs embedded in the XML.
 
 **CRITICAL NEXT STEPS** (Follow in order):
 1. **Apply Global Classes**: Use "apply-global-class" tool to apply the global classes you created BEFORE building this composition

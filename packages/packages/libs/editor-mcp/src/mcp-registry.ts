@@ -69,7 +69,7 @@ export const getMCPByDomain = ( namespace: string, options?: { instructions?: st
 		);
 	}
 	const mcpServer = mcpRegistry[ namespace ];
-	const { addTool } = createToolRegistrator( mcpServer );
+	const { addTool } = createToolRegistry( mcpServer );
 	return {
 		waitForReady: () => getSDK().waitForReady(),
 		// @ts-expect-error: TS is unable to infer the type here
@@ -132,6 +132,11 @@ type ToolRegistrationOptions<
 	name: string;
 	description: string;
 	schema?: InputArgs;
+	/**
+	 * Auto added fields:
+	 * @param llm_instructions z.string().optional().describe('Instructions what to do next, Important to follow these instructions!')
+	 * @param errors           z.string().optional().describe('Error message if the tool failed')
+	 */
 	outputSchema?: OutputSchema;
 	handler: InputArgs extends z.ZodRawShape
 		? (
@@ -147,16 +152,28 @@ type ToolRegistrationOptions<
 	modelPreferences?: AngieModelPreferences;
 };
 
-function createToolRegistrator( server: McpServer ) {
+function createToolRegistry( server: McpServer ) {
 	function addTool<
 		T extends undefined | z.ZodRawShape = undefined,
 		O extends undefined | z.ZodRawShape = undefined,
 	>( opts: ToolRegistrationOptions< T, O > ) {
 		const outputSchema = opts.outputSchema as ZodRawShape | undefined;
-		if ( outputSchema && ! ( 'llm_instructions' in outputSchema ) ) {
-			Object.assign( outputSchema, {
-				llm_instruction: z.string().optional().describe( 'Instructions for what to do next' ),
-			} );
+		if ( outputSchema ) {
+			Object.assign(
+				outputSchema,
+				outputSchema.llm_instructions ?? {
+					llm_instruction: z
+						.string()
+						.optional()
+						.describe( 'Instructions for what to do next, Important to follow these Instructions!' ),
+				}
+			);
+			Object.assign(
+				outputSchema,
+				outputSchema.errors ?? {
+					errors: z.string().optional().describe( 'Error message if the tool failed' ),
+				}
+			);
 		}
 		// @ts-ignore: TS is unable to infer the type here
 		const inputSchema: ZodRawShape = opts.schema ? opts.schema : {};
@@ -178,6 +195,9 @@ function createToolRegistrator( server: McpServer ) {
 			} catch ( error ) {
 				return {
 					isError: true,
+					structuredContent: {
+						errors: ( error as Error ).message || 'Unknown error',
+					},
 					content: [
 						{
 							type: 'text',
