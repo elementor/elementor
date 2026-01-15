@@ -11,6 +11,7 @@ export default function createMockDocument( {
 	userCan,
 	links,
 	elements,
+	revisions,
 }: Partial< Document > = {} ): Document {
 	return {
 		id: id ?? 1,
@@ -38,5 +39,6 @@ export default function createMockDocument( {
 			showCopyAndShare: true,
 		},
 		elements,
+		revisions,
 	};
 }

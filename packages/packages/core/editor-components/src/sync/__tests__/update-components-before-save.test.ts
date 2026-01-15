@@ -1,3 +1,4 @@
+import { createMockDocument } from 'test-utils';
 import { type Document } from '@elementor/editor-documents';
 
 import { apiClient } from '../../api';
@@ -13,25 +14,22 @@ describe( 'updateComponentsBeforeSave', () => {
 	const PUBLISHED_COMPONENT_ID = 2000;
 	const HAS_AUTOSAVE_COMPONENT_ID = 4000;
 
-	const createMockDocument = ( id: number ): Document => ( {
-		id,
-		title: `Component ${ id }`,
-		type: { value: 'elementor_component', label: 'Component' },
-		status: {
-			value: id === PUBLISHED_COMPONENT_ID || id === HAS_AUTOSAVE_COMPONENT_ID ? 'publish' : 'draft',
-			label: id === PUBLISHED_COMPONENT_ID || id === HAS_AUTOSAVE_COMPONENT_ID ? 'Published' : 'Draft',
-		},
-		links: { platformEdit: '', permalink: '' },
-		isDirty: id !== PUBLISHED_COMPONENT_ID,
-		isSaving: false,
-		isSavingDraft: false,
-		userCan: { publish: true },
-		permissions: { allowAddingWidgets: true, showCopyAndShare: true },
-		revisions: { current_id: HAS_AUTOSAVE_COMPONENT_ID === id ? 9000 : id },
-	} );
-
 	const createMockDocumentsMap = ( ids: number[] ): ComponentDocumentMap => {
-		return new Map( ids.map( ( id ) => [ id, createMockDocument( id ) ] ) );
+		return new Map(
+			ids.map( ( id ) => [
+				id,
+				createMockDocument( {
+					id,
+					status: {
+						value: id === PUBLISHED_COMPONENT_ID || id === HAS_AUTOSAVE_COMPONENT_ID ? 'publish' : 'draft',
+						label:
+							id === PUBLISHED_COMPONENT_ID || id === HAS_AUTOSAVE_COMPONENT_ID ? 'Published' : 'Draft',
+					},
+					isDirty: id !== PUBLISHED_COMPONENT_ID,
+					revisions: { current_id: HAS_AUTOSAVE_COMPONENT_ID === id ? 9000 : id },
+				} ),
+			] )
+		);
 	};
 
 	beforeEach( () => {
