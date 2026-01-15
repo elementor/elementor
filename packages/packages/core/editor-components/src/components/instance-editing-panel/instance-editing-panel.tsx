@@ -52,7 +52,7 @@ export function InstanceEditingPanel() {
 			<PanelHeader sx={ { justifyContent: 'start', px: 2 } }>
 				<Stack direction="row" alignItems="center" flexGrow={ 1 } gap={ 1 } maxWidth="100%">
 					<ComponentsIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
-					<EllipsisWithTooltip title={ component.name } as={ PanelHeaderTitle } />
+					<EllipsisWithTooltip title={ component.name } as={ PanelHeaderTitle } sx={ { flexGrow: 1 } } />
 					{ canEdit && (
 						<Tooltip title={ panelTitle }>
 							<IconButton size="tiny" onClick={ handleEditComponent } aria-label={ panelTitle }>
