@@ -192,7 +192,7 @@ describe( '<ComponentPanelHeader />', () => {
 		renderWithStore( <ComponentPanelHeader />, store );
 
 		// Act
-		const badgeButton = screen.getByLabelText( 'View exposed properties' );
+		const badgeButton = screen.getByLabelText( 'Component properties' );
 		fireEvent.click( badgeButton );
 
 		// Assert
