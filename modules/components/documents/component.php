@@ -71,21 +71,21 @@ class Component extends Document {
 
 	public function archive() {
 		try {
-			$this->update_main_meta( self::ARCHIVED_META_KEY, json_encode( [
+			$this->update_json_meta( self::ARCHIVED_META_KEY, [
 				'is_archived' => true,
 				'archived_at' => time(),
-			] ) );
+			] );
 		} catch ( \Exception $e ) {
 			throw new \Exception( 'Failed to archive component: ' . esc_html( $e->getMessage() ) );
 		}
 	}
 
 	public function get_is_archived() {
-		$archived_meta = $this->get_main_meta( self::ARCHIVED_META_KEY );
+		$archived_meta = $this->get_json_meta( self::ARCHIVED_META_KEY );
 		if ( ! $archived_meta ) {
 			return false;
 		}
-		return json_decode( $archived_meta, true );
+		return $archived_meta;
 	}
 
 	public function update_overridable_props( $data ): Parse_Result {
@@ -102,5 +102,43 @@ class Component extends Document {
 		$this->update_json_meta( self::OVERRIDABLE_PROPS_META_KEY, $sanitized_data );
 
 		return $result;
+	}
+
+	public function update_title( string $title ): bool {
+		$sanitized_title = sanitize_text_field( $title );
+
+		if ( empty( $sanitized_title ) ) {
+			return false;
+		}
+
+		$result = wp_update_post( [
+			'ID' => $this->post->ID,
+			'post_title' => $sanitized_title,
+		] );
+
+		$success = ! is_wp_error( $result ) && $result > 0;
+
+		if ( $success ) {
+			clean_post_cache( $this->post->ID );
+			$this->post = get_post( $this->post->ID );
+		}
+
+		return $success;
+	}
+
+	public function publish(): bool {
+		$result = wp_update_post( [
+			'ID' => $this->post->ID,
+			'post_status' => self::STATUS_PUBLISH,
+		] );
+
+		$success = ! is_wp_error( $result ) && $result > 0;
+
+		if ( $success ) {
+			clean_post_cache( $this->post->ID );
+			$this->post = get_post( $this->post->ID );
+		}
+
+		return $success;
 	}
 }

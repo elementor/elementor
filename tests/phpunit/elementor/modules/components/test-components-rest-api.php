@@ -167,12 +167,12 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		);
 	}
 
-	public function post_create_components_data_provider() {
+	public function put_sync_create_components_data_provider() {
 		return [
 			'Successfully created with status publish' => [
 				'input' => [
 					'status' => 'publish',
-					'items' => [
+					'created' => [
 						[
 							'uid' => '100',
 							'title' => 'New Test Component 1',
@@ -183,7 +183,10 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 							'title' => 'New Test Component 2',
 							'elements' => Component_Mocks::get_component_2_data(),
 						],
-					]
+					],
+					'published' => [],
+					'archived' => [],
+					'renamed' => [],
 				],
 				'expected' => [
 					'100' => [
@@ -201,13 +204,16 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 			'Successfully created with status draft' => [
 				'input' => [
 					'status' => 'draft',
-					'items' => [
+					'created' => [
 						[
 							'uid' => '100',
 							'title' => 'New Test Component 1',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
-					]
+					],
+					'published' => [],
+					'archived' => [],
+					'renamed' => [],
 				],
 				'expected' => [
 					'100' => [
@@ -220,13 +226,16 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 			'Successfully created with status autosave' => [
 				'input' => [
 					'status' => 'autosave',
-					'items' => [
+					'created' => [
 						[
 							'uid' => '100',
 							'title' => 'New Test Component 1',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
-					]
+					],
+					'published' => [],
+					'archived' => [],
+					'renamed' => [],
 				],
 				'expected' => [
 					'100' => [
@@ -239,13 +248,16 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 			'Sanitize the title' => [
 				'input' => [
 					'status' => 'publish',
-					'items' => [
+					'created' => [
 						[
 							'uid' => '100',
 							'title' => '  <script>alert(1)</script>Sanitized Component ',
 							'elements' => Component_Mocks::get_component_1_data(),
 						]
-					]
+					],
+					'published' => [],
+					'archived' => [],
+					'renamed' => [],
 				],
 				'expected' => [
 					'100' => [
@@ -259,28 +271,28 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 	}
 
 	/**
-	 * @dataProvider post_create_components_data_provider
+	 * @dataProvider put_sync_create_components_data_provider
 	 */
-	public function test_post_create_components( $input, $expected ) {
+	public function test_put_sync_components__creates_components( $input, $expected ) {
 		// Arrange
 		$this->act_as_admin();
 
 		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
 		$request->set_body_params( $input );
 
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 201, $response->get_status() );
+		$this->assertEquals( 200, $response->get_status() );
 
-		$data = (array) $response->get_data()['data'];
+		$data = $response->get_data()['data']['created']['success'];
 
 		$this->assertCount( count( $expected ), $data );
 
-		foreach ( $data as $key => $value ) {
-			$document = Plugin::$instance->documents->get( $value );
-			$current_expected = $expected[ $key ];
+		foreach ( $data as $uid => $component_id ) {
+			$document = Plugin::$instance->documents->get( $component_id );
+			$current_expected = $expected[ $uid ];
 
 			$this->assertEquals( Component_Document::TYPE, $document->get_type() );
 			$this->assertEquals( $current_expected['title'], $document->get_post()->post_title );
@@ -289,297 +301,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		}
 	}
 
-	public function test_post_create_component__fails_when_unauthorized() {
-		// Arrange
-		$this->act_as_editor();
-
-		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'status' => 'publish',
-			'items' => [
-				[
-					'uid' => '100',
-					'title' => 'Test Component',
-					'elements' => $this->mock_component_1_content,
-				]
-			],
-		] );
-
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( 403, $response->get_status() );
-	}
-
-
-	public function post_create_components_fails_data_provider() {
-		return [
-			'Missing title' => [
-				'input' => [
-					'status' => 'publish',
-					'items' => [
-						[
-							'uid' => '100',
-							'elements' => Component_Mocks::get_component_1_data(),
-						]
-					],
-				],
-				'expected' => [
-					'status_code' => 400,
-					'code' => 'rest_invalid_param',
-					'errors' => [ 'items' => "title is a required property of items[0]." ],
-				],
-			],
-			'Title too short' => [
-				'input' => [
-					'status' => 'publish',
-					'items' => [
-						[
-							'uid' => '1',
-							'title' => 'A',
-							'elements' => Component_Mocks::get_component_1_data(),
-						]
-					],
-				],
-				'expected' => [
-					'status_code' => 400,
-					'code' => 'rest_invalid_param',
-					'errors' => [ 'items' => "items[0][title] must be at least 2 characters long." ],
-				],
-			],
-			'Title too long' => [
-				'input' => [
-					'status' => 'publish',
-					'items' => [
-						[
-							'uid' => '1',
-							'title' => str_repeat( 'A', 201 ),
-							'elements' => Component_Mocks::get_component_1_data(),
-						]
-					],
-				],
-				'expected' => [
-					'status_code' => 400,
-					'code' => 'rest_invalid_param',
-					'errors' => [ 'items' => "items[0][title] must be at most 200 characters long." ],
-				],
-			],
-			'Title is invalid' => [
-				'input' => [
-					'status' => 'publish',
-					'items' => [
-						[
-							'uid' => '1',
-							'title' => [ 'not', 'a', 'string' ],
-							'elements' => Component_Mocks::get_component_1_data(),
-						]
-					],
-				],
-				'expected' => [
-					'status_code' => 400,
-					'code' => 'rest_invalid_param',
-					'errors' => [ 'items' => "items[0][title] is not of type string." ],
-				],
-			],
-			'Missing elements' => [
-				'input' => [
-					'status' => 'publish',
-					'items' => [
-						[
-							'uid' => '1',
-							'title' => 'Test Component',
-						]
-					],
-				],
-				'expected' => [
-					'status_code' => 400,
-					'code' => 'rest_invalid_param',
-					'errors' => [ 'items' => "elements is a required property of items[0]." ],
-				],
-			],
-			'Elements not an array of object' => [
-				'input' => [
-					'status' => 'publish',
-					'items' => [
-						[
-							'uid' => '1',
-							'title' => 'Test Component',
-							'elements' => 'not-an-array',
-						]
-					],
-				],
-				'expected' => [
-					'status_code' => 400,
-					'code' => 'rest_invalid_param',
-					'errors' => [ 'items' => "items[0][elements][0] is not of type object." ],
-				],
-			],
-			'Elements is invalid' => [
-				'input' => [
-					'status' => 'publish',
-					'items' => [
-						[
-							'uid' => '1',
-							'title' => 'Test Component',
-							'elements' => Component_Mocks::get_invalid_component_data(),
-						]
-					],
-				],
-				'expected' => [
-					'status_code' => 500,
-					'code' => 'unexpected_error',
-				],
-			],
-			'UID is missing' => [
-				'input' => [
-					'status' => 'publish',
-					'items' => [
-						[
-							'title' => 'Test Component',
-							'elements' => Component_Mocks::get_component_1_data(),
-						]
-					],
-				],
-				'expected' => [
-					'status_code' => 400,
-					'code' => 'rest_invalid_param',
-					'errors' => [ 'items' => "uid is a required property of items[0]." ],
-				],
-			],
-			'UID not a string' => [
-				'input' => [
-					'status' => 'publish',
-					'items' => [
-						[
-							'uid' => 456,
-							'title' => 'Test Component',
-							'elements' => Component_Mocks::get_component_1_data(),
-						]
-					],
-				],
-				'expected' => [
-					'status_code' => 400,
-					'code' => 'rest_invalid_param',
-					'errors' => [ 'items' => "items[0][uid] is not of type string." ],
-				],
-			],
-			'Status is missing' => [
-				'input' => [
-					'items' => [
-						[
-							'uid' => '1',
-							'title' => 'Test Component',
-							'elements' => Component_Mocks::get_component_1_data(),
-						]
-					],
-				],
-				'expected' => [
-					'status_code' => 400,
-					'code' => 'rest_missing_callback_param',
-					'errors' => [ 'status' ],
-				],
-			],
-			'Status invalid value' => [
-				'input' => [
-					'status' => 'invalid-status',
-					'items' => [
-						[
-							'uid' => '1',
-							'title' => 'Test Component',
-							'elements' => Component_Mocks::get_component_1_data(),
-						]
-					],
-				],
-				'expected' => [
-					'status_code' => 400,
-					'code' => 'rest_invalid_param',
-					'errors' => [ 'status' => "status is not one of publish, draft, and autosave." ],
-				],
-			],
-		];
-	}
-
-	/**
-	 * @dataProvider post_create_components_fails_data_provider
-	 */
-	public function test_post_create_components__fails( $input, $expected ) {
-		// Arrange
-		$this->act_as_admin();
-
-		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( $input );
-
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( $expected['status_code'], $response->get_status() );
-		$this->assertEquals( $expected['code'], $response->get_data()['code'] );
-
-		if ( isset( $expected['errors'] ) ) {
-			$this->assertEquals( $expected['errors'], $response->get_data()['data']['params'] );
-		}
-	}
-
-	public function test_post_create_component__fails_when_name_is_duplicated() {
-		// Arrange
-		$this->create_test_component( 'Test Component', $this->mock_component_1_content );
-		$this->act_as_admin();
-
-		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'status' => 'publish',
-			'items' => [
-				[
-					'uid' => '1',
-					'title' => 'Test Component',
-					'elements' => $this->mock_component_1_content,
-				]
-			],
-		] );
-
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( 422, $response->get_status() );
-		$this->assertEquals( 'components_validation_failed', $response->get_data()['code'] );
-		$this->assertEquals( 'Validation failed: Component title &#039;Test Component&#039; is duplicated.', $response->get_data()['message'] );
-	}
-
-	public function test_post_create_component__fails_when_uid_is_duplicated() {
-		// Arrange
-		$this->create_test_component( 'Test Component', $this->mock_component_1_content );
-		$this->act_as_admin();
-
-		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'status' => 'publish',
-			'items' => [
-				[
-					'uid' => '1',
-					'title' => 'Test Component 1',
-					'elements' => $this->mock_component_1_content,
-				],
-				[
-					'uid' => '1',
-					'title' => 'Test Component 2',
-					'elements' => $this->mock_component_1_content,
-				]
-			],
-		] );
-
-		$response = rest_do_request( $request );
-
-		// Assert
-		$this->assertEquals( 422, $response->get_status() );
-		$this->assertEquals( 'components_validation_failed', $response->get_data()['code'] );
-		$this->assertEquals( 'Validation failed: Component uid &#039;1&#039; is duplicated.', $response->get_data()['message'] );
-	}
-
-	public function test_post_create_component__successfully_creates_with_valid_overridable_props() {
+	public function test_put_sync_components__successfully_creates_with_valid_overridable_props() {
 		// Arrange
 		$this->act_as_admin();
 		$this->clean_up_components();
@@ -594,10 +316,10 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		];
 
 		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
 		$request->set_body_params( [
 			'status' => 'publish',
-			'items' => [
+			'created' => [
 				[
 					'uid' => 'test-uid-with-overrides',
 					'title' => 'Component With Overridable Props',
@@ -607,13 +329,16 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					],
 				],
 			],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
 		] );
 
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 201, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
-		$data = (array) $response->get_data()['data'];
+		$this->assertEquals( 200, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+		$data = $response->get_data()['data']['created']['success'];
 		$this->assertCount( 1, $data );
 
 		$component_id = $data['test-uid-with-overrides'];
@@ -630,7 +355,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( $overridable_props, $decoded_props );
 	}
 
-	public function test_post_create_component__successfully_creates_with_null_origin_value() {
+	public function test_put_sync_components__successfully_creates_with_null_origin_value() {
 		// Arrange
 		$this->act_as_admin();
 		
@@ -661,10 +386,10 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		];
 
 		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
 		$request->set_body_params( [
 			'status' => 'publish',
-			'items' => [
+			'created' => [
 				[
 					'uid' => 'test-uid-null-origin',
 					'title' => 'Component With Null Origin Value',
@@ -674,13 +399,16 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					],
 				],
 			],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
 		] );
 
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 201, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
-		$data = (array) $response->get_data()['data'];
+		$this->assertEquals( 200, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+		$data = $response->get_data()['data']['created']['success'];
 		
 		$component_id = $data['test-uid-null-origin'];
 		$document = Plugin::$instance->documents->get( $component_id );
@@ -688,7 +416,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( Component_Document::TYPE, $document->get_type() );
 	}
 
-	public function test_post_create_component__successfully_creates_with_valid_prop_values() {
+	public function test_put_sync_components__successfully_creates_with_valid_prop_values() {
 		// Arrange
 		$this->act_as_admin();
 		$this->clean_up_components();
@@ -745,10 +473,10 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		];
 
 		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
 		$request->set_body_params( [
 			'status' => 'publish',
-			'items' => [
+			'created' => [
 				[
 					'uid' => 'test-uid-valid-props',
 					'title' => 'Component With Valid PropValues',
@@ -758,13 +486,16 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					],
 				],
 			],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
 		] );
 
 		$response = rest_do_request( $request );
 
 		// Assert
-		$this->assertEquals( 201, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
-		$data = (array) $response->get_data()['data'];
+		$this->assertEquals( 200, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+		$data = $response->get_data()['data']['created']['success'];
 		$this->assertCount( 1, $data );
 
 		$component_id = $data['test-uid-valid-props'];
@@ -845,7 +576,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 200, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
 	}
 
-	public function test_post_create_component__fails_with_invalid_overridable_props() {
+	public function test_put_sync_components__fails_create_with_invalid_overridable_props() {
 		// Arrange
 		$this->act_as_admin();
 		
@@ -870,10 +601,10 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		];
 
 		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
 		$request->set_body_params( [
 			'status' => 'publish',
-			'items' => [
+			'created' => [
 				[
 					'uid' => 'test-uid-invalid-overrides',
 					'title' => 'Component With Invalid Overrides',
@@ -883,16 +614,22 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					],
 				],
 			],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
 		] );
 
 		$response = rest_do_request( $request );
 
-		// Assert
-		$this->assertEquals( 422, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
-		$this->assertStringContainsString( 'validation', strtolower( $response->get_data()['code'] ) );
+		// Assert - now returns 200 with failed item
+		$this->assertEquals( 200, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+		$data = $response->get_data()['data'];
+		$this->assertEquals( [], $data['created']['success'] );
+		$this->assertCount( 1, $data['created']['failed'] );
+		$this->assertEquals( 'test-uid-invalid-overrides', $data['created']['failed'][0]['uid'] );
 	}
 
-	public function test_post_create_component__fails_with_invalid_origin_value_type() {
+	public function test_put_sync_components__fails_create_with_invalid_origin_value_type() {
 		// Arrange
 		$this->act_as_admin();
 
@@ -924,10 +661,10 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		];
 
 		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
 		$request->set_body_params( [
 			'status' => 'publish',
-			'items' => [
+			'created' => [
 				[
 					'uid' => 'test-uid-invalid-origin-value',
 					'title' => 'Component With Invalid Origin Value Type',
@@ -937,14 +674,20 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					],
 				],
 			],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
 		] );
 
 		$response = rest_do_request( $request );
 
-		// Assert
-		$this->assertEquals( 422, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
-		$this->assertStringContainsString( 'validation', strtolower( $response->get_data()['code'] ) );
-		$this->assertStringContainsString( 'originvalue', strtolower( $response->get_data()['message'] ) );
+		// Assert - now returns 200 with failed item
+		$this->assertEquals( 200, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+		$data = $response->get_data()['data'];
+		$this->assertEquals( [], $data['created']['success'] );
+		$this->assertCount( 1, $data['created']['failed'] );
+		$this->assertEquals( 'test-uid-invalid-origin-value', $data['created']['failed'][0]['uid'] );
+		$this->assertStringContainsString( 'originvalue', strtolower( $data['created']['failed'][0]['error'] ) );
 	}
 
 	public function test_register_routes__endpoints_exist() {
@@ -966,9 +709,9 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$get_methods = array_filter( $components_route, fn( $route ) => in_array( 'GET', $route['methods'] ) );
 		$this->assertNotEmpty( $get_methods );
 
-		// Check POST method for components
-		$post_methods = array_filter( $components_route, fn( $route ) => in_array( 'POST', $route['methods'] ) );
-		$this->assertNotEmpty( $post_methods );
+		// Check PUT method for components (sync endpoint)
+		$put_methods = array_filter( $components_route, fn( $route ) => in_array( 'PUT', $route['methods'] ) );
+		$this->assertNotEmpty( $put_methods );
 
 		// Check GET method for styles
 		$styles_route = $routes['/elementor/v1/components/styles'];
@@ -1006,6 +749,17 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 			'GET components' => [
 				'method' => 'GET',
 				'endpoint' => '/elementor/v1/components',
+			],
+			'PUT components' => [
+				'method' => 'PUT',
+				'endpoint' => '/elementor/v1/components',
+				'params' => [
+					'status' => 'publish',
+					'created' => [],
+					'published' => [],
+					'archived' => [],
+					'renamed' => [],
+				],
 			],
 			'GET styles' => [
 				'method' => 'GET',
@@ -1283,50 +1037,278 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertNull( $lock_data['locked_by'], 'Component should be unlocked' );
 	}
 
-	public function test_update_statuses() {
+	public function test_put_sync_components__publishes_draft_components() {
+		// Arrange
 		$this->act_as_admin();
-
 		$draft_id = $this->create_test_component( 'Draft Component', [], 'draft' );
 		$draft_id_2 = $this->create_test_component( 'Draft 2 Component', [], 'draft' );
 		$publish_id = $this->create_test_component( 'Publish Component', [] );
 
-		$page_id = Plugin::$instance->documents->create(
-			'wp-page',
-			[ 'post_title' => 'Page', 'post_status' => 'draft' ]
-		)->get_main_id();
-
-		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components/status' );
-		$request->set_param( 'ids', [ $draft_id, $draft_id_2, $publish_id, $page_id ] );
-		$request->set_param( 'status', 'publish' );
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'created' => [],
+			'published' => [ $draft_id, $draft_id_2, $publish_id ],
+			'archived' => [],
+			'renamed' => [],
+		] );
 
 		$response = rest_do_request( $request );
 
+		// Assert
 		$this->assertEquals( 200, $response->get_status() );
-		$this->assertEquals( [ $draft_id, $draft_id_2, $publish_id ], $response->get_data()['data']['success'] );
-		$this->assertEquals( [], $response->get_data()['data']['failed'] );
+		$data = $response->get_data()['data'];
+
+		$this->assertEqualsCanonicalizing( [ $draft_id, $draft_id_2, $publish_id ], $data['published']['successIds'] );
+		$this->assertEquals( [], $data['published']['failed'] );
 
 		foreach ( [ $draft_id, $draft_id_2, $publish_id ] as $id ) {
-			$doc = Plugin::$instance->documents->get( $id );
-
-			$this->assertEquals( 'publish', $doc->get_post()->post_status );
+			clean_post_cache( $id );
+			$post = get_post( $id );
+			$this->assertEquals( 'publish', $post->post_status );
 		}
-
-		$page = Plugin::$instance->documents->get( $page_id );
-
-		$this->assertEquals( 'draft', $page->get_post()->post_status );
 	}
 
-	public function test_update_statuses__only_admins_can_update_statuses() {
+	public function test_put_sync_components__only_admins_can_sync() {
+		// Arrange
 		$this->act_as_editor();
 
-		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components/status' );
-		$request->set_param( 'status', 'publish' );
-		$request->set_param( 'ids', [] );
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'created' => [],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
+		] );
 
 		$response = rest_do_request( $request );
 
+		// Assert
 		$this->assertEquals( 403, $response->get_status() );
 		$this->assertEquals( 'rest_forbidden', $response->get_data()['code'] );
+	}
+
+	public function test_put_sync_components__archives_components() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Component to Archive', [] );
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'created' => [],
+			'published' => [],
+			'archived' => [ $component_id ],
+			'renamed' => [],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+
+		$this->assertEquals( [ $component_id ], $data['archived']['successIds'] );
+		$this->assertEquals( [], $data['archived']['failed'] );
+
+		$doc = Plugin::$instance->documents->get( $component_id, false );
+		$this->assertTrue( (bool) $doc->get_is_archived() );
+	}
+
+	public function test_put_sync_components__renames_components() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Original Name', [] );
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'created' => [],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [ [ 'id' => $component_id, 'title' => 'New Name' ] ],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+
+		$this->assertEquals( [ $component_id ], $data['renamed']['successIds'] );
+		$this->assertEquals( [], $data['renamed']['failed'] );
+
+		clean_post_cache( $component_id );
+		$post = get_post( $component_id );
+		$this->assertEquals( 'New Name', $post->post_title );
+	}
+
+	public function test_put_sync_components__creates_new_components() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'created' => [
+				[
+					'uid' => 'new-component-uid',
+					'title' => 'New Component',
+					'elements' => $this->mock_component_1_content,
+				],
+			],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+
+		$this->assertArrayHasKey( 'new-component-uid', $data['created']['success'] );
+		$this->assertEquals( [], $data['created']['failed'] );
+
+		$component_id = $data['created']['success']['new-component-uid'];
+		$doc = Plugin::$instance->documents->get( $component_id );
+
+		$this->assertEquals( Component_Document::TYPE, $doc->get_type() );
+		$this->assertEquals( 'New Component', $doc->get_post()->post_title );
+		$this->assertEquals( 'publish', $doc->get_post()->post_status );
+	}
+
+	public function test_put_sync_components__creates_with_draft_status_for_autosave() {
+		// Arrange
+		$this->act_as_admin();
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'autosave',
+			'created' => [
+				[
+					'uid' => 'autosave-component-uid',
+					'title' => 'Autosave Component',
+					'elements' => $this->mock_component_1_content,
+				],
+			],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+
+		$component_id = $data['created']['success']['autosave-component-uid'];
+		$doc = Plugin::$instance->documents->get( $component_id );
+
+		$this->assertEquals( 'draft', $doc->get_post()->post_status );
+	}
+
+	public function test_put_sync_components__handles_multiple_operations_on_same_component() {
+		// Arrange
+		$this->act_as_admin();
+		$component_id = $this->create_test_component( 'Original Name', [], 'draft' );
+
+		// Act - rename, archive, and publish same component
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'created' => [],
+			'published' => [ $component_id ],
+			'archived' => [ $component_id ],
+			'renamed' => [ [ 'id' => $component_id, 'title' => 'Renamed Before Archive' ] ],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+
+		$this->assertEquals( [ $component_id ], $data['renamed']['successIds'] );
+		$this->assertEquals( [ $component_id ], $data['archived']['successIds'] );
+		$this->assertEquals( [ $component_id ], $data['published']['successIds'] );
+
+		clean_post_cache( $component_id );
+		$post = get_post( $component_id );
+		$this->assertEquals( 'Renamed Before Archive', $post->post_title );
+		$this->assertEquals( 'publish', $post->post_status );
+
+		$doc = Plugin::$instance->documents->get( $component_id, false );
+		$this->assertTrue( (bool) $doc->get_is_archived() );
+	}
+
+	public function test_put_sync_components__fails_for_non_existing_component() {
+		// Arrange
+		$this->act_as_admin();
+		$non_existing_id = 999999;
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'created' => [],
+			'published' => [ $non_existing_id ],
+			'archived' => [],
+			'renamed' => [],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+
+		$this->assertEquals( [], $data['published']['successIds'] );
+		$this->assertCount( 1, $data['published']['failed'] );
+		$this->assertEquals( $non_existing_id, $data['published']['failed'][0]['id'] );
+		$this->assertStringContainsString( 'not found', strtolower( $data['published']['failed'][0]['error'] ) );
+	}
+
+	public function test_put_sync_components__fails_create_with_duplicate_title() {
+		// Arrange
+		$this->act_as_admin();
+		$this->create_test_component( 'Existing Component', [] );
+
+		// Act
+		$request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'created' => [
+				[
+					'uid' => 'duplicate-title-uid',
+					'title' => 'Existing Component',
+					'elements' => $this->mock_component_1_content,
+				],
+			],
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+		$data = $response->get_data()['data'];
+
+		$this->assertEquals( [], $data['created']['success'] );
+		$this->assertCount( 1, $data['created']['failed'] );
+		$this->assertEquals( 'duplicate-title-uid', $data['created']['failed'][0]['uid'] );
+		$this->assertStringContainsString( 'already exists', strtolower( $data['created']['failed'][0]['error'] ) );
 	}
 
 	public function test_get_overridable_props__returns_props_for_existing_component() {
@@ -1710,32 +1692,37 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 			],
 		];
 
-		$valid_data = [
-			'items' => [
-				[
-					'uid' => 'test-uid-1',
-					'title' => 'Test Component For Validation',
-					'elements' => $this->mock_component_1_content,
-					'settings' => [
-						'overridable_props' => $overridable_props,
-					],
+		$valid_items = [
+			[
+				'uid' => 'test-uid-1',
+				'title' => 'Test Component For Validation',
+				'elements' => $this->mock_component_1_content,
+				'settings' => [
+					'overridable_props' => $overridable_props,
 				],
 			],
 		];
 
 		// Act - Validate endpoint
 		$validate_request = new \WP_REST_Request( 'POST', '/elementor/v1/components/create-validate' );
-		$validate_request->set_body_params( $valid_data );
+		$validate_request->set_body_params( [ 'items' => $valid_items ] );
 		$validate_response = rest_do_request( $validate_request );
 
-		// Act - Create endpoint
-		$create_request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$create_request->set_body_params( array_merge( $valid_data, [ 'status' => 'draft' ] ) );
+		// Act - Create endpoint (PUT sync)
+		$create_request = new \WP_REST_Request( 'PUT', '/elementor/v1/components' );
+		$create_request->set_body_params( [
+			'status' => 'draft',
+			'created' => $valid_items,
+			'published' => [],
+			'archived' => [],
+			'renamed' => [],
+		] );
 		$create_response = rest_do_request( $create_request );
 
 		// Assert - Both should succeed
 		$this->assertEquals( 200, $validate_response->get_status(), 'Validate endpoint should return 200. Response: ' . json_encode( $validate_response->get_data() ) );
-		$this->assertEquals( 201, $create_response->get_status(), 'Create endpoint should return 201. Response: ' . json_encode( $create_response->get_data() ) );
+		$this->assertEquals( 200, $create_response->get_status(), 'Create (sync) endpoint should return 200. Response: ' . json_encode( $create_response->get_data() ) );
+		$this->assertNotEmpty( $create_response->get_data()['data']['created']['success'], 'Component should be created successfully' );
 	}
 
 	public function test_get_overridable_props__returns_autosave_version_when_exists() {
