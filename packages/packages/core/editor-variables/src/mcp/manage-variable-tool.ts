@@ -5,7 +5,7 @@ import { service } from '../service';
 import { GLOBAL_VARIABLES_URI } from './variables-resource';
 
 export const initManageVariableTool = () => {
-	getMCPByDomain( 'canvas' ).addTool( {
+	getMCPByDomain( 'variables' ).addTool( {
 		name: 'manage-global-variable',
 		schema: {
 			action: z.enum( [ 'create', 'update', 'delete' ] ).describe( 'Operation to perform' ),
