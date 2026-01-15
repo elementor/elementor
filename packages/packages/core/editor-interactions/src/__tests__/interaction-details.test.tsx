@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
@@ -39,20 +39,26 @@ const createInteractionItemValue = ( {
 } );
 
 const getEffectCombobox = (): HTMLElement => {
-	const effectLabel = screen.getByText( 'Effect' );
-	const gridContainer = effectLabel.closest( '[class*="MuiGrid-container"]' );
-	const effectSelect = gridContainer?.querySelector( '[role="combobox"]' ) as HTMLElement;
-	if ( ! effectSelect ) {
-		const allComboboxes = screen.getAllByRole( 'combobox' );
-		const effectSelectByProximity = Array.from( allComboboxes ).find( ( cb ) => {
-			const gridItem = cb.closest( '[class*="MuiGrid-item"]' );
-			const container = gridItem?.parentElement;
-			const label = container?.querySelector( 'label' );
-			return label?.textContent === 'Effect';
-		} );
-		return effectSelectByProximity || allComboboxes[ 1 ];
+	const allComboboxes = screen.getAllByRole( 'combobox' );
+	const effectSelectByProximity = allComboboxes.find( ( cb ) => {
+		try {
+			const container = within( cb );
+			container.getByText( 'Effect' );
+			return true;
+		} catch {
+			return false;
+		}
+	} );
+	if ( effectSelectByProximity ) {
+		return effectSelectByProximity;
 	}
-	return effectSelect;
+	const labelParent = screen.getByText( 'Effect', { selector: 'label' } );
+	const labelContainer = within( labelParent );
+	try {
+		return labelContainer.getByRole( 'combobox' );
+	} catch {
+		return allComboboxes[ 1 ];
+	}
 };
 
 describe( 'InteractionDetails', () => {
