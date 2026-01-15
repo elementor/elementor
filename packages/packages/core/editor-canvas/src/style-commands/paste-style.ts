@@ -40,8 +40,8 @@ function pasteStyles( args: PasteStylesCommandArgs, pasteCallback: ReturnType< t
 	const clipboardElements = getClipboardElements( storageKey );
 	const [ clipboardElement ] = clipboardElements ?? [];
 
-	const clipboardContainer = getContainer( clipboardElement.id ) as V1Element;
-	if ( ! clipboardElement || ! isAtomicWidget( clipboardContainer ) ) {
+	const clipboardContainer = getContainer( clipboardElement.id );
+	if ( ! clipboardElement || ! clipboardContainer || ! isAtomicWidget( clipboardContainer ) ) {
 		return;
 	}
 
