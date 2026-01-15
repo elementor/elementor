@@ -137,6 +137,7 @@ const TRIGGER_LABELS: Record< string, string > = {
 	load: 'On page load',
 	scrollIn: 'Scroll into view',
 	scrollOut: 'Scroll out of view',
+	scrollOn: 'While scrolling',
 };
 
 const capitalize = ( str: string ): string => {
