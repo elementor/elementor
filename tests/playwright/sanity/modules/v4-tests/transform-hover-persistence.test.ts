@@ -50,16 +50,22 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 		const transformItems = page.locator( '.MuiTag-root' );
 		await expect( transformItems ).toHaveCount( 1 );
 
-		// Wait for auto-save to complete (look for saving indicator to disappear)
-		await page.waitForTimeout( 2000 );
-		const savingIndicator = page.locator( 'text=Saving' ).or( page.locator( 'text=Draft' ) );
-		await savingIndicator.waitFor( { state: 'hidden', timeout: 10000 } ).catch( () => {} );
-		await page.waitForTimeout( 2000 );
-
+		// Wait for auto-save to complete
+		await page.waitForTimeout( 3000 );
+		
+		// Publish the page
+		await editor.publishPage();
+		
 		// Refresh page to test persistence
 		await page.reload();
 		await page.waitForLoadState( 'load' );
 		await wpAdmin.waitForPanel();
+		
+		// Re-select the widget after reload
+		await page.waitForTimeout( 2000 );
+		const widgetInCanvas = page.frameLocator( 'iframe[name="elementor-preview-iframe"]' ).locator( '.e-heading-base' ).first();
+		await widgetInCanvas.click();
+		await page.waitForTimeout( 1000 );
 
 		// Navigate back to style tab and hover state
 		await editor.v4Panel.openTab( 'style' );
