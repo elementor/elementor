@@ -30,6 +30,28 @@ test.describe( 'Home screen Edit site button tests', () => {
 		await context.close();
 	} );
 
+	test( 'free license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
+		const requestContext = await request.newContext( { storageState } );
+		const mockData = transformMockDataByLicense( 'free' );
+
+		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
+
+		const homeScreen = await navigateToHomeScreen( page );
+		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-free.png' );
+		await requestContext.dispose();
+	} );
+
+	test( 'pro license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
+		const requestContext = await request.newContext( { storageState } );
+		const mockData = transformMockDataByLicense( 'pro' );
+
+		await mockHomeScreenData( page, mockData, apiRequests, requestContext );
+
+		const homeScreen = await navigateToHomeScreen( page );
+		await expect.soft( homeScreen ).toHaveScreenshot( 'home-screen-pro.png' );
+		await requestContext.dispose();
+	} );
+
 	test( 'one license variant - UI renders correctly with mocked data', async ( { page, apiRequests, storageState } ) => {
 		const requestContext = await request.newContext( { storageState } );
 		const mockData = transformMockDataByLicense( 'one' );
