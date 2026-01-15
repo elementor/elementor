@@ -70,7 +70,7 @@ export function createVariableTypeRegistry() {
 		fallbackPropTypeUtil,
 		isCompatible,
 		emptyState,
-		isActive,
+		isActive = true,
 	}: VariableTypeOptions ) => {
 		const variableTypeKey = key ?? propTypeUtil.key;
 
