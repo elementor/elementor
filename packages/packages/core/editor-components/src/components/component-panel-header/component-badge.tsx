@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import { ComponentPropListIcon } from '@elementor/icons';
-import { Badge, Box, keyframes, styled, ToggleButton } from '@elementor/ui';
+import { Badge, Box, keyframes, styled, ToggleButton, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 export const ComponentsBadge = React.forwardRef<
@@ -26,14 +26,16 @@ export const ComponentsBadge = React.forwardRef<
 				</Box>
 			}
 		>
-			<ToggleButton
-				value="exposed properties"
-				size="tiny"
-				onClick={ onClick }
-				aria-label={ __( 'View exposed properties', 'elementor' ) }
-			>
-				<ComponentPropListIcon fontSize="tiny" />
-			</ToggleButton>
+			<Tooltip title={ __( 'Component properties', 'elementor' ) }>
+				<ToggleButton
+					value="exposed properties"
+					size="tiny"
+					onClick={ onClick }
+					aria-label={ __( 'Component properties', 'elementor' ) }
+				>
+					<ComponentPropListIcon fontSize="tiny" />
+				</ToggleButton>
+			</Tooltip>
 		</StyledBadge>
 	);
 } );
