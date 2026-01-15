@@ -5,12 +5,8 @@ export { registerVariableTypes } from './register-variable-types';
 export { service } from './service';
 export { registerVariableType } from './variables-registry/variable-type-registry';
 
-import { AppContext } from '@elementor/env';
-
 import { globalVariablesLLMResolvers } from './utils/llm-propvalue-label-resolver';
 
 export const Utils = {
 	globalVariablesLLMResolvers,
 } as const;
-
-AppContext.provide( 'Variables::Utils', Utils );

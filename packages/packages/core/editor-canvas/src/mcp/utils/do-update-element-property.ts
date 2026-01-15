@@ -8,8 +8,9 @@ import {
 import { getPropSchemaFromCache, type PropValue, Schema, type TransformablePropValue } from '@elementor/editor-props';
 import { type CustomCss, getStylesSchema } from '@elementor/editor-styles';
 import { type Utils as IUtils } from '@elementor/editor-variables';
-import { AppContext } from '@elementor/env';
+import { type z } from '@elementor/schema';
 
+type XElementor = z.infer< z.ZodAny >;
 type OwnParams = {
 	elementId: string;
 	elementType: string;
@@ -17,8 +18,9 @@ type OwnParams = {
 	propertyValue: string | PropValue | TransformablePropValue< string, unknown >;
 };
 
-export async function resolvePropValue( value: unknown, forceKey?: string ) {
-	const Utils = await AppContext.require< typeof IUtils >( 'Variables::Utils' );
+export function resolvePropValue( value: unknown, forceKey?: string ): PropValue {
+	const Utils = ( ( ( window as XElementor ).elementorV2 as XElementor ).editorVariables as XElementor )
+		.Utils as typeof IUtils;
 	return Schema.adjustLlmPropValueSchema( value as PropValue, {
 		forceKey,
 		transformers: Utils.globalVariablesLLMResolvers,
@@ -29,27 +31,24 @@ export async function resolvePropValue( value: unknown, forceKey?: string ) {
  * This function expects a PropValue bag for updaing an element.
  * Also, it supports updating styles "on-the-way" by checking for "_styles" property with PropValue bag that fits the common style schema.
  */
-export const doUpdateElementProperty = async ( params: OwnParams ) => {
+export const doUpdateElementProperty = ( params: OwnParams ) => {
 	const { elementId, propertyName, propertyValue, elementType } = params;
 	if ( propertyName === '_styles' ) {
 		const elementStyles = getElementStyles( elementId ) || {};
 		const propertyMapValue = propertyValue as Record< string, PropValue >;
 		const styleSchema = getStylesSchema();
-
-		const transformedStyleValues: Record< string, PropValue > = {};
-
-		for await ( const [ key, value ] of Object.entries( propertyMapValue ) ) {
-			if ( key === 'custom_css' ) {
-				transformedStyleValues[ key ] = value;
-				continue;
-			}
-			const { key: propKey, kind } = styleSchema?.[ key ] || {};
-			if ( ! propKey || kind !== 'union' ) {
-				throw new Error( `_styles property ${ key } is not supported.` );
-			}
-			transformedStyleValues[ key ] = await resolvePropValue( value, propKey );
-		}
-
+		const transformedStyleValues = Object.fromEntries(
+			Object.entries( propertyMapValue ).map( ( [ key, val ] ) => {
+				if ( key === 'custom_css' ) {
+					return [ key, val ];
+				}
+				const { key: propKey, kind } = styleSchema?.[ key ] || {};
+				if ( ! propKey && kind !== 'union' ) {
+					throw new Error( `_styles property ${ key } is not supported.` );
+				}
+				return [ key, resolvePropValue( val, propKey ) ];
+			} )
+		);
 		let customCss: CustomCss | undefined;
 		Object.keys( propertyMapValue as Record< string, unknown > ).forEach( ( stylePropName ) => {
 			const propertyRawSchema = styleSchema[ stylePropName ];
