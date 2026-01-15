@@ -10,6 +10,7 @@ import { type CustomCss, getStylesSchema } from '@elementor/editor-styles';
 import { type Utils as IUtils } from '@elementor/editor-variables';
 import { type z } from '@elementor/schema';
 
+// TODO: see https://elementor.atlassian.net/browse/ED-22450 for better cross-module access
 type XElementor = z.infer< z.ZodAny >;
 type OwnParams = {
 	elementId: string;
@@ -19,6 +20,7 @@ type OwnParams = {
 };
 
 export function resolvePropValue( value: unknown, forceKey?: string ): PropValue {
+	// TODO: see https://elementor.atlassian.net/browse/ED-22450 for better cross-module access
 	const Utils = ( ( ( window as XElementor ).elementorV2 as XElementor ).editorVariables as XElementor )
 		.Utils as typeof IUtils;
 	return Schema.adjustLlmPropValueSchema( value as PropValue, {
