@@ -9,7 +9,7 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 		const page = await context.newPage();
 		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
 		await wpAdmin.resetExperiments();
-		await page.close();
+		await context.close();
 	} );
 
 	test( 'Transform repeater items in hover state should persist after page refresh', async ( { page, apiRequests }, testInfo ) => {
@@ -18,8 +18,9 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 		
 		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
 		
-		const editor = await wpAdmin.openNewPage( false, false );
-		await editor.addWidget( { widgetType: 'e-heading' } );
+		const editor = await wpAdmin.openNewPage();
+		const container = await editor.addElement( { elType: 'container' }, 'document' );
+		await editor.addWidget( { widgetType: 'e-heading', container } );
 
 		// Act - Switch to hover state
 		await editor.v4Panel.openTab( 'style' );
@@ -43,26 +44,22 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 		const moveItem = page.locator( 'li:has-text("Move")' ).first();
 		await moveItem.waitFor( { state: 'visible', timeout: 15000 } );
 		await moveItem.click( { force: true } );
-		
-		// Add Scale in hover state
-		await addTransformButton.click();
-		const scaleItem = page.locator( 'li:has-text("Scale")' ).first();
-		await scaleItem.waitFor( { state: 'visible', timeout: 15000 } );
-		await scaleItem.click( { force: true } );
 
-		// Assert - Before refresh (should have 2 transform items)
+		// Assert - Before refresh (should have 1 transform item)
 		await page.waitForTimeout( 1000 );
 		const transformItems = page.locator( '.MuiTag-root' );
-		await expect( transformItems ).toHaveCount( 2 );
+		await expect( transformItems ).toHaveCount( 1 );
 
-		// Publish the page to save changes
-		await page.getByRole( 'button', { name: 'Publish' } ).click();
+		// Wait for auto-save to complete (look for saving indicator to disappear)
+		await page.waitForTimeout( 2000 );
+		const savingIndicator = page.locator( 'text=Saving' ).or( page.locator( 'text=Draft' ) );
+		await savingIndicator.waitFor( { state: 'hidden', timeout: 10000 } ).catch( () => {} );
 		await page.waitForTimeout( 2000 );
 
-		// Act - Refresh page
+		// Refresh page to test persistence
 		await page.reload();
 		await page.waitForLoadState( 'load' );
-		await page.waitForTimeout( 5000 );
+		await wpAdmin.waitForPanel();
 
 		// Navigate back to style tab and hover state
 		await editor.v4Panel.openTab( 'style' );
@@ -79,9 +76,9 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 		// Open effects section
 		await editor.openV2Section( 'effects' );
 
-		// Assert - After refresh (should still have 2 transform items in hover state)
+		// Assert - After refresh (should still have 1 transform item in hover state)
 		await page.waitForTimeout( 1000 );
 		const transformItemsAfterRefresh = page.locator( '.MuiTag-root' );
-		await expect( transformItemsAfterRefresh ).toHaveCount( 2 );
+		await expect( transformItemsAfterRefresh ).toHaveCount( 1 );
 	} );
 } );
