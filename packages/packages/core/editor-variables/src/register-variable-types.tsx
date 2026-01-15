@@ -14,6 +14,7 @@ import { registerVariableType } from './variables-registry/variable-type-registr
 
 export function registerVariableTypes() {
 	registerVariableType( {
+		isActive: true,
 		key: colorVariablePropTypeUtil.key,
 		valueField: ColorField,
 		icon: BrushIcon,
@@ -25,6 +26,7 @@ export function registerVariableTypes() {
 	} );
 
 	registerVariableType( {
+		isActive: true,
 		key: fontVariablePropTypeUtil.key,
 		valueField: FontField,
 		icon: TextIcon,
@@ -35,6 +37,7 @@ export function registerVariableTypes() {
 	} );
 
 	const sizePromotions = {
+		isActive: false,
 		icon: ExpandDiagonalIcon,
 		propTypeUtil: sizeVariablePropTypeUtil,
 		fallbackPropTypeUtil: sizePropTypeUtil,

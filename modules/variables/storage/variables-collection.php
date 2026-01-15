@@ -8,6 +8,8 @@ use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
+use Elementor\Utils as ElementorUtils;
 
 /**
  * TODO: a tradeoff when you want to use collection base methods they are
@@ -54,6 +56,10 @@ class Variables_Collection extends Collection {
 
 			if ( $include_deleted_key && $variable->is_deleted() ) {
 				$var['deleted'] = true;
+			}
+
+			if ( ! ElementorUtils::has_pro() && $var['type'] === Size_Variable_Prop_Type::get_key() ) {
+				continue;
 			}
 
 			$data[ $variable->id() ] = $var;
@@ -140,7 +146,7 @@ class Variables_Collection extends Collection {
 
 		foreach ( $this->all() as $variable ) {
 			if ( ! $variable->is_deleted() ) {
-				$active_count++;
+				++$active_count;
 			}
 		}
 

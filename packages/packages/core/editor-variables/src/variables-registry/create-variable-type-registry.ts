@@ -48,6 +48,7 @@ type VariableTypeOptions = {
 	valueTransformer?: ( value: string, type?: string ) => PropValue;
 	isCompatible?: ( propType: PropType, variable: Variable ) => boolean;
 	emptyState?: JSX.Element;
+	isActive?: boolean;
 };
 
 export type VariableTypesMap = Record< string, Omit< VariableTypeOptions, 'key' > >;
@@ -69,6 +70,7 @@ export function createVariableTypeRegistry() {
 		fallbackPropTypeUtil,
 		isCompatible,
 		emptyState,
+		isActive,
 	}: VariableTypeOptions ) => {
 		const variableTypeKey = key ?? propTypeUtil.key;
 
@@ -95,6 +97,7 @@ export function createVariableTypeRegistry() {
 			fallbackPropTypeUtil,
 			isCompatible,
 			emptyState,
+			isActive,
 		};
 
 		registerTransformer( propTypeUtil.key, styleTransformer );
@@ -118,7 +121,7 @@ export function createVariableTypeRegistry() {
 	};
 
 	const hasVariableType = ( key: string ) => {
-		return key in variableTypes;
+		return key in variableTypes && !! variableTypes[ key ].isActive;
 	};
 
 	return {
