@@ -12,7 +12,7 @@ export default function ChooseFeatures() {
 	const options = useMemo( () => getOptions( isEditorOneActive ), [ isEditorOneActive ] );
 	const { setAjax } = useAjax(),
 		tiers = {
-			one: __( 'ONE', 'elementor' ),
+			one: __( 'One', 'elementor' ),
 			advanced: __( 'Advanced', 'elementor' ),
 			essential: __( 'Essential', 'elementor' ),
 		},
