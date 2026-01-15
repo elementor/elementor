@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { type RefObject, useEffect, useMemo, useRef } from 'react';
+import { type RefObject, useEffect, useMemo } from 'react';
 import { type PropType, sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { usePopupState } from '@elementor/ui';
@@ -112,44 +112,23 @@ export const SizeControl = createControl(
 		const actualUnits = resolveUnits( propType, enablePropTypeUnits, variant, units, actualExtendedOptions );
 
 		const popupState = usePopupState( { variant: 'popover' } );
-		const currentUnitRef = useRef< Unit | ExtendedOption >( sizeValue?.unit ?? actualDefaultUnit );
 
-		const memorizedExternalState = useMemo( () => {
-			if ( ! sizeValue ) {
-				return createStateFromSizeProp( sizeValue, currentUnitRef.current );
-			}
-			const externalState = createStateFromSizeProp( sizeValue, actualDefaultUnit );
-			currentUnitRef.current = externalState.unit;
-			return externalState;
-		}, [ sizeValue, actualDefaultUnit ] );
+		const memorizedExternalState = useMemo(
+			() => createStateFromSizeProp( sizeValue, actualDefaultUnit ),
+			[ sizeValue, actualDefaultUnit ]
+		);
 
 		const [ state, setState ] = useSyncExternalState( {
 			external: memorizedExternalState,
 			setExternal: ( newState: State | null, options, meta ) =>
 				setSizeValue( extractValueFromState( newState ), options, meta ),
 			persistWhen: ( newState ) => !! extractValueFromState( newState ),
-			fallback: ( prevInternal ) => {
-				if ( prevInternal ) {
-					currentUnitRef.current = prevInternal.unit;
-					return {
-						unit: prevInternal.unit,
-						numeric: prevInternal.numeric ?? DEFAULT_SIZE,
-						custom: prevInternal.custom ?? '',
-					};
-				}
-				return {
-					unit: actualDefaultUnit,
-					numeric: DEFAULT_SIZE,
-					custom: '',
-				};
-			},
+			fallback: ( newState ) => ( {
+				unit: newState?.unit ?? actualDefaultUnit,
+				numeric: newState?.numeric ?? DEFAULT_SIZE,
+				custom: newState?.custom ?? '',
+			} ),
 		} );
-
-		useEffect( () => {
-			if ( state.unit ) {
-				currentUnitRef.current = state.unit;
-			}
-		}, [ state.unit ] );
 
 		const { size: controlSize = DEFAULT_SIZE, unit: controlUnit = actualDefaultUnit } =
 			extractValueFromState( state, true ) || {};
