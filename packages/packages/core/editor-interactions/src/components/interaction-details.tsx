@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { type PropsWithChildren, useMemo } from 'react';
 import { ControlFormLabel, PopoverContent, PopoverGridContainer } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -159,7 +159,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 
 type FieldProps = {
 	label: string;
-} & React.PropsWithChildren;
+} & PropsWithChildren;
 
 function Field( { label, children }: FieldProps ) {
 	return (
