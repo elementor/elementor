@@ -23,55 +23,37 @@ test.describe( 'Transform repeater persistence @atomic-widgets', () => {
 
 		// Act
 		await editor.v4Panel.openTab( 'style' );
-		await page.waitForTimeout( 500 );
 		await page.getByRole( 'button', { name: 'Open CSS Class Menu' } ).click();
-		await page.waitForTimeout( 500 );
-
 		await page.getByRole( 'menuitem', { name: 'hover' } ).click();
-		await page.waitForTimeout( 500 );
-
 		await editor.openV2Section( 'effects' );
 
 		const addTransformButton = page.getByRole( 'button', { name: 'Add transform item' } );
-
 		await addTransformButton.click();
 		const moveItem = page.locator( 'li:has-text("Move")' ).first();
 		await moveItem.waitFor( { state: 'visible', timeout: 15000 } );
 		await moveItem.click( { force: true } );
 
 		await page.locator( 'body' ).click();
-		await page.waitForTimeout( 500 );
 
 		// Assert
-		await page.waitForTimeout( 1000 );
 		const transformItems = page.locator( '.MuiTag-root' );
 		await expect( transformItems ).toHaveCount( 1 );
-		await page.waitForTimeout( 3000 );
 
 		// Publish
 		await editor.publishPage();
 
 		// Refresh
 		await page.reload();
-		await page.waitForLoadState( 'load' );
+		await page.waitForLoadState( 'networkidle' );
 		await wpAdmin.waitForPanel();
 
-		await page.waitForTimeout( 2000 );
 		await editor.selectElement( headingId );
-		await page.waitForTimeout( 1000 );
 		await editor.v4Panel.openTab( 'style' );
-		await page.waitForTimeout( 500 );
-
 		await page.getByRole( 'button', { name: 'Open CSS Class Menu' } ).click();
-		await page.waitForTimeout( 500 );
-
 		await page.getByRole( 'menuitem', { name: 'hover' } ).click();
-		await page.waitForTimeout( 500 );
-
 		await editor.openV2Section( 'effects' );
 
 		// Assert
-		await page.waitForTimeout( 1000 );
 		const transformItemsAfterRefresh = page.locator( '.MuiTag-root' );
 		await expect( transformItemsAfterRefresh ).toHaveCount( 1 );
 	} );
