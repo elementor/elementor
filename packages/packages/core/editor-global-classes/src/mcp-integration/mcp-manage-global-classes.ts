@@ -11,7 +11,7 @@ import { globalClassesStylesProvider } from '../global-classes-styles-provider';
 import { saveGlobalClasses } from '../save-global-classes';
 import { GLOBAL_CLASSES_URI } from './classes-resource';
 
-// TODO: see https://elementor.atlassian.net/browse/ED-22450 for better cross-module access
+// TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
 type XElementor = z.infer< z.ZodAny >;
 
 const schema = {
@@ -98,7 +98,7 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 		};
 	}
 
-	// TODO: see https://elementor.atlassian.net/browse/ED-22450 for better cross-module access
+	// TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
 	const Utils = ( ( ( window as XElementor ).elementorV2 as XElementor ).editorVariables as XElementor )
 		.Utils as typeof IUtils;
 	Object.keys( props ).forEach( ( key ) => {
