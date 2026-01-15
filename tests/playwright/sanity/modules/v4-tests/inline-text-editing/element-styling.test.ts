@@ -22,6 +22,8 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active', e_classes: 'active' } );
 
 		editor = await wpAdminPage.openNewPage();
+		await editor.loadJsonPageTemplate( __dirname, TEMPLATE_FILE_NAME, HEADING_WIDGET_SELECTOR );
+		await editor.previewFrame.waitForSelector( HEADING_WIDGET_SELECTOR );
 	} );
 
 	test.afterAll( async () => {
@@ -34,10 +36,6 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		const headingElement = editor.previewFrame.locator( HEADING_WIDGET_SELECTOR );
 		const editedHeadingElement = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 		const publishedHeadingElement = page.locator( '.e-heading-base' );
-
-		// Act.
-		await editor.loadJsonPageTemplate( __dirname, TEMPLATE_FILE_NAME, HEADING_WIDGET_SELECTOR );
-		await editor.previewFrame.waitForSelector( HEADING_WIDGET_SELECTOR );
 
 		await test.step( 'Static heading ', async () => {
 			// Assert.
