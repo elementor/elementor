@@ -76,6 +76,9 @@ class Components_REST_API {
 								'elements' => [
 									'type' => 'array',
 									'required' => true,
+									'items' => [
+										'type' => 'object',
+									],
 								],
 								'settings' => [
 									'type' => 'object',

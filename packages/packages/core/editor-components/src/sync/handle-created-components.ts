@@ -1,5 +1,5 @@
-import { type NotificationData, notify } from '@elementor/editor-notifications';
 import { updateElementSettings, type V1ElementData } from '@elementor/editor-elements';
+import { type NotificationData, notify } from '@elementor/editor-notifications';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { type CreatedResult } from '../api';
@@ -7,7 +7,7 @@ import { type ComponentInstanceProp } from '../prop-types/component-instance-pro
 import { selectUnpublishedComponents, slice } from '../store/store';
 
 export function handleCreatedComponents( result: CreatedResult, elements: V1ElementData[] ): void {
-	const uidToComponentId = new Map( Object.entries( result.success ).map( ( [ uid, id ] ) => [ uid, id ] ) );
+	const uidToComponentId = new Map( Object.entries( result.success ) );
 	const unpublishedComponents = selectUnpublishedComponents( getState() );
 
 	updateComponentInstances( elements, uidToComponentId );

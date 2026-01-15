@@ -1,9 +1,13 @@
+import { notify } from '@elementor/editor-notifications';
+
 import { invalidateComponentDocumentData } from '../../utils/component-document-data';
 import { handlePublishedComponents } from '../handle-published-components';
 
 jest.mock( '../../utils/component-document-data' );
+jest.mock( '@elementor/editor-notifications' );
 
 const mockInvalidateComponentDocumentData = jest.mocked( invalidateComponentDocumentData );
+const mockNotify = jest.mocked( notify );
 
 describe( 'handlePublishedComponents', () => {
 	beforeEach( () => {
@@ -25,9 +29,10 @@ describe( 'handlePublishedComponents', () => {
 		expect( mockInvalidateComponentDocumentData ).toHaveBeenNthCalledWith( 1, 1000 );
 		expect( mockInvalidateComponentDocumentData ).toHaveBeenNthCalledWith( 2, 2000 );
 		expect( mockInvalidateComponentDocumentData ).toHaveBeenNthCalledWith( 3, 3000 );
+		expect( mockNotify ).not.toHaveBeenCalled();
 	} );
 
-	it( 'should not invalidate failed components', () => {
+	it( 'should not invalidate failed components and notify error', () => {
 		// Arrange
 		const result = {
 			successIds: [ 1000 ],
@@ -43,9 +48,14 @@ describe( 'handlePublishedComponents', () => {
 		// Assert
 		expect( mockInvalidateComponentDocumentData ).toHaveBeenCalledTimes( 1 );
 		expect( mockInvalidateComponentDocumentData ).toHaveBeenCalledWith( 1000 );
+		expect( mockNotify ).toHaveBeenCalledWith( {
+			type: 'error',
+			message: 'Failed to publish components: 2000, 3000',
+			id: 'failed-published-components-notification',
+		} );
 	} );
 
-	it( 'should handle empty success array', () => {
+	it( 'should handle empty success array and notify error', () => {
 		// Arrange
 		const result = {
 			successIds: [],
@@ -57,6 +67,11 @@ describe( 'handlePublishedComponents', () => {
 
 		// Assert
 		expect( mockInvalidateComponentDocumentData ).not.toHaveBeenCalled();
+		expect( mockNotify ).toHaveBeenCalledWith( {
+			type: 'error',
+			message: 'Failed to publish components: 1000',
+			id: 'failed-published-components-notification',
+		} );
 	} );
 
 	it( 'should handle all components being successful', () => {
@@ -71,5 +86,6 @@ describe( 'handlePublishedComponents', () => {
 
 		// Assert
 		expect( mockInvalidateComponentDocumentData ).toHaveBeenCalledTimes( 2 );
+		expect( mockNotify ).not.toHaveBeenCalled();
 	} );
 } );

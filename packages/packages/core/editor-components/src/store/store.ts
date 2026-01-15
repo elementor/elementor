@@ -126,6 +126,12 @@ export const slice = createSlice( {
 		cleanUpdatedComponentNames: ( state ) => {
 			state.updatedComponentNames = {};
 		},
+		cleanUpdatedComponentNamesByIds: ( state, { payload }: PayloadAction< number[] > ) => {
+			const idsToRemove = new Set( payload );
+			state.updatedComponentNames = Object.fromEntries(
+				Object.entries( state.updatedComponentNames ).filter( ( [ id ] ) => ! idsToRemove.has( Number( id ) ) )
+			);
+		},
 	},
 	extraReducers: ( builder ) => {
 		builder.addCase( loadComponents.fulfilled, ( state, { payload }: PayloadAction< GetComponentResponse > ) => {

@@ -174,7 +174,6 @@ class Components_Repository {
 					'uid' => $uid,
 					'error' => $e->getMessage(),
 				];
-				continue;
 			}
 		}
 
@@ -197,7 +196,11 @@ class Components_Repository {
 	private function validate_batch( array $items, Collection $existing_components ): Parse_Result {
 		$result = Parse_Result::make();
 
-		$total_count = $existing_components->count() + count( $items );
+		$active_components_count = $existing_components->filter(
+			fn( $component ) => ! ( $component['is_archived'] ?? false )
+		)->count();
+
+		$total_count = $active_components_count + count( $items );
 		if ( $total_count > Components_REST_API::MAX_COMPONENTS ) {
 			$result->errors()->add( 'count', esc_html__( 'Maximum number of components exceeded', 'elementor' ) );
 			return $result;
@@ -414,22 +417,22 @@ class Components_Repository {
 		try {
 			$main_id = $component->get_main_id();
 			$autosave = $component->get_newer_autosave();
-	
+
 			if ( $autosave ) {
 				$autosave_id = $autosave->get_post()->ID;
-	
+
 				Plugin::$instance->db->copy_elementor_meta( $autosave_id, $main_id );
-	
+
 				$post_css = Post_CSS::create( $main_id );
 				$post_css->update();
-	
+
 				wp_delete_post_revision( $autosave_id );
 			}
-	
+
 			/** @var Component $main_component */
 			$main_component = Plugin::$instance->documents->get( $main_id );
 			$success = $main_component->publish();
-	
+
 			if ( ! $success ) {
 				throw new \Exception( 'Failed to publish component' );
 			}
