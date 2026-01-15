@@ -325,7 +325,6 @@ export default function createAtomicElementBaseView( type ) {
 		onDestroy() {
 			BaseElementView.prototype.onDestroy.apply( this, arguments );
 
-			this._invalidateTagCache();
 			this.dispatchPreviewEvent( 'elementor/element/destroy' );
 		},
 
