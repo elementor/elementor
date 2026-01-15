@@ -1,5 +1,4 @@
 import { createMockDocument } from 'test-utils';
-import { type Document } from '@elementor/editor-documents';
 
 import { apiClient } from '../../api';
 import { invalidateComponentDocumentData } from '../../utils/component-document-data';
@@ -31,10 +30,6 @@ describe( 'updateComponentsBeforeSave', () => {
 			] )
 		);
 	};
-
-	beforeEach( () => {
-		jest.clearAllMocks();
-	} );
 
 	it( 'should update all the components when publishing', async () => {
 		// Arrange
