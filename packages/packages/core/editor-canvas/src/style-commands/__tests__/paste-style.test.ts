@@ -795,16 +795,22 @@ describe( 'pasteStyles', () => {
 				expect( updateElementStyle ).toHaveBeenCalledTimes( expectedUpdateElementStyle );
 				expect( updateElementSettings ).toHaveBeenCalledTimes( expectedUpdateElementSettings );
 
-				if ( expectedClasses ) {
-					Object.entries( expectedClasses ).forEach( ( [ elementId, classes ] ) => {
+				selectedElements.forEach( ( { id } ) => {
+					if ( expectedClasses?.[ id ] ) {
 						expect( updateElementSettings ).toHaveBeenCalledWith( {
-							id: elementId,
+							id,
 							props: {
-								[ CLASSES_PROP_KEY ]: classesPropTypeUtil.create( classes ),
+								[ CLASSES_PROP_KEY ]: classesPropTypeUtil.create( expectedClasses[ id ] ),
 							},
 						} );
-					} );
-				}
+					} else {
+						expect( updateElementSettings ).not.toHaveBeenCalledWith(
+							expect.objectContaining( {
+								id,
+							} )
+						);
+					}
+				} );
 			}
 		);
 	} );
