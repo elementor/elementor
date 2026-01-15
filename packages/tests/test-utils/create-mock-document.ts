@@ -10,6 +10,7 @@ export default function createMockDocument( {
 	isSavingDraft,
 	userCan,
 	links,
+	elements,
 }: Partial< Document > = {} ): Document {
 	return {
 		id: id ?? 1,
@@ -36,5 +37,6 @@ export default function createMockDocument( {
 			allowAddingWidgets: true,
 			showCopyAndShare: true,
 		},
+		elements,
 	};
 }

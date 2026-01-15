@@ -1,42 +1,40 @@
+import { type Document } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
-import { apiClient } from '../../api';
-import { type ComponentId } from '../../types';
+import { type ComponentDocumentMap } from '../../utils/get-component-documents';
 import { selectStyles, slice } from '../store';
 
-export async function loadComponentsStyles( componentIds: number[] ) {
-	if ( ! componentIds.length ) {
+export function loadComponentsStyles( documents: ComponentDocumentMap ) {
+	if ( ! documents.size ) {
 		return;
 	}
 
 	const knownComponents = selectStyles( getState() );
-	const unknownComponentIds = componentIds.filter( ( id ) => ! knownComponents[ id ] );
+	const unknownDocuments = new Map( [ ...documents.entries() ].filter( ( [ id ] ) => ! knownComponents[ id ] ) );
 
-	if ( ! unknownComponentIds.length ) {
+	if ( ! unknownDocuments.size ) {
 		return;
 	}
 
-	await addComponentStyles( unknownComponentIds );
+	addStyles( unknownDocuments );
 }
 
-async function addComponentStyles( ids: ComponentId[] ) {
-	const newComponents = await loadStyles( ids );
-
-	addStyles( newComponents );
-}
-
-async function loadStyles( ids: number[] ): Promise< [ number, V1ElementData ][] > {
-	return Promise.all( ids.map( async ( id ) => [ id, await apiClient.getComponentConfig( id ) ] ) );
-}
-
-function addStyles( data: ( readonly [ ComponentId, V1ElementData ] )[] ) {
+function addStyles( documents: ComponentDocumentMap ) {
 	const styles = Object.fromEntries(
-		data.map( ( [ componentId, componentData ] ) => [ componentId, extractStyles( componentData ) ] )
+		[ ...documents.entries() ].map( ( [ id, document ] ) => [ id, extractStylesFromDocument( document ) ] )
 	);
 
 	dispatch( slice.actions.addStyles( styles ) );
+}
+
+function extractStylesFromDocument( document: Document ): Array< StyleDefinition > {
+	if ( ! document.elements?.length ) {
+		return [];
+	}
+
+	return document.elements.flatMap( extractStyles );
 }
 
 function extractStyles( element: V1ElementData ): Array< StyleDefinition > {
