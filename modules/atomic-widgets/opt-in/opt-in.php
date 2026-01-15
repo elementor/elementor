@@ -7,6 +7,7 @@ use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\GlobalClasses\Module as GlobalClassesModule;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
 use Elementor\Modules\Variables\Module as VariablesModule;
+use Elementor\Modules\Components\Module as ComponentsModule;
 use Elementor\Plugin;
 
 class Opt_In {
@@ -17,6 +18,7 @@ class Opt_In {
 		AtomicWidgetsModule::EXPERIMENT_NAME,
 		GlobalClassesModule::NAME,
 		VariablesModule::EXPERIMENT_NAME,
+		ComponentsModule::EXPERIMENT_NAME,
 	];
 
 	const OPT_IN_FEATURES = [
@@ -25,6 +27,7 @@ class Opt_In {
 		AtomicWidgetsModule::EXPERIMENT_NAME,
 		GlobalClassesModule::NAME,
 		VariablesModule::EXPERIMENT_NAME,
+		ComponentsModule::EXPERIMENT_NAME,
 	];
 
 	public function init() {
