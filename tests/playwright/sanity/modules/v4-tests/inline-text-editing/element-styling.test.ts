@@ -5,6 +5,7 @@ import EditorPage from '../../../../pages/editor-page';
 import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
 
 const HEADING_WIDGET_SELECTOR = '.elementor-widget-e-heading';
+const TEMPLATE_FILE_NAME = 'inline-editing-heading-template';
 
 test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
@@ -35,7 +36,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		const publishedHeadingElement = page.locator( '.e-heading-base' );
 
 		// Act.
-		await editor.loadJsonPageTemplate( __dirname, 'inline-editing-heading-template.json', HEADING_WIDGET_SELECTOR );
+		await editor.loadJsonPageTemplate( __dirname, TEMPLATE_FILE_NAME, HEADING_WIDGET_SELECTOR );
 		await editor.previewFrame.waitForSelector( HEADING_WIDGET_SELECTOR );
 
 		await test.step( 'Static heading ', async () => {
