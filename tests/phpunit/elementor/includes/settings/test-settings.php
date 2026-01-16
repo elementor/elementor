@@ -18,12 +18,6 @@ class Test_Settings extends Elementor_Test_Base {
 	}
 
 	public function test_register_admin_menu() {
-		$is_editor_one_enabled = true;
-		
-		if ( $is_editor_one_enabled ) {
-			$this->markTestSkipped( 'Editor-one is always active now. This test expects legacy menu structure when editor-one is inactive.' );
-		}
-
 		// Arrange.
 		$this->markTestSkipped();
 		return;
