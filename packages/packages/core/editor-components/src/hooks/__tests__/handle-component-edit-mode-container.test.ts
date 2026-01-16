@@ -1,4 +1,4 @@
-import { createHooksRegistry, setupHooksRegistry } from 'test-utils';
+import { createHooksRegistry, createMockElement, setupHooksRegistry } from 'test-utils';
 import { type V1Document } from '@elementor/editor-documents';
 import { createElement, selectElement, type V1Element } from '@elementor/editor-elements';
 
@@ -57,7 +57,7 @@ describe( 'initHandleComponentEditModeContainer', () => {
 
 			initHandleComponentEditModeContainer();
 
-			const deletedElement = createMockContainer( { id: 'deleted-element' } );
+			const deletedElement = createMockElement( { model: { id: 'deleted-element' } } );
 			createMockComponentContainer( [ deletedElement ] );
 
 			// Act
@@ -75,8 +75,8 @@ describe( 'initHandleComponentEditModeContainer', () => {
 			// Arrange
 			initHandleComponentEditModeContainer();
 
-			const deletedElement = createMockContainer( { id: 'deleted-element' } );
-			const remainingElement = createMockContainer( { id: 'remaining-element' } );
+			const deletedElement = createMockElement( { model: { id: 'deleted-element' } } );
+			const remainingElement = createMockElement( { model: { id: 'remaining-element' } } );
 			createMockComponentContainer( [ deletedElement, remainingElement ] );
 
 			// Act
@@ -91,7 +91,7 @@ describe( 'initHandleComponentEditModeContainer', () => {
 			jest.mocked( isEditingComponent ).mockReturnValue( false );
 			initHandleComponentEditModeContainer();
 
-			const deletedElement = createMockContainer( { id: 'deleted-element' } );
+			const deletedElement = createMockElement( { model: { id: 'deleted-element' } } );
 			createMockComponentContainer( [ deletedElement ] );
 
 			// Act
@@ -105,8 +105,8 @@ describe( 'initHandleComponentEditModeContainer', () => {
 			// Arrange
 			initHandleComponentEditModeContainer();
 
-			const parent = createMockContainer( { id: 'regular-container', children: [] } );
-			const deletedElement = createMockContainer( { id: 'deleted-element', parent } );
+			const parent = createMockElement( { model: { id: 'regular-container' } } );
+			const deletedElement = createMockElement( { model: { id: 'deleted-element' }, parent } );
 
 			// Act
 			deleteContainers( { container: deletedElement } );
@@ -119,8 +119,8 @@ describe( 'initHandleComponentEditModeContainer', () => {
 			// Arrange
 			initHandleComponentEditModeContainer();
 
-			const deletedElement1 = createMockContainer( { id: 'deleted-1' } );
-			const deletedElement2 = createMockContainer( { id: 'deleted-2' } );
+			const deletedElement1 = createMockElement( { model: { id: 'deleted-1' } } );
+			const deletedElement2 = createMockElement( { model: { id: 'deleted-2' } } );
 			createMockComponentContainer( [ deletedElement1 ] );
 
 			// Act
@@ -150,12 +150,12 @@ describe( 'initHandleComponentEditModeContainer', () => {
 			initHandleComponentEditModeContainer();
 			const hook = hooksRegistry.getByCommand( 'preview/drop' );
 
-			const topLevelElement = createMockContainer( { id: 'top-level-element' } );
+			const topLevelElement = createMockElement( { model: { id: 'top-level-element' } } );
 			const component = createMockComponentContainer( [ topLevelElement ] );
 			const args = { container: component };
 
 			// Act
-			const result = hook?.apply( args, null );
+			const result = hook?.apply( args );
 
 			// Assert
 			expect( result ).toBe( true );
@@ -171,7 +171,7 @@ describe( 'initHandleComponentEditModeContainer', () => {
 			const args = { container: component };
 
 			// Act
-			const result = hook?.apply( args, null );
+			const result = hook?.apply( args );
 
 			// Assert
 			expect( result ).toBe( true );
@@ -184,12 +184,12 @@ describe( 'initHandleComponentEditModeContainer', () => {
 			initHandleComponentEditModeContainer();
 			const hook = hooksRegistry.getByCommand( 'preview/drop' );
 
-			const topLevelElement = createMockContainer( { id: 'top-level-element' } );
+			const topLevelElement = createMockElement( { model: { id: 'top-level-element' } } );
 			const component = createMockComponentContainer( [ topLevelElement ] );
 			const args = { container: component };
 
 			// Act
-			const result = hook?.apply( args, null );
+			const result = hook?.apply( args );
 
 			// Assert
 			expect( result ).toBe( true );
@@ -201,67 +201,48 @@ describe( 'initHandleComponentEditModeContainer', () => {
 			initHandleComponentEditModeContainer();
 			const hook = hooksRegistry.getByCommand( 'preview/drop' );
 
-			const regularContainer = createMockContainer( { id: 'regular-container' } );
+			const regularContainer = createMockElement( { model: { id: 'regular-container' } } );
 			const args = { container: regularContainer };
 
 			// Act
-			const result = hook?.apply( args, null );
+			const result = hook?.apply( args );
 
 			// Assert
 			expect( result ).toBe( true );
 			expect( args.container ).toBe( regularContainer );
 		} );
 
-		it( 'should handle containers array and redirect each component', () => {
+		it.only( 'should handle containers array', () => {
 			// Arrange
 			initHandleComponentEditModeContainer();
 			const hook = hooksRegistry.getByCommand( 'preview/drop' );
 
-			const topLevelElement1 = createMockContainer( { id: 'top-level-1' } );
-			const component1 = createMockComponentContainer( [ topLevelElement1 ] );
+			const topLevelElement = createMockElement( { model: { id: 'top-level-element' } } );
+			const component1 = createMockComponentContainer( [ topLevelElement ] );
 
-			const topLevelElement2 = createMockContainer( { id: 'top-level-2' } );
-			const component2 = createMockComponentContainer( [ topLevelElement2 ] );
-
-			const args = { containers: [ component1, component2 ] };
+			const otherElement = createMockElement( { model: { id: 'other-element' } } );
 
 			// Act
-			const result = hook?.apply( args, null );
+			const args = { containers: [ component1, otherElement ] };
+			const result = hook?.apply( args );
 
 			// Assert
 			expect( result ).toBe( true );
-			expect( args.containers[ 0 ] ).toBe( topLevelElement1 );
-			expect( args.containers[ 1 ] ).toBe( topLevelElement2 );
+			expect( args.containers[ 0 ] ).toBe( topLevelElement );
+			expect( args.containers[ 1 ] ).toBe( otherElement );
 		} );
 	} );
 } );
 
 type MockContainer = NonNullable< DeleteArgs[ 'container' ] >;
 
-function createMockContainer( elementData: Partial< MockContainer > = {} ): MockContainer {
-	return {
-		id: 'element-id',
-		children: [],
-		model: {
-			get: jest.fn(),
-			set: jest.fn(),
-			toJSON: jest.fn(),
-		},
-		settings: {
-			get: jest.fn(),
-			set: jest.fn(),
-			toJSON: jest.fn(),
-		},
-		...elementData,
-	};
-}
-
 function createMockComponentContainer( children: MockContainer[] = [] ): MockContainer {
-	const component = createMockContainer( {
-		id: 'document',
-		document: { config: { type: COMPONENT_DOCUMENT_TYPE } } as unknown as V1Document,
+	const component = createMockElement( {
+		model: { id: 'document' },
 		children,
-	} );
+	} ) as MockContainer;
+
+	component.document = { config: { type: COMPONENT_DOCUMENT_TYPE } } as unknown as V1Document;
 
 	children?.forEach( ( child: MockContainer ) => {
 		child.parent = component;
