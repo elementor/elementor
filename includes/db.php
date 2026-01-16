@@ -353,7 +353,7 @@ class DB {
 	 * @param int $from_post_id Original post ID.
 	 * @param int $to_post_id   Target post ID.
 	 */
-	public function copy_elementor_meta( $from_post_id, $to_post_id ) {
+	public function copy_elementor_meta( $from_post_id, $to_post_id, $meta_keys = null ) {
 		$from_post_meta = get_post_meta( $from_post_id );
 		$core_meta = [
 			'_wp_page_template',
@@ -361,6 +361,10 @@ class DB {
 		];
 
 		foreach ( $from_post_meta as $meta_key => $values ) {
+			if ( $meta_keys && ! in_array( $meta_key, $meta_keys, true ) ) {
+				continue;
+			}
+
 			// Copy only meta with the `_elementor` prefix.
 			if ( 0 === strpos( $meta_key, '_elementor' ) || in_array( $meta_key, $core_meta, true ) ) {
 				$value = $values[0];

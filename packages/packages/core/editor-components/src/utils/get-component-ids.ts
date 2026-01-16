@@ -19,6 +19,10 @@ export const getComponentIds = async ( elements: V1ElementData[] ): Promise< num
 
 			const document = await getComponentDocumentData( componentId );
 
+			if ( ! document ) {
+				return;
+			}
+
 			childElements = document?.elements;
 
 			if ( Boolean( componentId ) ) {

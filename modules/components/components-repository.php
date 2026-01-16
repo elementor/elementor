@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Components\Documents\Component;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Plugin;
+use Elementor\Core\Base\Document;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -17,7 +18,7 @@ class Components_Repository {
 		return new self();
 	}
 
-	public function all() {
+	public function all( bool $filter_out_archived = false ) {
 		// Components count is limited to 50, if we increase this number, we need to iterate the posts in batches.
 		$posts = get_posts( [
 			'post_type' => Component_Document::TYPE,
@@ -28,28 +29,32 @@ class Components_Repository {
 		$components = [];
 
 		foreach ( $posts as $post ) {
-			$doc = Plugin::$instance->documents->get( $post->ID );
+			$component = $this->get( $post->ID );
 
-			if ( ! $doc || ! $doc instanceof Component_Document ) {
+			if ( ! $component ) {
+				continue;
+			}
+
+			$is_archived = $component->get_is_archived();
+
+			if ( $filter_out_archived && $is_archived ) {
 				continue;
 			}
 
 			$components[] = [
-				'id' => $doc->get_main_id(),
-				'title' => $doc->get_post()->post_title,
-				'uid' => $doc->get_component_uid(),
-				'is_archived' => (bool) $doc->get_is_archived(),
-				'styles' => $this->extract_styles( $doc->get_elements_data() ),
+				'id' => $component->get_main_id(),
+				'title' => $component->get_post()->post_title,
+				'uid' => $component->get_component_uid(),
+				'is_archived' => $is_archived,
+				'styles' => $this->extract_styles( $component->get_elements_data() ),
 			];
 		}
 
 		return Collection::make( $components );
 	}
 
-	public function get( $id, bool $include_autosave = false ) {
-		$should_get_autosave = $include_autosave || is_preview();
-
-		$doc = $should_get_autosave
+	public function get( $id, bool $include_autosave = true ) {
+		$doc = $include_autosave
 			? Plugin::$instance->documents->get_doc_or_auto_save( $id, get_current_user_id() )
 			: Plugin::$instance->documents->get( $id );
 
@@ -103,14 +108,14 @@ class Components_Repository {
 
 		foreach ( $ids as $id ) {
 			try {
-				$doc = Plugin::$instance->documents->get( $id );
+				$component = $this->get( $id );
 
-				if ( ! $doc instanceof Component_Document ) {
+				if ( ! $component ) {
 					$failed_ids[] = $id;
 					continue;
 				}
 
-				$doc->archive();
+				$component->archive();
 				$success_ids[] = $id;
 			} catch ( \Exception $e ) {
 				$failed_ids[] = $id;
@@ -124,12 +129,49 @@ class Components_Repository {
 	}
 
 	public function update_title( $component_id, $title ) {
-		$doc = $this->get( $component_id );
-		if ( ! $doc ) {
+		$component = $this->get( $component_id );
+
+		if ( ! $component ) {
 			return false;
 		}
-		$sanitized_title = sanitize_text_field( $title );
-		$doc->save( [ 'post_title' => $sanitized_title ] );
+
+		return $component->update_title( $title );
+	}
+
+	public function publish_component( Component $component ): bool {
+		try {
+			$main_id = $component->get_main_id();
+			$main_component = $this->get( $main_id, false );
+
+			$autosave = $main_component->get_newer_autosave();
+
+			if ( $autosave ) {
+				$autosave_id = $autosave->get_post()->ID;
+
+				// Copy component custom meta keys from the autosave to the main component.
+				Plugin::$instance->db->copy_elementor_meta( $autosave_id, $main_id, Component_Document::COMPONENT_CUSTOM_META_KEYS );
+
+				$autosave_elements = $autosave->get_elements_data();
+				$autosave_title = $autosave->get_post()->post_title;
+
+				$success = $main_component->save( [
+					'elements' => $autosave_elements,
+					'settings' => [
+						'post_status' => Document::STATUS_PUBLISH,
+						'post_title' => $autosave_title,
+					],
+				] );
+			} else {
+				$success = $main_component->update_status( Document::STATUS_PUBLISH );
+			}
+
+			if ( ! $success ) {
+				throw new \Exception( 'Failed to publish component' );
+			}
+		} catch ( \Exception $e ) {
+			return false;
+		}
+
 		return true;
 	}
 }

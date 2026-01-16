@@ -24,10 +24,14 @@ export const beforeSave = ( { container, status }: Options ) => {
 	const elements = container?.model.get( 'elements' ).toJSON?.() ?? [];
 
 	return Promise.all( [
-		updateArchivedComponentBeforeSave(),
-		createComponentsBeforeSave( { elements, status } ),
-		updateComponentsBeforeSave( { elements, status } ),
+		syncComponents( { elements, status } ),
 		setComponentOverridablePropsSettingsBeforeSave( { container } ),
-		updateComponentTitleBeforeSave(),
 	] );
+};
+
+const syncComponents = async ( { elements, status }: { elements: V1ElementData[]; status: DocumentSaveStatus } ) => {
+	await updateComponentTitleBeforeSave();
+	await updateArchivedComponentBeforeSave();
+	await updateComponentsBeforeSave( { elements, status } );
+	await createComponentsBeforeSave( { elements, status } );
 };
