@@ -55,6 +55,7 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 		$this->assertConfigEqualsIgnoringPostIds( $expected_config, $actual_config );
 	}
 
+
 	private function simulate_admin_context(): void {
 		if ( ! class_exists( 'WP_Screen' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-screen.php';

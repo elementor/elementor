@@ -17,11 +17,11 @@ import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
-import { Trigger } from './controls/trigger';
 
 type InteractionDetailsProps = {
 	interaction: InteractionItemValue;
 	onChange: ( interaction: InteractionItemValue ) => void;
+	onPlayInteraction: ( interactionId: string ) => void;
 };
 
 const DEFAULT_VALUES = {
@@ -36,7 +36,7 @@ const DEFAULT_VALUES = {
 
 const TRIGGERS_WITH_REPLAY = [ 'scrollIn', 'scrollOut' ];
 
-export const InteractionDetails = ( { interaction, onChange }: InteractionDetailsProps ) => {
+export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }: InteractionDetailsProps ) => {
 	const trigger = extractString( interaction.trigger, DEFAULT_VALUES.trigger );
 	const effect = extractString( interaction.animation.value.effect, DEFAULT_VALUES.effect );
 	const type = extractString( interaction.animation.value.type, DEFAULT_VALUES.type );
@@ -45,6 +45,9 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 	const delay = extractNumber( interaction.animation.value.timing_config.value.delay, DEFAULT_VALUES.delay );
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
 	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
+	const TriggerControl = useMemo( () => {
+		return getInteractionsControl( 'trigger' )?.component ?? null;
+	}, [] );
 	const ReplayControl = useMemo( () => {
 		if ( ! shouldShowReplay ) {
 			return null;
@@ -77,8 +80,9 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction );
 		const newReplay = updates.replay !== undefined ? updates.replay : replay;
 
-		onChange( {
+		const updatedInteraction = {
 			...interaction,
+			interaction_id: interaction.interaction_id,
 			trigger: createString( updates.trigger ?? trigger ),
 			animation: createAnimationPreset( {
 				effect: updates.effect ?? effect,
@@ -88,13 +92,22 @@ export const InteractionDetails = ( { interaction, onChange }: InteractionDetail
 				delay: updates.delay ?? delay,
 				replay: newReplay,
 			} ),
-		} );
+		};
+
+		onChange( updatedInteraction );
+
+		const interactionId = extractString( updatedInteraction.interaction_id );
+		setTimeout( () => {
+			onPlayInteraction( interactionId );
+		}, 0 );
 	};
 
 	return (
 		<PopoverContent p={ 1.5 }>
 			<Grid container spacing={ 1.5 }>
-				<Trigger value={ trigger } onChange={ ( v ) => updateInteraction( { trigger: v } ) } />
+				{ TriggerControl && (
+					<TriggerControl value={ trigger } onChange={ ( v ) => updateInteraction( { trigger: v } ) } />
+				) }
 				{ ReplayControl && (
 					<>
 						<Grid item xs={ 12 }>

@@ -7,9 +7,23 @@ import {
 } from '@elementor/editor-props';
 import { z } from '@elementor/schema';
 
-import { type DynamicPropType } from './types';
+import { getElementorConfig } from '../sync/get-elementor-globals';
+import { type DynamicPropType, type DynamicPropValue } from './types';
 
 const DYNAMIC_PROP_TYPE_KEY = 'dynamic';
+
+export const dynamicPropTypeUtil = createPropUtils(
+	DYNAMIC_PROP_TYPE_KEY,
+	z.strictObject( {
+		name: z.string(),
+		group: z.string(),
+		settings: z.any().optional(),
+	} )
+);
+
+export const isDynamicTagSupported = ( tagName: string ) => {
+	return !! getElementorConfig()?.atomicDynamicTags?.tags?.[ tagName ];
+};
 
 const isDynamicPropType = ( prop: TransformablePropType ): prop is DynamicPropType =>
 	prop.key === DYNAMIC_PROP_TYPE_KEY;
@@ -27,14 +41,3 @@ export const isDynamicPropValue = ( prop: PropValue ): prop is DynamicPropValue 
 export const supportsDynamic = ( propType: PropType ): boolean => {
 	return !! getDynamicPropType( propType );
 };
-
-export const dynamicPropTypeUtil = createPropUtils(
-	DYNAMIC_PROP_TYPE_KEY,
-	z.strictObject( {
-		name: z.string(),
-		group: z.string(),
-		settings: z.any().optional(),
-	} )
-);
-
-export type DynamicPropValue = z.infer< typeof dynamicPropTypeUtil.schema >;

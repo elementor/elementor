@@ -1,4 +1,5 @@
 import * as React from 'react';
+import type { ReactNode } from 'react';
 
 import { useDefaultPanelSettings } from '../hooks/use-default-panel-settings';
 import { Section } from './section';
@@ -8,7 +9,7 @@ type SectionType = {
 	component?: () => React.JSX.Element;
 	name: string;
 	title: string;
-	action?: React.ReactNode;
+	action?: { component: ReactNode; onClick: () => void };
 };
 
 type Props = { section: SectionType; fields?: string[]; unmountOnExit?: boolean };

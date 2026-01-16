@@ -89,5 +89,6 @@ class Test_Elementor_One_Menu_Manager_Edit_Posts_Users extends Elementor_Test_Ba
 
 		return $user_id;
 	}
+
 }
 
