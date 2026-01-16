@@ -102,13 +102,13 @@ class Components_Repository {
 		return $styles;
 	}
 
-	public function archive( $ids ) {
+	public function archive( array $ids, string $status ) {
 		$failed_ids = [];
 		$success_ids = [];
 
 		foreach ( $ids as $id ) {
 			try {
-				$component = $this->get( $id );
+				$component = $this->get_component_for_edit( $id, $status );
 
 				if ( ! $component ) {
 					$failed_ids[] = $id;
@@ -128,8 +128,8 @@ class Components_Repository {
 		];
 	}
 
-	public function update_title( $component_id, $title ) {
-		$component = $this->get( $component_id );
+	public function update_title( int $component_id, string $title, string $status ): bool {
+		$component = $this->get_component_for_edit( $component_id, $status );
 
 		if ( ! $component ) {
 			return false;
@@ -138,6 +138,19 @@ class Components_Repository {
 		return $component->update_title( $title );
 	}
 
+	private function get_component_for_edit( int $component_id, string $request_status ): ?Component {
+		$component = $this->get( $component_id );
+
+		$autosave_statuses = [ Document::STATUS_AUTOSAVE, Document::STATUS_DRAFT ];
+		$autosave_exists = $component->is_autosave();
+		$should_create_autosave = in_array( $request_status, $autosave_statuses, true ) && ! $autosave_exists;
+
+		if ( ! $should_create_autosave ) {
+			return $component;
+		}
+
+		return $component->get_autosave(0, true);
+	}
 	public function publish_component( Component $component ): bool {
 		try {
 			$main_id = $component->get_main_id();
