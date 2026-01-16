@@ -3,7 +3,6 @@
 namespace Elementor\Modules\Components;
 
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\Components\Documents\Component;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
 use Elementor\Plugin;
 use Elementor\Core\Base\Document;
@@ -18,7 +17,7 @@ class Components_Repository {
 		return new self();
 	}
 
-	public function all( bool $filter_out_archived = false ) {
+	public function all( bool $filter_out_archived = false ): Collection {
 		// Components count is limited to 50, if we increase this number, we need to iterate the posts in batches.
 		$posts = get_posts( [
 			'post_type' => Component_Document::TYPE,
@@ -58,7 +57,7 @@ class Components_Repository {
 			? Plugin::$instance->documents->get_doc_or_auto_save( $id, get_current_user_id() )
 			: Plugin::$instance->documents->get( $id );
 
-		if ( ! $doc instanceof Component ) {
+		if ( ! $doc instanceof Component_Document ) {
 			return null;
 		}
 
@@ -138,8 +137,12 @@ class Components_Repository {
 		return $component->update_title( $title );
 	}
 
-	private function get_component_for_edit( int $component_id, string $request_status ): ?Component {
+	private function get_component_for_edit( int $component_id, string $request_status ): ?Component_Document {
 		$component = $this->get( $component_id );
+
+		if ( ! $component ) {
+			return null;
+		}
 
 		$autosave_statuses = [ Document::STATUS_AUTOSAVE, Document::STATUS_DRAFT ];
 		$autosave_exists = $component->is_autosave();
@@ -149,9 +152,10 @@ class Components_Repository {
 			return $component;
 		}
 
-		return $component->get_autosave(0, true);
+		return $component->get_autosave( 0, true );
 	}
-	public function publish_component( Component $component ): bool {
+
+	public function publish_component( Component_Document $component ): bool {
 		try {
 			$main_id = $component->get_main_id();
 			$main_component = $this->get( $main_id, false );

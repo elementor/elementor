@@ -29,6 +29,9 @@ export const beforeSave = ( { container, status }: Options ) => {
 	] );
 };
 
+// These operations run sequentially to prevent race conditions when multiple
+// edits occur on the same component simultaneously.
+// TODO: Consolidate these into a single PUT /components endpoint.
 const syncComponents = async ( { elements, status }: { elements: V1ElementData[]; status: DocumentSaveStatus } ) => {
 	await updateComponentTitleBeforeSave();
 	await updateArchivedComponentBeforeSave();

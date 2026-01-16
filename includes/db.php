@@ -304,7 +304,7 @@ class DB {
 
 				$callback( $document, $elements_data );
 
-				$processed_posts++;
+				++$processed_posts;
 			}
 		}
 	}

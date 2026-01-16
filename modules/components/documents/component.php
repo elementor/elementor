@@ -21,7 +21,7 @@ class Component extends Document {
 		self::ARCHIVED_META_KEY,
 		self::ARCHIVED_AT_META_KEY,
 	];
-	
+
 	public static function get_properties() {
 		$properties = parent::get_properties();
 
@@ -80,7 +80,7 @@ class Component extends Document {
 			$this->update_json_meta( self::ARCHIVED_META_KEY, [
 				'is_archived' => true,
 				'archived_at' => time(),
-			] );	
+			] );
 		} catch ( \Exception $e ) {
 			throw new \Exception( 'Failed to archive component: ' . esc_html( $e->getMessage() ) );
 		}
@@ -135,8 +135,7 @@ class Component extends Document {
 		$success = ! is_wp_error( $result ) && $result > 0;
 
 		if ( $success ) {
-			clean_post_cache( $this->post->ID );
-			$this->post = get_post( $this->post->ID );
+			$this->refresh_post();
 		}
 
 		return $success;
