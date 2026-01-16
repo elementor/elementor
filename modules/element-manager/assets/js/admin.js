@@ -11,8 +11,7 @@ domReady( () => {
 		return;
 	}
 
-	const isEditorOneEnabled = typeof elementorCommon !== 'undefined' &&
-		true === elementorCommon.config?.isEditorOneActive;
+	const isEditorOneEnabled = true;
 
 	const root = createRoot( htmlOutput );
 

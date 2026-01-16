@@ -82,7 +82,7 @@ export default class WpDashboardTracking {
 	}
 
 	static isEditorOneActive() {
-		return elementorCommon?.config?.editor_events?.isEditorOneActive ?? false;
+		return true;
 	}
 
 	static processPendingNavClick() {

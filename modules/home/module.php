@@ -111,7 +111,7 @@ class Module extends BaseApp {
 		$api = new API( $editor_assets_api );
 
 		$config = $api->get_home_screen_items();
-		$config['isEditorOneActive'] = (bool) Plugin::$instance->modules_manager->get_modules( 'editor-one' );
+		$config['isEditorOneActive'] = true;
 
 		return $config;
 	}

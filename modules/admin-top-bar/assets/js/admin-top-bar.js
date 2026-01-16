@@ -6,7 +6,7 @@ import { usePageTitle } from './hooks/use-page-title/use-page-title';
 import environment from 'elementor-common/utils/environment';
 
 const isEditorOneEnabled = () => {
-	return window.elementorCommon?.config?.isEditorOneActive ?? false;
+	return true;
 };
 
 export default function AdminTopBar() {

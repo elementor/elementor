@@ -86,7 +86,7 @@ const optionsWithOne = [
  * @param {boolean} isEditorOneActive - Whether editor_one feature is active.
  * @return {Array} Array of feature options.
  */
-export const getOptions = ( isEditorOneActive = false ) => {
+export const getOptions = ( isEditorOneActive = true ) => {
 	return isEditorOneActive ? optionsWithOne : optionsWithoutOne;
 };
 

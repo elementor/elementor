@@ -113,7 +113,7 @@ class Module extends BaseModule {
 
 		/** @var Library $library */
 		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
-		$is_editor_one_active = (bool) Plugin::$instance->modules_manager->get_modules( 'editor-one' );
+		$is_editor_one_active = true;
 
 		Plugin::$instance->app->set_settings( 'onboarding', [
 			'eventPlacement' => 'Onboarding wizard',

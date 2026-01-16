@@ -8,7 +8,7 @@ import useButtonAction from '../utils/use-button-action';
 import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function ChooseFeatures() {
-	const isEditorOneActive = elementorAppConfig?.onboarding?.isEditorOneActive ?? false;
+	const isEditorOneActive = true;
 	const options = useMemo( () => getOptions( isEditorOneActive ), [ isEditorOneActive ] );
 	const { setAjax } = useAjax(),
 		tiers = {

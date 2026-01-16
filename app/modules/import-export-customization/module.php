@@ -246,7 +246,7 @@ class Module extends BaseModule {
 	}
 
 	private function print_item_content( $data ) {
-		$is_editor_one_enabled = (bool) Plugin::$instance->modules_manager->get_modules( 'editor-one' );
+		$is_editor_one_enabled = true;
 		$container_classes = 'tab-import-export-kit__container';
 		if ( $is_editor_one_enabled ) {
 			$container_classes .= ' e-editor-one';
