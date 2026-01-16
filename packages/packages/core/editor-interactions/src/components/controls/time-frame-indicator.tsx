@@ -1,19 +1,35 @@
 import * as React from 'react';
-import { ControlFormLabel, PopoverGridContainer } from '@elementor/editor-controls';
-import { MenuListItem } from '@elementor/editor-ui';
-import { Grid, Select, type SelectChangeEvent } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { ControlFormLabel, PopoverGridContainer, UnstableSizeField } from '@elementor/editor-controls';
+import { Grid } from '@elementor/ui';
 
-import { type FieldProps } from '../../types';
+import { NumberPropValue } from '../../types';
+import { numberPropTypeUtil, PropValue, sizePropTypeUtil, SizePropValue } from '@elementor/editor-props';
+import { createNumber } from '../../utils/prop-value-utils';
+import { useId, useMemo } from 'react';
 
-export function TimeFrameIndicator( { value, onChange, label }: FieldProps ) {
-	const availableTimeFrames = [ '0', '100', '200', '300', '400', '500', '750', '1000', '1250', '1500' ].map(
-		( key ) => ( {
-			key,
-			// translators: %s: time in milliseconds
-			label: __( '%s MS', 'elementor' ).replace( '%s', key ),
-		} )
-	);
+const DEFAULT_UNIT = 'ms';
+
+type Props<T = NumberPropValue> = {
+	value: T
+	onChange: ( value: T ) => void;
+	defaultValue: number;
+	label: string;
+};
+
+export function TimeFrameIndicator( {
+	value: numberValue,
+	onChange,
+	label,
+	defaultValue,
+}: Props ) {
+	const sizeValue = useMemo( () => convertToSizeValue( numberValue ), [ numberValue ] );
+	const id = useId();
+
+	const convertToNumberPropValue = ( value: SizePropValue['value'] ) => {
+		const numberValue = createNumber( value.size as number );
+
+		onChange( numberValue ?? defaultValue );
+	};
 
 	return (
 		<Grid item xs={ 12 }>
@@ -22,23 +38,28 @@ export function TimeFrameIndicator( { value, onChange, label }: FieldProps ) {
 					<ControlFormLabel>{ label }</ControlFormLabel>
 				</Grid>
 				<Grid item xs={ 6 }>
-					<Select
-						fullWidth
-						displayEmpty
-						size="tiny"
-						value={ value }
-						onChange={ ( event: SelectChangeEvent< string > ) => onChange( event.target.value ) }
-					>
-						{ availableTimeFrames.map( ( timeFrame ) => {
-							return (
-								<MenuListItem key={ timeFrame.key } value={ timeFrame.key }>
-									{ timeFrame.label }
-								</MenuListItem>
-							);
-						} ) }
-					</Select>
+					<UnstableSizeField
+						units={ [ DEFAULT_UNIT ] }
+						value={ sizeValue }
+						onChange={ convertToNumberPropValue }
+						id={ id }
+					/>
 				</Grid>
 			</PopoverGridContainer>
 		</Grid>
 	);
+}
+
+const convertToSizeValue = ( value: PropValue ): SizePropValue['value'] => {
+	if ( ! numberPropTypeUtil.isValid( value ) ) {
+		return {
+			size: 0,
+			unit: DEFAULT_UNIT,
+		}
+	}
+
+	return sizePropTypeUtil.create( {
+		size: value.value as number,
+		unit: DEFAULT_UNIT,
+	} ).value;
 }

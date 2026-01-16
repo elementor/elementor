@@ -1,23 +1,26 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import { ControlFormLabel, PopoverContent, PopoverGridContainer } from '@elementor/editor-controls';
+import {
+	ControlFormLabel,
+	PopoverContent,
+	PopoverGridContainer,
+} from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsControl } from '../interactions-controls-registry';
-import type { InteractionItemValue } from '../types';
+import type { InteractionItemValue, NumberPropValue } from '../types';
 import {
 	createAnimationPreset,
 	createString,
 	extractBoolean,
-	extractNumber,
 	extractString,
 } from '../utils/prop-value-utils';
 import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
-import { TimeFrameIndicator } from './controls/time-frame-indicator';
 import { Trigger } from './controls/trigger';
+import { TimeFrameIndicator } from './controls/time-frame-indicator';
 
 type InteractionDetailsProps = {
 	interaction: InteractionItemValue;
@@ -42,9 +45,11 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const effect = extractString( interaction.animation.value.effect, DEFAULT_VALUES.effect );
 	const type = extractString( interaction.animation.value.type, DEFAULT_VALUES.type );
 	const direction = extractString( interaction.animation.value.direction, DEFAULT_VALUES.direction );
-	const duration = extractNumber( interaction.animation.value.timing_config.value.duration, DEFAULT_VALUES.duration );
-	const delay = extractNumber( interaction.animation.value.timing_config.value.delay, DEFAULT_VALUES.delay );
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
+
+	const duration =  interaction.animation.value.timing_config.value.duration ?? DEFAULT_VALUES.duration;
+	const delay = interaction.animation.value.timing_config.value.delay ?? DEFAULT_VALUES.delay;
+
 	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
 	const ReplayControl = useMemo( () => {
 		if ( ! shouldShowReplay ) {
@@ -70,8 +75,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			effect: string;
 			type: string;
 			direction: string;
-			duration: number;
-			delay: number;
+			duration: NumberPropValue;
+			delay: NumberPropValue;
 			replay: boolean;
 		} >
 	): void => {
@@ -133,14 +138,16 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					interactionType={ type }
 				/>
 				<TimeFrameIndicator
-					value={ String( duration ) }
-					onChange={ ( v ) => updateInteraction( { duration: parseInt( v, 10 ) } ) }
+					value={ duration }
+					onChange={ ( duration ) => updateInteraction( { duration } ) }
 					label={ __( 'Duration', 'elementor' ) }
+					defaultValue={ DEFAULT_VALUES.duration }
 				/>
 				<TimeFrameIndicator
-					value={ String( delay ) }
-					onChange={ ( v ) => updateInteraction( { delay: parseInt( v, 10 ) } ) }
+					value={ delay }
+					onChange={ ( delay ) => updateInteraction( { delay } ) }
 					label={ __( 'Delay', 'elementor' ) }
+					defaultValue={ DEFAULT_VALUES.delay }
 				/>
 			</Grid>
 		</PopoverContent>

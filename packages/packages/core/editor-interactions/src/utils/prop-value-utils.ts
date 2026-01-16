@@ -21,11 +21,11 @@ export const createNumber = ( value: number ): NumberPropValue => ( {
 	value,
 } );
 
-export const createTimingConfig = ( duration: number, delay: number ): TimingConfigPropValue => ( {
+export const createTimingConfig = ( duration: NumberPropValue, delay: NumberPropValue ): TimingConfigPropValue => ( {
 	$$type: 'timing-config',
 	value: {
-		duration: createNumber( duration ),
-		delay: createNumber( delay ),
+		duration,
+		delay,
 	},
 } );
 
@@ -56,8 +56,8 @@ export const createAnimationPreset = ( {
 	effect: string;
 	type: string;
 	direction?: string;
-	duration: number;
-	delay: number;
+	duration: NumberPropValue;
+	delay: NumberPropValue;
 	replay: boolean;
 } ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
@@ -93,7 +93,14 @@ export const createInteractionItem = ( {
 	value: {
 		...( interactionId && { interaction_id: createString( interactionId ) } ),
 		trigger: createString( trigger ),
-		animation: createAnimationPreset( { effect, type, direction, duration, delay, replay } ),
+		animation: createAnimationPreset( {
+			effect,
+			type,
+			direction,
+			duration: createNumber( duration ),
+			delay: createNumber( delay ),
+			replay,
+		} ),
 	},
 } );
 
