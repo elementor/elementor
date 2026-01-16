@@ -15,8 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 class Module extends BaseModule {
 
-	const EXPERIMENT_NAME = 'e_editor_one';
-
 	const CUSTOM_REACT_APP_PAGES = [
 		'elementor-element-manager',
 	];

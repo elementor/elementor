@@ -450,7 +450,7 @@ class Hints {
 	}
 
 	public static function is_plugin_connected_to_one_subscription(): bool {
-		$has_one_subscription = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
+		$has_one_subscription = true;
 
 		if ( ! $has_one_subscription ) {
 			return false;
