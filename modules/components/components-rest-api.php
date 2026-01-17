@@ -342,7 +342,7 @@ class Components_REST_API {
 		$save_status = $request->get_param( 'status' );
 
 		$items = Collection::make( $request->get_param( 'items' ) );
-		$components = $this->get_repository()->all( true );
+		$components = $this->get_repository()->all();
 
 		$result = Save_Components_Validator::make( $components )->validate( $items );
 
@@ -561,7 +561,7 @@ class Components_REST_API {
 
 	private function create_validate_components( \WP_REST_Request $request ) {
 		$items = Collection::make( $request->get_param( 'items' ) );
-		$components = $this->get_repository()->all( true );
+		$components = $this->get_repository()->all();
 
 		$result = Save_Components_Validator::make( $components )->validate( $items );
 

@@ -17,7 +17,7 @@ class Components_Repository {
 		return new self();
 	}
 
-	public function all( bool $filter_out_archived = false ): Collection {
+	public function all(): Collection {
 		// Components count is limited to 50, if we increase this number, we need to iterate the posts in batches.
 		$posts = get_posts( [
 			'post_type' => Component_Document::TYPE,
@@ -34,17 +34,11 @@ class Components_Repository {
 				continue;
 			}
 
-			$is_archived = $component->get_is_archived();
-
-			if ( $filter_out_archived && $is_archived ) {
-				continue;
-			}
-
 			$components[] = [
 				'id' => $component->get_main_id(),
 				'title' => $component->get_post()->post_title,
 				'uid' => $component->get_component_uid(),
-				'is_archived' => $is_archived,
+				'is_archived' => $component->get_is_archived(),
 				'styles' => $this->extract_styles( $component->get_elements_data() ),
 			];
 		}
