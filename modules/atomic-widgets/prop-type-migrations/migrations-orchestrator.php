@@ -3,7 +3,6 @@
 namespace Elementor\Modules\AtomicWidgets\PropTypeMigrations;
 
 use Elementor\Modules\AtomicWidgets\Logger\Logger;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Array_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Base\Object_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
@@ -38,22 +37,6 @@ class Migrations_Orchestrator {
 	public static function destroy(): void {
 		Migrations_Loader::destroy();
 		self::$instance = null;
-	}
-
-	public static function register_feature_flag_hooks(): void {
-		static $registered = false;
-		if ( $registered ) {
-			return;
-		}
-
-		add_action(
-			'elementor/experiments/feature-state-change/' . Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING,
-			[ __CLASS__, 'clear_migration_cache' ],
-			10,
-			2
-		);
-
-		$registered = true;
 	}
 
 	public static function clear_migration_cache( $old_state = null, $new_state = null ): void {
