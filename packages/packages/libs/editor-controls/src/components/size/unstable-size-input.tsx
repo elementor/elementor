@@ -7,7 +7,6 @@ import type { TextFieldProps } from '@elementor/ui';
 import { forwardRef } from 'react';
 
 type Props = {
-	id?: string;
 	type: 'number' | 'text';
 	value: PropValue;
 	focused?: boolean;
@@ -24,7 +23,6 @@ type Props = {
 export const UnstableSizeInput = forwardRef(
 	(
 		{
-			id,
 			type,
 			value,
 			onChange,
@@ -39,7 +37,6 @@ export const UnstableSizeInput = forwardRef(
 	) => {
 		return (
 			<NumberInput
-				id={ id }
 				ref={ ref }
 				size="tiny"
 				fullWidth

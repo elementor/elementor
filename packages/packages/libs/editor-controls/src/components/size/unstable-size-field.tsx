@@ -7,7 +7,6 @@ import { useSizeValue } from '../../hooks/use-size-value';
 import { UnstableSizeInput } from './unstable-size-input';
 
 type Props<TValue = SizePropValue['value']> = {
-	id?: string;
 	units: Unit[];
 	defaultUnit?: Unit;
 	value: TValue;
@@ -18,7 +17,6 @@ const DEFAULT_UNIT = 'px';
 
 export const UnstableSizeField = (
 	{
-		id,
 		value,
 		onChange,
 		units,
@@ -35,7 +33,6 @@ export const UnstableSizeField = (
 	return (
 		<UnstableSizeInput
 			type="number"
-			id={ id }
 			value={ size }
 			onChange={ ( event ) => setSize( event.target.value ) }
 			InputProps={ {

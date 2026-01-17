@@ -5,7 +5,6 @@ import { Grid } from '@elementor/ui';
 import { NumberPropValue } from '../../types';
 import { numberPropTypeUtil, PropValue, sizePropTypeUtil, SizePropValue } from '@elementor/editor-props';
 import { createNumber } from '../../utils/prop-value-utils';
-import { useId, useMemo } from 'react';
 
 const DEFAULT_UNIT = 'ms';
 
@@ -22,10 +21,9 @@ export function TimeFrameIndicator( {
 	label,
 	defaultValue,
 }: Props ) {
-	const sizeValue = useMemo( () => convertToSizeValue( numberValue ), [ numberValue ] );
-	const id = useId();
+	const sizeValue = convertToSize( numberValue, defaultValue );
 
-	const convertToNumberPropValue = ( value: SizePropValue['value'] ) => {
+	const convertToNumber = ( value: SizePropValue['value'] ) => {
 		const numberValue = createNumber( value.size as number );
 
 		onChange( numberValue ?? defaultValue );
@@ -41,8 +39,7 @@ export function TimeFrameIndicator( {
 					<UnstableSizeField
 						units={ [ DEFAULT_UNIT ] }
 						value={ sizeValue }
-						onChange={ convertToNumberPropValue }
-						id={ id }
+						onChange={ convertToNumber }
 					/>
 				</Grid>
 			</PopoverGridContainer>
@@ -50,10 +47,10 @@ export function TimeFrameIndicator( {
 	);
 }
 
-const convertToSizeValue = ( value: PropValue ): SizePropValue['value'] => {
+const convertToSize = ( value: PropValue, defaultValue: number ): SizePropValue['value'] => {
 	if ( ! numberPropTypeUtil.isValid( value ) ) {
 		return {
-			size: 0,
+			size: defaultValue,
 			unit: DEFAULT_UNIT,
 		}
 	}
