@@ -57,7 +57,7 @@ function createMockChildren( children: V1Element[] ): V1Element[ 'children' ] {
 	return mockChildren;
 }
 
-export function createMockContainer( id: string, children: V1Element[], elType = 'container' ): V1Element {
+export function createMockContainer( id: string, children: V1Element[] = [], elType = 'container' ): V1Element {
 	const modelData: V1ElementModelProps = {
 		elType,
 		id,

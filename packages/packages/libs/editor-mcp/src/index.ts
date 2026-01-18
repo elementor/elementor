@@ -1,4 +1,4 @@
-import { getSDK } from './get-sdk';
+import { getSDK } from './utils/get-sdk';
 
 export {
 	McpServer,

@@ -34,7 +34,6 @@ import { InstanceEditingPanel } from './components/instance-editing-panel/instan
 import { OverridablePropControl } from './components/overridable-props/overridable-prop-control';
 import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
 import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-type';
-import { initRegenerateOverrideKeys } from './hooks/regenerate-override-keys';
 import { initMcp } from './mcp';
 import { PopulateStore } from './populate-store';
 import { initCircularNestingPrevention } from './prevent-circular-nesting';
@@ -45,6 +44,11 @@ import { removeComponentStyles } from './store/actions/remove-component-styles';
 import { componentsStylesProvider } from './store/components-styles-provider';
 import { slice } from './store/store';
 import { beforeSave } from './sync/before-save';
+import { initCleanupOverridablePropsOnDelete } from './sync/cleanup-overridable-props-on-delete';
+import { initHandleComponentEditModeContainer } from './sync/handle-component-edit-mode-container';
+import { initLoadComponentDataAfterInstanceAdded } from './sync/load-component-data-after-instance-added';
+import { initRegenerateOverrideKeys } from './sync/regenerate-override-keys';
+import { initRevertOverridablesOnCopyOrDuplicate } from './sync/revert-overridables-on-copy-or-duplicate';
 import { type ExtendedWindow } from './types';
 import { onElementDrop } from './utils/tracking';
 
@@ -132,9 +136,17 @@ export function init() {
 
 	initRegenerateOverrideKeys();
 
+	initCleanupOverridablePropsOnDelete();
+
 	initMcp();
 
 	initCircularNestingPrevention();
 
 	initNonAtomicNestingPrevention();
+
+	initLoadComponentDataAfterInstanceAdded();
+
+	initHandleComponentEditModeContainer();
+
+	initRevertOverridablesOnCopyOrDuplicate();
 }

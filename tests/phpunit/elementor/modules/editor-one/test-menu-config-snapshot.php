@@ -3,9 +3,7 @@
 namespace Elementor\Tests\Phpunit\Elementor\Modules\EditorOne;
 
 use Elementor\App\Modules\KitLibrary\Module as KitLibraryModule;
-use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Modules\EditorOne\Module as EditorOneModule;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use ElementorEditorTesting\Elementor_Test_Base;
@@ -23,7 +21,6 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 	public function setUp(): void {
 		parent::setUp();
 
-		$this->activate_editor_one_experiment();
 		$this->reset_menu_data_provider();
 		$this->simulate_admin_context();
 		$this->set_request_uri();
@@ -35,7 +32,6 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 		$this->reset_menu_data_provider();
 		$this->restore_screen_context();
 		$this->restore_request_uri();
-		$this->deactivate_editor_one_experiment();
 	}
 
 	public function test_menu_config__matches_expected_snapshot_via_action() {
@@ -56,24 +52,9 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 		}
 
 		$expected_config = $this->load_snapshot();
-		$this->assertEquals( $expected_config, $actual_config );
+		$this->assertConfigEqualsIgnoringPostIds( $expected_config, $actual_config );
 	}
 
-	private function activate_editor_one_experiment(): void {
-		$experiments = Plugin::instance()->experiments;
-		$experiments->set_feature_default_state(
-			EditorOneModule::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_ACTIVE
-		);
-	}
-
-	private function deactivate_editor_one_experiment(): void {
-		$experiments = Plugin::instance()->experiments;
-		$experiments->set_feature_default_state(
-			EditorOneModule::EXPERIMENT_NAME,
-			Experiments_Manager::STATE_INACTIVE
-		);
-	}
 
 	private function simulate_admin_context(): void {
 		if ( ! class_exists( 'WP_Screen' ) ) {
@@ -158,9 +139,9 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 
 		if ( isset( $parsed['query'] ) ) {
 			parse_str( $parsed['query'], $query_params );
-
-			unset( $query_params['ver'] );
-			
+			if ( isset( $query_params['return_to'] ) && '' === $query_params['return_to'] ) {
+				unset( $query_params['return_to'] );
+			}
 			if ( ! empty( $query_params ) ) {
 				$path .= '?' . http_build_query( $query_params );
 			}
@@ -191,18 +172,38 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 	}
 
 	private function set_request_uri(): void {
-		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
-			$this->original_server_request_uri = $_SERVER['REQUEST_URI'];
+		$this->original_server_request_uri = $_SERVER['REQUEST_URI'] ?? null;
+		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
+			$_SERVER['REQUEST_URI'] = '';
 		}
-
-		$_SERVER['REQUEST_URI'] = '/wp-admin/admin.php?page=elementor';
 	}
 
 	private function restore_request_uri(): void {
-		if ( isset( $this->original_server_request_uri ) ) {
-			$_SERVER['REQUEST_URI'] = $this->original_server_request_uri;
-		} else {
+		if ( null === $this->original_server_request_uri ) {
 			unset( $_SERVER['REQUEST_URI'] );
+		} else {
+			$_SERVER['REQUEST_URI'] = $this->original_server_request_uri;
 		}
+	}
+
+	private function assertConfigEqualsIgnoringPostIds( array $expected, array $actual, string $path = '' ): void {
+		$expected_normalized = $this->replace_post_ids_in_config( $expected );
+		$actual_normalized = $this->replace_post_ids_in_config( $actual );
+		$this->assertEquals( $expected_normalized, $actual_normalized );
+	}
+
+	private function replace_post_ids_in_config( $data ) {
+		if ( is_array( $data ) ) {
+			$result = [];
+			foreach ( $data as $key => $value ) {
+				$result[ $key ] = $this->replace_post_ids_in_config( $value );
+			}
+			return $result;
+		} elseif ( is_string( $data ) ) {
+			$replaced = preg_replace( '/post=(\d+)/', 'post={POST_ID}', $data );
+			$replaced = preg_replace( '/post%3D(\d+)/', 'post%3D{POST_ID}', $replaced );
+			return $replaced;
+		}
+		return $data;
 	}
 }

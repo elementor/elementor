@@ -9,6 +9,7 @@ import type {
 	StringPropValue,
 	TimingConfigPropValue,
 } from '../types';
+import { generateTempInteractionId } from './temp-id-utils';
 
 export const createString = ( value: string ): StringPropValue => ( {
 	$$type: 'string',
@@ -104,6 +105,7 @@ export const createDefaultInteractionItem = (): InteractionItemPropValue => {
 		duration: 300,
 		delay: 0,
 		replay: false,
+		interactionId: generateTempInteractionId(),
 	} );
 };
 
@@ -135,6 +137,7 @@ const TRIGGER_LABELS: Record< string, string > = {
 	load: 'On page load',
 	scrollIn: 'Scroll into view',
 	scrollOut: 'Scroll out of view',
+	scrollOn: 'While scrolling',
 };
 
 const capitalize = ( str: string ): string => {

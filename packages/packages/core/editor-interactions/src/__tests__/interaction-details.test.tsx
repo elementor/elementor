@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 
+import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
 import { createAnimationPreset, createString } from '../utils/prop-value-utils';
-
 jest.mock( '../interactions-controls-registry', () => ( {
 	getInteractionsControl: jest.fn(),
 } ) );
@@ -38,6 +38,29 @@ const createInteractionItemValue = ( {
 	} ),
 } );
 
+const getEffectCombobox = (): HTMLElement => {
+	const allComboboxes = screen.getAllByRole( 'combobox' );
+	const effectSelectByProximity = allComboboxes.find( ( cb ) => {
+		try {
+			const container = within( cb );
+			container.getByText( 'Effect' );
+			return true;
+		} catch {
+			return false;
+		}
+	} );
+	if ( effectSelectByProximity ) {
+		return effectSelectByProximity;
+	}
+	const labelParent = screen.getByText( 'Effect', { selector: 'label' } );
+	const labelContainer = within( labelParent );
+	try {
+		return labelContainer.getByRole( 'combobox' );
+	} catch {
+		return allComboboxes[ 1 ];
+	}
+};
+
 describe( 'InteractionDetails', () => {
 	const mockOnChange = jest.fn();
 	const mockReplayControl = jest.fn( ( { value, onChange, disabled } ) => (
@@ -47,12 +70,33 @@ describe( 'InteractionDetails', () => {
 			<button onClick={ () => onChange( ! value ) }>Toggle Replay</button>
 		</div>
 	) );
+	const mockOnPlayInteraction = jest.fn();
+
+	const renderInteractionDetails = ( interaction: InteractionItemValue ) => {
+		return render(
+			<InteractionDetails
+				interaction={ interaction }
+				onChange={ mockOnChange }
+				onPlayInteraction={ mockOnPlayInteraction }
+			/>
+		);
+	};
 
 	beforeEach( () => {
 		jest.clearAllMocks();
 		const { getInteractionsControl } = require( '../interactions-controls-registry' );
-		getInteractionsControl.mockReturnValue( {
-			component: mockReplayControl,
+		getInteractionsControl.mockImplementation( ( type: string ) => {
+			if ( type === 'trigger' ) {
+				return {
+					component: Trigger,
+				};
+			}
+			if ( type === 'replay' ) {
+				return {
+					component: mockReplayControl,
+				};
+			}
+			return null;
 		} );
 	} );
 
@@ -60,7 +104,7 @@ describe( 'InteractionDetails', () => {
 		it( 'should render with default values', () => {
 			const interaction = createInteractionItemValue();
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			expect( screen.getByText( 'Trigger' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Effect' ) ).toBeInTheDocument();
@@ -81,7 +125,7 @@ describe( 'InteractionDetails', () => {
 				replay: true,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			expect( screen.getByText( 'Trigger' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Effect' ) ).toBeInTheDocument();
@@ -96,7 +140,7 @@ describe( 'InteractionDetails', () => {
 				trigger: 'load',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			expect( screen.queryByText( 'Replay' ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: /toggle replay/i } ) ).not.toBeInTheDocument();
@@ -107,7 +151,7 @@ describe( 'InteractionDetails', () => {
 				trigger: 'scrollIn',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			expect( screen.getByText( 'Replay' ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: /toggle replay/i } ) ).toBeInTheDocument();
@@ -121,7 +165,7 @@ describe( 'InteractionDetails', () => {
 					trigger: 'scrollOut',
 				} );
 
-				render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+				renderInteractionDetails( interaction );
 
 				expect( screen.getByText( 'Replay' ) ).toBeInTheDocument();
 				expect( screen.getByRole( 'button', { name: /toggle replay/i } ) ).toBeInTheDocument();
@@ -136,7 +180,7 @@ describe( 'InteractionDetails', () => {
 				replay: false,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			expect( screen.getByText( 'Disabled: true' ) ).toBeInTheDocument();
 		} );
@@ -152,7 +196,7 @@ describe( 'InteractionDetails', () => {
 				delay: 0,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const triggerSelect = comboboxes[ 0 ];
@@ -176,10 +220,9 @@ describe( 'InteractionDetails', () => {
 				delay: 0,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
 			fireEvent.click( slideOption );
@@ -199,7 +242,7 @@ describe( 'InteractionDetails', () => {
 				delay: 0,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			const typeButtons = screen.getAllByRole( 'button' );
 			const outButton = typeButtons.find( ( button ) => button.textContent === 'Out' );
@@ -222,7 +265,7 @@ describe( 'InteractionDetails', () => {
 				delay: 0,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			const directionButtons = screen.getAllByRole( 'button' );
 			const bottomButton = directionButtons.find(
@@ -246,7 +289,7 @@ describe( 'InteractionDetails', () => {
 				delay: 0,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const durationSelect = comboboxes[ 2 ];
@@ -272,7 +315,7 @@ describe( 'InteractionDetails', () => {
 				delay: 0,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const delaySelect = comboboxes[ 3 ];
@@ -291,7 +334,7 @@ describe( 'InteractionDetails', () => {
 				replay: false,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			const toggleButton = screen.getByRole( 'button', { name: /toggle replay/i } );
 			fireEvent.click( toggleButton );
@@ -319,7 +362,7 @@ describe( 'InteractionDetails', () => {
 				direction: '',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			const directionButtons = screen.getAllByRole( 'button' );
 			const topButton = directionButtons.find(
@@ -336,7 +379,7 @@ describe( 'InteractionDetails', () => {
 				direction: 'bottom',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			const directionButtons = screen.getAllByRole( 'button' );
 			const bottomButton = directionButtons.find(
@@ -353,10 +396,9 @@ describe( 'InteractionDetails', () => {
 				direction: 'left',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const fadeOption = screen.getByRole( 'option', { name: /fade/i } );
 			fireEvent.click( fadeOption );
@@ -375,10 +417,9 @@ describe( 'InteractionDetails', () => {
 				direction: '',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
 			fireEvent.click( slideOption );
@@ -397,10 +438,9 @@ describe( 'InteractionDetails', () => {
 				direction: 'right',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const fadeOption = screen.getByRole( 'option', { name: /fade/i } );
 			fireEvent.click( fadeOption );
@@ -419,10 +459,9 @@ describe( 'InteractionDetails', () => {
 				direction: 'left',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
 			fireEvent.click( slideOption );
@@ -441,10 +480,9 @@ describe( 'InteractionDetails', () => {
 				direction: 'bottom',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const scaleOption = screen.getByRole( 'option', { name: /scale/i } );
 			fireEvent.click( scaleOption );
@@ -463,7 +501,7 @@ describe( 'InteractionDetails', () => {
 				direction: 'top',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			const typeButtons = screen.getAllByRole( 'button' );
 			const outButton = typeButtons.find( ( button ) => button.textContent === 'Out' );
@@ -486,7 +524,7 @@ describe( 'InteractionDetails', () => {
 				duration: 300,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const durationSelect = comboboxes[ 2 ];
@@ -512,7 +550,7 @@ describe( 'InteractionDetails', () => {
 				delay: 0,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const delaySelect = comboboxes[ 3 ];
@@ -538,7 +576,7 @@ describe( 'InteractionDetails', () => {
 				delay: 200,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			const comboboxes = screen.getAllByRole( 'combobox' );
 			const triggerSelect = comboboxes[ 0 ];
@@ -564,10 +602,9 @@ describe( 'InteractionDetails', () => {
 				delay: 100,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const scaleOption = screen.getByRole( 'option', { name: /scale/i } );
 			fireEvent.click( scaleOption );
@@ -590,10 +627,9 @@ describe( 'InteractionDetails', () => {
 				replay: true,
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const effectSelect = comboboxes[ 1 ];
+			const effectSelect = getEffectCombobox();
 			fireEvent.mouseDown( effectSelect );
 			const slideOption = screen.getByRole( 'option', { name: /slide/i } );
 			fireEvent.click( slideOption );
@@ -611,7 +647,7 @@ describe( 'InteractionDetails', () => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			( interaction.animation.value as any ).config = undefined;
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			expect( screen.getByText( 'Replay' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Replay: false' ) ).toBeInTheDocument();
@@ -626,7 +662,7 @@ describe( 'InteractionDetails', () => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			interaction.animation.value.direction = undefined as any;
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			expect( screen.getByText( 'Direction' ) ).toBeInTheDocument();
 		} );
@@ -639,7 +675,7 @@ describe( 'InteractionDetails', () => {
 				trigger: 'scrollIn',
 			} );
 
-			render( <InteractionDetails interaction={ interaction } onChange={ mockOnChange } /> );
+			renderInteractionDetails( interaction );
 
 			expect( screen.queryByText( 'Replay' ) ).not.toBeInTheDocument();
 			expect( screen.queryByRole( 'button', { name: /toggle replay/i } ) ).not.toBeInTheDocument();

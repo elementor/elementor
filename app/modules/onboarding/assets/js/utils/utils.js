@@ -3,7 +3,7 @@ import { OnboardingEventTracking } from './onboarding-event-tracking';
 /**
  * Checkboxes data.
  */
-export const options = [
+const optionsWithoutOne = [
 	{
 		plan: 'essential',
 		text: __( 'Templates & Theme Builder', 'elementor' ),
@@ -37,6 +37,58 @@ export const options = [
 		text: __( 'Notes & Collaboration', 'elementor' ),
 	},
 ];
+
+/**
+ * Updated checkboxes data with ONE features (when editor_one is active).
+ * Order matches Figma design: 2 columns, 4 rows
+ * Row 1: Theme Builder | AI for code, images, & layouts
+ * Row 2: Lead Collection | Image optimization
+ * Row 3: Custom Code & CSS | Accessibility scans and fixes
+ * Row 4: Email deliverability | WooCommerce Builder
+ */
+const optionsWithOne = [
+	{
+		plan: 'essential',
+		text: __( 'Theme Builder', 'elementor' ),
+	},
+	{
+		plan: 'one',
+		text: __( 'AI for code, images, & layouts', 'elementor' ),
+	},
+	{
+		plan: 'essential',
+		text: __( 'Lead Collection', 'elementor' ),
+	},
+	{
+		plan: 'one',
+		text: __( 'Image optimization', 'elementor' ),
+	},
+	{
+		plan: 'advanced',
+		text: __( 'Custom Code & CSS', 'elementor' ),
+	},
+	{
+		plan: 'one',
+		text: __( 'Accessibility scans and fixes', 'elementor' ),
+	},
+	{
+		plan: 'one',
+		text: __( 'Email deliverability', 'elementor' ),
+	},
+	{
+		plan: 'advanced',
+		text: __( 'WooCommerce Builder', 'elementor' ),
+	},
+];
+
+/**
+ * Get checkboxes data based on editor_one feature status.
+ * @param {boolean} isEditorOneActive - Whether editor_one feature is active.
+ * @return {Array} Array of feature options.
+ */
+export const getOptions = ( isEditorOneActive = false ) => {
+	return isEditorOneActive ? optionsWithOne : optionsWithoutOne;
+};
 
 /**
  * Set the selected feature list.

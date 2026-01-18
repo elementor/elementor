@@ -63,7 +63,12 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 		const newGroupId = generateUniqueId( 'group' );
 		const newLabel = generateUniqueLabel( groups );
 
-		addOverridableGroup( { componentId: currentComponentId, groupId: newGroupId, label: newLabel } );
+		addOverridableGroup( {
+			componentId: currentComponentId,
+			groupId: newGroupId,
+			label: newLabel,
+			source: 'user',
+		} );
 		setDocumentModifiedStatus( true );
 		setIsAddingGroup( false );
 
@@ -81,7 +86,7 @@ export function ComponentPropertiesPanelContent( { onClose }: Props ) {
 	};
 
 	const handlePropertyDelete = ( propKey: string ) => {
-		deleteOverridableProp( { componentId: currentComponentId, propKey } );
+		deleteOverridableProp( { componentId: currentComponentId, propKey, source: 'user' } );
 		setDocumentModifiedStatus( true );
 	};
 

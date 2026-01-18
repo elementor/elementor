@@ -3,19 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { InlineEditor } from '@elementor/editor-controls';
 import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
-import {
-	htmlPropTypeUtil,
-	type HtmlPropValue,
-	type PropType,
-	stringPropTypeUtil,
-	type TransformablePropValue,
-} from '@elementor/editor-props';
+import { htmlPropTypeUtil, type PropType, type PropValue, stringPropTypeUtil } from '@elementor/editor-props';
 import { __privateRunCommandSync as runCommandSync, isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
 import { Box, ThemeProvider } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { OutlineOverlay } from '../../../components/outline-overlay';
 import { ReplacementBase, TRIGGER_TIMING } from '../base';
+import { isInlineEditingAllowed } from './inline-editing-eligibility';
 import { getInitialPopoverPosition, INLINE_EDITING_PROPERTY_PER_TYPE } from './inline-editing-utils';
 
 const EXPERIMENT_KEY = 'v4-inline-text-editing';
@@ -52,11 +47,11 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	shouldRenderReplacement() {
-		return isExperimentActive( EXPERIMENT_KEY ) && ! this.isValueDynamic();
+		return isExperimentActive( EXPERIMENT_KEY ) && this.isInlineEditingEligible();
 	}
 
 	handleRenderInlineEditor = () => {
-		if ( this.isEditingModeActive() || this.isValueDynamic() ) {
+		if ( this.isEditingModeActive() || ! this.isInlineEditingEligible() ) {
 			return;
 		}
 
@@ -80,7 +75,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	_afterRender() {
-		if ( ! this.isValueDynamic() && ! this.handlerAttached ) {
+		if ( this.isInlineEditingEligible() && ! this.handlerAttached ) {
 			this.element.addEventListener( 'click', this.handleRenderInlineEditor );
 			this.handlerAttached = true;
 		}
@@ -111,33 +106,33 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		this.refreshView();
 	}
 
-	isValueDynamic() {
+	isInlineEditingEligible() {
 		const settingKey = this.getInlineEditablePropertyName();
-		const propValue = this.getSetting( settingKey ) as TransformablePropValue< string >;
+		const rawValue = this.getSetting( settingKey );
 
-		return propValue?.$$type === 'dynamic';
+		return isInlineEditingAllowed( { rawValue, propTypeFromSchema: this.getInlineEditablePropType() } );
 	}
 
 	getInlineEditablePropertyName(): string {
 		return INLINE_EDITING_PROPERTY_PER_TYPE[ this.type ] ?? '';
 	}
 
-	getHtmlPropType() {
+	getInlineEditablePropType() {
 		const propSchema = getElementType( this.type )?.propsSchema;
 		const propertyName = this.getInlineEditablePropertyName();
 
 		return propSchema?.[ propertyName ] ?? null;
 	}
 
-	getHtmlPropValue(): HtmlPropValue | null {
-		const prop = this.getHtmlPropType();
+	getInlineEditablePropValue() {
+		const prop = this.getInlineEditablePropType();
 		const settingKey = this.getInlineEditablePropertyName();
 
-		return ( this.getSetting( settingKey ) ?? prop?.default ?? null ) as HtmlPropValue | null;
+		return this.getSetting( settingKey ) ?? prop?.default ?? null;
 	}
 
 	getExtractedContentValue() {
-		const propValue = this.getHtmlPropValue();
+		const propValue = this.getInlineEditablePropValue();
 
 		return htmlPropTypeUtil.extract( propValue ) ?? stringPropTypeUtil.extract( propValue ) ?? '';
 	}
@@ -149,7 +144,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 		undoable(
 			{
 				do: () => {
-					const prevValue = this.getHtmlPropValue();
+					const prevValue = this.getInlineEditablePropValue();
 
 					this.runCommand( settingKey, valueToSave );
 
@@ -164,14 +159,40 @@ export default class InlineEditingReplacement extends ReplacementBase {
 				// translators: %s is the name of the property that was edited.
 				subtitle: __( '%s edited', 'elementor' ).replace(
 					'%s',
-					this.getHtmlPropType()?.key ?? 'Inline editing'
+					this.getInlineEditablePropTypeKey() ?? 'Inline editing'
 				),
 				debounce: { wait: HISTORY_DEBOUNCE_WAIT },
 			}
 		)();
 	}
 
-	runCommand( key: string, value: HtmlPropValue | null ) {
+	getInlineEditablePropTypeKey() {
+		const propType = this.getInlineEditablePropType();
+
+		if ( ! propType ) {
+			return null;
+		}
+
+		if ( propType.kind === 'union' ) {
+			if ( propType.prop_types[ htmlPropTypeUtil.key ] ) {
+				return htmlPropTypeUtil.key;
+			}
+
+			if ( propType.prop_types[ stringPropTypeUtil.key ] ) {
+				return stringPropTypeUtil.key;
+			}
+
+			return null;
+		}
+
+		if ( 'key' in propType && typeof propType.key === 'string' ) {
+			return propType.key;
+		}
+
+		return null;
+	}
+
+	runCommand( key: string, value: PropValue | null ) {
 		runCommandSync(
 			'document/elements/set-settings',
 			{
@@ -259,7 +280,15 @@ export default class InlineEditingReplacement extends ReplacementBase {
 
 		return (
 			<ThemeProvider>
-				<Box ref={ wrapperRef }>
+				<Box
+					ref={ wrapperRef }
+					sx={ {
+						'& .elementor-inline-editor-reset': {
+							margin: 0,
+							padding: 0,
+						},
+					} }
+				>
 					{ isWrapperRendered && (
 						<OutlineOverlay element={ wrapperRef.current as HTMLDivElement } id={ this.id } isSelected />
 					) }

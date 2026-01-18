@@ -165,6 +165,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 			upgradeNowBtn = page.locator( EditorSelectors.onboarding.upgradeButton ),
 			tierLocator = page.locator( '.e-onboarding__choose-features-section__message strong' ),
 			tiers = {
+				one: 'One',
 				advanced: 'Advanced',
 				essential: 'Essential',
 			};
@@ -187,12 +188,12 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		} );
 
 		await test.step( 'Check that tier changes to Advanced when checking an Advanced item', async () => {
-			await page.locator( '#advanced-1' ).check();
+			await page.locator( '#advanced-4' ).check();
 			await expect( tierLocator ).toHaveText( tiers.advanced );
 		} );
 
 		await test.step( 'Check that tier changes to Essential when unchecking all Advanced items but an Essential Item Is checked.', async () => {
-			await page.locator( '#advanced-1' ).uncheck();
+			await page.locator( '#advanced-4' ).uncheck();
 			await expect( tierLocator ).toHaveText( tiers.essential );
 		} );
 
@@ -202,8 +203,14 @@ test.describe( 'Onboarding @onBoarding', async () => {
 		} );
 
 		await test.step( 'Check that tier changes to Advanced when checking only and Advanced item', async () => {
-			await page.locator( '#advanced-1' ).check();
+			await page.locator( '#advanced-4' ).check();
 			await expect( tierLocator ).toHaveText( tiers.advanced );
+		} );
+
+		await test.step( 'Check that tier changes to ONE when checking a ONE item', async () => {
+			await page.locator( '#advanced-4' ).uncheck();
+			await page.locator( '#one-1' ).check();
+			await expect( tierLocator ).toHaveText( tiers.one );
 		} );
 	} );
 

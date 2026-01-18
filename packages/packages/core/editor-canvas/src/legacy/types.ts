@@ -7,6 +7,11 @@ export type NamespacedRenderContext< T = RenderContext > = Record< string, T | u
 
 export type LegacyWindow = Window & {
 	elementor: {
+		config: {
+			user: {
+				is_administrator?: boolean;
+			};
+		};
 		createBackboneElementsCollection: ( children: unknown ) => BackboneCollection< ElementModel >;
 		getElementData: ( model: unknown ) => { title: string };
 
@@ -123,6 +128,10 @@ export declare class ElementView {
 	getNamespaceKey(): string;
 
 	invalidateRenderCache(): void;
+
+	_openEditingPanel( options?: { scrollIntoView: boolean } ): void;
+
+	once: ( event: string, callback: () => void ) => void;
 }
 
 type JQueryElement = {
