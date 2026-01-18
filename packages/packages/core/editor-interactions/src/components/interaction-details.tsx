@@ -17,7 +17,6 @@ import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
-import { Trigger } from './controls/trigger';
 
 type InteractionDetailsProps = {
 	interaction: InteractionItemValue;
@@ -47,6 +46,10 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
 
 	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
+
+	const TriggerControl = useMemo( () => {
+		return getInteractionsControl( 'trigger' )?.component ?? null;
+	}, [] );
 
 	const ReplayControl = useMemo( () => {
 		if ( ! shouldShowReplay ) {
@@ -97,6 +100,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		onChange( updatedInteraction );
 
 		const interactionId = extractString( updatedInteraction.interaction_id );
+
 		setTimeout( () => {
 			onPlayInteraction( interactionId );
 		}, 0 );
@@ -105,9 +109,11 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	return (
 		<PopoverContent p={ 1.5 }>
 			<Grid container spacing={ 1.5 }>
-				<Field label={ __( 'Trigger', 'elementor' ) }>
-					<Trigger value={ trigger } onChange={ ( v ) => updateInteraction( { trigger: v } ) } />
-				</Field>
+				{ TriggerControl && (
+					<Field label={ __( 'Trigger', 'elementor' ) }>
+						<TriggerControl value={ trigger } onChange={ ( v ) => updateInteraction( { trigger: v } ) } />
+					</Field>
+				) }
 
 				{ ReplayControl && (
 					<Field label={ __( 'Replay', 'elementor' ) }>
