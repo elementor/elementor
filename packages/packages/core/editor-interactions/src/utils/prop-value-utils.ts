@@ -113,7 +113,17 @@ export const createInteractionItem = ( {
 	value: {
 		...( interactionId && { interaction_id: createString( interactionId ) } ),
 		trigger: createString( trigger ),
-		animation: createAnimationPreset( { effect, type, direction, duration, delay, replay } ),
+		animation: createAnimationPreset( {
+			effect,
+			type,
+			direction,
+			duration,
+			delay,
+			replay,
+			relativeTo,
+			offsetTop,
+			offsetBottom,
+		} ),
 	},
 } );
 

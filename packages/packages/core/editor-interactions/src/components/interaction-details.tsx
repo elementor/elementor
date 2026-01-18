@@ -80,14 +80,14 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			return null;
 		}
 		return getInteractionsControl( 'offsetTop' )?.component ?? null;
-	}, [] );
+	}, [ shouldShowRelativeTo ] );
 
 	const OffsetBottomControl = useMemo( () => {
 		if ( ! shouldShowRelativeTo ) {
 			return null;
 		}
 		return getInteractionsControl( 'offsetBottom' )?.component ?? null;
-	}, [] );
+	}, [ shouldShowRelativeTo ] );
 
 	const resolveDirection = ( hasDirection: boolean, newEffect?: string, newDirection?: string ) => {
 		if ( newEffect === 'slide' && ! newDirection ) {
