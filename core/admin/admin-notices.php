@@ -841,7 +841,7 @@ class Admin_Notices extends Module {
 		$is_active = Hints::is_plugin_active( $plugin_slug );
 
 		if ( $is_active ) {
-			return false;	
+			return false;
 		}
 
 		if ( $one_subscription ) {
