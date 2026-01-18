@@ -3,8 +3,8 @@ import { type V1ElementData } from '@elementor/editor-elements';
 
 import { apiClient } from '../api';
 import { type DocumentSaveStatus } from '../types';
-import { getComponentDocumentData, invalidateComponentDocumentData } from '../utils/component-document-data';
-import { getComponentIds } from '../utils/get-component-ids';
+import { invalidateComponentDocumentData } from '../utils/component-document-data';
+import { getComponentDocuments } from '../utils/get-component-documents';
 
 type Options = {
 	status: DocumentSaveStatus;
@@ -16,14 +16,9 @@ export async function updateComponentsBeforeSave( { status, elements }: Options 
 		return;
 	}
 
-	const componentIds = await getComponentIds( elements );
+	const documents = await getComponentDocuments( elements );
 
-	const componentDocumentData = await Promise.all( componentIds.map( getComponentDocumentData ) );
-
-	const draftIds = componentDocumentData
-		.filter( ( document ) => !! document )
-		.filter( isDocumentDirty )
-		.map( ( document ) => document.id );
+	const draftIds = [ ...documents.values() ].filter( isDocumentDirty ).map( ( document ) => document.id );
 
 	if ( draftIds.length === 0 ) {
 		return;
