@@ -19,6 +19,7 @@ export const INLINE_EDITING_SELECTORS = {
 		superscript: 'superscript',
 		subscript: 'subscript',
 		link: 'link',
+		italic: 'italic',
 	},
 	preMadeContent: {
 		paragraph: {
