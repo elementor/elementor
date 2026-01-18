@@ -1,4 +1,9 @@
-import { getAnchoredAncestorId, getAnchoredDescendantId, isElementAnchored } from '../link-restriction';
+import {
+	getAnchoredAncestorId,
+	getAnchoredDescendantId,
+	getLinkInLinkRestriction,
+	isElementAnchored,
+} from '../link-restriction';
 
 jest.mock( '../sync/get-container', () => {
 	return {
@@ -426,6 +431,44 @@ describe( 'link-restriction', () => {
 
 			// Assert
 			expect( result ).toBeNull();
+		} );
+	} );
+
+	describe( 'getLinkInLinkRestriction with resolved value', () => {
+		it( 'should not restrict when resolvedValue has a destination even if element contains inline anchor', () => {
+			// Arrange
+			document.body.innerHTML = `
+				<div data-id="element-with-inline-anchor">
+					<a href="#">Inline anchor</a>
+				</div>
+			`;
+			const resolvedValue = { destination: 'https://example.com' };
+
+			// Act
+			const result = getLinkInLinkRestriction( 'element-with-inline-anchor', resolvedValue );
+
+			// Assert
+			expect( result ).toEqual( { shouldRestrict: false } );
+		} );
+
+		it( 'should restrict for inline anchor when resolvedValue has no destination', () => {
+			// Arrange
+			document.body.innerHTML = `
+				<div data-id="element-with-inline-anchor">
+					<a href="#">Inline anchor</a>
+				</div>
+			`;
+			const resolvedValue = {};
+
+			// Act
+			const result = getLinkInLinkRestriction( 'element-with-inline-anchor', resolvedValue );
+
+			// Assert
+			expect( result ).toEqual( {
+				shouldRestrict: true,
+				reason: 'descendant',
+				elementId: 'element-with-inline-anchor',
+			} );
 		} );
 	} );
 } );
