@@ -3,6 +3,7 @@ import { __getState as getState } from '@elementor/store';
 
 import { apiClient } from '../api';
 import { selectArchivedThisSession } from '../store/store';
+import { type DocumentSaveStatus } from '../types';
 
 const failedNotification = ( message: string ): NotificationData => ( {
 	type: 'error',
@@ -10,7 +11,7 @@ const failedNotification = ( message: string ): NotificationData => ( {
 	id: 'failed-archived-components-notification',
 } );
 
-export const updateArchivedComponentBeforeSave = async () => {
+export const updateArchivedComponentBeforeSave = async ( status: DocumentSaveStatus ) => {
 	try {
 		const archivedComponents = selectArchivedThisSession( getState() );
 
@@ -18,7 +19,7 @@ export const updateArchivedComponentBeforeSave = async () => {
 			return;
 		}
 
-		const result = await apiClient.updateArchivedComponents( archivedComponents );
+		const result = await apiClient.updateArchivedComponents( archivedComponents, status );
 
 		const failedIds = result.failedIds.join( ', ' );
 
