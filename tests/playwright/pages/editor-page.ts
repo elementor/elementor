@@ -1373,6 +1373,8 @@ export default class EditorPage extends BasePage {
 	}
 
 	async triggerEditingElement( elementId: string ): Promise<Locator> {
+		await this.page.keyboard.press( 'Escape' );
+
 		const element = this.previewFrame.locator( `.elementor-element-${ elementId }` );
 
 		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();

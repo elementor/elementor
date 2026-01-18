@@ -26,13 +26,17 @@ import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 
 import { isEmpty } from '../utils/inline-editing';
 
+const ITALIC_KEYBOARD_SHORTCUT = 'i';
+const BOLD_KEYBOARD_SHORTCUT = 'b';
+const UNDERLINE_KEYBOARD_SHORTCUT = 'u';
+
 type InlineEditorProps = {
 	value: string | null;
 	setValue: ( value: string | null ) => void;
 	editorProps?: EditorProps;
 	elementClasses?: string;
 	sx?: SxProps< Theme >;
-	onBlur?: ( event: Event ) => void;
+	onBlur?: () => void;
 	autofocus?: boolean;
 	expectedTag?: string | null;
 	onEditorCreate?: Dispatch< SetStateAction< Editor | null > >;
@@ -42,7 +46,7 @@ type WrapperProps = PropsWithChildren< {
 	containerRef: RefObject< HTMLDivElement >;
 	editor: ReturnType< typeof useEditor >;
 	sx: SxProps< Theme >;
-	onBlur?: ( event: Event ) => void;
+	onBlur?: () => void;
 } >;
 
 export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) => {
@@ -65,6 +69,20 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 		const newValue: string | null = updatedEditor.getHTML();
 
 		setValue( isEmpty( newValue ) ? null : newValue );
+	};
+
+	const onKeyDown = ( _: Editor[ 'view' ], event: KeyboardEvent ) => {
+		if ( event.key === 'Escape' ) {
+			onBlur?.();
+		}
+
+		if ( ( ! event.metaKey && ! event.ctrlKey ) || event.altKey ) {
+			return;
+		}
+
+		if ( [ ITALIC_KEYBOARD_SHORTCUT, BOLD_KEYBOARD_SHORTCUT, UNDERLINE_KEYBOARD_SHORTCUT ].includes( event.key ) ) {
+			event.stopPropagation();
+		}
 	};
 
 	const editor = useEditor( {
@@ -116,6 +134,10 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 		autofocus,
 		editorProps: {
 			...editorProps,
+			handleDOMEvents: {
+				keydown: onKeyDown,
+				...( editorProps.handleDOMEvents ?? {} ),
+			},
 			attributes: {
 				...( editorProps.attributes ?? {} ),
 				role: 'textbox',
@@ -162,7 +184,7 @@ const Wrapper = ( { children, containerRef, editor, sx, onBlur }: WrapperProps )
 					return;
 				}
 
-				onBlur?.( event );
+				onBlur?.();
 			} }
 		>
 			{ wrappedChildren }
