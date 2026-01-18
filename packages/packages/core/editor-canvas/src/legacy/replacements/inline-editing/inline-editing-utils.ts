@@ -4,7 +4,7 @@ import { type LegacyWindow } from '../../types';
 
 export const INLINE_EDITING_PROPERTY_PER_TYPE: Record< string, string > = {
 	'e-heading': 'title',
-	'e-label': 'label_text',
+	'e-label': 'text',
 	'e-paragraph': 'paragraph',
 };
 
