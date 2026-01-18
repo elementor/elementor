@@ -12,7 +12,9 @@ const mockItems: VirtualizedItem< 'category' | 'item', string >[] = [
 
 jest.mock( '@tanstack/react-virtual', () => ( {
 	useVirtualizer: jest.fn().mockImplementation( () => ( {
-		getVirtualItems: jest.fn().mockReturnValue( mockItems.map( ( item, index ) => ( { key: item.value, index, start: index * 32 } ) ) ),
+		getVirtualItems: jest
+			.fn()
+			.mockReturnValue( mockItems.map( ( item, index ) => ( { key: item.value, index, start: index * 32 } ) ) ),
 		getTotalSize: jest.fn().mockReturnValue( mockItems.length ),
 		scrollToIndex: jest.fn(),
 		getVirtualIndexes: jest.fn().mockReturnValue( mockItems.map( ( _, index ) => index ) ),
@@ -20,7 +22,6 @@ jest.mock( '@tanstack/react-virtual', () => ( {
 } ) );
 
 describe( 'PopoverMenuList - menuCategoryContentTemplate', () => {
-
 	const onSelect = jest.fn();
 	const onClose = jest.fn();
 
