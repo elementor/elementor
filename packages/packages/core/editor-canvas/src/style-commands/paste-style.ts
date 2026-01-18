@@ -28,7 +28,7 @@ export function initPasteStyleCommand() {
 	);
 }
 
-function pasteStyles( args: PasteStylesCommandArgs, pasteCallback: ReturnType< typeof undoablePasteElementStyle > ) {
+function pasteStyles( args: PasteStylesCommandArgs, pasteLocalStyle: ReturnType< typeof undoablePasteElementStyle > ) {
 	const { containers = [ args.container ], storageKey } = args;
 
 	const atomicContainers = containers.filter( isAtomicWidget ) as V1Element[];
@@ -54,7 +54,7 @@ function pasteStyles( args: PasteStylesCommandArgs, pasteCallback: ReturnType< t
 	}
 
 	if ( elementStyle ) {
-		pasteCallback( { containers: atomicContainers, newStyle: elementStyle } );
+		pasteLocalStyle( { containers: atomicContainers, newStyle: elementStyle } );
 	}
 }
 
