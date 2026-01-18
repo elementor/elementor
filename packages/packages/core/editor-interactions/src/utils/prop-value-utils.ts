@@ -34,10 +34,11 @@ export const createBoolean = ( value: boolean ): BooleanPropValue => ( {
 	value,
 } );
 
-export const createConfig = ( replay: boolean ): ConfigPropValue => ( {
+export const createConfig = ( replay: boolean, easing: string ): ConfigPropValue => ( {
 	$$type: 'config',
 	value: {
 		replay: createBoolean( replay ),
+		easing: createString( easing ),
 	},
 } );
 
@@ -52,6 +53,7 @@ export const createAnimationPreset = ( {
 	duration,
 	delay,
 	replay = false,
+	easing = 'easeIn',
 }: {
 	effect: string;
 	type: string;
@@ -59,6 +61,7 @@ export const createAnimationPreset = ( {
 	duration: number;
 	delay: number;
 	replay: boolean;
+	easing: string;
 } ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
@@ -66,7 +69,7 @@ export const createAnimationPreset = ( {
 		type: createString( type ),
 		direction: createString( direction ?? '' ),
 		timing_config: createTimingConfig( duration, delay ),
-		config: createConfig( replay ),
+		config: createConfig( replay, easing ),
 	},
 } );
 
@@ -79,6 +82,7 @@ export const createInteractionItem = ( {
 	delay,
 	interactionId,
 	replay = false,
+	easing = 'easeIn',
 }: {
 	trigger: string;
 	effect: string;
@@ -88,12 +92,13 @@ export const createInteractionItem = ( {
 	delay: number;
 	interactionId?: string;
 	replay: boolean;
+	easing: string;
 } ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
 		...( interactionId && { interaction_id: createString( interactionId ) } ),
 		trigger: createString( trigger ),
-		animation: createAnimationPreset( { effect, type, direction, duration, delay, replay } ),
+		animation: createAnimationPreset( { effect, type, direction, duration, delay, replay, easing } ),
 	},
 } );
 
@@ -105,6 +110,7 @@ export const createDefaultInteractionItem = (): InteractionItemPropValue => {
 		duration: 300,
 		delay: 0,
 		replay: false,
+		easing: 'easeIn',
 		interactionId: generateTempInteractionId(),
 	} );
 };

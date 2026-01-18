@@ -32,6 +32,7 @@ const DEFAULT_VALUES = {
 	duration: 300,
 	delay: 0,
 	replay: false,
+	easing: 'easeIn',
 };
 
 const TRIGGERS_WITH_REPLAY = [ 'scrollIn', 'scrollOut' ];
@@ -44,6 +45,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const duration = extractNumber( interaction.animation.value.timing_config.value.duration, DEFAULT_VALUES.duration );
 	const delay = extractNumber( interaction.animation.value.timing_config.value.delay, DEFAULT_VALUES.delay );
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
+	const easing = extractString( interaction.animation.value.config?.value.easing, DEFAULT_VALUES.easing );
 
 	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
 
@@ -57,6 +59,10 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		}
 		return getInteractionsControl( 'replay' )?.component ?? null;
 	}, [ shouldShowReplay ] );
+
+	const EasingControl = useMemo( () => {
+		return getInteractionsControl( 'easing' )?.component ?? null;
+	}, [] );
 
 	const resolveDirection = ( hasDirection: boolean, newEffect?: string, newDirection?: string ) => {
 		if ( newEffect === 'slide' && ! newDirection ) {
@@ -78,10 +84,13 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			duration: number;
 			delay: number;
 			replay: boolean;
+			easing: string;
 		} >
 	): void => {
 		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction );
+
 		const newReplay = updates.replay !== undefined ? updates.replay : replay;
+		const newEasing = updates.easing !== undefined ? updates.easing : easing;
 
 		const updatedInteraction = {
 			...interaction,
@@ -94,6 +103,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				duration: updates.duration ?? duration,
 				delay: updates.delay ?? delay,
 				replay: newReplay,
+				easing: updates.easing ?? easing,
 			} ),
 		};
 
@@ -158,6 +168,15 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 						onChange={ ( v ) => updateInteraction( { delay: parseInt( v, 10 ) } ) }
 					/>
 				</Field>
+
+				{ EasingControl && (
+					<Field label={ __( 'Easing', 'elementor' ) }>
+						<EasingControl
+							value={ easing }
+							onChange={ ( v ) => updateInteraction( { easing: v } ) }
+						/>
+					</Field>
+				) }
 			</Grid>
 		</PopoverContent>
 	);
