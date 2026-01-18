@@ -372,18 +372,18 @@ class Components_REST_API {
 
 			try {
 				$settings = isset( $item['settings'] ) ? $this->parse_settings( $item['settings'] ) : [];
+
+				$status = Document::STATUS_AUTOSAVE === $save_status
+					? Document::STATUS_DRAFT
+					: $save_status;
+
+				$component_id = $this->get_repository()->create( $title, $content, $status, $uid, $settings );
+
+				return [ $uid => $component_id ];
 			} catch ( \Exception $e ) {
 				$validation_errors[ $uid ] = $e->getMessage();
 				return [ $uid => null ];
 			}
-
-			$status = Document::STATUS_AUTOSAVE === $save_status
-				? Document::STATUS_DRAFT
-				: $save_status;
-
-			$component_id = $this->get_repository()->create( $title, $content, $status, $uid, $settings );
-
-			return [ $uid => $component_id ];
 		} );
 
 		if ( ! empty( $validation_errors ) ) {
@@ -637,6 +637,9 @@ class Components_REST_API {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
+			var_dump($e->getMessage());
+			var_dump($e->getTraceAsString());
+			die();
 			return Error_Builder::make( 'unexpected_error' )
 			->set_message( __( 'Something went wrong', 'elementor' ) )
 			->build();

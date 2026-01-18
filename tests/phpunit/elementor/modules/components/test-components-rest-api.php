@@ -427,8 +427,8 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 					],
 				],
 				'expected' => [
-					'status_code' => 500,
-					'code' => 'unexpected_error',
+					'status_code' => 422,
+					'code' => 'settings_validation_failed',
 				],
 			],
 			'UID is missing' => [
@@ -1736,6 +1736,64 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Assert - Both should succeed
 		$this->assertEquals( 200, $validate_response->get_status(), 'Validate endpoint should return 200. Response: ' . json_encode( $validate_response->get_data() ) );
 		$this->assertEquals( 201, $create_response->get_status(), 'Create endpoint should return 201. Response: ' . json_encode( $create_response->get_data() ) );
+	}
+
+	public function test_post_create_component__returns_validation_error_for_nested_element_with_invalid_settings() {
+		// Arrange
+		$this->act_as_admin();
+
+		$component_with_invalid_nested_element = [
+			[
+				'id' => 'wrapper-element-id',
+				'elType' => 'e-div-block',
+				'settings' => [],
+				'elements' => [
+					[
+						'id' => 'nested-button-id',
+						'elType' => 'widget',
+						'widgetType' => 'e-button',
+						'settings' => [
+							'text' => [
+								'$$type' => 'string',
+								'value' => 'Button Text',
+							],
+							'link' => [
+								'$$type' => 'link',
+								'value' => 'invalid-link-structure-should-be-object',
+							],
+						],
+						'elements' => [],
+						'styles' => [],
+						'editor_settings' => [],
+						'version' => '0.0',
+					],
+				],
+				'isInner' => false,
+				'styles' => [],
+				'editor_settings' => [],
+				'version' => '0.0',
+			],
+		];
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'items' => [
+				[
+					'uid' => 'test-uid-nested-invalid',
+					'title' => 'Component With Invalid Nested Element',
+					'elements' => $component_with_invalid_nested_element,
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 422, $response->get_status(), 'Response: ' . json_encode( $response->get_data() ) );
+		$this->assertEquals( 'settings_validation_failed', $response->get_data()['code'] );
+		$this->assertStringContainsString( 'test-uid-nested-invalid', $response->get_data()['message'] );
 	}
 
 	public function test_get_overridable_props__returns_autosave_version_when_exists() {
