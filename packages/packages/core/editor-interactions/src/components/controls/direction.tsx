@@ -1,13 +1,7 @@
 import * as React from 'react';
 import { useMemo } from 'react';
-import {
-	ControlFormLabel,
-	PopoverGridContainer,
-	type ToggleButtonGroupItem,
-	ToggleButtonGroupUi,
-} from '@elementor/editor-controls';
+import { type ToggleButtonGroupItem, ToggleButtonGroupUi } from '@elementor/editor-controls';
 import { ArrowDownSmallIcon, ArrowLeftIcon, ArrowRightIcon, ArrowUpSmallIcon } from '@elementor/icons';
-import { Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { type DirectionFieldProps } from '../../types';
@@ -50,16 +44,5 @@ export function Direction( { value, onChange, interactionType }: DirectionFieldP
 		];
 	}, [ interactionType ] );
 
-	return (
-		<Grid item xs={ 12 }>
-			<PopoverGridContainer>
-				<Grid item xs={ 6 }>
-					<ControlFormLabel> { __( 'Direction', 'elementor' ) }</ControlFormLabel>
-				</Grid>
-				<Grid item xs={ 6 }>
-					<ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ value } />
-				</Grid>
-			</PopoverGridContainer>
-		</Grid>
-	);
+	return <ToggleButtonGroupUi items={ options } exclusive onChange={ onChange } value={ value } />;
 }
