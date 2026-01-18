@@ -6,7 +6,7 @@ import { generateUniqueId } from '@elementor/utils';
 import { type ComponentEventData } from '../../components/create-component-form/utils/get-component-event-data';
 import { replaceElementWithComponent } from '../../components/create-component-form/utils/replace-element-with-component';
 import { type OverridableProps } from '../../types';
-import { cleanAllOverridablesInElementData } from '../../utils/revert-overridable-settings';
+import { revertAllOverridablesInElementData } from '../../utils/revert-overridable-settings';
 import { type Source, trackComponentEvent } from '../../utils/tracking';
 import { slice } from '../store';
 
@@ -29,7 +29,7 @@ export async function createUnpublishedComponent( {
 }: CreateUnpublishedComponentParams ): Promise< { uid: string; instanceId: string } > {
 	const generatedUid = uid ?? generateUniqueId( 'component' );
 	const componentBase = { uid: generatedUid, name };
-	const elementsWithoutOverridables = cleanAllOverridablesInElementData( element );
+	const elementsWithoutOverridables = revertAllOverridablesInElementData( element );
 
 	dispatch(
 		slice.actions.addUnpublished( {

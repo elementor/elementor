@@ -6,7 +6,7 @@ import { componentInstanceOverridePropTypeUtil } from '../../prop-types/componen
 import { componentInstanceOverridesPropTypeUtil } from '../../prop-types/component-instance-overrides-prop-type';
 import { componentInstancePropTypeUtil } from '../../prop-types/component-instance-prop-type';
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
-import { cleanAllOverridablesInContainer, cleanAllOverridablesInElementData } from '../revert-overridable-settings';
+import { revertAllOverridablesInContainer, revertAllOverridablesInElementData } from '../revert-overridable-settings';
 
 jest.mock( '@elementor/editor-elements', () => ( {
 	...jest.requireActual( '@elementor/editor-elements' ),
@@ -22,9 +22,22 @@ const mockUpdateElementSettings = jest.mocked( updateElementSettings );
 const MOCK_COMPONENT_ID = 123;
 const ORIGIN_STRING_VALUE = { $$type: 'string', value: 'Original Text' };
 const ORIGIN_HTML_VALUE = { $$type: 'html', value: '<p>Hello</p>' };
+const ORIGIN_LINK_VALUE = {
+	$$type: 'link',
+	value: {
+		destination: {
+			$$type: 'url',
+			value: 'https://example.com',
+		},
+		isTargetBlank: {
+			$$type: 'boolean',
+			value: false,
+		},
+	},
+};
 
-describe( 'cleanAllOverridablesInElementData', () => {
-	it( 'should clean overridable props from regular element settings', () => {
+describe( 'revertAllOverridablesInElementData', () => {
+	it( 'should revert overridable props from regular element settings', () => {
 		// Arrange
 		const elementData = createMockElementData( {
 			id: 'element-1',
@@ -34,19 +47,19 @@ describe( 'cleanAllOverridablesInElementData', () => {
 					override_key: 'prop-1',
 					origin_value: ORIGIN_STRING_VALUE,
 				} ),
-				description: ORIGIN_HTML_VALUE,
+				link: ORIGIN_LINK_VALUE,
 			},
 		} );
 
 		// Act
-		const result = cleanAllOverridablesInElementData( elementData );
+		const result = revertAllOverridablesInElementData( elementData );
 
 		// Assert
 		expect( result.settings?.title ).toEqual( ORIGIN_STRING_VALUE );
-		expect( result.settings?.description ).toEqual( ORIGIN_HTML_VALUE );
+		expect( result.settings?.link ).toEqual( ORIGIN_LINK_VALUE );
 	} );
 
-	it( 'should clean multiple overridable props from settings', () => {
+	it( 'should revert multiple overridable props from settings', () => {
 		// Arrange
 		const elementData = createMockElementData( {
 			id: 'element-1',
@@ -58,21 +71,27 @@ describe( 'cleanAllOverridablesInElementData', () => {
 				} ),
 				subtitle: componentOverridablePropTypeUtil.create( {
 					override_key: 'prop-2',
-					origin_value: ORIGIN_HTML_VALUE,
+					origin_value: ORIGIN_LINK_VALUE,
 				} ),
 			},
 		} );
 
 		// Act
-		const result = cleanAllOverridablesInElementData( elementData );
+		const result = revertAllOverridablesInElementData( elementData );
 
 		// Assert
 		expect( result.settings?.title ).toEqual( ORIGIN_STRING_VALUE );
-		expect( result.settings?.subtitle ).toEqual( ORIGIN_HTML_VALUE );
+		expect( result.settings?.subtitle ).toEqual( ORIGIN_LINK_VALUE );
 	} );
 
-	it( 'should clean overridables from component instance overrides', () => {
+	it( 'should revert overridables from component instance overrides', () => {
 		// Arrange
+		const innerOverride = componentInstanceOverridePropTypeUtil.create( {
+			override_key: 'inner-key',
+			override_value: ORIGIN_STRING_VALUE,
+			schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
+		} );
+
 		const elementData = createMockElementData( {
 			id: 'component-1',
 			widgetType: 'e-component',
@@ -82,11 +101,7 @@ describe( 'cleanAllOverridablesInElementData', () => {
 					overrides: componentInstanceOverridesPropTypeUtil.create( [
 						componentOverridablePropTypeUtil.create( {
 							override_key: 'outer-key',
-							origin_value: componentInstanceOverridePropTypeUtil.create( {
-								override_key: 'inner-key',
-								override_value: ORIGIN_STRING_VALUE,
-								schema_source: { type: 'component', id: MOCK_COMPONENT_ID },
-							} ),
+							origin_value: innerOverride,
 						} ),
 					] ),
 				} ),
@@ -94,7 +109,7 @@ describe( 'cleanAllOverridablesInElementData', () => {
 		} );
 
 		// Act
-		const result = cleanAllOverridablesInElementData( elementData );
+		const result = revertAllOverridablesInElementData( elementData );
 
 		// Assert
 		const componentInstance = componentInstancePropTypeUtil.extract( result.settings?.component_instance );
@@ -102,9 +117,10 @@ describe( 'cleanAllOverridablesInElementData', () => {
 
 		expect( overrides ).toHaveLength( 1 );
 		expect( componentInstanceOverridePropTypeUtil.isValid( overrides?.[ 0 ] ) ).toBe( true );
+		expect( overrides?.[ 0 ] ).toEqual( innerOverride );
 	} );
 
-	it( 'should recursively clean nested elements', () => {
+	it( 'should recursively revert nested elements', () => {
 		// Arrange
 		const childElement = createMockElementData( {
 			id: 'child-1',
@@ -121,19 +137,16 @@ describe( 'cleanAllOverridablesInElementData', () => {
 			id: 'parent-1',
 			widgetType: 'container',
 			settings: {
-				layout: componentOverridablePropTypeUtil.create( {
-					override_key: 'parent-prop',
-					origin_value: ORIGIN_HTML_VALUE,
-				} ),
+				link: ORIGIN_LINK_VALUE,
 			},
 			elements: [ childElement ],
 		} );
 
 		// Act
-		const result = cleanAllOverridablesInElementData( parentElement );
+		const result = revertAllOverridablesInElementData( parentElement );
 
 		// Assert
-		expect( result.settings?.layout ).toEqual( ORIGIN_HTML_VALUE );
+		expect( result.settings?.link ).toEqual( ORIGIN_LINK_VALUE );
 		expect( result.elements?.[ 0 ].settings?.title ).toEqual( ORIGIN_STRING_VALUE );
 	} );
 
@@ -149,19 +162,19 @@ describe( 'cleanAllOverridablesInElementData', () => {
 		} );
 
 		// Act
-		const result = cleanAllOverridablesInElementData( elementData );
+		const result = revertAllOverridablesInElementData( elementData );
 
 		// Assert
 		expect( result.settings ).toEqual( elementData.settings );
 	} );
 } );
 
-describe( 'cleanAllOverridablesInContainer', () => {
+describe( 'revertAllOverridablesInContainer', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 	} );
 
-	it( 'should clean overridable props from regular element', () => {
+	it( 'should revert overridable props from regular element', () => {
 		// Arrange
 		const element = createMockElement( {
 			model: {
@@ -181,7 +194,7 @@ describe( 'cleanAllOverridablesInContainer', () => {
 		mockGetAllDescendants.mockReturnValue( [ element ] );
 
 		// Act
-		cleanAllOverridablesInContainer( 'element-1' );
+		revertAllOverridablesInContainer( element );
 
 		// Assert
 		expect( mockUpdateElementSettings ).toHaveBeenCalledWith( {
@@ -193,7 +206,7 @@ describe( 'cleanAllOverridablesInContainer', () => {
 		} );
 	} );
 
-	it( 'should clean overridables from component instance', () => {
+	it( 'should revert overridables from component instance', () => {
 		// Arrange
 		const componentInstance = createMockComponentInstance( MOCK_COMPONENT_ID, [
 			{
@@ -208,7 +221,7 @@ describe( 'cleanAllOverridablesInContainer', () => {
 		mockGetAllDescendants.mockReturnValue( [ componentInstance ] );
 
 		// Act
-		cleanAllOverridablesInContainer( 'component-1' );
+		revertAllOverridablesInContainer( componentInstance );
 
 		// Assert
 		expect( mockUpdateElementSettings ).toHaveBeenCalledTimes( 1 );
@@ -243,9 +256,9 @@ describe( 'cleanAllOverridablesInContainer', () => {
 				elType: 'container',
 			},
 			settings: {
-				layout: componentOverridablePropTypeUtil.create( {
+				link: componentOverridablePropTypeUtil.create( {
 					override_key: 'parent-prop',
-					origin_value: ORIGIN_HTML_VALUE,
+					origin_value: ORIGIN_LINK_VALUE,
 				} ),
 			},
 			children: [ childElement ],
@@ -255,10 +268,28 @@ describe( 'cleanAllOverridablesInContainer', () => {
 		mockGetAllDescendants.mockReturnValue( [ parentElement, childElement ] );
 
 		// Act
-		cleanAllOverridablesInContainer( 'parent-1' );
+		revertAllOverridablesInContainer( parentElement );
 
 		// Assert
 		expect( mockUpdateElementSettings ).toHaveBeenCalledTimes( 2 );
+		expect( mockUpdateElementSettings ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				id: 'parent-1',
+				withHistory: false,
+				props: {
+					link: ORIGIN_LINK_VALUE,
+				},
+			} )
+		);
+		expect( mockUpdateElementSettings ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				id: 'child-1',
+				withHistory: false,
+				props: {
+					title: ORIGIN_STRING_VALUE,
+				},
+			} )
+		);
 	} );
 
 	it( 'should not update element without overridable props', () => {
@@ -278,18 +309,7 @@ describe( 'cleanAllOverridablesInContainer', () => {
 		mockGetAllDescendants.mockReturnValue( [ element ] );
 
 		// Act
-		cleanAllOverridablesInContainer( 'element-1' );
-
-		// Assert
-		expect( mockUpdateElementSettings ).not.toHaveBeenCalled();
-	} );
-
-	it( 'should handle missing container gracefully', () => {
-		// Arrange
-		mockGetContainer.mockReturnValue( null );
-
-		// Act
-		cleanAllOverridablesInContainer( 'non-existent' );
+		revertAllOverridablesInContainer( element );
 
 		// Assert
 		expect( mockUpdateElementSettings ).not.toHaveBeenCalled();

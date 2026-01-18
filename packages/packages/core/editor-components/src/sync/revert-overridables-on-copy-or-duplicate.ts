@@ -4,8 +4,8 @@ import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { type ExtendedWindow } from '../types';
 import { isEditingComponent } from '../utils/is-editing-component';
 import {
-	cleanAllOverridablesInContainer,
-	cleanAllOverridablesInElementData,
+	revertAllOverridablesInContainer,
+	revertAllOverridablesInElementData,
 } from '../utils/revert-overridable-settings';
 
 type CopyArgs = {
@@ -18,13 +18,13 @@ type ClipboardData = {
 	elements: V1ElementData[];
 };
 
-export function initCleanOverridablesOnComponentInnerElementCopyOrDuplicate() {
+export function initRevertOverridablesOnCopyOrDuplicate() {
 	registerDataHook( 'after', 'document/elements/duplicate', ( _args, result: V1Element | V1Element[] ) => {
 		if ( ! isEditingComponent() ) {
 			return;
 		}
 
-		cleanOverridablePropsForDuplicatedElements( result );
+		revertOverridablesForDuplicatedElements( result );
 	} );
 
 	registerDataHook( 'after', 'document/elements/copy', ( args: CopyArgs ) => {
@@ -32,19 +32,19 @@ export function initCleanOverridablesOnComponentInnerElementCopyOrDuplicate() {
 			return;
 		}
 
-		cleanOverridablePropsFromStorage( args.storageKey ?? 'clipboard' );
+		revertOverridablesInStorage( args.storageKey ?? 'clipboard' );
 	} );
 }
 
-function cleanOverridablePropsForDuplicatedElements( duplicatedElements: V1Element | V1Element[] ) {
+function revertOverridablesForDuplicatedElements( duplicatedElements: V1Element | V1Element[] ) {
 	const containers = Array.isArray( duplicatedElements ) ? duplicatedElements : [ duplicatedElements ];
 
 	containers.forEach( ( container ) => {
-		cleanAllOverridablesInContainer( container.id );
+		revertAllOverridablesInContainer( container );
 	} );
 }
 
-function cleanOverridablePropsFromStorage( storageKey: string ) {
+function revertOverridablesInStorage( storageKey: string ) {
 	const storage = ( window as unknown as ExtendedWindow ).elementorCommon?.storage;
 
 	if ( ! storage ) {
@@ -57,10 +57,10 @@ function cleanOverridablePropsFromStorage( storageKey: string ) {
 		return;
 	}
 
-	const cleanedElements = storageData.elements.map( cleanAllOverridablesInElementData );
+	const revertedElements = storageData.elements.map( revertAllOverridablesInElementData );
 
 	storage.set( storageKey, {
 		...storageData,
-		elements: cleanedElements,
+		elements: revertedElements,
 	} );
 }
