@@ -3,10 +3,10 @@ import { type V1Element, type V1ElementData } from '@elementor/editor-elements';
 
 import { type DocumentSaveStatus } from '../types';
 import { createComponentsBeforeSave } from './create-components-before-save';
+import { publishDraftComponentsInPageBeforeSave } from './publish-draft-components-in-page-before-save';
 import { setComponentOverridablePropsSettingsBeforeSave } from './set-component-overridable-props-settings-before-save';
 import { updateArchivedComponentBeforeSave } from './update-archived-component-before-save';
 import { updateComponentTitleBeforeSave } from './update-component-title-before-save';
-import { publishDraftComponentsInPageBeforeSave } from './update-components-before-save';
 
 type Options = {
 	container: V1Element & {

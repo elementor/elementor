@@ -134,10 +134,10 @@ class Components_Repository {
 	/**
 	 * Get the component for edit.
 	 *
-	 * @param int $component_id The component ID.
+	 * @param int    $component_id The component ID.
 	 * @param string $target_status The target status, means the status the component should be saved as.
 	 * @return ?Component_Document The component document for edit.
-	 * 
+	 *
 	 * If target status is an autosave / draft:
 	 * - If the component main document is autosave / draft, it will return the main document.
 	 * - If the component main document is published, it will create a new autosave document and return it.
@@ -160,6 +160,7 @@ class Components_Repository {
 			return $component;
 		}
 
+		// Create a new autosave document, based on the published version.
 		return $component->get_autosave( 0, true );
 	}
 
@@ -171,21 +172,7 @@ class Components_Repository {
 			$autosave = $main_component->get_newer_autosave();
 
 			if ( $autosave ) {
-				$autosave_id = $autosave->get_post()->ID;
-
-				// Copy component custom meta keys from the autosave to the main component.
-				Plugin::$instance->db->copy_elementor_meta( $autosave_id, $main_id, Component_Document::COMPONENT_CUSTOM_META_KEYS );
-
-				$autosave_elements = $autosave->get_elements_data();
-				$autosave_title = $autosave->get_post()->post_title;
-
-				$success = $main_component->save( [
-					'elements' => $autosave_elements,
-					'settings' => [
-						'post_status' => Document::STATUS_PUBLISH,
-						'post_title' => $autosave_title,
-					],
-				] );
+				$success = $this->copy_autosave_data_to_main_component_document_and_publish( $autosave, $main_component, $main_id );
 			} else {
 				$success = $main_component->update_status( Document::STATUS_PUBLISH );
 			}
@@ -198,5 +185,23 @@ class Components_Repository {
 		}
 
 		return true;
+	}
+
+	private function copy_autosave_data_to_main_component_document_and_publish( Component_Document $autosave, Component_Document $main_component_document, int $main_id ): bool {
+		$autosave_id = $autosave->get_post()->ID;
+
+		// Copy component custom meta keys from the autosave to the main component.
+		Plugin::$instance->db->copy_elementor_meta( $autosave_id, $main_id, Component_Document::COMPONENT_CUSTOM_META_KEYS );
+
+		$autosave_elements = $autosave->get_elements_data();
+		$autosave_title = $autosave->get_post()->post_title;
+
+		return $main_component_document->save( [
+			'elements' => $autosave_elements,
+			'settings' => [
+				'post_status' => Document::STATUS_PUBLISH,
+				'post_title' => $autosave_title,
+			],
+		] );
 	}
 }

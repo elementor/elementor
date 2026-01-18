@@ -350,8 +350,8 @@ class DB {
 	 * @since 1.1.0
 	 * @access public
 	 *
-	 * @param int $from_post_id Original post ID.
-	 * @param int $to_post_id   Target post ID.
+	 * @param int    $from_post_id Original post ID.
+	 * @param int    $to_post_id   Target post ID.
 	 * @param ?array $specific_meta_keys Optional. Specific meta keys to copy. Default is null, which copies all elementor meta keys.
 	 */
 	public function copy_elementor_meta( $from_post_id, $to_post_id, $specific_meta_keys = null ) {
