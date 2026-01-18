@@ -3,13 +3,23 @@ import { render, screen } from '@testing-library/react';
 
 import { PopoverMenuList, type VirtualizedItem } from '../menu-list';
 
+const mockItems: VirtualizedItem< 'category' | 'item', string >[] = [
+	{ type: 'category', value: 'Category 1', label: 'Category 1' },
+	{ type: 'item', value: 'item-1', label: 'Item 1' },
+	{ type: 'category', value: 'Category 2', label: 'Category 2' },
+	{ type: 'item', value: 'item-2', label: 'Item 2' },
+];
+
+jest.mock( '@tanstack/react-virtual', () => ( {
+	useVirtualizer: jest.fn().mockImplementation( () => ( {
+		getVirtualItems: jest.fn().mockReturnValue( mockItems.map( ( item, index ) => ( { key: item.value, index, start: index * 32 } ) ) ),
+		getTotalSize: jest.fn().mockReturnValue( mockItems.length ),
+		scrollToIndex: jest.fn(),
+		getVirtualIndexes: jest.fn().mockReturnValue( mockItems.map( ( _, index ) => index ) ),
+	} ) ),
+} ) );
+
 describe( 'PopoverMenuList - menuCategoryContentTemplate', () => {
-	const mockItems: VirtualizedItem< 'category' | 'item', string >[] = [
-		{ type: 'category', value: 'Category 1', label: 'Category 1' },
-		{ type: 'item', value: 'item-1', label: 'Item 1' },
-		{ type: 'category', value: 'Category 2', label: 'Category 2' },
-		{ type: 'item', value: 'item-2', label: 'Item 2' },
-	];
 
 	const onSelect = jest.fn();
 	const onClose = jest.fn();
@@ -36,9 +46,7 @@ describe( 'PopoverMenuList - menuCategoryContentTemplate', () => {
 			categoryTemplate: ( item: VirtualizedItem< 'category' | 'item', string > ) => (
 				<div>Category: { item.label }</div>
 			),
-			itemTemplate: ( item: VirtualizedItem< 'category' | 'item', string > ) => (
-				<div>Item: { item.label }</div>
-			),
+			itemTemplate: ( item: VirtualizedItem< 'category' | 'item', string > ) => <div>Item: { item.label }</div>,
 			expectCategories: [ 'Category: Category 1', 'Category: Category 2' ],
 			expectItems: [ 'Item: Item 1', 'Item: Item 2' ],
 		},

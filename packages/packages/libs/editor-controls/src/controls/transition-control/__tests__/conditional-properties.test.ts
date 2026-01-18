@@ -11,12 +11,10 @@ interface TransitionCategory {
 }
 
 describe( 'transition properties conditional loading', () => {
-	const originalElementorPro = ( window as WindowWithElementorPro )
-		.elementorPro;
+	const originalElementorPro = ( window as WindowWithElementorPro ).elementorPro;
 
 	afterEach( () => {
-		( window as WindowWithElementorPro ).elementorPro =
-			originalElementorPro;
+		( window as WindowWithElementorPro ).elementorPro = originalElementorPro;
 		jest.resetModules();
 	} );
 
@@ -39,24 +37,17 @@ describe( 'transition properties conditional loading', () => {
 			expectedLength: 1,
 			expectedHasMargin: false,
 		},
-	] )(
-		'should load correct properties when $scenario',
-		( { proConfig, expectedLength, expectedHasMargin } ) => {
-			( window as WindowWithElementorPro ).elementorPro = proConfig;
+	] )( 'should load correct properties when $scenario', ( { proConfig, expectedLength, expectedHasMargin } ) => {
+		( window as WindowWithElementorPro ).elementorPro = proConfig;
 
-			const { transitionProperties: props } = require( '../data' );
+		const { transitionProperties: props } = require( '../data' );
 
-			if ( expectedLength === 'greater than 1' ) {
-				expect( props.length ).toBeGreaterThan( 1 );
-			} else {
-				expect( props.length ).toBe( expectedLength );
-			}
-
-			expect(
-				props.some(
-					( cat: TransitionCategory ) => cat.label === 'Margin'
-				)
-			).toBe( expectedHasMargin );
+		if ( expectedLength === 'greater than 1' ) {
+			expect( props.length ).toBeGreaterThan( 1 );
+		} else {
+			expect( props.length ).toBe( expectedLength );
 		}
-	);
+
+		expect( props.some( ( cat: TransitionCategory ) => cat.label === 'Margin' ) ).toBe( expectedHasMargin );
+	} );
 } );
