@@ -48,6 +48,7 @@ import { initCleanupOverridablePropsOnDelete } from './sync/cleanup-overridable-
 import { initHandleComponentEditModeContainer } from './sync/handle-component-edit-mode-container';
 import { initLoadComponentDataAfterInstanceAdded } from './sync/load-component-data-after-instance-added';
 import { initRegenerateOverrideKeys } from './sync/regenerate-override-keys';
+import { initRevertOverridablesOnCopyOrDuplicate } from './sync/revert-overridables-on-copy-or-duplicate';
 import { type ExtendedWindow } from './types';
 import { onElementDrop } from './utils/tracking';
 
@@ -146,4 +147,6 @@ export function init() {
 	initLoadComponentDataAfterInstanceAdded();
 
 	initHandleComponentEditModeContainer();
+
+	initRevertOverridablesOnCopyOrDuplicate();
 }
