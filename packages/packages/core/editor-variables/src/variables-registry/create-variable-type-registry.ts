@@ -3,7 +3,6 @@ import {
 	type JSX,
 	type KeyboardEvent,
 	type RefAttributes,
-	type RefObject,
 } from 'react';
 import { type AnyTransformer, styleTransformersRegistry } from '@elementor/editor-canvas';
 import { stylesInheritanceTransformersRegistry } from '@elementor/editor-editing-panel';
