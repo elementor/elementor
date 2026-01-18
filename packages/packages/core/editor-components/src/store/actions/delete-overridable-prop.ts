@@ -1,7 +1,7 @@
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { type ComponentId } from '../../types';
-import { revertElementOverridableSetting } from '../../utils/revert-element-overridable-setting';
+import { revertElementOverridableSetting } from '../../utils/revert-overridable-settings';
 import { type Source, trackComponentEvent } from '../../utils/tracking';
 import { selectCurrentComponent, selectOverridableProps, slice } from '../store';
 import { removePropFromAllGroups } from '../utils/groups-transformers';

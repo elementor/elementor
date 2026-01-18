@@ -120,6 +120,10 @@ describe( 'createComponentType', () => {
 					},
 				},
 			},
+			storage: {
+				get: jest.fn(),
+				set: jest.fn(),
+			},
 		};
 	} );
 
