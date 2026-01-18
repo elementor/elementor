@@ -57,10 +57,10 @@ function revertOverridablesInStorage( storageKey: string ) {
 		return;
 	}
 
-	const revertedElements = storageData.elements.map( revertAllOverridablesInElementData );
+	const elementsDataWithOverridablesReverted = storageData.elements.map( revertAllOverridablesInElementData );
 
 	storage.set( storageKey, {
 		...storageData,
-		elements: revertedElements,
+		elements: elementsDataWithOverridablesReverted,
 	} );
 }

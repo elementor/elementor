@@ -190,7 +190,6 @@ describe( 'revertAllOverridablesInContainer', () => {
 			},
 		} );
 
-		mockGetContainer.mockReturnValue( element );
 		mockGetAllDescendants.mockReturnValue( [ element ] );
 
 		// Act
@@ -305,7 +304,6 @@ describe( 'revertAllOverridablesInContainer', () => {
 			},
 		} );
 
-		mockGetContainer.mockReturnValue( element );
 		mockGetAllDescendants.mockReturnValue( [ element ] );
 
 		// Act

@@ -29,12 +29,12 @@ export async function createUnpublishedComponent( {
 }: CreateUnpublishedComponentParams ): Promise< { uid: string; instanceId: string } > {
 	const generatedUid = uid ?? generateUniqueId( 'component' );
 	const componentBase = { uid: generatedUid, name };
-	const elementsWithoutOverridables = revertAllOverridablesInElementData( element );
+	const elementDataWithOverridablesReverted = revertAllOverridablesInElementData( element );
 
 	dispatch(
 		slice.actions.addUnpublished( {
 			...componentBase,
-			elements: [ elementsWithoutOverridables ],
+			elements: [ elementDataWithOverridablesReverted ],
 			overridableProps,
 		} )
 	);
