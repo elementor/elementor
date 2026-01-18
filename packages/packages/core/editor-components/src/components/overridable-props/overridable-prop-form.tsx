@@ -20,8 +20,10 @@ type Props = {
 };
 
 export function OverridablePropForm( { onSubmit, groups, currentValue, existingLabels = [], sx }: Props ) {
+	const selectGroups = groups?.length ? groups : [ DEFAULT_GROUP ];
+
 	const [ propLabel, setPropLabel ] = useState< string | null >( currentValue?.label ?? null );
-	const [ group, setGroup ] = useState< string | null >( currentValue?.groupId ?? groups?.[ 0 ]?.value ?? null );
+	const [ group, setGroup ] = useState< string | null >( currentValue?.groupId ?? selectGroups[ 0 ]?.value ?? null );
 	const [ error, setError ] = useState< string | null >( null );
 
 	const name = __( 'Name', 'elementor' );
@@ -98,16 +100,17 @@ export function OverridablePropForm( { onSubmit, groups, currentValue, existingL
 							}
 							displayEmpty
 							renderValue={ ( selectedValue: string | null ) => {
-								if ( ! selectedValue || selectedValue === '' ) {
-									const [ firstGroup = DEFAULT_GROUP ] = groups ?? [];
-
-									return firstGroup.label;
+								if ( ! selectedValue ) {
+									return selectGroups[ 0 ].label;
 								}
 
-								return groups?.find( ( { value } ) => value === selectedValue )?.label ?? selectedValue;
+								return (
+									selectGroups.find( ( { value } ) => value === selectedValue )?.label ??
+									selectedValue
+								);
 							} }
 						>
-							{ ( groups ?? [ DEFAULT_GROUP ] ).map( ( { label: groupLabel, ...props } ) => (
+							{ selectGroups.map( ( { label: groupLabel, ...props } ) => (
 								<MenuListItem key={ props.value } { ...props } value={ props.value ?? '' }>
 									{ groupLabel }
 								</MenuListItem>
