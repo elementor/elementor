@@ -613,7 +613,7 @@ describe( 'pasteStyles', () => {
 
 		type ClipboardState = {
 			hasLocalStyle: boolean;
-			globalClasses: string[];
+			otherClasses: string[];
 		};
 
 		type PasteStylesTestCase = {
@@ -667,8 +667,8 @@ describe( 'pasteStyles', () => {
 
 				if ( elementId === CLIPBOARD_ELEMENT_ID ) {
 					const allClasses = clipboard.hasLocalStyle
-						? [ CLIPBOARD_STYLE_ID, ...clipboard.globalClasses ]
-						: clipboard.globalClasses;
+						? [ CLIPBOARD_STYLE_ID, ...clipboard.otherClasses ]
+						: clipboard.otherClasses;
 					return allClasses.length ? classesPropTypeUtil.create( allClasses ) : null;
 				}
 
@@ -696,45 +696,45 @@ describe( 'pasteStyles', () => {
 		const testCases: PasteStylesTestCase[] = [
 			{
 				scenario: 'do nothing when clipboard has no style and no classes',
-				clipboard: { hasLocalStyle: false, globalClasses: [] },
+				clipboard: { hasLocalStyle: false, otherClasses: [] },
 				selectedElements: [ { id: 'el-1', hasLocalStyle: false, existingClasses: [] } ],
 				expectedCalls: { createElementStyle: 0, updateElementStyle: 0, updateElementSettings: 0 },
 			},
 			{
 				scenario: 'do nothing when there are no selected elements',
-				clipboard: { hasLocalStyle: true, globalClasses: [ 'global-1' ] },
+				clipboard: { hasLocalStyle: true, otherClasses: [ 'global-1' ] },
 				selectedElements: [],
 				expectedCalls: { createElementStyle: 0, updateElementStyle: 0, updateElementSettings: 0 },
 			},
 			{
 				scenario: 'create style when clipboard has style and selected has none',
-				clipboard: { hasLocalStyle: true, globalClasses: [] },
+				clipboard: { hasLocalStyle: true, otherClasses: [] },
 				selectedElements: [ { id: 'el-1', hasLocalStyle: false, existingClasses: [] } ],
 				expectedCalls: { createElementStyle: 1, updateElementStyle: 0, updateElementSettings: 0 },
 			},
 			{
 				scenario: 'update style when clipboard has style and selected also has style',
-				clipboard: { hasLocalStyle: true, globalClasses: [] },
+				clipboard: { hasLocalStyle: true, otherClasses: [] },
 				selectedElements: [ { id: 'el-1', hasLocalStyle: true, existingClasses: [] } ],
 				expectedCalls: { createElementStyle: 0, updateElementStyle: 1, updateElementSettings: 0 },
 			},
 			{
 				scenario: 'add classes when clipboard has only global classes',
-				clipboard: { hasLocalStyle: false, globalClasses: [ 'global-1', 'global-2' ] },
+				clipboard: { hasLocalStyle: false, otherClasses: [ 'global-1', 'global-2' ] },
 				selectedElements: [ { id: 'el-1', hasLocalStyle: false, existingClasses: [] } ],
 				expectedCalls: { createElementStyle: 0, updateElementStyle: 0, updateElementSettings: 1 },
 				expectedClasses: { 'el-1': [ 'global-1', 'global-2' ] },
 			},
 			{
 				scenario: 'merge classes when both clipboard and selected have classes',
-				clipboard: { hasLocalStyle: false, globalClasses: [ 'global-1', 'global-2' ] },
+				clipboard: { hasLocalStyle: false, otherClasses: [ 'global-1', 'global-2' ] },
 				selectedElements: [ { id: 'el-1', hasLocalStyle: false, existingClasses: [ 'existing-1' ] } ],
 				expectedCalls: { createElementStyle: 0, updateElementStyle: 0, updateElementSettings: 1 },
 				expectedClasses: { 'el-1': [ 'global-1', 'global-2', 'existing-1' ] },
 			},
 			{
 				scenario: 'deduplicate classes when same class exists on both',
-				clipboard: { hasLocalStyle: false, globalClasses: [ 'shared-class', 'global-1' ] },
+				clipboard: { hasLocalStyle: false, otherClasses: [ 'shared-class', 'global-1' ] },
 				selectedElements: [
 					{ id: 'el-1', hasLocalStyle: false, existingClasses: [ 'shared-class', 'existing-1' ] },
 				],
@@ -743,14 +743,14 @@ describe( 'pasteStyles', () => {
 			},
 			{
 				scenario: 'paste style and classes together',
-				clipboard: { hasLocalStyle: true, globalClasses: [ 'global-1' ] },
+				clipboard: { hasLocalStyle: true, otherClasses: [ 'global-1' ] },
 				selectedElements: [ { id: 'el-1', hasLocalStyle: false, existingClasses: [] } ],
 				expectedCalls: { createElementStyle: 1, updateElementStyle: 0, updateElementSettings: 1 },
 				expectedClasses: { 'el-1': [ 'global-1' ] },
 			},
 			{
 				scenario: 'handle multiple selected elements with mixed states',
-				clipboard: { hasLocalStyle: true, globalClasses: [ 'global-1' ] },
+				clipboard: { hasLocalStyle: true, otherClasses: [ 'global-1' ] },
 				selectedElements: [
 					{ id: 'el-1', hasLocalStyle: false, existingClasses: [] },
 					{ id: 'el-2', hasLocalStyle: true, existingClasses: [ 'existing-1' ] },
@@ -763,7 +763,7 @@ describe( 'pasteStyles', () => {
 			},
 			{
 				scenario: 'not update settings when clipboard has only local style class (no global classes)',
-				clipboard: { hasLocalStyle: true, globalClasses: [] },
+				clipboard: { hasLocalStyle: true, otherClasses: [] },
 				selectedElements: [ { id: 'el-1', hasLocalStyle: false, existingClasses: [ 'existing-1' ] } ],
 				expectedCalls: { createElementStyle: 1, updateElementStyle: 0, updateElementSettings: 0 },
 			},
