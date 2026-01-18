@@ -3,7 +3,7 @@ import { type Document } from '@elementor/editor-documents';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
-import { type ComponentDocumentMap } from '../../utils/get-component-documents';
+import { type ComponentDocumentsMap } from '../../utils/get-component-documents';
 import { loadComponentsStyles } from '../actions/load-components-styles';
 import { selectStyles, slice, SLICE_NAME } from '../store';
 
@@ -55,7 +55,7 @@ describe( 'loadComponentsStyles', () => {
 
 	const items: {
 		shouldHandle: string;
-		documents: ComponentDocumentMap;
+		documents: ComponentDocumentsMap;
 		expected: Record< string, StyleDefinition[] >;
 	}[] = [
 		{
@@ -161,6 +161,6 @@ describe( 'loadComponentsStyles', () => {
 	} );
 } );
 
-function createDocumentMap( entries: [ number, Document ][] ): ComponentDocumentMap {
+function createDocumentMap( entries: [ number, Document ][] ): ComponentDocumentsMap {
 	return new Map( entries );
 }

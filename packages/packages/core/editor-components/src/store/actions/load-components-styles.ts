@@ -3,10 +3,10 @@ import { type V1ElementData } from '@elementor/editor-elements';
 import { type StyleDefinition } from '@elementor/editor-styles';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
-import { type ComponentDocumentMap } from '../../utils/get-component-documents';
+import { type ComponentDocumentsMap } from '../../utils/get-component-documents';
 import { selectStyles, slice } from '../store';
 
-export function loadComponentsStyles( documents: ComponentDocumentMap ) {
+export function loadComponentsStyles( documents: ComponentDocumentsMap ) {
 	if ( ! documents.size ) {
 		return;
 	}
@@ -21,7 +21,7 @@ export function loadComponentsStyles( documents: ComponentDocumentMap ) {
 	addStyles( unknownDocuments );
 }
 
-function addStyles( documents: ComponentDocumentMap ) {
+function addStyles( documents: ComponentDocumentsMap ) {
 	const styles = Object.fromEntries(
 		[ ...documents.entries() ].map( ( [ id, document ] ) => [ id, extractStylesFromDocument( document ) ] )
 	);
@@ -34,9 +34,12 @@ function extractStylesFromDocument( document: Document ): Array< StyleDefinition
 		return [];
 	}
 
-	return document.elements.flatMap( extractStyles );
+	return document.elements.flatMap( extractStylesFromElement );
 }
 
-function extractStyles( element: V1ElementData ): Array< StyleDefinition > {
-	return [ ...Object.values( element.styles ?? {} ), ...( element.elements ?? [] ).flatMap( extractStyles ) ];
+function extractStylesFromElement( element: V1ElementData ): Array< StyleDefinition > {
+	return [
+		...Object.values( element.styles ?? {} ),
+		...( element.elements ?? [] ).flatMap( extractStylesFromElement ),
+	];
 }

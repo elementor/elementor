@@ -5,20 +5,20 @@ import { type ComponentInstanceProp } from '../prop-types/component-instance-pro
 import { getComponentDocumentData } from './component-document-data';
 import { isComponentInstance } from './is-component-instance';
 
-export type ComponentDocumentMap = Map< number, Document >;
+export type ComponentDocumentsMap = Map< number, Document >;
 
 type ProcessedCache = Map< number, Promise< Document | null > >;
 
 export async function getComponentDocuments(
 	elements: V1ElementData[],
 	cache: ProcessedCache = new Map()
-): Promise< ComponentDocumentMap > {
-	const componentIds = await collectComponentIds( elements, cache );
+): Promise< ComponentDocumentsMap > {
+	const componentIds = await getComponentIds( elements, cache );
 
-	return buildDocumentMap( componentIds, cache );
+	return getDocumentsMap( componentIds, cache );
 }
 
-async function collectComponentIds( elements: V1ElementData[], cache: ProcessedCache ): Promise< number[] > {
+async function getComponentIds( elements: V1ElementData[], cache: ProcessedCache ): Promise< number[] > {
 	const results = await Promise.all(
 		elements.map( async ( { widgetType, elType, elements: childElements, settings } ) => {
 			const ids: number[] = [];
@@ -42,7 +42,7 @@ async function collectComponentIds( elements: V1ElementData[], cache: ProcessedC
 			}
 
 			if ( childElements?.length ) {
-				const childIds = await collectComponentIds( childElements, cache );
+				const childIds = await getComponentIds( childElements, cache );
 				ids.push( ...childIds );
 			}
 
@@ -53,13 +53,18 @@ async function collectComponentIds( elements: V1ElementData[], cache: ProcessedC
 	return [ ...new Set( results.flat() ) ];
 }
 
-async function buildDocumentMap( ids: number[], cache: ProcessedCache ): Promise< ComponentDocumentMap > {
-	const entries = await Promise.all(
+async function getDocumentsMap( ids: number[], cache: ProcessedCache ): Promise< ComponentDocumentsMap > {
+	const documents = await Promise.all(
 		ids.map( async ( id ) => {
-			const doc = await cache.get( id );
-			return doc ? ( [ id, doc ] as const ) : null;
+			const document = await cache.get( id );
+
+			if ( ! document ) {
+				return null;
+			}
+
+			return [ id, document ];
 		} )
 	);
 
-	return new Map( entries.filter( ( entry ): entry is [ number, Document ] => entry !== null ) );
+	return new Map( documents.filter( ( document ): document is [ number, Document ] => document !== null ) );
 }

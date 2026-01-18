@@ -2,7 +2,7 @@ import { createMockDocument } from 'test-utils';
 
 import { apiClient } from '../../api';
 import { invalidateComponentDocumentData } from '../../utils/component-document-data';
-import { type ComponentDocumentMap, getComponentDocuments } from '../../utils/get-component-documents';
+import { type ComponentDocumentsMap, getComponentDocuments } from '../../utils/get-component-documents';
 import { updateComponentsBeforeSave } from '../update-components-before-save';
 
 jest.mock( '../../utils/component-document-data' );
@@ -13,19 +13,21 @@ describe( 'updateComponentsBeforeSave', () => {
 	const PUBLISHED_COMPONENT_ID = 2000;
 	const HAS_AUTOSAVE_COMPONENT_ID = 4000;
 
-	const createMockDocumentsMap = ( ids: number[] ): ComponentDocumentMap => {
+	const isPublished = ( id: number ) => id === PUBLISHED_COMPONENT_ID;
+	const isHasAutosave = ( id: number ) => id === HAS_AUTOSAVE_COMPONENT_ID;
+
+	const createMockDocumentsMap = ( ids: number[] ): ComponentDocumentsMap => {
 		return new Map(
 			ids.map( ( id ) => [
 				id,
 				createMockDocument( {
 					id,
 					status: {
-						value: id === PUBLISHED_COMPONENT_ID || id === HAS_AUTOSAVE_COMPONENT_ID ? 'publish' : 'draft',
-						label:
-							id === PUBLISHED_COMPONENT_ID || id === HAS_AUTOSAVE_COMPONENT_ID ? 'Published' : 'Draft',
+						value: isPublished( id ) || isHasAutosave( id ) ? 'publish' : 'draft',
+						label: isPublished( id ) || isHasAutosave( id ) ? 'Published' : 'Draft',
 					},
-					isDirty: id !== PUBLISHED_COMPONENT_ID,
-					revisions: { current_id: HAS_AUTOSAVE_COMPONENT_ID === id ? 9000 : id },
+					isDirty: ! isPublished( id ),
+					revisions: { current_id: isHasAutosave( id ) ? 9000 : id },
 				} ),
 			] )
 		);

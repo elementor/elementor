@@ -1,7 +1,7 @@
 import { isDocumentDirty, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
 
-import { type ComponentDocumentMap, getComponentDocuments } from '../../utils/get-component-documents';
+import { type ComponentDocumentsMap, getComponentDocuments } from '../../utils/get-component-documents';
 import { loadComponentsOverridableProps } from './load-components-overridable-props';
 import { loadComponentsStyles } from './load-components-styles';
 
@@ -15,7 +15,7 @@ export async function loadComponentsAssets( elements: V1ElementData[] ) {
 	] );
 }
 
-function updateDocumentState( documents: ComponentDocumentMap ) {
+function updateDocumentState( documents: ComponentDocumentsMap ) {
 	const isDrafted = [ ...documents.values() ].some( isDocumentDirty );
 
 	if ( isDrafted ) {
