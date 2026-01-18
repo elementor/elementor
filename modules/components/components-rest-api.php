@@ -238,7 +238,12 @@ class Components_REST_API {
 							'required' => true,
 						],
 						'required' => true,
-						'description' => 'The component ID to archive',
+						'description' => 'The component IDs to archive',
+					],
+					'status' => [
+						'type' => 'string',
+						'enum' => [ Document::STATUS_PUBLISH, Document::STATUS_DRAFT, Document::STATUS_AUTOSAVE ],
+						'required' => true,
 					],
 				],
 			],
@@ -268,6 +273,11 @@ class Components_REST_API {
 								],
 							],
 						],
+					],
+					'status' => [
+						'type' => 'string',
+						'enum' => [ Document::STATUS_PUBLISH, Document::STATUS_DRAFT, Document::STATUS_AUTOSAVE ],
+						'required' => true,
 					],
 				],
 			],
@@ -310,7 +320,7 @@ class Components_REST_API {
 				->build();
 		}
 
-		$document = $this->get_repository()->get( $component_id, true );
+		$document = $this->get_repository()->get( $component_id );
 
 		if ( ! $document ) {
 			return Error_Builder::make( 'component_not_found' )
@@ -399,26 +409,19 @@ class Components_REST_API {
 	}
 
 	private function update_statuses( \WP_REST_Request $request ) {
-		$status = $request->get_param( 'status' );
-
 		$result = Collection::make( $request->get_param( 'ids' ) )
-			->map( fn( $id ) => $this->get_repository()->get( $id ) )
-			->filter( fn( $component ) => (bool) $component )
 			->reduce(
-				function ( $result, Component $component ) use ( $status ) {
-					$post = $component->get_post();
-					$autosave = $component->get_newer_autosave();
+				function ( $result, int $component_id ) {
+					$component = $this->get_repository()->get( $component_id );
 
-					$latest_post = $autosave ? $autosave : $component;
+					if ( ! $component ) {
+						$result['failed'][] = $component_id;
+						return $result;
+					}
 
-					$elements = $latest_post->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
+					$publish_result = $this->get_repository()->publish_component( $component );
 
-					$is_updated = $component->save( [
-						'settings' => [ 'post_status' => $status ],
-						'elements' => $elements,
-					] );
-
-					$result[ $is_updated ? 'success' : 'failed' ][] = $post->ID;
+					$result[ $publish_result ? 'success' : 'failed' ][] = $component_id;
 
 					return $result;
 				},
@@ -519,8 +522,10 @@ class Components_REST_API {
 
 	private function archive_components( \WP_REST_Request $request ) {
 		$component_ids = $request->get_param( 'componentIds' );
+		$status = $request->get_param( 'status' );
+
 		try {
-			$result = $this->get_repository()->archive( $component_ids );
+			$result = $this->get_repository()->archive( $component_ids, $status );
 		} catch ( \Exception $e ) {
 			error_log( 'Components REST API archive_components error: ' . $e->getMessage() );
 			return Error_Builder::make( 'archive_failed' )
@@ -536,8 +541,10 @@ class Components_REST_API {
 		$failed_ids = [];
 		$success_ids = [];
 		$components = $request->get_param( 'components' );
+		$status = $request->get_param( 'status' );
+
 		foreach ( $components as $component ) {
-			$is_success = $this->get_repository()->update_title( $component['componentId'], $component['title'] );
+			$is_success = $this->get_repository()->update_title( $component['componentId'], $component['title'], $status );
 
 			if ( ! $is_success ) {
 				$failed_ids[] = $component['componentId'];

@@ -108,7 +108,7 @@ class Component_Override_Parser extends Override_Parser {
 			return $this->component_overridable_props;
 		}
 
-		$component = $this->get_repository()->get( $component_id, true );
+		$component = $this->get_repository()->get( $component_id );
 
 		if ( ! $component ) {
 			return null;
