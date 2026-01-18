@@ -34,7 +34,7 @@ export const createBoolean = ( value: boolean ): BooleanPropValue => ( {
 	value,
 } );
 
-export const createConfig = ( 
+export const createConfig = (
 	replay: boolean,
 	relativeTo?: string,
 	offsetTop?: number,

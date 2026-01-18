@@ -49,7 +49,10 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
 	const relativeTo = extractString( interaction.animation.value.config?.value.relativeTo, DEFAULT_VALUES.relativeTo );
 	const offsetTop = extractNumber( interaction.animation.value.config?.value.offsetTop, DEFAULT_VALUES.offsetTop );
-	const offsetBottom = extractNumber( interaction.animation.value.config?.value.offsetBottom, DEFAULT_VALUES.offsetBottom );
+	const offsetBottom = extractNumber(
+		interaction.animation.value.config?.value.offsetBottom,
+		DEFAULT_VALUES.offsetBottom
+	);
 
 	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
 	const shouldShowRelativeTo = trigger === 'scrollOn';
@@ -70,7 +73,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			return null;
 		}
 		return getInteractionsControl( 'relativeTo' )?.component ?? null;
-	}, [ shouldShowRelativeTo] );
+	}, [ shouldShowRelativeTo ] );
 
 	const OffsetTopControl = useMemo( () => {
 		if ( ! shouldShowRelativeTo ) {
@@ -178,7 +181,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 						interactionType={ type }
 					/>
 				</Field>
-				
+
 				<Field label={ __( 'Duration', 'elementor' ) }>
 					<TimeFrameIndicator
 						value={ String( duration ) }
@@ -193,27 +196,36 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					/>
 				</Field>
 			</Grid>
-			{ shouldShowRelativeTo && (
+			{ shouldShowRelativeTo && RelativeToControl && (
 				<>
-				<Divider />
-				<Grid container spacing={ 1.5 }>
-					{ RelativeToControl && (
+					<Divider />
+					<Grid container spacing={ 1.5 }>
 						<Field label={ __( 'Relative To', 'elementor' ) }>
-							<RelativeToControl value={ relativeTo } onChange={ ( v ) => updateInteraction( { relativeTo: v } ) } />
+							<RelativeToControl
+								value={ relativeTo }
+								onChange={ ( v ) => updateInteraction( { relativeTo: v } ) }
+							/>
 						</Field>
-					) }
-					{ OffsetTopControl && (
-						<Field label={ __( 'Offset Top', 'elementor' ) }>
-							<OffsetTopControl value={ String( offsetTop ) } onChange={ ( v: string ) => updateInteraction( { offsetTop: parseInt( v, 10 ) } ) } />
-						</Field>
-					) }
-					{ OffsetBottomControl && (
-						<Field label={ __( 'Offset Bottom', 'elementor' ) }>
-							<OffsetBottomControl value={ String( offsetBottom ) } onChange={ ( v: string ) => updateInteraction( { offsetBottom: parseInt( v, 10 ) } ) } />
-						</Field>
-					) }
-				</Grid>
-				<Divider />
+						{ OffsetTopControl && (
+							<Field label={ __( 'Offset Top', 'elementor' ) }>
+								<OffsetTopControl
+									value={ String( offsetTop ) }
+									onChange={ ( v: string ) => updateInteraction( { offsetTop: parseInt( v, 10 ) } ) }
+								/>
+							</Field>
+						) }
+						{ OffsetBottomControl && (
+							<Field label={ __( 'Offset Bottom', 'elementor' ) }>
+								<OffsetBottomControl
+									value={ String( offsetBottom ) }
+									onChange={ ( v: string ) =>
+										updateInteraction( { offsetBottom: parseInt( v, 10 ) } )
+									}
+								/>
+							</Field>
+						) }
+					</Grid>
+					<Divider />
 				</>
 			) }
 		</PopoverContent>
