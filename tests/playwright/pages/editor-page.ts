@@ -1373,14 +1373,12 @@ export default class EditorPage extends BasePage {
 	}
 
 	async triggerEditingElement( elementId: string ): Promise<Locator> {
-		await this.page.keyboard.press( 'Escape' );
-
 		const element = this.previewFrame.locator( `.elementor-element-${ elementId }` );
-
-		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();
-
 		const inlineEditor = this.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 
+		await element.blur();
+		await this.page.waitForTimeout( 200 );
+		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();
 		await inlineEditor.waitFor();
 
 		return inlineEditor;
