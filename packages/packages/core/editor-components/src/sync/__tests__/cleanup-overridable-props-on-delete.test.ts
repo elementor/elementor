@@ -1,4 +1,4 @@
-import { createMockElement } from 'test-utils';
+import { createHooksRegistry, createMockElement, setupHooksRegistry } from 'test-utils';
 import { getAllDescendants, type V1Element } from '@elementor/editor-elements';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
@@ -18,28 +18,6 @@ jest.mock( '@elementor/editor-elements', () => ( {
 	getAllDescendants: jest.fn(),
 } ) );
 
-type MockHook = { getCommand: () => string; apply: ( args: unknown, result: unknown ) => void };
-
-function createHooksRegistry() {
-	let hooks: MockHook[] = [];
-
-	return {
-		getAll: () => hooks,
-
-		reset: () => {
-			hooks = [];
-		},
-
-		createClass: () => {
-			return class {
-				register() {
-					hooks.push( this as never );
-				}
-			};
-		},
-	};
-}
-
 describe( 'initCleanupOverridablePropsOnDelete', () => {
 	const MOCK_COMPONENT_ID = 123;
 	const ELEMENT_ID_1 = 'element-1';
@@ -51,19 +29,6 @@ describe( 'initCleanupOverridablePropsOnDelete', () => {
 	const GROUP_ID = 'group-1';
 
 	const hooksRegistry = createHooksRegistry();
-
-	type WindowWithHooks = Window & {
-		$e: {
-			modules: {
-				hookData: {
-					After: ReturnType< typeof hooksRegistry.createClass >;
-					Dependency: ReturnType< typeof hooksRegistry.createClass >;
-				};
-			};
-		};
-	};
-
-	const eWindow = window as unknown as WindowWithHooks;
 
 	let mockState: { data: PublishedComponent[]; currentComponentId: number | null };
 
@@ -164,16 +129,7 @@ describe( 'initCleanupOverridablePropsOnDelete', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
-		hooksRegistry.reset();
-
-		eWindow.$e = {
-			modules: {
-				hookData: {
-					Dependency: hooksRegistry.createClass(),
-					After: hooksRegistry.createClass(),
-				},
-			},
-		};
+		setupHooksRegistry( hooksRegistry );
 
 		mockState = {
 			data: [
