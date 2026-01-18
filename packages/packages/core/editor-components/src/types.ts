@@ -59,6 +59,11 @@ type BaseComponent = {
 export type DocumentStatus = 'publish' | 'draft';
 export type DocumentSaveStatus = DocumentStatus | 'autosave';
 
+export type ElementorStorage = {
+	get: < T = unknown >( key: string ) => T | null;
+	set: < T >( key: string, data: T ) => void;
+};
+
 export type ExtendedWindow = Window & {
 	elementorCommon: Record< string, unknown > & {
 		eventsManager: {
@@ -68,6 +73,7 @@ export type ExtendedWindow = Window & {
 				triggers: Record< string, string >;
 			};
 		};
+		storage: ElementorStorage;
 	};
 };
 
