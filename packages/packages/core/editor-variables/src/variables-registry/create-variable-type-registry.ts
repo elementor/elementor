@@ -1,10 +1,4 @@
-import {
-	type ForwardRefExoticComponent,
-	type JSX,
-	type KeyboardEvent,
-	type RefAttributes,
-	type RefObject,
-} from 'react';
+import { type ForwardRefExoticComponent, type JSX, type KeyboardEvent, type RefAttributes } from 'react';
 import { type AnyTransformer, styleTransformersRegistry } from '@elementor/editor-canvas';
 import { stylesInheritanceTransformersRegistry } from '@elementor/editor-editing-panel';
 import {
@@ -28,7 +22,6 @@ export type ValueFieldProps = {
 	onValidationChange?: ( value: string ) => void;
 	propType?: PropType;
 	error?: { value: string; message: string };
-	ref?: RefObject< HTMLElement | null >;
 	onKeyDown?: ( event: KeyboardEvent< HTMLElement > ) => void;
 };
 
