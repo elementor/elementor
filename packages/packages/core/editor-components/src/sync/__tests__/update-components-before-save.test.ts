@@ -3,13 +3,13 @@ import { createMockDocument } from 'test-utils';
 import { apiClient } from '../../api';
 import { invalidateComponentDocumentData } from '../../utils/component-document-data';
 import { type ComponentDocumentsMap, getComponentDocuments } from '../../utils/get-component-documents';
-import { updateComponentsBeforeSave } from '../update-components-before-save';
+import { publishDraftComponentsInPageBeforeSave } from '../publish-draft-components-in-page-before-save';
 
 jest.mock( '../../utils/component-document-data' );
 jest.mock( '../../utils/get-component-documents' );
 jest.mock( '../../api' );
 
-describe( 'updateComponentsBeforeSave', () => {
+describe( 'publishDraftComponentsInPageBeforeSave', () => {
 	const PUBLISHED_COMPONENT_ID = 2000;
 	const HAS_AUTOSAVE_COMPONENT_ID = 4000;
 
@@ -106,7 +106,7 @@ describe( 'updateComponentsBeforeSave', () => {
 		];
 
 		// Act
-		await updateComponentsBeforeSave( {
+		await publishDraftComponentsInPageBeforeSave( {
 			elements,
 			status: 'publish',
 		} );
@@ -140,7 +140,7 @@ describe( 'updateComponentsBeforeSave', () => {
 		];
 
 		// Act
-		await updateComponentsBeforeSave( {
+		await publishDraftComponentsInPageBeforeSave( {
 			elements,
 			status: 'draft',
 		} );
@@ -171,7 +171,7 @@ describe( 'updateComponentsBeforeSave', () => {
 		];
 
 		// Act
-		await updateComponentsBeforeSave( {
+		await publishDraftComponentsInPageBeforeSave( {
 			elements,
 			status: 'publish',
 		} );
