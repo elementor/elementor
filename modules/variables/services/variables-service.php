@@ -27,7 +27,7 @@ class Variables_Service {
 	public function load() {
 		$collection = $this->repo->load()->serialize( true );
 		foreach ( $collection['data'] as $id => $variable ) {
-			if ( ! ElementorUtils::has_pro() && $variable['type'] === Size_Variable_Prop_Type::get_key() ) {
+			if ( ! ElementorUtils::has_pro() && Size_Variable_Prop_Type::get_key() === $variable['type'] ) {
 				unset( $collection['data'][ $id ] );
 			}
 		}
