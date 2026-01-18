@@ -32,6 +32,9 @@ const DEFAULT_VALUES = {
 	duration: 300,
 	delay: 0,
 	replay: false,
+	relativeTo: '',
+	offsetTop: 0,
+	offsetBottom: 100,
 };
 
 const TRIGGERS_WITH_REPLAY = [ 'scrollIn', 'scrollOut' ];
@@ -44,8 +47,12 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const duration = extractNumber( interaction.animation.value.timing_config.value.duration, DEFAULT_VALUES.duration );
 	const delay = extractNumber( interaction.animation.value.timing_config.value.delay, DEFAULT_VALUES.delay );
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
+	const relativeTo = extractString( interaction.animation.value.config?.value.relativeTo, DEFAULT_VALUES.relativeTo );
+	const offsetTop = extractNumber( interaction.animation.value.config?.value.offsetTop, DEFAULT_VALUES.offsetTop );
+	const offsetBottom = extractNumber( interaction.animation.value.config?.value.offsetBottom, DEFAULT_VALUES.offsetBottom );
 
 	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
+	const shouldShowRelativeTo = trigger === 'scrollOn';
 
 	const TriggerControl = useMemo( () => {
 		return getInteractionsControl( 'trigger' )?.component ?? null;
@@ -57,6 +64,27 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		}
 		return getInteractionsControl( 'replay' )?.component ?? null;
 	}, [ shouldShowReplay ] );
+
+	const RelativeToControl = useMemo( () => {
+		if ( ! shouldShowRelativeTo ) {
+			return null;
+		}
+		return getInteractionsControl( 'relativeTo' )?.component ?? null;
+	}, [ shouldShowRelativeTo] );
+
+	const OffsetTopControl = useMemo( () => {
+		if ( ! shouldShowRelativeTo ) {
+			return null;
+		}
+		return getInteractionsControl( 'offsetTop' )?.component ?? null;
+	}, [] );
+
+	const OffsetBottomControl = useMemo( () => {
+		if ( ! shouldShowRelativeTo ) {
+			return null;
+		}
+		return getInteractionsControl( 'offsetBottom' )?.component ?? null;
+	}, [] );
 
 	const resolveDirection = ( hasDirection: boolean, newEffect?: string, newDirection?: string ) => {
 		if ( newEffect === 'slide' && ! newDirection ) {
@@ -78,6 +106,9 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			duration: number;
 			delay: number;
 			replay: boolean;
+			relativeTo: string;
+			offsetTop: number;
+			offsetBottom: number;
 		} >
 	): void => {
 		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction );
@@ -94,6 +125,9 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				duration: updates.duration ?? duration,
 				delay: updates.delay ?? delay,
 				replay: newReplay,
+				relativeTo: updates.relativeTo ?? relativeTo,
+				offsetTop: updates.offsetTop ?? offsetTop,
+				offsetBottom: updates.offsetBottom ?? offsetBottom,
 			} ),
 		};
 
@@ -144,7 +178,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 						interactionType={ type }
 					/>
 				</Field>
-
+				
 				<Field label={ __( 'Duration', 'elementor' ) }>
 					<TimeFrameIndicator
 						value={ String( duration ) }
@@ -159,6 +193,29 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					/>
 				</Field>
 			</Grid>
+			{ shouldShowRelativeTo && (
+				<>
+				<Divider />
+				<Grid container spacing={ 1.5 }>
+					{ RelativeToControl && (
+						<Field label={ __( 'Relative To', 'elementor' ) }>
+							<RelativeToControl value={ relativeTo } onChange={ ( v ) => updateInteraction( { relativeTo: v } ) } />
+						</Field>
+					) }
+					{ OffsetTopControl && (
+						<Field label={ __( 'Offset Top', 'elementor' ) }>
+							<OffsetTopControl value={ String( offsetTop ) } onChange={ ( v: string ) => updateInteraction( { offsetTop: parseInt( v, 10 ) } ) } />
+						</Field>
+					) }
+					{ OffsetBottomControl && (
+						<Field label={ __( 'Offset Bottom', 'elementor' ) }>
+							<OffsetBottomControl value={ String( offsetBottom ) } onChange={ ( v: string ) => updateInteraction( { offsetBottom: parseInt( v, 10 ) } ) } />
+						</Field>
+					) }
+				</Grid>
+				<Divider />
+				</>
+			) }
 		</PopoverContent>
 	);
 };

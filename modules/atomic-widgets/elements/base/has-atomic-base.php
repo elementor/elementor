@@ -404,6 +404,9 @@ trait Has_Atomic_Base {
 		$duration = 300;
 		$delay = 0;
 		$replay = 0;
+		$relativeTo = '';
+		$offsetTop = 0;
+		$offsetBottom = 100;
 
 		if ( is_array( $timing_config ) ) {
 			$duration = $this->extract_prop_value( $timing_config, 'duration', 300 );
@@ -411,6 +414,10 @@ trait Has_Atomic_Base {
 		}
 
 		if ( is_array( $config ) ) {
+			$relativeTo = $this->extract_prop_value( $config, 'relativeTo', '' );
+			$offsetTop = $this->extract_prop_value( $config, 'offsetTop', 0 );
+			$offsetBottom = $this->extract_prop_value( $config, 'offsetBottom', 100 );
+			
 			$replay = $this->extract_prop_value( $config, 'replay', 0 );
 			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
 				$replay = 0;
@@ -419,7 +426,7 @@ trait Has_Atomic_Base {
 			$replay = 0;
 		}
 
-		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay ] );
+		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay, $relativeTo, $offsetTop, $offsetBottom ] );
 	}
 
 	public function print_content() {
