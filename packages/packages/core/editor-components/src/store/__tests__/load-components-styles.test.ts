@@ -60,21 +60,21 @@ describe( 'loadComponentsStyles', () => {
 	}[] = [
 		{
 			shouldHandle: 'components without styles',
-			documents: createDocumentMap( [ [ SIMPLE_COMP_ID, SIMPLE_COMP_DOCUMENT ] ] ),
+			documents: createDocumentsMap( [ [ SIMPLE_COMP_ID, SIMPLE_COMP_DOCUMENT ] ] ),
 			expected: {
 				[ SIMPLE_COMP_ID ]: [],
 			},
 		},
 		{
 			shouldHandle: 'components with style',
-			documents: createDocumentMap( [ [ COMP_WITH_STYLES_ID, COMP_WITH_STYLES_DOCUMENT ] ] ),
+			documents: createDocumentsMap( [ [ COMP_WITH_STYLES_ID, COMP_WITH_STYLES_DOCUMENT ] ] ),
 			expected: {
 				[ COMP_WITH_STYLES_ID ]: [ STYLE_1 ],
 			},
 		},
 		{
 			shouldHandle: 'multiple components with styles',
-			documents: createDocumentMap( [
+			documents: createDocumentsMap( [
 				[ COMP_WITH_NESTED_COMP_ID, COMP_WITH_NESTED_COMP_DOCUMENT ],
 				[ COMP_WITH_STYLES_ID, COMP_WITH_STYLES_DOCUMENT ],
 				[ NESTED_COMP_ID, NESTED_COMP_DOCUMENT ],
@@ -113,7 +113,7 @@ describe( 'loadComponentsStyles', () => {
 
 	it( 'should dispatch addStyles action with extracted styles', () => {
 		// Arrange
-		const documents = createDocumentMap( [ [ COMP_WITH_STYLES_ID, COMP_WITH_STYLES_DOCUMENT ] ] );
+		const documents = createDocumentsMap( [ [ COMP_WITH_STYLES_ID, COMP_WITH_STYLES_DOCUMENT ] ] );
 
 		// Act
 		loadComponentsStyles( documents );
@@ -125,7 +125,7 @@ describe( 'loadComponentsStyles', () => {
 	it( 'should skip components that are already in the store', () => {
 		// Arrange
 		mockStateData = { [ COMP_WITH_STYLES_ID ]: [ STYLE_1 ] };
-		const documents = createDocumentMap( [
+		const documents = createDocumentsMap( [
 			[ COMP_WITH_STYLES_ID, COMP_WITH_STYLES_DOCUMENT ],
 			[ NESTED_COMP_ID, NESTED_COMP_DOCUMENT ],
 		] );
@@ -140,7 +140,7 @@ describe( 'loadComponentsStyles', () => {
 	it( 'should not dispatch if all components are already known', () => {
 		// Arrange
 		mockStateData = { [ COMP_WITH_STYLES_ID ]: [ STYLE_1 ] };
-		const documents = createDocumentMap( [ [ COMP_WITH_STYLES_ID, COMP_WITH_STYLES_DOCUMENT ] ] );
+		const documents = createDocumentsMap( [ [ COMP_WITH_STYLES_ID, COMP_WITH_STYLES_DOCUMENT ] ] );
 
 		// Act
 		loadComponentsStyles( documents );
@@ -151,7 +151,7 @@ describe( 'loadComponentsStyles', () => {
 
 	it( 'should not dispatch if documents map is empty', () => {
 		// Arrange
-		const documents = createDocumentMap( [] );
+		const documents = createDocumentsMap( [] );
 
 		// Act
 		loadComponentsStyles( documents );
@@ -161,6 +161,6 @@ describe( 'loadComponentsStyles', () => {
 	} );
 } );
 
-function createDocumentMap( entries: [ number, Document ][] ): ComponentDocumentsMap {
+function createDocumentsMap( entries: [ number, Document ][] ): ComponentDocumentsMap {
 	return new Map( entries );
 }
