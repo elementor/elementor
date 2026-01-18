@@ -593,6 +593,8 @@ class Admin_Notices extends Module {
 		}
 
 		if ( $one_subscription ) {
+			$learn_more_url = 'https://go.elementor.com/acc-plg-learn-more-one';
+
 			if ( ! $is_installed ) {
 				$description = esc_html__( 'Make sure your site has an accessibility statement page. Install Ally, included in ONE, to create it in a few clicks.', 'elementor' );
 				$button_text = esc_html__( 'Install now', 'elementor' );
@@ -616,6 +618,7 @@ class Admin_Notices extends Module {
 			}
 		} else {
 			$description = esc_html__( "Create a more inclusive site experience for all your visitors. With Ally, it's easy to add your statement page in just a few clicks.", 'elementor' );
+			$learn_more_url = 'https://go.elementor.com/acc-plg-learn-more';
 
 			if ( ! $is_installed ) {
 				$button_text = esc_html__( 'Install now', 'elementor' );
@@ -650,7 +653,7 @@ class Admin_Notices extends Module {
 			],
 			'button_secondary' => [
 				'text' => esc_html__( 'Learn more', 'elementor' ),
-				'url' => 'https://go.elementor.com/acc-plg-learn-more',
+				'url' => $learn_more_url,
 				'new_tab' => true,
 				'type' => 'cta',
 			],
@@ -751,6 +754,10 @@ class Admin_Notices extends Module {
 			}
 		}
 
+		$learn_more_url = $one_subscription && $is_woocommerce
+			? 'https://go.elementor.com/sm-woo-learn-more-one'
+			: 'https://go.elementor.com/sm-core-form/';
+
 		$options = [
 			'title' => $title,
 			'description' => $description,
@@ -766,7 +773,7 @@ class Admin_Notices extends Module {
 			],
 			'button_secondary' => [
 				'text' => esc_html__( 'Learn more', 'elementor' ),
-				'url' => 'https://go.elementor.com/sm-core-form/',
+				'url' => $learn_more_url,
 				'new_tab' => true,
 				'type' => 'cta',
 			],
@@ -911,7 +918,7 @@ class Admin_Notices extends Module {
 				];
 			}
 		} else {
-			$description = esc_html__( 'Automatically optimize images to improve site speed and performance. Included with your ONE subscription.', 'elementor' );
+			$description = esc_html__( 'Automatically compress and optimize images, resize larger files, or convert to WebP. Optimize images individually, in bulk, or on upload.', 'elementor' );
 
 			if ( ! $is_installed ) {
 				$button_text = esc_html__( 'Install now', 'elementor' );
@@ -939,10 +946,13 @@ class Admin_Notices extends Module {
 			'description' => $description,
 			'id' => $notice_id,
 			'type' => 'cta',
-			'button_secondary' => [
+			'button' => [
 				'text' => $button_text,
-				'url' => self::add_plg_campaign_data( $button_url, $campaign_data ),
+				'url' => $button_url,
 				'type' => 'cta',
+				'data' => [
+					'source' => $campaign_data['source'],
+				],
 			],
 		];
 
