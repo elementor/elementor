@@ -209,7 +209,7 @@ class Module extends BaseModule {
 			'title' => esc_html__( 'Editor MCP for atomic widgets', 'elementor' ),
 			'description' => esc_html__( 'Editor MCP for atomic widgets.', 'elementor' ),
 			'hidden' => true,
-			'default' => Experiments_Manager::STATE_INACTIVE,
+			'default' => Experiments_Manager::STATE_ACTIVE,
 			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
 		]);
 
