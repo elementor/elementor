@@ -57,6 +57,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 					'elType' => 'widget',
 					'widgetType' => 'e-heading',
 					'propKey' => 'title',
+					'elementId' => 'element-123',
 				],
 			]
 		];
@@ -112,6 +113,7 @@ class Test_Overridable_Props_Parser extends Elementor_Test_Base {
 					'elType' => 'widget',
 					'widgetType' => 'e-button',
 					'propKey' => 'text',
+					'elementId' => 'button-123',
 				],
 				'groupId' => 'group-uuid-1',
 			],
