@@ -16,16 +16,29 @@ export default function initMcpApplyUnapplyGlobalClasses( server: MCPRegistryEnt
 			intelligencePriority: 0.7,
 			speedPriority: 0.8,
 		},
-		description: `Apply a global class to the current element
+		description: `Apply a global class to an element, enabling consistent styling through your design system.
 
 ## When to use this tool:
-- When a user requests to apply a global class or a class to an element in the Elementor editor.
-- When you need to add a specific class to an element's applied classes.
+**ALWAYS use this IMMEDIATELY AFTER building compositions** to apply the global classes you created beforehand:
+- After using "build-compositions" tool, apply semantic classes to the created elements
+- When applying consistent typography styles (heading-primary, text-body, etc.)
+- When applying theme colors or brand styles (bg-brand, button-cta, etc.)
+- When ensuring spacing consistency (spacing-section-large, etc.)
+
+**DO NOT use this tool** for:
+- Elements that don't share styles with other elements (use inline styles instead)
+- Layout-specific properties (those should remain inline in stylesConfig)
 
 ## Prerequisites:
-- Ensure you have the most up-to-date list of classes applied to the element to avoid duplicates.
-  List available at always up-to-date resource 'elementor://global-classes'.
-- Make sure you have the correct class ID that you want to apply.`,
+- **REQUIRED**: Get the list of available global classes from 'elementor://global-classes' resource
+- **REQUIRED**: Get element IDs from the composition XML returned by "build-compositions" tool
+- Ensure you have the most up-to-date list of classes applied to the element to avoid duplicates
+- Make sure you have the correct class ID that you want to apply
+
+## Best Practices:
+1. Apply multiple classes to a single element if needed (typography + color + spacing)
+2. After applying, the tool will remind you to remove duplicate inline styles from elementConfig
+3. Classes should describe purpose, not implementation (e.g., "heading-primary" not "big-red-text")`,
 		handler: async ( params ) => {
 			const { classId, elementId } = params;
 			const appliedClasses = doGetAppliedClasses( elementId );
