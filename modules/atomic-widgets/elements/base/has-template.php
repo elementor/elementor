@@ -116,7 +116,7 @@ trait Has_Template {
 		} else {
 			$replay = 0;
 		}
-		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay, $relativeTo, $offsetTop, $offsetBottom ] );
+		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay, $relative_to, $offset_top, $offset_bottom ] );
 	}
 
 	private function extract_prop_value_simple( $data, $key, $default = '' ) {

@@ -426,7 +426,7 @@ trait Has_Atomic_Base {
 			$replay = 0;
 		}
 
-		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay, $relativeTo, $offsetTop, $offsetBottom ] );
+		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay, $relative_to, $offset_top, $offset_bottom ] );
 	}
 
 	public function print_content() {
