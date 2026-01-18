@@ -897,8 +897,11 @@ class Admin_Notices extends Module {
 			'type' => 'cta',
 			'button' => [
 				'text' => $button_text,
-				'url' => self::add_plg_campaign_data( $button_url, $campaign_data ),
+				'url' => $button_url,
 				'type' => 'cta',
+				'data' => [
+					'source' => $campaign_data['source'],
+				],
 			],
 		];
 
