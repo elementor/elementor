@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { type PropsWithChildren, useMemo } from 'react';
 import { ControlFormLabel, PopoverContent, PopoverGridContainer } from '@elementor/editor-controls';
 import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -17,7 +17,6 @@ import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
 import { TimeFrameIndicator } from './controls/time-frame-indicator';
-import { Trigger } from './controls/trigger';
 
 type InteractionDetailsProps = {
 	interaction: InteractionItemValue;
@@ -45,7 +44,13 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const duration = extractNumber( interaction.animation.value.timing_config.value.duration, DEFAULT_VALUES.duration );
 	const delay = extractNumber( interaction.animation.value.timing_config.value.delay, DEFAULT_VALUES.delay );
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
+
 	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
+
+	const TriggerControl = useMemo( () => {
+		return getInteractionsControl( 'trigger' )?.component ?? null;
+	}, [] );
+
 	const ReplayControl = useMemo( () => {
 		if ( ! shouldShowReplay ) {
 			return null;
@@ -95,6 +100,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		onChange( updatedInteraction );
 
 		const interactionId = extractString( updatedInteraction.interaction_id );
+
 		setTimeout( () => {
 			onPlayInteraction( interactionId );
 		}, 0 );
@@ -103,46 +109,75 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	return (
 		<PopoverContent p={ 1.5 }>
 			<Grid container spacing={ 1.5 }>
-				<Trigger value={ trigger } onChange={ ( v ) => updateInteraction( { trigger: v } ) } />
+				{ TriggerControl && (
+					<Field label={ __( 'Trigger', 'elementor' ) }>
+						<TriggerControl value={ trigger } onChange={ ( v ) => updateInteraction( { trigger: v } ) } />
+					</Field>
+				) }
+
 				{ ReplayControl && (
-					<>
-						<Grid item xs={ 12 }>
-							<PopoverGridContainer>
-								<Grid item xs={ 6 }>
-									<ControlFormLabel>{ __( 'Replay', 'elementor' ) }</ControlFormLabel>
-								</Grid>
-								<Grid item xs={ 6 }>
-									<ReplayControl
-										value={ replay }
-										onChange={ ( v ) => updateInteraction( { replay: v } ) }
-										disabled={ true }
-									/>
-								</Grid>
-							</PopoverGridContainer>
-						</Grid>
-					</>
+					<Field label={ __( 'Replay', 'elementor' ) }>
+						<ReplayControl
+							value={ replay }
+							onChange={ ( v ) => updateInteraction( { replay: v } ) }
+							disabled={ true }
+						/>
+					</Field>
 				) }
 			</Grid>
+
 			<Divider />
+
 			<Grid container spacing={ 1.5 }>
-				<Effect value={ effect } onChange={ ( v ) => updateInteraction( { effect: v } ) } />
-				<EffectType value={ type } onChange={ ( v ) => updateInteraction( { type: v } ) } />
-				<Direction
-					value={ direction }
-					onChange={ ( v ) => updateInteraction( { direction: v } ) }
-					interactionType={ type }
-				/>
-				<TimeFrameIndicator
-					value={ String( duration ) }
-					onChange={ ( v ) => updateInteraction( { duration: parseInt( v, 10 ) } ) }
-					label={ __( 'Duration', 'elementor' ) }
-				/>
-				<TimeFrameIndicator
-					value={ String( delay ) }
-					onChange={ ( v ) => updateInteraction( { delay: parseInt( v, 10 ) } ) }
-					label={ __( 'Delay', 'elementor' ) }
-				/>
+				<Field label={ __( 'Effect', 'elementor' ) }>
+					<Effect value={ effect } onChange={ ( v ) => updateInteraction( { effect: v } ) } />
+				</Field>
+
+				<Field label={ __( 'Type', 'elementor' ) }>
+					<EffectType value={ type } onChange={ ( v ) => updateInteraction( { type: v } ) } />
+				</Field>
+
+				<Field label={ __( 'Direction', 'elementor' ) }>
+					<Direction
+						value={ direction }
+						onChange={ ( v ) => updateInteraction( { direction: v } ) }
+						interactionType={ type }
+					/>
+				</Field>
+
+				<Field label={ __( 'Duration', 'elementor' ) }>
+					<TimeFrameIndicator
+						value={ String( duration ) }
+						onChange={ ( v ) => updateInteraction( { duration: parseInt( v, 10 ) } ) }
+					/>
+				</Field>
+
+				<Field label={ __( 'Delay', 'elementor' ) }>
+					<TimeFrameIndicator
+						value={ String( delay ) }
+						onChange={ ( v ) => updateInteraction( { delay: parseInt( v, 10 ) } ) }
+					/>
+				</Field>
 			</Grid>
 		</PopoverContent>
 	);
 };
+
+type FieldProps = {
+	label: string;
+} & PropsWithChildren;
+
+function Field( { label, children }: FieldProps ) {
+	return (
+		<Grid item xs={ 12 }>
+			<PopoverGridContainer>
+				<Grid item xs={ 6 }>
+					<ControlFormLabel>{ label }</ControlFormLabel>
+				</Grid>
+				<Grid item xs={ 6 }>
+					{ children }
+				</Grid>
+			</PopoverGridContainer>
+		</Grid>
+	);
+}
