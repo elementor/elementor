@@ -45,6 +45,7 @@ import { componentsStylesProvider } from './store/components-styles-provider';
 import { slice } from './store/store';
 import { beforeSave } from './sync/before-save';
 import { initCleanupOverridablePropsOnDelete } from './sync/cleanup-overridable-props-on-delete';
+import { initHandleComponentEditModeContainer } from './sync/handle-component-edit-mode-container';
 import { initLoadComponentDataAfterInstanceAdded } from './sync/load-component-data-after-instance-added';
 import { initRegenerateOverrideKeys } from './sync/regenerate-override-keys';
 import { type ExtendedWindow } from './types';
@@ -143,4 +144,6 @@ export function init() {
 	initNonAtomicNestingPrevention();
 
 	initLoadComponentDataAfterInstanceAdded();
+
+	initHandleComponentEditModeContainer();
 }
