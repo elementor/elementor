@@ -99,6 +99,7 @@ class Component_Overrides_Mocks {
 						'elType' => 'widget',
 						'widgetType' => 'e-button',
 						'propKey' => 'text',
+						'elementId' => 'button-123',
 					],
 					'groupId' => 'group-2',
 				],
