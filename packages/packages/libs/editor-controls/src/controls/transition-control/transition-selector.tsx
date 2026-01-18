@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { keyValuePropTypeUtil, type KeyValuePropValue, type StringPropValue } from '@elementor/editor-props';
-import { ChevronDownIcon, VariationsIcon } from '@elementor/icons';
-import { bindPopover, bindTrigger, Box, Popover, UnstableTag, usePopupState } from '@elementor/ui';
+import { PromotionChip } from '@elementor/editor-ui';
+import { ChevronDownIcon, CrownFilledIcon, VariationsIcon } from '@elementor/icons';
+import { Alert, bindPopover, bindTrigger, Box, Popover, UnstableTag, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useBoundProp } from '../../bound-prop-context';
@@ -49,9 +50,11 @@ const includeCurrentValueInOptions = ( value: KeyValuePropValue[ 'value' ], disa
 export const TransitionSelector = ( {
 	recentlyUsedList = [],
 	disabledItems = [],
+	showPromotion = false,
 }: {
 	recentlyUsedList: string[];
 	disabledItems?: string[];
+	showPromotion?: boolean;
 } ) => {
 	const { value, setValue } = useBoundProp( keyValuePropTypeUtil );
 	const {
@@ -59,6 +62,14 @@ export const TransitionSelector = ( {
 	} = value;
 	const defaultRef = useRef< HTMLDivElement >( null );
 	const popoverState = usePopupState( { variant: 'popover' } );
+
+	const disabledCategories = useMemo( () => {
+		return new Set(
+			transitionProperties
+				.filter( ( cat ) => cat.properties.some( ( prop ) => prop.isDisabled ) )
+				.map( ( cat ) => cat.label )
+		);
+	}, [] );
 
 	const getItemList = () => {
 		const recentItems = recentlyUsedList
@@ -136,6 +147,49 @@ export const TransitionSelector = ( {
 					title={ __( 'Transition Property', 'elementor' ) }
 					icon={ VariationsIcon as React.ElementType< { fontSize: string } > }
 					disabledItems={ includeCurrentValueInOptions( value, disabledItems ) }
+					menuCategoryContentTemplate={ ( item ) => (
+						<Box
+							sx={ {
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'space-between',
+								width: '100%',
+							} }
+						>
+							<span>{ item.value }</span>
+							{ showPromotion && disabledCategories.has( item.value ) && <PromotionChip /> }
+						</Box>
+					) }
+					footer={
+						showPromotion ? (
+							<Alert
+								variant="standard"
+								color="promotion"
+								icon={ false }
+								role="dialog"
+								aria-label="promotion-alert"
+								size="small"
+								sx={ { m: 1.5, mt: 0 } }
+							>
+								{ __( 'Upgrade to customize transition properties and control effects.', 'elementor' ) }
+								<Box
+									component="a"
+									href="https://go.elementor.com/go-pro-transitions-modal/"
+									target="_blank"
+									rel="noopener noreferrer"
+									sx={ {
+										display: 'flex',
+										alignItems: 'center',
+										gap: 0.5,
+										color: 'promotion.main',
+									} }
+								>
+									<CrownFilledIcon fontSize="tiny" />
+									{ __( 'Upgrade now', 'elementor' ) }
+								</Box>
+							</Alert>
+						) : null
+					}
 				/>
 			</Popover>
 		</Box>

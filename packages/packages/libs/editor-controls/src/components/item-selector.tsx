@@ -24,6 +24,8 @@ type ItemSelectorProps = {
 	icon: React.ElementType< { fontSize: string } >;
 	disabledItems?: string[];
 	id?: string;
+	footer?: React.ReactNode;
+	menuCategoryContentTemplate?: ( item: SelectableItem ) => React.ReactNode;
 };
 
 export const ItemSelector = ( {
@@ -38,6 +40,8 @@ export const ItemSelector = ( {
 	icon,
 	disabledItems,
 	id = 'item-selector',
+	footer,
+	menuCategoryContentTemplate,
 }: ItemSelectorProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 
@@ -66,62 +70,66 @@ export const ItemSelector = ( {
 
 			<Divider />
 
-			{ filteredItemsList.length > 0 ? (
-				<ItemList
-					itemListItems={ filteredItemsList }
-					setSelectedItem={ onItemChange }
-					handleClose={ handleClose }
-					selectedItem={ selectedItem }
-					itemStyle={ itemStyle }
-					onDebounce={ onDebounce }
-				/>
-			) : (
-				<Stack
-					alignItems="center"
-					justifyContent="center"
-					height="100%"
-					p={ 2.5 }
-					gap={ 1.5 }
-					overflow="hidden"
-				>
-					<IconComponent fontSize="large" />
-					<Box sx={ { maxWidth: 160, overflow: 'hidden' } }>
-						<Typography align="center" variant="subtitle2" color="text.secondary">
-							{ __( 'Sorry, nothing matched', 'elementor' ) }
-						</Typography>
-						<Typography
-							variant="subtitle2"
-							color="text.secondary"
-							sx={ { display: 'flex', width: '100%', justifyContent: 'center' } }
-						>
-							<span>&ldquo;</span>
-							<Box
-								component="span"
-								sx={ { maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis' } }
-							>
-								{ searchValue }
-							</Box>
-							<span>&rdquo;.</span>
-						</Typography>
-					</Box>
-					<Typography
-						align="center"
-						variant="caption"
-						color="text.secondary"
-						sx={ { display: 'flex', flexDirection: 'column' } }
+			<Box sx={ { flex: 1, overflow: 'auto', minHeight: 0 } }>
+				{ filteredItemsList.length > 0 ? (
+					<ItemList
+						itemListItems={ filteredItemsList }
+						setSelectedItem={ onItemChange }
+						handleClose={ handleClose }
+						selectedItem={ selectedItem }
+						itemStyle={ itemStyle }
+						onDebounce={ onDebounce }
+						menuCategoryContentTemplate={ menuCategoryContentTemplate }
+					/>
+				) : (
+					<Stack
+						alignItems="center"
+						justifyContent="center"
+						height="100%"
+						p={ 2.5 }
+						gap={ 1.5 }
+						overflow="hidden"
 					>
-						{ __( 'Try something else.', 'elementor' ) }
-						<Link
-							color="secondary"
+						<IconComponent fontSize="large" />
+						<Box sx={ { maxWidth: 160, overflow: 'hidden' } }>
+							<Typography align="center" variant="subtitle2" color="text.secondary">
+								{ __( 'Sorry, nothing matched', 'elementor' ) }
+							</Typography>
+							<Typography
+								variant="subtitle2"
+								color="text.secondary"
+								sx={ { display: 'flex', width: '100%', justifyContent: 'center' } }
+							>
+								<span>&ldquo;</span>
+								<Box
+									component="span"
+									sx={ { maxWidth: '80%', overflow: 'hidden', textOverflow: 'ellipsis' } }
+								>
+									{ searchValue }
+								</Box>
+								<span>&rdquo;.</span>
+							</Typography>
+						</Box>
+						<Typography
+							align="center"
 							variant="caption"
-							component="button"
-							onClick={ () => setSearchValue( '' ) }
+							color="text.secondary"
+							sx={ { display: 'flex', flexDirection: 'column' } }
 						>
-							{ __( 'Clear & try again', 'elementor' ) }
-						</Link>
-					</Typography>
-				</Stack>
-			) }
+							{ __( 'Try something else.', 'elementor' ) }
+							<Link
+								color="secondary"
+								variant="caption"
+								component="button"
+								onClick={ () => setSearchValue( '' ) }
+							>
+								{ __( 'Clear & try again', 'elementor' ) }
+							</Link>
+						</Typography>
+					</Stack>
+				) }
+			</Box>
+			{ footer }
 		</PopoverBody>
 	);
 };
@@ -134,6 +142,7 @@ type ItemListProps = {
 	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
 	onDebounce?: ( name: string ) => void;
 	disabledItems?: string[];
+	menuCategoryContentTemplate?: ( item: SelectableItem ) => React.ReactNode;
 };
 
 const ItemList = ( {
@@ -143,6 +152,7 @@ const ItemList = ( {
 	selectedItem,
 	itemStyle = () => ( {} ),
 	onDebounce = () => {},
+	menuCategoryContentTemplate,
 }: ItemListProps ) => {
 	const selectedItemFound = itemListItems.find( ( item ) => item.value === selectedItem );
 
@@ -165,6 +175,7 @@ const ItemList = ( {
 			onClose={ handleClose }
 			itemStyle={ memoizedItemStyle }
 			data-testid="item-list"
+			menuCategoryContentTemplate={ menuCategoryContentTemplate }
 		/>
 	);
 };
