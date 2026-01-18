@@ -2,6 +2,9 @@
 
 namespace Elementor\Modules\Components;
 
+use Elementor\Core\Base\Document;
+use Elementor\Core\Files\CSS\Post as Post_CSS;
+use Elementor\Core\Utils\Api\Parse_Result;
 use Elementor\Core\Utils\Collection;
 use Elementor\Modules\Components\Documents\Component;
 use Elementor\Modules\Components\Documents\Component as Component_Document;
@@ -97,39 +100,368 @@ class Components_Repository {
 		return $styles;
 	}
 
-	public function archive( $ids ) {
-		$failed_ids = [];
-		$success_ids = [];
-
-		foreach ( $ids as $id ) {
-			try {
-				$doc = Plugin::$instance->documents->get( $id );
-
-				if ( ! $doc instanceof Component_Document ) {
-					$failed_ids[] = $id;
-					continue;
-				}
-
-				$doc->archive();
-				$success_ids[] = $id;
-			} catch ( \Exception $e ) {
-				$failed_ids[] = $id;
-			}
-		}
+	public function put(
+		array $created_items,
+		array $published_ids,
+		array $archived_ids,
+		array $renamed_items,
+		string $status
+	): array {
+		$created_result = $this->create_new_components( $created_items, $status );
+		$update_results = $this->update_existing_components( $published_ids, $archived_ids, $renamed_items, $status );
 
 		return [
-			'failedIds' => $failed_ids,
-			'successIds' => $success_ids,
+			'created' => $created_result,
+			'published' => $update_results['published'],
+			'archived' => $update_results['archived'],
+			'renamed' => $update_results['renamed'],
 		];
 	}
 
-	public function update_title( $component_id, $title ) {
-		$doc = $this->get( $component_id );
-		if ( ! $doc ) {
-			return false;
+	private function create_new_components( array $items, string $status ): array {
+		$result = [ 'success' => [], 'failed' => [] ];
+
+		if ( empty( $items ) ) {
+			return $result;
 		}
-		$sanitized_title = sanitize_text_field( $title );
-		$doc->save( [ 'post_title' => $sanitized_title ] );
-		return true;
+
+		$existing_components = $this->all();
+
+		$batch_validation = $this->validate_batch( $items, $existing_components );
+		if ( ! $batch_validation->is_valid() ) {
+			return $this->fail_all_items( $items, $batch_validation->errors()->to_string() );
+		}
+
+		$create_status = Document::STATUS_AUTOSAVE === $status
+			? Document::STATUS_DRAFT
+			: $status;
+
+		$unsaved_components = $this->build_unsaved_components_map( $items );
+
+		foreach ( $items as $item ) {
+			$uid = $item['uid'];
+			$settings = $item['settings'] ?? [];
+
+			if ( isset( $settings['validation_error'] ) ) {
+				$result['failed'][] = [
+					'uid' => $uid,
+					'error' => $settings['validation_error'],
+				];
+				continue;
+			}
+
+			$validation = $this->validate_single_component_to_create( $item, $existing_components, $unsaved_components );
+
+			if ( ! $validation->is_valid() ) {
+				$result['failed'][] = [
+					'uid' => $uid,
+					'error' => $validation->errors()->to_string(),
+				];
+				continue;
+			}
+
+			try {
+				$component_id = $this->create(
+					$item['title'],
+					$item['elements'],
+					$create_status,
+					$item['uid'],
+					$settings
+				);
+				$result['success'][ $uid ] = $component_id;
+			} catch ( \Exception $e ) {
+				$result['failed'][] = [
+					'uid' => $uid,
+					'error' => $e->getMessage(),
+				];
+			}
+		}
+
+		return $result;
+	}
+
+	private function fail_all_items( array $items, string $error ): array {
+		$failed = [];
+
+		foreach ( $items as $item ) {
+			$failed[] = [
+				'uid' => $item['uid'],
+				'error' => $error,
+			];
+		}
+
+		return [ 'success' => [], 'failed' => $failed ];
+	}
+
+	private function validate_batch( array $items, Collection $existing_components ): Parse_Result {
+		$result = Parse_Result::make();
+
+		$active_components_count = $existing_components->filter(
+			fn( $component ) => ! ( $component['is_archived'] ?? false )
+		)->count();
+
+		$total_count = $active_components_count + count( $items );
+		if ( $total_count > Components_REST_API::MAX_COMPONENTS ) {
+			$result->errors()->add( 'count', esc_html__( 'Maximum number of components exceeded', 'elementor' ) );
+			return $result;
+		}
+
+		$duplicates_result = $this->validate_internal_duplicates( $items );
+		$result->errors()->merge( $duplicates_result->errors() );
+
+		return $result;
+	}
+
+	private function validate_internal_duplicates( array $items ): Parse_Result {
+		$result = Parse_Result::make();
+		$titles = [];
+		$uids = [];
+
+		foreach ( $items as $item ) {
+			$title = $item['title'];
+			$uid = $item['uid'];
+
+			if ( isset( $titles[ $title ] ) ) {
+				$result->errors()->add(
+					'title',
+					sprintf( esc_html__( "Duplicate title '%s' in request", 'elementor' ), $title )
+				);
+			}
+			$titles[ $title ] = true;
+
+			if ( isset( $uids[ $uid ] ) ) {
+				$result->errors()->add(
+					'uid',
+					sprintf( esc_html__( "Duplicate uid '%s' in request", 'elementor' ), $uid )
+				);
+			}
+			$uids[ $uid ] = true;
+		}
+
+		return $result;
+	}
+
+	private function build_unsaved_components_map( array $items ): array {
+		$map = [];
+
+		foreach ( $items as $item ) {
+			$map[ $item['uid'] ] = $item['elements'] ?? [];
+		}
+
+		return $map;
+	}
+
+	private function validate_single_component_to_create( array $item, Collection $existing_components, array $unsaved_components ): Parse_Result {
+		$result = Parse_Result::make();
+
+		$duplicates_result = $this->validate_duplicates_against_existing( $item, $existing_components );
+		$result->errors()->merge( $duplicates_result->errors() );
+
+		$elements_result = $this->validate_non_atomic_elements( $item );
+		$result->errors()->merge( $elements_result->errors() );
+
+		$circular_result = $this->validate_circular_dependency( $item, $unsaved_components );
+		$result->errors()->merge( $circular_result->errors() );
+
+		return $result;
+	}
+
+	private function validate_duplicates_against_existing( array $item, Collection $existing_components ): Parse_Result {
+		$result = Parse_Result::make();
+		$title = $item['title'];
+		$uid = $item['uid'];
+
+		$has_duplicate_title = $existing_components->some(
+			fn( $component ) => ! ( $component['is_archived'] ?? false ) && $component['title'] === $title
+		);
+
+		if ( $has_duplicate_title ) {
+			$result->errors()->add(
+				'title',
+				sprintf( esc_html__( "Component title '%s' already exists", 'elementor' ), $title )
+			);
+		}
+
+		$has_duplicate_uid = $existing_components->some(
+			fn( $component ) => $component['uid'] === $uid
+		);
+
+		if ( $has_duplicate_uid ) {
+			$result->errors()->add(
+				'uid',
+				sprintf( esc_html__( "Component uid '%s' already exists", 'elementor' ), $uid )
+			);
+		}
+
+		return $result;
+	}
+
+	private function validate_non_atomic_elements( array $item ): Parse_Result {
+		$result = Parse_Result::make();
+		$elements = $item['elements'] ?? [];
+		$validation = Non_Atomic_Widget_Validator::make()->validate( $elements );
+
+		if ( ! $validation['success'] ) {
+			$result->errors()->add( 'elements', $validation['messages'][0] ?? 'Invalid elements' );
+		}
+
+		return $result;
+	}
+
+	private function validate_circular_dependency( array $item, array $unsaved_components ): Parse_Result {
+		$result = Parse_Result::make();
+		$uid = $item['uid'];
+		$elements = $item['elements'] ?? [];
+		$validation = Circular_Dependency_Validator::make()->validate( $uid, $elements, $unsaved_components );
+
+		if ( ! $validation['success'] ) {
+			$result->errors()->add( 'circular', $validation['messages'][0] ?? 'Circular dependency detected' );
+		}
+
+		return $result;
+	}
+
+	private function update_existing_components(
+		array $published_ids,
+		array $archived_ids,
+		array $renamed_items,
+		string $status
+	): array {
+		$results = [
+			'published' => [ 'successIds' => [], 'failed' => [] ],
+			'archived' => [ 'successIds' => [], 'failed' => [] ],
+			'renamed' => [ 'successIds' => [], 'failed' => [] ],
+		];
+
+		$titles_map = [];
+		foreach ( $renamed_items as $item ) {
+			$titles_map[ $item['id'] ] = $item['title'];
+		}
+
+		$renamed_ids = array_keys( $titles_map );
+		$all_ids = array_unique( array_merge( $published_ids, $archived_ids, $renamed_ids ) );
+
+		foreach ( $all_ids as $id ) {
+			$component = $this->get( $id, true );
+
+			if ( ! $component ) {
+				$results = $this->add_failed_for_missing_component( $results, $id, $published_ids, $archived_ids, $titles_map );
+				continue;
+			}
+
+			$rename_result = $this->rename_component( $component, $id, $titles_map );
+			$results['renamed'] = $this->merge_result( $results['renamed'], $id, $rename_result );
+
+			$archive_result = $this->archive_component( $component, $id, $archived_ids );
+			$results['archived'] = $this->merge_result( $results['archived'], $id, $archive_result );
+
+			$publish_result = $this->publish_component( $component, $id, $published_ids, $status );
+			$results['published'] = $this->merge_result( $results['published'], $id, $publish_result );
+		}
+
+		return $results;
+	}
+
+	private function merge_result( array $results, int $id, ?Parse_Result $result ): array {
+		if ( null === $result ) {
+			return $results;
+		}
+
+		if ( $result->is_valid() ) {
+			$results['successIds'][] = $id;
+		} else {
+			$results['failed'][] = [ 'id' => $id, 'error' => $result->errors()->to_string() ];
+		}
+
+		return $results;
+	}
+
+	private function rename_component( Component $component, int $id, array $titles_map ): ?Parse_Result {
+		if ( ! isset( $titles_map[ $id ] ) ) {
+			return null;
+		}
+
+		$result = Parse_Result::make();
+		$success = $component->update_title( $titles_map[ $id ] );
+
+		if ( ! $success ) {
+			$result->errors()->add( 'rename', 'Failed to update title' );
+		}
+
+		return $result;
+	}
+
+	private function archive_component( Component $component, int $id, array $archived_ids ): ?Parse_Result {
+		if ( ! in_array( $id, $archived_ids, true ) ) {
+			return null;
+		}
+
+		$result = Parse_Result::make();
+
+		try {
+			$component->archive();
+		} catch ( \Exception $e ) {
+			$result->errors()->add( 'archive', $e->getMessage() );
+		}
+
+		return $result;
+	}
+
+	private function publish_component( Component $component, int $id, array $published_ids, string $status ): ?Parse_Result {
+		if ( ! in_array( $id, $published_ids, true ) || Document::STATUS_PUBLISH !== $status ) {
+			return null;
+		}
+
+		$result = Parse_Result::make();
+
+		try {
+			$main_id = $component->get_main_id();
+			$autosave = $component->get_newer_autosave();
+
+			if ( $autosave ) {
+				$autosave_id = $autosave->get_post()->ID;
+
+				Plugin::$instance->db->copy_elementor_meta( $autosave_id, $main_id );
+
+				$post_css = Post_CSS::create( $main_id );
+				$post_css->update();
+
+				wp_delete_post_revision( $autosave_id );
+			}
+
+			/** @var Component $main_component */
+			$main_component = Plugin::$instance->documents->get( $main_id );
+			$success = $main_component->publish();
+
+			if ( ! $success ) {
+				throw new \Exception( 'Failed to publish component' );
+			}
+		} catch ( \Exception $e ) {
+			$result->errors()->add( 'publish', $e->getMessage() );
+		}
+
+		return $result;
+	}
+
+	private function add_failed_for_missing_component(
+		array $results,
+		int $id,
+		array $published_ids,
+		array $archived_ids,
+		array $titles_map
+	): array {
+		$error = 'Component not found';
+
+		if ( in_array( $id, $published_ids, true ) ) {
+			$results['published']['failed'][] = [ 'id' => $id, 'error' => $error ];
+		}
+		if ( in_array( $id, $archived_ids, true ) ) {
+			$results['archived']['failed'][] = [ 'id' => $id, 'error' => $error ];
+		}
+		if ( isset( $titles_map[ $id ] ) ) {
+			$results['renamed']['failed'][] = [ 'id' => $id, 'error' => $error ];
+		}
+
+		return $results;
 	}
 }

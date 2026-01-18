@@ -47,20 +47,9 @@ class Components_REST_API {
 				'callback' => fn() => $this->route_wrapper( fn() => $this->get_components() ),
 				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 			],
-		] );
-
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/' . self::STYLES_ROUTE, [
 			[
-				'methods' => 'GET',
-				'callback' => fn() => $this->route_wrapper( fn() => $this->get_styles() ),
-				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
-			],
-		] );
-
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE, [
-			[
-				'methods' => 'POST',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->create_components( $request ) ),
+				'methods' => 'PUT',
+				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->sync_components( $request ) ),
 				'permission_callback' => fn() => current_user_can( 'manage_options' ),
 				'args' => [
 					'status' => [
@@ -68,7 +57,7 @@ class Components_REST_API {
 						'enum' => [ Document::STATUS_PUBLISH, Document::STATUS_DRAFT, Document::STATUS_AUTOSAVE ],
 						'required' => true,
 					],
-					'items' => [
+					'created' => [
 						'type' => 'array',
 						'required' => true,
 						'items' => [
@@ -98,7 +87,48 @@ class Components_REST_API {
 							],
 						],
 					],
+					'published' => [
+						'type' => 'array',
+						'required' => true,
+						'items' => [
+							'type' => 'integer',
+						],
+					],
+					'archived' => [
+						'type' => 'array',
+						'required' => true,
+						'items' => [
+							'type' => 'integer',
+						],
+					],
+					'renamed' => [
+						'type' => 'array',
+						'required' => true,
+						'items' => [
+							'type' => 'object',
+							'properties' => [
+								'id' => [
+									'type' => 'integer',
+									'required' => true,
+								],
+								'title' => [
+									'type' => 'string',
+									'required' => true,
+									'minLength' => 2,
+									'maxLength' => 200,
+								],
+							],
+						],
+					],
 				],
+			],
+		] );
+
+		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/' . self::STYLES_ROUTE, [
+			[
+				'methods' => 'GET',
+				'callback' => fn() => $this->route_wrapper( fn() => $this->get_styles() ),
+				'permission_callback' => fn() => current_user_can( 'edit_posts' ),
 			],
 		] );
 
@@ -157,29 +187,6 @@ class Components_REST_API {
 			],
 		] );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/status', [
-			[
-				'methods' => 'PUT',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->update_statuses( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-				'args' => [
-					'status' => [
-						'type' => 'string',
-						'required' => true,
-						'enum' => [ Document::STATUS_PUBLISH ],
-					],
-					'ids' => [
-						'type' => 'array',
-						'required' => true,
-						'items' => [
-							'type' => 'number',
-							'required' => true,
-						],
-					],
-				],
-			],
-		] );
-
 		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/lock', [
 			[
 				'methods' => 'POST',
@@ -225,53 +232,6 @@ class Components_REST_API {
 			],
 		] );
 
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/archive', [
-			[
-				'methods' => 'POST',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->archive_components( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-				'args' => [
-					'componentIds' => [
-						'type' => 'array',
-						'items' => [
-							'type' => 'number',
-							'required' => true,
-						],
-						'required' => true,
-						'description' => 'The component ID to archive',
-					],
-				],
-			],
-		] );
-
-		register_rest_route( self::API_NAMESPACE, '/' . self::API_BASE . '/update-titles', [
-			[
-				'methods' => 'POST',
-				'callback' => fn( $request ) => $this->route_wrapper( fn() => $this->update_components_title( $request ) ),
-				'permission_callback' => fn() => current_user_can( 'manage_options' ),
-				'args' => [
-					'components' => [
-						'type' => 'array',
-						'required' => true,
-						'items' => [
-							'type' => 'object',
-							'properties' => [
-								'componentId' => [
-									'type' => 'number',
-									'required' => true,
-									'description' => 'The component ID to update title',
-								],
-								'title' => [
-									'type' => 'string',
-									'required' => true,
-									'description' => 'The new title for the component',
-								],
-							],
-						],
-					],
-				],
-			],
-		] );
 	}
 
 	private function get_components() {
@@ -328,107 +288,44 @@ class Components_REST_API {
 		return Response_Builder::make( $overridable )->build();
 	}
 
-	private function create_components( \WP_REST_Request $request ) {
-		$save_status = $request->get_param( 'status' );
-
-		$items = Collection::make( $request->get_param( 'items' ) );
-		$components = $this->get_repository()->all();
-
-		$result = Save_Components_Validator::make( $components )->validate( $items );
-
-		if ( ! $result['success'] ) {
-			return Error_Builder::make( 'components_validation_failed' )
-				->set_status( 422 )
-				->set_message( 'Validation failed: ' . implode( ', ', $result['messages'] ) )
-				->build();
-		}
-
-		$circular_result = Circular_Dependency_Validator::make()->validate_new_components( $items );
-
-		if ( ! $circular_result['success'] ) {
-			return Error_Builder::make( 'circular_dependency_detected' )
-				->set_status( 422 )
-				->set_message( __( "Can't add this component - components that contain each other can't be nested.", 'elementor' ) )
-				->set_meta( [ 'caused_by' => $circular_result['messages'] ] )
-				->build();
-		}
-
-		$non_atomic_result = Non_Atomic_Widget_Validator::make()->validate_items( $items );
-
-		if ( ! $non_atomic_result['success'] ) {
-			return Error_Builder::make( Non_Atomic_Widget_Validator::ERROR_CODE )
-				->set_status( 422 )
-				->set_message( __( 'Components require atomic elements only. Remove widgets to create this component.', 'elementor' ) )
-				->set_meta( [ 'non_atomic_elements' => $non_atomic_result['non_atomic_elements'] ] )
-				->build();
-		}
-
-		$validation_errors = [];
-
-		$created = $items->map_with_keys( function ( $item ) use ( $save_status, &$validation_errors ) {
-			$title = sanitize_text_field( $item['title'] );
-			$content = $item['elements'];
-			$uid = $item['uid'];
-
-			try {
-				$settings = isset( $item['settings'] ) ? $this->parse_settings( $item['settings'] ) : [];
-			} catch ( \Exception $e ) {
-				$validation_errors[ $uid ] = $e->getMessage();
-				return [ $uid => null ];
-			}
-
-			$status = Document::STATUS_AUTOSAVE === $save_status
-				? Document::STATUS_DRAFT
-				: $save_status;
-
-			$component_id = $this->get_repository()->create( $title, $content, $status, $uid, $settings );
-
-			return [ $uid => $component_id ];
-		} );
-
-		if ( ! empty( $validation_errors ) ) {
-			return Error_Builder::make( 'settings_validation_failed' )
-				->set_status( 422 )
-				->set_message( 'Settings validation failed: ' . json_encode( $validation_errors ) )
-				->build();
-		}
-
-		return Response_Builder::make( $created->all() )
-			->set_status( 201 )
-			->build();
-	}
-
-	private function update_statuses( \WP_REST_Request $request ) {
+	private function sync_components( \WP_REST_Request $request ) {
 		$status = $request->get_param( 'status' );
 
-		$result = Collection::make( $request->get_param( 'ids' ) )
-			->map( fn( $id ) => $this->get_repository()->get( $id ) )
-			->filter( fn( $component ) => (bool) $component )
-			->reduce(
-				function ( $result, Component $component ) use ( $status ) {
-					$post = $component->get_post();
-					$autosave = $component->get_newer_autosave();
+		$created_items = $this->parse_created_items( $request->get_param( 'created' ) ?? [] );
+		$published_ids = $request->get_param( 'published' ) ?? [];
+		$archived_ids = $request->get_param( 'archived' ) ?? [];
+		$renamed_items = $request->get_param( 'renamed' ) ?? [];
 
-					$latest_post = $autosave ? $autosave : $component;
+		$results = $this->get_repository()->put(
+			$created_items,
+			$published_ids,
+			$archived_ids,
+			$renamed_items,
+			$status
+		);
 
-					$elements = $latest_post->get_json_meta( Document::ELEMENTOR_DATA_META_KEY );
+		return Response_Builder::make( $results )->build();
+	}
 
-					$is_updated = $component->save( [
-						'settings' => [ 'post_status' => $status ],
-						'elements' => $elements,
-					] );
+	private function parse_created_items( array $items ): array {
+		return array_map( function ( $item ) {
+			$settings = [];
 
-					$result[ $is_updated ? 'success' : 'failed' ][] = $post->ID;
+			if ( isset( $item['settings'] ) ) {
+				try {
+					$settings = $this->parse_settings( $item['settings'] );
+				} catch ( \Exception $e ) {
+					$settings = [ 'validation_error' => $e->getMessage() ];
+				}
+			}
 
-					return $result;
-				},
-				[
-					'success' => [],
-					'failed' => [],
-				]
-			);
-
-		return Response_Builder::make( $result )->build();
+			return [
+				'uid' => $item['uid'],
+				'title' => sanitize_text_field( $item['title'] ),
+				'elements' => $item['elements'],
+				'settings' => $settings,
+			];
+		}, $items );
 	}
 
 	private function lock_component( \WP_REST_Request $request ) {
@@ -515,41 +412,6 @@ class Components_REST_API {
 				->set_message( __( 'Failed to get lock status', 'elementor' ) )
 				->build();
 		}
-	}
-
-	private function archive_components( \WP_REST_Request $request ) {
-		$component_ids = $request->get_param( 'componentIds' );
-		try {
-			$result = $this->get_repository()->archive( $component_ids );
-		} catch ( \Exception $e ) {
-			error_log( 'Components REST API archive_components error: ' . $e->getMessage() );
-			return Error_Builder::make( 'archive_failed' )
-				->set_meta( [ 'error' => $e->getMessage() ] )
-				->set_status( 500 )
-				->set_message( __( 'Failed to archive components', 'elementor' ) )
-				->build();
-		}
-		return Response_Builder::make( $result )->build();
-	}
-
-	private function update_components_title( \WP_REST_Request $request ) {
-		$failed_ids = [];
-		$success_ids = [];
-		$components = $request->get_param( 'components' );
-		foreach ( $components as $component ) {
-			$is_success = $this->get_repository()->update_title( $component['componentId'], $component['title'] );
-
-			if ( ! $is_success ) {
-				$failed_ids[] = $component['componentId'];
-				continue;
-			}
-			$success_ids[] = $component['componentId'];
-
-		}
-		return Response_Builder::make( [
-			'failedIds' => $failed_ids,
-			'successIds' => $success_ids,
-		] )->build();
 	}
 
 	private function create_validate_components( \WP_REST_Request $request ) {

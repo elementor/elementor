@@ -20,9 +20,39 @@ export type ComponentItems = Array< {
 	};
 } >;
 
-export type CreateComponentPayload = {
+export type SyncPayload = {
 	status: DocumentSaveStatus;
-	items: ComponentItems;
+	created: ComponentItems;
+	published: number[];
+	archived: number[];
+	renamed: UpdatedComponentName[];
+};
+
+export type FailedItem = {
+	id: number;
+	error: string;
+};
+
+export type CreatedFailedItem = {
+	uid: string;
+	error: string;
+};
+
+export type OperationResult = {
+	successIds: number[];
+	failed: FailedItem[];
+};
+
+export type CreatedResult = {
+	success: Record< string, number >;
+	failed: CreatedFailedItem[];
+};
+
+export type SyncResponse = {
+	created: CreatedResult;
+	published: OperationResult;
+	archived: OperationResult;
+	renamed: OperationResult;
 };
 
 type ComponentLockStatusResponse = {
@@ -31,8 +61,6 @@ type ComponentLockStatusResponse = {
 };
 
 type GetComponentResponse = Array< PublishedComponent >;
-
-export type CreateComponentResponse = Record< string, number >;
 
 export type ValidateComponentsPayload = {
 	items: ComponentItems;
@@ -58,15 +86,6 @@ export const apiClient = {
 		httpService()
 			.get< HttpResponse< GetComponentResponse > >( `${ BASE_URL }` )
 			.then( ( res ) => res.data.data ),
-	create: ( payload: CreateComponentPayload ) =>
-		httpService()
-			.post< HttpResponse< CreateComponentResponse > >( `${ BASE_URL }`, payload )
-			.then( ( res ) => res.data.data ),
-	updateStatuses: ( ids: number[], status: DocumentSaveStatus ) =>
-		httpService().put( `${ BASE_URL }/status`, {
-			ids,
-			status,
-		} ),
 	getComponentConfig: ( id: number ) => ajax.load< { id: number }, V1ElementData >( getParams( id ) ),
 	invalidateComponentConfigCache: ( id: number ) => ajax.invalidateCache< { id: number } >( getParams( id ) ),
 	getComponentLockStatus: async ( componentId: number ) =>
@@ -100,26 +119,12 @@ export const apiClient = {
 				},
 			} )
 			.then( ( res ) => res.data.data ),
-	updateArchivedComponents: async ( componentIds: number[] ) =>
-		await httpService()
-			.post< { data: { failedIds: number[]; successIds: number[]; success: boolean } } >(
-				`${ BASE_URL }/archive`,
-				{
-					componentIds,
-				}
-			)
-			.then( ( res ) => res.data.data ),
-	updateComponentTitle: ( updatedComponentNames: UpdatedComponentName[] ) =>
-		httpService()
-			.post< { data: { failedIds: number[]; successIds: number[]; success: boolean } } >(
-				`${ BASE_URL }/update-titles`,
-				{
-					components: updatedComponentNames,
-				}
-			)
-			.then( ( res ) => res.data.data ),
 	validate: async ( payload: ValidateComponentsPayload ) =>
 		await httpService()
 			.post< HttpResponse< ValidateComponentsResponse > >( `${ BASE_URL }/create-validate`, payload )
 			.then( ( res ) => res.data ),
+	sync: ( payload: SyncPayload ) =>
+		httpService()
+			.put< HttpResponse< SyncResponse > >( `${ BASE_URL }`, payload )
+			.then( ( res ) => res.data.data ),
 };

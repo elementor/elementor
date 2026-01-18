@@ -81,6 +81,6 @@ export type ComponentRenderContext = RenderContext< {
 } >;
 
 export type UpdatedComponentName = {
-	componentId: number;
+	id: number;
 	title: string;
 };
