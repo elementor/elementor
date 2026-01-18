@@ -31,7 +31,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		await context.close();
 	} );
 
-	test.only( 'Compare appearance in frontend, editor - static and in edit mode', async () => {
+	test( 'Compare appearance in frontend, editor - static and in edit mode', async () => {
 		// Arrange.
 		const headingElement = editor.previewFrame.locator( HEADING_WIDGET_SELECTOR );
 		const editedHeadingElement = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
