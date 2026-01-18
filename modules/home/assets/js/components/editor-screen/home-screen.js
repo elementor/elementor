@@ -32,11 +32,11 @@ const EditorScreen = ( props ) => {
 						) }
 						<ExternalLinksSection externalLinksData={ props.homeScreenData.external_links } />
 					</Stack>
-					<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' }, display: 'flex', flexDirection: 'column', gap: 2.5 } }>
-						{ hasSidebarPromotion &&
+					{ hasSidebarPromotion &&
+						<Container maxWidth="xs" disableGutters={ true } sx={ { width: { sm: '305px' }, display: 'flex', flexDirection: 'column', gap: 2.5 } }>
 							<SideBarPromotion sideData={ props.homeScreenData.sidebar_promotion_variants } />
-						}
-					</Container>
+						</Container>
+					}
 				</Box>
 			</Container>
 		</Box>
