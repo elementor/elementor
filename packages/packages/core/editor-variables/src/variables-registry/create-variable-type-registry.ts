@@ -1,9 +1,4 @@
-import {
-	type ForwardRefExoticComponent,
-	type JSX,
-	type KeyboardEvent,
-	type RefAttributes,
-} from 'react';
+import { type ForwardRefExoticComponent, type JSX, type KeyboardEvent, type RefAttributes } from 'react';
 import { type AnyTransformer, styleTransformersRegistry } from '@elementor/editor-canvas';
 import { stylesInheritanceTransformersRegistry } from '@elementor/editor-editing-panel';
 import {
