@@ -28,7 +28,6 @@ export type ValueFieldProps = {
 	onValidationChange?: ( value: string ) => void;
 	propType?: PropType;
 	error?: { value: string; message: string };
-	ref?: RefObject< HTMLElement | null >;
 	onKeyDown?: ( event: KeyboardEvent< HTMLElement > ) => void;
 };
 
