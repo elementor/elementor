@@ -2,11 +2,10 @@ import { isAtomicWidget } from '@elementor/editor-canvas';
 import { getAllDescendants, getElementType, type V1Element } from '@elementor/editor-elements';
 import { type NotificationData, notify } from '@elementor/editor-notifications';
 import { blockCommand } from '@elementor/editor-v1-adapters';
-import { __getStore as getStore } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
-import { type ComponentsSlice, selectCurrentComponentId } from './store/store';
 import { type ExtendedWindow } from './types';
+import { isEditingComponent } from './utils/is-editing-component';
 
 type CreateArgs = {
 	container?: V1Element;
@@ -61,16 +60,6 @@ export function initNonAtomicNestingPrevention() {
 		command: 'document/elements/paste',
 		condition: blockNonAtomicPaste,
 	} );
-}
-
-function isEditingComponent(): boolean {
-	const state = getStore()?.getState() as ComponentsSlice | undefined;
-
-	if ( ! state ) {
-		return false;
-	}
-
-	return selectCurrentComponentId( state ) !== null;
 }
 
 export function isElementAtomic( elementType: string ): boolean {
