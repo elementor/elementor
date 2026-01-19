@@ -18,6 +18,7 @@ class Menu_Data_Provider {
 	private ?string $theme_builder_url = null;
 	private ?array $cached_editor_flyout_data = null;
 	private ?array $cached_level4_flyout_data = null;
+	private ?array $cached_flyout_menu_data = null;
 	private Slug_Normalizer $slug_normalizer;
 
 	public static function instance(): self {
@@ -116,6 +117,31 @@ class Menu_Data_Provider {
 		];
 
 		return $this->cached_editor_flyout_data;
+	}
+
+	/**
+	 * Get flyout menu data with third-party items expanded inline.
+	 *
+	 * Unlike get_editor_flyout_data() which keeps "Addons" as a parent item,
+	 * this method expands all third-party children directly into the menu.
+	 *
+	 * @return array The flyout menu data with expanded third-party items.
+	 */
+	public function get_flyout_menu_data(): array {
+		if ( null !== $this->cached_flyout_menu_data ) {
+			return $this->cached_flyout_menu_data;
+		}
+
+		$items = $this->build_flyout_items_with_expanded_third_party();
+
+		$this->sort_items_by_priority( $items );
+
+		$this->cached_flyout_menu_data = [
+			'parent_slug' => Menu_Config::EDITOR_MENU_SLUG,
+			'items' => $items,
+		];
+
+		return $this->cached_flyout_menu_data;
 	}
 
 	public function get_level4_flyout_data(): array {
@@ -253,6 +279,102 @@ class Menu_Data_Provider {
 		}
 
 		return $items;
+	}
+
+	/**
+	 * Build flyout items with third-party parent expanded into its children.
+	 *
+	 * @return array The flyout items array with third-party children inline.
+	 */
+	private function build_flyout_items_with_expanded_third_party(): array {
+		$items = [];
+		$existing_slugs = [];
+		$excluded_slugs = Menu_Config::get_excluded_level3_slugs();
+		$excluded_level4_slugs = Menu_Config::get_excluded_level4_slugs();
+
+		foreach ( $this->level3_items as $group_items ) {
+			foreach ( $group_items as $item_slug => $item ) {
+				if ( ! $this->should_include_flyout_item( $item, $item_slug, $existing_slugs, $excluded_slugs ) ) {
+					continue;
+				}
+
+				// Check if this is the third-party parent (Addons) with children
+				if ( $this->is_third_party_parent_with_children( $item ) ) {
+					// Expand children inline instead of showing the parent
+					$children = $this->level4_items[ Menu_Config::THIRD_PARTY_GROUP_ID ] ?? [];
+					$is_first_child = true;
+
+					foreach ( $children as $child_slug => $child ) {
+						if ( ! $this->is_item_accessible( $child ) ) {
+							continue;
+						}
+
+						if ( $this->slug_normalizer->is_excluded( $child_slug, $excluded_level4_slugs ) ) {
+							continue;
+						}
+
+						if ( in_array( $child_slug, $existing_slugs, true ) ) {
+							continue;
+						}
+
+						$child_data = $this->create_expanded_child_item_data( $child, $child_slug, $is_first_child );
+						$items[] = $child_data;
+						$existing_slugs[] = $child_slug;
+						$is_first_child = false;
+					}
+					continue;
+				}
+
+				$items[] = $this->create_flyout_item_data( $item, $item_slug );
+				$existing_slugs[] = $item_slug;
+			}
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Check if item is the third-party parent (Addons) with children.
+	 *
+	 * @param Menu_Item_Interface $item The menu item to check.
+	 * @return bool True if the item is the third-party parent with children.
+	 */
+	private function is_third_party_parent_with_children( Menu_Item_Interface $item ): bool {
+		if ( Menu_Config::THIRD_PARTY_GROUP_ID !== $item->get_group_id() ) {
+			return false;
+		}
+
+		if ( ! $item->has_children() ) {
+			return false;
+		}
+
+		$children = $this->level4_items[ Menu_Config::THIRD_PARTY_GROUP_ID ] ?? [];
+
+		return ! empty( $children );
+	}
+
+	/**
+	 * Create flyout item data for an expanded child item.
+	 *
+	 * @param Menu_Item_Interface $item The child menu item.
+	 * @param string $item_slug The item slug.
+	 * @param bool $is_first Whether this is the first child (for divider).
+	 * @return array The item data array.
+	 */
+	private function create_expanded_child_item_data( Menu_Item_Interface $item, string $item_slug, bool $is_first ): array {
+		$url = $item instanceof Menu_Item_With_Custom_Url_Interface
+			? $item->get_menu_url()
+			: $this->get_item_url( $item_slug, $item->get_parent_slug() );
+
+		return [
+			'slug' => $item_slug,
+			'label' => $this->title_case( $item->get_label() ),
+			'url' => $url,
+			'icon' => method_exists( $item, 'get_icon' ) ? $item->get_icon() : 'extension',
+			'group_id' => '',
+			'priority' => $item->get_position() ?? 100,
+			'has_divider_before' => $is_first,
+		];
 	}
 
 	private function should_include_flyout_item( Menu_Item_Interface $item, string $item_slug, array $existing_slugs, array $excluded_slugs ): bool {
@@ -421,6 +543,7 @@ class Menu_Data_Provider {
 	private function invalidate_cache(): void {
 		$this->cached_editor_flyout_data = null;
 		$this->cached_level4_flyout_data = null;
+		$this->cached_flyout_menu_data = null;
 	}
 
 	public static function get_current_user_capabilities(): array {

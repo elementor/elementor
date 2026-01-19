@@ -332,7 +332,7 @@ class Elementor_One_Menu_Manager {
 	}
 
 	private function get_editor_flyout_data(): array {
-		return $this->menu_data_provider->get_editor_flyout_data();
+		return $this->menu_data_provider->get_flyout_menu_data();
 	}
 }
 
