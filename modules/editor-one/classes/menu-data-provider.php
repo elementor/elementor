@@ -119,14 +119,6 @@ class Menu_Data_Provider {
 		return $this->cached_editor_flyout_data;
 	}
 
-	/**
-	 * Get flyout menu data with third-party items expanded inline.
-	 *
-	 * Unlike get_editor_flyout_data() which keeps "Addons" as a parent item,
-	 * this method expands all third-party children directly into the menu.
-	 *
-	 * @return array The flyout menu data with expanded third-party items.
-	 */
 	public function get_flyout_menu_data(): array {
 		if ( null !== $this->cached_flyout_menu_data ) {
 			return $this->cached_flyout_menu_data;
@@ -281,11 +273,6 @@ class Menu_Data_Provider {
 		return $items;
 	}
 
-	/**
-	 * Build flyout items with third-party parent expanded into its children.
-	 *
-	 * @return array The flyout items array with third-party children inline.
-	 */
 	private function build_flyout_items_with_expanded_third_party(): array {
 		$items = [];
 		$existing_slugs = [];
@@ -298,9 +285,7 @@ class Menu_Data_Provider {
 					continue;
 				}
 
-				// Check if this is the third-party parent (Addons) with children
 				if ( $this->is_third_party_parent_with_children( $item ) ) {
-					// Expand children inline instead of showing the parent
 					$children = $this->level4_items[ Menu_Config::THIRD_PARTY_GROUP_ID ] ?? [];
 					$is_first_child = true;
 
@@ -333,12 +318,6 @@ class Menu_Data_Provider {
 		return $items;
 	}
 
-	/**
-	 * Check if item is the third-party parent (Addons) with children.
-	 *
-	 * @param Menu_Item_Interface $item The menu item to check.
-	 * @return bool True if the item is the third-party parent with children.
-	 */
 	private function is_third_party_parent_with_children( Menu_Item_Interface $item ): bool {
 		if ( Menu_Config::THIRD_PARTY_GROUP_ID !== $item->get_group_id() ) {
 			return false;
@@ -353,14 +332,6 @@ class Menu_Data_Provider {
 		return ! empty( $children );
 	}
 
-	/**
-	 * Create flyout item data for an expanded child item.
-	 *
-	 * @param Menu_Item_Interface $item The child menu item.
-	 * @param string $item_slug The item slug.
-	 * @param bool $is_first Whether this is the first child (for divider).
-	 * @return array The item data array.
-	 */
 	private function create_expanded_child_item_data( Menu_Item_Interface $item, string $item_slug, bool $is_first ): array {
 		$url = $item instanceof Menu_Item_With_Custom_Url_Interface
 			? $item->get_menu_url()
