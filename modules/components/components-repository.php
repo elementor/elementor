@@ -70,12 +70,18 @@ class Components_Repository {
 			]
 		);
 
-		$saved = $document->save( [
-			'elements' => $content,
-			'settings' => $settings,
-		] );
+		try {
+			$saved = $document->save( [
+				'elements' => $content,
+				'settings' => $settings,
+			] );
+		} catch ( \Exception $e ) {
+			$document->force_delete();
+			throw $e;
+		}
 
 		if ( ! $saved ) {
+			$document->force_delete();
 			throw new \Exception( 'Failed to create component' );
 		}
 
