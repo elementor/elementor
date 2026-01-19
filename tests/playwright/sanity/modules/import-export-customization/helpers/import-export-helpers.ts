@@ -95,8 +95,8 @@ export class ImportExportHelpers {
 
 	static async waitForImportProcess( page: Page ): Promise<void> {
 		await page.waitForURL( /.*import-customization\/process.*/ );
-		await expect( page.locator( 'text=Settings up your website templates...' ) ).toBeVisible();
-		await expect( page.locator( 'text=This usually take a few moments.' ) ).toBeVisible();
+		await expect( page.locator( 'text=Setting up your website template...' ) ).toBeVisible();
+		await expect( page.locator( 'text=This usually takes a few moments.' ) ).toBeVisible();
 		await expect( page.locator( 'text=Don\'t close this window until the process is finished.' ) ).toBeVisible();
 	}
 
