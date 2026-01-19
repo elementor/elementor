@@ -1819,6 +1819,44 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		);
 	}
 
+	public function test_post_create_component__cleans_up_orphaned_post_when_save_throws_exception() {
+		// Arrange
+		$this->act_as_admin();
+		$initial_post_count = $this->get_component_post_count();
+
+		$throw_on_save = function () {
+			throw new \Exception( 'Simulated save failure' );
+		};
+		add_action( 'elementor/document/before_save', $throw_on_save );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'items' => [
+				[
+					'uid' => 'test-uid-cleanup-exception',
+					'title' => 'Test Component Cleanup Exception',
+					'elements' => $this->mock_component_1_content,
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 500, $response->get_status() );
+
+		remove_action( 'elementor/document/before_save', $throw_on_save );
+
+		$final_post_count = $this->get_component_post_count();
+		$this->assertEquals(
+			$initial_post_count,
+			$final_post_count,
+			'No orphaned posts should remain after save throws exception'
+		);
+	}
+
 	private function get_component_post_count(): int {
 		$posts = get_posts( [
 			'post_type' => Component_Document::TYPE,
