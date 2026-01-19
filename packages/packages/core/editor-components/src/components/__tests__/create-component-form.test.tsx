@@ -550,4 +550,67 @@ describe( 'CreateComponentForm', () => {
 			expect( getNameInput().value ).toBe( 'Div Block' );
 		} );
 	} );
+
+	describe( 'Component Count Validation', () => {
+		const loadMockComponents = ( count: number, isArchived: boolean = false ) => {
+			const components = Array.from( { length: count }, ( _, i ) => ( {
+				id: i + 1,
+				name: `Component ${ i + 1 }`,
+				uid: `component-uid-${ i + 1 }`,
+				isArchived,
+			} ) );
+
+			act( () => {
+				__dispatch( slice.actions.load( components ) );
+			} );
+		};
+
+		const MAX_COMPONENTS_NOTIFICATION = {
+			type: 'default',
+			message:
+				"You've reached the limit of 100 components. Please remove an existing one to create a new component.",
+			id: 'maximum-number-of-components-exceeded',
+		};
+
+		it.each( [
+			{ count: 100, shouldOpen: false, expected: 'not open' },
+			{ count: 101, shouldOpen: false, expected: 'not open' },
+			{ count: 99, shouldOpen: true, expected: 'open' },
+			{ count: 50, shouldOpen: true, expected: 'open' },
+		] )( 'should %(expected) when existing component count is %(count)', ( { count, shouldOpen } ) => {
+			// Arrange.
+			loadMockComponents( count );
+
+			setupForm();
+
+			// Act.
+			triggerOpenFormEvent();
+
+			// Assert.
+			if ( shouldOpen ) {
+				expect( screen.getByText( 'Create component' ) ).toBeInTheDocument();
+				expect( mockNotify ).not.toHaveBeenCalled();
+			} else {
+				expect( screen.queryByText( 'Create component' ) ).not.toBeInTheDocument();
+				expect( mockNotify ).toHaveBeenCalledWith( MAX_COMPONENTS_NOTIFICATION );
+			}
+		} );
+
+		it( 'should not count archived components for count validation', () => {
+			// Arrange.
+			// 90 active components
+			loadMockComponents( 90 );
+			// 20 archived components
+			loadMockComponents( 20, true );
+
+			setupForm();
+
+			// Act.
+			triggerOpenFormEvent();
+
+			// Assert.
+			expect( screen.getByText( 'Create component' ) ).toBeInTheDocument();
+			expect( mockNotify ).not.toHaveBeenCalled();
+		} );
+	} );
 } );
