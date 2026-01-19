@@ -1777,19 +1777,20 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$initial_post_count = $this->get_component_post_count();
 
-		// A way to mock the save failure by denying edit after create.
-		$deny_edit_after_create = function( $allcaps, $caps, $args ) {
-			if ( isset( $args[2] ) ) {
-				$post = get_post( $args[2] );
-				if ( $post && Component_Document::TYPE === $post->post_type ) {
-					$allcaps['edit_post'] = false;
-					$allcaps['edit_others_posts'] = false;
-				}
+		$deny_edit_component = function( $caps, $cap, $user_id, $args ) {
+			if ( 'edit_post' !== $cap || empty( $args[0] ) ) {
+				return $caps;
 			}
-			return $allcaps;
+
+			$post = get_post( $args[0] );
+			if ( $post && Component_Document::TYPE === $post->post_type ) {
+				return [ 'do_not_allow' ];
+			}
+
+			return $caps;
 		};
 
-		add_filter( 'user_has_cap', $deny_edit_after_create, 10, 3 );
+		add_filter( 'map_meta_cap', $deny_edit_component, 10, 4 );
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
@@ -1809,7 +1810,7 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		// Assert
 		$this->assertEquals( 500, $response->get_status() );
 
-		remove_filter( 'user_has_cap', $deny_edit_after_create, 10 );
+		remove_filter( 'map_meta_cap', $deny_edit_component, 10 );
 
 		$final_post_count = $this->get_component_post_count();
 		$this->assertEquals(
