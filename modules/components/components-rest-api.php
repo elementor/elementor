@@ -644,9 +644,6 @@ class Components_REST_API {
 		try {
 			$response = $cb();
 		} catch ( \Exception $e ) {
-			var_dump($e->getMessage());
-			var_dump($e->getTraceAsString());
-			die();
 			return Error_Builder::make( 'unexpected_error' )
 			->set_message( __( 'Something went wrong', 'elementor' ) )
 			->build();
