@@ -6,23 +6,30 @@ import { UnitSelect } from './unit-select'
 import { useSizeValue } from '../../hooks/use-size-value';
 import { UnstableSizeInput } from './unstable-size-input';
 
-type Props<TValue = SizePropValue['value']> = {
+type Props<TValue> = {
 	units: Unit[];
 	value: TValue;
+	defaultValue?: Partial<TValue>;
 	onChange: ( value: TValue ) => void;
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 };
 
-export const UnstableSizeField = (
+const DEFAULT_VALUE: SizePropValue['value'] = {
+	unit: 'px',
+	size: 0,
+};
+
+export const UnstableSizeField = <T extends SizePropValue['value']>(
 	{
 		value,
+		defaultValue,
 		onChange,
 		onBlur,
 		units,
 	}:
-	Props
+	Props<T>
 ) => {
-	const { size, unit, setSize, setUnit } = useSizeValue( value, onChange );
+	const { size, unit, setSize, setUnit } = useSizeValue<T>( value, onChange, { ...DEFAULT_VALUE, ...defaultValue } as T );
 
 	const shouldHighlightUnit = () => {
 		return hasValue( size );

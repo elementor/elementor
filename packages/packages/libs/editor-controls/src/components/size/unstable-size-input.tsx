@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { NumberInput } from '../number-input';
-import { useBoundProp } from '@elementor/editor-controls';
 import type { PropValue } from '@elementor/editor-props';
 import type { TextFieldProps } from '@elementor/ui';
 import { forwardRef } from 'react';

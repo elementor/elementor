@@ -24,7 +24,6 @@ type InteractionItemContextValue = {
 
 const InteractionItemContext = createContext< InteractionItemContextValue | null >( null );
 
-
 export function InteractionsList( props: InteractionListProps ) {
 	const { interactions, onSelectInteractions, onPlayInteraction, triggerCreateOnShowEmpty } = props;
 

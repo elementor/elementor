@@ -17,8 +17,8 @@ const DEFAULT_UNIT = 'ms';
 export function TimeFrameIndicator( { value, onChange, defaultValue }: Props ) {
 	const sizeValue = toSizeValue( value, defaultValue );
 
-	const setValue = useCallback( ( size?: number) => {
-			onChange( createNumber( size ?? defaultValue ) );
+	const setValue = useCallback( ( size: number) => {
+			onChange( createNumber( size ) );
 		},
 		[ onChange, defaultValue ]
 	);
@@ -29,7 +29,7 @@ export function TimeFrameIndicator( { value, onChange, defaultValue }: Props ) {
 
 	const handleBlur = () => {
 		if ( ! sizeValue.size ) {
-			setValue();
+			setValue( defaultValue );
 		}
 	}
 
@@ -39,6 +39,7 @@ export function TimeFrameIndicator( { value, onChange, defaultValue }: Props ) {
 			value={ sizeValue }
 			onChange={ handleChange }
 			onBlur={ handleBlur }
+			defaultValue={ { size: 90 } }
 		/>
 	);
 }

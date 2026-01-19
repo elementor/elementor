@@ -1,17 +1,16 @@
 import { SizePropValue } from '@elementor/editor-props';
 import { useSyncExternalState } from '../hooks/use-sync-external-state';
 
-const DEFAULT_UNIT = 'px';
-
 export const useSizeValue = <T extends SizePropValue['value']> (
 	externalValue: T,
 	onChange: ( value: T ) => void,
+	defaultValue: T,
 ) => {
 	const [ sizeValue, setSizeValue ] = useSyncExternalState<T>( {
 		external: externalValue,
 		setExternal: ( newState ) => onChange( newState as T ),
-		persistWhen: ( newState ) => shouldPersist( newState as T, externalValue ),
-		fallback: () => ( { unit: DEFAULT_UNIT, size: 0 } ) as T,
+		persistWhen: ( newState ) => differsFromExternal( newState as T, externalValue ),
+		fallback: () => defaultValue,
 	} );
 
 	const setSize = ( value: string) => {
@@ -40,7 +39,7 @@ export const useSizeValue = <T extends SizePropValue['value']> (
 	}
 }
 
-const shouldPersist = (
+const differsFromExternal = (
 	newState: SizePropValue['value'],
 	externalState: SizePropValue['value']
 ) => {
