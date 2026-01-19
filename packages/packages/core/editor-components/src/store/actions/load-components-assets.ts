@@ -8,11 +8,10 @@ import { loadComponentsStyles } from './load-components-styles';
 export async function loadComponentsAssets( elements: V1ElementData[] ) {
 	const documents = await getComponentDocuments( elements );
 
-	return Promise.all( [
-		updateDocumentState( documents ),
-		loadComponentsOverridableProps( [ ...documents.keys() ] ),
-		loadComponentsStyles( documents ),
-	] );
+	updateDocumentState( documents );
+	loadComponentsStyles( documents );
+
+	await loadComponentsOverridableProps( [ ...documents.keys() ] );
 }
 
 function updateDocumentState( documents: ComponentDocumentsMap ) {
