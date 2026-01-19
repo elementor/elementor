@@ -139,11 +139,10 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 
 		await test.step( 'Go back to editor', async () => {
 			wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-			editor = await wpAdminPage.editExistingPage( pageId, { page, testInfo } );
+			editor = await wpAdminPage.editExistingPostWithElementor( pageId, { page, testInfo } );
 		} );
 
 		const headingElement = editor.previewFrame.locator( HEADING_WIDGET_SELECTOR );
-		const flexboxElement = editor.previewFrame.locator( FLEXBOX_ELEMENT_SELECTOR );
 
 		// Await test.step( 'Heading in editor - static', async () => {
 		// 	// Assert.
@@ -157,6 +156,12 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		// } );
 
 		await test.step( 'Heading in editor - in edit mode', async () => {
+			// Arrange.
+			// Setup environment for non hovering assertion
+			const dummyElementId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
+			const flexboxElement = editor.previewFrame.locator( FLEXBOX_ELEMENT_SELECTOR ).first();
+			await page.pause();
+
 			// Act.
 			await editor.triggerEditingElement( headingId );
 
@@ -165,7 +170,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			await expect.soft( flexboxElement ).toHaveScreenshot( 'styled-edited-heading-hover.png' );
 
 			// Act.
-			await flexboxElement.blur();
+			await editor.previewFrame.locator( editor.getWidgetSelector( dummyElementId ) ).hover();
 
 			// Assert.
 			await expect.soft( flexboxElement ).toHaveScreenshot( 'styled-edited-heading.png' );

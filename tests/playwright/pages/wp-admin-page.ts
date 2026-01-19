@@ -145,14 +145,14 @@ export default class WpAdminPage extends BasePage {
 	/**
 	 * Edit an existing Elementor page.
 	 *
-	 * @param {string}   pageId        - The ID of the page to edit.
+	 * @param {string}   postId        - The ID of the page to edit.
 	 * @param {Object}   prop          - Properties object.
 	 * @param {Page}     prop.page     - Playwright Page object.
 	 * @param {TestInfo} prop.testInfo - Playwright TestInfo object.
 	 * @return {Promise<EditorPage>}
 	 */
-	async editExistingPage( pageId: string, { page, testInfo }: { page: Page; testInfo: TestInfo; } ): Promise<EditorPage> {
-		page.goto( `/wp-admin/post.php?post=${ pageId }&action=elementor` );
+	async editExistingPostWithElementor( postId: string, { page, testInfo }: { page: Page; testInfo: TestInfo; } ): Promise<EditorPage> {
+		page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
 
 		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
 		await this.waitForPanel();
