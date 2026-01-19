@@ -14,6 +14,8 @@ class Site_Settings extends Export_Runner_Base {
 		'customCode',
 		'customIcons',
 		'customFonts',
+		'classes',
+		'variables',
 	];
 
 	public static function get_name(): string {
@@ -36,7 +38,7 @@ class Site_Settings extends Export_Runner_Base {
 		return $this->export_all( $data );
 	}
 
-	private function export_all( $data, $include_theme = true ) {
+	private function export_all( $data, $include_theme = true, $customization = null ) {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 		$kit_data = $kit->get_export_data();
 
@@ -73,6 +75,12 @@ class Site_Settings extends Export_Runner_Base {
 			$manifest_data['site-settings']['theme'] = false;
 		}
 
+		$classes_variables_info = $this->get_classes_variables_info( $customization );
+		$manifest_data['site-settings']['classes'] = $classes_variables_info['classes'];
+		$manifest_data['site-settings']['classesCount'] = $classes_variables_info['classesCount'];
+		$manifest_data['site-settings']['variables'] = $classes_variables_info['variables'];
+		$manifest_data['site-settings']['variablesCount'] = $classes_variables_info['variablesCount'];
+
 		return [
 			'files' => [
 				'path' => 'site-settings',
@@ -84,6 +92,40 @@ class Site_Settings extends Export_Runner_Base {
 		];
 	}
 
+	private function get_classes_variables_info( ?array $customization = null ): array {
+		$classes_count = 0;
+		$variables_count = 0;
+
+		$include_classes = $customization['classes'] ?? true;
+		$include_variables = $customization['variables'] ?? true;
+
+		if ( $include_classes && class_exists( '\Elementor\Modules\GlobalClasses\Global_Classes_Repository' ) ) {
+			$classes_repository = \Elementor\Modules\GlobalClasses\Global_Classes_Repository::make();
+			$classes_data = $classes_repository->all()->get();
+			$classes_count = count( $classes_data['items'] ?? [] );
+		}
+
+		if ( $include_variables && class_exists( '\Elementor\Modules\Variables\Storage\Variables_Repository' ) ) {
+			$kit = Plugin::$instance->kits_manager->get_active_kit();
+			if ( $kit ) {
+				$variables_repository = new \Elementor\Modules\Variables\Storage\Variables_Repository( $kit );
+				$collection = $variables_repository->load();
+				foreach ( $collection->all() as $variable ) {
+					if ( ! $variable->is_deleted() ) {
+						$variables_count++;
+					}
+				}
+			}
+		}
+
+		return [
+			'classes' => $include_classes && $classes_count > 0,
+			'classesCount' => $classes_count,
+			'variables' => $include_variables && $variables_count > 0,
+			'variablesCount' => $variables_count,
+		];
+	}
+
 	private function export_customization( $data, $customization ) {
 		$result = apply_filters( 'elementor/import-export-customization/export/site-settings/customization', null, $data, $customization, $this );
 
@@ -91,7 +133,7 @@ class Site_Settings extends Export_Runner_Base {
 			return $result;
 		}
 
-		return $this->export_all( $data, ! empty( $customization['theme'] ) );
+		return $this->export_all( $data, ! empty( $customization['theme'] ), $customization );
 	}
 
 	public function export_theme() {

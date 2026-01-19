@@ -4,31 +4,40 @@ namespace Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners;
 
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Import_Runner_Base;
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
-use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
+use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly.
+	exit;
 }
 
 class Import extends Import_Runner_Base {
+	private const MAX_LABEL_LENGTH = 50;
+
 	public static function get_name(): string {
 		return 'global-classes';
 	}
 
-	public function should_import( array $data ) {
-		// Same as the site-settings runner.
+	public function should_import( array $data ): bool {
 		return (
 			isset( $data['include'] ) &&
 			in_array( 'settings', $data['include'], true ) &&
-			! empty( $data['site_settings']['settings'] ) &&
-			! empty( $data['extracted_directory_path'] )
+			! empty( $data['extracted_directory_path'] ) &&
+			$this->is_classes_enabled( $data )
 		);
 	}
 
-	public function import( array $data, array $imported_data ) {
+	private function is_classes_enabled( array $data ): bool {
+		if ( isset( $data['customization']['settings']['classes'] ) ) {
+			return (bool) $data['customization']['settings']['classes'];
+		}
+
+		return true;
+	}
+
+	public function import( array $data, array $imported_data ): array {
 		$kit = Plugin::$instance->kits_manager->get_active_kit();
 
 		$file_name = Import_Export_Customization::FILE_NAME;
@@ -44,13 +53,101 @@ class Import extends Import_Runner_Base {
 			return [];
 		}
 
-		$global_classes = $global_classes_result->unwrap();
+		$imported_classes = $global_classes_result->unwrap();
+		$repository = Global_Classes_Repository::make();
 
-		Global_Classes_Repository::make()->put(
-			$global_classes['items'],
-			$global_classes['order']
+		$override_all = ! empty( $data['customization']['settings']['classesOverrideAll'] );
+
+		if ( $override_all ) {
+			$repository->put(
+				$imported_classes['items'],
+				$imported_classes['order']
+			);
+
+			return $imported_classes;
+		}
+
+		$existing_classes = $repository->all()->get();
+		$merged = $this->merge_classes( $existing_classes, $imported_classes );
+
+		$repository->put(
+			$merged['items'],
+			$merged['order']
 		);
 
-		return $global_classes;
+		return $imported_classes;
+	}
+
+	private function merge_classes( array $existing, array $imported ): array {
+		$existing_items = $existing['items'] ?? [];
+		$existing_order = $existing['order'] ?? [];
+		$existing_labels = $this->get_existing_labels( $existing_items );
+
+		$imported_items = $imported['items'] ?? [];
+		$imported_order = $imported['order'] ?? [];
+
+		foreach ( $imported_order as $imported_id ) {
+			if ( ! isset( $imported_items[ $imported_id ] ) ) {
+				continue;
+			}
+
+			$imported_class = $imported_items[ $imported_id ];
+			$new_id = $this->generate_unique_id( array_keys( $existing_items ) );
+
+			$original_label = $imported_class['label'] ?? $imported_id;
+			$new_label = $this->resolve_label_conflict( $original_label, $existing_labels );
+			$existing_labels[] = strtolower( $new_label );
+
+			$imported_class['id'] = $new_id;
+			$imported_class['label'] = $new_label;
+
+			$existing_items[ $new_id ] = $imported_class;
+			$existing_order[] = $new_id;
+		}
+
+		return [
+			'items' => $existing_items,
+			'order' => $existing_order,
+		];
+	}
+
+	private function get_existing_labels( array $items ): array {
+		$labels = [];
+
+		foreach ( $items as $item ) {
+			if ( isset( $item['label'] ) ) {
+				$labels[] = strtolower( $item['label'] );
+			}
+		}
+
+		return $labels;
+	}
+
+	private function resolve_label_conflict( string $label, array $existing_labels ): string {
+		$lower_label = strtolower( $label );
+
+		if ( ! in_array( $lower_label, $existing_labels, true ) ) {
+			return $label;
+		}
+
+		$suffix = 1;
+
+		do {
+			$suffix_str = '_' . $suffix;
+			$max_base_length = self::MAX_LABEL_LENGTH - strlen( $suffix_str );
+			$base_label = mb_substr( $label, 0, $max_base_length );
+			$new_label = $base_label . $suffix_str;
+			$suffix++;
+		} while ( in_array( strtolower( $new_label ), $existing_labels, true ) && $suffix < 1000 );
+
+		return $new_label;
+	}
+
+	private function generate_unique_id( array $existing_ids ): string {
+		do {
+			$new_id = 'e-gc-' . wp_generate_uuid4();
+		} while ( in_array( $new_id, $existing_ids, true ) );
+
+		return $new_id;
 	}
 }
