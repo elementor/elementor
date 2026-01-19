@@ -36,7 +36,7 @@ const createAtomicFormStatusView = ( status ) => {
 			let current = this.getContainer();
 			while ( current ) {
 				const elementType = current.model.get( 'widgetType' ) || current.model.get( 'elType' );
-				if ( elementType === 'e-form' ) {
+				if ( 'e-form' === elementType ) {
 					this._formContainer = current;
 					return current;
 				}

@@ -91,5 +91,4 @@ class Atomic_Form_Error extends Atomic_Element_Base {
 
 		$this->add_render_attribute( '_wrapper', $attributes );
 	}
-
 }

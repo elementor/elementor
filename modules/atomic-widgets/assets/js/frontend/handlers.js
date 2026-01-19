@@ -52,7 +52,7 @@ function handleLinkActions( element ) {
 }
 
 function handleAtomicFormSubmit( element ) {
-	const form = element.tagName === 'FORM' ? element : element.querySelector( 'form' );
+	const form = 'FORM' === element.tagName ? element : element.querySelector( 'form' );
 
 	if ( ! form ) {
 		return;
