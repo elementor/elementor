@@ -1777,20 +1777,23 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->act_as_admin();
 		$initial_post_count = $this->get_component_post_count();
 
-		$deny_edit_component = function( $caps, $cap, $user_id, $args ) {
-			if ( 'edit_post' !== $cap || empty( $args[0] ) ) {
-				return $caps;
+		// Documents->create() internally calls save() with empty data first,
+		// then the repository calls save() with elements. We only want to fail
+		// on the second save (with elements) to test the repository's cleanup logic.
+		$force_save_failure = function( $data, $document ) {
+			if ( Component_Document::TYPE !== $document->get_type() ) {
+				return $data;
 			}
 
-			$post = get_post( $args[0] );
-			if ( $post && Component_Document::TYPE === $post->post_type ) {
-				return [ 'do_not_allow' ];
+			$has_elements = ! empty( $data['elements'] );
+			if ( $has_elements ) {
+				throw new \Exception( 'Forced save failure for testing' );
 			}
 
-			return $caps;
+			return $data;
 		};
 
-		add_filter( 'map_meta_cap', $deny_edit_component, 10, 4 );
+		add_filter( 'elementor/document/save/data', $force_save_failure, 10, 2 );
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
@@ -1800,17 +1803,17 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 				[
 					'uid' => 'test-uid-cleanup',
 					'title' => 'Test Component Cleanup',
-					'elements' => $this->mock_component_1_content,
+					'elements' => [ [ 'id' => 'test' ] ],
 				],
 			],
 		] );
 
 		$response = rest_do_request( $request );
 
+		remove_filter( 'elementor/document/save/data', $force_save_failure, 10 );
+
 		// Assert
 		$this->assertEquals( 500, $response->get_status() );
-
-		remove_filter( 'map_meta_cap', $deny_edit_component, 10 );
 
 		$final_post_count = $this->get_component_post_count();
 		$this->assertEquals(
