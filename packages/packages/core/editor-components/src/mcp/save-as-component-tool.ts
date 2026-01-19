@@ -74,7 +74,7 @@ export const ERROR_MESSAGES = {
 
 export const handleSaveAsComponent = async ( params: z.infer< z.ZodObject< typeof InputSchema > > ) => {
 	const {
-		groups,
+		groups = [],
 		element_id: elementId,
 		component_name: componentName,
 		overridable_props: overridablePropsInput,
