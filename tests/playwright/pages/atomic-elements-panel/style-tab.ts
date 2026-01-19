@@ -230,20 +230,20 @@ export default class StyleTab extends BasePage {
 		await this.changeSizeControl( control, lineHeight, unit );
 	}
 
-	async setFontSize( size: number, unit: Unit ) {
-		this.setFontSectionSize( 'Font size', size, unit );
+	setFontSize( size: number, unit: Unit ) {
+		return this.setFontSectionSize( 'Font size', size, unit );
 	}
 
-	async setLetterSpacing( spacing: number, unit: Unit ) {
-		this.setFontSectionSize( 'Letter spacing', spacing, unit );
+	setLetterSpacing( spacing: number, unit: Unit ) {
+		return this.setFontSectionSize( 'Letter spacing', spacing, unit );
 	}
 
-	async setWordSpacing( spacing: number, unit: Unit ) {
-		this.setFontSectionSize( 'Word spacing', spacing, unit );
+	setWordSpacing( spacing: number, unit: Unit ) {
+		return this.setFontSectionSize( 'Word spacing', spacing, unit );
 	}
 
-	async setLineHeight( lineHeight: number, unit: Unit ) {
-		this.setFontSectionSize( 'Line height', lineHeight, unit );
+	setLineHeight( lineHeight: number, unit: Unit ) {
+		return this.setFontSectionSize( 'Line height', lineHeight, unit );
 	}
 
 	async setFontWeight( weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 ): Promise<void> {
