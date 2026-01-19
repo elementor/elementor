@@ -280,7 +280,7 @@ trait Has_Atomic_Base {
 	final public function get_raw_data( $with_html_content = false ) {
 		$raw_data = parent::get_raw_data( $with_html_content );
 
-		$raw_data['styles'] = $this->styles;
+		$raw_data['styles'] = apply_filters( 'elementor/atomic_widgets/editor_data/element_styles', $this->styles, $this );
 		$raw_data['interactions'] = $this->interactions ?? [];
 		$raw_data['editor_settings'] = $this->editor_settings;
 
