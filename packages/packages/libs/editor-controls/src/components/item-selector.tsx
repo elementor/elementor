@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { type ReactNode, useCallback, useEffect, useState } from 'react';
 import { PopoverBody, PopoverHeader, PopoverMenuList, SearchField } from '@elementor/editor-ui';
 import { Box, Divider, Link, Stack, Typography } from '@elementor/ui';
 import { debounce } from '@elementor/utils';
@@ -24,8 +24,8 @@ type ItemSelectorProps = {
 	icon: React.ElementType< { fontSize: string } >;
 	disabledItems?: string[];
 	id?: string;
-	footer?: React.ReactNode;
-	menuCategoryContentTemplate?: ( item: SelectableItem ) => React.ReactNode;
+	footer?: ReactNode;
+	menuCategoryContentTemplate?: ( item: SelectableItem ) => ReactNode;
 };
 
 export const ItemSelector = ( {
@@ -142,7 +142,7 @@ type ItemListProps = {
 	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
 	onDebounce?: ( name: string ) => void;
 	disabledItems?: string[];
-	menuCategoryContentTemplate?: ( item: SelectableItem ) => React.ReactNode;
+	menuCategoryContentTemplate?: ( item: SelectableItem ) => ReactNode;
 };
 
 const ItemList = ( {

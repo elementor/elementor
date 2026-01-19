@@ -1,20 +1,12 @@
-interface WindowWithElementorPro {
-	elementorPro?: {
-		config?: {
-			version?: string;
-		};
-	};
-}
-
 interface TransitionCategory {
 	label: string;
 }
 
 describe( 'transition properties conditional loading', () => {
-	const originalElementorPro = ( window as WindowWithElementorPro ).elementorPro;
+	const originalElementorPro = window.elementorPro;
 
 	afterEach( () => {
-		( window as WindowWithElementorPro ).elementorPro = originalElementorPro;
+		window.elementorPro = originalElementorPro;
 		jest.resetModules();
 	} );
 
@@ -38,7 +30,7 @@ describe( 'transition properties conditional loading', () => {
 			expectedHasMargin: false,
 		},
 	] )( 'should load correct properties when $scenario', ( { proConfig, expectedLength, expectedHasMargin } ) => {
-		( window as WindowWithElementorPro ).elementorPro = proConfig;
+		window.elementorPro = proConfig;
 
 		const { transitionProperties: props } = require( '../data' );
 
