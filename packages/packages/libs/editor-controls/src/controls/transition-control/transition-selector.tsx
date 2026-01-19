@@ -47,6 +47,8 @@ const includeCurrentValueInOptions = ( value: KeyValuePropValue[ 'value' ], disa
 	} );
 };
 
+const PRO_UPGRADE_URL = 'https://go.elementor.com/go-pro-transitions-modal/';
+
 export const TransitionSelector = ( {
 	recentlyUsedList = [],
 	disabledItems = [],
@@ -174,7 +176,7 @@ export const TransitionSelector = ( {
 								{ __( 'Upgrade to customize transition properties and control effects.', 'elementor' ) }
 								<Box
 									component="a"
-									href="https://go.elementor.com/go-pro-transitions-modal/"
+									href={ PRO_UPGRADE_URL }
 									target="_blank"
 									rel="noopener noreferrer"
 									sx={ {
