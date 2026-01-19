@@ -7,6 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { type ComponentEventData } from '../../components/create-component-form/utils/get-component-event-data';
 import { replaceElementWithComponent } from '../../components/create-component-form/utils/replace-element-with-component';
 import { type OriginalElementData, type OverridableProps } from '../../types';
+import { revertAllOverridablesInElementData } from '../../utils/revert-overridable-settings';
 import { type Source, trackComponentEvent } from '../../utils/tracking';
 import { slice } from '../store';
 
@@ -29,6 +30,7 @@ export async function createUnpublishedComponent( {
 }: CreateUnpublishedComponentParams ): Promise< { uid: string; instanceId: string } > {
 	const generatedUid = uid ?? generateUniqueId( 'component' );
 	const componentBase = { uid: generatedUid, name };
+	const elementDataWithOverridablesReverted = revertAllOverridablesInElementData( element );
 
 	const container = getContainer( element.id );
 	const modelFromContainer = container?.model?.toJSON?.() as V1ElementData | undefined;
@@ -41,7 +43,7 @@ export async function createUnpublishedComponent( {
 	dispatch(
 		slice.actions.addUnpublished( {
 			...componentBase,
-			elements: [ element ],
+			elements: [ elementDataWithOverridablesReverted ],
 			overridableProps,
 		} )
 	);
