@@ -41,7 +41,7 @@ export const initialTransitionValue: TransitionValue = {
 
 const MIN_PRO_VERSION = '3.35';
 
-// TODO: Remove this after version 3.37 is released
+// TODO: Remove this after version 4.01 is released
 const shouldExtendTransitionProperties = (): boolean => {
 	const hasProInstalled = !! window.elementorPro;
 
