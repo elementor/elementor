@@ -174,7 +174,7 @@ function getAtomicFormFieldLabel( field, form ) {
 }
 
 function getAtomicFormFieldType( field ) {
-	if ( field.tagName === 'TEXTAREA' ) {
+	if ( 'TEXTAREA' === field.tagName ) {
 		return 'textarea';
 	}
 
