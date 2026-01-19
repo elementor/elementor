@@ -3,6 +3,7 @@ import { type V1Element } from '@elementor/editor-elements';
 import { type LegacyWindow } from '../../types';
 
 export const INLINE_EDITING_PROPERTY_PER_TYPE: Record< string, string > = {
+	'e-form-label': 'text',
 	'e-heading': 'title',
 	'e-paragraph': 'paragraph',
 };
