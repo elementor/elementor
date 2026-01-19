@@ -1,14 +1,11 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { getAngieSdk } from '@elementor/editor-mcp';
-import { AIIcon, ComponentsIcon } from '@elementor/icons';
-import { Box, Button, Divider, Link, List, Stack, Typography } from '@elementor/ui';
+import { ComponentsIcon } from '@elementor/icons';
+import { Box, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
 import { useComponentsPermissions } from '../../hooks/use-components-permissions';
 import { renameComponent } from '../../store/actions/rename-component';
-import { AngiePromotionModal } from './angie-promotion-modal';
 import { ComponentItem } from './components-item';
 import { LoadingComponents } from './loading-components';
 import { useSearch } from './search-provider';
@@ -52,25 +49,7 @@ export function ComponentsList() {
 }
 
 const EmptyState = () => {
-	const [ isAngieModalOpen, setIsAngieModalOpen ] = useState( false );
-
 	const { canCreate } = useComponentsPermissions();
-
-	const handleCreateWithAI = () => {
-		const sdk = getAngieSdk();
-
-		if ( sdk.isAngieReady() ) {
-			sdk.triggerAngie( {
-				prompt: __(
-					'Create a [hero/testimonial/product card/CTA/feature] component for my [business type]. Include [describe what you want]',
-					'elementor'
-				),
-				context: { source: 'components-panel-empty-state' },
-			} );
-		} else {
-			setIsAngieModalOpen( true );
-		}
-	};
 
 	return (
 		<Stack
@@ -108,45 +87,6 @@ const EmptyState = () => {
 					{ __( 'Learn more about components', 'elementor' ) }
 				</Link>
 			</Stack>
-
-			{ canCreate && (
-				<>
-					<Divider sx={ { width: '100%' } } />
-					<Stack alignItems="center" gap={ 1 } width="100%">
-						<Typography
-							align="center"
-							variant="subtitle2"
-							color="text.secondary"
-							sx={ SUBTITLE_OVERRIDE_SX }
-						>
-							{ __( 'Create your first one:', 'elementor' ) }
-						</Typography>
-
-						<Typography align="center" variant="caption" color="secondary" sx={ { maxWidth: 228 } }>
-							{ __(
-								'Right-click any div-block or flexbox on your canvas or structure and select "Create component"',
-								'elementor'
-							) }
-						</Typography>
-
-						<Typography align="center" variant="caption" color="secondary">
-							{ __( 'Or', 'elementor' ) }
-						</Typography>
-
-						<AngiePromotionModal open={ isAngieModalOpen } onClose={ () => setIsAngieModalOpen( false ) }>
-							<Button
-								color="secondary"
-								variant="outlined"
-								size="small"
-								onClick={ handleCreateWithAI }
-								endIcon={ <AIIcon /> }
-							>
-								{ __( 'Create component with AI', 'elementor' ) }
-							</Button>
-						</AngiePromotionModal>
-					</Stack>
-				</>
-			) }
 		</Stack>
 	);
 };

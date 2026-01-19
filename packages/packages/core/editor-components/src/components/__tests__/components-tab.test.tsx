@@ -134,8 +134,7 @@ describe( 'ComponentsTab', () => {
 			// Assert
 			expect( screen.getByText( 'No components yet' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Create your first one:' ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: /Create component with AI/i } ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Create once, use everywhere' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render components list when components exist', () => {
@@ -731,8 +730,7 @@ describe( 'ComponentsTab', () => {
 			// Assert
 			expect( screen.getByText( 'No components yet' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Learn more about components' ) ).toBeInTheDocument();
-			expect( screen.queryByText( 'Create your first one:' ) ).not.toBeInTheDocument();
-			expect( screen.queryByRole( 'button', { name: /Create component with AI/i } ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Create once, use everywhere' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
