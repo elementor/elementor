@@ -9,6 +9,9 @@ import createAtomicTabContentType from './atomic-element-types/atomic-tab-conten
 import createAtomicTabType from './atomic-element-types/atomic-tab/create-atomic-tab-type';
 import createAtomicTabsMenuType from './atomic-element-types/atomic-tabs-menu/create-atomic-tabs-menu-type';
 import createAtomicTabsContentAreaType from './atomic-element-types/atomic-tabs-content-area/create-atomic-tabs-content-area-type';
+import createAtomicFormType from './atomic-element-types/atomic-form/create-atomic-form-type';
+import createAtomicFormSuccessType from './atomic-element-types/atomic-form/create-atomic-form-success-type';
+import createAtomicFormErrorType from './atomic-element-types/atomic-form/create-atomic-form-error-type';
 
 class Module extends elementorModules.editor.utils.Module {
 	onInit() {
@@ -33,6 +36,10 @@ class Module extends elementorModules.editor.utils.Module {
 		elementor.elementsManager.registerElementType( createAtomicTabType() );
 		elementor.elementsManager.registerElementType( createAtomicTabsMenuType() );
 		elementor.elementsManager.registerElementType( createAtomicTabsContentAreaType() );
+
+		elementor.elementsManager.registerElementType( createAtomicFormType() );
+		elementor.elementsManager.registerElementType( createAtomicFormSuccessType() );
+		elementor.elementsManager.registerElementType( createAtomicFormErrorType() );
 	}
 }
 
