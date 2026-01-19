@@ -35,10 +35,7 @@ type StorageContent = {
 };
 
 const FORM_ELEMENT_TYPE = 'e-form';
-const FORM_FIELD_TYPES = new Set( [
-	'e-form-success',
-	'e-form-error',
-] );
+const FORM_FIELD_TYPES = new Set( [ 'e-form-success', 'e-form-error' ] );
 
 const FORM_NESTING_ALERT: NotificationData = {
 	type: 'default',
@@ -51,7 +48,6 @@ const FORM_FIELD_ALERT: NotificationData = {
 	message: __( 'Form fields must be placed inside a form.', 'elementor' ),
 	id: 'form-fields-outside-blocked',
 };
-
 
 export function initFormNestingPrevention() {
 	blockCommand( {
@@ -121,8 +117,9 @@ function blockFormPaste( args: PasteArgs ): boolean {
 		return false;
 	}
 
-	const data = ( window as { elementorCommon?: { storage?: { get: () => StorageContent } } } )
-		?.elementorCommon?.storage?.get();
+	const data = (
+		window as { elementorCommon?: { storage?: { get: () => StorageContent } } }
+	 )?.elementorCommon?.storage?.get();
 
 	if ( ! data?.clipboard?.elements ) {
 		return false;
@@ -198,4 +195,3 @@ function getFormAncestor( element?: V1Element ): V1Element | null {
 
 	return null;
 }
-
