@@ -6,6 +6,7 @@ import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
 import { UNITS } from '../typography/typography-constants';
 
 const HEADING_WIDGET_SELECTOR = '.e-heading-base';
+const FLEXBOX_ELEMENT_SELECTOR = '.e-flexbox-base';
 const TESTED_CONTENT = 'Very long Text With no Space To fiiiiiiiiiiiiiit';
 const CONTENT_WORDS = TESTED_CONTENT.split( ' ' );
 
@@ -145,7 +146,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 
 		editor = new EditorPage( page, testInfo );
 		const headingElement = editor.previewFrame.locator( HEADING_WIDGET_SELECTOR );
-		const editedHeadingElement = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
+		const flexboxElement = editor.previewFrame.locator( FLEXBOX_ELEMENT_SELECTOR );
 
 		await test.step( 'Heading in editor - static', async () => {
 			// Assert.
@@ -164,13 +165,13 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 
 			// Assert.
 			// Already hovered at this stage
-			await expect.soft( editedHeadingElement ).toHaveScreenshot( 'styled-edited-heading-hover.png' );
+			await expect.soft( flexboxElement ).toHaveScreenshot( 'styled-edited-heading-hover.png' );
 
 			// Act.
-			await editedHeadingElement.blur();
+			await flexboxElement.blur();
 
 			// Assert.
-			await expect.soft( editedHeadingElement ).toHaveScreenshot( 'styled-edited-heading.png' );
+			await expect.soft( flexboxElement ).toHaveScreenshot( 'styled-edited-heading.png' );
 		} );
 	} );
 } );
