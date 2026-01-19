@@ -1,11 +1,12 @@
-import { getCurrentDocument, getV1DocumentsManager } from '@elementor/editor-documents';
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
+import { getV1DocumentsManager } from '@elementor/editor-documents';
+import { getElements, getElementSetting, updateElementSettings } from '@elementor/editor-elements';
+import { classesPropTypeUtil, type ClassesPropValue } from '@elementor/editor-props';
 import { __dispatch as dispatch } from '@elementor/store';
 
 import { slice } from '../../store';
 import { trackGlobalClasses } from '../../utils/tracking';
 
-let isDeleted = false;
+let deletedClassId: string | null = null;
 
 export const deleteClass = ( id: string ) => {
 	trackGlobalClasses( {
@@ -13,30 +14,43 @@ export const deleteClass = ( id: string ) => {
 		classId: id,
 		runAction: () => {
 			dispatch( slice.actions.delete( id ) );
-			isDeleted = true;
+			deletedClassId = id;
 		},
 	} );
 };
 
 export const onDelete = async () => {
-	await reloadDocument();
+	if ( deletedClassId ) {
+		removeClassFromAllElements( deletedClassId );
+		invalidateDocumentCache();
+	}
 
-	isDeleted = false;
+	deletedClassId = null;
 };
 
-export const hasDeletedItems = () => isDeleted;
+export const hasDeletedItems = () => deletedClassId !== null;
 
-// When deleting a class, we remove it from all the documents that have it applied.
-// In order to reflect the changes in the active document, we need to reload it.
-const reloadDocument = () => {
-	const currentDocument = getCurrentDocument();
-	const documentsManager = getV1DocumentsManager();
+// Remove the deleted class from all elements in the current document
+const removeClassFromAllElements = ( classId: string ) => {
+	const elements = getElements();
 
-	documentsManager.invalidateCache();
+	elements.forEach( ( element ) => {
+		const appliedClasses = getElementSetting< ClassesPropValue >( element.id, 'classes' )?.value || [];
 
-	return runCommand( 'editor/documents/switch', {
-		id: currentDocument?.id,
-		shouldScroll: false,
-		shouldNavigateToDefaultRoute: false,
+		if ( appliedClasses.includes( classId ) ) {
+			const updatedClassIds = appliedClasses.filter( ( id ) => id !== classId );
+
+			updateElementSettings( {
+				id: element.id,
+				props: { classes: classesPropTypeUtil.create( updatedClassIds ) },
+				withHistory: false,
+			} );
+		}
 	} );
+};
+
+// Invalidate cache so future document loads get fresh data from server
+const invalidateDocumentCache = () => {
+	const documentsManager = getV1DocumentsManager();
+	documentsManager.invalidateCache();
 };
