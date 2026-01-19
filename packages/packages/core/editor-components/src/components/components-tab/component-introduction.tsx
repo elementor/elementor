@@ -45,7 +45,7 @@ export const ComponentIntroduction = ( {
 						</Typography>
 						<Typography variant={ 'body2' }>
 							{ __(
-								'Click next to any setting you want users to customize - like text, images, or links.',
+								'Select any Element, then in the General tab, click next to any setting you want users to customize - like text, images, or links.',
 								'elementor'
 							) }
 						</Typography>
