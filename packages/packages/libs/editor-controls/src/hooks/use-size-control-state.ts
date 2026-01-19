@@ -33,7 +33,7 @@ export function useSizeControlState(
 			setSizeValue( extractValueFromState( newState ), options, meta ),
 		persistWhen: ( newState ) => {
 			const extracted = extractValueFromState( newState );
-			return !! extracted && ( extracted.size !== null && extracted.size !== undefined );
+			return !! extracted && extracted.size !== null && extracted.size !== undefined;
 		},
 		fallback: ( newState ) => ( {
 			unit: newState?.unit ?? lastSelectedUnitRef.current,

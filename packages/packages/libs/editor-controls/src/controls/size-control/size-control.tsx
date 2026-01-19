@@ -1,15 +1,15 @@
 import * as React from 'react';
 
+import { createControl } from '../../create-control';
 import { AngleSizeControl } from './angle-size-control';
 import { LengthSizeControl } from './length-size-control';
 import {
 	type AngleSizeControlProps,
-	type LengthSizeControlProps,
 	type BaseSizeControlProps,
+	type LengthSizeControlProps,
 	type TimeSizeControlProps,
 } from './size-control-types';
 import { TimeSizeControl } from './time-size-control';
-import { createControl } from '../../create-control';
 
 /**
  * Generic SizeControl component that accepts an optional variant prop and delegates to the appropriate variant-specific control.
@@ -34,4 +34,4 @@ export const SizeControl = createControl( ( props: BaseSizeControlProps ) => {
 		default:
 			return <LengthSizeControl { ...( rest as Omit< LengthSizeControlProps, 'variant' > ) } />;
 	}
-});
+} );
