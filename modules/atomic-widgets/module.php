@@ -139,6 +139,7 @@ class Module extends BaseModule {
 
 		if ( self::is_active() ) {
 			$this->register_experimental_features();
+			Migrations_Orchestrator::register_feature_flag_hooks();
 		}
 
 		if ( Plugin::$instance->experiments->is_feature_active( self::EXPERIMENT_NAME ) ) {

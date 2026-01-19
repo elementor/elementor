@@ -39,6 +39,15 @@ class Migrations_Orchestrator {
 		self::$instance = null;
 	}
 
+	public static function register_feature_flag_hooks(): void {
+		static $registered = false;
+		if ( $registered ) {
+			return;
+		}
+
+		$registered = true;
+	}
+
 	public static function clear_migration_cache( $old_state = null, $new_state = null ): void {
 		global $wpdb;
 
