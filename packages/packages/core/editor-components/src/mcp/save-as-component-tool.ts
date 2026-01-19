@@ -128,7 +128,14 @@ export const handleSaveAsComponent = async ( params: z.infer< z.ZodObject< typeo
 		throw new Error( 'Unknown error' );
 	}
 
-	createUnpublishedComponent( componentName, element, null, overridableProps, uid );
+	await createUnpublishedComponent( {
+		name: componentName,
+		element,
+		eventData: null,
+		uid,
+		overridableProps,
+		source: 'mcp_tool',
+	} );
 
 	return {
 		status: 'ok' as const,

@@ -3,11 +3,13 @@ import { ControlAdornmentsProvider } from '@elementor/editor-controls';
 import { getFieldIndicators } from '@elementor/editor-editing-panel';
 import { useSelectedElement } from '@elementor/editor-elements';
 import { PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
+import { EllipsisWithTooltip } from '@elementor/editor-ui';
 import { ComponentsIcon, PencilIcon } from '@elementor/icons';
 import { Divider, IconButton, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponentInstanceSettings } from '../../hooks/use-component-instance-settings';
+import { useComponentsPermissions } from '../../hooks/use-components-permissions';
 import { useComponent, useOverridableProps } from '../../store/store';
 import { type OverridablePropsGroup } from '../../types';
 import { switchToComponent } from '../../utils/switch-to-component';
@@ -15,7 +17,10 @@ import { EmptyState } from './empty-state';
 import { OverridePropsGroup } from './override-props-group';
 
 export function InstanceEditingPanel() {
+	const { canEdit } = useComponentsPermissions();
+
 	const settings = useComponentInstanceSettings();
+
 	const componentId = settings?.component_id?.value;
 
 	const overrides = settings?.overrides?.value;
@@ -45,16 +50,16 @@ export function InstanceEditingPanel() {
 	return (
 		<>
 			<PanelHeader sx={ { justifyContent: 'start', px: 2 } }>
-				<Stack direction="row" alignContent="space-between" flexGrow={ 1 }>
-					<Stack direction="row" alignItems="center" justifyContent="start" gap={ 1 } flexGrow={ 1 }>
-						<ComponentsIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
-						<PanelHeaderTitle>{ component.name }</PanelHeaderTitle>
-					</Stack>
-					<Tooltip title={ panelTitle }>
-						<IconButton size="tiny" onClick={ handleEditComponent } aria-label={ panelTitle }>
-							<PencilIcon fontSize="tiny" />
-						</IconButton>
-					</Tooltip>
+				<Stack direction="row" alignItems="center" flexGrow={ 1 } gap={ 1 } maxWidth="100%">
+					<ComponentsIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
+					<EllipsisWithTooltip title={ component.name } as={ PanelHeaderTitle } sx={ { flexGrow: 1 } } />
+					{ canEdit && (
+						<Tooltip title={ panelTitle }>
+							<IconButton size="tiny" onClick={ handleEditComponent } aria-label={ panelTitle }>
+								<PencilIcon fontSize="tiny" />
+							</IconButton>
+						</Tooltip>
+					) }
 				</Stack>
 			</PanelHeader>
 			<PanelBody>

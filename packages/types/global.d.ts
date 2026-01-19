@@ -16,6 +16,7 @@ declare global {
 			};
 		};
 		elementor?: {
+			$preview?: [ HTMLIFrameElement ];
 			selection?: {
 				getElements: () => V1Element[];
 			};

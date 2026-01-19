@@ -1106,7 +1106,9 @@ class Admin extends App {
 	}
 
 	private function maybe_enqueue_hints() {
-		if ( ! Hints::should_display_hint( 'image-optimization' ) ) {
+		$plugin_slug = 'image-optimization';
+
+		if ( ! Hints::should_display_hint( $plugin_slug ) ) {
 			return;
 		}
 
@@ -1118,13 +1120,45 @@ class Admin extends App {
 			true
 		);
 
-		$content = sprintf("%1\$s <a class='e-btn-1' href='%2\$s' target='_blank'>%3\$s</a>!",
-			__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' ),
-			Hints::get_plugin_action_url( 'image-optimization' ),
-			( Hints::is_plugin_installed( 'image-optimization' ) ? __( 'Activate', 'elementor' ) : __( 'Install', 'elementor' ) ) . ' ' . __( 'Image Optimizer', 'elementor' )
-		);
+		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
+		$is_installed = Hints::is_plugin_installed( $plugin_slug );
+		$is_active = Hints::is_plugin_active( $plugin_slug );
+
+		if ( $is_active ) {
+			return;
+		}
+
+		if ( $one_subscription ) {
+			if ( ! $is_installed ) {
+				$description = esc_html__( 'Automatically optimize images to improve site speed and performance. Included with your ONE subscription.', 'elementor' );
+				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+			} elseif ( ! $is_active ) {
+				$description = esc_html__( 'Image Optimizer is installed and included in your ONE subscription. Activate it to optimize images and improve site performance.', 'elementor' );
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+			}
+		} else {
+			$description = esc_html__( 'Optimize your images to enhance site performance by using Image Optimizer.', 'elementor' );
+			if ( ! $is_installed ) {
+				$button_text = esc_html__( 'Install now', 'elementor' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+			} elseif ( ! $is_active ) {
+				$button_text = esc_html__( 'Activate now', 'elementor' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+			}
+		}
 
 		$dismissible = 'image_optimizer_hint';
+
+		$title = esc_html__( 'Speed up your website with Image Optimizer', 'elementor' );
+		$content = sprintf(
+			"<strong>%1\$s</strong><br>%2\$s <a class='e-btn-1' href='%3\$s' target='_blank'>%4\$s</a>!",
+			$title,
+			$description,
+			$button_url,
+			$button_text
+		);
 
 		wp_localize_script( 'media-hints', 'elementorAdminHints', [
 			'mediaHint' => [
@@ -1133,11 +1167,11 @@ class Admin extends App {
 				'content' => $content,
 				'icon' => true,
 				'dismissible' => $dismissible,
-				'dismiss' => __( 'Dismiss this notice.', 'elementor' ),
+				'dismiss' => esc_attr__( 'Dismiss this notice.', 'elementor' ),
 				'button_event' => $dismissible,
 				'button_data' => base64_encode(
 					wp_json_encode( [
-						'action_url' => Hints::get_plugin_action_url( 'image-optimization' ),
+						'action_url' => $button_url,
 					] ),
 				),
 			],
@@ -1179,10 +1213,20 @@ class Admin extends App {
 			return;
 		}
 
+		$one_subscription = Hints::is_plugin_connected_to_one_subscription();
+
+		if ( $one_subscription && strpos( $request['source'], 'editor' ) !== false ) {
+			$medium = 'editor-one';
+		} elseif ( $one_subscription ) {
+			$medium = 'wp-dash-one';
+		} else {
+			$medium = 'wp-dash';
+		}
+
 		$campaign_data = [
 			'source' => sanitize_key( $request['source'] ),
-			'campaign' => 'io-plg',
-			'medium' => 'wp-dash',
+			'campaign' => $one_subscription ? 'io-plg-one' : 'io-plg',
+			'medium' => $medium,
 		];
 
 		set_transient( 'elementor_image_optimization_campaign', $campaign_data, 30 * DAY_IN_SECONDS );

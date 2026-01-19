@@ -87,7 +87,7 @@
                 },
                 {
                     "slug": "elementor-element-manager",
-                    "label": "Elements Manager",
+                    "label": "Element Manager",
                     "url": "/wp-admin/admin.php?page=elementor-element-manager",
                     "priority": 20
                 }
@@ -126,8 +126,8 @@
                 {
                     "slug": "elementor-app",
                     "label": "Theme Builder",
-                    "url": "/wp-admin/admin.php?page=elementor-app&ver=3.35.0&return_to=%2Fwp-admin%2Fpost.php%3Fpost%3D1454&action=elementor#/site-editor/promotion",
-                    "priority": 20
+                    "url": "/wp-admin/admin.php?page=elementor-app&ver=3.35.0&return_to=%2Fwp-admin%2Fpost.php%3Fpost%3D1454&action=elementor#site-editor/promotion",
+                    "priority": 15
                 },
                 {
                     "slug": "/wp-admin/admin.php?page=elementor-app&ver=3.35.0&return_to=%2Fwp-admin%2Fpost.php%3Fpost%3D1454&action=elementor&source=wp_db_templates_menu#/kit-library",

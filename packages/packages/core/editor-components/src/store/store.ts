@@ -27,7 +27,7 @@ type ComponentsState = {
 	loadStatus: Status;
 	styles: StylesDefinition;
 	createdThisSession: Component[ 'uid' ][];
-	archivedData: PublishedComponent[];
+	archivedThisSession: ComponentId[];
 	path: ComponentsPathItem[];
 	currentComponentId: V1Document[ 'id' ] | null;
 	updatedComponentNames: Record< number, string >;
@@ -47,7 +47,7 @@ export const initialState: ComponentsState = {
 	loadStatus: 'idle',
 	styles: {},
 	createdThisSession: [],
-	archivedData: [],
+	archivedThisSession: [],
 	path: [],
 	currentComponentId: null,
 	updatedComponentNames: {},
@@ -87,14 +87,12 @@ export const slice = createSlice( {
 			state.createdThisSession.push( payload );
 		},
 		archive: ( state, { payload }: PayloadAction< number > ) => {
-			state.data = state.data.filter( ( component ) => {
-				const isArchived = component.id === payload;
-				if ( isArchived ) {
-					state.archivedData.push( component );
-				}
+			const component = state.data.find( ( comp ) => comp.id === payload );
 
-				return ! isArchived;
-			} );
+			if ( component ) {
+				component.isArchived = true;
+				state.archivedThisSession.push( payload );
+			}
 		},
 		setCurrentComponentId: ( state, { payload }: PayloadAction< V1Document[ 'id' ] | null > ) => {
 			state.currentComponentId = payload;
@@ -144,7 +142,7 @@ export const slice = createSlice( {
 } );
 
 const selectData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].data;
-const selectArchivedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].archivedData;
+export const selectArchivedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].archivedThisSession;
 const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadStatus;
 const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
 const selectUnpublishedData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].unpublishedData;
@@ -170,7 +168,7 @@ export const selectComponents = createSelector(
 			name: item.name,
 			overridableProps: item.overridableProps,
 		} ) ),
-		...data,
+		...data.filter( ( component ) => ! component.isArchived ),
 	]
 );
 export const selectUnpublishedComponents = createSelector(
@@ -222,14 +220,17 @@ export const selectCurrentComponentId = createSelector(
 	( currentComponentId ) => currentComponentId
 );
 
+export const selectCurrentComponent = createSelector( selectData, getCurrentComponentId, ( data, currentComponentId ) =>
+	data.find( ( component ) => component.id === currentComponentId )
+);
+
 export const useCurrentComponentId = () => {
 	return useSelector( selectCurrentComponentId );
 };
+export const useCurrentComponent = () => {
+	return useSelector( selectCurrentComponent );
+};
 
-export const selectArchivedComponents = createSelector(
-	selectArchivedData,
-	( archivedData: PublishedComponent[] ) => archivedData
-);
 export const selectUpdatedComponentNames = createSelector(
 	( state: ComponentsSlice ) => state[ SLICE_NAME ].updatedComponentNames,
 	( updatedComponentNames ) =>
