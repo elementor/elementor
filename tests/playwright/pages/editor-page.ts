@@ -359,25 +359,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Select an element inside the editor.
-	 *
-	 * @param {string} elementId - Element ID.
-	 *
-	 * @return {Promise<Locator>} element;
-	 */
-	async selectElementWithNavigator( elementId: string ): Promise<Locator> {
-		const item = this.page.locator( `${ EditorSelectors.panels.navigator.wrapper } [data-id="${ elementId }"]` );
-		const element = this.getPreviewFrame().locator( '.elementor-element-' + elementId );
-
-		await this.openNavigator();
-		await item.scrollIntoViewIfNeeded();
-		await item.click( { force: true } );
-		await element.waitFor();
-
-		return element;
-	}
-
-	/**
 	 * Add new container preset.
 	 *
 	 * @param {ContainerType}   element - Element type. Available values: 'flex', 'grid'.
@@ -925,25 +906,6 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
-	 * Close the navigator/structure panel.
-	 *
-	 * @return {Promise<void>}
-	 */
-	async openNavigator(): Promise<void> {
-		await this.waitForPreviewFrame();
-		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
-
-		if ( isOpen ) {
-			return;
-		}
-
-		const { wrapper, buttons: { navigator } } = EditorSelectors.panels.topBar;
-
-		await this.page.locator( `${ wrapper } ${ navigator }` ).click();
-		await this.page.locator( EditorSelectors.panels.navigator.wrapper ).waitFor();
-	}
-
-	/**
 	 * Set WordPress page template.
 	 *
 	 * @param {string} template - The page template to set. Available options: 'default', 'canvas', 'full-width'.
@@ -1415,8 +1377,9 @@ export default class EditorPage extends BasePage {
 		const element = this.previewFrame.locator( `.elementor-element-${ elementId }` );
 
 		await this.page.keyboard.press( 'Escape' );
+		await this.page.waitForTimeout( timeouts.short );
+		await element.waitFor();
 		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();
-		await inlineEditor.waitFor( { state: 'attached' } );
 
 		return inlineEditor;
 	}

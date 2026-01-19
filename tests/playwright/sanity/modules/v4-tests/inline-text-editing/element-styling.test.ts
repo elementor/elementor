@@ -14,6 +14,8 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 	let context: BrowserContext;
 	let page: Page;
 	let editor: EditorPage;
+	let pageId: string;
+	let headingId: string;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
@@ -24,6 +26,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active', e_classes: 'active' } );
 
 		editor = await wpAdminPage.openNewPage();
+		pageId = await editor.getPageId();
 	} );
 
 	test.afterAll( async () => {
@@ -31,14 +34,10 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		await context.close();
 	} );
 
-	test( 'Compare appearance in frontend, editor - static and in edit mode', async ( {}, testInfo ) => {
-		// Arrange.
-		let headingElement = editor.previewFrame.locator( HEADING_WIDGET_SELECTOR );
-		const editedHeadingElement = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
-
-		// Act.
+	test.only( 'Validate styling in editor, and that it does not get affected in frontend', async ( { apiRequests }, testInfo ) => {
+		// Arrange & act.
 		const flexboxId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
-		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: flexboxId } );
+		headingId = await editor.addWidget( { widgetType: 'e-heading', container: flexboxId } );
 
 		await test.step( 'Style flexbox to prevent footer from overlapping', async () => {
 			await editor.selectElement( flexboxId );
@@ -63,21 +62,27 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			await editor.toggleInlineEditingAttribute( INLINE_EDITING_SELECTORS.attributes.strikethrough );
 		} );
 
-		await test.step( 'Style widget', async () => {
-			await editor.v4Panel.openTab( 'style' );
+		await editor.v4Panel.openTab( 'style' );
 
+		await test.step( 'Style widget - spacing', async () => {
 			await editor.v4Panel.style.openSection( 'Spacing' );
 			await editor.v4Panel.style.setSpacingValue( 'Margin', 'Top', 30, UNITS.px );
 			await editor.v4Panel.style.closeSection( 'Spacing' );
+		} );
 
+		await test.step( 'Style widget - size', async () => {
 			await editor.v4Panel.style.openSection( 'Size' );
 			await editor.v4Panel.style.setSizeSectionValue( 'Width', 100, UNITS.px );
 			await editor.v4Panel.style.closeSection( 'Size' );
+		} );
 
+		await test.step( 'Style widget - position', async () => {
 			await editor.v4Panel.style.openSection( 'Position' );
 			await editor.v4Panel.style.setPositionValue( 'absolute', { Top: { size: 40, unit: UNITS.px } } );
 			await editor.v4Panel.style.closeSection( 'Position' );
+		} );
 
+		await test.step( 'Style widget - typography', async () => {
 			await editor.v4Panel.style.openSection( 'Typography' );
 			await editor.v4Panel.style.setFontFamily( 'Times New Roman' );
 			await editor.v4Panel.style.setFontSize( 33, UNITS.px );
@@ -87,18 +92,24 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			await editor.v4Panel.style.setLineHeight( 2, UNITS.em );
 			await editor.v4Panel.style.setLetterSpacing( 7, UNITS.px );
 			await editor.v4Panel.style.closeSection( 'Typography' );
+		} );
 
+		await test.step( 'Style widget - background', async () => {
 			await editor.v4Panel.style.openSection( 'Background' );
 			await editor.v4Panel.style.setBackgroundColor( '#333333' );
 			await editor.v4Panel.style.closeSection( 'Background' );
+		} );
 
+		await test.step( 'Style widget - border', async () => {
 			await editor.v4Panel.style.openSection( 'Border' );
 			await editor.v4Panel.style.setBorderWidth( 1, UNITS.px );
 			await editor.v4Panel.style.setBorderColor( '#BBBBBB' );
 			await editor.v4Panel.style.setBorderRadius( 10, UNITS.px );
 			await editor.v4Panel.style.setBorderType( 'solid' );
 			await editor.v4Panel.style.closeSection( 'Border' );
+		} );
 
+		await test.step( 'Style widget:hover - typography', async () => {
 			await editor.v4Panel.style.selectClassState( 'hover' );
 
 			await editor.v4Panel.style.openSection( 'Typography' );
@@ -106,15 +117,35 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			await editor.v4Panel.style.closeSection( 'Typography' );
 		} );
 
-		await test.step( 'Publish and reload page', async () => {
+		await test.step( 'Frontend - styled heading', async () => {
+			// Act.
 			await editor.publishPage();
-			await page.reload();
-			await page.waitForLoadState( 'load', { timeout: 20000 } );
-			await wpAdminPage.waitForPanel();
-			editor = new EditorPage( page, testInfo );
-			headingElement = editor.previewFrame.locator( HEADING_WIDGET_SELECTOR );
-			await headingElement.waitFor( { timeout: 20000 } );
+			await page.goto( `/?p=${ pageId }` );
+
+			const publishedHeadingElement = page.locator( HEADING_WIDGET_SELECTOR );
+
+			await publishedHeadingElement.waitFor();
+
+			// Assert.
+			await expect.soft( publishedHeadingElement ).toHaveScreenshot( 'styled-frontend-heading.png' );
+
+			// Act.
+			await publishedHeadingElement.hover();
+
+			// Assert.
+			await expect.soft( publishedHeadingElement ).toHaveScreenshot( 'styled-frontend-heading-hover.png' );
 		} );
+
+		await test.step( 'Go back to editor', async () => {
+			await page.goto( `wp-admin/post.php?post=${ pageId }&action=elementor` );
+			await page.waitForLoadState( 'load', { timeout: 20000 } );
+			wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
+			await wpAdminPage.waitForPanel();
+		} );
+
+		editor = new EditorPage( page, testInfo );
+		const headingElement = editor.previewFrame.locator( HEADING_WIDGET_SELECTOR );
+		const editedHeadingElement = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 
 		await test.step( 'Heading in editor - static', async () => {
 			// Assert.
@@ -132,30 +163,14 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			await editor.triggerEditingElement( headingId );
 
 			// Assert.
-			await expect.soft( editedHeadingElement ).toHaveScreenshot( 'styled-edited-heading.png' );
-
-			// Act.
-			await editedHeadingElement.hover();
-
-			// Assert.
+			// Already hovered at this stage
 			await expect.soft( editedHeadingElement ).toHaveScreenshot( 'styled-edited-heading-hover.png' );
-		} );
-
-		await test.step( 'Frontend - styled heading', async () => {
-			const publishedHeadingElement = page.locator( HEADING_WIDGET_SELECTOR );
 
 			// Act.
-			await editor.publishAndViewPage();
-			await publishedHeadingElement.waitFor();
+			await editedHeadingElement.blur();
 
 			// Assert.
-			await expect.soft( publishedHeadingElement ).toHaveScreenshot( 'styled-frontend-heading.png' );
-
-			// Act.
-			await publishedHeadingElement.hover();
-
-			// Assert.
-			await expect.soft( publishedHeadingElement ).toHaveScreenshot( 'styled-frontend-heading-hover.png' );
+			await expect.soft( editedHeadingElement ).toHaveScreenshot( 'styled-edited-heading.png' );
 		} );
 	} );
 } );

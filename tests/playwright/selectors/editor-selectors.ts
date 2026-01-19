@@ -18,9 +18,6 @@ const EditorSelectors = {
 	panels: {
 		topBar: {
 			wrapper: '#elementor-editor-wrapper-v2',
-			buttons: {
-				navigator: '[aria-label="Structure"]',
-			},
 		},
 		elements: {
 			wrapper: '#elementor-panel-page-elements',

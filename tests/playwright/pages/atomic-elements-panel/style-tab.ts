@@ -68,11 +68,7 @@ export default class StyleTab extends BasePage {
 			await this.changeUnit( unitSelect, unit );
 		}
 
-		await input.focus();
-		await input.clear();
-		await this.page.waitForTimeout( timeouts.short );
 		await input.fill( value.toString() );
-		await input.blur();
 	}
 
 	protected async getSelectControlByLabel( sectionLabel: StyleSection, labelText: string ): Promise<Locator> {
