@@ -255,29 +255,18 @@ class Menu_Data_Provider {
 	}
 
 	private function build_level3_flyout_items(): array {
-		$items = [];
-		$existing_slugs = [];
-		$excluded_slugs = Menu_Config::get_excluded_level3_slugs();
-
-		foreach ( $this->level3_items as $group_items ) {
-			foreach ( $group_items as $item_slug => $item ) {
-				if ( ! $this->should_include_flyout_item( $item, $item_slug, $existing_slugs, $excluded_slugs ) ) {
-					continue;
-				}
-
-				$items[] = $this->create_flyout_item_data( $item, $item_slug );
-				$existing_slugs[] = $item_slug;
-			}
-		}
-
-		return $items;
+		return $this->build_flyout_items( false );
 	}
 
 	private function build_flyout_items_with_expanded_third_party(): array {
+		return $this->build_flyout_items( true );
+	}
+
+	private function build_flyout_items( bool $expand_third_party ): array {
 		$items = [];
 		$existing_slugs = [];
 		$excluded_slugs = Menu_Config::get_excluded_level3_slugs();
-		$excluded_level4_slugs = Menu_Config::get_excluded_level4_slugs();
+		$excluded_level4_slugs = $expand_third_party ? Menu_Config::get_excluded_level4_slugs() : [];
 
 		foreach ( $this->level3_items as $group_items ) {
 			foreach ( $group_items as $item_slug => $item ) {
@@ -285,7 +274,7 @@ class Menu_Data_Provider {
 					continue;
 				}
 
-				if ( $this->is_third_party_parent_with_children( $item ) ) {
+				if ( $expand_third_party && $this->is_third_party_parent_with_children( $item ) ) {
 					$children = $this->level4_items[ Menu_Config::THIRD_PARTY_GROUP_ID ] ?? [];
 					$is_first_child = true;
 
@@ -294,7 +283,7 @@ class Menu_Data_Provider {
 							continue;
 						}
 
-						if ( $this->slug_normalizer->is_excluded( $child_slug, $excluded_level4_slugs ) ) {
+						if ( $this->is_slug_excluded( $child_slug, $excluded_level4_slugs, true ) ) {
 							continue;
 						}
 
@@ -333,9 +322,7 @@ class Menu_Data_Provider {
 	}
 
 	private function create_expanded_child_item_data( Menu_Item_Interface $item, string $item_slug, bool $is_first ): array {
-		$url = $item instanceof Menu_Item_With_Custom_Url_Interface
-			? $item->get_menu_url()
-			: $this->get_item_url( $item_slug, $item->get_parent_slug() );
+		$url = $this->resolve_item_url( $item, $item_slug );
 
 		return [
 			'slug' => $item_slug,
@@ -343,7 +330,7 @@ class Menu_Data_Provider {
 			'url' => $url,
 			'icon' => method_exists( $item, 'get_icon' ) ? $item->get_icon() : 'extension',
 			'group_id' => '',
-			'priority' => $item->get_position() ?? 100,
+			'priority' => $this->get_item_priority( $item ),
 			'has_divider_before' => $is_first,
 		];
 	}
@@ -357,7 +344,7 @@ class Menu_Data_Provider {
 			return false;
 		}
 
-		if ( in_array( $item_slug, $excluded_slugs, true ) ) {
+		if ( $this->is_slug_excluded( $item_slug, $excluded_slugs ) ) {
 			return false;
 		}
 
@@ -379,17 +366,13 @@ class Menu_Data_Provider {
 			'url' => $this->resolve_flyout_item_url( $item, $item_slug ),
 			'icon' => $item->get_icon(),
 			'group_id' => $group_id,
-			'priority' => $item->get_position() ?? 100,
+			'priority' => $this->get_item_priority( $item ),
 			'has_divider_before' => $is_third_party_parent,
 		];
 	}
 
 	private function resolve_flyout_item_url( Menu_Item_Interface $item, string $item_slug ): string {
-		if ( $item instanceof Menu_Item_With_Custom_Url_Interface ) {
-			return $item->get_menu_url();
-		}
-
-		$url = $this->get_item_url( $item_slug, $item->get_parent_slug() );
+		$url = $this->resolve_item_url( $item, $item_slug );
 
 		if ( ! $item->has_children() ) {
 			return $url;
@@ -416,7 +399,7 @@ class Menu_Data_Provider {
 
 			$children_data[] = [
 				'url' => $this->get_item_url( $child_slug, $child_item->get_parent_slug() ),
-				'priority' => $child_item->get_position() ?? 100,
+				'priority' => $this->get_item_priority( $child_item ),
 			];
 		}
 
@@ -442,7 +425,7 @@ class Menu_Data_Provider {
 					continue;
 				}
 
-				if ( $this->slug_normalizer->is_excluded( $item_slug, $excluded_slugs ) ) {
+				if ( $this->is_slug_excluded( $item_slug, $excluded_slugs, true ) ) {
 					continue;
 				}
 
@@ -453,15 +436,13 @@ class Menu_Data_Provider {
 					continue;
 				}
 
-				$url = $item instanceof Menu_Item_With_Custom_Url_Interface
-					? $item->get_menu_url()
-					: $this->get_item_url( $item_slug, $item->get_parent_slug() );
+				$url = $this->resolve_item_url( $item, $item_slug );
 
 				$groups[ $group_id ]['items'][] = [
 					'slug' => $item_slug,
 					'label' => $this->title_case( $item->get_label() ),
 					'url' => $url,
-					'priority' => $item->get_position() ?? 100,
+					'priority' => $this->get_item_priority( $item ),
 				];
 
 				$existing_labels[] = $label_lower;
@@ -495,18 +476,32 @@ class Menu_Data_Provider {
 		return admin_url( 'admin.php?page=' . $item_slug );
 	}
 
+	private function resolve_item_url( Menu_Item_Interface $item, string $item_slug ): string {
+		if ( $item instanceof Menu_Item_With_Custom_Url_Interface ) {
+			return $item->get_menu_url();
+		}
+
+		return $this->get_item_url( $item_slug, $item->get_parent_slug() );
+	}
+
+	private function get_item_priority( Menu_Item_Interface $item ): int {
+		return $item->get_position() ?? 100;
+	}
+
+	private function is_slug_excluded( string $item_slug, array $excluded_slugs, bool $use_normalizer = false ): bool {
+		if ( $use_normalizer ) {
+			return $this->slug_normalizer->is_excluded( $item_slug, $excluded_slugs );
+		}
+
+		return in_array( $item_slug, $excluded_slugs, true );
+	}
+
 	private function sort_items_by_priority( array &$items ): void {
 		usort( $items, function ( array $a, array $b ): int {
 			return ( $a['priority'] ?? 100 ) <=> ( $b['priority'] ?? 100 );
 		} );
 	}
 
-	/**
-	 * Convert string to Title Case (capitalize first letter of each word).
-	 *
-	 * @param string $text The text to convert.
-	 * @return string The text in Title Case.
-	 */
 	private function title_case( string $text ): string {
 		return mb_convert_case( $text, MB_CASE_TITLE, 'UTF-8' );
 	}
