@@ -21,7 +21,7 @@ describe( 'updateArchivedComponentBeforeSave', () => {
 
 	it( 'should return early when there are no archived components', async () => {
 		// Act
-		await updateArchivedComponentBeforeSave();
+		await updateArchivedComponentBeforeSave( 'publish' );
 
 		// Assert
 		expect( mockUpdateArchivedComponents ).not.toHaveBeenCalled();
@@ -45,10 +45,10 @@ describe( 'updateArchivedComponentBeforeSave', () => {
 		} );
 
 		// Act
-		await updateArchivedComponentBeforeSave();
+		await updateArchivedComponentBeforeSave( 'publish' );
 
 		// Assert
-		expect( mockUpdateArchivedComponents ).toHaveBeenCalledWith( [ 100, 200 ] );
+		expect( mockUpdateArchivedComponents ).toHaveBeenCalledWith( [ 100, 200 ], 'publish' );
 		expect( mockNotify ).toHaveBeenCalledTimes( 1 );
 		expect( mockNotify ).toHaveBeenCalledWith( {
 			type: 'error',
@@ -68,7 +68,7 @@ describe( 'updateArchivedComponentBeforeSave', () => {
 		mockUpdateArchivedComponents.mockRejectedValue( apiError );
 
 		// Act & Assert
-		await expect( updateArchivedComponentBeforeSave() ).rejects.toThrow(
+		await expect( updateArchivedComponentBeforeSave( 'publish' ) ).rejects.toThrow(
 			'Failed to update archived components: Error: Network error'
 		);
 		expect( mockNotify ).not.toHaveBeenCalled();

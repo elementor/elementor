@@ -35,6 +35,14 @@
 		.tablenav .actions {
 			display: flex;
 			align-items: center;
+
+			.button,
+			input[type="submit"].button {
+				height: 30px;
+				padding-block: 0;
+				line-height: 28px;
+				box-sizing: border-box;
+			}
 		}
 
 		> h1.wp-heading-inline {
@@ -63,6 +71,11 @@
 	}
 
 	#screen-meta-links {
+		display: flex;
+		justify-content: flex-end;
+		margin-block-end: 10px;
+		margin-inline: 32px;
+
 		.show-settings {
 			&::after {
 				bottom: 1px;
@@ -73,7 +86,7 @@
 	}
 
 	#screen-meta-links + .wrap {
-		margin-block-start: 60px;
+		margin-block-start: 0;
 	}
 
 	#wpbody-content,

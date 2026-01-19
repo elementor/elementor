@@ -1,12 +1,9 @@
 import * as React from 'react';
-import { PopoverGridContainer, UnstableSizeField } from '@elementor/editor-controls';
-import { Grid } from '@elementor/ui';
-
-import { NumberPropValue } from '../../types';
+import { UnstableSizeField } from '@elementor/editor-controls';
 import { numberPropTypeUtil, PropValue, sizePropTypeUtil, SizePropValue } from '@elementor/editor-props';
-import { createNumber } from '../../utils/prop-value-utils';
 
-const DEFAULT_UNIT = 'ms';
+import { createNumber } from '../../utils/prop-value-utils';
+import { NumberPropValue } from '../../types';
 
 type Props<T = NumberPropValue> = {
 	value: T
@@ -14,31 +11,23 @@ type Props<T = NumberPropValue> = {
 	defaultValue: number;
 };
 
-export function TimeFrameIndicator( {
-	value: numberValue,
-	onChange,
-	defaultValue,
-}: Props ) {
-	const sizeValue = convertToSize( numberValue, defaultValue );
+const DEFAULT_UNIT = 'ms';
 
-	const convertToNumber = ( value: SizePropValue['value'] ) => {
-		const numberValue = createNumber( value.size as number );
+export function TimeFrameIndicator( { value, onChange, defaultValue }: Props ) {
+	const sizeValue = convertToSize( value, defaultValue );
 
-		onChange( numberValue ?? defaultValue );
+	const convertToNumber = ( newValue: SizePropValue['value'] ) => {
+		const numberValue = createNumber( Number( newValue.size ) );
+
+		onChange( numberValue );
 	};
 
 	return (
-		<Grid item xs={ 12 }>
-			<PopoverGridContainer>
-				<Grid item xs={ 6 }>
-					<UnstableSizeField
-						units={ [ DEFAULT_UNIT ] }
-						value={ sizeValue }
-						onChange={ convertToNumber }
-					/>
-				</Grid>
-			</PopoverGridContainer>
-		</Grid>
+		<UnstableSizeField
+			units={ [ DEFAULT_UNIT ] }
+			value={ sizeValue }
+			onChange={ convertToNumber }
+		/>
 	);
 }
 

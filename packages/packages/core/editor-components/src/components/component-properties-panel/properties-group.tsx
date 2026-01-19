@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { EditableField, MenuListItem } from '@elementor/editor-ui';
+import { EditableField, EllipsisWithTooltip, MenuListItem } from '@elementor/editor-ui';
 import { DotsVerticalIcon } from '@elementor/icons';
 import {
 	bindMenu,
@@ -101,7 +101,6 @@ export function PropertiesGroup( {
 						{ isThisGroupEditing ? (
 							<Box
 								sx={ {
-									flex: 1,
 									height: 28,
 									display: 'flex',
 									alignItems: 'center',
@@ -109,6 +108,11 @@ export function PropertiesGroup( {
 									borderColor: 'text.secondary',
 									borderRadius: 1,
 									pl: 0.5,
+									flexGrow: 1,
+									overflow: 'hidden',
+									textOverflow: 'ellipsis',
+									whiteSpace: 'nowrap',
+									width: '100%',
 								} }
 							>
 								<EditableField
@@ -121,12 +125,12 @@ export function PropertiesGroup( {
 								/>
 							</Box>
 						) : (
-							<Typography
+							<EllipsisWithTooltip
+								title={ group.label }
+								as={ Typography }
 								variant="caption"
 								sx={ { color: 'text.primary', fontWeight: 400, lineHeight: 1.66 } }
-							>
-								{ group.label }
-							</Typography>
+							/>
 						) }
 						<IconButton
 							className="group-menu"

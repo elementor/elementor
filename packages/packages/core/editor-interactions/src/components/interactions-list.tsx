@@ -8,7 +8,6 @@ import { __ } from '@wordpress/i18n';
 import type { ElementInteractions, InteractionItemPropValue, InteractionItemValue } from '../types';
 import { buildDisplayLabel, createDefaultInteractionItem, extractString } from '../utils/prop-value-utils';
 import { InteractionDetails } from './interaction-details';
-
 export const MAX_NUMBER_OF_INTERACTIONS = 5;
 
 export type InteractionListProps = {
@@ -98,7 +97,6 @@ export function InteractionsList( props: InteractionListProps ) {
 		onInteractionChange: handleInteractionChange,
 		onPlayInteraction: onPlayInteraction,
 	} ), [ handleInteractionChange, onPlayInteraction ] );
-
 
 	return (
 		<InteractionItemContext.Provider value={ contextValue }>

@@ -230,5 +230,16 @@ export function createTemplatedElementView( {
 
 			this.triggerMethod( 'render', this );
 		}
+
+		_doAfterRender( callback: () => void ) {
+			if ( this.isRendered ) {
+				callback();
+			} else {
+				this.once( 'render', callback );
+			}
+		}
+		_openEditingPanel( options?: { scrollIntoView: boolean } ) {
+			this._doAfterRender( () => super._openEditingPanel( options ) );
+		}
 	};
 }

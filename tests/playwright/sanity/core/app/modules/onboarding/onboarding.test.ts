@@ -165,7 +165,7 @@ test.describe( 'Onboarding @onBoarding', async () => {
 			upgradeNowBtn = page.locator( EditorSelectors.onboarding.upgradeButton ),
 			tierLocator = page.locator( '.e-onboarding__choose-features-section__message strong' ),
 			tiers = {
-				one: 'ONE',
+				one: 'One',
 				advanced: 'Advanced',
 				essential: 'Essential',
 			};

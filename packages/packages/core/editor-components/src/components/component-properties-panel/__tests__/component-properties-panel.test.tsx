@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { renderWithStore } from 'test-utils';
+import { createMockContainer, renderWithStore } from 'test-utils';
 import { getContainer, updateElementSettings } from '@elementor/editor-elements';
 import {
 	__createStore,
@@ -71,7 +71,7 @@ describe( 'ComponentPropertiesPanel', () => {
 		store = __createStore();
 		jest.clearAllMocks();
 
-		jest.mocked( getContainer ).mockReturnValue( { id: 'element-1' } as never );
+		jest.mocked( getContainer ).mockReturnValue( createMockContainer( 'element-1' ) );
 	} );
 
 	afterEach( () => {
