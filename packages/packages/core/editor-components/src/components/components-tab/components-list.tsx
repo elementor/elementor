@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ComponentsIcon } from '@elementor/icons';
-import { Box, Link, List, Stack, Typography } from '@elementor/ui';
+import { Box, Divider, Link, List, Stack, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { useComponents } from '../../hooks/use-components';
@@ -87,6 +87,33 @@ const EmptyState = () => {
 					{ __( 'Learn more about components', 'elementor' ) }
 				</Link>
 			</Stack>
+
+			{ canCreate && (
+				<>
+					<Divider sx={ { width: '100%' } } />
+					<Stack alignItems="center" gap={ 1 } width="100%">
+						<Typography
+							align="center"
+							variant="subtitle2"
+							color="text.secondary"
+							sx={ SUBTITLE_OVERRIDE_SX }
+						>
+							{ __( 'Create your first one:', 'elementor' ) }
+						</Typography>
+
+						<Typography align="center" variant="caption" color="secondary" sx={ { maxWidth: 228 } }>
+							{ __(
+								'Right-click any div-block or flexbox on your canvas or structure and select "Create component"',
+								'elementor'
+							) }
+						</Typography>
+
+						<Typography align="center" variant="caption" color="secondary">
+							{ __( 'Or', 'elementor' ) }
+						</Typography>
+					</Stack>
+				</>
+			) }
 		</Stack>
 	);
 };
