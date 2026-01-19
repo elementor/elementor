@@ -39,6 +39,9 @@ const createInteraction = (
 							$$type: 'config',
 							value: {
 								replay: { $$type: 'boolean', value: false },
+								relativeTo: { $$type: 'string', value: 'viewport' },
+								offsetTop: { $$type: 'number', value: 15 },
+								offsetBottom: { $$type: 'number', value: 85 },
 							},
 						},
 					},
