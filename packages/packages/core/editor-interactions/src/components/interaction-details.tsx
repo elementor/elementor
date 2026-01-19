@@ -28,7 +28,7 @@ const DEFAULT_VALUES = {
 	effect: 'fade',
 	type: 'in',
 	direction: '',
-	duration: 300,
+	duration: 600,
 	delay: 0,
 	replay: false,
 };

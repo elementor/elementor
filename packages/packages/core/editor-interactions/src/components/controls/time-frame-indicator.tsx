@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { UnstableSizeField } from '@elementor/editor-controls';
-import { numberPropTypeUtil, PropValue, sizePropTypeUtil, SizePropValue } from '@elementor/editor-props';
+import { sizePropTypeUtil, SizePropValue } from '@elementor/editor-props';
 
 import { createNumber } from '../../utils/prop-value-utils';
 import { NumberPropValue } from '../../types';
@@ -43,8 +43,8 @@ export function TimeFrameIndicator( { value, onChange, defaultValue }: Props ) {
 	);
 }
 
-const toSizeValue = ( value: PropValue, defaultValue: number ): SizePropValue['value'] => {
-	if ( ! numberPropTypeUtil.isValid( value ) ) {
+const toSizeValue = ( value: NumberPropValue, defaultValue: number ): SizePropValue['value'] => {
+	if ( value.$$type !== 'number' ) {
 		return {
 			size: defaultValue,
 			unit: DEFAULT_UNIT,
