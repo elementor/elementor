@@ -32,9 +32,9 @@ const DEFAULT_VALUES = {
 	duration: 300,
 	delay: 0,
 	replay: false,
-	relativeTo: '',
-	offsetTop: 0,
-	offsetBottom: 100,
+	relativeTo: 'viewport',
+	offsetTop: 15,
+	offsetBottom: 85,
 };
 
 const TRIGGERS_WITH_REPLAY = [ 'scrollIn', 'scrollOut' ];

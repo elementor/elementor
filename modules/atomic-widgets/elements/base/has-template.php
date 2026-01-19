@@ -96,9 +96,9 @@ trait Has_Template {
 		$duration = 300;
 		$delay = 0;
 		$replay = 0;
-		$relative_to = '';
-		$offset_top = 0;
-		$offset_bottom = 100;
+		$relative_to = 'viewport';
+		$offset_top = 15;
+		$offset_bottom = 85;
 
 		if ( is_array( $timing_config ) ) {
 			$duration = $this->extract_prop_value_simple( $timing_config, 'duration', 300 );
@@ -106,9 +106,9 @@ trait Has_Template {
 		}
 
 		if ( is_array( $config ) ) {
-			$relative_to = $this->extract_prop_value_simple( $config, 'relative_to', '' );
-			$offset_top = $this->extract_prop_value_simple( $config, 'offset_top', 0 );
-			$offset_bottom = $this->extract_prop_value_simple( $config, 'offset_bottom', 100 );
+			$relative_to = $this->extract_prop_value_simple( $config, 'relative_to', 'viewport' );
+			$offset_top = $this->extract_prop_value_simple( $config, 'offset_top', 15 );
+			$offset_bottom = $this->extract_prop_value_simple( $config, 'offset_bottom', 85 );
 			$replay = $this->extract_prop_value_simple( $config, 'replay', 0 );
 			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
 				$replay = 0;
