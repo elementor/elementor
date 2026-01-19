@@ -59,7 +59,7 @@ describe( 'PopoverMenuList - menuCategoryContentTemplate', () => {
 					items={ mockItems }
 					onSelect={ onSelect }
 					onClose={ onClose }
-					menuCategoryContentTemplate={ categoryTemplate }
+					categoryItemContentTemplate={ categoryTemplate }
 					menuItemContentTemplate={ itemTemplate }
 				/>
 			);
