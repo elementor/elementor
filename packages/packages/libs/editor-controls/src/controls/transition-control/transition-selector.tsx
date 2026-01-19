@@ -149,7 +149,7 @@ export const TransitionSelector = ( {
 					title={ __( 'Transition Property', 'elementor' ) }
 					icon={ VariationsIcon as React.ElementType< { fontSize: string } > }
 					disabledItems={ includeCurrentValueInOptions( value, disabledItems ) }
-					menuCategoryContentTemplate={ ( item ) => (
+					categoryItemContentTemplate={ ( item ) => (
 						<Box
 							sx={ {
 								display: 'flex',
