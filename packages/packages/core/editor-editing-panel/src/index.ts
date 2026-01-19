@@ -35,4 +35,4 @@ export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-
 export { registerEditingPanelReplacement } from './editing-panel-replacement-registry';
 
 export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-unapply-actions';
-export { dynamicControlsConfig } from './dynamics/dynamic-controls-config';
+export { setDynamicControlsConfig } from './dynamics/dynamic-controls-config';

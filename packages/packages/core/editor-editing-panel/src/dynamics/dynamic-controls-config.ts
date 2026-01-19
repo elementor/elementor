@@ -2,37 +2,25 @@ import { useSyncExternalStore } from 'react';
 
 export type DynamicControlsConfig = {
 	expired: boolean;
-}
-
-class DynamicControlsConfigRegistry {
-	private config: DynamicControlsConfig = { expired: false };
-	private listeners = new Set< () => void >();
-
-	set( config: Partial< DynamicControlsConfig > ) {
-		this.config = { ...this.config, ...config };
-		this.listeners.forEach( ( listener ) => listener() );
-	}
-
-	get(): DynamicControlsConfig {
-		return this.config;
-	}
-
-	subscribe( listener: () => void ) {
-		this.listeners.add( listener );
-		return () => this.listeners.delete( listener );
-	}
-}
-
-const registry = new DynamicControlsConfigRegistry();
-
-export const dynamicControlsConfig = {
-	set: ( config: Partial< DynamicControlsConfig > ) => registry.set( config ),
 };
 
-export const useDynamicControlsConfig = () => {
-	return useSyncExternalStore(
-		( listener ) => registry.subscribe( listener ),
-		() => registry.get(),
-		() => registry.get()
-	);
-};
+let config: DynamicControlsConfig = { expired: false };
+const listeners = new Set< () => void >();
+
+export function setDynamicControlsConfig( newConfig: Partial< DynamicControlsConfig > ) {
+	config = { ...config, ...newConfig };
+	listeners.forEach( ( listener ) => listener() );
+}
+
+function getConfig(): DynamicControlsConfig {
+	return config;
+}
+
+function subscribe( listener: () => void ) {
+	listeners.add( listener );
+	return () => listeners.delete( listener );
+}
+
+export function useDynamicControlsConfig() {
+	return useSyncExternalStore( subscribe, getConfig, getConfig );
+}

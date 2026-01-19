@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { dynamicControlsConfig, useDynamicControlsConfig } from '../dynamic-controls-config';
+import { setDynamicControlsConfig, useDynamicControlsConfig } from '../dynamic-controls-config';
 
 describe( 'dynamic-controls-config', () => {
 	describe( 'useDynamicControlsConfig', () => {
@@ -20,7 +20,7 @@ describe( 'dynamic-controls-config', () => {
 
 			// Act.
 			act( () => {
-				dynamicControlsConfig.set( { expired: true } );
+				setDynamicControlsConfig( { expired: true } );
 			} );
 
 			// Assert.
@@ -35,7 +35,7 @@ describe( 'dynamic-controls-config', () => {
 
 			// Act.
 			act( () => {
-				dynamicControlsConfig.set( { expired: true } );
+				setDynamicControlsConfig( { expired: true } );
 			} );
 
 			// Assert.
@@ -51,7 +51,7 @@ describe( 'dynamic-controls-config', () => {
 
 			// Act.
 			act( () => {
-				dynamicControlsConfig.set( { expired: true } );
+				setDynamicControlsConfig( { expired: true } );
 			} );
 
 			// Assert.
@@ -67,7 +67,7 @@ describe( 'dynamic-controls-config', () => {
 	afterEach( () => {
 		// Reset config after each test.
 		act( () => {
-			dynamicControlsConfig.set( { expired: false } );
+			setDynamicControlsConfig( { expired: false } );
 		} );
 	} );
 } );
