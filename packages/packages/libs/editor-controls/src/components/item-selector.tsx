@@ -25,7 +25,7 @@ type ItemSelectorProps = {
 	disabledItems?: string[];
 	id?: string;
 	footer?: ReactNode;
-	menuCategoryContentTemplate?: ( item: SelectableItem ) => ReactNode;
+	categoryItemContentTemplate?: ( item: SelectableItem ) => ReactNode;
 };
 
 export const ItemSelector = ( {
@@ -41,7 +41,7 @@ export const ItemSelector = ( {
 	disabledItems,
 	id = 'item-selector',
 	footer,
-	menuCategoryContentTemplate,
+	categoryItemContentTemplate,
 }: ItemSelectorProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 
@@ -79,7 +79,7 @@ export const ItemSelector = ( {
 						selectedItem={ selectedItem }
 						itemStyle={ itemStyle }
 						onDebounce={ onDebounce }
-						menuCategoryContentTemplate={ menuCategoryContentTemplate }
+						categoryItemContentTemplate={ categoryItemContentTemplate }
 					/>
 				) : (
 					<Stack
@@ -142,7 +142,7 @@ type ItemListProps = {
 	itemStyle?: ( item: SelectableItem ) => React.CSSProperties;
 	onDebounce?: ( name: string ) => void;
 	disabledItems?: string[];
-	menuCategoryContentTemplate?: ( item: SelectableItem ) => ReactNode;
+	categoryItemContentTemplate?: ( item: SelectableItem ) => ReactNode;
 };
 
 const ItemList = ( {
@@ -152,7 +152,7 @@ const ItemList = ( {
 	selectedItem,
 	itemStyle = () => ( {} ),
 	onDebounce = () => {},
-	menuCategoryContentTemplate,
+	categoryItemContentTemplate,
 }: ItemListProps ) => {
 	const selectedItemFound = itemListItems.find( ( item ) => item.value === selectedItem );
 
@@ -175,7 +175,7 @@ const ItemList = ( {
 			onClose={ handleClose }
 			itemStyle={ memoizedItemStyle }
 			data-testid="item-list"
-			menuCategoryContentTemplate={ menuCategoryContentTemplate }
+			categoryItemContentTemplate={ categoryItemContentTemplate }
 		/>
 	);
 };
