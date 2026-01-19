@@ -191,52 +191,43 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await expect( headingElement ).toHaveText( 'Hello' );
 	} );
 
-	test( "ensure html tags for styling aren't stripped by twig", async ( ) => {
+	for ( const atom of supportedAtoms ) {
+		test( `ensure html tags for styling aren't stripped by twig for ${ atom } widget`, async ( ) => {
 		// Arrange
-		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
-		const atomIds: Partial< Record< typeof supportedAtoms[number], string > > = {};
-		const encodedExpectedOutput = '<strong draggable=\"true\">bold</strong>, <u>underline</u>, <s>strikethrough</s>, <sup>superscript</sup>, <sub>subscript</sub>';
+			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+			const atomIds: Partial< Record< typeof supportedAtoms[number], string > > = {};
+			const encodedExpectedOutput = '<strong draggable=\"true\">bold</strong>, <u>underline</u>, <s>strikethrough</s>, <sup>superscript</sup>, <sub>subscript</sub>';
 
-		for ( const atom of supportedAtoms ) {
 			atomIds[ atom ] = await editor.addWidget( { widgetType: atom, container: containerId } );
 
 			await editor.previewFrame.locator( getElementSelector( atomIds[ atom ] ) ).waitFor();
 			await editor.v4Panel.fillInlineEditing( atomTexts[ atom ] );
-		}
 
-		// Unfocus.
-		await page.keyboard.press( 'Escape' );
+			// Unfocus.
+			await page.keyboard.press( 'Escape' );
 
-		// Act.
-		for ( const atom of supportedAtoms ) {
+			// Act.
 			for ( const attribute of testedAttributes ) {
 				await editor.selectInlineEditedText( atomIds[ atom ], attribute );
 				await editor.toggleInlineEditingAttribute( attribute );
 				await page.keyboard.press( 'Escape' );
 			}
-		}
 
-		// Unfocus.
-		await page.keyboard.press( 'Escape' );
-
-		// Assert.
-		for ( const atom of supportedAtoms ) {
-			const queryString = getElementSelector( atomIds[ atom ] ) + ' ' + defaultAtomTags[ atom ];
+			// Assert.
+			let queryString = getElementSelector( atomIds[ atom ] ) + ' ' + defaultAtomTags[ atom ];
 
 			expect( await editor.previewFrame.locator( queryString ).innerHTML() )
 				.toContain( encodedExpectedOutput );
-		}
 
-		// Unfocus.
-		await page.keyboard.press( 'Escape' );
+			// Unfocus.
+			await page.keyboard.press( 'Escape' );
 
-		await editor.publishAndViewPage();
+			await editor.publishAndViewPage();
 
-		for ( const atom of supportedAtoms ) {
-			const queryString = `${ defaultAtomTags[ atom ] }[data-interaction-id="${ atomIds[ atom ] }"]`;
+			queryString = `${ defaultAtomTags[ atom ] }[data-interaction-id="${ atomIds[ atom ] }"]`;
 
 			expect( ( await page.locator( queryString ).innerHTML() ) )
 				.toContain( encodedExpectedOutput.replaceAll( ' draggable="true"', '' ) );
-		}
-	} );
+		} );
+	}
 } );
