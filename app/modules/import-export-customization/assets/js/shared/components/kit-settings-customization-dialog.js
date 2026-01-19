@@ -172,19 +172,15 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		} ) );
 	};
 
-	/**
-	 * Handle click on "Review" link for classes
-	 * Opens the Global Classes manager in a new tab
-	 */
 	const handleClassesReviewClick = () => {
+		const transformedAnalytics = transformAnalyticsData( settings );
+		handleSaveChanges( 'settings', settings, true, transformedAnalytics );
 		window.open( `${ elementorCommon.config.urls.admin }admin.php?page=elementor-app#/site-editor/global-classes`, '_blank' );
 	};
 
-	/**
-	 * Handle click on "Review" link for variables
-	 * Opens the Global Variables manager in a new tab
-	 */
 	const handleVariablesReviewClick = () => {
+		const transformedAnalytics = transformAnalyticsData( settings );
+		handleSaveChanges( 'settings', settings, true, transformedAnalytics );
 		window.open( `${ elementorCommon.config.urls.admin }admin.php?page=elementor-app#/site-editor/global-variables`, '_blank' );
 	};
 
