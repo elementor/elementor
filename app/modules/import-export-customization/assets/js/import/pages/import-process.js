@@ -72,7 +72,7 @@ export default function ImportProcess() {
 								</Typography>
 								<Stack>
 									<Typography variant="subtitle1" >
-										{ __( 'This usually take a few moments.', 'elementor' ) }
+										{ __( 'This usually takes a few moments.', 'elementor' ) }
 									</Typography>
 									<Typography variant="subtitle1" >
 										{ __( 'Don\'t close this window until the process is finished.', 'elementor' ) }
