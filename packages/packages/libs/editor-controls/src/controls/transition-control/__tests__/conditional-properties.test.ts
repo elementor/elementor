@@ -1,6 +1,4 @@
-interface TransitionCategory {
-	label: string;
-}
+type TransitionCategory = { label: string };
 
 describe( 'transition properties conditional loading', () => {
 	const originalElementorPro = window.elementorPro;
