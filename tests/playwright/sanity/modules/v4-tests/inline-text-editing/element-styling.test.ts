@@ -10,6 +10,12 @@ const FLEXBOX_ELEMENT_SELECTOR = '.e-flexbox-base';
 const TESTED_CONTENT = 'Very long Text With no Space To fiiiiiiiiiiiiiit';
 const CONTENT_WORDS = TESTED_CONTENT.split( ' ' );
 
+const FRONTEND_SCREENSHOT = 'styled-frontend-heading';
+const FRONTEND_SCREENSHOT_HOVER = FRONTEND_SCREENSHOT + '-hover';
+
+const EDITOR_STATIC_SCREENSHOT = 'styled-static-heading';
+const EDITOR_STATIC_SCREENSHOT_HOVER = EDITOR_STATIC_SCREENSHOT + '-hover';
+
 test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
 	let context: BrowserContext;
@@ -123,18 +129,19 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			await editor.publishPage();
 			await page.goto( `/?p=${ pageId }` );
 
-			// Const publishedHeadingElement = page.locator( HEADING_WIDGET_SELECTOR );
+			const publishedHeadingElement = page.locator( HEADING_WIDGET_SELECTOR );
 
-			// await publishedHeadingElement.waitFor();
+			await publishedHeadingElement.waitFor();
 
-			// // Assert.
-			// await expect.soft( publishedHeadingElement ).toHaveScreenshot( 'styled-frontend-heading.png' );
+			// Assert.
+			await expect.soft( publishedHeadingElement ).toHaveScreenshot( getScreenshotName( FRONTEND_SCREENSHOT ) );
 
-			// // Act.
-			// await publishedHeadingElement.hover();
+			// Act.
 
-			// // Assert.
-			// await expect.soft( publishedHeadingElement ).toHaveScreenshot( 'styled-frontend-heading-hover.png' );
+			await publishedHeadingElement.hover();
+
+			// Assert.
+			await expect.soft( publishedHeadingElement ).toHaveScreenshot( getScreenshotName( FRONTEND_SCREENSHOT_HOVER ) );
 		} );
 
 		await test.step( 'Go back to editor', async () => {
@@ -142,38 +149,51 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			editor = await wpAdminPage.editExistingPostWithElementor( pageId, { page, testInfo } );
 		} );
 
+		// Arrange & Act.
+		// Setup environment for non hovering assertion
+		const flexboxElement = editor.previewFrame.locator( FLEXBOX_ELEMENT_SELECTOR ).first();
 		const headingElement = editor.previewFrame.locator( HEADING_WIDGET_SELECTOR );
+		const dummyElementId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
+		const dummyElement = editor.previewFrame.locator( editor.getWidgetSelector( dummyElementId ) ).nth( 1 );
 
-		// Await test.step( 'Heading in editor - static', async () => {
-		// 	// Assert.
-		// 	await expect.soft( headingElement ).toHaveScreenshot( 'styled-static-heading.png' );
-
-		// 	// Act.
-		// 	await headingElement.hover();
-
-		// 	// Assert.
-		// 	await expect.soft( headingElement ).toHaveScreenshot( 'styled-static-heading-hover.png' );
-		// } );
-
-		await test.step( 'Heading in editor - in edit mode', async () => {
+		await test.step( 'Heading in editor is styled like in frontend', async () => {
 			// Arrange.
-			// Setup environment for non hovering assertion
-			const dummyElementId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
-			const flexboxElement = editor.previewFrame.locator( FLEXBOX_ELEMENT_SELECTOR ).first();
-			await page.pause();
+			await expect.soft( headingElement ).toHaveScreenshot( getScreenshotName( FRONTEND_SCREENSHOT ) );
+			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT ) );
+
+			// Act.
+			await headingElement.hover();
+
+			// Assert.
+			await expect.soft( headingElement ).toHaveScreenshot( getScreenshotName( FRONTEND_SCREENSHOT_HOVER ) );
+			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT_HOVER ) );
+		} );
+
+		await test.step( 'Heading in editor is styled the same when editor or not', async () => {
+			// Arrange.
+
+			// Assert.
+			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT ) );
+			await flexboxElement.hover();
+			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT_HOVER ) );
 
 			// Act.
 			await editor.triggerEditingElement( headingId );
 
 			// Assert.
 			// Already hovered at this stage
-			await expect.soft( flexboxElement ).toHaveScreenshot( 'styled-edited-heading-hover.png' );
+			await expect.soft( headingElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT_HOVER ) );
 
 			// Act.
-			await editor.previewFrame.locator( editor.getWidgetSelector( dummyElementId ) ).hover();
+			// Force heading to not be hovered
+			await dummyElement.hover();
 
 			// Assert.
-			await expect.soft( flexboxElement ).toHaveScreenshot( 'styled-edited-heading.png' );
+			await expect.soft( headingElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT ) );
 		} );
 	} );
 } );
+
+function getScreenshotName( name: string ) {
+	return `${ name }.png`;
+}
