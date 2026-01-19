@@ -2167,7 +2167,7 @@ public function test_post_create_component__cleans_up_orphaned_post_when_save_fa
 
 		$main_document = Plugin::$instance->documents->get( $component_id, false );
 		/** @var Component_Document $main_document */
-		$this->assertTrue( $main_document->get_is_archived(), 'Published component should be archived' )
+		$this->assertTrue( $main_document->get_is_archived(), 'Published component should be archived' );
 	}
 
 	// Helpers
