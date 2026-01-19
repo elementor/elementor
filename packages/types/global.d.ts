@@ -22,7 +22,11 @@ declare global {
 			};
 			getContainer?: (id: string) => V1Element | undefined;
 		};
-		elementorPro?: object;
+		elementorPro?: {
+			config?: {
+				version?: string;
+			};
+		};
 		ElementorInteractionsConfig?: InteractionsConfig;
 	}
 }
