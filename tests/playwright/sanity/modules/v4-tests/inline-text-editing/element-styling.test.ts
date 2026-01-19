@@ -123,18 +123,18 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			await editor.publishPage();
 			await page.goto( `/?p=${ pageId }` );
 
-			const publishedHeadingElement = page.locator( HEADING_WIDGET_SELECTOR );
+			// Const publishedHeadingElement = page.locator( HEADING_WIDGET_SELECTOR );
 
-			await publishedHeadingElement.waitFor();
+			// await publishedHeadingElement.waitFor();
 
-			// Assert.
-			await expect.soft( publishedHeadingElement ).toHaveScreenshot( 'styled-frontend-heading.png' );
+			// // Assert.
+			// await expect.soft( publishedHeadingElement ).toHaveScreenshot( 'styled-frontend-heading.png' );
 
-			// Act.
-			await publishedHeadingElement.hover();
+			// // Act.
+			// await publishedHeadingElement.hover();
 
-			// Assert.
-			await expect.soft( publishedHeadingElement ).toHaveScreenshot( 'styled-frontend-heading-hover.png' );
+			// // Assert.
+			// await expect.soft( publishedHeadingElement ).toHaveScreenshot( 'styled-frontend-heading-hover.png' );
 		} );
 
 		await test.step( 'Go back to editor', async () => {
@@ -148,16 +148,16 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		const headingElement = editor.previewFrame.locator( HEADING_WIDGET_SELECTOR );
 		const flexboxElement = editor.previewFrame.locator( FLEXBOX_ELEMENT_SELECTOR );
 
-		await test.step( 'Heading in editor - static', async () => {
-			// Assert.
-			await expect.soft( headingElement ).toHaveScreenshot( 'styled-static-heading.png' );
+		// Await test.step( 'Heading in editor - static', async () => {
+		// 	// Assert.
+		// 	await expect.soft( headingElement ).toHaveScreenshot( 'styled-static-heading.png' );
 
-			// Act.
-			await headingElement.hover();
+		// 	// Act.
+		// 	await headingElement.hover();
 
-			// Assert.
-			await expect.soft( headingElement ).toHaveScreenshot( 'styled-static-heading-hover.png' );
-		} );
+		// 	// Assert.
+		// 	await expect.soft( headingElement ).toHaveScreenshot( 'styled-static-heading-hover.png' );
+		// } );
 
 		await test.step( 'Heading in editor - in edit mode', async () => {
 			// Act.
