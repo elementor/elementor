@@ -5,7 +5,7 @@ const WHITELIST_FILTER = 'frontend/handlers/atomic-widgets/link-actions-whitelis
 const ACTION_LINK_SELECTOR = '[data-action-link]';
 const REGISTRATION_SELECTOR = `${ ACTION_LINK_SELECTOR }, :has(> ${ ACTION_LINK_SELECTOR })`;
 const ATOMIC_FORM_SELECTOR = '[data-element_type="e-form"]';
-const ATOMIC_FORM_INPUT_SELECTOR = 'input[data-interaction-id]';
+const ATOMIC_FORM_FIELD_SELECTOR = 'input[data-interaction-id], textarea[data-interaction-id]';
 
 registerBySelector( {
 	id: 'atomic-link-action-handler',
@@ -126,7 +126,7 @@ function buildAtomicFormPayload( element, form ) {
 
 function getAtomicFormFields( form ) {
 	const fields = [];
-	const inputs = form.querySelectorAll( ATOMIC_FORM_INPUT_SELECTOR );
+	const inputs = form.querySelectorAll( ATOMIC_FORM_FIELD_SELECTOR );
 
 	inputs.forEach( ( input ) => {
 		const id = input.dataset.interactionId;
@@ -134,8 +134,8 @@ function getAtomicFormFields( form ) {
 			return;
 		}
 
-		const label = input.getAttribute( 'aria-label' ) || input.getAttribute( 'placeholder' ) || '';
-		const type = input.getAttribute( 'type' ) || 'text';
+		const label = getAtomicFormFieldLabel( input, form );
+		const type = getAtomicFormFieldType( input );
 		const value = input.value;
 
 		fields.push( {
@@ -147,6 +147,38 @@ function getAtomicFormFields( form ) {
 	} );
 
 	return fields;
+}
+
+function getAtomicFormFieldLabel( field, form ) {
+	const ariaLabel = field.getAttribute( 'aria-label' );
+	if ( ariaLabel ) {
+		return ariaLabel;
+	}
+
+	const placeholder = field.getAttribute( 'placeholder' );
+	if ( placeholder ) {
+		return placeholder;
+	}
+
+	const fieldId = field.getAttribute( 'id' );
+	if ( fieldId ) {
+		const labelElement = form.querySelector( `label[for="${ fieldId }"]` );
+		const labelText = labelElement?.textContent?.trim();
+		if ( labelText ) {
+			return labelText;
+		}
+	}
+
+	const parentLabelText = field.closest( 'label' )?.textContent?.trim();
+	return parentLabelText || '';
+}
+
+function getAtomicFormFieldType( field ) {
+	if ( field.tagName === 'TEXTAREA' ) {
+		return 'textarea';
+	}
+
+	return field.getAttribute( 'type' ) || 'text';
 }
 
 async function submitAtomicForm( payload ) {

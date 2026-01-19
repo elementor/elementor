@@ -123,7 +123,7 @@ class Atomic_Form extends Atomic_Element_Base {
 
 	protected function define_default_children() {
 		return [
-			Widget_Builder::make( 'e-input' )
+			Widget_Builder::make( 'e-form-input' )
 				->build(),
 			Widget_Builder::make( Atomic_Button::get_element_type() )
 				->settings( [

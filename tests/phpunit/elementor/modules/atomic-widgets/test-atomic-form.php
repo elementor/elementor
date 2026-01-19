@@ -17,7 +17,7 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 
 		$input = $children[0];
 		$this->assertSame( 'widget', $input['elType'] );
-		$this->assertSame( 'e-input', $input['widgetType'] );
+		$this->assertSame( 'e-form-input', $input['widgetType'] );
 		$this->assertFalse( $input['isLocked'] ?? false );
 
 		$button = $children[1];
