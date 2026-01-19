@@ -11,7 +11,7 @@ type Options = {
 	elements: V1ElementData[];
 };
 
-export async function updateComponentsBeforeSave( { status, elements }: Options ) {
+export async function publishDraftComponentsInPageBeforeSave( { status, elements }: Options ) {
 	if ( status !== 'publish' ) {
 		return;
 	}
