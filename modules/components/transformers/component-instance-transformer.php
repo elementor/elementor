@@ -39,7 +39,8 @@ class Component_Instance_Transformer extends Transformer_Base {
 	}
 
 	private function get_rendered_content( int $component_id ): string {
-		$component = $this->get_repository()->get( $component_id );
+		$should_show_autosave = is_preview();
+		$component = $this->get_repository()->get( $component_id, $should_show_autosave );
 
 		if ( ! $component || ! $this->should_render_content( $component ) ) {
 			return '';
