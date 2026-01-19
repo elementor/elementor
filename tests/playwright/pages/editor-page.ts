@@ -359,6 +359,25 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Select an element inside the editor.
+	 *
+	 * @param {string} elementId - Element ID.
+	 *
+	 * @return {Promise<Locator>} element;
+	 */
+	async selectElementWithNavigator( elementId: string ): Promise<Locator> {
+		const item = this.page.locator( `${ EditorSelectors.panels.navigator.wrapper } [data-id="${ elementId }"]` );
+		const element = this.getPreviewFrame().locator( '.elementor-element-' + elementId );
+
+		await this.openNavigator();
+		await item.scrollIntoViewIfNeeded();
+		await item.click( { force: true } );
+		await element.waitFor();
+
+		return element;
+	}
+
+	/**
 	 * Add new container preset.
 	 *
 	 * @param {ContainerType}   element - Element type. Available values: 'flex', 'grid'.
@@ -906,6 +925,25 @@ export default class EditorPage extends BasePage {
 	}
 
 	/**
+	 * Close the navigator/structure panel.
+	 *
+	 * @return {Promise<void>}
+	 */
+	async openNavigator(): Promise<void> {
+		await this.waitForPreviewFrame();
+		const isOpen = await this.getPreviewFrame().evaluate( () => elementor.navigator.isOpen() );
+
+		if ( isOpen ) {
+			return;
+		}
+
+		const { wrapper, buttons: { navigator } } = EditorSelectors.panels.topBar;
+
+		await this.page.locator( `${ wrapper } ${ navigator }` ).click();
+		await this.page.locator( EditorSelectors.panels.navigator.wrapper ).waitFor();
+	}
+
+	/**
 	 * Set WordPress page template.
 	 *
 	 * @param {string} template - The page template to set. Available options: 'default', 'canvas', 'full-width'.
@@ -1373,13 +1411,12 @@ export default class EditorPage extends BasePage {
 	}
 
 	async triggerEditingElement( elementId: string ): Promise<Locator> {
+		const inlineEditor = this.previewFrame.locator( `.elementor-element-${ elementId } ${ INLINE_EDITING_SELECTORS.canvas.inlineEditor }` );
 		const element = this.previewFrame.locator( `.elementor-element-${ elementId }` );
-		const inlineEditor = this.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 
-		await element.blur();
-		await this.page.waitForTimeout( 200 );
+		await this.page.keyboard.press( 'Escape' );
 		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();
-		await inlineEditor.waitFor();
+		await inlineEditor.waitFor( { state: 'attached' } );
 
 		return inlineEditor;
 	}
@@ -1403,8 +1440,6 @@ export default class EditorPage extends BasePage {
 		}
 
 		const startIndex = entireText.indexOf( substring );
-
-		await this.page.keyboard.press( 'Home', { delay: 100 } );
 
 		for ( let i = 0; i < startIndex; i++ ) {
 			await this.page.keyboard.press( 'ArrowRight', { delay: 100 } );

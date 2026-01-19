@@ -68,6 +68,9 @@ export default class StyleTab extends BasePage {
 			await this.changeUnit( unitSelect, unit );
 		}
 
+		await input.focus();
+		await input.clear();
+		await this.page.waitForTimeout( timeouts.short );
 		await input.fill( value.toString() );
 		await input.blur();
 	}
@@ -79,8 +82,6 @@ export default class StyleTab extends BasePage {
 	}
 
 	protected async getSectionContentByLabel( label: StyleSection ): Promise<Locator> {
-		await this.openSection( label );
-
 		return this.page.locator( `[aria-label="${ label } section content"]` );
 	}
 
@@ -99,8 +100,10 @@ export default class StyleTab extends BasePage {
 			return;
 		}
 
-		await unitButton.click();
 		const unitOption = this.page.getByRole( 'menuitem', { name: targetUnit.toUpperCase(), exact: true } );
+
+		await unitButton.click();
+		await this.page.locator( '[role="presentation"] .MuiList-root' ).waitFor();
 		await unitOption.waitFor( { state: 'visible' } );
 		await unitOption.click();
 	}
@@ -153,8 +156,6 @@ export default class StyleTab extends BasePage {
 	}
 
 	async setSpacingValue( space: 'Margin' | 'Padding', property: OffSetLabel, value: number, unit: Unit, linked: boolean = true ): Promise<void> {
-		await this.openSection( 'Spacing' );
-
 		const nth = [ 'Margin', 'Padding' ].indexOf( space );
 		const linkButton = this.page.locator( 'label', { hasText: space } )
 			.locator( '..' )
@@ -216,7 +217,6 @@ export default class StyleTab extends BasePage {
 	async setFontFamily( fontName: string, fontType: 'system' | 'google' = 'system' ): Promise<void> {
 		const categorySelector = 'google' === fontType ? 'Google Fonts' : 'System';
 
-		await this.openSection( 'Typography' );
 		this.page.getByRole( 'button', { name: 'Font family' } ).click();
 		this.page.locator( '.MuiListSubheader-root', { hasText: new RegExp( categorySelector, 'i' ) } ).click();
 		this.page.locator( 'input[placeholder="Search"]' ).fill( fontName );
@@ -225,7 +225,6 @@ export default class StyleTab extends BasePage {
 	}
 
 	async setFontColor( color: string ): Promise<void> {
-		await this.openSection( 'Typography' );
 		await this.page.locator( '[aria-label="Text color control"] input' ).fill( color );
 	}
 
@@ -260,7 +259,9 @@ export default class StyleTab extends BasePage {
 	async setBackgroundColor( color: string ): Promise<void> {
 		const input = await this.getControlContainerByLabel( 'Background', 'Color', { innerSelector: 'input' } );
 
+		await input.clear();
 		await input.fill( color );
+		await input.blur();
 	}
 
 	async setBorderWidth( width: number, unit: Unit ) {
@@ -276,9 +277,11 @@ export default class StyleTab extends BasePage {
 	}
 
 	async setBorderColor( color: string ) {
-		const control = await this.getControlContainerByLabel( 'Border', 'Border color' );
+		const input = await this.getControlContainerByLabel( 'Border', 'Border color', { innerSelector: 'input' } );
 
-		await control.locator( 'input' ).fill( color );
+		await input.clear();
+		await input.fill( color );
+		await input.blur();
 	}
 
 	async setBorderType( border: BorderTypeLabel ) {
