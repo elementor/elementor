@@ -11,30 +11,14 @@ import { useClassesVariablesLimits } from '../hooks/use-classes-variables-limits
 import { UpgradeVersionBanner } from './upgrade-version-banner';
 import { transformValueForAnalytics } from '../utils/analytics-transformer';
 
-/**
- * Check if a specific experiment is active
- *
- * @param {string} experimentName - The name of the experiment to check
- * @return {boolean} Whether the experiment is active
- */
 function isExperimentActive( experimentName ) {
 	return !! elementorCommon?.config?.experimentalFeatures?.[ experimentName ];
 }
 
-/**
- * Check if both e_classes experiment and e_atomic_elements (required dependency) are active
- *
- * @return {boolean} Whether Global Classes feature is available
- */
 function isClassesFeatureActive() {
 	return isExperimentActive( 'e_classes' ) && isExperimentActive( 'e_atomic_elements' );
 }
 
-/**
- * Check if both e_variables experiment and e_atomic_elements (required dependency) are active
- *
- * @return {boolean} Whether Global Variables feature is available
- */
 function isVariablesFeatureActive() {
 	return isExperimentActive( 'e_variables' ) && isExperimentActive( 'e_atomic_elements' );
 }
@@ -76,13 +60,6 @@ function isVariablesExported( contextData ) {
 	return !! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.variables;
 }
 
-/**
- * Get the default state for Classes and Variables settings
- *
- * @param {Object} contextData - The context data from import/export
- * @param {boolean} isImport - Whether this is an import operation
- * @return {Object} Default state for classes and variables
- */
 function getClassesVariablesInitialState( contextData, isImport ) {
 	const includesSettings = contextData?.data?.includes?.includes( 'settings' );
 
@@ -98,12 +75,19 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 	const { isImport = false, contextData = {} } = useContextDetection() ?? {};
 	const { data = null } = contextData;
 
-	const initialState = getInitialState( contextData, isImport );
-	const classesVariablesInitialState = getClassesVariablesInitialState( contextData, isImport );
-
 	const showClassesSection = isClassesFeatureActive();
 	const showVariablesSection = isVariablesFeatureActive();
 	const showClassesVariablesSection = showClassesSection || showVariablesSection;
+
+	const initialState = useMemo(
+		() => getInitialState( contextData, isImport ),
+		[ contextData?.data?.includes, contextData?.isOldExport, contextData?.data?.uploadedData?.manifest, isImport ]
+	);
+
+	const classesVariablesInitialState = useMemo(
+		() => getClassesVariablesInitialState( contextData, isImport ),
+		[ contextData?.data?.includes, contextData?.data?.uploadedData?.manifest, isImport ]
+	);
 
 	const {
 		existingClassesCount,
@@ -150,7 +134,8 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 				} );
 			}
 		}
-	}, [ open, data.customization.settings, data?.uploadedData, initialState, showClassesVariablesSection, classesVariablesInitialState ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ open ] );
 
 	useEffect( () => {
 		if ( open ) {
@@ -225,7 +210,6 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 					/>
 				) }
 
-				{/* Classes & Variables Section - appears after Theme when experiments are active */}
 				{ showClassesVariablesSection && (
 					<ClassesVariablesSection
 						settings={ {

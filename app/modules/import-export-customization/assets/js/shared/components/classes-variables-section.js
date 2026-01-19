@@ -25,7 +25,28 @@ const SubSettingRow = ( {
 	overrideAll = false,
 	onOverrideAllChange,
 	showOverrideOption = false,
+	notExported = false,
 } ) => {
+	if ( notExported ) {
+		return (
+			<Box
+				sx={ {
+					display: 'flex',
+					justifyContent: 'space-between',
+					alignItems: 'center',
+					px: 1.25,
+				} }
+			>
+				<Typography variant="body1" color="text.primary">
+					{ label }
+				</Typography>
+				<Typography variant="body1" color="text.secondary">
+					{ __( 'Not exported', 'elementor' ) }
+				</Typography>
+			</Box>
+		);
+	}
+
 	return (
 		<Box
 			sx={ {
@@ -133,6 +154,7 @@ SubSettingRow.propTypes = {
 	overrideAll: PropTypes.bool,
 	onOverrideAllChange: PropTypes.func,
 	showOverrideOption: PropTypes.bool,
+	notExported: PropTypes.bool,
 };
 
 export function ClassesVariablesSection( {
@@ -154,21 +176,8 @@ export function ClassesVariablesSection( {
 	const [ variablesOverrideAll, setVariablesOverrideAll ] = useState( false );
 
 	const hasLimitWarning = isImport && ( classesLimitExceeded || variablesLimitExceeded );
-
-	if ( notExported ) {
-		return (
-			<Box sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
-				<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
-					<Typography variant="h6">
-						{ __( 'Classes & variables', 'elementor' ) }
-					</Typography>
-					<Typography variant="body1" color="text.secondary">
-						{ __( 'Not exported', 'elementor' ) }
-					</Typography>
-				</Box>
-			</Box>
-		);
-	}
+	const classesNotExported = isImport && ! classesExported;
+	const variablesNotExported = isImport && ! variablesExported;
 
 	return (
 		<Box sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
@@ -179,7 +188,7 @@ export function ClassesVariablesSection( {
 					</Typography>
 				</Box>
 
-				{ hasLimitWarning && (
+				{ hasLimitWarning && ! notExported && (
 					<Alert
 						severity="warning"
 						icon={ <AlertTriangleFilledIcon sx={ { color: 'warning.main' } } /> }
@@ -211,40 +220,34 @@ export function ClassesVariablesSection( {
 						label={ __( 'Classes', 'elementor' ) }
 						checked={ settings.classes ?? true }
 						onChange={ ( isChecked ) => onSettingChange( 'classes', isChecked ) }
-						disabled={ disabled || ( isImport && ! classesExported ) }
-						limitExceeded={ isImport && classesLimitExceeded }
+						disabled={ disabled }
+						limitExceeded={ isImport && classesLimitExceeded && ! classesNotExported }
 						overLimitCount={ classesOverLimitCount }
 						onReviewClick={ onClassesReviewClick }
 						overrideAll={ classesOverrideAll }
 						onOverrideAllChange={ ( checked ) => {
 							setClassesOverrideAll( checked );
-							if ( checked ) {
-								onSettingChange( 'classesOverrideAll', true );
-							} else {
-								onSettingChange( 'classesOverrideAll', false );
-							}
+							onSettingChange( 'classesOverrideAll', checked );
 						} }
-						showOverrideOption={ isImport }
+						showOverrideOption={ isImport && ! classesNotExported }
+						notExported={ classesNotExported }
 					/>
 
 					<SubSettingRow
 						label={ __( 'Variables', 'elementor' ) }
 						checked={ settings.variables ?? true }
 						onChange={ ( isChecked ) => onSettingChange( 'variables', isChecked ) }
-						disabled={ disabled || ( isImport && ! variablesExported ) }
-						limitExceeded={ isImport && variablesLimitExceeded }
+						disabled={ disabled }
+						limitExceeded={ isImport && variablesLimitExceeded && ! variablesNotExported }
 						overLimitCount={ variablesOverLimitCount }
 						onReviewClick={ onVariablesReviewClick }
 						overrideAll={ variablesOverrideAll }
 						onOverrideAllChange={ ( checked ) => {
 							setVariablesOverrideAll( checked );
-							if ( checked ) {
-								onSettingChange( 'variablesOverrideAll', true );
-							} else {
-								onSettingChange( 'variablesOverrideAll', false );
-							}
+							onSettingChange( 'variablesOverrideAll', checked );
 						} }
-						showOverrideOption={ isImport }
+						showOverrideOption={ isImport && ! variablesNotExported }
+						notExported={ variablesNotExported }
 					/>
 				</Stack>
 			</Stack>

@@ -99,13 +99,13 @@ class Site_Settings extends Export_Runner_Base {
 		$include_classes = $customization['classes'] ?? true;
 		$include_variables = $customization['variables'] ?? true;
 
-		if ( $include_classes && class_exists( '\Elementor\Modules\GlobalClasses\Global_Classes_Repository' ) ) {
+		if ( class_exists( '\Elementor\Modules\GlobalClasses\Global_Classes_Repository' ) ) {
 			$classes_repository = \Elementor\Modules\GlobalClasses\Global_Classes_Repository::make();
 			$classes_data = $classes_repository->all()->get();
 			$classes_count = count( $classes_data['items'] ?? [] );
 		}
 
-		if ( $include_variables && class_exists( '\Elementor\Modules\Variables\Storage\Variables_Repository' ) ) {
+		if ( class_exists( '\Elementor\Modules\Variables\Storage\Variables_Repository' ) ) {
 			$kit = Plugin::$instance->kits_manager->get_active_kit();
 			if ( $kit ) {
 				$variables_repository = new \Elementor\Modules\Variables\Storage\Variables_Repository( $kit );
@@ -119,10 +119,10 @@ class Site_Settings extends Export_Runner_Base {
 		}
 
 		return [
-			'classes' => $include_classes && $classes_count > 0,
-			'classesCount' => $classes_count,
-			'variables' => $include_variables && $variables_count > 0,
-			'variablesCount' => $variables_count,
+			'classes' => (bool) $include_classes,
+			'classesCount' => $include_classes ? $classes_count : 0,
+			'variables' => (bool) $include_variables,
+			'variablesCount' => $include_variables ? $variables_count : 0,
 		];
 	}
 
