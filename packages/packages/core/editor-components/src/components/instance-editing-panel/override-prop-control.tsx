@@ -29,10 +29,12 @@ import {
 	componentOverridablePropTypeUtil,
 } from '../../prop-types/component-overridable-prop-type';
 import { OverridablePropProvider } from '../../provider/overridable-prop-context';
+import { deleteOverridableProp } from '../../store/actions/delete-overridable-prop';
 import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
 import { useCurrentComponentId } from '../../store/store';
 import { type OriginPropFields, type OverridableProp } from '../../types';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
+import { isOriginElementMatchingOverridableProp } from '../../utils/is-origin-element-setting-overridable';
 import { resolveOverridePropValue } from '../../utils/resolve-override-prop-value';
 import { ControlLabel } from '../control-label';
 import { OverrideControlInnerElementNotFoundError } from '../errors';
@@ -79,6 +81,16 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 		throw new Error( 'Component ID is required' );
 	}
 
+	if ( ! isOriginElementMatchingOverridableProp( overridableProp ) ) {
+		deleteOverridableProp( {
+			componentId: componentInstanceId,
+			propKey: overridableProp.overrideKey,
+			source: 'system',
+		} );
+
+		return null;
+	}
+
 	const matchingOverride = getMatchingOverride( overrides, overridableProp.overrideKey );
 
 	const propValue = matchingOverride ? resolveOverridePropValue( matchingOverride ) : overridableProp.originValue;
@@ -119,8 +131,14 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 				return;
 			}
 
-			const { elType, widgetType, propKey, elementId } = overridableProp;
-			updateOverridableProp( componentId, overridableValue, { elType, widgetType, propKey, elementId } );
+			const { elType, widgetType, propKey, elementId, overrideKey } = overridableProp;
+			updateOverridableProp( componentId, overridableValue, {
+				elType,
+				widgetType,
+				propKey,
+				elementId,
+				overrideKey,
+			} );
 		}
 	};
 

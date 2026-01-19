@@ -2,7 +2,13 @@ import * as React from 'react';
 import { createMockContainer, createMockPropType, renderWithStore } from 'test-utils';
 import { ControlActionsProvider, TextControl, useBoundProp } from '@elementor/editor-controls';
 import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-panel';
-import { getContainer, getElementLabel, getElementType, getWidgetsCache } from '@elementor/editor-elements';
+import {
+	getContainer,
+	getElementLabel,
+	getElementSetting,
+	getElementType,
+	getWidgetsCache,
+} from '@elementor/editor-elements';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -190,6 +196,7 @@ describe( '<OverridePropControl />', () => {
 	describe( 'inner control element context', () => {
 		it( 'should use originPropFields element context when available', () => {
 			// Arrange
+			const ORIGIN_OVERRIDE_KEY = 'inner-prop-0';
 			const MOCK_NESTED_OVERRIDABLE_PROP: OverridableProp = {
 				overrideKey: 'nested-prop-1',
 				label: 'Nested Title',
@@ -198,7 +205,14 @@ describe( '<OverridePropControl />', () => {
 				widgetType: 'e-component',
 				elType: 'widget',
 				groupId: 'nested',
-				originValue: { $$type: 'string', value: 'Nested Value' },
+				originValue: {
+					$$type: 'override',
+					value: {
+						override_key: ORIGIN_OVERRIDE_KEY,
+						override_value: { $$type: 'string', value: 'Nested Value' },
+						schema_source: { type: 'component', id: 123 },
+					},
+				},
 				originPropFields: {
 					propKey: 'content',
 					widgetType: 'e-text',
@@ -206,6 +220,13 @@ describe( '<OverridePropControl />', () => {
 					elementId: 'original-text-element',
 				},
 			};
+
+			jest.mocked( getElementSetting ).mockReturnValue(
+				componentOverridablePropTypeUtil.create( {
+					override_key: ORIGIN_OVERRIDE_KEY,
+					origin_value: { $$type: 'string', value: 'Original' },
+				} )
+			);
 
 			setupComponent( MOCK_COMPONENT_ID_2 );
 

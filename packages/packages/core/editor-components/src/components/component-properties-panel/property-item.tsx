@@ -4,6 +4,7 @@ import { XIcon } from '@elementor/icons';
 import { bindPopover, bindTrigger, Box, IconButton, Popover, Typography, usePopupState } from '@elementor/ui';
 
 import { type OverridableProp } from '../../types';
+import { isOriginElementMatchingOverridableProp } from '../../utils/is-origin-element-setting-overridable';
 import { OverridablePropForm } from '../overridable-props/overridable-prop-form';
 import { SortableTrigger, type SortableTriggerProps } from './sortable';
 
@@ -29,6 +30,13 @@ export function PropertyItem( {
 	const popoverState = usePopupState( {
 		variant: 'popover',
 	} );
+
+	if ( ! isOriginElementMatchingOverridableProp( prop ) ) {
+		onDelete( prop.overrideKey );
+
+		return null;
+	}
+
 	const icon = getElementIcon( prop );
 	const popoverProps = bindPopover( popoverState );
 

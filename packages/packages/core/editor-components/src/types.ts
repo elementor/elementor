@@ -22,17 +22,21 @@ export type UnpublishedComponent = BaseComponent & {
 	elements: V1ElementData[];
 };
 
-export type OriginPropFields = Pick< OverridableProp, 'propKey' | 'widgetType' | 'elType' | 'elementId' >;
+export type OriginPropFields = Pick<
+	OverridableProp,
+	'propKey' | 'widgetType' | 'elType' | 'elementId' | 'overrideKey'
+>;
 
 export type OverridableProp = {
 	overrideKey: string;
-	label: string;
 	elementId: string;
 	propKey: string;
 	elType: string;
 	widgetType: string;
-	originValue: PropValue;
+
 	groupId: string;
+	label: string;
+	originValue: PropValue; // ?
 	originPropFields?: OriginPropFields;
 };
 
