@@ -52,7 +52,6 @@ const getBuildFiles = [
 	'core/files/assets/**',
 	'vendor/autoload.php',
 	'vendor/composer/**',
-	'vendor/elementor/wp-one-package/**',
 	'vendor/elementor/wp-notifications-package/**',
 ];
 /**
