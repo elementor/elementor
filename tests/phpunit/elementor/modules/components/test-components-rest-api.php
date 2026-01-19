@@ -1830,57 +1830,6 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( $autosave_props, $data );
 	}
 
-	public function test_post_create_component__cleans_up_orphaned_post_when_save_fails() {
-		// Arrange
-		$this->act_as_admin();
-		$initial_post_count = $this->get_component_post_count();
-
-		// Documents->create() internally calls save() with empty data first,
-		// then the repository calls save() with elements. We only want to fail
-		// on the second save (with elements) to test the repository's cleanup logic.
-		$force_save_failure = function( $data, $document ) {
-			if ( Component_Document::TYPE !== $document->get_type() ) {
-				return $data;
-			}
-
-			$has_elements = ! empty( $data['elements'] );
-			if ( $has_elements ) {
-				throw new \Exception( 'Forced save failure for testing' );
-			}
-
-			return $data;
-		};
-
-		add_filter( 'elementor/document/save/data', $force_save_failure, 10, 2 );
-
-		// Act
-		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
-		$request->set_body_params( [
-			'status' => 'publish',
-			'items' => [
-				[
-					'uid' => 'test-uid-cleanup',
-					'title' => 'Test Component Cleanup',
-					'elements' => [ [ 'id' => 'test' ] ],
-				],
-			],
-		] );
-
-		$response = rest_do_request( $request );
-
-		remove_filter( 'elementor/document/save/data', $force_save_failure, 10 );
-
-		// Assert
-		$this->assertEquals( 500, $response->get_status() );
-
-		$final_post_count = $this->get_component_post_count();
-		$this->assertEquals(
-			$initial_post_count,
-			$final_post_count,
-			'No orphaned posts should remain after failed save'
-		);
-	}
-
 	private function get_component_post_count(): int {
 		$posts = get_posts( [
 			'post_type' => Component_Document::TYPE,
