@@ -18,7 +18,7 @@ class Components_Repository {
 	}
 
 	public function all(): Collection {
-		// Components count is limited to 50, if we increase this number, we need to iterate the posts in batches.
+		// Components count is limited to 100, if we increase this number, we need to iterate the posts in batches.
 		$posts = get_posts( [
 			'post_type' => Component_Document::TYPE,
 			'post_status' => 'any',
