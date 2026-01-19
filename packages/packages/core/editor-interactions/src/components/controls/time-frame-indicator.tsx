@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ControlFormLabel, PopoverGridContainer, UnstableSizeField } from '@elementor/editor-controls';
+import { PopoverGridContainer, UnstableSizeField } from '@elementor/editor-controls';
 import { Grid } from '@elementor/ui';
 
 import { NumberPropValue } from '../../types';
@@ -12,13 +12,11 @@ type Props<T = NumberPropValue> = {
 	value: T
 	onChange: ( value: T ) => void;
 	defaultValue: number;
-	label: string;
 };
 
 export function TimeFrameIndicator( {
 	value: numberValue,
 	onChange,
-	label,
 	defaultValue,
 }: Props ) {
 	const sizeValue = convertToSize( numberValue, defaultValue );
@@ -32,9 +30,6 @@ export function TimeFrameIndicator( {
 	return (
 		<Grid item xs={ 12 }>
 			<PopoverGridContainer>
-				<Grid item xs={ 6 }>
-					<ControlFormLabel>{ label }</ControlFormLabel>
-				</Grid>
 				<Grid item xs={ 6 }>
 					<UnstableSizeField
 						units={ [ DEFAULT_UNIT ] }
