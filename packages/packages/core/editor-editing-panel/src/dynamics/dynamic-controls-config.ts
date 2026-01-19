@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 
-export interface DynamicControlsConfig {
+export type DynamicControlsConfig = {
 	expired: boolean;
 }
 
