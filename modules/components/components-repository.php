@@ -72,16 +72,19 @@ class Components_Repository {
 			]
 		);
 
+		$post_id = $document->get_main_id();
+
 		$saved = $document->save( [
 			'elements' => $content,
 			'settings' => $settings,
 		] );
 
 		if ( ! $saved ) {
+			$document->force_delete();
 			throw new \Exception( 'Failed to create component' );
 		}
 
-		return $document->get_main_id();
+		return $post_id;
 	}
 	private function extract_styles( array $elements, array $styles = [] ) {
 		foreach ( $elements as $element ) {

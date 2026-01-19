@@ -1,7 +1,13 @@
 import * as React from 'react';
 import { SnackbarProvider } from 'notistack';
 import { createMockElement, renderWithStore } from 'test-utils';
-import { getElementLabel, replaceElement, type V1ElementModelProps } from '@elementor/editor-elements';
+import {
+	createElements,
+	deleteElement,
+	getElementLabel,
+	replaceElement,
+	type V1ElementModelProps,
+} from '@elementor/editor-elements';
 import { notify } from '@elementor/editor-notifications';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 import { __createStore, __dispatch, __registerSlice, type SliceState, type Store } from '@elementor/store';
@@ -25,6 +31,8 @@ jest.mock( '@elementor/editor-notifications' );
 const mockGetElementLabel = jest.mocked( getElementLabel );
 const mockGetComponents = jest.mocked( apiClient.get );
 const mockReplaceElement = jest.mocked( replaceElement );
+const mockDeleteElement = jest.mocked( deleteElement );
+const mockCreateElements = jest.mocked( createElements );
 const mockGenerateUniqueId = jest.mocked( generateUniqueId );
 const mockRunCommand = jest.mocked( runCommand );
 const mockSwitchToComponent = jest.mocked( switchToComponent );
@@ -388,6 +396,117 @@ describe( 'CreateComponentForm', () => {
 					message: 'Failed to create component. Please try again.',
 					id: 'component-save-failed',
 				} );
+			} );
+		} );
+
+		it( 'should show error notification when auto-save fails', async () => {
+			// Arrange.
+			mockRunCommand.mockImplementation( ( command: string ) => {
+				if ( command === 'document/save/auto' ) {
+					return Promise.reject( new Error( 'Auto-save failed' ) );
+				}
+				return Promise.resolve();
+			} );
+
+			const { openForm, fillComponentName, getCreateButton } = setupForm();
+			openForm();
+
+			// Act.
+			fillComponentName( 'My Test Component' );
+			fireEvent.click( getCreateButton() );
+
+			// Assert.
+			await waitFor( () => {
+				expect( mockNotify ).toHaveBeenCalledWith( {
+					type: 'error',
+					message: 'Failed to create component. Please try again.',
+					id: 'component-save-failed',
+				} );
+			} );
+		} );
+
+		it( 'should close form when auto-save fails', async () => {
+			// Arrange.
+			mockRunCommand.mockImplementation( ( command: string ) => {
+				if ( command === 'document/save/auto' ) {
+					return Promise.reject( new Error( 'Auto-save failed' ) );
+				}
+				return Promise.resolve();
+			} );
+
+			const { openForm, fillComponentName, getCreateButton } = setupForm();
+			openForm();
+
+			// Act.
+			fillComponentName( 'My Test Component' );
+			fireEvent.click( getCreateButton() );
+
+			// Assert.
+			await waitFor( () => {
+				expect( screen.queryByText( 'Create component' ) ).not.toBeInTheDocument();
+			} );
+		} );
+
+		it( 'should remove unpublished component from store when auto-save fails', async () => {
+			// Arrange.
+			mockRunCommand.mockImplementation( ( command: string ) => {
+				if ( command === 'document/save/auto' ) {
+					return Promise.reject( new Error( 'Auto-save failed' ) );
+				}
+				return Promise.resolve();
+			} );
+
+			const { openForm, fillComponentName, getCreateButton } = setupForm();
+			openForm();
+
+			// Act.
+			fillComponentName( 'My Test Component' );
+			fireEvent.click( getCreateButton() );
+
+			// Assert.
+			await waitFor( () => {
+				const components = selectComponents( getState() );
+				const unpublishedComponent = components.find( ( c ) => c.name === 'My Test Component' );
+				expect( unpublishedComponent ).toBeUndefined();
+			} );
+		} );
+
+		it( 'should restore original element when auto-save fails', async () => {
+			// Arrange.
+			mockRunCommand.mockImplementation( ( command: string ) => {
+				if ( command === 'document/save/auto' ) {
+					return Promise.reject( new Error( 'Auto-save failed' ) );
+				}
+				return Promise.resolve();
+			} );
+
+			const { openForm, fillComponentName, getCreateButton } = setupForm();
+			openForm();
+
+			// Act.
+			fillComponentName( 'My Test Component' );
+			fireEvent.click( getCreateButton() );
+
+			// Assert.
+			await waitFor( () => {
+				expect( mockDeleteElement ).toHaveBeenCalledWith( {
+					elementId: CREATED_COMPONENT_INSTANCE_ID,
+					options: { useHistory: false },
+				} );
+			} );
+
+			await waitFor( () => {
+				expect( mockCreateElements ).toHaveBeenCalledWith(
+					expect.objectContaining( {
+						elements: expect.arrayContaining( [
+							expect.objectContaining( {
+								model: expect.objectContaining( {
+									id: mockElement.id,
+								} ),
+							} ),
+						] ),
+					} )
+				);
 			} );
 		} );
 	} );

@@ -110,6 +110,7 @@ export function CreateComponentForm() {
 				message: errorMessage,
 				id: 'component-save-failed',
 			} );
+			resetAndClosePopup();
 		}
 	};
 

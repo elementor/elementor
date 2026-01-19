@@ -1772,6 +1772,51 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( $autosave_props, $data );
 	}
 
+	public function test_post_create_component__cleans_up_orphaned_post_when_save_fails() {
+		// Arrange
+		$this->act_as_admin();
+		$initial_post_count = $this->get_component_post_count();
+
+		add_filter( 'elementor/document/save/data', '__return_false' );
+
+		// Act
+		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
+		$request->set_body_params( [
+			'status' => 'publish',
+			'items' => [
+				[
+					'uid' => 'test-uid-cleanup',
+					'title' => 'Test Component Cleanup',
+					'elements' => $this->mock_component_1_content,
+				],
+			],
+		] );
+
+		$response = rest_do_request( $request );
+
+		// Assert
+		$this->assertEquals( 500, $response->get_status() );
+
+		$final_post_count = $this->get_component_post_count();
+		$this->assertEquals(
+			$initial_post_count,
+			$final_post_count,
+			'No orphaned posts should remain after failed save'
+		);
+
+		remove_filter( 'elementor/document/save/data', '__return_false' );
+	}
+
+	private function get_component_post_count(): int {
+		$posts = get_posts( [
+			'post_type' => Component_Document::TYPE,
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+		] );
+
+		return count( $posts );
+	}
+
 	// Helpers
 	private function create_test_component( string $name, array $content, string $status = 'publish' ): int {
 		$this->act_as_admin();
