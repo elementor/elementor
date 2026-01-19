@@ -52,6 +52,7 @@ class Styles_Renderer {
 	 * @return string Rendered CSS string.
 	 */
 	public function render( array $styles ): string {
+
 		$css_style = [];
 
 		foreach ( $styles as $style_def ) {
