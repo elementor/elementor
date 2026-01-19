@@ -17,7 +17,7 @@ export function TimeFrameIndicator( { value, onChange, defaultValue }: Props ) {
 	const sizeValue = convertToSize( value, defaultValue );
 
 	const convertToNumber = ( newValue: SizePropValue['value'] ) => {
-		const numberValue = createNumber( Number( newValue.size ) );
+		const numberValue = createNumber( Number( newValue.size ?? defaultValue ) );
 
 		onChange( numberValue );
 	};

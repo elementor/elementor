@@ -1,22 +1,18 @@
 import { SizePropValue } from '@elementor/editor-props';
-import { useState } from 'react';
+import { useSyncExternalState } from '../hooks/use-sync-external-state';
+
+const DEFAULT_UNIT = 'px';
 
 export const useSizeValue = <T extends SizePropValue['value']> (
-	propValue: T,
+	externalValue: T,
 	onChange: ( value: T ) => void,
-	defaultUnit: SizePropValue['value']['unit']
 ) => {
-	const [ sizeValue, setSizeValue ] = useState< T >( {
-		...propValue,
-		unit: propValue.unit ?? defaultUnit,
+	const [ sizeValue, setSizeValue ] = useSyncExternalState<T>( {
+		external: externalValue,
+		setExternal: ( newState ) => onChange( newState as T ),
+		persistWhen: ( newState ) => shouldPersist( newState as T, externalValue ),
+		fallback: () => ( { unit: DEFAULT_UNIT, size: 0 } ) as T,
 	} );
-
-	// useEffect( () => {
-	//
-	// 	if ( sizeValue.size !== propValue.size || sizeValue.unit !== propValue.unit ) {
-	//
-	// 	}
-	// }, [ sizeValue, propValue.unit, propValue.size, onChange ] )
 
 	const setSize = ( value: string) => {
 		const newState = {
@@ -25,7 +21,6 @@ export const useSizeValue = <T extends SizePropValue['value']> (
 		};
 
 		setSizeValue( newState );
-		onChange( newState );
 	};
 
 	const setUnit = ( unit: SizePropValue['value']['unit'] ) => {
@@ -35,7 +30,6 @@ export const useSizeValue = <T extends SizePropValue['value']> (
 		};
 
 		setSizeValue( newState );
-		onChange( newState );
 	};
 
 	return {
@@ -44,4 +38,11 @@ export const useSizeValue = <T extends SizePropValue['value']> (
 		setSize,
 		setUnit
 	}
+}
+
+const shouldPersist = (
+	newState: SizePropValue['value'],
+	externalState: SizePropValue['value']
+) => {
+	return newState.size !== externalState.size || newState.unit !== externalState.unit
 }
