@@ -107,10 +107,6 @@ const EmptyState = () => {
 								'elementor'
 							) }
 						</Typography>
-
-						<Typography align="center" variant="caption" color="secondary">
-							{ __( 'Or', 'elementor' ) }
-						</Typography>
 					</Stack>
 				</>
 			) }
