@@ -154,7 +154,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		const flexboxElement = editor.previewFrame.locator( FLEXBOX_ELEMENT_SELECTOR ).first();
 		const headingElement = editor.previewFrame.locator( HEADING_WIDGET_SELECTOR );
 		const dummyElementId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
-		const dummyElement = editor.previewFrame.locator( editor.getWidgetSelector( dummyElementId ) ).nth( 1 );
+		const dummyElement = editor.previewFrame.locator( editor.getWidgetSelector( dummyElementId ) );
 
 		await test.step( 'Heading in editor is styled like in frontend', async () => {
 			// Arrange.
@@ -182,14 +182,14 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 
 			// Assert.
 			// Already hovered at this stage
-			await expect.soft( headingElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT_HOVER ) );
+			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT_HOVER ) );
 
 			// Act.
 			// Force heading to not be hovered
 			await dummyElement.hover();
 
 			// Assert.
-			await expect.soft( headingElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT ) );
+			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT ) );
 		} );
 	} );
 } );
