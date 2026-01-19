@@ -4,6 +4,7 @@ import { createMockElement, renderWithStore } from 'test-utils';
 import {
 	createElements,
 	deleteElement,
+	getContainer,
 	getElementLabel,
 	replaceElement,
 	type V1ElementModelProps,
@@ -29,6 +30,7 @@ jest.mock( '../../utils/switch-to-component' );
 jest.mock( '@elementor/editor-notifications' );
 
 const mockGetElementLabel = jest.mocked( getElementLabel );
+const mockGetContainer = jest.mocked( getContainer );
 const mockGetComponents = jest.mocked( apiClient.get );
 const mockReplaceElement = jest.mocked( replaceElement );
 const mockDeleteElement = jest.mocked( deleteElement );
@@ -59,6 +61,13 @@ describe( 'CreateComponentForm', () => {
 		store = __createStore();
 
 		mockGetElementLabel.mockReturnValue( 'Div Block' );
+		mockGetContainer.mockReturnValue( {
+			model: {
+				toJSON: () => mockElement,
+			},
+			parent: { id: 'parent-container-id' },
+			view: { _index: 0 },
+		} as ReturnType< typeof getContainer > );
 		mockGetComponents.mockReturnValue(
 			Promise.resolve( [
 				{ name: 'Existing Component', id: EXISTING_COMPONENT_ID, uid: EXISTING_COMPONENT_UID },
@@ -74,6 +83,7 @@ describe( 'CreateComponentForm', () => {
 			}
 			return Promise.resolve();
 		} );
+		mockReplaceElement.mockResolvedValue( createMockElement( { model: { id: CREATED_COMPONENT_INSTANCE_ID } } ) );
 
 		act( () => {
 			__dispatch(
@@ -253,12 +263,6 @@ describe( 'CreateComponentForm', () => {
 	} );
 
 	describe( 'Component Creation - Success Flow', () => {
-		beforeEach( () => {
-			mockReplaceElement.mockResolvedValue(
-				createMockElement( { model: { id: CREATED_COMPONENT_INSTANCE_ID } } )
-			);
-		} );
-
 		it( 'should add component to local store', async () => {
 			// Arrange.
 			const { openForm, fillComponentName, getCreateButton } = setupForm();

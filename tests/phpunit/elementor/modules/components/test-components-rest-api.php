@@ -1772,12 +1772,24 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( $autosave_props, $data );
 	}
 
-public function test_post_create_component__cleans_up_orphaned_post_when_save_fails() {
+	public function test_post_create_component__cleans_up_orphaned_post_when_save_fails() {
 		// Arrange
 		$this->act_as_admin();
 		$initial_post_count = $this->get_component_post_count();
 
-		add_filter( 'elementor/document/save/data', '__return_false' );
+		// A way to mock the save failure by denying edit after create.
+		$deny_edit_after_create = function( $allcaps, $caps, $args ) {
+			if ( isset( $args[2] ) ) {
+				$post = get_post( $args[2] );
+				if ( $post && Component_Document::TYPE === $post->post_type ) {
+					$allcaps['edit_post'] = false;
+					$allcaps['edit_others_posts'] = false;
+				}
+			}
+			return $allcaps;
+		};
+
+		add_filter( 'user_has_cap', $deny_edit_after_create, 10, 3 );
 
 		// Act
 		$request = new \WP_REST_Request( 'POST', '/elementor/v1/components' );
@@ -1797,14 +1809,14 @@ public function test_post_create_component__cleans_up_orphaned_post_when_save_fa
 		// Assert
 		$this->assertEquals( 500, $response->get_status() );
 
+		remove_filter( 'user_has_cap', $deny_edit_after_create, 10 );
+
 		$final_post_count = $this->get_component_post_count();
 		$this->assertEquals(
 			$initial_post_count,
 			$final_post_count,
 			'No orphaned posts should remain after failed save'
 		);
-
-		remove_filter( 'elementor/document/save/data', '__return_false' );
 	}
 
 	private function get_component_post_count(): int {
