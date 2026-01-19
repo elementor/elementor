@@ -14,9 +14,6 @@ import { AlertTriangleFilledIcon, ExternalLinkIcon } from '@elementor/icons';
 import { __ } from '@wordpress/i18n';
 import PropTypes from 'prop-types';
 
-/**
- * SubSetting row component for individual Class/Variable toggle
- */
 const SubSettingRow = ( {
 	label,
 	checked,
@@ -138,12 +135,6 @@ SubSettingRow.propTypes = {
 	showOverrideOption: PropTypes.bool,
 };
 
-/**
- * Classes & Variables section component for the Settings customization dialog
- *
- * This section appears after the Theme section and allows users to customize
- * the import/export of Global Classes and Global Variables.
- */
 export function ClassesVariablesSection( {
 	settings,
 	onSettingChange,
@@ -182,19 +173,17 @@ export function ClassesVariablesSection( {
 	return (
 		<Box sx={ { mb: 3, border: 1, borderRadius: 1, borderColor: 'action.focus', p: 2.5 } }>
 			<Stack spacing={ 2.5 }>
-				{/* Section Header */}
 				<Box sx={ { display: 'flex', justifyContent: 'space-between', alignItems: 'center' } }>
 					<Typography variant="h6">
 						{ __( 'Classes & variables', 'elementor' ) }
 					</Typography>
 				</Box>
 
-				{/* Limit Warning Alert - Only shown during import when limits are exceeded */}
 				{ hasLimitWarning && (
-				<Alert
-					severity="warning"
-					icon={ <AlertTriangleFilledIcon sx={ { color: 'warning.main' } } /> }
-					sx={ {
+					<Alert
+						severity="warning"
+						icon={ <AlertTriangleFilledIcon sx={ { color: 'warning.main' } } /> }
+						sx={ {
 							backgroundColor: 'warning.background',
 							'& .MuiAlert-message': {
 								display: 'flex',
@@ -217,9 +206,7 @@ export function ClassesVariablesSection( {
 					</Alert>
 				) }
 
-				{/* Sub-settings */}
 				<Stack spacing={ 1.5 }>
-					{/* Classes Row */}
 					<SubSettingRow
 						label={ __( 'Classes', 'elementor' ) }
 						checked={ settings.classes ?? true }
@@ -240,7 +227,6 @@ export function ClassesVariablesSection( {
 						showOverrideOption={ isImport }
 					/>
 
-					{/* Variables Row */}
 					<SubSettingRow
 						label={ __( 'Variables', 'elementor' ) }
 						checked={ settings.variables ?? true }
