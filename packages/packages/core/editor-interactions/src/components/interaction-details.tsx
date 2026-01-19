@@ -40,9 +40,10 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const effect = extractString( interaction.animation.value.effect, DEFAULT_VALUES.effect );
 	const type = extractString( interaction.animation.value.type, DEFAULT_VALUES.type );
 	const direction = extractString( interaction.animation.value.direction, DEFAULT_VALUES.direction );
+	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
+
 	const duration = interaction.animation.value.timing_config.value.duration ?? DEFAULT_VALUES.duration;
 	const delay = interaction.animation.value.timing_config.value.delay ?? DEFAULT_VALUES.delay;
-	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
 
 	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
 

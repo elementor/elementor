@@ -10,12 +10,14 @@ type Props<TValue = SizePropValue['value']> = {
 	units: Unit[];
 	value: TValue;
 	onChange: ( value: TValue ) => void;
+	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
 };
 
 export const UnstableSizeField = (
 	{
 		value,
 		onChange,
+		onBlur,
 		units,
 	}:
 	Props
@@ -30,6 +32,7 @@ export const UnstableSizeField = (
 		<UnstableSizeInput
 			type="number"
 			value={ size ?? '' }
+			onBlur={ onBlur }
 			onChange={ ( event ) => setSize( event.target.value ) }
 			InputProps={ {
 				endAdornment: (

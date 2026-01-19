@@ -4,6 +4,7 @@ import { numberPropTypeUtil, PropValue, sizePropTypeUtil, SizePropValue } from '
 
 import { createNumber } from '../../utils/prop-value-utils';
 import { NumberPropValue } from '../../types';
+import { useCallback } from 'react';
 
 type Props<T = NumberPropValue> = {
 	value: T
@@ -14,24 +15,35 @@ type Props<T = NumberPropValue> = {
 const DEFAULT_UNIT = 'ms';
 
 export function TimeFrameIndicator( { value, onChange, defaultValue }: Props ) {
-	const sizeValue = convertToSize( value, defaultValue );
+	const sizeValue = toSizeValue( value, defaultValue );
 
-	const convertToNumber = ( newValue: SizePropValue['value'] ) => {
-		const numberValue = createNumber( Number( newValue.size ?? defaultValue ) );
+	const setValue = useCallback( ( size?: number) => {
+			onChange( createNumber( size ?? defaultValue ) );
+		},
+		[ onChange, defaultValue ]
+	);
 
-		onChange( numberValue );
-	};
+	const handleChange = ( newValue: SizePropValue['value'] ) => {
+		setValue( newValue.size as number );
+	}
+
+	const handleBlur = () => {
+		if ( ! sizeValue.size ) {
+			setValue();
+		}
+	}
 
 	return (
 		<UnstableSizeField
 			units={ [ DEFAULT_UNIT ] }
 			value={ sizeValue }
-			onChange={ convertToNumber }
+			onChange={ handleChange }
+			onBlur={ handleBlur }
 		/>
 	);
 }
 
-const convertToSize = ( value: PropValue, defaultValue: number ): SizePropValue['value'] => {
+const toSizeValue = ( value: PropValue, defaultValue: number ): SizePropValue['value'] => {
 	if ( ! numberPropTypeUtil.isValid( value ) ) {
 		return {
 			size: defaultValue,
