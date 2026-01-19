@@ -6,7 +6,6 @@ import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
 import { UNITS } from '../typography/typography-constants';
 
 const HEADING_WIDGET_SELECTOR = '.e-heading-base';
-const FLEXBOX_ELEMENT_SELECTOR = '.e-flexbox-base';
 const TESTED_CONTENT = 'Very long Text With no Space To fiiiiiiiiiiiiiit';
 const CONTENT_WORDS = TESTED_CONTENT.split( ' ' );
 
@@ -138,15 +137,12 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		} );
 
 		await test.step( 'Go back to editor', async () => {
-			await page.goto( `wp-admin/post.php?post=${ pageId }&action=elementor` );
-			await page.waitForLoadState( 'load', { timeout: 20000 } );
 			wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-			await wpAdminPage.waitForPanel();
+			editor = await wpAdminPage.editExistingPage( pageId, { page, testInfo } );
 		} );
 
-		editor = new EditorPage( page, testInfo );
 		const headingElement = editor.previewFrame.locator( HEADING_WIDGET_SELECTOR );
-		const flexboxElement = editor.previewFrame.locator( FLEXBOX_ELEMENT_SELECTOR );
+		const editorHeadingElement = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
 
 		// Await test.step( 'Heading in editor - static', async () => {
 		// 	// Assert.
@@ -165,13 +161,13 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 
 			// Assert.
 			// Already hovered at this stage
-			await expect.soft( flexboxElement ).toHaveScreenshot( 'styled-edited-heading-hover.png' );
+			await expect.soft( editorHeadingElement ).toHaveScreenshot( 'styled-edited-heading-hover.png' );
 
 			// Act.
-			await flexboxElement.blur();
+			await editorHeadingElement.blur();
 
 			// Assert.
-			await expect.soft( flexboxElement ).toHaveScreenshot( 'styled-edited-heading.png' );
+			await expect.soft( editorHeadingElement ).toHaveScreenshot( 'styled-edited-heading.png' );
 		} );
 	} );
 } );
