@@ -1830,16 +1830,6 @@ class Test_Components_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( $autosave_props, $data );
 	}
 
-	private function get_component_post_count(): int {
-		$posts = get_posts( [
-			'post_type' => Component_Document::TYPE,
-			'post_status' => 'any',
-			'posts_per_page' => -1,
-		] );
-
-		return count( $posts );
-	}
-
 	// =====================================================
 	// Tests for draft/autosave vs published handling
 	// =====================================================
