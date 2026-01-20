@@ -404,6 +404,9 @@ trait Has_Atomic_Base {
 		$duration = 300;
 		$delay = 0;
 		$replay = 0;
+		$relative_to = 'viewport';
+		$offset_top = 15;
+		$offset_bottom = 85;
 
 		if ( is_array( $timing_config ) ) {
 			$duration = $this->extract_prop_value( $timing_config, 'duration', 300 );
@@ -411,6 +414,10 @@ trait Has_Atomic_Base {
 		}
 
 		if ( is_array( $config ) ) {
+			$relative_to = $this->extract_prop_value( $config, 'relative_to', 'viewport' );
+			$offset_top = $this->extract_prop_value( $config, 'offset_top', 15 );
+			$offset_bottom = $this->extract_prop_value( $config, 'offset_bottom', 85 );
+
 			$replay = $this->extract_prop_value( $config, 'replay', 0 );
 			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
 				$replay = 0;
@@ -419,7 +426,7 @@ trait Has_Atomic_Base {
 			$replay = 0;
 		}
 
-		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay ] );
+		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay, $replay, $relative_to, $offset_top, $offset_bottom ] );
 	}
 
 	public function print_content() {
