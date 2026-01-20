@@ -16,13 +16,14 @@ function applyAnimation( element, animConfig, animateFunc ) {
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
-		ease: config.ease,
+		ease: animConfig.easing,
 	};
 
 	const initialKeyframes = {};
 	Object.keys( keyframes ).forEach( ( key ) => {
 		initialKeyframes[ key ] = keyframes[ key ][ 0 ];
 	} );
+
 	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
 	const transition = element.style.transition;
 	element.style.transition = 'none';

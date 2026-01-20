@@ -45,7 +45,7 @@ export function parseAnimationName( name ) {
 		direction: direction || null,
 		duration: duration ? parseInt( duration, 10 ) : config.defaultDuration,
 		delay: delay ? parseInt( delay, 10 ) : config.defaultDelay,
-		easeing: easing || config.defaultEasing,
+		easing: easing || config.defaultEasing,
 	};
 }
 
