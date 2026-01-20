@@ -18,7 +18,7 @@ class Components_Repository {
 	}
 
 	public function all(): Collection {
-		// Components count is limited to 50, if we increase this number, we need to iterate the posts in batches.
+		// Components count is limited to 100, if we increase this number, we need to iterate the posts in batches.
 		$posts = get_posts( [
 			'post_type' => Component_Document::TYPE,
 			'post_status' => 'any',
@@ -70,12 +70,18 @@ class Components_Repository {
 			]
 		);
 
-		$saved = $document->save( [
-			'elements' => $content,
-			'settings' => $settings,
-		] );
+		try {
+			$saved = $document->save( [
+				'elements' => $content,
+				'settings' => $settings,
+			] );
+		} catch ( \Exception $e ) {
+			$document->force_delete();
+			throw $e;
+		}
 
 		if ( ! $saved ) {
+			$document->force_delete();
 			throw new \Exception( 'Failed to create component' );
 		}
 
