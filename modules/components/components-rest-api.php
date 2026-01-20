@@ -18,7 +18,7 @@ class Components_REST_API {
 	const API_BASE = 'components';
 	const LOCK_DOCUMENT_TYPE_NAME = 'components';
 	const STYLES_ROUTE = 'styles';
-	const MAX_COMPONENTS = 50;
+	const MAX_COMPONENTS = 100;
 
 	private $repository = null;
 	public function register_hooks() {
@@ -382,18 +382,18 @@ class Components_REST_API {
 
 			try {
 				$settings = isset( $item['settings'] ) ? $this->parse_settings( $item['settings'] ) : [];
+
+				$status = Document::STATUS_AUTOSAVE === $save_status
+					? Document::STATUS_DRAFT
+					: $save_status;
+
+				$component_id = $this->get_repository()->create( $title, $content, $status, $uid, $settings );
+
+				return [ $uid => $component_id ];
 			} catch ( \Exception $e ) {
 				$validation_errors[ $uid ] = $e->getMessage();
 				return [ $uid => null ];
 			}
-
-			$status = Document::STATUS_AUTOSAVE === $save_status
-				? Document::STATUS_DRAFT
-				: $save_status;
-
-			$component_id = $this->get_repository()->create( $title, $content, $status, $uid, $settings );
-
-			return [ $uid => $component_id ];
 		} );
 
 		if ( ! empty( $validation_errors ) ) {
