@@ -190,6 +190,7 @@ async function submitAtomicForm( payload ) {
 
 	const formData = new FormData();
 	formData.append( 'action', 'elementor_pro_atomic_forms_send_form' );
+	formData.append( '_nonce', elementorFrontendConfig?.nonces?.atomicFormsSendForm );
 	formData.append( 'post_id', payload.postId );
 	formData.append( 'form_id', payload.formId );
 	formData.append( 'form_name', payload.formName );
