@@ -31,6 +31,7 @@ import { PopoverBody } from '../../components/popover-body';
 import { Control as BaseControl } from '../../controls-registry/control';
 import { controlsRegistry, type ControlType } from '../../controls-registry/controls-registry';
 import { createTopLevelObjectType } from '../../controls-registry/create-top-level-object-type';
+import { useLicenseConfig } from '../../hooks/use-license-config';
 import { usePersistDynamicValue } from '../../hooks/use-persist-dynamic-value';
 import { DynamicControl } from '../dynamic-control';
 import { useDynamicTag } from '../hooks/use-dynamic-tag';
@@ -45,6 +46,7 @@ const tagsWithoutTabs = [ 'popup' ];
 export const DynamicSelectionControl = ( { OriginalControl, ...props }: { OriginalControl?: ControlComponent } ) => {
 	const { setValue: setAnyValue, propType } = useBoundProp();
 	const { bind, value } = useBoundProp( dynamicPropTypeUtil );
+	const { expired: readonly } = useLicenseConfig();
 	const originalPropType = createTopLevelObjectType( {
 		schema: {
 			[ bind ]: propType,
@@ -85,7 +87,7 @@ export const DynamicSelectionControl = ( { OriginalControl, ...props }: { Origin
 				{ ...bindTrigger( selectionPopoverState ) }
 				actions={
 					<>
-						<DynamicSettingsPopover dynamicTag={ dynamicTag } />
+						<DynamicSettingsPopover dynamicTag={ dynamicTag } disabled={ readonly } />
 						<IconButton
 							size={ SIZE }
 							onClick={ removeDynamicTag }
@@ -107,14 +109,20 @@ export const DynamicSelectionControl = ( { OriginalControl, ...props }: { Origin
 				{ ...bindPopover( selectionPopoverState ) }
 			>
 				<PopoverBody aria-label={ __( 'Dynamic tags', 'elementor' ) }>
-					<DynamicSelection close={ selectionPopoverState.close } />
+					<DynamicSelection close={ selectionPopoverState.close } expired={ readonly } />
 				</PopoverBody>
 			</Popover>
 		</Box>
 	);
 };
 
-export const DynamicSettingsPopover = ( { dynamicTag }: { dynamicTag: DynamicTag } ) => {
+export const DynamicSettingsPopover = ( {
+	dynamicTag,
+	disabled = false,
+}: {
+	dynamicTag: DynamicTag;
+	disabled?: boolean;
+} ) => {
 	const popupState = usePopupState( { variant: 'popover' } );
 
 	const hasDynamicSettings = !! dynamicTag.atomic_controls.length;
@@ -127,7 +135,8 @@ export const DynamicSettingsPopover = ( { dynamicTag }: { dynamicTag: DynamicTag
 		<>
 			<IconButton
 				size={ SIZE }
-				{ ...bindTrigger( popupState ) }
+				disabled={ disabled }
+				{ ...( ! disabled && bindTrigger( popupState ) ) }
 				aria-label={ __( 'Dynamic settings', 'elementor' ) }
 			>
 				<SettingsIcon fontSize={ SIZE } />
