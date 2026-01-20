@@ -5,7 +5,7 @@ import { InteractionsList } from '../components/interactions-list';
 import { PopupStateProvider } from '../contexts/popup-state-context';
 import { type ElementInteractions } from '../types';
 
-jest.mock( '../utils/get-interactions-config' );
+jest.mock( '../utils/interaction-default-config' );
 
 const createInteraction = (
 	trigger: string,

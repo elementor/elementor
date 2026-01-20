@@ -1,7 +1,7 @@
 export * from './components/empty-state';
 export * from './components/interactions-tab';
 export * from './types';
-export * from './utils/get-interactions-config';
+export * from './utils/interaction-default-config';
 
 export { interactionsRepository } from './interactions-repository';
 export {

@@ -6,12 +6,8 @@ import { __ } from '@wordpress/i18n';
 
 import { getInteractionsControl } from '../interactions-controls-registry';
 import type { InteractionItemValue, NumberPropValue } from '../types';
-import {
-	createAnimationPreset,
-	createString,
-	extractBoolean,
-	extractString,
-} from '../utils/prop-value-utils';
+import { INTERACTION_DEFAULT_CONFIG } from '../utils/interaction-default-config';
+import { createAnimationPreset, createString, extractBoolean, extractString } from '../utils/prop-value-utils';
 import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
@@ -23,27 +19,20 @@ type InteractionDetailsProps = {
 	onPlayInteraction: ( interactionId: string ) => void;
 };
 
-const DEFAULT_VALUES = {
-	trigger: 'load',
-	effect: 'fade',
-	type: 'in',
-	direction: '',
-	duration: 600,
-	delay: 0,
-	replay: false,
-};
-
 const TRIGGERS_WITH_REPLAY = [ 'scrollIn', 'scrollOut' ];
 
 export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }: InteractionDetailsProps ) => {
-	const trigger = extractString( interaction.trigger, DEFAULT_VALUES.trigger );
-	const effect = extractString( interaction.animation.value.effect, DEFAULT_VALUES.effect );
-	const type = extractString( interaction.animation.value.type, DEFAULT_VALUES.type );
-	const direction = extractString( interaction.animation.value.direction, DEFAULT_VALUES.direction );
-	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
+	const trigger = extractString( interaction.trigger, INTERACTION_DEFAULT_CONFIG.trigger );
+	const effect = extractString( interaction.animation.value.effect, INTERACTION_DEFAULT_CONFIG.effect );
+	const type = extractString( interaction.animation.value.type, INTERACTION_DEFAULT_CONFIG.type );
+	const direction = extractString( interaction.animation.value.direction, INTERACTION_DEFAULT_CONFIG.direction );
+	const replay = extractBoolean(
+		interaction.animation.value.config?.value.replay,
+		INTERACTION_DEFAULT_CONFIG.replay
+	);
 
-	const duration = interaction.animation.value.timing_config.value.duration ?? DEFAULT_VALUES.duration;
-	const delay = interaction.animation.value.timing_config.value.delay ?? DEFAULT_VALUES.delay;
+	const duration = interaction.animation.value.timing_config.value.duration;
+	const delay = interaction.animation.value.timing_config.value.delay;
 
 	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
 
@@ -148,16 +137,16 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				<Field label={ __( 'Duration', 'elementor' ) }>
 					<TimeFrameIndicator
 						value={ duration }
-						onChange={ ( duration ) => updateInteraction( { duration } ) }
-						defaultValue={ DEFAULT_VALUES.duration }
+						onChange={ ( value ) => updateInteraction( { duration: value } ) }
+						defaultValue={ INTERACTION_DEFAULT_CONFIG.duration }
 					/>
 				</Field>
 
 				<Field label={ __( 'Delay', 'elementor' ) }>
 					<TimeFrameIndicator
 						value={ delay }
-						onChange={ ( delay ) => updateInteraction( { delay } ) }
-						defaultValue={ DEFAULT_VALUES.delay }
+						onChange={ ( value ) => updateInteraction( { delay: value } ) }
+						defaultValue={ INTERACTION_DEFAULT_CONFIG.delay }
 					/>
 				</Field>
 			</Grid>

@@ -9,6 +9,7 @@ import type {
 	StringPropValue,
 	TimingConfigPropValue,
 } from '../types';
+import { INTERACTION_DEFAULT_CONFIG } from './interaction-default-config';
 import { generateTempInteractionId } from './temp-id-utils';
 
 export const createString = ( value: string ): StringPropValue => ( {
@@ -106,12 +107,7 @@ export const createInteractionItem = ( {
 
 export const createDefaultInteractionItem = (): InteractionItemPropValue => {
 	return createInteractionItem( {
-		trigger: 'load',
-		effect: 'fade',
-		type: 'in',
-		duration: 300,
-		delay: 0,
-		replay: false,
+		...INTERACTION_DEFAULT_CONFIG,
 		interactionId: generateTempInteractionId(),
 	} );
 };
