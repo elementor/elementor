@@ -36,7 +36,7 @@ export const createBoolean = ( value: boolean ): BooleanPropValue => ( {
 
 export const createConfig = (
 	replay: boolean,
-	easing: string,
+	easing?: string,
 	relativeTo?: string,
 	offsetTop?: number,
 	offsetBottom?: number
@@ -44,7 +44,7 @@ export const createConfig = (
 	$$type: 'config',
 	value: {
 		replay: createBoolean( replay ),
-		easing: createString( easing ),
+		easing: createString( easing ?? 'easeIn' ),
 		relativeTo: createString( relativeTo ?? '' ),
 		offsetTop: createNumber( offsetTop ?? 0 ),
 		offsetBottom: createNumber( offsetBottom ?? 100 ),
@@ -73,7 +73,7 @@ export const createAnimationPreset = ( {
 	duration: number;
 	delay: number;
 	replay: boolean;
-	easing: string;
+	easing?: string;
 	relativeTo?: string;
 	offsetTop?: number;
 	offsetBottom?: number;
@@ -110,7 +110,7 @@ export const createInteractionItem = ( {
 	delay: number;
 	interactionId?: string;
 	replay: boolean;
-	easing: string;
+	easing?: string;
 	relativeTo?: string;
 	offsetTop?: number;
 	offsetBottom?: number;
@@ -167,8 +167,9 @@ export const buildAnimationIdString = ( item: InteractionItemValue ): string => 
 	const direction = extractString( item.animation.value.direction );
 	const duration = extractNumber( item.animation.value.timing_config.value.duration );
 	const delay = extractNumber( item.animation.value.timing_config.value.delay );
+	const easing = extractString( item.animation.value.config?.value.easing );
 
-	return [ trigger, effect, type, direction, duration, delay ].join( '-' );
+	return [ trigger, effect, type, direction, duration, delay, easing ].join( '-' );
 };
 
 const TRIGGER_LABELS: Record< string, string > = {

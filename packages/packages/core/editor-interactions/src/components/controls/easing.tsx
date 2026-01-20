@@ -16,11 +16,10 @@ const EASING_OPTIONS = {
 };
 
 export function Easing( { value, onChange }: FieldProps ) {
-	const availableOptions = Object.entries( EASING_OPTIONS )
-		.map( ( [ key, label ] ) => ( {
-			key,
-			label,
-		} ) );
+	const availableOptions = Object.entries( EASING_OPTIONS ).map( ( [ key, label ] ) => ( {
+		key,
+		label,
+	} ) );
 
 	return (
 		<Select

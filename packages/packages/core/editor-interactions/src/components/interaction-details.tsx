@@ -115,16 +115,13 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			duration: number;
 			delay: number;
 			replay: boolean;
-			easing: string;
+			easing?: string;
 			relativeTo: string;
 			offsetTop: number;
 			offsetBottom: number;
 		} >
 	): void => {
 		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction );
-
-		const newReplay = updates.replay !== undefined ? updates.replay : replay;
-		const newEasing = updates.easing !== undefined ? updates.easing : easing;
 
 		const updatedInteraction = {
 			...interaction,
@@ -136,7 +133,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				direction: resolvedDirectionValue,
 				duration: updates.duration ?? duration,
 				delay: updates.delay ?? delay,
-				replay: newReplay,
+				replay: updates.replay ?? replay,
 				easing: updates.easing ?? easing,
 				relativeTo: updates.relativeTo ?? relativeTo,
 				offsetTop: updates.offsetTop ?? offsetTop,
@@ -208,10 +205,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 
 				{ EasingControl && (
 					<Field label={ __( 'Easing', 'elementor' ) }>
-						<EasingControl
-							value={ easing }
-							onChange={ ( v ) => updateInteraction( { easing: v } ) }
-						/>
+						<EasingControl value={ easing } onChange={ ( v ) => updateInteraction( { easing: v } ) } />
 					</Field>
 				) }
 			</Grid>
