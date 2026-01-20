@@ -34,8 +34,8 @@ const createAtomicFormView = () => {
 		_updateStatusVisibility() {
 			const formState = this._getFormState();
 
-			this.$el.find( '.e-form-success' ).toggle( formState === 'success' );
-			this.$el.find( '.e-form-error' ).toggle( formState === 'error' );
+		this.$el.find( '.e-form-success' ).toggle( 'success' === formState );
+		this.$el.find( '.e-form-error' ).toggle( 'error' === formState );
 		}
 	};
 };
