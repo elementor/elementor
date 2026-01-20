@@ -74,17 +74,36 @@ function initInteractions() {
 			return;
 		}
 
-		const elements = document.querySelectorAll( '[data-interactions]' );
+		const interactionsArray = getInteractionsData();
 
-		elements.forEach( ( element ) => {
-			const interactionsData = element.getAttribute( 'data-interactions' );
-			const parsedData = parseInteractionsData( interactionsData );
+		if ( ! interactionsArray || ! Array.isArray( interactionsArray ) || interactionsArray.length === 0 ) {
+			return;
+		}
 
-			if ( ! parsedData || ! Array.isArray( parsedData ) ) {
+		// Group interactions by element_id
+		const interactionsByElement = {};
+		interactionsArray.forEach( ( interaction ) => {
+			const elementId = interaction.element_id;
+			if ( ! elementId ) {
 				return;
 			}
 
-			parsedData.forEach( ( interaction ) => {
+			if ( ! interactionsByElement[ elementId ] ) {
+				interactionsByElement[ elementId ] = [];
+			}
+
+			interactionsByElement[ elementId ].push( interaction );
+		} );
+
+		// Apply interactions to each element
+		Object.keys( interactionsByElement ).forEach( ( elementId ) => {
+			const element = findElementByInteractionId( elementId );
+			if ( ! element ) {
+				return;
+			}
+
+			const interactions = interactionsByElement[ elementId ];
+			interactions.forEach( ( interaction ) => {
 				const animationName = extractAnimationId( interaction );
 				const animConfig = animationName && parseAnimationName( animationName );
 
@@ -93,6 +112,26 @@ function initInteractions() {
 				}
 			} );
 		} );
+
+		// const elements = document.querySelectorAll( '[data-interactions]' );
+
+		// elements.forEach( ( element ) => {
+		// 	const interactionsData = element.getAttribute( 'data-interactions' );
+		// 	const parsedData = parseInteractionsData( interactionsData );
+
+		// 	if ( ! parsedData || ! Array.isArray( parsedData ) ) {
+		// 		return;
+		// 	}
+
+		// 	parsedData.forEach( ( interaction ) => {
+		// 		const animationName = extractAnimationId( interaction );
+		// 		const animConfig = animationName && parseAnimationName( animationName );
+
+		// 		if ( animConfig ) {
+		// 			applyAnimation( element, animConfig, animateFunc, inViewFunc );
+		// 		}
+		// 	} );
+		// } );
 	} );
 }
 
