@@ -196,7 +196,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		// Arrange
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 			const atomIds: Partial< Record< typeof supportedAtoms[number], string > > = {};
-			const encodedExpectedOutput = '<strong draggable=\"true\">bold</strong>, <u>underline</u>, <s>strikethrough</s>, <sup>superscript</sup>, <sub>subscript</sub>';
+			const encodedExpectedOutput = '<strong draggable=\"true\">bold</strong>, <u>underline</u>, <s>strikethrough</s>, <sup>superscript</sup>, <sub>subscript</sub>, <em>italic</em>';
 
 			atomIds[ atom ] = await editor.addWidget( { widgetType: atom, container: containerId } );
 
@@ -209,7 +209,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 			// Act.
 			for ( const attribute of testedAttributes ) {
 				await editor.selectInlineEditedText( atomIds[ atom ], attribute );
-				await editor.toggleInlineEditingAttribute( attribute );
+				await editor.toggleInlineEditingAttribute( INLINE_EDITING_SELECTORS.attributes[ attribute ] );
 				await page.keyboard.press( 'Escape' );
 			}
 

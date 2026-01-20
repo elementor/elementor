@@ -128,7 +128,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			await editor.publishPage();
 			await page.goto( `/?p=${ pageId }` );
 
-			const publishedHeadingElement = page.locator( EditorSelectors.v4.atomSelectors.heading );
+			const publishedHeadingElement = page.locator( EditorSelectors.v4.atomSelectors.heading.base );
 
 			await publishedHeadingElement.waitFor();
 
@@ -151,12 +151,12 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		// Triggering editing mode forces heading to stay hovered.
 		// Add a div block so that it can be hovered, and force the heading to be "unhovered".
 		await editor.addElement( { elType: EditorSelectors.v4.atoms.divBlock }, 'document' );
-		const divBlocElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.divBlock );
+		const divBlocElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.divBlock.base );
 
 		await editor.closeNavigatorIfOpen();
 
-		const flexboxElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.flexbox );
-		const headingElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.heading );
+		const flexboxElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.flexbox.base );
+		const headingElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.heading.base );
 
 		await test.step( 'Heading in editor is styled like in frontend', async () => {
 			// Arrange.

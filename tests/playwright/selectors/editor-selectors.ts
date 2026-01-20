@@ -291,7 +291,10 @@ const EditorSelectors = {
 };
 
 function getElementSelectorBySlug( slug: string ) {
-	return `[data-element_type="${ slug }"],.${ slug }-base`;
+	return {
+		wrapper: `[data-widget_type="${ slug }.default"]`,
+		base: `.${ slug }-base`,
+	};
 }
 
 export default EditorSelectors;
