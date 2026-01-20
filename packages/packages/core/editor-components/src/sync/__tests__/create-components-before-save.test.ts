@@ -100,8 +100,22 @@ describe( 'createComponentsBeforeSave', () => {
 
 			// Act & Assert
 			await expect( createComponentsBeforeSave( { elements: [], status: 'draft' } ) ).rejects.toThrow(
-				'Failed to publish components and update component instances'
+				'Failed to publish components'
 			);
+		} );
+
+		it( 'should remove unpublished components from store when API call fails', async () => {
+			// Arrange
+			mockCreateComponents.mockRejectedValue( new Error( 'API Error' ) );
+
+			// Assert - unpublished components exist before
+			expect( selectUnpublishedComponents( getState() ) ).toHaveLength( 2 );
+
+			// Act
+			await expect( createComponentsBeforeSave( { elements: [], status: 'draft' } ) ).rejects.toThrow();
+
+			// Assert - unpublished components removed after failure
+			expect( selectUnpublishedComponents( getState() ) ).toEqual( [] );
 		} );
 	} );
 
