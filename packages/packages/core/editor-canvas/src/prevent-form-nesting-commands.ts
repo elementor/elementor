@@ -117,7 +117,6 @@ function hasElementType( element: V1Element, type: string ): boolean {
 	return getAllDescendants( element ).some( ( item ) => getElementType( item ) === type );
 }
 
-
 function hasClipboardElementType( elements: ClipboardElement[], type: string ): boolean {
 	return elements.some( ( element ) => {
 		const elementType = element.widgetType || element.elType;
@@ -128,7 +127,6 @@ function hasClipboardElementType( elements: ClipboardElement[], type: string ): 
 		return element.elements ? hasClipboardElementType( element.elements, type ) : false;
 	} );
 }
-
 
 function getElementType( element?: V1Element ): string | undefined {
 	return element?.model.get( 'widgetType' ) || element?.model.get( 'elType' );
