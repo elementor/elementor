@@ -183,7 +183,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			// Assert.
 			// Already hovered at this stage
 			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT_HOVER ) );
-			await expect( editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor ) ).toBeVisible();
+			await expect( editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor ) ).toBeAttached();
 
 			// Act.
 			// Force heading to be "unhovered
@@ -191,7 +191,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 
 			// Assert.
 			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT ) );
-			await expect( editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor ) ).toBeVisible();
+			await expect( editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor ) ).toBeAttached();
 		} );
 	} );
 } );

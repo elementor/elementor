@@ -291,7 +291,7 @@ const EditorSelectors = {
 };
 
 function getElementSelectorBySlug( slug: string ) {
-	return `[data-element_type="${ slug }"]`;
+	return `[data-element_type="${ slug }"],.${ slug }-base`;
 }
 
 export default EditorSelectors;
