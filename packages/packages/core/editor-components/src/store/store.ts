@@ -72,6 +72,12 @@ export const slice = createSlice( {
 		addUnpublished: ( state, { payload }: PayloadAction< UnpublishedComponent > ) => {
 			state.unpublishedData.unshift( payload );
 		},
+		removeUnpublished: ( state, { payload }: PayloadAction< string | string[] > ) => {
+			const uidsToRemove = Array.isArray( payload ) ? payload : [ payload ];
+			state.unpublishedData = state.unpublishedData.filter(
+				( component ) => ! uidsToRemove.includes( component.uid )
+			);
+		},
 		resetUnpublished: ( state ) => {
 			state.unpublishedData = [];
 		},
@@ -85,6 +91,9 @@ export const slice = createSlice( {
 		},
 		addCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
 			state.createdThisSession.push( payload );
+		},
+		removeCreatedThisSession: ( state, { payload }: PayloadAction< string > ) => {
+			state.createdThisSession = state.createdThisSession.filter( ( uid ) => uid !== payload );
 		},
 		archive: ( state, { payload }: PayloadAction< number > ) => {
 			const component = state.data.find( ( comp ) => comp.id === payload );
