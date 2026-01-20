@@ -48,8 +48,6 @@ function defaultAnimation( element, transition, keyframes, options, animateFunc 
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
 
-	console.log( { config, animConfig } );
-
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
