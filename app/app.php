@@ -50,6 +50,12 @@ class App extends BaseApp {
 		return admin_url( 'admin.php?page=' . self::PAGE_ID . '&ver=' . ELEMENTOR_VERSION );
 	}
 
+	private function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
+		if ( ! $this->is_editor_one_active() ) {
+			$admin_menu->register( static::PAGE_ID, new Theme_Builder_Menu_Item() );
+		}
+	}
+
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Theme_Builder_Menu() );
 	}

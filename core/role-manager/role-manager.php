@@ -146,7 +146,11 @@ class Role_Manager extends Settings_Page {
 			$excluded_options = $this->get_role_manager_options();
 		}
 
-		$row_classes = 'elementor-role-row e-editor-one ' . esc_attr( $role_slug );
+		$is_editor_one_enabled = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
+		$row_classes = 'elementor-role-row ' . esc_attr( $role_slug );
+		if ( $is_editor_one_enabled ) {
+			$row_classes .= ' e-editor-one';
+		}
 
 		?>
 		<div class="<?php echo esc_attr( $row_classes ); ?>">
@@ -326,6 +330,12 @@ class Role_Manager extends Settings_Page {
 	 */
 	public function __construct() {
 		parent::__construct();
+
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+			if ( ! $this->is_editor_one_active() ) {
+				$this->register_admin_menu( $admin_menu );
+			}
+		}, Settings::ADMIN_MENU_PRIORITY + 10 );
 
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu( $menu_data_provider );

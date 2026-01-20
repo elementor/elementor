@@ -209,6 +209,12 @@ class Tools extends Settings_Page {
 	public function __construct() {
 		parent::__construct();
 
+		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+			if ( ! $this->is_editor_one_active() ) {
+				$admin_menu->register( static::PAGE_ID, new Tools_Menu_Item( $this ) );
+			}
+		}, Settings::ADMIN_MENU_PRIORITY + 20 );
+
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu( $menu_data_provider );
 		} );
@@ -223,6 +229,10 @@ class Tools extends Settings_Page {
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Tools_Menu() );
+	}
+
+	private function is_editor_one_active(): bool {
+		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	public function get_warning_span( string $text ): string {
