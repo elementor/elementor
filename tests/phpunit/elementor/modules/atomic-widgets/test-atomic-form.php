@@ -37,11 +37,15 @@ class Test_Atomic_Form extends Elementor_Test_Base {
 		$this->assertSame( $expected_button_settings, $button['settings'] );
 
 		$success = $children[2];
-		$this->assertSame( Atomic_Form::get_element_type() . '-success', $success['elType'] );
+		$this->assertSame( 'e-div-block', $success['elType'] );
+		$this->assertSame( [ 'e-form-success' ], $success['settings']['classes']['value'] ?? [] );
+		$this->assertSame( 'Success message', $success['editor_settings']['title'] ?? null );
 		$this->assertTrue( $success['isLocked'] ?? false );
 
 		$error = $children[3];
-		$this->assertSame( Atomic_Form::get_element_type() . '-error', $error['elType'] );
+		$this->assertSame( 'e-div-block', $error['elType'] );
+		$this->assertSame( [ 'e-form-error' ], $error['settings']['classes']['value'] ?? [] );
+		$this->assertSame( 'Error message', $error['editor_settings']['title'] ?? null );
 		$this->assertTrue( $error['isLocked'] ?? false );
 	}
 

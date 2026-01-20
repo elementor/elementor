@@ -97,8 +97,6 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
 use Elementor\Modules\AtomicWidgets\Database\Atomic_Widgets_Database_Updater;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs\Atomic_Tab_Content;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Success;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form_Error;
 use Elementor\Modules\AtomicWidgets\PropTypeMigrations\Migrations_Orchestrator;
 use Elementor\Plugin;
 use Elementor\Widgets_Manager;
@@ -277,8 +275,6 @@ class Module extends BaseModule {
 
 		if ( \Elementor\Utils::has_pro() ) {
 			$elements_manager->register_element_type( new Atomic_Form() );
-			$elements_manager->register_element_type( new Atomic_Form_Success() );
-			$elements_manager->register_element_type( new Atomic_Form_Error() );
 		}
 	}
 
@@ -406,10 +402,10 @@ class Module extends BaseModule {
 
 	private function add_inline_styles() {
 		$inline_css = '.e-heading-base a, .e-paragraph-base a { all: unset; cursor: pointer; }';
-		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="default"] .elementor-element[data-element_type="e-form-success"],';
-		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="default"] .elementor-element[data-element_type="e-form-error"],';
-		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="success"] .elementor-element[data-element_type="e-form-error"],';
-		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="error"] .elementor-element[data-element_type="e-form-success"]';
+		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="default"] .e-form-success,';
+		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="default"] .e-form-error,';
+		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="success"] .e-form-error,';
+		$inline_css .= '.elementor-element[data-element_type="e-form"][data-form-state="error"] .e-form-success';
 		$inline_css .= '{ display: none; }';
 		wp_add_inline_style( 'elementor-frontend', $inline_css );
 		wp_add_inline_style( 'elementor-editor', $inline_css );

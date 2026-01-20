@@ -35,18 +35,10 @@ type StorageContent = {
 };
 
 const FORM_ELEMENT_TYPE = 'e-form';
-const FORM_FIELD_TYPES = new Set( [ 'e-form-success', 'e-form-error' ] );
-
 const FORM_NESTING_ALERT: NotificationData = {
 	type: 'default',
 	message: __( "Forms can't be nested. Create separate forms instead.", 'elementor' ),
 	id: 'form-nesting-blocked',
-};
-
-const FORM_FIELD_ALERT: NotificationData = {
-	type: 'default',
-	message: __( 'Form fields must be placed inside a form.', 'elementor' ),
-	id: 'form-fields-outside-blocked',
 };
 
 export function initFormNestingPrevention() {
@@ -78,11 +70,6 @@ function blockFormCreate( args: CreateArgs ): boolean {
 		return true;
 	}
 
-	if ( FORM_FIELD_TYPES.has( elementType ) && ! isWithinForm( args.container ) ) {
-		notify( FORM_FIELD_ALERT );
-		return true;
-	}
-
 	return false;
 }
 
@@ -95,15 +82,6 @@ function blockFormMove( args: MoveArgs ): boolean {
 
 	if ( hasFormElement && isWithinForm( target ) ) {
 		notify( FORM_NESTING_ALERT );
-		return true;
-	}
-
-	const hasFormFieldElement = containers.some( ( container ) =>
-		container ? hasElementTypeFromSet( container, FORM_FIELD_TYPES ) : false
-	);
-
-	if ( hasFormFieldElement && ! isWithinForm( target ) ) {
-		notify( FORM_FIELD_ALERT );
 		return true;
 	}
 
@@ -132,13 +110,6 @@ function blockFormPaste( args: PasteArgs ): boolean {
 		return true;
 	}
 
-	const hasFormFieldElement = hasClipboardElementTypeFromSet( data.clipboard.elements, FORM_FIELD_TYPES );
-
-	if ( hasFormFieldElement && ! isWithinForm( args.container ) ) {
-		notify( FORM_FIELD_ALERT );
-		return true;
-	}
-
 	return false;
 }
 
@@ -146,12 +117,6 @@ function hasElementType( element: V1Element, type: string ): boolean {
 	return getAllDescendants( element ).some( ( item ) => getElementType( item ) === type );
 }
 
-function hasElementTypeFromSet( element: V1Element, types: Set< string > ): boolean {
-	return getAllDescendants( element ).some( ( item ) => {
-		const itemType = getElementType( item );
-		return itemType ? types.has( itemType ) : false;
-	} );
-}
 
 function hasClipboardElementType( elements: ClipboardElement[], type: string ): boolean {
 	return elements.some( ( element ) => {
@@ -164,16 +129,6 @@ function hasClipboardElementType( elements: ClipboardElement[], type: string ): 
 	} );
 }
 
-function hasClipboardElementTypeFromSet( elements: ClipboardElement[], types: Set< string > ): boolean {
-	return elements.some( ( element ) => {
-		const elementType = element.widgetType || element.elType;
-		if ( elementType && types.has( elementType ) ) {
-			return true;
-		}
-
-		return element.elements ? hasClipboardElementTypeFromSet( element.elements, types ) : false;
-	} );
-}
 
 function getElementType( element?: V1Element ): string | undefined {
 	return element?.model.get( 'widgetType' ) || element?.model.get( 'elType' );

@@ -5,15 +5,20 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Toggle_Control;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Button\Atomic_Button;
+use Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph\Atomic_Paragraph;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Element_Builder;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Widget_Builder;
+use Elementor\Modules\AtomicWidgets\Elements\Div_Block\Div_Block;
+use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -122,6 +127,8 @@ class Atomic_Form extends Atomic_Element_Base {
 	}
 
 	protected function define_default_children() {
+		$is_inline_editing_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
+
 		return [
 			Widget_Builder::make( 'e-form-input' )
 				->build(),
@@ -137,13 +144,42 @@ class Atomic_Form extends Atomic_Element_Base {
 				] )
 				->is_locked( true )
 				->build(),
-			Element_Builder::make( Atomic_Form_Success::get_type() )
-				->is_locked( true )
-				->build(),
-			Element_Builder::make( Atomic_Form_Error::get_type() )
-				->is_locked( true )
-				->build(),
+			$this->build_status_message(
+				'e-form-success',
+				__( 'Thank you! Your submission has been received.', 'elementor' ),
+				$is_inline_editing_active,
+				__( 'Success message', 'elementor' )
+			),
+			$this->build_status_message(
+				'e-form-error',
+				__( 'Oops! Something went wrong.', 'elementor' ),
+				$is_inline_editing_active,
+				__( 'Error message', 'elementor' )
+			),
 		];
+	}
+
+	private function build_status_message( string $class_name, string $message, bool $is_inline_editing_active, string $title ): array {
+		$paragraph_value = $is_inline_editing_active
+			? Html_Prop_Type::generate( $message )
+			: String_Prop_Type::generate( $message );
+
+		return Element_Builder::make( Div_Block::get_element_type() )
+			->settings( [
+				'classes' => Classes_Prop_Type::generate( [ $class_name ] ),
+			] )
+			->editor_settings( [
+				'title' => $title,
+			] )
+			->children( [
+				Widget_Builder::make( Atomic_Paragraph::get_element_type() )
+					->settings( [
+						'paragraph' => $paragraph_value,
+					] )
+					->build(),
+			] )
+			->is_locked( true )
+			->build();
 	}
 
 	protected function add_render_attributes() {
@@ -169,7 +205,9 @@ class Atomic_Form extends Atomic_Element_Base {
 			$attributes['data-form-name'] = esc_attr( $settings['form-name'] );
 		}
 
-		$form_state = $settings['form-state'] ?? 'default';
+		$is_edit_mode = Plugin::$instance->editor->is_edit_mode();
+		$is_preview_mode = Plugin::$instance->preview->is_preview_mode();
+		$form_state = ( $is_edit_mode || $is_preview_mode ) ? ( $settings['form-state'] ?? 'default' ) : 'default';
 		$attributes['data-form-state'] = esc_attr( $form_state );
 
 		$this->add_render_attribute( '_wrapper', $attributes );
