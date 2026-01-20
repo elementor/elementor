@@ -9,7 +9,7 @@ const V4_BUTTON = 'e-button';
 const V4_DIVIDER = 'e-divider';
 const V4_YOUTUBE = 'e-youtube';
 
-const V4_ATOM_SELECTORS = {
+const V4_ATOM_SLUGS = {
 	divBlock: V4_DIV_BLOCK,
 	flexbox: V4_FLEXBOX,
 	tabs: V4_TABS,
@@ -21,6 +21,18 @@ const V4_ATOM_SELECTORS = {
 	divider: V4_DIVIDER,
 	youtube: V4_YOUTUBE,
 } as const;
+
+const V4_ATOM_SELECTORS = {
+	divBlock: getElementSelectorBySlug( V4_DIV_BLOCK ),
+	flexbox: getElementSelectorBySlug( V4_FLEXBOX ),
+	tabs: getElementSelectorBySlug( V4_TABS ),
+	heading: getElementSelectorBySlug( V4_HEADING ),
+	paragraph: getElementSelectorBySlug( V4_PARAGRAPH ),
+	image: getElementSelectorBySlug( V4_IMAGE ),
+	svg: getElementSelectorBySlug( V4_SVG ),
+	button: getElementSelectorBySlug( V4_BUTTON ),
+	divider: getElementSelectorBySlug( V4_DIVIDER ),
+};
 
 const EditorSelectors = {
 	getWidgetByName: ( title: string ) => `[data-widget_type="${ title }.default"]`,
@@ -38,7 +50,8 @@ const EditorSelectors = {
 	addSectionInner: '.elementor-add-section-inner',
 	removeContainer: '.elementor-editor-element-setting.elementor-editor-element-remove',
 	v4: {
-		atoms: V4_ATOM_SELECTORS,
+		atoms: V4_ATOM_SLUGS,
+		atomSelectors: V4_ATOM_SELECTORS,
 	},
 	panels: {
 		topBar: {
@@ -276,5 +289,9 @@ const EditorSelectors = {
 		},
 	},
 };
+
+function getElementSelectorBySlug( slug: string ) {
+	return `[data-element_type="${ slug }"]`;
+}
 
 export default EditorSelectors;

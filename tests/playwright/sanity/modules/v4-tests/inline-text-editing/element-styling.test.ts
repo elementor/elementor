@@ -40,10 +40,10 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		await context.close();
 	} );
 
-	test( 'Validate styling in editor, and that it does not get affected in frontend', async ( { apiRequests }, testInfo ) => {
+	test.only( 'Validate styling in editor, and that it does not get affected in frontend', async ( { apiRequests }, testInfo ) => {
 		// Arrange & act.
-		const flexboxId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
-		headingId = await editor.addWidget( { widgetType: 'e-heading', container: flexboxId } );
+		const flexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
+		headingId = await editor.addWidget( { widgetType: EditorSelectors.v4.atoms.heading, container: flexboxId } );
 
 		await test.step( 'Style flexbox to prevent footer from overlapping', async () => {
 			await editor.selectElement( flexboxId );
@@ -128,7 +128,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			await editor.publishPage();
 			await page.goto( `/?p=${ pageId }` );
 
-			const publishedHeadingElement = page.locator( EditorSelectors.v4.atoms.heading );
+			const publishedHeadingElement = page.locator( EditorSelectors.v4.atomSelectors.heading );
 
 			await publishedHeadingElement.waitFor();
 
@@ -150,11 +150,11 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		// Arrange & Act.
 		// Triggering editing mode forces heading to stay hovered.
 		// Add a div block so that it can be hovered, and force the heading to be "unhovered".
-		await editor.addElement( { elType: 'e-div-block' }, 'document' );
-		const divBlocElement = editor.previewFrame.locator( EditorSelectors.v4.atoms.divBlock );
+		await editor.addElement( { elType: EditorSelectors.v4.atoms.divBlock }, 'document' );
+		const divBlocElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.divBlock );
 
-		const flexboxElement = editor.previewFrame.locator( EditorSelectors.v4.atoms.flexbox );
-		const headingElement = editor.previewFrame.locator( EditorSelectors.v4.atoms.heading );
+		const flexboxElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.flexbox );
+		const headingElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.heading );
 
 		await editor.closeNavigatorIfOpen();
 
