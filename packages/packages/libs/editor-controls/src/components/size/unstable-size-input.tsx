@@ -1,9 +1,9 @@
 import * as React from 'react';
-
-import { NumberInput } from '../number-input';
+import { forwardRef } from 'react';
 import type { PropValue } from '@elementor/editor-props';
 import type { TextFieldProps } from '@elementor/ui';
-import { forwardRef } from 'react';
+
+import { NumberInput } from '../number-input';
 
 type Props = {
 	type: 'number' | 'text';
@@ -20,20 +20,7 @@ type Props = {
 };
 
 export const UnstableSizeInput = forwardRef(
-	(
-		{
-			type,
-			value,
-			onChange,
-			onKeyDown,
-			onKeyUp,
-			InputProps,
-			onBlur,
-			focused,
-			disabled,
-		}: Props,
-		ref
-	) => {
+	( { type, value, onChange, onKeyDown, onKeyUp, InputProps, onBlur, focused, disabled }: Props, ref ) => {
 		return (
 			<NumberInput
 				ref={ ref }
@@ -50,7 +37,7 @@ export const UnstableSizeInput = forwardRef(
 				InputProps={ InputProps }
 				sx={ getCursorStyle( InputProps?.readOnly ?? false ) }
 			/>
-		)
+		);
 	}
 );
 

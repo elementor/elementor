@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { bindMenu, bindTrigger, Button, Menu, styled, usePopupState } from '@elementor/ui';
 import { useId } from 'react';
+import { type SizePropValue } from '@elementor/editor-props';
 import { MenuListItem } from '@elementor/editor-ui';
-import { SizePropValue } from '@elementor/editor-props';
+import { bindMenu, bindTrigger, Button, Menu, styled, usePopupState } from '@elementor/ui';
 
-type Props<T = SizePropValue['value']['unit']> = {
+type Props< T = SizePropValue[ 'value' ][ 'unit' ] > = {
 	options: T[];
 	value: T;
 	onClick: ( value: T ) => void;
@@ -17,15 +17,7 @@ const menuItemContentStyles = {
 	justifyContent: 'center',
 };
 
-export const UnitSelect = (
-	{
-		value,
-		showPrimaryColor,
-		onClick,
-		options
-	}:
-	Props
-) => {
+export const UnitSelect = ( { value, showPrimaryColor, onClick, options }: Props ) => {
 	const popupState = usePopupState( {
 		variant: 'popover',
 		popupId: useId(),
@@ -33,6 +25,7 @@ export const UnitSelect = (
 
 	const handleMenuItemClick = ( index: number ) => {
 		onClick( options[ index ] );
+
 		popupState.close();
 	};
 
@@ -63,8 +56,8 @@ export const UnitSelect = (
 				) ) }
 			</Menu>
 		</>
-	)
-}
+	);
+};
 
 const StyledButton = styled( Button, {
 	shouldForwardProp: ( prop ) => prop !== 'isPrimaryColor',
