@@ -4,9 +4,8 @@ import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
 import { UNITS } from '../typography/typography-constants';
+import EditorSelectors from '../../../../selectors/editor-selectors';
 
-const HEADING_WIDGET_SELECTOR = '.e-heading-base';
-const FLEXBOX_ELEMENT_SELECTOR = '.e-flexbox-base';
 const TESTED_CONTENT = 'Very long Text With no Space To fiiiiiiiiiiiiiit';
 const CONTENT_WORDS = TESTED_CONTENT.split( ' ' );
 
@@ -73,7 +72,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 
 		await test.step( 'Style widget - spacing', async () => {
 			await editor.v4Panel.style.openSection( 'Spacing' );
-			await editor.v4Panel.style.setSpacingValue( 'Margin', 'Top', 30, UNITS.px );
+			await editor.v4Panel.style.setSpacingSectionValue( 'Margin', 'Top', 30, UNITS.px );
 			await editor.v4Panel.style.closeSection( 'Spacing' );
 		} );
 
@@ -85,7 +84,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 
 		await test.step( 'Style widget - position', async () => {
 			await editor.v4Panel.style.openSection( 'Position' );
-			await editor.v4Panel.style.setPositionValue( 'absolute', { Top: { size: 40, unit: UNITS.px } } );
+			await editor.v4Panel.style.setPositionSectionValue( 'absolute', { Top: { size: 40, unit: UNITS.px } } );
 			await editor.v4Panel.style.closeSection( 'Position' );
 		} );
 
@@ -129,7 +128,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			await editor.publishPage();
 			await page.goto( `/?p=${ pageId }` );
 
-			const publishedHeadingElement = page.locator( HEADING_WIDGET_SELECTOR );
+			const publishedHeadingElement = page.locator( EditorSelectors.v4.atoms.heading );
 
 			await publishedHeadingElement.waitFor();
 
@@ -137,7 +136,6 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			await expect.soft( publishedHeadingElement ).toHaveScreenshot( getScreenshotName( FRONTEND_SCREENSHOT ) );
 
 			// Act.
-
 			await publishedHeadingElement.hover();
 
 			// Assert.
@@ -150,11 +148,15 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		} );
 
 		// Arrange & Act.
-		// Setup environment for non hovering assertion
-		const flexboxElement = editor.previewFrame.locator( FLEXBOX_ELEMENT_SELECTOR ).first();
-		const headingElement = editor.previewFrame.locator( HEADING_WIDGET_SELECTOR );
-		const dummyElementId = await editor.addElement( { elType: 'e-flexbox' }, 'document' );
-		const dummyElement = editor.previewFrame.locator( editor.getWidgetSelector( dummyElementId ) );
+		// Triggering editing mode forces heading to stay hovered.
+		// Add a div block so that it can be hovered, and force the heading to be "unhovered".
+		await editor.addElement( { elType: 'e-div-block' }, 'document' );
+		const divBlocElement = editor.previewFrame.locator( EditorSelectors.v4.atoms.divBlock );
+
+		const flexboxElement = editor.previewFrame.locator( EditorSelectors.v4.atoms.flexbox );
+		const headingElement = editor.previewFrame.locator( EditorSelectors.v4.atoms.heading );
+
+		await editor.closeNavigatorIfOpen();
 
 		await test.step( 'Heading in editor is styled like in frontend', async () => {
 			// Arrange.
@@ -170,11 +172,9 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		} );
 
 		await test.step( 'Heading in editor is styled the same when editor or not', async () => {
-			// Arrange.
-
-			// Assert.
+			// Arrange & assert.
 			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT ) );
-			await flexboxElement.hover();
+			await headingElement.hover();
 			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT_HOVER ) );
 
 			// Act.
@@ -183,13 +183,15 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			// Assert.
 			// Already hovered at this stage
 			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT_HOVER ) );
+			await expect( editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor ) ).toBeVisible();
 
 			// Act.
-			// Force heading to not be hovered
-			await dummyElement.hover();
+			// Force heading to be "unhovered
+			await divBlocElement.hover();
 
 			// Assert.
 			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT ) );
+			await expect( editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor ) ).toBeVisible();
 		} );
 	} );
 } );

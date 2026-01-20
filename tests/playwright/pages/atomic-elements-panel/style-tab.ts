@@ -60,6 +60,18 @@ type BorderTypeLabel = typeof BORDER_TYPE_LABELS[keyof typeof BORDER_TYPE_LABELS
 const UNIT_BUTTON_SELECTOR = 'input ~ .MuiInputAdornment-positionEnd button[aria-haspopup="true"]:not([aria-label])';
 
 export default class StyleTab extends BasePage {
+	async getSectionContentByLabel( label: StyleSection ): Promise<Locator> {
+		return this.page.locator( `[aria-label="${ label } section content"]` );
+	}
+
+	async getControlByLabel( sectionLabel: StyleSection, labelText: string, options?: { nth?: number, innerSelector?: string } ): Promise<Locator> {
+		const labelRegex = new RegExp( `^${ labelText }$`, 'i' );
+		const section = await this.getSectionContentByLabel( sectionLabel );
+		const control = section.locator( 'label', { hasText: labelRegex } ).nth( options?.nth ?? 0 ).locator( '../../..' );
+
+		return options?.innerSelector ? control.locator( options.innerSelector ) : control;
+	}
+
 	async changeSizeControl( controlLocator: Locator, value: number, unit?: Unit ): Promise<void> {
 		const input = controlLocator.locator( 'input' );
 		const unitSelect = controlLocator.locator( UNIT_BUTTON_SELECTOR );
@@ -69,24 +81,6 @@ export default class StyleTab extends BasePage {
 		}
 
 		await input.fill( value.toString() );
-	}
-
-	protected async getSelectControlByLabel( sectionLabel: StyleSection, labelText: string ): Promise<Locator> {
-		const sectionContent = await this.getSectionContentByLabel( sectionLabel );
-
-		return sectionContent.locator( `[aria-label="${ labelText } control"] .MuiSelect-select[role="combobox"]` );
-	}
-
-	protected async getSectionContentByLabel( label: StyleSection ): Promise<Locator> {
-		return this.page.locator( `[aria-label="${ label } section content"]` );
-	}
-
-	protected async getControlContainerByLabel( sectionLabel: StyleSection, labelText: string, options?: { nth?: number, innerSelector?: string } ): Promise<Locator> {
-		const labelRegex = new RegExp( `^${ labelText }$`, 'i' );
-		const section = await this.getSectionContentByLabel( sectionLabel );
-		const control = section.locator( 'label', { hasText: labelRegex } ).nth( options?.nth ?? 0 ).locator( '../../..' );
-
-		return options?.innerSelector ? control.locator( options.innerSelector ) : control;
 	}
 
 	protected async changeUnit( unitButton: Locator, targetUnit: string ): Promise<void> {
@@ -102,6 +96,12 @@ export default class StyleTab extends BasePage {
 		await this.page.locator( '[role="presentation"] .MuiList-root' ).waitFor();
 		await unitOption.waitFor( { state: 'visible' } );
 		await unitOption.click();
+	}
+
+	async getSelectControlByLabel( sectionLabel: StyleSection, labelText: string ): Promise<Locator> {
+		const sectionContent = await this.getSectionContentByLabel( sectionLabel );
+
+		return sectionContent.locator( `[aria-label="${ labelText } control"] .MuiSelect-select[role="combobox"]` );
 	}
 
 	async changeSelectControl( controlLocator: Locator, value: string ): Promise<void> {
@@ -151,9 +151,9 @@ export default class StyleTab extends BasePage {
 		await sectionButton.click();
 	}
 
-	async setSpacingValue( space: 'Margin' | 'Padding', property: OffSetLabel, value: number, unit: Unit, linked: boolean = true ): Promise<void> {
-		const nth = [ 'Margin', 'Padding' ].indexOf( space );
-		const linkButton = this.page.locator( 'label', { hasText: space } )
+	async setSpacingSectionValue( property: 'Margin' | 'Padding', offsetLabel: OffSetLabel, value: number, unit: Unit, linked: boolean = true ): Promise<void> {
+		const controlIndex = [ 'Margin', 'Padding' ].indexOf( property );
+		const linkButton = this.page.locator( 'label', { hasText: property } )
 			.locator( '..' )
 			.locator( 'button' );
 		const isLinked = 'true' === await linkButton.getAttribute( 'aria-pressed' );
@@ -162,18 +162,18 @@ export default class StyleTab extends BasePage {
 			await linkButton.click();
 		}
 
-		const control = await this.getControlContainerByLabel( 'Spacing', property, { nth } );
+		const control = await this.getControlByLabel( 'Spacing', offsetLabel, { nth: controlIndex } );
 
 		await this.changeSizeControl( control, value, unit );
 	}
 
 	async setSizeSectionValue( property: SizeLabel, value: number, unit: Unit ) {
-		const control = await this.getControlContainerByLabel( 'Size', property );
+		const control = await this.getControlByLabel( 'Size', property );
 
 		await this.changeSizeControl( control, value, unit );
 	}
 
-	async setPositionValue( position: Position, offsets: Partial< Record< OffSetLabel, SizeValue > > = {}, options: {
+	async setPositionSectionValue( position: Position, offsets: Partial< Record< OffSetLabel, SizeValue > > = {}, options: {
 		zIndex?: number | typeof NaN;
 		offset?: SizeValue;
 	} = {} ) {
@@ -186,28 +186,22 @@ export default class StyleTab extends BasePage {
 		}
 
 		for ( const [ key, { size, unit } ] of Object.entries( offsets ) ) {
-			const sizeControl = await this.getControlContainerByLabel( 'Position', key );
+			const sizeControl = await this.getControlByLabel( 'Position', key );
 
 			await this.changeSizeControl( sizeControl, size, unit );
 		}
 
 		if ( ! Number.isNaN( options?.zIndex ?? NaN ) ) {
-			const zIndexControl = await this.getControlContainerByLabel( 'Position', 'Z-index' );
+			const zIndexControl = await this.getControlByLabel( 'Position', 'Z-index' );
 
 			await this.changeSizeControl( zIndexControl, options.zIndex );
 		}
 
 		if ( options?.offset ) {
-			const offsetControl = await this.getControlContainerByLabel( 'Position', 'Offset' );
+			const offsetControl = await this.getControlByLabel( 'Position', 'Offset' );
 
 			await this.changeSizeControl( offsetControl, options.offset.size, options.offset.unit );
 		}
-	}
-
-	async setTypographySizeValue( labelText: string, value: number, unit: Unit ): Promise<void> {
-		const spacingInput = await this.getControlContainerByLabel( 'Typography', labelText );
-
-		await this.changeSizeControl( spacingInput, value, unit );
 	}
 
 	async setFontFamily( fontName: string, fontType: 'system' | 'google' = 'system' ): Promise<void> {
@@ -224,26 +218,26 @@ export default class StyleTab extends BasePage {
 		await this.page.locator( '[aria-label="Text color control"] input' ).fill( color );
 	}
 
-	async setFontSectionSize( property: FontProperty, lineHeight: number, unit: Unit ) {
-		const control = await this.getControlContainerByLabel( 'Typography', property );
+	async setTypographySectionSizeBasedValue( property: FontProperty, size: number, unit: Unit ) {
+		const control = await this.getControlByLabel( 'Typography', property );
 
-		await this.changeSizeControl( control, lineHeight, unit );
+		await this.changeSizeControl( control, size, unit );
 	}
 
 	setFontSize( size: number, unit: Unit ) {
-		return this.setFontSectionSize( 'Font size', size, unit );
+		return this.setTypographySectionSizeBasedValue( 'Font size', size, unit );
 	}
 
-	setLetterSpacing( spacing: number, unit: Unit ) {
-		return this.setFontSectionSize( 'Letter spacing', spacing, unit );
+	setLetterSpacing( size: number, unit: Unit ) {
+		return this.setTypographySectionSizeBasedValue( 'Letter spacing', size, unit );
 	}
 
-	setWordSpacing( spacing: number, unit: Unit ) {
-		return this.setFontSectionSize( 'Word spacing', spacing, unit );
+	setWordSpacing( size: number, unit: Unit ) {
+		return this.setTypographySectionSizeBasedValue( 'Word spacing', size, unit );
 	}
 
-	setLineHeight( lineHeight: number, unit: Unit ) {
-		return this.setFontSectionSize( 'Line height', lineHeight, unit );
+	setLineHeight( size: number, unit: Unit ) {
+		return this.setTypographySectionSizeBasedValue( 'Line height', size, unit );
 	}
 
 	async setFontWeight( weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 ): Promise<void> {
@@ -253,7 +247,7 @@ export default class StyleTab extends BasePage {
 	}
 
 	async setBackgroundColor( color: string ): Promise<void> {
-		const input = await this.getControlContainerByLabel( 'Background', 'Color', { innerSelector: 'input' } );
+		const input = await this.getControlByLabel( 'Background', 'Color', { innerSelector: 'input' } );
 
 		await input.clear();
 		await input.fill( color );
@@ -261,19 +255,19 @@ export default class StyleTab extends BasePage {
 	}
 
 	async setBorderWidth( width: number, unit: Unit ) {
-		const control = await this.getControlContainerByLabel( 'Border', 'Border width' );
+		const control = await this.getControlByLabel( 'Border', 'Border width' );
 
 		await this.changeSizeControl( control, width, unit );
 	}
 
 	async setBorderRadius( radius: number, unit: Unit ) {
-		const control = await this.getControlContainerByLabel( 'Border', 'Border radius' );
+		const control = await this.getControlByLabel( 'Border', 'Border radius' );
 
 		await this.changeSizeControl( control, radius, unit );
 	}
 
 	async setBorderColor( color: string ) {
-		const input = await this.getControlContainerByLabel( 'Border', 'Border color', { innerSelector: 'input' } );
+		const input = await this.getControlByLabel( 'Border', 'Border color', { innerSelector: 'input' } );
 
 		await input.clear();
 		await input.fill( color );

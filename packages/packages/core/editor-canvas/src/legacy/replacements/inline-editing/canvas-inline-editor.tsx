@@ -168,6 +168,6 @@ const InlineEditingToolbar = ( { element, editor, id }: { element: HTMLElement; 
 	);
 };
 
-const getInlineEditorElement = ( rootElement: HTMLElement, tag: string | null ) => {
-	return ! tag ? null : ( rootElement.querySelector( tag ) as HTMLDivElement );
+const getInlineEditorElement = ( elementWrapper: HTMLElement, expectedTag: string | null ) => {
+	return ! expectedTag ? null : ( elementWrapper.querySelector( expectedTag ) as HTMLDivElement );
 };

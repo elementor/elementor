@@ -26,86 +26,14 @@ import { __ } from '@wordpress/i18n';
 
 import { UrlPopover } from './url-popover';
 
-const checkIfElementHasLink = ( elementId: ElementID ): boolean =>
-	!! getElementSetting< LinkPropValue >( elementId, 'link' )?.value?.destination;
-
 export type InlineEditorToolbarProps = {
 	editor: Editor;
 	elementId?: ElementID;
 };
 
-const toolbarButtons = {
-	clear: {
-		label: __( 'Clear', 'elementor' ),
-		icon: <MinusIcon fontSize="tiny" />,
-		action: 'clear',
-		method: ( editor: Editor ) => {
-			editor.chain().focus().clearNodes().unsetAllMarks().run();
-		},
-	},
-	bold: {
-		label: __( 'Bold', 'elementor' ),
-		icon: <BoldIcon fontSize="tiny" />,
-		action: 'bold',
-		method: ( editor: Editor ) => {
-			editor.chain().focus().toggleBold().run();
-		},
-	},
-	italic: {
-		label: __( 'Italic', 'elementor' ),
-		icon: <ItalicIcon fontSize="tiny" />,
-		action: 'italic',
-		method: ( editor: Editor ) => {
-			editor.chain().focus().toggleItalic().run();
-		},
-	},
-	underline: {
-		label: __( 'Underline', 'elementor' ),
-		icon: <UnderlineIcon fontSize="tiny" />,
-		action: 'underline',
-		method: ( editor: Editor ) => {
-			editor.chain().focus().toggleUnderline().run();
-		},
-	},
-	strike: {
-		label: __( 'Strikethrough', 'elementor' ),
-		icon: <StrikethroughIcon fontSize="tiny" />,
-		action: 'strike',
-		method: ( editor: Editor ) => {
-			editor.chain().focus().toggleStrike().run();
-		},
-	},
-	superscript: {
-		label: __( 'Superscript', 'elementor' ),
-		icon: <SuperscriptIcon fontSize="tiny" />,
-		action: 'superscript',
-		method: ( editor: Editor ) => {
-			editor.chain().focus().toggleSuperscript().run();
-		},
-	},
-	subscript: {
-		label: __( 'Subscript', 'elementor' ),
-		icon: <SubscriptIcon fontSize="tiny" />,
-		action: 'subscript',
-		method: ( editor: Editor ) => {
-			editor.chain().focus().toggleSubscript().run();
-		},
-	},
-	link: {
-		label: __( 'Link', 'elementor' ),
-		icon: <LinkIcon fontSize="tiny" />,
-		action: 'link',
-		method: null,
-	},
-} as const;
-
 type ToolbarButtonKeys = keyof typeof toolbarButtons;
 
 type FormatAction = Omit< ToolbarButtonKeys, 'clear' >;
-
-const { clear: clearButton, ...formatButtons } = toolbarButtons;
-
-const possibleFormats: FormatAction[] = Object.keys( formatButtons ) as FormatAction[];
 
 export const InlineEditorToolbar = ( { editor, elementId }: InlineEditorToolbarProps ) => {
 	const [ urlValue, setUrlValue ] = useState( '' );
@@ -247,3 +175,75 @@ export const InlineEditorToolbar = ( { editor, elementId }: InlineEditorToolbarP
 		</Box>
 	);
 };
+
+const checkIfElementHasLink = ( elementId: ElementID ): boolean =>
+	!! getElementSetting< LinkPropValue >( elementId, 'link' )?.value?.destination;
+
+const toolbarButtons = {
+	clear: {
+		label: __( 'Clear', 'elementor' ),
+		icon: <MinusIcon fontSize="tiny" />,
+		action: 'clear',
+		method: ( editor: Editor ) => {
+			editor.chain().focus().clearNodes().unsetAllMarks().run();
+		},
+	},
+	bold: {
+		label: __( 'Bold', 'elementor' ),
+		icon: <BoldIcon fontSize="tiny" />,
+		action: 'bold',
+		method: ( editor: Editor ) => {
+			editor.chain().focus().toggleBold().run();
+		},
+	},
+	italic: {
+		label: __( 'Italic', 'elementor' ),
+		icon: <ItalicIcon fontSize="tiny" />,
+		action: 'italic',
+		method: ( editor: Editor ) => {
+			editor.chain().focus().toggleItalic().run();
+		},
+	},
+	underline: {
+		label: __( 'Underline', 'elementor' ),
+		icon: <UnderlineIcon fontSize="tiny" />,
+		action: 'underline',
+		method: ( editor: Editor ) => {
+			editor.chain().focus().toggleUnderline().run();
+		},
+	},
+	strike: {
+		label: __( 'Strikethrough', 'elementor' ),
+		icon: <StrikethroughIcon fontSize="tiny" />,
+		action: 'strike',
+		method: ( editor: Editor ) => {
+			editor.chain().focus().toggleStrike().run();
+		},
+	},
+	superscript: {
+		label: __( 'Superscript', 'elementor' ),
+		icon: <SuperscriptIcon fontSize="tiny" />,
+		action: 'superscript',
+		method: ( editor: Editor ) => {
+			editor.chain().focus().toggleSuperscript().run();
+		},
+	},
+	subscript: {
+		label: __( 'Subscript', 'elementor' ),
+		icon: <SubscriptIcon fontSize="tiny" />,
+		action: 'subscript',
+		method: ( editor: Editor ) => {
+			editor.chain().focus().toggleSubscript().run();
+		},
+	},
+	link: {
+		label: __( 'Link', 'elementor' ),
+		icon: <LinkIcon fontSize="tiny" />,
+		action: 'link',
+		method: null,
+	},
+} as const;
+
+const { clear: clearButton, ...formatButtons } = toolbarButtons;
+
+const possibleFormats: FormatAction[] = Object.keys( formatButtons ) as FormatAction[];
