@@ -34,11 +34,19 @@ export const createBoolean = ( value: boolean ): BooleanPropValue => ( {
 	value,
 } );
 
-export const createConfig = ( replay: boolean, easing: string ): ConfigPropValue => ( {
+export const createConfig = (
+	replay: boolean,
+	relativeTo?: string,
+	offsetTop?: number,
+	offsetBottom?: number
+): ConfigPropValue => ( {
 	$$type: 'config',
 	value: {
 		replay: createBoolean( replay ),
 		easing: createString( easing ),
+		relativeTo: createString( relativeTo ?? '' ),
+		offsetTop: createNumber( offsetTop ?? 0 ),
+		offsetBottom: createNumber( offsetBottom ?? 100 ),
 	},
 } );
 
@@ -54,6 +62,9 @@ export const createAnimationPreset = ( {
 	delay,
 	replay = false,
 	easing = 'easeIn',
+	relativeTo,
+	offsetTop,
+	offsetBottom,
 }: {
 	effect: string;
 	type: string;
@@ -62,6 +73,9 @@ export const createAnimationPreset = ( {
 	delay: number;
 	replay: boolean;
 	easing: string;
+	relativeTo?: string;
+	offsetTop?: number;
+	offsetBottom?: number;
 } ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
@@ -69,7 +83,7 @@ export const createAnimationPreset = ( {
 		type: createString( type ),
 		direction: createString( direction ?? '' ),
 		timing_config: createTimingConfig( duration, delay ),
-		config: createConfig( replay, easing ),
+		config: createConfig( replay, easing, relativeTo, offsetTop, offsetBottom ),
 	},
 } );
 
@@ -83,6 +97,9 @@ export const createInteractionItem = ( {
 	interactionId,
 	replay = false,
 	easing = 'easeIn',
+	relativeTo,
+	offsetTop,
+	offsetBottom,
 }: {
 	trigger: string;
 	effect: string;
@@ -93,12 +110,26 @@ export const createInteractionItem = ( {
 	interactionId?: string;
 	replay: boolean;
 	easing: string;
+	relativeTo?: string;
+	offsetTop?: number;
+	offsetBottom?: number;
 } ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
 		...( interactionId && { interaction_id: createString( interactionId ) } ),
 		trigger: createString( trigger ),
-		animation: createAnimationPreset( { effect, type, direction, duration, delay, replay, easing } ),
+		animation: createAnimationPreset( {
+			effect,
+			type,
+			direction,
+			duration,
+			delay,
+			replay,
+			easing,
+			relativeTo,
+			offsetTop,
+			offsetBottom,
+		} ),
 	},
 } );
 

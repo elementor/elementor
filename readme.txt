@@ -348,6 +348,11 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 
 == Changelog ==
 
+= 3.34.2 - 2026-01-20 =
+
+* Tweak: Unified the Elementor interface into a single place to manage, optimize, and configure Elementor capabilities in WordPress Admin
+* Tweak: Moved editor-related entry points under the unified Elementor menu in WordPress Admin
+
 = 3.34.1 - 2026-01-07 =
 
 * Fix: RTL issues in Icon Box widget ([#33963](https://github.com/elementor/elementor/issues/33963))

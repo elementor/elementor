@@ -33,6 +33,9 @@ const DEFAULT_VALUES = {
 	delay: 0,
 	replay: false,
 	easing: 'easeIn',
+	relativeTo: 'viewport',
+	offsetTop: 15,
+	offsetBottom: 85,
 };
 
 const TRIGGERS_WITH_REPLAY = [ 'scrollIn', 'scrollOut' ];
@@ -46,8 +49,15 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const delay = extractNumber( interaction.animation.value.timing_config.value.delay, DEFAULT_VALUES.delay );
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
 	const easing = extractString( interaction.animation.value.config?.value.easing, DEFAULT_VALUES.easing );
+	const relativeTo = extractString( interaction.animation.value.config?.value.relativeTo, DEFAULT_VALUES.relativeTo );
+	const offsetTop = extractNumber( interaction.animation.value.config?.value.offsetTop, DEFAULT_VALUES.offsetTop );
+	const offsetBottom = extractNumber(
+		interaction.animation.value.config?.value.offsetBottom,
+		DEFAULT_VALUES.offsetBottom
+	);
 
 	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
+	const shouldShowRelativeTo = trigger === 'scrollOn';
 
 	const TriggerControl = useMemo( () => {
 		return getInteractionsControl( 'trigger' )?.component ?? null;
@@ -63,6 +73,27 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const EasingControl = useMemo( () => {
 		return getInteractionsControl( 'easing' )?.component ?? null;
 	}, [] );
+
+	const RelativeToControl = useMemo( () => {
+		if ( ! shouldShowRelativeTo ) {
+			return null;
+		}
+		return getInteractionsControl( 'relativeTo' )?.component ?? null;
+	}, [ shouldShowRelativeTo ] );
+
+	const OffsetTopControl = useMemo( () => {
+		if ( ! shouldShowRelativeTo ) {
+			return null;
+		}
+		return getInteractionsControl( 'offsetTop' )?.component ?? null;
+	}, [ shouldShowRelativeTo ] );
+
+	const OffsetBottomControl = useMemo( () => {
+		if ( ! shouldShowRelativeTo ) {
+			return null;
+		}
+		return getInteractionsControl( 'offsetBottom' )?.component ?? null;
+	}, [ shouldShowRelativeTo ] );
 
 	const resolveDirection = ( hasDirection: boolean, newEffect?: string, newDirection?: string ) => {
 		if ( newEffect === 'slide' && ! newDirection ) {
@@ -85,6 +116,9 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			delay: number;
 			replay: boolean;
 			easing: string;
+			relativeTo: string;
+			offsetTop: number;
+			offsetBottom: number;
 		} >
 	): void => {
 		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction );
@@ -104,6 +138,9 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				delay: updates.delay ?? delay,
 				replay: newReplay,
 				easing: updates.easing ?? easing,
+				relativeTo: updates.relativeTo ?? relativeTo,
+				offsetTop: updates.offsetTop ?? offsetTop,
+				offsetBottom: updates.offsetBottom ?? offsetBottom,
 			} ),
 		};
 
@@ -178,6 +215,38 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					</Field>
 				) }
 			</Grid>
+			{ shouldShowRelativeTo && RelativeToControl && (
+				<>
+					<Divider />
+					<Grid container spacing={ 1.5 }>
+						<Field label={ __( 'Relative To', 'elementor' ) }>
+							<RelativeToControl
+								value={ relativeTo }
+								onChange={ ( v ) => updateInteraction( { relativeTo: v } ) }
+							/>
+						</Field>
+						{ OffsetTopControl && (
+							<Field label={ __( 'Offset Top', 'elementor' ) }>
+								<OffsetTopControl
+									value={ String( offsetTop ) }
+									onChange={ ( v: string ) => updateInteraction( { offsetTop: parseInt( v, 10 ) } ) }
+								/>
+							</Field>
+						) }
+						{ OffsetBottomControl && (
+							<Field label={ __( 'Offset Bottom', 'elementor' ) }>
+								<OffsetBottomControl
+									value={ String( offsetBottom ) }
+									onChange={ ( v: string ) =>
+										updateInteraction( { offsetBottom: parseInt( v, 10 ) } )
+									}
+								/>
+							</Field>
+						) }
+					</Grid>
+					<Divider />
+				</>
+			) }
 		</PopoverContent>
 	);
 };

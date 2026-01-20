@@ -751,6 +751,40 @@ describe( 'OverridablePropForm duplicate validation', () => {
 		expect( screen.queryByText( 'Property name already exists' ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Create' } ) ).toBeEnabled();
 	} );
+
+	it( 'should show Default group when groups array is empty', () => {
+		// Arrange
+		const componentData: PublishedComponent = {
+			id: MOCK_COMPONENT_ID,
+			uid: `component-${ MOCK_COMPONENT_ID }`,
+			name: 'Test Component',
+			overridableProps: {
+				props: {},
+				groups: { items: {}, order: [] },
+			},
+		};
+
+		dispatch( slice.actions.load( [ componentData ] ) );
+		dispatch( slice.actions.setCurrentComponentId( MOCK_COMPONENT_ID ) );
+
+		const boundProp = mockBoundProp( { bind: 'title', value: stringPropTypeUtil.create( 'Test' ) } );
+		jest.mocked( useBoundProp ).mockImplementation( ( propUtil ) => {
+			if ( propUtil ) {
+				return { ...boundProp, value: null };
+			}
+			return boundProp;
+		} );
+
+		renderWithStore( <OverridablePropIndicator />, store );
+
+		// Act
+		const indicator = screen.getByLabelText( 'Make prop overridable' );
+		fireEvent.click( indicator );
+
+		// Assert
+		const groupSelect = screen.getByRole( 'combobox' );
+		expect( groupSelect ).toHaveTextContent( 'Default' );
+	} );
 } );
 
 function mockBoundProp( {
