@@ -142,7 +142,7 @@ class DB extends Base_Object {
 		$table_name = $this->get_table_name();
 		$charset_collate = $this->wpdb->get_charset_collate();
 
-		$e_events_table = "CREATE TABLE `{$table_name}` (
+		$e_events_table = "CREATE TABLE IF NOT EXISTS `{$table_name}` (
 			id bigint(20) unsigned auto_increment primary key,
 			event_data text null,
 			created_at datetime not null
