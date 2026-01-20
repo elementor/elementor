@@ -8,6 +8,7 @@ import {
 	Link,
 	Stack,
 	Switch,
+	Tooltip,
 	Typography,
 } from '@elementor/ui';
 import { AlertTriangleFilledIcon, ExternalLinkIcon } from '@elementor/icons';
@@ -122,12 +123,19 @@ const SubSettingRow = ( {
 								},
 							} }
 						/>
-						<AlertTriangleFilledIcon
-							sx={ {
-								fontSize: 16,
-								color: 'warning.main',
-							} }
-						/>
+						<Tooltip
+							title={ __( 'This will delete all existing items and replace them with the imported ones', 'elementor' ) }
+							placement="top"
+							arrow
+						>
+							<AlertTriangleFilledIcon
+								sx={ {
+									fontSize: 16,
+									color: 'warning.main',
+									cursor: 'pointer',
+								} }
+							/>
+						</Tooltip>
 					</Stack>
 				) }
 

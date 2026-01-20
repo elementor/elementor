@@ -1,10 +1,11 @@
 import { Stack } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { SettingSection } from './customization-setting-section';
 import { ClassesVariablesSection } from './classes-variables-section';
 import { KitCustomizationDialog } from './kit-customization-dialog';
+import { OverrideConfirmationDialog } from './override-confirmation-dialog';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import useContextDetection from '../hooks/use-context-detection';
 import { useClassesVariablesLimits } from '../hooks/use-classes-variables-limits';
@@ -81,12 +82,12 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 
 	const initialState = useMemo(
 		() => getInitialState( contextData, isImport ),
-		[ contextData?.data?.includes, contextData?.isOldExport, contextData?.data?.uploadedData?.manifest, isImport ]
+		[ contextData?.data?.includes, contextData?.isOldExport, contextData?.data?.uploadedData?.manifest, isImport ],
 	);
 
 	const classesVariablesInitialState = useMemo(
 		() => getClassesVariablesInitialState( contextData, isImport ),
-		[ contextData?.data?.includes, contextData?.data?.uploadedData?.manifest, isImport ]
+		[ contextData?.data?.includes, contextData?.data?.uploadedData?.manifest, isImport ],
 	);
 
 	const {
@@ -100,12 +101,12 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 
 	const classesLimitInfo = useMemo(
 		() => calculateLimitInfo( existingClassesCount, importedClassesCount, 100 ),
-		[ existingClassesCount, importedClassesCount, calculateLimitInfo ]
+		[ existingClassesCount, importedClassesCount, calculateLimitInfo ],
 	);
 
 	const variablesLimitInfo = useMemo(
 		() => calculateLimitInfo( existingVariablesCount, importedVariablesCount, 100 ),
-		[ existingVariablesCount, importedVariablesCount, calculateLimitInfo ]
+		[ existingVariablesCount, importedVariablesCount, calculateLimitInfo ],
 	);
 
 	const [ settings, setSettings ] = useState( () => {
@@ -178,15 +179,54 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 	const classesOverLimitCount = classesLimitInfo.overLimitCount;
 	const variablesOverLimitCount = variablesLimitInfo.overLimitCount;
 
+	const [ confirmationDialog, setConfirmationDialog ] = useState( {
+		open: false,
+		type: 'classes',
+	} );
+
+	const performSave = useCallback( () => {
+		const transformedAnalytics = transformAnalyticsData( settings );
+		handleSaveChanges( 'settings', settings, true, transformedAnalytics );
+	}, [ settings, handleSaveChanges ] );
+
+	const handleSaveClick = useCallback( () => {
+		const classesOverrideEnabled = settings.classesOverrideAll && settings.classes;
+		const variablesOverrideEnabled = settings.variablesOverrideAll && settings.variables;
+
+		if ( classesOverrideEnabled && variablesOverrideEnabled ) {
+			setConfirmationDialog( { open: true, type: 'both' } );
+			return;
+		}
+
+		if ( classesOverrideEnabled ) {
+			setConfirmationDialog( { open: true, type: 'classes' } );
+			return;
+		}
+
+		if ( variablesOverrideEnabled ) {
+			setConfirmationDialog( { open: true, type: 'variables' } );
+			return;
+		}
+
+		performSave();
+	}, [ settings, performSave ] );
+
+	const handleConfirmationClose = useCallback( () => {
+		setConfirmationDialog( { open: false, type: '' } );
+	}, [] );
+
+	const handleConfirmationConfirm = useCallback( () => {
+		setConfirmationDialog( { open: false, type: '' } );
+		performSave();
+	}, [ performSave ] );
+
 	return (
+		<>
 		<KitCustomizationDialog
 			open={ open }
 			title={ __( 'Edit settings & configurations', 'elementor' ) }
 			handleClose={ handleClose }
-			handleSaveChanges={ () => {
-				const transformedAnalytics = transformAnalyticsData( settings );
-				handleSaveChanges( 'settings', settings, true, transformedAnalytics );
-			} }
+			handleSaveChanges={ handleSaveClick }
 		>
 			<Stack gap={ 2 }>
 				{ contextData?.isOldElementorVersion && (
@@ -233,6 +273,14 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 				) }
 			</Stack>
 		</KitCustomizationDialog>
+
+		<OverrideConfirmationDialog
+			open={ confirmationDialog.open }
+			onClose={ handleConfirmationClose }
+			onConfirm={ handleConfirmationConfirm }
+			type={ confirmationDialog.type }
+		/>
+		</>
 	);
 }
 
