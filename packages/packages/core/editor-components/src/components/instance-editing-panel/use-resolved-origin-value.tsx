@@ -17,7 +17,7 @@ function resolveOriginValue(
 	components: PublishedComponent[],
 	matchingOverride: ComponentInstanceOverride | null,
 	overridableProp: OverridableProp
-): PropValue | undefined {
+): PropValue {
 	const { originValue: fallbackOriginValue, originPropFields } = overridableProp;
 
 	if ( hasValue( fallbackOriginValue ) ) {
@@ -26,6 +26,7 @@ function resolveOriginValue(
 
 	if ( matchingOverride ) {
 		const result = getOriginFromOverride( components, matchingOverride );
+
 		if ( hasValue( result ) ) {
 			return result;
 		}
@@ -38,24 +39,21 @@ function resolveOriginValue(
 	return undefined;
 }
 
-function getOriginFromOverride(
-	components: PublishedComponent[],
-	override: ComponentInstanceOverride
-): PropValue | undefined {
+function getOriginFromOverride( components: PublishedComponent[], override: ComponentInstanceOverride ): PropValue {
 	const overridableValue = componentOverridablePropTypeUtil.extract( override );
 	const innerOverride = overridableValue
 		? componentInstanceOverridePropTypeUtil.extract( overridableValue.origin_value )
 		: componentInstanceOverridePropTypeUtil.extract( override );
 
 	if ( ! innerOverride ) {
-		return undefined;
+		return null;
 	}
 
 	const { schema_source: schemaSource, override_key: overrideKey, override_value: overrideValue } = innerOverride;
 	const componentId = schemaSource?.id;
 
 	if ( ! componentId || ! overrideKey ) {
-		return undefined;
+		return null;
 	}
 
 	const prop = getOverridableProp( components, componentId, overrideKey );
@@ -66,24 +64,26 @@ function getOriginFromOverride(
 
 	if ( prop?.originPropFields?.elementId ) {
 		const result = findOriginValueByElementId( components, prop.originPropFields.elementId );
+
 		if ( hasValue( result ) ) {
 			return result;
 		}
 	}
 
 	const nestedOverridable = componentOverridablePropTypeUtil.extract( overrideValue );
+
 	if ( nestedOverridable ) {
 		return getOriginFromOverride( components, componentOverridablePropTypeUtil.create( nestedOverridable ) );
 	}
 
-	return undefined;
+	return null;
 }
 
 function findOriginValueByElementId(
 	components: PublishedComponent[],
 	targetElementId: string,
 	visited: Set< number > = new Set()
-): PropValue | undefined {
+): PropValue {
 	for ( const component of components ) {
 		if ( visited.has( component.id ) ) {
 			continue;
@@ -107,7 +107,7 @@ function findOriginValueByElementId(
 		}
 	}
 
-	return undefined;
+	return null;
 }
 
 function hasValue< T >( value: T | null | undefined ): value is T {
