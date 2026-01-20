@@ -1,6 +1,6 @@
 // Removes unknown widgets from the data recursively
 
-export const filterUnknownElements = ( data ) => {
+export default ( data ) => {
 	if ( data?.elements?.length ) {
 		data.elements = filterChildren( data.elements );
 	}
@@ -8,19 +8,21 @@ export const filterUnknownElements = ( data ) => {
 	return data;
 };
 
-const filterChildren = ( elements ) => elements.filter( ( el ) => {
-	if ( ! el ) {
-		return false;
-	}
+function filterChildren( elements ) {
+	return elements.filter( ( el ) => {
+		if ( ! el ) {
+			return false;
+		}
 
-	const elementType = el.widgetType || el.elType,
-		elementTypeClass = elementor.elementsManager.getElementTypeClass( elementType );
+		const elementType = el.widgetType || el.elType,
+			elementTypeClass = elementor.elementsManager.getElementTypeClass( elementType );
 
-	return !! elementTypeClass;
-} ).map( ( element ) => {
-	if ( element.elements?.length ) {
-		element.elements = filterChildren( element.elements );
-	}
+		return !! elementTypeClass;
+	} ).map( ( element ) => {
+		if ( element.elements?.length ) {
+			element.elements = filterChildren( element.elements );
+		}
 
-	return element;
-} );
+		return element;
+	} );
+}
