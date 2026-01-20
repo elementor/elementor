@@ -34,10 +34,18 @@ export const createBoolean = ( value: boolean ): BooleanPropValue => ( {
 	value,
 } );
 
-export const createConfig = ( replay: boolean ): ConfigPropValue => ( {
+export const createConfig = (
+	replay: boolean,
+	relativeTo?: string,
+	offsetTop?: number,
+	offsetBottom?: number
+): ConfigPropValue => ( {
 	$$type: 'config',
 	value: {
 		replay: createBoolean( replay ),
+		relativeTo: createString( relativeTo ?? '' ),
+		offsetTop: createNumber( offsetTop ?? 0 ),
+		offsetBottom: createNumber( offsetBottom ?? 100 ),
 	},
 } );
 
@@ -52,6 +60,9 @@ export const createAnimationPreset = ( {
 	duration,
 	delay,
 	replay = false,
+	relativeTo,
+	offsetTop,
+	offsetBottom,
 }: {
 	effect: string;
 	type: string;
@@ -59,6 +70,9 @@ export const createAnimationPreset = ( {
 	duration: number;
 	delay: number;
 	replay: boolean;
+	relativeTo?: string;
+	offsetTop?: number;
+	offsetBottom?: number;
 } ): AnimationPresetPropValue => ( {
 	$$type: 'animation-preset-props',
 	value: {
@@ -66,7 +80,7 @@ export const createAnimationPreset = ( {
 		type: createString( type ),
 		direction: createString( direction ?? '' ),
 		timing_config: createTimingConfig( duration, delay ),
-		config: createConfig( replay ),
+		config: createConfig( replay, relativeTo, offsetTop, offsetBottom ),
 	},
 } );
 
@@ -79,6 +93,9 @@ export const createInteractionItem = ( {
 	delay,
 	interactionId,
 	replay = false,
+	relativeTo,
+	offsetTop,
+	offsetBottom,
 }: {
 	trigger: string;
 	effect: string;
@@ -88,12 +105,25 @@ export const createInteractionItem = ( {
 	delay: number;
 	interactionId?: string;
 	replay: boolean;
+	relativeTo?: string;
+	offsetTop?: number;
+	offsetBottom?: number;
 } ): InteractionItemPropValue => ( {
 	$$type: 'interaction-item',
 	value: {
 		...( interactionId && { interaction_id: createString( interactionId ) } ),
 		trigger: createString( trigger ),
-		animation: createAnimationPreset( { effect, type, direction, duration, delay, replay } ),
+		animation: createAnimationPreset( {
+			effect,
+			type,
+			direction,
+			duration,
+			delay,
+			replay,
+			relativeTo,
+			offsetTop,
+			offsetBottom,
+		} ),
 	},
 } );
 
