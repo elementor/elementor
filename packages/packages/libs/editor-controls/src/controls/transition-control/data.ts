@@ -2,6 +2,14 @@ import { type KeyValuePropValue, type SizePropValue } from '@elementor/editor-pr
 import { isVersionGreaterOrEqual } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
+type ElementorWindow = Window & {
+	elementorFrontend?: {
+		config?: {
+			is_rtl?: boolean;
+		};
+	};
+};
+
 export type TransitionProperty = {
 	label: string;
 	value: string;
@@ -41,6 +49,10 @@ export const initialTransitionValue: TransitionValue = {
 
 const MIN_PRO_VERSION = '3.35';
 
+const getIsSiteRtl = () => {
+	return !! ( window as unknown as ElementorWindow )?.elementorFrontend?.config?.is_rtl;
+};
+
 // TODO: Remove this after version 4.01 is released
 const shouldExtendTransitionProperties = (): boolean => {
 	const hasProInstalled = !! window.elementorPro;
@@ -59,6 +71,8 @@ const shouldExtendTransitionProperties = (): boolean => {
 };
 
 const createTransitionPropertiesList = (): TransitionCategory[] => {
+	const isSiteRtl = getIsSiteRtl();
+
 	const baseProperties: TransitionCategory[] = [
 		{
 			label: __( 'Default', 'elementor' ),
@@ -71,8 +85,16 @@ const createTransitionPropertiesList = (): TransitionCategory[] => {
 			properties: [
 				{ label: __( 'Margin (all)', 'elementor' ), value: 'margin', isDisabled: true },
 				{ label: __( 'Margin bottom', 'elementor' ), value: 'margin-block-end', isDisabled: true },
-				{ label: __( 'Margin left', 'elementor' ), value: 'margin-inline-start', isDisabled: true },
-				{ label: __( 'Margin right', 'elementor' ), value: 'margin-inline-end', isDisabled: true },
+				{
+					label: isSiteRtl ? __( 'Margin right', 'elementor' ) : __( 'Margin left', 'elementor' ),
+					value: 'margin-inline-start',
+					isDisabled: true,
+				},
+				{
+					label: isSiteRtl ? __( 'Margin left', 'elementor' ) : __( 'Margin right', 'elementor' ),
+					value: 'margin-inline-end',
+					isDisabled: true,
+				},
 				{ label: __( 'Margin top', 'elementor' ), value: 'margin-block-start', isDisabled: true },
 			],
 		},
@@ -82,8 +104,16 @@ const createTransitionPropertiesList = (): TransitionCategory[] => {
 			properties: [
 				{ label: __( 'Padding (all)', 'elementor' ), value: 'padding', isDisabled: true },
 				{ label: __( 'Padding bottom', 'elementor' ), value: 'padding-block-end', isDisabled: true },
-				{ label: __( 'Padding left', 'elementor' ), value: 'padding-inline-start', isDisabled: true },
-				{ label: __( 'Padding right', 'elementor' ), value: 'padding-inline-end', isDisabled: true },
+				{
+					label: isSiteRtl ? __( 'Padding right', 'elementor' ) : __( 'Padding left', 'elementor' ),
+					value: 'padding-inline-start',
+					isDisabled: true,
+				},
+				{
+					label: isSiteRtl ? __( 'Padding left', 'elementor' ) : __( 'Padding right', 'elementor' ),
+					value: 'padding-inline-end',
+					isDisabled: true,
+				},
 				{ label: __( 'Padding top', 'elementor' ), value: 'padding-block-start', isDisabled: true },
 			],
 		},
@@ -114,8 +144,16 @@ const createTransitionPropertiesList = (): TransitionCategory[] => {
 			type: 'category',
 			properties: [
 				{ label: __( 'Top', 'elementor' ), value: 'inset-block-start', isDisabled: true },
-				{ label: __( 'Left', 'elementor' ), value: 'inset-inline-start', isDisabled: true },
-				{ label: __( 'Right', 'elementor' ), value: 'inset-inline-end', isDisabled: true },
+				{
+					label: isSiteRtl ? __( 'Right', 'elementor' ) : __( 'Left', 'elementor' ),
+					value: 'inset-inline-start',
+					isDisabled: true,
+				},
+				{
+					label: isSiteRtl ? __( 'Left', 'elementor' ) : __( 'Right', 'elementor' ),
+					value: 'inset-inline-end',
+					isDisabled: true,
+				},
 				{ label: __( 'Bottom', 'elementor' ), value: 'inset-block-end', isDisabled: true },
 				{ label: __( 'Z-index', 'elementor' ), value: 'z-index', isDisabled: true },
 			],
