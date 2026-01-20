@@ -32,8 +32,8 @@ import { Control as BaseControl } from '../../controls-registry/control';
 import { controlsRegistry, type ControlType } from '../../controls-registry/controls-registry';
 import { createTopLevelObjectType } from '../../controls-registry/create-top-level-object-type';
 import { usePersistDynamicValue } from '../../hooks/use-persist-dynamic-value';
+import { useLicenseConfig } from '../../hooks/use-license-config';
 import { DynamicControl } from '../dynamic-control';
-import { useDynamicControlsConfig } from '../dynamic-controls-config';
 import { useDynamicTag } from '../hooks/use-dynamic-tag';
 import { type DynamicTag } from '../types';
 import { dynamicPropTypeUtil, isDynamicTagSupported } from '../utils';
@@ -46,7 +46,7 @@ const tagsWithoutTabs = [ 'popup' ];
 export const DynamicSelectionControl = ( { OriginalControl, ...props }: { OriginalControl?: ControlComponent } ) => {
 	const { setValue: setAnyValue, propType } = useBoundProp();
 	const { bind, value } = useBoundProp( dynamicPropTypeUtil );
-	const { expired: readonly } = useDynamicControlsConfig();
+	const { expired: readonly } = useLicenseConfig();
 	const originalPropType = createTopLevelObjectType( {
 		schema: {
 			[ bind ]: propType,

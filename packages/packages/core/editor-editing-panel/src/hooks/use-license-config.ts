@@ -1,18 +1,18 @@
 import { useSyncExternalStore } from 'react';
 
-export type DynamicControlsConfig = {
+export type LicenseConfig = {
 	expired: boolean;
 };
 
-let config: DynamicControlsConfig = { expired: false };
+let config: LicenseConfig = { expired: false };
 const listeners = new Set< () => void >();
 
-export function setDynamicControlsConfig( newConfig: Partial< DynamicControlsConfig > ) {
+export function setLicenseConfig( newConfig: Partial< LicenseConfig > ) {
 	config = { ...config, ...newConfig };
 	listeners.forEach( ( listener ) => listener() );
 }
 
-function getConfig(): DynamicControlsConfig {
+function getConfig(): LicenseConfig {
 	return config;
 }
 
@@ -21,6 +21,7 @@ function subscribe( listener: () => void ) {
 	return () => listeners.delete( listener );
 }
 
-export function useDynamicControlsConfig() {
+export function useLicenseConfig() {
 	return useSyncExternalStore( subscribe, getConfig, getConfig );
 }
+

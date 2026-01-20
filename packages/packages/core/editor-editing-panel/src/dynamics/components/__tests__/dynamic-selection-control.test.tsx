@@ -5,8 +5,8 @@ import { fireEvent, screen, waitFor } from '@testing-library/react';
 
 import { mockElement } from '../../../__tests__/utils';
 import { useElement } from '../../../contexts/element-context';
+import { useLicenseConfig } from '../../../hooks/use-license-config';
 import { usePersistDynamicValue } from '../../../hooks/use-persist-dynamic-value';
-import { useDynamicControlsConfig } from '../../dynamic-controls-config';
 import { useDynamicTag } from '../../hooks/use-dynamic-tag';
 import { usePropDynamicTags } from '../../hooks/use-prop-dynamic-tags';
 import { type DynamicTag } from '../../types';
@@ -17,9 +17,9 @@ jest.mock( '@elementor/editor-controls' );
 jest.mock( '../../hooks/use-dynamic-tag' );
 jest.mock( '../../hooks/use-prop-dynamic-tags' );
 jest.mock( '../../../hooks/use-persist-dynamic-value' );
+jest.mock( '../../../hooks/use-license-config' );
 jest.mock( '../../../contexts/element-context' );
 jest.mock( '../../utils' );
-jest.mock( '../../dynamic-controls-config' );
 
 describe( '<DynamicSelectionControl />', () => {
 	beforeEach( () => {
@@ -50,7 +50,7 @@ describe( '<DynamicSelectionControl />', () => {
 
 		jest.mocked( isDynamicTagSupported ).mockReturnValue( true );
 
-		jest.mocked( useDynamicControlsConfig ).mockReturnValue( { expired: false } );
+		jest.mocked( useLicenseConfig ).mockReturnValue( { expired: false } );
 	} );
 
 	afterEach( () => {
@@ -171,7 +171,7 @@ describe( '<DynamicSelectionControl />', () => {
 
 	describe( 'readonly mode', () => {
 		beforeEach( () => {
-			jest.mocked( useDynamicControlsConfig ).mockReturnValue( { expired: true } );
+			jest.mocked( useLicenseConfig ).mockReturnValue( { expired: true } );
 		} );
 
 		it( 'should hide settings button when readonly', () => {
