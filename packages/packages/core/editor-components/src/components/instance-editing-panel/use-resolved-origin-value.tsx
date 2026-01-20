@@ -10,10 +10,10 @@ import { type OverridableProp, type PublishedComponent } from '../../types';
 export function useResolvedOriginValue( override: ComponentInstanceOverride, overridableProp: OverridableProp ) {
 	const components = useSelector( selectData );
 
-	return resolveOriginValueFromStore( components, override, overridableProp );
+	return resolveOriginValue( components, override, overridableProp );
 }
 
-function resolveOriginValueFromStore(
+function resolveOriginValue(
 	components: PublishedComponent[],
 	matchingOverride: ComponentInstanceOverride | null,
 	overridableProp: OverridableProp
