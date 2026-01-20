@@ -93,6 +93,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<div class="title-wrapper">
 			<div class="title">{{{ title }}}</div>
 		</div>
+		<# if ( '' !== accessibility ) { #>
+		<div class="accessibility-indicator ">
+			{{{ accessibility }}}
+		</div>
+		<# } #>
 	</button>
 </script>
 
