@@ -40,7 +40,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		await context.close();
 	} );
 
-	test.only( 'Validate styling in editor, and that it does not get affected in frontend', async ( { apiRequests }, testInfo ) => {
+	test( 'Validate styling in editor, and that it does not get affected in frontend', async ( { apiRequests }, testInfo ) => {
 		// Arrange & act.
 		const flexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
 		headingId = await editor.addWidget( { widgetType: EditorSelectors.v4.atoms.heading, container: flexboxId } );
