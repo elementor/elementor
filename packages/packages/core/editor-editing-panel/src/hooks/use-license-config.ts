@@ -24,4 +24,3 @@ function subscribe( listener: () => void ) {
 export function useLicenseConfig() {
 	return useSyncExternalStore( subscribe, getConfig, getConfig );
 }
-

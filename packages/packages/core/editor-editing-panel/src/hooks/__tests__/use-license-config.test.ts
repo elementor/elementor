@@ -75,4 +75,3 @@ describe( 'use-license-config', () => {
 		} );
 	} );
 } );
-
