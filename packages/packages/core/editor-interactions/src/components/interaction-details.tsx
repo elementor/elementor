@@ -25,12 +25,6 @@ type InteractionDetailsProps = {
 	onPlayInteraction: ( interactionId: string ) => void;
 };
 
-const DEFAULT_VALUES = {
-	relativeTo: 'viewport',
-	offsetTop: 15,
-	offsetBottom: 85,
-};
-
 const TRIGGERS_WITH_REPLAY = [ 'scrollIn', 'scrollOut' ];
 
 export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }: InteractionDetailsProps ) => {
@@ -38,11 +32,17 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const effect = extractString( interaction.animation.value.effect, INTERACTION_DEFAULT_CONFIG.effect );
 	const type = extractString( interaction.animation.value.type, INTERACTION_DEFAULT_CONFIG.type );
 	const direction = extractString( interaction.animation.value.direction, INTERACTION_DEFAULT_CONFIG.direction );
-	const relativeTo = extractString( interaction.animation.value.config?.value.relativeTo, DEFAULT_VALUES.relativeTo );
-	const offsetTop = extractNumber( interaction.animation.value.config?.value.offsetTop, DEFAULT_VALUES.offsetTop );
+	const relativeTo = extractString(
+		interaction.animation.value.config?.value.relativeTo,
+		INTERACTION_DEFAULT_CONFIG.relativeTo
+	);
+	const offsetTop = extractNumber(
+		interaction.animation.value.config?.value.offsetTop,
+		INTERACTION_DEFAULT_CONFIG.offsetTop
+	);
 	const offsetBottom = extractNumber(
 		interaction.animation.value.config?.value.offsetBottom,
-		DEFAULT_VALUES.offsetBottom
+		INTERACTION_DEFAULT_CONFIG.offsetBottom
 	);
 	const replay = extractBoolean(
 		interaction.animation.value.config?.value.replay,

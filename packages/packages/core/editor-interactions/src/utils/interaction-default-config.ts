@@ -6,4 +6,7 @@ export const INTERACTION_DEFAULT_CONFIG = {
 	duration: 600,
 	delay: 0,
 	replay: false,
+	relativeTo: 'viewport',
+	offsetTop: 15,
+	offsetBottom: 85,
 };

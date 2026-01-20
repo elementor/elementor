@@ -130,7 +130,13 @@ export const createInteractionItem = ( {
 
 export const createDefaultInteractionItem = (): InteractionItemPropValue => {
 	return createInteractionItem( {
-		...INTERACTION_DEFAULT_CONFIG,
+		trigger: INTERACTION_DEFAULT_CONFIG.trigger,
+		effect: INTERACTION_DEFAULT_CONFIG.effect,
+		type: INTERACTION_DEFAULT_CONFIG.type,
+		direction: INTERACTION_DEFAULT_CONFIG.direction,
+		duration: INTERACTION_DEFAULT_CONFIG.duration,
+		delay: INTERACTION_DEFAULT_CONFIG.delay,
+		replay: INTERACTION_DEFAULT_CONFIG.replay,
 		interactionId: generateTempInteractionId(),
 	} );
 };
