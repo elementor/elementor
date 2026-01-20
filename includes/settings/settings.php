@@ -9,6 +9,7 @@ use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Modules\Home\Module as Home_Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Home_Menu;
 use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Settings_Menu;
 
@@ -146,22 +147,6 @@ class Settings extends Settings_Page {
 
 		// Return order.
 		return $elementor_menu_order;
-	}
-
-	/**
-	 * Register Elementor knowledge base sub-menu.
-	 *
-	 * Add new Elementor knowledge base sub-menu under the main Elementor menu.
-	 *
-	 * Fired by `admin_menu` action.
-	 *
-	 * @since 2.0.3
-	 * @access private
-	 */
-	private function register_knowledge_base_menu( Admin_Menu_Manager $admin_menu ) {
-		if ( ! Plugin::instance()->modules_manager->get_modules( 'editor-one' ) ) {
-			$admin_menu->register( 'go_knowledge_base_site', new Get_Help_Menu_Item() );
-		}
 	}
 
 	private function register_editor_one_settings_menu( Menu_Data_Provider $menu_data_provider ) {
@@ -565,10 +550,6 @@ class Settings extends Settings_Page {
 			$this->register_editor_one_settings_menu( $menu_data_provider );
 			$this->register_editor_one_home_menu( $menu_data_provider );
 		} );
-
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-			$this->register_knowledge_base_menu( $admin_menu );
-		}, Promotions_Module::ADMIN_MENU_PRIORITY - 1 );
 
 		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 

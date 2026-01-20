@@ -236,8 +236,7 @@ class Tools extends Settings_Page {
 	}
 
 	public function get_warning_span( string $text ): string {
-		$is_editor_one_enabled = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
-		$color = $is_editor_one_enabled ? 'var(--e-one-palette-error-main)' : 'red';
+		$color = 'var(--e-one-palette-error-main)';
 		return sprintf( '<span style="color: %s;">%s</span>', esc_attr( $color ), esc_html( $text ) );
 	}
 
