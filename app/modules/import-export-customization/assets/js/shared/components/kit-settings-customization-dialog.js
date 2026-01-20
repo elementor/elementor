@@ -222,64 +222,64 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 
 	return (
 		<>
-		<KitCustomizationDialog
-			open={ open }
-			title={ __( 'Edit settings & configurations', 'elementor' ) }
-			handleClose={ handleClose }
-			handleSaveChanges={ handleSaveClick }
-		>
-			<Stack gap={ 2 }>
-				{ contextData?.isOldElementorVersion && (
-					<UpgradeVersionBanner />
-				) }
-				{ isImport && ! isExported( contextData ) ? (
-					<SettingSection
-						title={ __( 'Theme', 'elementor' ) }
-						settingKey="theme"
-						notExported
-					/>
-				) : (
-					<SettingSection
-						key="theme"
-						checked={ settings.theme }
-						title={ __( 'Theme', 'elementor' ) }
-						description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
-						settingKey="theme"
-						onSettingChange={ handleToggleChange }
-						disabled={ isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme }
-					/>
-				) }
+			<KitCustomizationDialog
+				open={ open }
+				title={ __( 'Edit settings & configurations', 'elementor' ) }
+				handleClose={ handleClose }
+				handleSaveChanges={ handleSaveClick }
+			>
+				<Stack gap={ 2 }>
+					{ contextData?.isOldElementorVersion && (
+						<UpgradeVersionBanner />
+					) }
+					{ isImport && ! isExported( contextData ) ? (
+						<SettingSection
+							title={ __( 'Theme', 'elementor' ) }
+							settingKey="theme"
+							notExported
+						/>
+					) : (
+						<SettingSection
+							key="theme"
+							checked={ settings.theme }
+							title={ __( 'Theme', 'elementor' ) }
+							description={ __( 'Only public WordPress themes are supported', 'elementor' ) }
+							settingKey="theme"
+							onSettingChange={ handleToggleChange }
+							disabled={ isImport && ! contextData?.data?.uploadedData?.manifest?.[ 'site-settings' ]?.theme }
+						/>
+					) }
 
-				{ showClassesVariablesSection && (
-					<ClassesVariablesSection
-						settings={ {
-							classes: settings.classes ?? true,
-							variables: settings.variables ?? true,
-							classesOverrideAll: settings.classesOverrideAll ?? false,
-							variablesOverrideAll: settings.variablesOverrideAll ?? false,
-						} }
-						onSettingChange={ handleClassesVariablesChange }
-						isImport={ isImport }
-						classesExported={ ! classesNotExported && showClassesSection }
-						variablesExported={ ! variablesNotExported && showVariablesSection }
-						classesLimitExceeded={ classesLimitExceeded }
-						variablesLimitExceeded={ variablesLimitExceeded }
-						classesOverLimitCount={ classesOverLimitCount }
-						variablesOverLimitCount={ variablesOverLimitCount }
-						onClassesReviewClick={ handleClassesReviewClick }
-						onVariablesReviewClick={ handleVariablesReviewClick }
-						notExported={ classesVariablesNotExported }
-					/>
-				) }
-			</Stack>
-		</KitCustomizationDialog>
+					{ showClassesVariablesSection && (
+						<ClassesVariablesSection
+							settings={ {
+								classes: settings.classes ?? true,
+								variables: settings.variables ?? true,
+								classesOverrideAll: settings.classesOverrideAll ?? false,
+								variablesOverrideAll: settings.variablesOverrideAll ?? false,
+							} }
+							onSettingChange={ handleClassesVariablesChange }
+							isImport={ isImport }
+							classesExported={ ! classesNotExported && showClassesSection }
+							variablesExported={ ! variablesNotExported && showVariablesSection }
+							classesLimitExceeded={ classesLimitExceeded }
+							variablesLimitExceeded={ variablesLimitExceeded }
+							classesOverLimitCount={ classesOverLimitCount }
+							variablesOverLimitCount={ variablesOverLimitCount }
+							onClassesReviewClick={ handleClassesReviewClick }
+							onVariablesReviewClick={ handleVariablesReviewClick }
+							notExported={ classesVariablesNotExported }
+						/>
+					) }
+				</Stack>
+			</KitCustomizationDialog>
 
-		<OverrideConfirmationDialog
-			open={ confirmationDialog.open }
-			onClose={ handleConfirmationClose }
-			onConfirm={ handleConfirmationConfirm }
-			type={ confirmationDialog.type }
-		/>
+			<OverrideConfirmationDialog
+				open={ confirmationDialog.open }
+				onClose={ handleConfirmationClose }
+				onConfirm={ handleConfirmationConfirm }
+				type={ confirmationDialog.type }
+			/>
 		</>
 	);
 }
