@@ -12,6 +12,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Menu_Data_Provider {
+	public const THIRD_LEVEL_EDITOR_FLYOUT = 'editor_flyout';
+	public const THIRD_LEVEL_FLYOUT_MENU = 'flyout_menu';
+
 	private static ?Menu_Data_Provider $instance = null;
 	private array $level3_items = [];
 	private array $level4_items = [];
@@ -102,38 +105,22 @@ class Menu_Data_Provider {
 		return false;
 	}
 
-	public function get_editor_flyout_data(): array {
-		if ( null !== $this->cached_editor_flyout_data ) {
-			return $this->cached_editor_flyout_data;
+	public function get_third_level_data( string $variant ): array {
+		if ( self::THIRD_LEVEL_EDITOR_FLYOUT === $variant ) {
+			return $this->get_third_level_data_from_cache(
+				$this->cached_editor_flyout_data,
+				[ $this, 'build_level3_flyout_items' ]
+			);
 		}
 
-		$items = $this->build_level3_flyout_items();
-
-		$this->sort_items_by_priority( $items );
-
-		$this->cached_editor_flyout_data = [
-			'parent_slug' => Menu_Config::EDITOR_MENU_SLUG,
-			'items' => $items,
-		];
-
-		return $this->cached_editor_flyout_data;
-	}
-
-	public function get_flyout_menu_data(): array {
-		if ( null !== $this->cached_flyout_menu_data ) {
-			return $this->cached_flyout_menu_data;
+		if ( self::THIRD_LEVEL_FLYOUT_MENU === $variant ) {
+			return $this->get_third_level_data_from_cache(
+				$this->cached_flyout_menu_data,
+				[ $this, 'build_flyout_items_with_expanded_third_party' ]
+			);
 		}
 
-		$items = $this->build_flyout_items_with_expanded_third_party();
-
-		$this->sort_items_by_priority( $items );
-
-		$this->cached_flyout_menu_data = [
-			'parent_slug' => Menu_Config::EDITOR_MENU_SLUG,
-			'items' => $items,
-		];
-
-		return $this->cached_flyout_menu_data;
+		return [];
 	}
 
 	public function get_level4_flyout_data(): array {
@@ -152,6 +139,23 @@ class Menu_Data_Provider {
 		$this->cached_level4_flyout_data = $groups;
 
 		return $this->cached_level4_flyout_data;
+	}
+
+	private function get_third_level_data_from_cache( ?array &$cache, callable $items_builder ): array {
+		if ( null !== $cache ) {
+			return $cache;
+		}
+
+		$items = $items_builder();
+
+		$this->sort_items_by_priority( $items );
+
+		$cache = [
+			'parent_slug' => Menu_Config::EDITOR_MENU_SLUG,
+			'items' => $items,
+		];
+
+		return $cache;
 	}
 
 	public function get_theme_builder_url(): string {

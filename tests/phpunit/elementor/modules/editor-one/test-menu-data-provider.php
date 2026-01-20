@@ -191,7 +191,7 @@ class Test_Menu_Data_Provider extends Elementor_Test_Base {
 		$this->assertEquals( 1, $slug_counts['elementor-settings'] );
 	}
 
-	public function test_get_editor_flyout_data__uses_custom_url_for_custom_item() {
+	public function test_get_third_level_data__uses_custom_url_for_custom_item() {
 		$this->set_admin_user();
 		$custom_url = 'https://example.com/custom';
 		$item = new Test_Custom_Url_Menu_Item(
@@ -204,13 +204,13 @@ class Test_Menu_Data_Provider extends Elementor_Test_Base {
 
 		$this->provider->register_level3_item( $item );
 
-		$data = $this->provider->get_editor_flyout_data();
+		$data = $this->provider->get_third_level_data( Menu_Data_Provider::THIRD_LEVEL_EDITOR_FLYOUT );
 
 		$this->assertCount( 1, $data['items'] );
 		$this->assertEquals( $custom_url, $data['items'][0]['url'] );
 	}
 
-	public function test_get_flyout_menu_data__expands_third_party_children() {
+	public function test_get_third_level_data__expands_third_party_children() {
 		$this->set_admin_user();
 		$parent = $this->createMock( Menu_Item_Third_Level_Interface::class );
 		$parent->method( 'get_slug' )->willReturn( 'third-party-parent' );
@@ -230,7 +230,7 @@ class Test_Menu_Data_Provider extends Elementor_Test_Base {
 		$this->provider->register_level4_item( $child1 );
 		$this->provider->register_level4_item( $child2 );
 
-		$data = $this->provider->get_flyout_menu_data();
+		$data = $this->provider->get_third_level_data( Menu_Data_Provider::THIRD_LEVEL_FLYOUT_MENU );
 		$slugs = array_column( $data['items'], 'slug' );
 
 		$this->assertNotContains( 'third-party-parent', $slugs );

@@ -313,7 +313,7 @@ class Elementor_One_Menu_Manager {
 		);
 
 		$config = [
-			'editorFlyout' => $this->get_editor_flyout_data(),
+			'editorFlyout' => $this->get_third_level_data(),
 		];
 
 		wp_enqueue_script(
@@ -331,8 +331,10 @@ class Elementor_One_Menu_Manager {
 		);
 	}
 
-	private function get_editor_flyout_data(): array {
-		return $this->menu_data_provider->get_flyout_menu_data();
+	private function get_third_level_data(): array {
+		return $this->menu_data_provider->get_third_level_data(
+			Menu_Data_Provider::THIRD_LEVEL_FLYOUT_MENU
+		);
 	}
 }
 
