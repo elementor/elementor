@@ -1,6 +1,6 @@
 import { filterUnknownElements } from 'elementor-frontend-utils/filter-unknown-elements';
 
-module.exports = Marionette.CompositeView.extend( {
+export default Marionette.CompositeView.extend( {
 	id: 'elementor-panel-revisions',
 
 	template: '#tmpl-elementor-panel-revisions',
