@@ -36,6 +36,7 @@ export const createBoolean = ( value: boolean ): BooleanPropValue => ( {
 
 export const createConfig = (
 	replay: boolean,
+	easing: string,
 	relativeTo?: string,
 	offsetTop?: number,
 	offsetBottom?: number
