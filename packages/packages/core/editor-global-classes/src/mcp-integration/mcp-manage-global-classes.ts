@@ -2,7 +2,7 @@ import { BREAKPOINTS_SCHEMA_URI, STYLE_SCHEMA_URI } from '@elementor/editor-canv
 import { type MCPRegistryEntry } from '@elementor/editor-mcp';
 import { type Props, Schema } from '@elementor/editor-props';
 import { type BreakpointId } from '@elementor/editor-responsive';
-import { getStylesSchema } from '@elementor/editor-styles';
+import { getStylesSchema, type StyleDefinitionState } from '@elementor/editor-styles';
 import { type StylesProvider } from '@elementor/editor-styles-repository';
 import { type Utils as IUtils } from '@elementor/editor-variables';
 import { z } from '@elementor/schema';
@@ -21,11 +21,25 @@ const schema = {
 		.optional()
 		.describe( 'Global class ID (required for modify). Get from elementor://global-classes resource.' ),
 	globalClassName: z.string().optional().describe( 'Global class name (required for create)' ),
-	props: z
-		.record( z.any() )
-		.describe(
-			'key-value of style-schema PropValues. Available properties at dynamic resource "elementor://styles/schema/{property-name}"'
-		),
+	props: z.object( {
+		default: z
+			.record( z.any() )
+			.describe(
+				'key-value of style-schema PropValues. Available properties at dynamic resource "elementor://styles/schema/{property-name}"'
+			),
+		hover: z
+			.record( z.any() )
+			.describe( 'key-value of style-schema PropValues, for :hover css state. optional' )
+			.optional(),
+		focus: z
+			.record( z.any() )
+			.describe( 'key-value of style-schema PropValues, for :focus css state. optional' )
+			.optional(),
+		active: z
+			.record( z.any() )
+			.describe( 'key-value of style-schema PropValues, for :active css state. optional' )
+			.optional(),
+	} ),
 	breakpoint: z
 		.nullable( z.string().describe( 'Responsive breakpoint name for styles. Defaults to desktop (null).' ) )
 		.default( null )
@@ -42,8 +56,9 @@ type InputSchema = z.infer< ReturnType< typeof z.object< typeof schema > > >;
 type OutputSchema = z.infer< ReturnType< typeof z.object< typeof outputSchema > > >;
 
 const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
-	const { action, classId, globalClassName, props, breakpoint } = input;
-
+	const { action, classId: rawClassId, globalClassName, props: rawProps, breakpoint } = input;
+	const propsWithStates = rawProps as unknown as Record< NonNullable< StyleDefinitionState >, Props >;
+	let classId = rawClassId;
 	if ( action === 'create' && ! globalClassName ) {
 		return {
 			status: 'error',
@@ -76,17 +91,18 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 	const errors: string[] = [];
 	const stylesSchema = getStylesSchema();
 	const validProps = Object.keys( stylesSchema );
-
-	Object.keys( props ).forEach( ( key ) => {
-		const propType = stylesSchema[ key ];
-		if ( ! propType ) {
-			errors.push( `Property "${ key }" does not exist in styles schema.` );
-			return;
-		}
-		const { valid, jsonSchema } = Schema.validatePropValue( propType, props[ key ] );
-		if ( ! valid ) {
-			errors.push( `- Property "${ key }" has invalid value\n  Expected schema: ${ jsonSchema }\n` );
-		}
+	Object.values( propsWithStates ).forEach( ( props ) => {
+		Object.keys( props ).forEach( ( key ) => {
+			const propType = stylesSchema[ key ];
+			if ( ! propType ) {
+				errors.push( `Property "${ key }" does not exist in styles schema.` );
+				return;
+			}
+			const { valid, jsonSchema } = Schema.validatePropValue( propType, props[ key ] );
+			if ( ! valid ) {
+				errors.push( `- Property "${ key }" has invalid value\n  Expected schema: ${ jsonSchema }\n` );
+			}
+		} );
 	} );
 
 	if ( errors.length > 0 ) {
@@ -101,56 +117,78 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 	// TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
 	const Utils = ( ( ( window as XElementor ).elementorV2 as XElementor ).editorVariables as XElementor )
 		.Utils as typeof IUtils;
-	Object.keys( props ).forEach( ( key ) => {
-		props[ key ] = Schema.adjustLlmPropValueSchema( props[ key ], {
-			transformers: Utils.globalVariablesLLMResolvers,
+	Object.values( propsWithStates ).forEach( ( props ) => {
+		Object.keys( props ).forEach( ( key ) => {
+			props[ key ] = Schema.adjustLlmPropValueSchema( props[ key ], {
+				transformers: Utils.globalVariablesLLMResolvers,
+			} );
 		} );
 	} );
 
 	const breakpointValue = breakpoint ?? 'desktop';
+	let result = {
+		status: 'error',
+		classId: '',
+		message: 'unknown error',
+	} as { status: 'error' | 'ok'; message?: string; classId?: string };
 
 	try {
-		switch ( action ) {
-			case 'create':
-				const newClassId = await attemptCreate( {
-					props,
-					className: globalClassName,
-					stylesProvider: globalClassesStylesProvider,
-					breakpoint: breakpointValue as BreakpointId,
-				} );
-				return newClassId
-					? {
-							status: 'ok',
-							message: `created global class with ID ${ newClassId }`,
-					  }
-					: {
-							status: 'error',
-							message: 'error creating class',
-					  };
-			case 'modify':
-				const updated = await attemptUpdate( {
-					classId,
-					props,
-					stylesProvider: globalClassesStylesProvider,
-					breakpoint: breakpointValue as BreakpointId,
-				} );
-				return updated
-					? { status: 'ok', classId }
-					: {
-							status: 'error',
-							message: 'error modifying class',
-					  };
-			case 'delete':
-				const deleted = await attemptDelete( {
-					classId,
-					stylesProvider: globalClassesStylesProvider,
-				} );
-				return deleted
-					? { status: 'ok', message: `deleted global class with ID ${ classId }` }
-					: {
-							status: 'error',
-							message: 'error deleting class',
-					  };
+		let currentAction = action;
+		for await ( const [ state, props ] of Object.entries( propsWithStates ) ) {
+			switch ( currentAction ) {
+				case 'create':
+					const newClassId = await attemptCreate( {
+						props,
+						className: globalClassName,
+						stylesProvider: globalClassesStylesProvider,
+						breakpoint: breakpointValue as BreakpointId,
+						state: state as StyleDefinitionState,
+					} );
+					if ( newClassId && currentAction === 'create' ) {
+						// NOTE: for multiple iterations as the state changes, the next execution would be update an existing class
+						currentAction = 'modify';
+						classId = newClassId;
+					}
+					result = newClassId
+						? {
+								status: 'ok',
+								message: `created global class with ID ${ newClassId }`,
+						  }
+						: {
+								status: 'error',
+								message: 'error creating class',
+						  };
+					break;
+				case 'modify':
+					const updated = await attemptUpdate( {
+						classId,
+						props,
+						stylesProvider: globalClassesStylesProvider,
+						breakpoint: breakpointValue as BreakpointId,
+						state: state as StyleDefinitionState,
+					} );
+					result = updated
+						? { status: 'ok', classId }
+						: {
+								status: 'error',
+								message: 'error modifying class',
+						  };
+					break;
+				case 'delete':
+					const deleted = await attemptDelete( {
+						classId,
+						stylesProvider: globalClassesStylesProvider,
+					} );
+					result = deleted
+						? { status: 'ok', message: `deleted global class with ID ${ classId }` }
+						: {
+								status: 'error',
+								message: 'error deleting class',
+						  };
+					break;
+				default:
+					throw new Error( `Unsupported action ${ action }` );
+			}
 		}
 	} catch ( error ) {
 		return {
@@ -158,6 +196,7 @@ const handler = async ( input: InputSchema ): Promise< OutputSchema > => {
 			message: `${ action } failed: ${ ( error as Error ).message || 'Unknown error' }`,
 		};
 	}
+	return result;
 };
 
 export const initManageGlobalClasses = ( reg: MCPRegistryEntry ) => {
@@ -195,10 +234,11 @@ type Opts = {
 	classId?: string;
 	breakpoint: BreakpointId;
 	props: Props;
+	state: StyleDefinitionState;
 };
 
 async function attemptCreate( opts: Opts ) {
-	const { props, breakpoint, className, stylesProvider } = opts;
+	const { props, breakpoint, className, stylesProvider, state } = opts;
 	const { create, delete: deleteClass } = stylesProvider.actions;
 	if ( ! className ) {
 		throw new Error( 'Global class name is a required for creation' );
@@ -210,7 +250,7 @@ async function attemptCreate( opts: Opts ) {
 		{
 			meta: {
 				breakpoint,
-				state: null,
+				state: ( state as string ) === 'default' ? null : state,
 			},
 			custom_css: null,
 			props,
@@ -226,7 +266,7 @@ async function attemptCreate( opts: Opts ) {
 }
 
 async function attemptUpdate( opts: Opts ) {
-	const { props, breakpoint, classId, stylesProvider } = opts;
+	const { props, breakpoint, classId, stylesProvider, state } = opts;
 	const { updateProps, update } = stylesProvider.actions;
 	if ( ! classId ) {
 		throw new Error( 'Class ID is required for modification' );
@@ -241,7 +281,7 @@ async function attemptUpdate( opts: Opts ) {
 			props,
 			meta: {
 				breakpoint,
-				state: null,
+				state,
 			},
 		} );
 		await saveGlobalClasses( { context: 'frontend' } );
