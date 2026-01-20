@@ -3,8 +3,8 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
-import type { InteractionItemValue } from '../types';
-import { createAnimationPreset, createString } from '../utils/prop-value-utils';
+import type { InteractionItemValue, NumberPropValue } from '../types';
+import { createAnimationPreset, createNumber, createString } from '../utils/prop-value-utils';
 jest.mock( '../interactions-controls-registry', () => ( {
 	getInteractionsControl: jest.fn(),
 } ) );
@@ -14,16 +14,16 @@ const createInteractionItemValue = ( {
 	effect = 'fade',
 	type = 'in',
 	direction = '',
-	duration = 300,
-	delay = 0,
+	duration = createNumber( 300 ),
+	delay = createNumber( 0 ),
 	replay = false,
 }: {
 	trigger?: string;
 	effect?: string;
 	type?: string;
 	direction?: string;
-	duration?: number;
-	delay?: number;
+	duration?: NumberPropValue;
+	delay?: NumberPropValue;
 	replay?: boolean;
 } = {} ): InteractionItemValue => ( {
 	interaction_id: createString( 'test-id' ),
@@ -120,8 +120,8 @@ describe( 'InteractionDetails', () => {
 				effect: 'slide',
 				type: 'out',
 				direction: 'top',
-				duration: 500,
-				delay: 200,
+				duration: createNumber( 500 ),
+				delay: createNumber( 200 ),
 				replay: true,
 			} );
 
@@ -192,8 +192,8 @@ describe( 'InteractionDetails', () => {
 				trigger: 'load',
 				effect: 'fade',
 				type: 'in',
-				duration: 300,
-				delay: 0,
+				duration: createNumber( 300 ),
+				delay: createNumber( 0 ),
 			} );
 
 			renderInteractionDetails( interaction );
@@ -216,8 +216,8 @@ describe( 'InteractionDetails', () => {
 				trigger: 'load',
 				effect: 'fade',
 				type: 'in',
-				duration: 300,
-				delay: 0,
+				duration: createNumber( 300 ),
+				delay: createNumber( 0 ),
 			} );
 
 			renderInteractionDetails( interaction );
@@ -238,8 +238,8 @@ describe( 'InteractionDetails', () => {
 				trigger: 'load',
 				effect: 'fade',
 				type: 'in',
-				duration: 300,
-				delay: 0,
+				duration: createNumber( 300 ),
+				delay: createNumber( 0 ),
 			} );
 
 			renderInteractionDetails( interaction );
@@ -261,8 +261,8 @@ describe( 'InteractionDetails', () => {
 				effect: 'slide',
 				type: 'in',
 				direction: 'top',
-				duration: 300,
-				delay: 0,
+				duration: createNumber( 300 ),
+				delay: createNumber( 0 ),
 			} );
 
 			renderInteractionDetails( interaction );
@@ -285,25 +285,22 @@ describe( 'InteractionDetails', () => {
 				trigger: 'load',
 				effect: 'fade',
 				type: 'in',
-				duration: 300,
-				delay: 0,
+				duration: createNumber( 300 ),
+				delay: createNumber( 0 ),
 			} );
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const durationSelect = comboboxes[ 2 ];
-			fireEvent.mouseDown( durationSelect );
-			const allOptions = screen.getAllByRole( 'option' );
-			const duration500Option = allOptions.find( ( opt ) => opt.textContent?.includes( '500 MS' ) );
-			expect( duration500Option ).toBeInTheDocument();
-			if ( duration500Option ) {
-				fireEvent.click( duration500Option );
-			}
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			const durationInput = sizeInputs[ 0 ];
+
+			expect( durationInput ).toHaveValue( 300 );
+
+			fireEvent.input( durationInput, { target: { value: 354 } } );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 500 );
+			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 354 );
 		} );
 
 		it( 'should call onChange when delay changes', () => {
@@ -311,17 +308,18 @@ describe( 'InteractionDetails', () => {
 				trigger: 'load',
 				effect: 'fade',
 				type: 'in',
-				duration: 300,
-				delay: 0,
+				duration: createNumber( 300 ),
+				delay: createNumber( 40 ),
 			} );
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const delaySelect = comboboxes[ 3 ];
-			fireEvent.mouseDown( delaySelect );
-			const delay200Option = screen.getByRole( 'option', { name: /200 MS/i } );
-			fireEvent.click( delay200Option );
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			const durationInput = sizeInputs[ 1 ];
+
+			expect( durationInput ).toHaveValue( 40 );
+
+			fireEvent.input( durationInput, { target: { value: 200 } } );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -521,19 +519,17 @@ describe( 'InteractionDetails', () => {
 				effect: 'slide',
 				type: 'in',
 				direction: 'right',
-				duration: 300,
+				duration: createNumber( 300 ),
 			} );
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const durationSelect = comboboxes[ 2 ];
-			fireEvent.mouseDown( durationSelect );
-			const allOptions = screen.getAllByRole( 'option' );
-			const duration500Option = allOptions.find( ( opt ) => opt.textContent?.includes( '500 MS' ) );
-			if ( duration500Option ) {
-				fireEvent.click( duration500Option );
-			}
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			const durationInput = sizeInputs[ 0 ];
+
+			expect( durationInput ).toHaveValue( 300 );
+
+			fireEvent.input( durationInput, { target: { value: 500 } } );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -547,16 +543,17 @@ describe( 'InteractionDetails', () => {
 				effect: 'fade',
 				type: 'in',
 				direction: 'left',
-				delay: 0,
+				delay: createNumber( 0 ),
 			} );
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const delaySelect = comboboxes[ 3 ];
-			fireEvent.mouseDown( delaySelect );
-			const delay200Option = screen.getByRole( 'option', { name: /200 MS/i } );
-			fireEvent.click( delay200Option );
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			const durationInput = sizeInputs[ 1 ];
+
+			expect( durationInput ).toHaveValue( 0 );
+
+			fireEvent.input( durationInput, { target: { value: 200 } } );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -572,8 +569,8 @@ describe( 'InteractionDetails', () => {
 				effect: 'fade',
 				type: 'in',
 				direction: 'left',
-				duration: 500,
-				delay: 200,
+				duration: createNumber( 500 ),
+				delay: createNumber( 200 ),
 			} );
 
 			renderInteractionDetails( interaction );
@@ -598,8 +595,8 @@ describe( 'InteractionDetails', () => {
 				effect: 'fade',
 				type: 'out',
 				direction: 'right',
-				duration: 750,
-				delay: 100,
+				duration: createNumber( 750 ),
+				delay: createNumber( 100 ),
 			} );
 
 			renderInteractionDetails( interaction );
@@ -622,8 +619,8 @@ describe( 'InteractionDetails', () => {
 				trigger: 'scrollIn',
 				effect: 'fade',
 				type: 'in',
-				duration: 300,
-				delay: 0,
+				duration: createNumber( 300 ),
+				delay: createNumber( 0 ),
 				replay: true,
 			} );
 
