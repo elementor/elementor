@@ -332,7 +332,6 @@ class Menu_Data_Provider {
 			'slug' => $item_slug,
 			'label' => $this->title_case( $item->get_label() ),
 			'url' => $url,
-			'icon' => method_exists( $item, 'get_icon' ) ? $item->get_icon() : 'extension',
 			'group_id' => '',
 			'priority' => $this->get_item_priority( $item ),
 			'has_divider_before' => $is_first,
