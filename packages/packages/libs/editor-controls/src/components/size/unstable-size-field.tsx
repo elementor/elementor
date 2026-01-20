@@ -1,10 +1,9 @@
 import * as React from 'react';
 import type { PropValue, SizePropValue } from '@elementor/editor-props';
-
-import { type Unit } from '../../utils/size-control';
 import { InputAdornment } from '@elementor/ui';
 
 import { useSizeValue } from '../../hooks/use-size-value';
+import { type Unit } from '../../utils/size-control';
 import { UnitSelect } from './unit-select';
 import { UnstableSizeInput } from './unstable-size-input';
 
