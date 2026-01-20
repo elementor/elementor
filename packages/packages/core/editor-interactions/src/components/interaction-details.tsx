@@ -7,7 +7,13 @@ import { __ } from '@wordpress/i18n';
 import { getInteractionsControl } from '../interactions-controls-registry';
 import type { InteractionItemValue, NumberPropValue } from '../types';
 import { INTERACTION_DEFAULT_CONFIG } from '../utils/interaction-default-config';
-import { createAnimationPreset, createString, extractBoolean, extractString } from '../utils/prop-value-utils';
+import {
+	createAnimationPreset,
+	createString,
+	extractBoolean,
+	extractNumber,
+	extractString,
+} from '../utils/prop-value-utils';
 import { Direction } from './controls/direction';
 import { Effect } from './controls/effect';
 import { EffectType } from './controls/effect-type';
@@ -19,6 +25,12 @@ type InteractionDetailsProps = {
 	onPlayInteraction: ( interactionId: string ) => void;
 };
 
+const DEFAULT_VALUES = {
+	relativeTo: 'viewport',
+	offsetTop: 15,
+	offsetBottom: 85,
+};
+
 const TRIGGERS_WITH_REPLAY = [ 'scrollIn', 'scrollOut' ];
 
 export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }: InteractionDetailsProps ) => {
@@ -26,6 +38,12 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const effect = extractString( interaction.animation.value.effect, INTERACTION_DEFAULT_CONFIG.effect );
 	const type = extractString( interaction.animation.value.type, INTERACTION_DEFAULT_CONFIG.type );
 	const direction = extractString( interaction.animation.value.direction, INTERACTION_DEFAULT_CONFIG.direction );
+	const relativeTo = extractString( interaction.animation.value.config?.value.relativeTo, DEFAULT_VALUES.relativeTo );
+	const offsetTop = extractNumber( interaction.animation.value.config?.value.offsetTop, DEFAULT_VALUES.offsetTop );
+	const offsetBottom = extractNumber(
+		interaction.animation.value.config?.value.offsetBottom,
+		DEFAULT_VALUES.offsetBottom
+	);
 	const replay = extractBoolean(
 		interaction.animation.value.config?.value.replay,
 		INTERACTION_DEFAULT_CONFIG.replay
@@ -35,6 +53,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const delay = interaction.animation.value.timing_config.value.delay;
 
 	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
+	const shouldShowRelativeTo = trigger === 'scrollOn';
 
 	const TriggerControl = useMemo( () => {
 		return getInteractionsControl( 'trigger' )?.component ?? null;
@@ -46,6 +65,27 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		}
 		return getInteractionsControl( 'replay' )?.component ?? null;
 	}, [ shouldShowReplay ] );
+
+	const RelativeToControl = useMemo( () => {
+		if ( ! shouldShowRelativeTo ) {
+			return null;
+		}
+		return getInteractionsControl( 'relativeTo' )?.component ?? null;
+	}, [ shouldShowRelativeTo ] );
+
+	const OffsetTopControl = useMemo( () => {
+		if ( ! shouldShowRelativeTo ) {
+			return null;
+		}
+		return getInteractionsControl( 'offsetTop' )?.component ?? null;
+	}, [ shouldShowRelativeTo ] );
+
+	const OffsetBottomControl = useMemo( () => {
+		if ( ! shouldShowRelativeTo ) {
+			return null;
+		}
+		return getInteractionsControl( 'offsetBottom' )?.component ?? null;
+	}, [ shouldShowRelativeTo ] );
 
 	const resolveDirection = ( hasDirection: boolean, newEffect?: string, newDirection?: string ) => {
 		if ( newEffect === 'slide' && ! newDirection ) {
@@ -67,6 +107,9 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			duration: NumberPropValue;
 			delay: NumberPropValue;
 			replay: boolean;
+			relativeTo: string;
+			offsetTop: number;
+			offsetBottom: number;
 		} >
 	): void => {
 		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction );
@@ -83,6 +126,9 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				duration: updates.duration ?? duration,
 				delay: updates.delay ?? delay,
 				replay: newReplay,
+				relativeTo: updates.relativeTo ?? relativeTo,
+				offsetTop: updates.offsetTop ?? offsetTop,
+				offsetBottom: updates.offsetBottom ?? offsetBottom,
 			} ),
 		};
 
@@ -150,6 +196,38 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					/>
 				</Field>
 			</Grid>
+			{ shouldShowRelativeTo && RelativeToControl && (
+				<>
+					<Divider />
+					<Grid container spacing={ 1.5 }>
+						<Field label={ __( 'Relative To', 'elementor' ) }>
+							<RelativeToControl
+								value={ relativeTo }
+								onChange={ ( v ) => updateInteraction( { relativeTo: v } ) }
+							/>
+						</Field>
+						{ OffsetTopControl && (
+							<Field label={ __( 'Offset Top', 'elementor' ) }>
+								<OffsetTopControl
+									value={ String( offsetTop ) }
+									onChange={ ( v: string ) => updateInteraction( { offsetTop: parseInt( v, 10 ) } ) }
+								/>
+							</Field>
+						) }
+						{ OffsetBottomControl && (
+							<Field label={ __( 'Offset Bottom', 'elementor' ) }>
+								<OffsetBottomControl
+									value={ String( offsetBottom ) }
+									onChange={ ( v: string ) =>
+										updateInteraction( { offsetBottom: parseInt( v, 10 ) } )
+									}
+								/>
+							</Field>
+						) }
+					</Grid>
+					<Divider />
+				</>
+			) }
 		</PopoverContent>
 	);
 };
