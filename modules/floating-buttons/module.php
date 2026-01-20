@@ -62,18 +62,6 @@ class Module extends BaseModule {
 		];
 	}
 
-	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
-		if ( ! $this->is_editor_one_active() ) {
-			$menu_args = $this->get_contact_menu_args();
-			$function = $menu_args['function'];
-			if ( is_callable( $function ) ) {
-				$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Empty_View_Menu_Item( $function ) );
-			} else {
-				$admin_menu->register( $menu_args['menu_slug'], new Floating_Buttons_Menu_Item() );
-			}
-		}
-	}
-
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Floating_Elements_Menu() );
 	}

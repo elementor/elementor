@@ -121,12 +121,6 @@ class Module extends BaseModule {
 	 * @access private
 	 */
 	private function add_actions() {
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu_manager ) {
-			if ( ! $this->is_editor_one_active() ) {
-				$this->register_menu( $admin_menu_manager );
-			}
-		}, Settings::ADMIN_MENU_PRIORITY + 30 );
-
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu( $menu_data_provider );
 		} );

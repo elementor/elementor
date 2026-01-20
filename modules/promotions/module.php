@@ -51,10 +51,6 @@ class Module extends Base_Module {
 			$this->handle_external_redirects();
 		} );
 
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-			$this->register_menu_items( $admin_menu );
-		}, static::ADMIN_MENU_PRIORITY );
-
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu_items( $menu_data_provider );
 		} );
@@ -105,16 +101,6 @@ class Module extends Base_Module {
 		}
 	}
 
-	private function register_menu_items( Admin_Menu_Manager $admin_menu ) {
-		if ( ! $this->is_editor_one_active() ) {
-			$admin_menu->register( 'e-form-submissions', new Form_Submissions_Promotion_Item() );
-			$admin_menu->register( 'elementor_custom_fonts', new Custom_Fonts_Promotion_Item() );
-			$admin_menu->register( 'elementor_custom_icons', new Custom_Icons_Promotion_Item() );
-			$admin_menu->register( 'elementor_custom_code', new Custom_Code_Promotion_Item() );
-			$admin_menu->register( 'popup_templates', new Popups_Promotion_Item() );
-		}
-	}
-
 	private function register_editor_one_menu_items( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Custom_Elements_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Submissions_Menu() );
@@ -122,12 +108,6 @@ class Module extends Base_Module {
 		$menu_data_provider->register_menu( new Editor_One_Icons_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Custom_Code_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Popups_Menu() );
-	}
-
-	private function register_promotion_menu_item( Admin_Menu_Manager $admin_menu ) {
-		if ( ! $this->is_editor_one_active() ) {
-			$admin_menu->register( 'go_elementor_pro', new Go_Pro_Promotion_Item() );
-		}
 	}
 
 	public function enqueue_react_data(): void {
