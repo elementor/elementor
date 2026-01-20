@@ -53,7 +53,7 @@ class Import extends Import_Runner_Base {
 
 		if ( $override_all ) {
 			$imported_collection = Variables_Collection::hydrate( $variables_data );
-			$repository->save( $imported_collection );
+			$this->save_collection( $repository, $imported_collection );
 
 			return $variables_data;
 		}
@@ -62,7 +62,7 @@ class Import extends Import_Runner_Base {
 		$imported_collection = Variables_Collection::hydrate( $variables_data );
 
 		$merged_collection = $this->merge_collections( $existing_collection, $imported_collection );
-		$repository->save( $merged_collection );
+		$this->save_collection( $repository, $merged_collection );
 
 		return $variables_data;
 	}
@@ -117,5 +117,13 @@ class Import extends Import_Runner_Base {
 
 	private function generate_unique_id( array $existing_ids ): string {
 		return Utils::generate_id( 'e-gv-', $existing_ids );
+	}
+
+	private function save_collection( Variables_Repository $repository, Variables_Collection $collection ): void {
+		$result = $repository->save( $collection );
+
+		if ( false === $result ) {
+			throw new \RuntimeException( 'Failed to save global variables during import.' );
+		}
 	}
 }
