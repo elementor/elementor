@@ -1418,25 +1418,8 @@ export default class EditorPage extends BasePage {
 			return;
 		}
 
-		const attemptCount = 5;
 		const button = this.page.locator( `[role="presentation"] button[value="${ attribute }"]` );
 
-		const doesHaveClass = async ( locator: Locator, className: string ) => {
-			return ( await locator.getAttribute( 'class' ) ).split( ' ' ).includes( className );
-		};
-
-		const isSelected = await doesHaveClass( button, 'Mui-selected' );
-
-		for ( let i = 0; i < attemptCount; i++ ) {
-			await button.click();
-
-			const currentIsSelected = await doesHaveClass( button, 'Mui-selected' );
-
-			if ( isSelected !== currentIsSelected ) {
-				return;
-			}
-
-			await this.page.waitForTimeout( timeouts.veryShort );
-		}
+		await button.click();
 	}
 }
