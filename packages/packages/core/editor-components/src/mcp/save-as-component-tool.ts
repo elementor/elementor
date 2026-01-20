@@ -394,19 +394,19 @@ Component with overridable properties:
         "elementId": "heading-123",
         "propKey": "text",
         "label": "Card Title",
-        "group": "Settings"
+        "group": "Content"
       },
       "button-text": {
         "elementId": "button-456",
         "propKey": "text",
         "label": "Button Text",
-        "group": "Settings"
+        "group": "Content"
       },
       "button-link": {
         "elementId": "button-456",
         "propKey": "url",
         "label": "Button Link",
-        "group": "Advanced"
+        "group": "Settings"
       }
     }
   }
