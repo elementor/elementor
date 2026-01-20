@@ -21,7 +21,7 @@ export function TimeFrameIndicator( { value, onChange, defaultValue }: Props ) {
 		( size: number ) => {
 			onChange( createNumber( size ) );
 		},
-		[ onChange, defaultValue ]
+		[ onChange ]
 	);
 
 	const handleChange = ( newValue: SizePropValue[ 'value' ] ) => {
