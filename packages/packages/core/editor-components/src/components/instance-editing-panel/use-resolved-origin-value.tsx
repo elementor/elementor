@@ -4,15 +4,17 @@ import { __useSelector as useSelector } from '@elementor/store';
 import { componentInstanceOverridePropTypeUtil } from '../../prop-types/component-instance-override-prop-type';
 import { type ComponentInstanceOverride } from '../../prop-types/component-instance-overrides-prop-type';
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
-import { type ComponentsSlice, selectOverridableProps, SLICE_NAME } from '../../store/store';
-import { type OverridableProp } from '../../types';
+import { selectData } from '../../store/store';
+import { type OverridableProp, type PublishedComponent } from '../../types';
 
 export function useResolvedOriginValue( override: ComponentInstanceOverride, overridableProp: OverridableProp ) {
-	return useSelector( ( state: ComponentsSlice ) => resolveOriginValueFromStore( state, override, overridableProp ) );
+	const components = useSelector( selectData );
+
+	return resolveOriginValueFromStore( components, override, overridableProp );
 }
 
 function resolveOriginValueFromStore(
-	state: ComponentsSlice,
+	components: PublishedComponent[],
 	matchingOverride: ComponentInstanceOverride | null,
 	overridableProp: OverridableProp
 ): PropValue | undefined {
@@ -23,20 +25,23 @@ function resolveOriginValueFromStore(
 	}
 
 	if ( matchingOverride ) {
-		const result = getOriginFromOverride( state, matchingOverride );
+		const result = getOriginFromOverride( components, matchingOverride );
 		if ( hasValue( result ) ) {
 			return result;
 		}
 	}
 
 	if ( originPropFields?.elementId ) {
-		return findOriginValueByElementId( state, originPropFields.elementId );
+		return findOriginValueByElementId( components, originPropFields.elementId );
 	}
 
 	return undefined;
 }
 
-function getOriginFromOverride( state: ComponentsSlice, override: ComponentInstanceOverride ): PropValue | undefined {
+function getOriginFromOverride(
+	components: PublishedComponent[],
+	override: ComponentInstanceOverride
+): PropValue | undefined {
 	const overridableValue = componentOverridablePropTypeUtil.extract( override );
 	const innerOverride = overridableValue
 		? componentInstanceOverridePropTypeUtil.extract( overridableValue.origin_value )
@@ -53,14 +58,14 @@ function getOriginFromOverride( state: ComponentsSlice, override: ComponentInsta
 		return undefined;
 	}
 
-	const prop = getOverridableProp( state, componentId, overrideKey );
+	const prop = getOverridableProp( components, componentId, overrideKey );
 
 	if ( hasValue( prop?.originValue ) ) {
 		return prop.originValue;
 	}
 
 	if ( prop?.originPropFields?.elementId ) {
-		const result = findOriginValueByElementId( state, prop.originPropFields.elementId );
+		const result = findOriginValueByElementId( components, prop.originPropFields.elementId );
 		if ( hasValue( result ) ) {
 			return result;
 		}
@@ -68,18 +73,18 @@ function getOriginFromOverride( state: ComponentsSlice, override: ComponentInsta
 
 	const nestedOverridable = componentOverridablePropTypeUtil.extract( overrideValue );
 	if ( nestedOverridable ) {
-		return getOriginFromOverride( state, componentOverridablePropTypeUtil.create( nestedOverridable ) );
+		return getOriginFromOverride( components, componentOverridablePropTypeUtil.create( nestedOverridable ) );
 	}
 
 	return undefined;
 }
 
 function findOriginValueByElementId(
-	state: ComponentsSlice,
+	components: PublishedComponent[],
 	targetElementId: string,
 	visited: Set< number > = new Set()
 ): PropValue | undefined {
-	for ( const component of state[ SLICE_NAME ].data ) {
+	for ( const component of components ) {
 		if ( visited.has( component.id ) ) {
 			continue;
 		}
@@ -98,7 +103,7 @@ function findOriginValueByElementId(
 		}
 
 		if ( matchingProp.originPropFields?.elementId ) {
-			return findOriginValueByElementId( state, matchingProp.originPropFields.elementId, visited );
+			return findOriginValueByElementId( components, matchingProp.originPropFields.elementId, visited );
 		}
 	}
 
@@ -109,6 +114,8 @@ function hasValue< T >( value: T | null | undefined ): value is T {
 	return value !== null && value !== undefined;
 }
 
-function getOverridableProp( state: ComponentsSlice, componentId: number, overrideKey: string ) {
-	return selectOverridableProps( state, componentId )?.props?.[ overrideKey ];
+function getOverridableProp( components: PublishedComponent[], componentId: number, overrideKey: string ) {
+	const component = components.find( ( { id } ) => id === componentId );
+
+	return component?.overridableProps?.props?.[ overrideKey ];
 }
