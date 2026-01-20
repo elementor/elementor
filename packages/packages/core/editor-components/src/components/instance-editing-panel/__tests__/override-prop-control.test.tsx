@@ -217,7 +217,181 @@ describe( '<OverridePropControl />', () => {
 			expect( getElementType ).toHaveBeenCalledWith( 'e-text' );
 		} );
 	} );
+
+	describe( 'recursive origin value resolution', () => {
+		const INNER_COMPONENT_ID = 1001;
+		const MIDDLE_COMPONENT_ID = 1002;
+
+		const INNER_ELEMENT_ID = 'inner-element-1';
+		const MIDDLE_ELEMENT_ID = 'middle-element-1';
+
+		const INNER_OVERRIDE_KEY = 'inner-prop-key';
+		const MIDDLE_OVERRIDE_KEY = 'middle-prop-key';
+		const OUTER_OVERRIDE_KEY = 'outer-prop-key';
+
+		const INNER_ORIGIN_VALUE = { $$type: 'string', value: 'Innermost Origin Value' };
+
+		it( 'should show originValue when override is cleared (single level)', () => {
+			// Arrange
+			const overridableProp: OverridableProp = {
+				overrideKey: INNER_OVERRIDE_KEY,
+				label: 'Title',
+				elementId: INNER_ELEMENT_ID,
+				propKey: 'title',
+				widgetType: 'e-heading',
+				elType: 'widget',
+				groupId: 'content',
+				originValue: INNER_ORIGIN_VALUE,
+			};
+
+			const overrideWithNullValue = componentInstanceOverridePropTypeUtil.create( {
+				override_key: INNER_OVERRIDE_KEY,
+				override_value: null,
+				schema_source: { type: 'component', id: INNER_COMPONENT_ID },
+			} );
+
+			setupNestedComponents( {
+				innerComponentId: INNER_COMPONENT_ID,
+				innerElementId: INNER_ELEMENT_ID,
+				innerOverrideKey: INNER_OVERRIDE_KEY,
+				innerOriginValue: INNER_ORIGIN_VALUE,
+			} );
+
+			// Act
+			renderOverridePropControl( store, overridableProp, [ overrideWithNullValue ] );
+
+			// Assert
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveValue( 'Innermost Origin Value' );
+		} );
+
+		it( 'should recursively find origin value through nested overridable structure', () => {
+			// Arrange
+			const overridablePropWithNullOrigin: OverridableProp = {
+				overrideKey: MIDDLE_OVERRIDE_KEY,
+				label: 'Nested Title',
+				elementId: MIDDLE_ELEMENT_ID,
+				propKey: 'title',
+				widgetType: 'e-heading',
+				elType: 'widget',
+				groupId: 'content',
+				originValue: null,
+				originPropFields: {
+					propKey: 'title',
+					widgetType: 'e-heading',
+					elType: 'widget',
+					elementId: INNER_ELEMENT_ID,
+				},
+			};
+
+			const nestedOverridableWithNullValue = componentOverridablePropTypeUtil.create( {
+				override_key: OUTER_OVERRIDE_KEY,
+				origin_value: componentInstanceOverridePropTypeUtil.create( {
+					override_key: MIDDLE_OVERRIDE_KEY,
+					override_value: null,
+					schema_source: { type: 'component', id: MIDDLE_COMPONENT_ID },
+				} ),
+			} );
+
+			setupNestedComponents( {
+				innerComponentId: INNER_COMPONENT_ID,
+				innerElementId: INNER_ELEMENT_ID,
+				innerOverrideKey: INNER_OVERRIDE_KEY,
+				innerOriginValue: INNER_ORIGIN_VALUE,
+				middleComponentId: MIDDLE_COMPONENT_ID,
+				middleElementId: MIDDLE_ELEMENT_ID,
+				middleOverrideKey: MIDDLE_OVERRIDE_KEY,
+				middleOriginPropFields: {
+					propKey: 'title',
+					widgetType: 'e-heading',
+					elType: 'widget',
+					elementId: INNER_ELEMENT_ID,
+				},
+			} );
+
+			// Act
+			renderOverridePropControl( store, overridablePropWithNullOrigin, [ nestedOverridableWithNullValue ] );
+
+			// Assert
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveValue( 'Innermost Origin Value' );
+		} );
+	} );
 } );
+
+function setupNestedComponents( config: {
+	innerComponentId: number;
+	innerElementId: string;
+	innerOverrideKey: string;
+	innerOriginValue: { $$type: string; value: string };
+	middleComponentId?: number;
+	middleElementId?: string;
+	middleOverrideKey?: string;
+	middleOriginPropFields?: {
+		propKey: string;
+		widgetType: string;
+		elType: string;
+		elementId: string;
+	};
+} ) {
+	type ComponentData = Parameters< typeof slice.actions.load >[ 0 ][ number ];
+
+	const innerComponent: ComponentData = {
+		id: config.innerComponentId,
+		uid: `component-${ config.innerComponentId }`,
+		name: 'Inner Component',
+		overridableProps: {
+			props: {
+				[ config.innerOverrideKey ]: {
+					overrideKey: config.innerOverrideKey,
+					label: 'Title',
+					elementId: config.innerElementId,
+					propKey: 'title',
+					widgetType: 'e-heading',
+					elType: 'widget',
+					groupId: 'content',
+					originValue: config.innerOriginValue,
+				},
+			},
+			groups: {
+				items: { content: { id: 'content', label: 'Content', props: [ config.innerOverrideKey ] } },
+				order: [ 'content' ],
+			},
+		},
+	};
+
+	const components: ComponentData[] = [ innerComponent ];
+
+	if ( config.middleComponentId && config.middleOverrideKey && config.middleElementId ) {
+		const middleComponent: ComponentData = {
+			id: config.middleComponentId,
+			uid: `component-${ config.middleComponentId }`,
+			name: 'Middle Component',
+			overridableProps: {
+				props: {
+					[ config.middleOverrideKey ]: {
+						overrideKey: config.middleOverrideKey,
+						label: 'Title',
+						elementId: config.middleElementId,
+						propKey: 'title',
+						widgetType: 'e-heading',
+						elType: 'widget',
+						groupId: 'content',
+						originValue: null,
+						originPropFields: config.middleOriginPropFields,
+					},
+				},
+				groups: {
+					items: { content: { id: 'content', label: 'Content', props: [ config.middleOverrideKey ] } },
+					order: [ 'content' ],
+				},
+			},
+		};
+		components.push( middleComponent );
+	}
+
+	dispatch( slice.actions.load( components ) );
+}
 
 function setupElementsMocks() {
 	const widgetDefinitions: Record< string, { propKey: string; label: string; title: string } > = {
