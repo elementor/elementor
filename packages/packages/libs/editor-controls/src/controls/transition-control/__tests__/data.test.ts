@@ -4,15 +4,25 @@ jest.mock( '@wordpress/i18n', () => ( {
 	__: ( label: string ) => label,
 } ) );
 
-declare global {
-	interface Window {
-		elementorFrontend?: {
-			config?: {
-				is_rtl?: boolean;
-			};
-		};
-	}
-}
+const setSiteDirection = ( isRtl: boolean ) => {
+	window.elementorFrontend = {
+		config: {
+			is_rtl: isRtl,
+		},
+	};
+};
+
+const getPropertyLabel = ( categoryLabel: string, propertyValue: string ) => {
+	const { transitionProperties: props } = require( '../data' );
+	return props
+		.find( ( cat: TransitionCategory ) => cat.label === categoryLabel )
+		?.properties.find( ( prop: TransitionProperty ) => prop.value === propertyValue )?.label;
+};
+
+const getCategory = ( categoryLabel: string ) => {
+	const { transitionProperties: props } = require( '../data' );
+	return props.find( ( cat: TransitionCategory ) => cat.label === categoryLabel );
+};
 
 describe( 'transitionProperties RTL support', () => {
 	beforeEach( () => {
@@ -21,50 +31,41 @@ describe( 'transitionProperties RTL support', () => {
 	} );
 
 	it( 'should use logical inline labels for LTR websites', () => {
-		window.elementorFrontend = {
-			config: {
-				is_rtl: false,
-			},
-		};
+		setSiteDirection( false );
 
-		const { transitionProperties: props } = require( '../data' );
+		expect( getPropertyLabel( 'Margin', 'margin-inline-start' ) ).toBe( 'Margin left' );
+		expect( getPropertyLabel( 'Margin', 'margin-inline-end' ) ).toBe( 'Margin right' );
 
-		const getLabel = ( categoryLabel: string, propertyValue: string ) =>
-			props
-				.find( ( cat: TransitionCategory ) => cat.label === categoryLabel )
-				?.properties.find( ( prop: TransitionProperty ) => prop.value === propertyValue )?.label;
+		expect( getPropertyLabel( 'Padding', 'padding-inline-start' ) ).toBe( 'Padding left' );
+		expect( getPropertyLabel( 'Padding', 'padding-inline-end' ) ).toBe( 'Padding right' );
 
-		expect( getLabel( 'Margin', 'margin-inline-start' ) ).toBe( 'Margin left' );
-		expect( getLabel( 'Margin', 'margin-inline-end' ) ).toBe( 'Margin right' );
+		expect( getPropertyLabel( 'Position', 'inset-inline-start' ) ).toBe( 'Left' );
+		expect( getPropertyLabel( 'Position', 'inset-inline-end' ) ).toBe( 'Right' );
 
-		expect( getLabel( 'Padding', 'padding-inline-start' ) ).toBe( 'Padding left' );
-		expect( getLabel( 'Padding', 'padding-inline-end' ) ).toBe( 'Padding right' );
-
-		expect( getLabel( 'Position', 'inset-inline-start' ) ).toBe( 'Left' );
-		expect( getLabel( 'Position', 'inset-inline-end' ) ).toBe( 'Right' );
+		const positionValues = getCategory( 'Position' )?.properties.map(
+			( property: TransitionProperty ) => property.value
+		);
+		expect( positionValues ).toEqual(
+			expect.arrayContaining( [
+				'inset-block-start',
+				'inset-inline-start',
+				'inset-inline-end',
+				'inset-block-end',
+				'z-index',
+			] )
+		);
 	} );
 
 	it( 'should flip inline labels according to RTL websites', () => {
-		window.elementorFrontend = {
-			config: {
-				is_rtl: true,
-			},
-		};
+		setSiteDirection( true );
 
-		const { transitionProperties: props } = require( '../data' );
+		expect( getPropertyLabel( 'Margin', 'margin-inline-start' ) ).toBe( 'Margin right' );
+		expect( getPropertyLabel( 'Margin', 'margin-inline-end' ) ).toBe( 'Margin left' );
 
-		const getLabel = ( categoryLabel: string, propertyValue: string ) =>
-			props
-				.find( ( cat: TransitionCategory ) => cat.label === categoryLabel )
-				?.properties.find( ( prop: TransitionProperty ) => prop.value === propertyValue )?.label;
+		expect( getPropertyLabel( 'Padding', 'padding-inline-start' ) ).toBe( 'Padding right' );
+		expect( getPropertyLabel( 'Padding', 'padding-inline-end' ) ).toBe( 'Padding left' );
 
-		expect( getLabel( 'Margin', 'margin-inline-start' ) ).toBe( 'Margin right' );
-		expect( getLabel( 'Margin', 'margin-inline-end' ) ).toBe( 'Margin left' );
-
-		expect( getLabel( 'Padding', 'padding-inline-start' ) ).toBe( 'Padding right' );
-		expect( getLabel( 'Padding', 'padding-inline-end' ) ).toBe( 'Padding left' );
-
-		expect( getLabel( 'Position', 'inset-inline-start' ) ).toBe( 'Right' );
-		expect( getLabel( 'Position', 'inset-inline-end' ) ).toBe( 'Left' );
+		expect( getPropertyLabel( 'Position', 'inset-inline-start' ) ).toBe( 'Right' );
+		expect( getPropertyLabel( 'Position', 'inset-inline-end' ) ).toBe( 'Left' );
 	} );
 } );

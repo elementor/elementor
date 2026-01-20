@@ -2,14 +2,6 @@ import { type KeyValuePropValue, type SizePropValue } from '@elementor/editor-pr
 import { isVersionGreaterOrEqual } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
-type ElementorWindow = Window & {
-	elementorFrontend?: {
-		config?: {
-			is_rtl?: boolean;
-		};
-	};
-};
-
 export type TransitionProperty = {
 	label: string;
 	value: string;
@@ -50,7 +42,7 @@ export const initialTransitionValue: TransitionValue = {
 const MIN_PRO_VERSION = '3.35';
 
 const getIsSiteRtl = () => {
-	return !! ( window as unknown as ElementorWindow )?.elementorFrontend?.config?.is_rtl;
+	return !! window.elementorFrontend?.config?.is_rtl;
 };
 
 // TODO: Remove this after version 4.01 is released
