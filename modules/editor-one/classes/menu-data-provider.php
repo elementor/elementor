@@ -19,8 +19,8 @@ class Menu_Data_Provider {
 	private array $level3_items = [];
 	private array $level4_items = [];
 	private ?string $theme_builder_url = null;
-	private ?array $cached_editor_flyout_data = null;
-	private ?array $cached_level4_flyout_data = null;
+	private ?array $cached_level3_sidebar_data = null;
+	private ?array $cached_level4_sidebar_data = null;
 	private ?array $cached_flyout_menu_data = null;
 	private Slug_Normalizer $slug_normalizer;
 
@@ -108,7 +108,7 @@ class Menu_Data_Provider {
 	public function get_third_level_data( string $variant ): array {
 		if ( self::THIRD_LEVEL_EDITOR_FLYOUT === $variant ) {
 			return $this->get_third_level_data_from_cache(
-				$this->cached_editor_flyout_data,
+				$this->cached_level3_sidebar_data,
 				[ $this, 'build_level3_flyout_items' ]
 			);
 		}
@@ -124,8 +124,8 @@ class Menu_Data_Provider {
 	}
 
 	public function get_level4_flyout_data(): array {
-		if ( null !== $this->cached_level4_flyout_data ) {
-			return $this->cached_level4_flyout_data;
+		if ( null !== $this->cached_level4_sidebar_data ) {
+			return $this->cached_level4_sidebar_data;
 		}
 
 		$groups = $this->build_level4_flyout_groups();
@@ -136,9 +136,9 @@ class Menu_Data_Provider {
 			}
 		}
 
-		$this->cached_level4_flyout_data = $groups;
+		$this->cached_level4_sidebar_data = $groups;
 
-		return $this->cached_level4_flyout_data;
+		return $this->cached_level4_sidebar_data;
 	}
 
 	private function get_third_level_data_from_cache( ?array &$cache, callable $items_builder ): array {
@@ -511,8 +511,8 @@ class Menu_Data_Provider {
 	}
 
 	private function invalidate_cache(): void {
-		$this->cached_editor_flyout_data = null;
-		$this->cached_level4_flyout_data = null;
+		$this->cached_level3_sidebar_data = null;
+		$this->cached_level4_sidebar_data = null;
 		$this->cached_flyout_menu_data = null;
 	}
 
