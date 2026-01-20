@@ -172,8 +172,8 @@ export function ClassesVariablesSection( {
 	disabled = false,
 	notExported = false,
 } ) {
-	const [ classesOverrideAll, setClassesOverrideAll ] = useState( false );
-	const [ variablesOverrideAll, setVariablesOverrideAll ] = useState( false );
+	const [ classesOverrideAll, setClassesOverrideAll ] = useState( settings.classesOverrideAll ?? false );
+	const [ variablesOverrideAll, setVariablesOverrideAll ] = useState( settings.variablesOverrideAll ?? false );
 
 	const hasLimitWarning = isImport && ( classesLimitExceeded || variablesLimitExceeded );
 	const classesNotExported = isImport && ! classesExported;
