@@ -16,8 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Import extends Import_Runner_Base {
-	private const MAX_LABEL_LENGTH = 50;
-
 	public static function get_name(): string {
 		return 'global-variables';
 	}
@@ -88,7 +86,7 @@ class Import extends Import_Runner_Base {
 				: $original_id;
 			$existing_ids[] = $new_id;
 
-			$new_label = $this->resolve_label_conflict( $variable->label(), $existing_labels );
+			$new_label = ImportExportUtils::resolve_label_conflict( $variable->label(), $existing_labels );
 			$existing_labels[] = strtolower( $new_label );
 
 			$new_variable = Variable::create_new( [
@@ -115,26 +113,6 @@ class Import extends Import_Runner_Base {
 		}
 
 		return $labels;
-	}
-
-	private function resolve_label_conflict( string $label, array $existing_labels ): string {
-		$lower_label = strtolower( $label );
-
-		if ( ! in_array( $lower_label, $existing_labels, true ) ) {
-			return $label;
-		}
-
-		$suffix = 1;
-
-		do {
-			$suffix_str = '_' . $suffix;
-			$max_base_length = self::MAX_LABEL_LENGTH - strlen( $suffix_str );
-			$base_label = mb_substr( $label, 0, $max_base_length );
-			$new_label = $base_label . $suffix_str;
-			$suffix++;
-		} while ( in_array( strtolower( $new_label ), $existing_labels, true ) && $suffix < 1000 );
-
-		return $new_label;
 	}
 
 	private function generate_unique_id( array $existing_ids ): string {
