@@ -4,6 +4,7 @@ namespace Elementor\Modules\GlobalClasses\ImportExportCustomization\Runners;
 
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Import_Runner_Base;
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\GlobalClasses\Global_Classes_Parser;
 use Elementor\Modules\GlobalClasses\Global_Classes_Repository;
 use Elementor\Modules\GlobalClasses\ImportExportCustomization\Import_Export_Customization;
@@ -92,7 +93,11 @@ class Import extends Import_Runner_Base {
 			}
 
 			$imported_class = $imported_items[ $imported_id ];
-			$new_id = $this->generate_unique_id( array_keys( $existing_items ) );
+
+			$id_exists = array_key_exists( $imported_id, $existing_items );
+			$new_id = $id_exists
+				? $this->generate_unique_id( array_keys( $existing_items ) )
+				: $imported_id;
 
 			$original_label = $imported_class['label'] ?? $imported_id;
 			$new_label = $this->resolve_label_conflict( $original_label, $existing_labels );
@@ -144,10 +149,6 @@ class Import extends Import_Runner_Base {
 	}
 
 	private function generate_unique_id( array $existing_ids ): string {
-		do {
-			$new_id = 'e-gc-' . wp_generate_uuid4();
-		} while ( in_array( $new_id, $existing_ids, true ) );
-
-		return $new_id;
+		return Utils::generate_id( 'g-', $existing_ids );
 	}
 }

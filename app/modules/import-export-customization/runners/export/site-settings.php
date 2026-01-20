@@ -96,8 +96,12 @@ class Site_Settings extends Export_Runner_Base {
 		$classes_count = 0;
 		$variables_count = 0;
 
-		$include_classes = $customization['classes'] ?? true;
-		$include_variables = $customization['variables'] ?? true;
+		$include_classes = is_array( $customization ) && array_key_exists( 'classes', $customization )
+			? (bool) $customization['classes']
+			: true;
+		$include_variables = is_array( $customization ) && array_key_exists( 'variables', $customization )
+			? (bool) $customization['variables']
+			: true;
 
 		if ( class_exists( '\Elementor\Modules\GlobalClasses\Global_Classes_Repository' ) ) {
 			$classes_repository = \Elementor\Modules\GlobalClasses\Global_Classes_Repository::make();

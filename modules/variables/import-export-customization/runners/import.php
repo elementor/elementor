@@ -4,6 +4,7 @@ namespace Elementor\Modules\Variables\ImportExportCustomization\Runners;
 
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Import_Runner_Base;
 use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\Variables\ImportExportCustomization\Import_Export_Customization;
 use Elementor\Modules\Variables\Storage\Entities\Variable;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
@@ -80,7 +81,11 @@ class Import extends Import_Runner_Base {
 				continue;
 			}
 
-			$new_id = $this->generate_unique_id( $existing_ids );
+			$original_id = $variable->id();
+			$id_exists = in_array( $original_id, $existing_ids, true );
+			$new_id = $id_exists
+				? $this->generate_unique_id( $existing_ids )
+				: $original_id;
 			$existing_ids[] = $new_id;
 
 			$new_label = $this->resolve_label_conflict( $variable->label(), $existing_labels );
@@ -133,10 +138,6 @@ class Import extends Import_Runner_Base {
 	}
 
 	private function generate_unique_id( array $existing_ids ): string {
-		do {
-			$new_id = 'e-gv-' . wp_generate_uuid4();
-		} while ( in_array( $new_id, $existing_ids, true ) );
-
-		return $new_id;
+		return Utils::generate_id( 'e-gv-', $existing_ids );
 	}
 }
