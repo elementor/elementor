@@ -37,11 +37,7 @@ const InputSchema = {
 						.describe(
 							'A unique, user-friendly display name for this property (e.g., "Hero Headline", "CTA Button Text"). Must be unique within the same component.'
 						),
-					group: z
-						.string()
-						.optional()
-						.describe( 'Non unique, optional property grouping' )
-						.default( 'Default' ),
+					group: z.string().optional().describe( 'Non unique, optional property grouping' ),
 				} )
 			),
 		} )
@@ -50,11 +46,7 @@ const InputSchema = {
 			'Overridable properties configuration. Specify which CHILD element properties can be customized. ' +
 				'Only elementId and propKey are required; To get the available propKeys for a child element you must use the "get-element-type-config" tool.'
 		),
-	groups: z
-		.array( z.string() )
-		.describe( 'Property Groups, by order, unique values' )
-		.optional()
-		.default( [ 'Default' ] ),
+	groups: z.array( z.string() ).describe( 'Property Groups, by order, unique values' ).optional(),
 };
 
 const OutputSchema = {
@@ -147,7 +139,7 @@ export const handleSaveAsComponent = async ( params: z.infer< z.ZodObject< typeo
 type PropertyGroup = OverridableProps[ 'groups' ][ 'items' ][ string ];
 
 function enrichOverridableProps(
-	input: { props: Record< string, { elementId: string; propKey: string; label: string; group: string } > },
+	input: { props: Record< string, { elementId: string; propKey: string; label: string; group?: string } > },
 	rootElement: V1ElementData,
 	propertGroups: PropertyGroup[]
 ): OverridableProps {
@@ -160,7 +152,7 @@ function enrichOverridableProps(
 	}
 
 	Object.entries( input.props ).forEach( ( [ , prop ] ) => {
-		const { elementId, propKey, label, group } = prop;
+		const { elementId, propKey, label, group = 'Default' } = prop;
 		const targetGroup = propertGroups.find( ( g ) => g.label === group ) || defaultGroup;
 		const targetGroupId = targetGroup.id;
 		const element = findElementById( rootElement, elementId );
