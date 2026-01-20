@@ -74,7 +74,7 @@ export function extractAnimationId( interaction ) {
 				duration,
 				delay,
 				easing,
-			].join('-');
+			].join( '-' );
 		}
 	}
 
