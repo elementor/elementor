@@ -15,22 +15,28 @@ const EASING_OPTIONS = {
 	linear: __( 'Linear', 'elementor' ),
 };
 
+const SUPPORTED_EASING_OPTIONS = [ 'easeIn' ];
+
+function isSupportedEasing( easing: string ) {
+	return -1 < SUPPORTED_EASING_OPTIONS.indexOf( easing );
+}
+
 export function Easing( { value, onChange }: FieldProps ) {
 	const availableOptions = Object.entries( EASING_OPTIONS ).map( ( [ key, label ] ) => ( {
 		key,
 		label,
 	} ) );
 
+	const handleChange = ( event: SelectChangeEvent< string > ) => {
+		if ( isSupportedEasing( event.target.value ) ) {
+			onChange( event.target.value );
+		}
+	};
+
 	return (
-		<Select
-			fullWidth
-			displayEmpty
-			size="tiny"
-			onChange={ ( event: SelectChangeEvent< string > ) => onChange( event.target.value ) }
-			value={ value }
-		>
+		<Select onChange={ handleChange } value={ value } fullWidth displayEmpty size="tiny">
 			{ availableOptions.map( ( option ) => {
-				const isDisabled = 'easeIn' !== option.key;
+				const isDisabled = ! isSupportedEasing( option.key );
 				return (
 					<MenuListItem key={ option.key } value={ option.key } disabled={ isDisabled }>
 						{ option.label }
