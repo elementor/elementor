@@ -153,10 +153,10 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		await editor.addElement( { elType: EditorSelectors.v4.atoms.divBlock }, 'document' );
 		const divBlocElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.divBlock );
 
+		await editor.closeNavigatorIfOpen();
+
 		const flexboxElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.flexbox );
 		const headingElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.heading );
-
-		await editor.closeNavigatorIfOpen();
 
 		await test.step( 'Heading in editor is styled like in frontend', async () => {
 			// Arrange.

@@ -60,7 +60,7 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		await inlineEditor.clear();
 		await page.keyboard.type( 'this is the first test' );
 		await editor.selectInlineEditedText( headingId, 'this' );
-		await editor.toggleInlineEditingAttribute( 'underline' );
+		await editor.toggleInlineEditingAttribute( INLINE_EDITING_SELECTORS.attributes.underline );
 		await page.keyboard.press( 'Escape', { delay: 100 } );
 		await editor.selectElement( headingId );
 

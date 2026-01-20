@@ -1377,7 +1377,7 @@ export default class EditorPage extends BasePage {
 		const element = this.previewFrame.locator( `.elementor-element-${ elementId }` );
 
 		await this.page.keyboard.press( 'Escape' );
-		await this.page.waitForTimeout( timeouts.short );
+		await this.page.waitForTimeout( timeouts.veryShort );
 		await element.waitFor();
 		await element[ INLINE_EDITING_SELECTORS.triggerEvent ]();
 
@@ -1405,21 +1405,38 @@ export default class EditorPage extends BasePage {
 		const startIndex = entireText.indexOf( substring );
 
 		for ( let i = 0; i < startIndex; i++ ) {
-			await this.page.keyboard.press( 'ArrowRight', { delay: 100 } );
+			await this.page.keyboard.press( 'ArrowRight', { delay: timeouts.veryShort } );
 		}
 
 		for ( let i = 0; i < substring.length; i++ ) {
-			await this.page.keyboard.press( 'Shift+ArrowRight', { delay: 100 } );
+			await this.page.keyboard.press( 'Shift+ArrowRight', { delay: timeouts.veryShort } );
 		}
 	}
 
 	async toggleInlineEditingAttribute( attribute: string ): Promise<void> {
-		if ( ! Object.keys( INLINE_EDITING_SELECTORS.attributes ).includes( attribute ) ) {
+		if ( ! Object.values( INLINE_EDITING_SELECTORS.attributes ).includes( attribute ) ) {
 			return;
 		}
 
-		const button = this.page.locator( `[role="presentation"] button[value="${ INLINE_EDITING_SELECTORS.attributes[ attribute ] }"]` );
+		const attemptCount = 5;
+		const button = this.page.locator( `[role="presentation"] button[value="${ attribute }"]` );
 
-		await button.click();
+		const doesHaveClass = async ( locator: Locator, className: string ) => {
+			return ( await locator.getAttribute( 'class' ) ).split( ' ' ).includes( className );
+		};
+
+		const isSelected = await doesHaveClass( button, 'Mui-selected' );
+
+		for ( let i = 0; i < attemptCount; i++ ) {
+			await button.click();
+
+			const currentIsSelected = await doesHaveClass( button, 'Mui-selected' );
+
+			if ( isSelected !== currentIsSelected ) {
+				return;
+			}
+
+			await this.page.waitForTimeout( timeouts.veryShort );
+		}
 	}
 }
