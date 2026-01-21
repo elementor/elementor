@@ -45,7 +45,7 @@ define( 'ELEMENTOR_ASSETS_PATH', ELEMENTOR_PATH . 'assets/' );
 define( 'ELEMENTOR_ASSETS_URL', ELEMENTOR_URL . 'assets/' );
 
 if ( ! defined( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN' ) ) {
-	define( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN', '' );
+	define( 'ELEMENTOR_EDITOR_EVENTS_MIXPANEL_TOKEN', '150605b3b9f979922f2ac5a52e2dcfe9' );
 }
 
 if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
