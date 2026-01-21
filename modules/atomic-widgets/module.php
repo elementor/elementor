@@ -25,8 +25,11 @@ use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Combine_Array_Tra
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Image_Src_Export_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Src_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Image_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import\Dynamic_Import_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import\Image_Src_Import_Transformer;
+use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export\Dynamic_Export_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Import_Export_Plain_Transformer;
+use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Classes_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Date_Time_Transformer;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Settings\Link_Transformer;
@@ -343,12 +346,14 @@ class Module extends BaseModule {
 		$transformers->register_fallback( new Import_Export_Plain_Transformer() );
 
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Import_Transformer() );
+		$transformers->register( Dynamic_Prop_Type::get_key(), new Dynamic_Import_Transformer() );
 	}
 
 	public function register_export_transformers( Transformers_Registry $transformers ) {
 		$transformers->register_fallback( new Import_Export_Plain_Transformer() );
 
 		$transformers->register( Image_Src_Prop_Type::get_key(), new Image_Src_Export_Transformer() );
+		$transformers->register( Dynamic_Prop_Type::get_key(), new Dynamic_Export_Transformer() );
 	}
 
 	public static function is_active(): bool {
