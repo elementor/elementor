@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 
+import { Easing } from '../components/controls/easing';
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
 import { createAnimationPreset, createString } from '../utils/prop-value-utils';
+
 jest.mock( '../interactions-controls-registry', () => ( {
 	getInteractionsControl: jest.fn(),
 } ) );
@@ -17,6 +19,7 @@ const createInteractionItemValue = ( {
 	duration = 300,
 	delay = 0,
 	replay = false,
+	easing = 'easeIn',
 }: {
 	trigger?: string;
 	effect?: string;
@@ -25,6 +28,7 @@ const createInteractionItemValue = ( {
 	duration?: number;
 	delay?: number;
 	replay?: boolean;
+	easing?: string;
 } = {} ): InteractionItemValue => ( {
 	interaction_id: createString( 'test-id' ),
 	trigger: createString( trigger ),
@@ -35,6 +39,7 @@ const createInteractionItemValue = ( {
 		duration,
 		delay,
 		replay,
+		easing,
 	} ),
 } );
 
@@ -63,6 +68,7 @@ const getEffectCombobox = (): HTMLElement => {
 
 describe( 'InteractionDetails', () => {
 	const mockOnChange = jest.fn();
+
 	const mockReplayControl = jest.fn( ( { value, onChange, disabled } ) => (
 		<div>
 			<span>Replay: { String( value ) }</span>
@@ -70,6 +76,7 @@ describe( 'InteractionDetails', () => {
 			<button onClick={ () => onChange( ! value ) }>Toggle Replay</button>
 		</div>
 	) );
+
 	const mockOnPlayInteraction = jest.fn();
 
 	const renderInteractionDetails = ( interaction: InteractionItemValue ) => {
@@ -85,17 +92,26 @@ describe( 'InteractionDetails', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		const { getInteractionsControl } = require( '../interactions-controls-registry' );
+
 		getInteractionsControl.mockImplementation( ( type: string ) => {
 			if ( type === 'trigger' ) {
 				return {
 					component: Trigger,
 				};
 			}
+
 			if ( type === 'replay' ) {
 				return {
 					component: mockReplayControl,
 				};
 			}
+
+			if ( type === 'easing' ) {
+				return {
+					component: Easing,
+				};
+			}
+
 			return null;
 		} );
 	} );
@@ -112,6 +128,7 @@ describe( 'InteractionDetails', () => {
 			expect( screen.getByText( 'Direction' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Duration' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Delay' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Easing' ) ).toBeInTheDocument();
 		} );
 
 		it( 'should render with custom values', () => {
@@ -123,6 +140,7 @@ describe( 'InteractionDetails', () => {
 				duration: 500,
 				delay: 200,
 				replay: true,
+				easing: 'easeIn',
 			} );
 
 			renderInteractionDetails( interaction );

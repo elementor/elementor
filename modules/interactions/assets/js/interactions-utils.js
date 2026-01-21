@@ -5,7 +5,7 @@ export const config = window.ElementorInteractionsConfig?.constants || {
 	defaultDelay: 0,
 	slideDistance: 100,
 	scaleStart: 0,
-	ease: 'easeIn',
+	defaultEasing: 'easeIn',
 };
 
 export function getKeyframes( effect, type, direction ) {
@@ -36,7 +36,16 @@ export function getKeyframes( effect, type, direction ) {
 }
 
 export function parseAnimationName( name ) {
-	const [ trigger, effect, type, direction, duration, delay ] = name.split( '-' );
+	const [
+		trigger,
+		effect,
+		type,
+		direction,
+		duration,
+		delay,
+		,
+		easing,
+	] = name.split( '-' );
 
 	return {
 		trigger,
@@ -45,6 +54,7 @@ export function parseAnimationName( name ) {
 		direction: direction || null,
 		duration: duration ? parseInt( duration, 10 ) : config.defaultDuration,
 		delay: delay ? parseInt( delay, 10 ) : config.defaultDelay,
+		easing: easing || config.defaultEasing,
 	};
 }
 
@@ -55,15 +65,30 @@ export function extractAnimationId( interaction ) {
 
 	if ( 'interaction-item' === interaction?.$$type && interaction?.value ) {
 		const { trigger, animation } = interaction.value;
+
 		if ( 'animation-preset-props' === animation?.$$type && animation?.value ) {
-			const { effect, type, direction, timing_config: timingConfig } = animation.value;
+			const { effect, type, direction, timing_config: timingConfig, config: animationConfig } = animation.value;
+
 			const triggerVal = trigger?.value || 'load';
 			const effectVal = effect?.value || 'fade';
 			const typeVal = type?.value || 'in';
 			const directionVal = direction?.value || '';
+
 			const duration = timingConfig?.value?.duration?.value ?? 300;
 			const delay = timingConfig?.value?.delay?.value ?? 0;
-			return `${ triggerVal }-${ effectVal }-${ typeVal }-${ directionVal }-${ duration }-${ delay }`;
+
+			const easing = animationConfig?.value?.easing?.value || config.defaultEasing;
+
+			return [
+				triggerVal,
+				effectVal,
+				typeVal,
+				directionVal,
+				duration,
+				delay,
+				'',
+				easing,
+			].join( '-' );
 		}
 	}
 
