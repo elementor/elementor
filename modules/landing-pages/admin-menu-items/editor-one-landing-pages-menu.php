@@ -14,22 +14,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Editor_One_Landing_Pages_Menu implements Menu_Item_Interface, Admin_Menu_Item_With_Page {
 
 	private $module;
-	private $legacy_menu_item;
+	private $menu_item;
 
 	public function __construct( Module $module ) {
 		$this->module = $module;
-		$this->initialize_legacy_menu_item();
+		$this->initialize_menu_item();
 	}
 
-	private function initialize_legacy_menu_item() {
+	private function initialize_menu_item() {
 		$menu_args = $this->module->get_menu_args();
 		$slug = $menu_args['menu_slug'];
 		$function = $menu_args['function'];
 
 		if ( is_callable( $function ) ) {
-			$this->legacy_menu_item = new Landing_Pages_Empty_View_Menu_Item( $function );
+			$this->menu_item = new Landing_Pages_Empty_View_Menu_Item( $function );
 		} else {
-			$this->legacy_menu_item = new Landing_Pages_Menu_Item();
+			$this->menu_item = new Landing_Pages_Menu_Item();
 		}
 	}
 
@@ -67,8 +67,8 @@ class Editor_One_Landing_Pages_Menu implements Menu_Item_Interface, Admin_Menu_I
 	}
 
 	public function render() {
-		if ( $this->legacy_menu_item instanceof Admin_Menu_Item_With_Page ) {
-			$this->legacy_menu_item->render();
+		if ( $this->menu_item instanceof Admin_Menu_Item_With_Page ) {
+			$this->menu_item->render();
 		} else {
 			wp_safe_redirect( admin_url( Module::ADMIN_PAGE_SLUG ) );
 			exit;
