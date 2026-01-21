@@ -7,7 +7,7 @@ import { componentOverridablePropTypeUtil } from '../../prop-types/component-ove
 import { selectData } from '../../store/store';
 import { type OverridableProp, type PublishedComponent } from '../../types';
 
-export function useResolvedOriginValue( override: ComponentInstanceOverride, overridableProp: OverridableProp ) {
+export function useResolvedOriginValue( override: ComponentInstanceOverride | null, overridableProp: OverridableProp ) {
 	const components = useSelector( selectData );
 
 	return resolveOriginValue( components, override, overridableProp );

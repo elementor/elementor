@@ -64,10 +64,7 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 
 	const matchingOverride = getMatchingOverride( overrides, overridableProp.overrideKey );
 
-	const recursiveOriginValue = useResolvedOriginValue(
-		matchingOverride as ComponentInstanceOverride,
-		overridableProp
-	);
+	const recursiveOriginValue = useResolvedOriginValue( matchingOverride, overridableProp );
 
 	const propType = getPropTypeForComponentOverride( overridableProp );
 
