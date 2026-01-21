@@ -141,6 +141,9 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 
 		if ( isset( $parsed['query'] ) ) {
 			parse_str( $parsed['query'], $query_params );
+
+			unset( $query_params['ver'] );
+
 			if ( isset( $query_params['return_to'] ) && '' === $query_params['return_to'] ) {
 				unset( $query_params['return_to'] );
 			}
@@ -174,10 +177,11 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 	}
 
 	private function set_request_uri(): void {
-		$this->original_server_request_uri = $_SERVER['REQUEST_URI'] ?? null;
-		if ( ! isset( $_SERVER['REQUEST_URI'] ) ) {
-			$_SERVER['REQUEST_URI'] = '';
+		if ( isset( $_SERVER['REQUEST_URI'] ) ) {
+			$this->original_server_request_uri = $_SERVER['REQUEST_URI'];
 		}
+
+		$_SERVER['REQUEST_URI'] = '/wp-admin/admin.php?page=elementor';
 	}
 
 	private function restore_request_uri(): void {
