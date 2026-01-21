@@ -1,6 +1,6 @@
 <?php
 
-namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers\Export;
+namespace Elementor\Modules\AtomicWidgets\PropsResolver\Transformers;
 
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Prop_Type;
 use Elementor\Modules\AtomicWidgets\DynamicTags\Dynamic_Tags_Module;
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Dynamic_Export_Transformer extends Transformer_Base {
+class Dynamic_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ): ?array {
 		if ( empty( $value['name'] ) || ! is_string( $value['name'] ) ) {
 			return null;
