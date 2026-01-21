@@ -22,7 +22,16 @@ declare global {
 			};
 			getContainer?: (id: string) => V1Element | undefined;
 		};
-		elementorPro?: object;
+		elementorFrontend?: {
+			config?: {
+				is_rtl?: boolean;
+			};
+		};
+		elementorPro?: {
+			config?: {
+				version?: string;
+			};
+		};
 		ElementorInteractionsConfig?: InteractionsConfig;
 	}
 }

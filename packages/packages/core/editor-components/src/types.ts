@@ -18,6 +18,12 @@ export type PublishedComponent = BaseComponent & {
 	isArchived?: boolean;
 };
 
+export type OriginalElementData = {
+	model: V1ElementData;
+	parentId: string;
+	index: number;
+};
+
 export type UnpublishedComponent = BaseComponent & {
 	elements: V1ElementData[];
 };
