@@ -21,8 +21,7 @@ const overlayRegistry: ElementOverlayConfig[] = [
 	},
 	{
 		component: InlineEditorOverlay,
-		shouldRender: ( { id, isSelected } ) =>
-			isSelected && hasInlineEditableProperty( id ),
+		shouldRender: ( { id, isSelected } ) => isSelected && hasInlineEditableProperty( id ),
 	},
 ];
 
