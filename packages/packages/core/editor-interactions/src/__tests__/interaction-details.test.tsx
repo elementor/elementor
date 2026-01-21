@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react';
 
+import { Easing } from '../components/controls/easing';
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
 import type { InteractionItemValue } from '../types';
@@ -67,6 +68,7 @@ const getEffectCombobox = (): HTMLElement => {
 
 describe( 'InteractionDetails', () => {
 	const mockOnChange = jest.fn();
+
 	const mockReplayControl = jest.fn( ( { value, onChange, disabled } ) => (
 		<div>
 			<span>Replay: { String( value ) }</span>
@@ -74,6 +76,7 @@ describe( 'InteractionDetails', () => {
 			<button onClick={ () => onChange( ! value ) }>Toggle Replay</button>
 		</div>
 	) );
+
 	const mockOnPlayInteraction = jest.fn();
 
 	const renderInteractionDetails = ( interaction: InteractionItemValue ) => {
@@ -89,17 +92,26 @@ describe( 'InteractionDetails', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		const { getInteractionsControl } = require( '../interactions-controls-registry' );
+
 		getInteractionsControl.mockImplementation( ( type: string ) => {
 			if ( type === 'trigger' ) {
 				return {
 					component: Trigger,
 				};
 			}
+
 			if ( type === 'replay' ) {
 				return {
 					component: mockReplayControl,
 				};
 			}
+
+			if ( type === 'easing' ) {
+				return {
+					component: Easing,
+				};
+			}
+
 			return null;
 		} );
 	} );
