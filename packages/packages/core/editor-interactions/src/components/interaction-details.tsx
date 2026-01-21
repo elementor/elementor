@@ -190,7 +190,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					/>
 				</Field>
 
-				<Field label={ __( 'Delay 33', 'elementor' ) }>
+				<Field label={ __( 'Delay', 'elementor' ) }>
 					<TimeFrameIndicator
 						value={ String( delay ) }
 						onChange={ ( v ) => updateInteraction( { delay: parseInt( v, 10 ) } ) }
