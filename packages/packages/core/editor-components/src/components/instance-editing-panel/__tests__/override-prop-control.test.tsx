@@ -427,7 +427,7 @@ describe( '<OverridePropControl />', () => {
 			// Act
 			renderOverridePropControl( store, linkOverridableProp, [ linkOverrideWithNullValue ] );
 
-			// Assert - should get link's origin value ("Link Origin Value"), NOT title's ("Innermost Origin Value")
+			// Assert
 			const input = screen.getByRole( 'textbox' );
 			expect( input ).toHaveValue( 'Link Origin Value' );
 		} );
