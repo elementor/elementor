@@ -32,11 +32,13 @@ function resolveOriginValue(
 		}
 	}
 
-	if ( originPropFields?.elementId ) {
-		return findOriginValueByElementId( components, originPropFields.elementId );
+	const { elementId, propKey } = originPropFields ?? {};
+
+	if ( elementId && propKey ) {
+		return findOriginValueByElementId( components, elementId, propKey );
 	}
 
-	return undefined;
+	return null;
 }
 
 function getOriginFromOverride( components: PublishedComponent[], override: ComponentInstanceOverride ): PropValue {
@@ -63,7 +65,8 @@ function getOriginFromOverride( components: PublishedComponent[], override: Comp
 	}
 
 	if ( prop?.originPropFields?.elementId ) {
-		const result = findOriginValueByElementId( components, prop.originPropFields.elementId );
+		const targetPropKey = prop.originPropFields.propKey ?? prop.propKey;
+		const result = findOriginValueByElementId( components, prop.originPropFields.elementId, targetPropKey );
 
 		if ( hasValue( result ) ) {
 			return result;
@@ -82,6 +85,7 @@ function getOriginFromOverride( components: PublishedComponent[], override: Comp
 function findOriginValueByElementId(
 	components: PublishedComponent[],
 	targetElementId: string,
+	targetPropKey: string,
 	visited: Set< number > = new Set()
 ): PropValue {
 	for ( const component of components ) {
@@ -91,7 +95,7 @@ function findOriginValueByElementId(
 		visited.add( component.id );
 
 		const matchingProp = Object.values( component.overridableProps?.props ?? {} ).find(
-			( prop ) => prop.elementId === targetElementId
+			( { elementId, propKey } ) => elementId === targetElementId && propKey === targetPropKey
 		);
 
 		if ( ! matchingProp ) {
@@ -103,7 +107,14 @@ function findOriginValueByElementId(
 		}
 
 		if ( matchingProp.originPropFields?.elementId ) {
-			return findOriginValueByElementId( components, matchingProp.originPropFields.elementId, visited );
+			const innerPropKey = matchingProp.originPropFields.propKey ?? targetPropKey;
+
+			return findOriginValueByElementId(
+				components,
+				matchingProp.originPropFields.elementId,
+				innerPropKey,
+				visited
+			);
 		}
 	}
 

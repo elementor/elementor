@@ -316,6 +316,56 @@ describe( '<OverridePropControl />', () => {
 			const input = screen.getByRole( 'textbox' );
 			expect( input ).toHaveValue( 'Innermost Origin Value' );
 		} );
+
+		it( 'should resolve correct origin when multiple props share the same elementId', () => {
+			// Arrange
+			const LINK_OVERRIDE_KEY = 'link-prop-key';
+			const LINK_ORIGIN_VALUE = { $$type: 'string', value: 'Link Origin Value' };
+
+			const linkOverridableProp: OverridableProp = {
+				overrideKey: LINK_OVERRIDE_KEY,
+				label: 'Link',
+				elementId: MIDDLE_ELEMENT_ID,
+				propKey: 'link',
+				widgetType: 'e-heading',
+				elType: 'widget',
+				groupId: 'content',
+				originValue: null,
+				originPropFields: {
+					propKey: 'link',
+					widgetType: 'e-heading',
+					elType: 'widget',
+					elementId: INNER_ELEMENT_ID,
+				},
+			};
+
+			const linkOverrideWithNullValue = componentOverridablePropTypeUtil.create( {
+				override_key: LINK_OVERRIDE_KEY,
+				origin_value: componentInstanceOverridePropTypeUtil.create( {
+					override_key: LINK_OVERRIDE_KEY,
+					override_value: null,
+					schema_source: { type: 'component', id: MIDDLE_COMPONENT_ID },
+				} ),
+			} );
+
+			setupMultiPropNestedComponents( {
+				innerComponentId: INNER_COMPONENT_ID,
+				innerElementId: INNER_ELEMENT_ID,
+				titleOverrideKey: INNER_OVERRIDE_KEY,
+				titleOriginValue: INNER_ORIGIN_VALUE,
+				linkOverrideKey: LINK_OVERRIDE_KEY,
+				linkOriginValue: LINK_ORIGIN_VALUE,
+				middleComponentId: MIDDLE_COMPONENT_ID,
+				middleElementId: MIDDLE_ELEMENT_ID,
+			} );
+
+			// Act
+			renderOverridePropControl( store, linkOverridableProp, [ linkOverrideWithNullValue ] );
+
+			// Assert - should get link's origin value ("Link Origin Value"), NOT title's ("Innermost Origin Value")
+			const input = screen.getByRole( 'textbox' );
+			expect( input ).toHaveValue( 'Link Origin Value' );
+		} );
 	} );
 } );
 
@@ -393,10 +443,128 @@ function setupNestedComponents( config: {
 	dispatch( slice.actions.load( components ) );
 }
 
+function setupMultiPropNestedComponents( config: {
+	innerComponentId: number;
+	innerElementId: string;
+	titleOverrideKey: string;
+	titleOriginValue: { $$type: string; value: string };
+	linkOverrideKey: string;
+	linkOriginValue: { $$type: string; value: string };
+	middleComponentId: number;
+	middleElementId: string;
+} ) {
+	type ComponentData = Parameters< typeof slice.actions.load >[ 0 ][ number ];
+
+	// Inner component has BOTH title and link props pointing to the SAME elementId
+	const innerComponent: ComponentData = {
+		id: config.innerComponentId,
+		uid: `component-${ config.innerComponentId }`,
+		name: 'Inner Component',
+		overridableProps: {
+			props: {
+				[ config.titleOverrideKey ]: {
+					overrideKey: config.titleOverrideKey,
+					label: 'Title',
+					elementId: config.innerElementId,
+					propKey: 'title',
+					widgetType: 'e-heading',
+					elType: 'widget',
+					groupId: 'content',
+					originValue: config.titleOriginValue,
+				},
+				[ config.linkOverrideKey ]: {
+					overrideKey: config.linkOverrideKey,
+					label: 'Link',
+					elementId: config.innerElementId,
+					propKey: 'link',
+					widgetType: 'e-heading',
+					elType: 'widget',
+					groupId: 'content',
+					originValue: config.linkOriginValue,
+				},
+			},
+			groups: {
+				items: {
+					content: {
+						id: 'content',
+						label: 'Content',
+						props: [ config.titleOverrideKey, config.linkOverrideKey ],
+					},
+				},
+				order: [ 'content' ],
+			},
+		},
+	};
+
+	// Middle component also has both props, with null originValue, pointing to inner element
+	const middleComponent: ComponentData = {
+		id: config.middleComponentId,
+		uid: `component-${ config.middleComponentId }`,
+		name: 'Middle Component',
+		overridableProps: {
+			props: {
+				[ config.titleOverrideKey ]: {
+					overrideKey: config.titleOverrideKey,
+					label: 'Title',
+					elementId: config.middleElementId,
+					propKey: 'title',
+					widgetType: 'e-heading',
+					elType: 'widget',
+					groupId: 'content',
+					originValue: null,
+					originPropFields: {
+						propKey: 'title',
+						widgetType: 'e-heading',
+						elType: 'widget',
+						elementId: config.innerElementId,
+					},
+				},
+				[ config.linkOverrideKey ]: {
+					overrideKey: config.linkOverrideKey,
+					label: 'Link',
+					elementId: config.middleElementId,
+					propKey: 'link',
+					widgetType: 'e-heading',
+					elType: 'widget',
+					groupId: 'content',
+					originValue: null,
+					originPropFields: {
+						propKey: 'link',
+						widgetType: 'e-heading',
+						elType: 'widget',
+						elementId: config.innerElementId,
+					},
+				},
+			},
+			groups: {
+				items: {
+					content: {
+						id: 'content',
+						label: 'Content',
+						props: [ config.titleOverrideKey, config.linkOverrideKey ],
+					},
+				},
+				order: [ 'content' ],
+			},
+		},
+	};
+
+	dispatch( slice.actions.load( [ innerComponent, middleComponent ] ) );
+}
+
 function setupElementsMocks() {
-	const widgetDefinitions: Record< string, { propKey: string; label: string; title: string } > = {
-		'e-heading': { propKey: 'title', label: 'Title', title: 'Heading' },
-		'e-text': { propKey: 'content', label: 'Content', title: 'Text' },
+	const widgetDefinitions: Record< string, { props: Array< { propKey: string; label: string } >; title: string } > = {
+		'e-heading': {
+			title: 'Heading',
+			props: [
+				{ propKey: 'title', label: 'Title' },
+				{ propKey: 'link', label: 'Link' },
+			],
+		},
+		'e-text': {
+			title: 'Text',
+			props: [ { propKey: 'content', label: 'Content' } ],
+		},
 	};
 
 	jest.mocked( getContainer ).mockImplementation( ( id ) => createMockContainer( id, [] ) );
@@ -407,16 +575,18 @@ function setupElementsMocks() {
 			return null;
 		}
 
+		const controls = def.props.map( ( prop ) => ( {
+			type: 'control' as const,
+			value: { bind: prop.propKey, label: prop.label, type: MOCK_CONTROL_TYPE, props: {} },
+		} ) );
+
+		const propsSchema = Object.fromEntries( def.props.map( ( prop ) => [ prop.propKey, MOCK_PROP_TYPE ] ) );
+
 		return {
 			key: type,
 			title: def.title,
-			controls: [
-				{
-					type: 'control' as const,
-					value: { bind: def.propKey, label: def.label, type: MOCK_CONTROL_TYPE, props: {} },
-				},
-			],
-			propsSchema: { [ def.propKey ]: MOCK_PROP_TYPE },
+			controls,
+			propsSchema,
 			dependenciesPerTargetMapping: {},
 			styleStates: [],
 		};
@@ -425,18 +595,22 @@ function setupElementsMocks() {
 	jest.mocked( getElementLabel ).mockReturnValue( 'Element Label' );
 
 	const widgetsCache = Object.fromEntries(
-		Object.entries( widgetDefinitions ).map( ( [ key, def ] ) => [
-			key,
-			{
-				atomic_props_schema: { [ def.propKey ]: MOCK_PROP_TYPE },
-				atomic_controls: [
-					{
-						type: 'control' as const,
-						value: { bind: def.propKey, label: def.label, type: MOCK_CONTROL_TYPE, props: {} },
-					},
-				],
-			},
-		] )
+		Object.entries( widgetDefinitions ).map( ( [ key, def ] ) => {
+			const controls = def.props.map( ( prop ) => ( {
+				type: 'control' as const,
+				value: { bind: prop.propKey, label: prop.label, type: MOCK_CONTROL_TYPE, props: {} },
+			} ) );
+
+			const propsSchema = Object.fromEntries( def.props.map( ( prop ) => [ prop.propKey, MOCK_PROP_TYPE ] ) );
+
+			return [
+				key,
+				{
+					atomic_props_schema: propsSchema,
+					atomic_controls: controls,
+				},
+			];
+		} )
 	) as ReturnType< typeof getWidgetsCache >;
 
 	jest.mocked( getWidgetsCache ).mockReturnValue( widgetsCache );
