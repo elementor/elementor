@@ -10,6 +10,10 @@ export type DynamicTag = {
 	categories: string[];
 	atomic_controls: ControlItem[];
 	props_schema: PropsSchema;
+	meta?: {
+		origin: string;
+		required_license: boolean;
+	};
 };
 
 export type DynamicPropType = TransformablePropType & {
