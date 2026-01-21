@@ -370,4 +370,86 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 		await expect( getMenuTabs( tabsRoot ) ).toHaveCount( 1 );
 		await expect( getTabContents( tabsRoot ) ).toHaveCount( 1 );
 	} );
+
+	test( 'Undo and redo tab operations', async () => {
+		// Arrange
+		const tabsId = await editor.addElement( { elType: tabsType }, 'document' );
+		const tabsRoot = getTabsRoot( tabsId );
+		await editor.selectElement( tabsId );
+		await editor.waitForPanelToLoad();
+
+		const menuItemsField = await openMenuItemsControl();
+		const initialTabIds = await getIdsByType( tabsRoot, tabType );
+		const initialContentIds = await getIdsByType( tabsRoot, tabContentType );
+
+		// Act - Add a tab
+		await menuItemsField.getByRole( 'button', { name: 'Add item' } ).click();
+		await expect.poll( () => getIdsByType( tabsRoot, tabType ) ).toHaveLength( 4 );
+		await expect.poll( () => getIdsByType( tabsRoot, tabContentType ) ).toHaveLength( 4 );
+
+		// Act - Undo the add
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await editor.page.evaluate( () => ( window as any ).$e.run( 'document/history/undo' ) );
+
+		// Assert - Back to initial state
+		await expect.poll( () => getIdsByType( tabsRoot, tabType ) ).toHaveLength( initialTabIds.length );
+		await expect.poll( () => getIdsByType( tabsRoot, tabContentType ) ).toHaveLength( initialContentIds.length );
+
+		const afterUndoTabIds = await getIdsByType( tabsRoot, tabType );
+		const afterUndoContentIds = await getIdsByType( tabsRoot, tabContentType );
+
+		expect( afterUndoTabIds ).toEqual( initialTabIds );
+		expect( afterUndoContentIds ).toEqual( initialContentIds );
+
+		// Act - Redo the add
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await editor.page.evaluate( () => ( window as any ).$e.run( 'document/history/redo' ) );
+
+		// Assert - Tab is added again
+		await expect.poll( () => getIdsByType( tabsRoot, tabType ) ).toHaveLength( 4 );
+		await expect.poll( () => getIdsByType( tabsRoot, tabContentType ) ).toHaveLength( 4 );
+	} );
+
+	test( 'Undo and redo reorder restores tab order', async () => {
+		// Arrange
+		const tabsId = await editor.addElement( { elType: tabsType }, 'document' );
+		const tabsRoot = getTabsRoot( tabsId );
+		await editor.selectElement( tabsId );
+		await editor.waitForPanelToLoad();
+
+		const menuItemsField = await openMenuItemsControl();
+		const initialTabIds = await getIdsByType( tabsRoot, tabType );
+		const initialContentIds = await getIdsByType( tabsRoot, tabContentType );
+
+		// Act - Reorder: move first tab to last position
+		const listItems = menuItemsField.locator( 'ul.MuiList-root > li' );
+		const firstItem = listItems.first();
+		const lastItem = listItems.last();
+		const firstDragHandle = firstItem.locator( '.class-item-sortable-trigger' );
+
+		await firstItem.hover();
+		await firstDragHandle.dragTo( lastItem );
+
+		// Assert - Order changed
+		const expectedTabOrder = [ ...initialTabIds.slice( 1 ), initialTabIds[ 0 ] ];
+		const expectedContentOrder = [ ...initialContentIds.slice( 1 ), initialContentIds[ 0 ] ];
+		await expect.poll( () => getIdsByType( tabsRoot, tabType ) ).toEqual( expectedTabOrder );
+		await expect.poll( () => getIdsByType( tabsRoot, tabContentType ) ).toEqual( expectedContentOrder );
+
+		// Act - Undo the reorder
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await editor.page.evaluate( () => ( window as any ).$e.run( 'document/history/undo' ) );
+
+		// Assert - Order restored
+		await expect.poll( () => getIdsByType( tabsRoot, tabType ) ).toEqual( initialTabIds );
+		await expect.poll( () => getIdsByType( tabsRoot, tabContentType ) ).toEqual( initialContentIds );
+
+		// Act - Redo the reorder
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await editor.page.evaluate( () => ( window as any ).$e.run( 'document/history/redo' ) );
+
+		// Assert - Order changed again
+		await expect.poll( () => getIdsByType( tabsRoot, tabType ) ).toEqual( expectedTabOrder );
+		await expect.poll( () => getIdsByType( tabsRoot, tabContentType ) ).toEqual( expectedContentOrder );
+	} );
 } );
