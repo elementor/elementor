@@ -142,7 +142,7 @@ class Module extends BaseModule {
 		return self::CPT === $post->post_type;
 	}
 
-	protected function get_menu_args() {
+	public function get_menu_args() {
 		if ( $this->has_landing_pages() ) {
 			$menu_slug = self::ADMIN_PAGE_SLUG;
 			$function = null;
@@ -464,6 +464,14 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu( $menu_data_provider );
+		} );
+
+		add_filter( 'elementor/editor-one/menu/elementor_post_types', function ( array $elementor_post_types ): array {
+			$elementor_post_types[ static::CPT ] = [
+				'menu_slug' => 'elementor-editor-templates',
+				'child_slug' => 'edit.php?post_type=' . static::CPT,
+			];
+			return $elementor_post_types;
 		} );
 
 		// Add the custom 'Add New' link for Landing Pages into Elementor's admin config.
