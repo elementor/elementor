@@ -167,9 +167,9 @@ export const buildAnimationIdString = ( item: InteractionItemValue ): string => 
 	const direction = extractString( item.animation.value.direction );
 	const duration = extractNumber( item.animation.value.timing_config.value.duration );
 	const delay = extractNumber( item.animation.value.timing_config.value.delay );
-	const easing = extractString( item.animation.value.config?.value.easing );
+	const easing = extractString( item.animation.value?.config?.value?.easing );
 
-	return [ trigger, effect, type, direction, duration, delay, easing ].join( '-' );
+	return [ trigger, effect, type, direction, duration, delay, '', easing ].join( '-' );
 };
 
 const TRIGGER_LABELS: Record< string, string > = {
