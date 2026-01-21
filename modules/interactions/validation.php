@@ -238,6 +238,10 @@ class Validation {
 			return false;
 		}
 
+		if ( isset( $config_value['easing'] ) && ! $this->is_valid_string_prop( $config_value, 'easing' ) ) {
+			return false;
+		}
+
 		if ( isset( $config_value['relativeTo'] ) && ! $this->is_valid_string_prop( $config_value, 'relativeTo' ) ) {
 			return false;
 		}
