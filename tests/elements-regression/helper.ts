@@ -30,15 +30,9 @@ export default class ElementRegressionHelper {
 
 			for ( let i = 0; i < count; i++ ) {
 				const videoWidget = videoWidgets.nth( i );
-
-				const iframe = videoWidget.locator( 'iframe.elementor-video' );
+				const iframe = videoWidget.locator( 'iframe' );
 				if ( await iframe.count() > 0 ) {
-					masks.push( iframe.first() );
-				}
-
-				const overlay = videoWidget.locator( '.elementor-custom-embed-image-overlay' );
-				if ( await overlay.count() > 0 ) {
-					masks.push( overlay.first() );
+					masks.push( iframe );
 				}
 			}
 		}
