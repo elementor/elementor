@@ -290,7 +290,12 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			{ EasingControl && (
 				<Grid container spacing={ 1.5 }>
 					<Field label={ __( 'Easing', 'elementor' ) }>
-						<EasingControl value={ easing } onChange={ ( v ) => { updateInteraction( { easing: v } ) } } />
+						<EasingControl
+							value={ easing }
+							onChange={ ( v ) => {
+								updateInteraction( { easing: v } );
+							} }
+						/>
 					</Field>
 				</Grid>
 			) }
