@@ -29,7 +29,7 @@ const DEFAULT_VALUES = {
 	effect: 'fade',
 	type: 'in',
 	direction: '',
-	duration: 300,
+	duration: 600,
 	delay: 0,
 	replay: false,
 	relativeTo: 'viewport',
@@ -190,7 +190,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					/>
 				</Field>
 
-				<Field label={ __( 'Delay', 'elementor' ) }>
+				<Field label={ __( 'Delay 33', 'elementor' ) }>
 					<TimeFrameIndicator
 						value={ String( delay ) }
 						onChange={ ( v ) => updateInteraction( { delay: parseInt( v, 10 ) } ) }
