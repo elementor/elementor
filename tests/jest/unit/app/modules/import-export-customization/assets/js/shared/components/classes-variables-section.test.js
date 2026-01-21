@@ -422,7 +422,7 @@ describe( 'ClassesVariablesSection Component', () => {
 
 			// Assert
 			const switches = screen.getAllByRole( 'checkbox' );
-			const classesSwitch = switches.find( ( s ) => s.getAttribute( 'type' ) !== 'checkbox' || s.closest( '[class*="MuiSwitch"]' ) );
+			switches.find( ( s ) => s.getAttribute( 'type' ) !== 'checkbox' || s.closest( '[class*="MuiSwitch"]' ) );
 			// The switch should be disabled when limit exceeded and override is not checked
 		} );
 

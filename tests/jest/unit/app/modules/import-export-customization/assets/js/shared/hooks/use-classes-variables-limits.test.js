@@ -350,7 +350,7 @@ describe( 'useClassesVariablesLimits Hook', () => {
 					json: jest.fn().mockResolvedValue( { data: {} } ),
 				} );
 
-			const { result, rerender } = renderHook(
+			const { rerender } = renderHook(
 				( { open, isImport } ) => useClassesVariablesLimits( { open, isImport } ),
 				{ initialProps: { open: false, isImport: true } },
 			);
