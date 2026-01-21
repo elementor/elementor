@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { Repeater } from '@elementor/editor-controls';
 import { InfoCircleFilledIcon, PlayerPlayIcon } from '@elementor/icons';
 import { Alert, AlertTitle, Box, IconButton, Tooltip } from '@elementor/ui';
@@ -16,6 +16,13 @@ export type InteractionListProps = {
 	onPlayInteraction: ( interactionId: string ) => void;
 	triggerCreateOnShowEmpty?: boolean;
 };
+
+type InteractionItemContextValue = {
+	onInteractionChange: ( index: number, newInteractionValue: InteractionItemValue ) => void;
+	onPlayInteraction: ( interactionId: string ) => void;
+};
+
+const InteractionItemContext = createContext< InteractionItemContextValue | null >( null );
 
 export function InteractionsList( props: InteractionListProps ) {
 	const { interactions, onSelectInteractions, onPlayInteraction, triggerCreateOnShowEmpty } = props;
@@ -85,44 +92,72 @@ export function InteractionsList( props: InteractionListProps ) {
 		[ interactions, handleUpdateInteractions ]
 	);
 
+	const contextValue = useMemo(
+		() => ( {
+			onInteractionChange: handleInteractionChange,
+			onPlayInteraction,
+		} ),
+		[ handleInteractionChange, onPlayInteraction ]
+	);
+
 	return (
-		<Repeater
-			openOnAdd
-			openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
-			label={ __( 'Interactions', 'elementor' ) }
-			values={ interactions.items }
-			setValues={ handleRepeaterChange }
-			showDuplicate={ false }
-			showToggle={ false }
-			isSortable={ false }
-			disableAddItemButton={ isMaxNumberOfInteractionsReached }
-			addButtonInfotipContent={ infotipContent }
-			itemSettings={ {
-				initialValues: createDefaultInteractionItem(),
-				Label: ( { value }: { value: InteractionItemPropValue } ) => buildDisplayLabel( value.value ),
-				Icon: () => null,
-				Content: ( { index, value }: { index: number; value: InteractionItemPropValue } ) => (
-					<InteractionDetails
-						key={ index }
-						interaction={ value.value }
-						onChange={ ( newInteractionValue: InteractionItemValue ) => {
-							handleInteractionChange( index, newInteractionValue );
-						} }
-						onPlayInteraction={ onPlayInteraction }
-					/>
-				),
-				actions: ( value: InteractionItemPropValue ) => (
-					<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
-						<IconButton
-							aria-label={ __( 'Play interaction', 'elementor' ) }
-							size="tiny"
-							onClick={ () => onPlayInteraction( extractString( value.value.interaction_id ) ) }
-						>
-							<PlayerPlayIcon fontSize="tiny" />
-						</IconButton>
-					</Tooltip>
-				),
-			} }
-		/>
+		<InteractionItemContext.Provider value={ contextValue }>
+			<Repeater
+				openOnAdd
+				openItem={ triggerCreateOnShowEmpty ? 0 : undefined }
+				label={ __( 'Interactions', 'elementor' ) }
+				values={ interactions.items }
+				setValues={ handleRepeaterChange }
+				showDuplicate={ false }
+				showToggle={ false }
+				isSortable={ false }
+				disableAddItemButton={ isMaxNumberOfInteractionsReached }
+				addButtonInfotipContent={ infotipContent }
+				itemSettings={ {
+					initialValues: createDefaultInteractionItem(),
+					Label: ( { value }: { value: InteractionItemPropValue } ) => buildDisplayLabel( value.value ),
+					Icon: () => null,
+					Content,
+					actions: ( value: InteractionItemPropValue ) => (
+						<Tooltip key="preview" placement="top" title={ __( 'Preview', 'elementor' ) }>
+							<IconButton
+								aria-label={ __( 'Play interaction', 'elementor' ) }
+								size="tiny"
+								onClick={ () => onPlayInteraction( extractString( value.value.interaction_id ) ) }
+							>
+								<PlayerPlayIcon fontSize="tiny" />
+							</IconButton>
+						</Tooltip>
+					),
+				} }
+			/>
+		</InteractionItemContext.Provider>
 	);
 }
+
+const Content = ( { index, value }: { index: number; value: InteractionItemPropValue } ) => {
+	const context = useContext( InteractionItemContext );
+
+	const handleChange = useCallback(
+		( newInteractionValue: InteractionItemValue ) => {
+			context?.onInteractionChange( index, newInteractionValue );
+		},
+		[ context, index ]
+	);
+
+	const handlePlayInteraction = useCallback(
+		( interactionId: string ) => {
+			context?.onPlayInteraction( interactionId );
+		},
+		[ context ]
+	);
+
+	return (
+		<InteractionDetails
+			key={ index }
+			interaction={ value.value }
+			onChange={ handleChange }
+			onPlayInteraction={ handlePlayInteraction }
+		/>
+	);
+};
