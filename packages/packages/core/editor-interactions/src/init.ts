@@ -1,3 +1,4 @@
+import { Easing } from './components/controls/easing';
 import { Trigger } from './components/controls/trigger';
 import { initCleanInteractionIdsOnDuplicate } from './hooks/on-duplicate';
 import { registerInteractionsControl } from './interactions-controls-registry';
@@ -12,6 +13,12 @@ export function init() {
 			type: 'trigger',
 			component: Trigger,
 			options: [ 'load', 'scrollIn' ],
+		} );
+
+		registerInteractionsControl( {
+			type: 'easing',
+			component: Easing,
+			options: [ 'easeIn' ],
 		} );
 	} catch ( error ) {
 		throw error;
