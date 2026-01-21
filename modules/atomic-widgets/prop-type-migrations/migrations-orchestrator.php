@@ -39,6 +39,30 @@ class Migrations_Orchestrator {
 		self::$instance = null;
 	}
 
+	/**
+	 * Registers hooks to listen for experiment flag state changes.
+	 *
+	 * Usage example:
+	 * ```
+	 * static $registered = false;
+	 * if ( $registered ) {
+	 *     return;
+	 * }
+	 *
+	 * add_action(
+	 *     'elementor/experiments/feature-state-change/' . Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING,
+	 *     [ __CLASS__, 'clear_migration_cache' ],
+	 *     10,
+	 *     2
+	 * );
+	 *
+	 * $registered = true;
+	 * ```
+	 *
+	 * This ensures that when the inline editing experiment is enabled or disabled, all
+	 * migration state metadata is cleared, forcing documents to be re-migrated with the
+	 * new feature flag state.
+	 */
 	public static function register_feature_flag_hooks(): void {
 	}
 
