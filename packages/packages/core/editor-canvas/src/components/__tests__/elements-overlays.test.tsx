@@ -1,10 +1,7 @@
 import * as React from 'react';
 import { createDOMElement, createMockElement, createMockElementType, renderWithTheme } from 'test-utils';
 import { getElements, useSelectedElement } from '@elementor/editor-elements';
-import {
-	__privateUseIsRouteActive as useIsRouteActive,
-	useEditMode,
-} from '@elementor/editor-v1-adapters';
+import { __privateUseIsRouteActive as useIsRouteActive, useEditMode } from '@elementor/editor-v1-adapters';
 import { screen, waitFor } from '@testing-library/react';
 
 import { hasInlineEditableProperty } from '../../utils/inline-editing-utils';
