@@ -187,7 +187,7 @@ class Module extends BaseModule {
 	 *
 	 * @since 3.1.0
 	 */
-	protected function print_empty_landing_pages_page() {
+	public function print_empty_landing_pages_page() {
 		$template_sources = Plugin::$instance->templates_manager->get_registered_sources();
 		$source_local = $template_sources['local'];
 		$trashed_posts = $this->get_trashed_landing_page_posts();
