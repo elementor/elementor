@@ -3,23 +3,16 @@ import { useCallback } from 'react';
 import { UnstableSizeField } from '@elementor/editor-controls';
 import { sizePropTypeUtil, type SizePropValue } from '@elementor/editor-props';
 
-import { type NumberPropValue } from '../../types';
-import { createNumber } from '../../utils/prop-value-utils';
-
-type Props< T = NumberPropValue > = {
-	value: T;
-	onChange: ( value: T ) => void;
-	defaultValue: number;
-};
+import { type FieldProps } from '../../types';
 
 const DEFAULT_UNIT = 'ms';
 
-export function TimeFrameIndicator( { value, onChange, defaultValue }: Props ) {
-	const sizeValue = toSizeValue( value, defaultValue );
+export function TimeFrameIndicator( { value, onChange, defaultValue }: FieldProps & { defaultValue: number } ) {
+	const sizeValue = toSizeValue( value ?? defaultValue );
 
 	const setValue = useCallback(
 		( size: number ) => {
-			onChange( createNumber( size ) );
+			onChange( String( size ) );
 		},
 		[ onChange ]
 	);
@@ -45,16 +38,9 @@ export function TimeFrameIndicator( { value, onChange, defaultValue }: Props ) {
 	);
 }
 
-const toSizeValue = ( value: NumberPropValue, defaultValue: number ): SizePropValue[ 'value' ] => {
-	if ( value.$$type !== 'number' ) {
-		return {
-			size: defaultValue,
-			unit: DEFAULT_UNIT,
-		};
-	}
-
+const toSizeValue = ( value: string ): SizePropValue[ 'value' ] => {
 	return sizePropTypeUtil.create( {
-		size: value.value as number,
+		size: Number( value ),
 		unit: DEFAULT_UNIT,
 	} ).value;
 };

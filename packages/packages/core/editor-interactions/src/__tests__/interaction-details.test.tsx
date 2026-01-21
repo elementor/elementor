@@ -3,8 +3,8 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 
 import { Trigger } from '../components/controls/trigger';
 import { InteractionDetails } from '../components/interaction-details';
-import type { InteractionItemValue, NumberPropValue } from '../types';
-import { createAnimationPreset, createNumber, createString } from '../utils/prop-value-utils';
+import type { InteractionItemValue } from '../types';
+import { createAnimationPreset, createString } from '../utils/prop-value-utils';
 jest.mock( '../interactions-controls-registry', () => ( {
 	getInteractionsControl: jest.fn(),
 } ) );
@@ -14,16 +14,16 @@ const createInteractionItemValue = ( {
 	effect = 'fade',
 	type = 'in',
 	direction = '',
-	duration = createNumber( 300 ),
-	delay = createNumber( 0 ),
+	duration = 300,
+	delay = 0,
 	replay = false,
 }: {
 	trigger?: string;
 	effect?: string;
 	type?: string;
 	direction?: string;
-	duration?: NumberPropValue;
-	delay?: NumberPropValue;
+	duration?: number;
+	delay?: number;
 	replay?: boolean;
 } = {} ): InteractionItemValue => ( {
 	interaction_id: createString( 'test-id' ),
@@ -120,8 +120,8 @@ describe( 'InteractionDetails', () => {
 				effect: 'slide',
 				type: 'out',
 				direction: 'top',
-				duration: createNumber( 500 ),
-				delay: createNumber( 200 ),
+				duration: 500,
+				delay: 200,
 				replay: true,
 			} );
 
@@ -192,8 +192,8 @@ describe( 'InteractionDetails', () => {
 				trigger: 'load',
 				effect: 'fade',
 				type: 'in',
-				duration: createNumber( 300 ),
-				delay: createNumber( 0 ),
+				duration: 300,
+				delay: 0,
 			} );
 
 			renderInteractionDetails( interaction );
@@ -216,8 +216,8 @@ describe( 'InteractionDetails', () => {
 				trigger: 'load',
 				effect: 'fade',
 				type: 'in',
-				duration: createNumber( 300 ),
-				delay: createNumber( 0 ),
+				duration: 300,
+				delay: 0,
 			} );
 
 			renderInteractionDetails( interaction );
@@ -238,8 +238,8 @@ describe( 'InteractionDetails', () => {
 				trigger: 'load',
 				effect: 'fade',
 				type: 'in',
-				duration: createNumber( 300 ),
-				delay: createNumber( 0 ),
+				duration: 300,
+				delay: 0,
 			} );
 
 			renderInteractionDetails( interaction );
@@ -261,8 +261,8 @@ describe( 'InteractionDetails', () => {
 				effect: 'slide',
 				type: 'in',
 				direction: 'top',
-				duration: createNumber( 300 ),
-				delay: createNumber( 0 ),
+				duration: 300,
+				delay: 0,
 			} );
 
 			renderInteractionDetails( interaction );
@@ -285,8 +285,8 @@ describe( 'InteractionDetails', () => {
 				trigger: 'load',
 				effect: 'fade',
 				type: 'in',
-				duration: createNumber( 300 ),
-				delay: createNumber( 0 ),
+				duration: 300,
+				delay: 0,
 			} );
 
 			renderInteractionDetails( interaction );
@@ -308,8 +308,8 @@ describe( 'InteractionDetails', () => {
 				trigger: 'load',
 				effect: 'fade',
 				type: 'in',
-				duration: createNumber( 300 ),
-				delay: createNumber( 40 ),
+				duration: 300,
+				delay: 0,
 			} );
 
 			renderInteractionDetails( interaction );
@@ -317,7 +317,7 @@ describe( 'InteractionDetails', () => {
 			const sizeInputs = screen.getAllByRole( 'spinbutton' );
 			const durationInput = sizeInputs[ 1 ];
 
-			expect( durationInput ).toHaveValue( 40 );
+			expect( durationInput ).toHaveValue( 0 );
 
 			fireEvent.input( durationInput, { target: { value: 200 } } );
 
@@ -519,7 +519,7 @@ describe( 'InteractionDetails', () => {
 				effect: 'slide',
 				type: 'in',
 				direction: 'right',
-				duration: createNumber( 300 ),
+				duration: 300,
 			} );
 
 			renderInteractionDetails( interaction );
@@ -543,7 +543,7 @@ describe( 'InteractionDetails', () => {
 				effect: 'fade',
 				type: 'in',
 				direction: 'left',
-				delay: createNumber( 0 ),
+				delay: 0,
 			} );
 
 			renderInteractionDetails( interaction );
@@ -569,8 +569,8 @@ describe( 'InteractionDetails', () => {
 				effect: 'fade',
 				type: 'in',
 				direction: 'left',
-				duration: createNumber( 500 ),
-				delay: createNumber( 200 ),
+				duration: 500,
+				delay: 200,
 			} );
 
 			renderInteractionDetails( interaction );
@@ -595,8 +595,8 @@ describe( 'InteractionDetails', () => {
 				effect: 'fade',
 				type: 'out',
 				direction: 'right',
-				duration: createNumber( 750 ),
-				delay: createNumber( 100 ),
+				duration: 750,
+				delay: 100,
 			} );
 
 			renderInteractionDetails( interaction );
@@ -619,8 +619,8 @@ describe( 'InteractionDetails', () => {
 				trigger: 'scrollIn',
 				effect: 'fade',
 				type: 'in',
-				duration: createNumber( 300 ),
-				delay: createNumber( 0 ),
+				duration: 300,
+				delay: 0,
 				replay: true,
 			} );
 

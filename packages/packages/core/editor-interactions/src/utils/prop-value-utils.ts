@@ -9,7 +9,6 @@ import type {
 	StringPropValue,
 	TimingConfigPropValue,
 } from '../types';
-import { INTERACTION_DEFAULT_CONFIG } from './interaction-default-config';
 import { generateTempInteractionId } from './temp-id-utils';
 
 export const createString = ( value: string ): StringPropValue => ( {
@@ -22,11 +21,11 @@ export const createNumber = ( value: number ): NumberPropValue => ( {
 	value,
 } );
 
-export const createTimingConfig = ( duration: NumberPropValue, delay: NumberPropValue ): TimingConfigPropValue => ( {
+export const createTimingConfig = ( duration: number, delay: number ): TimingConfigPropValue => ( {
 	$$type: 'timing-config',
 	value: {
-		duration,
-		delay,
+		duration: createNumber( duration ),
+		delay: createNumber( delay ),
 	},
 } );
 
@@ -68,8 +67,8 @@ export const createAnimationPreset = ( {
 	effect: string;
 	type: string;
 	direction?: string;
-	duration: NumberPropValue;
-	delay: NumberPropValue;
+	duration: number;
+	delay: number;
 	replay: boolean;
 	relativeTo?: string;
 	offsetTop?: number;
@@ -118,8 +117,8 @@ export const createInteractionItem = ( {
 			effect,
 			type,
 			direction,
-			duration: createNumber( duration ),
-			delay: createNumber( delay ),
+			duration,
+			delay,
 			replay,
 			relativeTo,
 			offsetTop,
@@ -130,13 +129,12 @@ export const createInteractionItem = ( {
 
 export const createDefaultInteractionItem = (): InteractionItemPropValue => {
 	return createInteractionItem( {
-		trigger: INTERACTION_DEFAULT_CONFIG.trigger,
-		effect: INTERACTION_DEFAULT_CONFIG.effect,
-		type: INTERACTION_DEFAULT_CONFIG.type,
-		direction: INTERACTION_DEFAULT_CONFIG.direction,
-		duration: INTERACTION_DEFAULT_CONFIG.duration,
-		delay: INTERACTION_DEFAULT_CONFIG.delay,
-		replay: INTERACTION_DEFAULT_CONFIG.replay,
+		trigger: 'load',
+		effect: 'fade',
+		type: 'in',
+		duration: 300,
+		delay: 0,
+		replay: false,
 		interactionId: generateTempInteractionId(),
 	} );
 };

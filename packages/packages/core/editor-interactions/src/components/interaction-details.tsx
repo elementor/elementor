@@ -5,8 +5,7 @@ import { Divider, Grid } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { getInteractionsControl } from '../interactions-controls-registry';
-import type { InteractionItemValue, NumberPropValue } from '../types';
-import { INTERACTION_DEFAULT_CONFIG } from '../utils/interaction-default-config';
+import type { InteractionItemValue } from '../types';
 import {
 	createAnimationPreset,
 	createString,
@@ -25,32 +24,35 @@ type InteractionDetailsProps = {
 	onPlayInteraction: ( interactionId: string ) => void;
 };
 
+const DEFAULT_VALUES = {
+	trigger: 'load',
+	effect: 'fade',
+	type: 'in',
+	direction: '',
+	duration: 300,
+	delay: 0,
+	replay: false,
+	relativeTo: 'viewport',
+	offsetTop: 15,
+	offsetBottom: 85,
+};
+
 const TRIGGERS_WITH_REPLAY = [ 'scrollIn', 'scrollOut' ];
 
 export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }: InteractionDetailsProps ) => {
-	const trigger = extractString( interaction.trigger, INTERACTION_DEFAULT_CONFIG.trigger );
-	const effect = extractString( interaction.animation.value.effect, INTERACTION_DEFAULT_CONFIG.effect );
-	const type = extractString( interaction.animation.value.type, INTERACTION_DEFAULT_CONFIG.type );
-	const direction = extractString( interaction.animation.value.direction, INTERACTION_DEFAULT_CONFIG.direction );
-	const relativeTo = extractString(
-		interaction.animation.value.config?.value.relativeTo,
-		INTERACTION_DEFAULT_CONFIG.relativeTo
-	);
-	const offsetTop = extractNumber(
-		interaction.animation.value.config?.value.offsetTop,
-		INTERACTION_DEFAULT_CONFIG.offsetTop
-	);
+	const trigger = extractString( interaction.trigger, DEFAULT_VALUES.trigger );
+	const effect = extractString( interaction.animation.value.effect, DEFAULT_VALUES.effect );
+	const type = extractString( interaction.animation.value.type, DEFAULT_VALUES.type );
+	const direction = extractString( interaction.animation.value.direction, DEFAULT_VALUES.direction );
+	const duration = extractNumber( interaction.animation.value.timing_config.value.duration, DEFAULT_VALUES.duration );
+	const delay = extractNumber( interaction.animation.value.timing_config.value.delay, DEFAULT_VALUES.delay );
+	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
+	const relativeTo = extractString( interaction.animation.value.config?.value.relativeTo, DEFAULT_VALUES.relativeTo );
+	const offsetTop = extractNumber( interaction.animation.value.config?.value.offsetTop, DEFAULT_VALUES.offsetTop );
 	const offsetBottom = extractNumber(
 		interaction.animation.value.config?.value.offsetBottom,
-		INTERACTION_DEFAULT_CONFIG.offsetBottom
+		DEFAULT_VALUES.offsetBottom
 	);
-	const replay = extractBoolean(
-		interaction.animation.value.config?.value.replay,
-		INTERACTION_DEFAULT_CONFIG.replay
-	);
-
-	const duration = interaction.animation.value.timing_config.value.duration;
-	const delay = interaction.animation.value.timing_config.value.delay;
 
 	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
 	const shouldShowRelativeTo = trigger === 'scrollOn';
@@ -104,8 +106,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			effect: string;
 			type: string;
 			direction: string;
-			duration: NumberPropValue;
-			delay: NumberPropValue;
+			duration: number;
+			delay: number;
 			replay: boolean;
 			relativeTo: string;
 			offsetTop: number;
@@ -182,17 +184,17 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 
 				<Field label={ __( 'Duration', 'elementor' ) }>
 					<TimeFrameIndicator
-						value={ duration }
-						onChange={ ( value ) => updateInteraction( { duration: value } ) }
-						defaultValue={ INTERACTION_DEFAULT_CONFIG.duration }
+						value={ String( duration ) }
+						onChange={ ( v ) => updateInteraction( { duration: parseInt( v, 10 ) } ) }
+						defaultValue={ DEFAULT_VALUES.duration }
 					/>
 				</Field>
 
 				<Field label={ __( 'Delay', 'elementor' ) }>
 					<TimeFrameIndicator
-						value={ delay }
-						onChange={ ( value ) => updateInteraction( { delay: value } ) }
-						defaultValue={ INTERACTION_DEFAULT_CONFIG.delay }
+						value={ String( delay ) }
+						onChange={ ( v ) => updateInteraction( { delay: parseInt( v, 10 ) } ) }
+						defaultValue={ DEFAULT_VALUES.delay }
 					/>
 				</Field>
 			</Grid>
