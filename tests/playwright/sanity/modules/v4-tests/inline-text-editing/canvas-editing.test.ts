@@ -15,8 +15,12 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
+<<<<<<< HEAD
 		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
 		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active' } );
+=======
+		await wpAdminPage.setExperiments( { e_atomic_elements: 'active', e_classes: 'active' } );
+>>>>>>> 1ea0beed8e (Internal: Remove inline editor experiment [ED-22507] (#34287))
 
 		editor = await wpAdminPage.openNewPage();
 	} );
