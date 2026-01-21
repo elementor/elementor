@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { InlineEditor, InlineEditorToolbar, type InlineEditorToolbarProps } from '@elementor/editor-controls';
 import { Box, ThemeProvider } from '@elementor/ui';
 import { FloatingPortal, useInteractions } from '@floating-ui/react';
@@ -10,6 +10,13 @@ import { useFloatingOnElement } from '../../../hooks/use-floating-on-element';
 
 type Editor = InlineEditorToolbarProps[ 'editor' ];
 type EditorView = Editor[ 'view' ];
+
+const TOP_BAR_SELECTOR = '#elementor-editor-wrapper-v2';
+const NAVIGATOR_SELECTOR = '#elementor-navigator';
+const V4_EDITING_PANEL = 'main.MuiBox-root';
+const V3_EDITING_PANEL = '#elementor-panel-content-wrapper';
+
+const EDITOR_ELEMENTS_OUT_OF_IFRAME = [ TOP_BAR_SELECTOR, NAVIGATOR_SELECTOR, V4_EDITING_PANEL, V3_EDITING_PANEL ];
 
 const EDITOR_WRAPPER_SELECTOR = 'inline-editor-wrapper';
 
@@ -32,10 +39,6 @@ export const CanvasInlineEditor = ( {
 } ) => {
 	const [ hasSelectedContent, setHasSelectedContent ] = useState( false );
 	const [ editor, setEditor ] = useState< Editor | null >( null );
-	const iframeWindow = useMemo(
-		() => rootElement?.ownerDocument?.defaultView ?? null,
-		[ rootElement?.ownerDocument?.defaultView ]
-	);
 
 	const onSelectionEnd = ( view: EditorView ) => {
 		const hasSelection = ! view.state.selection.empty;
@@ -47,10 +50,17 @@ export const CanvasInlineEditor = ( {
 	const asyncUnmountInlineEditor = React.useCallback( () => queueMicrotask( onBlur ), [ onBlur ] );
 
 	useEffect( () => {
-		iframeWindow?.addEventListener( 'blur', asyncUnmountInlineEditor );
+		EDITOR_ELEMENTS_OUT_OF_IFRAME.forEach(
+			( selector ) =>
+				document?.querySelector( selector )?.addEventListener( 'mousedown', asyncUnmountInlineEditor )
+		);
 
-		return () => iframeWindow?.removeEventListener( 'blur', asyncUnmountInlineEditor );
-	}, [ asyncUnmountInlineEditor, iframeWindow ] );
+		return () =>
+			EDITOR_ELEMENTS_OUT_OF_IFRAME.forEach(
+				( selector ) =>
+					document?.querySelector( selector )?.removeEventListener( 'mousedown', asyncUnmountInlineEditor )
+			);
+	}, [ asyncUnmountInlineEditor ] );
 
 	return (
 		<ThemeProvider>

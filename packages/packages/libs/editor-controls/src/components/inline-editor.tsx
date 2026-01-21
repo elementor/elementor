@@ -183,7 +183,7 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 
 const Wrapper = ( { children, containerRef, editor, sx, onBlur, className }: WrapperProps ) => {
 	const wrappedChildren = (
-		<Box ref={ containerRef } { ...sx } class={ className }>
+		<Box ref={ containerRef } { ...sx } className={ className }>
 			{ children }
 		</Box>
 	);
