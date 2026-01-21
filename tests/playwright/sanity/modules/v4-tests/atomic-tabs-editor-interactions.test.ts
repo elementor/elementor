@@ -2,6 +2,7 @@ import { expect, type Locator, type BrowserContext } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
+import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 	let editor: EditorPage;
@@ -52,6 +53,7 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 	};
 
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
+		await wpCli( 'wp elementor experiments activate e_atomic_elements' );
 		context = await browser.newContext();
 		const page = await context.newPage();
 
@@ -61,6 +63,8 @@ test.describe( 'Atomic Tabs Editor Interactions @atomic-widgets', () => {
 	} );
 
 	test.afterEach( async () => {
+		await wpAdmin.resetExperiments();
+
 		await context.close();
 	} );
 
