@@ -34,6 +34,27 @@ const transformAnalyticsData = ( payload ) => {
 	return transformed;
 };
 
+async function fetchManagerUrl( panelId ) {
+	const baseUrl = window.wpApiSettings?.root || '/wp-json/';
+	const nonce = window.wpApiSettings?.nonce || '';
+
+	const response = await fetch(
+		`${ baseUrl }elementor/v1/import-export-customization/manager-url?panel=${ panelId }`,
+		{
+			headers: {
+				'X-WP-Nonce': nonce,
+			},
+		},
+	);
+
+	if ( ! response.ok ) {
+		throw new Error( 'Failed to fetch manager URL' );
+	}
+
+	const data = await response.json();
+	return data.data?.url || data.url;
+}
+
 function getInitialState( contextData, isImport ) {
 	const data = contextData.data;
 	let initialState = data.includes.includes( 'settings' );
@@ -158,16 +179,32 @@ export function KitSettingsCustomizationDialog( { open, handleClose, handleSaveC
 		} ) );
 	};
 
-	const handleClassesReviewClick = () => {
+	const handleClassesReviewClick = async () => {
 		const transformedAnalytics = transformAnalyticsData( settings );
 		handleSaveChanges( 'settings', settings, true, transformedAnalytics );
-		window.open( `${ elementorCommon.config.urls.admin }admin.php?page=elementor-app#/site-editor/global-classes`, '_blank' );
+		handleClose();
+
+		try {
+			const url = await fetchManagerUrl( 'global-classes-manager' );
+			window.open( url, '_blank' );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Failed to open Class Manager:', error );
+		}
 	};
 
-	const handleVariablesReviewClick = () => {
+	const handleVariablesReviewClick = async () => {
 		const transformedAnalytics = transformAnalyticsData( settings );
 		handleSaveChanges( 'settings', settings, true, transformedAnalytics );
-		window.open( `${ elementorCommon.config.urls.admin }admin.php?page=elementor-app#/site-editor/global-variables`, '_blank' );
+		handleClose();
+
+		try {
+			const url = await fetchManagerUrl( 'variables-manager' );
+			window.open( url, '_blank' );
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.error( 'Failed to open Variables Manager:', error );
+		}
 	};
 
 	const classesNotExported = isImport && ! isClassesExported( contextData );
