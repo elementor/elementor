@@ -3,7 +3,6 @@ import { getElements, useSelectedElement } from '@elementor/editor-elements';
 import {
 	__privateUseIsRouteActive as useIsRouteActive,
 	__privateUseListenTo as useListenTo,
-	isExperimentActive,
 	useEditMode,
 	windowEvent,
 } from '@elementor/editor-v1-adapters';
@@ -22,8 +21,7 @@ const overlayRegistry: ElementOverlayConfig[] = [
 	},
 	{
 		component: InlineEditorOverlay,
-		shouldRender: ( { id, isSelected } ) =>
-			isSelected && hasInlineEditableProperty( id ) && isExperimentActive( 'v4-inline-text-editing' ),
+		shouldRender: ( { id, isSelected } ) => isSelected && hasInlineEditableProperty( id ),
 	},
 ];
 
