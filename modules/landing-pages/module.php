@@ -172,26 +172,6 @@ class Module extends BaseModule {
 	}
 
 	/**
-	 * Add Submenu Page
-	 *
-	 * Adds the 'Landing Pages' submenu item to the 'Templates' menu item.
-	 *
-	 * @since 3.1.0
-	 */
-	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
-		$menu_args = $this->get_menu_args();
-
-		$slug = $menu_args['menu_slug'];
-		$function = $menu_args['function'];
-
-		if ( is_callable( $function ) ) {
-			$admin_menu->register( $slug, new Landing_Pages_Empty_View_Menu_Item( $function ) );
-		} else {
-			$admin_menu->register( $slug, new Landing_Pages_Menu_Item() );
-		}
-	}
-
-	/**
 	 * Get 'Add New' Landing Page URL
 	 *
 	 * Retrieves the custom URL for the admin dashboard's 'Add New' button in the Landing Pages admin screen. This URL
@@ -491,10 +471,6 @@ class Module extends BaseModule {
 		add_action( 'elementor/documents/register', function( Documents_Manager $documents_manager ) {
 			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Landing_Page::get_class_full_name() );
 		} );
-
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			$this->register_admin_menu_legacy( $admin_menu );
-		}, Source_Local::ADMIN_MENU_PRIORITY + 20 );
 
 		// Add the custom 'Add New' link for Landing Pages into Elementor's admin config.
 		add_action( 'elementor/admin/localize_settings', function( array $settings ) {
