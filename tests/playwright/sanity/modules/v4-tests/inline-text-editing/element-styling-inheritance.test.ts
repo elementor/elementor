@@ -196,7 +196,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		} );
 	} );
 
-	test.only( 'Validate inheritance of dimension while editing', async () => {
+	test( 'Validate inheritance of dimension while editing', async () => {
 		// Arrange
 		editor = await wpAdminPage.openNewPage();
 		const flexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
