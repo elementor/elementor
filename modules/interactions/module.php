@@ -59,6 +59,12 @@ class Module extends BaseModule {
 		add_action( 'elementor/preview/enqueue_scripts', fn () => $this->enqueue_preview_scripts() );
 		add_action( 'elementor/editor/after_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 
+		// Collect interactions from documents before they render (header, footer, post content)
+		add_filter( 'elementor/frontend/builder_content_data', [ $this, 'collect_document_interactions' ], 10, 2 );
+
+		// Output centralized interaction data in head (similar to editor)
+		add_action( 'wp_footer', [ $this, 'print_interactions_data' ], 1 );
+		
 		add_filter( 'elementor/document/save/data',
 			/**
 			 * @throws \Exception
@@ -75,6 +81,102 @@ class Module extends BaseModule {
 		add_filter( 'elementor/document/save/data', function( $data, $document ) {
 			return ( new Parser( $document->get_main_id() ) )->assign_interaction_ids( $data );
 		}, 11, 2 );
+	}
+
+	public function collect_document_interactions( $elements_data, $post_id ) {
+		// Only collect on frontend, not in editor
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			return $elements_data;
+		}
+
+		if ( empty( $elements_data ) || ! is_array( $elements_data ) ) {
+			return $elements_data;
+		}
+
+		$collector = Interactions_Collector::instance();
+
+		// Iterate through all elements in the document and collect interactions
+		Plugin::$instance->db->iterate_data( $elements_data, function( $element_data ) use ( $collector ) {
+			// Only process elements that have interactions
+			if ( empty( $element_data['interactions'] ) || empty( $element_data['id'] ) ) {
+				return $element_data;
+			}
+
+			$element_id = $element_data['id'];
+			$interactions = $element_data['interactions'];
+
+			// Decode if it's a JSON string
+			if ( is_string( $interactions ) ) {
+				$decoded = json_decode( $interactions, true );
+				if ( json_last_error() === JSON_ERROR_NONE && is_array( $decoded ) ) {
+					$interactions = $decoded;
+				} else {
+					return $element_data;
+				}
+			}
+
+			// Register with collector
+			if ( is_array( $interactions ) && ! empty( $interactions ) ) {
+				$collector->register( $element_id, $interactions );
+			}
+
+			return $element_data;
+		} );
+
+		return $elements_data;
+	}
+
+	// Remove collect_from_document() method - not needed
+
+	public function print_interactions_data() {
+		// Only output on frontend, not in editor
+		if ( Plugin::$instance->editor->is_edit_mode() ) {
+			var_dump( 'dfbdfb' );
+			return;
+		}
+
+		$collector = Interactions_Collector::instance();
+		$all_interactions = $collector->get_all();
+
+		if ( empty( $all_interactions ) ) {
+			var_dump( 'dfbdfb' );
+			return;
+		}
+
+		// Format data similar to editor: array of interaction items
+		$interactions_array = [];
+		foreach ( $all_interactions as $element_id => $interactions ) {
+			if ( isset( $interactions['items'] ) && is_array( $interactions['items'] ) ) {
+				foreach ( $interactions['items'] as $item ) {
+					// Add element_id to each interaction item for easy lookup
+					$item['element_id'] = $element_id;
+					$interactions_array[] = $item;
+				}
+			}
+		}
+
+		if ( empty( $interactions_array ) ) {
+			return;
+		}
+
+		// Output as JSON script tag and move it to head
+		$json_data = wp_json_encode( $interactions_array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+		?>
+		<script type="application/json" data-e-interactions="true" id="elementor-interactions-data">
+			<?php
+			echo $json_data;
+			?>
+		</script>
+		<script>
+			// Move interactions data to head (similar to editor approach)
+			(function() {
+				var script = document.getElementById('elementor-interactions-data');
+				if ( script && document.head ) {
+					document.head.appendChild(script);
+				}
+			})();
+		</script>
+		<?php
 	}
 
 	private function get_config() {

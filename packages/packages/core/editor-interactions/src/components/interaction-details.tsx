@@ -37,7 +37,74 @@ const DEFAULT_VALUES = {
 	offsetBottom: 85,
 };
 
-const TRIGGERS_WITH_REPLAY = [ 'scrollIn', 'scrollOut' ];
+const TRIGGERS_WITHOUT_REPLAY = [ 'load', 'scrollOn' ];
+
+type InteractionsControlType =
+	| 'trigger'
+	| 'effect'
+	| 'effectType'
+	| 'direction'
+	| 'duration'
+	| 'delay'
+	| 'replay'
+	| 'relativeTo'
+	| 'offsetTop'
+	| 'offsetBottom';
+
+type InteractionValues = {
+	trigger: string;
+	effect: string;
+	type: string;
+	direction: string;
+	duration: number;
+	delay: number;
+	replay: boolean;
+	relativeTo: string;
+	offsetTop: number;
+	offsetBottom: number;
+};
+
+type ControlVisibilityConfig = {
+	[ key: string ]: ( values: InteractionValues ) => boolean;
+};
+
+const CONTROL_VISIBILITY_CONFIG: ControlVisibilityConfig = {
+	replay: ( values ) => ! TRIGGERS_WITHOUT_REPLAY.includes( values.trigger ),
+
+	relativeTo: ( values ) => values.trigger === 'scrollOn',
+	offsetTop: ( values ) => values.trigger === 'scrollOn',
+	offsetBottom: ( values ) => values.trigger === 'scrollOn',
+
+	duration: ( values ) => {
+		const isRelativeToVisible = values.trigger === 'scrollOn';
+		return ! isRelativeToVisible;
+	},
+	delay: ( values ) => {
+		const isRelativeToVisible = values.trigger === 'scrollOn';
+		return ! isRelativeToVisible;
+	},
+};
+
+function useControlVisibility( values: InteractionValues ) {
+	return useMemo( () => {
+		const visibility: Record< string, boolean > = {};
+
+		for ( const [ controlName, visibilityFn ] of Object.entries( CONTROL_VISIBILITY_CONFIG ) ) {
+			visibility[ controlName ] = visibilityFn( values );
+		}
+
+		return visibility;
+	}, [ values ] );
+}
+
+function useControlComponent( controlName: InteractionsControlType, isVisible: boolean = true ) {
+	return useMemo( () => {
+		if ( ! isVisible ) {
+			return null;
+		}
+		return getInteractionsControl( controlName )?.component ?? null;
+	}, [ controlName, isVisible ] );
+}
 
 export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }: InteractionDetailsProps ) => {
 	const trigger = extractString( interaction.trigger, DEFAULT_VALUES.trigger );
@@ -54,40 +121,29 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		DEFAULT_VALUES.offsetBottom
 	);
 
-	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
-	const shouldShowRelativeTo = trigger === 'scrollOn';
+	const interactionValues: InteractionValues = useMemo(
+		() => ( {
+			trigger,
+			effect,
+			type,
+			direction,
+			duration,
+			delay,
+			replay,
+			relativeTo,
+			offsetTop,
+			offsetBottom,
+		} ),
+		[ trigger, effect, type, direction, duration, delay, replay, relativeTo, offsetTop, offsetBottom ]
+	);
 
-	const TriggerControl = useMemo( () => {
-		return getInteractionsControl( 'trigger' )?.component ?? null;
-	}, [] );
+	const controlVisibility = useControlVisibility( interactionValues );
 
-	const ReplayControl = useMemo( () => {
-		if ( ! shouldShowReplay ) {
-			return null;
-		}
-		return getInteractionsControl( 'replay' )?.component ?? null;
-	}, [ shouldShowReplay ] );
-
-	const RelativeToControl = useMemo( () => {
-		if ( ! shouldShowRelativeTo ) {
-			return null;
-		}
-		return getInteractionsControl( 'relativeTo' )?.component ?? null;
-	}, [ shouldShowRelativeTo ] );
-
-	const OffsetTopControl = useMemo( () => {
-		if ( ! shouldShowRelativeTo ) {
-			return null;
-		}
-		return getInteractionsControl( 'offsetTop' )?.component ?? null;
-	}, [ shouldShowRelativeTo ] );
-
-	const OffsetBottomControl = useMemo( () => {
-		if ( ! shouldShowRelativeTo ) {
-			return null;
-		}
-		return getInteractionsControl( 'offsetBottom' )?.component ?? null;
-	}, [ shouldShowRelativeTo ] );
+	const TriggerControl = useControlComponent( 'trigger', true );
+	const ReplayControl = useControlComponent( 'replay', controlVisibility.replay );
+	const RelativeToControl = useControlComponent( 'relativeTo', controlVisibility.relativeTo );
+	const OffsetTopControl = useControlComponent( 'offsetTop', controlVisibility.offsetTop );
+	const OffsetBottomControl = useControlComponent( 'offsetBottom', controlVisibility.offsetBottom );
 
 	const resolveDirection = ( hasDirection: boolean, newEffect?: string, newDirection?: string ) => {
 		if ( newEffect === 'slide' && ! newDirection ) {
@@ -182,21 +238,25 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					/>
 				</Field>
 
-				<Field label={ __( 'Duration', 'elementor' ) }>
-					<TimeFrameIndicator
-						value={ String( duration ) }
-						onChange={ ( v ) => updateInteraction( { duration: parseInt( v, 10 ) } ) }
-					/>
-				</Field>
+				{ controlVisibility.duration && (
+					<Field label={ __( 'Duration', 'elementor' ) }>
+						<TimeFrameIndicator
+							value={ String( duration ) }
+							onChange={ ( v ) => updateInteraction( { duration: parseInt( v, 10 ) } ) }
+						/>
+					</Field>
+				) }
 
-				<Field label={ __( 'Delay', 'elementor' ) }>
-					<TimeFrameIndicator
-						value={ String( delay ) }
-						onChange={ ( v ) => updateInteraction( { delay: parseInt( v, 10 ) } ) }
-					/>
-				</Field>
+				{ controlVisibility.delay && (
+					<Field label={ __( 'Delay', 'elementor' ) }>
+						<TimeFrameIndicator
+							value={ String( delay ) }
+							onChange={ ( v ) => updateInteraction( { delay: parseInt( v, 10 ) } ) }
+						/>
+					</Field>
+				) }
 			</Grid>
-			{ shouldShowRelativeTo && RelativeToControl && (
+			{ controlVisibility.relativeTo && RelativeToControl && (
 				<>
 					<Divider />
 					<Grid container spacing={ 1.5 }>
