@@ -15,13 +15,15 @@ const FRONTEND_SCREENSHOT_HOVER = FRONTEND_SCREENSHOT + '-hover';
 const EDITOR_STATIC_SCREENSHOT = 'styled-static-heading';
 const EDITOR_STATIC_SCREENSHOT_HOVER = EDITOR_STATIC_SCREENSHOT + '-hover';
 
+const FLEXBOX_WITH_DIMENSIONS = 'flexbox-with-dimensions';
+const HEADING_AND_FLEXBOX_WITH_DIMENSIONS = 'heading-with-dimensions';
+
 test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 	let wpAdminPage: WpAdminPage;
 	let context: BrowserContext;
 	let page: Page;
 	let editor: EditorPage;
 	let pageId: string;
-	let headingId: string;
 
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
@@ -40,10 +42,10 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 		await context.close();
 	} );
 
-	test( 'Validate styling in editor, and that it does not get affected in frontend', async ( { apiRequests }, testInfo ) => {
+	test( 'Validate styling stays the same while editing, and in the frontend: position absolute', async ( { apiRequests }, testInfo ) => {
 		// Arrange & act.
 		const flexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
-		headingId = await editor.addWidget( { widgetType: EditorSelectors.v4.atoms.heading, container: flexboxId } );
+		const headingId = await editor.addWidget( { widgetType: EditorSelectors.v4.atoms.heading, container: flexboxId } );
 
 		await test.step( 'Style flexbox to prevent footer from overlapping', async () => {
 			await editor.selectElement( flexboxId );
@@ -171,7 +173,7 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT_HOVER ) );
 		} );
 
-		await test.step( 'Heading in editor is styled the same when editor or not', async () => {
+		await test.step( 'Heading in editor is styled the same when editing or not', async () => {
 			// Arrange & assert.
 			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT ) );
 			await headingElement.hover();
@@ -193,6 +195,85 @@ test.describe( 'Inline Editing Element Styling @v4-tests', () => {
 			await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( EDITOR_STATIC_SCREENSHOT ) );
 			await expect( editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor ) ).toBeAttached();
 		} );
+	} );
+
+	test( 'Validate inheritance of dimension while editing', async () => {
+		// Arrange
+		const flexboxId = await editor.addElement( { elType: EditorSelectors.v4.atoms.flexbox }, 'document' );
+		const flexboxElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.flexbox.base );
+
+		const headingId = await editor.addWidget( { widgetType: EditorSelectors.v4.atoms.heading, container: flexboxId } );
+
+		// Act.
+		await test.step( 'Edit content', async () => {
+			await editor.selectElement( headingId );
+			await editor.v4Panel.openTab( 'general' );
+			await editor.v4Panel.fillInlineEditing( TESTED_CONTENT );
+		} );
+
+		await editor.v4Panel.openTab( 'style' );
+
+		await test.step( 'Style widget - typography', async () => {
+			await editor.v4Panel.style.openSection( 'Typography' );
+			await editor.v4Panel.style.setFontColor( '#FFFFFF' );
+			await editor.v4Panel.style.closeSection( 'Typography' );
+		} );
+
+		await test.step( 'Style widget - background', async () => {
+			await editor.v4Panel.style.openSection( 'Background' );
+			await editor.v4Panel.style.setBackgroundColor( '#333333' );
+			await editor.v4Panel.style.closeSection( 'Background' );
+		} );
+
+		await test.step( 'Style flexbox', async () => {
+			await editor.selectElement( flexboxId );
+			await editor.v4Panel.openTab( 'style' );
+
+			await editor.v4Panel.style.openSection( 'Size' );
+			await editor.v4Panel.style.setSizeSectionValue( 'Height', 700, UNITS.px );
+			await editor.v4Panel.style.setSizeSectionValue( 'Width', 1000, UNITS.px );
+			await editor.v4Panel.style.closeSection( 'Size' );
+
+			await editor.v4Panel.style.openSection( 'Spacing' );
+			await editor.v4Panel.style.setSpacingSectionValue( 'Padding', 'Top', 30, UNITS.px );
+			await editor.v4Panel.style.closeSection( 'Spacing' );
+
+			await editor.v4Panel.style.openSection( 'Background' );
+			await editor.v4Panel.style.setBackgroundColor( '#6699AA' );
+			await editor.v4Panel.style.closeSection( 'Background' );
+		} );
+
+		await editor.closeNavigatorIfOpen();
+
+		// Assert.
+		await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( FLEXBOX_WITH_DIMENSIONS ) );
+
+		// Act.
+		await editor.triggerEditingElement( headingId );
+
+		// Assert.
+		await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( FLEXBOX_WITH_DIMENSIONS ) );
+
+		await test.step( 'change heading height', async () => {
+			await editor.selectElement( headingId );
+			await editor.v4Panel.openTab( 'style' );
+
+			await editor.v4Panel.style.openSection( 'Size' );
+			await editor.v4Panel.style.setSizeSectionValue( 'Height', 100, UNITS.px );
+			await editor.v4Panel.style.setSizeSectionValue( 'Width', 400, UNITS.px );
+			await editor.v4Panel.style.closeSection( 'Size' );
+		} );
+
+		await editor.closeNavigatorIfOpen();
+
+		// Assert.
+		await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( HEADING_AND_FLEXBOX_WITH_DIMENSIONS ) );
+
+		// Act.
+		await editor.triggerEditingElement( headingId );
+
+		// Assert.
+		await expect.soft( flexboxElement ).toHaveScreenshot( getScreenshotName( HEADING_AND_FLEXBOX_WITH_DIMENSIONS ) );
 	} );
 } );
 

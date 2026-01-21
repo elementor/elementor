@@ -40,6 +40,7 @@ type InlineEditorProps = {
 	autofocus?: boolean;
 	expectedTag?: string | null;
 	onEditorCreate?: Dispatch< SetStateAction< Editor | null > >;
+	wrapperClassName?: string;
 };
 
 type WrapperProps = PropsWithChildren< {
@@ -47,6 +48,7 @@ type WrapperProps = PropsWithChildren< {
 	editor: ReturnType< typeof useEditor >;
 	sx: SxProps< Theme >;
 	onBlur?: () => void;
+	className?: string;
 } >;
 
 export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) => {
@@ -60,6 +62,7 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 		onBlur = undefined,
 		expectedTag = null,
 		onEditorCreate,
+		wrapperClassName,
 	} = props;
 
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -85,6 +88,11 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 		}
 	};
 
+	const editedElementAttributes = ( HTMLAttributes: Record< string, unknown > ) => ( {
+		...HTMLAttributes,
+		class: elementClasses,
+	} );
+
 	const editor = useEditor( {
 		extensions: [
 			Document.extend( {
@@ -93,20 +101,20 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 			Paragraph.extend( {
 				renderHTML( { HTMLAttributes } ) {
 					const tag = expectedTag ?? 'p';
-					return [ tag, { ...HTMLAttributes, class: elementClasses }, 0 ];
+					return [ tag, editedElementAttributes( HTMLAttributes ), 0 ];
 				},
 			} ),
 			Heading.extend( {
 				renderHTML( { node, HTMLAttributes } ) {
 					if ( expectedTag ) {
-						return [ expectedTag, { ...HTMLAttributes, class: elementClasses }, 0 ];
+						return [ expectedTag, editedElementAttributes( HTMLAttributes ), 0 ];
 					}
 
 					const level = this.options.levels.includes( node.attrs.level )
 						? node.attrs.level
 						: this.options.levels[ 0 ];
 
-					return [ `h${ level }`, { ...HTMLAttributes, class: elementClasses }, 0 ];
+					return [ `h${ level }`, editedElementAttributes( HTMLAttributes ), 0 ];
 				},
 			} ).configure( {
 				levels: [ 1, 2, 3, 4, 5, 6 ],
@@ -160,16 +168,22 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 
 	return (
 		<>
-			<Wrapper containerRef={ containerRef } editor={ editor } sx={ sx } onBlur={ onBlur }>
+			<Wrapper
+				containerRef={ containerRef }
+				editor={ editor }
+				sx={ sx }
+				onBlur={ onBlur }
+				className={ wrapperClassName }
+			>
 				<EditorContent ref={ ref } editor={ editor } />
 			</Wrapper>
 		</>
 	);
 } );
 
-const Wrapper = ( { children, containerRef, editor, sx, onBlur }: WrapperProps ) => {
+const Wrapper = ( { children, containerRef, editor, sx, onBlur, className }: WrapperProps ) => {
 	const wrappedChildren = (
-		<Box ref={ containerRef } { ...sx }>
+		<Box ref={ containerRef } { ...sx } class={ className }>
 			{ children }
 		</Box>
 	);

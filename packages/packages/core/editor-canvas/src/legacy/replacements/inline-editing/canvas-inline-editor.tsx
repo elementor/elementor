@@ -18,6 +18,8 @@ const V3_EDITING_PANEL = '#elementor-panel-content-wrapper';
 
 const BLUR_TRIGGERING_SELECTORS = [ TOP_BAR_SELECTOR, NAVIGATOR_SELECTOR, V4_EDITING_PANEL, V3_EDITING_PANEL ];
 
+const EDITOR_WRAPPER_SELECTOR = 'inline-editor-wrapper';
+
 export const CanvasInlineEditor = ( {
 	elementClasses,
 	initialValue,
@@ -63,11 +65,21 @@ export const CanvasInlineEditor = ( {
 	return (
 		<ThemeProvider>
 			<InlineEditingOverlay expectedTag={ expectedTag } rootElement={ rootElement } id={ id } />
+			<style>
+				{ `
+			.${ EDITOR_WRAPPER_SELECTOR }, .${ EDITOR_WRAPPER_SELECTOR } > * {
+				height: 100%;
+			}
+			.ProseMirror > * {
+				height: 100%;
+			}
+			` }
+			</style>
 			<InlineEditor
 				onEditorCreate={ setEditor }
 				editorProps={ {
 					attributes: {
-						style: 'outline: none;overflow-wrap: normal;',
+						style: 'outline: none;overflow-wrap: normal;height:100%',
 					},
 					handleDOMEvents: {
 						mouseup: onSelectionEnd,
@@ -80,6 +92,7 @@ export const CanvasInlineEditor = ( {
 				onBlur={ onBlur }
 				autofocus
 				expectedTag={ expectedTag }
+				wrapperClassName={ EDITOR_WRAPPER_SELECTOR }
 			/>
 			{ hasSelectedContent && editor && (
 				<InlineEditingToolbarWrapper
