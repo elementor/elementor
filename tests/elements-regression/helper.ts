@@ -20,26 +20,6 @@ export default class ElementRegressionHelper {
 		return isPublished ? 'published' : 'editor';
 	}
 
-	async getMaskElements( widgetType: string, isPublished: boolean ) {
-		const masks = [];
-
-		if ( 'video' === widgetType ) {
-			const context = isPublished ? this.page : this.editor.getPreviewFrame();
-			const videoWidgets = context.locator( '[data-widget_type="video.default"]' );
-			const count = await videoWidgets.count();
-
-			for ( let i = 0; i < count; i++ ) {
-				const videoWidget = videoWidgets.nth( i );
-				const iframe = videoWidget.locator( 'iframe' );
-				if ( await iframe.count() > 0 ) {
-					masks.push( iframe );
-				}
-			}
-		}
-
-		return masks;
-	}
-
 	async doScreenshot( widgetType: string, isPublished: boolean ) {
 		if ( widgetType.includes( 'hover' ) ) {
 			return;
@@ -62,11 +42,8 @@ export default class ElementRegressionHelper {
 				iframe.style.height = '3000px';
 			} );
 		}
-
-		const mask = await this.getMaskElements( widgetType, isPublished );
-
 		await expect.soft( locator )
-			.toHaveScreenshot( `${ widgetType }_${ label }.png`, { maxDiffPixels: 200, timeout: 10000, mask } );
+			.toHaveScreenshot( `${ widgetType }_${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 	}
 
 	async doHoverScreenshot( args:Omit<ScreenShot, 'device'> ) {
@@ -106,8 +83,6 @@ export default class ElementRegressionHelper {
 			return;
 		}
 
-		const mask = await this.getMaskElements( args.widgetType, args.isPublished );
-
 		if ( args.isPublished ) {
 			page = this.page;
 			await page.setViewportSize( deviceParams[ args.device ] );
@@ -118,7 +93,7 @@ export default class ElementRegressionHelper {
 
 			label = '_published';
 			await expect.soft( page.locator( EditorSelectors.container + ' >> nth=0' ) )
-				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000, mask } );
+				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		} else {
 			page = this.editor.getPreviewFrame();
 			await this.setResponsiveMode( args.device );
@@ -128,7 +103,7 @@ export default class ElementRegressionHelper {
 				wrapper.style.maxHeight = 'none';
 			} );
 			await expect.soft( page.locator( EditorSelectors.container + ' >> nth=0' ) )
-				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000, mask } );
+				.toHaveScreenshot( `${ args.widgetType }_${ args.device }${ label }.png`, { maxDiffPixels: 200, timeout: 10000 } );
 		}
 	}
 }
