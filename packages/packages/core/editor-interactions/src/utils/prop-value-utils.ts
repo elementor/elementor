@@ -34,20 +34,26 @@ export const createBoolean = ( value: boolean ): BooleanPropValue => ( {
 	value,
 } );
 
-export const createConfig = (
-	replay: boolean,
-	easing?: string,
-	relativeTo?: string,
-	offsetTop?: number,
-	offsetBottom?: number
-): ConfigPropValue => ( {
+export const createConfig = ( {
+	replay,
+	easing = 'easeIn',
+	relativeTo = '',
+	offsetTop = 0,
+	offsetBottom = 100,
+}: {
+	replay: boolean;
+	easing?: string;
+	relativeTo?: string;
+	offsetTop?: number;
+	offsetBottom?: number;
+} ): ConfigPropValue => ( {
 	$$type: 'config',
 	value: {
 		replay: createBoolean( replay ),
-		easing: createString( easing ?? 'easeIn' ),
-		relativeTo: createString( relativeTo ?? '' ),
-		offsetTop: createNumber( offsetTop ?? 0 ),
-		offsetBottom: createNumber( offsetBottom ?? 100 ),
+		easing: createString( easing ),
+		relativeTo: createString( relativeTo ),
+		offsetTop: createNumber( offsetTop ),
+		offsetBottom: createNumber( offsetBottom ),
 	},
 } );
 
@@ -84,7 +90,13 @@ export const createAnimationPreset = ( {
 		type: createString( type ),
 		direction: createString( direction ?? '' ),
 		timing_config: createTimingConfig( duration, delay ),
-		config: createConfig( replay, easing, relativeTo, offsetTop, offsetBottom ),
+		config: createConfig( {
+			replay,
+			easing,
+			relativeTo,
+			offsetTop,
+			offsetBottom,
+		} ),
 	},
 } );
 
