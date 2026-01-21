@@ -291,19 +291,16 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const durationSelect = comboboxes[ 2 ];
-			fireEvent.mouseDown( durationSelect );
-			const allOptions = screen.getAllByRole( 'option' );
-			const duration500Option = allOptions.find( ( opt ) => opt.textContent?.includes( '500 MS' ) );
-			expect( duration500Option ).toBeInTheDocument();
-			if ( duration500Option ) {
-				fireEvent.click( duration500Option );
-			}
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			const durationInput = sizeInputs[ 0 ];
+
+			expect( durationInput ).toHaveValue( 300 );
+
+			fireEvent.input( durationInput, { target: { value: 354 } } );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
-			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 500 );
+			expect( updatedInteraction.animation.value.timing_config.value.duration.value ).toBe( 354 );
 		} );
 
 		it( 'should call onChange when delay changes', () => {
@@ -317,11 +314,12 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const delaySelect = comboboxes[ 3 ];
-			fireEvent.mouseDown( delaySelect );
-			const delay200Option = screen.getByRole( 'option', { name: /200 MS/i } );
-			fireEvent.click( delay200Option );
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			const durationInput = sizeInputs[ 1 ];
+
+			expect( durationInput ).toHaveValue( 0 );
+
+			fireEvent.input( durationInput, { target: { value: 200 } } );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -526,14 +524,12 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const durationSelect = comboboxes[ 2 ];
-			fireEvent.mouseDown( durationSelect );
-			const allOptions = screen.getAllByRole( 'option' );
-			const duration500Option = allOptions.find( ( opt ) => opt.textContent?.includes( '500 MS' ) );
-			if ( duration500Option ) {
-				fireEvent.click( duration500Option );
-			}
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			const durationInput = sizeInputs[ 0 ];
+
+			expect( durationInput ).toHaveValue( 300 );
+
+			fireEvent.input( durationInput, { target: { value: 500 } } );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
@@ -552,11 +548,12 @@ describe( 'InteractionDetails', () => {
 
 			renderInteractionDetails( interaction );
 
-			const comboboxes = screen.getAllByRole( 'combobox' );
-			const delaySelect = comboboxes[ 3 ];
-			fireEvent.mouseDown( delaySelect );
-			const delay200Option = screen.getByRole( 'option', { name: /200 MS/i } );
-			fireEvent.click( delay200Option );
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			const durationInput = sizeInputs[ 1 ];
+
+			expect( durationInput ).toHaveValue( 0 );
+
+			fireEvent.input( durationInput, { target: { value: 200 } } );
 
 			expect( mockOnChange ).toHaveBeenCalledTimes( 1 );
 			const updatedInteraction = mockOnChange.mock.calls[ 0 ][ 0 ];
