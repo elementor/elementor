@@ -33,7 +33,6 @@ export function TimeFrameIndicator( { value, onChange, defaultValue }: FieldProp
 			value={ sizeValue }
 			onChange={ handleChange }
 			onBlur={ handleBlur }
-			defaultValue={ { size: 90 } }
 		/>
 	);
 }
