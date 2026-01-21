@@ -10,6 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Frontend_Assets_Loader {
 	const ALPINEJS_HANDLE = 'elementor-v2-alpinejs';
 	const FRONTEND_HANDLERS_HANDLE = 'elementor-v2-frontend-handlers';
+	const ATOMIC_WIDGETS_HANDLER = 'elementor-v2-widgets-frontend';
 
 	/**
 	 * @return void
@@ -36,6 +37,14 @@ class Frontend_Assets_Loader {
 			self::ALPINEJS_HANDLE,
 			"{$assets_url}js/packages/alpinejs/alpinejs{$min_suffix}.js",
 			[],
+			ELEMENTOR_VERSION,
+			true
+		);
+
+		wp_register_script(
+			self::ATOMIC_WIDGETS_HANDLER,
+			"{$assets_url}js/atomic-widgets-frontend-handler{$min_suffix}.js",
+			[ self::FRONTEND_HANDLERS_HANDLE ],
 			ELEMENTOR_VERSION,
 			true
 		);

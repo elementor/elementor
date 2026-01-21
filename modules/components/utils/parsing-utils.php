@@ -2,8 +2,8 @@
 namespace Elementor\Modules\Components\Utils;
 
 use Elementor\Plugin;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 

@@ -5,9 +5,11 @@ namespace Elementor\Modules\AtomicWidgets\DynamicTags;
 use Elementor\Modules\AtomicWidgets\PropTypes\Utils\Prop_Types_Schema_Extender;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Transformable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Image_Src_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Color_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Url_Prop_Type;
 use Elementor\Modules\DynamicTags\Module as V1_Dynamic_Tags_Module;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
@@ -58,12 +60,24 @@ class Dynamic_Prop_Types_Mapping extends Prop_Types_Schema_Extender {
 			return [ V1_Dynamic_Tags_Module::NUMBER_CATEGORY ];
 		}
 
+		if ( $prop_type->get_meta_item( 'is_svg', false ) ) {
+			return [ V1_Dynamic_Tags_Module::SVG_CATEGORY ];
+		}
+
 		if ( $prop_type instanceof Image_Src_Prop_Type ) {
 			return [ V1_Dynamic_Tags_Module::IMAGE_CATEGORY ];
 		}
 
 		if ( $prop_type instanceof Url_Prop_Type ) {
 			return [ V1_Dynamic_Tags_Module::URL_CATEGORY ];
+		}
+
+		if ( $prop_type instanceof Html_Prop_Type ) {
+			return [ V1_Dynamic_Tags_Module::TEXT_CATEGORY ];
+		}
+
+		if ( $prop_type instanceof Color_Prop_Type ) {
+			return [ V1_Dynamic_Tags_Module::COLOR_CATEGORY ];
 		}
 
 		if ( $prop_type instanceof String_Prop_Type && empty( $prop_type->get_enum() ) ) {

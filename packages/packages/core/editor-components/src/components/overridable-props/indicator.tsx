@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { forwardRef } from 'react';
 import { CheckIcon, PlusIcon } from '@elementor/icons';
-import { type bindTrigger, Box, styled } from '@elementor/ui';
+import { Box, styled } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 const SIZE = 'tiny';
@@ -64,11 +64,10 @@ const Content = styled( Box )`
 
 type Props = {
 	isOverridable: boolean;
-	triggerProps: ReturnType< typeof bindTrigger >;
 	isOpen: boolean;
 };
-export const Indicator = forwardRef< HTMLDivElement, Props >( ( { triggerProps, isOpen, isOverridable }, ref ) => (
-	<Content ref={ ref } { ...triggerProps } className={ isOpen || isOverridable ? 'enlarged' : '' }>
+export const Indicator = forwardRef< HTMLDivElement, Props >( ( { isOpen, isOverridable, ...props }, ref ) => (
+	<Content ref={ ref } { ...props } className={ isOpen || isOverridable ? 'enlarged' : '' }>
 		<IconContainer
 			className="icon"
 			aria-label={

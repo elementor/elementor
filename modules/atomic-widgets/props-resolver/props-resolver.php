@@ -90,8 +90,7 @@ abstract class Props_Resolver {
 			$context = Props_Resolver_Context::make()
 				->set_key( $key )
 				->set_disabled( (bool) ( $value['disabled'] ?? false ) )
-				->set_prop_type( $prop_type )
-				->set_transformers_registry( $this->transformers_registry );
+				->set_prop_type( $prop_type );
 
 			return $transformer->transform( $value['value'], $context );
 		} catch ( Exception $e ) {

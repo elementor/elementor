@@ -1,9 +1,9 @@
 import { injectIntoLogic } from '@elementor/editor';
-import { initElementsMcp } from '@elementor/editor-elements';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { blockCommand } from '@elementor/editor-v1-adapters';
 
 import { EditingPanelHooks } from './components/editing-panel-hooks';
+import { init as initPromotionsSections } from './components/promotions/init';
 import { registerElementControls } from './controls-registry/element-controls/registry';
 import { init as initDynamics } from './dynamics/init';
 import { panel } from './panel';
@@ -14,8 +14,6 @@ import { isAtomicWidgetSelected } from './sync/is-atomic-widget-selected';
 export function init() {
 	registerPanel( panel );
 	blockV1Panel();
-
-	initElementsMcp();
 
 	injectIntoLogic( {
 		id: 'editing-panel-hooks',
@@ -32,6 +30,8 @@ export function init() {
 	registerElementControls();
 
 	initResetStyleProps();
+
+	initPromotionsSections();
 }
 
 const blockV1Panel = () => {

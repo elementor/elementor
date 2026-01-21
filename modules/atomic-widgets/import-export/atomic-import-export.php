@@ -2,8 +2,8 @@
 
 namespace Elementor\Modules\AtomicWidgets\ImportExport;
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Settings_Props_Modifier;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Styles_Ids_Modifier;
 use Elementor\Modules\AtomicWidgets\ImportExport\Modifiers\Styles_Props_Modifier;

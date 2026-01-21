@@ -67,6 +67,7 @@ const mockVariableType = {
 	variableType: 'Color',
 	propTypeUtil: { key: 'color' },
 	selectionFilter: null,
+	isUpgradeRequired: false,
 };
 
 const mockBoundProp = {
@@ -331,6 +332,40 @@ describe( 'VariablesSelection', () => {
 			// eslint-disable-next-line testing-library/no-node-access
 			const selectedItem = screen.getByText( 'Primary Color' ).closest( '[aria-selected="true"]' );
 			expect( selectedItem ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'Upgrade Promotion', () => {
+		it( 'should show promotion empty state when upgrade required', () => {
+			// Arrange.
+			( variablesRegistry.getVariableType as jest.Mock ).mockReturnValue( {
+				...mockVariableType,
+				emptyState: <button>Upgrade Now</button>,
+			} );
+			( useFilteredVariables as jest.Mock ).mockReturnValue( {
+				list: [],
+				hasMatches: false,
+				isSourceNotEmpty: false,
+				hasNoCompatibleVariables: false,
+			} );
+
+			// Act.
+			renderWithTheme(
+				<TestWrapper propTypeKey="size">
+					<VariablesSelection { ...defaultProps } disabled={ true } />
+				</TestWrapper>
+			);
+
+			// Assert.
+			expect( screen.getByText( /No .* variables yet/i ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( /Upgrade to create .* variables and maintain consistent element sizing/i )
+			).toBeInTheDocument();
+
+			expect( screen.getByText( 'Upgrade Now' ) ).toBeInTheDocument();
+
+			const addButton = screen.getByRole( 'button', { name: __( 'Create variable', 'elementor' ) } );
+			expect( addButton ).toBeDisabled();
 		} );
 	} );
 } );

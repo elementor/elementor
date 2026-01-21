@@ -25,10 +25,11 @@ type Props = {
 	onAdd?: () => void;
 	onEdit?: ( key: string ) => void;
 	onSettings?: () => void;
+	disabled?: boolean;
 };
 
-export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }: Props ) => {
-	const { icon: VariableIcon, startIcon, variableType, propTypeUtil } = useVariableType();
+export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, disabled = false }: Props ) => {
+	const { icon: VariableIcon, startIcon, variableType, propTypeUtil, emptyState } = useVariableType();
 
 	const { value: variable, setValue: setVariable, path } = useVariableBoundProp();
 	const [ searchValue, setSearchValue ] = useState( '' );
@@ -64,14 +65,17 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 	if ( onAdd ) {
 		actions.push(
 			<Tooltip key="add" placement="top" title={ CREATE_LABEL }>
-				<IconButton
-					id="add-variable-button"
-					size={ SIZE }
-					onClick={ onAddAndTrack }
-					aria-label={ CREATE_LABEL }
-				>
-					<PlusIcon fontSize={ SIZE } />
-				</IconButton>
+				<span>
+					<IconButton
+						id="add-variable-button"
+						size={ SIZE }
+						onClick={ onAddAndTrack }
+						aria-label={ CREATE_LABEL }
+						disabled={ disabled }
+					>
+						<PlusIcon fontSize={ SIZE } />
+					</IconButton>
+				</span>
 			</Tooltip>
 		);
 	}
@@ -119,12 +123,6 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 		setSearchValue( '' );
 	};
 
-	const noVariableTitle = sprintf(
-		/* translators: %s: Variable Type. */
-		__( 'Create your first %s variable', 'elementor' ),
-		variableType
-	);
-
 	return (
 		<PopoverBody>
 			<PopoverHeader
@@ -166,9 +164,31 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 				/>
 			) }
 
-			{ ! hasVariables && ! hasNoCompatibleVariables && (
+			{ disabled && (
 				<EmptyState
-					title={ noVariableTitle }
+					title={ sprintf(
+						/* translators: %s: Variable Type. */
+						__( 'No %s variables yet', 'elementor' ),
+						variableType
+					) }
+					message={ sprintf(
+						/* translators: %s: Variable Type. */
+						__( 'Upgrade to create %s variables and maintain consistent element sizing.', 'elementor' ),
+						variableType
+					) }
+					icon={ <VariableIcon fontSize="large" /> }
+				>
+					{ emptyState }
+				</EmptyState>
+			) }
+
+			{ ! hasVariables && ! hasNoCompatibleVariables && ! disabled && (
+				<EmptyState
+					title={ sprintf(
+						/* translators: %s: Variable Type. */
+						__( 'Create your first %s variable', 'elementor' ),
+						variableType
+					) }
 					message={ __(
 						'Variables are saved attributes that you can apply anywhere on your site.',
 						'elementor'
@@ -178,7 +198,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings }:
 				/>
 			) }
 
-			{ hasNoCompatibleVariables && (
+			{ hasNoCompatibleVariables && ! disabled && (
 				<EmptyState
 					title={ __( 'No compatible variables', 'elementor' ) }
 					message={ __(

@@ -31,6 +31,7 @@ export function linkPropType() {
 		shape: {
 			destination: stringPropType(),
 			isTargetBlank: booleanPropType(),
+			tag: stringPropType(),
 		},
 	} );
 }

@@ -5,6 +5,8 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\Utils;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Core\Common\Modules\Connect\AdminMenuItems\Editor_One_Connect_Menu;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -40,12 +42,18 @@ class Admin {
 		return $validated;
 	}
 
-	/**
-	 * @since 2.3.0
-	 * @access public
-	 */
 	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( static::PAGE_ID, new Connect_Menu_Item() );
+		if ( ! $this->is_editor_one_active() ) {
+			$admin_menu->register( static::PAGE_ID, new Connect_Menu_Item() );
+		}
+	}
+
+	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
+		$menu_data_provider->register_menu( new Editor_One_Connect_Menu() );
+	}
+
+	private function is_editor_one_active(): bool {
+		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	/**
@@ -116,10 +124,18 @@ class Admin {
 
 		add_action( 'elementor/admin/menu/register', [ $this, 'register_admin_menu' ] );
 
+		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ] );
+
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
 			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
 				add_action( 'load-' . $hooks[ static::PAGE_ID ], [ $this, 'on_load_page' ] );
 			}
 		}, 10, 2 );
+
+		add_action( 'elementor/editor-one/menu/after_register_hidden_submenus', function ( array $hooks ) {
+			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
+				add_action( 'load-' . $hooks[ static::PAGE_ID ], [ $this, 'on_load_page' ] );
+			}
+		} );
 	}
 }

@@ -95,20 +95,22 @@ $top-bar-height: 50px;
 	&.e-admin-top-bar--active {
 		display: block;
 
-		&~ #wpbody {
-			#wpbody-content {
-				margin-block-start: $top-bar-height;
-			}
+		&:not(.e-admin-top-bar--editor-one) {
+			&~ #wpbody {
+				#wpbody-content {
+					margin-block-start: $top-bar-height;
+				}
 
-			.wrap {
-				// Since there is no h1 tag (in the normal place of the admin page) we need to break the page content under screen options button.
-				clear: both;
-				padding-block-start: 10px;
-
-				h1 {
-					display: none;
+				.wrap {
+					// Since there is no h1 tag (in the normal place of the admin page) we need to break the page content under screen options button.
+					clear: both;
+					padding-block-start: 10px;
 				}
 			}
+		}
+
+		&:not(.e-admin-top-bar--editor-one) ~ #wpbody .wrap h1 {
+			display: none;
 		}
 	}
 
@@ -165,8 +167,8 @@ $top-bar-height: 50px;
 		line-height: normal;
 	}
 
-	// The title and buttons are not visible by default in the original place. They might be visible according to the result of the admin top bar.
-	&~ #wpbody {
+	// The title and buttons are not visible by default in the original place if Elementor One is disabled. They might be visible according to the result of the admin top bar.
+	&:not(.e-admin-top-bar--editor-one) ~ #wpbody {
 		.wrap {
 			h1, .page-title-action {
 				display: none;

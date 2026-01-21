@@ -89,11 +89,11 @@ describe( 'duplicateElements', () => {
 		expect( mockDuplicateElement ).toHaveBeenCalledTimes( 2 );
 		expect( mockDuplicateElement ).toHaveBeenNthCalledWith( 1, {
 			elementId: 'original-1',
-			options: { useHistory: false, clone: true },
+			options: { useHistory: false },
 		} );
 		expect( mockDuplicateElement ).toHaveBeenNthCalledWith( 2, {
 			elementId: 'original-2',
-			options: { useHistory: false, clone: true },
+			options: { useHistory: false },
 		} );
 
 		const historyItem = historyMock.instance.get();
@@ -203,7 +203,7 @@ describe( 'duplicateElements', () => {
 		expect( mockDuplicateElement ).toHaveBeenCalledTimes( 1 );
 		expect( mockDuplicateElement ).toHaveBeenCalledWith( {
 			elementId: 'original-1',
-			options: { useHistory: false, clone: true },
+			options: { useHistory: false },
 		} );
 	} );
 

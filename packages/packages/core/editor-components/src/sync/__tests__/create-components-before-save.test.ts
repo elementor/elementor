@@ -100,8 +100,22 @@ describe( 'createComponentsBeforeSave', () => {
 
 			// Act & Assert
 			await expect( createComponentsBeforeSave( { elements: [], status: 'draft' } ) ).rejects.toThrow(
-				'Failed to publish components and update component instances'
+				'Failed to publish components'
 			);
+		} );
+
+		it( 'should remove unpublished components from store when API call fails', async () => {
+			// Arrange
+			mockCreateComponents.mockRejectedValue( new Error( 'API Error' ) );
+
+			// Assert - unpublished components exist before
+			expect( selectUnpublishedComponents( getState() ) ).toHaveLength( 2 );
+
+			// Act
+			await expect( createComponentsBeforeSave( { elements: [], status: 'draft' } ) ).rejects.toThrow();
+
+			// Assert - unpublished components removed after failure
+			expect( selectUnpublishedComponents( getState() ) ).toEqual( [] );
 		} );
 	} );
 
@@ -121,7 +135,9 @@ describe( 'createComponentsBeforeSave', () => {
 				props: {
 					component_instance: {
 						$$type: 'component-instance',
-						value: { component_id: 1111 },
+						value: {
+							component_id: { $$type: 'number', value: 1111 },
+						},
 					},
 				},
 				withHistory: false,
@@ -131,7 +147,9 @@ describe( 'createComponentsBeforeSave', () => {
 				props: {
 					component_instance: {
 						$$type: 'component-instance',
-						value: { component_id: 3333 },
+						value: {
+							component_id: { $$type: 'number', value: 3333 },
+						},
 					},
 				},
 				withHistory: false,
@@ -190,10 +208,11 @@ describe( 'createComponentsBeforeSave', () => {
 			await createComponentsBeforeSave( { elements: [], status: 'draft' } );
 
 			// Assert
-			expect( getState().components.data ).toEqual( [
-				{ id: 4444, name: 'Published Component', uid: publishedComponentUid },
-				{ id: 3333, name: 'Test Component 2', uid: COMPONENT_2_UID },
-				{ id: 1111, name: 'Test Component 1', uid: COMPONENT_1_UID },
+			const components = getState().components.data;
+			expect( components ).toEqual( [
+				{ id: 3333, name: 'Test Component 2', uid: COMPONENT_2_UID, overridableProps: undefined },
+				{ id: 1111, name: 'Test Component 1', uid: COMPONENT_1_UID, overridableProps: undefined },
+				{ id: 4444, name: 'Published Component', uid: publishedComponentUid, overridableProps: undefined },
 			] );
 		} );
 
@@ -249,7 +268,9 @@ const mockPageElements: V1ElementData[] = [
 		settings: {
 			component_instance: {
 				$$type: 'component-instance',
-				value: { component_id: COMPONENT_1_UID },
+				value: {
+					component_id: { $$type: 'number', value: COMPONENT_1_UID },
+				},
 			},
 		},
 	},
@@ -264,7 +285,9 @@ const mockPageElements: V1ElementData[] = [
 				settings: {
 					component_instance: {
 						$$type: 'component-instance',
-						value: { component_id: COMPONENT_2_UID },
+						value: {
+							component_id: { $$type: 'number', value: COMPONENT_2_UID },
+						},
 					},
 				},
 			},
@@ -288,7 +311,9 @@ const mockPageElements: V1ElementData[] = [
 		settings: {
 			component_instance: {
 				$$type: 'component-instance',
-				value: { component_id: 4444 },
+				value: {
+					component_id: { $$type: 'number', value: 4444 },
+				},
 			},
 		},
 	},

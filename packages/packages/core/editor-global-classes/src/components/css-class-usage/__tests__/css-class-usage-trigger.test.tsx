@@ -1,13 +1,13 @@
 import * as React from 'react';
+import { createMockTrackingModule, mockTracking } from 'test-utils';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-import { mockTrackingModule } from '../../../__tests__/mocks';
 import { useCssClassUsageByID } from '../../../hooks/use-css-class-usage-by-id';
 import { CssClassUsageTrigger } from '../components';
 
 jest.mock( '../../../hooks/use-css-class-usage-by-id' );
 
-jest.mock( '../../../utils/tracking', () => mockTrackingModule );
+jest.mock( '../../../utils/tracking', () => createMockTrackingModule( 'trackGlobalClasses' ) );
 
 describe( 'CssClassUsageTrigger', () => {
 	it( 'renders locator icon and does not open on click when total is 0', async () => {
@@ -22,6 +22,16 @@ describe( 'CssClassUsageTrigger', () => {
 
 		fireEvent.mouseOver( screen.getByRole( 'button' ) );
 		expect( await screen.findByText( 'This class isn’t being used yet.' ) ).toBeInTheDocument();
+
+		const button = screen.getByRole( 'button' );
+		fireEvent.mouseEnter( button );
+
+		expect( mockTracking ).toHaveBeenCalledWith( {
+			event: 'classUsageHovered',
+			classId: 'css-id',
+			usage: 0,
+		} );
+
 		expect( screen.queryByLabelText( 'css-class-usage-popover' ) ).not.toBeInTheDocument();
 	} );
 
@@ -44,11 +54,22 @@ describe( 'CssClassUsageTrigger', () => {
 		const iconButton = screen.getByRole( 'button' );
 		expect( iconButton ).toBeInTheDocument();
 
+		fireEvent.mouseEnter( iconButton );
+		expect( mockTracking ).toHaveBeenCalledWith( {
+			event: 'classUsageHovered',
+			classId: 'css-id',
+			usage: 2,
+		} );
+
 		fireEvent.click( iconButton );
 
-		// Assert.
 		await waitFor( () => {
 			expect( screen.getByRole( 'presentation' ) ).toBeInTheDocument();
+		} );
+
+		expect( mockTracking ).toHaveBeenCalledWith( {
+			event: 'classUsageClicked',
+			classId: 'css-id',
 		} );
 	} );
 } );

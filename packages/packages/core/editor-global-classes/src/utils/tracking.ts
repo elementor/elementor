@@ -157,9 +157,7 @@ const track = ( data: Record< string, unknown > ) => {
 	try {
 		dispatchEvent?.( name, {
 			event,
-			properties: {
-				...eventData,
-			},
+			...eventData,
 		} );
 	} catch ( error ) {
 		throw new GlobalClassTrackingError( { cause: error } );

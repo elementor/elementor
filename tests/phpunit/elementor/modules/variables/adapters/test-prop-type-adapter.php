@@ -5,6 +5,7 @@ namespace Elementor\Modules\Variables\Adapters;
 use Elementor\Core\Kits\Documents\Kit;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Union_Prop_Type;
+use Elementor\Modules\AtomicWidgets\Styles\Size_Constants;
 use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
@@ -555,5 +556,240 @@ class Test_Prop_Type_Adapter extends TestCase {
 		];
 		// Assert.
 		$this->assertEquals( $expected, $result['data']['e-gv-size']['value'] );
+	}
+
+	public function test_to_storage__handles_invalid_edge_case_values_for_all_variable_types() {
+		// Arrange.
+		$collection = $this->make_collection( [
+			'data' => [
+				'e-gv-color-empty' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Color Empty',
+					'value' => '',
+				],
+				'e-gv-font-empty' => [
+					'type' => Font_Variable_Prop_Type::get_key(),
+					'label' => 'Font Empty',
+					'value' => '',
+				],
+				'e-gv-font-null' => [
+					'type' => Font_Variable_Prop_Type::get_key(),
+					'label' => 'Font Null',
+					'value' => null,
+				],
+				'e-gv-size-empty' => [
+					'type' => Size_Variable_Prop_Type::get_key(),
+					'label' => 'Size Empty',
+					'value' => '',
+				],
+				'e-gv-size-null' => [
+					'type' => Size_Variable_Prop_Type::get_key(),
+					'label' => 'Size Null',
+					'value' => null,
+				]
+			],
+		] );
+
+		// Act.
+		$result = $this->adapter->to_storage( $collection );
+
+		$expected = [
+			'e-gv-color-empty' => [
+				'type' => 'global-color-variable',
+				'label' => 'Color Empty',
+				'value' => [
+					'$$type' => 'color',
+					'value' => ''
+				]
+			],
+			'e-gv-font-empty' => [
+				'type' => Font_Variable_Prop_Type::get_key(),
+				'label' => 'Font Empty',
+				'value' => [
+					'$$type' => 'string',
+					'value' => ''
+				],
+			],
+			'e-gv-font-null' => [
+				'type' => Font_Variable_Prop_Type::get_key(),
+				'label' => 'Font Null',
+				'value' => [
+					'$$type' => 'string',
+					'value' => null
+				],
+			],
+			'e-gv-size-empty' => [
+				'type' => Size_Variable_Prop_Type::get_key(),
+				'label' => 'Size Empty',
+				'value' => [
+					'$$type' => 'size',
+					'value' => [
+						'size' => '',
+						'unit' => Size_Constants::DEFAULT_UNIT,
+					]
+				],
+			],
+			'e-gv-size-null' => [
+				'type' => Size_Variable_Prop_Type::get_key(),
+				'label' => 'Size Null',
+				'value' => [
+					'$$type' => 'size',
+					'value' => [
+						'size' => '',
+						'unit' => Size_Constants::DEFAULT_UNIT,
+					]
+				],
+			]
+		];
+
+		$this->assertEquals( $expected, $result['data'] );
+	}
+
+	public function test_from_storage__handles_invalid_values_edge_case_values_for_all_variable_types() {
+		// Arrange.
+		$collection = $this->make_collection( [
+			'data' => [
+				'e-gv-color-string' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Color String',
+					'value' => [
+						'$$type' => 'color',
+						'value' => '',
+					],
+				],
+				'e-gv-empty-string-color' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Color Empty',
+					'value' => '',
+				],
+				'e-gv-color-null' => [
+					'type' => Color_Variable_Prop_Type::get_key(),
+					'label' => 'Color Null',
+					'value' => [
+						'$$type' => 'color',
+						'value' => null,
+					],
+				],
+				'e-gv-font-empty' => [
+					'type' => Font_Variable_Prop_Type::get_key(),
+					'label' => 'Font Empty',
+					'value' => [
+						'$$type' => 'string',
+						'value' => '',
+					],
+				],
+				'e-gv-empty-string-size' => [
+					'type' => Size_Variable_Prop_Type::get_key(),
+					'label' => 'Size String',
+					'value' => [
+						'$$type' => 'size',
+						'value' => '',
+					],
+				],
+				'e-gv-null-size' => [
+					'type' => Size_Variable_Prop_Type::get_key(),
+					'label' => 'Size String',
+					'value' => [
+						'$$type' => 'size',
+						'value' => null,
+					],
+				],
+				'e-gv-null-value' => [
+					'type' => Size_Variable_Prop_Type::get_key(),
+					'label' => 'Size String',
+					'value' => null,
+				],
+				'e-gv-size-empty' => [
+					'type' => Size_Variable_Prop_Type::get_key(),
+					'label' => 'Size Empty',
+					'value' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => '',
+							'unit' => '',
+						],
+					],
+				],
+				'e-gv-size-null' => [
+					'type' => Size_Variable_Prop_Type::get_key(),
+					'label' => 'Size Null',
+					'value' => [
+						'$$type' => 'size',
+						'value' => [
+							'size' => null,
+							'unit' => null,
+						],
+					],
+				],
+				'e-gv-size-malformed' => [
+					'type' => Size_Variable_Prop_Type::get_key(),
+					'label' => 'Size Malformed',
+					'value' => [
+						'$$type' => 'size',
+						'value' => [],
+					],
+				]
+			],
+		] );
+
+		// Act.
+		$this->adapter->from_storage( $collection );
+		$result = $collection->serialize();
+
+		$expected = [
+			'e-gv-color-string' => [
+				'type' => Color_Variable_Prop_Type::get_key(),
+				'label' => 'Color String',
+				'value' => '',
+			],
+			'e-gv-empty-string-color' => [
+				'type' => Color_Variable_Prop_Type::get_key(),
+				'label' => 'Color Empty',
+				'value' => '',
+			],
+			'e-gv-color-null' => [
+				'type' => Color_Variable_Prop_Type::get_key(),
+				'label' => 'Color Null',
+				'value' => null,
+			],
+			'e-gv-font-empty' => [
+				'type' => Font_Variable_Prop_Type::get_key(),
+				'label' => 'Font Empty',
+				'value' => '',
+			],
+			'e-gv-empty-string-size' => [
+				'type' => Size_Variable_Prop_Type::get_key(),
+				'label' => 'Size String',
+				'value' => 'px',
+			],
+			'e-gv-null-size' => [
+				'type' => Size_Variable_Prop_Type::get_key(),
+				'label' => 'Size String',
+				'value' => 'px',
+			],
+			'e-gv-null-value' => [
+				'type' => Size_Variable_Prop_Type::get_key(),
+				'label' => 'Size String',
+				'value' => null,
+			],
+			'e-gv-size-empty' => [
+				'type' => Size_Variable_Prop_Type::get_key(),
+				'label' => 'Size Empty',
+				'value' => 'px',
+			],
+			'e-gv-size-null' => [
+				'type' => Size_Variable_Prop_Type::get_key(),
+				'label' => 'Size Null',
+				'value' => 'px',
+			],
+			'e-gv-size-malformed' => [
+				'type' => 'global-size-variable',
+				'label' => 'Size Malformed',
+				'value' => 'px',
+			],
+		];
+
+		// Assert.
+		$this->assertEquals( $expected, $result['data'] );
 	}
 }

@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'ELEMENTOR_VERSION', '3.35.0' );
+define( 'ELEMENTOR_VERSION', '4.0.0' );
 
 define( 'ELEMENTOR__FILE__', __FILE__ );
 define( 'ELEMENTOR_PLUGIN_BASE', plugin_basename( ELEMENTOR__FILE__ ) );
@@ -52,6 +52,16 @@ if ( file_exists( ELEMENTOR_PATH . 'vendor/autoload.php' ) ) {
 	require_once ELEMENTOR_PATH . 'vendor/autoload.php';
 	// We need this file because of the DI\create function that we are using.
 	// Autoload classmap doesn't include this file.
+}
+
+$deprecation_func_file = ELEMENTOR_PATH . 'vendor_prefixed/twig/symfony/deprecation-contracts/function.php';
+if ( file_exists( $deprecation_func_file ) ) {
+	require_once $deprecation_func_file;
+	if ( ! function_exists( 'trigger_deprecation' ) ) {
+		function trigger_deprecation( string $package, string $version, string $message, ...$args ): void {
+			\ElementorDeps\trigger_deprecation( $package, $version, $message, ...$args );
+		}
+	}
 }
 
 if ( ! version_compare( PHP_VERSION, '7.4', '>=' ) ) {

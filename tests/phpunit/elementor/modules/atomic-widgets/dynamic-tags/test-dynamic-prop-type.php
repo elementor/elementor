@@ -54,6 +54,7 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 			'$$type' => 'dynamic',
 			'value' => [
 				'name' => 'mock-dynamic-tag',
+				'group' => 'mock-dynamic-tag-group',
 				'settings' => [
 					'mock-control-1' => [ '$$type' => 'string', 'value' => 'mock-value-1' ],
 					'mock-control-2' => [ '$$type' => 'string', 'value' => 'valid-value' ],
@@ -80,6 +81,7 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 			'$$type' => 'dynamic',
 			'value' => [
 				'name' => 'mock-dynamic-tag',
+				'group' => 'mock-dynamic-tag-group',
 				'settings' => [
 					'mock-control-1' => [ '$$type' => 'string', 'value' => ' <script>console.log("Hack!")</script>mock-value-1 ' ],
 					'not-in-schema' => [ '$$type' => 'string', 'value' => 'Not in schema' ],
@@ -94,6 +96,7 @@ class Test_Dynamic_Prop_Type extends Elementor_Test_Base {
 				'$$type' => 'dynamic',
 				'value' => [
 					'name' => 'mock-dynamic-tag',
+					'group' => 'mock-dynamic-tag-group',
 					'settings' => [
 						'mock-control-1' => [ '$$type' => 'string', 'value' => ' mock-value-1 ' ],
 					],

@@ -5,15 +5,13 @@ import {
 	updateElementSettings,
 	updateElementStyle,
 } from '@elementor/editor-elements';
-import {
-	getPropSchemaFromCache,
-	type PropValue,
-	Schema,
-	stringPropTypeUtil,
-	type TransformablePropValue,
-} from '@elementor/editor-props';
+import { getPropSchemaFromCache, type PropValue, Schema, type TransformablePropValue } from '@elementor/editor-props';
 import { type CustomCss, getStylesSchema } from '@elementor/editor-styles';
+import { type Utils as IUtils } from '@elementor/editor-variables';
+import { type z } from '@elementor/schema';
 
+// TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
+type XElementor = z.infer< z.ZodAny >;
 type OwnParams = {
 	elementId: string;
 	elementType: string;
@@ -21,13 +19,22 @@ type OwnParams = {
 	propertyValue: string | PropValue | TransformablePropValue< string, unknown >;
 };
 
-function resolvePropValue( value: unknown, forceKey?: string ): PropValue {
-	return Schema.adjustLlmPropValueSchema( value as PropValue, forceKey );
+export function resolvePropValue( value: unknown, forceKey?: string ): PropValue {
+	// TODO: see https://elementor.atlassian.net/browse/ED-22513 for better cross-module access
+	const Utils = ( ( ( window as XElementor ).elementorV2 as XElementor ).editorVariables as XElementor )
+		.Utils as typeof IUtils;
+	return Schema.adjustLlmPropValueSchema( value as PropValue, {
+		forceKey,
+		transformers: Utils.globalVariablesLLMResolvers,
+	} );
 }
 
+/*
+ * This function expects a PropValue bag for updaing an element.
+ * Also, it supports updating styles "on-the-way" by checking for "_styles" property with PropValue bag that fits the common style schema.
+ */
 export const doUpdateElementProperty = ( params: OwnParams ) => {
 	const { elementId, propertyName, propertyValue, elementType } = params;
-
 	if ( propertyName === '_styles' ) {
 		const elementStyles = getElementStyles( elementId ) || {};
 		const propertyMapValue = propertyValue as Record< string, PropValue >;
@@ -48,12 +55,12 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 		Object.keys( propertyMapValue as Record< string, unknown > ).forEach( ( stylePropName ) => {
 			const propertyRawSchema = styleSchema[ stylePropName ];
 			if ( stylePropName === 'custom_css' ) {
-				let customCssValue = propertyMapValue[ stylePropName ] as object | string;
-				if ( typeof customCssValue === 'object' ) {
-					customCssValue =
-						stringPropTypeUtil.extract( customCssValue ) ||
-						( customCssValue as { value: unknown } )?.value ||
-						'';
+				let customCssValue = propertyMapValue[ stylePropName ] as Record< string, unknown > | string;
+				if ( typeof customCssValue === 'object' && customCssValue && customCssValue.value ) {
+					customCssValue = String( customCssValue.value );
+				}
+				if ( ! customCssValue ) {
+					customCssValue = '';
 				}
 				customCss = {
 					raw: btoa( customCssValue as string ),
@@ -62,7 +69,7 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 			}
 			const isSupported = !! propertyRawSchema;
 			if ( ! isSupported ) {
-				throw new Error( `_styles property ${ stylePropName } is not supported.` );
+				throw new Error( `Style property ${ stylePropName } is not supported.` );
 			}
 			if ( propertyRawSchema.kind === 'plain' ) {
 				if ( typeof ( propertyMapValue as Record< string, unknown > )[ stylePropName ] !== 'object' ) {
@@ -74,6 +81,7 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 				}
 			}
 		} );
+		delete transformedStyleValues.custom_css;
 		const localStyle = Object.values( elementStyles ).find( ( style ) => style.label === 'local' );
 		if ( ! localStyle ) {
 			createElementStyle( {
@@ -118,7 +126,8 @@ export const doUpdateElementProperty = ( params: OwnParams ) => {
 			) }`
 		);
 	}
-	const value = resolvePropValue( propertyValue );
+	const propKey = elementPropSchema[ propertyName ].key;
+	const value = resolvePropValue( propertyValue, propKey );
 	updateElementSettings( {
 		id: elementId,
 		props: {

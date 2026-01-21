@@ -17,6 +17,7 @@ export type DependencyOperator =
 export type DependencyTerm = {
 	operator: DependencyOperator;
 	path: string[];
+	nestedPath?: string[];
 	value: PropValue;
 	newValue?: TransformablePropValue< string >;
 };
@@ -24,6 +25,7 @@ export type DependencyTerm = {
 export type Dependency = {
 	relation: 'or' | 'and';
 	terms: ( DependencyTerm | Dependency )[];
+	newValue?: TransformablePropValue< string >;
 };
 
 type BasePropTypeMeta = {
@@ -40,7 +42,7 @@ type BasePropType< TValue > = {
 };
 
 export type PlainPropType = BasePropType< PlainPropValue > & {
-	kind: 'plain';
+	kind: 'plain' | 'string' | 'number' | 'boolean';
 	key: PropTypeKey;
 };
 

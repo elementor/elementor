@@ -3,7 +3,10 @@ namespace Elementor\Modules\ElementManager;
 
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\ElementManager\AdminMenuItems\Editor_One_Elements_Manager_Menu;
 use Elementor\Widget_Base;
+use Elementor\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -24,14 +27,21 @@ class Module extends BaseModule {
 		$ajax->register_endpoints();
 
 		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			$admin_menu->register( static::PAGE_ID, new Admin_Menu_App() );
+			if ( ! $this->is_editor_one_active() ) {
+				$admin_menu->register( static::PAGE_ID, new Admin_Menu_App() );
+			}
 		}, 25 );
 
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu( $menu_data_provider );
+		} );
+
+		add_action( 'elementor/editor-one/menu/after_register_hidden_submenus', function ( array $hooks ) {
+			$this->enqueue_assets_for_editor_one_menu( $hooks );
+		} );
+
 		add_action( 'elementor/admin/menu/after_register', function ( Admin_Menu_Manager $admin_menu, array $hooks ) {
-			if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
-				add_action( "admin_print_scripts-{$hooks[ static::PAGE_ID ]}", [ $this, 'enqueue_assets' ] );
-				add_action( "admin_footer-{$hooks[ static::PAGE_ID ]}", [ $this, 'print_styles' ], 1000 );
-			}
+			$this->enqueue_assets_for_editor_one_menu( $hooks );
 		}, 10, 2 );
 
 		add_filter( 'elementor/widgets/is_widget_enabled', function( $should_register, Widget_Base $widget_instance ) {
@@ -59,6 +69,21 @@ class Module extends BaseModule {
 		} );
 	}
 
+	public function enqueue_assets_for_editor_one_menu( array $hooks ): void {
+		if ( ! empty( $hooks[ static::PAGE_ID ] ) ) {
+			add_action( "admin_print_scripts-{$hooks[ static::PAGE_ID ]}", [ $this, 'enqueue_assets' ] );
+			add_action( "admin_footer-{$hooks[ static::PAGE_ID ]}", [ $this, 'print_styles' ], 1000 );
+		}
+	}
+
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
+		$menu_data_provider->register_menu( new Editor_One_Elements_Manager_Menu() );
+	}
+
+	private function is_editor_one_active(): bool {
+		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
+	}
+
 	public function enqueue_assets() {
 		wp_enqueue_script(
 			'e-element-manager-app',
@@ -68,6 +93,8 @@ class Module extends BaseModule {
 				'wp-components',
 				'wp-dom-ready',
 				'wp-i18n',
+				'elementor-v2-ui',
+				'elementor-v2-icons',
 			],
 			ELEMENTOR_VERSION
 		);

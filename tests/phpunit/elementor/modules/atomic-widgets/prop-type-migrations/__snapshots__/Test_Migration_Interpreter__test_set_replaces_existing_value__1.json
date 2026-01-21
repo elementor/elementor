@@ -1,0 +1,8 @@
+{
+    "settings": {
+        "link": {
+            "url": "new.com",
+            "extra": "data"
+        }
+    }
+}

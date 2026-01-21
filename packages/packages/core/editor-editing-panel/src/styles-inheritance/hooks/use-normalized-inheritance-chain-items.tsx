@@ -1,5 +1,5 @@
 import { isValidElement, type ReactNode, useEffect, useState } from 'react';
-import { type PropsResolver } from '@elementor/editor-canvas';
+import { type PropsResolver, UnknownStyleStateError } from '@elementor/editor-canvas';
 import { type PropKey } from '@elementor/editor-props';
 import {
 	isClassState,
@@ -70,7 +70,7 @@ export const normalizeInheritanceItem = async (
 		style: { label, id },
 	} = item;
 
-	const displayLabel = getLabel( { label, state } );
+	const displayLabel = getDisplayLabel( { label, state } );
 
 	return {
 		id: id ? id + ( state ?? '' ) : index,
@@ -81,7 +81,11 @@ export const normalizeInheritanceItem = async (
 	};
 };
 
-function getLabel( { label, state }: { label: string; state: StyleDefinitionState } ) {
+function getDisplayLabel( { label, state }: { label: string; state: StyleDefinitionState } ) {
+	if ( ! state ) {
+		return label;
+	}
+
 	if ( isClassState( state ) ) {
 		return `${ label }.${ state }`;
 	}
@@ -90,7 +94,7 @@ function getLabel( { label, state }: { label: string; state: StyleDefinitionStat
 		return `${ label }:${ state }`;
 	}
 
-	return label;
+	throw new UnknownStyleStateError( { context: { state } } );
 }
 const getTransformedValue = async (
 	item: SnapshotPropValue,

@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import { defineConfig } from '@playwright/test';
 import { config as _config } from 'dotenv';
-import { timeouts } from './config/timeouts';
+import { timeouts as timeoutsConfig } from './config/timeouts';
 
 const isCI = Boolean( process.env.CI );
 const localDevServer = 'http://127.0.0.1:9400';
@@ -13,6 +13,10 @@ process.env.DEV_SERVER = isCI ? ciDevServer : localDevServer;
 process.env.TEST_SERVER = isCI ? ciTestServer : localTestServer;
 
 process.env.DEBUG_PORT = ( 1 === Number( process.env.TEST_PARALLEL_INDEX ) ) ? '9223' : '9222';
+const timeouts = isCI ? timeoutsConfig : Object.entries( timeoutsConfig ).reduce( ( acc, [ key, value ] ) => {
+	acc[ key ] = value * 2;
+	return acc;
+}, {} as typeof timeoutsConfig );
 
 _config( {
 	path: resolve( __dirname, '../../.env' ),
@@ -33,7 +37,7 @@ export default defineConfig( {
 	workers: process.env.CI ? 2 : 1,
 	fullyParallel: false,
 	reporter: process.env.CI
-		? [ [ 'github' ], [ 'list' ] ]
+		? [ [ 'github' ], [ 'list' ], [ 'allure-playwright', { suiteTitle: false } ] ]
 		: [ [ 'list' ] ],
 	use: {
 		launchOptions: {

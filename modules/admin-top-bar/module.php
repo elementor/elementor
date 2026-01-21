@@ -1,6 +1,7 @@
 <?php
 namespace Elementor\Modules\AdminTopBar;
 
+use Elementor\Core\Admin\Admin;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
 use Elementor\Core\Base\App as BaseApp;
@@ -111,16 +112,9 @@ class Module extends BaseApp {
 	private function is_top_bar_active() {
 		$current_screen = get_current_screen();
 
-		if ( ! $current_screen ) {
-			return false;
-		}
-
-		$is_elementor_page = strpos( $current_screen->id ?? '', 'elementor' ) !== false;
-		$is_elementor_post_type_page = strpos( $current_screen->post_type ?? '', 'elementor' ) !== false;
-
 		return apply_filters(
 			'elementor/admin-top-bar/is-active',
-			$is_elementor_page || $is_elementor_post_type_page,
+			Admin::is_elementor_admin_page( $current_screen ),
 			$current_screen
 		);
 	}

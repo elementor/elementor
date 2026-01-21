@@ -2,7 +2,7 @@ import { __dispatch as dispatch, __getState as getState } from '@elementor/store
 import { generateUniqueId } from '@elementor/utils';
 
 import type { PublishedComponent } from '../../types';
-import { setOverridableProp } from '../set-overridable-prop';
+import { setOverridableProp } from '../actions/set-overridable-prop';
 import { SLICE_NAME } from '../store';
 
 jest.mock( '@elementor/store', () => ( {
@@ -329,6 +329,7 @@ describe( 'setOverridableProp', () => {
 			propKey: MOCK_PROP_KEY,
 			...MOCK_WIDGET,
 			originValue: callParams.originValue ?? ORIGIN_VALUE,
+			source: 'user',
 		} );
 
 		// Assert
@@ -358,6 +359,7 @@ describe( 'setOverridableProp', () => {
 			propKey: MOCK_PROP_KEY,
 			...MOCK_WIDGET,
 			originValue: ORIGIN_VALUE,
+			source: 'user',
 		} );
 
 		// Assert

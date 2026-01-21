@@ -7,7 +7,7 @@ const createAtomicTabModel = () => {
 			const position = this.attributes.editor_settings?.initial_position;
 
 			paragraph.settings.paragraph = {
-				$$type: 'string',
+				$$type: 'html',
 				value: `Tab ${ position }`,
 			};
 

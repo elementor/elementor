@@ -1,4 +1,5 @@
 import {
+	type Dependency,
 	type DependencyTerm,
 	extractValue,
 	isDependencyMet,
@@ -12,55 +13,10 @@ type Value = TransformablePropValue< string > | null;
 
 export type Values = Record< string, Value >;
 
-export function extractOrderedDependencies(
-	bind: string,
-	propsSchema: PropsSchema,
-	elementValues: Values,
-	dependenciesPerTargetMapping: Record< string, string[] >
-): string[] {
-	const prop = getPropType( propsSchema, elementValues, bind.split( '.' ) );
-
-	if ( ! prop ) {
-		return [];
-	}
-
-	const dependencies: string[] = [];
-
-	if ( 'object' === prop.kind ) {
-		dependencies.push( ...Object.keys( prop.shape ).map( ( key ) => bind + '.' + key ) );
-	}
-
-	const directDependencies = extractPropOrderedDependencies( bind, dependenciesPerTargetMapping );
-
-	if ( ! dependencies.length ) {
-		return directDependencies;
-	}
-
-	return dependencies.reduce(
-		( carry, dependency ) => [
-			...carry,
-			...extractOrderedDependencies( dependency, propsSchema, elementValues, dependenciesPerTargetMapping ),
-		],
-		directDependencies
-	);
-}
-
-function extractPropOrderedDependencies(
-	bind: string,
-	dependenciesPerTargetMapping: Record< string, string[] >
-): string[] {
-	if ( ! dependenciesPerTargetMapping?.[ bind ]?.length ) {
-		return [];
-	}
-
-	return dependenciesPerTargetMapping[ bind ].reduce< string[] >(
-		( dependencies, dependency ) => [
-			...dependencies,
-			dependency,
-			...extractPropOrderedDependencies( dependency, dependenciesPerTargetMapping ),
-		],
-		[]
-	);
+export function extractOrderedDependencies( dependenciesPerTargetMapping: Record< string, string[] > ): string[] {
+	return Object.values( dependenciesPerTargetMapping )
+		.flat()
+		.filter( ( dependent, index, self ) => self.indexOf( dependent ) === index );
 }
 
 export function getUpdatedValues(
@@ -77,8 +33,8 @@ export function getUpdatedValues(
 	return dependencies.reduce(
 		( newValues, dependency ) => {
 			const path = dependency.split( '.' );
-			const propType = getPropType( propsSchema, elementValues, path );
 			const combinedValues = { ...elementValues, ...newValues };
+			const propType = getPropType( propsSchema, combinedValues, path );
 
 			if ( ! propType ) {
 				return newValues;
@@ -197,7 +153,7 @@ function updateValue( path: string[], value: Value, values: Values ) {
 }
 
 function handleUnmetCondition( props: {
-	failingDependencies: DependencyTerm[];
+	failingDependencies: ( DependencyTerm | Dependency )[];
 	dependency: string;
 	elementValues: Values;
 	defaultValue: Value;

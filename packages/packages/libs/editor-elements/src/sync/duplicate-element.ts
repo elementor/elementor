@@ -1,4 +1,5 @@
-import { createElement } from './create-element';
+import { __privateRunCommandSync as runCommandSync } from '@elementor/editor-v1-adapters';
+
 import { getContainer } from './get-container';
 import { type V1Element } from './types';
 
@@ -20,23 +21,12 @@ export function duplicateElement( { elementId, options = {} }: DuplicateElementP
 		throw new Error( `Element with ID "${ elementId }" not found` );
 	}
 
-	if ( ! elementToDuplicate.parent ) {
-		throw new Error( `Element with ID "${ elementId }" has no parent container` );
-	}
-
-	const parentContainer = elementToDuplicate.parent;
-	const elementModel = elementToDuplicate.model.toJSON();
-
 	// Get the position after the original element (only when cloning)
 	const currentIndex = elementToDuplicate.view?._index ?? 0;
 	const insertPosition = options.clone !== false ? currentIndex + 1 : undefined;
 
-	return createElement( {
-		containerId: parentContainer.id,
-		model: elementModel,
-		options: {
-			at: insertPosition,
-			...options,
-		},
+	return runCommandSync< V1Element >( 'document/elements/duplicate', {
+		container: elementToDuplicate,
+		options: { at: insertPosition, edit: false, ...options },
 	} );
 }
