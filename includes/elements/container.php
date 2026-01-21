@@ -166,8 +166,7 @@ class Container extends Element_Base {
 			view.addRenderAttribute(
 				'background-video-container',
 				{
-					'class': 'elementor-background-video-container',
-					'aria-hidden': 'true',
+					'class': 'elementor-background-video-container'
 				}
 			);
 
