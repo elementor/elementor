@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-class Dynamic_Transformer extends Transformer_Base {
+class Dynamic_Import_Export_Transformer extends Transformer_Base {
 	public function transform( $value, Props_Resolver_Context $context ): ?array {
 		if ( empty( $value['name'] ) || ! is_string( $value['name'] ) ) {
 			return null;
