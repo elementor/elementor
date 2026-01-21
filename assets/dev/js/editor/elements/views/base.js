@@ -285,7 +285,7 @@ BaseElementView = BaseContainer.extend( {
 			return;
 		}
 
-		if ( ! this.getContainer().isEditable() ) {
+		if ( ! this.getContainer().isEditable() && elementor.channels.dataEditMode.request( 'activeMode' ) !== 'global-classes-manager' ) {
 			return;
 		}
 
