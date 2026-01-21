@@ -29,7 +29,7 @@ const DEFAULT_VALUES = {
 	effect: 'fade',
 	type: 'in',
 	direction: '',
-	duration: 300,
+	duration: 600,
 	delay: 0,
 	replay: false,
 	relativeTo: 'viewport',
@@ -232,6 +232,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 						<TimeFrameIndicator
 							value={ String( duration ) }
 							onChange={ ( v ) => updateInteraction( { duration: parseInt( v, 10 ) } ) }
+							defaultValue={ DEFAULT_VALUES.duration }
 						/>
 					</Field>
 				) }
@@ -241,6 +242,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 						<TimeFrameIndicator
 							value={ String( delay ) }
 							onChange={ ( v ) => updateInteraction( { delay: parseInt( v, 10 ) } ) }
+							defaultValue={ DEFAULT_VALUES.delay }
 						/>
 					</Field>
 				) }
