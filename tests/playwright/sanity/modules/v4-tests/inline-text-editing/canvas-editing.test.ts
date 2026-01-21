@@ -4,6 +4,8 @@ import WpAdminPage from '../../../../pages/wp-admin-page';
 import EditorPage from '../../../../pages/editor-page';
 import { INLINE_EDITING_SELECTORS } from './selectors/selectors';
 import { getElementSelector } from '../../../../assets/elements-utils';
+import topBarSelectors from '../../../../selectors/top-bar-selectors';
+import EditorSelectors from '../../../../selectors/editor-selectors';
 
 const testedAttributes = Object.keys( INLINE_EDITING_SELECTORS.attributes ).filter( ( attribute ) => attribute !== 'link' );
 
@@ -229,4 +231,70 @@ test.describe( 'Inline Editing Canvas @v4-tests', () => {
 				.toContain( encodedExpectedOutput.replaceAll( ' draggable="true"', '' ) );
 		} );
 	}
+
+	test( 'Ensure relevant focusing unmounts the inline editor form frame', async () => {
+		// Arrange
+		const containerId = await editor.addElement( { elType: 'container' }, 'document' );
+		const dummyDivBlockId = await editor.addElement( { elType: 'e-div-block' }, 'document' );
+
+		const headingId = await editor.addWidget( { widgetType: 'e-heading', container: containerId } );
+		const headingElement = editor.previewFrame.locator( EditorSelectors.v4.atomSelectors.heading.wrapper + ' > ' + EditorSelectors.v4.atomSelectors.heading.base );
+		const inlineEditedHeading = editor.previewFrame.locator( INLINE_EDITING_SELECTORS.canvas.inlineEditor );
+
+		// Act
+		await editor.triggerEditingElement( headingId );
+
+		// Assert
+		await expect( inlineEditedHeading ).toBeVisible();
+		await expect( headingElement ).not.toBeAttached();
+
+		// Arrange
+		await editor.triggerEditingElement( headingId );
+
+		await test.step( 'Clicking the panel', async () => {
+			// Act - click on a panel tab
+			await editor.v4Panel.openTab( 'style' );
+
+			// Assert
+			await expect( headingElement ).toBeVisible();
+			await expect( inlineEditedHeading ).not.toBeAttached();
+		} );
+
+		// Arrange.
+		await editor.closeNavigatorIfOpen();
+		await editor.triggerEditingElement( headingId );
+
+		await test.step( 'Clicking the topbar', async () => {
+			// Act - open navigator using topbar
+			await editor.clickTopBarItem( topBarSelectors.navigator );
+
+			// Assert
+			await expect( headingElement ).toBeVisible();
+			await expect( inlineEditedHeading ).not.toBeAttached();
+		} );
+
+		// Arrange.
+		await editor.triggerEditingElement( headingId );
+
+		await test.step( 'Clicking the navigator', async () => {
+			// Act - clicking on navigator
+			await editor.closeNavigatorIfOpen();
+
+			// Assert
+			await expect( headingElement ).toBeVisible();
+			await expect( inlineEditedHeading ).not.toBeAttached();
+		} );
+
+		// Arrange.
+		await editor.triggerEditingElement( headingId );
+
+		await test.step( 'Clicking a different element', async () => {
+			// Act - clicking on a different element
+			await editor.previewFrame.locator( editor.getWidgetSelector( dummyDivBlockId ) ).click();
+
+			// Assert
+			await expect( headingElement ).toBeVisible();
+			await expect( inlineEditedHeading ).not.toBeAttached();
+		} );
+	} );
 } );
