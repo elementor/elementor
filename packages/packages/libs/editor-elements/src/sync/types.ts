@@ -71,6 +71,7 @@ export type ConfigPropValue = {
 	$$type: 'config';
 	value: {
 		replay: BooleanPropValue;
+		easing: StringPropValue;
 		relativeTo: StringPropValue;
 		offsetTop: NumberPropValue;
 		offsetBottom: NumberPropValue;
