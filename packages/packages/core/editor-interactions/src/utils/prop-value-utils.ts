@@ -151,7 +151,7 @@ export const createDefaultInteractionItem = (): InteractionItemPropValue => {
 		trigger: 'load',
 		effect: 'fade',
 		type: 'in',
-		duration: 300,
+		duration: 600,
 		delay: 0,
 		replay: false,
 		easing: 'easeIn',
@@ -170,18 +170,6 @@ export const extractString = ( prop: StringPropValue | undefined, fallback = '' 
 
 export const extractNumber = ( prop: NumberPropValue | undefined, fallback = 0 ): number => {
 	return prop?.value ?? fallback;
-};
-
-export const buildAnimationIdString = ( item: InteractionItemValue ): string => {
-	const trigger = extractString( item.trigger );
-	const effect = extractString( item.animation.value.effect );
-	const type = extractString( item.animation.value.type );
-	const direction = extractString( item.animation.value.direction );
-	const duration = extractNumber( item.animation.value.timing_config.value.duration );
-	const delay = extractNumber( item.animation.value.timing_config.value.delay );
-	const easing = extractString( item.animation.value?.config?.value?.easing );
-
-	return [ trigger, effect, type, direction, duration, delay, '', easing ].join( '-' );
 };
 
 const TRIGGER_LABELS: Record< string, string > = {
