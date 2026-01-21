@@ -31,10 +31,13 @@ test.describe( 'Image widget tests @styleguide_image_link', () => {
 			await wpAdmin.openNewPage();
 			await editor.addWidget( { widgetType: data[ i ].widgetTitle } );
 			await editor.setMediaControlImageValue( 'image', `${ imageTitle }.png` );
+			await editor.waitForPanelToLoad();
 
 			const imageSize = [ 'thumbnail', 'large', 'full' ];
 			for ( const id in imageSize ) {
-				await editor.waitForPanelToLoad();
+				if ( id !== '0' ) {
+					await editor.waitForPanelToLoad();
+				}
 				await contentTab.selectImageSize(
 					{
 						widget: data[ i ].widget,
