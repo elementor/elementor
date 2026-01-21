@@ -250,12 +250,20 @@ describe( '<OverridePropControl />', () => {
 				schema_source: { type: 'component', id: INNER_COMPONENT_ID },
 			} );
 
-			setupNestedComponents( {
-				innerComponentId: INNER_COMPONENT_ID,
-				innerElementId: INNER_ELEMENT_ID,
-				innerOverrideKey: INNER_OVERRIDE_KEY,
-				innerOriginValue: INNER_ORIGIN_VALUE,
-			} );
+			setupNestedComponents( [
+				{
+					componentId: INNER_COMPONENT_ID,
+					elementId: INNER_ELEMENT_ID,
+					props: [
+						{
+							overrideKey: INNER_OVERRIDE_KEY,
+							propKey: 'title',
+							label: 'Title',
+							originValue: INNER_ORIGIN_VALUE,
+						},
+					],
+				},
+			] );
 
 			// Act
 			renderOverridePropControl( store, overridableProp, [ overrideWithNullValue ] );
@@ -293,21 +301,38 @@ describe( '<OverridePropControl />', () => {
 				} ),
 			} );
 
-			setupNestedComponents( {
-				innerComponentId: INNER_COMPONENT_ID,
-				innerElementId: INNER_ELEMENT_ID,
-				innerOverrideKey: INNER_OVERRIDE_KEY,
-				innerOriginValue: INNER_ORIGIN_VALUE,
-				middleComponentId: MIDDLE_COMPONENT_ID,
-				middleElementId: MIDDLE_ELEMENT_ID,
-				middleOverrideKey: MIDDLE_OVERRIDE_KEY,
-				middleOriginPropFields: {
-					propKey: 'title',
-					widgetType: 'e-heading',
-					elType: 'widget',
+			setupNestedComponents( [
+				{
+					componentId: INNER_COMPONENT_ID,
 					elementId: INNER_ELEMENT_ID,
+					props: [
+						{
+							overrideKey: INNER_OVERRIDE_KEY,
+							propKey: 'title',
+							label: 'Title',
+							originValue: INNER_ORIGIN_VALUE,
+						},
+					],
 				},
-			} );
+				{
+					componentId: MIDDLE_COMPONENT_ID,
+					elementId: MIDDLE_ELEMENT_ID,
+					props: [
+						{
+							overrideKey: MIDDLE_OVERRIDE_KEY,
+							propKey: 'title',
+							label: 'Title',
+							originValue: null,
+							originPropFields: {
+								propKey: 'title',
+								widgetType: 'e-heading',
+								elType: 'widget',
+								elementId: INNER_ELEMENT_ID,
+							},
+						},
+					],
+				},
+			] );
 
 			// Act
 			renderOverridePropControl( store, overridablePropWithNullOrigin, [ nestedOverridableWithNullValue ] );
@@ -348,16 +373,56 @@ describe( '<OverridePropControl />', () => {
 				} ),
 			} );
 
-			setupMultiPropNestedComponents( {
-				innerComponentId: INNER_COMPONENT_ID,
-				innerElementId: INNER_ELEMENT_ID,
-				titleOverrideKey: INNER_OVERRIDE_KEY,
-				titleOriginValue: INNER_ORIGIN_VALUE,
-				linkOverrideKey: LINK_OVERRIDE_KEY,
-				linkOriginValue: LINK_ORIGIN_VALUE,
-				middleComponentId: MIDDLE_COMPONENT_ID,
-				middleElementId: MIDDLE_ELEMENT_ID,
-			} );
+			setupNestedComponents( [
+				{
+					componentId: INNER_COMPONENT_ID,
+					elementId: INNER_ELEMENT_ID,
+					props: [
+						{
+							overrideKey: INNER_OVERRIDE_KEY,
+							propKey: 'title',
+							label: 'Title',
+							originValue: INNER_ORIGIN_VALUE,
+						},
+						{
+							overrideKey: LINK_OVERRIDE_KEY,
+							propKey: 'link',
+							label: 'Link',
+							originValue: LINK_ORIGIN_VALUE,
+						},
+					],
+				},
+				{
+					componentId: MIDDLE_COMPONENT_ID,
+					elementId: MIDDLE_ELEMENT_ID,
+					props: [
+						{
+							overrideKey: INNER_OVERRIDE_KEY,
+							propKey: 'title',
+							label: 'Title',
+							originValue: null,
+							originPropFields: {
+								propKey: 'title',
+								widgetType: 'e-heading',
+								elType: 'widget',
+								elementId: INNER_ELEMENT_ID,
+							},
+						},
+						{
+							overrideKey: LINK_OVERRIDE_KEY,
+							propKey: 'link',
+							label: 'Link',
+							originValue: null,
+							originPropFields: {
+								propKey: 'link',
+								widgetType: 'e-heading',
+								elType: 'widget',
+								elementId: INNER_ELEMENT_ID,
+							},
+						},
+					],
+				},
+			] );
 
 			// Act
 			renderOverridePropControl( store, linkOverridableProp, [ linkOverrideWithNullValue ] );
@@ -369,187 +434,67 @@ describe( '<OverridePropControl />', () => {
 	} );
 } );
 
-function setupNestedComponents( config: {
-	innerComponentId: number;
-	innerElementId: string;
-	innerOverrideKey: string;
-	innerOriginValue: { $$type: string; value: string };
-	middleComponentId?: number;
-	middleElementId?: string;
-	middleOverrideKey?: string;
-	middleOriginPropFields?: {
+type PropConfig = {
+	overrideKey: string;
+	propKey: string;
+	label: string;
+	originValue: { $$type: string; value: string } | null;
+	originPropFields?: {
 		propKey: string;
 		widgetType: string;
 		elType: string;
 		elementId: string;
 	};
-} ) {
+};
+
+type ComponentLayerConfig = {
+	componentId: number;
+	elementId: string;
+	props: PropConfig[];
+};
+
+function setupNestedComponents( layers: ComponentLayerConfig[] ) {
 	type ComponentData = Parameters< typeof slice.actions.load >[ 0 ][ number ];
 
-	const innerComponent: ComponentData = {
-		id: config.innerComponentId,
-		uid: `component-${ config.innerComponentId }`,
-		name: 'Inner Component',
-		overridableProps: {
-			props: {
-				[ config.innerOverrideKey ]: {
-					overrideKey: config.innerOverrideKey,
-					label: 'Title',
-					elementId: config.innerElementId,
-					propKey: 'title',
+	const components: ComponentData[] = layers.map( ( layer, index ) => {
+		const propsRecord = Object.fromEntries(
+			layer.props.map( ( prop ) => [
+				prop.overrideKey,
+				{
+					overrideKey: prop.overrideKey,
+					label: prop.label,
+					elementId: layer.elementId,
+					propKey: prop.propKey,
 					widgetType: 'e-heading',
 					elType: 'widget',
 					groupId: 'content',
-					originValue: config.innerOriginValue,
+					originValue: prop.originValue,
+					originPropFields: prop.originPropFields,
 				},
-			},
-			groups: {
-				items: { content: { id: 'content', label: 'Content', props: [ config.innerOverrideKey ] } },
-				order: [ 'content' ],
-			},
-		},
-	};
+			] )
+		);
 
-	const components: ComponentData[] = [ innerComponent ];
-
-	if ( config.middleComponentId && config.middleOverrideKey && config.middleElementId ) {
-		const middleComponent: ComponentData = {
-			id: config.middleComponentId,
-			uid: `component-${ config.middleComponentId }`,
-			name: 'Middle Component',
+		return {
+			id: layer.componentId,
+			uid: `component-${ layer.componentId }`,
+			name: `Component ${ index + 1 }`,
 			overridableProps: {
-				props: {
-					[ config.middleOverrideKey ]: {
-						overrideKey: config.middleOverrideKey,
-						label: 'Title',
-						elementId: config.middleElementId,
-						propKey: 'title',
-						widgetType: 'e-heading',
-						elType: 'widget',
-						groupId: 'content',
-						originValue: null,
-						originPropFields: config.middleOriginPropFields,
-					},
-				},
+				props: propsRecord,
 				groups: {
-					items: { content: { id: 'content', label: 'Content', props: [ config.middleOverrideKey ] } },
+					items: {
+						content: {
+							id: 'content',
+							label: 'Content',
+							props: layer.props.map( ( p ) => p.overrideKey ),
+						},
+					},
 					order: [ 'content' ],
 				},
 			},
 		};
-		components.push( middleComponent );
-	}
+	} );
 
 	dispatch( slice.actions.load( components ) );
-}
-
-function setupMultiPropNestedComponents( config: {
-	innerComponentId: number;
-	innerElementId: string;
-	titleOverrideKey: string;
-	titleOriginValue: { $$type: string; value: string };
-	linkOverrideKey: string;
-	linkOriginValue: { $$type: string; value: string };
-	middleComponentId: number;
-	middleElementId: string;
-} ) {
-	type ComponentData = Parameters< typeof slice.actions.load >[ 0 ][ number ];
-
-	// Inner component has BOTH title and link props pointing to the SAME elementId
-	const innerComponent: ComponentData = {
-		id: config.innerComponentId,
-		uid: `component-${ config.innerComponentId }`,
-		name: 'Inner Component',
-		overridableProps: {
-			props: {
-				[ config.titleOverrideKey ]: {
-					overrideKey: config.titleOverrideKey,
-					label: 'Title',
-					elementId: config.innerElementId,
-					propKey: 'title',
-					widgetType: 'e-heading',
-					elType: 'widget',
-					groupId: 'content',
-					originValue: config.titleOriginValue,
-				},
-				[ config.linkOverrideKey ]: {
-					overrideKey: config.linkOverrideKey,
-					label: 'Link',
-					elementId: config.innerElementId,
-					propKey: 'link',
-					widgetType: 'e-heading',
-					elType: 'widget',
-					groupId: 'content',
-					originValue: config.linkOriginValue,
-				},
-			},
-			groups: {
-				items: {
-					content: {
-						id: 'content',
-						label: 'Content',
-						props: [ config.titleOverrideKey, config.linkOverrideKey ],
-					},
-				},
-				order: [ 'content' ],
-			},
-		},
-	};
-
-	// Middle component also has both props, with null originValue, pointing to inner element
-	const middleComponent: ComponentData = {
-		id: config.middleComponentId,
-		uid: `component-${ config.middleComponentId }`,
-		name: 'Middle Component',
-		overridableProps: {
-			props: {
-				[ config.titleOverrideKey ]: {
-					overrideKey: config.titleOverrideKey,
-					label: 'Title',
-					elementId: config.middleElementId,
-					propKey: 'title',
-					widgetType: 'e-heading',
-					elType: 'widget',
-					groupId: 'content',
-					originValue: null,
-					originPropFields: {
-						propKey: 'title',
-						widgetType: 'e-heading',
-						elType: 'widget',
-						elementId: config.innerElementId,
-					},
-				},
-				[ config.linkOverrideKey ]: {
-					overrideKey: config.linkOverrideKey,
-					label: 'Link',
-					elementId: config.middleElementId,
-					propKey: 'link',
-					widgetType: 'e-heading',
-					elType: 'widget',
-					groupId: 'content',
-					originValue: null,
-					originPropFields: {
-						propKey: 'link',
-						widgetType: 'e-heading',
-						elType: 'widget',
-						elementId: config.innerElementId,
-					},
-				},
-			},
-			groups: {
-				items: {
-					content: {
-						id: 'content',
-						label: 'Content',
-						props: [ config.titleOverrideKey, config.linkOverrideKey ],
-					},
-				},
-				order: [ 'content' ],
-			},
-		},
-	};
-
-	dispatch( slice.actions.load( [ innerComponent, middleComponent ] ) );
 }
 
 function setupElementsMocks() {
