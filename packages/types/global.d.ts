@@ -22,6 +22,11 @@ declare global {
 			};
 			getContainer?: (id: string) => V1Element | undefined;
 		};
+		elementorFrontend?: {
+			config?: {
+				is_rtl?: boolean;
+			};
+		};
 		elementorPro?: {
 			config?: {
 				version?: string;
