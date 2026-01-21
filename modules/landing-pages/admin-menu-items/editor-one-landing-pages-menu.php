@@ -62,7 +62,7 @@ class Editor_One_Landing_Pages_Menu implements Menu_Item_Interface, Admin_Menu_I
 		return Menu_Config::TEMPLATES_GROUP_ID;
 	}
 
-	public function get_page_title() {
+	public function get_page_title(): string {
 		return $this->get_label();
 	}
 
