@@ -4,7 +4,6 @@ export { injectIntoCssClassConvert } from './components/css-classes/css-class-co
 export { injectIntoClassSelectorActions } from './components/css-classes/css-class-selector';
 export { CustomCssIndicator } from './components/custom-css-indicator';
 export { injectIntoPanelHeaderTop } from './components/editing-panel';
-export { PopoverBody } from './components/popover-body';
 export { SectionContent } from './components/section-content';
 export { SettingsControl } from './components/settings-control';
 export { SettingsField } from './controls-registry/settings-field';
@@ -14,7 +13,6 @@ export { injectIntoStyleTab } from './components/style-tab';
 export { StyleTabSection } from './components/style-tab-section';
 export { useClassesProp } from './contexts/classes-prop-context';
 export { ElementProvider, useElement } from './contexts/element-context';
-export { useSectionWidth } from './contexts/section-context';
 export { useStyle } from './contexts/style-context';
 export { registerControlReplacement, getControlReplacements } from './control-replacement';
 export { controlActionsMenu } from './controls-actions';
