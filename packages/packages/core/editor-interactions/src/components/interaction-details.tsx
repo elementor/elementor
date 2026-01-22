@@ -29,15 +29,73 @@ const DEFAULT_VALUES = {
 	effect: 'fade',
 	type: 'in',
 	direction: '',
-	duration: 300,
+	duration: 600,
 	delay: 0,
 	replay: false,
+	easing: 'easeIn',
 	relativeTo: 'viewport',
 	offsetTop: 15,
 	offsetBottom: 85,
 };
 
-const TRIGGERS_WITH_REPLAY = [ 'scrollIn', 'scrollOut' ];
+const TRIGGERS_WITHOUT_REPLAY = [ 'load', 'scrollOn' ];
+
+type InteractionsControlType =
+	| 'trigger'
+	| 'effect'
+	| 'effectType'
+	| 'direction'
+	| 'duration'
+	| 'delay'
+	| 'replay'
+	| 'easing'
+	| 'relativeTo'
+	| 'offsetTop'
+	| 'offsetBottom';
+
+type InteractionValues = {
+	trigger: string;
+	effect: string;
+	type: string;
+	direction: string;
+	duration: number;
+	delay: number;
+	replay: boolean;
+	easing: string;
+	relativeTo: string;
+	offsetTop: number;
+	offsetBottom: number;
+};
+
+type ControlVisibilityConfig = {
+	[ key: string ]: ( values: InteractionValues ) => boolean;
+};
+
+const controlVisibilityConfig: ControlVisibilityConfig = {
+	replay: ( values ) => ! TRIGGERS_WITHOUT_REPLAY.includes( values.trigger ),
+
+	relativeTo: ( values ) => values.trigger === 'scrollOn',
+	offsetTop: ( values ) => values.trigger === 'scrollOn',
+	offsetBottom: ( values ) => values.trigger === 'scrollOn',
+
+	duration: ( values ) => {
+		const isRelativeToVisible = values.trigger === 'scrollOn';
+		return ! isRelativeToVisible;
+	},
+	delay: ( values ) => {
+		const isRelativeToVisible = values.trigger === 'scrollOn';
+		return ! isRelativeToVisible;
+	},
+};
+
+function useControlComponent( controlName: InteractionsControlType, isVisible: boolean = true ) {
+	return useMemo( () => {
+		if ( ! isVisible ) {
+			return null;
+		}
+		return getInteractionsControl( controlName )?.component ?? null;
+	}, [ controlName, isVisible ] );
+}
 
 export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }: InteractionDetailsProps ) => {
 	const trigger = extractString( interaction.trigger, DEFAULT_VALUES.trigger );
@@ -47,6 +105,7 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 	const duration = extractNumber( interaction.animation.value.timing_config.value.duration, DEFAULT_VALUES.duration );
 	const delay = extractNumber( interaction.animation.value.timing_config.value.delay, DEFAULT_VALUES.delay );
 	const replay = extractBoolean( interaction.animation.value.config?.value.replay, DEFAULT_VALUES.replay );
+	const easing = extractString( interaction.animation.value.config?.value.easing, DEFAULT_VALUES.easing );
 	const relativeTo = extractString( interaction.animation.value.config?.value.relativeTo, DEFAULT_VALUES.relativeTo );
 	const offsetTop = extractNumber( interaction.animation.value.config?.value.offsetTop, DEFAULT_VALUES.offsetTop );
 	const offsetBottom = extractNumber(
@@ -54,40 +113,33 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 		DEFAULT_VALUES.offsetBottom
 	);
 
-	const shouldShowReplay = TRIGGERS_WITH_REPLAY.includes( trigger );
-	const shouldShowRelativeTo = trigger === 'scrollOn';
+	const interactionValues = {
+		trigger,
+		effect,
+		type,
+		direction,
+		duration,
+		delay,
+		easing,
+		replay,
+		relativeTo,
+		offsetTop,
+		offsetBottom,
+	};
 
-	const TriggerControl = useMemo( () => {
-		return getInteractionsControl( 'trigger' )?.component ?? null;
-	}, [] );
+	const TriggerControl = useControlComponent( 'trigger', true );
+	const ReplayControl = useControlComponent( 'replay', controlVisibilityConfig.replay( interactionValues ) );
+	const RelativeToControl = useControlComponent(
+		'relativeTo',
+		controlVisibilityConfig.relativeTo( interactionValues )
+	);
+	const OffsetTopControl = useControlComponent( 'offsetTop', controlVisibilityConfig.offsetTop( interactionValues ) );
+	const OffsetBottomControl = useControlComponent(
+		'offsetBottom',
+		controlVisibilityConfig.offsetBottom( interactionValues )
+	);
 
-	const ReplayControl = useMemo( () => {
-		if ( ! shouldShowReplay ) {
-			return null;
-		}
-		return getInteractionsControl( 'replay' )?.component ?? null;
-	}, [ shouldShowReplay ] );
-
-	const RelativeToControl = useMemo( () => {
-		if ( ! shouldShowRelativeTo ) {
-			return null;
-		}
-		return getInteractionsControl( 'relativeTo' )?.component ?? null;
-	}, [ shouldShowRelativeTo ] );
-
-	const OffsetTopControl = useMemo( () => {
-		if ( ! shouldShowRelativeTo ) {
-			return null;
-		}
-		return getInteractionsControl( 'offsetTop' )?.component ?? null;
-	}, [ shouldShowRelativeTo ] );
-
-	const OffsetBottomControl = useMemo( () => {
-		if ( ! shouldShowRelativeTo ) {
-			return null;
-		}
-		return getInteractionsControl( 'offsetBottom' )?.component ?? null;
-	}, [ shouldShowRelativeTo ] );
+	const EasingControl = useControlComponent( 'easing' );
 
 	const resolveDirection = ( hasDirection: boolean, newEffect?: string, newDirection?: string ) => {
 		if ( newEffect === 'slide' && ! newDirection ) {
@@ -109,13 +161,13 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 			duration: number;
 			delay: number;
 			replay: boolean;
+			easing?: string;
 			relativeTo: string;
 			offsetTop: number;
 			offsetBottom: number;
 		} >
 	): void => {
 		const resolvedDirectionValue = resolveDirection( 'direction' in updates, updates.effect, updates.direction );
-		const newReplay = updates.replay !== undefined ? updates.replay : replay;
 
 		const updatedInteraction = {
 			...interaction,
@@ -127,7 +179,8 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 				direction: resolvedDirectionValue,
 				duration: updates.duration ?? duration,
 				delay: updates.delay ?? delay,
-				replay: newReplay,
+				replay: updates.replay ?? replay,
+				easing: updates.easing ?? easing,
 				relativeTo: updates.relativeTo ?? relativeTo,
 				offsetTop: updates.offsetTop ?? offsetTop,
 				offsetBottom: updates.offsetBottom ?? offsetBottom,
@@ -182,21 +235,28 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					/>
 				</Field>
 
-				<Field label={ __( 'Duration', 'elementor' ) }>
-					<TimeFrameIndicator
-						value={ String( duration ) }
-						onChange={ ( v ) => updateInteraction( { duration: parseInt( v, 10 ) } ) }
-					/>
-				</Field>
+				{ controlVisibilityConfig.duration( interactionValues ) && (
+					<Field label={ __( 'Duration', 'elementor' ) }>
+						<TimeFrameIndicator
+							value={ String( duration ) }
+							onChange={ ( v ) => updateInteraction( { duration: parseInt( v, 10 ) } ) }
+							defaultValue={ DEFAULT_VALUES.duration }
+						/>
+					</Field>
+				) }
 
-				<Field label={ __( 'Delay', 'elementor' ) }>
-					<TimeFrameIndicator
-						value={ String( delay ) }
-						onChange={ ( v ) => updateInteraction( { delay: parseInt( v, 10 ) } ) }
-					/>
-				</Field>
+				{ controlVisibilityConfig.delay( interactionValues ) && (
+					<Field label={ __( 'Delay', 'elementor' ) }>
+						<TimeFrameIndicator
+							value={ String( delay ) }
+							onChange={ ( v ) => updateInteraction( { delay: parseInt( v, 10 ) } ) }
+							defaultValue={ DEFAULT_VALUES.delay }
+						/>
+					</Field>
+				) }
 			</Grid>
-			{ shouldShowRelativeTo && RelativeToControl && (
+
+			{ controlVisibilityConfig.relativeTo( interactionValues ) && RelativeToControl && (
 				<>
 					<Divider />
 					<Grid container spacing={ 1.5 }>
@@ -227,6 +287,19 @@ export const InteractionDetails = ( { interaction, onChange, onPlayInteraction }
 					</Grid>
 					<Divider />
 				</>
+			) }
+
+			{ EasingControl && (
+				<Grid container spacing={ 1.5 }>
+					<Field label={ __( 'Easing', 'elementor' ) }>
+						<EasingControl
+							value={ easing }
+							onChange={ ( v ) => {
+								updateInteraction( { easing: v } );
+							} }
+						/>
+					</Field>
+				</Grid>
 			) }
 		</PopoverContent>
 	);

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useMemo, useRef, useState } from 'react';
 import { createPropsResolver, type PropsResolver } from '@elementor/editor-canvas';
 import { type PropKey, type PropType } from '@elementor/editor-props';
-import { PopoverHeader } from '@elementor/editor-ui';
+import { PopoverHeader, useSectionWidth } from '@elementor/editor-ui';
 import {
 	Backdrop,
 	Box,
@@ -17,7 +17,6 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useSectionWidth } from '../../contexts/section-context';
 import { useDirection } from '../../hooks/use-direction';
 import { useNormalizedInheritanceChainItems } from '../hooks/use-normalized-inheritance-chain-items';
 import { stylesInheritanceTransformersRegistry } from '../styles-inheritance-transformers-registry';
