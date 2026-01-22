@@ -1,4 +1,5 @@
 import { enqueueFont } from '@elementor/editor-v1-adapters';
+
 import { createStyleVariablesRepository } from '../create-style-variables-repository';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { type FontCategory } from '@elementor/editor-controls';
-import { type SupportedFonts, getElementorConfig } from '@elementor/editor-v1-adapters';
+import { getElementorConfig, type SupportedFonts } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 const supportedCategories: Record< SupportedFonts, string > = {
