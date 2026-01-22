@@ -25,7 +25,7 @@ export default class extends elementorModules.Module {
 			},
 		);
 
-		if ( ! this.canSendEvents() ) {
+		if ( this.canSendEvents() ) {
 			this.enableTracking();
 		}
 	}
