@@ -42,7 +42,9 @@ class Test_Menu_Config_Snapshot extends Elementor_Test_Base {
 		$this->trigger_admin_only_registrations( $menu_data_provider );
 
 		$actual_config = $this->normalize_config( [
-			'editorFlyout' => $menu_data_provider->get_editor_flyout_data(),
+			'editorFlyout' => $menu_data_provider->get_third_level_data(
+				Menu_Data_Provider::THIRD_LEVEL_EDITOR_FLYOUT
+			),
 			'level4Flyouts' => $menu_data_provider->get_level4_flyout_data(),
 		] );
 
