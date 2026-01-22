@@ -33,3 +33,4 @@ export { registerEditingPanelReplacement } from './editing-panel-replacement-reg
 export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-unapply-actions';
 export { setLicenseConfig } from './hooks/use-license-config';
 export { type DynamicTag, type DynamicTags, type DynamicTagsManager } from './dynamics/types';
+export { isDynamicPropValue } from './dynamics/utils';
