@@ -183,6 +183,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 						'initial_value' => null,
 					],
 				],
+				'meta' => [],
 			],
 			'post' => [
 				'name' => 'post',
@@ -193,6 +194,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				'group' => 'post',
 				'atomic_controls' => [],
 				'props_schema' => [],
+				'meta' => [],
 			]
 		];
 
@@ -307,6 +309,7 @@ class Test_Dynamic_Tags_Module extends Elementor_Test_Base {
 				'group' => 'post',
 				'atomic_controls' => [],
 				'props_schema' => [],
+				'meta' => [],
 			],
 		];
 
