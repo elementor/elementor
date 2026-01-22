@@ -9,7 +9,6 @@ jest.mock( '../../../sync/get-elementor-globals' );
 describe( 'getAtomicDynamicTags', () => {
 	const mockTags: DynamicTags = {
 		'core-tag': {
-			meta: { origin: 'core', required_license: false },
 			name: 'core-tag',
 			label: 'Core Tag',
 			group: 'core',
@@ -18,7 +17,6 @@ describe( 'getAtomicDynamicTags', () => {
 			props_schema: {},
 		},
 		'pro-free-tag': {
-			meta: { origin: 'elementor', required_license: false },
 			name: 'pro-free-tag',
 			label: 'Pro Free Tag',
 			group: 'pro',
@@ -27,7 +25,7 @@ describe( 'getAtomicDynamicTags', () => {
 			props_schema: {},
 		},
 		'pro-paid-tag': {
-			meta: { origin: 'elementor', required_license: true },
+			meta: { origin: 'elementor', required_license: 'dynamic-tags' },
 			name: 'pro-paid-tag',
 			label: 'Pro Paid Tag',
 			group: 'pro',
@@ -125,7 +123,6 @@ describe( 'getAtomicDynamicTags', () => {
 		// Arrange.
 		const tagsWithMissingMeta: DynamicTags = {
 			'tag-no-meta': {
-				meta: { origin: '', required_license: false },
 				name: 'tag-no-meta',
 				label: 'Tag No Meta',
 				group: 'test',

@@ -12,7 +12,7 @@ export type DynamicTag = {
 	props_schema: PropsSchema;
 	meta?: {
 		origin: string;
-		required_license: boolean;
+		required_license: string;
 	};
 };
 
