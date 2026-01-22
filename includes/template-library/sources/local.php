@@ -421,12 +421,6 @@ class Source_Local extends Source_Base {
 		}
 	}
 
-	private function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
-		if ( ! $this->is_editor_one_active() ) {
-			$admin_menu->register( static::get_admin_url( true ), new Saved_Templates_Menu_Item() );
-		}
-	}
-
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Templates_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Saved_Templates_Menu() );
@@ -1660,10 +1654,6 @@ class Source_Local extends Source_Base {
 	 */
 	private function add_actions() {
 		if ( is_admin() ) {
-			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-				$this->register_admin_menu( $admin_menu );
-			}, static::ADMIN_MENU_PRIORITY );
-
 			add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 				$this->register_editor_one_menu( $menu_data_provider );
 			} );

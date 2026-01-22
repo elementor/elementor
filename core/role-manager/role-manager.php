@@ -53,14 +53,6 @@ class Role_Manager extends Settings_Page {
 
 	/**
 	 * @since 2.0.0
-	 * @access public
-	 */
-	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
-		$admin_menu->register( static::PAGE_ID, new Role_Manager_Menu_Item( $this ) );
-	}
-
-	/**
-	 * @since 2.0.0
 	 * @access protected
 	 */
 	protected function create_tabs() {
@@ -330,12 +322,6 @@ class Role_Manager extends Settings_Page {
 	 */
 	public function __construct() {
 		parent::__construct();
-
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-			if ( ! $this->is_editor_one_active() ) {
-				$this->register_admin_menu( $admin_menu );
-			}
-		}, Settings::ADMIN_MENU_PRIORITY + 10 );
 
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu( $menu_data_provider );

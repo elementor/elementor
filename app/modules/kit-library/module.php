@@ -31,15 +31,6 @@ class Module extends BaseModule {
 		return 'kit-library';
 	}
 
-	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
-		if ( ! $this->is_editor_one_active() ) {
-			$admin_menu->register(
-				Plugin::$instance->app->get_base_url() . '&source=wp_db_templates_menu#/kit-library',
-				new Kit_Library_Menu_Item()
-			);
-		}
-	}
-
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Website_Templates_Menu() );
 	}
@@ -108,10 +99,6 @@ class Module extends BaseModule {
 	public function register_actions() {
 		// Assigning this action here since the repository is being loaded by demand.
 		add_action( 'elementor/experiments/feature-state-change/container', [ Repository::class, 'clear_cache' ], 10, 0 );
-
-		add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
-			$this->register_admin_menu_legacy( $admin_menu );
-		}, Source_Local::ADMIN_MENU_PRIORITY + 30 );
 
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu( $menu_data_provider );
