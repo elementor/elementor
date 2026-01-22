@@ -1,7 +1,10 @@
-import { createTransformer, styleTransformersRegistry } from '@elementor/editor-canvas';
+import {
+	createTransformer,
+	stylesInheritanceTransformersRegistry,
+	styleTransformersRegistry,
+} from '@elementor/editor-canvas';
 
 import { excludePropTypeTransformers } from './consts';
-import { stylesInheritanceTransformersRegistry } from './styles-inheritance-transformers-registry';
 import { arrayTransformer } from './transformers/array-transformer';
 import { backgroundColorOverlayTransformer } from './transformers/background-color-overlay-transformer';
 import { backgroundGradientOverlayTransformer } from './transformers/background-gradient-overlay-transformer';
