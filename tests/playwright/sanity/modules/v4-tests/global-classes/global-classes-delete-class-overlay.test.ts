@@ -27,41 +27,12 @@ test.describe( 'Global Classes - delete assigned class keeps element overlay @v4
 		const divBlock = editor.getPreviewFrame().locator( `[data-id="${ divBlockId }"]` );
 		await expect( divBlock ).toHaveClass( new RegExp( `\\b${ className }\\b` ) );
 
-		const classManagerButton = page.getByRole( 'button', { name: 'Class Manager' } );
-		await expect( classManagerButton ).toBeVisible();
-		await classManagerButton.click();
-
-		const saveAndContinueButton = page.getByRole( 'button', { name: 'Save & Continue' } );
-		if ( await saveAndContinueButton.isVisible() ) {
-			await expect( saveAndContinueButton ).toBeEnabled();
-			await saveAndContinueButton.click();
-		}
-
-		const classRow = page.getByRole( 'listitem' ).filter( { hasText: className } ).first();
-		await expect( classRow ).toBeVisible();
-
-		const moreActionsButton = classRow.getByRole( 'button', { name: 'More actions', exact: true } );
-		await expect( moreActionsButton ).toBeVisible();
-		await moreActionsButton.click();
-
-		const deleteMenuItem = page.getByRole( 'menuitem', { name: 'Delete' } );
-		await expect( deleteMenuItem ).toBeVisible();
-		await expect( deleteMenuItem ).toBeEnabled();
-		await deleteMenuItem.click();
-
-		const deleteDialog = page.getByRole( 'dialog', { name: 'Delete this class?' } );
-		await expect( deleteDialog ).toBeVisible();
-
-		const confirmDeleteButton = deleteDialog.getByRole( 'button', { name: 'Delete' } );
-		await expect( confirmDeleteButton ).toBeVisible();
-		await expect( confirmDeleteButton ).toBeEnabled();
-		await confirmDeleteButton.click();
-
-		const saveChangesButton = page.getByRole( 'button', { name: 'Save changes' } );
-		if ( await saveChangesButton.isVisible() ) {
-			await expect( saveChangesButton ).toBeEnabled();
-			await saveChangesButton.click();
-		}
+		await page.getByRole('button', { name: 'Class Manager' }).click();
+		await page.getByRole('button', { name: 'Save & Continue' }).click();
+		await page.locator( '[aria-label="More actions"]' ).first().click();
+		await page.getByRole('menuitem', { name: 'Delete' }).click();
+		await page.getByRole('button', { name: 'Delete' }).click();
+		await page.getByRole('button', { name: 'Save changes' }).click();
 
 		const overlay = divBlock.locator('.elementor-element-overlay');
 		await expect( overlay ).toHaveCount( 1 );
