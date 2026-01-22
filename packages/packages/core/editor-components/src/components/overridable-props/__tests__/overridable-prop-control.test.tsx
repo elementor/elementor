@@ -26,6 +26,10 @@ const mockGetControlReplacements = jest.fn< ControlReplacement[], [] >( () => []
 jest.mock( '@elementor/editor-editing-panel', () => ( {
 	...jest.requireActual( '@elementor/editor-editing-panel' ),
 	useElement: jest.fn(),
+} ) );
+
+jest.mock( '@elementor/editor-controls', () => ( {
+	...jest.requireActual( '@elementor/editor-controls' ),
 	getControlReplacements: () => mockGetControlReplacements(),
 } ) );
 

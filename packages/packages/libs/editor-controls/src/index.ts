@@ -67,6 +67,8 @@ export type { FontCategory } from './controls/font-family-control/font-family-co
 // providers
 export {
 	createControlReplacementsRegistry,
+	registerControlReplacement,
+	getControlReplacements,
 	ControlReplacementsProvider,
 	useControlReplacement,
 	type ControlReplacement,
