@@ -1,7 +1,4 @@
 import { type Document, getV1DocumentsManager } from '@elementor/editor-documents';
-import { __dispatch as dispatch } from '@elementor/store';
-
-import { slice } from '../store/store';
 
 type ComponentDocumentData = Document;
 
@@ -15,10 +12,8 @@ export const getComponentDocumentData = async ( id: number ) => {
 	}
 };
 
-export const invalidateComponentCache = ( id: number ) => {
+export const invalidateComponentDocumentData = ( id: number ) => {
 	const documentManager = getV1DocumentsManager();
 
 	documentManager.invalidateCache( id );
-	dispatch( slice.actions.removeStyles( { id } ) );
-	dispatch( slice.actions.clearOverridableProps( { componentId: id } ) );
 };
