@@ -15,6 +15,8 @@ import {
 import {
 	Box,
 	IconButton,
+	type SxProps,
+	type Theme,
 	ToggleButton,
 	ToggleButtonGroup,
 	toggleButtonGroupClasses,
@@ -29,13 +31,14 @@ import { UrlPopover } from './url-popover';
 export type InlineEditorToolbarProps = {
 	editor: Editor;
 	elementId?: ElementID;
+	sx?: SxProps< Theme >;
 };
 
 type ToolbarButtonKeys = keyof typeof toolbarButtons;
 
 type FormatAction = Omit< ToolbarButtonKeys, 'clear' >;
 
-export const InlineEditorToolbar = ( { editor, elementId }: InlineEditorToolbarProps ) => {
+export const InlineEditorToolbar = ( { editor, elementId, sx = {} }: InlineEditorToolbarProps ) => {
 	const [ urlValue, setUrlValue ] = useState( '' );
 	const [ openInNewTab, setOpenInNewTab ] = useState( false );
 	const toolbarRef = useRef< HTMLDivElement >( null );
@@ -114,6 +117,7 @@ export const InlineEditorToolbar = ( { editor, elementId }: InlineEditorToolbarP
 				alignItems: 'center',
 				visibility: linkPopupState.isOpen ? 'hidden' : 'visible',
 				pointerEvents: linkPopupState.isOpen ? 'none' : 'all',
+				...sx,
 			} }
 		>
 			<Tooltip title={ clearButton.label } placement="top" sx={ { borderRadius: '8px' } }>

@@ -21,7 +21,7 @@ import Subscript from '@tiptap/extension-subscript';
 import Superscript from '@tiptap/extension-superscript';
 import Text from '@tiptap/extension-text';
 import Underline from '@tiptap/extension-underline';
-import { type EditorProps } from '@tiptap/pm/view';
+import { type EditorProps, type EditorView } from '@tiptap/pm/view';
 import { type Editor, EditorContent, useEditor } from '@tiptap/react';
 
 import { isEmpty } from '../utils/inline-editing';
@@ -41,6 +41,7 @@ type InlineEditorProps = {
 	expectedTag?: string | null;
 	onEditorCreate?: Dispatch< SetStateAction< Editor | null > >;
 	wrapperClassName?: string;
+	onSelectionEnd?: ( view: EditorView ) => void;
 };
 
 type WrapperProps = PropsWithChildren< {
@@ -63,6 +64,7 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 		expectedTag = null,
 		onEditorCreate,
 		wrapperClassName,
+		onSelectionEnd,
 	} = props;
 
 	const containerRef = useRef< HTMLDivElement >( null );
@@ -144,7 +146,6 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 			...editorProps,
 			handleDOMEvents: {
 				keydown: onKeyDown,
-				...( editorProps.handleDOMEvents ?? {} ),
 			},
 			attributes: {
 				...( editorProps.attributes ?? {} ),
@@ -152,6 +153,9 @@ export const InlineEditor = React.forwardRef( ( props: InlineEditorProps, ref ) 
 			},
 		},
 		onCreate: onEditorCreate ? ( { editor: mountedEditor } ) => onEditorCreate( mountedEditor ) : undefined,
+		onSelectionUpdate: onSelectionEnd
+			? ( { editor: updatedEditor } ) => onSelectionEnd( updatedEditor.view )
+			: undefined,
 	} );
 
 	useOnUpdate( () => {

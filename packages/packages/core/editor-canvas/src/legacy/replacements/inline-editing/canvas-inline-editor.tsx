@@ -1,15 +1,19 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { InlineEditor, InlineEditorToolbar, type InlineEditorToolbarProps } from '@elementor/editor-controls';
+import { InlineEditor, InlineEditorToolbar } from '@elementor/editor-controls';
 import { Box, ThemeProvider } from '@elementor/ui';
 import { FloatingPortal, useInteractions } from '@floating-ui/react';
 
 import { CANVAS_WRAPPER_ID, OutlineOverlay } from '../../../components/outline-overlay';
 import { useBindReactPropsToElement } from '../../../hooks/use-bind-react-props-to-element';
 import { useFloatingOnElement } from '../../../hooks/use-floating-on-element';
-
-type Editor = InlineEditorToolbarProps[ 'editor' ];
-type EditorView = Editor[ 'view' ];
+import {
+	calcSelectionCenterOffsets,
+	type Editor,
+	type EditorView,
+	getComputedStyle,
+	type Offsets,
+} from './inline-editing-utils';
 
 const TOP_BAR_SELECTOR = '#elementor-editor-wrapper-v2';
 const NAVIGATOR_SELECTOR = '#elementor-navigator';
@@ -36,14 +40,13 @@ export const CanvasInlineEditor = ( {
 	setValue: ( value: string | null ) => void;
 	onBlur: () => void;
 } ) => {
-	const [ hasSelectedContent, setHasSelectedContent ] = useState( false );
+	const [ selectionOffsets, setSelectionOffsets ] = useState< Offsets | null >( null );
 	const [ editor, setEditor ] = useState< Editor | null >( null );
 
 	const onSelectionEnd = ( view: EditorView ) => {
 		const hasSelection = ! view.state.selection.empty;
 
-		setHasSelectedContent( hasSelection );
-		queueMicrotask( () => view.focus() );
+		setSelectionOffsets( hasSelection ? calcSelectionCenterOffsets( view ) : null );
 	};
 
 	useOnClickOutsideIframe( onBlur );
@@ -67,10 +70,6 @@ export const CanvasInlineEditor = ( {
 					attributes: {
 						style: 'outline: none;overflow-wrap: normal;height:100%',
 					},
-					handleDOMEvents: {
-						mouseup: onSelectionEnd,
-						keyup: onSelectionEnd,
-					},
 				} }
 				elementClasses={ elementClasses }
 				value={ initialValue }
@@ -79,13 +78,15 @@ export const CanvasInlineEditor = ( {
 				autofocus
 				expectedTag={ expectedTag }
 				wrapperClassName={ EDITOR_WRAPPER_SELECTOR }
+				onSelectionEnd={ onSelectionEnd }
 			/>
-			{ hasSelectedContent && editor && (
+			{ selectionOffsets && editor && (
 				<InlineEditingToolbarWrapper
 					expectedTag={ expectedTag }
 					editor={ editor }
 					rootElement={ rootElement }
 					id={ id }
+					selectionOffsets={ selectionOffsets }
 				/>
 			) }
 		</ThemeProvider>
@@ -116,11 +117,13 @@ const InlineEditingToolbarWrapper = ( {
 	editor,
 	rootElement,
 	id,
+	selectionOffsets,
 }: {
 	expectedTag: string | null;
 	editor: Editor;
 	rootElement: HTMLElement;
 	id: string;
+	selectionOffsets: Offsets;
 } ) => {
 	const [ element, setElement ] = useState< HTMLElement | null >( null );
 
@@ -128,15 +131,28 @@ const InlineEditingToolbarWrapper = ( {
 		setElement( getInlineEditorElement( rootElement, expectedTag ) );
 	}, [ expectedTag, rootElement ] );
 
-	return element ? <InlineEditingToolbar element={ element } editor={ editor } id={ id } /> : null;
+	return element ? (
+		<InlineEditingToolbar element={ element } editor={ editor } id={ id } selectionOffsets={ selectionOffsets } />
+	) : null;
 };
 
-const InlineEditingToolbar = ( { element, editor, id }: { element: HTMLElement; editor: Editor; id: string } ) => {
+const InlineEditingToolbar = ( {
+	element,
+	editor,
+	id,
+	selectionOffsets,
+}: {
+	element: HTMLElement;
+	editor: Editor;
+	id: string;
+	selectionOffsets: Offsets;
+} ) => {
 	const { floating } = useFloatingOnElement( {
 		element,
 		isSelected: true,
 	} );
 	const { getFloatingProps, getReferenceProps } = useInteractions();
+	const style = getComputedStyle( floating.styles, selectionOffsets );
 
 	useBindReactPropsToElement( element, getReferenceProps );
 
@@ -149,7 +165,7 @@ const InlineEditingToolbar = ( { element, editor, id }: { element: HTMLElement; 
 					pointerEvents: 'none',
 				} }
 				role="presentation"
-				{ ...getFloatingProps() }
+				{ ...getFloatingProps( { style } ) }
 			>
 				{ floating.styles.transform && (
 					<Box
@@ -159,7 +175,13 @@ const InlineEditingToolbar = ( { element, editor, id }: { element: HTMLElement; 
 							height: 'max-content',
 						} }
 					>
-						<InlineEditorToolbar editor={ editor } elementId={ id } />
+						<InlineEditorToolbar
+							editor={ editor }
+							elementId={ id }
+							sx={ {
+								transform: 'translateX(-50%)',
+							} }
+						/>
 					</Box>
 				) }
 			</Box>
