@@ -430,9 +430,9 @@ trait Has_Atomic_Base {
 		}
 
 		if ( is_array( $config ) ) {
-			$relative_to = $this->extract_prop_value( $config, 'relative_to', 'viewport' );
-			$offset_top = $this->extract_prop_value( $config, 'offset_top', 15 );
-			$offset_bottom = $this->extract_prop_value( $config, 'offset_bottom', 85 );
+			$relative_to = $this->extract_prop_value( $config, 'relativeTo', 'viewport' );
+			$offset_top = $this->extract_prop_value( $config, 'offsetTop', 15 );
+			$offset_bottom = $this->extract_prop_value( $config, 'offsetBottom', 85 );
 
 			$replay = $this->extract_prop_value( $config, 'replay', 0 );
 			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
