@@ -164,7 +164,6 @@ class Menu_Data_Provider {
 			$return_to = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
 
 			if ( $pro_url ) {
-				// Add `return_to` only when the URL contains a hash fragment.
 				if ( false !== strpos( $pro_url, '#' ) ) {
 					$url = $this->add_return_to_url( $pro_url, $return_to );
 				} else {
