@@ -17,7 +17,7 @@ const HeaderSection = ( props ) => {
 			} }
 		>
 			<Typography variant="h5">
-				{ __( 'Home', 'elementor' ) }
+				{ __( 'Quick Start', 'elementor' ) }
 			</Typography>
 			<Button
 				variant="contained"
