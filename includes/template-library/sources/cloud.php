@@ -102,15 +102,45 @@ class Source_Cloud extends Source_Base {
 	}
 
 	private function format_resource_item_for_create( $template_data ) {
+		$content_payload = [
+			'content' => $template_data['content'],
+			'page_settings' => $template_data['page_settings'],
+		];
+
+		// Embed Global Classes snapshot (only if used by the template).
+		if (
+			class_exists( \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::class ) &&
+			is_array( $template_data['content'] ?? null )
+		) {
+			$snapshot = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::build_snapshot_for_elements( $template_data['content'] );
+
+			/**
+			 * Filter embedded global classes snapshot for Template Library exports.
+			 *
+			 * @since 3.0.0
+			 *
+			 * @param array|null $snapshot
+			 * @param int        $template_id
+			 * @param array      $export_data
+			 */
+			$snapshot = apply_filters( 'elementor/template_library/export/global_classes_snapshot', $snapshot, 0, [
+				'content' => $template_data['content'],
+				'page_settings' => $template_data['page_settings'],
+				'title' => $template_data['title'] ?? '',
+				'type' => $template_data['type'] ?? '',
+			] );
+
+			if ( ! empty( $snapshot ) ) {
+				$content_payload['global_classes'] = $snapshot;
+			}
+		}
+
 		return [
 			'title' => $template_data['title'] ?? esc_html__( '(no title)', 'elementor' ),
 			'type' => self::TEMPLATE_RESOURCE_TYPE,
 			'templateType' => $template_data['type'],
 			'parentId' => ! empty( $template_data['parentId'] ) ? (int) $template_data['parentId'] : null,
-			'content' => wp_json_encode( [
-				'content' => $template_data['content'],
-				'page_settings' => $template_data['page_settings'],
-			] ),
+			'content' => wp_json_encode( $content_payload ),
 			'hasPageSettings' => ! empty( $template_data['page_settings'] ),
 		];
 	}
@@ -196,6 +226,30 @@ class Source_Cloud extends Source_Base {
 			'title' => $data['title'],
 			'type' => $data['templateType'],
 		];
+
+		// Prefer snapshot stored in cloud content; fallback to current site snapshot.
+		$snapshot = $data['content']['global_classes'] ?? null;
+
+		if ( class_exists( \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::class ) ) {
+			if ( empty( $snapshot ) && is_array( $export_data['content'] ?? null ) ) {
+				$snapshot = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::build_snapshot_for_elements( $export_data['content'] );
+			}
+
+			/**
+			 * Filter embedded global classes snapshot for Template Library exports.
+			 *
+			 * @since 3.0.0
+			 *
+			 * @param array|null $snapshot
+			 * @param int        $template_id
+			 * @param array      $export_data
+			 */
+			$snapshot = apply_filters( 'elementor/template_library/export/global_classes_snapshot', $snapshot, (int) ( $data['id'] ?? 0 ), $export_data );
+		}
+
+		if ( ! empty( $snapshot ) ) {
+			$export_data['global_classes'] = $snapshot;
+		}
 
 		return [
 			'name' => 'elementor-' . $data['id'] . '-' . gmdate( 'Y-m-d' ) . '.json',

@@ -1573,6 +1573,26 @@ class Source_Local extends Source_Base {
 			'type' => self::get_template_type( $template_id ),
 		];
 
+		// Embed Global Classes snapshot (only if used by the template).
+		if ( class_exists( \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::class ) ) {
+			$snapshot = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::build_snapshot_for_elements( $content );
+
+			/**
+			 * Filter embedded global classes snapshot for Template Library exports.
+			 *
+			 * @since 3.0.0
+			 *
+			 * @param array|null $snapshot
+			 * @param int        $template_id
+			 * @param array      $export_data
+			 */
+			$snapshot = apply_filters( 'elementor/template_library/export/global_classes_snapshot', $snapshot, $template_id, $export_data );
+
+			if ( ! empty( $snapshot ) ) {
+				$export_data['global_classes'] = $snapshot;
+			}
+		}
+
 		return [
 			'name' => 'elementor-' . $template_id . '-' . gmdate( 'Y-m-d' ) . '.json',
 			'content' => wp_json_encode( $export_data ),

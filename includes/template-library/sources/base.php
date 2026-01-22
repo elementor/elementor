@@ -481,6 +481,30 @@ abstract class Source_Base {
 			$content
 		);
 
+		// Import embedded Global Classes (if present) and rewrite ids in the imported content.
+		if (
+			! empty( $data['global_classes'] ) &&
+			is_array( $data['global_classes'] ) &&
+			class_exists( \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::class )
+		) {
+			/**
+			 * Filter embedded global classes snapshot for Template Library imports.
+			 *
+			 * @since 3.0.0
+			 *
+			 * @param array $snapshot
+			 * @param array $template_file_data Full decoded template JSON.
+			 */
+			$snapshot = apply_filters( 'elementor/template_library/import/global_classes_snapshot', $data['global_classes'], $data );
+
+			$merge_result = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::merge_snapshot_and_get_id_map( $snapshot );
+			$id_map = $merge_result['id_map'] ?? [];
+
+			if ( ! empty( $id_map ) ) {
+				$content = \Elementor\Modules\GlobalClasses\Utils\Template_Library_Global_Classes::rewrite_elements_classes_ids( $content, $id_map );
+			}
+		}
+
 		$page_settings = [];
 
 		if ( ! empty( $data['page_settings'] ) ) {
