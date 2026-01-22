@@ -5,18 +5,10 @@ import { getAtomicDynamicTags } from '../sync/get-atomic-dynamic-tags';
 import { type DynamicTag } from '../types';
 import { getDynamicPropType } from '../utils';
 
-/**
- * Get available dynamic tags for current prop (filtered by license).
- * Use this when showing options for NEW tag selection.
- */
 export const usePropDynamicTags = () => {
 	return usePropDynamicTagsInternal( true );
 };
 
-/**
- * Get all dynamic tags for current prop (unfiltered).
- * Use this when reading EXISTING tag values that might require expired license.
- */
 export const useAllPropDynamicTags = () => {
 	return usePropDynamicTagsInternal( false );
 };
