@@ -1,7 +1,7 @@
 import { createMockDocument } from 'test-utils';
 
 import { apiClient } from '../../api';
-import { invalidateComponentCache } from '../../utils/component-document-data';
+import { invalidateComponentDocumentData } from '../../utils/component-document-data';
 import { type ComponentDocumentsMap, getComponentDocuments } from '../../utils/get-component-documents';
 import { publishDraftComponentsInPageBeforeSave } from '../publish-draft-components-in-page-before-save';
 
@@ -113,10 +113,10 @@ describe( 'publishDraftComponentsInPageBeforeSave', () => {
 
 		// Assert
 		expect( apiClient.updateStatuses ).toHaveBeenCalledWith( [ 1000, 3000, 4000 ], 'publish' );
-		expect( invalidateComponentCache ).toHaveBeenCalledTimes( 3 );
-		expect( invalidateComponentCache ).toHaveBeenNthCalledWith( 1, 1000 );
-		expect( invalidateComponentCache ).toHaveBeenNthCalledWith( 2, 3000 );
-		expect( invalidateComponentCache ).toHaveBeenNthCalledWith( 3, 4000 );
+		expect( invalidateComponentDocumentData ).toHaveBeenCalledTimes( 3 );
+		expect( invalidateComponentDocumentData ).toHaveBeenNthCalledWith( 1, 1000 );
+		expect( invalidateComponentDocumentData ).toHaveBeenNthCalledWith( 2, 3000 );
+		expect( invalidateComponentDocumentData ).toHaveBeenNthCalledWith( 3, 4000 );
 	} );
 
 	it( 'should not update any components when not publishing', async () => {
@@ -147,7 +147,7 @@ describe( 'publishDraftComponentsInPageBeforeSave', () => {
 
 		// Assert
 		expect( apiClient.updateStatuses ).not.toHaveBeenCalled();
-		expect( invalidateComponentCache ).not.toHaveBeenCalled();
+		expect( invalidateComponentDocumentData ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should not update any components when all components are published', async () => {
@@ -178,6 +178,6 @@ describe( 'publishDraftComponentsInPageBeforeSave', () => {
 
 		// Assert
 		expect( apiClient.updateStatuses ).not.toHaveBeenCalled();
-		expect( invalidateComponentCache ).not.toHaveBeenCalled();
+		expect( invalidateComponentDocumentData ).not.toHaveBeenCalled();
 	} );
 } );
