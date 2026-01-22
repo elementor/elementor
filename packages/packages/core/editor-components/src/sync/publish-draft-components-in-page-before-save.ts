@@ -3,7 +3,7 @@ import { type V1ElementData } from '@elementor/editor-elements';
 
 import { apiClient } from '../api';
 import { type DocumentSaveStatus } from '../types';
-import { invalidateComponentCache } from '../utils/component-document-data';
+import { invalidateComponentDocumentData } from '../utils/component-document-data';
 import { getComponentDocuments } from '../utils/get-component-documents';
 
 type Options = {
@@ -26,5 +26,5 @@ export async function publishDraftComponentsInPageBeforeSave( { status, elements
 
 	await apiClient.updateStatuses( draftIds, 'publish' );
 
-	draftIds.forEach( ( id ) => invalidateComponentCache( id ) );
+	draftIds.forEach( ( id ) => invalidateComponentDocumentData( id ) );
 }
