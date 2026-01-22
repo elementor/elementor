@@ -46,7 +46,7 @@ jest.mocked( PopoverMenuList ).mockImplementation(
 jest.mock( '../ui/no-search-results', () => ( {
 	NoSearchResults: () => <span>No results found</span>,
 } ) );
-jest.mock( '@elementor/editor-editing-panel', () => ( {
+jest.mock( '@elementor/editor-ui', () => ( {
 	PopoverBody: ( { children }: PropsWithChildren ) => children,
 } ) );
 

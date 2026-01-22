@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 import { type FontCategory } from '@elementor/editor-controls';
+import { getElementorConfig } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
-
-import { getElementorConfig } from '../../../../sync/get-elementor-globals';
 
 const supportedCategories: Record< string, string > = {
 	system: __( 'System', 'elementor' ),

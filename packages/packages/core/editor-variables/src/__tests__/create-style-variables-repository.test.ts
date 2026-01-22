@@ -1,13 +1,9 @@
 import { createStyleVariablesRepository } from '../create-style-variables-repository';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
-import * as enqueueModule from '../sync/enqueue-font';
-
-jest.mock( '../sync/enqueue-font' );
 
 describe( 'createStyleVariablesRepository', () => {
-	const mockEnqueueFont = jest.mocked( enqueueModule.enqueueFont );
-
+	const mockEnqueueFont = jest.fn();
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockEnqueueFont.mockImplementation( () => {} );
