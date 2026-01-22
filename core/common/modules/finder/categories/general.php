@@ -63,7 +63,7 @@ class General extends Base_Category {
 				'url' => Role_Manager::get_url(),
 				'keywords' => [ 'role', 'manager', 'user', 'elementor' ],
 			],
-			'knowledge-base' => [
+			'knowledge-base' => [ // TODO: Possibly delete.
 				'title' => esc_html__( 'Knowledge Base', 'elementor' ),
 				'url' => admin_url( 'admin.php?page=go_knowledge_base_site' ),
 				'keywords' => [ 'help', 'knowledge', 'docs', 'elementor' ],

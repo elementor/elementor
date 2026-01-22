@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+// TODO: Possibly delete.
 class Get_Help_Menu_Item implements Admin_Menu_Item_With_Page {
 	const URL = 'https://go.elementor.com/docs-admin-menu/';
 
