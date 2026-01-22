@@ -38,12 +38,27 @@ import { CssClassFilter } from '../search-and-filter/components/filter/css-class
 import { ClassManagerSearch } from '../search-and-filter/components/search/class-manager-search';
 import { SearchAndFilterProvider } from '../search-and-filter/context';
 import { ClassManagerIntroduction } from './class-manager-introduction';
-import { hasDeletedItems, onDelete, reloadDocument } from './delete-class';
+import { hasDeletedItems, onDelete } from './delete-class';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { GlobalClassesList } from './global-classes-list';
 import { blockPanelInteractions, unblockPanelInteractions } from './panel-interactions';
+import { getCurrentDocument, getV1DocumentsManager } from '@elementor/editor-documents';
+import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
 const id = 'global-classes-manager';
+
+const reloadDocument = () => {
+	const currentDocument = getCurrentDocument();
+	const documentsManager = getV1DocumentsManager();
+
+	documentsManager.invalidateCache();
+
+	return runCommand( 'editor/documents/switch', {
+		id: currentDocument?.id,
+		shouldScroll: false,
+		shouldNavigateToDefaultRoute: false,
+	} );
+};
 
 // We need to disable the app-bar buttons, and the elements overlays when opening the classes manager panel.
 // The buttons and overlays are enabled only in edit mode, so we're creating a custom new edit mode that
