@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { type ComponentType, type ElementType as ReactElementType } from 'react';
-import { useFloatingActionsBar } from '@elementor/editor-controls';
 import { bindPopover, bindTrigger, IconButton, Popover, Tooltip, usePopupState } from '@elementor/ui';
+
+import { useFloatingActionsBar } from '../floating-bar';
 
 const SIZE = 'tiny';
 

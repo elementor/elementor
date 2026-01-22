@@ -4,7 +4,7 @@ import { createRoot, type Root } from 'react-dom/client';
 import { InlineEditor } from '@elementor/editor-controls';
 import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
 import { htmlPropTypeUtil, type PropType, type PropValue, stringPropTypeUtil } from '@elementor/editor-props';
-import { __privateRunCommandSync as runCommandSync, isExperimentActive, undoable } from '@elementor/editor-v1-adapters';
+import { __privateRunCommandSync as runCommandSync, undoable } from '@elementor/editor-v1-adapters';
 import { Box, ThemeProvider } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
@@ -12,8 +12,6 @@ import { OutlineOverlay } from '../../../components/outline-overlay';
 import { ReplacementBase, TRIGGER_TIMING } from '../base';
 import { isInlineEditingAllowed } from './inline-editing-eligibility';
 import { getInitialPopoverPosition, INLINE_EDITING_PROPERTY_PER_TYPE } from './inline-editing-utils';
-
-const EXPERIMENT_KEY = 'v4-inline-text-editing';
 
 type TagPropType = PropType< 'tag' > & {
 	settings?: {
@@ -47,7 +45,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	shouldRenderReplacement() {
-		return isExperimentActive( EXPERIMENT_KEY ) && this.isInlineEditingEligible();
+		return this.isInlineEditingEligible();
 	}
 
 	handleRenderInlineEditor = () => {
