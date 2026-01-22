@@ -26,3 +26,92 @@
 		max-width: calc(100% / var(--e-image-carousel-slides-to-show, 3));
 	}
 }
+
+@supports (scroll-marker-group: after) {
+	.elementor-image-carousel-wrapper {
+		.elementor-swiper-button {
+			display: none !important;
+		}
+	}
+
+	.elementor-image-carousel:not(.swiper-wrapper) {
+		display: grid;
+		grid-auto-columns: max-content;
+		grid-auto-flow: column;
+		gap: 4em;
+
+		scroll-behavior: smooth;
+
+		scrollbar-width: none;
+		anchor-name: --carousel;
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		scroll-snap-type: x mandatory;
+
+		/* Dot Navigation */
+		scroll-marker-group: after;
+
+		/* The scroll-marker-group is actually a *sibling* */
+		&::scroll-marker-group {
+			position: absolute;
+			bottom: 0;
+			left: calc(222px + 24px + 6px);
+			z-index: 5;
+		}
+
+		&::scroll-button(*) {
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			height: 48px;
+			aspect-ratio: 1;
+			background: #000;
+			color: #fff;
+			cursor: pointer;
+			border: none;
+			z-index: 5;
+
+			&:disabled {
+
+			}
+
+			&:hover {
+				background: #24890d;
+			}
+		}
+
+		/* TODO: Use SVG icons with fallback to the data-* attributes */
+
+		&::scroll-button(left) {
+			content: attr(data-prev);
+			left: 0;
+		}
+
+		&::scroll-button(right) {
+			content: attr(data-next);
+		}
+
+		.swiper-slide {
+			display: block;
+			container-type: scroll-state;
+			scroll-snap-align: center;
+
+			&::scroll-marker {
+				content: '' / attr(data-index);
+				width: 12px;
+				height: 12px;
+				display: inline-block;
+				border-radius: 50%;
+				background: #000;
+				opacity: 0.2;
+				cursor: pointer;
+				margin: 0 3px;
+
+				&:target-current {
+					opacity: 1;
+					background: #000;
+				}
+			}
+		}
+	}
+}
