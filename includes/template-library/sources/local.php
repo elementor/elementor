@@ -426,10 +426,6 @@ class Source_Local extends Source_Base {
 		$menu_data_provider->register_menu( new Editor_One_Saved_Templates_Menu() );
 	}
 
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-	}
-
 	public function admin_title( $admin_title, $title ) {
 		$library_title = $this->get_library_title();
 

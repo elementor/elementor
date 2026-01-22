@@ -192,8 +192,4 @@ class Module extends Base_Module {
 			EditorAssetsAPI::ASSETS_DATA_KEY => 'promotions',
 		];
 	}
-
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-	}
 }

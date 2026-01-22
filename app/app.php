@@ -54,10 +54,6 @@ class App extends BaseApp {
 		$menu_data_provider->register_menu( new Editor_One_Theme_Builder_Menu() );
 	}
 
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-	}
-
 	public function fix_submenu( $menu ) {
 		global $submenu;
 

@@ -214,10 +214,6 @@ class Tools extends Settings_Page {
 		$menu_data_provider->register_menu( new Editor_One_Tools_Menu() );
 	}
 
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-	}
-
 	public function get_warning_span( string $text ): string {
 		$color = 'var(--e-one-palette-error-main)';
 		return sprintf( '<span style="color: %s;">%s</span>', esc_attr( $color ), esc_html( $text ) );

@@ -74,10 +74,6 @@ class Module extends BaseModule {
 		$menu_data_provider->register_menu( new Editor_One_Elements_Manager_Menu() );
 	}
 
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-	}
-
 	public function enqueue_assets() {
 		wp_enqueue_script(
 			'e-element-manager-app',

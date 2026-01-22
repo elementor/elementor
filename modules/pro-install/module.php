@@ -46,10 +46,6 @@ class Module extends BaseModule {
 		} );
 	}
 
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-	}
-
 	private function get_connect_app(): Connect {
 		return Plugin::$instance->common->get_component( 'connect' )->get_app( 'pro-install' );
 	}

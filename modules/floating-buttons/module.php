@@ -66,10 +66,6 @@ class Module extends BaseModule {
 		$menu_data_provider->register_menu( new Editor_One_Floating_Elements_Menu() );
 	}
 
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-	}
-
 	public function __construct() {
 		parent::__construct();
 
