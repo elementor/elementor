@@ -8,7 +8,7 @@ import useButtonAction from '../utils/use-button-action';
 import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function ChooseFeatures() {
-	const options = useMemo( () => getOptions( true ), [] );
+	const options = useMemo( () => getOptions(), [] );
 	const { setAjax } = useAjax(),
 		tiers = {
 			one: __( 'One', 'elementor' ),
