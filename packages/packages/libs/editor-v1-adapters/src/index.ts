@@ -41,3 +41,5 @@ export { registerDataHook } from './data-hooks/register-data-hook';
 export { blockCommand } from './data-hooks/block-command';
 
 export { getCanvasIframeDocument } from './canvas';
+
+export * from './config';
