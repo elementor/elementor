@@ -29,6 +29,7 @@ test.describe( 'Global Classes - delete assigned class keeps element overlay @v4
 
 		await page.getByRole('button', { name: 'Class Manager' }).click();
 		await page.getByRole('button', { name: 'Save & Continue' }).click();
+		await page.locator( '[aria-label="Got it introduction"]' ).click();
 		await page.locator( '[aria-label="More actions"]' ).first().click();
 		await page.getByRole('menuitem', { name: 'Delete' }).click();
 		await page.getByRole('button', { name: 'Delete' }).click();
