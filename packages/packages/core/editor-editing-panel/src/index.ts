@@ -1,4 +1,3 @@
-export { useBoundProp } from '@elementor/editor-controls';
 export { type ValidationEvent, type ValidationResult } from './components/creatable-autocomplete';
 export { injectIntoCssClassConvert } from './components/css-classes/css-class-convert-local';
 export { injectIntoClassSelectorActions } from './components/css-classes/css-class-selector';
@@ -26,7 +25,6 @@ export { getSubtitle, getTitle, HISTORY_DEBOUNCE_WAIT } from './hooks/use-styles
 export { useStylesRerender } from './hooks/use-styles-rerender';
 export { init } from './init';
 export { usePanelActions, usePanelStatus } from './panel';
-export type { PopoverActionProps } from './popover-action';
 export { registerStyleProviderToColors } from './provider-colors-registry';
 export { stylesInheritanceTransformersRegistry } from './styles-inheritance/styles-inheritance-transformers-registry';
 export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-indicators-registry';
