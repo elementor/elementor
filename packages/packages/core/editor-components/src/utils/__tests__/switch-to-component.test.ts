@@ -1,4 +1,10 @@
-import { buildUniqueSelector } from '../switch-to-component';
+import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
+
+import { invalidateComponentCache } from '../component-document-data';
+import { buildUniqueSelector, switchToComponent } from '../switch-to-component';
+
+jest.mock( '@elementor/editor-v1-adapters' );
+jest.mock( '../component-document-data' );
 
 const COMPONENT_A_INSTANCE_1_ID = 'component-a-instance-1';
 const COMPONENT_A_INSTANCE_2_ID = 'component-a-instance-2';
@@ -160,5 +166,29 @@ describe( 'buildUniqueSelector', () => {
 		expect( result ).not.toContain( 'container-1' );
 		expect( result ).not.toContain( 'container-2' );
 		expect( result ).not.toContain( 'container-3' );
+	} );
+} );
+
+describe( 'switchToComponent', () => {
+	const COMPONENT_ID = 1234;
+	const INSTANCE_ID = 'instance-abc';
+
+	it( 'should invalidate component cache before switching document', async () => {
+		// Arrange
+		const callOrder: string[] = [];
+		jest.mocked( invalidateComponentCache ).mockImplementation( () => {
+			callOrder.push( 'invalidateComponentCache' );
+		} );
+		jest.mocked( runCommand ).mockImplementation( async () => {
+			callOrder.push( 'runCommand' );
+		} );
+
+		// Act
+		await switchToComponent( COMPONENT_ID, INSTANCE_ID );
+
+		// Assert
+		expect( invalidateComponentCache ).toHaveBeenCalledWith( COMPONENT_ID );
+		expect( runCommand ).toHaveBeenCalledWith( 'editor/documents/switch', expect.any( Object ) );
+		expect( callOrder ).toEqual( [ 'invalidateComponentCache', 'runCommand' ] );
 	} );
 } );
