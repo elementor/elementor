@@ -69,7 +69,7 @@ export function InstanceEditingPanel() {
 					) : (
 						<Stack direction="column" alignItems="stretch">
 							{ groups.map( ( group ) => (
-								<React.Fragment key={ group.id }>
+								<React.Fragment key={ group.id + componentInstanceId }>
 									<OverridePropsGroup
 										group={ group }
 										props={ overridableProps.props }
