@@ -47,7 +47,6 @@ export {
 	type ItemsActionPayload,
 	type RepeaterItem,
 } from './components/repeater/repeater';
-export { FloatingActionsBar } from './components/floating-bar';
 export { PopoverGridContainer } from './components/popover-grid-container';
 export { InlineEditor } from './components/inline-editor';
 export { InlineEditorToolbar } from './components/inline-editor-toolbar';
@@ -73,7 +72,6 @@ export {
 	type ControlReplacement,
 } from './control-replacements';
 export { ControlActionsProvider, useControlActions } from './control-actions/control-actions-context';
-export { useFloatingActionsBar } from './components/floating-bar';
 export { useBoundProp, PropProvider, PropKeyProvider } from './bound-prop-context';
 export { ControlAdornmentsProvider } from './control-adornments/control-adornments-context';
 export { ControlAdornments } from './control-adornments/control-adornments';
