@@ -163,9 +163,19 @@ class Menu_Data_Provider {
 			$pro_url = Plugin::$instance->app ? Plugin::$instance->app->get_settings( 'menu_url' ) : null;
 			$return_to = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
 
-			$url = $pro_url
-				? $this->add_return_to_url( $pro_url, $return_to )
-				: add_query_arg( [ 'return_to' => $return_to ], admin_url( 'admin.php?page=elementor-app' ) ) . '#/site-editor/promotion';
+			if ( $pro_url ) {
+				// Add `return_to` only when the URL contains a hash fragment.
+				if ( false !== strpos( $pro_url, '#' ) ) {
+					$url = $this->add_return_to_url( $pro_url, $return_to );
+				} else {
+					$url = $pro_url;
+				}
+			} else {
+				$url = $this->add_return_to_url(
+					admin_url( 'admin.php?page=elementor-app' ) . '#/site-editor/promotion',
+					$return_to
+				);
+			}
 
 			$this->theme_builder_url = apply_filters( 'elementor/editor-one/menu/theme_builder_url', $url );
 		}
