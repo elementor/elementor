@@ -9,7 +9,6 @@ use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Modules\Home\Module as Home_Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Home_Menu;
 use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Settings_Menu;
 
@@ -90,22 +89,32 @@ class Settings extends Settings_Page {
 
 		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
 
-		if ( ! current_user_can( self::MENU_CAPABILITY_EDIT_POSTS ) ) {
+		$required_capability = $this->get_menu_capability();
+
+		if ( ! current_user_can( $required_capability ) ) {
 			return;
 		}
 
 		add_menu_page(
 			esc_html__( 'Elementor', 'elementor' ),
 			esc_html__( 'Elementor', 'elementor' ),
-			self::MENU_CAPABILITY_EDIT_POSTS,
-			Menu_Config::ELEMENTOR_HOME_MENU_SLUG,
+			$required_capability,
+			self::PAGE_ID,
 			[
 				$this,
-				'display_home_screen',
+				$this->home_module->is_experiment_active() ? 'display_home_screen' : 'display_settings_page',
 			],
 			'',
 			'58.5'
 		);
+
+		if ( $this->home_module->is_experiment_active() ) {
+			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+				if ( ! $this->is_editor_one_active() ) {
+					$admin_menu->register( 'elementor-settings', new Admin_Menu_Item( $this ) );
+				}
+			}, 0 );
+		}
 	}
 
 	public function display_home_screen() {
@@ -149,12 +158,36 @@ class Settings extends Settings_Page {
 		return $elementor_menu_order;
 	}
 
+	/**
+	 * Register Elementor knowledge base sub-menu.
+	 *
+	 * Add new Elementor knowledge base sub-menu under the main Elementor menu.
+	 *
+	 * Fired by `admin_menu` action.
+	 *
+	 * @since 2.0.3
+	 * @access private
+	 */
+	private function register_knowledge_base_menu( Admin_Menu_Manager $admin_menu ) {
+		if ( ! Plugin::instance()->modules_manager->get_modules( 'editor-one' ) ) {
+			$admin_menu->register( 'go_knowledge_base_site', new Get_Help_Menu_Item() );
+		}
+	}
+
 	private function register_editor_one_settings_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Settings_Menu() );
 	}
 
 	private function register_editor_one_home_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Home_Menu() );
+	}
+
+	private function is_editor_one_active(): bool {
+		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
+	}
+
+	private function get_menu_capability(): string {
+		return $this->is_editor_one_active() ? self::MENU_CAPABILITY_EDIT_POSTS : self::MENU_CAPABILITY_MANAGE_OPTIONS;
 	}
 
 	/**
@@ -205,7 +238,9 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function admin_menu_change_name() {
-		$menu_name = esc_html__( 'Home', 'elementor' );
+		$menu_name = $this->home_module->is_experiment_active()
+			? esc_html__( 'Home', 'elementor' )
+			: esc_html__( 'Settings', 'elementor' );
 
 		Utils::change_submenu_first_item_label( 'elementor', $menu_name );
 	}
@@ -547,9 +582,15 @@ class Settings extends Settings_Page {
 		add_action( 'admin_menu', [ $this, 'register_admin_menu' ], 20 );
 
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
-			$this->register_editor_one_settings_menu( $menu_data_provider );
-			$this->register_editor_one_home_menu( $menu_data_provider );
+			if ( $this->home_module->is_experiment_active() ) {
+				$this->register_editor_one_settings_menu( $menu_data_provider );
+				$this->register_editor_one_home_menu( $menu_data_provider );
+			}
 		} );
+
+		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+			$this->register_knowledge_base_menu( $admin_menu );
+		}, Promotions_Module::ADMIN_MENU_PRIORITY - 1 );
 
 		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 
