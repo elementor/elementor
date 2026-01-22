@@ -19,8 +19,6 @@ export const deleteClass = ( id: string ) => {
 };
 
 export const onDelete = async () => {
-	await reloadDocument();
-
 	isDeleted = false;
 };
 
@@ -28,7 +26,7 @@ export const hasDeletedItems = () => isDeleted;
 
 // When deleting a class, we remove it from all the documents that have it applied.
 // In order to reflect the changes in the active document, we need to reload it.
-const reloadDocument = () => {
+export const reloadDocument = () => {
 	const currentDocument = getCurrentDocument();
 	const documentsManager = getV1DocumentsManager();
 
