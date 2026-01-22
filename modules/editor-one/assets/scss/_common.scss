@@ -100,8 +100,6 @@
 	}
 
 	#wpbody-content {
-		margin-block-start: 50px;
-
 		hr:not(.MuiDivider-root) {
 			border: none;
 			border-block-start: 1px solid var(--e-one-palette-divider);
@@ -344,4 +342,8 @@
 	#elementor-element-manager-wrap {
 		width: 100%;
 	}
+}
+
+body:has(#editor-one-top-bar > *) #wpcontent #wpbody-content {
+	margin-block-start: 50px;
 }
