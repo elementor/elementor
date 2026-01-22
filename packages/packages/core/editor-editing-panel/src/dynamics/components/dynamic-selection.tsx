@@ -1,12 +1,11 @@
 import { Fragment, useState } from 'react';
 import * as React from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
-import { CtaButton, PopoverHeader, PopoverMenuList, SearchField } from '@elementor/editor-ui';
+import { CtaButton, PopoverHeader, PopoverMenuList, SearchField, SectionPopoverBody } from '@elementor/editor-ui';
 import { DatabaseIcon } from '@elementor/icons';
 import { Divider, Link, Stack, Typography, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { SectionPopoverBody } from '@elementor/editor-ui';
 import { usePersistDynamicValue } from '../../hooks/use-persist-dynamic-value';
 import { usePropDynamicTags } from '../hooks/use-prop-dynamic-tags';
 import { getAtomicDynamicTags } from '../sync/get-atomic-dynamic-tags';

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { type KeyboardEvent, useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
-import { SectionPopoverBody } from '@elementor/editor-ui';
-import { PopoverHeader } from '@elementor/editor-ui';
+import { PopoverHeader, SectionPopoverBody } from '@elementor/editor-ui';
 import { Button, CardActions, Divider, FormHelperText, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
