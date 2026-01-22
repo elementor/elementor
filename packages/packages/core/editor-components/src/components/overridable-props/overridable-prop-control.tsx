@@ -1,13 +1,7 @@
 import * as React from 'react';
 import { type ComponentType } from 'react';
-import {
-	ControlReplacementsProvider,
-	PropKeyProvider,
-	PropProvider,
-	useBoundProp,
-	useControlReplacement,
-} from '@elementor/editor-controls';
-import { createTopLevelObjectType, getControlReplacements, useElement } from '@elementor/editor-editing-panel';
+import { PropKeyProvider, PropProvider, useBoundProp } from '@elementor/editor-controls';
+import { createTopLevelObjectType, useElement } from '@elementor/editor-editing-panel';
 import { type PropValue } from '@elementor/editor-props';
 
 import { type ComponentInstanceOverridePropValue } from '../../prop-types/component-instance-override-prop-type';
@@ -19,7 +13,6 @@ import { OverridablePropProvider } from '../../provider/overridable-prop-context
 import { updateOverridableProp } from '../../store/actions/update-overridable-prop';
 import { useCurrentComponentId, useOverridableProps } from '../../store/store';
 import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-component-override';
-import { OVERRIDABLE_PROP_REPLACEMENT_ID } from '../consts';
 
 export function OverridablePropControl< T extends object >( {
 	OriginalControl,
@@ -30,9 +23,6 @@ export function OverridablePropControl< T extends object >( {
 	const { value, bind, setValue, placeholder, ...propContext } = useBoundProp( componentOverridablePropTypeUtil );
 	const componentId = useCurrentComponentId();
 	const overridableProps = useOverridableProps( componentId );
-	const filteredReplacements = getControlReplacements().filter(
-		( r ) => ! r.id || r.id !== OVERRIDABLE_PROP_REPLACEMENT_ID
-	);
 
 	if ( ! componentId ) {
 		return null;
@@ -95,32 +85,9 @@ export function OverridablePropControl< T extends object >( {
 				placeholder={ objectPlaceholder }
 			>
 				<PropKeyProvider bind={ bind }>
-					<ControlReplacementsProvider replacements={ filteredReplacements }>
-						<ControlWithReplacements OriginalControl={ OriginalControl } props={ props as T } />
-					</ControlReplacementsProvider>
+					<OriginalControl { ...( props as T ) } />
 				</PropKeyProvider>
 			</PropProvider>
 		</OverridablePropProvider>
 	);
-}
-
-type ControlComponentType = ComponentType< object & { OriginalControl: ComponentType } >;
-
-function ControlWithReplacements< T extends object >( {
-	OriginalControl,
-	props,
-}: {
-	OriginalControl: ComponentType< T >;
-	props: T;
-} ) {
-	const { ControlToRender, isReplaced } = useControlReplacement( OriginalControl as ControlComponentType );
-
-	if ( isReplaced ) {
-		const ReplacementControl = ControlToRender as unknown as ComponentType<
-			T & { OriginalControl: ComponentType< T > }
-		>;
-		return <ReplacementControl { ...props } OriginalControl={ OriginalControl } />;
-	}
-
-	return <OriginalControl { ...props } />;
 }

@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { type ComponentType } from 'react';
 import { createMockElementType, createMockPropType, renderControl } from 'test-utils';
-import { type ControlReplacement, useBoundProp } from '@elementor/editor-controls';
+import {
+	type ControlReplacement,
+	ControlReplacementsProvider,
+	createControl,
+	useBoundProp,
+} from '@elementor/editor-controls';
 import { ElementProvider, useElement } from '@elementor/editor-editing-panel';
 import { isTransformable, numberPropTypeUtil, stringPropTypeUtil } from '@elementor/editor-props';
 import {
@@ -298,15 +303,15 @@ function mockOverridableProps( { props }: { props: Record< string, Partial< Over
 	};
 }
 
-function MockTextControl() {
+const MockTextControl = createControl( () => {
 	const { value, setValue } = useBoundProp( stringPropTypeUtil );
 	return <input type="text" value={ value ?? '' } onChange={ ( e ) => setValue( e.target.value ) } />;
-}
+} );
 
-function MockNumberControl() {
+const MockNumberControl = createControl( () => {
 	const { value, setValue } = useBoundProp( numberPropTypeUtil );
 	return <input type="number" value={ value ?? '' } onChange={ ( e ) => setValue( Number( e.target.value ) ) } />;
-}
+} );
 
 function renderOverridableControl(
 	storeInstance: Store< ComponentsSlice >,
@@ -375,6 +380,7 @@ describe( 'OverridablePropControl with control replacements', () => {
 	it( 'should apply control replacement when inner value matches replacement condition', () => {
 		// Arrange
 		const dynamicReplacement: ControlReplacement = {
+			id: 'test-dynamic-replacement',
 			component: () => <div role="alert">Dynamic Control Replacement</div>,
 			condition: ( { value } ) => isDynamicValue( value ),
 		};
@@ -402,6 +408,7 @@ describe( 'OverridablePropControl with control replacements', () => {
 	it( 'should render original control when inner value does not match any replacement condition', () => {
 		// Arrange
 		const dynamicReplacement: ControlReplacement = {
+			id: 'test-dynamic-replacement',
 			component: () => <div role="alert">Dynamic Control Replacement</div>,
 			condition: ( { value } ) => isDynamicValue( value ),
 		};
@@ -433,6 +440,7 @@ describe( 'OverridablePropControl with control replacements', () => {
 		);
 
 		const dynamicReplacement: ControlReplacement = {
+			id: 'test-dynamic-replacement',
 			component: ReplacementWithOriginal,
 			condition: ( { value } ) => isDynamicValue( value ),
 		};
@@ -469,14 +477,20 @@ function renderOverridableControlWithReplacements(
 	props: Parameters< typeof renderControl >[ 1 ]
 ) {
 	const OriginalControl = props.bind === BIND_NUMBER ? MockNumberControl : MockTextControl;
+	const replacements = mockGetControlReplacements();
 
 	return renderControl(
 		<StoreProvider store={ storeInstance }>
-			<ElementProvider element={ { id: 'test-widget-id', type: ELEMENT_TYPE } } elementType={ mockElementType }>
-				<ErrorBoundary fallback={ null }>
-					<OverridablePropControl OriginalControl={ OriginalControl } />
-				</ErrorBoundary>
-			</ElementProvider>
+			<ControlReplacementsProvider replacements={ replacements }>
+				<ElementProvider
+					element={ { id: 'test-widget-id', type: ELEMENT_TYPE } }
+					elementType={ mockElementType }
+				>
+					<ErrorBoundary fallback={ null }>
+						<OverridablePropControl OriginalControl={ OriginalControl } />
+					</ErrorBoundary>
+				</ElementProvider>
+			</ControlReplacementsProvider>
 		</StoreProvider>,
 		props
 	);

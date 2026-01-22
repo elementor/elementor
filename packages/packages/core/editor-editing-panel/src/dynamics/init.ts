@@ -22,6 +22,7 @@ const { registerPopoverAction } = controlActionsMenu;
 
 export const init = () => {
 	registerControlReplacement( {
+		id: 'dynamic-control',
 		component: DynamicSelectionControl as ControlComponent,
 		condition: ( { value } ) => isDynamicPropValue( value ),
 	} );
