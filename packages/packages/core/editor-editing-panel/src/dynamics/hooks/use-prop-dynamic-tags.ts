@@ -21,7 +21,7 @@ export const usePropDynamicTags = () => {
 };
 
 const getDynamicTagsByCategories = ( categories: string[] ) => {
-	const { tags, groups } = getAtomicDynamicTags() || {};
+	const { tags, groups } = getAtomicDynamicTags( false ) || {};
 
 	if ( ! categories.length || ! tags || ! groups ) {
 		return [];
