@@ -13,6 +13,7 @@ type Props< TValue > = {
 	defaultValue?: Partial< TValue >;
 	onChange: ( value: TValue ) => void;
 	onBlur?: ( event: React.FocusEvent< HTMLInputElement > ) => void;
+	disabled?: boolean;
 };
 
 const DEFAULT_VALUE: SizePropValue[ 'value' ] = {
