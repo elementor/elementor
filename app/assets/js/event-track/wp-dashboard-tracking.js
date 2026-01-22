@@ -81,10 +81,6 @@ export default class WpDashboardTracking {
 		this.saveSessionToStorage();
 	}
 
-	static isEditorOneActive() {
-		return elementorCommon?.config?.editor_events?.isEditorOneActive ?? false;
-	}
-
 	static processPendingNavClick() {
 		try {
 			const pendingNav = sessionStorage.getItem( PENDING_NAV_CLICK_KEY );
@@ -381,10 +377,7 @@ export default class WpDashboardTracking {
 		PromotionTracking.destroy();
 		MenuPromotionTracking.destroy();
 		ActionControlTracking.destroy();
-
-		if ( ! WpDashboardTracking.isEditorOneActive() ) {
-			TopBarTracking.destroy();
-		}
+		TopBarTracking.destroy();
 
 		this.initialized = false;
 	}
@@ -407,10 +400,7 @@ window.addEventListener( 'elementor/admin/init', () => {
 		PromotionTracking.init();
 		MenuPromotionTracking.init();
 		ActionControlTracking.init();
-
-		if ( ! WpDashboardTracking.isEditorOneActive() ) {
-			TopBarTracking.init();
-		}
+		TopBarTracking.init();
 	}
 } );
 
