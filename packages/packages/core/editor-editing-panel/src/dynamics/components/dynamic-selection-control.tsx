@@ -7,7 +7,7 @@ import {
 	useBoundProp,
 } from '@elementor/editor-controls';
 import type { Control, ControlLayout, ControlsSection } from '@elementor/editor-elements';
-import { PopoverHeader } from '@elementor/editor-ui';
+import { PopoverHeader, SectionPopoverBody } from '@elementor/editor-ui';
 import { DatabaseIcon, SettingsIcon, XIcon } from '@elementor/icons';
 import {
 	bindPopover,
@@ -27,7 +27,6 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { PopoverBody } from '../../components/popover-body';
 import { Control as BaseControl } from '../../controls-registry/control';
 import { controlsRegistry, type ControlType } from '../../controls-registry/controls-registry';
 import { createTopLevelObjectType } from '../../controls-registry/create-top-level-object-type';
@@ -108,9 +107,9 @@ export const DynamicSelectionControl = ( { OriginalControl, ...props }: { Origin
 				} }
 				{ ...bindPopover( selectionPopoverState ) }
 			>
-				<PopoverBody aria-label={ __( 'Dynamic tags', 'elementor' ) }>
+				<SectionPopoverBody aria-label={ __( 'Dynamic tags', 'elementor' ) }>
 					<DynamicSelection close={ selectionPopoverState.close } expired={ readonly } />
-				</PopoverBody>
+				</SectionPopoverBody>
 			</Popover>
 		</Box>
 	);
@@ -151,14 +150,14 @@ export const DynamicSettingsPopover = ( {
 				} }
 				{ ...bindPopover( popupState ) }
 			>
-				<PopoverBody aria-label={ __( 'Dynamic settings', 'elementor' ) }>
+				<SectionPopoverBody aria-label={ __( 'Dynamic settings', 'elementor' ) }>
 					<PopoverHeader
 						title={ dynamicTag.label }
 						onClose={ popupState.close }
 						icon={ <DatabaseIcon fontSize={ SIZE } /> }
 					/>
 					<DynamicSettings controls={ dynamicTag.atomic_controls } tagName={ dynamicTag.name } />
-				</PopoverBody>
+				</SectionPopoverBody>
 			</Popover>
 		</>
 	);
