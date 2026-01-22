@@ -121,13 +121,6 @@ export const slice = createSlice( {
 
 			component.overridableProps = payload.overridableProps;
 		},
-		clearOverridableProps: ( state, { payload }: PayloadAction< { componentId: ComponentId } > ) => {
-			const component = state.data.find( ( comp ) => comp.id === payload.componentId );
-
-			if ( component ) {
-				component.overridableProps = undefined;
-			}
-		},
 		rename: ( state, { payload }: PayloadAction< { componentUid: string; name: string } > ) => {
 			const component = state.data.find( ( comp ) => comp.uid === payload.componentUid );
 
