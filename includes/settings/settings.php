@@ -29,6 +29,11 @@ class Settings extends Settings_Page {
 	const PAGE_ID = 'elementor';
 
 	/**
+	 * Upgrade menu priority.
+	 */
+	const MENU_PRIORITY_GO_PRO = 502;
+
+	/**
 	 * Settings page field for update time.
 	 */
 	const UPDATE_TIME_FIELD = '_elementor_settings_update_time';
