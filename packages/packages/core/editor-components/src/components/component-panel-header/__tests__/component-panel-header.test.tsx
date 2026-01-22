@@ -93,6 +93,7 @@ describe( '<ComponentPanelHeader />', () => {
 				},
 			} ),
 			getInitialId: () => MOCK_INITIAL_DOCUMENT_ID,
+			invalidateCache: jest.fn(),
 		} as unknown as V1DocumentsManager );
 
 		jest.mocked( useSuppressedMessage ).mockReturnValue( [ true, jest.fn() ] );
