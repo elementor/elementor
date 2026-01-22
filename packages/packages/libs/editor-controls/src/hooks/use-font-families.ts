@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { type SupportedFonts, getElementorConfig } from '@elementor/editor-v1-adapters';
+import { getElementorConfig, type SupportedFonts } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { type FontCategory } from '../controls/font-family-control/font-family-control';
