@@ -1,7 +1,6 @@
 import { createDOMElement, dispatchElementEvent } from 'test-utils';
 import { renderHook } from '@testing-library/react';
 
-import { type ExtendedWindow } from '../../sync/types';
 import { useComputedStyle } from '../use-computed-style';
 
 describe( 'useComputedStyle', () => {
@@ -11,15 +10,10 @@ describe( 'useComputedStyle', () => {
 			el: {},
 		},
 	};
-	let extendedWindow: ExtendedWindow;
-
-	beforeEach( () => {
-		extendedWindow = window as unknown as ExtendedWindow;
-	} );
 
 	it( 'should return the style of the element on device-mode/change event', () => {
 		// Arrange
-		extendedWindow.elementor = {
+		window.elementor = {
 			getContainer: jest.fn().mockReturnValue( mockElement ),
 		};
 		const ele = createDOMElement( {
@@ -43,7 +37,7 @@ describe( 'useComputedStyle', () => {
 
 	it( 'should return the style of the element on elements/reset-style event', () => {
 		// Arrange
-		extendedWindow.elementor = {
+		window.elementor = {
 			getContainer: jest.fn().mockReturnValue( mockElement ),
 		};
 		const ele = createDOMElement( {
@@ -67,7 +61,7 @@ describe( 'useComputedStyle', () => {
 
 	it( 'should return the style of the element on elements/settings event', () => {
 		// Arrange
-		extendedWindow.elementor = {
+		window.elementor = {
 			getContainer: jest.fn().mockReturnValue( mockElement ),
 		};
 		const ele = createDOMElement( {
@@ -91,7 +85,7 @@ describe( 'useComputedStyle', () => {
 
 	it( 'should return the style of the element on elements/paste-style event', () => {
 		// Arrange
-		extendedWindow.elementor = {
+		window.elementor = {
 			getContainer: jest.fn().mockReturnValue( mockElement ),
 		};
 		const ele = createDOMElement( {
@@ -115,7 +109,7 @@ describe( 'useComputedStyle', () => {
 
 	it( 'should return null when elementor not defined', () => {
 		// Arrange
-		extendedWindow.elementor = undefined;
+		window.elementor = undefined;
 
 		// Act
 		const { result } = renderHook( () => useComputedStyle( 'mockId' ) );
@@ -125,7 +119,7 @@ describe( 'useComputedStyle', () => {
 
 	it( 'should return null when getContainer not defined', () => {
 		// Arrange
-		extendedWindow.elementor = {
+		window.elementor = {
 			getContainer: undefined,
 		};
 
@@ -137,7 +131,7 @@ describe( 'useComputedStyle', () => {
 
 	it( 'should return null when element not found', () => {
 		// Arrange
-		extendedWindow.elementor = {
+		window.elementor = {
 			getContainer: jest.fn().mockReturnValue( undefined ),
 		};
 
@@ -149,7 +143,7 @@ describe( 'useComputedStyle', () => {
 
 	it( 'should return null when element view undefined', () => {
 		// Arrange
-		extendedWindow.elementor = {
+		window.elementor = {
 			getContainer: jest.fn().mockReturnValue( undefined ),
 		};
 
