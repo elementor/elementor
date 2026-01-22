@@ -308,10 +308,6 @@ class Role_Manager extends Settings_Page {
 		$menu_data_provider->register_menu( new Editor_One_Role_Manager_Menu() );
 	}
 
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-	}
-
 	/**
 	 * @since 2.0.0
 	 * @access public
