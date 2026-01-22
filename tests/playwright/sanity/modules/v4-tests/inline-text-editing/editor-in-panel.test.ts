@@ -16,7 +16,6 @@ test.describe( 'Inline Editing Control in Editor Panel @v4-tests', () => {
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
 
 		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
-		await wpAdminPage.setExperiments( { 'v4-inline-text-editing': 'active' } );
 
 		editor = await wpAdminPage.openNewPage();
 	} );
