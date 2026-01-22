@@ -13,10 +13,9 @@ type EditorView = Editor[ 'view' ];
 
 const TOP_BAR_SELECTOR = '#elementor-editor-wrapper-v2';
 const NAVIGATOR_SELECTOR = '#elementor-navigator';
-const V4_EDITING_PANEL = 'main.MuiBox-root';
-const V3_EDITING_PANEL = '#elementor-panel-content-wrapper';
+const EDITING_PANEL = '#elementor-panel';
 
-const EDITOR_ELEMENTS_OUT_OF_IFRAME = [ TOP_BAR_SELECTOR, NAVIGATOR_SELECTOR, V4_EDITING_PANEL, V3_EDITING_PANEL ];
+const EDITOR_ELEMENTS_OUT_OF_IFRAME = [ TOP_BAR_SELECTOR, NAVIGATOR_SELECTOR, EDITING_PANEL ];
 
 const EDITOR_WRAPPER_SELECTOR = 'inline-editor-wrapper';
 
@@ -47,13 +46,7 @@ export const CanvasInlineEditor = ( {
 		queueMicrotask( () => view.focus() );
 	};
 
-	const asyncUnmountInlineEditor = React.useCallback( () => queueMicrotask( onBlur ), [ onBlur ] );
-
-	useEffect( () => {
-		blurOnClickOutsideIframe( EDITOR_ELEMENTS_OUT_OF_IFRAME, asyncUnmountInlineEditor );
-
-		return () => removeBlurOnClickOutsideIframe( EDITOR_ELEMENTS_OUT_OF_IFRAME, asyncUnmountInlineEditor );
-	}, [ asyncUnmountInlineEditor ] );
+	useOnClickOutsideIframe( onBlur );
 
 	return (
 		<ThemeProvider>
@@ -181,14 +174,20 @@ const getInlineEditorElement = ( elementWrapper: HTMLElement, expectedTag: strin
 // Elements out of iframe and canvas don't trigger "onClickAway" which unmounts the editor
 // since they are not part of the iframes owner document.
 // We need to manually add listeners to these elements to unmount the editor when they are clicked.
-const blurOnClickOutsideIframe = ( selectors: string[], cb: ( event: MouseEvent ) => void ) => {
-	const elements = selectors.map( ( selector ) => document.querySelector( selector ) as HTMLElement );
+const useOnClickOutsideIframe = ( handleUnmount: () => void ) => {
+	const asyncUnmountInlineEditor = React.useCallback( () => queueMicrotask( handleUnmount ), [ handleUnmount ] );
 
-	elements.forEach( ( element ) => element.addEventListener( 'mousedown', cb ) );
-};
+	useEffect( () => {
+		EDITOR_ELEMENTS_OUT_OF_IFRAME.forEach(
+			( selector ) =>
+				document?.querySelector( selector )?.addEventListener( 'mousedown', asyncUnmountInlineEditor )
+		);
 
-const removeBlurOnClickOutsideIframe = ( selectors: string[], cb: ( event: MouseEvent ) => void ) => {
-	const elements = selectors.map( ( selector ) => document.querySelector( selector ) as HTMLElement );
-
-	elements.forEach( ( element ) => element.removeEventListener( 'mousedown', cb ) );
+		return () =>
+			EDITOR_ELEMENTS_OUT_OF_IFRAME.forEach(
+				( selector ) =>
+					document?.querySelector( selector )?.removeEventListener( 'mousedown', asyncUnmountInlineEditor )
+			);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 };

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { getContainer, getElementLabel, getElementType } from '@elementor/editor-elements';
 import { htmlPropTypeUtil, type PropType, type PropValue, stringPropTypeUtil } from '@elementor/editor-props';
-import { __privateRunCommandSync as runCommandSync, undoable } from '@elementor/editor-v1-adapters';
+import { __privateRunCommandSync as runCommandSync, getCurrentEditMode, undoable } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
 import { ReplacementBase, TRIGGER_TIMING } from '../base';
@@ -35,7 +35,7 @@ export default class InlineEditingReplacement extends ReplacementBase {
 	}
 
 	shouldRenderReplacement() {
-		return this.isInlineEditingEligible();
+		return this.isInlineEditingEligible() && getCurrentEditMode() === 'edit';
 	}
 
 	handleRenderInlineEditor = () => {
