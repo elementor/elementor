@@ -2,7 +2,6 @@
 namespace Elementor;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Kits\Manager;
 use Elementor\Includes\Settings\AdminMenuItems\Tools_Menu_Item;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
@@ -28,16 +27,6 @@ class Tools extends Settings_Page {
 	 * Settings page ID for Elementor tools.
 	 */
 	const PAGE_ID = 'elementor-tools';
-
-	private function register_admin_menu( MainMenu $menu ) {
-		$menu->add_submenu( [
-			'page_title' => esc_html__( 'Tools', 'elementor' ),
-			'menu_title' => esc_html__( 'Tools', 'elementor' ),
-			'menu_slug' => self::PAGE_ID,
-			'function' => [ $this, 'display_settings_page' ],
-			'index' => 50,
-		] );
-	}
 
 	/**
 	 * Clear cache.

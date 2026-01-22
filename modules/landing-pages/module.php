@@ -2,7 +2,6 @@
 namespace Elementor\Modules\LandingPages;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
@@ -157,18 +156,6 @@ class Module extends BaseModule {
 			'menu_slug' => $menu_slug,
 			'function' => $function,
 		];
-	}
-
-	private function register_admin_menu( MainMenu $menu ) {
-		$landing_pages_title = esc_html__( 'Landing Pages', 'elementor' );
-
-		$menu_args = array_merge( $this->get_menu_args(), [
-			'page_title' => $landing_pages_title,
-			'menu_title' => $landing_pages_title,
-			'index' => 20,
-		] );
-
-		$menu->add_submenu( $menu_args );
 	}
 
 	/**

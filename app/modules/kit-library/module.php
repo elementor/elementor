@@ -3,7 +3,6 @@ namespace Elementor\App\Modules\KitLibrary;
 
 use Elementor\App\Modules\KitLibrary\Data\Repository;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Base\Module as BaseModule;
@@ -30,15 +29,6 @@ class Module extends BaseModule {
 	 */
 	public function get_name() {
 		return 'kit-library';
-	}
-
-	private function register_admin_menu( MainMenu $menu ) {
-		$menu->add_submenu( [
-			'page_title' => esc_html__( 'Website Templates', 'elementor' ),
-			'menu_title' => '<span id="e-admin-menu__kit-library">' . esc_html__( 'Website Templates', 'elementor' ) . '</span>',
-			'menu_slug' => Plugin::$instance->app->get_base_url() . '&source=wp_db_templates_menu#/kit-library',
-			'index' => 40,
-		] );
 	}
 
 	private function register_admin_menu_legacy( Admin_Menu_Manager $admin_menu ) {
