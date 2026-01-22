@@ -1,5 +1,14 @@
 $remote-templates-items-space: 30px;
 
+@mixin button-reset {
+	background: transparent;
+	margin: 0;
+	font-size: inherit;
+	font-family: inherit;
+	color: inherit;
+	border: none;
+}
+
 #elementor-template-library-modal {
 
 	a.elementor-template-library-blank-footer-link {
@@ -44,13 +53,16 @@ $remote-templates-items-space: 30px;
 	padding: 17px 20px;
 	border-block-end: 3px solid transparent;
 	cursor: pointer;
+	@include button-reset;
 
 	&:hover {
 		background-color: var(--e-a-bg-hover);
 		border-color: var(--e-a-bg-hover);
 	}
 
-	&.elementor-active {
+	&.elementor-active,
+	&[aria-selected="true"] {
+		border-block-end: 3px solid;
 		border-color: var(--e-a-border-color-accent);
 		color: var(--e-a-color-txt-accent);
 	}
@@ -312,6 +324,7 @@ $remote-templates-items-space: 30px;
 		gap: 8px;
 
 		.elementor-template-library-action-item {
+			@include button-reset;
 			cursor: pointer;
 			font-size: 20px;
 			padding: 0 5px;
@@ -504,14 +517,23 @@ $remote-templates-items-space: 30px;
 		align-items: center;
 		flex: 1;
 
-		i {
+		button {
+			@include button-reset;
 			cursor: pointer;
-			font-size: 18px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
 
 			&.disabled {
 				pointer-events: none;
 				opacity: 0.3;
+				cursor: not-allowed;
 			}
+		}
+
+		i {
+			cursor: pointer;
+			font-size: 18px;
 		}
 
 		.eicon-editor-close {
@@ -610,9 +632,9 @@ $remote-templates-items-space: 30px;
 		}
 
 		.new-badge {
-			border: 1px solid var(--e-a-color-primary-bold);
+			border: 1px solid var(--e-a-color-primary-bold-dark);
 			padding: 2px 4px;
-			color: var(--e-a-color-primary-bold);
+			color: var(--e-a-color-primary-bold-dark);
 			border-radius: 10px;
 			font-size: 10px;
 			margin-inline-start: 5px;
@@ -1067,31 +1089,32 @@ label.elementor-template-library-order-label {
 		inset-block-start: 100%;
 		inset-inline-end: 0;
 		z-index: 1;
+		list-style: none;
+		margin: 0;
+		padding: 0;
 
-		> div {
-			padding: 10px 20px;
-			font-size: 11px;
-			cursor: pointer;
-			display: flex;
-			align-items: center;
-			gap: 8px;
+		> li {
+			button,
+			a {
+				@include button-reset;
+				padding: 10px 20px;
+				font-size: 11px;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				width: 100%;
 
-			&.disabled {
-				cursor: not-allowed;
-				color: var(--e-a-color-txt-disabled);
-
-				a {
-					color: var(--e-a-color-txt-disabled);
+				&.disabled {
 					cursor: not-allowed;
+					color: var(--e-a-color-txt-disabled);
 				}
 			}
-		}
 
-		a {
-			color: var(--e-a-color-txt);
-			display: flex;
-			align-items: center;
-			gap: 8px;
+			a {
+				color: var(--e-a-color-txt);
+				text-decoration: none;
+			}
 		}
 
 		.elementor-template-library-template-delete {
@@ -1106,6 +1129,12 @@ label.elementor-template-library-order-label {
 	.elementor-template-library-template-more-toggle {
 		margin-inline-start: auto;
 		cursor: pointer;
+		background: none;
+		border: none;
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 
 		i {
 			font-size: 20px;
