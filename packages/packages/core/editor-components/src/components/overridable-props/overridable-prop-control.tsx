@@ -2,12 +2,13 @@ import * as React from 'react';
 import { type ComponentType } from 'react';
 import {
 	ControlReplacementsProvider,
+	getControlReplacements,
 	PropKeyProvider,
 	PropProvider,
 	useBoundProp,
 	useControlReplacement,
 } from '@elementor/editor-controls';
-import { createTopLevelObjectType, getControlReplacements, useElement } from '@elementor/editor-editing-panel';
+import { createTopLevelObjectType, useElement } from '@elementor/editor-editing-panel';
 import { type PropValue } from '@elementor/editor-props';
 
 import { type ComponentInstanceOverridePropValue } from '../../prop-types/component-instance-override-prop-type';
