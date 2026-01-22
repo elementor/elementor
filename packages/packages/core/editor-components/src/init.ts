@@ -4,11 +4,11 @@ import {
 	registerElementType,
 	settingsTransformersRegistry,
 } from '@elementor/editor-canvas';
+import { registerControlReplacement } from '@elementor/editor-controls';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
 import {
 	FIELD_TYPE,
 	injectIntoPanelHeaderTop,
-	registerControlReplacement,
 	registerEditingPanelReplacement,
 	registerFieldIndicator,
 } from '@elementor/editor-editing-panel';
