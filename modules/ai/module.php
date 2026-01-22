@@ -333,13 +333,15 @@ class Module extends BaseModule {
 		foreach ( $post_ids as $post_id ) {
 			if ( $is_galley_only ) {
 				$product = wc_get_product( $post_id );
-				$gallery_image_ids = $product->get_gallery_image_ids();
-				foreach ( $gallery_image_ids as $image_id ) {
-					$image_ids[] = [
-						'productId' => $post_id,
-						'id'   => $image_id,
-						'image_url' => wp_get_attachment_url( $image_id ),
-					];
+				if ( false !== $product ) {
+					$gallery_image_ids = $product->get_gallery_image_ids();
+					foreach ( $gallery_image_ids as $image_id ) {
+						$image_ids[] = [
+							'productId' => $post_id,
+							'id'   => $image_id,
+							'image_url' => wp_get_attachment_url( $image_id ),
+						];
+					}
 				}
 				continue;
 			}
@@ -348,9 +350,11 @@ class Module extends BaseModule {
 
 			if ( ! $image_id ) {
 				$product = wc_get_product( $post_id );
-				$gallery_image_ids = $product->get_gallery_image_ids();
-				if ( ! empty( $gallery_image_ids ) ) {
-					$image_id = $gallery_image_ids[0];
+				if ( false !== $product ) {
+					$gallery_image_ids = $product->get_gallery_image_ids();
+					if ( ! empty( $gallery_image_ids ) ) {
+						$image_id = $gallery_image_ids[0];
+					}
 				}
 			}
 
