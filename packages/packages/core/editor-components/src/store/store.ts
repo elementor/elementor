@@ -150,7 +150,7 @@ export const slice = createSlice( {
 	},
 } );
 
-const selectData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].data;
+export const selectData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].data;
 export const selectArchivedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].archivedThisSession;
 const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadStatus;
 const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};
