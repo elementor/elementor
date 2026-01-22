@@ -138,11 +138,7 @@ class Role_Manager extends Settings_Page {
 			$excluded_options = $this->get_role_manager_options();
 		}
 
-		$is_editor_one_enabled = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
-		$row_classes = 'elementor-role-row ' . esc_attr( $role_slug );
-		if ( $is_editor_one_enabled ) {
-			$row_classes .= ' e-editor-one';
-		}
+		$row_classes = 'elementor-role-row ' . esc_attr( $role_slug ) . ' e-editor-one';
 
 		?>
 		<div class="<?php echo esc_attr( $row_classes ); ?>">
