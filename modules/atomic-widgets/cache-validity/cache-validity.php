@@ -12,4 +12,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * @deprecated 3.35 Use \Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity instead.
  */
-abstract class Cache_Validity extends New_Cache_Validity {}
+class Cache_Validity extends New_Cache_Validity {}
