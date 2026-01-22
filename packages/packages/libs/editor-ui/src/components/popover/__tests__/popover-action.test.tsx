@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { PopoverAction, useFloatingActionsBar } from '@elementor/editor-ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 
-jest.mock( '@elementor/editor-ui' );
+import { useFloatingActionsBar } from '../../floating-bar';
+import { PopoverAction } from '../popover-action';
+
+jest.mock( '../../floating-bar' );
 
 describe( 'PopoverAction', () => {
 	beforeEach( () => {
