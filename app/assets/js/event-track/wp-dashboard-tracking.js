@@ -4,7 +4,6 @@ import PromotionTracking from './dashboard/promotion';
 import ScreenViewTracking from './dashboard/screen-view';
 import MenuPromotionTracking from './dashboard/menu-promotion';
 import ActionControlTracking from './dashboard/action-controls';
-import TopBarTracking from './dashboard/top-bar';
 
 const SESSION_TIMEOUT_MINUTES = 30;
 const MINUTE_MS = 60 * 1000;
@@ -377,7 +376,6 @@ export default class WpDashboardTracking {
 		PromotionTracking.destroy();
 		MenuPromotionTracking.destroy();
 		ActionControlTracking.destroy();
-		TopBarTracking.destroy();
 
 		this.initialized = false;
 	}
@@ -400,7 +398,6 @@ window.addEventListener( 'elementor/admin/init', () => {
 		PromotionTracking.init();
 		MenuPromotionTracking.init();
 		ActionControlTracking.init();
-		TopBarTracking.init();
 	}
 } );
 
