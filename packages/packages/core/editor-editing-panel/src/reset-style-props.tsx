@@ -1,4 +1,6 @@
 import { useBoundProp } from '@elementor/editor-controls';
+import { hasVariable } from '@elementor/editor-variables';
+import { type TransformablePropValue } from '@elementor/editor-props';
 import { BrushBigIcon } from '@elementor/icons';
 import { controlActionsMenu } from '@elementor/menus';
 import { __ } from '@wordpress/i18n';
@@ -22,9 +24,11 @@ export function useResetStyleValueProps() {
 	const hasInitial = propType.initial_value !== undefined && propType.initial_value !== null;
 	const isRequired = !! propType.settings?.required;
 	const shouldHide = !! propType.settings?.hide_reset;
+	const isPropTypeValue = value as TransformablePropValue<string, string>;
+	const variableExists = isPropTypeValue?.$$type?.includes('variable') && hasVariable(isPropTypeValue?.value);
 
 	function calculateVisibility() {
-		if ( ! isStyle || ! hasValue || shouldHide ) {
+		if ( ! isStyle || ! hasValue || shouldHide || ! variableExists ) {
 			return false;
 		}
 
