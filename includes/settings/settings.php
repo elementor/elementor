@@ -4,7 +4,6 @@ namespace Elementor;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Files\Fonts\Google_Font;
 use Elementor\Includes\Settings\AdminMenuItems\Admin_Menu_Item;
-use Elementor\Includes\Settings\AdminMenuItems\Get_Help_Menu_Item;
 use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Modules\Home\Module as Home_Module;
@@ -146,51 +145,12 @@ class Settings extends Settings_Page {
 		return $elementor_menu_order;
 	}
 
-	/**
-	 * Register Elementor knowledge base sub-menu.
-	 *
-	 * Add new Elementor knowledge base sub-menu under the main Elementor menu.
-	 *
-	 * Fired by `admin_menu` action.
-	 *
-	 * @since 2.0.3
-	 * @access private
-	 */
-	// TODO: Possibly delete.
-	private function register_knowledge_base_menu( Admin_Menu_Manager $admin_menu ) {
-		if ( ! Plugin::instance()->modules_manager->get_modules( 'editor-one' ) ) {
-			$admin_menu->register( 'go_knowledge_base_site', new Get_Help_Menu_Item() );
-		}
-	}
-
 	private function register_editor_one_settings_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Settings_Menu() );
 	}
 
 	private function register_editor_one_home_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Home_Menu() );
-	}
-
-	/**
-	 * Go Elementor Pro.
-	 *
-	 * Redirect the Elementor Pro page the clicking the Elementor Pro menu link.
-	 *
-	 * Fired by `admin_init` action.
-	 *
-	 * @since 2.0.3
-	 * @access public
-	 */
-	// TODO: Possibly delete.
-	public function handle_external_redirects() {
-		if ( empty( $_GET['page'] ) ) {
-			return;
-		}
-
-		if ( 'go_knowledge_base_site' === $_GET['page'] ) {
-			wp_redirect( Get_Help_Menu_Item::URL );
-			die;
-		}
 	}
 
 	/**
@@ -204,8 +164,6 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function on_admin_init() {
-		$this->handle_external_redirects();
-
 		$this->maybe_remove_all_admin_notices();
 	}
 
@@ -565,11 +523,6 @@ class Settings extends Settings_Page {
 			$this->register_editor_one_settings_menu( $menu_data_provider );
 			$this->register_editor_one_home_menu( $menu_data_provider );
 		} );
-
-		// TODO: Possibly delete.
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-			$this->register_knowledge_base_menu( $admin_menu );
-		}, Promotions_Module::ADMIN_MENU_PRIORITY - 1 );
 
 		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
 

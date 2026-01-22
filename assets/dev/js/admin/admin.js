@@ -29,7 +29,7 @@ import FloatingButtonsHandler from 'elementor/modules/floating-buttons/assets/js
 				$importFormFileInput: $( '#elementor-import-template-form input[type="file"]' ),
 				$settingsForm: $( '#elementor-settings-form' ),
 				$settingsTabsWrapper: $( '#elementor-settings-tabs-wrapper' ),
-				$menuGetHelpLink: $( 'a[href="admin.php?page=go_knowledge_base_site"]' ),
+				$menuGetHelpLink: $( 'https://go.elementor.com/docs-admin-menu/' ),
 				$menuGoProLink: $( 'a[href="admin.php?page=go_elementor_pro"]' ),
 				$reMigrateGlobalsButton: $( '.elementor-re-migrate-globals-button' ),
 			};
