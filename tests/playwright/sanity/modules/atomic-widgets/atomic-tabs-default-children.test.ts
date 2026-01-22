@@ -21,6 +21,7 @@ test.describe( 'Atomic Tabs Default Children @atomic-widgets', () => {
 		await wpAdmin.resetExperiments();
 
 		await page.close();
+		expect( true ).toBe( false );
 	} );
 
 	test( 'Atomic tabs creates default children hierarchy when dropped on canvas', async () => {
