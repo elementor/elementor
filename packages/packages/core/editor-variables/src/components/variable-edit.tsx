@@ -2,7 +2,7 @@ import * as React from 'react';
 import { type KeyboardEvent, useEffect, useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
 import { useSuppressedMessage } from '@elementor/editor-current-user';
-import { PopoverBody } from '@elementor/editor-editing-panel';
+import { PopoverBodyWithWidth } from '@elementor/editor-ui';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { ArrowLeftIcon, TrashIcon } from '@elementor/icons';
 import { Button, CardActions, Divider, FormHelperText, IconButton, Tooltip, Typography } from '@elementor/ui';
@@ -169,7 +169,7 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 
 	return (
 		<>
-			<PopoverBody height="auto">
+			<PopoverBodyWithWidth height="auto">
 				<PopoverHeader
 					title={ __( 'Edit variable', 'elementor' ) }
 					onClose={ onClose }
@@ -244,7 +244,7 @@ export const VariableEdit = ( { onClose, onGoBack, onSubmit, editId }: Props ) =
 						{ __( 'Save', 'elementor' ) }
 					</Button>
 				</CardActions>
-			</PopoverBody>
+			</PopoverBodyWithWidth>
 
 			{ deleteConfirmation && (
 				<DeleteConfirmationDialog

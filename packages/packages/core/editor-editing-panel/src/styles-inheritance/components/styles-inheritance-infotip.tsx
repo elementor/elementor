@@ -17,7 +17,7 @@ import {
 } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { useSectionWidth } from '../../contexts/section-context';
+import { useSectionWidth } from '@elementor/editor-ui';
 import { useDirection } from '../../hooks/use-direction';
 import { useNormalizedInheritanceChainItems } from '../hooks/use-normalized-inheritance-chain-items';
 import { stylesInheritanceTransformersRegistry } from '../styles-inheritance-transformers-registry';

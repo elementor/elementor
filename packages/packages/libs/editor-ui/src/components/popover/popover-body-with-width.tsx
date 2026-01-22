@@ -1,0 +1,10 @@
+import * as React from 'react';
+import { type ComponentProps } from 'react';
+import { PopoverBody as BasePopoverBody } from './body';
+import { useSectionWidth } from '../../contexts/section-context';
+
+export const PopoverBodyWithWidth = ( props: ComponentProps< typeof BasePopoverBody > ) => {
+	const sectionWidth = useSectionWidth();
+
+	return <BasePopoverBody { ...props } width={ sectionWidth } />;
+};

@@ -6,7 +6,7 @@ import { DatabaseIcon } from '@elementor/icons';
 import { Divider, Link, Stack, Typography, useTheme } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
-import { PopoverBody } from '../../components/popover-body';
+import { PopoverBodyWithWidth } from '@elementor/editor-ui';
 import { usePersistDynamicValue } from '../../hooks/use-persist-dynamic-value';
 import { usePropDynamicTags } from '../hooks/use-prop-dynamic-tags';
 import { getAtomicDynamicTags } from '../sync/get-atomic-dynamic-tags';
@@ -116,14 +116,14 @@ export const DynamicSelection = ( { close: closePopover, expired = false }: Dyna
 	};
 
 	return (
-		<PopoverBody aria-label={ __( 'Dynamic tags', 'elementor' ) }>
+		<PopoverBodyWithWidth aria-label={ __( 'Dynamic tags', 'elementor' ) }>
 			<PopoverHeader
 				title={ __( 'Dynamic tags', 'elementor' ) }
 				onClose={ closePopover }
 				icon={ <DatabaseIcon fontSize={ SIZE } /> }
 			/>
 			{ getPopOverContent() }
-		</PopoverBody>
+		</PopoverBodyWithWidth>
 	);
 };
 

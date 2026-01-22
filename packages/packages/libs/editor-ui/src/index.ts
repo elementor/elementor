@@ -20,5 +20,8 @@ export * from './components/popover';
 export * from './components/save-changes-dialog';
 export { ConfirmationDialog } from './components/confirmation-dialog';
 
+// contexts
+export { SectionRefContext, useSectionWidth } from './contexts/section-context';
+
 // hooks
 export { useEditable } from './hooks/use-editable';

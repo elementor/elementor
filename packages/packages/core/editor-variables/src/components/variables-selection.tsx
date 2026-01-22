@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { PopoverBody } from '@elementor/editor-editing-panel';
+import { PopoverBodyWithWidth } from '@elementor/editor-ui';
 import { PopoverHeader, PopoverMenuList, SearchField, type VirtualizedItem } from '@elementor/editor-ui';
 import { ColorFilterIcon, PlusIcon, SettingsIcon } from '@elementor/icons';
 import { Divider, IconButton, Tooltip } from '@elementor/ui';
@@ -124,7 +124,7 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 	};
 
 	return (
-		<PopoverBody>
+		<PopoverBodyWithWidth>
 			<PopoverHeader
 				title={ __( 'Variables', 'elementor' ) }
 				icon={ <ColorFilterIcon fontSize={ SIZE } /> }
@@ -209,6 +209,6 @@ export const VariablesSelection = ( { closePopover, onAdd, onEdit, onSettings, d
 					onAdd={ onAdd }
 				/>
 			) }
-		</PopoverBody>
+		</PopoverBodyWithWidth>
 	);
 };

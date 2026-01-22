@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FontFamilyControl } from '@elementor/editor-controls';
 import { __ } from '@wordpress/i18n';
 
-import { useSectionWidth } from '../../../contexts/section-context';
+import { useSectionWidth } from '@elementor/editor-ui';
 import { StylesField } from '../../../controls-registry/styles-field';
 import { StylesFieldLayout } from '../../styles-field-layout';
 import { useFontFamilies } from './hooks/use-font-families';
