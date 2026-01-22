@@ -220,6 +220,26 @@ class Menu_Data_Provider {
 		return $this->is_elementor_post_type( $post_type );
 	}
 
+	public function is_editor_one_post_edit_screen(): bool {
+		$screen = get_current_screen();
+
+		if ( ! $screen || empty( $screen->post_type ) ) {
+			return false;
+		}
+
+		if ( 'post' !== $screen->base ) {
+			return false;
+		}
+
+		$post_types = apply_filters( 'elementor/editor-one/admin-edit-post-types', [] );
+
+		return in_array( $screen->post_type, $post_types, true );
+	}
+
+	public function is_editor_one_admin_page(): bool {
+		return $this->is_elementor_editor_page() || $this->is_editor_one_post_edit_screen();
+	}
+
 	private function is_elementor_post_type( string $post_type ): bool {
 		if ( empty( $post_type ) ) {
 			return false;

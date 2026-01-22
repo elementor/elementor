@@ -55,9 +55,7 @@ class Module extends BaseModule {
 		add_action( 'current_screen', function () {
 			$menu_data_provider = Menu_Data_Provider::instance();
 
-			$should_enqueue = $menu_data_provider->is_elementor_editor_page() || $this->is_editor_one_post_edit_screen();
-
-			if ( ! $should_enqueue || ! static::is_active() ) {
+			if ( ! $menu_data_provider->is_editor_one_admin_page() || ! static::is_active() ) {
 				return;
 			}
 
@@ -69,22 +67,6 @@ class Module extends BaseModule {
 		add_filter( 'elementor/admin-top-bar/is-active', function ( $is_active ) {
 			return static::is_active() ? false : $is_active;
 		} );
-	}
-
-	private function is_editor_one_post_edit_screen(): bool {
-		$screen = get_current_screen();
-
-		if ( ! $screen || empty( $screen->post_type ) ) {
-			return false;
-		}
-
-		if ( 'post' !== $screen->base ) {
-			return false;
-		}
-
-		$post_types = apply_filters( 'elementor/editor-one/admin-edit-post-types', [] );
-
-		return in_array( $screen->post_type, $post_types, true );
 	}
 
 	/**
