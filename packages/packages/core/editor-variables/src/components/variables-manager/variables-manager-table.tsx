@@ -251,7 +251,16 @@ export const VariablesManagerTable = ( {
 														onValidationChange,
 														error,
 													} ) =>
+<<<<<<< HEAD
 														row.valueField( {
+=======
+														row.valueField?.( {
+															ref: {
+																current: variableRowRefs.current.get(
+																	'table-ref-' + row.id
+																) as HTMLElement,
+															},
+>>>>>>> 65a95a01d8 (Internal: Enable variable-size floating action for all users [ED-21159] (#33725))
 															value,
 															onChange,
 															onValidationChange: ( errorMsg ) => {
@@ -259,7 +268,7 @@ export const VariablesManagerTable = ( {
 																onFieldError?.( !! errorMsg );
 															},
 															error,
-														} )
+														} ) ?? <></>
 													}
 													onRowRef={ handleRowRef( row.id ) }
 													gap={ 0.25 }
