@@ -1,6 +1,6 @@
 // Removes unknown widgets from the data recursively
 
-export default ( data ) => {
+export const filterUnknownElements = ( data ) => {
 	if ( data?.elements?.length ) {
 		data.elements = filterChildren( data.elements );
 	}

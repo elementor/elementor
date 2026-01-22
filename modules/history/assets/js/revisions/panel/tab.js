@@ -1,4 +1,4 @@
-import filterUnknownElements from 'elementor-frontend-utils/filter-unknown-elements';
+import { filterUnknownElements } from 'elementor-frontend-utils/filter-unknown-elements';
 
 export default Marionette.CompositeView.extend( {
 	id: 'elementor-panel-revisions',
