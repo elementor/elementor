@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type KeyboardEvent, useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
-import { PopoverBodyWithWidth } from '@elementor/editor-ui';
+import { SectionPopoverBody } from '@elementor/editor-ui';
 import { PopoverHeader } from '@elementor/editor-ui';
 import { ArrowLeftIcon } from '@elementor/icons';
 import { Button, CardActions, Divider, FormHelperText, IconButton, Typography } from '@elementor/ui';
@@ -108,7 +108,7 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 	};
 
 	return (
-		<PopoverBodyWithWidth height="auto">
+		<SectionPopoverBody height="auto">
 			<PopoverHeader
 				icon={
 					<>
@@ -183,6 +183,6 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</CardActions>
-		</PopoverBodyWithWidth>
+		</SectionPopoverBody>
 	);
 };

@@ -7,7 +7,7 @@ import {
 	useBoundProp,
 } from '@elementor/editor-controls';
 import type { Control, ControlLayout, ControlsSection } from '@elementor/editor-elements';
-import { PopoverHeader, PopoverBodyWithWidth } from '@elementor/editor-ui';
+import { PopoverHeader, SectionPopoverBody } from '@elementor/editor-ui';
 import { DatabaseIcon, SettingsIcon, XIcon } from '@elementor/icons';
 import {
 	bindPopover,
@@ -107,9 +107,9 @@ export const DynamicSelectionControl = ( { OriginalControl, ...props }: { Origin
 				} }
 				{ ...bindPopover( selectionPopoverState ) }
 			>
-				<PopoverBodyWithWidth aria-label={ __( 'Dynamic tags', 'elementor' ) }>
+				<SectionPopoverBody aria-label={ __( 'Dynamic tags', 'elementor' ) }>
 					<DynamicSelection close={ selectionPopoverState.close } expired={ readonly } />
-				</PopoverBodyWithWidth>
+				</SectionPopoverBody>
 			</Popover>
 		</Box>
 	);
@@ -150,14 +150,14 @@ export const DynamicSettingsPopover = ( {
 				} }
 				{ ...bindPopover( popupState ) }
 			>
-				<PopoverBodyWithWidth aria-label={ __( 'Dynamic settings', 'elementor' ) }>
+				<SectionPopoverBody aria-label={ __( 'Dynamic settings', 'elementor' ) }>
 					<PopoverHeader
 						title={ dynamicTag.label }
 						onClose={ popupState.close }
 						icon={ <DatabaseIcon fontSize={ SIZE } /> }
 					/>
 					<DynamicSettings controls={ dynamicTag.atomic_controls } tagName={ dynamicTag.name } />
-				</PopoverBodyWithWidth>
+				</SectionPopoverBody>
 			</Popover>
 		</>
 	);
