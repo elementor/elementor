@@ -1,0 +1,43 @@
+const AB_TESTING_URL = 'https://assets.elementor.com/ab-testing/v1/ab-testing.json';
+
+interface AbTestingResponse {
+	lastUpdated: string;
+	'ab-testing': Array<{
+		coreOnboarding?: Record<string, boolean>;
+	}>;
+}
+
+let cachedResult: boolean | null = null;
+
+async function fetchAbTestingData(): Promise<AbTestingResponse | null> {
+	try {
+		const response = await fetch( AB_TESTING_URL );
+		if ( ! response.ok ) {
+			return null;
+		}
+		return await response.json();
+	} catch {
+		return null;
+	}
+}
+
+export async function hasActiveOnboardingExperiment(): Promise<boolean> {
+	if ( cachedResult !== null ) {
+		return cachedResult;
+	}
+
+	const data = await fetchAbTestingData();
+	if ( ! data || ! data[ 'ab-testing' ] || data[ 'ab-testing' ].length === 0 ) {
+		cachedResult = false;
+		return false;
+	}
+
+	const coreOnboarding = data[ 'ab-testing' ][ 0 ]?.coreOnboarding;
+	if ( ! coreOnboarding ) {
+		cachedResult = false;
+		return false;
+	}
+
+	cachedResult = Object.values( coreOnboarding ).some( ( value ) => value === true );
+	return cachedResult;
+}
