@@ -8,8 +8,7 @@ import useButtonAction from '../utils/use-button-action';
 import { OnboardingEventTracking } from '../utils/onboarding-event-tracking';
 
 export default function ChooseFeatures() {
-	const isEditorOneActive = elementorAppConfig?.onboarding?.isEditorOneActive ?? false;
-	const options = useMemo( () => getOptions( isEditorOneActive ), [ isEditorOneActive ] );
+	const options = useMemo( () => getOptions( true ), [] );
 	const { setAjax } = useAjax(),
 		tiers = {
 			one: __( 'One', 'elementor' ),
@@ -85,14 +84,14 @@ export default function ChooseFeatures() {
 	}
 
 	useEffect( () => {
-		if ( isEditorOneActive && selectedFeatures.one && selectedFeatures.one.length > 0 ) {
+		if ( selectedFeatures.one && selectedFeatures.one.length > 0 ) {
 			setTierName( tiers.one );
 		} else if ( selectedFeatures.advanced && selectedFeatures.advanced.length > 0 ) {
 			setTierName( tiers.advanced );
 		} else {
 			setTierName( tiers.essential );
 		}
-	}, [ selectedFeatures, isEditorOneActive, tiers.one, tiers.advanced, tiers.essential ] );
+	}, [ selectedFeatures, tiers.one, tiers.advanced, tiers.essential ] );
 
 	useEffect( () => {
 		OnboardingEventTracking.setupAllUpgradeButtons( state.currentStep );
