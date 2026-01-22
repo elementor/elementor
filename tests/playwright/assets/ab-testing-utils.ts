@@ -1,5 +1,10 @@
 const AB_TESTING_URL = 'https://assets.elementor.com/ab-testing/v1/ab-testing.json';
 
+const EXPERIMENTS_TO_SKIP = [
+	'offerThemeChoicesHelloBiz201',
+	'emphasizeThemeValueAudience202',
+];
+
 interface AbTestingResponse {
 	lastUpdated: string;
 	'ab-testing': Array<{
@@ -38,6 +43,6 @@ export async function hasActiveOnboardingExperiment(): Promise<boolean> {
 		return false;
 	}
 
-	cachedResult = Object.values( coreOnboarding ).some( ( value ) => value === true );
+	cachedResult = EXPERIMENTS_TO_SKIP.some( ( experimentName ) => coreOnboarding[ experimentName ] === true );
 	return cachedResult;
 }
