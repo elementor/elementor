@@ -23,9 +23,11 @@ type OptionEntry = [ string, Option[] ];
 const SIZE = 'tiny';
 const PROMO_TEXT_WIDTH = 170;
 const PRO_DYNAMIC_TAGS_URL = 'https://go.elementor.com/go-pro-dynamic-tags-modal/';
+const RENEW_DYNAMIC_TAGS_URL = 'https://go.elementor.com/go-pro-dynamic-tags-renew-modal/';
 
 type DynamicSelectionProps = {
 	close: () => void;
+	expired?: boolean;
 };
 
 type NoResultsProps = {
@@ -33,7 +35,7 @@ type NoResultsProps = {
 	onClear?: () => void;
 };
 
-export const DynamicSelection = ( { close: closePopover }: DynamicSelectionProps ) => {
+export const DynamicSelection = ( { close: closePopover, expired = false }: DynamicSelectionProps ) => {
 	const [ searchValue, setSearchValue ] = useState( '' );
 	const { groups: dynamicGroups } = getAtomicDynamicTags() || {};
 	const theme = useTheme();
@@ -78,6 +80,41 @@ export const DynamicSelection = ( { close: closePopover }: DynamicSelectionProps
 		} ) ),
 	] );
 
+	const getPopOverContent = () => {
+		if ( hasNoDynamicTags ) {
+			return <NoDynamicTags />;
+		}
+
+		if ( expired ) {
+			return <ExpiredDynamicTags />;
+		}
+
+		return (
+			<Fragment>
+				<SearchField
+					value={ searchValue }
+					onSearch={ handleSearch }
+					placeholder={ __( 'Search dynamic tags…', 'elementor' ) }
+				/>
+
+				<Divider />
+
+				<PopoverMenuList
+					items={ virtualizedItems }
+					onSelect={ handleSetDynamicTag }
+					onClose={ closePopover }
+					selectedValue={ dynamicValue?.name }
+					itemStyle={ ( item ) =>
+						item.type === 'item' ? { paddingInlineStart: theme.spacing( 3.5 ) } : {}
+					}
+					noResultsComponent={
+						<NoResults searchValue={ searchValue } onClear={ () => setSearchValue( '' ) } />
+					}
+				/>
+			</Fragment>
+		);
+	};
+
 	return (
 		<PopoverBody aria-label={ __( 'Dynamic tags', 'elementor' ) }>
 			<PopoverHeader
@@ -85,32 +122,7 @@ export const DynamicSelection = ( { close: closePopover }: DynamicSelectionProps
 				onClose={ closePopover }
 				icon={ <DatabaseIcon fontSize={ SIZE } /> }
 			/>
-			{ hasNoDynamicTags ? (
-				<NoDynamicTags />
-			) : (
-				<Fragment>
-					<SearchField
-						value={ searchValue }
-						onSearch={ handleSearch }
-						placeholder={ __( 'Search dynamic tags…', 'elementor' ) }
-					/>
-
-					<Divider />
-
-					<PopoverMenuList
-						items={ virtualizedItems }
-						onSelect={ handleSetDynamicTag }
-						onClose={ closePopover }
-						selectedValue={ dynamicValue?.name }
-						itemStyle={ ( item ) =>
-							item.type === 'item' ? { paddingInlineStart: theme.spacing( 3.5 ) } : {}
-						}
-						noResultsComponent={
-							<NoResults searchValue={ searchValue } onClear={ () => setSearchValue( '' ) } />
-						}
-					/>
-				</Fragment>
-			) }
+			{ getPopOverContent() }
 		</PopoverBody>
 	);
 };
@@ -160,6 +172,30 @@ const NoDynamicTags = () => (
 				{ __( 'Upgrade now to display your content dynamically.', 'elementor' ) }
 			</Typography>
 			<CtaButton size="small" href={ PRO_DYNAMIC_TAGS_URL } />
+		</Stack>
+	</>
+);
+
+const ExpiredDynamicTags = () => (
+	<>
+		<Divider />
+		<Stack
+			gap={ 1 }
+			alignItems="center"
+			justifyContent="center"
+			height="100%"
+			p={ 2.5 }
+			color="text.secondary"
+			sx={ { pb: 3.5 } }
+		>
+			<DatabaseIcon fontSize="large" />
+			<Typography align="center" variant="subtitle2">
+				{ __( 'Unlock your Dynamic tags again', 'elementor' ) }
+			</Typography>
+			<Typography align="center" variant="caption" width={ PROMO_TEXT_WIDTH }>
+				{ __( 'Dynamic tags need Elementor Pro. Renew now to keep them active.', 'elementor' ) }
+			</Typography>
+			<CtaButton size="small" href={ RENEW_DYNAMIC_TAGS_URL } children={ __( 'Renew Now', 'elementor' ) } />
 		</Stack>
 	</>
 );

@@ -1,14 +1,13 @@
 <?php
 namespace Elementor\Modules\LandingPages;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager as Experiments_Manager;
 use Elementor\Modules\LandingPages\Documents\Landing_Page;
-use Elementor\Modules\LandingPages\AdminMenuItems\Landing_Pages_Menu_Item;
-use Elementor\Modules\LandingPages\AdminMenuItems\Landing_Pages_Empty_View_Menu_Item;
+use Elementor\Modules\LandingPages\AdminMenuItems\Editor_One_Landing_Pages_Menu;
 use Elementor\Modules\LandingPages\Module as Landing_Pages_Module;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 
@@ -143,7 +142,7 @@ class Module extends BaseModule {
 		return self::CPT === $post->post_type;
 	}
 
-	private function get_menu_args() {
+	public function get_menu_args() {
 		if ( $this->has_landing_pages() ) {
 			$menu_slug = self::ADMIN_PAGE_SLUG;
 			$function = null;
@@ -156,6 +155,10 @@ class Module extends BaseModule {
 			'menu_slug' => $menu_slug,
 			'function' => $function,
 		];
+	}
+
+	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
+		$menu_data_provider->register_menu( new Editor_One_Landing_Pages_Menu( $this ) );
 	}
 
 	/**
@@ -457,6 +460,18 @@ class Module extends BaseModule {
 
 		add_action( 'elementor/documents/register', function( Documents_Manager $documents_manager ) {
 			$documents_manager->register_document_type( self::DOCUMENT_TYPE, Landing_Page::get_class_full_name() );
+		} );
+
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			$this->register_editor_one_menu( $menu_data_provider );
+		} );
+
+		add_filter( 'elementor/editor-one/menu/elementor_post_types', function ( array $elementor_post_types ): array {
+			$elementor_post_types[ static::CPT ] = [
+				'menu_slug' => 'elementor-editor-templates',
+				'child_slug' => 'edit.php?post_type=' . static::CPT,
+			];
+			return $elementor_post_types;
 		} );
 
 		// Add the custom 'Add New' link for Landing Pages into Elementor's admin config.

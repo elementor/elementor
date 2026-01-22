@@ -77,6 +77,7 @@ describe( 'save-as-component-tool handler', () => {
 				const result = await handleSaveAsComponent( {
 					element_id: TEST_ELEMENT_ID,
 					component_name: TEST_COMPONENT_NAME,
+					groups: [],
 				} );
 
 				// Assert
@@ -131,6 +132,7 @@ describe( 'save-as-component-tool handler', () => {
 			const result = await handleSaveAsComponent( {
 				element_id: TEST_ELEMENT_ID,
 				component_name: TEST_COMPONENT_NAME,
+				groups: [],
 				overridable_props: {
 					props: {
 						heading_text: {
@@ -189,6 +191,7 @@ describe( 'save-as-component-tool handler', () => {
 				handleSaveAsComponent( {
 					element_id: 'non-existent-id',
 					component_name: TEST_COMPONENT_NAME,
+					groups: [],
 				} )
 			).rejects.toThrow( ERROR_MESSAGES.ELEMENT_NOT_FOUND );
 			expect( mockApiClient.validate ).not.toHaveBeenCalled();
