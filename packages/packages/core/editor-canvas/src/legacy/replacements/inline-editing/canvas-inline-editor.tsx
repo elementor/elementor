@@ -50,10 +50,10 @@ export const CanvasInlineEditor = ( {
 	const asyncUnmountInlineEditor = React.useCallback( () => queueMicrotask( onBlur ), [ onBlur ] );
 
 	useEffect( () => {
-		addListenersToExternalUnfocusElements( EDITOR_ELEMENTS_OUT_OF_IFRAME, asyncUnmountInlineEditor );
+		blurOnClickOutsideIframe( EDITOR_ELEMENTS_OUT_OF_IFRAME, asyncUnmountInlineEditor );
 
 		return () =>
-			removeListenersFromExternalUnfocusElements( EDITOR_ELEMENTS_OUT_OF_IFRAME, asyncUnmountInlineEditor );
+			removeBlurOnClickOutsideIframe( EDITOR_ELEMENTS_OUT_OF_IFRAME, asyncUnmountInlineEditor );
 	}, [ asyncUnmountInlineEditor ] );
 
 	return (
@@ -182,13 +182,13 @@ const getInlineEditorElement = ( elementWrapper: HTMLElement, expectedTag: strin
 // Elements out of iframe and canvas don't trigger "onClickAway" which unmounts the editor
 // since they are not part of the iframes owner document.
 // We need to manually add listeners to these elements to unmount the editor when they are clicked.
-const addListenersToExternalUnfocusElements = ( selectors: string[], cb: ( event: MouseEvent ) => void ) => {
+const blurOnClickOutsideIframe = ( selectors: string[], cb: ( event: MouseEvent ) => void ) => {
 	const elements = selectors.map( ( selector ) => document.querySelector( selector ) as HTMLElement );
 
 	elements.forEach( ( element ) => element.addEventListener( 'mousedown', cb ) );
 };
 
-const removeListenersFromExternalUnfocusElements = ( selectors: string[], cb: ( event: MouseEvent ) => void ) => {
+const removeBlurOnClickOutsideIframe = ( selectors: string[], cb: ( event: MouseEvent ) => void ) => {
 	const elements = selectors.map( ( selector ) => document.querySelector( selector ) as HTMLElement );
 
 	elements.forEach( ( element ) => element.removeEventListener( 'mousedown', cb ) );
