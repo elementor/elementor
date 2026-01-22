@@ -9,10 +9,6 @@ export default class extends elementorModules.Module {
 	onInit() {
 		this.config = eventsConfig;
 
-		if ( ! this.canSendEvents() ) {
-			return;
-		}
-
 		mixpanel.init(
 			elementorCommon.config.editor_events?.token,
 			{
@@ -29,7 +25,9 @@ export default class extends elementorModules.Module {
 			},
 		);
 
-		this.enableTracking();
+		if ( ! this.canSendEvents() ) {
+			this.enableTracking();
+		}
 	}
 
 	enableTracking() {
