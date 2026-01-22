@@ -1,10 +1,9 @@
+import { getElementorConfig, type SupportedFonts } from '@elementor/editor-v1-adapters';
 import { renderHook } from '@testing-library/react';
 
-import { getElementorConfig } from '../../../../../sync/get-elementor-globals';
-import { type SupportedFonts } from '../../../../../sync/types';
 import { useFontFamilies } from '../use-font-families';
 
-jest.mock( '../../../../../sync/get-elementor-globals' );
+jest.mock( '@elementor/editor-v1-adapters' );
 
 describe( 'useFontFamilies', () => {
 	it( 'should return empty array when there are no font families', () => {

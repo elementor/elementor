@@ -1,5 +1,6 @@
+import { getElementorConfig } from '@elementor/editor-v1-adapters';
+
 import { getLicenseConfig } from '../../hooks/use-license-config';
-import { getElementorConfig } from '../../sync/get-elementor-globals';
 import { type DynamicTags } from '../types';
 
 export const getAtomicDynamicTags = ( shouldFilterByLicense: boolean = true ) => {
