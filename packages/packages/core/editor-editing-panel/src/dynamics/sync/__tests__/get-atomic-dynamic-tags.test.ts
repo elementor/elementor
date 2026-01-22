@@ -1,10 +1,13 @@
+import { getElementorConfig } from '@elementor/editor-v1-adapters';
+
 import { getLicenseConfig } from '../../../hooks/use-license-config';
-import { getElementorConfig } from '../../../sync/get-elementor-globals';
 import { type DynamicTags } from '../../types';
 import { getAtomicDynamicTags } from '../get-atomic-dynamic-tags';
 
+jest.mock( '@elementor/editor-v1-adapters', () => ( {
+	getElementorConfig: jest.fn(),
+} ) );
 jest.mock( '../../../hooks/use-license-config' );
-jest.mock( '../../../sync/get-elementor-globals' );
 
 describe( 'getAtomicDynamicTags', () => {
 	const mockTags: DynamicTags = {
