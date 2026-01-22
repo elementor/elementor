@@ -5,7 +5,7 @@ import { __getState as getState } from '@elementor/store';
 import { selectCreatedThisSession } from '../store/store';
 import { type ExtendedWindow } from '../types';
 
-export type Source = 'user' | 'mcp_tool';
+export type Source = 'user' | 'mcp_tool' | 'system';
 
 type ComponentEventData = Record< string, unknown > & {
 	action:
@@ -24,6 +24,10 @@ type ComponentEventData = Record< string, unknown > & {
 const FEATURE_NAME = 'Components';
 
 export const trackComponentEvent = ( { action, source, ...data }: ComponentEventData ) => {
+	if ( source === 'system' ) {
+		return;
+	}
+
 	const { dispatchEvent, config } = getMixpanel();
 	if ( ! config?.names?.components?.[ action ] ) {
 		return;

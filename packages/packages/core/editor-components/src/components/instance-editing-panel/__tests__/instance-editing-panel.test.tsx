@@ -5,6 +5,7 @@ import { controlsRegistry, ElementProvider } from '@elementor/editor-editing-pan
 import {
 	getContainer,
 	getElementLabel,
+	getElementSetting,
 	getElementType,
 	getWidgetsCache,
 	useElementSetting,
@@ -20,6 +21,7 @@ import {
 import { fireEvent, screen } from '@testing-library/react';
 
 import { componentInstancePropTypeUtil } from '../../../prop-types/component-instance-prop-type';
+import { componentOverridablePropTypeUtil } from '../../../prop-types/component-overridable-prop-type';
 import { slice } from '../../../store/store';
 import { switchToComponent } from '../../../utils/switch-to-component';
 import { InstanceEditingPanel } from '../instance-editing-panel';
@@ -145,6 +147,8 @@ const MOCK_OVERRIDABLE_PROPS_WITH_EMPTY_GROUP = {
 	},
 };
 
+const MOCK_NESTED_ORIGIN_OVERRIDE_KEY = 'inner-prop-0';
+
 const MOCK_OVERRIDABLE_PROPS_WITH_NESTED = {
 	props: {
 		'prop-1': {
@@ -165,7 +169,14 @@ const MOCK_OVERRIDABLE_PROPS_WITH_NESTED = {
 			widgetType: 'e-component',
 			elType: 'widget',
 			groupId: 'nested',
-			originValue: { $$type: 'string', value: 'Nested Title Value' },
+			originValue: {
+				$$type: 'override',
+				value: {
+					override_key: MOCK_NESTED_ORIGIN_OVERRIDE_KEY,
+					override_value: { $$type: 'string', value: 'Nested Title Value' },
+					schema_source: { type: 'component', id: 123 },
+				},
+			},
 			originPropFields: MOCK_ORIGIN_OVERRIDABLE_PROP,
 		},
 	},
@@ -266,6 +277,12 @@ describe( '<InstanceEditingPanel />', () => {
 		);
 		jest.mocked( getElementType ).mockImplementation( createMockElementType );
 		jest.mocked( getContainer ).mockReturnValue( createMockContainer( MOCK_ELEMENT_ID, [] ) );
+		jest.mocked( getElementSetting ).mockReturnValue(
+			componentOverridablePropTypeUtil.create( {
+				override_key: MOCK_NESTED_ORIGIN_OVERRIDE_KEY,
+				origin_value: { $$type: 'string', value: 'Original' },
+			} )
+		);
 	} );
 
 	it( 'should render the component name in the header', () => {
