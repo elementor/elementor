@@ -52,8 +52,7 @@ export const CanvasInlineEditor = ( {
 	useEffect( () => {
 		blurOnClickOutsideIframe( EDITOR_ELEMENTS_OUT_OF_IFRAME, asyncUnmountInlineEditor );
 
-		return () =>
-			removeBlurOnClickOutsideIframe( EDITOR_ELEMENTS_OUT_OF_IFRAME, asyncUnmountInlineEditor );
+		return () => removeBlurOnClickOutsideIframe( EDITOR_ELEMENTS_OUT_OF_IFRAME, asyncUnmountInlineEditor );
 	}, [ asyncUnmountInlineEditor ] );
 
 	return (
