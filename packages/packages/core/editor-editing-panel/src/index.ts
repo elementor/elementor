@@ -7,7 +7,6 @@ export { SectionContent } from './components/section-content';
 export { SettingsControl } from './components/settings-control';
 export { SettingsField } from './controls-registry/settings-field';
 export { StyleIndicator } from './components/style-indicator';
-export { useFontFamilies } from './components/style-sections/typography-section/hooks/use-font-families';
 export { injectIntoStyleTab } from './components/style-tab';
 export { StyleTabSection } from './components/style-tab-section';
 export { useClassesProp } from './contexts/classes-prop-context';
