@@ -16,6 +16,7 @@ jest.mock( '../../variables-registry/variable-type-registry' );
 jest.mock( '../../utils/tracking' );
 jest.mock( '../../hooks/use-permissions' );
 jest.mock( '@elementor/editor-controls', () => ( {
+	...jest.requireActual( '@elementor/editor-controls' ),
 	useBoundProp: jest.fn(),
 } ) );
 jest.mock( '@elementor/editor-ui', () => ( {

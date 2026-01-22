@@ -1,12 +1,14 @@
+import { enqueueFont } from '@elementor/editor-v1-adapters';
 import { createStyleVariablesRepository } from '../create-style-variables-repository';
 import { colorVariablePropTypeUtil } from '../prop-types/color-variable-prop-type';
 import { fontVariablePropTypeUtil } from '../prop-types/font-variable-prop-type';
 
+jest.mock( '@elementor/editor-v1-adapters' );
+
 describe( 'createStyleVariablesRepository', () => {
-	const mockEnqueueFont = jest.fn();
+	jest.mocked( enqueueFont ).mockImplementation( () => {} );
 	beforeEach( () => {
 		jest.clearAllMocks();
-		mockEnqueueFont.mockImplementation( () => {} );
 	} );
 
 	it( 'should be able to update a single variable', () => {
@@ -365,8 +367,8 @@ describe( 'createStyleVariablesRepository', () => {
 		repo.update( variables );
 
 		// Assert.
-		expect( mockEnqueueFont ).toHaveBeenCalledWith( fontFamily );
-		expect( mockEnqueueFont ).toHaveBeenCalledTimes( 1 );
+		expect( enqueueFont ).toHaveBeenCalledWith( fontFamily );
+		expect( enqueueFont ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'should not enqueue font if value has not changed', () => {
@@ -390,8 +392,8 @@ describe( 'createStyleVariablesRepository', () => {
 		repository.update( variables );
 
 		// Assert.
-		expect( mockEnqueueFont ).toHaveBeenCalledWith( fontFamily );
-		expect( mockEnqueueFont ).toHaveBeenCalledTimes( 1 );
+		expect( enqueueFont ).toHaveBeenCalledWith( fontFamily );
+		expect( enqueueFont ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'should not enqueue font for non-font variables', () => {
@@ -414,7 +416,7 @@ describe( 'createStyleVariablesRepository', () => {
 		repository.update( variables );
 
 		// Assert.
-		expect( mockEnqueueFont ).not.toHaveBeenCalled();
+		expect( enqueueFont ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should handle empty font family values', () => {
@@ -432,7 +434,7 @@ describe( 'createStyleVariablesRepository', () => {
 		repository.update( variables );
 
 		// Assert.
-		expect( mockEnqueueFont ).not.toHaveBeenCalled();
+		expect( enqueueFont ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should handle font enqueue errors gracefully without throwing', () => {
@@ -440,7 +442,7 @@ describe( 'createStyleVariablesRepository', () => {
 		const repository = createStyleVariablesRepository();
 		const fontFamily = 'Arial, sans-serif';
 
-		mockEnqueueFont.mockImplementation( () => {
+		jest.mocked( enqueueFont ).mockImplementation( () => {
 			throw new Error( 'Failed to enqueue font' );
 		} );
 
@@ -458,6 +460,6 @@ describe( 'createStyleVariablesRepository', () => {
 			repository.update( variables );
 		} ).not.toThrow();
 
-		expect( mockEnqueueFont ).toHaveBeenCalledWith( fontFamily );
+		expect( enqueueFont ).toHaveBeenCalledWith( fontFamily );
 	} );
 } );

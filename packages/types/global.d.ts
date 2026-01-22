@@ -1,8 +1,7 @@
-import type { InteractionsConfig, DynamicTags, DynamicTagsManager, DynamicTag, SupportedFonts } from '@elementor/editor-editing-panel';
+import type { InteractionsConfig, DynamicTags, DynamicTagsManager, DynamicTag } from '@elementor/editor-editing-panel';
 import type { ControlItem, V1Element } from '@elementor/editor-elements';
 import type { PropsSchema } from '@elementor/editor-props';
-
-type EnqueueFont = ( fontFamily: string, context?: 'preview' | 'editor' ) => void;
+import type { SupportedFonts, EnqueueFont } from '@elementor/editor-v1-adapters';
 
 declare global {
 	interface Window {

@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { type FontCategory } from '@elementor/editor-controls';
-import { getElementorConfig } from '@elementor/editor-v1-adapters';
+import { type SupportedFonts, getElementorConfig } from '@elementor/editor-v1-adapters';
 import { __ } from '@wordpress/i18n';
 
-const supportedCategories: Record< string, string > = {
+const supportedCategories: Record< SupportedFonts, string > = {
 	system: __( 'System', 'elementor' ),
 	custom: __( 'Custom Fonts', 'elementor' ),
 	googlefonts: __( 'Google Fonts', 'elementor' ),
@@ -25,11 +25,11 @@ export const useFontFamilies = () => {
 	const fontFamilies = getFontFamilies();
 
 	return useMemo( () => {
-		const categoriesOrder = [ 'system', 'custom', 'googlefonts' ];
+		const categoriesOrder: SupportedFonts[] = [ 'system', 'custom', 'googlefonts' ];
 
 		return Object.entries( fontFamilies || {} )
 			.reduce< FontCategory[] >( ( acc, [ font, category ] ) => {
-				if ( ! supportedCategories[ category ] ) {
+				if ( ! supportedCategories[ category as SupportedFonts ] ) {
 					return acc;
 				}
 
@@ -37,7 +37,7 @@ export const useFontFamilies = () => {
 
 				if ( ! acc[ categoryIndex ] ) {
 					acc[ categoryIndex ] = {
-						label: supportedCategories[ category ],
+						label: supportedCategories[ category as SupportedFonts ],
 						fonts: [],
 					};
 				}

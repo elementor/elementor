@@ -1,6 +1,5 @@
 import { type PropType } from '@elementor/editor-props';
 
-import { type ExtendedWindow } from '../../sync/types';
 import { dynamicTransformer } from '../dynamic-transformer';
 import { DynamicTagsManagerNotFoundError } from '../errors';
 import { type DynamicTagsManager, type TagInstance } from '../types';
@@ -8,7 +7,6 @@ import { type DynamicTagsManager, type TagInstance } from '../types';
 jest.mock( '@elementor/editor-v1-adapters' );
 
 describe( 'dynamicTransformer', () => {
-	const extendedWindow = window as ExtendedWindow;
 	const ELEMENTOR_MOCK = {
 		dynamicTags: mockDynamicTagsManager(),
 		config: {
@@ -41,7 +39,7 @@ describe( 'dynamicTransformer', () => {
 
 	it( 'should throw when the dynamic tags manager cannot be found', () => {
 		// Arrange.
-		extendedWindow.elementor = {
+		window.elementor = {
 			...ELEMENTOR_MOCK,
 			dynamicTags: undefined,
 		};
@@ -54,7 +52,7 @@ describe( 'dynamicTransformer', () => {
 
 	it( 'should fetch the tag value from server, and load from cache on next requests', async () => {
 		// Arrange.
-		extendedWindow.elementor = ELEMENTOR_MOCK;
+		window.elementor = ELEMENTOR_MOCK;
 
 		// Act.
 		const valueFromServer = dynamicTransformer(

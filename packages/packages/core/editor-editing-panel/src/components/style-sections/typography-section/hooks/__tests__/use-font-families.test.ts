@@ -1,7 +1,6 @@
-import { getElementorConfig } from '@elementor/editor-v1-adapters';
+import { getElementorConfig, type SupportedFonts } from '@elementor/editor-v1-adapters';
 import { renderHook } from '@testing-library/react';
 
-import { type SupportedFonts } from '../../../../../sync/types';
 import { useFontFamilies } from '../use-font-families';
 
 jest.mock( '@elementor/editor-v1-adapters' );
