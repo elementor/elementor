@@ -5,12 +5,11 @@ const EXPERIMENTS_TO_SKIP = [
 	'emphasizeThemeValueAudience202',
 ];
 
-interface AbTestingResponse {
-	lastUpdated: string;
+type AbTestingResponse = {
 	'ab-testing': Array<{
 		coreOnboarding?: Record<string, boolean>;
 	}>;
-}
+};
 
 let cachedResult: boolean | null = null;
 
@@ -32,7 +31,7 @@ export async function hasActiveOnboardingExperiment(): Promise<boolean> {
 	}
 
 	const data = await fetchAbTestingData();
-	if ( ! data || ! data[ 'ab-testing' ] || data[ 'ab-testing' ].length === 0 ) {
+	if ( ! data || ! data[ 'ab-testing' ] || 0 === data[ 'ab-testing' ].length ) {
 		cachedResult = false;
 		return false;
 	}
@@ -43,6 +42,6 @@ export async function hasActiveOnboardingExperiment(): Promise<boolean> {
 		return false;
 	}
 
-	cachedResult = EXPERIMENTS_TO_SKIP.some( ( experimentName ) => coreOnboarding[ experimentName ] === true );
+	cachedResult = EXPERIMENTS_TO_SKIP.some( ( experimentName ) => true === coreOnboarding[ experimentName ] );
 	return cachedResult;
 }

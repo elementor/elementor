@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { parallelTest as test } from '../../../../../parallelTest';
 import EditorSelectors from '../../../../../selectors/editor-selectors';
 import WpAdminPage from '../../../../../pages/wp-admin-page';
-import { hasActiveOnboardingExperiment } from '../../../../../assets/ab-testing-utils';
+import { hasActiveOnboardingExperiment } from './ab-testing-utils';
 
 test.describe( 'Onboarding Skip disabled until Hello Theme loaded', async () => {
 	test.beforeAll( async ( { browser, apiRequests }, testInfo ) => {
