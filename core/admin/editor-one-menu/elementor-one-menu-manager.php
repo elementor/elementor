@@ -200,7 +200,7 @@ class Elementor_One_Menu_Manager {
 		?>
 		<style type="text/css">
 			#toplevel_page_elementor,
-			li.wp-not-current-submenu.wp-menu-separator.elementor {
+			#toplevel_page_elementor + .wp-not-current-submenu.wp-menu-separator {
 				display: none !important;
 			}
 		</style>

@@ -3,10 +3,8 @@ namespace Elementor;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Files\Fonts\Google_Font;
-use Elementor\Includes\Settings\AdminMenuItems\Admin_Menu_Item;
 use Elementor\Modules\Promotions\Module as Promotions_Module;
 use Elementor\TemplateLibrary\Source_Local;
-use Elementor\Modules\Home\Module as Home_Module;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Home_Menu;
 use Elementor\Includes\Settings\AdminMenuItems\Editor_One_Settings_Menu;
@@ -31,11 +29,6 @@ class Settings extends Settings_Page {
 	const PAGE_ID = 'elementor';
 
 	/**
-	 * Upgrade menu priority.
-	 */
-	const MENU_PRIORITY_GO_PRO = 502;
-
-	/**
 	 * Settings page field for update time.
 	 */
 	const UPDATE_TIME_FIELD = '_elementor_settings_update_time';
@@ -44,11 +37,6 @@ class Settings extends Settings_Page {
 	 * Settings page general tab slug.
 	 */
 	const TAB_GENERAL = 'general';
-
-	/**
-	 * Settings page style tab slug.
-	 */
-	const TAB_STYLE = 'style';
 
 	/**
 	 * Settings page integrations tab slug.
@@ -69,8 +57,6 @@ class Settings extends Settings_Page {
 
 	const MENU_CAPABILITY_EDIT_POSTS = 'edit_posts';
 
-	public Home_Module $home_module;
-
 	/**
 	 * Register admin menu.
 	 *
@@ -82,10 +68,6 @@ class Settings extends Settings_Page {
 	 * @access public
 	 */
 	public function register_admin_menu() {
-		global $menu;
-
-		$menu[] = [ '', 'read', 'separator-elementor', '', 'wp-menu-separator elementor' ]; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-
 		if ( ! current_user_can( self::MENU_CAPABILITY_EDIT_POSTS ) ) {
 			return;
 		}
@@ -95,10 +77,7 @@ class Settings extends Settings_Page {
 			esc_html__( 'Elementor', 'elementor' ),
 			self::MENU_CAPABILITY_EDIT_POSTS,
 			self::PAGE_ID,
-			[
-				$this,
-				'display_home_screen',
-			],
+			[ $this, 'display_home_screen' ],
 			'',
 			'58.5'
 		);
@@ -106,43 +85,6 @@ class Settings extends Settings_Page {
 
 	public function display_home_screen() {
 		echo '<div id="e-home-screen"></div>';
-	}
-
-	/**
-	 * Reorder the Elementor menu items in admin.
-	 * Based on WC.
-	 *
-	 * @since 2.4.0
-	 *
-	 * @param array $menu_order Menu order.
-	 * @return array
-	 */
-	public function menu_order( $menu_order ) {
-		// Initialize our custom order array.
-		$elementor_menu_order = [];
-
-		// Get the index of our custom separator.
-		$elementor_separator = array_search( 'separator-elementor', $menu_order, true );
-
-		// Get index of library menu.
-		$elementor_library = array_search( Source_Local::ADMIN_MENU_SLUG, $menu_order, true );
-
-		// Loop through menu order and do some rearranging.
-		foreach ( $menu_order as $index => $item ) {
-			if ( 'elementor' === $item ) {
-				$elementor_menu_order[] = 'separator-elementor';
-				$elementor_menu_order[] = $item;
-				$elementor_menu_order[] = Source_Local::ADMIN_MENU_SLUG;
-
-				unset( $menu_order[ $elementor_separator ] );
-				unset( $menu_order[ $elementor_library ] );
-			} elseif ( ! in_array( $item, [ 'separator-elementor' ], true ) ) {
-				$elementor_menu_order[] = $item;
-			}
-		}
-
-		// Return order.
-		return $elementor_menu_order;
 	}
 
 	private function register_editor_one_settings_menu( Menu_Data_Provider $menu_data_provider ) {
@@ -165,38 +107,6 @@ class Settings extends Settings_Page {
 	 */
 	public function on_admin_init() {
 		$this->maybe_remove_all_admin_notices();
-	}
-
-	/**
-	 * Change "Settings" menu name.
-	 *
-	 * Update the name of the Settings admin menu from "Elementor" to "Settings".
-	 *
-	 * Fired by `admin_menu` action.
-	 *
-	 * @since 1.0.0
-	 * @access public
-	 */
-	public function admin_menu_change_name() {
-		$menu_name = esc_html__( 'Home', 'elementor' );
-
-		Utils::change_submenu_first_item_label( 'elementor', $menu_name );
-	}
-
-	/**
-	 * Update CSS print method.
-	 *
-	 * Clear post CSS cache.
-	 *
-	 * Fired by `add_option_elementor_css_print_method` and
-	 * `update_option_elementor_css_print_method` actions.
-	 *
-	 * @since 1.7.5
-	 * @access public
-	 * @deprecated 3.0.0 Use `Plugin::$instance->files_manager->clear_cache()` method instead.
-	 */
-	public function update_css_print_method() {
-		Plugin::$instance->files_manager->clear_cache();
 	}
 
 	/**
@@ -512,8 +422,6 @@ class Settings extends Settings_Page {
 	public function __construct() {
 		parent::__construct();
 
-		$this->home_module = new Home_Module();
-
 		add_action( 'admin_init', [ $this, 'on_admin_init' ] );
 		add_filter( 'elementor/generator_tag/settings', [ $this, 'add_generator_tag_settings' ] );
 
@@ -523,11 +431,6 @@ class Settings extends Settings_Page {
 			$this->register_editor_one_settings_menu( $menu_data_provider );
 			$this->register_editor_one_home_menu( $menu_data_provider );
 		} );
-
-		add_action( 'admin_menu', [ $this, 'admin_menu_change_name' ], 200 );
-
-		add_filter( 'custom_menu_order', '__return_true' );
-		add_filter( 'menu_order', [ $this, 'menu_order' ] );
 
 		$clear_cache_callback = [ Plugin::$instance->files_manager, 'clear_cache' ];
 
