@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-require_once __DIR__ . '/../../mocks/mock-dynamic-tag.php';
+require_once __DIR__ . '/../mocks/mock-dynamic-tag.php';
 
 class Test_Dynamic_Transformer extends Elementor_Test_Base {
 
