@@ -48,6 +48,9 @@ class Elementor_Image_Loading_Optimization_Test_Module extends Elementor_Test_Ba
 		parent::setUp();
 
 		set_current_screen( 'front' );
+
+		remove_all_actions( 'elementor/editor/after_enqueue_scripts' );
+		remove_all_actions( 'elementor/editor/v2/scripts/enqueue' );
 	}
 
 	/**
