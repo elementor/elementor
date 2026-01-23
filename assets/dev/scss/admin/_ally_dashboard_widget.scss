@@ -1,5 +1,5 @@
 #dashboard-widgets #e-dashboard-ally .ui-sortable-handle {
-	justify-content: start;
+	justify-content: flex-start;
 	gap: 8px;
 }
 
@@ -10,6 +10,7 @@
 		text-align: center;
 		margin-block-end: 16px;
 	}
+
 	.e-dashboard-ally-info {
 		display: flex;
 		flex-direction: column;
