@@ -70,6 +70,20 @@ export function initializeMixpanelForOnboarding() {
 	}
 }
 
+export function initializeAndEnableTracking() {
+	if ( ! isEventsManagerAvailable() ) {
+		return;
+	}
+
+	if ( ! isMixpanelInitialized() ) {
+		elementorCommon.eventsManager.initializeMixpanel();
+	}
+
+	if ( ! elementorCommon.eventsManager.trackingEnabled ) {
+		elementorCommon.eventsManager.enableTracking();
+	}
+}
+
 export function dispatch( eventName, payload = {} ) {
 	if ( ! isEventsManagerAvailable() ) {
 		return false;
@@ -198,6 +212,7 @@ const EventDispatcher = {
 	canSendEvents,
 	isEventsManagerAvailable,
 	initializeMixpanelForOnboarding,
+	initializeAndEnableTracking,
 	dispatch,
 	dispatchIfAllowed,
 	createEventPayload,
