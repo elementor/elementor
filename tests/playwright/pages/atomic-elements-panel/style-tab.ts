@@ -100,4 +100,23 @@ export default class StyleTab extends BasePage {
 		await fontSizeInput.fill( size.toString() );
 		await fontSizeInput.blur();
 	}
+
+	async setFontWeight( weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 ): Promise<void> {
+		await this.page.locator( '[aria-label="Font weight control"] .MuiSelect-select[role="combobox"]' ).click();
+		await this.page.locator( `li[data-value="${ weight }"]` ).click();
+	}
+
+	async addGlobalClass( className: string ): Promise<void> {
+		await this.page.locator( 'label', { hasText: 'Classes' } ).locator( '../..' ).locator( 'input' ).fill( className );
+		await this.page.keyboard.press( 'Enter' );
+	}
+
+	async removeGlobalClass( className: string ): Promise<void> {
+		const classesSection = this.page.locator( 'label', { hasText: 'Classes' } ).locator( '../..' );
+		const classChip = classesSection.locator( `[aria-label="Edit ${ className }"]` );
+		const menuItem = classChip.locator( '[role="button"]' ).nth( 1 );
+
+		await menuItem.click();
+		await this.page.locator( 'li[role="menuitem"] span', { hasText: 'Remove' } ).click();
+	}
 }

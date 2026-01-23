@@ -1,12 +1,16 @@
-import { render } from '@wordpress/element';
+import { createRoot } from '@wordpress/element';
 import domReady from '@wordpress/dom-ready';
 
-import { App } from './app';
+import { AppModern } from './app-editor-one';
 
 domReady( () => {
 	const htmlOutput = document.getElementById( 'elementor-element-manager-wrap' );
 
-	if ( htmlOutput ) {
-		render( <App />, htmlOutput );
+	if ( ! htmlOutput ) {
+		return;
 	}
+
+	const root = createRoot( htmlOutput );
+
+	root.render( <AppModern /> );
 } );

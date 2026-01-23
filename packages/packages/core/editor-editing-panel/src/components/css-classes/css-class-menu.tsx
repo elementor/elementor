@@ -219,7 +219,6 @@ function StateMenuItem( { state, label, closeMenu, ...props }: StateMenuItemProp
 					setActiveId( styleId );
 				}
 				trackStyles( provider ?? '', 'classStateClicked', {
-					location: 'from StateMenuItem',
 					classId: styleId,
 					type: label,
 					source: styleId ? 'global' : 'local',
@@ -257,7 +256,6 @@ function UnapplyClassMenuItem( { closeMenu, ...props }: { closeMenu: () => void 
 				unapplyClass( { classId, classLabel } );
 				trackStyles( provider ?? '', 'classRemoved', {
 					classId,
-					location: 'from UnapplyClassMenuItem',
 					classTitle: classLabel,
 					source: 'style-tab',
 				} );

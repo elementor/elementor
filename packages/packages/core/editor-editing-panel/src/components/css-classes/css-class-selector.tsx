@@ -255,7 +255,6 @@ function useCreateAction() {
 		const { createdId } = createAction( { classLabel } );
 		trackStyles( provider.getKey() ?? '', 'classCreated', {
 			source: 'created',
-			location: 'from useCreateAction',
 			classTitle: classLabel,
 			classId: createdId,
 		} );
@@ -265,10 +264,11 @@ function useCreateAction() {
 		if ( hasReachedLimit( provider ) ) {
 			return {
 				isValid: false,
+				/* translators: %s is the maximum number of classes */
 				errorMessage: __(
-					'You’ve reached the limit of 50 classes. Please remove an existing one to create a new class.',
+					'You’ve reached the limit of %s classes. Please remove an existing one to create a new class.',
 					'elementor'
-				),
+				).replace( '%s', provider.limit.toString() ),
 			};
 		}
 		return validateStyleLabel( newClassLabel, event );
@@ -317,7 +317,6 @@ function useHandleSelect() {
 			case 'selectOption':
 				apply( { classId: option.value, classLabel: option.label } );
 				trackStyles( option.provider ?? '', 'classApplied', {
-					location: 'from useHandleSelect',
 					classId: option.value,
 					source: 'style-tab',
 				} );
@@ -326,7 +325,6 @@ function useHandleSelect() {
 			case 'removeOption':
 				unapply( { classId: option.value, classLabel: option.label } );
 				trackStyles( option.provider ?? '', 'classRemoved', {
-					location: 'from useHandleSelect',
 					classId: option.value,
 					source: 'style-tab',
 				} );

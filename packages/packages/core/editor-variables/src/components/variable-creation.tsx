@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
 import { PopoverContent, useBoundProp } from '@elementor/editor-controls';
-import { PopoverBody } from '@elementor/editor-editing-panel';
-import { PopoverHeader } from '@elementor/editor-ui';
+import { PopoverHeader, SectionPopoverBody } from '@elementor/editor-ui';
 import { ArrowLeftIcon } from '@elementor/icons';
 import { Button, CardActions, Divider, FormHelperText, IconButton, Typography } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
@@ -100,8 +99,15 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 
 	const isSubmitDisabled = hasEmptyFields() || hasErrors();
 
+	const handleKeyDown = ( event: KeyboardEvent< HTMLElement > ) => {
+		if ( event.key === 'Enter' && ! isSubmitDisabled ) {
+			event.preventDefault();
+			handleCreateAndTrack();
+		}
+	};
+
 	return (
-		<PopoverBody height="auto">
+		<SectionPopoverBody height="auto">
 			<PopoverHeader
 				icon={
 					<>
@@ -140,23 +146,27 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 								message: errorMsg,
 							} );
 						} }
+						onKeyDown={ handleKeyDown }
 					/>
 				</FormField>
-				<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
-					<Typography variant="h5" id="variable-value-wrapper">
-						<ValueField
-							value={ value }
-							onPropTypeKeyChange={ ( key: string ) => setPropTypeKey( key ) }
-							onChange={ ( newValue ) => {
-								setValue( newValue );
-								setErrorMessage( '' );
-								setValueFieldError( '' );
-							} }
-							onValidationChange={ setValueFieldError }
-							propType={ propType }
-						/>
-					</Typography>
-				</FormField>
+				{ ValueField && (
+					<FormField errorMsg={ valueFieldError } label={ __( 'Value', 'elementor' ) }>
+						<Typography variant="h5" id="variable-value-wrapper">
+							<ValueField
+								value={ value }
+								onPropTypeKeyChange={ ( key: string ) => setPropTypeKey( key ) }
+								onChange={ ( newValue ) => {
+									setValue( newValue );
+									setErrorMessage( '' );
+									setValueFieldError( '' );
+								} }
+								onValidationChange={ setValueFieldError }
+								propType={ propType }
+								onKeyDown={ handleKeyDown }
+							/>
+						</Typography>
+					</FormField>
+				) }
 
 				{ errorMessage && <FormHelperText error>{ errorMessage }</FormHelperText> }
 			</PopoverContent>
@@ -172,6 +182,6 @@ export const VariableCreation = ( { onGoBack, onClose }: Props ) => {
 					{ __( 'Create', 'elementor' ) }
 				</Button>
 			</CardActions>
-		</PopoverBody>
+		</SectionPopoverBody>
 	);
 };

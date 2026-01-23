@@ -63,6 +63,13 @@ class Module extends BaseApp {
 			'elementorHomeScreenData',
 			$this->get_app_js_config()
 		);
+
+		wp_enqueue_style(
+			'e-home-screen',
+			$this->get_css_assets_url( 'modules/home/e-home-screen' ),
+			[],
+			ELEMENTOR_VERSION
+		);
 	}
 
 	public function is_experiment_active(): bool {
@@ -100,7 +107,6 @@ class Module extends BaseApp {
 		$api = new API( $editor_assets_api );
 
 		$config = $api->get_home_screen_items();
-		$config['isEditorOneActive'] = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
 
 		return $config;
 	}

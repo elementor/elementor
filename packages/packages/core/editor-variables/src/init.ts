@@ -1,5 +1,6 @@
 import { injectIntoTop } from '@elementor/editor';
-import { controlActionsMenu, registerControlReplacement } from '@elementor/editor-editing-panel';
+import { registerControlReplacement } from '@elementor/editor-controls';
+import { controlActionsMenu } from '@elementor/editor-editing-panel';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { isTransformable, type PropValue } from '@elementor/editor-props';
 
@@ -21,7 +22,17 @@ export function init() {
 
 	registerControlReplacement( {
 		component: VariableControl,
-		condition: ( { value, placeholder } ) => hasVariable( value ) || hasVariable( placeholder ),
+		condition: ( { value, placeholder } ) => {
+			if ( hasVariableAssigned( value ) ) {
+				return true;
+			}
+
+			if ( value ) {
+				return false;
+			}
+
+			return hasVariableAssigned( placeholder );
+		},
 	} );
 
 	registerPopoverAction( {
@@ -41,7 +52,7 @@ export function init() {
 	registerPanel( panel );
 }
 
-function hasVariable( value: PropValue ) {
+function hasVariableAssigned( value: PropValue ) {
 	if ( isTransformable( value ) ) {
 		return hasVariableType( value.$$type );
 	}

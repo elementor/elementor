@@ -1,5 +1,9 @@
 import * as React from 'react';
-import { ControlActionsProvider, ControlReplacementsProvider } from '@elementor/editor-controls';
+import {
+	ControlActionsProvider,
+	ControlReplacementsProvider,
+	getControlReplacements,
+} from '@elementor/editor-controls';
 import { useSelectedElement } from '@elementor/editor-elements';
 import { Panel, PanelBody, PanelHeader, PanelHeaderTitle } from '@elementor/editor-panels';
 import { ThemeProvider } from '@elementor/editor-ui';
@@ -10,8 +14,8 @@ import { ErrorBoundary } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { ElementProvider } from '../contexts/element-context';
-import { getControlReplacements } from '../control-replacement';
 import { controlActionsMenu } from '../controls-actions';
+import { getEditingPanelReplacement } from '../editing-panel-replacement-registry';
 import { EditorPanelErrorFallback } from './editing-panel-error-fallback';
 import { EditingPanelTabs } from './editing-panel-tabs';
 
@@ -31,26 +35,38 @@ export const EditingPanel = () => {
 	/* translators: %s: Element type title. */
 	const panelTitle = __( 'Edit %s', 'elementor' ).replace( '%s', elementType.title );
 
+	const { component: ReplacementComponent } = getEditingPanelReplacement( element, elementType ) ?? {};
+
+	let panelContent = (
+		<>
+			<PanelHeader>
+				<PanelHeaderTitle>{ panelTitle }</PanelHeaderTitle>
+				<AtomIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
+			</PanelHeader>
+			<PanelBody>
+				<EditingPanelTabs />
+			</PanelBody>
+		</>
+	);
+
+	if ( ReplacementComponent ) {
+		panelContent = <ReplacementComponent />;
+	}
+
 	return (
 		<ErrorBoundary fallback={ <EditorPanelErrorFallback /> }>
 			<SessionStorageProvider prefix={ 'elementor' }>
 				<ThemeProvider>
-					<Panel>
-						<PanelHeaderTopSlot />
-						<PanelHeader>
-							<PanelHeaderTitle>{ panelTitle }</PanelHeaderTitle>
-							<AtomIcon fontSize="small" sx={ { color: 'text.tertiary' } } />
-						</PanelHeader>
-						<PanelBody>
-							<ControlActionsProvider items={ menuItems }>
-								<ControlReplacementsProvider replacements={ controlReplacements }>
-									<ElementProvider element={ element } elementType={ elementType }>
-										<EditingPanelTabs />
-									</ElementProvider>
-								</ControlReplacementsProvider>
-							</ControlActionsProvider>
-						</PanelBody>
-					</Panel>
+					<ControlActionsProvider items={ menuItems }>
+						<ControlReplacementsProvider replacements={ controlReplacements }>
+							<ElementProvider element={ element } elementType={ elementType }>
+								<Panel>
+									<PanelHeaderTopSlot />
+									{ panelContent }
+								</Panel>
+							</ElementProvider>
+						</ControlReplacementsProvider>
+					</ControlActionsProvider>
 				</ThemeProvider>
 			</SessionStorageProvider>
 		</ErrorBoundary>

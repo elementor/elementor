@@ -1,16 +1,13 @@
 import ReactUtils from 'elementor-utils/react';
 import { DirectionProvider, LocalizationProvider, ThemeProvider } from '@elementor/ui';
-import HomeScreen from './components/home-screen/home-screen';
-import EditorScreen from './components/editor-screen/home-screen';
+import EditorScreen from './components/home-screen';
 
 const App = ( props ) => {
-	const ScreenComponent = props.isEditorOneActive ? EditorScreen : HomeScreen;
-
 	return (
 		<DirectionProvider rtl={ props.isRTL }>
 			<LocalizationProvider>
 				<ThemeProvider colorScheme={ 'light' }>
-					<ScreenComponent
+					<EditorScreen
 						homeScreenData={ props.homeScreenData }
 						adminUrl={ props.adminUrl }
 					/>
@@ -28,7 +25,6 @@ App.propTypes = {
 	isRTL: PropTypes.bool,
 	adminUrl: PropTypes.string,
 	homeScreenData: PropTypes.object,
-	isEditorOneActive: PropTypes.bool,
 };
 
 ReactUtils.render( (
@@ -36,6 +32,5 @@ ReactUtils.render( (
 		isRTL={ isRTL }
 		homeScreenData={ elementorHomeScreenData }
 		adminUrl={ adminUrl }
-		isEditorOneActive={ elementorHomeScreenData.isEditorOneActive }
 	/>
 ), rootElement );

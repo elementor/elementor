@@ -4,9 +4,6 @@ namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Selection_Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Styles\Style_States;
@@ -14,6 +11,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,6 +20,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Tab_Content extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
+
+	public function __construct( $data = [], $args = null ) {
+		parent::__construct( $data, $args );
+		$this->meta( 'llm_support', false );
+	}
 
 	public static function get_type() {
 		return 'e-tab-content';
@@ -52,7 +55,7 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tab-id' => String_Prop_Type::make(),
-			'attributes' => Attributes_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
 

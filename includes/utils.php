@@ -637,6 +637,21 @@ class Utils {
 		return defined( 'ELEMENTOR_PRO_VERSION' );
 	}
 
+	public static function is_pro_installed_and_not_active(): bool {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$file_path = self::get_elementor_pro_file_path();
+		$installed_plugins = get_plugins();
+
+		return isset( $installed_plugins[ $file_path ] );
+	}
+
+	private static function get_elementor_pro_file_path(): string {
+		return 'elementor-pro/elementor-pro.php';
+	}
+
 	/**
 	 * Convert HTMLEntities to UTF-8 characters
 	 *

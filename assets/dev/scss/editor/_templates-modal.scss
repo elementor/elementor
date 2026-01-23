@@ -19,7 +19,8 @@ $remote-templates-items-space: 30px;
 		overflow-y: scroll;
 	}
 
-	&:has(#elementor-template-library-save-template) {
+	&:has(#elementor-template-library-save-template),
+	&:has(#elementor-template-library-save-template-variant-b) {
 
 		.dialog-message {
 			overflow-y: hidden;
@@ -624,7 +625,17 @@ $remote-templates-items-space: 30px;
 	}
 }
 
-#elementor-template-library-toolbar {
+#elementor-template-library-connect-states {
+	.elementor-template-library-filter-toolbar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+}
+
+
+#elementor-template-library-toolbar,
+.elementor-template-library-connect-states-badge {
 
 	.source-option-badge {
 		display: flex;
@@ -636,6 +647,8 @@ $remote-templates-items-space: 30px;
 		font-size: 14px;
 		font-weight: 500;
 		white-space: nowrap;
+		margin-inline-start: auto;
+		margin-inline-end: 15px;
 
 		i {
 			margin: 0;
@@ -1550,6 +1563,10 @@ label.elementor-template-library-order-label {
 					line-height: normal;
 					gap: 8px;
 
+					&:has(input[type="checkbox"]:checked) {
+						border-color: var(--e-a-color-txt);
+					}
+
 					&.cloud,
 					&.local {
 						display: flex;
@@ -1559,6 +1576,10 @@ label.elementor-template-library-order-label {
 						margin-inline-end: 0;
 						flex-shrink: 0;
 						position: relative;
+
+						&:checked {
+							inset-block-start: 0;
+						}
 
 						&::after {
 							content: '';
@@ -1571,9 +1592,16 @@ label.elementor-template-library-order-label {
 					}
 
 					> i:first-of-type {
+						margin-inline-start: 12px;
+						margin-inline-end: 4px;
+						font-size: 24px;
+						color: var(--e-a-color-txt);
+					}
+
+					> svg:first-of-type {
 						margin-inline-start: 8px;
 						margin-inline-end: 0;
-						font-size: 18px;
+						font-size: 24px;
 						color: var(--e-a-color-txt);
 					}
 
@@ -1653,11 +1681,11 @@ label.elementor-template-library-order-label {
 						}
 
 						a {
-							color: var(--e-a-color-primary-bold);
-							text-decoration: none;
+							color: var(--e-a-color-info);
+							text-decoration: underline;
 
 							&:hover {
-								text-decoration: underline;
+								text-decoration: none;
 							}
 						}
 					}
@@ -1727,7 +1755,8 @@ label.elementor-template-library-order-label {
 			}
 
 			.cloud-folder-selection-dropdown {
-				inset-block-start: 70px;
+				inset-block-start: 75px;
+				inset-inline-start: 230px;
 			}
 
 			.source-selections-input.cloud {
@@ -2041,15 +2070,20 @@ label.elementor-template-library-order-label {
 		padding: 20px;
 	}
 
-	&:after {
-		inset-block-end: 100%;
-		border-block-end-color: var(--e-a-bg-default);
+	&:not(.variant-b) {
+		&:after {
+			inset-block-end: 100%;
+			border-block-end-color: var(--e-a-bg-default);
+		}
 	}
 
 	&.variant-b {
 		&:after {
-			border-block-end-color: var(--e-a-bg-secondary);
+			border-block-start-color: var(--e-a-bg-secondary);
+			inset-block-start: 100%;
 		}
+
+		width: 265px;
 	}
 }
 
@@ -2069,13 +2103,12 @@ label.elementor-template-library-order-label {
 	}
 }
 
-#elementor-library--site-info__dialog{
+#elementor-library--site-info__dialog {
 	width: 265px;
 
 	&:after {
 		inset-block-start: 100%;
 		border-block-start-color: var(--e-a-bg-default);
-
 	}
 
 	&.variant-b {

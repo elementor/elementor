@@ -443,7 +443,7 @@ describe( 'SizeControl', () => {
 
 			fireEvent.click( select );
 
-			const expected = [ 'px', '%', 'em', 'rem', 'vw', 'vh' ];
+			const expected = [ 'px', '%', 'em', 'rem', 'vw', 'vh', 'ch' ];
 
 			// Assert.
 			screen.getAllByRole( 'menuitem' ).forEach( ( option, index ) => {

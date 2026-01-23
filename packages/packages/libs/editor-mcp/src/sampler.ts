@@ -19,6 +19,7 @@ type SamplingOpts = {
 	systemPrompt?: string;
 	structuredOutput?: z.ZodTypeAny;
 	messages: { role: 'user' | 'assistant'; content: { type: 'text'; text: string } }[];
+	requestParams?: { [ key: string ]: string };
 };
 
 const DEFAULT_STRUCTURED_OUTPUT = {
@@ -37,10 +38,12 @@ export const createSampler = ( server: Server, opts: Opts = DEFAULT_OPTS ) => {
 	const { maxTokens = 1000, modelPreferences = 'openai', model = 'gpt-4o' } = opts;
 	const exec = async ( payload: SamplingOpts ) => {
 		const systemPromptObject = { ...( payload.systemPrompt ? { systemPrompt: payload.systemPrompt } : {} ) };
+		const requestParams = payload.requestParams || {};
 		const result = await server.sendRequest(
 			{
 				method: 'sampling/createMessage',
 				params: {
+					...requestParams,
 					maxTokens,
 					modelPreferences: {
 						hints: [ { name: modelPreferences } ],

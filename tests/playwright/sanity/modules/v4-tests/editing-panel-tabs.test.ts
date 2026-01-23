@@ -3,7 +3,6 @@ import { parallelTest as test } from '../../../parallelTest';
 import { BrowserContext, expect } from '@playwright/test';
 import EditorPage from '../../../pages/editor-page';
 import { timeouts } from '../../../config/timeouts';
-import { DriverFactory } from '../../../drivers/driver-factory';
 
 test.describe( 'Editing panel tabs @v4-tests', () => {
 	let editor: EditorPage;
@@ -25,15 +24,13 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		'border',
 	];
 
-	test.beforeAll( async () => {
-		await DriverFactory.activateExperimentsCli( [ 'e_atomic_elements' ] );
-	} );
-
 	test.beforeEach( async ( { browser, apiRequests }, testInfo ) => {
 		context = await browser.newContext();
 		const page = await context.newPage();
 
 		wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+		await wpAdmin.setExperiments( { e_atomic_elements: 'active' } );
+
 		editor = await wpAdmin.openNewPage();
 	} );
 
@@ -85,20 +82,18 @@ test.describe( 'Editing panel tabs @v4-tests', () => {
 		} );
 	} );
 
-	test( 'should hide tabs header when scrolling down in the panel', async () => {
+	test( 'should show/hide tabs header when scrolling up/down in the panel', async () => {
 		await openScrollableStylePanel();
 
-		const lastSection = editor.page.locator( '.MuiButtonBase-root', { hasText: /effects/i } );
-		await lastSection.scrollIntoViewIfNeeded();
+		// Scroll down
+		await editor.page.mouse.wheel( 0, 100 );
+		await editor.page.waitForTimeout( 1000 );
 
 		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-scrolling-down.png' );
-	} );
 
-	test( 'should display tabs header when scrolling back up', async () => {
-		await openScrollableStylePanel();
-
-		const firstSection = editor.page.locator( '.MuiButtonBase-root', { hasText: /layout/i } );
-		await firstSection.scrollIntoViewIfNeeded();
+		// Scroll up
+		await editor.page.mouse.wheel( 0, -100 );
+		await editor.page.waitForTimeout( 1000 );
 
 		await expect.soft( editor.page.locator( panelSelector ) ).toHaveScreenshot( 'editing-panel-scrolling-up.png' );
 	} );

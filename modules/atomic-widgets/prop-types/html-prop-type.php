@@ -38,6 +38,9 @@ class Html_Prop_Type extends String_Prop_Type {
 				'span'       => [],
 				'br'         => [],
 				'strong'     => [],
+				'sup'        => [],
+				'sub'        => [],
+				's'          => [],
 			];
 
 			$sanitized = wp_kses( $value, $allowed_tags );

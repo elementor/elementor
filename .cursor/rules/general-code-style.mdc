@@ -18,4 +18,16 @@ alwaysApply: true
 
 ## Self Documented Code
 - Avoid adding comments that can be a constants or a well named function
-- Always prefer to create small funcitons that describe themself
+- Always prefer to create small functions that describe themselves
+- Only add comments to explain "why" when it is truly not understandable from the code itself
+- Do NOT add comments that explain "what" the code does (the code should be self-explanatory)
+- Examples of unnecessary comments to avoid:
+  - `// Loop through items` (obvious from for loop)
+  - `// Check if user exists` (obvious from if statement)
+  - `// Return the result` (obvious from return statement)
+  - JSDoc comments that just repeat the function name or parameter names
+- Examples of valuable comments to keep:
+  - Business logic explanations that aren't obvious from code
+  - Workarounds for bugs in third-party libraries
+  - Performance optimizations that might look odd without context
+  - Complex algorithms where the "why" matters more than the "what"

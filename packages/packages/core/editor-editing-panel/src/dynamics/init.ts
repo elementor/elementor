@@ -1,9 +1,13 @@
 import { settingsTransformersRegistry, styleTransformersRegistry } from '@elementor/editor-canvas';
-import { injectIntoRepeaterItemIcon, injectIntoRepeaterItemLabel } from '@elementor/editor-controls';
+import {
+	type ControlComponent,
+	injectIntoRepeaterItemIcon,
+	injectIntoRepeaterItemLabel,
+	registerControlReplacement,
+} from '@elementor/editor-controls';
 import { type BackgroundOverlayPropType, type PropValue } from '@elementor/editor-props';
 import { type InjectedComponent } from '@elementor/locations';
 
-import { registerControlReplacement } from '../control-replacement';
 import { controlActionsMenu } from '../controls-actions';
 import {
 	BackgroundControlDynamicTagIcon,
@@ -18,7 +22,7 @@ const { registerPopoverAction } = controlActionsMenu;
 
 export const init = () => {
 	registerControlReplacement( {
-		component: DynamicSelectionControl,
+		component: DynamicSelectionControl as ControlComponent,
 		condition: ( { value } ) => isDynamicPropValue( value ),
 	} );
 

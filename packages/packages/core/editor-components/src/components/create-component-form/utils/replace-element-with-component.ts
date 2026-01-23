@@ -6,8 +6,8 @@ type ComponentInstanceParams = {
 	uid: string;
 };
 
-export const replaceElementWithComponent = ( element: V1ElementData, component: ComponentInstanceParams ) => {
-	replaceElement( {
+export const replaceElementWithComponent = async ( element: V1ElementData, component: ComponentInstanceParams ) => {
+	return await replaceElement( {
 		currentElement: element,
 		newElement: createComponentModel( component ),
 		withHistory: false,
@@ -30,7 +30,6 @@ export const createComponentModel = ( component: ComponentInstanceParams ): Omit
 			},
 		},
 		editor_settings: {
-			title: component.name,
 			component_uid: component.uid,
 		},
 	};
