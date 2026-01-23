@@ -1,7 +1,6 @@
 <?php
 namespace Elementor\Modules\ProInstall;
 
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Plugin;
