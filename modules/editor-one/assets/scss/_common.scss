@@ -22,6 +22,24 @@
 		font-family: var(--e-one-typography-fontFamily);
 	}
 
+	#submitdiv {
+		.button {
+			height: 30px;
+			padding: 5px 16px;
+		}
+
+		a:not(.button),
+		.eps-button {
+			color: var(--e-one-palette-text-primary);
+			text-decoration: none;
+
+			&:hover,
+			&:focus {
+				text-decoration: underline;
+			}
+		}
+	}
+
 	.wrap {
 		background-color: var(--e-one-palette-background-default);
 		margin: 20px 32px;
@@ -100,8 +118,6 @@
 	}
 
 	#wpbody-content {
-		margin-block-start: 50px;
-
 		hr:not(.MuiDivider-root) {
 			border: none;
 			border-block-start: 1px solid var(--e-one-palette-divider);
@@ -344,4 +360,8 @@
 	#elementor-element-manager-wrap {
 		width: 100%;
 	}
+}
+
+body:has(#editor-one-top-bar > *) #wpcontent #wpbody-content {
+	margin-block-start: 50px;
 }
