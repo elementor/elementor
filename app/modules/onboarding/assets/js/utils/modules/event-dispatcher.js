@@ -60,16 +60,6 @@ function isMixpanelInitialized() {
 	}
 }
 
-export function initializeMixpanelForOnboarding() {
-	if ( ! isEventsManagerAvailable() ) {
-		return;
-	}
-
-	if ( ! isMixpanelInitialized() ) {
-		elementorCommon.eventsManager.initializeMixpanel();
-	}
-}
-
 export function initializeAndEnableTracking() {
 	if ( ! isEventsManagerAvailable() ) {
 		return;
@@ -211,7 +201,6 @@ export function addTimeSpentToPayload( payload, totalTimeSpent, stepTimeSpent = 
 const EventDispatcher = {
 	canSendEvents,
 	isEventsManagerAvailable,
-	initializeMixpanelForOnboarding,
 	initializeAndEnableTracking,
 	dispatch,
 	dispatchIfAllowed,
