@@ -301,14 +301,6 @@
 	}
 }
 
-.wp-list-table:not(.e-form-submissions-list-table) {
-	tbody {
-		td {
-			font-weight: 400;
-		}
-	}
-}
-
 @media screen and (min-width: 783px) {
 	body.post-type-elementor_library {
 		.wp-list-table {
@@ -329,3 +321,10 @@
 	}
 }
 
+.wp-list-table:not(.e-form-submissions-list-table) {
+	tbody {
+		td {
+			font-weight: 400;
+		}
+	}
+}
