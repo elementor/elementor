@@ -1,3 +1,4 @@
+import mixpanel from 'mixpanel-browser';
 
 export const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
@@ -46,12 +47,39 @@ export function isEventsManagerAvailable() {
 		'function' === typeof elementorCommon.eventsManager.dispatchEvent;
 }
 
+function isMixpanelInitialized() {
+	return 'undefined' !== typeof mixpanel &&
+		mixpanel &&
+		'function' === typeof mixpanel.get_distinct_id;
+}
+
+function ensureMixpanelInitialized() {
+	if ( ! canSendEvents() ) {
+		return false;
+	}
+
+	if ( ! isEventsManagerAvailable() ) {
+		return false;
+	}
+
+	if ( ! isMixpanelInitialized() ) {
+		elementorCommon.eventsManager.initializeMixpanel();
+		elementorCommon.eventsManager.enableTracking();
+	}
+
+	return true;
+}
+
 export function dispatch( eventName, payload = {} ) {
 	if ( ! isEventsManagerAvailable() ) {
 		return false;
 	}
 
 	if ( ! canSendEvents() ) {
+		return false;
+	}
+
+	if ( ! ensureMixpanelInitialized() ) {
 		return false;
 	}
 
