@@ -80,7 +80,6 @@ class Module extends Base_Module {
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 
-
 		// Add Ally promo
 		Ally_Dashboard_Widget::init();
 		Ally_Top_Bar_Link::init();
