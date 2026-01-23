@@ -107,9 +107,9 @@ trait Has_Template {
 		}
 
 		if ( is_array( $config ) ) {
-			$relative_to = $this->extract_prop_value_simple( $config, 'relative_to', 'viewport' );
-			$offset_top = $this->extract_prop_value_simple( $config, 'offset_top', 15 );
-			$offset_bottom = $this->extract_prop_value_simple( $config, 'offset_bottom', 85 );
+			$relative_to = $this->extract_prop_value_simple( $config, 'relativeTo', 'viewport' );
+			$offset_top = $this->extract_prop_value_simple( $config, 'offsetTop', 15 );
+			$offset_bottom = $this->extract_prop_value_simple( $config, 'offsetBottom', 85 );
 			$replay = $this->extract_prop_value_simple( $config, 'replay', 0 );
 			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
 				$replay = 0;

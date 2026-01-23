@@ -12,7 +12,7 @@ export function setLicenseConfig( newConfig: Partial< LicenseConfig > ) {
 	listeners.forEach( ( listener ) => listener() );
 }
 
-function getConfig(): LicenseConfig {
+export function getLicenseConfig(): LicenseConfig {
 	return config;
 }
 
@@ -22,5 +22,5 @@ function subscribe( listener: () => void ) {
 }
 
 export function useLicenseConfig() {
-	return useSyncExternalStore( subscribe, getConfig, getConfig );
+	return useSyncExternalStore( subscribe, getLicenseConfig, getLicenseConfig );
 }

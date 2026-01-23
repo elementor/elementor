@@ -163,9 +163,18 @@ class Menu_Data_Provider {
 			$pro_url = Plugin::$instance->app ? Plugin::$instance->app->get_settings( 'menu_url' ) : null;
 			$return_to = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
 
-			$url = $pro_url
-				? $this->add_return_to_url( $pro_url, $return_to )
-				: add_query_arg( [ 'return_to' => $return_to ], admin_url( 'admin.php?page=elementor-app' ) ) . '#/site-editor/promotion';
+			if ( $pro_url ) {
+				if ( false !== strpos( $pro_url, '#' ) ) {
+					$url = $this->add_return_to_url( $pro_url, $return_to );
+				} else {
+					$url = $pro_url;
+				}
+			} else {
+				$url = $this->add_return_to_url(
+					admin_url( 'admin.php?page=elementor-app' ) . '#/site-editor/promotion',
+					$return_to
+				);
+			}
 
 			$this->theme_builder_url = apply_filters( 'elementor/editor-one/menu/theme_builder_url', $url );
 		}
@@ -218,6 +227,26 @@ class Menu_Data_Provider {
 		$post_type = filter_input( INPUT_GET, 'post_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ?? '';
 
 		return $this->is_elementor_post_type( $post_type );
+	}
+
+	public function is_editor_one_post_edit_screen(): bool {
+		$screen = get_current_screen();
+
+		if ( ! $screen || empty( $screen->post_type ) ) {
+			return false;
+		}
+
+		if ( 'post' !== $screen->base ) {
+			return false;
+		}
+
+		$post_types = apply_filters( 'elementor/editor-one/admin-edit-post-types', [] );
+
+		return in_array( $screen->post_type, $post_types, true );
+	}
+
+	public function is_editor_one_admin_page(): bool {
+		return $this->is_elementor_editor_page() || $this->is_editor_one_post_edit_screen();
 	}
 
 	private function is_elementor_post_type( string $post_type ): bool {

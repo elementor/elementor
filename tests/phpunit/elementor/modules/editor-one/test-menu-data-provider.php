@@ -16,15 +16,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Test_Menu_Data_Provider extends Elementor_Test_Base {
 
 	private Menu_Data_Provider $provider;
+	private $original_plugin_app;
 
 	public function setUp(): void {
 		parent::setUp();
+		$this->original_plugin_app = \Elementor\Plugin::$instance->app ?? null;
 		$this->reset_menu_data_provider();
 		$this->provider = Menu_Data_Provider::instance();
 	}
 
 	public function tearDown(): void {
 		parent::tearDown();
+		\Elementor\Plugin::$instance->app = $this->original_plugin_app;
 		$this->reset_menu_data_provider();
 	}
 
@@ -243,6 +246,52 @@ class Test_Menu_Data_Provider extends Elementor_Test_Base {
 		$this->assertTrue( $first_item['has_divider_before'] );
 		$this->assertFalse( $second_item['has_divider_before'] );
 		$this->assertSame( '', $first_item['group_id'] );
+	}
+
+	public function test_get_theme_builder_url__adds_return_to_only_when_url_has_hash() {
+		$_SERVER['REQUEST_URI'] = '/wp-admin/admin.php?page=elementor-settings';
+
+		$pro_url = admin_url( 'admin.php?page=elementor-app' ) . '#/site-editor';
+
+		\Elementor\Plugin::$instance->app = new class( $pro_url ) {
+			private string $menu_url;
+
+			public function __construct( string $menu_url ) {
+				$this->menu_url = $menu_url;
+			}
+
+			public function get_settings( string $key ) {
+				return 'menu_url' === $key ? $this->menu_url : null;
+			}
+		};
+
+		$url = $this->provider->get_theme_builder_url();
+
+		$this->assertStringContainsString( '#/site-editor', $url );
+		$this->assertStringContainsString( 'return_to=', $url );
+	}
+
+	public function test_get_theme_builder_url__does_not_add_return_to_when_url_has_no_hash() {
+		$_SERVER['REQUEST_URI'] = '/wp-admin/admin.php?page=elementor-settings';
+
+		$pro_url = admin_url( 'admin.php?page=elementor-app' );
+
+		\Elementor\Plugin::$instance->app = new class( $pro_url ) {
+			private string $menu_url;
+
+			public function __construct( string $menu_url ) {
+				$this->menu_url = $menu_url;
+			}
+
+			public function get_settings( string $key ) {
+				return 'menu_url' === $key ? $this->menu_url : null;
+			}
+		};
+
+		$url = $this->provider->get_theme_builder_url();
+
+		$this->assertSame( $pro_url, $url );
+		$this->assertStringNotContainsString( 'return_to=', $url );
 	}
 
 	private function create_test_item( string $slug, string $group_id, bool $is_level3 ) {
