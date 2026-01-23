@@ -61,10 +61,6 @@ export function initializeMixpanelForOnboarding() {
 	if ( ! isMixpanelInitialized() ) {
 		elementorCommon.eventsManager.initializeMixpanel();
 	}
-
-	if ( canSendEvents() ) {
-		elementorCommon.eventsManager.enableTracking();
-	}
 }
 
 export function dispatch( eventName, payload = {} ) {
