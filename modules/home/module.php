@@ -64,10 +64,6 @@ class Module extends BaseApp {
 			$this->get_app_js_config()
 		);
 
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_editor_one' ) ) {
-			return;
-		}
-
 		wp_enqueue_style(
 			'e-home-screen',
 			$this->get_css_assets_url( 'modules/home/e-home-screen' ),
@@ -111,7 +107,6 @@ class Module extends BaseApp {
 		$api = new API( $editor_assets_api );
 
 		$config = $api->get_home_screen_items();
-		$config['isEditorOneActive'] = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
 
 		return $config;
 	}
