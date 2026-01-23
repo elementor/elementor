@@ -1,12 +1,17 @@
 import * as React from 'react';
-import { ControlReplacementsProvider, PropKeyProvider, PropProvider, useBoundProp } from '@elementor/editor-controls';
+import {
+	ControlReplacementsProvider,
+	getControlReplacements,
+	PropKeyProvider,
+	PropProvider,
+	useBoundProp,
+} from '@elementor/editor-controls';
 import {
 	BaseControl,
 	controlsRegistry,
 	type ControlType,
 	createTopLevelObjectType,
 	ElementProvider,
-	getControlReplacements,
 	SettingsField,
 	useElement,
 } from '@elementor/editor-editing-panel';
@@ -36,6 +41,7 @@ import { getPropTypeForComponentOverride } from '../../utils/get-prop-type-for-c
 import { resolveOverridePropValue } from '../../utils/resolve-override-prop-value';
 import { ControlLabel } from '../control-label';
 import { OverrideControlInnerElementNotFoundError } from '../errors';
+import { useResolvedOriginValue } from './use-resolved-origin-value';
 
 type Props = {
 	overridableProp: OverridableProp;
@@ -61,6 +67,10 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 	);
 	const controlReplacements = getControlReplacements();
 
+	const matchingOverride = getMatchingOverride( overrides, overridableProp.overrideKey );
+
+	const recursiveOriginValue = useResolvedOriginValue( matchingOverride, overridableProp );
+
 	const propType = getPropTypeForComponentOverride( overridableProp );
 
 	if ( ! propType ) {
@@ -79,9 +89,8 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 		throw new Error( 'Component ID is required' );
 	}
 
-	const matchingOverride = getMatchingOverride( overrides, overridableProp.overrideKey );
-
-	const propValue = matchingOverride ? resolveOverridePropValue( matchingOverride ) : overridableProp.originValue;
+	const resolvedOverrideValue = matchingOverride ? resolveOverridePropValue( matchingOverride ) : null;
+	const propValue = resolvedOverrideValue ?? recursiveOriginValue ?? overridableProp.originValue;
 
 	const value = {
 		[ overridableProp.overrideKey ]: propValue,
@@ -180,7 +189,7 @@ function getMatchingOverride(
 	overrides: ComponentInstanceOverridesPropValue,
 	overrideKey: string
 ): ComponentInstanceOverride | null {
-	return (
+	const result =
 		overrides?.find( ( override ) => {
 			const overridableValue = componentOverridablePropTypeUtil.extract( override );
 			let comparedOverrideKey = null;
@@ -193,8 +202,9 @@ function getMatchingOverride(
 			}
 
 			return comparedOverrideKey === overrideKey;
-		} ) ?? null
-	);
+		} ) ?? null;
+
+	return result;
 }
 
 function createOverrideValue( {

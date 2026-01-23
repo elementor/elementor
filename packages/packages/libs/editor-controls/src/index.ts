@@ -67,6 +67,8 @@ export type { FontCategory } from './controls/font-family-control/font-family-co
 // providers
 export {
 	createControlReplacementsRegistry,
+	registerControlReplacement,
+	getControlReplacements,
 	ControlReplacementsProvider,
 	useControlReplacement,
 	type ControlReplacement,
@@ -86,3 +88,4 @@ export {
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';
 export { useElementCanHaveChildren } from './hooks/use-element-can-have-children';
+export { useFontFamilies } from './hooks/use-font-families';

@@ -4,7 +4,6 @@ namespace Elementor\Modules\Promotions;
 
 use Elementor\Api;
 use Elementor\Controls_Manager;
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as Base_Module;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Code_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Custom_Fonts_Promotion_Item;

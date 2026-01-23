@@ -2,7 +2,6 @@
 namespace Elementor\App\Modules\KitLibrary;
 
 use Elementor\App\Modules\KitLibrary\Data\Repository;
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Plugin;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Core\Base\Module as BaseModule;
@@ -33,10 +32,6 @@ class Module extends BaseModule {
 
 	private function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Website_Templates_Menu() );
-	}
-
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	private function set_kit_library_settings() {

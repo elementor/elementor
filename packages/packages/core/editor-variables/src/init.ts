@@ -1,5 +1,6 @@
 import { injectIntoTop } from '@elementor/editor';
-import { controlActionsMenu, registerControlReplacement } from '@elementor/editor-editing-panel';
+import { registerControlReplacement } from '@elementor/editor-controls';
+import { controlActionsMenu } from '@elementor/editor-editing-panel';
 import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { isTransformable, type PropValue } from '@elementor/editor-props';
 
