@@ -9,8 +9,8 @@ export default class TemplatesModule extends elementorModules.editor.utils.Modul
 
 	registerTemplateTypes() {
 		elementor.templates.getDefaultTemplateTypeData().then( ( templateTypesData ) => {
-			elementor.templates.getDefaultTemplateTypeSafeData( title ).then( ( defaultData ) => {
-				jQuery.each( elementor?.config?.library?.doc_types, function( type ) {
+			jQuery.each( elementor?.config?.library?.doc_types, function( type, title ) {
+				elementor.templates.getDefaultTemplateTypeSafeData( title ).then( ( defaultData ) => {
 					const safeData = jQuery.extend(
 						true,
 						{},
