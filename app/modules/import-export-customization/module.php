@@ -246,11 +246,7 @@ class Module extends BaseModule {
 	}
 
 	private function print_item_content( $data ) {
-		$is_editor_one_enabled = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
-		$container_classes = 'tab-import-export-kit__container';
-		if ( $is_editor_one_enabled ) {
-			$container_classes .= ' e-editor-one';
-		}
+		$container_classes = 'tab-import-export-kit__container e-editor-one';
 		?>
 		<div class="<?php echo esc_attr( $container_classes ); ?>">
 			<div class="tab-import-export-kit__box">
