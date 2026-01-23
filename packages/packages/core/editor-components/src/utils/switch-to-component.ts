@@ -1,17 +1,14 @@
 import { getCurrentDocumentContainer, selectElement } from '@elementor/editor-elements';
 import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
-import { invalidateComponentCache } from './component-document-data';
 import { expandNavigator } from './expand-navigator';
 
 export async function switchToComponent(
-	componentId: number,
+	componentId: number | string,
 	componentInstanceId?: string | null,
 	element?: HTMLElement | null
 ) {
 	const selector = getSelector( element, componentInstanceId );
-
-	invalidateComponentCache( componentId );
 
 	await runCommand( 'editor/documents/switch', {
 		id: componentId,
