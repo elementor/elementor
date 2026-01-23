@@ -1,5 +1,7 @@
 import mixpanel from 'mixpanel-browser';
 
+let mixpanelInitialized = false;
+
 export const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
 	THEME_INSTALLED: 'core_onboarding_s2_theme_installed',
@@ -53,23 +55,6 @@ function isMixpanelInitialized() {
 		'function' === typeof mixpanel.get_distinct_id;
 }
 
-function ensureMixpanelInitialized() {
-	if ( ! canSendEvents() ) {
-		return false;
-	}
-
-	if ( ! isEventsManagerAvailable() ) {
-		return false;
-	}
-
-	if ( ! isMixpanelInitialized() ) {
-		elementorCommon.eventsManager.initializeMixpanel();
-		elementorCommon.eventsManager.enableTracking();
-	}
-
-	return true;
-}
-
 export function dispatch( eventName, payload = {} ) {
 	if ( ! isEventsManagerAvailable() ) {
 		return false;
@@ -79,8 +64,12 @@ export function dispatch( eventName, payload = {} ) {
 		return false;
 	}
 
-	if ( ! ensureMixpanelInitialized() ) {
-		return false;
+	if ( ! mixpanelInitialized ) {
+		if ( ! isMixpanelInitialized() ) {
+			elementorCommon.eventsManager.initializeMixpanel();
+			elementorCommon.eventsManager.enableTracking();
+		}
+		mixpanelInitialized = true;
 	}
 
 	try {
