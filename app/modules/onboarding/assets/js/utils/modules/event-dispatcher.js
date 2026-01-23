@@ -48,9 +48,16 @@ export function isEventsManagerAvailable() {
 }
 
 function isMixpanelInitialized() {
-	return 'undefined' !== typeof mixpanel &&
-		mixpanel &&
-		'function' === typeof mixpanel.get_distinct_id;
+	if ( 'undefined' === typeof mixpanel || ! mixpanel ) {
+		return false;
+	}
+
+	try {
+		const distinctId = mixpanel.get_distinct_id();
+		return distinctId !== undefined && distinctId !== null;
+	} catch ( error ) {
+		return false;
+	}
 }
 
 export function initializeMixpanelForOnboarding() {
