@@ -2,9 +2,9 @@ import { Box, Paper, Stack, Typography } from '@elementor/ui';
 import Button from '@elementor/ui/Button';
 import List from '@elementor/ui/List';
 import ListItem from '@elementor/ui/ListItem';
-import SideBarCheckIcon from '../../../icons/side-bar-check-icon';
+import SideBarCheckIcon from '../../icons/side-bar-check-icon';
 import ListItemText from '@elementor/ui/ListItemText';
-import { trackPromoClick, getHomeScreenPath } from '../../../utils/promo-tracking';
+import { trackPromoClick, getHomeScreenPath } from '../../utils/promo-tracking';
 
 const SidebarDefault = ( { header, cta, repeater } ) => {
 	const handleCtaClick = () => {
@@ -12,7 +12,7 @@ const SidebarDefault = ( { header, cta, repeater } ) => {
 	};
 
 	return (
-		<Paper elevation={ 0 } sx={ { p: 3 } }>
+		<Paper elevation={ 0 } sx={ { p: 3, borderRadius: 1 } }>
 			<Stack gap={ 1.5 } alignItems="center" textAlign="center" sx={ { pb: 4 } }>
 				<Box component="img" src={ header.image }></Box>
 				<Box>
