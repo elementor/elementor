@@ -9,8 +9,6 @@ use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\Experiments\Manager;
 use Elementor\Modules\FloatingButtons\Base\Widget_Floating_Bars_Base;
-use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Empty_View_Menu_Item;
-use Elementor\Modules\FloatingButtons\AdminMenuItems\Floating_Buttons_Menu_Item;
 use Elementor\Modules\FloatingButtons\Base\Widget_Contact_Button_Base;
 use Elementor\Modules\FloatingButtons\Classes\Action\Action_Handler;
 use Elementor\Modules\FloatingButtons\Control\Hover_Animation_Floating_Buttons;
