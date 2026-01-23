@@ -47,6 +47,10 @@ export default class WpDashboardTracking {
 	static navigationListeners = [];
 	static isNavigatingToElementor = false;
 
+	static getElementorCommon() {
+		return globalThis.elementorCommon;
+	}
+
 	static init() {
 		if ( this.initialized ) {
 			return;
@@ -82,6 +86,7 @@ export default class WpDashboardTracking {
 	}
 
 	static isEditorOneActive() {
+		const elementorCommon = this.getElementorCommon();
 		return elementorCommon?.config?.editor_events?.isEditorOneActive ?? false;
 	}
 
@@ -132,11 +137,14 @@ export default class WpDashboardTracking {
 	}
 
 	static isEventsManagerAvailable() {
+		const elementorCommon = this.getElementorCommon();
+
 		return elementorCommon?.eventsManager &&
 			'function' === typeof elementorCommon.eventsManager.dispatchEvent;
 	}
 
 	static canSendEvents() {
+		const elementorCommon = this.getElementorCommon();
 		return elementorCommon?.config?.editor_events?.can_send_events || false;
 	}
 
@@ -145,7 +153,8 @@ export default class WpDashboardTracking {
 			return;
 		}
 
-		elementorCommon.eventsManager.dispatchEvent( eventName, properties, options );
+		const elementorCommon = this.getElementorCommon();
+		elementorCommon?.eventsManager?.dispatchEvent( eventName, properties, options );
 	}
 
 	static updateActivity() {
