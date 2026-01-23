@@ -156,7 +156,6 @@
 		td {
 			color: var(--e-one-palette-text-primary);
 			font-size: 13px;
-			font-weight: 400;
 			padding: 10px;
 
 			&:last-child {
@@ -298,6 +297,14 @@
 					margin: 0;
 				}
 			}
+		}
+	}
+}
+
+.wp-list-table:not(.e-form-submissions-list-table) {
+	tbody {
+		td {
+			font-weight: 400;
 		}
 	}
 }
