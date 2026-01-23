@@ -4,7 +4,6 @@ import PromotionTracking from './dashboard/promotion';
 import ScreenViewTracking from './dashboard/screen-view';
 import MenuPromotionTracking from './dashboard/menu-promotion';
 import ActionControlTracking from './dashboard/action-controls';
-import TopBarTracking from './dashboard/top-bar';
 
 const SESSION_TIMEOUT_MINUTES = 30;
 const MINUTE_MS = 60 * 1000;
@@ -79,10 +78,6 @@ export default class WpDashboardTracking {
 
 		this.processPendingNavClick();
 		this.saveSessionToStorage();
-	}
-
-	static isEditorOneActive() {
-		return elementorCommon?.config?.editor_events?.isEditorOneActive ?? false;
 	}
 
 	static processPendingNavClick() {
@@ -182,7 +177,7 @@ export default class WpDashboardTracking {
 			const postType = params.get( 'post_type' );
 			const action = params.get( 'action' );
 
-			const elementorPages = [ 'elementor', 'go_knowledge_base_site', 'e-form-submissions' ];
+			const elementorPages = [ 'elementor-home', 'e-form-submissions' ];
 			const elementorPostTypes = [ 'elementor_library', 'e-floating-buttons' ];
 
 			return ( page && elementorPages.some( ( p ) => page.includes( p ) ) ) ||
@@ -382,10 +377,6 @@ export default class WpDashboardTracking {
 		MenuPromotionTracking.destroy();
 		ActionControlTracking.destroy();
 
-		if ( ! WpDashboardTracking.isEditorOneActive() ) {
-			TopBarTracking.destroy();
-		}
-
 		this.initialized = false;
 	}
 }
@@ -407,10 +398,6 @@ window.addEventListener( 'elementor/admin/init', () => {
 		PromotionTracking.init();
 		MenuPromotionTracking.init();
 		ActionControlTracking.init();
-
-		if ( ! WpDashboardTracking.isEditorOneActive() ) {
-			TopBarTracking.init();
-		}
 	}
 } );
 
