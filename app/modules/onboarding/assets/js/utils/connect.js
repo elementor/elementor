@@ -14,6 +14,9 @@ export default function Connect( props ) {
 
 		if ( isTrackingOptedInConnect ) {
 			elementorCommon.config.editor_events.can_send_events = true;
+			if ( elementorCommon?.eventsManager ) {
+				elementorCommon.eventsManager.enableTracking();
+			}
 			OnboardingEventTracking.sendConnectionSuccessEvents( data );
 		}
 	}, [] );

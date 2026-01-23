@@ -1,7 +1,5 @@
 import mixpanel from 'mixpanel-browser';
 
-let mixpanelInitialized = false;
-
 export const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
 	THEME_INSTALLED: 'core_onboarding_s2_theme_installed',
@@ -55,6 +53,20 @@ function isMixpanelInitialized() {
 		'function' === typeof mixpanel.get_distinct_id;
 }
 
+export function initializeMixpanelForOnboarding() {
+	if ( ! isEventsManagerAvailable() ) {
+		return;
+	}
+
+	if ( ! isMixpanelInitialized() ) {
+		elementorCommon.eventsManager.initializeMixpanel();
+	}
+
+	if ( canSendEvents() ) {
+		elementorCommon.eventsManager.enableTracking();
+	}
+}
+
 export function dispatch( eventName, payload = {} ) {
 	if ( ! isEventsManagerAvailable() ) {
 		return false;
@@ -62,14 +74,6 @@ export function dispatch( eventName, payload = {} ) {
 
 	if ( ! canSendEvents() ) {
 		return false;
-	}
-
-	if ( ! mixpanelInitialized ) {
-		if ( ! isMixpanelInitialized() ) {
-			elementorCommon.eventsManager.initializeMixpanel();
-			elementorCommon.eventsManager.enableTracking();
-		}
-		mixpanelInitialized = true;
 	}
 
 	try {
@@ -190,6 +194,7 @@ export function addTimeSpentToPayload( payload, totalTimeSpent, stepTimeSpent = 
 const EventDispatcher = {
 	canSendEvents,
 	isEventsManagerAvailable,
+	initializeMixpanelForOnboarding,
 	dispatch,
 	dispatchIfAllowed,
 	createEventPayload,
