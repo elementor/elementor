@@ -24,7 +24,7 @@ class Module extends BaseModule {
 	}
 
 	public static function is_active(): bool {
-		return Menu_Config::is_elementor_home_menu_available();
+		return true;
 	}
 
 	public function __construct() {
@@ -40,7 +40,7 @@ class Module extends BaseModule {
 		add_action( 'current_screen', function () {
 			$menu_data_provider = Menu_Data_Provider::instance();
 
-			if ( ! $menu_data_provider->is_elementor_editor_page() || ! static::is_active() ) {
+			if ( ! $menu_data_provider->is_elementor_editor_page() ) {
 				return;
 			}
 
@@ -49,8 +49,8 @@ class Module extends BaseModule {
 			} );
 		} );
 
-		add_filter( 'elementor/admin-top-bar/is-active', function ( $is_active ) {
-			return static::is_active() ? false : $is_active;
+		add_filter( 'elementor/admin-top-bar/is-active', function ( $_is_active ) {
+			return false;
 		} );
 	}
 
