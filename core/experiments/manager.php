@@ -639,13 +639,8 @@ class Manager extends Base_Object {
 		ob_start();
 
 		$is_feature_active = $this->is_feature_active( $feature['name'] );
-		$is_editor_one_enabled = $this->is_feature_active( 'e_editor_one' );
 
-		$indicator_classes = 'e-experiment__title__indicator';
-
-		if ( $is_feature_active ) {
-			$indicator_classes .= ' e-experiment__title__indicator--active';
-		}
+		$indicator_classes = 'e-experiment__title__indicator e-experiment__title__indicator--active';
 
 		$indicator_tooltip = $this->get_feature_state_label( $feature );
 
@@ -655,10 +650,7 @@ class Manager extends Base_Object {
 			<label class="e-experiment__title__label" for="e-experiment-<?php echo $feature['name']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>"><?php echo $feature['title']; ?></label>
 			<?php foreach ( $feature['tags'] as $tag ) { ?>
 				<?php
-				$tag_classes = 'e-experiment__title__tag e-experiment__title__tag__' . $tag['type'];
-				if ( $is_editor_one_enabled ) {
-					$tag_classes .= ' e-editor-one';
-				}
+				$tag_classes = 'e-experiment__title__tag e-experiment__title__tag__' . $tag['type'] . ' e-editor-one';
 				?>
 				<span class="<?php echo esc_attr( $tag_classes ); ?>"><?php echo $tag['label']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 			<?php } ?>
