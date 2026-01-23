@@ -23,10 +23,6 @@ class Module extends BaseModule {
 		return 'editor-one';
 	}
 
-	public static function is_active(): bool {
-		return true;
-	}
-
 	public function __construct() {
 		parent::__construct();
 
