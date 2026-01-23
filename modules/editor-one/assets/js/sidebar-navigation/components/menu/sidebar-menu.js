@@ -30,13 +30,14 @@ const SidebarMenu = ( { menuItems, level4Groups, activeMenuSlug, activeChildSlug
 		<MenuList>
 			{ menuItems.map( ( item ) => (
 				<Fragment key={ item.slug }>
-					{ item.has_divider_before && <Divider key={ `divider-${ item.slug }` } sx={ { my: 1 } } /> }
+					{ item.has_divider_before && <Divider sx={ { my: 1 } } /> }
 					<SidebarMenuItem
 						item={ item }
 						isActive={ activeStateResolver.isMenuActive( item ) }
-						children={ getChildren( item ) }
 						activeChildSlug={ activeChildSlug }
-					/>
+					>
+						{ getChildren( item ) }
+					</SidebarMenuItem>
 				</Fragment>
 			) ) }
 		</MenuList>

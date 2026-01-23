@@ -144,7 +144,7 @@ export default class WpDashboardTracking {
 
 	static canSendEvents() {
 		const elementorCommon = this.getElementorCommon();
-		return elementorCommon?.config?.editor_events?.can_send_events || false;
+		return elementorCommon?.config?.editor_events?.can_send_events ?? false;
 	}
 
 	static dispatchEvent( eventName, properties = {}, options = {} ) {
