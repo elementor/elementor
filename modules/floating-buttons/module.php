@@ -144,15 +144,6 @@ class Module extends BaseModule {
 			} );
 		}
 
-		add_action( 'elementor/admin-top-bar/is-active', function ( $is_top_bar_active, $current_screen ) {
-
-			if ( strpos( $current_screen->id ?? '', static::CPT_FLOATING_BUTTONS ) !== false ) {
-				return true;
-			}
-
-			return $is_top_bar_active;
-		}, 10, 2 );
-
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu( $menu_data_provider );
 		} );

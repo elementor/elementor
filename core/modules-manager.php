@@ -98,7 +98,6 @@ class Modules_Manager {
 			'elementor-counter',
 			'shapes',
 			'favorites',
-			'admin-top-bar',
 			'element-manager',
 			'pro-free-trial-popup',
 			'nested-elements',
