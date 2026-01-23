@@ -51,8 +51,6 @@
 		clear: both;
 
 		.tablenav .actions {
-			display: flex;
-			align-items: center;
 
 			.button,
 			input[type="submit"].button {
@@ -62,6 +60,13 @@
 				box-sizing: border-box;
 			}
 		}
+
+	@media screen and (min-width: 783px) {
+		.tablenav .actions {
+			display: flex;
+			align-items: center;
+		}
+	}
 
 		> h1.wp-heading-inline {
 			font-family: var(--e-one-typography-fontFamily);
