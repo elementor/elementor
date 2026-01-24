@@ -4,20 +4,14 @@ namespace Elementor\Modules\Promotions;
 
 use Elementor\Api;
 use Elementor\Controls_Manager;
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as Base_Module;
-use Elementor\Modules\Promotions\AdminMenuItems\Custom_Code_Promotion_Item;
-use Elementor\Modules\Promotions\AdminMenuItems\Custom_Fonts_Promotion_Item;
-use Elementor\Modules\Promotions\AdminMenuItems\Custom_Icons_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Code_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Elements_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Fonts_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Icons_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Popups_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Submissions_Menu;
-use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
-use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Widgets_Manager;
@@ -51,17 +45,9 @@ class Module extends Base_Module {
 			$this->handle_external_redirects();
 		} );
 
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-			$this->register_menu_items( $admin_menu );
-		}, static::ADMIN_MENU_PRIORITY );
-
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu_items( $menu_data_provider );
 		} );
-
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-			$this->register_promotion_menu_item( $admin_menu );
-		}, static::ADMIN_MENU_PROMOTIONS_PRIORITY );
 
 		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
 			foreach ( Api::get_promotion_widgets() as $widget_data ) {
@@ -90,6 +76,7 @@ class Module extends Base_Module {
 
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 	}
 
 	private function handle_external_redirects() {
@@ -104,16 +91,6 @@ class Module extends Base_Module {
 		}
 	}
 
-	private function register_menu_items( Admin_Menu_Manager $admin_menu ) {
-		if ( ! $this->is_editor_one_active() ) {
-			$admin_menu->register( 'e-form-submissions', new Form_Submissions_Promotion_Item() );
-			$admin_menu->register( 'elementor_custom_fonts', new Custom_Fonts_Promotion_Item() );
-			$admin_menu->register( 'elementor_custom_icons', new Custom_Icons_Promotion_Item() );
-			$admin_menu->register( 'elementor_custom_code', new Custom_Code_Promotion_Item() );
-			$admin_menu->register( 'popup_templates', new Popups_Promotion_Item() );
-		}
-	}
-
 	private function register_editor_one_menu_items( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Custom_Elements_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Submissions_Menu() );
@@ -121,12 +98,6 @@ class Module extends Base_Module {
 		$menu_data_provider->register_menu( new Editor_One_Icons_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Custom_Code_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Popups_Menu() );
-	}
-
-	private function register_promotion_menu_item( Admin_Menu_Manager $admin_menu ) {
-		if ( ! $this->is_editor_one_active() ) {
-			$admin_menu->register( 'go_elementor_pro', new Go_Pro_Promotion_Item() );
-		}
 	}
 
 	public function enqueue_react_data(): void {
@@ -195,7 +166,24 @@ class Module extends Base_Module {
 		];
 	}
 
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
+	public function add_v4_promotions_data( array $settings ): array {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return $settings;
+		}
+
+		$editor_assets_api = new EditorAssetsAPI( $this->get_v4_promotions_api_config() );
+		$promotion_data = new PromotionData( $editor_assets_api );
+
+		$settings['v4Promotions'] = $promotion_data->get_v4_promotions_data();
+
+		return $settings;
+	}
+
+	private function get_v4_promotions_api_config(): array {
+		return [
+			EditorAssetsAPI::ASSETS_DATA_URL => 'https://assets.elementor.com/packages/v1/promotions.json',
+			EditorAssetsAPI::ASSETS_DATA_TRANSIENT_KEY => '_elementor_v4_promotions',
+			EditorAssetsAPI::ASSETS_DATA_KEY => 'promotions',
+		];
 	}
 }

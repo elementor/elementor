@@ -2,6 +2,7 @@ import BasePage from '../base-page';
 import { type Page, type TestInfo } from '@playwright/test';
 import EditorPage from '../editor-page';
 import StyleTab from './style-tab';
+import { INLINE_EDITING_SELECTORS } from '../../sanity/modules/v4-tests/inline-text-editing/selectors/selectors';
 
 export default class v4Panel extends BasePage {
 	readonly inputField: string;
@@ -23,6 +24,20 @@ export default class v4Panel extends BasePage {
 
 	async fillTextarea( nth: number, text: string ): Promise<void> {
 		await this.page.locator( this.textareaField ).nth( nth ).fill( text );
+	}
+
+	async fillInlineEditing( content: string ) {
+		await this.openTab( 'general' );
+
+		const contentSection = this.page.getByLabel( INLINE_EDITING_SELECTORS.panel.contentSection );
+		const panelInlineEditor = contentSection.locator( INLINE_EDITING_SELECTORS.panel.inlineEditor );
+
+		if ( ! await panelInlineEditor.isVisible() ) {
+			return;
+		}
+
+		await panelInlineEditor.clear();
+		await panelInlineEditor.fill( content );
 	}
 
 	async setWidgetSize( options: { width?: number, height?: number, minWidth?: number, minHeight?: number, maxWidth?: number, maxHeight?: number, overflow?: string } ): Promise<void> {

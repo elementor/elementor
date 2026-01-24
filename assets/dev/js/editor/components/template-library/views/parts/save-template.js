@@ -45,7 +45,9 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
 			'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
 			'mouseenter @ui.infoIcon': 'showInfoTip',
+			'mouseleave @ui.infoIcon': 'hideInfoTip',
 			'mouseenter @ui.connectBadge': 'showConnectInfoTip',
+			'mouseleave @ui.connectBadge': 'hideConnectInfoTip',
 			'input @ui.templateNameInput': 'onTemplateNameInputChange',
 		};
 	},
@@ -76,7 +78,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	handleOnRender() {
 		setTimeout( () => this.ui.templateNameInput.trigger( 'focus' ) );
-
 		const context = this.getOption( 'context' );
 
 		elementor.templates.eventManager.sendPageViewEvent( {
@@ -639,6 +640,16 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.infoTipDialog.show();
 	},
 
+	hideInfoTip() {
+		if ( this.infoTipDialog ) {
+			this.infoTipDialog.hide();
+		}
+	},
+
+	getConnectInfoTipPosition() {
+		return 'top+80';
+	},
+
 	showConnectInfoTip() {
 		if ( this.connectInfoTipDialog ) {
 			this.connectInfoTipDialog.hide();
@@ -652,7 +663,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			},
 			position: {
 				of: this.ui.connectBadge,
-				at: 'top+80',
+				at: this.getConnectInfoTipPosition(),
 			},
 		} )
 			.setMessage(
@@ -674,7 +685,19 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		this.connectInfoTipDialog.getElements( 'header' ).remove();
 		this.connectInfoTipDialog.getElements( 'buttonsWrapper' ).remove();
+
+		this.addVariantClass( this.connectInfoTipDialog.getElements( 'widget' ) );
 		this.connectInfoTipDialog.show();
+	},
+
+	addVariantClass() {
+		return '';
+	},
+
+	hideConnectInfoTip() {
+		if ( this.connectInfoTipDialog ) {
+			this.connectInfoTipDialog.hide();
+		}
 	},
 
 	handleElementorConnect() {

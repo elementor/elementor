@@ -4,7 +4,7 @@ import { dimensionsPropTypeUtil, type PropKey, sizePropTypeUtil } from '@element
 import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { DetachIcon, LinkIcon, SideBottomIcon, SideLeftIcon, SideRightIcon, SideTopIcon } from '@elementor/icons';
 import { Grid, Stack, Tooltip } from '@elementor/ui';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
@@ -23,7 +23,7 @@ type Props = {
 export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOptions, min }: Props ) => {
 	const gridRowRefs: RefObject< HTMLDivElement >[] = [ useRef( null ), useRef( null ) ];
 
-	const { disabled: sizeDisabled, placeholder: sizePlaceholder } = useBoundProp( sizePropTypeUtil );
+	const { disabled: sizeDisabled } = useBoundProp( sizePropTypeUtil );
 
 	const {
 		value: dimensionsValue,
@@ -35,14 +35,12 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 
 	const { value: masterValue, placeholder: masterPlaceholder, setValue: setMasterValue } = useBoundProp();
 
-	const hasPlaceholders = !! ( sizePlaceholder || dimensionsPlaceholder );
-
 	const inferIsLinked = () => {
 		if ( dimensionsPropTypeUtil.isValid( masterValue ) ) {
 			return false;
 		}
 
-		if ( dimensionsPropTypeUtil.isValid( masterPlaceholder ) ) {
+		if ( ! masterValue && dimensionsPropTypeUtil.isValid( masterPlaceholder ) ) {
 			return false;
 		}
 
@@ -114,6 +112,8 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 		isDisabled: () => dimensionsDisabled,
 	};
 
+	const hasPlaceholders = ! masterValue && ( dimensionsPlaceholder || masterPlaceholder );
+
 	return (
 		<PropProvider { ...propProviderProps }>
 			<Stack direction="row" gap={ 2 } flexWrap="nowrap">
@@ -134,7 +134,7 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 				</Tooltip>
 			</Stack>
 
-			{ getCssDimensionProps( isSiteRtl ).map( ( row, index ) => (
+			{ getCssDimensionProps( label, isSiteRtl ).map( ( row, index ) => (
 				<Stack direction="row" gap={ 2 } flexWrap="nowrap" key={ index } ref={ gridRowRefs[ index ] }>
 					{ row.map( ( { icon, ...props } ) => (
 						<Grid container gap={ 0.75 } alignItems="center" key={ props.bind }>
@@ -144,6 +144,7 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 							<Grid item xs={ 12 }>
 								<Control
 									bind={ props.bind }
+									ariaLabel={ props.ariaLabel }
 									startIcon={ icon }
 									isLinked={ isLinked }
 									extendedOptions={ extendedOptions }
@@ -161,6 +162,7 @@ export const LinkedDimensionsControl = ( { label, isSiteRtl = false, extendedOpt
 
 const Control = ( {
 	bind,
+	ariaLabel,
 	startIcon,
 	isLinked,
 	extendedOptions,
@@ -168,6 +170,7 @@ const Control = ( {
 	min,
 }: {
 	bind: PropKey;
+	ariaLabel: string;
 	startIcon: React.ReactNode;
 	isLinked: boolean;
 	extendedOptions?: ExtendedOption[];
@@ -177,6 +180,7 @@ const Control = ( {
 	if ( isLinked ) {
 		return (
 			<SizeControl
+				ariaLabel={ ariaLabel }
 				startIcon={ startIcon }
 				extendedOptions={ extendedOptions }
 				anchorRef={ anchorRef }
@@ -188,6 +192,7 @@ const Control = ( {
 	return (
 		<PropKeyProvider bind={ bind }>
 			<SizeControl
+				ariaLabel={ ariaLabel }
 				startIcon={ startIcon }
 				extendedOptions={ extendedOptions }
 				anchorRef={ anchorRef }
@@ -205,17 +210,24 @@ const Label = ( { label, bind }: { label: string; bind: PropKey } ) => {
 	);
 };
 
-function getCssDimensionProps( isSiteRtl: boolean ) {
+function getCssDimensionProps( label: string, isSiteRtl: boolean ) {
 	return [
 		[
 			{
 				bind: 'block-start',
 				label: __( 'Top', 'elementor' ),
+				/* translators: %s is the name of the main group (margin or padding) */
+				ariaLabel: sprintf( __( '%s top', 'elementor' ), label ),
 				icon: <SideTopIcon fontSize={ 'tiny' } />,
 			},
 			{
 				bind: 'inline-end',
 				label: isSiteRtl ? __( 'Left', 'elementor' ) : __( 'Right', 'elementor' ),
+				ariaLabel: isSiteRtl
+					? /* translators: %s is the name of the main group (margin or padding) */
+					  sprintf( __( '%s left', 'elementor' ), label )
+					: /* translators: %s is the name of the main group (margin or padding) */
+					  sprintf( __( '%s right', 'elementor' ), label ),
 				icon: isSiteRtl ? <SideLeftIcon fontSize={ 'tiny' } /> : <SideRightIcon fontSize={ 'tiny' } />,
 			},
 		],
@@ -223,11 +235,18 @@ function getCssDimensionProps( isSiteRtl: boolean ) {
 			{
 				bind: 'block-end',
 				label: __( 'Bottom', 'elementor' ),
+				/* translators: %s is the name of the main group (margin or padding) */
+				ariaLabel: sprintf( __( '%s bottom', 'elementor' ), label ),
 				icon: <SideBottomIcon fontSize={ 'tiny' } />,
 			},
 			{
 				bind: 'inline-start',
 				label: isSiteRtl ? __( 'Right', 'elementor' ) : __( 'Left', 'elementor' ),
+				ariaLabel: isSiteRtl
+					? /* translators: %s is the name of the main group (margin or padding) */
+					  sprintf( __( '%s right', 'elementor' ), label )
+					: /* translators: %s is the name of the main group (margin or padding) */
+					  sprintf( __( '%s left', 'elementor' ), label ),
 				icon: isSiteRtl ? <SideRightIcon fontSize={ 'tiny' } /> : <SideLeftIcon fontSize={ 'tiny' } />,
 			},
 		],

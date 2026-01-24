@@ -77,13 +77,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 </script>
 
 <script type="text/template" id="tmpl-elementor-element-library-element">
+	<# const v4Categories = ['v4-elements', 'atomic-form']; #>
 	<button class="elementor-element">
 	<# if ( obj.integration ) { #>
 			<i class="eicon-plug"></i>
 		<# } else if ( false === obj.editable ) { #>
 			<i class="eicon-lock"></i>
 		<# } #>
-		<# if ( obj.categories.includes( 'v4-elements' ) ) { #>
+		<# if ( obj.categories.some( category => v4Categories.includes( category ) ) ) { #>
 			<i class="eicon-atomic"></i>
 		<# } #>
 		<div class="icon">

@@ -2,7 +2,7 @@ name: Playwright
 
 on:
   pull_request:
-    types: [ labeled, synchronize, opened, reopened, ready_for_review ]
+    types: [labeled, synchronize, opened, reopened, ready_for_review]
     paths-ignore:
       - '**.md'
       - '**.txt'
@@ -62,13 +62,14 @@ jobs:
     strategy:
       fail-fast: ${{ inputs.fail_fast || false }}
       matrix:
-        shardIndex: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
-        shardTotal: [ 10 ]
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        shardTotal: [10]
         include:
           - shardIndex: "v4-tests"
           - shardIndex: "elements-regression"
           - shardIndex: "plugin_tester_section"
           - shardIndex: "plugin_tester_container"
+          - shardIndex: "import_export_customization"
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
@@ -124,10 +125,11 @@ jobs:
           matrix.shardIndex != 'elements-regression' &&
           matrix.shardIndex != 'plugin_tester_container' &&
           matrix.shardIndex != 'plugin_tester_section' &&
-          matrix.shardIndex != 'v4-tests'
+          matrix.shardIndex != 'v4-tests' &&
+          matrix.shardIndex != 'import_export_customization'
           }}
         run: |
-          npm run test:playwright -- --grep-invert="@v4-tests|@plugin_tester_container|@plugin_tester_section" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          npm run test:playwright -- --grep-invert="@v4-tests|@plugin_tester_container|@plugin_tester_section|@import_export_customization" --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - name: Run v4 tests
         if: ${{ matrix.shardIndex == 'v4-tests' }}
         run: npm run test:playwright -- --grep="@v4-tests"
@@ -137,6 +139,9 @@ jobs:
       - name: Run Playwright Plugin Container tests
         if: ${{ matrix.shardIndex == 'plugin_tester_section' }}
         run: npm run test:playwright -- --grep="@plugin_tester_section"
+      - name: Run import export customization tests
+        if: ${{ matrix.shardIndex == 'import_export_customization' }}
+        run: npm run test:playwright -- --grep="@import_export_customization"
       - name: Run element regression tests
         if: ${{ matrix.shardIndex == 'elements-regression' }}
         run: npm run test:playwright:elements-regression
@@ -158,7 +163,7 @@ jobs:
   PlaywrightWithTag:
     name: Playwright test - tagged tests on PHP (${{ needs.get-php-version.outputs.php_version }})
     runs-on: ubuntu-22.04
-    needs: [ build-plugin, get-php-version ]
+    needs: [build-plugin, get-php-version]
     if: ${{ github.event.inputs.tag }}
     steps:
       - name: Checkout source code
@@ -346,7 +351,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
 
   test-result:
-    needs: [ Playwright, PlaywrightWithTag ]
+    needs: [Playwright, PlaywrightWithTag]
     if: always() && (needs.Playwright.result != 'skipped')
     runs-on: ubuntu-22.04
     name: Playwright - Test Results

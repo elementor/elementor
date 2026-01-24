@@ -91,16 +91,47 @@ trait Has_Template {
 		$type = $this->extract_prop_value_simple( $animation, 'type' );
 		$direction = $this->extract_prop_value_simple( $animation, 'direction' );
 		$timing_config = $this->extract_prop_value_simple( $animation, 'timing_config' );
+		$config = $this->extract_prop_value_simple( $animation, 'config' );
 
 		$duration = 300;
 		$delay = 0;
+		$replay = 0;
+		$easing = 'easeIn';
+		$relative_to = 'viewport';
+		$offset_top = 15;
+		$offset_bottom = 85;
 
 		if ( is_array( $timing_config ) ) {
 			$duration = $this->extract_prop_value_simple( $timing_config, 'duration', 300 );
 			$delay = $this->extract_prop_value_simple( $timing_config, 'delay', 0 );
 		}
 
-		return implode( '-', [ $trigger, $effect, $type, $direction, $duration, $delay ] );
+		if ( is_array( $config ) ) {
+			$relative_to = $this->extract_prop_value_simple( $config, 'relativeTo', 'viewport' );
+			$offset_top = $this->extract_prop_value_simple( $config, 'offsetTop', 15 );
+			$offset_bottom = $this->extract_prop_value_simple( $config, 'offsetBottom', 85 );
+			$replay = $this->extract_prop_value_simple( $config, 'replay', 0 );
+			if ( empty( $replay ) && 0 !== $replay && '0' !== $replay ) {
+				$replay = 0;
+			}
+			$easing = $this->extract_prop_value_simple( $config, 'easing', 'easeIn' );
+		} else {
+			$replay = 0;
+		}
+
+		return implode( '-', [
+			$trigger,
+			$effect,
+			$type,
+			$direction,
+			$duration,
+			$delay,
+			$replay,
+			$easing,
+			$relative_to,
+			$offset_top,
+			$offset_bottom,
+		] );
 	}
 
 	private function extract_prop_value_simple( $data, $key, $default = '' ) {

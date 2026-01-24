@@ -8,7 +8,7 @@ export function loadComponentsOverridableProps( componentIds: number[] ) {
 		return;
 	}
 
-	componentIds.forEach( loadComponentOverrides );
+	return Promise.all( componentIds.map( loadComponentOverrides ) );
 }
 
 async function loadComponentOverrides( componentId: number ) {

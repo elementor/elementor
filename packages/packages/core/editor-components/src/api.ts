@@ -2,7 +2,12 @@ import { type V1ElementData } from '@elementor/editor-elements';
 import { ajax } from '@elementor/editor-v1-adapters';
 import { type HttpResponse, httpService } from '@elementor/http-client';
 
-import { type DocumentSaveStatus, type OverridableProps, type PublishedComponent } from './types';
+import {
+	type DocumentSaveStatus,
+	type OverridableProps,
+	type PublishedComponent,
+	type UpdatedComponentName,
+} from './types';
 
 const BASE_URL = 'elementor/v1/components';
 
@@ -95,12 +100,23 @@ export const apiClient = {
 				},
 			} )
 			.then( ( res ) => res.data.data ),
-	updateArchivedComponents: async ( componentIds: number[] ) =>
+	updateArchivedComponents: async ( componentIds: number[], status: DocumentSaveStatus ) =>
 		await httpService()
 			.post< { data: { failedIds: number[]; successIds: number[]; success: boolean } } >(
 				`${ BASE_URL }/archive`,
 				{
 					componentIds,
+					status,
+				}
+			)
+			.then( ( res ) => res.data.data ),
+	updateComponentTitle: ( updatedComponentNames: UpdatedComponentName[], status: DocumentSaveStatus ) =>
+		httpService()
+			.post< { data: { failedIds: number[]; successIds: number[]; success: boolean } } >(
+				`${ BASE_URL }/update-titles`,
+				{
+					components: updatedComponentNames,
+					status,
 				}
 			)
 			.then( ( res ) => res.data.data ),

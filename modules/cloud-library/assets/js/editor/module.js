@@ -8,17 +8,17 @@ export default class TemplatesModule extends elementorModules.editor.utils.Modul
 	}
 
 	registerTemplateTypes() {
-		const templateTypesData = elementor.templates.getDefaultTemplateTypeData();
+		elementor.templates.getDefaultTemplateTypeData().then( ( templateTypesData ) => {
+			jQuery.each( elementor?.config?.library?.doc_types, function( type, title ) {
+				const safeData = jQuery.extend(
+					true,
+					{},
+					templateTypesData,
+					elementor.templates.getDefaultTemplateTypeSafeData( title ),
+				);
 
-		jQuery.each( elementor?.config?.library?.doc_types, function( type, title ) {
-			const safeData = jQuery.extend(
-				true,
-				{},
-				templateTypesData,
-				elementor.templates.getDefaultTemplateTypeSafeData( title ),
-			);
-
-			elementor.templates.registerTemplateType( type, safeData );
+				elementor.templates.registerTemplateType( type, safeData );
+			} );
 		} );
 	}
 }

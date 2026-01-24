@@ -2,31 +2,28 @@ import * as React from 'react';
 import { useBoundProp } from '@elementor/editor-controls';
 import { useElement } from '@elementor/editor-editing-panel';
 import { getWidgetsCache } from '@elementor/editor-elements';
-import { type TransformablePropValue } from '@elementor/editor-props';
-import { __getState as getState } from '@elementor/store';
+import { type PropType, type TransformablePropValue } from '@elementor/editor-props';
 import { bindPopover, bindTrigger, Popover, Tooltip, usePopupState } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { componentOverridablePropTypeUtil } from '../../prop-types/component-overridable-prop-type';
-import { useOverridablePropValue } from '../../provider/overridable-prop-context';
+import { useComponentInstanceElement, useOverridablePropValue } from '../../provider/overridable-prop-context';
 import { setOverridableProp } from '../../store/actions/set-overridable-prop';
-import { selectCurrentComponentId, selectOverridableProps } from '../../store/store';
+import { useCurrentComponentId, useOverridableProps } from '../../store/store';
 import { type OverridableProps } from '../../types';
+import { resolveOverridePropValue } from '../../utils/resolve-override-prop-value';
 import { Indicator } from './indicator';
 import { OverridablePropForm } from './overridable-prop-form';
 import { getOverridableProp } from './utils/get-overridable-prop';
 
-const FORBIDDEN_KEYS = [ '_cssid', 'attributes' ];
-
 export function OverridablePropIndicator() {
-	const { bind } = useBoundProp();
-	const componentId = selectCurrentComponentId( getState() );
+	const { propType } = useBoundProp();
+	const componentId = useCurrentComponentId();
+	const overridableProps = useOverridableProps( componentId );
 
-	if ( ! isPropAllowed( bind ) || ! componentId ) {
+	if ( ! isPropAllowed( propType ) || ! componentId || ! overridableProps ) {
 		return null;
 	}
-
-	const overridableProps = selectOverridableProps( getState(), componentId );
 
 	return <Content componentId={ componentId } overridableProps={ overridableProps } />;
 }
@@ -43,6 +40,8 @@ export function Content( { componentId, overridableProps }: Props ) {
 	const { value, bind, propType } = useBoundProp();
 
 	const contextOverridableValue = useOverridablePropValue();
+	const componentInstanceElement = useComponentInstanceElement();
+
 	const { value: boundPropOverridableValue, setValue: setOverridableValue } = useBoundProp(
 		componentOverridablePropTypeUtil
 	);
@@ -63,18 +62,26 @@ export function Content( { componentId, overridableProps }: Props ) {
 	const { elType } = getWidgetsCache()?.[ elementType.key ] ?? { elType: 'widget' };
 
 	const handleSubmit = ( { label, group }: { label: string; group: string | null } ) => {
-		const originValue = ! overridableValue ? value ?? propType.default : overridableValue?.origin_value ?? {};
+		const propTypeDefault = propType.default ?? {};
+
+		const originValue = resolveOverridePropValue( overridableValue?.origin_value ) ?? value ?? propTypeDefault;
+
+		const matchingOverridableProp = overridableValue
+			? overridableProps?.props?.[ overridableValue.override_key ]
+			: undefined;
 
 		const overridablePropConfig = setOverridableProp( {
 			componentId,
 			overrideKey: overridableValue?.override_key ?? null,
-			elementId,
+			elementId: componentInstanceElement?.element.id ?? elementId,
 			label,
 			groupId: group,
 			propKey: bind,
 			elType: elType ?? 'widget',
-			widgetType: elementType.key,
+			widgetType: componentInstanceElement?.elementType.key ?? elementType.key,
 			originValue,
+			originPropFields: matchingOverridableProp?.originPropFields,
+			source: 'user',
 		} );
 
 		if ( ! overridableValue && overridablePropConfig ) {
@@ -117,6 +124,7 @@ export function Content( { componentId, overridableProps }: Props ) {
 						value: groupId,
 						label: overridableProps.groups.items[ groupId ].label,
 					} ) ) }
+					existingLabels={ Object.values( overridableProps?.props ?? {} ).map( ( prop ) => prop.label ) }
 					currentValue={ overridableConfig }
 				/>
 			</Popover>
@@ -124,6 +132,6 @@ export function Content( { componentId, overridableProps }: Props ) {
 	);
 }
 
-function isPropAllowed( bind: string ) {
-	return ! FORBIDDEN_KEYS.includes( bind );
+function isPropAllowed( propType: PropType ) {
+	return propType.meta.overridable !== false;
 }
