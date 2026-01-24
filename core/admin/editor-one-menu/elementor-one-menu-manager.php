@@ -188,7 +188,8 @@ class Elementor_One_Menu_Manager {
 	public function hide_legacy_templates_menu(): void {
 		?>
 		<style type="text/css">
-			#menu-posts-elementor_library {
+			#menu-posts-elementor_library, 
+			#menu-posts-elementor_library + .wp-not-current-submenu.wp-menu-separator {
 				display: none !important;
 			}
 		</style>
@@ -198,7 +199,8 @@ class Elementor_One_Menu_Manager {
 	public function hide_old_elementor_menu(): void {
 		?>
 		<style type="text/css">
-			#toplevel_page_elementor {
+			#toplevel_page_elementor,
+			#toplevel_page_elementor + .wp-not-current-submenu.wp-menu-separator {
 				display: none !important;
 			}
 		</style>
