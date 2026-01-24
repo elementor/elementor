@@ -7,7 +7,7 @@ import {
 	mockTracking,
 	renderWithStore,
 } from 'test-utils';
-import { getCurrentDocument, getV1DocumentsManager } from '@elementor/editor-documents';
+import { getCurrentDocument } from '@elementor/editor-documents';
 import { __privateRunCommand } from '@elementor/editor-v1-adapters';
 import { QueryClient, QueryClientProvider } from '@elementor/query';
 import { __createStore, __dispatch, __registerSlice, type SliceState, type Store } from '@elementor/store';
