@@ -1,4 +1,4 @@
-export type PromotionData = {
+export type V4PromotionData = {
 	title: string;
 	content: string;
 	image: string;
