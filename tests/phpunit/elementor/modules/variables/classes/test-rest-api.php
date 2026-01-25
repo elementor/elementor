@@ -7,8 +7,6 @@ use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\Classes\Rest_Api;
 use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
 use Elementor\Modules\Variables\Services\Variables_Service;
-use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
-use Elementor\Modules\Variables\Storage\Exceptions\Type_Mismatch;
 use Elementor\Modules\Variables\Storage\Variables_Collection;
 use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
@@ -122,7 +120,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'data' => [
 					'color-1' => [
 						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Primary Color',
+						'label' => 'Primary-Color',
 						'value' => '#FF0000',
 					],
 				],
@@ -283,7 +281,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'data' => [
 					'color-1' => [
 						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Primary Color',
+						'label' => 'Primary-Color',
 						'value' => '#FF0000',
 					],
 				],
@@ -313,7 +311,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertTrue( $response_data['success'] );
 
 		$this->assertEquals( Color_Variable_Prop_Type::get_key(), $response_data['data']['variable']['type'] );
-		$this->assertEquals( 'Primary Color', $response_data['data']['variable']['label'] );
+		$this->assertEquals( 'Primary-Color', $response_data['data']['variable']['label'] );
 		$this->assertEquals( '#FF0000', $response_data['data']['variable']['value'] );
 		$this->assertTrue( $response_data['data']['variable']['deleted'] );
 		$this->assertNotEmpty( $response_data['data']['variable']['deleted_at'] );
@@ -355,7 +353,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'data' => [
 					'color-1' => [
 						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Primary Color',
+						'label' => 'Primary-Color',
 						'value' => '#FF0000',
 						'deleted' => true,
 						'deleted_at' => '2021-01-01 00:00:00',
@@ -373,7 +371,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/restore' );
 		$request->set_body_params( [
 			'id' => 'color-1',
-			'label' => 'Primary Color',
+			'label' => 'Primary-Color',
 		] );
 
 		$response = $this->rest_api->restore_variable( $request );
@@ -385,7 +383,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 		$this->assertEquals( 11, $response_data['data']['watermark'], 'Watermark validation failed' );
 
-		$this->assertEquals( 'Primary Color', $response_data['data']['variable']['label'] );
+		$this->assertEquals( 'Primary-Color', $response_data['data']['variable']['label'] );
 		$this->assertEquals( '#FF0000', $response_data['data']['variable']['value'] );
 		$this->assertArrayNotHasKey( 'deleted', $response_data['data']['variable'] );
 		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
@@ -633,7 +631,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				'data' => [
 					'color-1' => [
 						'type' => Color_Variable_Prop_Type::get_key(),
-						'label' => 'Primary Color',
+						'label' => 'Primary-Color',
 						'value' => '#FF0000',
 					],
 					'color-2' => [
