@@ -69,8 +69,9 @@ export default class v4Panel extends BasePage {
 			style: 'style',
 			general: 'settings',
 		};
-		const sectionButtonSelector = `#tab-0-${ selectorMap[ sectionName ] }`,
-			sectionContentSelector = `#tabpanel-0-${ selectorMap[ sectionName ] }`,
+
+		const sectionButtonSelector = `[id^="tab-"][id$="-${ selectorMap[ sectionName ] }"]`,
+			sectionContentSelector = `[id^="tabpanel-"][id$="-${ selectorMap[ sectionName ] }"]`,
 			isOpenSection = await this.page.evaluate( ( selector ) => {
 				const sectionContentElement: HTMLElement = document.querySelector( selector );
 
