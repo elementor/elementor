@@ -153,11 +153,13 @@ const Content = ( { index, value }: { index: number; value: InteractionItemPropV
 	);
 
 	return (
-		<InteractionDetails
-			key={ index }
-			interaction={ value.value }
-			onChange={ handleChange }
-			onPlayInteraction={ handlePlayInteraction }
-		/>
+		<>
+			<InteractionDetails
+				key={ index }
+				interaction={ value.value }
+				onChange={ handleChange }
+				onPlayInteraction={ handlePlayInteraction }
+			/>
+		</>
 	);
 };
