@@ -1,6 +1,6 @@
 import { Box, Paper } from '@elementor/ui';
 import Link from '@elementor/ui/Link';
-import { trackPromoClick, getHomeScreenPath } from '../../../utils/promo-tracking';
+import { trackPromoClick, getHomeScreenPath } from '../../utils/promo-tracking';
 
 const SidebarBanner = ( { image, link } ) => {
 	const handleClick = () => {
@@ -8,7 +8,7 @@ const SidebarBanner = ( { image, link } ) => {
 	};
 
 	return (
-		<Paper elevation={ 0 } sx={ { overflow: 'hidden' } }>
+		<Paper elevation={ 0 } sx={ { overflow: 'hidden', borderRadius: 1 } }>
 			<Link
 				target="_blank"
 				href={ link }
