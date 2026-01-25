@@ -1,12 +1,17 @@
 import * as React from 'react';
-import { ControlReplacementsProvider, PropKeyProvider, PropProvider, useBoundProp } from '@elementor/editor-controls';
+import {
+	ControlReplacementsProvider,
+	getControlReplacements,
+	PropKeyProvider,
+	PropProvider,
+	useBoundProp,
+} from '@elementor/editor-controls';
 import {
 	BaseControl,
 	controlsRegistry,
 	type ControlType,
 	createTopLevelObjectType,
 	ElementProvider,
-	getControlReplacements,
 	isDynamicPropValue,
 	SettingsField,
 	useElement,

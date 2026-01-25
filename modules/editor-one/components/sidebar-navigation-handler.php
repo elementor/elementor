@@ -34,21 +34,17 @@ class Sidebar_Navigation_Handler {
 	}
 
 	public function add_body_class( string $classes ): string {
-		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_editor_one_admin_page() ) {
 			return $classes;
 		}
 
-		$classes .= ' e-has-sidebar-navigation';
-
-		if ( Menu_Config::is_elementor_home_menu_available() ) {
-			$classes .= ' e-has-elementor-home-menu';
-		}
+		$classes .= ' e-has-sidebar-navigation e-has-elementor-home-menu';
 
 		return $classes;
 	}
 
 	public function enqueue_sidebar_assets(): void {
-		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_editor_one_admin_page() ) {
 			return;
 		}
 
@@ -85,7 +81,7 @@ class Sidebar_Navigation_Handler {
 	}
 
 	public function render_sidebar_container(): void {
-		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_editor_one_admin_page() ) {
 			return;
 		}
 
