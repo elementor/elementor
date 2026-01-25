@@ -22,6 +22,7 @@ class Performance {
 			static::$is_frontend = (
 				! is_admin()
 				&& ! Plugin::$instance->preview->is_preview_mode()
+				&& ! defined( 'REST_REQUEST' )
 			);
 		}
 

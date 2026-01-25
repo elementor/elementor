@@ -50,6 +50,10 @@ export const initGetElementConfigTool = ( reg: MCPRegistryEntry ) => {
 		description: "Retrieve the element's configuration PropValues for a specific element by unique ID.",
 		schema,
 		outputSchema,
+		modelPreferences: {
+			intelligencePriority: 0.6,
+			speedPriority: 0.9,
+		},
 		handler: async ( { elementId } ) => {
 			const element = getContainer( elementId );
 			if ( ! element ) {

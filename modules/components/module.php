@@ -35,7 +35,9 @@ class Module extends BaseModule {
 		add_filter( 'elementor/editor/v2/packages', fn ( $packages ) => $this->add_packages( $packages ) );
 		add_filter( 'elementor/atomic-widgets/props-schema', fn ( $schema ) => $this->modify_props_schema( $schema ) );
 		add_action( 'elementor/documents/register', fn ( $documents_manager ) => $this->register_document_type( $documents_manager ) );
+		add_action( 'elementor/document/before_save', fn( Document $document, array $data ) => $this->validate_circular_dependencies( $document, $data ), 10, 2 );
 		add_action( 'elementor/document/after_save', fn( Document $document, array $data ) => $this->set_component_overridable_props( $document, $data ), 10, 2 );
+		add_filter( 'elementor/global_classes/additional_post_types', fn( $post_types ) => array_merge( $post_types, [ Component_Document::TYPE ] ) );
 
 		add_action( 'elementor/atomic-widgets/settings/transformers/register', fn ( $transformers ) => $this->register_settings_transformers( $transformers ) );
 
@@ -50,8 +52,8 @@ class Module extends BaseModule {
 			'title'          => esc_html__( 'Components', 'elementor' ),
 			'description'    => esc_html__( 'Enable components.', 'elementor' ),
 			'hidden'         => true,
-			'default'        => Experiments_Manager::STATE_INACTIVE,
-			'release_status' => Experiments_Manager::RELEASE_STATUS_DEV,
+			'default'        => Experiments_Manager::STATE_ACTIVE,
+			'release_status' => Experiments_Manager::RELEASE_STATUS_BETA,
 		];
 	}
 
@@ -83,6 +85,25 @@ class Module extends BaseModule {
 			Component_Document::TYPE,
 			Component_Document::get_class_full_name()
 		);
+	}
+
+	private function validate_circular_dependencies( Document $document, array $data ) {
+		if ( ! $document instanceof Component_Document ) {
+			return;
+		}
+
+		if ( ! isset( $data['elements'] ) ) {
+			return;
+		}
+
+		$component_id = $document->get_main_id();
+		$elements = $data['elements'];
+
+		$result = Circular_Dependency_Validator::make()->validate( $component_id, $elements );
+
+		if ( ! $result['success'] ) {
+			throw new \Exception( esc_html__( "Can't add this component - components that contain each other can't be nested.", 'elementor' ) );
+		}
 	}
 
 	private function set_component_overridable_props( Document $document, array $data ) {

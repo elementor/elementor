@@ -76,7 +76,6 @@ export const VariablesManagerTable = ( {
 
 	const ids = Object.keys( variables ).sort( sortVariablesOrder( variables ) );
 	const rows = ids
-		.filter( ( id ) => ! variables[ id ].deleted )
 		.map( ( id ) => {
 			const variable = variables[ id ];
 			const variableType = getVariableType( variable.type );
@@ -160,7 +159,7 @@ export const VariablesManagerTable = ( {
 									return (
 										<TableRow
 											{ ...itemProps }
-											ref={ handleRowRef( 'table-ref-' + row.id ) }
+											ref={ itemProps.ref }
 											selected={ isDragged }
 											sx={ {
 												...( showIndicationBefore && {
@@ -265,11 +264,6 @@ export const VariablesManagerTable = ( {
 														error,
 													} ) =>
 														row.valueField?.( {
-															ref: {
-																current: variableRowRefs.current.get(
-																	'table-ref-' + row.id
-																) as HTMLElement,
-															},
 															value,
 															onChange,
 															onPropTypeKeyChange: ( type ) => {

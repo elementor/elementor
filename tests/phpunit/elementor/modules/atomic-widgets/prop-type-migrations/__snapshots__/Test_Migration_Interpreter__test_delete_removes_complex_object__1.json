@@ -1,0 +1,12 @@
+{
+    "settings": {
+        "link": {
+            "value": {
+                "tag": "a"
+            },
+            "metadata": {
+                "custom": true
+            }
+        }
+    }
+}

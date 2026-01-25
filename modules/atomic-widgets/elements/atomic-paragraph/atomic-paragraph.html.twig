@@ -11,7 +11,7 @@
 						{{ settings.paragraph | striptags(allowed_tags) | raw }}
 				</{{ settings.link.tag | e('html_tag') }}>
 			{% else %}
-					{{ settings.paragraph | striptags('<b><strong><em><u><ul><ol><li><blockquote><a><del><span><br>') | raw }}
+					{{ settings.paragraph | striptags('<b><strong><sup><sub><s><em><u><ul><ol><li><blockquote><a><del><span><br>') | raw }}
 			{% endif %}
 		</{{ settings.tag | e('html_tag') }}>
 {% endif %}

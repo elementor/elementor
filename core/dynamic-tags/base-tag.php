@@ -41,6 +41,10 @@ abstract class Base_Tag extends Controls_Stack {
 	 */
 	abstract public function get_group();
 
+	public function get_atomic_group() {
+		return $this->get_group();
+	}
+
 	/**
 	 * @since 2.0.0
 	 * @access public
@@ -97,6 +101,7 @@ abstract class Base_Tag extends Controls_Stack {
 			'panel_template' => $panel_template,
 			'categories' => $this->get_categories(),
 			'group' => $this->get_group(),
+			'atomic_group' => $this->get_atomic_group(),
 			'controls' => $this->get_controls(),
 			'content_type' => $this->get_content_type(),
 			'settings_required' => $this->is_settings_required(),

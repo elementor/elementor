@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { renderWithStore } from 'test-utils';
-import { getV1DocumentsManager, type V1DocumentsManager } from '@elementor/editor-documents';
-import { __privateRunCommand } from '@elementor/editor-v1-adapters';
+import { useSuppressedMessage } from '@elementor/editor-current-user';
+import { getV1DocumentsManager, switchToDocument, type V1DocumentsManager } from '@elementor/editor-documents';
 import {
 	__createStore,
 	__dispatch as dispatch,
@@ -9,25 +9,35 @@ import {
 	type SliceState,
 	type Store,
 } from '@elementor/store';
+import { describe } from '@jest/globals';
 import { fireEvent, screen } from '@testing-library/react';
+import { __ } from '@wordpress/i18n';
 
 import { slice } from '../../../store/store';
 import { ComponentPanelHeader } from '../component-panel-header';
 
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
-	__privateRunCommand: jest.fn(),
-} ) );
+const mockOpenPropertiesPanel = jest.fn();
 
 jest.mock( '@elementor/editor-documents', () => ( {
-	...jest.requireActual( '@elementor/editor-documents' ),
 	getV1DocumentsManager: jest.fn(),
+	switchToDocument: jest.fn(),
+	invalidateDocumentData: jest.fn(),
 } ) );
+
+jest.mock( '../../component-properties-panel/component-properties-panel', () => ( {
+	usePanelActions: () => ( {
+		open: mockOpenPropertiesPanel,
+	} ),
+} ) );
+
+jest.mock( '@elementor/editor-current-user' );
+jest.mock( '@wordpress/i18n' );
 
 const MOCK_INITIAL_DOCUMENT_ID = 1;
 const MOCK_COMPONENT_ID = 123;
 const MOCK_COMPONENT_NAME = 'Test Component';
 const MOCK_INSTANCE_ID = 'instance-456';
+const MOCK_CUSTOM_INSTANCE_TITLE = 'My Custom Component Title';
 
 const MOCK_OVERRIDABLE_PROPS = {
 	props: {
@@ -78,7 +88,11 @@ describe( '<ComponentPanelHeader />', () => {
 				},
 			} ),
 			getInitialId: () => MOCK_INITIAL_DOCUMENT_ID,
+			invalidateCache: jest.fn(),
 		} as unknown as V1DocumentsManager );
+
+		jest.mocked( useSuppressedMessage ).mockReturnValue( [ true, jest.fn() ] );
+		( __ as jest.Mock ).mockImplementation( ( str ) => str );
 	} );
 
 	it( 'should not render when not editing a component', () => {
@@ -101,9 +115,42 @@ describe( '<ComponentPanelHeader />', () => {
 		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
 	} );
 
-	it( 'should display the component name', () => {
+	it( 'should display the component name from post_title when no custom instance title is set', () => {
 		// Arrange
 		setupComponentEditing();
+
+		// Act
+		renderWithStore( <ComponentPanelHeader />, store );
+
+		// Assert
+		expect( screen.getByText( MOCK_COMPONENT_NAME ) ).toBeInTheDocument();
+	} );
+
+	it( 'should display custom instance title when instanceTitle is set in path', () => {
+		// Arrange
+		setupComponentEditing( {
+			path: [
+				{
+					componentId: MOCK_COMPONENT_ID,
+					instanceId: 'instance-123',
+					instanceTitle: MOCK_CUSTOM_INSTANCE_TITLE,
+				},
+			],
+		} );
+
+		// Act
+		renderWithStore( <ComponentPanelHeader />, store );
+
+		// Assert
+		expect( screen.getByText( MOCK_CUSTOM_INSTANCE_TITLE ) ).toBeInTheDocument();
+		expect( screen.queryByText( MOCK_COMPONENT_NAME ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'should fallback to post_title when instanceTitle is undefined', () => {
+		// Arrange
+		setupComponentEditing( {
+			path: [ { componentId: MOCK_COMPONENT_ID, instanceId: 'instance-123', instanceTitle: undefined } ],
+		} );
 
 		// Act
 		renderWithStore( <ComponentPanelHeader />, store );
@@ -135,6 +182,19 @@ describe( '<ComponentPanelHeader />', () => {
 		expect( screen.queryByText( '0' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'should open properties panel when badge is clicked', () => {
+		// Arrange
+		setupComponentEditing( { withOverridableProps: true } );
+		renderWithStore( <ComponentPanelHeader />, store );
+
+		// Act
+		const badgeButton = screen.getByLabelText( 'Component properties' );
+		fireEvent.click( badgeButton );
+
+		// Assert
+		expect( mockOpenPropertiesPanel ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'should navigate back to initial document when back button is clicked', () => {
 		// Arrange
 		setupComponentEditing();
@@ -145,8 +205,7 @@ describe( '<ComponentPanelHeader />', () => {
 		fireEvent.click( backButton );
 
 		// Assert
-		expect( __privateRunCommand ).toHaveBeenCalledWith( 'editor/documents/switch', {
-			id: MOCK_INITIAL_DOCUMENT_ID,
+		expect( switchToDocument ).toHaveBeenCalledWith( MOCK_INITIAL_DOCUMENT_ID, {
 			mode: 'autosave',
 			setAsInitial: false,
 			shouldScroll: false,
@@ -169,8 +228,7 @@ describe( '<ComponentPanelHeader />', () => {
 		fireEvent.click( backButton );
 
 		// Assert
-		expect( __privateRunCommand ).toHaveBeenCalledWith( 'editor/documents/switch', {
-			id: parentComponentId,
+		expect( switchToDocument ).toHaveBeenCalledWith( parentComponentId, {
 			selector: `[data-id="${ MOCK_INSTANCE_ID }"]`,
 			mode: 'autosave',
 			setAsInitial: false,
@@ -178,10 +236,22 @@ describe( '<ComponentPanelHeader />', () => {
 		} );
 	} );
 
+	it( 'should hide introduction when message is suppressed', () => {
+		// Arrange
+		setupComponentEditing();
+		jest.mocked( useSuppressedMessage ).mockReturnValue( [ true, jest.fn() ] );
+
+		// Act
+		renderWithStore( <ComponentPanelHeader />, store );
+
+		// Assert
+		expect( screen.queryByText( 'Add your first property' ) ).not.toBeInTheDocument();
+	} );
+
 	function setupComponentEditing(
 		options: {
 			withOverridableProps?: boolean;
-			path?: Array< { componentId: number; instanceId: string } >;
+			path?: Array< { componentId: number; instanceId: string; instanceTitle?: string } >;
 		} = {}
 	) {
 		const { withOverridableProps = false, path } = options;

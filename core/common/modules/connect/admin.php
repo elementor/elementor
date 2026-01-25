@@ -42,18 +42,8 @@ class Admin {
 		return $validated;
 	}
 
-	public function register_admin_menu( Admin_Menu_Manager $admin_menu ) {
-		if ( ! $this->is_editor_one_active() ) {
-			$admin_menu->register( static::PAGE_ID, new Connect_Menu_Item() );
-		}
-	}
-
 	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Connect_Menu() );
-	}
-
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
 	}
 
 	/**
@@ -121,8 +111,6 @@ class Admin {
 	 */
 	public function __construct() {
 		self::$url = admin_url( 'admin.php?page=' . self::PAGE_ID );
-
-		add_action( 'elementor/admin/menu/register', [ $this, 'register_admin_menu' ] );
 
 		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ] );
 

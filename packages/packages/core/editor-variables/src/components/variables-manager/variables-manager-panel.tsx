@@ -45,7 +45,7 @@ export const { panel, usePanelActions } = createPanel( {
 	onOpen: () => {
 		changeEditMode( id );
 	},
-	onClose: () => {
+	onClose: async () => {
 		changeEditMode( 'edit' );
 	},
 	isOpenPreviousElement: true,
@@ -156,7 +156,7 @@ export function VariablesManagerPanel() {
 		},
 	];
 
-	const hasVariables = Object.values( variables ).some( ( variable ) => ! variable.deleted );
+	const hasVariables = Object.keys( variables ).length > 0;
 
 	return (
 		<ThemeProvider>

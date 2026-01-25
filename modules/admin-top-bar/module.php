@@ -5,7 +5,6 @@ use Elementor\Core\Admin\Admin;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
 use Elementor\Core\Base\App as BaseApp;
-use Elementor\Core\Experiments\Manager;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {

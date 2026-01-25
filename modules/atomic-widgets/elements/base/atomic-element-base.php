@@ -6,9 +6,7 @@ use Elementor\Element_Base;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
 use Elementor\Modules\AtomicWidgets\PropDependencies\Manager as Dependency_Manager;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
-use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
 use Elementor\Modules\AtomicWidgets\PropTypes\Concerns\Has_Meta;
-use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Plugin;
 use Elementor\Utils;
 
@@ -55,10 +53,6 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 		if ( ! is_array( $interactions ) ) {
 			return [];
-		}
-
-		if ( isset( $interactions['items'] ) && is_array( $interactions['items'] ) ) {
-			return $this->convert_prop_type_interactions_to_legacy_for_runtime( $interactions );
 		}
 
 		return $interactions;
@@ -255,19 +249,5 @@ abstract class Atomic_Element_Base extends Element_Base {
 
 	public static function generate() {
 		return Element_Builder::make( static::get_type() );
-	}
-
-	protected function get_link_attributes( $link_settings ) {
-		$tag = $link_settings['tag'] ?? Link_Prop_Type::DEFAULT_TAG;
-		$href = $link_settings['href'];
-		$target = $link_settings['target'] ?? '_self';
-
-		$is_button = 'button' === $tag;
-		$href_attribute_key = $is_button ? 'data-action-link' : 'href';
-
-		return [
-			$href_attribute_key => $href,
-			'target' => $target,
-		];
 	}
 }

@@ -55,5 +55,5 @@ export const addElement = ( props: { model: unknown, container: null | string, i
  * @return {string} css selector
  */
 export const getElementSelector = ( id: string ) => {
-	return `[data-id = "${ id }"]`;
+	return `[data-id="${ id }"]`;
 };

@@ -92,7 +92,7 @@ describe( 'replaceElement', () => {
 		// Assert.
 		expect( mockRunCommandSync ).toHaveBeenNthCalledWith( 1, 'document/elements/create', {
 			container: documentElement,
-			model: { elType: 'container' },
+			model: { elType: 'e-flexbox' },
 			options: { at: 1, useHistory: false, edit: false },
 		} );
 
