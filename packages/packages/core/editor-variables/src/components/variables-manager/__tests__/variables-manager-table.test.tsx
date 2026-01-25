@@ -10,13 +10,7 @@ jest.mock( '@elementor/ui', () => {
 	const actual = jest.requireActual( '@elementor/ui' );
 	return {
 		...actual,
-		UnstableSortableProvider: ( {
-			children,
-			value,
-		}: {
-			children: React.ReactNode;
-			value: string[];
-		} ) => {
+		UnstableSortableProvider: ( { children, value }: { children: React.ReactNode; value: string[] } ) => {
 			return (
 				<div aria-label="Sortable variables list" data-value={ JSON.stringify( value ) }>
 					{ React.Children.map( children, ( child ) => child ) }
@@ -25,7 +19,6 @@ jest.mock( '@elementor/ui', () => {
 		},
 		UnstableSortableItem: ( {
 			render: renderItem,
-			id,
 		}: {
 			render: ( props: Record< string, unknown > ) => React.ReactNode;
 			id: string;
