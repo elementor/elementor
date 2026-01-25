@@ -47,7 +47,7 @@ export default class WpDashboardTracking {
 	static isNavigatingToElementor = false;
 
 	static getElementorCommon() {
-		return globalThis.elementorCommon;
+		return window.elementorCommon;
 	}
 
 	static init() {

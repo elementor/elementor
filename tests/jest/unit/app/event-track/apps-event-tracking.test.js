@@ -1,11 +1,11 @@
 describe( 'AppsEventTracking', () => {
 	afterEach( () => {
-		delete globalThis.elementorCommon;
+		delete window.elementorCommon;
 		jest.resetModules();
 	} );
 
 	test( 'dispatchEvent does not throw when elementorCommon is missing', () => {
-		delete globalThis.elementorCommon;
+		delete window.elementorCommon;
 
 		jest.isolateModules( () => {
 			const { AppsEventTracking } = require( 'elementor-app/event-track/apps-event-tracking' );
@@ -18,7 +18,7 @@ describe( 'AppsEventTracking', () => {
 	test( 'dispatchEvent calls elementorCommon.eventsManager.dispatchEvent when available', () => {
 		const dispatchEvent = jest.fn();
 
-		globalThis.elementorCommon = {
+		window.elementorCommon = {
 			eventsManager: {
 				dispatchEvent,
 			},

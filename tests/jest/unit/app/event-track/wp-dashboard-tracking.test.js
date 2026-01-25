@@ -1,11 +1,11 @@
 describe( 'WpDashboardTracking', () => {
 	afterEach( () => {
-		delete globalThis.elementorCommon;
+		delete window.elementorCommon;
 		jest.resetModules();
 	} );
 
 	test( 'does not throw and returns safe defaults when elementorCommon is missing', () => {
-		delete globalThis.elementorCommon;
+		delete window.elementorCommon;
 
 		jest.isolateModules( () => {
 			const WpDashboardTracking = require( 'elementor-app/event-track/wp-dashboard-tracking' ).default;
@@ -21,7 +21,7 @@ describe( 'WpDashboardTracking', () => {
 	test( 'dispatchEvent calls elementorCommon.eventsManager.dispatchEvent when available', () => {
 		const dispatchEvent = jest.fn();
 
-		globalThis.elementorCommon = {
+		window.elementorCommon = {
 			config: {
 				editor_events: {
 					can_send_events: true,
