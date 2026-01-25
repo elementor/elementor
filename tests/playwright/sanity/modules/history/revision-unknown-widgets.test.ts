@@ -12,8 +12,6 @@ test.describe.serial( 'Revision loading with unknown widgets @history', () => {
 		context = await browser.newContext();
 		page = await context.newPage();
 		wpAdminPage = new WpAdminPage( page, testInfo, apiRequests );
-
-		await wpAdminPage.setExperiments( { e_atomic_elements: 'active' } );
 	} );
 
 	test.afterAll( async () => {
@@ -21,17 +19,16 @@ test.describe.serial( 'Revision loading with unknown widgets @history', () => {
 		await context.close();
 	} );
 
-	test( 'should gracefully handle revision loading when atomic experiment is deactivated', async ( { apiRequests }, testInfo ) => {
-		const wpAdmin = new WpAdminPage( page, testInfo, apiRequests );
+	test( 'should gracefully handle revision loading when atomic experiment is deactivated', async ( _, testInfo ) => {
 		let editor: EditorPage;
 		let pageUrl: string;
 
 		await test.step( 'Ensure atomic experiment is active initially', async () => {
-			await wpAdmin.setExperiments( { e_atomic_elements: true } );
+			await wpAdminPage.setExperiments( { e_atomic_elements: true } );
 		} );
 
 		await test.step( 'Create page with atomic and regular widgets', async () => {
-			editor = await wpAdmin.openNewPage();
+			editor = await wpAdminPage.openNewPage();
 
 			const containerId = await editor.addElement( { elType: 'container' }, 'document' );
 
@@ -52,14 +49,14 @@ test.describe.serial( 'Revision loading with unknown widgets @history', () => {
 		} );
 
 		await test.step( 'Deactivate atomic experiment', async () => {
-			await wpAdmin.setExperiments( { e_atomic_elements: false } );
+			await wpAdminPage.setExperiments( { e_atomic_elements: false } );
 		} );
 
 		await test.step( 'Reload editor with experiment off', async () => {
 			await page.goto( pageUrl );
 			await page.reload();
-			await wpAdmin.waitForPanel();
-			await wpAdmin.closeAnnouncementsIfVisible();
+			await wpAdminPage.waitForPanel();
+			await wpAdminPage.closeAnnouncementsIfVisible();
 
 			editor = new EditorPage( page, testInfo );
 		} );
