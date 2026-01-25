@@ -3,10 +3,17 @@
 namespace Elementor\Tests\Modules\Variables\Classes;
 
 use Elementor\Core\Kits\Documents\Kit;
+use Elementor\Modules\Variables\Adapters\Prop_Type_Adapter;
 use Elementor\Modules\Variables\Classes\Rest_Api;
-use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
+use Elementor\Modules\Variables\Services\Batch_Operations\Batch_Processor;
+use Elementor\Modules\Variables\Services\Variables_Service;
+use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
+use Elementor\Modules\Variables\Storage\Exceptions\Type_Mismatch;
+use Elementor\Modules\Variables\Storage\Variables_Collection;
+use Elementor\Modules\Variables\Storage\Variables_Repository;
 use Elementor\Modules\Variables\PropTypes\Color_Variable_Prop_Type;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use ElementorEditorTesting\Elementor_Test_Base;
 use WP_REST_Request;
 
@@ -34,10 +41,10 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		parent::setUp();
 
 		$this->kit = $this->createMock( Kit::class );
+		$repository = new Variables_Repository( $this->kit );
+		$service = new Variables_Service( $repository, new Batch_Processor() );
 
-		$this->rest_api = new Rest_Api(
-			new Variables_Repository( $this->kit )
-		);
+		$this->rest_api = new Rest_Api( $service );
 	}
 
 	public function test_admin_user__has__enough_permissions_to_perform_action() {
@@ -152,14 +159,127 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( 'color-1', $response_data['data']['variable']['id'] );
 	}
 
+	public function test_update_variable__switches_type_from_custom_size_to_size() {
+		// Arrange
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
+				'data' => [
+					'size-1' => [
+						'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+						'label' => 'Custom Size',
+						'value' => 'calc(100% - 20px)',
+					],
+				],
+				'watermark' => 10,
+			] );
+
+		$this->kit
+			->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
+
+		// Act
+		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/update' );
+		$request->set_body_params( [
+			'id' => 'size-1',
+			'type' => Size_Variable_Prop_Type::get_key(),
+			'value' => '50px',
+		] );
+
+		$response = $this->rest_api->update_variable( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+
+		$response_data = $response->get_data();
+
+		$this->assertEquals( 'global-size-variable', $response_data['data']['variable']['type'] );
+		$this->assertEquals( '50px', $response_data['data']['variable']['value'] );
+	}
+
+	public function test_update_variable__switches_type_from_size_to_custom_size() {
+		// Arrange
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
+				'data' => [
+					'size-2' => [
+						'type' => Size_Variable_Prop_Type::get_key(),
+						'label' => 'Normal Size',
+						'value' => '100px',
+					],
+				],
+				'watermark' => 15,
+			] );
+
+		$this->kit
+			->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
+
+		// Act
+		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/update' );
+		$request->set_body_params( [
+			'id' => 'size-2',
+			'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+			'value' => 'calc(50% + 20px)',
+		] );
+
+		$response = $this->rest_api->update_variable( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+
+		$response_data = $response->get_data();
+
+		$this->assertEquals( 'global-custom-size-variable', $response_data['data']['variable']['type'] );
+		$this->assertEquals( 'calc(50% + 20px)', $response_data['data']['variable']['value'] );
+	}
+	public function test_update_variable__switches_non_size_to_custom_size_throws_exception() {
+		// Arrange
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
+				'data' => [
+					'size-2' => [
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'Normal',
+						'value' => '#ffffff',
+					],
+				],
+				'watermark' => 15,
+			] );
+
+		// Act
+		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/update' );
+		$request->set_body_params( [
+			'id' => 'size-2',
+			'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+			'value' => 'calc(50% + 20px)',
+		] );
+
+		$response = $this->rest_api->update_variable( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+
+		$response_data = $response->get_data();
+
+		$this->assertEquals( 'type_mismatch', $response_data['code'] );
+	}
+
 	public function test_delete_variable() {
 		// Arrange
 		$this->act_as_admin();
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'get_json_meta' )->
-			willReturn( [
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
 				'data' => [
 					'color-1' => [
 						'type' => Color_Variable_Prop_Type::get_key(),
@@ -203,10 +323,10 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'get_json_meta' )->
-			willReturn( null );
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( null );
 
 		// Act
 		$request = new WP_REST_Request( 'DELETE', '/elementor/v1/variables/delete' );
@@ -228,10 +348,10 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		// Arrange
 		$this->act_as_admin();
 
-		$this->kit->
-			expects( $this->once() )->
-			method( 'get_json_meta' )->
-			willReturn( [
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
 				'data' => [
 					'color-1' => [
 						'type' => Color_Variable_Prop_Type::get_key(),
@@ -253,6 +373,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/restore' );
 		$request->set_body_params( [
 			'id' => 'color-1',
+			'label' => 'Primary Color',
 		] );
 
 		$response = $this->rest_api->restore_variable( $request );
@@ -266,6 +387,97 @@ class Test_Rest_Api extends Elementor_Test_Base {
 
 		$this->assertEquals( 'Primary Color', $response_data['data']['variable']['label'] );
 		$this->assertEquals( '#FF0000', $response_data['data']['variable']['value'] );
+		$this->assertArrayNotHasKey( 'deleted', $response_data['data']['variable'] );
+		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
+	}
+
+	public function test_restore_variable__with_type_switch_from_custom_size_to_size() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
+				'data' => [
+					'size-deleted' => [
+						'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+						'label' => 'Deleted Custom Size',
+						'value' => 'calc(100vh - 50px)',
+						'deleted_at' => '2024-01-01 00:00:00',
+						],
+					],
+				'watermark' => 25,
+			] );
+
+		$this->kit
+			->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
+
+		// Act
+		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/restore' );
+		$request->set_body_params( [
+			'id' => 'size-deleted',
+			'type' => Size_Variable_Prop_Type::get_key(),
+			'value' => '200px',
+		] );
+
+		$response = $this->rest_api->restore_variable( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+
+		$response_data = $response->get_data();
+
+		$this->assertEquals( 'global-size-variable', $response_data['data']['variable']['type'] );
+		$this->assertEquals( '200px', $response_data['data']['variable']['value'] );
+		$this->assertArrayNotHasKey( 'deleted', $response_data['data']['variable'] );
+		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
+	}
+
+	public function test_restore_variable__with_type_switch_from_size_to_custom_size() {
+		// Arrange
+		$this->act_as_admin();
+
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
+				'data' => [
+					'size-deleted-2' => [
+						'type' => Size_Variable_Prop_Type::get_key(),
+						'label' => 'Deleted Size',
+						'value' => '150px',
+						'deleted' => true,
+						'deleted_at' => '2024-01-01 00:00:00',
+						],
+					],
+				'watermark' => 30,
+			] );
+
+		$this->kit
+			->expects( $this->once() )
+			->method( 'update_json_meta' )
+			->willReturn( true );
+
+		// Act.
+		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/restore' );
+		$request->set_body_params( [
+			'id' => 'size-deleted-2',
+			'type' => Prop_Type_Adapter::GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+			'value' => 'calc(100% / 3)',
+		] );
+
+		$response = $this->rest_api->restore_variable( $request );
+
+		// Assert
+		$this->assertEquals( 200, $response->get_status() );
+
+		$response_data = $response->get_data();
+
+		$this->assertEquals( 'global-custom-size-variable', $response_data['data']['variable']['type'] );
+		$this->assertEquals( 'calc(100% / 3)', $response_data['data']['variable']['value'] );
 		$this->assertArrayNotHasKey( 'deleted', $response_data['data']['variable'] );
 		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
 	}
@@ -321,6 +533,41 @@ class Test_Rest_Api extends Elementor_Test_Base {
 		$this->assertEquals( '#202020', $response_data['data']['variable']['value'] );
 		$this->assertArrayNotHasKey( 'deleted', $response_data['data']['variable'] );
 		$this->assertArrayNotHasKey( 'deleted_at', $response_data['data']['variable'] );
+	}
+
+	public function test_restore_variable__switches_non_size_to_custom_size_throws_exception() {
+		// Arrange
+		$this->kit
+			->expects( $this->once() )
+			->method( 'get_json_meta' )
+			->willReturn( [
+				'data' => [
+					'size-2' => [
+						'type' => Color_Variable_Prop_Type::get_key(),
+						'label' => 'Normal',
+						'value' => '#ffffff',
+						'deleted_at' => '2021-01-01 00:00:00',
+					],
+				],
+				'watermark' => 15,
+			] );
+
+		// Act
+		$request = new WP_REST_Request( 'PUT', '/elementor/v1/variables/restore' );
+		$request->set_body_params( [
+			'id' => 'size-2',
+			'type' => Size_Variable_Prop_Type::get_key(),
+			'value' => '20px',
+		] );
+
+		$response = $this->rest_api->restore_variable( $request );
+
+		// Assert
+		$this->assertEquals( 400, $response->get_status() );
+
+		$response_data = $response->get_data();
+
+		$this->assertEquals( 'type_mismatch', $response_data['code'] );
 	}
 
 	public function test_restore_variable__with_overrides_and_duplicated_label__results_in_bad_request() {
@@ -446,7 +693,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 			expects( $this->once() )->
 			method( 'get_json_meta' )->
 			willReturn( [
-				'data' => array_fill( 0, Variables_Repository::TOTAL_VARIABLES_COUNT, [
+				'data' => array_fill( 0, Variables_Collection::TOTAL_VARIABLES_COUNT, [
 					'type' => Color_Variable_Prop_Type::get_key(),
 					'label' => 'primary-color',
 					'value' => '#FF0000',
@@ -527,7 +774,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				],
 			],
 			'watermark' => 10,
-			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+			'version' => Variables_Collection::FORMAT_VERSION_V1,
 		] );
 
 		$this->kit
@@ -593,7 +840,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				],
 			],
 			'watermark' => 5,
-			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+			'version' => Variables_Collection::FORMAT_VERSION_V1,
 		] );
 
 		// Act
@@ -750,7 +997,7 @@ class Test_Rest_Api extends Elementor_Test_Base {
 				],
 			],
 			'watermark' => 5,
-			'version' => \Elementor\Modules\Variables\Storage\Repository::FORMAT_VERSION_V1,
+			'version' => Variables_Collection::FORMAT_VERSION_V1,
 		] );
 
 		// Act

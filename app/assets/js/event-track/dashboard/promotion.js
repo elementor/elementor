@@ -2,7 +2,7 @@ import WpDashboardTracking from '../wp-dashboard-tracking';
 import BaseTracking from './base-tracking';
 
 const PROMO_SELECTORS = {
-	PROMO_PAGE: '.e-feature-promotion, .elementor-settings-form-page',
+	PROMO_PAGE: '.e-feature-promotion, .elementor-settings-form-page, #elementor-element-manager-wrap',
 	PROMO_BLANK_STATE: '.elementor-blank_state',
 	CTA_BUTTON: '.go-pro',
 	TITLE: 'h3',

@@ -1,7 +1,7 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\Number_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
@@ -13,11 +13,11 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Dimensions_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Elements\Tabs_Control;
+use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Core\Utils\Collection;
-use Elementor\Modules\AtomicWidgets\Loader\Frontend_Assets_Loader;
 use Elementor\Utils;
 use Elementor\Plugin;
-
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -29,6 +29,13 @@ class Atomic_Tabs extends Atomic_Element_Base {
 	const ELEMENT_TYPE_TABS_CONTENT_AREA = 'e-tabs-content-area';
 	const ELEMENT_TYPE_TAB = 'e-tab';
 	const ELEMENT_TYPE_TAB_CONTENT = 'e-tab-content';
+
+	public static $widget_description = 'Create a tabbed interface with customizable tabs and content areas. LLM support: Each child element will be represented as a tab, the menu auto-generates based on the children';
+
+	public function __construct( $data = [], $args = null ) {
+		parent::__construct( $data, $args );
+		$this->meta( 'is_container', true );
+	}
 
 	public static function get_type() {
 		return 'e-tabs';
@@ -56,7 +63,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				->default( [] ),
 			'default-active-tab' => Number_Prop_Type::make()
 				->default( 0 ),
-			'attributes' => Attributes_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
 
@@ -119,6 +126,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 			$tab_elements[] = Atomic_Tab::generate()
 				->editor_settings( [
 					'title' => "Tab {$i} trigger",
+					'initial_position' => $i,
 				] )
 				->is_locked( true )
 				->build();
@@ -127,6 +135,7 @@ class Atomic_Tabs extends Atomic_Element_Base {
 				->is_locked( true )
 				->editor_settings( [
 					'title' => "Tab {$i} content",
+					'initial_position' => $i,
 				] )
 				->build();
 		}
@@ -147,18 +156,14 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		];
 	}
 
-	public function define_initial_attributes() {
-		return [
-			'data-e-type' => $this->get_type(),
-		];
-	}
-
 	public function get_script_depends() {
+		$global_depends = parent::get_script_depends();
+
 		if ( Plugin::$instance->preview->is_preview_mode() ) {
-			return [ 'elementor-tabs-handler', 'elementor-tabs-preview-handler' ];
+			return array_merge( $global_depends, [ 'elementor-tabs-handler', 'elementor-tabs-preview-handler' ] );
 		}
 
-		return [ 'elementor-tabs-handler' ];
+		return array_merge( $global_depends, [ 'elementor-tabs-handler' ] );
 	}
 
 	public function register_frontend_handlers() {
@@ -216,10 +221,12 @@ class Atomic_Tabs extends Atomic_Element_Base {
 		$default_active_tab = $this->get_atomic_setting( 'default-active-tab' );
 
 		return [
-			'default-active-tab' => $default_active_tab,
-			'get-tab-index' => fn( $tab_id ) => $this->get_tab_index( $tab_id ),
-			'get-tab-content-index' => fn( $tab_content_id ) => $this->get_tab_content_index( $tab_content_id ),
-			'tabs-id' => $this->get_id(),
+			'context' => [
+				'default-active-tab' => $default_active_tab,
+				'get-tab-index' => fn( $tab_id ) => $this->get_tab_index( $tab_id ),
+				'get-tab-content-index' => fn( $tab_content_id ) => $this->get_tab_content_index( $tab_content_id ),
+				'tabs-id' => $this->get_id(),
+			],
 		];
 	}
 

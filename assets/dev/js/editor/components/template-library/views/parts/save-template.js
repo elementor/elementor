@@ -11,39 +11,45 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	template: '#tmpl-elementor-template-library-save-template',
 
-	ui: {
-		form: '#elementor-template-library-save-template-form',
-		submitButton: '#elementor-template-library-save-template-submit',
-		ellipsisIcon: '.cloud-library-form-inputs .ellipsis-container',
-		foldersList: '.cloud-folder-selection-dropdown ul',
-		foldersDropdown: '.cloud-folder-selection-dropdown',
-		foldersListContainer: '.cloud-folder-selection-dropdown-list',
-		removeFolderSelection: '.source-selections .selected-folder i',
-		selectedFolder: '.selected-folder',
-		selectedFolderText: '.selected-folder-text',
-		hiddenInputSelectedFolder: '#parentId',
-		templateNameInput: '#elementor-template-library-save-template-name',
-		localInput: '.source-selections-input.local',
-		cloudInput: '.source-selections-input.cloud',
-		sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
-		infoIcon: '.source-selections-input.cloud .eicon-info',
-		connect: '#elementor-template-library-connect__badge',
-		connectBadge: '.source-selections-input.cloud .connect-badge',
-		cloudFormInputs: '.cloud-library-form-inputs',
-		upgradeBadge: '.source-selections-input.cloud upgrade-badge',
+	ui() {
+		return {
+			form: '#elementor-template-library-save-template-form',
+			submitButton: '#elementor-template-library-save-template-submit',
+			ellipsisIcon: '.cloud-library-form-inputs .ellipsis-container',
+			foldersList: '.cloud-folder-selection-dropdown ul',
+			foldersDropdown: '.cloud-folder-selection-dropdown',
+			foldersListContainer: '.cloud-folder-selection-dropdown-list',
+			removeFolderSelection: '.source-selections .selected-folder i',
+			selectedFolder: '.selected-folder',
+			selectedFolderText: '.selected-folder-text',
+			hiddenInputSelectedFolder: '#parentId',
+			templateNameInput: '#elementor-template-library-save-template-name',
+			localInput: '.source-selections-input.local',
+			cloudInput: '.source-selections-input.cloud',
+			sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
+			infoIcon: '.source-selections-input.cloud .eicon-info',
+			connect: '#elementor-template-library-connect__badge',
+			connectBadge: '.source-selections-input.cloud .connect-badge',
+			cloudFormInputs: '.cloud-library-form-inputs',
+			upgradeBadge: '.source-selections-input.cloud .upgrade-badge',
+		};
 	},
 
-	events: {
-		'submit @ui.form': 'onFormSubmit',
-		'click @ui.ellipsisIcon': 'onEllipsisIconClick',
-		'click @ui.foldersList': 'onFoldersListClick',
-		'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
-		'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
-		'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
-		'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
-		'mouseenter @ui.infoIcon': 'showInfoTip',
-		'mouseenter @ui.connect': 'showConnectInfoTip',
-		'input @ui.templateNameInput': 'onTemplateNameInputChange',
+	events() {
+		return {
+			'submit @ui.form': 'onFormSubmit',
+			'click @ui.ellipsisIcon': 'onEllipsisIconClick',
+			'click @ui.foldersList': 'onFoldersListClick',
+			'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
+			'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
+			'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
+			'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
+			'mouseenter @ui.infoIcon': 'showInfoTip',
+			'mouseleave @ui.infoIcon': 'hideInfoTip',
+			'mouseenter @ui.connectBadge': 'showConnectInfoTip',
+			'mouseleave @ui.connectBadge': 'hideConnectInfoTip',
+			'input @ui.templateNameInput': 'onTemplateNameInputChange',
+		};
 	},
 
 	onRender() {
@@ -72,7 +78,6 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 	handleOnRender() {
 		setTimeout( () => this.ui.templateNameInput.trigger( 'focus' ) );
-
 		const context = this.getOption( 'context' );
 
 		elementor.templates.eventManager.sendPageViewEvent( {
@@ -635,6 +640,16 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 		this.infoTipDialog.show();
 	},
 
+	hideInfoTip() {
+		if ( this.infoTipDialog ) {
+			this.infoTipDialog.hide();
+		}
+	},
+
+	getConnectInfoTipPosition() {
+		return 'top+80';
+	},
+
 	showConnectInfoTip() {
 		if ( this.connectInfoTipDialog ) {
 			this.connectInfoTipDialog.hide();
@@ -648,7 +663,7 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 			},
 			position: {
 				of: this.ui.connectBadge,
-				at: 'top+80',
+				at: this.getConnectInfoTipPosition(),
 			},
 		} )
 			.setMessage(
@@ -670,7 +685,19 @@ const TemplateLibrarySaveTemplateView = Marionette.ItemView.extend( {
 
 		this.connectInfoTipDialog.getElements( 'header' ).remove();
 		this.connectInfoTipDialog.getElements( 'buttonsWrapper' ).remove();
+
+		this.addVariantClass( this.connectInfoTipDialog.getElements( 'widget' ) );
 		this.connectInfoTipDialog.show();
+	},
+
+	addVariantClass() {
+		return '';
+	},
+
+	hideConnectInfoTip() {
+		if ( this.connectInfoTipDialog ) {
+			this.connectInfoTipDialog.hide();
+		}
 	},
 
 	handleElementorConnect() {

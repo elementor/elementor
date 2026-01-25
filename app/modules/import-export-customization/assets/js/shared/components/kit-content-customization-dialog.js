@@ -7,6 +7,7 @@ import { ListSettingSection } from './customization-list-setting-section';
 import { SettingSection } from './customization-setting-section';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 import { useKitCustomizationCustomPostTypes } from '../hooks/use-kit-customization-custom-post-types';
+import useContextDetection from '../hooks/use-context-detection';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
 import { transformValueForAnalytics } from '../utils/analytics-transformer';
 
@@ -46,12 +47,12 @@ export function KitContentCustomizationDialog( {
 	open,
 	handleClose,
 	handleSaveChanges,
-	data,
-	isImport,
-	isOldElementorVersion,
 	isCloudKitsEligible = false,
 	showMediaFormatValidation = false,
 } ) {
+	const { isImport = false, contextData = {} } = useContextDetection() ?? {};
+	const { data = null, isOldElementorVersion = false } = contextData;
+
 	const { customPostTypes } = useKitCustomizationCustomPostTypes( { data } );
 
 	const alertRef = useRef( null );
@@ -265,11 +266,8 @@ export function KitContentCustomizationDialog( {
 
 KitContentCustomizationDialog.propTypes = {
 	open: PropTypes.bool.isRequired,
-	isImport: PropTypes.bool,
-	isOldElementorVersion: PropTypes.bool,
 	handleClose: PropTypes.func.isRequired,
 	handleSaveChanges: PropTypes.func.isRequired,
-	data: PropTypes.object.isRequired,
 	isCloudKitsEligible: PropTypes.bool,
 	showMediaFormatValidation: PropTypes.bool,
 };

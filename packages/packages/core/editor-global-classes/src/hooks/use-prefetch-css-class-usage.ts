@@ -14,3 +14,9 @@ export function usePrefetchCssClassUsage() {
 
 	return { prefetchClassesUsage };
 }
+
+export const PrefetchCssClassUsage = () => {
+	const { prefetchClassesUsage } = usePrefetchCssClassUsage();
+	prefetchClassesUsage();
+	return null;
+};

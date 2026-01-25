@@ -16,6 +16,7 @@ ElementModel = BaseElementModel.extend( {
 		defaultEditSettings: {
 			defaultEditRoute: 'content',
 		},
+		interactions: {},
 	},
 
 	remoteRender: false,

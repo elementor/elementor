@@ -1,41 +1,76 @@
 import * as React from 'react';
-import { type RefObject, useRef } from 'react';
+import { type RefObject, useLayoutEffect, useRef, useState } from 'react';
 import { layoutDirectionPropTypeUtil, type PropKey, sizePropTypeUtil } from '@elementor/editor-props';
+import { useActiveBreakpoint } from '@elementor/editor-responsive';
 import { DetachIcon, LinkIcon } from '@elementor/icons';
-import { Grid, Stack, ToggleButton, Tooltip } from '@elementor/ui';
+import { Grid, Stack, Tooltip } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
 import { ControlLabel } from '../components/control-label';
+import { StyledToggleButton } from '../components/control-toggle-button-group';
 import { SizeControl } from './size-control';
 
 export const GapControl = ( { label }: { label: string } ) => {
+	const stackRef = useRef< HTMLDivElement >( null );
+
+	const { disabled: sizeDisabled } = useBoundProp( sizePropTypeUtil );
+
 	const {
 		value: directionValue,
 		setValue: setDirectionValue,
 		propType,
+		placeholder: directionPlaceholder,
 		disabled: directionDisabled,
 	} = useBoundProp( layoutDirectionPropTypeUtil );
 
-	const stackRef = useRef< HTMLDivElement >( null );
+	const { value: masterValue, setValue: setMasterValue, placeholder: masterPlaceholder } = useBoundProp();
 
-	const { value: sizeValue, setValue: setSizeValue, disabled: sizeDisabled } = useBoundProp( sizePropTypeUtil );
+	const inferIsLinked = () => {
+		if ( layoutDirectionPropTypeUtil.isValid( masterValue ) ) {
+			return false;
+		}
 
-	const isLinked = ! directionValue && ! sizeValue ? true : !! sizeValue;
+		if ( ! masterValue && layoutDirectionPropTypeUtil.isValid( masterPlaceholder ) ) {
+			return false;
+		}
+
+		return true;
+	};
+
+	const [ isLinked, setIsLinked ] = useState( () => inferIsLinked() );
+
+	const activeBreakpoint = useActiveBreakpoint();
+	useLayoutEffect( () => {
+		setIsLinked( inferIsLinked() );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ activeBreakpoint ] );
 
 	const onLinkToggle = () => {
-		if ( ! isLinked ) {
-			setSizeValue( directionValue?.column?.value ?? null );
+		setIsLinked( ( prev ) => ! prev );
+
+		if ( ! layoutDirectionPropTypeUtil.isValid( masterValue ) ) {
+			const currentValue = masterValue ? masterValue : null;
+
+			if ( ! currentValue ) {
+				setMasterValue( null );
+				return;
+			}
+
+			setMasterValue(
+				layoutDirectionPropTypeUtil.create( {
+					row: currentValue,
+					column: currentValue,
+				} )
+			);
+
 			return;
 		}
 
-		const value = sizeValue ? sizePropTypeUtil.create( sizeValue ) : null;
+		const currentValue = directionValue?.column ?? directionValue?.row ?? null;
 
-		setDirectionValue( {
-			row: value,
-			column: value,
-		} );
+		setMasterValue( currentValue );
 	};
 
 	const tooltipLabel = label.toLowerCase();
@@ -48,12 +83,21 @@ export const GapControl = ( { label }: { label: string } ) => {
 
 	const disabled = sizeDisabled || directionDisabled;
 
+	const propProviderProps = {
+		propType,
+		value: directionValue,
+		setValue: setDirectionValue,
+		placeholder: directionPlaceholder,
+	};
+
+	const hasPlaceholders = ! masterValue && ( directionPlaceholder || masterPlaceholder );
+
 	return (
-		<PropProvider propType={ propType } value={ directionValue } setValue={ setDirectionValue }>
+		<PropProvider { ...propProviderProps }>
 			<Stack direction="row" gap={ 2 } flexWrap="nowrap">
 				<ControlLabel>{ label }</ControlLabel>
 				<Tooltip title={ isLinked ? unlinkedLabel : linkedLabel } placement="top">
-					<ToggleButton
+					<StyledToggleButton
 						aria-label={ isLinked ? unlinkedLabel : linkedLabel }
 						size={ 'tiny' }
 						value={ 'check' }
@@ -61,9 +105,10 @@ export const GapControl = ( { label }: { label: string } ) => {
 						sx={ { marginLeft: 'auto' } }
 						onChange={ onLinkToggle }
 						disabled={ disabled }
+						isPlaceholder={ hasPlaceholders }
 					>
 						<LinkedIcon fontSize={ 'tiny' } />
-					</ToggleButton>
+					</StyledToggleButton>
 				</Tooltip>
 			</Stack>
 			<Stack direction="row" gap={ 2 } flexWrap="nowrap" ref={ stackRef }>
@@ -72,7 +117,12 @@ export const GapControl = ( { label }: { label: string } ) => {
 						<ControlFormLabel>{ __( 'Column', 'elementor' ) }</ControlFormLabel>
 					</Grid>
 					<Grid item xs={ 12 }>
-						<Control bind={ 'column' } isLinked={ isLinked } anchorRef={ stackRef } />
+						<Control
+							bind={ 'column' }
+							ariaLabel={ __( 'Column gap', 'elementor' ) }
+							isLinked={ isLinked }
+							anchorRef={ stackRef }
+						/>
 					</Grid>
 				</Grid>
 				<Grid container gap={ 0.75 } alignItems="center">
@@ -80,7 +130,12 @@ export const GapControl = ( { label }: { label: string } ) => {
 						<ControlFormLabel>{ __( 'Row', 'elementor' ) }</ControlFormLabel>
 					</Grid>
 					<Grid item xs={ 12 }>
-						<Control bind={ 'row' } isLinked={ isLinked } anchorRef={ stackRef } />
+						<Control
+							bind={ 'row' }
+							ariaLabel={ __( 'Row gap', 'elementor' ) }
+							isLinked={ isLinked }
+							anchorRef={ stackRef }
+						/>
 					</Grid>
 				</Grid>
 			</Stack>
@@ -90,20 +145,22 @@ export const GapControl = ( { label }: { label: string } ) => {
 
 const Control = ( {
 	bind,
+	ariaLabel,
 	isLinked,
 	anchorRef,
 }: {
 	bind: PropKey;
+	ariaLabel?: string;
 	isLinked: boolean;
 	anchorRef: RefObject< HTMLDivElement >;
 } ) => {
 	if ( isLinked ) {
-		return <SizeControl anchorRef={ anchorRef } />;
+		return <SizeControl anchorRef={ anchorRef } ariaLabel={ ariaLabel } />;
 	}
 
 	return (
 		<PropKeyProvider bind={ bind }>
-			<SizeControl anchorRef={ anchorRef } />
+			<SizeControl anchorRef={ anchorRef } ariaLabel={ ariaLabel } />
 		</PropKeyProvider>
 	);
 };

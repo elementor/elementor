@@ -19,6 +19,25 @@ const TemplateLibraryManager = function() {
 		bulkSelectedItems = new Set(),
 		lastDeletedItems = new Set();
 
+	const variantsConfig = {
+		control: {
+			saveBtnText: __( 'Save', 'elementor' ),
+			saveDialogDescription: sprintf(
+				/* Translators: 1: Opening bold tag, 2: Closing bold tag.  2: Line break tag. 4: Opening bold tag, 5: Closing bold tag. */
+				__( "You can save it to %1$sCloud Templates%2$s to reuse across any of your Elementor sites at any time%3$sor to %4$sSite Templates%5$s so it's always ready when editing this website.", 'elementor' ),
+				'<b>', '</b>', '<br>', '<b>', '</b>',
+			),
+		},
+		B: {
+			saveBtnText: __( 'Save page', 'elementor' ),
+			saveDialogDescription: sprintf(
+				/* Translators: 1: Opening bold tag, 2: Closing bold tag. 3: Opening bold tag, 4: Closing bold tag. */
+				__( 'Store your design in %1$sCloud Templates%2$s for future Elementor projects. Or save it to %3$sSite Templates%4$s, to reuse anywhere on this site.', 'elementor' ),
+				'<b>', '</b>', '<b>', '</b>',
+			),
+		},
+	};
+
 	let deleteDialog,
 		errorDialog,
 		templatesCollection,
@@ -30,31 +49,32 @@ const TemplateLibraryManager = function() {
 		bulkSelectedItemsTypes = [];
 
 	const registerDefaultTemplateTypes = function() {
-		var data = self.getDefaultTemplateTypeData();
+		self.getDefaultTemplateTypeData().then( ( data ) => {
+			const elements = Object.entries( elementor.getConfig().elements ).reduce( ( acc, [ type, element ] ) => {
+				if ( ! element?.atomic_props_schema ) {
+					return acc;
+				}
 
-		const elements = Object.entries( elementor.getConfig().elements ).reduce( ( acc, [ type, element ] ) => {
-			if ( ! element?.atomic_props_schema ) {
+				acc[ type ] = element.title;
+
 				return acc;
-			}
+			}, {} );
 
-			acc[ type ] = element.title;
+			const translationMap = {
+				page: __( 'Page', 'elementor' ),
+				section: __( 'Section', 'elementor' ),
+				container: __( 'Container', 'elementor' ),
+				...elements,
 
-			return acc;
-		}, {} );
+				[ elementor.config.document.type ]: elementor.config.document.panel.title,
+			};
 
-		const translationMap = {
-			page: __( 'Page', 'elementor' ),
-			section: __( 'Section', 'elementor' ),
-			container: __( 'Container', 'elementor' ),
-			...elements,
-
-			[ elementor.config.document.type ]: elementor.config.document.panel.title,
-		};
-
-		jQuery.each( translationMap, function( type, title ) {
-			var safeData = jQuery.extend( true, {}, data, self.getDefaultTemplateTypeSafeData( title ) );
-
-			self.registerTemplateType( type, safeData );
+			jQuery.each( translationMap, function( type, title ) {
+				self.getDefaultTemplateTypeSafeData( title, type ).then( ( defaultTemplateData ) => {
+					const safeData = jQuery.extend( true, {}, data, defaultTemplateData );
+					self.registerTemplateType( type, safeData );
+				} );
+			} );
 		} );
 	};
 
@@ -133,61 +153,95 @@ const TemplateLibraryManager = function() {
 	};
 
 	this.getDefaultTemplateTypeData = function() {
-		return {
-			saveDialog: {
-				icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
-				canSaveToCloud: true,
-				saveBtnText: __( 'Save', 'elementor' ),
-			},
-			moveDialog: {
-				description: __( 'Alternatively, you can copy the template.', 'elementor' ),
-				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
-				canSaveToCloud: true,
-				saveBtnText: __( 'Move', 'elementor' ),
-			},
-			copyDialog: {
-				description: __( 'Alternatively, you can move the template.', 'elementor' ),
-				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
-				canSaveToCloud: true,
-				saveBtnText: __( 'Copy', 'elementor' ),
-			},
-			bulkMoveDialog: {
-				description: __( 'Alternatively, you can copy the templates.', 'elementor' ),
-				title: __( 'Move templates to a different location', 'elementor' ),
-				icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
-				canSaveToCloud: true,
-				saveBtnText: __( 'Move', 'elementor' ),
-			},
-			bulkCopyDialog: {
-				description: __( 'Alternatively, you can move the templates.', 'elementor' ),
-				title: __( 'Copy templates to a different location', 'elementor' ),
-				icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
-				canSaveToCloud: true,
-				saveBtnText: __( 'Copy', 'elementor' ),
-			},
-		};
+		return this.eventManager.getSaveTemplateExperimentVariant().then( ( experimentVariant ) => {
+			return {
+				saveDialog: {
+					icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+					canSaveToCloud: true,
+					saveBtnText: variantsConfig[ experimentVariant ]?.saveBtnText,
+				},
+				moveDialog: {
+					description: __( 'Alternatively, you can copy the template.', 'elementor' ),
+					icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
+					canSaveToCloud: true,
+					saveBtnText: __( 'Move', 'elementor' ),
+					nameLabel: '',
+					namePlaceholder: '',
+				},
+				copyDialog: {
+					description: __( 'Alternatively, you can move the template.', 'elementor' ),
+					icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
+					canSaveToCloud: true,
+					saveBtnText: __( 'Copy', 'elementor' ),
+					nameLabel: '',
+					namePlaceholder: '',
+				},
+				bulkMoveDialog: {
+					description: __( 'Alternatively, you can copy the templates.', 'elementor' ),
+					title: __( 'Move templates to a different location', 'elementor' ),
+					icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
+					canSaveToCloud: true,
+					saveBtnText: __( 'Move', 'elementor' ),
+					nameLabel: '',
+					namePlaceholder: '',
+				},
+				bulkCopyDialog: {
+					description: __( 'Alternatively, you can move the templates.', 'elementor' ),
+					title: __( 'Copy templates to a different location', 'elementor' ),
+					icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
+					canSaveToCloud: true,
+					saveBtnText: __( 'Copy', 'elementor' ),
+					nameLabel: '',
+					namePlaceholder: '',
+				},
+			};
+		} );
 	};
 
-	this.getDefaultTemplateTypeSafeData = function( title ) {
-		return {
-			saveDialog: {
-				description: sprintf(
-					/* Translators: 1: Opening bold tag, 2: Closing bold tag.  2: Line break tag. 4: Opening bold tag, 5: Closing bold tag. */
-					__( 'You can save it to %1$sCloud Templates%2$s to reuse across any of your Elementor sites at any time%3$sor to %4$sSite Templates%5$s so it’s always ready when editing this website.', 'elementor' ),
-					'<b>', '</b>', '<br>', '<b>', '</b>',
-				),
-				/* Translators: %s: Template type. */
-				title: sprintf( __( 'Save this %s to your library', 'elementor' ), title ),
-			},
-			moveDialog: {
-				/* Translators: %s: Template type. */
-				title: sprintf( __( 'Move your %s to a different location', 'elementor' ), title ),
-			},
-			copyDialog: {
-				/* Translators: %s: Template type. */
-				title: sprintf( __( 'Copy your %s to a different location', 'elementor' ), title ),
-			},
-		};
+	this.getDefaultTemplateTypeSafeData = function( title, type ) {
+		return this.eventManager.getSaveTemplateExperimentVariant().then( ( experimentVariant ) => {
+			const isPageType = 'page' === type;
+
+			/* Translators: %s: Template type. */
+			const nameLabel = sprintf( __( '%s name', 'elementor' ), title );
+			const namePlaceholder = isPageType
+				? __( 'Type the page name here', 'elementor' )
+				: __( 'Give your template a name', 'elementor' );
+
+			return {
+				saveDialog: {
+					description: variantsConfig[ experimentVariant ]?.saveDialogDescription || '',
+					/* Translators: %s: Template type. */
+					title: sprintf( __( 'Save this %s to your library', 'elementor' ), title ),
+					nameLabel,
+					namePlaceholder,
+					/* Translators: %s: Template type. */
+					saveLocationLabel: sprintf( __( 'Where would you like to save this %s?', 'elementor' ), title ),
+				},
+				moveDialog: {
+					/* Translators: %s: Template type. */
+					title: sprintf( __( 'Move your %s to a different location', 'elementor' ), title ),
+					/* Translators: %s: Template type. */
+					saveLocationLabel: sprintf( __( 'Where would you like to move this %s?', 'elementor' ), title ),
+					nameLabel,
+					namePlaceholder,
+				},
+				copyDialog: {
+					/* Translators: %s: Template type. */
+					title: sprintf( __( 'Copy your %s to a different location', 'elementor' ), title ),
+					/* Translators: %s: Template type. */
+					saveLocationLabel: sprintf( __( 'Where would you like to cppy this %s?', 'elementor' ), title ),
+					nameLabel,
+					namePlaceholder,
+				},
+				bulkMoveDialog: {
+					saveLocationLabel: __( 'Where would you like to move selected templates?', 'elementor' ),
+				},
+				bulkCopyDialog: {
+					saveLocationLabel: __( 'Where would you like to copy selected templates?', 'elementor' ),
+				},
+			};
+		} );
 	};
 
 	this.isSelectAllShortcut = function( event ) {

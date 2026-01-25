@@ -1,19 +1,17 @@
 <?php
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Selection_Size_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Transition_Prop_Type;
-use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Styles\Style_States;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
-use Elementor\Modules\AtomicWidgets\Render_Context;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Render_Context;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,6 +20,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Atomic_Tab_Content extends Atomic_Element_Base {
 	const BASE_STYLE_KEY = 'base';
+
+	public function __construct( $data = [], $args = null ) {
+		parent::__construct( $data, $args );
+		$this->meta( 'llm_support', false );
+	}
 
 	public static function get_type() {
 		return 'e-tab-content';
@@ -52,7 +55,7 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 			'tab-id' => String_Prop_Type::make(),
-			'attributes' => Attributes_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
 	}
 
@@ -74,14 +77,6 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 	protected function define_base_styles(): array {
 		$styles = [
 			'display' => String_Prop_Type::generate( 'block' ),
-			'opacity' => Size_Prop_Type::generate( [
-				'size' => 0,
-				'unit' => '%',
-			] ),
-			'min-height' => Size_Prop_Type::generate( [
-				'size' => 200,
-				'unit' => 'px',
-			] ),
 			'padding' => Size_Prop_Type::generate( [
 				'size' => 10,
 				'unit' => 'px',
@@ -90,24 +85,6 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 				'size' => 30,
 				'unit' => 'px',
 			] ),
-			'transition' => Transition_Prop_Type::generate( [
-				Selection_Size_Prop_Type::generate( [
-					'selection' => Key_Value_Prop_Type::generate( [
-						'value' => 'opacity',
-					] ),
-					'size' => Size_Prop_Type::generate( [
-						'size' => 600,
-						'unit' => 'ms',
-					] ),
-				] ),
-			] ),
-		];
-
-		$selected_styles = [
-			'opacity' => Size_Prop_Type::generate( [
-				'size' => 100,
-				'unit' => '%',
-			] ),
 		];
 
 		return [
@@ -115,11 +92,6 @@ class Atomic_Tab_Content extends Atomic_Element_Base {
 				->add_variant(
 					Style_Variant::make()
 						->add_props( $styles )
-				)
-				->add_variant(
-					Style_Variant::make()
-						->set_state( Style_States::SELECTED )
-						->add_props( $selected_styles )
 				),
 		];
 	}

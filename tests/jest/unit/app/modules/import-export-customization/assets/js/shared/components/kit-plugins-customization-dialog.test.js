@@ -3,7 +3,13 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { KitPluginsCustomizationDialog } from 'elementor/app/modules/import-export-customization/assets/js/shared/components/kit-plugins-customization-dialog';
 
 jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-kit-plugins' );
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
+
 import useKitPlugins from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-kit-plugins';
+import useContextDetection from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection';
 import eventsConfig from 'elementor/core/common/modules/events-manager/assets/js/events-config';
 
 global.__ = jest.fn( ( text ) => text );
@@ -54,6 +60,14 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 		useKitPlugins.mockReturnValue( {
 			pluginsList: mockPluginsList,
 			isLoading: false,
+		} );
+
+		useContextDetection.mockReturnValue( {
+			isImport: false,
+			contextData: {
+				data: mockData,
+				isOldElementorVersion: false,
+			},
 		} );
 
 		global.elementorCommon = {
@@ -219,12 +233,19 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 				},
 			};
 
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data: dataWithCustomization,
+					isOldElementorVersion: false,
+				},
+			} );
+
 			render(
 				<KitPluginsCustomizationDialog
 					open={ true }
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
-					data={ dataWithCustomization }
 				/>,
 			);
 
@@ -262,12 +283,19 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 				},
 			};
 
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data: dataWithoutPlugins,
+					isOldElementorVersion: false,
+				},
+			} );
+
 			render(
 				<KitPluginsCustomizationDialog
 					open={ true }
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
-					data={ dataWithoutPlugins }
 				/>,
 			);
 
@@ -317,12 +345,19 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 				},
 			};
 
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data: dataWithPartialSelection,
+					isOldElementorVersion: false,
+				},
+			} );
+
 			render(
 				<KitPluginsCustomizationDialog
 					open={ true }
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
-					data={ dataWithPartialSelection }
 				/>,
 			);
 
@@ -344,12 +379,19 @@ describe( 'KitPluginsCustomizationDialog Component', () => {
 				},
 			};
 
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data: dataWithoutPlugins,
+					isOldElementorVersion: false,
+				},
+			} );
+
 			render(
 				<KitPluginsCustomizationDialog
 					open={ true }
 					handleClose={ mockHandleClose }
 					handleSaveChanges={ mockHandleSaveChanges }
-					data={ dataWithoutPlugins }
 				/>,
 			);
 

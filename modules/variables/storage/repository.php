@@ -3,7 +3,7 @@
 namespace Elementor\Modules\Variables\Storage;
 
 use Elementor\Core\Kits\Documents\Kit;
-use Elementor\Modules\AtomicWidgets\Utils;
+use Elementor\Modules\AtomicWidgets\Utils\Utils;
 use Elementor\Modules\Variables\Storage\Exceptions\DuplicatedLabel;
 use Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound;
 use Elementor\Modules\Variables\Storage\Exceptions\VariablesLimitReached;
@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Repository {
+	// TODO: deleted this class later after this PR
 	const TOTAL_VARIABLES_COUNT = 100;
 	const FORMAT_VERSION_V1 = 1;
 	const VARIABLES_META_KEY = '_elementor_global_variables';
@@ -342,7 +343,7 @@ class Repository {
 		$variable_data = $operation['variable'];
 
 		if ( ! isset( $db_record['data'][ $id ] ) ) {
-			throw new \Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound( 'Variable not found' );
+			throw new RecordNotFound( 'Variable not found' );
 		}
 
 		$updated_fields = $this->extract_from( $variable_data, [ 'label', 'value', 'order' ] );

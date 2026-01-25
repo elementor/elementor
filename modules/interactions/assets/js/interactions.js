@@ -1,73 +1,98 @@
-import { config, getKeyframes, parseAnimationName } from './interactions-utils.js';
+import {
+	config,
+	getKeyframes,
+	parseAnimationName,
+	extractAnimationId,
+	getAnimateFunction,
+	getInViewFunction,
+	waitForAnimateFunction,
+	parseInteractionsData,
+} from './interactions-utils.js';
+
+function scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
+	const viewOptions = { amount: 0.85, root: null };
+	const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
+
+	animateFunc( element, resetKeyframes, { duration: 0 } );
+
+	const stop = inViewFunc( element, () => {
+		return () => {
+			animateFunc( element, keyframes, options ).then( () => {
+				element.style.transition = transition;
+			} );
+			if ( false === animConfig.replay ) {
+				stop();
+			}
+		};
+	}, viewOptions );
+}
+
+function scrollInAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc ) {
+	const viewOptions = { amount: 0, root: null };
+	const stop = inViewFunc( element, () => {
+		animateFunc( element, keyframes, options ).then( () => {
+			element.style.transition = transition;
+		} );
+		if ( false === animConfig.replay ) {
+			stop();
+		}
+	}, viewOptions );
+}
+
+function defaultAnimation( element, transition, keyframes, options, animateFunc ) {
+	animateFunc( element, keyframes, options ).then( () => {
+		element.style.transition = transition;
+	} );
+}
 
 function applyAnimation( element, animConfig, animateFunc, inViewFunc ) {
 	const keyframes = getKeyframes( animConfig.effect, animConfig.type, animConfig.direction );
+
 	const options = {
 		duration: animConfig.duration / 1000,
 		delay: animConfig.delay / 1000,
-		easing: config.easing,
+		ease: config.defaultEasing,
 	};
 
-	const viewOptions = { amount: 0.1, root: null };
-
+	// WHY - Transition can be set on elements but once it sets it destroys all animations, so we basically put it aside.
+	const transition = element.style.transition;
+	element.style.transition = 'none';
 	if ( 'scrollOut' === animConfig.trigger ) {
-		inViewFunc( element, () => {
-			const resetKeyframes = getKeyframes( animConfig.effect, 'in', animConfig.direction );
-			animateFunc( element, resetKeyframes, { duration: 0 } );
-
-			return () => {
-				animateFunc( element, keyframes, options );
-			};
-		}, viewOptions );
+		scrollOutAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else if ( 'scrollIn' === animConfig.trigger ) {
-		inViewFunc( element, () => {
-			animateFunc( element, keyframes, options );
-
-			return () => {
-				const resetKeyframes = getKeyframes( animConfig.effect, 'out', animConfig.direction );
-				animateFunc( element, resetKeyframes, { duration: 0 } );
-			};
-		}, viewOptions );
+		scrollInAnimation( element, transition, animConfig, keyframes, options, animateFunc, inViewFunc );
 	} else {
-		animateFunc( element, keyframes, options );
+		defaultAnimation( element, transition, keyframes, options, animateFunc );
 	}
 }
 
 function initInteractions() {
-	if ( 'undefined' === typeof animate && ! window.Motion?.animate ) {
-		setTimeout( initInteractions, 100 );
-		return;
-	}
+	waitForAnimateFunction( () => {
+		const animateFunc = getAnimateFunction();
+		const inViewFunc = getInViewFunction();
 
-	const animateFunc = 'undefined' !== typeof animate ? animate : window.Motion?.animate;
-	const inViewFunc = 'undefined' !== typeof inView ? inView : window.Motion?.inView;
-
-	if ( ! inViewFunc || ! animateFunc ) {
-		return;
-	}
-
-	const elements = document.querySelectorAll( '[data-interactions]' );
-
-	elements.forEach( ( element ) => {
-		const interactionsData = element.getAttribute( 'data-interactions' );
-		let interactions = [];
-
-		try {
-			interactions = JSON.parse( interactionsData );
-		} catch ( error ) {
+		if ( ! inViewFunc || ! animateFunc ) {
 			return;
 		}
 
-		interactions.forEach( ( interaction ) => {
-			const animationName = 'string' === typeof interaction
-				? interaction
-				: interaction?.animation?.animation_id;
+		const elements = document.querySelectorAll( '[data-interactions]' );
 
-			const animConfig = animationName && parseAnimationName( animationName );
+		elements.forEach( ( element ) => {
+			const interactionsData = element.getAttribute( 'data-interactions' );
+			const parsedData = parseInteractionsData( interactionsData );
 
-			if ( animConfig ) {
-				applyAnimation( element, animConfig, animateFunc, inViewFunc );
+			if ( ! parsedData || ! Array.isArray( parsedData ) ) {
+				return;
 			}
+
+			parsedData.forEach( ( interaction ) => {
+				const animationName = extractAnimationId( interaction );
+				const animConfig = animationName && parseAnimationName( animationName );
+
+				if ( animConfig ) {
+					applyAnimation( element, animConfig, animateFunc, inViewFunc );
+				}
+			} );
 		} );
 	} );
 }

@@ -4,37 +4,61 @@ import {
 	registerElementType,
 	settingsTransformersRegistry,
 } from '@elementor/editor-canvas';
+import { registerControlReplacement } from '@elementor/editor-controls';
 import { getV1CurrentDocument } from '@elementor/editor-documents';
+import {
+	FIELD_TYPE,
+	injectIntoPanelHeaderTop,
+	registerEditingPanelReplacement,
+	registerFieldIndicator,
+} from '@elementor/editor-editing-panel';
 import { type V1ElementData } from '@elementor/editor-elements';
 import { injectTab } from '@elementor/editor-elements-panel';
+import { __registerPanel as registerPanel } from '@elementor/editor-panels';
 import { stylesRepository } from '@elementor/editor-styles-repository';
-import { __privateListenTo as listenTo, commandStartEvent, registerDataHook } from '@elementor/editor-v1-adapters';
+import { registerDataHook } from '@elementor/editor-v1-adapters';
 import { __registerSlice as registerSlice } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
-import { componentIdTransformer } from './component-id-transformer';
+import { componentInstanceTransformer } from './component-instance-transformer';
+import { componentOverridableTransformer } from './component-overridable-transformer';
+import { componentOverrideTransformer } from './component-override-transformer';
+import { ComponentPanelHeader } from './components/component-panel-header/component-panel-header';
+import { panel as componentPropertiesPanel } from './components/component-properties-panel/component-properties-panel';
 import { Components } from './components/components-tab/components';
+import { COMPONENT_DOCUMENT_TYPE, OVERRIDABLE_PROP_REPLACEMENT_ID } from './components/consts';
 import { CreateComponentForm } from './components/create-component-form/create-component-form';
 import { EditComponent } from './components/edit-component/edit-component';
 import { openEditModeDialog } from './components/in-edit-mode';
-import { createComponentType, TYPE } from './create-component-type';
+import { InstanceEditingPanel } from './components/instance-editing-panel/instance-editing-panel';
+import { OverridablePropControl } from './components/overridable-props/overridable-prop-control';
+import { OverridablePropIndicator } from './components/overridable-props/overridable-prop-indicator';
+import { COMPONENT_WIDGET_TYPE, createComponentType } from './create-component-type';
+import { initMcp } from './mcp';
 import { PopulateStore } from './populate-store';
+import { initCircularNestingPrevention } from './prevent-circular-nesting';
+import { initNonAtomicNestingPrevention } from './prevent-non-atomic-nesting';
+import { componentOverridablePropTypeUtil } from './prop-types/component-overridable-prop-type';
+import { loadComponentsAssets } from './store/actions/load-components-assets';
+import { removeComponentStyles } from './store/actions/remove-component-styles';
 import { componentsStylesProvider } from './store/components-styles-provider';
-import { loadComponentsStyles } from './store/load-components-styles';
-import { removeComponentStyles } from './store/remove-component-styles';
 import { slice } from './store/store';
 import { beforeSave } from './sync/before-save';
+import { initCleanupOverridablePropsOnDelete } from './sync/cleanup-overridable-props-on-delete';
+import { initHandleComponentEditModeContainer } from './sync/handle-component-edit-mode-container';
+import { initLoadComponentDataAfterInstanceAdded } from './sync/load-component-data-after-instance-added';
+import { initRegenerateOverrideKeys } from './sync/regenerate-override-keys';
+import { initRevertOverridablesOnCopyOrDuplicate } from './sync/revert-overridables-on-copy-or-duplicate';
 import { type ExtendedWindow } from './types';
 import { onElementDrop } from './utils/tracking';
-
-const COMPONENT_DOCUMENT_TYPE = 'elementor_component';
 
 export function init() {
 	stylesRepository.register( componentsStylesProvider );
 
 	registerSlice( slice );
+	registerPanel( componentPropertiesPanel );
 
-	registerElementType( TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
+	registerElementType( COMPONENT_WIDGET_TYPE, ( options: CreateTemplatedElementTypeOptions ) =>
 		createComponentType( { ...options, showLockedByModal: openEditModeDialog } )
 	);
 
@@ -54,6 +78,7 @@ export function init() {
 		id: 'components',
 		label: __( 'Components', 'elementor' ),
 		component: Components,
+		position: 1,
 	} );
 
 	injectIntoTop( {
@@ -71,15 +96,57 @@ export function init() {
 		component: EditComponent,
 	} );
 
-	listenTo( commandStartEvent( 'editor/documents/attach-preview' ), () => {
+	injectIntoPanelHeaderTop( {
+		id: 'component-panel-header',
+		component: ComponentPanelHeader,
+	} );
+
+	registerDataHook( 'after', 'editor/documents/attach-preview', async () => {
 		const { id, config } = getV1CurrentDocument();
 
 		if ( id ) {
 			removeComponentStyles( id );
 		}
 
-		loadComponentsStyles( ( config?.elements as V1ElementData[] ) ?? [] );
+		await loadComponentsAssets( ( config?.elements as V1ElementData[] ) ?? [] );
 	} );
 
-	settingsTransformersRegistry.register( 'component-id', componentIdTransformer );
+	registerFieldIndicator( {
+		fieldType: FIELD_TYPE.SETTINGS,
+		id: 'component-overridable-prop',
+		priority: 1,
+		indicator: OverridablePropIndicator,
+	} );
+
+	registerControlReplacement( {
+		id: OVERRIDABLE_PROP_REPLACEMENT_ID,
+		component: OverridablePropControl,
+		condition: ( { value } ) => componentOverridablePropTypeUtil.isValid( value ),
+	} );
+
+	registerEditingPanelReplacement( {
+		id: 'component-instance-edit-panel',
+		condition: ( _, elementType ) => elementType.key === 'e-component',
+		component: InstanceEditingPanel,
+	} );
+
+	settingsTransformersRegistry.register( 'component-instance', componentInstanceTransformer );
+	settingsTransformersRegistry.register( 'overridable', componentOverridableTransformer );
+	settingsTransformersRegistry.register( 'override', componentOverrideTransformer );
+
+	initRegenerateOverrideKeys();
+
+	initCleanupOverridablePropsOnDelete();
+
+	initMcp();
+
+	initCircularNestingPrevention();
+
+	initNonAtomicNestingPrevention();
+
+	initLoadComponentDataAfterInstanceAdded();
+
+	initHandleComponentEditModeContainer();
+
+	initRevertOverridablesOnCopyOrDuplicate();
 }

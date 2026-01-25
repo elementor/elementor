@@ -15,53 +15,58 @@ type ReplaceElementArgs = {
 	withHistory?: boolean;
 };
 
-export const replaceElement = ( { currentElement, newElement, withHistory = true }: ReplaceElementArgs ) => {
-	const { containerId, index } = getNewElementLocation( currentElement, newElement );
+export const replaceElement = async ( { currentElement, newElement, withHistory = true }: ReplaceElementArgs ) => {
+	const { containerId, index } = getNewElementContainer( currentElement, newElement );
 
-	createElement( {
+	const newElementInstance = createElement( {
 		containerId,
 		model: newElement,
 		options: { at: index, useHistory: withHistory },
 	} );
 
-	deleteElement( { elementId: currentElement.id, options: { useHistory: withHistory } } );
+	await deleteElement( { elementId: currentElement.id, options: { useHistory: withHistory } } );
+
+	return newElementInstance;
 };
 
-function getNewElementLocation(
+function getNewElementContainer(
 	currentElement: V1ElementData,
 	newElement: Omit< V1ElementModelProps, 'id' >
 ): ElementLocation {
-	let location: ElementLocation;
-
 	const currentElementContainer = getContainer( currentElement.id );
+
 	if ( ! currentElementContainer ) {
 		throw new ElementNotFoundError( { context: { elementId: currentElement.id } } );
 	}
 
-	const parent = currentElementContainer.parent;
+	const { parent } = currentElementContainer;
+
 	if ( ! parent ) {
 		throw new ElementParentNotFoundError( { context: { elementId: currentElement.id } } );
 	}
 
 	const elementIndex = currentElementContainer.view?._index ?? 0;
-	if ( elementIndex === undefined || elementIndex === -1 ) {
+
+	if ( elementIndex === -1 ) {
 		throw new ElementIndexNotFoundError( { context: { elementId: currentElement.id } } );
 	}
 
-	location = { containerId: parent.id, index: elementIndex };
+	let container = { containerId: parent.id, index: elementIndex };
 
 	// If the element is at document top level and is a widget, wrap it with an empty container
 	if ( parent.id === 'document' && newElement.elType === 'widget' ) {
-		location = createWrapperForWidget( parent.id, elementIndex );
+		container = createWrapperForWidget( parent.id, elementIndex );
 	}
 
-	return location;
+	return container;
 }
+
+const DEFAULT_CONTAINER_TYPE = 'e-flexbox';
 
 function createWrapperForWidget( parentId: string, elementIndex: number ): ElementLocation {
 	const container = createElement( {
 		containerId: parentId,
-		model: { elType: 'container' },
+		model: { elType: DEFAULT_CONTAINER_TYPE },
 		options: { at: elementIndex, useHistory: false },
 	} );
 

@@ -3,6 +3,7 @@ import { type MCPRegistryEntry, ResourceTemplate } from '@elementor/editor-mcp';
 import {
 	type ArrayPropType,
 	type ObjectPropType,
+	type Props,
 	type PropType,
 	Schema,
 	type TransformablePropType,
@@ -12,15 +13,32 @@ import { getStylesSchema } from '@elementor/editor-styles';
 
 export const WIDGET_SCHEMA_URI = 'elementor://widgets/schema/{widgetType}';
 export const STYLE_SCHEMA_URI = 'elementor://styles/schema/{category}';
+export const BEST_PRACTICES_URI = 'elementor://styles/best-practices';
 
 export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 	const { mcpServer } = reg;
+
+	mcpServer.resource( 'styles-best-practices', BEST_PRACTICES_URI, async () => {
+		return {
+			contents: [
+				{
+					uri: BEST_PRACTICES_URI,
+					text: `# Styling best practices
+Prefer using "em" and "rem" values for text-related sizes, padding and spacing. Use percentages for dynamic sizing relative to parent containers.
+This flexboxes are by default "flex" with "stretch" alignment. To ensure proper layout, define the "justify-content" and "align-items" as in the schema.
+
+When applicable for styles, apply style PropValues using the ${ STYLE_SCHEMA_URI }.
+The css string must follow standard CSS syntax, with properties and values separated by semicolons, no selectors, or nesting rules allowed.`,
+				},
+			],
+		};
+	} );
 
 	mcpServer.resource(
 		'styles-schema',
 		new ResourceTemplate( STYLE_SCHEMA_URI, {
 			list: () => {
-				const categories = [ ...Object.keys( getStylesSchema() ), 'custom_css' ];
+				const categories = [ ...Object.keys( getStylesSchema() ) ].filter( ( category ) => category !== 'all' );
 				return {
 					resources: categories.map( ( category ) => ( {
 						uri: `elementor://styles/schema/${ category }`,
@@ -34,27 +52,19 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 		},
 		async ( uri, variables ) => {
 			const category = typeof variables.category === 'string' ? variables.category : variables.category?.[ 0 ];
-			if ( category === 'custom_css' ) {
-				return {
-					contents: [
-						{
-							uri: uri.toString(),
-							text: 'Free style inline CSS string of properties and their values. Applicable for a single element, only the properties and values are accepted.',
-						},
-					],
-				};
-			}
 			const stylesSchema = getStylesSchema()[ category ];
 			if ( ! stylesSchema ) {
 				throw new Error( `No styles schema found for category: ${ category }` );
 			}
-			const cleanedupPropSchema = cleanupPropType( stylesSchema );
-			const asJson = Schema.propTypeToJsonSchema( cleanedupPropSchema as PropType );
+			const asJson = Schema.propTypeToJsonSchema( stylesSchema as PropType );
 			return {
 				contents: [
 					{
 						uri: uri.toString(),
-						text: JSON.stringify( asJson ),
+						mimeType: 'application/json',
+						text: JSON.stringify(
+							Schema.enrichWithIntention( asJson, 'Desired CSS in format "property: value;"' )
+						),
 					},
 				],
 			};
@@ -67,7 +77,8 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 			list: () => {
 				const cache = getWidgetsCache() || {};
 				const availableWidgets = Object.keys( cache || {} ).filter(
-					( widgetType ) => cache[ widgetType ]?.atomic_props_schema
+					( widgetType ) =>
+						cache[ widgetType ]?.atomic_props_schema && cache[ widgetType ].meta?.llm_support !== false
 				);
 				return {
 					resources: availableWidgets.map( ( widgetType ) => ( {
@@ -83,25 +94,58 @@ export const initWidgetsSchemaResource = ( reg: MCPRegistryEntry ) => {
 		async ( uri, variables ) => {
 			const widgetType =
 				typeof variables.widgetType === 'string' ? variables.widgetType : variables.widgetType?.[ 0 ];
-			const propSchema = getWidgetsCache()?.[ widgetType ]?.atomic_props_schema;
-			if ( ! propSchema ) {
+			const widgetData = getWidgetsCache()?.[ widgetType ];
+			const propSchema = widgetData?.atomic_props_schema;
+			if ( ! propSchema || ! widgetData ) {
 				throw new Error( `No prop schema found for element type: ${ widgetType }` );
 			}
-			const cleanedupPropSchema = cleanupPropSchema( propSchema );
 			const asJson = Object.fromEntries(
-				Object.entries( cleanedupPropSchema ).map( ( [ key, propType ] ) => [
+				Object.entries( propSchema ).map( ( [ key, propType ] ) => [
 					key,
 					Schema.propTypeToJsonSchema( propType ),
 				] )
 			);
-			delete asJson.classes;
-			delete asJson._cssid;
-			delete asJson.attributes;
+			Schema.nonConfigurablePropKeys.forEach( ( key ) => {
+				// eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+				delete asJson[ key ];
+			} );
+
+			const description =
+				typeof widgetData?.meta?.description === 'string' ? widgetData.meta.description : undefined;
+
+			const defaultStyles: Record< string, Props > = {};
+			const baseStyleSchema = widgetData?.base_styles;
+			if ( baseStyleSchema ) {
+				Object.values( baseStyleSchema ).forEach( ( stylePropType ) => {
+					stylePropType.variants.forEach( ( variant ) => {
+						Object.assign( defaultStyles, variant.props );
+					} );
+				} );
+			}
+
+			// build llm instructions
+			const hasDefaultStyles = Object.keys( defaultStyles ).length > 0;
+			const llmGuidance: Record< string, unknown > = {
+				can_have_children: !! widgetData?.meta?.is_container,
+			};
+
+			if ( hasDefaultStyles ) {
+				llmGuidance.instructions =
+					'These are the default styles applied to the widget. Override only when necessary.';
+				llmGuidance.default_styles = defaultStyles;
+			}
+
 			return {
 				contents: [
 					{
 						uri: uri.toString(),
-						text: JSON.stringify( asJson ),
+						mimeType: 'application/json',
+						text: JSON.stringify( {
+							type: 'object',
+							properties: asJson,
+							description,
+							llm_guidance: llmGuidance,
+						} ),
 					},
 				],
 			};

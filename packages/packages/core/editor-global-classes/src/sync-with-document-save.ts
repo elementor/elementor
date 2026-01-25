@@ -26,19 +26,21 @@ function syncDirtyState() {
 }
 
 function bindSaveAction( panelActions?: { open: () => void } ) {
-	registerDataHook( 'after', 'document/save/save', ( args ) => {
+	registerDataHook( 'dependency', 'document/save/save', ( args ) => {
 		const user = getCurrentUser();
 
 		const canEdit = user?.capabilities.includes( UPDATE_CLASS_CAPABILITY_KEY );
 
 		if ( ! canEdit ) {
-			return;
+			return true;
 		}
 
 		saveGlobalClasses( {
 			context: args.status === 'publish' ? 'frontend' : 'preview',
 			onApprove: panelActions?.open,
 		} );
+
+		return true;
 	} );
 }
 

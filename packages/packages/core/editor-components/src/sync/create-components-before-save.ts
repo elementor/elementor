@@ -1,16 +1,16 @@
 import { updateElementSettings, type V1ElementData } from '@elementor/editor-elements';
-import { type TransformablePropValue } from '@elementor/editor-props';
 import { __dispatch as dispatch, __getState as getState } from '@elementor/store';
 
 import { apiClient } from '../api';
+import { type ComponentInstanceProp } from '../prop-types/component-instance-prop-type';
 import { selectUnpublishedComponents, slice } from '../store/store';
-import { type Container, type DocumentSaveStatus, type UnpublishedComponent } from '../types';
+import { type DocumentSaveStatus, type UnpublishedComponent } from '../types';
 
 export async function createComponentsBeforeSave( {
-	container,
+	elements,
 	status,
 }: {
-	container: Container;
+	elements: V1ElementData[];
 	status: DocumentSaveStatus;
 } ) {
 	const unpublishedComponents = selectUnpublishedComponents( getState() );
@@ -22,7 +22,6 @@ export async function createComponentsBeforeSave( {
 	try {
 		const uidToComponentId = await createComponents( unpublishedComponents, status );
 
-		const elements = container.model.get( 'elements' ).toJSON();
 		updateComponentInstances( elements, uidToComponentId );
 
 		dispatch(
@@ -31,12 +30,16 @@ export async function createComponentsBeforeSave( {
 					id: uidToComponentId.get( component.uid ) as number,
 					name: component.name,
 					uid: component.uid,
+					overridableProps: component.overridableProps ? component.overridableProps : undefined,
 				} ) )
 			)
 		);
 		dispatch( slice.actions.resetUnpublished() );
 	} catch ( error ) {
-		throw new Error( `Failed to publish components and update component instances: ${ error }` );
+		const failedUids = unpublishedComponents.map( ( component ) => component.uid );
+		dispatch( slice.actions.removeUnpublished( failedUids ) );
+
+		throw new Error( `Failed to publish components: ${ error }` );
 	}
 }
 
@@ -50,6 +53,7 @@ async function createComponents(
 			uid: component.uid,
 			title: component.name,
 			elements: component.elements,
+			settings: component.overridableProps ? { overridable_props: component.overridableProps } : undefined,
 		} ) ),
 	} );
 
@@ -80,10 +84,14 @@ function shouldUpdateElement(
 	uidToComponentId: Map< string, number >
 ): { shouldUpdate: true; newComponentId: number } | { shouldUpdate: false; newComponentId: null } {
 	if ( element.widgetType === 'e-component' ) {
-		const currentComponentId = ( element.settings?.component as TransformablePropValue< 'component-id', string > )
-			?.value;
-		if ( currentComponentId && uidToComponentId.has( currentComponentId ) ) {
-			return { shouldUpdate: true, newComponentId: uidToComponentId.get( currentComponentId ) as number };
+		const currentComponentId = ( element.settings?.component_instance as ComponentInstanceProp )?.value
+			?.component_id.value;
+
+		if ( currentComponentId && uidToComponentId.has( currentComponentId.toString() ) ) {
+			return {
+				shouldUpdate: true,
+				newComponentId: uidToComponentId.get( currentComponentId.toString() ) as number,
+			};
 		}
 	}
 	return { shouldUpdate: false, newComponentId: null };
@@ -93,9 +101,11 @@ function updateElementComponentId( elementId: string, componentId: number ): voi
 	updateElementSettings( {
 		id: elementId,
 		props: {
-			component: {
-				$$type: 'component-id',
-				value: componentId,
+			component_instance: {
+				$$type: 'component-instance',
+				value: {
+					component_id: { $$type: 'number', value: componentId },
+				},
 			},
 		},
 		withHistory: false,

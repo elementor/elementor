@@ -1,1 +1,7621 @@
-!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"function"==typeof define&&define.amd?define(["exports"],e):e((t="undefined"!=typeof globalThis?globalThis:t||self).Motion={})}(this,(function(t){"use strict";const e=t=>t;let n=e;function s(t,e,n){var s;if(t instanceof Element)return[t];if("string"==typeof t){let i=document;e&&(i=e.current);const r=null!==(s=null==n?void 0:n[t])&&void 0!==s?s:i.querySelectorAll(t);return r?Array.from(r):[]}return Array.from(t)}const i=!1;function r(t,e){const n=t.indexOf(e);n>-1&&t.splice(n,1)}class o{constructor(){this.subscriptions=[]}add(t){var e,n;return e=this.subscriptions,n=t,-1===e.indexOf(n)&&e.push(n),()=>r(this.subscriptions,t)}notify(t,e,n){const s=this.subscriptions.length;if(s)if(1===s)this.subscriptions[0](t,e,n);else for(let i=0;i<s;i++){const s=this.subscriptions[i];s&&s(t,e,n)}}getSize(){return this.subscriptions.length}clear(){this.subscriptions.length=0}}function a(t,e){return e?t*(1e3/e):0}const l=!1;const u=["read","resolveKeyframes","update","preRender","render","postRender"];const{schedule:c,cancel:h,state:d,steps:p}=function(t,e){let n=!1,s=!0;const i={delta:0,timestamp:0,isProcessing:!1},r=()=>n=!0,o=u.reduce((t,e)=>(t[e]=function(t){let e=new Set,n=new Set,s=!1,i=!1;const r=new WeakSet;let o={delta:0,timestamp:0,isProcessing:!1};function a(e){r.has(e)&&(l.schedule(e),t()),e(o)}const l={schedule:(t,i=!1,o=!1)=>{const a=o&&s?e:n;return i&&r.add(t),a.has(t)||a.add(t),t},cancel:t=>{n.delete(t),r.delete(t)},process:t=>{o=t,s?i=!0:(s=!0,[e,n]=[n,e],n.clear(),e.forEach(a),s=!1,i&&(i=!1,l.process(t)))}};return l}(r),t),{}),{read:a,resolveKeyframes:l,update:c,preRender:h,render:d,postRender:p}=o,f=()=>{const r=performance.now();n=!1,i.delta=s?1e3/60:Math.max(Math.min(r-i.timestamp,40),1),i.timestamp=r,i.isProcessing=!0,a.process(i),l.process(i),c.process(i),h.process(i),d.process(i),p.process(i),i.isProcessing=!1,n&&e&&(s=!1,t(f))};return{schedule:u.reduce((e,r)=>{const a=o[r];return e[r]=(e,r=!1,o=!1)=>(n||(n=!0,s=!0,i.isProcessing||t(f)),a.schedule(e,r,o)),e},{}),cancel:t=>{for(let e=0;e<u.length;e++)o[u[e]].cancel(t)},state:i,steps:o}}("undefined"!=typeof requestAnimationFrame?requestAnimationFrame:e,!0);let f;function m(){f=void 0}const g={now:()=>(void 0===f&&g.set(d.isProcessing||l?d.timestamp:performance.now()),f),set:t=>{f=t,queueMicrotask(m)}};class y{constructor(t,e={}){this.version="11.13.5",this.canTrackVelocity=null,this.events={},this.updateAndNotify=(t,e=!0)=>{const n=g.now();this.updatedAt!==n&&this.setPrevFrameValue(),this.prev=this.current,this.setCurrent(t),this.current!==this.prev&&this.events.change&&this.events.change.notify(this.current),e&&this.events.renderRequest&&this.events.renderRequest.notify(this.current)},this.hasAnimated=!1,this.setCurrent(t),this.owner=e.owner}setCurrent(t){var e;this.current=t,this.updatedAt=g.now(),null===this.canTrackVelocity&&void 0!==t&&(this.canTrackVelocity=(e=this.current,!isNaN(parseFloat(e))))}setPrevFrameValue(t=this.current){this.prevFrameValue=t,this.prevUpdatedAt=this.updatedAt}onChange(t){return this.on("change",t)}on(t,e){this.events[t]||(this.events[t]=new o);const n=this.events[t].add(e);return"change"===t?()=>{n(),c.read(()=>{this.events.change.getSize()||this.stop()})}:n}clearListeners(){for(const t in this.events)this.events[t].clear()}attach(t,e){this.passiveEffect=t,this.stopPassiveEffect=e}set(t,e=!0){e&&this.passiveEffect?this.passiveEffect(t,this.updateAndNotify):this.updateAndNotify(t,e)}setWithVelocity(t,e,n){this.set(e),this.prev=void 0,this.prevFrameValue=t,this.prevUpdatedAt=this.updatedAt-n}jump(t,e=!0){this.updateAndNotify(t),this.prev=t,this.prevUpdatedAt=this.prevFrameValue=void 0,e&&this.stop(),this.stopPassiveEffect&&this.stopPassiveEffect()}get(){return this.current}getPrevious(){return this.prev}getVelocity(){const t=g.now();if(!this.canTrackVelocity||void 0===this.prevFrameValue||t-this.updatedAt>30)return 0;const e=Math.min(this.updatedAt-this.prevUpdatedAt,30);return a(parseFloat(this.current)-parseFloat(this.prevFrameValue),e)}start(t){return this.stop(),new Promise(e=>{this.hasAnimated=!0,this.animation=t(e),this.events.animationStart&&this.events.animationStart.notify()}).then(()=>{this.events.animationComplete&&this.events.animationComplete.notify(),this.clearAnimation()})}stop(){this.animation&&(this.animation.stop(),this.events.animationCancel&&this.events.animationCancel.notify()),this.clearAnimation()}isAnimating(){return!!this.animation}clearAnimation(){delete this.animation}destroy(){this.clearListeners(),this.stop(),this.stopPassiveEffect&&this.stopPassiveEffect()}}function v(t,e){return new y(t,e)}function w(t){let e;return()=>(void 0===e&&(e=t()),e)}const b=w(()=>void 0!==window.ScrollTimeline);class x{constructor(t){this.stop=()=>this.runAll("stop"),this.animations=t.filter(Boolean)}then(t,e){return Promise.all(this.animations).then(t).catch(e)}getAll(t){return this.animations[0][t]}setAll(t,e){for(let n=0;n<this.animations.length;n++)this.animations[n][t]=e}attachTimeline(t,e){const n=this.animations.map(n=>b()&&n.attachTimeline?n.attachTimeline(t):e(n));return()=>{n.forEach((t,e)=>{t&&t(),this.animations[e].stop()})}}get time(){return this.getAll("time")}set time(t){this.setAll("time",t)}get speed(){return this.getAll("speed")}set speed(t){this.setAll("speed",t)}get startTime(){return this.getAll("startTime")}get duration(){let t=0;for(let e=0;e<this.animations.length;e++)t=Math.max(t,this.animations[e].duration);return t}runAll(t){this.animations.forEach(e=>e[t]())}flatten(){this.runAll("flatten")}play(){this.runAll("play")}pause(){this.runAll("pause")}cancel(){this.runAll("cancel")}complete(){this.runAll("complete")}}const T=(t,e,n)=>{const s=e-t;return 0===s?1:(n-t)/s},S=(t,e,n=10)=>{let s="";const i=Math.max(Math.round(e/n),2);for(let e=0;e<i;e++)s+=t(T(0,i-1,e))+", ";return`linear(${s.substring(0,s.length-2)})`},V=t=>1e3*t,A=t=>t/1e3;function M(t,e,n){const s=Math.max(e-5,0);return a(n-t(s),e-s)}const P=(t,e,n)=>n>e?e:n<t?t:n,k=100,F=10,C=1,E=0,O=800,I=.3,R=.3,B={granular:.01,default:2},D={granular:.005,default:.5},L=.01,W=10,N=.05,K=1;function j({duration:t=O,bounce:e=I,velocity:n=E,mass:s=C}){let i,r,o=1-e;o=P(N,K,o),t=P(L,W,A(t)),o<1?(i=e=>{const s=e*o,i=s*t;return.001-(s-n)/z(e,o)*Math.exp(-i)},r=e=>{const s=e*o*t,r=s*n+n,a=Math.pow(o,2)*Math.pow(e,2)*t,l=Math.exp(-s),u=z(Math.pow(e,2),o);return(.001-i(e)>0?-1:1)*((r-a)*l)/u}):(i=e=>Math.exp(-e*t)*((e-n)*t+1)-.001,r=e=>Math.exp(-e*t)*(t*t*(n-e)));const a=function(t,e,n){let s=n;for(let n=1;n<12;n++)s-=t(s)/e(s);return s}(i,r,5/t);if(t=V(t),isNaN(a))return{stiffness:k,damping:F,duration:t};{const e=Math.pow(a,2)*s;return{stiffness:e,damping:2*o*Math.sqrt(s*e),duration:t}}}function z(t,e){return t*Math.sqrt(1-e*e)}function $(t){let e=0;let n=t.next(e);for(;!n.done&&e<2e4;)e+=50,n=t.next(e);return e>=2e4?1/0:e}const H=["duration","bounce"],U=["stiffness","damping","mass"];function Y(t,e){return e.some(e=>void 0!==t[e])}function q(t=R,e=I){const n="object"!=typeof t?{visualDuration:t,keyframes:[0,1],bounce:e}:t;let{restSpeed:s,restDelta:i}=n;const r=n.keyframes[0],o=n.keyframes[n.keyframes.length-1],a={done:!1,value:r},{stiffness:l,damping:u,mass:c,duration:h,velocity:d,isResolvedFromDuration:p}=function(t){let e={velocity:E,stiffness:k,damping:F,mass:C,isResolvedFromDuration:!1,...t};if(!Y(t,U)&&Y(t,H))if(t.visualDuration){const n=t.visualDuration,s=2*Math.PI/(1.2*n),i=s*s,r=2*P(.05,1,1-t.bounce)*Math.sqrt(i);e={...e,mass:C,stiffness:i,damping:r}}else{const n=j(t);e={...e,...n,mass:C},e.isResolvedFromDuration=!0}return e}({...n,velocity:-A(n.velocity||0)}),f=d||0,m=u/(2*Math.sqrt(l*c)),g=o-r,y=A(Math.sqrt(l/c)),v=Math.abs(g)<5;let w;if(s||(s=v?B.granular:B.default),i||(i=v?D.granular:D.default),m<1){const t=z(y,m);w=e=>{const n=Math.exp(-m*y*e);return o-n*((f+m*y*g)/t*Math.sin(t*e)+g*Math.cos(t*e))}}else if(1===m)w=t=>o-Math.exp(-y*t)*(g+(f+y*g)*t);else{const t=y*Math.sqrt(m*m-1);w=e=>{const n=Math.exp(-m*y*e),s=Math.min(t*e,300);return o-n*((f+m*y*g)*Math.sinh(s)+t*g*Math.cosh(s))/t}}const b={calculatedDuration:p&&h||null,next:t=>{const e=w(t);if(p)a.done=t>=h;else{let n=0;m<1&&(n=0===t?V(f):M(w,t,e));const r=Math.abs(n)<=s,l=Math.abs(o-e)<=i;a.done=r&&l}return a.value=a.done?o:e,a},toString:()=>{const t=Math.min($(b),2e4),e=S(e=>b.next(t*e).value,t,30);return t+"ms "+e}};return b}function X(t,e=100,n){const s=n({...t,keyframes:[0,e]}),i=Math.min($(s),2e4);return{type:"keyframes",ease:t=>s.next(i*t).value/e,duration:A(i)}}const G=(t,e,n)=>t+(e-t)*n;function Z(t,e){const n=t[t.length-1];for(let s=1;s<=e;s++){const i=T(0,e,s);t.push(G(n,1,i))}}function _(t){const e=[0];return Z(e,t.length-1),e}const J=t=>Boolean(t&&t.getVelocity);function Q(t){return"object"==typeof t&&!Array.isArray(t)}function tt(t,e,n,i){return"string"==typeof t&&Q(e)?s(t,n,i):t instanceof NodeList?Array.from(t):Array.isArray(t)?t:[t]}function et(t){return"function"==typeof t}function nt(t,e,n,s){var i;return"number"==typeof e?e:e.startsWith("-")||e.startsWith("+")?Math.max(0,t+parseFloat(e)):"<"===e?n:null!==(i=s.get(e))&&void 0!==i?i:t}const st=(t,e,n)=>{const s=e-t;return((n-t)%s+s)%s+t},it=t=>Array.isArray(t)&&"number"!=typeof t[0];function rt(t,e){return it(t)?t[st(0,t.length,e)]:t}function ot(t,e,n,s,i,o){!function(t,e,n){for(let s=0;s<t.length;s++){const i=t[s];i.at>e&&i.at<n&&(r(t,i),s--)}}(t,i,o);for(let r=0;r<e.length;r++)t.push({value:e[r],at:G(i,o,s[r]),easing:rt(n,r)})}function at(t,e){return t.at===e.at?null===t.value?1:null===e.value?-1:0:t.at-e.at}function lt(t,e){return!e.has(t)&&e.set(t,{}),e.get(t)}function ut(t,e){return e[t]||(e[t]=[]),e[t]}function ct(t){return Array.isArray(t)?t:[t]}function ht(t,e){return t&&t[e]?{...t,...t[e]}:{...t}}const dt=t=>"number"==typeof t,pt=t=>t.every(dt),ft=new WeakMap,mt=["transformPerspective","x","y","z","translateX","translateY","translateZ","scale","scaleX","scaleY","rotate","rotateX","rotateY","rotateZ","skew","skewX","skewY"],gt=new Set(mt),yt={type:"spring",stiffness:500,damping:25,restSpeed:10},vt={type:"keyframes",duration:.8},wt={type:"keyframes",ease:[.25,.1,.35,1],duration:.3},bt=(t,{keyframes:e})=>e.length>2?vt:gt.has(t)?t.startsWith("scale")?{type:"spring",stiffness:550,damping:0===e[1]?2*Math.sqrt(550):30,restSpeed:10}:yt:wt;function xt(t,e){return t?t[e]||t.default||t:void 0}const Tt=t=>null!==t;function St(t,{repeat:e,repeatType:n="loop"},s){const i=t.filter(Tt),r=e&&"loop"!==n&&e%2==1?0:i.length-1;return r&&void 0!==s?s:i[r]}const Vt=(t,e,n)=>(((1-3*n+3*e)*t+(3*n-6*e))*t+3*e)*t;function At(t,n,s,i){if(t===n&&s===i)return e;const r=e=>function(t,e,n,s,i){let r,o,a=0;do{o=e+(n-e)/2,r=Vt(o,s,i)-t,r>0?n=o:e=o}while(Math.abs(r)>1e-7&&++a<12);return o}(e,0,1,t,s);return t=>0===t||1===t?t:Vt(r(t),n,i)}const Mt=t=>e=>e<=.5?t(2*e)/2:(2-t(2*(1-e)))/2,Pt=t=>e=>1-t(1-e),kt=At(.33,1.53,.69,.99),Ft=Pt(kt),Ct=Mt(Ft),Et=t=>(t*=2)<1?.5*Ft(t):.5*(2-Math.pow(2,-10*(t-1))),Ot=t=>1-Math.sin(Math.acos(t)),It=Pt(Ot),Rt=Mt(Ot),Bt=t=>/^0[^.\s]+$/u.test(t);const Dt=t=>/^-?(?:\d+(?:\.\d+)?|\.\d+)$/u.test(t),Lt=t=>e=>"string"==typeof e&&e.startsWith(t),Wt=Lt("--"),Nt=Lt("var(--"),Kt=t=>!!Nt(t)&&jt.test(t.split("/*")[0].trim()),jt=/var\(--(?:[\w-]+\s*|[\w-]+\s*,(?:\s*[^)(\s]|\s*\((?:[^)(]|\([^)(]*\))*\))+\s*)\)$/iu,zt=/^var\(--(?:([\w-]+)|([\w-]+), ?([a-zA-Z\d ()%#.,-]+))\)/u;function $t(t,e,n=1){const[s,i]=function(t){const e=zt.exec(t);if(!e)return[,];const[,n,s,i]=e;return["--"+(null!=n?n:s),i]}(t);if(!s)return;const r=window.getComputedStyle(e).getPropertyValue(s);if(r){const t=r.trim();return Dt(t)?parseFloat(t):t}return Kt(i)?$t(i,e,n+1):i}const Ht={test:t=>"number"==typeof t,parse:parseFloat,transform:t=>t},Ut={...Ht,transform:t=>P(0,1,t)},Yt={...Ht,default:1},qt=t=>({test:e=>"string"==typeof e&&e.endsWith(t)&&1===e.split(" ").length,parse:parseFloat,transform:e=>`${e}${t}`}),Xt=qt("deg"),Gt=qt("%"),Zt=qt("px"),_t=qt("vh"),Jt=qt("vw"),Qt={...Gt,parse:t=>Gt.parse(t)/100,transform:t=>Gt.transform(100*t)},te=new Set(["width","height","top","left","right","bottom","x","y","translateX","translateY"]),ee=t=>t===Ht||t===Zt,ne=(t,e)=>parseFloat(t.split(", ")[e]),se=(t,e)=>(n,{transform:s})=>{if("none"===s||!s)return 0;const i=s.match(/^matrix3d\((.+)\)$/u);if(i)return ne(i[1],e);{const e=s.match(/^matrix\((.+)\)$/u);return e?ne(e[1],t):0}},ie=new Set(["x","y","z"]),re=mt.filter(t=>!ie.has(t));const oe={width:({x:t},{paddingLeft:e="0",paddingRight:n="0"})=>t.max-t.min-parseFloat(e)-parseFloat(n),height:({y:t},{paddingTop:e="0",paddingBottom:n="0"})=>t.max-t.min-parseFloat(e)-parseFloat(n),top:(t,{top:e})=>parseFloat(e),left:(t,{left:e})=>parseFloat(e),bottom:({y:t},{top:e})=>parseFloat(e)+(t.max-t.min),right:({x:t},{left:e})=>parseFloat(e)+(t.max-t.min),x:se(4,13),y:se(5,14)};oe.translateX=oe.x,oe.translateY=oe.y;const ae=t=>e=>e.test(t),le=[Ht,Zt,Gt,Xt,Jt,_t,{test:t=>"auto"===t,parse:t=>t}],ue=t=>le.find(ae(t)),ce=new Set;let he=!1,de=!1;function pe(){if(de){const t=Array.from(ce).filter(t=>t.needsMeasurement),e=new Set(t.map(t=>t.element)),n=new Map;e.forEach(t=>{const e=function(t){const e=[];return re.forEach(n=>{const s=t.getValue(n);void 0!==s&&(e.push([n,s.get()]),s.set(n.startsWith("scale")?1:0))}),e}(t);e.length&&(n.set(t,e),t.render())}),t.forEach(t=>t.measureInitialState()),e.forEach(t=>{t.render();const e=n.get(t);e&&e.forEach(([e,n])=>{var s;null===(s=t.getValue(e))||void 0===s||s.set(n)})}),t.forEach(t=>t.measureEndState()),t.forEach(t=>{void 0!==t.suspendedScrollY&&window.scrollTo(0,t.suspendedScrollY)})}de=!1,he=!1,ce.forEach(t=>t.complete()),ce.clear()}function fe(){ce.forEach(t=>{t.readKeyframes(),t.needsMeasurement&&(de=!0)})}class me{constructor(t,e,n,s,i,r=!1){this.isComplete=!1,this.isAsync=!1,this.needsMeasurement=!1,this.isScheduled=!1,this.unresolvedKeyframes=[...t],this.onComplete=e,this.name=n,this.motionValue=s,this.element=i,this.isAsync=r}scheduleResolve(){this.isScheduled=!0,this.isAsync?(ce.add(this),he||(he=!0,c.read(fe),c.resolveKeyframes(pe))):(this.readKeyframes(),this.complete())}readKeyframes(){const{unresolvedKeyframes:t,name:e,element:n,motionValue:s}=this;for(let i=0;i<t.length;i++)if(null===t[i])if(0===i){const i=null==s?void 0:s.get(),r=t[t.length-1];if(void 0!==i)t[0]=i;else if(n&&e){const s=n.readValue(e,r);null!=s&&(t[0]=s)}void 0===t[0]&&(t[0]=r),s&&void 0===i&&s.set(t[0])}else t[i]=t[i-1]}setFinalKeyframe(){}measureInitialState(){}renderEndStyles(){}measureEndState(){}complete(){this.isComplete=!0,this.onComplete(this.unresolvedKeyframes,this.finalKeyframe),ce.delete(this)}cancel(){this.isComplete||(this.isScheduled=!1,ce.delete(this))}resume(){this.isComplete||this.scheduleResolve()}}const ge=t=>Math.round(1e5*t)/1e5,ye=/-?(?:\d+(?:\.\d+)?|\.\d+)/gu;const ve=/^(?:#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\))$/iu,we=(t,e)=>n=>Boolean("string"==typeof n&&ve.test(n)&&n.startsWith(t)||e&&!function(t){return null==t}(n)&&Object.prototype.hasOwnProperty.call(n,e)),be=(t,e,n)=>s=>{if("string"!=typeof s)return s;const[i,r,o,a]=s.match(ye);return{[t]:parseFloat(i),[e]:parseFloat(r),[n]:parseFloat(o),alpha:void 0!==a?parseFloat(a):1}},xe={...Ht,transform:t=>Math.round((t=>P(0,255,t))(t))},Te={test:we("rgb","red"),parse:be("red","green","blue"),transform:({red:t,green:e,blue:n,alpha:s=1})=>"rgba("+xe.transform(t)+", "+xe.transform(e)+", "+xe.transform(n)+", "+ge(Ut.transform(s))+")"};const Se={test:we("#"),parse:function(t){let e="",n="",s="",i="";return t.length>5?(e=t.substring(1,3),n=t.substring(3,5),s=t.substring(5,7),i=t.substring(7,9)):(e=t.substring(1,2),n=t.substring(2,3),s=t.substring(3,4),i=t.substring(4,5),e+=e,n+=n,s+=s,i+=i),{red:parseInt(e,16),green:parseInt(n,16),blue:parseInt(s,16),alpha:i?parseInt(i,16)/255:1}},transform:Te.transform},Ve={test:we("hsl","hue"),parse:be("hue","saturation","lightness"),transform:({hue:t,saturation:e,lightness:n,alpha:s=1})=>"hsla("+Math.round(t)+", "+Gt.transform(ge(e))+", "+Gt.transform(ge(n))+", "+ge(Ut.transform(s))+")"},Ae={test:t=>Te.test(t)||Se.test(t)||Ve.test(t),parse:t=>Te.test(t)?Te.parse(t):Ve.test(t)?Ve.parse(t):Se.parse(t),transform:t=>"string"==typeof t?t:t.hasOwnProperty("red")?Te.transform(t):Ve.transform(t)},Me=/(?:#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\))/giu;const Pe=/var\s*\(\s*--(?:[\w-]+\s*|[\w-]+\s*,(?:\s*[^)(\s]|\s*\((?:[^)(]|\([^)(]*\))*\))+\s*)\)|#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\)|-?(?:\d+(?:\.\d+)?|\.\d+)/giu;function ke(t){const e=t.toString(),n=[],s={color:[],number:[],var:[]},i=[];let r=0;const o=e.replace(Pe,t=>(Ae.test(t)?(s.color.push(r),i.push("color"),n.push(Ae.parse(t))):t.startsWith("var(")?(s.var.push(r),i.push("var"),n.push(t)):(s.number.push(r),i.push("number"),n.push(parseFloat(t))),++r,"${}")).split("${}");return{values:n,split:o,indexes:s,types:i}}function Fe(t){return ke(t).values}function Ce(t){const{split:e,types:n}=ke(t),s=e.length;return t=>{let i="";for(let r=0;r<s;r++)if(i+=e[r],void 0!==t[r]){const e=n[r];i+="number"===e?ge(t[r]):"color"===e?Ae.transform(t[r]):t[r]}return i}}const Ee=t=>"number"==typeof t?0:t;const Oe={test:function(t){var e,n;return isNaN(t)&&"string"==typeof t&&((null===(e=t.match(ye))||void 0===e?void 0:e.length)||0)+((null===(n=t.match(Me))||void 0===n?void 0:n.length)||0)>0},parse:Fe,createTransformer:Ce,getAnimatableNone:function(t){const e=Fe(t);return Ce(t)(e.map(Ee))}},Ie=new Set(["brightness","contrast","saturate","opacity"]);function Re(t){const[e,n]=t.slice(0,-1).split("(");if("drop-shadow"===e)return t;const[s]=n.match(ye)||[];if(!s)return t;const i=n.replace(s,"");let r=Ie.has(e)?1:0;return s!==n&&(r*=100),e+"("+r+i+")"}const Be=/\b([a-z-]*)\(.*?\)/gu,De={...Oe,getAnimatableNone:t=>{const e=t.match(Be);return e?e.map(Re).join(" "):t}},Le={borderWidth:Zt,borderTopWidth:Zt,borderRightWidth:Zt,borderBottomWidth:Zt,borderLeftWidth:Zt,borderRadius:Zt,radius:Zt,borderTopLeftRadius:Zt,borderTopRightRadius:Zt,borderBottomRightRadius:Zt,borderBottomLeftRadius:Zt,width:Zt,maxWidth:Zt,height:Zt,maxHeight:Zt,top:Zt,right:Zt,bottom:Zt,left:Zt,padding:Zt,paddingTop:Zt,paddingRight:Zt,paddingBottom:Zt,paddingLeft:Zt,margin:Zt,marginTop:Zt,marginRight:Zt,marginBottom:Zt,marginLeft:Zt,backgroundPositionX:Zt,backgroundPositionY:Zt},We={rotate:Xt,rotateX:Xt,rotateY:Xt,rotateZ:Xt,scale:Yt,scaleX:Yt,scaleY:Yt,scaleZ:Yt,skew:Xt,skewX:Xt,skewY:Xt,distance:Zt,translateX:Zt,translateY:Zt,translateZ:Zt,x:Zt,y:Zt,z:Zt,perspective:Zt,transformPerspective:Zt,opacity:Ut,originX:Qt,originY:Qt,originZ:Zt},Ne={...Ht,transform:Math.round},Ke={...Le,...We,zIndex:Ne,size:Zt,fillOpacity:Ut,strokeOpacity:Ut,numOctaves:Ne},je={...Ke,color:Ae,backgroundColor:Ae,outlineColor:Ae,fill:Ae,stroke:Ae,borderColor:Ae,borderTopColor:Ae,borderRightColor:Ae,borderBottomColor:Ae,borderLeftColor:Ae,filter:De,WebkitFilter:De},ze=t=>je[t];function $e(t,e){let n=ze(t);return n!==De&&(n=Oe),n.getAnimatableNone?n.getAnimatableNone(e):void 0}const He=new Set(["auto","none","0"]);class Ue extends me{constructor(t,e,n,s,i){super(t,e,n,s,i,!0)}readKeyframes(){const{unresolvedKeyframes:t,element:e,name:n}=this;if(!e||!e.current)return;super.readKeyframes();for(let n=0;n<t.length;n++){let s=t[n];if("string"==typeof s&&(s=s.trim(),Kt(s))){const i=$t(s,e.current);void 0!==i&&(t[n]=i),n===t.length-1&&(this.finalKeyframe=s)}}if(this.resolveNoneKeyframes(),!te.has(n)||2!==t.length)return;const[s,i]=t,r=ue(s),o=ue(i);if(r!==o)if(ee(r)&&ee(o))for(let e=0;e<t.length;e++){const n=t[e];"string"==typeof n&&(t[e]=parseFloat(n))}else this.needsMeasurement=!0}resolveNoneKeyframes(){const{unresolvedKeyframes:t,name:e}=this,n=[];for(let e=0;e<t.length;e++)("number"==typeof(s=t[e])?0===s:null===s||"none"===s||"0"===s||Bt(s))&&n.push(e);var s;n.length&&function(t,e,n){let s=0,i=void 0;for(;s<t.length&&!i;){const e=t[s];"string"==typeof e&&!He.has(e)&&ke(e).values.length&&(i=t[s]),s++}if(i&&n)for(const s of e)t[s]=$e(n,i)}(t,n,e)}measureInitialState(){const{element:t,unresolvedKeyframes:e,name:n}=this;if(!t||!t.current)return;"height"===n&&(this.suspendedScrollY=window.pageYOffset),this.measuredOrigin=oe[n](t.measureViewportBox(),window.getComputedStyle(t.current)),e[0]=this.measuredOrigin;const s=e[e.length-1];void 0!==s&&t.getValue(n,s).jump(s,!1)}measureEndState(){var t;const{element:e,name:n,unresolvedKeyframes:s}=this;if(!e||!e.current)return;const i=e.getValue(n);i&&i.jump(this.measuredOrigin,!1);const r=s.length-1,o=s[r];s[r]=oe[n](e.measureViewportBox(),window.getComputedStyle(e.current)),null!==o&&void 0===this.finalKeyframe&&(this.finalKeyframe=o),(null===(t=this.removedTransforms)||void 0===t?void 0:t.length)&&this.removedTransforms.forEach(([t,n])=>{e.getValue(t).set(n)}),this.resolveNoneKeyframes()}}const Ye=(t,e)=>"zIndex"!==e&&(!("number"!=typeof t&&!Array.isArray(t))||!("string"!=typeof t||!Oe.test(t)&&"0"!==t||t.startsWith("url(")));function qe(t,e,n,s){const i=t[0];if(null===i)return!1;if("display"===e||"visibility"===e)return!0;const r=t[t.length-1],o=Ye(i,e),a=Ye(r,e);return!(!o||!a)&&(function(t){const e=t[0];if(1===t.length)return!0;for(let n=0;n<t.length;n++)if(t[n]!==e)return!0}(t)||("spring"===n||et(n))&&s)}class Xe{constructor({autoplay:t=!0,delay:e=0,type:n="keyframes",repeat:s=0,repeatDelay:i=0,repeatType:r="loop",...o}){this.isStopped=!1,this.hasAttemptedResolve=!1,this.createdAt=g.now(),this.options={autoplay:t,delay:e,type:n,repeat:s,repeatDelay:i,repeatType:r,...o},this.updateFinishedPromise()}calcStartTime(){return this.resolvedAt&&this.resolvedAt-this.createdAt>40?this.resolvedAt:this.createdAt}get resolved(){return this._resolved||this.hasAttemptedResolve||(fe(),pe()),this._resolved}onKeyframesResolved(t,e){this.resolvedAt=g.now(),this.hasAttemptedResolve=!0;const{name:n,type:s,velocity:i,delay:r,onComplete:o,onUpdate:a,isGenerator:l}=this.options;if(!l&&!qe(t,n,s,i)){if(!r)return null==a||a(St(t,this.options,e)),null==o||o(),void this.resolveFinishedPromise();this.options.duration=0}const u=this.initPlayback(t,e);!1!==u&&(this._resolved={keyframes:t,finalKeyframe:e,...u},this.onPostResolved())}onPostResolved(){}then(t,e){return this.currentFinishedPromise.then(t,e)}flatten(){this.options.type="keyframes",this.options.ease="linear"}updateFinishedPromise(){this.currentFinishedPromise=new Promise(t=>{this.resolveFinishedPromise=t})}}function Ge({keyframes:t,velocity:e=0,power:n=.8,timeConstant:s=325,bounceDamping:i=10,bounceStiffness:r=500,modifyTarget:o,min:a,max:l,restDelta:u=.5,restSpeed:c}){const h=t[0],d={done:!1,value:h},p=t=>void 0===a?l:void 0===l||Math.abs(a-t)<Math.abs(l-t)?a:l;let f=n*e;const m=h+f,g=void 0===o?m:o(m);g!==m&&(f=g-h);const y=t=>-f*Math.exp(-t/s),v=t=>g+y(t),w=t=>{const e=y(t),n=v(t);d.done=Math.abs(e)<=u,d.value=d.done?g:n};let b,x;const T=t=>{var e;(e=d.value,void 0!==a&&e<a||void 0!==l&&e>l)&&(b=t,x=q({keyframes:[d.value,p(d.value)],velocity:M(v,t,d.value),damping:i,stiffness:r,restDelta:u,restSpeed:c}))};return T(0),{calculatedDuration:null,next:t=>{let e=!1;return x||void 0!==b||(e=!0,w(t),T(t)),void 0!==b&&t>=b?x.next(t-b):(!e&&w(t),d)}}}const Ze=At(.42,0,1,1),_e=At(0,0,.58,1),Je=At(.42,0,.58,1),Qe=t=>Array.isArray(t)&&"number"==typeof t[0],tn={linear:e,easeIn:Ze,easeInOut:Je,easeOut:_e,circIn:Ot,circInOut:Rt,circOut:It,backIn:Ft,backInOut:Ct,backOut:kt,anticipate:Et},en=t=>{if(Qe(t)){n(4===t.length);const[e,s,i,r]=t;return At(e,s,i,r)}return"string"==typeof t?tn[t]:t},nn=(t,e)=>n=>e(t(n)),sn=(...t)=>t.reduce(nn);function rn(t,e,n){return n<0&&(n+=1),n>1&&(n-=1),n<1/6?t+6*(e-t)*n:n<.5?e:n<2/3?t+(e-t)*(2/3-n)*6:t}function on(t,e){return n=>n>0?e:t}const an=(t,e,n)=>{const s=t*t,i=n*(e*e-s)+s;return i<0?0:Math.sqrt(i)},ln=[Se,Te,Ve];function un(t){const e=(n=t,ln.find(t=>t.test(n)));var n;if(!Boolean(e))return!1;let s=e.parse(t);return e===Ve&&(s=function({hue:t,saturation:e,lightness:n,alpha:s}){t/=360,n/=100;let i=0,r=0,o=0;if(e/=100){const s=n<.5?n*(1+e):n+e-n*e,a=2*n-s;i=rn(a,s,t+1/3),r=rn(a,s,t),o=rn(a,s,t-1/3)}else i=r=o=n;return{red:Math.round(255*i),green:Math.round(255*r),blue:Math.round(255*o),alpha:s}}(s)),s}const cn=(t,e)=>{const n=un(t),s=un(e);if(!n||!s)return on(t,e);const i={...n};return t=>(i.red=an(n.red,s.red,t),i.green=an(n.green,s.green,t),i.blue=an(n.blue,s.blue,t),i.alpha=G(n.alpha,s.alpha,t),Te.transform(i))},hn=new Set(["none","hidden"]);function dn(t,e){return n=>G(t,e,n)}function pn(t){return"number"==typeof t?dn:"string"==typeof t?Kt(t)?on:Ae.test(t)?cn:gn:Array.isArray(t)?fn:"object"==typeof t?Ae.test(t)?cn:mn:on}function fn(t,e){const n=[...t],s=n.length,i=t.map((t,n)=>pn(t)(t,e[n]));return t=>{for(let e=0;e<s;e++)n[e]=i[e](t);return n}}function mn(t,e){const n={...t,...e},s={};for(const i in n)void 0!==t[i]&&void 0!==e[i]&&(s[i]=pn(t[i])(t[i],e[i]));return t=>{for(const e in s)n[e]=s[e](t);return n}}const gn=(t,e)=>{const n=Oe.createTransformer(e),s=ke(t),i=ke(e);return s.indexes.var.length===i.indexes.var.length&&s.indexes.color.length===i.indexes.color.length&&s.indexes.number.length>=i.indexes.number.length?hn.has(t)&&!i.values.length||hn.has(e)&&!s.values.length?function(t,e){return hn.has(t)?n=>n<=0?t:e:n=>n>=1?e:t}(t,e):sn(fn(function(t,e){var n;const s=[],i={color:0,var:0,number:0};for(let r=0;r<e.values.length;r++){const o=e.types[r],a=t.indexes[o][i[o]],l=null!==(n=t.values[a])&&void 0!==n?n:0;s[r]=l,i[o]++}return s}(s,i),i.values),n):on(t,e)};function yn(t,e,n){if("number"==typeof t&&"number"==typeof e&&"number"==typeof n)return G(t,e,n);return pn(t)(t,e)}function vn(t,s,{clamp:i=!0,ease:r,mixer:o}={}){const a=t.length;if(n(a===s.length),1===a)return()=>s[0];if(2===a&&t[0]===t[1])return()=>s[1];t[0]>t[a-1]&&(t=[...t].reverse(),s=[...s].reverse());const l=function(t,n,s){const i=[],r=s||yn,o=t.length-1;for(let s=0;s<o;s++){let o=r(t[s],t[s+1]);if(n){const t=Array.isArray(n)?n[s]||e:n;o=sn(t,o)}i.push(o)}return i}(s,r,o),u=l.length,c=e=>{let n=0;if(u>1)for(;n<t.length-2&&!(e<t[n+1]);n++);const s=T(t[n],t[n+1],e);return l[n](s)};return i?e=>c(P(t[0],t[a-1],e)):c}function wn({duration:t=300,keyframes:e,times:n,ease:s="easeInOut"}){const i=it(s)?s.map(en):en(s),r={done:!1,value:e[0]},o=vn(function(t,e){return t.map(t=>t*e)}(n&&n.length===e.length?n:_(e),t),e,{ease:Array.isArray(i)?i:(a=e,l=i,a.map(()=>l||Je).splice(0,a.length-1))});var a,l;return{calculatedDuration:t,next:e=>(r.value=o(e),r.done=e>=t,r)}}const bn=t=>{const e=({timestamp:e})=>t(e);return{start:()=>c.update(e,!0),stop:()=>h(e),now:()=>d.isProcessing?d.timestamp:g.now()}},xn={decay:Ge,inertia:Ge,tween:wn,keyframes:wn,spring:q},Tn=t=>t/100;class Sn extends Xe{constructor(t){super(t),this.holdTime=null,this.cancelTime=null,this.currentTime=0,this.playbackSpeed=1,this.pendingPlayState="running",this.startTime=null,this.state="idle",this.stop=()=>{if(this.resolver.cancel(),this.isStopped=!0,"idle"===this.state)return;this.teardown();const{onStop:t}=this.options;t&&t()};const{name:e,motionValue:n,element:s,keyframes:i}=this.options,r=(null==s?void 0:s.KeyframeResolver)||me;this.resolver=new r(i,(t,e)=>this.onKeyframesResolved(t,e),e,n,s),this.resolver.scheduleResolve()}flatten(){super.flatten(),this._resolved&&Object.assign(this._resolved,this.initPlayback(this._resolved.keyframes))}initPlayback(t){const{type:e="keyframes",repeat:n=0,repeatDelay:s=0,repeatType:i,velocity:r=0}=this.options,o=et(e)?e:xn[e]||wn;let a,l;o!==wn&&"number"!=typeof t[0]&&(a=sn(Tn,yn(t[0],t[1])),t=[0,100]);const u=o({...this.options,keyframes:t});"mirror"===i&&(l=o({...this.options,keyframes:[...t].reverse(),velocity:-r})),null===u.calculatedDuration&&(u.calculatedDuration=$(u));const{calculatedDuration:c}=u,h=c+s;return{generator:u,mirroredGenerator:l,mapPercentToKeyframes:a,calculatedDuration:c,resolvedDuration:h,totalDuration:h*(n+1)-s}}onPostResolved(){const{autoplay:t=!0}=this.options;this.play(),"paused"!==this.pendingPlayState&&t?this.state=this.pendingPlayState:this.pause()}tick(t,e=!1){const{resolved:n}=this;if(!n){const{keyframes:t}=this.options;return{done:!0,value:t[t.length-1]}}const{finalKeyframe:s,generator:i,mirroredGenerator:r,mapPercentToKeyframes:o,keyframes:a,calculatedDuration:l,totalDuration:u,resolvedDuration:c}=n;if(null===this.startTime)return i.next(0);const{delay:h,repeat:d,repeatType:p,repeatDelay:f,onUpdate:m}=this.options;this.speed>0?this.startTime=Math.min(this.startTime,t):this.speed<0&&(this.startTime=Math.min(t-u/this.speed,this.startTime)),e?this.currentTime=t:null!==this.holdTime?this.currentTime=this.holdTime:this.currentTime=Math.round(t-this.startTime)*this.speed;const g=this.currentTime-h*(this.speed>=0?1:-1),y=this.speed>=0?g<0:g>u;this.currentTime=Math.max(g,0),"finished"===this.state&&null===this.holdTime&&(this.currentTime=u);let v=this.currentTime,w=i;if(d){const t=Math.min(this.currentTime,u)/c;let e=Math.floor(t),n=t%1;!n&&t>=1&&(n=1),1===n&&e--,e=Math.min(e,d+1);Boolean(e%2)&&("reverse"===p?(n=1-n,f&&(n-=f/c)):"mirror"===p&&(w=r)),v=P(0,1,n)*c}const b=y?{done:!1,value:a[0]}:w.next(v);o&&(b.value=o(b.value));let{done:x}=b;y||null===l||(x=this.speed>=0?this.currentTime>=u:this.currentTime<=0);const T=null===this.holdTime&&("finished"===this.state||"running"===this.state&&x);return T&&void 0!==s&&(b.value=St(a,this.options,s)),m&&m(b.value),T&&this.finish(),b}get duration(){const{resolved:t}=this;return t?A(t.calculatedDuration):0}get time(){return A(this.currentTime)}set time(t){t=V(t),this.currentTime=t,null!==this.holdTime||0===this.speed?this.holdTime=t:this.driver&&(this.startTime=this.driver.now()-t/this.speed)}get speed(){return this.playbackSpeed}set speed(t){const e=this.playbackSpeed!==t;this.playbackSpeed=t,e&&(this.time=A(this.currentTime))}play(){if(this.resolver.isScheduled||this.resolver.resume(),!this._resolved)return void(this.pendingPlayState="running");if(this.isStopped)return;const{driver:t=bn,onPlay:e,startTime:n}=this.options;this.driver||(this.driver=t(t=>this.tick(t))),e&&e();const s=this.driver.now();null!==this.holdTime?this.startTime=s-this.holdTime:this.startTime?"finished"===this.state&&(this.startTime=s):this.startTime=null!=n?n:this.calcStartTime(),"finished"===this.state&&this.updateFinishedPromise(),this.cancelTime=this.startTime,this.holdTime=null,this.state="running",this.driver.start()}pause(){var t;this._resolved?(this.state="paused",this.holdTime=null!==(t=this.currentTime)&&void 0!==t?t:0):this.pendingPlayState="paused"}complete(){"running"!==this.state&&this.play(),this.pendingPlayState=this.state="finished",this.holdTime=null}finish(){this.teardown(),this.state="finished";const{onComplete:t}=this.options;t&&t()}cancel(){null!==this.cancelTime&&this.tick(this.cancelTime),this.teardown(),this.updateFinishedPromise()}teardown(){this.state="idle",this.stopDriver(),this.resolveFinishedPromise(),this.updateFinishedPromise(),this.startTime=this.cancelTime=null,this.resolver.cancel()}stopDriver(){this.driver&&(this.driver.stop(),this.driver=void 0)}sample(t){return this.startTime=0,this.tick(t,!0)}}const Vn=new Set(["opacity","clipPath","filter","transform"]),An={linearEasing:void 0};function Mn(t,e){const n=w(t);return()=>{var t;return null!==(t=An[e])&&void 0!==t?t:n()}}const Pn=Mn(()=>{try{document.createElement("div").animate({opacity:0},{easing:"linear(0, 1)"})}catch(t){return!1}return!0},"linearEasing");function kn(t){return Boolean("function"==typeof t&&Pn()||!t||"string"==typeof t&&(t in Cn||Pn())||Qe(t)||Array.isArray(t)&&t.every(kn))}const Fn=([t,e,n,s])=>`cubic-bezier(${t}, ${e}, ${n}, ${s})`,Cn={linear:"linear",ease:"ease",easeIn:"ease-in",easeOut:"ease-out",easeInOut:"ease-in-out",circIn:Fn([0,.65,.55,1]),circOut:Fn([.55,0,1,.45]),backIn:Fn([.31,.01,.66,-.59]),backOut:Fn([.33,1.53,.69,.99])};function En(t,e,n,{delay:s=0,duration:i=300,repeat:r=0,repeatType:o="loop",ease:a="easeInOut",times:l}={}){const u={[e]:n};l&&(u.offset=l);const c=function t(e,n){return e?"function"==typeof e&&Pn()?S(e,n):Qe(e)?Fn(e):Array.isArray(e)?e.map(e=>t(e,n)||Cn.easeOut):Cn[e]:void 0}(a,i);return Array.isArray(c)&&(u.easing=c),t.animate(u,{delay:s,duration:i,easing:Array.isArray(c)?"linear":c,fill:"both",iterations:r+1,direction:"reverse"===o?"alternate":"normal"})}function On(t,e){t.timeline=e,t.onfinish=null}const In=w(()=>Object.hasOwnProperty.call(Element.prototype,"animate"));const Rn={anticipate:Et,backInOut:Ct,circInOut:Rt};class Bn extends Xe{constructor(t){super(t);const{name:e,motionValue:n,element:s,keyframes:i}=this.options;this.resolver=new Ue(i,(t,e)=>this.onKeyframesResolved(t,e),e,n,s),this.resolver.scheduleResolve()}initPlayback(t,e){var n;let{duration:s=300,times:i,ease:r,type:o,motionValue:a,name:l,startTime:u}=this.options;if(!(null===(n=a.owner)||void 0===n?void 0:n.current))return!1;var c;if("string"==typeof r&&Pn()&&r in Rn&&(r=Rn[r]),et((c=this.options).type)||"spring"===c.type||!kn(c.ease)){const{onComplete:e,onUpdate:n,motionValue:a,element:l,...u}=this.options,c=function(t,e){const n=new Sn({...e,keyframes:t,repeat:0,delay:0,isGenerator:!0});let s={done:!1,value:t[0]};const i=[];let r=0;for(;!s.done&&r<2e4;)s=n.sample(r),i.push(s.value),r+=10;return{times:void 0,keyframes:i,duration:r-10,ease:"linear"}}(t,u);1===(t=c.keyframes).length&&(t[1]=t[0]),s=c.duration,i=c.times,r=c.ease,o="keyframes"}const h=En(a.owner.current,l,t,{...this.options,duration:s,times:i,ease:r});return h.startTime=null!=u?u:this.calcStartTime(),this.pendingTimeline?(On(h,this.pendingTimeline),this.pendingTimeline=void 0):h.onfinish=()=>{const{onComplete:n}=this.options;a.set(St(t,this.options,e)),n&&n(),this.cancel(),this.resolveFinishedPromise()},{animation:h,duration:s,times:i,type:o,ease:r,keyframes:t}}get duration(){const{resolved:t}=this;if(!t)return 0;const{duration:e}=t;return A(e)}get time(){const{resolved:t}=this;if(!t)return 0;const{animation:e}=t;return A(e.currentTime||0)}set time(t){const{resolved:e}=this;if(!e)return;const{animation:n}=e;n.currentTime=V(t)}get speed(){const{resolved:t}=this;if(!t)return 1;const{animation:e}=t;return e.playbackRate}set speed(t){const{resolved:e}=this;if(!e)return;const{animation:n}=e;n.playbackRate=t}get state(){const{resolved:t}=this;if(!t)return"idle";const{animation:e}=t;return e.playState}get startTime(){const{resolved:t}=this;if(!t)return null;const{animation:e}=t;return e.startTime}attachTimeline(t){if(this._resolved){const{resolved:n}=this;if(!n)return e;const{animation:s}=n;On(s,t)}else this.pendingTimeline=t;return e}play(){if(this.isStopped)return;const{resolved:t}=this;if(!t)return;const{animation:e}=t;"finished"===e.playState&&this.updateFinishedPromise(),e.play()}pause(){const{resolved:t}=this;if(!t)return;const{animation:e}=t;e.pause()}stop(){if(this.resolver.cancel(),this.isStopped=!0,"idle"===this.state)return;this.resolveFinishedPromise(),this.updateFinishedPromise();const{resolved:t}=this;if(!t)return;const{animation:e,keyframes:n,duration:s,type:i,ease:r,times:o}=t;if("idle"===e.playState||"finished"===e.playState)return;if(this.time){const{motionValue:t,onUpdate:e,onComplete:a,element:l,...u}=this.options,c=new Sn({...u,keyframes:n,duration:s,type:i,ease:r,times:o,isGenerator:!0}),h=V(this.time);t.setWithVelocity(c.sample(h-10).value,c.sample(h).value,10)}const{onStop:a}=this.options;a&&a(),this.cancel()}complete(){const{resolved:t}=this;t&&t.animation.finish()}cancel(){const{resolved:t}=this;t&&t.animation.cancel()}static supports(t){const{motionValue:e,name:n,repeatDelay:s,repeatType:i,damping:r,type:o}=t;return In()&&n&&Vn.has(n)&&e&&e.owner&&e.owner.current instanceof HTMLElement&&!e.owner.getProps().onUpdate&&!s&&"mirror"!==i&&0!==r&&"inertia"!==o}}const Dn=(t,e,n,s={},i,r)=>o=>{const a=xt(s,t)||{},l=a.delay||s.delay||0;let{elapsed:u=0}=s;u-=V(l);let h={keyframes:Array.isArray(n)?n:[null,n],ease:"easeOut",velocity:e.getVelocity(),...a,delay:-u,onUpdate:t=>{e.set(t),a.onUpdate&&a.onUpdate(t)},onComplete:()=>{o(),a.onComplete&&a.onComplete()},name:t,motionValue:e,element:r?void 0:i};(function({when:t,delay:e,delayChildren:n,staggerChildren:s,staggerDirection:i,repeat:r,repeatType:o,repeatDelay:a,from:l,elapsed:u,...c}){return!!Object.keys(c).length})(a)||(h={...h,...bt(t,h)}),h.duration&&(h.duration=V(h.duration)),h.repeatDelay&&(h.repeatDelay=V(h.repeatDelay)),void 0!==h.from&&(h.keyframes[0]=h.from);let d=!1;if((!1===h.type||0===h.duration&&!h.repeatDelay)&&(h.duration=0,0===h.delay&&(d=!0)),d&&!r&&void 0!==e.get()){const t=St(h.keyframes,a);if(void 0!==t)return c.update(()=>{h.onUpdate(t),h.onComplete()}),new x([])}return!r&&Bn.supports(h)?new Bn(h):new Sn(h)},Ln=t=>(t=>Array.isArray(t))(t)?t[t.length-1]||0:t;function Wn(t){const e=[{},{}];return null==t||t.values.forEach((t,n)=>{e[0][n]=t.get(),e[1][n]=t.getVelocity()}),e}function Nn(t,e,n,s){if("function"==typeof e){const[i,r]=Wn(s);e=e(void 0!==n?n:t.custom,i,r)}if("string"==typeof e&&(e=t.variants&&t.variants[e]),"function"==typeof e){const[i,r]=Wn(s);e=e(void 0!==n?n:t.custom,i,r)}return e}function Kn(t,e,n){t.hasValue(e)?t.getValue(e).set(n):t.addValue(e,v(n))}function jn(t,e){const n=function(t,e,n){const s=t.getProps();return Nn(s,e,void 0!==n?n:s.custom,t)}(t,e);let{transitionEnd:s={},transition:i={},...r}=n||{};r={...r,...s};for(const e in r){Kn(t,e,Ln(r[e]))}}const zn=t=>t.replace(/([a-z])([A-Z])/gu,"$1-$2").toLowerCase(),$n="data-"+zn("framerAppearId");function Hn(t){return t.props[$n]}function Un(t,e){const n=t.getValue("willChange");if(s=n,Boolean(J(s)&&s.add))return n.add(e);var s}function Yn({protectedKeys:t,needsAnimating:e},n){const s=t.hasOwnProperty(n)&&!0!==e[n];return e[n]=!1,s}function qn(t,e,{delay:n=0,transitionOverride:s,type:i}={}){var r;let{transition:o=t.getDefaultTransition(),transitionEnd:a,...l}=e;s&&(o=s);const u=[],h=i&&t.animationState&&t.animationState.getState()[i];for(const e in l){const s=t.getValue(e,null!==(r=t.latestValues[e])&&void 0!==r?r:null),i=l[e];if(void 0===i||h&&Yn(h,e))continue;const a={delay:n,...xt(o||{},e)};let d=!1;if(window.MotionHandoffAnimation){const n=Hn(t);if(n){const t=window.MotionHandoffAnimation(n,e,c);null!==t&&(a.startTime=t,d=!0)}}Un(t,e),s.start(Dn(e,s,i,t.shouldReduceMotion&&gt.has(e)?{type:!1}:a,t,d));const p=s.animation;p&&u.push(p)}return a&&Promise.all(u).then(()=>{c.update(()=>{a&&jn(t,a)})}),u}const Xn={};function Gn(t,{layout:e,layoutId:n}){return gt.has(t)||t.startsWith("origin")||(e||void 0!==n)&&(!!Xn[t]||"opacity"===t)}function Zn(t,e,n){var s;const{style:i}=t,r={};for(const o in i)(J(i[o])||e.style&&J(e.style[o])||Gn(o,t)||void 0!==(null===(s=null==n?void 0:n.getValue(o))||void 0===s?void 0:s.liveStyle))&&(r[o]=i[o]);return r}const _n="undefined"!=typeof window,Jn={current:null},Qn={current:!1};const ts=["initial","animate","whileInView","whileFocus","whileHover","whileTap","whileDrag","exit"];function es(t){return null!==(e=t.animate)&&"object"==typeof e&&"function"==typeof e.start||ts.some(e=>function(t){return"string"==typeof t||Array.isArray(t)}(t[e]));var e}const ns={animation:["animate","variants","whileHover","whileTap","exit","whileInView","whileFocus","whileDrag"],exit:["exit"],drag:["drag","dragControls"],focus:["whileFocus"],hover:["whileHover","onHoverStart","onHoverEnd"],tap:["whileTap","onTap","onTapStart","onTapCancel"],pan:["onPan","onPanStart","onPanSessionStart","onPanEnd"],inView:["whileInView","onViewportEnter","onViewportLeave"],layout:["layout","layoutId"]},ss={};for(const t in ns)ss[t]={isEnabled:e=>ns[t].some(t=>!!e[t])};const is=[...le,Ae,Oe],rs=()=>({x:{min:0,max:0},y:{min:0,max:0}}),os=["AnimationStart","AnimationComplete","Update","BeforeLayoutMeasure","LayoutMeasure","LayoutAnimationStart","LayoutAnimationComplete"];class as{scrapeMotionValuesFromProps(t,e,n){return{}}constructor({parent:t,props:e,presenceContext:n,reducedMotionConfig:s,blockInitialAnimation:i,visualState:r},o={}){this.current=null,this.children=new Set,this.isVariantNode=!1,this.isControllingVariants=!1,this.shouldReduceMotion=null,this.values=new Map,this.KeyframeResolver=me,this.features={},this.valueSubscriptions=new Map,this.prevMotionValues={},this.events={},this.propEventSubscriptions={},this.notifyUpdate=()=>this.notify("Update",this.latestValues),this.render=()=>{this.current&&(this.triggerBuild(),this.renderInstance(this.current,this.renderState,this.props.style,this.projection))},this.renderScheduledAt=0,this.scheduleRender=()=>{const t=g.now();this.renderScheduledAt<t&&(this.renderScheduledAt=t,c.render(this.render,!1,!0))};const{latestValues:a,renderState:l}=r;this.latestValues=a,this.baseTarget={...a},this.initialValues=e.initial?{...a}:{},this.renderState=l,this.parent=t,this.props=e,this.presenceContext=n,this.depth=t?t.depth+1:0,this.reducedMotionConfig=s,this.options=o,this.blockInitialAnimation=Boolean(i),this.isControllingVariants=es(e),this.isVariantNode=function(t){return Boolean(es(t)||t.variants)}(e),this.isVariantNode&&(this.variantChildren=new Set),this.manuallyAnimateOnMount=Boolean(t&&t.current);const{willChange:u,...h}=this.scrapeMotionValuesFromProps(e,{},this);for(const t in h){const e=h[t];void 0!==a[t]&&J(e)&&e.set(a[t],!1)}}mount(t){this.current=t,ft.set(t,this),this.projection&&!this.projection.instance&&this.projection.mount(t),this.parent&&this.isVariantNode&&!this.isControllingVariants&&(this.removeFromVariantTree=this.parent.addVariantChild(this)),this.values.forEach((t,e)=>this.bindToMotionValue(e,t)),Qn.current||function(){if(Qn.current=!0,_n)if(window.matchMedia){const t=window.matchMedia("(prefers-reduced-motion)"),e=()=>Jn.current=t.matches;t.addListener(e),e()}else Jn.current=!1}(),this.shouldReduceMotion="never"!==this.reducedMotionConfig&&("always"===this.reducedMotionConfig||Jn.current),this.parent&&this.parent.children.add(this),this.update(this.props,this.presenceContext)}unmount(){ft.delete(this.current),this.projection&&this.projection.unmount(),h(this.notifyUpdate),h(this.render),this.valueSubscriptions.forEach(t=>t()),this.valueSubscriptions.clear(),this.removeFromVariantTree&&this.removeFromVariantTree(),this.parent&&this.parent.children.delete(this);for(const t in this.events)this.events[t].clear();for(const t in this.features){const e=this.features[t];e&&(e.unmount(),e.isMounted=!1)}this.current=null}bindToMotionValue(t,e){this.valueSubscriptions.has(t)&&this.valueSubscriptions.get(t)();const n=gt.has(t),s=e.on("change",e=>{this.latestValues[t]=e,this.props.onUpdate&&c.preRender(this.notifyUpdate),n&&this.projection&&(this.projection.isTransformDirty=!0)}),i=e.on("renderRequest",this.scheduleRender);let r;window.MotionCheckAppearSync&&(r=window.MotionCheckAppearSync(this,t,e)),this.valueSubscriptions.set(t,()=>{s(),i(),r&&r(),e.owner&&e.stop()})}sortNodePosition(t){return this.current&&this.sortInstanceNodePosition&&this.type===t.type?this.sortInstanceNodePosition(this.current,t.current):0}updateFeatures(){let t="animation";for(t in ss){const e=ss[t];if(!e)continue;const{isEnabled:n,Feature:s}=e;if(!this.features[t]&&s&&n(this.props)&&(this.features[t]=new s(this)),this.features[t]){const e=this.features[t];e.isMounted?e.update():(e.mount(),e.isMounted=!0)}}}triggerBuild(){this.build(this.renderState,this.latestValues,this.props)}measureViewportBox(){return this.current?this.measureInstanceViewportBox(this.current,this.props):{x:{min:0,max:0},y:{min:0,max:0}}}getStaticValue(t){return this.latestValues[t]}setStaticValue(t,e){this.latestValues[t]=e}update(t,e){(t.transformTemplate||this.props.transformTemplate)&&this.scheduleRender(),this.prevProps=this.props,this.props=t,this.prevPresenceContext=this.presenceContext,this.presenceContext=e;for(let e=0;e<os.length;e++){const n=os[e];this.propEventSubscriptions[n]&&(this.propEventSubscriptions[n](),delete this.propEventSubscriptions[n]);const s=t["on"+n];s&&(this.propEventSubscriptions[n]=this.on(n,s))}this.prevMotionValues=function(t,e,n){for(const s in e){const i=e[s],r=n[s];if(J(i))t.addValue(s,i);else if(J(r))t.addValue(s,v(i,{owner:t}));else if(r!==i)if(t.hasValue(s)){const e=t.getValue(s);!0===e.liveStyle?e.jump(i):e.hasAnimated||e.set(i)}else{const e=t.getStaticValue(s);t.addValue(s,v(void 0!==e?e:i,{owner:t}))}}for(const s in n)void 0===e[s]&&t.removeValue(s);return e}(this,this.scrapeMotionValuesFromProps(t,this.prevProps,this),this.prevMotionValues),this.handleChildMotionValue&&this.handleChildMotionValue()}getProps(){return this.props}getVariant(t){return this.props.variants?this.props.variants[t]:void 0}getDefaultTransition(){return this.props.transition}getTransformPagePoint(){return this.props.transformPagePoint}getClosestVariantNode(){return this.isVariantNode?this:this.parent?this.parent.getClosestVariantNode():void 0}addVariantChild(t){const e=this.getClosestVariantNode();if(e)return e.variantChildren&&e.variantChildren.add(t),()=>e.variantChildren.delete(t)}addValue(t,e){const n=this.values.get(t);e!==n&&(n&&this.removeValue(t),this.bindToMotionValue(t,e),this.values.set(t,e),this.latestValues[t]=e.get())}removeValue(t){this.values.delete(t);const e=this.valueSubscriptions.get(t);e&&(e(),this.valueSubscriptions.delete(t)),delete this.latestValues[t],this.removeValueFromRenderState(t,this.renderState)}hasValue(t){return this.values.has(t)}getValue(t,e){if(this.props.values&&this.props.values[t])return this.props.values[t];let n=this.values.get(t);return void 0===n&&void 0!==e&&(n=v(null===e?void 0:e,{owner:this}),this.addValue(t,n)),n}readValue(t,e){var n;let s=void 0===this.latestValues[t]&&this.current?null!==(n=this.getBaseTargetFromProps(this.props,t))&&void 0!==n?n:this.readValueFromInstance(this.current,t,this.options):this.latestValues[t];var i;return null!=s&&("string"==typeof s&&(Dt(s)||Bt(s))?s=parseFloat(s):(i=s,!is.find(ae(i))&&Oe.test(e)&&(s=$e(t,e))),this.setBaseTarget(t,J(s)?s.get():s)),J(s)?s.get():s}setBaseTarget(t,e){this.baseTarget[t]=e}getBaseTarget(t){var e;const{initial:n}=this.props;let s;if("string"==typeof n||"object"==typeof n){const i=Nn(this.props,n,null===(e=this.presenceContext)||void 0===e?void 0:e.custom);i&&(s=i[t])}if(n&&void 0!==s)return s;const i=this.getBaseTargetFromProps(this.props,t);return void 0===i||J(i)?void 0!==this.initialValues[t]&&void 0===s?void 0:this.baseTarget[t]:i}on(t,e){return this.events[t]||(this.events[t]=new o),this.events[t].add(e)}notify(t,...e){this.events[t]&&this.events[t].notify(...e)}}class ls extends as{constructor(){super(...arguments),this.KeyframeResolver=Ue}sortInstanceNodePosition(t,e){return 2&t.compareDocumentPosition(e)?1:-1}getBaseTargetFromProps(t,e){return t.style?t.style[e]:void 0}removeValueFromRenderState(t,{vars:e,style:n}){delete e[t],delete n[t]}handleChildMotionValue(){this.childSubscription&&(this.childSubscription(),delete this.childSubscription);const{children:t}=this.props;J(t)&&(this.childSubscription=t.on("change",t=>{this.current&&(this.current.textContent=""+t)}))}}const us=(t,e)=>e&&"number"==typeof t?e.transform(t):t,cs={x:"translateX",y:"translateY",z:"translateZ",transformPerspective:"perspective"},hs=mt.length;function ds(t,e,n){const{style:s,vars:i,transformOrigin:r}=t;let o=!1,a=!1;for(const t in e){const n=e[t];if(gt.has(t))o=!0;else if(Wt(t))i[t]=n;else{const e=us(n,Ke[t]);t.startsWith("origin")?(a=!0,r[t]=e):s[t]=e}}if(e.transform||(o||n?s.transform=function(t,e,n){let s="",i=!0;for(let r=0;r<hs;r++){const o=mt[r],a=t[o];if(void 0===a)continue;let l=!0;if(l="number"==typeof a?a===(o.startsWith("scale")?1:0):0===parseFloat(a),!l||n){const t=us(a,Ke[o]);if(!l){i=!1;s+=`${cs[o]||o}(${t}) `}n&&(e[o]=t)}}return s=s.trim(),n?s=n(e,i?"":s):i&&(s="none"),s}(e,t.transform,n):s.transform&&(s.transform="none")),a){const{originX:t="50%",originY:e="50%",originZ:n=0}=r;s.transformOrigin=`${t} ${e} ${n}`}}function ps(t,e,n){return"string"==typeof t?t:Zt.transform(e+n*t)}const fs={offset:"stroke-dashoffset",array:"stroke-dasharray"},ms={offset:"strokeDashoffset",array:"strokeDasharray"};function gs(t,{attrX:e,attrY:n,attrScale:s,originX:i,originY:r,pathLength:o,pathSpacing:a=1,pathOffset:l=0,...u},c,h){if(ds(t,u,h),c)return void(t.style.viewBox&&(t.attrs.viewBox=t.style.viewBox));t.attrs=t.style,t.style={};const{attrs:d,style:p,dimensions:f}=t;d.transform&&(f&&(p.transform=d.transform),delete d.transform),f&&(void 0!==i||void 0!==r||p.transform)&&(p.transformOrigin=function(t,e,n){return`${ps(e,t.x,t.width)} ${ps(n,t.y,t.height)}`}(f,void 0!==i?i:.5,void 0!==r?r:.5)),void 0!==e&&(d.x=e),void 0!==n&&(d.y=n),void 0!==s&&(d.scale=s),void 0!==o&&function(t,e,n=1,s=0,i=!0){t.pathLength=1;const r=i?fs:ms;t[r.offset]=Zt.transform(-s);const o=Zt.transform(e),a=Zt.transform(n);t[r.array]=`${o} ${a}`}(d,o,a,l,!1)}const ys=new Set(["baseFrequency","diffuseConstant","kernelMatrix","kernelUnitLength","keySplines","keyTimes","limitingConeAngle","markerHeight","markerWidth","numOctaves","targetX","targetY","surfaceScale","specularConstant","specularExponent","stdDeviation","tableValues","viewBox","gradientTransform","pathLength","startOffset","textLength","lengthAdjust"]);function vs(t,{style:e,vars:n},s,i){Object.assign(t.style,e,i&&i.getProjectionStyles(s));for(const e in n)t.style.setProperty(e,n[e])}class ws extends ls{constructor(){super(...arguments),this.type="svg",this.isSVGTag=!1,this.measureInstanceViewportBox=rs}getBaseTargetFromProps(t,e){return t[e]}readValueFromInstance(t,e){if(gt.has(e)){const t=ze(e);return t&&t.default||0}return e=ys.has(e)?e:zn(e),t.getAttribute(e)}scrapeMotionValuesFromProps(t,e,n){return function(t,e,n){const s=Zn(t,e,n);for(const n in t)if(J(t[n])||J(e[n])){s[-1!==mt.indexOf(n)?"attr"+n.charAt(0).toUpperCase()+n.substring(1):n]=t[n]}return s}(t,e,n)}build(t,e,n){gs(t,e,this.isSVGTag,n.transformTemplate)}renderInstance(t,e,n,s){!function(t,e,n,s){vs(t,e,void 0,s);for(const n in e.attrs)t.setAttribute(ys.has(n)?n:zn(n),e.attrs[n])}(t,e,0,s)}mount(t){var e;this.isSVGTag="string"==typeof(e=t.tagName)&&"svg"===e.toLowerCase(),super.mount(t)}}class bs extends ls{constructor(){super(...arguments),this.type="html",this.renderInstance=vs}readValueFromInstance(t,e){if(gt.has(e)){const t=ze(e);return t&&t.default||0}{const s=(n=t,window.getComputedStyle(n)),i=(Wt(e)?s.getPropertyValue(e):s[e])||0;return"string"==typeof i?i.trim():i}var n}measureInstanceViewportBox(t,{transformPagePoint:e}){return function(t,e){return function({top:t,left:e,right:n,bottom:s}){return{x:{min:e,max:n},y:{min:t,max:s}}}(function(t,e){if(!e)return t;const n=e({x:t.left,y:t.top}),s=e({x:t.right,y:t.bottom});return{top:n.y,left:n.x,bottom:s.y,right:s.x}}(t.getBoundingClientRect(),e))}(t,e)}build(t,e,n){ds(t,e,n.transformTemplate)}scrapeMotionValuesFromProps(t,e,n){return Zn(t,e,n)}}class xs extends as{constructor(){super(...arguments),this.type="object"}readValueFromInstance(t,e){if(function(t,e){return t in e}(e,t)){const n=t[e];if("string"==typeof n||"number"==typeof n)return n}}getBaseTargetFromProps(){}removeValueFromRenderState(t,e){delete e.output[t]}measureInstanceViewportBox(){return{x:{min:0,max:0},y:{min:0,max:0}}}build(t,e){Object.assign(t.output,e)}renderInstance(t,{output:e}){Object.assign(t,e)}sortInstanceNodePosition(){return 0}}function Ts(t){const e={presenceContext:null,props:{},visualState:{renderState:{transform:{},transformOrigin:{},style:{},vars:{},attrs:{}},latestValues:{}}},n=function(t){return t instanceof SVGElement&&"svg"!==t.tagName}(t)?new ws(e):new bs(e);n.mount(t),ft.set(t,n)}function Ss(t){const e=new xs({presenceContext:null,props:{},visualState:{renderState:{output:{}},latestValues:{}}});e.mount(t),ft.set(t,e)}function Vs(t,e,n,s){const i=[];if(function(t,e){return J(t)||"number"==typeof t||"string"==typeof t&&!Q(e)}(t,e))i.push(function(t,e,n){const s=J(t)?t:v(t);return s.start(Dn("",s,e,n)),s.animation}(t,Q(e)&&e.default||e,n&&n.default||n));else{const r=tt(t,e,s),o=r.length;for(let t=0;t<o;t++){const s=r[t],a=s instanceof Element?Ts:Ss;ft.has(s)||a(s);const l=ft.get(s),u={...n};"delay"in u&&"function"==typeof u.delay&&(u.delay=u.delay(t,o)),i.push(...qn(l,{...e,transition:u},{}))}}return i}function As(t,e,n){const s=[];return function(t,{defaultTransition:e={},...n}={},s,i){const r=e.duration||.3,o=new Map,a=new Map,l={},u=new Map;let c=0,h=0,d=0;for(let n=0;n<t.length;n++){const o=t[n];if("string"==typeof o){u.set(o,h);continue}if(!Array.isArray(o)){u.set(o.name,nt(h,o.at,c,u));continue}let[p,f,m={}]=o;void 0!==m.at&&(h=nt(h,m.at,c,u));let g=0;const y=(t,n,s,o=0,a=0)=>{const l=ct(t),{delay:u=0,times:c=_(l),type:p="keyframes",...f}=n;let{ease:m=e.ease||"easeOut",duration:y}=n;const v="function"==typeof u?u(o,a):u,w=l.length,b=et(p)?p:null==i?void 0:i[p];if(w<=2&&b){let t=100;if(2===w&&pt(l)){const e=l[1]-l[0];t=Math.abs(e)}const e={...f};void 0!==y&&(e.duration=V(y));const n=X(e,t,b);m=n.ease,y=n.duration}null!=y||(y=r);const x=h+v,T=x+y;1===c.length&&0===c[0]&&(c[1]=1);const S=c.length-l.length;S>0&&Z(c,S),1===l.length&&l.unshift(null),ot(s,l,m,c,x,T),g=Math.max(v+y,g),d=Math.max(T,d)};if(J(p)){y(f,m,ut("default",lt(p,a)))}else{const t=tt(p,f,s,l),e=t.length;for(let n=0;n<e;n++){f=f,m=m;const s=lt(t[n],a);for(const t in f)y(f[t],ht(m,t),ut(t,s),n,e)}}c=h,h+=g}return a.forEach((t,s)=>{for(const i in t){const r=t[i];r.sort(at);const a=[],l=[],u=[];for(let t=0;t<r.length;t++){const{at:e,value:n,easing:s}=r[t];a.push(n),l.push(T(0,d,e)),u.push(s||"easeOut")}0!==l[0]&&(l.unshift(0),a.unshift(a[0]),u.unshift("easeInOut")),1!==l[l.length-1]&&(l.push(1),a.push(null)),o.has(s)||o.set(s,{keyframes:{},transition:{}});const c=o.get(s);c.keyframes[i]=a,c.transition[i]={...e,duration:d,ease:u,times:l,...n}}}),o}(t,e,n,{spring:q}).forEach(({keyframes:t,transition:e},n)=>{s.push(...Vs(n,t,e))}),s}function Ms(t){return function(e,n,s){let i=[];var r;r=e,i=Array.isArray(r)&&Array.isArray(r[0])?As(e,n,t):Vs(e,n,s,t);const o=new x(i);return t&&t.animations.push(o),o}}const Ps=Ms();function ks(t,e,n){t.style.setProperty("--"+e,n)}function Fs(t,e,n){t.style[e]=n}const Cs=w(()=>{try{document.createElement("div").animate({opacity:[1]})}catch(t){return!1}return!0}),Es=new WeakMap;function Os(t){const e=Es.get(t)||new Map;return Es.set(t,e),Es.get(t)}class Is{constructor(t,e,s,i){const r=e.startsWith("--");this.setValue=r?ks:Fs,this.options=i,this.updateFinishedPromise(),n("string"!=typeof i.type);const o=Os(t).get(e);o&&o.stop();if(Array.isArray(s)||(s=[s]),function(t,e,n){for(let s=0;s<e.length;s++)null===e[s]&&(e[s]=0===s?n():e[s-1]),"number"==typeof e[s]&&Le[t]&&(e[s]=Le[t].transform(e[s]));!Cs()&&e.length<2&&e.unshift(n())}(e,s,()=>e.startsWith("--")?t.style.getPropertyValue(e):window.getComputedStyle(t)[e]),et(i.type)){const t=X(i,100,i.type);i.ease=Pn()?t.ease:"easeOut",i.duration=V(t.duration),i.type="keyframes"}else i.ease=i.ease||"easeOut";this.removeAnimation=()=>{var n;return null===(n=Es.get(t))||void 0===n?void 0:n.delete(e)};const a=()=>{this.setValue(t,e,St(s,this.options)),this.cancel(),this.resolveFinishedPromise()};In()?(this.animation=En(t,e,s,i),!1===i.autoplay&&this.animation.pause(),this.animation.onfinish=a,this.pendingTimeline&&On(this.animation,this.pendingTimeline),Os(t).set(e,this)):a()}get duration(){return A(this.options.duration||300)}get time(){var t;return this.animation?A((null===(t=this.animation)||void 0===t?void 0:t.currentTime)||0):0}set time(t){this.animation&&(this.animation.currentTime=V(t))}get speed(){return this.animation?this.animation.playbackRate:1}set speed(t){this.animation&&(this.animation.playbackRate=t)}get state(){return this.animation?this.animation.playState:"finished"}get startTime(){return this.animation?this.animation.startTime:null}flatten(){var t;this.animation&&(null===(t=this.animation.effect)||void 0===t||t.updateTiming({easing:"linear"}))}play(){"finished"===this.state&&this.updateFinishedPromise(),this.animation&&this.animation.play()}pause(){this.animation&&this.animation.pause()}stop(){this.animation&&"idle"!==this.state&&"finished"!==this.state&&(this.animation.commitStyles&&this.animation.commitStyles(),this.cancel())}complete(){this.animation&&this.animation.finish()}cancel(){this.removeAnimation();try{this.animation&&this.animation.cancel()}catch(t){}}then(t,e){return this.currentFinishedPromise.then(t,e)}updateFinishedPromise(){this.currentFinishedPromise=new Promise(t=>{this.resolveFinishedPromise=t})}attachTimeline(t){return this.animation?On(this.animation,t):this.pendingTimeline=t,e}}const Rs=(t=>function(e,n,i){return new x(function(t,e,n,i){const r=s(t,i),o=r.length,a=[];for(let t=0;t<o;t++){const s=r[t],i={...n};"function"==typeof i.delay&&(i.delay=i.delay(t,o));for(const t in e){const n=e[t],r={...xt(i,t)};r.duration=r.duration?V(r.duration):r.duration,r.delay=V(r.delay||0),a.push(new Is(s,t,n,r))}}return a}(e,n,i,t))})(),Bs=new WeakMap;let Ds;function Ls({target:t,contentRect:e,borderBoxSize:n}){var s;null===(s=Bs.get(t))||void 0===s||s.forEach(s=>{s({target:t,contentSize:e,get size(){return function(t,e){if(e){const{inlineSize:t,blockSize:n}=e[0];return{width:t,height:n}}return t instanceof SVGElement&&"getBBox"in t?t.getBBox():{width:t.offsetWidth,height:t.offsetHeight}}(t,n)}})})}function Ws(t){t.forEach(Ls)}function Ns(t,e){Ds||"undefined"!=typeof ResizeObserver&&(Ds=new ResizeObserver(Ws));const n=s(t);return n.forEach(t=>{let n=Bs.get(t);n||(n=new Set,Bs.set(t,n)),n.add(e),null==Ds||Ds.observe(t)}),()=>{n.forEach(t=>{const n=Bs.get(t);null==n||n.delete(e),(null==n?void 0:n.size)||null==Ds||Ds.unobserve(t)})}}const Ks=new Set;let js;function zs(t){return Ks.add(t),js||(js=()=>{const t={width:window.innerWidth,height:window.innerHeight},e={target:window,size:t,contentSize:t};Ks.forEach(t=>t(e))},window.addEventListener("resize",js)),()=>{Ks.delete(t),!Ks.size&&js&&(js=void 0)}}const $s={x:{length:"Width",position:"Left"},y:{length:"Height",position:"Top"}};function Hs(t,e,n,s){const i=n[e],{length:r,position:o}=$s[e],l=i.current,u=n.time;i.current=t["scroll"+o],i.scrollLength=t["scroll"+r]-t["client"+r],i.offset.length=0,i.offset[0]=0,i.offset[1]=i.scrollLength,i.progress=T(0,i.scrollLength,i.current);const c=s-u;i.velocity=c>50?0:a(i.current-l,c)}const Us={Enter:[[0,1],[1,1]],Exit:[[0,0],[1,0]],Any:[[1,0],[0,1]],All:[[0,0],[1,1]]},Ys={start:0,center:.5,end:1};function qs(t,e,n=0){let s=0;if(t in Ys&&(t=Ys[t]),"string"==typeof t){const e=parseFloat(t);t.endsWith("px")?s=e:t.endsWith("%")?t=e/100:t.endsWith("vw")?s=e/100*document.documentElement.clientWidth:t.endsWith("vh")?s=e/100*document.documentElement.clientHeight:t=e}return"number"==typeof t&&(s=e*t),n+s}const Xs=[0,0];function Gs(t,e,n,s){let i=Array.isArray(t)?t:Xs,r=0,o=0;return"number"==typeof t?i=[t,t]:"string"==typeof t&&(i=(t=t.trim()).includes(" ")?t.split(" "):[t,Ys[t]?t:"0"]),r=qs(i[0],n,s),o=qs(i[1],e),r-o}const Zs={x:0,y:0};function _s(t,e,n){const{offset:s=Us.All}=n,{target:i=t,axis:r="y"}=n,o="y"===r?"height":"width",a=i!==t?function(t,e){const n={x:0,y:0};let s=t;for(;s&&s!==e;)if(s instanceof HTMLElement)n.x+=s.offsetLeft,n.y+=s.offsetTop,s=s.offsetParent;else if("svg"===s.tagName){const t=s.getBoundingClientRect();s=s.parentElement;const e=s.getBoundingClientRect();n.x+=t.left-e.left,n.y+=t.top-e.top}else{if(!(s instanceof SVGGraphicsElement))break;{const{x:t,y:e}=s.getBBox();n.x+=t,n.y+=e;let i=null,r=s.parentNode;for(;!i;)"svg"===r.tagName&&(i=r),r=s.parentNode;s=i}}return n}(i,t):Zs,l=i===t?{width:t.scrollWidth,height:t.scrollHeight}:function(t){return"getBBox"in t&&"svg"!==t.tagName?t.getBBox():{width:t.clientWidth,height:t.clientHeight}}(i),u={width:t.clientWidth,height:t.clientHeight};e[r].offset.length=0;let c=!e[r].interpolate;const h=s.length;for(let t=0;t<h;t++){const n=Gs(s[t],u[o],l[o],a[r]);c||n===e[r].interpolatorOffsets[t]||(c=!0),e[r].offset[t]=n}c&&(e[r].interpolate=vn(e[r].offset,_(s)),e[r].interpolatorOffsets=[...e[r].offset]),e[r].progress=e[r].interpolate(e[r].current)}function Js(t,e,n,s={}){return{measure:()=>function(t,e=t,n){if(n.x.targetOffset=0,n.y.targetOffset=0,e!==t){let s=e;for(;s&&s!==t;)n.x.targetOffset+=s.offsetLeft,n.y.targetOffset+=s.offsetTop,s=s.offsetParent}n.x.targetLength=e===t?e.scrollWidth:e.clientWidth,n.y.targetLength=e===t?e.scrollHeight:e.clientHeight,n.x.containerLength=t.clientWidth,n.y.containerLength=t.clientHeight}(t,s.target,n),update:e=>{!function(t,e,n){Hs(t,"x",e,n),Hs(t,"y",e,n),e.time=n}(t,n,e),(s.offset||s.target)&&_s(t,n,s)},notify:()=>e(n)}}const Qs=new WeakMap,ti=new WeakMap,ei=new WeakMap,ni=t=>t===document.documentElement?window:t;function si(t,{container:e=document.documentElement,...n}={}){let s=ei.get(e);s||(s=new Set,ei.set(e,s));const i=Js(e,t,{time:0,x:{current:0,offset:[],progress:0,scrollLength:0,targetOffset:0,targetLength:0,containerLength:0,velocity:0},y:{current:0,offset:[],progress:0,scrollLength:0,targetOffset:0,targetLength:0,containerLength:0,velocity:0}},n);if(s.add(i),!Qs.has(e)){const t=()=>{for(const t of s)t.measure()},n=()=>{for(const t of s)t.update(d.timestamp)},i=()=>{for(const t of s)t.notify()},a=()=>{c.read(t,!1,!0),c.read(n,!1,!0),c.update(i,!1,!0)};Qs.set(e,a);const l=ni(e);window.addEventListener("resize",a,{passive:!0}),e!==document.documentElement&&ti.set(e,(o=a,"function"==typeof(r=e)?zs(r):Ns(r,o))),l.addEventListener("scroll",a,{passive:!0})}var r,o;const a=Qs.get(e);return c.read(a,!1,!0),()=>{var t;h(a);const n=ei.get(e);if(!n)return;if(n.delete(i),n.size)return;const s=Qs.get(e);Qs.delete(e),s&&(ni(e).removeEventListener("scroll",s),null===(t=ti.get(e))||void 0===t||t(),window.removeEventListener("resize",s))}}function ii(t,e){let n;const s=()=>{const{currentTime:s}=e,i=(null===s?0:s.value)/100;n!==i&&t(i),n=i};return c.update(s,!0),()=>h(s)}const ri=new Map;function oi({source:t,container:e=document.documentElement,axis:n="y"}={}){t&&(e=t),ri.has(e)||ri.set(e,{});const s=ri.get(e);return s[n]||(s[n]=b()?new ScrollTimeline({source:e,axis:n}):function({source:t,container:e,axis:n="y"}){t&&(e=t);const s={value:0},i=si(t=>{s.value=100*t[n].progress},{container:e,axis:n});return{currentTime:s,cancel:i}}({source:e,axis:n})),s[n]}function ai(t){return t&&(t.target||t.offset)}const li={some:0,all:1};const ui=(t,e)=>Math.abs(t-e);const ci=c,hi=u.reduce((t,e)=>(t[e]=t=>h(t),t),{});t.MotionValue=y,t.animate=Ps,t.animateMini=Rs,t.anticipate=Et,t.backIn=Ft,t.backInOut=Ct,t.backOut=kt,t.cancelFrame=h,t.cancelSync=hi,t.circIn=Ot,t.circInOut=Rt,t.circOut=It,t.clamp=P,t.createScopedAnimate=Ms,t.cubicBezier=At,t.delay=function(t,e){return function(t,e){const n=g.now(),s=({timestamp:i})=>{const r=i-n;r>=e&&(h(s),t(r-e))};return c.read(s,!0),()=>h(s)}(t,V(e))},t.distance=ui,t.distance2D=function(t,e){const n=ui(t.x,e.x),s=ui(t.y,e.y);return Math.sqrt(n**2+s**2)},t.easeIn=Ze,t.easeInOut=Je,t.easeOut=_e,t.frame=c,t.frameData=d,t.frameSteps=p,t.inView=function(t,e,{root:n,margin:i,amount:r="some"}={}){const o=s(t),a=new WeakMap,l=new IntersectionObserver(t=>{t.forEach(t=>{const n=a.get(t.target);if(t.isIntersecting!==Boolean(n))if(t.isIntersecting){const n=e(t);"function"==typeof n?a.set(t.target,n):l.unobserve(t.target)}else n&&(n(t),a.delete(t.target))})},{root:n,rootMargin:i,threshold:"number"==typeof r?r:li[r]});return o.forEach(t=>l.observe(t)),()=>l.disconnect()},t.inertia=Ge,t.interpolate=vn,t.invariant=n,t.isDragActive=function(){return i},t.keyframes=wn,t.mirrorEasing=Mt,t.mix=yn,t.motionValue=v,t.noop=e,t.pipe=sn,t.progress=T,t.reverseEasing=Pt,t.scroll=function(t,{axis:n="y",...s}={}){const i={axis:n,...s};return"function"==typeof t?function(t,e){return function(t){return 2===t.length}(t)||ai(e)?si(n=>{t(n[e.axis].progress,n)},e):ii(t,oi(e))}(t,i):function(t,n){if(t.flatten(),ai(n))return t.pause(),si(e=>{t.time=t.duration*e[n.axis].progress},n);{const s=oi(n);return t.attachTimeline?t.attachTimeline(s,t=>(t.pause(),ii(e=>{t.time=t.duration*e},s))):e}}(t,i)},t.scrollInfo=si,t.spring=q,t.stagger=function(t=.1,{startDelay:e=0,from:n=0,ease:s}={}){return(i,r)=>{const o="number"==typeof n?n:function(t,e){if("first"===t)return 0;{const n=e-1;return"last"===t?n:n/2}}(n,r),a=Math.abs(o-i);let l=t*a;if(s){const e=r*t;l=en(s)(l/e)*e}return e+l}},t.steps=function(t,e="end"){return n=>{const s=(n="end"===e?Math.min(n,.999):Math.max(n,.001))*t,i="end"===e?Math.floor(s):Math.ceil(s);return P(0,1,i/t)}},t.sync=ci,t.transform=function(...t){const e=!Array.isArray(t[0]),n=e?0:-1,s=t[0+n],i=t[1+n],r=t[2+n],o=t[3+n],a=vn(i,r,{mixer:(l=r[0],(t=>t&&"object"==typeof t&&t.mix)(l)?l.mix:void 0),...o});var l;return e?a(s):a},t.wrap=st}));
+(function (global, factory) {
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+    typeof define === 'function' && define.amd ? define(['exports'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Motion = {}));
+})(this, (function (exports) { 'use strict';
+
+    function addUniqueItem(arr, item) {
+        if (arr.indexOf(item) === -1)
+            arr.push(item);
+    }
+    function removeItem(arr, item) {
+        const index = arr.indexOf(item);
+        if (index > -1)
+            arr.splice(index, 1);
+    }
+    // Adapted from array-move
+    function moveItem([...arr], fromIndex, toIndex) {
+        const startIndex = fromIndex < 0 ? arr.length + fromIndex : fromIndex;
+        if (startIndex >= 0 && startIndex < arr.length) {
+            const endIndex = toIndex < 0 ? arr.length + toIndex : toIndex;
+            const [item] = arr.splice(fromIndex, 1);
+            arr.splice(endIndex, 0, item);
+        }
+        return arr;
+    }
+
+    const clamp = (min, max, v) => {
+        if (v > max)
+            return max;
+        if (v < min)
+            return min;
+        return v;
+    };
+
+    function formatErrorMessage(message, errorCode) {
+        return errorCode
+            ? `${message}. For more information and steps for solving, visit https://motion.dev/troubleshooting/${errorCode}`
+            : message;
+    }
+
+    exports.warning = () => { };
+    exports.invariant = () => { };
+    {
+        exports.warning = (check, message, errorCode) => {
+            if (!check && typeof console !== "undefined") {
+                console.warn(formatErrorMessage(message, errorCode));
+            }
+        };
+        exports.invariant = (check, message, errorCode) => {
+            if (!check) {
+                throw new Error(formatErrorMessage(message, errorCode));
+            }
+        };
+    }
+
+    const MotionGlobalConfig = {};
+
+    /**
+     * Check if value is a numerical string, ie a string that is purely a number eg "100" or "-100.1"
+     */
+    const isNumericalString = (v) => /^-?(?:\d+(?:\.\d+)?|\.\d+)$/u.test(v);
+
+    function isObject(value) {
+        return typeof value === "object" && value !== null;
+    }
+
+    /**
+     * Check if the value is a zero value string like "0px" or "0%"
+     */
+    const isZeroValueString = (v) => /^0[^.\s]+$/u.test(v);
+
+    /*#__NO_SIDE_EFFECTS__*/
+    function memo(callback) {
+        let result;
+        return () => {
+            if (result === undefined)
+                result = callback();
+            return result;
+        };
+    }
+
+    /*#__NO_SIDE_EFFECTS__*/
+    const noop = (any) => any;
+
+    /**
+     * Pipe
+     * Compose other transformers to run linearily
+     * pipe(min(20), max(40))
+     * @param  {...functions} transformers
+     * @return {function}
+     */
+    const combineFunctions = (a, b) => (v) => b(a(v));
+    const pipe = (...transformers) => transformers.reduce(combineFunctions);
+
+    /*
+      Progress within given range
+
+      Given a lower limit and an upper limit, we return the progress
+      (expressed as a number 0-1) represented by the given value, and
+      limit that progress to within 0-1.
+
+      @param [number]: Lower limit
+      @param [number]: Upper limit
+      @param [number]: Value to find progress within given range
+      @return [number]: Progress of value within range as expressed 0-1
+    */
+    /*#__NO_SIDE_EFFECTS__*/
+    const progress = (from, to, value) => {
+        const toFromDifference = to - from;
+        return toFromDifference === 0 ? 1 : (value - from) / toFromDifference;
+    };
+
+    class SubscriptionManager {
+        constructor() {
+            this.subscriptions = [];
+        }
+        add(handler) {
+            addUniqueItem(this.subscriptions, handler);
+            return () => removeItem(this.subscriptions, handler);
+        }
+        notify(a, b, c) {
+            const numSubscriptions = this.subscriptions.length;
+            if (!numSubscriptions)
+                return;
+            if (numSubscriptions === 1) {
+                /**
+                 * If there's only a single handler we can just call it without invoking a loop.
+                 */
+                this.subscriptions[0](a, b, c);
+            }
+            else {
+                for (let i = 0; i < numSubscriptions; i++) {
+                    /**
+                     * Check whether the handler exists before firing as it's possible
+                     * the subscriptions were modified during this loop running.
+                     */
+                    const handler = this.subscriptions[i];
+                    handler && handler(a, b, c);
+                }
+            }
+        }
+        getSize() {
+            return this.subscriptions.length;
+        }
+        clear() {
+            this.subscriptions.length = 0;
+        }
+    }
+
+    /**
+     * Converts seconds to milliseconds
+     *
+     * @param seconds - Time in seconds.
+     * @return milliseconds - Converted time in milliseconds.
+     */
+    /*#__NO_SIDE_EFFECTS__*/
+    const secondsToMilliseconds = (seconds) => seconds * 1000;
+    /*#__NO_SIDE_EFFECTS__*/
+    const millisecondsToSeconds = (milliseconds) => milliseconds / 1000;
+
+    /*
+      Convert velocity into velocity per second
+
+      @param [number]: Unit per frame
+      @param [number]: Frame duration in ms
+    */
+    function velocityPerSecond(velocity, frameDuration) {
+        return frameDuration ? velocity * (1000 / frameDuration) : 0;
+    }
+
+    const warned = new Set();
+    function hasWarned(message) {
+        return warned.has(message);
+    }
+    function warnOnce(condition, message, errorCode) {
+        if (condition || warned.has(message))
+            return;
+        console.warn(formatErrorMessage(message, errorCode));
+        warned.add(message);
+    }
+
+    const wrap = (min, max, v) => {
+        const rangeSize = max - min;
+        return ((((v - min) % rangeSize) + rangeSize) % rangeSize) + min;
+    };
+
+    /*
+      Bezier function generator
+      This has been modified from Gaëtan Renaudeau's BezierEasing
+      https://github.com/gre/bezier-easing/blob/master/src/index.js
+      https://github.com/gre/bezier-easing/blob/master/LICENSE
+      
+      I've removed the newtonRaphsonIterate algo because in benchmarking it
+      wasn't noticeably faster than binarySubdivision, indeed removing it
+      usually improved times, depending on the curve.
+      I also removed the lookup table, as for the added bundle size and loop we're
+      only cutting ~4 or so subdivision iterations. I bumped the max iterations up
+      to 12 to compensate and this still tended to be faster for no perceivable
+      loss in accuracy.
+      Usage
+        const easeOut = cubicBezier(.17,.67,.83,.67);
+        const x = easeOut(0.5); // returns 0.627...
+    */
+    // Returns x(t) given t, x1, and x2, or y(t) given t, y1, and y2.
+    const calcBezier = (t, a1, a2) => (((1.0 - 3.0 * a2 + 3.0 * a1) * t + (3.0 * a2 - 6.0 * a1)) * t + 3.0 * a1) *
+        t;
+    const subdivisionPrecision = 0.0000001;
+    const subdivisionMaxIterations = 12;
+    function binarySubdivide(x, lowerBound, upperBound, mX1, mX2) {
+        let currentX;
+        let currentT;
+        let i = 0;
+        do {
+            currentT = lowerBound + (upperBound - lowerBound) / 2.0;
+            currentX = calcBezier(currentT, mX1, mX2) - x;
+            if (currentX > 0.0) {
+                upperBound = currentT;
+            }
+            else {
+                lowerBound = currentT;
+            }
+        } while (Math.abs(currentX) > subdivisionPrecision &&
+            ++i < subdivisionMaxIterations);
+        return currentT;
+    }
+    function cubicBezier(mX1, mY1, mX2, mY2) {
+        // If this is a linear gradient, return linear easing
+        if (mX1 === mY1 && mX2 === mY2)
+            return noop;
+        const getTForX = (aX) => binarySubdivide(aX, 0, 1, mX1, mX2);
+        // If animation is at start/end, return t without easing
+        return (t) => t === 0 || t === 1 ? t : calcBezier(getTForX(t), mY1, mY2);
+    }
+
+    // Accepts an easing function and returns a new one that outputs mirrored values for
+    // the second half of the animation. Turns easeIn into easeInOut.
+    const mirrorEasing = (easing) => (p) => p <= 0.5 ? easing(2 * p) / 2 : (2 - easing(2 * (1 - p))) / 2;
+
+    // Accepts an easing function and returns a new one that outputs reversed values.
+    // Turns easeIn into easeOut.
+    const reverseEasing = (easing) => (p) => 1 - easing(1 - p);
+
+    const backOut = /*@__PURE__*/ cubicBezier(0.33, 1.53, 0.69, 0.99);
+    const backIn = /*@__PURE__*/ reverseEasing(backOut);
+    const backInOut = /*@__PURE__*/ mirrorEasing(backIn);
+
+    const anticipate = (p) => (p *= 2) < 1 ? 0.5 * backIn(p) : 0.5 * (2 - Math.pow(2, -10 * (p - 1)));
+
+    const circIn = (p) => 1 - Math.sin(Math.acos(p));
+    const circOut = reverseEasing(circIn);
+    const circInOut = mirrorEasing(circIn);
+
+    const easeIn = /*@__PURE__*/ cubicBezier(0.42, 0, 1, 1);
+    const easeOut = /*@__PURE__*/ cubicBezier(0, 0, 0.58, 1);
+    const easeInOut = /*@__PURE__*/ cubicBezier(0.42, 0, 0.58, 1);
+
+    function steps(numSteps, direction = "end") {
+        return (progress) => {
+            progress =
+                direction === "end"
+                    ? Math.min(progress, 0.999)
+                    : Math.max(progress, 0.001);
+            const expanded = progress * numSteps;
+            const rounded = direction === "end" ? Math.floor(expanded) : Math.ceil(expanded);
+            return clamp(0, 1, rounded / numSteps);
+        };
+    }
+
+    const isEasingArray = (ease) => {
+        return Array.isArray(ease) && typeof ease[0] !== "number";
+    };
+
+    function getEasingForSegment(easing, i) {
+        return isEasingArray(easing) ? easing[wrap(0, easing.length, i)] : easing;
+    }
+
+    const isBezierDefinition = (easing) => Array.isArray(easing) && typeof easing[0] === "number";
+
+    const easingLookup = {
+        linear: noop,
+        easeIn,
+        easeInOut,
+        easeOut,
+        circIn,
+        circInOut,
+        circOut,
+        backIn,
+        backInOut,
+        backOut,
+        anticipate,
+    };
+    const isValidEasing = (easing) => {
+        return typeof easing === "string";
+    };
+    const easingDefinitionToFunction = (definition) => {
+        if (isBezierDefinition(definition)) {
+            // If cubic bezier definition, create bezier curve
+            exports.invariant(definition.length === 4, `Cubic bezier arrays must contain four numerical values.`, "cubic-bezier-length");
+            const [x1, y1, x2, y2] = definition;
+            return cubicBezier(x1, y1, x2, y2);
+        }
+        else if (isValidEasing(definition)) {
+            // Else lookup from table
+            exports.invariant(easingLookup[definition] !== undefined, `Invalid easing type '${definition}'`, "invalid-easing-type");
+            return easingLookup[definition];
+        }
+        return definition;
+    };
+
+    const stepsOrder = [
+        "setup", // Compute
+        "read", // Read
+        "resolveKeyframes", // Write/Read/Write/Read
+        "preUpdate", // Compute
+        "update", // Compute
+        "preRender", // Compute
+        "render", // Write
+        "postRender", // Compute
+    ];
+
+    const statsBuffer = {
+        value: null,
+        addProjectionMetrics: null,
+    };
+
+    function createRenderStep(runNextFrame, stepName) {
+        /**
+         * We create and reuse two queues, one to queue jobs for the current frame
+         * and one for the next. We reuse to avoid triggering GC after x frames.
+         */
+        let thisFrame = new Set();
+        let nextFrame = new Set();
+        /**
+         * Track whether we're currently processing jobs in this step. This way
+         * we can decide whether to schedule new jobs for this frame or next.
+         */
+        let isProcessing = false;
+        let flushNextFrame = false;
+        /**
+         * A set of processes which were marked keepAlive when scheduled.
+         */
+        const toKeepAlive = new WeakSet();
+        let latestFrameData = {
+            delta: 0.0,
+            timestamp: 0.0,
+            isProcessing: false,
+        };
+        let numCalls = 0;
+        function triggerCallback(callback) {
+            if (toKeepAlive.has(callback)) {
+                step.schedule(callback);
+                runNextFrame();
+            }
+            numCalls++;
+            callback(latestFrameData);
+        }
+        const step = {
+            /**
+             * Schedule a process to run on the next frame.
+             */
+            schedule: (callback, keepAlive = false, immediate = false) => {
+                const addToCurrentFrame = immediate && isProcessing;
+                const queue = addToCurrentFrame ? thisFrame : nextFrame;
+                if (keepAlive)
+                    toKeepAlive.add(callback);
+                if (!queue.has(callback))
+                    queue.add(callback);
+                return callback;
+            },
+            /**
+             * Cancel the provided callback from running on the next frame.
+             */
+            cancel: (callback) => {
+                nextFrame.delete(callback);
+                toKeepAlive.delete(callback);
+            },
+            /**
+             * Execute all schedule callbacks.
+             */
+            process: (frameData) => {
+                latestFrameData = frameData;
+                /**
+                 * If we're already processing we've probably been triggered by a flushSync
+                 * inside an existing process. Instead of executing, mark flushNextFrame
+                 * as true and ensure we flush the following frame at the end of this one.
+                 */
+                if (isProcessing) {
+                    flushNextFrame = true;
+                    return;
+                }
+                isProcessing = true;
+                [thisFrame, nextFrame] = [nextFrame, thisFrame];
+                // Execute this frame
+                thisFrame.forEach(triggerCallback);
+                /**
+                 * If we're recording stats then
+                 */
+                if (stepName && statsBuffer.value) {
+                    statsBuffer.value.frameloop[stepName].push(numCalls);
+                }
+                numCalls = 0;
+                // Clear the frame so no callbacks remain. This is to avoid
+                // memory leaks should this render step not run for a while.
+                thisFrame.clear();
+                isProcessing = false;
+                if (flushNextFrame) {
+                    flushNextFrame = false;
+                    step.process(frameData);
+                }
+            },
+        };
+        return step;
+    }
+
+    const maxElapsed$1 = 40;
+    function createRenderBatcher(scheduleNextBatch, allowKeepAlive) {
+        let runNextFrame = false;
+        let useDefaultElapsed = true;
+        const state = {
+            delta: 0.0,
+            timestamp: 0.0,
+            isProcessing: false,
+        };
+        const flagRunNextFrame = () => (runNextFrame = true);
+        const steps = stepsOrder.reduce((acc, key) => {
+            acc[key] = createRenderStep(flagRunNextFrame, allowKeepAlive ? key : undefined);
+            return acc;
+        }, {});
+        const { setup, read, resolveKeyframes, preUpdate, update, preRender, render, postRender, } = steps;
+        const processBatch = () => {
+            const timestamp = MotionGlobalConfig.useManualTiming
+                ? state.timestamp
+                : performance.now();
+            runNextFrame = false;
+            if (!MotionGlobalConfig.useManualTiming) {
+                state.delta = useDefaultElapsed
+                    ? 1000 / 60
+                    : Math.max(Math.min(timestamp - state.timestamp, maxElapsed$1), 1);
+            }
+            state.timestamp = timestamp;
+            state.isProcessing = true;
+            // Unrolled render loop for better per-frame performance
+            setup.process(state);
+            read.process(state);
+            resolveKeyframes.process(state);
+            preUpdate.process(state);
+            update.process(state);
+            preRender.process(state);
+            render.process(state);
+            postRender.process(state);
+            state.isProcessing = false;
+            if (runNextFrame && allowKeepAlive) {
+                useDefaultElapsed = false;
+                scheduleNextBatch(processBatch);
+            }
+        };
+        const wake = () => {
+            runNextFrame = true;
+            useDefaultElapsed = true;
+            if (!state.isProcessing) {
+                scheduleNextBatch(processBatch);
+            }
+        };
+        const schedule = stepsOrder.reduce((acc, key) => {
+            const step = steps[key];
+            acc[key] = (process, keepAlive = false, immediate = false) => {
+                if (!runNextFrame)
+                    wake();
+                return step.schedule(process, keepAlive, immediate);
+            };
+            return acc;
+        }, {});
+        const cancel = (process) => {
+            for (let i = 0; i < stepsOrder.length; i++) {
+                steps[stepsOrder[i]].cancel(process);
+            }
+        };
+        return { schedule, cancel, state, steps };
+    }
+
+    const { schedule: frame, cancel: cancelFrame, state: frameData, steps: frameSteps, } = /* @__PURE__ */ createRenderBatcher(typeof requestAnimationFrame !== "undefined" ? requestAnimationFrame : noop, true);
+
+    let now;
+    function clearTime() {
+        now = undefined;
+    }
+    /**
+     * An eventloop-synchronous alternative to performance.now().
+     *
+     * Ensures that time measurements remain consistent within a synchronous context.
+     * Usually calling performance.now() twice within the same synchronous context
+     * will return different values which isn't useful for animations when we're usually
+     * trying to sync animations to the same frame.
+     */
+    const time = {
+        now: () => {
+            if (now === undefined) {
+                time.set(frameData.isProcessing || MotionGlobalConfig.useManualTiming
+                    ? frameData.timestamp
+                    : performance.now());
+            }
+            return now;
+        },
+        set: (newTime) => {
+            now = newTime;
+            queueMicrotask(clearTime);
+        },
+    };
+
+    const activeAnimations = {
+        layout: 0,
+        mainThread: 0,
+        waapi: 0,
+    };
+
+    const checkStringStartsWith = (token) => (key) => typeof key === "string" && key.startsWith(token);
+    const isCSSVariableName = 
+    /*@__PURE__*/ checkStringStartsWith("--");
+    const startsAsVariableToken = 
+    /*@__PURE__*/ checkStringStartsWith("var(--");
+    const isCSSVariableToken = (value) => {
+        const startsWithToken = startsAsVariableToken(value);
+        if (!startsWithToken)
+            return false;
+        // Ensure any comments are stripped from the value as this can harm performance of the regex.
+        return singleCssVariableRegex.test(value.split("/*")[0].trim());
+    };
+    const singleCssVariableRegex = /var\(--(?:[\w-]+\s*|[\w-]+\s*,(?:\s*[^)(\s]|\s*\((?:[^)(]|\([^)(]*\))*\))+\s*)\)$/iu;
+
+    const number = {
+        test: (v) => typeof v === "number",
+        parse: parseFloat,
+        transform: (v) => v,
+    };
+    const alpha = {
+        ...number,
+        transform: (v) => clamp(0, 1, v),
+    };
+    const scale = {
+        ...number,
+        default: 1,
+    };
+
+    // If this number is a decimal, make it just five decimal places
+    // to avoid exponents
+    const sanitize = (v) => Math.round(v * 100000) / 100000;
+
+    const floatRegex = /-?(?:\d+(?:\.\d+)?|\.\d+)/gu;
+
+    function isNullish(v) {
+        return v == null;
+    }
+
+    const singleColorRegex = /^(?:#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\))$/iu;
+
+    /**
+     * Returns true if the provided string is a color, ie rgba(0,0,0,0) or #000,
+     * but false if a number or multiple colors
+     */
+    const isColorString = (type, testProp) => (v) => {
+        return Boolean((typeof v === "string" &&
+            singleColorRegex.test(v) &&
+            v.startsWith(type)) ||
+            (testProp &&
+                !isNullish(v) &&
+                Object.prototype.hasOwnProperty.call(v, testProp)));
+    };
+    const splitColor = (aName, bName, cName) => (v) => {
+        if (typeof v !== "string")
+            return v;
+        const [a, b, c, alpha] = v.match(floatRegex);
+        return {
+            [aName]: parseFloat(a),
+            [bName]: parseFloat(b),
+            [cName]: parseFloat(c),
+            alpha: alpha !== undefined ? parseFloat(alpha) : 1,
+        };
+    };
+
+    const clampRgbUnit = (v) => clamp(0, 255, v);
+    const rgbUnit = {
+        ...number,
+        transform: (v) => Math.round(clampRgbUnit(v)),
+    };
+    const rgba = {
+        test: /*@__PURE__*/ isColorString("rgb", "red"),
+        parse: /*@__PURE__*/ splitColor("red", "green", "blue"),
+        transform: ({ red, green, blue, alpha: alpha$1 = 1 }) => "rgba(" +
+            rgbUnit.transform(red) +
+            ", " +
+            rgbUnit.transform(green) +
+            ", " +
+            rgbUnit.transform(blue) +
+            ", " +
+            sanitize(alpha.transform(alpha$1)) +
+            ")",
+    };
+
+    function parseHex(v) {
+        let r = "";
+        let g = "";
+        let b = "";
+        let a = "";
+        // If we have 6 characters, ie #FF0000
+        if (v.length > 5) {
+            r = v.substring(1, 3);
+            g = v.substring(3, 5);
+            b = v.substring(5, 7);
+            a = v.substring(7, 9);
+            // Or we have 3 characters, ie #F00
+        }
+        else {
+            r = v.substring(1, 2);
+            g = v.substring(2, 3);
+            b = v.substring(3, 4);
+            a = v.substring(4, 5);
+            r += r;
+            g += g;
+            b += b;
+            a += a;
+        }
+        return {
+            red: parseInt(r, 16),
+            green: parseInt(g, 16),
+            blue: parseInt(b, 16),
+            alpha: a ? parseInt(a, 16) / 255 : 1,
+        };
+    }
+    const hex = {
+        test: /*@__PURE__*/ isColorString("#"),
+        parse: parseHex,
+        transform: rgba.transform,
+    };
+
+    /*#__NO_SIDE_EFFECTS__*/
+    const createUnitType = (unit) => ({
+        test: (v) => typeof v === "string" && v.endsWith(unit) && v.split(" ").length === 1,
+        parse: parseFloat,
+        transform: (v) => `${v}${unit}`,
+    });
+    const degrees = /*@__PURE__*/ createUnitType("deg");
+    const percent = /*@__PURE__*/ createUnitType("%");
+    const px = /*@__PURE__*/ createUnitType("px");
+    const vh = /*@__PURE__*/ createUnitType("vh");
+    const vw = /*@__PURE__*/ createUnitType("vw");
+    const progressPercentage = /*@__PURE__*/ (() => ({
+        ...percent,
+        parse: (v) => percent.parse(v) / 100,
+        transform: (v) => percent.transform(v * 100),
+    }))();
+
+    const hsla = {
+        test: /*@__PURE__*/ isColorString("hsl", "hue"),
+        parse: /*@__PURE__*/ splitColor("hue", "saturation", "lightness"),
+        transform: ({ hue, saturation, lightness, alpha: alpha$1 = 1 }) => {
+            return ("hsla(" +
+                Math.round(hue) +
+                ", " +
+                percent.transform(sanitize(saturation)) +
+                ", " +
+                percent.transform(sanitize(lightness)) +
+                ", " +
+                sanitize(alpha.transform(alpha$1)) +
+                ")");
+        },
+    };
+
+    const color = {
+        test: (v) => rgba.test(v) || hex.test(v) || hsla.test(v),
+        parse: (v) => {
+            if (rgba.test(v)) {
+                return rgba.parse(v);
+            }
+            else if (hsla.test(v)) {
+                return hsla.parse(v);
+            }
+            else {
+                return hex.parse(v);
+            }
+        },
+        transform: (v) => {
+            return typeof v === "string"
+                ? v
+                : v.hasOwnProperty("red")
+                    ? rgba.transform(v)
+                    : hsla.transform(v);
+        },
+        getAnimatableNone: (v) => {
+            const parsed = color.parse(v);
+            parsed.alpha = 0;
+            return color.transform(parsed);
+        },
+    };
+
+    const colorRegex = /(?:#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\))/giu;
+
+    function test(v) {
+        return (isNaN(v) &&
+            typeof v === "string" &&
+            (v.match(floatRegex)?.length || 0) +
+                (v.match(colorRegex)?.length || 0) >
+                0);
+    }
+    const NUMBER_TOKEN = "number";
+    const COLOR_TOKEN = "color";
+    const VAR_TOKEN = "var";
+    const VAR_FUNCTION_TOKEN = "var(";
+    const SPLIT_TOKEN = "${}";
+    // this regex consists of the `singleCssVariableRegex|rgbHSLValueRegex|digitRegex`
+    const complexRegex = /var\s*\(\s*--(?:[\w-]+\s*|[\w-]+\s*,(?:\s*[^)(\s]|\s*\((?:[^)(]|\([^)(]*\))*\))+\s*)\)|#[\da-f]{3,8}|(?:rgb|hsl)a?\((?:-?[\d.]+%?[,\s]+){2}-?[\d.]+%?\s*(?:[,/]\s*)?(?:\b\d+(?:\.\d+)?|\.\d+)?%?\)|-?(?:\d+(?:\.\d+)?|\.\d+)/giu;
+    function analyseComplexValue(value) {
+        const originalValue = value.toString();
+        const values = [];
+        const indexes = {
+            color: [],
+            number: [],
+            var: [],
+        };
+        const types = [];
+        let i = 0;
+        const tokenised = originalValue.replace(complexRegex, (parsedValue) => {
+            if (color.test(parsedValue)) {
+                indexes.color.push(i);
+                types.push(COLOR_TOKEN);
+                values.push(color.parse(parsedValue));
+            }
+            else if (parsedValue.startsWith(VAR_FUNCTION_TOKEN)) {
+                indexes.var.push(i);
+                types.push(VAR_TOKEN);
+                values.push(parsedValue);
+            }
+            else {
+                indexes.number.push(i);
+                types.push(NUMBER_TOKEN);
+                values.push(parseFloat(parsedValue));
+            }
+            ++i;
+            return SPLIT_TOKEN;
+        });
+        const split = tokenised.split(SPLIT_TOKEN);
+        return { values, split, indexes, types };
+    }
+    function parseComplexValue(v) {
+        return analyseComplexValue(v).values;
+    }
+    function createTransformer(source) {
+        const { split, types } = analyseComplexValue(source);
+        const numSections = split.length;
+        return (v) => {
+            let output = "";
+            for (let i = 0; i < numSections; i++) {
+                output += split[i];
+                if (v[i] !== undefined) {
+                    const type = types[i];
+                    if (type === NUMBER_TOKEN) {
+                        output += sanitize(v[i]);
+                    }
+                    else if (type === COLOR_TOKEN) {
+                        output += color.transform(v[i]);
+                    }
+                    else {
+                        output += v[i];
+                    }
+                }
+            }
+            return output;
+        };
+    }
+    const convertNumbersToZero = (v) => typeof v === "number" ? 0 : color.test(v) ? color.getAnimatableNone(v) : v;
+    function getAnimatableNone$1(v) {
+        const parsed = parseComplexValue(v);
+        const transformer = createTransformer(v);
+        return transformer(parsed.map(convertNumbersToZero));
+    }
+    const complex = {
+        test,
+        parse: parseComplexValue,
+        createTransformer,
+        getAnimatableNone: getAnimatableNone$1,
+    };
+
+    // Adapted from https://gist.github.com/mjackson/5311256
+    function hueToRgb(p, q, t) {
+        if (t < 0)
+            t += 1;
+        if (t > 1)
+            t -= 1;
+        if (t < 1 / 6)
+            return p + (q - p) * 6 * t;
+        if (t < 1 / 2)
+            return q;
+        if (t < 2 / 3)
+            return p + (q - p) * (2 / 3 - t) * 6;
+        return p;
+    }
+    function hslaToRgba({ hue, saturation, lightness, alpha }) {
+        hue /= 360;
+        saturation /= 100;
+        lightness /= 100;
+        let red = 0;
+        let green = 0;
+        let blue = 0;
+        if (!saturation) {
+            red = green = blue = lightness;
+        }
+        else {
+            const q = lightness < 0.5
+                ? lightness * (1 + saturation)
+                : lightness + saturation - lightness * saturation;
+            const p = 2 * lightness - q;
+            red = hueToRgb(p, q, hue + 1 / 3);
+            green = hueToRgb(p, q, hue);
+            blue = hueToRgb(p, q, hue - 1 / 3);
+        }
+        return {
+            red: Math.round(red * 255),
+            green: Math.round(green * 255),
+            blue: Math.round(blue * 255),
+            alpha,
+        };
+    }
+
+    function mixImmediate(a, b) {
+        return (p) => (p > 0 ? b : a);
+    }
+
+    /*
+      Value in range from progress
+
+      Given a lower limit and an upper limit, we return the value within
+      that range as expressed by progress (usually a number from 0 to 1)
+
+      So progress = 0.5 would change
+
+      from -------- to
+
+      to
+
+      from ---- to
+
+      E.g. from = 10, to = 20, progress = 0.5 => 15
+
+      @param [number]: Lower limit of range
+      @param [number]: Upper limit of range
+      @param [number]: The progress between lower and upper limits expressed 0-1
+      @return [number]: Value as calculated from progress within range (not limited within range)
+    */
+    const mixNumber$1 = (from, to, progress) => {
+        return from + (to - from) * progress;
+    };
+
+    // Linear color space blending
+    // Explained https://www.youtube.com/watch?v=LKnqECcg6Gw
+    // Demonstrated http://codepen.io/osublake/pen/xGVVaN
+    const mixLinearColor = (from, to, v) => {
+        const fromExpo = from * from;
+        const expo = v * (to * to - fromExpo) + fromExpo;
+        return expo < 0 ? 0 : Math.sqrt(expo);
+    };
+    const colorTypes = [hex, rgba, hsla];
+    const getColorType = (v) => colorTypes.find((type) => type.test(v));
+    function asRGBA(color) {
+        const type = getColorType(color);
+        exports.warning(Boolean(type), `'${color}' is not an animatable color. Use the equivalent color code instead.`, "color-not-animatable");
+        if (!Boolean(type))
+            return false;
+        let model = type.parse(color);
+        if (type === hsla) {
+            // TODO Remove this cast - needed since Motion's stricter typing
+            model = hslaToRgba(model);
+        }
+        return model;
+    }
+    const mixColor = (from, to) => {
+        const fromRGBA = asRGBA(from);
+        const toRGBA = asRGBA(to);
+        if (!fromRGBA || !toRGBA) {
+            return mixImmediate(from, to);
+        }
+        const blended = { ...fromRGBA };
+        return (v) => {
+            blended.red = mixLinearColor(fromRGBA.red, toRGBA.red, v);
+            blended.green = mixLinearColor(fromRGBA.green, toRGBA.green, v);
+            blended.blue = mixLinearColor(fromRGBA.blue, toRGBA.blue, v);
+            blended.alpha = mixNumber$1(fromRGBA.alpha, toRGBA.alpha, v);
+            return rgba.transform(blended);
+        };
+    };
+
+    const invisibleValues = new Set(["none", "hidden"]);
+    /**
+     * Returns a function that, when provided a progress value between 0 and 1,
+     * will return the "none" or "hidden" string only when the progress is that of
+     * the origin or target.
+     */
+    function mixVisibility(origin, target) {
+        if (invisibleValues.has(origin)) {
+            return (p) => (p <= 0 ? origin : target);
+        }
+        else {
+            return (p) => (p >= 1 ? target : origin);
+        }
+    }
+
+    function mixNumber(a, b) {
+        return (p) => mixNumber$1(a, b, p);
+    }
+    function getMixer(a) {
+        if (typeof a === "number") {
+            return mixNumber;
+        }
+        else if (typeof a === "string") {
+            return isCSSVariableToken(a)
+                ? mixImmediate
+                : color.test(a)
+                    ? mixColor
+                    : mixComplex;
+        }
+        else if (Array.isArray(a)) {
+            return mixArray;
+        }
+        else if (typeof a === "object") {
+            return color.test(a) ? mixColor : mixObject;
+        }
+        return mixImmediate;
+    }
+    function mixArray(a, b) {
+        const output = [...a];
+        const numValues = output.length;
+        const blendValue = a.map((v, i) => getMixer(v)(v, b[i]));
+        return (p) => {
+            for (let i = 0; i < numValues; i++) {
+                output[i] = blendValue[i](p);
+            }
+            return output;
+        };
+    }
+    function mixObject(a, b) {
+        const output = { ...a, ...b };
+        const blendValue = {};
+        for (const key in output) {
+            if (a[key] !== undefined && b[key] !== undefined) {
+                blendValue[key] = getMixer(a[key])(a[key], b[key]);
+            }
+        }
+        return (v) => {
+            for (const key in blendValue) {
+                output[key] = blendValue[key](v);
+            }
+            return output;
+        };
+    }
+    function matchOrder(origin, target) {
+        const orderedOrigin = [];
+        const pointers = { color: 0, var: 0, number: 0 };
+        for (let i = 0; i < target.values.length; i++) {
+            const type = target.types[i];
+            const originIndex = origin.indexes[type][pointers[type]];
+            const originValue = origin.values[originIndex] ?? 0;
+            orderedOrigin[i] = originValue;
+            pointers[type]++;
+        }
+        return orderedOrigin;
+    }
+    const mixComplex = (origin, target) => {
+        const template = complex.createTransformer(target);
+        const originStats = analyseComplexValue(origin);
+        const targetStats = analyseComplexValue(target);
+        const canInterpolate = originStats.indexes.var.length === targetStats.indexes.var.length &&
+            originStats.indexes.color.length === targetStats.indexes.color.length &&
+            originStats.indexes.number.length >= targetStats.indexes.number.length;
+        if (canInterpolate) {
+            if ((invisibleValues.has(origin) &&
+                !targetStats.values.length) ||
+                (invisibleValues.has(target) &&
+                    !originStats.values.length)) {
+                return mixVisibility(origin, target);
+            }
+            return pipe(mixArray(matchOrder(originStats, targetStats), targetStats.values), template);
+        }
+        else {
+            exports.warning(true, `Complex values '${origin}' and '${target}' too different to mix. Ensure all colors are of the same type, and that each contains the same quantity of number and color values. Falling back to instant transition.`, "complex-values-different");
+            return mixImmediate(origin, target);
+        }
+    };
+
+    function mix(from, to, p) {
+        if (typeof from === "number" &&
+            typeof to === "number" &&
+            typeof p === "number") {
+            return mixNumber$1(from, to, p);
+        }
+        const mixer = getMixer(from);
+        return mixer(from, to);
+    }
+
+    const frameloopDriver = (update) => {
+        const passTimestamp = ({ timestamp }) => update(timestamp);
+        return {
+            start: (keepAlive = true) => frame.update(passTimestamp, keepAlive),
+            stop: () => cancelFrame(passTimestamp),
+            /**
+             * If we're processing this frame we can use the
+             * framelocked timestamp to keep things in sync.
+             */
+            now: () => (frameData.isProcessing ? frameData.timestamp : time.now()),
+        };
+    };
+
+    const generateLinearEasing = (easing, duration, // as milliseconds
+    resolution = 10 // as milliseconds
+    ) => {
+        let points = "";
+        const numPoints = Math.max(Math.round(duration / resolution), 2);
+        for (let i = 0; i < numPoints; i++) {
+            points += Math.round(easing(i / (numPoints - 1)) * 10000) / 10000 + ", ";
+        }
+        return `linear(${points.substring(0, points.length - 2)})`;
+    };
+
+    /**
+     * Implement a practical max duration for keyframe generation
+     * to prevent infinite loops
+     */
+    const maxGeneratorDuration = 20000;
+    function calcGeneratorDuration(generator) {
+        let duration = 0;
+        const timeStep = 50;
+        let state = generator.next(duration);
+        while (!state.done && duration < maxGeneratorDuration) {
+            duration += timeStep;
+            state = generator.next(duration);
+        }
+        return duration >= maxGeneratorDuration ? Infinity : duration;
+    }
+
+    /**
+     * Create a progress => progress easing function from a generator.
+     */
+    function createGeneratorEasing(options, scale = 100, createGenerator) {
+        const generator = createGenerator({ ...options, keyframes: [0, scale] });
+        const duration = Math.min(calcGeneratorDuration(generator), maxGeneratorDuration);
+        return {
+            type: "keyframes",
+            ease: (progress) => {
+                return generator.next(duration * progress).value / scale;
+            },
+            duration: millisecondsToSeconds(duration),
+        };
+    }
+
+    const velocitySampleDuration = 5; // ms
+    function calcGeneratorVelocity(resolveValue, t, current) {
+        const prevT = Math.max(t - velocitySampleDuration, 0);
+        return velocityPerSecond(current - resolveValue(prevT), t - prevT);
+    }
+
+    const springDefaults = {
+        // Default spring physics
+        stiffness: 100,
+        damping: 10,
+        mass: 1.0,
+        velocity: 0.0,
+        // Default duration/bounce-based options
+        duration: 800, // in ms
+        bounce: 0.3,
+        visualDuration: 0.3, // in seconds
+        // Rest thresholds
+        restSpeed: {
+            granular: 0.01,
+            default: 2,
+        },
+        restDelta: {
+            granular: 0.005,
+            default: 0.5,
+        },
+        // Limits
+        minDuration: 0.01, // in seconds
+        maxDuration: 10.0, // in seconds
+        minDamping: 0.05,
+        maxDamping: 1,
+    };
+
+    const safeMin = 0.001;
+    function findSpring({ duration = springDefaults.duration, bounce = springDefaults.bounce, velocity = springDefaults.velocity, mass = springDefaults.mass, }) {
+        let envelope;
+        let derivative;
+        exports.warning(duration <= secondsToMilliseconds(springDefaults.maxDuration), "Spring duration must be 10 seconds or less", "spring-duration-limit");
+        let dampingRatio = 1 - bounce;
+        /**
+         * Restrict dampingRatio and duration to within acceptable ranges.
+         */
+        dampingRatio = clamp(springDefaults.minDamping, springDefaults.maxDamping, dampingRatio);
+        duration = clamp(springDefaults.minDuration, springDefaults.maxDuration, millisecondsToSeconds(duration));
+        if (dampingRatio < 1) {
+            /**
+             * Underdamped spring
+             */
+            envelope = (undampedFreq) => {
+                const exponentialDecay = undampedFreq * dampingRatio;
+                const delta = exponentialDecay * duration;
+                const a = exponentialDecay - velocity;
+                const b = calcAngularFreq(undampedFreq, dampingRatio);
+                const c = Math.exp(-delta);
+                return safeMin - (a / b) * c;
+            };
+            derivative = (undampedFreq) => {
+                const exponentialDecay = undampedFreq * dampingRatio;
+                const delta = exponentialDecay * duration;
+                const d = delta * velocity + velocity;
+                const e = Math.pow(dampingRatio, 2) * Math.pow(undampedFreq, 2) * duration;
+                const f = Math.exp(-delta);
+                const g = calcAngularFreq(Math.pow(undampedFreq, 2), dampingRatio);
+                const factor = -envelope(undampedFreq) + safeMin > 0 ? -1 : 1;
+                return (factor * ((d - e) * f)) / g;
+            };
+        }
+        else {
+            /**
+             * Critically-damped spring
+             */
+            envelope = (undampedFreq) => {
+                const a = Math.exp(-undampedFreq * duration);
+                const b = (undampedFreq - velocity) * duration + 1;
+                return -safeMin + a * b;
+            };
+            derivative = (undampedFreq) => {
+                const a = Math.exp(-undampedFreq * duration);
+                const b = (velocity - undampedFreq) * (duration * duration);
+                return a * b;
+            };
+        }
+        const initialGuess = 5 / duration;
+        const undampedFreq = approximateRoot(envelope, derivative, initialGuess);
+        duration = secondsToMilliseconds(duration);
+        if (isNaN(undampedFreq)) {
+            return {
+                stiffness: springDefaults.stiffness,
+                damping: springDefaults.damping,
+                duration,
+            };
+        }
+        else {
+            const stiffness = Math.pow(undampedFreq, 2) * mass;
+            return {
+                stiffness,
+                damping: dampingRatio * 2 * Math.sqrt(mass * stiffness),
+                duration,
+            };
+        }
+    }
+    const rootIterations = 12;
+    function approximateRoot(envelope, derivative, initialGuess) {
+        let result = initialGuess;
+        for (let i = 1; i < rootIterations; i++) {
+            result = result - envelope(result) / derivative(result);
+        }
+        return result;
+    }
+    function calcAngularFreq(undampedFreq, dampingRatio) {
+        return undampedFreq * Math.sqrt(1 - dampingRatio * dampingRatio);
+    }
+
+    const durationKeys = ["duration", "bounce"];
+    const physicsKeys = ["stiffness", "damping", "mass"];
+    function isSpringType(options, keys) {
+        return keys.some((key) => options[key] !== undefined);
+    }
+    function getSpringOptions(options) {
+        let springOptions = {
+            velocity: springDefaults.velocity,
+            stiffness: springDefaults.stiffness,
+            damping: springDefaults.damping,
+            mass: springDefaults.mass,
+            isResolvedFromDuration: false,
+            ...options,
+        };
+        // stiffness/damping/mass overrides duration/bounce
+        if (!isSpringType(options, physicsKeys) &&
+            isSpringType(options, durationKeys)) {
+            if (options.visualDuration) {
+                const visualDuration = options.visualDuration;
+                const root = (2 * Math.PI) / (visualDuration * 1.2);
+                const stiffness = root * root;
+                const damping = 2 *
+                    clamp(0.05, 1, 1 - (options.bounce || 0)) *
+                    Math.sqrt(stiffness);
+                springOptions = {
+                    ...springOptions,
+                    mass: springDefaults.mass,
+                    stiffness,
+                    damping,
+                };
+            }
+            else {
+                const derived = findSpring(options);
+                springOptions = {
+                    ...springOptions,
+                    ...derived,
+                    mass: springDefaults.mass,
+                };
+                springOptions.isResolvedFromDuration = true;
+            }
+        }
+        return springOptions;
+    }
+    function spring(optionsOrVisualDuration = springDefaults.visualDuration, bounce = springDefaults.bounce) {
+        const options = typeof optionsOrVisualDuration !== "object"
+            ? {
+                visualDuration: optionsOrVisualDuration,
+                keyframes: [0, 1],
+                bounce,
+            }
+            : optionsOrVisualDuration;
+        let { restSpeed, restDelta } = options;
+        const origin = options.keyframes[0];
+        const target = options.keyframes[options.keyframes.length - 1];
+        /**
+         * This is the Iterator-spec return value. We ensure it's mutable rather than using a generator
+         * to reduce GC during animation.
+         */
+        const state = { done: false, value: origin };
+        const { stiffness, damping, mass, duration, velocity, isResolvedFromDuration, } = getSpringOptions({
+            ...options,
+            velocity: -millisecondsToSeconds(options.velocity || 0),
+        });
+        const initialVelocity = velocity || 0.0;
+        const dampingRatio = damping / (2 * Math.sqrt(stiffness * mass));
+        const initialDelta = target - origin;
+        const undampedAngularFreq = millisecondsToSeconds(Math.sqrt(stiffness / mass));
+        /**
+         * If we're working on a granular scale, use smaller defaults for determining
+         * when the spring is finished.
+         *
+         * These defaults have been selected emprically based on what strikes a good
+         * ratio between feeling good and finishing as soon as changes are imperceptible.
+         */
+        const isGranularScale = Math.abs(initialDelta) < 5;
+        restSpeed || (restSpeed = isGranularScale
+            ? springDefaults.restSpeed.granular
+            : springDefaults.restSpeed.default);
+        restDelta || (restDelta = isGranularScale
+            ? springDefaults.restDelta.granular
+            : springDefaults.restDelta.default);
+        let resolveSpring;
+        if (dampingRatio < 1) {
+            const angularFreq = calcAngularFreq(undampedAngularFreq, dampingRatio);
+            // Underdamped spring
+            resolveSpring = (t) => {
+                const envelope = Math.exp(-dampingRatio * undampedAngularFreq * t);
+                return (target -
+                    envelope *
+                        (((initialVelocity +
+                            dampingRatio * undampedAngularFreq * initialDelta) /
+                            angularFreq) *
+                            Math.sin(angularFreq * t) +
+                            initialDelta * Math.cos(angularFreq * t)));
+            };
+        }
+        else if (dampingRatio === 1) {
+            // Critically damped spring
+            resolveSpring = (t) => target -
+                Math.exp(-undampedAngularFreq * t) *
+                    (initialDelta +
+                        (initialVelocity + undampedAngularFreq * initialDelta) * t);
+        }
+        else {
+            // Overdamped spring
+            const dampedAngularFreq = undampedAngularFreq * Math.sqrt(dampingRatio * dampingRatio - 1);
+            resolveSpring = (t) => {
+                const envelope = Math.exp(-dampingRatio * undampedAngularFreq * t);
+                // When performing sinh or cosh values can hit Infinity so we cap them here
+                const freqForT = Math.min(dampedAngularFreq * t, 300);
+                return (target -
+                    (envelope *
+                        ((initialVelocity +
+                            dampingRatio * undampedAngularFreq * initialDelta) *
+                            Math.sinh(freqForT) +
+                            dampedAngularFreq *
+                                initialDelta *
+                                Math.cosh(freqForT))) /
+                        dampedAngularFreq);
+            };
+        }
+        const generator = {
+            calculatedDuration: isResolvedFromDuration ? duration || null : null,
+            next: (t) => {
+                const current = resolveSpring(t);
+                if (!isResolvedFromDuration) {
+                    let currentVelocity = t === 0 ? initialVelocity : 0.0;
+                    /**
+                     * We only need to calculate velocity for under-damped springs
+                     * as over- and critically-damped springs can't overshoot, so
+                     * checking only for displacement is enough.
+                     */
+                    if (dampingRatio < 1) {
+                        currentVelocity =
+                            t === 0
+                                ? secondsToMilliseconds(initialVelocity)
+                                : calcGeneratorVelocity(resolveSpring, t, current);
+                    }
+                    const isBelowVelocityThreshold = Math.abs(currentVelocity) <= restSpeed;
+                    const isBelowDisplacementThreshold = Math.abs(target - current) <= restDelta;
+                    state.done =
+                        isBelowVelocityThreshold && isBelowDisplacementThreshold;
+                }
+                else {
+                    state.done = t >= duration;
+                }
+                state.value = state.done ? target : current;
+                return state;
+            },
+            toString: () => {
+                const calculatedDuration = Math.min(calcGeneratorDuration(generator), maxGeneratorDuration);
+                const easing = generateLinearEasing((progress) => generator.next(calculatedDuration * progress).value, calculatedDuration, 30);
+                return calculatedDuration + "ms " + easing;
+            },
+            toTransition: () => { },
+        };
+        return generator;
+    }
+    spring.applyToOptions = (options) => {
+        const generatorOptions = createGeneratorEasing(options, 100, spring);
+        options.ease = generatorOptions.ease;
+        options.duration = secondsToMilliseconds(generatorOptions.duration);
+        options.type = "keyframes";
+        return options;
+    };
+
+    function inertia({ keyframes, velocity = 0.0, power = 0.8, timeConstant = 325, bounceDamping = 10, bounceStiffness = 500, modifyTarget, min, max, restDelta = 0.5, restSpeed, }) {
+        const origin = keyframes[0];
+        const state = {
+            done: false,
+            value: origin,
+        };
+        const isOutOfBounds = (v) => (min !== undefined && v < min) || (max !== undefined && v > max);
+        const nearestBoundary = (v) => {
+            if (min === undefined)
+                return max;
+            if (max === undefined)
+                return min;
+            return Math.abs(min - v) < Math.abs(max - v) ? min : max;
+        };
+        let amplitude = power * velocity;
+        const ideal = origin + amplitude;
+        const target = modifyTarget === undefined ? ideal : modifyTarget(ideal);
+        /**
+         * If the target has changed we need to re-calculate the amplitude, otherwise
+         * the animation will start from the wrong position.
+         */
+        if (target !== ideal)
+            amplitude = target - origin;
+        const calcDelta = (t) => -amplitude * Math.exp(-t / timeConstant);
+        const calcLatest = (t) => target + calcDelta(t);
+        const applyFriction = (t) => {
+            const delta = calcDelta(t);
+            const latest = calcLatest(t);
+            state.done = Math.abs(delta) <= restDelta;
+            state.value = state.done ? target : latest;
+        };
+        /**
+         * Ideally this would resolve for t in a stateless way, we could
+         * do that by always precalculating the animation but as we know
+         * this will be done anyway we can assume that spring will
+         * be discovered during that.
+         */
+        let timeReachedBoundary;
+        let spring$1;
+        const checkCatchBoundary = (t) => {
+            if (!isOutOfBounds(state.value))
+                return;
+            timeReachedBoundary = t;
+            spring$1 = spring({
+                keyframes: [state.value, nearestBoundary(state.value)],
+                velocity: calcGeneratorVelocity(calcLatest, t, state.value), // TODO: This should be passing * 1000
+                damping: bounceDamping,
+                stiffness: bounceStiffness,
+                restDelta,
+                restSpeed,
+            });
+        };
+        checkCatchBoundary(0);
+        return {
+            calculatedDuration: null,
+            next: (t) => {
+                /**
+                 * We need to resolve the friction to figure out if we need a
+                 * spring but we don't want to do this twice per frame. So here
+                 * we flag if we updated for this frame and later if we did
+                 * we can skip doing it again.
+                 */
+                let hasUpdatedFrame = false;
+                if (!spring$1 && timeReachedBoundary === undefined) {
+                    hasUpdatedFrame = true;
+                    applyFriction(t);
+                    checkCatchBoundary(t);
+                }
+                /**
+                 * If we have a spring and the provided t is beyond the moment the friction
+                 * animation crossed the min/max boundary, use the spring.
+                 */
+                if (timeReachedBoundary !== undefined && t >= timeReachedBoundary) {
+                    return spring$1.next(t - timeReachedBoundary);
+                }
+                else {
+                    !hasUpdatedFrame && applyFriction(t);
+                    return state;
+                }
+            },
+        };
+    }
+
+    function createMixers(output, ease, customMixer) {
+        const mixers = [];
+        const mixerFactory = customMixer || MotionGlobalConfig.mix || mix;
+        const numMixers = output.length - 1;
+        for (let i = 0; i < numMixers; i++) {
+            let mixer = mixerFactory(output[i], output[i + 1]);
+            if (ease) {
+                const easingFunction = Array.isArray(ease) ? ease[i] || noop : ease;
+                mixer = pipe(easingFunction, mixer);
+            }
+            mixers.push(mixer);
+        }
+        return mixers;
+    }
+    /**
+     * Create a function that maps from a numerical input array to a generic output array.
+     *
+     * Accepts:
+     *   - Numbers
+     *   - Colors (hex, hsl, hsla, rgb, rgba)
+     *   - Complex (combinations of one or more numbers or strings)
+     *
+     * ```jsx
+     * const mixColor = interpolate([0, 1], ['#fff', '#000'])
+     *
+     * mixColor(0.5) // 'rgba(128, 128, 128, 1)'
+     * ```
+     *
+     * TODO Revisit this approach once we've moved to data models for values,
+     * probably not needed to pregenerate mixer functions.
+     *
+     * @public
+     */
+    function interpolate(input, output, { clamp: isClamp = true, ease, mixer } = {}) {
+        const inputLength = input.length;
+        exports.invariant(inputLength === output.length, "Both input and output ranges must be the same length", "range-length");
+        /**
+         * If we're only provided a single input, we can just make a function
+         * that returns the output.
+         */
+        if (inputLength === 1)
+            return () => output[0];
+        if (inputLength === 2 && output[0] === output[1])
+            return () => output[1];
+        const isZeroDeltaRange = input[0] === input[1];
+        // If input runs highest -> lowest, reverse both arrays
+        if (input[0] > input[inputLength - 1]) {
+            input = [...input].reverse();
+            output = [...output].reverse();
+        }
+        const mixers = createMixers(output, ease, mixer);
+        const numMixers = mixers.length;
+        const interpolator = (v) => {
+            if (isZeroDeltaRange && v < input[0])
+                return output[0];
+            let i = 0;
+            if (numMixers > 1) {
+                for (; i < input.length - 2; i++) {
+                    if (v < input[i + 1])
+                        break;
+                }
+            }
+            const progressInRange = progress(input[i], input[i + 1], v);
+            return mixers[i](progressInRange);
+        };
+        return isClamp
+            ? (v) => interpolator(clamp(input[0], input[inputLength - 1], v))
+            : interpolator;
+    }
+
+    function fillOffset(offset, remaining) {
+        const min = offset[offset.length - 1];
+        for (let i = 1; i <= remaining; i++) {
+            const offsetProgress = progress(0, remaining, i);
+            offset.push(mixNumber$1(min, 1, offsetProgress));
+        }
+    }
+
+    function defaultOffset$1(arr) {
+        const offset = [0];
+        fillOffset(offset, arr.length - 1);
+        return offset;
+    }
+
+    function convertOffsetToTimes(offset, duration) {
+        return offset.map((o) => o * duration);
+    }
+
+    function defaultEasing(values, easing) {
+        return values.map(() => easing || easeInOut).splice(0, values.length - 1);
+    }
+    function keyframes({ duration = 300, keyframes: keyframeValues, times, ease = "easeInOut", }) {
+        /**
+         * Easing functions can be externally defined as strings. Here we convert them
+         * into actual functions.
+         */
+        const easingFunctions = isEasingArray(ease)
+            ? ease.map(easingDefinitionToFunction)
+            : easingDefinitionToFunction(ease);
+        /**
+         * This is the Iterator-spec return value. We ensure it's mutable rather than using a generator
+         * to reduce GC during animation.
+         */
+        const state = {
+            done: false,
+            value: keyframeValues[0],
+        };
+        /**
+         * Create a times array based on the provided 0-1 offsets
+         */
+        const absoluteTimes = convertOffsetToTimes(
+        // Only use the provided offsets if they're the correct length
+        // TODO Maybe we should warn here if there's a length mismatch
+        times && times.length === keyframeValues.length
+            ? times
+            : defaultOffset$1(keyframeValues), duration);
+        const mapTimeToKeyframe = interpolate(absoluteTimes, keyframeValues, {
+            ease: Array.isArray(easingFunctions)
+                ? easingFunctions
+                : defaultEasing(keyframeValues, easingFunctions),
+        });
+        return {
+            calculatedDuration: duration,
+            next: (t) => {
+                state.value = mapTimeToKeyframe(t);
+                state.done = t >= duration;
+                return state;
+            },
+        };
+    }
+
+    const isNotNull$1 = (value) => value !== null;
+    function getFinalKeyframe$1(keyframes, { repeat, repeatType = "loop" }, finalKeyframe, speed = 1) {
+        const resolvedKeyframes = keyframes.filter(isNotNull$1);
+        const useFirstKeyframe = speed < 0 || (repeat && repeatType !== "loop" && repeat % 2 === 1);
+        const index = useFirstKeyframe ? 0 : resolvedKeyframes.length - 1;
+        return !index || finalKeyframe === undefined
+            ? resolvedKeyframes[index]
+            : finalKeyframe;
+    }
+
+    const transitionTypeMap = {
+        decay: inertia,
+        inertia,
+        tween: keyframes,
+        keyframes: keyframes,
+        spring,
+    };
+    function replaceTransitionType(transition) {
+        if (typeof transition.type === "string") {
+            transition.type = transitionTypeMap[transition.type];
+        }
+    }
+
+    class WithPromise {
+        constructor() {
+            this.updateFinished();
+        }
+        get finished() {
+            return this._finished;
+        }
+        updateFinished() {
+            this._finished = new Promise((resolve) => {
+                this.resolve = resolve;
+            });
+        }
+        notifyFinished() {
+            this.resolve();
+        }
+        /**
+         * Allows the animation to be awaited.
+         *
+         * @deprecated Use `finished` instead.
+         */
+        then(onResolve, onReject) {
+            return this.finished.then(onResolve, onReject);
+        }
+    }
+
+    const percentToProgress = (percent) => percent / 100;
+    class JSAnimation extends WithPromise {
+        constructor(options) {
+            super();
+            this.state = "idle";
+            this.startTime = null;
+            this.isStopped = false;
+            /**
+             * The current time of the animation.
+             */
+            this.currentTime = 0;
+            /**
+             * The time at which the animation was paused.
+             */
+            this.holdTime = null;
+            /**
+             * Playback speed as a factor. 0 would be stopped, -1 reverse and 2 double speed.
+             */
+            this.playbackSpeed = 1;
+            /**
+             * This method is bound to the instance to fix a pattern where
+             * animation.stop is returned as a reference from a useEffect.
+             */
+            this.stop = () => {
+                const { motionValue } = this.options;
+                if (motionValue && motionValue.updatedAt !== time.now()) {
+                    this.tick(time.now());
+                }
+                this.isStopped = true;
+                if (this.state === "idle")
+                    return;
+                this.teardown();
+                this.options.onStop?.();
+            };
+            activeAnimations.mainThread++;
+            this.options = options;
+            this.initAnimation();
+            this.play();
+            if (options.autoplay === false)
+                this.pause();
+        }
+        initAnimation() {
+            const { options } = this;
+            replaceTransitionType(options);
+            const { type = keyframes, repeat = 0, repeatDelay = 0, repeatType, velocity = 0, } = options;
+            let { keyframes: keyframes$1 } = options;
+            const generatorFactory = type || keyframes;
+            if (generatorFactory !== keyframes) {
+                exports.invariant(keyframes$1.length <= 2, `Only two keyframes currently supported with spring and inertia animations. Trying to animate ${keyframes$1}`, "spring-two-frames");
+            }
+            if (generatorFactory !== keyframes &&
+                typeof keyframes$1[0] !== "number") {
+                this.mixKeyframes = pipe(percentToProgress, mix(keyframes$1[0], keyframes$1[1]));
+                keyframes$1 = [0, 100];
+            }
+            const generator = generatorFactory({ ...options, keyframes: keyframes$1 });
+            /**
+             * If we have a mirror repeat type we need to create a second generator that outputs the
+             * mirrored (not reversed) animation and later ping pong between the two generators.
+             */
+            if (repeatType === "mirror") {
+                this.mirroredGenerator = generatorFactory({
+                    ...options,
+                    keyframes: [...keyframes$1].reverse(),
+                    velocity: -velocity,
+                });
+            }
+            /**
+             * If duration is undefined and we have repeat options,
+             * we need to calculate a duration from the generator.
+             *
+             * We set it to the generator itself to cache the duration.
+             * Any timeline resolver will need to have already precalculated
+             * the duration by this step.
+             */
+            if (generator.calculatedDuration === null) {
+                generator.calculatedDuration = calcGeneratorDuration(generator);
+            }
+            const { calculatedDuration } = generator;
+            this.calculatedDuration = calculatedDuration;
+            this.resolvedDuration = calculatedDuration + repeatDelay;
+            this.totalDuration = this.resolvedDuration * (repeat + 1) - repeatDelay;
+            this.generator = generator;
+        }
+        updateTime(timestamp) {
+            const animationTime = Math.round(timestamp - this.startTime) * this.playbackSpeed;
+            // Update currentTime
+            if (this.holdTime !== null) {
+                this.currentTime = this.holdTime;
+            }
+            else {
+                // Rounding the time because floating point arithmetic is not always accurate, e.g. 3000.367 - 1000.367 =
+                // 2000.0000000000002. This is a problem when we are comparing the currentTime with the duration, for
+                // example.
+                this.currentTime = animationTime;
+            }
+        }
+        tick(timestamp, sample = false) {
+            const { generator, totalDuration, mixKeyframes, mirroredGenerator, resolvedDuration, calculatedDuration, } = this;
+            if (this.startTime === null)
+                return generator.next(0);
+            const { delay = 0, keyframes, repeat, repeatType, repeatDelay, type, onUpdate, finalKeyframe, } = this.options;
+            /**
+             * requestAnimationFrame timestamps can come through as lower than
+             * the startTime as set by performance.now(). Here we prevent this,
+             * though in the future it could be possible to make setting startTime
+             * a pending operation that gets resolved here.
+             */
+            if (this.speed > 0) {
+                this.startTime = Math.min(this.startTime, timestamp);
+            }
+            else if (this.speed < 0) {
+                this.startTime = Math.min(timestamp - totalDuration / this.speed, this.startTime);
+            }
+            if (sample) {
+                this.currentTime = timestamp;
+            }
+            else {
+                this.updateTime(timestamp);
+            }
+            // Rebase on delay
+            const timeWithoutDelay = this.currentTime - delay * (this.playbackSpeed >= 0 ? 1 : -1);
+            const isInDelayPhase = this.playbackSpeed >= 0
+                ? timeWithoutDelay < 0
+                : timeWithoutDelay > totalDuration;
+            this.currentTime = Math.max(timeWithoutDelay, 0);
+            // If this animation has finished, set the current time  to the total duration.
+            if (this.state === "finished" && this.holdTime === null) {
+                this.currentTime = totalDuration;
+            }
+            let elapsed = this.currentTime;
+            let frameGenerator = generator;
+            if (repeat) {
+                /**
+                 * Get the current progress (0-1) of the animation. If t is >
+                 * than duration we'll get values like 2.5 (midway through the
+                 * third iteration)
+                 */
+                const progress = Math.min(this.currentTime, totalDuration) / resolvedDuration;
+                /**
+                 * Get the current iteration (0 indexed). For instance the floor of
+                 * 2.5 is 2.
+                 */
+                let currentIteration = Math.floor(progress);
+                /**
+                 * Get the current progress of the iteration by taking the remainder
+                 * so 2.5 is 0.5 through iteration 2
+                 */
+                let iterationProgress = progress % 1.0;
+                /**
+                 * If iteration progress is 1 we count that as the end
+                 * of the previous iteration.
+                 */
+                if (!iterationProgress && progress >= 1) {
+                    iterationProgress = 1;
+                }
+                iterationProgress === 1 && currentIteration--;
+                currentIteration = Math.min(currentIteration, repeat + 1);
+                /**
+                 * Reverse progress if we're not running in "normal" direction
+                 */
+                const isOddIteration = Boolean(currentIteration % 2);
+                if (isOddIteration) {
+                    if (repeatType === "reverse") {
+                        iterationProgress = 1 - iterationProgress;
+                        if (repeatDelay) {
+                            iterationProgress -= repeatDelay / resolvedDuration;
+                        }
+                    }
+                    else if (repeatType === "mirror") {
+                        frameGenerator = mirroredGenerator;
+                    }
+                }
+                elapsed = clamp(0, 1, iterationProgress) * resolvedDuration;
+            }
+            /**
+             * If we're in negative time, set state as the initial keyframe.
+             * This prevents delay: x, duration: 0 animations from finishing
+             * instantly.
+             */
+            const state = isInDelayPhase
+                ? { done: false, value: keyframes[0] }
+                : frameGenerator.next(elapsed);
+            if (mixKeyframes) {
+                state.value = mixKeyframes(state.value);
+            }
+            let { done } = state;
+            if (!isInDelayPhase && calculatedDuration !== null) {
+                done =
+                    this.playbackSpeed >= 0
+                        ? this.currentTime >= totalDuration
+                        : this.currentTime <= 0;
+            }
+            const isAnimationFinished = this.holdTime === null &&
+                (this.state === "finished" || (this.state === "running" && done));
+            // TODO: The exception for inertia could be cleaner here
+            if (isAnimationFinished && type !== inertia) {
+                state.value = getFinalKeyframe$1(keyframes, this.options, finalKeyframe, this.speed);
+            }
+            if (onUpdate) {
+                onUpdate(state.value);
+            }
+            if (isAnimationFinished) {
+                this.finish();
+            }
+            return state;
+        }
+        /**
+         * Allows the returned animation to be awaited or promise-chained. Currently
+         * resolves when the animation finishes at all but in a future update could/should
+         * reject if its cancels.
+         */
+        then(resolve, reject) {
+            return this.finished.then(resolve, reject);
+        }
+        get duration() {
+            return millisecondsToSeconds(this.calculatedDuration);
+        }
+        get iterationDuration() {
+            const { delay = 0 } = this.options || {};
+            return this.duration + millisecondsToSeconds(delay);
+        }
+        get time() {
+            return millisecondsToSeconds(this.currentTime);
+        }
+        set time(newTime) {
+            newTime = secondsToMilliseconds(newTime);
+            this.currentTime = newTime;
+            if (this.startTime === null ||
+                this.holdTime !== null ||
+                this.playbackSpeed === 0) {
+                this.holdTime = newTime;
+            }
+            else if (this.driver) {
+                this.startTime = this.driver.now() - newTime / this.playbackSpeed;
+            }
+            this.driver?.start(false);
+        }
+        get speed() {
+            return this.playbackSpeed;
+        }
+        set speed(newSpeed) {
+            this.updateTime(time.now());
+            const hasChanged = this.playbackSpeed !== newSpeed;
+            this.playbackSpeed = newSpeed;
+            if (hasChanged) {
+                this.time = millisecondsToSeconds(this.currentTime);
+            }
+        }
+        play() {
+            if (this.isStopped)
+                return;
+            const { driver = frameloopDriver, startTime } = this.options;
+            if (!this.driver) {
+                this.driver = driver((timestamp) => this.tick(timestamp));
+            }
+            this.options.onPlay?.();
+            const now = this.driver.now();
+            if (this.state === "finished") {
+                this.updateFinished();
+                this.startTime = now;
+            }
+            else if (this.holdTime !== null) {
+                this.startTime = now - this.holdTime;
+            }
+            else if (!this.startTime) {
+                this.startTime = startTime ?? now;
+            }
+            if (this.state === "finished" && this.speed < 0) {
+                this.startTime += this.calculatedDuration;
+            }
+            this.holdTime = null;
+            /**
+             * Set playState to running only after we've used it in
+             * the previous logic.
+             */
+            this.state = "running";
+            this.driver.start();
+        }
+        pause() {
+            this.state = "paused";
+            this.updateTime(time.now());
+            this.holdTime = this.currentTime;
+        }
+        complete() {
+            if (this.state !== "running") {
+                this.play();
+            }
+            this.state = "finished";
+            this.holdTime = null;
+        }
+        finish() {
+            this.notifyFinished();
+            this.teardown();
+            this.state = "finished";
+            this.options.onComplete?.();
+        }
+        cancel() {
+            this.holdTime = null;
+            this.startTime = 0;
+            this.tick(0);
+            this.teardown();
+            this.options.onCancel?.();
+        }
+        teardown() {
+            this.state = "idle";
+            this.stopDriver();
+            this.startTime = this.holdTime = null;
+            activeAnimations.mainThread--;
+        }
+        stopDriver() {
+            if (!this.driver)
+                return;
+            this.driver.stop();
+            this.driver = undefined;
+        }
+        sample(sampleTime) {
+            this.startTime = 0;
+            return this.tick(sampleTime, true);
+        }
+        attachTimeline(timeline) {
+            if (this.options.allowFlatten) {
+                this.options.type = "keyframes";
+                this.options.ease = "linear";
+                this.initAnimation();
+            }
+            this.driver?.stop();
+            return timeline.observe(this);
+        }
+    }
+    // Legacy function support
+    function animateValue(options) {
+        return new JSAnimation(options);
+    }
+
+    function fillWildcards(keyframes) {
+        for (let i = 1; i < keyframes.length; i++) {
+            keyframes[i] ?? (keyframes[i] = keyframes[i - 1]);
+        }
+    }
+
+    const radToDeg = (rad) => (rad * 180) / Math.PI;
+    const rotate = (v) => {
+        const angle = radToDeg(Math.atan2(v[1], v[0]));
+        return rebaseAngle(angle);
+    };
+    const matrix2dParsers = {
+        x: 4,
+        y: 5,
+        translateX: 4,
+        translateY: 5,
+        scaleX: 0,
+        scaleY: 3,
+        scale: (v) => (Math.abs(v[0]) + Math.abs(v[3])) / 2,
+        rotate,
+        rotateZ: rotate,
+        skewX: (v) => radToDeg(Math.atan(v[1])),
+        skewY: (v) => radToDeg(Math.atan(v[2])),
+        skew: (v) => (Math.abs(v[1]) + Math.abs(v[2])) / 2,
+    };
+    const rebaseAngle = (angle) => {
+        angle = angle % 360;
+        if (angle < 0)
+            angle += 360;
+        return angle;
+    };
+    const rotateZ = rotate;
+    const scaleX = (v) => Math.sqrt(v[0] * v[0] + v[1] * v[1]);
+    const scaleY = (v) => Math.sqrt(v[4] * v[4] + v[5] * v[5]);
+    const matrix3dParsers = {
+        x: 12,
+        y: 13,
+        z: 14,
+        translateX: 12,
+        translateY: 13,
+        translateZ: 14,
+        scaleX,
+        scaleY,
+        scale: (v) => (scaleX(v) + scaleY(v)) / 2,
+        rotateX: (v) => rebaseAngle(radToDeg(Math.atan2(v[6], v[5]))),
+        rotateY: (v) => rebaseAngle(radToDeg(Math.atan2(-v[2], v[0]))),
+        rotateZ,
+        rotate: rotateZ,
+        skewX: (v) => radToDeg(Math.atan(v[4])),
+        skewY: (v) => radToDeg(Math.atan(v[1])),
+        skew: (v) => (Math.abs(v[1]) + Math.abs(v[4])) / 2,
+    };
+    function defaultTransformValue(name) {
+        return name.includes("scale") ? 1 : 0;
+    }
+    function parseValueFromTransform(transform, name) {
+        if (!transform || transform === "none") {
+            return defaultTransformValue(name);
+        }
+        const matrix3dMatch = transform.match(/^matrix3d\(([-\d.e\s,]+)\)$/u);
+        let parsers;
+        let match;
+        if (matrix3dMatch) {
+            parsers = matrix3dParsers;
+            match = matrix3dMatch;
+        }
+        else {
+            const matrix2dMatch = transform.match(/^matrix\(([-\d.e\s,]+)\)$/u);
+            parsers = matrix2dParsers;
+            match = matrix2dMatch;
+        }
+        if (!match) {
+            return defaultTransformValue(name);
+        }
+        const valueParser = parsers[name];
+        const values = match[1].split(",").map(convertTransformToNumber);
+        return typeof valueParser === "function"
+            ? valueParser(values)
+            : values[valueParser];
+    }
+    const readTransformValue = (instance, name) => {
+        const { transform = "none" } = getComputedStyle(instance);
+        return parseValueFromTransform(transform, name);
+    };
+    function convertTransformToNumber(value) {
+        return parseFloat(value.trim());
+    }
+
+    /**
+     * Generate a list of every possible transform key.
+     */
+    const transformPropOrder = [
+        "transformPerspective",
+        "x",
+        "y",
+        "z",
+        "translateX",
+        "translateY",
+        "translateZ",
+        "scale",
+        "scaleX",
+        "scaleY",
+        "rotate",
+        "rotateX",
+        "rotateY",
+        "rotateZ",
+        "skew",
+        "skewX",
+        "skewY",
+    ];
+    /**
+     * A quick lookup for transform props.
+     */
+    const transformProps = /*@__PURE__*/ (() => new Set(transformPropOrder))();
+
+    const isNumOrPxType = (v) => v === number || v === px;
+    const transformKeys = new Set(["x", "y", "z"]);
+    const nonTranslationalTransformKeys = transformPropOrder.filter((key) => !transformKeys.has(key));
+    function removeNonTranslationalTransform(visualElement) {
+        const removedTransforms = [];
+        nonTranslationalTransformKeys.forEach((key) => {
+            const value = visualElement.getValue(key);
+            if (value !== undefined) {
+                removedTransforms.push([key, value.get()]);
+                value.set(key.startsWith("scale") ? 1 : 0);
+            }
+        });
+        return removedTransforms;
+    }
+    const positionalValues = {
+        // Dimensions
+        width: ({ x }, { paddingLeft = "0", paddingRight = "0" }) => x.max - x.min - parseFloat(paddingLeft) - parseFloat(paddingRight),
+        height: ({ y }, { paddingTop = "0", paddingBottom = "0" }) => y.max - y.min - parseFloat(paddingTop) - parseFloat(paddingBottom),
+        top: (_bbox, { top }) => parseFloat(top),
+        left: (_bbox, { left }) => parseFloat(left),
+        bottom: ({ y }, { top }) => parseFloat(top) + (y.max - y.min),
+        right: ({ x }, { left }) => parseFloat(left) + (x.max - x.min),
+        // Transform
+        x: (_bbox, { transform }) => parseValueFromTransform(transform, "x"),
+        y: (_bbox, { transform }) => parseValueFromTransform(transform, "y"),
+    };
+    // Alias translate longform names
+    positionalValues.translateX = positionalValues.x;
+    positionalValues.translateY = positionalValues.y;
+
+    const toResolve = new Set();
+    let isScheduled = false;
+    let anyNeedsMeasurement = false;
+    let isForced = false;
+    function measureAllKeyframes() {
+        if (anyNeedsMeasurement) {
+            const resolversToMeasure = Array.from(toResolve).filter((resolver) => resolver.needsMeasurement);
+            const elementsToMeasure = new Set(resolversToMeasure.map((resolver) => resolver.element));
+            const transformsToRestore = new Map();
+            /**
+             * Write pass
+             * If we're measuring elements we want to remove bounding box-changing transforms.
+             */
+            elementsToMeasure.forEach((element) => {
+                const removedTransforms = removeNonTranslationalTransform(element);
+                if (!removedTransforms.length)
+                    return;
+                transformsToRestore.set(element, removedTransforms);
+                element.render();
+            });
+            // Read
+            resolversToMeasure.forEach((resolver) => resolver.measureInitialState());
+            // Write
+            elementsToMeasure.forEach((element) => {
+                element.render();
+                const restore = transformsToRestore.get(element);
+                if (restore) {
+                    restore.forEach(([key, value]) => {
+                        element.getValue(key)?.set(value);
+                    });
+                }
+            });
+            // Read
+            resolversToMeasure.forEach((resolver) => resolver.measureEndState());
+            // Write
+            resolversToMeasure.forEach((resolver) => {
+                if (resolver.suspendedScrollY !== undefined) {
+                    window.scrollTo(0, resolver.suspendedScrollY);
+                }
+            });
+        }
+        anyNeedsMeasurement = false;
+        isScheduled = false;
+        toResolve.forEach((resolver) => resolver.complete(isForced));
+        toResolve.clear();
+    }
+    function readAllKeyframes() {
+        toResolve.forEach((resolver) => {
+            resolver.readKeyframes();
+            if (resolver.needsMeasurement) {
+                anyNeedsMeasurement = true;
+            }
+        });
+    }
+    function flushKeyframeResolvers() {
+        isForced = true;
+        readAllKeyframes();
+        measureAllKeyframes();
+        isForced = false;
+    }
+    class KeyframeResolver {
+        constructor(unresolvedKeyframes, onComplete, name, motionValue, element, isAsync = false) {
+            this.state = "pending";
+            /**
+             * Track whether this resolver is async. If it is, it'll be added to the
+             * resolver queue and flushed in the next frame. Resolvers that aren't going
+             * to trigger read/write thrashing don't need to be async.
+             */
+            this.isAsync = false;
+            /**
+             * Track whether this resolver needs to perform a measurement
+             * to resolve its keyframes.
+             */
+            this.needsMeasurement = false;
+            this.unresolvedKeyframes = [...unresolvedKeyframes];
+            this.onComplete = onComplete;
+            this.name = name;
+            this.motionValue = motionValue;
+            this.element = element;
+            this.isAsync = isAsync;
+        }
+        scheduleResolve() {
+            this.state = "scheduled";
+            if (this.isAsync) {
+                toResolve.add(this);
+                if (!isScheduled) {
+                    isScheduled = true;
+                    frame.read(readAllKeyframes);
+                    frame.resolveKeyframes(measureAllKeyframes);
+                }
+            }
+            else {
+                this.readKeyframes();
+                this.complete();
+            }
+        }
+        readKeyframes() {
+            const { unresolvedKeyframes, name, element, motionValue } = this;
+            // If initial keyframe is null we need to read it from the DOM
+            if (unresolvedKeyframes[0] === null) {
+                const currentValue = motionValue?.get();
+                // TODO: This doesn't work if the final keyframe is a wildcard
+                const finalKeyframe = unresolvedKeyframes[unresolvedKeyframes.length - 1];
+                if (currentValue !== undefined) {
+                    unresolvedKeyframes[0] = currentValue;
+                }
+                else if (element && name) {
+                    const valueAsRead = element.readValue(name, finalKeyframe);
+                    if (valueAsRead !== undefined && valueAsRead !== null) {
+                        unresolvedKeyframes[0] = valueAsRead;
+                    }
+                }
+                if (unresolvedKeyframes[0] === undefined) {
+                    unresolvedKeyframes[0] = finalKeyframe;
+                }
+                if (motionValue && currentValue === undefined) {
+                    motionValue.set(unresolvedKeyframes[0]);
+                }
+            }
+            fillWildcards(unresolvedKeyframes);
+        }
+        setFinalKeyframe() { }
+        measureInitialState() { }
+        renderEndStyles() { }
+        measureEndState() { }
+        complete(isForcedComplete = false) {
+            this.state = "complete";
+            this.onComplete(this.unresolvedKeyframes, this.finalKeyframe, isForcedComplete);
+            toResolve.delete(this);
+        }
+        cancel() {
+            if (this.state === "scheduled") {
+                toResolve.delete(this);
+                this.state = "pending";
+            }
+        }
+        resume() {
+            if (this.state === "pending")
+                this.scheduleResolve();
+        }
+    }
+
+    const isCSSVar = (name) => name.startsWith("--");
+
+    function setStyle(element, name, value) {
+        isCSSVar(name)
+            ? element.style.setProperty(name, value)
+            : (element.style[name] = value);
+    }
+
+    const supportsScrollTimeline = /* @__PURE__ */ memo(() => window.ScrollTimeline !== undefined);
+
+    /**
+     * Add the ability for test suites to manually set support flags
+     * to better test more environments.
+     */
+    const supportsFlags = {};
+
+    function memoSupports(callback, supportsFlag) {
+        const memoized = memo(callback);
+        return () => supportsFlags[supportsFlag] ?? memoized();
+    }
+
+    const supportsLinearEasing = /*@__PURE__*/ memoSupports(() => {
+        try {
+            document
+                .createElement("div")
+                .animate({ opacity: 0 }, { easing: "linear(0, 1)" });
+        }
+        catch (e) {
+            return false;
+        }
+        return true;
+    }, "linearEasing");
+
+    const cubicBezierAsString = ([a, b, c, d]) => `cubic-bezier(${a}, ${b}, ${c}, ${d})`;
+
+    const supportedWaapiEasing = {
+        linear: "linear",
+        ease: "ease",
+        easeIn: "ease-in",
+        easeOut: "ease-out",
+        easeInOut: "ease-in-out",
+        circIn: /*@__PURE__*/ cubicBezierAsString([0, 0.65, 0.55, 1]),
+        circOut: /*@__PURE__*/ cubicBezierAsString([0.55, 0, 1, 0.45]),
+        backIn: /*@__PURE__*/ cubicBezierAsString([0.31, 0.01, 0.66, -0.59]),
+        backOut: /*@__PURE__*/ cubicBezierAsString([0.33, 1.53, 0.69, 0.99]),
+    };
+
+    function mapEasingToNativeEasing(easing, duration) {
+        if (!easing) {
+            return undefined;
+        }
+        else if (typeof easing === "function") {
+            return supportsLinearEasing()
+                ? generateLinearEasing(easing, duration)
+                : "ease-out";
+        }
+        else if (isBezierDefinition(easing)) {
+            return cubicBezierAsString(easing);
+        }
+        else if (Array.isArray(easing)) {
+            return easing.map((segmentEasing) => mapEasingToNativeEasing(segmentEasing, duration) ||
+                supportedWaapiEasing.easeOut);
+        }
+        else {
+            return supportedWaapiEasing[easing];
+        }
+    }
+
+    function startWaapiAnimation(element, valueName, keyframes, { delay = 0, duration = 300, repeat = 0, repeatType = "loop", ease = "easeOut", times, } = {}, pseudoElement = undefined) {
+        const keyframeOptions = {
+            [valueName]: keyframes,
+        };
+        if (times)
+            keyframeOptions.offset = times;
+        const easing = mapEasingToNativeEasing(ease, duration);
+        /**
+         * If this is an easing array, apply to keyframes, not animation as a whole
+         */
+        if (Array.isArray(easing))
+            keyframeOptions.easing = easing;
+        if (statsBuffer.value) {
+            activeAnimations.waapi++;
+        }
+        const options = {
+            delay,
+            duration,
+            easing: !Array.isArray(easing) ? easing : "linear",
+            fill: "both",
+            iterations: repeat + 1,
+            direction: repeatType === "reverse" ? "alternate" : "normal",
+        };
+        if (pseudoElement)
+            options.pseudoElement = pseudoElement;
+        const animation = element.animate(keyframeOptions, options);
+        if (statsBuffer.value) {
+            animation.finished.finally(() => {
+                activeAnimations.waapi--;
+            });
+        }
+        return animation;
+    }
+
+    function isGenerator(type) {
+        return typeof type === "function" && "applyToOptions" in type;
+    }
+
+    function applyGeneratorOptions({ type, ...options }) {
+        if (isGenerator(type) && supportsLinearEasing()) {
+            return type.applyToOptions(options);
+        }
+        else {
+            options.duration ?? (options.duration = 300);
+            options.ease ?? (options.ease = "easeOut");
+        }
+        return options;
+    }
+
+    /**
+     * NativeAnimation implements AnimationPlaybackControls for the browser's Web Animations API.
+     */
+    class NativeAnimation extends WithPromise {
+        constructor(options) {
+            super();
+            this.finishedTime = null;
+            this.isStopped = false;
+            if (!options)
+                return;
+            const { element, name, keyframes, pseudoElement, allowFlatten = false, finalKeyframe, onComplete, } = options;
+            this.isPseudoElement = Boolean(pseudoElement);
+            this.allowFlatten = allowFlatten;
+            this.options = options;
+            exports.invariant(typeof options.type !== "string", `Mini animate() doesn't support "type" as a string.`, "mini-spring");
+            const transition = applyGeneratorOptions(options);
+            this.animation = startWaapiAnimation(element, name, keyframes, transition, pseudoElement);
+            if (transition.autoplay === false) {
+                this.animation.pause();
+            }
+            this.animation.onfinish = () => {
+                this.finishedTime = this.time;
+                if (!pseudoElement) {
+                    const keyframe = getFinalKeyframe$1(keyframes, this.options, finalKeyframe, this.speed);
+                    if (this.updateMotionValue) {
+                        this.updateMotionValue(keyframe);
+                    }
+                    else {
+                        /**
+                         * If we can, we want to commit the final style as set by the user,
+                         * rather than the computed keyframe value supplied by the animation.
+                         */
+                        setStyle(element, name, keyframe);
+                    }
+                    this.animation.cancel();
+                }
+                onComplete?.();
+                this.notifyFinished();
+            };
+        }
+        play() {
+            if (this.isStopped)
+                return;
+            this.animation.play();
+            if (this.state === "finished") {
+                this.updateFinished();
+            }
+        }
+        pause() {
+            this.animation.pause();
+        }
+        complete() {
+            this.animation.finish?.();
+        }
+        cancel() {
+            try {
+                this.animation.cancel();
+            }
+            catch (e) { }
+        }
+        stop() {
+            if (this.isStopped)
+                return;
+            this.isStopped = true;
+            const { state } = this;
+            if (state === "idle" || state === "finished") {
+                return;
+            }
+            if (this.updateMotionValue) {
+                this.updateMotionValue();
+            }
+            else {
+                this.commitStyles();
+            }
+            if (!this.isPseudoElement)
+                this.cancel();
+        }
+        /**
+         * WAAPI doesn't natively have any interruption capabilities.
+         *
+         * In this method, we commit styles back to the DOM before cancelling
+         * the animation.
+         *
+         * This is designed to be overridden by NativeAnimationExtended, which
+         * will create a renderless JS animation and sample it twice to calculate
+         * its current value, "previous" value, and therefore allow
+         * Motion to also correctly calculate velocity for any subsequent animation
+         * while deferring the commit until the next animation frame.
+         */
+        commitStyles() {
+            if (!this.isPseudoElement) {
+                this.animation.commitStyles?.();
+            }
+        }
+        get duration() {
+            const duration = this.animation.effect?.getComputedTiming?.().duration || 0;
+            return millisecondsToSeconds(Number(duration));
+        }
+        get iterationDuration() {
+            const { delay = 0 } = this.options || {};
+            return this.duration + millisecondsToSeconds(delay);
+        }
+        get time() {
+            return millisecondsToSeconds(Number(this.animation.currentTime) || 0);
+        }
+        set time(newTime) {
+            this.finishedTime = null;
+            this.animation.currentTime = secondsToMilliseconds(newTime);
+        }
+        /**
+         * The playback speed of the animation.
+         * 1 = normal speed, 2 = double speed, 0.5 = half speed.
+         */
+        get speed() {
+            return this.animation.playbackRate;
+        }
+        set speed(newSpeed) {
+            // Allow backwards playback after finishing
+            if (newSpeed < 0)
+                this.finishedTime = null;
+            this.animation.playbackRate = newSpeed;
+        }
+        get state() {
+            return this.finishedTime !== null
+                ? "finished"
+                : this.animation.playState;
+        }
+        get startTime() {
+            return Number(this.animation.startTime);
+        }
+        set startTime(newStartTime) {
+            this.animation.startTime = newStartTime;
+        }
+        /**
+         * Attaches a timeline to the animation, for instance the `ScrollTimeline`.
+         */
+        attachTimeline({ timeline, observe }) {
+            if (this.allowFlatten) {
+                this.animation.effect?.updateTiming({ easing: "linear" });
+            }
+            this.animation.onfinish = null;
+            if (timeline && supportsScrollTimeline()) {
+                this.animation.timeline = timeline;
+                return noop;
+            }
+            else {
+                return observe(this);
+            }
+        }
+    }
+
+    const unsupportedEasingFunctions = {
+        anticipate,
+        backInOut,
+        circInOut,
+    };
+    function isUnsupportedEase(key) {
+        return key in unsupportedEasingFunctions;
+    }
+    function replaceStringEasing(transition) {
+        if (typeof transition.ease === "string" &&
+            isUnsupportedEase(transition.ease)) {
+            transition.ease = unsupportedEasingFunctions[transition.ease];
+        }
+    }
+
+    /**
+     * 10ms is chosen here as it strikes a balance between smooth
+     * results (more than one keyframe per frame at 60fps) and
+     * keyframe quantity.
+     */
+    const sampleDelta = 10; //ms
+    class NativeAnimationExtended extends NativeAnimation {
+        constructor(options) {
+            /**
+             * The base NativeAnimation function only supports a subset
+             * of Motion easings, and WAAPI also only supports some
+             * easing functions via string/cubic-bezier definitions.
+             *
+             * This function replaces those unsupported easing functions
+             * with a JS easing function. This will later get compiled
+             * to a linear() easing function.
+             */
+            replaceStringEasing(options);
+            /**
+             * Ensure we replace the transition type with a generator function
+             * before passing to WAAPI.
+             *
+             * TODO: Does this have a better home? It could be shared with
+             * JSAnimation.
+             */
+            replaceTransitionType(options);
+            super(options);
+            if (options.startTime) {
+                this.startTime = options.startTime;
+            }
+            this.options = options;
+        }
+        /**
+         * WAAPI doesn't natively have any interruption capabilities.
+         *
+         * Rather than read commited styles back out of the DOM, we can
+         * create a renderless JS animation and sample it twice to calculate
+         * its current value, "previous" value, and therefore allow
+         * Motion to calculate velocity for any subsequent animation.
+         */
+        updateMotionValue(value) {
+            const { motionValue, onUpdate, onComplete, element, ...options } = this.options;
+            if (!motionValue)
+                return;
+            if (value !== undefined) {
+                motionValue.set(value);
+                return;
+            }
+            const sampleAnimation = new JSAnimation({
+                ...options,
+                autoplay: false,
+            });
+            const sampleTime = secondsToMilliseconds(this.finishedTime ?? this.time);
+            motionValue.setWithVelocity(sampleAnimation.sample(sampleTime - sampleDelta).value, sampleAnimation.sample(sampleTime).value, sampleDelta);
+            sampleAnimation.stop();
+        }
+    }
+
+    /**
+     * Check if a value is animatable. Examples:
+     *
+     * ✅: 100, "100px", "#fff"
+     * ❌: "block", "url(2.jpg)"
+     * @param value
+     *
+     * @internal
+     */
+    const isAnimatable = (value, name) => {
+        // If the list of keys that might be non-animatable grows, replace with Set
+        if (name === "zIndex")
+            return false;
+        // If it's a number or a keyframes array, we can animate it. We might at some point
+        // need to do a deep isAnimatable check of keyframes, or let Popmotion handle this,
+        // but for now lets leave it like this for performance reasons
+        if (typeof value === "number" || Array.isArray(value))
+            return true;
+        if (typeof value === "string" && // It's animatable if we have a string
+            (complex.test(value) || value === "0") && // And it contains numbers and/or colors
+            !value.startsWith("url(") // Unless it starts with "url("
+        ) {
+            return true;
+        }
+        return false;
+    };
+
+    function hasKeyframesChanged(keyframes) {
+        const current = keyframes[0];
+        if (keyframes.length === 1)
+            return true;
+        for (let i = 0; i < keyframes.length; i++) {
+            if (keyframes[i] !== current)
+                return true;
+        }
+    }
+    function canAnimate(keyframes, name, type, velocity) {
+        /**
+         * Check if we're able to animate between the start and end keyframes,
+         * and throw a warning if we're attempting to animate between one that's
+         * animatable and another that isn't.
+         */
+        const originKeyframe = keyframes[0];
+        if (originKeyframe === null)
+            return false;
+        /**
+         * These aren't traditionally animatable but we do support them.
+         * In future we could look into making this more generic or replacing
+         * this function with mix() === mixImmediate
+         */
+        if (name === "display" || name === "visibility")
+            return true;
+        const targetKeyframe = keyframes[keyframes.length - 1];
+        const isOriginAnimatable = isAnimatable(originKeyframe, name);
+        const isTargetAnimatable = isAnimatable(targetKeyframe, name);
+        exports.warning(isOriginAnimatable === isTargetAnimatable, `You are trying to animate ${name} from "${originKeyframe}" to "${targetKeyframe}". "${isOriginAnimatable ? targetKeyframe : originKeyframe}" is not an animatable value.`, "value-not-animatable");
+        // Always skip if any of these are true
+        if (!isOriginAnimatable || !isTargetAnimatable) {
+            return false;
+        }
+        return (hasKeyframesChanged(keyframes) ||
+            ((type === "spring" || isGenerator(type)) && velocity));
+    }
+
+    function makeAnimationInstant(options) {
+        options.duration = 0;
+        options.type = "keyframes";
+    }
+
+    /**
+     * A list of values that can be hardware-accelerated.
+     */
+    const acceleratedValues$1 = new Set([
+        "opacity",
+        "clipPath",
+        "filter",
+        "transform",
+        // TODO: Could be re-enabled now we have support for linear() easing
+        // "background-color"
+    ]);
+    const supportsWaapi = /*@__PURE__*/ memo(() => Object.hasOwnProperty.call(Element.prototype, "animate"));
+    function supportsBrowserAnimation(options) {
+        const { motionValue, name, repeatDelay, repeatType, damping, type } = options;
+        const subject = motionValue?.owner?.current;
+        /**
+         * We use this check instead of isHTMLElement() because we explicitly
+         * **don't** want elements in different timing contexts (i.e. popups)
+         * to be accelerated, as it's not possible to sync these animations
+         * properly with those driven from the main window frameloop.
+         */
+        if (!(subject instanceof HTMLElement)) {
+            return false;
+        }
+        const { onUpdate, transformTemplate } = motionValue.owner.getProps();
+        return (supportsWaapi() &&
+            name &&
+            acceleratedValues$1.has(name) &&
+            (name !== "transform" || !transformTemplate) &&
+            /**
+             * If we're outputting values to onUpdate then we can't use WAAPI as there's
+             * no way to read the value from WAAPI every frame.
+             */
+            !onUpdate &&
+            !repeatDelay &&
+            repeatType !== "mirror" &&
+            damping !== 0 &&
+            type !== "inertia");
+    }
+
+    /**
+     * Maximum time allowed between an animation being created and it being
+     * resolved for us to use the latter as the start time.
+     *
+     * This is to ensure that while we prefer to "start" an animation as soon
+     * as it's triggered, we also want to avoid a visual jump if there's a big delay
+     * between these two moments.
+     */
+    const MAX_RESOLVE_DELAY = 40;
+    class AsyncMotionValueAnimation extends WithPromise {
+        constructor({ autoplay = true, delay = 0, type = "keyframes", repeat = 0, repeatDelay = 0, repeatType = "loop", keyframes, name, motionValue, element, ...options }) {
+            super();
+            /**
+             * Bound to support return animation.stop pattern
+             */
+            this.stop = () => {
+                if (this._animation) {
+                    this._animation.stop();
+                    this.stopTimeline?.();
+                }
+                this.keyframeResolver?.cancel();
+            };
+            this.createdAt = time.now();
+            const optionsWithDefaults = {
+                autoplay,
+                delay,
+                type,
+                repeat,
+                repeatDelay,
+                repeatType,
+                name,
+                motionValue,
+                element,
+                ...options,
+            };
+            const KeyframeResolver$1 = element?.KeyframeResolver || KeyframeResolver;
+            this.keyframeResolver = new KeyframeResolver$1(keyframes, (resolvedKeyframes, finalKeyframe, forced) => this.onKeyframesResolved(resolvedKeyframes, finalKeyframe, optionsWithDefaults, !forced), name, motionValue, element);
+            this.keyframeResolver?.scheduleResolve();
+        }
+        onKeyframesResolved(keyframes, finalKeyframe, options, sync) {
+            this.keyframeResolver = undefined;
+            const { name, type, velocity, delay, isHandoff, onUpdate } = options;
+            this.resolvedAt = time.now();
+            /**
+             * If we can't animate this value with the resolved keyframes
+             * then we should complete it immediately.
+             */
+            if (!canAnimate(keyframes, name, type, velocity)) {
+                if (MotionGlobalConfig.instantAnimations || !delay) {
+                    onUpdate?.(getFinalKeyframe$1(keyframes, options, finalKeyframe));
+                }
+                keyframes[0] = keyframes[keyframes.length - 1];
+                makeAnimationInstant(options);
+                options.repeat = 0;
+            }
+            /**
+             * Resolve startTime for the animation.
+             *
+             * This method uses the createdAt and resolvedAt to calculate the
+             * animation startTime. *Ideally*, we would use the createdAt time as t=0
+             * as the following frame would then be the first frame of the animation in
+             * progress, which would feel snappier.
+             *
+             * However, if there's a delay (main thread work) between the creation of
+             * the animation and the first commited frame, we prefer to use resolvedAt
+             * to avoid a sudden jump into the animation.
+             */
+            const startTime = sync
+                ? !this.resolvedAt
+                    ? this.createdAt
+                    : this.resolvedAt - this.createdAt > MAX_RESOLVE_DELAY
+                        ? this.resolvedAt
+                        : this.createdAt
+                : undefined;
+            const resolvedOptions = {
+                startTime,
+                finalKeyframe,
+                ...options,
+                keyframes,
+            };
+            /**
+             * Animate via WAAPI if possible. If this is a handoff animation, the optimised animation will be running via
+             * WAAPI. Therefore, this animation must be JS to ensure it runs "under" the
+             * optimised animation.
+             */
+            const animation = !isHandoff && supportsBrowserAnimation(resolvedOptions)
+                ? new NativeAnimationExtended({
+                    ...resolvedOptions,
+                    element: resolvedOptions.motionValue.owner.current,
+                })
+                : new JSAnimation(resolvedOptions);
+            animation.finished.then(() => this.notifyFinished()).catch(noop);
+            if (this.pendingTimeline) {
+                this.stopTimeline = animation.attachTimeline(this.pendingTimeline);
+                this.pendingTimeline = undefined;
+            }
+            this._animation = animation;
+        }
+        get finished() {
+            if (!this._animation) {
+                return this._finished;
+            }
+            else {
+                return this.animation.finished;
+            }
+        }
+        then(onResolve, _onReject) {
+            return this.finished.finally(onResolve).then(() => { });
+        }
+        get animation() {
+            if (!this._animation) {
+                this.keyframeResolver?.resume();
+                flushKeyframeResolvers();
+            }
+            return this._animation;
+        }
+        get duration() {
+            return this.animation.duration;
+        }
+        get iterationDuration() {
+            return this.animation.iterationDuration;
+        }
+        get time() {
+            return this.animation.time;
+        }
+        set time(newTime) {
+            this.animation.time = newTime;
+        }
+        get speed() {
+            return this.animation.speed;
+        }
+        get state() {
+            return this.animation.state;
+        }
+        set speed(newSpeed) {
+            this.animation.speed = newSpeed;
+        }
+        get startTime() {
+            return this.animation.startTime;
+        }
+        attachTimeline(timeline) {
+            if (this._animation) {
+                this.stopTimeline = this.animation.attachTimeline(timeline);
+            }
+            else {
+                this.pendingTimeline = timeline;
+            }
+            return () => this.stop();
+        }
+        play() {
+            this.animation.play();
+        }
+        pause() {
+            this.animation.pause();
+        }
+        complete() {
+            this.animation.complete();
+        }
+        cancel() {
+            if (this._animation) {
+                this.animation.cancel();
+            }
+            this.keyframeResolver?.cancel();
+        }
+    }
+
+    class GroupAnimation {
+        constructor(animations) {
+            // Bound to accomadate common `return animation.stop` pattern
+            this.stop = () => this.runAll("stop");
+            this.animations = animations.filter(Boolean);
+        }
+        get finished() {
+            return Promise.all(this.animations.map((animation) => animation.finished));
+        }
+        /**
+         * TODO: Filter out cancelled or stopped animations before returning
+         */
+        getAll(propName) {
+            return this.animations[0][propName];
+        }
+        setAll(propName, newValue) {
+            for (let i = 0; i < this.animations.length; i++) {
+                this.animations[i][propName] = newValue;
+            }
+        }
+        attachTimeline(timeline) {
+            const subscriptions = this.animations.map((animation) => animation.attachTimeline(timeline));
+            return () => {
+                subscriptions.forEach((cancel, i) => {
+                    cancel && cancel();
+                    this.animations[i].stop();
+                });
+            };
+        }
+        get time() {
+            return this.getAll("time");
+        }
+        set time(time) {
+            this.setAll("time", time);
+        }
+        get speed() {
+            return this.getAll("speed");
+        }
+        set speed(speed) {
+            this.setAll("speed", speed);
+        }
+        get state() {
+            return this.getAll("state");
+        }
+        get startTime() {
+            return this.getAll("startTime");
+        }
+        get duration() {
+            return getMax(this.animations, "duration");
+        }
+        get iterationDuration() {
+            return getMax(this.animations, "iterationDuration");
+        }
+        runAll(methodName) {
+            this.animations.forEach((controls) => controls[methodName]());
+        }
+        play() {
+            this.runAll("play");
+        }
+        pause() {
+            this.runAll("pause");
+        }
+        cancel() {
+            this.runAll("cancel");
+        }
+        complete() {
+            this.runAll("complete");
+        }
+    }
+    function getMax(animations, propName) {
+        let max = 0;
+        for (let i = 0; i < animations.length; i++) {
+            const value = animations[i][propName];
+            if (value !== null && value > max) {
+                max = value;
+            }
+        }
+        return max;
+    }
+
+    class GroupAnimationWithThen extends GroupAnimation {
+        then(onResolve, _onReject) {
+            return this.finished.finally(onResolve).then(() => { });
+        }
+    }
+
+    class NativeAnimationWrapper extends NativeAnimation {
+        constructor(animation) {
+            super();
+            this.animation = animation;
+            animation.onfinish = () => {
+                this.finishedTime = this.time;
+                this.notifyFinished();
+            };
+        }
+    }
+
+    const animationMaps = new WeakMap();
+    const animationMapKey = (name, pseudoElement = "") => `${name}:${pseudoElement}`;
+    function getAnimationMap(element) {
+        const map = animationMaps.get(element) || new Map();
+        animationMaps.set(element, map);
+        return map;
+    }
+
+    /**
+     * Parse Framer's special CSS variable format into a CSS token and a fallback.
+     *
+     * ```
+     * `var(--foo, #fff)` => [`--foo`, '#fff']
+     * ```
+     *
+     * @param current
+     */
+    const splitCSSVariableRegex = 
+    // eslint-disable-next-line redos-detector/no-unsafe-regex -- false positive, as it can match a lot of words
+    /^var\(--(?:([\w-]+)|([\w-]+), ?([a-zA-Z\d ()%#.,-]+))\)/u;
+    function parseCSSVariable(current) {
+        const match = splitCSSVariableRegex.exec(current);
+        if (!match)
+            return [,];
+        const [, token1, token2, fallback] = match;
+        return [`--${token1 ?? token2}`, fallback];
+    }
+    const maxDepth = 4;
+    function getVariableValue(current, element, depth = 1) {
+        exports.invariant(depth <= maxDepth, `Max CSS variable fallback depth detected in property "${current}". This may indicate a circular fallback dependency.`, "max-css-var-depth");
+        const [token, fallback] = parseCSSVariable(current);
+        // No CSS variable detected
+        if (!token)
+            return;
+        // Attempt to read this CSS variable off the element
+        const resolved = window.getComputedStyle(element).getPropertyValue(token);
+        if (resolved) {
+            const trimmed = resolved.trim();
+            return isNumericalString(trimmed) ? parseFloat(trimmed) : trimmed;
+        }
+        return isCSSVariableToken(fallback)
+            ? getVariableValue(fallback, element, depth + 1)
+            : fallback;
+    }
+
+    function getValueTransition$1(transition, key) {
+        return (transition?.[key] ??
+            transition?.["default"] ??
+            transition);
+    }
+
+    const positionalKeys = new Set([
+        "width",
+        "height",
+        "top",
+        "left",
+        "right",
+        "bottom",
+        ...transformPropOrder,
+    ]);
+
+    /**
+     * ValueType for "auto"
+     */
+    const auto = {
+        test: (v) => v === "auto",
+        parse: (v) => v,
+    };
+
+    /**
+     * Tests a provided value against a ValueType
+     */
+    const testValueType = (v) => (type) => type.test(v);
+
+    /**
+     * A list of value types commonly used for dimensions
+     */
+    const dimensionValueTypes = [number, px, percent, degrees, vw, vh, auto];
+    /**
+     * Tests a dimensional value against the list of dimension ValueTypes
+     */
+    const findDimensionValueType = (v) => dimensionValueTypes.find(testValueType(v));
+
+    function isNone(value) {
+        if (typeof value === "number") {
+            return value === 0;
+        }
+        else if (value !== null) {
+            return value === "none" || value === "0" || isZeroValueString(value);
+        }
+        else {
+            return true;
+        }
+    }
+
+    /**
+     * Properties that should default to 1 or 100%
+     */
+    const maxDefaults = new Set(["brightness", "contrast", "saturate", "opacity"]);
+    function applyDefaultFilter(v) {
+        const [name, value] = v.slice(0, -1).split("(");
+        if (name === "drop-shadow")
+            return v;
+        const [number] = value.match(floatRegex) || [];
+        if (!number)
+            return v;
+        const unit = value.replace(number, "");
+        let defaultValue = maxDefaults.has(name) ? 1 : 0;
+        if (number !== value)
+            defaultValue *= 100;
+        return name + "(" + defaultValue + unit + ")";
+    }
+    const functionRegex = /\b([a-z-]*)\(.*?\)/gu;
+    const filter = {
+        ...complex,
+        getAnimatableNone: (v) => {
+            const functions = v.match(functionRegex);
+            return functions ? functions.map(applyDefaultFilter).join(" ") : v;
+        },
+    };
+
+    const int = {
+        ...number,
+        transform: Math.round,
+    };
+
+    const transformValueTypes = {
+        rotate: degrees,
+        rotateX: degrees,
+        rotateY: degrees,
+        rotateZ: degrees,
+        scale,
+        scaleX: scale,
+        scaleY: scale,
+        scaleZ: scale,
+        skew: degrees,
+        skewX: degrees,
+        skewY: degrees,
+        distance: px,
+        translateX: px,
+        translateY: px,
+        translateZ: px,
+        x: px,
+        y: px,
+        z: px,
+        perspective: px,
+        transformPerspective: px,
+        opacity: alpha,
+        originX: progressPercentage,
+        originY: progressPercentage,
+        originZ: px,
+    };
+
+    const numberValueTypes = {
+        // Border props
+        borderWidth: px,
+        borderTopWidth: px,
+        borderRightWidth: px,
+        borderBottomWidth: px,
+        borderLeftWidth: px,
+        borderRadius: px,
+        radius: px,
+        borderTopLeftRadius: px,
+        borderTopRightRadius: px,
+        borderBottomRightRadius: px,
+        borderBottomLeftRadius: px,
+        // Positioning props
+        width: px,
+        maxWidth: px,
+        height: px,
+        maxHeight: px,
+        top: px,
+        right: px,
+        bottom: px,
+        left: px,
+        // Spacing props
+        padding: px,
+        paddingTop: px,
+        paddingRight: px,
+        paddingBottom: px,
+        paddingLeft: px,
+        margin: px,
+        marginTop: px,
+        marginRight: px,
+        marginBottom: px,
+        marginLeft: px,
+        // Misc
+        backgroundPositionX: px,
+        backgroundPositionY: px,
+        ...transformValueTypes,
+        zIndex: int,
+        // SVG
+        fillOpacity: alpha,
+        strokeOpacity: alpha,
+        numOctaves: int,
+    };
+
+    /**
+     * A map of default value types for common values
+     */
+    const defaultValueTypes = {
+        ...numberValueTypes,
+        // Color props
+        color,
+        backgroundColor: color,
+        outlineColor: color,
+        fill: color,
+        stroke: color,
+        // Border props
+        borderColor: color,
+        borderTopColor: color,
+        borderRightColor: color,
+        borderBottomColor: color,
+        borderLeftColor: color,
+        filter,
+        WebkitFilter: filter,
+    };
+    /**
+     * Gets the default ValueType for the provided value key
+     */
+    const getDefaultValueType = (key) => defaultValueTypes[key];
+
+    function getAnimatableNone(key, value) {
+        let defaultValueType = getDefaultValueType(key);
+        if (defaultValueType !== filter)
+            defaultValueType = complex;
+        // If value is not recognised as animatable, ie "none", create an animatable version origin based on the target
+        return defaultValueType.getAnimatableNone
+            ? defaultValueType.getAnimatableNone(value)
+            : undefined;
+    }
+
+    /**
+     * If we encounter keyframes like "none" or "0" and we also have keyframes like
+     * "#fff" or "200px 200px" we want to find a keyframe to serve as a template for
+     * the "none" keyframes. In this case "#fff" or "200px 200px" - then these get turned into
+     * zero equivalents, i.e. "#fff0" or "0px 0px".
+     */
+    const invalidTemplates = new Set(["auto", "none", "0"]);
+    function makeNoneKeyframesAnimatable(unresolvedKeyframes, noneKeyframeIndexes, name) {
+        let i = 0;
+        let animatableTemplate = undefined;
+        while (i < unresolvedKeyframes.length && !animatableTemplate) {
+            const keyframe = unresolvedKeyframes[i];
+            if (typeof keyframe === "string" &&
+                !invalidTemplates.has(keyframe) &&
+                analyseComplexValue(keyframe).values.length) {
+                animatableTemplate = unresolvedKeyframes[i];
+            }
+            i++;
+        }
+        if (animatableTemplate && name) {
+            for (const noneIndex of noneKeyframeIndexes) {
+                unresolvedKeyframes[noneIndex] = getAnimatableNone(name, animatableTemplate);
+            }
+        }
+    }
+
+    class DOMKeyframesResolver extends KeyframeResolver {
+        constructor(unresolvedKeyframes, onComplete, name, motionValue, element) {
+            super(unresolvedKeyframes, onComplete, name, motionValue, element, true);
+        }
+        readKeyframes() {
+            const { unresolvedKeyframes, element, name } = this;
+            if (!element || !element.current)
+                return;
+            super.readKeyframes();
+            /**
+             * If any keyframe is a CSS variable, we need to find its value by sampling the element
+             */
+            for (let i = 0; i < unresolvedKeyframes.length; i++) {
+                let keyframe = unresolvedKeyframes[i];
+                if (typeof keyframe === "string") {
+                    keyframe = keyframe.trim();
+                    if (isCSSVariableToken(keyframe)) {
+                        const resolved = getVariableValue(keyframe, element.current);
+                        if (resolved !== undefined) {
+                            unresolvedKeyframes[i] = resolved;
+                        }
+                        if (i === unresolvedKeyframes.length - 1) {
+                            this.finalKeyframe = keyframe;
+                        }
+                    }
+                }
+            }
+            /**
+             * Resolve "none" values. We do this potentially twice - once before and once after measuring keyframes.
+             * This could be seen as inefficient but it's a trade-off to avoid measurements in more situations, which
+             * have a far bigger performance impact.
+             */
+            this.resolveNoneKeyframes();
+            /**
+             * Check to see if unit type has changed. If so schedule jobs that will
+             * temporarily set styles to the destination keyframes.
+             * Skip if we have more than two keyframes or this isn't a positional value.
+             * TODO: We can throw if there are multiple keyframes and the value type changes.
+             */
+            if (!positionalKeys.has(name) || unresolvedKeyframes.length !== 2) {
+                return;
+            }
+            const [origin, target] = unresolvedKeyframes;
+            const originType = findDimensionValueType(origin);
+            const targetType = findDimensionValueType(target);
+            /**
+             * Either we don't recognise these value types or we can animate between them.
+             */
+            if (originType === targetType)
+                return;
+            /**
+             * If both values are numbers or pixels, we can animate between them by
+             * converting them to numbers.
+             */
+            if (isNumOrPxType(originType) && isNumOrPxType(targetType)) {
+                for (let i = 0; i < unresolvedKeyframes.length; i++) {
+                    const value = unresolvedKeyframes[i];
+                    if (typeof value === "string") {
+                        unresolvedKeyframes[i] = parseFloat(value);
+                    }
+                }
+            }
+            else if (positionalValues[name]) {
+                /**
+                 * Else, the only way to resolve this is by measuring the element.
+                 */
+                this.needsMeasurement = true;
+            }
+        }
+        resolveNoneKeyframes() {
+            const { unresolvedKeyframes, name } = this;
+            const noneKeyframeIndexes = [];
+            for (let i = 0; i < unresolvedKeyframes.length; i++) {
+                if (unresolvedKeyframes[i] === null ||
+                    isNone(unresolvedKeyframes[i])) {
+                    noneKeyframeIndexes.push(i);
+                }
+            }
+            if (noneKeyframeIndexes.length) {
+                makeNoneKeyframesAnimatable(unresolvedKeyframes, noneKeyframeIndexes, name);
+            }
+        }
+        measureInitialState() {
+            const { element, unresolvedKeyframes, name } = this;
+            if (!element || !element.current)
+                return;
+            if (name === "height") {
+                this.suspendedScrollY = window.pageYOffset;
+            }
+            this.measuredOrigin = positionalValues[name](element.measureViewportBox(), window.getComputedStyle(element.current));
+            unresolvedKeyframes[0] = this.measuredOrigin;
+            // Set final key frame to measure after next render
+            const measureKeyframe = unresolvedKeyframes[unresolvedKeyframes.length - 1];
+            if (measureKeyframe !== undefined) {
+                element.getValue(name, measureKeyframe).jump(measureKeyframe, false);
+            }
+        }
+        measureEndState() {
+            const { element, name, unresolvedKeyframes } = this;
+            if (!element || !element.current)
+                return;
+            const value = element.getValue(name);
+            value && value.jump(this.measuredOrigin, false);
+            const finalKeyframeIndex = unresolvedKeyframes.length - 1;
+            const finalKeyframe = unresolvedKeyframes[finalKeyframeIndex];
+            unresolvedKeyframes[finalKeyframeIndex] = positionalValues[name](element.measureViewportBox(), window.getComputedStyle(element.current));
+            if (finalKeyframe !== null && this.finalKeyframe === undefined) {
+                this.finalKeyframe = finalKeyframe;
+            }
+            // If we removed transform values, reapply them before the next render
+            if (this.removedTransforms?.length) {
+                this.removedTransforms.forEach(([unsetTransformName, unsetTransformValue]) => {
+                    element
+                        .getValue(unsetTransformName)
+                        .set(unsetTransformValue);
+                });
+            }
+            this.resolveNoneKeyframes();
+        }
+    }
+
+    const pxValues = new Set([
+        // Border props
+        "borderWidth",
+        "borderTopWidth",
+        "borderRightWidth",
+        "borderBottomWidth",
+        "borderLeftWidth",
+        "borderRadius",
+        "radius",
+        "borderTopLeftRadius",
+        "borderTopRightRadius",
+        "borderBottomRightRadius",
+        "borderBottomLeftRadius",
+        // Positioning props
+        "width",
+        "maxWidth",
+        "height",
+        "maxHeight",
+        "top",
+        "right",
+        "bottom",
+        "left",
+        // Spacing props
+        "padding",
+        "paddingTop",
+        "paddingRight",
+        "paddingBottom",
+        "paddingLeft",
+        "margin",
+        "marginTop",
+        "marginRight",
+        "marginBottom",
+        "marginLeft",
+        // Misc
+        "backgroundPositionX",
+        "backgroundPositionY",
+    ]);
+
+    function applyPxDefaults(keyframes, name) {
+        for (let i = 0; i < keyframes.length; i++) {
+            if (typeof keyframes[i] === "number" && pxValues.has(name)) {
+                keyframes[i] = keyframes[i] + "px";
+            }
+        }
+    }
+
+    function isWaapiSupportedEasing(easing) {
+        return Boolean((typeof easing === "function" && supportsLinearEasing()) ||
+            !easing ||
+            (typeof easing === "string" &&
+                (easing in supportedWaapiEasing || supportsLinearEasing())) ||
+            isBezierDefinition(easing) ||
+            (Array.isArray(easing) && easing.every(isWaapiSupportedEasing)));
+    }
+
+    const supportsPartialKeyframes = /*@__PURE__*/ memo(() => {
+        try {
+            document.createElement("div").animate({ opacity: [1] });
+        }
+        catch (e) {
+            return false;
+        }
+        return true;
+    });
+
+    /**
+     * A list of values that can be hardware-accelerated.
+     */
+    const acceleratedValues = new Set([
+        "opacity",
+        "clipPath",
+        "filter",
+        "transform",
+        // TODO: Can be accelerated but currently disabled until https://issues.chromium.org/issues/41491098 is resolved
+        // or until we implement support for linear() easing.
+        // "background-color"
+    ]);
+
+    function camelToDash$1(str) {
+        return str.replace(/([A-Z])/g, (match) => `-${match.toLowerCase()}`);
+    }
+
+    function resolveElements(elementOrSelector, scope, selectorCache) {
+        if (elementOrSelector instanceof EventTarget) {
+            return [elementOrSelector];
+        }
+        else if (typeof elementOrSelector === "string") {
+            let root = document;
+            if (scope) {
+                root = scope.current;
+            }
+            const elements = selectorCache?.[elementOrSelector] ??
+                root.querySelectorAll(elementOrSelector);
+            return elements ? Array.from(elements) : [];
+        }
+        return Array.from(elementOrSelector);
+    }
+
+    function createSelectorEffect(subjectEffect) {
+        return (subject, values) => {
+            const elements = resolveElements(subject);
+            const subscriptions = [];
+            for (const element of elements) {
+                const remove = subjectEffect(element, values);
+                subscriptions.push(remove);
+            }
+            return () => {
+                for (const remove of subscriptions)
+                    remove();
+            };
+        };
+    }
+
+    /**
+     * Provided a value and a ValueType, returns the value as that value type.
+     */
+    const getValueAsType = (value, type) => {
+        return type && typeof value === "number"
+            ? type.transform(value)
+            : value;
+    };
+
+    class MotionValueState {
+        constructor() {
+            this.latest = {};
+            this.values = new Map();
+        }
+        set(name, value, render, computed, useDefaultValueType = true) {
+            const existingValue = this.values.get(name);
+            if (existingValue) {
+                existingValue.onRemove();
+            }
+            const onChange = () => {
+                const v = value.get();
+                if (useDefaultValueType) {
+                    this.latest[name] = getValueAsType(v, numberValueTypes[name]);
+                }
+                else {
+                    this.latest[name] = v;
+                }
+                render && frame.render(render);
+            };
+            onChange();
+            const cancelOnChange = value.on("change", onChange);
+            computed && value.addDependent(computed);
+            const remove = () => {
+                cancelOnChange();
+                render && cancelFrame(render);
+                this.values.delete(name);
+                computed && value.removeDependent(computed);
+            };
+            this.values.set(name, { value, onRemove: remove });
+            return remove;
+        }
+        get(name) {
+            return this.values.get(name)?.value;
+        }
+        destroy() {
+            for (const value of this.values.values()) {
+                value.onRemove();
+            }
+        }
+    }
+
+    function createEffect(addValue) {
+        const stateCache = new WeakMap();
+        const subscriptions = [];
+        return (subject, values) => {
+            const state = stateCache.get(subject) ?? new MotionValueState();
+            stateCache.set(subject, state);
+            for (const key in values) {
+                const value = values[key];
+                const remove = addValue(subject, state, key, value);
+                subscriptions.push(remove);
+            }
+            return () => {
+                for (const cancel of subscriptions)
+                    cancel();
+            };
+        };
+    }
+
+    function canSetAsProperty(element, name) {
+        if (!(name in element))
+            return false;
+        const descriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(element), name) ||
+            Object.getOwnPropertyDescriptor(element, name);
+        // Check if it has a setter
+        return descriptor && typeof descriptor.set === "function";
+    }
+    const addAttrValue = (element, state, key, value) => {
+        const isProp = canSetAsProperty(element, key);
+        const name = isProp
+            ? key
+            : key.startsWith("data") || key.startsWith("aria")
+                ? camelToDash$1(key)
+                : key;
+        /**
+         * Set attribute directly via property if available
+         */
+        const render = isProp
+            ? () => {
+                element[name] = state.latest[key];
+            }
+            : () => {
+                const v = state.latest[key];
+                if (v === null || v === undefined) {
+                    element.removeAttribute(name);
+                }
+                else {
+                    element.setAttribute(name, String(v));
+                }
+            };
+        return state.set(key, value, render);
+    };
+    const attrEffect = /*@__PURE__*/ createSelectorEffect(
+    /*@__PURE__*/ createEffect(addAttrValue));
+
+    const propEffect = /*@__PURE__*/ createEffect((subject, state, key, value) => {
+        return state.set(key, value, () => {
+            subject[key] = state.latest[key];
+        }, undefined, false);
+    });
+
+    /**
+     * Checks if an element is an HTML element in a way
+     * that works across iframes
+     */
+    function isHTMLElement(element) {
+        return isObject(element) && "offsetHeight" in element;
+    }
+
+    /**
+     * Maximum time between the value of two frames, beyond which we
+     * assume the velocity has since been 0.
+     */
+    const MAX_VELOCITY_DELTA = 30;
+    const isFloat = (value) => {
+        return !isNaN(parseFloat(value));
+    };
+    const collectMotionValues = {
+        current: undefined,
+    };
+    /**
+     * `MotionValue` is used to track the state and velocity of motion values.
+     *
+     * @public
+     */
+    class MotionValue {
+        /**
+         * @param init - The initiating value
+         * @param config - Optional configuration options
+         *
+         * -  `transformer`: A function to transform incoming values with.
+         */
+        constructor(init, options = {}) {
+            /**
+             * Tracks whether this value can output a velocity. Currently this is only true
+             * if the value is numerical, but we might be able to widen the scope here and support
+             * other value types.
+             *
+             * @internal
+             */
+            this.canTrackVelocity = null;
+            /**
+             * An object containing a SubscriptionManager for each active event.
+             */
+            this.events = {};
+            this.updateAndNotify = (v) => {
+                const currentTime = time.now();
+                /**
+                 * If we're updating the value during another frame or eventloop
+                 * than the previous frame, then the we set the previous frame value
+                 * to current.
+                 */
+                if (this.updatedAt !== currentTime) {
+                    this.setPrevFrameValue();
+                }
+                this.prev = this.current;
+                this.setCurrent(v);
+                // Update update subscribers
+                if (this.current !== this.prev) {
+                    this.events.change?.notify(this.current);
+                    if (this.dependents) {
+                        for (const dependent of this.dependents) {
+                            dependent.dirty();
+                        }
+                    }
+                }
+            };
+            this.hasAnimated = false;
+            this.setCurrent(init);
+            this.owner = options.owner;
+        }
+        setCurrent(current) {
+            this.current = current;
+            this.updatedAt = time.now();
+            if (this.canTrackVelocity === null && current !== undefined) {
+                this.canTrackVelocity = isFloat(this.current);
+            }
+        }
+        setPrevFrameValue(prevFrameValue = this.current) {
+            this.prevFrameValue = prevFrameValue;
+            this.prevUpdatedAt = this.updatedAt;
+        }
+        /**
+         * Adds a function that will be notified when the `MotionValue` is updated.
+         *
+         * It returns a function that, when called, will cancel the subscription.
+         *
+         * When calling `onChange` inside a React component, it should be wrapped with the
+         * `useEffect` hook. As it returns an unsubscribe function, this should be returned
+         * from the `useEffect` function to ensure you don't add duplicate subscribers..
+         *
+         * ```jsx
+         * export const MyComponent = () => {
+         *   const x = useMotionValue(0)
+         *   const y = useMotionValue(0)
+         *   const opacity = useMotionValue(1)
+         *
+         *   useEffect(() => {
+         *     function updateOpacity() {
+         *       const maxXY = Math.max(x.get(), y.get())
+         *       const newOpacity = transform(maxXY, [0, 100], [1, 0])
+         *       opacity.set(newOpacity)
+         *     }
+         *
+         *     const unsubscribeX = x.on("change", updateOpacity)
+         *     const unsubscribeY = y.on("change", updateOpacity)
+         *
+         *     return () => {
+         *       unsubscribeX()
+         *       unsubscribeY()
+         *     }
+         *   }, [])
+         *
+         *   return <motion.div style={{ x }} />
+         * }
+         * ```
+         *
+         * @param subscriber - A function that receives the latest value.
+         * @returns A function that, when called, will cancel this subscription.
+         *
+         * @deprecated
+         */
+        onChange(subscription) {
+            {
+                warnOnce(false, `value.onChange(callback) is deprecated. Switch to value.on("change", callback).`);
+            }
+            return this.on("change", subscription);
+        }
+        on(eventName, callback) {
+            if (!this.events[eventName]) {
+                this.events[eventName] = new SubscriptionManager();
+            }
+            const unsubscribe = this.events[eventName].add(callback);
+            if (eventName === "change") {
+                return () => {
+                    unsubscribe();
+                    /**
+                     * If we have no more change listeners by the start
+                     * of the next frame, stop active animations.
+                     */
+                    frame.read(() => {
+                        if (!this.events.change.getSize()) {
+                            this.stop();
+                        }
+                    });
+                };
+            }
+            return unsubscribe;
+        }
+        clearListeners() {
+            for (const eventManagers in this.events) {
+                this.events[eventManagers].clear();
+            }
+        }
+        /**
+         * Attaches a passive effect to the `MotionValue`.
+         */
+        attach(passiveEffect, stopPassiveEffect) {
+            this.passiveEffect = passiveEffect;
+            this.stopPassiveEffect = stopPassiveEffect;
+        }
+        /**
+         * Sets the state of the `MotionValue`.
+         *
+         * @remarks
+         *
+         * ```jsx
+         * const x = useMotionValue(0)
+         * x.set(10)
+         * ```
+         *
+         * @param latest - Latest value to set.
+         * @param render - Whether to notify render subscribers. Defaults to `true`
+         *
+         * @public
+         */
+        set(v) {
+            if (!this.passiveEffect) {
+                this.updateAndNotify(v);
+            }
+            else {
+                this.passiveEffect(v, this.updateAndNotify);
+            }
+        }
+        setWithVelocity(prev, current, delta) {
+            this.set(current);
+            this.prev = undefined;
+            this.prevFrameValue = prev;
+            this.prevUpdatedAt = this.updatedAt - delta;
+        }
+        /**
+         * Set the state of the `MotionValue`, stopping any active animations,
+         * effects, and resets velocity to `0`.
+         */
+        jump(v, endAnimation = true) {
+            this.updateAndNotify(v);
+            this.prev = v;
+            this.prevUpdatedAt = this.prevFrameValue = undefined;
+            endAnimation && this.stop();
+            if (this.stopPassiveEffect)
+                this.stopPassiveEffect();
+        }
+        dirty() {
+            this.events.change?.notify(this.current);
+        }
+        addDependent(dependent) {
+            if (!this.dependents) {
+                this.dependents = new Set();
+            }
+            this.dependents.add(dependent);
+        }
+        removeDependent(dependent) {
+            if (this.dependents) {
+                this.dependents.delete(dependent);
+            }
+        }
+        /**
+         * Returns the latest state of `MotionValue`
+         *
+         * @returns - The latest state of `MotionValue`
+         *
+         * @public
+         */
+        get() {
+            if (collectMotionValues.current) {
+                collectMotionValues.current.push(this);
+            }
+            return this.current;
+        }
+        /**
+         * @public
+         */
+        getPrevious() {
+            return this.prev;
+        }
+        /**
+         * Returns the latest velocity of `MotionValue`
+         *
+         * @returns - The latest velocity of `MotionValue`. Returns `0` if the state is non-numerical.
+         *
+         * @public
+         */
+        getVelocity() {
+            const currentTime = time.now();
+            if (!this.canTrackVelocity ||
+                this.prevFrameValue === undefined ||
+                currentTime - this.updatedAt > MAX_VELOCITY_DELTA) {
+                return 0;
+            }
+            const delta = Math.min(this.updatedAt - this.prevUpdatedAt, MAX_VELOCITY_DELTA);
+            // Casts because of parseFloat's poor typing
+            return velocityPerSecond(parseFloat(this.current) -
+                parseFloat(this.prevFrameValue), delta);
+        }
+        /**
+         * Registers a new animation to control this `MotionValue`. Only one
+         * animation can drive a `MotionValue` at one time.
+         *
+         * ```jsx
+         * value.start()
+         * ```
+         *
+         * @param animation - A function that starts the provided animation
+         */
+        start(startAnimation) {
+            this.stop();
+            return new Promise((resolve) => {
+                this.hasAnimated = true;
+                this.animation = startAnimation(resolve);
+                if (this.events.animationStart) {
+                    this.events.animationStart.notify();
+                }
+            }).then(() => {
+                if (this.events.animationComplete) {
+                    this.events.animationComplete.notify();
+                }
+                this.clearAnimation();
+            });
+        }
+        /**
+         * Stop the currently active animation.
+         *
+         * @public
+         */
+        stop() {
+            if (this.animation) {
+                this.animation.stop();
+                if (this.events.animationCancel) {
+                    this.events.animationCancel.notify();
+                }
+            }
+            this.clearAnimation();
+        }
+        /**
+         * Returns `true` if this value is currently animating.
+         *
+         * @public
+         */
+        isAnimating() {
+            return !!this.animation;
+        }
+        clearAnimation() {
+            delete this.animation;
+        }
+        /**
+         * Destroy and clean up subscribers to this `MotionValue`.
+         *
+         * The `MotionValue` hooks like `useMotionValue` and `useTransform` automatically
+         * handle the lifecycle of the returned `MotionValue`, so this method is only necessary if you've manually
+         * created a `MotionValue` via the `motionValue` function.
+         *
+         * @public
+         */
+        destroy() {
+            this.dependents?.clear();
+            this.events.destroy?.notify();
+            this.clearListeners();
+            this.stop();
+            if (this.stopPassiveEffect) {
+                this.stopPassiveEffect();
+            }
+        }
+    }
+    function motionValue(init, options) {
+        return new MotionValue(init, options);
+    }
+
+    const translateAlias$1 = {
+        x: "translateX",
+        y: "translateY",
+        z: "translateZ",
+        transformPerspective: "perspective",
+    };
+    function buildTransform$1(state) {
+        let transform = "";
+        let transformIsDefault = true;
+        /**
+         * Loop over all possible transforms in order, adding the ones that
+         * are present to the transform string.
+         */
+        for (let i = 0; i < transformPropOrder.length; i++) {
+            const key = transformPropOrder[i];
+            const value = state.latest[key];
+            if (value === undefined)
+                continue;
+            let valueIsDefault = true;
+            if (typeof value === "number") {
+                valueIsDefault = value === (key.startsWith("scale") ? 1 : 0);
+            }
+            else {
+                valueIsDefault = parseFloat(value) === 0;
+            }
+            if (!valueIsDefault) {
+                transformIsDefault = false;
+                const transformName = translateAlias$1[key] || key;
+                const valueToRender = state.latest[key];
+                transform += `${transformName}(${valueToRender}) `;
+            }
+        }
+        return transformIsDefault ? "none" : transform.trim();
+    }
+
+    const originProps = new Set(["originX", "originY", "originZ"]);
+    const addStyleValue = (element, state, key, value) => {
+        let render = undefined;
+        let computed = undefined;
+        if (transformProps.has(key)) {
+            if (!state.get("transform")) {
+                // If this is an HTML element, we need to set the transform-box to fill-box
+                // to normalise the transform relative to the element's bounding box
+                if (!isHTMLElement(element) && !state.get("transformBox")) {
+                    addStyleValue(element, state, "transformBox", new MotionValue("fill-box"));
+                }
+                state.set("transform", new MotionValue("none"), () => {
+                    element.style.transform = buildTransform$1(state);
+                });
+            }
+            computed = state.get("transform");
+        }
+        else if (originProps.has(key)) {
+            if (!state.get("transformOrigin")) {
+                state.set("transformOrigin", new MotionValue(""), () => {
+                    const originX = state.latest.originX ?? "50%";
+                    const originY = state.latest.originY ?? "50%";
+                    const originZ = state.latest.originZ ?? 0;
+                    element.style.transformOrigin = `${originX} ${originY} ${originZ}`;
+                });
+            }
+            computed = state.get("transformOrigin");
+        }
+        else if (isCSSVar(key)) {
+            render = () => {
+                element.style.setProperty(key, state.latest[key]);
+            };
+        }
+        else {
+            render = () => {
+                element.style[key] = state.latest[key];
+            };
+        }
+        return state.set(key, value, render, computed);
+    };
+    const styleEffect = /*@__PURE__*/ createSelectorEffect(
+    /*@__PURE__*/ createEffect(addStyleValue));
+
+    const toPx = px.transform;
+    function addSVGPathValue(element, state, key, value) {
+        frame.render(() => element.setAttribute("pathLength", "1"));
+        if (key === "pathOffset") {
+            return state.set(key, value, () => element.setAttribute("stroke-dashoffset", toPx(-state.latest[key])));
+        }
+        else {
+            if (!state.get("stroke-dasharray")) {
+                state.set("stroke-dasharray", new MotionValue("1 1"), () => {
+                    const { pathLength = 1, pathSpacing } = state.latest;
+                    element.setAttribute("stroke-dasharray", `${toPx(pathLength)} ${toPx(pathSpacing ?? 1 - Number(pathLength))}`);
+                });
+            }
+            return state.set(key, value, undefined, state.get("stroke-dasharray"));
+        }
+    }
+    const addSVGValue = (element, state, key, value) => {
+        if (key.startsWith("path")) {
+            return addSVGPathValue(element, state, key, value);
+        }
+        else if (key.startsWith("attr")) {
+            return addAttrValue(element, state, convertAttrKey(key), value);
+        }
+        const handler = key in element.style ? addStyleValue : addAttrValue;
+        return handler(element, state, key, value);
+    };
+    const svgEffect = /*@__PURE__*/ createSelectorEffect(
+    /*@__PURE__*/ createEffect(addSVGValue));
+    function convertAttrKey(key) {
+        return key.replace(/^attr([A-Z])/, (_, firstChar) => firstChar.toLowerCase());
+    }
+
+    const { schedule: microtask, cancel: cancelMicrotask } = 
+    /* @__PURE__ */ createRenderBatcher(queueMicrotask, false);
+
+    const isDragging = {
+        x: false,
+        y: false,
+    };
+    function isDragActive() {
+        return isDragging.x || isDragging.y;
+    }
+
+    function setDragLock(axis) {
+        if (axis === "x" || axis === "y") {
+            if (isDragging[axis]) {
+                return null;
+            }
+            else {
+                isDragging[axis] = true;
+                return () => {
+                    isDragging[axis] = false;
+                };
+            }
+        }
+        else {
+            if (isDragging.x || isDragging.y) {
+                return null;
+            }
+            else {
+                isDragging.x = isDragging.y = true;
+                return () => {
+                    isDragging.x = isDragging.y = false;
+                };
+            }
+        }
+    }
+
+    function setupGesture(elementOrSelector, options) {
+        const elements = resolveElements(elementOrSelector);
+        const gestureAbortController = new AbortController();
+        const eventOptions = {
+            passive: true,
+            ...options,
+            signal: gestureAbortController.signal,
+        };
+        const cancel = () => gestureAbortController.abort();
+        return [elements, eventOptions, cancel];
+    }
+
+    function isValidHover(event) {
+        return !(event.pointerType === "touch" || isDragActive());
+    }
+    /**
+     * Create a hover gesture. hover() is different to .addEventListener("pointerenter")
+     * in that it has an easier syntax, filters out polyfilled touch events, interoperates
+     * with drag gestures, and automatically removes the "pointerennd" event listener when the hover ends.
+     *
+     * @public
+     */
+    function hover(elementOrSelector, onHoverStart, options = {}) {
+        const [elements, eventOptions, cancel] = setupGesture(elementOrSelector, options);
+        const onPointerEnter = (enterEvent) => {
+            if (!isValidHover(enterEvent))
+                return;
+            const { target } = enterEvent;
+            const onHoverEnd = onHoverStart(target, enterEvent);
+            if (typeof onHoverEnd !== "function" || !target)
+                return;
+            const onPointerLeave = (leaveEvent) => {
+                if (!isValidHover(leaveEvent))
+                    return;
+                onHoverEnd(leaveEvent);
+                target.removeEventListener("pointerleave", onPointerLeave);
+            };
+            target.addEventListener("pointerleave", onPointerLeave, eventOptions);
+        };
+        elements.forEach((element) => {
+            element.addEventListener("pointerenter", onPointerEnter, eventOptions);
+        });
+        return cancel;
+    }
+
+    /**
+     * Recursively traverse up the tree to check whether the provided child node
+     * is the parent or a descendant of it.
+     *
+     * @param parent - Element to find
+     * @param child - Element to test against parent
+     */
+    const isNodeOrChild = (parent, child) => {
+        if (!child) {
+            return false;
+        }
+        else if (parent === child) {
+            return true;
+        }
+        else {
+            return isNodeOrChild(parent, child.parentElement);
+        }
+    };
+
+    const isPrimaryPointer = (event) => {
+        if (event.pointerType === "mouse") {
+            return typeof event.button !== "number" || event.button <= 0;
+        }
+        else {
+            /**
+             * isPrimary is true for all mice buttons, whereas every touch point
+             * is regarded as its own input. So subsequent concurrent touch points
+             * will be false.
+             *
+             * Specifically match against false here as incomplete versions of
+             * PointerEvents in very old browser might have it set as undefined.
+             */
+            return event.isPrimary !== false;
+        }
+    };
+
+    const focusableElements = new Set([
+        "BUTTON",
+        "INPUT",
+        "SELECT",
+        "TEXTAREA",
+        "A",
+    ]);
+    function isElementKeyboardAccessible(element) {
+        return (focusableElements.has(element.tagName) ||
+            element.tabIndex !== -1);
+    }
+
+    const isPressing = new WeakSet();
+
+    /**
+     * Filter out events that are not "Enter" keys.
+     */
+    function filterEvents(callback) {
+        return (event) => {
+            if (event.key !== "Enter")
+                return;
+            callback(event);
+        };
+    }
+    function firePointerEvent(target, type) {
+        target.dispatchEvent(new PointerEvent("pointer" + type, { isPrimary: true, bubbles: true }));
+    }
+    const enableKeyboardPress = (focusEvent, eventOptions) => {
+        const element = focusEvent.currentTarget;
+        if (!element)
+            return;
+        const handleKeydown = filterEvents(() => {
+            if (isPressing.has(element))
+                return;
+            firePointerEvent(element, "down");
+            const handleKeyup = filterEvents(() => {
+                firePointerEvent(element, "up");
+            });
+            const handleBlur = () => firePointerEvent(element, "cancel");
+            element.addEventListener("keyup", handleKeyup, eventOptions);
+            element.addEventListener("blur", handleBlur, eventOptions);
+        });
+        element.addEventListener("keydown", handleKeydown, eventOptions);
+        /**
+         * Add an event listener that fires on blur to remove the keydown events.
+         */
+        element.addEventListener("blur", () => element.removeEventListener("keydown", handleKeydown), eventOptions);
+    };
+
+    /**
+     * Filter out events that are not primary pointer events, or are triggering
+     * while a Motion gesture is active.
+     */
+    function isValidPressEvent(event) {
+        return isPrimaryPointer(event) && !isDragActive();
+    }
+    /**
+     * Create a press gesture.
+     *
+     * Press is different to `"pointerdown"`, `"pointerup"` in that it
+     * automatically filters out secondary pointer events like right
+     * click and multitouch.
+     *
+     * It also adds accessibility support for keyboards, where
+     * an element with a press gesture will receive focus and
+     *  trigger on Enter `"keydown"` and `"keyup"` events.
+     *
+     * This is different to a browser's `"click"` event, which does
+     * respond to keyboards but only for the `"click"` itself, rather
+     * than the press start and end/cancel. The element also needs
+     * to be focusable for this to work, whereas a press gesture will
+     * make an element focusable by default.
+     *
+     * @public
+     */
+    function press(targetOrSelector, onPressStart, options = {}) {
+        const [targets, eventOptions, cancelEvents] = setupGesture(targetOrSelector, options);
+        const startPress = (startEvent) => {
+            const target = startEvent.currentTarget;
+            if (!isValidPressEvent(startEvent))
+                return;
+            isPressing.add(target);
+            const onPressEnd = onPressStart(target, startEvent);
+            const onPointerEnd = (endEvent, success) => {
+                window.removeEventListener("pointerup", onPointerUp);
+                window.removeEventListener("pointercancel", onPointerCancel);
+                if (isPressing.has(target)) {
+                    isPressing.delete(target);
+                }
+                if (!isValidPressEvent(endEvent)) {
+                    return;
+                }
+                if (typeof onPressEnd === "function") {
+                    onPressEnd(endEvent, { success });
+                }
+            };
+            const onPointerUp = (upEvent) => {
+                onPointerEnd(upEvent, target === window ||
+                    target === document ||
+                    options.useGlobalTarget ||
+                    isNodeOrChild(target, upEvent.target));
+            };
+            const onPointerCancel = (cancelEvent) => {
+                onPointerEnd(cancelEvent, false);
+            };
+            window.addEventListener("pointerup", onPointerUp, eventOptions);
+            window.addEventListener("pointercancel", onPointerCancel, eventOptions);
+        };
+        targets.forEach((target) => {
+            const pointerDownTarget = options.useGlobalTarget ? window : target;
+            pointerDownTarget.addEventListener("pointerdown", startPress, eventOptions);
+            if (isHTMLElement(target)) {
+                target.addEventListener("focus", (event) => enableKeyboardPress(event, eventOptions));
+                if (!isElementKeyboardAccessible(target) &&
+                    !target.hasAttribute("tabindex")) {
+                    target.tabIndex = 0;
+                }
+            }
+        });
+        return cancelEvents;
+    }
+
+    function getComputedStyle$2(element, name) {
+        const computedStyle = window.getComputedStyle(element);
+        return isCSSVar(name)
+            ? computedStyle.getPropertyValue(name)
+            : computedStyle[name];
+    }
+
+    /**
+     * Checks if an element is an SVG element in a way
+     * that works across iframes
+     */
+    function isSVGElement(element) {
+        return isObject(element) && "ownerSVGElement" in element;
+    }
+
+    const resizeHandlers = new WeakMap();
+    let observer;
+    const getSize = (borderBoxAxis, svgAxis, htmlAxis) => (target, borderBoxSize) => {
+        if (borderBoxSize && borderBoxSize[0]) {
+            return borderBoxSize[0][(borderBoxAxis + "Size")];
+        }
+        else if (isSVGElement(target) && "getBBox" in target) {
+            return target.getBBox()[svgAxis];
+        }
+        else {
+            return target[htmlAxis];
+        }
+    };
+    const getWidth = /*@__PURE__*/ getSize("inline", "width", "offsetWidth");
+    const getHeight = /*@__PURE__*/ getSize("block", "height", "offsetHeight");
+    function notifyTarget({ target, borderBoxSize }) {
+        resizeHandlers.get(target)?.forEach((handler) => {
+            handler(target, {
+                get width() {
+                    return getWidth(target, borderBoxSize);
+                },
+                get height() {
+                    return getHeight(target, borderBoxSize);
+                },
+            });
+        });
+    }
+    function notifyAll(entries) {
+        entries.forEach(notifyTarget);
+    }
+    function createResizeObserver() {
+        if (typeof ResizeObserver === "undefined")
+            return;
+        observer = new ResizeObserver(notifyAll);
+    }
+    function resizeElement(target, handler) {
+        if (!observer)
+            createResizeObserver();
+        const elements = resolveElements(target);
+        elements.forEach((element) => {
+            let elementHandlers = resizeHandlers.get(element);
+            if (!elementHandlers) {
+                elementHandlers = new Set();
+                resizeHandlers.set(element, elementHandlers);
+            }
+            elementHandlers.add(handler);
+            observer?.observe(element);
+        });
+        return () => {
+            elements.forEach((element) => {
+                const elementHandlers = resizeHandlers.get(element);
+                elementHandlers?.delete(handler);
+                if (!elementHandlers?.size) {
+                    observer?.unobserve(element);
+                }
+            });
+        };
+    }
+
+    const windowCallbacks = new Set();
+    let windowResizeHandler;
+    function createWindowResizeHandler() {
+        windowResizeHandler = () => {
+            const info = {
+                get width() {
+                    return window.innerWidth;
+                },
+                get height() {
+                    return window.innerHeight;
+                },
+            };
+            windowCallbacks.forEach((callback) => callback(info));
+        };
+        window.addEventListener("resize", windowResizeHandler);
+    }
+    function resizeWindow(callback) {
+        windowCallbacks.add(callback);
+        if (!windowResizeHandler)
+            createWindowResizeHandler();
+        return () => {
+            windowCallbacks.delete(callback);
+            if (!windowCallbacks.size &&
+                typeof windowResizeHandler === "function") {
+                window.removeEventListener("resize", windowResizeHandler);
+                windowResizeHandler = undefined;
+            }
+        };
+    }
+
+    function resize(a, b) {
+        return typeof a === "function" ? resizeWindow(a) : resizeElement(a, b);
+    }
+
+    function observeTimeline(update, timeline) {
+        let prevProgress;
+        const onFrame = () => {
+            const { currentTime } = timeline;
+            const percentage = currentTime === null ? 0 : currentTime.value;
+            const progress = percentage / 100;
+            if (prevProgress !== progress) {
+                update(progress);
+            }
+            prevProgress = progress;
+        };
+        frame.preUpdate(onFrame, true);
+        return () => cancelFrame(onFrame);
+    }
+
+    function record() {
+        const { value } = statsBuffer;
+        if (value === null) {
+            cancelFrame(record);
+            return;
+        }
+        value.frameloop.rate.push(frameData.delta);
+        value.animations.mainThread.push(activeAnimations.mainThread);
+        value.animations.waapi.push(activeAnimations.waapi);
+        value.animations.layout.push(activeAnimations.layout);
+    }
+    function mean(values) {
+        return values.reduce((acc, value) => acc + value, 0) / values.length;
+    }
+    function summarise(values, calcAverage = mean) {
+        if (values.length === 0) {
+            return {
+                min: 0,
+                max: 0,
+                avg: 0,
+            };
+        }
+        return {
+            min: Math.min(...values),
+            max: Math.max(...values),
+            avg: calcAverage(values),
+        };
+    }
+    const msToFps = (ms) => Math.round(1000 / ms);
+    function clearStatsBuffer() {
+        statsBuffer.value = null;
+        statsBuffer.addProjectionMetrics = null;
+    }
+    function reportStats() {
+        const { value } = statsBuffer;
+        if (!value) {
+            throw new Error("Stats are not being measured");
+        }
+        clearStatsBuffer();
+        cancelFrame(record);
+        const summary = {
+            frameloop: {
+                setup: summarise(value.frameloop.setup),
+                rate: summarise(value.frameloop.rate),
+                read: summarise(value.frameloop.read),
+                resolveKeyframes: summarise(value.frameloop.resolveKeyframes),
+                preUpdate: summarise(value.frameloop.preUpdate),
+                update: summarise(value.frameloop.update),
+                preRender: summarise(value.frameloop.preRender),
+                render: summarise(value.frameloop.render),
+                postRender: summarise(value.frameloop.postRender),
+            },
+            animations: {
+                mainThread: summarise(value.animations.mainThread),
+                waapi: summarise(value.animations.waapi),
+                layout: summarise(value.animations.layout),
+            },
+            layoutProjection: {
+                nodes: summarise(value.layoutProjection.nodes),
+                calculatedTargetDeltas: summarise(value.layoutProjection.calculatedTargetDeltas),
+                calculatedProjections: summarise(value.layoutProjection.calculatedProjections),
+            },
+        };
+        /**
+         * Convert the rate to FPS
+         */
+        const { rate } = summary.frameloop;
+        rate.min = msToFps(rate.min);
+        rate.max = msToFps(rate.max);
+        rate.avg = msToFps(rate.avg);
+        [rate.min, rate.max] = [rate.max, rate.min];
+        return summary;
+    }
+    function recordStats() {
+        if (statsBuffer.value) {
+            clearStatsBuffer();
+            throw new Error("Stats are already being measured");
+        }
+        const newStatsBuffer = statsBuffer;
+        newStatsBuffer.value = {
+            frameloop: {
+                setup: [],
+                rate: [],
+                read: [],
+                resolveKeyframes: [],
+                preUpdate: [],
+                update: [],
+                preRender: [],
+                render: [],
+                postRender: [],
+            },
+            animations: {
+                mainThread: [],
+                waapi: [],
+                layout: [],
+            },
+            layoutProjection: {
+                nodes: [],
+                calculatedTargetDeltas: [],
+                calculatedProjections: [],
+            },
+        };
+        newStatsBuffer.addProjectionMetrics = (metrics) => {
+            const { layoutProjection } = newStatsBuffer.value;
+            layoutProjection.nodes.push(metrics.nodes);
+            layoutProjection.calculatedTargetDeltas.push(metrics.calculatedTargetDeltas);
+            layoutProjection.calculatedProjections.push(metrics.calculatedProjections);
+        };
+        frame.postRender(record, true);
+        return reportStats;
+    }
+
+    /**
+     * Checks if an element is specifically an SVGSVGElement (the root SVG element)
+     * in a way that works across iframes
+     */
+    function isSVGSVGElement(element) {
+        return isSVGElement(element) && element.tagName === "svg";
+    }
+
+    function getOriginIndex(from, total) {
+        if (from === "first") {
+            return 0;
+        }
+        else {
+            const lastIndex = total - 1;
+            return from === "last" ? lastIndex : lastIndex / 2;
+        }
+    }
+    function stagger(duration = 0.1, { startDelay = 0, from = 0, ease } = {}) {
+        return (i, total) => {
+            const fromIndex = typeof from === "number" ? from : getOriginIndex(from, total);
+            const distance = Math.abs(fromIndex - i);
+            let delay = duration * distance;
+            if (ease) {
+                const maxDelay = total * duration;
+                const easingFunction = easingDefinitionToFunction(ease);
+                delay = easingFunction(delay / maxDelay) * maxDelay;
+            }
+            return startDelay + delay;
+        };
+    }
+
+    function transform(...args) {
+        const useImmediate = !Array.isArray(args[0]);
+        const argOffset = useImmediate ? 0 : -1;
+        const inputValue = args[0 + argOffset];
+        const inputRange = args[1 + argOffset];
+        const outputRange = args[2 + argOffset];
+        const options = args[3 + argOffset];
+        const interpolator = interpolate(inputRange, outputRange, options);
+        return useImmediate ? interpolator(inputValue) : interpolator;
+    }
+
+    function subscribeValue(inputValues, outputValue, getLatest) {
+        const update = () => outputValue.set(getLatest());
+        const scheduleUpdate = () => frame.preRender(update, false, true);
+        const subscriptions = inputValues.map((v) => v.on("change", scheduleUpdate));
+        outputValue.on("destroy", () => {
+            subscriptions.forEach((unsubscribe) => unsubscribe());
+            cancelFrame(update);
+        });
+    }
+
+    /**
+     * Create a `MotionValue` that transforms the output of other `MotionValue`s by
+     * passing their latest values through a transform function.
+     *
+     * Whenever a `MotionValue` referred to in the provided function is updated,
+     * it will be re-evaluated.
+     *
+     * ```jsx
+     * const x = motionValue(0)
+     * const y = transformValue(() => x.get() * 2) // double x
+     * ```
+     *
+     * @param transformer - A transform function. This function must be pure with no side-effects or conditional statements.
+     * @returns `MotionValue`
+     *
+     * @public
+     */
+    function transformValue(transform) {
+        const collectedValues = [];
+        /**
+         * Open session of collectMotionValues. Any MotionValue that calls get()
+         * inside transform will be saved into this array.
+         */
+        collectMotionValues.current = collectedValues;
+        const initialValue = transform();
+        collectMotionValues.current = undefined;
+        const value = motionValue(initialValue);
+        subscribeValue(collectedValues, value, transform);
+        return value;
+    }
+
+    /**
+     * Create a `MotionValue` that maps the output of another `MotionValue` by
+     * mapping it from one range of values into another.
+     *
+     * @remarks
+     *
+     * Given an input range of `[-200, -100, 100, 200]` and an output range of
+     * `[0, 1, 1, 0]`, the returned `MotionValue` will:
+     *
+     * - When provided a value between `-200` and `-100`, will return a value between `0` and  `1`.
+     * - When provided a value between `-100` and `100`, will return `1`.
+     * - When provided a value between `100` and `200`, will return a value between `1` and  `0`
+     *
+     * The input range must be a linear series of numbers. The output range
+     * can be any value type supported by Motion: numbers, colors, shadows, etc.
+     *
+     * Every value in the output range must be of the same type and in the same format.
+     *
+     * ```jsx
+     * const x = motionValue(0)
+     * const xRange = [-200, -100, 100, 200]
+     * const opacityRange = [0, 1, 1, 0]
+     * const opacity = mapValue(x, xRange, opacityRange)
+     * ```
+     *
+     * @param inputValue - `MotionValue`
+     * @param inputRange - A linear series of numbers (either all increasing or decreasing)
+     * @param outputRange - A series of numbers, colors or strings. Must be the same length as `inputRange`.
+     * @param options -
+     *
+     *  - clamp: boolean. Clamp values to within the given range. Defaults to `true`
+     *  - ease: EasingFunction[]. Easing functions to use on the interpolations between each value in the input and output ranges. If provided as an array, the array must be one item shorter than the input and output ranges, as the easings apply to the transition between each.
+     *
+     * @returns `MotionValue`
+     *
+     * @public
+     */
+    function mapValue(inputValue, inputRange, outputRange, options) {
+        const map = transform(inputRange, outputRange, options);
+        return transformValue(() => map(inputValue.get()));
+    }
+
+    const isMotionValue = (value) => Boolean(value && value.getVelocity);
+
+    /**
+     * Create a `MotionValue` that animates to its latest value using a spring.
+     * Can either be a value or track another `MotionValue`.
+     *
+     * ```jsx
+     * const x = motionValue(0)
+     * const y = transformValue(() => x.get() * 2) // double x
+     * ```
+     *
+     * @param transformer - A transform function. This function must be pure with no side-effects or conditional statements.
+     * @returns `MotionValue`
+     *
+     * @public
+     */
+    function springValue(source, options) {
+        const initialValue = isMotionValue(source) ? source.get() : source;
+        const value = motionValue(initialValue);
+        attachSpring(value, source, options);
+        return value;
+    }
+    function attachSpring(value, source, options) {
+        const initialValue = value.get();
+        let activeAnimation = null;
+        let latestValue = initialValue;
+        let latestSetter;
+        const unit = typeof initialValue === "string"
+            ? initialValue.replace(/[\d.-]/g, "")
+            : undefined;
+        const stopAnimation = () => {
+            if (activeAnimation) {
+                activeAnimation.stop();
+                activeAnimation = null;
+            }
+        };
+        const startAnimation = () => {
+            stopAnimation();
+            activeAnimation = new JSAnimation({
+                keyframes: [asNumber(value.get()), asNumber(latestValue)],
+                velocity: value.getVelocity(),
+                type: "spring",
+                restDelta: 0.001,
+                restSpeed: 0.01,
+                ...options,
+                onUpdate: latestSetter,
+            });
+        };
+        value.attach((v, set) => {
+            latestValue = v;
+            latestSetter = (latest) => set(parseValue(latest, unit));
+            frame.postRender(startAnimation);
+        }, stopAnimation);
+        if (isMotionValue(source)) {
+            const removeSourceOnChange = source.on("change", (v) => value.set(parseValue(v, unit)));
+            const removeValueOnDestroy = value.on("destroy", removeSourceOnChange);
+            return () => {
+                removeSourceOnChange();
+                removeValueOnDestroy();
+            };
+        }
+        return stopAnimation;
+    }
+    function parseValue(v, unit) {
+        return unit ? v + unit : v;
+    }
+    function asNumber(v) {
+        return typeof v === "number" ? v : parseFloat(v);
+    }
+
+    /**
+     * A list of all ValueTypes
+     */
+    const valueTypes = [...dimensionValueTypes, color, complex];
+    /**
+     * Tests a value against the list of ValueTypes
+     */
+    const findValueType = (v) => valueTypes.find(testValueType(v));
+
+    function chooseLayerType(valueName) {
+        if (valueName === "layout")
+            return "group";
+        if (valueName === "enter" || valueName === "new")
+            return "new";
+        if (valueName === "exit" || valueName === "old")
+            return "old";
+        return "group";
+    }
+
+    let pendingRules = {};
+    let style = null;
+    const css = {
+        set: (selector, values) => {
+            pendingRules[selector] = values;
+        },
+        commit: () => {
+            if (!style) {
+                style = document.createElement("style");
+                style.id = "motion-view";
+            }
+            let cssText = "";
+            for (const selector in pendingRules) {
+                const rule = pendingRules[selector];
+                cssText += `${selector} {\n`;
+                for (const [property, value] of Object.entries(rule)) {
+                    cssText += `  ${property}: ${value};\n`;
+                }
+                cssText += "}\n";
+            }
+            style.textContent = cssText;
+            document.head.appendChild(style);
+            pendingRules = {};
+        },
+        remove: () => {
+            if (style && style.parentElement) {
+                style.parentElement.removeChild(style);
+            }
+        },
+    };
+
+    function getViewAnimationLayerInfo(pseudoElement) {
+        const match = pseudoElement.match(/::view-transition-(old|new|group|image-pair)\((.*?)\)/);
+        if (!match)
+            return null;
+        return { layer: match[2], type: match[1] };
+    }
+
+    function filterViewAnimations(animation) {
+        const { effect } = animation;
+        if (!effect)
+            return false;
+        return (effect.target === document.documentElement &&
+            effect.pseudoElement?.startsWith("::view-transition"));
+    }
+    function getViewAnimations() {
+        return document.getAnimations().filter(filterViewAnimations);
+    }
+
+    function hasTarget(target, targets) {
+        return targets.has(target) && Object.keys(targets.get(target)).length > 0;
+    }
+
+    const definitionNames = ["layout", "enter", "exit", "new", "old"];
+    function startViewAnimation(builder) {
+        const { update, targets, options: defaultOptions } = builder;
+        if (!document.startViewTransition) {
+            return new Promise(async (resolve) => {
+                await update();
+                resolve(new GroupAnimation([]));
+            });
+        }
+        // TODO: Go over existing targets and ensure they all have ids
+        /**
+         * If we don't have any animations defined for the root target,
+         * remove it from being captured.
+         */
+        if (!hasTarget("root", targets)) {
+            css.set(":root", {
+                "view-transition-name": "none",
+            });
+        }
+        /**
+         * Set the timing curve to linear for all view transition layers.
+         * This gets baked into the keyframes, which can't be changed
+         * without breaking the generated animation.
+         *
+         * This allows us to set easing via updateTiming - which can be changed.
+         */
+        css.set("::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*)", { "animation-timing-function": "linear !important" });
+        css.commit(); // Write
+        const transition = document.startViewTransition(async () => {
+            await update();
+            // TODO: Go over new targets and ensure they all have ids
+        });
+        transition.finished.finally(() => {
+            css.remove(); // Write
+        });
+        return new Promise((resolve) => {
+            transition.ready.then(() => {
+                const generatedViewAnimations = getViewAnimations();
+                const animations = [];
+                /**
+                 * Create animations for each of our explicitly-defined subjects.
+                 */
+                targets.forEach((definition, target) => {
+                    // TODO: If target is not "root", resolve elements
+                    // and iterate over each
+                    for (const key of definitionNames) {
+                        if (!definition[key])
+                            continue;
+                        const { keyframes, options } = definition[key];
+                        for (let [valueName, valueKeyframes] of Object.entries(keyframes)) {
+                            if (!valueKeyframes)
+                                continue;
+                            const valueOptions = {
+                                ...getValueTransition$1(defaultOptions, valueName),
+                                ...getValueTransition$1(options, valueName),
+                            };
+                            const type = chooseLayerType(key);
+                            /**
+                             * If this is an opacity animation, and keyframes are not an array,
+                             * we need to convert them into an array and set an initial value.
+                             */
+                            if (valueName === "opacity" &&
+                                !Array.isArray(valueKeyframes)) {
+                                const initialValue = type === "new" ? 0 : 1;
+                                valueKeyframes = [initialValue, valueKeyframes];
+                            }
+                            /**
+                             * Resolve stagger function if provided.
+                             */
+                            if (typeof valueOptions.delay === "function") {
+                                valueOptions.delay = valueOptions.delay(0, 1);
+                            }
+                            valueOptions.duration && (valueOptions.duration = secondsToMilliseconds(valueOptions.duration));
+                            valueOptions.delay && (valueOptions.delay = secondsToMilliseconds(valueOptions.delay));
+                            const animation = new NativeAnimation({
+                                ...valueOptions,
+                                element: document.documentElement,
+                                name: valueName,
+                                pseudoElement: `::view-transition-${type}(${target})`,
+                                keyframes: valueKeyframes,
+                            });
+                            animations.push(animation);
+                        }
+                    }
+                });
+                /**
+                 * Handle browser generated animations
+                 */
+                for (const animation of generatedViewAnimations) {
+                    if (animation.playState === "finished")
+                        continue;
+                    const { effect } = animation;
+                    if (!effect || !(effect instanceof KeyframeEffect))
+                        continue;
+                    const { pseudoElement } = effect;
+                    if (!pseudoElement)
+                        continue;
+                    const name = getViewAnimationLayerInfo(pseudoElement);
+                    if (!name)
+                        continue;
+                    const targetDefinition = targets.get(name.layer);
+                    if (!targetDefinition) {
+                        /**
+                         * If transition name is group then update the timing of the animation
+                         * whereas if it's old or new then we could possibly replace it using
+                         * the above method.
+                         */
+                        const transitionName = name.type === "group" ? "layout" : "";
+                        let animationTransition = {
+                            ...getValueTransition$1(defaultOptions, transitionName),
+                        };
+                        animationTransition.duration && (animationTransition.duration = secondsToMilliseconds(animationTransition.duration));
+                        animationTransition =
+                            applyGeneratorOptions(animationTransition);
+                        const easing = mapEasingToNativeEasing(animationTransition.ease, animationTransition.duration);
+                        effect.updateTiming({
+                            delay: secondsToMilliseconds(animationTransition.delay ?? 0),
+                            duration: animationTransition.duration,
+                            easing,
+                        });
+                        animations.push(new NativeAnimationWrapper(animation));
+                    }
+                    else if (hasOpacity(targetDefinition, "enter") &&
+                        hasOpacity(targetDefinition, "exit") &&
+                        effect
+                            .getKeyframes()
+                            .some((keyframe) => keyframe.mixBlendMode)) {
+                        animations.push(new NativeAnimationWrapper(animation));
+                    }
+                    else {
+                        animation.cancel();
+                    }
+                }
+                resolve(new GroupAnimation(animations));
+            });
+        });
+    }
+    function hasOpacity(target, key) {
+        return target?.[key]?.keyframes.opacity;
+    }
+
+    let builders = [];
+    let current = null;
+    function next() {
+        current = null;
+        const [nextBuilder] = builders;
+        if (nextBuilder)
+            start(nextBuilder);
+    }
+    function start(builder) {
+        removeItem(builders, builder);
+        current = builder;
+        startViewAnimation(builder).then((animation) => {
+            builder.notifyReady(animation);
+            animation.finished.finally(next);
+        });
+    }
+    function processQueue() {
+        /**
+         * Iterate backwards over the builders array. We can ignore the
+         * "wait" animations. If we have an interrupting animation in the
+         * queue then we need to batch all preceeding animations into it.
+         * Currently this only batches the update functions but will also
+         * need to batch the targets.
+         */
+        for (let i = builders.length - 1; i >= 0; i--) {
+            const builder = builders[i];
+            const { interrupt } = builder.options;
+            if (interrupt === "immediate") {
+                const batchedUpdates = builders.slice(0, i + 1).map((b) => b.update);
+                const remaining = builders.slice(i + 1);
+                builder.update = () => {
+                    batchedUpdates.forEach((update) => update());
+                };
+                // Put the current builder at the front, followed by any "wait" builders
+                builders = [builder, ...remaining];
+                break;
+            }
+        }
+        if (!current || builders[0]?.options.interrupt === "immediate") {
+            next();
+        }
+    }
+    function addToQueue(builder) {
+        builders.push(builder);
+        microtask.render(processQueue);
+    }
+
+    class ViewTransitionBuilder {
+        constructor(update, options = {}) {
+            this.currentSubject = "root";
+            this.targets = new Map();
+            this.notifyReady = noop;
+            this.readyPromise = new Promise((resolve) => {
+                this.notifyReady = resolve;
+            });
+            this.update = update;
+            this.options = {
+                interrupt: "wait",
+                ...options,
+            };
+            addToQueue(this);
+        }
+        get(subject) {
+            this.currentSubject = subject;
+            return this;
+        }
+        layout(keyframes, options) {
+            this.updateTarget("layout", keyframes, options);
+            return this;
+        }
+        new(keyframes, options) {
+            this.updateTarget("new", keyframes, options);
+            return this;
+        }
+        old(keyframes, options) {
+            this.updateTarget("old", keyframes, options);
+            return this;
+        }
+        enter(keyframes, options) {
+            this.updateTarget("enter", keyframes, options);
+            return this;
+        }
+        exit(keyframes, options) {
+            this.updateTarget("exit", keyframes, options);
+            return this;
+        }
+        crossfade(options) {
+            this.updateTarget("enter", { opacity: 1 }, options);
+            this.updateTarget("exit", { opacity: 0 }, options);
+            return this;
+        }
+        updateTarget(target, keyframes, options = {}) {
+            const { currentSubject, targets } = this;
+            if (!targets.has(currentSubject)) {
+                targets.set(currentSubject, {});
+            }
+            const targetData = targets.get(currentSubject);
+            targetData[target] = { keyframes, options };
+        }
+        then(resolve, reject) {
+            return this.readyPromise.then(resolve, reject);
+        }
+    }
+    function animateView(update, defaultOptions = {}) {
+        return new ViewTransitionBuilder(update, defaultOptions);
+    }
+
+    /**
+     * @deprecated
+     *
+     * Import as `frame` instead.
+     */
+    const sync = frame;
+    /**
+     * @deprecated
+     *
+     * Use cancelFrame(callback) instead.
+     */
+    const cancelSync = stepsOrder.reduce((acc, key) => {
+        acc[key] = (process) => cancelFrame(process);
+        return acc;
+    }, {});
+
+    function isDOMKeyframes(keyframes) {
+        return typeof keyframes === "object" && !Array.isArray(keyframes);
+    }
+
+    function resolveSubjects(subject, keyframes, scope, selectorCache) {
+        if (typeof subject === "string" && isDOMKeyframes(keyframes)) {
+            return resolveElements(subject, scope, selectorCache);
+        }
+        else if (subject instanceof NodeList) {
+            return Array.from(subject);
+        }
+        else if (Array.isArray(subject)) {
+            return subject;
+        }
+        else {
+            return [subject];
+        }
+    }
+
+    function calculateRepeatDuration(duration, repeat, _repeatDelay) {
+        return duration * (repeat + 1);
+    }
+
+    /**
+     * Given a absolute or relative time definition and current/prev time state of the sequence,
+     * calculate an absolute time for the next keyframes.
+     */
+    function calcNextTime(current, next, prev, labels) {
+        if (typeof next === "number") {
+            return next;
+        }
+        else if (next.startsWith("-") || next.startsWith("+")) {
+            return Math.max(0, current + parseFloat(next));
+        }
+        else if (next === "<") {
+            return prev;
+        }
+        else if (next.startsWith("<")) {
+            return Math.max(0, prev + parseFloat(next.slice(1)));
+        }
+        else {
+            return labels.get(next) ?? current;
+        }
+    }
+
+    function eraseKeyframes(sequence, startTime, endTime) {
+        for (let i = 0; i < sequence.length; i++) {
+            const keyframe = sequence[i];
+            if (keyframe.at > startTime && keyframe.at < endTime) {
+                removeItem(sequence, keyframe);
+                // If we remove this item we have to push the pointer back one
+                i--;
+            }
+        }
+    }
+    function addKeyframes(sequence, keyframes, easing, offset, startTime, endTime) {
+        /**
+         * Erase every existing value between currentTime and targetTime,
+         * this will essentially splice this timeline into any currently
+         * defined ones.
+         */
+        eraseKeyframes(sequence, startTime, endTime);
+        for (let i = 0; i < keyframes.length; i++) {
+            sequence.push({
+                value: keyframes[i],
+                at: mixNumber$1(startTime, endTime, offset[i]),
+                easing: getEasingForSegment(easing, i),
+            });
+        }
+    }
+
+    /**
+     * Take an array of times that represent repeated keyframes. For instance
+     * if we have original times of [0, 0.5, 1] then our repeated times will
+     * be [0, 0.5, 1, 1, 1.5, 2]. Loop over the times and scale them back
+     * down to a 0-1 scale.
+     */
+    function normalizeTimes(times, repeat) {
+        for (let i = 0; i < times.length; i++) {
+            times[i] = times[i] / (repeat + 1);
+        }
+    }
+
+    function compareByTime(a, b) {
+        if (a.at === b.at) {
+            if (a.value === null)
+                return 1;
+            if (b.value === null)
+                return -1;
+            return 0;
+        }
+        else {
+            return a.at - b.at;
+        }
+    }
+
+    const defaultSegmentEasing = "easeInOut";
+    const MAX_REPEAT = 20;
+    function createAnimationsFromSequence(sequence, { defaultTransition = {}, ...sequenceTransition } = {}, scope, generators) {
+        const defaultDuration = defaultTransition.duration || 0.3;
+        const animationDefinitions = new Map();
+        const sequences = new Map();
+        const elementCache = {};
+        const timeLabels = new Map();
+        let prevTime = 0;
+        let currentTime = 0;
+        let totalDuration = 0;
+        /**
+         * Build the timeline by mapping over the sequence array and converting
+         * the definitions into keyframes and offsets with absolute time values.
+         * These will later get converted into relative offsets in a second pass.
+         */
+        for (let i = 0; i < sequence.length; i++) {
+            const segment = sequence[i];
+            /**
+             * If this is a timeline label, mark it and skip the rest of this iteration.
+             */
+            if (typeof segment === "string") {
+                timeLabels.set(segment, currentTime);
+                continue;
+            }
+            else if (!Array.isArray(segment)) {
+                timeLabels.set(segment.name, calcNextTime(currentTime, segment.at, prevTime, timeLabels));
+                continue;
+            }
+            let [subject, keyframes, transition = {}] = segment;
+            /**
+             * If a relative or absolute time value has been specified we need to resolve
+             * it in relation to the currentTime.
+             */
+            if (transition.at !== undefined) {
+                currentTime = calcNextTime(currentTime, transition.at, prevTime, timeLabels);
+            }
+            /**
+             * Keep track of the maximum duration in this definition. This will be
+             * applied to currentTime once the definition has been parsed.
+             */
+            let maxDuration = 0;
+            const resolveValueSequence = (valueKeyframes, valueTransition, valueSequence, elementIndex = 0, numSubjects = 0) => {
+                const valueKeyframesAsList = keyframesAsList(valueKeyframes);
+                const { delay = 0, times = defaultOffset$1(valueKeyframesAsList), type = "keyframes", repeat, repeatType, repeatDelay = 0, ...remainingTransition } = valueTransition;
+                let { ease = defaultTransition.ease || "easeOut", duration } = valueTransition;
+                /**
+                 * Resolve stagger() if defined.
+                 */
+                const calculatedDelay = typeof delay === "function"
+                    ? delay(elementIndex, numSubjects)
+                    : delay;
+                /**
+                 * If this animation should and can use a spring, generate a spring easing function.
+                 */
+                const numKeyframes = valueKeyframesAsList.length;
+                const createGenerator = isGenerator(type)
+                    ? type
+                    : generators?.[type || "keyframes"];
+                if (numKeyframes <= 2 && createGenerator) {
+                    /**
+                     * As we're creating an easing function from a spring,
+                     * ideally we want to generate it using the real distance
+                     * between the two keyframes. However this isn't always
+                     * possible - in these situations we use 0-100.
+                     */
+                    let absoluteDelta = 100;
+                    if (numKeyframes === 2 &&
+                        isNumberKeyframesArray(valueKeyframesAsList)) {
+                        const delta = valueKeyframesAsList[1] - valueKeyframesAsList[0];
+                        absoluteDelta = Math.abs(delta);
+                    }
+                    const springTransition = { ...remainingTransition };
+                    if (duration !== undefined) {
+                        springTransition.duration = secondsToMilliseconds(duration);
+                    }
+                    const springEasing = createGeneratorEasing(springTransition, absoluteDelta, createGenerator);
+                    ease = springEasing.ease;
+                    duration = springEasing.duration;
+                }
+                duration ?? (duration = defaultDuration);
+                const startTime = currentTime + calculatedDelay;
+                /**
+                 * If there's only one time offset of 0, fill in a second with length 1
+                 */
+                if (times.length === 1 && times[0] === 0) {
+                    times[1] = 1;
+                }
+                /**
+                 * Fill out if offset if fewer offsets than keyframes
+                 */
+                const remainder = times.length - valueKeyframesAsList.length;
+                remainder > 0 && fillOffset(times, remainder);
+                /**
+                 * If only one value has been set, ie [1], push a null to the start of
+                 * the keyframe array. This will let us mark a keyframe at this point
+                 * that will later be hydrated with the previous value.
+                 */
+                valueKeyframesAsList.length === 1 &&
+                    valueKeyframesAsList.unshift(null);
+                /**
+                 * Handle repeat options
+                 */
+                if (repeat) {
+                    exports.invariant(repeat < MAX_REPEAT, "Repeat count too high, must be less than 20", "repeat-count-high");
+                    duration = calculateRepeatDuration(duration, repeat);
+                    const originalKeyframes = [...valueKeyframesAsList];
+                    const originalTimes = [...times];
+                    ease = Array.isArray(ease) ? [...ease] : [ease];
+                    const originalEase = [...ease];
+                    for (let repeatIndex = 0; repeatIndex < repeat; repeatIndex++) {
+                        valueKeyframesAsList.push(...originalKeyframes);
+                        for (let keyframeIndex = 0; keyframeIndex < originalKeyframes.length; keyframeIndex++) {
+                            times.push(originalTimes[keyframeIndex] + (repeatIndex + 1));
+                            ease.push(keyframeIndex === 0
+                                ? "linear"
+                                : getEasingForSegment(originalEase, keyframeIndex - 1));
+                        }
+                    }
+                    normalizeTimes(times, repeat);
+                }
+                const targetTime = startTime + duration;
+                /**
+                 * Add keyframes, mapping offsets to absolute time.
+                 */
+                addKeyframes(valueSequence, valueKeyframesAsList, ease, times, startTime, targetTime);
+                maxDuration = Math.max(calculatedDelay + duration, maxDuration);
+                totalDuration = Math.max(targetTime, totalDuration);
+            };
+            if (isMotionValue(subject)) {
+                const subjectSequence = getSubjectSequence(subject, sequences);
+                resolveValueSequence(keyframes, transition, getValueSequence("default", subjectSequence));
+            }
+            else {
+                const subjects = resolveSubjects(subject, keyframes, scope, elementCache);
+                const numSubjects = subjects.length;
+                /**
+                 * For every element in this segment, process the defined values.
+                 */
+                for (let subjectIndex = 0; subjectIndex < numSubjects; subjectIndex++) {
+                    /**
+                     * Cast necessary, but we know these are of this type
+                     */
+                    keyframes = keyframes;
+                    transition = transition;
+                    const thisSubject = subjects[subjectIndex];
+                    const subjectSequence = getSubjectSequence(thisSubject, sequences);
+                    for (const key in keyframes) {
+                        resolveValueSequence(keyframes[key], getValueTransition(transition, key), getValueSequence(key, subjectSequence), subjectIndex, numSubjects);
+                    }
+                }
+            }
+            prevTime = currentTime;
+            currentTime += maxDuration;
+        }
+        /**
+         * For every element and value combination create a new animation.
+         */
+        sequences.forEach((valueSequences, element) => {
+            for (const key in valueSequences) {
+                const valueSequence = valueSequences[key];
+                /**
+                 * Arrange all the keyframes in ascending time order.
+                 */
+                valueSequence.sort(compareByTime);
+                const keyframes = [];
+                const valueOffset = [];
+                const valueEasing = [];
+                /**
+                 * For each keyframe, translate absolute times into
+                 * relative offsets based on the total duration of the timeline.
+                 */
+                for (let i = 0; i < valueSequence.length; i++) {
+                    const { at, value, easing } = valueSequence[i];
+                    keyframes.push(value);
+                    valueOffset.push(progress(0, totalDuration, at));
+                    valueEasing.push(easing || "easeOut");
+                }
+                /**
+                 * If the first keyframe doesn't land on offset: 0
+                 * provide one by duplicating the initial keyframe. This ensures
+                 * it snaps to the first keyframe when the animation starts.
+                 */
+                if (valueOffset[0] !== 0) {
+                    valueOffset.unshift(0);
+                    keyframes.unshift(keyframes[0]);
+                    valueEasing.unshift(defaultSegmentEasing);
+                }
+                /**
+                 * If the last keyframe doesn't land on offset: 1
+                 * provide one with a null wildcard value. This will ensure it
+                 * stays static until the end of the animation.
+                 */
+                if (valueOffset[valueOffset.length - 1] !== 1) {
+                    valueOffset.push(1);
+                    keyframes.push(null);
+                }
+                if (!animationDefinitions.has(element)) {
+                    animationDefinitions.set(element, {
+                        keyframes: {},
+                        transition: {},
+                    });
+                }
+                const definition = animationDefinitions.get(element);
+                definition.keyframes[key] = keyframes;
+                definition.transition[key] = {
+                    ...defaultTransition,
+                    duration: totalDuration,
+                    ease: valueEasing,
+                    times: valueOffset,
+                    ...sequenceTransition,
+                };
+            }
+        });
+        return animationDefinitions;
+    }
+    function getSubjectSequence(subject, sequences) {
+        !sequences.has(subject) && sequences.set(subject, {});
+        return sequences.get(subject);
+    }
+    function getValueSequence(name, sequences) {
+        if (!sequences[name])
+            sequences[name] = [];
+        return sequences[name];
+    }
+    function keyframesAsList(keyframes) {
+        return Array.isArray(keyframes) ? keyframes : [keyframes];
+    }
+    function getValueTransition(transition, key) {
+        return transition && transition[key]
+            ? {
+                ...transition,
+                ...transition[key],
+            }
+            : { ...transition };
+    }
+    const isNumber = (keyframe) => typeof keyframe === "number";
+    const isNumberKeyframesArray = (keyframes) => keyframes.every(isNumber);
+
+    const visualElementStore = new WeakMap();
+
+    const isKeyframesTarget = (v) => {
+        return Array.isArray(v);
+    };
+
+    function getValueState(visualElement) {
+        const state = [{}, {}];
+        visualElement?.values.forEach((value, key) => {
+            state[0][key] = value.get();
+            state[1][key] = value.getVelocity();
+        });
+        return state;
+    }
+    function resolveVariantFromProps(props, definition, custom, visualElement) {
+        /**
+         * If the variant definition is a function, resolve.
+         */
+        if (typeof definition === "function") {
+            const [current, velocity] = getValueState(visualElement);
+            definition = definition(custom !== undefined ? custom : props.custom, current, velocity);
+        }
+        /**
+         * If the variant definition is a variant label, or
+         * the function returned a variant label, resolve.
+         */
+        if (typeof definition === "string") {
+            definition = props.variants && props.variants[definition];
+        }
+        /**
+         * At this point we've resolved both functions and variant labels,
+         * but the resolved variant label might itself have been a function.
+         * If so, resolve. This can only have returned a valid target object.
+         */
+        if (typeof definition === "function") {
+            const [current, velocity] = getValueState(visualElement);
+            definition = definition(custom !== undefined ? custom : props.custom, current, velocity);
+        }
+        return definition;
+    }
+
+    function resolveVariant(visualElement, definition, custom) {
+        const props = visualElement.getProps();
+        return resolveVariantFromProps(props, definition, props.custom, visualElement);
+    }
+
+    /**
+     * Set VisualElement's MotionValue, creating a new MotionValue for it if
+     * it doesn't exist.
+     */
+    function setMotionValue(visualElement, key, value) {
+        if (visualElement.hasValue(key)) {
+            visualElement.getValue(key).set(value);
+        }
+        else {
+            visualElement.addValue(key, motionValue(value));
+        }
+    }
+    function resolveFinalValueInKeyframes(v) {
+        // TODO maybe throw if v.length - 1 is placeholder token?
+        return isKeyframesTarget(v) ? v[v.length - 1] || 0 : v;
+    }
+    function setTarget(visualElement, definition) {
+        const resolved = resolveVariant(visualElement, definition);
+        let { transitionEnd = {}, transition = {}, ...target } = resolved || {};
+        target = { ...target, ...transitionEnd };
+        for (const key in target) {
+            const value = resolveFinalValueInKeyframes(target[key]);
+            setMotionValue(visualElement, key, value);
+        }
+    }
+
+    function isWillChangeMotionValue(value) {
+        return Boolean(isMotionValue(value) && value.add);
+    }
+
+    function addValueToWillChange(visualElement, key) {
+        const willChange = visualElement.getValue("willChange");
+        /**
+         * It could be that a user has set willChange to a regular MotionValue,
+         * in which case we can't add the value to it.
+         */
+        if (isWillChangeMotionValue(willChange)) {
+            return willChange.add(key);
+        }
+        else if (!willChange && MotionGlobalConfig.WillChange) {
+            const newWillChange = new MotionGlobalConfig.WillChange("auto");
+            visualElement.addValue("willChange", newWillChange);
+            newWillChange.add(key);
+        }
+    }
+
+    /**
+     * Convert camelCase to dash-case properties.
+     */
+    const camelToDash = (str) => str.replace(/([a-z])([A-Z])/gu, "$1-$2").toLowerCase();
+
+    const optimizedAppearDataId = "framerAppearId";
+    const optimizedAppearDataAttribute = "data-" + camelToDash(optimizedAppearDataId);
+
+    function getOptimisedAppearId(visualElement) {
+        return visualElement.props[optimizedAppearDataAttribute];
+    }
+
+    const isNotNull = (value) => value !== null;
+    function getFinalKeyframe(keyframes, { repeat, repeatType = "loop" }, finalKeyframe) {
+        const resolvedKeyframes = keyframes.filter(isNotNull);
+        const index = repeat && repeatType !== "loop" && repeat % 2 === 1
+            ? 0
+            : resolvedKeyframes.length - 1;
+        return !index || finalKeyframe === undefined
+            ? resolvedKeyframes[index]
+            : finalKeyframe;
+    }
+
+    const underDampedSpring = {
+        type: "spring",
+        stiffness: 500,
+        damping: 25,
+        restSpeed: 10,
+    };
+    const criticallyDampedSpring = (target) => ({
+        type: "spring",
+        stiffness: 550,
+        damping: target === 0 ? 2 * Math.sqrt(550) : 30,
+        restSpeed: 10,
+    });
+    const keyframesTransition = {
+        type: "keyframes",
+        duration: 0.8,
+    };
+    /**
+     * Default easing curve is a slightly shallower version of
+     * the default browser easing curve.
+     */
+    const ease = {
+        type: "keyframes",
+        ease: [0.25, 0.1, 0.35, 1],
+        duration: 0.3,
+    };
+    const getDefaultTransition = (valueKey, { keyframes }) => {
+        if (keyframes.length > 2) {
+            return keyframesTransition;
+        }
+        else if (transformProps.has(valueKey)) {
+            return valueKey.startsWith("scale")
+                ? criticallyDampedSpring(keyframes[1])
+                : underDampedSpring;
+        }
+        return ease;
+    };
+
+    /**
+     * Decide whether a transition is defined on a given Transition.
+     * This filters out orchestration options and returns true
+     * if any options are left.
+     */
+    function isTransitionDefined({ when, delay: _delay, delayChildren, staggerChildren, staggerDirection, repeat, repeatType, repeatDelay, from, elapsed, ...transition }) {
+        return !!Object.keys(transition).length;
+    }
+
+    const animateMotionValue = (name, value, target, transition = {}, element, isHandoff) => (onComplete) => {
+        const valueTransition = getValueTransition$1(transition, name) || {};
+        /**
+         * Most transition values are currently completely overwritten by value-specific
+         * transitions. In the future it'd be nicer to blend these transitions. But for now
+         * delay actually does inherit from the root transition if not value-specific.
+         */
+        const delay = valueTransition.delay || transition.delay || 0;
+        /**
+         * Elapsed isn't a public transition option but can be passed through from
+         * optimized appear effects in milliseconds.
+         */
+        let { elapsed = 0 } = transition;
+        elapsed = elapsed - secondsToMilliseconds(delay);
+        const options = {
+            keyframes: Array.isArray(target) ? target : [null, target],
+            ease: "easeOut",
+            velocity: value.getVelocity(),
+            ...valueTransition,
+            delay: -elapsed,
+            onUpdate: (v) => {
+                value.set(v);
+                valueTransition.onUpdate && valueTransition.onUpdate(v);
+            },
+            onComplete: () => {
+                onComplete();
+                valueTransition.onComplete && valueTransition.onComplete();
+            },
+            name,
+            motionValue: value,
+            element: isHandoff ? undefined : element,
+        };
+        /**
+         * If there's no transition defined for this value, we can generate
+         * unique transition settings for this value.
+         */
+        if (!isTransitionDefined(valueTransition)) {
+            Object.assign(options, getDefaultTransition(name, options));
+        }
+        /**
+         * Both WAAPI and our internal animation functions use durations
+         * as defined by milliseconds, while our external API defines them
+         * as seconds.
+         */
+        options.duration && (options.duration = secondsToMilliseconds(options.duration));
+        options.repeatDelay && (options.repeatDelay = secondsToMilliseconds(options.repeatDelay));
+        /**
+         * Support deprecated way to set initial value. Prefer keyframe syntax.
+         */
+        if (options.from !== undefined) {
+            options.keyframes[0] = options.from;
+        }
+        let shouldSkip = false;
+        if (options.type === false ||
+            (options.duration === 0 && !options.repeatDelay)) {
+            makeAnimationInstant(options);
+            if (options.delay === 0) {
+                shouldSkip = true;
+            }
+        }
+        if (MotionGlobalConfig.instantAnimations ||
+            MotionGlobalConfig.skipAnimations) {
+            shouldSkip = true;
+            makeAnimationInstant(options);
+            options.delay = 0;
+        }
+        /**
+         * If the transition type or easing has been explicitly set by the user
+         * then we don't want to allow flattening the animation.
+         */
+        options.allowFlatten = !valueTransition.type && !valueTransition.ease;
+        /**
+         * If we can or must skip creating the animation, and apply only
+         * the final keyframe, do so. We also check once keyframes are resolved but
+         * this early check prevents the need to create an animation at all.
+         */
+        if (shouldSkip && !isHandoff && value.get() !== undefined) {
+            const finalKeyframe = getFinalKeyframe(options.keyframes, valueTransition);
+            if (finalKeyframe !== undefined) {
+                frame.update(() => {
+                    options.onUpdate(finalKeyframe);
+                    options.onComplete();
+                });
+                return;
+            }
+        }
+        return valueTransition.isSync
+            ? new JSAnimation(options)
+            : new AsyncMotionValueAnimation(options);
+    };
+
+    /**
+     * Decide whether we should block this animation. Previously, we achieved this
+     * just by checking whether the key was listed in protectedKeys, but this
+     * posed problems if an animation was triggered by afterChildren and protectedKeys
+     * had been set to true in the meantime.
+     */
+    function shouldBlockAnimation({ protectedKeys, needsAnimating }, key) {
+        const shouldBlock = protectedKeys.hasOwnProperty(key) && needsAnimating[key] !== true;
+        needsAnimating[key] = false;
+        return shouldBlock;
+    }
+    function animateTarget(visualElement, targetAndTransition, { delay = 0, transitionOverride, type } = {}) {
+        let { transition = visualElement.getDefaultTransition(), transitionEnd, ...target } = targetAndTransition;
+        if (transitionOverride)
+            transition = transitionOverride;
+        const animations = [];
+        const animationTypeState = type &&
+            visualElement.animationState &&
+            visualElement.animationState.getState()[type];
+        for (const key in target) {
+            const value = visualElement.getValue(key, visualElement.latestValues[key] ?? null);
+            const valueTarget = target[key];
+            if (valueTarget === undefined ||
+                (animationTypeState &&
+                    shouldBlockAnimation(animationTypeState, key))) {
+                continue;
+            }
+            const valueTransition = {
+                delay,
+                ...getValueTransition$1(transition || {}, key),
+            };
+            /**
+             * If the value is already at the defined target, skip the animation.
+             */
+            const currentValue = value.get();
+            if (currentValue !== undefined &&
+                !value.isAnimating &&
+                !Array.isArray(valueTarget) &&
+                valueTarget === currentValue &&
+                !valueTransition.velocity) {
+                continue;
+            }
+            /**
+             * If this is the first time a value is being animated, check
+             * to see if we're handling off from an existing animation.
+             */
+            let isHandoff = false;
+            if (window.MotionHandoffAnimation) {
+                const appearId = getOptimisedAppearId(visualElement);
+                if (appearId) {
+                    const startTime = window.MotionHandoffAnimation(appearId, key, frame);
+                    if (startTime !== null) {
+                        valueTransition.startTime = startTime;
+                        isHandoff = true;
+                    }
+                }
+            }
+            addValueToWillChange(visualElement, key);
+            value.start(animateMotionValue(key, value, valueTarget, visualElement.shouldReduceMotion && positionalKeys.has(key)
+                ? { type: false }
+                : valueTransition, visualElement, isHandoff));
+            const animation = value.animation;
+            if (animation) {
+                animations.push(animation);
+            }
+        }
+        if (transitionEnd) {
+            Promise.all(animations).then(() => {
+                frame.update(() => {
+                    transitionEnd && setTarget(visualElement, transitionEnd);
+                });
+            });
+        }
+        return animations;
+    }
+
+    /**
+     * Bounding boxes tend to be defined as top, left, right, bottom. For various operations
+     * it's easier to consider each axis individually. This function returns a bounding box
+     * as a map of single-axis min/max values.
+     */
+    function convertBoundingBoxToBox({ top, left, right, bottom, }) {
+        return {
+            x: { min: left, max: right },
+            y: { min: top, max: bottom },
+        };
+    }
+    /**
+     * Applies a TransformPoint function to a bounding box. TransformPoint is usually a function
+     * provided by Framer to allow measured points to be corrected for device scaling. This is used
+     * when measuring DOM elements and DOM event points.
+     */
+    function transformBoxPoints(point, transformPoint) {
+        if (!transformPoint)
+            return point;
+        const topLeft = transformPoint({ x: point.left, y: point.top });
+        const bottomRight = transformPoint({ x: point.right, y: point.bottom });
+        return {
+            top: topLeft.y,
+            left: topLeft.x,
+            bottom: bottomRight.y,
+            right: bottomRight.x,
+        };
+    }
+
+    function measureViewportBox(instance, transformPoint) {
+        return convertBoundingBoxToBox(transformBoxPoints(instance.getBoundingClientRect(), transformPoint));
+    }
+
+    const featureProps = {
+        animation: [
+            "animate",
+            "variants",
+            "whileHover",
+            "whileTap",
+            "exit",
+            "whileInView",
+            "whileFocus",
+            "whileDrag",
+        ],
+        exit: ["exit"],
+        drag: ["drag", "dragControls"],
+        focus: ["whileFocus"],
+        hover: ["whileHover", "onHoverStart", "onHoverEnd"],
+        tap: ["whileTap", "onTap", "onTapStart", "onTapCancel"],
+        pan: ["onPan", "onPanStart", "onPanSessionStart", "onPanEnd"],
+        inView: ["whileInView", "onViewportEnter", "onViewportLeave"],
+        layout: ["layout", "layoutId"],
+    };
+    const featureDefinitions = {};
+    for (const key in featureProps) {
+        featureDefinitions[key] = {
+            isEnabled: (props) => featureProps[key].some((name) => !!props[name]),
+        };
+    }
+
+    const createAxis = () => ({ min: 0, max: 0 });
+    const createBox = () => ({
+        x: createAxis(),
+        y: createAxis(),
+    });
+
+    const isBrowser = typeof window !== "undefined";
+
+    // Does this device prefer reduced motion? Returns `null` server-side.
+    const prefersReducedMotion = { current: null };
+    const hasReducedMotionListener = { current: false };
+
+    function initPrefersReducedMotion() {
+        hasReducedMotionListener.current = true;
+        if (!isBrowser)
+            return;
+        if (window.matchMedia) {
+            const motionMediaQuery = window.matchMedia("(prefers-reduced-motion)");
+            const setReducedMotionPreferences = () => (prefersReducedMotion.current = motionMediaQuery.matches);
+            motionMediaQuery.addEventListener("change", setReducedMotionPreferences);
+            setReducedMotionPreferences();
+        }
+        else {
+            prefersReducedMotion.current = false;
+        }
+    }
+
+    function isAnimationControls(v) {
+        return (v !== null &&
+            typeof v === "object" &&
+            typeof v.start === "function");
+    }
+
+    /**
+     * Decides if the supplied variable is variant label
+     */
+    function isVariantLabel(v) {
+        return typeof v === "string" || Array.isArray(v);
+    }
+
+    const variantPriorityOrder = [
+        "animate",
+        "whileInView",
+        "whileFocus",
+        "whileHover",
+        "whileTap",
+        "whileDrag",
+        "exit",
+    ];
+    const variantProps = ["initial", ...variantPriorityOrder];
+
+    function isControllingVariants(props) {
+        return (isAnimationControls(props.animate) ||
+            variantProps.some((name) => isVariantLabel(props[name])));
+    }
+    function isVariantNode(props) {
+        return Boolean(isControllingVariants(props) || props.variants);
+    }
+
+    function updateMotionValuesFromProps(element, next, prev) {
+        for (const key in next) {
+            const nextValue = next[key];
+            const prevValue = prev[key];
+            if (isMotionValue(nextValue)) {
+                /**
+                 * If this is a motion value found in props or style, we want to add it
+                 * to our visual element's motion value map.
+                 */
+                element.addValue(key, nextValue);
+            }
+            else if (isMotionValue(prevValue)) {
+                /**
+                 * If we're swapping from a motion value to a static value,
+                 * create a new motion value from that
+                 */
+                element.addValue(key, motionValue(nextValue, { owner: element }));
+            }
+            else if (prevValue !== nextValue) {
+                /**
+                 * If this is a flat value that has changed, update the motion value
+                 * or create one if it doesn't exist. We only want to do this if we're
+                 * not handling the value with our animation state.
+                 */
+                if (element.hasValue(key)) {
+                    const existingValue = element.getValue(key);
+                    if (existingValue.liveStyle === true) {
+                        existingValue.jump(nextValue);
+                    }
+                    else if (!existingValue.hasAnimated) {
+                        existingValue.set(nextValue);
+                    }
+                }
+                else {
+                    const latestValue = element.getStaticValue(key);
+                    element.addValue(key, motionValue(latestValue !== undefined ? latestValue : nextValue, { owner: element }));
+                }
+            }
+        }
+        // Handle removed values
+        for (const key in prev) {
+            if (next[key] === undefined)
+                element.removeValue(key);
+        }
+        return next;
+    }
+
+    const propEventHandlers = [
+        "AnimationStart",
+        "AnimationComplete",
+        "Update",
+        "BeforeLayoutMeasure",
+        "LayoutMeasure",
+        "LayoutAnimationStart",
+        "LayoutAnimationComplete",
+    ];
+    /**
+     * A VisualElement is an imperative abstraction around UI elements such as
+     * HTMLElement, SVGElement, Three.Object3D etc.
+     */
+    class VisualElement {
+        /**
+         * This method takes React props and returns found MotionValues. For example, HTML
+         * MotionValues will be found within the style prop, whereas for Three.js within attribute arrays.
+         *
+         * This isn't an abstract method as it needs calling in the constructor, but it is
+         * intended to be one.
+         */
+        scrapeMotionValuesFromProps(_props, _prevProps, _visualElement) {
+            return {};
+        }
+        constructor({ parent, props, presenceContext, reducedMotionConfig, blockInitialAnimation, visualState, }, options = {}) {
+            /**
+             * A reference to the current underlying Instance, e.g. a HTMLElement
+             * or Three.Mesh etc.
+             */
+            this.current = null;
+            /**
+             * A set containing references to this VisualElement's children.
+             */
+            this.children = new Set();
+            /**
+             * Determine what role this visual element should take in the variant tree.
+             */
+            this.isVariantNode = false;
+            this.isControllingVariants = false;
+            /**
+             * Decides whether this VisualElement should animate in reduced motion
+             * mode.
+             *
+             * TODO: This is currently set on every individual VisualElement but feels
+             * like it could be set globally.
+             */
+            this.shouldReduceMotion = null;
+            /**
+             * A map of all motion values attached to this visual element. Motion
+             * values are source of truth for any given animated value. A motion
+             * value might be provided externally by the component via props.
+             */
+            this.values = new Map();
+            this.KeyframeResolver = KeyframeResolver;
+            /**
+             * Cleanup functions for active features (hover/tap/exit etc)
+             */
+            this.features = {};
+            /**
+             * A map of every subscription that binds the provided or generated
+             * motion values onChange listeners to this visual element.
+             */
+            this.valueSubscriptions = new Map();
+            /**
+             * A reference to the previously-provided motion values as returned
+             * from scrapeMotionValuesFromProps. We use the keys in here to determine
+             * if any motion values need to be removed after props are updated.
+             */
+            this.prevMotionValues = {};
+            /**
+             * An object containing a SubscriptionManager for each active event.
+             */
+            this.events = {};
+            /**
+             * An object containing an unsubscribe function for each prop event subscription.
+             * For example, every "Update" event can have multiple subscribers via
+             * VisualElement.on(), but only one of those can be defined via the onUpdate prop.
+             */
+            this.propEventSubscriptions = {};
+            this.notifyUpdate = () => this.notify("Update", this.latestValues);
+            this.render = () => {
+                if (!this.current)
+                    return;
+                this.triggerBuild();
+                this.renderInstance(this.current, this.renderState, this.props.style, this.projection);
+            };
+            this.renderScheduledAt = 0.0;
+            this.scheduleRender = () => {
+                const now = time.now();
+                if (this.renderScheduledAt < now) {
+                    this.renderScheduledAt = now;
+                    frame.render(this.render, false, true);
+                }
+            };
+            const { latestValues, renderState } = visualState;
+            this.latestValues = latestValues;
+            this.baseTarget = { ...latestValues };
+            this.initialValues = props.initial ? { ...latestValues } : {};
+            this.renderState = renderState;
+            this.parent = parent;
+            this.props = props;
+            this.presenceContext = presenceContext;
+            this.depth = parent ? parent.depth + 1 : 0;
+            this.reducedMotionConfig = reducedMotionConfig;
+            this.options = options;
+            this.blockInitialAnimation = Boolean(blockInitialAnimation);
+            this.isControllingVariants = isControllingVariants(props);
+            this.isVariantNode = isVariantNode(props);
+            if (this.isVariantNode) {
+                this.variantChildren = new Set();
+            }
+            this.manuallyAnimateOnMount = Boolean(parent && parent.current);
+            /**
+             * Any motion values that are provided to the element when created
+             * aren't yet bound to the element, as this would technically be impure.
+             * However, we iterate through the motion values and set them to the
+             * initial values for this component.
+             *
+             * TODO: This is impure and we should look at changing this to run on mount.
+             * Doing so will break some tests but this isn't necessarily a breaking change,
+             * more a reflection of the test.
+             */
+            const { willChange, ...initialMotionValues } = this.scrapeMotionValuesFromProps(props, {}, this);
+            for (const key in initialMotionValues) {
+                const value = initialMotionValues[key];
+                if (latestValues[key] !== undefined && isMotionValue(value)) {
+                    value.set(latestValues[key]);
+                }
+            }
+        }
+        mount(instance) {
+            this.current = instance;
+            visualElementStore.set(instance, this);
+            if (this.projection && !this.projection.instance) {
+                this.projection.mount(instance);
+            }
+            if (this.parent && this.isVariantNode && !this.isControllingVariants) {
+                this.removeFromVariantTree = this.parent.addVariantChild(this);
+            }
+            this.values.forEach((value, key) => this.bindToMotionValue(key, value));
+            if (!hasReducedMotionListener.current) {
+                initPrefersReducedMotion();
+            }
+            this.shouldReduceMotion =
+                this.reducedMotionConfig === "never"
+                    ? false
+                    : this.reducedMotionConfig === "always"
+                        ? true
+                        : prefersReducedMotion.current;
+            {
+                warnOnce(this.shouldReduceMotion !== true, "You have Reduced Motion enabled on your device. Animations may not appear as expected.", "reduced-motion-disabled");
+            }
+            this.parent?.addChild(this);
+            this.update(this.props, this.presenceContext);
+        }
+        unmount() {
+            this.projection && this.projection.unmount();
+            cancelFrame(this.notifyUpdate);
+            cancelFrame(this.render);
+            this.valueSubscriptions.forEach((remove) => remove());
+            this.valueSubscriptions.clear();
+            this.removeFromVariantTree && this.removeFromVariantTree();
+            this.parent?.removeChild(this);
+            for (const key in this.events) {
+                this.events[key].clear();
+            }
+            for (const key in this.features) {
+                const feature = this.features[key];
+                if (feature) {
+                    feature.unmount();
+                    feature.isMounted = false;
+                }
+            }
+            this.current = null;
+        }
+        addChild(child) {
+            this.children.add(child);
+            this.enteringChildren ?? (this.enteringChildren = new Set());
+            this.enteringChildren.add(child);
+        }
+        removeChild(child) {
+            this.children.delete(child);
+            this.enteringChildren && this.enteringChildren.delete(child);
+        }
+        bindToMotionValue(key, value) {
+            if (this.valueSubscriptions.has(key)) {
+                this.valueSubscriptions.get(key)();
+            }
+            const valueIsTransform = transformProps.has(key);
+            if (valueIsTransform && this.onBindTransform) {
+                this.onBindTransform();
+            }
+            const removeOnChange = value.on("change", (latestValue) => {
+                this.latestValues[key] = latestValue;
+                this.props.onUpdate && frame.preRender(this.notifyUpdate);
+                if (valueIsTransform && this.projection) {
+                    this.projection.isTransformDirty = true;
+                }
+                this.scheduleRender();
+            });
+            let removeSyncCheck;
+            if (window.MotionCheckAppearSync) {
+                removeSyncCheck = window.MotionCheckAppearSync(this, key, value);
+            }
+            this.valueSubscriptions.set(key, () => {
+                removeOnChange();
+                if (removeSyncCheck)
+                    removeSyncCheck();
+                if (value.owner)
+                    value.stop();
+            });
+        }
+        sortNodePosition(other) {
+            /**
+             * If these nodes aren't even of the same type we can't compare their depth.
+             */
+            if (!this.current ||
+                !this.sortInstanceNodePosition ||
+                this.type !== other.type) {
+                return 0;
+            }
+            return this.sortInstanceNodePosition(this.current, other.current);
+        }
+        updateFeatures() {
+            let key = "animation";
+            for (key in featureDefinitions) {
+                const featureDefinition = featureDefinitions[key];
+                if (!featureDefinition)
+                    continue;
+                const { isEnabled, Feature: FeatureConstructor } = featureDefinition;
+                /**
+                 * If this feature is enabled but not active, make a new instance.
+                 */
+                if (!this.features[key] &&
+                    FeatureConstructor &&
+                    isEnabled(this.props)) {
+                    this.features[key] = new FeatureConstructor(this);
+                }
+                /**
+                 * If we have a feature, mount or update it.
+                 */
+                if (this.features[key]) {
+                    const feature = this.features[key];
+                    if (feature.isMounted) {
+                        feature.update();
+                    }
+                    else {
+                        feature.mount();
+                        feature.isMounted = true;
+                    }
+                }
+            }
+        }
+        triggerBuild() {
+            this.build(this.renderState, this.latestValues, this.props);
+        }
+        /**
+         * Measure the current viewport box with or without transforms.
+         * Only measures axis-aligned boxes, rotate and skew must be manually
+         * removed with a re-render to work.
+         */
+        measureViewportBox() {
+            return this.current
+                ? this.measureInstanceViewportBox(this.current, this.props)
+                : createBox();
+        }
+        getStaticValue(key) {
+            return this.latestValues[key];
+        }
+        setStaticValue(key, value) {
+            this.latestValues[key] = value;
+        }
+        /**
+         * Update the provided props. Ensure any newly-added motion values are
+         * added to our map, old ones removed, and listeners updated.
+         */
+        update(props, presenceContext) {
+            if (props.transformTemplate || this.props.transformTemplate) {
+                this.scheduleRender();
+            }
+            this.prevProps = this.props;
+            this.props = props;
+            this.prevPresenceContext = this.presenceContext;
+            this.presenceContext = presenceContext;
+            /**
+             * Update prop event handlers ie onAnimationStart, onAnimationComplete
+             */
+            for (let i = 0; i < propEventHandlers.length; i++) {
+                const key = propEventHandlers[i];
+                if (this.propEventSubscriptions[key]) {
+                    this.propEventSubscriptions[key]();
+                    delete this.propEventSubscriptions[key];
+                }
+                const listenerName = ("on" + key);
+                const listener = props[listenerName];
+                if (listener) {
+                    this.propEventSubscriptions[key] = this.on(key, listener);
+                }
+            }
+            this.prevMotionValues = updateMotionValuesFromProps(this, this.scrapeMotionValuesFromProps(props, this.prevProps, this), this.prevMotionValues);
+            if (this.handleChildMotionValue) {
+                this.handleChildMotionValue();
+            }
+        }
+        getProps() {
+            return this.props;
+        }
+        /**
+         * Returns the variant definition with a given name.
+         */
+        getVariant(name) {
+            return this.props.variants ? this.props.variants[name] : undefined;
+        }
+        /**
+         * Returns the defined default transition on this component.
+         */
+        getDefaultTransition() {
+            return this.props.transition;
+        }
+        getTransformPagePoint() {
+            return this.props.transformPagePoint;
+        }
+        getClosestVariantNode() {
+            return this.isVariantNode
+                ? this
+                : this.parent
+                    ? this.parent.getClosestVariantNode()
+                    : undefined;
+        }
+        /**
+         * Add a child visual element to our set of children.
+         */
+        addVariantChild(child) {
+            const closestVariantNode = this.getClosestVariantNode();
+            if (closestVariantNode) {
+                closestVariantNode.variantChildren &&
+                    closestVariantNode.variantChildren.add(child);
+                return () => closestVariantNode.variantChildren.delete(child);
+            }
+        }
+        /**
+         * Add a motion value and bind it to this visual element.
+         */
+        addValue(key, value) {
+            // Remove existing value if it exists
+            const existingValue = this.values.get(key);
+            if (value !== existingValue) {
+                if (existingValue)
+                    this.removeValue(key);
+                this.bindToMotionValue(key, value);
+                this.values.set(key, value);
+                this.latestValues[key] = value.get();
+            }
+        }
+        /**
+         * Remove a motion value and unbind any active subscriptions.
+         */
+        removeValue(key) {
+            this.values.delete(key);
+            const unsubscribe = this.valueSubscriptions.get(key);
+            if (unsubscribe) {
+                unsubscribe();
+                this.valueSubscriptions.delete(key);
+            }
+            delete this.latestValues[key];
+            this.removeValueFromRenderState(key, this.renderState);
+        }
+        /**
+         * Check whether we have a motion value for this key
+         */
+        hasValue(key) {
+            return this.values.has(key);
+        }
+        getValue(key, defaultValue) {
+            if (this.props.values && this.props.values[key]) {
+                return this.props.values[key];
+            }
+            let value = this.values.get(key);
+            if (value === undefined && defaultValue !== undefined) {
+                value = motionValue(defaultValue === null ? undefined : defaultValue, { owner: this });
+                this.addValue(key, value);
+            }
+            return value;
+        }
+        /**
+         * If we're trying to animate to a previously unencountered value,
+         * we need to check for it in our state and as a last resort read it
+         * directly from the instance (which might have performance implications).
+         */
+        readValue(key, target) {
+            let value = this.latestValues[key] !== undefined || !this.current
+                ? this.latestValues[key]
+                : this.getBaseTargetFromProps(this.props, key) ??
+                    this.readValueFromInstance(this.current, key, this.options);
+            if (value !== undefined && value !== null) {
+                if (typeof value === "string" &&
+                    (isNumericalString(value) || isZeroValueString(value))) {
+                    // If this is a number read as a string, ie "0" or "200", convert it to a number
+                    value = parseFloat(value);
+                }
+                else if (!findValueType(value) && complex.test(target)) {
+                    value = getAnimatableNone(key, target);
+                }
+                this.setBaseTarget(key, isMotionValue(value) ? value.get() : value);
+            }
+            return isMotionValue(value) ? value.get() : value;
+        }
+        /**
+         * Set the base target to later animate back to. This is currently
+         * only hydrated on creation and when we first read a value.
+         */
+        setBaseTarget(key, value) {
+            this.baseTarget[key] = value;
+        }
+        /**
+         * Find the base target for a value thats been removed from all animation
+         * props.
+         */
+        getBaseTarget(key) {
+            const { initial } = this.props;
+            let valueFromInitial;
+            if (typeof initial === "string" || typeof initial === "object") {
+                const variant = resolveVariantFromProps(this.props, initial, this.presenceContext?.custom);
+                if (variant) {
+                    valueFromInitial = variant[key];
+                }
+            }
+            /**
+             * If this value still exists in the current initial variant, read that.
+             */
+            if (initial && valueFromInitial !== undefined) {
+                return valueFromInitial;
+            }
+            /**
+             * Alternatively, if this VisualElement config has defined a getBaseTarget
+             * so we can read the value from an alternative source, try that.
+             */
+            const target = this.getBaseTargetFromProps(this.props, key);
+            if (target !== undefined && !isMotionValue(target))
+                return target;
+            /**
+             * If the value was initially defined on initial, but it doesn't any more,
+             * return undefined. Otherwise return the value as initially read from the DOM.
+             */
+            return this.initialValues[key] !== undefined &&
+                valueFromInitial === undefined
+                ? undefined
+                : this.baseTarget[key];
+        }
+        on(eventName, callback) {
+            if (!this.events[eventName]) {
+                this.events[eventName] = new SubscriptionManager();
+            }
+            return this.events[eventName].add(callback);
+        }
+        notify(eventName, ...args) {
+            if (this.events[eventName]) {
+                this.events[eventName].notify(...args);
+            }
+        }
+        scheduleRenderMicrotask() {
+            microtask.render(this.render);
+        }
+    }
+
+    class DOMVisualElement extends VisualElement {
+        constructor() {
+            super(...arguments);
+            this.KeyframeResolver = DOMKeyframesResolver;
+        }
+        sortInstanceNodePosition(a, b) {
+            /**
+             * compareDocumentPosition returns a bitmask, by using the bitwise &
+             * we're returning true if 2 in that bitmask is set to true. 2 is set
+             * to true if b preceeds a.
+             */
+            return a.compareDocumentPosition(b) & 2 ? 1 : -1;
+        }
+        getBaseTargetFromProps(props, key) {
+            return props.style
+                ? props.style[key]
+                : undefined;
+        }
+        removeValueFromRenderState(key, { vars, style }) {
+            delete vars[key];
+            delete style[key];
+        }
+        handleChildMotionValue() {
+            if (this.childSubscription) {
+                this.childSubscription();
+                delete this.childSubscription;
+            }
+            const { children } = this.props;
+            if (isMotionValue(children)) {
+                this.childSubscription = children.on("change", (latest) => {
+                    if (this.current) {
+                        this.current.textContent = `${latest}`;
+                    }
+                });
+            }
+        }
+    }
+
+    const translateAlias = {
+        x: "translateX",
+        y: "translateY",
+        z: "translateZ",
+        transformPerspective: "perspective",
+    };
+    const numTransforms = transformPropOrder.length;
+    /**
+     * Build a CSS transform style from individual x/y/scale etc properties.
+     *
+     * This outputs with a default order of transforms/scales/rotations, this can be customised by
+     * providing a transformTemplate function.
+     */
+    function buildTransform(latestValues, transform, transformTemplate) {
+        // The transform string we're going to build into.
+        let transformString = "";
+        let transformIsDefault = true;
+        /**
+         * Loop over all possible transforms in order, adding the ones that
+         * are present to the transform string.
+         */
+        for (let i = 0; i < numTransforms; i++) {
+            const key = transformPropOrder[i];
+            const value = latestValues[key];
+            if (value === undefined)
+                continue;
+            let valueIsDefault = true;
+            if (typeof value === "number") {
+                valueIsDefault = value === (key.startsWith("scale") ? 1 : 0);
+            }
+            else {
+                valueIsDefault = parseFloat(value) === 0;
+            }
+            if (!valueIsDefault || transformTemplate) {
+                const valueAsType = getValueAsType(value, numberValueTypes[key]);
+                if (!valueIsDefault) {
+                    transformIsDefault = false;
+                    const transformName = translateAlias[key] || key;
+                    transformString += `${transformName}(${valueAsType}) `;
+                }
+                if (transformTemplate) {
+                    transform[key] = valueAsType;
+                }
+            }
+        }
+        transformString = transformString.trim();
+        // If we have a custom `transform` template, pass our transform values and
+        // generated transformString to that before returning
+        if (transformTemplate) {
+            transformString = transformTemplate(transform, transformIsDefault ? "" : transformString);
+        }
+        else if (transformIsDefault) {
+            transformString = "none";
+        }
+        return transformString;
+    }
+
+    function buildHTMLStyles(state, latestValues, transformTemplate) {
+        const { style, vars, transformOrigin } = state;
+        // Track whether we encounter any transform or transformOrigin values.
+        let hasTransform = false;
+        let hasTransformOrigin = false;
+        /**
+         * Loop over all our latest animated values and decide whether to handle them
+         * as a style or CSS variable.
+         *
+         * Transforms and transform origins are kept separately for further processing.
+         */
+        for (const key in latestValues) {
+            const value = latestValues[key];
+            if (transformProps.has(key)) {
+                // If this is a transform, flag to enable further transform processing
+                hasTransform = true;
+                continue;
+            }
+            else if (isCSSVariableName(key)) {
+                vars[key] = value;
+                continue;
+            }
+            else {
+                // Convert the value to its default value type, ie 0 -> "0px"
+                const valueAsType = getValueAsType(value, numberValueTypes[key]);
+                if (key.startsWith("origin")) {
+                    // If this is a transform origin, flag and enable further transform-origin processing
+                    hasTransformOrigin = true;
+                    transformOrigin[key] =
+                        valueAsType;
+                }
+                else {
+                    style[key] = valueAsType;
+                }
+            }
+        }
+        if (!latestValues.transform) {
+            if (hasTransform || transformTemplate) {
+                style.transform = buildTransform(latestValues, state.transform, transformTemplate);
+            }
+            else if (style.transform) {
+                /**
+                 * If we have previously created a transform but currently don't have any,
+                 * reset transform style to none.
+                 */
+                style.transform = "none";
+            }
+        }
+        /**
+         * Build a transformOrigin style. Uses the same defaults as the browser for
+         * undefined origins.
+         */
+        if (hasTransformOrigin) {
+            const { originX = "50%", originY = "50%", originZ = 0, } = transformOrigin;
+            style.transformOrigin = `${originX} ${originY} ${originZ}`;
+        }
+    }
+
+    function renderHTML(element, { style, vars }, styleProp, projection) {
+        const elementStyle = element.style;
+        let key;
+        for (key in style) {
+            // CSSStyleDeclaration has [index: number]: string; in the types, so we use that as key type.
+            elementStyle[key] = style[key];
+        }
+        // Write projection styles directly to element style
+        projection?.applyProjectionStyles(elementStyle, styleProp);
+        for (key in vars) {
+            // Loop over any CSS variables and assign those.
+            // They can only be assigned using `setProperty`.
+            elementStyle.setProperty(key, vars[key]);
+        }
+    }
+
+    const scaleCorrectors = {};
+
+    function isForcedMotionValue(key, { layout, layoutId }) {
+        return (transformProps.has(key) ||
+            key.startsWith("origin") ||
+            ((layout || layoutId !== undefined) &&
+                (!!scaleCorrectors[key] || key === "opacity")));
+    }
+
+    function scrapeMotionValuesFromProps$1(props, prevProps, visualElement) {
+        const { style } = props;
+        const newValues = {};
+        for (const key in style) {
+            if (isMotionValue(style[key]) ||
+                (prevProps.style &&
+                    isMotionValue(prevProps.style[key])) ||
+                isForcedMotionValue(key, props) ||
+                visualElement?.getValue(key)?.liveStyle !== undefined) {
+                newValues[key] = style[key];
+            }
+        }
+        return newValues;
+    }
+
+    function getComputedStyle$1(element) {
+        return window.getComputedStyle(element);
+    }
+    class HTMLVisualElement extends DOMVisualElement {
+        constructor() {
+            super(...arguments);
+            this.type = "html";
+            this.renderInstance = renderHTML;
+        }
+        readValueFromInstance(instance, key) {
+            if (transformProps.has(key)) {
+                return this.projection?.isProjecting
+                    ? defaultTransformValue(key)
+                    : readTransformValue(instance, key);
+            }
+            else {
+                const computedStyle = getComputedStyle$1(instance);
+                const value = (isCSSVariableName(key)
+                    ? computedStyle.getPropertyValue(key)
+                    : computedStyle[key]) || 0;
+                return typeof value === "string" ? value.trim() : value;
+            }
+        }
+        measureInstanceViewportBox(instance, { transformPagePoint }) {
+            return measureViewportBox(instance, transformPagePoint);
+        }
+        build(renderState, latestValues, props) {
+            buildHTMLStyles(renderState, latestValues, props.transformTemplate);
+        }
+        scrapeMotionValuesFromProps(props, prevProps, visualElement) {
+            return scrapeMotionValuesFromProps$1(props, prevProps, visualElement);
+        }
+    }
+
+    function isObjectKey(key, object) {
+        return key in object;
+    }
+    class ObjectVisualElement extends VisualElement {
+        constructor() {
+            super(...arguments);
+            this.type = "object";
+        }
+        readValueFromInstance(instance, key) {
+            if (isObjectKey(key, instance)) {
+                const value = instance[key];
+                if (typeof value === "string" || typeof value === "number") {
+                    return value;
+                }
+            }
+            return undefined;
+        }
+        getBaseTargetFromProps() {
+            return undefined;
+        }
+        removeValueFromRenderState(key, renderState) {
+            delete renderState.output[key];
+        }
+        measureInstanceViewportBox() {
+            return createBox();
+        }
+        build(renderState, latestValues) {
+            Object.assign(renderState.output, latestValues);
+        }
+        renderInstance(instance, { output }) {
+            Object.assign(instance, output);
+        }
+        sortInstanceNodePosition() {
+            return 0;
+        }
+    }
+
+    const dashKeys = {
+        offset: "stroke-dashoffset",
+        array: "stroke-dasharray",
+    };
+    const camelKeys = {
+        offset: "strokeDashoffset",
+        array: "strokeDasharray",
+    };
+    /**
+     * Build SVG path properties. Uses the path's measured length to convert
+     * our custom pathLength, pathSpacing and pathOffset into stroke-dashoffset
+     * and stroke-dasharray attributes.
+     *
+     * This function is mutative to reduce per-frame GC.
+     */
+    function buildSVGPath(attrs, length, spacing = 1, offset = 0, useDashCase = true) {
+        // Normalise path length by setting SVG attribute pathLength to 1
+        attrs.pathLength = 1;
+        // We use dash case when setting attributes directly to the DOM node and camel case
+        // when defining props on a React component.
+        const keys = useDashCase ? dashKeys : camelKeys;
+        // Build the dash offset
+        attrs[keys.offset] = px.transform(-offset);
+        // Build the dash array
+        const pathLength = px.transform(length);
+        const pathSpacing = px.transform(spacing);
+        attrs[keys.array] = `${pathLength} ${pathSpacing}`;
+    }
+
+    /**
+     * Build SVG visual attributes, like cx and style.transform
+     */
+    function buildSVGAttrs(state, { attrX, attrY, attrScale, pathLength, pathSpacing = 1, pathOffset = 0, 
+    // This is object creation, which we try to avoid per-frame.
+    ...latest }, isSVGTag, transformTemplate, styleProp) {
+        buildHTMLStyles(state, latest, transformTemplate);
+        /**
+         * For svg tags we just want to make sure viewBox is animatable and treat all the styles
+         * as normal HTML tags.
+         */
+        if (isSVGTag) {
+            if (state.style.viewBox) {
+                state.attrs.viewBox = state.style.viewBox;
+            }
+            return;
+        }
+        state.attrs = state.style;
+        state.style = {};
+        const { attrs, style } = state;
+        /**
+         * However, we apply transforms as CSS transforms.
+         * So if we detect a transform, transformOrigin we take it from attrs and copy it into style.
+         */
+        if (attrs.transform) {
+            style.transform = attrs.transform;
+            delete attrs.transform;
+        }
+        if (style.transform || attrs.transformOrigin) {
+            style.transformOrigin = attrs.transformOrigin ?? "50% 50%";
+            delete attrs.transformOrigin;
+        }
+        if (style.transform) {
+            /**
+             * SVG's element transform-origin uses its own median as a reference.
+             * Therefore, transformBox becomes a fill-box
+             */
+            style.transformBox = styleProp?.transformBox ?? "fill-box";
+            delete attrs.transformBox;
+        }
+        // Render attrX/attrY/attrScale as attributes
+        if (attrX !== undefined)
+            attrs.x = attrX;
+        if (attrY !== undefined)
+            attrs.y = attrY;
+        if (attrScale !== undefined)
+            attrs.scale = attrScale;
+        // Build SVG path if one has been defined
+        if (pathLength !== undefined) {
+            buildSVGPath(attrs, pathLength, pathSpacing, pathOffset, false);
+        }
+    }
+
+    /**
+     * A set of attribute names that are always read/written as camel case.
+     */
+    const camelCaseAttributes = new Set([
+        "baseFrequency",
+        "diffuseConstant",
+        "kernelMatrix",
+        "kernelUnitLength",
+        "keySplines",
+        "keyTimes",
+        "limitingConeAngle",
+        "markerHeight",
+        "markerWidth",
+        "numOctaves",
+        "targetX",
+        "targetY",
+        "surfaceScale",
+        "specularConstant",
+        "specularExponent",
+        "stdDeviation",
+        "tableValues",
+        "viewBox",
+        "gradientTransform",
+        "pathLength",
+        "startOffset",
+        "textLength",
+        "lengthAdjust",
+    ]);
+
+    const isSVGTag = (tag) => typeof tag === "string" && tag.toLowerCase() === "svg";
+
+    function renderSVG(element, renderState, _styleProp, projection) {
+        renderHTML(element, renderState, undefined, projection);
+        for (const key in renderState.attrs) {
+            element.setAttribute(!camelCaseAttributes.has(key) ? camelToDash(key) : key, renderState.attrs[key]);
+        }
+    }
+
+    function scrapeMotionValuesFromProps(props, prevProps, visualElement) {
+        const newValues = scrapeMotionValuesFromProps$1(props, prevProps, visualElement);
+        for (const key in props) {
+            if (isMotionValue(props[key]) ||
+                isMotionValue(prevProps[key])) {
+                const targetKey = transformPropOrder.indexOf(key) !== -1
+                    ? "attr" + key.charAt(0).toUpperCase() + key.substring(1)
+                    : key;
+                newValues[targetKey] = props[key];
+            }
+        }
+        return newValues;
+    }
+
+    class SVGVisualElement extends DOMVisualElement {
+        constructor() {
+            super(...arguments);
+            this.type = "svg";
+            this.isSVGTag = false;
+            this.measureInstanceViewportBox = createBox;
+        }
+        getBaseTargetFromProps(props, key) {
+            return props[key];
+        }
+        readValueFromInstance(instance, key) {
+            if (transformProps.has(key)) {
+                const defaultType = getDefaultValueType(key);
+                return defaultType ? defaultType.default || 0 : 0;
+            }
+            key = !camelCaseAttributes.has(key) ? camelToDash(key) : key;
+            return instance.getAttribute(key);
+        }
+        scrapeMotionValuesFromProps(props, prevProps, visualElement) {
+            return scrapeMotionValuesFromProps(props, prevProps, visualElement);
+        }
+        build(renderState, latestValues, props) {
+            buildSVGAttrs(renderState, latestValues, this.isSVGTag, props.transformTemplate, props.style);
+        }
+        renderInstance(instance, renderState, styleProp, projection) {
+            renderSVG(instance, renderState, styleProp, projection);
+        }
+        mount(instance) {
+            this.isSVGTag = isSVGTag(instance.tagName);
+            super.mount(instance);
+        }
+    }
+
+    function createDOMVisualElement(element) {
+        const options = {
+            presenceContext: null,
+            props: {},
+            visualState: {
+                renderState: {
+                    transform: {},
+                    transformOrigin: {},
+                    style: {},
+                    vars: {},
+                    attrs: {},
+                },
+                latestValues: {},
+            },
+        };
+        const node = isSVGElement(element) && !isSVGSVGElement(element)
+            ? new SVGVisualElement(options)
+            : new HTMLVisualElement(options);
+        node.mount(element);
+        visualElementStore.set(element, node);
+    }
+    function createObjectVisualElement(subject) {
+        const options = {
+            presenceContext: null,
+            props: {},
+            visualState: {
+                renderState: {
+                    output: {},
+                },
+                latestValues: {},
+            },
+        };
+        const node = new ObjectVisualElement(options);
+        node.mount(subject);
+        visualElementStore.set(subject, node);
+    }
+
+    function animateSingleValue(value, keyframes, options) {
+        const motionValue$1 = isMotionValue(value) ? value : motionValue(value);
+        motionValue$1.start(animateMotionValue("", motionValue$1, keyframes, options));
+        return motionValue$1.animation;
+    }
+
+    function isSingleValue(subject, keyframes) {
+        return (isMotionValue(subject) ||
+            typeof subject === "number" ||
+            (typeof subject === "string" && !isDOMKeyframes(keyframes)));
+    }
+    /**
+     * Implementation
+     */
+    function animateSubject(subject, keyframes, options, scope) {
+        const animations = [];
+        if (isSingleValue(subject, keyframes)) {
+            animations.push(animateSingleValue(subject, isDOMKeyframes(keyframes)
+                ? keyframes.default || keyframes
+                : keyframes, options ? options.default || options : options));
+        }
+        else {
+            const subjects = resolveSubjects(subject, keyframes, scope);
+            const numSubjects = subjects.length;
+            exports.invariant(Boolean(numSubjects), "No valid elements provided.", "no-valid-elements");
+            for (let i = 0; i < numSubjects; i++) {
+                const thisSubject = subjects[i];
+                exports.invariant(thisSubject !== null, "You're trying to perform an animation on null. Ensure that selectors are correctly finding elements and refs are correctly hydrated.", "animate-null");
+                const createVisualElement = thisSubject instanceof Element
+                    ? createDOMVisualElement
+                    : createObjectVisualElement;
+                if (!visualElementStore.has(thisSubject)) {
+                    createVisualElement(thisSubject);
+                }
+                const visualElement = visualElementStore.get(thisSubject);
+                const transition = { ...options };
+                /**
+                 * Resolve stagger function if provided.
+                 */
+                if ("delay" in transition &&
+                    typeof transition.delay === "function") {
+                    transition.delay = transition.delay(i, numSubjects);
+                }
+                animations.push(...animateTarget(visualElement, { ...keyframes, transition }, {}));
+            }
+        }
+        return animations;
+    }
+
+    function animateSequence(sequence, options, scope) {
+        const animations = [];
+        const animationDefinitions = createAnimationsFromSequence(sequence, options, scope, { spring });
+        animationDefinitions.forEach(({ keyframes, transition }, subject) => {
+            animations.push(...animateSubject(subject, keyframes, transition));
+        });
+        return animations;
+    }
+
+    function isSequence(value) {
+        return Array.isArray(value) && value.some(Array.isArray);
+    }
+    /**
+     * Creates an animation function that is optionally scoped
+     * to a specific element.
+     */
+    function createScopedAnimate(scope) {
+        /**
+         * Implementation
+         */
+        function scopedAnimate(subjectOrSequence, optionsOrKeyframes, options) {
+            let animations = [];
+            let animationOnComplete;
+            if (isSequence(subjectOrSequence)) {
+                animations = animateSequence(subjectOrSequence, optionsOrKeyframes, scope);
+            }
+            else {
+                // Extract top-level onComplete so it doesn't get applied per-value
+                const { onComplete, ...rest } = options || {};
+                if (typeof onComplete === "function") {
+                    animationOnComplete = onComplete;
+                }
+                animations = animateSubject(subjectOrSequence, optionsOrKeyframes, rest, scope);
+            }
+            const animation = new GroupAnimationWithThen(animations);
+            if (animationOnComplete) {
+                animation.finished.then(animationOnComplete);
+            }
+            if (scope) {
+                scope.animations.push(animation);
+                animation.finished.then(() => {
+                    removeItem(scope.animations, animation);
+                });
+            }
+            return animation;
+        }
+        return scopedAnimate;
+    }
+    const animate = createScopedAnimate();
+
+    function animateElements(elementOrSelector, keyframes, options, scope) {
+        const elements = resolveElements(elementOrSelector, scope);
+        const numElements = elements.length;
+        exports.invariant(Boolean(numElements), "No valid elements provided.", "no-valid-elements");
+        /**
+         * WAAPI doesn't support interrupting animations.
+         *
+         * Therefore, starting animations requires a three-step process:
+         * 1. Stop existing animations (write styles to DOM)
+         * 2. Resolve keyframes (read styles from DOM)
+         * 3. Create new animations (write styles to DOM)
+         *
+         * The hybrid `animate()` function uses AsyncAnimation to resolve
+         * keyframes before creating new animations, which removes style
+         * thrashing. Here, we have much stricter filesize constraints.
+         * Therefore we do this in a synchronous way that ensures that
+         * at least within `animate()` calls there is no style thrashing.
+         *
+         * In the motion-native-animate-mini-interrupt benchmark this
+         * was 80% faster than a single loop.
+         */
+        const animationDefinitions = [];
+        /**
+         * Step 1: Build options and stop existing animations (write)
+         */
+        for (let i = 0; i < numElements; i++) {
+            const element = elements[i];
+            const elementTransition = { ...options };
+            /**
+             * Resolve stagger function if provided.
+             */
+            if (typeof elementTransition.delay === "function") {
+                elementTransition.delay = elementTransition.delay(i, numElements);
+            }
+            for (const valueName in keyframes) {
+                let valueKeyframes = keyframes[valueName];
+                if (!Array.isArray(valueKeyframes)) {
+                    valueKeyframes = [valueKeyframes];
+                }
+                const valueOptions = {
+                    ...getValueTransition$1(elementTransition, valueName),
+                };
+                valueOptions.duration && (valueOptions.duration = secondsToMilliseconds(valueOptions.duration));
+                valueOptions.delay && (valueOptions.delay = secondsToMilliseconds(valueOptions.delay));
+                /**
+                 * If there's an existing animation playing on this element then stop it
+                 * before creating a new one.
+                 */
+                const map = getAnimationMap(element);
+                const key = animationMapKey(valueName, valueOptions.pseudoElement || "");
+                const currentAnimation = map.get(key);
+                currentAnimation && currentAnimation.stop();
+                animationDefinitions.push({
+                    map,
+                    key,
+                    unresolvedKeyframes: valueKeyframes,
+                    options: {
+                        ...valueOptions,
+                        element,
+                        name: valueName,
+                        allowFlatten: !elementTransition.type && !elementTransition.ease,
+                    },
+                });
+            }
+        }
+        /**
+         * Step 2: Resolve keyframes (read)
+         */
+        for (let i = 0; i < animationDefinitions.length; i++) {
+            const { unresolvedKeyframes, options: animationOptions } = animationDefinitions[i];
+            const { element, name, pseudoElement } = animationOptions;
+            if (!pseudoElement && unresolvedKeyframes[0] === null) {
+                unresolvedKeyframes[0] = getComputedStyle$2(element, name);
+            }
+            fillWildcards(unresolvedKeyframes);
+            applyPxDefaults(unresolvedKeyframes, name);
+            /**
+             * If we only have one keyframe, explicitly read the initial keyframe
+             * from the computed style. This is to ensure consistency with WAAPI behaviour
+             * for restarting animations, for instance .play() after finish, when it
+             * has one vs two keyframes.
+             */
+            if (!pseudoElement && unresolvedKeyframes.length < 2) {
+                unresolvedKeyframes.unshift(getComputedStyle$2(element, name));
+            }
+            animationOptions.keyframes = unresolvedKeyframes;
+        }
+        /**
+         * Step 3: Create new animations (write)
+         */
+        const animations = [];
+        for (let i = 0; i < animationDefinitions.length; i++) {
+            const { map, key, options: animationOptions } = animationDefinitions[i];
+            const animation = new NativeAnimation(animationOptions);
+            map.set(key, animation);
+            animation.finished.finally(() => map.delete(key));
+            animations.push(animation);
+        }
+        return animations;
+    }
+
+    const createScopedWaapiAnimate = (scope) => {
+        function scopedAnimate(elementOrSelector, keyframes, options) {
+            return new GroupAnimationWithThen(animateElements(elementOrSelector, keyframes, options, scope));
+        }
+        return scopedAnimate;
+    };
+    const animateMini = /*@__PURE__*/ createScopedWaapiAnimate();
+
+    /**
+     * A time in milliseconds, beyond which we consider the scroll velocity to be 0.
+     */
+    const maxElapsed = 50;
+    const createAxisInfo = () => ({
+        current: 0,
+        offset: [],
+        progress: 0,
+        scrollLength: 0,
+        targetOffset: 0,
+        targetLength: 0,
+        containerLength: 0,
+        velocity: 0,
+    });
+    const createScrollInfo = () => ({
+        time: 0,
+        x: createAxisInfo(),
+        y: createAxisInfo(),
+    });
+    const keys = {
+        x: {
+            length: "Width",
+            position: "Left",
+        },
+        y: {
+            length: "Height",
+            position: "Top",
+        },
+    };
+    function updateAxisInfo(element, axisName, info, time) {
+        const axis = info[axisName];
+        const { length, position } = keys[axisName];
+        const prev = axis.current;
+        const prevTime = info.time;
+        axis.current = element[`scroll${position}`];
+        axis.scrollLength = element[`scroll${length}`] - element[`client${length}`];
+        axis.offset.length = 0;
+        axis.offset[0] = 0;
+        axis.offset[1] = axis.scrollLength;
+        axis.progress = progress(0, axis.scrollLength, axis.current);
+        const elapsed = time - prevTime;
+        axis.velocity =
+            elapsed > maxElapsed
+                ? 0
+                : velocityPerSecond(axis.current - prev, elapsed);
+    }
+    function updateScrollInfo(element, info, time) {
+        updateAxisInfo(element, "x", info, time);
+        updateAxisInfo(element, "y", info, time);
+        info.time = time;
+    }
+
+    function calcInset(element, container) {
+        const inset = { x: 0, y: 0 };
+        let current = element;
+        while (current && current !== container) {
+            if (isHTMLElement(current)) {
+                inset.x += current.offsetLeft;
+                inset.y += current.offsetTop;
+                current = current.offsetParent;
+            }
+            else if (current.tagName === "svg") {
+                /**
+                 * This isn't an ideal approach to measuring the offset of <svg /> tags.
+                 * It would be preferable, given they behave like HTMLElements in most ways
+                 * to use offsetLeft/Top. But these don't exist on <svg />. Likewise we
+                 * can't use .getBBox() like most SVG elements as these provide the offset
+                 * relative to the SVG itself, which for <svg /> is usually 0x0.
+                 */
+                const svgBoundingBox = current.getBoundingClientRect();
+                current = current.parentElement;
+                const parentBoundingBox = current.getBoundingClientRect();
+                inset.x += svgBoundingBox.left - parentBoundingBox.left;
+                inset.y += svgBoundingBox.top - parentBoundingBox.top;
+            }
+            else if (current instanceof SVGGraphicsElement) {
+                const { x, y } = current.getBBox();
+                inset.x += x;
+                inset.y += y;
+                let svg = null;
+                let parent = current.parentNode;
+                while (!svg) {
+                    if (parent.tagName === "svg") {
+                        svg = parent;
+                    }
+                    parent = current.parentNode;
+                }
+                current = svg;
+            }
+            else {
+                break;
+            }
+        }
+        return inset;
+    }
+
+    const namedEdges = {
+        start: 0,
+        center: 0.5,
+        end: 1,
+    };
+    function resolveEdge(edge, length, inset = 0) {
+        let delta = 0;
+        /**
+         * If we have this edge defined as a preset, replace the definition
+         * with the numerical value.
+         */
+        if (edge in namedEdges) {
+            edge = namedEdges[edge];
+        }
+        /**
+         * Handle unit values
+         */
+        if (typeof edge === "string") {
+            const asNumber = parseFloat(edge);
+            if (edge.endsWith("px")) {
+                delta = asNumber;
+            }
+            else if (edge.endsWith("%")) {
+                edge = asNumber / 100;
+            }
+            else if (edge.endsWith("vw")) {
+                delta = (asNumber / 100) * document.documentElement.clientWidth;
+            }
+            else if (edge.endsWith("vh")) {
+                delta = (asNumber / 100) * document.documentElement.clientHeight;
+            }
+            else {
+                edge = asNumber;
+            }
+        }
+        /**
+         * If the edge is defined as a number, handle as a progress value.
+         */
+        if (typeof edge === "number") {
+            delta = length * edge;
+        }
+        return inset + delta;
+    }
+
+    const defaultOffset = [0, 0];
+    function resolveOffset(offset, containerLength, targetLength, targetInset) {
+        let offsetDefinition = Array.isArray(offset) ? offset : defaultOffset;
+        let targetPoint = 0;
+        let containerPoint = 0;
+        if (typeof offset === "number") {
+            /**
+             * If we're provided offset: [0, 0.5, 1] then each number x should become
+             * [x, x], so we default to the behaviour of mapping 0 => 0 of both target
+             * and container etc.
+             */
+            offsetDefinition = [offset, offset];
+        }
+        else if (typeof offset === "string") {
+            offset = offset.trim();
+            if (offset.includes(" ")) {
+                offsetDefinition = offset.split(" ");
+            }
+            else {
+                /**
+                 * If we're provided a definition like "100px" then we want to apply
+                 * that only to the top of the target point, leaving the container at 0.
+                 * Whereas a named offset like "end" should be applied to both.
+                 */
+                offsetDefinition = [offset, namedEdges[offset] ? offset : `0`];
+            }
+        }
+        targetPoint = resolveEdge(offsetDefinition[0], targetLength, targetInset);
+        containerPoint = resolveEdge(offsetDefinition[1], containerLength);
+        return targetPoint - containerPoint;
+    }
+
+    const ScrollOffset = {
+        Enter: [
+            [0, 1],
+            [1, 1],
+        ],
+        Exit: [
+            [0, 0],
+            [1, 0],
+        ],
+        Any: [
+            [1, 0],
+            [0, 1],
+        ],
+        All: [
+            [0, 0],
+            [1, 1],
+        ],
+    };
+
+    const point = { x: 0, y: 0 };
+    function getTargetSize(target) {
+        return "getBBox" in target && target.tagName !== "svg"
+            ? target.getBBox()
+            : { width: target.clientWidth, height: target.clientHeight };
+    }
+    function resolveOffsets(container, info, options) {
+        const { offset: offsetDefinition = ScrollOffset.All } = options;
+        const { target = container, axis = "y" } = options;
+        const lengthLabel = axis === "y" ? "height" : "width";
+        const inset = target !== container ? calcInset(target, container) : point;
+        /**
+         * Measure the target and container. If they're the same thing then we
+         * use the container's scrollWidth/Height as the target, from there
+         * all other calculations can remain the same.
+         */
+        const targetSize = target === container
+            ? { width: container.scrollWidth, height: container.scrollHeight }
+            : getTargetSize(target);
+        const containerSize = {
+            width: container.clientWidth,
+            height: container.clientHeight,
+        };
+        /**
+         * Reset the length of the resolved offset array rather than creating a new one.
+         * TODO: More reusable data structures for targetSize/containerSize would also be good.
+         */
+        info[axis].offset.length = 0;
+        /**
+         * Populate the offset array by resolving the user's offset definition into
+         * a list of pixel scroll offets.
+         */
+        let hasChanged = !info[axis].interpolate;
+        const numOffsets = offsetDefinition.length;
+        for (let i = 0; i < numOffsets; i++) {
+            const offset = resolveOffset(offsetDefinition[i], containerSize[lengthLabel], targetSize[lengthLabel], inset[axis]);
+            if (!hasChanged && offset !== info[axis].interpolatorOffsets[i]) {
+                hasChanged = true;
+            }
+            info[axis].offset[i] = offset;
+        }
+        /**
+         * If the pixel scroll offsets have changed, create a new interpolator function
+         * to map scroll value into a progress.
+         */
+        if (hasChanged) {
+            info[axis].interpolate = interpolate(info[axis].offset, defaultOffset$1(offsetDefinition), { clamp: false });
+            info[axis].interpolatorOffsets = [...info[axis].offset];
+        }
+        info[axis].progress = clamp(0, 1, info[axis].interpolate(info[axis].current));
+    }
+
+    function measure(container, target = container, info) {
+        /**
+         * Find inset of target within scrollable container
+         */
+        info.x.targetOffset = 0;
+        info.y.targetOffset = 0;
+        if (target !== container) {
+            let node = target;
+            while (node && node !== container) {
+                info.x.targetOffset += node.offsetLeft;
+                info.y.targetOffset += node.offsetTop;
+                node = node.offsetParent;
+            }
+        }
+        info.x.targetLength =
+            target === container ? target.scrollWidth : target.clientWidth;
+        info.y.targetLength =
+            target === container ? target.scrollHeight : target.clientHeight;
+        info.x.containerLength = container.clientWidth;
+        info.y.containerLength = container.clientHeight;
+        /**
+         * In development mode ensure scroll containers aren't position: static as this makes
+         * it difficult to measure their relative positions.
+         */
+        {
+            if (container && target && target !== container) {
+                warnOnce(getComputedStyle(container).position !== "static", "Please ensure that the container has a non-static position, like 'relative', 'fixed', or 'absolute' to ensure scroll offset is calculated correctly.");
+            }
+        }
+    }
+    function createOnScrollHandler(element, onScroll, info, options = {}) {
+        return {
+            measure: (time) => {
+                measure(element, options.target, info);
+                updateScrollInfo(element, info, time);
+                if (options.offset || options.target) {
+                    resolveOffsets(element, info, options);
+                }
+            },
+            notify: () => onScroll(info),
+        };
+    }
+
+    const scrollListeners = new WeakMap();
+    const resizeListeners = new WeakMap();
+    const onScrollHandlers = new WeakMap();
+    const getEventTarget = (element) => element === document.scrollingElement ? window : element;
+    function scrollInfo(onScroll, { container = document.scrollingElement, ...options } = {}) {
+        if (!container)
+            return noop;
+        let containerHandlers = onScrollHandlers.get(container);
+        /**
+         * Get the onScroll handlers for this container.
+         * If one isn't found, create a new one.
+         */
+        if (!containerHandlers) {
+            containerHandlers = new Set();
+            onScrollHandlers.set(container, containerHandlers);
+        }
+        /**
+         * Create a new onScroll handler for the provided callback.
+         */
+        const info = createScrollInfo();
+        const containerHandler = createOnScrollHandler(container, onScroll, info, options);
+        containerHandlers.add(containerHandler);
+        /**
+         * Check if there's a scroll event listener for this container.
+         * If not, create one.
+         */
+        if (!scrollListeners.has(container)) {
+            const measureAll = () => {
+                for (const handler of containerHandlers) {
+                    handler.measure(frameData.timestamp);
+                }
+                frame.preUpdate(notifyAll);
+            };
+            const notifyAll = () => {
+                for (const handler of containerHandlers) {
+                    handler.notify();
+                }
+            };
+            const listener = () => frame.read(measureAll);
+            scrollListeners.set(container, listener);
+            const target = getEventTarget(container);
+            window.addEventListener("resize", listener, { passive: true });
+            if (container !== document.documentElement) {
+                resizeListeners.set(container, resize(container, listener));
+            }
+            target.addEventListener("scroll", listener, { passive: true });
+            listener();
+        }
+        const listener = scrollListeners.get(container);
+        frame.read(listener, false, true);
+        return () => {
+            cancelFrame(listener);
+            /**
+             * Check if we even have any handlers for this container.
+             */
+            const currentHandlers = onScrollHandlers.get(container);
+            if (!currentHandlers)
+                return;
+            currentHandlers.delete(containerHandler);
+            if (currentHandlers.size)
+                return;
+            /**
+             * If no more handlers, remove the scroll listener too.
+             */
+            const scrollListener = scrollListeners.get(container);
+            scrollListeners.delete(container);
+            if (scrollListener) {
+                getEventTarget(container).removeEventListener("scroll", scrollListener);
+                resizeListeners.get(container)?.();
+                window.removeEventListener("resize", scrollListener);
+            }
+        };
+    }
+
+    const timelineCache = new Map();
+    function scrollTimelineFallback(options) {
+        const currentTime = { value: 0 };
+        const cancel = scrollInfo((info) => {
+            currentTime.value = info[options.axis].progress * 100;
+        }, options);
+        return { currentTime, cancel };
+    }
+    function getTimeline({ source, container, ...options }) {
+        const { axis } = options;
+        if (source)
+            container = source;
+        const containerCache = timelineCache.get(container) ?? new Map();
+        timelineCache.set(container, containerCache);
+        const targetKey = options.target ?? "self";
+        const targetCache = containerCache.get(targetKey) ?? {};
+        const axisKey = axis + (options.offset ?? []).join(",");
+        if (!targetCache[axisKey]) {
+            targetCache[axisKey] =
+                !options.target && supportsScrollTimeline()
+                    ? new ScrollTimeline({ source: container, axis })
+                    : scrollTimelineFallback({ container, ...options });
+        }
+        return targetCache[axisKey];
+    }
+
+    function attachToAnimation(animation, options) {
+        const timeline = getTimeline(options);
+        return animation.attachTimeline({
+            timeline: options.target ? undefined : timeline,
+            observe: (valueAnimation) => {
+                valueAnimation.pause();
+                return observeTimeline((progress) => {
+                    valueAnimation.time =
+                        valueAnimation.iterationDuration * progress;
+                }, timeline);
+            },
+        });
+    }
+
+    /**
+     * If the onScroll function has two arguments, it's expecting
+     * more specific information about the scroll from scrollInfo.
+     */
+    function isOnScrollWithInfo(onScroll) {
+        return onScroll.length === 2;
+    }
+    function attachToFunction(onScroll, options) {
+        if (isOnScrollWithInfo(onScroll)) {
+            return scrollInfo((info) => {
+                onScroll(info[options.axis].progress, info);
+            }, options);
+        }
+        else {
+            return observeTimeline(onScroll, getTimeline(options));
+        }
+    }
+
+    function scroll(onScroll, { axis = "y", container = document.scrollingElement, ...options } = {}) {
+        if (!container)
+            return noop;
+        const optionsWithDefaults = { axis, container, ...options };
+        return typeof onScroll === "function"
+            ? attachToFunction(onScroll, optionsWithDefaults)
+            : attachToAnimation(onScroll, optionsWithDefaults);
+    }
+
+    const thresholds = {
+        some: 0,
+        all: 1,
+    };
+    function inView(elementOrSelector, onStart, { root, margin: rootMargin, amount = "some" } = {}) {
+        const elements = resolveElements(elementOrSelector);
+        const activeIntersections = new WeakMap();
+        const onIntersectionChange = (entries) => {
+            entries.forEach((entry) => {
+                const onEnd = activeIntersections.get(entry.target);
+                /**
+                 * If there's no change to the intersection, we don't need to
+                 * do anything here.
+                 */
+                if (entry.isIntersecting === Boolean(onEnd))
+                    return;
+                if (entry.isIntersecting) {
+                    const newOnEnd = onStart(entry.target, entry);
+                    if (typeof newOnEnd === "function") {
+                        activeIntersections.set(entry.target, newOnEnd);
+                    }
+                    else {
+                        observer.unobserve(entry.target);
+                    }
+                }
+                else if (typeof onEnd === "function") {
+                    onEnd(entry);
+                    activeIntersections.delete(entry.target);
+                }
+            });
+        };
+        const observer = new IntersectionObserver(onIntersectionChange, {
+            root,
+            rootMargin,
+            threshold: typeof amount === "number" ? amount : thresholds[amount],
+        });
+        elements.forEach((element) => observer.observe(element));
+        return () => observer.disconnect();
+    }
+
+    /**
+     * Timeout defined in ms
+     */
+    function delay(callback, timeout) {
+        const start = time.now();
+        const checkElapsed = ({ timestamp }) => {
+            const elapsed = timestamp - start;
+            if (elapsed >= timeout) {
+                cancelFrame(checkElapsed);
+                callback(elapsed - timeout);
+            }
+        };
+        frame.setup(checkElapsed, true);
+        return () => cancelFrame(checkElapsed);
+    }
+    function delayInSeconds(callback, timeout) {
+        return delay(callback, secondsToMilliseconds(timeout));
+    }
+
+    const distance = (a, b) => Math.abs(a - b);
+    function distance2D(a, b) {
+        // Multi-dimensional
+        const xDelta = distance(a.x, b.x);
+        const yDelta = distance(a.y, b.y);
+        return Math.sqrt(xDelta ** 2 + yDelta ** 2);
+    }
+
+    exports.AsyncMotionValueAnimation = AsyncMotionValueAnimation;
+    exports.DOMKeyframesResolver = DOMKeyframesResolver;
+    exports.GroupAnimation = GroupAnimation;
+    exports.GroupAnimationWithThen = GroupAnimationWithThen;
+    exports.JSAnimation = JSAnimation;
+    exports.KeyframeResolver = KeyframeResolver;
+    exports.MotionGlobalConfig = MotionGlobalConfig;
+    exports.MotionValue = MotionValue;
+    exports.NativeAnimation = NativeAnimation;
+    exports.NativeAnimationExtended = NativeAnimationExtended;
+    exports.NativeAnimationWrapper = NativeAnimationWrapper;
+    exports.SubscriptionManager = SubscriptionManager;
+    exports.ViewTransitionBuilder = ViewTransitionBuilder;
+    exports.acceleratedValues = acceleratedValues;
+    exports.activeAnimations = activeAnimations;
+    exports.addAttrValue = addAttrValue;
+    exports.addStyleValue = addStyleValue;
+    exports.addUniqueItem = addUniqueItem;
+    exports.alpha = alpha;
+    exports.analyseComplexValue = analyseComplexValue;
+    exports.animate = animate;
+    exports.animateMini = animateMini;
+    exports.animateValue = animateValue;
+    exports.animateView = animateView;
+    exports.animationMapKey = animationMapKey;
+    exports.anticipate = anticipate;
+    exports.applyGeneratorOptions = applyGeneratorOptions;
+    exports.applyPxDefaults = applyPxDefaults;
+    exports.attachSpring = attachSpring;
+    exports.attrEffect = attrEffect;
+    exports.backIn = backIn;
+    exports.backInOut = backInOut;
+    exports.backOut = backOut;
+    exports.calcGeneratorDuration = calcGeneratorDuration;
+    exports.cancelFrame = cancelFrame;
+    exports.cancelMicrotask = cancelMicrotask;
+    exports.cancelSync = cancelSync;
+    exports.circIn = circIn;
+    exports.circInOut = circInOut;
+    exports.circOut = circOut;
+    exports.clamp = clamp;
+    exports.collectMotionValues = collectMotionValues;
+    exports.color = color;
+    exports.complex = complex;
+    exports.convertOffsetToTimes = convertOffsetToTimes;
+    exports.createGeneratorEasing = createGeneratorEasing;
+    exports.createRenderBatcher = createRenderBatcher;
+    exports.createScopedAnimate = createScopedAnimate;
+    exports.cubicBezier = cubicBezier;
+    exports.cubicBezierAsString = cubicBezierAsString;
+    exports.defaultEasing = defaultEasing;
+    exports.defaultOffset = defaultOffset$1;
+    exports.defaultTransformValue = defaultTransformValue;
+    exports.defaultValueTypes = defaultValueTypes;
+    exports.degrees = degrees;
+    exports.delay = delayInSeconds;
+    exports.dimensionValueTypes = dimensionValueTypes;
+    exports.distance = distance;
+    exports.distance2D = distance2D;
+    exports.easeIn = easeIn;
+    exports.easeInOut = easeInOut;
+    exports.easeOut = easeOut;
+    exports.easingDefinitionToFunction = easingDefinitionToFunction;
+    exports.fillOffset = fillOffset;
+    exports.fillWildcards = fillWildcards;
+    exports.findDimensionValueType = findDimensionValueType;
+    exports.findValueType = findValueType;
+    exports.flushKeyframeResolvers = flushKeyframeResolvers;
+    exports.frame = frame;
+    exports.frameData = frameData;
+    exports.frameSteps = frameSteps;
+    exports.generateLinearEasing = generateLinearEasing;
+    exports.getAnimatableNone = getAnimatableNone;
+    exports.getAnimationMap = getAnimationMap;
+    exports.getComputedStyle = getComputedStyle$2;
+    exports.getDefaultValueType = getDefaultValueType;
+    exports.getEasingForSegment = getEasingForSegment;
+    exports.getMixer = getMixer;
+    exports.getOriginIndex = getOriginIndex;
+    exports.getValueAsType = getValueAsType;
+    exports.getValueTransition = getValueTransition$1;
+    exports.getVariableValue = getVariableValue;
+    exports.getViewAnimationLayerInfo = getViewAnimationLayerInfo;
+    exports.getViewAnimations = getViewAnimations;
+    exports.hasWarned = hasWarned;
+    exports.hex = hex;
+    exports.hover = hover;
+    exports.hsla = hsla;
+    exports.hslaToRgba = hslaToRgba;
+    exports.inView = inView;
+    exports.inertia = inertia;
+    exports.interpolate = interpolate;
+    exports.invisibleValues = invisibleValues;
+    exports.isBezierDefinition = isBezierDefinition;
+    exports.isCSSVariableName = isCSSVariableName;
+    exports.isCSSVariableToken = isCSSVariableToken;
+    exports.isDragActive = isDragActive;
+    exports.isDragging = isDragging;
+    exports.isEasingArray = isEasingArray;
+    exports.isGenerator = isGenerator;
+    exports.isHTMLElement = isHTMLElement;
+    exports.isMotionValue = isMotionValue;
+    exports.isNodeOrChild = isNodeOrChild;
+    exports.isNumericalString = isNumericalString;
+    exports.isObject = isObject;
+    exports.isPrimaryPointer = isPrimaryPointer;
+    exports.isSVGElement = isSVGElement;
+    exports.isSVGSVGElement = isSVGSVGElement;
+    exports.isWaapiSupportedEasing = isWaapiSupportedEasing;
+    exports.isZeroValueString = isZeroValueString;
+    exports.keyframes = keyframes;
+    exports.makeAnimationInstant = makeAnimationInstant;
+    exports.mapEasingToNativeEasing = mapEasingToNativeEasing;
+    exports.mapValue = mapValue;
+    exports.maxGeneratorDuration = maxGeneratorDuration;
+    exports.memo = memo;
+    exports.microtask = microtask;
+    exports.millisecondsToSeconds = millisecondsToSeconds;
+    exports.mirrorEasing = mirrorEasing;
+    exports.mix = mix;
+    exports.mixArray = mixArray;
+    exports.mixColor = mixColor;
+    exports.mixComplex = mixComplex;
+    exports.mixImmediate = mixImmediate;
+    exports.mixLinearColor = mixLinearColor;
+    exports.mixNumber = mixNumber$1;
+    exports.mixObject = mixObject;
+    exports.mixVisibility = mixVisibility;
+    exports.motionValue = motionValue;
+    exports.moveItem = moveItem;
+    exports.noop = noop;
+    exports.number = number;
+    exports.numberValueTypes = numberValueTypes;
+    exports.observeTimeline = observeTimeline;
+    exports.parseCSSVariable = parseCSSVariable;
+    exports.parseValueFromTransform = parseValueFromTransform;
+    exports.percent = percent;
+    exports.pipe = pipe;
+    exports.positionalKeys = positionalKeys;
+    exports.press = press;
+    exports.progress = progress;
+    exports.progressPercentage = progressPercentage;
+    exports.propEffect = propEffect;
+    exports.px = px;
+    exports.readTransformValue = readTransformValue;
+    exports.recordStats = recordStats;
+    exports.removeItem = removeItem;
+    exports.resize = resize;
+    exports.resolveElements = resolveElements;
+    exports.reverseEasing = reverseEasing;
+    exports.rgbUnit = rgbUnit;
+    exports.rgba = rgba;
+    exports.scale = scale;
+    exports.scroll = scroll;
+    exports.scrollInfo = scrollInfo;
+    exports.secondsToMilliseconds = secondsToMilliseconds;
+    exports.setDragLock = setDragLock;
+    exports.setStyle = setStyle;
+    exports.spring = spring;
+    exports.springValue = springValue;
+    exports.stagger = stagger;
+    exports.startWaapiAnimation = startWaapiAnimation;
+    exports.statsBuffer = statsBuffer;
+    exports.steps = steps;
+    exports.styleEffect = styleEffect;
+    exports.supportedWaapiEasing = supportedWaapiEasing;
+    exports.supportsBrowserAnimation = supportsBrowserAnimation;
+    exports.supportsFlags = supportsFlags;
+    exports.supportsLinearEasing = supportsLinearEasing;
+    exports.supportsPartialKeyframes = supportsPartialKeyframes;
+    exports.supportsScrollTimeline = supportsScrollTimeline;
+    exports.svgEffect = svgEffect;
+    exports.sync = sync;
+    exports.testValueType = testValueType;
+    exports.time = time;
+    exports.transform = transform;
+    exports.transformPropOrder = transformPropOrder;
+    exports.transformProps = transformProps;
+    exports.transformValue = transformValue;
+    exports.transformValueTypes = transformValueTypes;
+    exports.velocityPerSecond = velocityPerSecond;
+    exports.vh = vh;
+    exports.vw = vw;
+    exports.warnOnce = warnOnce;
+    exports.wrap = wrap;
+
+}));

@@ -479,4 +479,39 @@ class Source_Cloud extends Source_Base {
 
 		return $quota['currentUsage'] + count( $items ) <= $quota['threshold'];
 	}
+
+	public function format_args_for_bulk_action( $args ) {
+		$templates = $this->get_bulk_items( $args );
+		$bulk_args = [];
+
+		foreach ( $templates as $template ) {
+			$content = json_decode( $template['content'], true );
+
+			$bulk_args[] = array_merge(
+				$args,
+				[
+					'title' => $template['title'],
+					'type' => $template['type'],
+					'content' => $content['content'],
+					'page_settings' => $content['page_settings'],
+				]
+			);
+		}
+
+		return $bulk_args;
+	}
+
+	public function format_args_for_single_action( $args ) {
+		$data = $this->get_item( $args['from_template_id'] );
+
+		if ( is_wp_error( $data ) || empty( $data['content'] ) ) {
+			return new \WP_Error( 'template_error', 'Unable to format template args.' );
+		}
+
+		$decoded_data = json_decode( $data['content'], true );
+		$args['content'] = $decoded_data['content'];
+		$args['page_settings'] = $decoded_data['page_settings'];
+
+		return $args;
+	}
 }

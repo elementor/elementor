@@ -3,7 +3,7 @@ import { __createStore, __registerSlice, type SliceState, type Store } from '@el
 
 import { slice } from '../../store';
 import { selectActiveDocument } from '../../store/selectors';
-import { type Document, type ExitTo, type ExtendedWindow, type V1Document } from '../../types';
+import { type Document, type ExitTo, type ExtendedWindow, type V1Document, type V1DocumentsManager } from '../../types';
 import { syncStore } from '../index';
 import { getV1DocumentPermalink, getV1DocumentsExitTo } from '../utils';
 import { makeDocumentsManager } from './test-utils';
@@ -478,6 +478,6 @@ function mockV1DocumentsManager(
 ) {
 	( window as unknown as WindowWithOptionalElementor ).elementor = {
 		getPreferences: () => exitTo,
-		documents: makeDocumentsManager( documentsArray, current, initial ),
+		documents: makeDocumentsManager( documentsArray, current, initial ) as V1DocumentsManager,
 	};
 }

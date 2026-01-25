@@ -1,3 +1,4 @@
+import mixpanel from 'mixpanel-browser';
 
 export const ONBOARDING_EVENTS_MAP = {
 	UPGRADE_NOW_S3: 'core_onboarding_s3_upgrade_now',
@@ -24,6 +25,7 @@ export const ONBOARDING_EVENTS_MAP = {
 	CREATE_ACCOUNT_STATUS: 'core_onboarding_create_account_status',
 	STEP1_CLICKED_CONNECT: 'core_onboarding_s1_clicked_connect',
 	AB_101_START_AS_FREE_USER: 'ab_101_start_as_free_user',
+	SESSION_REPLAY_START: 'onboarding_session_replay_start',
 };
 
 export const ONBOARDING_STEP_NAMES = {
@@ -43,6 +45,33 @@ export function canSendEvents() {
 export function isEventsManagerAvailable() {
 	return elementorCommon?.eventsManager &&
 		'function' === typeof elementorCommon.eventsManager.dispatchEvent;
+}
+
+function isMixpanelInitialized() {
+	if ( 'undefined' === typeof mixpanel || ! mixpanel ) {
+		return false;
+	}
+
+	try {
+		const distinctId = mixpanel.get_distinct_id();
+		return distinctId !== undefined && distinctId !== null;
+	} catch ( error ) {
+		return false;
+	}
+}
+
+export function initializeAndEnableTracking() {
+	if ( ! isEventsManagerAvailable() ) {
+		return;
+	}
+
+	if ( ! isMixpanelInitialized() ) {
+		elementorCommon.eventsManager.initializeMixpanel();
+	}
+
+	if ( ! elementorCommon.eventsManager.trackingEnabled ) {
+		elementorCommon.eventsManager.enableTracking();
+	}
 }
 
 export function dispatch( eventName, payload = {} ) {
@@ -172,6 +201,7 @@ export function addTimeSpentToPayload( payload, totalTimeSpent, stepTimeSpent = 
 const EventDispatcher = {
 	canSendEvents,
 	isEventsManagerAvailable,
+	initializeAndEnableTracking,
 	dispatch,
 	dispatchIfAllowed,
 	createEventPayload,

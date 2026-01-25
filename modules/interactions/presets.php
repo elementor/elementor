@@ -10,10 +10,10 @@ class Presets {
 	const DEFAULT_DURATION = 300;
 	const DEFAULT_DELAY = 0;
 	const DEFAULT_SLIDE_DISTANCE = 100;
-	const DEFAULT_SCALE_START = 0.5;
-	const DEFAULT_EASING = 'linear';
+	const DEFAULT_SCALE_START = 0;
+	const DEFAULT_EASING = 'easeIn';
 
-	const TRIGGERS = [ 'load', 'scrollIn', 'scrollOut' ];
+	const TRIGGERS = [ 'load', 'scrollIn', 'scrollOn' ]; // 'scrollOut' is not supported yet.
 	const EFFECTS = [ 'fade', 'slide', 'scale' ];
 	const TYPES = [ 'in', 'out' ];
 	const DIRECTIONS = [ 'left', 'right', 'top', 'bottom' ];
@@ -30,7 +30,7 @@ class Presets {
 			'defaultDelay' => self::DEFAULT_DELAY,
 			'slideDistance' => self::DEFAULT_SLIDE_DISTANCE,
 			'scaleStart' => self::DEFAULT_SCALE_START,
-			'easing' => self::DEFAULT_EASING,
+			'defaultEasing' => self::DEFAULT_EASING,
 		];
 	}
 

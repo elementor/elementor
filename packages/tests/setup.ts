@@ -1,6 +1,5 @@
 // Add JSDOM matchers.
 import '@testing-library/jest-dom';
-import '@wordpress/jest-console';
 
 import {
 	__privateFlushListeners as flushListeners,
@@ -9,10 +8,13 @@ import {
 import { __resetEnv } from '@elementor/env';
 import { __flushAllInjections } from '@elementor/locations';
 import { __deleteStore } from '@elementor/store';
+import { TextEncoder, TextDecoder } from 'util';
 
 jest.mock( '@elementor/http-client' );
 jest.mock( '@elementor/editor-mcp', () => ( {} ) );
 globalThis.structuredClone = ( value ) => JSON.parse( JSON.stringify( value ) );
+globalThis.TextEncoder = TextEncoder as typeof globalThis.TextEncoder;
+globalThis.TextDecoder = TextDecoder as typeof globalThis.TextDecoder;
 
 globalThis.ResizeObserver = class ResizeObserver {
 	observe() {}
@@ -73,14 +75,6 @@ let globalOriginalProps: PropertyKey[];
 (globalThis as Record<string, unknown>).__ELEMENTOR_MCP_DISABLED__ = true;
 
 beforeEach( () => {
-	/* eslint-disable no-console */
-	// The mocks already created at `@wordpress/jest-console`
-	// here it just ensure that nothing will be prompt to the console.
-	jest.mocked( console.error ).mockImplementation( () => null );
-	jest.mocked( console.warn ).mockImplementation( () => null );
-	jest.mocked( console.info ).mockImplementation( () => null );
-	/* eslint-enable no-console */
-
 	setReady( true );
 
 	globalOriginalProps = Object.keys( globalThis );

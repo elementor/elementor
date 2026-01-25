@@ -25,18 +25,14 @@ class Module extends elementorModules.editor.utils.Module {
 	}
 
 	registerAtomicElements() {
-		const nestedElementsExperiment = 'e_nested_elements';
-
 		elementor.elementsManager.registerElementType( createDivBlockType() );
 		elementor.elementsManager.registerElementType( createFlexboxType() );
 
-		if ( elementorCommon.config.experimentalFeatures[ nestedElementsExperiment ] ) {
-			elementor.elementsManager.registerElementType( createAtomicTabsType() );
-			elementor.elementsManager.registerElementType( createAtomicTabContentType() );
-			elementor.elementsManager.registerElementType( createAtomicTabType() );
-			elementor.elementsManager.registerElementType( createAtomicTabsMenuType() );
-			elementor.elementsManager.registerElementType( createAtomicTabsContentAreaType() );
-		}
+		elementor.elementsManager.registerElementType( createAtomicTabsType() );
+		elementor.elementsManager.registerElementType( createAtomicTabContentType() );
+		elementor.elementsManager.registerElementType( createAtomicTabType() );
+		elementor.elementsManager.registerElementType( createAtomicTabsMenuType() );
+		elementor.elementsManager.registerElementType( createAtomicTabsContentAreaType() );
 	}
 }
 

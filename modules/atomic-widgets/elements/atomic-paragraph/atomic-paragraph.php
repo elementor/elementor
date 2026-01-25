@@ -2,13 +2,11 @@
 
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Paragraph;
 
-use Elementor\Modules\AtomicWidgets\Elements\Atomic_Widget_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Widget_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Link_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Select_Control;
-use Elementor\Modules\AtomicWidgets\Controls\Types\Textarea_Control;
-use Elementor\Modules\AtomicWidgets\Elements\Has_Template;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Classes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Html_Prop_Type;
@@ -19,7 +17,7 @@ use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Variant;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Text_Control;
 use Elementor\Modules\AtomicWidgets\Controls\Types\Inline_Editing_Control;
-use Elementor\Plugin;
+use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -29,6 +27,8 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	use Has_Template;
 
 	const LINK_BASE_STYLE_KEY = 'link-base';
+
+	public static $widget_description = 'Display a paragraph with customizable tag, styles, and link options.';
 
 	public static function get_element_type(): string {
 		return 'e-paragraph';
@@ -47,17 +47,12 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 	}
 
 	protected static function define_props_schema(): array {
-		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
-
-		$paragraph_prop = $is_feature_active
-			? Html_Prop_Type::make()->default( __( 'Type your paragraph here', 'elementor' ) )
-			: String_Prop_Type::make()->default( __( 'Type your paragraph here', 'elementor' ) );
-
-		$props = [
+		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
 
-			'paragraph' => $paragraph_prop
+			'paragraph' => Html_Prop_Type::make()
+				->default( __( 'Type your paragraph here', 'elementor' ) )
 				->description( 'The text content of the paragraph.' ),
 
 			'tag' => String_Prop_Type::make()
@@ -66,27 +61,19 @@ class Atomic_Paragraph extends Atomic_Widget_Base {
 
 			'link' => Link_Prop_Type::make(),
 
-			'attributes' => Attributes_Prop_Type::make(),
+			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
 		];
-
-		return $props;
 	}
 
 	protected function define_atomic_controls(): array {
-		$is_feature_active = Plugin::$instance->experiments->is_feature_active( Atomic_Widgets_Module::EXPERIMENT_INLINE_EDITING );
-
-		$control = $is_feature_active
-			? Inline_Editing_Control::bind_to( 'paragraph' )
-				->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
-				->set_label( __( 'Paragraph', 'elementor' ) )
-			: Textarea_Control::bind_to( 'paragraph' )
-				->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
-				->set_label( __( 'Paragraph', 'elementor' ) );
-
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor' ) )
-				->set_items( [ $control ] ),
+				->set_items( [
+					Inline_Editing_Control::bind_to( 'paragraph' )
+						->set_placeholder( __( 'Type your paragraph here', 'elementor' ) )
+						->set_label( __( 'Paragraph', 'elementor' ) ),
+				] ),
 			Section::make()
 				->set_label( __( 'Settings', 'elementor' ) )
 				->set_id( 'settings' )

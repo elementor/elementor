@@ -28,6 +28,11 @@ export const useActions = () => {
 		items: ItemsActionPayload< TabItem >;
 		tabContentAreaId: string;
 	} ) => {
+		const newDefault = calculateDefaultOnDuplicate( {
+			items,
+			defaultActiveTab,
+		} );
+
 		items.forEach( ( { item, index } ) => {
 			const tabId = item.id as string;
 			const tabContentAreaContainer = getContainer( tabContentAreaId );
@@ -40,6 +45,16 @@ export const useActions = () => {
 			duplicateElements( {
 				elementIds: [ tabId, tabContentId ],
 				title: __( 'Duplicate Tab', 'elementor' ),
+				onDuplicateElements: () => {
+					if ( newDefault !== defaultActiveTab ) {
+						setDefaultActiveTab( newDefault, {}, { withHistory: false } );
+					}
+				},
+				onRestoreElements: () => {
+					if ( newDefault !== defaultActiveTab ) {
+						setDefaultActiveTab( defaultActiveTab, {}, { withHistory: false } );
+					}
+				},
 			} );
 		} );
 	};
@@ -86,12 +101,12 @@ export const useActions = () => {
 			],
 			onMoveElements: () => {
 				if ( newDefault !== defaultActiveTab ) {
-					setDefaultActiveTab( newDefault );
+					setDefaultActiveTab( newDefault, {}, { withHistory: false } );
 				}
 			},
 			onRestoreElements: () => {
 				if ( newDefault !== defaultActiveTab ) {
-					setDefaultActiveTab( defaultActiveTab );
+					setDefaultActiveTab( defaultActiveTab, {}, { withHistory: false } );
 				}
 			},
 		} );
@@ -124,12 +139,12 @@ export const useActions = () => {
 			} ),
 			onRemoveElements: () => {
 				if ( newDefault !== defaultActiveTab ) {
-					setDefaultActiveTab( newDefault );
+					setDefaultActiveTab( newDefault, {}, { withHistory: false } );
 				}
 			},
 			onRestoreElements: () => {
 				if ( newDefault !== defaultActiveTab ) {
-					setDefaultActiveTab( defaultActiveTab );
+					setDefaultActiveTab( defaultActiveTab, {}, { withHistory: false } );
 				}
 			},
 		} );
@@ -145,6 +160,8 @@ export const useActions = () => {
 		items: ItemsActionPayload< TabItem >;
 	} ) => {
 		items.forEach( ( { index } ) => {
+			const position = index + 1;
+
 			createElements( {
 				title: __( 'Tabs', 'elementor' ),
 				elements: [
@@ -152,14 +169,14 @@ export const useActions = () => {
 						containerId: tabContentAreaId,
 						model: {
 							elType: TAB_CONTENT_ELEMENT_TYPE,
-							editor_settings: { title: `Tab ${ index + 1 } content` },
+							editor_settings: { title: `Tab ${ position } content`, initial_position: position },
 						},
 					},
 					{
 						containerId: tabsMenuId,
 						model: {
 							elType: TAB_ELEMENT_TYPE,
-							editor_settings: { title: `Tab ${ index + 1 } trigger` },
+							editor_settings: { title: `Tab ${ position } trigger`, initial_position: position },
 						},
 					},
 				],
@@ -188,15 +205,11 @@ const calculateDefaultOnMove = ( {
 		return to;
 	}
 
-	if ( to === defaultActiveTab ) {
-		return from;
-	}
-
-	if ( from < defaultActiveTab && to > defaultActiveTab ) {
+	if ( from < defaultActiveTab && to >= defaultActiveTab ) {
 		return defaultActiveTab - 1;
 	}
 
-	if ( from > defaultActiveTab && to < defaultActiveTab ) {
+	if ( from > defaultActiveTab && to <= defaultActiveTab ) {
 		return defaultActiveTab + 1;
 	}
 
@@ -218,4 +231,18 @@ const calculateDefaultOnRemove = ( {
 
 	const defaultGap = items.reduce( ( acc, { index } ) => ( index < defaultActiveTab ? acc + 1 : acc ), 0 );
 	return defaultActiveTab - defaultGap;
+};
+
+const calculateDefaultOnDuplicate = ( {
+	items,
+	defaultActiveTab,
+}: {
+	items: ItemsActionPayload< TabItem >;
+	defaultActiveTab: number;
+} ) => {
+	const duplicatesBefore = items.reduce( ( acc, { index } ) => {
+		const isDuplicatedBeforeDefault = index < defaultActiveTab;
+		return isDuplicatedBeforeDefault ? acc + 1 : acc;
+	}, 0 );
+	return defaultActiveTab + duplicatesBefore;
 };

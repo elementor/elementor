@@ -20,7 +20,6 @@ use Elementor\Widget_Base;
 use Elementor\Core\Settings\Page\Manager as PageManager;
 use ElementorPro\Modules\Library\Widgets\Template;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
-use Elementor\Modules\AtomicWidgets\Module as Atomic_Widgets_Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -1060,6 +1059,21 @@ abstract class Document extends Controls_Stack {
 
 		if ( is_null( $data ) ) {
 			$data = $this->get_elements_data();
+		}
+
+		/**
+		 * Filters document elements data after loading.
+		 *
+		 * Allows modification of elements data when loading (not saving).
+		 * Useful for migrations, transformations, or data enrichment.
+		 *
+		 * @since 3.35.0
+		 *
+		 * @param array                         $data      The elements data array.
+		 * @param \Elementor\Core\Base\Document $document  The document instance.
+		 */
+		if ( ! $this->is_saving ) {
+			$data = apply_filters( 'elementor/document/load/data', $data, $this );
 		}
 
 		// Change the current documents, so widgets can use `documents->get_current` and other post data

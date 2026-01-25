@@ -78,8 +78,10 @@ export default class WpAdminPage extends BasePage {
 		await this.openElementorSettings( tab );
 
 		for ( const [ selector, state ] of Object.entries( settings ) ) {
-			await this.page.locator( `select[name="${ selector }"]` ).waitFor();
-			await this.page.selectOption( `[name="${ selector }"]`, state.toString() );
+			const selectLocator = this.page.locator( `select[name="${ selector }"]` );
+			await selectLocator.waitFor( { state: 'attached' } );
+
+			await selectLocator.selectOption( state.toString(), { force: true } );
 		}
 
 		await this.page.click( '#submit' );
@@ -149,6 +151,25 @@ export default class WpAdminPage extends BasePage {
 		await this.closeAnnouncementsIfVisible();
 
 		return new EditorPage( this.page, this.testInfo );
+	}
+
+	/**
+	 * Edit an existing Elementor page.
+	 *
+	 * @param {string}   postId        - The ID of the page to edit.
+	 * @param {Object}   prop          - Properties object.
+	 * @param {Page}     prop.page     - Playwright Page object.
+	 * @param {TestInfo} prop.testInfo - Playwright TestInfo object.
+	 * @return {Promise<EditorPage>}
+	 */
+	async editExistingPostWithElementor( postId: string, { page, testInfo }: { page: Page; testInfo: TestInfo; } ): Promise<EditorPage> {
+		page.goto( `/wp-admin/post.php?post=${ postId }&action=elementor` );
+
+		await this.page.waitForLoadState( 'load', { timeout: 20000 } );
+		await this.waitForPanel();
+		await this.closeAnnouncementsIfVisible();
+
+		return new EditorPage( page, testInfo );
 	}
 
 	/**
@@ -274,8 +295,15 @@ export default class WpAdminPage extends BasePage {
 		for ( const [ id, state ] of Object.entries( experiments ) ) {
 			const selector = `#${ prefix }-${ id }`;
 
-			try {
-				await this.page.waitForTimeout( 500 );
+			await this.page.waitForSelector( selector, { state: 'attached', timeout: 10000 } );
+
+			const selectElement = this.page.locator( selector );
+			await selectElement.waitFor( { state: 'visible', timeout: 5000 } );
+
+			await this.page.waitForTimeout( 500 );
+
+			await this.page.evaluate( ( el ) => {
+				const element: HTMLElement = document.querySelector( el );
 
 				await this.page.evaluate( ( el ) => {
 					const element: HTMLElement = document.querySelector( el );
@@ -302,16 +330,9 @@ export default class WpAdminPage extends BasePage {
 					}
 				}
 
-				await this.confirmExperimentModalIfOpen();
-			} catch ( e ) {
-				console.warn( `Error setting experiment ${ id }:`, e );
-			}
-		}
+			await selectElement.selectOption( state ? 'active' : 'inactive', { timeout: 5000 } );
 
-		try {
-			await this.page.click( '#submit' );
-		} catch ( e ) {
-			console.warn( 'Could not click submit button' );
+			await this.confirmExperimentModalIfOpen();
 		}
 	}
 

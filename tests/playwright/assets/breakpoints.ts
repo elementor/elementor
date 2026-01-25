@@ -57,10 +57,15 @@ export default class {
 		await this.page.waitForSelector( 'text=Active Breakpoints' );
 
 		const removeBreakpointButton = EditorSelectors.panels.siteSettings.layout.breakpoints.removeBreakpointButton;
-		while ( await this.page.locator( removeBreakpointButton ).count() > 0 ) {
+		const breakpointsToReset = this.page.locator( removeBreakpointButton );
+
+		while ( await breakpointsToReset.count() > 0 ) {
 			await this.page.click( removeBreakpointButton );
 		}
-		await editor.saveSiteSettings( true );
+
+		if ( await breakpointsToReset.count() > 0 ) {
+			await editor.saveSiteSettings( true );
+		}
 	}
 
 	getBreakpointInputLocator( page: Page, device: BreakpointEditableDevice ): Locator {

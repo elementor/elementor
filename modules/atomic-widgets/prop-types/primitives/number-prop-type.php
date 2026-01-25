@@ -9,6 +9,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Number_Prop_Type extends Plain_Prop_Type {
+	// Backward compatibility, do not change to "const". Keep name in uppercase.
+	// phpcs:ignore
+	static $KIND = 'number';
+
 	private bool $is_float = false;
 
 	public static function get_key(): string {

@@ -9,6 +9,15 @@ export default class extends elementorModules.Module {
 	onInit() {
 		this.config = eventsConfig;
 
+		if ( ! this.canSendEvents() ) {
+			return;
+		}
+
+		this.initializeMixpanel();
+		this.enableTracking();
+	}
+
+	initializeMixpanel() {
 		mixpanel.init(
 			elementorCommon.config.editor_events?.token,
 			{
@@ -18,12 +27,12 @@ export default class extends elementorModules.Module {
 				record_idle_timeout_ms: 60000,
 				record_max_ms: 300000,
 				record_mask_text_selector: '',
+				flags: true,
+				api_hosts: {
+					flags: 'https://api-eu.mixpanel.com',
+				},
 			},
 		);
-
-		if ( elementorCommon.config.editor_events?.can_send_events ) {
-			this.enableTracking();
-		}
 	}
 
 	enableTracking() {
@@ -47,7 +56,7 @@ export default class extends elementorModules.Module {
 	}
 
 	dispatchEvent( name, data, options = {} ) {
-		if ( ! elementorCommon.config.editor_events?.can_send_events ) {
+		if ( ! this.canSendEvents() ) {
 			return;
 		}
 
@@ -72,7 +81,7 @@ export default class extends elementorModules.Module {
 	}
 
 	startSessionRecording() {
-		if ( ! elementorCommon.config.editor_events?.can_send_events || this.isSessionRecordingInProgress() ) {
+		if ( ! this.canSendEvents() || this.isSessionRecordingInProgress() ) {
 			return;
 		}
 
@@ -85,7 +94,7 @@ export default class extends elementorModules.Module {
 	}
 
 	stopSessionRecording() {
-		if ( ! elementorCommon.config.editor_events?.can_send_events || ! this.isSessionRecordingInProgress() ) {
+		if ( ! this.canSendEvents() || ! this.isSessionRecordingInProgress() ) {
 			return;
 		}
 
@@ -103,5 +112,66 @@ export default class extends elementorModules.Module {
 
 	isSessionRecordingInProgress() {
 		return this.#sessionRecordingInProgress;
+	}
+
+	async featureFlagIsActive( flagName ) {
+		if ( 'function' !== typeof mixpanel?.flags?.is_enabled ) {
+			return false;
+		}
+
+		const isEnabled = await mixpanel.flags.is_enabled( flagName, false );
+		return true === isEnabled;
+	}
+
+	async getExperimentVariant( experimentName, defaultValue = 'control' ) {
+		try {
+			if ( ! this.canSendEvents() ) {
+				return defaultValue;
+			}
+
+			const isAbTestingEnabled = elementorCommon.config.editor_events?.flags_enabled ?? false;
+
+			if ( ! isAbTestingEnabled ) {
+				return defaultValue;
+			}
+
+			if ( ! mixpanel ) {
+				return defaultValue;
+			}
+
+			if ( ! this.trackingEnabled ) {
+				this.enableTracking();
+			}
+
+			if ( ! mixpanel.flags ) {
+				return defaultValue;
+			}
+
+			if ( 'function' !== typeof mixpanel.flags.get_variant_value ) {
+				return defaultValue;
+			}
+
+			const variant = await mixpanel.flags.get_variant_value( experimentName, defaultValue );
+
+			if ( undefined === variant || null === variant ) {
+				return defaultValue;
+			}
+
+			return variant;
+		} catch ( error ) {
+			return defaultValue;
+		}
+	}
+
+	startExperiment( experimentName, experimentVariant ) {
+		if ( ! this.trackingEnabled ) {
+			return;
+		}
+
+		mixpanel.track( '$experiment_started', { 'Experiment name': experimentName, 'Variant name': experimentVariant } );
+	}
+
+	canSendEvents() {
+		return !! elementorCommon?.config?.editor_events?.can_send_events;
 	}
 }

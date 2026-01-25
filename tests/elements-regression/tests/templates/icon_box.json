@@ -10,7 +10,7 @@
                         "view": "stacked",
                         "title_text": "New test heading!",
                         "description_text": "This is a test text",
-                        "position": "left",
+                        "position": "inline-start",
                         "icon_space": {
                             "unit": "px",
                             "size": 58,
@@ -57,7 +57,7 @@
                         "view": "framed",
                         "title_text": "This is the heading",
                         "description_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
-                        "position": "top",
+                        "position": "block-start",
                         "primary_color": "#8AE46E",
                         "secondary_color": "#468EB6",
                         "icon_space": {
@@ -115,7 +115,7 @@
                         },
                         "title_text": "This is the heading",
                         "description_text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.",
-                        "position": "right",
+                        "position": "inline-end",
                         "rotate": {
                             "unit": "deg",
                             "size": 0,

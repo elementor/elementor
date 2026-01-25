@@ -33,6 +33,13 @@ type Props = {
 	onFieldError?: ( hasError: boolean ) => void;
 };
 
+type Row = ReturnType< typeof getVariableType > & {
+	id: string;
+	type: string;
+	name: string;
+	value: string;
+};
+
 export const VariablesManagerTable = ( {
 	menuActions,
 	variables,
@@ -69,10 +76,13 @@ export const VariablesManagerTable = ( {
 
 	const ids = Object.keys( variables ).sort( sortVariablesOrder( variables ) );
 	const rows = ids
-		.filter( ( id ) => ! variables[ id ].deleted )
 		.map( ( id ) => {
 			const variable = variables[ id ];
 			const variableType = getVariableType( variable.type );
+
+			if ( ! variableType ) {
+				return null;
+			}
 
 			return {
 				id,
@@ -81,7 +91,8 @@ export const VariablesManagerTable = ( {
 				value: variable.value,
 				...variableType,
 			};
-		} );
+		} )
+		.filter( Boolean ) as Row[];
 
 	const tableSX: SxProps = {
 		minWidth: 250,
@@ -148,6 +159,7 @@ export const VariablesManagerTable = ( {
 									return (
 										<TableRow
 											{ ...itemProps }
+											ref={ itemProps.ref }
 											selected={ isDragged }
 											sx={ {
 												...( showIndicationBefore && {
@@ -251,15 +263,22 @@ export const VariablesManagerTable = ( {
 														onValidationChange,
 														error,
 													} ) =>
-														row.valueField( {
+														row.valueField?.( {
 															value,
 															onChange,
+															onPropTypeKeyChange: ( type ) => {
+																handleOnChange( {
+																	...variables,
+																	[ row.id ]: { ...variables[ row.id ], type },
+																} );
+															},
+															propTypeKey: row.type,
 															onValidationChange: ( errorMsg ) => {
 																onValidationChange?.( errorMsg );
 																onFieldError?.( !! errorMsg );
 															},
 															error,
-														} )
+														} ) ?? <></>
 													}
 													onRowRef={ handleRowRef( row.id ) }
 													gap={ 0.25 }

@@ -12,19 +12,12 @@ export default function AdminTopBar() {
 	// Handle Top Bar visibility on initiation: Indicate that the admin top bar is visible and the page content needs to push down below the admin top bar for visibility.
 	useEffect( () => {
 		const adminTopBarElement = document.querySelector( '#e-admin-top-bar-root' );
-		adminTopBarElement.classList.add( 'e-admin-top-bar--active' );
+		adminTopBarElement?.classList.add( 'e-admin-top-bar--active' );
+		adminTopBarElement?.classList.add( 'e-admin-top-bar--editor-one' );
 	}, [] );
 
 	// Handle the page title visibility in admin top bar.
 	const pageTitleText = usePageTitle();
-
-	// Handle the action buttons visibility in admin top bar on initiation.
-	useEffect( () => {
-		const actionButtonElements = document.querySelectorAll( '.page-title-action' );
-		actionButtonElements.forEach( ( actionButtonElement ) => {
-			actionButtonsRef.current.appendChild( actionButtonElement );
-		} );
-	}, [] );
 
 	const finderAction = () => {
 		$e.route( 'finder' );

@@ -7,6 +7,7 @@ import {
 	bindTrigger,
 	Box,
 	IconButton,
+	Infotip,
 	Tooltip,
 	type UnstableTagProps,
 	usePopupState,
@@ -92,6 +93,7 @@ type RepeaterProps< T > =
 			setValues: ( newValue: T[], _: CreateOptions, meta?: SetRepeaterValuesMeta< T > ) => void;
 			disabled?: boolean;
 			disableAddItemButton?: boolean;
+			addButtonInfotipContent?: React.ReactNode;
 			showDuplicate?: boolean;
 			showToggle?: boolean;
 			showRemove?: boolean;
@@ -106,6 +108,7 @@ type RepeaterProps< T > =
 			setValues: ( newValue: T[], _: CreateOptions, meta?: SetRepeaterValuesMeta< T > ) => void;
 			disabled?: boolean;
 			disableAddItemButton?: boolean;
+			addButtonInfotipContent?: React.ReactNode;
 			showDuplicate?: boolean;
 			showToggle?: boolean;
 			showRemove?: boolean;
@@ -127,6 +130,7 @@ export const Repeater = < T, >( {
 	showToggle = true,
 	showRemove = true,
 	disableAddItemButton = false,
+	addButtonInfotipContent,
 	openItem: initialOpenItem = EMPTY_OPEN_ITEM,
 	isSortable = true,
 }: RepeaterProps< RepeaterItem< T > > ) => {
@@ -206,18 +210,38 @@ export const Repeater = < T, >( {
 		);
 	};
 
+	const isButtonDisabled = disabled || disableAddItemButton;
+	const shouldShowInfotip = isButtonDisabled && addButtonInfotipContent;
+
+	const addButton = (
+		<IconButton
+			size={ SIZE }
+			sx={ {
+				ml: 'auto',
+			} }
+			disabled={ isButtonDisabled }
+			onClick={ addRepeaterItem }
+			aria-label={ __( 'Add item', 'elementor' ) }
+		>
+			<PlusIcon fontSize={ SIZE } />
+		</IconButton>
+	);
+
 	return (
 		<SectionContent gap={ 2 }>
 			<RepeaterHeader label={ label } adornment={ ControlAdornments }>
-				<IconButton
-					size={ SIZE }
-					sx={ { ml: 'auto' } }
-					disabled={ disabled || disableAddItemButton }
-					onClick={ addRepeaterItem }
-					aria-label={ __( 'Add item', 'elementor' ) }
-				>
-					<PlusIcon fontSize={ SIZE } />
-				</IconButton>
+				{ shouldShowInfotip ? (
+					<Infotip
+						placement="right"
+						content={ addButtonInfotipContent }
+						color="secondary"
+						slotProps={ { popper: { sx: { width: 300 } } } }
+					>
+						<Box sx={ { ...( isButtonDisabled ? { cursor: 'not-allowed' } : {} ) } }>{ addButton }</Box>
+					</Infotip>
+				) : (
+					addButton
+				) }
 			</RepeaterHeader>
 			{ 0 < uniqueKeys.length && (
 				<SortableProvider value={ uniqueKeys } onChange={ onChangeOrder }>
@@ -369,7 +393,6 @@ const usePopover = ( openOnMount: boolean, onOpen: () => void ) => {
 			popoverState.open( ref );
 			onOpen?.();
 		}
-		// eslint-disable-next-line react-compiler/react-compiler
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ ref ] );
 

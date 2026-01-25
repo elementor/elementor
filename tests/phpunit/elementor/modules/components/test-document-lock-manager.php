@@ -186,31 +186,29 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$document_id = $this->test_document_ids['page'];
 
 		// Act
-		$result = $this->lock_manager->is_locked( $document_id );
+		$result = $this->lock_manager->get_lock_data( $document_id );
 
 		// Assert
-		$this->assertFalse( $result['is_locked'], 'Should return false when document is not locked' );
-		$this->assertNull( $result['lock_user'], 'Lock user should be null when not locked' );
-		$this->assertNull( $result['lock_time'], 'Lock time should be null when not locked' );
+		$this->assertNull( $result['locked_by'], 'Should return false when document is not locked' );
+		$this->assertNull( $result['locked_at'], 'Lock time should be null when not locked' );
 	}
 
-	public function test_is_locked__returns_lock_data_when_locked() {
+	public function test_get_lock_data__returns_lock_data_when_locked() {
 		// Arrange
 		$document_id = $this->test_document_ids['page'];
 		wp_set_current_user( $this->test_user_1 );
 		$this->lock_manager->lock( $document_id );
 
 		// Act
-		$result = $this->lock_manager->is_locked( $document_id );
+		$result = $this->lock_manager->get_lock_data( $document_id );
 
 		// Assert
 		$this->assertIsArray( $result, 'Should return array when document is locked' );
-		$this->assertArrayHasKey( 'is_locked', $result );
-		$this->assertArrayHasKey( 'lock_user', $result );
-		$this->assertArrayHasKey( 'lock_time', $result );
-		$this->assertTrue( $result['is_locked'], 'Should be locked' );
-		$this->assertEquals( $this->test_user_1, $result['lock_user'] );
-		$this->assertIsNumeric( $result['lock_time'], 'Lock time should be numeric' );
+		$this->assertArrayHasKey( 'locked_by', $result );
+		$this->assertArrayHasKey( 'locked_at', $result );
+		$this->assertNotNull( $result['locked_by'], 'Should be locked' );
+		$this->assertEquals( $this->test_user_1, $result['locked_by'] );
+		$this->assertIsNumeric( $result['locked_at'], 'Lock time should be numeric' );
 	}
 
 	
@@ -277,9 +275,9 @@ class Test_Document_Lock_Manager extends Elementor_Test_Base {
 		$this->assertFalse( $result, 'Should reject lock attempt when document is locked by another user' );
 		
 		// Verify the lock is still owned by the first user
-		$lock_data = $this->lock_manager->is_locked( $document_id );
-		$this->assertTrue( $lock_data['is_locked'], 'Document should still be locked' );
-		$this->assertEquals( $this->test_user_1, $lock_data['lock_user'], 'Lock should still be owned by first user' );
+		$lock_data = $this->lock_manager->get_lock_data( $document_id );
+		$this->assertNotNull( $lock_data['locked_by'], 'Document should still be locked' );
+		$this->assertEquals( $this->test_user_1, $lock_data['locked_by'], 'Lock should still be owned by first user' );
 	}
 
 	public function test_lock_metadata_consistency() {

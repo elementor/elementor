@@ -69,11 +69,7 @@ class Elements_Manager {
 	 */
 	public function create_element_instance( array $element_data, array $element_args = [], ?Element_Base $element_type = null ) {
 		if ( null === $element_type ) {
-			if ( 'widget' === $element_data['elType'] ) {
-				$element_type = Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
-			} else {
-				$element_type = $this->get_element_types( $element_data['elType'] );
-			}
+			$element_type = $this->get_element( $element_data['elType'], isset( $element_data['widgetType'] ) ? $element_data['widgetType'] : null );
 		}
 
 		if ( ! $element_type ) {
@@ -103,6 +99,18 @@ class Elements_Manager {
 				$element_class
 			) );
 			return null;
+		}
+
+		return $element;
+	}
+
+	public function get_element( string $el_type, ?string $widget_type = null ) {
+		$element = null;
+
+		if ( 'widget' === $el_type ) {
+			$element = Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
+		} else {
+			$element = $this->get_element_types( $el_type );
 		}
 
 		return $element;
@@ -293,6 +301,10 @@ class Elements_Manager {
 		$this->categories = [
 			'v4-elements' => [
 				'title' => esc_html__( 'Atomic Elements', 'elementor' ),
+				'hideIfEmpty' => true,
+			],
+			'atomic-form' => [
+				'title' => esc_html__( 'Atomic Form', 'elementor' ),
 				'hideIfEmpty' => true,
 			],
 			'layout' => [

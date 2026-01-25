@@ -135,6 +135,8 @@ class Modules_Manager {
 			'atomic-opt-in',
 			'components',
 			'interactions',
+			'feedback',
+			'editor-one',
 			'css-converter',
 		];
 	}

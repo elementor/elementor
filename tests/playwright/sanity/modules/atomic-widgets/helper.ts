@@ -59,11 +59,16 @@ export class AtomicHelper {
 	}
 
 	public getHtmlTagControl( deeperSelector: string = '' ) {
-		const control = this.page.locator( `.MuiStack-root >.MuiBox-root>label`, { hasText: /Tag/ig } ).locator( '..' );
+		const field = this.getSettingsField( 'HTML Tag' );
 
 		return deeperSelector
-			? control.locator( deeperSelector )
-			: control;
+			? field.locator( deeperSelector )
+			: field;
+	}
+
+	public getSettingsField( label: string ) {
+		return this.page.locator( `[data-type="settings-field"]` )
+			.filter( { has: this.page.getByText( label, { exact: true } ) } );
 	}
 
 	public async isHtmlTagControlDisabled() {

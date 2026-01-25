@@ -11,7 +11,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Union_Prop_Type implements Prop_Type {
-	const KIND = 'union';
+	// Backward compatibility, do not change to "const". Keep name in uppercase.
+	// phpcs:ignore
+	static $KIND = 'union';
 
 	use Concerns\Has_Meta;
 	use Concerns\Has_Settings;
@@ -142,7 +144,8 @@ class Union_Prop_Type implements Prop_Type {
 
 	public function jsonSerialize(): array {
 		return [
-			'kind' => static::KIND,
+			// phpcs:ignore
+			'kind' => static::$KIND,
 			'default' => $this->get_default(),
 			'meta' => $this->get_meta(),
 			'settings' => $this->get_settings(),

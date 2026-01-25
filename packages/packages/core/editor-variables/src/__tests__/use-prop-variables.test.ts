@@ -4,6 +4,7 @@ import { renderHook } from '@testing-library/react';
 import { useVariableType } from '../context/variable-type-context';
 import { useFilteredVariables } from '../hooks/use-prop-variables';
 import { service } from '../service';
+import { getVariableType, getVariableTypes } from '../variables-registry/variable-type-registry';
 
 jest.mock( '../service' );
 
@@ -13,6 +14,7 @@ jest.mock( '@elementor/editor-controls', () => ( {
 
 jest.mock( '../variables-registry/variable-type-registry', () => ( {
 	getVariableType: jest.fn(),
+	getVariableTypes: jest.fn(),
 } ) );
 
 jest.mock( '../context/variable-type-context', () => ( {
@@ -65,6 +67,22 @@ describe( 'useFilteredVariables', () => {
 		jest.mocked( useVariableType ).mockReturnValue( {
 			selectionFilter: undefined,
 		} as never );
+
+		jest.mocked( getVariableTypes ).mockReturnValue( {
+			'global-color-variable': { variableType: 'color' },
+			'global-font-variable': { variableType: 'font' },
+		} as never );
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		jest.mocked( getVariableType ).mockImplementation( ( propKey: string ): any => {
+			if ( propKey === 'global-color-variable' ) {
+				return { variableType: 'color' };
+			}
+			if ( propKey === 'global-font-variable' ) {
+				return { variableType: 'font' };
+			}
+			return { variableType: propKey };
+		} );
 	} );
 
 	it( 'should not include deleted variables in the list', () => {
@@ -75,6 +93,7 @@ describe( 'useFilteredVariables', () => {
 				key: 'a-02',
 				label: 'B',
 				value: '#cccccc',
+				order: undefined,
 			},
 		] );
 
@@ -85,6 +104,7 @@ describe( 'useFilteredVariables', () => {
 				key: 'a-04',
 				label: 'D',
 				value: 'Roboto',
+				order: undefined,
 			},
 		] );
 	} );

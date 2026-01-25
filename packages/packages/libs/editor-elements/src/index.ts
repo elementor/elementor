@@ -30,6 +30,7 @@ export { getElementLabel } from './sync/get-element-label';
 export { getElementSetting, getElementSettings } from './sync/get-element-setting';
 export { getElementStyles } from './sync/get-element-styles';
 export { getElementType } from './sync/get-element-type';
+export { getAllDescendants } from './sync/get-all-descendants';
 export { getElements } from './sync/get-elements';
 export { getSelectedElements } from './sync/get-selected-elements';
 export { getWidgetsCache } from './sync/get-widgets-cache';
@@ -64,5 +65,3 @@ export { updateElementStyle, type UpdateElementStyleArgs } from './styles/update
 export { useElementInteractions } from './hooks/use-element-interactions';
 export { getElementInteractions } from './sync/get-element-interactions';
 export { playElementInteractions, updateElementInteractions } from './sync/update-element-interactions';
-
-export { initMcp as initElementsMcp } from './mcp';

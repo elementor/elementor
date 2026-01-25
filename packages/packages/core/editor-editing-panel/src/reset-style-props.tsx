@@ -1,9 +1,9 @@
 import { useBoundProp } from '@elementor/editor-controls';
 import { BrushBigIcon } from '@elementor/icons';
+import { controlActionsMenu } from '@elementor/menus';
 import { __ } from '@wordpress/i18n';
 
 import { useIsStyle } from './contexts/style-context';
-import { controlActionsMenu } from './controls-actions';
 import { isEqual } from './utils/is-equal';
 
 const { registerAction } = controlActionsMenu;
@@ -21,9 +21,10 @@ export function useResetStyleValueProps() {
 	const hasValue = value !== null && value !== undefined;
 	const hasInitial = propType.initial_value !== undefined && propType.initial_value !== null;
 	const isRequired = !! propType.settings?.required;
+	const shouldHide = !! propType.settings?.hide_reset;
 
 	function calculateVisibility() {
-		if ( ! isStyle || ! hasValue ) {
+		if ( ! isStyle || ! hasValue || shouldHide ) {
 			return false;
 		}
 

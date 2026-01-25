@@ -2,7 +2,7 @@
 namespace Elementor\Testing\Modules\Components\Styles;
 
 use ElementorEditorTesting\Elementor_Test_Base;
-use Elementor\Modules\AtomicWidgets\CacheValidity\Cache_Validity;
+use Elementor\Modules\AtomicWidgets\Styles\CacheValidity\Cache_Validity;
 use Elementor\Modules\Components\Styles\Component_Styles;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -69,9 +69,9 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-some-widget',
 				'settings' => [
-					'component' => [
-						'$$type' => 'component-id',
-						'value' => '50',
+					'component_instance' => [
+						'$$type' => 'component-instance',
+						'value' => [ 'component_id' => [ '$$type' => 'number', 'value' => 50 ] ],
 					],
 				],
 			],
@@ -81,9 +81,9 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'component' => [
-						'$$type' => 'component-id',
-						'value' => '180',
+					'component_instance' => [
+						'$$type' => 'component-instance',
+						'value' => [ 'component_id' => [ '$$type' => 'number', 'value' => 180 ] ],
 					],
 				],
 			],
@@ -93,9 +93,9 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'component' => [
-						'$$type' => 'component-id',
-						'value' => '180',
+					'component_instance' => [
+						'$$type' => 'component-instance',
+						'value' => [ 'component_id' => [ '$$type' => 'number', 'value' => 180 ] ],
 					],
 				],
 			],
@@ -105,9 +105,9 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'component' => [
-						'$$type' => 'component-id',
-						'value' => '250',
+					'component_instance' => [
+						'$$type' => 'component-instance',
+						'value' => [ 'component_id' => [ '$$type' => 'number', 'value' => 250 ] ],
 					],
 				],
 			],
@@ -138,8 +138,13 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'widgetType' => 'e-component',
 				'settings' => [
 					'post_id' => [
-						'$$type' => 'component-id',
-						'value' => '180',
+						'$$type' => 'component-instance',
+						'value' => [
+							'component_id' => [
+								'$$type' => 'number',
+								'value' => [ '$$type' => 'number', 'value' => 180 ],
+							],
+						],
 					],
 				],
 			],
@@ -166,9 +171,9 @@ class Test_Component_Styles extends Elementor_Test_Base {
 				'elType' => 'widget',
 				'widgetType' => 'e-component',
 				'settings' => [
-					'component' => [
-						'$$type' => 'component-id',
-						'value' => '180',
+					'component_instance' => [
+						'$$type' => 'component-instance',
+						'value' => [ 'component_id' => [ '$$type' => 'number', 'value' => 180 ] ],
 					],
 				],
 			],

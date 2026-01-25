@@ -5,6 +5,11 @@ jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/h
 	useKitCustomizationCustomPostTypes: jest.fn(),
 } ) );
 
+jest.mock( 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection', () => ( {
+	__esModule: true,
+	default: jest.fn(),
+} ) );
+
 jest.mock( 'elementor-app/event-track/apps-event-tracking', () => ( {
 	AppsEventTracking: {
 		sendPageViewsWebsiteTemplates: jest.fn(),
@@ -12,6 +17,7 @@ jest.mock( 'elementor-app/event-track/apps-event-tracking', () => ( {
 } ) );
 
 import { useKitCustomizationCustomPostTypes } from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-kit-customization-custom-post-types';
+import useContextDetection from 'elementor/app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection';
 import { AppsEventTracking } from 'elementor-app/event-track/apps-event-tracking';
 
 import { KitContentCustomizationDialog } from 'elementor/app/modules/import-export-customization/assets/js/shared/components/kit-content-customization-dialog';
@@ -47,6 +53,14 @@ describe( 'KitContentCustomizationDialog Component', () => {
 				},
 			},
 		};
+
+		useContextDetection.mockReturnValue( {
+			isImport: false,
+			contextData: {
+				data: mockData,
+				isOldElementorVersion: false,
+			},
+		} );
 
 		useKitCustomizationCustomPostTypes.mockReturnValue( {
 			customPostTypes: [
@@ -158,8 +172,16 @@ describe( 'KitContentCustomizationDialog Component', () => {
 					},
 				},
 			};
+
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data,
+					isOldElementorVersion: false,
+				},
+			} );
+
 			const props = {
-				data,
 				open: true,
 				handleClose: mockHandleClose,
 				handleSaveChanges: mockHandleSaveChanges,
@@ -266,12 +288,19 @@ describe( 'KitContentCustomizationDialog Component', () => {
 					manifest: {},
 				},
 			};
+
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					data: importData,
+					isOldElementorVersion: false,
+				},
+			} );
+
 			const props = {
-				data: importData,
 				open: true,
 				handleClose: mockHandleClose,
 				handleSaveChanges: mockHandleSaveChanges,
-				isImport: true,
 			};
 
 			// Act
@@ -488,13 +517,19 @@ describe( 'KitContentCustomizationDialog Component', () => {
 
 		it( 'should render media format banner in import mode', () => {
 			// Arrange
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					data: mockData,
+					isOldElementorVersion: false,
+				},
+			} );
+
 			const props = {
-				data: mockData,
 				open: true,
 				handleClose: mockHandleClose,
 				handleSaveChanges: mockHandleSaveChanges,
 				isCloudKitsEligible: true,
-				isImport: true,
 			};
 
 			// Act
@@ -657,12 +692,18 @@ describe( 'KitContentCustomizationDialog Component', () => {
 	describe( 'Upgrade Version Banner', () => {
 		it( 'should render upgrade version banner when isOldElementorVersion is true', () => {
 			// Arrange
+			useContextDetection.mockReturnValue( {
+				isImport: false,
+				contextData: {
+					data: mockData,
+					isOldElementorVersion: true,
+				},
+			} );
+
 			const props = {
-				data: mockData,
 				open: true,
 				handleClose: mockHandleClose,
 				handleSaveChanges: mockHandleSaveChanges,
-				isOldElementorVersion: true,
 			};
 
 			// Act
@@ -739,12 +780,18 @@ describe( 'KitContentCustomizationDialog Component', () => {
 				},
 			};
 
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					data: malformedData,
+					isOldElementorVersion: false,
+				},
+			} );
+
 			const props = {
-				data: malformedData,
 				open: true,
 				handleClose: mockHandleClose,
 				handleSaveChanges: mockHandleSaveChanges,
-				isImport: true,
 			};
 
 			// Act
@@ -766,12 +813,18 @@ describe( 'KitContentCustomizationDialog Component', () => {
 				},
 			};
 
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					data: incompleteData,
+					isOldElementorVersion: false,
+				},
+			} );
+
 			const props = {
-				data: incompleteData,
 				open: true,
 				handleClose: mockHandleClose,
 				handleSaveChanges: mockHandleSaveChanges,
-				isImport: true,
 			};
 
 			// Act
@@ -791,12 +844,18 @@ describe( 'KitContentCustomizationDialog Component', () => {
 				},
 			};
 
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					data: emptyData,
+					isOldElementorVersion: false,
+				},
+			} );
+
 			const props = {
-				data: emptyData,
 				open: true,
 				handleClose: mockHandleClose,
 				handleSaveChanges: mockHandleSaveChanges,
-				isImport: true,
 			};
 
 			// Act
@@ -824,12 +883,18 @@ describe( 'KitContentCustomizationDialog Component', () => {
 				},
 			};
 
+			useContextDetection.mockReturnValue( {
+				isImport: true,
+				contextData: {
+					data: validData,
+					isOldElementorVersion: false,
+				},
+			} );
+
 			const props = {
-				data: validData,
 				open: true,
 				handleClose: mockHandleClose,
 				handleSaveChanges: mockHandleSaveChanges,
-				isImport: true,
 			};
 
 			// Act

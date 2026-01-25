@@ -112,6 +112,7 @@ jobs:
         with:
           VERSION: ${{ env.CLEAN_PACKAGE_VERSION }}
       - name: Create GitHub release
+        if: github.event.inputs.dry_run == 'false'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.PACKAGE_VERSION }}
@@ -119,8 +120,6 @@ jobs:
           files: |
             elementor-*.zip
             ${{ env.CHANGELOG_FILE }}
-          prerelease: ${{ github.event.inputs.dry_run }}
-          draft: ${{ github.event.inputs.dry_run }}
           body_path: ${{ env.CHANGELOG_FILE }}
       - name: Validate Build Files
         if: github.repository_owner == 'elementor'
@@ -199,18 +198,15 @@ jobs:
           if [ "${{ env.CHANNEL }}" == "ga" ]; then
             node scripts/version-manager/index.js set "${{ env.PACKAGE_VERSION }}"
           else
-            if [ ${{ github.event.inputs.dry_run }} == 'false' ]; then
-              LATEST_BETA_NUM=$(git tag -l "v${{ env.PACKAGE_VERSION }}-*" | sed 's/.*-//' | sort -nr | head -n1 || echo "0")
-              NEXT_BETA_NUM=$((LATEST_BETA_NUM + 1))
-              node scripts/version-manager/index.js set "${{ env.PACKAGE_VERSION }}" --tag "${NEXT_BETA_NUM}"
-              git config --global user.email "github-actions@github.com"
-              git config --global user.name "GitHub Actions"
-              git tag -a "v${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}" -m "Release ${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}"
-              git push origin "v${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}"
-            fi
+            LATEST_BETA_NUM=$(git tag -l "v${{ env.PACKAGE_VERSION }}-*" | sed 's/.*-//' | sort -nr | head -n1 || echo "0")
+            NEXT_BETA_NUM=$((LATEST_BETA_NUM + 1))
+            node scripts/version-manager/index.js set "${{ env.PACKAGE_VERSION }}" --tag "${NEXT_BETA_NUM}"
+            git config --global user.email "github-actions@github.com"
+            git config --global user.name "GitHub Actions"
+            git tag -a "v${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}" -m "Release ${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}"
+            git push origin "v${{ env.PACKAGE_VERSION }}-${NEXT_BETA_NUM}"
           fi
-          npm run release ${{ github.event.inputs.dry_run && '-- --dry-run' || '' }}
+          npm run release
         env:
           GITHUB_TOKEN: ${{ secrets.MAINTAIN_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_CLOUD_DEVOPS_TOKEN }}
-          DRY_RUN: ${{ github.event.inputs.dry_run }}

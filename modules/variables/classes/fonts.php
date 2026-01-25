@@ -2,20 +2,20 @@
 
 namespace Elementor\Modules\Variables\Classes;
 
+use Elementor\Modules\Variables\Services\Variables_Service;
 use Elementor\Plugin;
 use Elementor\Core\Files\CSS\Post as Post_CSS;
 use Elementor\Modules\Variables\PropTypes\Font_Variable_Prop_Type;
-use Elementor\Modules\Variables\Storage\Repository as Variables_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Fonts {
-	private Variables_Repository $repository;
+	private Variables_Service $service;
 
-	public function __construct( Variables_Repository $repository ) {
-		$this->repository = $repository;
+	public function __construct( Variables_Service $service ) {
+		$this->service = $service;
 	}
 
 	public function append_to( Post_CSS $post_css ) {
@@ -23,7 +23,7 @@ class Fonts {
 			return;
 		}
 
-		$list_of_variables = $this->repository->variables();
+		$list_of_variables = $this->service->get_variables_list();
 
 		foreach ( $list_of_variables as $variable ) {
 			if ( Font_Variable_Prop_Type::get_key() !== $variable['type'] ) {

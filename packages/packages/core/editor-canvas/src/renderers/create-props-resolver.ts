@@ -5,8 +5,10 @@ import {
 	type PropsSchema,
 	type PropType,
 	type PropValue,
+	type TransformablePropType,
 } from '@elementor/editor-props';
 
+import { type RenderContext } from '../legacy/types';
 import { type TransformersRegistry } from '../transformers/create-transformers-registry';
 import { getMultiPropsValue, isMultiProps } from './multi-props';
 
@@ -20,6 +22,7 @@ type ResolveArgs = {
 	props: Props;
 	schema?: PropsSchema;
 	signal?: AbortSignal;
+	renderContext?: RenderContext;
 };
 
 type TransformArgs = {
@@ -28,6 +31,7 @@ type TransformArgs = {
 	type: PropType;
 	signal?: AbortSignal;
 	depth?: number;
+	renderContext?: RenderContext;
 };
 
 type ResolvedProps = Record< string, unknown >;
@@ -35,16 +39,14 @@ type ResolvedProps = Record< string, unknown >;
 export type PropsResolver = ReturnType< typeof createPropsResolver >;
 
 const TRANSFORM_DEPTH_LIMIT = 3;
-
 export function createPropsResolver( { transformers, schema: initialSchema, onPropResolve }: CreatePropResolverArgs ) {
-	async function resolve( { props, schema, signal }: ResolveArgs ): Promise< ResolvedProps > {
+	async function resolve( { props, schema, signal, renderContext }: ResolveArgs ): Promise< ResolvedProps > {
 		schema = schema ?? initialSchema;
 
 		const promises = Promise.all(
 			Object.entries( schema ).map( async ( [ key, type ] ) => {
 				const value = props[ key ] ?? type.default;
-
-				const transformed = await transform( { value, key, type, signal } );
+				const transformed = ( await transform( { value, key, type, signal, renderContext } ) ) as PropValue;
 
 				onPropResolve?.( { key, value: transformed } );
 
@@ -59,7 +61,7 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 		return Object.assign( {}, ...( await promises ).filter( Boolean ) );
 	}
 
-	async function transform( { value, key, type, signal, depth = 0 }: TransformArgs ) {
+	async function transform( { value, key, type, signal, depth = 0, renderContext }: TransformArgs ) {
 		if ( value === null || value === undefined ) {
 			return null;
 		}
@@ -76,33 +78,45 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 			return null;
 		}
 
-		if ( type.kind === 'union' ) {
-			type = type.prop_types[ value.$$type ];
+		let transformablePropType = type;
 
-			if ( ! type ) {
+		if ( type.kind === 'union' ) {
+			transformablePropType = type.prop_types[ value.$$type ];
+
+			if ( ! transformablePropType ) {
 				return null;
 			}
 		}
 
-		if ( value.$$type !== type.key ) {
+		transformablePropType = transformablePropType as TransformablePropType;
+
+		if ( value.$$type !== transformablePropType.key ) {
 			return null;
 		}
 
 		// Warning: This variable is loosely-typed - use with caution.
 		let resolvedValue = value.value;
 
-		if ( type.kind === 'object' ) {
+		if ( transformablePropType.kind === 'object' ) {
 			resolvedValue = await resolve( {
 				props: resolvedValue,
-				schema: type.shape,
+				schema: transformablePropType.shape,
 				signal,
+				renderContext,
 			} );
 		}
 
-		if ( type.kind === 'array' ) {
+		if ( transformablePropType.kind === 'array' ) {
 			resolvedValue = await Promise.all(
 				resolvedValue.map( ( item: PropValue ) =>
-					transform( { value: item, key, type: type.item_prop_type, depth, signal } )
+					transform( {
+						value: item,
+						key,
+						type: transformablePropType.item_prop_type,
+						depth,
+						signal,
+						renderContext,
+					} )
 				)
 			);
 		}
@@ -114,9 +128,9 @@ export function createPropsResolver( { transformers, schema: initialSchema, onPr
 		}
 
 		try {
-			const transformed = await transformer( resolvedValue, { key, signal } );
+			const transformed = await transformer( resolvedValue, { key, signal, renderContext, propType: type } );
 
-			return transform( { value: transformed, key, type, signal, depth: depth + 1 } );
+			return transform( { value: transformed, key, type, signal, depth: depth + 1, renderContext } );
 		} catch {
 			return null;
 		}

@@ -8,7 +8,7 @@ import {
 import { __ } from '@wordpress/i18n';
 
 import { getCapabilities } from './capabilities';
-import { GlobalClassLabelAlreadyExistsError } from './errors';
+import { GlobalClassLabelAlreadyExistsError, GlobalClassTrackingError } from './errors';
 import {
 	selectClass,
 	selectData,
@@ -17,6 +17,7 @@ import {
 	slice,
 	type StateWithGlobalClasses,
 } from './store';
+import { trackGlobalClasses, type TrackingEvent } from './utils/tracking';
 
 const MAX_CLASSES = 100;
 
@@ -33,7 +34,11 @@ export const globalClassesStylesProvider = createStylesProvider( {
 	subscribe: ( cb ) => subscribeWithStates( cb ),
 	capabilities: getCapabilities(),
 	actions: {
-		all: () => selectOrderedClasses( getState() ),
+		all: () => {
+			const selectAllClasses = selectOrderedClasses( getState() );
+			localStorage.setItem( 'elementor-global-classes', JSON.stringify( selectAllClasses ) );
+			return selectAllClasses;
+		},
 		get: ( id ) => selectClass( getState(), id ),
 		resolveCssName: ( id: string ) => {
 			return selectClass( getState(), id )?.label ?? id;
@@ -89,6 +94,11 @@ export const globalClassesStylesProvider = createStylesProvider( {
 					props: {},
 				} )
 			);
+		},
+		tracking: ( data: { event: string; [ key: string ]: unknown } ) => {
+			trackGlobalClasses( data as TrackingEvent ).catch( ( error ) => {
+				throw new GlobalClassTrackingError( { cause: error } );
+			} );
 		},
 	},
 } );

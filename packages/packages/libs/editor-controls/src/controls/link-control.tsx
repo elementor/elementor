@@ -1,14 +1,16 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getLinkInLinkRestriction } from '@elementor/editor-elements';
 import { linkPropTypeUtil, type LinkPropValue } from '@elementor/editor-props';
 import { MinusIcon, PlusIcon } from '@elementor/icons';
 import { useSessionStorage } from '@elementor/session';
 import { Collapse, Grid, IconButton, Stack } from '@elementor/ui';
+import { debounce } from '@elementor/utils';
 import { __ } from '@wordpress/i18n';
 
 import { PropKeyProvider, PropProvider, useBoundProp } from '../bound-prop-context';
 import { ControlFormLabel } from '../components/control-form-label';
+import { ControlLabel } from '../components/control-label';
 import { RestrictedLinkInfotip } from '../components/restricted-link-infotip';
 import { createControl } from '../create-control';
 import { type ControlProps } from '../utils/types';
@@ -53,11 +55,46 @@ export const LinkControl = createControl( ( props: Props ) => {
 		ariaLabel,
 	} = props || {};
 
-	const [ linkInLinkRestriction, setLinkInLinkRestriction ] = useState( getLinkInLinkRestriction( elementId ) );
+	const [ linkInLinkRestriction, setLinkInLinkRestriction ] = useState(
+		getLinkInLinkRestriction( elementId, value )
+	);
 	const shouldDisableAddingLink = ! isActive && linkInLinkRestriction.shouldRestrict;
 
+	const debouncedCheckRestriction = useMemo(
+		() =>
+			debounce( () => {
+				const newRestriction = getLinkInLinkRestriction( elementId, value );
+
+				if ( newRestriction.shouldRestrict && isActive ) {
+					setIsActive( false );
+				}
+
+				setLinkInLinkRestriction( newRestriction );
+			}, 300 ),
+		[ elementId, isActive, value ]
+	);
+
+	useEffect( () => {
+		debouncedCheckRestriction();
+
+		const handleInlineLinkChanged = ( event: Event ) => {
+			const customEvent = event as CustomEvent< { elementId: string } >;
+
+			if ( customEvent.detail.elementId === elementId ) {
+				debouncedCheckRestriction();
+			}
+		};
+
+		window.addEventListener( 'elementor:inline-link-changed', handleInlineLinkChanged );
+
+		return () => {
+			window.removeEventListener( 'elementor:inline-link-changed', handleInlineLinkChanged );
+			debouncedCheckRestriction.cancel();
+		};
+	}, [ elementId, debouncedCheckRestriction ] );
+
 	const onEnabledChange = () => {
-		setLinkInLinkRestriction( getLinkInLinkRestriction( elementId ) );
+		setLinkInLinkRestriction( getLinkInLinkRestriction( elementId, value ) );
 
 		if ( linkInLinkRestriction.shouldRestrict && ! isActive ) {
 			return;
@@ -102,7 +139,7 @@ export const LinkControl = createControl( ( props: Props ) => {
 						marginInlineEnd: -0.75,
 					} }
 				>
-					<ControlFormLabel>{ label }</ControlFormLabel>
+					<ControlLabel>{ label }</ControlLabel>
 					<RestrictedLinkInfotip isVisible={ ! isActive } linkInLinkRestriction={ linkInLinkRestriction }>
 						<ToggleIconControl
 							disabled={ shouldDisableAddingLink }

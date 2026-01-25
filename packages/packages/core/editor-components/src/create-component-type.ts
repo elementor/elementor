@@ -1,61 +1,171 @@
 import {
 	type BackboneModel,
+	type BackboneModelConstructor,
 	type CreateTemplatedElementTypeOptions,
 	createTemplatedElementView,
 	type ElementModel,
 	type ElementType,
 	type ElementView,
 	type LegacyWindow,
+	type NamespacedRenderContext,
+	type RenderContext,
 } from '@elementor/editor-canvas';
 import { getCurrentDocument } from '@elementor/editor-documents';
-import { type NumberPropValue } from '@elementor/editor-props';
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
+import { __getState as getState } from '@elementor/store';
 import { __ } from '@wordpress/i18n';
 
 import { apiClient } from './api';
-import { type ExtendedWindow } from './types';
+import { type ComponentInstanceProp } from './prop-types/component-instance-prop-type';
+import { type ComponentsSlice, selectComponentByUid } from './store/store';
+import { type ComponentRenderContext, type ExtendedWindow } from './types';
+import { switchToComponent } from './utils/switch-to-component';
 import { trackComponentEvent } from './utils/tracking';
 
 type ContextMenuEventData = { location: string; secondaryLocation: string; trigger: string };
 
-export const TYPE = 'e-component';
+export type ContextMenuAction = {
+	name: string;
+	icon: string;
+	title: string | ( () => string );
+	isEnabled: () => boolean;
+	callback: ( _: unknown, eventData: ContextMenuEventData ) => void;
+};
+
+type ContextMenuGroupConfig = {
+	disable: Record< string, string[] >;
+	add: Record< string, { index: number; action: ContextMenuAction } >;
+};
+
+type ContextMenuGroup = {
+	name: string;
+	actions: ContextMenuAction[];
+};
+
+type ComponentModel = ElementModel & {
+	componentId?: number | string;
+	isGlobal: boolean;
+};
+
+type ComponentModelInstance = BackboneModel< ComponentModel > & {
+	trigger: ( event: string, ...args: unknown[] ) => void;
+	getTitle: () => string;
+	getComponentId: () => number | null;
+	getComponentName: () => string;
+	getComponentUid: () => string | null;
+};
+
+export const COMPONENT_WIDGET_TYPE = 'e-component';
+
+const updateGroups = ( groups: ContextMenuGroup[], config: ContextMenuGroupConfig ): ContextMenuGroup[] => {
+	const disableMap = new Map( Object.entries( config.disable ?? {} ) );
+	const addMap = new Map( Object.entries( config.add ?? {} ) );
+
+	return groups.map( ( group ) => {
+		const disabledActions = disableMap.get( group.name ) ?? [];
+		const addConfig = addMap.get( group.name );
+
+		// Update disabled actions
+		const updatedActions = group.actions.map( ( action ) =>
+			disabledActions.includes( action.name ) ? { ...action, isEnabled: () => false } : action
+		);
+
+		// Insert additional action if needed
+		if ( addConfig ) {
+			updatedActions.splice( addConfig.index, 0, addConfig.action );
+		}
+
+		return { ...group, actions: updatedActions };
+	} );
+};
 
 export function createComponentType(
 	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
 ): typeof ElementType {
 	const legacyWindow = window as unknown as LegacyWindow;
+	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
 
-	return class extends legacyWindow.elementor.modules.elements.types.Widget {
+	const view = createComponentView( { ...options } );
+
+	return class extends WidgetType {
 		getType() {
 			return options.type;
 		}
 
 		getView() {
-			return createComponentView( options );
+			return view;
+		}
+
+		getModel(): BackboneModelConstructor< ComponentModel > {
+			return createComponentModel();
 		}
 	};
 }
 
 function createComponentView(
-	options: CreateTemplatedElementTypeOptions & { showLockedByModal?: ( lockedBy: string ) => void }
+	options: CreateTemplatedElementTypeOptions & {
+		showLockedByModal?: ( lockedBy: string ) => void;
+	}
 ): typeof ElementView {
+	const legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
+
 	return class extends createTemplatedElementView( options ) {
-		legacyWindow = window as unknown as LegacyWindow & ExtendedWindow;
-		eventsManagerConfig = this.legacyWindow.elementorCommon.eventsManager.config;
+		eventsManagerConfig = legacyWindow.elementorCommon.eventsManager.config;
+		#componentRenderContext: ComponentRenderContext | undefined;
 
 		isComponentCurrentlyEdited() {
 			const currentDocument = getCurrentDocument();
 
-			return currentDocument?.id === this.getComponentId()?.value;
+			return currentDocument?.id === this.getComponentId();
+		}
+
+		getRenderContext(): NamespacedRenderContext | undefined {
+			const namespaceKey = this.getNamespaceKey();
+			const parentContext = this._parent?.getRenderContext?.();
+			const parentComponentContext = parentContext?.[ namespaceKey ];
+
+			if ( ! this.#componentRenderContext ) {
+				return parentContext;
+			}
+
+			const ownOverrides = this.#componentRenderContext.overrides ?? {};
+			const parentOverrides = parentComponentContext?.overrides ?? {};
+
+			return {
+				...parentContext,
+				[ namespaceKey ]: {
+					overrides: {
+						...parentOverrides,
+						...ownOverrides,
+					},
+				},
+			};
+		}
+
+		getResolverRenderContext(): RenderContext | undefined {
+			const namespaceKey = this.getNamespaceKey();
+			const context = this.getRenderContext();
+
+			return context?.[ namespaceKey ];
 		}
 
 		afterSettingsResolve( settings: { [ key: string ]: unknown } ) {
-			if ( settings.component ) {
-				this.collection = this.legacyWindow.elementor.createBackboneElementsCollection( settings.component );
+			const componentInstance = settings.component_instance as
+				| {
+						overrides?: Record< string, unknown >;
+						elements?: unknown[];
+				  }
+				| undefined;
+
+			if ( componentInstance ) {
+				this.#componentRenderContext = {
+					overrides: componentInstance.overrides ?? {},
+				};
+
+				this.collection = legacyWindow.elementor.createBackboneElementsCollection( componentInstance.elements );
 
 				this.collection.models.forEach( setInactiveRecursively );
 
-				settings.component = '<template data-children-placeholder></template>';
+				settings.component_instance = '<template data-children-placeholder></template>';
 			}
 
 			return settings;
@@ -79,48 +189,60 @@ function createComponentView(
 		}
 
 		getComponentId() {
-			return this.options?.model?.get( 'settings' )?.get( 'component' ) as NumberPropValue;
+			const componentInstance = (
+				this.options?.model?.get( 'settings' )?.get( 'component_instance' ) as ComponentInstanceProp
+			 )?.value;
+
+			return componentInstance.component_id.value;
 		}
 
 		getContextMenuGroups() {
 			const filteredGroups = super.getContextMenuGroups().filter( ( group ) => group.name !== 'save' );
-			const componentId = this.getComponentId()?.value as number;
+			const componentId = this.getComponentId();
 			if ( ! componentId ) {
 				return filteredGroups;
 			}
 
-			const newGroup = [
-				{
-					name: 'edit component',
-					actions: [
-						{
-							name: 'edit component',
-							icon: 'eicon-edit',
-							title: () => __( 'Edit Component', 'elementor' ),
-							isEnabled: () => true,
-							callback: ( _: unknown, eventData: ContextMenuEventData ) =>
-								this.editComponent( eventData ),
-						},
-					],
+			const newGroups = updateGroups(
+				filteredGroups as ContextMenuGroup[],
+				this._getContextMenuConfig() as unknown as ContextMenuGroupConfig
+			);
+			return newGroups;
+		}
+
+		_getContextMenuConfig() {
+			const isAdministrator = isUserAdministrator();
+
+			const addedGroup = {
+				general: {
+					index: 1,
+					action: {
+						name: 'edit component',
+						icon: 'eicon-edit',
+						title: () => __( 'Edit Component', 'elementor' ),
+						isEnabled: () => true,
+						callback: ( _: unknown, eventData: ContextMenuEventData ) => this.editComponent( eventData ),
+					},
 				},
-			];
-			return [ ...filteredGroups, ...newGroup ];
+			};
+
+			const disabledGroup = {
+				clipboard: [ 'pasteStyle', 'resetStyle' ],
+			};
+
+			return { add: isAdministrator ? addedGroup : {}, disable: disabledGroup };
 		}
 
 		async switchDocument() {
+			//todo: handle unpublished
 			const { isAllowedToSwitchDocument, lockedBy } = await apiClient.getComponentLockStatus(
-				this.getComponentId()?.value as number
+				this.getComponentId() as number
 			);
 
 			if ( ! isAllowedToSwitchDocument ) {
 				options.showLockedByModal?.( lockedBy || '' );
 			} else {
-				runCommand( 'editor/documents/switch', {
-					id: this.getComponentId()?.value as number,
-					mode: 'autosave',
-					selector: `[data-id="${ this.model.get( 'id' ) }"]`,
-					shouldScroll: false,
-				} );
+				switchToComponent( this.getComponentId() as number, this.model.get( 'id' ), this.el );
 			}
 		}
 
@@ -135,6 +257,7 @@ function createComponentView(
 
 			trackComponentEvent( {
 				action: 'edited',
+				source: 'user',
 				component_uid: editorSettings?.component_uid,
 				component_name: editorSettings?.title,
 				location,
@@ -145,6 +268,12 @@ function createComponentView(
 
 		handleDblClick( e: MouseEvent ) {
 			e.stopPropagation();
+
+			const isAdministrator = isUserAdministrator();
+
+			if ( ! isAdministrator ) {
+				return;
+			}
 
 			const { triggers, locations, secondaryLocations } = this.eventsManagerConfig;
 
@@ -165,7 +294,7 @@ function createComponentView(
 		attributes() {
 			return {
 				...super.attributes(),
-				'data-elementor-id': this.getComponentId().value,
+				'data-elementor-id': this.getComponentId(),
 			};
 		}
 	};
@@ -185,4 +314,76 @@ function setInactiveRecursively( model: BackboneModel< ElementModel > ) {
 			setInactiveRecursively( childModel );
 		} );
 	}
+}
+
+function isUserAdministrator() {
+	const legacyWindow = window as unknown as LegacyWindow;
+
+	return legacyWindow.elementor.config?.user?.is_administrator ?? false;
+}
+
+function createComponentModel(): BackboneModelConstructor< ComponentModel > {
+	const legacyWindow = window as unknown as LegacyWindow;
+	const WidgetType = legacyWindow.elementor.modules.elements.types.Widget;
+	const widgetTypeInstance = new WidgetType() as unknown as BackboneModelConstructor< ElementModel >;
+	const BaseWidgetModel = widgetTypeInstance.getModel();
+
+	return BaseWidgetModel.extend( {
+		initialize( this: ComponentModelInstance, attributes: unknown, options: unknown ): void {
+			BaseWidgetModel.prototype.initialize.call( this, attributes, options );
+
+			const componentInstance = this.get( 'settings' )?.get( 'component_instance' ) as
+				| ComponentInstanceProp
+				| undefined;
+			if ( componentInstance?.value ) {
+				const componentId = componentInstance.value.component_id?.value;
+				if ( componentId && typeof componentId === 'number' ) {
+					this.set( 'componentId', componentId );
+				}
+			}
+
+			this.set( 'isGlobal', true );
+		},
+
+		getTitle( this: ComponentModelInstance ): string {
+			const editorSettings = this.get( 'editor_settings' ) as
+				| {
+						title?: string;
+						component_uid?: string;
+				  }
+				| undefined;
+
+			const instanceTitle = editorSettings?.title;
+			if ( instanceTitle ) {
+				return instanceTitle;
+			}
+
+			const componentUid = editorSettings?.component_uid;
+			if ( componentUid ) {
+				const component = selectComponentByUid( getState() as ComponentsSlice, componentUid );
+				if ( component?.name ) {
+					return component.name;
+				}
+			}
+
+			return ( window as unknown as LegacyWindow ).elementor.getElementData( this ).title;
+		},
+
+		getComponentId( this: ComponentModelInstance ): number | null {
+			return ( this.get( 'componentId' ) as number | undefined ) || null;
+		},
+
+		getComponentName( this: ComponentModelInstance ): string {
+			return this.getTitle();
+		},
+
+		getComponentUid( this: ComponentModelInstance ): string | null {
+			const editorSettings = this.get( 'editor_settings' ) as
+				| {
+						component_uid?: string;
+				  }
+				| undefined;
+			return editorSettings?.component_uid || null;
+		},
+	} );
 }

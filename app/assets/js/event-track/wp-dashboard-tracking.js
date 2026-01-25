@@ -2,8 +2,8 @@ import NavigationTracking from './dashboard/navigation';
 import PluginActions from './dashboard/plugin-actions';
 import PromotionTracking from './dashboard/promotion';
 import ScreenViewTracking from './dashboard/screen-view';
-import TopBarTracking from './dashboard/top-bar';
 import MenuPromotionTracking from './dashboard/menu-promotion';
+import ActionControlTracking from './dashboard/action-controls';
 
 const SESSION_TIMEOUT_MINUTES = 30;
 const MINUTE_MS = 60 * 1000;
@@ -19,6 +19,7 @@ export const CONTROL_TYPES = {
 	LINK: 'link',
 	SELECT: 'select',
 	TOGGLE: 'toggle',
+	FILTER: 'filter',
 };
 
 export const NAV_AREAS = {
@@ -26,6 +27,7 @@ export const NAV_AREAS = {
 	SUBMENU: 'submenu',
 	HOVER_MENU: 'hover_menu',
 	TOP_BAR: 'top_bar',
+	SIDEBAR_MENU: 'sidebar',
 };
 
 export const SCREEN_TYPES = {
@@ -175,7 +177,7 @@ export default class WpDashboardTracking {
 			const postType = params.get( 'post_type' );
 			const action = params.get( 'action' );
 
-			const elementorPages = [ 'elementor', 'go_knowledge_base_site', 'e-form-submissions' ];
+			const elementorPages = [ 'elementor-home', 'e-form-submissions' ];
 			const elementorPostTypes = [ 'elementor_library', 'e-floating-buttons' ];
 
 			return ( page && elementorPages.some( ( p ) => page.includes( p ) ) ) ||
@@ -225,6 +227,11 @@ export default class WpDashboardTracking {
 				} else if ( this.isElementorPage( link.href ) ) {
 					this.isNavigatingToElementor = true;
 				}
+			}
+
+			const isSidebar = event.target.closest( '#editor-one-sidebar-navigation' );
+			if ( isSidebar ) {
+				this.isNavigatingToElementor = true;
 			}
 		};
 
@@ -365,10 +372,10 @@ export default class WpDashboardTracking {
 
 		this.navigationListeners = [];
 
-		TopBarTracking.destroy();
 		ScreenViewTracking.destroy();
 		PromotionTracking.destroy();
 		MenuPromotionTracking.destroy();
+		ActionControlTracking.destroy();
 
 		this.initialized = false;
 	}
@@ -387,10 +394,10 @@ window.addEventListener( 'elementor/admin/init', () => {
 
 	if ( isElementorPage ) {
 		WpDashboardTracking.init();
-		TopBarTracking.init();
 		ScreenViewTracking.init();
 		PromotionTracking.init();
 		MenuPromotionTracking.init();
+		ActionControlTracking.init();
 	}
 } );
 
