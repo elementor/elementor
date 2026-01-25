@@ -1,4 +1,4 @@
-import { type ControlComponent, DisplayConditionsControl } from '@elementor/editor-controls';
+import { DisplayConditionsControl } from '@elementor/editor-controls';
 
 import { controlsRegistry } from '../../controls-registry/controls-registry';
 import { injectIntoStyleTab } from '../style-tab';
@@ -13,10 +13,6 @@ export const init = () => {
 			options: { overwrite: true },
 		} );
 
-		controlsRegistry.register(
-			'display-conditions',
-			DisplayConditionsControl as unknown as ControlComponent,
-			'two-columns'
-		);
+		controlsRegistry.register( 'display-conditions', DisplayConditionsControl, 'two-columns' );
 	}
 };

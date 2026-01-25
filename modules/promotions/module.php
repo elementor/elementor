@@ -199,6 +199,9 @@ class Module extends Base_Module {
 				return;
 			}
 
+			require_once __DIR__ . '/prop-types/display-conditions-prop-type.php';
+			require_once __DIR__ . '/controls/display-conditions-promotion-control.php';
+
 			add_filter(
 				'elementor/atomic-widgets/props-schema',
 				[ $this, 'inject_display_conditions_promo_prop' ]
@@ -214,8 +217,6 @@ class Module extends Base_Module {
 	}
 
 	public function inject_display_conditions_promo_prop( array $schema ): array {
-		require_once __DIR__ . '/prop-types/display-conditions-prop-type.php';
-
 		$prop_key = PropTypes\Display_Conditions_Prop_Type::get_key();
 
 		if ( isset( $schema[ $prop_key ] ) ) {
@@ -228,8 +229,6 @@ class Module extends Base_Module {
 	}
 
 	public function inject_display_conditions_promo_control( array $element_controls, $atomic_element ): array {
-		require_once __DIR__ . '/prop-types/display-conditions-prop-type.php';
-
 		$prop_key = PropTypes\Display_Conditions_Prop_Type::get_key();
 		$schema = $atomic_element::get_props_schema();
 
@@ -245,8 +244,6 @@ class Module extends Base_Module {
 			if ( $item->get_id() !== 'settings' ) {
 				continue;
 			}
-
-			require_once __DIR__ . '/controls/display-conditions-promotion-control.php';
 
 			$control = Controls\Display_Conditions_Promotion_Control::bind_to( $prop_key )
 				->set_label( __( 'Display Conditions', 'elementor' ) )
