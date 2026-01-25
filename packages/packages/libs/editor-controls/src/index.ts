@@ -68,6 +68,8 @@ export type { InlineEditorToolbarProps } from './components/inline-editor-toolba
 // providers
 export {
 	createControlReplacementsRegistry,
+	registerControlReplacement,
+	getControlReplacements,
 	ControlReplacementsProvider,
 	useControlReplacement,
 	type ControlReplacement,
@@ -87,3 +89,4 @@ export {
 // hooks
 export { useSyncExternalState } from './hooks/use-sync-external-state';
 export { useElementCanHaveChildren } from './hooks/use-element-can-have-children';
+export { useFontFamilies } from './hooks/use-font-families';
