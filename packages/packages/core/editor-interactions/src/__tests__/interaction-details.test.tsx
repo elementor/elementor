@@ -344,6 +344,23 @@ describe( 'InteractionDetails', () => {
 			expect( updatedInteraction.animation.value.timing_config.value.delay.value ).toBe( 200 );
 		} );
 
+		it( 'should prevent negative values for duration', () => {
+			const interaction = createInteractionItemValue( {
+				trigger: 'load',
+				effect: 'fade',
+				type: 'in',
+				duration: 0,
+				delay: 0,
+			} );
+
+			renderInteractionDetails( interaction );
+
+			const sizeInputs = screen.getAllByRole( 'spinbutton' );
+			fireEvent.keyDown(sizeInputs[ 0 ], { key: '-' });
+
+			expect( mockOnChange ).not.toHaveBeenCalled();
+		} );
+
 		it( 'should call onChange when replay changes', () => {
 			const interaction = createInteractionItemValue( {
 				trigger: 'scrollIn',
