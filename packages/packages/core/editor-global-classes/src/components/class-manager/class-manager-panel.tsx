@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { setDocumentModifiedStatus } from '@elementor/editor-documents';
+import { getCurrentDocument, getV1DocumentsManager, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -10,7 +10,7 @@ import {
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
 import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
-import { changeEditMode } from '@elementor/editor-v1-adapters';
+import { __privateRunCommand as runCommand, changeEditMode } from '@elementor/editor-v1-adapters';
 import { XIcon } from '@elementor/icons';
 import { useMutation } from '@elementor/query';
 import { __dispatch as dispatch } from '@elementor/store';
@@ -45,6 +45,19 @@ import { blockPanelInteractions, unblockPanelInteractions } from './panel-intera
 
 const id = 'global-classes-manager';
 
+const reloadDocument = () => {
+	const currentDocument = getCurrentDocument();
+	const documentsManager = getV1DocumentsManager();
+
+	documentsManager.invalidateCache();
+
+	return runCommand( 'editor/documents/switch', {
+		id: currentDocument?.id,
+		shouldScroll: false,
+		shouldNavigateToDefaultRoute: false,
+	} );
+};
+
 // We need to disable the app-bar buttons, and the elements overlays when opening the classes manager panel.
 // The buttons and overlays are enabled only in edit mode, so we're creating a custom new edit mode that
 // will force them to be disabled. We can't use the `preview` edit mode in this case since it'll force
@@ -58,9 +71,9 @@ export const { panel, usePanelActions } = createPanel( {
 
 		blockPanelInteractions();
 	},
-	onClose: () => {
+	onClose: async () => {
 		changeEditMode( 'edit' );
-
+		await reloadDocument();
 		unblockPanelInteractions();
 	},
 	isOpenPreviousElement: true,
