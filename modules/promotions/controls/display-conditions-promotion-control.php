@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Display_Conditions_Promotion_Control extends Atomic_Control_Base {
 	private const TYPE = 'display-conditions';
+
 	public function get_type(): string {
 		return self::TYPE;
 	}
