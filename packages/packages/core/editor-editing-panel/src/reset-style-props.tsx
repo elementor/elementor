@@ -1,9 +1,9 @@
 import { useBoundProp } from '@elementor/editor-controls';
 import { BrushBigIcon } from '@elementor/icons';
+import { controlActionsMenu } from '@elementor/menus';
 import { __ } from '@wordpress/i18n';
 
 import { useIsStyle } from './contexts/style-context';
-import { controlActionsMenu } from './controls-actions';
 import { isEqual } from './utils/is-equal';
 
 const { registerAction } = controlActionsMenu;
