@@ -6,11 +6,8 @@ import {
 	type ControlType,
 	createTopLevelObjectType,
 	ElementProvider,
-<<<<<<< HEAD
 	getControlReplacements,
-=======
 	isDynamicPropValue,
->>>>>>> 3309d1e8d2 (Internal: Temporarily allow removing dynamic from overrides [ED-22658] (#34410))
 	SettingsField,
 	useElement,
 } from '@elementor/editor-editing-panel';
