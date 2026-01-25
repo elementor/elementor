@@ -1,7 +1,6 @@
+import { invalidateDocumentData, switchToDocument } from '@elementor/editor-documents';
 import { getCurrentDocumentContainer, selectElement } from '@elementor/editor-elements';
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
-import { invalidateComponentDocumentData } from './component-document-data';
 import { expandNavigator } from './expand-navigator';
 
 export async function switchToComponent(
@@ -11,10 +10,9 @@ export async function switchToComponent(
 ) {
 	const selector = getSelector( element, componentInstanceId );
 
-	invalidateComponentDocumentData( componentId );
+	invalidateDocumentData( componentId );
 
-	await runCommand( 'editor/documents/switch', {
-		id: componentId,
+	await switchToDocument( componentId, {
 		selector,
 		mode: 'autosave',
 		setAsInitial: false,

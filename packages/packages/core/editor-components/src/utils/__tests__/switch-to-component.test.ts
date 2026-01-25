@@ -1,10 +1,8 @@
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
+import { invalidateDocumentData, switchToDocument } from '@elementor/editor-documents';
 
-import { invalidateComponentDocumentData } from '../component-document-data';
 import { buildUniqueSelector, switchToComponent } from '../switch-to-component';
 
-jest.mock( '@elementor/editor-v1-adapters' );
-jest.mock( '../component-document-data' );
+jest.mock( '@elementor/editor-documents' );
 
 const COMPONENT_A_INSTANCE_1_ID = 'component-a-instance-1';
 const COMPONENT_A_INSTANCE_2_ID = 'component-a-instance-2';
@@ -175,10 +173,10 @@ describe( 'switchToComponent', () => {
 		const componentId = 1234;
 		const callOrder: string[] = [];
 
-		jest.mocked( invalidateComponentDocumentData ).mockImplementation( () => {
+		jest.mocked( invalidateDocumentData ).mockImplementation( () => {
 			callOrder.push( 'invalidateCache' );
 		} );
-		jest.mocked( runCommand ).mockImplementation( async () => {
+		jest.mocked( switchToDocument ).mockImplementation( async () => {
 			callOrder.push( 'switch' );
 		} );
 
@@ -186,11 +184,8 @@ describe( 'switchToComponent', () => {
 		await switchToComponent( componentId );
 
 		// Assert
-		expect( invalidateComponentDocumentData ).toHaveBeenCalledWith( componentId );
-		expect( runCommand ).toHaveBeenCalledWith(
-			'editor/documents/switch',
-			expect.objectContaining( { id: componentId } )
-		);
+		expect( invalidateDocumentData ).toHaveBeenCalledWith( componentId );
+		expect( switchToDocument ).toHaveBeenCalledWith( componentId, expect.objectContaining( { mode: 'autosave' } ) );
 		expect( callOrder ).toEqual( [ 'invalidateCache', 'switch' ] );
 	} );
 } );

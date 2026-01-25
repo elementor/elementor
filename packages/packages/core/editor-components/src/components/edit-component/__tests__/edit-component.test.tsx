@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { createDOMElement, createMockDocument, dispatchCommandAfter, renderWithStore } from 'test-utils';
-import { getV1DocumentsManager, type V1Document, type V1DocumentsManager } from '@elementor/editor-documents';
-import { __privateRunCommand } from '@elementor/editor-v1-adapters';
+import {
+	getV1DocumentsManager,
+	switchToDocument,
+	type V1Document,
+	type V1DocumentsManager,
+} from '@elementor/editor-documents';
 import { __createStore, __registerSlice as registerSlice, type SliceState, type Store } from '@elementor/store';
 import { act, fireEvent, screen } from '@testing-library/react';
 
@@ -18,14 +22,10 @@ jest.mock( '../component-modal', () => ( {
 		} >,
 } ) );
 
-jest.mock( '@elementor/editor-v1-adapters', () => ( {
-	...jest.requireActual( '@elementor/editor-v1-adapters' ),
-	__privateRunCommand: jest.fn(),
-} ) );
-
 jest.mock( '@elementor/editor-documents', () => ( {
-	...jest.requireActual( '@elementor/editor-documents' ),
 	getV1DocumentsManager: jest.fn(),
+	switchToDocument: jest.fn(),
+	invalidateDocumentData: jest.fn(),
 } ) );
 
 jest.mock( '../../../api' );
@@ -68,10 +68,8 @@ describe( '<EditComponent />', () => {
 			updateCurrentDocument();
 		} );
 
-		jest.mocked( __privateRunCommand ).mockImplementation( async ( command, args ) => {
-			if ( command === 'editor/documents/switch' ) {
-				switchDocumentCallback( args );
-			}
+		jest.mocked( switchToDocument ).mockImplementation( async ( id, options ) => {
+			switchDocumentCallback( { id, ...options } );
 		} );
 	} );
 
