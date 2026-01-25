@@ -25,10 +25,11 @@ export function useResetStyleValueProps() {
 	const isRequired = !! propType.settings?.required;
 	const shouldHide = !! propType.settings?.hide_reset;
 	const isPropTypeValue = value as TransformablePropValue<string, string>;
-	const variableExists = isPropTypeValue?.$$type?.includes('variable') && hasVariable(isPropTypeValue?.value);
+	const isVariable = isPropTypeValue?.$$type?.includes('variable');
+	const variableExists = isVariable && hasVariable(isPropTypeValue?.value);
 
 	function calculateVisibility() {
-		if ( ! isStyle || ! hasValue || shouldHide || ! variableExists ) {
+		if ( ! isStyle || ! hasValue || shouldHide || (isVariable && ! variableExists) ) {
 			return false;
 		}
 
