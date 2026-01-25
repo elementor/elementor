@@ -93,7 +93,7 @@ test.describe( 'Revision loading with unknown widgets @history', () => {
 		await test.step( 'Verify atomic widgets are not rendered', async () => {
 			const previewFrame = editor.getPreviewFrame();
 			const atomicHeading = previewFrame.locator( '[data-widget_type="e-heading.default"]' );
-			await expect( atomicHeading ).not.toBeInViewport();
+			await expect( atomicHeading ).toHaveCount( 0 );
 		} );
 
 		await test.step( 'Apply the revision without errors', async () => {
