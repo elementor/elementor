@@ -3,8 +3,10 @@ import { __privateListenTo, v1ReadyEvent } from '@elementor/editor-v1-adapters';
 
 import { createDomRenderer } from '../renderers/create-dom-renderer';
 import { createElementType } from './create-element-type';
+import { canBeNestedTemplated, createNestedTemplatedElementType } from './create-nested-templated-element-type';
 import { canBeTemplated, type CreateTemplatedElementTypeOptions } from './create-templated-element-type';
 import { createTemplatedElementTypeWithReplacements } from './replacements/manager';
+import { getTabsViewExtensions } from './tabs-view-extensions';
 import type { ElementType, LegacyWindow } from './types';
 
 type ElementLegacyType = {
@@ -31,9 +33,15 @@ export function initLegacyViews() {
 				return;
 			}
 
+			const shouldUseNestedTemplated = canBeNestedTemplated( element );
+			const isAlreadyRegistered = !! legacyWindow.elementor.elementsManager.getElementTypeClass( type );
+
 			let ElementType;
 
-			if ( !! elementsLegacyTypes[ type ] && canBeTemplated( element ) ) {
+			if ( shouldUseNestedTemplated ) {
+				const viewExtensions = getTabsViewExtensions( type );
+				ElementType = createNestedTemplatedElementType( { type, renderer, element, viewExtensions } );
+			} else if ( !! elementsLegacyTypes[ type ] && canBeTemplated( element ) ) {
 				ElementType = elementsLegacyTypes[ type ]( { type, renderer, element } );
 			} else if ( canBeTemplated( element ) ) {
 				ElementType = createTemplatedElementTypeWithReplacements( { type, renderer, element } );
@@ -41,7 +49,13 @@ export function initLegacyViews() {
 				ElementType = createElementType( type );
 			}
 
-			legacyWindow.elementor.elementsManager.registerElementType( new ElementType() );
+			try {
+				legacyWindow.elementor.elementsManager.registerElementType( new ElementType() );
+			} catch {
+				if ( shouldUseNestedTemplated && isAlreadyRegistered ) {
+					legacyWindow.elementor.elementsManager._elementTypes[ type ] = new ElementType();
+				}
+			}
 		} );
 	} );
 }

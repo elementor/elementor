@@ -53,6 +53,7 @@ export {
 	isElementAnchored,
 	type LinkInLinkRestriction,
 } from './link-restriction';
+export { ELEMENT_CHILDREN_RENDERED_EVENT } from './lifecycle-events';
 export { ELEMENT_STYLE_CHANGE_EVENT, styleRerenderEvents } from './styles/consts';
 export {
 	createElementStyle,

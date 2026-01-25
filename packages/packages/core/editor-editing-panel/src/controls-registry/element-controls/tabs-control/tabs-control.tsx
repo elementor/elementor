@@ -19,7 +19,7 @@ import { __ } from '@wordpress/i18n';
 
 import { useElement } from '../../../contexts/element-context';
 import { SettingsField } from '../../settings-field';
-import { getElementByType } from '../get-element-by-type';
+import { findElementByType } from '../get-element-by-type';
 import { TAB_ELEMENT_TYPE, type TabItem, useActions } from './use-actions';
 
 const TAB_MENU_ELEMENT_TYPE = 'e-tabs-menu';
@@ -40,8 +40,8 @@ export const TabsControlContent = ( { label }: { label: string } ) => {
 		[ TAB_MENU_ELEMENT_TYPE ]: TAB_ELEMENT_TYPE,
 	} );
 
-	const tabList = getElementByType( element.id, TAB_MENU_ELEMENT_TYPE );
-	const tabContentArea = getElementByType( element.id, TAB_CONTENT_AREA_ELEMENT_TYPE );
+	const tabList = findElementByType( element.id, TAB_MENU_ELEMENT_TYPE );
+	const tabContentArea = findElementByType( element.id, TAB_CONTENT_AREA_ELEMENT_TYPE );
 
 	const repeaterValues: RepeaterItem< TabItem >[] = tabLinks.map( ( tabLink, index ) => {
 		const { title: titleSetting } = getElementEditorSettings( tabLink.id ) ?? {};
@@ -58,6 +58,10 @@ export const TabsControlContent = ( { label }: { label: string } ) => {
 		_options: CreateOptions,
 		meta?: SetRepeaterValuesMeta< RepeaterItem< TabItem > >
 	) => {
+		if ( ! tabList || ! tabContentArea ) {
+			return;
+		}
+
 		if ( meta?.action?.type === 'add' ) {
 			const items = meta.action.payload;
 

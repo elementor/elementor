@@ -1,5 +1,11 @@
-import { __privateUseListenTo as useListenTo, commandEndEvent, v1ReadyEvent } from '@elementor/editor-v1-adapters';
+import {
+	__privateUseListenTo as useListenTo,
+	commandEndEvent,
+	v1ReadyEvent,
+	windowEvent,
+} from '@elementor/editor-v1-adapters';
 
+import { ELEMENT_CHILDREN_RENDERED_EVENT } from '../lifecycle-events';
 import { getContainer } from '../sync/get-container';
 import { type ElementID } from '../types';
 
@@ -20,6 +26,7 @@ export function useElementChildren< T extends ElementChildren >(
 			commandEndEvent( 'document/elements/delete' ),
 			commandEndEvent( 'document/elements/update' ),
 			commandEndEvent( 'document/elements/set-settings' ),
+			windowEvent( ELEMENT_CHILDREN_RENDERED_EVENT ),
 		],
 		() => {
 			const container = getContainer( elementId );

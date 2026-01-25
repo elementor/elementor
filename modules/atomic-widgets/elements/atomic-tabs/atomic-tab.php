@@ -2,6 +2,7 @@
 namespace Elementor\Modules\AtomicWidgets\Elements\Atomic_Tabs;
 
 use Elementor\Modules\AtomicWidgets\Elements\Base\Atomic_Element_Base;
+use Elementor\Modules\AtomicWidgets\Elements\Base\Has_Element_Template;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Size_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Definition;
@@ -22,6 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Atomic_Tab extends Atomic_Element_Base {
+	use Has_Element_Template;
+
 	const BASE_STYLE_KEY = 'base';
 
 	public function __construct( $data = [], $args = null ) {
@@ -160,12 +163,13 @@ class Atomic_Tab extends Atomic_Element_Base {
 		];
 	}
 
-	protected function add_render_attributes() {
-		parent::add_render_attributes();
-		$settings = $this->get_atomic_settings();
-		$base_style_class = $this->get_base_styles_dictionary()[ static::BASE_STYLE_KEY ];
-		$initial_attributes = $this->define_initial_attributes();
+	protected function get_templates(): array {
+		return [
+			'elementor/elements/atomic-tab' => __DIR__ . '/atomic-tab.html.twig',
+		];
+	}
 
+	protected function build_template_context(): array {
 		$tabs_context = Render_Context::get( Atomic_Tabs::class );
 		$default_active_tab = $tabs_context['default-active-tab'];
 		$get_tab_index = $tabs_context['get-tab-index'];
@@ -174,25 +178,10 @@ class Atomic_Tab extends Atomic_Element_Base {
 		$index = $get_tab_index( $this->get_id() );
 		$is_active = $default_active_tab === $index;
 
-		$attributes = [
-			'class' => [
-				'e-con',
-				'e-atomic-element',
-				$base_style_class,
-				...( $settings['classes'] ?? [] ),
-			],
-			'tabindex' => $is_active ? '0' : '-1',
-			'aria-selected' => $is_active ? 'true' : 'false',
-			'x-bind' => 'tab',
-			'x-ref' => $this->get_id(),
-			'id' => Atomic_Tabs::get_tab_id( $tabs_id, $index ),
-			'aria-controls' => Atomic_Tabs::get_tab_content_id( $tabs_id, $index ),
-		];
-
-		if ( ! empty( $settings['_cssid'] ) ) {
-			$attributes['id'] = esc_attr( $settings['_cssid'] );
-		}
-
-		$this->add_render_attribute( '_wrapper', array_merge( $initial_attributes, $attributes ) );
+		return array_merge( $this->build_base_template_context(), [
+			'is_active' => $is_active,
+			'tab_id' => Atomic_Tabs::get_tab_id( $tabs_id, $index ),
+			'tab_content_id' => Atomic_Tabs::get_tab_content_id( $tabs_id, $index ),
+		] );
 	}
 }
