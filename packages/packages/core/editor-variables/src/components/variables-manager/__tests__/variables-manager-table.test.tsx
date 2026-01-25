@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ColorFilterIcon } from '@elementor/icons';
-import { type IconButtonProps, type StackProps, type TableCellProps } from '@elementor/ui';
+import { type TableCellProps } from '@elementor/ui';
 import { render, screen } from '@testing-library/react';
 
 import { type TVariablesList } from '../../../storage';
@@ -35,21 +35,6 @@ jest.mock( '@elementor/ui', () => {
 				isSorting: false,
 			} ) as React.ReactElement;
 		},
-		Table: ( props: { children: React.ReactNode } ) => <table { ...props } />,
-		TableBody: ( props: { children: React.ReactNode } ) => <tbody { ...props } />,
-		TableHead: ( props: { children: React.ReactNode } ) => <thead { ...props } />,
-		TableRow: ( props: { children: React.ReactNode } ) => <tr { ...props } />,
-		TableContainer: ( props: { children: React.ReactNode } ) => <div { ...props } />,
-		Stack: ( { children, direction, spacing, ...props }: StackProps ) => (
-			<div
-				data-direction={ direction }
-				data-spacing={ spacing }
-				{ ...( props as React.HTMLAttributes< HTMLDivElement > ) }
-			>
-				{ children }
-			</div>
-		),
-		IconButton: ( props: IconButtonProps ) => <button type="button" { ...props } />,
 	};
 } );
 
@@ -92,37 +77,19 @@ jest.mock( '../variable-editable-cell', () => ( {
 		initialValue: string;
 		prefixElement?: React.ReactNode;
 		children: React.ReactNode;
-	} ) => {
-		const [ isEditing, setIsEditing ] = React.useState( false );
-		return isEditing ? (
-			<input
-				type="text"
-				aria-label="Edit value"
-				value={ props.initialValue }
-				onChange={ () => {} }
-				data-props={ JSON.stringify( {
-					initialValue: props.initialValue,
-					prefixElement: !! props.prefixElement,
-				} ) }
-			/>
-		) : (
-			<button
-				type="button"
-				onClick={ () => setIsEditing( true ) }
-				data-props={ JSON.stringify( {
-					initialValue: props.initialValue,
-					prefixElement: !! props.prefixElement,
-				} ) }
-			>
-				{ props.children }
-			</button>
-		);
-	},
+	} ) => (
+		<button
+			type="button"
+			data-props={ JSON.stringify( {
+				initialValue: props.initialValue,
+				prefixElement: !! props.prefixElement,
+			} ) }
+		>
+			{ props.children }
+		</button>
+	),
 } ) );
 
-jest.mock( '@elementor/editor-ui', () => ( {
-	EllipsisWithTooltip: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
-} ) );
 
 jest.mock(
 	'../../../variables-registry/variable-type-registry',
