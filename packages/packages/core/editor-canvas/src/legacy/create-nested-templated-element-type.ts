@@ -199,17 +199,10 @@ export function createNestedTemplatedElementView( {
 
 			this._destroyAlpine();
 
-			// Preserve critical editor attributes before copying new ones
-			const dataAtomic = oldEl.getAttribute( 'data-atomic' );
-
 			Array.from( newEl.attributes ).forEach( ( attr ) => {
 				oldEl.setAttribute( attr.name, attr.value );
 			} );
 
-			// Restore critical editor attributes
-			if ( dataAtomic !== null ) {
-				oldEl.setAttribute( 'data-atomic', dataAtomic );
-			}
 			oldEl.setAttribute( 'draggable', 'true' );
 
 			const overlayHTML = this.getHandlesOverlay()?.get( 0 )?.outerHTML ?? '';
