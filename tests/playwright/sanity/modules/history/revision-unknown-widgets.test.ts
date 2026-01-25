@@ -3,7 +3,7 @@ import { parallelTest as test } from '../../../parallelTest';
 import WpAdminPage from '../../../pages/wp-admin-page';
 import EditorPage from '../../../pages/editor-page';
 
-test.describe.serial( 'Revision loading with unknown widgets @history', () => {
+test.describe( 'Revision loading with unknown widgets @history', () => {
 	let wpAdminPage: WpAdminPage;
 	let context: BrowserContext;
 	let page: Page;
