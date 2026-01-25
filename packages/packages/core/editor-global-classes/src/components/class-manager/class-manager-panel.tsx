@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useEffect } from 'react';
-import { setDocumentModifiedStatus } from '@elementor/editor-documents';
+import { getCurrentDocument, getV1DocumentsManager, setDocumentModifiedStatus } from '@elementor/editor-documents';
 import {
 	__createPanel as createPanel,
 	Panel,
@@ -10,7 +10,7 @@ import {
 	PanelHeaderTitle,
 } from '@elementor/editor-panels';
 import { SaveChangesDialog, ThemeProvider, useDialog } from '@elementor/editor-ui';
-import { changeEditMode } from '@elementor/editor-v1-adapters';
+import { __privateRunCommand as runCommand, changeEditMode } from '@elementor/editor-v1-adapters';
 import { XIcon } from '@elementor/icons';
 import { useMutation } from '@elementor/query';
 import { __dispatch as dispatch } from '@elementor/store';
@@ -42,8 +42,6 @@ import { hasDeletedItems, onDelete } from './delete-class';
 import { FlippedColorSwatchIcon } from './flipped-color-swatch-icon';
 import { GlobalClassesList } from './global-classes-list';
 import { blockPanelInteractions, unblockPanelInteractions } from './panel-interactions';
-import { getCurrentDocument, getV1DocumentsManager } from '@elementor/editor-documents';
-import { __privateRunCommand as runCommand } from '@elementor/editor-v1-adapters';
 
 const id = 'global-classes-manager';
 
