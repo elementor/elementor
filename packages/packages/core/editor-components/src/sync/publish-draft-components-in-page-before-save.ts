@@ -1,9 +1,8 @@
-import { isDocumentDirty } from '@elementor/editor-documents';
+import { invalidateDocumentData, isDocumentDirty } from '@elementor/editor-documents';
 import { type V1ElementData } from '@elementor/editor-elements';
 
 import { apiClient } from '../api';
 import { type DocumentSaveStatus } from '../types';
-import { invalidateComponentDocumentData } from '../utils/component-document-data';
 import { getComponentDocuments } from '../utils/get-component-documents';
 
 type Options = {
@@ -26,5 +25,5 @@ export async function publishDraftComponentsInPageBeforeSave( { status, elements
 
 	await apiClient.updateStatuses( draftIds, 'publish' );
 
-	draftIds.forEach( ( id ) => invalidateComponentDocumentData( id ) );
+	draftIds.forEach( ( id ) => invalidateDocumentData( id ) );
 }
