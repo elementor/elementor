@@ -121,13 +121,6 @@ export const slice = createSlice( {
 
 			component.overridableProps = payload.overridableProps;
 		},
-		clearOverridableProps: ( state, { payload }: PayloadAction< { componentId: ComponentId } > ) => {
-			const component = state.data.find( ( comp ) => comp.id === payload.componentId );
-
-			if ( component ) {
-				component.overridableProps = undefined;
-			}
-		},
 		rename: ( state, { payload }: PayloadAction< { componentUid: string; name: string } > ) => {
 			const component = state.data.find( ( comp ) => comp.uid === payload.componentUid );
 
@@ -157,7 +150,7 @@ export const slice = createSlice( {
 	},
 } );
 
-const selectData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].data;
+export const selectData = ( state: ComponentsSlice ) => state[ SLICE_NAME ].data;
 export const selectArchivedThisSession = ( state: ComponentsSlice ) => state[ SLICE_NAME ].archivedThisSession;
 const selectLoadStatus = ( state: ComponentsSlice ) => state[ SLICE_NAME ].loadStatus;
 const selectStylesDefinitions = ( state: ComponentsSlice ) => state[ SLICE_NAME ].styles ?? {};

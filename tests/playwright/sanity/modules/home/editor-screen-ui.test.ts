@@ -1,13 +1,11 @@
 import { expect, request } from '@playwright/test';
 import { parallelTest as test } from '../../../parallelTest';
 import { saveHomepageSettings, restoreHomepageSettings, mockHomeScreenData, transformMockDataByLicense, navigateToHomeScreen, type HomepageSettings } from './home-screen.helper';
-import { wpCli } from '../../../assets/wp-cli';
 
 test.describe( 'Editor screen UI tests', () => {
 	let originalHomepageSettings: HomepageSettings | null = null;
 
 	test.beforeAll( async ( { browser, apiRequests } ) => {
-		await wpCli( 'wp elementor experiments activate e_editor_one' );
 		const context = await browser.newContext();
 		const page = await context.newPage();
 		const requestContext = page.context().request;
@@ -17,7 +15,6 @@ test.describe( 'Editor screen UI tests', () => {
 	} );
 
 	test.afterAll( async ( { browser, apiRequests } ) => {
-		await wpCli( 'wp elementor experiments deactivate e_editor_one' );
 		const context = await browser.newContext();
 		const page = await context.newPage();
 
