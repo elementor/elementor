@@ -22,11 +22,18 @@ export const initConfigureElementTool = ( reg: MCPRegistryEntry ) => {
 			{ description: 'Styles schema', uri: STYLE_SCHEMA_URI },
 		],
 		modelPreferences: {
-			hints: [ { name: 'claude-sonnet-4-5' } ],
+			hints: [ { name: 'claude-sonnet' } ],
 			intelligencePriority: 0.8,
 			speedPriority: 0.7,
 		},
-		handler: ( { elementId, propertiesToChange, elementType, stylePropertiesToChange } ) => {
+		handler: ( {
+			elementId,
+			propertiesToChange,
+			elementType,
+			stylePropertiesToChange,
+		} ) => {
+			validateColorPropertyIfPresent( stylePropertiesToChange );
+
 			const toUpdate = Object.entries( propertiesToChange );
 			const { valid, errors } = validateInput.validatePropSchema(
 				elementType,
