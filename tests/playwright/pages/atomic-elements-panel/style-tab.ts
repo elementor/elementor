@@ -14,29 +14,99 @@ export const STYLE_SECTIONS = {
 	EFFECTS: 'Effects',
 } as const;
 
+const SIZE_SECTION_LABELS = {
+	WIDTH: 'Width',
+	HEIGHT: 'Height',
+	MIN_WIDTH: 'Min width',
+	MIN_HEIGHT: 'Min height',
+	MAX_WIDTH: 'Max width',
+	MAX_HEIGHT: 'Max height',
+};
+
+const OFFSET_LABELS = {
+	TOP: 'Top',
+	RIGHT: 'Right',
+	BOTTOM: 'Bottom',
+	LEFT: 'Left',
+};
+
+const FONT_SIZE_LABELS = {
+	LINE_HEIGHT: 'Line height',
+	LETTER_SPACING: 'Letter spacing',
+	WORD_SPACING: 'Word spacing',
+	FONT_SIZE: 'Font size',
+};
+
+const BORDER_TYPE_LABELS = {
+	NONE: 'None',
+	SOLID: 'Solid',
+	DASHED: 'Dashed',
+	DOTTED: 'Dotted',
+	DOUBLE: 'Double',
+	GROOVE: 'Groove',
+	RIDGE: 'Ridge',
+	INSET: 'Inset',
+	OUTSET: 'Outset',
+};
+
 export type StyleSection = typeof STYLE_SECTIONS[keyof typeof STYLE_SECTIONS];
+type SizeLabel = typeof SIZE_SECTION_LABELS[keyof typeof SIZE_SECTION_LABELS];
+type OffSetLabel = typeof OFFSET_LABELS[keyof typeof OFFSET_LABELS];
+type Position= 'static' | 'relative' | 'absolute' | 'fixed' | 'sticky';
+type SizeValue = { size: number, unit?: Unit ; };
+type FontProperty = typeof FONT_SIZE_LABELS[keyof typeof FONT_SIZE_LABELS];
+type BorderTypeLabel = typeof BORDER_TYPE_LABELS[keyof typeof BORDER_TYPE_LABELS];
+
+const UNIT_BUTTON_SELECTOR = 'input ~ .MuiInputAdornment-positionEnd button[aria-haspopup="true"]:not([aria-label])';
 
 export default class StyleTab extends BasePage {
-	protected async getInputByLabel( labelText: string ): Promise<Locator> {
-		const input = this.page.locator( `[aria-label="${ labelText } control"]` ).locator( 'input' );
-		await input.waitFor( { state: 'visible', timeout: 5000 } );
-		return input;
+	async getSectionContentByLabel( label: StyleSection ): Promise<Locator> {
+		return this.page.locator( `[aria-label="${ label } section content"]` );
 	}
 
-	protected async getUnitButtonByLabel( labelText: string ): Promise<Locator> {
-		return this.page.locator( `[aria-label="${ labelText } control"]` )
-			.locator( 'button[aria-haspopup="true"]' )
-			.first();
+	async getControlByLabel( sectionLabel: StyleSection, labelText: string, options?: { nth?: number, innerSelector?: string } ): Promise<Locator> {
+		const labelRegex = new RegExp( `^${ labelText }$`, 'i' );
+		const section = await this.getSectionContentByLabel( sectionLabel );
+		const control = section.locator( 'label', { hasText: labelRegex } ).nth( options?.nth ?? 0 ).locator( '../../..' );
+
+		return options?.innerSelector ? control.locator( options.innerSelector ) : control;
+	}
+
+	async changeSizeControl( controlLocator: Locator, value: number, unit?: Unit ): Promise<void> {
+		const input = controlLocator.locator( 'input' );
+		const unitSelect = controlLocator.locator( UNIT_BUTTON_SELECTOR );
+
+		if ( unit ) {
+			await this.changeUnit( unitSelect, unit );
+		}
+
+		await input.fill( value.toString() );
 	}
 
 	protected async changeUnit( unitButton: Locator, targetUnit: string ): Promise<void> {
 		const currentUnitText = await unitButton.textContent();
-		if ( currentUnitText?.toLowerCase() !== targetUnit.toLowerCase() ) {
-			await unitButton.click();
-			const unitOption = this.page.getByRole( 'menuitem', { name: targetUnit.toUpperCase(), exact: true } );
-			await unitOption.waitFor( { state: 'visible' } );
-			await unitOption.click();
+
+		if ( currentUnitText?.toLowerCase() === targetUnit.toLowerCase() ) {
+			return;
 		}
+
+		const unitOption = this.page.getByRole( 'menuitem', { name: targetUnit.toUpperCase(), exact: true } );
+
+		await unitButton.click();
+		await this.page.locator( '[role="presentation"] .MuiList-root' ).waitFor();
+		await unitOption.waitFor( { state: 'visible' } );
+		await unitOption.click();
+	}
+
+	async getSelectControlByLabel( sectionLabel: StyleSection, labelText: string ): Promise<Locator> {
+		const sectionContent = await this.getSectionContentByLabel( sectionLabel );
+
+		return sectionContent.locator( `[aria-label="${ labelText } control"] .MuiSelect-select[role="combobox"]` );
+	}
+
+	async changeSelectControl( controlLocator: Locator, value: string ): Promise<void> {
+		await controlLocator.click();
+		await this.page.locator( `li[data-value="${ value }"]` ).click();
 	}
 
 	async clickShowMore( sectionName: StyleSection ): Promise<void> {
@@ -67,43 +137,147 @@ export default class StyleTab extends BasePage {
 		}
 	}
 
-	async setSpacingValue( labelText: string, value: number, unit: Unit ): Promise<void> {
-		const spacingInput = await this.getInputByLabel( labelText );
-		const unitButton = await this.getUnitButtonByLabel( labelText );
+	async closeSection( sectionId: StyleSection ): Promise<void> {
+		const sectionButton = this.page.locator( '.MuiButtonBase-root', { hasText: new RegExp( sectionId, 'i' ) } );
+		const contentSelector = await sectionButton.getAttribute( 'aria-controls' );
+		const isContentVisible = await this.page.evaluate( ( selector ) => {
+			return !! document.getElementById( selector );
+		}, contentSelector );
 
-		await this.changeUnit( unitButton, unit );
-		await spacingInput.fill( value.toString() );
+		if ( ! isContentVisible ) {
+			return;
+		}
+
+		await sectionButton.click();
+	}
+
+	async setSpacingSectionValue( property: 'Margin' | 'Padding', offsetLabel: OffSetLabel, value: number, unit: Unit, linked: boolean = true ): Promise<void> {
+		const controlIndex = [ 'Margin', 'Padding' ].indexOf( property );
+		const linkButton = this.page.locator( 'label', { hasText: property } )
+			.locator( '..' )
+			.locator( 'button' );
+		const isLinked = 'true' === await linkButton.getAttribute( 'aria-pressed' );
+
+		if ( isLinked !== linked ) {
+			await linkButton.click();
+		}
+
+		const control = await this.getControlByLabel( 'Spacing', offsetLabel, { nth: controlIndex } );
+
+		await this.changeSizeControl( control, value, unit );
+	}
+
+	async setSizeSectionValue( property: SizeLabel, value: number, unit: Unit ) {
+		const control = await this.getControlByLabel( 'Size', property );
+
+		await this.changeSizeControl( control, value, unit );
+	}
+
+	async setPositionSectionValue( position: Position, offsets: Partial< Record< OffSetLabel, SizeValue > > = {}, options: {
+		zIndex?: number | typeof NaN;
+		offset?: SizeValue;
+	} = {} ) {
+		const control = await this.getSelectControlByLabel( 'Position', 'Position' );
+
+		await this.changeSelectControl( control, position );
+
+		if ( 'static' === position ) {
+			return;
+		}
+
+		for ( const [ key, { size, unit } ] of Object.entries( offsets ) ) {
+			const sizeControl = await this.getControlByLabel( 'Position', key );
+
+			await this.changeSizeControl( sizeControl, size, unit );
+		}
+
+		if ( ! Number.isNaN( options?.zIndex ?? NaN ) ) {
+			const zIndexControl = await this.getControlByLabel( 'Position', 'Z-index' );
+
+			await this.changeSizeControl( zIndexControl, options.zIndex );
+		}
+
+		if ( options?.offset ) {
+			const offsetControl = await this.getControlByLabel( 'Position', 'Offset' );
+
+			await this.changeSizeControl( offsetControl, options.offset.size, options.offset.unit );
+		}
 	}
 
 	async setFontFamily( fontName: string, fontType: 'system' | 'google' = 'system' ): Promise<void> {
-		this.page.getByRole( 'button', { name: 'Font family' } ).click();
 		const categorySelector = 'google' === fontType ? 'Google Fonts' : 'System';
 
-		this.page.locator( '.MuiListSubheader-root', { hasText: categorySelector } ).click();
-		this.page.locator( 'input[placeholder="Search"]' ).fill( fontName );
-
+		await this.page.getByRole( 'button', { name: 'Font family' } ).click();
+		await this.page.locator( '.MuiListSubheader-root', { hasText: new RegExp( categorySelector, 'i' ) } ).click();
+		await this.page.locator( 'input[placeholder="Search"]' ).fill( fontName );
 		await this.page.waitForTimeout( timeouts.short );
-		this.page.locator( '[role="option"]', { hasText: fontName } ).first().click();
+		await this.page.locator( '[role="option"]', { hasText: fontName } ).first().click();
 	}
 
-	async setFontSize( size: number, unit: Unit ): Promise<void> {
-		const fontSizeInput = this.page.locator( '[aria-label="Font size"]' );
+	async setFontColor( color: string ): Promise<void> {
+		await this.page.locator( '[aria-label="Text color control"] input' ).fill( color );
+	}
 
-		if ( 'px' !== unit ) {
-			const unitButton = fontSizeInput.locator( '..' ).getByRole( 'button' ).filter( { hasText: /^(px|em|rem|vw|vh|%)$/ } );
-			await unitButton.click();
+	async setTypographySectionSizeBasedValue( property: FontProperty, size: number, unit: Unit ) {
+		const control = await this.getControlByLabel( 'Typography', property );
 
-			await this.page.getByRole( 'menuitem', { name: unit.toUpperCase(), exact: true } ).click();
-			await fontSizeInput.locator( '..' ).getByRole( 'button', { name: unit } ).waitFor( { state: 'visible' } );
-		}
+		await this.changeSizeControl( control, size, unit );
+	}
 
-		await fontSizeInput.fill( size.toString() );
-		await fontSizeInput.blur();
+	setFontSize( size: number, unit: Unit ) {
+		return this.setTypographySectionSizeBasedValue( 'Font size', size, unit );
+	}
+
+	setLetterSpacing( size: number, unit: Unit ) {
+		return this.setTypographySectionSizeBasedValue( 'Letter spacing', size, unit );
+	}
+
+	setWordSpacing( size: number, unit: Unit ) {
+		return this.setTypographySectionSizeBasedValue( 'Word spacing', size, unit );
+	}
+
+	setLineHeight( size: number, unit: Unit ) {
+		return this.setTypographySectionSizeBasedValue( 'Line height', size, unit );
 	}
 
 	async setFontWeight( weight: 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 ): Promise<void> {
-		await this.page.locator( '[aria-label="Font weight control"] .MuiSelect-select[role="combobox"]' ).click();
-		await this.page.locator( `li[data-value="${ weight }"]` ).click();
+		const control = await this.getSelectControlByLabel( 'Typography', 'Font weight' );
+
+		await this.changeSelectControl( control, weight.toString() );
+	}
+
+	async setBackgroundColor( color: string ): Promise<void> {
+		const input = await this.getControlByLabel( 'Background', 'Color', { innerSelector: 'input' } );
+
+		await input.clear();
+		await input.fill( color );
+		await input.blur();
+	}
+
+	async setBorderWidth( width: number, unit: Unit ) {
+		const control = await this.getControlByLabel( 'Border', 'Border width' );
+
+		await this.changeSizeControl( control, width, unit );
+	}
+
+	async setBorderRadius( radius: number, unit: Unit ) {
+		const control = await this.getControlByLabel( 'Border', 'Border radius' );
+
+		await this.changeSizeControl( control, radius, unit );
+	}
+
+	async setBorderColor( color: string ) {
+		const input = await this.getControlByLabel( 'Border', 'Border color', { innerSelector: 'input' } );
+
+		await input.clear();
+		await input.fill( color );
+		await input.blur();
+	}
+
+	async setBorderType( border: BorderTypeLabel ) {
+		const control = await this.getSelectControlByLabel( 'Border', 'Border type' );
+
+		await this.changeSelectControl( control, border );
 	}
 
 	async addGlobalClass( className: string ): Promise<void> {
@@ -118,5 +292,17 @@ export default class StyleTab extends BasePage {
 
 		await menuItem.click();
 		await this.page.locator( 'li[role="menuitem"] span', { hasText: 'Remove' } ).click();
+	}
+
+	async selectClassState( state: 'normal'|'active'|'hover'|'focus', target: string = 'local' ) {
+		const stateRegex = new RegExp( state, 'i' );
+		const classesSection = this.page.locator( 'label', { hasText: 'Classes' } ).locator( '../..' );
+		const classChip = classesSection.locator( `[aria-label="Edit ${ target }"]` );
+		const menuTrigger = classChip.locator( '[aria-label="Open CSS Class Menu"]' );
+		const menuItem = this.page.locator( 'li[role="menuitem"]', { hasText: stateRegex } );
+
+		await menuTrigger.click();
+		await menuItem.waitFor( { state: 'visible' } );
+		await menuItem.click();
 	}
 }

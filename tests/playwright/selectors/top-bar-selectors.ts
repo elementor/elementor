@@ -4,6 +4,10 @@ export type TopBarSelector = {
 }
 
 export default {
+	navigator: {
+		attribute: 'value',
+		attributeValue: 'Structure',
+	},
 	elementorLogo: {
 		attribute: 'value',
 		attributeValue: 'selected',
