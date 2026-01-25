@@ -23,7 +23,6 @@ export { useStylesRerender } from './hooks/use-styles-rerender';
 export { init } from './init';
 export { usePanelActions, usePanelStatus } from './panel';
 export { registerStyleProviderToColors } from './provider-colors-registry';
-export { stylesInheritanceTransformersRegistry } from './styles-inheritance/styles-inheritance-transformers-registry';
 export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-indicators-registry';
 export { registerEditingPanelReplacement } from './editing-panel-replacement-registry';
 
