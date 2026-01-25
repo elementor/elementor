@@ -6,12 +6,6 @@ import { render, screen } from '@testing-library/react';
 import { type TVariablesList } from '../../../storage';
 import { VariablesManagerTable } from '../variables-manager-table';
 
-type SortableProviderChildrenFn = ( props: {
-	itemProps: Record< string, unknown >;
-	triggerProps: Record< string, unknown >;
-	setTriggerRef: () => void;
-} ) => React.ReactNode;
-
 jest.mock( '@elementor/ui', () => {
 	const actual = jest.requireActual( '@elementor/ui' );
 	return {
@@ -20,29 +14,34 @@ jest.mock( '@elementor/ui', () => {
 			children,
 			value,
 		}: {
-			children: React.ReactNode | SortableProviderChildrenFn;
+			children: React.ReactNode;
 			value: string[];
-		} ) => (
-			<div aria-label="Sortable variables list" data-value={ JSON.stringify( value ) }>
-				{ typeof children === 'function'
-					? children( {
-							itemProps: {},
-							triggerProps: {},
-							setTriggerRef: () => {},
-					  } )
-					: children }
-			</div>
-		),
+		} ) => {
+			return (
+				<div aria-label="Sortable variables list" data-value={ JSON.stringify( value ) }>
+					{ React.Children.map( children, ( child ) => child ) }
+				</div>
+			);
+		},
 		UnstableSortableItem: ( {
 			render: renderItem,
+			id,
 		}: {
 			render: ( props: Record< string, unknown > ) => React.ReactNode;
-		} ) =>
-			renderItem( {
+			id: string;
+		} ) => {
+			return renderItem( {
 				itemProps: {},
 				triggerProps: {},
 				setTriggerRef: () => {},
-			} ),
+				showDropIndication: false,
+				itemStyle: {},
+				triggerStyle: {},
+				isDragged: false,
+				dropPosition: undefined,
+				isSorting: false,
+			} ) as React.ReactElement;
+		},
 		Table: ( props: { children: React.ReactNode } ) => <table { ...props } />,
 		TableBody: ( props: { children: React.ReactNode } ) => <tbody { ...props } />,
 		TableHead: ( props: { children: React.ReactNode } ) => <thead { ...props } />,
