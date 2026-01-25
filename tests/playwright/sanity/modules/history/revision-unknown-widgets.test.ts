@@ -54,7 +54,6 @@ test.describe( 'Revision loading with unknown widgets @history', () => {
 
 		await test.step( 'Reload editor with experiment off', async () => {
 			await page.goto( pageUrl );
-			await page.reload();
 			await wpAdminPage.waitForPanel();
 			await wpAdminPage.closeAnnouncementsIfVisible();
 		} );
