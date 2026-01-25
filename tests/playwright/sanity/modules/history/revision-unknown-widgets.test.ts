@@ -19,7 +19,7 @@ test.describe.serial( 'Revision loading with unknown widgets @history', () => {
 		await context.close();
 	} );
 
-	test( 'should gracefully handle revision loading when atomic experiment is deactivated', async ( _, testInfo ) => {
+	test( 'should gracefully handle revision loading when atomic experiment is deactivated', async () => {
 		let editor: EditorPage;
 		let pageUrl: string;
 
@@ -57,8 +57,6 @@ test.describe.serial( 'Revision loading with unknown widgets @history', () => {
 			await page.reload();
 			await wpAdminPage.waitForPanel();
 			await wpAdminPage.closeAnnouncementsIfVisible();
-
-			editor = new EditorPage( page, testInfo );
 		} );
 
 		await test.step( 'Open revisions panel', async () => {
