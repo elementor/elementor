@@ -35,3 +35,9 @@ export { getFieldIndicators, registerFieldIndicator, FIELD_TYPE } from './field-
 export { registerEditingPanelReplacement } from './editing-panel-replacement-registry';
 
 export { doApplyClasses, doGetAppliedClasses, doUnapplyClass } from './apply-unapply-actions';
+<<<<<<< HEAD
+=======
+export { setLicenseConfig } from './hooks/use-license-config';
+export { type DynamicTag, type DynamicTags, type DynamicTagsManager } from './dynamics/types';
+export { isDynamicPropValue } from './dynamics/utils';
+>>>>>>> 3309d1e8d2 (Internal: Temporarily allow removing dynamic from overrides [ED-22658] (#34410))

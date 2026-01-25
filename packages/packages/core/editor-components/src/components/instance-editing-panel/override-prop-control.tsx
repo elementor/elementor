@@ -6,11 +6,16 @@ import {
 	type ControlType,
 	createTopLevelObjectType,
 	ElementProvider,
+<<<<<<< HEAD
 	getControlReplacements,
+=======
+	isDynamicPropValue,
+>>>>>>> 3309d1e8d2 (Internal: Temporarily allow removing dynamic from overrides [ED-22658] (#34410))
 	SettingsField,
 	useElement,
 } from '@elementor/editor-editing-panel';
 import { type Control, getContainer, getElementType } from '@elementor/editor-elements';
+import { type PropType, type PropValue } from '@elementor/editor-props';
 import { Stack } from '@elementor/ui';
 
 import { useControlsByWidgetType } from '../../hooks/use-controls-by-widget-type';
@@ -72,12 +77,6 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 		return null;
 	}
 
-	const propTypeSchema = createTopLevelObjectType( {
-		schema: {
-			[ overridableProp.overrideKey ]: propType,
-		},
-	} );
-
 	const componentInstanceId = instanceValue.component_id?.value;
 
 	if ( ! componentInstanceId ) {
@@ -92,9 +91,11 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 	} as OverridesSchema;
 
 	const setValue = ( newValue: OverridesSchema ) => {
-		const newPropValue = newValue[ overridableProp.overrideKey ] as
-			| ComponentInstanceOverrideProp
-			| ComponentOverridableProp;
+		const newPropValue = getTempNewValueForDynamicProp(
+			propType,
+			propValue,
+			newValue[ overridableProp.overrideKey ]
+		);
 
 		const newOverrideValue = createOverrideValue( {
 			matchingOverride,
@@ -150,6 +151,12 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 		return null;
 	}
 
+	const propTypeSchema = createTopLevelObjectType( {
+		schema: {
+			[ overridableProp.overrideKey ]: propType,
+		},
+	} );
+
 	return (
 		<OverridablePropProvider
 			value={ componentOverridablePropTypeUtil.extract( matchingOverride ) ?? undefined }
@@ -178,6 +185,17 @@ function OverrideControl( { overridableProp, overrides }: Props ) {
 			</ElementProvider>
 		</OverridablePropProvider>
 	);
+}
+
+// temp solution to allow dynamic values to be overridden, will be removed once placeholder is implemented
+function getTempNewValueForDynamicProp( propType: PropType, propValue: PropValue, newPropValue: PropValue ) {
+	const isRemovingOverride = newPropValue === null;
+
+	if ( isRemovingOverride && isDynamicPropValue( propValue ) ) {
+		return ( propType.default ?? null ) as ComponentInstanceOverrideProp | ComponentOverridableProp;
+	}
+
+	return newPropValue as ComponentInstanceOverrideProp | ComponentOverridableProp;
 }
 
 function getMatchingOverride(
